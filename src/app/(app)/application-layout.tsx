@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useState } from 'react'
 import { Avatar } from '@/components/avatar'
 import {
   Dropdown,
@@ -40,6 +41,7 @@ import {
   Cog6ToothIcon,
   AdjustmentsVerticalIcon,
   ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
@@ -52,6 +54,7 @@ export function ApplicationLayout({
 }) {
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
+  let [collapsed, setCollapsed] = useState(false)
 
   return (
     <SidebarLayout
@@ -61,14 +64,15 @@ export function ApplicationLayout({
         </Navbar>
       }
       sidebar={
-        <Sidebar>
-          <SidebarHeader>
-            {inSettings ? (
+        <Sidebar collapsed={collapsed}>
+          <SidebarHeader className="flex-row items-center gap-2">
+            {!collapsed && inSettings && (
               <SidebarItem href="/">
                 <ChevronLeftIcon />
                 <SidebarLabel>Back to app</SidebarLabel>
               </SidebarItem>
-            ) : (
+            )}
+            {!collapsed && !inSettings && (
               <Dropdown>
                 <DropdownButton as={SidebarItem}>
                   <Avatar src="/teams/catalyst.svg" />
@@ -105,6 +109,13 @@ export function ApplicationLayout({
                 </DropdownMenu>
               </Dropdown>
             )}
+            <NavbarItem
+              className="ml-auto"
+              onClick={() => setCollapsed(!collapsed)}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </NavbarItem>
           </SidebarHeader>
 
           <SidebarBody>
@@ -181,6 +192,7 @@ export function ApplicationLayout({
           </SidebarBody>
         </Sidebar>
       }
+      collapsed={collapsed}
     >
       {children}
     </SidebarLayout>

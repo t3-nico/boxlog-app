@@ -7,8 +7,18 @@ import React, { forwardRef, useId } from 'react'
 import { TouchTarget } from './button'
 import { Link } from './link'
 
-export function Sidebar({ className, ...props }: React.ComponentPropsWithoutRef<'nav'>) {
-  return <nav {...props} className={clsx(className, 'flex h-full min-h-0 flex-col')} />
+export function Sidebar({
+  collapsed = false,
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<'nav'> & { collapsed?: boolean }) {
+  return (
+    <nav
+      {...props}
+      data-collapsed={collapsed ? 'true' : undefined}
+      className={clsx(className, 'group flex h-full min-h-0 flex-col')}
+    />
+  )
 }
 
 export function SidebarHeader({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
@@ -86,6 +96,7 @@ export const SidebarItem = forwardRef(function SidebarItem(
   let classes = clsx(
     // Base
     'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
+    'group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-2',
     // Leading icon/icon-only
     '*:data-[slot=icon]:size-6 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:fill-zinc-500 sm:*:data-[slot=icon]:size-5',
     // Trailing icon (down chevron or similar)
@@ -138,5 +149,10 @@ export const SidebarItem = forwardRef(function SidebarItem(
 })
 
 export function SidebarLabel({ className, ...props }: React.ComponentPropsWithoutRef<'span'>) {
-  return <span {...props} className={clsx(className, 'truncate')} />
+  return (
+    <span
+      {...props}
+      className={clsx(className, 'truncate group-data-[collapsed=true]:hidden')}
+    />
+  )
 }
