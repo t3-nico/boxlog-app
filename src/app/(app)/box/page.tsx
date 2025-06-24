@@ -11,17 +11,17 @@ import { EllipsisVerticalIcon, MagnifyingGlassIcon } from '@heroicons/react/16/s
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Events',
+  title: 'Box',
 }
 
-export default async function Events() {
+export default async function Box() {
   let events = await getEvents()
 
   return (
     <>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="max-sm:w-full sm:flex-1">
-          <Heading>Events</Heading>
+          <Heading>Box</Heading>
           <div className="mt-4 flex max-w-xl gap-4">
             <div className="flex-1">
               <InputGroup>
