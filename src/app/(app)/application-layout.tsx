@@ -109,13 +109,15 @@ export function ApplicationLayout({
                 </DropdownMenu>
               </Dropdown>
             )}
-            <NavbarItem
-              className="ml-auto"
-              onClick={() => setCollapsed(!collapsed)}
-              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </NavbarItem>
+            {!inSettings && (
+              <NavbarItem
+                className="ml-auto"
+                onClick={() => setCollapsed(!collapsed)}
+                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </NavbarItem>
+            )}
           </SidebarHeader>
 
           <SidebarBody>
