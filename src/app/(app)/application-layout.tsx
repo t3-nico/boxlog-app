@@ -139,6 +139,20 @@ export function ApplicationLayout({
               ))}
             </SidebarSection>
 
+            {pathname.startsWith('/settings') && (
+              <SidebarSection>
+                <SidebarItem href="/settings" current={pathname === '/settings'}>
+                  <SidebarLabel>General</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/preferences"
+                  current={pathname.startsWith('/settings/preferences')}
+                >
+                  <SidebarLabel>Preferences</SidebarLabel>
+                </SidebarItem>
+              </SidebarSection>
+            )}
+
             <SidebarSpacer />
           </SidebarBody>
         </Sidebar>
