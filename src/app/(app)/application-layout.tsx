@@ -141,12 +141,18 @@ export function ApplicationLayout({
 
             {pathname.startsWith('/settings') && (
               <SidebarSection>
-                <SidebarItem href="/settings" current={pathname === '/settings'}>
+                <SidebarItem
+                  href="/settings/general"
+                  current={pathname.startsWith('/settings/general')}
+                >
                   <SidebarLabel>General</SidebarLabel>
                 </SidebarItem>
                 <SidebarItem
                   href="/settings/preferences"
-                  current={pathname.startsWith('/settings/preferences')}
+                  current={
+                    pathname === '/settings' ||
+                    pathname.startsWith('/settings/preferences')
+                  }
                 >
                   <SidebarLabel>Preferences</SidebarLabel>
                 </SidebarItem>
