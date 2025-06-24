@@ -66,13 +66,15 @@ export function ApplicationLayout({
       sidebar={
         <Sidebar collapsed={collapsed}>
           <SidebarHeader className="flex items-center gap-2">
-            {!collapsed &&
-              (inSettings ? (
-                <SidebarItem href="/">
-                  <ChevronLeftIcon />
-                  <SidebarLabel>Back to app</SidebarLabel>
-                </SidebarItem>
-              ) : (
+            {!collapsed && inSettings && (
+              <SidebarItem href="/">
+                <ChevronLeftIcon />
+                <SidebarLabel>Back to app</SidebarLabel>
+              </SidebarItem>
+            )}
+
+            <div className="ml-auto flex items-center gap-2">
+              {!collapsed && !inSettings && (
                 <Dropdown>
                   <DropdownButton as={SidebarItem}>
                     <Avatar src="/teams/catalyst.svg" />
@@ -108,14 +110,14 @@ export function ApplicationLayout({
                     </DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
-              ))}
-            <NavbarItem
-              onClick={() => setCollapsed(!collapsed)}
-              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              className="ml-auto"
-            >
-              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-            </NavbarItem>
+              )}
+              <NavbarItem
+                onClick={() => setCollapsed(!collapsed)}
+                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              </NavbarItem>
+            </div>
           </SidebarHeader>
 
           <SidebarBody>
