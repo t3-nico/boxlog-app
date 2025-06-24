@@ -138,13 +138,13 @@ export function ApplicationLayout({
                 <div className="h-4" />
 
                 <SidebarSection>
-                  <SidebarItem href="/" current={pathname === '/'}>
+                  <SidebarItem href="/calender" current={pathname === '/calender'}>
                     <CalendarIcon />
-                    <SidebarLabel>Calendar</SidebarLabel>
+                    <SidebarLabel>Calender</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/events"
-                    current={pathname.startsWith('/events')}
+                    href="/box"
+                    current={pathname.startsWith('/box')}
                   >
                     <CubeIcon />
                     <SidebarLabel>Box</SidebarLabel>
