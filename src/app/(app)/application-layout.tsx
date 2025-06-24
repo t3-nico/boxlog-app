@@ -30,7 +30,6 @@ import {
   QuestionMarkCircleIcon,
   ShieldCheckIcon,
   SparklesIcon,
-  UserCircleIcon,
 } from '@heroicons/react/16/solid'
 import {
   CalendarIcon,
@@ -38,6 +37,9 @@ import {
   DocumentTextIcon,
   MagnifyingGlassIcon,
   PlusIcon,
+  Cog6ToothIcon,
+  AdjustmentsVerticalIcon,
+  ChevronLeftIcon,
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
@@ -49,6 +51,7 @@ export function ApplicationLayout({
   children: React.ReactNode
 }) {
   let pathname = usePathname()
+  let inSettings = pathname.startsWith('/settings')
 
   return (
     <SidebarLayout
@@ -60,84 +63,119 @@ export function ApplicationLayout({
       sidebar={
         <Sidebar>
           <SidebarHeader>
-            <Dropdown>
-              <DropdownButton as={SidebarItem}>
-                <Avatar src="/teams/catalyst.svg" />
-                <SidebarLabel>Catalyst</SidebarLabel>
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                <DropdownItem href="/settings">
-                  <Cog8ToothIcon />
-                  <DropdownLabel>Settings</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="#">
-                  <UserCircleIcon />
-                  <DropdownLabel>My account</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <ShieldCheckIcon />
-                  <DropdownLabel>Privacy policy</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <LightBulbIcon />
-                  <DropdownLabel>Share feedback</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <QuestionMarkCircleIcon />
-                  <DropdownLabel>Support</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <SparklesIcon />
-                  <DropdownLabel>Changelog</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="/login">
-                  <ArrowRightStartOnRectangleIcon />
-                  <DropdownLabel>Sign out</DropdownLabel>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            {inSettings ? (
+              <SidebarItem href="/">
+                <ChevronLeftIcon />
+                <SidebarLabel>Back to app</SidebarLabel>
+              </SidebarItem>
+            ) : (
+              <Dropdown>
+                <DropdownButton as={SidebarItem}>
+                  <Avatar src="/teams/catalyst.svg" />
+                  <SidebarLabel>Catalyst</SidebarLabel>
+                  <ChevronDownIcon />
+                </DropdownButton>
+                <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
+                  <DropdownItem href="/settings">
+                    <Cog8ToothIcon />
+                    <DropdownLabel>Settings</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownItem href="#">
+                    <ShieldCheckIcon />
+                    <DropdownLabel>Privacy policy</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <LightBulbIcon />
+                    <DropdownLabel>Share feedback</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <QuestionMarkCircleIcon />
+                    <DropdownLabel>Support</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <SparklesIcon />
+                    <DropdownLabel>Changelog</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownItem href="/login">
+                    <ArrowRightStartOnRectangleIcon />
+                    <DropdownLabel>Sign out</DropdownLabel>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            )}
           </SidebarHeader>
 
           <SidebarBody>
-            <SidebarSection>
-              <SidebarItem href="/add" current={pathname.startsWith('/add')}>
-                <PlusIcon />
-                <SidebarLabel>Add</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/search" current={pathname.startsWith('/search')}>
-                <MagnifyingGlassIcon />
-                <SidebarLabel>Search</SidebarLabel>
-              </SidebarItem>
-            </SidebarSection>
+            {!inSettings && (
+              <>
+                <SidebarSection>
+                  <SidebarItem href="/add" current={pathname.startsWith('/add')}>
+                    <PlusIcon />
+                    <SidebarLabel>Add</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/search"
+                    current={pathname.startsWith('/search')}
+                  >
+                    <MagnifyingGlassIcon />
+                    <SidebarLabel>Search</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
 
-            <div className="h-4" />
+                <div className="h-4" />
 
-            <SidebarSection>
-              <SidebarItem href="/" current={pathname === '/'}>
-                <CalendarIcon />
-                <SidebarLabel>Calendar</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/events" current={pathname.startsWith('/events')}>
-                <CubeIcon />
-                <SidebarLabel>Box</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/orders" current={pathname.startsWith('/orders')}>
-                <DocumentTextIcon />
-                <SidebarLabel>Review</SidebarLabel>
-              </SidebarItem>
-            </SidebarSection>
+                <SidebarSection>
+                  <SidebarItem href="/" current={pathname === '/'}>
+                    <CalendarIcon />
+                    <SidebarLabel>Calendar</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/events"
+                    current={pathname.startsWith('/events')}
+                  >
+                    <CubeIcon />
+                    <SidebarLabel>Box</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/orders"
+                    current={pathname.startsWith('/orders')}
+                  >
+                    <DocumentTextIcon />
+                    <SidebarLabel>Review</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
 
-            <SidebarSection className="max-lg:hidden">
-              <SidebarHeading>Upcoming Events</SidebarHeading>
-              {events.map((event) => (
-                <SidebarItem key={event.id} href={event.url}>
-                  {event.name}
+                <SidebarSection className="max-lg:hidden">
+                  <SidebarHeading>Upcoming Events</SidebarHeading>
+                  {events.map((event) => (
+                    <SidebarItem key={event.id} href={event.url}>
+                      {event.name}
+                    </SidebarItem>
+                  ))}
+                </SidebarSection>
+              </>
+            )}
+
+            {inSettings && (
+              <SidebarSection>
+              <SidebarItem
+                  href="/settings/general"
+                  current={pathname.startsWith('/settings/general')}
+                >
+                  <Cog6ToothIcon />
+                  <SidebarLabel>General</SidebarLabel>
                 </SidebarItem>
-              ))}
-            </SidebarSection>
+              <SidebarItem
+                  href="/settings/preferences"
+                  current={pathname.startsWith('/settings/preferences')}
+                >
+                  <AdjustmentsVerticalIcon />
+                  <SidebarLabel>Preferences</SidebarLabel>
+                </SidebarItem>
+              </SidebarSection>
+            )}
 
             <SidebarSpacer />
           </SidebarBody>
