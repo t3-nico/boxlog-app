@@ -22,7 +22,7 @@ import {
   SidebarSpacer,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
-import { getEvents } from '@/data'
+import { getEvents, getOrders } from '@/data'
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
@@ -47,9 +47,11 @@ import { usePathname } from 'next/navigation'
 
 export function ApplicationLayout({
   events,
+  orders,
   children,
 }: {
   events: Awaited<ReturnType<typeof getEvents>>
+  orders: Awaited<ReturnType<typeof getOrders>>
   children: React.ReactNode
 }) {
   let pathname = usePathname()
@@ -67,14 +69,14 @@ export function ApplicationLayout({
         <Sidebar collapsed={collapsed}>
           <SidebarHeader className="flex-row items-center gap-2">
             {!collapsed && inSettings && (
-              <SidebarItem href="/">
+              <SidebarItem href="/" indicator={false}>
                 <ChevronLeftIcon />
                 <SidebarLabel>Back to app</SidebarLabel>
               </SidebarItem>
             )}
             {!collapsed && !inSettings && (
               <Dropdown>
-                <DropdownButton as={SidebarItem}>
+                <DropdownButton as={SidebarItem} indicator={false}>
                   <Avatar src="/teams/catalyst.svg" />
                   <SidebarLabel>Catalyst</SidebarLabel>
                   <ChevronDownIcon />
@@ -124,13 +126,18 @@ export function ApplicationLayout({
             {!inSettings && (
               <>
                 <SidebarSection>
-                  <SidebarItem href="/add" current={pathname.startsWith('/add')}>
+                  <SidebarItem
+                    href="/add"
+                    current={pathname.startsWith('/add')}
+                    indicator={false}
+                  >
                     <PlusIcon />
                     <SidebarLabel>Add</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
                     href="/search"
                     current={pathname.startsWith('/search')}
+                    indicator={false}
                   >
                     <MagnifyingGlassIcon />
                     <SidebarLabel>Search</SidebarLabel>
@@ -161,12 +168,30 @@ export function ApplicationLayout({
                 </SidebarSection>
 
                 <SidebarSection className="max-lg:hidden">
-                  <SidebarHeading>Upcoming Events</SidebarHeading>
-                  {events.map((event) => (
-                    <SidebarItem key={event.id} href={event.url}>
-                      {event.name}
-                    </SidebarItem>
-                  ))}
+                  <SidebarHeading>
+                    {pathname.startsWith('/orders') ? 'Recent Orders' : 'Upcoming Events'}
+                  </SidebarHeading>
+                  {pathname.startsWith('/orders')
+                    ? orders.slice(0, 5).map((order) => (
+                        <SidebarItem
+                          key={order.id}
+                          href={order.url}
+                          current={pathname === order.url}
+                          indicator={false}
+                        >
+                          Order #{order.id}
+                        </SidebarItem>
+                      ))
+                    : events.map((event) => (
+                        <SidebarItem
+                          key={event.id}
+                          href={event.url}
+                          current={pathname === event.url}
+                          indicator={false}
+                        >
+                          {event.name}
+                        </SidebarItem>
+                      ))}
                 </SidebarSection>
               </>
             )}
@@ -176,6 +201,7 @@ export function ApplicationLayout({
               <SidebarItem
                   href="/settings/general"
                   current={pathname.startsWith('/settings/general')}
+                  indicator={false}
                 >
                   <Cog6ToothIcon />
                   <SidebarLabel>General</SidebarLabel>
@@ -183,6 +209,7 @@ export function ApplicationLayout({
               <SidebarItem
                   href="/settings/preferences"
                   current={pathname.startsWith('/settings/preferences')}
+                  indicator={false}
                 >
                   <AdjustmentsVerticalIcon />
                   <SidebarLabel>Preferences</SidebarLabel>

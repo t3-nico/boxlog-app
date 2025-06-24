@@ -84,15 +84,31 @@ export function SidebarHeading({ className, ...props }: React.ComponentPropsWith
 export const SidebarItem = forwardRef(function SidebarItem(
   {
     current,
+    indicator = true,
     className,
     children,
     ...props
-  }: { current?: boolean; className?: string; children: React.ReactNode } & (
+  }: {
+    current?: boolean
+    indicator?: boolean
+    className?: string
+    children: React.ReactNode
+  } & (
     | Omit<Headless.ButtonProps, 'as' | 'className'>
     | Omit<Headless.ButtonProps<typeof Link>, 'as' | 'className'>
   ),
   ref: React.ForwardedRef<HTMLAnchorElement | HTMLButtonElement>
 ) {
+  let currentClasses = indicator
+    ? clsx(
+        'data-current:*:data-[slot=icon]:fill-zinc-950',
+        'dark:data-current:*:data-[slot=icon]:fill-white'
+      )
+    : clsx(
+        'data-current:bg-zinc-950/5 data-current:*:data-[slot=icon]:fill-zinc-950',
+        'dark:data-current:bg-white/5 dark:data-current:*:data-[slot=icon]:fill-white'
+      )
+
   let classes = clsx(
     // Base
     'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
@@ -107,18 +123,16 @@ export const SidebarItem = forwardRef(function SidebarItem(
     'data-hover:bg-zinc-950/5 data-hover:*:data-[slot=icon]:fill-zinc-950',
     // Active
     'data-active:bg-zinc-950/5 data-active:*:data-[slot=icon]:fill-zinc-950',
-    // Current
-    'data-current:*:data-[slot=icon]:fill-zinc-950',
     // Dark mode
     'dark:text-white dark:*:data-[slot=icon]:fill-zinc-400',
     'dark:data-hover:bg-white/5 dark:data-hover:*:data-[slot=icon]:fill-white',
     'dark:data-active:bg-white/5 dark:data-active:*:data-[slot=icon]:fill-white',
-    'dark:data-current:*:data-[slot=icon]:fill-white'
+    currentClasses
   )
 
   return (
     <span className={clsx(className, 'relative')}>
-      {current && (
+      {indicator && current && (
         <motion.span
           layoutId="current-indicator"
           className="absolute inset-y-2 -left-4 w-0.5 rounded-full bg-zinc-950 dark:bg-white"
