@@ -49,6 +49,7 @@ export function ApplicationLayout({
   children: React.ReactNode
 }) {
   let pathname = usePathname()
+  let inSettings = pathname.startsWith('/settings')
 
   return (
     <SidebarLayout
@@ -102,44 +103,57 @@ export function ApplicationLayout({
           </SidebarHeader>
 
           <SidebarBody>
-            <SidebarSection>
-              <SidebarItem href="/add" current={pathname.startsWith('/add')}>
-                <PlusIcon />
-                <SidebarLabel>Add</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/search" current={pathname.startsWith('/search')}>
-                <MagnifyingGlassIcon />
-                <SidebarLabel>Search</SidebarLabel>
-              </SidebarItem>
-            </SidebarSection>
+            {!inSettings && (
+              <>
+                <SidebarSection>
+                  <SidebarItem href="/add" current={pathname.startsWith('/add')}>
+                    <PlusIcon />
+                    <SidebarLabel>Add</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/search"
+                    current={pathname.startsWith('/search')}
+                  >
+                    <MagnifyingGlassIcon />
+                    <SidebarLabel>Search</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
 
-            <div className="h-4" />
+                <div className="h-4" />
 
-            <SidebarSection>
-              <SidebarItem href="/" current={pathname === '/'}>
-                <CalendarIcon />
-                <SidebarLabel>Calendar</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/events" current={pathname.startsWith('/events')}>
-                <CubeIcon />
-                <SidebarLabel>Box</SidebarLabel>
-              </SidebarItem>
-              <SidebarItem href="/orders" current={pathname.startsWith('/orders')}>
-                <DocumentTextIcon />
-                <SidebarLabel>Review</SidebarLabel>
-              </SidebarItem>
-            </SidebarSection>
+                <SidebarSection>
+                  <SidebarItem href="/" current={pathname === '/'}>
+                    <CalendarIcon />
+                    <SidebarLabel>Calendar</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/events"
+                    current={pathname.startsWith('/events')}
+                  >
+                    <CubeIcon />
+                    <SidebarLabel>Box</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/orders"
+                    current={pathname.startsWith('/orders')}
+                  >
+                    <DocumentTextIcon />
+                    <SidebarLabel>Review</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
 
-            <SidebarSection className="max-lg:hidden">
-              <SidebarHeading>Upcoming Events</SidebarHeading>
-              {events.map((event) => (
-                <SidebarItem key={event.id} href={event.url}>
-                  {event.name}
-                </SidebarItem>
-              ))}
-            </SidebarSection>
+                <SidebarSection className="max-lg:hidden">
+                  <SidebarHeading>Upcoming Events</SidebarHeading>
+                  {events.map((event) => (
+                    <SidebarItem key={event.id} href={event.url}>
+                      {event.name}
+                    </SidebarItem>
+                  ))}
+                </SidebarSection>
+              </>
+            )}
 
-            {pathname.startsWith('/settings') && (
+            {inSettings && (
               <SidebarSection>
                 <SidebarItem
                   href="/settings/general"
