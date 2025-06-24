@@ -73,7 +73,7 @@ export function ApplicationLayout({
               </SidebarItem>
             )}
 
-            <div className="ml-auto flex items-center gap-2">
+            <div className="flex items-center gap-2">
               {!collapsed && !inSettings && (
                 <Dropdown>
                   <DropdownButton as={SidebarItem}>
