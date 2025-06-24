@@ -168,12 +168,20 @@ export function ApplicationLayout({
                   </SidebarHeading>
                   {pathname.startsWith('/orders')
                     ? orders.slice(0, 5).map((order) => (
-                        <SidebarItem key={order.id} href={order.url}>
+                        <SidebarItem
+                          key={order.id}
+                          href={order.url}
+                          current={pathname === order.url}
+                        >
                           Order #{order.id}
                         </SidebarItem>
                       ))
                     : events.map((event) => (
-                        <SidebarItem key={event.id} href={event.url}>
+                        <SidebarItem
+                          key={event.id}
+                          href={event.url}
+                          current={pathname === event.url}
+                        >
                           {event.name}
                         </SidebarItem>
                       ))}
