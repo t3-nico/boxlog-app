@@ -167,12 +167,9 @@ export function ApplicationLayout({
                   <Cog6ToothIcon />
                   <SidebarLabel>General</SidebarLabel>
                 </SidebarItem>
-                <SidebarItem
+              <SidebarItem
                   href="/settings/preferences"
-                  current={
-                    pathname === '/settings' ||
-                    pathname.startsWith('/settings/preferences')
-                  }
+                  current={pathname.startsWith('/settings/preferences')}
                 >
                   <AdjustmentsVerticalIcon />
                   <SidebarLabel>Preferences</SidebarLabel>

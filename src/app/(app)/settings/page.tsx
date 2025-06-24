@@ -1,5 +1,5 @@
-import PreferencesPage from './preferences/page'
+import { redirect } from 'next/navigation'
 
 export default function SettingsIndexPage() {
-  return <PreferencesPage />
+  redirect('/settings/general')
 }
