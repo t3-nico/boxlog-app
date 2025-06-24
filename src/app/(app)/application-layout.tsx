@@ -65,59 +65,57 @@ export function ApplicationLayout({
       }
       sidebar={
         <Sidebar collapsed={collapsed}>
-          <SidebarHeader className="flex items-center gap-2">
+          <SidebarHeader className="flex-row items-center gap-2">
             {!collapsed && inSettings && (
               <SidebarItem href="/">
                 <ChevronLeftIcon />
                 <SidebarLabel>Back to app</SidebarLabel>
               </SidebarItem>
             )}
-
-            <div className="flex items-center gap-2">
-              {!collapsed && !inSettings && (
-                <Dropdown>
-                  <DropdownButton as={SidebarItem}>
-                    <Avatar src="/teams/catalyst.svg" />
-                    <SidebarLabel>Catalyst</SidebarLabel>
-                    <ChevronDownIcon />
-                  </DropdownButton>
-                  <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                    <DropdownItem href="/settings">
-                      <Cog8ToothIcon />
-                      <DropdownLabel>Settings</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownDivider />
-                    <DropdownItem href="#">
-                      <ShieldCheckIcon />
-                      <DropdownLabel>Privacy policy</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownItem href="#">
-                      <LightBulbIcon />
-                      <DropdownLabel>Share feedback</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownItem href="#">
-                      <QuestionMarkCircleIcon />
-                      <DropdownLabel>Support</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownItem href="#">
-                      <SparklesIcon />
-                      <DropdownLabel>Changelog</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownDivider />
-                    <DropdownItem href="/login">
-                      <ArrowRightStartOnRectangleIcon />
-                      <DropdownLabel>Sign out</DropdownLabel>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              )}
-              <NavbarItem
-                onClick={() => setCollapsed(!collapsed)}
-                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              >
-                {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-              </NavbarItem>
-            </div>
+            {!collapsed && !inSettings && (
+              <Dropdown>
+                <DropdownButton as={SidebarItem}>
+                  <Avatar src="/teams/catalyst.svg" />
+                  <SidebarLabel>Catalyst</SidebarLabel>
+                  <ChevronDownIcon />
+                </DropdownButton>
+                <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
+                  <DropdownItem href="/settings">
+                    <Cog8ToothIcon />
+                    <DropdownLabel>Settings</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownItem href="#">
+                    <ShieldCheckIcon />
+                    <DropdownLabel>Privacy policy</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <LightBulbIcon />
+                    <DropdownLabel>Share feedback</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <QuestionMarkCircleIcon />
+                    <DropdownLabel>Support</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <SparklesIcon />
+                    <DropdownLabel>Changelog</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownItem href="/login">
+                    <ArrowRightStartOnRectangleIcon />
+                    <DropdownLabel>Sign out</DropdownLabel>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            )}
+            <NavbarItem
+              className="ml-auto"
+              onClick={() => setCollapsed(!collapsed)}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </NavbarItem>
           </SidebarHeader>
 
           <SidebarBody>
