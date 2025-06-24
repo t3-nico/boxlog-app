@@ -30,7 +30,6 @@ import {
   QuestionMarkCircleIcon,
   ShieldCheckIcon,
   SparklesIcon,
-  UserCircleIcon,
 } from '@heroicons/react/16/solid'
 import {
   CalendarIcon,
@@ -38,8 +37,11 @@ import {
   DocumentTextIcon,
   MagnifyingGlassIcon,
   PlusIcon,
+  Cog6ToothIcon,
+  AdjustmentsVerticalIcon,
+  ChevronLeftIcon,
 } from '@heroicons/react/20/solid'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 export function ApplicationLayout({
   events,
@@ -50,6 +52,7 @@ export function ApplicationLayout({
 }) {
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
+  let router = useRouter()
 
   return (
     <SidebarLayout
@@ -61,45 +64,48 @@ export function ApplicationLayout({
       sidebar={
         <Sidebar>
           <SidebarHeader>
-            <Dropdown>
-              <DropdownButton as={SidebarItem}>
-                <Avatar src="/teams/catalyst.svg" />
-                <SidebarLabel>Catalyst</SidebarLabel>
-                <ChevronDownIcon />
-              </DropdownButton>
-              <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                <DropdownItem href="/settings">
-                  <Cog8ToothIcon />
-                  <DropdownLabel>Settings</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="#">
-                  <UserCircleIcon />
-                  <DropdownLabel>My account</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <ShieldCheckIcon />
-                  <DropdownLabel>Privacy policy</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <LightBulbIcon />
-                  <DropdownLabel>Share feedback</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <QuestionMarkCircleIcon />
-                  <DropdownLabel>Support</DropdownLabel>
-                </DropdownItem>
-                <DropdownItem href="#">
-                  <SparklesIcon />
-                  <DropdownLabel>Changelog</DropdownLabel>
-                </DropdownItem>
-                <DropdownDivider />
-                <DropdownItem href="/login">
-                  <ArrowRightStartOnRectangleIcon />
-                  <DropdownLabel>Sign out</DropdownLabel>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            {inSettings ? (
+              <SidebarItem onClick={() => router.back()}>
+                <ChevronLeftIcon />
+                <SidebarLabel>Back to app</SidebarLabel>
+              </SidebarItem>
+            ) : (
+              <Dropdown>
+                <DropdownButton as={SidebarItem}>
+                  <Avatar src="/teams/catalyst.svg" />
+                  <SidebarLabel>Catalyst</SidebarLabel>
+                  <ChevronDownIcon />
+                </DropdownButton>
+                <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
+                  <DropdownItem href="/settings">
+                    <Cog8ToothIcon />
+                    <DropdownLabel>Settings</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownItem href="#">
+                    <ShieldCheckIcon />
+                    <DropdownLabel>Privacy policy</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <LightBulbIcon />
+                    <DropdownLabel>Share feedback</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <QuestionMarkCircleIcon />
+                    <DropdownLabel>Support</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownItem href="#">
+                    <SparklesIcon />
+                    <DropdownLabel>Changelog</DropdownLabel>
+                  </DropdownItem>
+                  <DropdownDivider />
+                  <DropdownItem href="/login">
+                    <ArrowRightStartOnRectangleIcon />
+                    <DropdownLabel>Sign out</DropdownLabel>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            )}
           </SidebarHeader>
 
           <SidebarBody>
@@ -155,10 +161,11 @@ export function ApplicationLayout({
 
             {inSettings && (
               <SidebarSection>
-                <SidebarItem
+              <SidebarItem
                   href="/settings/general"
                   current={pathname.startsWith('/settings/general')}
                 >
+                  <Cog6ToothIcon />
                   <SidebarLabel>General</SidebarLabel>
                 </SidebarItem>
                 <SidebarItem
@@ -168,6 +175,7 @@ export function ApplicationLayout({
                     pathname.startsWith('/settings/preferences')
                   }
                 >
+                  <AdjustmentsVerticalIcon />
                   <SidebarLabel>Preferences</SidebarLabel>
                 </SidebarItem>
               </SidebarSection>
