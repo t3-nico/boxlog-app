@@ -41,7 +41,7 @@ import {
   AdjustmentsVerticalIcon,
   ChevronLeftIcon,
 } from '@heroicons/react/20/solid'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 export function ApplicationLayout({
   events,
@@ -52,7 +52,6 @@ export function ApplicationLayout({
 }) {
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
-  let router = useRouter()
 
   return (
     <SidebarLayout
@@ -65,7 +64,7 @@ export function ApplicationLayout({
         <Sidebar>
           <SidebarHeader>
             {inSettings ? (
-              <SidebarItem onClick={() => router.back()}>
+              <SidebarItem href="/">
                 <ChevronLeftIcon />
                 <SidebarLabel>Back to app</SidebarLabel>
               </SidebarItem>
