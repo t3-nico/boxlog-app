@@ -1,5 +1,6 @@
 'use client'
 
+import React, { useState } from 'react'
 import { Avatar } from '@/components/avatar'
 import {
   Dropdown,
@@ -19,6 +20,7 @@ import {
   SidebarLabel,
   SidebarSection,
   SidebarSpacer,
+  SidebarFooter,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { getEvents } from '@/data'
@@ -40,6 +42,7 @@ import {
   Cog6ToothIcon,
   AdjustmentsVerticalIcon,
   ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
@@ -52,6 +55,7 @@ export function ApplicationLayout({
 }) {
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
+  let [collapsed, setCollapsed] = useState(false)
 
   return (
     <SidebarLayout
@@ -61,7 +65,7 @@ export function ApplicationLayout({
         </Navbar>
       }
       sidebar={
-        <Sidebar>
+        <Sidebar collapsed={collapsed}>
           <SidebarHeader>
             {inSettings ? (
               <SidebarItem href="/">
@@ -179,8 +183,17 @@ export function ApplicationLayout({
 
             <SidebarSpacer />
           </SidebarBody>
+          <SidebarFooter>
+            <SidebarItem
+              onClick={() => setCollapsed(!collapsed)}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </SidebarItem>
+          </SidebarFooter>
         </Sidebar>
       }
+      collapsed={collapsed}
     >
       {children}
     </SidebarLayout>
