@@ -27,7 +27,12 @@ dependencies before they were added, run `npm install` again or add them
 explicitly:
 
 ```bash
-npm install @fullcalendar/react @fullcalendar/daygrid @fullcalendar/timegrid @fullcalendar/interaction
+npm install \
+  @fullcalendar/react \
+  @fullcalendar/daygrid \
+  @fullcalendar/timegrid \
+  @fullcalendar/interaction \
+  @fullcalendar/core
 ```
 
 Ensure your environment has network access to the npm registry so these
