@@ -149,7 +149,7 @@ export function ApplicationLayout({
                 <SidebarSection>
                   <SidebarItem href="/calender" current={pathname === '/calender'}>
                     <CalendarIcon />
-                    <SidebarLabel>Calender</SidebarLabel>
+                    <SidebarLabel>Calendar</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
                     href="/box"
