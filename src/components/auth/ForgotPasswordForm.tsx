@@ -34,7 +34,7 @@ export default function ForgotPasswordForm({
         setSuccess(true)
       }
     } catch (err) {
-      setError('パスワードリセット中にエラーが発生しました')
+      setError('An error occurred while resetting the password')
     } finally {
       setLoading(false)
     }
@@ -43,8 +43,8 @@ export default function ForgotPasswordForm({
   if (success) {
     return (
       <div className="text-center space-y-6">
-        <Heading level={2} className="text-green-600">メール送信完了</Heading>
-        <Text>{email} にパスワードリセット用のメールを送信しました。</Text>
+        <Heading level={2} className="text-green-600">Email Sent</Heading>
+        <Text>A password reset link was sent to {email}.</Text>
       </div>
     )
   }
@@ -52,10 +52,10 @@ export default function ForgotPasswordForm({
   return (
     <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>パスワードをリセット</Heading>
-      <Text>登録済みのメールアドレスを入力してください。</Text>
+      <Heading>Reset Password</Heading>
+      <Text>Enter your registered email address.</Text>
       <Field>
-        <Label>メールアドレス</Label>
+        <Label>Email</Label>
         <Input
           id="email"
           type="email"
@@ -66,11 +66,11 @@ export default function ForgotPasswordForm({
       </Field>
       {error && <Text className="text-red-600">{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? '送信中...' : 'リセットメールを送信'}
+        {loading ? 'Sending...' : 'Send reset email'}
       </Button>
       <Text className="text-center">
         <TextLink href="#" onClick={onLoginClick}>
-          <Strong>ログインページに戻る</Strong>
+          <Strong>Back to sign in</Strong>
         </TextLink>
       </Text>
     </form>

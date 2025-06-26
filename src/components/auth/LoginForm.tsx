@@ -34,7 +34,7 @@ export default function LoginForm({
         setError(error.message)
       }
     } catch (err) {
-      setError('ログイン中にエラーが発生しました')
+      setError('An error occurred during sign in')
     } finally {
       setLoading(false)
     }
@@ -43,9 +43,9 @@ export default function LoginForm({
   return (
     <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>ログイン</Heading>
+      <Heading>Sign in</Heading>
       <Field>
-        <Label>メールアドレス</Label>
+        <Label>Email</Label>
         <Input
           id="email"
           type="email"
@@ -55,7 +55,7 @@ export default function LoginForm({
         />
       </Field>
       <Field>
-        <Label>パスワード</Label>
+        <Label>Password</Label>
         <Input
           id="password"
           type="password"
@@ -68,21 +68,21 @@ export default function LoginForm({
       <div className="flex items-center justify-between">
         <CheckboxField>
           <Checkbox name="remember" />
-          <Label>ログイン状態を保持</Label>
+          <Label>Remember me</Label>
         </CheckboxField>
         <Text>
           <TextLink href="#" onClick={onForgotPasswordClick}>
-            <Strong>パスワードを忘れた場合</Strong>
+            <Strong>Forgot your password?</Strong>
           </TextLink>
         </Text>
       </div>
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'ログイン中...' : 'ログイン'}
+        {loading ? 'Signing in...' : 'Sign in'}
       </Button>
       <Text className="text-center">
-        アカウントをお持ちでない方は{' '}
+        Don’t have an account?{' '}
         <TextLink href="#" onClick={onRegisterClick}>
-          <Strong>登録</Strong>
+          <Strong>Sign up</Strong>
         </TextLink>
       </Text>
     </form>

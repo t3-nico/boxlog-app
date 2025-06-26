@@ -33,5 +33,5 @@ export default function AuthPage() {
     }
   }
 
-  return <div className="w-full">{renderForm()}</div>
+  return <div className="flex w-full justify-center">{renderForm()}</div>
 }

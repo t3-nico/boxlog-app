@@ -20,12 +20,12 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  // URLパラメータからアクセストークンを取得
+  // Get access tokens from URL parameters
   const accessToken = searchParams.get('access_token')
   const refreshToken = searchParams.get('refresh_token')
 
   useEffect(() => {
-    // トークンがない場合は認証ページにリダイレクト
+    // Redirect to auth page if tokens are missing
     if (!accessToken || !refreshToken) {
       router.push('/auth')
     }
@@ -37,13 +37,13 @@ export default function ResetPassword() {
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません')
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
 
     if (password.length < 6) {
-      setError('パスワードは6文字以上で入力してください')
+      setError('Password must be at least 6 characters long')
       setLoading(false)
       return
     }
@@ -55,13 +55,13 @@ export default function ResetPassword() {
         setError(error)
       } else {
         setSuccess(true)
-        // 3秒後にメインページにリダイレクト
+        // Redirect to main page after 3 seconds
         setTimeout(() => {
           router.push('/calender')
         }, 3000)
       }
     } catch (err) {
-      setError('パスワード更新中にエラーが発生しました')
+      setError('An error occurred while updating the password')
     } finally {
       setLoading(false)
     }
@@ -70,8 +70,8 @@ export default function ResetPassword() {
   if (success) {
     return (
       <div className="space-y-6 text-center">
-        <Heading level={2} className="text-green-600">パスワード更新完了</Heading>
-        <Text>パスワードが正常に更新されました。</Text>
+        <Heading level={2} className="text-green-600">Password Updated</Heading>
+        <Text>Your password has been updated.</Text>
       </div>
     )
   }
@@ -79,9 +79,9 @@ export default function ResetPassword() {
   return (
     <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>新しいパスワードを設定</Heading>
+      <Heading>Set a new password</Heading>
       <Field>
-        <Label>新しいパスワード</Label>
+        <Label>New Password</Label>
         <Input
           id="password"
           type="password"
@@ -92,7 +92,7 @@ export default function ResetPassword() {
         />
       </Field>
       <Field>
-        <Label>パスワード確認</Label>
+        <Label>Confirm Password</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -104,10 +104,10 @@ export default function ResetPassword() {
       </Field>
       {error && <Text className="text-red-600">{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? '更新中...' : 'パスワードを更新'}
+        {loading ? 'Updating...' : 'Update Password'}
       </Button>
       <button type="button" onClick={() => router.push('/auth')} className="text-blue-600 hover:text-blue-700 text-sm">
-        認証ページに戻る
+        Back to sign in
       </button>
     </form>
   )

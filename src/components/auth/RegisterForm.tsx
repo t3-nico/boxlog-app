@@ -28,7 +28,7 @@ export default function RegisterForm({
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません')
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
@@ -41,7 +41,7 @@ export default function RegisterForm({
         setSuccess(true)
       }
     } catch (err) {
-      setError('登録中にエラーが発生しました')
+      setError('An error occurred during sign up')
     } finally {
       setLoading(false)
     }
@@ -50,9 +50,9 @@ export default function RegisterForm({
   if (success) {
     return (
       <div className="text-center space-y-6">
-        <Heading level={2}>登録完了</Heading>
+        <Heading level={2}>Registration Complete</Heading>
         <Text>
-          確認メールを送信しました。メールを確認してアカウントを有効化してください。
+          A confirmation email has been sent. Please check it to activate your account.
         </Text>
       </div>
     )
@@ -61,9 +61,9 @@ export default function RegisterForm({
   return (
     <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>アカウント登録</Heading>
+      <Heading>Create an account</Heading>
       <Field>
-        <Label>メールアドレス</Label>
+        <Label>Email</Label>
         <Input
           id="email"
           type="email"
@@ -73,7 +73,7 @@ export default function RegisterForm({
         />
       </Field>
       <Field>
-        <Label>パスワード</Label>
+        <Label>Password</Label>
         <Input
           id="password"
           type="password"
@@ -84,7 +84,7 @@ export default function RegisterForm({
         />
       </Field>
       <Field>
-        <Label>パスワード確認</Label>
+        <Label>Confirm Password</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -96,12 +96,12 @@ export default function RegisterForm({
       </Field>
       {error && <Text className="text-red-600">{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? '登録中...' : '登録'}
+        {loading ? 'Signing up...' : 'Sign up'}
       </Button>
       <Text className="text-center">
-        すでにアカウントをお持ちの方は{' '}
+        Already have an account?{' '}
         <TextLink href="#" onClick={onLoginClick}>
-          <Strong>ログイン</Strong>
+          <Strong>Sign in</Strong>
         </TextLink>
       </Text>
     </form>
