@@ -7,11 +7,14 @@ interface AuthContextType {
   user: any
   session: any
   loading: boolean
+  error: string | null
   signUp: (email: string, password: string) => Promise<any>
   signIn: (email: string, password: string) => Promise<any>
   signInWithOAuth: (provider: 'google' | 'apple') => Promise<any>
   signOut: () => Promise<any>
   resetPassword: (email: string) => Promise<any>
+  updatePassword: (password: string) => Promise<any>
+  clearError: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
