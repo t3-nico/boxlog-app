@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { User, Session, AuthError } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-browser'
 
 interface AuthState {
   user: User | null
@@ -18,6 +18,9 @@ export function useAuth() {
     loading: true,
     error: null,
   })
+
+  // クライアント用supabaseインスタンス
+  const supabase = createClient()
 
   // エラーハンドリング関数
   const handleAuthError = useCallback((error: AuthError | null) => {
