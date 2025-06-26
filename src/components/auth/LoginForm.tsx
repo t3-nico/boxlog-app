@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
+import { GoogleIcon, AppleIcon } from '@/components/icons'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
 import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
@@ -93,6 +94,7 @@ export default function LoginForm({
           onClick={() => handleProviderSignIn('google')}
           className="w-full"
         >
+          <GoogleIcon data-slot="icon" className="size-5" />
           Continue with Google
         </Button>
         <Button
@@ -101,6 +103,7 @@ export default function LoginForm({
           onClick={() => handleProviderSignIn('apple')}
           className="w-full"
         >
+          <AppleIcon data-slot="icon" className="size-5" />
           Continue with Apple
         </Button>
       </div>
