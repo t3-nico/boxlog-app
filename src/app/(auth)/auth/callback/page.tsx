@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase-browser'
 import { Heading } from '@/components/heading'
 
 export default function AuthCallback() {
@@ -12,25 +12,33 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const supabase = createClient()
+    const code = searchParams.get('code')
+    const next = searchParams.get('next') ?? '/calender'
+
     const handleAuthCallback = async () => {
       try {
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code)
+          if (error) {
+            console.error('Auth callback error:', error)
+            setError('認証に失敗しました')
+            setLoading(false)
+            return
+          }
+          router.push(next)
+          return
+        }
+
         const { data, error } = await supabase.auth.getSession()
-        
-        if (error) {
+        if (error || !data.session) {
           console.error('Auth callback error:', error)
-          setError('認証に失敗しました')
+          setError('認証セッションが見つかりません')
           setLoading(false)
           return
         }
 
-        if (data.session) {
-          // 認証成功 - メインページにリダイレクト
-          router.push('/calender')
-        } else {
-          // セッションが見つからない場合
-          setError('認証セッションが見つかりません')
-          setLoading(false)
-        }
+        router.push(next)
       } catch (err) {
         console.error('Unexpected error:', err)
         setError('予期しないエラーが発生しました')
@@ -39,7 +47,7 @@ export default function AuthCallback() {
     }
 
     handleAuthCallback()
-  }, [router])
+  }, [router, searchParams])
 
   if (loading) {
     return (
