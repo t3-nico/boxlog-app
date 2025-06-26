@@ -15,8 +15,9 @@ export const metadata: Metadata = {
 }
 
 export default function AccountSettingsPage() {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  // Example defaults to match the rest of the demo
+  const [name, setName] = useState('Ada Lovelace')
+  const [email, setEmail] = useState('ada@example.com')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [twoFactor, setTwoFactor] = useState(false)
