@@ -21,7 +21,7 @@ export default function LoginForm({
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { signIn } = useAuthContext()
+  const { signIn, signInWithOAuth } = useAuthContext()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +38,16 @@ export default function LoginForm({
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleProviderSignIn = async (provider: 'google' | 'apple') => {
+    setLoading(true)
+    setError(null)
+    const { error } = await signInWithOAuth(provider)
+    if (error) {
+      setError(error)
+    }
+    setLoading(false)
   }
 
   return (
@@ -76,6 +86,22 @@ export default function LoginForm({
           </TextLink>
         </Text>
       </div>
+      <Button
+        type="button"
+        outline
+        onClick={() => handleProviderSignIn('google')}
+        className="w-full"
+      >
+        Continue with Google
+      </Button>
+      <Button
+        type="button"
+        outline
+        onClick={() => handleProviderSignIn('apple')}
+        className="w-full"
+      >
+        Continue with Apple
+      </Button>
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Signing in...' : 'Sign in'}
       </Button>

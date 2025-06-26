@@ -140,6 +140,32 @@ export function useAuth() {
     }
   }
 
+  const signInWithOAuth = async (provider: 'google' | 'apple') => {
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (error) {
+        const errorMessage = handleAuthError(error)
+        setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
+        return { data, error: errorMessage }
+      }
+
+      setAuthState((prev) => ({ ...prev, loading: false }))
+      return { data, error: null }
+    } catch (error) {
+      const errorMessage = 'OAuth sign in failed'
+      setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
+      return { data: null, error: errorMessage }
+    }
+  }
+
   const signOut = async () => {
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
@@ -218,6 +244,7 @@ export function useAuth() {
     error: authState.error,
     signUp,
     signIn,
+    signInWithOAuth,
     signOut,
     resetPassword,
     updatePassword,
