@@ -73,6 +73,26 @@ export default function RegisterForm({
     <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
       <Heading>Create an account</Heading>
+      <div className="mb-6 flex flex-col gap-2">
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('google')}
+          className="w-full"
+        >
+          <GoogleIcon data-slot="icon" className="size-5" />
+          Continue with Google
+        </Button>
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('apple')}
+          className="w-full"
+        >
+          <AppleIcon data-slot="icon" className="size-5" />
+          Continue with Apple
+        </Button>
+      </div>
       <Field>
         <Label>Email</Label>
         <Input
@@ -106,26 +126,6 @@ export default function RegisterForm({
         />
       </Field>
       {error && <Text className="text-red-600">{error}</Text>}
-      <div className="flex flex-col gap-2">
-        <Button
-          type="button"
-          outline
-          onClick={() => handleProviderSignIn('google')}
-          className="w-full"
-        >
-          <GoogleIcon data-slot="icon" className="size-5" />
-          Continue with Google
-        </Button>
-        <Button
-          type="button"
-          outline
-          onClick={() => handleProviderSignIn('apple')}
-          className="w-full"
-        >
-          <AppleIcon data-slot="icon" className="size-5" />
-          Continue with Apple
-        </Button>
-      </div>
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Signing up...' : 'Sign up'}
       </Button>
