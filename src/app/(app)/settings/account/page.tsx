@@ -1,8 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuthContext } from '@/contexts/AuthContext'
-import { createClient } from '@/lib/supabase-browser'
 import { Avatar } from '@/components/avatar'
 import { Button } from '@/components/button'
 import { Field, Label } from '@/components/fieldset'
@@ -12,42 +10,11 @@ import { SettingSection, ToggleItem } from '@/components/settings-section'
 import { GoogleIcon, AppleIcon } from '@/components/icons'
 
 export default function AccountSettingsPage() {
-  const { user, signInWithOAuth, updatePassword, signOut } = useAuthContext()
-  const supabase = createClient()
-
-  const [name, setName] = useState(
-    (user?.user_metadata as any)?.full_name ?? ''
-  )
-  const [email, setEmail] = useState(user?.email ?? '')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [changingPassword, setChangingPassword] = useState(false)
   const [twoFactor, setTwoFactor] = useState(false)
-
-  const handleProfileSave = async () => {
-    setSaving(true)
-    try {
-      await supabase.auth.updateUser({
-        data: { full_name: name },
-        email,
-      })
-    } finally {
-      setSaving(false)
-    }
-  }
-
-  const handlePasswordUpdate = async () => {
-    if (newPassword !== confirmPassword || newPassword.length < 6) return
-    setChangingPassword(true)
-    try {
-      await updatePassword(newPassword)
-      setNewPassword('')
-      setConfirmPassword('')
-    } finally {
-      setChangingPassword(false)
-    }
-  }
 
   return (
     <div className="space-y-10">
@@ -78,9 +45,7 @@ export default function AccountSettingsPage() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </Field>
-          <Button type="button" onClick={handleProfileSave} disabled={saving}>
-            {saving ? 'Saving...' : 'Save changes'}
-          </Button>
+          <Button type="button">Save changes</Button>
         </div>
       </SettingSection>
 
@@ -104,13 +69,7 @@ export default function AccountSettingsPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </Field>
-          <Button
-            type="button"
-            onClick={handlePasswordUpdate}
-            disabled={changingPassword}
-          >
-            {changingPassword ? 'Updating...' : 'Update password'}
-          </Button>
+          <Button type="button">Update password</Button>
         </div>
       </SettingSection>
 
@@ -124,19 +83,11 @@ export default function AccountSettingsPage() {
 
       <SettingSection title="Social accounts" description="Connect additional sign in methods.">
         <div className="flex flex-col gap-2 px-4 py-3">
-          <Button
-            outline
-            type="button"
-            onClick={() => signInWithOAuth('google')}
-          >
+          <Button outline type="button">
             <GoogleIcon data-slot="icon" className="size-5" />
             Connect Google
           </Button>
-          <Button
-            outline
-            type="button"
-            onClick={() => signInWithOAuth('apple')}
-          >
+          <Button outline type="button">
             <AppleIcon data-slot="icon" className="size-5" />
             Connect Apple
           </Button>
@@ -145,7 +96,7 @@ export default function AccountSettingsPage() {
 
       <SettingSection title="Danger zone" description="Delete your account and all related data.">
         <div className="px-4 py-3">
-          <Button color="red" type="button" onClick={signOut}>
+          <Button color="red" type="button">
             Delete account
           </Button>
         </div>
