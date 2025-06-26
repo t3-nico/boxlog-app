@@ -35,7 +35,7 @@ export default function LoginForm({
         setError(error.message)
       }
     } catch (err) {
-      setError('An error occurred during sign in')
+      setError('An error occurred during login')
     } finally {
       setLoading(false)
     }
@@ -54,7 +54,7 @@ export default function LoginForm({
   return (
     <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>Sign in</Heading>
+      <Heading>Login</Heading>
       <div className="mb-6 flex flex-col gap-2">
         <Button
           type="button"
@@ -108,7 +108,7 @@ export default function LoginForm({
         </Text>
       </div>
       <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'Signing in...' : 'Sign in'}
+        {loading ? 'Logging in...' : 'Login'}
       </Button>
       <Text className="text-center">
         Don’t have an account?{' '}

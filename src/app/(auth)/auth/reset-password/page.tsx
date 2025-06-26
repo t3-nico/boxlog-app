@@ -107,7 +107,7 @@ export default function ResetPassword() {
         {loading ? 'Updating...' : 'Update Password'}
       </Button>
       <button type="button" onClick={() => router.push('/auth')} className="text-blue-600 hover:text-blue-700 text-sm">
-        Back to sign in
+        Back to login
       </button>
     </form>
   )

@@ -4,7 +4,6 @@ import { Checkbox, CheckboxField } from '@/components/checkbox'
 import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
-import { Select } from '@/components/select'
 import { Strong, Text, TextLink } from '@/components/text'
 import type { Metadata } from 'next'
 
@@ -29,14 +28,6 @@ export default function Login() {
         <Label>Password</Label>
         <Input type="password" name="password" autoComplete="new-password" />
       </Field>
-      <Field>
-        <Label>Country</Label>
-        <Select name="country">
-          <option>Canada</option>
-          <option>Mexico</option>
-          <option>United States</option>
-        </Select>
-      </Field>
       <CheckboxField>
         <Checkbox name="remember" />
         <Label>Get emails about product updates and news.</Label>
@@ -47,7 +38,7 @@ export default function Login() {
       <Text>
         Already have an account?{' '}
         <TextLink href="/auth/login">
-          <Strong>Sign in</Strong>
+          <Strong>Login</Strong>
         </TextLink>
       </Text>
     </form>

@@ -70,7 +70,7 @@ export default function ForgotPasswordForm({
       </Button>
       <Text className="text-center">
         <TextLink href="#" onClick={onLoginClick}>
-          <Strong>Back to sign in</Strong>
+          <Strong>Back to login</Strong>
         </TextLink>
       </Text>
     </form>

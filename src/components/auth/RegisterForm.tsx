@@ -132,7 +132,7 @@ export default function RegisterForm({
       <Text className="text-center">
         Already have an account?{' '}
         <TextLink href="#" onClick={onLoginClick}>
-          <Strong>Sign in</Strong>
+          <Strong>Login</Strong>
         </TextLink>
       </Text>
     </form>

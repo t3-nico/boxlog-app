@@ -160,7 +160,7 @@ export function useAuth() {
       setAuthState((prev) => ({ ...prev, loading: false }))
       return { data, error: null }
     } catch (error) {
-      const errorMessage = 'OAuth sign in failed'
+      const errorMessage = 'OAuth login failed'
       setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
       return { data: null, error: errorMessage }
     }
