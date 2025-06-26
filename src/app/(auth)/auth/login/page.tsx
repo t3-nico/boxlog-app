@@ -1,10 +1,9 @@
-import { Logo } from '@/app/logo'
-import { Button } from '@/components/button'
-import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Field, Label } from '@/components/fieldset'
-import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
-import { Strong, Text, TextLink } from '@/components/text'
+"use client"
+
+import { useRouter } from 'next/navigation'
+import LoginForm from '@/components/auth/LoginForm'
+import { useAuthContext } from '@/contexts/AuthContext'
+import { useEffect } from 'react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -12,38 +11,19 @@ export const metadata: Metadata = {
 }
 
 export default function Login() {
+  const router = useRouter()
+  const { user } = useAuthContext()
+
+  useEffect(() => {
+    if (user) {
+      router.push('/calender')
+    }
+  }, [user, router])
+
   return (
-    <form action="" method="POST" className="grid w-full max-w-sm grid-cols-1 gap-8">
-      <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>Sign in to your account</Heading>
-      <Field>
-        <Label>Email</Label>
-        <Input type="email" name="email" />
-      </Field>
-      <Field>
-        <Label>Password</Label>
-        <Input type="password" name="password" />
-      </Field>
-      <div className="flex items-center justify-between">
-        <CheckboxField>
-          <Checkbox name="remember" />
-          <Label>Remember me</Label>
-        </CheckboxField>
-        <Text>
-          <TextLink href="/auth/password">
-            <Strong>Forgot password?</Strong>
-          </TextLink>
-        </Text>
-      </div>
-      <Button type="submit" className="w-full">
-        Login
-      </Button>
-      <Text>
-        Don’t have an account?{' '}
-        <TextLink href="/auth/signup">
-          <Strong>Sign up</Strong>
-        </TextLink>
-      </Text>
-    </form>
+    <LoginForm
+      onRegisterClick={() => router.push('/auth/signup')}
+      onForgotPasswordClick={() => router.push('/auth/password')}
+    />
   )
 }
