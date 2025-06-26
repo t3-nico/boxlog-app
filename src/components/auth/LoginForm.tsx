@@ -86,22 +86,24 @@ export default function LoginForm({
           </TextLink>
         </Text>
       </div>
-      <Button
-        type="button"
-        outline
-        onClick={() => handleProviderSignIn('google')}
-        className="w-full"
-      >
-        Continue with Google
-      </Button>
-      <Button
-        type="button"
-        outline
-        onClick={() => handleProviderSignIn('apple')}
-        className="w-full"
-      >
-        Continue with Apple
-      </Button>
+      <div className="flex flex-col gap-2">
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('google')}
+          className="w-full"
+        >
+          Continue with Google
+        </Button>
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('apple')}
+          className="w-full"
+        >
+          Continue with Apple
+        </Button>
+      </div>
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Signing in...' : 'Sign in'}
       </Button>

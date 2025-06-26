@@ -20,7 +20,7 @@ export default function RegisterForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const { signUp } = useAuthContext()
+  const { signUp, signInWithOAuth } = useAuthContext()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,6 +45,16 @@ export default function RegisterForm({
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleProviderSignIn = async (provider: 'google' | 'apple') => {
+    setLoading(true)
+    setError(null)
+    const { error } = await signInWithOAuth(provider)
+    if (error) {
+      setError(error)
+    }
+    setLoading(false)
   }
 
   if (success) {
@@ -95,6 +105,24 @@ export default function RegisterForm({
         />
       </Field>
       {error && <Text className="text-red-600">{error}</Text>}
+      <div className="flex flex-col gap-2">
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('google')}
+          className="w-full"
+        >
+          Continue with Google
+        </Button>
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('apple')}
+          className="w-full"
+        >
+          Continue with Apple
+        </Button>
+      </div>
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Signing up...' : 'Sign up'}
       </Button>
