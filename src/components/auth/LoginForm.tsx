@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
@@ -23,6 +24,7 @@ export default function LoginForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { signIn, signInWithOAuth } = useAuthContext()
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,6 +35,8 @@ export default function LoginForm({
       const { error } = await signIn(email, password)
       if (error) {
         setError(error.message)
+      } else {
+        router.push('/calender')
       }
     } catch (err) {
       setError('An error occurred during sign in')
@@ -47,6 +51,8 @@ export default function LoginForm({
     const { error } = await signInWithOAuth(provider)
     if (error) {
       setError(error)
+    } else {
+      router.push('/calender')
     }
     setLoading(false)
   }
