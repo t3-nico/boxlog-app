@@ -46,7 +46,7 @@ export default function Login() {
       </Button>
       <Text>
         Already have an account?{' '}
-        <TextLink href="/login">
+        <TextLink href="/auth">
           <Strong>Sign in</Strong>
         </TextLink>
       </Text>
