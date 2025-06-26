@@ -8,6 +8,11 @@ import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
 import { SettingSection, ToggleItem } from '@/components/settings-section'
 import { GoogleIcon, AppleIcon } from '@/components/icons'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Account',
+}
 
 export default function AccountSettingsPage() {
   const [name, setName] = useState('')
