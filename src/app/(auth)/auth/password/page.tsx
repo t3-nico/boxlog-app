@@ -1,26 +1,18 @@
-"use client"
-
-import { useRouter } from 'next/navigation'
-import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm'
-import { useAuthContext } from '@/contexts/AuthContext'
-import { useEffect } from 'react'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import type { Metadata } from 'next'
+import PasswordClient from './password-client'
 
 export const metadata: Metadata = {
   title: 'Forgot password',
 }
 
-export default function Login() {
-  const router = useRouter()
-  const { user } = useAuthContext()
-
-  useEffect(() => {
-    if (user) {
-      router.push('/calender')
-    }
-  }, [user, router])
-
-  return (
-    <ForgotPasswordForm onLoginClick={() => router.push('/auth/login')} />
-  )
+export default async function Password() {
+  const supabase = createServerSupabaseClient(cookies())
+  const { data } = await supabase.auth.getUser()
+  if (data.user) {
+    redirect('/calender')
+  }
+  return <PasswordClient />
 }
