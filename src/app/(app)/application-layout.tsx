@@ -33,6 +33,7 @@ import {
   QuestionMarkCircleIcon,
   ShieldCheckIcon,
   SparklesIcon,
+  UserIcon,
 } from '@heroicons/react/16/solid'
 import {
   CalendarIcon,
@@ -211,7 +212,15 @@ export function ApplicationLayout({
 
             {inSettings && (
               <SidebarSection>
-              <SidebarItem
+                <SidebarItem
+                  href="/settings/account"
+                  current={pathname.startsWith('/settings/account')}
+                  indicator={false}
+                >
+                  <UserIcon />
+                  <SidebarLabel>Account</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
                   href="/settings/general"
                   current={pathname.startsWith('/settings/general')}
                   indicator={false}
@@ -219,7 +228,7 @@ export function ApplicationLayout({
                   <Cog6ToothIcon />
                   <SidebarLabel>General</SidebarLabel>
                 </SidebarItem>
-              <SidebarItem
+                <SidebarItem
                   href="/settings/preferences"
                   current={pathname.startsWith('/settings/preferences')}
                   indicator={false}
