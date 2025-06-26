@@ -23,6 +23,8 @@ import {
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { getEvents, getOrders } from '@/data'
+import { useAuthContext } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
@@ -57,6 +59,17 @@ export function ApplicationLayout({
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
   let [collapsed, setCollapsed] = useState(false)
+  const { user, signOut } = useAuthContext()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      router.push('/auth')
+    } catch (error) {
+      console.error('ログアウトエラー:', error)
+    }
+  }
 
   return (
     <SidebarLayout
@@ -78,7 +91,7 @@ export function ApplicationLayout({
               <Dropdown>
                 <DropdownButton as={SidebarItem} indicator={false}>
                   <Avatar src="/teams/catalyst.svg" />
-                  <SidebarLabel>Catalyst</SidebarLabel>
+                  <SidebarLabel>BoxLog</SidebarLabel>
                   <ChevronDownIcon />
                 </DropdownButton>
                 <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
@@ -104,7 +117,7 @@ export function ApplicationLayout({
                     <DropdownLabel>Changelog</DropdownLabel>
                   </DropdownItem>
                   <DropdownDivider />
-                  <DropdownItem href="/login">
+                  <DropdownItem onClick={handleSignOut}>
                     <ArrowRightStartOnRectangleIcon />
                     <DropdownLabel>Sign out</DropdownLabel>
                   </DropdownItem>
