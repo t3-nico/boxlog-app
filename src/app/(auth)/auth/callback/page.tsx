@@ -22,7 +22,7 @@ export default function AuthCallback() {
           const { error } = await supabase.auth.exchangeCodeForSession(code)
           if (error) {
             console.error('Auth callback error:', error)
-            setError('認証に失敗しました')
+            setError('Authentication failed')
             setLoading(false)
             return
           }
@@ -33,7 +33,7 @@ export default function AuthCallback() {
         const { data, error } = await supabase.auth.getSession()
         if (error || !data.session) {
           console.error('Auth callback error:', error)
-          setError('認証セッションが見つかりません')
+          setError('Authentication session not found')
           setLoading(false)
           return
         }
@@ -41,7 +41,7 @@ export default function AuthCallback() {
         router.push(next)
       } catch (err) {
         console.error('Unexpected error:', err)
-        setError('予期しないエラーが発生しました')
+        setError('An unexpected error occurred')
         setLoading(false)
       }
     }
@@ -51,35 +51,25 @@ export default function AuthCallback() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <Heading level={2} className="mt-4">
-            認証中...
-          </Heading>
-          <p className="text-gray-600 mt-2">
-            認証を処理しています。しばらくお待ちください。
-          </p>
-        </div>
+      <div className="space-y-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto" />
+        <Heading level={2}>Authenticating...</Heading>
+        <p>Processing authentication. Please wait.</p>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center max-w-md mx-auto p-6">
-          <Heading level={2} className="text-red-600 mb-4">
-            認証エラー
-          </Heading>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={() => router.push('/auth')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-          >
-            認証ページに戻る
-          </button>
-        </div>
+      <div className="space-y-6 text-center">
+        <Heading level={2} className="text-red-600">Authentication Error</Heading>
+        <p>{error}</p>
+        <button
+          onClick={() => router.push('/auth')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        >
+          Back to sign in
+        </button>
       </div>
     )
   }

@@ -2,18 +2,26 @@
 
 import { useState } from 'react'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
-import { Input } from '@/components/input'
+import { GoogleIcon, AppleIcon } from '@/components/icons'
+import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
+import { Input } from '@/components/input'
+import { Strong, Text, TextLink } from '@/components/text'
 
-export default function RegisterForm() {
+export default function RegisterForm({
+  onLoginClick,
+}: {
+  onLoginClick?: () => void
+}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const { signUp } = useAuthContext()
+  const { signUp, signInWithOAuth } = useAuthContext()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -21,7 +29,7 @@ export default function RegisterForm() {
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('パスワードが一致しません')
+      setError('Passwords do not match')
       setLoading(false)
       return
     }
@@ -34,92 +42,99 @@ export default function RegisterForm() {
         setSuccess(true)
       }
     } catch (err) {
-      setError('登録中にエラーが発生しました')
+      setError('An error occurred during sign up')
     } finally {
       setLoading(false)
     }
   }
 
+  const handleProviderSignIn = async (provider: 'google' | 'apple') => {
+    setLoading(true)
+    setError(null)
+    const { error } = await signInWithOAuth(provider)
+    if (error) {
+      setError(error)
+    }
+    setLoading(false)
+  }
+
   if (success) {
     return (
-      <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-        <div className="text-center">
-          <Heading level={2} className="mb-4">
-            登録完了
-          </Heading>
-          <p className="text-gray-600 mb-4">
-            確認メールを送信しました。メールを確認してアカウントを有効化してください。
-          </p>
-        </div>
+      <div className="text-center space-y-6">
+        <Heading level={2}>Registration Complete</Heading>
+        <Text>
+          A confirmation email has been sent. Please check it to activate your account.
+        </Text>
       </div>
     )
   }
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <Heading level={2} className="text-center mb-6">
-        アカウント登録
-      </Heading>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            メールアドレス
-          </label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="your@email.com"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            パスワード
-          </label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="パスワードを入力"
-            minLength={6}
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-            パスワード確認
-          </label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            placeholder="パスワードを再入力"
-            minLength={6}
-          />
-        </div>
-        
-        {error && (
-          <div className="text-red-600 text-sm bg-red-50 p-3 rounded">
-            {error}
-          </div>
-        )}
-        
+    <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
+      <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
+      <Heading>Create an account</Heading>
+      <Field>
+        <Label>Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </Field>
+      <Field>
+        <Label>Password</Label>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+      </Field>
+      <Field>
+        <Label>Confirm Password</Label>
+        <Input
+          id="confirmPassword"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          minLength={6}
+        />
+      </Field>
+      {error && <Text className="text-red-600">{error}</Text>}
+      <div className="flex flex-col gap-2">
         <Button
-          type="submit"
-          disabled={loading}
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('google')}
           className="w-full"
         >
-          {loading ? '登録中...' : '登録'}
+          <GoogleIcon data-slot="icon" className="size-5" />
+          Continue with Google
         </Button>
-      </form>
-    </div>
+        <Button
+          type="button"
+          outline
+          onClick={() => handleProviderSignIn('apple')}
+          className="w-full"
+        >
+          <AppleIcon data-slot="icon" className="size-5" />
+          Continue with Apple
+        </Button>
+      </div>
+      <Button type="submit" disabled={loading} className="w-full">
+        {loading ? 'Signing up...' : 'Sign up'}
+      </Button>
+      <Text className="text-center">
+        Already have an account?{' '}
+        <TextLink href="#" onClick={onLoginClick}>
+          <Strong>Sign in</Strong>
+        </TextLink>
+      </Text>
+    </form>
   )
-} 
+}

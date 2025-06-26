@@ -18,23 +18,23 @@ export default function ConfirmPage() {
 
     if (!token_hash || !type) {
       setStatus('error')
-      setMessage('認証情報が不足しています')
+      setMessage('Missing authentication information')
       return
     }
 
     const verify = async () => {
       setStatus('loading')
-      setMessage('認証処理中...')
+      setMessage('Verifying...')
       const { error } = await supabase.auth.verifyOtp({
         type: type as any,
         token_hash,
       })
       if (error) {
         setStatus('error')
-        setMessage('認証に失敗しました: ' + error.message)
+        setMessage('Verification failed: ' + error.message)
       } else {
         setStatus('success')
-        setMessage('メール認証が完了しました。自動的にログインします...')
+        setMessage('Email verified. Logging you in...')
         setTimeout(() => {
           router.push('/calender')
         }, 3000)
@@ -45,26 +45,20 @@ export default function ConfirmPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded shadow max-w-md w-full text-center">
-        <Heading level={2} className="mb-4">
-          メール認証
-        </Heading>
-        <p className="mb-6 text-gray-700">
-          {message}
-        </p>
-        {status === 'loading' && (
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
-        )}
-        {status === 'error' && (
-          <button
-            onClick={() => router.push('/auth')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-          >
-            認証ページに戻る
-          </button>
-        )}
-      </div>
+    <div className="space-y-6 text-center">
+      <Heading level={2}>Email Verification</Heading>
+      <p>{message}</p>
+      {status === 'loading' && (
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
+      )}
+      {status === 'error' && (
+        <button
+          onClick={() => router.push('/auth')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Back to sign in
+        </button>
+      )}
     </div>
   )
-} 
+}

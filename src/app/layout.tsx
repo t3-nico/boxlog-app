@@ -7,13 +7,13 @@ export const metadata: Metadata = {
     template: '%s - BoxLog',
     default: 'BoxLog',
   },
-  description: 'BoxLog - ボックス管理アプリケーション',
+  description: 'BoxLog - Box management application',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
-      lang="ja"
+      lang="en"
       className="text-zinc-950 antialiased lg:bg-zinc-100 dark:bg-zinc-900 dark:text-white dark:lg:bg-zinc-950"
     >
       <head>
