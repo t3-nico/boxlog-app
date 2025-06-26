@@ -45,26 +45,20 @@ export default function ConfirmPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded shadow max-w-md w-full text-center">
-        <Heading level={2} className="mb-4">
-          メール認証
-        </Heading>
-        <p className="mb-6 text-gray-700">
-          {message}
-        </p>
-        {status === 'loading' && (
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
-        )}
-        {status === 'error' && (
-          <button
-            onClick={() => router.push('/auth')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-          >
-            認証ページに戻る
-          </button>
-        )}
-      </div>
+    <div className="space-y-6 text-center">
+      <Heading level={2}>メール認証</Heading>
+      <p>{message}</p>
+      {status === 'loading' && (
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" />
+      )}
+      {status === 'error' && (
+        <button
+          onClick={() => router.push('/auth')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          認証ページに戻る
+        </button>
+      )}
     </div>
   )
-} 
+}

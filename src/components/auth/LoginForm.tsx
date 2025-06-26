@@ -2,11 +2,21 @@
 
 import { useState } from 'react'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
-import { Input } from '@/components/input'
+import { Checkbox, CheckboxField } from '@/components/checkbox'
+import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
+import { Input } from '@/components/input'
+import { Strong, Text, TextLink } from '@/components/text'
 
-export default function LoginForm() {
+export default function LoginForm({
+  onRegisterClick,
+  onForgotPasswordClick,
+}: {
+  onRegisterClick?: () => void
+  onForgotPasswordClick?: () => void
+}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -31,54 +41,50 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-      <Heading level={2} className="text-center mb-6">
-        ログイン
-      </Heading>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            メールアドレス
-          </label>
-          <Input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="your@email.com"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-            パスワード
-          </label>
-          <Input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="パスワードを入力"
-          />
-        </div>
-        
-        {error && (
-          <div className="text-red-600 text-sm bg-red-50 p-3 rounded">
-            {error}
-          </div>
-        )}
-        
-        <Button
-          type="submit"
-          disabled={loading}
-          className="w-full"
-        >
-          {loading ? 'ログイン中...' : 'ログイン'}
-        </Button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
+      <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
+      <Heading>ログイン</Heading>
+      <Field>
+        <Label>メールアドレス</Label>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </Field>
+      <Field>
+        <Label>パスワード</Label>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </Field>
+      {error && <Text className="text-red-600">{error}</Text>}
+      <div className="flex items-center justify-between">
+        <CheckboxField>
+          <Checkbox name="remember" />
+          <Label>ログイン状態を保持</Label>
+        </CheckboxField>
+        <Text>
+          <TextLink href="#" onClick={onForgotPasswordClick}>
+            <Strong>パスワードを忘れた場合</Strong>
+          </TextLink>
+        </Text>
+      </div>
+      <Button type="submit" disabled={loading} className="w-full">
+        {loading ? 'ログイン中...' : 'ログイン'}
+      </Button>
+      <Text className="text-center">
+        アカウントをお持ちでない方は{' '}
+        <TextLink href="#" onClick={onRegisterClick}>
+          <Strong>登録</Strong>
+        </TextLink>
+      </Text>
+    </form>
   )
-} 
+}
