@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') as EmailOtpType | null
   const next = searchParams.get('next') ?? '/'
   if (token_hash && type) {
-    const supabase = createServerSupabaseClient(request.cookies)
+    const supabase = createServerSupabaseClient()
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,

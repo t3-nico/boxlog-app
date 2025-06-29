@@ -1,6 +1,6 @@
-import { createServerClient } from '@supabase/ssr'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 
-export function createServerSupabaseClient(cookies: any) {
+export function createServerSupabaseClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
@@ -8,10 +8,8 @@ export function createServerSupabaseClient(cookies: any) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('Supabase environment variables are missing')
     }
-    return createServerClient('https://placeholder.supabase.co', 'placeholder', { cookies })
+    return createSupabaseClient('https://placeholder.supabase.co', 'placeholder')
   }
 
-  return createServerClient(url, key, {
-    cookies,
-  })
+  return createSupabaseClient(url, key)
 }
