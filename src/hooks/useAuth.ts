@@ -1,12 +1,23 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { User, Session, AuthError } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase-browser'
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signOut as firebaseSignOut,
+  sendPasswordResetEmail,
+  updatePassword as firebaseUpdatePassword,
+  User,
+} from 'firebase/auth'
+import { initFirebase } from '@/lib/firebase'
 
 interface AuthState {
   user: User | null
-  session: Session | null
   loading: boolean
   error: string | null
 }
@@ -14,232 +25,117 @@ interface AuthState {
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
-    session: null,
     loading: true,
     error: null,
   })
 
-  // クライアント用supabaseインスタンス
-  const supabase = createClient()
-
-  // エラーハンドリング関数
-  const handleAuthError = useCallback((error: AuthError | null) => {
+  const handleAuthError = useCallback((error: any) => {
     if (!error) return null
-
-    // エラーメッセージの日本語化
     const errorMessages: Record<string, string> = {
-      'Invalid login credentials': 'メールアドレスまたはパスワードが正しくありません',
-      'Email not confirmed': 'メールアドレスの確認が必要です',
-      'User already registered': 'このメールアドレスは既に登録されています',
-      'Password should be at least 6 characters': 'パスワードは6文字以上で入力してください',
-      'Too many requests': 'リクエストが多すぎます。しばらく待ってから再試行してください',
-      'Email rate limit exceeded': 'メール送信の制限に達しました。しばらく待ってから再試行してください',
+      'auth/invalid-credential': 'メールアドレスまたはパスワードが正しくありません',
+      'auth/user-disabled': 'ユーザーが無効になっています',
+      'auth/email-already-in-use': 'このメールアドレスは既に登録されています',
+      'auth/weak-password': 'パスワードは6文字以上で入力してください',
     }
-
-    return errorMessages[error.message] || error.message
+    return errorMessages[error.code] || error.message
   }, [])
 
   useEffect(() => {
-    // 現在のセッションを取得
-    const getSession = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          setAuthState(prev => ({
-            ...prev,
-            error: handleAuthError(error),
-            loading: false,
-          }))
-          return
-        }
+    initFirebase()
+    const auth = getAuth()
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setAuthState({ user, loading: false, error: null })
+    })
+    return unsubscribe
+  }, [])
 
-        setAuthState({
-          user: session?.user ?? null,
-          session,
-          loading: false,
-          error: null,
-        })
-      } catch (error) {
-        setAuthState(prev => ({
-          ...prev,
-          error: 'セッションの取得に失敗しました',
-          loading: false,
-        }))
-      }
-    }
-
-    getSession()
-
-    // 認証状態の変更を監視
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email || 'No user')
-        
-        setAuthState({
-          user: session?.user ?? null,
-          session,
-          loading: false,
-          error: null,
-        })
-      }
-    )
-
-    return () => subscription.unsubscribe()
-  }, [handleAuthError])
-
-  const signUp = async (email: string, password: string, metadata?: any) => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
+  const signUp = async (email: string, password: string) => {
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = '登録中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
+      const result = await createUserWithEmailAndPassword(getAuth(), email, password)
+      setAuthState((prev) => ({ ...prev, loading: false }))
+      return { data: result, error: null }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error)
+      setAuthState((prev) => ({ ...prev, loading: false, error: errorMessage }))
       return { data: null, error: errorMessage }
     }
   }
 
   const signIn = async (email: string, password: string) => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'ログイン中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
+      const result = await signInWithEmailAndPassword(getAuth(), email, password)
+      setAuthState((prev) => ({ ...prev, loading: false }))
+      return { data: result, error: null }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error)
+      setAuthState((prev) => ({ ...prev, loading: false, error: errorMessage }))
       return { data: null, error: errorMessage }
     }
   }
 
   const signInWithOAuth = async (provider: 'google' | 'apple') => {
     setAuthState((prev) => ({ ...prev, loading: true, error: null }))
-
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
+      const auth = getAuth()
+      const prov = provider === 'google' ? new GoogleAuthProvider() : new OAuthProvider('apple.com')
+      const result = await signInWithPopup(auth, prov)
       setAuthState((prev) => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'OAuth login failed'
-      setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
+      return { data: result, error: null }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error)
+      setAuthState((prev) => ({ ...prev, loading: false, error: errorMessage }))
       return { data: null, error: errorMessage }
     }
   }
 
   const signOut = async () => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
     try {
-      const { error } = await supabase.auth.signOut()
-      
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
+      await firebaseSignOut(getAuth())
+      setAuthState((prev) => ({ ...prev, loading: false }))
       return { error: null }
-    } catch (error) {
-      const errorMessage = 'ログアウト中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error)
+      setAuthState((prev) => ({ ...prev, loading: false, error: errorMessage }))
       return { error: errorMessage }
     }
   }
 
   const resetPassword = async (email: string) => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
     try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'パスワードリセット中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
+      const result = await sendPasswordResetEmail(getAuth(), email)
+      setAuthState((prev) => ({ ...prev, loading: false }))
+      return { data: result, error: null }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error)
+      setAuthState((prev) => ({ ...prev, loading: false, error: errorMessage }))
       return { data: null, error: errorMessage }
     }
   }
 
   const updatePassword = async (password: string) => {
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
     try {
-      const { data, error } = await supabase.auth.updateUser({
-        password,
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'パスワード更新中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
+      if (!getAuth().currentUser) throw new Error('No user')
+      const result = await firebaseUpdatePassword(getAuth().currentUser!, password)
+      setAuthState((prev) => ({ ...prev, loading: false }))
+      return { data: result, error: null }
+    } catch (error: any) {
+      const errorMessage = handleAuthError(error)
+      setAuthState((prev) => ({ ...prev, loading: false, error: errorMessage }))
       return { data: null, error: errorMessage }
     }
   }
 
   const clearError = () => {
-    setAuthState(prev => ({ ...prev, error: null }))
+    setAuthState((prev) => ({ ...prev, error: null }))
   }
 
   return {
     user: authState.user,
-    session: authState.session,
     loading: authState.loading,
     error: authState.error,
     signUp,
@@ -250,4 +146,4 @@ export function useAuth() {
     updatePassword,
     clearError,
   }
-} 
+}

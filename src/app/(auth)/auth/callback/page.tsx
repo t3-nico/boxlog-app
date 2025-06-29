@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase-browser'
+import { getAuth, getRedirectResult } from 'firebase/auth'
+import { initFirebase } from '@/lib/firebase'
 import { Heading } from '@/components/heading'
 
 export default function AuthCallback() {
@@ -12,41 +13,16 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const supabase = createClient()
-    const code = searchParams.get('code')
+    initFirebase()
+    const auth = getAuth()
     const next = searchParams.get('next') ?? '/calender'
-
-    const handleAuthCallback = async () => {
-      try {
-        if (code) {
-          const { error } = await supabase.auth.exchangeCodeForSession(code)
-          if (error) {
-            console.error('Auth callback error:', error)
-            setError('Authentication failed')
-            setLoading(false)
-            return
-          }
-          router.push(next)
-          return
-        }
-
-        const { data, error } = await supabase.auth.getSession()
-        if (error || !data.session) {
-          console.error('Auth callback error:', error)
-          setError('Authentication session not found')
-          setLoading(false)
-          return
-        }
-
-        router.push(next)
-      } catch (err) {
-        console.error('Unexpected error:', err)
-        setError('An unexpected error occurred')
-        setLoading(false)
-      }
-    }
-
-    handleAuthCallback()
+    getRedirectResult(auth)
+      .then(() => router.push(next))
+      .catch((err) => {
+        console.error('Auth callback error:', err)
+        setError('Authentication failed')
+      })
+      .finally(() => setLoading(false))
   }, [router, searchParams])
 
   if (loading) {
@@ -75,4 +51,4 @@ export default function AuthCallback() {
   }
 
   return null
-} 
+}
