@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
@@ -21,7 +22,15 @@ export default function RegisterForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const { signUp, signInWithOAuth } = useAuthContext()
+  const { signUp, signInWithOAuth, user } = useAuthContext()
+  const router = useRouter()
+
+  // 認証成功後のリダイレクト
+  useEffect(() => {
+    if (user) {
+      router.push('/calender')
+    }
+  }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,7 +46,7 @@ export default function RegisterForm({
     try {
       const { error } = await signUp(email, password)
       if (error) {
-        setError(error.message)
+        setError(error)
       } else {
         setSuccess(true)
       }

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
@@ -22,7 +23,15 @@ export default function LoginForm({
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { signIn, signInWithOAuth } = useAuthContext()
+  const { signIn, signInWithOAuth, user } = useAuthContext()
+  const router = useRouter()
+
+  // 認証成功後のリダイレクト
+  useEffect(() => {
+    if (user) {
+      router.push('/calender')
+    }
+  }, [user, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,7 +41,7 @@ export default function LoginForm({
     try {
       const { error } = await signIn(email, password)
       if (error) {
-        setError(error.message)
+        setError(error)
       }
     } catch (err) {
       setError('An error occurred during login')
@@ -111,7 +120,7 @@ export default function LoginForm({
         {loading ? 'Logging in...' : 'Login'}
       </Button>
       <Text className="text-center">
-        Don’t have an account?{' '}
+        Don't have an account?{' '}
         <TextLink href="#" onClick={onRegisterClick}>
           <Strong>Sign up</Strong>
         </TextLink>

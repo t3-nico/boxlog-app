@@ -1,3 +1,11 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/contexts/AuthContext'
+import LoginForm from '@/components/auth/LoginForm'
+import RegisterForm from '@/components/auth/RegisterForm'
+import ForgotPasswordForm from '@/components/auth/ForgotPasswordForm'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/button'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
@@ -11,39 +19,52 @@ export const metadata: Metadata = {
   title: 'Login',
 }
 
-export default function Login() {
-  return (
-    <form action="" method="POST" className="grid w-full max-w-sm grid-cols-1 gap-8">
-      <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>Log in to your account</Heading>
-      <Field>
-        <Label>Email</Label>
-        <Input type="email" name="email" />
-      </Field>
-      <Field>
-        <Label>Password</Label>
-        <Input type="password" name="password" />
-      </Field>
-      <div className="flex items-center justify-between">
-        <CheckboxField>
-          <Checkbox name="remember" />
-          <Label>Remember me</Label>
-        </CheckboxField>
-        <Text>
-          <TextLink href="/auth/password">
-            <Strong>Forgot password?</Strong>
-          </TextLink>
-        </Text>
+type AuthMode = 'login' | 'register' | 'forgot-password'
+
+export default function AuthPage() {
+  const [mode, setMode] = useState<AuthMode>('login')
+  const { user, loading } = useAuthContext()
+  const router = useRouter()
+
+  const handleRegisterClick = () => setMode('register')
+  const handleLoginClick = () => setMode('login')
+  const handleForgotPasswordClick = () => setMode('forgot-password')
+
+  // 認証済みユーザーは自動的にリダイレクト
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/calender')
+    }
+  }, [user, loading, router])
+
+  // ローディング中は何も表示しない
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
       </div>
-      <Button type="submit" className="w-full">
-        Login
-      </Button>
-      <Text>
-        Don’t have an account?{' '}
-        <TextLink href="/auth/signup">
-          <Strong>Sign up</Strong>
-        </TextLink>
-      </Text>
-    </form>
+    )
+  }
+
+  // 認証済みユーザーは何も表示しない（リダイレクト中）
+  if (user) {
+    return null
+  }
+
+  return (
+    <>
+      {mode === 'login' && (
+        <LoginForm
+          onRegisterClick={handleRegisterClick}
+          onForgotPasswordClick={handleForgotPasswordClick}
+        />
+      )}
+      {mode === 'register' && (
+        <RegisterForm onLoginClick={handleLoginClick} />
+      )}
+      {mode === 'forgot-password' && (
+        <ForgotPasswordForm onLoginClick={handleLoginClick} />
+      )}
+    </>
   )
 }

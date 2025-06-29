@@ -13,16 +13,32 @@ const firebaseConfig = {
 }
 
 export function initFirebase() {
+  console.log('Firebase config:', {
+    apiKey: firebaseConfig.apiKey ? '***' : 'MISSING',
+    authDomain: firebaseConfig.authDomain,
+    projectId: firebaseConfig.projectId,
+    appId: firebaseConfig.appId ? '***' : 'MISSING'
+  })
+  
   if (!getApps().length) {
+    console.log('Initializing new Firebase app...')
     const app = initializeApp(firebaseConfig)
     
     // Analyticsの初期化（ブラウザ環境でのみ）
     if (typeof window !== 'undefined') {
-      getAnalytics(app)
+      try {
+        getAnalytics(app)
+        console.log('Analytics initialized')
+      } catch (error) {
+        console.warn('Analytics initialization failed:', error)
+      }
     }
     
+    console.log('Firebase app initialized successfully')
     return app
   }
+  
+  console.log('Firebase app already exists, returning existing app')
   return getApps()[0]
 }
 
