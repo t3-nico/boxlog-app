@@ -1,8 +1,8 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/utils/firebase/middleware'
+import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request)
+  // No session handling on the edge
+  return NextResponse.next()
 }
 
 export const config = {

@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getAuth, getRedirectResult } from 'firebase/auth'
-import { initFirebase } from '@/lib/firebase'
+import { createClient } from '@/lib/supabase-browser'
 import { Heading } from '@/components/heading'
 
 export default function AuthCallback() {
@@ -13,16 +12,41 @@ export default function AuthCallback() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    initFirebase()
-    const auth = getAuth()
+    const supabase = createClient()
+    const code = searchParams.get('code')
     const next = searchParams.get('next') ?? '/calender'
-    getRedirectResult(auth)
-      .then(() => router.push(next))
-      .catch((err) => {
-        console.error('Auth callback error:', err)
-        setError('Authentication failed')
-      })
-      .finally(() => setLoading(false))
+
+    const handleAuthCallback = async () => {
+      try {
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code)
+          if (error) {
+            console.error('Auth callback error:', error)
+            setError('Authentication failed')
+            setLoading(false)
+            return
+          }
+          router.push(next)
+          return
+        }
+
+        const { data, error } = await supabase.auth.getSession()
+        if (error || !data.session) {
+          console.error('Auth callback error:', error)
+          setError('Authentication session not found')
+          setLoading(false)
+          return
+        }
+
+        router.push(next)
+      } catch (err) {
+        console.error('Unexpected error:', err)
+        setError('An unexpected error occurred')
+        setLoading(false)
+      }
+    }
+
+    handleAuthCallback()
   }, [router, searchParams])
 
   if (loading) {
@@ -44,11 +68,11 @@ export default function AuthCallback() {
           onClick={() => router.push('/auth')}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
         >
-          Back to login
+          Back to sign in
         </button>
       </div>
     )
   }
 
   return null
-}
+} 
