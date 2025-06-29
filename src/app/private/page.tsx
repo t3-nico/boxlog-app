@@ -1,12 +1,18 @@
 import { redirect } from 'next/navigation'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { cookies } from 'next/headers'
+import { initAdmin, getAuth } from '@/lib/firebase-admin'
 
 export default async function PrivatePage() {
-  const supabase = createServerSupabaseClient(cookies())
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  initAdmin()
+  const auth = getAuth()
+  const token = cookies().get('session')?.value
+  if (!token) {
     redirect('/auth')
   }
-  return <p className="text-center mt-16 text-xl">Hello {data.user.email}</p>
-} 
+  try {
+    const decoded = await auth.verifyIdToken(token!)
+    return <p className="text-center mt-16 text-xl">Hello {decoded.email}</p>
+  } catch {
+    redirect('/auth')
+  }
+}
