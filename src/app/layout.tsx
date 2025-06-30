@@ -1,4 +1,4 @@
-import '@/styles/tailwind.css'
+import '../styles/tailwind.css'
 import type { Metadata } from 'next'
 import { AuthProvider } from '@/contexts/AuthContext'
 
