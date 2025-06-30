@@ -12,13 +12,7 @@ import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
-export default function LoginForm({
-  onRegisterClick,
-  onForgotPasswordClick,
-}: {
-  onRegisterClick?: () => void
-  onForgotPasswordClick?: () => void
-}) {
+export default function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -111,7 +105,7 @@ export default function LoginForm({
           <Label>Remember me</Label>
         </CheckboxField>
         <Text>
-          <TextLink href="#" onClick={onForgotPasswordClick}>
+          <TextLink href="/auth/password">
             <Strong>Forgot your password?</Strong>
           </TextLink>
         </Text>
@@ -121,7 +115,7 @@ export default function LoginForm({
       </Button>
       <Text className="text-center">
         Don't have an account?{' '}
-        <TextLink href="#" onClick={onRegisterClick}>
+        <TextLink href="/auth/signup">
           <Strong>Sign up</Strong>
         </TextLink>
       </Text>
