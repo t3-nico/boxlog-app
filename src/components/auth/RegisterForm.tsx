@@ -11,11 +11,7 @@ import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
-export default function RegisterForm({
-  onLoginClick,
-}: {
-  onLoginClick?: () => void
-}) {
+export default function RegisterForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -140,7 +136,7 @@ export default function RegisterForm({
       </Button>
       <Text className="text-center">
         Already have an account?{' '}
-        <TextLink href="#" onClick={onLoginClick}>
+        <TextLink href="/auth/login">
           <Strong>Login</Strong>
         </TextLink>
       </Text>

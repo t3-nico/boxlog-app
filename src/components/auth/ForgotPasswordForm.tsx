@@ -9,11 +9,7 @@ import { Heading } from '@/components/heading'
 import { Input } from '@/components/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
-export default function ForgotPasswordForm({
-  onLoginClick,
-}: {
-  onLoginClick?: () => void
-}) {
+export default function ForgotPasswordForm() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -69,7 +65,7 @@ export default function ForgotPasswordForm({
         {loading ? 'Sending...' : 'Send reset email'}
       </Button>
       <Text className="text-center">
-        <TextLink href="#" onClick={onLoginClick}>
+        <TextLink href="/auth/login">
           <Strong>Back to login</Strong>
         </TextLink>
       </Text>
