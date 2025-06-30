@@ -41,6 +41,7 @@ import {
   MagnifyingGlassIcon,
   PlusIcon,
   Cog6ToothIcon,
+  UserIcon,
   AdjustmentsVerticalIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -218,6 +219,14 @@ export function ApplicationLayout({
                 >
                   <Cog6ToothIcon />
                   <SidebarLabel>General</SidebarLabel>
+                </SidebarItem>
+              <SidebarItem
+                  href="/settings/account"
+                  current={pathname.startsWith('/settings/account')}
+                  indicator={false}
+                >
+                  <UserIcon />
+                  <SidebarLabel>Account</SidebarLabel>
                 </SidebarItem>
               <SidebarItem
                   href="/settings/preferences"

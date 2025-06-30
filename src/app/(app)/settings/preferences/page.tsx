@@ -9,7 +9,7 @@ export default function PreferencesPage() {
   const [theme, setTheme] = useState('light')
   const [language, setLanguage] = useState('en')
   return (
-    <div className="space-y-10">
+    <div className="mx-auto max-w-4xl space-y-10">
       <Heading>Preferences</Heading>
       <SettingSection title="General" description="Basic application options.">
         <ToggleItem
