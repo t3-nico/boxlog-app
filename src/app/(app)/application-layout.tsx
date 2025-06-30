@@ -218,80 +218,99 @@ export function ApplicationLayout({
             )}
 
             {inSettings && (
-              <SidebarSection>
-                <SidebarItem
-                  href="/settings/account"
-                  current={pathname.startsWith('/settings/account')}
-                  indicator={false}
-                >
-                  <UserIcon />
-                  <SidebarLabel>Account</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/plan-billing"
-                  current={pathname.startsWith('/settings/plan-billing')}
-                  indicator={false}
-                >
-                  <CreditCardIcon />
-                  <SidebarLabel>Plan & Billing</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/preferences"
-                  current={pathname.startsWith('/settings/preferences')}
-                  indicator={false}
-                >
-                  <AdjustmentsVerticalIcon />
-                  <SidebarLabel>Preferences</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/tags"
-                  current={pathname.startsWith('/settings/tags')}
-                  indicator={false}
-                >
-                  <TagIcon />
-                  <SidebarLabel>Tags</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/templates"
-                  current={pathname.startsWith('/settings/templates')}
-                  indicator={false}
-                >
-                  <ClipboardDocumentListIcon />
-                  <SidebarLabel>Task Templates</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/integration"
-                  current={pathname.startsWith('/settings/integration')}
-                  indicator={false}
-                >
-                  <LinkIcon />
-                  <SidebarLabel>Calendar & Integration</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/notifications"
-                  current={pathname.startsWith('/settings/notifications')}
-                  indicator={false}
-                >
-                  <BellAlertIcon />
-                  <SidebarLabel>Notifications</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/data-export"
-                  current={pathname.startsWith('/settings/data-export')}
-                  indicator={false}
-                >
-                  <ArrowDownTrayIcon />
-                  <SidebarLabel>Data & Export</SidebarLabel>
-                </SidebarItem>
-                <SidebarItem
-                  href="/settings/legal"
-                  current={pathname.startsWith('/settings/legal')}
-                  indicator={false}
-                >
-                  <InformationCircleIcon />
-                  <SidebarLabel>About / Legal</SidebarLabel>
-                </SidebarItem>
-              </SidebarSection>
+              <>
+                <SidebarSection>
+                  <SidebarHeading>General</SidebarHeading>
+                  <SidebarItem
+                    href="/settings/account"
+                    current={pathname.startsWith('/settings/account')}
+                    indicator={false}
+                  >
+                    <UserIcon />
+                    <SidebarLabel>Account</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/settings/preferences"
+                    current={pathname.startsWith('/settings/preferences')}
+                    indicator={false}
+                  >
+                    <AdjustmentsVerticalIcon />
+                    <SidebarLabel>Preferences</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/settings/notifications"
+                    current={pathname.startsWith('/settings/notifications')}
+                    indicator={false}
+                  >
+                    <BellAlertIcon />
+                    <SidebarLabel>Notifications</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+
+                <SidebarSection className="mt-8">
+                  <SidebarHeading>Customization</SidebarHeading>
+                  <SidebarItem
+                    href="/settings/tags"
+                    current={pathname.startsWith('/settings/tags')}
+                    indicator={false}
+                  >
+                    <TagIcon />
+                    <SidebarLabel>Tags</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/settings/templates"
+                    current={pathname.startsWith('/settings/templates')}
+                    indicator={false}
+                  >
+                    <ClipboardDocumentListIcon />
+                    <SidebarLabel>Task Templates</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+
+                <SidebarSection className="mt-8">
+                  <SidebarHeading>Integration</SidebarHeading>
+                  <SidebarItem
+                    href="/settings/integration"
+                    current={pathname.startsWith('/settings/integration')}
+                    indicator={false}
+                  >
+                    <LinkIcon />
+                    <SidebarLabel>Calendar & Integration</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+
+                <SidebarSection className="mt-8">
+                  <SidebarHeading>Data</SidebarHeading>
+                  <SidebarItem
+                    href="/settings/plan-billing"
+                    current={pathname.startsWith('/settings/plan-billing')}
+                    indicator={false}
+                  >
+                    <CreditCardIcon />
+                    <SidebarLabel>Plan & Billing</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/settings/data-export"
+                    current={pathname.startsWith('/settings/data-export')}
+                    indicator={false}
+                  >
+                    <ArrowDownTrayIcon />
+                    <SidebarLabel>Data & Export</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+
+                <SidebarSection className="mt-8">
+                  <SidebarHeading>About</SidebarHeading>
+                  <SidebarItem
+                    href="/settings/legal"
+                    current={pathname.startsWith('/settings/legal')}
+                    indicator={false}
+                  >
+                    <InformationCircleIcon />
+                    <SidebarLabel>About / Legal</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+              </>
             )}
 
             <SidebarSpacer />
