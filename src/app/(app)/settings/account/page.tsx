@@ -32,7 +32,7 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="space-y-10">
+    <div className="mx-auto max-w-4xl space-y-10">
       <Heading>Account</Heading>
 
       <SettingSection title="Profile" description="Update your personal information.">
