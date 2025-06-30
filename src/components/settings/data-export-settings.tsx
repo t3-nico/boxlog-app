@@ -1,12 +1,13 @@
 'use client'
 
 import { Heading, Subheading } from '@/components/heading'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { SettingSection } from '@/components/settings-section'
+import { SettingsLayout } from './settings-layout'
 
 export default function DataExportSettings() {
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <SettingsLayout>
       <Heading>Data & Export</Heading>
 
       <SettingSection title="Export" description="Download your data in various formats.">
@@ -29,7 +30,7 @@ export default function DataExportSettings() {
           </Button>
         </div>
       </SettingSection>
-    </div>
+    </SettingsLayout>
   )
 }
 

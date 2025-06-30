@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Listbox, ListboxLabel, ListboxOption } from '@/components/listbox'
 import { getCountries } from '@/data'
 import { useState } from 'react'

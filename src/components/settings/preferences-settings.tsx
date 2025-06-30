@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection, ToggleItem, SelectItem } from '@/components/settings-section'
+import { SettingsLayout } from './settings-layout'
 
 export default function PreferencesSettings() {
   const [notifications, setNotifications] = useState(true)
@@ -10,7 +11,7 @@ export default function PreferencesSettings() {
   const [duration, setDuration] = useState('30')
   const [segment, setSegment] = useState('30')
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <SettingsLayout>
       <Heading>Preferences</Heading>
       <SettingSection title="General" description="Basic application options.">
         <ToggleItem
@@ -52,7 +53,7 @@ export default function PreferencesSettings() {
           <option value="60">60 minutes</option>
         </SelectItem>
       </SettingSection>
-    </div>
+    </SettingsLayout>
   )
 }
 

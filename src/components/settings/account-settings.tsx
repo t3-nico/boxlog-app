@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Text } from '@/components/text'
 import { SettingSection } from '@/components/settings-section'
-import { Switch } from '@/components/switch'
+import { Switch } from '@/components/ui/switch'
+import { SettingsLayout } from './settings-layout'
 
 export default function AccountSettings() {
   const [name, setName] = useState('')
@@ -37,7 +38,7 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <SettingsLayout>
       <Heading>Account</Heading>
 
       <SettingSection title="Profile" description="Update your personal information.">
@@ -135,7 +136,7 @@ export default function AccountSettings() {
           </Button>
         </div>
       </SettingSection>
-    </div>
+    </SettingsLayout>
   )
 }
 

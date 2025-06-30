@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
 export default function ForgotPasswordForm() {

@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
+import { SettingsLayout } from './settings-layout'
 
 export default function PlanBillingSettings() {
   const [plan, setPlan] = useState('Free')
@@ -16,7 +17,7 @@ export default function PlanBillingSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <SettingsLayout>
       <Heading>Plan & Billing</Heading>
 
       <SettingSection title="Current Plan" description="Manage your subscription plan.">
@@ -69,7 +70,7 @@ export default function PlanBillingSettings() {
           </Table>
         </div>
       </SettingSection>
-    </div>
+    </SettingsLayout>
   )
 }
 

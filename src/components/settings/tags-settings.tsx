@@ -3,17 +3,13 @@
 import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
-import { Button } from '@/components/button'
-import { Input } from '@/components/input'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from '@/components/table'
+import useTags, { Tag } from '@/hooks/useTags'
+import { SettingsLayout } from './settings-layout'
 
-interface Tag {
-  id: number
-  name: string
-  color: string
-  count: number
-}
 
 function TagItem({ tag, onEdit, onDelete }: { tag: Tag; onEdit: () => void; onDelete: () => void }) {
   return (
@@ -119,14 +115,14 @@ function NewTagForm({ onCreate }: { onCreate: (tag: Omit<Tag, 'id' | 'count'>) =
 }
 
 export default function TagsSettings() {
-  const [tags, setTags] = useState<Tag[]>([
+  const [editing, setEditing] = useState<Tag | null>(null)
+  const { tags, createTag, updateTag, deleteTag } = useTags([
     { id: 1, name: 'Work', color: '#3b82f6', count: 5 },
     { id: 2, name: 'Personal', color: '#ef4444', count: 2 },
   ])
-  const [editing, setEditing] = useState<Tag | null>(null)
 
   const handleEdit = (updated: Tag) => {
-    setTags((tags) => tags.map((t) => (t.id === updated.id ? updated : t)))
+    updateTag(updated)
     setEditing(null)
   }
 
@@ -135,15 +131,15 @@ export default function TagsSettings() {
       alert('This tag is currently in use and cannot be deleted.')
       return
     }
-    setTags((tags) => tags.filter((t) => t.id !== tag.id))
+    deleteTag(tag)
   }
 
   const handleCreate = (tag: Omit<Tag, 'id' | 'count'>) => {
-    setTags((tags) => [...tags, { id: Date.now(), count: 0, ...tag }])
+    createTag(tag)
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <SettingsLayout>
       <Heading>Tags</Heading>
 
       <SettingSection title="Manage Tags" description="Create and edit tag presets.">
@@ -175,6 +171,6 @@ export default function TagsSettings() {
       {editing && (
         <EditTagDialog tag={editing} open={true} onClose={() => setEditing(null)} onSave={handleEdit} />
       )}
-    </div>
+    </SettingsLayout>
   )
 }

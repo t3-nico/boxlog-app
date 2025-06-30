@@ -3,10 +3,11 @@
 import { Heading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
 import { Text } from '@/components/text'
+import { SettingsLayout } from './settings-layout'
 
 export default function AboutLegalSettings() {
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <SettingsLayout>
       <Heading>About / Legal</Heading>
 
       <SettingSection title="Terms of Service & Privacy" description="Important legal information.">
@@ -31,7 +32,7 @@ export default function AboutLegalSettings() {
           </Text>
         </div>
       </SettingSection>
-    </div>
+    </SettingsLayout>
   )
 }
 

@@ -25,6 +25,7 @@ import { SidebarLayout } from '@/components/sidebar-layout'
 import { getEvents, getOrders } from '@/data'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/constants/routes'
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
@@ -65,7 +66,7 @@ export function ApplicationLayout({
   children: React.ReactNode
 }) {
   let pathname = usePathname()
-  let inSettings = pathname.startsWith('/settings')
+  let inSettings = pathname.startsWith(ROUTES.settings.account.replace('/account', ''))
   let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
   const router = useRouter()
@@ -73,7 +74,7 @@ export function ApplicationLayout({
   const handleSignOut = async () => {
     try {
       await signOut()
-      router.push('/auth')
+      router.push(ROUTES.auth)
     } catch (error) {
       console.error('ログアウトエラー:', error)
     }
@@ -90,7 +91,7 @@ export function ApplicationLayout({
         <Sidebar collapsed={collapsed}>
           <SidebarHeader className="flex-row items-center gap-2">
             {!collapsed && inSettings && (
-              <SidebarItem href="/" indicator={false}>
+              <SidebarItem href={ROUTES.home} indicator={false}>
                 <ChevronLeftIcon />
                 <SidebarLabel>Back to app</SidebarLabel>
               </SidebarItem>
@@ -103,7 +104,7 @@ export function ApplicationLayout({
                   <ChevronDownIcon />
                 </DropdownButton>
                 <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                  <DropdownItem href="/settings">
+                  <DropdownItem href={ROUTES.settings.root}>
                     <Cog8ToothIcon />
                     <DropdownLabel>Settings</DropdownLabel>
                   </DropdownItem>
@@ -148,16 +149,16 @@ export function ApplicationLayout({
               <>
                 <SidebarSection>
                   <SidebarItem
-                    href="/add"
-                    current={pathname.startsWith('/add')}
+                    href={ROUTES.add}
+                    current={pathname.startsWith(ROUTES.add)}
                     indicator={false}
                   >
                     <PlusIcon />
                     <SidebarLabel>Add</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/search"
-                    current={pathname.startsWith('/search')}
+                    href={ROUTES.search}
+                    current={pathname.startsWith(ROUTES.search)}
                     indicator={false}
                   >
                     <MagnifyingGlassIcon />
@@ -168,20 +169,20 @@ export function ApplicationLayout({
                 <div className="h-4" />
 
                 <SidebarSection>
-                  <SidebarItem href="/calender" current={pathname === '/calender'}>
+                  <SidebarItem href={ROUTES.calendar} current={pathname === ROUTES.calendar}>
                     <CalendarIcon />
                     <SidebarLabel>Calender</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/box"
-                    current={pathname.startsWith('/box')}
+                    href={ROUTES.box}
+                    current={pathname.startsWith(ROUTES.box)}
                   >
                     <CubeIcon />
                     <SidebarLabel>Box</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/orders"
-                    current={pathname.startsWith('/orders')}
+                    href={ROUTES.orders}
+                    current={pathname.startsWith(ROUTES.orders)}
                   >
                     <DocumentTextIcon />
                     <SidebarLabel>Review</SidebarLabel>
@@ -190,9 +191,9 @@ export function ApplicationLayout({
 
                 <SidebarSection className="max-lg:hidden">
                   <SidebarHeading>
-                    {pathname.startsWith('/orders') ? 'Recent Orders' : 'Upcoming Events'}
+                    {pathname.startsWith(ROUTES.orders) ? 'Recent Orders' : 'Upcoming Events'}
                   </SidebarHeading>
-                  {pathname.startsWith('/orders')
+                  {pathname.startsWith(ROUTES.orders)
                     ? orders.slice(0, 5).map((order) => (
                         <SidebarItem
                           key={order.id}
@@ -222,24 +223,24 @@ export function ApplicationLayout({
                 <SidebarSection>
                   <SidebarHeading>General</SidebarHeading>
                   <SidebarItem
-                    href="/settings/account"
-                    current={pathname.startsWith('/settings/account')}
+                    href={ROUTES.settings.account}
+                    current={pathname.startsWith(ROUTES.settings.account)}
                     indicator={false}
                   >
                     <UserIcon />
                     <SidebarLabel>Account</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/settings/preferences"
-                    current={pathname.startsWith('/settings/preferences')}
+                    href={ROUTES.settings.preferences}
+                    current={pathname.startsWith(ROUTES.settings.preferences)}
                     indicator={false}
                   >
                     <AdjustmentsVerticalIcon />
                     <SidebarLabel>Preferences</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/settings/notifications"
-                    current={pathname.startsWith('/settings/notifications')}
+                    href={ROUTES.settings.notifications}
+                    current={pathname.startsWith(ROUTES.settings.notifications)}
                     indicator={false}
                   >
                     <BellAlertIcon />
@@ -250,16 +251,16 @@ export function ApplicationLayout({
                 <SidebarSection className="mt-8">
                   <SidebarHeading>Customization</SidebarHeading>
                   <SidebarItem
-                    href="/settings/tags"
-                    current={pathname.startsWith('/settings/tags')}
+                    href={ROUTES.settings.tags}
+                    current={pathname.startsWith(ROUTES.settings.tags)}
                     indicator={false}
                   >
                     <TagIcon />
                     <SidebarLabel>Tags</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/settings/templates"
-                    current={pathname.startsWith('/settings/templates')}
+                    href={ROUTES.settings.templates}
+                    current={pathname.startsWith(ROUTES.settings.templates)}
                     indicator={false}
                   >
                     <ClipboardDocumentListIcon />
@@ -270,8 +271,8 @@ export function ApplicationLayout({
                 <SidebarSection className="mt-8">
                   <SidebarHeading>Integration</SidebarHeading>
                   <SidebarItem
-                    href="/settings/integration"
-                    current={pathname.startsWith('/settings/integration')}
+                    href={ROUTES.settings.integration}
+                    current={pathname.startsWith(ROUTES.settings.integration)}
                     indicator={false}
                   >
                     <LinkIcon />
@@ -282,16 +283,16 @@ export function ApplicationLayout({
                 <SidebarSection className="mt-8">
                   <SidebarHeading>Data</SidebarHeading>
                   <SidebarItem
-                    href="/settings/plan-billing"
-                    current={pathname.startsWith('/settings/plan-billing')}
+                    href={ROUTES.settings.planBilling}
+                    current={pathname.startsWith(ROUTES.settings.planBilling)}
                     indicator={false}
                   >
                     <CreditCardIcon />
                     <SidebarLabel>Plan & Billing</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/settings/data-export"
-                    current={pathname.startsWith('/settings/data-export')}
+                    href={ROUTES.settings.dataExport}
+                    current={pathname.startsWith(ROUTES.settings.dataExport)}
                     indicator={false}
                   >
                     <ArrowDownTrayIcon />
@@ -302,8 +303,8 @@ export function ApplicationLayout({
                 <SidebarSection className="mt-8">
                   <SidebarHeading>About</SidebarHeading>
                   <SidebarItem
-                    href="/settings/legal"
-                    current={pathname.startsWith('/settings/legal')}
+                    href={ROUTES.settings.legal}
+                    current={pathname.startsWith(ROUTES.settings.legal)}
                     indicator={false}
                   >
                     <InformationCircleIcon />

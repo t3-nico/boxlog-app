@@ -1,0 +1,21 @@
+export const ROUTES = {
+  home: '/',
+  add: '/add',
+  search: '/search',
+  calendar: '/calender',
+  box: '/box',
+  orders: '/orders',
+  auth: '/auth',
+  settings: {
+    root: '/settings',
+    account: '/settings/account',
+    preferences: '/settings/preferences',
+    notifications: '/settings/notifications',
+    tags: '/settings/tags',
+    templates: '/settings/templates',
+    integration: '/settings/integration',
+    planBilling: '/settings/plan-billing',
+    dataExport: '/settings/data-export',
+    legal: '/settings/legal',
+  },
+} as const

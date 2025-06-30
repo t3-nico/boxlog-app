@@ -1,6 +1,6 @@
 import { Stat } from '@/app/stat'
 import { Badge } from '@/components/badge'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
 import { Link } from '@/components/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
