@@ -22,6 +22,7 @@ import {
   SidebarSpacer,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
+import SearchModal from '@/components/SearchModal'
 import { getEvents, getOrders } from '@/data'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
@@ -73,7 +74,8 @@ export function ApplicationLayout({
   }
 
   return (
-    <SidebarLayout
+    <>
+      <SidebarLayout
       navbar={
         <Navbar>
           <NavbarSpacer />
@@ -247,5 +249,7 @@ export function ApplicationLayout({
     >
       {children}
     </SidebarLayout>
+    <SearchModal />
+  </>
   )
 }
