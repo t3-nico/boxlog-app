@@ -48,6 +48,8 @@ import {
   BellAlertIcon,
   ArrowDownTrayIcon,
   InformationCircleIcon,
+  TagIcon,
+  ClipboardDocumentListIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/20/solid'
@@ -240,6 +242,22 @@ export function ApplicationLayout({
                 >
                   <AdjustmentsVerticalIcon />
                   <SidebarLabel>Preferences</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/tags"
+                  current={pathname.startsWith('/settings/tags')}
+                  indicator={false}
+                >
+                  <TagIcon />
+                  <SidebarLabel>Tags</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/templates"
+                  current={pathname.startsWith('/settings/templates')}
+                  indicator={false}
+                >
+                  <ClipboardDocumentListIcon />
+                  <SidebarLabel>Task Templates</SidebarLabel>
                 </SidebarItem>
                 <SidebarItem
                   href="/settings/integration"
