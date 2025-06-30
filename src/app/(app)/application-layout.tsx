@@ -43,6 +43,11 @@ import {
   Cog6ToothIcon,
   UserIcon,
   AdjustmentsVerticalIcon,
+  CreditCardIcon,
+  LinkIcon,
+  BellAlertIcon,
+  ArrowDownTrayIcon,
+  InformationCircleIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/20/solid'
@@ -212,15 +217,7 @@ export function ApplicationLayout({
 
             {inSettings && (
               <SidebarSection>
-              <SidebarItem
-                  href="/settings/general"
-                  current={pathname.startsWith('/settings/general')}
-                  indicator={false}
-                >
-                  <Cog6ToothIcon />
-                  <SidebarLabel>General</SidebarLabel>
-                </SidebarItem>
-              <SidebarItem
+                <SidebarItem
                   href="/settings/account"
                   current={pathname.startsWith('/settings/account')}
                   indicator={false}
@@ -228,13 +225,53 @@ export function ApplicationLayout({
                   <UserIcon />
                   <SidebarLabel>Account</SidebarLabel>
                 </SidebarItem>
-              <SidebarItem
+                <SidebarItem
+                  href="/settings/plan-billing"
+                  current={pathname.startsWith('/settings/plan-billing')}
+                  indicator={false}
+                >
+                  <CreditCardIcon />
+                  <SidebarLabel>Plan & Billing</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
                   href="/settings/preferences"
                   current={pathname.startsWith('/settings/preferences')}
                   indicator={false}
                 >
                   <AdjustmentsVerticalIcon />
                   <SidebarLabel>Preferences</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/integration"
+                  current={pathname.startsWith('/settings/integration')}
+                  indicator={false}
+                >
+                  <LinkIcon />
+                  <SidebarLabel>Calendar & Integration</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/notifications"
+                  current={pathname.startsWith('/settings/notifications')}
+                  indicator={false}
+                >
+                  <BellAlertIcon />
+                  <SidebarLabel>Notifications</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/data-export"
+                  current={pathname.startsWith('/settings/data-export')}
+                  indicator={false}
+                >
+                  <ArrowDownTrayIcon />
+                  <SidebarLabel>Data & Export</SidebarLabel>
+                </SidebarItem>
+                <SidebarItem
+                  href="/settings/legal"
+                  current={pathname.startsWith('/settings/legal')}
+                  indicator={false}
+                >
+                  <InformationCircleIcon />
+                  <SidebarLabel>About / Legal</SidebarLabel>
                 </SidebarItem>
               </SidebarSection>
             )}
