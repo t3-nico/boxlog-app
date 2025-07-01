@@ -28,7 +28,7 @@ function TagNode({ tag, level = 0 }: { tag: Tag; level?: number }) {
         {hasChildren && (
           <ChevronDown className={clsx('h-4 w-4 transition-transform', open ? 'rotate-0' : '-rotate-90')} />
         )}
-        <Badge color={tag.color} style={{ backgroundColor: tag.color }}>
+        <Badge color={tag.color}>
           {tag.name}
         </Badge>
         <span className="ml-auto text-xs text-zinc-500">0</span>
