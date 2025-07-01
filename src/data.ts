@@ -930,3 +930,28 @@ export function getCountries() {
     },
   ]
 }
+
+export async function getTags() {
+  return [
+    {
+      id: 1,
+      name: 'Work',
+      color: '#f87171',
+      children: [
+        {
+          id: 2,
+          name: 'Project',
+          color: '#60a5fa',
+          children: [
+            { id: 3, name: 'Task', color: '#4ade80' }
+          ],
+        },
+      ],
+    },
+    {
+      id: 4,
+      name: 'Personal',
+      color: '#a78bfa',
+    },
+  ]
+}

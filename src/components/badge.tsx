@@ -34,16 +34,21 @@ const colors = {
   zinc: 'bg-zinc-600/10 text-zinc-700 group-data-hover:bg-zinc-600/20 dark:bg-white/5 dark:text-zinc-400 dark:group-data-hover:bg-white/10',
 }
 
-type BadgeProps = { color?: keyof typeof colors }
+function isPredefinedColor(color: string): color is keyof typeof colors {
+  return color in colors
+}
 
-export function Badge({ color = 'zinc', className, ...props }: BadgeProps & React.ComponentPropsWithoutRef<'span'>) {
+type BadgeProps = { color?: keyof typeof colors | string }
+
+export function Badge({ color = 'zinc', className, style, ...props }: BadgeProps & React.ComponentPropsWithoutRef<'span'>) {
   return (
     <span
       {...props}
+      style={!isPredefinedColor(color) ? { backgroundColor: color, ...style } : style}
       className={clsx(
         className,
         'inline-flex items-center gap-x-1.5 rounded-md px-1.5 py-0.5 text-sm/5 font-medium sm:text-xs/5 forced-colors:outline',
-        colors[color]
+        isPredefinedColor(color) ? colors[color] : undefined
       )}
     />
   )
