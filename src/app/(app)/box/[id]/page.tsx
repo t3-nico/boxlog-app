@@ -4,7 +4,7 @@ import { Button } from '@/components/button'
 import { Heading, Subheading } from '@/components/heading'
 import { Link } from '@/components/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { getEvent, getEventOrders } from '@/data'
+import { getEvent, getEventReviews } from '@/data'
 import { ChevronLeftIcon } from '@heroicons/react/16/solid'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 export default async function Event({ params }: { params: { id: string } }) {
   let event = await getEvent(params.id)
-  let orders = await getEventOrders(params.id)
+  let reviews = await getEventReviews(params.id)
 
   if (!event) {
     notFound()
@@ -62,23 +62,23 @@ export default async function Event({ params }: { params: { id: string } }) {
         />
         <Stat title="Pageviews" value={event.pageViews} change={event.pageViewsChange} />
       </div>
-      <Subheading className="mt-12">Recent orders</Subheading>
+      <Subheading className="mt-12">Recent reviews</Subheading>
       <Table className="mt-4 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Order number</TableHeader>
+            <TableHeader>Review number</TableHeader>
             <TableHeader>Purchase date</TableHeader>
             <TableHeader>Customer</TableHeader>
             <TableHeader className="text-right">Amount</TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell className="text-zinc-500">{order.date}</TableCell>
-              <TableCell>{order.customer.name}</TableCell>
-              <TableCell className="text-right">US{order.amount.usd}</TableCell>
+          {reviews.map((review) => (
+            <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
+              <TableCell>{review.id}</TableCell>
+              <TableCell className="text-zinc-500">{review.date}</TableCell>
+              <TableCell>{review.customer.name}</TableCell>
+              <TableCell className="text-right">US{review.amount.usd}</TableCell>
             </TableRow>
           ))}
         </TableBody>

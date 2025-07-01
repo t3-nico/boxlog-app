@@ -22,7 +22,7 @@ import {
   SidebarSpacer,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
-import { getEvents, getOrders } from '@/data'
+import { getEvents, getReviews } from '@/data'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import {
@@ -57,11 +57,11 @@ import { usePathname } from 'next/navigation'
 
 export function ApplicationLayout({
   events,
-  orders,
+  reviews,
   children,
 }: {
   events: Awaited<ReturnType<typeof getEvents>>
-  orders: Awaited<ReturnType<typeof getOrders>>
+  reviews: Awaited<ReturnType<typeof getReviews>>
   children: React.ReactNode
 }) {
   let pathname = usePathname()
@@ -181,8 +181,8 @@ export function ApplicationLayout({
                     <SidebarLabel>Box</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/orders"
-                    current={pathname.startsWith('/orders')}
+                    href="/review"
+                    current={pathname.startsWith('/review')}
                   >
                     <DocumentTextIcon />
                     <SidebarLabel>Review</SidebarLabel>
@@ -191,17 +191,17 @@ export function ApplicationLayout({
 
                 <SidebarSection className="max-lg:hidden">
                   <SidebarHeading>
-                    {pathname.startsWith('/orders') ? 'Recent Orders' : 'Upcoming Events'}
+                    {pathname.startsWith('/review') ? 'Recent Reviews' : 'Upcoming Events'}
                   </SidebarHeading>
-                  {pathname.startsWith('/orders')
-                    ? orders.slice(0, 5).map((order) => (
+                  {pathname.startsWith('/review')
+                    ? reviews.slice(0, 5).map((review) => (
                         <SidebarItem
-                          key={order.id}
-                          href={order.url}
-                          current={pathname === order.url}
+                          key={review.id}
+                          href={review.url}
+                          current={pathname === review.url}
                           indicator={false}
                         >
-                          Order #{order.id}
+                          Review #{review.id}
                         </SidebarItem>
                       ))
                     : events.map((event) => (
