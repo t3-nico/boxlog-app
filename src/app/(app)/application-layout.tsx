@@ -217,44 +217,96 @@ export function ApplicationLayout({
                 </SidebarSection>
 
                 {pathname.startsWith('/review') && (
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>My Compass</SidebarHeading>
-                    <SidebarItem
-                      href="/review/purpose"
-                      current={pathname.startsWith('/review/purpose')}
-                      indicator={false}
-                    >
-                      <SidebarLabel>Purpose</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/review/goals"
-                      current={pathname.startsWith('/review/goals')}
-                      indicator={false}
-                    >
-                      <SidebarLabel>Goals</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/review/identity"
-                      current={pathname.startsWith('/review/identity')}
-                      indicator={false}
-                    >
-                      <SidebarLabel>Identity</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/review/antivalues"
-                      current={pathname.startsWith('/review/antivalues')}
-                      indicator={false}
-                    >
-                      <SidebarLabel>AntiValues</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/review/life-vision"
-                      current={pathname.startsWith('/review/life-vision')}
-                      indicator={false}
-                    >
-                      <SidebarLabel>Life Vision</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
+                  <>
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>Reflect</SidebarHeading>
+                      <SidebarItem
+                        href="/review/reflect/today"
+                        current={pathname.startsWith('/review/reflect/today')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Today</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/reflect/week"
+                        current={pathname.startsWith('/review/reflect/week')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Week</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/reflect/month"
+                        current={pathname.startsWith('/review/reflect/month')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Month</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/reflect/all"
+                        current={pathname.startsWith('/review/reflect/all')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>All</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
+
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>Act</SidebarHeading>
+                      <SidebarItem
+                        href="/review/act/next"
+                        current={pathname.startsWith('/review/act/next')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Next</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/act/try"
+                        current={pathname.startsWith('/review/act/try')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Try</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
+
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>My Compass</SidebarHeading>
+                      <SidebarItem
+                        href="/review/purpose"
+                        current={pathname.startsWith('/review/purpose')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Purpose</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/value"
+                        current={pathname.startsWith('/review/value')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Value</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/principles"
+                        current={pathname.startsWith('/review/principles')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Principles</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/goals"
+                        current={pathname.startsWith('/review/goals')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Goals</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/review/connpass"
+                        current={pathname.startsWith('/review/connpass')}
+                        indicator={false}
+                      >
+                        <SidebarLabel>Connpass</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
+                  </>
                 )}
               </>
             )}
