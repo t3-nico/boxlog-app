@@ -19,33 +19,51 @@ export const metadata: Metadata = {
 const tasks = [
   {
     id: 1,
-    title: 'Set up project repository',
-    status: 'Backlog',
-    label: 'Project',
-    priority: 'Low',
-  },
-  {
-    id: 2,
     title: 'Design application UI',
     status: 'In progress',
     label: 'Design',
     priority: 'High',
   },
   {
-    id: 3,
+    id: 2,
     title: 'Implement authentication',
     status: 'Todo',
     label: 'Development',
     priority: 'Medium',
   },
   {
-    id: 4,
+    id: 3,
     title: 'Write unit tests',
-    status: 'Todo',
+    status: 'Backlog',
     label: 'QA',
     priority: 'Low',
   },
+  {
+    id: 4,
+    title: 'Deploy to production',
+    status: 'Done',
+    label: 'Project',
+    priority: 'Medium',
+  },
+  {
+    id: 5,
+    title: 'Prepare documentation',
+    status: 'Todo',
+    label: 'Docs',
+    priority: 'Low',
+  },
 ]
+
+function priorityColor(priority: string) {
+  switch (priority) {
+    case 'High':
+      return 'red'
+    case 'Medium':
+      return 'yellow'
+    default:
+      return 'zinc'
+  }
+}
 
 export default async function TasksPage() {
   return (
@@ -54,7 +72,11 @@ export default async function TasksPage() {
         <Heading>Tasks</Heading>
         <Button className="-my-0.5">Add task</Button>
       </div>
-      <Table className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
+      <Table
+        dense
+        striped
+        className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]"
+      >
         <TableHead>
           <TableRow>
             <TableHeader className="w-12" />
@@ -79,7 +101,9 @@ export default async function TasksPage() {
               <TableCell>
                 <Badge>{task.label}</Badge>
               </TableCell>
-              <TableCell className="text-right">{task.priority}</TableCell>
+              <TableCell className="text-right">
+                <Badge color={priorityColor(task.priority)}>{task.priority}</Badge>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
