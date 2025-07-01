@@ -22,7 +22,7 @@ import {
   SidebarSpacer,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
-import { getEvents, getOrders } from '@/data'
+import { getEvents, getReviews } from '@/data'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import {
@@ -57,15 +57,16 @@ import { usePathname } from 'next/navigation'
 
 export function ApplicationLayout({
   events,
-  orders,
+  reviews,
   children,
 }: {
   events: Awaited<ReturnType<typeof getEvents>>
-  orders: Awaited<ReturnType<typeof getOrders>>
+  reviews: Awaited<ReturnType<typeof getReviews>>
   children: React.ReactNode
 }) {
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
+  let inReview = pathname.startsWith('/review')
   let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
   const router = useRouter()
@@ -180,8 +181,8 @@ export function ApplicationLayout({
                     <SidebarLabel>Box</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
-                    href="/orders"
-                    current={pathname.startsWith('/orders')}
+                    href="/review"
+                    current={pathname.startsWith('/review')}
                   >
                     <DocumentTextIcon />
                     <SidebarLabel>Review</SidebarLabel>
@@ -190,17 +191,17 @@ export function ApplicationLayout({
 
                 <SidebarSection className="max-lg:hidden">
                   <SidebarHeading>
-                    {pathname.startsWith('/orders') ? 'Recent Orders' : 'Upcoming Events'}
+                    {pathname.startsWith('/review') ? 'Recent Reviews' : 'Upcoming Events'}
                   </SidebarHeading>
-                  {pathname.startsWith('/orders')
-                    ? orders.slice(0, 5).map((order) => (
+                  {pathname.startsWith('/review')
+                    ? reviews.slice(0, 5).map((review) => (
                         <SidebarItem
-                          key={order.id}
-                          href={order.url}
-                          current={pathname === order.url}
+                          key={review.id}
+                          href={review.url}
+                          current={pathname === review.url}
                           indicator={false}
                         >
-                          Order #{order.id}
+                          Review #{review.id}
                         </SidebarItem>
                       ))
                     : events.map((event) => (
@@ -214,6 +215,47 @@ export function ApplicationLayout({
                         </SidebarItem>
                       ))}
                 </SidebarSection>
+
+                {pathname.startsWith('/review') && (
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>My Compass</SidebarHeading>
+                    <SidebarItem
+                      href="/review/purpose"
+                      current={pathname.startsWith('/review/purpose')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Purpose</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/goals"
+                      current={pathname.startsWith('/review/goals')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Goals</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/identity"
+                      current={pathname.startsWith('/review/identity')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Identity</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/antivalues"
+                      current={pathname.startsWith('/review/antivalues')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>AntiValues</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/life-vision"
+                      current={pathname.startsWith('/review/life-vision')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Life Vision</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+                )}
               </>
             )}
 

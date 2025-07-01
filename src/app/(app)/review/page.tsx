@@ -2,26 +2,26 @@ import { Avatar } from '@/components/avatar'
 import { Button } from '@/components/button'
 import { Heading } from '@/components/heading'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { getOrders } from '@/data'
+import { getReviews } from '@/data'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Orders',
+  title: 'Reviews',
 }
 
-export default async function Orders() {
-  let orders = await getOrders()
+export default async function Reviews() {
+  let reviews = await getReviews()
 
   return (
     <>
       <div className="flex items-end justify-between gap-4">
-        <Heading>Orders</Heading>
-        <Button className="-my-0.5">Create order</Button>
+        <Heading>Reviews</Heading>
+        <Button className="-my-0.5">Create review</Button>
       </div>
       <Table className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Order number</TableHeader>
+            <TableHeader>Review number</TableHeader>
             <TableHeader>Purchase date</TableHeader>
             <TableHeader>Customer</TableHeader>
             <TableHeader>Event</TableHeader>
@@ -29,18 +29,18 @@ export default async function Orders() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell className="text-zinc-500">{order.date}</TableCell>
-              <TableCell>{order.customer.name}</TableCell>
+          {reviews.map((review) => (
+            <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
+              <TableCell>{review.id}</TableCell>
+              <TableCell className="text-zinc-500">{review.date}</TableCell>
+              <TableCell>{review.customer.name}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Avatar src={order.event.thumbUrl} className="size-6" />
-                  <span>{order.event.name}</span>
+                  <Avatar src={review.event.thumbUrl} className="size-6" />
+                  <span>{review.event.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-right">US{order.amount.usd}</TableCell>
+              <TableCell className="text-right">US{review.amount.usd}</TableCell>
             </TableRow>
           ))}
         </TableBody>

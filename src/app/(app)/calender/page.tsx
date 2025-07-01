@@ -3,10 +3,10 @@ import { Avatar } from '@/components/avatar'
 import { Heading, Subheading } from '@/components/heading'
 import { Select } from '@/components/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { getRecentOrders } from '@/data'
+import { getRecentReviews } from '@/data'
 
 export default async function Home() {
-  let orders = await getRecentOrders()
+  let reviews = await getRecentReviews()
 
   return (
     <>
@@ -24,15 +24,15 @@ export default async function Home() {
       </div>
       <div className="mt-4 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
         <Stat title="Total revenue" value="$2.6M" change="+4.5%" />
-        <Stat title="Average order value" value="$455" change="-0.5%" />
+        <Stat title="Average review value" value="$455" change="-0.5%" />
         <Stat title="Tickets sold" value="5,888" change="+4.5%" />
         <Stat title="Pageviews" value="823,067" change="+21.2%" />
       </div>
-      <Subheading className="mt-14">Recent orders</Subheading>
+      <Subheading className="mt-14">Recent reviews</Subheading>
       <Table className="mt-4 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Order number</TableHeader>
+            <TableHeader>Review number</TableHeader>
             <TableHeader>Purchase date</TableHeader>
             <TableHeader>Customer</TableHeader>
             <TableHeader>Event</TableHeader>
@@ -40,18 +40,18 @@ export default async function Home() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
-              <TableCell>{order.id}</TableCell>
-              <TableCell className="text-zinc-500">{order.date}</TableCell>
-              <TableCell>{order.customer.name}</TableCell>
+          {reviews.map((review) => (
+            <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
+              <TableCell>{review.id}</TableCell>
+              <TableCell className="text-zinc-500">{review.date}</TableCell>
+              <TableCell>{review.customer.name}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Avatar src={order.event.thumbUrl} className="size-6" />
-                  <span>{order.event.name}</span>
+                  <Avatar src={review.event.thumbUrl} className="size-6" />
+                  <span>{review.event.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-right">US{order.amount.usd}</TableCell>
+              <TableCell className="text-right">US{review.amount.usd}</TableCell>
             </TableRow>
           ))}
         </TableBody>
