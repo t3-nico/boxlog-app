@@ -225,6 +225,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/reflect/today')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Today</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -232,6 +233,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/reflect/week')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Week</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -239,6 +241,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/reflect/month')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Month</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -246,6 +249,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/reflect/all')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>All</SidebarLabel>
                       </SidebarItem>
                     </SidebarSection>
@@ -257,6 +261,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/act/next')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Next</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -264,6 +269,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/act/try')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Try</SidebarLabel>
                       </SidebarItem>
                     </SidebarSection>
@@ -275,6 +281,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/purpose')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Purpose</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -282,6 +289,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/value')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Value</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -289,6 +297,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/principles')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Principles</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -296,6 +305,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/goals')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Goals</SidebarLabel>
                       </SidebarItem>
                       <SidebarItem
@@ -303,6 +313,7 @@ export function ApplicationLayout({
                         current={pathname.startsWith('/review/connpass')}
                         indicator={false}
                       >
+                        <DocumentTextIcon className="w-4 h-4" />
                         <SidebarLabel>Connpass</SidebarLabel>
                       </SidebarItem>
                     </SidebarSection>
