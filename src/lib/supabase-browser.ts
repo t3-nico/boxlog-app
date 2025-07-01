@@ -1,4 +1,5 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
 
 export function createClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -8,8 +9,8 @@ export function createClient() {
     if (process.env.NODE_ENV === 'development') {
       console.warn('Supabase environment variables are missing')
     }
-    return createSupabaseClient('https://placeholder.supabase.co', 'placeholder')
+    return createSupabaseClient<Database>('https://placeholder.supabase.co', 'placeholder')
   }
 
-  return createSupabaseClient(url, key)
+  return createSupabaseClient<Database>(url, key)
 }
