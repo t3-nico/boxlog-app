@@ -66,6 +66,7 @@ export function ApplicationLayout({
 }) {
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
+  let inReview = pathname.startsWith('/review')
   let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
   const router = useRouter()
@@ -214,6 +215,47 @@ export function ApplicationLayout({
                         </SidebarItem>
                       ))}
                 </SidebarSection>
+
+                {pathname.startsWith('/review') && (
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>My Compass</SidebarHeading>
+                    <SidebarItem
+                      href="/review/purpose"
+                      current={pathname.startsWith('/review/purpose')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Purpose</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/goals"
+                      current={pathname.startsWith('/review/goals')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Goals</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/identity"
+                      current={pathname.startsWith('/review/identity')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Identity</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/antivalues"
+                      current={pathname.startsWith('/review/antivalues')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>AntiValues</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/review/life-vision"
+                      current={pathname.startsWith('/review/life-vision')}
+                      indicator={false}
+                    >
+                      <SidebarLabel>Life Vision</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+                )}
               </>
             )}
 
