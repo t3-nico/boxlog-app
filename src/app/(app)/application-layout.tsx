@@ -169,9 +169,9 @@ export function ApplicationLayout({
                 <div className="h-4" />
 
                 <SidebarSection>
-                  <SidebarItem href="/calender" current={pathname === '/calender'}>
+                  <SidebarItem href="/calendar" current={pathname === '/calendar'}>
                     <CalendarIcon />
-                    <SidebarLabel>Calender</SidebarLabel>
+                    <SidebarLabel>Calendar</SidebarLabel>
                   </SidebarItem>
                   <SidebarItem
                     href="/box"

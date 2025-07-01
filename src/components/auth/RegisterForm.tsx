@@ -24,7 +24,7 @@ export default function RegisterForm() {
   // 認証成功後のリダイレクト
   useEffect(() => {
     if (user) {
-      router.push('/calender')
+      router.push('/calendar')
     }
   }, [user, router])
 

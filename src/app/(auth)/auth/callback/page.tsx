@@ -14,7 +14,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const supabase = createClient()
     const code = searchParams.get('code')
-    const next = searchParams.get('next') ?? '/calender'
+    const next = searchParams.get('next') ?? '/calendar'
 
     const handleAuthCallback = async () => {
       try {

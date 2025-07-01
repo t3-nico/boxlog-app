@@ -12,7 +12,7 @@ export default function LoginPage() {
   // 認証済みユーザーは自動的にリダイレクト
   useEffect(() => {
     if (!loading && user) {
-      router.push('/calender')
+      router.push('/calendar')
     }
   }, [user, loading, router])
 

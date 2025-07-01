@@ -9,5 +9,5 @@ export default async function RedirectHome() {
     redirect('/auth/login')
   }
 
-  redirect('/calender')
+  redirect('/calendar')
 }
