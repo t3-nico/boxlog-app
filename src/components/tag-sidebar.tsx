@@ -49,7 +49,7 @@ export default function TagSidebar() {
 
   return (
     <aside className="w-60 bg-muted/50 h-[100vh] overflow-y-auto p-2">
-      <ul>{data?.map((tag) => <TagNode key={tag.id} tag={tag} />)}</ul>
+      <ul>{data?.map((tag: Tag) => <TagNode key={tag.id} tag={tag} />)}</ul>
     </aside>
   )
 }
