@@ -3,6 +3,8 @@ import { getTags } from '@/data'
 import TagSidebar from '@/components/tag-sidebar'
 import React from 'react'
 
+export const dynamic = 'force-dynamic'
+
 export default async function CalendarLayout({ children }: { children: React.ReactNode }) {
   const tags = await getTags()
   return (
