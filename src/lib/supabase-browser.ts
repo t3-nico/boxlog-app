@@ -1,16 +1,7 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
-import type { Database } from './database.types'
+import { createBrowserClient } from '@supabase/ssr'
 
-export function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!url || !key) {
-    if (process.env.NODE_ENV === 'development') {
-      console.warn('Supabase environment variables are missing')
-    }
-    return createSupabaseClient<Database>('https://placeholder.supabase.co', 'placeholder')
-  }
-
-  return createSupabaseClient<Database>(url, key)
-}
+export const supabaseBrowser = () =>
+  createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )

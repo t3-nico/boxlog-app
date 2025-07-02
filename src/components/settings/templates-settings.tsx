@@ -33,10 +33,10 @@ function TemplateCard({ template, onEdit, onApply }: { template: Template; onEdi
           {template.duration && <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{template.duration} min</p>}
         </div>
         <div className="flex gap-2">
-          <Button type="button" onClick={onEdit} size="sm">
+          <Button type="button" onClick={onEdit}>
             Edit
           </Button>
-          <Button type="button" onClick={onApply} size="sm">
+          <Button type="button" onClick={onApply}>
             Apply
           </Button>
         </div>

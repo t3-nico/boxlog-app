@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { User, Session, AuthError } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase-browser'
+import { supabaseBrowser } from '@/lib/supabase-browser'
 
 interface AuthState {
   user: User | null
@@ -20,7 +20,7 @@ export function useAuth() {
   })
 
   // クライアント用supabaseインスタンス
-  const supabase = createClient()
+  const supabase = supabaseBrowser()
 
   // エラーハンドリング関数
   const handleAuthError = useCallback((error: AuthError | null) => {
@@ -28,12 +28,12 @@ export function useAuth() {
 
     // エラーメッセージの日本語化
     const errorMessages: Record<string, string> = {
-      'Invalid login credentials': 'メールアドレスまたはパスワードが正しくありません',
-      'Email not confirmed': 'メールアドレスの確認が必要です',
-      'User already registered': 'このメールアドレスは既に登録されています',
-      'Password should be at least 6 characters': 'パスワードは6文字以上で入力してください',
-      'Too many requests': 'リクエストが多すぎます。しばらく待ってから再試行してください',
-      'Email rate limit exceeded': 'メール送信の制限に達しました。しばらく待ってから再試行してください',
+      'Invalid login credentials': 'Invalid email or password. If you don\'t have an account, please sign up.',
+      'Email not confirmed': 'Please confirm your email address.',
+      'User already registered': 'This email address is already registered.',
+      'Password should be at least 6 characters': 'Password must be at least 6 characters.',
+      'Too many requests': 'Too many requests. Please try again later.',
+      'Email rate limit exceeded': 'Email sending limit exceeded. Please try again later.'
     }
 
     return errorMessages[error.message] || error.message

@@ -24,7 +24,7 @@ function TagItem({ tag, onEdit, onDelete }: { tag: Tag; onEdit: () => void; onDe
       </TableCell>
       <TableCell>{tag.count}</TableCell>
       <TableCell className="flex gap-2">
-        <Button type="button" onClick={onEdit} size="sm">
+        <Button type="button" onClick={onEdit}>
           Edit
         </Button>
         <Button

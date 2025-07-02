@@ -74,7 +74,7 @@ export function ApplicationLayout({
   const handleSignOut = async () => {
     try {
       await signOut()
-      router.push('/auth')
+      router.push('/auth/login')
     } catch (error) {
       console.error('ログアウトエラー:', error)
     }
@@ -128,7 +128,7 @@ export function ApplicationLayout({
                   <DropdownDivider />
                   <DropdownItem onClick={handleSignOut}>
                     <ArrowRightStartOnRectangleIcon />
-                    <DropdownLabel>Sign out</DropdownLabel>
+                    <DropdownLabel>Logout</DropdownLabel>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, ReactNode } from 'react'
+import { createContext, useContext, ReactNode, useMemo } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 
 interface AuthContextType {
@@ -8,7 +8,7 @@ interface AuthContextType {
   session: any
   loading: boolean
   error: string | null
-  signUp: (email: string, password: string) => Promise<any>
+  signUp: (email: string, password: string, metadata?: any) => Promise<any>
   signIn: (email: string, password: string) => Promise<any>
   signInWithOAuth: (provider: 'google' | 'apple') => Promise<any>
   signOut: () => Promise<any>
@@ -22,8 +22,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const auth = useAuth()
 
+  const memoizedAuth = useMemo(() => auth, [auth])
+
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={memoizedAuth}>
       {children}
     </AuthContext.Provider>
   )
@@ -35,4 +37,4 @@ export function useAuthContext() {
     throw new Error('useAuthContext must be used within an AuthProvider')
   }
   return context
-} 
+}

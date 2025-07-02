@@ -17,7 +17,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const { signIn, signInWithOAuth, user } = useAuthContext()
+  const { signIn, signInWithOAuth, user, error: authError } = useAuthContext()
   const router = useRouter()
 
   // 認証成功後のリダイレクト
@@ -27,18 +27,21 @@ export default function LoginForm() {
     }
   }, [user, router])
 
+  // authErrorが変更されたらLoginFormのerrorステートを更新
+  useEffect(() => {
+    setError(authError)
+  }, [authError])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
+    // setError(null) は削除済み
 
     try {
-      const { error } = await signIn(email, password)
-      if (error) {
-        setError(error)
-      }
+      await signIn(email, password)
     } catch (err) {
-      setError('An error occurred during login')
+      console.error("LoginForm handleSubmit catch error:", err)
+      setError('予期せぬエラーが発生しました') // 予期せぬエラーの場合のフォールバック
     } finally {
       setLoading(false)
     }
@@ -98,7 +101,7 @@ export default function LoginForm() {
           required
         />
       </Field>
-      {error && <Text className="text-red-600">{error}</Text>}
+      {error && <Text className="text-red-600 font-bold text-lg">{error}</Text>}
       <div className="flex items-center justify-between">
         <CheckboxField>
           <Checkbox name="remember" />

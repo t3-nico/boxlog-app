@@ -1,7 +1,7 @@
 create table tags (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
-  color text default '#3b82f6',
+  color text default '#3b82f6',      -- Tailwind blue-500 を初期値に
   parent_id uuid references tags(id) on delete cascade,
   depth smallint generated always as (
     coalesce(
@@ -14,21 +14,19 @@ create table tags (
   created_at timestamptz default now()
 );
 create index on tags(parent_id);
--- policy should be adjusted to existing RLS settings
--- placeholder for row level security policy
-create policy "individual_access" on tags for all using (auth.uid() = auth.uid());
+create policy "individual_access" on tags for all to authenticated using (true);
 
--- function to prevent depth >= 4
-create or replace function check_tag_depth()
+-- Supabase function で depth ≥ 4 の挿入／更新を拒否する（raise exception）。
+create or replace function check_tag_depth() 
 returns trigger as $$
 begin
   if (new.depth >= 4) then
-    raise exception 'Tag depth cannot exceed 3';
+    raise exception 'Tag depth cannot be 4 or greater';
   end if;
   return new;
 end;
 $$ language plpgsql;
 
-create trigger tags_depth_trigger
+create trigger tags_depth_check
   before insert or update on tags
-  for each row execute function check_tag_depth();
+  for each row execute procedure check_tag_depth();

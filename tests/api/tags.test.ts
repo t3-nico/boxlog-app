@@ -1,71 +1,107 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import request from 'supertest'
 import { POST } from '@/app/api/tags/route'
+import { GET, PUT, DELETE } from '@/app/api/tags/[id]/route'
 
-vi.mock('@/lib/supabase-server')
+// Mock the server Supabase client
+vi.mock('@/lib/supabase-server', () => ({
+  createServerSupabaseClient: vi.fn(),
+}))
 
-interface SupabaseCall {
-  type: 'select' | 'insert'
-  args?: any
-}
-
-describe('POST /api/tags', () => {
-  const module = await import('@/lib/supabase-server')
-  const mockClient = { from: vi.fn() }
-  ;(module as any).createServerSupabaseClient = () => mockClient
+describe('/api/tags', () => {
+  let mockSupabase: any
 
   beforeEach(() => {
-    mockClient.from.mockReset()
+    mockSupabase = {
+      from: vi.fn(() => mockSupabase),
+      select: vi.fn(() => mockSupabase),
+      insert: vi.fn(() => mockSupabase),
+      update: vi.fn(() => mockSupabase),
+      delete: vi.fn(() => mockSupabase),
+      eq: vi.fn(() => mockSupabase),
+      maybeSingle: vi.fn(),
+      single: vi.fn(),
+    }
+    require('@/lib/supabase-server').createServerSupabaseClient.mockReturnValue(mockSupabase)
   })
 
-  it('returns 201 on success', async () => {
-    const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null })
-    const insertSingle = vi
-      .fn()
-      .mockResolvedValue({ data: { id: '1', name: 'Tag1' }, error: null })
+  describe('POST', () => {
+    it('should create a new tag and return 201', async () => {
+      mockSupabase.maybeSingle.mockResolvedValueOnce({ data: null, error: null })
+      mockSupabase.single.mockResolvedValueOnce({ data: { id: '1', name: 'test' }, error: null })
 
-    mockClient.from.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({ maybeSingle }),
-      }),
-      insert: vi.fn().mockReturnValue({
-        select: () => ({ single: insertSingle }),
-      }),
+      const response = await request(POST)
+        .post('/api/tags')
+        .send({ name: 'test' })
+
+      expect(response.status).toBe(201)
+      expect(response.body).toEqual({ id: '1', name: 'test' })
     })
 
-    const res = await POST(new Request('http://test', { method: 'POST', body: JSON.stringify({ name: 'Tag1' }) }))
-    expect(res.status).toBe(201)
+    it('should return 409 if tag name already exists', async () => {
+      mockSupabase.maybeSingle.mockResolvedValueOnce({ data: { id: '1' }, error: null })
+
+      const response = await request(POST)
+        .post('/api/tags')
+        .send({ name: 'exists' })
+
+      expect(response.status).toBe(409)
+    })
+
+    it('should return 422 if parent tag is too deep', async () => {
+      // Mock the parent lookup to simulate a depth of 3
+      mockSupabase.maybeSingle
+        .mockResolvedValueOnce({ data: { parent_id: 'p2' }, error: null }) // depth 1
+        .mockResolvedValueOnce({ data: { parent_id: 'p3' }, error: null }) // depth 2
+        .mockResolvedValueOnce({ data: { parent_id: null }, error: null }) // depth 3
+
+      const response = await request(POST)
+        .post('/api/tags')
+        .send({ name: 'deep-tag', parent_id: 'p1' })
+
+      expect(response.status).toBe(422)
+    })
   })
 
-  it('returns 422 when depth too deep', async () => {
-    const maybeSingle = vi
-      .fn()
-      .mockResolvedValueOnce({ data: { parent_id: 'p2' }, error: null })
-      .mockResolvedValueOnce({ data: { parent_id: 'p3' }, error: null })
-      .mockResolvedValueOnce({ data: { parent_id: null }, error: null })
-      .mockResolvedValueOnce({ data: null, error: null })
-    mockClient.from.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({ maybeSingle }),
-      }),
-      insert: vi.fn(),
+  describe('GET /[id]', () => {
+    it('should return a tag and 200', async () => {
+      mockSupabase.single.mockResolvedValueOnce({ data: { id: '1', name: 'test' }, error: null })
+
+      const response = await request(GET).get('/api/tags/1')
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({ id: '1', name: 'test' })
     })
 
-    const res = await POST(
-      new Request('http://test', { method: 'POST', body: JSON.stringify({ name: 'deep', parent_id: 'p1' }) })
-    )
-    expect(res.status).toBe(422)
+    it('should return 404 if tag not found', async () => {
+      mockSupabase.single.mockResolvedValueOnce({ data: null, error: { message: 'Not found' } })
+
+      const response = await request(GET).get('/api/tags/1')
+
+      expect(response.status).toBe(404)
+    })
   })
 
-  it('returns 409 when name duplicated', async () => {
-    const maybeSingle = vi.fn().mockResolvedValue({ data: { id: 'x' }, error: null })
-    mockClient.from.mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({ maybeSingle }),
-      }),
-      insert: vi.fn(),
-    })
+  describe('PUT /[id]', () => {
+    it('should update a tag and return 200', async () => {
+      mockSupabase.single.mockResolvedValueOnce({ data: { id: '1', name: 'updated' }, error: null })
 
-    const res = await POST(new Request('http://test', { method: 'POST', body: JSON.stringify({ name: 'dup' }) }))
-    expect(res.status).toBe(409)
+      const response = await request(PUT)
+        .put('/api/tags/1')
+        .send({ name: 'updated' })
+
+      expect(response.status).toBe(200)
+      expect(response.body).toEqual({ id: '1', name: 'updated' })
+    })
+  })
+
+  describe('DELETE /[id]', () => {
+    it('should delete a tag and return 204', async () => {
+      mockSupabase.single.mockResolvedValueOnce({ data: {}, error: null })
+
+      const response = await request(DELETE).delete('/api/tags/1')
+
+      expect(response.status).toBe(204)
+    })
   })
 })

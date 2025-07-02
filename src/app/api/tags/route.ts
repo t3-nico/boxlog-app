@@ -1,69 +1,80 @@
-import { NextResponse } from 'next/server'
+import { supabaseServer } from '@/lib/supabase-server'
+import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
-import type { Database } from '@/lib/database.types'
 
-type TagsRow = Database['public']['Tables']['tags']['Row']
-type TagsInsert = Database['public']['Tables']['tags']['Insert']
-
-const tagSchema = z.object({
+const schema = z.object({
   name: z.string().min(1),
   color: z.string().optional(),
-  parent_id: z.string().uuid().nullable().optional(),
+  parent_id: z.string().uuid().optional(),
 })
 
-async function getDepth(id: string, supabase: ReturnType<typeof createServerSupabaseClient>): Promise<number | null> {
+async function checkDepth(supabase: ReturnType<typeof supabaseServer>, parentId: string): Promise<number> {
   let depth = 1
-  let current = id
-  for (let i = 0; i < 4; i++) {
-    const { data, error } = await supabase
+  let currentParentId: string | null = parentId
+
+  while (currentParentId && depth < 4) {
+    const { data, error }: { data: { parent_id: string | null } | null, error: any } = await supabase
       .from('tags')
       .select('parent_id')
-      .eq('id', current)
+      .eq('id', currentParentId)
       .maybeSingle()
-    if (error) return null
-    if (!data?.parent_id) return depth
-    current = data.parent_id
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    if (!data) {
+      break
+    }
+
+    currentParentId = data.parent_id
     depth++
   }
+
   return depth
 }
 
-export async function POST(request: Request) {
-  const body = await request.json().catch(() => null)
-  const parsed = tagSchema.safeParse(body)
+export async function POST(req: NextRequest) {
+  const supabase = supabaseServer()
+  const body = await req.json()
+
+  const parsed = schema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.message }, { status: 400 })
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
 
-  const supabase = createServerSupabaseClient()
   const { name, color, parent_id } = parsed.data
 
-  if (parent_id) {
-    const depth = await getDepth(parent_id, supabase)
-    if (!depth || depth >= 3) {
-      return NextResponse.json({ error: 'depth' }, { status: 422 })
-    }
-  }
-
-  const { data: existing } = await supabase
+  // Check for duplicate name
+  const { data: existingTag, error: existingTagError } = await supabase
     .from('tags')
     .select('id')
     .eq('name', name)
     .maybeSingle()
 
-  if (existing) {
-    return NextResponse.json({ error: 'duplicate' }, { status: 409 })
+  if (existingTagError) {
+    return NextResponse.json({ error: existingTagError.message }, { status: 500 })
+  }
+
+  if (existingTag) {
+    return NextResponse.json({ error: 'Tag with this name already exists' }, { status: 409 })
+  }
+
+  if (parent_id) {
+    const depth = await checkDepth(supabase, parent_id)
+    if (depth >= 3) {
+      return NextResponse.json({ error: 'Parent tag depth is too deep' }, { status: 422 })
+    }
   }
 
   const { data, error } = await supabase
     .from('tags')
-    .insert({ name, color, parent_id } as TagsInsert)
+    .insert({ name, color, parent_id })
     .select()
     .single()
 
-  if (error || !data) {
-    return NextResponse.json({ error: error?.message }, { status: 500 })
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
   return NextResponse.json(data, { status: 201 })
