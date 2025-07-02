@@ -57,7 +57,7 @@ export default function ResetPassword() {
         setSuccess(true)
         // Redirect to main page after 3 seconds
         setTimeout(() => {
-          router.push('/calender')
+          router.push('/calendar')
         }, 3000)
       }
     } catch (err) {
