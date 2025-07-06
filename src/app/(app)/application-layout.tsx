@@ -2,6 +2,12 @@
 
 import React, { useState } from 'react'
 import { Avatar } from '@/components/avatar'
+import { ToastProvider } from '@/components/ui/toast'
+import { ThemeProvider } from '@/contexts/theme-context'
+import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
+import { EagleSmartFolderList } from '@/components/box/eagle-smart-folder-list'
+import { EagleFolderList } from '@/components/box/eagle-folder-list'
+import { useBoxStore } from '@/lib/box-store'
 import {
   Dropdown,
   DropdownButton,
@@ -70,6 +76,21 @@ export function ApplicationLayout({
   let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
   const router = useRouter()
+  
+  // SmartFolder and Tag filtering
+  const { setSmartFolderFilter, setTagFilter, filters } = useBoxStore()
+  
+  const handleSelectSmartFolder = (folderId: string) => {
+    setSmartFolderFilter(folderId)
+  }
+
+  const handleSelectTag = (tagId: string) => {
+    const currentTags = filters.tags || []
+    const newTags = currentTags.includes(tagId) 
+      ? currentTags.filter(id => id !== tagId)
+      : [...currentTags, tagId]
+    setTagFilter(newTags)
+  }
 
   const handleSignOut = async () => {
     try {
@@ -81,13 +102,16 @@ export function ApplicationLayout({
   }
 
   return (
-    <SidebarLayout
-      navbar={
-        <Navbar>
-          <NavbarSpacer />
-        </Navbar>
-      }
-      sidebar={
+    <ThemeProvider>
+      <SidebarLayout
+        navbar={
+          <Navbar>
+            <div className="flex items-center space-x-4 ml-auto">
+              <SimpleThemeToggle />
+            </div>
+          </Navbar>
+        }
+        sidebar={
         <Sidebar collapsed={collapsed}>
           <SidebarHeader className="flex-row items-center gap-2">
             {!collapsed && inSettings && (
@@ -189,32 +213,69 @@ export function ApplicationLayout({
                   </SidebarItem>
                 </SidebarSection>
 
-                <SidebarSection className="max-lg:hidden">
-                  <SidebarHeading>
-                    {pathname.startsWith('/review') ? 'Recent Reviews' : 'Upcoming Events'}
-                  </SidebarHeading>
-                  {pathname.startsWith('/review')
-                    ? reviews.slice(0, 5).map((review) => (
-                        <SidebarItem
-                          key={review.id}
-                          href={review.url}
-                          current={pathname === review.url}
-                          indicator={false}
-                        >
-                          Review #{review.id}
-                        </SidebarItem>
-                      ))
-                    : events.map((event) => (
-                        <SidebarItem
-                          key={event.id}
-                          href={event.url}
-                          current={pathname === event.url}
-                          indicator={false}
-                        >
-                          {event.name}
-                        </SidebarItem>
-                      ))}
-                </SidebarSection>
+                {pathname.startsWith('/box') && (
+                  <SidebarSection className="mt-4">
+                    <SidebarHeading>Box</SidebarHeading>
+                    <SidebarItem
+                      href="/box"
+                      current={pathname === '/box'}
+                      indicator={false}
+                      className="pl-6"
+                    >
+                      <SidebarLabel>Inbox</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/box/today"
+                      current={pathname === '/box/today'}
+                      indicator={false}
+                      className="pl-6"
+                    >
+                      <SidebarLabel>Today</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/box/filters"
+                      current={pathname === '/box/filters'}
+                      indicator={false}
+                      className="pl-6"
+                    >
+                      <SidebarLabel>Filters & Labels</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+                )}
+
+                {pathname.startsWith('/box') && !collapsed && (
+                  <>
+                    <div className="mt-4 px-4">
+                      <EagleSmartFolderList
+                        onSelectFolder={handleSelectSmartFolder}
+                        selectedFolderId={filters.smartFolder || ''}
+                      />
+                    </div>
+
+                    <div className="mt-4 px-4">
+                      <EagleFolderList
+                        onSelectTag={handleSelectTag}
+                        selectedTagIds={filters.tags || []}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {pathname.startsWith('/review') && (
+                  <SidebarSection className="max-lg:hidden">
+                    <SidebarHeading>Recent Reviews</SidebarHeading>
+                    {reviews.slice(0, 5).map((review) => (
+                      <SidebarItem
+                        key={review.id}
+                        href={review.url}
+                        current={pathname === review.url}
+                        indicator={false}
+                      >
+                        Review #{review.id}
+                      </SidebarItem>
+                    ))}
+                  </SidebarSection>
+                )}
 
                 {pathname.startsWith('/review') && (
                   <>
@@ -424,7 +485,10 @@ export function ApplicationLayout({
       }
       collapsed={collapsed}
     >
-      {children}
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     </SidebarLayout>
+    </ThemeProvider>
   )
 }

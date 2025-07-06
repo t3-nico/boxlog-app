@@ -1,6 +1,6 @@
 import '@/styles/tailwind.css'
 import type { Metadata } from 'next'
-import { AuthProvider } from '@/contexts/AuthContext'
+import { Providers } from '@/components/providers'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,9 +23,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </head>
       <body>
-        <AuthProvider>
+        <Providers>
           {children}
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   )

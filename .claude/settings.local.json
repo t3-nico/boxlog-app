@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run:*)",
+      "Bash(npx next lint:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(npm install:*)",
+      "Bash(pkill:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(touch:*)",
+      "Bash(npx supabase login)",
+      "Bash(npx supabase link:*)",
+      "Bash(npx supabase gen types typescript:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": []
+  }
+}

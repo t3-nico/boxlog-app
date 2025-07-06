@@ -1,0 +1,164 @@
+/* Theme CSS Variables */
+:root {
+  /* Light theme variables */
+  --background: 255 255 255;
+  --foreground: 15 23 42;
+  --card: 255 255 255;
+  --card-foreground: 15 23 42;
+  --popover: 255 255 255;
+  --popover-foreground: 15 23 42;
+  --muted: 248 250 252;
+  --muted-foreground: 100 116 139;
+  --border: 226 232 240;
+  --input: 226 232 240;
+  --ring: 59 130 246;
+  
+  /* Default blue color scheme */
+  --color-primary: 59 130 246;
+  --color-primary-foreground: 255 255 255;
+  --color-accent: 219 234 254;
+  --color-accent-foreground: 30 64 175;
+}
+
+.dark {
+  /* Dark theme variables */
+  --background: 2 6 23;
+  --foreground: 248 250 252;
+  --card: 15 23 42;
+  --card-foreground: 248 250 252;
+  --popover: 15 23 42;
+  --popover-foreground: 248 250 252;
+  --muted: 30 41 59;
+  --muted-foreground: 148 163 184;
+  --border: 51 65 85;
+  --input: 51 65 85;
+  --ring: 96 165 250;
+  
+  /* Default blue color scheme for dark */
+  --color-primary: 96 165 250;
+  --color-primary-foreground: 30 58 138;
+  --color-accent: 30 58 138;
+  --color-accent-foreground: 219 234 254;
+}
+
+/* Utility classes using CSS variables */
+.bg-background { background-color: rgb(var(--background)); }
+.text-foreground { color: rgb(var(--foreground)); }
+.bg-card { background-color: rgb(var(--card)); }
+.text-card-foreground { color: rgb(var(--card-foreground)); }
+.bg-popover { background-color: rgb(var(--popover)); }
+.text-popover-foreground { color: rgb(var(--popover-foreground)); }
+.bg-muted { background-color: rgb(var(--muted)); }
+.text-muted-foreground { color: rgb(var(--muted-foreground)); }
+.border-border { border-color: rgb(var(--border)); }
+.bg-input { background-color: rgb(var(--input)); }
+.ring-ring { --tw-ring-color: rgb(var(--ring)); }
+
+.bg-primary { background-color: rgb(var(--color-primary)); }
+.text-primary { color: rgb(var(--color-primary)); }
+.text-primary-foreground { color: rgb(var(--color-primary-foreground)); }
+.bg-accent { background-color: rgb(var(--color-accent)); }
+.text-accent-foreground { color: rgb(var(--color-accent-foreground)); }
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Override default styles to use theme variables */
+body {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+}
+
+/* Card styling */
+.theme-card {
+  background-color: rgb(var(--card));
+  color: rgb(var(--card-foreground));
+  border-color: rgb(var(--border));
+}
+
+/* Muted elements */
+.theme-muted {
+  background-color: rgb(var(--muted));
+  color: rgb(var(--muted-foreground));
+}
+
+/* Input elements */
+.theme-input {
+  background-color: rgb(var(--input));
+  border-color: rgb(var(--border));
+  color: rgb(var(--foreground));
+}
+
+.theme-input:focus {
+  ring-color: rgb(var(--ring));
+}
+
+/* Primary button */
+.theme-primary {
+  background-color: rgb(var(--color-primary));
+  color: rgb(var(--color-primary-foreground));
+}
+
+.theme-primary:hover {
+  background-color: rgb(var(--color-primary) / 0.9);
+}
+
+/* Accent elements */
+.theme-accent {
+  background-color: rgb(var(--color-accent));
+  color: rgb(var(--color-accent-foreground));
+}
+
+/* Dark mode specific adjustments */
+.dark .bg-white {
+  background-color: rgb(var(--card));
+}
+
+.dark .text-gray-900 {
+  color: rgb(var(--foreground));
+}
+
+.dark .text-gray-600 {
+  color: rgb(var(--muted-foreground));
+}
+
+.dark .text-gray-500 {
+  color: rgb(var(--muted-foreground) / 0.8);
+}
+
+.dark .border-gray-200 {
+  border-color: rgb(var(--border));
+}
+
+.dark .border-gray-300 {
+  border-color: rgb(var(--border));
+}
+
+.dark .bg-gray-50 {
+  background-color: rgb(var(--muted));
+}
+
+.dark .bg-gray-100 {
+  background-color: rgb(var(--muted));
+}
+
+/* Scrollbar styling for dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: rgb(var(--muted));
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgb(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground) / 0.5);
+}

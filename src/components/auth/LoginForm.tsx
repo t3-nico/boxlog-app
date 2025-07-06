@@ -117,7 +117,7 @@ export default function LoginForm() {
         {loading ? 'Logging in...' : 'Login'}
       </Button>
       <Text className="text-center">
-        Don't have an account?{' '}
+        Don&apos;t have an account?{' '}
         <TextLink href="/auth/signup">
           <Strong>Sign up</Strong>
         </TextLink>

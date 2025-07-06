@@ -1,87 +1,204 @@
-import { Badge } from '@/components/badge'
+'use client'
+
+import { useState } from 'react'
+import { TaskTable } from '@/components/box/task-table'
+import { TaskFilters } from '@/components/box/task-filters'
+import { TaskBulkActions } from '@/components/box/task-bulk-actions'
+import { TaskForm } from '@/components/tasks/TaskForm'
+import { Dashboard } from '@/components/box/dashboard'
+import { BoardView } from '@/components/box/board-view'
+import { Avatar } from '@/components/avatar'
 import { Button } from '@/components/button'
-import { Divider } from '@/components/divider'
-import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/dropdown'
-import { Heading } from '@/components/heading'
-import { Input, InputGroup } from '@/components/input'
-import { Link } from '@/components/link'
-import { Select } from '@/components/select'
-import { getEvents } from '@/data'
-import { EllipsisVerticalIcon, MagnifyingGlassIcon } from '@heroicons/react/16/solid'
-import type { Metadata } from 'next'
+import { useBoxStore } from '@/lib/box-store'
+import { useSmartFolderStore } from '@/lib/smart-folder-store'
+import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
+import { useFilterUrlSync } from '@/hooks/use-filter-url-sync'
+import { ChartBarIcon, TableCellsIcon, Squares2X2Icon } from '@heroicons/react/16/solid'
 
-export const metadata: Metadata = {
-  title: 'Box',
-}
+export default function Box() {
+  const { 
+    getSortedTasks, 
+    getSelectedTasks, 
+    selectAllTasks, 
+    deleteTask,
+    filters,
+    tasks: allTasks
+  } = useBoxStore()
+  const { getMatchingTasks } = useSmartFolderStore()
+  
+  // Get tasks based on current filters (including SmartFolder)
+  const tasks = filters.smartFolder 
+    ? getMatchingTasks(allTasks, filters.smartFolder)
+    : getSortedTasks()
+  const selectedTasks = getSelectedTasks()
+  
+  const [showTaskForm, setShowTaskForm] = useState(false)
+  const [activeView, setActiveView] = useState<'table' | 'dashboard' | 'board'>('table')
 
-export default async function Box() {
-  let events = await getEvents()
+  // Sync filters with URL
+  useFilterUrlSync()
+
+  const handleViewChange = (view: 'table' | 'dashboard' | 'board') => {
+    console.log('Changing view from', activeView, 'to', view)
+    setActiveView(view)
+  }
+
+  const handleNewTask = (status?: string) => {
+    setShowTaskForm(true)
+    // TODO: Set initial status if provided
+  }
+
+  const handleEditTask = (task: any) => {
+    // TODO: Handle task editing from board view
+    console.log('Edit task:', task)
+  }
+
+  const handleDeleteSelected = () => {
+    if (selectedTasks.length === 0) return
+    
+    if (window.confirm(`Are you sure you want to delete ${selectedTasks.length} selected task${selectedTasks.length !== 1 ? 's' : ''}?`)) {
+      selectedTasks.forEach(task => deleteTask(task.id))
+    }
+  }
+
+  const handleSelectAll = () => {
+    const allSelected = tasks.length > 0 && selectedTasks.length === tasks.length
+    selectAllTasks(!allSelected)
+  }
+
+  const handleClearSelection = () => {
+    selectAllTasks(false)
+  }
+
+  useKeyboardShortcuts({
+    onNewTask: handleNewTask,
+    onDeleteSelected: handleDeleteSelected,
+    onSelectAll: handleSelectAll,
+    onClearSelection: handleClearSelection,
+  })
+
 
   return (
-    <>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="max-sm:w-full sm:flex-1">
-          <Heading>Box</Heading>
-          <div className="mt-4 flex max-w-xl gap-4">
-            <div className="flex-1">
-              <InputGroup>
-                <MagnifyingGlassIcon />
-                <Input name="search" placeholder="Search events&hellip;" />
-              </InputGroup>
-            </div>
-            <div>
-              <Select name="sort_by">
-                <option value="name">Sort by name</option>
-                <option value="date">Sort by date</option>
-                <option value="status">Sort by status</option>
-              </Select>
+    <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
+      <div className="flex items-center justify-between space-y-2">
+        <div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Welcome back!</h2>
+          <p className="text-muted-foreground">
+            {activeView === 'dashboard' 
+              ? "Here's an overview of your task progress!" 
+              : activeView === 'board'
+              ? "Manage your tasks with a kanban board!"
+              : "Here's a list of your tasks for this month!"
+            }
+          </p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center rounded-md border">
+            {activeView === 'dashboard' ? (
+              <Button
+                onClick={() => handleViewChange('dashboard')}
+                className="flex items-center space-x-1 px-2 py-1 text-xs"
+              >
+                <ChartBarIcon className="h-4 w-4" />
+                <span className="hidden lg:inline">Dashboard</span>
+              </Button>
+            ) : (
+              <Button
+                plain
+                onClick={() => handleViewChange('dashboard')}
+                className="flex items-center space-x-1 px-2 py-1 text-xs"
+              >
+                <ChartBarIcon className="h-4 w-4" />
+                <span className="hidden lg:inline">Dashboard</span>
+              </Button>
+            )}
+            {activeView === 'board' ? (
+              <Button
+                onClick={() => handleViewChange('board')}
+                className="flex items-center space-x-1 px-2 py-1 text-xs"
+              >
+                <Squares2X2Icon className="h-4 w-4" />
+                <span className="hidden lg:inline">Board</span>
+              </Button>
+            ) : (
+              <Button
+                plain
+                onClick={() => handleViewChange('board')}
+                className="flex items-center space-x-1 px-2 py-1 text-xs"
+              >
+                <Squares2X2Icon className="h-4 w-4" />
+                <span className="hidden lg:inline">Board</span>
+              </Button>
+            )}
+            {activeView === 'table' ? (
+              <Button
+                onClick={() => handleViewChange('table')}
+                className="flex items-center space-x-1 px-2 py-1 text-xs"
+              >
+                <TableCellsIcon className="h-4 w-4" />
+                <span className="hidden lg:inline">Table</span>
+              </Button>
+            ) : (
+              <Button
+                plain
+                onClick={() => handleViewChange('table')}
+                className="flex items-center space-x-1 px-2 py-1 text-xs"
+              >
+                <TableCellsIcon className="h-4 w-4" />
+                <span className="hidden lg:inline">Table</span>
+              </Button>
+            )}
+          </div>
+          <Avatar
+            src="/users/erica.jpg"
+            className="h-8 w-8"
+          />
+        </div>
+      </div>
+      {activeView === 'table' && (
+        <>
+          <TaskFilters 
+            currentView={activeView}
+            onViewChange={handleViewChange}
+          />
+          {selectedTasks.length > 0 && <TaskBulkActions />}
+          <div className="space-y-4">
+            <TaskTable />
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div>
+                Showing {tasks.length} of {tasks.length} task{tasks.length !== 1 ? 's' : ''}
+              </div>
+              <div className="hidden md:block text-xs text-muted-foreground">
+                Shortcuts: Ctrl+N (new), Ctrl+A (select all), Delete (remove), Esc (clear)
+              </div>
             </div>
           </div>
-        </div>
-        <Button>Create event</Button>
-      </div>
-      <ul className="mt-10">
-        {events.map((event, index) => (
-          <li key={event.id}>
-            <Divider soft={index > 0} />
-            <div className="flex items-center justify-between">
-              <div key={event.id} className="flex gap-6 py-6">
-                <div className="w-32 shrink-0">
-                  <Link href={event.url} aria-hidden="true">
-                    <img className="aspect-3/2 rounded-lg shadow-sm" src={event.imgUrl} alt="" />
-                  </Link>
-                </div>
-                <div className="space-y-1.5">
-                  <div className="text-base/6 font-semibold">
-                    <Link href={event.url}>{event.name}</Link>
-                  </div>
-                  <div className="text-xs/6 text-zinc-500">
-                    {event.date} at {event.time} <span aria-hidden="true">·</span> {event.location}
-                  </div>
-                  <div className="text-xs/6 text-zinc-600">
-                    {event.ticketsSold}/{event.ticketsAvailable} tickets sold
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Badge className="max-sm:hidden" color={event.status === 'On Sale' ? 'lime' : 'zinc'}>
-                  {event.status}
-                </Badge>
-                <Dropdown>
-                  <DropdownButton plain aria-label="More options">
-                    <EllipsisVerticalIcon />
-                  </DropdownButton>
-                  <DropdownMenu anchor="bottom end">
-                    <DropdownItem href={event.url}>View</DropdownItem>
-                    <DropdownItem>Edit</DropdownItem>
-                    <DropdownItem>Delete</DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </>
+        </>
+      )}
+      
+      {activeView === 'dashboard' && <Dashboard />}
+      
+      {activeView === 'board' && (
+        <>
+          <TaskFilters 
+            currentView={activeView}
+            onViewChange={handleViewChange}
+          />
+          <div className="min-h-[600px] h-[calc(100vh-250px)]">
+            <BoardView
+              onEditTask={handleEditTask}
+              onAddTask={handleNewTask}
+            />
+          </div>
+        </>
+      )}
+      {showTaskForm && (
+        <TaskForm
+          task={null}
+          open={showTaskForm}
+          onClose={() => setShowTaskForm(false)}
+        />
+      )}
+    </div>
   )
 }
