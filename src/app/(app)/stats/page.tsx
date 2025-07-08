@@ -1,76 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Avatar } from '@/components/avatar'
-import { Button } from '@/components/button'
-import { Heading } from '@/components/heading'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
+import { useState } from 'react'
 import { ChartBarIcon } from '@heroicons/react/24/outline'
+import { Heading } from '@/components/heading'
 import { useChatContext } from '@/contexts/chat-context'
 
-interface ReviewType {
-  id: string
-  date: string
-  customer: { name: string }
-  event: { name: string; thumbUrl: string }
-  amount: { usd: string }
-  url: string
-}
-
-export default function Reviews() {
-  const [reviews, setReviews] = useState<ReviewType[]>([])
+export default function Stats() {
   const { toggleChat, state } = useChatContext()
-
-  useEffect(() => {
-    // モックデータ
-    const mockReviews = [
-      {
-        id: '001',
-        date: '2024-01-15',
-        customer: { name: 'John Doe' },
-        event: { name: 'Sample Event', thumbUrl: '/teams/catalyst.svg' },
-        amount: { usd: '$125' },
-        url: '/review/001'
-      }
-    ]
-    setReviews(mockReviews)
-  }, [])
 
   return (
     <div className="flex flex-col h-full relative">
       <div className={`flex-1 p-4 md:p-6 lg:p-10 transition-all duration-300 ${state.isOpen ? 'mr-80' : ''}`}>
         <div className="mx-auto max-w-6xl">
-          <div className="flex items-end justify-between gap-4">
-            <Heading>Reviews</Heading>
-            <Button className="-my-0.5">Create review</Button>
+          <Heading>Stats View</Heading>
+          <div className="mt-8 flex items-center justify-center h-64 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+            <div className="text-center">
+              <ChartBarIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">Statistics view coming soon</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                This feature is under development.
+              </p>
+            </div>
           </div>
-          <Table className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
-            <TableHead>
-              <TableRow>
-                <TableHeader>Review number</TableHeader>
-                <TableHeader>Purchase date</TableHeader>
-                <TableHeader>Customer</TableHeader>
-                <TableHeader>Event</TableHeader>
-                <TableHeader className="text-right">Amount</TableHeader>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {reviews.map((review) => (
-                <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
-                  <TableCell>{review.id}</TableCell>
-                  <TableCell className="text-zinc-500">{review.date}</TableCell>
-                  <TableCell>{review.customer.name}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Avatar src={review.event.thumbUrl} className="size-6" />
-                      <span>{review.event.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">US{review.amount.usd}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
         </div>
       </div>
     </div>

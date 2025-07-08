@@ -17,6 +17,7 @@ import { OptimizedSidebarSection } from '@/components/sidebar/OptimizedSidebarSe
 import { TagsList } from '@/components/tags/tags-list'
 import { SmartFolderList } from '@/components/smart-folders/smart-folder-list'
 import { useDevelopmentPerformanceMonitor } from '@/hooks/usePerformanceMonitor'
+import { sidebarConfig } from '@/config/sidebarConfig'
 import {
   Dropdown,
   DropdownButton,
@@ -67,6 +68,9 @@ import {
   ChevronRightIcon,
   TrashIcon,
   ClockIcon,
+  TableCellsIcon,
+  ChartBarIcon,
+  Squares2X2Icon,
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
@@ -205,55 +209,26 @@ export function ApplicationLayout({
                 <div className="h-4" />
 
                 <SidebarSection>
+                  <SidebarHeading>Views</SidebarHeading>
                   <SidebarItem href="/calendar" current={pathname === '/calendar'}>
                     <CalendarIcon />
                     <SidebarLabel>Calendar</SidebarLabel>
                   </SidebarItem>
-                  <SidebarItem
-                    href="/box"
-                    current={pathname.startsWith('/box')}
-                  >
-                    <CubeIcon />
-                    <SidebarLabel>Box</SidebarLabel>
+                  <SidebarItem href="/table" current={pathname.startsWith('/table')}>
+                    <TableCellsIcon />
+                    <SidebarLabel>Table</SidebarLabel>
                   </SidebarItem>
-                  <SidebarItem
-                    href="/review"
-                    current={pathname.startsWith('/review')}
-                  >
-                    <DocumentTextIcon />
-                    <SidebarLabel>Review</SidebarLabel>
+                  <SidebarItem href="/board" current={pathname.startsWith('/board')}>
+                    <Squares2X2Icon />
+                    <SidebarLabel>Board</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem href="/stats" current={pathname.startsWith('/stats')}>
+                    <ChartBarIcon />
+                    <SidebarLabel>Stats</SidebarLabel>
                   </SidebarItem>
                 </SidebarSection>
 
-                {pathname.startsWith('/box') && (
-                  <SidebarSection className="mt-4">
-                    <SidebarHeading>Box</SidebarHeading>
-                    <SidebarItem
-                      href="/box"
-                      current={pathname === '/box'}
-                      indicator={false}
-                      className="pl-6"
-                    >
-                      <SidebarLabel>Inbox</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/box/today"
-                      current={pathname === '/box/today'}
-                      indicator={false}
-                      className="pl-6"
-                    >
-                      <SidebarLabel>Today</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/box/filters"
-                      current={pathname === '/box/filters'}
-                      indicator={false}
-                      className="pl-6"
-                    >
-                      <SidebarLabel>Filters & Labels</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-                )}
+
 
                 {!collapsed && (
                   <>
@@ -275,125 +250,6 @@ export function ApplicationLayout({
                   </>
                 )}
 
-                {pathname.startsWith('/review') && (
-                  <SidebarSection className="max-lg:hidden">
-                    <SidebarHeading>Recent Reviews</SidebarHeading>
-                    {reviews.slice(0, 5).map((review) => (
-                      <SidebarItem
-                        key={review.id}
-                        href={review.url}
-                        current={pathname === review.url}
-                        indicator={false}
-                      >
-                        Review #{review.id}
-                      </SidebarItem>
-                    ))}
-                  </SidebarSection>
-                )}
-
-                {pathname.startsWith('/review') && (
-                  <>
-                    <SidebarSection className="mt-8">
-                      <SidebarHeading>Reflect</SidebarHeading>
-                      <SidebarItem
-                        href="/review/reflect/today"
-                        current={pathname.startsWith('/review/reflect/today')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Today</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/reflect/week"
-                        current={pathname.startsWith('/review/reflect/week')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Week</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/reflect/month"
-                        current={pathname.startsWith('/review/reflect/month')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Month</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/reflect/all"
-                        current={pathname.startsWith('/review/reflect/all')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>All</SidebarLabel>
-                      </SidebarItem>
-                    </SidebarSection>
-
-                    <SidebarSection className="mt-8">
-                      <SidebarHeading>Act</SidebarHeading>
-                      <SidebarItem
-                        href="/review/act/next"
-                        current={pathname.startsWith('/review/act/next')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Next</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/act/try"
-                        current={pathname.startsWith('/review/act/try')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Try</SidebarLabel>
-                      </SidebarItem>
-                    </SidebarSection>
-
-                    <SidebarSection className="mt-8">
-                      <SidebarHeading>My Compass</SidebarHeading>
-                      <SidebarItem
-                        href="/review/purpose"
-                        current={pathname.startsWith('/review/purpose')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Purpose</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/value"
-                        current={pathname.startsWith('/review/value')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Value</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/principles"
-                        current={pathname.startsWith('/review/principles')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Principles</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/goals"
-                        current={pathname.startsWith('/review/goals')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Goals</SidebarLabel>
-                      </SidebarItem>
-                      <SidebarItem
-                        href="/review/connpass"
-                        current={pathname.startsWith('/review/connpass')}
-                        indicator={false}
-                      >
-                        <DocumentTextIcon className="w-4 h-4" />
-                        <SidebarLabel>Connpass</SidebarLabel>
-                      </SidebarItem>
-                    </SidebarSection>
-                  </>
-                )}
               </>
             )}
 
@@ -513,6 +369,18 @@ export function ApplicationLayout({
               </>
             )}
 
+            {/* ヘルプとアップグレードボタン */}
+            {!collapsed && (() => {
+              const supportSection = sidebarConfig.find(section => section.id === 'support')
+              return supportSection ? (
+                <DynamicSidebarSection
+                  section={supportSection}
+                  currentPath={pathname}
+                  collapsed={collapsed}
+                />
+              ) : null
+            })()}
+            
             <SidebarSpacer />
           </SidebarBody>
         </Sidebar>
