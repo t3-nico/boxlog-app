@@ -25,7 +25,7 @@ interface DynamicSidebarSectionProps {
 export function DynamicSidebarSection({ section, currentPath, collapsed = false }: DynamicSidebarSectionProps) {
   return (
     <SidebarSection>
-      {section.title && !collapsed && (
+      {section.title && !collapsed && section.id !== 'support' && (
         <SidebarHeading>{section.title}</SidebarHeading>
       )}
       {section.title && collapsed && (
@@ -107,7 +107,6 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
             // アップグレードボタンは特別なスタイル
             return (
               <div key={item.id}>
-                <div className="h-0.5" />
                 <div className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 transition-colors cursor-pointer mb-2">
                   <a href={item.href} className="flex w-full items-center gap-3">
                     <IconComponent className="size-5 shrink-0" />

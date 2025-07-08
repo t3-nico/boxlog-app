@@ -265,9 +265,9 @@ export function TagsList({
       <div className="flex items-center justify-between w-full">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded px-2 py-1 transition-colors"
+          className="flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
         >
-          <span className="peer text-xs font-medium">Tags</span>
+          <span className="peer">Tags</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
             {isExpanded ? (
               <ChevronDownIcon className="h-3 w-3" />
