@@ -19,8 +19,15 @@ export function useAuth() {
     error: null,
   })
 
-  // クライアント用supabaseインスタンス
-  const supabase = supabaseBrowser()
+  // クライアントサイドでのみsupabaseインスタンスを作成
+  const [supabase, setSupabase] = useState<ReturnType<typeof supabaseBrowser> | null>(null)
+
+  useEffect(() => {
+    // クライアントサイドでのみ初期化
+    if (typeof window !== 'undefined') {
+      setSupabase(supabaseBrowser())
+    }
+  }, [])
 
   // エラーハンドリング関数
   const handleAuthError = useCallback((error: AuthError | null) => {
@@ -40,6 +47,8 @@ export function useAuth() {
   }, [])
 
   useEffect(() => {
+    if (!supabase) return
+
     // 現在のセッションを取得
     const getSession = async () => {
       try {
@@ -86,9 +95,13 @@ export function useAuth() {
     )
 
     return () => subscription.unsubscribe()
-  }, [handleAuthError])
+  }, [supabase, handleAuthError])
 
   const signUp = async (email: string, password: string, metadata?: any) => {
+    if (!supabase) {
+      return { data: null, error: 'Supabase not initialized' }
+    }
+
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
     try {
@@ -117,6 +130,10 @@ export function useAuth() {
   }
 
   const signIn = async (email: string, password: string) => {
+    if (!supabase) {
+      return { data: null, error: 'Supabase not initialized' }
+    }
+
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
     try {
@@ -141,6 +158,10 @@ export function useAuth() {
   }
 
   const signInWithOAuth = async (provider: 'google' | 'apple') => {
+    if (!supabase) {
+      return { data: null, error: 'Supabase not initialized' }
+    }
+
     setAuthState((prev) => ({ ...prev, loading: true, error: null }))
 
     try {
@@ -167,6 +188,10 @@ export function useAuth() {
   }
 
   const signOut = async () => {
+    if (!supabase) {
+      return { error: 'Supabase not initialized' }
+    }
+
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
     try {
@@ -188,6 +213,10 @@ export function useAuth() {
   }
 
   const resetPassword = async (email: string) => {
+    if (!supabase) {
+      return { data: null, error: 'Supabase not initialized' }
+    }
+
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
     try {
@@ -211,6 +240,10 @@ export function useAuth() {
   }
 
   const updatePassword = async (password: string) => {
+    if (!supabase) {
+      return { data: null, error: 'Supabase not initialized' }
+    }
+
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
 
     try {

@@ -4,10 +4,19 @@ import React, { useState } from 'react'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
 import { ThemeProvider } from '@/contexts/theme-context'
+import { useAuthContext } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { EagleSmartFolderList } from '@/components/box/eagle-smart-folder-list'
 import { EagleFolderList } from '@/components/box/eagle-folder-list'
 import { useBoxStore } from '@/lib/box-store'
+import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
+import { useSidebarMenu } from '@/hooks/useSidebarMenu'
+import { DynamicSidebarSection } from '@/components/sidebar/DynamicSidebarSection'
+import { OptimizedSidebarSection } from '@/components/sidebar/OptimizedSidebarSection'
+import { TagsList } from '@/components/tags/tags-list'
+import { SmartFolderList } from '@/components/smart-folders/smart-folder-list'
+import { useDevelopmentPerformanceMonitor } from '@/hooks/usePerformanceMonitor'
 import {
   Dropdown,
   DropdownButton,
@@ -29,8 +38,6 @@ import {
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { getEvents, getReviews } from '@/data'
-import { useAuthContext } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
@@ -58,6 +65,8 @@ import {
   ClipboardDocumentListIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  TrashIcon,
+  ClockIcon,
 } from '@heroicons/react/20/solid'
 import { usePathname } from 'next/navigation'
 
@@ -107,6 +116,9 @@ export function ApplicationLayout({
         navbar={
           <Navbar>
             <div className="flex items-center space-x-4 ml-auto">
+              <NavbarItem href="#" aria-label="Notifications">
+                <BellAlertIcon />
+              </NavbarItem>
               <SimpleThemeToggle />
             </div>
           </Navbar>
@@ -243,17 +255,19 @@ export function ApplicationLayout({
                   </SidebarSection>
                 )}
 
-                {pathname.startsWith('/box') && !collapsed && (
+                {!collapsed && (
                   <>
-                    <div className="mt-4 px-4">
-                      <EagleSmartFolderList
+                    <div className="mt-4 px-2">
+                      <SmartFolderList
+                        collapsed={collapsed}
                         onSelectFolder={handleSelectSmartFolder}
                         selectedFolderId={filters.smartFolder || ''}
                       />
                     </div>
 
-                    <div className="mt-4 px-4">
-                      <EagleFolderList
+                    <div className="mt-4 px-2">
+                      <TagsList
+                        collapsed={collapsed}
                         onSelectTag={handleSelectTag}
                         selectedTagIds={filters.tags || []}
                       />
@@ -462,6 +476,26 @@ export function ApplicationLayout({
                   >
                     <ArrowDownTrayIcon />
                     <SidebarLabel>Data & Export</SidebarLabel>
+                  </SidebarItem>
+                  <SidebarItem
+                    href="/settings/trash"
+                    current={pathname.startsWith('/settings/trash')}
+                    indicator={false}
+                  >
+                    <TrashIcon />
+                    <SidebarLabel>Trash</SidebarLabel>
+                  </SidebarItem>
+                </SidebarSection>
+
+                <SidebarSection className="mt-8">
+                  <SidebarHeading>Personal</SidebarHeading>
+                  <SidebarItem
+                    href="/settings/chronotype"
+                    current={pathname.startsWith('/settings/chronotype')}
+                    indicator={false}
+                  >
+                    <ClockIcon />
+                    <SidebarLabel>Chronotype</SidebarLabel>
                   </SidebarItem>
                 </SidebarSection>
 

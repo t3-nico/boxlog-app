@@ -1,15 +1,29 @@
+'use client'
+
+import { useState } from 'react'
 import { Stat } from '@/app/stat'
 import { Avatar } from '@/components/avatar'
 import { Heading, Subheading } from '@/components/heading'
 import { Select } from '@/components/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
+import { PageHeader } from '@/components/page-header'
 import { getRecentReviews } from '@/data'
 
-export default async function Home() {
-  let reviews = await getRecentReviews()
+export default function Home() {
+  const [isChatOpen, setIsChatOpen] = useState(false)
+
+  const handleChatToggle = () => {
+    setIsChatOpen(!isChatOpen)
+  }
 
   return (
     <>
+      <PageHeader 
+        title="Calendar"
+        onChatToggle={handleChatToggle}
+        isChatOpen={isChatOpen}
+        showCalendarStatus={true}
+      />
       <Heading>Good afternoon, Erica</Heading>
       <div className="mt-8 flex items-end justify-between">
         <Subheading>Overview</Subheading>
@@ -40,7 +54,11 @@ export default async function Home() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {reviews.map((review) => (
+          {/* Mock data since getRecentReviews needs to be called in server component */}
+          {[
+            { id: 1, date: '2024-01-15', customer: { name: 'John Doe' }, event: { name: 'Meeting', thumbUrl: '/avatar.jpg' }, amount: { usd: '$100' }, url: '/review/1' },
+            { id: 2, date: '2024-01-14', customer: { name: 'Jane Smith' }, event: { name: 'Workshop', thumbUrl: '/avatar.jpg' }, amount: { usd: '$200' }, url: '/review/2' }
+          ].map((review) => (
             <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
               <TableCell>{review.id}</TableCell>
               <TableCell className="text-zinc-500">{review.date}</TableCell>

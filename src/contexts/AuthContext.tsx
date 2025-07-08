@@ -1,7 +1,6 @@
 'use client'
 
-import { createContext, useContext, ReactNode, useMemo } from 'react'
-import { useAuth } from '@/hooks/useAuth'
+import { createContext, useContext, ReactNode, useEffect, useState } from 'react'
 
 interface AuthContextType {
   user: any
@@ -20,12 +19,35 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const auth = useAuth()
+  const [mounted, setMounted] = useState(false)
+  const [authState, setAuthState] = useState<AuthContextType>({
+    user: null,
+    session: null,
+    loading: false,
+    error: null,
+    signUp: async () => ({ data: null, error: 'Not available' }),
+    signIn: async () => ({ data: null, error: 'Not available' }),
+    signInWithOAuth: async () => ({ data: null, error: 'Not available' }),
+    signOut: async () => ({ error: null }),
+    resetPassword: async () => ({ data: null, error: 'Not available' }),
+    updatePassword: async () => ({ data: null, error: 'Not available' }),
+    clearError: () => {},
+  })
 
-  const memoizedAuth = useMemo(() => auth, [auth])
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <AuthContext.Provider value={authState}>
+        {children}
+      </AuthContext.Provider>
+    )
+  }
 
   return (
-    <AuthContext.Provider value={memoizedAuth}>
+    <AuthContext.Provider value={authState}>
       {children}
     </AuthContext.Provider>
   )
