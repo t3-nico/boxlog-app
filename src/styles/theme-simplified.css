@@ -1,0 +1,445 @@
+/* Simplified Theme CSS - Let Tailwind handle most of the dark mode */
+
+/* Neutral color palette definition */
+:root {
+  --color-neutral-50: 250 250 250;
+  --color-neutral-100: 245 245 245;
+  --color-neutral-200: 229 229 229;
+  --color-neutral-300: 212 212 212;
+  --color-neutral-400: 163 163 163;
+  --color-neutral-500: 115 115 115;
+  --color-neutral-600: 82 82 82;
+  --color-neutral-700: 64 64 64;
+  --color-neutral-800: 38 38 38;
+  --color-neutral-900: 23 23 23;
+  --color-neutral-950: 10 10 10;
+}
+
+/* ライトモード */
+:root {
+  /* 背景 */
+  --bg-primary: 250 250 250;    /* neutral-50相当 - メイン背景 */
+  --bg-secondary: 245 245 245;  /* neutral-100相当 - サイドバー背景 */
+  --bg-card: 229 229 229;       /* neutral-200相当 - カード背景 */
+  
+  /* テキスト */
+  --text-primary: 23 23 23;     /* neutral-900相当 */
+  --text-secondary: 82 82 82;   /* neutral-600相当 */
+  --text-muted: 115 115 115;    /* neutral-500相当 */
+  
+  /* アイコン */
+  --icon-primary: 115 115 115;  /* neutral-500相当 - 通常のアイコン色 */
+  --icon-secondary: 163 163 163; /* neutral-400相当 - セカンダリアイコン色 */
+  
+  /* ボーダー */
+  --border-primary: 229 229 229;  /* neutral-200相当 */
+  --border-secondary: 212 212 212; /* neutral-300相当 */
+  
+  /* ホバー */
+  --hover-bg: 229 229 229;      /* neutral-200相当 - ホバー背景 */
+  --hover-text: 23 23 23;       /* neutral-900相当 - ホバー時のテキスト色 */
+  --hover-icon: 23 23 23;       /* neutral-900相当 - ホバー時のアイコン色 */
+}
+
+/* ダークモード */
+.dark {
+  /* 背景 */
+  --bg-primary: 23 23 23;       /* neutral-900相当 */
+  --bg-secondary: 10 10 10;     /* neutral-950相当 */
+  --bg-card: 38 38 38;          /* neutral-800相当 */
+  
+  /* テキスト */
+  --text-primary: 250 250 250;  /* neutral-100相当 */
+  --text-secondary: 163 163 163; /* neutral-400相当 */
+  --text-muted: 163 163 163;    /* neutral-400相当 */
+  
+  /* ボーダー */
+  --border-primary: 64 64 64;   /* neutral-700相当 */
+  --border-secondary: 82 82 82; /* neutral-600相当 */
+  
+  /* ホバー */
+  --hover-bg: 64 64 64;         /* neutral-700相当 */
+  --hover-text: 250 250 250;    /* neutral-100相当 - ホバー時のテキスト色 */
+  --hover-icon: 250 250 250;    /* neutral-100相当 - ホバー時のアイコン色 */
+}
+
+/* Tailwind classes redefined with CSS variables */
+/* 背景 */
+.bg-white { background-color: rgb(var(--bg-primary)) !important; }
+.bg-gray-50 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-gray-100 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-gray-800 { background-color: rgb(var(--bg-card)) !important; }
+.bg-gray-900 { background-color: rgb(var(--bg-primary)) !important; }
+
+/* レスポンシブ背景 */
+.lg\:bg-white { background-color: rgb(var(--bg-primary)) !important; }
+.dark\:bg-gray-800 { background-color: rgb(var(--bg-card)) !important; }
+.dark\:bg-gray-900 { background-color: rgb(var(--bg-primary)) !important; }
+.dark\:lg\:bg-gray-800 { background-color: rgb(var(--bg-card)) !important; }
+
+/* 強制適用 - ライトモード */
+:not(.dark) .bg-gray-50,
+:not(.dark) nav.bg-gray-50 {
+  background-color: rgb(var(--bg-secondary)) !important;
+}
+
+:not(.dark) .lg\:bg-white,
+:not(.dark) div.lg\:bg-white {
+  background-color: rgb(var(--bg-primary)) !important;
+}
+
+@media (min-width: 1024px) {
+  :not(.dark) .lg\:bg-white {
+    background-color: rgb(var(--bg-primary)) !important;
+  }
+}
+
+/* テキスト */
+.text-black { color: rgb(var(--text-primary)) !important; }
+.text-white { color: rgb(var(--text-primary)) !important; }
+.text-gray-600 { color: rgb(var(--text-secondary)) !important; }
+.text-gray-700 { color: rgb(var(--text-secondary)) !important; }
+.text-gray-500 { color: rgb(var(--text-muted)) !important; }
+.text-gray-900 { color: rgb(var(--text-primary)) !important; }
+.text-zinc-950 { color: rgb(var(--text-primary)) !important; }
+
+/* アイコン色 - ライトモード */
+:not(.dark) svg:not(.tag-icon):not([class*="text-orange"]):not([class*="fill-orange"]),
+:not(.dark) [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
+  fill: rgb(var(--icon-primary)) !important;
+  color: rgb(var(--icon-primary)) !important;
+}
+
+:not(.dark) *[data-slot="icon"]:not(.tag-icon):not([class*="text-orange"]) {
+  fill: rgb(var(--icon-primary)) !important;
+  color: rgb(var(--icon-primary)) !important;
+}
+
+/* ダークモード時のテキスト */
+.dark\:text-white { color: rgb(var(--text-primary)) !important; }
+.dark\:text-gray-100 { color: rgb(var(--text-primary)) !important; }
+.dark\:text-gray-300 { color: rgb(var(--text-secondary)) !important; }
+.dark\:text-gray-400 { color: rgb(var(--text-muted)) !important; }
+
+/* ボーダー */
+.border { border-color: rgb(var(--border-primary)) !important; }
+.border-gray-200 { border-color: rgb(var(--border-primary)) !important; }
+.border-gray-300 { border-color: rgb(var(--border-secondary)) !important; }
+.border-t { border-top-color: rgb(var(--border-primary)) !important; }
+.border-b { border-bottom-color: rgb(var(--border-primary)) !important; }
+.border-l { border-left-color: rgb(var(--border-primary)) !important; }
+.border-r { border-right-color: rgb(var(--border-primary)) !important; }
+
+/* ダークモード時のボーダー */
+.dark\:border-gray-600 { border-color: rgb(var(--border-secondary)) !important; }
+.dark\:border-gray-700 { border-color: rgb(var(--border-primary)) !important; }
+
+/* ホバー効果 */
+.hover\:bg-gray-50:hover { background-color: rgb(var(--hover-bg)) !important; }
+.hover\:bg-gray-100:hover { background-color: rgb(var(--hover-bg)) !important; }
+.dark\:hover\:bg-gray-700:hover { background-color: rgb(var(--hover-bg)) !important; }
+.dark\:hover\:bg-gray-800:hover { background-color: rgb(var(--hover-bg)) !important; }
+
+/* ホバー時のアイコン色確保 */
+.hover\:bg-gray-50:hover svg,
+.hover\:bg-gray-100:hover svg,
+.hover\:bg-zinc-950\/5:hover svg {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+.hover\:bg-gray-50:hover [class*="Icon"],
+.hover\:bg-gray-100:hover [class*="Icon"],
+.hover\:bg-zinc-950\/5:hover [class*="Icon"] {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* ダークモード時のホバーアイコン色 */
+.dark .hover\:bg-gray-700:hover svg,
+.dark .hover\:bg-gray-800:hover svg,
+.dark .hover\:bg-white\/5:hover svg {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+.dark .hover\:bg-gray-700:hover [class*="Icon"],
+.dark .hover\:bg-gray-800:hover [class*="Icon"],
+.dark .hover\:bg-white\/5:hover [class*="Icon"] {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* 基本コンポーネント */
+.sidebar {
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+  border-right: 1px solid rgb(var(--border-primary));
+}
+
+.main-content {
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+}
+
+/* ページ全体の背景色 */
+:not(.dark) html,
+:not(.dark) body {
+  background-color: rgb(var(--bg-secondary)) !important; /* サイドバーと同じ色 */
+}
+
+.card {
+  background-color: rgb(var(--bg-card));
+  border: 1px solid rgb(var(--border-primary));
+  color: rgb(var(--text-primary));
+}
+
+.text-secondary {
+  color: rgb(var(--text-secondary));
+}
+
+.text-muted {
+  color: rgb(var(--text-muted));
+}
+
+/* インタラクション */
+.hover-bg:hover {
+  background-color: rgb(var(--hover-bg));
+}
+
+.hover-bg:hover svg,
+.hover-bg:hover [class*="Icon"] {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+.icon {
+  color: rgb(var(--text-secondary));
+}
+
+/* 一般的なホバー効果でのアイコン色 */
+[class*="hover:"]:hover svg:not(.tag-icon):not([class*="text-orange"]),
+[class*="hover:"]:hover [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* ライトモード - data-hover属性対応 */
+:not(.dark) [data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+:not(.dark) [data-hover="true"] svg:not(.tag-icon):not([class*="text-orange"]),
+:not(.dark) [data-hover="true"] [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+:not(.dark) [data-hover="true"] *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* より具体的なSidebarItem対応 */
+:not(.dark) .group [data-hover="true"],
+:not(.dark) nav [data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+:not(.dark) .group [data-hover="true"] svg,
+:not(.dark) nav [data-hover="true"] svg,
+:not(.dark) .group [data-hover="true"] *[data-slot="icon"],
+:not(.dark) nav [data-hover="true"] *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* ダークモード - data-hover属性対応 */
+.dark [data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+.dark [data-hover="true"] svg:not(.tag-icon):not([class*="text-orange"]),
+.dark [data-hover="true"] [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+.dark [data-hover="true"] *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* SidebarItemの具体的なクラス対応 - ライトモード */
+/* Tailwind v4の新しい構文対応 */
+:not(.dark) .data-hover\:bg-zinc-950\/5[data-hover="true"],
+:not(.dark) [class*="data-hover:bg-zinc-950/5"][data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+:not(.dark) .data-hover\:bg-zinc-950\/5[data-hover="true"] *[data-slot="icon"],
+:not(.dark) [class*="data-hover:bg-zinc-950/5"][data-hover="true"] *[data-slot="icon"],
+:not(.dark) .data-hover\:bg-zinc-950\/5[data-hover="true"] svg,
+:not(.dark) [class*="data-hover:bg-zinc-950/5"][data-hover="true"] svg {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* 最強のセレクター - すべてのパターンを網羅 */
+html:not(.dark) [data-hover="true"],
+html:not(.dark) *[data-hover="true"],
+:root:not(.dark) [data-hover="true"],
+body:not(.dark) [data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+/* 通常のhoverセレクターで正しいホバー効果を実装 */
+:not(.dark) nav a:hover,
+:not(.dark) nav button:hover {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+:not(.dark) nav a:hover svg,
+:not(.dark) nav button:hover svg,
+:not(.dark) nav a:hover *[data-slot="icon"],
+:not(.dark) nav button:hover *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* Tagsセクションのホバー効果 */
+:not(.dark) .hover\:bg-zinc-950\/5:hover,
+:not(.dark) [class*="hover:bg-zinc-950/5"]:hover {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+:not(.dark) .hover\:bg-zinc-950\/5:hover svg,
+:not(.dark) [class*="hover:bg-zinc-950/5"]:hover svg,
+:not(.dark) .hover\:bg-zinc-950\/5:hover *[data-slot="icon"],
+:not(.dark) [class*="hover:bg-zinc-950/5"]:hover *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+html:not(.dark) [data-hover="true"] svg,
+html:not(.dark) [data-hover="true"] *[data-slot="icon"],
+html:not(.dark) *[data-hover="true"] svg,
+html:not(.dark) *[data-hover="true"] *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* 特定のクラス名でも強制適用 */
+html:not(.dark) .data-hover\:bg-zinc-950\/5[data-hover="true"],
+html:not(.dark) *[class*="data-hover:bg-zinc-950/5"][data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+/* アイコンに対する最強セレクター */
+html:not(.dark) [data-hover="true"] svg[data-slot="icon"],
+html:not(.dark) [data-hover="true"] *[data-slot="icon"] {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* ドロップダウンメニューのライトモード対応 */
+:not(.dark) .bg-white\/75 {
+  background-color: rgb(var(--bg-card)) !important;
+  backdrop-filter: none !important;
+}
+
+:not(.dark) .data-focus\:bg-blue-500[data-focus="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+:not(.dark) .data-focus\:text-white[data-focus="true"] {
+  color: rgb(var(--hover-icon)) !important;
+}
+
+:not(.dark) .data-focus\:bg-blue-500[data-focus="true"] *[data-slot="icon"] {
+  color: rgb(var(--hover-icon)) !important;
+  fill: rgb(var(--hover-icon)) !important;
+}
+
+/* Neutralカラーパレット統一 - その他の色をneutralに再定義 */
+/* 青色系をneutralに */
+.bg-blue-50, .bg-blue-100 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-blue-500, .bg-blue-600 { background-color: rgb(var(--text-secondary)) !important; }
+.text-blue-500, .text-blue-600 { color: rgb(var(--text-secondary)) !important; }
+.border-blue-500 { border-color: rgb(var(--border-secondary)) !important; }
+
+/* 緑色系をneutralに */
+.bg-green-50, .bg-green-100 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-green-500, .bg-green-600 { color: rgb(var(--text-secondary)) !important; }
+.text-green-500, .text-green-600 { color: rgb(var(--text-secondary)) !important; }
+.border-green-500 { border-color: rgb(var(--border-secondary)) !important; }
+
+/* 赤色系をneutralに */
+.bg-red-50, .bg-red-100 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-red-500, .bg-red-600 { background-color: rgb(var(--text-secondary)) !important; }
+.text-red-500, .text-red-600 { color: rgb(var(--text-secondary)) !important; }
+.border-red-500 { border-color: rgb(var(--border-secondary)) !important; }
+
+/* 黄色系をneutralに */
+.bg-yellow-50, .bg-yellow-100 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-yellow-500, .bg-yellow-600 { background-color: rgb(var(--text-secondary)) !important; }
+.text-yellow-500, .text-yellow-600 { color: rgb(var(--text-secondary)) !important; }
+
+/* 紫色系をneutralに */
+.bg-purple-50, .bg-purple-100 { background-color: rgb(var(--bg-secondary)) !important; }
+.bg-purple-500, .bg-purple-600 { background-color: rgb(var(--text-secondary)) !important; }
+.text-purple-500, .text-purple-600 { color: rgb(var(--text-secondary)) !important; }
+
+/* SidebarItemの具体的なクラス対応 - ダークモード */
+.dark .dark\:data-hover\:bg-white\/5[data-hover="true"],
+.dark [class*="dark:data-hover:bg-white/5"][data-hover="true"] {
+  background-color: rgb(var(--hover-bg)) !important;
+}
+
+.dark .dark\:data-hover\:bg-white\/5[data-hover="true"] *[data-slot="icon"],
+.dark [class*="dark:data-hover:bg-white/5"][data-hover="true"] *[data-slot="icon"],
+.dark .dark\:data-hover\:bg-white\/5[data-hover="true"] svg,
+.dark [class*="dark:data-hover:bg-white/5"][data-hover="true"] svg {
+  fill: rgb(var(--hover-icon)) !important;
+  color: rgb(var(--hover-icon)) !important;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Preserve orange color for Add button */
+.text-orange-600,
+.fill-orange-600 {
+  color: rgb(234, 88, 12) !important;
+}
+
+.dark .text-orange-600,
+.dark .text-orange-400,
+.dark .fill-orange-600,
+.dark .fill-orange-400 {
+  color: rgb(251, 146, 60) !important;
+}
+
+/* Preserve custom tag colors */
+.tag-icon[style*="color"] {
+  color: inherit !important;
+}
+
+.dark .tag-icon[style*="color"] {
+  filter: brightness(1.3) contrast(1.1);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground) / 0.5);
+}

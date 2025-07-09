@@ -16,7 +16,7 @@ export function Sidebar({
     <nav
       {...props}
       data-collapsed={collapsed ? 'true' : undefined}
-      className={clsx(className, 'group flex h-full min-h-0 flex-col')}
+      className={clsx(className, 'group flex h-full min-h-0 flex-col bg-gray-50 dark:bg-gray-900')}
     />
   )
 }
@@ -120,7 +120,7 @@ export const SidebarItem = forwardRef(function SidebarItem(
     // Avatar
     '*:data-[slot=avatar]:-m-0.5 *:data-[slot=avatar]:size-7 sm:*:data-[slot=avatar]:size-6',
     // Hover
-    'data-hover:bg-zinc-950/5 data-hover:*:data-[slot=icon]:fill-zinc-950',
+    'data-hover:bg-zinc-950/50 data-hover:*:data-[slot=icon]:fill-zinc-950',
     // Active
     'data-active:bg-zinc-950/5 data-active:*:data-[slot=icon]:fill-zinc-950',
     // Dark mode

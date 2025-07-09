@@ -40,6 +40,7 @@ import {
   SidebarSpacer,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
+import { MainAreaHeader, AskAIButton } from '@/components/main-area-header'
 import { getEvents, getReviews } from '@/data'
 import {
   ArrowRightStartOnRectangleIcon,
@@ -183,7 +184,7 @@ export function ApplicationLayout({
                       <DropdownMenu className="min-w-80 max-w-96" anchor="bottom end">
                         <div className="p-4">
                           <div className="mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Notifications</h3>
                           </div>
                           
                           <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -196,35 +197,35 @@ export function ApplicationLayout({
                                   Unread
                                 </span>
                               </div>
-                              <h4 className="font-medium text-gray-900 mb-1">System Maintenance Notice</h4>
-                              <p className="text-sm text-gray-700 mb-1">Scheduled maintenance on July 12, 2025 from 2:00-4:00 AM.</p>
-                              <p className="text-xs text-gray-500">2025-07-08</p>
+                              <h4 className="font-medium text-gray-900 dark:text-white mb-1">System Maintenance Notice</h4>
+                              <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">Scheduled maintenance on July 12, 2025 from 2:00-4:00 AM.</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-08</p>
                             </div>
                             
-                            <div className="p-3 bg-gray-50 rounded-lg">
+                            <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <div className="flex items-center justify-between mb-1">
                                 <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">
                                   Feature
                                 </span>
                               </div>
-                              <h4 className="font-medium text-gray-900 mb-1">New Feature Release</h4>
-                              <p className="text-sm text-gray-700 mb-1">New tagging feature has been added for better organization.</p>
-                              <p className="text-xs text-gray-500">2025-07-05</p>
+                              <h4 className="font-medium text-gray-900 dark:text-white mb-1">New Feature Release</h4>
+                              <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">New tagging feature has been added for better organization.</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-05</p>
                             </div>
                             
-                            <div className="p-3 bg-gray-50 rounded-lg">
+                            <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                               <div className="flex items-center justify-between mb-1">
                                 <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
                                   Important
                                 </span>
                               </div>
-                              <h4 className="font-medium text-gray-900 mb-1">Terms of Service Update</h4>
-                              <p className="text-sm text-gray-700 mb-1">Our terms of service have been updated. Please review the changes.</p>
-                              <p className="text-xs text-gray-500">2025-07-01</p>
+                              <h4 className="font-medium text-gray-900 dark:text-white mb-1">Terms of Service Update</h4>
+                              <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">Our terms of service have been updated. Please review the changes.</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-01</p>
                             </div>
                           </div>
                           
-                          <div className="mt-4 pt-3 border-t border-gray-200">
+                          <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
                             <a
                               href="/notifications"
                               className="block w-full text-center text-sm text-blue-600 hover:text-blue-800 font-medium"
@@ -458,7 +459,13 @@ export function ApplicationLayout({
         collapsed={collapsed}
       >
         <ToastProvider>
-          {children}
+          <div className="flex flex-col h-full">
+            {!inSettings && <MainAreaHeader />}
+            <div className="flex-1 overflow-auto">
+              {children}
+            </div>
+            {!inSettings && <AskAIButton />}
+          </div>
         </ToastProvider>
       </SidebarLayout>
     </ThemeProvider>

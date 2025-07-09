@@ -1,8 +1,19 @@
 @import 'tailwindcss';
-@import './theme.css';
+@import './theme-simplified.css';
 @import './eagle-theme.css';
 
 @theme {
   --font-sans: Inter, sans-serif;
   --font-sans--font-feature-settings: 'cv11';
+}
+
+/* Tailwind v4 dark mode support */
+@supports (color: light-dark(black, white)) {
+  :root {
+    color-scheme: light;
+  }
+  
+  .dark {
+    color-scheme: dark;
+  }
 }
