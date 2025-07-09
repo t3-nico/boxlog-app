@@ -15,7 +15,7 @@ export const EmptyTrashState = () => {
         Deleted items will appear here and be kept for 30 days before being permanently removed.
       </p>
       <div className="text-xs text-gray-400 dark:text-gray-500">
-        When you delete tasks, events, tags, or folders, they'll be moved here first for safety.
+        When you delete tasks, events, tags, or folders, they&apos;ll be moved here first for safety.
       </div>
     </div>
   )

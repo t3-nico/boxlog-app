@@ -757,6 +757,67 @@ describe('useApiData', () => {
 })
 ```
 
+### Deployment & Production
+
+#### Vercel Deployment Configuration
+
+This application is **designed for Vercel deployment** and follows Vercel best practices:
+
+**Key Vercel Compatibility Features:**
+- Next.js 14 App Router (fully compatible with Vercel)
+- Server-side rendering with Supabase SSR
+- API routes for backend functionality
+- Static asset optimization
+- Environment variable management
+- Zero-config deployment
+
+**Vercel Deployment Steps:**
+```bash
+# 1. Install Vercel CLI (if not already installed)
+npm i -g vercel
+
+# 2. Deploy from project root
+vercel
+
+# 3. Set up environment variables via Vercel dashboard or CLI
+vercel env add NEXT_PUBLIC_SUPABASE_URL
+vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
+vercel env add SUPABASE_SERVICE_ROLE_KEY
+
+# 4. Redeploy with environment variables
+vercel --prod
+```
+
+**Vercel Project Configuration (vercel.json):**
+```json
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_APP_URL": {
+      "value": "https://your-app.vercel.app"
+    }
+  },
+  "regions": ["iad1"],
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 10
+    }
+  }
+}
+```
+
+**Production Checklist for Vercel:**
+- [ ] All environment variables configured in Vercel dashboard
+- [ ] Build command succeeds (`npm run build`)
+- [ ] No build warnings or errors
+- [ ] Supabase production database configured
+- [ ] Domain configured (if using custom domain)
+- [ ] SSL certificate is active
+- [ ] Performance optimizations applied
+
 ### Environment Variables
 
 #### Required Environment Variables
@@ -767,7 +828,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key # Server-side only
 
 # Application Settings
-NEXT_PUBLIC_APP_URL=http://localhost:3000 # or production URL
+NEXT_PUBLIC_APP_URL=http://localhost:3000 # or production URL (https://your-app.vercel.app)
 NODE_ENV=development # development, production, test
 
 # Optional: Analytics & Monitoring
@@ -779,15 +840,48 @@ NEXT_PUBLIC_ENABLE_EXPERIMENTAL_FEATURES=false
 ```
 
 #### Environment Setup
+
+**Development Environment:**
 ```bash
 # Development setup
 cp .env.example .env.local
 # Edit .env.local with your values
 
-# Production deployment (Vercel example)
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-vercel env add SUPABASE_SERVICE_ROLE_KEY
+# Verify environment variables are loaded
+npm run dev
+```
+
+**Production Environment (Vercel):**
+```bash
+# Method 1: Vercel CLI
+vercel env add NEXT_PUBLIC_SUPABASE_URL production
+vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+vercel env add SUPABASE_SERVICE_ROLE_KEY production
+vercel env add NEXT_PUBLIC_APP_URL production
+
+# Method 2: Vercel Dashboard
+# 1. Go to your project dashboard on vercel.com
+# 2. Navigate to Settings > Environment Variables
+# 3. Add each environment variable for Production environment
+# 4. Redeploy to apply changes
+```
+
+**Environment Variable Validation:**
+```tsx
+// Add to src/lib/env.ts for runtime validation
+export const env = {
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL!,
+}
+
+// Validate required environment variables at build time
+Object.entries(env).forEach(([key, value]) => {
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`)
+  }
+})
 ```
 
 ### Code Style Guidelines

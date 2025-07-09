@@ -33,7 +33,7 @@ export function useFilterUrlSync() {
     if (JSON.stringify(filters.type) !== JSON.stringify(type)) setTypeFilter(type as any)
     if (JSON.stringify(filters.tags) !== JSON.stringify(tags)) setTagFilter(tags)
     if (filters.smartFolder !== smartFolder) setSmartFolderFilter(smartFolder)
-  }, [searchParams])
+  }, [searchParams, filters.search, filters.status, filters.priority, filters.type, filters.tags, filters.smartFolder, setSearchFilter, setStatusFilter, setPriorityFilter, setTypeFilter, setTagFilter, setSmartFolderFilter])
 
   // Sync store to URL when filters change
   useEffect(() => {

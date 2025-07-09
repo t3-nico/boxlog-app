@@ -20,7 +20,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false)
-  const [authState, setAuthState] = useState<AuthContextType>({
+  
+  const authState: AuthContextType = {
     user: null,
     session: null,
     loading: false,
@@ -32,19 +33,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     resetPassword: async () => ({ data: null, error: 'Not available' }),
     updatePassword: async () => ({ data: null, error: 'Not available' }),
     clearError: () => {},
-  })
+  }
 
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  if (!mounted) {
-    return (
-      <AuthContext.Provider value={authState}>
-        {children}
-      </AuthContext.Provider>
-    )
-  }
 
   return (
     <AuthContext.Provider value={authState}>
@@ -55,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuthContext() {
   const context = useContext(AuthContext)
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuthContext must be used within an AuthProvider')
   }
   return context

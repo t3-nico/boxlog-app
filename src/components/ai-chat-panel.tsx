@@ -17,7 +17,6 @@ interface Message {
 }
 
 export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
-  if (!isOpen) return null;
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -27,6 +26,8 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
     }
   ])
   const [inputValue, setInputValue] = useState('')
+  
+  if (!isOpen) return null;
 
   const handleSendMessage = () => {
     if (!inputValue.trim()) return
