@@ -6,7 +6,11 @@ import {
   startOfWeek, 
   endOfWeek, 
   addWeeks, 
-  subWeeks, 
+  subWeeks,
+  startOfMonth,
+  endOfMonth,
+  addMonths,
+  subMonths,
   eachDayOfInterval, 
   isWithinInterval,
   format 
@@ -69,6 +73,16 @@ export function calculateViewDateRange(
         end: twoWeekEnd,
         days: eachDayOfInterval({ start: twoWeekStart, end: twoWeekEnd })
       }
+    
+    case 'schedule':
+      // スケジュールビューは現在月を中心に3ヶ月分表示
+      const scheduleStart = startOfMonth(subMonths(baseDate, 1))
+      const scheduleEnd = endOfMonth(addMonths(baseDate, 1))
+      return {
+        start: scheduleStart,
+        end: scheduleEnd,
+        days: eachDayOfInterval({ start: scheduleStart, end: scheduleEnd })
+      }
   }
 }
 
@@ -85,6 +99,7 @@ export function getNextPeriod(
     case 'week':
     case 'week-no-weekend': return addWeeks(currentDate, 1)
     case '2week': return addWeeks(currentDate, 2)
+    case 'schedule': return addMonths(currentDate, 1)
   }
 }
 
@@ -98,6 +113,7 @@ export function getPreviousPeriod(
     case 'week':
     case 'week-no-weekend': return subWeeks(currentDate, 1)
     case '2week': return subWeeks(currentDate, 2)
+    case 'schedule': return subMonths(currentDate, 1)
   }
 }
 
@@ -125,6 +141,9 @@ export function formatDateRange(
     
     case '2week':
       return `${format(range.start, 'M月d日', { locale: ja })} - ${format(range.end, 'd日', { locale: ja })}`
+    
+    case 'schedule':
+      return format(currentDate, 'yyyy年M月', { locale: ja })
   }
 }
 
@@ -149,7 +168,7 @@ export function filterTasksForDateRange(
  * ビュータイプの有効性チェック
  */
 export function isValidViewType(value: string): value is CalendarViewType {
-  return ['day', '3day', 'week', 'week-no-weekend', '2week'].includes(value)
+  return ['day', '3day', 'week', 'week-no-weekend', '2week', 'schedule'].includes(value)
 }
 
 /**
@@ -162,5 +181,6 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     case 'week': return '週'
     case 'week-no-weekend': return '平日'
     case '2week': return '2週'
+    case 'schedule': return 'スケジュール'
   }
 }

@@ -1,0 +1,274 @@
+/* Google Calendar風レスポンシブ対応 */
+
+/* デスクトップ（1024px以上） */
+@media (min-width: 1024px) {
+  .calendar-task {
+    font-size: 0.875rem; /* text-sm */
+    padding: 0.5rem; /* p-2 */
+  }
+  
+  .calendar-task-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .calendar-task-time {
+    font-size: 0.75rem; /* text-xs */
+    opacity: 0.9;
+  }
+  
+  .calendar-task-description {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+  }
+}
+
+/* タブレット（768px - 1023px） */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .calendar-task {
+    font-size: 0.75rem; /* text-xs */
+    padding: 0.375rem; /* p-1.5 */
+  }
+  
+  .calendar-task-title {
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .calendar-task-time {
+    font-size: 0.625rem; /* text-xs */
+    opacity: 0.9;
+  }
+  
+  .calendar-task-description {
+    display: none; /* タブレットでは説明を非表示 */
+  }
+  
+  .calendar-header {
+    padding: 0.5rem; /* p-2 */
+  }
+  
+  .time-axis-labels {
+    width: 3rem; /* w-12 */
+    font-size: 0.625rem;
+  }
+}
+
+/* モバイル（767px以下） */
+@media (max-width: 767px) {
+  .calendar-task {
+    font-size: 0.625rem; /* text-xs */
+    padding: 0.25rem; /* p-1 */
+    min-height: 1.25rem; /* 20px */
+  }
+  
+  .calendar-task-title {
+    font-size: 0.625rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  
+  .calendar-task-time {
+    display: none; /* モバイルでは時刻を非表示 */
+  }
+  
+  .calendar-task-description {
+    display: none; /* モバイルでは説明を非表示 */
+  }
+  
+  .calendar-header {
+    padding: 0.25rem; /* p-1 */
+  }
+  
+  .calendar-header-title {
+    font-size: 0.75rem;
+  }
+  
+  .calendar-header-date {
+    font-size: 0.875rem;
+  }
+  
+  .time-axis-labels {
+    width: 2.5rem; /* w-10 */
+    font-size: 0.5rem;
+  }
+  
+  .time-grid-background {
+    /* モバイルでは細かいグリッド線を薄くする */
+  }
+  
+  .time-grid-background .grid-line-minor {
+    opacity: 0.3;
+  }
+  
+  /* タッチターゲットサイズを確保 */
+  .calendar-task {
+    min-height: 2.75rem; /* 44px - Appleのガイドライン */
+  }
+  
+  /* スクロールバーを隠す（iOS Safari対応） */
+  .calendar-scroll-container {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  .calendar-scroll-container::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+}
+
+/* 超小型デバイス（480px以下） */
+@media (max-width: 480px) {
+  .calendar-task {
+    padding: 0.125rem; /* p-0.5 */
+    font-size: 0.5rem;
+  }
+  
+  .calendar-task-title {
+    font-size: 0.5rem;
+    line-height: 1.1;
+  }
+  
+  .time-axis-labels {
+    width: 2rem; /* w-8 */
+    font-size: 0.375rem;
+  }
+  
+  .calendar-header {
+    padding: 0.125rem;
+  }
+  
+  /* 週表示では土日を非表示にするオプション */
+  .week-view-compact .weekend-column {
+    display: none;
+  }
+}
+
+/* ダークモード調整 */
+@media (prefers-color-scheme: dark) {
+  .calendar-task {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .calendar-task:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* 高コントラストモード */
+@media (prefers-contrast: high) {
+  .calendar-task {
+    border-width: 2px;
+    font-weight: 600;
+  }
+  
+  .calendar-task-title {
+    font-weight: 700;
+  }
+}
+
+/* 動きを減らすモード */
+@media (prefers-reduced-motion: reduce) {
+  .calendar-task,
+  .calendar-header,
+  .time-grid-background {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* プリント用スタイル */
+@media print {
+  .calendar-task {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+    break-inside: avoid;
+  }
+  
+  .calendar-header {
+    break-after: avoid;
+  }
+  
+  .time-grid-background {
+    border-color: #000;
+  }
+}
+
+/* 縦画面/横画面対応 */
+@media (orientation: landscape) and (max-width: 767px) {
+  .calendar-task {
+    min-height: 1.5rem; /* 横画面では少し小さく */
+  }
+  
+  .time-axis-labels {
+    width: 2rem;
+  }
+}
+
+@media (orientation: portrait) and (max-width: 767px) {
+  .calendar-task {
+    min-height: 2rem; /* 縦画面では見やすく */
+  }
+  
+  .time-axis-labels {
+    width: 2.5rem;
+  }
+}
+
+/* アクセシビリティ: フォーカス表示 */
+.calendar-task:focus,
+.calendar-task:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* アクセシビリティ: 選択状態 */
+.calendar-task[aria-selected="true"] {
+  ring: 2px solid #3b82f6;
+  ring-opacity: 0.5;
+}
+
+/* タッチデバイス向け調整 */
+@media (hover: none) and (pointer: coarse) {
+  .calendar-task {
+    /* ホバー効果を無効化 */
+  }
+  
+  .calendar-task:hover {
+    transform: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  }
+  
+  /* タップ時のフィードバック */
+  .calendar-task:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* 大型デバイス（1440px以上） */
+@media (min-width: 1440px) {
+  .calendar-task {
+    font-size: 0.9375rem; /* 15px */
+    padding: 0.625rem; /* p-2.5 */
+  }
+  
+  .calendar-task-title {
+    font-size: 0.9375rem;
+  }
+  
+  .calendar-task-time {
+    font-size: 0.8125rem; /* 13px */
+  }
+  
+  .calendar-task-description {
+    font-size: 0.8125rem;
+  }
+  
+  .time-axis-labels {
+    width: 4rem; /* w-16 */
+    font-size: 0.75rem;
+  }
+}

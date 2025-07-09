@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { addDays, subDays, isToday } from 'date-fns'
+import { addDays, subDays, isToday, format } from 'date-fns'
 import { TimeGrid } from '../TimeGrid'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { 
@@ -65,27 +65,24 @@ export function ThreeDayView({
 
   return (
     <div className="h-full flex flex-col">
-      {/* 日付ヘッダー */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+      {/* 簡潔な日付ヘッダー */}
+      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <div className="flex">
-          <div className="w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-800"></div>
+          <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-800"></div>
           {days.map((day, index) => (
             <div
               key={day.toISOString()}
               className={cn(
-                "flex-1 px-4 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
-                isToday(day) && "bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500",
-                index === 1 && "font-semibold" // 中央（今日）を強調
+                "flex-1 px-2 py-2 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
+                isToday(day) && "bg-blue-50 dark:bg-blue-900/20",
+                index === 1 && "font-medium" // 中央（今日）を強調
               )}
             >
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
                 {formatShortWeekday(day)}
               </div>
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                {formatShortDate(day)}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {filterTasksForDate(calendarTasks, day).length}件
+              <div className="text-sm text-gray-900 dark:text-white">
+                {format(day, 'd')}
               </div>
             </div>
           ))}
@@ -93,25 +90,17 @@ export function ThreeDayView({
       </div>
 
       {/* 3日分のTimeGrid */}
-      <div className="flex-1 flex overflow-hidden">
-        <div className="w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          {/* 時間軸を共有するためのスペース */}
-        </div>
-        
-        {days.map((day, index) => (
-          <div key={day.toISOString()} className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0">
-            <TimeGrid
-              date={day}
-              tasks={filterTasksForDate(calendarTasks, day)}
-              gridInterval={30} // 3日表示は30分グリッド
-              onTaskClick={handleTaskClick}
-              onEmptyClick={handleEmptyClick}
-              onTaskDrop={handleTaskDrop}
-              showCurrentTime={isToday(day)}
-              className="h-full"
-            />
-          </div>
-        ))}
+      <div className="flex-1 overflow-hidden">
+        <TimeGrid
+          dates={days}
+          tasks={calendarTasks}
+          gridInterval={60} // 1時間グリッド
+          onTaskClick={handleTaskClick}
+          onEmptyClick={handleEmptyClick}
+          showCurrentTime={days.some(day => isToday(day))}
+          showDateHeader={false} // 曜日ヘッダーを非表示（上に独自ヘッダーがあるため）
+          className="h-full"
+        />
       </div>
     </div>
   )

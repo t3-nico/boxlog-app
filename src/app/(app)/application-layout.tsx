@@ -355,6 +355,14 @@ export function ApplicationLayout({
                       <BellIcon />
                       <SidebarLabel>Notifications</SidebarLabel>
                     </SidebarItem>
+                    <SidebarItem
+                      href="/settings/calendar"
+                      current={pathname.startsWith('/settings/calendar')}
+                      indicator={false}
+                    >
+                      <CalendarIcon />
+                      <SidebarLabel>Calendar</SidebarLabel>
+                    </SidebarItem>
                   </SidebarSection>
 
                   <SidebarSection className="mt-8">

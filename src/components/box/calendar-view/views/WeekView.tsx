@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { isWeekend, isToday } from 'date-fns'
+import { isWeekend, isToday, format } from 'date-fns'
 import { TimeGrid } from '../TimeGrid'
+import { CalendarViewAnimation } from '../components/ViewTransition'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { 
   formatShortDate, 
@@ -66,55 +67,66 @@ export function WeekView({
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* 曜日ヘッダー */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <div className="flex">
-          <div className="w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-800"></div>
-          {displayDays.map((day) => (
-            <div
-              key={day.toISOString()}
-              className={cn(
-                "flex-1 px-2 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
-                isToday(day) && "bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500",
-                isWeekend(day) && !showWeekends && "bg-gray-100 dark:bg-gray-700"
-              )}
-            >
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                {formatShortWeekday(day)}
+    <CalendarViewAnimation viewType="week">
+      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+        {/* Google Calendar風の週ヘッダー */}
+        <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <div className="flex">
+            <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-900"></div>
+            {displayDays.map((day) => (
+              <div
+                key={day.toISOString()}
+                className={cn(
+                  "flex-1 px-2 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
+                  "transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer",
+                  isToday(day) && "bg-blue-50 dark:bg-blue-900/20",
+                  isWeekend(day) && "bg-gray-50/50 dark:bg-gray-800/50"
+                )}
+              >
+                <div className={cn(
+                  "text-xs font-medium uppercase tracking-wide mb-1",
+                  isToday(day) 
+                    ? "text-blue-600 dark:text-blue-400" 
+                    : "text-gray-600 dark:text-gray-400"
+                )}>
+                  {formatShortWeekday(day)}
+                </div>
+                <div className={cn(
+                  "text-lg font-semibold",
+                  isToday(day) 
+                    ? "text-blue-600 dark:text-blue-400 bg-blue-600 dark:bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto"
+                    : "text-gray-900 dark:text-white"
+                )}>
+                  {format(day, 'd')}
+                </div>
+                {/* タスク数表示 */}
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {filterTasksForDate(calendarTasks, day).length}件
+                </div>
               </div>
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                {formatShortDate(day)}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {filterTasksForDate(calendarTasks, day).length}件
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 週のTimeGrid */}
-      <div className="flex-1 flex overflow-hidden">
-        <div className="w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-          {/* 時間軸を共有するためのスペース */}
-        </div>
-        
-        {displayDays.map((day) => (
-          <div key={day.toISOString()} className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0">
-            <TimeGrid
-              date={day}
-              tasks={filterTasksForDate(calendarTasks, day)}
-              gridInterval={30} // 週表示は30分グリッド
-              onTaskClick={handleTaskClick}
-              onEmptyClick={handleEmptyClick}
-              onTaskDrop={handleTaskDrop}
-              showCurrentTime={isToday(day)}
-              className="h-full"
-            />
+            ))}
           </div>
-        ))}
+        </div>
+
+        {/* 週のTimeGrid */}
+        <div className="flex-1 overflow-hidden">
+          <TimeGrid
+            dates={displayDays}
+            tasks={calendarTasks}
+            gridInterval={60} // 1時間グリッド
+            scrollToTime="08:00" // 朝8時にスクロール（Google Calendar風）
+            showAllDay={true}
+            showCurrentTime={displayDays.some(day => isToday(day))}
+            showWeekends={showWeekends}
+            showDateHeader={false} // 曜日ヘッダーを非表示（上に独自ヘッダーがあるため）
+            businessHours={{ start: 9, end: 18 }}
+            onTaskClick={handleTaskClick}
+            onEmptyClick={handleEmptyClick}
+            onTaskDrop={handleTaskDrop}
+            className="h-full"
+          />
+        </div>
       </div>
-    </div>
+    </CalendarViewAnimation>
   )
 }

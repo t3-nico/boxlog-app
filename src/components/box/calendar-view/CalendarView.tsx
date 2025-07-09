@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { CalendarHeader } from './CalendarHeader'
+import { CalendarLayout } from './CalendarLayout'
 import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
+import { ScheduleView } from './views/ScheduleView'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -118,6 +119,10 @@ export function CalendarView({ className }: CalendarViewProps) {
             e.preventDefault()
             handleViewChange('2week')
             break
+          case 'a':
+            e.preventDefault()
+            handleViewChange('schedule')
+            break
         }
       }
     }
@@ -145,23 +150,34 @@ export function CalendarView({ className }: CalendarViewProps) {
         return <WeekView {...commonProps} showWeekends={false} />
       case '2week':
         return <TwoWeekView {...commonProps} />
+      case 'schedule':
+        return <ScheduleView {...commonProps} />
       default:
         return <DayView {...commonProps} />
     }
   }
   
+  // 日付選択ハンドラー
+  const handleDateSelect = useCallback((date: Date) => {
+    setCurrentDate(date)
+  }, [])
+
+  // タスク作成ハンドラー
+  const handleCreateTask = useCallback(() => {
+    console.log('Create new task')
+    // TODO: タスク作成モーダルを開く
+  }, [])
+
   return (
-    <div className={`flex flex-col h-full ${className || ''}`}>
-      <CalendarHeader
-        viewType={viewType}
-        currentDate={currentDate}
-        onNavigate={handleNavigate}
-        onViewChange={handleViewChange}
-      />
-      
-      <div className="flex-1 overflow-hidden">
+    <CalendarLayout
+      viewType={viewType}
+      currentDate={currentDate}
+      onNavigate={handleNavigate}
+      onViewChange={handleViewChange}
+    >
+      <div className="h-full overflow-hidden bg-white dark:bg-gray-800">
         {renderView()}
       </div>
-    </div>
+    </CalendarLayout>
   )
 }

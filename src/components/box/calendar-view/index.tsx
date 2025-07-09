@@ -1,3 +1,5 @@
 export { CalendarView } from './CalendarView'
 export { CalendarView as default } from './CalendarView'
+export { CalendarLayout } from './CalendarLayout'
+export { CalendarHeader } from './CalendarHeader'
 export type { CalendarViewType } from './types'

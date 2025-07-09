@@ -1,233 +1,345 @@
 'use client'
 
-import React, { useRef, useMemo } from 'react'
+import React, { useRef, useMemo, useEffect, useState } from 'react'
 import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
+import { isToday, isSameDay } from 'date-fns'
 import { CurrentTimeLine } from './CurrentTimeLine'
 import { DraggableTask } from './DraggableTask'
-import { 
-  CalendarTask,
-  generateTimeLabels,
-  getTimeSlotBgClass,
-  getGridLineClass,
-  formatTimeForDisplay,
-  calculateTaskPosition,
-  timeToMinutes,
-  getTimeFromPosition,
-  snapToGrid
-} from './utils/time-grid-helpers'
+import { AllDaySection } from './components/AllDaySection'
+import { DateHeader } from './components/DateHeader'
+import { TimeAxisLabels } from './components/TimeAxisLabels'
+import { GridBackground } from './components/GridBackground'
+import { TaskLayer, SingleDayTaskLayer } from './components/TaskLayer'
+import { CalendarTask } from './utils/time-grid-helpers'
+import { useScrollSync, useScrollToTime, useVisibleTimeRange } from './hooks/useScrollSync'
+import { filterTasksForDate } from './utils/view-helpers'
+import { HOUR_HEIGHT } from './constants/grid-constants'
 
 interface TimeGridProps {
-  date: Date
+  dates: Date[] // 表示する日付の配列（1日〜7日）
   tasks?: CalendarTask[]
-  gridInterval?: 15 | 30 | 60 // 分単位
+  gridInterval?: 15 | 30 | 60
+  scrollToTime?: string // 初期スクロール位置（例: "09:00"）
+  businessHours?: { start: number; end: number }
+  showAllDay?: boolean
+  showCurrentTime?: boolean
+  showWeekends?: boolean
+  showDateHeader?: boolean // 日付ヘッダーの表示/非表示
   onTaskClick?: (task: CalendarTask) => void
   onEmptyClick?: (date: Date, time: string) => void
-  onTaskDrop?: (task: CalendarTask, newStartTime: Date) => void
-  showCurrentTime?: boolean
+  onTaskDrop?: (task: CalendarTask, newDate: Date, newStartTime: Date) => void
+  onDateClick?: (date: Date) => void
   className?: string
 }
 
 export function TimeGrid({
-  date,
+  dates,
   tasks = [],
   gridInterval = 15,
+  scrollToTime,
+  businessHours,
+  showAllDay = true,
+  showCurrentTime = true,
+  showWeekends = true,
+  showDateHeader = true,
   onTaskClick,
   onEmptyClick,
   onTaskDrop,
-  showCurrentTime = true,
+  onDateClick,
   className = ''
 }: TimeGridProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-
-  // 時間ラベルを生成（メモ化）
-  const timeLabels = useMemo(() => {
-    return generateTimeLabels(gridInterval)
-  }, [gridInterval])
-
-  // 当日のタスクのみフィルタリング
-  const dayTasks = useMemo(() => {
-    return tasks.filter(task => {
-      const taskDate = new Date(task.startTime)
-      return (
-        taskDate.getDate() === date.getDate() &&
-        taskDate.getMonth() === date.getMonth() &&
-        taskDate.getFullYear() === date.getFullYear()
-      )
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const [isInitialized, setIsInitialized] = useState(false)
+  
+  // スクロール同期
+  const { scrollLeft, handleScroll } = useScrollSync()
+  
+  // 時間位置への自動スクロール
+  const { scrollToTime: scrollToTimeFunc } = useScrollToTime(
+    scrollContainerRef,
+    scrollToTime
+  )
+  
+  // 可視時間範囲の計算（パフォーマンス最適化）
+  const visibleTimeRange = useVisibleTimeRange(scrollContainerRef, 0, 24)
+  
+  // 全日タスクと時間指定タスクを分離
+  const { allDayTasks, timedTasks } = useMemo(() => {
+    const allDay: CalendarTask[] = []
+    const timed: CalendarTask[] = []
+    
+    tasks.forEach(task => {
+      const duration = task.endTime.getTime() - task.startTime.getTime()
+      const durationHours = duration / (1000 * 60 * 60)
+      
+      if (durationHours >= 24) {
+        allDay.push(task)
+      } else {
+        timed.push(task)
+      }
     })
-  }, [tasks, date])
-
+    
+    return { allDayTasks: allDay, timedTasks: timed }
+  }, [tasks])
+  
+  // 各日のタスクを取得
+  const getTasksForDate = (date: Date, taskList: CalendarTask[]) => {
+    return filterTasksForDate(taskList, date)
+  }
+  
   // 空のセルクリック処理
-  const handleEmptyClick = (time: string) => {
+  const handleEmptyClick = (date: Date, time: string) => {
     if (onEmptyClick) {
-      const clickDate = new Date(date)
       const [hours, minutes] = time.split(':').map(Number)
+      const clickDate = new Date(date)
       clickDate.setHours(hours, minutes, 0, 0)
       onEmptyClick(clickDate, time)
     }
   }
-
-  // 今日かどうかを判定
-  const isToday = useMemo(() => {
-    const today = new Date()
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    )
-  }, [date])
-
-  // ドラッグ&ドロップのドロップゾーン
-  const { setNodeRef: setDropZoneRef } = useDroppable({
-    id: `time-grid-${date.toISOString()}`,
-    data: {
-      type: 'time-grid',
-      date: date
-    }
-  })
-
-  // ドラッグ終了処理
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over, delta } = event
-    
-    if (!over || !onTaskDrop) return
-    
-    const draggedTask = active.data.current?.task as CalendarTask
-    if (!draggedTask) return
-
-    if (containerRef.current) {
-      // マウス位置から新しい時刻を計算
-      const containerRect = containerRef.current.getBoundingClientRect()
-      const relativeY = event.activatorEvent ? 
-        (event.activatorEvent as MouseEvent).clientY - containerRect.top + containerRef.current.scrollTop :
-        delta.y
-
-      const newStartTime = getTimeFromPosition(relativeY, containerRect, gridInterval)
-      
-      // グリッドにスナップ
-      const snappedStartTime = snapToGrid(newStartTime, gridInterval)
-      
-      // 新しい日付に設定
-      const adjustedStartTime = new Date(date)
-      adjustedStartTime.setHours(
-        snappedStartTime.getHours(),
-        snappedStartTime.getMinutes(),
-        0,
-        0
-      )
-
-      onTaskDrop(draggedTask, adjustedStartTime)
+  
+  // タスクドロップ処理
+  const handleTaskDrop = (task: CalendarTask, targetDate: Date, newStartTime: Date) => {
+    if (onTaskDrop) {
+      onTaskDrop(task, targetDate, newStartTime)
     }
   }
-
+  
+  // 総高さ計算
+  const totalHeight = 24 * HOUR_HEIGHT
+  
+  // 初期化処理
+  useEffect(() => {
+    if (!isInitialized && scrollContainerRef.current) {
+      if (scrollToTime) {
+        scrollToTimeFunc(scrollToTime)
+      }
+      setIsInitialized(true)
+    }
+  }, [isInitialized, scrollToTime, scrollToTimeFunc])
+  
   return (
-    <DndContext onDragEnd={handleDragEnd}>
-      <div className={`h-full flex ${className}`}>
-      {/* 時間ラベル列 */}
-      <div className="w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-        <div className="sticky top-0 bg-gray-50 dark:bg-gray-800 z-20">
-          {/* ヘッダースペース */}
-          <div className="h-0"></div>
-        </div>
+    <div className={`h-full flex flex-col bg-white dark:bg-gray-900 ${className}`}>
+      {/* 全日イベントエリア */}
+      {showAllDay && allDayTasks.length > 0 && (
+        <AllDaySection
+          dates={dates}
+          tasks={allDayTasks}
+          scrollLeft={scrollLeft}
+          onTaskClick={onTaskClick}
+          onEmptyClick={onDateClick}
+        />
+      )}
+      
+      {/* 時間指定エリア */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* スティッキーヘッダー（日付） */}
+        {showDateHeader && (
+          <div className="sticky top-0 z-20">
+            <DateHeader
+              dates={dates}
+              scrollLeft={scrollLeft}
+              onDateClick={onDateClick}
+            />
+          </div>
+        )}
         
-        {/* 時間ラベル */}
-        <div className="relative">
-          {timeLabels.map((time, index) => {
-            const minutes = timeToMinutes(time) % 60
-            const hour = Math.floor(timeToMinutes(time) / 60)
-            
-            return (
-              <div
-                key={time}
-                className={`
-                  relative h-4 text-xs text-gray-600 dark:text-gray-400
-                  ${minutes === 0 ? 'font-medium' : 'font-normal'}
-                `}
-                style={{ 
-                  height: `${100 / timeLabels.length}%`,
-                  minHeight: '16px'
-                }}
-              >
-                {minutes === 0 && (
-                  <div className="absolute -top-2 right-2 text-right">
-                    {formatTimeForDisplay(time)}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* メイングリッド */}
-      <div className="flex-1 relative overflow-hidden">
-        <div 
-          ref={(node) => {
-            if (containerRef && typeof containerRef !== 'function') {
-              (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = node
-            }
-            setDropZoneRef(node)
-          }}
-          className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
-        >
-          {/* グリッド背景 */}
-          <div className="relative min-h-full">
-            {timeLabels.map((time, index) => {
-              const minutes = timeToMinutes(time) % 60
-              const hour = Math.floor(timeToMinutes(time) / 60)
-              const bgClass = getTimeSlotBgClass(hour)
-              const gridLineClass = getGridLineClass(minutes, gridInterval)
-              
-              return (
-                <div
-                  key={time}
-                  className={`
-                    relative cursor-pointer transition-colors duration-150
-                    hover:bg-blue-50 dark:hover:bg-blue-900/20
-                    ${bgClass}
-                    ${gridLineClass}
-                  `}
-                  style={{ 
-                    height: `${100 / timeLabels.length}%`,
-                    minHeight: '16px'
-                  }}
-                  onClick={() => handleEmptyClick(time)}
-                >
-                  {/* グリッド線の視覚的強調（正時のみ） */}
-                  {minutes === 0 && (
-                    <div className="absolute inset-x-0 top-0 h-px bg-gray-300 dark:bg-gray-600"></div>
-                  )}
-                </div>
-              )
-            })}
-
-            {/* タスク表示レイヤー */}
-            <div className="absolute inset-0 pointer-events-none">
-              {dayTasks.map((task) => {
-                const position = calculateTaskPosition(task, date, gridInterval)
-                
-                return (
-                  <DraggableTask
-                    key={task.id}
-                    task={task}
-                    position={position}
-                    onClick={onTaskClick}
-                  />
-                )
-              })}
-            </div>
-
-            {/* 現在時刻ライン */}
-            {showCurrentTime && isToday && (
-              <CurrentTimeLine 
-                containerRef={containerRef}
+        {/* スクロール可能な時間グリッド */}
+        <div className="flex-1 flex overflow-hidden">
+          {/* 時間軸ラベル（固定） */}
+          <TimeAxisLabels
+            startHour={0}
+            endHour={24}
+            interval={gridInterval}
+            showBusinessHours={!!businessHours}
+            className="z-10"
+          />
+          
+          {/* スクロール可能なグリッドエリア */}
+          <div
+            ref={scrollContainerRef}
+            className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
+            onScroll={handleScroll}
+            style={{ height: '100%' }}
+          >
+            <div className="relative" style={{ height: totalHeight }}>
+              {/* グリッド背景 */}
+              <GridBackground
+                dates={dates}
+                startHour={0}
+                endHour={24}
                 gridInterval={gridInterval}
-                isVisible={true}
+                showBusinessHours={!!businessHours}
+                showWeekends={showWeekends}
               />
-            )}
+              
+              {/* タスク表示レイヤー */}
+              <TaskLayer
+                dates={dates}
+                tasks={timedTasks}
+                view={dates.length === 1 ? 'day' : 'week'}
+                onTaskClick={onTaskClick}
+                onTaskDoubleClick={onTaskClick} // 同じハンドラーを使用
+                onTaskDrag={onTaskDrop}
+              />
+              
+              {/* 各日のドロップゾーン */}
+              <div className="absolute inset-0 flex">
+                {dates.map((date, dateIndex) => (
+                  <DayColumn
+                    key={date.toISOString()}
+                    date={date}
+                    tasks={getTasksForDate(date, timedTasks)}
+                    gridInterval={gridInterval}
+                    visibleTimeRange={visibleTimeRange}
+                    onTaskClick={onTaskClick}
+                    onEmptyClick={handleEmptyClick}
+                    onTaskDrop={handleTaskDrop}
+                    totalHeight={totalHeight}
+                  />
+                ))}
+              </div>
+              
+              {/* 現在時刻ライン */}
+              {showCurrentTime && dates.some(date => isToday(date)) && (
+                <CurrentTimeLine
+                  containerRef={scrollContainerRef}
+                  gridInterval={gridInterval}
+                  isVisible={true}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
-      </div>
+    </div>
+  )
+}
+
+// 個別の日カラムコンポーネント
+interface DayColumnProps {
+  date: Date
+  tasks: CalendarTask[]
+  gridInterval: 15 | 30 | 60
+  visibleTimeRange: { start: number; end: number }
+  totalHeight: number
+  onTaskClick?: (task: CalendarTask) => void
+  onEmptyClick?: (date: Date, time: string) => void
+  onTaskDrop?: (task: CalendarTask, targetDate: Date, newStartTime: Date) => void
+}
+
+function DayColumn({
+  date,
+  tasks,
+  gridInterval,
+  visibleTimeRange,
+  totalHeight,
+  onTaskClick,
+  onEmptyClick,
+  onTaskDrop
+}: DayColumnProps) {
+  const { setNodeRef: setDropZoneRef } = useDroppable({
+    id: `day-column-${date.toISOString()}`,
+    data: {
+      type: 'day-column',
+      date: date
+    }
+  })
+  
+  // 時間スロットのクリック処理
+  const handleTimeSlotClick = (event: React.MouseEvent) => {
+    if (!onEmptyClick) return
+    
+    const rect = event.currentTarget.getBoundingClientRect()
+    const y = event.clientY - rect.top
+    const hour = Math.floor((y / totalHeight) * 24)
+    const minute = Math.floor(((y % (totalHeight / 24)) / (totalHeight / 24)) * 60)
+    
+    // グリッド間隔にスナップ
+    const snappedMinute = Math.round(minute / gridInterval) * gridInterval
+    const timeString = `${hour.toString().padStart(2, '0')}:${snappedMinute.toString().padStart(2, '0')}`
+    
+    onEmptyClick(date, timeString)
+  }
+  
+  return (
+    <div
+      ref={setDropZoneRef}
+      className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative cursor-pointer"
+      onClick={handleTimeSlotClick}
+    >
+      {/* このコンポーネントはドロップゾーンのみとして機能 */}
+    </div>
+  )
+}
+
+
+// ドラッグコンテキスト付きのラッパー
+interface TimeGridWithDragProps extends TimeGridProps {
+  onDragStart?: (task: CalendarTask) => void
+  onDragEnd?: (event: DragEndEvent) => void
+}
+
+export function TimeGridWithDrag({
+  onDragStart,
+  onDragEnd,
+  ...props
+}: TimeGridWithDragProps) {
+  const handleDragEnd = (event: DragEndEvent) => {
+    if (onDragEnd) {
+      onDragEnd(event)
+    }
+    
+    // デフォルトのドロップ処理
+    const { active, over } = event
+    if (!over || !props.onTaskDrop) return
+    
+    const draggedTask = active.data.current?.task as CalendarTask
+    if (!draggedTask) return
+    
+    const overData = over.data.current
+    if (overData?.type === 'day-column') {
+      const targetDate = overData.date as Date
+      // 新しい時間を計算する必要がある
+      const newStartTime = new Date(targetDate)
+      newStartTime.setHours(draggedTask.startTime.getHours(), draggedTask.startTime.getMinutes())
+      
+      props.onTaskDrop(draggedTask, targetDate, newStartTime)
+    }
+  }
+  
+  return (
+    <DndContext onDragEnd={handleDragEnd}>
+      <TimeGrid {...props} />
     </DndContext>
   )
+}
+
+// 単一日表示用のシンプル版
+export function SingleDayTimeGrid({
+  date,
+  ...props
+}: Omit<TimeGridProps, 'dates'> & { date: Date }) {
+  return <TimeGrid {...props} dates={[date]} />
+}
+
+// 週表示用
+export function WeekTimeGrid({
+  weekStart,
+  ...props
+}: Omit<TimeGridProps, 'dates'> & { weekStart: Date }) {
+  const dates = useMemo(() => {
+    const week = []
+    const startDate = new Date(weekStart)
+    
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(startDate)
+      date.setDate(startDate.getDate() + i)
+      week.push(date)
+    }
+    
+    return week
+  }, [weekStart])
+  
+  return <TimeGrid {...props} dates={dates} />
 }

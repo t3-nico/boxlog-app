@@ -2,7 +2,8 @@
 
 import React, { useMemo, useRef, useEffect } from 'react'
 import { isToday } from 'date-fns'
-import { TimeGrid } from '../TimeGrid'
+import { SingleDayTimeGrid } from '../TimeGrid'
+import { CalendarViewAnimation } from '../components/ViewTransition'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { formatFullDate, scrollToCurrentTime, getPriorityColorClass } from '../utils/view-helpers'
 import type { ViewDateRange, Task } from '../types'
@@ -66,29 +67,31 @@ export function DayView({
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* 日付ヘッダー */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {formatFullDate(currentDate)}
-        </h3>
-        <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-          {tasks.length}件のタスク
+    <CalendarViewAnimation viewType="day">
+      <div className="h-full bg-white dark:bg-gray-900">
+        {/* Google Calendar風のシンプルなヘッダー */}
+        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <h2 className="text-xl font-normal text-gray-900 dark:text-white">
+            {formatFullDate(currentDate)}
+          </h2>
+        </div>
+        
+        {/* 詳細な時間グリッド */}
+        <div ref={containerRef} className="h-full overflow-hidden">
+          <SingleDayTimeGrid
+            date={currentDate}
+            tasks={calendarTasks}
+            gridInterval={60} // 1時間グリッド
+            scrollToTime={isToday(currentDate) ? "current" : "09:00"}
+            showAllDay={true}
+            showCurrentTime={isToday(currentDate)}
+            businessHours={{ start: 9, end: 18 }}
+            onTaskClick={handleTaskClick}
+            onEmptyClick={handleEmptyClick}
+            onTaskDrop={handleTaskDrop}
+          />
         </div>
       </div>
-
-      {/* TimeGrid */}
-      <div ref={containerRef} className="flex-1 overflow-hidden">
-        <TimeGrid
-          date={currentDate}
-          tasks={calendarTasks}
-          gridInterval={15}
-          onTaskClick={handleTaskClick}
-          onEmptyClick={handleEmptyClick}
-          onTaskDrop={handleTaskDrop}
-          showCurrentTime={isToday(currentDate)}
-        />
-      </div>
-    </div>
+    </CalendarViewAnimation>
   )
 }

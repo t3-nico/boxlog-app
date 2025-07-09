@@ -2,25 +2,33 @@
 
 import React from 'react'
 import { useDraggable } from '@dnd-kit/core'
-import { CalendarTask } from './utils/time-grid-helpers'
+import { CalendarTask as CalendarTaskType } from './utils/time-grid-helpers'
+import { CalendarTask } from './components/CalendarTask'
+import { TaskDragAnimation } from './components/ViewTransition'
 
 interface DraggableTaskProps {
-  task: CalendarTask
+  task: CalendarTaskType
   position: {
     top: string
     height: string
     left: string
     width: string
   }
-  onClick?: (task: CalendarTask) => void
-  isDragging?: boolean
+  view?: 'day' | 'week' | 'month'
+  conflicts?: number
+  totalConflicts?: number
+  onClick?: (task: CalendarTaskType) => void
+  onDoubleClick?: (task: CalendarTaskType) => void
 }
 
 export function DraggableTask({
   task,
   position,
+  view = 'week',
+  conflicts = 0,
+  totalConflicts = 1,
   onClick,
-  isDragging = false
+  onDoubleClick
 }: DraggableTaskProps) {
   const {
     attributes,
@@ -36,67 +44,147 @@ export function DraggableTask({
     }
   })
 
-  const style = transform ? {
+  const dragStyle = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     zIndex: 1000
   } : undefined
 
-  const isBeingDragged = isDragging || dndIsDragging
+  const combinedStyle = {
+    ...position,
+    ...dragStyle
+  }
 
   return (
     <div
       ref={setNodeRef}
-      className={`
-        absolute mx-1 rounded-md shadow-sm cursor-pointer
-        transition-all duration-150
-        ${isBeingDragged ? 'opacity-50 scale-105 shadow-lg z-50' : 'hover:shadow-md hover:scale-105'}
-        ${task.color || 'bg-blue-500'} text-white
-        overflow-hidden
-      `}
-      style={{
-        top: position.top,
-        height: position.height,
-        left: position.left,
-        width: `calc(${position.width} - 8px)`, // マージン分を引く
-        ...style
-      }}
-      onClick={(e) => {
-        if (!isBeingDragged) {
-          e.stopPropagation()
-          onClick?.(task)
-        }
-      }}
+      style={combinedStyle}
       {...attributes}
       {...listeners}
     >
-      <div className="p-2 h-full flex flex-col select-none">
-        <div className="font-medium text-sm truncate">
-          {task.title}
-        </div>
-        {task.description && (
-          <div className="text-xs opacity-90 mt-1 flex-1 overflow-hidden">
-            {task.description}
-          </div>
-        )}
-        <div className="text-xs opacity-75 mt-auto">
-          {task.startTime.toLocaleTimeString('ja-JP', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })}
-          {' - '}
-          {task.endTime.toLocaleTimeString('ja-JP', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-          })}
-        </div>
-        
-        {/* ドラッグハンドル視覚化 */}
-        <div className="absolute top-1 right-1 opacity-50">
-          <div className="w-1 h-1 bg-white rounded-full"></div>
-          <div className="w-1 h-1 bg-white rounded-full mt-0.5"></div>
-          <div className="w-1 h-1 bg-white rounded-full mt-0.5"></div>
-        </div>
-      </div>
+      <TaskDragAnimation isDragging={dndIsDragging}>
+        <CalendarTask
+          task={task}
+          view={view}
+          isDragging={dndIsDragging}
+          conflicts={conflicts}
+          totalConflicts={totalConflicts}
+          onClick={onClick}
+          onDoubleClick={onDoubleClick}
+        />
+      </TaskDragAnimation>
+    </div>
+  )
+}
+
+// ドラッグ不可のタスク表示用
+interface StaticTaskProps {
+  task: CalendarTaskType
+  position: {
+    top: string
+    height: string
+    left: string
+    width: string
+  }
+  view?: 'day' | 'week' | 'month'
+  conflicts?: number
+  totalConflicts?: number
+  onClick?: (task: CalendarTaskType) => void
+  onDoubleClick?: (task: CalendarTaskType) => void
+}
+
+export function StaticTask({
+  task,
+  position,
+  view = 'week',
+  conflicts = 0,
+  totalConflicts = 1,
+  onClick,
+  onDoubleClick
+}: StaticTaskProps) {
+  return (
+    <div style={position}>
+      <CalendarTask
+        task={task}
+        view={view}
+        conflicts={conflicts}
+        totalConflicts={totalConflicts}
+        onClick={onClick}
+        onDoubleClick={onDoubleClick}
+      />
+    </div>
+  )
+}
+
+// リサイズ可能なタスク（デイビュー用）
+interface ResizableTaskProps extends DraggableTaskProps {
+  onResize?: (taskId: string, newDuration: number) => void
+}
+
+export function ResizableTask({
+  task,
+  position,
+  view = 'day',
+  onResize,
+  ...props
+}: ResizableTaskProps) {
+  const [isResizing, setIsResizing] = React.useState(false)
+  const [startY, setStartY] = React.useState(0)
+  const [originalHeight, setOriginalHeight] = React.useState(0)
+
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setIsResizing(true)
+    setStartY(e.clientY)
+    setOriginalHeight(parseInt(position.height.replace('px', '')))
+  }
+
+  const handleResizeMove = React.useCallback((e: MouseEvent) => {
+    if (!isResizing) return
+    
+    const deltaY = e.clientY - startY
+    const newHeight = Math.max(20, originalHeight + deltaY) // 最小高さ20px
+    const newDuration = (newHeight / 48) * 60 // 1時間48pxと仮定
+    
+    onResize?.(task.id, newDuration)
+  }, [isResizing, startY, originalHeight, task.id, onResize])
+
+  const handleResizeEnd = React.useCallback(() => {
+    setIsResizing(false)
+  }, [])
+
+  React.useEffect(() => {
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResizeMove)
+      document.addEventListener('mouseup', handleResizeEnd)
+      
+      return () => {
+        document.removeEventListener('mousemove', handleResizeMove)
+        document.removeEventListener('mouseup', handleResizeEnd)
+      }
+    }
+  }, [isResizing, handleResizeMove, handleResizeEnd])
+
+  return (
+    <div style={position} className="relative">
+      <DraggableTask
+        {...props}
+        task={task}
+        position={{
+          top: '0%',
+          height: '100%',
+          left: '0%',
+          width: '100%'
+        }}
+        view={view}
+      />
+      
+      {/* リサイズハンドル */}
+      {view === 'day' && (
+        <div
+          className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize bg-white/20 opacity-0 hover:opacity-100 transition-opacity z-10"
+          onMouseDown={handleResizeStart}
+        />
+      )}
     </div>
   )
 }
