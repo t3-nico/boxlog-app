@@ -9,7 +9,7 @@ import {
   EllipsisHorizontalIcon,
   PencilIcon,
   TrashIcon
-} from '@heroicons/react/24/outline'
+} from '@heroicons/react/24/solid'
 import { tagIconMapping, TagIconName } from '@/config/tagIcons'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { TagEditDialog } from './tag-edit-dialog'
@@ -87,7 +87,8 @@ function TagItem({
             {hasChildren && (
               <button
                 onClick={handleToggleExpanded}
-                className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors z-10"
+                className="p-1 rounded tag-toggle-button transition-colors z-10"
+                style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
               >
                 {isExpanded ? (
                   <ChevronDownIcon className="h-3 w-3 text-gray-500 dark:text-gray-400" />
@@ -104,10 +105,10 @@ function TagItem({
               ? tagIconMapping[tag.icon as TagIconName] 
               : TagIcon
             return (
-              <div className="relative">
+              <div className="relative" style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}>
                 <IconComponent 
                   className="h-4 w-4 flex-shrink-0 tag-icon"
-                  style={{ color: tag.color || '#6b7280' }}
+                  style={{ color: tag.color || '#6b7280', '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
                 />
               </div>
             )
@@ -135,9 +136,10 @@ function TagItem({
                 e.stopPropagation()
                 setShowMenu(!showMenu)
               }}
-              className={`p-1.5 hover:bg-zinc-950/10 dark:hover:bg-white/10 rounded transition-all ${
+              className={`p-1.5 tag-menu-button rounded transition-all ${
                 isHovered || showMenu ? 'opacity-100' : 'opacity-0'
               }`}
+              style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
             >
               <EllipsisHorizontalIcon className="h-3 w-3 text-gray-500 dark:text-gray-400" />
             </button>
@@ -265,7 +267,7 @@ export function TagsList({
       <div className="flex items-center justify-between w-full">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
+          className="section-header-toggle flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
         >
           <span className="peer">Tags</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
@@ -279,7 +281,7 @@ export function TagsList({
         
         <button
           onClick={() => console.log('Create new tag')}
-          className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+          className="section-header-button p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
         >
           <PlusIcon className="h-4 w-4 text-gray-400" />
         </button>

@@ -8,7 +8,7 @@ import {
   EllipsisHorizontalIcon,
   FolderIcon,
   Bars3Icon
-} from '@heroicons/react/20/solid'
+} from '@heroicons/react/24/solid'
 import { SmartFolder } from '@/types/smart-folders'
 import { SmartFolderDialog } from './smart-folder-dialog'
 import { SmartFolderContextMenu } from './smart-folder-context-menu'
@@ -287,7 +287,7 @@ export function SmartFolderList({
       <div className="flex items-center justify-between w-full">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
+          className="section-header-toggle flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
         >
           <span className="peer">Smart Folders</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
@@ -300,7 +300,7 @@ export function SmartFolderList({
         </button>
         <button
           onClick={() => setShowCreateDialog(true)}
-          className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+          className="section-header-button p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
         >
           <PlusIcon className="h-4 w-4 text-gray-400" />
         </button>

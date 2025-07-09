@@ -108,10 +108,13 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
             </label>
             
             {/* 現在選択されているアイコンのプレビュー */}
-            <div className="flex items-center gap-3 mb-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div 
+              className="flex items-center gap-3 mb-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800"
+              style={{ '--tag-color': color } as React.CSSProperties}
+            >
               {(() => {
                 const IconComponent = tagIconMapping[icon]
-                return <IconComponent className="w-5 h-5 tag-icon" style={{ color }} />
+                return <IconComponent className="w-5 h-5 tag-icon" style={{ color, '--tag-color': color } as React.CSSProperties} />
               })()}
               <span className="text-sm font-medium text-gray-900 dark:text-white">{icon}</span>
             </div>
