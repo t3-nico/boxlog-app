@@ -1,10 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { SparklesIcon, CalendarIcon, ClockIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
-import { Button } from '@/components/button'
-import { ScheduleCard } from '@/components/cards/schedule-card'
-import { ClockCard } from '@/components/cards/clock-card'
 import { usePathname, useRouter } from 'next/navigation'
 
 interface MainAreaHeaderProps {

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { XMarkIcon, PaperAirplaneIcon, SparklesIcon, EllipsisVerticalIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { Button } from '@/components/button'
 
 interface AiChatPanelProps {
   isOpen: boolean
@@ -133,15 +132,13 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
             className="flex-1 resize-none rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             rows={2}
           />
-          <Button
+          <button
             onClick={handleSendMessage}
             disabled={!inputValue.trim()}
-            variant="outline"
-            size="sm"
-            className="self-end bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400"
+            className="self-end p-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
           >
             <PaperAirplaneIcon className="w-4 h-4" />
-          </Button>
+          </button>
         </div>
       </div>
     </div>

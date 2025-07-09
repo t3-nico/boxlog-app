@@ -33,7 +33,15 @@ export const useTrashStore = create<TrashState>()(
         }))
 
         // 期限切れアイテムの自動削除をチェック
-        get().cleanupExpiredItems()
+        const state = get()
+        const currentTime = new Date()
+        const validItems = state.deletedItems.filter(item => 
+          item.expiresAt.getTime() > currentTime.getTime()
+        )
+        
+        if (validItems.length !== state.deletedItems.length) {
+          set({ deletedItems: validItems })
+        }
       },
 
       restoreItem: async (deletedItemId: string) => {
@@ -52,8 +60,6 @@ export const useTrashStore = create<TrashState>()(
         // 実際の復元処理は各ストアで実装
         // TODO: 復元先の決定とデータの復元
         console.log('Restoring item:', itemToRestore)
-        
-        return itemToRestore
       },
 
       permanentDelete: async (deletedItemId: string) => {
@@ -71,7 +77,15 @@ export const useTrashStore = create<TrashState>()(
         
         try {
           // 期限切れアイテムをクリーンアップ
-          get().cleanupExpiredItems()
+          const state = get()
+          const cleanupTime = new Date()
+          const validItems = state.deletedItems.filter(item => 
+            item.expiresAt.getTime() > cleanupTime.getTime()
+          )
+          
+          if (validItems.length !== state.deletedItems.length) {
+            set({ deletedItems: validItems })
+          }
         } finally {
           set({ loading: false })
         }

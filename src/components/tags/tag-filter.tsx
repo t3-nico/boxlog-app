@@ -8,7 +8,6 @@ import {
   ChevronDownIcon
 } from '@heroicons/react/24/outline'
 import { useTags } from '@/hooks/use-tags'
-import { useTagFiltering } from '@/hooks/use-filter-url-sync'
 import type { TagWithChildren } from '@/types/tags'
 
 interface TagFilterProps {
@@ -78,7 +77,17 @@ export function TagFilter({
 }: TagFilterProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { data: allTags = [], isLoading } = useTags(true)
-  const { selectedTagIds, toggleTag, clearTags, hasTagFilters } = useTagFiltering()
+  // Use a simple local state for tag filtering for now
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
+  const toggleTag = (tagId: string) => {
+    setSelectedTagIds(prev => 
+      prev.includes(tagId) 
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    )
+  }
+  const clearTags = () => setSelectedTagIds([])
+  const hasTagFilters = selectedTagIds.length > 0
 
   // 選択されたタグ
   const selectedTags = allTags.filter(tag => selectedTagIds.includes(tag.id))
@@ -238,7 +247,14 @@ export function TagChip({ tag, isSelected, onToggle }: TagChipProps) {
  */
 export function TagFilterChips({ className = '' }: { className?: string }) {
   const { data: allTags = [], isLoading } = useTags(true)
-  const { selectedTagIds, toggleTag } = useTagFiltering()
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
+  const toggleTag = (tagId: string) => {
+    setSelectedTagIds(prev => 
+      prev.includes(tagId) 
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    )
+  }
 
   // 使用頻度が高いタグを表示（最大10個）
   const popularTags = allTags
