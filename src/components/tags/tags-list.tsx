@@ -106,7 +106,7 @@ function TagItem({
             return (
               <div className="relative">
                 <IconComponent 
-                  className="h-4 w-4 flex-shrink-0"
+                  className="h-4 w-4 flex-shrink-0 tag-icon"
                   style={{ color: tag.color || '#6b7280' }}
                 />
               </div>
@@ -139,7 +139,7 @@ function TagItem({
                 isHovered || showMenu ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <EllipsisHorizontalIcon className="h-3 w-3 text-zinc-500 dark:text-zinc-400" />
+              <EllipsisHorizontalIcon className="h-3 w-3 text-gray-500 dark:text-gray-400" />
             </button>
             
             {/* コンテキストメニュー */}

@@ -6,24 +6,11 @@ import { Avatar } from '@/components/avatar'
 import { Heading, Subheading } from '@/components/heading'
 import { Select } from '@/components/select'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { PageHeader } from '@/components/page-header'
 import { getRecentReviews } from '@/data'
 
 export default function Home() {
-  const [isChatOpen, setIsChatOpen] = useState(false)
-
-  const handleChatToggle = () => {
-    setIsChatOpen(!isChatOpen)
-  }
-
   return (
-    <>
-      <PageHeader 
-        title="Calendar"
-        onChatToggle={handleChatToggle}
-        isChatOpen={isChatOpen}
-        showCalendarStatus={true}
-      />
+    <div className="p-10">
       <Heading>Good afternoon, Erica</Heading>
       <div className="mt-8 flex items-end justify-between">
         <Subheading>Overview</Subheading>
@@ -74,6 +61,6 @@ export default function Home() {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   )
 }

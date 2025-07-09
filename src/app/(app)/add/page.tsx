@@ -77,8 +77,8 @@ export default function AddPage() {
   return (
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div>
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Add New</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Add New</h2>
+        <p className="text-gray-600 dark:text-gray-300">
           Choose what you&apos;d like to create
         </p>
       </div>

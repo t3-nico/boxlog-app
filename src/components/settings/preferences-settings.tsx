@@ -3,14 +3,15 @@
 import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection, ToggleItem, SelectItem } from '@/components/settings-section'
+import { useTheme } from '@/contexts/theme-context'
 
 export default function PreferencesSettings() {
   const [notifications, setNotifications] = useState(true)
-  const [theme, setTheme] = useState('light')
   const [duration, setDuration] = useState('30')
   const [segment, setSegment] = useState('30')
+  const { theme, setTheme } = useTheme()
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <div className="mx-auto max-w-4xl space-y-10 p-10">
       <Heading>Preferences</Heading>
       <SettingSection title="General" description="Basic application options.">
         <ToggleItem
@@ -23,13 +24,13 @@ export default function PreferencesSettings() {
       <SettingSection title="Appearance" description="Customize the look and feel.">
         <SelectItem
           label="Theme"
-          description="Select application theme"
+          description="Choose your preferred theme setting"
           value={theme}
-          onChange={(e) => setTheme(e.target.value)}
+          onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
         >
           <option value="light">Light</option>
           <option value="dark">Dark</option>
-          <option value="auto">Auto</option>
+          <option value="system">System</option>
         </SelectItem>
       </SettingSection>
       <SettingSection title="Time & Tags" description="Default behaviors.">

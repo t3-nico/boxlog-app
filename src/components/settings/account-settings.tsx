@@ -37,7 +37,7 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <div className="mx-auto max-w-4xl space-y-10 p-10">
       <Heading>Account</Heading>
 
       <SettingSection title="Profile" description="Update your personal information.">

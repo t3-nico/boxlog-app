@@ -235,7 +235,7 @@ export default function ChronoTypePage() {
   const progress = ((currentQuestion + 1) / diagnosisQuestions.length) * 100
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl p-10">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
           Chronotype Settings

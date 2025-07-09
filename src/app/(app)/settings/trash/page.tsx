@@ -67,7 +67,7 @@ export default function TrashPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-10">
       {/* ページヘッダー */}
       <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
         <div className="flex items-center justify-between">

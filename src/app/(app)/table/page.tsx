@@ -10,7 +10,7 @@ export default function Table() {
 
   return (
     <div className="flex flex-col h-full relative">
-      <div className={`flex-1 p-4 md:p-6 lg:p-10 transition-all duration-300 ${state.isOpen ? 'mr-80' : ''}`}>
+      <div className={`flex-1 p-10 transition-all duration-300 ${state.isOpen ? 'mr-80' : ''}`}>
         <div className="mx-auto max-w-6xl">
           <Heading>Table View</Heading>
           <div className="mt-8 flex items-center justify-center h-64 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">

@@ -72,16 +72,16 @@ export default function NotificationsPage() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <BellAlertIcon className="h-8 w-8 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-900">お知らせ</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">お知らせ</h1>
         </div>
-        <p className="text-gray-600">最新のお知らせや更新情報をご確認いただけます。</p>
+        <p className="text-gray-600 dark:text-gray-300">最新のお知らせや更新情報をご確認いただけます。</p>
       </div>
 
       <div className="space-y-4">
         {notificationList.map((notification) => (
           <div
             key={notification.id}
-            className={`bg-white rounded-lg shadow-sm border p-6 ${
+            className={`bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 p-6 ${
               !notification.isRead ? 'border-l-4 border-l-blue-500' : ''
             }`}
           >
@@ -101,11 +101,11 @@ export default function NotificationsPage() {
                     </span>
                   )}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {notification.title}
                 </h3>
-                <p className="text-gray-700 mb-3">{notification.content}</p>
-                <p className="text-sm text-gray-500">{notification.date}</p>
+                <p className="text-gray-700 dark:text-gray-300 mb-3">{notification.content}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{notification.date}</p>
               </div>
               {!notification.isRead && (
                 <button
@@ -123,8 +123,8 @@ export default function NotificationsPage() {
       {notificationList.length === 0 && (
         <div className="text-center py-12">
           <BellAlertIcon className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">お知らせはありません</h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">お知らせはありません</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             新しいお知らせが投稿されるとここに表示されます。
           </p>
         </div>

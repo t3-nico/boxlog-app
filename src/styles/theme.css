@@ -21,18 +21,18 @@
 }
 
 .dark {
-  /* Dark theme variables */
-  --background: 2 6 23;
-  --foreground: 248 250 252;
-  --card: 15 23 42;
-  --card-foreground: 248 250 252;
-  --popover: 15 23 42;
-  --popover-foreground: 248 250 252;
-  --muted: 30 41 59;
-  --muted-foreground: 148 163 184;
-  --border: 51 65 85;
-  --input: 51 65 85;
-  --ring: 96 165 250;
+  /* Dark theme variables - pure grays */
+  --background: 31 41 55 !important;
+  --foreground: 255 255 255 !important;
+  --card: 31 41 55 !important;
+  --card-foreground: 255 255 255 !important;
+  --popover: 31 41 55 !important;
+  --popover-foreground: 255 255 255 !important;
+  --muted: 31 41 55 !important;
+  --muted-foreground: 255 255 255 !important;
+  --border: 75 85 99 !important;
+  --input: 75 85 99 !important;
+  --ring: 96 165 250 !important;
   
   /* Default blue color scheme for dark */
   --color-primary: 96 165 250;
@@ -116,8 +116,256 @@ body {
   background-color: rgb(var(--card));
 }
 
+/* Sidebar specific styling - highest priority */
+nav.group.bg-gray-50.dark\:bg-gray-900 {
+  background-color: rgb(249 250 251) !important; /* light gray-50 */
+}
+
+.dark nav.group.bg-gray-50.dark\:bg-gray-900 {
+  background-color: rgb(17 24 39) !important; /* dark gray-900 */
+}
+
+/* Force sidebar background color in dark mode - more specific */
+.dark nav.group,
+.dark nav[class*="bg-gray-50"] {
+  background-color: rgb(17, 24, 39) !important; /* true gray-900 */
+}
+
+/* Main area specific styling */
+.grow.lg\:bg-white.dark\:lg\:bg-gray-800 {
+  background-color: rgb(255 255 255) !important; /* light white */
+}
+
+.dark .grow.lg\:bg-white.dark\:lg\:bg-gray-800 {
+  background-color: rgb(31, 41, 55) !important; /* dark gray-800 */
+}
+
+/* Force main area background color in dark mode - more specific */
+.dark .grow,
+.dark div[class*="grow"],
+.dark main div.grow {
+  background-color: rgb(31, 41, 55) !important; /* true gray-800 */
+}
+
+/* Force main area header background in dark mode */
+.dark div[class*="sticky"][class*="top-0"],
+.dark div[class*="lg:bg-white"] {
+  background-color: rgb(31, 41, 55) !important; /* true gray-800 */
+}
+
+/* Override ALL dark mode backgrounds and text to pure gray */
+.dark * {
+  --tw-bg-opacity: 1;
+}
+
+.dark body,
+.dark #__next,
+.dark [data-theme="dark"] {
+  background-color: rgb(31, 41, 55) !important; /* gray-800 for main */
+}
+
+.dark nav,
+.dark aside,
+.dark [role="navigation"] {
+  background-color: rgb(17, 24, 39) !important; /* gray-900 for sidebar */
+}
+
+/* Force override any CSS variables being used */
+.dark {
+  background-color: rgb(31, 41, 55) !important;
+}
+
+/* Force all text colors in dark mode - but completely exclude tags and custom colors */
+.dark h1:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark h2:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *), 
+.dark h3:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark h4:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark h5:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark h6:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark p:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark span:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark div:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark a:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark button:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *),
+.dark label:not([style*="color:"]):not(.tag-icon):not([class*="tag"]):not(.tags-list *) {
+  color: rgb(255, 255, 255) !important;
+}
+
+/* Force all backgrounds in dark mode - but respect Tailwind classes */
+.dark div:not([class*="bg-"]),
+.dark section:not([class*="bg-"]),
+.dark article:not([class*="bg-"]),
+.dark main:not([class*="bg-"]) {
+  background-color: rgb(31, 41, 55) !important;
+}
+
+.dark nav div:not([class*="bg-"]),
+.dark aside div:not([class*="bg-"]),
+.dark [role="navigation"] div:not([class*="bg-"]) {
+  background-color: rgb(17, 24, 39) !important;
+}
+
+/* Remove forced blue color overrides - let Tailwind classes work */
+
+/* Let Tailwind dark mode classes work properly */
+
+/* Remove global forced colors to let Tailwind work properly */
+
+/* Fix light mode icons that are white - but preserve orange for add button AND tag colors */
+:not(.dark) svg:not(.fill-orange-600):not(.tag-icon):not([style*="color:"]),
+:not(.dark) [class*="w-"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]),
+:not(.dark) [class*="h-"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
+  color: rgb(17, 24, 39) !important;
+}
+
+/* Fix light mode icons with specific text color classes - but preserve orange AND tag colors */
+:not(.dark) [class*="text-white"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
+  color: rgb(17, 24, 39) !important;
+}
+
+/* Fix light mode icons that might be using fill - but preserve orange AND tag colors */
+:not(.dark) svg[fill="currentColor"]:not(.fill-orange-600):not(.tag-icon):not([style*="color:"]) {
+  fill: rgb(17, 24, 39) !important;
+}
+
+/* Fix light mode icons in specific contexts - but preserve orange AND tag colors */
+:not(.dark) nav svg:not(.fill-orange-600):not(.tag-icon):not([style*="color:"]),
+:not(.dark) button svg:not(.fill-orange-600):not(.tag-icon):not([style*="color:"]),
+:not(.dark) [role="button"] svg:not(.fill-orange-600):not(.tag-icon):not([style*="color:"]) {
+  color: rgb(17, 24, 39) !important;
+}
+
+/* Fix Heroicons specifically - but preserve orange AND tag colors */
+:not(.dark) [class*="Icon"]:not(.fill-orange-600):not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
+  color: rgb(17, 24, 39) !important;
+}
+
+/* Fix any icons that might be using fill attribute - but preserve orange AND tag colors */
+:not(.dark) svg:not(.fill-orange-600):not(.tag-icon):not([style*="color:"]) path {
+  fill: rgb(17, 24, 39) !important;
+}
+
+/* Fix specific icon color classes */
+:not(.dark) [class*="text-zinc-400"],
+:not(.dark) [class*="text-zinc-500"],
+:not(.dark) [class*="text-gray-400"],
+:not(.dark) [class*="text-gray-500"] {
+  color: rgb(107, 114, 128) !important; /* readable gray for light mode */
+}
+
+/* Keep Add button orange in both modes - highest priority */
+.text-orange-600,
+a.text-orange-600,
+span.text-orange-600 {
+  color: rgb(234, 88, 12) !important; /* orange-600 */
+}
+
+.dark .text-orange-600,
+.dark a.text-orange-600,
+.dark span.text-orange-600 {
+  color: rgb(251, 146, 60) !important; /* orange-400 for dark mode */
+}
+
+.dark .text-orange-400,
+.dark a.text-orange-400,
+.dark span.text-orange-400 {
+  color: rgb(251, 146, 60) !important; /* orange-400 for dark mode */
+}
+
+.fill-orange-600,
+svg.fill-orange-600,
+[class*="Icon"].fill-orange-600 {
+  fill: rgb(234, 88, 12) !important; /* orange-600 */
+}
+
+.dark .fill-orange-600,
+.dark svg.fill-orange-600,
+.dark [class*="Icon"].fill-orange-600 {
+  fill: rgb(251, 146, 60) !important; /* orange-400 for dark mode */
+}
+
+.dark .fill-orange-400,
+.dark svg.fill-orange-400,
+.dark [class*="Icon"].fill-orange-400 {
+  fill: rgb(251, 146, 60) !important; /* orange-400 for dark mode */
+}
+
+/* Specific rule for PlusCircleIcon */
+.fill-orange-600 path,
+svg.fill-orange-600 path {
+  fill: rgb(234, 88, 12) !important; /* orange-600 */
+}
+
+.dark .fill-orange-600 path,
+.dark svg.fill-orange-600 path {
+  fill: rgb(251, 146, 60) !important; /* orange-400 for dark mode */
+}
+
+/* Light mode text contrast fixes - specific selectors */
+.text-zinc-950 {
+  color: rgb(17, 24, 39) !important; /* ensure dark text in light mode */
+}
+
+.text-white {
+  color: rgb(17, 24, 39) !important; /* dark gray for light mode */
+}
+
+/* Sidebar specific text colors */
+nav .text-zinc-950,
+nav [class*="text-zinc-950"] {
+  color: rgb(17, 24, 39) !important; /* dark text in light sidebar */
+}
+
+/* Force sidebar item text colors */
+nav [class*="flex"][class*="items-center"][class*="text-zinc-950"] {
+  color: rgb(17, 24, 39) !important;
+}
+
+/* Override any white text in light mode */
+:not(.dark) .text-white,
+:not(.dark) [class*="text-white"] {
+  color: rgb(17, 24, 39) !important;
+}
+
+/* Secondary text colors */
+.text-zinc-500 {
+  color: rgb(107, 114, 128) !important; /* readable gray for icons/secondary */
+}
+
+.fill-zinc-500 {
+  fill: rgb(107, 114, 128) !important; /* readable gray for icons */
+}
+
+/* Light mode hover effects - same behavior as dark mode, different colors */
+:not(.dark) [data-hover] {
+  background-color: rgba(17, 24, 39, 0.05) !important; /* subtle dark overlay like dark mode */
+}
+
+:not(.dark) nav [data-hover] {
+  background-color: rgba(17, 24, 39, 0.05) !important; /* consistent sidebar hover */
+}
+
+/* Hover text and icon enhancement in light mode */
+:not(.dark) [data-hover] [data-slot="icon"] {
+  fill: rgb(17, 24, 39) !important; /* darker icon on hover */
+}
+
+/* Active state for light mode - same pattern as dark mode */
+:not(.dark) [data-active] {
+  background-color: rgba(17, 24, 39, 0.05) !important; /* same subtle overlay */
+}
+
+:not(.dark) [data-active] [data-slot="icon"] {
+  fill: rgb(17, 24, 39) !important; /* active icon color */
+}
+
+/* Dark mode text colors */
 .dark .text-gray-900 {
   color: rgb(var(--foreground));
+}
+
+.dark .text-white {
+  color: rgb(249, 250, 251) !important; /* white text in dark mode */
 }
 
 .dark .text-gray-600 {
@@ -137,11 +385,19 @@ body {
 }
 
 .dark .bg-gray-50 {
-  background-color: rgb(var(--muted));
+  background-color: rgb(17 24 39) !important; /* gray-900 for sidebar */
 }
 
 .dark .bg-gray-100 {
-  background-color: rgb(var(--muted));
+  background-color: rgb(55 65 81); /* gray-700 */
+}
+
+.dark .bg-gray-800 {
+  background-color: rgb(31 41 55) !important; /* gray-800 for main area */
+}
+
+.dark .bg-gray-900 {
+  background-color: rgb(17 24 39) !important; /* gray-900 for sidebar */
 }
 
 /* Scrollbar styling for dark mode */
@@ -161,4 +417,144 @@ body {
 
 .dark ::-webkit-scrollbar-thumb:hover {
   background: rgb(var(--muted-foreground) / 0.5);
+}
+
+/* Preserve custom tag colors in both light and dark modes */
+/* Override theme color forcing for elements with inline style colors */
+.dark h1[style*="color:"],
+.dark h2[style*="color:"], 
+.dark h3[style*="color:"],
+.dark h4[style*="color:"],
+.dark h5[style*="color:"],
+.dark h6[style*="color:"],
+.dark p[style*="color:"],
+.dark span[style*="color:"],
+.dark div[style*="color:"],
+.dark a[style*="color:"],
+.dark button[style*="color:"],
+.dark label[style*="color:"],
+.dark svg[style*="color:"] {
+  color: revert !important; /* Allow inline styles to take precedence */
+}
+
+/* DELETE ALL PREVIOUS APPROACHES AND START FRESH */
+/* Simply exclude tag icons from all color overrides */
+
+/* FINAL SOLUTION: Let inline styles work naturally */
+/* For tag icons specifically, don't override ANY colors */
+.tag-icon {
+  /* Remove all color overrides */
+}
+
+.tag-icon[style] {
+  /* Inline styles take precedence */
+}
+
+/* Dark mode brightness adjustment only */
+.dark .tag-icon {
+  filter: brightness(1.3) contrast(1.1);
+}
+
+/* Light mode - ensure custom colors aren't overridden */
+:not(.dark) svg[style*="color:"],
+:not(.dark) [class*="w-"][style*="color:"],
+:not(.dark) [class*="h-"][style*="color:"] {
+  color: revert !important; /* Use the inline style color */
+}
+
+/* Preserve custom background colors for tags */
+.dark .tag-item[style*="background-color:"],
+.dark .tag-badge[style*="background-color:"],
+.dark [class*="tag"][style*="background-color:"] {
+  background-color: revert !important; /* Use the inline style background */
+  filter: brightness(0.8); /* Slightly darken custom background colors for dark mode */
+}
+
+/* Ensure custom colored elements have proper contrast */
+.dark [style*="color:#"] {
+  filter: brightness(1.2) contrast(1.1); /* Enhance visibility in dark mode */
+}
+
+/* Light mode contrast enhancement for custom colors */
+:not(.dark) [style*="color:#"] {
+  filter: contrast(1.1); /* Slightly enhance contrast in light mode */
+}
+
+/* ABSOLUTE FINAL OVERRIDE - MUST BE LAST IN FILE */
+/* Tag icons must use their inline style colors - HIGHEST PRIORITY */
+.tag-icon[style*="color"] {
+  color: inherit !important;
+}
+
+/* Override ALL previous rules for tag icons */
+svg.tag-icon[style*="color"],
+.tags-list svg.tag-icon[style*="color"],
+.tag-edit-dialog svg.tag-icon[style*="color"] {
+  color: inherit !important;
+}
+
+/* Dark mode tag icons - only adjust brightness, don't change color */
+.dark svg.tag-icon[style*="color"] {
+  color: inherit !important;
+  filter: brightness(1.3) contrast(1.1);
+}
+
+/* Ensure hover effects work properly */
+.hover\:bg-zinc-950\/5:hover {
+  background-color: rgba(24, 24, 27, 0.05) !important;
+}
+
+.dark .hover\:bg-white\/5:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Fix hover effects for tags and interactive elements */
+/* Light mode hover effects */
+:not(.dark) .hover\:bg-zinc-950\/5:hover {
+  background-color: rgba(17, 24, 39, 0.05) !important;
+}
+
+:not(.dark) .hover\:bg-gray-200:hover {
+  background-color: rgb(229, 231, 235) !important;
+}
+
+:not(.dark) .hover\:bg-gray-50:hover {
+  background-color: rgb(249, 250, 251) !important;
+}
+
+:not(.dark) .hover\:bg-blue-50:hover {
+  background-color: rgb(239, 246, 255) !important;
+}
+
+/* Dark mode hover effects */
+.dark .hover\:bg-white\/5:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark .hover\:bg-gray-700:hover {
+  background-color: rgb(55, 65, 81) !important;
+}
+
+.dark .hover\:bg-gray-600:hover {
+  background-color: rgb(75, 85, 99) !important;
+}
+
+.dark .hover\:bg-blue-900\/20:hover {
+  background-color: rgba(30, 58, 138, 0.2) !important;
+}
+
+/* Ensure transition effects work */
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition-duration: 150ms !important;
+}
+
+/* Fix specific tag hover effects */
+.dark .tags-list [class*="hover:"]:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+:not(.dark) .tags-list [class*="hover:"]:hover {
+  background-color: rgba(17, 24, 39, 0.05) !important;
 }

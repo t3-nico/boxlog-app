@@ -16,7 +16,7 @@ export default function PlanBillingSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <div className="mx-auto max-w-4xl space-y-10 p-10">
       <Heading>Plan & Billing</Heading>
 
       <SettingSection title="Current Plan" description="Manage your subscription plan.">

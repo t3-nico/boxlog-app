@@ -111,9 +111,9 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
             <div className="flex items-center gap-3 mb-3 p-3 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
               {(() => {
                 const IconComponent = tagIconMapping[icon]
-                return <IconComponent className="w-5 h-5" style={{ color }} />
+                return <IconComponent className="w-5 h-5 tag-icon" style={{ color }} />
               })()}
-              <span className="text-sm font-medium">{icon}</span>
+              <span className="text-sm font-medium text-gray-900 dark:text-white">{icon}</span>
             </div>
             
             {/* アイコン選択 */}
@@ -136,7 +136,7 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
                           }`}
                           title={iconName}
                         >
-                          <IconComponent className="w-5 h-5 mx-auto text-gray-600 dark:text-gray-400" />
+                          <IconComponent className="w-5 h-5 mx-auto text-gray-600 dark:text-gray-400 tag-icon" />
                         </button>
                       )
                     })}

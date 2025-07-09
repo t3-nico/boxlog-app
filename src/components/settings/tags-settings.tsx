@@ -143,7 +143,7 @@ export default function TagsSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10">
+    <div className="mx-auto max-w-4xl space-y-10 p-10">
       <Heading>Tags</Heading>
 
       <SettingSection title="Manage Tags" description="Create and edit tag presets.">
