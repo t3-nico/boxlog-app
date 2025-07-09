@@ -15,7 +15,20 @@
       "Bash(npx supabase login)",
       "Bash(npx supabase link:*)",
       "Bash(npx supabase gen types typescript:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(rg:*)",
+      "Bash(cp:*)",
+      "Bash(git commit:*)",
+      "Bash(git diff:*)",
+      "Bash(git restore:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(for:*)",
+      "Bash(do sed -i '' 's/mx-auto max-w-4xl space-y-10/mx-auto max-w-4xl space-y-10 p-10/g' \"$file\")",
+      "Bash(done)",
+      "Bash(curl:*)",
+      "Bash(open http://localhost:3001)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

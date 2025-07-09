@@ -40,7 +40,8 @@ import {
   SidebarSpacer,
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
-import { MainAreaHeader, AskAIButton } from '@/components/main-area-header'
+import { MainAreaHeader } from '@/components/main-area-header'
+import { AiChatPanel } from '@/components/ai-chat-panel'
 import { getEvents, getReviews } from '@/data'
 import {
   ArrowRightStartOnRectangleIcon,
@@ -91,6 +92,7 @@ export function ApplicationLayout({
   let inSettings = pathname.startsWith('/settings')
   let inReview = pathname.startsWith('/review')
   let [collapsed, setCollapsed] = useState(false)
+  let [isChatOpen, setIsChatOpen] = useState(false)
   const { user, signOut } = useAuthContext()
   const router = useRouter()
   
@@ -459,12 +461,18 @@ export function ApplicationLayout({
         collapsed={collapsed}
       >
         <ToastProvider>
-          <div className="flex flex-col h-full">
-            {!inSettings && <MainAreaHeader />}
-            <div className="flex-1 overflow-auto">
-              {children}
+          <div className="flex h-full">
+            <div className="flex flex-col flex-1 min-w-0">
+              {!inSettings && <MainAreaHeader onToggleChat={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />}
+              <div className="flex-1 overflow-auto">
+                {children}
+              </div>
             </div>
-            {!inSettings && <AskAIButton />}
+            {isChatOpen && (
+              <div className="w-96 flex-shrink-0">
+                <AiChatPanel isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+              </div>
+            )}
           </div>
         </ToastProvider>
       </SidebarLayout>
