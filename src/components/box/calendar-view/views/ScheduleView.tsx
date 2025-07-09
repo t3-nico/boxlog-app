@@ -4,7 +4,6 @@ import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react'
 import { format, startOfDay, addDays, isToday, isSameDay, isThisWeek } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { CalendarTask } from '../utils/time-grid-helpers'
-import { CalendarViewAnimation } from '../components/ViewTransition'
 import { DayGroup } from '../components/DayGroup'
 import { filterTasksForDate } from '../utils/view-helpers'
 import type { ViewDateRange, Task } from '../types'
@@ -93,36 +92,15 @@ export function ScheduleView({
     }
   }, [])
   
-  // 今日の日付へスクロール
+  // スクロール機能は無効化（自動スクロールを防ぐため）
   const scrollToToday = useCallback(() => {
-    const container = scrollContainerRef.current
-    if (!container) return
-    
-    const todayElement = container.querySelector(`[data-date="${format(new Date(), 'yyyy-MM-dd')}"]`)
-    if (todayElement) {
-      todayElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    // 自動スクロールを無効化
   }, [])
   
-  // 特定の日付へスクロール
   const scrollToDate = useCallback((date: Date) => {
-    const container = scrollContainerRef.current
-    if (!container) return
-    
-    const dateElement = container.querySelector(`[data-date="${format(date, 'yyyy-MM-dd')}"]`)
-    if (dateElement) {
-      dateElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    // 自動スクロールを無効化
   }, [])
   
-  // 初期スクロール位置設定
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToDate(currentDate)
-    }, 100)
-    
-    return () => clearTimeout(timer)
-  }, [currentDate, scrollToDate])
   
   const handleTaskClick = (task: CalendarTask) => {
     onTaskClick?.(task)
@@ -133,9 +111,8 @@ export function ScheduleView({
   }
   
   return (
-    <CalendarViewAnimation viewType="schedule">
-      <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
-        {/* スクロール可能なコンテンツ */}
+    <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
+      {/* スクロール可能なコンテンツ */}
         <div 
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
@@ -161,8 +138,7 @@ export function ScheduleView({
             </div>
           </div>
         </div>
-      </div>
-    </CalendarViewAnimation>
+    </div>
   )
 }
 

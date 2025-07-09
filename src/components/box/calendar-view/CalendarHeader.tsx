@@ -66,7 +66,10 @@ export function CalendarHeader({
   onNavigate,
   onViewChange
 }: CalendarHeaderProps) {
+  const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false)
   const isToday = new Date().toDateString() === currentDate.toDateString()
+  
+  const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
     <header className="h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4">
@@ -92,23 +95,25 @@ export function CalendarHeader({
             今日
           </button>
           
-          {/* 前後ナビゲーション */}
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => onNavigate('prev')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-              title="前の期間"
-            >
-              <ChevronLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-            </button>
-            <button
-              onClick={() => onNavigate('next')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-              title="次の期間"
-            >
-              <ChevronRightIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-            </button>
-          </div>
+          {/* 前後ナビゲーション（スケジュールビューでは無効） */}
+          {viewType !== 'schedule' && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => onNavigate('prev')}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                title="前の期間"
+              >
+                <ChevronLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              </button>
+              <button
+                onClick={() => onNavigate('next')}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                title="次の期間"
+              >
+                <ChevronRightIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              </button>
+            </div>
+          )}
           
           {/* 現在の日付（大きく表示） */}
           <h1 className="text-xl font-normal text-gray-900 dark:text-white">
@@ -116,25 +121,48 @@ export function CalendarHeader({
           </h1>
         </div>
         
-        {/* 右側: ビュー切り替え */}
-        <div className="flex items-center">
-          {/* ビュー切り替え（セグメント化されたボタン） */}
-          <div className="inline-flex rounded-lg border border-gray-200 dark:border-gray-700 p-0.5 bg-gray-50 dark:bg-gray-800">
-            {viewOptions.map(option => (
-              <button
-                key={option.value}
-                onClick={() => onViewChange(option.value)}
-                className={cn(
-                  "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
-                  viewType === option.value
-                    ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-700/50"
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+        {/* 右側: ビュー切り替えドロップダウン（Googleカレンダー風） */}
+        <div className="flex items-center relative">
+          <button
+            onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
+            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          >
+            {currentViewOption?.label || '週'}
+            <ChevronDownIcon className="w-4 h-4" />
+          </button>
+
+          {isViewDropdownOpen && (
+            <>
+              {/* Backdrop */}
+              <div 
+                className="fixed inset-0 z-50" 
+                onClick={() => setIsViewDropdownOpen(false)}
+              />
+              
+              {/* Dropdown */}
+              <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50">
+                <div className="py-1">
+                  {viewOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        onViewChange(option.value)
+                        setIsViewDropdownOpen(false)
+                      }}
+                      className={cn(
+                        "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+                        viewType === option.value 
+                          ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
+                          : 'text-gray-700 dark:text-gray-300'
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </header>
