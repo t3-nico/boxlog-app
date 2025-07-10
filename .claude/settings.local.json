@@ -31,7 +31,8 @@
       "Bash(rg:*)",
       "Bash(mkdir:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

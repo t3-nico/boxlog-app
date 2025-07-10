@@ -32,11 +32,15 @@ interface WeekdayViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
   currentDate: Date
-  onTaskClick?: (task: CalendarTask) => void
+  onTaskClick?: (task: any) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
+  onViewChange?: (viewType: 'day' | 'three-day' | 'week' | 'weekday') => void
+  onNavigatePrev?: () => void
+  onNavigateNext?: () => void
+  onNavigateToday?: () => void
 }
 
 export function WeekdayView({ 
@@ -47,7 +51,11 @@ export function WeekdayView({
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
-  onCreateRecord
+  onCreateRecord,
+  onViewChange,
+  onNavigatePrev,
+  onNavigateNext,
+  onNavigateToday
 }: WeekdayViewProps) {
   // 平日のみを表示（土日を除外）
   const weekdays = useMemo(() => {
@@ -66,6 +74,10 @@ export function WeekdayView({
       onTaskDrag={onTaskDrag}
       onCreateTask={onCreateTask}
       onCreateRecord={onCreateRecord}
+      onViewChange={onViewChange}
+      onNavigatePrev={onNavigatePrev}
+      onNavigateNext={onNavigateNext}
+      onNavigateToday={onNavigateToday}
     />
   )
 }

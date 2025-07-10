@@ -85,12 +85,6 @@ export function calculateViewDateRange(
         days: eachDayOfInterval({ start: scheduleStart, end: scheduleEnd })
       }
     
-    case 'plan-vs-record':
-      return {
-        start: startOfDay(baseDate),
-        end: endOfDay(baseDate),
-        days: [baseDate]
-      }
   }
 }
 
@@ -109,7 +103,6 @@ export function getNextPeriod(
     case 'week-no-weekend': return addWeeks(currentDate, 1)
     case '2week': return addWeeks(currentDate, 2)
     case 'schedule': return addMonths(currentDate, 1)
-    case 'plan-vs-record': return addDays(currentDate, 1)
   }
 }
 
@@ -125,7 +118,6 @@ export function getPreviousPeriod(
     case 'week-no-weekend': return subWeeks(currentDate, 1)
     case '2week': return subWeeks(currentDate, 2)
     case 'schedule': return subMonths(currentDate, 1)
-    case 'plan-vs-record': return subDays(currentDate, 1)
   }
 }
 
@@ -160,8 +152,6 @@ export function formatDateRange(
     case 'schedule':
       return format(currentDate, 'yyyy年M月', { locale: ja })
     
-    case 'plan-vs-record':
-      return format(currentDate, 'yyyy年M月d日(EEE) - 計画vs実績', { locale: ja })
   }
 }
 
@@ -186,7 +176,7 @@ export function filterTasksForDateRange(
  * ビュータイプの有効性チェック
  */
 export function isValidViewType(value: string): value is CalendarViewType {
-  return ['day', 'split-day', '3day', 'week', 'week-no-weekend', '2week', 'schedule', 'plan-vs-record'].includes(value)
+  return ['day', 'split-day', '3day', 'week', 'week-no-weekend', '2week', 'schedule'].includes(value)
 }
 
 /**
@@ -201,6 +191,5 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     case 'week-no-weekend': return '平日'
     case '2week': return '2週'
     case 'schedule': return 'スケジュール'
-    case 'plan-vs-record': return '計画vs実績'
   }
 }

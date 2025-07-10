@@ -10,7 +10,6 @@ import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYe
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import type { CalendarViewType } from './types'
-import { ViewModeToggle } from './components/ViewModeToggle'
 
 interface CalendarHeaderProps {
   viewType: CalendarViewType
@@ -26,7 +25,6 @@ const viewOptions = [
   { value: 'week' as CalendarViewType, label: '週' },
   { value: '2week' as CalendarViewType, label: '2週' },
   { value: 'schedule' as CalendarViewType, label: 'スケジュール' },
-  { value: 'plan-vs-record' as CalendarViewType, label: '予定vs記録' },
 ]
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
@@ -57,8 +55,6 @@ function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
       return `${format(twoWeekStart, 'M月d日')} – ${format(twoWeekEnd, 'M月d日')}`
     case 'schedule':
       return format(date, 'yyyy年M月', { locale: ja })
-    case 'plan-vs-record':
-      return format(date, 'yyyy年M月d日 (E)', { locale: ja })
     default:
       return format(date, 'yyyy年M月')
   }
@@ -123,24 +119,6 @@ export function CalendarHeader({
           <h1 className="text-xl font-normal text-gray-900 dark:text-white">
             {formatHeaderDate(viewType, currentDate)}
           </h1>
-          
-          {/* 表示切替トグル（plan-vs-recordビューでのみ表示） */}
-          {viewType === 'plan-vs-record' && (
-            <div className="flex items-center">
-              {/* デスクトップ: フルサイズ */}
-              <div className="hidden md:block">
-                <ViewModeToggle size="md" showLabels={true} />
-              </div>
-              {/* タブレット: 短縮ラベル */}
-              <div className="hidden sm:block md:hidden">
-                <ViewModeToggle size="sm" showLabels={true} />
-              </div>
-              {/* モバイル: アイコンのみ */}
-              <div className="block sm:hidden">
-                <ViewModeToggle size="sm" showLabels={false} />
-              </div>
-            </div>
-          )}
         </div>
         
         {/* 右側: ビュー切り替えドロップダウン（Googleカレンダー風） */}

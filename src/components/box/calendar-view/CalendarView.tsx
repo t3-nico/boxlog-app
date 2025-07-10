@@ -9,7 +9,6 @@ import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
 import { ScheduleView } from './views/ScheduleView'
-import { PlanVsRecordView } from './views/PlanVsRecordView'
 import { TaskReviewModal } from './components/TaskReviewModal'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
@@ -58,12 +57,10 @@ export function CalendarView({ className }: CalendarViewProps) {
     return calculateViewDateRange(viewType, currentDate)
   }, [viewType, currentDate])
 
-  // recordsの初期ロード
-  useEffect(() => {
-    if (viewType === 'plan-vs-record') {
-      fetchRecords(viewDateRange)
-    }
-  }, [viewType, viewDateRange, fetchRecords])
+  // recordsの初期ロード（将来的にstatsビューで使用）
+  // useEffect(() => {
+  //   fetchRecords(viewDateRange)
+  // }, [viewDateRange, fetchRecords])
   
   // 表示範囲のタスクを取得
   const filteredTasks = useMemo(() => {
@@ -251,15 +248,6 @@ export function CalendarView({ className }: CalendarViewProps) {
             }}
             onDateClick={handleDateSelect}
             useSplitLayout={planRecordMode === 'both'} // Auto-enable split when in 'both' mode
-          />
-        )
-      case 'plan-vs-record':
-        return (
-          <PlanVsRecordView 
-            date={currentDate}
-            tasks={filteredTasks}
-            onConvertToRecord={createRecordFromTask}
-            onCreateTask={handleCreateTask}
           />
         )
       default:

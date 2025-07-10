@@ -83,6 +83,10 @@ export function UnifiedCalendarLayout({
   onTaskDrag,
   onCreateTask,
   onCreateRecord,
+  onViewChange,
+  onNavigatePrev,
+  onNavigateNext,
+  onNavigateToday,
   className
 }: UnifiedCalendarLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -241,27 +245,15 @@ export function UnifiedCalendarLayout({
   const renderDateHeader = () => {
     if (!header) {
       return (
-        <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="flex">
-            <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-800"></div>
-            {responsiveDates.map((date, index) => (
-              <div
-                key={date.toISOString()}
-                className={cn(
-                  "flex-1 px-2 py-2 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 min-w-[200px]",
-                  isToday(date) && "bg-blue-50 dark:bg-blue-900/20"
-                )}
-              >
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {format(date, 'E', { locale: ja })}
-                </div>
-                <div className="text-sm text-gray-900 dark:text-white">
-                  {format(date, 'd')}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <UnifiedCalendarHeader
+          viewType={viewType}
+          dates={responsiveDates}
+          currentDate={currentDate}
+          onViewChange={onViewChange}
+          onNavigatePrev={onNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          onNavigateToday={onNavigateToday}
+        />
       )
     }
     return header
