@@ -24,6 +24,8 @@ import {
 } from '@/components/dropdown'
 import { Avatar } from '@/components/avatar'
 import { useAuthContext } from '@/contexts/AuthContext'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 
 interface PageHeaderProps {
   title: string
@@ -52,7 +54,7 @@ interface ChronoStatus {
   icon: string
   label: string
   period: string
-  type: 'focus' | 'creative' | 'rest'
+  type: 'focus' | 'creative' | 'rest' | 'sleep'
 }
 
 interface ChatButtonProps {
@@ -132,9 +134,20 @@ export function PageHeader({
   showCalendarStatus = false
 }: PageHeaderProps) {
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
   const router = useRouter()
+  const { chronotype } = useCalendarSettingsStore()
 
-  // Mock data for current event and chrono status
+  // 時間を1分ごとに更新（クロノタイプステータス更新のため）
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 60000) // 1分ごと
+    
+    return () => clearInterval(interval)
+  }, [])
+
+  // Mock data for current event
   const currentEvent: CurrentEvent | null = showCalendarStatus ? {
     id: 'event-123',
     title: 'Team Meeting',
@@ -143,12 +156,54 @@ export function PageHeader({
     date: '2024-01-15'
   } : null
 
-  const chronoStatus: ChronoStatus = {
-    icon: 'focus',
-    label: 'Focus Time',
-    period: '14:00-16:00',
-    type: 'focus'
+  // 現在のクロノタイプステータスを取得
+  const getCurrentChronoStatus = (): ChronoStatus => {
+    if (!chronotype.enabled) {
+      return {
+        icon: 'rest',
+        label: 'Chronotype Off',
+        period: '',
+        type: 'rest'
+      }
+    }
+
+    const currentHour = currentTime.getHours()
+    
+    const profile = chronotype.type === 'custom' && chronotype.customZones
+      ? { productivityZones: chronotype.customZones }
+      : CHRONOTYPE_PRESETS[chronotype.type]
+    
+    const currentZone = getProductivityZoneForHour(profile, currentHour)
+    
+    if (!currentZone) {
+      return {
+        icon: 'rest',
+        label: 'Rest Time',
+        period: '',
+        type: 'rest'
+      }
+    }
+
+    const getTypeFromLevel = (level: string): 'focus' | 'creative' | 'rest' | 'sleep' => {
+      switch (level) {
+        case 'peak': return 'focus'
+        case 'good': return 'creative'
+        case 'moderate': return 'creative'
+        case 'low': return 'rest'
+        case 'sleep': return 'sleep'
+        default: return 'rest'
+      }
+    }
+
+    return {
+      icon: currentZone.level,
+      label: currentZone.label,
+      period: `${currentZone.startHour}:00-${currentZone.endHour}:00`,
+      type: getTypeFromLevel(currentZone.level)
+    }
   }
+
+  const chronoStatus = getCurrentChronoStatus()
 
   const handleEventClick = () => {
     if (currentEvent) {
@@ -227,10 +282,16 @@ export function PageHeader({
                     ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
                     : chronoStatus.type === 'creative'
                     ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50'
+                    : chronoStatus.type === 'sleep'
+                    ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-900/50'
                     : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50'
                 }`}
               >
-                <AcademicCapIcon className="h-4 w-4" />
+                {chronoStatus.type === 'sleep' ? (
+                  <span className="text-sm">💤</span>
+                ) : (
+                  <AcademicCapIcon className="h-4 w-4" />
+                )}
                 <span className="font-medium">{chronoStatus.label}</span>
                 <span className="text-xs opacity-75">{chronoStatus.period}</span>
               </button>

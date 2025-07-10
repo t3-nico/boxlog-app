@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
 
 interface CalendarSettings {
   // タイムゾーン設定
@@ -19,6 +20,18 @@ interface CalendarSettings {
   // 表示設定
   showWeekNumbers: boolean
   showDeclinedEvents: boolean
+  
+  // クロノタイプ設定
+  chronotype: {
+    enabled: boolean
+    type: ChronotypeType
+    customZones?: ProductivityZone[]
+    displayMode: 'border' | 'background' | 'both'
+    opacity: number // 0-100
+  }
+  
+  // Plan/Record表示設定
+  planRecordMode: 'plan' | 'record' | 'both'
 }
 
 interface CalendarSettingsStore extends CalendarSettings {
@@ -38,7 +51,14 @@ const defaultSettings: CalendarSettings = {
     end: 18
   },
   showWeekNumbers: false,
-  showDeclinedEvents: false
+  showDeclinedEvents: false,
+  chronotype: {
+    enabled: true,
+    type: 'bear',
+    displayMode: 'border',
+    opacity: 90
+  },
+  planRecordMode: 'plan'
 }
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(

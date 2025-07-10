@@ -8,10 +8,12 @@ import {
   SunIcon,
   ClockIcon
 } from '@heroicons/react/24/outline'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { CHRONOTYPE_PRESETS, type ChronotypeType } from '@/types/chronotype'
 
 interface ChronoTypeSchedule {
   id: string
-  type: 'focus' | 'creative' | 'rest' | 'admin'
+  type: 'focus' | 'creative' | 'rest' | 'admin' | 'sleep'
   label: string
   startTime: string
   endTime: string
@@ -30,45 +32,65 @@ interface ChronoTypeProfile {
 
 const chronoTypeProfiles: ChronoTypeProfile[] = [
   {
-    id: 'lark',
-    name: 'Morning Lark (朝型)',
-    description: '早朝に最も集中力が高く、夜は早めに休む傾向',
-    peakHours: '6:00-10:00',
-    lowHours: '14:00-16:00, 20:00以降',
+    id: 'lion',
+    name: 'Lion (ライオン型・超朝型)',
+    description: '早朝に最も生産的。朝5-6時に起床し、午前中にピークを迎える。',
+    peakHours: '7:00-11:00',
+    lowHours: '17:00-21:00, 21:00以降',
     schedules: [
-      { id: '1', type: 'focus', label: 'Deep Work', startTime: '06:00', endTime: '09:00', description: '最も集中力の高い時間帯', icon: 'focus' },
-      { id: '2', type: 'admin', label: 'Admin Tasks', startTime: '09:00', endTime: '11:00', description: 'メール処理や事務作業', icon: 'admin' },
-      { id: '3', type: 'creative', label: 'Creative Work', startTime: '11:00', endTime: '13:00', description: 'アイデア出しや企画', icon: 'creative' },
-      { id: '4', type: 'rest', label: 'Break Time', startTime: '14:00', endTime: '16:00', description: '休憩・軽作業', icon: 'rest' },
-      { id: '5', type: 'admin', label: 'Light Tasks', startTime: '16:00', endTime: '18:00', description: '軽めのタスク', icon: 'admin' },
+      { id: '1', type: 'admin', label: 'Morning Setup', startTime: '05:00', endTime: '07:00', description: '起床・準備の時間', icon: 'admin' },
+      { id: '2', type: 'focus', label: 'Peak Performance', startTime: '07:00', endTime: '11:00', description: '最高のパフォーマンス時間', icon: 'focus' },
+      { id: '3', type: 'creative', label: 'Focused Work', startTime: '11:00', endTime: '14:00', description: '集中作業', icon: 'creative' },
+      { id: '4', type: 'admin', label: 'Regular Tasks', startTime: '14:00', endTime: '17:00', description: '通常業務', icon: 'admin' },
+      { id: '5', type: 'rest', label: 'Low Energy', startTime: '17:00', endTime: '21:00', description: '低エネルギー時間', icon: 'rest' },
+      { id: '6', type: 'sleep', label: 'Sleep Time', startTime: '21:00', endTime: '05:00', description: '睡眠時間', icon: 'sleep' },
     ]
   },
   {
-    id: 'owl',
-    name: 'Night Owl (夜型)',
-    description: '夜間に最も活動的で創造的になる傾向',
-    peakHours: '20:00-24:00',
-    lowHours: '6:00-10:00, 14:00-16:00',
+    id: 'bear',
+    name: 'Bear (クマ型・標準型)',
+    description: '太陽のリズムに従う。朝7時頃起床、午前中と午後早めが生産的。',
+    peakHours: '9:00-12:00, 14:00-17:00',
+    lowHours: '12:00-14:00, 22:00以降',
     schedules: [
-      { id: '1', type: 'admin', label: 'Morning Admin', startTime: '09:00', endTime: '11:00', description: '軽めの事務作業', icon: 'admin' },
-      { id: '2', type: 'creative', label: 'Creative Work', startTime: '11:00', endTime: '13:00', description: 'アイデア出し', icon: 'creative' },
-      { id: '3', type: 'rest', label: 'Afternoon Break', startTime: '14:00', endTime: '16:00', description: '午後の休憩', icon: 'rest' },
-      { id: '4', type: 'admin', label: 'Light Work', startTime: '16:00', endTime: '18:00', description: '軽作業', icon: 'admin' },
-      { id: '5', type: 'focus', label: 'Deep Work', startTime: '20:00', endTime: '23:00', description: '最も集中できる時間', icon: 'focus' },
+      { id: '1', type: 'admin', label: 'Morning Prep', startTime: '07:00', endTime: '09:00', description: '起床・準備', icon: 'admin' },
+      { id: '2', type: 'focus', label: 'Morning Peak', startTime: '09:00', endTime: '12:00', description: '午前のピーク時間', icon: 'focus' },
+      { id: '3', type: 'rest', label: 'Lunch Break', startTime: '12:00', endTime: '14:00', description: 'ランチ・休憩', icon: 'rest' },
+      { id: '4', type: 'creative', label: 'Afternoon Peak', startTime: '14:00', endTime: '17:00', description: '午後のピーク時間', icon: 'creative' },
+      { id: '5', type: 'admin', label: 'Evening Wind Down', startTime: '17:00', endTime: '22:00', description: '夕方の時間', icon: 'admin' },
+      { id: '6', type: 'sleep', label: 'Sleep Time', startTime: '22:00', endTime: '07:00', description: '睡眠時間', icon: 'sleep' },
     ]
   },
   {
-    id: 'third-bird',
-    name: 'Third Bird (中間型)',
-    description: '朝型と夜型の中間で、柔軟な働き方が可能',
-    peakHours: '10:00-12:00, 16:00-18:00',
-    lowHours: '14:00-15:00',
+    id: 'wolf',
+    name: 'Wolf (オオカミ型・夜型)',
+    description: '夜に最も創造的。朝は苦手で、午後から夜にかけて生産性が上がる。',
+    peakHours: '17:00-22:00, 22:00-02:00',
+    lowHours: '7:00-11:00',
     schedules: [
-      { id: '1', type: 'admin', label: 'Morning Setup', startTime: '09:00', endTime: '10:00', description: '1日の準備', icon: 'admin' },
-      { id: '2', type: 'focus', label: 'Morning Focus', startTime: '10:00', endTime: '12:00', description: '午前の集中作業', icon: 'focus' },
-      { id: '3', type: 'creative', label: 'Creative Session', startTime: '13:00', endTime: '14:00', description: 'クリエイティブ作業', icon: 'creative' },
-      { id: '4', type: 'rest', label: 'Afternoon Rest', startTime: '14:00', endTime: '15:00', description: '午後の休憩', icon: 'rest' },
-      { id: '5', type: 'focus', label: 'Afternoon Focus', startTime: '16:00', endTime: '18:00', description: '午後の集中作業', icon: 'focus' },
+      { id: '1', type: 'rest', label: 'Slow Morning', startTime: '07:00', endTime: '11:00', description: '低調な朝の時間', icon: 'rest' },
+      { id: '2', type: 'admin', label: 'Gradual Start', startTime: '11:00', endTime: '14:00', description: '徐々にペースアップ', icon: 'admin' },
+      { id: '3', type: 'creative', label: 'Afternoon Focus', startTime: '14:00', endTime: '17:00', description: '午後の集中時間', icon: 'creative' },
+      { id: '4', type: 'focus', label: 'Evening Peak', startTime: '17:00', endTime: '22:00', description: '夜のピーク時間', icon: 'focus' },
+      { id: '5', type: 'creative', label: 'Creative Night', startTime: '22:00', endTime: '02:00', description: '深夜の創造的時間', icon: 'creative' },
+      { id: '6', type: 'sleep', label: 'Sleep Time', startTime: '02:00', endTime: '07:00', description: '睡眠時間', icon: 'sleep' },
+    ]
+  },
+  {
+    id: 'dolphin',
+    name: 'Dolphin (イルカ型・不規則型)',
+    description: '睡眠が浅く、不規則なリズム。短い集中時間を複数回持つ。',
+    peakHours: '8:00-10:00, 14:00-16:00',
+    lowHours: '12:00-14:00, 22:00以降',
+    schedules: [
+      { id: '1', type: 'admin', label: 'Morning Start', startTime: '06:00', endTime: '08:00', description: '早朝の起床', icon: 'admin' },
+      { id: '2', type: 'creative', label: 'Morning Focus', startTime: '08:00', endTime: '10:00', description: '朝の集中時間', icon: 'creative' },
+      { id: '3', type: 'admin', label: 'Regular Tasks', startTime: '10:00', endTime: '12:00', description: '通常業務', icon: 'admin' },
+      { id: '4', type: 'rest', label: 'Midday Rest', startTime: '12:00', endTime: '14:00', description: '昼間の低調時間', icon: 'rest' },
+      { id: '5', type: 'focus', label: 'Afternoon Peak', startTime: '14:00', endTime: '16:00', description: '午後のピーク', icon: 'focus' },
+      { id: '6', type: 'creative', label: 'Evening Work', startTime: '16:00', endTime: '18:00', description: '夕方の作業', icon: 'creative' },
+      { id: '7', type: 'admin', label: 'Evening Tasks', startTime: '18:00', endTime: '22:00', description: '夜の時間', icon: 'admin' },
+      { id: '8', type: 'sleep', label: 'Sleep Time', startTime: '22:00', endTime: '06:00', description: '睡眠時間', icon: 'sleep' },
     ]
   }
 ]
@@ -77,14 +99,16 @@ const typeColors = {
   focus: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300',
   creative: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
   rest: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-  admin: 'bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300'
+  admin: 'bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300',
+  sleep: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
 }
 
 const typeIcons = {
   focus: AcademicCapIcon,
   creative: LightBulbIcon,
   rest: MoonIcon,
-  admin: ClockIcon
+  admin: ClockIcon,
+  sleep: () => <span className="text-base">💤</span>
 }
 
 interface DiagnosisQuestion {
@@ -93,7 +117,7 @@ interface DiagnosisQuestion {
   options: {
     value: number
     text: string
-    type: 'lark' | 'owl' | 'third-bird'
+    type: 'lion' | 'bear' | 'wolf' | 'dolphin'
   }[]
 }
 
@@ -102,69 +126,77 @@ const diagnosisQuestions: DiagnosisQuestion[] = [
     id: '1',
     question: '理想的な就寝時間はいつですか？',
     options: [
-      { value: 3, text: '21:00-22:30', type: 'lark' },
-      { value: 2, text: '22:30-24:00', type: 'third-bird' },
-      { value: 1, text: '24:00以降', type: 'owl' }
+      { value: 4, text: '20:00-21:30（超早寝）', type: 'lion' },
+      { value: 3, text: '21:30-23:00（標準的）', type: 'bear' },
+      { value: 2, text: '23:00-01:00（夜型）', type: 'wolf' },
+      { value: 1, text: '不規則・まちまち', type: 'dolphin' }
     ]
   },
   {
     id: '2',
     question: '理想的な起床時間はいつですか？',
     options: [
-      { value: 3, text: '5:30-7:00', type: 'lark' },
-      { value: 2, text: '7:00-8:30', type: 'third-bird' },
-      { value: 1, text: '8:30以降', type: 'owl' }
+      { value: 4, text: '5:00-6:30（超早起き）', type: 'lion' },
+      { value: 3, text: '6:30-8:00（標準的）', type: 'bear' },
+      { value: 2, text: '8:00-10:00（遅め）', type: 'wolf' },
+      { value: 1, text: '不規則・まちまち', type: 'dolphin' }
     ]
   },
   {
     id: '3',
     question: '最も集中できる時間帯はいつですか？',
     options: [
-      { value: 3, text: '朝早く（6-10時）', type: 'lark' },
-      { value: 2, text: '午前中〜午後（10-16時）', type: 'third-bird' },
-      { value: 1, text: '夕方〜夜（16時以降）', type: 'owl' }
+      { value: 4, text: '早朝（6-9時）', type: 'lion' },
+      { value: 3, text: '午前中（9-12時）', type: 'bear' },
+      { value: 2, text: '夜間（20-24時）', type: 'wolf' },
+      { value: 1, text: '複数の短時間（8-10時、14-16時）', type: 'dolphin' }
     ]
   },
   {
     id: '4',
     question: '朝の目覚めはどうですか？',
     options: [
-      { value: 3, text: 'スッキリ目覚める', type: 'lark' },
-      { value: 2, text: '普通に目覚める', type: 'third-bird' },
-      { value: 1, text: 'なかなか起きられない', type: 'owl' }
+      { value: 4, text: '非常にスッキリ、すぐ活動開始', type: 'lion' },
+      { value: 3, text: 'スッキリ目覚める', type: 'bear' },
+      { value: 2, text: 'なかなか起きられない', type: 'wolf' },
+      { value: 1, text: '浅い眠り、頻繁に目覚める', type: 'dolphin' }
     ]
   },
   {
     id: '5',
     question: '夜の過ごし方として好ましいのは？',
     options: [
-      { value: 1, text: '早めにリラックスして休む', type: 'lark' },
-      { value: 2, text: '適度な活動をして休む', type: 'third-bird' },
-      { value: 3, text: '活発に活動する', type: 'owl' }
+      { value: 1, text: '19-20時頃にはリラックスモード', type: 'lion' },
+      { value: 2, text: '21-22時頃に適度にくつろぐ', type: 'bear' },
+      { value: 4, text: '深夜まで活発に活動する', type: 'wolf' },
+      { value: 3, text: '気分や体調による', type: 'dolphin' }
     ]
   },
   {
     id: '6',
-    question: '最も創造性を発揮できる時間は？',
+    question: '睡眠の質について教えてください',
     options: [
-      { value: 3, text: '早朝〜午前中', type: 'lark' },
-      { value: 2, text: '日中の任意の時間', type: 'third-bird' },
-      { value: 1, text: '夕方〜深夜', type: 'owl' }
+      { value: 3, text: '規則正しく深く眠れる', type: 'lion' },
+      { value: 4, text: '安定して良く眠れる', type: 'bear' },
+      { value: 2, text: '遅寝だが深く眠れる', type: 'wolf' },
+      { value: 1, text: '浅い眠り、中途覚醒が多い', type: 'dolphin' }
     ]
   },
   {
     id: '7',
     question: '週末の自然な睡眠パターンは？',
     options: [
-      { value: 3, text: '平日とほぼ同じ', type: 'lark' },
-      { value: 2, text: '1-2時間程度ずれる', type: 'third-bird' },
-      { value: 1, text: '大幅にずれる（3時間以上）', type: 'owl' }
+      { value: 4, text: '平日とまったく同じ', type: 'lion' },
+      { value: 3, text: '平日とほぼ同じ（±1時間）', type: 'bear' },
+      { value: 2, text: '大幅にずれる（2-3時間以上）', type: 'wolf' },
+      { value: 1, text: '不規則で一定しない', type: 'dolphin' }
     ]
   }
 ]
 
 export default function ChronoTypePage() {
-  const [selectedProfile, setSelectedProfile] = useState<string>('third-bird')
+  const { chronotype, updateSettings } = useCalendarSettingsStore()
+  const [selectedProfile, setSelectedProfile] = useState<string>(chronotype.type || 'bear')
   const [customSchedules, setCustomSchedules] = useState<ChronoTypeSchedule[]>([])
   const [showDiagnosis, setShowDiagnosis] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -190,7 +222,7 @@ export default function ChronoTypePage() {
   }
 
   const calculateResult = (finalAnswers: Record<string, number>) => {
-    const typeScores = { lark: 0, owl: 0, 'third-bird': 0 }
+    const typeScores = { lion: 0, bear: 0, wolf: 0, dolphin: 0 }
     
     diagnosisQuestions.forEach(question => {
       const answer = finalAnswers[question.id]
@@ -204,10 +236,16 @@ export default function ChronoTypePage() {
 
     // 最高スコアのタイプを決定
     const maxScore = Math.max(...Object.values(typeScores))
-    const resultType = Object.entries(typeScores).find(([_, score]) => score === maxScore)?.[0] || 'third-bird'
+    const resultType = Object.entries(typeScores).find(([_, score]) => score === maxScore)?.[0] || 'bear'
     
     setDiagnosisResult(resultType)
     setSelectedProfile(resultType)
+    updateSettings({ 
+      chronotype: { 
+        ...chronotype, 
+        type: resultType as ChronotypeType 
+      } 
+    })
   }
 
   const startDiagnosis = () => {
@@ -260,9 +298,10 @@ export default function ChronoTypePage() {
                 </p>
                 <div className="inline-block p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center gap-3 mb-2">
-                    {diagnosisResult === 'lark' && <SunIcon className="h-8 w-8 text-yellow-500" />}
-                    {diagnosisResult === 'owl' && <MoonIcon className="h-8 w-8 text-purple-500" />}
-                    {diagnosisResult === 'third-bird' && <ClockIcon className="h-8 w-8 text-blue-500" />}
+                    {diagnosisResult === 'lion' && <SunIcon className="h-8 w-8 text-yellow-500" />}
+                    {diagnosisResult === 'bear' && <ClockIcon className="h-8 w-8 text-blue-500" />}
+                    {diagnosisResult === 'wolf' && <MoonIcon className="h-8 w-8 text-purple-500" />}
+                    {diagnosisResult === 'dolphin' && <AcademicCapIcon className="h-8 w-8 text-teal-500" />}
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                       {chronoTypeProfiles.find(p => p.id === diagnosisResult)?.name}
                     </h3>
@@ -352,7 +391,15 @@ export default function ChronoTypePage() {
             {chronoTypeProfiles.map((profile) => (
               <button
                 key={profile.id}
-                onClick={() => setSelectedProfile(profile.id)}
+                onClick={() => {
+                  setSelectedProfile(profile.id)
+                  updateSettings({ 
+                    chronotype: { 
+                      ...chronotype, 
+                      type: profile.id as ChronotypeType 
+                    } 
+                  })
+                }}
                 className={`p-4 border-2 rounded-lg text-left transition-all ${
                   selectedProfile === profile.id
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
@@ -360,9 +407,10 @@ export default function ChronoTypePage() {
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  {profile.id === 'lark' && <SunIcon className="h-5 w-5 text-yellow-500" />}
-                  {profile.id === 'owl' && <MoonIcon className="h-5 w-5 text-purple-500" />}
-                  {profile.id === 'third-bird' && <ClockIcon className="h-5 w-5 text-blue-500" />}
+                  {profile.id === 'lion' && <SunIcon className="h-5 w-5 text-yellow-500" />}
+                  {profile.id === 'bear' && <ClockIcon className="h-5 w-5 text-blue-500" />}
+                  {profile.id === 'wolf' && <MoonIcon className="h-5 w-5 text-purple-500" />}
+                  {profile.id === 'dolphin' && <AcademicCapIcon className="h-5 w-5 text-teal-500" />}
                   <h3 className="font-medium text-gray-900 dark:text-gray-100">
                     {profile.name}
                   </h3>
@@ -409,13 +457,55 @@ export default function ChronoTypePage() {
         </div>
       )}
 
+      {/* カレンダー表示設定 */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              Show in Calendar
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Display chronotype indicators in calendar views
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={chronotype.enabled}
+              onChange={(e) => updateSettings({ 
+                chronotype: { ...chronotype, enabled: e.target.checked } 
+              })}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          </label>
+        </div>
+      </div>
+
       {/* 保存ボタン */}
       <div className="flex justify-end gap-3">
-        <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-          リセット
+        <button 
+          onClick={() => {
+            setSelectedProfile('bear')
+            updateSettings({ chronotype: { ...chronotype, type: 'bear' } })
+          }}
+          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Reset
         </button>
-        <button className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
-          設定を保存
+        <button 
+          onClick={() => {
+            updateSettings({ 
+              chronotype: { 
+                ...chronotype, 
+                type: selectedProfile as ChronotypeType 
+              } 
+            })
+            alert('Settings saved successfully!')
+          }}
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+        >
+          Save Settings
         </button>
       </div>
 
@@ -433,37 +523,47 @@ export default function ChronoTypePage() {
             </p>
 
             <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mt-6 mb-3">
-              📊 3つの主要なクロノタイプ
+              📊 4つのクロノタイプ
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
               <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">🌅 Morning Lark (朝型)</h4>
+                <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">🦁 Lion (ライオン型・超朝型)</h4>
                 <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
-                  <li>• 人口の約 25%</li>
-                  <li>• 早朝（6-10時）が最高パフォーマンス</li>
-                  <li>• 夜は早めに疲れる傾向</li>
-                  <li>• 集中力を要する作業は午前中に</li>
-                </ul>
-              </div>
-
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-                <h4 className="font-medium text-purple-800 dark:text-purple-200 mb-2">🌙 Night Owl (夜型)</h4>
-                <ul className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
-                  <li>• 人口の約 25%</li>
-                  <li>• 夜間（20-24時）が最高パフォーマンス</li>
-                  <li>• 朝は調子が上がりにくい</li>
-                  <li>• 創造的作業は夜に向いている</li>
+                  <li>• 人口の約 15%</li>
+                  <li>• 早朝（5-7時）起床、7-11時がピーク</li>
+                  <li>• 夜は21時頃には疲れる</li>
+                  <li>• リーダーシップを発揮しやすい</li>
                 </ul>
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">⚖️ Third Bird (中間型)</h4>
+                <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">🐻 Bear (クマ型・標準型)</h4>
                 <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-                  <li>• 人口の約 50%</li>
-                  <li>• 柔軟な活動パターン</li>
-                  <li>• 午前と夕方にピークが2回</li>
-                  <li>• 環境に適応しやすい</li>
+                  <li>• 人口の約 55%</li>
+                  <li>• 7-8時起床、9-12時と14-17時がピーク</li>
+                  <li>• 太陽のサイクルに同調</li>
+                  <li>• 最も一般的なタイプ</li>
+                </ul>
+              </div>
+
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                <h4 className="font-medium text-purple-800 dark:text-purple-200 mb-2">🐺 Wolf (オオカミ型・夜型)</h4>
+                <ul className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
+                  <li>• 人口の約 20%</li>
+                  <li>• 17-22時がピーク、深夜も活動的</li>
+                  <li>• 朝は調子が上がりにくい</li>
+                  <li>• 創造性と直感力が高い</li>
+                </ul>
+              </div>
+
+              <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-lg border border-teal-200 dark:border-teal-800">
+                <h4 className="font-medium text-teal-800 dark:text-teal-200 mb-2">🐬 Dolphin (イルカ型・不規則型)</h4>
+                <ul className="text-sm text-teal-700 dark:text-teal-300 space-y-1">
+                  <li>• 人口の約 10%</li>
+                  <li>• 複数の短いピーク時間</li>
+                  <li>• 睡眠が浅く、中途覚醒が多い</li>
+                  <li>• 高い知性と完璧主義傾向</li>
                 </ul>
               </div>
             </div>
@@ -484,7 +584,7 @@ export default function ChronoTypePage() {
               📝 作業タイプの分類
             </h3>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 my-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 my-4">
               <div className="flex items-center gap-2 p-2 bg-green-100 dark:bg-green-900/30 rounded">
                 <AcademicCapIcon className="h-4 w-4 text-green-600 dark:text-green-400" />
                 <span className="text-sm font-medium text-green-700 dark:text-green-300">Focus</span>
@@ -501,13 +601,18 @@ export default function ChronoTypePage() {
                 <ClockIcon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
               </div>
+              <div className="flex items-center gap-2 p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded">
+                <span className="text-sm">💤</span>
+                <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Sleep</span>
+              </div>
             </div>
 
             <p className="text-sm">
               <strong>Focus</strong>：集中力を要する重要な作業<br/>
               <strong>Creative</strong>：アイデア出し、企画、デザインなどの創造的作業<br/>
               <strong>Rest</strong>：休憩、軽い作業、リラックス時間<br/>
-              <strong>Admin</strong>：メール処理、事務作業、ルーチンタスク
+              <strong>Admin</strong>：メール処理、事務作業、ルーチンタスク<br/>
+              <strong>Sleep</strong>：睡眠時間、休息を推奨する時間帯
             </p>
 
             <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg mt-6">

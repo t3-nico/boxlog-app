@@ -1,8 +1,10 @@
 'use client'
 
 import React from 'react'
-import { SparklesIcon, CalendarIcon, ClockIcon, SunIcon, MoonIcon } from '@heroicons/react/24/outline'
+import { SparklesIcon, CalendarIcon, ClockIcon, SunIcon, MoonIcon, AcademicCapIcon, LightBulbIcon } from '@heroicons/react/24/outline'
 import { usePathname, useRouter } from 'next/navigation'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 
 interface MainAreaHeaderProps {
   className?: string
@@ -96,6 +98,7 @@ function CurrentTaskDisplay() {
 function TimeDisplay() {
   const [time, setTime] = React.useState(new Date())
   const router = useRouter()
+  const { chronotype } = useCalendarSettingsStore()
 
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -105,27 +108,94 @@ function TimeDisplay() {
     return () => clearInterval(timer)
   }, [])
 
-  // クロノタイプと現在時刻から状態を判定
-  const getChronotypeStatus = (currentTime: Date) => {
-    const hour = currentTime.getHours()
-    const chronotype = 'Morning' // 実際にはユーザー設定から取得
-    
-    if (chronotype === 'Morning') {
-      if (hour >= 6 && hour < 10) return { status: 'Peak', icon: SunIcon }
-      if (hour >= 10 && hour < 14) return { status: 'Active', icon: SunIcon }
-      if (hour >= 14 && hour < 16) return { status: 'Low', icon: MoonIcon }
-      if (hour >= 16 && hour < 20) return { status: 'Moderate', icon: SunIcon }
-      return { status: 'Rest', icon: MoonIcon }
-    } else {
-      // Night Owl の場合
-      if (hour >= 20 || hour < 2) return { status: 'Peak', icon: SunIcon }
-      if (hour >= 6 && hour < 10) return { status: 'Low', icon: MoonIcon }
-      if (hour >= 10 && hour < 16) return { status: 'Moderate', icon: SunIcon }
-      return { status: 'Active', icon: SunIcon }
+  // 現在のクロノタイプステータスを取得
+  const getCurrentChronoStatus = () => {
+    if (!chronotype.enabled) {
+      return {
+        status: 'Off',
+        label: 'Chronotype Off',
+        icon: ClockIcon,
+        color: 'text-gray-500 dark:text-gray-400',
+        bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700'
+      }
     }
+
+    const currentHour = time.getHours()
+    
+    const profile = chronotype.type === 'custom' && chronotype.customZones
+      ? { productivityZones: chronotype.customZones }
+      : CHRONOTYPE_PRESETS[chronotype.type]
+    
+    const currentZone = getProductivityZoneForHour(profile, currentHour)
+    
+    if (!currentZone) {
+      return {
+        status: 'Unknown',
+        label: 'Unknown Zone',
+        icon: ClockIcon,
+        color: 'text-gray-500 dark:text-gray-400',
+        bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700'
+      }
+    }
+
+    // レベルに応じてアイコンと色を決定（設定ページのtypeIconsと統一）
+    const getStatusDisplay = (level: string, label: string) => {
+      switch (level) {
+        case 'peak':
+          return {
+            status: label,
+            label,
+            icon: AcademicCapIcon, // focus type → AcademicCapIcon
+            color: 'text-green-600 dark:text-green-400',
+            bgColor: 'hover:bg-green-50 dark:hover:bg-green-900/20 border-green-300 dark:border-green-600'
+          }
+        case 'good':
+          return {
+            status: label,
+            label,
+            icon: LightBulbIcon, // creative type → LightBulbIcon
+            color: 'text-emerald-600 dark:text-emerald-400',
+            bgColor: 'hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border-emerald-300 dark:border-emerald-600'
+          }
+        case 'moderate':
+          return {
+            status: label,
+            label,
+            icon: ClockIcon, // admin type → ClockIcon
+            color: 'text-blue-600 dark:text-blue-400',
+            bgColor: 'hover:bg-blue-50 dark:hover:bg-blue-900/20 border-blue-300 dark:border-blue-600'
+          }
+        case 'low':
+          return {
+            status: label,
+            label,
+            icon: MoonIcon, // rest type → MoonIcon
+            color: 'text-gray-600 dark:text-gray-400',
+            bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+          }
+        case 'sleep':
+          return {
+            status: label,
+            label,
+            icon: () => <span className="text-base">💤</span>, // sleep type → 💤 emoji
+            color: 'text-indigo-600 dark:text-indigo-400',
+            bgColor: 'hover:bg-indigo-50 dark:hover:bg-indigo-900/20 border-indigo-300 dark:border-indigo-600'
+          }
+        default:
+          return {
+            status: label,
+            label,
+            icon: MoonIcon,
+            color: 'text-gray-600 dark:text-gray-400',
+            bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-300 dark:border-gray-600'
+          }
+      }
+    }
+
+    return getStatusDisplay(currentZone.level, currentZone.label)
   }
 
-  const chronoStatus = getChronotypeStatus(time)
+  const chronoStatus = getCurrentChronoStatus()
   const ChronoIcon = chronoStatus.icon
 
   const handleChronotypeClick = () => {
@@ -146,11 +216,15 @@ function TimeDisplay() {
         </div>
         <button
           onClick={handleChronotypeClick}
-          className="flex items-center gap-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md ml-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-          title="クロノタイプ設定"
+          className={`flex items-center gap-1 px-2 py-1 border rounded-md ml-1 transition-colors cursor-pointer ${chronoStatus.bgColor}`}
+          title={`${chronoStatus.label} - Go to Chronotype Settings`}
         >
-          <ChronoIcon className="w-3 h-3 text-amber-500 dark:text-amber-400" />
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          {typeof ChronoIcon === 'function' ? (
+            <ChronoIcon />
+          ) : (
+            <ChronoIcon className={`w-3 h-3 ${chronoStatus.color}`} />
+          )}
+          <div className={`text-xs font-medium ${chronoStatus.color}`}>
             {chronoStatus.status}
           </div>
         </button>
