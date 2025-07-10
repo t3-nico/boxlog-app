@@ -10,6 +10,7 @@ import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYe
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import type { CalendarViewType } from './types'
+import { ViewModeToggle } from './components/ViewModeToggle'
 
 interface CalendarHeaderProps {
   viewType: CalendarViewType
@@ -82,7 +83,7 @@ export function CalendarHeader({
           {/* 必要に応じて他の要素を追加 */}
         </div>
         
-        {/* 中央: ナビゲーションと日付 */}
+        {/* 中央: ナビゲーションと日付と表示切替 */}
         <div className="flex items-center gap-4">
           {/* 今日ボタン */}
           <button
@@ -122,6 +123,24 @@ export function CalendarHeader({
           <h1 className="text-xl font-normal text-gray-900 dark:text-white">
             {formatHeaderDate(viewType, currentDate)}
           </h1>
+          
+          {/* 表示切替トグル（plan-vs-recordビューでのみ表示） */}
+          {viewType === 'plan-vs-record' && (
+            <div className="flex items-center">
+              {/* デスクトップ: フルサイズ */}
+              <div className="hidden md:block">
+                <ViewModeToggle size="md" showLabels={true} />
+              </div>
+              {/* タブレット: 短縮ラベル */}
+              <div className="hidden sm:block md:hidden">
+                <ViewModeToggle size="sm" showLabels={true} />
+              </div>
+              {/* モバイル: アイコンのみ */}
+              <div className="block sm:hidden">
+                <ViewModeToggle size="sm" showLabels={false} />
+              </div>
+            </div>
+          )}
         </div>
         
         {/* 右側: ビュー切り替えドロップダウン（Googleカレンダー風） */}
