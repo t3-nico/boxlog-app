@@ -388,7 +388,7 @@ export class OfflineManager {
       const result = await response.json()
       return { success: true, serverData: result.data }
     } catch (error) {
-      return { success: false, error: error.message }
+      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
     }
   }
 

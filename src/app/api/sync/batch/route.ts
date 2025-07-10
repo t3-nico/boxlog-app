@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
         results.push({
           actionId: action.id,
           success: false,
-          error: error.message || 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error'
         })
         totalFailed++
       }
@@ -134,7 +134,7 @@ async function processBatchAction(
         return { success: false, error: 'Unknown entity type' }
     }
   } catch (error) {
-    return { success: false, error: error.message || 'Unknown error' }
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
@@ -223,7 +223,7 @@ async function processBatchTaskAction(
         return { success: false, error: 'Unknown action type' }
     }
   } catch (error) {
-    return { success: false, error: error.message || 'Unknown error' }
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
@@ -304,7 +304,7 @@ async function processBatchRecordAction(
         return { success: false, error: 'Unknown action type' }
     }
   } catch (error) {
-    return { success: false, error: error.message || 'Unknown error' }
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
@@ -385,7 +385,7 @@ async function processBatchBlockAction(
         return { success: false, error: 'Unknown action type' }
     }
   } catch (error) {
-    return { success: false, error: error.message || 'Unknown error' }
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }
 
@@ -466,6 +466,6 @@ async function processBatchTagAction(
         return { success: false, error: 'Unknown action type' }
     }
   } catch (error) {
-    return { success: false, error: error.message || 'Unknown error' }
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' }
   }
 }

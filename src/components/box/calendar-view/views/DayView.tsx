@@ -3,20 +3,16 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react'
 import { isToday, format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { SingleDayTimeGrid } from '../TimeGrid'
-import { CalendarViewAnimation } from '../components/ViewTransition'
-import { SplitGridBackground } from '../components/SplitGridBackground'
-import { SplitQuickCreator } from '../components/SplitQuickCreator'
 import { RefinedTimeGrid } from '../components/RefinedTimeGrid'
 import { RefinedCalendarTask } from '../components/RefinedCalendarTask'
-import { SmoothDragPreview } from '../components/SmoothDragPreview'
+import { SplitQuickCreator } from '../components/SplitQuickCreator'
 import { TaskCreatedAnimation } from '../components/MicroInteractions'
-import { TimeBlockCalendarView } from '../components/TimeBlockCalendarView'
+import { CalendarViewAnimation } from '../components/ViewTransition'
 import { useSplitDragToCreate } from '../hooks/useSplitDragToCreate'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
-import { formatFullDate, scrollToCurrentTime, getPriorityColorClass } from '../utils/view-helpers'
+import { scrollToCurrentTime } from '../utils/view-helpers'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 
 interface CreateTaskInput {
@@ -50,7 +46,6 @@ interface DayViewProps {
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
-  enableTimeBlocks?: boolean
 }
 
 export function DayView({ 
@@ -61,8 +56,7 @@ export function DayView({
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
-  onCreateRecord,
-  enableTimeBlocks = false
+  onCreateRecord
 }: DayViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { planRecordMode } = useCalendarSettingsStore()
@@ -74,7 +68,6 @@ export function DayView({
     side: 'left' | 'right'
   } | null>(null)
   const [showTaskCreated, setShowTaskCreated] = useState(false)
-  const [showTimeBlocks, setShowTimeBlocks] = useState(enableTimeBlocks)
 
   // Recordsの取得
   useEffect(() => {
@@ -157,7 +150,7 @@ export function DayView({
         if (containerRef.current) {
           scrollToCurrentTime(containerRef.current)
         }
-      }, 100) // 少し遅延してスクロール
+      }, 100)
 
       return () => clearTimeout(timer)
     }
@@ -194,26 +187,25 @@ export function DayView({
   return (
     <CalendarViewAnimation viewType="day">
       <div className="h-full flex flex-col">
-      
-      {/* 簡潔な日付ヘッダー */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-        <div className="flex">
-          <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-800"></div>
-          <div className="flex-1 px-2 py-2 text-center">
-            <div className="text-xs text-gray-500 dark:text-gray-400">
-              {format(currentDate, 'E', { locale: ja })}
-            </div>
-            <div className="text-sm text-gray-900 dark:text-white">
-              {format(currentDate, 'd')}
+        {/* 日付ヘッダー */}
+        <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <div className="flex">
+            <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-800"></div>
+            <div className="flex-1 px-2 py-2 text-center">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {format(currentDate, 'E', { locale: ja })}
+              </div>
+              <div className="text-sm text-gray-900 dark:text-white">
+                {format(currentDate, 'd')}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 時間グリッド */}
-      <div ref={containerRef} className="flex-1 overflow-hidden">
+        {/* 時間グリッド */}
+        <div ref={containerRef} className="flex-1 overflow-hidden">
           {planRecordMode === 'both' ? (
-            // 分割表示モード - Refined版使用
+            // 分割表示モード
             <div 
               className="relative h-full bg-white dark:bg-gray-900"
               onMouseDown={handleMouseDown}
@@ -244,16 +236,10 @@ export function DayView({
                         <RefinedCalendarTask
                           key={task.id}
                           task={{
-                            id: task.id,
-                            title: task.title,
-                            startTime: task.startTime,
-                            endTime: task.endTime,
-                            status: (task.status === 'scheduled' || task.status === 'pending') ? 'scheduled' : 
+                            ...task,
+                            status: (task.status === 'pending' || task.status === 'scheduled') ? 'scheduled' : 
                                    task.status === 'in_progress' ? 'in_progress' : 'completed',
-                            priority: task.priority || 'medium',
-                            description: task.description,
-                            isPlan: task.isPlan,
-                            isRecord: task.isRecord
+                            priority: task.priority || 'medium'
                           }}
                           view="day"
                           style={{
@@ -273,13 +259,8 @@ export function DayView({
                     })}
                   </div>
                   
-                  {/* 中央区切り線と日付ラベル */}
-                  <div className="w-px bg-gray-300 dark:bg-gray-600 z-20 relative">
-                    {/* 日付表示 */}
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-white dark:bg-gray-900 text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                      {format(currentDate, 'M月d日(E)', { locale: ja })}
-                    </div>
-                  </div>
+                  {/* 中央区切り線 */}
+                  <div className="w-px bg-gray-300 dark:bg-gray-600 z-20" />
                   
                   {/* 右側：記録タスク */}
                   <div className="w-1/2 pl-0.5 relative">
@@ -292,18 +273,10 @@ export function DayView({
                         <RefinedCalendarTask
                           key={task.id}
                           task={{
-                            id: task.id,
-                            title: task.title,
-                            startTime: task.startTime,
-                            endTime: task.endTime,
-                            status: 'completed',
-                            priority: task.priority || 'medium',
-                            description: task.description,
-                            isPlan: task.isPlan,
-                            isRecord: task.isRecord,
-                            satisfaction: task.satisfaction,
-                            focusLevel: task.focusLevel,
-                            energyLevel: task.energyLevel
+                            ...task,
+                            status: (task.status === 'pending' || task.status === 'scheduled') ? 'scheduled' : 
+                                   task.status === 'in_progress' ? 'in_progress' : 'completed',
+                            priority: task.priority || 'medium'
                           }}
                           view="day"
                           style={{
@@ -344,7 +317,7 @@ export function DayView({
               )}
             </div>
           ) : (
-            // 通常表示モード - Refined版使用
+            // 通常表示モード
             <RefinedTimeGrid
               dates={[currentDate]}
               gridInterval={15}
@@ -369,19 +342,10 @@ export function DayView({
                     <RefinedCalendarTask
                       key={task.id}
                       task={{
-                        id: task.id,
-                        title: task.title,
-                        startTime: task.startTime,
-                        endTime: task.endTime,
-                        status: (task.status === 'scheduled' || task.status === 'pending') ? 'scheduled' : 
+                        ...task,
+                        status: (task.status === 'pending' || task.status === 'scheduled') ? 'scheduled' : 
                                task.status === 'in_progress' ? 'in_progress' : 'completed',
-                        priority: task.priority || 'medium',
-                        description: task.description,
-                        isPlan: task.isPlan,
-                        isRecord: task.isRecord,
-                        satisfaction: task.satisfaction,
-                        focusLevel: task.focusLevel,
-                        energyLevel: task.energyLevel
+                        priority: task.priority || 'medium'
                       }}
                       view="day"
                       style={{
@@ -394,7 +358,6 @@ export function DayView({
                       }}
                       onClick={handleTaskClick}
                       onStatusChange={(taskId, status) => {
-                        // ステータス変更処理
                         console.log('Status change:', taskId, status)
                       }}
                     />
@@ -411,20 +374,6 @@ export function DayView({
         isVisible={showTaskCreated}
         onComplete={() => setShowTaskCreated(false)}
       />
-      
-      {/* タイムブロック機能オーバーレイ */}
-      {enableTimeBlocks && showTimeBlocks && (
-        <div className="absolute inset-0 z-50">
-          <TimeBlockCalendarView
-            date={currentDate}
-            hourHeight={60}
-            showTimeBlocks={true}
-            onTimeSlotClick={handleEmptyClick}
-            className="h-full"
-          />
-        </div>
-      )}
-      </div>
     </CalendarViewAnimation>
   )
 }
