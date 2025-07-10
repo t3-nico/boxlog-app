@@ -1,10 +1,15 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect, useState, useRef } from 'react'
 import { isWeekend, isToday, format } from 'date-fns'
 import { TimeGrid } from '../TimeGrid'
 import { CalendarViewAnimation } from '../components/ViewTransition'
+import { SplitGridBackground } from '../components/SplitGridBackground'
+import { SplitQuickCreator } from '../components/SplitQuickCreator'
+import { useSplitDragToCreate } from '../hooks/useSplitDragToCreate'
 import { CalendarTask } from '../utils/time-grid-helpers'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useRecordsStore } from '@/stores/useRecordsStore'
 import { 
   formatShortDate, 
   formatShortWeekday, 
@@ -12,7 +17,29 @@ import {
   getPriorityColorClass,
   cn
 } from '../utils/view-helpers'
-import type { ViewDateRange, Task } from '../types'
+import type { ViewDateRange, Task, TaskRecord } from '../types'
+
+interface CreateTaskInput {
+  title: string
+  planned_start: Date
+  planned_duration: number
+  status: 'pending' | 'in_progress' | 'completed'
+  priority: 'low' | 'medium' | 'high'
+  description?: string
+  tags?: string[]
+}
+
+interface CreateRecordInput {
+  title: string
+  actual_start: Date
+  actual_end: Date
+  actual_duration: number
+  satisfaction?: number
+  focus_level?: number
+  energy_level?: number
+  memo?: string
+  interruptions?: number
+}
 
 interface WeekViewProps {
   dateRange: ViewDateRange
@@ -22,6 +49,8 @@ interface WeekViewProps {
   onTaskClick?: (task: CalendarTask) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
+  onCreateTask?: (task: CreateTaskInput) => void
+  onCreateRecord?: (record: CreateRecordInput) => void
 }
 
 export function WeekView({ 
@@ -31,8 +60,20 @@ export function WeekView({
   showWeekends = true,
   onTaskClick,
   onEmptyClick,
-  onTaskDrag 
+  onTaskDrag,
+  onCreateTask,
+  onCreateRecord
 }: WeekViewProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { planRecordMode } = useCalendarSettingsStore()
+  const { records, fetchRecords } = useRecordsStore()
+  const [activeCreation, setActiveCreation] = useState<{
+    type: 'task' | 'record'
+    start: Date
+    end: Date
+    side: 'left' | 'right'
+  } | null>(null)
+
   // 表示する日付を計算（土日を除外するかどうか）
   const displayDays = useMemo(() => {
     return showWeekends 
@@ -40,19 +81,79 @@ export function WeekView({
       : dateRange.days.filter(day => !isWeekend(day))
   }, [dateRange.days, showWeekends])
 
-  // Task[]をCalendarTask[]に変換
-  const calendarTasks: CalendarTask[] = useMemo(() => {
+  // Recordsの取得
+  useEffect(() => {
+    if (planRecordMode === 'record' || planRecordMode === 'both') {
+      fetchRecords({ start: dateRange.start, end: dateRange.end })
+    }
+  }, [planRecordMode, dateRange, fetchRecords])
+
+  // Task[]をCalendarTask[]に変換（計画用）
+  const planTasks: CalendarTask[] = useMemo(() => {
+    if (planRecordMode === 'record') return []
+    
     return tasks.map(task => ({
       id: task.id,
       title: task.title,
       startTime: new Date(task.planned_start || ''),
       endTime: new Date(task.planned_end || task.planned_start || ''),
-      color: getPriorityColorClass(task.priority || 'medium').split(' ')[0],
+      color: '#3b82f6', // 計画は青色
       description: task.description || '',
       status: task.status || 'scheduled',
-      priority: task.priority || 'medium'
+      priority: task.priority || 'medium',
+      isPlan: true
     }))
-  }, [tasks])
+  }, [tasks, planRecordMode])
+
+  // TaskRecord[]をCalendarTask[]に変換（実績用）
+  const recordTasks: CalendarTask[] = useMemo(() => {
+    if (planRecordMode === 'plan') return []
+    
+    return records.map(record => ({
+      id: record.id,
+      title: record.title,
+      startTime: new Date(record.actual_start),
+      endTime: new Date(record.actual_end),
+      color: '#10b981', // 実績は緑色
+      description: record.memo || '',
+      status: 'completed' as const,
+      priority: 'medium' as const,
+      isRecord: true,
+      satisfaction: record.satisfaction,
+      focusLevel: record.focus_level,
+      energyLevel: record.energy_level
+    }))
+  }, [records, planRecordMode])
+
+  // 分割ドラッグ機能（'both'モードでのみ有効）
+  const { dragState, handleMouseDown, dragPreview } = useSplitDragToCreate({
+    containerRef,
+    gridInterval: 15,
+    onCreateItem: (item) => {
+      if (planRecordMode === 'both') {
+        setActiveCreation({
+          type: item.side === 'left' ? 'task' : 'record',
+          start: item.start,
+          end: item.end,
+          side: item.side
+        })
+      }
+    }
+  })
+
+  // 表示するタスクを決定
+  const calendarTasks: CalendarTask[] = useMemo(() => {
+    switch (planRecordMode) {
+      case 'plan':
+        return planTasks
+      case 'record':
+        return recordTasks
+      case 'both':
+        return [...planTasks, ...recordTasks]
+      default:
+        return planTasks
+    }
+  }, [planTasks, recordTasks, planRecordMode])
 
   const handleTaskClick = (task: CalendarTask) => {
     onTaskClick?.(task)
@@ -66,9 +167,30 @@ export function WeekView({
     onTaskDrag?.(task.id, newStartTime)
   }
 
+  const handleSaveTask = (data: CreateTaskInput) => {
+    onCreateTask?.(data)
+    setActiveCreation(null)
+  }
+
+  const handleSaveRecord = (data: CreateRecordInput) => {
+    onCreateRecord?.(data)
+    setActiveCreation(null)
+  }
+
+  const handleCancel = () => {
+    setActiveCreation(null)
+  }
+
   return (
     <CalendarViewAnimation viewType="week">
       <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+        
+        {/* Week view indicator - temporary for debugging */}
+        <div className="bg-blue-500 text-white text-sm px-3 py-1 text-center">
+          週ビュー ({displayDays.length}日表示)
+        </div>
+        
+        
         {/* Google Calendar風の週ヘッダー */}
         <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="flex">
@@ -99,32 +221,97 @@ export function WeekView({
                 )}>
                   {format(day, 'd')}
                 </div>
-                {/* タスク数表示 */}
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {filterTasksForDate(calendarTasks, day).length}件
-                </div>
               </div>
             ))}
           </div>
         </div>
 
         {/* 週のTimeGrid */}
-        <div className="flex-1 overflow-hidden">
-          <TimeGrid
-            dates={displayDays}
-            tasks={calendarTasks}
-            gridInterval={60} // 1時間グリッド
-            scrollToTime="08:00" // 朝8時にスクロール（Google Calendar風）
-            showAllDay={true}
-            showCurrentTime={displayDays.some(day => isToday(day))}
-            showWeekends={showWeekends}
-            showDateHeader={false} // 曜日ヘッダーを非表示（上に独自ヘッダーがあるため）
-            businessHours={{ start: 9, end: 18 }}
-            onTaskClick={handleTaskClick}
-            onEmptyClick={handleEmptyClick}
-            onTaskDrop={handleTaskDrop}
-            className="h-full"
-          />
+        <div ref={containerRef} className="flex-1 overflow-hidden">
+          {/* Debug: {planRecordMode} */}
+          {planRecordMode === 'both' ? (
+            // 分割表示モード
+            <div 
+              className="relative h-full"
+              onMouseDown={handleMouseDown}
+              style={{ height: '100%' }}
+            >
+              {/* 分割グリッド背景 */}
+              <SplitGridBackground />
+              
+              {/* 各日の中央に区切り線 */}
+              <div className="absolute inset-0 z-20 pointer-events-none">
+                {displayDays.map((day, index) => {
+                  const dayWidth = 100 / displayDays.length
+                  const dayStart = index * dayWidth
+                  const centerLine = dayStart + (dayWidth / 2)
+                  
+                  return (
+                    <div
+                      key={day.toISOString()}
+                      className="absolute top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600"
+                      style={{
+                        left: `${centerLine}%`
+                      }}
+                    />
+                  )
+                })}
+              </div>
+
+              {/* 分割TimeGrid - 予定と記録を統合 */}
+              <TimeGrid
+                dates={displayDays}
+                tasks={[...planTasks, ...recordTasks]}
+                gridInterval={60}
+                scrollToTime="08:00"
+                showAllDay={true}
+                showCurrentTime={displayDays.some(day => isToday(day))}
+                showWeekends={showWeekends}
+                showDateHeader={false}
+                businessHours={{ start: 9, end: 18 }}
+                onTaskClick={handleTaskClick}
+                onEmptyClick={handleEmptyClick}
+                onTaskDrop={handleTaskDrop}
+                className="h-full"
+                splitMode={true}
+              />
+
+              {/* インライン作成フォーム */}
+              {activeCreation && (
+                <SplitQuickCreator
+                  type={activeCreation.type}
+                  side={activeCreation.side}
+                  initialStart={activeCreation.start}
+                  initialEnd={activeCreation.end}
+                  onSave={(data) => {
+                    if (activeCreation.type === 'task') {
+                      handleSaveTask(data as CreateTaskInput)
+                    } else {
+                      handleSaveRecord(data as CreateRecordInput)
+                    }
+                  }}
+                  onCancel={handleCancel}
+                />
+              )}
+            </div>
+          ) : (
+            // 通常表示モード
+            <TimeGrid
+              dates={displayDays}
+              tasks={calendarTasks}
+              gridInterval={60} // 1時間グリッド
+              scrollToTime="08:00" // 朝8時にスクロール（Google Calendar風）
+              showAllDay={true}
+              showCurrentTime={displayDays.some(day => isToday(day))}
+              showWeekends={showWeekends}
+              showDateHeader={false} // 曜日ヘッダーを非表示（上に独自ヘッダーがあるため）
+              businessHours={{ start: 9, end: 18 }}
+              onTaskClick={handleTaskClick}
+              onEmptyClick={handleEmptyClick}
+              onTaskDrop={handleTaskDrop}
+              className="h-full"
+            />
+          )}
         </div>
       </div>
     </CalendarViewAnimation>

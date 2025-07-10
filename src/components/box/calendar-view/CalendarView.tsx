@@ -10,8 +10,10 @@ import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
 import { ScheduleView } from './views/ScheduleView'
 import { PlanVsRecordView } from './views/PlanVsRecordView'
+import { TaskReviewModal } from './components/TaskReviewModal'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useTaskStore } from '@/stores/useTaskStore'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -24,8 +26,19 @@ import type { CalendarViewType, CalendarViewProps, Task } from './types'
 export function CalendarView({ className }: CalendarViewProps) {
   const [viewType, setViewType] = useState<CalendarViewType>('split-day')
   const [currentDate, setCurrentDate] = useState(new Date())
+  const [selectedTask, setSelectedTask] = useState<any>(null)
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+  
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
   const { planRecordMode } = useCalendarSettingsStore()
+  const { 
+    tasks, 
+    createTask, 
+    updateTask, 
+    deleteTask, 
+    updateTaskStatus,
+    getTasksForDateRange 
+  } = useTaskStore()
   
   // LocalStorageからビュータイプを復元
   useEffect(() => {
@@ -52,27 +65,10 @@ export function CalendarView({ className }: CalendarViewProps) {
     }
   }, [viewType, viewDateRange, fetchRecords])
   
-  // タスク取得（一時的にモックデータを使用）
-  const tasks: Task[] = useMemo(() => [
-    {
-      id: '1',
-      title: 'サンプルタスク1',
-      planned_start: new Date().toISOString(),
-      planned_end: new Date(Date.now() + 3600000).toISOString(),
-      planned_duration: 60,
-      status: 'pending',
-      priority: 'high'
-    },
-    {
-      id: '2',
-      title: 'サンプルタスク2',
-      planned_start: new Date(Date.now() + 7200000).toISOString(),
-      planned_end: new Date(Date.now() + 10800000).toISOString(),
-      planned_duration: 60,
-      status: 'in_progress',
-      priority: 'medium'
-    }
-  ], [])
+  // 表示範囲のタスクを取得
+  const filteredTasks = useMemo(() => {
+    return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
+  }, [getTasksForDateRange, viewDateRange])
 
   // レコード取得（一時的にモックデータを使用）
   const records = useMemo(() => [
@@ -91,9 +87,47 @@ export function CalendarView({ className }: CalendarViewProps) {
     }
   ], [])
 
-  const filteredTasks = useMemo(() => {
-    return filterTasksForDateRange(tasks, viewDateRange)
-  }, [tasks, viewDateRange])
+  // タスククリックハンドラー
+  const handleTaskClick = useCallback((task: any) => {
+    // CalendarTaskをTaskストア形式に変換
+    const storeTask = {
+      id: task.id,
+      title: task.title,
+      planned_start: task.startTime || new Date(task.planned_start || ''),
+      planned_duration: task.planned_duration || Math.round((new Date(task.endTime || '').getTime() - new Date(task.startTime || '').getTime()) / (1000 * 60)),
+      status: task.status || 'pending',
+      priority: task.priority || 'medium',
+      description: task.description,
+      tags: task.tags,
+      created_at: task.created_at || new Date(),
+      updated_at: task.updated_at || new Date()
+    }
+    setSelectedTask(storeTask)
+    setIsReviewModalOpen(true)
+  }, [])
+  
+  // タスクレビューモーダルのハンドラー
+  const handleTaskSave = useCallback((task: any) => {
+    // カレンダータスクからストアタスクへ変換
+    const storeTask = {
+      ...task,
+      planned_start: typeof task.planned_start === 'string' ? new Date(task.planned_start) : task.planned_start,
+      created_at: task.created_at || new Date(),
+      updated_at: new Date()
+    }
+    updateTask(task.id, storeTask)
+    setIsReviewModalOpen(false)
+  }, [updateTask])
+  
+  const handleTaskDelete = useCallback((taskId: string) => {
+    deleteTask(taskId)
+    setIsReviewModalOpen(false)
+  }, [deleteTask])
+  
+  const handleStatusChange = useCallback((taskId: string, status: 'pending' | 'in_progress' | 'completed') => {
+    updateTaskStatus(taskId, status)
+    setIsReviewModalOpen(false)
+  }, [updateTaskStatus])
   
   // ナビゲーション関数
   const handleNavigate = useCallback((direction: 'prev' | 'next' | 'today') => {
@@ -175,7 +209,8 @@ export function CalendarView({ className }: CalendarViewProps) {
       tasks: filteredTasks,
       currentDate,
       onCreateTask: handleCreateTask,
-      onCreateRecord: handleCreateRecord
+      onCreateRecord: handleCreateRecord,
+      onTaskClick: handleTaskClick
     }
 
     switch (viewType) {
@@ -203,10 +238,7 @@ export function CalendarView({ className }: CalendarViewProps) {
         return (
           <ScheduleView 
             {...commonProps}
-            onTaskClick={(task) => {
-              // Handle task click - could open task details or edit
-              console.log('Task clicked:', task)
-            }}
+            onTaskClick={handleTaskClick}
             onEmptySlotClick={(date, time) => {
               // Handle empty slot click - could create new task
               handleCreateTask({
@@ -250,10 +282,9 @@ export function CalendarView({ className }: CalendarViewProps) {
     description?: string
     tags?: string[]
   }) => {
-    console.log('Creating new task:', taskData)
-    // TODO: 実際のタスク作成処理を実装
-    // ここで Supabase やローカルストレージにタスクを保存
-  }, [])
+    const newTask = createTask(taskData)
+    console.log('Created new task:', newTask)
+  }, [createTask])
 
   // 記録作成ハンドラー
   const handleCreateRecord = useCallback((recordData: {
@@ -273,15 +304,27 @@ export function CalendarView({ className }: CalendarViewProps) {
   }, [])
 
   return (
-    <CalendarLayout
-      viewType={viewType}
-      currentDate={currentDate}
-      onNavigate={handleNavigate}
-      onViewChange={handleViewChange}
-    >
-      <div className="h-full overflow-hidden bg-white dark:bg-gray-800">
-        {renderView()}
-      </div>
-    </CalendarLayout>
+    <>
+      <CalendarLayout
+        viewType={viewType}
+        currentDate={currentDate}
+        onNavigate={handleNavigate}
+        onViewChange={handleViewChange}
+      >
+        <div className="h-full overflow-hidden bg-white dark:bg-gray-800">
+          {renderView()}
+        </div>
+      </CalendarLayout>
+      
+      {/* タスクレビューモーダル */}
+      <TaskReviewModal
+        task={selectedTask}
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        onSave={handleTaskSave}
+        onDelete={handleTaskDelete}
+        onStatusChange={handleStatusChange}
+      />
+    </>
   )
 }

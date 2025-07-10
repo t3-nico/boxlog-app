@@ -44,7 +44,7 @@ export function PlanVsRecordView({
   // 該当日のデータ取得
   const dayTasks = useMemo(() => 
     tasks.filter(task => 
-      task.planned_start && isSameDay(new Date(task.planned_start), date)
+      task.planned_start && isSameDay(task.planned_start, date)
     ), [tasks, date]
   )
   

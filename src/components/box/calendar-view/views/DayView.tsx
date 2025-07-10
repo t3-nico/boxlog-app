@@ -1,12 +1,17 @@
 'use client'
 
 import React, { useMemo, useRef, useEffect, useState } from 'react'
-import { isToday } from 'date-fns'
+import { isToday, format } from 'date-fns'
+import { ja } from 'date-fns/locale'
 import { SingleDayTimeGrid } from '../TimeGrid'
 import { CalendarViewAnimation } from '../components/ViewTransition'
-import { PlanRecordToggle } from '../components/PlanRecordToggle'
 import { SplitGridBackground } from '../components/SplitGridBackground'
 import { SplitQuickCreator } from '../components/SplitQuickCreator'
+import { RefinedTimeGrid } from '../components/RefinedTimeGrid'
+import { RefinedCalendarTask } from '../components/RefinedCalendarTask'
+import { SmoothDragPreview } from '../components/SmoothDragPreview'
+import { TaskCreatedAnimation } from '../components/MicroInteractions'
+import { TimeBlockCalendarView } from '../components/TimeBlockCalendarView'
 import { useSplitDragToCreate } from '../hooks/useSplitDragToCreate'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
@@ -45,6 +50,7 @@ interface DayViewProps {
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
+  enableTimeBlocks?: boolean
 }
 
 export function DayView({ 
@@ -55,7 +61,8 @@ export function DayView({
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
-  onCreateRecord 
+  onCreateRecord,
+  enableTimeBlocks = false
 }: DayViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { planRecordMode } = useCalendarSettingsStore()
@@ -66,6 +73,8 @@ export function DayView({
     end: Date
     side: 'left' | 'right'
   } | null>(null)
+  const [showTaskCreated, setShowTaskCreated] = useState(false)
+  const [showTimeBlocks, setShowTimeBlocks] = useState(enableTimeBlocks)
 
   // Recordsの取得
   useEffect(() => {
@@ -81,8 +90,8 @@ export function DayView({
     return tasks.map(task => ({
       id: task.id,
       title: task.title,
-      startTime: new Date(task.planned_start || ''),
-      endTime: new Date(task.planned_end || task.planned_start || ''),
+      startTime: task.planned_start,
+      endTime: new Date(task.planned_start.getTime() + task.planned_duration * 60000),
       color: '#3b82f6', // 計画は青色
       description: task.description || '',
       status: task.status || 'scheduled',
@@ -169,11 +178,13 @@ export function DayView({
   const handleSaveTask = (data: CreateTaskInput) => {
     onCreateTask?.(data)
     setActiveCreation(null)
+    setShowTaskCreated(true)
   }
 
   const handleSaveRecord = (data: CreateRecordInput) => {
     onCreateRecord?.(data)
     setActiveCreation(null)
+    setShowTaskCreated(true)
   }
 
   const handleCancel = () => {
@@ -182,74 +193,128 @@ export function DayView({
 
   return (
     <CalendarViewAnimation viewType="day">
-      <div className="h-full bg-white dark:bg-gray-900">
-        {/* Plan/Record切り替えヘッダー */}
-        <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">日表示</h3>
-          <PlanRecordToggle />
+      <div className="h-full">
+        
+        {/* Day view indicator - temporary for debugging */}
+        <div className="bg-green-500 text-white text-sm px-3 py-1 text-center">
+          日ビュー (1日表示)
         </div>
         
-        {/* Google Calendar風のシンプルなヘッダー */}
-        <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-          <h2 className="text-xl font-normal text-gray-900 dark:text-white">
-            {formatFullDate(currentDate)}
-          </h2>
-        </div>
         
         {/* 詳細な時間グリッド */}
         <div ref={containerRef} className="h-full overflow-hidden">
           {planRecordMode === 'both' ? (
-            // 分割表示モード
+            // 分割表示モード - Refined版使用
             <div 
-              className="relative h-full"
+              className="relative h-full bg-white dark:bg-gray-900"
               onMouseDown={handleMouseDown}
               style={{ height: '100%' }}
             >
-              {/* 分割グリッド背景 */}
-              <SplitGridBackground />
-              
-              {/* 中央の区切り線 */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-20">
-                {/* ラベル */}
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex gap-8 text-sm font-medium">
-                  <span className="text-blue-600 dark:text-blue-400">← 予定</span>
-                  <span className="text-green-600 dark:text-green-400">記録 →</span>
+              <RefinedTimeGrid
+                dates={[currentDate]}
+                gridInterval={15}
+                showCurrentTime={isToday(currentDate)}
+                showBusinessHours={true}
+                businessHours={{ start: 9, end: 18 }}
+                onTimeSlotClick={(date, time, x, y) => {
+                  const [hours, minutes] = time.split(':').map(Number)
+                  const clickDate = new Date(date)
+                  clickDate.setHours(hours, minutes, 0, 0)
+                  handleEmptyClick(clickDate, time)
+                }}
+              >
+                <div className="absolute inset-0 flex">
+                  {/* 左側：計画タスク */}
+                  <div className="w-1/2 pr-0.5 relative">
+                    {planTasks.map(task => {
+                      const startMinutes = task.startTime.getHours() * 60 + task.startTime.getMinutes()
+                      const endMinutes = task.endTime.getHours() * 60 + task.endTime.getMinutes()
+                      const duration = endMinutes - startMinutes
+                      
+                      return (
+                        <RefinedCalendarTask
+                          key={task.id}
+                          task={{
+                            id: task.id,
+                            title: task.title,
+                            startTime: task.startTime,
+                            endTime: task.endTime,
+                            status: (task.status === 'scheduled' || task.status === 'pending') ? 'scheduled' : 
+                                   task.status === 'in_progress' ? 'in_progress' : 'completed',
+                            priority: task.priority || 'medium',
+                            description: task.description,
+                            isPlan: task.isPlan,
+                            isRecord: task.isRecord
+                          }}
+                          view="day"
+                          style={{
+                            position: 'absolute',
+                            top: `${(startMinutes / 60) * 60}px`,
+                            height: `${Math.max((duration / 60) * 60, 24)}px`,
+                            left: '2px',
+                            right: '2px',
+                            zIndex: 10
+                          }}
+                          onClick={handleTaskClick}
+                          onStatusChange={(taskId, status) => {
+                            console.log('Plan status change:', taskId, status)
+                          }}
+                        />
+                      )
+                    })}
+                  </div>
+                  
+                  {/* 中央区切り線と日付ラベル */}
+                  <div className="w-px bg-gray-300 dark:bg-gray-600 z-20 relative">
+                    {/* 日付表示 */}
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-white dark:bg-gray-900 text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                      {format(currentDate, 'M月d日(E)', { locale: ja })}
+                    </div>
+                  </div>
+                  
+                  {/* 右側：記録タスク */}
+                  <div className="w-1/2 pl-0.5 relative">
+                    {recordTasks.map(task => {
+                      const startMinutes = task.startTime.getHours() * 60 + task.startTime.getMinutes()
+                      const endMinutes = task.endTime.getHours() * 60 + task.endTime.getMinutes()
+                      const duration = endMinutes - startMinutes
+                      
+                      return (
+                        <RefinedCalendarTask
+                          key={task.id}
+                          task={{
+                            id: task.id,
+                            title: task.title,
+                            startTime: task.startTime,
+                            endTime: task.endTime,
+                            status: 'completed',
+                            priority: task.priority || 'medium',
+                            description: task.description,
+                            isPlan: task.isPlan,
+                            isRecord: task.isRecord,
+                            satisfaction: task.satisfaction,
+                            focusLevel: task.focusLevel,
+                            energyLevel: task.energyLevel
+                          }}
+                          view="day"
+                          style={{
+                            position: 'absolute',
+                            top: `${(startMinutes / 60) * 60}px`,
+                            height: `${Math.max((duration / 60) * 60, 24)}px`,
+                            left: '2px',
+                            right: '2px',
+                            zIndex: 10
+                          }}
+                          onClick={handleTaskClick}
+                          onStatusChange={(taskId, status) => {
+                            console.log('Record status change:', taskId, status)
+                          }}
+                        />
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
-
-              {/* 左側：予定タスク */}
-              <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1">
-                <SingleDayTimeGrid
-                  date={currentDate}
-                  tasks={planTasks}
-                  gridInterval={15}
-                  scrollToTime={isToday(currentDate) ? "current" : "09:00"}
-                  showAllDay={true}
-                  showCurrentTime={isToday(currentDate)}
-                  businessHours={{ start: 9, end: 18 }}
-                  enableDragToCreate={false} // 分割ドラッグを使用
-                  onTaskClick={handleTaskClick}
-                  onEmptyClick={handleEmptyClick}
-                  onTaskDrop={handleTaskDrop}
-                />
-              </div>
-
-              {/* 右側：記録タスク */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1">
-                <SingleDayTimeGrid
-                  date={currentDate}
-                  tasks={recordTasks}
-                  gridInterval={15}
-                  scrollToTime={isToday(currentDate) ? "current" : "09:00"}
-                  showAllDay={true}
-                  showCurrentTime={isToday(currentDate)}
-                  businessHours={{ start: 9, end: 18 }}
-                  enableDragToCreate={false} // 分割ドラッグを使用
-                  onTaskClick={handleTaskClick}
-                  onEmptyClick={handleEmptyClick}
-                  onTaskDrop={handleTaskDrop}
-                />
-              </div>
+              </RefinedTimeGrid>
 
               {/* インライン作成フォーム */}
               {activeCreation && (
@@ -270,24 +335,86 @@ export function DayView({
               )}
             </div>
           ) : (
-            // 通常表示モード
-            <SingleDayTimeGrid
-              date={currentDate}
-              tasks={calendarTasks}
-              gridInterval={15} // 15分グリッド
-              scrollToTime={isToday(currentDate) ? "current" : "09:00"}
-              showAllDay={true}
+            // 通常表示モード - Refined版使用
+            <RefinedTimeGrid
+              dates={[currentDate]}
+              gridInterval={15}
               showCurrentTime={isToday(currentDate)}
+              showBusinessHours={true}
               businessHours={{ start: 9, end: 18 }}
-              enableDragToCreate={!!onCreateTask}
-              onTaskClick={handleTaskClick}
-              onEmptyClick={handleEmptyClick}
-              onTaskDrop={handleTaskDrop}
-              onCreateTask={onCreateTask}
-            />
+              onTimeSlotClick={(date, time, x, y) => {
+                const [hours, minutes] = time.split(':').map(Number)
+                const clickDate = new Date(date)
+                clickDate.setHours(hours, minutes, 0, 0)
+                handleEmptyClick(clickDate, time)
+              }}
+            >
+              {/* タスク表示 */}
+              <div className="absolute inset-0">
+                {calendarTasks.map(task => {
+                  const startMinutes = task.startTime.getHours() * 60 + task.startTime.getMinutes()
+                  const endMinutes = task.endTime.getHours() * 60 + task.endTime.getMinutes()
+                  const duration = endMinutes - startMinutes
+                  
+                  return (
+                    <RefinedCalendarTask
+                      key={task.id}
+                      task={{
+                        id: task.id,
+                        title: task.title,
+                        startTime: task.startTime,
+                        endTime: task.endTime,
+                        status: (task.status === 'scheduled' || task.status === 'pending') ? 'scheduled' : 
+                               task.status === 'in_progress' ? 'in_progress' : 'completed',
+                        priority: task.priority || 'medium',
+                        description: task.description,
+                        isPlan: task.isPlan,
+                        isRecord: task.isRecord,
+                        satisfaction: task.satisfaction,
+                        focusLevel: task.focusLevel,
+                        energyLevel: task.energyLevel
+                      }}
+                      view="day"
+                      style={{
+                        position: 'absolute',
+                        top: `${(startMinutes / 60) * 60}px`,
+                        height: `${Math.max((duration / 60) * 60, 24)}px`,
+                        left: '4px',
+                        right: '4px',
+                        zIndex: 10
+                      }}
+                      onClick={handleTaskClick}
+                      onStatusChange={(taskId, status) => {
+                        // ステータス変更処理
+                        console.log('Status change:', taskId, status)
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            </RefinedTimeGrid>
           )}
         </div>
       </div>
+      
+      {/* タスク作成成功アニメーション */}
+      <TaskCreatedAnimation
+        isVisible={showTaskCreated}
+        onComplete={() => setShowTaskCreated(false)}
+      />
+      
+      {/* タイムブロック機能オーバーレイ */}
+      {enableTimeBlocks && showTimeBlocks && (
+        <div className="absolute inset-0 z-50">
+          <TimeBlockCalendarView
+            date={currentDate}
+            hourHeight={60}
+            showTimeBlocks={true}
+            onTimeSlotClick={handleEmptyClick}
+            className="h-full"
+          />
+        </div>
+      )}
     </CalendarViewAnimation>
   )
 }

@@ -123,7 +123,12 @@ function TimeDisplay() {
     const currentHour = time.getHours()
     
     const profile = chronotype.type === 'custom' && chronotype.customZones
-      ? { productivityZones: chronotype.customZones }
+      ? { 
+          type: 'custom' as const,
+          name: 'Custom Profile',
+          description: 'Custom chronotype profile',
+          productivityZones: chronotype.customZones 
+        }
       : CHRONOTYPE_PRESETS[chronotype.type]
     
     const currentZone = getProductivityZoneForHour(profile, currentHour)
@@ -219,11 +224,9 @@ function TimeDisplay() {
           className={`flex items-center gap-1 px-2 py-1 border rounded-md ml-1 transition-colors cursor-pointer ${chronoStatus.bgColor}`}
           title={`${chronoStatus.label} - Go to Chronotype Settings`}
         >
-          {typeof ChronoIcon === 'function' ? (
-            <ChronoIcon />
-          ) : (
+          {ChronoIcon && typeof ChronoIcon === 'function' ? (
             <ChronoIcon className={`w-3 h-3 ${chronoStatus.color}`} />
-          )}
+          ) : null}
           <div className={`text-xs font-medium ${chronoStatus.color}`}>
             {chronoStatus.status}
           </div>

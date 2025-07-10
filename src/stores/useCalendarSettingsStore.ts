@@ -58,7 +58,7 @@ const defaultSettings: CalendarSettings = {
     displayMode: 'border',
     opacity: 90
   },
-  planRecordMode: 'plan'
+  planRecordMode: 'both'
 }
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(

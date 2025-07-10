@@ -5,8 +5,12 @@ import { format, startOfDay, addDays, isToday, isSameDay, isThisWeek } from 'dat
 import { ja } from 'date-fns/locale'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { DayGroup } from '../components/DayGroup'
+import { TimeGrid } from '../TimeGrid'
+import { SplitGridBackground } from '../components/SplitGridBackground'
 import { filterTasksForDate } from '../utils/view-helpers'
-import type { ViewDateRange, Task } from '../types'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useRecordsStore } from '@/stores/useRecordsStore'
+import type { ViewDateRange, Task, TaskRecord } from '../types'
 
 interface ScheduleViewProps {
   dateRange: ViewDateRange
@@ -15,6 +19,7 @@ interface ScheduleViewProps {
   onTaskClick?: (task: CalendarTask) => void
   onEmptySlotClick?: (date: Date, time: string) => void
   onDateClick?: (date: Date) => void
+  useSplitLayout?: boolean
 }
 
 export function ScheduleView({ 
@@ -23,27 +28,74 @@ export function ScheduleView({
   currentDate,
   onTaskClick,
   onEmptySlotClick,
-  onDateClick
+  onDateClick,
+  useSplitLayout = false
 }: ScheduleViewProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const { planRecordMode } = useCalendarSettingsStore()
+  const { records, fetchRecords } = useRecordsStore()
   const [extendedDateRange, setExtendedDateRange] = useState({
     start: startOfDay(currentDate),
     end: addDays(startOfDay(currentDate), 30) // 初期30日分
   })
   
-  // Task[]をCalendarTask[]に変換
-  const calendarTasks: CalendarTask[] = useMemo(() => {
+  // Recordsの取得
+  useEffect(() => {
+    if (planRecordMode === 'record' || planRecordMode === 'both') {
+      fetchRecords(extendedDateRange)
+    }
+  }, [planRecordMode, extendedDateRange, fetchRecords])
+  
+  // Task[]をCalendarTask[]に変換（計画用）
+  const planTasks: CalendarTask[] = useMemo(() => {
+    if (planRecordMode === 'record') return []
+    
     return tasks.map(task => ({
       id: task.id,
       title: task.title,
-      startTime: new Date(task.planned_start || ''),
-      endTime: new Date(task.planned_end || task.planned_start || ''),
-      color: '#3b82f6', // デフォルト色
+      startTime: task.planned_start,
+      endTime: new Date(task.planned_start.getTime() + task.planned_duration * 60000),
+      color: '#3b82f6', // 計画は青色
       description: task.description || '',
       status: task.status || 'scheduled',
-      priority: task.priority || 'medium'
+      priority: task.priority || 'medium',
+      isPlan: true
     }))
-  }, [tasks])
+  }, [tasks, planRecordMode])
+  
+  // TaskRecord[]をCalendarTask[]に変換（実績用）
+  const recordTasks: CalendarTask[] = useMemo(() => {
+    if (planRecordMode === 'plan') return []
+    
+    return records.map(record => ({
+      id: record.id,
+      title: record.title,
+      startTime: new Date(record.actual_start),
+      endTime: new Date(record.actual_end),
+      color: '#10b981', // 実績は緑色
+      description: record.memo || '',
+      status: 'completed' as const,
+      priority: 'medium' as const,
+      isRecord: true,
+      satisfaction: record.satisfaction,
+      focusLevel: record.focus_level,
+      energyLevel: record.energy_level
+    }))
+  }, [records, planRecordMode])
+  
+  // 表示するタスクを決定
+  const calendarTasks: CalendarTask[] = useMemo(() => {
+    switch (planRecordMode) {
+      case 'plan':
+        return planTasks
+      case 'record':
+        return recordTasks
+      case 'both':
+        return [...planTasks, ...recordTasks]
+      default:
+        return planTasks
+    }
+  }, [planTasks, recordTasks, planRecordMode])
   
   // 日付ごとにタスクをグループ化
   const groupedTasks = useMemo(() => {
@@ -102,23 +154,131 @@ export function ScheduleView({
   }, [])
   
   
-  const handleTaskClick = (task: CalendarTask) => {
+  const handleTaskClick = useCallback((task: CalendarTask) => {
     onTaskClick?.(task)
-  }
+  }, [onTaskClick])
   
-  const handleEmptySlotClick = (date: Date, time: string) => {
+  const handleEmptySlotClick = useCallback((date: Date, time: string) => {
     onEmptySlotClick?.(date, time)
-  }
+  }, [onEmptySlotClick])
+
+  const handleTaskDrop = useCallback((task: CalendarTask, newDate: Date, newStartTime: Date) => {
+    // タスクドロップ処理（必要に応じて実装）
+    console.log('Task dropped:', task, newDate, newStartTime)
+  }, [])
   
+  // 分割表示を使用するかの判定
+  const shouldUseSplit = useSplitLayout || (planRecordMode === 'both' && (planTasks.length > 0 || recordTasks.length > 0))
+  
+  // 表示する日付の配列を生成
+  const displayDates = useMemo(() => {
+    const dates: Date[] = []
+    let currentIterDate = extendedDateRange.start
+    while (currentIterDate <= extendedDateRange.end) {
+      dates.push(new Date(currentIterDate))
+      currentIterDate = addDays(currentIterDate, 1)
+    }
+    return dates
+  }, [extendedDateRange])
+
+  // 分割表示用のTask[]を準備（CalendarTask[]からTask[]に変換）
+  const splitTasks = useMemo(() => {
+    return tasks.filter(task => 
+      task.planned_start && displayDates.some(date => 
+        isSameDay(new Date(task.planned_start!), date)
+      )
+    )
+  }, [tasks, displayDates])
+
+  // 分割表示用のコンテンツ（左側：予定）
+  const planContent = useMemo(() => {
+    if (!shouldUseSplit) return null
+    
+    return (
+      <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+        <div className="max-w-4xl mx-auto">
+          {groupedTasks.map(({ date, tasks: dayTasks }) => {
+            const dayPlanTasks = dayTasks.filter(task => task.isPlan)
+            if (dayPlanTasks.length === 0 && planRecordMode !== 'both') return null
+            
+            return (
+              <DayGroup
+                key={format(date, 'yyyy-MM-dd')}
+                date={date}
+                tasks={dayPlanTasks}
+                onTaskClick={handleTaskClick}
+                onEmptySlotClick={handleEmptySlotClick}
+                onDateClick={onDateClick}
+              />
+            )
+          })}
+        </div>
+      </div>
+    )
+  }, [shouldUseSplit, groupedTasks, handleTaskClick, handleEmptySlotClick, onDateClick, planRecordMode])
+
+  // 分割表示の場合は通常表示と同じTimeGridを使用
+
+  // 通常表示の場合
   return (
     <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* スクロール可能なコンテンツ */}
+      {/* ヘッダー */}
+      <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          スケジュール表示{shouldUseSplit && '（分割モード）'}
+        </h3>
+      </div>
+      
+      {shouldUseSplit ? (
+        /* 分割表示モード */
+        <div className="flex-1 relative">
+          <SplitGridBackground />
+          
+          {/* 中央の区切り線（各日の中央） */}
+          <div className="absolute inset-0 z-20 pointer-events-none">
+            {displayDates.map((day, index) => {
+              const dayWidth = 100 / displayDates.length
+              const dayStart = index * dayWidth
+              const centerLine = dayStart + (dayWidth / 2)
+              
+              return (
+                <div
+                  key={day.toISOString()}
+                  className="absolute top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600"
+                  style={{
+                    left: `${centerLine}%`
+                  }}
+                />
+              )
+            })}
+          </div>
+
+          {/* TimeGridを使用した分割表示 */}
+          <TimeGrid
+            dates={displayDates}
+            tasks={calendarTasks}
+            gridInterval={60}
+            scrollToTime="08:00"
+            showAllDay={true}
+            showCurrentTime={displayDates.some(day => isToday(day))}
+            showDateHeader={false}
+            businessHours={{ start: 9, end: 18 }}
+            onTaskClick={handleTaskClick}
+            onEmptyClick={handleEmptySlotClick}
+            onTaskDrop={handleTaskDrop}
+            className="h-full"
+            splitMode={true}
+          />
+        </div>
+      ) : (
+        /* スクロール可能なコンテンツ */
         <div 
           ref={scrollContainerRef}
           className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
           onScroll={handleScroll}
         >
           <div className="max-w-4xl mx-auto">
+            {/* 統一表示モード（計画と実績を同一タイムライン上に表示） */}
             {groupedTasks.map(({ date, tasks: dayTasks }) => (
               <DayGroup
                 key={format(date, 'yyyy-MM-dd')}
@@ -138,6 +298,7 @@ export function ScheduleView({
             </div>
           </div>
         </div>
+      )}
     </div>
   )
 }

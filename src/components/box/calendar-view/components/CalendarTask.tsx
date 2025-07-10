@@ -40,8 +40,8 @@ export function CalendarTask({
   const widthPercentage = 100 / totalConflicts
   const leftOffset = conflicts * widthPercentage
   
-  // Google Calendar風のスタイル
-  const taskStyle = getTaskStyle(task.status || 'scheduled', task.priority || 'medium')
+  // Google Calendar風のスタイル（計画/実績を考慮）
+  const taskStyle = getTaskStyle(task.status || 'scheduled', task.priority || 'medium', task.isPlan, task.isRecord)
   
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -107,10 +107,25 @@ export function CalendarTask({
                 <span className="text-xs opacity-90 mr-1">
                   {format(task.startTime, 'HH:mm')}
                 </span>
+                {/* 計画/実績の表示アイコン */}
+                {(task.isPlan || task.isRecord) && (
+                  <span className="text-xs mr-1 font-semibold">
+                    {task.isPlan && '📅'}
+                    {task.isRecord && '✅'}
+                  </span>
+                )}
                 {task.title}
               </>
             ) : (
-              task.title
+              <>
+                {(task.isPlan || task.isRecord) && (
+                  <span className="text-xs mr-1">
+                    {task.isPlan && '📅'}
+                    {task.isRecord && '✅'}
+                  </span>
+                )}
+                {task.title}
+              </>
             )}
           </div>
           
@@ -126,6 +141,20 @@ export function CalendarTask({
               {duration >= 60 && task.description && (
                 <div className="text-xs opacity-80 mt-1 line-clamp-2">
                   {task.description}
+                </div>
+              )}
+              
+              {/* 実績の満足度表示 */}
+              {task.isRecord && task.satisfaction && (
+                <div className="text-xs opacity-80 mt-1 flex items-center gap-1">
+                  <span>満足度:</span>
+                  <div className="flex">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <span key={i} className={i < task.satisfaction! ? 'text-yellow-400' : 'text-gray-400'}>
+                        ⭐
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </>
@@ -148,15 +177,68 @@ export function CalendarTask({
   )
 }
 
-// Google Calendar風の色定義
-function getTaskStyle(status: string, priority: string) {
+// Google Calendar風の色定義（計画/実績対応）
+function getTaskStyle(status: string, priority: string, isPlan?: boolean, isRecord?: boolean) {
   const baseClasses = "border-opacity-80"
   
-  // ステータスベースの色
+  // 計画と実績で異なるスタイル
+  if (isPlan) {
+    // 計画タスクは青系、実線ボーダー
+    const planStyles = {
+      scheduled: {
+        base: "bg-blue-500 text-white border-blue-600",
+        hover: "hover:bg-blue-600"
+      },
+      in_progress: {
+        base: "bg-blue-600 text-white border-blue-700",
+        hover: "hover:bg-blue-700"
+      },
+      pending: {
+        base: "bg-blue-400 text-white border-blue-500",
+        hover: "hover:bg-blue-500"
+      }
+    }
+    
+    const statusStyle = planStyles[status as keyof typeof planStyles] || planStyles.scheduled
+    const priorityClass = getPriorityModifier(priority, 'solid')
+    
+    return {
+      base: `${statusStyle.base} ${baseClasses} ${priorityClass}`,
+      hover: statusStyle.hover
+    }
+  }
+  
+  if (isRecord) {
+    // 実績タスクは緑系、点線ボーダー
+    const recordStyles = {
+      completed: {
+        base: "bg-green-500 text-white border-green-600 border-dashed",
+        hover: "hover:bg-green-600"
+      },
+      in_progress: {
+        base: "bg-green-600 text-white border-green-700 border-dashed", 
+        hover: "hover:bg-green-700"
+      },
+      scheduled: {
+        base: "bg-green-400 text-white border-green-500 border-dashed",
+        hover: "hover:bg-green-500"
+      }
+    }
+    
+    const statusStyle = recordStyles[status as keyof typeof recordStyles] || recordStyles.completed
+    const priorityClass = getPriorityModifier(priority, 'dashed')
+    
+    return {
+      base: `${statusStyle.base} ${baseClasses} ${priorityClass}`,
+      hover: statusStyle.hover
+    }
+  }
+  
+  // 従来のステータスベースの色（計画でも実績でもない場合）
   const statusStyles = {
     scheduled: {
-      base: "bg-blue-500 text-white border-blue-600",
-      hover: "hover:bg-blue-600"
+      base: "bg-gray-500 text-white border-gray-600",
+      hover: "hover:bg-gray-600"
     },
     completed: {
       base: "bg-green-500 text-white border-green-600", 
@@ -180,20 +262,31 @@ function getTaskStyle(status: string, priority: string) {
     }
   }
   
-  // 優先度による微調整
-  const priorityModifiers = {
-    high: "border-l-8 font-semibold",
-    medium: "border-l-4",
-    low: "border-l-2 opacity-90"
-  }
-  
   const statusStyle = statusStyles[status as keyof typeof statusStyles] || statusStyles.scheduled
-  const priorityClass = priorityModifiers[priority as keyof typeof priorityModifiers] || priorityModifiers.medium
+  const priorityClass = getPriorityModifier(priority, 'solid')
   
   return {
     base: `${statusStyle.base} ${baseClasses} ${priorityClass}`,
     hover: statusStyle.hover
   }
+}
+
+// 優先度による微調整（ボーダースタイル対応）
+function getPriorityModifier(priority: string, borderStyle: 'solid' | 'dashed') {
+  const baseModifiers = {
+    high: "border-l-8 font-semibold",
+    medium: "border-l-4",
+    low: "border-l-2 opacity-90"
+  }
+  
+  const modifier = baseModifiers[priority as keyof typeof baseModifiers] || baseModifiers.medium
+  
+  // 点線ボーダーの場合は追加のクラスを適用
+  if (borderStyle === 'dashed') {
+    return `${modifier} border-dashed`
+  }
+  
+  return modifier
 }
 
 // ステータスインジケーター
@@ -236,7 +329,7 @@ interface CompactTaskProps {
 }
 
 export function CompactTask({ task, onClick }: CompactTaskProps) {
-  const taskStyle = getTaskStyle(task.status || 'scheduled', task.priority || 'medium')
+  const taskStyle = getTaskStyle(task.status || 'scheduled', task.priority || 'medium', task.isPlan, task.isRecord)
   
   return (
     <div
@@ -256,6 +349,13 @@ export function CompactTask({ task, onClick }: CompactTaskProps) {
       <span className="text-xs opacity-75 mr-1">
         {format(task.startTime, 'HH:mm')}
       </span>
+      {/* 計画/実績アイコン */}
+      {(task.isPlan || task.isRecord) && (
+        <span className="text-xs mr-1">
+          {task.isPlan && '📅'}
+          {task.isRecord && '✅'}
+        </span>
+      )}
       {task.title}
     </div>
   )

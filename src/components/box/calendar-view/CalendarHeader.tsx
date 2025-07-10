@@ -25,6 +25,7 @@ const viewOptions = [
   { value: 'week' as CalendarViewType, label: '週' },
   { value: '2week' as CalendarViewType, label: '2週' },
   { value: 'schedule' as CalendarViewType, label: 'スケジュール' },
+  { value: 'plan-vs-record' as CalendarViewType, label: '予定vs記録' },
 ]
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
@@ -55,6 +56,8 @@ function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
       return `${format(twoWeekStart, 'M月d日')} – ${format(twoWeekEnd, 'M月d日')}`
     case 'schedule':
       return format(date, 'yyyy年M月', { locale: ja })
+    case 'plan-vs-record':
+      return format(date, 'yyyy年M月d日 (E)', { locale: ja })
     default:
       return format(date, 'yyyy年M月')
   }

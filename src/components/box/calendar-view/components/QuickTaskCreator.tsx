@@ -68,8 +68,33 @@ export function QuickTaskCreator({
   const [description, setDescription] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [isGoogleMode, setIsGoogleMode] = useState(true) // Google Calendar風モード
+  const [suggestions, setSuggestions] = useState<string[]>([])
+  const [selectedSuggestion, setSelectedSuggestion] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
   const { timeFormat } = useCalendarSettingsStore()
+  
+  // よくあるタスクの候補
+  const commonTasks = [
+    '会議', 'ミーティング', '打ち合わせ', '定例会', '振り返り',
+    '開発', 'コーディング', 'レビュー', 'テスト', 'デバッグ',
+    '企画', '資料作成', 'プレゼン', '報告書', '提案',
+    '学習', '勉強', '読書', '調査', 'リサーチ',
+    'ランチ', '休憩', '散歩', '運動', 'ストレッチ'
+  ]
+  
+  // Google Calendar風のスマート入力
+  useEffect(() => {
+    if (title.length > 0) {
+      const matches = commonTasks.filter(task => 
+        task.includes(title) || task.toLowerCase().includes(title.toLowerCase())
+      ).slice(0, 5)
+      setSuggestions(matches)
+      setSelectedSuggestion(-1)
+    } else {
+      setSuggestions([])
+    }
+  }, [title])
   
   useEffect(() => {
     // フォーカスとアニメーション
@@ -100,10 +125,44 @@ export function QuickTaskCreator({
   }
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // 候補選択中のキーボード操作
+    if (suggestions.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setSelectedSuggestion(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : prev
+        )
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setSelectedSuggestion(prev => prev > -1 ? prev - 1 : -1)
+      } else if (e.key === 'Tab' && selectedSuggestion >= 0) {
+        e.preventDefault()
+        setTitle(suggestions[selectedSuggestion])
+        setSuggestions([])
+        setSelectedSuggestion(-1)
+      }
+    }
+    
     if (e.key === 'Escape') {
-      onCancel()
-    } else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-      handleSubmit(e as any)
+      if (suggestions.length > 0) {
+        setSuggestions([])
+        setSelectedSuggestion(-1)
+      } else {
+        onCancel()
+      }
+    } else if (e.key === 'Enter') {
+      if (selectedSuggestion >= 0) {
+        e.preventDefault()
+        setTitle(suggestions[selectedSuggestion])
+        setSuggestions([])
+        setSelectedSuggestion(-1)
+      } else if (isGoogleMode && title.trim()) {
+        // Google Calendar風: Enterで即座に保存
+        e.preventDefault()
+        handleSubmit(e as any)
+      } else if (e.metaKey || e.ctrlKey) {
+        handleSubmit(e as any)
+      }
     } else if (e.key === 'Tab' && e.shiftKey && !showAdvanced) {
       e.preventDefault()
       setShowAdvanced(true)
@@ -171,7 +230,8 @@ export function QuickTaskCreator({
           "bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl",
           "border border-gray-200/50 dark:border-gray-700/50",
           "rounded-xl shadow-2xl shadow-gray-900/10 dark:shadow-black/20",
-          "ring-1 ring-gray-900/5 dark:ring-white/10"
+          "ring-1 ring-gray-900/5 dark:ring-white/10",
+          "cal-focus-visible"
         )}
       >
         <div className="h-full flex flex-col">
@@ -201,7 +261,7 @@ export function QuickTaskCreator({
           
           {/* メインコンテンツ */}
           <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-            {/* タイトル入力 - モダンデザイン */}
+            {/* タイトル入力 - Google Calendar風 */}
             <div className="space-y-2">
               <div className="relative">
                 <input
@@ -209,7 +269,7 @@ export function QuickTaskCreator({
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="何に取り組みますか？"
+                  placeholder={isGoogleMode ? "タイトルを追加" : "何に取り組みますか？"}
                   className={cn(
                     "w-full px-4 py-3 text-base font-medium",
                     "bg-gray-50/50 dark:bg-gray-800/50 border-0",
@@ -220,12 +280,56 @@ export function QuickTaskCreator({
                     "transition-all duration-200"
                   )}
                 />
-                {title && (
+                {title && !suggestions.length && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
                     <CheckIcon className="w-5 h-5 text-green-500" />
                   </div>
                 )}
+                
+                {/* Google Calendar風の候補ドロップダウン */}
+                {suggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 z-50 mt-1">
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden">
+                      {suggestions.map((suggestion, index) => (
+                        <button
+                          key={suggestion}
+                          type="button"
+                          onClick={() => {
+                            setTitle(suggestion)
+                            setSuggestions([])
+                            setSelectedSuggestion(-1)
+                          }}
+                          className={cn(
+                            "w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700",
+                            "transition-colors duration-100",
+                            index === selectedSuggestion && "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                          )}
+                        >
+                          <span className="font-medium">{suggestion}</span>
+                          {index === selectedSuggestion && (
+                            <span className="ml-2 text-xs opacity-60">Tab で選択</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+              
+              {/* Google Calendar風のシンプルなヒント */}
+              {isGoogleMode && !showAdvanced && (
+                <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                  <span>Enter で保存</span>
+                  <span>•</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdvanced(true)}
+                    className="text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    その他のオプション
+                  </button>
+                </div>
+              )}
             </div>
             
             {/* 優先度選択 - ピル型ボタン */}

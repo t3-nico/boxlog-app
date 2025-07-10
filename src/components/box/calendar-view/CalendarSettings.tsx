@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { getTimeZones, formatInTimeZone, formatHour } from '@/utils/timezone-utils'
 import { format } from 'date-fns'
+import { ChronotypeSettings } from './components/ChronotypeSettings'
 
 interface CalendarSettingsProps {
   open: boolean
@@ -195,6 +196,32 @@ export function CalendarSettings({ open, onOpenChange }: CalendarSettingsProps) 
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          
+          {/* 計画・実績表示モード */}
+          <div className="space-y-2">
+            <Label htmlFor="planRecordMode">表示モード</Label>
+            <Select
+              value={settings.planRecordMode}
+              onValueChange={(value: 'plan' | 'record' | 'both') => settings.updateSettings({ planRecordMode: value })}
+            >
+              <SelectTrigger id="planRecordMode">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="plan">計画のみ</SelectItem>
+                <SelectItem value="record">実績のみ</SelectItem>
+                <SelectItem value="both">計画・実績（分割表示）</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              「計画・実績（分割表示）」を選択すると、左側に計画、右側に実績が表示されます
+            </p>
+          </div>
+
+          {/* クロノタイプ設定 */}
+          <div className="space-y-3">
+            <ChronotypeSettings />
           </div>
           
           {/* その他の設定 */}

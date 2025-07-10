@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { HOUR_HEIGHT, TIME_LABEL_WIDTH, BUSINESS_HOURS } from '../constants/grid-constants'
 import { formatTimeForDisplay } from '../utils/time-grid-helpers'
 import { useFormattedTime } from '@/hooks/useFormattedTime'
+import { ChronotypeIndicatorCompact, ChronotypeIndicator } from './ChronotypeIndicator'
 
 interface TimeAxisLabelsProps {
   startHour?: number
@@ -45,9 +46,12 @@ export function TimeAxisLabels({
           )}
           style={{ height: HOUR_HEIGHT }}
         >
+          {/* クロノタイプ縦線インジケーター（右端に表示） */}
+          <ChronotypeIndicator hour={hour} className="z-0" />
+          
           {/* 正時のラベルのみ表示 */}
           {hour > 0 && (
-            <div className="absolute -top-2 right-2 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-1">
+            <div className="absolute -top-2 right-2 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-1 z-10">
               {formatHourLabel(hour)}
             </div>
           )}

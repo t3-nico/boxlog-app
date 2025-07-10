@@ -40,6 +40,7 @@ interface TimeGridProps {
   showWeekends?: boolean
   showDateHeader?: boolean // 日付ヘッダーの表示/非表示
   enableDragToCreate?: boolean // ドラッグでタスク作成を有効にする
+  splitMode?: boolean // 各日付内で左右分割表示（予定左、記録右）
   onTaskClick?: (task: CalendarTask) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrop?: (task: CalendarTask, newDate: Date, newStartTime: Date) => void
@@ -59,6 +60,7 @@ export function TimeGrid({
   showWeekends = true,
   showDateHeader = true,
   enableDragToCreate = true,
+  splitMode = false,
   onTaskClick,
   onEmptyClick,
   onTaskDrop,
@@ -146,8 +148,13 @@ export function TimeGrid({
   // タスク作成処理
   const handleSaveTask = async (taskData: CreateTaskInput) => {
     if (onCreateTask) {
-      await onCreateTask(taskData)
-      setCreatingTask(null)
+      try {
+        await onCreateTask(taskData)
+        setCreatingTask(null)
+      } catch (error) {
+        console.error('Failed to create task:', error)
+        // エラーハンドリング - 必要に応じてエラー表示
+      }
     }
   }
   
@@ -228,6 +235,7 @@ export function TimeGrid({
                 dates={dates}
                 tasks={timedTasks}
                 view={dates.length === 1 ? 'day' : 'week'}
+                splitMode={splitMode}
                 onTaskClick={onTaskClick}
                 onTaskDoubleClick={onTaskClick} // 同じハンドラーを使用
                 onTaskDrag={onTaskDrop}

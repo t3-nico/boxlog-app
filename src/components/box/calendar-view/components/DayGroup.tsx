@@ -6,7 +6,10 @@ import { ja } from 'date-fns/locale'
 import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { ScheduleTaskCard } from './ScheduleTaskCard'
+import { CompactSplitTask } from './SplitTaskCard'
 import { EmptyDaySlot } from './EmptyDaySlot'
+import { pairPlanAndRecordTasks } from '../utils/task-pairing-helpers'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { cn } from '../utils/view-helpers'
 
 interface DayGroupProps {
@@ -24,6 +27,20 @@ export function DayGroup({
   onEmptySlotClick,
   onDateClick
 }: DayGroupProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
+  
+  // 計画と実績のタスクを分離
+  const planTasks = useMemo(() => tasks.filter(task => task.isPlan), [tasks])
+  const recordTasks = useMemo(() => tasks.filter(task => task.isRecord), [tasks])
+  
+  // 分割表示モードの場合はペアリング処理
+  const taskPairs = useMemo(() => {
+    if (planRecordMode === 'both' && (planTasks.length > 0 || recordTasks.length > 0)) {
+      return pairPlanAndRecordTasks(planTasks, recordTasks, date)
+    }
+    return []
+  }, [planTasks, recordTasks, date, planRecordMode])
+  
   // 日付のフォーマット
   const dateInfo = useMemo(() => {
     const today = isToday(date)
@@ -106,7 +123,8 @@ export function DayGroup({
     onEmptySlotClick?.(date, "09:00") // デフォルトで朝9時
   }
 
-  const totalTasks = tasks.length
+  // タスクの有無とカウント（分割表示モードを考慮）
+  const totalTasks = planRecordMode === 'both' ? taskPairs.length : tasks.length
   const hasAnyTasks = totalTasks > 0
 
   return (
@@ -165,7 +183,45 @@ export function DayGroup({
 
       {/* タスクリスト */}
       <div className="space-y-1">
-        {hasAnyTasks ? (
+        {planRecordMode === 'both' && taskPairs.length > 0 ? (
+          /* 分割表示モード */
+          <>
+            {/* 全日ペア */}
+            {taskPairs.filter(pair => {
+              const referenceTask = pair.planTask || pair.recordTask
+              if (!referenceTask) return false
+              const duration = (referenceTask.endTime.getTime() - referenceTask.startTime.getTime()) / (1000 * 60 * 60)
+              return duration >= 24
+            }).map(pair => (
+              <div key={pair.id} className="mb-2">
+                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 px-3">
+                  終日
+                </div>
+                <CompactSplitTask
+                  planTask={pair.planTask}
+                  recordTask={pair.recordTask}
+                  onClick={(task, type) => onTaskClick?.(task)}
+                />
+              </div>
+            ))}
+
+            {/* 時間指定ペア */}
+            {taskPairs.filter(pair => {
+              const referenceTask = pair.planTask || pair.recordTask
+              if (!referenceTask) return false
+              const duration = (referenceTask.endTime.getTime() - referenceTask.startTime.getTime()) / (1000 * 60 * 60)
+              return duration < 24
+            }).map(pair => (
+              <CompactSplitTask
+                key={pair.id}
+                planTask={pair.planTask}
+                recordTask={pair.recordTask}
+                onClick={(task, type) => onTaskClick?.(task)}
+              />
+            ))}
+          </>
+        ) : hasAnyTasks ? (
+          /* 通常表示モード */
           <>
             {/* 全日イベント */}
             {timeGroups.allDay.length > 0 && (

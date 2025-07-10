@@ -3,7 +3,10 @@
 import React, { useMemo, useState } from 'react'
 import { isSameDay } from 'date-fns'
 import { CalendarTask } from './CalendarTask'
+import { SplitTaskCard } from './SplitTaskCard'
 import { CalendarTask as CalendarTaskType } from '../utils/time-grid-helpers'
+import { pairPlanAndRecordTasks, calculateTaskPairLayout, TaskPair } from '../utils/task-pairing-helpers'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
 
 interface PositionedTask {
@@ -18,6 +21,7 @@ interface TaskLayerProps {
   dates: Date[]
   tasks: CalendarTaskType[]
   view?: 'day' | 'week' | 'month'
+  splitMode?: boolean // 各日付内で左右分割表示
   onTaskClick?: (task: CalendarTaskType) => void
   onTaskDoubleClick?: (task: CalendarTaskType) => void
   onTaskDrag?: (task: CalendarTaskType, newDate: Date, newStartTime: Date) => void
@@ -27,48 +31,131 @@ export function TaskLayer({
   dates, 
   tasks, 
   view = 'week',
+  splitMode = false,
   onTaskClick,
   onTaskDoubleClick,
   onTaskDrag
 }: TaskLayerProps) {
   const [hoveredTaskId, setHoveredTaskId] = useState<string | null>(null)
+  const { planRecordMode } = useCalendarSettingsStore()
   
-  // 日付ごとにタスクをグループ化し、位置を計算
+  // 計画と実績のタスクを分離
+  const planTasks = useMemo(() => tasks.filter(task => task.isPlan), [tasks])
+  const recordTasks = useMemo(() => tasks.filter(task => task.isRecord), [tasks])
+  const regularTasks = useMemo(() => tasks.filter(task => !task.isPlan && !task.isRecord), [tasks])
+
+  // 分割表示用のポジション計算関数
+  const calculateTaskPositionsForSplit = (tasks: CalendarTaskType[], side: 'left' | 'right'): PositionedTask[] => {
+    return tasks.map((task, index) => {
+      const start = task.startTime
+      const startMinutes = start.getHours() * 60 + start.getMinutes()
+      const durationMinutes = (task.endTime.getTime() - task.startTime.getTime()) / (1000 * 60)
+      
+      return {
+        task,
+        column: 0, // 分割表示では各サイドで1列のみ
+        totalColumns: 1,
+        startMinutes,
+        durationMinutes
+      }
+    })
+  }
+
+  // 分割表示モードの場合は、ペアリング処理を行う
   const tasksByDate = useMemo(() => {
     return dates.reduce((acc, date) => {
-      const dayTasks = tasks.filter(task => 
-        isSameDay(task.startTime, date)
-      )
-      
-      // 重複を検出して配置を計算
-      acc[date.toISOString()] = calculateTaskPositions(dayTasks)
+      if (splitMode && (planTasks.length > 0 || recordTasks.length > 0)) {
+        // 各日付内で左右分割表示
+        const dayPlanTasks = planTasks.filter(task => isSameDay(task.startTime, date))
+        const dayRecordTasks = recordTasks.filter(task => isSameDay(task.startTime, date))
+        
+        acc[date.toISOString()] = {
+          type: 'split',
+          planTasks: calculateTaskPositionsForSplit(dayPlanTasks, 'left'),
+          recordTasks: calculateTaskPositionsForSplit(dayRecordTasks, 'right')
+        }
+      } else {
+        // 通常の表示モード
+        const dayTasks = tasks.filter(task => isSameDay(task.startTime, date))
+        acc[date.toISOString()] = {
+          type: 'regular',
+          positioned: calculateTaskPositions(dayTasks)
+        }
+      }
       return acc
-    }, {} as Record<string, PositionedTask[]>)
-  }, [dates, tasks])
+    }, {} as Record<string, {
+      type: 'split' | 'regular'
+      planTasks?: PositionedTask[]
+      recordTasks?: PositionedTask[]
+      positioned?: PositionedTask[]
+    }>)
+  }, [dates, tasks, planTasks, recordTasks, splitMode])
   
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className="flex h-full">
-        {dates.map((date, dateIndex) => (
-          <div
-            key={date.toISOString()}
-            className="flex-1 relative pointer-events-auto"
-          >
-            {tasksByDate[date.toISOString()]?.map(positionedTask => (
-              <CalendarTask
-                key={positionedTask.task.id}
-                task={positionedTask.task}
-                view={view}
-                style={calculateTaskStyle(positionedTask)}
-                conflicts={positionedTask.column}
-                totalConflicts={positionedTask.totalColumns}
-                isHovered={hoveredTaskId === positionedTask.task.id}
-                onClick={onTaskClick}
-                onDoubleClick={onTaskDoubleClick}
-              />
-            ))}
-          </div>
-        ))}
+        {dates.map((date, dateIndex) => {
+          const dateData = tasksByDate[date.toISOString()]
+          
+          return (
+            <div
+              key={date.toISOString()}
+              className="flex-1 relative pointer-events-auto"
+            >
+              {dateData?.type === 'split' && (
+                <>
+                  {/* 左側：計画タスク */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1">
+                    {dateData.planTasks?.map(positionedTask => (
+                      <CalendarTask
+                        key={positionedTask.task.id}
+                        task={positionedTask.task}
+                        view={view}
+                        style={calculateTaskStyleForSplit(positionedTask, 'left')}
+                        conflicts={positionedTask.column}
+                        totalConflicts={positionedTask.totalColumns}
+                        isHovered={hoveredTaskId === positionedTask.task.id}
+                        onClick={onTaskClick}
+                        onDoubleClick={onTaskDoubleClick}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* 右側：記録タスク */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1">
+                    {dateData.recordTasks?.map(positionedTask => (
+                      <CalendarTask
+                        key={positionedTask.task.id}
+                        task={positionedTask.task}
+                        view={view}
+                        style={calculateTaskStyleForSplit(positionedTask, 'right')}
+                        conflicts={positionedTask.column}
+                        totalConflicts={positionedTask.totalColumns}
+                        isHovered={hoveredTaskId === positionedTask.task.id}
+                        onClick={onTaskClick}
+                        onDoubleClick={onTaskDoubleClick}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+              
+              {dateData?.type === 'regular' && dateData.positioned?.map(positionedTask => (
+                <CalendarTask
+                  key={positionedTask.task.id}
+                  task={positionedTask.task}
+                  view={view}
+                  style={calculateTaskStyle(positionedTask)}
+                  conflicts={positionedTask.column}
+                  totalConflicts={positionedTask.totalColumns}
+                  isHovered={hoveredTaskId === positionedTask.task.id}
+                  onClick={onTaskClick}
+                  onDoubleClick={onTaskDoubleClick}
+                />
+              ))}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -160,6 +247,25 @@ function calculateTaskStyle(positionedTask: PositionedTask): React.CSSProperties
   }
 }
 
+// 分割タスクのスタイル計算
+function calculateSplitTaskStyle(pair: TaskPair & { left: number; width: number; conflicts: number; totalConflicts: number }): React.CSSProperties {
+  const startMinutes = pair.startTime.getHours() * 60 + pair.startTime.getMinutes()
+  const endMinutes = pair.endTime.getHours() * 60 + pair.endTime.getMinutes()
+  const durationMinutes = endMinutes - startMinutes
+  
+  const top = (startMinutes / 60) * HOUR_HEIGHT
+  const height = Math.max((durationMinutes / 60) * HOUR_HEIGHT, 20) // 最小高さ20px
+  
+  return {
+    top: `${top}px`,
+    height: `${height}px`,
+    left: `${pair.left}%`,
+    width: `${Math.max(pair.width, 10)}%`, // 最小幅を確保
+    minHeight: '20px',
+    zIndex: pair.totalConflicts > 1 ? 10 + pair.conflicts : 1
+  }
+}
+
 // 単一日用のシンプル版
 interface SingleDayTaskLayerProps {
   date: Date
@@ -178,20 +284,60 @@ export function SingleDayTaskLayer({
   onTaskDoubleClick,
   onTaskDrag
 }: SingleDayTaskLayerProps) {
+  const [hoveredTaskId, setHoveredTaskId] = useState<string | null>(null)
+  const { planRecordMode } = useCalendarSettingsStore()
+  
+  // 計画と実績のタスクを分離
+  const planTasks = useMemo(() => tasks.filter(task => task.isPlan), [tasks])
+  const recordTasks = useMemo(() => tasks.filter(task => task.isRecord), [tasks])
+  
   // 当日のタスクのみフィルタリング
   const dayTasks = useMemo(() => 
     tasks.filter(task => isSameDay(task.startTime, date))
   , [tasks, date])
   
-  // 位置計算
-  const positionedTasks = useMemo(() => 
-    calculateTaskPositions(dayTasks)
-  , [dayTasks])
+  // 分割表示 vs 通常表示
+  const taskData = useMemo(() => {
+    if (planRecordMode === 'both' && (planTasks.length > 0 || recordTasks.length > 0)) {
+      // 計画と実績をペアリングしてSplitTaskCardで表示
+      const pairs = pairPlanAndRecordTasks(planTasks, recordTasks, date)
+      const layoutPairs = calculateTaskPairLayout(pairs)
+      
+      return {
+        type: 'split' as const,
+        pairs: layoutPairs
+      }
+    } else {
+      // 通常の表示モード
+      return {
+        type: 'regular' as const,
+        positioned: calculateTaskPositions(dayTasks)
+      }
+    }
+  }, [dayTasks, planTasks, recordTasks, date, planRecordMode])
   
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className="h-full relative pointer-events-auto">
-        {positionedTasks.map(positionedTask => (
+        {taskData.type === 'split' && taskData.pairs?.map(pair => (
+          <SplitTaskCard
+            key={pair.id}
+            planTask={pair.planTask}
+            recordTask={pair.recordTask}
+            view={view}
+            style={calculateSplitTaskStyle(pair)}
+            isHovered={hoveredTaskId === pair.id}
+            onClick={(task, type) => {
+              onTaskClick?.(task)
+              setHoveredTaskId(task.id)
+            }}
+            onDoubleClick={(task, type) => {
+              onTaskDoubleClick?.(task)
+            }}
+          />
+        ))}
+        
+        {taskData.type === 'regular' && taskData.positioned?.map(positionedTask => (
           <CalendarTask
             key={positionedTask.task.id}
             task={positionedTask.task}
@@ -199,6 +345,7 @@ export function SingleDayTaskLayer({
             style={calculateTaskStyle(positionedTask)}
             conflicts={positionedTask.column}
             totalConflicts={positionedTask.totalColumns}
+            isHovered={hoveredTaskId === positionedTask.task.id}
             onClick={onTaskClick}
             onDoubleClick={onTaskDoubleClick}
           />
@@ -341,4 +488,20 @@ export function TaskGroupVisualizer({ tasks, date }: TaskGroupVisualizerProps) {
       ))}
     </div>
   )
+}
+
+// 分割表示用のタスクスタイル計算
+function calculateTaskStyleForSplit(positionedTask: PositionedTask, side: 'left' | 'right') {
+  const { startMinutes, durationMinutes } = positionedTask
+  const height = (durationMinutes / 60) * HOUR_HEIGHT
+  const top = (startMinutes / 60) * HOUR_HEIGHT
+  
+  return {
+    position: 'absolute' as const,
+    top: `${top}px`,
+    left: '0%',
+    right: '0%',
+    height: `${Math.max(height, 20)}px`, // 最小高さ20px
+    zIndex: 10
+  }
 }

@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import './theme-simplified.css';
 @import './eagle-theme.css';
+@import './calendar-theme.css';
 
 @theme {
   --font-sans: Inter, sans-serif;

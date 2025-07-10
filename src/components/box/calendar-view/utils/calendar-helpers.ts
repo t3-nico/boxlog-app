@@ -27,6 +27,7 @@ export function calculateViewDateRange(
 ): ViewDateRange {
   switch (viewType) {
     case 'day':
+    case 'split-day':
       return {
         start: startOfDay(baseDate),
         end: endOfDay(baseDate),
@@ -83,6 +84,13 @@ export function calculateViewDateRange(
         end: scheduleEnd,
         days: eachDayOfInterval({ start: scheduleStart, end: scheduleEnd })
       }
+    
+    case 'plan-vs-record':
+      return {
+        start: startOfDay(baseDate),
+        end: endOfDay(baseDate),
+        days: [baseDate]
+      }
   }
 }
 
@@ -94,12 +102,14 @@ export function getNextPeriod(
   currentDate: Date
 ): Date {
   switch (viewType) {
-    case 'day': return addDays(currentDate, 1)
+    case 'day':
+    case 'split-day': return addDays(currentDate, 1)
     case '3day': return addDays(currentDate, 3)
     case 'week':
     case 'week-no-weekend': return addWeeks(currentDate, 1)
     case '2week': return addWeeks(currentDate, 2)
     case 'schedule': return addMonths(currentDate, 1)
+    case 'plan-vs-record': return addDays(currentDate, 1)
   }
 }
 
@@ -108,12 +118,14 @@ export function getPreviousPeriod(
   currentDate: Date
 ): Date {
   switch (viewType) {
-    case 'day': return subDays(currentDate, 1)
+    case 'day':
+    case 'split-day': return subDays(currentDate, 1)
     case '3day': return subDays(currentDate, 3)
     case 'week':
     case 'week-no-weekend': return subWeeks(currentDate, 1)
     case '2week': return subWeeks(currentDate, 2)
     case 'schedule': return subMonths(currentDate, 1)
+    case 'plan-vs-record': return subDays(currentDate, 1)
   }
 }
 
@@ -130,6 +142,9 @@ export function formatDateRange(
     case 'day':
       return format(currentDate, 'yyyy年M月d日(EEE)', { locale: ja })
     
+    case 'split-day':
+      return format(currentDate, 'yyyy年M月d日(EEE) - 分割表示', { locale: ja })
+    
     case '3day':
       return `${format(range.start, 'M月d日(EEE)', { locale: ja })} - ${format(range.end, 'd日(EEE)', { locale: ja })}`
     
@@ -144,6 +159,9 @@ export function formatDateRange(
     
     case 'schedule':
       return format(currentDate, 'yyyy年M月', { locale: ja })
+    
+    case 'plan-vs-record':
+      return format(currentDate, 'yyyy年M月d日(EEE) - 計画vs実績', { locale: ja })
   }
 }
 
@@ -168,7 +186,7 @@ export function filterTasksForDateRange(
  * ビュータイプの有効性チェック
  */
 export function isValidViewType(value: string): value is CalendarViewType {
-  return ['day', '3day', 'week', 'week-no-weekend', '2week', 'schedule'].includes(value)
+  return ['day', 'split-day', '3day', 'week', 'week-no-weekend', '2week', 'schedule', 'plan-vs-record'].includes(value)
 }
 
 /**
@@ -177,10 +195,12 @@ export function isValidViewType(value: string): value is CalendarViewType {
 export function getViewDisplayName(viewType: CalendarViewType): string {
   switch (viewType) {
     case 'day': return '日'
+    case 'split-day': return '分割日'
     case '3day': return '3日'
     case 'week': return '週'
     case 'week-no-weekend': return '平日'
     case '2week': return '2週'
     case 'schedule': return 'スケジュール'
+    case 'plan-vs-record': return '計画vs実績'
   }
 }

@@ -48,6 +48,11 @@ export interface CalendarTask {
   description?: string
   status?: 'pending' | 'in_progress' | 'completed' | 'scheduled' | 'rescheduled' | 'stopped'
   priority?: 'low' | 'medium' | 'high'
+  isPlan?: boolean
+  isRecord?: boolean
+  satisfaction?: number
+  focusLevel?: number
+  energyLevel?: number
 }
 
 /**

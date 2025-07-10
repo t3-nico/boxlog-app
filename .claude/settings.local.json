@@ -29,7 +29,9 @@
       "Bash(curl:*)",
       "Bash(open http://localhost:3001)",
       "Bash(rg:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": []
   }

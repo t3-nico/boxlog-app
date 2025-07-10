@@ -170,7 +170,12 @@ export function PageHeader({
     const currentHour = currentTime.getHours()
     
     const profile = chronotype.type === 'custom' && chronotype.customZones
-      ? { productivityZones: chronotype.customZones }
+      ? { 
+          type: 'custom' as const,
+          name: 'Custom Profile',
+          description: 'Custom chronotype profile',
+          productivityZones: chronotype.customZones 
+        }
       : CHRONOTYPE_PRESETS[chronotype.type]
     
     const currentZone = getProductivityZoneForHour(profile, currentHour)

@@ -41,67 +41,26 @@ export function GridBackground({
         {dates.map((date, index) => (
           <div
             key={date.toISOString()}
-            className={cn(
-              "flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0",
-              isWeekend(date) && showWeekends && "bg-gray-50/50 dark:bg-gray-800/20",
-              isToday(date) && "bg-blue-50/30 dark:bg-blue-900/10",
-              !showBusinessHours && !isBusinessHour(new Date().getHours()) && "bg-gray-50/30 dark:bg-gray-800/30"
-            )}
+            className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
             style={{ height: totalHeight }}
           />
         ))}
       </div>
       
-      {/* 横線（時間の境界） */}
+      {/* 横線（時間の境界 - 1時間毎のみ） */}
       <div className="absolute inset-0">
         {hours.map((hour, index) => (
-          <React.Fragment key={hour}>
-            {/* 正時の線 */}
-            <div
-              className={cn(
-                "absolute w-full border-t",
-                hour === 0 ? "border-transparent" : "border-gray-200 dark:border-gray-700"
-              )}
-              style={{ top: index * HOUR_HEIGHT }}
-            />
-            
-            {/* 30分の線 */}
-            {gridInterval <= 30 && (
-              <div
-                className="absolute w-full border-t border-gray-100 dark:border-gray-800 border-dashed"
-                style={{ top: index * HOUR_HEIGHT + HOUR_HEIGHT / 2 }}
-              />
+          <div
+            key={hour}
+            className={cn(
+              "absolute w-full border-t",
+              hour === 0 ? "border-transparent" : "border-gray-200 dark:border-gray-700"
             )}
-            
-            {/* 15分の線 */}
-            {gridInterval === 15 && (
-              <>
-                <div
-                  className="absolute w-full border-t border-gray-50 dark:border-gray-850 border-dotted"
-                  style={{ top: index * HOUR_HEIGHT + HOUR_HEIGHT / 4 }}
-                />
-                <div
-                  className="absolute w-full border-t border-gray-50 dark:border-gray-850 border-dotted"
-                  style={{ top: index * HOUR_HEIGHT + (3 * HOUR_HEIGHT) / 4 }}
-                />
-              </>
-            )}
-          </React.Fragment>
+            style={{ top: index * HOUR_HEIGHT }}
+          />
         ))}
       </div>
       
-      {/* 営業時間の背景 */}
-      {showBusinessHours && (
-        <div className="absolute inset-0">
-          <div
-            className="absolute inset-x-0 bg-green-50/30 dark:bg-green-900/10 border-t border-b border-green-200 dark:border-green-800 border-dashed"
-            style={{
-              top: (BUSINESS_HOURS.start - startHour) * HOUR_HEIGHT,
-              height: (BUSINESS_HOURS.end - BUSINESS_HOURS.start) * HOUR_HEIGHT
-            }}
-          />
-        </div>
-      )}
     </div>
   )
 }
