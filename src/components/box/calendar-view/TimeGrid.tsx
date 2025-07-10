@@ -10,10 +10,24 @@ import { DateHeader } from './components/DateHeader'
 import { TimeAxisLabels } from './components/TimeAxisLabels'
 import { GridBackground } from './components/GridBackground'
 import { TaskLayer, SingleDayTaskLayer } from './components/TaskLayer'
+import { DragPreview } from './components/DragPreview'
+import { QuickTaskCreator } from './components/QuickTaskCreator'
 import { CalendarTask } from './utils/time-grid-helpers'
 import { useScrollSync, useScrollToTime, useVisibleTimeRange } from './hooks/useScrollSync'
+import { useDragToCreate } from './hooks/useDragToCreate'
 import { filterTasksForDate } from './utils/view-helpers'
 import { HOUR_HEIGHT } from './constants/grid-constants'
+import type { Task } from './types'
+
+interface CreateTaskInput {
+  title: string
+  planned_start: Date
+  planned_duration: number
+  status: 'pending' | 'in_progress' | 'completed'
+  priority: 'low' | 'medium' | 'high'
+  description?: string
+  tags?: string[]
+}
 
 interface TimeGridProps {
   dates: Date[] // 表示する日付の配列（1日〜7日）
@@ -25,10 +39,12 @@ interface TimeGridProps {
   showCurrentTime?: boolean
   showWeekends?: boolean
   showDateHeader?: boolean // 日付ヘッダーの表示/非表示
+  enableDragToCreate?: boolean // ドラッグでタスク作成を有効にする
   onTaskClick?: (task: CalendarTask) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrop?: (task: CalendarTask, newDate: Date, newStartTime: Date) => void
   onDateClick?: (date: Date) => void
+  onCreateTask?: (task: CreateTaskInput) => void
   className?: string
 }
 
@@ -42,15 +58,22 @@ export function TimeGrid({
   showCurrentTime = true,
   showWeekends = true,
   showDateHeader = true,
+  enableDragToCreate = true,
   onTaskClick,
   onEmptyClick,
   onTaskDrop,
   onDateClick,
+  onCreateTask,
   className = ''
 }: TimeGridProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const [isInitialized, setIsInitialized] = useState(false)
+  const [creatingTask, setCreatingTask] = useState<{
+    start: Date
+    end: Date
+    column: number
+  } | null>(null)
   
   // スクロール同期
   const { scrollLeft, handleScroll } = useScrollSync()
@@ -63,6 +86,21 @@ export function TimeGrid({
   
   // 可視時間範囲の計算（パフォーマンス最適化）
   const visibleTimeRange = useVisibleTimeRange(scrollContainerRef, 0, 24)
+  
+  // ドラッグでタスク作成
+  const { dragState, handleMouseDown, handleTouchStart, dragPreview } = useDragToCreate({
+    gridInterval,
+    containerRef: scrollContainerRef,
+    hourHeight: HOUR_HEIGHT,
+    disabled: !enableDragToCreate || !onCreateTask,
+    onCreateTask: (task) => {
+      setCreatingTask({
+        start: task.start,
+        end: task.end,
+        column: task.column || 0
+      })
+    }
+  })
   
   // 全日タスクと時間指定タスクを分離
   const { allDayTasks, timedTasks } = useMemo(() => {
@@ -103,6 +141,18 @@ export function TimeGrid({
     if (onTaskDrop) {
       onTaskDrop(task, targetDate, newStartTime)
     }
+  }
+  
+  // タスク作成処理
+  const handleSaveTask = async (taskData: CreateTaskInput) => {
+    if (onCreateTask) {
+      await onCreateTask(taskData)
+      setCreatingTask(null)
+    }
+  }
+  
+  const handleCancelTask = () => {
+    setCreatingTask(null)
   }
   
   // 総高さ計算
@@ -189,16 +239,57 @@ export function TimeGrid({
                   <DayColumn
                     key={date.toISOString()}
                     date={date}
+                    dateIndex={dateIndex}
                     tasks={getTasksForDate(date, timedTasks)}
                     gridInterval={gridInterval}
                     visibleTimeRange={visibleTimeRange}
                     onTaskClick={onTaskClick}
                     onEmptyClick={handleEmptyClick}
                     onTaskDrop={handleTaskDrop}
+                    onMouseDown={enableDragToCreate ? handleMouseDown : undefined}
+                    onTouchStart={enableDragToCreate ? handleTouchStart : undefined}
                     totalHeight={totalHeight}
+                    isDragging={dragState.isDragging}
                   />
                 ))}
               </div>
+              
+              {/* ドラッグプレビュー */}
+              {dragPreview && (
+                <div className="absolute inset-0 flex pointer-events-none">
+                  {dates.map((date, dateIndex) => (
+                    <div key={date.toISOString()} className="flex-1 relative">
+                      {dragPreview.column === dateIndex && (
+                        <DragPreview
+                          start={dragPreview.start}
+                          end={dragPreview.end}
+                          hourHeight={HOUR_HEIGHT}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* インライン作成フォーム */}
+              {creatingTask && (
+                <div className="absolute inset-0 flex pointer-events-none">
+                  {dates.map((date, dateIndex) => (
+                    <div key={date.toISOString()} className="flex-1 relative">
+                      {creatingTask.column === dateIndex && (
+                        <QuickTaskCreator
+                          initialStart={creatingTask.start}
+                          initialEnd={creatingTask.end}
+                          hourHeight={HOUR_HEIGHT}
+                          onSave={handleSaveTask}
+                          onCancel={handleCancelTask}
+                          className="pointer-events-auto"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
               
               {/* 現在時刻ライン */}
               {showCurrentTime && dates.some(date => isToday(date)) && (
@@ -219,24 +310,32 @@ export function TimeGrid({
 // 個別の日カラムコンポーネント
 interface DayColumnProps {
   date: Date
+  dateIndex: number
   tasks: CalendarTask[]
   gridInterval: 15 | 30 | 60
   visibleTimeRange: { start: number; end: number }
   totalHeight: number
+  isDragging?: boolean
   onTaskClick?: (task: CalendarTask) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrop?: (task: CalendarTask, targetDate: Date, newStartTime: Date) => void
+  onMouseDown?: (e: React.MouseEvent, date: Date, column: number) => void
+  onTouchStart?: (e: React.TouchEvent, date: Date, column: number) => void
 }
 
 function DayColumn({
   date,
+  dateIndex,
   tasks,
   gridInterval,
   visibleTimeRange,
   totalHeight,
+  isDragging = false,
   onTaskClick,
   onEmptyClick,
-  onTaskDrop
+  onTaskDrop,
+  onMouseDown,
+  onTouchStart
 }: DayColumnProps) {
   const { setNodeRef: setDropZoneRef } = useDroppable({
     id: `day-column-${date.toISOString()}`,
@@ -248,7 +347,8 @@ function DayColumn({
   
   // 時間スロットのクリック処理
   const handleTimeSlotClick = (event: React.MouseEvent) => {
-    if (!onEmptyClick) return
+    // ドラッグ中はクリック処理をしない
+    if (isDragging || !onEmptyClick) return
     
     const rect = event.currentTarget.getBoundingClientRect()
     const y = event.clientY - rect.top
@@ -262,13 +362,31 @@ function DayColumn({
     onEmptyClick(date, timeString)
   }
   
+  // マウスダウン処理（ドラッグ開始）
+  const handleMouseDown = (event: React.MouseEvent) => {
+    if (onMouseDown) {
+      onMouseDown(event, date, dateIndex)
+    }
+  }
+  
+  // タッチ開始処理（ドラッグ開始）
+  const handleTouchStart = (event: React.TouchEvent) => {
+    if (onTouchStart) {
+      onTouchStart(event, date, dateIndex)
+    }
+  }
+  
   return (
     <div
       ref={setDropZoneRef}
-      className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative cursor-pointer"
+      className={`flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative ${
+        isDragging ? 'cursor-grabbing' : onMouseDown ? 'cursor-crosshair' : 'cursor-pointer'
+      }`}
       onClick={handleTimeSlotClick}
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
     >
-      {/* このコンポーネントはドロップゾーンのみとして機能 */}
+      {/* このコンポーネントはドロップゾーンとして機能 */}
     </div>
   )
 }
