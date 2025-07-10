@@ -182,52 +182,33 @@ export function WeekView({
   }
 
   return (
-    <CalendarViewAnimation viewType="week">
-      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-        
-        {/* Week view indicator - temporary for debugging */}
-        <div className="bg-blue-500 text-white text-sm px-3 py-1 text-center">
-          週ビュー ({displayDays.length}日表示)
-        </div>
-        
-        
-        {/* Google Calendar風の週ヘッダー */}
-        <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-          <div className="flex">
-            <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-900"></div>
-            {displayDays.map((day) => (
-              <div
-                key={day.toISOString()}
-                className={cn(
-                  "flex-1 px-2 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
-                  "transition-colors duration-150 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer",
-                  isToday(day) && "bg-blue-50 dark:bg-blue-900/20",
-                  isWeekend(day) && "bg-gray-50/50 dark:bg-gray-800/50"
-                )}
-              >
-                <div className={cn(
-                  "text-xs font-medium uppercase tracking-wide mb-1",
-                  isToday(day) 
-                    ? "text-blue-600 dark:text-blue-400" 
-                    : "text-gray-600 dark:text-gray-400"
-                )}>
-                  {formatShortWeekday(day)}
-                </div>
-                <div className={cn(
-                  "text-lg font-semibold",
-                  isToday(day) 
-                    ? "text-blue-600 dark:text-blue-400 bg-blue-600 dark:bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto"
-                    : "text-gray-900 dark:text-white"
-                )}>
-                  {format(day, 'd')}
-                </div>
+    <div className="h-full flex flex-col">
+      
+      {/* 簡潔な日付ヘッダー */}
+      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex">
+          <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-800"></div>
+          {displayDays.map((day, index) => (
+            <div
+              key={day.toISOString()}
+              className={cn(
+                "flex-1 px-2 py-2 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0",
+                isToday(day) && "bg-blue-50 dark:bg-blue-900/20"
+              )}
+            >
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {formatShortWeekday(day)}
               </div>
-            ))}
+              <div className="text-sm text-gray-900 dark:text-white">
+                {format(day, 'd')}
+              </div>
+            </div>
+          ))}
           </div>
         </div>
 
-        {/* 週のTimeGrid */}
-        <div ref={containerRef} className="flex-1 overflow-hidden">
+      {/* 週のTimeGrid */}
+      <div ref={containerRef} className="flex-1 overflow-hidden">
           {/* Debug: {planRecordMode} */}
           {planRecordMode === 'both' ? (
             // 分割表示モード
@@ -312,8 +293,7 @@ export function WeekView({
               className="h-full"
             />
           )}
-        </div>
       </div>
-    </CalendarViewAnimation>
+    </div>
   )
 }

@@ -193,16 +193,25 @@ export function DayView({
 
   return (
     <CalendarViewAnimation viewType="day">
-      <div className="h-full">
-        
-        {/* Day view indicator - temporary for debugging */}
-        <div className="bg-green-500 text-white text-sm px-3 py-1 text-center">
-          日ビュー (1日表示)
+      <div className="h-full flex flex-col">
+      
+      {/* 簡潔な日付ヘッダー */}
+      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="flex">
+          <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-800"></div>
+          <div className="flex-1 px-2 py-2 text-center">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {format(currentDate, 'E', { locale: ja })}
+            </div>
+            <div className="text-sm text-gray-900 dark:text-white">
+              {format(currentDate, 'd')}
+            </div>
+          </div>
         </div>
-        
-        
-        {/* 詳細な時間グリッド */}
-        <div ref={containerRef} className="h-full overflow-hidden">
+      </div>
+
+      {/* 時間グリッド */}
+      <div ref={containerRef} className="flex-1 overflow-hidden">
           {planRecordMode === 'both' ? (
             // 分割表示モード - Refined版使用
             <div 
@@ -415,6 +424,7 @@ export function DayView({
           />
         </div>
       )}
+      </div>
     </CalendarViewAnimation>
   )
 }

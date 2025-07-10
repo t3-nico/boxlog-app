@@ -17,7 +17,8 @@ import {
 } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
 import { formatDuration } from '../utils/timeBlockHelpers'
-import type { TimeBlock, Task } from '../types/timeBlock'
+import type { TimeBlock } from '../types/timeBlock'
+import type { Task } from '../types'
 
 interface TimeBlockProps {
   block: TimeBlock
@@ -95,7 +96,7 @@ export function TimeBlockComponent({
     
     // Update block tasks
     const updatedTasks = block.tasks.map(t => 
-      t.id === taskId ? { ...t, status: newStatus } : t
+      t.id === taskId ? { ...t, status: newStatus as Task['status'] } : t
     )
     onUpdate({ ...block, tasks: updatedTasks })
   }
@@ -246,7 +247,7 @@ export function TimeBlockComponent({
                         isDragDisabled={block.isLocked}
                       >
                         {(provided, snapshot) => (
-                          <motion.div
+                          <div
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
@@ -257,8 +258,6 @@ export function TimeBlockComponent({
                               task.status === 'completed' && "opacity-60",
                               snapshot.isDragging && "shadow-lg rotate-2 scale-105 z-50"
                             )}
-                            layout
-                            whileHover={{ y: -1 }}
                           >
                             <input
                               type="checkbox"
@@ -276,7 +275,7 @@ export function TimeBlockComponent({
                             <span className="text-gray-500 dark:text-gray-400 font-mono text-xs">
                               {task.planned_duration}分
                             </span>
-                          </motion.div>
+                          </div>
                         )}
                       </Draggable>
                     ))}

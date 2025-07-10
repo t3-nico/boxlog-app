@@ -107,11 +107,12 @@ export function findContinuousWorkPeriods(existingBlocks: TimeBlock[]): Array<{ 
   
   // 最後の期間を処理
   if (currentPeriod) {
-    const duration = differenceInMinutes(currentPeriod.end, currentPeriod.start)
+    const period = currentPeriod as { start: Date; end: Date }
+    const duration = differenceInMinutes(period.end, period.start)
     if (duration > 60) {
       continuousPeriods.push({
-        start: currentPeriod.start,
-        end: currentPeriod.end,
+        start: period.start,
+        end: period.end,
         duration
       })
     }
