@@ -312,11 +312,14 @@ export function UnifiedCalendarLayout({
                     return (
                       <div 
                         key={date.toISOString()}
-                        className="relative flex"
+                        className="relative flex border-r border-gray-200 dark:border-gray-700 last:border-r-0"
                         style={{ width: `${dayWidth}%`, minWidth: '200px' }}
                       >
                         {/* 左側：計画タスク */}
-                        <div className="w-1/2 pr-0.5 relative">
+                        <div className="w-1/2 relative bg-blue-50/20 dark:bg-blue-900/10">
+                          <div className="absolute top-2 left-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
+                            予定
+                          </div>
                           {dayPlanTasks.map(task => {
                             const startMinutes = task.startTime.getHours() * 60 + task.startTime.getMinutes()
                             const endMinutes = task.endTime.getHours() * 60 + task.endTime.getMinutes()
@@ -336,8 +339,8 @@ export function UnifiedCalendarLayout({
                                   position: 'absolute',
                                   top: `${(startMinutes / 60) * 60}px`,
                                   height: `${Math.max((duration / 60) * 60, 24)}px`,
-                                  left: '2px',
-                                  right: '2px',
+                                  left: '4px',
+                                  right: '4px',
                                   zIndex: 10
                                 }}
                                 onClick={handleTaskClick}
@@ -349,11 +352,14 @@ export function UnifiedCalendarLayout({
                           })}
                         </div>
                         
-                        {/* 中央区切り線 */}
-                        <div className="w-px bg-gray-300 dark:bg-gray-600 z-20" />
+                        {/* 各日付の中央区切り線 */}
+                        <div className="w-px bg-gray-400 dark:bg-gray-500 z-20" style={{ boxShadow: '0 0 1px rgba(0,0,0,0.1)' }} />
                         
                         {/* 右側：記録タスク */}
-                        <div className="w-1/2 pl-0.5 relative">
+                        <div className="w-1/2 relative bg-green-50/20 dark:bg-green-900/10">
+                          <div className="absolute top-2 right-2 text-xs text-green-600 dark:text-green-400 font-medium">
+                            記録
+                          </div>
                           {dayRecordTasks.map(task => {
                             const startMinutes = task.startTime.getHours() * 60 + task.startTime.getMinutes()
                             const endMinutes = task.endTime.getHours() * 60 + task.endTime.getMinutes()
@@ -373,8 +379,8 @@ export function UnifiedCalendarLayout({
                                   position: 'absolute',
                                   top: `${(startMinutes / 60) * 60}px`,
                                   height: `${Math.max((duration / 60) * 60, 24)}px`,
-                                  left: '2px',
-                                  right: '2px',
+                                  left: '4px',
+                                  right: '4px',
                                   zIndex: 10
                                 }}
                                 onClick={handleTaskClick}

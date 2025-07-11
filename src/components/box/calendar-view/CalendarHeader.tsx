@@ -9,6 +9,7 @@ import {
 import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { CalendarViewType } from './types'
 
 interface CalendarHeaderProps {
@@ -26,6 +27,12 @@ const viewOptions = [
   { value: '2week' as CalendarViewType, label: '2週' },
   { value: 'schedule' as CalendarViewType, label: 'スケジュール' },
 ]
+
+const displayModeOptions = [
+  { value: 'both', label: '両方' },
+  { value: 'plan', label: '予定' },
+  { value: 'record', label: '記録' },
+] as const
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
   switch (viewType) {
@@ -69,6 +76,7 @@ export function CalendarHeader({
   const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false)
   const isToday = new Date().toDateString() === currentDate.toDateString()
   
+  const { planRecordMode, updateSettings } = useCalendarSettingsStore()
   const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
@@ -121,48 +129,69 @@ export function CalendarHeader({
           </h1>
         </div>
         
-        {/* 右側: ビュー切り替えドロップダウン（Googleカレンダー風） */}
-        <div className="flex items-center relative">
-          <button
-            onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            {currentViewOption?.label || '週'}
-            <ChevronDownIcon className="w-4 h-4" />
-          </button>
+        {/* 右側: 表示モードとビュー切り替えドロップダウン */}
+        <div className="flex items-center gap-3">
+          {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}
+          <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+            {displayModeOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => updateSettings({ planRecordMode: option.value })}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                  planRecordMode === option.value
+                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          
+          {/* ビュー切り替えドロップダウン */}
+          <div className="relative">
+            <button
+              onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors shadow-sm"
+            >
+              <span>{currentViewOption?.label || 'ビュー'}</span>
+              <ChevronDownIcon className="w-4 h-4" />
+            </button>
 
-          {isViewDropdownOpen && (
-            <>
-              {/* Backdrop */}
-              <div 
-                className="fixed inset-0 z-50" 
-                onClick={() => setIsViewDropdownOpen(false)}
-              />
-              
-              {/* Dropdown */}
-              <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50">
-                <div className="py-1">
-                  {viewOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => {
-                        onViewChange(option.value)
-                        setIsViewDropdownOpen(false)
-                      }}
-                      className={cn(
-                        "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
-                        viewType === option.value 
-                          ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
-                          : 'text-gray-700 dark:text-gray-300'
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
+            {isViewDropdownOpen && (
+              <>
+                {/* Backdrop */}
+                <div 
+                  className="fixed inset-0 z-50" 
+                  onClick={() => setIsViewDropdownOpen(false)}
+                />
+                
+                {/* Dropdown */}
+                <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50">
+                  <div className="py-1">
+                    {viewOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          onViewChange(option.value)
+                          setIsViewDropdownOpen(false)
+                        }}
+                        className={cn(
+                          "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+                          viewType === option.value 
+                            ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
+                            : 'text-gray-700 dark:text-gray-300'
+                        )}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>
