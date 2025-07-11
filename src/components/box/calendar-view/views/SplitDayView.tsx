@@ -64,8 +64,6 @@ export function SplitDayView({
     side: 'left' | 'right'
   } | null>(null)
 
-  // デバッグログ
-  console.log('SplitDayView - planRecordMode:', planRecordMode)
 
   // その日のタスクと記録をフィルタリング
   const dayTasks = useMemo(() => 
@@ -185,12 +183,6 @@ export function SplitDayView({
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-      
-      {/* Split Day view indicator - temporary for debugging */}
-      <div className="bg-purple-500 text-white text-sm px-3 py-1 text-center">
-        分割日ビュー (計画vs実績)
-      </div>
-      
       {/* ヘッダー */}
       <SplitDayHeader 
         date={date} 
@@ -219,21 +211,14 @@ export function SplitDayView({
             {/* 背景グリッド */}
             <SplitGridBackground />
 
-            {/* モード別レンダリング */}
+            {/* 分割表示 */}
             {planRecordMode === 'both' ? (
               <>
-                {/* 分割表示モード */}
                 {/* 中央の区切り線 */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-20">
-                  {/* ラベル */}
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex gap-8 text-sm font-medium">
-                    <span className="text-blue-600 dark:text-blue-400">← 予定</span>
-                    <span className="text-green-600 dark:text-green-400">記録 →</span>
-                  </div>
-                </div>
+                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-20"></div>
 
                 {/* 左側：予定 */}
-                <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1 bg-blue-50/10 dark:bg-blue-900/10">
+                <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1">
                   {calendarTasks.map(task => (
                     <CalendarTask
                       key={task.id}
@@ -246,20 +231,10 @@ export function SplitDayView({
                       }}
                     />
                   ))}
-
-                  {/* ドラッグプレビュー（予定側） */}
-                  {dragPreview && dragPreview.side === 'left' && (
-                    <DragPreview
-                      start={dragPreview.start}
-                      end={dragPreview.end}
-                      hourHeight={HOUR_HEIGHT}
-                      className="bg-blue-100 border-blue-400 border-2 border-dashed"
-                    />
-                  )}
                 </div>
 
                 {/* 右側：記録 */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1 bg-green-50/10 dark:bg-green-900/10">
+                <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1">
                   {calendarRecords.map(record => (
                     <CalendarTask
                       key={record.id}
@@ -272,60 +247,40 @@ export function SplitDayView({
                       }}
                     />
                   ))}
-
-                  {/* ドラッグプレビュー（記録側） */}
-                  {dragPreview && dragPreview.side === 'right' && (
-                    <DragPreview
-                      start={dragPreview.start}
-                      end={dragPreview.end}
-                      hourHeight={HOUR_HEIGHT}
-                      className="bg-green-100 border-green-400 border-2 border-dashed"
-                    />
-                  )}
                 </div>
               </>
             ) : planRecordMode === 'plan' ? (
-              <>
-                {/* 予定のみ表示モード */}
-                <div className="absolute top-2 left-2 text-sm font-medium text-blue-600 dark:text-blue-400 z-30">
-                  予定のみ表示
-                </div>
-                <div className="absolute left-0 top-0 bottom-0 w-full bg-blue-50/10 dark:bg-blue-900/10">
-                  {calendarTasks.map(task => (
-                    <CalendarTask
-                      key={task.id}
-                      task={task}
-                      view="day"
-                      style={calculateTaskStyle(dayTasks.find(t => t.id === task.id)!)}
-                      onClick={() => {
-                        const originalTask = dayTasks.find(t => t.id === task.id)
-                        if (originalTask) onTaskClick?.(originalTask)
-                      }}
-                    />
-                  ))}
-                </div>
-              </>
+              /* 予定のみ */
+              <div className="absolute left-0 top-0 bottom-0 w-full">
+                {calendarTasks.map(task => (
+                  <CalendarTask
+                    key={task.id}
+                    task={task}
+                    view="day"
+                    style={calculateTaskStyle(dayTasks.find(t => t.id === task.id)!)}
+                    onClick={() => {
+                      const originalTask = dayTasks.find(t => t.id === task.id)
+                      if (originalTask) onTaskClick?.(originalTask)
+                    }}
+                  />
+                ))}
+              </div>
             ) : (
-              <>
-                {/* 記録のみ表示モード */}
-                <div className="absolute top-2 right-2 text-sm font-medium text-green-600 dark:text-green-400 z-30">
-                  記録のみ表示
-                </div>
-                <div className="absolute left-0 top-0 bottom-0 w-full bg-green-50/10 dark:bg-green-900/10">
-                  {calendarRecords.map(record => (
-                    <CalendarTask
-                      key={record.id}
-                      task={record}
-                      view="day"
-                      style={calculateRecordStyle(dayRecords.find(r => r.id === record.id)!)}
-                      onClick={() => {
-                        const originalRecord = dayRecords.find(r => r.id === record.id)
-                        if (originalRecord) onRecordClick?.(originalRecord)
-                      }}
-                    />
-                  ))}
-                </div>
-              </>
+              /* 記録のみ */
+              <div className="absolute left-0 top-0 bottom-0 w-full">
+                {calendarRecords.map(record => (
+                  <CalendarTask
+                    key={record.id}
+                    task={record}
+                    view="day"
+                    style={calculateRecordStyle(dayRecords.find(r => r.id === record.id)!)}
+                    onClick={() => {
+                      const originalRecord = dayRecords.find(r => r.id === record.id)
+                      if (originalRecord) onRecordClick?.(originalRecord)
+                    }}
+                  />
+                ))}
+              </div>
             )}
 
             {/* 現在時刻ライン */}

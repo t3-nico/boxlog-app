@@ -4,7 +4,10 @@ import { useState } from 'react'
 import { 
   ChevronLeftIcon, 
   ChevronRightIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
+  ViewColumnsIcon,
+  ClipboardDocumentListIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline'
 import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -29,9 +32,9 @@ const viewOptions = [
 ]
 
 const displayModeOptions = [
-  { value: 'both', label: '両方' },
-  { value: 'plan', label: '予定' },
-  { value: 'record', label: '記録' },
+  { value: 'both', label: '両方', icon: ViewColumnsIcon },
+  { value: 'plan', label: '予定', icon: ClipboardDocumentListIcon },
+  { value: 'record', label: '記録', icon: CheckCircleIcon },
 ] as const
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
@@ -133,20 +136,42 @@ export function CalendarHeader({
         <div className="flex items-center gap-3">
           {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}
           <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-            {displayModeOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => updateSettings({ planRecordMode: option.value })}
-                className={cn(
-                  "px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
-                  planRecordMode === option.value
-                    ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
-                )}
-              >
-                {option.label}
-              </button>
-            ))}
+            <button
+              onClick={() => updateSettings({ planRecordMode: 'both' })}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                planRecordMode === 'both'
+                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+              )}
+            >
+              <ViewColumnsIcon className="w-4 h-4" />
+              <span>両方</span>
+            </button>
+            <button
+              onClick={() => updateSettings({ planRecordMode: 'plan' })}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                planRecordMode === 'plan'
+                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+              )}
+            >
+              <ClipboardDocumentListIcon className="w-4 h-4" />
+              <span>予定</span>
+            </button>
+            <button
+              onClick={() => updateSettings({ planRecordMode: 'record' })}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                planRecordMode === 'record'
+                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+              )}
+            >
+              <CheckCircleIcon className="w-4 h-4" />
+              <span>記録</span>
+            </button>
           </div>
           
           {/* ビュー切り替えドロップダウン */}

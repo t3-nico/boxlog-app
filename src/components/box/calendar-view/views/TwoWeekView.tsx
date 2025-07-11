@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useMemo, useEffect, useState, useRef } from 'react'
-import { isWeekend, isToday, format, startOfWeek, addDays } from 'date-fns'
+import { isWeekend, isToday, format, startOfWeek, addDays, isSameDay } from 'date-fns'
 import { TimeGrid } from '../TimeGrid'
+import { TimeAxisLabels } from '../components/TimeAxisLabels'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { SplitGridBackground } from '../components/SplitGridBackground'
 import { SplitQuickCreator } from '../components/SplitQuickCreator'
@@ -10,6 +11,7 @@ import { useSplitDragToCreate } from '../hooks/useSplitDragToCreate'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
+import { HOUR_HEIGHT } from '../constants/grid-constants'
 import { 
   formatShortDate, 
   formatShortWeekday, 
@@ -279,46 +281,109 @@ export function TwoWeekView({
               onMouseDown={handleMouseDown}
               style={{ height: '100%' }}
             >
-              {/* 分割グリッド背景 */}
-              <SplitGridBackground />
-              
-              {/* 各日の中央に区切り線 */}
-              <div className="absolute inset-0 z-20 pointer-events-none">
-                {[...firstWeek, ...secondWeek].map((day, index) => {
-                  const totalDays = [...firstWeek, ...secondWeek].length
-                  const dayWidth = 100 / totalDays
-                  const dayStart = index * dayWidth
-                  const centerLine = dayStart + (dayWidth / 2)
-                  
-                  return (
-                    <div
-                      key={day.toISOString()}
-                      className="absolute top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600"
-                      style={{
-                        left: `${centerLine}%`
-                      }}
-                    />
-                  )
-                })}
-              </div>
 
-              {/* 分割TimeGrid - 予定と記録を統合 */}
-              <TimeGrid
-                dates={[...firstWeek, ...secondWeek]}
-                tasks={[...planTasks, ...recordTasks]}
-                gridInterval={60}
-                scrollToTime="08:00"
-                showAllDay={false}
-                showCurrentTime={[...firstWeek, ...secondWeek].some(day => isToday(day))}
-                showWeekends={showWeekends}
-                showDateHeader={false}
-                businessHours={{ start: 9, end: 18 }}
-                onTaskClick={handleTaskClick}
-                onEmptyClick={handleEmptyClick}
-                onTaskDrop={handleTaskDrop}
-                className="h-full"
-                splitMode={true}
-              />
+              {/* 分割表示のためのカスタムレイアウト */}
+              <div className="flex h-full">
+                {/* 時間軸 */}
+                <TimeAxisLabels 
+                  startHour={0} 
+                  endHour={24} 
+                  interval={60}
+                  className="z-10"
+                />
+                
+                {/* 日付別グリッド */}
+                <div className="flex-1 flex overflow-y-auto">
+                  {[...firstWeek, ...secondWeek].map((day, dayIndex) => {
+                    const dayPlanTasks = planTasks.filter(task => 
+                      isSameDay(task.startTime, day)
+                    )
+                    const dayRecordTasks = recordTasks.filter(task => 
+                      isSameDay(task.startTime, day)
+                    )
+                    
+                    return (
+                      <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
+                        {/* 時間グリッド背景 */}
+                        <div className="absolute inset-0">
+                          {Array.from({ length: 24 }, (_, hour) => (
+                            <div
+                              key={hour}
+                              className="border-b border-gray-100 dark:border-gray-800"
+                              style={{ height: `${HOUR_HEIGHT}px` }}
+                            />
+                          ))}
+                        </div>
+                        
+                        {/* 中央分割線 */}
+                        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-0.5"></div>
+                        
+                        {/* 左側：予定 */}
+                        <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-0.5">
+                          {dayPlanTasks.map(task => {
+                            const startHour = task.startTime.getHours()
+                            const startMinute = task.startTime.getMinutes()
+                            const endHour = task.endTime.getHours()
+                            const endMinute = task.endTime.getMinutes()
+                            const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                            const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
+                            
+                            return (
+                              <div
+                                key={task.id}
+                                className="absolute left-1 right-1 bg-blue-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-blue-600 z-20"
+                                style={{
+                                  top: `${topPosition}px`,
+                                  height: `${Math.max(height, 20)}px`
+                                }}
+                                onClick={() => handleTaskClick(task)}
+                              >
+                                {task.title}
+                              </div>
+                            )
+                          })}
+                        </div>
+                        
+                        {/* 右側：記録 */}
+                        <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-0.5">
+                          {dayRecordTasks.map(task => {
+                            const startHour = task.startTime.getHours()
+                            const startMinute = task.startTime.getMinutes()
+                            const endHour = task.endTime.getHours()
+                            const endMinute = task.endTime.getMinutes()
+                            const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                            const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
+                            
+                            return (
+                              <div
+                                key={task.id}
+                                className="absolute left-1 right-1 bg-green-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-green-600 z-20"
+                                style={{
+                                  top: `${topPosition}px`,
+                                  height: `${Math.max(height, 20)}px`
+                                }}
+                                onClick={() => handleTaskClick(task)}
+                              >
+                                {task.title}
+                              </div>
+                            )
+                          })}
+                        </div>
+                        
+                        {/* 現在時刻線 */}
+                        {isToday(day) && (
+                          <div
+                            className="absolute left-0 right-0 h-px bg-red-500 z-30"
+                            style={{
+                              top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT}px`
+                            }}
+                          />
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
 
               {/* インライン作成フォーム */}
               {activeCreation && (
