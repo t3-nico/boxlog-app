@@ -195,8 +195,6 @@ export function TimeGrid({
           <div className="sticky top-0 z-20">
             <DateHeader
               dates={dates}
-              scrollLeft={scrollLeft}
-              onDateClick={onDateClick}
             />
           </div>
         )}

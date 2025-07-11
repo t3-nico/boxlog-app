@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { CalendarLayout } from './CalendarLayout'
 import { DayView } from './views/DayView'
@@ -23,10 +23,11 @@ import {
 import type { CalendarViewType, CalendarViewProps, Task } from './types'
 
 export function CalendarView({ className }: CalendarViewProps) {
-  const [viewType, setViewType] = useState<CalendarViewType>('split-day')
+  const [viewType, setViewType] = useState<CalendarViewType>('day')
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+  
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
   const { planRecordMode } = useCalendarSettingsStore()
@@ -221,6 +222,7 @@ export function CalendarView({ className }: CalendarViewProps) {
             records={records}
             onCreateTask={handleCreateTask}
             onCreateRecord={handleCreateRecord}
+            onTaskClick={handleTaskClick}
           />
         )
       case '3day':

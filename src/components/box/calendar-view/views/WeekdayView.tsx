@@ -2,7 +2,9 @@
 
 import React, { useMemo } from 'react'
 import { isWeekend } from 'date-fns'
-import { UnifiedCalendarLayout } from '../layouts/UnifiedCalendarLayout'
+import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
+import { CalendarViewAnimation } from '../components/ViewTransition'
+import { DateHeader } from '../components/DateHeader'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 import { CalendarTask } from '../utils/time-grid-helpers'
 
@@ -63,21 +65,24 @@ export function WeekdayView({
   }, [dateRange.days])
 
   return (
-    <UnifiedCalendarLayout
-      viewType="weekday"
-      dates={weekdays}
-      tasks={tasks}
-      currentDate={currentDate}
-      dateRange={dateRange}
-      onTaskClick={onTaskClick}
-      onEmptyClick={onEmptyClick}
-      onTaskDrag={onTaskDrag}
-      onCreateTask={onCreateTask}
-      onCreateRecord={onCreateRecord}
-      onViewChange={onViewChange}
-      onNavigatePrev={onNavigatePrev}
-      onNavigateNext={onNavigateNext}
-      onNavigateToday={onNavigateToday}
-    />
+    <CalendarViewAnimation viewType="week-no-weekend">
+      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+        
+        {/* 日付ヘッダー */}
+        <DateHeader dates={weekdays} />
+        
+        {/* 共通SplitCalendarLayoutコンポーネントを使用 */}
+        <SplitCalendarLayout
+          dates={weekdays}
+          tasks={tasks}
+          dateRange={dateRange}
+          onTaskClick={onTaskClick}
+          onEmptyClick={onEmptyClick}
+          onTaskDrag={onTaskDrag}
+          onCreateTask={onCreateTask}
+          onCreateRecord={onCreateRecord}
+        />
+      </div>
+    </CalendarViewAnimation>
   )
 }

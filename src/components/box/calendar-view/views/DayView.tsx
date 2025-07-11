@@ -1,7 +1,9 @@
 'use client'
 
 import React from 'react'
-import { UnifiedCalendarLayout } from '../layouts/UnifiedCalendarLayout'
+import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
+import { CalendarViewAnimation } from '../components/ViewTransition'
+import { DateHeader } from '../components/DateHeader'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 
 interface CreateTaskInput {
@@ -56,21 +58,24 @@ export function DayView({
   onNavigateToday
 }: DayViewProps) {
   return (
-    <UnifiedCalendarLayout
-      viewType="day"
-      dates={[currentDate]}
-      tasks={tasks}
-      currentDate={currentDate}
-      dateRange={dateRange}
-      onTaskClick={onTaskClick}
-      onEmptyClick={onEmptyClick}
-      onTaskDrag={onTaskDrag}
-      onCreateTask={onCreateTask}
-      onCreateRecord={onCreateRecord}
-      onViewChange={onViewChange}
-      onNavigatePrev={onNavigatePrev}
-      onNavigateNext={onNavigateNext}
-      onNavigateToday={onNavigateToday}
-    />
+    <CalendarViewAnimation viewType="day">
+      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+        
+        {/* 日付ヘッダー */}
+        <DateHeader dates={[currentDate]} />
+        
+        {/* 共通SplitCalendarLayoutコンポーネントを使用 */}
+        <SplitCalendarLayout
+          dates={[currentDate]}
+          tasks={tasks}
+          dateRange={dateRange}
+          onTaskClick={onTaskClick}
+          onEmptyClick={onEmptyClick}
+          onTaskDrag={onTaskDrag}
+          onCreateTask={onCreateTask}
+          onCreateRecord={onCreateRecord}
+        />
+      </div>
+    </CalendarViewAnimation>
   )
 }
