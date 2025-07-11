@@ -10,7 +10,6 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline'
 import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { CalendarViewType } from './types'
@@ -23,28 +22,28 @@ interface CalendarHeaderProps {
 }
 
 const viewOptions = [
-  { value: 'day' as CalendarViewType, label: '日' },
-  { value: '3day' as CalendarViewType, label: '3日' },
-  { value: 'week-no-weekend' as CalendarViewType, label: '平日' },
-  { value: 'week' as CalendarViewType, label: '週' },
-  { value: '2week' as CalendarViewType, label: '2週' },
-  { value: 'schedule' as CalendarViewType, label: 'スケジュール' },
+  { value: 'day' as CalendarViewType, label: 'Day' },
+  { value: '3day' as CalendarViewType, label: '3 Days' },
+  { value: 'week-no-weekend' as CalendarViewType, label: 'Weekdays' },
+  { value: 'week' as CalendarViewType, label: 'Week' },
+  { value: '2week' as CalendarViewType, label: '2 Weeks' },
+  { value: 'schedule' as CalendarViewType, label: 'Schedule' },
 ]
 
 const displayModeOptions = [
-  { value: 'both', label: '両方', icon: ViewColumnsIcon },
-  { value: 'plan', label: '予定', icon: ClipboardDocumentListIcon },
-  { value: 'record', label: '記録', icon: CheckCircleIcon },
+  { value: 'both', label: 'Both', icon: ViewColumnsIcon },
+  { value: 'plan', label: 'Plan', icon: ClipboardDocumentListIcon },
+  { value: 'record', label: 'Record', icon: CheckCircleIcon },
 ] as const
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
   switch (viewType) {
     case 'day':
-      return format(date, 'yyyy年M月d日 (E)', { locale: ja })
+      return format(date, 'EEEE, MMMM d, yyyy')
     case '3day':
       const start3 = subDays(date, 1)
       const end3 = addDays(date, 1)
-      return `${format(start3, 'M月d日')} – ${format(end3, 'd日')}`
+      return `${format(start3, 'MMM d')} – ${format(end3, 'MMM d, yyyy')}`
     case 'week':
     case 'week-no-weekend':
       const weekStart = startOfWeek(date, { weekStartsOn: 1 })
@@ -53,20 +52,20 @@ function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
         : endOfWeek(date, { weekStartsOn: 1 })
       
       if (isSameMonth(weekStart, weekEnd)) {
-        return `${format(weekStart, 'yyyy年M月d日')} – ${format(weekEnd, 'd日')}`
+        return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'd, yyyy')}`
       } else if (isSameYear(weekStart, weekEnd)) {
-        return `${format(weekStart, 'M月d日')} – ${format(weekEnd, 'M月d日')}`
+        return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d, yyyy')}`
       } else {
-        return `${format(weekStart, 'yyyy年M月d日')} – ${format(weekEnd, 'yyyy年M月d日')}`
+        return `${format(weekStart, 'MMM d, yyyy')} – ${format(weekEnd, 'MMM d, yyyy')}`
       }
     case '2week':
       const twoWeekStart = startOfWeek(date, { weekStartsOn: 1 })
       const twoWeekEnd = addDays(twoWeekStart, 13)
-      return `${format(twoWeekStart, 'M月d日')} – ${format(twoWeekEnd, 'M月d日')}`
+      return `${format(twoWeekStart, 'MMM d')} – ${format(twoWeekEnd, 'MMM d, yyyy')}`
     case 'schedule':
-      return format(date, 'yyyy年M月', { locale: ja })
+      return format(date, 'MMMM yyyy')
     default:
-      return format(date, 'yyyy年M月')
+      return format(date, 'MMMM yyyy')
   }
 }
 
@@ -83,14 +82,9 @@ export function CalendarHeader({
   const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
-    <header className="h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4">
+    <header className="relative h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4">
       <div className="h-full flex items-center justify-between">
-        {/* 左側: 空のスペース */}
-        <div className="flex items-center">
-          {/* 必要に応じて他の要素を追加 */}
-        </div>
-        
-        {/* 中央: ナビゲーションと日付と表示切替 */}
+        {/* 左側: ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
           {/* 今日ボタン */}
           <button
@@ -103,7 +97,7 @@ export function CalendarHeader({
                 : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
             )}
           >
-            今日
+            Today
           </button>
           
           {/* 前後ナビゲーション（スケジュールビューでは無効） */}
@@ -112,22 +106,22 @@ export function CalendarHeader({
               <button
                 onClick={() => onNavigate('prev')}
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                title="前の期間"
+                title="Previous period"
               >
                 <ChevronLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </button>
               <button
                 onClick={() => onNavigate('next')}
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                title="次の期間"
+                title="Next period"
               >
                 <ChevronRightIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
               </button>
             </div>
           )}
           
-          {/* 現在の日付（大きく表示） */}
-          <h1 className="text-xl font-normal text-gray-900 dark:text-white">
+          {/* 現在の日付（左寄せ） */}
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
             {formatHeaderDate(viewType, currentDate)}
           </h1>
         </div>
@@ -146,7 +140,7 @@ export function CalendarHeader({
               )}
             >
               <ViewColumnsIcon className="w-4 h-4" />
-              <span>両方</span>
+              <span>Both</span>
             </button>
             <button
               onClick={() => updateSettings({ planRecordMode: 'plan' })}
@@ -158,7 +152,7 @@ export function CalendarHeader({
               )}
             >
               <ClipboardDocumentListIcon className="w-4 h-4" />
-              <span>予定</span>
+              <span>Plan</span>
             </button>
             <button
               onClick={() => updateSettings({ planRecordMode: 'record' })}
@@ -170,7 +164,7 @@ export function CalendarHeader({
               )}
             >
               <CheckCircleIcon className="w-4 h-4" />
-              <span>記録</span>
+              <span>Record</span>
             </button>
           </div>
           
@@ -180,7 +174,7 @@ export function CalendarHeader({
               onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors shadow-sm"
             >
-              <span>{currentViewOption?.label || 'ビュー'}</span>
+              <span>{currentViewOption?.label || 'View'}</span>
               <ChevronDownIcon className="w-4 h-4" />
             </button>
 

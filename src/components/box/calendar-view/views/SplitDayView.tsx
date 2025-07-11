@@ -200,116 +200,215 @@ export function SplitDayView({
           className="z-10"
         />
 
-        {/* 分割グリッド */}
+        {/* 2週デザインパターンを適用した統一レイアウト */}
         <div 
           ref={containerRef}
-          className="flex-1 relative overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
+          className="flex-1 overflow-hidden"
           onMouseDown={handleMouseDown}
-          style={{ height: '100%' }}
         >
-          <div className="relative" style={{ height: 24 * HOUR_HEIGHT }}>
-            {/* 背景グリッド */}
-            <SplitGridBackground />
-
-            {/* 分割表示 */}
-            {planRecordMode === 'both' ? (
-              <>
-                {/* 中央の区切り線 */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-20"></div>
-
-                {/* 左側：予定 */}
-                <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1">
-                  {calendarTasks.map(task => (
-                    <CalendarTask
-                      key={task.id}
-                      task={task}
-                      view="day"
-                      style={calculateTaskStyle(dayTasks.find(t => t.id === task.id)!)}
-                      onClick={() => {
-                        const originalTask = dayTasks.find(t => t.id === task.id)
-                        if (originalTask) onTaskClick?.(originalTask)
+          {planRecordMode === 'both' ? (
+            /* 分割表示モード - 2週デザインパターン */
+            <div className="flex h-full">
+              {/* 時間軸 */}
+              <TimeAxisLabels 
+                startHour={0} 
+                endHour={24} 
+                interval={15}
+                className="z-10"
+              />
+              
+              {/* 日付カラム */}
+              <div className="flex-1 flex overflow-y-auto">
+                <div className="flex-1 relative border-r border-gray-200 dark:border-gray-700">
+                  {/* 時間グリッド背景 */}
+                  <div className="absolute inset-0">
+                    {Array.from({ length: 24 * 4 }, (_, quarter) => (
+                      <div
+                        key={quarter}
+                        className="border-b border-gray-100 dark:border-gray-800"
+                        style={{ height: `${HOUR_HEIGHT / 4}px` }}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* 中央分割線 */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-0.5"></div>
+                  
+                  {/* 左側：予定 */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-0.5">
+                    {calendarTasks.map(task => {
+                      const originalTask = dayTasks.find(t => t.id === task.id)!
+                      const startHour = task.startTime.getHours()
+                      const startMinute = task.startTime.getMinutes()
+                      const endHour = task.endTime.getHours()
+                      const endMinute = task.endTime.getMinutes()
+                      const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                      const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
+                      
+                      return (
+                        <div
+                          key={task.id}
+                          className="absolute left-1 right-1 bg-blue-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-blue-600 z-20"
+                          style={{
+                            top: `${topPosition}px`,
+                            height: `${Math.max(height, 20)}px`
+                          }}
+                          onClick={() => onTaskClick?.(originalTask)}
+                        >
+                          {task.title}
+                        </div>
+                      )
+                    })}
+                  </div>
+                  
+                  {/* 右側：記録 */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-0.5">
+                    {calendarRecords.map(record => {
+                      const originalRecord = dayRecords.find(r => r.id === record.id)!
+                      const startHour = record.startTime.getHours()
+                      const startMinute = record.startTime.getMinutes()
+                      const endHour = record.endTime.getHours()
+                      const endMinute = record.endTime.getMinutes()
+                      const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                      const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
+                      
+                      return (
+                        <div
+                          key={record.id}
+                          className="absolute left-1 right-1 bg-green-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-green-600 z-20"
+                          style={{
+                            top: `${topPosition}px`,
+                            height: `${Math.max(height, 20)}px`
+                          }}
+                          onClick={() => onRecordClick?.(originalRecord)}
+                        >
+                          {record.title}
+                        </div>
+                      )
+                    })}
+                  </div>
+                  
+                  {/* 現在時刻線 */}
+                  {isToday(date) && (
+                    <div
+                      className="absolute left-0 right-0 h-px bg-red-500 z-30"
+                      style={{
+                        top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT}px`
                       }}
                     />
-                  ))}
+                  )}
                 </div>
-
-                {/* 右側：記録 */}
-                <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1">
-                  {calendarRecords.map(record => (
-                    <CalendarTask
-                      key={record.id}
-                      task={record}
-                      view="day"
-                      style={calculateRecordStyle(dayRecords.find(r => r.id === record.id)!)}
-                      onClick={() => {
-                        const originalRecord = dayRecords.find(r => r.id === record.id)
-                        if (originalRecord) onRecordClick?.(originalRecord)
+              </div>
+            </div>
+          ) : planRecordMode === 'plan' ? (
+            /* 予定のみ - 2週デザインパターン */
+            <div className="flex h-full">
+              <TimeAxisLabels 
+                startHour={0} 
+                endHour={24} 
+                interval={15}
+                className="z-10"
+              />
+              <div className="flex-1 flex overflow-y-auto">
+                <div className="flex-1 relative">
+                  <div className="absolute inset-0">
+                    {Array.from({ length: 24 * 4 }, (_, quarter) => (
+                      <div
+                        key={quarter}
+                        className="border-b border-gray-100 dark:border-gray-800"
+                        style={{ height: `${HOUR_HEIGHT / 4}px` }}
+                      />
+                    ))}
+                  </div>
+                  {calendarTasks.map(task => {
+                    const originalTask = dayTasks.find(t => t.id === task.id)!
+                    const startHour = task.startTime.getHours()
+                    const startMinute = task.startTime.getMinutes()
+                    const endHour = task.endTime.getHours()
+                    const endMinute = task.endTime.getMinutes()
+                    const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                    const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
+                    
+                    return (
+                      <div
+                        key={task.id}
+                        className="absolute left-1 right-1 bg-blue-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-blue-600 z-20"
+                        style={{
+                          top: `${topPosition}px`,
+                          height: `${Math.max(height, 20)}px`
+                        }}
+                        onClick={() => onTaskClick?.(originalTask)}
+                      >
+                        {task.title}
+                      </div>
+                    )
+                  })}
+                  {isToday(date) && (
+                    <div
+                      className="absolute left-0 right-0 h-px bg-red-500 z-30"
+                      style={{
+                        top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT}px`
                       }}
                     />
-                  ))}
+                  )}
                 </div>
-              </>
-            ) : planRecordMode === 'plan' ? (
-              /* 予定のみ */
-              <div className="absolute left-0 top-0 bottom-0 w-full">
-                {calendarTasks.map(task => (
-                  <CalendarTask
-                    key={task.id}
-                    task={task}
-                    view="day"
-                    style={calculateTaskStyle(dayTasks.find(t => t.id === task.id)!)}
-                    onClick={() => {
-                      const originalTask = dayTasks.find(t => t.id === task.id)
-                      if (originalTask) onTaskClick?.(originalTask)
-                    }}
-                  />
-                ))}
               </div>
-            ) : (
-              /* 記録のみ */
-              <div className="absolute left-0 top-0 bottom-0 w-full">
-                {calendarRecords.map(record => (
-                  <CalendarTask
-                    key={record.id}
-                    task={record}
-                    view="day"
-                    style={calculateRecordStyle(dayRecords.find(r => r.id === record.id)!)}
-                    onClick={() => {
-                      const originalRecord = dayRecords.find(r => r.id === record.id)
-                      if (originalRecord) onRecordClick?.(originalRecord)
-                    }}
-                  />
-                ))}
+            </div>
+          ) : (
+            /* 記録のみ - 2週デザインパターン */
+            <div className="flex h-full">
+              <TimeAxisLabels 
+                startHour={0} 
+                endHour={24} 
+                interval={15}
+                className="z-10"
+              />
+              <div className="flex-1 flex overflow-y-auto">
+                <div className="flex-1 relative">
+                  <div className="absolute inset-0">
+                    {Array.from({ length: 24 * 4 }, (_, quarter) => (
+                      <div
+                        key={quarter}
+                        className="border-b border-gray-100 dark:border-gray-800"
+                        style={{ height: `${HOUR_HEIGHT / 4}px` }}
+                      />
+                    ))}
+                  </div>
+                  {calendarRecords.map(record => {
+                    const originalRecord = dayRecords.find(r => r.id === record.id)!
+                    const startHour = record.startTime.getHours()
+                    const startMinute = record.startTime.getMinutes()
+                    const endHour = record.endTime.getHours()
+                    const endMinute = record.endTime.getMinutes()
+                    const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                    const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
+                    
+                    return (
+                      <div
+                        key={record.id}
+                        className="absolute left-1 right-1 bg-green-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-green-600 z-20"
+                        style={{
+                          top: `${topPosition}px`,
+                          height: `${Math.max(height, 20)}px`
+                        }}
+                        onClick={() => onRecordClick?.(originalRecord)}
+                      >
+                        {record.title}
+                      </div>
+                    )
+                  })}
+                  {isToday(date) && (
+                    <div
+                      className="absolute left-0 right-0 h-px bg-red-500 z-30"
+                      style={{
+                        top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT}px`
+                      }}
+                    />
+                  )}
+                </div>
               </div>
-            )}
-
-            {/* 現在時刻ライン */}
-            {isToday(date) && (
-              <CurrentTimeLine
-                containerRef={containerRef}
-                gridInterval={15}
-                isVisible={true}
-              />
-            )}
-
-            {/* インライン作成フォーム */}
-            {activeCreation && (
-              <SplitQuickCreator
-                type={activeCreation.type}
-                side={activeCreation.side}
-                initialStart={activeCreation.start}
-                initialEnd={activeCreation.end}
-                onSave={(data) => {
-                  if (activeCreation.type === 'task') {
-                    handleSaveTask(data as CreateTaskInput)
-                  } else {
-                    handleSaveRecord(data as CreateRecordInput)
-                  }
-                }}
-                onCancel={handleCancel}
-              />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
