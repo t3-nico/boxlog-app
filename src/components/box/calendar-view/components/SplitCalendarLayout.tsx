@@ -112,10 +112,13 @@ export function SplitCalendarLayout({
     onTaskClick?.(task)
   }
 
+  // デバッグログ
+  console.log('SplitCalendarLayout render:', { planRecordMode, planTasks: planTasks.length, recordTasks: recordTasks.length })
+
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
       {planRecordMode === 'both' ? (
-        /* 分割表示モード - 2週ビューと全く同じデザイン */
+        /* スケジュールビュー - Googleカレンダー風テキストベース表示 */
         <div className="flex h-full">
           <TimeAxisLabels 
             startHour={0} 
@@ -125,12 +128,14 @@ export function SplitCalendarLayout({
           />
           <div className="flex-1 flex overflow-y-auto relative">
             {dates.map((day, dayIndex) => {
+              // その日のタスクと記録を時間順でソート
               const dayPlanTasks = planTasks.filter(task => 
                 isSameDay(task.startTime, day)
-              )
+              ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+              
               const dayRecordTasks = recordTasks.filter(task => 
                 isSameDay(task.startTime, day)
-              )
+              ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
               
               return (
                 <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
@@ -161,56 +166,63 @@ export function SplitCalendarLayout({
                     </div>
                   )}
                   
-                  {/* 左側：予定 */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-0.5">
-                    {dayPlanTasks.map(task => {
-                      const startHour = task.startTime.getHours()
-                      const startMinute = task.startTime.getMinutes()
-                      const endHour = task.endTime.getHours()
-                      const endMinute = task.endTime.getMinutes()
-                      const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
-                      const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
-                      
-                      return (
+                  {/* 左側：予定（テキストベース） */}
+                  <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1 overflow-y-auto">
+                    <div className="p-2 space-y-1">
+                      {dayPlanTasks.map(task => (
                         <div
                           key={task.id}
-                          className="absolute left-1 right-1 bg-blue-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-blue-600 z-20"
-                          style={{
-                            top: `${topPosition}px`,
-                            height: `${Math.max(height, 20)}px`
-                          }}
+                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1 rounded"
                           onClick={() => handleTaskClick(task)}
                         >
-                          {task.title}
+                          <div className="flex items-start gap-2">
+                            <div className="text-blue-600 dark:text-blue-400 font-mono text-xs min-w-0 flex-shrink-0">
+                              {task.startTime.toLocaleTimeString('ja-JP', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: false 
+                              })}
+                            </div>
+                            <div className="font-medium truncate flex-1">
+                              {task.title}
+                            </div>
+                          </div>
                         </div>
-                      )
-                    })}
+                      ))}
+                    </div>
                   </div>
                   
-                  {/* 右側：記録 */}
-                  <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-0.5">
-                    {dayRecordTasks.map(task => {
-                      const startHour = task.startTime.getHours()
-                      const startMinute = task.startTime.getMinutes()
-                      const endHour = task.endTime.getHours()
-                      const endMinute = task.endTime.getMinutes()
-                      const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
-                      const height = ((endHour + endMinute / 60) - (startHour + startMinute / 60)) * HOUR_HEIGHT
-                      
-                      return (
+                  {/* 右側：記録（テキストベース） */}
+                  <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1 overflow-y-auto">
+                    <div className="p-2 space-y-1">
+                      {dayRecordTasks.map(task => (
                         <div
                           key={task.id}
-                          className="absolute left-1 right-1 bg-green-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-green-600 z-20"
-                          style={{
-                            top: `${topPosition}px`,
-                            height: `${Math.max(height, 20)}px`
-                          }}
+                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded"
                           onClick={() => handleTaskClick(task)}
                         >
-                          {task.title}
+                          <div className="flex items-start gap-2">
+                            <div className="text-green-600 dark:text-green-400 font-mono text-xs min-w-0 flex-shrink-0">
+                              {task.startTime.toLocaleTimeString('ja-JP', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: false 
+                              })}
+                            </div>
+                            <div className="font-medium truncate flex-1">
+                              {task.title}
+                            </div>
+                          </div>
+                          <div className="text-green-600 dark:text-green-400 text-xs ml-12 mt-0.5">
+                            {task.endTime.toLocaleTimeString('ja-JP', { 
+                              hour: '2-digit', 
+                              minute: '2-digit',
+                              hour12: false 
+                            })} まで
+                          </div>
                         </div>
-                      )
-                    })}
+                      ))}
+                    </div>
                   </div>
                 </div>
               )
@@ -268,14 +280,25 @@ export function SplitCalendarLayout({
                     return (
                       <div
                         key={task.id}
-                        className="absolute left-1 right-1 bg-blue-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-blue-600 z-20"
+                        className="absolute left-1 right-1 bg-blue-500 text-white text-xs rounded-sm cursor-pointer hover:bg-blue-600 z-20 shadow-sm border border-blue-600"
                         style={{
                           top: `${topPosition}px`,
-                          height: `${Math.max(height, 20)}px`
+                          height: `${Math.max(height, 24)}px`
                         }}
                         onClick={() => handleTaskClick(task)}
                       >
-                        {task.title}
+                        <div className="p-1 h-full flex flex-col justify-start">
+                          <div className="font-medium leading-tight truncate">{task.title}</div>
+                          {height >= 40 && (
+                            <div className="text-blue-100 text-xs mt-0.5 leading-tight">
+                              {task.startTime.toLocaleTimeString('ja-JP', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: false 
+                              })}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )
                   })}
@@ -335,14 +358,29 @@ export function SplitCalendarLayout({
                     return (
                       <div
                         key={task.id}
-                        className="absolute left-1 right-1 bg-green-500 text-white text-xs p-1 rounded cursor-pointer hover:bg-green-600 z-20"
+                        className="absolute left-1 right-1 bg-green-500 text-white text-xs rounded-sm cursor-pointer hover:bg-green-600 z-20 shadow-sm border border-green-600"
                         style={{
                           top: `${topPosition}px`,
-                          height: `${Math.max(height, 20)}px`
+                          height: `${Math.max(height, 24)}px`
                         }}
                         onClick={() => handleTaskClick(task)}
                       >
-                        {task.title}
+                        <div className="p-1 h-full flex flex-col justify-start">
+                          <div className="font-medium leading-tight truncate">{task.title}</div>
+                          {height >= 40 && (
+                            <div className="text-green-100 text-xs mt-0.5 leading-tight">
+                              {task.startTime.toLocaleTimeString('ja-JP', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: false 
+                              })} - {task.endTime.toLocaleTimeString('ja-JP', { 
+                                hour: '2-digit', 
+                                minute: '2-digit',
+                                hour12: false 
+                              })}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )
                   })}

@@ -102,7 +102,7 @@ export function getNextPeriod(
     case 'week':
     case 'week-no-weekend': return addWeeks(currentDate, 1)
     case '2week': return addWeeks(currentDate, 2)
-    case 'schedule': return addMonths(currentDate, 1)
+    case 'schedule': return addWeeks(currentDate, 1)
   }
 }
 
@@ -117,7 +117,7 @@ export function getPreviousPeriod(
     case 'week':
     case 'week-no-weekend': return subWeeks(currentDate, 1)
     case '2week': return subWeeks(currentDate, 2)
-    case 'schedule': return subMonths(currentDate, 1)
+    case 'schedule': return subWeeks(currentDate, 1)
   }
 }
 

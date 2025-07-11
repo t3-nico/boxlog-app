@@ -63,7 +63,16 @@ function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
       const twoWeekEnd = addDays(twoWeekStart, 13)
       return `${format(twoWeekStart, 'MMM d')} – ${format(twoWeekEnd, 'MMM d, yyyy')}`
     case 'schedule':
-      return format(date, 'MMMM yyyy')
+      const scheduleWeekStart = startOfWeek(date, { weekStartsOn: 1 })
+      const scheduleWeekEnd = endOfWeek(date, { weekStartsOn: 1 })
+      
+      if (isSameMonth(scheduleWeekStart, scheduleWeekEnd)) {
+        return `${format(scheduleWeekStart, 'MMM d')} – ${format(scheduleWeekEnd, 'd, yyyy')}`
+      } else if (isSameYear(scheduleWeekStart, scheduleWeekEnd)) {
+        return `${format(scheduleWeekStart, 'MMM d')} – ${format(scheduleWeekEnd, 'MMM d, yyyy')}`
+      } else {
+        return `${format(scheduleWeekStart, 'MMM d, yyyy')} – ${format(scheduleWeekEnd, 'MMM d, yyyy')}`
+      }
     default:
       return format(date, 'MMMM yyyy')
   }
@@ -100,25 +109,23 @@ export function CalendarHeader({
             Today
           </button>
           
-          {/* 前後ナビゲーション（スケジュールビューでは無効） */}
-          {viewType !== 'schedule' && (
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => onNavigate('prev')}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                title="Previous period"
-              >
-                <ChevronLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-              <button
-                onClick={() => onNavigate('next')}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
-                title="Next period"
-              >
-                <ChevronRightIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-              </button>
-            </div>
-          )}
+          {/* 前後ナビゲーション */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onNavigate('prev')}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              title="Previous period"
+            >
+              <ChevronLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            </button>
+            <button
+              onClick={() => onNavigate('next')}
+              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              title="Next period"
+            >
+              <ChevronRightIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            </button>
+          </div>
           
           {/* 現在の日付（左寄せ） */}
           <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
