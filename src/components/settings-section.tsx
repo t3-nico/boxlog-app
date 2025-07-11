@@ -5,6 +5,7 @@ import { Subheading } from './heading'
 import { Text } from './text'
 import { Switch } from './switch'
 import { Select } from './select'
+import { Input } from './input'
 
 export function SettingSection({
   title,
@@ -79,6 +80,37 @@ export function SelectItem({
         <Select value={value} onChange={onChange} className="w-full">
           {children}
         </Select>
+      </div>
+    </div>
+  )
+}
+
+export function DatePickerItem({
+  label,
+  description,
+  value,
+  onChange,
+}: {
+  label: string
+  description?: string
+  value: string | null
+  onChange: (value: string) => void
+}) {
+  return (
+    <div className="flex items-center justify-between px-4 py-3">
+      <div className="space-y-0.5">
+        <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
+        {description && (
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
+        )}
+      </div>
+      <div className="w-40">
+        <Input
+          type="date"
+          value={value || ''}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full"
+        />
       </div>
     </div>
   )
