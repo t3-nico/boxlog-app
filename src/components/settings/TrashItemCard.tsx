@@ -111,7 +111,7 @@ export const TrashItemCard = ({ item }: TrashItemCardProps) => {
           <div className="flex items-center space-x-3">
             {/* アイテムタイプアイコン */}
             <div className="flex-shrink-0">
-              <IconComponent className="w-5 h-5 text-gray-400" />
+              <IconComponent className="w-5 h-5 text-gray-400" data-slot="icon" />
             </div>
             
             {/* アイテム名とタイプ */}
@@ -136,7 +136,7 @@ export const TrashItemCard = ({ item }: TrashItemCardProps) => {
           {/* 期限情報 */}
           <div className="mt-1 flex items-center space-x-1 text-xs">
             {daysUntilExpiration <= 3 && (
-              <ExclamationTriangleIcon className="w-4 h-4 text-amber-500" />
+              <ExclamationTriangleIcon className="w-4 h-4 text-amber-500" data-slot="icon" />
             )}
             <span className={`${daysUntilExpiration <= 3 ? 'text-amber-600 dark:text-amber-400 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>
               {daysUntilExpiration > 0 

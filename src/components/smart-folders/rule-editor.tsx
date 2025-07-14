@@ -257,7 +257,7 @@ export function RuleEditor({ rules, onChange }: RuleEditorProps) {
                   <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                     {/* ドラッグハンドル */}
                     <div className="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                      <Bars3Icon className="w-4 h-4" />
+                      <Bars3Icon className="w-4 h-4" data-slot="icon" />
                     </div>
 
                     {/* ロジック演算子（最初のルール以外） */}
@@ -325,7 +325,7 @@ export function RuleEditor({ rules, onChange }: RuleEditorProps) {
                       onClick={() => removeRule(index)}
                       className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      <TrashIcon className="w-4 h-4" />
+                      <TrashIcon className="w-4 h-4" data-slot="icon" />
                     </button>
                   </div>
                 </SortableItem>
@@ -349,7 +349,7 @@ export function RuleEditor({ rules, onChange }: RuleEditorProps) {
         onClick={addRule}
         className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-md transition-colors"
       >
-        <PlusIcon className="w-4 h-4" />
+        <PlusIcon className="w-4 h-4" data-slot="icon" />
         Add Filter Rule
       </button>
     </div>

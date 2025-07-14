@@ -94,9 +94,9 @@ function getToastIcon(type: Toast['type']) {
     case 'error':
       return <XCircleIcon className={`${iconProps} text-red-500`} data-slot="icon" />
     case 'warning':
-      return <ExclamationTriangleIcon className={`${iconProps} text-yellow-500`} />
+      return <ExclamationTriangleIcon className={`${iconProps} text-yellow-500`} data-slot="icon" />
     case 'info':
-      return <InformationCircleIcon className={`${iconProps} text-blue-500`} />
+      return <InformationCircleIcon className={`${iconProps} text-blue-500`} data-slot="icon" />
   }
 }
 

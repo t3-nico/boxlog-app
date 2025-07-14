@@ -17,7 +17,7 @@ export const EmptyTrashModal = ({ open, onClose, onConfirm, itemCount }: EmptyTr
       <DialogBody>
         <div className="flex items-center space-x-3">
           <div className="flex-shrink-0">
-            <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
+            <ExclamationTriangleIcon className="w-6 h-6 text-red-600" data-slot="icon" />
           </div>
           <div>
             <DialogTitle>Empty Trash</DialogTitle>

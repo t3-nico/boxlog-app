@@ -11,7 +11,7 @@ interface EmptyTagsStateProps {
 export const EmptyTagsState = ({ onCreateClick }: EmptyTagsStateProps) => {
   return (
     <div className="text-center py-12">
-      <TagIcon className="mx-auto h-12 w-12 text-gray-400" />
+      <TagIcon className="mx-auto h-12 w-12 text-gray-400" data-slot="icon" />
       <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
         No tags yet
       </h3>
@@ -20,7 +20,7 @@ export const EmptyTagsState = ({ onCreateClick }: EmptyTagsStateProps) => {
       </p>
       <div className="mt-6">
         <Button onClick={onCreateClick}>
-          <PlusIcon className="w-4 h-4 mr-2" />
+          <PlusIcon className="w-4 h-4 mr-2" data-slot="icon" />
           Create your first tag
         </Button>
       </div>

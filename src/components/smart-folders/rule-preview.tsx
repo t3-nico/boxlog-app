@@ -122,7 +122,7 @@ export function RulePreview({ rules, items }: RulePreviewProps) {
       {/* ヘッダー */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-2">
-          <FunnelIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <FunnelIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" data-slot="icon" />
           <h3 className="text-sm font-medium text-gray-900 dark:text-white">
             Preview
           </h3>
@@ -143,7 +143,7 @@ export function RulePreview({ rules, items }: RulePreviewProps) {
       {/* 統計情報 */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-3">
-          <ChartBarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          <ChartBarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" data-slot="icon" />
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             Statistics
           </span>
@@ -255,7 +255,7 @@ export function RulePreview({ rules, items }: RulePreviewProps) {
             </div>
           ) : (
             <div className="text-center py-8">
-              <XCircleIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+              <XCircleIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" data-slot="icon" />
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 No items match your current rules
               </p>
