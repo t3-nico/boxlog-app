@@ -85,7 +85,7 @@ export default function TrashPage() {
               color="red"
               onClick={() => setShowEmptyModal(true)}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="w-4 h-4 mr-2" data-slot="icon" />
               Empty Trash
             </Button>
           )}

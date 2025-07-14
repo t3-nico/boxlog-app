@@ -207,7 +207,7 @@ export default function ChronoTypePage() {
 
   const getTypeIcon = (type: ChronoTypeSchedule['type']) => {
     const IconComponent = typeIcons[type]
-    return <IconComponent className="h-4 w-4" />
+    return <IconComponent className="h-4 w-4" data-slot="icon" />
   }
 
   const handleAnswerSelect = (questionId: string, value: number) => {
@@ -298,10 +298,10 @@ export default function ChronoTypePage() {
                 </p>
                 <div className="inline-block p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center gap-3 mb-2">
-                    {diagnosisResult === 'lion' && <Sun className="h-8 w-8 text-yellow-500" />}
-                    {diagnosisResult === 'bear' && <Clock className="h-8 w-8 text-blue-500" />}
-                    {diagnosisResult === 'wolf' && <Moon className="h-8 w-8 text-purple-500" />}
-                    {diagnosisResult === 'dolphin' && <GraduationCap className="h-8 w-8 text-teal-500" />}
+                    {diagnosisResult === 'lion' && <Sun className="h-8 w-8 text-yellow-500" data-slot="icon" />}
+                    {diagnosisResult === 'bear' && <Clock className="h-8 w-8 text-blue-500" data-slot="icon" />}
+                    {diagnosisResult === 'wolf' && <Moon className="h-8 w-8 text-purple-500" data-slot="icon" />}
+                    {diagnosisResult === 'dolphin' && <GraduationCap className="h-8 w-8 text-teal-500" data-slot="icon" />}
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                       {chronoTypeProfiles.find(p => p.id === diagnosisResult)?.name}
                     </h3>
@@ -407,10 +407,10 @@ export default function ChronoTypePage() {
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  {profile.id === 'lion' && <Sun className="h-5 w-5 text-yellow-500" />}
-                  {profile.id === 'bear' && <Clock className="h-5 w-5 text-blue-500" />}
-                  {profile.id === 'wolf' && <Moon className="h-5 w-5 text-purple-500" />}
-                  {profile.id === 'dolphin' && <GraduationCap className="h-5 w-5 text-teal-500" />}
+                  {profile.id === 'lion' && <Sun className="h-5 w-5 text-yellow-500" data-slot="icon" />}
+                  {profile.id === 'bear' && <Clock className="h-5 w-5 text-blue-500" data-slot="icon" />}
+                  {profile.id === 'wolf' && <Moon className="h-5 w-5 text-purple-500" data-slot="icon" />}
+                  {profile.id === 'dolphin' && <GraduationCap className="h-5 w-5 text-teal-500" data-slot="icon" />}
                   <h3 className="font-medium text-gray-900 dark:text-gray-100">
                     {profile.name}
                   </h3>
@@ -586,19 +586,19 @@ export default function ChronoTypePage() {
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 my-4">
               <div className="flex items-center gap-2 p-2 bg-green-100 dark:bg-green-900/30 rounded">
-                <GraduationCap className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <GraduationCap className="h-4 w-4 text-green-600 dark:text-green-400" data-slot="icon" />
                 <span className="text-sm font-medium text-green-700 dark:text-green-300">Focus</span>
               </div>
               <div className="flex items-center gap-2 p-2 bg-purple-100 dark:bg-purple-900/30 rounded">
-                <Lightbulb className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <Lightbulb className="h-4 w-4 text-purple-600 dark:text-purple-400" data-slot="icon" />
                 <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Creative</span>
               </div>
               <div className="flex items-center gap-2 p-2 bg-blue-100 dark:bg-blue-900/30 rounded">
-                <Moon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <Moon className="h-4 w-4 text-blue-600 dark:text-blue-400" data-slot="icon" />
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Rest</span>
               </div>
               <div className="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800/30 rounded">
-                <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
               </div>
               <div className="flex items-center gap-2 p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded">
