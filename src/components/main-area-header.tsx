@@ -84,7 +84,7 @@ function CurrentTaskDisplay() {
       className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer"
       title="カレンダーで詳細を見る"
     >
-      <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" />
+      <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-medium text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
           {currentSchedule.title}
@@ -212,7 +212,7 @@ function TimeDisplay() {
 
   return (
     <div className="flex items-center gap-1.5">
-      <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+      <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-bold tabular-nums text-gray-600 dark:text-gray-300">
           {time.toLocaleTimeString('en-US', { 
@@ -228,7 +228,7 @@ function TimeDisplay() {
           title={`${chronoStatus.label} - Go to Chronotype Settings`}
         >
           {ChronoIcon && typeof ChronoIcon === 'function' ? (
-            <ChronoIcon className={`w-3 h-3 ${chronoStatus.color}`} />
+            <ChronoIcon className={`w-3 h-3 ${chronoStatus.color}`} data-slot="icon" />
           ) : null}
           <div className={`text-xs font-medium ${chronoStatus.color}`}>
             {chronoStatus.status}
@@ -246,7 +246,7 @@ function AskAIButton({ onToggle }: { onToggle: () => void }) {
       className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
       title="Ask AI"
     >
-      <SparklesIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+      <SparklesIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" data-slot="icon" />
       <span className="text-sm font-medium text-gray-900 dark:text-white">Ask AI</span>
     </button>
   )

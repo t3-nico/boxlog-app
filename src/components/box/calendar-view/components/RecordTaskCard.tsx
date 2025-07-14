@@ -91,7 +91,7 @@ export function RecordTaskCard({
                       className={cn(
                         "h-3 w-3",
                         i < record.satisfaction!
-                          ? "text-yellow-400 fill-current"
+                          ? "text-yellow-400"
                           : "text-gray-300 dark:text-gray-600"
                       )}
                     />

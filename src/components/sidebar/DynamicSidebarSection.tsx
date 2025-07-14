@@ -44,7 +44,7 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
               onClick={() => console.log('Search clicked')}
               className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium text-zinc-950 hover:bg-zinc-950/5 dark:hover:bg-white/5 transition-colors dark:text-white"
             >
-              <IconComponent className="size-5 shrink-0 fill-zinc-500 dark:fill-zinc-400" />
+              <IconComponent className="size-5 shrink-0" data-slot="icon" />
               {!collapsed && <span className="truncate text-zinc-500 dark:text-zinc-400">{item.label}</span>}
             </button>
           )
@@ -58,7 +58,7 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
               href={item.href}
               className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium text-orange-500 hover:text-orange-600 dark:text-orange-400 dark:hover:text-orange-300 hover:bg-zinc-950/5 dark:hover:bg-white/5 transition-colors"
             >
-              <IconComponent className="size-5 shrink-0" />
+              <IconComponent className="size-5 shrink-0" data-slot="icon" />
               {!collapsed && <span className="truncate">{item.label}</span>}
             </a>
           )
@@ -70,32 +70,32 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
             return (
               <Dropdown key={item.id}>
                 <DropdownButton as="div" className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium hover:bg-zinc-950/5 dark:hover:bg-white/5 transition-colors cursor-pointer">
-                  <IconComponent className="size-5 shrink-0" />
+                  <IconComponent className="size-5 shrink-0" data-slot="icon" />
                   <span className="truncate">{item.label}</span>
                 </DropdownButton>
                 <DropdownMenu className="min-w-[200px]" anchor="top start">
                   <DropdownItem href="/help/chat">
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-4 h-4" data-slot="icon" />
                     <DropdownLabel>Chat with AI</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help">
-                    <IconComponent className="w-4 h-4" />
+                    <IconComponent className="w-4 h-4" data-slot="icon" />
                     <DropdownLabel>Help Center</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/tips">
-                    <Lightbulb className="w-4 h-4" />
+                    <Lightbulb className="w-4 h-4" data-slot="icon" />
                     <DropdownLabel>Tips & Tricks</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/contact">
-                    <Mail className="w-4 h-4" />
+                    <Mail className="w-4 h-4" data-slot="icon" />
                     <DropdownLabel>Contact Support</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/updates">
-                    <Sparkles className="w-4 h-4" />
+                    <Sparkles className="w-4 h-4" data-slot="icon" />
                     <DropdownLabel>What&rsquo;s New</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/bug-report">
-                    <Bug className="w-4 h-4" />
+                    <Bug className="w-4 h-4" data-slot="icon" />
                     <DropdownLabel>Report Bug</DropdownLabel>
                   </DropdownItem>
                 </DropdownMenu>
@@ -109,7 +109,7 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
               <div key={item.id}>
                 <div className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm font-medium text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 transition-colors cursor-pointer mb-2">
                   <a href={item.href} className="flex w-full items-center gap-3">
-                    <IconComponent className="size-5 shrink-0" />
+                    <IconComponent className="size-5 shrink-0" data-slot="icon" />
                     <span className="truncate">{item.label}</span>
                   </a>
                 </div>
@@ -127,7 +127,7 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
             href={item.href}
             current={isActive}
           >
-            <IconComponent />
+            <IconComponent data-slot="icon" />
             <SidebarLabel>{item.label}</SidebarLabel>
             
             {item.count && item.count > 0 && !collapsed && (

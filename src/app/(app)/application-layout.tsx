@@ -135,7 +135,7 @@ export function ApplicationLayout({
             <SidebarHeader className="flex-row items-center gap-2">
               {!collapsed && inSettings && (
                 <SidebarItem href="/" indicator={false}>
-                  <ChevronLeftIcon />
+                  <ChevronLeftIcon data-slot="icon" />
                   <SidebarLabel>Back to app</SidebarLabel>
                 </SidebarItem>
               )}
@@ -144,33 +144,33 @@ export function ApplicationLayout({
                   <DropdownButton as={SidebarItem} indicator={false}>
                     <Avatar src="/teams/catalyst.svg" />
                     <SidebarLabel>BoxLog</SidebarLabel>
-                    <ChevronDownIcon />
+                    <ChevronDownIcon data-slot="icon" />
                   </DropdownButton>
                   <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
                     <DropdownItem href="/settings">
-                      <Cog8ToothIcon />
+                      <Cog8ToothIcon data-slot="icon" />
                       <DropdownLabel>Settings</DropdownLabel>
                     </DropdownItem>
                     <DropdownDivider />
                     <DropdownItem href="#">
-                      <ShieldCheckIcon />
+                      <ShieldCheckIcon data-slot="icon" />
                       <DropdownLabel>Privacy policy</DropdownLabel>
                     </DropdownItem>
                     <DropdownItem href="#">
-                      <LightBulbIcon />
+                      <LightBulbIcon data-slot="icon" />
                       <DropdownLabel>Share feedback</DropdownLabel>
                     </DropdownItem>
                     <DropdownItem href="#">
-                      <QuestionMarkCircleIcon />
+                      <QuestionMarkCircleIcon data-slot="icon" />
                       <DropdownLabel>Support</DropdownLabel>
                     </DropdownItem>
                     <DropdownItem href="#">
-                      <SparklesIcon />
+                      <SparklesIcon data-slot="icon" />
                       <DropdownLabel>Changelog</DropdownLabel>
                     </DropdownItem>
                     <DropdownDivider />
                     <DropdownItem onClick={handleSignOut}>
-                      <ArrowRightStartOnRectangleIcon />
+                      <ArrowRightStartOnRectangleIcon data-slot="icon" />
                       <DropdownLabel>Logout</DropdownLabel>
                     </DropdownItem>
                   </DropdownMenu>
@@ -181,7 +181,7 @@ export function ApplicationLayout({
                   {!collapsed && (
                     <Dropdown>
                       <DropdownButton as={NavbarItem} aria-label="Notifications">
-                        <BellIcon className="h-5 w-5" />
+                        <BellIcon className="h-5 w-5" data-slot="icon" />
                       </DropdownButton>
                       <DropdownMenu className="min-w-80 max-w-96" anchor="bottom end">
                         <div className="p-4">
@@ -244,7 +244,7 @@ export function ApplicationLayout({
                     onClick={() => setCollapsed(!collapsed)}
                     aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                   >
-                    {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                    {collapsed ? <ChevronRightIcon data-slot="icon" /> : <ChevronLeftIcon data-slot="icon" />}
                   </NavbarItem>
                 </div>
               )}
@@ -266,7 +266,7 @@ export function ApplicationLayout({
                           collapsed && 'justify-center'
                         )}
                       >
-                        <PlusCircleIcon className="size-6 sm:size-5 shrink-0 fill-orange-600 dark:fill-orange-400" />
+                        <PlusCircleIcon className="size-6 sm:size-5 shrink-0 text-orange-600 dark:text-orange-400" data-slot="icon" />
                         <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
                       </a>
                     </div>
@@ -275,7 +275,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/search')}
                       indicator={false}
                     >
-                      <MagnifyingGlassIcon />
+                      <MagnifyingGlassIcon data-slot="icon" />
                       <SidebarLabel>Search</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -287,19 +287,19 @@ export function ApplicationLayout({
                       {!collapsed && 'Views'}
                     </div>
                     <SidebarItem href="/calendar" current={pathname === '/calendar'} indicator={false}>
-                      <CalendarIcon />
+                      <CalendarIcon data-slot="icon" />
                       <SidebarLabel>Calendar</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem href="/table" current={pathname.startsWith('/table')} indicator={false}>
-                      <TableCellsIcon />
+                      <TableCellsIcon data-slot="icon" />
                       <SidebarLabel>Table</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem href="/board" current={pathname.startsWith('/board')} indicator={false}>
-                      <Squares2X2Icon />
+                      <Squares2X2Icon data-slot="icon" />
                       <SidebarLabel>Board</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem href="/stats" current={pathname.startsWith('/stats')} indicator={false}>
-                      <ChartBarIcon />
+                      <ChartBarIcon data-slot="icon" />
                       <SidebarLabel>Stats</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -336,7 +336,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/account')}
                       indicator={false}
                     >
-                      <UserIcon />
+                      <UserIcon data-slot="icon" />
                       <SidebarLabel>Account</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem
@@ -344,7 +344,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/preferences')}
                       indicator={false}
                     >
-                      <AdjustmentsVerticalIcon />
+                      <AdjustmentsVerticalIcon data-slot="icon" />
                       <SidebarLabel>Preferences</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem
@@ -352,7 +352,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/notifications')}
                       indicator={false}
                     >
-                      <BellIcon />
+                      <BellIcon data-slot="icon" />
                       <SidebarLabel>Notifications</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem
@@ -360,7 +360,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/calendar')}
                       indicator={false}
                     >
-                      <CalendarIcon />
+                      <CalendarIcon data-slot="icon" />
                       <SidebarLabel>Calendar</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -372,7 +372,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/tags')}
                       indicator={false}
                     >
-                      <TagIcon />
+                      <TagIcon data-slot="icon" />
                       <SidebarLabel>Tags</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem
@@ -380,7 +380,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/templates')}
                       indicator={false}
                     >
-                      <ClipboardDocumentListIcon />
+                      <ClipboardDocumentListIcon data-slot="icon" />
                       <SidebarLabel>Task Templates</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -392,7 +392,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/integration')}
                       indicator={false}
                     >
-                      <LinkIcon />
+                      <LinkIcon data-slot="icon" />
                       <SidebarLabel>Calendar & Integration</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -404,7 +404,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/plan-billing')}
                       indicator={false}
                     >
-                      <CreditCardIcon />
+                      <CreditCardIcon data-slot="icon" />
                       <SidebarLabel>Plan & Billing</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem
@@ -412,7 +412,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/data-export')}
                       indicator={false}
                     >
-                      <ArrowDownTrayIcon />
+                      <ArrowDownTrayIcon data-slot="icon" />
                       <SidebarLabel>Data & Export</SidebarLabel>
                     </SidebarItem>
                     <SidebarItem
@@ -420,7 +420,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/trash')}
                       indicator={false}
                     >
-                      <TrashIcon />
+                      <TrashIcon data-slot="icon" />
                       <SidebarLabel>Trash</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -432,7 +432,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/chronotype')}
                       indicator={false}
                     >
-                      <ClockIcon />
+                      <ClockIcon data-slot="icon" />
                       <SidebarLabel>Chronotype</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>
@@ -444,7 +444,7 @@ export function ApplicationLayout({
                       current={pathname.startsWith('/settings/legal')}
                       indicator={false}
                     >
-                      <InformationCircleIcon />
+                      <InformationCircleIcon data-slot="icon" />
                       <SidebarLabel>About / Legal</SidebarLabel>
                     </SidebarItem>
                   </SidebarSection>

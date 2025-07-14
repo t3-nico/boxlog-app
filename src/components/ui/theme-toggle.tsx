@@ -21,9 +21,9 @@ export function ThemeToggle() {
   const { theme, colorScheme, setTheme, setColorScheme, resolvedTheme } = useTheme()
 
   const themeIcons = {
-    light: <SunIcon className="h-4 w-4" />,
-    dark: <MoonIcon className="h-4 w-4" />,
-    system: <ComputerDesktopIcon className="h-4 w-4" />,
+    light: <SunIcon className="h-4 w-4" data-slot="icon" />,
+    dark: <MoonIcon className="h-4 w-4" data-slot="icon" />,
+    system: <ComputerDesktopIcon className="h-4 w-4" data-slot="icon" />,
   }
 
   const colorSchemes = [
@@ -41,7 +41,7 @@ export function ThemeToggle() {
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <DropdownButton plain className="flex items-center space-x-2">
             {themeIcons[theme]}
-            <ChevronDownIcon className="h-4 w-4" />
+            <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
           </DropdownButton>
         </motion.div>
         
@@ -50,21 +50,21 @@ export function ThemeToggle() {
             onClick={() => setTheme('light')}
             className={theme === 'light' ? 'bg-accent' : ''}
           >
-            <SunIcon className="mr-2 h-4 w-4" />
+            <SunIcon className="mr-2 h-4 w-4" data-slot="icon" />
             Light
           </DropdownItem>
           <DropdownItem
             onClick={() => setTheme('dark')}
             className={theme === 'dark' ? 'bg-accent' : ''}
           >
-            <MoonIcon className="mr-2 h-4 w-4" />
+            <MoonIcon className="mr-2 h-4 w-4" data-slot="icon" />
             Dark
           </DropdownItem>
           <DropdownItem
             onClick={() => setTheme('system')}
             className={theme === 'system' ? 'bg-accent' : ''}
           >
-            <ComputerDesktopIcon className="mr-2 h-4 w-4" />
+            <ComputerDesktopIcon className="mr-2 h-4 w-4" data-slot="icon" />
             System
           </DropdownItem>
         </DropdownMenu>
@@ -74,8 +74,8 @@ export function ThemeToggle() {
       <Dropdown>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <DropdownButton plain className="flex items-center space-x-2">
-            <SwatchIcon className="h-4 w-4" />
-            <ChevronDownIcon className="h-4 w-4" />
+            <SwatchIcon className="h-4 w-4" data-slot="icon" />
+            <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
           </DropdownButton>
         </motion.div>
         
@@ -116,9 +116,9 @@ export function SimpleThemeToggle() {
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <Button plain onClick={toggleTheme} className="p-2">
         {resolvedTheme === 'light' ? (
-          <MoonIcon className="h-4 w-4" />
+          <MoonIcon className="h-4 w-4" data-slot="icon" />
         ) : (
-          <SunIcon className="h-4 w-4" />
+          <SunIcon className="h-4 w-4" data-slot="icon" />
         )}
         <span className="sr-only">Toggle theme</span>
       </Button>

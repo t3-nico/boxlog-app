@@ -29,7 +29,7 @@ export default async function Event({ params }: { params: { id: string } }) {
     <>
       <div className="max-lg:hidden">
         <Link href="/box" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
-          <ChevronLeft className="size-4 fill-zinc-400 dark:fill-zinc-500" />
+          <ChevronLeft className="size-4 text-zinc-400 dark:text-zinc-500" />
           Box
         </Link>
       </div>

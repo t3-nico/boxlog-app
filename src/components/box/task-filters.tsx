@@ -90,7 +90,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
     <div className={`flex flex-col gap-4 md:flex-row md:items-center md:justify-between ${className}`}>
       <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:space-x-2">
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" data-slot="icon" />
           <Input
             placeholder="Filter tasks..."
             value={filters.search}
@@ -104,7 +104,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
               outline
               className={`h-8 border-dashed ${filters.status.length > 0 ? 'border-solid' : ''}`}
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4" data-slot="icon" />
               Status
               {filters.status.length > 0 && (
                 <div className="ml-1 flex h-4 w-4 items-center justify-center rounded bg-primary text-xs text-primary-foreground">
@@ -137,7 +137,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
               outline
               className={`h-8 border-dashed ${filters.priority.length > 0 ? 'border-solid' : ''}`}
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4" data-slot="icon" />
               Priority
               {filters.priority.length > 0 && (
                 <div className="ml-1 flex h-4 w-4 items-center justify-center rounded bg-primary text-xs text-primary-foreground">
@@ -170,7 +170,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
               outline
               className={`h-8 border-dashed ${filters.tags.length > 0 ? 'border-solid' : ''}`}
             >
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4" data-slot="icon" />
               Tags
               {filters.tags.length > 0 && (
                 <div className="ml-1 flex h-4 w-4 items-center justify-center rounded bg-primary text-xs text-primary-foreground">
@@ -221,7 +221,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
             <Dropdown>
               <DropdownButton outline className="h-8">
                 View
-                <ChevronDown className="ml-2 h-4 w-4" />
+                <ChevronDown className="ml-2 h-4 w-4" data-slot="icon" />
               </DropdownButton>
               <DropdownMenu>
                 <DropdownItem 

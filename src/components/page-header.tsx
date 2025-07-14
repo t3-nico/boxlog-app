@@ -78,7 +78,7 @@ function ChatButton({ onClick, isOpen = false, notifications = 0 }: ChatButtonPr
         isOpen 
           ? 'text-orange-500 dark:text-orange-400' 
           : ''
-      }`} />
+      }`} data-slot="icon" />
       <span className="text-sm font-medium">Ask AI</span>
       {notifications > 0 && (
         <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
@@ -116,7 +116,7 @@ function LiveTime() {
   return (
     <div className="flex items-center justify-center">
       <div className="flex items-center gap-2 text-sm font-mono font-medium text-gray-700 dark:text-gray-300">
-        <ClockIcon className="h-4 w-4" />
+        <ClockIcon className="h-4 w-4" data-slot="icon" />
         {currentTime}
       </div>
     </div>
@@ -261,7 +261,7 @@ export function PageHeader({
                 onClick={handleEventClick}
                 className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-1.5 rounded-full transition-all duration-200 group"
               >
-                <CalendarIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                <CalendarIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" data-slot="icon" />
                 {currentEvent ? (
                   <>
                     <span className="text-gray-900 dark:text-gray-100 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
@@ -295,7 +295,7 @@ export function PageHeader({
                 {chronoStatus.type === 'sleep' ? (
                   <span className="text-sm">💤</span>
                 ) : (
-                  <AcademicCapIcon className="h-4 w-4" />
+                  <AcademicCapIcon className="h-4 w-4" data-slot="icon" />
                 )}
                 <span className="font-medium">{chronoStatus.label}</span>
                 <span className="text-xs opacity-75">{chronoStatus.period}</span>

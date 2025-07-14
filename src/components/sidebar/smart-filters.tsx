@@ -71,9 +71,9 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
           className="flex items-center gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wide hover:text-gray-400 transition-colors duration-150"
         >
           {isExpanded ? (
-            <ChevronDown className="size-3" />
+            <ChevronDown className="size-3" data-slot="icon" />
           ) : (
-            <ChevronRight className="size-3" />
+            <ChevronRight className="size-3" data-slot="icon" />
           )}
           Smart Filters
         </button>
@@ -81,7 +81,7 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
           className="p-1 text-gray-400 hover:text-gray-300 transition-colors duration-150"
           title="Create new filter"
         >
-          <Plus className="size-3" />
+          <Plus className="size-3" data-slot="icon" />
         </button>
       </div>
 
@@ -97,7 +97,7 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
               <span className="flex-1 text-sm">{filter.label}</span>
               <div className="flex items-center gap-1">
                 {filter.urgent && (
-                  <AlertTriangle className="size-3 text-red-400" />
+                  <AlertTriangle className="size-3 text-red-400" data-slot="icon" />
                 )}
                 <span className="text-xs text-gray-400">
                   {filter.count}
@@ -107,7 +107,7 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
           ))}
           
           <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-gray-300 hover:bg-gray-800 transition-colors duration-150">
-            <Plus className="size-4" />
+            <Plus className="size-4" data-slot="icon" />
             Create Filter
           </button>
         </div>

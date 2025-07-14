@@ -111,7 +111,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
           <div className="border-t border-blue-200 dark:border-blue-700 pt-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" data-slot="icon" />
                 <span className="text-sm text-gray-600 dark:text-gray-400">予定時間</span>
               </div>
               <span className="font-medium text-blue-600 dark:text-blue-400">
@@ -133,7 +133,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
           {/* 実績時間 */}
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4 text-green-600 dark:text-green-400" />
+              <Clock className="w-4 h-4 text-green-600 dark:text-green-400" data-slot="icon" />
               <span className="text-sm text-gray-600 dark:text-gray-400">実績時間</span>
             </div>
             <span className="font-medium text-green-600 dark:text-green-400">
@@ -146,7 +146,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
             <>
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500" />
+                  <Star className="w-4 h-4 text-yellow-500" data-slot="icon" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">満足度</span>
                 </div>
                 <div className="flex items-center gap-1">
@@ -159,9 +159,10 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
                         key={star}
                         className={`w-3 h-3 ${
                           star <= recordStats.avgSatisfaction 
-                            ? 'text-yellow-400 fill-yellow-400' 
+                            ? 'text-yellow-400' 
                             : 'text-gray-300 dark:text-gray-600'
                         }`}
+                        data-slot="icon"
                       />
                     ))}
                   </div>
@@ -170,7 +171,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
               
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
-                  <Eye className="w-4 h-4 text-blue-500" />
+                  <Eye className="w-4 h-4 text-blue-500" data-slot="icon" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">集中度</span>
                 </div>
                 <span className="font-medium text-blue-600 dark:text-blue-400">
@@ -180,7 +181,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
               
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
-                  <Zap className="w-4 h-4 text-orange-500" />
+                  <Zap className="w-4 h-4 text-orange-500" data-slot="icon" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">エネルギー</span>
                 </div>
                 <span className="font-medium text-orange-600 dark:text-orange-400">
@@ -190,7 +191,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
               
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1">
-                  <AlertTriangle className="w-4 h-4 text-red-500" />
+                  <AlertTriangle className="w-4 h-4 text-red-500" data-slot="icon" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">中断回数</span>
                 </div>
                 <span className="font-medium text-red-600 dark:text-red-400">

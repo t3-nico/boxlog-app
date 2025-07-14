@@ -73,6 +73,7 @@ export const TagItem = ({ tag }: TagItemProps) => {
               <IconComponent 
                 className="w-4 h-4"
                 style={{ color: tag.color || '#6B7280' }}
+                data-slot="icon"
               />
             ) : (
               <div 
@@ -106,17 +107,17 @@ export const TagItem = ({ tag }: TagItemProps) => {
           {/* アクションメニュー */}
           <Dropdown>
             <DropdownButton className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-              <EllipsisVerticalIcon className="w-4 h-4" />
+              <EllipsisVerticalIcon className="w-4 h-4" data-slot="icon" />
             </DropdownButton>
             
             <DropdownMenu>
               <DropdownItem onClick={() => setIsEditing(true)}>
-                <PencilIcon className="w-4 h-4" />
+                <PencilIcon className="w-4 h-4" data-slot="icon" />
                 <DropdownLabel>Edit</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem onClick={handleDelete}>
-                <TrashIcon className="w-4 h-4" />
+                <TrashIcon className="w-4 h-4" data-slot="icon" />
                 <DropdownLabel>Delete</DropdownLabel>
               </DropdownItem>
             </DropdownMenu>

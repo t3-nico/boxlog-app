@@ -66,26 +66,26 @@ export function UserProfile({ collapsed = false }: UserProfileProps) {
               {userPlan} Plan
             </div>
           </div>
-          <ChevronDown className="size-4 text-gray-400" />
+          <ChevronDown className="size-4 text-gray-400" data-slot="icon" />
         </DropdownButton>
         
         <DropdownMenu className="min-w-64" anchor="bottom start">
           <DropdownItem href="/settings">
-            <Settings />
+            <Settings data-slot="icon" />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
           
           <DropdownDivider />
           
           <DropdownItem href="/support">
-            <HelpCircle />
+            <HelpCircle data-slot="icon" />
             <DropdownLabel>Support</DropdownLabel>
           </DropdownItem>
           
           <DropdownDivider />
           
           <DropdownItem onClick={handleSignOut}>
-            <LogOut />
+            <LogOut data-slot="icon" />
             <DropdownLabel>Logout</DropdownLabel>
           </DropdownItem>
         </DropdownMenu>

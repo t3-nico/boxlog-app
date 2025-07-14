@@ -83,7 +83,7 @@ function SortableSmartFolderItem({
             {...listeners}
             className="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <Bars3Icon className="h-3.5 w-3.5" />
+            <Bars3Icon className="h-3.5 w-3.5" data-slot="icon" />
           </div>
         )}
         
@@ -95,6 +95,7 @@ function SortableSmartFolderItem({
             <FolderIcon 
               className={clsx('h-4 w-4', { 'smart-folder-icon': isActive })}
               style={{ color: isActive ? undefined : folder.color }}
+              data-slot="icon"
             />
           )}
         </div>
@@ -122,7 +123,7 @@ function SortableSmartFolderItem({
               }}
               className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
             >
-              <EllipsisHorizontalIcon className="h-3 w-3" />
+              <EllipsisHorizontalIcon className="h-3 w-3" data-slot="icon" />
             </button>
           )}
         </div>
@@ -292,9 +293,9 @@ export function SmartFolderList({
           <span className="peer">Smart Folders</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
             {isExpanded ? (
-              <ChevronDownIcon className="h-3 w-3" />
+              <ChevronDownIcon className="h-3 w-3" data-slot="icon" />
             ) : (
-              <ChevronRightIcon className="h-3 w-3" />
+              <ChevronRightIcon className="h-3 w-3" data-slot="icon" />
             )}
           </span>
         </button>
@@ -302,7 +303,7 @@ export function SmartFolderList({
           onClick={() => setShowCreateDialog(true)}
           className="section-header-button p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
         >
-          <PlusIcon className="h-4 w-4 text-gray-400" />
+          <PlusIcon className="h-4 w-4 text-gray-400" data-slot="icon" />
         </button>
       </div>
 

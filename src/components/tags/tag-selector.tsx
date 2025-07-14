@@ -79,7 +79,7 @@ export function TagSelector({
               : placeholder
             }
           </span>
-          <ChevronDownIcon className="h-4 w-4" />
+          <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
         </DropdownButton>
         <DropdownMenu className="w-64 p-0">
           <div className="p-2">
