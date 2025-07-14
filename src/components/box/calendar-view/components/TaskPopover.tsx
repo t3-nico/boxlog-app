@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { ClockIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline'
+import { Clock, Trash2, Pencil } from 'lucide-react'
 import * as Popover from '@radix-ui/react-popover'
 import { Task, TaskStatus, TaskPriority } from '@/types/box'
 import { CalendarTask } from '../utils/time-grid-helpers'
@@ -109,7 +109,7 @@ export function TaskPopover({
                   onClick={() => setIsEditing(true)}
                   className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                 >
-                  <PencilIcon className="w-4 h-4 text-gray-500" />
+                  <Pencil className="w-4 h-4 text-gray-500" />
                 </button>
               </div>
             )}
@@ -137,7 +137,7 @@ export function TaskPopover({
           
           {/* 時間情報 */}
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <ClockIcon className="w-4 h-4" />
+            <Clock className="w-4 h-4" />
             <span>
               {format(task.startTime, 'HH:mm', { locale: ja })} - 
               {format(task.endTime, 'HH:mm', { locale: ja })}
@@ -207,7 +207,7 @@ export function TaskPopover({
                 plain
                 className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                <TrashIcon className="w-4 h-4 mr-1" />
+                <Trash2 className="w-4 h-4 mr-1" />
                 削除
               </Button>
               

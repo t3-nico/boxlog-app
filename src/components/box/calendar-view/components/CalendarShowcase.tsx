@@ -6,11 +6,11 @@ import { addDays, startOfWeek } from 'date-fns'
 import { RefinedCalendarIntegration } from './RefinedCalendarIntegration'
 import { cn } from '@/lib/utils'
 import { 
-  PlayIcon,
-  PauseIcon,
-  EyeIcon,
-  Cog6ToothIcon
-} from '@heroicons/react/24/outline'
+  Play,
+  Pause,
+  Eye,
+  Settings
+} from 'lucide-react'
 
 // デモ用のサンプルタスク
 const generateSampleTasks = () => {
@@ -217,7 +217,7 @@ export function CalendarShowcase({ className }: CalendarShowcaseProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <EyeIcon className="w-4 h-4" />
+              <Eye className="w-4 h-4" />
               分割モード
             </motion.button>
             
@@ -236,12 +236,12 @@ export function CalendarShowcase({ className }: CalendarShowcaseProps) {
             >
               {showDemo ? (
                 <>
-                  <PauseIcon className="w-4 h-4" />
+                  <Pause className="w-4 h-4" />
                   デモ実行中...
                 </>
               ) : (
                 <>
-                  <PlayIcon className="w-4 h-4" />
+                  <Play className="w-4 h-4" />
                   デモを実行
                 </>
               )}

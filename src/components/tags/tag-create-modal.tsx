@@ -11,10 +11,10 @@ import {
   Textarea
 } from '@headlessui/react'
 import { 
-  XMarkIcon, 
-  TagIcon,
-  PlusIcon
-} from '@heroicons/react/24/outline'
+  X as XMarkIcon, 
+  Tag as TagIcon,
+  Plus as PlusIcon
+} from 'lucide-react'
 import type { TagWithChildren, CreateTagInput } from '@/types/tags'
 
 interface TagCreateModalProps {

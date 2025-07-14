@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from 'react'
 import {
-  PencilIcon,
-  TrashIcon,
-  DocumentDuplicateIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  StarIcon
-} from '@heroicons/react/24/outline'
+  Pencil as PencilIcon,
+  Trash2 as TrashIcon,
+  Copy as DocumentDuplicateIcon,
+  Eye as EyeIcon,
+  EyeOff as EyeSlashIcon,
+  Star as StarIcon
+} from 'lucide-react'
 import { SmartFolder } from '@/types/smart-folders'
 
 interface SmartFolderContextMenuProps {

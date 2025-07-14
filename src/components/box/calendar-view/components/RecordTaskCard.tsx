@@ -1,8 +1,7 @@
 'use client'
 
 import { differenceInMinutes } from 'date-fns'
-import { StarIcon } from '@heroicons/react/16/solid'
-import { EyeIcon, BoltIcon } from '@heroicons/react/24/outline'
+import { Star, Eye, Zap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { TaskRecord, Task } from '../types'
 
@@ -87,7 +86,7 @@ export function RecordTaskCard({
               <div className="flex items-center gap-1">
                 <div className="flex">
                   {Array.from({ length: 5 }, (_, i) => (
-                    <StarIcon
+                    <Star
                       key={i}
                       className={cn(
                         "h-3 w-3",
@@ -104,7 +103,7 @@ export function RecordTaskCard({
             {/* 集中度 */}
             {record.focus_level && (
               <div className="flex items-center gap-1">
-                <EyeIcon className="h-3 w-3 text-blue-500" />
+                <Eye className="h-3 w-3 text-blue-500" />
                 <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
                   {record.focus_level}
                 </span>
@@ -114,7 +113,7 @@ export function RecordTaskCard({
             {/* エネルギーレベル */}
             {record.energy_level && (
               <div className="flex items-center gap-1">
-                <BoltIcon className="h-3 w-3 text-orange-500" />
+                <Zap className="h-3 w-3 text-orange-500" />
                 <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
                   {record.energy_level}
                 </span>

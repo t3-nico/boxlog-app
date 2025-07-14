@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { ChartBarSquareIcon } from '@heroicons/react/24/outline'
+import { BarChart4 } from 'lucide-react'
 
 export function ProgressCard() {
   const completedTasks = 7
@@ -20,7 +20,7 @@ export function ProgressCard() {
           <div className="w-6 h-6 rounded-xl flex items-center justify-center
             bg-purple-50 text-purple-600
             dark:bg-gradient-to-br dark:from-purple-500 dark:to-violet-600 dark:text-white dark:shadow-lg dark:shadow-purple-500/30">
-            <ChartBarSquareIcon className="w-4 h-4" />
+            <BarChart4 className="w-4 h-4" />
           </div>
           <div className="text-xs font-bold
             bg-purple-100 text-purple-700 px-2 py-1 rounded-lg

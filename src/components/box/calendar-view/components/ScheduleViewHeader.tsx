@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { ArrowUpIcon } from '@heroicons/react/24/outline'
+import { ArrowUp } from 'lucide-react'
 import { CalendarTask } from '../utils/time-grid-helpers'
 
 interface ScheduleViewHeaderProps {
@@ -26,7 +26,7 @@ export function ScheduleViewHeader({
           onClick={handleTodayClick}
           className="flex items-center space-x-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
-          <ArrowUpIcon className="w-4 h-4" />
+          <ArrowUp className="w-4 h-4" />
           <span>今日</span>
         </button>
       </div>

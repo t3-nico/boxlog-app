@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { RadioGroup } from '@headlessui/react'
 import { 
-  ClipboardDocumentListIcon, 
-  CheckCircleIcon, 
-  ViewColumnsIcon 
-} from '@heroicons/react/24/outline'
+  ClipboardList, 
+  CheckCircle, 
+  Columns 
+} from 'lucide-react'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
@@ -15,21 +15,21 @@ const modes = [
     value: 'both' as const, 
     name: '両方', 
     shortName: '両方',
-    icon: ViewColumnsIcon,
+    icon: Columns,
     description: '予定と記録を左右に表示'
   },
   { 
     value: 'plan' as const, 
     name: '予定のみ', 
     shortName: '予定',
-    icon: ClipboardDocumentListIcon,
+    icon: ClipboardList,
     description: '予定を全幅表示'
   },
   { 
     value: 'record' as const, 
     name: '記録のみ', 
     shortName: '記録',
-    icon: CheckCircleIcon,
+    icon: CheckCircle,
     description: '記録を全幅表示'
   },
 ] as const

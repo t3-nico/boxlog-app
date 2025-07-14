@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { BoltIcon, MoonIcon, SunIcon } from '@heroicons/react/24/outline'
+import { Zap, Moon, Sun } from 'lucide-react'
 
 export function FocusCard() {
   const [focusMode, setFocusMode] = useState(false)
@@ -54,7 +54,7 @@ export function FocusCard() {
                   'bg-gray-100 text-gray-600 ' +
                   'dark:bg-gradient-to-br dark:from-gray-600 dark:to-gray-800 dark:text-gray-300 dark:shadow-lg'
             }`}>
-              <BoltIcon className="w-3 h-3" />
+              <Zap className="w-3 h-3" />
             </div>
             <button
               onClick={() => setFocusMode(!focusMode)}
@@ -77,11 +77,11 @@ export function FocusCard() {
             )}
             {/* Chronotype indicators with enhanced styling */}
             {chronotype === 'Morning' ? (
-              <SunIcon className="w-3 h-3 
+              <Sun className="w-3 h-3 
                 text-amber-500 
                 dark:text-amber-400 dark:drop-shadow-[0_0_3px_rgba(245,158,11,0.5)]" />
             ) : (
-              <MoonIcon className="w-3 h-3 
+              <Moon className="w-3 h-3 
                 text-indigo-500 
                 dark:text-indigo-400 dark:drop-shadow-[0_0_3px_rgba(99,102,241,0.5)]" />
             )}

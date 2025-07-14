@@ -6,17 +6,13 @@ import { differenceInMinutes } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { 
-  ClockIcon,
-  StarIcon,
-  BoltIcon,
-  CheckIcon,
-  PlayIcon,
-  PauseIcon
-} from '@heroicons/react/24/outline'
-import { 
-  StarIcon as StarIconSolid,
-  BoltIcon as BoltIconSolid
-} from '@heroicons/react/24/solid'
+  Clock,
+  Star,
+  Zap,
+  Check,
+  Play,
+  Pause
+} from 'lucide-react'
 
 interface CalendarTask {
   id: string
@@ -75,24 +71,24 @@ function getPriorityConfig(priority: 'low' | 'medium' | 'high') {
   switch (priority) {
     case 'high':
       return {
-        icon: BoltIconSolid,
-        iconOutline: BoltIcon,
+        icon: Zap,
+        iconOutline: Zap,
         color: 'text-red-400',
         bg: 'bg-red-500/10',
         label: '緊急'
       }
     case 'medium':
       return {
-        icon: StarIconSolid,
-        iconOutline: StarIcon,
+        icon: Star,
+        iconOutline: Star,
         color: 'text-amber-400',
         bg: 'bg-amber-500/10',
         label: '標準'
       }
     case 'low':
       return {
-        icon: StarIcon,
-        iconOutline: StarIcon,
+        icon: Star,
+        iconOutline: Star,
         color: 'text-gray-400',
         bg: 'bg-gray-500/10',
         label: '低'
@@ -257,7 +253,7 @@ export function RefinedCalendarTask({
                 >
                   {/* 時間 */}
                   <div className="flex items-center gap-1 text-xs opacity-90">
-                    <ClockIcon className="w-3 h-3" />
+                    <Clock className="w-3 h-3" />
                     <span>
                       {formatTime(task.startTime, timeFormat)} - {formatTime(task.endTime, timeFormat)}
                     </span>
@@ -305,7 +301,7 @@ export function RefinedCalendarTask({
                   exit={{ scale: 0, rotate: 180 }}
                   transition={{ type: "spring", stiffness: 500, damping: 25 }}
                 >
-                  <CheckIcon className="w-4 h-4 text-white" />
+                  <Check className="w-4 h-4 text-white" />
                 </motion.div>
               )}
               
@@ -314,7 +310,7 @@ export function RefinedCalendarTask({
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
                 >
-                  <PlayIcon className="w-4 h-4 text-white" />
+                  <Play className="w-4 h-4 text-white" />
                 </motion.div>
               )}
               
@@ -343,7 +339,7 @@ export function RefinedCalendarTask({
                       onClick={(e) => handleStatusClick(e, 'completed')}
                       className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
-                      <CheckIcon className="w-3 h-3" />
+                      <Check className="w-3 h-3" />
                     </motion.button>
                   )}
                   
@@ -354,7 +350,7 @@ export function RefinedCalendarTask({
                       onClick={(e) => handleStatusClick(e, 'in_progress')}
                       className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
-                      <PlayIcon className="w-3 h-3" />
+                      <Play className="w-3 h-3" />
                     </motion.button>
                   )}
                   
@@ -365,7 +361,7 @@ export function RefinedCalendarTask({
                       onClick={(e) => handleStatusClick(e, 'scheduled')}
                       className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
-                      <PauseIcon className="w-3 h-3" />
+                      <Pause className="w-3 h-3" />
                     </motion.button>
                   )}
                 </motion.div>

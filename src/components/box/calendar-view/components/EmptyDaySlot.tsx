@@ -4,13 +4,13 @@ import React, { useMemo } from 'react'
 import { format, isToday, isTomorrow, isYesterday, isPast } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { 
-  PlusIcon, 
-  CalendarDaysIcon, 
-  CheckCircleIcon,
-  SunIcon,
-  MoonIcon,
-  CloudIcon
-} from '@heroicons/react/24/outline'
+  Plus, 
+  Calendar, 
+  CheckCircle,
+  Sun,
+  Moon,
+  Cloud
+} from 'lucide-react'
 import { cn } from '../utils/view-helpers'
 
 interface EmptyDaySlotProps {
@@ -39,7 +39,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
   const content = useMemo(() => {
     if (dateStatus.isToday) {
       return {
-        icon: SunIcon,
+        icon: Sun,
         title: '今日は予定がありません',
         message: 'リラックスした一日を過ごすか、新しいタスクを追加してみましょう',
         actionText: 'タスクを追加',
@@ -48,7 +48,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
       }
     } else if (dateStatus.isTomorrow) {
       return {
-        icon: CalendarDaysIcon,
+        icon: Calendar,
         title: '明日の予定はありません',
         message: '明日の計画を立てて、充実した一日にしましょう',
         actionText: '明日の予定を追加',
@@ -57,7 +57,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
       }
     } else if (dateStatus.isYesterday) {
       return {
-        icon: CheckCircleIcon,
+        icon: CheckCircle,
         title: '昨日はお疲れ様でした',
         message: 'タスクがない日も、充実した一日だったはずです',
         actionText: null, // 過去の日は追加不可
@@ -66,7 +66,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
       }
     } else if (dateStatus.isPast) {
       return {
-        icon: MoonIcon,
+        icon: Moon,
         title: format(date, 'M月d日は予定がありませんでした', { locale: ja }),
         message: '',
         actionText: null, // 過去の日は追加不可
@@ -75,7 +75,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
       }
     } else {
       return {
-        icon: CloudIcon,
+        icon: Cloud,
         title: `${format(date, 'M月d日', { locale: ja })}の予定はありません`,
         message: '新しい予定を追加して、計画的な日々を送りましょう',
         actionText: '予定を追加',
@@ -157,7 +157,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
               content.color === 'purple' && "bg-purple-600 hover:bg-purple-700 text-white focus:ring-purple-500"
             )}
           >
-            <PlusIcon className="w-4 h-4" />
+            <Plus className="w-4 h-4" />
             <span>{content.actionText}</span>
           </button>
         )}
@@ -242,7 +242,7 @@ export function SimpleEmptyDaySlot({
       )}
       onClick={handleClick}
     >
-      <CalendarDaysIcon className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+      <Calendar className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
       <div className="text-sm text-gray-600 dark:text-gray-400">
         {dateStatus.isPast ? '予定はありませんでした' : '予定を追加'}
       </div>
@@ -288,7 +288,7 @@ export function WeekendEmptySlot({ date, onEmptySlotClick }: WeekendEmptySlotPro
       <div className="text-center">
         <div className="flex justify-center mb-4">
           <div className="p-3 rounded-full bg-amber-100 dark:bg-amber-900/30">
-            <SunIcon className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+            <Sun className="w-8 h-8 text-amber-600 dark:text-amber-400" />
           </div>
         </div>
         
@@ -308,7 +308,7 @@ export function WeekendEmptySlot({ date, onEmptySlotClick }: WeekendEmptySlotPro
             onClick={handleClick}
             className="inline-flex items-center space-x-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
           >
-            <PlusIcon className="w-4 h-4" />
+            <Plus className="w-4 h-4" />
             <span>週末の予定を追加</span>
           </button>
         )}

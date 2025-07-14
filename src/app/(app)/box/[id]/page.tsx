@@ -5,7 +5,7 @@ import { Heading, Subheading } from '@/components/heading'
 import { Link } from '@/components/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
 import { getEvent, getEventReviews } from '@/data'
-import { ChevronLeftIcon } from '@heroicons/react/16/solid'
+import { ChevronLeft } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -29,7 +29,7 @@ export default async function Event({ params }: { params: { id: string } }) {
     <>
       <div className="max-lg:hidden">
         <Link href="/box" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
-          <ChevronLeftIcon className="size-4 fill-zinc-400 dark:fill-zinc-500" />
+          <ChevronLeft className="size-4 fill-zinc-400 dark:fill-zinc-500" />
           Box
         </Link>
       </div>

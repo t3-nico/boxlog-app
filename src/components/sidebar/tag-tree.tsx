@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import {
-  ChevronRightIcon,
-  ChevronDownIcon,
-  TagIcon,
-  ArrowTopRightOnSquareIcon,
-} from '@heroicons/react/20/solid'
+  ChevronRight,
+  ChevronDown,
+  Tag,
+  ExternalLink,
+} from 'lucide-react'
 import { SidebarItem, SidebarLabel } from '@/components/sidebar'
 
 interface TagNode {
@@ -120,16 +120,16 @@ export function TagTree({
               className="p-0.5 -ml-0.5 hover:bg-gray-700 rounded transition-colors duration-150"
             >
               {isParentExpanded ? (
-                <ChevronDownIcon className="size-3" />
+                <ChevronDown className="size-3" />
               ) : (
-                <ChevronRightIcon className="size-3" />
+                <ChevronRight className="size-3" />
               )}
             </button>
           ) : (
             <div className="w-4" />
           )}
           
-          <TagIcon className="size-4 text-gray-400" />
+          <Tag className="size-4 text-gray-400" />
           
           <span className="flex-1 text-sm truncate">
             {tag.name}
@@ -157,9 +157,9 @@ export function TagTree({
           className="flex items-center gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wide hover:text-gray-400 transition-colors duration-150"
         >
           {isExpanded ? (
-            <ChevronDownIcon className="size-3" />
+            <ChevronDown className="size-3" />
           ) : (
-            <ChevronRightIcon className="size-3" />
+            <ChevronRight className="size-3" />
           )}
           Tags
         </button>

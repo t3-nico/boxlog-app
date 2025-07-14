@@ -1,7 +1,7 @@
 'use client'
 
 import { format } from 'date-fns'
-import { CheckCircleIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { CheckCircle, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { Task } from '../types'
 
@@ -55,7 +55,7 @@ export function PlanTaskCard({
           <div className="flex items-center gap-1">
             {/* 完了済みアイコン */}
             {hasRecord && (
-              <CheckCircleIcon className="h-4 w-4 text-green-500" />
+              <CheckCircle className="h-4 w-4 text-green-500" />
             )}
             
             {/* 優先度バッジ */}
@@ -70,7 +70,7 @@ export function PlanTaskCard({
         {/* 時間情報 */}
         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-1">
-            <ClockIcon className="h-3 w-3" />
+            <Clock className="h-3 w-3" />
             <span>
               {task.planned_start ? format(new Date(task.planned_start), 'HH:mm') : '--:--'}
             </span>

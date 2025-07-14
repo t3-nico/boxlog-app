@@ -3,12 +3,12 @@
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  SparklesIcon, 
-  ExclamationTriangleIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  LightBulbIcon
-} from '@heroicons/react/24/outline'
+  Sparkles, 
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Lightbulb
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { TimeBlockDropZoneProps, TimeSuggestion } from '../types/timeBlock'
 
@@ -44,28 +44,28 @@ export function TimeBlockDropZone({
       border: 'border-green-500',
       bg: 'bg-green-50 dark:bg-green-900/20',
       text: 'text-green-700 dark:text-green-300',
-      icon: CheckCircleIcon,
+      icon: CheckCircle,
       pulse: 'animate-pulse'
     },
     good: {
       border: 'border-blue-500',
       bg: 'bg-blue-50 dark:bg-blue-900/20',
       text: 'text-blue-700 dark:text-blue-300',
-      icon: LightBulbIcon,
+      icon: Lightbulb,
       pulse: ''
     },
     fair: {
       border: 'border-yellow-500',
       bg: 'bg-yellow-50 dark:bg-yellow-900/20',
       text: 'text-yellow-700 dark:text-yellow-300',
-      icon: ClockIcon,
+      icon: Clock,
       pulse: ''
     },
     poor: {
       border: 'border-red-500',
       bg: 'bg-red-50 dark:bg-red-900/20',
       text: 'text-red-700 dark:text-red-300',
-      icon: ExclamationTriangleIcon,
+      icon: AlertTriangle,
       pulse: ''
     }
   }
@@ -285,7 +285,7 @@ export function ScoreIndicator({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <SparklesIcon className="w-4 h-4 text-yellow-500" />
+          <Sparkles className="w-4 h-4 text-yellow-500" />
         </motion.div>
       )}
     </motion.div>
@@ -324,7 +324,7 @@ export function CalendarDropOverlay({
             >
               <div className="bg-white dark:bg-gray-800 px-6 py-4 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700">
                 <div className="flex items-center gap-3">
-                  <ClockIcon className="w-6 h-6 text-blue-600" />
+                  <Clock className="w-6 h-6 text-blue-600" />
                   <div>
                     <div className="font-semibold text-gray-900 dark:text-white">
                       タイムブロックを配置

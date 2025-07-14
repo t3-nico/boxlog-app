@@ -30,16 +30,16 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs'
 import {
-  PaperClipIcon,
-  ChatBubbleLeftIcon,
-  ClockIcon,
-  CalendarIcon,
-  TagIcon,
-  PencilIcon,
-  TrashIcon,
-} from '@heroicons/react/16/solid'
+  Paperclip,
+  MessageCircle,
+  Clock as ClockIcon,
+  Calendar,
+  Tag,
+  Pencil,
+  Trash2,
+} from 'lucide-react'
 import { 
-  Circle, 
+  Circle,
   Clock, 
   CheckCircle2, 
   XCircle, 
@@ -181,7 +181,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
               onClick={() => setIsEditing(!isEditing)}
               className="flex items-center space-x-2"
             >
-              <PencilIcon className="h-4 w-4" />
+              <Pencil className="h-4 w-4" />
               <span>{isEditing ? 'Cancel' : 'Edit'}</span>
             </Button>
           </div>
@@ -237,7 +237,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
-                <CalendarIcon className="h-4 w-4 text-gray-500" />
+                <Calendar className="h-4 w-4 text-gray-500" />
                 <span className="text-sm font-medium">Due Date:</span>
                 <span className="text-sm text-gray-600">
                   {task.dueDate ? formatDate(task.dueDate) : 'Not set'}
@@ -267,7 +267,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
           {task.tags && task.tags.length > 0 && (
             <div>
               <div className="flex items-center space-x-2 mb-2">
-                <TagIcon className="h-4 w-4 text-gray-500" />
+                <Tag className="h-4 w-4 text-gray-500" />
                 <span className="text-sm font-medium">Tags:</span>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -284,11 +284,11 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
           <Tabs defaultValue="comments" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="comments" className="flex items-center space-x-2">
-                <ChatBubbleLeftIcon className="h-4 w-4" />
+                <MessageCircle className="h-4 w-4" />
                 <span>Comments ({task.comments?.length || 0})</span>
               </TabsTrigger>
               <TabsTrigger value="attachments" className="flex items-center space-x-2">
-                <PaperClipIcon className="h-4 w-4" />
+                <Paperclip className="h-4 w-4" />
                 <span>Attachments ({task.attachments?.length || 0})</span>
               </TabsTrigger>
             </TabsList>
@@ -338,7 +338,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
                 {task.attachments?.map((attachment) => (
                   <div key={attachment.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md border">
                     <div className="flex items-center space-x-3">
-                      <PaperClipIcon className="h-5 w-5 text-gray-400" />
+                      <Paperclip className="h-5 w-5 text-gray-400" />
                       <div>
                         <p className="text-sm font-medium text-gray-900">{attachment.name}</p>
                         <p className="text-xs text-gray-500">
@@ -358,7 +358,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
 
               {/* Add Attachment */}
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <PaperClipIcon className="mx-auto h-8 w-8 text-gray-400" />
+                <Paperclip className="mx-auto h-8 w-8 text-gray-400" />
                 <p className="mt-2 text-sm text-gray-600">
                   Drop files here or click to upload
                 </p>

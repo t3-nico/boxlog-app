@@ -11,7 +11,7 @@ import {
   DropdownItem,
   DropdownMenu,
 } from '@/components/dropdown'
-import { TrashIcon, ChevronDownIcon } from '@heroicons/react/16/solid'
+import { Trash2, ChevronDown } from 'lucide-react'
 import { Circle, Clock, CheckCircle2, Minus, XCircle, ArrowUp, ArrowDown } from 'lucide-react'
 
 export function TaskBulkActions() {
@@ -136,7 +136,7 @@ export function TaskBulkActions() {
           <DropdownButton outline className="h-8 text-xs md:text-sm">
             <span className="hidden sm:inline">Set Status</span>
             <span className="sm:hidden">Status</span>
-            <ChevronDownIcon className="ml-1 h-4 w-4 md:ml-2" />
+            <ChevronDown className="ml-1 h-4 w-4 md:ml-2" />
           </DropdownButton>
           <DropdownMenu>
             <DropdownItem onClick={() => handleBulkStatusChange('Todo')}>
@@ -165,7 +165,7 @@ export function TaskBulkActions() {
           <DropdownButton outline className="h-8 text-xs md:text-sm">
             <span className="hidden sm:inline">Set Priority</span>
             <span className="sm:hidden">Priority</span>
-            <ChevronDownIcon className="ml-1 h-4 w-4 md:ml-2" />
+            <ChevronDown className="ml-1 h-4 w-4 md:ml-2" />
           </DropdownButton>
           <DropdownMenu>
             <DropdownItem onClick={() => handleBulkPriorityChange('High')}>
@@ -187,7 +187,7 @@ export function TaskBulkActions() {
           onClick={handleBulkDelete}
           className="h-8 text-red-600 hover:bg-red-50"
         >
-          <TrashIcon className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Button outline onClick={handleCancel} className="h-8 text-xs md:text-sm">

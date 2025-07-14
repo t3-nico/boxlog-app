@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react'
 import { format, isToday, isYesterday, isTomorrow, isSameWeek, isThisYear } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { Calendar, Clock } from 'lucide-react'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { ScheduleTaskCard } from './ScheduleTaskCard'
 import { CompactSplitTask } from './SplitTaskCard'
@@ -145,7 +145,7 @@ export function DayGroup({
         onClick={handleDateClick}
       >
         <div className="flex items-center space-x-3">
-          <CalendarIcon className={cn(
+          <Calendar className={cn(
             "w-5 h-5",
             dateInfo.isToday ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"
           )} />

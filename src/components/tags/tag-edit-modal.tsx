@@ -11,12 +11,12 @@ import {
   Textarea
 } from '@headlessui/react'
 import { 
-  XMarkIcon, 
-  TagIcon,
-  PencilIcon,
-  TrashIcon,
-  ExclamationTriangleIcon
-} from '@heroicons/react/24/outline'
+  X as XMarkIcon, 
+  Tag as TagIcon,
+  Pencil as PencilIcon,
+  Trash2 as TrashIcon,
+  AlertTriangle as ExclamationTriangleIcon
+} from 'lucide-react'
 import type { TagWithChildren, UpdateTagInput } from '@/types/tags'
 
 interface TagEditModalProps {

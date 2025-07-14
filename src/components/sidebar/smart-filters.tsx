@@ -2,12 +2,12 @@
 
 import { useState } from 'react'
 import {
-  FolderIcon,
-  ExclamationTriangleIcon,
-  PlusIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-} from '@heroicons/react/20/solid'
+  Folder,
+  AlertTriangle,
+  Plus,
+  ChevronRight,
+  ChevronDown,
+} from 'lucide-react'
 import { SidebarItem, SidebarLabel, SidebarSection, SidebarHeading } from '@/components/sidebar'
 
 interface SmartFilter {
@@ -71,9 +71,9 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
           className="flex items-center gap-2 text-xs font-semibold text-gray-500 uppercase tracking-wide hover:text-gray-400 transition-colors duration-150"
         >
           {isExpanded ? (
-            <ChevronDownIcon className="size-3" />
+            <ChevronDown className="size-3" />
           ) : (
-            <ChevronRightIcon className="size-3" />
+            <ChevronRight className="size-3" />
           )}
           Smart Filters
         </button>
@@ -81,7 +81,7 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
           className="p-1 text-gray-400 hover:text-gray-300 transition-colors duration-150"
           title="Create new filter"
         >
-          <PlusIcon className="size-3" />
+          <Plus className="size-3" />
         </button>
       </div>
 
@@ -97,7 +97,7 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
               <span className="flex-1 text-sm">{filter.label}</span>
               <div className="flex items-center gap-1">
                 {filter.urgent && (
-                  <ExclamationTriangleIcon className="size-3 text-red-400" />
+                  <AlertTriangle className="size-3 text-red-400" />
                 )}
                 <span className="text-xs text-gray-400">
                   {filter.count}
@@ -107,7 +107,7 @@ export function SmartFilters({ collapsed = false, currentPath = '' }: SmartFilte
           ))}
           
           <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-gray-300 hover:bg-gray-800 transition-colors duration-150">
-            <PlusIcon className="size-4" />
+            <Plus className="size-4" />
             Create Filter
           </button>
         </div>

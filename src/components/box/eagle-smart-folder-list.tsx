@@ -6,11 +6,11 @@ import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
 import { SmartFolder } from '@/types/box'
 import { 
-  ChevronRightIcon,
-  ChevronDownIcon,
-  EllipsisHorizontalIcon,
-  FolderIcon
-} from '@heroicons/react/20/solid'
+  ChevronRight,
+  ChevronDown,
+  MoreHorizontal,
+  Folder
+} from 'lucide-react'
 
 interface EagleSmartFolderListProps {
   onSelectFolder: (folderId: string) => void
@@ -110,9 +110,9 @@ export function EagleSmartFolderList({
                 className="mr-1 p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
               >
                 {isExpanded ? (
-                  <ChevronDownIcon className="h-3.5 w-3.5" />
+                  <ChevronDown className="h-3.5 w-3.5" />
                 ) : (
-                  <ChevronRightIcon className="h-3.5 w-3.5" />
+                  <ChevronRight className="h-3.5 w-3.5" />
                 )}
               </button>
             )}
@@ -123,7 +123,7 @@ export function EagleSmartFolderList({
 
             <div className="flex items-center min-w-0 flex-1">
               <span className="text-sm mr-2 flex-shrink-0">
-                {folder.icon || <FolderIcon className="h-4 w-4" />}
+                {folder.icon || <Folder className="h-4 w-4" />}
               </span>
               
               <span className="text-sm font-medium truncate" title={folder.name}>
@@ -142,7 +142,7 @@ export function EagleSmartFolderList({
                 onClick={(e) => handleContextMenu(e, folder.id)}
                 className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
               >
-                <EllipsisHorizontalIcon className="h-3 w-3" />
+                <MoreHorizontal className="h-3 w-3" />
               </button>
             )}
           </div>
@@ -168,9 +168,9 @@ export function EagleSmartFolderList({
       >
         <div className="flex items-center space-x-2">
           {isCollapsed ? (
-            <ChevronRightIcon className="h-3 w-3" />
+            <ChevronRight className="h-3 w-3" />
           ) : (
-            <ChevronDownIcon className="h-3 w-3" />
+            <ChevronDown className="h-3 w-3" />
           )}
           <span>Smart Folders</span>
         </div>

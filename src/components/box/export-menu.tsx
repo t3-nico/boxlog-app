@@ -13,12 +13,12 @@ import {
   DropdownMenu,
 } from '@/components/dropdown'
 import {
-  ArrowDownTrayIcon,
-  ChevronDownIcon,
-  DocumentTextIcon,
-  PrinterIcon,
-  TableCellsIcon,
-} from '@heroicons/react/16/solid'
+  Download,
+  ChevronDown,
+  FileText,
+  Printer,
+  Table,
+} from 'lucide-react'
 
 interface ExportMenuProps {
   className?: string
@@ -120,34 +120,34 @@ export function ExportMenu({ className }: ExportMenuProps) {
             disabled={isExporting}
             className="flex items-center space-x-2"
           >
-            <ArrowDownTrayIcon className="h-4 w-4" />
+            <Download className="h-4 w-4" />
             <span className="hidden sm:inline">
               {isExporting ? 'Exporting...' : 'Export'}
             </span>
-            <ChevronDownIcon className="h-4 w-4" />
+            <ChevronDown className="h-4 w-4" />
           </DropdownButton>
         </motion.div>
         
         <DropdownMenu className="w-48">
           <DropdownItem onClick={handleExportCSV} disabled={isExporting}>
-            <TableCellsIcon className="mr-2 h-4 w-4" />
+            <Table className="mr-2 h-4 w-4" />
             Export as CSV
           </DropdownItem>
           
           <DropdownItem onClick={handleExportJSON} disabled={isExporting}>
-            <DocumentTextIcon className="mr-2 h-4 w-4" />
+            <FileText className="mr-2 h-4 w-4" />
             Export as JSON
           </DropdownItem>
           
           <DropdownItem onClick={handleExportFiltered} disabled={isExporting}>
-            <TableCellsIcon className="mr-2 h-4 w-4" />
+            <Table className="mr-2 h-4 w-4" />
             Export Filtered
           </DropdownItem>
           
           <div className="border-t border-gray-100 my-1" />
           
           <DropdownItem onClick={handlePrint} disabled={isExporting}>
-            <PrinterIcon className="mr-2 h-4 w-4" />
+            <Printer className="mr-2 h-4 w-4" />
             Print Report
           </DropdownItem>
         </DropdownMenu>

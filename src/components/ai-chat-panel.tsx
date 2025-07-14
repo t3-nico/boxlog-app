@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { XMarkIcon, PaperAirplaneIcon, SparklesIcon, EllipsisVerticalIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { X, Send, Sparkles, MoreVertical, Plus } from 'lucide-react'
 
 interface AiChatPanelProps {
   isOpen: boolean
@@ -65,7 +65,7 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2">
-          <SparklesIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">AI Assistant</h2>
         </div>
         <div className="flex items-center gap-0.5">
@@ -83,20 +83,20 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="新規チャット"
           >
-            <PlusIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <Plus className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </button>
           <button
             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="詳細オプション"
           >
-            <EllipsisVerticalIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </button>
           <button
             onClick={onClose}
             className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="閉じる"
           >
-            <XMarkIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+            <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
       </div>
@@ -137,7 +137,7 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
             disabled={!inputValue.trim()}
             className="self-end p-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"
           >
-            <PaperAirplaneIcon className="w-4 h-4" />
+            <Send className="w-4 h-4" />
           </button>
         </div>
       </div>

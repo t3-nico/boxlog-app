@@ -3,15 +3,15 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  ArrowLeftIcon,
-  TagIcon,
-  PencilIcon,
-  TrashIcon,
-  ChartBarIcon,
-  CalendarIcon,
-  FolderIcon,
-  EllipsisHorizontalIcon
-} from '@heroicons/react/24/outline'
+  ArrowLeft,
+  Tag,
+  Pencil,
+  Trash2,
+  BarChart3,
+  Calendar,
+  Folder,
+  MoreHorizontal
+} from 'lucide-react'
 import { useTag, useDeleteTag } from '@/hooks/use-tags'
 import { useItemsByTags } from '@/hooks/use-item-tags'
 import { TagEditModal } from '@/components/tags/tag-edit-modal'
@@ -90,7 +90,7 @@ function AssociatedItems({ tagId }: AssociatedItemsProps) {
   if (itemTags.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-        <FolderIcon className="h-12 w-12 mx-auto mb-4" />
+        <Folder className="h-12 w-12 mx-auto mb-4" />
         <p>No items associated with this tag yet.</p>
       </div>
     )
@@ -178,7 +178,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
           The tag you&apos;re looking for doesn&apos;t exist or has been deleted.
         </p>
         <Button onClick={() => router.push('/tags/manage')}>
-          <ArrowLeftIcon className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Tags
         </Button>
       </div>
@@ -200,7 +200,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
             outline 
             onClick={() => router.push('/tags/manage')}
           >
-            <ArrowLeftIcon className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Tags
           </Button>
           
@@ -209,7 +209,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
               outline
               onClick={() => setShowEditModal(true)}
             >
-              <PencilIcon className="h-4 w-4 mr-2" />
+              <Pencil className="h-4 w-4 mr-2" />
               Edit
             </Button>
             <Button
@@ -217,7 +217,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
               onClick={() => setShowDeleteConfirm(true)}
               className="text-red-600 border-red-300 hover:bg-red-50"
             >
-              <TrashIcon className="h-4 w-4 mr-2" />
+              <Trash2 className="h-4 w-4 mr-2" />
               Delete
             </Button>
           </div>
@@ -229,7 +229,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
         {/* タグ情報 */}
         <div className="flex items-center gap-4 mt-4">
           <div className="flex items-center gap-3">
-            <TagIcon 
+            <Tag 
               className="h-8 w-8" 
               style={{ color: tag.color }}
             />
@@ -252,25 +252,25 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
         <TagStatsCard
           title="Total Items"
           value={totalItems}
-          icon={<ChartBarIcon className="h-5 w-5" />}
+          icon={<BarChart3 className="h-5 w-5" />}
           color="blue"
         />
         <TagStatsCard
           title="Tasks"
           value={taskCount}
-          icon={<FolderIcon className="h-5 w-5" />}
+          icon={<Folder className="h-5 w-5" />}
           color="green"
         />
         <TagStatsCard
           title="Events"
           value={eventCount}
-          icon={<CalendarIcon className="h-5 w-5" />}
+          icon={<Calendar className="h-5 w-5" />}
           color="yellow"
         />
         <TagStatsCard
           title="Records"
           value={recordCount}
-          icon={<EllipsisHorizontalIcon className="h-5 w-5" />}
+          icon={<MoreHorizontal className="h-5 w-5" />}
           color="purple"
         />
       </div>
@@ -360,7 +360,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
                     className="w-full justify-start"
                     onClick={() => router.push(`/tags/${child.id}`)}
                   >
-                    <TagIcon 
+                    <Tag 
                       className="h-4 w-4 mr-2" 
                       style={{ color: child.color }}
                     />

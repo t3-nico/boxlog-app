@@ -2,13 +2,13 @@
 
 import { useState, useCallback } from 'react'
 import { 
-  PlusIcon,
-  ChevronRightIcon,
-  ChevronDownIcon,
-  EllipsisHorizontalIcon,
-  FolderIcon,
-  Bars3Icon
-} from '@heroicons/react/24/solid'
+  Plus as PlusIcon,
+  ChevronRight as ChevronRightIcon,
+  ChevronDown as ChevronDownIcon,
+  MoreHorizontal as EllipsisHorizontalIcon,
+  Folder as FolderIcon,
+  Menu as Bars3Icon
+} from 'lucide-react'
 import { SmartFolder } from '@/types/smart-folders'
 import { SmartFolderDialog } from './smart-folder-dialog'
 import { SmartFolderContextMenu } from './smart-folder-context-menu'

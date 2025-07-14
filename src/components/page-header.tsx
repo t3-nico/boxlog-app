@@ -3,17 +3,17 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  ChatBubbleLeftIcon,
-  Cog6ToothIcon,
-  ChevronDownIcon,
-  BellIcon,
-  UserIcon,
-  CommandLineIcon,
-  SparklesIcon,
-  CalendarIcon,
-  ClockIcon,
-  AcademicCapIcon
-} from '@heroicons/react/24/outline'
+  MessageCircle as ChatBubbleLeftIcon,
+  Settings as Cog6ToothIcon,
+  ChevronDown as ChevronDownIcon,
+  Bell as BellIcon,
+  User as UserIcon,
+  Terminal as CommandLineIcon,
+  Sparkles as SparklesIcon,
+  Calendar as CalendarIcon,
+  Clock as ClockIcon,
+  GraduationCap as AcademicCapIcon
+} from 'lucide-react'
 import {
   Dropdown,
   DropdownButton,

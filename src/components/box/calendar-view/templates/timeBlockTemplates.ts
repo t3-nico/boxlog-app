@@ -1,11 +1,11 @@
 import { addMinutes } from 'date-fns'
 import { 
-  AcademicCapIcon,
-  ClockIcon,
-  UsersIcon,
-  SparklesIcon,
-  SunIcon
-} from '@heroicons/react/24/outline'
+  GraduationCap,
+  Clock,
+  Users,
+  Sparkles,
+  Sun
+} from 'lucide-react'
 import type { TimeBlockTemplate, TimeBlock } from '../types/timeBlock'
 
 // ID生成関数
@@ -22,7 +22,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'purple',
     suggestedTasks: ['コーディング', 'ドキュメント作成', '設計', '分析', '執筆'],
     bestTime: { start: 9, end: 11 },
-    icon: AcademicCapIcon
+    icon: GraduationCap
   },
   {
     id: 'pomodoro',
@@ -32,7 +32,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'red',
     breakDuration: 5,
     cycles: 4,
-    icon: ClockIcon
+    icon: Clock
   },
   {
     id: 'pomodoro-extended',
@@ -42,7 +42,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'red',
     breakDuration: 10,
     cycles: 3,
-    icon: ClockIcon
+    icon: Clock
   },
   {
     id: 'meeting-block',
@@ -53,7 +53,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     preparationTime: 10,
     wrapUpTime: 10,
     suggestedTasks: ['1on1', 'チーム会議', 'プレゼン', '面談'],
-    icon: UsersIcon
+    icon: Users
   },
   {
     id: 'meeting-extended',
@@ -64,7 +64,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     preparationTime: 15,
     wrapUpTime: 15,
     suggestedTasks: ['ワークショップ', '企画会議', '研修'],
-    icon: UsersIcon
+    icon: Users
   },
   {
     id: 'energy-break',
@@ -73,7 +73,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     duration: 15,
     color: 'green',
     activities: ['散歩', 'ストレッチ', '瞑想', '深呼吸'],
-    icon: SparklesIcon
+    icon: Sparkles
   },
   {
     id: 'lunch-break',
@@ -83,7 +83,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'green',
     activities: ['昼食', 'リラックス', '雑談', '外出'],
     bestTime: { start: 12, end: 13 },
-    icon: SparklesIcon
+    icon: Sparkles
   },
   {
     id: 'morning-routine',
@@ -93,7 +93,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'yellow',
     suggestedTasks: ['メールチェック', 'タスク整理', '1日の計画', 'ニュース確認'],
     bestTime: { start: 8, end: 9 },
-    icon: SunIcon
+    icon: Sun
   },
   {
     id: 'evening-routine',
@@ -103,7 +103,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'yellow',
     suggestedTasks: ['日報作成', '翌日準備', '振り返り', 'クリーンアップ'],
     bestTime: { start: 17, end: 18 },
-    icon: SunIcon
+    icon: Sun
   },
   {
     id: 'admin-time',
@@ -112,7 +112,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     duration: 30,
     color: 'gray',
     suggestedTasks: ['経費精算', '書類整理', 'システム更新', '報告書'],
-    icon: SunIcon
+    icon: Sun
   },
   {
     id: 'creative-session',
@@ -122,7 +122,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     color: 'purple',
     suggestedTasks: ['ブレインストーミング', 'アイデア出し', 'プロトタイプ作成'],
     bestTime: { start: 10, end: 12 },
-    icon: AcademicCapIcon
+    icon: GraduationCap
   },
   {
     id: 'review-session',
@@ -131,7 +131,7 @@ export const timeBlockTemplates: TimeBlockTemplate[] = [
     duration: 45,
     color: 'purple',
     suggestedTasks: ['コードレビュー', '品質チェック', 'テスト', '検証'],
-    icon: AcademicCapIcon
+    icon: GraduationCap
   }
 ]
 

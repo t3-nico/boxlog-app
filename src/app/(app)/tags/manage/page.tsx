@@ -2,11 +2,11 @@
 
 import { useState, useCallback } from 'react'
 import { 
-  TagIcon, 
-  Cog6ToothIcon,
-  MagnifyingGlassIcon,
-  FunnelIcon
-} from '@heroicons/react/24/outline'
+  Tag, 
+  Settings,
+  Search,
+  Filter
+} from 'lucide-react'
 import { TagTreeView } from '@/components/tags/tag-tree-view'
 import { TagCreateModal } from '@/components/tags/tag-create-modal'
 import { TagEditModal } from '@/components/tags/tag-edit-modal'
@@ -186,7 +186,7 @@ export default function TagsManagePage() {
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <div className="text-red-600 dark:text-red-400 mb-4">
-            <TagIcon className="w-12 h-12 mx-auto mb-2" />
+            <Tag className="w-12 h-12 mx-auto mb-2" />
             <p>タグの読み込みに失敗しました</p>
           </div>
           <button
@@ -206,7 +206,7 @@ export default function TagsManagePage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <TagIcon className="w-8 h-8 text-blue-600" />
+            <Tag className="w-8 h-8 text-blue-600" />
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 タグ管理
@@ -222,12 +222,12 @@ export default function TagsManagePage() {
               onClick={() => handleCreateTag()}
               className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              <TagIcon className="w-4 h-4" />
+              <Tag className="w-4 h-4" />
               新しいタグ
             </button>
             
             <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-              <Cog6ToothIcon className="w-5 h-5" />
+              <Settings className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -235,7 +235,7 @@ export default function TagsManagePage() {
         {/* 検索・フィルター */}
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder="タグを検索..."
@@ -254,7 +254,7 @@ export default function TagsManagePage() {
                   : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
               }`}
             >
-              <FunnelIcon className="w-4 h-4" />
+              <Filter className="w-4 h-4" />
               非アクティブを表示
             </button>
           </div>

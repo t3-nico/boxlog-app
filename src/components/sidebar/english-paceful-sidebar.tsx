@@ -3,17 +3,17 @@
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import {
-  MagnifyingGlassIcon,
-  PlusIcon,
-  CalendarIcon,
-  TableCellsIcon,
-  ViewColumnsIcon,
-  ChartBarIcon,
-  BellIcon,
-  HeartIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@heroicons/react/20/solid'
+  Search as MagnifyingGlassIcon,
+  Plus as PlusIcon,
+  Calendar as CalendarIcon,
+  Table as TableCellsIcon,
+  Columns3 as ViewColumnsIcon,
+  BarChart3 as ChartBarIcon,
+  Bell as BellIcon,
+  Heart as HeartIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+} from 'lucide-react'
 import { Sidebar, SidebarBody, SidebarHeader, SidebarItem, SidebarLabel } from '@/components/sidebar'
 import { UserProfile } from './user-profile'
 import { SmartFilters } from './smart-filters'

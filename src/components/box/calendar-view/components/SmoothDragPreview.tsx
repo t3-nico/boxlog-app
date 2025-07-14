@@ -6,10 +6,10 @@ import { differenceInMinutes } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { 
-  ClockIcon,
-  PlusIcon,
-  SparklesIcon
-} from '@heroicons/react/24/outline'
+  Clock,
+  Plus,
+  Sparkles
+} from 'lucide-react'
 
 interface SmoothDragPreviewProps {
   start: Date
@@ -166,7 +166,7 @@ export function SmoothDragPreview({
               "w-6 h-6 rounded-full flex items-center justify-center",
               side === 'left' ? "bg-blue-500" : "bg-green-500"
             )}>
-              <PlusIcon className="w-4 h-4 text-white" />
+              <Plus className="w-4 h-4 text-white" />
             </div>
           )}
         </motion.div>
@@ -183,7 +183,7 @@ export function SmoothDragPreview({
           )}
         >
           <div className="flex items-center gap-1 text-xs font-medium">
-            <ClockIcon className="w-3 h-3" />
+            <Clock className="w-3 h-3" />
             <span>
               {formatTime(start, timeFormat)} - {formatTime(end, timeFormat)}
             </span>
@@ -220,7 +220,7 @@ export function SmoothDragPreview({
             ease: "easeInOut"
           }}
         >
-          <SparklesIcon className="w-3 h-3 text-current opacity-60" />
+          <Sparkles className="w-3 h-3 text-current opacity-60" />
         </motion.div>
       </div>
       

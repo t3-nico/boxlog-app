@@ -3,14 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { format, differenceInMinutes } from 'date-fns'
 import { 
-  XMarkIcon, 
-  CheckIcon, 
-  ClipboardDocumentListIcon,
-  ClockIcon,
-  StarIcon,
-  EyeIcon,
-  BoltIcon
-} from '@heroicons/react/24/outline'
+  X, 
+  Check, 
+  ClipboardList,
+  Clock,
+  Star,
+  Eye,
+  Zap
+} from 'lucide-react'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
 
 interface CreateTaskInput {
@@ -152,9 +152,9 @@ export function SplitQuickCreator({
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           {isTask ? (
-            <ClipboardDocumentListIcon className={`w-4 h-4 ${themeColors.icon}`} />
+            <ClipboardList className={`w-4 h-4 ${themeColors.icon}`} />
           ) : (
-            <CheckIcon className={`w-4 h-4 ${themeColors.icon}`} />
+            <Check className={`w-4 h-4 ${themeColors.icon}`} />
           )}
           <span className={`text-sm font-medium ${themeColors.icon}`}>
             {isTask ? '予定作成' : '記録作成'}
@@ -162,7 +162,7 @@ export function SplitQuickCreator({
         </div>
         
         <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-          <ClockIcon className="w-3 h-3" />
+          <Clock className="w-3 h-3" />
           <span>
             {format(initialStart, 'HH:mm')} - {format(initialEnd, 'HH:mm')}
           </span>
@@ -218,7 +218,7 @@ export function SplitQuickCreator({
             {/* 満足度 */}
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <StarIcon className="w-3 h-3 text-yellow-500" />
+                <Star className="w-3 h-3 text-yellow-500" />
                 <span className="text-gray-600 dark:text-gray-400">満足度</span>
               </div>
               <div className="flex gap-1">
@@ -242,7 +242,7 @@ export function SplitQuickCreator({
             {/* 集中度 */}
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <EyeIcon className="w-3 h-3 text-blue-500" />
+                <Eye className="w-3 h-3 text-blue-500" />
                 <span className="text-gray-600 dark:text-gray-400">集中度</span>
               </div>
               <div className="flex gap-1">
@@ -269,7 +269,7 @@ export function SplitQuickCreator({
             {/* エネルギー */}
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <BoltIcon className="w-3 h-3 text-orange-500" />
+                <Zap className="w-3 h-3 text-orange-500" />
                 <span className="text-gray-600 dark:text-gray-400">エネルギー</span>
               </div>
               <div className="flex gap-1">
@@ -333,7 +333,7 @@ export function SplitQuickCreator({
           onClick={onCancel}
           className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
         >
-          <XMarkIcon className="w-4 h-4" />
+          <X className="w-4 h-4" />
         </button>
       </div>
     </div>

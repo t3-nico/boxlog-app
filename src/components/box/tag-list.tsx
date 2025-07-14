@@ -6,11 +6,11 @@ import { useTagStore } from '@/lib/tag-store'
 import { useBoxStore } from '@/lib/box-store'
 import { Button } from '@/components/button'
 import { 
-  PlusIcon, 
-  EllipsisHorizontalIcon,
-  ChevronRightIcon,
-  ChevronDownIcon
-} from '@heroicons/react/20/solid'
+  Plus, 
+  MoreHorizontal,
+  ChevronRight,
+  ChevronDown
+} from 'lucide-react'
 import {
   Dropdown,
   DropdownButton,
@@ -101,9 +101,9 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
                 }}
               >
                 {isExpanded ? (
-                  <ChevronDownIcon className="h-3 w-3" />
+                  <ChevronDown className="h-3 w-3" />
                 ) : (
-                  <ChevronRightIcon className="h-3 w-3" />
+                  <ChevronRight className="h-3 w-3" />
                 )}
               </Button>
             )}
@@ -139,7 +139,7 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
               className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-100 dark:hover:bg-gray-700"
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
-              <EllipsisHorizontalIcon className="h-4 w-4" />
+              <MoreHorizontal className="h-4 w-4" />
             </DropdownButton>
             <DropdownMenu anchor="bottom end">
               {canAddChild(tag.id) && (
@@ -177,7 +177,7 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
           onClick={() => setShowCreateModal(true)}
           className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
         >
-          <PlusIcon className="h-4 w-4" />
+          <Plus className="h-4 w-4" />
         </Button>
       </div>
       

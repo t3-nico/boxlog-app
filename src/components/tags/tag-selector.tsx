@@ -12,7 +12,7 @@ import {
   DropdownItem,
   DropdownMenu,
 } from '@/components/dropdown'
-import { ChevronDownIcon, PlusIcon } from '@heroicons/react/16/solid'
+import { ChevronDown as ChevronDownIcon, Plus as PlusIcon } from 'lucide-react'
 
 interface TagSelectorProps {
   selectedTagIds: string[]

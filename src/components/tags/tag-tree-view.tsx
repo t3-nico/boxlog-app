@@ -2,14 +2,14 @@
 
 import { useState, useCallback } from 'react'
 import { 
-  ChevronRightIcon,
-  ChevronDownIcon,
-  PlusIcon,
-  EllipsisHorizontalIcon,
-  TagIcon,
-  PencilIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline'
+  ChevronRight as ChevronRightIcon,
+  ChevronDown as ChevronDownIcon,
+  Plus as PlusIcon,
+  MoreHorizontal as EllipsisHorizontalIcon,
+  Tag as TagIcon,
+  Pencil as PencilIcon,
+  Trash2 as TrashIcon
+} from 'lucide-react'
 import type { TagWithChildren } from '@/types/tags'
 
 interface TagTreeViewProps {

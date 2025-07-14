@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/button'
 import { 
-  ClipboardDocumentListIcon,
-  TagIcon,
-  FolderIcon,
-  CalendarIcon,
-  DocumentTextIcon
-} from '@heroicons/react/20/solid'
+  Clipboard,
+  Tag,
+  Folder,
+  Calendar,
+  FileText
+} from 'lucide-react'
 
 type AddType = 'task' | 'tag' | 'smart-folder' | 'event' | 'note'
 
@@ -27,7 +27,7 @@ const addOptions: AddOption[] = [
     type: 'task',
     title: 'New Task',
     description: 'Create a new task with details, tags, and priority',
-    icon: <ClipboardDocumentListIcon className="h-8 w-8" />,
+    icon: <Clipboard className="h-8 w-8" />,
     color: 'bg-blue-500',
     href: '/add/task'
   },
@@ -35,7 +35,7 @@ const addOptions: AddOption[] = [
     type: 'tag',
     title: 'New Tag',
     description: 'Create a new tag to organize your tasks',
-    icon: <TagIcon className="h-8 w-8" />,
+    icon: <Tag className="h-8 w-8" />,
     color: 'bg-green-500',
     href: '/add/tag'
   },
@@ -43,7 +43,7 @@ const addOptions: AddOption[] = [
     type: 'smart-folder',
     title: 'New Smart Folder',
     description: 'Create a smart folder with automatic filtering conditions',
-    icon: <FolderIcon className="h-8 w-8" />,
+    icon: <Folder className="h-8 w-8" />,
     color: 'bg-purple-500',
     href: '/add/smart-folder'
   },
@@ -51,7 +51,7 @@ const addOptions: AddOption[] = [
     type: 'event',
     title: 'New Event',
     description: 'Schedule a new calendar event or meeting',
-    icon: <CalendarIcon className="h-8 w-8" />,
+    icon: <Calendar className="h-8 w-8" />,
     color: 'bg-orange-500',
     href: '/add/event'
   },
@@ -59,7 +59,7 @@ const addOptions: AddOption[] = [
     type: 'note',
     title: 'New Note',
     description: 'Write a quick note or documentation',
-    icon: <DocumentTextIcon className="h-8 w-8" />,
+    icon: <FileText className="h-8 w-8" />,
     color: 'bg-gray-500',
     href: '/add/note'
   }

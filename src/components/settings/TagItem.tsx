@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { EllipsisVerticalIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { MoreVertical as EllipsisVerticalIcon, Pencil as PencilIcon, Trash2 as TrashIcon } from 'lucide-react'
 import { 
   Dropdown,
   DropdownButton,

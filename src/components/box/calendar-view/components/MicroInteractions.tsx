@@ -4,15 +4,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { 
-  CheckIcon,
-  SparklesIcon,
-  BoltIcon,
-  HeartIcon
-} from '@heroicons/react/24/outline'
-import { 
-  CheckIcon as CheckIconSolid,
-  SparklesIcon as SparklesIconSolid
-} from '@heroicons/react/24/solid'
+  Check,
+  Sparkles,
+  Zap,
+  Heart
+} from 'lucide-react'
 
 // リップルエフェクト
 interface RippleEffect {
@@ -135,7 +131,7 @@ export function TaskCreatedAnimation({
               delay: 0.1
             }}
           >
-            <CheckIconSolid className="w-5 h-5" />
+            <Check className="w-5 h-5" style={{ fill: 'currentColor' }} />
           </motion.div>
           
           <span className="font-medium">{message}</span>
@@ -152,7 +148,7 @@ export function TaskCreatedAnimation({
               ease: "easeInOut"
             }}
           >
-            <SparklesIconSolid className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" style={{ fill: 'currentColor' }} />
           </motion.div>
         </motion.div>
       )}

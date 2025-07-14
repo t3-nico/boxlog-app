@@ -8,7 +8,7 @@ import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/input'
 import { Textarea } from '@/components/textarea'
 import { Select } from '@/components/select'
-import { ArrowLeftIcon } from '@heroicons/react/20/solid'
+import { ArrowLeft } from 'lucide-react'
 
 export default function AddTagPage() {
   const router = useRouter()
@@ -66,7 +66,7 @@ export default function AddTagPage() {
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
-          <ArrowLeftIcon className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Back to Add</span>
         </Button>
       </div>

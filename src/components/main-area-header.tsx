@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SparklesIcon, CalendarIcon, ClockIcon, SunIcon, MoonIcon, AcademicCapIcon, LightBulbIcon } from '@heroicons/react/24/outline'
+import { Sparkles as SparklesIcon, Calendar as CalendarIcon, Clock as ClockIcon, Sun as SunIcon, Moon as MoonIcon, GraduationCap as AcademicCapIcon, Lightbulb as LightBulbIcon } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'

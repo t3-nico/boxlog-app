@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { format, isToday } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
@@ -97,7 +97,7 @@ export function UnifiedCalendarHeader({
             className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             disabled={!onNavigatePrev}
           >
-            <ChevronLeftIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
           
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white min-w-0 text-center">
@@ -109,7 +109,7 @@ export function UnifiedCalendarHeader({
             className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             disabled={!onNavigateNext}
           >
-            <ChevronRightIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
 

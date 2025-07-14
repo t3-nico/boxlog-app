@@ -13,7 +13,7 @@ import { useBoxStore } from '@/lib/box-store'
 import { useSmartFolderStore } from '@/lib/smart-folder-store'
 import { useKeyboardShortcuts } from '@/hooks/use-keyboard-shortcuts'
 import { useFilterUrlSync } from '@/hooks/use-filter-url-sync'
-import { ChartBarIcon, TableCellsIcon, Squares2X2Icon } from '@heroicons/react/16/solid'
+import { BarChart3, Table, Grid2X2 } from 'lucide-react'
 
 export default function Box() {
   const { 
@@ -99,7 +99,7 @@ export default function Box() {
                 onClick={() => handleViewChange('dashboard')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
-                <ChartBarIcon className="h-4 w-4" />
+                <BarChart3 className="h-4 w-4" />
                 <span className="hidden lg:inline">Dashboard</span>
               </Button>
             ) : (
@@ -108,7 +108,7 @@ export default function Box() {
                 onClick={() => handleViewChange('dashboard')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
-                <ChartBarIcon className="h-4 w-4" />
+                <BarChart3 className="h-4 w-4" />
                 <span className="hidden lg:inline">Dashboard</span>
               </Button>
             )}
@@ -117,7 +117,7 @@ export default function Box() {
                 onClick={() => handleViewChange('board')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
-                <Squares2X2Icon className="h-4 w-4" />
+                <Grid2X2 className="h-4 w-4" />
                 <span className="hidden lg:inline">Board</span>
               </Button>
             ) : (
@@ -126,7 +126,7 @@ export default function Box() {
                 onClick={() => handleViewChange('board')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
-                <Squares2X2Icon className="h-4 w-4" />
+                <Grid2X2 className="h-4 w-4" />
                 <span className="hidden lg:inline">Board</span>
               </Button>
             )}
@@ -135,7 +135,7 @@ export default function Box() {
                 onClick={() => handleViewChange('table')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
-                <TableCellsIcon className="h-4 w-4" />
+                <Table className="h-4 w-4" />
                 <span className="hidden lg:inline">Table</span>
               </Button>
             ) : (
@@ -144,7 +144,7 @@ export default function Box() {
                 onClick={() => handleViewChange('table')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
-                <TableCellsIcon className="h-4 w-4" />
+                <Table className="h-4 w-4" />
                 <span className="hidden lg:inline">Table</span>
               </Button>
             )}

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { differenceInMinutes } from 'date-fns'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
-import { ClockIcon, SparklesIcon } from '@heroicons/react/24/outline'
+import { Clock, Sparkles } from 'lucide-react'
 
 interface DragPreviewProps {
   start: Date
@@ -80,9 +80,9 @@ export function DragPreview({
           {/* アイコンとタイトル */}
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1 rounded-lg bg-white/20 dark:bg-white/10">
-              <ClockIcon className="w-4 h-4 text-white" />
+              <Clock className="w-4 h-4 text-white" />
             </div>
-            <SparklesIcon className="w-4 h-4 text-yellow-300 animate-pulse" />
+            <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
           </div>
           
           {/* 時間表示 */}
@@ -96,7 +96,7 @@ export function DragPreview({
           
           {/* 時間長 */}
           <div className="text-white/80 text-xs mt-1 flex items-center gap-1">
-            <ClockIcon className="w-3 h-3" />
+            <Clock className="w-3 h-3" />
             {duration}分
           </div>
           
@@ -200,7 +200,7 @@ export function AdvancedDragPreview({
           {/* ステータスアイコン */}
           <div className="flex items-center gap-2 mb-2">
             <div className="p-1 rounded-lg bg-white/20 dark:bg-white/10">
-              <ClockIcon className="w-4 h-4 text-white" />
+              <Clock className="w-4 h-4 text-white" />
             </div>
             {conflictInfo.hasConflict ? (
               <div className="p-1 rounded-lg bg-white/20 dark:bg-white/10">
@@ -209,7 +209,7 @@ export function AdvancedDragPreview({
                 </svg>
               </div>
             ) : (
-              <SparklesIcon className="w-4 h-4 text-yellow-300 animate-pulse" />
+              <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
             )}
           </div>
           
@@ -224,7 +224,7 @@ export function AdvancedDragPreview({
           
           {/* 時間長とステータス */}
           <div className="text-white/80 text-xs mt-1 flex items-center gap-1">
-            <ClockIcon className="w-3 h-3" />
+            <Clock className="w-3 h-3" />
             {duration}分
           </div>
           

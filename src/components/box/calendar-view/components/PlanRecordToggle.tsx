@@ -1,13 +1,13 @@
 'use client'
 
 import { RadioGroup } from '@headlessui/react'
-import { ClipboardDocumentListIcon, CheckCircleIcon, Squares2X2Icon, ViewColumnsIcon } from '@heroicons/react/24/outline'
+import { ClipboardList, CheckCircle, Grid2X2, Columns } from 'lucide-react'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 
 const modes = [
-  { value: 'plan', name: '計画', icon: ClipboardDocumentListIcon },
-  { value: 'record', name: '実績', icon: CheckCircleIcon },
-  { value: 'both', name: '両方', icon: Squares2X2Icon },
+  { value: 'plan', name: '計画', icon: ClipboardList },
+  { value: 'record', name: '実績', icon: CheckCircle },
+  { value: 'both', name: '両方', icon: Grid2X2 },
 ] as const
 
 export function PlanRecordToggle() {

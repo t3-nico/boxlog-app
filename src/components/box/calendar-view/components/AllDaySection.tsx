@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { format, isSameDay } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
+import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { ALL_DAY_ROW_HEIGHT, TIME_LABEL_WIDTH } from '../constants/grid-constants'
@@ -103,12 +103,12 @@ export function AllDaySection({
         >
           {expanded ? (
             <>
-              <ChevronUpIcon className="w-3 h-3" />
+              <ChevronUp className="w-3 h-3" />
               <span>折りたたむ</span>
             </>
           ) : (
             <>
-              <ChevronDownIcon className="w-3 h-3" />
+              <ChevronDown className="w-3 h-3" />
               <span>他{hiddenCount}件を表示</span>
             </>
           )}

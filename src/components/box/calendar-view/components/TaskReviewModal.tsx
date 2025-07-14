@@ -3,19 +3,16 @@ import { format, differenceInMinutes } from 'date-fns'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 import {
-  ClockIcon,
-  StarIcon,
-  XMarkIcon,
-  PencilIcon,
-  TrashIcon,
-  CheckIcon,
-  CalendarIcon,
-  DocumentTextIcon
-} from '@heroicons/react/24/outline'
-import {
-  StarIcon as StarIconSolid,
-  BoltIcon
-} from '@heroicons/react/24/solid'
+  Clock,
+  Star,
+  X,
+  Pencil,
+  Trash2,
+  Check,
+  Calendar,
+  FileText,
+  Zap
+} from 'lucide-react'
 
 interface Task {
   id: string
@@ -100,21 +97,21 @@ export function TaskReviewModal({
     switch (priority) {
       case 'high':
         return {
-          icon: BoltIcon,
+          icon: Zap,
           color: 'text-red-500',
           bg: 'bg-red-50 dark:bg-red-950/30',
           label: '緊急'
         }
       case 'medium':
         return {
-          icon: StarIconSolid,
+          icon: Star,
           color: 'text-amber-500',
           bg: 'bg-amber-50 dark:bg-amber-950/30',
           label: '標準'
         }
       case 'low':
         return {
-          icon: StarIcon,
+          icon: Star,
           color: 'text-gray-500',
           bg: 'bg-gray-50 dark:bg-gray-950/30',
           label: '低'
@@ -169,7 +166,7 @@ export function TaskReviewModal({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className={cn("p-2 rounded-lg", statusConfig.bg)}>
-                  <CalendarIcon className={cn("w-5 h-5", statusConfig.color)} />
+                  <Calendar className={cn("w-5 h-5", statusConfig.color)} />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -184,7 +181,7 @@ export function TaskReviewModal({
                 onClick={onClose}
                 className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
-                <XMarkIcon className="w-5 h-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -213,7 +210,7 @@ export function TaskReviewModal({
             {/* 時間 */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                <ClockIcon className="w-4 h-4" />
+                <Clock className="w-4 h-4" />
                 <span className="text-sm">
                   {formatTime(task.planned_start, timeFormat)} - {formatTime(endTime, timeFormat)}
                 </span>
@@ -329,7 +326,7 @@ export function TaskReviewModal({
                     onClick={handleDelete}
                     className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors flex items-center gap-2"
                   >
-                    <TrashIcon className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4" />
                     削除
                   </button>
                 )}
@@ -351,7 +348,7 @@ export function TaskReviewModal({
                       onClick={handleSave}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2"
                     >
-                      <CheckIcon className="w-4 h-4" />
+                      <Check className="w-4 h-4" />
                       保存
                     </button>
                   </>
@@ -360,7 +357,7 @@ export function TaskReviewModal({
                     onClick={() => setIsEditing(true)}
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors flex items-center gap-2"
                   >
-                    <PencilIcon className="w-4 h-4" />
+                    <Pencil className="w-4 h-4" />
                     編集
                   </button>
                 )}

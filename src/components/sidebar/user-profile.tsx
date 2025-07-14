@@ -12,15 +12,15 @@ import {
   DropdownMenu,
 } from '@/components/dropdown'
 import {
-  ChevronDownIcon,
-  Cog8ToothIcon,
-  ArrowRightStartOnRectangleIcon,
-  UserIcon,
-  CreditCardIcon,
-  ShieldCheckIcon,
-  QuestionMarkCircleIcon,
-  LightBulbIcon,
-} from '@heroicons/react/16/solid'
+  ChevronDown,
+  Settings,
+  LogOut,
+  User,
+  CreditCard,
+  Shield,
+  HelpCircle,
+  Lightbulb,
+} from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -66,26 +66,26 @@ export function UserProfile({ collapsed = false }: UserProfileProps) {
               {userPlan} Plan
             </div>
           </div>
-          <ChevronDownIcon className="size-4 text-gray-400" />
+          <ChevronDown className="size-4 text-gray-400" />
         </DropdownButton>
         
         <DropdownMenu className="min-w-64" anchor="bottom start">
           <DropdownItem href="/settings">
-            <Cog8ToothIcon />
+            <Settings />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
           
           <DropdownDivider />
           
           <DropdownItem href="/support">
-            <QuestionMarkCircleIcon />
+            <HelpCircle />
             <DropdownLabel>Support</DropdownLabel>
           </DropdownItem>
           
           <DropdownDivider />
           
           <DropdownItem onClick={handleSignOut}>
-            <ArrowRightStartOnRectangleIcon />
+            <LogOut />
             <DropdownLabel>Logout</DropdownLabel>
           </DropdownItem>
         </DropdownMenu>

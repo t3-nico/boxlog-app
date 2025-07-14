@@ -2,15 +2,15 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { 
-  XMarkIcon, 
-  ArrowUpCircleIcon,
-  EllipsisVerticalIcon,
-  TrashIcon,
-  DocumentDuplicateIcon,
-  SparklesIcon,
-  PencilIcon,
-  CheckIcon
-} from '@heroicons/react/24/outline'
+  X, 
+  ArrowUpCircle,
+  MoreVertical,
+  Trash2,
+  Copy,
+  Sparkles,
+  Pencil,
+  Check
+} from 'lucide-react'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { Avatar } from '@/components/avatar'
 
@@ -80,13 +80,13 @@ function MessageBubble({ message }: MessageBubbleProps) {
                     onClick={handleSave}
                     className="p-1 hover:bg-blue-500 rounded transition-colors"
                   >
-                    <CheckIcon className="w-4 h-4" />
+                    <Check className="w-4 h-4" />
                   </button>
                   <button
                     onClick={handleCancel}
                     className="p-1 hover:bg-blue-500 rounded transition-colors"
                   >
-                    <XMarkIcon className="w-4 h-4" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -107,7 +107,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
               onClick={handleEdit}
               className="absolute -left-8 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
             >
-              <PencilIcon className="w-4 h-4" />
+              <Pencil className="w-4 h-4" />
             </button>
           )}
         </div>
@@ -198,7 +198,7 @@ function ChatInput() {
             disabled={!state.inputValue.trim() || state.isTyping}
             className="absolute right-2 bottom-2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors focus:outline-none"
           >
-            <ArrowUpCircleIcon className="h-5 w-5" />
+            <ArrowUpCircle className="h-5 w-5" />
           </button>
         </form>
       </div>
@@ -226,7 +226,7 @@ function ChatHeader() {
               onClick={() => setShowMenu(!showMenu)}
               className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
             >
-              <EllipsisVerticalIcon className="h-4 w-4" />
+              <MoreVertical className="h-4 w-4" />
             </button>
             
             {showMenu && (
@@ -238,7 +238,7 @@ function ChatHeader() {
                   }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <TrashIcon className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" />
                   Clear conversation
                 </button>
                 <button
@@ -248,7 +248,7 @@ function ChatHeader() {
                   }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <DocumentDuplicateIcon className="w-4 h-4" />
+                  <Copy className="w-4 h-4" />
                   Export conversation
                 </button>
               </div>

@@ -3,7 +3,7 @@
 import React, { useMemo } from 'react'
 import { format, isToday, isYesterday, isTomorrow } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { CalendarIcon } from '@heroicons/react/24/outline'
+import { Calendar } from 'lucide-react'
 import type { Task, TaskRecord } from '../types'
 
 interface SplitDayHeaderProps {
@@ -64,7 +64,7 @@ export function SplitDayHeader({ date, tasks, records }: SplitDayHeaderProps) {
       {/* シンプルなヘッダー */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <CalendarIcon className={`w-6 h-6 ${
+          <Calendar className={`w-6 h-6 ${
             dateInfo.isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
           }`} />
           <div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BellAlertIcon } from '@heroicons/react/20/solid'
+import { BellRing } from 'lucide-react'
 
 const notifications = [
   {
@@ -71,7 +71,7 @@ export default function NotificationsPage() {
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <BellAlertIcon className="h-8 w-8 text-blue-600" />
+          <BellRing className="h-8 w-8 text-blue-600" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">お知らせ</h1>
         </div>
         <p className="text-gray-600 dark:text-gray-300">最新のお知らせや更新情報をご確認いただけます。</p>
@@ -122,7 +122,7 @@ export default function NotificationsPage() {
 
       {notificationList.length === 0 && (
         <div className="text-center py-12">
-          <BellAlertIcon className="mx-auto h-12 w-12 text-gray-400" />
+          <BellRing className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">お知らせはありません</h3>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             新しいお知らせが投稿されるとここに表示されます。

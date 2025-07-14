@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { ClockIcon, SunIcon, MoonIcon, BoltIcon } from '@heroicons/react/24/outline'
+import { Clock, Sun, Moon, Zap } from 'lucide-react'
 
 export function ClockCard() {
   const [time, setTime] = useState(new Date())
@@ -20,17 +20,17 @@ export function ClockCard() {
     const chronotype = 'Morning' // 実際にはユーザー設定から取得
     
     if (chronotype === 'Morning') {
-      if (hour >= 6 && hour < 10) return { status: 'peak', label: 'Peak Time', color: 'green', icon: BoltIcon }
-      if (hour >= 10 && hour < 14) return { status: 'active', label: 'Active', color: 'blue', icon: SunIcon }
-      if (hour >= 14 && hour < 16) return { status: 'low', label: 'Low Energy', color: 'orange', icon: MoonIcon }
-      if (hour >= 16 && hour < 20) return { status: 'moderate', label: 'Moderate', color: 'blue', icon: SunIcon }
-      return { status: 'rest', label: 'Rest Time', color: 'purple', icon: MoonIcon }
+      if (hour >= 6 && hour < 10) return { status: 'peak', label: 'Peak Time', color: 'green', icon: Zap }
+      if (hour >= 10 && hour < 14) return { status: 'active', label: 'Active', color: 'blue', icon: Sun }
+      if (hour >= 14 && hour < 16) return { status: 'low', label: 'Low Energy', color: 'orange', icon: Moon }
+      if (hour >= 16 && hour < 20) return { status: 'moderate', label: 'Moderate', color: 'blue', icon: Sun }
+      return { status: 'rest', label: 'Rest Time', color: 'purple', icon: Moon }
     } else {
       // Night Owl の場合
-      if (hour >= 20 || hour < 2) return { status: 'peak', label: 'Peak Time', color: 'green', icon: BoltIcon }
-      if (hour >= 6 && hour < 10) return { status: 'low', label: 'Low Energy', color: 'orange', icon: MoonIcon }
-      if (hour >= 10 && hour < 16) return { status: 'moderate', label: 'Moderate', color: 'blue', icon: SunIcon }
-      return { status: 'active', label: 'Active', color: 'blue', icon: SunIcon }
+      if (hour >= 20 || hour < 2) return { status: 'peak', label: 'Peak Time', color: 'green', icon: Zap }
+      if (hour >= 6 && hour < 10) return { status: 'low', label: 'Low Energy', color: 'orange', icon: Moon }
+      if (hour >= 10 && hour < 16) return { status: 'moderate', label: 'Moderate', color: 'blue', icon: Sun }
+      return { status: 'active', label: 'Active', color: 'blue', icon: Sun }
     }
   }
 

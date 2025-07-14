@@ -1,14 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { TrashIcon, ArrowPathIcon } from '@heroicons/react/20/solid'
+import { Trash2 as TrashIcon, RotateCcw as ArrowPathIcon } from 'lucide-react'
 import { 
-  DocumentTextIcon, 
-  CalendarIcon, 
-  TagIcon, 
-  FolderIcon,
-  ExclamationTriangleIcon 
-} from '@heroicons/react/24/outline'
+  FileText as DocumentTextIcon, 
+  Calendar as CalendarIcon, 
+  Tag as TagIcon, 
+  Folder as FolderIcon,
+  AlertTriangle as ExclamationTriangleIcon 
+} from 'lucide-react'
 import { useTrashStore } from '@/stores/trashStore'
 import { DeletedItem } from '@/types/trash'
 import { Button } from '@/components/button'

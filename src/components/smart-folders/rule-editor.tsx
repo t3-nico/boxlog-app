@@ -2,10 +2,10 @@
 
 import { useState, useCallback } from 'react'
 import { 
-  PlusIcon, 
-  TrashIcon,
-  Bars3Icon
-} from '@heroicons/react/24/outline'
+  Plus as PlusIcon, 
+  Trash2 as TrashIcon,
+  Menu as Bars3Icon
+} from 'lucide-react'
 import { 
   Button,
   Field,

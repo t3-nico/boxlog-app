@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { Button } from '@/components/button'
-import { ArrowLeftIcon } from '@heroicons/react/20/solid'
+import { ArrowLeft } from 'lucide-react'
 
 export default function AddTaskPage() {
   const router = useRouter()
@@ -27,7 +27,7 @@ export default function AddTaskPage() {
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
-          <ArrowLeftIcon className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Back to Add</span>
         </Button>
       </div>

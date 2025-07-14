@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { TrashIcon, ArrowPathIcon, ExclamationTriangleIcon } from '@heroicons/react/20/solid'
+import { Trash2, RotateCcw, AlertTriangle } from 'lucide-react'
 import { useTrashStore } from '@/stores/trashStore'
 import { TrashItemCard } from '@/components/settings/TrashItemCard'
 import { EmptyTrashModal } from '@/components/settings/EmptyTrashModal'
@@ -85,7 +85,7 @@ export default function TrashPage() {
               color="red"
               onClick={() => setShowEmptyModal(true)}
             >
-              <TrashIcon className="w-4 h-4 mr-2" />
+              <Trash2 className="w-4 h-4 mr-2" />
               Empty Trash
             </Button>
           )}

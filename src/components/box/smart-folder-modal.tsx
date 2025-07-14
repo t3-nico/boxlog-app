@@ -16,7 +16,7 @@ import {
   DialogTitle 
 } from '@/components/dialog'
 import { Select } from '@/components/select'
-import { PlusIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { Plus, X } from 'lucide-react'
 
 // Color options for SmartFolders
 const folderColors = [
@@ -282,7 +282,7 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
               onClick={handleAddCondition}
               className="flex items-center space-x-1 text-sm"
             >
-              <PlusIcon className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
               <span>Add Condition</span>
             </Button>
           </div>
@@ -367,7 +367,7 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
                       onClick={() => handleRemoveCondition(condition.id)}
                       className="p-1 text-red-600 hover:text-red-700"
                     >
-                      <XMarkIcon className="h-4 w-4" />
+                      <X className="h-4 w-4" />
                     </Button>
                   )}
                 </div>

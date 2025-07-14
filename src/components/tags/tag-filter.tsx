@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import {
-  FunnelIcon,
-  XMarkIcon,
-  TagIcon,
-  ChevronDownIcon
-} from '@heroicons/react/24/outline'
+  Filter as FunnelIcon,
+  X as XMarkIcon,
+  Tag as TagIcon,
+  ChevronDown as ChevronDownIcon
+} from 'lucide-react'
 import { useTags } from '@/hooks/use-tags'
 import type { TagWithChildren } from '@/types/tags'
 

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircleIcon, XCircleIcon, ExclamationTriangleIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/16/solid'
+import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, AlertTriangle as ExclamationTriangleIcon, Info as InformationCircleIcon, X as XMarkIcon } from 'lucide-react'
 
 export interface Toast {
   id: string

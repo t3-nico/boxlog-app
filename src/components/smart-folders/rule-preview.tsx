@@ -4,12 +4,12 @@ import { useMemo } from 'react'
 import { SmartFolderRule } from '@/types/smart-folders'
 import { AdvancedRuleEngine } from '@/lib/smart-folders/rule-engine'
 import { 
-  CheckCircleIcon, 
-  XCircleIcon,
-  ExclamationTriangleIcon,
-  FunnelIcon,
-  ChartBarIcon
-} from '@heroicons/react/24/outline'
+  CheckCircle as CheckCircleIcon, 
+  XCircle as XCircleIcon,
+  AlertTriangle as ExclamationTriangleIcon,
+  Filter as FunnelIcon,
+  BarChart3 as ChartBarIcon
+} from 'lucide-react'
 
 interface RulePreviewProps {
   rules: SmartFolderRule[]

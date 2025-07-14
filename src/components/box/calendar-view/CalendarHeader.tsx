@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { 
-  ChevronLeftIcon, 
-  ChevronRightIcon,
-  ChevronDownIcon,
-  ViewColumnsIcon,
-  ClipboardDocumentListIcon,
-  CheckCircleIcon
-} from '@heroicons/react/24/outline'
+  ChevronLeft, 
+  ChevronRight,
+  ChevronDown,
+  Columns3,
+  ClipboardList,
+  CheckCircle
+} from 'lucide-react'
 import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
@@ -31,9 +31,9 @@ const viewOptions = [
 ]
 
 const displayModeOptions = [
-  { value: 'both', label: 'Both', icon: ViewColumnsIcon },
-  { value: 'plan', label: 'Plan', icon: ClipboardDocumentListIcon },
-  { value: 'record', label: 'Record', icon: CheckCircleIcon },
+  { value: 'both', label: 'Both', icon: Columns3 },
+  { value: 'plan', label: 'Plan', icon: ClipboardList },
+  { value: 'record', label: 'Record', icon: CheckCircle },
 ] as const
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
@@ -116,14 +116,14 @@ export function CalendarHeader({
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
               title="Previous period"
             >
-              <ChevronLeftIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
             <button
               onClick={() => onNavigate('next')}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
               title="Next period"
             >
-              <ChevronRightIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </button>
           </div>
           
@@ -146,7 +146,7 @@ export function CalendarHeader({
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
               )}
             >
-              <ViewColumnsIcon className="w-4 h-4" />
+              <Columns3 className="w-4 h-4" />
               <span>Both</span>
             </button>
             <button
@@ -158,7 +158,7 @@ export function CalendarHeader({
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
               )}
             >
-              <ClipboardDocumentListIcon className="w-4 h-4" />
+              <ClipboardList className="w-4 h-4" />
               <span>Plan</span>
             </button>
             <button
@@ -170,7 +170,7 @@ export function CalendarHeader({
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
               )}
             >
-              <CheckCircleIcon className="w-4 h-4" />
+              <CheckCircle className="w-4 h-4" />
               <span>Record</span>
             </button>
           </div>
@@ -182,7 +182,7 @@ export function CalendarHeader({
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors shadow-sm"
             >
               <span>{currentViewOption?.label || 'View'}</span>
-              <ChevronDownIcon className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4" />
             </button>
 
             {isViewDropdownOpen && (

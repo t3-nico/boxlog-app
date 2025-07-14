@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react'
 import { format } from 'date-fns'
-import { ClockIcon, CheckCircleIcon, PlayCircleIcon, PauseCircleIcon } from '@heroicons/react/24/outline'
+import { Clock, CheckCircle, Play, Pause } from 'lucide-react'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { cn, getTaskColorClass, getPriorityColorClass } from '../utils/view-helpers'
 
@@ -41,13 +41,13 @@ export function ScheduleTaskCard({
   const StatusIcon = useMemo(() => {
     switch (task.status) {
       case 'completed':
-        return CheckCircleIcon
+        return CheckCircle
       case 'in_progress':
-        return PlayCircleIcon
+        return Play
       case 'pending':
-        return PauseCircleIcon
+        return Pause
       default:
-        return ClockIcon
+        return Clock
     }
   }, [task.status])
 
@@ -200,7 +200,7 @@ export function ScheduleTaskCard({
                 // 完了マーク
               }}
             >
-              <CheckCircleIcon className="w-3 h-3 text-green-500 dark:text-green-400" />
+              <CheckCircle className="w-3 h-3 text-green-500 dark:text-green-400" />
             </button>
           )}
         </div>
@@ -228,9 +228,9 @@ export function CompactScheduleTaskCard({
   const StatusIcon = useMemo(() => {
     switch (task.status) {
       case 'completed':
-        return CheckCircleIcon
+        return CheckCircle
       case 'in_progress':
-        return PlayCircleIcon
+        return Play
       default:
         return null
     }

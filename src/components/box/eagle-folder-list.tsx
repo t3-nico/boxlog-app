@@ -6,11 +6,11 @@ import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
 import { Tag } from '@/types/box'
 import { 
-  ChevronRightIcon,
-  ChevronDownIcon,
-  EllipsisHorizontalIcon,
-  FolderIcon
-} from '@heroicons/react/20/solid'
+  ChevronRight,
+  ChevronDown,
+  MoreHorizontal,
+  Folder
+} from 'lucide-react'
 
 interface EagleFolderListProps {
   onSelectTag: (tagId: string) => void
@@ -106,9 +106,9 @@ export function EagleFolderList({
                 className="mr-1 p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
               >
                 {isExpanded ? (
-                  <ChevronDownIcon className="h-3.5 w-3.5" />
+                  <ChevronDown className="h-3.5 w-3.5" />
                 ) : (
-                  <ChevronRightIcon className="h-3.5 w-3.5" />
+                  <ChevronRight className="h-3.5 w-3.5" />
                 )}
               </button>
             )}
@@ -146,7 +146,7 @@ export function EagleFolderList({
               onClick={(e) => handleContextMenu(e, tag.id)}
               className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
             >
-              <EllipsisHorizontalIcon className="h-3 w-3" />
+              <MoreHorizontal className="h-3 w-3" />
             </button>
           </div>
         </div>
@@ -169,9 +169,9 @@ export function EagleFolderList({
       >
         <div className="flex items-center space-x-2">
           {isCollapsed ? (
-            <ChevronRightIcon className="h-3 w-3" />
+            <ChevronRight className="h-3 w-3" />
           ) : (
-            <ChevronDownIcon className="h-3 w-3" />
+            <ChevronDown className="h-3 w-3" />
           )}
           <span>Folders</span>
         </div>

@@ -11,11 +11,11 @@ import {
   Textarea
 } from '@headlessui/react'
 import { 
-  XMarkIcon, 
-  PlusIcon,
-  EyeIcon,
-  FolderIcon
-} from '@heroicons/react/24/outline'
+  X as XMarkIcon, 
+  Plus as PlusIcon,
+  Eye as EyeIcon,
+  Folder as FolderIcon
+} from 'lucide-react'
 import { SmartFolder, SmartFolderRule, CreateSmartFolderInput, UpdateSmartFolderInput } from '@/types/smart-folders'
 import { RuleEditor } from './rule-editor'
 import { RulePreview } from './rule-preview'

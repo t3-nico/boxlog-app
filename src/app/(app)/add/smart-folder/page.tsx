@@ -10,7 +10,7 @@ import { Button } from '@/components/button'
 import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/input'
 import { Select } from '@/components/select'
-import { ArrowLeftIcon, PlusIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import { ArrowLeft, Plus, X } from 'lucide-react'
 
 // Color options for SmartFolders
 const folderColors = [
@@ -158,7 +158,7 @@ export default function AddSmartFolderPage() {
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
-          <ArrowLeftIcon className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" />
           <span>Back to Add</span>
         </Button>
       </div>
@@ -254,7 +254,7 @@ export default function AddSmartFolderPage() {
                   onClick={handleAddCondition}
                   className="flex items-center space-x-1 text-sm"
                 >
-                  <PlusIcon className="h-4 w-4" />
+                  <Plus className="h-4 w-4" />
                   <span>Add Condition</span>
                 </Button>
               </div>
@@ -339,7 +339,7 @@ export default function AddSmartFolderPage() {
                           onClick={() => handleRemoveCondition(condition.id)}
                           className="p-1 text-red-600 hover:text-red-700"
                         >
-                          <XMarkIcon className="h-4 w-4" />
+                          <X className="h-4 w-4" />
                         </Button>
                       )}
                     </div>

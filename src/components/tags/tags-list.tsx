@@ -2,14 +2,14 @@
 
 import { useState, useCallback } from 'react'
 import { 
-  ChevronRightIcon,
-  ChevronDownIcon,
-  PlusIcon,
-  TagIcon,
-  EllipsisHorizontalIcon,
-  PencilIcon,
-  TrashIcon
-} from '@heroicons/react/24/solid'
+  ChevronRight as ChevronRightIcon,
+  ChevronDown as ChevronDownIcon,
+  Plus as PlusIcon,
+  Tag as TagIcon,
+  MoreHorizontal as EllipsisHorizontalIcon,
+  Pencil as PencilIcon,
+  Trash2 as TrashIcon
+} from 'lucide-react'
 import { tagIconMapping, TagIconName } from '@/config/tagIcons'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { TagEditDialog } from './tag-edit-dialog'

@@ -10,12 +10,12 @@ import {
   DropdownMenu,
 } from '@/components/dropdown'
 import {
-  SunIcon,
-  MoonIcon,
-  ComputerDesktopIcon,
-  ChevronDownIcon,
-  SwatchIcon,
-} from '@heroicons/react/16/solid'
+  Sun as SunIcon,
+  Moon as MoonIcon,
+  Monitor as ComputerDesktopIcon,
+  ChevronDown as ChevronDownIcon,
+  Palette as SwatchIcon,
+} from 'lucide-react'
 
 export function ThemeToggle() {
   const { theme, colorScheme, setTheme, setColorScheme, resolvedTheme } = useTheme()

@@ -6,12 +6,12 @@ import { useBoxStore } from '@/lib/box-store'
 import { Task, TaskStatus, TaskPriority } from '@/types/box'
 import { Badge } from '@/components/badge'
 import {
-  ChartBarIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  CalendarIcon,
-} from '@heroicons/react/16/solid'
+  BarChart3,
+  Clock,
+  CheckCircle,
+  AlertTriangle,
+  Calendar,
+} from 'lucide-react'
 
 // Simple Chart Component (replacing Chart.js dependency)
 interface PieChartProps {
@@ -236,7 +236,7 @@ export function Dashboard() {
         <StatCard
           title="Total Tasks"
           value={stats.totalTasks}
-          icon={<ChartBarIcon className="h-6 w-6 text-blue-600" />}
+          icon={<BarChart3 className="h-6 w-6 text-blue-600" />}
           color="border-blue-200"
           index={0}
         />
@@ -244,7 +244,7 @@ export function Dashboard() {
           title="Completion Rate"
           value={`${stats.completionRate}%`}
           subtitle={`${stats.completedTasks}/${stats.totalTasks} completed`}
-          icon={<CheckCircleIcon className="h-6 w-6 text-green-600" />}
+          icon={<CheckCircle className="h-6 w-6 text-green-600" />}
           color="border-green-200"
           index={1}
         />
@@ -252,7 +252,7 @@ export function Dashboard() {
           title="This Month"
           value={`${stats.thisMonthRate}%`}
           subtitle={`${stats.thisMonthTasks} tasks this month`}
-          icon={<CalendarIcon className="h-6 w-6 text-purple-600" />}
+          icon={<Calendar className="h-6 w-6 text-purple-600" />}
           color="border-purple-200"
           index={2}
         />
@@ -260,7 +260,7 @@ export function Dashboard() {
           title="In Progress"
           value={stats.inProgressTasks}
           subtitle={stats.overdueTasks > 0 ? `${stats.overdueTasks} overdue` : 'On track'}
-          icon={<ClockIcon className="h-6 w-6 text-orange-600" />}
+          icon={<Clock className="h-6 w-6 text-orange-600" />}
           color="border-orange-200"
           index={3}
         />
@@ -307,7 +307,7 @@ export function Dashboard() {
           {stats.overdue.length > 0 && (
             <div className="mb-4">
               <div className="flex items-center space-x-2 mb-2">
-                <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
+                <AlertTriangle className="h-5 w-5 text-red-500" />
                 <span className="text-sm font-medium text-red-700">
                   {stats.overdue.length} Overdue Task{stats.overdue.length !== 1 ? 's' : ''}
                 </span>
@@ -326,7 +326,7 @@ export function Dashboard() {
           {stats.upcoming.length > 0 && (
             <div>
               <div className="flex items-center space-x-2 mb-2">
-                <ClockIcon className="h-5 w-5 text-orange-500" />
+                <Clock className="h-5 w-5 text-orange-500" />
                 <span className="text-sm font-medium text-orange-700">
                   {stats.upcoming.length} Due This Week
                 </span>
@@ -343,7 +343,7 @@ export function Dashboard() {
 
           {stats.overdue.length === 0 && stats.upcoming.length === 0 && (
             <div className="text-center py-4">
-              <CheckCircleIcon className="h-8 w-8 text-green-500 mx-auto mb-2" />
+              <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />
               <p className="text-sm text-gray-500">All caught up!</p>
             </div>
           )}

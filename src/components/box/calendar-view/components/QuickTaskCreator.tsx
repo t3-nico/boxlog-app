@@ -3,18 +3,15 @@ import { differenceInMinutes } from 'date-fns'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 import { 
-  ClockIcon, 
-  StarIcon, 
-  CheckIcon,
-  XMarkIcon,
-  SparklesIcon,
-  TagIcon,
-  DocumentTextIcon
-} from '@heroicons/react/24/outline'
-import { 
-  StarIcon as StarIconSolid,
-  BoltIcon
-} from '@heroicons/react/24/solid'
+  Clock, 
+  Star, 
+  Check,
+  X,
+  Sparkles,
+  Tag,
+  FileText,
+  Zap
+} from 'lucide-react'
 import type { Task } from '../types'
 
 interface CreateTaskInput {
@@ -187,7 +184,7 @@ export function QuickTaskCreator({
     switch (priority) {
       case 'high':
         return {
-          icon: BoltIcon,
+          icon: Zap,
           color: 'text-red-500 dark:text-red-400',
           bg: 'bg-red-50 dark:bg-red-950/30',
           border: 'border-red-200 dark:border-red-800',
@@ -195,7 +192,7 @@ export function QuickTaskCreator({
         }
       case 'medium':
         return {
-          icon: StarIconSolid,
+          icon: Star,
           color: 'text-amber-500 dark:text-amber-400',
           bg: 'bg-amber-50 dark:bg-amber-950/30',
           border: 'border-amber-200 dark:border-amber-800',
@@ -203,7 +200,7 @@ export function QuickTaskCreator({
         }
       case 'low':
         return {
-          icon: StarIcon,
+          icon: Star,
           color: 'text-gray-500 dark:text-gray-400',
           bg: 'bg-gray-50 dark:bg-gray-950/30',
           border: 'border-gray-200 dark:border-gray-800',
@@ -243,7 +240,7 @@ export function QuickTaskCreator({
           )}>
             <div className="flex items-center gap-3">
               <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-                <ClockIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -254,7 +251,7 @@ export function QuickTaskCreator({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <SparklesIcon className="w-4 h-4 text-amber-500" />
+                <Sparkles className="w-4 h-4 text-amber-500" />
               </div>
             </div>
           </div>
@@ -282,7 +279,7 @@ export function QuickTaskCreator({
                 />
                 {title && !suggestions.length && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <CheckIcon className="w-5 h-5 text-green-500" />
+                    <Check className="w-5 h-5 text-green-500" />
                   </div>
                 )}
                 
@@ -335,7 +332,7 @@ export function QuickTaskCreator({
             {/* 優先度選択 - ピル型ボタン */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                <StarIcon className="w-4 h-4" />
+                <Star className="w-4 h-4" />
                 優先度
               </label>
               <div className="flex gap-2">
@@ -385,7 +382,7 @@ export function QuickTaskCreator({
                   "hover:text-gray-900 dark:hover:text-white transition-colors"
                 )}
               >
-                <DocumentTextIcon className="w-4 h-4" />
+                <FileText className="w-4 h-4" />
                 詳細設定
                 <div className={cn(
                   "transform transition-transform duration-200",
@@ -400,7 +397,7 @@ export function QuickTaskCreator({
             {(showAdvanced || duration > 60) && (
               <div className="animate-in slide-in-from-top-2 fade-in duration-200 space-y-2">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                  <DocumentTextIcon className="w-4 h-4" />
+                  <FileText className="w-4 h-4" />
                   メモ・詳細
                 </label>
                 <textarea
@@ -446,7 +443,7 @@ export function QuickTaskCreator({
                     "transition-all duration-200 hover:scale-105 active:scale-95"
                   )}
                 >
-                  <XMarkIcon className="w-4 h-4" />
+                  <X className="w-4 h-4" />
                 </button>
                 <button
                   type="submit"
@@ -469,7 +466,7 @@ export function QuickTaskCreator({
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <CheckIcon className="w-4 h-4" />
+                      <Check className="w-4 h-4" />
                       作成
                     </div>
                   )}

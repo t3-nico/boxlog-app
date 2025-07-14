@@ -9,12 +9,12 @@ import {
   DropdownMenu,
 } from '@/components/dropdown'
 import {
-  ChatBubbleLeftIcon,
-  EnvelopeIcon,
-  BugAntIcon,
-  LightBulbIcon,
-  SparklesIcon,
-} from '@heroicons/react/20/solid'
+  MessageCircle,
+  Mail,
+  Bug,
+  Lightbulb,
+  Sparkles,
+} from 'lucide-react'
 
 interface DynamicSidebarSectionProps {
   section: MenuSection
@@ -75,7 +75,7 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
                 </DropdownButton>
                 <DropdownMenu className="min-w-[200px]" anchor="top start">
                   <DropdownItem href="/help/chat">
-                    <ChatBubbleLeftIcon className="w-4 h-4" />
+                    <MessageCircle className="w-4 h-4" />
                     <DropdownLabel>Chat with AI</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help">
@@ -83,19 +83,19 @@ export function DynamicSidebarSection({ section, currentPath, collapsed = false 
                     <DropdownLabel>Help Center</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/tips">
-                    <LightBulbIcon className="w-4 h-4" />
+                    <Lightbulb className="w-4 h-4" />
                     <DropdownLabel>Tips & Tricks</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/contact">
-                    <EnvelopeIcon className="w-4 h-4" />
+                    <Mail className="w-4 h-4" />
                     <DropdownLabel>Contact Support</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/updates">
-                    <SparklesIcon className="w-4 h-4" />
+                    <Sparkles className="w-4 h-4" />
                     <DropdownLabel>What&rsquo;s New</DropdownLabel>
                   </DropdownItem>
                   <DropdownItem href="/help/bug-report">
-                    <BugAntIcon className="w-4 h-4" />
+                    <Bug className="w-4 h-4" />
                     <DropdownLabel>Report Bug</DropdownLabel>
                   </DropdownItem>
                 </DropdownMenu>

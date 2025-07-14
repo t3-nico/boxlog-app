@@ -1,6 +1,6 @@
 'use client'
 
-import { TrashIcon } from '@heroicons/react/24/outline'
+import { Trash2 as TrashIcon } from 'lucide-react'
 
 export const EmptyTrashState = () => {
   return (
