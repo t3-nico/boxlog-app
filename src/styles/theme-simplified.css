@@ -106,12 +106,10 @@
 /* アイコン色 - ライトモード */
 :not(.dark) svg:not(.tag-icon):not([class*="text-orange"]):not([class*="fill-orange"]),
 :not(.dark) [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
-  fill: rgb(var(--icon-primary)) !important;
   color: rgb(var(--icon-primary)) !important;
 }
 
 :not(.dark) *[data-slot="icon"]:not(.tag-icon):not([class*="text-orange"]) {
-  fill: rgb(var(--icon-primary)) !important;
   color: rgb(var(--icon-primary)) !important;
 }
 
@@ -170,7 +168,6 @@
 .dark .hover\:bg-zinc-950\/5:hover .tag-icon,
 .dark [class*="hover:bg-zinc-950/5"]:hover .tag-icon {
   color: var(--tag-color, currentColor) !important;
-  fill: var(--tag-color, currentColor) !important;
   filter: brightness(1.3) contrast(1.1);
 }
 
@@ -295,12 +292,12 @@ html.dark div button.tag-menu-button:hover {
 
 :not(.dark) [data-hover="true"] svg:not(.tag-icon):not([class*="text-orange"]),
 :not(.dark) [data-hover="true"] [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
 :not(.dark) [data-hover="true"] *[data-slot="icon"] {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -314,7 +311,7 @@ html.dark div button.tag-menu-button:hover {
 :not(.dark) nav [data-hover="true"] svg,
 :not(.dark) .group [data-hover="true"] *[data-slot="icon"],
 :not(.dark) nav [data-hover="true"] *[data-slot="icon"] {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -325,12 +322,12 @@ html.dark div button.tag-menu-button:hover {
 
 .dark [data-hover="true"] svg:not(.tag-icon):not([class*="text-orange"]),
 .dark [data-hover="true"] [class*="Icon"]:not(.tag-icon):not([class*="text-orange"]) {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
 .dark [data-hover="true"] *[data-slot="icon"] {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -345,7 +342,7 @@ html.dark div button.tag-menu-button:hover {
 :not(.dark) [class*="data-hover:bg-zinc-950/5"][data-hover="true"] *[data-slot="icon"],
 :not(.dark) .data-hover\:bg-zinc-950\/5[data-hover="true"] svg,
 :not(.dark) [class*="data-hover:bg-zinc-950/5"][data-hover="true"] svg {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -367,7 +364,7 @@ body:not(.dark) [data-hover="true"] {
 :not(.dark) nav button:hover svg,
 :not(.dark) nav a:hover *[data-slot="icon"],
 :not(.dark) nav button:hover *[data-slot="icon"] {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -382,7 +379,7 @@ body:not(.dark) [data-hover="true"] {
 :not(.dark) [class*="hover:bg-zinc-950/5"]:hover svg:not(.tag-icon),
 :not(.dark) .hover\:bg-zinc-950\/5:hover *[data-slot="icon"]:not(.tag-icon),
 :not(.dark) [class*="hover:bg-zinc-950/5"]:hover *[data-slot="icon"]:not(.tag-icon) {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -390,14 +387,13 @@ body:not(.dark) [data-hover="true"] {
 :not(.dark) .hover\:bg-zinc-950\/5:hover .tag-icon,
 :not(.dark) [class*="hover:bg-zinc-950/5"]:hover .tag-icon {
   color: var(--tag-color, currentColor) !important;
-  fill: var(--tag-color, currentColor) !important;
 }
 
 html:not(.dark) [data-hover="true"] svg,
 html:not(.dark) [data-hover="true"] *[data-slot="icon"],
 html:not(.dark) *[data-hover="true"] svg,
 html:not(.dark) *[data-hover="true"] *[data-slot="icon"] {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -410,7 +406,7 @@ html:not(.dark) *[class*="data-hover:bg-zinc-950/5"][data-hover="true"] {
 /* アイコンに対する最強セレクター */
 html:not(.dark) [data-hover="true"] svg[data-slot="icon"],
 html:not(.dark) [data-hover="true"] *[data-slot="icon"] {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -430,7 +426,7 @@ html:not(.dark) [data-hover="true"] *[data-slot="icon"] {
 
 :not(.dark) .data-focus\:bg-blue-500[data-focus="true"] *[data-slot="icon"] {
   color: rgb(var(--hover-icon)) !important;
-  fill: rgb(var(--hover-icon)) !important;
+
 }
 
 /* Neutralカラーパレット統一 - その他の色をneutralに再定義 */
@@ -472,7 +468,7 @@ html:not(.dark) [data-hover="true"] *[data-slot="icon"] {
 .dark [class*="dark:data-hover:bg-white/5"][data-hover="true"] *[data-slot="icon"],
 .dark .dark\:data-hover\:bg-white\/5[data-hover="true"] svg,
 .dark [class*="dark:data-hover:bg-white/5"][data-hover="true"] svg {
-  fill: rgb(var(--hover-icon)) !important;
+
   color: rgb(var(--hover-icon)) !important;
 }
 
@@ -482,28 +478,23 @@ html:not(.dark) [data-hover="true"] *[data-slot="icon"] {
 }
 
 /* Preserve orange color for Add button */
-.text-orange-600,
-.fill-orange-600 {
+.text-orange-600 {
   color: rgb(234, 88, 12) !important;
 }
 
 .dark .text-orange-600,
-.dark .text-orange-400,
-.dark .fill-orange-600,
-.dark .fill-orange-400 {
+.dark .text-orange-400 {
   color: rgb(251, 146, 60) !important;
 }
 
 /* Preserve custom tag colors - 最強の優先度 */
 .tag-icon {
   color: var(--tag-color, currentColor) !important;
-  fill: var(--tag-color, currentColor) !important;
 }
 
 /* inlineスタイルも保護 */
 .tag-icon[style*="color"] {
   color: var(--tag-color, inherit) !important;
-  fill: var(--tag-color, inherit) !important;
 }
 
 /* ダークモードでのタグ色調整 */
