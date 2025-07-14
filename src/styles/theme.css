@@ -212,7 +212,7 @@ nav.group.bg-gray-50.dark\:bg-gray-900 {
 /* Remove global forced colors to let Tailwind work properly */
 
 /* Fix light mode icons that are white - but preserve orange for add button AND tag colors */
-:not(.dark) svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]) {
+:not(.dark) svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
   color: rgb(17, 24, 39) !important;
 }
 
@@ -222,24 +222,24 @@ nav.group.bg-gray-50.dark\:bg-gray-900 {
 }
 
 /* Fix light mode icons that might be using fill - but preserve orange AND tag colors */
-:not(.dark) svg[fill="currentColor"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]) {
+:not(.dark) svg[fill="currentColor"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
   fill: rgb(17, 24, 39) !important;
 }
 
 /* Fix light mode icons in specific contexts - but preserve orange AND tag colors */
-:not(.dark) nav svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]),
-:not(.dark) button svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]),
-:not(.dark) [role="button"] svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]) {
+:not(.dark) nav svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]),
+:not(.dark) button svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]),
+:not(.dark) [role="button"] svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
   color: rgb(17, 24, 39) !important;
 }
 
 /* Fix Heroicons specifically - but preserve orange AND tag colors */
-:not(.dark) [class*="Icon"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]) {
+:not(.dark) [class*="Icon"]:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) {
   color: rgb(17, 24, 39) !important;
 }
 
 /* Fix any icons that might be using fill attribute - but preserve orange AND tag colors */
-:not(.dark) svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]):not([data-slot="icon"]) path {
+:not(.dark) svg:not(.text-orange-600):not(.tag-icon):not([style*="color:"]) path {
   fill: rgb(17, 24, 39) !important;
 }
 
@@ -336,7 +336,7 @@ nav [class*="flex"][class*="items-center"][class*="text-zinc-950"] {
 
 /* Hover text and icon enhancement in light mode */
 :not(.dark) [data-hover] [data-slot="icon"] {
-  fill: rgb(17, 24, 39) !important; /* darker icon on hover */
+  color: rgb(17, 24, 39) !important; /* darker icon on hover */
 }
 
 /* Active state for light mode - same pattern as dark mode */
@@ -345,7 +345,7 @@ nav [class*="flex"][class*="items-center"][class*="text-zinc-950"] {
 }
 
 :not(.dark) [data-active] [data-slot="icon"] {
-  fill: rgb(17, 24, 39) !important; /* active icon color */
+  color: rgb(17, 24, 39) !important; /* active icon color */
 }
 
 /* Dark mode text colors */
