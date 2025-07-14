@@ -21,18 +21,16 @@
       "Bash(git commit:*)",
       "Bash(git diff:*)",
       "Bash(git restore:*)",
-      "Bash(git commit:*)",
       "Bash(find:*)",
       "Bash(for:*)",
       "Bash(do sed -i '' 's/mx-auto max-w-4xl space-y-10/mx-auto max-w-4xl space-y-10 p-10/g' \"$file\")",
       "Bash(done)",
       "Bash(curl:*)",
       "Bash(open http://localhost:3001)",
-      "Bash(rg:*)",
       "Bash(mkdir:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx tsc:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(npx madge:*)"
     ],
     "deny": []
   }
