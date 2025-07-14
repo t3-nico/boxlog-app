@@ -6,7 +6,7 @@ export const EmptyTrashState = () => {
   return (
     <div className="text-center py-12">
       <div className="mx-auto flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
-        <TrashIcon className="w-6 h-6 text-gray-400" />
+        <TrashIcon className="w-6 h-6 text-gray-400" data-slot="icon" />
       </div>
       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
         Trash is empty

@@ -30,7 +30,7 @@ export default async function Review({ params }: { params: { id: string } }) {
     <>
       <div className="max-lg:hidden">
         <Link href="/review" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
-          <ChevronLeft className="size-4 text-zinc-400 dark:text-zinc-500" />
+          <ChevronLeft className="size-4 text-zinc-400 dark:text-zinc-500" data-slot="icon" />
           Reviews
         </Link>
       </div>
@@ -55,7 +55,7 @@ export default async function Review({ params }: { params: { id: string } }) {
               </span>
             </span>
             <span className="flex items-center gap-3 text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white">
-              <Calendar className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+              <Calendar className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" data-slot="icon" />
               <span>{review.date}</span>
             </span>
           </div>

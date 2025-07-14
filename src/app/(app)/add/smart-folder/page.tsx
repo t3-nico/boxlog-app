@@ -158,7 +158,7 @@ export default function AddSmartFolderPage() {
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" data-slot="icon" />
           <span>Back to Add</span>
         </Button>
       </div>
@@ -254,7 +254,7 @@ export default function AddSmartFolderPage() {
                   onClick={handleAddCondition}
                   className="flex items-center space-x-1 text-sm"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4" data-slot="icon" />
                   <span>Add Condition</span>
                 </Button>
               </div>
@@ -339,7 +339,7 @@ export default function AddSmartFolderPage() {
                           onClick={() => handleRemoveCondition(condition.id)}
                           className="p-1 text-red-600 hover:text-red-700"
                         >
-                          <X className="h-4 w-4" />
+                          <X className="h-4 w-4" data-slot="icon" />
                         </Button>
                       )}
                     </div>

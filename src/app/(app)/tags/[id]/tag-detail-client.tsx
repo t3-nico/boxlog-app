@@ -178,7 +178,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
           The tag you&apos;re looking for doesn&apos;t exist or has been deleted.
         </p>
         <Button onClick={() => router.push('/tags/manage')}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
+          <ArrowLeft className="h-4 w-4 mr-2" data-slot="icon" />
           Back to Tags
         </Button>
       </div>
@@ -200,7 +200,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
             outline 
             onClick={() => router.push('/tags/manage')}
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="h-4 w-4 mr-2" data-slot="icon" />
             Back to Tags
           </Button>
           
@@ -217,7 +217,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
               onClick={() => setShowDeleteConfirm(true)}
               className="text-red-600 border-red-300 hover:bg-red-50"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
+              <Trash2 className="h-4 w-4 mr-2" data-slot="icon" />
               Delete
             </Button>
           </div>
@@ -264,7 +264,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
         <TagStatsCard
           title="Events"
           value={eventCount}
-          icon={<Calendar className="h-5 w-5" />}
+          icon={<Calendar className="h-5 w-5" data-slot="icon" />}
           color="yellow"
         />
         <TagStatsCard

@@ -35,7 +35,7 @@ const addOptions: AddOption[] = [
     type: 'tag',
     title: 'New Tag',
     description: 'Create a new tag to organize your tasks',
-    icon: <Tag className="h-8 w-8" />,
+    icon: <Tag className="h-8 w-8" data-slot="icon" />,
     color: 'bg-green-500',
     href: '/add/tag'
   },
@@ -51,7 +51,7 @@ const addOptions: AddOption[] = [
     type: 'event',
     title: 'New Event',
     description: 'Schedule a new calendar event or meeting',
-    icon: <Calendar className="h-8 w-8" />,
+    icon: <Calendar className="h-8 w-8" data-slot="icon" />,
     color: 'bg-orange-500',
     href: '/add/event'
   },

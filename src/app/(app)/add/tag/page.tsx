@@ -66,7 +66,7 @@ export default function AddTagPage() {
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" data-slot="icon" />
           <span>Back to Add</span>
         </Button>
       </div>

@@ -90,9 +90,9 @@ function getToastIcon(type: Toast['type']) {
   const iconProps = "h-5 w-5"
   switch (type) {
     case 'success':
-      return <CheckCircleIcon className={`${iconProps} text-green-500`} />
+      return <CheckCircleIcon className={`${iconProps} text-green-500`} data-slot="icon" />
     case 'error':
-      return <XCircleIcon className={`${iconProps} text-red-500`} />
+      return <XCircleIcon className={`${iconProps} text-red-500`} data-slot="icon" />
     case 'warning':
       return <ExclamationTriangleIcon className={`${iconProps} text-yellow-500`} />
     case 'info':
@@ -138,7 +138,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
         onClick={() => onRemove(toast.id)}
         className="flex-shrink-0 ml-2 text-current opacity-50 hover:opacity-100 transition-opacity"
       >
-        <XMarkIcon className="h-4 w-4" />
+        <XMarkIcon className="h-4 w-4" data-slot="icon" />
       </motion.button>
     </motion.div>
   )
