@@ -6,9 +6,9 @@ import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/ui/button'
 import { GoogleIcon, AppleIcon } from '@/components/icons'
-import { Field, Label } from '@/components/fieldset'
+import { Label } from '@/components/ui/label'
 import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
 export default function RegisterForm() {
@@ -98,8 +98,8 @@ export default function RegisterForm() {
           Continue with Apple
         </Button>
       </div>
-      <Field>
-        <Label>Email</Label>
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
         <Input
           id="email"
           type="email"
@@ -107,9 +107,9 @@ export default function RegisterForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-      </Field>
-      <Field>
-        <Label>Password</Label>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
         <Input
           id="password"
           type="password"
@@ -118,9 +118,9 @@ export default function RegisterForm() {
           required
           minLength={6}
         />
-      </Field>
-      <Field>
-        <Label>Confirm Password</Label>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Confirm Password</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -129,7 +129,7 @@ export default function RegisterForm() {
           required
           minLength={6}
         />
-      </Field>
+      </div>
       {error && <Text className="text-red-600">{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Signing up...' : 'Sign up'}

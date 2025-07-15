@@ -7,9 +7,9 @@ import { Logo } from '@/app/logo'
 import { Button } from '@/components/ui/button'
 import { GoogleIcon, AppleIcon } from '@/components/icons'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Field, Label } from '@/components/fieldset'
+import { Label } from '@/components/ui/label'
 import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
 export default function LoginForm() {
@@ -81,8 +81,8 @@ export default function LoginForm() {
           Continue with Apple
         </Button>
       </div>
-      <Field>
-        <Label>Email</Label>
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
         <Input
           id="email"
           type="email"
@@ -90,9 +90,9 @@ export default function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-      </Field>
-      <Field>
-        <Label>Password</Label>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
         <Input
           id="password"
           type="password"
@@ -100,7 +100,7 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-      </Field>
+      </div>
       {error && <Text className="text-red-600 font-bold text-lg">{error}</Text>}
       <div className="flex items-center justify-between">
         <CheckboxField>

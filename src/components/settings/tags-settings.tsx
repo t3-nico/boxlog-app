@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from '@/components/table'
 

@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/ui/button'
-import { Field, Label } from '@/components/fieldset'
+import { Label } from '@/components/ui/label'
 import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Strong, Text, TextLink } from '@/components/text'
 
 export default function ForgotPasswordForm() {
@@ -50,8 +50,8 @@ export default function ForgotPasswordForm() {
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
       <Heading>Reset Password</Heading>
       <Text>Enter your registered email address.</Text>
-      <Field>
-        <Label>Email</Label>
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
         <Input
           id="email"
           type="email"
@@ -59,7 +59,7 @@ export default function ForgotPasswordForm() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-      </Field>
+      </div>
       {error && <Text className="text-red-600">{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Sending...' : 'Send reset email'}
