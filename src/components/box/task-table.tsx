@@ -21,7 +21,7 @@ import {
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/dropdown'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { TaskMobileCard } from './task-mobile-card'
 import { TaskDetailModal } from './task-detail-modal'

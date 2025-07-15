@@ -30,7 +30,7 @@ import {
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/dropdown'
 import {
   MoreHorizontal,
   ArrowUp,

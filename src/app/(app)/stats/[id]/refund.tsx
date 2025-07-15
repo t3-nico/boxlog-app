@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/dialog'
 import { Description, Field, FieldGroup, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/select'

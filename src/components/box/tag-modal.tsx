@@ -110,31 +110,31 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
         
         <div className="space-y-6">
           <Field>
-          <Label>Parent Tag (Optional)</Label>
-          <Select value={selectedParentId} onValueChange={setSelectedParentId}>
-            <SelectTrigger>
-              <SelectValue placeholder="None (Root level)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">None (Root level)</SelectItem>
-              {getAvailableParents().map((parent) => (
-                <SelectItem key={parent.id} value={parent.id}>
-                  {parent.path} (Level {parent.level})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
+            <Label>Parent Tag (Optional)</Label>
+            <Select value={selectedParentId} onValueChange={setSelectedParentId}>
+              <SelectTrigger>
+                <SelectValue placeholder="None (Root level)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">None (Root level)</SelectItem>
+                {getAvailableParents().map((parent) => (
+                  <SelectItem key={parent.id} value={parent.id}>
+                    {parent.path} (Level {parent.level})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
-        <Field>
-          <Label>Tag Name</Label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter tag name..."
-            required
-          />
-        </Field>
+          <Field>
+            <Label>Tag Name</Label>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter tag name..."
+              required
+            />
+          </Field>
 
         <Field>
           <Label>Description (Optional)</Label>

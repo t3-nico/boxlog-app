@@ -214,8 +214,8 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
         
         <div className="space-y-6">
           <Field>
-          <Label>Parent Folder (Optional)</Label>
-          <Select value={selectedParentId} onValueChange={setSelectedParentId}>
+            <Label>Parent Folder (Optional)</Label>
+            <Select value={selectedParentId} onValueChange={setSelectedParentId}>
             <SelectTrigger>
               <SelectValue placeholder="None (Root level)" />
             </SelectTrigger>

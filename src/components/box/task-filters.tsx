@@ -11,7 +11,7 @@ import {
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/dropdown'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { ExportMenu } from './export-menu'
 import { TagBadge } from '@/components/tags/tag-badge'
