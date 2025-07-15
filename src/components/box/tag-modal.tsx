@@ -7,7 +7,13 @@ import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/textarea'
-import { Select } from '@/components/select'
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
 import { 
   Dialog, 
   DialogActions, 
@@ -101,16 +107,18 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
       <DialogBody className="space-y-6">
         <Field>
           <Label>Parent Tag (Optional)</Label>
-          <Select
-            value={selectedParentId}
-            onChange={(e) => setSelectedParentId(e.target.value)}
-          >
-            <option value="">None (Root level)</option>
-            {getAvailableParents().map((parent) => (
-              <option key={parent.id} value={parent.id}>
-                {parent.path} (Level {parent.level})
-              </option>
-            ))}
+          <Select value={selectedParentId} onValueChange={setSelectedParentId}>
+            <SelectTrigger>
+              <SelectValue placeholder="None (Root level)" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">None (Root level)</SelectItem>
+              {getAvailableParents().map((parent) => (
+                <SelectItem key={parent.id} value={parent.id}>
+                  {parent.path} (Level {parent.level})
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </Field>
 

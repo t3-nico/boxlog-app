@@ -4,8 +4,13 @@ import { Divider } from '@/components/divider'
 import { Label } from '@/components/fieldset'
 import { Heading, Subheading } from '@/components/heading'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/select'
-import { Text } from '@/components/text'
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
 import { Textarea } from '@/components/textarea'
 import type { Metadata } from 'next'
 import { Address } from '../address'
@@ -23,7 +28,7 @@ export default function Settings() {
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
           <Subheading>Organization Name</Subheading>
-          <Text>This will be displayed on your public profile.</Text>
+          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This will be displayed on your public profile.</p>
         </div>
         <div>
           <Input aria-label="Organization Name" name="name" defaultValue="Catalyst" />
@@ -35,7 +40,7 @@ export default function Settings() {
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
           <Subheading>Organization Bio</Subheading>
-          <Text>This will be displayed on your public profile. Maximum 240 characters.</Text>
+          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This will be displayed on your public profile. Maximum 240 characters.</p>
         </div>
         <div>
           <Textarea aria-label="Organization Bio" name="bio" />
@@ -47,7 +52,7 @@ export default function Settings() {
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
           <Subheading>Organization Email</Subheading>
-          <Text>This is how customers can contact you for support.</Text>
+          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This is how customers can contact you for support.</p>
         </div>
         <div className="space-y-4">
           <Input type="email" aria-label="Organization Email" name="email" defaultValue="info@example.com" />
@@ -63,7 +68,7 @@ export default function Settings() {
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
           <Subheading>Address</Subheading>
-          <Text>This is where your organization is registered.</Text>
+          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This is where your organization is registered.</p>
         </div>
         <Address />
       </section>
@@ -73,12 +78,17 @@ export default function Settings() {
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
           <Subheading>Currency</Subheading>
-          <Text>The currency that your organization will be collecting.</Text>
+          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">The currency that your organization will be collecting.</p>
         </div>
         <div>
-          <Select aria-label="Currency" name="currency" defaultValue="cad">
-            <option value="cad">CAD - Canadian Dollar</option>
-            <option value="usd">USD - United States Dollar</option>
+          <Select defaultValue="cad" name="currency">
+            <SelectTrigger>
+              <SelectValue placeholder="Select currency" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cad">CAD - Canadian Dollar</SelectItem>
+              <SelectItem value="usd">USD - United States Dollar</SelectItem>
+            </SelectContent>
           </Select>
         </div>
       </section>

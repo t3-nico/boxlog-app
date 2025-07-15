@@ -10,7 +10,6 @@ import { Checkbox, CheckboxField } from '@/components/checkbox'
 import { Label } from '@/components/ui/label'
 import { Heading } from '@/components/heading'
 import { Input } from '@/components/ui/input'
-import { Strong, Text, TextLink } from '@/components/text'
 
 export default function LoginForm() {
   const [email, setEmail] = useState('')
@@ -101,27 +100,27 @@ export default function LoginForm() {
           required
         />
       </div>
-      {error && <Text className="text-red-600 font-bold text-lg">{error}</Text>}
+      {error && <p className="text-red-600 font-bold text-lg text-base/6 sm:text-sm/6">{error}</p>}
       <div className="flex items-center justify-between">
         <CheckboxField>
           <Checkbox name="remember" />
           <Label>Remember me</Label>
         </CheckboxField>
-        <Text>
-          <TextLink href="/auth/password">
-            <Strong>Forgot your password?</Strong>
-          </TextLink>
-        </Text>
+        <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">
+          <a href="/auth/password" className="text-zinc-950 underline decoration-zinc-950/50 data-hover:decoration-zinc-950 dark:text-white dark:decoration-white/50 dark:data-hover:decoration-white">
+            <strong className="font-medium text-zinc-950 dark:text-white">Forgot your password?</strong>
+          </a>
+        </p>
       </div>
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Logging in...' : 'Login'}
       </Button>
-      <Text className="text-center">
+      <p className="text-center text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">
         Don&apos;t have an account?{' '}
-        <TextLink href="/auth/signup">
-          <Strong>Sign up</Strong>
-        </TextLink>
-      </Text>
+        <a href="/auth/signup" className="text-zinc-950 underline decoration-zinc-950/50 data-hover:decoration-zinc-950 dark:text-white dark:decoration-white/50 dark:data-hover:decoration-white">
+          <strong className="font-medium text-zinc-950 dark:text-white">Sign up</strong>
+        </a>
+      </p>
     </form>
   )
 }

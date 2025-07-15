@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Switch } from '@/components/switch'
+import { Switch } from '@/components/ui/switch'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, PRODUCTIVITY_COLORS, type ChronotypeType } from '@/types/chronotype'
 import { cn } from '@/lib/utils'
@@ -110,7 +110,7 @@ export function ChronotypeSettings() {
         </div>
         <Switch
           checked={chronotype.enabled}
-          onChange={handleToggle}
+          onCheckedChange={handleToggle}
         />
       </div>
       

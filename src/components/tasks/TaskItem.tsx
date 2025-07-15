@@ -2,7 +2,7 @@
 
 import { Task } from '@/types/box'
 import { getStatusColor, getPriorityColor, getTypeColor } from '@/lib/tasks'
-import { Badge } from '@/components/badge'
+import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'

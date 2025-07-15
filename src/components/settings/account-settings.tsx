@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
 import { Input } from '@/components/ui/input'
-import { Text } from '@/components/text'
 import { SettingSection } from '@/components/settings-section'
-import { Switch } from '@/components/switch'
+import { Switch } from '@/components/ui/switch'
 
 export default function AccountSettings() {
   const [name, setName] = useState('')
@@ -90,7 +89,7 @@ export default function AccountSettings() {
             placeholder="Confirm new password"
             required
           />
-          {passwordError && <Text className="text-red-600">{passwordError}</Text>}
+          {passwordError && <p className="text-red-600 text-base/6 text-sm/6">{passwordError}</p>}
           <div className="flex justify-end">
             <Button type="submit">Update password</Button>
           </div>
@@ -106,9 +105,9 @@ export default function AccountSettings() {
             <Subheading level={3} className="!text-base">
               Enable 2FA
             </Subheading>
-            <Text className="mt-1">Require a second step to sign in.</Text>
+            <p className="mt-1 text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Require a second step to sign in.</p>
           </div>
-          <Switch checked={twoFactorEnabled} onChange={setTwoFactorEnabled} />
+          <Switch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
         </div>
         {twoFactorEnabled && (
           <div className="flex justify-end px-4 pb-4">
@@ -126,9 +125,9 @@ export default function AccountSettings() {
             <Subheading level={3} className="!text-base text-red-600 dark:text-red-400">
               Delete account
             </Subheading>
-            <Text className="text-red-600 dark:text-red-400">
+            <p className="text-red-600 dark:text-red-400 text-base/6 sm:text-sm/6">
               This action is irreversible.
-            </Text>
+            </p>
           </div>
           <Button type="button" onClick={handleDeleteAccount} className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800">
             Delete

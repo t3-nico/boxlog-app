@@ -9,7 +9,13 @@ import { SmartFolder, FolderCondition, FilterField, FilterOperator, FilterLogic 
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/select'
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
 import { ArrowLeft, Plus, X } from 'lucide-react'
 
 // Color options for SmartFolders
@@ -154,7 +160,7 @@ export default function AddSmartFolderPage() {
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div className="flex items-center space-x-4">
         <Button
-          plain
+          variant="ghost"
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
@@ -176,16 +182,18 @@ export default function AddSmartFolderPage() {
             
             <Field>
               <Label>Parent Folder (Optional)</Label>
-              <Select
-                value={selectedParentId}
-                onChange={(e) => setSelectedParentId(e.target.value)}
-              >
-                <option value="">None (Root level)</option>
-                {getAvailableParents().map((parent) => (
-                  <option key={parent.id} value={parent.id}>
-                    {parent.path} (Level {parent.level})
-                  </option>
-                ))}
+              <Select value={selectedParentId} onValueChange={setSelectedParentId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="None (Root level)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">None (Root level)</SelectItem>
+                  {getAvailableParents().map((parent) => (
+                    <SelectItem key={parent.id} value={parent.id}>
+                      {parent.path} (Level {parent.level})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
             </Field>
 
