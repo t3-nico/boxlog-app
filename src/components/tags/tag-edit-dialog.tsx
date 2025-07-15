@@ -150,7 +150,7 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
           </div>
         </DialogBody>
         <DialogActions>
-          <Button type="button" outline onClick={handleClose}>
+          <Button type="button" variant="outline" onClick={handleClose}>
             キャンセル
           </Button>
           <Button type="submit">保存</Button>

@@ -49,7 +49,7 @@ export default async function Event({ params }: { params: { id: string } }) {
           </div>
         </div>
         <div className="flex gap-4">
-          <Button outline>Edit</Button>
+          <Button variant="outline">Edit</Button>
           <Button>View</Button>
         </div>
       </div>

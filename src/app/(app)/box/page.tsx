@@ -104,7 +104,7 @@ export default function Box() {
               </Button>
             ) : (
               <Button
-                plain
+                variant="ghost"
                 onClick={() => handleViewChange('dashboard')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
@@ -122,7 +122,7 @@ export default function Box() {
               </Button>
             ) : (
               <Button
-                plain
+                variant="ghost"
                 onClick={() => handleViewChange('board')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >
@@ -140,7 +140,7 @@ export default function Box() {
               </Button>
             ) : (
               <Button
-                plain
+                variant="ghost"
                 onClick={() => handleViewChange('table')}
                 className="flex items-center space-x-1 px-2 py-1 text-xs"
               >

@@ -60,7 +60,7 @@ export default async function Review({ params }: { params: { id: string } }) {
             </span>
           </div>
           <div className="flex gap-4">
-            <RefundReview outline amount={review.amount.usd}>
+            <RefundReview variant="outline" amount={review.amount.usd}>
               Refund
             </RefundReview>
             <Button>Resend Invoice</Button>

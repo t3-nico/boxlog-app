@@ -274,71 +274,91 @@ export default function AddSmartFolderPage() {
                   <div key={condition.id} className="border rounded-lg p-3 bg-gray-50 dark:bg-gray-800">
                     <div className="flex items-center space-x-2">
                       {index > 0 && (
-                        <Select
-                          value={condition.logic || 'and'}
-                          onChange={(e) => handleConditionChange(condition.id, { logic: e.target.value as FilterLogic })}
-                          className="w-20"
+                        <Select 
+                          value={condition.logic || 'and'} 
+                          onValueChange={(value) => handleConditionChange(condition.id, { logic: value as FilterLogic })}
                         >
-                          {logicOptions.map(option => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
+                          <SelectTrigger className="w-20">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {logicOptions.map(option => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       )}
                       
                       <Select
                         value={condition.field}
-                        onChange={(e) => handleConditionChange(condition.id, { 
-                          field: e.target.value as FilterField,
+                        onValueChange={(value) => handleConditionChange(condition.id, { 
+                          field: value as FilterField,
                           value: '' // Reset value when field changes
                         })}
-                        className="flex-1"
                       >
-                        {filterFields.map(field => (
-                          <option key={field.value} value={field.value}>
-                            {field.label}
-                          </option>
-                        ))}
+                        <SelectTrigger className="flex-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {filterFields.map(field => (
+                            <SelectItem key={field.value} value={field.value}>
+                              {field.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                       
                       <Select
                         value={condition.operator}
-                        onChange={(e) => handleConditionChange(condition.id, { operator: e.target.value as FilterOperator })}
-                        className="flex-1"
+                        onValueChange={(value) => handleConditionChange(condition.id, { operator: value as FilterOperator })}
                       >
-                        {operators.map(op => (
-                          <option key={op.value} value={op.value}>
-                            {op.label}
-                          </option>
-                        ))}
+                        <SelectTrigger className="flex-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {operators.map(op => (
+                            <SelectItem key={op.value} value={op.value}>
+                              {op.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                       
                       {condition.field === 'tags' ? (
                         <Select
                           value={condition.value as string}
-                          onChange={(e) => handleConditionChange(condition.id, { value: e.target.value })}
-                          className="flex-1"
+                          onValueChange={(value) => handleConditionChange(condition.id, { value })}
                         >
-                          <option value="">Select tag...</option>
-                          {getValueOptions(condition.field).map((tag: any) => (
-                            <option key={tag.value} value={tag.value}>
-                              {tag.label}
-                            </option>
-                          ))}
+                          <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Select tag..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Select tag...</SelectItem>
+                            {getValueOptions(condition.field).map((tag: any) => (
+                              <SelectItem key={tag.value} value={tag.value}>
+                                {tag.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       ) : (
                         <Select
                           value={condition.value as string}
-                          onChange={(e) => handleConditionChange(condition.id, { value: e.target.value })}
-                          className="flex-1"
+                          onValueChange={(value) => handleConditionChange(condition.id, { value })}
                         >
-                          <option value="">Select value...</option>
-                          {getValueOptions(condition.field).map((option: any) => (
-                            <option key={option.value || option} value={option.value || option}>
-                              {option.label || option}
-                            </option>
-                          ))}
+                          <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Select value..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Select value...</SelectItem>
+                            {getValueOptions(condition.field).map((option: any) => (
+                              <SelectItem key={option.value || option} value={option.value || option}>
+                                {option.label || option}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       )}
                       

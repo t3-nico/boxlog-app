@@ -96,7 +96,7 @@ export default function Settings() {
       <Divider className="my-10" soft />
 
       <div className="flex justify-end gap-4">
-        <Button type="reset" plain>
+        <Button type="reset" variant="ghost">
           Reset
         </Button>
         <Button type="submit">Save changes</Button>

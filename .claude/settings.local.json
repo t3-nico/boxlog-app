@@ -30,7 +30,9 @@
       "Bash(mkdir:*)",
       "Bash(npx tsc:*)",
       "Bash(mv:*)",
-      "Bash(npx madge:*)"
+      "Bash(npx madge:*)",
+      "Bash(tail:*)",
+      "Bash(npx next build:*)"
     ],
     "deny": []
   }

@@ -68,7 +68,7 @@ export default function AddTagPage() {
     <div className="flex-1 space-y-6 p-4 pt-6 md:p-8">
       <div className="flex items-center space-x-4">
         <Button
-          plain
+          variant="ghost"
           onClick={() => router.push('/add')}
           className="flex items-center space-x-2"
         >
@@ -214,7 +214,7 @@ export default function AddTagPage() {
           <div className="flex items-center justify-end space-x-4">
             <Button
               type="button"
-              plain
+              variant="ghost"
               onClick={() => router.push('/add')}
             >
               Cancel

@@ -45,7 +45,7 @@ export function RefundReview({ amount, ...props }: { amount: string } & React.Co
           </FieldGroup>
         </DialogBody>
         <DialogActions>
-          <Button plain onClick={() => setIsOpen(false)}>
+          <Button variant="ghost" onClick={() => setIsOpen(false)}>
             Cancel
           </Button>
           <Button onClick={() => setIsOpen(false)}>Refund</Button>

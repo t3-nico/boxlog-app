@@ -1,3 +1,5 @@
+import { SmartFolder as BoxSmartFolder, FolderCondition } from './box'
+
 export interface Notification {
   id: string
   type: 'meeting' | 'task' | 'reminder' | 'mention' | 'system'
@@ -9,13 +11,8 @@ export interface Notification {
   priority: 'low' | 'normal' | 'high'
 }
 
-export interface SmartFolder {
-  id: string
-  name: string
+export interface SmartFolder extends Omit<BoxSmartFolder, 'createdAt' | 'updatedAt'> {
   count: number
-  rules: any[] // TODO: Define proper rule interface
-  color?: string
-  isSystem?: boolean
   orderIndex: number
 }
 

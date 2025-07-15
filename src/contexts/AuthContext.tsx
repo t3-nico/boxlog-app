@@ -1,18 +1,23 @@
 'use client'
 
 import { createContext, useContext, ReactNode, useEffect, useState } from 'react'
+import { User, Session, AuthResponse, AuthError } from '@supabase/supabase-js'
+
+interface UserMetadata {
+  [key: string]: string | number | boolean | null
+}
 
 interface AuthContextType {
-  user: any
-  session: any
+  user: User | null
+  session: Session | null
   loading: boolean
   error: string | null
-  signUp: (email: string, password: string, metadata?: any) => Promise<any>
-  signIn: (email: string, password: string) => Promise<any>
-  signInWithOAuth: (provider: 'google' | 'apple') => Promise<any>
-  signOut: () => Promise<any>
-  resetPassword: (email: string) => Promise<any>
-  updatePassword: (password: string) => Promise<any>
+  signUp: (email: string, password: string, metadata?: UserMetadata) => Promise<AuthResponse>
+  signIn: (email: string, password: string) => Promise<AuthResponse>
+  signInWithOAuth: (provider: 'google' | 'apple') => Promise<AuthResponse>
+  signOut: () => Promise<{ error: AuthError | null }>
+  resetPassword: (email: string) => Promise<{ error: AuthError | null }>
+  updatePassword: (password: string) => Promise<AuthResponse>
   clearError: () => void
 }
 
@@ -26,12 +31,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session: null,
     loading: false,
     error: null,
-    signUp: async () => ({ data: null, error: 'Not available' }),
-    signIn: async () => ({ data: null, error: 'Not available' }),
-    signInWithOAuth: async () => ({ data: null, error: 'Not available' }),
-    signOut: async () => ({ error: null }),
-    resetPassword: async () => ({ data: null, error: 'Not available' }),
-    updatePassword: async () => ({ data: null, error: 'Not available' }),
+    signUp: async () => ({ 
+      data: { user: null, session: null }, 
+      error: { message: 'Not available', name: 'NotImplemented', status: 500 } as AuthError 
+    }),
+    signIn: async () => ({ 
+      data: { user: null, session: null }, 
+      error: { message: 'Not available', name: 'NotImplemented', status: 500 } as AuthError 
+    }),
+    signInWithOAuth: async () => ({ 
+      data: { user: null, session: null }, 
+      error: { message: 'Not available', name: 'NotImplemented', status: 500 } as AuthError 
+    }),
+    signOut: async () => ({ 
+      error: { message: 'Not available', name: 'NotImplemented', status: 500 } as AuthError 
+    }),
+    resetPassword: async () => ({ 
+      error: { message: 'Not available', name: 'NotImplemented', status: 500 } as AuthError 
+    }),
+    updatePassword: async () => ({ 
+      data: { user: null, session: null }, 
+      error: { message: 'Not available', name: 'NotImplemented', status: 500 } as AuthError 
+    }),
     clearError: () => {},
   }
 

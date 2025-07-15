@@ -197,7 +197,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <Button 
-            outline 
+            variant="outline" 
             onClick={() => router.push('/tags/manage')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" data-slot="icon" />
@@ -206,14 +206,14 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
           
           <div className="flex items-center gap-2">
             <Button
-              outline
+              variant="outline"
               onClick={() => setShowEditModal(true)}
             >
               <Pencil className="h-4 w-4 mr-2" />
               Edit
             </Button>
             <Button
-              outline
+              variant="outline"
               onClick={() => setShowDeleteConfirm(true)}
               className="text-red-600 border-red-300 hover:bg-red-50"
             >
@@ -356,7 +356,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
                 {tag.children.map(child => (
                   <Button
                     key={child.id}
-                    outline
+                    variant="outline"
                     className="w-full justify-start"
                     onClick={() => router.push(`/tags/${child.id}`)}
                   >
@@ -402,7 +402,7 @@ export function TagDetailClient({ tagId }: TagDetailClientProps) {
             </p>
             <div className="flex gap-3 justify-end">
               <Button
-                outline
+                variant="outline"
                 onClick={() => setShowDeleteConfirm(false)}
               >
                 Cancel
