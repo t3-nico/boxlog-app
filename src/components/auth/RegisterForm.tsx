@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { GoogleIcon, AppleIcon } from '@/components/icons'
 import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
@@ -81,7 +81,7 @@ export default function RegisterForm() {
       <div className="mb-6 flex flex-col gap-2">
         <Button
           type="button"
-          outline
+          variant="outline"
           onClick={() => handleProviderSignIn('google')}
           className="w-full"
         >
@@ -90,7 +90,7 @@ export default function RegisterForm() {
         </Button>
         <Button
           type="button"
-          outline
+          variant="outline"
           onClick={() => handleProviderSignIn('apple')}
           className="w-full"
         >

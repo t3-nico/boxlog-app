@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/input'
 import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from '@/components/table'
@@ -73,7 +73,7 @@ function EditTagDialog({
           />
         </DialogBody>
         <DialogActions>
-          <Button type="button" outline onClick={onClose}>
+          <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit">Save</Button>
