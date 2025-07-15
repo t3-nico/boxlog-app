@@ -6,8 +6,8 @@ import { usePathname } from 'next/navigation'
 export function AuthLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   
-  // ログインページは shadcn/ui の2カラムレイアウトを使用するため、ラップしない
-  if (pathname === '/auth/login') {
+  // ログインとサインアップページは shadcn/ui の2カラムレイアウトを使用するため、ラップしない
+  if (pathname === '/auth/login' || pathname === '/auth/signup' || pathname === '/auth/password') {
     return <>{children}</>
   }
 
