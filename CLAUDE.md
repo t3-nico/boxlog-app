@@ -29,7 +29,7 @@ This is a Next.js 14 application built with TypeScript, using App Router for rou
 
 - **Frontend**: Next.js 14 with App Router, React 18, TypeScript
 - **Styling**: Tailwind CSS v4 with custom theme system
-- **UI Components**: Headless UI, Radix UI primitives
+- **UI Components**: shadcn/ui (Radix UI primitives), legacy Headless UI (partial)
 - **Authentication**: Supabase Auth with custom AuthContext
 - **State Management**: Zustand with persistence
 - **Database**: Supabase (PostgreSQL)
@@ -48,6 +48,132 @@ This is a Next.js 14 application built with TypeScript, using App Router for rou
 - `src/contexts/` - React contexts (auth, theme)
 - `src/styles/` - Global styles and theme definitions
 - `src/config/` - Configuration files
+
+### shadcn/ui Component Migration
+
+The application has completed migration from legacy Headless UI components to shadcn/ui, achieving a modern, type-safe component system built on Radix UI primitives.
+
+#### Migration Completion Status
+
+**✅ Fully Migrated Components:**
+- **Button** (shadcn/ui) - Complete replacement with variant system
+- **Input** (shadcn/ui) - All form inputs migrated
+- **Dialog** (shadcn/ui) - DialogContent, DialogHeader, DialogFooter pattern
+- **Select** (shadcn/ui) - SelectTrigger, SelectContent, SelectItem pattern
+- **Switch** (shadcn/ui) - Radix UI primitives with proper theming
+- **Badge** (shadcn/ui) - Consistent styling with variant support
+- **Text** (removed) - Replaced with semantic HTML `<p>` tags with Tailwind classes
+
+**⚠️ Legacy Components (Partial Usage):**
+- **Dropdown** (Headless UI) - Used in application-layout.tsx for compatibility
+- **Checkbox** (Headless UI) - Used in specific refund forms
+- **Fieldset/Field/Label** (Headless UI) - Used in forms, coexists with shadcn/ui
+- **Textarea** (Headless UI) - Limited usage in tag descriptions
+
+#### Component Usage Patterns
+
+**shadcn/ui Dialog Pattern:**
+```tsx
+import { 
+  Dialog, 
+  DialogContent,
+  DialogDescription, 
+  DialogFooter,
+  DialogHeader,
+  DialogTitle 
+} from '@/components/ui/dialog'
+
+<Dialog open={open} onOpenChange={onClose}>
+  <DialogContent className="sm:max-w-lg">
+    <DialogHeader>
+      <DialogTitle>Dialog Title</DialogTitle>
+      <DialogDescription>Dialog description</DialogDescription>
+    </DialogHeader>
+    
+    {/* Content */}
+    
+    <DialogFooter>
+      <Button variant="outline" onClick={onClose}>Cancel</Button>
+      <Button onClick={handleSave}>Save</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+**shadcn/ui Select Pattern:**
+```tsx
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '@/components/ui/select'
+
+<Select value={value} onValueChange={setValue}>
+  <SelectTrigger>
+    <SelectValue placeholder="Select option..." />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="option1">Option 1</SelectItem>
+    <SelectItem value="option2">Option 2</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+**shadcn/ui Button Variants:**
+```tsx
+// Primary button (default)
+<Button onClick={handleSave}>Save</Button>
+
+// Secondary button
+<Button variant="outline" onClick={onClose}>Cancel</Button>
+
+// Ghost button (replaces legacy `plain` prop)
+<Button variant="ghost" onClick={handleAction}>Action</Button>
+
+// Other variants: destructive, secondary, link
+<Button variant="destructive">Delete</Button>
+```
+
+**Switch Component Migration:**
+```tsx
+// Legacy Headless UI
+<Switch checked={enabled} onChange={setEnabled} />
+
+// shadcn/ui (note: onCheckedChange instead of onChange)
+<Switch checked={enabled} onCheckedChange={setEnabled} />
+```
+
+#### Mixed Component Strategy
+
+The codebase uses a pragmatic mixed approach:
+- **New features**: Use shadcn/ui components exclusively
+- **Legacy compatibility**: Maintain Headless UI where breaking changes would be significant
+- **Form components**: Gradual migration with Field/Label from Headless UI + shadcn/ui inputs
+
+#### Migration Benefits Achieved
+
+1. **Type Safety**: Better TypeScript integration with Radix UI primitives
+2. **Accessibility**: Improved ARIA support and keyboard navigation
+3. **Consistency**: Unified component API and styling patterns
+4. **Performance**: Optimized bundle size with tree-shaking
+5. **Developer Experience**: Better IntelliSense and prop validation
+6. **Theme Integration**: Seamless integration with CSS variable theme system
+
+#### Remaining Legacy Usage
+
+**Files with Legacy Components:**
+- `src/app/(app)/application-layout.tsx` - Dropdown components
+- `src/app/(app)/stats/[id]/refund.tsx` - Dialog, Checkbox components
+- `src/app/(app)/review/[id]/refund.tsx` - Dialog, Checkbox components
+- `src/components/tags/tag-edit-dialog.tsx` - Dialog components
+
+**Migration Notes:**
+- Legacy components are stable and functional
+- No immediate migration required for remaining components
+- Future development should prefer shadcn/ui components
+- Mixed usage is intentional and well-documented
 
 ### Theme System
 

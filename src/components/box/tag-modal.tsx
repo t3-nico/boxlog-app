@@ -194,6 +194,7 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
             </span>
           </div>
         </Field>
+        </div>
 
         <div className="rounded-lg bg-gray-50 dark:bg-gray-800 p-4">
           <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">

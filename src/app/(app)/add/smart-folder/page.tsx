@@ -210,16 +210,18 @@ export default function AddSmartFolderPage() {
               
               <Field>
                 <Label>Icon (Optional)</Label>
-                <Select
-                  value={selectedIcon}
-                  onChange={(e) => setSelectedIcon(e.target.value)}
-                >
-                  <option value="">Select icon...</option>
-                  {folderIcons.map((icon) => (
-                    <option key={icon} value={icon}>
-                      {icon} {icon}
-                    </option>
-                  ))}
+                <Select value={selectedIcon} onValueChange={setSelectedIcon}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select icon..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Select icon...</SelectItem>
+                    {folderIcons.map((icon) => (
+                      <SelectItem key={icon} value={icon}>
+                        {icon} {icon}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </Field>
             </div>
@@ -258,7 +260,7 @@ export default function AddSmartFolderPage() {
                 <Label>Conditions</Label>
                 <Button
                   type="button"
-                  plain
+                  variant="ghost"
                   onClick={handleAddCondition}
                   className="flex items-center space-x-1 text-sm"
                 >
@@ -343,7 +345,7 @@ export default function AddSmartFolderPage() {
                       {conditions.length > 1 && (
                         <Button
                           type="button"
-                          plain
+                          variant="ghost"
                           onClick={() => handleRemoveCondition(condition.id)}
                           className="p-1 text-red-600 hover:text-red-700"
                         >
@@ -401,7 +403,7 @@ export default function AddSmartFolderPage() {
           <div className="flex items-center justify-end space-x-4">
             <Button
               type="button"
-              plain
+              variant="outline"
               onClick={() => router.push('/add')}
             >
               Cancel

@@ -216,29 +216,29 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
           <Field>
             <Label>Parent Folder (Optional)</Label>
             <Select value={selectedParentId} onValueChange={setSelectedParentId}>
-            <SelectTrigger>
-              <SelectValue placeholder="None (Root level)" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">None (Root level)</SelectItem>
-              {getAvailableParents().map((parent) => (
-                <SelectItem key={parent.id} value={parent.id}>
-                  {parent.path} (Level {parent.level})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </Field>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Field>
-            <Label>Folder Name</Label>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter folder name..."
-            />
+              <SelectTrigger>
+                <SelectValue placeholder="None (Root level)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">None (Root level)</SelectItem>
+                {getAvailableParents().map((parent) => (
+                  <SelectItem key={parent.id} value={parent.id}>
+                    {parent.path} (Level {parent.level})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Field>
+              <Label>Folder Name</Label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter folder name..."
+              />
+            </Field>
           
           <Field>
             <Label>Icon (Optional)</Label>
@@ -256,7 +256,7 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
               </SelectContent>
             </Select>
           </Field>
-        </div>
+          </div>
 
         <Field>
           <Label>Description (Optional)</Label>
@@ -292,7 +292,7 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
             <Label>Conditions</Label>
             <Button
               type="button"
-              plain
+              variant="ghost"
               onClick={handleAddCondition}
               className="flex items-center space-x-1 text-sm"
             >
@@ -397,7 +397,7 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
                   {conditions.length > 1 && (
                     <Button
                       type="button"
-                      plain
+                      variant="ghost"
                       onClick={() => handleRemoveCondition(condition.id)}
                       className="p-1 text-red-600 hover:text-red-700"
                     >
@@ -408,6 +408,7 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         {/* Preview Section */}
