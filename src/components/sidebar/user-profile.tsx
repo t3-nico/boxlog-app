@@ -4,13 +4,13 @@ import { useState } from 'react'
 import { Avatar } from '@/components/avatar'
 import { useAuth } from '@/hooks/use-auth'
 import {
-  Dropdown,
-  DropdownButton,
-  DropdownDivider,
-  DropdownItem,
-  DropdownLabel,
   DropdownMenu,
-} from '@/components/dropdown'
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   ChevronDown,
   Settings,
@@ -51,45 +51,47 @@ export function UserProfile({ collapsed = false }: UserProfileProps) {
 
   return (
     <div className="px-4">
-      <Dropdown>
-        <DropdownButton className="w-full flex items-center gap-3 p-2 hover:bg-gray-800 transition-colors duration-150">
-          <Avatar
-            src={user.user_metadata?.avatar_url}
-            className="size-8"
-            initials={userDisplayName.charAt(0).toUpperCase()}
-          />
-          <div className="flex-1 text-left min-w-0">
-            <div className="text-sm font-medium text-gray-200 truncate">
-              {userDisplayName}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="w-full flex items-center gap-3 p-2 hover:bg-gray-800 transition-colors duration-150 rounded-md">
+            <Avatar
+              src={user.user_metadata?.avatar_url}
+              className="size-8"
+              initials={userDisplayName.charAt(0).toUpperCase()}
+            />
+            <div className="flex-1 text-left min-w-0">
+              <div className="text-sm font-medium text-gray-200 truncate">
+                {userDisplayName}
+              </div>
+              <div className="text-xs text-gray-400">
+                {userPlan} Plan
+              </div>
             </div>
-            <div className="text-xs text-gray-400">
-              {userPlan} Plan
-            </div>
-          </div>
-          <ChevronDown className="size-4 text-gray-400" data-slot="icon" />
-        </DropdownButton>
+            <ChevronDown className="size-4 text-gray-400" />
+          </button>
+        </DropdownMenuTrigger>
         
-        <DropdownMenu className="min-w-64" anchor="bottom start">
-          <DropdownItem href="/settings">
-            <Settings data-slot="icon" />
-            <DropdownLabel>Settings</DropdownLabel>
-          </DropdownItem>
+        <DropdownMenuContent className="min-w-64" align="start">
+          <DropdownMenuItem onClick={() => router.push('/settings')}>
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </DropdownMenuItem>
           
-          <DropdownDivider />
+          <DropdownMenuSeparator />
           
-          <DropdownItem href="/support">
-            <HelpCircle data-slot="icon" />
-            <DropdownLabel>Support</DropdownLabel>
-          </DropdownItem>
+          <DropdownMenuItem onClick={() => router.push('/support')}>
+            <HelpCircle className="mr-2 h-4 w-4" />
+            Support
+          </DropdownMenuItem>
           
-          <DropdownDivider />
+          <DropdownMenuSeparator />
           
-          <DropdownItem onClick={handleSignOut}>
-            <LogOut data-slot="icon" />
-            <DropdownLabel>Logout</DropdownLabel>
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+          <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }

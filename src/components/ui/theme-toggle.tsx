@@ -2,13 +2,13 @@
 
 import { motion } from 'framer-motion'
 import { useTheme } from '@/contexts/theme-context'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
-  Dropdown,
-  DropdownButton,
-  DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Sun as SunIcon,
   Moon as MoonIcon,
@@ -37,51 +37,53 @@ export function ThemeToggle() {
   return (
     <div className="flex items-center space-x-2">
       {/* Theme Selector */}
-      <Dropdown>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <DropdownButton plain className="flex items-center space-x-2">
-            {themeIcons[theme]}
-            <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
-          </DropdownButton>
-        </motion.div>
-        
-        <DropdownMenu className="w-32">
-          <DropdownItem
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+              {themeIcons[theme]}
+              <ChevronDownIcon className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-32">
+          <DropdownMenuItem
             onClick={() => setTheme('light')}
             className={theme === 'light' ? 'bg-accent' : ''}
           >
-            <SunIcon className="mr-2 h-4 w-4" data-slot="icon" />
+            <SunIcon className="mr-2 h-4 w-4" />
             Light
-          </DropdownItem>
-          <DropdownItem
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={() => setTheme('dark')}
             className={theme === 'dark' ? 'bg-accent' : ''}
           >
-            <MoonIcon className="mr-2 h-4 w-4" data-slot="icon" />
+            <MoonIcon className="mr-2 h-4 w-4" />
             Dark
-          </DropdownItem>
-          <DropdownItem
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={() => setTheme('system')}
             className={theme === 'system' ? 'bg-accent' : ''}
           >
-            <ComputerDesktopIcon className="mr-2 h-4 w-4" data-slot="icon" />
+            <ComputerDesktopIcon className="mr-2 h-4 w-4" />
             System
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* Color Scheme Selector */}
-      <Dropdown>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <DropdownButton plain className="flex items-center space-x-2">
-            <SwatchIcon className="h-4 w-4" data-slot="icon" />
-            <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
-          </DropdownButton>
-        </motion.div>
-        
-        <DropdownMenu className="w-36">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+              <SwatchIcon className="h-4 w-4" />
+              <ChevronDownIcon className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-36">
           {colorSchemes.map((scheme) => (
-            <DropdownItem
+            <DropdownMenuItem
               key={scheme.value}
               onClick={() => setColorScheme(scheme.value)}
               className={`flex items-center justify-between ${colorScheme === scheme.value ? 'bg-accent' : ''}`}
@@ -97,10 +99,10 @@ export function ThemeToggle() {
                   className="w-2 h-2 bg-current rounded-full"
                 />
               )}
-            </DropdownItem>
+            </DropdownMenuItem>
           ))}
-        </DropdownMenu>
-      </Dropdown>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
@@ -114,11 +116,11 @@ export function SimpleThemeToggle() {
 
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-      <Button plain onClick={toggleTheme} className="p-2">
+      <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
         {resolvedTheme === 'light' ? (
-          <MoonIcon className="h-4 w-4" data-slot="icon" />
+          <MoonIcon className="h-4 w-4" />
         ) : (
-          <SunIcon className="h-4 w-4" data-slot="icon" />
+          <SunIcon className="h-4 w-4" />
         )}
         <span className="sr-only">Toggle theme</span>
       </Button>
