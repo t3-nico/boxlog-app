@@ -5,16 +5,16 @@ import { SmartFolder, FolderCondition, FilterField, FilterOperator, FilterLogic 
 import { useSmartFolderStore } from '@/lib/smart-folder-store'
 import { useBoxStore } from '@/lib/box-store'
 import { useTagStore } from '@/lib/tag-store'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { 
   Dialog, 
   DialogActions, 
   DialogBody, 
   DialogDescription, 
   DialogTitle 
-} from '@/components/dialog'
+} from '@/components/ui/dialog'
 import { Select } from '@/components/select'
 import { Plus, X } from 'lucide-react'
 

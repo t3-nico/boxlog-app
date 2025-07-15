@@ -23,14 +23,14 @@ import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
 import { useTagStore } from '@/lib/tag-store'
 import { Badge } from '@/components/badge'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { TagBadge } from '@/components/tags/tag-badge'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import {
   MoreHorizontal,
   ArrowUp,

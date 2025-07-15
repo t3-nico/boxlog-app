@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { TaskForm } from '@/components/tasks/TaskForm'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 
 export default function AddTaskPage() {

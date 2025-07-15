@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { Heading, Subheading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
-import { Button } from '@/components/button'
-import { Input } from '@/components/input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/textarea'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
+import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/badge'
 
 interface Template {

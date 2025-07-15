@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { Logo } from '@/app/logo'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
 import { Heading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Text } from '@/components/text'
 
 export default function ResetPassword() {

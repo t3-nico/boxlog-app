@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/avatar'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/heading'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getReviews } from '@/data'
 import type { Metadata } from 'next'
 

@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react'
 import { Tag } from '@/types/box'
 import { useTagStore, tagColors, colorCategories } from '@/lib/tag-store'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/textarea'
 import { Select } from '@/components/select'
 import { 
@@ -14,7 +14,7 @@ import {
   DialogBody, 
   DialogDescription, 
   DialogTitle 
-} from '@/components/dialog'
+} from '@/components/ui/dialog'
 
 interface TagModalProps {
   open: boolean

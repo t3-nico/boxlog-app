@@ -5,7 +5,7 @@ import { useBoxStore } from '@/lib/box-store'
 import { getStatusColor, getPriorityColor, getTypeColor } from '@/lib/tasks'
 import { Task } from '@/types/box'
 import { Badge } from '@/components/badge'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Edit, Trash2, X } from 'lucide-react'
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Tag } from '@/types/box'
 import { useTagStore } from '@/lib/tag-store'
 import { useBoxStore } from '@/lib/box-store'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { 
   Plus, 
   MoreHorizontal,
@@ -16,7 +16,7 @@ import {
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import { TagModal } from './tag-modal'
 
 interface TagListProps {

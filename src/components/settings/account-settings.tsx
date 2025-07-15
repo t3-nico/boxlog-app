@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 import { Text } from '@/components/text'
 import { SettingSection } from '@/components/settings-section'
 import { Switch } from '@/components/switch'

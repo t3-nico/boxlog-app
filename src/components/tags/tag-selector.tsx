@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { Tag } from '@/types/box'
 import { useTagStore } from '@/lib/tag-store'
 import { TagBadge } from './tag-badge'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
-  Dropdown,
-  DropdownButton,
-  DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { ChevronDown as ChevronDownIcon, Plus as PlusIcon } from 'lucide-react'
 
 interface TagSelectorProps {
@@ -67,21 +67,23 @@ export function TagSelector({
       )}
 
       {/* Tag Selector Dropdown */}
-      <Dropdown>
-        <DropdownButton 
-          outline 
-          className="w-full justify-between"
-          disabled={maxTags ? selectedTagIds.length >= maxTags : false}
-        >
-          <span className="text-left">
-            {selectedTags.length > 0 
-              ? `${selectedTags.length} tag${selectedTags.length !== 1 ? 's' : ''} selected`
-              : placeholder
-            }
-          </span>
-          <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
-        </DropdownButton>
-        <DropdownMenu className="w-64 p-0">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="w-full justify-between"
+            disabled={maxTags ? selectedTagIds.length >= maxTags : false}
+          >
+            <span className="text-left">
+              {selectedTags.length > 0 
+                ? `${selectedTags.length} tag${selectedTags.length !== 1 ? 's' : ''} selected`
+                : placeholder
+              }
+            </span>
+            <ChevronDownIcon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-64 p-0">
           <div className="p-2">
             <Input
               placeholder="Search tags..."
@@ -93,7 +95,7 @@ export function TagSelector({
           <div className="max-h-48 overflow-y-auto">
             {filteredTags.length > 0 ? (
               filteredTags.map(tag => (
-                <DropdownItem
+                <DropdownMenuItem
                   key={tag.id}
                   onClick={() => handleTagAdd(tag)}
                   className={`flex items-center space-x-2 p-2 ${
@@ -106,7 +108,7 @@ export function TagSelector({
                       {tag.description}
                     </span>
                   )}
-                </DropdownItem>
+                </DropdownMenuItem>
               ))
             ) : (
               <div className="p-2 text-sm text-gray-500 text-center">
@@ -114,8 +116,8 @@ export function TagSelector({
               </div>
             )}
           </div>
-        </DropdownMenu>
-      </Dropdown>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {maxTags && (
         <div className="text-xs text-gray-500">

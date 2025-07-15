@@ -5,13 +5,13 @@ import { useBoxStore } from '@/lib/box-store'
 import { useTagStore } from '@/lib/tag-store'
 import { TaskStatus, TaskPriority, TaskType } from '@/types/box'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { ExportMenu } from './export-menu'
 import { TagBadge } from '@/components/tags/tag-badge'

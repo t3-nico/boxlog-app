@@ -15,13 +15,13 @@ import {
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/badge'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { TaskMobileCard } from './task-mobile-card'
 import { TaskDetailModal } from './task-detail-modal'

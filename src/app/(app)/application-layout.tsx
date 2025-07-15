@@ -27,6 +27,7 @@ import {
   DropdownLabel,
   DropdownMenu,
 } from '@/components/dropdown'
+import { Button } from '@/components/ui/button'
 import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar'
 import {
   Sidebar,

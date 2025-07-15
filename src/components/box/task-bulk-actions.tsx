@@ -3,14 +3,14 @@
 import { motion } from 'framer-motion'
 import { useBoxStore } from '@/lib/box-store'
 import { TaskStatus, TaskPriority } from '@/types/box'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
 import {
-  Dropdown,
-  DropdownButton,
-  DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { Trash2, ChevronDown } from 'lucide-react'
 import { Circle, Clock, CheckCircle2, Minus, XCircle, ArrowUp, ArrowDown } from 'lucide-react'
 
@@ -132,65 +132,69 @@ export function TaskBulkActions() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.15 }}
       >
-        <Dropdown>
-          <DropdownButton outline className="h-8 text-xs md:text-sm">
-            <span className="hidden sm:inline">Set Status</span>
-            <span className="sm:hidden">Status</span>
-            <ChevronDown className="ml-1 h-4 w-4 md:ml-2" />
-          </DropdownButton>
-          <DropdownMenu>
-            <DropdownItem onClick={() => handleBulkStatusChange('Todo')}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="h-8 text-xs md:text-sm">
+              <span className="hidden sm:inline">Set Status</span>
+              <span className="sm:hidden">Status</span>
+              <ChevronDown className="ml-1 h-4 w-4 md:ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('Todo')}>
               <Circle className="mr-2 h-4 w-4 text-gray-500" />
               Todo
-            </DropdownItem>
-            <DropdownItem onClick={() => handleBulkStatusChange('In Progress')}>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('In Progress')}>
               <Clock className="mr-2 h-4 w-4 text-blue-500" />
               In Progress
-            </DropdownItem>
-            <DropdownItem onClick={() => handleBulkStatusChange('Backlog')}>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('Backlog')}>
               <Minus className="mr-2 h-4 w-4 text-gray-400" />
               Backlog
-            </DropdownItem>
-            <DropdownItem onClick={() => handleBulkStatusChange('Done')}>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('Done')}>
               <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
               Done
-            </DropdownItem>
-            <DropdownItem onClick={() => handleBulkStatusChange('Cancelled')}>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('Cancelled')}>
               <XCircle className="mr-2 h-4 w-4 text-red-500" />
               Cancelled
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-        <Dropdown>
-          <DropdownButton outline className="h-8 text-xs md:text-sm">
-            <span className="hidden sm:inline">Set Priority</span>
-            <span className="sm:hidden">Priority</span>
-            <ChevronDown className="ml-1 h-4 w-4 md:ml-2" />
-          </DropdownButton>
-          <DropdownMenu>
-            <DropdownItem onClick={() => handleBulkPriorityChange('High')}>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="h-8 text-xs md:text-sm">
+              <span className="hidden sm:inline">Set Priority</span>
+              <span className="sm:hidden">Priority</span>
+              <ChevronDown className="ml-1 h-4 w-4 md:ml-2" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('High')}>
               <ArrowUp className="mr-2 h-4 w-4 text-red-500" />
               High
-            </DropdownItem>
-            <DropdownItem onClick={() => handleBulkPriorityChange('Medium')}>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('Medium')}>
               <Minus className="mr-2 h-4 w-4 text-yellow-500" />
               Medium
-            </DropdownItem>
-            <DropdownItem onClick={() => handleBulkPriorityChange('Low')}>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('Low')}>
               <ArrowDown className="mr-2 h-4 w-4 text-green-500" />
               Low
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         <Button
-          outline
+          variant="outline"
           onClick={handleBulkDelete}
           className="h-8 text-red-600 hover:bg-red-50"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button outline onClick={handleCancel} className="h-8 text-xs md:text-sm">
+          <Button variant="outline" onClick={handleCancel} className="h-8 text-xs md:text-sm">
             Cancel
           </Button>
         </motion.div>

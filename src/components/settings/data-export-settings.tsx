@@ -1,7 +1,7 @@
 'use client'
 
 import { Heading, Subheading } from '@/components/heading'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { SettingSection } from '@/components/settings-section'
 
 export default function DataExportSettings() {

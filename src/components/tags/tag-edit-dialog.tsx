@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
-import { Button } from '@/components/button'
-import { Input } from '@/components/input'
+import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/tagIcons'
 
 interface Tag {

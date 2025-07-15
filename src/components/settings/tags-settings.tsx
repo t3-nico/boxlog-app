@@ -6,7 +6,7 @@ import { SettingSection } from '@/components/settings-section'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from '@/components/table'
+import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from '@/components/ui/table'
 
 interface Tag {
   id: number

@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection, ToggleItem } from '@/components/settings-section'
-import { Input } from '@/components/input'
-import { Button } from '@/components/button'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export default function NotificationSettings() {
   const [emailReminders, setEmailReminders] = useState(true)

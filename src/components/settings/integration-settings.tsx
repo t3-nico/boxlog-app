@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { Heading, Subheading } from '@/components/heading'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { SettingSection, ToggleItem } from '@/components/settings-section'
-import { Input } from '@/components/input'
+import { Input } from '@/components/ui/input'
 
 export default function IntegrationSettings() {
   const [googleSync, setGoogleSync] = useState(false)

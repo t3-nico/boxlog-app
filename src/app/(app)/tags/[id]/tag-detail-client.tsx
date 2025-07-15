@@ -15,7 +15,7 @@ import {
 import { useTag, useDeleteTag } from '@/hooks/use-tags'
 import { useItemsByTags } from '@/hooks/use-item-tags'
 import { TagEditModal } from '@/components/tags/tag-edit-modal'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/badge'
 import type { TagWithChildren } from '@/types/tags'
 

@@ -7,7 +7,7 @@ import { Clock, Trash2, Pencil } from 'lucide-react'
 import * as Popover from '@radix-ui/react-popover'
 import { Task, TaskStatus, TaskPriority } from '@/types/box'
 import { CalendarTask } from '../utils/time-grid-helpers'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 
 interface TaskPopoverProps {
   task: CalendarTask | null

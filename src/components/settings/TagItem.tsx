@@ -9,7 +9,7 @@ import {
   DropdownItem,
   DropdownLabel,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { TagEditDialog } from '@/components/tags/tag-edit-dialog'
 import { tagIconMapping, TagIconName } from '@/config/tagIcons'

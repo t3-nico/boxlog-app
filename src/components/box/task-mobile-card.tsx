@@ -10,7 +10,7 @@ import {
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import {
   MoreHorizontal,
   Circle,

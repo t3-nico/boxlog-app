@@ -6,7 +6,7 @@ import { useTrashStore } from '@/stores/trashStore'
 import { TrashItemCard } from '@/components/settings/TrashItemCard'
 import { EmptyTrashModal } from '@/components/settings/EmptyTrashModal'
 import { EmptyTrashState } from '@/components/settings/EmptyTrashState'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 
 // ローディングスケルトンコンポーネント
 function TrashLoadingSkeleton() {

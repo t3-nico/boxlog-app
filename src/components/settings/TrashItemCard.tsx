@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { useTrashStore } from '@/stores/trashStore'
 import { DeletedItem } from '@/types/trash'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 
 interface TrashItemCardProps {
   item: DeletedItem

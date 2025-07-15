@@ -4,8 +4,8 @@ import { Task } from '@/types/box'
 import { getStatusColor, getPriorityColor, getTypeColor } from '@/lib/tasks'
 import { Badge } from '@/components/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/button'
-import { Dropdown, DropdownButton, DropdownMenu, DropdownItem } from '@/components/dropdown'
+import { Button } from '@/components/ui/button'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Edit, Trash2 } from 'lucide-react'
 import { useBoxStore } from '@/lib/box-store'
 
@@ -68,21 +68,23 @@ export function TaskItem({ task, onEdit, onSelect }: TaskItemProps) {
         </div>
       </div>
       
-      <Dropdown>
-        <DropdownButton plain onClick={(e: React.MouseEvent) => e.stopPropagation()}>
-          <MoreHorizontal className="h-4 w-4" />
-        </DropdownButton>
-        <DropdownMenu>
-          <DropdownItem onClick={handleEdit}>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem onClick={handleEdit}>
             <Edit className="mr-2 h-4 w-4" />
             編集
-          </DropdownItem>
-          <DropdownItem onClick={handleDelete}>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleDelete}>
             <Trash2 className="mr-2 h-4 w-4" />
             削除
-          </DropdownItem>
-        </DropdownMenu>
-      </Dropdown>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }

@@ -21,7 +21,7 @@ import {
   DropdownItem,
   DropdownLabel,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import { Avatar } from '@/components/avatar'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'

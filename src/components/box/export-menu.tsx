@@ -5,13 +5,13 @@ import { motion } from 'framer-motion'
 import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
 import { exportToCSV, exportToJSON, printTasks } from '@/lib/export'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/dropdown'
+} from '@/components/ui/dropdown-menu'
 import {
   Download,
   ChevronDown,
