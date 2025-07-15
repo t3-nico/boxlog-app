@@ -48,7 +48,7 @@ export function PasswordResetForm({
         </div>
         <div className="text-center text-sm">
           <a href="/auth/login" className="underline underline-offset-4">
-            Back to log in
+            Back to Log in
           </a>
         </div>
       </div>
@@ -91,7 +91,7 @@ export function PasswordResetForm({
       <div className="text-center text-sm">
         Remember your password?{" "}
         <a href="/auth/login" className="underline underline-offset-4">
-          Back to log in
+          Back to Log in
         </a>
       </div>
     </form>

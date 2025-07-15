@@ -66,7 +66,7 @@ export default function ForgotPasswordForm() {
       </Button>
       <Text className="text-center">
         <TextLink href="/auth/login">
-          <Strong>Back to login</Strong>
+          <Strong>Back to Log in</Strong>
         </TextLink>
       </Text>
     </form>
