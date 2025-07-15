@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button"
-import { PlusIcon, EditIcon, TrashIcon, HeartIcon } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { PlusIcon, EditIcon, TrashIcon, HeartIcon, SettingsIcon, UserIcon, LogOutIcon, MoreHorizontalIcon } from "lucide-react"
 
 export default function ShadcnTestPage() {
   return (
@@ -96,6 +104,235 @@ export default function ShadcnTestPage() {
                 Existing Button
               </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Form Components Test */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">Form Components</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Input & Label</CardTitle>
+              <CardDescription>フォーム要素のテスト</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" placeholder="Enter your name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="Enter your email" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" placeholder="Enter password" />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">Submit</Button>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Select & Dropdown</CardTitle>
+              <CardDescription>選択系コンポーネントのテスト</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Priority</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Actions</Label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline">
+                      <MoreHorizontalIcon />
+                      Actions
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <UserIcon />
+                      Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <SettingsIcon />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <LogOutIcon />
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Modal Components Test */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">Modal Components</h2>
+        
+        <div className="flex flex-wrap gap-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Open Dialog</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Dialog Example</DialogTitle>
+                <DialogDescription>
+                  This is a dialog modal example with shadcn/ui components.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="dialog-name">Task Name</Label>
+                  <Input id="dialog-name" placeholder="Enter task name" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dialog-desc">Description</Label>
+                  <Input id="dialog-desc" placeholder="Enter description" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline">Cancel</Button>
+                <Button>Save Task</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline">Open Sheet</Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Sheet Example</SheetTitle>
+                <SheetDescription>
+                  This is a side sheet panel for additional content.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="space-y-4 mt-6">
+                <div className="space-y-2">
+                  <Label>Settings</Label>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Notifications</span>
+                      <Button size="sm" variant="outline">Toggle</Button>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm">Dark Mode</span>
+                      <Button size="sm" variant="outline">Toggle</Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <SheetFooter className="mt-6">
+                <Button className="w-full">Save Changes</Button>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </section>
+
+      {/* Badge & Card Examples */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">Badge & Card Components</h2>
+        
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Badge Variants</h3>
+            <div className="flex flex-wrap gap-2">
+              <Badge>Default</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+              <Badge variant="outline">Outline</Badge>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  Task Management
+                  <Badge variant="secondary">Beta</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Organize your tasks efficiently
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Create, manage, and track your daily tasks with ease.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button size="sm" className="w-full">Get Started</Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  Calendar View
+                  <Badge>New</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Schedule and plan your activities
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Visual calendar interface for better planning.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button size="sm" variant="outline" className="w-full">Learn More</Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  Team Collaboration
+                  <Badge variant="destructive">Premium</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Work together seamlessly
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Share tasks and collaborate with your team.
+                </p>
+              </CardContent>
+              <CardFooter>
+                <Button size="sm" variant="secondary" className="w-full">Upgrade</Button>
+              </CardFooter>
+            </Card>
           </div>
         </div>
       </section>
