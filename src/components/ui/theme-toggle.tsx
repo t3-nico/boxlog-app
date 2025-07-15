@@ -40,7 +40,7 @@ export function ThemeToggle() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+            <Button plain size="sm" className="flex items-center space-x-2">
               {themeIcons[theme]}
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
@@ -75,7 +75,7 @@ export function ThemeToggle() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+            <Button plain size="sm" className="flex items-center space-x-2">
               <SwatchIcon className="h-4 w-4" />
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
@@ -116,7 +116,7 @@ export function SimpleThemeToggle() {
 
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-      <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
+      <Button plain size="sm" onClick={toggleTheme} className="p-2">
         {resolvedTheme === 'light' ? (
           <MoonIcon className="h-4 w-4" />
         ) : (
