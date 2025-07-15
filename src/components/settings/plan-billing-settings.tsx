@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { Input } from '@/components/input'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Input } from '@/components/ui/input'
 
 export default function PlanBillingSettings() {
   const [plan, setPlan] = useState('Free')
@@ -46,14 +46,14 @@ export default function PlanBillingSettings() {
 
       <SettingSection title="Payment History" description="Your previous transactions.">
         <div className="px-4 pb-4">
-          <Table className="[--gutter:--spacing(4)]">
-            <TableHead>
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableHeader>Date</TableHeader>
-                <TableHeader>Amount</TableHeader>
-                <TableHeader>Status</TableHeader>
+                <TableHead>Date</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
-            </TableHead>
+            </TableHeader>
             <TableBody>
               <TableRow>
                 <TableCell>2024-01-01</TableCell>
