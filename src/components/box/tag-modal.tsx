@@ -136,29 +136,29 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
             />
           </Field>
 
-        <Field>
-          <Label>Description (Optional)</Label>
-          <Textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter tag description..."
-            rows={2}
-          />
-        </Field>
+          <Field>
+            <Label>Description (Optional)</Label>
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter tag description..."
+              rows={2}
+            />
+          </Field>
 
-        <Field>
-          <Label>Icon (Optional)</Label>
-          <Input
-            value={icon}
-            onChange={(e) => setIcon(e.target.value)}
-            placeholder="Enter emoji or icon..."
-            maxLength={2}
-          />
-        </Field>
+          <Field>
+            <Label>Icon (Optional)</Label>
+            <Input
+              value={icon}
+              onChange={(e) => setIcon(e.target.value)}
+              placeholder="Enter emoji or icon..."
+              maxLength={2}
+            />
+          </Field>
 
-        <Field>
-          <Label>Color</Label>
-          <div className="space-y-4 mt-2">
+          <Field>
+            <Label>Color</Label>
+            <div className="space-y-4 mt-2">
             {Object.entries(colorCategories).map(([categoryName, colors]) => (
               <div key={categoryName}>
                 <Label className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
