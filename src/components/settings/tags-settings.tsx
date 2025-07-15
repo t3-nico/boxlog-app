@@ -5,7 +5,7 @@ import { Heading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from '@/components/table'
 
 interface Tag {
@@ -59,26 +59,32 @@ function EditTagDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} size="sm">
-      <form onSubmit={handleSubmit} className="p-4">
-        <DialogTitle>Edit Tag</DialogTitle>
-        <DialogBody className="space-y-4">
-          <Input aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Input
-            type="color"
-            aria-label="Color"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="h-10 w-16 p-0"
-          />
-        </DialogBody>
-        <DialogActions>
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit">Save</Button>
-        </DialogActions>
-      </form>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>Edit Tag</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <Input aria-label="Name" value={name} onChange={(e) => setName(e.target.value)} required />
+            <Input
+              type="color"
+              aria-label="Color"
+              value={color}
+              onChange={(e) => setColor(e.target.value)}
+              className="h-10 w-16 p-0"
+            />
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">Save</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }
