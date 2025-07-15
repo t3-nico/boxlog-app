@@ -1,46 +1,31 @@
-import Link from 'next/link'
-import { AuthForm } from '@/components/auth/auth-form'
+import { GalleryVerticalEnd } from "lucide-react"
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { message: string; error: string }
-}) {
+import { LoginForm } from "@/components/login-form"
+
+export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to Paceful
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link
-              href="/signup"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              create a new account
-            </Link>
-          </p>
+    <div className="grid min-h-svh lg:grid-cols-2">
+      <div className="flex flex-col gap-4 p-6 md:p-10">
+        <div className="flex justify-center gap-2 md:justify-start">
+          <a href="#" className="flex items-center gap-2 font-medium">
+            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+              <GalleryVerticalEnd className="size-4" />
+            </div>
+            Acme Inc.
+          </a>
         </div>
-
-        {searchParams?.message && (
-          <div className="rounded-md bg-green-50 p-4">
-            <p className="text-sm text-green-800">{searchParams.message}</p>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="w-full max-w-xs">
+            <LoginForm />
           </div>
-        )}
-
-        {searchParams?.error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-800">
-              {searchParams.error === 'auth' 
-                ? 'Authentication failed. Please try again.' 
-                : searchParams.error}
-            </p>
-          </div>
-        )}
-
-        <AuthForm mode="login" />
+        </div>
+      </div>
+      <div className="bg-muted relative hidden lg:block">
+        <img
+          src="/placeholder.svg"
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
       </div>
     </div>
   )
