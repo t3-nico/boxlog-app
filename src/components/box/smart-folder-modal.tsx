@@ -10,9 +10,10 @@ import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'
 import { 
   Dialog, 
-  DialogActions, 
-  DialogBody, 
+  DialogContent,
   DialogDescription, 
+  DialogFooter,
+  DialogHeader,
   DialogTitle 
 } from '@/components/ui/dialog'
 import { 
@@ -200,16 +201,19 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
   if (!open) return null
 
   return (
-    <Dialog open={open} onClose={onClose} size="2xl">
-      <DialogTitle>
-        {folder ? 'Edit Smart Folder' : 'Create Smart Folder'}
-      </DialogTitle>
-      <DialogDescription>
-        Create a dynamic folder that automatically shows tasks matching your conditions.
-      </DialogDescription>
-      
-      <DialogBody className="space-y-6">
-        <Field>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>
+            {folder ? 'Edit Smart Folder' : 'Create Smart Folder'}
+          </DialogTitle>
+          <DialogDescription>
+            Create a dynamic folder that automatically shows tasks matching your conditions.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-6">
+          <Field>
           <Label>Parent Folder (Optional)</Label>
           <Select value={selectedParentId} onValueChange={setSelectedParentId}>
             <SelectTrigger>
@@ -446,19 +450,19 @@ export function SmartFolderModal({ open, onClose, folder, parentId }: SmartFolde
             )}
           </div>
         </div>
-      </DialogBody>
-      
-      <DialogActions>
-        <Button plain onClick={onClose}>
-          Cancel
-        </Button>
-        <Button 
-          onClick={handleSave}
-          disabled={!name.trim() || conditions.length === 0}
-        >
-          {folder ? 'Update' : 'Create'} Folder
-        </Button>
-      </DialogActions>
+        
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSave}
+            disabled={!name.trim() || conditions.length === 0}
+          >
+            {folder ? 'Update' : 'Create'} Folder
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   )
 }

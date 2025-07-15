@@ -6,8 +6,8 @@ import { SettingSection } from '@/components/settings-section'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/textarea'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/ui/dialog'
-import { Badge } from '@/components/badge'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Badge } from '@/components/ui/badge'
 
 interface Template {
   id: number
@@ -68,37 +68,41 @@ function EditTemplateDialog({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} size="sm">
-      <form onSubmit={handleSubmit} className="p-4 space-y-4">
-        <DialogTitle>Edit Template</DialogTitle>
-        <DialogBody className="space-y-4">
-          <Input aria-label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-          <Input
-            aria-label="Tags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="tag1, tag2"
-          />
-          <Input
-            aria-label="Duration"
-            value={duration}
-            onChange={(e) => setDuration(e.target.value)}
-            placeholder="minutes"
-          />
-          <Textarea
-            aria-label="Notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Notes"
-          />
-        </DialogBody>
-        <DialogActions>
-          <Button type="button" outline onClick={onClose}>
-            Cancel
-          </Button>
-          <Button type="submit">Save</Button>
-        </DialogActions>
-      </form>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-sm">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <DialogHeader>
+            <DialogTitle>Edit Template</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input aria-label="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+            <Input
+              aria-label="Tags"
+              value={tags}
+              onChange={(e) => setTags(e.target.value)}
+              placeholder="tag1, tag2"
+            />
+            <Input
+              aria-label="Duration"
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="minutes"
+            />
+            <Textarea
+              aria-label="Notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Notes"
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit">Save</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

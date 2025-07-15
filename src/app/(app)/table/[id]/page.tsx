@@ -1,5 +1,5 @@
 import { Stat } from '@/app/stat'
-import { Badge } from '@/components/badge'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
 import { Link } from '@/components/link'

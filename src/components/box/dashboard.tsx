@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useBoxStore } from '@/lib/box-store'
 import { Task, TaskStatus, TaskPriority } from '@/types/box'
-import { Badge } from '@/components/badge'
+import { Badge } from '@/components/ui/badge'
 import {
   BarChart3,
   Clock,

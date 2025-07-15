@@ -1,4 +1,4 @@
-import { Badge } from '@/components/badge'
+import { Badge } from '@/components/ui/badge'
 import { Divider } from '@/components/divider'
 
 export function Stat({ title, value, change }: { title: string; value: string; change: string }) {

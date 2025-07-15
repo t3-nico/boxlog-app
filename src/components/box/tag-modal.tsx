@@ -16,9 +16,10 @@ import {
 } from '@/components/ui/select'
 import { 
   Dialog, 
-  DialogActions, 
-  DialogBody, 
+  DialogContent,
   DialogDescription, 
+  DialogFooter,
+  DialogHeader,
   DialogTitle 
 } from '@/components/ui/dialog'
 
@@ -96,16 +97,19 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
   if (!open) return null
 
   return (
-    <Dialog open={open} onClose={onClose} size="lg">
-      <DialogTitle>
-        {tag ? 'Edit Tag' : 'Create Tag'}
-      </DialogTitle>
-      <DialogDescription>
-        Create a tag to organize and categorize your tasks.
-      </DialogDescription>
-      
-      <DialogBody className="space-y-6">
-        <Field>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>
+            {tag ? 'Edit Tag' : 'Create Tag'}
+          </DialogTitle>
+          <DialogDescription>
+            Create a tag to organize and categorize your tasks.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-6">
+          <Field>
           <Label>Parent Tag (Optional)</Label>
           <Select value={selectedParentId} onValueChange={setSelectedParentId}>
             <SelectTrigger>
@@ -225,19 +229,19 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
             )}
           </div>
         </div>
-      </DialogBody>
-      
-      <DialogActions>
-        <Button plain onClick={onClose}>
-          Cancel
-        </Button>
-        <Button 
-          onClick={handleSave}
-          disabled={!name.trim()}
-        >
-          {tag ? 'Update' : 'Create'} Tag
-        </Button>
-      </DialogActions>
+        
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleSave}
+            disabled={!name.trim()}
+          >
+            {tag ? 'Update' : 'Create'} Tag
+          </Button>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   )
 }

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Task, TaskStatus, TaskPriority } from '@/types/box'
 import { useBoxStore } from '@/lib/box-store'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/badge'
+import { Badge } from '@/components/ui/badge'
 import {
   Dropdown,
   DropdownButton,

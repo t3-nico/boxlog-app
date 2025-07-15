@@ -1,5 +1,5 @@
 import { Avatar } from '@/components/avatar'
-import { Badge } from '@/components/badge'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list'
 import { Divider } from '@/components/divider'
