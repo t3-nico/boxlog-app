@@ -50,7 +50,7 @@ export function LoginForm({
     setError(null)
     const { error } = await signInWithOAuth('google')
     if (error) {
-      setError(error)
+      setError(error.message)
     }
     setLoading(false)
   }
@@ -60,7 +60,7 @@ export function LoginForm({
     setError(null)
     const { error } = await signInWithOAuth('apple')
     if (error) {
-      setError(error)
+      setError(error.message)
     }
     setLoading(false)
   }

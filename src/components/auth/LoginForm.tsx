@@ -51,7 +51,7 @@ export default function LoginForm() {
     setError(null)
     const { error } = await signInWithOAuth(provider)
     if (error) {
-      setError(error)
+      setError(error.message)
     }
     setLoading(false)
   }

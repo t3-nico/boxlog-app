@@ -143,7 +143,7 @@ export const CreateTagModal = ({ open, onClose }: CreateTagModalProps) => {
           </div>
         </DialogBody>
         <DialogActions>
-          <Button type="button" outline onClick={handleClose}>
+          <Button type="button" variant="outline" onClick={handleClose}>
             Cancel
           </Button>
           <Button type="submit">Create Tag</Button>

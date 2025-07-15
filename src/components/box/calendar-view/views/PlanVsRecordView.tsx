@@ -49,7 +49,7 @@ export function PlanVsRecordView({
   )
   
   const dayRecords = useMemo(() => 
-    getRecordsByDate(date), [date, records]
+    getRecordsByDate(date), [date, records, getRecordsByDate]
   )
   
   // スクロール同期

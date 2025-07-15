@@ -3,9 +3,10 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Heading, Subheading } from '@/components/heading'
 import { Link } from '@/components/link'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
 import { getEvent, getEventReviews } from '@/data'
 import { ChevronLeft } from 'lucide-react'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
@@ -36,7 +37,14 @@ export default async function Event({ params }: { params: { id: string } }) {
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-center gap-6">
           <div className="w-32 shrink-0">
-            <img className="aspect-3/2 rounded-lg shadow-sm" src={event.imgUrl} alt="" />
+            <Image 
+              className="aspect-3/2 rounded-lg shadow-sm" 
+              src={event.imgUrl} 
+              alt={event.name}
+              width={128}
+              height={85}
+              priority
+            />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -74,7 +82,12 @@ export default async function Event({ params }: { params: { id: string } }) {
         </TableHead>
         <TableBody>
           {reviews.map((review) => (
-            <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
+            <TableRow 
+              key={review.id} 
+              className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+              onClick={() => window.open(review.url, '_blank')}
+              title={`Review #${review.id}`}
+            >
               <TableCell>{review.id}</TableCell>
               <TableCell className="text-zinc-500">{review.date}</TableCell>
               <TableCell>{review.customer.name}</TableCell>

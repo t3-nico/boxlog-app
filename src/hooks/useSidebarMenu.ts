@@ -47,10 +47,10 @@ export const useSidebarMenu = () => {
           items = [...items, ...tagItems]
         }
         
-        // 無料プランの制限適用
-        if (section.maxItems && user?.plan === 'free') {
-          items = items.slice(0, section.maxItems)
-        }
+        // プランの制限適用（現在無効化）
+        // if (section.maxItems && user?.plan === 'free') {
+        //   items = items.slice(0, section.maxItems)
+        // }
         
         return {
           ...section,
@@ -66,12 +66,14 @@ export const useSidebarMenu = () => {
 // アクセス権限チェック関数
 function canAccessSection(section: MenuSection, user: any): boolean {
   if (section.requiresAuth && !user) return false
-  if (section.minPlan && !hasMinimumPlan(user?.plan, section.minPlan)) return false
+  // プラン制限（現在無効化）
+  // if (section.minPlan && !hasMinimumPlan(user?.plan, section.minPlan)) return false
   return true
 }
 
 function canAccessItem(item: MenuItem, user: any): boolean {
-  if (item.minPlan && !hasMinimumPlan(user?.plan, item.minPlan)) return false
+  // プラン制限（現在無効化）
+  // if (item.minPlan && !hasMinimumPlan(user?.plan, item.minPlan)) return false
   if (item.requiresFeature && !hasFeatures(user?.features, item.requiresFeature)) return false
   return true
 }

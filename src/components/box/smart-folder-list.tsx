@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { SmartFolder } from '@/types/box'
 import { useSmartFolderStore } from '@/lib/smart-folder-store'
 import { useBoxStore } from '@/lib/box-store'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/button'
 import { 
   Folder, 
   Plus, 
@@ -17,7 +17,7 @@ import {
   DropdownButton,
   DropdownItem,
   DropdownMenu,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/dropdown'
 import { SmartFolderModal } from './smart-folder-modal'
 
 interface SmartFolderListProps {

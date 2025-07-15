@@ -185,7 +185,7 @@ export function TaskSidebar({ onNewTask }: TaskSidebarProps) {
         {(filters.status?.length || filters.priority?.length || filters.type?.length || filters.search) && (
           <>
             <Separator />
-            <Button outline onClick={clearFilters} className="w-full">
+            <Button variant="outline" onClick={clearFilters} className="w-full">
               フィルターをクリア
             </Button>
           </>

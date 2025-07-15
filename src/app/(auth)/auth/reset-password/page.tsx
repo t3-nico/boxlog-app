@@ -52,7 +52,7 @@ export default function ResetPassword() {
       const { error } = await updatePassword(password)
       
       if (error) {
-        setError(error)
+        setError(error.message)
       } else {
         setSuccess(true)
         // Redirect to main page after 3 seconds

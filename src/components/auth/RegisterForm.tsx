@@ -42,7 +42,7 @@ export default function RegisterForm() {
     try {
       const { error } = await signUp(email, password)
       if (error) {
-        setError(error)
+        setError(error.message)
       } else {
         setSuccess(true)
       }
@@ -58,7 +58,7 @@ export default function RegisterForm() {
     setError(null)
     const { error } = await signInWithOAuth(provider)
     if (error) {
-      setError(error)
+      setError(error.message)
     }
     setLoading(false)
   }

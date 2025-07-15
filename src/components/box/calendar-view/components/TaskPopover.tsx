@@ -191,7 +191,7 @@ export function TaskPopover({
               </Button>
               <Button
                 onClick={handleCancel}
-                outline
+                variant="outline"
                 className="flex-1"
               >
                 キャンセル
@@ -204,7 +204,7 @@ export function TaskPopover({
             <div className="flex justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
               <Button
                 onClick={handleDelete}
-                plain
+                variant="ghost"
                 className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
@@ -213,7 +213,7 @@ export function TaskPopover({
               
               <Button
                 onClick={onClose}
-                outline
+                variant="outline"
               >
                 閉じる
               </Button>

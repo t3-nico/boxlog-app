@@ -177,7 +177,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
               {getTaskTypeBadge(task.type)}
             </div>
             <Button
-              outline
+              variant="outline"
               onClick={() => setIsEditing(!isEditing)}
               className="flex items-center space-x-2"
             >
@@ -346,7 +346,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
                         </p>
                       </div>
                     </div>
-                    <Button outline className="text-xs">
+                    <Button variant="outline" className="text-xs">
                       Download
                     </Button>
                   </div>
@@ -362,7 +362,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
                 <p className="mt-2 text-sm text-gray-600">
                   Drop files here or click to upload
                 </p>
-                <Button outline className="mt-2" disabled>
+                <Button variant="outline" className="mt-2" disabled>
                   Choose Files
                 </Button>
               </div>
@@ -372,7 +372,7 @@ export function TaskDetailModal({ task, open, onClose }: TaskDetailModalProps) {
           {/* Action Buttons */}
           {isEditing && (
             <div className="flex justify-end space-x-2 pt-4 border-t">
-              <Button outline onClick={() => {
+              <Button variant="outline" onClick={() => {
                 setIsEditing(false)
                 setEditedTask({})
               }}>

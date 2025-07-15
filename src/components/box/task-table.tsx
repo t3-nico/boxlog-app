@@ -168,7 +168,7 @@ export function TaskTable({ className }: TaskTableProps) {
     const isActive = sortConfig.key === key
     return (
       <Button
-        plain
+        variant="ghost"
         className="flex items-center gap-2 font-medium"
         onClick={() => handleSort(key)}
       >

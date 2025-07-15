@@ -15,12 +15,12 @@ import {
   GraduationCap as AcademicCapIcon
 } from 'lucide-react'
 import {
-  Dropdown,
-  DropdownButton,
-  DropdownDivider,
-  DropdownItem,
-  DropdownLabel,
   DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Avatar } from '@/components/avatar'
 import { useAuthContext } from '@/contexts/AuthContext'

@@ -205,7 +205,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
           </Dropdown>
           {hasActiveFilters && (
             <Button
-              outline
+              variant="outline"
               onClick={clearFilters}
               className="h-8 px-2 lg:px-3"
             >

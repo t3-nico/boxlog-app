@@ -91,7 +91,7 @@ export function QuickTaskCreator({
     } else {
       setSuggestions([])
     }
-  }, [title])
+  }, [title, commonTasks])
   
   useEffect(() => {
     // フォーカスとアニメーション

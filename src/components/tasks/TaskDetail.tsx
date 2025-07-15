@@ -48,15 +48,15 @@ export function TaskDetail({ task, onEdit, onClose }: TaskDetailProps) {
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <Button outline onClick={onEdit}>
+            <Button variant="outline" onClick={onEdit}>
               <Edit className="h-4 w-4 mr-2" />
               編集
             </Button>
-            <Button outline onClick={handleDelete}>
+            <Button variant="outline" onClick={handleDelete}>
               <Trash2 className="h-4 w-4 mr-2" />
               削除
             </Button>
-            <Button plain onClick={onClose}>
+            <Button variant="ghost" onClick={onClose}>
               <X className="h-4 w-4" />
             </Button>
           </div>

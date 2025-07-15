@@ -187,7 +187,7 @@ function BoardColumn({ column, tasks, onEdit, onDelete, onAddTask }: BoardColumn
           </Badge>
         </div>
         <Button
-          plain
+          variant="ghost"
           onClick={() => onAddTask(column.id)}
           className="p-1"
         >
