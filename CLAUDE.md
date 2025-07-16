@@ -33,8 +33,8 @@ This is a Next.js 14 application built with TypeScript, using App Router for rou
 - **Authentication**: Supabase Auth with custom AuthContext
 - **State Management**: Zustand with persistence
 - **Database**: Supabase (PostgreSQL)
-- **Drag & Drop**: @dnd-kit for sortable interfaces
-- **Icons**: Heroicons
+- **Drag & Drop**: @dnd-kit for sortable interfaces, kiboUI Kanban for board views
+- **Icons**: Heroicons, Lucide React
 
 ### Directory Structure
 
@@ -254,6 +254,7 @@ The application has **INTEGRATED** advanced AI interface components from kiboUI,
 - **Code Block** (kiboUI) - Syntax highlighting with copy functionality and language selection
 - **Scroll Area** (kiboUI) - Optimized scrolling components
 - **Badge/Button/Select/Textarea** (kiboUI) - Additional UI components for AI interface
+- **Kanban** (kiboUI) - Modern kanban board with drag-and-drop functionality
 
 #### AI Component Usage Patterns
 
@@ -1569,7 +1570,7 @@ import { Button as KiboButton } from '@/components/ui/kibo-ui/button'
 
 **🎯 Component Selection Priority:**
 1. **shadcn/ui** - For basic UI components (Button, Dialog, Select, etc.)
-2. **kiboUI** - For advanced components (Gantt, ColorPicker, AI components)
+2. **kiboUI** - For advanced components (Gantt, ColorPicker, AI components, Kanban)
 3. **Custom** - Only when neither provides the needed functionality
 
 **⚠️ kiboUI Integration Rules:**
@@ -1607,6 +1608,66 @@ import { Button as KiboButton } from '@/components/ui/kibo-ui/button'
 - **AI Message**: `@/components/ui/kibo-ui/ai/message` - 統一メッセージレイアウト・アバター表示
 - **AI Response**: `@/components/ui/kibo-ui/ai/response` - マークダウン・コードハイライト・セキュリティ
 - **AI Branch**: `@/components/ui/kibo-ui/ai/branch` - 会話分岐・複数レスポンス対応
+
+### タスク管理機能 (kiboUI) - ✅ 統合済み
+- **Kanban**: `@/components/ui/kibo-ui/kanban` - ドラッグ&ドロップ・アクセシビリティ対応・テーマ統合
+
+#### Kanban Component Usage Pattern
+
+**Kanban Board Pattern:**
+```tsx
+import { 
+  KanbanProvider, 
+  KanbanBoard, 
+  KanbanHeader, 
+  KanbanCards, 
+  KanbanCard 
+} from '@/components/ui/kibo-ui/kanban'
+
+// Column and data definitions
+const columns = [
+  { id: 'todo', name: 'Todo', color: 'bg-gray-50' },
+  { id: 'in_progress', name: 'In Progress', color: 'bg-blue-50' },
+  { id: 'done', name: 'Done', color: 'bg-green-50' }
+]
+
+const data = [
+  { id: '1', name: 'Task 1', column: 'todo', task: taskObject },
+  { id: '2', name: 'Task 2', column: 'in_progress', task: taskObject }
+]
+
+<KanbanProvider 
+  columns={columns} 
+  data={data}
+  onDataChange={handleDataChange}
+>
+  {(column) => (
+    <KanbanBoard key={column.id} id={column.id}>
+      <KanbanHeader>
+        <span>{column.name}</span>
+        <Badge>{getColumnTaskCount(column.id)}</Badge>
+      </KanbanHeader>
+      
+      <KanbanCards id={column.id}>
+        {(item) => (
+          <KanbanCard key={item.id} id={item.id} name={item.name}>
+            {/* Custom card content */}
+          </KanbanCard>
+        )}
+      </KanbanCards>
+    </KanbanBoard>
+  )}
+</KanbanProvider>
+```
+
+**Kanban Features:**
+- ✅ **Drag & Drop**: Built-in @dnd-kit integration with accessibility
+- ✅ **Type Safety**: Full TypeScript support with generic types
+- ✅ **Theme Integration**: Supports light/dark mode via CSS variables
+- ✅ **Accessibility**: ARIA labels, keyboard navigation, screen reader support
+- ✅ **Customization**: Flexible card content and column styling
+- ✅ **Performance**: Optimized rendering with React.memo and virtual scrolling
+- ✅ **BoxLog Integration**: Seamless integration with task management features
 
 ### 高度な機能 (kiboUI) - 🔄 必要に応じて追加
 - **ガントチャート**: `@/components/ui/kibo-ui/gantt` (プロジェクト管理画面)
@@ -1924,5 +1985,5 @@ feat: implement smart folder drag and drop
 
 ---
 
-*Last Major Update: 2025-01-16 - Added kiboUI AI components integration*
-*Current Version: v1.3 - Enhanced with kiboUI AI chatbot components and advanced conversational UI patterns*
+*Last Major Update: 2025-01-16 - Added kiboUI Kanban board integration*
+*Current Version: v1.4 - Enhanced with kiboUI Kanban board for modern task management and complete AI chatbot integration*
