@@ -243,7 +243,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         </DialogHeader>
         
         {/* Search input - Vercel Style */}
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        <div className="flex items-center px-4 py-3">
           <SearchIcon className="w-4 h-4 text-gray-400 mr-3 flex-shrink-0" />
           <Input
             value={query}
@@ -289,10 +289,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                 : 'hover:bg-gray-100 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                             }`}
                           >
-                            {/* Selection indicator - Todoist style */}
-                            {isSelected && (
-                              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500" />
-                            )}
                             
                             {/* Icon - Compact Vercel/VS Code Style */}
                             <div className="flex-shrink-0">
