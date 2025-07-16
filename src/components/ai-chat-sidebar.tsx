@@ -23,7 +23,7 @@ interface MessageBubbleProps {
     content: string
     sender: 'user' | 'assistant'
     timestamp: Date
-    status?: 'sending' | 'error'
+    status?: 'sending' | 'error' | 'sent'
   }
 }
 
@@ -42,6 +42,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
             <div className="mt-1 text-xs text-blue-100 opacity-75">
               {message.status === 'sending' && 'Sending...'}
               {message.status === 'error' && 'Send Error'}
+              {message.status === 'sent' && 'Sent'}
             </div>
           )}
         </div>
