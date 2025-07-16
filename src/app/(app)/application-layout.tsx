@@ -19,6 +19,7 @@ import { TagsList } from '@/components/tags/tags-list'
 import { SmartFolderList } from '@/components/smart-folders/smart-folder-list'
 import { useDevelopmentPerformanceMonitor } from '@/hooks/usePerformanceMonitor'
 import { sidebarConfig } from '@/config/sidebarConfig'
+import { useCommandPalette } from '@/components/providers'
 import {
   Dropdown,
   DropdownButton,
@@ -96,6 +97,7 @@ export function ApplicationLayout({
   let inReview = pathname.startsWith('/review')
   let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
+  const { open: openCommandPalette } = useCommandPalette()
   const router = useRouter()
   
   // AI Chat Sidebar state
@@ -275,14 +277,29 @@ export function ApplicationLayout({
                         <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
                       </a>
                     </div>
-                    <SidebarItem
-                      href="/search"
-                      current={pathname.startsWith('/search')}
-                      indicator={false}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        openCommandPalette()
+                      }}
+                      className={clsx(
+                        'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
+                        'group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-2',
+                        '*:data-[slot=icon]:size-6 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:text-zinc-500 sm:*:data-[slot=icon]:size-5',
+                        'hover:bg-zinc-950/5 hover:*:data-[slot=icon]:text-zinc-950',
+                        'dark:text-white dark:*:data-[slot=icon]:text-zinc-400',
+                        'dark:hover:bg-white/5 dark:hover:*:data-[slot=icon]:text-white',
+                        'cursor-pointer transition-colors'
+                      )}
+                      title="Search (⌘K)"
                     >
                       <MagnifyingGlassIcon data-slot="icon" />
                       <SidebarLabel>Search</SidebarLabel>
-                    </SidebarItem>
+                      {!collapsed && (
+                        <span className="ml-auto text-xs text-gray-400">⌘K</span>
+                      )}
+                    </button>
                   </SidebarSection>
 
                   <div className="h-4" />

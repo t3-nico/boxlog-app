@@ -108,10 +108,12 @@ function CurrentTaskDisplay() {
 // 時間表示コンポーネント
 function TimeDisplay() {
   const [time, setTime] = React.useState(new Date())
+  const [mounted, setMounted] = React.useState(false)
   const router = useRouter()
   const { chronotype } = useCalendarSettingsStore()
 
   React.useEffect(() => {
+    setMounted(true)
     const timer = setInterval(() => {
       setTime(new Date())
     }, 1000)
@@ -223,12 +225,12 @@ function TimeDisplay() {
       <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-bold tabular-nums text-gray-600 dark:text-gray-300">
-          {time.toLocaleTimeString('en-US', { 
+          {mounted ? time.toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit',
             second: '2-digit',
             hour12: false 
-          })}
+          }) : '--:--:--'}
         </div>
         <button
           onClick={handleChronotypeClick}
