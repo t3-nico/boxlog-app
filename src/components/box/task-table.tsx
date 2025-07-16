@@ -231,6 +231,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
           {row.getValue('task')}
         </div>
       ),
+      enableSorting: true,
     },
     {
       accessorKey: 'title',
@@ -245,6 +246,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
           </Badge>
         </div>
       ),
+      enableSorting: true,
     },
     {
       accessorKey: 'status',
@@ -281,6 +283,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
           </DropdownMenu>
         )
       },
+      enableSorting: true,
     },
     {
       accessorKey: 'priority',
@@ -317,6 +320,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
           </DropdownMenu>
         )
       },
+      enableSorting: true,
     },
     {
       accessorKey: 'tags',

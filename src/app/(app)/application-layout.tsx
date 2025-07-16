@@ -76,7 +76,7 @@ import {
   PanelRight,
   Trash2 as TrashIcon,
   Clock as ClockIcon,
-  Table as TableCellsIcon,
+  TableProperties as TableCellsIcon,
   BarChart3 as ChartBarIcon,
   SquareKanban as Squares2X2Icon,
 } from 'lucide-react'
