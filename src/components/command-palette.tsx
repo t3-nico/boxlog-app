@@ -237,7 +237,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 max-w-xl border border-gray-200 dark:border-gray-700 shadow-xl animate-in fade-in-0 zoom-in-95 duration-200 rounded-lg">
+      <DialogContent className="p-0 max-w-xl border-0 shadow-xl animate-in fade-in-0 zoom-in-95 duration-200 rounded-lg">
         <DialogHeader className="sr-only">
           <DialogTitle>Command Palette</DialogTitle>
         </DialogHeader>
@@ -285,8 +285,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                             onClick={() => executeCommand(result)}
                             className={`w-full px-3 py-1.5 text-left transition-all duration-100 flex items-center gap-3 group relative ${
                               isSelected 
-                                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100' 
-                                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300'
+                                ? 'bg-gray-100 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100' 
+                                : 'hover:bg-gray-100 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                             }`}
                           >
                             {/* Selection indicator - Todoist style */}
@@ -304,7 +304,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                             {/* Content */}
                             <div className="flex-1 min-w-0">
                               <div className={`text-sm truncate ${
-                                isSelected ? 'text-blue-900 dark:text-blue-100 font-medium' : 'text-gray-900 dark:text-gray-100'
+                                isSelected ? 'text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-900 dark:text-gray-100'
                               }`}>
                                 {result.title}
                               </div>
@@ -324,13 +324,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                                   <span className="text-xs text-gray-500">{result.metadata.tags.length}</span>
                                 </div>
                               )}
-                              
-                              {/* Keyboard hint - only for selected */}
-                              {isSelected && (
-                                <kbd className="px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono border border-gray-200 dark:border-gray-600 text-gray-500">
-                                  ↵
-                                </kbd>
-                              )}
                             </div>
                           </button>
                         )
@@ -343,29 +336,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
           )}
         </div>
         
-        {/* Footer - Vercel Style */}
-        <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-800/30">
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>
-              {results.length > 0 && `${results.length} results`}
-            </span>
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <ArrowUpIcon className="w-3 h-3" />
-                <ArrowDownIcon className="w-3 h-3" />
-                to navigate
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono border border-gray-200 dark:border-gray-600">↵</kbd>
-                to select
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono border border-gray-200 dark:border-gray-600">esc</kbd>
-                to close
-              </span>
-            </div>
-          </div>
-        </div>
       </DialogContent>
     </Dialog>
   )
