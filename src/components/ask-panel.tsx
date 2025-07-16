@@ -617,7 +617,7 @@ export function AskPanel() {
   // Expanded state - show menu selection or specific tab content
   return (
     <div 
-      className="h-full bg-white dark:bg-gray-900 shadow-lg flex flex-col overflow-hidden transition-all duration-300
+      className="h-full bg-gray-50 dark:bg-gray-900 shadow-lg flex flex-col overflow-hidden transition-all duration-300
                  max-lg:fixed max-lg:inset-0 max-lg:z-50"
       style={{ 
         width: isMobile ? '100%' : `${currentWidth}px`

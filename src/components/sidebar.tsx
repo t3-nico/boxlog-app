@@ -99,15 +99,10 @@ export const SidebarItem = forwardRef(function SidebarItem(
   ),
   ref: React.ForwardedRef<HTMLAnchorElement | HTMLButtonElement>
 ) {
-  let currentClasses = indicator
-    ? clsx(
-        'data-current:*:data-[slot=icon]:text-zinc-950',
-        'dark:data-current:*:data-[slot=icon]:text-white'
-      )
-    : clsx(
-        'data-current:bg-zinc-950/5 data-current:*:data-[slot=icon]:text-zinc-950',
-        'dark:data-current:bg-white/5 dark:data-current:*:data-[slot=icon]:text-white'
-      )
+  let currentClasses = clsx(
+    'data-current:bg-zinc-950/10 data-current:*:data-[slot=icon]:text-zinc-950',
+    'dark:data-current:bg-white/10 dark:data-current:*:data-[slot=icon]:text-white'
+  )
 
   let classes = clsx(
     // Base
@@ -132,12 +127,7 @@ export const SidebarItem = forwardRef(function SidebarItem(
 
   return (
     <span className={clsx(className, 'relative')}>
-      {indicator && current && (
-        <motion.span
-          layoutId="current-indicator"
-          className="absolute inset-y-2 -left-4 w-0.5 rounded-full bg-zinc-950 dark:bg-white"
-        />
-      )}
+      {/* Remove vertical line indicator */}
       {'href' in props ? (
         <Headless.CloseButton
           as={Link}

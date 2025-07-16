@@ -197,7 +197,7 @@ export function ApplicationLayout({
                 </Dropdown>
               )}
               {!inSettings && (
-                <div className="flex items-center ml-auto">
+                <div className="flex items-center ml-auto mr-2">
                   {!collapsed && (
                     <Dropdown>
                       <DropdownButton as={NavbarItem} aria-label="Notifications">
@@ -306,19 +306,19 @@ export function ApplicationLayout({
                     <div className="mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 h-6">
                       {!collapsed && 'Views'}
                     </div>
-                    <SidebarItem href="/calendar" current={pathname === '/calendar'} indicator={false}>
+                    <SidebarItem href="/calendar" current={pathname === '/calendar'}>
                       <CalendarIcon data-slot="icon" />
                       <SidebarLabel>Calendar</SidebarLabel>
                     </SidebarItem>
-                    <SidebarItem href="/table" current={pathname.startsWith('/table')} indicator={false}>
+                    <SidebarItem href="/table" current={pathname.startsWith('/table')}>
                       <TableCellsIcon data-slot="icon" />
                       <SidebarLabel>Table</SidebarLabel>
                     </SidebarItem>
-                    <SidebarItem href="/board" current={pathname.startsWith('/board')} indicator={false}>
+                    <SidebarItem href="/board" current={pathname.startsWith('/board')}>
                       <Squares2X2Icon data-slot="icon" />
                       <SidebarLabel>Board</SidebarLabel>
                     </SidebarItem>
-                    <SidebarItem href="/stats" current={pathname.startsWith('/stats')} indicator={false}>
+                    <SidebarItem href="/stats" current={pathname.startsWith('/stats')}>
                       <ChartBarIcon data-slot="icon" />
                       <SidebarLabel>Stats</SidebarLabel>
                     </SidebarItem>

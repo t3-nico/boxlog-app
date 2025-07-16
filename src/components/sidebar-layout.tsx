@@ -89,7 +89,7 @@ export function SidebarLayout({
       {/* Content */}
       <main
         className={clsx(
-          'flex flex-1 flex-col pb-2 lg:min-w-0 lg:pt-2 lg:pr-2',
+          'flex flex-1 flex-col lg:min-w-0',
           collapsed ? 'lg:pl-16' : 'lg:pl-64'
         )}
       >
