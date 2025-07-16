@@ -1,7 +1,7 @@
 import {
   PlusCircle as PlusCircleIcon,
   Calendar as CalendarIcon,
-  Table as TableCellsIcon,
+  TableProperties as TableCellsIcon,
   SquareKanban as ViewColumnsIcon,
   BarChart3 as ChartBarIcon,
   HelpCircle as QuestionMarkCircleIcon,
