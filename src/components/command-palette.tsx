@@ -202,25 +202,52 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     </div>
   )
   
+  // Group results by category
+  const groupedResults = useMemo(() => {
+    const groups: Record<string, SearchResult[]> = {}
+    
+    results.forEach(result => {
+      const category = result.category
+      if (!groups[category]) {
+        groups[category] = []
+      }
+      groups[category].push(result)
+    })
+    
+    return groups
+  }, [results])
+
+  // Get category display info
+  const getCategoryInfo = (category: string) => {
+    const categoryMap: Record<string, { label: string; icon: React.ReactNode }> = {
+      'navigation': { label: 'ナビゲーション', icon: '🧭' },
+      'create': { label: 'アクション', icon: '➕' },
+      'tasks': { label: '最近のタスク', icon: '✓' },
+      'tags': { label: 'タグ', icon: '🏷️' },
+      'ai': { label: 'AI', icon: '🤖' },
+    }
+    return categoryMap[category] || { label: category, icon: '📁' }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 max-w-2xl border-0 shadow-2xl">
+      <DialogContent className="p-0 max-w-2xl border-0 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-200">
         <DialogHeader className="sr-only">
-          <DialogTitle>Command Palette</DialogTitle>
+          <DialogTitle>コマンドパレット</DialogTitle>
         </DialogHeader>
         
         {/* Search input */}
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-          <SearchIcon className="w-5 h-5 text-gray-400 mr-3" />
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <SearchIcon className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for commands, tasks, tags..."
-            className="border-0 outline-0 ring-0 focus:ring-0 focus:outline-0 text-base"
+            placeholder="タスクを検索..."
+            className="border-0 outline-0 ring-0 focus:ring-0 focus:outline-0 text-lg placeholder:text-gray-400 bg-transparent"
             autoFocus
           />
           {isLoading && (
-            <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full ml-2" />
+            <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full ml-3 flex-shrink-0" />
           )}
         </div>
         
@@ -230,86 +257,128 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             <EmptyState />
           ) : (
             <div className="py-2">
-              {results.map((result, index) => (
-                <button
-                  key={result.id}
-                  onClick={() => executeCommand(result)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
-                    index === selectedIndex 
-                      ? 'bg-blue-50 dark:bg-blue-900/30 border-r-2 border-blue-500' 
-                      : ''
-                  }`}
-                >
-                  {/* Icon */}
-                  <div className="flex-shrink-0">
-                    {result.type === 'command' ? (
-                      <CommandLineIcon className="w-5 h-5 text-gray-500" />
-                    ) : (
-                      <div className="w-5 h-5 bg-gray-200 dark:bg-gray-700 rounded" />
-                    )}
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-gray-900 dark:text-gray-100 truncate">
-                        {result.title}
-                      </span>
-                      <Badge 
-                        variant="secondary" 
-                        className={`text-xs ${getCategoryColor(result.category)}`}
-                      >
-                        {result.category}
-                      </Badge>
+              {Object.entries(groupedResults).map(([category, categoryResults]) => {
+                const categoryInfo = getCategoryInfo(category)
+                return (
+                  <div key={category} className="mb-4 last:mb-0">
+                    {/* Section Header */}
+                    <div className="px-6 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-2">
+                      <span>{categoryInfo.icon}</span>
+                      <span>{categoryInfo.label}</span>
                     </div>
-                    {result.description && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {result.description}
-                      </p>
-                    )}
-                    {result.metadata?.tags && result.metadata.tags.length > 0 && (
-                      <div className="flex gap-1 mt-1">
-                        {result.metadata.tags.slice(0, 3).map((tag, i) => (
-                          <span 
-                            key={i}
-                            className="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded"
+                    
+                    {/* Section Items */}
+                    <div className="px-3">
+                      {categoryResults.map((result, categoryIndex) => {
+                        const globalIndex = results.findIndex(r => r.id === result.id)
+                        const isSelected = globalIndex === selectedIndex
+                        
+                        return (
+                          <button
+                            key={result.id}
+                            onClick={() => executeCommand(result)}
+                            className={`w-full rounded-lg p-3 mb-2 text-left transition-all duration-150 ${
+                              isSelected 
+                                ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 shadow-sm' 
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent'
+                            }`}
                           >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
+                            {/* Item Content */}
+                            <div className="flex items-start gap-3">
+                              {/* Icon */}
+                              <div className="flex-shrink-0 mt-0.5">
+                                {result.type === 'command' ? (
+                                  <div className="w-6 h-6 rounded-md bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
+                                    <CommandLineIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                                  </div>
+                                ) : result.type === 'task' ? (
+                                  <div className="w-6 h-6 rounded-md bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                                    <span className="text-green-600 dark:text-green-400 text-sm">✓</span>
+                                  </div>
+                                ) : (
+                                  <div className="w-6 h-6 rounded-md bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                                    <span className="text-gray-600 dark:text-gray-400 text-sm">📁</span>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                                  {result.title}
+                                </div>
+                                {result.description && (
+                                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                                    {result.description}
+                                  </div>
+                                )}
+                                
+                                {/* Metadata */}
+                                {(result.metadata?.tags || result.metadata?.status || result.metadata?.dueDate) && (
+                                  <div className="flex items-center gap-2 text-xs">
+                                    {result.metadata.tags && result.metadata.tags.length > 0 && (
+                                      <div className="flex gap-1">
+                                        {result.metadata.tags.slice(0, 2).map((tag, i) => (
+                                          <span 
+                                            key={i}
+                                            className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full"
+                                          >
+                                            #{tag}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {result.metadata.status && (
+                                      <span className="text-gray-500 dark:text-gray-400">
+                                        {result.metadata.status}
+                                      </span>
+                                    )}
+                                    {result.metadata.dueDate && (
+                                      <span className="text-orange-600 dark:text-orange-400">
+                                        期限: {result.metadata.dueDate}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Action indicator */}
+                              <div className="flex-shrink-0 mt-1">
+                                <ArrowRightIcon className={`w-4 h-4 transition-colors ${
+                                  isSelected ? 'text-blue-500' : 'text-gray-400'
+                                }`} />
+                              </div>
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
                   </div>
-                  
-                  {/* Action indicator */}
-                  <div className="flex-shrink-0">
-                    <ArrowRightIcon className="w-4 h-4 text-gray-400" />
-                  </div>
-                </button>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
         
         {/* Footer */}
-        <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-800/50">
+        <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>
-              {results.length > 0 && `${results.length} result${results.length === 1 ? '' : 's'}`}
+              {results.length > 0 && `${results.length}件の結果`}
             </span>
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1">
                 <ArrowUpIcon className="w-3 h-3" />
                 <ArrowDownIcon className="w-3 h-3" />
-                Navigate
+                移動
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1 bg-white dark:bg-gray-700 rounded">↵</kbd>
-                Execute
+                <kbd className="px-1.5 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono">↵</kbd>
+                実行
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1 bg-white dark:bg-gray-700 rounded">esc</kbd>
-                Close
+                <kbd className="px-1.5 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono">esc</kbd>
+                閉じる
               </span>
             </div>
           </div>
