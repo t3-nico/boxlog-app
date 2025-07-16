@@ -237,6 +237,210 @@ const migrationPatterns = {
 - ✅ **Mixed usage is stable**: Remaining legacy components are intentionally preserved
 - ✅ **No breaking changes needed**: Current mixed approach works well in production
 
+### kiboUI AI Components Integration
+
+The application has **INTEGRATED** advanced AI interface components from kiboUI, providing state-of-the-art conversational UI patterns for the AI chatbot functionality.
+
+#### AI Components Integrated ✅ 100% Complete
+
+**✅ Core AI Components:**
+- **AI Input** (kiboUI) - Advanced input with voice recognition, model selection, auto-resize
+- **AI Conversation** (kiboUI) - Optimized chat display with auto-scroll and stick-to-bottom
+- **AI Message** (kiboUI) - Unified message layout for user and assistant messages
+- **AI Response** (kiboUI) - Advanced markdown rendering with syntax highlighting
+- **AI Branch** (kiboUI) - Conversation branching for multiple response variants
+
+**✅ Supporting Components:**
+- **Code Block** (kiboUI) - Syntax highlighting with copy functionality and language selection
+- **Scroll Area** (kiboUI) - Optimized scrolling components
+- **Badge/Button/Select/Textarea** (kiboUI) - Additional UI components for AI interface
+
+#### AI Component Usage Patterns
+
+**AI Input Pattern:**
+```tsx
+import {
+  AIInput,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputSubmit,
+  AIInputButton,
+  AIInputTools,
+  AIInputModelSelect
+} from '@/components/ui/kibo-ui/ai/input'
+
+<AIInput onSubmit={handleSubmit}>
+  <AIInputTextarea
+    value={inputValue}
+    onChange={setInputValue}
+    placeholder="Ask Claude..."
+    minHeight={40}
+    maxHeight={120}
+  />
+  <AIInputToolbar>
+    <AIInputTools>
+      {/* Voice Input */}
+      <AIInputButton onClick={toggleVoiceInput}>
+        <Mic className="w-4 h-4" />
+      </AIInputButton>
+      
+      {/* Model Selection */}
+      <AIInputModelSelect value={model} onValueChange={setModel}>
+        <AIInputModelSelectTrigger>
+          <AIInputModelSelectValue />
+        </AIInputModelSelectTrigger>
+        <AIInputModelSelectContent>
+          <AIInputModelSelectItem value="claude-3-sonnet">Claude 3 Sonnet</AIInputModelSelectItem>
+        </AIInputModelSelectContent>
+      </AIInputModelSelect>
+    </AIInputTools>
+    
+    <AIInputSubmit disabled={!inputValue.trim()} status="ready" />
+  </AIInputToolbar>
+</AIInput>
+```
+
+**AI Conversation Pattern:**
+```tsx
+import {
+  AIConversation,
+  AIConversationContent,
+  AIConversationScrollButton
+} from '@/components/ui/kibo-ui/ai/conversation'
+
+<AIConversation>
+  <AIConversationContent>
+    {messages.map(message => (
+      <MessageComponent key={message.id} message={message} />
+    ))}
+  </AIConversationContent>
+  <AIConversationScrollButton />
+</AIConversation>
+```
+
+**AI Message Pattern:**
+```tsx
+import {
+  AIMessage,
+  AIMessageContent,
+  AIMessageAvatar
+} from '@/components/ui/kibo-ui/ai/message'
+import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
+
+<AIMessage from="assistant">
+  <AIMessageAvatar src="/claude-avatar.png" name="Claude" />
+  <AIMessageContent>
+    <AIResponse>
+      {message.content}
+    </AIResponse>
+  </AIMessageContent>
+</AIMessage>
+```
+
+**AI Branch Pattern (Conversation Variants):**
+```tsx
+import {
+  AIBranch,
+  AIBranchMessages,
+  AIBranchSelector,
+  AIBranchPrevious,
+  AIBranchNext,
+  AIBranchPage
+} from '@/components/ui/kibo-ui/ai/branch'
+
+<AIBranch onBranchChange={handleBranchChange}>
+  <AIBranchMessages>
+    {responseVariants.map((content, index) => (
+      <AIResponse key={index}>{content}</AIResponse>
+    ))}
+  </AIBranchMessages>
+  <AIBranchSelector from="assistant">
+    <AIBranchPrevious />
+    <AIBranchPage />
+    <AIBranchNext />
+  </AIBranchSelector>
+</AIBranch>
+```
+
+**BoxLog Custom AI Response:**
+```tsx
+// Custom AI Response component optimized for BoxLog theme
+const BoxLogAIResponse = ({ children, ...props }) => (
+  <AIResponse
+    className="prose prose-sm dark:prose-invert max-w-none
+      [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
+      [&_p]:leading-relaxed [&_p]:my-2
+      [&_code]:bg-gray-100 [&_code]:dark:bg-gray-800"
+    options={{
+      disallowedElements: ['script', 'iframe'],
+      remarkPlugins: [],
+    }}
+    {...props}
+  >
+    {children}
+  </AIResponse>
+)
+```
+
+#### AI Integration Benefits Achieved
+
+1. **Advanced UX**: Voice input, model selection, conversation branching
+2. **Security**: XSS prevention with content sanitization 
+3. **Performance**: Optimized scroll management with use-stick-to-bottom
+4. **Accessibility**: ARIA support and keyboard navigation
+5. **Developer Experience**: Type-safe components with TypeScript
+6. **Theme Integration**: Seamless light/dark mode support
+7. **Markdown Support**: Rich content rendering with syntax highlighting
+
+#### AI Feature Implementation
+
+**Voice Input Integration:**
+- Web Speech API with Japanese language support
+- Visual feedback during recording (red indicator)
+- Automatic transcription to text input
+- Fallback for unsupported browsers
+
+**Model Selection Features:**
+- Claude 3 Sonnet (default, balanced)
+- Claude 3 Haiku (fast response)
+- Claude 3 Opus (high performance)
+- Dropdown interface with easy switching
+
+**Conversation Branching:**
+- Multiple AI response variants (string | string[])
+- Navigation controls (previous/next/page indicator)
+- Automatic branch detection and UI switching
+- Personalization and preference tracking
+
+**Security & Performance:**
+- Content sanitization (script/iframe blocking)
+- Memory optimization with React.memo
+- Efficient re-rendering with proper dependencies
+- Auto-scroll management without manual refs
+
+#### AI Components File Structure
+
+```
+src/components/ui/kibo-ui/ai/
+├── input.tsx           # Advanced input with voice & model selection
+├── conversation.tsx    # Auto-scroll conversation container
+├── message.tsx        # Unified message layout
+├── response.tsx       # Markdown rendering with security
+├── branch.tsx         # Conversation branching system
+├── source.tsx         # Source attribution
+├── suggestion.tsx     # Response suggestions
+├── tool.tsx          # Tool integration
+└── reasoning.tsx      # AI reasoning display
+```
+
+**Integration Status:**
+- ✅ **AI Input**: Voice input, model selection, auto-resize implemented
+- ✅ **AI Conversation**: Auto-scroll, scroll-to-bottom implemented  
+- ✅ **AI Message**: Unified layout with avatars implemented
+- ✅ **AI Response**: Markdown, code highlighting, security implemented
+- ✅ **AI Branch**: Multi-variant responses, navigation implemented
+- 🔄 **Advanced Features**: Source, suggestion, tool components available for future use
+
 ### Theme System
 
 The application uses a custom theme system in `src/styles/theme-simplified.css`:
@@ -1393,12 +1597,21 @@ import { Button as KiboButton } from '@/components/ui/kibo-ui/button'
 ```
 
 ## コンポーネント使用ルール
-- **基本UI**: Shadcn/ui を使用
-- **高度な機能**: Kibo UI を使用
-  - ガントチャート: `@/components/ui/kibo-ui/gantt` (プロジェクト管理画面)
-  - AI入力: `@/components/ui/kibo-ui/ai-input` (チャット機能)
-  - カラーピッカー: `@/components/ui/kibo-ui/color-picker` (設定画面)
-  - ドロップゾーン: `@/components/ui/kibo-ui/dropzone` (ファイルアップロード)
+- **基本UI**: shadcn/ui を使用
+- **AI機能**: kiboUI AI コンポーネント を使用 ✅ **統合完了**
+- **高度な機能**: kiboUI を使用
+
+### AI機能 (kiboUI) - ✅ 統合済み
+- **AI Input**: `@/components/ui/kibo-ui/ai/input` - 音声入力・モデル選択・自動リサイズ
+- **AI Conversation**: `@/components/ui/kibo-ui/ai/conversation` - 自動スクロール・最適化されたチャット表示
+- **AI Message**: `@/components/ui/kibo-ui/ai/message` - 統一メッセージレイアウト・アバター表示
+- **AI Response**: `@/components/ui/kibo-ui/ai/response` - マークダウン・コードハイライト・セキュリティ
+- **AI Branch**: `@/components/ui/kibo-ui/ai/branch` - 会話分岐・複数レスポンス対応
+
+### 高度な機能 (kiboUI) - 🔄 必要に応じて追加
+- **ガントチャート**: `@/components/ui/kibo-ui/gantt` (プロジェクト管理画面)
+- **カラーピッカー**: `@/components/ui/kibo-ui/color-picker` (設定画面)
+- **ドロップゾーン**: `@/components/ui/kibo-ui/dropzone` (ファイルアップロード)
 
 #### TypeScript Best Practices
 ```tsx
@@ -1711,5 +1924,5 @@ feat: implement smart folder drag and drop
 
 ---
 
-*Last Major Update: 2024-07-16 - Added shadcn/ui migration completion and troubleshooting*
-*Current Version: v1.2 - Enhanced with complete shadcn/ui migration documentation and common issue solutions*
+*Last Major Update: 2025-01-16 - Added kiboUI AI components integration*
+*Current Version: v1.3 - Enhanced with kiboUI AI chatbot components and advanced conversational UI patterns*
