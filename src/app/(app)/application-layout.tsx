@@ -501,14 +501,12 @@ export function ApplicationLayout({
               </div>
             </div>
             
-            {/* Ask Panel - Always visible on desktop, conditional on mobile */}
-            {(isAskPanelOpen) && (
+            {/* Ask Panel - Always visible on desktop, hidden on mobile */}
+            {!isMobile && (
               <div 
-                className="transition-all duration-300
-                           lg:fixed lg:right-0 lg:top-0 lg:bottom-0 lg:z-30
-                           max-lg:fixed max-lg:inset-0 max-lg:z-50"
+                className="transition-all duration-300 fixed right-0 top-0 bottom-0 z-30"
                 style={{ 
-                  width: isMobile ? '100%' : `${askPanelCurrentWidth}px`
+                  width: `${askPanelCurrentWidth}px`
                 }}
               >
                 <AskPanel />

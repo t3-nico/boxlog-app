@@ -49,9 +49,8 @@ export function MainAreaHeader({ className }: MainAreaHeaderProps) {
             </div>
           </div>
           
-          {/* Right: Ask AI Panel Toggle */}
+          {/* Right: Empty space */}
           <div className="flex items-center justify-end w-48">
-            <AskPanelToggleButton />
           </div>
         </div>
       </div>

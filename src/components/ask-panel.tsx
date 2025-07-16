@@ -16,7 +16,11 @@ import {
   Lightbulb,
   TrendingUp,
   Calendar,
-  Clock
+  Clock,
+  PanelRight,
+  HelpCircle,
+  Book,
+  ExternalLink
 } from 'lucide-react'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { useAskPanelStore, askPanelSelectors } from '@/stores/useAskPanelStore'
@@ -214,107 +218,148 @@ function ChatInput() {
   )
 }
 
-function AskPanelHeader() {
+function AskPanelHeader({ 
+  activeTab, 
+  onTabChange, 
+  onBackToMenu 
+}: { 
+  activeTab: 'ai' | 'help'
+  onTabChange: (tab: 'ai' | 'help') => void
+  onBackToMenu: () => void
+}) {
   const { clearMessages } = useChatContext()
-  const { close, toggleCollapsed } = useAskPanelStore()
+  const { toggleCollapsed } = useAskPanelStore()
   const [showMenu, setShowMenu] = useState(false)
 
+  const tabs = [
+    {
+      id: 'ai' as const,
+      label: 'AI Chat',
+      icon: Sparkles,
+      color: 'from-purple-600 to-blue-600'
+    },
+    {
+      id: 'help' as const,
+      label: 'Help',
+      icon: HelpCircle,
+      color: 'from-green-600 to-emerald-600'
+    }
+  ]
+
+  const activeTabData = tabs.find(tab => tab.id === activeTab)!
+
   return (
-    <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">Ask Claude</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Your AI assistant</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-1">
-          {/* Collapse Button */}
-          <button
-            onClick={toggleCollapsed}
-            className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors lg:block hidden"
-            title="Collapse panel"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-          
-          {/* Menu */}
-          <div className="relative">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-            >
-              <MoreVertical className="h-4 w-4" />
-            </button>
+    <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
+      {/* Header with collapse button and active tab info */}
+      <div className="px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
             
-            {showMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+            <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${activeTabData.color} flex items-center justify-center`}>
+              <activeTabData.icon className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100">{activeTabData.label}</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {activeTab === 'ai' ? 'Your AI assistant' : 'Documentation & support'}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1">
+            {/* Menu for AI tab */}
+            {activeTab === 'ai' && (
+              <div className="relative">
                 <button
-                  onClick={() => {
-                    clearMessages()
-                    setShowMenu(false)
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  onClick={() => setShowMenu(!showMenu)}
+                  className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                 >
-                  <Trash2 className="w-4 h-4" />
-                  Clear conversation
+                  <MoreVertical className="h-4 w-4" />
                 </button>
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(JSON.stringify({}))
-                    setShowMenu(false)
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <Copy className="w-4 h-4" />
-                  Export conversation
-                </button>
+                
+                {showMenu && (
+                  <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+                    <button
+                      onClick={() => {
+                        clearMessages()
+                        setShowMenu(false)
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Clear conversation
+                    </button>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify({}))
+                        setShowMenu(false)
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <Copy className="w-4 h-4" />
+                      Export conversation
+                    </button>
+                  </div>
+                )}
               </div>
             )}
+            
+            {/* Close Button */}
+            <button
+              onClick={toggleCollapsed}
+              className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              title="Close panel"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          
-          {/* Close Button (Mobile only) */}
-          <button
-            onClick={close}
-            className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors lg:hidden"
-          >
-            <X className="h-4 w-4" />
-          </button>
         </div>
       </div>
     </div>
   )
 }
 
-function QuickPrompts() {
+function AIIntroduction() {
   const { sendMessage } = useChatContext()
-  const defaultPrompts = useAskPanelStore(askPanelSelectors.getDefaultPrompts)
 
   const quickPrompts = [
-    { icon: TrendingUp, text: "Analyze my productivity", color: "text-green-600" },
-    { icon: Calendar, text: "What's on my schedule?", color: "text-blue-600" },
-    { icon: Clock, text: "Help me prioritize tasks", color: "text-orange-600" },
-    { icon: Lightbulb, text: "Suggest improvements", color: "text-purple-600" },
+    { emoji: "📊", text: "Analyze my productivity patterns", description: "Get insights on your work patterns" },
+    { emoji: "🎯", text: "What tasks should I focus on today?", description: "Prioritize your day" },
+    { emoji: "📅", text: "Help me organize my schedule", description: "Optimize your calendar" },
+    { emoji: "💡", text: "Suggest productivity improvements", description: "Enhance your workflow" },
   ]
 
   return (
-    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Quick actions</div>
-      <div className="grid grid-cols-2 gap-2">
+    <div className="p-6">
+      {/* AI Introduction */}
+      <div className="text-center mb-6">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-4">
+          <Sparkles className="w-8 h-8 text-white" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Ask Claude</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+          I'm your AI assistant for productivity and task management. I can help you analyze patterns, organize tasks, and optimize your workflow.
+        </p>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="space-y-3">
+        <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Quick actions</div>
         {quickPrompts.map((prompt, index) => (
           <button
             key={index}
             onClick={() => sendMessage(prompt.text)}
-            className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center"
+            className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left"
           >
-            <prompt.icon className={`w-5 h-5 ${prompt.color}`} />
-            <span className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-              {prompt.text}
-            </span>
+            <span className="text-xl">{prompt.emoji}</span>
+            <div className="flex-1">
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {prompt.text}
+              </div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                {prompt.description}
+              </div>
+            </div>
           </button>
         ))}
       </div>
@@ -322,14 +367,163 @@ function QuickPrompts() {
   )
 }
 
+// メニュー選択画面（collapsed状態から開いた時の初期画面）
+function PanelMenuSelection({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) {
+  const menuItems = [
+    {
+      id: 'ai' as const,
+      title: 'AI Assistant',
+      description: 'Chat with Claude for productivity insights and task management',
+      icon: Sparkles,
+      color: 'from-purple-600 to-blue-600',
+      badge: null
+    },
+    {
+      id: 'help' as const,
+      title: 'Help & Support',
+      description: 'Documentation, guides, and frequently asked questions',
+      icon: HelpCircle,
+      color: 'from-green-600 to-emerald-600',
+      badge: null
+    }
+  ]
+
+  return (
+    <div className="p-6">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">BoxLog Assistant</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Choose from the available tools and resources
+        </p>
+      </div>
+      
+      <div className="space-y-3">
+        {menuItems.map((item) => {
+          const ItemIcon = item.icon
+          return (
+            <button
+              key={item.id}
+              onClick={() => onSelectTab(item.id)}
+              className="w-full flex items-center gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left group"
+            >
+              <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center group-hover:scale-105 transition-transform`}>
+                <ItemIcon className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">{item.title}</h4>
+                  {item.badge && (
+                    <span className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// Help画面のコンテンツ
+function HelpContent() {
+  const helpSections = [
+    {
+      title: 'Getting Started',
+      items: [
+        { title: 'Quick Start Guide', description: 'Learn the basics of BoxLog' },
+        { title: 'Creating Your First Task', description: 'Step-by-step tutorial' },
+        { title: 'Setting Up Your Workspace', description: 'Customize your environment' }
+      ]
+    },
+    {
+      title: 'Features',
+      items: [
+        { title: 'Calendar View', description: 'Managing tasks in calendar format' },
+        { title: 'Tags & Smart Folders', description: 'Organizing with tags and automation' },
+        { title: 'Productivity Analytics', description: 'Understanding your work patterns' }
+      ]
+    },
+    {
+      title: 'Troubleshooting',
+      items: [
+        { title: 'Common Issues', description: 'Solutions to frequent problems' },
+        { title: 'Performance Tips', description: 'Optimize your BoxLog experience' },
+        { title: 'Data Backup', description: 'Keep your data safe' }
+      ]
+    }
+  ]
+
+  return (
+    <div className="p-6">
+      <div className="text-center mb-6">
+        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center mx-auto mb-4">
+          <Book className="w-8 h-8 text-white" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Help & Support</h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Find answers and learn how to make the most of BoxLog
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {helpSections.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{section.title}</h4>
+            <div className="space-y-2">
+              {section.items.map((item, itemIndex) => (
+                <button
+                  key={itemIndex}
+                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group"
+                >
+                  <div>
+                    <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                      {item.title}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      {item.description}
+                    </div>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <div className="flex items-center gap-3 mb-2">
+          <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <span className="font-medium text-gray-900 dark:text-gray-100">Need more help?</span>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+          Can't find what you're looking for? Contact our support team.
+        </p>
+        <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+          Contact Support →
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export function AskPanel() {
-  const { state, markAsRead } = useChatContext()
+  const { state, markAsRead, sendMessage } = useChatContext()
   const isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
   const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
   const currentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
-  const { toggleCollapsed, close } = useAskPanelStore()
+  const { toggleCollapsed, collapse } = useAskPanelStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
+  const [activeTab, setActiveTab] = useState<'ai' | 'help' | 'menu'>('menu') // 'menu' is the initial state
+  const [showTabSelection, setShowTabSelection] = useState(true) // Show menu selection when first expanded
 
   // Check if mobile on client side
   useEffect(() => {
@@ -342,6 +536,14 @@ export function AskPanel() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
+  // Reset to menu when collapsed
+  useEffect(() => {
+    if (collapsed) {
+      setActiveTab('menu')
+      setShowTabSelection(true)
+    }
+  }, [collapsed])
+
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -349,100 +551,179 @@ export function AskPanel() {
 
   // Mark messages as read when panel is expanded
   useEffect(() => {
-    if (isOpen && !collapsed && state.unreadCount > 0) {
+    if (!collapsed && state.unreadCount > 0) {
       markAsRead()
     }
-  }, [isOpen, collapsed, state.unreadCount, markAsRead])
+  }, [collapsed, state.unreadCount, markAsRead])
 
-  if (!isOpen) return null
+  // Handle tab selection from menu
+  const handleTabSelect = (tab: 'ai' | 'help') => {
+    setActiveTab(tab)
+    setShowTabSelection(false)
+  }
 
-  // Collapsed state - icon only with sidebar-like design
-  if (collapsed && !isMobile) {
+  // Handle direct tab selection from collapsed state
+  const handleDirectTabSelect = (tab: 'ai' | 'help') => {
+    setActiveTab(tab)
+    setShowTabSelection(false)
+    toggleCollapsed() // Expand the panel
+  }
+
+  // Collapsed state - icon only with sidebar-like design  
+  if (collapsed) {
     return (
       <div 
-        className="h-full bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 shadow-lg flex flex-col items-center transition-all duration-300"
+        className="h-full bg-gray-50 dark:bg-gray-900 shadow-lg flex flex-col items-center transition-all duration-300"
         style={{ width: `${currentWidth}px` }}
       >
-        {/* Header area with close button */}
-        <div className="flex flex-col items-center p-4 border-b border-gray-200 dark:border-gray-700 w-full">
+        {/* Header area with expand button */}
+        <div className="flex flex-col items-center pt-4 px-4 w-full">
           <button
-            onClick={close}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors mb-3"
-            title="Close panel"
+            onClick={toggleCollapsed}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            title="Expand panel"
           >
-            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <PanelRight className="size-5 text-gray-600 dark:text-gray-400" />
           </button>
         </div>
         
-        {/* AI Icon button */}
-        <div className="flex flex-col items-center px-4 pt-2">
+        {/* Menu Icons */}
+        <div className="flex flex-col items-center px-4 pt-4 space-y-2">
           <button
-            onClick={toggleCollapsed}
+            onClick={() => handleDirectTabSelect('ai')}
             className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group relative"
-            title="Expand Ask Claude"
+            title="AI Assistant"
           >
-            <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
+            <Sparkles className="size-5 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
             {state.unreadCount > 0 && (
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-xs text-white font-bold">{Math.min(state.unreadCount, 9)}</span>
               </div>
             )}
           </button>
+          
+          <button
+            onClick={() => handleDirectTabSelect('help')}
+            className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group"
+            title="Help & Support"
+          >
+            <HelpCircle className="size-5 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform" />
+          </button>
         </div>
       </div>
     )
   }
 
-  // Expanded state or mobile
+  // Expanded state - show menu selection or specific tab content
   return (
     <div 
       className="h-full bg-white dark:bg-gray-900 shadow-lg flex flex-col overflow-hidden transition-all duration-300
-                 lg:border-l lg:border-gray-200 lg:dark:border-gray-700
                  max-lg:fixed max-lg:inset-0 max-lg:z-50"
       style={{ 
         width: isMobile ? '100%' : `${currentWidth}px`
       }}
     >
-      <AskPanelHeader />
+      {/* Header - only show when specific tab is selected */}
+      {!showTabSelection && (
+        <AskPanelHeader activeTab={activeTab} onTabChange={setActiveTab} onBackToMenu={() => setShowTabSelection(true)} />
+      )}
       
-      {/* Messages */}
+      {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        {state.messages.length === 0 ? (
+        {showTabSelection ? (
+          // Menu selection screen - sidebar style
           <>
-            <div className="px-4 py-6">
-              <div className="flex justify-start items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-4 py-3">
-                  <div className="text-sm leading-relaxed">
-                    Hi! I&rsquo;m Claude, your AI assistant in BoxLog. I can help you with:
-                  </div>
-                  <ul className="text-sm mt-2 space-y-1">
-                    <li>• Analyzing your tasks and productivity patterns</li>
-                    <li>• Creating and organizing tasks</li>
-                    <li>• Scheduling and time management</li>
-                    <li>• Answering questions about your data</li>
-                  </ul>
-                  <div className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-                    Try one of the quick actions below, or ask me anything!
-                  </div>
+            <div className="flex flex-col h-full w-64">
+              {/* Header with collapse button */}
+              <div className="flex items-center p-4">
+                <button
+                  onClick={toggleCollapsed}
+                  className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                  title="Collapse panel"
+                >
+                  <PanelRight className="size-5" />
+                </button>
+                <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Assistant</h3>
+              </div>
+              
+              {/* Menu Items - Sidebar style */}
+              <div className="flex-1 px-4 pb-4">
+                <div className="space-y-2" style={{ maxWidth: '256px' }}>
+                  <button
+                    onClick={() => handleTabSelect('ai')}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                  >
+                    <Sparkles className="size-5 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform shrink-0" />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">AI Chat</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Ask Claude for help</div>
+                    </div>
+                    {state.unreadCount > 0 && (
+                      <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                        <span className="text-xs text-white font-bold">{Math.min(state.unreadCount, 9)}</span>
+                      </div>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={() => handleTabSelect('help')}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                  >
+                    <HelpCircle className="size-5 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform shrink-0" />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900 dark:text-gray-100">Help & Support</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Documentation & guides</div>
+                    </div>
+                  </button>
                 </div>
               </div>
             </div>
-            <QuickPrompts />
+          </>
+        ) : activeTab === 'ai' ? (
+          // AI Chat content
+          <>
+            {state.messages.length === 0 ? (
+              <>
+                <div className="px-4 py-6">
+                  <div className="flex justify-start items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-4 py-3">
+                      <div className="text-sm leading-relaxed">
+                        Hi! I&rsquo;m Claude, your AI assistant in BoxLog. I can help you with:
+                      </div>
+                      <ul className="text-sm mt-2 space-y-1">
+                        <li>• Analyzing your tasks and productivity patterns</li>
+                        <li>• Creating and organizing tasks</li>
+                        <li>• Scheduling and time management</li>
+                        <li>• Answering questions about your data</li>
+                      </ul>
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                        Try one of the quick actions below, or ask me anything!
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <AIIntroduction />
+              </>
+            ) : (
+              <div className="px-4 py-6 space-y-6">
+                {state.messages.map((message) => (
+                  <MessageBubble key={message.id} message={message} />
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
           </>
         ) : (
-          <div className="px-4 py-6 space-y-6">
-            {state.messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
+          // Help content
+          <HelpContent />
         )}
       </div>
       
-      <ChatInput />
+      {/* Chat input - only show for AI tab */}
+      {!showTabSelection && activeTab === 'ai' && <ChatInput />}
     </div>
   )
 }

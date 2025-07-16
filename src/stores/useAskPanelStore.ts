@@ -36,14 +36,14 @@ export type AskPanelStore = AskPanelState & AskPanelActions
 
 // 初期状態
 const initialState: AskPanelState = {
-  isOpen: true, // デフォルトで表示（折りたたみ状態で）
+  isOpen: true, // 常時表示
   collapsed: true, // 初期状態は折りたたみ（アイコンのみ）
-  width: 384, // w-96 equivalent (展開時)
-  collapsedWidth: 64, // w-16 equivalent (折りたたみ時)
+  width: 256, // w-64 equivalent (展開時) - 左サイドメニューと完全に同じ幅
+  collapsedWidth: 64, // w-16 equivalent (折りたたみ時) - 左サイドメニューと完全に同じ幅
   
   preferences: {
     autoOpen: false,
-    showInHeader: true,
+    showInHeader: false, // ヘッダーボタンは非表示
     defaultPrompts: [
       "Analyze my productivity patterns",
       "What tasks should I focus on today?",
@@ -74,7 +74,7 @@ export const useAskPanelStore = create<AskPanelStore>()(
 
       // 設定操作
       setWidth: (width: number) => 
-        set({ width: Math.max(320, Math.min(640, width)) }), // 最小320px、最大640px
+        set({ width: Math.max(256, Math.min(640, width)) }), // 最小256px（サイドメニューと同じ）、最大640px
       
       updatePreferences: (preferences: Partial<AskPanelState['preferences']>) =>
         set((state) => ({
