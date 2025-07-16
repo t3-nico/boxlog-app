@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { MoreVertical as EllipsisVerticalIcon, Pencil as PencilIcon, Trash2 as TrashIcon } from 'lucide-react'
 import { 
-  Dropdown,
-  DropdownButton,
-  DropdownDivider,
-  DropdownItem,
-  DropdownLabel,
   DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { TagEditDialog } from '@/components/tags/tag-edit-dialog'
@@ -105,23 +105,23 @@ export const TagItem = ({ tag }: TagItemProps) => {
           </div>
 
           {/* アクションメニュー */}
-          <Dropdown>
-            <DropdownButton className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
-              <EllipsisVerticalIcon className="w-4 h-4" data-slot="icon" />
-            </DropdownButton>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded">
+              <EllipsisVerticalIcon className="w-4 h-4" />
+            </DropdownMenuTrigger>
             
-            <DropdownMenu>
-              <DropdownItem onClick={() => setIsEditing(true)}>
-                <PencilIcon className="w-4 h-4" data-slot="icon" />
-                <DropdownLabel>Edit</DropdownLabel>
-              </DropdownItem>
-              <DropdownDivider />
-              <DropdownItem onClick={handleDelete}>
-                <TrashIcon className="w-4 h-4" data-slot="icon" />
-                <DropdownLabel>Delete</DropdownLabel>
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                <PencilIcon className="w-4 h-4 mr-2" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleDelete}>
+                <TrashIcon className="w-4 h-4 mr-2" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

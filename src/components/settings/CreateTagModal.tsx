@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/tagIcons'
@@ -53,10 +53,12 @@ export const CreateTagModal = ({ open, onClose }: CreateTagModalProps) => {
   }
 
   return (
-    <Dialog open={open} onClose={handleClose} size="lg">
-      <form onSubmit={handleSubmit}>
-        <DialogTitle>Create New Tag</DialogTitle>
-        <DialogBody className="space-y-4">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Create New Tag</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Tag Name
@@ -141,14 +143,14 @@ export const CreateTagModal = ({ open, onClose }: CreateTagModalProps) => {
               ))}
             </div>
           </div>
-        </DialogBody>
-        <DialogActions>
-          <Button type="button" variant="outline" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button type="submit">Create Tag</Button>
-        </DialogActions>
-      </form>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button type="submit">Create Tag</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

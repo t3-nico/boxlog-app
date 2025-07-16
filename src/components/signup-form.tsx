@@ -42,7 +42,7 @@ export function SignupForm({
     try {
       const { error } = await signUp(email, password)
       if (error) {
-        setError(error)
+        setError(error.message)
       } else {
         setSuccess(true)
       }
@@ -58,7 +58,7 @@ export function SignupForm({
     setError(null)
     const { error } = await signInWithOAuth('google')
     if (error) {
-      setError(error)
+      setError(error.message)
     }
     setLoading(false)
   }
@@ -68,7 +68,7 @@ export function SignupForm({
     setError(null)
     const { error } = await signInWithOAuth('apple')
     if (error) {
-      setError(error)
+      setError(error.message)
     }
     setLoading(false)
   }

@@ -150,7 +150,7 @@ export const TrashItemCard = ({ item }: TrashItemCardProps) => {
         {/* アクションボタン */}
         <div className="flex items-center space-x-2 ml-4">
           <Button
-            outline
+            variant="outline"
             onClick={handleRestore}
             disabled={isRestoring || isDeleting}
             className="text-xs"

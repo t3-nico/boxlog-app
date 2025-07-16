@@ -14,14 +14,6 @@ import {
   Clock as ClockIcon,
   GraduationCap as AcademicCapIcon
 } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { Avatar } from '@/components/avatar'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
