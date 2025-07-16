@@ -21,7 +21,13 @@ import {
   Terminal as CommandLineIcon,
   ArrowUp as ArrowUpIcon,
   ArrowDown as ArrowDownIcon,
-  ArrowRight as ArrowRightIcon
+  ArrowRight as ArrowRightIcon,
+  Navigation,
+  Plus,
+  CheckSquare,
+  Tag,
+  Bot,
+  Folder
 } from 'lucide-react'
 
 interface CommandPaletteProps {
@@ -217,58 +223,58 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     return groups
   }, [results])
 
-  // Get category display info
+  // Get category display info - Vercel Toolbar style
   const getCategoryInfo = (category: string) => {
-    const categoryMap: Record<string, { label: string; icon: React.ReactNode }> = {
-      'navigation': { label: 'ナビゲーション', icon: '🧭' },
-      'create': { label: 'アクション', icon: '➕' },
-      'tasks': { label: '最近のタスク', icon: '✓' },
-      'tags': { label: 'タグ', icon: '🏷️' },
-      'ai': { label: 'AI', icon: '🤖' },
+    const categoryMap: Record<string, { label: string; icon: React.ComponentType<any> }> = {
+      'navigation': { label: 'Navigation', icon: Navigation },
+      'create': { label: 'Actions', icon: Plus },
+      'tasks': { label: 'Recent Items', icon: CheckSquare },
+      'tags': { label: 'Tags', icon: Tag },
+      'ai': { label: 'AI', icon: Bot },
     }
-    return categoryMap[category] || { label: category, icon: '📁' }
+    return categoryMap[category] || { label: category, icon: Folder }
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="p-0 max-w-2xl border-0 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-200">
+      <DialogContent className="p-0 max-w-xl border border-gray-200 dark:border-gray-700 shadow-xl animate-in fade-in-0 zoom-in-95 duration-200 rounded-lg">
         <DialogHeader className="sr-only">
-          <DialogTitle>コマンドパレット</DialogTitle>
+          <DialogTitle>Command Palette</DialogTitle>
         </DialogHeader>
         
-        {/* Search input */}
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-          <SearchIcon className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+        {/* Search input - Vercel Style */}
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+          <SearchIcon className="w-4 h-4 text-gray-400 mr-3 flex-shrink-0" />
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="タスクを検索..."
-            className="border-0 outline-0 ring-0 focus:ring-0 focus:outline-0 text-lg placeholder:text-gray-400 bg-transparent"
+            placeholder="Search for commands and recent items..."
+            className="border-0 outline-0 ring-0 focus:ring-0 focus:outline-0 text-sm placeholder:text-gray-400 bg-transparent"
             autoFocus
           />
           {isLoading && (
-            <div className="animate-spin w-4 h-4 border-2 border-gray-300 border-t-blue-600 rounded-full ml-3 flex-shrink-0" />
+            <div className="animate-spin w-3 h-3 border-2 border-gray-300 border-t-blue-600 rounded-full ml-3 flex-shrink-0" />
           )}
         </div>
         
-        {/* Results */}
+        {/* Results - Vercel Toolbar Style */}
         <div className="max-h-96 overflow-y-auto">
           {results.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="py-2">
+            <div className="py-1">
               {Object.entries(groupedResults).map(([category, categoryResults]) => {
                 const categoryInfo = getCategoryInfo(category)
+                const IconComponent = categoryInfo.icon
                 return (
-                  <div key={category} className="mb-4 last:mb-0">
-                    {/* Section Header */}
-                    <div className="px-6 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide flex items-center gap-2">
-                      <span>{categoryInfo.icon}</span>
-                      <span>{categoryInfo.label}</span>
+                  <div key={category} className="mb-3 last:mb-0">
+                    {/* Section Header - Vercel Style */}
+                    <div className="px-3 py-1.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      {categoryInfo.label}
                     </div>
                     
-                    {/* Section Items */}
-                    <div className="px-3">
+                    {/* Section Items - Compact Vercel Style */}
+                    <div className="space-y-0.5">
                       {categoryResults.map((result, categoryIndex) => {
                         const globalIndex = results.findIndex(r => r.id === result.id)
                         const isSelected = globalIndex === selectedIndex
@@ -277,77 +283,54 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                           <button
                             key={result.id}
                             onClick={() => executeCommand(result)}
-                            className={`w-full rounded-lg p-3 mb-2 text-left transition-all duration-150 ${
+                            className={`w-full px-3 py-1.5 text-left transition-all duration-100 flex items-center gap-3 group relative ${
                               isSelected 
-                                ? 'bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 shadow-sm' 
-                                : 'hover:bg-gray-50 dark:hover:bg-gray-800 border border-transparent'
+                                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100' 
+                                : 'hover:bg-gray-50 dark:hover:bg-gray-800/50 text-gray-700 dark:text-gray-300'
                             }`}
                           >
-                            {/* Item Content */}
-                            <div className="flex items-start gap-3">
-                              {/* Icon */}
-                              <div className="flex-shrink-0 mt-0.5">
-                                {result.type === 'command' ? (
-                                  <div className="w-6 h-6 rounded-md bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                                    <CommandLineIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-                                  </div>
-                                ) : result.type === 'task' ? (
-                                  <div className="w-6 h-6 rounded-md bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                                    <span className="text-green-600 dark:text-green-400 text-sm">✓</span>
-                                  </div>
-                                ) : (
-                                  <div className="w-6 h-6 rounded-md bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                    <span className="text-gray-600 dark:text-gray-400 text-sm">📁</span>
-                                  </div>
-                                )}
+                            {/* Selection indicator - Todoist style */}
+                            {isSelected && (
+                              <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500" />
+                            )}
+                            
+                            {/* Icon - Compact Vercel/VS Code Style */}
+                            <div className="flex-shrink-0">
+                              <IconComponent className={`w-4 h-4 ${
+                                isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'
+                              }`} />
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                              <div className={`text-sm truncate ${
+                                isSelected ? 'text-blue-900 dark:text-blue-100 font-medium' : 'text-gray-900 dark:text-gray-100'
+                              }`}>
+                                {result.title}
                               </div>
-                              
-                              {/* Content */}
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                                  {result.title}
+                              {result.description && (
+                                <div className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                                  {result.description}
                                 </div>
-                                {result.description && (
-                                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                                    {result.description}
-                                  </div>
-                                )}
-                                
-                                {/* Metadata */}
-                                {(result.metadata?.tags || result.metadata?.status || result.metadata?.dueDate) && (
-                                  <div className="flex items-center gap-2 text-xs">
-                                    {result.metadata.tags && result.metadata.tags.length > 0 && (
-                                      <div className="flex gap-1">
-                                        {result.metadata.tags.slice(0, 2).map((tag, i) => (
-                                          <span 
-                                            key={i}
-                                            className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-full"
-                                          >
-                                            #{tag}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    )}
-                                    {result.metadata.status && (
-                                      <span className="text-gray-500 dark:text-gray-400">
-                                        {result.metadata.status}
-                                      </span>
-                                    )}
-                                    {result.metadata.dueDate && (
-                                      <span className="text-orange-600 dark:text-orange-400">
-                                        期限: {result.metadata.dueDate}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
+                              )}
+                            </div>
+                            
+                            {/* Right side content */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              {/* Metadata - Ultra compact */}
+                              {result.metadata?.tags && result.metadata.tags.length > 0 && (
+                                <div className="flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+                                  <span className="text-xs text-gray-500">{result.metadata.tags.length}</span>
+                                </div>
+                              )}
                               
-                              {/* Action indicator */}
-                              <div className="flex-shrink-0 mt-1">
-                                <ArrowRightIcon className={`w-4 h-4 transition-colors ${
-                                  isSelected ? 'text-blue-500' : 'text-gray-400'
-                                }`} />
-                              </div>
+                              {/* Keyboard hint - only for selected */}
+                              {isSelected && (
+                                <kbd className="px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono border border-gray-200 dark:border-gray-600 text-gray-500">
+                                  ↵
+                                </kbd>
+                              )}
                             </div>
                           </button>
                         )
@@ -360,25 +343,25 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
           )}
         </div>
         
-        {/* Footer */}
-        <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-3 bg-gray-50 dark:bg-gray-800/50">
+        {/* Footer - Vercel Style */}
+        <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-800/30">
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>
-              {results.length > 0 && `${results.length}件の結果`}
+              {results.length > 0 && `${results.length} results`}
             </span>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
                 <ArrowUpIcon className="w-3 h-3" />
                 <ArrowDownIcon className="w-3 h-3" />
-                移動
+                to navigate
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono">↵</kbd>
-                実行
+                <kbd className="px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono border border-gray-200 dark:border-gray-600">↵</kbd>
+                to select
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono">esc</kbd>
-                閉じる
+                <kbd className="px-1 py-0.5 bg-white dark:bg-gray-700 rounded text-xs font-mono border border-gray-200 dark:border-gray-600">esc</kbd>
+                to close
               </span>
             </div>
           </div>
