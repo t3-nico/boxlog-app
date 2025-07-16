@@ -99,7 +99,8 @@ export function ApplicationLayout({
   
   // Ask Panel state
   const isAskPanelOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
-  const askPanelWidth = useAskPanelStore(askPanelSelectors.getWidth)
+  const isAskPanelCollapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
+  const askPanelCurrentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
   const [isMobile, setIsMobile] = useState(false)
 
   // Check if mobile on client side
@@ -491,7 +492,7 @@ export function ApplicationLayout({
             <div 
               className="flex flex-col flex-1 min-w-0 transition-all duration-300"
               style={{ 
-                marginRight: (isAskPanelOpen && !isMobile) ? `${askPanelWidth}px` : '0px' 
+                marginRight: (isAskPanelOpen && !isMobile) ? `${askPanelCurrentWidth}px` : '0px' 
               }}
             >
               {!inSettings && <MainAreaHeader />}
@@ -500,13 +501,14 @@ export function ApplicationLayout({
               </div>
             </div>
             
-            {/* Ask Panel - Fixed Right Side (Desktop) / Overlay (Mobile) */}
-            {isAskPanelOpen && (
+            {/* Ask Panel - Always visible on desktop, conditional on mobile */}
+            {(isAskPanelOpen) && (
               <div 
-                className="fixed right-0 top-0 bottom-0 z-30 transition-all duration-300
-                           lg:relative lg:w-auto lg:z-auto"
+                className="transition-all duration-300
+                           lg:fixed lg:right-0 lg:top-0 lg:bottom-0 lg:z-30
+                           max-lg:fixed max-lg:inset-0 max-lg:z-50"
                 style={{ 
-                  width: `${askPanelWidth}px`
+                  width: isMobile ? '100%' : `${askPanelCurrentWidth}px`
                 }}
               >
                 <AskPanel />

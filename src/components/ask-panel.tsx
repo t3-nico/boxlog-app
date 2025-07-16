@@ -216,7 +216,7 @@ function ChatInput() {
 
 function AskPanelHeader() {
   const { clearMessages } = useChatContext()
-  const { close } = useAskPanelStore()
+  const { close, toggleCollapsed } = useAskPanelStore()
   const [showMenu, setShowMenu] = useState(false)
 
   return (
@@ -233,6 +233,15 @@ function AskPanelHeader() {
         </div>
         
         <div className="flex items-center gap-1">
+          {/* Collapse Button */}
+          <button
+            onClick={toggleCollapsed}
+            className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors lg:block hidden"
+            title="Collapse panel"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+          
           {/* Menu */}
           <div className="relative">
             <button
@@ -268,10 +277,10 @@ function AskPanelHeader() {
             )}
           </div>
           
-          {/* Close Button */}
+          {/* Close Button (Mobile only) */}
           <button
             onClick={close}
-            className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+            className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors lg:hidden"
           >
             <X className="h-4 w-4" />
           </button>
@@ -315,7 +324,10 @@ function QuickPrompts() {
 
 export function AskPanel() {
   const { state, markAsRead } = useChatContext()
-  const { isOpen, width } = useAskPanelStore()
+  const isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
+  const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
+  const currentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
+  const { toggleCollapsed, close } = useAskPanelStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -335,22 +347,60 @@ export function AskPanel() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [state.messages])
 
-  // Mark messages as read when panel is open
+  // Mark messages as read when panel is expanded
   useEffect(() => {
-    if (isOpen && state.unreadCount > 0) {
+    if (isOpen && !collapsed && state.unreadCount > 0) {
       markAsRead()
     }
-  }, [isOpen, state.unreadCount, markAsRead])
+  }, [isOpen, collapsed, state.unreadCount, markAsRead])
 
   if (!isOpen) return null
 
+  // Collapsed state - icon only with sidebar-like design
+  if (collapsed && !isMobile) {
+    return (
+      <div 
+        className="h-full bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 shadow-lg flex flex-col items-center transition-all duration-300"
+        style={{ width: `${currentWidth}px` }}
+      >
+        {/* Header area with close button */}
+        <div className="flex flex-col items-center p-4 border-b border-gray-200 dark:border-gray-700 w-full">
+          <button
+            onClick={close}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors mb-3"
+            title="Close panel"
+          >
+            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          </button>
+        </div>
+        
+        {/* AI Icon button */}
+        <div className="flex flex-col items-center px-4 pt-2">
+          <button
+            onClick={toggleCollapsed}
+            className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group relative"
+            title="Expand Ask Claude"
+          >
+            <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
+            {state.unreadCount > 0 && (
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                <span className="text-xs text-white font-bold">{Math.min(state.unreadCount, 9)}</span>
+              </div>
+            )}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // Expanded state or mobile
   return (
     <div 
-      className="h-full bg-white dark:bg-gray-900 shadow-lg flex flex-col overflow-hidden
+      className="h-full bg-white dark:bg-gray-900 shadow-lg flex flex-col overflow-hidden transition-all duration-300
                  lg:border-l lg:border-gray-200 lg:dark:border-gray-700
                  max-lg:fixed max-lg:inset-0 max-lg:z-50"
       style={{ 
-        width: isMobile ? '100%' : `${width}px`
+        width: isMobile ? '100%' : `${currentWidth}px`
       }}
     >
       <AskPanelHeader />
@@ -399,24 +449,33 @@ export function AskPanel() {
 
 // Ask Panel Toggle Button for Header
 export function AskPanelToggleButton() {
-  const { toggle } = useAskPanelStore()
+  const { open, toggleCollapsed } = useAskPanelStore()
   const isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
+  const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
   const showInHeader = useAskPanelStore(askPanelSelectors.getShowInHeader)
 
   if (!showInHeader) return null
 
+  const handleClick = () => {
+    // シンプルに常に開いて、folded状態を切り替え
+    open()
+    if (isOpen) {
+      toggleCollapsed()
+    }
+  }
+
   return (
     <Button
       variant="outline"
-      onClick={toggle}
+      onClick={handleClick}
       className="flex items-center gap-2 px-3 py-1.5 h-auto"
     >
       <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
       <span className="text-sm font-medium">Ask Claude</span>
-      {isOpen ? (
-        <ChevronRight className="w-4 h-4 text-gray-500" />
-      ) : (
+      {!isOpen || collapsed ? (
         <ChevronLeft className="w-4 h-4 text-gray-500" />
+      ) : (
+        <ChevronRight className="w-4 h-4 text-gray-500" />
       )}
     </Button>
   )

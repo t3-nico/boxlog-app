@@ -3,9 +3,10 @@ import { persist } from 'zustand/middleware'
 
 export interface AskPanelState {
   // UI状態
-  isOpen: boolean
-  collapsed: false // 将来の機能拡張用
-  width: number // パネル幅（デフォルト: 384px = w-96）
+  isOpen: boolean // パネルが表示されているかどうか（常にtrue、モバイルではfalse可能）
+  collapsed: boolean // 折りたたみ状態（true: アイコンのみ、false: 全体表示）
+  width: number // 展開時のパネル幅（デフォルト: 384px = w-96）
+  collapsedWidth: number // 折りたたみ時の幅（デフォルト: 64px = w-16）
   
   // 設定
   preferences: {
@@ -21,6 +22,11 @@ export interface AskPanelActions {
   close: () => void
   toggle: () => void
   
+  // 折りたたみ操作
+  collapse: () => void
+  expand: () => void
+  toggleCollapsed: () => void
+  
   // 設定操作
   setWidth: (width: number) => void
   updatePreferences: (preferences: Partial<AskPanelState['preferences']>) => void
@@ -30,9 +36,10 @@ export type AskPanelStore = AskPanelState & AskPanelActions
 
 // 初期状態
 const initialState: AskPanelState = {
-  isOpen: false,
-  collapsed: false,
-  width: 384, // w-96 equivalent
+  isOpen: true, // デフォルトで表示（折りたたみ状態で）
+  collapsed: true, // 初期状態は折りたたみ（アイコンのみ）
+  width: 384, // w-96 equivalent (展開時)
+  collapsedWidth: 64, // w-16 equivalent (折りたたみ時)
   
   preferences: {
     autoOpen: false,
@@ -58,6 +65,13 @@ export const useAskPanelStore = create<AskPanelStore>()(
       
       toggle: () => set((state) => ({ isOpen: !state.isOpen })),
 
+      // 折りたたみ操作
+      collapse: () => set({ collapsed: true }),
+      
+      expand: () => set({ collapsed: false }),
+      
+      toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
+
       // 設定操作
       setWidth: (width: number) => 
         set({ width: Math.max(320, Math.min(640, width)) }), // 最小320px、最大640px
@@ -71,7 +85,9 @@ export const useAskPanelStore = create<AskPanelStore>()(
       name: 'ask-panel-store',
       partialize: (state) => ({
         isOpen: state.isOpen,
+        collapsed: state.collapsed,
         width: state.width,
+        collapsedWidth: state.collapsedWidth,
         preferences: state.preferences,
       }),
     }
@@ -82,7 +98,10 @@ export const useAskPanelStore = create<AskPanelStore>()(
 export const askPanelSelectors = {
   // UI状態
   getIsOpen: (state: AskPanelStore) => state.isOpen,
+  getCollapsed: (state: AskPanelStore) => state.collapsed,
   getWidth: (state: AskPanelStore) => state.width,
+  getCollapsedWidth: (state: AskPanelStore) => state.collapsedWidth,
+  getCurrentWidth: (state: AskPanelStore) => state.collapsed ? state.collapsedWidth : state.width,
   
   // 設定
   getPreferences: (state: AskPanelStore) => state.preferences,
