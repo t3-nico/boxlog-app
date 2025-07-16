@@ -36,8 +36,8 @@ export type AskPanelStore = AskPanelState & AskPanelActions
 
 // 初期状態
 const initialState: AskPanelState = {
-  isOpen: true, // 常時表示
-  collapsed: true, // 初期状態は折りたたみ（アイコンのみ）
+  isOpen: false, // 初期状態は非表示
+  collapsed: false, // 開いたときは展開状態
   width: 256, // w-64 equivalent (展開時) - 左サイドメニューと完全に同じ幅
   collapsedWidth: 64, // w-16 equivalent (折りたたみ時) - 左サイドメニューと完全に同じ幅
   
@@ -63,7 +63,11 @@ export const useAskPanelStore = create<AskPanelStore>()(
       
       close: () => set({ isOpen: false }),
       
-      toggle: () => set((state) => ({ isOpen: !state.isOpen })),
+      toggle: () => set((state) => ({ 
+        isOpen: !state.isOpen,
+        // 開くときは展開状態にする
+        collapsed: state.isOpen ? state.collapsed : false
+      })),
 
       // 折りたたみ操作
       collapse: () => set({ collapsed: true }),

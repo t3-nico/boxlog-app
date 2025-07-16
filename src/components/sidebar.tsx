@@ -16,7 +16,7 @@ export function Sidebar({
     <nav
       {...props}
       data-collapsed={collapsed ? 'true' : undefined}
-      className={clsx(className, 'group flex h-full min-h-0 flex-col bg-gray-50 dark:bg-gray-900')}
+      className={clsx(className, 'group flex h-full min-h-0 flex-col bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700')}
     />
   )
 }

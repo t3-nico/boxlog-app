@@ -42,8 +42,7 @@ import {
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { MainAreaHeader } from '@/components/main-area-header'
-import { AskPanel } from '@/components/ask-panel'
-import { useAskPanelStore, askPanelSelectors } from '@/stores/useAskPanelStore'
+import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { getEvents, getReviews } from '@/data'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
@@ -99,22 +98,8 @@ export function ApplicationLayout({
   const { user, signOut } = useAuthContext()
   const router = useRouter()
   
-  // Ask Panel state
-  const isAskPanelOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
-  const isAskPanelCollapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
-  const askPanelCurrentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
-  const [isMobile, setIsMobile] = useState(false)
-
-  // Check if mobile on client side
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024)
-    }
-    
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  // AI Chat Sidebar state
+  const [isAIChatOpen, setIsAIChatOpen] = useState(false)
   
   // SmartFolder and Tag filtering
   const { setSmartFolderFilter, setTagFilter, filters } = useBoxStore()
@@ -489,32 +474,32 @@ export function ApplicationLayout({
         collapsed={collapsed}
       >
         <ToastProvider>
-          <div className="flex h-full">
-            {/* Main Content Area */}
-            <div 
-              className="flex flex-col flex-1 min-w-0 transition-all duration-300"
-              style={{ 
-                marginRight: (isAskPanelOpen && !isMobile) ? `${askPanelCurrentWidth}px` : '0px' 
-              }}
-            >
-              {!inSettings && <MainAreaHeader />}
-              <div className="flex-1 overflow-auto">
-                {children}
+          <div className="flex flex-col h-full">
+            {/* Main Header - Full width */}
+            {!inSettings && <MainAreaHeader onAIClick={() => setIsAIChatOpen(true)} />}
+            
+            {/* Content Area */}
+            <div className="flex flex-1 overflow-hidden">
+              {/* Main Content Area */}
+              <div 
+                className="flex flex-col flex-1 min-w-0 transition-all duration-300 ease-in-out"
+                style={{
+                  marginRight: isAIChatOpen ? '320px' : '0px'
+                }}
+              >
+                <div className="flex-1 overflow-auto">
+                  {children}
+                </div>
               </div>
             </div>
             
-            {/* Ask Panel - Always visible on desktop, hidden on mobile */}
-            {!isMobile && (
-              <div 
-                className="transition-all duration-300 fixed right-0 top-0 bottom-0 z-30"
-                style={{ 
-                  width: `${askPanelCurrentWidth}px`
-                }}
-              >
-                <AskPanel />
-              </div>
-            )}
           </div>
+          
+          {/* AI Chat Sidebar */}
+          <AIChatSidebar 
+            isOpen={isAIChatOpen} 
+            onClose={() => setIsAIChatOpen(false)} 
+          />
         </ToastProvider>
       </SidebarLayout>
     </ThemeProvider>

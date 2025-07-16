@@ -6,14 +6,19 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 import { LifeCounter } from './life-counter'
-import { AskPanelToggleButton } from './ask-panel'
 
 interface MainAreaHeaderProps {
   className?: string
+  onAIClick?: () => void
 }
 
-export function MainAreaHeader({ className }: MainAreaHeaderProps) {
+export function MainAreaHeader({ className, onAIClick }: MainAreaHeaderProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  
+  const handleAIClick = () => {
+    onAIClick?.()
+  }
   
   // パス名から表示名を取得
   const getPageTitle = (path: string) => {
@@ -28,10 +33,17 @@ export function MainAreaHeader({ className }: MainAreaHeaderProps) {
   }
 
   return (
-    <div className={`sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 ${className}`}>
-      <div className="px-4 pb-2">
-        <div className="flex items-center justify-start h-12">
-          {/* Left: Current Task, Time & Life Counter */}
+    <div className={`sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-16 ${className}`}>
+      <div className="flex items-center justify-between px-4 h-full">
+        {/* Left: Current Page */}
+        <div className="flex items-center w-48">
+          <div className="text-lg font-semibold text-gray-600 dark:text-gray-300">
+            {getPageTitle(pathname)}
+          </div>
+        </div>
+        
+        {/* Center: Current Task, Time & Life Counter */}
+        <div className="flex items-center justify-center flex-1">
           <div className="flex items-center gap-6">
             <CurrentTaskDisplay />
             <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
@@ -39,6 +51,17 @@ export function MainAreaHeader({ className }: MainAreaHeaderProps) {
             <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
             <LifeCounter />
           </div>
+        </div>
+        
+        {/* Right: AI Icon */}
+        <div className="flex items-center justify-end w-48">
+          <button
+            onClick={handleAIClick}
+            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            title="AI Assistant"
+          >
+            <SparklesIcon className="size-5 text-purple-600 dark:text-purple-400" />
+          </button>
         </div>
       </div>
     </div>

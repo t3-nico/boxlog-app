@@ -25,6 +25,7 @@ import {
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { useAskPanelStore, askPanelSelectors } from '@/stores/useAskPanelStore'
 import { Button } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
 
 interface MessageBubbleProps {
   message: ChatMessage
@@ -224,7 +225,7 @@ function AskPanelHeader({
   onBackToMenu 
 }: { 
   activeTab: 'ai' | 'help'
-  onTabChange: (tab: 'ai' | 'help') => void
+  onTabChange: (tab: 'ai' | 'help' | 'menu') => void
   onBackToMenu: () => void
 }) {
   const { clearMessages } = useChatContext()
@@ -338,7 +339,7 @@ function AIIntroduction() {
         </div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Ask Claude</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-          I'm your AI assistant for productivity and task management. I can help you analyze patterns, organize tasks, and optimize your workflow.
+          I&apos;m your AI assistant for productivity and task management. I can help you analyze patterns, organize tasks, and optimize your workflow.
         </p>
       </div>
 
@@ -504,7 +505,7 @@ function HelpContent() {
           <span className="font-medium text-gray-900 dark:text-gray-100">Need more help?</span>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-          Can't find what you're looking for? Contact our support team.
+          Can&apos;t find what you&apos;re looking for? Contact our support team.
         </p>
         <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
           Contact Support →
@@ -521,9 +522,10 @@ export function AskPanel() {
   const currentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
   const { toggleCollapsed, collapse } = useAskPanelStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
   const [isMobile, setIsMobile] = useState(false)
-  const [activeTab, setActiveTab] = useState<'ai' | 'help' | 'menu'>('menu') // 'menu' is the initial state
-  const [showTabSelection, setShowTabSelection] = useState(true) // Show menu selection when first expanded
+  const [activeTab, setActiveTab] = useState<'ai' | 'help' | 'menu'>('ai') // デフォルトでAIタブを選択
+  const [showTabSelection, setShowTabSelection] = useState(false) // 最初からAIチャットを表示
 
   // Check if mobile on client side
   useEffect(() => {
@@ -543,6 +545,14 @@ export function AskPanel() {
       setShowTabSelection(true)
     }
   }, [collapsed])
+
+  // Auto-select AI tab when on AI chat page
+  useEffect(() => {
+    if (pathname === '/ai-chat' && !collapsed) {
+      setActiveTab('ai')
+      setShowTabSelection(false)
+    }
+  }, [pathname, collapsed])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -573,20 +583,9 @@ export function AskPanel() {
   if (collapsed) {
     return (
       <div 
-        className="h-full bg-gray-50 dark:bg-gray-900 shadow-lg flex flex-col items-center transition-all duration-300"
+        className="h-full bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center transition-all duration-300"
         style={{ width: `${currentWidth}px` }}
       >
-        {/* Header area with expand button */}
-        <div className="flex flex-col items-center pt-4 px-4 w-full">
-          <button
-            onClick={toggleCollapsed}
-            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-            title="Expand panel"
-          >
-            <PanelRight className="size-5 text-gray-600 dark:text-gray-400" />
-          </button>
-        </div>
-        
         {/* Menu Icons */}
         <div className="flex flex-col items-center px-4 pt-4 space-y-2">
           <button
@@ -617,15 +616,15 @@ export function AskPanel() {
   // Expanded state - show menu selection or specific tab content
   return (
     <div 
-      className="h-full bg-gray-50 dark:bg-gray-900 shadow-lg flex flex-col overflow-hidden transition-all duration-300
+      className="h-full bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden transition-all duration-300
                  max-lg:fixed max-lg:inset-0 max-lg:z-50"
       style={{ 
         width: isMobile ? '100%' : `${currentWidth}px`
       }}
     >
       {/* Header - only show when specific tab is selected */}
-      {!showTabSelection && (
-        <AskPanelHeader activeTab={activeTab} onTabChange={setActiveTab} onBackToMenu={() => setShowTabSelection(true)} />
+      {!showTabSelection && activeTab !== 'menu' && (
+        <AskPanelHeader activeTab={activeTab as 'ai' | 'help'} onTabChange={setActiveTab} onBackToMenu={() => setShowTabSelection(true)} />
       )}
       
       {/* Content */}
@@ -691,7 +690,7 @@ export function AskPanel() {
                     </div>
                     <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-4 py-3">
                       <div className="text-sm leading-relaxed">
-                        Hi! I&rsquo;m Claude, your AI assistant in BoxLog. I can help you with:
+                        Hi! I&apos;m Claude, your AI assistant in BoxLog. I can help you with:
                       </div>
                       <ul className="text-sm mt-2 space-y-1">
                         <li>• Analyzing your tasks and productivity patterns</li>
