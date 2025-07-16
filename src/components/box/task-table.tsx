@@ -13,7 +13,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TableColumnHeader,
   type ColumnDef,
 } from '@/components/ui/kibo-ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -224,7 +223,19 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
     {
       accessorKey: 'task',
       header: ({ column }) => (
-        <TableColumnHeader column={column} title="Task" />
+        <div 
+          className="flex items-center cursor-pointer select-none hover:bg-accent/50 p-2 rounded"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <span className="font-medium">Task</span>
+          {column.getIsSorted() === 'desc' ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'asc' ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <Minus className="ml-2 h-4 w-4 opacity-50" />
+          )}
+        </div>
       ),
       cell: ({ row }) => (
         <div className="font-mono text-sm text-muted-foreground">
@@ -236,7 +247,19 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
     {
       accessorKey: 'title',
       header: ({ column }) => (
-        <TableColumnHeader column={column} title="Title" />
+        <div 
+          className="flex items-center cursor-pointer select-none hover:bg-accent/50 p-2 rounded"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <span className="font-medium">Title</span>
+          {column.getIsSorted() === 'desc' ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'asc' ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <Minus className="ml-2 h-4 w-4 opacity-50" />
+          )}
+        </div>
       ),
       cell: ({ row }) => (
         <div className="max-w-[300px]">
@@ -251,7 +274,19 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
     {
       accessorKey: 'status',
       header: ({ column }) => (
-        <TableColumnHeader column={column} title="Status" />
+        <div 
+          className="flex items-center cursor-pointer select-none hover:bg-accent/50 p-2 rounded"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <span className="font-medium">Status</span>
+          {column.getIsSorted() === 'desc' ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'asc' ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <Minus className="ml-2 h-4 w-4 opacity-50" />
+          )}
+        </div>
       ),
       cell: ({ row }) => {
         const status = row.getValue('status') as TaskStatus
@@ -288,7 +323,19 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
     {
       accessorKey: 'priority',
       header: ({ column }) => (
-        <TableColumnHeader column={column} title="Priority" />
+        <div 
+          className="flex items-center cursor-pointer select-none hover:bg-accent/50 p-2 rounded"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <span className="font-medium">Priority</span>
+          {column.getIsSorted() === 'desc' ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === 'asc' ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : (
+            <Minus className="ml-2 h-4 w-4 opacity-50" />
+          )}
+        </div>
       ),
       cell: ({ row }) => {
         const priority = row.getValue('priority') as TaskPriority
