@@ -1,6 +1,14 @@
 'use client'
 
 import * as React from "react"
+
+// Speech Recognition API types
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
 import { useState, useRef, useEffect } from 'react'
 import { 
   X,
@@ -8,9 +16,24 @@ import {
   Sparkles,
   Trash2,
   Copy,
-  MoreVertical
+  MoreVertical,
+  Mic,
+  MicOff
 } from 'lucide-react'
 import { useChatContext } from '@/contexts/chat-context'
+import {
+  AIInput,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputSubmit,
+  AIInputButton,
+  AIInputTools,
+  AIInputModelSelect,
+  AIInputModelSelectTrigger,
+  AIInputModelSelectContent,
+  AIInputModelSelectItem,
+  AIInputModelSelectValue
+} from '@/components/ui/kibo-ui/ai/input'
 
 interface AIChatSidebarProps {
   isOpen: boolean
@@ -74,7 +97,8 @@ function MessageBubble({ message }: MessageBubbleProps) {
 function ChatInput() {
   const { state, sendMessage, setInputValue } = useChatContext()
   const [isComposing, setIsComposing] = useState(false)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [isListening, setIsListening] = useState(false)
+  const [selectedModel, setSelectedModel] = useState('claude-3-sonnet')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -83,21 +107,44 @@ function ChatInput() {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
-      e.preventDefault()
-      handleSubmit(e)
-    }
+  const getSubmitStatus = () => {
+    if (state.isTyping) return 'streaming'
+    if (!state.inputValue.trim()) return 'ready'
+    return 'ready'
   }
 
-  // Auto-resize textarea
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'
-      const scrollHeight = textareaRef.current.scrollHeight
-      textareaRef.current.style.height = Math.min(scrollHeight, 120) + 'px'
+  const toggleVoiceInput = () => {
+    if (!isListening) {
+      // 音声認識開始
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+        const recognition = new SpeechRecognition()
+        
+        recognition.continuous = false
+        recognition.interimResults = true
+        recognition.lang = 'ja-JP'
+        
+        recognition.onstart = () => setIsListening(true)
+        recognition.onend = () => setIsListening(false)
+        
+        recognition.onresult = (event: any) => {
+          const transcript = Array.from(event.results)
+            .map((result: any) => result[0])
+            .map((result: any) => result.transcript)
+            .join('')
+          
+          setInputValue(transcript)
+        }
+        
+        recognition.onerror = () => setIsListening(false)
+        recognition.start()
+      } else {
+        alert('音声認識がサポートされていません')
+      }
+    } else {
+      setIsListening(false)
     }
-  }, [state.inputValue])
+  }
 
   return (
     <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
@@ -113,30 +160,48 @@ function ChatInput() {
         </div>
       )}
       
-      <div className="relative">
-        <form onSubmit={handleSubmit} className="relative">
-          <textarea
-            ref={textareaRef}
-            value={state.inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
-            placeholder="Ask Claude..."
-            className="w-full resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 max-h-32 min-h-[40px] placeholder-gray-500 dark:placeholder-gray-400"
-            disabled={state.isTyping}
-            rows={1}
-          />
+      <AIInput onSubmit={handleSubmit}>
+        <AIInputTextarea
+          value={state.inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
+          placeholder="Ask Claude..."
+          disabled={state.isTyping}
+          minHeight={40}
+          maxHeight={120}
+        />
+        <AIInputToolbar>
+          <AIInputTools>
+            {/* AI Model Selector */}
+            <AIInputModelSelect value={selectedModel} onValueChange={setSelectedModel}>
+              <AIInputModelSelectTrigger className="w-auto min-w-[120px]">
+                <AIInputModelSelectValue />
+              </AIInputModelSelectTrigger>
+              <AIInputModelSelectContent>
+                <AIInputModelSelectItem value="claude-3-sonnet">Claude 3 Sonnet</AIInputModelSelectItem>
+                <AIInputModelSelectItem value="claude-3-haiku">Claude 3 Haiku</AIInputModelSelectItem>
+                <AIInputModelSelectItem value="claude-3-opus">Claude 3 Opus</AIInputModelSelectItem>
+              </AIInputModelSelectContent>
+            </AIInputModelSelect>
+            
+            {/* Voice Input Button */}
+            <AIInputButton
+              onClick={toggleVoiceInput}
+              variant={isListening ? "default" : "ghost"}
+              className={isListening ? "text-red-600 bg-red-50 dark:bg-red-950" : ""}
+              title={isListening ? "音声入力を停止" : "音声入力を開始"}
+            >
+              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            </AIInputButton>
+          </AIInputTools>
           
-          <button
-            type="submit"
+          <AIInputSubmit
             disabled={!state.inputValue.trim() || state.isTyping}
-            className="absolute right-2 bottom-2 p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors focus:outline-none"
-          >
-            <ArrowUpCircle className="h-4 w-4" />
-          </button>
-        </form>
-      </div>
+            status={getSubmitStatus()}
+          />
+        </AIInputToolbar>
+      </AIInput>
     </div>
   )
 }
