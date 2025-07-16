@@ -5,9 +5,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      '@/components/ui/kibo-ui': path.resolve(__dirname, 'src/components/ui/kibo-ui'),
     },
   },
   test: {
-    environment: 'node',
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
   },
 })
