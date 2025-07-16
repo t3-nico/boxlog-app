@@ -255,6 +255,7 @@ The application has **INTEGRATED** advanced AI interface components from kiboUI,
 - **Scroll Area** (kiboUI) - Optimized scrolling components
 - **Badge/Button/Select/Textarea** (kiboUI) - Additional UI components for AI interface
 - **Kanban** (kiboUI) - Modern kanban board with drag-and-drop functionality
+- **Table** (kiboUI) - Advanced table component with @tanstack/react-table and Jotai sorting
 
 #### AI Component Usage Patterns
 
@@ -1611,6 +1612,7 @@ import { Button as KiboButton } from '@/components/ui/kibo-ui/button'
 
 ### タスク管理機能 (kiboUI) - ✅ 統合済み
 - **Kanban**: `@/components/ui/kibo-ui/kanban` - ドラッグ&ドロップ・アクセシビリティ対応・テーマ統合
+- **Table**: `@/components/ui/kibo-ui/table` - @tanstack/react-table統合・Jotaiソート・フィルタリング対応
 
 #### Kanban Component Usage Pattern
 
@@ -1665,6 +1667,69 @@ const data = [
 - ✅ **Type Safety**: Full TypeScript support with generic types
 - ✅ **Theme Integration**: Supports light/dark mode via CSS variables
 - ✅ **Accessibility**: ARIA labels, keyboard navigation, screen reader support
+
+#### Table Component Usage Pattern
+
+**Table Component Pattern:**
+```tsx
+import {
+  TableProvider,
+  TableHeader,
+  TableHeaderGroup,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableColumnHeader,
+  type ColumnDef,
+} from '@/components/ui/kibo-ui/table'
+
+// Column definitions with sorting
+const columns: ColumnDef<Task>[] = [
+  {
+    accessorKey: 'title',
+    header: ({ column }) => (
+      <TableColumnHeader column={column} title="Title" />
+    ),
+    cell: ({ row }) => (
+      <div className="max-w-[300px] truncate">
+        {row.getValue('title')}
+      </div>
+    ),
+  },
+  // More columns...
+]
+
+// Table implementation
+<TableProvider columns={columns} data={tasks}>
+  <TableHeader>
+    {({ headerGroup }) => (
+      <TableHeaderGroup headerGroup={headerGroup}>
+        {({ header }) => (
+          <TableHead key={header.id} header={header} />
+        )}
+      </TableHeaderGroup>
+    )}
+  </TableHeader>
+  <TableBody>
+    {({ row }) => (
+      <TableRow key={row.id} row={row}>
+        {({ cell }) => (
+          <TableCell key={cell.id} cell={cell} />
+        )}
+      </TableRow>
+    )}
+  </TableBody>
+</TableProvider>
+```
+
+**Table Features:**
+- ✅ **Sorting**: Integrated @tanstack/react-table with Jotai state management
+- ✅ **Filtering**: Built-in filtering capabilities
+- ✅ **Selection**: Row selection with checkbox controls
+- ✅ **Mobile Responsive**: Automatically switches to mobile cards on small screens
+- ✅ **Inline Editing**: Dropdown editing for status and priority fields
+- ✅ **Theme Integration**: Supports light/dark mode via CSS variables
 - ✅ **Customization**: Flexible card content and column styling
 - ✅ **Performance**: Optimized rendering with React.memo and virtual scrolling
 - ✅ **BoxLog Integration**: Seamless integration with task management features
@@ -1985,5 +2050,5 @@ feat: implement smart folder drag and drop
 
 ---
 
-*Last Major Update: 2025-01-16 - Added kiboUI Kanban board integration*
-*Current Version: v1.4 - Enhanced with kiboUI Kanban board for modern task management and complete AI chatbot integration*
+*Last Major Update: 2025-01-16 - Added kiboUI Table integration*
+*Current Version: v1.5 - Enhanced with kiboUI Table for advanced task management with sorting, filtering, and inline editing capabilities*
