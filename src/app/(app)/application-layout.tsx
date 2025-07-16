@@ -78,7 +78,7 @@ import {
   Clock as ClockIcon,
   Table as TableCellsIcon,
   BarChart3 as ChartBarIcon,
-  Grid2X2 as Squares2X2Icon,
+  SquareKanban as Squares2X2Icon,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
