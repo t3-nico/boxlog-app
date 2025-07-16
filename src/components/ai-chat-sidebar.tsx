@@ -45,6 +45,14 @@ import {
   AIMessageAvatar
 } from '@/components/ui/kibo-ui/ai/message'
 import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
+import {
+  AIBranch,
+  AIBranchMessages,
+  AIBranchSelector,
+  AIBranchPrevious,
+  AIBranchNext,
+  AIBranchPage
+} from '@/components/ui/kibo-ui/ai/branch'
 
 // BoxLog用のカスタムAI Responseコンポーネント
 const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
@@ -78,7 +86,7 @@ interface AIChatSidebarProps {
 interface MessageBubbleProps {
   message: {
     id: string
-    content: string
+    content: string | string[]  // 複数の分岐レスポンスをサポート
     sender: 'user' | 'assistant'
     timestamp: Date
     status?: 'sending' | 'error' | 'sent'
@@ -88,6 +96,9 @@ interface MessageBubbleProps {
 function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.sender === 'user'
   const isAssistant = message.sender === 'assistant'
+  
+  // 分岐レスポンス（配列）かどうかチェック
+  const hasBranches = isAssistant && Array.isArray(message.content) && message.content.length > 1
   
   return (
     <AIMessage from={message.sender}>
@@ -99,13 +110,31 @@ function MessageBubble({ message }: MessageBubbleProps) {
       )}
       
       <AIMessageContent>
-        {isAssistant ? (
+        {isAssistant && hasBranches ? (
+          // 複数の分岐レスポンスがある場合
+          <AIBranch onBranchChange={(index) => console.log('Branch changed to:', index)}>
+            <AIBranchMessages>
+              {(message.content as string[]).map((content, index) => (
+                <BoxLogAIResponse key={index}>
+                  {content}
+                </BoxLogAIResponse>
+              ))}
+            </AIBranchMessages>
+            <AIBranchSelector from="assistant">
+              <AIBranchPrevious />
+              <AIBranchPage />
+              <AIBranchNext />
+            </AIBranchSelector>
+          </AIBranch>
+        ) : isAssistant ? (
+          // 単一のレスポンスの場合
           <BoxLogAIResponse>
-            {message.content}
+            {Array.isArray(message.content) ? message.content[0] : message.content}
           </BoxLogAIResponse>
         ) : (
+          // ユーザーメッセージの場合
           <div className="text-sm leading-relaxed whitespace-pre-wrap">
-            {message.content}
+            {message.content as string}
             {message.status && (
               <div className="mt-1 text-xs opacity-75">
                 {message.status === 'sending' && 'Sending...'}
@@ -325,16 +354,49 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
                 name="Claude"
               />
               <AIMessageContent>
-                <BoxLogAIResponse>
-                  Hi! I'm **Claude**, your AI assistant. I can help you with:
-                  
-                  • **Task planning and organization**
-                  • **Answering questions**  
-                  • **Code assistance**
-                  • **Writing and analysis**
-                  
-                  What would you like to know?
-                </BoxLogAIResponse>
+                <AIBranch>
+                  <AIBranchMessages>
+                    <BoxLogAIResponse>
+                      Hi! I'm **Claude**, your AI assistant. I can help you with:
+                      
+                      • **Task planning and organization**
+                      • **Answering questions**  
+                      • **Code assistance**
+                      • **Writing and analysis**
+                      
+                      What would you like to know?
+                    </BoxLogAIResponse>
+                    <BoxLogAIResponse>
+                      Welcome to **BoxLog**! I'm Claude, your AI assistant. 
+                      
+                      I'm here to help you:
+                      
+                      • **Organize your tasks** and projects
+                      • **Answer any questions** you might have
+                      • **Assist with coding** and technical issues
+                      • **Help with writing** and analysis
+                      
+                      How can I assist you today?
+                    </BoxLogAIResponse>
+                    <BoxLogAIResponse>
+                      Hello! I'm **Claude**, ready to help you with BoxLog.
+                      
+                      My capabilities include:
+                      
+                      • **Smart task management** suggestions
+                      • **Quick answers** to your questions
+                      • **Code assistance** and debugging
+                      • **Content creation** and analysis
+                      
+                      What would you like to work on?
+                    </BoxLogAIResponse>
+                  </AIBranchMessages>
+                  <AIBranchSelector from="assistant">
+                    <AIBranchPrevious />
+                    <AIBranchPage />
+                    <AIBranchNext />
+                  </AIBranchSelector>
+                </AIBranch>
               </AIMessageContent>
             </AIMessage>
           ) : (
