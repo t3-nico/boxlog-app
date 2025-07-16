@@ -46,6 +46,30 @@ import {
 } from '@/components/ui/kibo-ui/ai/message'
 import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
 
+// BoxLog用のカスタムAI Responseコンポーネント
+const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
+  <AIResponse
+    className="prose prose-sm dark:prose-invert max-w-none
+      [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
+      [&_p]:leading-relaxed [&_p]:my-2
+      [&_ul]:my-2 [&_ol]:my-2
+      [&_li]:my-1
+      [&_pre]:bg-gray-100 [&_pre]:dark:bg-gray-800
+      [&_code]:bg-gray-100 [&_code]:dark:bg-gray-800 [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded
+      [&_h1]:text-lg [&_h1]:font-semibold [&_h1]:mt-4 [&_h1]:mb-2
+      [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2
+      [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1
+      [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic"
+    options={{
+      disallowedElements: ['script', 'iframe'],
+      remarkPlugins: [],
+    }}
+    {...props}
+  >
+    {children}
+  </AIResponse>
+)
+
 interface AIChatSidebarProps {
   isOpen: boolean
   onClose: () => void
@@ -76,9 +100,9 @@ function MessageBubble({ message }: MessageBubbleProps) {
       
       <AIMessageContent>
         {isAssistant ? (
-          <AIResponse>
+          <BoxLogAIResponse>
             {message.content}
-          </AIResponse>
+          </BoxLogAIResponse>
         ) : (
           <div className="text-sm leading-relaxed whitespace-pre-wrap">
             {message.content}
@@ -301,16 +325,16 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
                 name="Claude"
               />
               <AIMessageContent>
-                <AIResponse>
-                  Hi! I'm Claude, your AI assistant. I can help you with:
+                <BoxLogAIResponse>
+                  Hi! I'm **Claude**, your AI assistant. I can help you with:
                   
-                  • Task planning and organization
-                  • Answering questions  
-                  • Code assistance
-                  • Writing and analysis
+                  • **Task planning and organization**
+                  • **Answering questions**  
+                  • **Code assistance**
+                  • **Writing and analysis**
                   
                   What would you like to know?
-                </AIResponse>
+                </BoxLogAIResponse>
               </AIMessageContent>
             </AIMessage>
           ) : (
