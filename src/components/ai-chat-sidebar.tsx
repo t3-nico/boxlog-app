@@ -21,7 +21,7 @@ interface MessageBubbleProps {
   message: {
     id: string
     content: string
-    sender: 'user' | 'ai'
+    sender: 'user' | 'assistant'
     timestamp: Date
     status?: 'sending' | 'error'
   }
@@ -29,6 +29,7 @@ interface MessageBubbleProps {
 
 function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.sender === 'user'
+  const isAssistant = message.sender === 'assistant'
   
   if (isUser) {
     return (
@@ -48,7 +49,8 @@ function MessageBubble({ message }: MessageBubbleProps) {
     )
   }
   
-  return (
+  if (isAssistant) {
+    return (
     <div className="mb-4 flex justify-start items-start gap-2">
       <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white flex-shrink-0">
         <Sparkles className="w-3 h-3" />
@@ -62,7 +64,10 @@ function MessageBubble({ message }: MessageBubbleProps) {
         </div>
       </div>
     </div>
-  )
+    )
+  }
+  
+  return null
 }
 
 function ChatInput() {
