@@ -73,6 +73,8 @@ import {
   ClipboardList as ClipboardDocumentListIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
+  PanelLeft,
+  PanelRight,
   Trash2 as TrashIcon,
   Clock as ClockIcon,
   Table as TableCellsIcon,
@@ -262,7 +264,7 @@ export function ApplicationLayout({
                     onClick={() => setCollapsed(!collapsed)}
                     aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                   >
-                    {collapsed ? <ChevronRightIcon data-slot="icon" /> : <ChevronLeftIcon data-slot="icon" />}
+                    {collapsed ? <PanelRight data-slot="icon" /> : <PanelLeft data-slot="icon" />}
                   </NavbarItem>
                 </div>
               )}
