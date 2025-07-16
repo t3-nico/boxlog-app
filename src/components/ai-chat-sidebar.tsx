@@ -9,7 +9,7 @@ declare global {
     webkitSpeechRecognition: any;
   }
 }
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   X,
   ArrowUpCircle,
@@ -34,6 +34,17 @@ import {
   AIInputModelSelectItem,
   AIInputModelSelectValue
 } from '@/components/ui/kibo-ui/ai/input'
+import {
+  AIConversation,
+  AIConversationContent,
+  AIConversationScrollButton
+} from '@/components/ui/kibo-ui/ai/conversation'
+import {
+  AIMessage,
+  AIMessageContent,
+  AIMessageAvatar
+} from '@/components/ui/kibo-ui/ai/message'
+import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
 
 interface AIChatSidebarProps {
   isOpen: boolean
@@ -54,44 +65,48 @@ function MessageBubble({ message }: MessageBubbleProps) {
   const isUser = message.sender === 'user'
   const isAssistant = message.sender === 'assistant'
   
-  if (isUser) {
-    return (
-      <div className="mb-4 flex justify-end">
-        <div className="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-3 py-2 max-w-[85%] break-words">
+  return (
+    <AIMessage from={message.sender}>
+      {isAssistant && (
+        <AIMessageAvatar 
+          src="/users/claude-avatar.png"
+          name="Claude"
+        />
+      )}
+      
+      <AIMessageContent>
+        {isAssistant ? (
+          <AIResponse>
+            {message.content}
+          </AIResponse>
+        ) : (
           <div className="text-sm leading-relaxed whitespace-pre-wrap">
             {message.content}
+            {message.status && (
+              <div className="mt-1 text-xs opacity-75">
+                {message.status === 'sending' && 'Sending...'}
+                {message.status === 'error' && 'Send Error'}
+                {message.status === 'sent' && 'Sent'}
+              </div>
+            )}
           </div>
-          {message.status && (
-            <div className="mt-1 text-xs text-blue-100 opacity-75">
-              {message.status === 'sending' && 'Sending...'}
-              {message.status === 'error' && 'Send Error'}
-              {message.status === 'sent' && 'Sent'}
-            </div>
-          )}
-        </div>
-      </div>
-    )
-  }
-  
-  if (isAssistant) {
-    return (
-    <div className="mb-4 flex justify-start items-start gap-2">
-      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white flex-shrink-0">
-        <Sparkles className="w-3 h-3" />
-      </div>
-      <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-3 py-2 max-w-[85%] break-words">
-        <div className="text-sm leading-relaxed whitespace-pre-wrap">
-          {message.content}
-        </div>
-        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </div>
-      </div>
-    </div>
-    )
-  }
-  
-  return null
+        )}
+        
+        {isAssistant && (
+          <div className="mt-1 text-xs opacity-60">
+            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+        )}
+      </AIMessageContent>
+      
+      {isUser && (
+        <AIMessageAvatar 
+          src="/users/user-avatar.png"
+          name="You"
+        />
+      )}
+    </AIMessage>
+  )
 }
 
 function ChatInput() {
@@ -209,12 +224,6 @@ function ChatInput() {
 export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
   const { state, clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  // Auto-scroll to bottom
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [state.messages])
 
   if (!isOpen) return null
 
@@ -283,38 +292,35 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
       </div>
 
       {/* Chat Content */}
-      <div className="flex-1 overflow-y-auto">
-        {state.messages.length === 0 ? (
-          <div className="p-4">
-            <div className="flex justify-start items-start gap-2 mb-4">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white flex-shrink-0">
-                <Sparkles className="w-3 h-3" />
-              </div>
-              <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-3 py-2">
-                <div className="text-sm leading-relaxed">
-                  Hi! I&apos;m Claude, your AI assistant. I can help you with:
-                </div>
-                <ul className="text-sm mt-2 space-y-1">
-                  <li>• Task planning and organization</li>
-                  <li>• Answering questions</li>
-                  <li>• Code assistance</li>
-                  <li>• Writing and analysis</li>
-                </ul>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+      <AIConversation>
+        <AIConversationContent>
+          {state.messages.length === 0 ? (
+            <AIMessage from="assistant">
+              <AIMessageAvatar 
+                src="/users/claude-avatar.png"
+                name="Claude"
+              />
+              <AIMessageContent>
+                <AIResponse>
+                  Hi! I'm Claude, your AI assistant. I can help you with:
+                  
+                  • Task planning and organization
+                  • Answering questions  
+                  • Code assistance
+                  • Writing and analysis
+                  
                   What would you like to know?
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="p-4 space-y-4">
-            {state.messages.map((message) => (
+                </AIResponse>
+              </AIMessageContent>
+            </AIMessage>
+          ) : (
+            state.messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </div>
+            ))
+          )}
+        </AIConversationContent>
+        <AIConversationScrollButton />
+      </AIConversation>
       
       {/* Chat Input */}
       <ChatInput />
