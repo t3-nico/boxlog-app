@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
@@ -42,7 +42,8 @@ import {
 } from '@/components/sidebar'
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { MainAreaHeader } from '@/components/main-area-header'
-import { AiChatPanel } from '@/components/ai-chat-panel'
+import { AskPanel } from '@/components/ask-panel'
+import { useAskPanelStore, askPanelSelectors } from '@/stores/useAskPanelStore'
 import { getEvents, getReviews } from '@/data'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
@@ -93,9 +94,24 @@ export function ApplicationLayout({
   let inSettings = pathname.startsWith('/settings')
   let inReview = pathname.startsWith('/review')
   let [collapsed, setCollapsed] = useState(false)
-  let [isChatOpen, setIsChatOpen] = useState(false)
   const { user, signOut } = useAuthContext()
   const router = useRouter()
+  
+  // Ask Panel state
+  const isAskPanelOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
+  const askPanelWidth = useAskPanelStore(askPanelSelectors.getWidth)
+  const [isMobile, setIsMobile] = useState(false)
+
+  // Check if mobile on client side
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   
   // SmartFolder and Tag filtering
   const { setSmartFolderFilter, setTagFilter, filters } = useBoxStore()
@@ -471,15 +487,29 @@ export function ApplicationLayout({
       >
         <ToastProvider>
           <div className="flex h-full">
-            <div className="flex flex-col flex-1 min-w-0">
-              {!inSettings && <MainAreaHeader onToggleChat={() => setIsChatOpen(!isChatOpen)} isChatOpen={isChatOpen} />}
+            {/* Main Content Area */}
+            <div 
+              className="flex flex-col flex-1 min-w-0 transition-all duration-300"
+              style={{ 
+                marginRight: (isAskPanelOpen && !isMobile) ? `${askPanelWidth}px` : '0px' 
+              }}
+            >
+              {!inSettings && <MainAreaHeader />}
               <div className="flex-1 overflow-auto">
                 {children}
               </div>
             </div>
-            {isChatOpen && (
-              <div className="w-96 flex-shrink-0">
-                <AiChatPanel isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
+            
+            {/* Ask Panel - Fixed Right Side (Desktop) / Overlay (Mobile) */}
+            {isAskPanelOpen && (
+              <div 
+                className="fixed right-0 top-0 bottom-0 z-30 transition-all duration-300
+                           lg:relative lg:w-auto lg:z-auto"
+                style={{ 
+                  width: `${askPanelWidth}px`
+                }}
+              >
+                <AskPanel />
               </div>
             )}
           </div>

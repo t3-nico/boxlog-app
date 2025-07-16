@@ -6,14 +6,13 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 import { LifeCounter } from './life-counter'
+import { AskPanelToggleButton } from './ask-panel'
 
 interface MainAreaHeaderProps {
   className?: string
-  onToggleChat?: () => void
-  isChatOpen?: boolean
 }
 
-export function MainAreaHeader({ className, onToggleChat, isChatOpen }: MainAreaHeaderProps) {
+export function MainAreaHeader({ className }: MainAreaHeaderProps) {
   const pathname = usePathname()
   
   // パス名から表示名を取得
@@ -50,9 +49,9 @@ export function MainAreaHeader({ className, onToggleChat, isChatOpen }: MainArea
             </div>
           </div>
           
-          {/* Right: AI Button */}
+          {/* Right: Ask AI Panel Toggle */}
           <div className="flex items-center justify-end w-48">
-            {!isChatOpen && <AskAIButton onToggle={onToggleChat || (() => {})} />}
+            <AskPanelToggleButton />
           </div>
         </div>
       </div>
@@ -239,15 +238,3 @@ function TimeDisplay() {
   )
 }
 
-function AskAIButton({ onToggle }: { onToggle: () => void }) {
-  return (
-    <button
-      onClick={onToggle}
-      className="flex items-center gap-2 px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-      title="Ask AI"
-    >
-      <SparklesIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" data-slot="icon" />
-      <span className="text-sm font-medium text-gray-900 dark:text-white">Ask AI</span>
-    </button>
-  )
-}
