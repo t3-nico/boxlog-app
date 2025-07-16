@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ChatProvider } from '@/contexts/chat-context'
+import { CommandPalette } from '@/components/command-palette'
+import { useCommandPalette } from '@/hooks/use-command-palette'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -22,9 +24,22 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ChatProvider>
-          {children}
+          <CommandPaletteProvider>
+            {children}
+          </CommandPaletteProvider>
         </ChatProvider>
       </AuthProvider>
     </QueryClientProvider>
+  )
+}
+
+function CommandPaletteProvider({ children }: { children: React.ReactNode }) {
+  const { isOpen, close } = useCommandPalette()
+
+  return (
+    <>
+      {children}
+      <CommandPalette isOpen={isOpen} onClose={close} />
+    </>
   )
 }
