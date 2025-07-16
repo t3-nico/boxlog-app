@@ -1310,6 +1310,10 @@ Object.entries(env).forEach(([key, value]) => {
 ### Code Style Guidelines
 
 #### Naming Conventions
+
+**📋 Complete naming conventions documented in:** `/docs/NAMING_CONVENTIONS.md`
+
+**Key Rules Summary:**
 ```tsx
 // ✅ Components: PascalCase
 export function TagEditDialog() {}
@@ -1319,11 +1323,9 @@ export function SmartFolderList() {}
 const tagCount = 5
 const handleTagUpdate = () => {}
 
-// ✅ Constants: SCREAMING_SNAKE_CASE
-const API_ENDPOINTS = {
-  TAGS: '/api/tags',
-  SMART_FOLDERS: '/api/smart-folders'
-}
+// ✅ Constants: SCREAMING_SNAKE_CASE (primitives) / camelCase (objects)
+const MAX_TAG_DEPTH = 3
+const apiEndpoints = { TAGS: '/api/tags' }
 
 // ✅ Types and interfaces: PascalCase
 interface TagEditDialogProps {
@@ -1331,10 +1333,72 @@ interface TagEditDialogProps {
   onSave: (tag: Tag) => void
 }
 
-// ✅ File names: kebab-case for components, camelCase for utilities
-TagEditDialog.tsx → tag-edit-dialog.tsx
-useApiData.ts → useApiData.ts (hooks exception)
+// ✅ File names: kebab-case (consistent)
+tag-edit-dialog.tsx
+use-tags.ts
+sidebar-config.ts
 ```
+
+**🏗️ Component Integration Strategy:**
+```
+src/components/ui/
+├── button.tsx              # shadcn/ui components
+├── dialog.tsx              # shadcn/ui components  
+└── kibo-ui/                # kiboUI components (separated)
+    ├── color-picker/
+    ├── gantt/
+    └── ai-input/
+```
+
+**📦 Import Strategy:**
+```tsx
+// shadcn/ui (primary choice)
+import { Button } from '@/components/ui/button'
+
+// kiboUI (advanced components)
+import { ColorPicker } from '@/components/ui/kibo-ui/color-picker'
+
+// Conflict resolution (when needed)
+import { Button as UIButton } from '@/components/ui/button'
+import { Button as KiboButton } from '@/components/ui/kibo-ui/button'
+```
+
+**🎯 Component Selection Priority:**
+1. **shadcn/ui** - For basic UI components (Button, Dialog, Select, etc.)
+2. **kiboUI** - For advanced components (Gantt, ColorPicker, AI components)
+3. **Custom** - Only when neither provides the needed functionality
+
+**⚠️ kiboUI Integration Rules:**
+- Install individually: `npx kibo-ui add [component]`
+- Keep in separate `/kibo-ui/` directory to avoid conflicts
+- Follow same Props naming pattern: `ComponentNameProps`
+- Use consistent export pattern: named exports
+- Maintain shadcn/ui styling compatibility
+
+**🚀 段階的導入戦略:**
+```
+フェーズ1: 基本UI構築 (shadcn/ui完全活用)
+├── Button, Dialog, Select等の基本UI完成
+└── 既存コンポーネントの最適化
+
+フェーズ2: 特定機能のみKibo UI追加
+├── Gantt → プロジェクト管理画面のみ
+├── AI Input → チャット機能のみ
+└── 動作確認・テスト
+
+フェーズ3: 動作確認後の拡張
+├── Color Picker → 必要に応じて
+├── Dropzone → 必要に応じて
+└── その他コンポーネント
+```
+
+## コンポーネント使用ルール
+- **基本UI**: Shadcn/ui を使用
+- **高度な機能**: Kibo UI を使用
+  - ガントチャート: `@/components/ui/kibo-ui/gantt` (プロジェクト管理画面)
+  - AI入力: `@/components/ui/kibo-ui/ai-input` (チャット機能)
+  - カラーピッカー: `@/components/ui/kibo-ui/color-picker` (設定画面)
+  - ドロップゾーン: `@/components/ui/kibo-ui/dropzone` (ファイルアップロード)
 
 #### TypeScript Best Practices
 ```tsx
