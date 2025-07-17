@@ -44,6 +44,7 @@ import {
 import { SidebarLayout } from '@/components/sidebar-layout'
 import { MainAreaHeader } from '@/components/main-area-header'
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
+import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
@@ -99,6 +100,7 @@ export function ApplicationLayout({
   const { user, signOut } = useAuthContext()
   const { open: openCommandPalette } = useCommandPalette()
   const router = useRouter()
+  const { isOpen, openPopup, closePopup } = useAddPopup()
   
   // AI Chat Sidebar state
   const [isAIChatOpen, setIsAIChatOpen] = useState(false)
@@ -262,20 +264,23 @@ export function ApplicationLayout({
                 <>
                   <SidebarSection>
                     <div className="relative">
-                      <a
-                        href="/add"
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault()
+                          openPopup('schedule')
+                        }}
                         className={clsx(
                           'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
                           'text-orange-600 dark:text-orange-400',
                           'hover:bg-orange-50 dark:hover:bg-orange-900/20',
                           'transition-colors duration-200',
-                          pathname.startsWith('/add') && 'bg-orange-100 dark:bg-orange-900/30',
+                          'focus:outline-none focus:ring-2 focus:ring-orange-500',
                           collapsed && 'justify-center'
                         )}
                       >
                         <PlusCircleIcon className="size-6 sm:size-5 shrink-0 text-orange-600 dark:text-orange-400" data-slot="icon" />
                         <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
-                      </a>
+                      </button>
                     </div>
                     <button
                       onClick={(e) => {
@@ -511,6 +516,13 @@ export function ApplicationLayout({
             </div>
             
           </div>
+          
+          {/* Add Popup */}
+          <AddPopup 
+            open={isOpen} 
+            onOpenChange={(open) => open ? openPopup() : closePopup()}
+            defaultTab="schedule"
+          />
           
           {/* AI Chat Sidebar */}
           <AIChatSidebar 
