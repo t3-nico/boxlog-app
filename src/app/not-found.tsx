@@ -32,7 +32,7 @@ export default function NotFound() {
   const reviews: any[] = []
 
   return (
-    <ApplicationLayout events={events} reviews={reviews}>
+    <ApplicationLayout events={events} reviews={reviews} hideHeader={true}>
       <NotFoundContent />
     </ApplicationLayout>
   )
