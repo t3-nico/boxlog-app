@@ -206,14 +206,15 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       title="Command Palette"
       description="Search for commands and recent items..."
       showCloseButton={false}
-      className="max-w-xl"
+      className="w-[650px] max-w-[90vw] sm:max-w-[650px]"
     >
       <CommandInput
         placeholder="Search for commands and recent items..."
         value={query}
         onValueChange={setQuery}
+        className="text-base"
       />
-      <CommandList>
+      <CommandList className="max-h-[480px] min-h-[320px]">
         <CommandEmpty>No results found.</CommandEmpty>
         {Object.entries(groupedResults).map(([category, categoryResults]) => {
           const categoryInfo = getCategoryInfo(category)
@@ -226,19 +227,19 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                   key={result.id}
                   value={result.title}
                   onSelect={() => executeCommand(result)}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-4 px-4 py-3"
                 >
-                  <IconComponent className="w-4 h-4" />
+                  <IconComponent className="w-5 h-5" />
                   <div className="flex-1">
-                    <div className="text-sm font-medium">{result.title}</div>
+                    <div className="text-base font-medium">{result.title}</div>
                     {result.description && (
-                      <div className="text-xs text-muted-foreground">{result.description}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{result.description}</div>
                     )}
                   </div>
                   {result.metadata?.tags && result.metadata.tags.length > 0 && (
-                    <div className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-muted-foreground rounded-full"></span>
-                      <span className="text-xs text-muted-foreground">{result.metadata.tags.length}</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
+                      <span className="text-sm text-muted-foreground">{result.metadata.tags.length}</span>
                     </div>
                   )}
                 </CommandItem>
