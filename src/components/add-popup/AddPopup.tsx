@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, FileCheck, X, Plus, Zap } from 'lucide-react'
+import { Calendar, FileCheck } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -41,6 +41,7 @@ export function AddPopup({
   contextData 
 }: AddPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [activeTab, setActiveTab] = useState<'schedule' | 'record'>(defaultTab)
 
   const handleClose = () => {
     onOpenChange(false)
@@ -67,33 +68,49 @@ export function AddPopup({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[85vh] p-0">
+      <DialogContent className="sm:max-w-[650px] max-h-[85vh] p-0 bg-popover text-popover-foreground">
         {/* Tab Navigation at the top */}
-        <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-none border-b">
-            <TabsTrigger value="schedule" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">
-              <Calendar className="w-4 h-4 mr-2" />
-              Schedule
-            </TabsTrigger>
-            <TabsTrigger value="record" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">
-              <FileCheck className="w-4 h-4 mr-2" />
-              Record
-            </TabsTrigger>
-          </TabsList>
+        <div className="w-full">
+          <div className="flex bg-popover p-2">
+            <div className="flex h-auto gap-1">
+              <button 
+                onClick={() => setActiveTab('schedule')}
+                className={`flex items-center gap-2 px-4 py-3 transition-colors rounded-md ${
+                  activeTab === 'schedule' 
+                    ? 'bg-zinc-950/5 dark:bg-white/5 font-medium' 
+                    : 'bg-transparent hover:bg-zinc-950/5 dark:hover:bg-white/5'
+                }`}
+              >
+                <Calendar className="w-4 h-4" />
+                Schedule
+              </button>
+              <button 
+                onClick={() => setActiveTab('record')}
+                className={`flex items-center gap-2 px-4 py-3 transition-colors rounded-md ${
+                  activeTab === 'record' 
+                    ? 'bg-zinc-950/5 dark:bg-white/5 font-medium' 
+                    : 'bg-transparent hover:bg-zinc-950/5 dark:hover:bg-white/5'
+                }`}
+              >
+                <FileCheck className="w-4 h-4" />
+                Record
+              </button>
+            </div>
+          </div>
 
           {/* Tab Content */}
-          <TabsContent value="schedule" className="mt-0">
+          {activeTab === 'schedule' && (
             <div className="p-6 max-h-[70vh] overflow-y-auto">
               <ScheduleCreateForm contextData={contextData} />
             </div>
-          </TabsContent>
+          )}
           
-          <TabsContent value="record" className="mt-0">
+          {activeTab === 'record' && (
             <div className="p-6 max-h-[70vh] overflow-y-auto">
               <RecordCreateForm contextData={contextData} />
             </div>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
 
         {/* Footer */}
         <DialogFooter className="px-6 py-4 border-t">

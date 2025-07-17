@@ -95,7 +95,7 @@ export function ScheduleCreateForm({ contextData }: ScheduleCreateFormProps) {
   const selectedPriority = priorities.find(p => p.value === formData.priority)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-popover text-popover-foreground">
       {/* Title */}
       <div className="space-y-2">
         <Label htmlFor="title">

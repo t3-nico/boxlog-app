@@ -81,7 +81,7 @@ export function RecordCreateForm({ contextData }: RecordCreateFormProps) {
   const selectedTaskType = taskTypes.find(t => t.value === formData.type)
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-popover text-popover-foreground">
       {/* Title */}
       <div className="space-y-2">
         <Label htmlFor="title">
