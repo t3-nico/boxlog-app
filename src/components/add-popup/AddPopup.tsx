@@ -67,100 +67,47 @@ export function AddPopup({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-hidden p-0 gap-0">
-        {/* ClickUp-style Header */}
-        <div className="relative">
-          <div className="px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Plus className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <DialogTitle className="text-xl font-bold text-gray-900 dark:text-white">
-                    Create New
-                  </DialogTitle>
-                  <DialogDescription className="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
-                    Choose what you'd like to create
-                  </DialogDescription>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClose}
-                className="h-8 w-8 p-0 rounded-full hover:bg-white/50 dark:hover:bg-black/20"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* ClickUp-style Tab Navigation */}
-        <Tabs defaultValue={defaultTab} className="w-full flex-1">
-          <div className="px-6 py-3 bg-gray-50/50 dark:bg-gray-900/50 border-b">
-            <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-800 shadow-sm">
-              <TabsTrigger 
-                value="schedule" 
-                className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-blue-500 data-[state=active]:text-white rounded-lg"
-              >
-                <Calendar className="w-4 h-4" />
-                <div className="text-left">
-                  <div className="font-semibold text-sm">Schedule</div>
-                  <div className="text-xs opacity-80">Plan future work</div>
-                </div>
-              </TabsTrigger>
-              <TabsTrigger 
-                value="record" 
-                className="flex items-center gap-2 py-3 px-4 data-[state=active]:bg-green-500 data-[state=active]:text-white rounded-lg"
-              >
-                <FileCheck className="w-4 h-4" />
-                <div className="text-left">
-                  <div className="font-semibold text-sm">Record</div>
-                  <div className="text-xs opacity-80">Log completed work</div>
-                </div>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+      <DialogContent className="sm:max-w-[500px] max-h-[85vh] p-0">
+        {/* Tab Navigation at the top */}
+        <Tabs defaultValue={defaultTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 rounded-none border-b">
+            <TabsTrigger value="schedule" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">
+              <Calendar className="w-4 h-4 mr-2" />
+              Schedule
+            </TabsTrigger>
+            <TabsTrigger value="record" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary">
+              <FileCheck className="w-4 h-4 mr-2" />
+              Record
+            </TabsTrigger>
+          </TabsList>
 
           {/* Tab Content */}
-          <div className="flex-1 overflow-hidden">
-            <TabsContent value="schedule" className="mt-0 h-full">
-              <div className="p-6 h-[500px] overflow-y-auto">
-                <ScheduleCreateForm contextData={contextData} />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="record" className="mt-0 h-full">
-              <div className="p-6 h-[500px] overflow-y-auto">
-                <RecordCreateForm contextData={contextData} />
-              </div>
-            </TabsContent>
-          </div>
+          <TabsContent value="schedule" className="mt-0">
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              <ScheduleCreateForm contextData={contextData} />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="record" className="mt-0">
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              <RecordCreateForm contextData={contextData} />
+            </div>
+          </TabsContent>
         </Tabs>
 
-        {/* ClickUp-style Footer */}
-        <div className="px-6 py-4 bg-gray-50/50 dark:bg-gray-900/50 border-t">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
-                <Zap className="w-3 h-3 mr-1" />
-                Quick Create
-              </Badge>
-              <span className="text-xs text-muted-foreground">
-                Ctrl+Enter to submit
-              </span>
+        {/* Footer */}
+        <DialogFooter className="px-6 py-4 border-t">
+          <div className="flex items-center justify-between w-full">
+            <div className="text-xs text-muted-foreground">
+              Ctrl+Enter to submit
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" onClick={handleClose} size="sm">
+              <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
               <Button 
                 onClick={handleSubmit} 
                 disabled={isSubmitting}
-                className="min-w-[120px] bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                size="sm"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
@@ -168,15 +115,12 @@ export function AddPopup({
                     Creating...
                   </div>
                 ) : (
-                  <>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create
-                  </>
+                  'Create'
                 )}
               </Button>
             </div>
           </div>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
