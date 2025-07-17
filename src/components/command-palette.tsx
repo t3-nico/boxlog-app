@@ -81,11 +81,59 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       setIsLoading(false)
     }
   }, [tasks, tags, smartFolders])
+
+  // Load initial results when opening
+  const loadInitialResults = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      // Get available commands and convert to SearchResult format
+      const availableCommands = commandRegistry.getAvailable()
+      const commandResults: SearchResult[] = availableCommands.map(command => ({
+        ...command,
+        type: 'command' as const
+      }))
+      
+      // Get recent tasks
+      const recentTasks = tasks.slice(0, 5) // Get 5 most recent tasks
+      const taskResults: SearchResult[] = recentTasks.map(task => ({
+        id: `task-${task.id}`,
+        title: task.title || 'Untitled Task',
+        description: task.description || '',
+        category: 'tasks' as const,
+        type: 'task' as const,
+        action: async () => {
+          // Navigate to task or show task details
+          console.log('Open task:', task)
+        },
+        metadata: {
+          tags: task.tags || [],
+          status: task.status,
+          dueDate: task.planned_start ? new Date(task.planned_start).toLocaleDateString() : undefined
+        }
+      }))
+      
+      const initialResults: SearchResult[] = [
+        ...commandResults,
+        ...taskResults
+      ]
+      
+      setResults(initialResults)
+    } catch (error) {
+      console.error('Initial results error:', error)
+      setResults([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [tasks])
   
   // Search when debounced query changes
   useEffect(() => {
-    performSearch(debouncedQuery)
-  }, [debouncedQuery, performSearch])
+    if (debouncedQuery.trim()) {
+      performSearch(debouncedQuery)
+    } else {
+      loadInitialResults()
+    }
+  }, [debouncedQuery, performSearch, loadInitialResults])
   
   // Handle URL sync - restore query from URL when opening
   useEffect(() => {
@@ -115,13 +163,19 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     return () => clearTimeout(timeoutId)
   }, [query, isOpen])
   
-  // Reset state when closing
+  // Handle opening/closing
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      // Load initial results when opening
+      if (!query.trim()) {
+        loadInitialResults()
+      }
+    } else {
+      // Reset state when closing
       setQuery('')
       setResults([])
     }
-  }, [isOpen])
+  }, [isOpen, query, loadInitialResults])
   
   // Get category display info
   const getCategoryInfo = (category: string) => {
