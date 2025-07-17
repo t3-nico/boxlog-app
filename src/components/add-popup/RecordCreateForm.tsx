@@ -81,54 +81,62 @@ export function RecordCreateForm({ contextData }: RecordCreateFormProps) {
   const selectedTaskType = taskTypes.find(t => t.value === formData.type)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Status Badge */}
-      <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
-        <CheckCircle className="w-5 h-5 text-green-600" />
+      <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border border-green-200 dark:border-green-800 rounded-xl">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-sm">
+          <CheckCircle className="w-5 h-5 text-white" />
+        </div>
         <div>
-          <p className="text-sm font-medium text-green-800">完了した作業の記録</p>
-          <p className="text-xs text-green-600">実施した活動や成果を記録します</p>
+          <p className="text-sm font-semibold text-green-800 dark:text-green-200">Record Completed Work</p>
+          <p className="text-xs text-green-600 dark:text-green-400">Log what you've accomplished</p>
         </div>
       </div>
 
       {/* Title */}
-      <div className="space-y-2">
-        <Label htmlFor="title" className="text-sm font-medium">
-          作業内容 <span className="text-red-500">*</span>
+      <div className="space-y-3">
+        <Label htmlFor="title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          What did you complete? <span className="text-red-500">*</span>
         </Label>
         <Input
           id="title"
-          placeholder="例: クライアントミーティングを実施"
+          placeholder="e.g., Client meeting conducted successfully"
           value={formData.title}
           onChange={(e) => updateFormData('title', e.target.value)}
-          className="text-sm"
+          className="text-sm border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
         />
-        <p className="text-xs text-muted-foreground">
-          何を実施したかを簡潔に記録してください
+        <p className="text-xs text-gray-500">
+          Briefly describe what you accomplished
         </p>
       </div>
 
       {/* Type */}
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">作業タイプ</Label>
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Work Type</Label>
         <Select value={formData.type} onValueChange={(value) => updateFormData('type', value)}>
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
             <SelectValue>
               {selectedTaskType && (
                 <div className="flex items-center gap-2">
-                  <Badge className={`${selectedTaskType.color} text-xs px-2 py-0.5`}>
-                    {selectedTaskType.label}
-                  </Badge>
+                  <div className={`w-3 h-3 rounded-full ${
+                    selectedTaskType.value === 'Feature' ? 'bg-blue-500' :
+                    selectedTaskType.value === 'Bug' ? 'bg-red-500' : 'bg-green-500'
+                  }`} />
+                  <span className="font-medium">{selectedTaskType.label}</span>
                 </div>
               )}
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="rounded-lg border-gray-200 dark:border-gray-700">
             {taskTypes.map((type) => (
-              <SelectItem key={type.value} value={type.value}>
-                <Badge className={`${type.color} text-xs px-2 py-0.5`}>
-                  {type.label}
-                </Badge>
+              <SelectItem key={type.value} value={type.value} className="rounded-md">
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${
+                    type.value === 'Feature' ? 'bg-blue-500' :
+                    type.value === 'Bug' ? 'bg-red-500' : 'bg-green-500'
+                  }`} />
+                  <span className="font-medium">{type.label}</span>
+                </div>
               </SelectItem>
             ))}
           </SelectContent>
@@ -137,112 +145,112 @@ export function RecordCreateForm({ contextData }: RecordCreateFormProps) {
 
       {/* Completed Date and Time */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="completedAt" className="text-sm font-medium flex items-center gap-1">
+        <div className="space-y-3">
+          <Label htmlFor="completedAt" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            完了日
+            Completed Date
           </Label>
           <Input
             id="completedAt"
             type="date"
             value={formData.completedAt}
             onChange={(e) => updateFormData('completedAt', e.target.value)}
-            className="text-sm"
+            className="text-sm border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="completedTime" className="text-sm font-medium flex items-center gap-1">
+        <div className="space-y-3">
+          <Label htmlFor="completedTime" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            完了時刻
+            Time
           </Label>
           <Input
             id="completedTime"
             type="time"
             value={formData.completedTime}
             onChange={(e) => updateFormData('completedTime', e.target.value)}
-            className="text-sm"
+            className="text-sm border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
           />
         </div>
       </div>
 
       {/* Actual Hours */}
-      <div className="space-y-2">
-        <Label htmlFor="actualHours" className="text-sm font-medium">
-          実際の作業時間（時間）
+      <div className="space-y-3">
+        <Label htmlFor="actualHours" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Time Spent (hours)
         </Label>
         <Input
           id="actualHours"
           type="number"
           min="0"
           step="0.25"
-          placeholder="例: 1.5"
+          placeholder="e.g., 1.5"
           value={formData.actualHours}
           onChange={(e) => updateFormData('actualHours', e.target.value)}
-          className="text-sm"
+          className="text-sm border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
         />
-        <p className="text-xs text-muted-foreground">
-          実際にかかった時間を記録してください（15分単位）
+        <p className="text-xs text-gray-500">
+          How much time did you actually spend? (15min increments)
         </p>
       </div>
 
       {/* Description */}
-      <div className="space-y-2">
-        <Label htmlFor="description" className="text-sm font-medium">
-          作業詳細
+      <div className="space-y-3">
+        <Label htmlFor="description" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Work Details
         </Label>
         <Textarea
           id="description"
-          placeholder="どのような作業を行ったかの詳細を記録..."
+          placeholder="Describe what work was performed and how..."
           value={formData.description}
           onChange={(e) => updateFormData('description', e.target.value)}
-          className="text-sm resize-none"
+          className="text-sm resize-none border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
           rows={3}
         />
       </div>
 
       {/* Outcome */}
-      <div className="space-y-2">
-        <Label htmlFor="outcome" className="text-sm font-medium">
-          成果・結果
+      <div className="space-y-3">
+        <Label htmlFor="outcome" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Outcomes & Results
         </Label>
         <Textarea
           id="outcome"
-          placeholder="何を達成したか、どんな成果が得られたかを記録..."
+          placeholder="What was achieved? What were the key results or learnings?"
           value={formData.outcome}
           onChange={(e) => updateFormData('outcome', e.target.value)}
-          className="text-sm resize-none"
+          className="text-sm resize-none border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
           rows={2}
         />
-        <p className="text-xs text-muted-foreground">
-          この作業で得られた具体的な成果や学びを記録してください
+        <p className="text-xs text-gray-500">
+          Document specific achievements and insights gained
         </p>
       </div>
 
       {/* Next Actions */}
-      <div className="space-y-2">
-        <Label htmlFor="nextActions" className="text-sm font-medium">
-          次のアクション（任意）
+      <div className="space-y-3">
+        <Label htmlFor="nextActions" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Next Actions (Optional)
         </Label>
         <Textarea
           id="nextActions"
-          placeholder="この作業の結果として必要になった次のステップがあれば記録..."
+          placeholder="Are there any follow-up actions or next steps needed?"
           value={formData.nextActions}
           onChange={(e) => updateFormData('nextActions', e.target.value)}
-          className="text-sm resize-none"
+          className="text-sm resize-none border-gray-200 dark:border-gray-700 focus:border-green-500 focus:ring-green-500 rounded-lg px-4 py-3"
           rows={2}
         />
-        <p className="text-xs text-muted-foreground">
-          フォローアップが必要な項目があれば記録してください
+        <p className="text-xs text-gray-500">
+          Note any follow-up tasks or items that need attention
         </p>
       </div>
 
       {/* Tags Placeholder */}
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">タグ（任意）</Label>
-        <div className="min-h-[40px] p-3 border rounded-md bg-muted/50">
-          <p className="text-xs text-muted-foreground">
-            タグ選択機能は後で実装予定
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tags (Optional)</Label>
+        <div className="min-h-[44px] p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 flex items-center justify-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            🏷️ Tag selection coming soon
           </p>
         </div>
       </div>

@@ -95,76 +95,86 @@ export function ScheduleCreateForm({ contextData }: ScheduleCreateFormProps) {
   const selectedPriority = priorities.find(p => p.value === formData.priority)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Title */}
-      <div className="space-y-2">
-        <Label htmlFor="title" className="text-sm font-medium">
-          タイトル <span className="text-red-500">*</span>
+      <div className="space-y-3">
+        <Label htmlFor="title" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Task Name <span className="text-red-500">*</span>
         </Label>
         <Input
           id="title"
-          placeholder="例: クライアントミーティングの準備"
+          placeholder="What needs to be done?"
           value={formData.title}
           onChange={(e) => updateFormData('title', e.target.value)}
-          className="text-sm"
+          className="text-sm border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 rounded-lg px-4 py-3"
         />
       </div>
 
       {/* Type and Priority Row */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">タイプ</Label>
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Type</Label>
           <Select value={formData.type} onValueChange={(value) => updateFormData('type', value)}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
               <SelectValue>
                 {selectedTaskType && (
                   <div className="flex items-center gap-2">
-                    <Badge className={`${selectedTaskType.color} text-xs px-2 py-0.5`}>
-                      {selectedTaskType.label}
-                    </Badge>
+                    <div className={`w-3 h-3 rounded-full ${
+                      selectedTaskType.value === 'Feature' ? 'bg-blue-500' :
+                      selectedTaskType.value === 'Bug' ? 'bg-red-500' : 'bg-green-500'
+                    }`} />
+                    <span className="font-medium">{selectedTaskType.label}</span>
                   </div>
                 )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-lg border-gray-200 dark:border-gray-700">
               {taskTypes.map((type) => (
-                <SelectItem key={type.value} value={type.value}>
-                  <Badge className={`${type.color} text-xs px-2 py-0.5`}>
-                    {type.label}
-                  </Badge>
+                <SelectItem key={type.value} value={type.value} className="rounded-md">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${
+                      type.value === 'Feature' ? 'bg-blue-500' :
+                      type.value === 'Bug' ? 'bg-red-500' : 'bg-green-500'
+                    }`} />
+                    <span className="font-medium">{type.label}</span>
+                  </div>
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">優先度</Label>
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Priority</Label>
           <Select value={formData.priority} onValueChange={(value) => updateFormData('priority', value)}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
               <SelectValue>
                 {selectedPriority && (
                   <div className="flex items-center gap-2">
-                    <Badge className={`${selectedPriority.color} text-xs px-2 py-0.5`}>
-                      {selectedPriority.label}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground">
+                    <div className={`w-3 h-3 rounded-full ${
+                      selectedPriority.value === 'Low' ? 'bg-gray-400' :
+                      selectedPriority.value === 'Medium' ? 'bg-yellow-500' : 'bg-red-500'
+                    }`} />
+                    <span className="font-medium">{selectedPriority.label}</span>
+                    <span className="text-xs text-gray-500">
                       {selectedPriority.description}
                     </span>
                   </div>
                 )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-lg border-gray-200 dark:border-gray-700">
               {priorities.map((priority) => (
-                <SelectItem key={priority.value} value={priority.value}>
-                  <div className="flex items-center justify-between w-full">
-                    <Badge className={`${priority.color} text-xs px-2 py-0.5`}>
-                      {priority.label}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground ml-2">
-                      {priority.description}
-                    </span>
+                <SelectItem key={priority.value} value={priority.value} className="rounded-md">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${
+                      priority.value === 'Low' ? 'bg-gray-400' :
+                      priority.value === 'Medium' ? 'bg-yellow-500' : 'bg-red-500'
+                    }`} />
+                    <div>
+                      <div className="font-medium">{priority.label}</div>
+                      <div className="text-xs text-gray-500">{priority.description}</div>
+                    </div>
                   </div>
                 </SelectItem>
               ))}
@@ -174,25 +184,29 @@ export function ScheduleCreateForm({ contextData }: ScheduleCreateFormProps) {
       </div>
 
       {/* Status */}
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">ステータス</Label>
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Status</Label>
         <Select value={formData.status} onValueChange={(value) => updateFormData('status', value)}>
-          <SelectTrigger className="w-full">
+          <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Todo">
+          <SelectContent className="rounded-lg border-gray-200 dark:border-gray-700">
+            <SelectItem value="Todo" className="rounded-md">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                <span>Todo</span>
-                <span className="text-xs text-muted-foreground">- すぐに取りかかる</span>
+                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                <div>
+                  <div className="font-medium">Todo</div>
+                  <div className="text-xs text-gray-500">Ready to start</div>
+                </div>
               </div>
             </SelectItem>
-            <SelectItem value="Backlog">
+            <SelectItem value="Backlog" className="rounded-md">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-gray-400" />
-                <span>Backlog</span>
-                <span className="text-xs text-muted-foreground">- 後で実行する</span>
+                <div className="w-3 h-3 rounded-full bg-gray-400" />
+                <div>
+                  <div className="font-medium">Backlog</div>
+                  <div className="text-xs text-gray-500">For later</div>
+                </div>
               </div>
             </SelectItem>
           </SelectContent>
@@ -201,76 +215,76 @@ export function ScheduleCreateForm({ contextData }: ScheduleCreateFormProps) {
 
       {/* Due Date and Time */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="dueDate" className="text-sm font-medium flex items-center gap-1">
+        <div className="space-y-3">
+          <Label htmlFor="dueDate" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            予定日
+            Due Date
           </Label>
           <Input
             id="dueDate"
             type="date"
             value={formData.dueDate}
             onChange={(e) => updateFormData('dueDate', e.target.value)}
-            className="text-sm"
+            className="text-sm border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 rounded-lg px-4 py-3"
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="dueTime" className="text-sm font-medium flex items-center gap-1">
+        <div className="space-y-3">
+          <Label htmlFor="dueTime" className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            時刻（任意）
+            Time (Optional)
           </Label>
           <Input
             id="dueTime"
             type="time"
             value={formData.dueTime}
             onChange={(e) => updateFormData('dueTime', e.target.value)}
-            className="text-sm"
+            className="text-sm border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 rounded-lg px-4 py-3"
           />
         </div>
       </div>
 
       {/* Estimated Hours */}
-      <div className="space-y-2">
-        <Label htmlFor="estimatedHours" className="text-sm font-medium">
-          予想作業時間（時間）
+      <div className="space-y-3">
+        <Label htmlFor="estimatedHours" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Estimated Time (hours)
         </Label>
         <Input
           id="estimatedHours"
           type="number"
           min="0"
           step="0.5"
-          placeholder="例: 2.5"
+          placeholder="e.g., 2.5"
           value={formData.estimatedHours}
           onChange={(e) => updateFormData('estimatedHours', e.target.value)}
-          className="text-sm"
+          className="text-sm border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 rounded-lg px-4 py-3"
         />
-        <p className="text-xs text-muted-foreground">
-          この作業にかかると予想される時間を入力してください
+        <p className="text-xs text-gray-500">
+          How long do you think this will take?
         </p>
       </div>
 
       {/* Description */}
-      <div className="space-y-2">
-        <Label htmlFor="description" className="text-sm font-medium">
-          詳細説明（任意）
+      <div className="space-y-3">
+        <Label htmlFor="description" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          Description (Optional)
         </Label>
         <Textarea
           id="description"
-          placeholder="詳細な説明や注意事項を入力..."
+          placeholder="Add more details, context, or requirements..."
           value={formData.description}
           onChange={(e) => updateFormData('description', e.target.value)}
-          className="text-sm resize-none"
+          className="text-sm resize-none border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-blue-500 rounded-lg px-4 py-3"
           rows={3}
         />
       </div>
 
       {/* Tags Placeholder */}
-      <div className="space-y-2">
-        <Label className="text-sm font-medium">タグ（任意）</Label>
-        <div className="min-h-[40px] p-3 border rounded-md bg-muted/50">
-          <p className="text-xs text-muted-foreground">
-            タグ選択機能は後で実装予定
+      <div className="space-y-3">
+        <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tags (Optional)</Label>
+        <div className="min-h-[44px] p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50/50 dark:bg-gray-800/50 flex items-center justify-center">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            🏷️ Tag selection coming soon
           </p>
         </div>
       </div>
