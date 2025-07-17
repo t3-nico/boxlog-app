@@ -68,9 +68,9 @@ export function AddPopup({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[650px] max-h-[85vh] p-0 bg-popover text-popover-foreground">
-        {/* Tab Navigation at the top */}
-        <div className="w-full">
+      <DialogContent className="sm:max-w-[650px] max-h-[85vh] p-0 bg-popover text-popover-foreground flex flex-col">
+        {/* Tab Navigation at the top - Fixed position */}
+        <div className="w-full flex-shrink-0">
           <div className="flex bg-popover p-2">
             <div className="flex h-auto gap-1">
               <button 
@@ -97,16 +97,18 @@ export function AddPopup({
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Tab Content */}
+        {/* Tab Content - Expandable area */}
+        <div className="flex-1 min-h-0">
           {activeTab === 'schedule' && (
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
+            <div className="p-6 h-full overflow-y-auto">
               <ScheduleCreateForm contextData={contextData} />
             </div>
           )}
           
           {activeTab === 'record' && (
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
+            <div className="p-6 h-full overflow-y-auto">
               <RecordCreateForm contextData={contextData} />
             </div>
           )}
