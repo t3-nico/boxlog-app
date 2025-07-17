@@ -96,6 +96,7 @@ export function ApplicationLayout({
   let pathname = usePathname()
   let inSettings = pathname.startsWith('/settings')
   let inReview = pathname.startsWith('/review')
+  let is404Page = pathname === '/404' || pathname.includes('not-found')
   let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
   const { open: openCommandPalette } = useCommandPalette()
@@ -498,7 +499,7 @@ export function ApplicationLayout({
         <ToastProvider>
           <div className="flex flex-col h-full">
             {/* Main Header - Full width */}
-            {!inSettings && <MainAreaHeader onAIClick={() => setIsAIChatOpen(true)} />}
+            {!inSettings && !is404Page && <MainAreaHeader onAIClick={() => setIsAIChatOpen(true)} />}
             
             {/* Content Area */}
             <div className="flex flex-1 overflow-hidden">
