@@ -212,7 +212,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         placeholder="Search for commands and recent items..."
         value={query}
         onValueChange={setQuery}
-        className="text-base"
+        className="text-sm"
       />
       <CommandList className="max-h-[480px] min-h-[320px]">
         <CommandEmpty>No results found.</CommandEmpty>
@@ -231,15 +231,15 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                 >
                   <IconComponent className="w-5 h-5" />
                   <div className="flex-1">
-                    <div className="text-base font-medium">{result.title}</div>
+                    <div className="text-sm font-medium">{result.title}</div>
                     {result.description && (
-                      <div className="text-sm text-muted-foreground mt-1">{result.description}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{result.description}</div>
                     )}
                   </div>
                   {result.metadata?.tags && result.metadata.tags.length > 0 && (
                     <div className="flex items-center gap-1.5">
                       <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
-                      <span className="text-sm text-muted-foreground">{result.metadata.tags.length}</span>
+                      <span className="text-xs text-muted-foreground">{result.metadata.tags.length}</span>
                     </div>
                   )}
                 </CommandItem>
