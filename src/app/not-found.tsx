@@ -6,16 +6,12 @@ import { Calendar, Table, SquareKanban, Settings, Sun, Moon } from 'lucide-react
 import { useTheme } from '@/contexts/theme-context'
 import { ApplicationLayout } from './(app)/application-layout'
 
-export default function NotFound() {
+// 404ページのコンテンツコンポーネント（ThemeProvider内で使用）
+function NotFoundContent() {
   const { resolvedTheme } = useTheme()
   const isDark = resolvedTheme === 'dark'
-  
-  // Empty arrays for events and reviews since this is a 404 page
-  const events: any[] = []
-  const reviews: any[] = []
 
   return (
-    <ApplicationLayout events={events} reviews={reviews}>
       <div className="flex-1 flex items-center justify-center px-4 py-12 min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-md w-full text-center">
           {/* 404 Icon with theme-aware styling */}
@@ -134,6 +130,17 @@ export default function NotFound() {
           </div>
         </div>
       </div>
+  )
+}
+
+export default function NotFound() {
+  // Empty arrays for events and reviews since this is a 404 page
+  const events: any[] = []
+  const reviews: any[] = []
+
+  return (
+    <ApplicationLayout events={events} reviews={reviews}>
+      <NotFoundContent />
     </ApplicationLayout>
   )
 }
