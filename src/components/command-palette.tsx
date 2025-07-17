@@ -208,12 +208,19 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       showCloseButton={false}
       className="w-[650px] max-w-[90vw] sm:max-w-[650px]"
     >
-      <CommandInput
-        placeholder="Search for commands and recent items..."
-        value={query}
-        onValueChange={setQuery}
-        className="text-sm"
-      />
+      <div className="relative">
+        <CommandInput
+          placeholder="Search for commands and recent items..."
+          value={query}
+          onValueChange={setQuery}
+          className="text-sm pr-16"
+        />
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <kbd className="inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+            ESC
+          </kbd>
+        </div>
+      </div>
       <CommandList className="max-h-[480px] min-h-[320px]">
         <CommandEmpty>No results found.</CommandEmpty>
         {Object.entries(groupedResults).map(([category, categoryResults]) => {
