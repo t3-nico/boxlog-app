@@ -35,6 +35,7 @@ This is a Next.js 14 application built with TypeScript, using App Router for rou
 - **Database**: Supabase (PostgreSQL)
 - **Drag & Drop**: @dnd-kit for sortable interfaces, kiboUI Kanban for board views
 - **Icons**: Heroicons, Lucide React
+- **Command Palette**: shadcn/ui Command (cmdk-based)
 
 ### Directory Structure
 
@@ -570,6 +571,147 @@ Primary state is managed through Zustand stores:
 - **New components MUST support dual themes from the start**
 - **Use `--tag-color` CSS variable for elements that need custom colors**
 - Use TypeScript strictly - avoid `any` types where possible
+
+### **🏗️ Component Library Strategy**
+
+**CRITICAL: Always prefer existing library components over custom implementations.**
+
+#### **📋 Component Selection Priority (MANDATORY)**
+
+When implementing any new feature, **ALWAYS follow this priority order:**
+
+1. **🥇 shadcn/ui (FIRST CHOICE)**
+   - Check: https://ui.shadcn.com/docs/components
+   - Use: `npx shadcn@latest add [component-name]`
+   - Examples: Button, Dialog, Command, Select, Input, etc.
+
+2. **🥈 kiboUI (ADVANCED FEATURES)**
+   - Check: Available components for advanced functionality
+   - Use: `npx kibo-ui add [component]`
+   - Examples: AI components, Gantt charts, Advanced tables
+
+3. **🥉 Headless UI (LEGACY ONLY)**
+   - Use: Only for existing components that haven't been migrated
+   - Status: Being phased out in favor of shadcn/ui
+
+4. **🚫 Custom Implementation (LAST RESORT)**
+   - Only when: No suitable library component exists
+   - Requirement: Must document why existing libraries are insufficient
+
+#### **✅ Pre-Implementation Checklist**
+
+Before writing any custom component, **ALWAYS**:
+
+```typescript
+// 1. Check shadcn/ui availability
+// Visit: https://ui.shadcn.com/docs/components
+// Command: npx shadcn@latest add [component-name]
+
+// 2. Check kiboUI availability  
+// Check: Advanced UI patterns and AI components
+// Command: npx kibo-ui add [component]
+
+// 3. Search existing codebase
+// Command: grep -r "similar-functionality" src/
+
+// 4. Only proceed with custom if:
+const shouldImplementCustom = {
+  shadcnUnavailable: true,
+  kiboUIUnavailable: true,
+  existingNotSuitable: true,
+  documentedReason: "Specific reason why libraries don't work"
+}
+```
+
+#### **🎯 Success Examples**
+
+**✅ Command Palette Migration:**
+```typescript
+// Before: Custom 300+ line implementation
+// After: shadcn/ui Command component (cmdk-based)
+// Result: Better UX, performance, accessibility, maintenance
+```
+
+**✅ Future implementations should follow:**
+- Need modal? → Check `npx shadcn@latest add dialog`
+- Need form inputs? → Check `npx shadcn@latest add form`
+- Need data table? → Check `npx shadcn@latest add table`
+- Need dropdowns? → Check `npx shadcn@latest add dropdown-menu`
+
+#### **🔍 Discovery Process**
+
+1. **Feature Request Analysis:**
+   ```bash
+   # Step 1: Identify core functionality needed
+   echo "Feature: [describe functionality]"
+   
+   # Step 2: Check shadcn/ui docs
+   open "https://ui.shadcn.com/docs/components"
+   
+   # Step 3: Check available components
+   npx shadcn@latest add --help
+   
+   # Step 4: Install if available
+   npx shadcn@latest add [component-name]
+   ```
+
+2. **Implementation Decision Tree:**
+   ```
+   New Feature Needed
+   ├── shadcn/ui has it? → Use shadcn/ui ✅
+   ├── kiboUI has it? → Use kiboUI ✅  
+   ├── Can combine existing? → Combine components ✅
+   └── None suitable? → Document + Custom ⚠️
+   ```
+
+#### **📝 Documentation Requirements**
+
+When using library components, **ALWAYS document:**
+
+```typescript
+// ✅ Good: Document component choice
+/**
+ * Using shadcn/ui Command component for search functionality
+ * - Based on cmdk library (industry standard)
+ * - Provides keyboard navigation, accessibility
+ * - Matches VS Code/Linear UX patterns
+ * - Reduces custom code maintenance
+ */
+import { CommandDialog } from '@/components/ui/command'
+```
+
+#### **⚠️ Custom Component Justification**
+
+If creating custom components, **MUST include:**
+
+```typescript
+/**
+ * CUSTOM COMPONENT JUSTIFICATION
+ * 
+ * Feature: [What you're building]
+ * 
+ * Library Analysis:
+ * - shadcn/ui: [Why not suitable - be specific]
+ * - kiboUI: [Why not suitable - be specific]  
+ * - Headless UI: [Why not suitable - be specific]
+ * 
+ * Custom Reason: [Specific business/technical requirement]
+ * 
+ * Future Migration: [Plan for eventual library adoption]
+ */
+```
+
+#### **🚀 Benefits of Library-First Approach**
+
+- **Consistency**: Unified design system
+- **Accessibility**: Professional ARIA/keyboard support
+- **Performance**: Optimized implementations
+- **Maintenance**: Community-driven updates
+- **Standards**: Industry best practices
+- **Testing**: Battle-tested components
+- **Documentation**: Comprehensive guides
+
+**Remember: The goal is to build features faster and better by leveraging proven solutions.**
 
 ### Git Workflow & Development Practices
 
