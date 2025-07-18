@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🗣️ Communication Language
+
+**IMPORTANT: Always respond in Japanese (日本語) unless specifically requested otherwise by the user.**
+
 ## Development Commands
 
 ```bash
@@ -135,7 +139,7 @@ Primary state is managed through Zustand stores:
 
 ### 📚 Documentation
 
-Detailed documentation has been moved to specialized files:
+Detailed documentation has been moved to specialized files and is automatically loaded by Claude Code via `.claude/settings.local.json`:
 
 - **Migration Guide**: `docs/migration/shadcn-ui.md` - shadcn/ui migration patterns
 - **Component Guide**: `docs/components/kibo-ui.md` - kiboUI integration patterns
@@ -145,6 +149,8 @@ Detailed documentation has been moved to specialized files:
 - **Testing**: `docs/testing/guidelines.md` - Testing patterns and setup
 - **Database**: `docs/database/schema.md` - Database schema and relationships
 - **Troubleshooting**: `docs/troubleshooting/common-issues.md` - Common issues and solutions
+
+> **Note**: When adding new documentation files, update the `claudeMd` array in `.claude/settings.local.json` to ensure automatic loading by Claude Code.
 
 ### 🚀 Quick Start Patterns
 

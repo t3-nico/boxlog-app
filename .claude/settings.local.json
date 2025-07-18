@@ -33,8 +33,20 @@
       "Bash(npx madge:*)",
       "Bash(tail:*)",
       "Bash(npx next build:*)",
-      "WebFetch(domain:www.kibo-ui.com)"
+      "WebFetch(domain:www.kibo-ui.com)",
+      "Bash(ls:*)"
     ],
     "deny": []
-  }
+  },
+  "claudeMd": [
+    "CLAUDE.md",
+    "docs/migration/shadcn-ui.md",
+    "docs/components/kibo-ui.md",
+    "docs/theming/theme-system.md",
+    "docs/development/git-workflow.md",
+    "docs/deployment/vercel.md",
+    "docs/testing/guidelines.md",
+    "docs/database/schema.md",
+    "docs/troubleshooting/common-issues.md"
+  ]
 }
