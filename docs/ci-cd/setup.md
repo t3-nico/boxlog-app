@@ -141,22 +141,47 @@ cat .vercel/project.json
 
 ## 🔧 GitHub側の必要な設定
 
-### 1. リポジトリのActions有効化
+### 1. リポジトリのActions有効化 ✅
 GitHubリポジトリで以下を確認：
 - **Settings** → **Actions** → **General**
 - **Actions permissions**: "Allow all actions and reusable workflows"
 
-### 2. Branch Protection Rules（推奨）
-**Settings** → **Branches** で以下を設定：
+### 2. Branch Protection Rules ✅
+**2025-01-18 設定完了**
+
+#### devブランチ設定
 ```
-Branch: main
+Branch name pattern: dev
 ☑ Require status checks to pass before merging
 ☑ Require branches to be up to date before merging
 Status checks: lint-and-test
+
+特徴：
+- 直接push可能（開発速度重視）
+- レビュー承認不要
+- CI/CD成功は必須
 ```
 
-### 3. Vercel Integration（任意）
-GitHub Apps経由でVercelを連携することで、より詳細なデプロイ情報をPRで確認可能
+#### mainブランチ設定
+```
+Branch name pattern: main
+☑ Require a pull request before merging
+  ☑ Require approvals (1)
+☑ Require status checks to pass before merging
+☑ Include administrators
+
+特徴：
+- 直接push不可（PR必須）
+- レビュー承認必須
+- CI/CD成功必須
+- 管理者も規則に従う
+```
+
+### 3. Vercel Secrets設定 ✅
+**Repository secrets** に以下を設定済み：
+- `VERCEL_TOKEN`
+- `ORG_ID`
+- `PROJECT_ID`
 
 ## 🔄 今後の改善予定
 

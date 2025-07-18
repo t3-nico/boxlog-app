@@ -150,6 +150,7 @@ Detailed documentation has been moved to specialized files and is automatically 
 - **CI/CD**: `docs/ci-cd/setup.md` - Vitest and GitHub Actions setup guide
 - **GitHub Setup**: `docs/ci-cd/github-setup.md` - Step-by-step GitHub configuration
 - **Vercel Integration**: `docs/ci-cd/vercel-integration.md` - Vercel deployment workflow
+- **CI/CD Status**: `docs/ci-cd/current-status.md` - Current CI/CD configuration status
 - **Database**: `docs/database/schema.md` - Database schema and relationships
 - **Troubleshooting**: `docs/troubleshooting/common-issues.md` - Common issues and solutions
 
