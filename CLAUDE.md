@@ -148,6 +148,8 @@ Detailed documentation has been moved to specialized files and is automatically 
 - **Deployment**: `docs/deployment/vercel.md` - Vercel deployment guide
 - **Testing**: `docs/testing/guidelines.md` - Testing patterns and setup
 - **CI/CD**: `docs/ci-cd/setup.md` - Vitest and GitHub Actions setup guide
+- **GitHub Setup**: `docs/ci-cd/github-setup.md` - Step-by-step GitHub configuration
+- **Vercel Integration**: `docs/ci-cd/vercel-integration.md` - Vercel deployment workflow
 - **Database**: `docs/database/schema.md` - Database schema and relationships
 - **Troubleshooting**: `docs/troubleshooting/common-issues.md` - Common issues and solutions
 
