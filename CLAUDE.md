@@ -147,6 +147,7 @@ Detailed documentation has been moved to specialized files and is automatically 
 - **Git Workflow**: `docs/development/git-workflow.md` - Development practices
 - **Deployment**: `docs/deployment/vercel.md` - Vercel deployment guide
 - **Testing**: `docs/testing/guidelines.md` - Testing patterns and setup
+- **CI/CD**: `docs/ci-cd/setup.md` - Vitest and GitHub Actions setup guide
 - **Database**: `docs/database/schema.md` - Database schema and relationships
 - **Troubleshooting**: `docs/troubleshooting/common-issues.md` - Common issues and solutions
 
