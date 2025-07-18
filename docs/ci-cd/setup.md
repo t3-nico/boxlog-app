@@ -116,17 +116,54 @@ ORG_ID=your_organization_id
 PROJECT_ID=your_project_id
 ```
 
+#### GitHub Secretsの設定手順
+1. GitHubリポジトリ → **Settings** → **Secrets and variables** → **Actions**
+2. **New repository secret** をクリック
+3. 以下のシークレットを追加：
+
+**VERCEL_TOKEN の取得:**
+- Vercelダッシュボード → Settings → Tokens
+- **Create Token** で新しいトークン作成
+
+**ORG_ID と PROJECT_ID の取得:**
+```bash
+# Vercel CLIで確認
+npx vercel link
+cat .vercel/project.json
+```
+
+または Vercel Project Settings → General で確認可能
+
 ### 型エラーについて
 現在、いくつかの型エラーがありますが、CI実行は継続されます：
 - Next.js自動生成ファイルの型問題
 - 既存APIテストファイルの型不整合
 
+## 🔧 GitHub側の必要な設定
+
+### 1. リポジトリのActions有効化
+GitHubリポジトリで以下を確認：
+- **Settings** → **Actions** → **General**
+- **Actions permissions**: "Allow all actions and reusable workflows"
+
+### 2. Branch Protection Rules（推奨）
+**Settings** → **Branches** で以下を設定：
+```
+Branch: main
+☑ Require status checks to pass before merging
+☑ Require branches to be up to date before merging
+Status checks: lint-and-test
+```
+
+### 3. Vercel Integration（任意）
+GitHub Apps経由でVercelを連携することで、より詳細なデプロイ情報をPRで確認可能
+
 ## 🔄 今後の改善予定
 
-### 短期的
-- [ ] Vercelシークレット設定
+### 短期的（要対応）
+- [ ] **Vercelシークレット設定** ← 自動デプロイに必須
+- [ ] Branch Protection Rules設定
 - [ ] より包括的なテストケース追加
-- [ ] カバレッジ閾値設定
 
 ### 長期的
 - [ ] E2Eテスト（Playwright）
