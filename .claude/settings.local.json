@@ -23,8 +23,6 @@
       "Bash(git restore:*)",
       "Bash(find:*)",
       "Bash(for:*)",
-      "Bash(do sed -i '' 's/mx-auto max-w-4xl space-y-10/mx-auto max-w-4xl space-y-10 p-10/g' \"$file\")",
-      "Bash(done)",
       "Bash(curl:*)",
       "Bash(open http://localhost:3001)",
       "Bash(mkdir:*)",
@@ -34,19 +32,9 @@
       "Bash(tail:*)",
       "Bash(npx next build:*)",
       "WebFetch(domain:www.kibo-ui.com)",
+      "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)"
     ],
     "deny": []
-  },
-  "claudeMd": [
-    "CLAUDE.md",
-    "docs/migration/shadcn-ui.md",
-    "docs/components/kibo-ui.md",
-    "docs/theming/theme-system.md",
-    "docs/development/git-workflow.md",
-    "docs/deployment/vercel.md",
-    "docs/testing/guidelines.md",
-    "docs/database/schema.md",
-    "docs/troubleshooting/common-issues.md"
-  ]
+  }
 }

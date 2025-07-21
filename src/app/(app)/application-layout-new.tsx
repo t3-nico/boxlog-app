@@ -8,16 +8,12 @@ import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
-import { EagleSmartFolderList } from '@/components/box/eagle-smart-folder-list'
-import { EagleFolderList } from '@/components/box/eagle-folder-list'
+import { ViewSwitcher } from '@/components/ui/view-switcher'
 import { useBoxStore } from '@/lib/box-store'
 import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
-import { useSidebarMenu } from '@/hooks/useSidebarMenu'
 import { DynamicSidebarSection } from '@/components/sidebar/DynamicSidebarSection'
-import { OptimizedSidebarSection } from '@/components/sidebar/OptimizedSidebarSection'
 import { TagsList } from '@/components/tags/tags-list'
 import { SmartFolderList } from '@/components/smart-folders/smart-folder-list'
-import { useDevelopmentPerformanceMonitor } from '@/hooks/usePerformanceMonitor'
 import { sidebarConfig } from '@/config/sidebarConfig'
 import { useCommandPalette } from '@/components/providers'
 import {
@@ -28,22 +24,13 @@ import {
   DropdownLabel,
   DropdownMenu,
 } from '@/components/dropdown'
-import { Button } from '@/components/ui/button'
-import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar'
+import { NavbarItem } from '@/components/navbar'
 import {
-  Sidebar,
-  SidebarBody,
-  SidebarFooter,
-  SidebarHeader,
   SidebarHeading,
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-  SidebarSpacer,
 } from '@/components/sidebar'
-import { SidebarLayoutCustom } from '@/components/sidebar-layout-custom'
-import { ViewSwitcher } from '@/components/ui/view-switcher'
-import { MainAreaHeader } from '@/components/main-area-header'
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
@@ -85,7 +72,7 @@ import {
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
-export function ApplicationLayout({
+export function ApplicationLayoutNew({
   events,
   reviews,
   children,
@@ -136,8 +123,8 @@ export function ApplicationLayout({
   return (
     <ThemeProvider>
       <div className="flex flex-col h-screen">
-        {/* Header - Full width at top */}
-        <header className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '64px'}}>
+        {/* Fixed Header - Full width at top */}
+        <header className="fixed top-0 left-0 right-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '57px', minHeight: '57px', maxHeight: '57px'}}>
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
@@ -230,28 +217,6 @@ export function ApplicationLayout({
                             <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">Scheduled maintenance on July 12, 2025 from 2:00-4:00 AM.</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-08</p>
                           </div>
-                          
-                          <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                                Feature
-                              </span>
-                            </div>
-                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">New Feature Release</h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">New tagging feature has been added for better organization.</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-05</p>
-                          </div>
-                          
-                          <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-medium text-red-600 bg-red-100 px-2 py-1 rounded-full">
-                                Important
-                              </span>
-                            </div>
-                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">Terms of Service Update</h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">Our terms of service have been updated. Please review the changes.</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-01</p>
-                          </div>
                         </div>
                         
                         <div className="mt-4 pt-3 border-t border-gray-200 dark:border-gray-600">
@@ -296,13 +261,11 @@ export function ApplicationLayout({
           </div>
         </header>
         
-        {/* Body - Sidebar and content */}
-        <div className="flex-1 relative">
-          <SidebarLayoutCustom
-            navbar={null}
-            sidebar={
-              <Sidebar collapsed={collapsed} className="h-full">
-                <SidebarBody>
+        {/* Body - 3 Column Layout below header */}
+        <div className="flex flex-1" style={{paddingTop: '57px'}}>
+          {/* Left Sidebar */}
+          <div className={`${collapsed ? 'w-16' : 'w-64'} flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150`}>
+            <div className="h-full overflow-y-auto p-4">
               {!inSettings && (
                 <>
                   <SidebarSection>
@@ -325,29 +288,6 @@ export function ApplicationLayout({
                         <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
                       </button>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        openCommandPalette()
-                      }}
-                      className={clsx(
-                        'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
-                        'group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-2',
-                        '*:data-[slot=icon]:size-6 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:text-zinc-500 sm:*:data-[slot=icon]:size-5',
-                        'hover:bg-zinc-950/5 hover:*:data-[slot=icon]:text-zinc-950',
-                        'dark:text-white dark:*:data-[slot=icon]:text-zinc-400',
-                        'dark:hover:bg-white/5 dark:hover:*:data-[slot=icon]:text-white',
-                        'cursor-pointer transition-colors'
-                      )}
-                      title="Search (⌘K)"
-                    >
-                      <MagnifyingGlassIcon data-slot="icon" />
-                      <SidebarLabel>Search</SidebarLabel>
-                      {!collapsed && (
-                        <span className="ml-auto text-xs text-gray-400">⌘K</span>
-                      )}
-                    </button>
                   </SidebarSection>
 
                   <div className="h-4" />
@@ -409,169 +349,49 @@ export function ApplicationLayout({
                       <UserIcon data-slot="icon" />
                       <SidebarLabel>Account</SidebarLabel>
                     </SidebarItem>
-                    <SidebarItem
-                      href="/settings/preferences"
-                      current={pathname.startsWith('/settings/preferences')}
-                      indicator={false}
-                    >
-                      <AdjustmentsVerticalIcon data-slot="icon" />
-                      <SidebarLabel>Preferences</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/notifications"
-                      current={pathname.startsWith('/settings/notifications')}
-                      indicator={false}
-                    >
-                      <BellIcon data-slot="icon" />
-                      <SidebarLabel>Notifications</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/calendar"
-                      current={pathname.startsWith('/settings/calendar')}
-                      indicator={false}
-                    >
-                      <CalendarIcon data-slot="icon" />
-                      <SidebarLabel>Calendar</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Customization</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/tags"
-                      current={pathname.startsWith('/settings/tags')}
-                      indicator={false}
-                    >
-                      <TagIcon data-slot="icon" />
-                      <SidebarLabel>Tags</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/templates"
-                      current={pathname.startsWith('/settings/templates')}
-                      indicator={false}
-                    >
-                      <ClipboardDocumentListIcon data-slot="icon" />
-                      <SidebarLabel>Task Templates</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Integration</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/integration"
-                      current={pathname.startsWith('/settings/integration')}
-                      indicator={false}
-                    >
-                      <LinkIcon data-slot="icon" />
-                      <SidebarLabel>Calendar & Integration</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Data</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/plan-billing"
-                      current={pathname.startsWith('/settings/plan-billing')}
-                      indicator={false}
-                    >
-                      <CreditCardIcon data-slot="icon" />
-                      <SidebarLabel>Plan & Billing</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/data-export"
-                      current={pathname.startsWith('/settings/data-export')}
-                      indicator={false}
-                    >
-                      <ArrowDownTrayIcon data-slot="icon" />
-                      <SidebarLabel>Data & Export</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/trash"
-                      current={pathname.startsWith('/settings/trash')}
-                      indicator={false}
-                    >
-                      <TrashIcon data-slot="icon" />
-                      <SidebarLabel>Trash</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Personal</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/chronotype"
-                      current={pathname.startsWith('/settings/chronotype')}
-                      indicator={false}
-                    >
-                      <ClockIcon data-slot="icon" />
-                      <SidebarLabel>Chronotype</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>About</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/legal"
-                      current={pathname.startsWith('/settings/legal')}
-                      indicator={false}
-                    >
-                      <InformationCircleIcon data-slot="icon" />
-                      <SidebarLabel>About / Legal</SidebarLabel>
-                    </SidebarItem>
                   </SidebarSection>
                 </>
               )}
               
-              <SidebarSpacer />
-            </SidebarBody>
-            
-            {/* Help and Upgrade buttons */}
-            {!inSettings && (
-              <SidebarFooter>
-                <DynamicSidebarSection
-                  section={sidebarConfig.find(section => section.id === 'support')!}
-                  currentPath={pathname}
-                  collapsed={collapsed}
-                />
-              </SidebarFooter>
-            )}
-          </Sidebar>
-            }
-            collapsed={collapsed}
-          >
-            <ToastProvider>
-              <div className="flex flex-col h-full">
-                {/* Content Area */}
-                <div className="flex flex-1 overflow-hidden">
-              {/* Main Content Area */}
-              <div 
-                className="flex flex-col flex-1 min-w-0 transition-all duration-300 ease-in-out"
-                style={{
-                  marginRight: isAIChatOpen ? '320px' : '0px'
-                }}
-              >
-                <div className="flex-1 overflow-auto">
-                  {children}
+              {/* Help and Upgrade buttons */}
+              {!inSettings && (
+                <div className="mt-auto">
+                  <DynamicSidebarSection
+                    section={sidebarConfig.find(section => section.id === 'support')!}
+                    currentPath={pathname}
+                    collapsed={collapsed}
+                  />
                 </div>
-              </div>
+              )}
             </div>
-            
-              </div>
-              
-              {/* Add Popup */}
-              <AddPopup 
-                open={isOpen} 
-                onOpenChange={(open) => open ? openPopup() : closePopup()}
-                defaultTab="schedule"
-              />
-              
-              {/* AI Chat Sidebar */}
+          </div>
+          
+          {/* Main Content */}
+          <div className="flex-1 min-w-0 bg-white dark:bg-gray-800">
+            <div className="h-full overflow-auto">
+              {children}
+            </div>
+          </div>
+          
+          {/* Right Sidebar (conditionally shown) */}
+          {isAIChatOpen && (
+            <div className="w-80 flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700">
               <AIChatSidebar 
                 isOpen={isAIChatOpen} 
                 onClose={() => setIsAIChatOpen(false)} 
               />
-            </ToastProvider>
-          </SidebarLayoutCustom>
+            </div>
+          )}
         </div>
+        
+        {/* Floating Components */}
+        <ToastProvider>
+          <AddPopup 
+            open={isOpen} 
+            onOpenChange={(open) => open ? openPopup() : closePopup()}
+            defaultTab="schedule"
+          />
+        </ToastProvider>
       </div>
     </ThemeProvider>
   )

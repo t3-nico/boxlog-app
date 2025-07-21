@@ -1,123 +1,12 @@
 'use client'
 
 import React from 'react'
-import { Sparkles as SparklesIcon, Calendar as CalendarIcon, Clock as ClockIcon, Sun as SunIcon, Moon as MoonIcon, GraduationCap as AcademicCapIcon, Lightbulb as LightBulbIcon } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { Clock as ClockIcon, Sun as SunIcon, Moon as MoonIcon, GraduationCap as AcademicCapIcon, Lightbulb as LightBulbIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
-import { LifeCounter } from './life-counter'
 
-interface MainAreaHeaderProps {
-  className?: string
-  onAIClick?: () => void
-  hideWrapper?: boolean
-}
-
-export function MainAreaHeader({ className, onAIClick, hideWrapper }: MainAreaHeaderProps) {
-  const pathname = usePathname()
-  const router = useRouter()
-  
-  const handleAIClick = () => {
-    onAIClick?.()
-  }
-  
-  // パス名から表示名を取得
-  const getPageTitle = (path: string) => {
-    if (path === '/calendar') return 'Calendar'
-    if (path === '/table') return 'Table'
-    if (path === '/board') return 'Board'
-    if (path === '/stats') return 'Stats'
-    if (path === '/search') return 'Search'
-    if (path === '/add') return 'Add'
-    if (path.startsWith('/settings')) return 'Settings'
-    return 'Dashboard'
-  }
-
-  const content = (
-    <>
-      {/* Left: Current Page */}
-      <div className="flex items-center w-48">
-        <div className="text-lg font-semibold text-gray-600 dark:text-gray-300">
-          {getPageTitle(pathname)}
-        </div>
-      </div>
-      
-      {/* Center: Current Task, Time & Life Counter */}
-      <div className="flex items-center justify-center flex-1">
-        <div className="flex items-center gap-6">
-          <CurrentTaskDisplay />
-          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-          <TimeDisplay />
-          <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-          <LifeCounter />
-        </div>
-      </div>
-      
-      {/* Right: AI Icon */}
-      <div className="flex items-center justify-end w-48">
-        <button
-          onClick={handleAIClick}
-          className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-          title="AI Assistant"
-        >
-          <SparklesIcon className="size-5 text-purple-600 dark:text-purple-400" />
-        </button>
-      </div>
-    </>
-  )
-
-  if (hideWrapper) {
-    return content
-  }
-
-  return (
-    <div className={`sticky top-0 z-10 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-16 ${className}`}>
-      <div className="flex items-center justify-between px-4 h-full">
-        {content}
-      </div>
-    </div>
-  )
-}
-
-
-// 現在の予定表示コンポーネント
-function CurrentTaskDisplay() {
-  const router = useRouter()
-  
-  // 実際の実装では現在の予定を取得
-  const currentSchedule = {
-    id: '1', // 実際の実装では予定のIDを使用
-    title: "Team Meeting",
-    startTime: "14:00",
-    endTime: "15:00"
-  }
-  
-  const handleScheduleClick = () => {
-    // 実際の実装では予定のIDやタイムスタンプをパラメータで渡す
-    router.push(`/calendar?eventId=${currentSchedule.id}`)
-  }
-  
-  return (
-    <button
-      onClick={handleScheduleClick}
-      className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer"
-      title="カレンダーで詳細を見る"
-    >
-      <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" data-slot="icon" />
-      <div className="flex items-center gap-1">
-        <div className="text-base font-medium text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-          {currentSchedule.title}
-        </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-          {currentSchedule.startTime} - {currentSchedule.endTime}
-        </div>
-      </div>
-    </button>
-  )
-}
-
-// 時間表示コンポーネント
-function TimeDisplay() {
+export function TimeDisplay() {
   const [time, setTime] = React.useState(new Date())
   const [mounted, setMounted] = React.useState(false)
   const router = useRouter()
@@ -259,4 +148,3 @@ function TimeDisplay() {
     </div>
   )
 }
-
