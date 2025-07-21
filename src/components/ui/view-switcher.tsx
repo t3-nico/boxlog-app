@@ -42,6 +42,7 @@ export function ViewSwitcher() {
   const router = useRouter()
 
   const handleViewChange = (path: string) => {
+    console.log('ViewSwitcher: Navigating to', path)
     router.push(path)
   }
 

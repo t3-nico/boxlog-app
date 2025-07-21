@@ -24,6 +24,8 @@ import {
   DropdownLabel,
   DropdownMenu,
 } from '@/components/dropdown'
+import * as Headless from '@headlessui/react'
+import { Button } from '@/components/button'
 import { NavbarItem } from '@/components/navbar'
 import {
   SidebarHeading,
@@ -122,55 +124,103 @@ export function ApplicationLayoutNew({
 
   return (
     <ThemeProvider>
-      <div className="flex flex-col h-screen">
+      <ToastProvider>
+        <div className="flex flex-col h-screen">
         {/* Fixed Header - Full width at top */}
         <header className="fixed top-0 left-0 right-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '57px', minHeight: '57px', maxHeight: '57px'}}>
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
-              <NavbarItem
-                onClick={() => setCollapsed(!collapsed)}
-                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-              >
-                {collapsed ? <PanelRight data-slot="icon" /> : <PanelLeft data-slot="icon" />}
-              </NavbarItem>
-              
               {!inSettings && (
-                <Dropdown>
-                  <DropdownButton as={SidebarItem} indicator={false}>
+                <Headless.Menu as="div" className="relative">
+                  <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 dark:data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 dark:data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
                     <Avatar src="/teams/catalyst.svg" />
                     <SidebarLabel>BoxLog</SidebarLabel>
                     <ChevronDownIcon data-slot="icon" />
-                  </DropdownButton>
-                  <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
-                    <DropdownItem href="/settings">
-                      <Cog8ToothIcon data-slot="icon" />
-                      <DropdownLabel>Settings</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownDivider />
-                    <DropdownItem href="#">
-                      <ShieldCheckIcon data-slot="icon" />
-                      <DropdownLabel>Privacy policy</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownItem href="#">
-                      <LightBulbIcon data-slot="icon" />
-                      <DropdownLabel>Share feedback</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownItem href="#">
-                      <QuestionMarkCircleIcon data-slot="icon" />
-                      <DropdownLabel>Support</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownItem href="#">
-                      <SparklesIcon data-slot="icon" />
-                      <DropdownLabel>Changelog</DropdownLabel>
-                    </DropdownItem>
-                    <DropdownDivider />
-                    <DropdownItem onClick={handleSignOut}>
-                      <ArrowRightStartOnRectangleIcon data-slot="icon" />
-                      <DropdownLabel>Logout</DropdownLabel>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                  </Headless.MenuButton>
+                  <Headless.MenuItems className="absolute left-0 mt-2 w-80 lg:w-64 origin-top-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-1 z-50">
+                    <Headless.MenuItem>
+                      {({ focus }) => (
+                        <a
+                          href="/settings"
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                            focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                          }`}
+                        >
+                          <Cog8ToothIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-zinc-950 dark:text-white">Settings</span>
+                        </a>
+                      )}
+                    </Headless.MenuItem>
+                    <div className="my-1 h-px bg-zinc-950/10 dark:bg-white/10" />
+                    <Headless.MenuItem>
+                      {({ focus }) => (
+                        <a
+                          href="#"
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                            focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                          }`}
+                        >
+                          <ShieldCheckIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-zinc-950 dark:text-white">Privacy policy</span>
+                        </a>
+                      )}
+                    </Headless.MenuItem>
+                    <Headless.MenuItem>
+                      {({ focus }) => (
+                        <a
+                          href="#"
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                            focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                          }`}
+                        >
+                          <LightBulbIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-zinc-950 dark:text-white">Share feedback</span>
+                        </a>
+                      )}
+                    </Headless.MenuItem>
+                    <Headless.MenuItem>
+                      {({ focus }) => (
+                        <a
+                          href="#"
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                            focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                          }`}
+                        >
+                          <QuestionMarkCircleIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-zinc-950 dark:text-white">Support</span>
+                        </a>
+                      )}
+                    </Headless.MenuItem>
+                    <Headless.MenuItem>
+                      {({ focus }) => (
+                        <a
+                          href="#"
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                            focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                          }`}
+                        >
+                          <SparklesIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-zinc-950 dark:text-white">Changelog</span>
+                        </a>
+                      )}
+                    </Headless.MenuItem>
+                    <div className="my-1 h-px bg-zinc-950/10 dark:bg-white/10" />
+                    <Headless.MenuItem>
+                      {({ focus }) => (
+                        <button
+                          onClick={handleSignOut}
+                          className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                            focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                          }`}
+                        >
+                          <ArrowRightStartOnRectangleIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
+                          <span className="text-zinc-950 dark:text-white">Logout</span>
+                        </button>
+                      )}
+                    </Headless.MenuItem>
+                  </Headless.MenuItems>
+                </Headless.Menu>
               )}
               
               {inSettings && (
@@ -183,11 +233,10 @@ export function ApplicationLayoutNew({
             
             {/* Center - View Switcher */}
             {!inSettings && (
-              <div className="flex items-center justify-center flex-1">
+              <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <ViewSwitcher />
               </div>
             )}
-            {inSettings && <div className="flex-1" />}
             
             {/* Right side - Notifications, theme toggle, AI icon */}
             <div className="flex items-center gap-2">
@@ -255,8 +304,6 @@ export function ApplicationLayoutNew({
                   )}
                 </>
               )}
-              
-              <SimpleThemeToggle />
             </div>
           </div>
         </header>
@@ -349,6 +396,114 @@ export function ApplicationLayoutNew({
                       <UserIcon data-slot="icon" />
                       <SidebarLabel>Account</SidebarLabel>
                     </SidebarItem>
+                    <SidebarItem
+                      href="/settings/preferences"
+                      current={pathname.startsWith('/settings/preferences')}
+                      indicator={false}
+                    >
+                      <AdjustmentsVerticalIcon data-slot="icon" />
+                      <SidebarLabel>Preferences</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/settings/notifications"
+                      current={pathname.startsWith('/settings/notifications')}
+                      indicator={false}
+                    >
+                      <BellIcon data-slot="icon" />
+                      <SidebarLabel>Notifications</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/settings/calendar"
+                      current={pathname.startsWith('/settings/calendar')}
+                      indicator={false}
+                    >
+                      <CalendarIcon data-slot="icon" />
+                      <SidebarLabel>Calendar</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>Customization</SidebarHeading>
+                    <SidebarItem
+                      href="/settings/tags"
+                      current={pathname.startsWith('/settings/tags')}
+                      indicator={false}
+                    >
+                      <TagIcon data-slot="icon" />
+                      <SidebarLabel>Tags</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/settings/templates"
+                      current={pathname.startsWith('/settings/templates')}
+                      indicator={false}
+                    >
+                      <ClipboardDocumentListIcon data-slot="icon" />
+                      <SidebarLabel>Task Templates</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>Integration</SidebarHeading>
+                    <SidebarItem
+                      href="/settings/integration"
+                      current={pathname.startsWith('/settings/integration')}
+                      indicator={false}
+                    >
+                      <LinkIcon data-slot="icon" />
+                      <SidebarLabel>Calendar & Integration</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>Data</SidebarHeading>
+                    <SidebarItem
+                      href="/settings/plan-billing"
+                      current={pathname.startsWith('/settings/plan-billing')}
+                      indicator={false}
+                    >
+                      <CreditCardIcon data-slot="icon" />
+                      <SidebarLabel>Plan & Billing</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/settings/data-export"
+                      current={pathname.startsWith('/settings/data-export')}
+                      indicator={false}
+                    >
+                      <ArrowDownTrayIcon data-slot="icon" />
+                      <SidebarLabel>Data & Export</SidebarLabel>
+                    </SidebarItem>
+                    <SidebarItem
+                      href="/settings/trash"
+                      current={pathname.startsWith('/settings/trash')}
+                      indicator={false}
+                    >
+                      <TrashIcon data-slot="icon" />
+                      <SidebarLabel>Trash</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>Personal</SidebarHeading>
+                    <SidebarItem
+                      href="/settings/chronotype"
+                      current={pathname.startsWith('/settings/chronotype')}
+                      indicator={false}
+                    >
+                      <ClockIcon data-slot="icon" />
+                      <SidebarLabel>Chronotype</SidebarLabel>
+                    </SidebarItem>
+                  </SidebarSection>
+
+                  <SidebarSection className="mt-8">
+                    <SidebarHeading>About</SidebarHeading>
+                    <SidebarItem
+                      href="/settings/legal"
+                      current={pathname.startsWith('/settings/legal')}
+                      indicator={false}
+                    >
+                      <InformationCircleIcon data-slot="icon" />
+                      <SidebarLabel>About / Legal</SidebarLabel>
+                    </SidebarItem>
                   </SidebarSection>
                 </>
               )}
@@ -385,14 +540,13 @@ export function ApplicationLayoutNew({
         </div>
         
         {/* Floating Components */}
-        <ToastProvider>
-          <AddPopup 
-            open={isOpen} 
-            onOpenChange={(open) => open ? openPopup() : closePopup()}
-            defaultTab="schedule"
-          />
-        </ToastProvider>
-      </div>
+        <AddPopup 
+          open={isOpen} 
+          onOpenChange={(open) => open ? openPopup() : closePopup()}
+          defaultTab="schedule"
+        />
+        </div>
+      </ToastProvider>
     </ThemeProvider>
   )
 }
