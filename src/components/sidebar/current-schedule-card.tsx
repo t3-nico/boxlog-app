@@ -63,11 +63,11 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
       const currentHour = currentTime.getHours()
       const zone = getProductivityZoneForHour(profile, currentHour)
       
-      if (!zone || !PRODUCTIVITY_COLORS[zone.color]) {
+      if (!zone || !PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]) {
         return '#3b82f6' // フォールバック
       }
 
-      const colors = PRODUCTIVITY_COLORS[zone.color]
+      const colors = PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]
       return colors.border
     } catch (error) {
       console.error('Chronotype color calculation error:', error)
