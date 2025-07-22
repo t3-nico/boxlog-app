@@ -55,7 +55,7 @@ export function RecordTaskCard({
           <div className="flex flex-col gap-1">
             {timeDiff !== null && timeDiff !== 0 && (
               <span className={cn(
-                "text-xs px-1.5 py-0.5 rounded font-medium",
+                "text-xs px-2 py-1 rounded font-medium",
                 isDelayed 
                   ? "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300" 
                   : "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
@@ -66,7 +66,7 @@ export function RecordTaskCard({
             
             {durationDiff !== null && durationDiff !== 0 && (
               <span className={cn(
-                "text-xs px-1.5 py-0.5 rounded font-medium",
+                "text-xs px-2 py-1 rounded font-medium",
                 isOvertime 
                   ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300" 
                   : "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300"
@@ -123,7 +123,7 @@ export function RecordTaskCard({
           
           {/* 中断回数 */}
           {record.interruptions !== undefined && record.interruptions > 0 && (
-            <span className="text-xs px-1.5 py-0.5 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded font-medium">
+            <span className="text-xs px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded font-medium">
               中断{record.interruptions}回
             </span>
           )}
@@ -132,7 +132,7 @@ export function RecordTaskCard({
         {/* 予定外タスクの表示 */}
         {isUnplanned && (
           <div className="mt-1">
-            <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 rounded font-medium">
+            <span className="text-xs px-2 py-1 bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 rounded font-medium">
               予定外
             </span>
           </div>

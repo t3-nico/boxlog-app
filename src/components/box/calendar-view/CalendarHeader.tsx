@@ -100,7 +100,7 @@ export function CalendarHeader({
             onClick={() => onNavigate('today')}
             disabled={isToday}
             className={cn(
-              "px-4 py-1.5 text-sm font-medium border rounded-md transition-colors",
+              "px-4 py-2 text-sm font-medium border rounded-md transition-colors",
               isToday
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600 border-gray-200 dark:border-gray-600"
                 : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
@@ -140,7 +140,7 @@ export function CalendarHeader({
             <button
               onClick={() => updateSettings({ planRecordMode: 'both' })}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'both'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
@@ -152,7 +152,7 @@ export function CalendarHeader({
             <button
               onClick={() => updateSettings({ planRecordMode: 'plan' })}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'plan'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
@@ -164,7 +164,7 @@ export function CalendarHeader({
             <button
               onClick={() => updateSettings({ planRecordMode: 'record' })}
               className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200",
+                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'record'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'

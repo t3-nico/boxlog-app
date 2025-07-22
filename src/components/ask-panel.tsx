@@ -273,7 +273,7 @@ function AskPanelHeader({
               <div className="relative">
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                 >
                   <MoreVertical className="h-4 w-4" />
                 </button>
@@ -308,7 +308,7 @@ function AskPanelHeader({
             {/* Close Button */}
             <button
               onClick={toggleCollapsed}
-              className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
               title="Close panel"
             >
               <X className="h-4 w-4" />
@@ -637,7 +637,7 @@ export function AskPanel() {
               <div className="flex items-center p-4">
                 <button
                   onClick={toggleCollapsed}
-                  className="p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                   title="Collapse panel"
                 >
                   <PanelRight className="size-5" />
@@ -650,7 +650,7 @@ export function AskPanel() {
                 <div className="space-y-2" style={{ maxWidth: '256px' }}>
                   <button
                     onClick={() => handleTabSelect('ai')}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                    className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                   >
                     <Sparkles className="size-5 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex-1">
@@ -666,7 +666,7 @@ export function AskPanel() {
                   
                   <button
                     onClick={() => handleTabSelect('help')}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                    className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                   >
                     <HelpCircle className="size-5 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex-1">
@@ -748,7 +748,7 @@ export function AskPanelToggleButton() {
     <Button
       variant="outline"
       onClick={handleClick}
-      className="flex items-center gap-2 px-3 py-1.5 h-auto"
+      className="flex items-center gap-2 px-3 py-2 h-auto"
     >
       <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
       <span className="text-sm font-medium">Ask Claude</span>

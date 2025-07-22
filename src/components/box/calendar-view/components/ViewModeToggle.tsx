@@ -62,7 +62,7 @@ export function ViewModeToggle({
       value={planRecordMode}
       onChange={(value) => updateSettings({ planRecordMode: value })}
       className={cn(
-        "flex items-center gap-0.5 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden",
+        "flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden",
         isSmall ? "p-0.5" : "p-1",
         className
       )}
@@ -78,7 +78,7 @@ export function ViewModeToggle({
               checked
                 ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600',
-              isSmall ? "px-2 py-1" : "px-3 py-1.5"
+              isSmall ? "px-2 py-1" : "px-3 py-2"
             )
           }
           onMouseEnter={() => setHoveredMode(mode.value)}

@@ -67,7 +67,7 @@ export function LifeCounter() {
   return (
     <button
       onClick={handleClick}
-      className="group flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 cursor-pointer border border-red-200 dark:border-red-700"
+      className="group flex items-center gap-2 px-3 py-2 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 cursor-pointer border border-red-200 dark:border-red-700"
       title={`${lifeData.isOverLifeExpectancy ? 'Celebrating life beyond 100!' : `Age ${lifeData.age} - Click to adjust settings`}`}
     >
       <Heart className="w-4 h-4 text-red-500 dark:text-red-400 group-hover:scale-110 transition-transform" data-slot="icon" />

@@ -251,7 +251,7 @@ export function PageHeader({
               {/* 現在の予定 */}
               <button
                 onClick={handleEventClick}
-                className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-1.5 rounded-full transition-all duration-200 group"
+                className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 px-3 py-2 rounded-full transition-all duration-200 group"
               >
                 <CalendarIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" data-slot="icon" />
                 {currentEvent ? (
@@ -274,7 +274,7 @@ export function PageHeader({
               {/* クロノタイプステータス */}
               <button
                 onClick={handleChronoClick}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-200 group ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-full transition-all duration-200 group ${
                   chronoStatus.type === 'focus' 
                     ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50'
                     : chronoStatus.type === 'creative'
