@@ -36,7 +36,7 @@ export default async function Event({ params }: { params: { id: string } }) {
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-center gap-6">
           <div className="w-32 shrink-0">
-            <img className="aspect-3/2 rounded-lg shadow-sm" src={event.imgUrl} alt="" />
+            <img className="aspect-3/2 rounded-lg shadow-sm" src={event.imgUrl} alt={event.name + ' event image'} />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">

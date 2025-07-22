@@ -139,6 +139,7 @@ export function TagFilter({
                   toggleTag(tag.id)
                 }}
                 className="ml-1 text-blue-500 hover:text-blue-700 dark:hover:text-blue-200"
+                aria-label={`Remove ${tag.name} filter`}
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>

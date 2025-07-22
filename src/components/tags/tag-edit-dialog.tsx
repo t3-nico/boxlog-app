@@ -97,6 +97,7 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
                   }`}
                   style={{ backgroundColor: presetColor }}
                   title={presetColor}
+                  aria-label={`Select color ${presetColor}`}
                 />
               ))}
             </div>

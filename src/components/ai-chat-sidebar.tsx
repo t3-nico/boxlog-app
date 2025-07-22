@@ -306,6 +306,7 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
               <button
                 onClick={() => setShowMenu(!showMenu)}
                 className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                aria-label="Menu options"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
@@ -340,6 +341,7 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
             <button
               onClick={onClose}
               className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              aria-label="Close AI chat"
             >
               <X className="h-4 w-4" />
             </button>
