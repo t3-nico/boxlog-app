@@ -130,7 +130,7 @@ Primary state is managed through Zustand stores:
 - **Use `--tag-color` CSS variable for elements that need custom colors**
 - Use TypeScript strictly - avoid `any` types where possible
 
-### 🎨 Design System - 8px Grid Guidelines
+### 🎨 Design System - 8px Grid Guidelines ✅ **実装完了**
 
 **基本ルール**: 8pxグリッドシステムを基本とし、実用性を重視した柔軟な運用
 
@@ -144,9 +144,17 @@ Primary state is managed through Zustand stores:
 - **半端な値**: 6px, 10px, 14px, 18px...
 - `py-1.5` (6px), `px-2.5` (10px), `gap-1.5` (6px)
 
+#### 🎯 **実装状況（2025-01-22完了）**
+- ✅ **0.5px要素**: 完全除去（13ファイル修正）
+- ✅ **1px要素**: w-1, h-1 → w-2, h-2 に統一
+- ✅ **1.5px要素**: h-1.5, w-1.5 → h-2, w-2 に統一
+- ✅ **3.5px要素**: w-3.5, h-3.5 → w-4, h-4 に統一
+- ✅ **インラインpx値**: 動的値は適切に配置
+- ✅ **CSS変数**: 8px基準で統一済み
+
 #### 🎯 **実装ガイドライン**
 - **新規コンポーネント**: 8pxの倍数を優先的に使用
-- **既存コンポーネント**: 明らかに非適合な値（6px, 10pxなど）を優先的に修正
+- **既存コンポーネント**: 8pxグリッド準拠完了
 - **例外**: `px-3` (12px) など使用頻度の高い値は実用性を重視
 - **統一性**: 同じ用途のスペーシングは統一（例：ボタンパディング、カード間隔）
 
