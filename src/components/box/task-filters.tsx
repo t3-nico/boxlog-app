@@ -101,7 +101,8 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
         <div className="flex flex-wrap items-center gap-2">
           <Dropdown>
             <DropdownButton 
-              outline
+              as={Button}
+              variant="outline"
               className={`h-8 border-dashed ${filters.status.length > 0 ? 'border-solid' : ''}`}
             >
               <Plus className="mr-2 h-4 w-4" data-slot="icon" />
@@ -219,7 +220,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
           <ExportMenu />
           {onViewChange && (
             <Dropdown>
-              <DropdownButton outline className="h-8">
+              <DropdownButton as={Button} variant="outline" className="h-8">
                 View
                 <ChevronDown className="ml-2 h-4 w-4" data-slot="icon" />
               </DropdownButton>
