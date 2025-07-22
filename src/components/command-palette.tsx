@@ -86,8 +86,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         limit: 10,
       }, {
         tasks: convertedTasks,
-        tags,
-        smartFolders,
+        tags: tags as unknown as import('@/types/common').Tag[],
+        smartFolders: smartFolders as unknown as import('@/types/common').SmartFolder[],
       })
       setResults(searchResults)
     } catch (error) {
