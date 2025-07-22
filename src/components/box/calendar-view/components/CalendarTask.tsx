@@ -133,7 +133,7 @@ export function CalendarTask({
           {!isShort && view !== 'month' && (
             <>
               {/* 時間範囲 */}
-              <div className="text-xs opacity-90 mt-0.5">
+              <div className="text-xs opacity-90 mt-1">
                 {format(task.startTime, 'HH:mm')} - {format(task.endTime, 'HH:mm')}
               </div>
               
