@@ -189,18 +189,18 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
         border: `2px solid ${borderColor}`
       }}
     >
-      <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-center gap-2 mb-2">
         <Calendar className="w-3 h-3 text-blue-600 dark:text-blue-400" />
         <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
           Live
         </span>
       </div>
       
-      <h3 className="font-medium text-gray-900 dark:text-white text-xs mb-1">
+      <h3 className="font-medium text-gray-900 dark:text-white text-xs mb-2">
         {currentEvent.title}
       </h3>
       
-      <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 mb-1">
+      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
         <Clock className="w-3 h-3" />
         <span>
           {formatTime(currentEvent.startTime)} - {formatTime(currentEvent.endTime)}

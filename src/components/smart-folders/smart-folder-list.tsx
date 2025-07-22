@@ -65,7 +65,7 @@ function SortableSmartFolderItem({
       ref={setNodeRef}
       style={style}
       className={clsx(
-        'group flex items-center justify-between px-2 py-1 rounded-md cursor-pointer transition-colors duration-150',
+        'group flex items-center justify-between px-2 py-2 rounded-md cursor-pointer transition-colors duration-150',
         {
           'smart-folder-item-active': isActive,
           'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800': !isActive,
@@ -83,7 +83,7 @@ function SortableSmartFolderItem({
             {...listeners}
             className="cursor-move text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity"
           >
-            <Bars3Icon className="h-3.5 w-3.5" data-slot="icon" />
+            <Bars3Icon className="h-4 w-4" data-slot="icon" />
           </div>
         )}
         
@@ -110,7 +110,7 @@ function SortableSmartFolderItem({
 
       {/* タスク数とメニュー */}
       {!isCollapsed && (
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-2">
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {folder.taskCount || 0}
           </span>
@@ -121,7 +121,7 @@ function SortableSmartFolderItem({
                 e.stopPropagation()
                 onContextMenu(e, folder)
               }}
-              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
+              className="opacity-0 group-hover:opacity-100 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
             >
               <EllipsisHorizontalIcon className="h-3 w-3" data-slot="icon" />
             </button>
@@ -283,12 +283,12 @@ export function SmartFolderList({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {/* セクションヘッダー */}
       <div className="flex items-center justify-between w-full">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="section-header-toggle flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
+          className="section-header-toggle flex items-center mb-2 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
         >
           <span className="peer">Smart Folders</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
@@ -301,7 +301,7 @@ export function SmartFolderList({
         </button>
         <button
           onClick={() => setShowCreateDialog(true)}
-          className="section-header-button p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+          className="section-header-button p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
         >
           <PlusIcon className="h-4 w-4 text-gray-400" data-slot="icon" />
         </button>
@@ -309,7 +309,7 @@ export function SmartFolderList({
 
       {/* フォルダリスト */}
       {isExpanded && (
-        <div className="space-y-0.5">
+        <div className="space-y-2">
           {/* システムフォルダ */}
           {systemFolders.map(folder => (
             <SortableSmartFolderItem

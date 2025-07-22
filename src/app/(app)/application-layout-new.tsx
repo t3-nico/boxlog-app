@@ -133,13 +133,13 @@ export function ApplicationLayoutNew({
       <ToastProvider>
         <div className="flex flex-col h-screen">
         {/* Fixed Header - Full width at top */}
-        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '57px', minHeight: '57px', maxHeight: '57px'}}>
+        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '56px', minHeight: '56px', maxHeight: '56px'}}>
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
               {!inSettings && (
                 <Headless.Menu as="div" className="relative">
-                  <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 dark:data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 dark:data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
+                  <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 dark:data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 dark:data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
                     <Avatar src="/teams/catalyst.svg" className="w-5 h-5" />
                     <SidebarLabel>BoxLog</SidebarLabel>
                     <ChevronDownIcon data-slot="icon" />
@@ -322,9 +322,9 @@ export function ApplicationLayoutNew({
         </header>
         
         {/* Body - Layout container */}
-        <div className="flex-1" style={{paddingTop: '57px'}}>
+        <div className="flex-1" style={{paddingTop: '56px'}}>
           {/* Left Sidebar - Fixed Position */}
-          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150 z-10`} style={{top: '57px', bottom: '0'}}>
+          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150 z-10`} style={{top: '56px', bottom: '0'}}>
             <div className="h-full flex flex-col p-4">
               {/* Collapsed sidebar - expand button */}
               {collapsed && !inSettings && (
@@ -366,7 +366,7 @@ export function ApplicationLayoutNew({
                             openPopup('schedule')
                           }}
                           className={clsx(
-                            'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
+                            'flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
                             'text-orange-600 dark:text-orange-400',
                             'hover:bg-orange-50 dark:hover:bg-orange-900/20',
                             'transition-colors duration-200',
@@ -559,7 +559,7 @@ export function ApplicationLayoutNew({
           
           {/* Right Icon Bar - Hide when AI Chat is open */}
           {!isAIChatOpen && (
-            <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '57px', bottom: '0'}}>
+            <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '56px', bottom: '0'}}>
               <button
                 onClick={() => setIsAIChatOpen(true)}
                 className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"

@@ -25,7 +25,7 @@ export function ViewSwitcher() {
             key={view.id}
             onClick={() => handleViewChange(view.path)}
             className={clsx(
-              'flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200',
+              'flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200',
               isActive
                 ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-gray-700/50'

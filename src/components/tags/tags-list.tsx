@@ -68,7 +68,7 @@ function TagItem({
   }, [onSelectTag, tag.id])
   
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {/* タグアイテム */}
       <div 
         className="flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer hover:bg-zinc-950/5 dark:hover:bg-white/5 transition-colors duration-150"
@@ -136,7 +136,7 @@ function TagItem({
                 e.stopPropagation()
                 setShowMenu(!showMenu)
               }}
-              className={`p-1.5 tag-menu-button rounded transition-all ${
+              className={`p-2 tag-menu-button rounded transition-all ${
                 isHovered || showMenu ? 'opacity-100' : 'opacity-0'
               }`}
               style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
@@ -262,12 +262,12 @@ export function TagsList({
   }
   
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       {/* セクションヘッダー */}
       <div className="flex items-center justify-between w-full">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="section-header-toggle flex items-center mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
+          className="section-header-toggle flex items-center mb-2 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
         >
           <span className="peer">Tags</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
@@ -289,7 +289,7 @@ export function TagsList({
       
       {/* タグリスト */}
       {isExpanded && (
-        <div className="space-y-0.5">
+        <div className="space-y-2">
           {displayTags().length > 0 ? (
             <>
               {displayTags().map(({ tag, level, hasChildren, isExpanded }) => (

@@ -81,7 +81,7 @@ export function ChronotypeStatus() {
   }
 
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+    <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
       <div 
         className="w-2 h-2 rounded-full"
         style={{ backgroundColor: status.color }}
