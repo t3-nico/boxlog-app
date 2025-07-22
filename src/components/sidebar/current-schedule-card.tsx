@@ -171,10 +171,10 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
 
   if (!currentEvent) {
     return (
-      <div className="mb-4 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg border">
+      <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg border">
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-          <Calendar className="w-4 h-4" />
-          <span className="text-sm">No current events</span>
+          <Calendar className="w-3 h-3" />
+          <span className="text-xs">No current events</span>
         </div>
       </div>
     )
@@ -184,23 +184,23 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
   
   return (
     <div 
-      className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+      className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
       style={{
         border: `2px solid ${borderColor}`
       }}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+      <div className="flex items-center gap-2 mb-1">
+        <Calendar className="w-3 h-3 text-blue-600 dark:text-blue-400" />
         <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
           Live
         </span>
       </div>
       
-      <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
+      <h3 className="font-medium text-gray-900 dark:text-white text-xs mb-1">
         {currentEvent.title}
       </h3>
       
-      <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 mb-2">
+      <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-300 mb-1">
         <Clock className="w-3 h-3" />
         <span>
           {formatTime(currentEvent.startTime)} - {formatTime(currentEvent.endTime)}

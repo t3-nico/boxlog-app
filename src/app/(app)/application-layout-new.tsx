@@ -323,8 +323,8 @@ export function ApplicationLayoutNew({
         
         {/* Body - 3 Column Layout below header */}
         <div className="flex flex-1" style={{paddingTop: '57px'}}>
-          {/* Left Sidebar */}
-          <div className={`${collapsed ? 'w-16' : 'w-64'} flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150`}>
+          {/* Left Sidebar - Fixed Position */}
+          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150`} style={{top: '57px', bottom: '0'}}>
             <div className="h-full flex flex-col p-4">
               {/* Collapsed sidebar - expand button */}
               {collapsed && !inSettings && (
@@ -334,7 +334,7 @@ export function ApplicationLayoutNew({
                     className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                     title="Open sidebar"
                   >
-                    <PanelRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                   </button>
                 </div>
               )}
@@ -345,8 +345,8 @@ export function ApplicationLayoutNew({
                     <SidebarSection>
                       {/* 動的ページタイトル表示 - 開いている時のみ */}
                       {!collapsed && (
-                        <div className="mb-4 px-2 flex items-center justify-between">
-                          <h1 className="text-xl font-semibold text-zinc-950 dark:text-white">
+                        <div className="mb-3 px-2 flex items-center justify-between">
+                          <h1 className="text-lg font-semibold text-zinc-950 dark:text-white">
                             {pageTitle}
                           </h1>
                           <button
@@ -380,21 +380,19 @@ export function ApplicationLayoutNew({
                       </div>
                     </SidebarSection>
 
-                    <div className="h-4" />
+                    <div className="h-2" />
                   </div>
 
                   {/* 中央スクロールエリア - スマートフォルダーとタグのみ */}
                   {!collapsed && (
                     <div className="flex-1 overflow-y-auto min-h-0">
-                      <div className="mt-8">
+                      <div className="space-y-3">
                         <SmartFolderList
                           collapsed={collapsed}
                           onSelectFolder={handleSelectSmartFolder}
                           selectedFolderId={filters.smartFolder || ''}
                         />
-                      </div>
 
-                      <div className="mt-8">
                         <TagsList
                           collapsed={collapsed}
                           onSelectTag={handleSelectTag}
@@ -405,31 +403,21 @@ export function ApplicationLayoutNew({
                   )}
 
                   {/* 下部固定エリア - LiveカードとUpgradeボタン */}
-                  <div className="flex-shrink-0 space-y-4">
-                    <CurrentScheduleCard collapsed={collapsed} events={events} />
-                    
-                    {/* Upgrade Button */}
-                    {!collapsed ? (
+                  {!collapsed && (
+                    <div className="flex-shrink-0 space-y-3">
+                      <CurrentScheduleCard collapsed={collapsed} events={events} />
+                      
+                      {/* Upgrade Button */}
                       <button
                         onClick={() => router.push('/upgrade')}
-                        className="flex w-full items-center gap-3 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2.5 text-left text-sm font-medium text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+                        className="flex w-full items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2 text-left text-xs font-medium text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
                         title="Unlock premium features"
                       >
-                        <SparklesIcon className="size-5 shrink-0" />
+                        <SparklesIcon className="size-4 shrink-0" />
                         <span>Upgrade</span>
                       </button>
-                    ) : (
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => router.push('/upgrade')}
-                          className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
-                          title="Unlock premium features"
-                        >
-                          <SparklesIcon className="size-5" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                 </>
               )}
@@ -563,7 +551,7 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="flex-1 min-w-0 bg-white dark:bg-gray-800">
+          <div className="flex-1 min-w-0 bg-white dark:bg-gray-800" style={{marginLeft: collapsed ? '64px' : '256px', marginRight: isAIChatOpen ? '320px' : '0'}}>
             <div className="h-full overflow-auto">
               {children}
             </div>
@@ -571,7 +559,7 @@ export function ApplicationLayoutNew({
           
           {/* Right Sidebar (conditionally shown) */}
           {isAIChatOpen && (
-            <div className="w-80 flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700">
+            <div className="w-80 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700" style={{top: '57px', bottom: '0'}}>
               <AIChatSidebar 
                 isOpen={isAIChatOpen} 
                 onClose={() => setIsAIChatOpen(false)} 

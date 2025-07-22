@@ -185,7 +185,7 @@ export function TagsList({
   onSelectTag = () => {},
   selectedTagIds = []
 }: TagsListProps) {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
   
   // Zustandストアからデータを取得
   const tags = useSidebarStore(state => state.tags)

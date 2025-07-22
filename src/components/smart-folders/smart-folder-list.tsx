@@ -65,7 +65,7 @@ function SortableSmartFolderItem({
       ref={setNodeRef}
       style={style}
       className={clsx(
-        'group flex items-center justify-between px-2 py-1.5 rounded-md cursor-pointer transition-colors duration-150',
+        'group flex items-center justify-between px-2 py-1 rounded-md cursor-pointer transition-colors duration-150',
         {
           'smart-folder-item-active': isActive,
           'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800': !isActive,
@@ -102,7 +102,7 @@ function SortableSmartFolderItem({
         
         {/* フォルダ名 */}
         {!isCollapsed && (
-          <span className="text-sm font-medium truncate" title={folder.name}>
+          <span className="text-xs font-medium truncate" title={folder.name}>
             {folder.name}
           </span>
         )}
@@ -139,7 +139,7 @@ export function SmartFolderList({
   onSelectFolder,
   previewItems = []
 }: SmartFolderListProps) {
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [editingFolder, setEditingFolder] = useState<SmartFolder | undefined>()
