@@ -101,16 +101,16 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
                 }}
               >
                 {isExpanded ? (
-                  <ChevronDown className="h-3 w-3" />
+                  <ChevronDown className="h-4 w-4" />
                 ) : (
-                  <ChevronRight className="h-3 w-3" />
+                  <ChevronRight className="h-4 w-4" />
                 )}
               </Button>
             )}
             {!hasChildren && <div className="w-4" />}
             
             <div 
-              className="h-3 w-3 rounded-full flex-shrink-0" 
+              className="h-4 w-4 rounded-full flex-shrink-0" 
               style={{ backgroundColor: tag.color }}
             />
             <span className="text-sm truncate">

@@ -203,7 +203,7 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
           <div className="mt-2 space-y-2">
             <div className="flex items-center space-x-2">
               <div 
-                className="h-3 w-3 rounded-full" 
+                className="h-4 w-4 rounded-full" 
                 style={{ backgroundColor: selectedColor }}
               />
               <span className="text-sm text-gray-900 dark:text-gray-100">

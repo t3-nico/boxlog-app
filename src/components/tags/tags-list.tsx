@@ -91,9 +91,9 @@ function TagItem({
                 style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
               >
                 {isExpanded ? (
-                  <ChevronDownIcon className="h-3 w-3 text-gray-500 dark:text-gray-400" />
+                  <ChevronDownIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 ) : (
-                  <ChevronRightIcon className="h-3 w-3 text-gray-500 dark:text-gray-400" />
+                  <ChevronRightIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 )}
               </button>
             )}
@@ -141,7 +141,7 @@ function TagItem({
               }`}
               style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
             >
-              <EllipsisHorizontalIcon className="h-3 w-3 text-gray-500 dark:text-gray-400" />
+              <EllipsisHorizontalIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </button>
             
             {/* コンテキストメニュー */}
@@ -272,9 +272,9 @@ export function TagsList({
           <span className="peer">Tags</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
             {isExpanded ? (
-              <ChevronDownIcon className="h-3 w-3" />
+              <ChevronDownIcon className="h-4 w-4" />
             ) : (
-              <ChevronRightIcon className="h-3 w-3" />
+              <ChevronRightIcon className="h-4 w-4" />
             )}
           </span>
         </button>

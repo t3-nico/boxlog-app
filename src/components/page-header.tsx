@@ -66,7 +66,7 @@ function ChatButton({ onClick, isOpen = false, notifications = 0 }: ChatButtonPr
       }`}
       title="Ask AI (⌘/)"
     >
-      <SparklesIcon className={`h-5 w-5 ${
+      <SparklesIcon className={`h-6 w-6 ${
         isOpen 
           ? 'text-orange-500 dark:text-orange-400' 
           : ''

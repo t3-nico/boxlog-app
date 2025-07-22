@@ -123,7 +123,7 @@ function SortableSmartFolderItem({
               }}
               className="opacity-0 group-hover:opacity-100 p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
             >
-              <EllipsisHorizontalIcon className="h-3 w-3" data-slot="icon" />
+              <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
             </button>
           )}
         </div>
@@ -293,9 +293,9 @@ export function SmartFolderList({
           <span className="peer">Smart Folders</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
             {isExpanded ? (
-              <ChevronDownIcon className="h-3 w-3" data-slot="icon" />
+              <ChevronDownIcon className="h-4 w-4" data-slot="icon" />
             ) : (
-              <ChevronRightIcon className="h-3 w-3" data-slot="icon" />
+              <ChevronRightIcon className="h-4 w-4" data-slot="icon" />
             )}
           </span>
         </button>

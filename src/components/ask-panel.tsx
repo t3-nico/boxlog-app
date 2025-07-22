@@ -211,7 +211,7 @@ function ChatInput() {
             disabled={!state.inputValue.trim() || state.isTyping}
             className="absolute right-2 bottom-2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors focus:outline-none"
           >
-            <ArrowUpCircle className="h-5 w-5" />
+            <ArrowUpCircle className="h-6 w-6" />
           </button>
         </form>
       </div>
@@ -423,7 +423,7 @@ function PanelMenuSelection({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
                   {item.description}
                 </p>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+              <ChevronRight className="w-6 h-6 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
             </button>
           )
         })}
@@ -501,7 +501,7 @@ function HelpContent() {
 
       <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <div className="flex items-center gap-3 mb-2">
-          <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           <span className="font-medium text-gray-900 dark:text-gray-100">Need more help?</span>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -593,7 +593,7 @@ export function AskPanel() {
             className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group relative"
             title="AI Assistant"
           >
-            <Sparkles className="size-5 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
+            <Sparkles className="size-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
             {state.unreadCount > 0 && (
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-xs text-white font-bold">{Math.min(state.unreadCount, 9)}</span>
@@ -606,7 +606,7 @@ export function AskPanel() {
             className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group"
             title="Help & Support"
           >
-            <HelpCircle className="size-5 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform" />
+            <HelpCircle className="size-6 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform" />
           </button>
         </div>
       </div>
@@ -640,7 +640,7 @@ export function AskPanel() {
                   className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
                   title="Collapse panel"
                 >
-                  <PanelRight className="size-5" />
+                  <PanelRight className="size-6" />
                 </button>
                 <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Assistant</h3>
               </div>
@@ -652,7 +652,7 @@ export function AskPanel() {
                     onClick={() => handleTabSelect('ai')}
                     className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                   >
-                    <Sparkles className="size-5 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform shrink-0" />
+                    <Sparkles className="size-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex-1">
                       <div className="font-medium text-gray-900 dark:text-gray-100">AI Chat</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">Ask Claude for help</div>
@@ -668,7 +668,7 @@ export function AskPanel() {
                     onClick={() => handleTabSelect('help')}
                     className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
                   >
-                    <HelpCircle className="size-5 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform shrink-0" />
+                    <HelpCircle className="size-6 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex-1">
                       <div className="font-medium text-gray-900 dark:text-gray-100">Help & Support</div>
                       <div className="text-xs text-gray-500 dark:text-gray-400">Documentation & guides</div>

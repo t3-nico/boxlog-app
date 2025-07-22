@@ -116,14 +116,14 @@ export function CalendarHeader({
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
               title="Previous period"
             >
-              <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <ChevronLeft className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
             <button
               onClick={() => onNavigate('next')}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
               title="Next period"
             >
-              <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <ChevronRight className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
           </div>
           

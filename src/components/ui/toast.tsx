@@ -87,7 +87,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 function getToastIcon(type: Toast['type']) {
-  const iconProps = "h-5 w-5"
+  const iconProps = "h-6 w-6"
   switch (type) {
     case 'success':
       return <CheckCircleIcon className={`${iconProps} text-green-500`} data-slot="icon" />

@@ -129,7 +129,7 @@ export function TagFilter({
               className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md"
             >
               <TagIcon 
-                className="h-3 w-3" 
+                className="h-4 w-4" 
                 style={{ color: tag.color }}
               />
               {tag.name}
@@ -140,7 +140,7 @@ export function TagFilter({
                 }}
                 className="ml-1 text-blue-500 hover:text-blue-700 dark:hover:text-blue-200"
               >
-                <XMarkIcon className="h-3 w-3" />
+                <XMarkIcon className="h-4 w-4" />
               </button>
             </span>
           ))}
@@ -234,7 +234,7 @@ export function TagChip({ tag, isSelected, onToggle }: TagChipProps) {
       }`}
     >
       <TagIcon 
-        className="h-3 w-3" 
+        className="h-4 w-4" 
         style={{ color: tag.color }}
       />
       {tag.name}

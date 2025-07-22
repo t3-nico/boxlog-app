@@ -100,7 +100,7 @@ export function CompactFloatingActionButton({ onClick, className }: FloatingActi
             transition-all duration-200
           "
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-6 w-6" />
           <span className="sr-only">新しいアイテムを作成</span>
         </Button>
       </motion.div>
