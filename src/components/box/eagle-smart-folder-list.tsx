@@ -107,7 +107,7 @@ export function EagleSmartFolderList({
                   e.stopPropagation()
                   toggleExpanded(folder.id)
                 }}
-                className="mr-1 p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+                className="mr-1 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
               >
                 {isExpanded ? (
                   <ChevronDown className="h-4 w-4" />

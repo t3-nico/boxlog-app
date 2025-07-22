@@ -16,7 +16,7 @@ export default async function Reviews() {
     <>
       <div className="flex items-end justify-between gap-4">
         <Heading>Reviews</Heading>
-        <Button className="-my-0.5">Create review</Button>
+        <Button className="-my-1">Create review</Button>
       </div>
       <Table className="mt-8 [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]">
         <TableHead>

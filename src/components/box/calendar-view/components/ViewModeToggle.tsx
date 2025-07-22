@@ -63,7 +63,7 @@ export function ViewModeToggle({
       onChange={(value) => updateSettings({ planRecordMode: value })}
       className={cn(
         "flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden",
-        isSmall ? "p-0.5" : "p-1",
+        isSmall ? "p-1" : "p-1",
         className
       )}
     >

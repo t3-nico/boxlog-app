@@ -117,7 +117,7 @@ export function TagTree({
                 e.stopPropagation()
                 toggleTagExpansion(tag.id)
               }}
-              className="p-0.5 -ml-0.5 hover:bg-gray-700 rounded transition-colors duration-150"
+              className="p-1 -ml-1 hover:bg-gray-700 rounded transition-colors duration-150"
             >
               {isParentExpanded ? (
                 <ChevronDown className="size-3" data-slot="icon" />

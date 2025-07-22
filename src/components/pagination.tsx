@@ -76,7 +76,7 @@ export function PaginationPage({
         current && 'before:bg-zinc-950/5 dark:before:bg-white/10'
       )}
     >
-      <span className="-mx-0.5">{children}</span>
+      <span className="-mx-1">{children}</span>
     </Button>
   )
 }

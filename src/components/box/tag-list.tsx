@@ -94,7 +94,7 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
             {hasChildren && (
               <Button
                 plain
-                className="p-0.5 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={(e: React.MouseEvent) => {
                   e.stopPropagation()
                   toggleExpanded(tag.id)
