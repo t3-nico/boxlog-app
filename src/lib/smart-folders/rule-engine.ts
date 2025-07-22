@@ -96,7 +96,7 @@ export class AdvancedRuleEngine {
   /**
    * バッチ評価（複数アイテムを効率的に評価）
    */
-  static evaluateBatch<T = any>(
+  static evaluateBatch<T extends BaseEntity>(
     items: T[], 
     rules: SmartFolderRule[],
     context?: Partial<RuleEvaluationContext>

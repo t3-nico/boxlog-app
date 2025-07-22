@@ -166,7 +166,7 @@ export class SearchEngine {
       metadata: {
         status: task.status,
         priority: task.priority,
-        dueDate: task.dueDate,
+        dueDate: task.dueDate?.toISOString(),
         tags: task.tags?.map(tag => tag.name) || [],
       },
     }))
@@ -180,21 +180,31 @@ export class SearchEngine {
   static searchTags(query: string, tags: Tag[]): SearchResult[] {
     if (!tags || tags.length === 0) return []
     
-    const tagResults = FuzzySearch.search(tags, query).map(tag => ({
-      id: `tag:${tag.id}`,
+    const searchableTags = tags.map(tag => ({
       title: tag.name,
-      description: `${tag.count || 0} tasks`,
-      category: 'tags',
-      icon: tag.icon || 'tag',
-      type: 'tag' as const,
-      action: () => {
-        // TODO: Implement tag filtering
-        console.log('Filter by tag:', tag.id)
-      },
-      metadata: {
-        path: tag.path || [],
-      },
+      description: tag.description || '',
+      keywords: [tag.name, tag.path].filter((keyword): keyword is string => Boolean(keyword)),
+      originalTag: tag
     }))
+    
+    const tagResults = FuzzySearch.search(searchableTags, query).map(result => {
+      const tag = result.originalTag
+      return {
+        id: `tag:${tag.id}`,
+        title: tag.name,
+        description: tag.description || `Level ${tag.level} tag`,
+        category: 'tags',
+        icon: 'tag',
+        type: 'tag' as const,
+        action: () => {
+          // TODO: Implement tag filtering
+          console.log('Filter by tag:', tag.id)
+        },
+        metadata: {
+          path: tag.path ? [tag.path] : [],
+        },
+      }
+    })
     
     return tagResults
   }
@@ -205,18 +215,28 @@ export class SearchEngine {
   static searchSmartFolders(query: string, smartFolders: SmartFolder[]): SearchResult[] {
     if (!smartFolders || smartFolders.length === 0) return []
     
-    const folderResults = FuzzySearch.search(smartFolders, query).map(folder => ({
-      id: `smart-folder:${folder.id}`,
+    const searchableFolders = smartFolders.map(folder => ({
       title: folder.name,
-      description: folder.description || 'Smart folder',
-      category: 'navigation',
-      icon: folder.icon || 'folder',
-      type: 'smart-folder' as const,
-      action: () => {
-        // TODO: Implement smart folder navigation
-        console.log('Navigate to smart folder:', folder.id)
-      },
+      description: folder.description || '',
+      keywords: [folder.name].filter((keyword): keyword is string => Boolean(keyword)),
+      originalFolder: folder
     }))
+    
+    const folderResults = FuzzySearch.search(searchableFolders, query).map(result => {
+      const folder = result.originalFolder
+      return {
+        id: `smart-folder:${folder.id}`,
+        title: folder.name,
+        description: folder.description || 'Smart folder',
+        category: 'navigation',
+        icon: 'folder',
+        type: 'smart-folder' as const,
+        action: () => {
+          // TODO: Implement smart folder navigation
+          console.log('Navigate to smart folder:', folder.id)
+        },
+      }
+    })
     
     return folderResults
   }

@@ -188,7 +188,7 @@ export function TagCreateModal({
   const [formData, setFormData] = useState({
     name: '',
     parent_id: parentTag?.id || null,
-    color: TAG_PRESET_COLORS[0],
+    color: TAG_PRESET_COLORS[0] as string,
     description: ''
   })
   
@@ -201,7 +201,7 @@ export function TagCreateModal({
       setFormData({
         name: '',
         parent_id: parentTag?.id || null,
-        color: TAG_PRESET_COLORS[0],
+        color: TAG_PRESET_COLORS[0] as string,
         description: ''
       })
       setErrors({})

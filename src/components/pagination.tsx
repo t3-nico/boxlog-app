@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 import type React from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 
 export function Pagination({
   'aria-label': ariaLabel = 'Page navigation',
@@ -18,21 +18,37 @@ export function PaginationPrevious({
 }: React.PropsWithChildren<{ href?: string | null; className?: string }>) {
   return (
     <span className={clsx(className, 'grow basis-0')}>
-      <Button 
-        {...(href === null ? { disabled: true } : { href })} 
-        variant="ghost" 
-        aria-label="Previous page"
-      >
-        <svg className="stroke-current" data-slot="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path
-            d="M2.75 8H13.25M2.75 8L5.25 5.5M2.75 8L5.25 10.5"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        {children}
-      </Button>
+      {href === null ? (
+        <Button 
+          disabled 
+          variant="ghost" 
+          aria-label="Previous page"
+        >
+          <svg className="stroke-current" data-slot="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M2.75 8H13.25M2.75 8L5.25 5.5M2.75 8L5.25 10.5"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {children}
+        </Button>
+      ) : (
+        <Button asChild variant="ghost" aria-label="Previous page">
+          <Link href={href}>
+            <svg className="stroke-current" data-slot="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M2.75 8H13.25M2.75 8L5.25 5.5M2.75 8L5.25 10.5"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            {children}
+          </Link>
+        </Button>
+      )}
     </span>
   )
 }
@@ -44,21 +60,37 @@ export function PaginationNext({
 }: React.PropsWithChildren<{ href?: string | null; className?: string }>) {
   return (
     <span className={clsx(className, 'flex grow basis-0 justify-end')}>
-      <Button 
-        {...(href === null ? { disabled: true } : { href })} 
-        variant="ghost" 
-        aria-label="Next page"
-      >
-        {children}
-        <svg className="stroke-current" data-slot="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path
-            d="M13.25 8L2.75 8M13.25 8L10.75 10.5M13.25 8L10.75 5.5"
-            strokeWidth={1.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </Button>
+      {href === null ? (
+        <Button 
+          disabled 
+          variant="ghost" 
+          aria-label="Next page"
+        >
+          {children}
+          <svg className="stroke-current" data-slot="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path
+              d="M13.25 8L2.75 8M13.25 8L10.75 10.5M13.25 8L10.75 5.5"
+              strokeWidth={1.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </Button>
+      ) : (
+        <Button asChild variant="ghost" aria-label="Next page">
+          <Link href={href}>
+            {children}
+            <svg className="stroke-current" data-slot="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M13.25 8L2.75 8M13.25 8L10.75 10.5M13.25 8L10.75 5.5"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+        </Button>
+      )}
     </span>
   )
 }
@@ -75,8 +107,8 @@ export function PaginationPage({
 }: React.PropsWithChildren<{ href: string; className?: string; current?: boolean }>) {
   return (
     <Button
-      href={href}
-      plain
+      asChild
+      variant="ghost"
       aria-label={`Page ${children}`}
       aria-current={current ? 'page' : undefined}
       className={clsx(
@@ -85,7 +117,9 @@ export function PaginationPage({
         current && 'before:bg-zinc-950/5 dark:before:bg-white/10'
       )}
     >
-      <span className="-mx-1">{children}</span>
+      <Link href={href}>
+        <span className="-mx-1">{children}</span>
+      </Link>
     </Button>
   )
 }
