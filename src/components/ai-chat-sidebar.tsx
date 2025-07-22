@@ -215,7 +215,7 @@ function ChatInput() {
   }
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
+    <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
       {/* Typing indicator */}
       {state.isTyping && (
         <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
@@ -282,8 +282,11 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
 
   return (
     <div 
-      className="fixed right-0 top-0 h-full w-80 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col transition-transform duration-300 ease-in-out transform"
-      style={{ transform: isOpen ? 'translateX(0)' : 'translateX(100%)' }}
+      className="fixed right-0 w-80 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
+      style={{ 
+        top: '57px',
+        bottom: '0'
+      }}
     >
       {/* Header */}
       <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-16">

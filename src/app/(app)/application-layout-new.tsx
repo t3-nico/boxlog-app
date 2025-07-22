@@ -321,10 +321,10 @@ export function ApplicationLayoutNew({
           </div>
         </header>
         
-        {/* Body - 3 Column Layout below header */}
-        <div className="flex flex-1" style={{paddingTop: '57px'}}>
+        {/* Body - Layout container */}
+        <div className="flex-1" style={{paddingTop: '57px'}}>
           {/* Left Sidebar - Fixed Position */}
-          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150`} style={{top: '57px', bottom: '0'}}>
+          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150 z-10`} style={{top: '57px', bottom: '0'}}>
             <div className="h-full flex flex-col p-4">
               {/* Collapsed sidebar - expand button */}
               {collapsed && !inSettings && (
@@ -551,21 +551,30 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="flex-1 min-w-0 bg-white dark:bg-gray-800" style={{marginLeft: collapsed ? '64px' : '256px', marginRight: isAIChatOpen ? '320px' : '0'}}>
+          <div className="min-h-screen bg-white dark:bg-gray-800" style={{marginLeft: collapsed ? '64px' : '256px', marginRight: isAIChatOpen ? '320px' : '48px'}}>
             <div className="h-full overflow-auto">
               {children}
             </div>
           </div>
           
-          {/* Right Sidebar (conditionally shown) */}
-          {isAIChatOpen && (
-            <div className="w-80 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700" style={{top: '57px', bottom: '0'}}>
-              <AIChatSidebar 
-                isOpen={isAIChatOpen} 
-                onClose={() => setIsAIChatOpen(false)} 
-              />
+          {/* Right Icon Bar - Hide when AI Chat is open */}
+          {!isAIChatOpen && (
+            <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '57px', bottom: '0'}}>
+              <button
+                onClick={() => setIsAIChatOpen(true)}
+                className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
+                title="AI Chat"
+              >
+                <SparklesIcon className="w-5 h-5" />
+              </button>
             </div>
           )}
+          
+          {/* Right Chat Sidebar (conditionally shown) */}
+          <AIChatSidebar 
+            isOpen={isAIChatOpen} 
+            onClose={() => setIsAIChatOpen(false)} 
+          />
         </div>
         
         {/* Floating Components */}
