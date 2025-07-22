@@ -67,7 +67,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
     setIsLoading(true)
     try {
       // Convert BoxTask[] to common.Task[] for SearchEngine
-      const convertedTasks = (tasks as BoxTask[]).map((task) => ({
+      const convertedTasks = (tasks as unknown as BoxTask[]).map((task) => ({
         id: task.id,
         title: task.title,
         description: task.description,
