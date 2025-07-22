@@ -3,39 +3,7 @@
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
-import {
-  Calendar as CalendarIcon,
-  TableProperties as TableCellsIcon,
-  BarChart3 as ChartBarIcon,
-  SquareKanban as Squares2X2Icon,
-} from 'lucide-react'
-
-const views = [
-  {
-    id: 'calendar',
-    label: 'Calendar',
-    path: '/calendar',
-    icon: CalendarIcon,
-  },
-  {
-    id: 'table',
-    label: 'Table',
-    path: '/table',
-    icon: TableCellsIcon,
-  },
-  {
-    id: 'board',
-    label: 'Board',
-    path: '/board',
-    icon: Squares2X2Icon,
-  },
-  {
-    id: 'stats',
-    label: 'Stats',
-    path: '/stats',
-    icon: ChartBarIcon,
-  },
-]
+import { views } from '@/config/views'
 
 export function ViewSwitcher() {
   const pathname = usePathname()

@@ -9,6 +9,7 @@ import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { ViewSwitcher } from '@/components/ui/view-switcher'
+import { getPageTitle, getCurrentViewIcon } from '@/config/views'
 import { useBoxStore } from '@/lib/box-store'
 import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
 import { DynamicSidebarSection } from '@/components/sidebar/DynamicSidebarSection'
@@ -121,6 +122,10 @@ export function ApplicationLayoutNew({
       console.error('Logout error:', error)
     }
   }
+
+  // 動的ページタイトルとアイコンを取得
+  const pageTitle = !inSettings ? getPageTitle(pathname) : 'BoxLog'
+  const PageIcon = !inSettings ? getCurrentViewIcon(pathname) : null
 
   return (
     <ThemeProvider>
@@ -316,6 +321,13 @@ export function ApplicationLayoutNew({
               {!inSettings && (
                 <>
                   <SidebarSection>
+                    {/* 動的ページタイトル表示 */}
+                    <div className="mb-4 px-2">
+                      <h1 className="text-xl font-semibold text-zinc-950 dark:text-white">
+                        {pageTitle}
+                      </h1>
+                    </div>
+                    
                     <div className="relative">
                       <button
                         onClick={(e) => {
