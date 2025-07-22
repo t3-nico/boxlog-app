@@ -244,7 +244,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                     )}
                   </div>
                   {result.metadata?.tags && result.metadata.tags.length > 0 && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
                       <span className="text-xs text-muted-foreground">{result.metadata.tags.length}</span>
                     </div>

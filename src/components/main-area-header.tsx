@@ -100,7 +100,7 @@ function CurrentTaskDisplay() {
   return (
     <button
       onClick={handleScheduleClick}
-      className="group flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer"
+      className="group flex items-center gap-2 px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 cursor-pointer"
       title="カレンダーで詳細を見る"
     >
       <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" data-slot="icon" />
@@ -232,7 +232,7 @@ function TimeDisplay() {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2">
       <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-bold tabular-nums text-gray-600 dark:text-gray-300">

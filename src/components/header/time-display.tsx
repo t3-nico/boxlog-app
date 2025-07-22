@@ -121,7 +121,7 @@ export function TimeDisplay() {
   }
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-2">
       <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-bold tabular-nums text-gray-600 dark:text-gray-300">

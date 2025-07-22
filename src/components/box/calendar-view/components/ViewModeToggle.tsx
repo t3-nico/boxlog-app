@@ -74,7 +74,7 @@ export function ViewModeToggle({
           value={mode.value}
           className={({ checked }) =>
             cn(
-              "relative flex items-center gap-1.5 cursor-pointer transition-all duration-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+              "relative flex items-center gap-2 cursor-pointer transition-all duration-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
               checked
                 ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600',

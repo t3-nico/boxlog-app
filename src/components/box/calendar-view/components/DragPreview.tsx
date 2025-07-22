@@ -87,7 +87,7 @@ export function DragPreview({
           
           {/* 時間表示 */}
           <div className="text-white font-medium text-sm leading-tight">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span>{formatTime(start, timeFormat)}</span>
               <div className="w-3 h-px bg-white/60" />
               <span>{formatTime(end, timeFormat)}</span>
@@ -215,7 +215,7 @@ export function AdvancedDragPreview({
           
           {/* 時間表示 */}
           <div className="text-white font-medium text-sm leading-tight">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span>{formatTime(props.start, timeFormat)}</span>
               <div className="w-3 h-px bg-white/60" />
               <span>{formatTime(props.end, timeFormat)}</span>
