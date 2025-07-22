@@ -130,12 +130,33 @@ Primary state is managed through Zustand stores:
 - **Use `--tag-color` CSS variable for elements that need custom colors**
 - Use TypeScript strictly - avoid `any` types where possible
 
+### 🎨 Design System - 8px Grid Guidelines
+
+**基本ルール**: 8pxグリッドシステムを基本とし、実用性を重視した柔軟な運用
+
+#### ✅ **推奨値（優先順位順）**
+1. **8pxの倍数**: 8px, 16px, 24px, 32px, 40px, 48px...
+   - `p-2`, `p-4`, `p-6`, `p-8`, `p-10`, `p-12`
+2. **実用的な値**: 4px, 12px, 20px（頻繁に使用される値）
+   - `p-1`, `p-3`, `p-5`（例外として許可）
+
+#### ❌ **避けるべき値**
+- **半端な値**: 6px, 10px, 14px, 18px...
+- `py-1.5` (6px), `px-2.5` (10px), `gap-1.5` (6px)
+
+#### 🎯 **実装ガイドライン**
+- **新規コンポーネント**: 8pxの倍数を優先的に使用
+- **既存コンポーネント**: 明らかに非適合な値（6px, 10pxなど）を優先的に修正
+- **例外**: `px-3` (12px) など使用頻度の高い値は実用性を重視
+- **統一性**: 同じ用途のスペーシングは統一（例：ボタンパディング、カード間隔）
+
 ### 🎯 Development Workflow
 
 - **ALWAYS run `npm run lint` before committing**
 - **Test both light and dark modes for all new components**
 - **Follow branch naming**: `feature/[name]`, `fix/[name]`, `refactor/[name]`
 - **Use descriptive commit messages with proper prefixes**
+- **Follow 8px grid guidelines for new components**
 
 ### 📚 Documentation
 
