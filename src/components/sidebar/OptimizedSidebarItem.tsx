@@ -41,7 +41,7 @@ export const OptimizedSidebarItem = memo<OptimizedSidebarItemProps>(
               )}
               
               {count !== undefined && count > 0 && (
-                <span className="text-xs bg-gray-500 dark:bg-gray-600 text-white rounded-full px-2 py-0.5 min-w-[1.25rem] text-center">
+                <span className="text-xs bg-gray-500 dark:bg-gray-600 text-white rounded-full px-2 py-1 min-w-[1.25rem] text-center">
                   {count > 99 ? '99+' : count}
                 </span>
               )}

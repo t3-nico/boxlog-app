@@ -156,7 +156,7 @@ export function TimeBlockDropZone({
               config.border
             )}>
               <div className="flex items-center gap-1">
-                <Icon className="w-3 h-3" />
+                <Icon className="w-4 h-4" />
                 <span>{suggestion.score}%</span>
               </div>
             </div>
@@ -180,7 +180,7 @@ export function TimeBlockDropZone({
                   推奨度: {suggestion.score}%
                 </span>
                 <span className={cn(
-                  "px-2 py-0.5 rounded-full text-xs font-medium",
+                  "px-2 py-1 rounded-full text-xs font-medium",
                   qualityLevel === 'excellent' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
                   qualityLevel === 'good' && "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
                   qualityLevel === 'fair' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",

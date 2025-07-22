@@ -59,7 +59,7 @@ export function SplitTaskCard({
         isHovered && "ring-2 ring-blue-400 ring-opacity-50",
         // 短いタスクの調整
         isVeryShort && "text-xs min-h-[20px]",
-        isShort && "py-0.5"
+        isShort && "py-1"
       )}
       style={{
         ...style,

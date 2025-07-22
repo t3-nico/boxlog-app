@@ -70,9 +70,9 @@ export function TaskDragLayer({ activeId, dragOffset, tasks }: TaskDragLayerProp
           {/* ドラッグ中のインジケーター */}
           <div className="flex items-center justify-center mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-              <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse delay-100"></div>
-              <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse delay-200"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-100"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200"></div>
               <span className="ml-1">移動中...</span>
             </div>
           </div>

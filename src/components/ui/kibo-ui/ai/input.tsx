@@ -173,7 +173,7 @@ export const AIInputButton = ({
   return (
     <Button
       className={cn(
-        'shrink-0 gap-1.5 rounded-lg',
+        'shrink-0 gap-2 rounded-lg',
         variant === 'ghost' && 'text-muted-foreground',
         newSize === 'default' && 'px-3',
         className
@@ -210,7 +210,7 @@ export const AIInputSubmit = ({
 
   return (
     <Button
-      className={cn('gap-1.5 rounded-lg rounded-br-xl', className)}
+      className={cn('gap-2 rounded-lg rounded-br-xl', className)}
       size={size}
       type="submit"
       variant={variant}

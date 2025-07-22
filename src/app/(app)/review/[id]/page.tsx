@@ -40,7 +40,7 @@ export default async function Review({ params }: { params: { id: string } }) {
           <Badge color="lime">Successful</Badge>
         </div>
         <div className="isolate mt-2.5 flex flex-wrap justify-between gap-x-6 gap-y-4">
-          <div className="flex flex-wrap gap-x-10 gap-y-4 py-1.5">
+          <div className="flex flex-wrap gap-x-10 gap-y-4 py-2">
             <span className="flex items-center gap-3 text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white">
               <Banknote className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
               <span>US{review.amount.usd}</span>

@@ -371,7 +371,7 @@ export function SplitRefinedTimeGrid({
     <RefinedTimeGrid dates={dates} {...props}>
       <div className="absolute inset-0 flex">
         {/* 左側コンテンツ */}
-        <div className="w-1/2 pr-0.5 relative">
+        <div className="w-1/2 pr-1 relative">
           {leftContent}
         </div>
         
@@ -384,7 +384,7 @@ export function SplitRefinedTimeGrid({
         />
         
         {/* 右側コンテンツ */}
-        <div className="w-1/2 pl-0.5 relative">
+        <div className="w-1/2 pl-1 relative">
           {rightContent}
         </div>
       </div>

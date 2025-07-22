@@ -68,7 +68,7 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
           <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">AI Assistant</h2>
         </div>
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => {
               // 新規チャットの処理

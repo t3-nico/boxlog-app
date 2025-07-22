@@ -103,12 +103,12 @@ export function AllDaySection({
         >
           {expanded ? (
             <>
-              <ChevronUp className="w-3 h-3" />
+              <ChevronUp className="w-4 h-4" />
               <span>折りたたむ</span>
             </>
           ) : (
             <>
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className="w-4 h-4" />
               <span>他{hiddenCount}件を表示</span>
             </>
           )}

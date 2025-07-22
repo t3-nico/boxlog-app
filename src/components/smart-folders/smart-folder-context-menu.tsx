@@ -107,7 +107,7 @@ export function SmartFolderContextMenu({
             <span className="text-sm">{folder.icon}</span>
           ) : (
             <div 
-              className="w-3 h-3 rounded"
+              className="w-4 h-4 rounded"
               style={{ backgroundColor: folder.color }}
             />
           )}
@@ -115,7 +115,7 @@ export function SmartFolderContextMenu({
             {folder.name}
           </span>
           {folder.isSystem && (
-            <StarIcon className="w-3 h-3 text-yellow-500" />
+            <StarIcon className="w-4 h-4 text-yellow-500" />
           )}
         </div>
         <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -157,7 +157,7 @@ export function SmartFolderContextMenu({
       {!folder.isActive && (
         <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 text-xs text-yellow-600 dark:text-yellow-400">
-            <EyeSlashIcon className="w-3 h-3" />
+            <EyeSlashIcon className="w-4 h-4" />
             This folder is currently disabled
           </div>
         </div>
@@ -167,7 +167,7 @@ export function SmartFolderContextMenu({
       {folder.isSystem && (
         <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
-            <StarIcon className="w-3 h-3" />
+            <StarIcon className="w-4 h-4" />
             System folder (cannot be deleted)
           </div>
         </div>

@@ -426,8 +426,8 @@ export function QuickTaskCreator({
           )}>
             <div className="flex items-center justify-between">
               <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                <kbd className="px-2 py-0.5 text-xs font-mono bg-gray-200 dark:bg-gray-700 rounded">⌘</kbd>
-                <kbd className="px-2 py-0.5 text-xs font-mono bg-gray-200 dark:bg-gray-700 rounded">Enter</kbd>
+                <kbd className="px-2 py-1 text-xs font-mono bg-gray-200 dark:bg-gray-700 rounded">⌘</kbd>
+                <kbd className="px-2 py-1 text-xs font-mono bg-gray-200 dark:bg-gray-700 rounded">Enter</kbd>
                 <span>で保存</span>
               </div>
               <div className="flex gap-2">

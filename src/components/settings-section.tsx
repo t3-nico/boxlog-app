@@ -44,7 +44,7 @@ export function ToggleItem({
 }) {
   return (
     <div className="flex items-center justify-between px-4 py-3">
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
         {description && (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
@@ -70,7 +70,7 @@ export function SelectItem({
 }) {
   return (
     <div className="flex items-center justify-between px-4 py-3">
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
         {description && (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
@@ -98,7 +98,7 @@ export function DatePickerItem({
 }) {
   return (
     <div className="flex items-center justify-between px-4 py-3">
-      <div className="space-y-0.5">
+      <div className="space-y-1">
         <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
         {description && (
           <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>

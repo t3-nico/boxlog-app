@@ -39,7 +39,7 @@ export function ChronotypeIndicator({ hour, className = '' }: ChronotypeIndicato
       {zone.level === 'sleep' ? (
         /* 睡眠時間は点線でより目立つように */
         <div
-          className="absolute right-0 w-1 h-full"
+          className="absolute right-0 w-2 h-full"
           style={{
             backgroundImage: `linear-gradient(to bottom, ${colorMapping.border} 60%, transparent 60%)`,
             backgroundSize: '100% 8px',
@@ -51,7 +51,7 @@ export function ChronotypeIndicator({ hour, className = '' }: ChronotypeIndicato
       ) : (
         /* 通常の生産性ゾーンは実線 */
         <div
-          className="absolute right-0 w-1 h-full"
+          className="absolute right-0 w-2 h-full"
           style={{
             backgroundColor: colorMapping.border,
             opacity: Math.max(opacityFactor, 0.8), // 最低80%の不透明度を保証

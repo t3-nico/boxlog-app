@@ -110,7 +110,7 @@ export function DifferenceIndicator({ tasks, records, className }: DifferenceInd
               }}
             >
               <div className={cn(
-                "text-xs font-bold px-1 py-0.5 rounded shadow-sm text-center min-w-[32px]",
+                "text-xs font-bold px-1 py-1 rounded shadow-sm text-center min-w-[32px]",
                 diff.severity === 'high' 
                   ? (isDelayed 
                     ? "bg-red-100 text-red-800 dark:bg-red-900/80 dark:text-red-200" 
@@ -170,15 +170,15 @@ export function DifferenceIndicator({ tasks, records, className }: DifferenceInd
         <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">差異</div>
         <div className="space-y-1">
           <div className="flex items-center gap-1">
-            <div className="w-3 h-0.5 bg-red-500"></div>
+            <div className="w-4 h-1 bg-red-500"></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">遅延</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-0.5 bg-blue-500"></div>
+            <div className="w-4 h-1 bg-blue-500"></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">早期</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-3 h-0.5 bg-orange-400"></div>
+            <div className="w-4 h-1 bg-orange-400"></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">予定外</span>
           </div>
         </div>

@@ -231,7 +231,7 @@ export function RefinedCalendarTask({
             "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center",
             priorityConfig.bg
           )}>
-            <priorityConfig.icon className={cn("w-3 h-3", priorityConfig.color)} />
+            <priorityConfig.icon className={cn("w-4 h-4", priorityConfig.color)} />
           </div>
           
           {/* タスク情報 */}
@@ -253,7 +253,7 @@ export function RefinedCalendarTask({
                 >
                   {/* 時間 */}
                   <div className="flex items-center gap-1 text-xs opacity-90">
-                    <Clock className="w-3 h-3" />
+                    <Clock className="w-4 h-4" />
                     <span>
                       {formatTime(task.startTime, timeFormat)} - {formatTime(task.endTime, timeFormat)}
                     </span>
@@ -339,7 +339,7 @@ export function RefinedCalendarTask({
                       onClick={(e) => handleStatusClick(e, 'completed')}
                       className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
-                      <Check className="w-3 h-3" />
+                      <Check className="w-4 h-4" />
                     </motion.button>
                   )}
                   
@@ -350,7 +350,7 @@ export function RefinedCalendarTask({
                       onClick={(e) => handleStatusClick(e, 'in_progress')}
                       className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
-                      <Play className="w-3 h-3" />
+                      <Play className="w-4 h-4" />
                     </motion.button>
                   )}
                   
@@ -361,7 +361,7 @@ export function RefinedCalendarTask({
                       onClick={(e) => handleStatusClick(e, 'scheduled')}
                       className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                     >
-                      <Pause className="w-3 h-3" />
+                      <Pause className="w-4 h-4" />
                     </motion.button>
                   )}
                 </motion.div>
@@ -422,7 +422,7 @@ export function CompactCalendarTask({ task, ...props }: RefinedCalendarTaskProps
       style={props.style}
     >
       <div className="flex items-center gap-2 h-full">
-        <priorityConfig.icon className={cn("w-3 h-3 flex-shrink-0", priorityConfig.color)} />
+        <priorityConfig.icon className={cn("w-4 h-4 flex-shrink-0", priorityConfig.color)} />
         <span className="text-xs font-medium truncate flex-1">
           {task.title}
         </span>

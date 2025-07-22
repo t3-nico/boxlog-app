@@ -183,7 +183,7 @@ export function SmoothDragPreview({
           )}
         >
           <div className="flex items-center gap-1 text-xs font-medium">
-            <Clock className="w-3 h-3" />
+            <Clock className="w-4 h-4" />
             <span>
               {formatTime(start, timeFormat)} - {formatTime(end, timeFormat)}
             </span>
@@ -220,7 +220,7 @@ export function SmoothDragPreview({
             ease: "easeInOut"
           }}
         >
-          <Sparkles className="w-3 h-3 text-current opacity-60" />
+          <Sparkles className="w-4 h-4 text-current opacity-60" />
         </motion.div>
       </div>
       
@@ -231,7 +231,7 @@ export function SmoothDragPreview({
       {/* サイドインジケーター */}
       <motion.div
         className={cn(
-          "absolute top-0 bottom-0 w-1",
+          "absolute top-0 bottom-0 w-2",
           side === 'left' ? "left-0 bg-blue-500" : "right-0 bg-green-500"
         )}
         initial={{ scaleY: 0 }}
@@ -281,7 +281,7 @@ export function CompactDragPreview({
       style={style}
     >
       <div className="h-full flex items-center justify-center">
-        <div className="bg-white/80 dark:bg-gray-800/80 px-1 py-0.5 rounded text-xs font-medium">
+        <div className="bg-white/80 dark:bg-gray-800/80 px-1 py-1 rounded text-xs font-medium">
           {duration}分
         </div>
       </div>

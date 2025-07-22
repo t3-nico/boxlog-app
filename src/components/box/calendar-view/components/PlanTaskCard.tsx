@@ -70,7 +70,7 @@ export function PlanTaskCard({
         {/* 時間情報 */}
         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
           <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+            <Clock className="h-4 w-4" />
             <span>
               {task.planned_start ? format(new Date(task.planned_start), 'HH:mm') : '--:--'}
             </span>

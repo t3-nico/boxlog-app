@@ -248,7 +248,7 @@ export function TaskReviewModal({
                           key={status}
                           onClick={() => handleStatusChange(status)}
                           className={cn(
-                            "px-3 py-1.5 rounded-full text-sm font-medium transition-all",
+                            "px-3 py-2 rounded-full text-sm font-medium transition-all",
                             task.status === status ? [
                               config.bg,
                               config.color
@@ -284,7 +284,7 @@ export function TaskReviewModal({
                     <option value="high">緊急</option>
                   </select>
                 ) : (
-                  <div className={cn("inline-flex items-center gap-2 px-3 py-1.5 rounded-full", priorityConfig.bg)}>
+                  <div className={cn("inline-flex items-center gap-2 px-3 py-2 rounded-full", priorityConfig.bg)}>
                     <priorityConfig.icon className={cn("w-4 h-4", priorityConfig.color)} />
                     <span className={cn("text-sm font-medium", priorityConfig.color)}>
                       {priorityConfig.label}

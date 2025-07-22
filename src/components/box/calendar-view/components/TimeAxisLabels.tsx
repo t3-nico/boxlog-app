@@ -204,7 +204,7 @@ export function TimeSlotHighlight({
   
   return (
     <div 
-      className="absolute left-0 w-1 bg-opacity-50 rounded-r"
+      className="absolute left-0 w-2 bg-opacity-50 rounded-r"
       style={{ 
         top: topPosition,
         height,

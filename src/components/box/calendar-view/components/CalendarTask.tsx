@@ -78,7 +78,7 @@ export function CalendarTask({
         
         // 短いタスクの調整
         isVeryShort && "text-xs min-h-[20px]",
-        isShort && "py-0.5"
+        isShort && "py-1"
       )}
       style={{
         ...style,
@@ -298,7 +298,7 @@ interface StatusIndicatorProps {
 function StatusIndicator({ status, size = 'md' }: StatusIndicatorProps) {
   const sizeClasses = {
     sm: "w-2 h-2",
-    md: "w-3 h-3", 
+    md: "w-4 h-4", 
     lg: "w-4 h-4"
   }
   

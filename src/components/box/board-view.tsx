@@ -86,13 +86,13 @@ export function BoardView({ className, onEditTask, onAddTask }: BoardViewProps) 
   const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'High':
-        return <ArrowUp className="h-3 w-3 text-red-500" />
+        return <ArrowUp className="h-4 w-4 text-red-500" />
       case 'Medium':
-        return <Minus className="h-3 w-3 text-yellow-500" />
+        return <Minus className="h-4 w-4 text-yellow-500" />
       case 'Low':
-        return <ArrowDown className="h-3 w-3 text-green-500" />
+        return <ArrowDown className="h-4 w-4 text-green-500" />
       default:
-        return <Minus className="h-3 w-3 text-gray-500" />
+        return <Minus className="h-4 w-4 text-gray-500" />
     }
   }
 
@@ -156,7 +156,7 @@ export function BoardView({ className, onEditTask, onAddTask }: BoardViewProps) 
                 variant="ghost"
                 size="icon"
                 onClick={() => onAddTask(column.id as TaskStatus)}
-                className="h-7 w-7"
+                className="h-8 w-8"
               >
                 <Plus className="h-4 w-4" />
               </Button>

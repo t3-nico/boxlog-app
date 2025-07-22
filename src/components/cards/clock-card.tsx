@@ -92,7 +92,7 @@ export function ClockCard() {
                 hover:shadow-md`}
               onClick={(e) => e.stopPropagation()}
             >
-              <StatusIcon className={`w-3 h-3 ${
+              <StatusIcon className={`w-4 h-4 ${
                 chronoStatus.color === 'green' ? 'text-green-700 dark:text-green-200' :
                 chronoStatus.color === 'blue' ? 'text-blue-700 dark:text-blue-200' :
                 chronoStatus.color === 'orange' ? 'text-orange-700 dark:text-orange-200' :

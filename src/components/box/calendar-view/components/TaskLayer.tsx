@@ -428,11 +428,11 @@ export function MonthTaskLayer({
               height: '25%'
             }}
           >
-            <div className="space-y-0.5 overflow-hidden">
+            <div className="space-y-1 overflow-hidden">
               {visibleTasks.map(task => (
                 <div
                   key={task.id}
-                  className="text-xs px-1 py-0.5 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 truncate cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                  className="text-xs px-1 py-1 rounded bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 truncate cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                   onClick={() => onTaskClick?.(task)}
                   title={task.title}
                 >

@@ -182,7 +182,7 @@ export function EagleFolderList({
 
       {/* Folder List */}
       {!isCollapsed && (
-        <div className="space-y-0.5">
+        <div className="space-y-1">
           {rootTags.map(tag => renderTag(tag))}
         </div>
       )}

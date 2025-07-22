@@ -44,7 +44,7 @@ function ScrollIndicator({ scrollTop, scrollHeight, clientHeight, isVisible }: S
           className="fixed right-4 top-1/2 -translate-y-1/2 z-50"
         >
           {/* スクロールトラック */}
-          <div className="w-1 h-32 bg-gray-200 dark:bg-gray-700 rounded-full relative">
+          <div className="w-2 h-32 bg-gray-200 dark:bg-gray-700 rounded-full relative">
             {/* スクロールサム */}
             <motion.div
               className="w-full bg-blue-500 rounded-full absolute"

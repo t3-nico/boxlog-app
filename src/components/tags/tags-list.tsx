@@ -319,7 +319,7 @@ export function TagsList({
                 onClick={() => console.log('Create new tag')}
                 className="inline-flex items-center gap-1 px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
               >
-                <PlusIcon className="w-3 h-3" />
+                <PlusIcon className="w-4 h-4" />
                 作成
               </button>
             </div>

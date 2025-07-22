@@ -89,7 +89,7 @@ export function RecordTaskCard({
                     <Star
                       key={i}
                       className={cn(
-                        "h-3 w-3",
+                        "h-4 w-4",
                         i < record.satisfaction!
                           ? "text-yellow-400"
                           : "text-gray-300 dark:text-gray-600"
@@ -103,7 +103,7 @@ export function RecordTaskCard({
             {/* 集中度 */}
             {record.focus_level && (
               <div className="flex items-center gap-1">
-                <Eye className="h-3 w-3 text-blue-500" data-slot="icon" />
+                <Eye className="h-4 w-4 text-blue-500" data-slot="icon" />
                 <span className="text-xs font-medium text-purple-700 dark:text-purple-300">
                   {record.focus_level}
                 </span>
@@ -113,7 +113,7 @@ export function RecordTaskCard({
             {/* エネルギーレベル */}
             {record.energy_level && (
               <div className="flex items-center gap-1">
-                <Zap className="h-3 w-3 text-orange-500" data-slot="icon" />
+                <Zap className="h-4 w-4 text-orange-500" data-slot="icon" />
                 <span className="text-xs font-medium text-blue-700 dark:text-blue-300">
                   {record.energy_level}
                 </span>

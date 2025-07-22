@@ -183,7 +183,7 @@ export function RefinedCalendarIntegration({
           {/* 分割モードでのタスク表示 */}
           <div className="absolute inset-0 flex">
             {/* 左側：予定 */}
-            <div className="w-1/2 pr-0.5 relative">
+            <div className="w-1/2 pr-1 relative">
               {tasks
                 .filter(task => task.isPlan)
                 .map(task => (
@@ -210,7 +210,7 @@ export function RefinedCalendarIntegration({
             </div>
             
             {/* 右側：記録 */}
-            <div className="w-1/2 pl-0.5 relative">
+            <div className="w-1/2 pl-1 relative">
               {tasks
                 .filter(task => task.isRecord)
                 .map(task => (

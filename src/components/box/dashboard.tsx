@@ -80,7 +80,7 @@ function PieChart({ data, size = 120 }: PieChartProps) {
         {data.map((item, index) => (
           <div key={index} className="flex items-center space-x-2 text-xs">
             <div 
-              className="w-3 h-3 rounded-full"
+              className="w-4 h-4 rounded-full"
               style={{ backgroundColor: item.color }}
             />
             <span className="text-gray-600">

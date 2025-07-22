@@ -89,14 +89,14 @@ export default function NotificationsPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTypeColor(
+                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getTypeColor(
                       notification.type
                     )}`}
                   >
                     {getTypeLabel(notification.type)}
                   </span>
                   {!notification.isRead && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                       未読
                     </span>
                   )}

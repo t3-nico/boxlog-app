@@ -181,7 +181,7 @@ export function EagleSmartFolderList({
 
       {/* Folder List */}
       {!isCollapsed && (
-        <div className="space-y-0.5">
+        <div className="space-y-1">
           {/* System Folders */}
           {systemFolders.map(folder => renderFolder(folder))}
           

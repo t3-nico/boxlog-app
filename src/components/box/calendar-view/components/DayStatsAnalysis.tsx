@@ -157,7 +157,7 @@ export function DayStatsAnalysis({ tasks, records }: DayStatsAnalysisProps) {
                     {[1, 2, 3, 4, 5].map(star => (
                       <Star
                         key={star}
-                        className={`w-3 h-3 ${
+                        className={`w-4 h-4 ${
                           star <= recordStats.avgSatisfaction 
                             ? 'text-yellow-400' 
                             : 'text-gray-300 dark:text-gray-600'

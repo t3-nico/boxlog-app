@@ -162,7 +162,7 @@ export function SplitQuickCreator({
         </div>
         
         <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-          <Clock className="w-3 h-3" />
+          <Clock className="w-4 h-4" />
           <span>
             {format(initialStart, 'HH:mm')} - {format(initialEnd, 'HH:mm')}
           </span>
@@ -218,7 +218,7 @@ export function SplitQuickCreator({
             {/* 満足度 */}
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-yellow-500" />
+                <Star className="w-4 h-4 text-yellow-500" />
                 <span className="text-gray-600 dark:text-gray-400">満足度</span>
               </div>
               <div className="flex gap-1">
@@ -242,7 +242,7 @@ export function SplitQuickCreator({
             {/* 集中度 */}
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <Eye className="w-3 h-3 text-blue-500" />
+                <Eye className="w-4 h-4 text-blue-500" />
                 <span className="text-gray-600 dark:text-gray-400">集中度</span>
               </div>
               <div className="flex gap-1">
@@ -269,7 +269,7 @@ export function SplitQuickCreator({
             {/* エネルギー */}
             <div className="space-y-1">
               <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-orange-500" />
+                <Zap className="w-4 h-4 text-orange-500" />
                 <span className="text-gray-600 dark:text-gray-400">エネルギー</span>
               </div>
               <div className="flex gap-1">
