@@ -35,6 +35,7 @@ import {
   SidebarSection,
 } from '@/components/sidebar'
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
+import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
@@ -299,6 +300,13 @@ export function ApplicationLayoutNew({
                         <MagnifyingGlassIcon className="size-5 text-gray-600 dark:text-gray-400" />
                       </button>
                       <button
+                        onClick={() => window.open('#', '_blank')}
+                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        title="Help"
+                      >
+                        <QuestionMarkCircleIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                      </button>
+                      <button
                         onClick={() => router.push('/settings')}
                         className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                         title="Settings"
@@ -317,64 +325,67 @@ export function ApplicationLayoutNew({
         <div className="flex flex-1" style={{paddingTop: '57px'}}>
           {/* Left Sidebar */}
           <div className={`${collapsed ? 'w-16' : 'w-64'} flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150`}>
-            <div className="h-full overflow-y-auto p-4">
+            <div className="h-full flex flex-col p-4">
+              {/* Collapsed sidebar - expand button */}
+              {collapsed && !inSettings && (
+                <div className="flex justify-center mb-4">
+                  <button
+                    onClick={() => setCollapsed(false)}
+                    className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                    title="Open sidebar"
+                  >
+                    <PanelRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                </div>
+              )}
               {!inSettings && (
                 <>
-                  <SidebarSection>
-                    {/* 動的ページタイトル表示 */}
-                    <div className="mb-4 px-2">
-                      <h1 className="text-xl font-semibold text-zinc-950 dark:text-white">
-                        {pageTitle}
-                      </h1>
-                    </div>
-                    
-                    <div className="relative">
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          openPopup('schedule')
-                        }}
-                        className={clsx(
-                          'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
-                          'text-orange-600 dark:text-orange-400',
-                          'hover:bg-orange-50 dark:hover:bg-orange-900/20',
-                          'transition-colors duration-200',
-                          'focus:outline-none focus:ring-2 focus:ring-orange-500',
-                          collapsed && 'justify-center'
-                        )}
-                      >
-                        <PlusCircleIcon className="size-6 sm:size-5 shrink-0 text-orange-600 dark:text-orange-400" data-slot="icon" />
-                        <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
-                      </button>
-                    </div>
-                  </SidebarSection>
+                  {/* 上部固定エリア - タイトルとAddボタン */}
+                  <div className="flex-shrink-0">
+                    <SidebarSection>
+                      {/* 動的ページタイトル表示 - 開いている時のみ */}
+                      {!collapsed && (
+                        <div className="mb-4 px-2 flex items-center justify-between">
+                          <h1 className="text-xl font-semibold text-zinc-950 dark:text-white">
+                            {pageTitle}
+                          </h1>
+                          <button
+                            onClick={() => setCollapsed(true)}
+                            className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                            title="Close sidebar"
+                          >
+                            <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                          </button>
+                        </div>
+                      )}
+                      
+                      <div className="relative">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            openPopup('schedule')
+                          }}
+                          className={clsx(
+                            'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
+                            'text-orange-600 dark:text-orange-400',
+                            'hover:bg-orange-50 dark:hover:bg-orange-900/20',
+                            'transition-colors duration-200',
+                            'focus:outline-none focus:ring-2 focus:ring-orange-500',
+                            collapsed && 'justify-center'
+                          )}
+                        >
+                          <PlusCircleIcon className="size-6 sm:size-5 shrink-0 text-orange-600 dark:text-orange-400" data-slot="icon" />
+                          <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
+                        </button>
+                      </div>
+                    </SidebarSection>
 
-                  <div className="h-4" />
+                    <div className="h-4" />
+                  </div>
 
-                  <SidebarSection>
-                    <div className="mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 h-6">
-                      {!collapsed && 'Views'}
-                    </div>
-                    <SidebarItem href="/calendar" current={pathname === '/calendar'}>
-                      <CalendarIcon data-slot="icon" />
-                      <SidebarLabel>Calendar</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem href="/table" current={pathname.startsWith('/table')}>
-                      <TableCellsIcon data-slot="icon" />
-                      <SidebarLabel>Table</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem href="/board" current={pathname.startsWith('/board')}>
-                      <Squares2X2Icon data-slot="icon" />
-                      <SidebarLabel>Board</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem href="/stats" current={pathname.startsWith('/stats')}>
-                      <ChartBarIcon data-slot="icon" />
-                      <SidebarLabel>Stats</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
+                  {/* 中央スクロールエリア - スマートフォルダーとタグのみ */}
                   {!collapsed && (
-                    <>
+                    <div className="flex-1 overflow-y-auto min-h-0">
                       <div className="mt-8">
                         <SmartFolderList
                           collapsed={collapsed}
@@ -390,8 +401,35 @@ export function ApplicationLayoutNew({
                           selectedTagIds={filters.tags || []}
                         />
                       </div>
-                    </>
+                    </div>
                   )}
+
+                  {/* 下部固定エリア - LiveカードとUpgradeボタン */}
+                  <div className="flex-shrink-0 space-y-4">
+                    <CurrentScheduleCard collapsed={collapsed} events={events} />
+                    
+                    {/* Upgrade Button */}
+                    {!collapsed ? (
+                      <button
+                        onClick={() => router.push('/upgrade')}
+                        className="flex w-full items-center gap-3 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2.5 text-left text-sm font-medium text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+                        title="Unlock premium features"
+                      >
+                        <SparklesIcon className="size-5 shrink-0" />
+                        <span>Upgrade</span>
+                      </button>
+                    ) : (
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => router.push('/upgrade')}
+                          className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
+                          title="Unlock premium features"
+                        >
+                          <SparklesIcon className="size-5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                 </>
               )}
@@ -520,16 +558,7 @@ export function ApplicationLayoutNew({
                 </>
               )}
               
-              {/* Help and Upgrade buttons */}
-              {!inSettings && (
-                <div className="mt-auto">
-                  <DynamicSidebarSection
-                    section={sidebarConfig.find(section => section.id === 'support')!}
-                    currentPath={pathname}
-                    collapsed={collapsed}
-                  />
-                </div>
-              )}
+              
             </div>
           </div>
           

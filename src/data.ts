@@ -724,6 +724,24 @@ export async function getEventReviews(id: string) {
 export async function getEvents() {
   return [
     {
+      id: 1004,
+      name: 'BoxLog Live Demo',
+      url: '/box/1004',
+      date: 'Jul 22, 2025',
+      time: '2 PM',
+      location: 'BoxLog Studio, Tokyo, JP',
+      totalRevenue: '$15,000',
+      totalRevenueChange: '+12.5%',
+      ticketsAvailable: 100,
+      ticketsSold: 45,
+      ticketsSoldChange: '+25.0%',
+      pageViews: '8,500',
+      pageViewsChange: '+15.2%',
+      status: 'On Sale',
+      imgUrl: '/events/boxlog-demo.jpg',
+      thumbUrl: '/events/boxlog-demo-thumb.jpg',
+    },
+    {
       id: 1000,
       name: 'Bear Hug: Live in Concert',
       url: '/box/1000',
