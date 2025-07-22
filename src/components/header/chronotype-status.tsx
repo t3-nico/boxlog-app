@@ -40,11 +40,11 @@ export function ChronotypeStatus() {
       const currentHour = currentTime.getHours()
       const zone = getProductivityZoneForHour(profile, currentHour)
       
-      if (!zone || !PRODUCTIVITY_COLORS[zone.color]) {
+      if (!zone || !PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]) {
         return null
       }
 
-      const colors = PRODUCTIVITY_COLORS[zone.color]
+      const colors = PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]
       
       // レベルの日本語表示
       const levelMap = {
