@@ -228,7 +228,7 @@ export function RefinedCalendarTask({
         <div className="flex items-start gap-2 h-full">
           {/* 優先度インジケーター */}
           <div className={cn(
-            "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center",
+            "flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center",
             priorityConfig.bg
           )}>
             <priorityConfig.icon className={cn("w-4 h-4", priorityConfig.color)} />
@@ -373,7 +373,7 @@ export function RefinedCalendarTask({
       
       {/* 左端のカラーバー（アニメーション付き） */}
       <motion.div
-        className="absolute left-0 top-0 bottom-0 w-1 bg-current"
+        className="absolute left-0 top-0 bottom-0 w-2 bg-current"
         initial={{ scaleY: 0 }}
         animate={{ scaleY: 1 }}
         transition={{ delay: 0.1, duration: 0.3 }}

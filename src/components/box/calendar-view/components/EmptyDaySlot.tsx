@@ -182,7 +182,7 @@ export function EmptyDaySlot({ date, onEmptySlotClick }: EmptyDaySlotProps) {
       </div>
       <div className="absolute bottom-3 left-3 opacity-20">
         <div className={cn(
-          "w-1.5 h-1.5 rounded-full",
+          "w-2 h-2 rounded-full",
           content.color === 'blue' && "bg-blue-300",
           content.color === 'green' && "bg-green-300",
           content.color === 'gray' && "bg-gray-300",

@@ -189,7 +189,7 @@ export function SplitTaskCard({
 
       {/* リサイズハンドル（デスクトップのみ） */}
       {view === 'day' && !isVeryShort && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 cursor-ns-resize hover:bg-white/20 transition-colors" />
+        <div className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors" />
       )}
     </div>
   )

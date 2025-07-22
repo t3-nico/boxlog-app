@@ -286,7 +286,7 @@ export function PerformanceBadge({
       </span>
       
       {/* プログレスバー */}
-      <div className="w-12 h-1.5 bg-white/50 rounded-full overflow-hidden">
+      <div className="w-12 h-2 bg-white/50 rounded-full overflow-hidden">
         <motion.div
           className="h-full bg-current rounded-full"
           initial={animated ? { width: 0 } : { width: `${score}%` }}

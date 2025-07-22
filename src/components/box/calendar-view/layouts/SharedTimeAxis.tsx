@@ -106,7 +106,7 @@ export function SharedTimeAxis({
       {/* 営業時間のハイライト */}
       {showBusinessHours && (
         <div
-          className="absolute left-0 w-1 bg-blue-200 dark:bg-blue-800 opacity-50"
+          className="absolute left-0 w-2 bg-blue-200 dark:bg-blue-800 opacity-50"
           style={{
             top: `${((businessHours.start - startHour) * 60 / 60) * HOUR_HEIGHT}px`,
             height: `${((businessHours.end - businessHours.start) * 60 / 60) * HOUR_HEIGHT}px`

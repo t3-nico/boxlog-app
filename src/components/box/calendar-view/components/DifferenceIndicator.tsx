@@ -170,15 +170,15 @@ export function DifferenceIndicator({ tasks, records, className }: DifferenceInd
         <div className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">差異</div>
         <div className="space-y-1">
           <div className="flex items-center gap-1">
-            <div className="w-4 h-1 bg-red-500"></div>
+            <div className="w-4 h-2 bg-red-500"></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">遅延</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-4 h-1 bg-blue-500"></div>
+            <div className="w-4 h-2 bg-blue-500"></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">早期</span>
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-4 h-1 bg-orange-400"></div>
+            <div className="w-4 h-2 bg-orange-400"></div>
             <span className="text-xs text-gray-600 dark:text-gray-400">予定外</span>
           </div>
         </div>

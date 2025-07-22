@@ -157,7 +157,7 @@ export function ChronotypeGridOverlay({
             {/* 左端のボーダー */}
             {(chronotype.displayMode === 'border' || chronotype.displayMode === 'both') && (
               <div
-                className="absolute left-0 w-1 h-full"
+                className="absolute left-0 w-2 h-full"
                 style={{
                   backgroundColor: colorMapping.border,
                   opacity: opacityFactor,

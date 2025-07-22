@@ -17,7 +17,7 @@ export function ScheduleCard() {
             <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">in 15 min</div>
           </div>
           {/* Light: Subtle indicator, Dark: Glowing dot */}
-          <div className="w-1.5 h-1.5 rounded-full
+          <div className="w-2 h-2 rounded-full
             bg-blue-400 opacity-50
             dark:bg-blue-400 dark:opacity-80 dark:shadow-[0_0_6px_rgba(59,130,246,0.6)]"></div>
         </div>

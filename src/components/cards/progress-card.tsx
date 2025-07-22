@@ -36,8 +36,8 @@ export function ProgressCard() {
         
         {/* Compact progress bar */}
         <div className="relative w-full rounded-full overflow-hidden mt-2
-          h-1 bg-gray-100
-          dark:h-1.5 dark:bg-gray-800/80">
+          h-2 bg-gray-100
+          dark:h-2 dark:bg-gray-800/80">
           <div 
             className="absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out
               bg-gradient-to-r from-purple-500 to-purple-600

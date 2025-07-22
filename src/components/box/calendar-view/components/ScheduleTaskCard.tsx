@@ -165,9 +165,9 @@ export function ScheduleTaskCard({
         {/* プログレスバー（進行中タスク用） */}
         {task.status === 'in_progress' && (
           <div className="mt-2">
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
-                className="bg-blue-500 dark:bg-blue-400 h-1 rounded-full transition-all duration-300"
+                className="bg-blue-500 dark:bg-blue-400 h-2 rounded-full transition-all duration-300"
                 style={{ width: '45%' }} // 仮の進捗率
               />
             </div>
@@ -279,7 +279,7 @@ export function CompactScheduleTaskCard({
       {/* 優先度インジケーター */}
       {task.priority !== 'medium' && (
         <div className={cn(
-          "w-1.5 h-1.5 rounded-full ml-2",
+          "w-2 h-2 rounded-full ml-2",
           task.priority === 'high' && "bg-red-500",
           task.priority === 'low' && "bg-green-500"
         )} />

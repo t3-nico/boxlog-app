@@ -90,7 +90,7 @@ export function ViewModeToggle({
               <mode.icon className={cn(
                 "flex-shrink-0 transition-transform duration-150",
                 checked && "scale-110",
-                isSmall ? "w-3.5 h-3.5" : "w-4 h-4"
+                isSmall ? "w-4 h-4" : "w-4 h-4"
               )} />
               {showLabels && (
                 <span className={cn(

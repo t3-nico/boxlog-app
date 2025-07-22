@@ -182,9 +182,9 @@ function ChatInput() {
       {state.isTyping && (
         <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex gap-1">
-            <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse"></div>
-            <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-1 h-1 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span>Claude is thinking...</span>
         </div>
