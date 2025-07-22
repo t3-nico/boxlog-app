@@ -187,7 +187,7 @@ export function RulePreview({ rules, items }: RulePreviewProps) {
               <div key={index} className="text-xs">
                 {index > 0 && (
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-1.5 py-1 rounded text-xs font-medium ${
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
                       rule.logic === 'AND' 
                         ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
                         : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
@@ -232,7 +232,7 @@ export function RulePreview({ rules, items }: RulePreviewProps) {
                       {item.tags.slice(0, 3).map((tag: string, tagIndex: number) => (
                         <span 
                           key={tagIndex}
-                          className="px-1.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-xs"
+                          className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-xs"
                         >
                           {tag}
                         </span>

@@ -113,7 +113,7 @@ export function TagFilter({
           </span>
         )}
         {showSelectedCount && selectedTagIds.length > 0 && (
-          <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-1.5 py-1 rounded">
+          <span className="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs px-2 py-1 rounded">
             {selectedTagIds.length}
           </span>
         )}

@@ -84,7 +84,7 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
     return (
       <div key={tag.id}>
         <div
-          className={`group flex items-center justify-between px-2 py-1.5 rounded-md cursor-pointer transition-colors ${indentClass} ${
+          className={`group flex items-center justify-between px-2 py-2 rounded-md cursor-pointer transition-colors ${indentClass} ${
             isSelected 
               ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' 
               : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
@@ -122,7 +122,7 @@ export function TagList({ onSelectTag, selectedTagIds }: TagListProps) {
               )}
             </span>
             {taskCount > 0 && (
-              <span className={`text-xs px-1.5 py-1 rounded-full ${
+              <span className={`text-xs px-2 py-1 rounded-full ${
                 isSelected 
                   ? 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
