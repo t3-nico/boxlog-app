@@ -133,7 +133,7 @@ export function ApplicationLayoutNew({
       <ToastProvider>
         <div className="flex flex-col h-screen">
         {/* Fixed Header - Full width at top */}
-        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '64px', minHeight: '64px', maxHeight: '64px'}}>
+        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-16">
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">

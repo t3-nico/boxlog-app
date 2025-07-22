@@ -137,7 +137,7 @@ export function ApplicationLayout({
     <ThemeProvider>
       <div className="flex flex-col h-screen">
         {/* Header - Full width at top */}
-        <header className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '64px'}}>
+        <header className="sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-16">
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
