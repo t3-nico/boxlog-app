@@ -133,7 +133,7 @@ export function ApplicationLayoutNew({
       <ToastProvider>
         <div className="flex flex-col h-screen">
         {/* Fixed Header - Full width at top */}
-        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '56px', minHeight: '56px', maxHeight: '56px'}}>
+        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700" style={{height: '64px', minHeight: '64px', maxHeight: '64px'}}>
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
@@ -322,9 +322,9 @@ export function ApplicationLayoutNew({
         </header>
         
         {/* Body - Layout container */}
-        <div className="flex-1" style={{paddingTop: '56px'}}>
+        <div className="flex-1" style={{paddingTop: '64px'}}>
           {/* Left Sidebar - Fixed Position */}
-          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150 z-10`} style={{top: '56px', bottom: '0'}}>
+          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150 z-10`} style={{top: '64px', bottom: '0'}}>
             <div className="h-full flex flex-col p-4">
               {/* Collapsed sidebar - expand button */}
               {collapsed && !inSettings && (
@@ -559,7 +559,7 @@ export function ApplicationLayoutNew({
           
           {/* Right Icon Bar - Hide when AI Chat is open */}
           {!isAIChatOpen && (
-            <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '56px', bottom: '0'}}>
+            <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '64px', bottom: '0'}}>
               <button
                 onClick={() => setIsAIChatOpen(true)}
                 className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
