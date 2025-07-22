@@ -173,7 +173,7 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
     return (
       <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg border">
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-          <Calendar className="w-3 h-3" />
+          <Calendar className="w-4 h-4" />
           <span className="text-xs">No current events</span>
         </div>
       </div>
@@ -190,7 +190,7 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
       }}
     >
       <div className="flex items-center gap-2 mb-2">
-        <Calendar className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+        <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
           Live
         </span>
@@ -201,7 +201,7 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
       </h3>
       
       <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
-        <Clock className="w-3 h-3" />
+        <Clock className="w-4 h-4" />
         <span>
           {formatTime(currentEvent.startTime)} - {formatTime(currentEvent.endTime)}
         </span>

@@ -89,14 +89,14 @@ export function DragPreview({
           <div className="text-white font-medium text-sm leading-tight">
             <div className="flex items-center gap-2">
               <span>{formatTime(start, timeFormat)}</span>
-              <div className="w-3 h-px bg-white/60" />
+              <div className="w-4 h-px bg-white/60" />
               <span>{formatTime(end, timeFormat)}</span>
             </div>
           </div>
           
           {/* 時間長 */}
           <div className="text-white/80 text-xs mt-1 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
+            <Clock className="w-4 h-4" />
             {duration}分
           </div>
           
@@ -217,21 +217,21 @@ export function AdvancedDragPreview({
           <div className="text-white font-medium text-sm leading-tight">
             <div className="flex items-center gap-2">
               <span>{formatTime(props.start, timeFormat)}</span>
-              <div className="w-3 h-px bg-white/60" />
+              <div className="w-4 h-px bg-white/60" />
               <span>{formatTime(props.end, timeFormat)}</span>
             </div>
           </div>
           
           {/* 時間長とステータス */}
           <div className="text-white/80 text-xs mt-1 flex items-center gap-1">
-            <Clock className="w-3 h-3" />
+            <Clock className="w-4 h-4" />
             {duration}分
           </div>
           
           {/* 重複警告またはヒント */}
           {conflictInfo.hasConflict ? (
             <div className="text-white/90 text-xs mt-2 flex items-center gap-1 animate-pulse">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
               {conflictInfo.conflictCount}件の重複

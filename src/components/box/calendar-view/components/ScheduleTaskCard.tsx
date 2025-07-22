@@ -186,7 +186,7 @@ export function ScheduleTaskCard({
               // 編集アクション
             }}
           >
-            <svg className="w-3 h-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
           </button>
@@ -200,7 +200,7 @@ export function ScheduleTaskCard({
                 // 完了マーク
               }}
             >
-              <CheckCircle className="w-3 h-3 text-green-500 dark:text-green-400" />
+              <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400" />
             </button>
           )}
         </div>
@@ -258,7 +258,7 @@ export function CompactScheduleTaskCard({
       {/* ステータスアイコン */}
       {StatusIcon && (
         <StatusIcon className={cn(
-          "w-3 h-3 mr-2",
+          "w-4 h-4 mr-2",
           task.status === 'completed' && "text-green-500 dark:text-green-400",
           task.status === 'in_progress' && "text-blue-500 dark:text-blue-400"
         )} />

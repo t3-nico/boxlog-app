@@ -33,7 +33,7 @@ export function RadioField({
         // Base layout
         'grid grid-cols-[1.125rem_1fr] gap-x-4 gap-y-1 sm:grid-cols-[1rem_1fr]',
         // Control layout
-        '*:data-[slot=control]:col-start-1 *:data-[slot=control]:row-start-1 *:data-[slot=control]:mt-0.75 sm:*:data-[slot=control]:mt-1',
+        '*:data-[slot=control]:col-start-1 *:data-[slot=control]:row-start-1 *:data-[slot=control]:mt-1 sm:*:data-[slot=control]:mt-1',
         // Label layout
         '*:data-[slot=label]:col-start-2 *:data-[slot=label]:row-start-1',
         // Description layout
@@ -47,7 +47,7 @@ export function RadioField({
 
 const base = [
   // Basic layout
-  'relative isolate flex size-4.75 shrink-0 rounded-full sm:size-4.25',
+  'relative isolate flex size-5 shrink-0 rounded-full sm:size-4',
   // Background color + shadow applied to inset pseudo element, so shadow blends with border in light mode
   'before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-white before:shadow-sm',
   // Background color when checked
@@ -131,7 +131,7 @@ export function Radio({
       <span className={clsx([base, colors[color]])}>
         <span
           className={clsx(
-            'size-full rounded-full border-[4.5px] border-transparent bg-(--radio-indicator) bg-clip-padding',
+            'size-full rounded-full border-[4px] border-transparent bg-(--radio-indicator) bg-clip-padding',
             // Forced colors mode
             'forced-colors:border-[Canvas] forced-colors:group-data-checked:border-[Highlight]'
           )}

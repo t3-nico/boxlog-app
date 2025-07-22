@@ -95,7 +95,7 @@ export function EagleSmartFolderList({
     return (
       <div key={folder.id} className="select-none">
         <div
-          className={`group flex items-center justify-between px-2 py-1.5 rounded-md cursor-pointer eagle-transition eagle-item-hover ${isSelected ? 'eagle-item-selected text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'} ${level > 0 ? 'eagle-tree-line' : ''}`}
+          className={`group flex items-center justify-between px-2 py-2 rounded-md cursor-pointer eagle-transition eagle-item-hover ${isSelected ? 'eagle-item-selected text-blue-700 dark:text-blue-300' : 'text-gray-700 dark:text-gray-300'} ${level > 0 ? 'eagle-tree-line' : ''}`}
           style={{ paddingLeft: `${8 + level * 16}px` }}
           onClick={() => onSelectFolder(folder.id)}
           onContextMenu={(e) => handleContextMenu(e, folder.id)}
@@ -110,9 +110,9 @@ export function EagleSmartFolderList({
                 className="mr-1 p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
               >
                 {isExpanded ? (
-                  <ChevronDown className="h-3.5 w-3.5" />
+                  <ChevronDown className="h-4 w-4" />
                 ) : (
-                  <ChevronRight className="h-3.5 w-3.5" />
+                  <ChevronRight className="h-4 w-4" />
                 )}
               </button>
             )}
@@ -142,7 +142,7 @@ export function EagleSmartFolderList({
                 onClick={(e) => handleContextMenu(e, folder.id)}
                 className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-all"
               >
-                <MoreHorizontal className="h-3 w-3" />
+                <MoreHorizontal className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -168,9 +168,9 @@ export function EagleSmartFolderList({
       >
         <div className="flex items-center space-x-2">
           {isCollapsed ? (
-            <ChevronRight className="h-3 w-3" />
+            <ChevronRight className="h-4 w-4" />
           ) : (
-            <ChevronDown className="h-3 w-3" />
+            <ChevronDown className="h-4 w-4" />
           )}
           <span>Smart Folders</span>
         </div>
@@ -202,17 +202,17 @@ export function EagleSmartFolderList({
           style={{ left: contextMenu.x, top: contextMenu.y }}
           onBlur={() => setContextMenu(null)}
         >
-          <button className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <button className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             New Folder
           </button>
-          <button className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <button className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             Edit
           </button>
-          <button className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <button className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             Duplicate
           </button>
           <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
-          <button className="w-full text-left px-3 py-1.5 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+          <button className="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
             Delete
           </button>
         </div>
