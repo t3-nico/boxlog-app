@@ -188,7 +188,7 @@ export function SmoothDragPreview({
               {formatTime(start, timeFormat)} - {formatTime(end, timeFormat)}
             </span>
           </div>
-          <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+          <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
             {duration}分の{side === 'left' ? '予定' : '記録'}
           </div>
         </motion.div>

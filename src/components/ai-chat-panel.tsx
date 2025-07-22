@@ -80,20 +80,20 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
               }])
               setInputValue('') // 入力欄もクリア
             }}
-            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="新規チャット"
           >
             <Plus className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </button>
           <button
-            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="詳細オプション"
           >
             <MoreVertical className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           </button>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
             title="閉じる"
           >
             <X className="w-4 h-4 text-gray-600 dark:text-gray-400" />

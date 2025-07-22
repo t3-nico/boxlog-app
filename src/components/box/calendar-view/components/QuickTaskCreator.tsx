@@ -239,7 +239,7 @@ export function QuickTaskCreator({
             "dark:from-blue-950/30 dark:to-indigo-950/30"
           )}>
             <div className="flex items-center gap-3">
-              <div className="p-1.5 rounded-lg bg-blue-100 dark:bg-blue-900/50">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
                 <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="flex-1">
@@ -297,7 +297,7 @@ export function QuickTaskCreator({
                             setSelectedSuggestion(-1)
                           }}
                           className={cn(
-                            "w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700",
+                            "w-full px-4 py-3 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700",
                             "transition-colors duration-100",
                             index === selectedSuggestion && "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                           )}
@@ -347,7 +347,7 @@ export function QuickTaskCreator({
                       type="button"
                       onClick={() => setPriority(p)}
                       className={cn(
-                        "flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl",
+                        "flex-1 flex items-center justify-center gap-2 px-3 py-3 rounded-xl",
                         "border transition-all duration-200",
                         "text-sm font-medium",
                         isSelected ? [

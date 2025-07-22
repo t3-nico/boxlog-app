@@ -60,7 +60,7 @@ export function StackedLayout({
 
       {/* Navbar */}
       <header className="flex items-center px-4">
-        <div className="py-2.5 lg:hidden">
+        <div className="py-3 lg:hidden">
           <NavbarItem onClick={() => setShowSidebar(true)} aria-label="Open navigation">
             <OpenMenuIcon />
           </NavbarItem>

@@ -151,7 +151,7 @@ export function ScheduleView({
                             className="flex items-start gap-3 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer transition-colors"
                             onClick={() => handleTaskClick(task)}
                           >
-                            <div className="text-xs text-blue-600 dark:text-blue-400 font-mono min-w-0 flex-shrink-0 mt-0.5">
+                            <div className="text-xs text-blue-600 dark:text-blue-400 font-mono min-w-0 flex-shrink-0 mt-1">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
@@ -222,7 +222,7 @@ export function ScheduleView({
                             className="flex items-start gap-3 p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 cursor-pointer transition-colors"
                             onClick={() => handleTaskClick(task)}
                           >
-                            <div className="text-xs text-green-600 dark:text-green-400 font-mono min-w-0 flex-shrink-0 mt-0.5">
+                            <div className="text-xs text-green-600 dark:text-green-400 font-mono min-w-0 flex-shrink-0 mt-1">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
@@ -304,7 +304,7 @@ export function ScheduleView({
                           }`}
                           onClick={() => handleTaskClick(task)}
                         >
-                          <div className={`text-xs font-mono min-w-0 flex-shrink-0 mt-0.5 ${
+                          <div className={`text-xs font-mono min-w-0 flex-shrink-0 mt-1 ${
                             task.isPlan 
                               ? 'text-blue-600 dark:text-blue-400' 
                               : 'text-green-600 dark:text-green-400'

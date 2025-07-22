@@ -220,7 +220,7 @@ const lineHighlightClassNames = cn(
   '[&_.line.highlighted]:after:left-0',
   '[&_.line.highlighted]:after:top-0',
   '[&_.line.highlighted]:after:bottom-0',
-  '[&_.line.highlighted]:after:w-0.5',
+  '[&_.line.highlighted]:after:w-2',
   'dark:[&_.line.highlighted]:!bg-blue-500/10'
 );
 
@@ -229,7 +229,7 @@ const lineDiffClassNames = cn(
   '[&_.line.diff]:after:left-0',
   '[&_.line.diff]:after:top-0',
   '[&_.line.diff]:after:bottom-0',
-  '[&_.line.diff]:after:w-0.5',
+  '[&_.line.diff]:after:w-2',
   '[&_.line.diff.add]:bg-emerald-50',
   '[&_.line.diff.add]:after:bg-emerald-500',
   '[&_.line.diff.remove]:bg-rose-50',

@@ -27,7 +27,7 @@ export function SidebarHeader({ className, ...props }: React.ComponentPropsWitho
       {...props}
       className={clsx(
         className,
-        'flex flex-col px-4 pt-4 pb-2 [&>[data-slot=section]+[data-slot=section]]:mt-2.5'
+        'flex flex-col px-4 pt-4 pb-2 [&>[data-slot=section]+[data-slot=section]]:mt-3'
       )}
     />
   )
@@ -51,7 +51,7 @@ export function SidebarFooter({ className, ...props }: React.ComponentPropsWitho
       {...props}
       className={clsx(
         className,
-        'flex flex-col p-4 [&>[data-slot=section]+[data-slot=section]]:mt-2.5'
+        'flex flex-col p-4 [&>[data-slot=section]+[data-slot=section]]:mt-3'
       )}
     />
   )

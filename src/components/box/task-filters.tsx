@@ -90,7 +90,7 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
     <div className={`flex flex-col gap-4 md:flex-row md:items-center md:justify-between ${className}`}>
       <div className="flex flex-1 flex-col gap-2 md:flex-row md:items-center md:space-x-2">
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" data-slot="icon" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" data-slot="icon" />
           <Input
             placeholder="Filter tasks..."
             value={filters.search}

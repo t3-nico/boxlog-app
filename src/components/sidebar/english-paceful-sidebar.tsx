@@ -50,7 +50,7 @@ export function EnglishPacefulSidebar({ collapsed = false, onToggleCollapse }: E
         </div>
         <button
           onClick={onToggleCollapse}
-          className="p-1.5 hover:bg-gray-800 rounded-md transition-colors duration-150"
+          className="p-2 hover:bg-gray-800 rounded-md transition-colors duration-150"
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           <ChevronLeftIcon className="size-4 text-gray-400" />

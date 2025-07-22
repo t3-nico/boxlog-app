@@ -313,7 +313,7 @@ export function ApplicationLayout({
                           openPopup('schedule')
                         }}
                         className={clsx(
-                          'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
+                          'flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
                           'text-orange-600 dark:text-orange-400',
                           'hover:bg-orange-50 dark:hover:bg-orange-900/20',
                           'transition-colors duration-200',
@@ -332,7 +332,7 @@ export function ApplicationLayout({
                         openCommandPalette()
                       }}
                       className={clsx(
-                        'flex w-full items-center gap-3 rounded-lg px-2 py-2.5 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
+                        'flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
                         'group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-2',
                         '*:data-[slot=icon]:size-6 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:text-zinc-500 sm:*:data-[slot=icon]:size-5',
                         'hover:bg-zinc-950/5 hover:*:data-[slot=icon]:text-zinc-950',

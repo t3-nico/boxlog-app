@@ -106,7 +106,7 @@ export function SplitTaskCard({
                 
                 {/* 時間範囲（十分なスペースがある場合のみ） */}
                 {!isShort && view !== 'month' && (
-                  <div className="text-xs opacity-90 mt-0.5">
+                  <div className="text-xs opacity-90 mt-1">
                     {format(planTask.startTime, 'HH:mm')} - {format(planTask.endTime, 'HH:mm')}
                   </div>
                 )}
@@ -121,7 +121,7 @@ export function SplitTaskCard({
         </div>
 
         {/* 中央の分割線 */}
-        <div className="w-0.5 bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
+        <div className="w-2 bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
 
         {/* 右側: 実績タスク */}
         <div 
@@ -161,7 +161,7 @@ export function SplitTaskCard({
                 
                 {/* 時間範囲（十分なスペースがある場合のみ） */}
                 {!isShort && view !== 'month' && (
-                  <div className="text-xs opacity-90 mt-0.5">
+                  <div className="text-xs opacity-90 mt-1">
                     {format(recordTask.startTime, 'HH:mm')} - {format(recordTask.endTime, 'HH:mm')}
                   </div>
                 )}
@@ -234,7 +234,7 @@ export function CompactSplitTask({ planTask, recordTask, onClick }: CompactSplit
       </div>
 
       {/* 分割線 */}
-      <div className="w-0.5 bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
+      <div className="w-2 bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
 
       {/* 右側: 実績 */}
       <div 

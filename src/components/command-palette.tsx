@@ -240,7 +240,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
                   <div className="flex-1">
                     <div className="text-sm font-medium">{result.title}</div>
                     {result.description && (
-                      <div className="text-xs text-muted-foreground mt-0.5">{result.description}</div>
+                      <div className="text-xs text-muted-foreground mt-1">{result.description}</div>
                     )}
                   </div>
                   {result.metadata?.tags && result.metadata.tags.length > 0 && (

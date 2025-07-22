@@ -89,7 +89,7 @@ export function TaskSidebar({ onNewTask }: TaskSidebarProps) {
         <div className="space-y-2">
           <Label htmlFor="search">検索</Label>
           <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+            <Search className="absolute left-2 top-3 h-4 w-4 text-gray-500" />
             <Input
               id="search"
               placeholder="タスクを検索..."

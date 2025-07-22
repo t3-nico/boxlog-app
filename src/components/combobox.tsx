@@ -170,7 +170,7 @@ export function ComboboxOption<T>({
 }
 
 export function ComboboxLabel({ className, ...props }: React.ComponentPropsWithoutRef<'span'>) {
-  return <span {...props} className={clsx(className, 'ml-2.5 truncate first:ml-0 sm:ml-2 sm:first:ml-0')} />
+  return <span {...props} className={clsx(className, 'ml-3 truncate first:ml-0 sm:ml-2 sm:first:ml-0')} />
 }
 
 export function ComboboxDescription({ className, children, ...props }: React.ComponentPropsWithoutRef<'span'>) {

@@ -151,7 +151,7 @@ export function SplitCalendarLayout({
                   </div>
                   
                   {/* 中央分割線 */}
-                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-0.5"></div>
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-1"></div>
                   
                   {/* 今日のみに現在時刻線を表示 */}
                   {isToday(day) && (
@@ -213,7 +213,7 @@ export function SplitCalendarLayout({
                               {task.title}
                             </div>
                           </div>
-                          <div className="text-green-600 dark:text-green-400 text-xs ml-12 mt-0.5">
+                          <div className="text-green-600 dark:text-green-400 text-xs ml-12 mt-1">
                             {task.endTime.toLocaleTimeString('ja-JP', { 
                               hour: '2-digit', 
                               minute: '2-digit',
@@ -290,7 +290,7 @@ export function SplitCalendarLayout({
                         <div className="p-1 h-full flex flex-col justify-start">
                           <div className="font-medium leading-tight truncate">{task.title}</div>
                           {height >= 40 && (
-                            <div className="text-blue-100 text-xs mt-0.5 leading-tight">
+                            <div className="text-blue-100 text-xs mt-1 leading-tight">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
@@ -368,7 +368,7 @@ export function SplitCalendarLayout({
                         <div className="p-1 h-full flex flex-col justify-start">
                           <div className="font-medium leading-tight truncate">{task.title}</div>
                           {height >= 40 && (
-                            <div className="text-green-100 text-xs mt-0.5 leading-tight">
+                            <div className="text-green-100 text-xs mt-1 leading-tight">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
