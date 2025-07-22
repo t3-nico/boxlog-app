@@ -5,6 +5,7 @@ import { Task, TaskStatus, TaskPriority } from '@/types/box'
 import { useBoxStore } from '@/lib/box-store'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dropdown,
   DropdownButton,
@@ -170,7 +171,7 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
         </div>
         <Dropdown>
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <DropdownButton plain>
+            <DropdownButton as={Button} variant="ghost">
               <MoreHorizontal className="h-5 w-5" />
             </DropdownButton>
           </motion.div>
@@ -196,7 +197,7 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
         <div className="flex items-center space-x-2">
           <Dropdown>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <DropdownButton plain className="flex items-center space-x-2">
+              <DropdownButton as={Button} variant="ghost" className="flex items-center space-x-2">
                 {getStatusIcon(task.status)}
                 <span className="text-sm">{task.status}</span>
               </DropdownButton>
@@ -229,7 +230,7 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
         <div className="flex items-center space-x-2">
           <Dropdown>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <DropdownButton plain className="flex items-center space-x-2">
+              <DropdownButton as={Button} variant="ghost" className="flex items-center space-x-2">
                 {getPriorityIcon(task.priority)}
                 <span className="text-sm">{task.priority}</span>
               </DropdownButton>
