@@ -9,6 +9,7 @@ import {
   PRODUCTIVITY_COLORS,
   type ProductivityZone 
 } from '@/types/chronotype'
+import { CHRONOTYPE_COLORS, getCSSVariableValue } from '@/config/theme/colors'
 
 interface ScheduleEvent {
   id: string
@@ -51,11 +52,11 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
   // クロノタイプ設定に完全対応した色変更
   const getChronotypeColor = () => {
     if (!chronotype || !chronotype.enabled) {
-      return '#3b82f6' // デフォルト青
+      return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // デフォルト青
     }
 
     if (chronotype.type === 'custom') {
-      return '#3b82f6' // カスタムの場合はデフォルト
+      return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // カスタムの場合はデフォルト
     }
 
     try {
@@ -64,14 +65,14 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
       const zone = getProductivityZoneForHour(profile, currentHour)
       
       if (!zone || !PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]) {
-        return '#3b82f6' // フォールバック
+        return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // フォールバック
       }
 
       const colors = PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]
       return colors.border
     } catch (error) {
       console.error('Chronotype color calculation error:', error)
-      return '#3b82f6' // エラー時のフォールバック
+      return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // エラー時のフォールバック
     }
   }
 

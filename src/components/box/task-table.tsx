@@ -41,18 +41,23 @@ import {
   Eye,
 } from 'lucide-react'
 import { TagBadge } from '@/components/tags/tag-badge'
+import { 
+  TASK_STATUS_COLORS, 
+  TASK_PRIORITY_COLORS, 
+  SEMANTIC_COLORS 
+} from '@/config/theme/colors'
 
 const getStatusIcon = (status: TaskStatus) => {
   const iconProps = "h-4 w-4"
   switch (status) {
     case 'Todo':
-      return <Circle className={`${iconProps} text-gray-500`} />
+      return <Circle className={`${iconProps}`} style={{ color: `rgb(var(--color-task-todo))` }} />
     case 'In Progress':
-      return <Clock className={`${iconProps} text-blue-500`} />
+      return <Clock className={`${iconProps}`} style={{ color: `rgb(var(--color-task-progress))` }} />
     case 'Done':
-      return <CheckCircle2 className={`${iconProps} text-green-500`} />
+      return <CheckCircle2 className={`${iconProps}`} style={{ color: `rgb(var(--color-task-completed))` }} />
     case 'Cancelled':
-      return <XCircle className={`${iconProps} text-red-500`} />
+      return <XCircle className={`${iconProps}`} style={{ color: `rgb(var(--color-task-cancelled))` }} />
     case 'Backlog':
       return <Minus className={`${iconProps} text-gray-400`} />
     default:
@@ -81,11 +86,11 @@ const getPriorityIcon = (priority: TaskPriority) => {
   const iconProps = "h-4 w-4"
   switch (priority) {
     case 'High':
-      return <ArrowUp className={`${iconProps} text-red-500`} />
+      return <ArrowUp className={`${iconProps}`} style={{ color: `rgb(var(--color-priority-high))` }} />
     case 'Medium':
-      return <Minus className={`${iconProps} text-yellow-500`} />
+      return <Minus className={`${iconProps}`} style={{ color: `rgb(var(--color-priority-medium))` }} />
     case 'Low':
-      return <ArrowDown className={`${iconProps} text-green-500`} />
+      return <ArrowDown className={`${iconProps}`} style={{ color: `rgb(var(--color-priority-low))` }} />
     default:
       return <Minus className={`${iconProps} text-gray-500`} />
   }

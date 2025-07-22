@@ -7,6 +7,7 @@ import {
   getProductivityZoneForHour, 
   PRODUCTIVITY_COLORS 
 } from '@/types/chronotype'
+import { getCSSVariableValue } from '@/config/theme/colors'
 
 export function ChronotypeStatus() {
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -31,7 +32,7 @@ export function ChronotypeStatus() {
       return {
         type: 'Custom',
         level: 'Active',
-        color: '#3b82f6'
+        color: `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})`
       }
     }
 

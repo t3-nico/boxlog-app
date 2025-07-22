@@ -16,6 +16,7 @@ import {
   Plus as PlusIcon
 } from 'lucide-react'
 import type { TagWithChildren, CreateTagInput } from '@/types/tags'
+import { TAG_PRESET_COLORS, getCSSVariableValue } from '@/config/theme/colors'
 
 interface TagCreateModalProps {
   isOpen: boolean
@@ -25,18 +26,23 @@ interface TagCreateModalProps {
   allTags?: TagWithChildren[]
 }
 
-const DEFAULT_COLORS = [
-  '#3B82F6', // Blue
-  '#10B981', // Emerald
-  '#F59E0B', // Amber
-  '#EF4444', // Red
-  '#8B5CF6', // Violet
-  '#06B6D4', // Cyan
-  '#84CC16', // Lime
-  '#F97316', // Orange
-  '#EC4899', // Pink
-  '#6B7280', // Gray
-]
+// CSS変数からHEX値への変換マップ（UI表示用）
+const CSS_VAR_TO_HEX = {
+  'var(--color-tag-blue)': '#3B82F6',
+  'var(--color-tag-emerald)': '#10B981', 
+  'var(--color-tag-amber)': '#F59E0B',
+  'var(--color-tag-red)': '#EF4444',
+  'var(--color-tag-violet)': '#8B5CF6',
+  'var(--color-tag-cyan)': '#06B6D4',
+  'var(--color-tag-lime)': '#84CC16',
+  'var(--color-tag-orange)': '#F97316',
+  'var(--color-tag-pink)': '#EC4899',
+  'var(--color-tag-gray)': '#6B7280',
+} as const
+
+const DEFAULT_COLORS = TAG_PRESET_COLORS.map(cssVar => 
+  CSS_VAR_TO_HEX[cssVar as keyof typeof CSS_VAR_TO_HEX] || cssVar
+)
 
 function ColorPicker({ 
   value, 
@@ -55,17 +61,17 @@ function ColorPicker({
     <div className="space-y-3">
       {/* プリセットカラー */}
       <div className="grid grid-cols-5 gap-2">
-        {DEFAULT_COLORS.map((color) => (
+        {DEFAULT_COLORS.map((color, index) => (
           <button
             key={color}
-            onClick={() => onChange(color)}
+            onClick={() => onChange(TAG_PRESET_COLORS[index])}
             className={`w-8 h-8 rounded-full border-2 transition-all ${
-              value === color 
+              value === TAG_PRESET_COLORS[index] 
                 ? 'border-gray-900 dark:border-white scale-110' 
                 : 'border-gray-300 dark:border-gray-600 hover:scale-105'
             }`}
             style={{ backgroundColor: color }}
-            title={color}
+            title={TAG_PRESET_COLORS[index]}
           />
         ))}
       </div>
@@ -182,7 +188,7 @@ export function TagCreateModal({
   const [formData, setFormData] = useState({
     name: '',
     parent_id: parentTag?.id || null,
-    color: DEFAULT_COLORS[0],
+    color: TAG_PRESET_COLORS[0],
     description: ''
   })
   
@@ -195,7 +201,7 @@ export function TagCreateModal({
       setFormData({
         name: '',
         parent_id: parentTag?.id || null,
-        color: DEFAULT_COLORS[0],
+        color: TAG_PRESET_COLORS[0],
         description: ''
       })
       setErrors({})

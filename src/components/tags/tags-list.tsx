@@ -15,6 +15,7 @@ import { useSidebarStore } from '@/stores/sidebarStore'
 import { TagEditDialog } from './tag-edit-dialog'
 import { useActiveState } from '@/hooks/useActiveState'
 import { clsx } from 'clsx'
+import { DEFAULT_TAG_COLOR } from '@/config/theme/colors'
 
 interface TagsListProps {
   collapsed?: boolean
@@ -88,7 +89,7 @@ function TagItem({
               <button
                 onClick={handleToggleExpanded}
                 className="p-1 rounded tag-toggle-button transition-colors z-10"
-                style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
+                style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
               >
                 {isExpanded ? (
                   <ChevronDownIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
@@ -105,10 +106,10 @@ function TagItem({
               ? tagIconMapping[tag.icon as TagIconName] 
               : TagIcon
             return (
-              <div className="relative" style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}>
+              <div className="relative" style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}>
                 <IconComponent 
                   className="h-4 w-4 flex-shrink-0 tag-icon"
-                  style={{ color: tag.color || '#6b7280', '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
+                  style={{ color: tag.color || 'DEFAULT_TAG_COLOR', '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
                 />
               </div>
             )
@@ -139,7 +140,7 @@ function TagItem({
               className={`p-2 tag-menu-button rounded transition-all ${
                 isHovered || showMenu ? 'opacity-100' : 'opacity-0'
               }`}
-              style={{ '--tag-color': tag.color || '#6b7280' } as React.CSSProperties}
+              style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
             >
               <EllipsisHorizontalIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
             </button>

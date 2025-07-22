@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { CalendarTask as CalendarTaskType } from '../utils/time-grid-helpers'
+import { TASK_STATUS_COLORS, TASK_PRIORITY_COLORS } from '@/config/theme/colors'
 
 interface CalendarTaskProps {
   task: CalendarTaskType
@@ -82,6 +83,7 @@ export function CalendarTask({
       )}
       style={{
         ...style,
+        ...taskStyle.style,
         // 重複時の配置調整
         left: totalConflicts > 1 ? `${leftOffset}%` : undefined,
         width: totalConflicts > 1 ? `${widthPercentage - 1}%` : undefined, // 1%のマージン
@@ -186,16 +188,22 @@ function getTaskStyle(status: string, priority: string, isPlan?: boolean, isReco
     // 計画タスクは青系、実線ボーダー
     const planStyles = {
       scheduled: {
-        base: "bg-blue-500 text-white border-blue-600",
-        hover: "hover:bg-blue-600"
+        base: "text-white",
+        bgColor: "rgb(var(--color-info))",
+        borderColor: "rgb(var(--color-info))",
+        hover: "hover:brightness-110"
       },
       in_progress: {
-        base: "bg-blue-600 text-white border-blue-700",
-        hover: "hover:bg-blue-700"
+        base: "text-white",
+        bgColor: "rgb(var(--color-task-progress))",
+        borderColor: "rgb(var(--color-task-progress))",
+        hover: "hover:brightness-110"
       },
       pending: {
-        base: "bg-blue-400 text-white border-blue-500",
-        hover: "hover:bg-blue-500"
+        base: "text-white",
+        bgColor: "rgb(var(--color-info) / 0.8)",
+        borderColor: "rgb(var(--color-info))",
+        hover: "hover:brightness-110"
       }
     }
     
@@ -204,6 +212,7 @@ function getTaskStyle(status: string, priority: string, isPlan?: boolean, isReco
     
     return {
       base: `${statusStyle.base} ${baseClasses} ${priorityClass}`,
+      style: { backgroundColor: statusStyle.bgColor, borderColor: statusStyle.borderColor },
       hover: statusStyle.hover
     }
   }
@@ -212,16 +221,22 @@ function getTaskStyle(status: string, priority: string, isPlan?: boolean, isReco
     // 実績タスクは緑系、点線ボーダー
     const recordStyles = {
       completed: {
-        base: "bg-green-500 text-white border-green-600 border-dashed",
-        hover: "hover:bg-green-600"
+        base: "text-white border-dashed",
+        bgColor: "rgb(var(--color-task-completed))",
+        borderColor: "rgb(var(--color-task-completed))",
+        hover: "hover:brightness-110"
       },
       in_progress: {
-        base: "bg-green-600 text-white border-green-700 border-dashed", 
-        hover: "hover:bg-green-700"
+        base: "text-white border-dashed",
+        bgColor: "rgb(var(--color-task-completed) / 0.9)",
+        borderColor: "rgb(var(--color-task-completed))",
+        hover: "hover:brightness-110"
       },
       scheduled: {
-        base: "bg-green-400 text-white border-green-500 border-dashed",
-        hover: "hover:bg-green-500"
+        base: "text-white border-dashed",
+        bgColor: "rgb(var(--color-task-completed) / 0.7)",
+        borderColor: "rgb(var(--color-task-completed))",
+        hover: "hover:brightness-110"
       }
     }
     
@@ -230,6 +245,7 @@ function getTaskStyle(status: string, priority: string, isPlan?: boolean, isReco
     
     return {
       base: `${statusStyle.base} ${baseClasses} ${priorityClass}`,
+      style: { backgroundColor: statusStyle.bgColor, borderColor: statusStyle.borderColor },
       hover: statusStyle.hover
     }
   }
@@ -237,28 +253,40 @@ function getTaskStyle(status: string, priority: string, isPlan?: boolean, isReco
   // 従来のステータスベースの色（計画でも実績でもない場合）
   const statusStyles = {
     scheduled: {
-      base: "bg-gray-500 text-white border-gray-600",
-      hover: "hover:bg-gray-600"
+      base: "text-white",
+      bgColor: "rgb(var(--color-task-todo))",
+      borderColor: "rgb(var(--color-task-todo))",
+      hover: "hover:brightness-110"
     },
     completed: {
-      base: "bg-green-500 text-white border-green-600", 
-      hover: "hover:bg-green-600"
+      base: "text-white",
+      bgColor: "rgb(var(--color-task-completed))",
+      borderColor: "rgb(var(--color-task-completed))",
+      hover: "hover:brightness-110"
     },
     in_progress: {
-      base: "bg-orange-500 text-white border-orange-600",
-      hover: "hover:bg-orange-600"
+      base: "text-white",
+      bgColor: "rgb(var(--color-task-progress))",
+      borderColor: "rgb(var(--color-task-progress))",
+      hover: "hover:brightness-110"
     },
     rescheduled: {
-      base: "bg-yellow-500 text-yellow-900 border-yellow-600",
-      hover: "hover:bg-yellow-600 hover:text-yellow-900"
+      base: "text-yellow-900",
+      bgColor: "rgb(var(--color-warning))",
+      borderColor: "rgb(var(--color-warning))",
+      hover: "hover:brightness-110"
     },
     stopped: {
-      base: "bg-gray-400 text-white border-gray-500",
-      hover: "hover:bg-gray-500"
+      base: "text-white",
+      bgColor: "rgb(var(--color-task-todo) / 0.7)",
+      borderColor: "rgb(var(--color-task-todo))",
+      hover: "hover:brightness-110"
     },
     pending: {
-      base: "bg-purple-500 text-white border-purple-600",
-      hover: "hover:bg-purple-600"
+      base: "text-white",
+      bgColor: "rgb(var(--color-info) / 0.8)",
+      borderColor: "rgb(var(--color-info))",
+      hover: "hover:brightness-110"
     }
   }
   
@@ -267,6 +295,7 @@ function getTaskStyle(status: string, priority: string, isPlan?: boolean, isReco
   
   return {
     base: `${statusStyle.base} ${baseClasses} ${priorityClass}`,
+    style: { backgroundColor: statusStyle.bgColor, borderColor: statusStyle.borderColor },
     hover: statusStyle.hover
   }
 }
@@ -303,22 +332,24 @@ function StatusIndicator({ status, size = 'md' }: StatusIndicatorProps) {
   }
   
   const statusColors = {
-    scheduled: "bg-blue-400",
-    completed: "bg-green-400",
-    in_progress: "bg-orange-400",
-    rescheduled: "bg-yellow-400",
-    stopped: "bg-gray-400",
-    pending: "bg-purple-400"
+    scheduled: { backgroundColor: "rgb(var(--color-info))" },
+    completed: { backgroundColor: "rgb(var(--color-task-completed))" },
+    in_progress: { backgroundColor: "rgb(var(--color-task-progress))" },
+    rescheduled: { backgroundColor: "rgb(var(--color-warning))" },
+    stopped: { backgroundColor: "rgb(var(--color-task-todo))" },
+    pending: { backgroundColor: "rgb(var(--color-info) / 0.8)" }
   }
   
-  const colorClass = statusColors[status as keyof typeof statusColors] || statusColors.scheduled
+  const colorStyle = statusColors[status as keyof typeof statusColors] || statusColors.scheduled
   
   return (
-    <div className={cn(
-      "rounded-full",
-      sizeClasses[size],
-      colorClass
-    )} />
+    <div 
+      className={cn(
+        "rounded-full",
+        sizeClasses[size]
+      )}
+      style={colorStyle}
+    />
   )
 }
 
@@ -340,6 +371,7 @@ export function CompactTask({ task, onClick }: CompactTaskProps) {
         taskStyle.base.replace('border-l-4', 'border-l-2'),
         taskStyle.hover
       )}
+      style={taskStyle.style}
       onClick={(e) => {
         e.stopPropagation()
         onClick?.(task)
