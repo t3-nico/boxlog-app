@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection } from '@/components/settings-section'
+import { SettingsPageLayout } from '@/components/settings/SettingsPageLayout'
+import { DangerButton } from '@/components/ui/DangerButton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -27,13 +29,13 @@ function TagItem({ tag, onEdit, onDelete }: { tag: Tag; onEdit: () => void; onDe
         <Button type="button" onClick={onEdit}>
           Edit
         </Button>
-        <Button
+        <DangerButton
           type="button"
           onClick={onDelete}
-          className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+          confirmText="このタグを削除してもよろしいですか？"
         >
           Delete
-        </Button>
+        </DangerButton>
       </TableCell>
     </TableRow>
   )
@@ -149,8 +151,10 @@ export default function TagsSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-8">
-      <Heading>Tags</Heading>
+    <SettingsPageLayout 
+      title="Tags" 
+      subtitle="Create and edit tag presets"
+    >
 
       <SettingSection title="Manage Tags" description="Create and edit tag presets.">
         <div className="space-y-4 px-4 py-4">
@@ -181,6 +185,6 @@ export default function TagsSettings() {
       {editing && (
         <EditTagDialog tag={editing} open={true} onClose={() => setEditing(null)} onSave={handleEdit} />
       )}
-    </div>
+    </SettingsPageLayout>
   )
 }

@@ -46,81 +46,23 @@ import {
   TASK_PRIORITY_COLORS, 
   SEMANTIC_COLORS 
 } from '@/config/theme/colors'
+import { 
+  getStatusIcon, 
+  getPriorityIcon, 
+  getStatusColorClass, 
+  getPriorityColorClass, 
+  getTypeColorClass 
+} from '@/utils/icon-utils'
 
-const getStatusIcon = (status: TaskStatus) => {
-  const iconProps = "h-4 w-4"
-  switch (status) {
-    case 'Todo':
-      return <Circle className={`${iconProps}`} style={{ color: `rgb(var(--color-task-todo))` }} />
-    case 'In Progress':
-      return <Clock className={`${iconProps}`} style={{ color: `rgb(var(--color-task-progress))` }} />
-    case 'Done':
-      return <CheckCircle2 className={`${iconProps}`} style={{ color: `rgb(var(--color-task-completed))` }} />
-    case 'Cancelled':
-      return <XCircle className={`${iconProps}`} style={{ color: `rgb(var(--color-task-cancelled))` }} />
-    case 'Backlog':
-      return <Minus className={`${iconProps} text-gray-400`} />
-    default:
-      return <Circle className={`${iconProps} text-gray-500`} />
-  }
-}
+// getStatusIcon は @/utils/icon-utils から import
 
-const getStatusColor = (status: TaskStatus): string => {
-  switch (status) {
-    case 'Todo':
-      return 'text-gray-700 bg-gray-100 dark:text-gray-300 dark:bg-gray-800'
-    case 'In Progress':
-      return 'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-800'
-    case 'Done':
-      return 'text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-800'
-    case 'Cancelled':
-      return 'text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-800'
-    case 'Backlog':
-      return 'text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900'
-    default:
-      return 'text-gray-700 bg-gray-100 dark:text-gray-300 dark:bg-gray-800'
-  }
-}
+// getStatusColor は getStatusColorClass として @/utils/icon-utils から import
 
-const getPriorityIcon = (priority: TaskPriority) => {
-  const iconProps = "h-4 w-4"
-  switch (priority) {
-    case 'High':
-      return <ArrowUp className={`${iconProps}`} style={{ color: `rgb(var(--color-priority-high))` }} />
-    case 'Medium':
-      return <Minus className={`${iconProps}`} style={{ color: `rgb(var(--color-priority-medium))` }} />
-    case 'Low':
-      return <ArrowDown className={`${iconProps}`} style={{ color: `rgb(var(--color-priority-low))` }} />
-    default:
-      return <Minus className={`${iconProps} text-gray-500`} />
-  }
-}
+// getPriorityIcon は @/utils/icon-utils から import
 
-const getPriorityColor = (priority: TaskPriority): string => {
-  switch (priority) {
-    case 'High':
-      return 'text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-800'
-    case 'Medium':
-      return 'text-yellow-700 bg-yellow-100 dark:text-yellow-300 dark:bg-yellow-800'
-    case 'Low':
-      return 'text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-800'
-    default:
-      return 'text-gray-700 bg-gray-100 dark:text-gray-300 dark:bg-gray-800'
-  }
-}
+// getPriorityColor は getPriorityColorClass として @/utils/icon-utils から import
 
-const getTypeColor = (type: TaskType): string => {
-  switch (type) {
-    case 'Bug':
-      return 'text-red-700 bg-red-100 dark:text-red-300 dark:bg-red-800'
-    case 'Feature':
-      return 'text-blue-700 bg-blue-100 dark:text-blue-300 dark:bg-blue-800'
-    case 'Documentation':
-      return 'text-green-700 bg-green-100 dark:text-green-300 dark:bg-green-800'
-    default:
-      return 'text-gray-700 bg-gray-100 dark:text-gray-300 dark:bg-gray-800'
-  }
-}
+// getTypeColor は getTypeColorClass として @/utils/icon-utils から import
 
 interface TaskTableProps {
   onEditTask?: (task: Task) => void
@@ -269,7 +211,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
       cell: ({ row }) => (
         <div className="max-w-[300px]">
           <div className="font-medium truncate">{row.getValue('title')}</div>
-          <Badge className={`mt-1 text-xs ${getTypeColor(row.original.type)}`}>
+          <Badge className={`mt-1 text-xs ${getTypeColorClass(row.original.type)}`}>
             {row.original.type}
           </Badge>
         </div>
@@ -301,7 +243,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <div className="flex items-center gap-2">
                   {getStatusIcon(status)}
-                  <Badge className={`text-xs ${getStatusColor(status)}`}>
+                  <Badge className={`text-xs ${getStatusColorClass(status)}`}>
                     {status}
                   </Badge>
                 </div>
@@ -350,7 +292,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <div className="flex items-center gap-2">
                   {getPriorityIcon(priority)}
-                  <Badge className={`text-xs ${getPriorityColor(priority)}`}>
+                  <Badge className={`text-xs ${getPriorityColorClass(priority)}`}>
                     {priority}
                   </Badge>
                 </div>
