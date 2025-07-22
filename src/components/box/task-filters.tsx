@@ -135,7 +135,8 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
           </Dropdown>
           <Dropdown>
             <DropdownButton 
-              outline
+              as={Button}
+              variant="outline"
               className={`h-8 border-dashed ${filters.priority.length > 0 ? 'border-solid' : ''}`}
             >
               <Plus className="mr-2 h-4 w-4" data-slot="icon" />
@@ -168,7 +169,8 @@ export function TaskFilters({ className, currentView, onViewChange }: TaskFilter
           </Dropdown>
           <Dropdown>
             <DropdownButton 
-              outline
+              as={Button}
+              variant="outline"
               className={`h-8 border-dashed ${filters.tags.length > 0 ? 'border-solid' : ''}`}
             >
               <Plus className="mr-2 h-4 w-4" data-slot="icon" />
