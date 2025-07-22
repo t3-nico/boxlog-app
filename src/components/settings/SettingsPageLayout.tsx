@@ -5,7 +5,6 @@
  */
 
 import React from 'react'
-import { Heading } from '@headlessui/react'
 
 interface SettingsPageLayoutProps {
   title: string
@@ -23,9 +22,9 @@ export function SettingsPageLayout({
   return (
     <div className={`mx-auto max-w-4xl space-y-8 p-8 ${className}`}>
       <div className="space-y-2">
-        <Heading className="text-2xl font-semibold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
           {title}
-        </Heading>
+        </h1>
         {subtitle && (
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {subtitle}

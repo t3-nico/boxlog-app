@@ -116,7 +116,8 @@ export function ExportMenu({ className }: ExportMenuProps) {
       <Dropdown>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <DropdownButton 
-            outline 
+            as={Button}
+            variant="outline"
             disabled={isExporting}
             className="flex items-center space-x-2"
           >
