@@ -12,7 +12,7 @@ interface FloatingActionButtonProps {
 export function FloatingActionButton({ onClick, className }: FloatingActionButtonProps) {
   return (
     <motion.div
-      className={`fixed bottom-6 right-6 z-50 ${className}`}
+      className={`fixed bottom-8 right-8 z-50 ${className}`}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0, opacity: 0 }}
@@ -27,7 +27,7 @@ export function FloatingActionButton({ onClick, className }: FloatingActionButto
           onClick={onClick}
           size="lg"
           className="
-            h-14 w-14 rounded-full shadow-lg hover:shadow-xl 
+            h-16 w-16 rounded-full shadow-lg hover:shadow-xl 
             bg-primary hover:bg-primary/90 
             border-2 border-background/20
             transition-all duration-200
@@ -42,7 +42,7 @@ export function FloatingActionButton({ onClick, className }: FloatingActionButto
       <motion.div
         className="
           absolute right-16 top-1/2 -translate-y-1/2
-          bg-background border border-border rounded-md px-3 py-2
+          bg-background border border-border rounded-md px-4 py-2
           text-sm font-medium whitespace-nowrap
           shadow-md opacity-0 pointer-events-none
           group-hover:opacity-100 group-hover:pointer-events-auto
@@ -60,7 +60,7 @@ export function FloatingActionButton({ onClick, className }: FloatingActionButto
       <motion.div
         className="
           absolute -top-8 left-1/2 -translate-x-1/2
-          bg-muted/90 backdrop-blur-sm rounded px-2 py-1
+          bg-muted/90 backdrop-blur-sm rounded px-2 py-2
           text-xs text-muted-foreground
           opacity-0 animate-pulse
           group-hover:opacity-100

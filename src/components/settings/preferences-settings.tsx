@@ -59,7 +59,7 @@ export default function PreferencesSettings() {
     setLifeCounter(prev => ({ ...prev, birthDate }))
   }
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Preferences</Heading>
       <SettingSection title="General" description="Basic application options.">
         <ToggleItem

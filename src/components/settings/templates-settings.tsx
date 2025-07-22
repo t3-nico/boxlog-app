@@ -25,7 +25,7 @@ function TemplateCard({ template, onEdit, onApply }: { template: Template; onEdi
           <Subheading level={3} className="!text-base">
             {template.title}
           </Subheading>
-          <div className="mt-2 flex flex-wrap gap-1">
+          <div className="mt-2 flex flex-wrap gap-2">
             {template.tags.map((tag) => (
               <Badge key={tag}>{tag}</Badge>
             ))}
@@ -129,7 +129,7 @@ export default function TemplatesSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Task Templates</Heading>
 
       <SettingSection title="Templates" description="Save and reuse task setups.">

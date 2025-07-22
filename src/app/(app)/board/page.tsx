@@ -35,7 +35,7 @@ export default function Board() {
           onViewChange={handleViewChange}
         />
         
-        <div className="mt-4 min-h-[600px] h-[calc(100vh-200px)]">
+        <div className="mt-8 min-h-[600px] h-[calc(100vh-200px)]">
           <BoardView
             onEditTask={handleEditTask}
             onAddTask={handleNewTask}

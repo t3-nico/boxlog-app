@@ -6,7 +6,7 @@ import { SettingSection } from '@/components/settings-section'
 
 export default function DataExportSettings() {
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Data & Export</Heading>
 
       <SettingSection title="Export" description="Download your data in various formats.">

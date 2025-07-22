@@ -16,7 +16,7 @@ export default function IntegrationSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Calendar & Integration</Heading>
 
       <SettingSection title="Google Calendar" description="Sync with your Google Calendar.">

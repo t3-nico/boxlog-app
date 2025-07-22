@@ -6,7 +6,7 @@ import { Text } from '@/components/text'
 
 export default function AboutLegalSettings() {
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>About / Legal</Heading>
 
       <SettingSection title="Terms of Service & Privacy" description="Important legal information.">

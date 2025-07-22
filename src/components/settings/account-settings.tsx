@@ -36,7 +36,7 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Account</Heading>
 
       <SettingSection title="Profile" description="Update your personal information.">
@@ -105,7 +105,7 @@ export default function AccountSettings() {
             <Subheading level={3} className="!text-base">
               Enable 2FA
             </Subheading>
-            <p className="mt-1 text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Require a second step to sign in.</p>
+            <p className="mt-2 text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Require a second step to sign in.</p>
           </div>
           <Switch checked={twoFactorEnabled} onCheckedChange={setTwoFactorEnabled} />
         </div>
@@ -121,7 +121,7 @@ export default function AccountSettings() {
         description="Delete your account and all associated data."
       >
         <div className="flex justify-between px-4 py-4">
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Subheading level={3} className="!text-base text-red-600 dark:text-red-400">
               Delete account
             </Subheading>

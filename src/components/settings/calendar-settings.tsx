@@ -16,7 +16,7 @@ export default function CalendarSettingsPage() {
   }
   
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Calendar Settings</Heading>
       
       <SettingSection 
@@ -60,7 +60,7 @@ export default function CalendarSettingsPage() {
         {/* プレビュー表示 */}
         <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Preview:</p>
-          <div className="space-y-1">
+          <div className="space-y-2">
             <p className="font-medium">
               Current time: {formatTimeWithSettings(new Date(), settings.timeFormat)}
             </p>

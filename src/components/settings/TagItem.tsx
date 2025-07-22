@@ -85,7 +85,7 @@ export const TagItem = ({ tag }: TagItemProps) => {
           
           {/* タグ名と親情報 */}
           <div className="flex-1">
-            <div className="space-y-1">
+            <div className="space-y-2">
               <div className="font-medium text-gray-900 dark:text-gray-100">
                 {tag.name}
               </div>

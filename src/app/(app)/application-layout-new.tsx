@@ -144,7 +144,7 @@ export function ApplicationLayoutNew({
                     <SidebarLabel>BoxLog</SidebarLabel>
                     <ChevronDownIcon data-slot="icon" />
                   </Headless.MenuButton>
-                  <Headless.MenuItems className="absolute left-0 mt-2 w-80 lg:w-64 origin-top-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-1 z-50">
+                  <Headless.MenuItems className="absolute left-0 mt-2 w-80 lg:w-64 origin-top-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-2 z-50">
                     <Headless.MenuItem>
                       {({ focus }) => (
                         <a
@@ -260,16 +260,16 @@ export function ApplicationLayoutNew({
                         
                         <div className="space-y-3 max-h-96 overflow-y-auto">
                           <div className="p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-2 rounded-full">
                                 System
                               </span>
-                              <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                              <span className="text-xs text-blue-600 bg-blue-100 px-2 py-2 rounded-full">
                                 Unread
                               </span>
                             </div>
-                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">System Maintenance Notice</h4>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">Scheduled maintenance on July 12, 2025 from 2:00-4:00 AM.</p>
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-2">System Maintenance Notice</h4>
+                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">Scheduled maintenance on July 12, 2025 from 2:00-4:00 AM.</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">2025-07-08</p>
                           </div>
                         </div>
@@ -351,7 +351,7 @@ export function ApplicationLayoutNew({
                           </h1>
                           <button
                             onClick={() => setCollapsed(true)}
-                            className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                            className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
                             title="Close sidebar"
                           >
                             <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />

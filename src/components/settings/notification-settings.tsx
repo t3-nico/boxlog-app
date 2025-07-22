@@ -18,7 +18,7 @@ export default function NotificationSettings() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-10 p-10">
+    <div className="mx-auto max-w-4xl space-y-8 p-8">
       <Heading>Notifications</Heading>
 
       <SettingSection title="Email" description="Control email notifications.">
