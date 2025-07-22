@@ -79,7 +79,7 @@ export function UnifiedCalendarHeader({
               key={view}
               onClick={() => onViewChange?.(view as ViewType)}
               className={cn(
-                "px-3 py-1.5 text-sm rounded-md transition-colors",
+                "px-3 py-2 text-sm rounded-md transition-colors",
                 viewType === view
                   ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium"
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -118,7 +118,7 @@ export function UnifiedCalendarHeader({
           <button
             onClick={onNavigateToday}
             className={cn(
-              "px-3 py-1.5 text-sm rounded-md transition-colors",
+              "px-3 py-2 text-sm rounded-md transition-colors",
               dates.some(date => isToday(date))
                 ? "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-default"
                 : "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800"

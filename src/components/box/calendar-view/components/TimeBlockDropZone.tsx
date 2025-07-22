@@ -129,7 +129,7 @@ export function TimeBlockDropZone({
                   ここにドロップ
                 </span>
                 {suggestion && (
-                  <span className={cn("text-xs px-1.5 py-0.5 rounded", config.text)}>
+                  <span className={cn("text-xs px-2 py-1 rounded", config.text)}>
                     {suggestion.score}%
                   </span>
                 )}

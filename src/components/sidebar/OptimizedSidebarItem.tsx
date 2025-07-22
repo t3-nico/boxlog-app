@@ -35,7 +35,7 @@ export const OptimizedSidebarItem = memo<OptimizedSidebarItemProps>(
           {!collapsed && (
             <div className="ml-auto flex items-center gap-1">
               {badge && (
-                <span className="text-xs bg-blue-500 text-white rounded px-1.5 py-0.5">
+                <span className="text-xs bg-blue-500 text-white rounded px-2 py-1">
                   {badge}
                 </span>
               )}

@@ -60,7 +60,7 @@ export function PlanTaskCard({
             
             {/* 優先度バッジ */}
             {task.priority === 'high' && (
-              <span className="text-xs px-1.5 py-0.5 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded font-medium">
+              <span className="text-xs px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300 rounded font-medium">
                 高
               </span>
             )}
@@ -93,7 +93,7 @@ export function PlanTaskCard({
             {task.tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded"
+                className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded"
               >
                 {tag}
               </span>

@@ -334,7 +334,7 @@ export function CompactTask({ task, onClick }: CompactTaskProps) {
   return (
     <div
       className={cn(
-        "text-xs px-1.5 py-0.5 rounded border cursor-pointer",
+        "text-xs px-2 py-1 rounded border cursor-pointer",
         "transition-all duration-150 hover:scale-105",
         "truncate max-w-full",
         taskStyle.base.replace('border-l-4', 'border-l-2'),

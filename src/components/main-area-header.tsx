@@ -249,7 +249,7 @@ function TimeDisplay() {
           title={`${chronoStatus.label} - Go to Chronotype Settings`}
         >
           {ChronoIcon && typeof ChronoIcon === 'function' ? (
-            <ChronoIcon className={`w-3 h-3 ${chronoStatus.color}`} data-slot="icon" />
+            <ChronoIcon className={`w-4 h-4 ${chronoStatus.color}`} data-slot="icon" />
           ) : null}
           <div className={`text-xs font-medium ${chronoStatus.color}`}>
             {chronoStatus.status}

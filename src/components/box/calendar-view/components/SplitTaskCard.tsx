@@ -211,7 +211,7 @@ export function CompactSplitTask({ planTask, recordTask, onClick }: CompactSplit
       {/* 左側: 計画 */}
       <div 
         className={cn(
-          "flex-1 px-1.5 py-0.5 cursor-pointer truncate",
+          "flex-1 px-2 py-1 cursor-pointer truncate",
           planTask ? "bg-blue-500 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
         )}
         onClick={planTask ? (e) => {
@@ -239,7 +239,7 @@ export function CompactSplitTask({ planTask, recordTask, onClick }: CompactSplit
       {/* 右側: 実績 */}
       <div 
         className={cn(
-          "flex-1 px-1.5 py-0.5 cursor-pointer truncate",
+          "flex-1 px-2 py-1 cursor-pointer truncate",
           recordTask ? "bg-green-500 text-white" : "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500"
         )}
         onClick={recordTask ? (e) => {
