@@ -1,5 +1,6 @@
 import { SearchResult, SearchOptions } from '@/config/command-palette'
 import { commandRegistry } from './command-registry'
+import { Task, Tag, SmartFolder } from '@/types/common'
 
 // Simple fuzzy search implementation
 export class FuzzySearch {
@@ -89,9 +90,9 @@ export class SearchEngine {
    * Search across all available data sources
    */
   static async search(options: SearchOptions, stores?: {
-    tasks?: any[]
-    tags?: any[]
-    smartFolders?: any[]
+    tasks?: Task[]
+    tags?: Tag[]
+    smartFolders?: SmartFolder[]
   }): Promise<SearchResult[]> {
     const { query, categories, limit = 10 } = options
     let results: SearchResult[] = []
@@ -148,7 +149,7 @@ export class SearchEngine {
   /**
    * Search tasks from the task store
    */
-  static searchTasks(query: string, tasks: any[]): SearchResult[] {
+  static searchTasks(query: string, tasks: Task[]): SearchResult[] {
     if (!tasks || tasks.length === 0) return []
     
     const taskResults = FuzzySearch.search(tasks, query).map(task => ({
@@ -166,7 +167,7 @@ export class SearchEngine {
         status: task.status,
         priority: task.priority,
         dueDate: task.dueDate,
-        tags: task.tags?.map((tag: any) => tag.name) || [],
+        tags: task.tags?.map(tag => tag.name) || [],
       },
     }))
     
@@ -176,7 +177,7 @@ export class SearchEngine {
   /**
    * Search tags from the tag store
    */
-  static searchTags(query: string, tags: any[]): SearchResult[] {
+  static searchTags(query: string, tags: Tag[]): SearchResult[] {
     if (!tags || tags.length === 0) return []
     
     const tagResults = FuzzySearch.search(tags, query).map(tag => ({
@@ -201,7 +202,7 @@ export class SearchEngine {
   /**
    * Search smart folders
    */
-  static searchSmartFolders(query: string, smartFolders: any[]): SearchResult[] {
+  static searchSmartFolders(query: string, smartFolders: SmartFolder[]): SearchResult[] {
     if (!smartFolders || smartFolders.length === 0) return []
     
     const folderResults = FuzzySearch.search(smartFolders, query).map(folder => ({

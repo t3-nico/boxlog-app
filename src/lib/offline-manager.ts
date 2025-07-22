@@ -1,28 +1,17 @@
 import { generateId } from './utils'
+import { OfflineActionData, ConflictData } from '@/types/common'
 
-export interface OfflineAction {
-  id: string
-  type: 'create' | 'update' | 'delete'
-  entity: 'task' | 'record' | 'block' | 'tag'
-  data: any
-  timestamp: Date
+export interface OfflineAction<T = unknown> extends OfflineActionData<T> {
   syncStatus: 'pending' | 'syncing' | 'completed' | 'conflict'
   retryCount?: number
-  originalData?: any
 }
 
-export interface ConflictData {
-  localData: any
-  serverData: any
-  localTimestamp: Date
-  serverTimestamp: Date
-  field: string
-}
+// ConflictData は @/types/common から import
 
-export interface SyncResult {
+export interface SyncResult<T = unknown> {
   success: boolean
-  conflicts?: ConflictData[]
-  serverData?: any
+  conflicts?: ConflictData<T>[]
+  serverData?: T
   error?: string
 }
 

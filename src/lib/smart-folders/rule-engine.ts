@@ -6,6 +6,7 @@ import {
   SmartFolderRuleOperator,
   RuleEvaluationContext 
 } from '@/types/smart-folders'
+import { BaseEntity } from '@/types/common'
 
 // ルール評価結果のキャッシュ
 interface RuleEvaluationCache {
@@ -37,7 +38,7 @@ export class AdvancedRuleEngine {
    * 単一ルールの評価（キャッシュ付き）
    */
   static evaluateRule(
-    item: any, 
+    item: BaseEntity, 
     rule: SmartFolderRule, 
     context: RuleEvaluationContext = { 
       item, 
@@ -74,7 +75,7 @@ export class AdvancedRuleEngine {
    * ルールセットの評価（AND/OR論理演算）
    */
   static evaluateRuleSet(
-    item: any, 
+    item: BaseEntity, 
     rules: SmartFolderRule[], 
     context?: RuleEvaluationContext
   ): boolean {
@@ -331,7 +332,7 @@ export class AdvancedRuleEngine {
   /**
    * フィールド値の取得
    */
-  private static getFieldValue(item: any, field: SmartFolderRuleField): any {
+  private static getFieldValue(item: BaseEntity, field: SmartFolderRuleField): unknown {
     const fieldMap: Record<string, string[]> = {
       tag: ['tags', 'tag'],
       created_date: ['createdAt', 'created_at', 'createdDate'],
@@ -474,7 +475,7 @@ export class AdvancedRuleEngine {
   /**
    * キャッシュキーの生成
    */
-  private static generateCacheKey(item: any, rule: SmartFolderRule): string {
+  private static generateCacheKey(item: BaseEntity, rule: SmartFolderRule): string {
     const itemId = item.id || JSON.stringify(item).substring(0, 50)
     const ruleKey = `${rule.field}-${rule.operator}-${rule.value}`
     return `${itemId}-${ruleKey}`
