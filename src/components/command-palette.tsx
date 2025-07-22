@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/command'
 import { SearchResult } from '@/config/command-palette'
 import { SearchEngine } from '@/lib/search-engine'
+import { Task as BoxTask } from '@/types/box'
 import { commandRegistry, registerDefaultCommands } from '@/lib/command-registry'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTaskStore } from '@/stores/useTaskStore'
@@ -65,11 +66,26 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const performSearch = useCallback(async (searchQuery: string) => {
     setIsLoading(true)
     try {
+      // Convert BoxTask[] to common.Task[] for SearchEngine
+      const convertedTasks = tasks.map((task: BoxTask) => ({
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+        priority: task.priority,
+        type: task.type,
+        tags: task.tags ? [] : [], // Convert tag IDs to Tag objects if needed
+        dueDate: task.dueDate,
+        createdAt: task.createdAt,
+        updatedAt: task.updatedAt,
+        selected: task.selected,
+      }))
+      
       const searchResults = await SearchEngine.search({
         query: searchQuery,
         limit: 10,
       }, {
-        tasks,
+        tasks: convertedTasks,
         tags,
         smartFolders,
       })
