@@ -1,0 +1,48 @@
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthContext } from '@/contexts/AuthContext'
+
+interface AuthGuardProps {
+  children: React.ReactNode
+  fallback?: React.ReactNode
+}
+
+export function AuthGuard({ children, fallback }: AuthGuardProps) {
+  const { user, loading } = useAuthContext()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/login')
+    }
+  }, [user, loading, router])
+
+  // ローディング中
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <p className="mt-4 text-sm text-muted-foreground">認証状態を確認中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 未認証の場合
+  if (!user) {
+    return fallback || (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-medium">認証が必要です</p>
+          <p className="mt-2 text-sm text-muted-foreground">ログインページにリダイレクトしています...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 認証済みの場合
+  return <>{children}</>
+}
