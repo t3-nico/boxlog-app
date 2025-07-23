@@ -151,8 +151,21 @@ export function ApplicationLayout({
               {!inSettings && (
                 <Dropdown>
                   <DropdownButton as={SidebarItem} indicator={false}>
-                    <Avatar src="/teams/catalyst.svg" />
-                    <SidebarLabel>BoxLog</SidebarLabel>
+                    {user?.user_metadata?.avatar_url ? (
+                      <Avatar src={user.user_metadata.avatar_url} />
+                    ) : user?.user_metadata?.profile_icon ? (
+                      <div className="size-6 text-lg flex items-center justify-center">
+                        {user.user_metadata.profile_icon}
+                      </div>
+                    ) : (
+                      <Avatar 
+                        src={undefined}
+                        initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                      />
+                    )}
+                    <SidebarLabel>
+                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+                    </SidebarLabel>
                     <ChevronDownIcon data-slot="icon" />
                   </DropdownButton>
                   <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">

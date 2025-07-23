@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Avatar } from '@/components/avatar'
-import { useAuth } from '@/hooks/use-auth'
+import { useAuthContext } from '@/contexts/AuthContext'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +29,7 @@ interface UserProfileProps {
 }
 
 export function UserProfile({ collapsed = false }: UserProfileProps) {
-  const { user } = useAuth()
+  const { user } = useAuthContext()
   const router = useRouter()
   const supabase = createClient()
 
@@ -48,17 +48,31 @@ export function UserProfile({ collapsed = false }: UserProfileProps) {
 
   const userDisplayName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'
   const userPlan = 'Free' // TODO: Get from user subscription data
+  const profileIcon = user.user_metadata?.profile_icon
+  const avatarUrl = user.user_metadata?.avatar_url
 
   return (
     <div className="px-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="w-full flex items-center gap-3 p-2 hover:bg-gray-800 transition-colors duration-150 rounded-md">
-            <Avatar
-              src={user.user_metadata?.avatar_url}
-              className="size-8"
-              initials={userDisplayName.charAt(0).toUpperCase()}
-            />
+            {avatarUrl ? (
+              <Avatar
+                src={avatarUrl}
+                className="size-8"
+                initials={userDisplayName.charAt(0).toUpperCase()}
+              />
+            ) : profileIcon ? (
+              <div className="size-8 text-2xl flex items-center justify-center">
+                {profileIcon}
+              </div>
+            ) : (
+              <Avatar
+                src={undefined}
+                className="size-8"
+                initials={userDisplayName.charAt(0).toUpperCase()}
+              />
+            )}
             <div className="flex-1 text-left min-w-0">
               <div className="text-sm font-medium text-gray-200 truncate">
                 {userDisplayName}

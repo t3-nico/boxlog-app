@@ -139,9 +139,23 @@ export function ApplicationLayoutNew({
             <div className="flex items-center gap-4">
               {!inSettings && (
                 <Headless.Menu as="div" className="relative">
-                  <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 dark:data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 dark:data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
-                    <Avatar src="/teams/catalyst.svg" className="w-5 h-5" />
-                    <SidebarLabel>BoxLog</SidebarLabel>
+                  <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
+                    {user?.user_metadata?.avatar_url ? (
+                      <Avatar src={user.user_metadata.avatar_url} className="w-5 h-5" />
+                    ) : user?.user_metadata?.profile_icon ? (
+                      <div className="w-5 h-5 text-sm flex items-center justify-center">
+                        {user.user_metadata.profile_icon}
+                      </div>
+                    ) : (
+                      <Avatar 
+                        src={undefined}
+                        className="w-5 h-5"
+                        initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                      />
+                    )}
+                    <SidebarLabel>
+                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+                    </SidebarLabel>
                     <ChevronDownIcon data-slot="icon" />
                   </Headless.MenuButton>
                   <Headless.MenuItems className="absolute left-0 mt-2 w-80 lg:w-64 origin-top-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-2 z-50">

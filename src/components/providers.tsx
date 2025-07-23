@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect, createContext, useContext } from 'rea
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ChatProvider } from '@/contexts/chat-context'
 import { CommandPalette } from '@/components/command-palette'
+import { ToastProvider } from '@/components/ui/toast'
 
 interface CommandPaletteContextType {
   open: () => void
@@ -39,9 +40,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ChatProvider>
-          <CommandPaletteProvider>
-            {children}
-          </CommandPaletteProvider>
+          <ToastProvider>
+            <CommandPaletteProvider>
+              {children}
+            </CommandPaletteProvider>
+          </ToastProvider>
         </ChatProvider>
       </AuthProvider>
     </QueryClientProvider>
