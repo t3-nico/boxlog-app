@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useAuthContext } from "@/contexts/AuthContext"
+import { createClient } from "@/lib/supabase/client"
 
 export function LoginForm({
   className,
@@ -18,13 +19,57 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null)
   const { signIn, signInWithOAuth, user, error: authError } = useAuthContext()
   const router = useRouter()
+  
+  // 2FA関連のstate
+  const [requiresMFA, setRequiresMFA] = useState(false)
+  const [mfaCode, setMfaCode] = useState("")
+  const [factorId, setFactorId] = useState("")
+  const [challengeId, setChallengeId] = useState("")
 
   // 認証成功後のリダイレクト
   useEffect(() => {
     if (user) {
-      router.push('/calendar')
+      checkMFAStatus()
     }
   }, [user, router])
+
+  // MFAステータスのチェック
+  const checkMFAStatus = async () => {
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      
+      if (error) {
+        console.error('MFA status check error:', error)
+        router.push('/calendar')
+        return
+      }
+      
+      // AAL1 = MFA未設定または未認証、AAL2 = MFA認証済み
+      if (data?.currentLevel === 'aal1' && data?.nextLevel === 'aal2') {
+        // MFAが必要な場合、チャレンジを開始
+        const { data: factors } = await supabase.auth.mfa.listFactors()
+        if (factors?.totp && factors.totp.length > 0) {
+          const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
+            factorId: factors.totp[0].id
+          })
+          
+          if (!challengeError && challengeData) {
+            setFactorId(factors.totp[0].id)
+            setChallengeId(challengeData.id)
+            setRequiresMFA(true)
+            return
+          }
+        }
+      }
+      
+      // MFAが不要またはすでに認証済みの場合はリダイレクト
+      router.push('/calendar')
+    } catch (err) {
+      console.error('Unexpected MFA check error:', err)
+      router.push('/calendar')
+    }
+  }
 
   // authErrorが変更されたらLoginFormのerrorステートを更新
   useEffect(() => {
@@ -63,6 +108,99 @@ export function LoginForm({
       setError(error.message)
     }
     setLoading(false)
+  }
+
+  // MFA検証処理
+  const handleMFAVerify = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!mfaCode || mfaCode.length !== 6) {
+      setError("Please enter a 6-digit verification code")
+      return
+    }
+    
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const supabase = createClient()
+      
+      const { error } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId,
+        code: mfaCode
+      })
+      
+      if (error) {
+        setError("Invalid verification code")
+        return
+      }
+      
+      // MFA認証成功後はカレンダーページにリダイレクト
+      router.push('/calendar')
+      
+    } catch (err) {
+      console.error('MFA verify error:', err)
+      setError('An unexpected error occurred')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // MFAが必要な場合は2FA認証フォームを表示
+  if (requiresMFA) {
+    return (
+      <form 
+        className={cn("flex flex-col gap-6", className)} 
+        onSubmit={handleMFAVerify}
+        {...props}
+      >
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-2xl font-bold">Two-Factor Authentication</h1>
+          <p className="text-muted-foreground text-sm text-balance">
+            Enter the 6-digit code from your authenticator app
+          </p>
+        </div>
+        <div className="grid gap-6">
+          <div className="grid gap-3">
+            <Label htmlFor="mfaCode">Verification Code</Label>
+            <Input 
+              id="mfaCode" 
+              type="text" 
+              placeholder="000000"
+              value={mfaCode}
+              onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              className="text-center font-mono text-lg tracking-widest"
+              maxLength={6}
+              required 
+            />
+          </div>
+          {error && (
+            <div className="text-sm text-destructive text-center">
+              {error}
+            </div>
+          )}
+          <Button type="submit" className="w-full" disabled={loading || mfaCode.length !== 6}>
+            {loading ? "Verifying..." : "Verify"}
+          </Button>
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="w-full"
+            onClick={() => {
+              setRequiresMFA(false)
+              setMfaCode("")
+              setFactorId("")
+              setChallengeId("")
+              setError(null)
+            }}
+            disabled={loading}
+          >
+            Back
+          </Button>
+        </div>
+      </form>
+    )
   }
 
   return (
