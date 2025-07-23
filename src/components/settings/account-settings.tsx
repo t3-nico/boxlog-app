@@ -26,6 +26,13 @@ export default function AccountSettings() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   
+  // メールアドレス変更関連
+  const [newEmail, setNewEmail] = useState('')
+  const [emailChangePassword, setEmailChangePassword] = useState('')
+  const [emailChangeError, setEmailChangeError] = useState<string | null>(null)
+  const [isEmailLoading, setIsEmailLoading] = useState(false)
+  const [showEmailChange, setShowEmailChange] = useState(false)
+  
   // 2FA関連のstate
   const [mfaFactors, setMfaFactors] = useState<any[]>([])
   const [is2FALoading, setIs2FALoading] = useState(false)
@@ -243,6 +250,61 @@ export default function AccountSettings() {
     }
   }
 
+  // メールアドレス変更処理
+  const handleEmailChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!newEmail || !emailChangePassword) {
+      setEmailChangeError('Both email and password are required')
+      return
+    }
+    
+    if (newEmail === email) {
+      setEmailChangeError('New email must be different from current email')
+      return
+    }
+    
+    setIsEmailLoading(true)
+    setEmailChangeError(null)
+    
+    try {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      
+      // まず現在のパスワードを確認（セキュリティのため）
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: emailChangePassword
+      })
+      
+      if (signInError) {
+        setEmailChangeError('Current password is incorrect')
+        return
+      }
+      
+      // メールアドレスを更新（確認メールが送信される）
+      const { error: updateError } = await supabase.auth.updateUser({
+        email: newEmail
+      })
+      
+      if (updateError) {
+        setEmailChangeError(updateError.message)
+        return
+      }
+      
+      success("Success", `A confirmation email has been sent to ${newEmail}. Please click the link in the email to complete the change.`)
+      setShowEmailChange(false)
+      setNewEmail('')
+      setEmailChangePassword('')
+      
+    } catch (err) {
+      console.error('Email change error:', err)
+      setEmailChangeError('An unexpected error occurred')
+    } finally {
+      setIsEmailLoading(false)
+    }
+  }
+
   const handleNameSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -365,14 +427,89 @@ export default function AccountSettings() {
             placeholder="Your name"
             required
           />
-          <Input
-            type="email"
-            aria-label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
-            required
-          />
+          <div className="space-y-2">
+            <Input
+              type="email"
+              aria-label="Email"
+              value={email}
+              placeholder="Email address"
+              readOnly
+              className="bg-gray-50 dark:bg-gray-800 cursor-not-allowed"
+            />
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowEmailChange(!showEmailChange)}
+              >
+                {showEmailChange ? 'Cancel' : 'Change Email'}
+              </Button>
+            </div>
+          </div>
+
+          {/* メールアドレス変更フォーム */}
+          {showEmailChange && (
+            <div className="space-y-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
+              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Change Email Address
+              </div>
+              
+              <form onSubmit={handleEmailChange} className="space-y-4">
+                <Input
+                  type="email"
+                  placeholder="New email address"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  required
+                />
+                <Input
+                  type="password"
+                  placeholder="Current password (for security)"
+                  value={emailChangePassword}
+                  onChange={(e) => setEmailChangePassword(e.target.value)}
+                  required
+                />
+                
+                {emailChangeError && (
+                  <div className="text-sm text-red-600 dark:text-red-400">
+                    {emailChangeError}
+                  </div>
+                )}
+                
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowEmailChange(false)
+                      setNewEmail('')
+                      setEmailChangePassword('')
+                      setEmailChangeError(null)
+                    }}
+                    disabled={isEmailLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isEmailLoading || !newEmail || !emailChangePassword}
+                  >
+                    {isEmailLoading ? 'Updating...' : 'Update Email'}
+                  </Button>
+                </div>
+              </form>
+              
+              <div className="text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600 pt-3">
+                <p className="font-medium mb-1">Important:</p>
+                <ul className="space-y-1">
+                  <li>• A confirmation email will be sent to your new address</li>
+                  <li>• Your current email will remain active until confirmed</li>
+                  <li>• Click the link in the confirmation email to complete the change</li>
+                </ul>
+              </div>
+            </div>
+          )}
           
           {/* Profile Picture Section */}
           <div className="space-y-4">
