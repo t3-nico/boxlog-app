@@ -182,6 +182,7 @@ Detailed documentation has been moved to specialized files and is automatically 
 - **CI/CD Status**: `docs/ci-cd/current-status.md` - Current CI/CD configuration status
 - **Database**: `docs/database/schema.md` - Database schema and relationships
 - **Troubleshooting**: `docs/troubleshooting/common-issues.md` - Common issues and solutions
+- **Authentication**: `docs/authentication/setup-guide.md` - Authentication system setup and usage guide
 
 > **Note**: When adding new documentation files, update the `claudeMd` array in `.claude/settings.local.json` to ensure automatic loading by Claude Code.
 
