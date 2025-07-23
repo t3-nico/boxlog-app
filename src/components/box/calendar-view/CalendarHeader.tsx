@@ -7,7 +7,8 @@ import {
   ChevronDown,
   Columns3,
   ClipboardList,
-  CheckCircle
+  CheckCircle,
+  Plus
 } from 'lucide-react'
 import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear } from 'date-fns'
 import { cn } from '@/lib/utils'
@@ -19,6 +20,7 @@ interface CalendarHeaderProps {
   currentDate: Date
   onNavigate: (direction: 'prev' | 'next' | 'today') => void
   onViewChange: (view: CalendarViewType) => void
+  onCreateEvent?: () => void
 }
 
 const viewOptions = [
@@ -27,7 +29,7 @@ const viewOptions = [
   { value: 'week-no-weekend' as CalendarViewType, label: 'Weekdays' },
   { value: 'week' as CalendarViewType, label: 'Week' },
   { value: '2week' as CalendarViewType, label: '2 Weeks' },
-  { value: 'schedule' as CalendarViewType, label: 'Schedule' },
+  { value: 'schedule' as CalendarViewType, label: 'Event' },
 ]
 
 const displayModeOptions = [
@@ -82,7 +84,8 @@ export function CalendarHeader({
   viewType,
   currentDate,
   onNavigate,
-  onViewChange
+  onViewChange,
+  onCreateEvent
 }: CalendarHeaderProps) {
   const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false)
   const isToday = new Date().toDateString() === currentDate.toDateString()
@@ -133,8 +136,18 @@ export function CalendarHeader({
           </h1>
         </div>
         
-        {/* 右側: 表示モードとビュー切り替えドロップダウン */}
+        {/* 右側: 新規イベント作成、表示モードとビュー切り替えドロップダウン */}
         <div className="flex items-center gap-3">
+          {/* 新規イベント作成ボタン */}
+          {onCreateEvent && (
+            <button
+              onClick={onCreateEvent}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 border border-blue-600 rounded-lg transition-colors shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>新規イベント</span>
+            </button>
+          )}
           {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}
           <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
             <button

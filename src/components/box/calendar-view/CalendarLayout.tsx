@@ -11,6 +11,7 @@ interface CalendarLayoutProps {
   onViewChange: (view: CalendarViewType) => void
   onDateSelect?: (date: Date) => void
   onCreateTask?: () => void
+  onCreateEvent?: () => void
 }
 
 export function CalendarLayout({
@@ -18,7 +19,8 @@ export function CalendarLayout({
   viewType,
   currentDate,
   onNavigate,
-  onViewChange
+  onViewChange,
+  onCreateEvent
 }: CalendarLayoutProps) {
   return (
     <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
@@ -28,6 +30,7 @@ export function CalendarLayout({
         currentDate={currentDate}
         onNavigate={onNavigate}
         onViewChange={onViewChange}
+        onCreateEvent={onCreateEvent}
       />
       
       {/* メインコンテンツ */}

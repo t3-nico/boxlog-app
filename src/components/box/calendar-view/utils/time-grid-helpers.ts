@@ -50,6 +50,11 @@ export interface CalendarTask {
   priority?: 'low' | 'medium' | 'high'
   isPlan?: boolean
   isRecord?: boolean
+  isEvent?: boolean
+  eventType?: 'event' | 'task' | 'reminder'
+  eventStatus?: 'confirmed' | 'tentative' | 'cancelled'
+  location?: string
+  url?: string
   satisfaction?: number
   focusLevel?: number
   energyLevel?: number

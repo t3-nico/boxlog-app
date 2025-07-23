@@ -190,6 +190,6 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     case 'week': return '週'
     case 'week-no-weekend': return '平日'
     case '2week': return '2週'
-    case 'schedule': return 'スケジュール'
+    case 'schedule': return 'イベント'
   }
 }

@@ -10,9 +10,11 @@ import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
 import { ScheduleView } from './views/ScheduleView'
 import { TaskReviewModal } from './components/TaskReviewModal'
+import { EventModal } from './components/EventModal'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
+import { useEventStore } from '@/stores/useEventStore'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -21,12 +23,17 @@ import {
   isValidViewType
 } from './utils/calendar-helpers'
 import type { CalendarViewType, CalendarViewProps, Task } from './types'
+import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/events'
 
 export function CalendarView({ className }: CalendarViewProps) {
   const [viewType, setViewType] = useState<CalendarViewType>('day')
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false)
+  const [eventDefaultDate, setEventDefaultDate] = useState<Date | undefined>(undefined)
+  const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
   
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
@@ -39,6 +46,17 @@ export function CalendarView({ className }: CalendarViewProps) {
     updateTaskStatus,
     getTasksForDateRange 
   } = useTaskStore()
+  
+  const {
+    events,
+    loading: eventsLoading,
+    error: eventsError,
+    fetchEvents,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    getEventsByDateRange
+  } = useEventStore()
   
   // LocalStorageからビュータイプを復元
   useEffect(() => {
@@ -67,6 +85,19 @@ export function CalendarView({ className }: CalendarViewProps) {
   const filteredTasks = useMemo(() => {
     return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
   }, [getTasksForDateRange, viewDateRange])
+  
+  // 表示範囲のイベントを取得
+  const filteredEvents = useMemo(() => {
+    return getEventsByDateRange(viewDateRange.start, viewDateRange.end)
+  }, [getEventsByDateRange, viewDateRange.start, viewDateRange.end])
+  
+  // イベントの初期ロードと更新
+  useEffect(() => {
+    fetchEvents({
+      startDate: viewDateRange.start,
+      endDate: viewDateRange.end
+    })
+  }, [viewDateRange, fetchEvents])
 
   // レコード取得（一時的にモックデータを使用）
   const records = useMemo(() => [
@@ -126,6 +157,43 @@ export function CalendarView({ className }: CalendarViewProps) {
     updateTaskStatus(taskId, status)
     setIsReviewModalOpen(false)
   }, [updateTaskStatus])
+  
+  // イベント関連のハンドラー
+  const handleEventClick = useCallback((event: Event) => {
+    setSelectedEvent(event)
+    setIsEventModalOpen(true)
+  }, [])
+  
+  const handleCreateEvent = useCallback((date?: Date, time?: string) => {
+    setSelectedEvent(null)
+    setEventDefaultDate(date)
+    setEventDefaultTime(time)
+    setIsEventModalOpen(true)
+  }, [])
+  
+  const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
+    try {
+      if ('id' in eventData) {
+        await updateEvent(eventData as UpdateEventRequest)
+      } else {
+        await createEvent(eventData as CreateEventRequest)
+      }
+      setIsEventModalOpen(false)
+      setSelectedEvent(null)
+    } catch (error) {
+      console.error('Failed to save event:', error)
+    }
+  }, [createEvent, updateEvent])
+  
+  const handleEventDelete = useCallback(async (eventId: string) => {
+    try {
+      await deleteEvent(eventId)
+      setIsEventModalOpen(false)
+      setSelectedEvent(null)
+    } catch (error) {
+      console.error('Failed to delete event:', error)
+    }
+  }, [deleteEvent])
   
   // ナビゲーション関数
   const handleNavigate = useCallback((direction: 'prev' | 'next' | 'today') => {
@@ -205,10 +273,13 @@ export function CalendarView({ className }: CalendarViewProps) {
     const commonProps = {
       dateRange: viewDateRange,
       tasks: filteredTasks,
+      events: filteredEvents,
       currentDate,
       onCreateTask: handleCreateTask,
       onCreateRecord: handleCreateRecord,
-      onTaskClick: handleTaskClick
+      onTaskClick: handleTaskClick,
+      onEventClick: handleEventClick,
+      onCreateEvent: handleCreateEvent
     }
 
     switch (viewType) {
@@ -238,15 +309,11 @@ export function CalendarView({ className }: CalendarViewProps) {
           <ScheduleView 
             {...commonProps}
             onTaskClick={handleTaskClick}
+            onEventClick={handleEventClick}
+            onCreateEvent={handleCreateEvent}
             onEmptySlotClick={(date, time) => {
-              // Handle empty slot click - could create new task
-              handleCreateTask({
-                title: '',
-                planned_start: new Date(`${format(date, 'yyyy-MM-dd')}T${time}`),
-                planned_duration: 60,
-                status: 'pending',
-                priority: 'medium'
-              })
+              // Handle empty slot click - could create new task or event
+              handleCreateEvent(date, time)
             }}
             onDateClick={handleDateSelect}
             useSplitLayout={planRecordMode === 'both'} // Auto-enable split when in 'both' mode
@@ -300,6 +367,7 @@ export function CalendarView({ className }: CalendarViewProps) {
         currentDate={currentDate}
         onNavigate={handleNavigate}
         onViewChange={handleViewChange}
+        onCreateEvent={() => handleCreateEvent()}
       >
         <div className="h-full overflow-hidden bg-white dark:bg-gray-800">
           {renderView()}
@@ -314,6 +382,17 @@ export function CalendarView({ className }: CalendarViewProps) {
         onSave={handleTaskSave}
         onDelete={handleTaskDelete}
         onStatusChange={handleStatusChange}
+      />
+      
+      {/* イベントモーダル */}
+      <EventModal
+        event={selectedEvent}
+        isOpen={isEventModalOpen}
+        onClose={() => setIsEventModalOpen(false)}
+        onSave={handleEventSave}
+        onDelete={handleEventDelete}
+        defaultDate={eventDefaultDate}
+        defaultTime={eventDefaultTime}
       />
     </>
   )

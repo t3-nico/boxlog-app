@@ -15,7 +15,7 @@ export function ViewSelector({ value, onChange }: ViewSelectorProps) {
     { value: 'week-no-weekend', label: '平日', shortcut: '5' },
     { value: 'week', label: '週', shortcut: '7' },
     { value: '2week', label: '2週', shortcut: '14' },
-    { value: 'schedule', label: 'スケジュール', shortcut: 'A' },
+    { value: 'schedule', label: 'イベント', shortcut: 'A' },
   ]
 
   const handleSelect = (viewType: CalendarViewType) => {

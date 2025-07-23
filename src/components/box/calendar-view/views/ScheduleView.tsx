@@ -7,24 +7,31 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
+import type { Event } from '@/types/events'
 
 interface ScheduleViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
+  events?: Event[]
   currentDate: Date
   onTaskClick?: (task: CalendarTask) => void
+  onEventClick?: (event: Event) => void
   onEmptySlotClick?: (date: Date, time: string) => void
   onDateClick?: (date: Date) => void
+  onCreateEvent?: (date?: Date, time?: string) => void
   useSplitLayout?: boolean
 }
 
 export function ScheduleView({ 
   dateRange,
   tasks,
+  events = [],
   currentDate,
   onTaskClick,
+  onEventClick,
   onEmptySlotClick,
   onDateClick,
+  onCreateEvent,
   useSplitLayout = false
 }: ScheduleViewProps) {
   const { planRecordMode } = useCalendarSettingsStore()
@@ -74,6 +81,25 @@ export function ScheduleView({
     }))
   }, [records, planRecordMode])
 
+  // Event[]をCalendarTask[]に変換（イベント用）
+  const eventTasks: CalendarTask[] = useMemo(() => {
+    return events.map(event => ({
+      id: event.id,
+      title: event.title,
+      startTime: event.startDate,
+      endTime: event.endDate || event.startDate,
+      color: event.color,
+      description: event.description || '',
+      status: 'scheduled' as const,
+      priority: 'medium' as const,
+      isEvent: true,
+      eventType: event.type,
+      eventStatus: event.status,
+      location: event.location,
+      url: event.url
+    }))
+  }, [events])
+
   // 1週間分の日付を生成
   const weekDates = useMemo(() => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 })
@@ -95,20 +121,43 @@ export function ScheduleView({
         .filter(task => isSameDay(task.startTime, date))
         .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
 
+      const dayEventTasks = eventTasks
+        .filter(task => isSameDay(task.startTime, date))
+        .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+
       return {
         date,
         planTasks: dayPlanTasks,
-        recordTasks: dayRecordTasks
+        recordTasks: dayRecordTasks,
+        eventTasks: dayEventTasks
       }
     })
-  }, [weekDates, planTasks, recordTasks])
+  }, [weekDates, planTasks, recordTasks, eventTasks])
 
   const handleTaskClick = (task: CalendarTask) => {
-    onTaskClick?.(task)
+    if (task.isEvent && onEventClick) {
+      // Find the original event
+      const originalEvent = events.find(e => e.id === task.id)
+      if (originalEvent) {
+        onEventClick(originalEvent)
+      }
+    } else {
+      onTaskClick?.(task)
+    }
   }
 
   return (
     <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+      {/* ヘッダー部分にAddボタンを追加 */}
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">イベント</h2>
+        <button
+          onClick={() => onCreateEvent?.()}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+        >
+          Add
+        </button>
+      </div>
 
       {planRecordMode === 'both' ? (
         /* 分割表示モード：予定と記録を左右に分割 */
@@ -121,7 +170,7 @@ export function ScheduleView({
               </h3>
             </div>
             <div className="overflow-y-auto h-full">
-              {dailyTasks.map(({ date, planTasks }) => (
+              {dailyTasks.map(({ date, planTasks, eventTasks }) => (
                 <div key={date.toISOString()} className="border-b border-gray-100 dark:border-gray-800">
                   {/* 日付ヘッダー */}
                   <div className={`p-4 ${isToday(date) ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
@@ -143,9 +192,9 @@ export function ScheduleView({
 
                   {/* タスクリスト */}
                   <div className="pb-4">
-                    {planTasks.length > 0 ? (
+                    {(planTasks.length > 0 || eventTasks.length > 0) ? (
                       <div className="space-y-2 px-4">
-                        {planTasks.map(task => (
+                        {[...planTasks, ...eventTasks].sort((a, b) => a.startTime.getTime() - b.startTime.getTime()).map(task => (
                           <div
                             key={task.id}
                             className="flex items-start gap-3 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 cursor-pointer transition-colors"
@@ -265,8 +314,8 @@ export function ScheduleView({
       ) : (
         /* 統一表示モード */
         <div className="flex-1 overflow-y-auto">
-          {dailyTasks.map(({ date, planTasks, recordTasks }) => {
-            const allTasks = [...planTasks, ...recordTasks].sort((a, b) => 
+          {dailyTasks.map(({ date, planTasks, recordTasks, eventTasks }) => {
+            const allTasks = [...planTasks, ...recordTasks, ...eventTasks].sort((a, b) => 
               a.startTime.getTime() - b.startTime.getTime()
             )
 
