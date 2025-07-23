@@ -11,6 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Event, CreateEventRequest, UpdateEventRequest, EventType, EventStatus } from '@/types/events'
 import { X, Calendar, Clock, MapPin, Link, Tag } from 'lucide-react'
+import { useTags } from '@/hooks/use-tags'
+import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface EventModalProps {
   event?: Event | null
@@ -70,6 +73,7 @@ export function EventModal({
     color: string
     location: string
     url: string
+    tagIds: string[]
   }>({
     title: '',
     description: '',
@@ -83,7 +87,11 @@ export function EventModal({
     color: '#3b82f6',
     location: '',
     url: '',
+    tagIds: [],
   })
+
+  // タグデータを取得
+  const { data: tags = [], isLoading: tagsLoading } = useTags(true)
 
   // フォームデータの初期化
   useEffect(() => {
@@ -103,6 +111,7 @@ export function EventModal({
           color: event.color,
           location: event.location || '',
           url: event.url || '',
+          tagIds: event.tags?.map(tag => tag.id) || [],
         })
       } else {
         // 新規作成モード
@@ -124,6 +133,7 @@ export function EventModal({
           color: '#3b82f6',
           location: '',
           url: '',
+          tagIds: [],
         })
       }
     }
@@ -155,6 +165,7 @@ export function EventModal({
         color: formData.color,
         location: formData.location || undefined,
         url: formData.url || undefined,
+        tagIds: formData.tagIds,
       }
 
       if (event) {
@@ -198,6 +209,30 @@ export function EventModal({
       endTime: isAllDay ? '' : '10:00',
     }))
   }
+
+  // タグ選択のヘルパー関数
+  const handleTagToggle = (tagId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tagIds: prev.tagIds.includes(tagId)
+        ? prev.tagIds.filter(id => id !== tagId)
+        : [...prev.tagIds, tagId]
+    }))
+  }
+
+  // フラットなタグリストを作成（階層構造を展開）
+  const flattenTags = (tagList: any[], level = 0): any[] => {
+    let flattened: any[] = []
+    tagList.forEach(tag => {
+      flattened.push({ ...tag, level })
+      if (tag.children && tag.children.length > 0) {
+        flattened = flattened.concat(flattenTags(tag.children, level + 1))
+      }
+    })
+    return flattened
+  }
+
+  const flatTags = flattenTags(tags)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -374,6 +409,74 @@ export function EventModal({
               onChange={(e) => handleChange('url', e.target.value)}
               placeholder="関連URLを入力（任意）"
             />
+          </div>
+
+          {/* タグ選択 */}
+          <div className="space-y-2">
+            <Label className="flex items-center gap-2">
+              <Tag className="w-4 h-4" />
+              タグ
+            </Label>
+            
+            {/* 選択されたタグの表示 */}
+            {formData.tagIds.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {formData.tagIds.map(tagId => {
+                  const tag = flatTags.find(t => t.id === tagId)
+                  if (!tag) return null
+                  return (
+                    <Badge 
+                      key={tagId} 
+                      variant="secondary" 
+                      className="text-xs"
+                      style={{ backgroundColor: tag.color + '20', color: tag.color }}
+                    >
+                      {tag.icon} {tag.name}
+                      <button
+                        type="button"
+                        onClick={() => handleTagToggle(tagId)}
+                        className="ml-1 hover:bg-red-200 rounded-full w-3 h-3 flex items-center justify-center text-xs"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  )
+                })}
+              </div>
+            )}
+            
+            {/* タグ選択リスト */}
+            <div className="border rounded-md p-3 max-h-32 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+              {tagsLoading ? (
+                <div className="text-sm text-gray-500">タグを読み込み中...</div>
+              ) : flatTags.length > 0 ? (
+                <div className="space-y-1">
+                  {flatTags.map(tag => (
+                    <div 
+                      key={tag.id} 
+                      className="flex items-center space-x-2"
+                      style={{ paddingLeft: `${tag.level * 12}px` }}
+                    >
+                      <Checkbox
+                        id={`tag-${tag.id}`}
+                        checked={formData.tagIds.includes(tag.id)}
+                        onCheckedChange={() => handleTagToggle(tag.id)}
+                      />
+                      <label 
+                        htmlFor={`tag-${tag.id}`}
+                        className="text-sm cursor-pointer flex items-center gap-1"
+                        style={{ color: tag.color }}
+                      >
+                        <span>{tag.icon}</span>
+                        <span>{tag.name}</span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-gray-500">利用可能なタグがありません</div>
+              )}
+            </div>
           </div>
 
           <DialogFooter className="flex justify-between">

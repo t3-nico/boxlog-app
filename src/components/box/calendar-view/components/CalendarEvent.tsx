@@ -142,6 +142,29 @@ export function CalendarEventComponent({
               📍 {event.location}
             </div>
           )}
+          
+          {/* タグ表示（コンパクトモードでない場合） */}
+          {!compact && event.tags && event.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {event.tags.slice(0, 3).map(tag => (
+                <span
+                  key={tag.id}
+                  className="inline-flex items-center px-1 py-0.5 rounded text-xs"
+                  style={{ 
+                    backgroundColor: `${tag.color}20`,
+                    color: tag.color,
+                    fontSize: '10px'
+                  }}
+                >
+                  {tag.icon && <span className="mr-0.5">{tag.icon}</span>}
+                  {tag.name}
+                </span>
+              ))}
+              {event.tags.length > 3 && (
+                <span className="text-xs text-gray-400">+{event.tags.length - 3}</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* アクションボタン（ホバー時に表示） */}

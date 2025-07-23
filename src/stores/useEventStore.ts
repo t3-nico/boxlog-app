@@ -21,6 +21,9 @@ const convertEntityToEvent = (entity: EventEntity): Event => {
     endDate = new Date(`${entity.end_date}T${entity.end_time || '23:59:59'}`)
   }
 
+  // Convert tag data from entity format
+  const tags = entity.event_tags?.map(eventTag => eventTag.tags).filter(Boolean) || []
+
   return {
     id: entity.id,
     title: entity.title,
@@ -34,7 +37,7 @@ const convertEntityToEvent = (entity: EventEntity): Event => {
     recurrencePattern: entity.recurrence_pattern,
     location: entity.location,
     url: entity.url,
-    tags: [], // Tags will be implemented later
+    tags,
     createdAt: new Date(entity.created_at),
     updatedAt: new Date(entity.updated_at),
   }
@@ -153,7 +156,7 @@ export const useEventStore = create<EventStore>()(
             recurrence_pattern: eventData.recurrencePattern,
             location: eventData.location,
             url: eventData.url,
-            // tag_ids: eventData.tagIds || [], // Tags will be implemented later
+            tag_ids: eventData.tagIds || [],
           }
 
           const response = await fetch('/api/events', {
@@ -217,7 +220,7 @@ export const useEventStore = create<EventStore>()(
           if (eventData.recurrencePattern) apiData.recurrence_pattern = eventData.recurrencePattern
           if (eventData.location !== undefined) apiData.location = eventData.location
           if (eventData.url !== undefined) apiData.url = eventData.url
-          // if (eventData.tagIds) apiData.tag_ids = eventData.tagIds // Tags will be implemented later
+          if (eventData.tagIds !== undefined) apiData.tag_ids = eventData.tagIds
 
           const response = await fetch(`/api/events/${eventData.id}`, {
             method: 'PUT',

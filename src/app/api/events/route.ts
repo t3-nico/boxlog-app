@@ -76,10 +76,23 @@ export async function GET(req: NextRequest) {
 
   const { start_date, end_date, event_type, status, tag_ids, search, limit, offset } = parsed.data
 
-  // Build query
+  // Build query with tag information
   let query = supabase
     .from('events')
-    .select('*')
+    .select(`
+      *,
+      event_tags (
+        tag_id,
+        tags (
+          id,
+          name,
+          color,
+          icon,
+          parent_id
+        )
+      )
+    `)
+    .eq('user_id', user.id)
     .order('start_date', { ascending: true })
     .order('start_time', { ascending: true })
 
@@ -173,7 +186,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: eventError.message }, { status: 500 })
   }
 
-  // Note: Tag associations will be implemented later
+  // Handle tag associations if provided
+  if (eventData.tag_ids && eventData.tag_ids.length > 0) {
+    const eventTagData = eventData.tag_ids.map((tagId: string) => ({
+      event_id: event.id,
+      tag_id: tagId,
+    }))
+
+    const { error: tagError } = await supabase
+      .from('event_tags')
+      .insert(eventTagData)
+
+    if (tagError) {
+      console.error('Failed to create tag associations:', tagError)
+      // Don't fail the entire request for tag association errors
+    }
+  }
   
   return NextResponse.json(event, { status: 201 })
 }

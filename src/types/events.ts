@@ -37,6 +37,16 @@ export interface EventEntity {
   url?: string
   created_at: string
   updated_at: string
+  event_tags?: Array<{
+    tag_id: string
+    tags: {
+      id: string
+      name: string
+      color: string
+      icon?: string
+      parent_id?: string
+    }
+  }>
 }
 
 export interface EventTagEntity {
@@ -64,6 +74,8 @@ export interface Event {
     id: string
     name: string
     color: string
+    icon?: string
+    parent_id?: string
   }>
   createdAt: Date
   updatedAt: Date

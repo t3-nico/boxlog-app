@@ -33,7 +33,9 @@
       "Bash(npx next build:*)",
       "WebFetch(domain:www.kibo-ui.com)",
       "WebFetch(domain:docs.anthropic.com)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npx supabase projects:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }
