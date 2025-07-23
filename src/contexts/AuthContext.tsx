@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       } catch (err) {
         console.error('Unexpected error getting session:', err)
-        setError('認証の初期化でエラーが発生しました')
+        setError('Failed to initialize authentication')
       } finally {
         setLoading(false)
       }
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return response
     } catch (err) {
-      const errorMessage = 'サインアップでエラーが発生しました'
+      const errorMessage = 'An error occurred during sign up'
       setError(errorMessage)
       return {
         data: { user: null, session: null },
@@ -119,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return response
     } catch (err) {
-      const errorMessage = 'ログインでエラーが発生しました'
+      const errorMessage = 'An error occurred during login'
       setError(errorMessage)
       return {
         data: { user: null, session: null },
@@ -156,7 +156,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error: null
       }
     } catch (err) {
-      const errorMessage = `${provider} ログインでエラーが発生しました`
+      const errorMessage = `An error occurred during ${provider} login`
       setError(errorMessage)
       return {
         data: { user: null, session: null },
@@ -178,7 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       return { error }
     } catch (err) {
-      const errorMessage = 'ログアウトでエラーが発生しました'
+      const errorMessage = 'An error occurred during logout'
       setError(errorMessage)
       return { error: { message: errorMessage, name: 'UnexpectedError', status: 500 } as AuthError }
     } finally {
@@ -201,7 +201,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return { error }
     } catch (err) {
-      const errorMessage = 'パスワードリセットでエラーが発生しました'
+      const errorMessage = 'An error occurred during password reset'
       setError(errorMessage)
       return { error: { message: errorMessage, name: 'UnexpectedError', status: 500 } as AuthError }
     } finally {
@@ -230,7 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         error: null
       }
     } catch (err) {
-      const errorMessage = 'パスワード更新でエラーが発生しました'
+      const errorMessage = 'An error occurred during password update'
       setError(errorMessage)
       return {
         data: { user: null, session: null },

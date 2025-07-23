@@ -84,7 +84,7 @@ export function LoginForm({
       await signIn(email, password)
     } catch (err) {
       console.error("LoginForm handleSubmit catch error:", err)
-      setError('予期せぬエラーが発生しました')
+      setError('An unexpected error occurred')
     } finally {
       setLoading(false)
     }

@@ -25,7 +25,7 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-          <p className="mt-4 text-sm text-muted-foreground">認証状態を確認中...</p>
+          <p className="mt-4 text-sm text-muted-foreground">Checking authentication status...</p>
         </div>
       </div>
     )
@@ -36,8 +36,8 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
     return fallback || (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium">認証が必要です</p>
-          <p className="mt-2 text-sm text-muted-foreground">ログインページにリダイレクトしています...</p>
+          <p className="text-lg font-medium">Authentication Required</p>
+          <p className="mt-2 text-sm text-muted-foreground">Redirecting to login page...</p>
         </div>
       </div>
     )
