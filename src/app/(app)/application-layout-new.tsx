@@ -91,7 +91,6 @@ export function ApplicationLayoutNew({
   let inSettings = pathname.startsWith('/settings')
   let inReview = pathname.startsWith('/review')
   let is404Page = pathname === '/404' || pathname.includes('not-found') || pathname === '/_not-found'
-  let [collapsed, setCollapsed] = useState(false)
   const { user, signOut } = useAuthContext()
   const { open: openCommandPalette } = useCommandPalette()
   const router = useRouter()
@@ -99,6 +98,12 @@ export function ApplicationLayoutNew({
   
   // AI Chat Sidebar state
   const [isAIChatOpen, setIsAIChatOpen] = useState(false)
+  
+  // Right sidebar visibility state (like Google Calendar)
+  const [isRightSidebarHidden, setIsRightSidebarHidden] = useState(false)
+  
+  // Sidebar state from store
+  const { collapsed, setCollapsed } = useSidebarStore()
   
   // SmartFolder and Tag filtering
   const { setSmartFolderFilter, setTagFilter, filters } = useBoxStore()
@@ -565,14 +570,17 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="min-h-screen bg-white dark:bg-gray-800" style={{marginLeft: collapsed ? '64px' : '256px', marginRight: isAIChatOpen ? '320px' : '48px'}}>
+          <div className="min-h-screen bg-white dark:bg-gray-800 transition-all duration-300 ease-in-out" style={{
+            marginLeft: collapsed ? '64px' : '256px', 
+            marginRight: isAIChatOpen ? '320px' : (isRightSidebarHidden ? '0px' : '48px')
+          }}>
             <div className="h-full overflow-auto">
               {children}
             </div>
           </div>
           
           {/* Right Icon Bar - Hide when AI Chat is open */}
-          {!isAIChatOpen && (
+          {!isAIChatOpen && !isRightSidebarHidden && (
             <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '64px', bottom: '0'}}>
               <button
                 onClick={() => setIsAIChatOpen(true)}
@@ -582,6 +590,25 @@ export function ApplicationLayoutNew({
                 <SparklesIcon className="w-5 h-5" />
               </button>
             </div>
+          )}
+          
+          {/* Fixed toggle button at bottom right - always visible when not in AI chat */}
+          {!isAIChatOpen && (
+            <button
+              onClick={() => setIsRightSidebarHidden(!isRightSidebarHidden)}
+              className={`fixed right-2 bottom-4 p-2 rounded-lg transition-colors text-gray-600 dark:text-gray-400 z-40 ${
+                isRightSidebarHidden 
+                  ? 'bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+              }`}
+              title={isRightSidebarHidden ? "Show sidebar" : "Hide sidebar"}
+            >
+              {isRightSidebarHidden ? (
+                <PanelLeft className="w-5 h-5" />
+              ) : (
+                <PanelRight className="w-5 h-5" />
+              )}
+            </button>
           )}
           
           {/* Right Chat Sidebar (conditionally shown) */}
