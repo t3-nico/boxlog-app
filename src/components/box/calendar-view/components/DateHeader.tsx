@@ -12,6 +12,8 @@ interface DateHeaderProps {
 }
 
 export function DateHeader({ dates, className = '', planRecordMode }: DateHeaderProps) {
+  console.log('DateHeader planRecordMode:', planRecordMode)
+  
   return (
     <div className={cn("flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900", className)}>
       <div className="flex">

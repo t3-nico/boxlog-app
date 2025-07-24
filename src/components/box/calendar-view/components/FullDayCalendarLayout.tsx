@@ -130,18 +130,6 @@ export function FullDayCalendarLayout({
                   ))}
                 </div>
                 
-                {/* bothモードの場合は中央に分割線を表示 */}
-                {planRecordMode === 'both' && (
-                  <>
-                    <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-0.5"></div>
-                    {/* ラベル */}
-                    <div className="absolute top-0 left-0 right-0 h-6 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-30 flex">
-                      <div className="flex-1 text-center text-xs text-gray-600 dark:text-gray-400 py-1">event</div>
-                      <div className="w-px bg-gray-400 dark:bg-gray-600"></div>
-                      <div className="flex-1 text-center text-xs text-gray-600 dark:text-gray-400 py-1">log</div>
-                    </div>
-                  </>
-                )}
                 
                 {/* 今日のみに現在時刻線を表示 */}
                 {isToday(day) && (
