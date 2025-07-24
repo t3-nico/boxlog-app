@@ -39,10 +39,6 @@ export function TimeAxisLabels({
       )}
       style={{ width: TIME_LABEL_WIDTH }}
     >
-      {/* bothモードの場合は全体を通る中央分割線を表示 */}
-      {planRecordMode === 'both' && (
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
-      )}
       
       {hours.map(hour => (
         <div
