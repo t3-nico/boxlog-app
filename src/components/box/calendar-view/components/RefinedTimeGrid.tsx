@@ -87,7 +87,7 @@ function TimeAxisLabels({
   const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i)
   
   return (
-    <div className="relative w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+    <div className="relative w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-900">
       
       {hours.map(hour => (
         <div 

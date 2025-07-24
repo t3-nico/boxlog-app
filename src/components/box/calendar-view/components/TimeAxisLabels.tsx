@@ -34,7 +34,7 @@ export function TimeAxisLabels({
   return (
     <div 
       className={cn(
-        "shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 relative",
+        "shrink-0 bg-white dark:bg-gray-900 relative",
         className
       )}
       style={{ width: TIME_LABEL_WIDTH }}
