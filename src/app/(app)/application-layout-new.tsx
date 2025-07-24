@@ -101,8 +101,6 @@ export function ApplicationLayoutNew({
   // カレンダーページかどうかを判定
   const isCalendarPage = pathname.startsWith('/calendar')
   
-  // デバッグ用
-  console.log('Current page:', { pathname, isCalendarPage })
   
   // 日付選択時のハンドラー
   const handleDateSelect = (date: Date | undefined) => {
@@ -121,12 +119,6 @@ export function ApplicationLayoutNew({
       const currentView = pathname.split('/calendar/')[1]?.split('?')[0] || 'day'
       const newUrl = `/calendar/${currentView}?date=${dateParam}`
       
-      console.log('Calendar date click:', {
-        pathname,
-        currentView,
-        dateParam,
-        newUrl
-      })
       
       // ページの再レンダリングを強制するため、現在のURLと異なる場合のみナビゲート
       if (newUrl !== `${pathname}${window.location.search}`) {

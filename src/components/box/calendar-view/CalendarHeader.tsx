@@ -39,46 +39,9 @@ const displayModeOptions = [
 ] as const
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
-  switch (viewType) {
-    case 'day':
-      const weekNumber = getWeek(date, { weekStartsOn: 1 })
-      return `${format(date, 'MMMM yyyy')}|week${weekNumber}`
-    case '3day':
-      const start3 = subDays(date, 1)
-      const end3 = addDays(date, 1)
-      return `${format(start3, 'MMM d')} – ${format(end3, 'MMM d, yyyy')}`
-    case 'week':
-    case 'week-no-weekend':
-      const weekStart = startOfWeek(date, { weekStartsOn: 1 })
-      const weekEnd = viewType === 'week-no-weekend' 
-        ? addDays(weekStart, 4)
-        : endOfWeek(date, { weekStartsOn: 1 })
-      
-      if (isSameMonth(weekStart, weekEnd)) {
-        return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'd, yyyy')}`
-      } else if (isSameYear(weekStart, weekEnd)) {
-        return `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d, yyyy')}`
-      } else {
-        return `${format(weekStart, 'MMM d, yyyy')} – ${format(weekEnd, 'MMM d, yyyy')}`
-      }
-    case '2week':
-      const twoWeekStart = startOfWeek(date, { weekStartsOn: 1 })
-      const twoWeekEnd = addDays(twoWeekStart, 13)
-      return `${format(twoWeekStart, 'MMM d')} – ${format(twoWeekEnd, 'MMM d, yyyy')}`
-    case 'schedule':
-      const scheduleWeekStart = startOfWeek(date, { weekStartsOn: 1 })
-      const scheduleWeekEnd = endOfWeek(date, { weekStartsOn: 1 })
-      
-      if (isSameMonth(scheduleWeekStart, scheduleWeekEnd)) {
-        return `${format(scheduleWeekStart, 'MMM d')} – ${format(scheduleWeekEnd, 'd, yyyy')}`
-      } else if (isSameYear(scheduleWeekStart, scheduleWeekEnd)) {
-        return `${format(scheduleWeekStart, 'MMM d')} – ${format(scheduleWeekEnd, 'MMM d, yyyy')}`
-      } else {
-        return `${format(scheduleWeekStart, 'MMM d, yyyy')} – ${format(scheduleWeekEnd, 'MMM d, yyyy')}`
-      }
-    default:
-      return format(date, 'MMMM yyyy')
-  }
+  // すべてのビューで統一した「July 2025 week30」形式
+  const weekNumber = getWeek(date, { weekStartsOn: 1 })
+  return `${format(date, 'MMMM yyyy')}|week${weekNumber}`
 }
 
 export function CalendarHeader({
@@ -162,7 +125,7 @@ export function CalendarHeader({
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 border border-blue-600 rounded-lg transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
-              <span>新規イベント</span>
+              <span>Add</span>
             </button>
           )}
           {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}

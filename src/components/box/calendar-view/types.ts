@@ -74,3 +74,33 @@ export interface RecordStats {
   avgSatisfaction: number
   unplannedTasks: number
 }
+
+// Calendar Event type (extends Event with display-specific properties)
+export interface CalendarEvent {
+  id: string
+  title: string
+  description?: string
+  startDate: Date
+  endDate?: Date
+  isAllDay: boolean
+  type: 'event' | 'task' | 'reminder'
+  status: 'confirmed' | 'tentative' | 'cancelled'
+  color: string
+  location?: string
+  url?: string
+  tags?: Array<{
+    id: string
+    name: string
+    color: string
+    icon?: string
+    parent_id?: string
+  }>
+  createdAt: Date
+  updatedAt: Date
+  // Display-specific properties
+  displayStartDate: Date
+  displayEndDate: Date
+  duration: number // minutes
+  isMultiDay: boolean
+  isRecurring: boolean
+}

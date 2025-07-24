@@ -75,13 +75,8 @@ export function SplitCalendarLayout({
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
   
-  console.log('🔍 Current planRecordMode:', planRecordMode)
-  console.log('🔍 Available dates:', dates)
-  console.log('🔍 Events:', events)
-  
-  // 一時的に 'both' モードを強制（テスト用）
-  const effectivePlanRecordMode = 'both' // planRecordMode
-  console.log('🔍 Using effectivePlanRecordMode:', effectivePlanRecordMode)
+  // 実際のplanRecordModeを使用
+  const effectivePlanRecordMode = planRecordMode
   
   // 初期スクロール位置を現在時刻に設定
   useEffect(() => {
@@ -93,14 +88,10 @@ export function SplitCalendarLayout({
       const scrollHour = Math.max(0, currentHour - 2)
       const scrollPosition = scrollHour * HOUR_HEIGHT
       
-      console.log('📍 Scrolling to:', { currentHour, scrollHour, scrollPosition })
-      
       // スクロールコンテナを見つけてスクロール
       const scrollContainers = document.querySelectorAll('.calendar-scroll')
-      console.log('📍 Found scroll containers:', scrollContainers.length)
       
       scrollContainers.forEach((container, index) => {
-        console.log(`📍 Scrolling container ${index}:`, container)
         container.scrollTop = scrollPosition
       })
     }

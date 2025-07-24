@@ -3,9 +3,9 @@
 import React from 'react'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
-import { SplitDayHeader } from '../components/SplitDayHeader'
-import { DateHeader } from '../components/DateHeader'
-import type { Task, TaskRecord } from '../types'
+import { UnifiedCalendarHeader } from '../components/UnifiedCalendarHeader'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import type { Task, TaskRecord, CalendarViewType } from '../types'
 
 interface CreateTaskInput {
   title: string
@@ -37,6 +37,11 @@ interface SplitDayViewProps {
   onCreateRecord?: (record: CreateRecordInput) => void
   onTaskClick?: (task: any) => void
   onRecordClick?: (record: TaskRecord) => void
+  onViewChange?: (viewType: CalendarViewType) => void
+  onNavigatePrev?: () => void
+  onNavigateNext?: () => void
+  onNavigateToday?: () => void
+  onCreateEvent?: (date?: Date, time?: string) => void
 }
 
 export function SplitDayView({
@@ -46,31 +51,35 @@ export function SplitDayView({
   onCreateTask,
   onCreateRecord,
   onTaskClick,
-  onRecordClick
+  onRecordClick,
+  onViewChange,
+  onNavigatePrev,
+  onNavigateNext,
+  onNavigateToday,
+  onCreateEvent
 }: SplitDayViewProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
 
   return (
-    <CalendarViewAnimation viewType="day">
-      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-        {/* 統計ヘッダー */}
-        <SplitDayHeader 
-          date={date} 
-          tasks={tasks} 
-          records={records} 
-        />
-
-        {/* 日付ヘッダー */}
-        <DateHeader dates={[date]} />
-
-        {/* 共通SplitCalendarLayoutコンポーネントを使用 */}
-        <SplitCalendarLayout
-          dates={[date]}
-          tasks={tasks}
-          dateRange={{ start: date, end: date, days: [date] }}
-          onTaskClick={onTaskClick}
-          onCreateTask={onCreateTask}
-          onCreateRecord={onCreateRecord}
-        />
+    <CalendarViewAnimation viewType="split-day">
+      <div 
+        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
+        style={{ overscrollBehavior: 'none' }}
+      >
+        {/* スクロール可能なメインコンテンツ */}
+        <div 
+          className="flex-1 min-h-0 overflow-hidden" 
+          style={{ overscrollBehavior: 'none' }}
+        >
+          <SplitCalendarLayout
+            dates={[date]}
+            tasks={tasks}
+            dateRange={{ start: date, end: date, days: [date] }}
+            onTaskClick={onTaskClick}
+            onCreateTask={onCreateTask}
+            onCreateRecord={onCreateRecord}
+          />
+        </div>
       </div>
     </CalendarViewAnimation>
   )

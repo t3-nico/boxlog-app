@@ -4,8 +4,8 @@ import React, { useMemo } from 'react'
 import { isWeekend } from 'date-fns'
 import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
 import { CalendarViewAnimation } from '../components/ViewTransition'
-import { DateHeader } from '../components/DateHeader'
-import type { ViewDateRange, Task, TaskRecord } from '../types'
+import { UnifiedCalendarHeader } from '../components/UnifiedCalendarHeader'
+import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
 import { CalendarTask } from '../utils/time-grid-helpers'
 
 interface CreateTaskInput {
@@ -39,7 +39,7 @@ interface WeekdayViewProps {
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
-  onViewChange?: (viewType: 'day' | 'three-day' | 'week' | 'weekday') => void
+  onViewChange?: (viewType: CalendarViewType) => void
   onNavigatePrev?: () => void
   onNavigateNext?: () => void
   onNavigateToday?: () => void
@@ -66,22 +66,39 @@ export function WeekdayView({
 
   return (
     <CalendarViewAnimation viewType="week-no-weekend">
-      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-        
-        {/* 日付ヘッダー */}
-        <DateHeader dates={weekdays} />
-        
-        {/* 共通SplitCalendarLayoutコンポーネントを使用 */}
-        <SplitCalendarLayout
+      <div 
+        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
+        style={{ overscrollBehavior: 'none' }}
+      >
+        {/* 統一ヘッダー */}
+        <UnifiedCalendarHeader
+          viewType="week-no-weekend"
+          currentDate={currentDate}
           dates={weekdays}
-          tasks={tasks}
-          dateRange={dateRange}
-          onTaskClick={onTaskClick}
-          onEmptyClick={onEmptyClick}
-          onTaskDrag={onTaskDrag}
-          onCreateTask={onCreateTask}
-          onCreateRecord={onCreateRecord}
+          onNavigate={(direction) => {
+            if (direction === 'prev') onNavigatePrev?.()
+            else if (direction === 'next') onNavigateNext?.()
+            else if (direction === 'today') onNavigateToday?.()
+          }}
+          onViewChange={onViewChange || (() => {})}
         />
+        
+        {/* スクロール可能なメインコンテンツ */}
+        <main 
+          className="flex-1 min-h-0 overflow-hidden" 
+          style={{ overscrollBehavior: 'none' }}
+        >
+          <SplitCalendarLayout
+            dates={weekdays}
+            tasks={tasks}
+            dateRange={dateRange}
+            onTaskClick={onTaskClick}
+            onEmptyClick={onEmptyClick}
+            onTaskDrag={onTaskDrag}
+            onCreateTask={onCreateTask}
+            onCreateRecord={onCreateRecord}
+          />
+        </main>
       </div>
     </CalendarViewAnimation>
   )

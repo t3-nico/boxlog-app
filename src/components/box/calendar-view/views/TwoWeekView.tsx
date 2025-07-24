@@ -4,9 +4,9 @@ import React, { useMemo } from 'react'
 import { isWeekend, startOfWeek, addDays } from 'date-fns'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
-import { DateHeader } from '../components/DateHeader'
+import { UnifiedCalendarHeader } from '../components/UnifiedCalendarHeader'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
-import type { ViewDateRange, Task, TaskRecord } from '../types'
+import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
 interface CreateTaskInput {
@@ -44,7 +44,7 @@ interface TwoWeekViewProps {
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
-  onViewChange?: (viewType: 'day' | 'three-day' | 'week' | 'weekday') => void
+  onViewChange?: (viewType: CalendarViewType) => void
   onNavigatePrev?: () => void
   onNavigateNext?: () => void
   onNavigateToday?: () => void
@@ -103,20 +103,24 @@ export function TwoWeekView({
 
   return (
     <CalendarViewAnimation viewType="2week">
-      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-        
-        {/* 日付ヘッダー */}
-        <DateHeader dates={allDates} planRecordMode={planRecordMode} />
-
-        {/* 24時間表示のFullDayCalendarLayoutを使用 */}
-        <FullDayCalendarLayout
-          dates={allDates}
-          tasks={tasks}
-          events={events}
-          dateRange={dateRange}
-          onEventClick={onEventClick}
-          onCreateEvent={onCreateEvent}
-        />
+      <div 
+        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
+        style={{ overscrollBehavior: 'none' }}
+      >
+        {/* スクロール可能なメインコンテンツ */}
+        <div 
+          className="flex-1 min-h-0 overflow-hidden" 
+          style={{ overscrollBehavior: 'none' }}
+        >
+          <FullDayCalendarLayout
+            dates={allDates}
+            tasks={tasks}
+            events={events}
+            dateRange={dateRange}
+            onEventClick={onEventClick}
+            onCreateEvent={onCreateEvent}
+          />
+        </div>
       </div>
     </CalendarViewAnimation>
   )

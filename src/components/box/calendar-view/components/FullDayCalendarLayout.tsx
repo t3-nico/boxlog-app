@@ -37,7 +37,6 @@ export function FullDayCalendarLayout({
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
   
-  console.log('FullDayCalendarLayout dates:', dates.length, dates.map(d => d.toDateString()))
 
   // Recordsの取得
   useEffect(() => {

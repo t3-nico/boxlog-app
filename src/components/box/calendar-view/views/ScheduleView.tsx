@@ -3,22 +3,27 @@
 import React, { useMemo, useEffect } from 'react'
 import { format, isToday, isSameDay, addDays, startOfWeek } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { CalendarViewAnimation } from '../components/ViewTransition'
+import { UnifiedCalendarHeader } from '../components/UnifiedCalendarHeader'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { CalendarTask } from '../utils/time-grid-helpers'
-import type { ViewDateRange, Task, TaskRecord } from '../types'
-import type { Event } from '@/types/events'
+import type { ViewDateRange, Task, TaskRecord, CalendarEvent, CalendarViewType } from '../types'
 
 interface ScheduleViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
-  events?: Event[]
+  events?: CalendarEvent[]
   currentDate: Date
   onTaskClick?: (task: CalendarTask) => void
-  onEventClick?: (event: Event) => void
+  onEventClick?: (event: CalendarEvent) => void
   onEmptySlotClick?: (date: Date, time: string) => void
   onDateClick?: (date: Date) => void
   onCreateEvent?: (date?: Date, time?: string) => void
+  onViewChange?: (viewType: CalendarViewType) => void
+  onNavigatePrev?: () => void
+  onNavigateNext?: () => void
+  onNavigateToday?: () => void
   useSplitLayout?: boolean
 }
 
@@ -32,6 +37,10 @@ export function ScheduleView({
   onEmptySlotClick,
   onDateClick,
   onCreateEvent,
+  onViewChange,
+  onNavigatePrev,
+  onNavigateNext,
+  onNavigateToday,
   useSplitLayout = false
 }: ScheduleViewProps) {
   const { planRecordMode } = useCalendarSettingsStore()
@@ -147,17 +156,16 @@ export function ScheduleView({
   }
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-      {/* ヘッダー部分にAddボタンを追加 */}
-      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">イベント</h2>
-        <button
-          onClick={() => onCreateEvent?.()}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+    <CalendarViewAnimation viewType="schedule">
+      <div 
+        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
+        style={{ overscrollBehavior: 'none' }}
+      >
+        {/* スクロール可能なメインコンテンツ */}
+        <div 
+          className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-gray-800" 
+          style={{ overscrollBehavior: 'none' }}
         >
-          Add
-        </button>
-      </div>
 
       {planRecordMode === 'both' ? (
         /* 分割表示モード：予定と記録を左右に分割 */
@@ -409,6 +417,8 @@ export function ScheduleView({
           })}
         </div>
       )}
-    </div>
+        </div>
+      </div>
+    </CalendarViewAnimation>
   )
 }

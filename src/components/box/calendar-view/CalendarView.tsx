@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { useRouter, usePathname } from 'next/navigation'
 import { CalendarLayout } from './CalendarLayout'
+import { UnifiedCalendarHeader } from './components/UnifiedCalendarHeader'
 import { DayView } from './views/DayView'
 import { SplitDayView } from './views/SplitDayView'
 import { ThreeDayView } from './views/ThreeDayView'
@@ -23,7 +24,8 @@ import {
   filterTasksForDateRange,
   isValidViewType
 } from './utils/calendar-helpers'
-import type { CalendarViewType, CalendarViewProps, Task } from './types'
+import { convertEventsToCalendarEvents } from './utils/event-converters'
+import type { CalendarViewType, CalendarViewProps, Task, CalendarEvent } from './types'
 import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/events'
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
@@ -50,6 +52,7 @@ export function CalendarView({
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
   const { planRecordMode } = useCalendarSettingsStore()
+  const taskStore = useTaskStore()
   const { 
     tasks, 
     createTask, 
@@ -57,8 +60,9 @@ export function CalendarView({
     deleteTask, 
     updateTaskStatus,
     getTasksForDateRange 
-  } = useTaskStore()
+  } = taskStore
   
+  const eventStore = useEventStore()
   const {
     events,
     loading: eventsLoading,
@@ -68,7 +72,7 @@ export function CalendarView({
     updateEvent,
     deleteEvent,
     getEventsByDateRange
-  } = useEventStore()
+  } = eventStore
   
   // LocalStorageからビュータイプを復元
   useEffect(() => {
@@ -102,21 +106,26 @@ export function CalendarView({
   
   // 表示範囲のタスクを取得
   const filteredTasks = useMemo(() => {
-    return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
-  }, [getTasksForDateRange, viewDateRange])
+    return taskStore.getTasksForDateRange(viewDateRange.start, viewDateRange.end)
+  }, [taskStore.getTasksForDateRange, viewDateRange.start, viewDateRange.end])
   
-  // 表示範囲のイベントを取得
+  // 表示範囲のイベントを取得してCalendarEvent型に変換
   const filteredEvents = useMemo(() => {
-    return getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-  }, [getEventsByDateRange, viewDateRange.start, viewDateRange.end, events])
+    const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
+    return convertEventsToCalendarEvents(events)
+  }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end])
   
   // イベントの初期ロードと更新
-  useEffect(() => {
-    fetchEvents({
+  const fetchEventsCallback = useCallback(() => {
+    eventStore.fetchEvents({
       startDate: viewDateRange.start,
       endDate: viewDateRange.end
     })
-  }, [viewDateRange, fetchEvents])
+  }, [eventStore.fetchEvents, viewDateRange.start, viewDateRange.end])
+
+  useEffect(() => {
+    fetchEventsCallback()
+  }, [fetchEventsCallback])
 
   // レコード取得（一時的にモックデータを使用）
   const records = useMemo(() => [
@@ -163,23 +172,40 @@ export function CalendarView({
       created_at: task.created_at || new Date(),
       updated_at: new Date()
     }
-    updateTask(task.id, storeTask)
+    taskStore.updateTask(task.id, storeTask)
     setIsReviewModalOpen(false)
-  }, [updateTask])
+  }, [taskStore])
   
   const handleTaskDelete = useCallback((taskId: string) => {
-    deleteTask(taskId)
+    taskStore.deleteTask(taskId)
     setIsReviewModalOpen(false)
-  }, [deleteTask])
+  }, [taskStore])
   
   const handleStatusChange = useCallback((taskId: string, status: 'pending' | 'in_progress' | 'completed') => {
-    updateTaskStatus(taskId, status)
+    taskStore.updateTaskStatus(taskId, status)
     setIsReviewModalOpen(false)
-  }, [updateTaskStatus])
+  }, [taskStore])
   
   // イベント関連のハンドラー
-  const handleEventClick = useCallback((event: Event) => {
-    setSelectedEvent(event)
+  const handleEventClick = useCallback((event: CalendarEvent) => {
+    // CalendarEventからEventに変換して保存（必要なプロパティのみ）
+    const eventData: Event = {
+      id: event.id,
+      title: event.title,
+      description: event.description,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      isAllDay: event.isAllDay,
+      type: event.type,
+      status: event.status,
+      color: event.color,
+      location: event.location,
+      url: event.url,
+      tags: event.tags,
+      createdAt: new Date(), // デフォルト値
+      updatedAt: new Date()  // デフォルト値
+    }
+    setSelectedEvent(eventData)
     setIsEventModalOpen(true)
   }, [])
   
@@ -193,26 +219,26 @@ export function CalendarView({
   const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
     try {
       if ('id' in eventData) {
-        await updateEvent(eventData as UpdateEventRequest)
+        await eventStore.updateEvent(eventData as UpdateEventRequest)
       } else {
-        await createEvent(eventData as CreateEventRequest)
+        await eventStore.createEvent(eventData as CreateEventRequest)
       }
       setIsEventModalOpen(false)
       setSelectedEvent(null)
     } catch (error) {
       console.error('Failed to save event:', error)
     }
-  }, [createEvent, updateEvent])
+  }, [eventStore])
   
   const handleEventDelete = useCallback(async (eventId: string) => {
     try {
-      await deleteEvent(eventId)
+      await eventStore.deleteEvent(eventId)
       setIsEventModalOpen(false)
       setSelectedEvent(null)
     } catch (error) {
       console.error('Failed to delete event:', error)
     }
-  }, [deleteEvent])
+  }, [eventStore])
   
   // URLを更新する関数
   const updateURL = useCallback((newViewType: CalendarViewType, newDate?: Date) => {
@@ -313,7 +339,11 @@ export function CalendarView({
       onCreateRecord: handleCreateRecord,
       onTaskClick: handleTaskClick,
       onEventClick: handleEventClick,
-      onCreateEvent: handleCreateEvent
+      onCreateEvent: handleCreateEvent,
+      onViewChange: handleViewChange,
+      onNavigatePrev: () => handleNavigate('prev'),
+      onNavigateNext: () => handleNavigate('next'),
+      onNavigateToday: () => handleNavigate('today')
     }
 
     switch (viewType) {
@@ -328,6 +358,11 @@ export function CalendarView({
             onCreateTask={handleCreateTask}
             onCreateRecord={handleCreateRecord}
             onTaskClick={handleTaskClick}
+            onViewChange={handleViewChange}
+            onNavigatePrev={() => handleNavigate('prev')}
+            onNavigateNext={() => handleNavigate('next')}
+            onNavigateToday={() => handleNavigate('today')}
+            onCreateEvent={handleCreateEvent}
           />
         )
       case '3day':
@@ -341,10 +376,17 @@ export function CalendarView({
       case 'schedule':
         return (
           <ScheduleView 
-            {...commonProps}
+            dateRange={viewDateRange}
+            tasks={filteredTasks}
+            events={filteredEvents}
+            currentDate={currentDate}
             onTaskClick={handleTaskClick}
             onEventClick={handleEventClick}
             onCreateEvent={handleCreateEvent}
+            onViewChange={handleViewChange}
+            onNavigatePrev={() => handleNavigate('prev')}
+            onNavigateNext={() => handleNavigate('next')}
+            onNavigateToday={() => handleNavigate('today')}
             onEmptySlotClick={(date, time) => {
               // Handle empty slot click - could create new task or event
               handleCreateEvent(date, time)
@@ -373,9 +415,8 @@ export function CalendarView({
     description?: string
     tags?: string[]
   }) => {
-    const newTask = createTask(taskData)
-    console.log('Created new task:', newTask)
-  }, [createTask])
+    const newTask = taskStore.createTask(taskData)
+  }, [taskStore])
 
   // 記録作成ハンドラー
   const handleCreateRecord = useCallback((recordData: {
@@ -389,21 +430,31 @@ export function CalendarView({
     memo?: string
     interruptions?: number
   }) => {
-    console.log('Creating new record:', recordData)
     // TODO: 実際の記録作成処理を実装
     // ここで Supabase やローカルストレージに記録を保存
   }, [])
 
+  // 表示される日付の配列を計算
+  const displayDates = useMemo(() => {
+    return viewDateRange.days
+  }, [viewDateRange.days])
+
   return (
     <>
-      <CalendarLayout
-        viewType={viewType}
-        currentDate={currentDate}
-        onNavigate={handleNavigate}
-        onViewChange={handleViewChange}
-        onCreateEvent={() => handleCreateEvent()}
-      >
-        <div className="h-full overflow-hidden bg-white dark:bg-gray-800">
+      <CalendarLayout>
+        {/* 共通ヘッダー - すべてのビューで同じインスタンス */}
+        <UnifiedCalendarHeader
+          viewType={viewType}
+          currentDate={currentDate}
+          dates={displayDates}
+          planRecordMode={planRecordMode}
+          onNavigate={handleNavigate}
+          onViewChange={handleViewChange}
+          onCreateEvent={() => handleCreateEvent()}
+        />
+        
+        {/* ビュー固有のコンテンツ */}
+        <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-gray-800">
           {renderView()}
         </div>
       </CalendarLayout>

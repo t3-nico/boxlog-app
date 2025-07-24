@@ -12,12 +12,20 @@ interface AuthGuardProps {
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const { user, loading } = useAuthContext()
   const router = useRouter()
+  
+  // 開発時の認証スキップ
+  const skipAuthInDev = process.env.NODE_ENV === 'development' && process.env.SKIP_AUTH_IN_DEV === 'true'
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!skipAuthInDev && !loading && !user) {
       router.push('/auth/login')
     }
-  }, [user, loading, router])
+  }, [user, loading, router, skipAuthInDev])
+
+  // 開発時の認証スキップが有効な場合はすぐにchildren を表示
+  if (skipAuthInDev) {
+    return <>{children}</>
+  }
 
   // ローディング中
   if (loading) {
