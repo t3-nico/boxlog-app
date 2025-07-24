@@ -105,11 +105,6 @@ export function FullDayCalendarLayout({
           className="flex-1 relative" 
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
-          {/* bothモードの場合は中央に分割線を表示 */}
-          {planRecordMode === 'both' && (
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
-          )}
-          
           {dates.map((day, dayIndex) => {
             // その日のイベント
             const dayEvents = events.filter(event => 
@@ -135,6 +130,10 @@ export function FullDayCalendarLayout({
                   ))}
                 </div>
                 
+                {/* bothモードの場合は各日付カラムに中央分割線を表示 */}
+                {planRecordMode === 'both' && (
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
+                )}
                 
                 {/* 今日のみに現在時刻線を表示 */}
                 {isToday(day) && (
