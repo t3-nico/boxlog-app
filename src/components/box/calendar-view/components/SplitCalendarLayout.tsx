@@ -334,6 +334,7 @@ export function SplitCalendarLayout({
               )
             })}
           </div>
+          </div>
         </div>
       ) : effectivePlanRecordMode === 'plan' ? (
         /* 予定のみ表示 */
