@@ -3,7 +3,7 @@
 import { create } from 'zustand'
 import { CreateContextData } from '@/components/add-popup/AddPopup'
 
-type TabType = 'schedule' | 'record'
+type TabType = 'event' | 'log'
 
 interface AddPopupStore {
   // State
@@ -21,25 +21,25 @@ interface AddPopupStore {
 export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
   // Initial state
   isOpen: false,
-  activeTab: 'schedule',
+  activeTab: 'event',
   contextData: null,
 
   // Actions
-  openPopup: (tab = 'schedule', context: CreateContextData | null = null) => {
+  openPopup: (tab = 'event', context: CreateContextData | null = null) => {
     // Smart tab selection based on context
     let selectedTab = tab
     if (context && !tab) {
-      // If context suggests completed work, default to record tab
+      // If context suggests completed work, default to log tab
       if (context.status === 'Done') {
-        selectedTab = 'record'
+        selectedTab = 'log'
       }
-      // If due date is in the past, suggest record tab
+      // If due date is in the past, suggest log tab
       else if (context.dueDate && context.dueDate < new Date()) {
-        selectedTab = 'record'
+        selectedTab = 'log'
       }
-      // Default to schedule for future planning
+      // Default to event for future planning
       else {
-        selectedTab = 'schedule'
+        selectedTab = 'event'
       }
     }
 
@@ -83,10 +83,10 @@ export const useAddPopup = () => {
     setContextData: store.setContextData,
     
     // Convenience methods
-    openSchedulePopup: (context?: CreateContextData | null) => 
-      store.openPopup('schedule', context),
-    openRecordPopup: (context?: CreateContextData | null) => 
-      store.openPopup('record', context),
+    openEventPopup: (context?: CreateContextData | null) => 
+      store.openPopup('event', context),
+    openLogPopup: (context?: CreateContextData | null) => 
+      store.openPopup('log', context),
   }
 }
 
@@ -98,13 +98,13 @@ export const useAddPopupKeyboardShortcuts = () => {
     // Ctrl+N or Cmd+N - Open add popup
     if ((event.ctrlKey || event.metaKey) && event.key === 'n') {
       event.preventDefault()
-      openPopup('schedule')
+      openPopup('event')
     }
     
-    // Ctrl+Shift+N or Cmd+Shift+N - Open record popup
+    // Ctrl+Shift+N or Cmd+Shift+N - Open log popup
     if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'N') {
       event.preventDefault()
-      openPopup('record')
+      openPopup('log')
     }
   }
 
@@ -135,7 +135,7 @@ export const useContextAwarePopup = () => {
       tags: filters?.tags,
       priority: filters?.priority as any,
     }
-    openPopup('schedule', context) // Default to schedule for table view
+    openPopup('event', context) // Default to event for table view
   }
 
   return {
