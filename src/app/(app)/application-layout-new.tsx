@@ -4,9 +4,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
+import { Calendar } from '@/components/ui/calendar'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { ViewSwitcher } from '@/components/ui/view-switcher'
 import { getPageTitle, getCurrentViewIcon } from '@/config/views'
@@ -74,7 +75,6 @@ import {
   BarChart3 as ChartBarIcon,
   SquareKanban as Squares2X2Icon,
 } from 'lucide-react'
-import { usePathname } from 'next/navigation'
 
 export function ApplicationLayoutNew({
   events,
@@ -96,6 +96,44 @@ export function ApplicationLayoutNew({
   const { open: openCommandPalette } = useCommandPalette()
   const router = useRouter()
   const { isOpen, openPopup, closePopup } = useAddPopup()
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  
+  // カレンダーページかどうかを判定
+  const isCalendarPage = pathname.startsWith('/calendar')
+  
+  // デバッグ用
+  console.log('Current page:', { pathname, isCalendarPage })
+  
+  // 日付選択時のハンドラー
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date)
+    if (date && isCalendarPage) {
+      // カレンダーページの場合、選択した日付にナビゲート
+      const formatDate = (d: Date) => {
+        const year = d.getFullYear()
+        const month = String(d.getMonth() + 1).padStart(2, '0')
+        const day = String(d.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      }
+      const dateParam = formatDate(date)
+      
+      // 現在のビューを取得（/calendar/day, /calendar/week等）
+      const currentView = pathname.split('/calendar/')[1]?.split('?')[0] || 'day'
+      const newUrl = `/calendar/${currentView}?date=${dateParam}`
+      
+      console.log('Calendar date click:', {
+        pathname,
+        currentView,
+        dateParam,
+        newUrl
+      })
+      
+      // ページの再レンダリングを強制するため、現在のURLと異なる場合のみナビゲート
+      if (newUrl !== `${pathname}${window.location.search}`) {
+        router.push(newUrl)
+      }
+    }
+  }
   
   // AI Chat Sidebar state
   const [isAIChatOpen, setIsAIChatOpen] = useState(false)
@@ -393,6 +431,19 @@ export function ApplicationLayoutNew({
                         </button>
                       </div>
                     </SidebarSection>
+
+                    {/* 日付選択カレンダー */}
+                    {!collapsed && (
+                      <div>
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={handleDateSelect}
+                          className="w-full p-0"
+                          weekStartsOn={1}
+                        />
+                      </div>
+                    )}
 
                     <div className="h-2" />
                   </div>

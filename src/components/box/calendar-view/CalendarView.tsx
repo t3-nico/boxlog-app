@@ -77,6 +77,13 @@ export function CalendarView({
       setViewType(saved as CalendarViewType)
     }
   }, [])
+  
+  // URLパラメータの日付変更を検知
+  useEffect(() => {
+    if (initialDate && (!currentDate || initialDate.getTime() !== currentDate.getTime())) {
+      setCurrentDate(initialDate)
+    }
+  }, [initialDate, currentDate])
 
   // ビュータイプをLocalStorageに保存
   useEffect(() => {

@@ -68,10 +68,10 @@ export function UnifiedCalendarHeader({
 
   return (
     <div className={cn(
-      "flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800",
+      "relative h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4",
       className
     )}>
-      <div className="flex items-center justify-between px-4 py-3">
+      <div className="h-full flex items-center justify-between">
         {/* 左側: ビュー切り替えボタン */}
         <div className="flex items-center space-x-1">
           {Object.entries(VIEW_LABELS).map(([view, label]) => (
