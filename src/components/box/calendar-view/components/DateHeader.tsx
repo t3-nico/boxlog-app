@@ -12,8 +12,6 @@ interface DateHeaderProps {
 }
 
 export function DateHeader({ dates, className = '', planRecordMode }: DateHeaderProps) {
-  console.log('DateHeader planRecordMode:', planRecordMode)
-  
   return (
     <div className={cn("flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900", className)}>
       <div className="flex">
@@ -30,10 +28,6 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
               isWeekend(day) && "bg-gray-50/50 dark:bg-gray-800/50"
             )}
           >
-            {/* bothモードの場合は中央に分割線を表示 */}
-            {planRecordMode === 'both' && (
-              <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5"></div>
-            )}
             
             {/* 曜日 */}
             <div className={cn(

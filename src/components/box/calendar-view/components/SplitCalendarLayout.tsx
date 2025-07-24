@@ -158,9 +158,6 @@ export function SplitCalendarLayout({
     onTaskClick?.(task)
   }
 
-
-  console.log('🎨 Rendering with mode:', effectivePlanRecordMode)
-
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
       {effectivePlanRecordMode === 'both' ? (
@@ -173,15 +170,7 @@ export function SplitCalendarLayout({
             className="z-10"
             planRecordMode={effectivePlanRecordMode}
           />
-          <div className="flex-1 flex flex-col relative">
-            {/* bothモードの場合のラベル */}
-            <div className="sticky top-0 z-30 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 h-6 flex">
-              <div className="flex-1 text-center text-xs text-gray-600 dark:text-gray-400 py-1">event</div>
-              <div className="w-px bg-gray-400 dark:bg-gray-600"></div>
-              <div className="flex-1 text-center text-xs text-gray-600 dark:text-gray-400 py-1">log</div>
-            </div>
-            
-            <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
+          <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
               {dates.map((day, dayIndex) => {
               // その日のタスクと記録を時間順でソート
               const dayPlanTasks = planTasks.filter(task => 
@@ -200,9 +189,6 @@ export function SplitCalendarLayout({
               
               return (
                 <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
-                  {/* 中央分割線 */}
-                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-0.5"></div>
-                  
                   {/* 時間グリッド背景 */}
                   <div className="absolute inset-0">
                     {Array.from({ length: 24 }, (_, hour) => (
@@ -333,7 +319,6 @@ export function SplitCalendarLayout({
                 </div>
               )
             })}
-          </div>
           </div>
         </div>
       ) : effectivePlanRecordMode === 'plan' ? (
