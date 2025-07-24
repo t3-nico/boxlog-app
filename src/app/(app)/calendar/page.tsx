@@ -1,11 +1,6 @@
-'use client'
-
-import { CalendarView } from '@/components/box/calendar-view'
+import { redirect } from 'next/navigation'
 
 export default function CalendarPage() {
-  return (
-    <div className="h-screen">
-      <CalendarView />
-    </div>
-  )
+  const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+  redirect(`/calendar/day?date=${today}`)
 }

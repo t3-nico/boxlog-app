@@ -14,16 +14,21 @@ import {
 
 // Utility functions
 const convertEntityToEvent = (entity: EventEntity): Event => {
+  console.log('🔍 Converting entity:', entity)
+  
   // ローカルタイムで日付を作成（タイムゾーン変換を避ける）
   const [year, month, day] = entity.start_date.split('-').map(Number)
   const [hours, minutes, seconds] = (entity.start_time || '00:00:00').split(':').map(Number)
   const startDate = new Date(year, month - 1, day, hours, minutes, seconds)
+  
+  console.log('📅 Created startDate:', startDate, 'from', { year, month: month-1, day, hours, minutes, seconds })
   
   let endDate: Date | undefined
   if (entity.end_date) {
     const [endYear, endMonth, endDay] = entity.end_date.split('-').map(Number)
     const [endHours, endMinutes, endSeconds] = (entity.end_time || '23:59:59').split(':').map(Number)
     endDate = new Date(endYear, endMonth - 1, endDay, endHours, endMinutes, endSeconds)
+    console.log('📅 Created endDate:', endDate, 'from', { endYear, endMonth: endMonth-1, endDay, endHours, endMinutes, endSeconds })
   }
 
   // Convert tag data from entity format (temporarily disabled until event_tags table is created)

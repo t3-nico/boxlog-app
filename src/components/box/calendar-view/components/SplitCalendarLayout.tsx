@@ -74,6 +74,31 @@ export function SplitCalendarLayout({
   const containerRef = useRef<HTMLDivElement>(null)
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
+  
+  console.log('🔍 Current planRecordMode:', planRecordMode)
+  
+  // 初期スクロール位置を現在時刻に設定
+  useEffect(() => {
+    const scrollToCurrentTime = () => {
+      const now = new Date()
+      const currentHour = now.getHours()
+      const currentMinute = now.getMinutes()
+      
+      // 現在時刻の1時間前にスクロール（見やすくするため）
+      const scrollHour = Math.max(0, currentHour - 1)
+      const scrollPosition = scrollHour * HOUR_HEIGHT
+      
+      // スクロールコンテナを見つけてスクロール
+      const scrollContainers = document.querySelectorAll('.calendar-scroll')
+      scrollContainers.forEach(container => {
+        container.scrollTop = scrollPosition
+      })
+    }
+    
+    // 少し遅延をつけてスクロール（レンダリング完了後）
+    const timer = setTimeout(scrollToCurrentTime, 100)
+    return () => clearTimeout(timer)
+  }, [planRecordMode])
 
   // Recordsの取得
   useEffect(() => {
@@ -135,7 +160,7 @@ export function SplitCalendarLayout({
             interval={60}
             className="z-10"
           />
-          <div className="flex-1 flex overflow-y-auto relative">
+          <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
             {dates.map((day, dayIndex) => {
               // その日のタスクと記録を時間順でソート
               const dayPlanTasks = planTasks.filter(task => 
@@ -190,27 +215,71 @@ export function SplitCalendarLayout({
                   
                   {/* 左側：イベント表示 */}
                   <div className="absolute left-0 top-6 bottom-0 w-1/2 pr-1 overflow-y-auto">
-                    <div className="p-2 space-y-1">
-                      {dayEvents.map(event => (
-                        <div
-                          key={event.id}
-                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded"
-                          onClick={() => onEventClick?.(event)}
-                        >
-                          <div className="flex items-start gap-2">
-                            <div className="text-green-600 dark:text-green-400 font-mono text-xs min-w-0 flex-shrink-0">
-                              {event.startDate.toLocaleTimeString('ja-JP', { 
-                                hour: '2-digit', 
-                                minute: '2-digit',
-                                hour12: false 
-                              })}
+                    <div className="p-1 space-y-1">
+                      {dayEvents.map(event => {
+                        const startTime = `${String(event.startDate.getHours()).padStart(2, '0')}:${String(event.startDate.getMinutes()).padStart(2, '0')}`
+                        const endTime = event.endDate ? `${String(event.endDate.getHours()).padStart(2, '0')}:${String(event.endDate.getMinutes()).padStart(2, '0')}` : null
+                        const eventColor = event.color || '#1a73e8'
+                        
+                        return (
+                          <div
+                            key={event.id}
+                            className="group relative bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden"
+                            onClick={() => onEventClick?.(event)}
+                            style={{
+                              backgroundColor: `${eventColor}08`,
+                              borderLeft: `3px solid ${eventColor}`
+                            }}
+                          >
+                            <div className="p-2">
+                              {/* ヘッダー: 時間とタイトル */}
+                              <div className="flex items-start gap-2 mb-1">
+                                <div 
+                                  className="text-xs font-medium px-1.5 py-0.5 rounded text-white flex-shrink-0"
+                                  style={{ backgroundColor: eventColor }}
+                                >
+                                  {startTime}{endTime && ` - ${endTime}`}
+                                </div>
+                              </div>
+                              
+                              {/* タイトル */}
+                              <div 
+                                className="text-sm font-medium leading-tight mb-1 group-hover:text-opacity-80"
+                                style={{ color: eventColor }}
+                              >
+                                {event.title}
+                              </div>
+                              
+                              {/* 説明 */}
+                              {event.description && (
+                                <div className="text-xs text-gray-600 dark:text-gray-400 leading-snug line-clamp-1 mb-1">
+                                  {event.description}
+                                </div>
+                              )}
+                              
+                              {/* 場所 */}
+                              {event.location && (
+                                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
+                                  <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                  </svg>
+                                  <span className="truncate text-xs">{event.location}</span>
+                                </div>
+                              )}
                             </div>
-                            <div className="font-medium truncate flex-1">
-                              {event.title}
+                            
+                            {/* ホバー時の編集アイコン */}
+                            <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="w-5 h-5 bg-white dark:bg-gray-700 rounded shadow-sm flex items-center justify-center">
+                                <svg className="w-3 h-3 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
                   </div>
                   
@@ -260,7 +329,7 @@ export function SplitCalendarLayout({
             interval={60}
             className="z-10"
           />
-          <div className="flex-1 flex overflow-y-auto relative">
+          <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
             {dates.map((day, dayIndex) => {
               const dayPlanTasks = planTasks.filter(task => 
                 isSameDay(task.startTime, day)
@@ -338,7 +407,7 @@ export function SplitCalendarLayout({
             interval={60}
             className="z-10"
           />
-          <div className="flex-1 flex overflow-y-auto relative">
+          <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
             {dates.map((day, dayIndex) => {
               const dayRecordTasks = recordTasks.filter(task => 
                 isSameDay(task.startTime, day)

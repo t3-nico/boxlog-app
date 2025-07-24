@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
+import { useRouter, usePathname } from 'next/navigation'
 import { CalendarLayout } from './CalendarLayout'
 import { DayView } from './views/DayView'
 import { SplitDayView } from './views/SplitDayView'
@@ -25,9 +26,20 @@ import {
 import type { CalendarViewType, CalendarViewProps, Task } from './types'
 import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/events'
 
-export function CalendarView({ className }: CalendarViewProps) {
-  const [viewType, setViewType] = useState<CalendarViewType>('day')
-  const [currentDate, setCurrentDate] = useState(new Date())
+interface CalendarViewExtendedProps extends CalendarViewProps {
+  initialViewType?: CalendarViewType
+  initialDate?: Date
+}
+
+export function CalendarView({ 
+  className,
+  initialViewType = 'day',
+  initialDate = new Date()
+}: CalendarViewExtendedProps) {
+  const router = useRouter()
+  const pathname = usePathname()
+  const [viewType, setViewType] = useState<CalendarViewType>(initialViewType)
+  const [currentDate, setCurrentDate] = useState(initialDate)
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
@@ -195,25 +207,40 @@ export function CalendarView({ className }: CalendarViewProps) {
     }
   }, [deleteEvent])
   
+  // URLを更新する関数
+  const updateURL = useCallback((newViewType: CalendarViewType, newDate?: Date) => {
+    const dateToUse = newDate || currentDate
+    const dateString = format(dateToUse, 'yyyy-MM-dd')
+    router.push(`/calendar/${newViewType}?date=${dateString}`)
+  }, [router, currentDate])
+
   // ナビゲーション関数
   const handleNavigate = useCallback((direction: 'prev' | 'next' | 'today') => {
+    let newDate: Date
     switch (direction) {
       case 'prev':
-        setCurrentDate(prev => getPreviousPeriod(viewType, prev))
+        newDate = getPreviousPeriod(viewType, currentDate)
+        setCurrentDate(newDate)
+        updateURL(viewType, newDate)
         break
       case 'next':
-        setCurrentDate(prev => getNextPeriod(viewType, prev))
+        newDate = getNextPeriod(viewType, currentDate)
+        setCurrentDate(newDate)
+        updateURL(viewType, newDate)
         break
       case 'today':
-        setCurrentDate(new Date())
+        newDate = new Date()
+        setCurrentDate(newDate)
+        updateURL(viewType, newDate)
         break
     }
-  }, [viewType])
-  
+  }, [viewType, currentDate, updateURL])
+
   // ビュー切り替え
   const handleViewChange = useCallback((newView: CalendarViewType) => {
     setViewType(newView)
-  }, [])
+    updateURL(newView)
+  }, [updateURL])
 
   // キーボードショートカット
   useEffect(() => {
