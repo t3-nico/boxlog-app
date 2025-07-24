@@ -166,7 +166,7 @@ export function ScheduleView({
           <div className="w-1/2 border-r border-gray-200 dark:border-gray-700">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                予定 (Plan)
+                イベント (Event)
               </h3>
             </div>
             <div className="overflow-y-auto h-full">

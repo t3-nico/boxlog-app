@@ -34,7 +34,7 @@ const viewOptions = [
 
 const displayModeOptions = [
   { value: 'both', label: 'Both', icon: Columns3 },
-  { value: 'plan', label: 'Plan', icon: ClipboardList },
+  { value: 'plan', label: 'Event', icon: ClipboardList },
   { value: 'record', label: 'Record', icon: CheckCircle },
 ] as const
 
@@ -172,7 +172,7 @@ export function CalendarHeader({
               )}
             >
               <ClipboardList className="w-4 h-4" />
-              <span>Plan</span>
+              <span>Event</span>
             </button>
             <button
               onClick={() => updateSettings({ planRecordMode: 'record' })}

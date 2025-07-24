@@ -209,13 +209,13 @@ export function CalendarSettings({ open, onOpenChange }: CalendarSettingsProps) 
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="plan">計画のみ</SelectItem>
+                <SelectItem value="plan">イベントのみ</SelectItem>
                 <SelectItem value="record">実績のみ</SelectItem>
-                <SelectItem value="both">計画・実績（分割表示）</SelectItem>
+                <SelectItem value="both">イベント・実績（分割表示）</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              「計画・実績（分割表示）」を選択すると、左側に計画、右側に実績が表示されます
+              「イベント・実績（分割表示）」を選択すると、左側にイベント、右側に実績が表示されます
             </p>
           </div>
 

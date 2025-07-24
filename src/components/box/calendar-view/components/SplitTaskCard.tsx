@@ -76,7 +76,7 @@ export function SplitTaskCard({
           )}
           onClick={planTask ? handleClick(planTask, 'plan') : undefined}
           onDoubleClick={planTask ? handleDoubleClick(planTask, 'plan') : undefined}
-          title={planTask ? `計画: ${planTask.title}` : '計画なし'}
+          title={planTask ? `イベント: ${planTask.title}` : 'イベントなし'}
         >
           {planTask && (
             <div className={cn(
@@ -115,7 +115,7 @@ export function SplitTaskCard({
           )}
           {!planTask && (
             <div className="h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
-              <span className="text-xs">計画なし</span>
+              <span className="text-xs">イベントなし</span>
             </div>
           )}
         </div>
@@ -218,7 +218,7 @@ export function CompactSplitTask({ planTask, recordTask, onClick }: CompactSplit
           e.stopPropagation()
           onClick?.(planTask, 'plan')
         } : undefined}
-        title={planTask ? `計画: ${planTask.title} (${format(planTask.startTime, 'HH:mm')})` : '計画なし'}
+        title={planTask ? `イベント: ${planTask.title} (${format(planTask.startTime, 'HH:mm')})` : 'イベントなし'}
       >
         {planTask ? (
           <>
@@ -229,7 +229,7 @@ export function CompactSplitTask({ planTask, recordTask, onClick }: CompactSplit
             {planTask.title}
           </>
         ) : (
-          <span>計画なし</span>
+          <span>イベントなし</span>
         )}
       </div>
 

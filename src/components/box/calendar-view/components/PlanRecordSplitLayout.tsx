@@ -153,7 +153,7 @@ export function PlanRecordSplitLayout({
         <div className="flex-1 flex flex-col border-r border-gray-200 dark:border-gray-700">
           <div className="bg-blue-50 dark:bg-blue-900/20 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 flex items-center gap-2">
-              📅 予定 (Plan)
+              📅 イベント (Event)
               <span className="text-xs font-normal text-blue-700 dark:text-blue-300">
                 {periodTasks.length}件
               </span>
