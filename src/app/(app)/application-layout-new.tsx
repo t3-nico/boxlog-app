@@ -343,8 +343,8 @@ export function ApplicationLayoutNew({
         {/* Body - Layout container */}
         <div className="flex-1" style={{paddingTop: '64px'}}>
           {/* Left Sidebar - Fixed Position */}
-          <div className={`${collapsed ? 'w-16' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-150 z-10`} style={{top: '64px', bottom: '0'}}>
-            <div className="h-full flex flex-col p-4">
+          <div className={`${collapsed ? 'w-12' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-10`} style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
+            <div className={`h-full flex flex-col ${collapsed ? 'p-2' : 'p-4'}`}>
               {/* Collapsed sidebar - expand button */}
               {collapsed && !inSettings && (
                 <div className="flex justify-center mb-4">
@@ -570,9 +570,11 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="min-h-screen bg-white dark:bg-gray-800 transition-all duration-300 ease-in-out" style={{
-            marginLeft: collapsed ? '64px' : '256px', 
-            marginRight: isAIChatOpen ? '320px' : (isRightSidebarHidden ? '0px' : '48px')
+          <div className="bg-white dark:bg-gray-800" style={{
+            marginLeft: collapsed ? '48px' : '256px', 
+            marginRight: isAIChatOpen ? '320px' : (isRightSidebarHidden ? '0px' : '48px'),
+            transition: 'margin-left 150ms ease, margin-right 150ms ease',
+            height: 'calc(100vh - 64px)'
           }}>
             <div className="h-full overflow-auto">
               {children}
