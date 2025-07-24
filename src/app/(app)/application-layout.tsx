@@ -323,7 +323,7 @@ export function ApplicationLayout({
                       <button
                         onClick={(e) => {
                           e.preventDefault()
-                          openPopup('schedule')
+                          openPopup('event')
                         }}
                         className={clsx(
                           'flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
@@ -574,7 +574,7 @@ export function ApplicationLayout({
               <AddPopup 
                 open={isOpen} 
                 onOpenChange={(open) => open ? openPopup() : closePopup()}
-                defaultTab="schedule"
+                defaultTab="event"
               />
               
               {/* AI Chat Sidebar */}
