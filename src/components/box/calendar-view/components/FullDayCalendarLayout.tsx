@@ -106,10 +106,6 @@ export function FullDayCalendarLayout({
           className="flex-1 flex relative" 
           style={{ height: `${25 * HOUR_HEIGHT}px` }}
         >
-          {/* bothモードの場合は中央に分割線を表示 */}
-          {planRecordMode === 'both' && (
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
-          )}
           
           {dates.map((day, dayIndex) => {
             // その日のイベント
@@ -125,6 +121,11 @@ export function FullDayCalendarLayout({
             
             return (
               <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
+                {/* bothモードの場合は各日付の中央に分割線を表示 */}
+                {planRecordMode === 'both' && (
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
+                )}
+                
                 {/* 時間グリッド背景 */}
                 <div className="absolute inset-0">
                   {Array.from({ length: 25 }, (_, hour) => (
@@ -177,51 +178,43 @@ export function FullDayCalendarLayout({
                   return (
                     <div
                       key={event.id}
-                      className="absolute rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 z-20"
+                      className="absolute rounded-md cursor-pointer hover:shadow-lg transition-all duration-200 z-20 border border-white/20"
                       style={{
                         left: leftPosition,
                         right: rightPosition,
                         top: `${topPosition}px`,
                         height: `${height}px`,
-                        backgroundColor: `${eventColor}15`,
-                        borderLeft: `4px solid ${eventColor}`
+                        backgroundColor: eventColor
                       }}
                       onClick={() => onEventClick?.(event)}
                     >
-                      <div className="p-2 h-full overflow-hidden">
-                        {/* 時間バッジ */}
-                        <div 
-                          className="inline-block text-xs font-medium px-2 py-1 rounded text-white mb-1"
-                          style={{ backgroundColor: eventColor }}
-                        >
-                          {startTime}{endTime && ` - ${endTime}`}
-                        </div>
-                        
-                        {/* タイトル */}
-                        <div 
-                          className="text-sm font-medium leading-tight mb-1"
-                          style={{ color: eventColor }}
-                        >
-                          {event.title}
-                        </div>
-                        
-                        {/* 説明（高さがある場合のみ） */}
-                        {event.description && height > 60 && (
-                          <div className="text-xs text-gray-600 dark:text-gray-400 leading-snug">
-                            {event.description}
+                      <div className="p-1.5 h-full overflow-hidden text-white">
+                        {/* メインコンテンツ */}
+                        <div className="flex flex-col h-full">
+                          {/* タイトルと時間 */}
+                          <div className="flex-1 min-h-0">
+                            {/* タイトル */}
+                            <div className="text-xs font-medium leading-tight line-clamp-2 mb-0.5">
+                              {event.title}
+                            </div>
+                            
+                            {/* 時間 */}
+                            <div className="text-xs opacity-90 leading-tight">
+                              {startTime}{endTime && ` - ${endTime}`}
+                            </div>
                           </div>
-                        )}
-                        
-                        {/* 場所（高さがある場合のみ） */}
-                        {event.location && height > 80 && (
-                          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500 mt-1">
-                            <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span className="truncate">{event.location}</span>
-                          </div>
-                        )}
+                          
+                          {/* 場所（高さがある場合のみ） */}
+                          {event.location && height > 60 && (
+                            <div className="flex items-center gap-1 text-xs opacity-90 mt-1">
+                              <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span className="truncate">{event.location}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )
@@ -249,39 +242,38 @@ export function FullDayCalendarLayout({
                   return (
                     <div
                       key={record.id}
-                      className="absolute rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-all duration-200 z-20"
+                      className="absolute rounded-md cursor-pointer hover:shadow-lg transition-all duration-200 z-20 border border-white/20"
                       style={{
                         left: leftPosition,
                         right: rightPosition,
                         top: `${topPosition}px`,
                         height: `${height}px`,
-                        backgroundColor: `${recordColor}15`,
-                        borderLeft: `4px solid ${recordColor}`
+                        backgroundColor: recordColor
                       }}
                     >
-                      <div className="p-2 h-full overflow-hidden">
-                        {/* 時間バッジ */}
-                        <div 
-                          className="inline-block text-xs font-medium px-2 py-1 rounded text-white mb-1"
-                          style={{ backgroundColor: recordColor }}
-                        >
-                          {startTime} - {endTime}
-                        </div>
-                        
-                        {/* タイトル */}
-                        <div 
-                          className="text-sm font-medium leading-tight mb-1"
-                          style={{ color: recordColor }}
-                        >
-                          {record.title}
-                        </div>
-                        
-                        {/* 説明（高さがある場合のみ） */}
-                        {record.description && height > 60 && (
-                          <div className="text-xs text-gray-600 dark:text-gray-400 leading-snug">
-                            {record.description}
+                      <div className="p-1.5 h-full overflow-hidden text-white">
+                        {/* メインコンテンツ */}
+                        <div className="flex flex-col h-full">
+                          {/* タイトルと時間 */}
+                          <div className="flex-1 min-h-0">
+                            {/* タイトル */}
+                            <div className="text-xs font-medium leading-tight line-clamp-2 mb-0.5">
+                              {record.title}
+                            </div>
+                            
+                            {/* 時間 */}
+                            <div className="text-xs opacity-90 leading-tight">
+                              {startTime} - {endTime}
+                            </div>
                           </div>
-                        )}
+                          
+                          {/* 説明（高さがある場合のみ） */}
+                          {record.description && height > 60 && (
+                            <div className="text-xs opacity-80 leading-tight mt-1 line-clamp-2">
+                              {record.description}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )
