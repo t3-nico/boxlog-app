@@ -76,40 +76,50 @@ export function SplitCalendarLayout({
   const { records, fetchRecords } = useRecordsStore()
   
   console.log('🔍 Current planRecordMode:', planRecordMode)
+  console.log('🔍 Available dates:', dates)
+  console.log('🔍 Events:', events)
+  
+  // 一時的に 'both' モードを強制（テスト用）
+  const effectivePlanRecordMode = 'both' // planRecordMode
+  console.log('🔍 Using effectivePlanRecordMode:', effectivePlanRecordMode)
   
   // 初期スクロール位置を現在時刻に設定
   useEffect(() => {
     const scrollToCurrentTime = () => {
       const now = new Date()
       const currentHour = now.getHours()
-      const currentMinute = now.getMinutes()
       
-      // 現在時刻の1時間前にスクロール（見やすくするため）
-      const scrollHour = Math.max(0, currentHour - 1)
+      // 現在時刻の2時間前にスクロール（見やすくするため）
+      const scrollHour = Math.max(0, currentHour - 2)
       const scrollPosition = scrollHour * HOUR_HEIGHT
+      
+      console.log('📍 Scrolling to:', { currentHour, scrollHour, scrollPosition })
       
       // スクロールコンテナを見つけてスクロール
       const scrollContainers = document.querySelectorAll('.calendar-scroll')
-      scrollContainers.forEach(container => {
+      console.log('📍 Found scroll containers:', scrollContainers.length)
+      
+      scrollContainers.forEach((container, index) => {
+        console.log(`📍 Scrolling container ${index}:`, container)
         container.scrollTop = scrollPosition
       })
     }
     
     // 少し遅延をつけてスクロール（レンダリング完了後）
-    const timer = setTimeout(scrollToCurrentTime, 100)
+    const timer = setTimeout(scrollToCurrentTime, 500)
     return () => clearTimeout(timer)
-  }, [planRecordMode])
+  }, [effectivePlanRecordMode])
 
   // Recordsの取得
   useEffect(() => {
-    if (planRecordMode === 'record' || planRecordMode === 'both') {
+    if (effectivePlanRecordMode === 'record' || effectivePlanRecordMode === 'both') {
       fetchRecords(dateRange)
     }
-  }, [planRecordMode, dateRange, fetchRecords])
+  }, [effectivePlanRecordMode, dateRange, fetchRecords])
 
   // Task[]をCalendarTask[]に変換（計画用）
   const planTasks: CalendarTask[] = useMemo(() => {
-    if (planRecordMode === 'record') return []
+    if (effectivePlanRecordMode === 'record') return []
     
     return tasks.map(task => ({
       id: task.id,
@@ -122,11 +132,11 @@ export function SplitCalendarLayout({
       priority: task.priority || 'medium',
       isPlan: true
     }))
-  }, [tasks, planRecordMode])
+  }, [tasks, effectivePlanRecordMode])
 
   // TaskRecord[]をCalendarTask[]に変換（実績用）
   const recordTasks: CalendarTask[] = useMemo(() => {
-    if (planRecordMode === 'plan') return []
+    if (effectivePlanRecordMode === 'plan') return []
     
     return records.map(record => ({
       id: record.id,
@@ -142,16 +152,18 @@ export function SplitCalendarLayout({
       focusLevel: record.focus_level,
       energyLevel: record.energy_level
     }))
-  }, [records, planRecordMode])
+  }, [records, effectivePlanRecordMode])
 
   const handleTaskClick = (task: CalendarTask) => {
     onTaskClick?.(task)
   }
 
 
+  console.log('🎨 Rendering with mode:', effectivePlanRecordMode)
+
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
-      {planRecordMode === 'both' ? (
+      {effectivePlanRecordMode === 'both' ? (
         /* スケジュールビュー - Googleカレンダー風テキストベース表示 */
         <div className="flex h-full">
           <TimeAxisLabels 
@@ -320,7 +332,7 @@ export function SplitCalendarLayout({
             })}
           </div>
         </div>
-      ) : planRecordMode === 'plan' ? (
+      ) : effectivePlanRecordMode === 'plan' ? (
         /* 予定のみ表示 */
         <div className="flex h-full">
           <TimeAxisLabels 

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
+import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { DateHeader } from '../components/DateHeader'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
@@ -66,24 +66,19 @@ export function DayView({
 }: DayViewProps) {
   return (
     <CalendarViewAnimation viewType="day">
-      <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+      <div className="h-full flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
         
         {/* 日付ヘッダー */}
         <DateHeader dates={[currentDate]} />
         
-        {/* 共通SplitCalendarLayoutコンポーネントを使用 */}
-        <SplitCalendarLayout
+        {/* 24時間表示のFullDayCalendarLayoutを使用 */}
+        <FullDayCalendarLayout
           dates={[currentDate]}
           tasks={tasks}
           events={events}
           dateRange={dateRange}
-          onTaskClick={onTaskClick}
           onEventClick={onEventClick}
           onCreateEvent={onCreateEvent}
-          onEmptyClick={onEmptyClick}
-          onTaskDrag={onTaskDrag}
-          onCreateTask={onCreateTask}
-          onCreateRecord={onCreateRecord}
         />
       </div>
     </CalendarViewAnimation>

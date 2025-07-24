@@ -3,9 +3,10 @@
 import React, { useMemo } from 'react'
 import { isWeekend, startOfWeek, addDays } from 'date-fns'
 import { CalendarViewAnimation } from '../components/ViewTransition'
-import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
+import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
 import { DateHeader } from '../components/DateHeader'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
+import type { CalendarEvent } from '@/types/events'
 
 interface CreateTaskInput {
   title: string
@@ -32,9 +33,12 @@ interface CreateRecordInput {
 interface TwoWeekViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
+  events: CalendarEvent[]
   currentDate: Date
   showWeekends?: boolean
   onTaskClick?: (task: any) => void
+  onEventClick?: (event: CalendarEvent) => void
+  onCreateEvent?: (date: Date, time?: string) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -48,9 +52,12 @@ interface TwoWeekViewProps {
 export function TwoWeekView({ 
   dateRange, 
   tasks, 
+  events,
   currentDate,
   showWeekends = true,
   onTaskClick,
+  onEventClick,
+  onCreateEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -98,16 +105,14 @@ export function TwoWeekView({
         {/* 日付ヘッダー */}
         <DateHeader dates={allDates} />
 
-        {/* 共通SplitCalendarLayoutコンポーネントを使用 */}
-        <SplitCalendarLayout
+        {/* 24時間表示のFullDayCalendarLayoutを使用 */}
+        <FullDayCalendarLayout
           dates={allDates}
           tasks={tasks}
+          events={events}
           dateRange={dateRange}
-          onTaskClick={onTaskClick}
-          onEmptyClick={onEmptyClick}
-          onTaskDrag={onTaskDrag}
-          onCreateTask={onCreateTask}
-          onCreateRecord={onCreateRecord}
+          onEventClick={onEventClick}
+          onCreateEvent={onCreateEvent}
         />
       </div>
     </CalendarViewAnimation>
