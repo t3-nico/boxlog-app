@@ -5,6 +5,7 @@ import { addDays, subDays } from 'date-fns'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
 import { DateHeader } from '../components/DateHeader'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -65,6 +66,7 @@ export function ThreeDayView({
   onNavigateNext,
   onNavigateToday
 }: ThreeDayViewProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
   
   // 3日間の日付を計算（昨日、今日、明日）
   const days = useMemo(() => [
@@ -78,7 +80,7 @@ export function ThreeDayView({
       <div className="h-full flex flex-col bg-white dark:bg-gray-900">
         
         {/* 日付ヘッダー */}
-        <DateHeader dates={days} />
+        <DateHeader dates={days} planRecordMode={planRecordMode} />
         
         {/* 24時間表示のFullDayCalendarLayoutを使用 */}
         <FullDayCalendarLayout

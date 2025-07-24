@@ -5,6 +5,7 @@ import { isWeekend } from 'date-fns'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
 import { DateHeader } from '../components/DateHeader'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -67,6 +68,7 @@ export function WeekView({
   onNavigateNext,
   onNavigateToday
 }: WeekViewProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
   
   // 表示する日付を計算（土日を除外するかどうか）
   const displayDays = useMemo(() => {
@@ -80,7 +82,7 @@ export function WeekView({
       <div className="h-full flex flex-col bg-white dark:bg-gray-900">
         
         {/* 日付ヘッダー */}
-        <DateHeader dates={displayDays} />
+        <DateHeader dates={displayDays} planRecordMode={planRecordMode} />
         
         {/* 24時間表示のFullDayCalendarLayoutを使用 */}
         <FullDayCalendarLayout

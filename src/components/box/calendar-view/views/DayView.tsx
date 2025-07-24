@@ -4,6 +4,7 @@ import React from 'react'
 import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { DateHeader } from '../components/DateHeader'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -64,12 +65,14 @@ export function DayView({
   onNavigateNext,
   onNavigateToday
 }: DayViewProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
+  
   return (
     <CalendarViewAnimation viewType="day">
       <div className="h-full flex flex-col bg-white dark:bg-gray-900 overflow-hidden">
         
         {/* 日付ヘッダー */}
-        <DateHeader dates={[currentDate]} />
+        <DateHeader dates={[currentDate]} planRecordMode={planRecordMode} />
         
         {/* 24時間表示のFullDayCalendarLayoutを使用 */}
         <FullDayCalendarLayout
