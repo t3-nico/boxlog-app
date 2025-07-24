@@ -1,13 +1,13 @@
 // Main components
 export { AddPopup } from './AddPopup'
-export { ScheduleCreateForm } from './ScheduleCreateForm'
-export { RecordCreateForm } from './RecordCreateForm'
+export { EventCreateForm } from './EventCreateForm'
+export { LogCreateForm } from './LogCreateForm'
 export { FloatingActionButton, CompactFloatingActionButton } from './FloatingActionButton'
 
 // Types
 export type { CreateContextData } from './AddPopup'
-export type { ScheduleFormData } from './ScheduleCreateForm'
-export type { RecordFormData } from './RecordCreateForm'
+export type { EventFormData } from './EventCreateForm'
+export type { LogFormData } from './LogCreateForm'
 
 // Hooks
 export { 

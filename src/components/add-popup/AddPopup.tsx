@@ -13,13 +13,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { ScheduleCreateForm } from './ScheduleCreateForm'
-import { RecordCreateForm } from './RecordCreateForm'
+import { EventCreateForm, type EventFormData } from './EventCreateForm'
+import { LogCreateForm, type LogFormData } from './LogCreateForm'
+import { createEvent } from '@/lib/supabase/events'
+import { createTaskRecord } from '@/lib/supabase/task-records'
 
 interface AddPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  defaultTab?: 'schedule' | 'record'
+  defaultTab?: 'event' | 'log'
   contextData?: CreateContextData
 }
 
@@ -37,34 +39,52 @@ interface CreateContextData {
 export function AddPopup({ 
   open, 
   onOpenChange, 
-  defaultTab = 'schedule',
+  defaultTab = 'event',
   contextData 
 }: AddPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [activeTab, setActiveTab] = useState<'schedule' | 'record'>(defaultTab)
+  const [activeTab, setActiveTab] = useState<'event' | 'log'>(defaultTab)
+  const [eventFormData, setEventFormData] = useState<EventFormData | null>(null)
+  const [logFormData, setLogFormData] = useState<LogFormData | null>(null)
+  const [isEventFormValid, setIsEventFormValid] = useState(false)
+  const [isLogFormValid, setIsLogFormValid] = useState(false)
 
   const handleClose = () => {
     onOpenChange(false)
     // Reset form data when closing
+    setEventFormData(null)
+    setLogFormData(null)
+    setIsEventFormValid(false)
+    setIsLogFormValid(false)
   }
 
   const handleSubmit = async () => {
+    if (!((activeTab === 'event' && eventFormData && isEventFormValid) || 
+          (activeTab === 'log' && logFormData && isLogFormValid))) {
+      return
+    }
+
     setIsSubmitting(true)
     try {
-      // TODO: Implement form submission logic
-      console.log('Submitting form')
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      if (activeTab === 'event' && eventFormData) {
+        await createEvent(eventFormData)
+        console.log('Event created successfully')
+      } else if (activeTab === 'log' && logFormData) {
+        await createTaskRecord(logFormData)
+        console.log('Task record created successfully')
+      }
       
       // Close popup on success
       handleClose()
     } catch (error) {
       console.error('Failed to submit form:', error)
+      // TODO: Show error message to user
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  const isFormValid = activeTab === 'event' ? isEventFormValid : isLogFormValid
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -74,26 +94,26 @@ export function AddPopup({
           <div className="flex bg-popover p-2">
             <div className="flex h-auto gap-1">
               <button 
-                onClick={() => setActiveTab('schedule')}
+                onClick={() => setActiveTab('event')}
                 className={`flex items-center gap-2 px-4 py-3 transition-colors rounded-md ${
-                  activeTab === 'schedule' 
+                  activeTab === 'event' 
                     ? 'bg-zinc-950/5 dark:bg-white/5 font-medium' 
                     : 'bg-transparent hover:bg-zinc-950/5 dark:hover:bg-white/5'
                 }`}
               >
                 <Calendar className="w-4 h-4" />
-                Schedule
+                Event
               </button>
               <button 
-                onClick={() => setActiveTab('record')}
+                onClick={() => setActiveTab('log')}
                 className={`flex items-center gap-2 px-4 py-3 transition-colors rounded-md ${
-                  activeTab === 'record' 
+                  activeTab === 'log' 
                     ? 'bg-zinc-950/5 dark:bg-white/5 font-medium' 
                     : 'bg-transparent hover:bg-zinc-950/5 dark:hover:bg-white/5'
                 }`}
               >
                 <FileCheck className="w-4 h-4" />
-                Record
+                Log
               </button>
             </div>
           </div>
@@ -101,15 +121,23 @@ export function AddPopup({
 
         {/* Tab Content - Expandable area */}
         <div className="flex-1 min-h-0">
-          {activeTab === 'schedule' && (
+          {activeTab === 'event' && (
             <div className="p-6 h-full overflow-y-auto">
-              <ScheduleCreateForm contextData={contextData} />
+              <EventCreateForm 
+                contextData={contextData}
+                onFormDataChange={setEventFormData}
+                onFormValidChange={setIsEventFormValid}
+              />
             </div>
           )}
           
-          {activeTab === 'record' && (
+          {activeTab === 'log' && (
             <div className="p-6 h-full overflow-y-auto">
-              <RecordCreateForm contextData={contextData} />
+              <LogCreateForm 
+                contextData={contextData}
+                onFormDataChange={setLogFormData}
+                onFormValidChange={setIsLogFormValid}
+              />
             </div>
           )}
         </div>
@@ -126,7 +154,7 @@ export function AddPopup({
               </Button>
               <Button 
                 onClick={handleSubmit} 
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isFormValid}
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">

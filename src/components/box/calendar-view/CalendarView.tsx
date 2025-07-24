@@ -13,6 +13,7 @@ import { TwoWeekView } from './views/TwoWeekView'
 import { ScheduleView } from './views/ScheduleView'
 import { TaskReviewModal } from './components/TaskReviewModal'
 import { EventModal } from './components/EventModal'
+import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
@@ -49,6 +50,8 @@ export function CalendarView({
   const [eventDefaultDate, setEventDefaultDate] = useState<Date | undefined>(undefined)
   const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
   
+  // AddPopup hook
+  const { isOpen: isAddPopupOpen, openPopup, closePopup } = useAddPopup()
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
   const { planRecordMode } = useCalendarSettingsStore()
@@ -210,11 +213,9 @@ export function CalendarView({
   }, [])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    setSelectedEvent(null)
-    setEventDefaultDate(date)
-    setEventDefaultTime(time)
-    setIsEventModalOpen(true)
-  }, [])
+    // AddPopupを開く（eventタブをデフォルトで開く）
+    openPopup('event')
+  }, [openPopup])
   
   const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
     try {
@@ -450,7 +451,6 @@ export function CalendarView({
           planRecordMode={planRecordMode}
           onNavigate={handleNavigate}
           onViewChange={handleViewChange}
-          onCreateEvent={() => handleCreateEvent()}
         />
         
         {/* ビュー固有のコンテンツ */}
@@ -478,6 +478,13 @@ export function CalendarView({
         onDelete={handleEventDelete}
         defaultDate={eventDefaultDate}
         defaultTime={eventDefaultTime}
+      />
+      
+      {/* AddPopup */}
+      <AddPopup 
+        open={isAddPopupOpen} 
+        onOpenChange={(open) => open ? openPopup() : closePopup()}
+        defaultTab="event"
       />
     </>
   )

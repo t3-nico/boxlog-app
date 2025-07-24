@@ -20,8 +20,6 @@ interface UnifiedCalendarHeaderProps {
   onNavigate: (direction: 'prev' | 'next' | 'today') => void
   /** ビュー変更関数 */
   onViewChange: (view: CalendarViewType) => void
-  /** イベント作成関数 */
-  onCreateEvent?: () => void
 }
 
 /**
@@ -34,8 +32,7 @@ export function UnifiedCalendarHeader({
   dates,
   planRecordMode,
   onNavigate,
-  onViewChange,
-  onCreateEvent
+  onViewChange
 }: UnifiedCalendarHeaderProps) {
   // ビュータイプに応じた期間表示を生成（July 2025 week30形式）
   const getPeriodDisplay = () => {
@@ -70,7 +67,6 @@ export function UnifiedCalendarHeader({
         currentDate={currentDate}
         onNavigate={onNavigate}
         onViewChange={onViewChange}
-        onCreateEvent={onCreateEvent}
       />
       
       
