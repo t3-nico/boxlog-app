@@ -135,5 +135,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
+    overflow: hidden;
+  }
+  html {
+    overscroll-behavior: none;
+    overflow: hidden;
   }
 }

@@ -616,10 +616,18 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="min-h-screen bg-white dark:bg-gray-800" style={{marginLeft: collapsed ? '64px' : '256px', marginRight: isAIChatOpen ? '320px' : '48px'}}>
-            <div className="h-full overflow-auto">
-              {children}
-            </div>
+          <div 
+            className="bg-white dark:bg-gray-800 overflow-hidden" 
+            style={{
+              position: 'fixed',
+              top: '64px',
+              bottom: 0,
+              left: collapsed ? '64px' : '256px',
+              right: isAIChatOpen ? '320px' : '48px',
+              overscrollBehavior: 'none'
+            }}
+          >
+            {children}
           </div>
           
           {/* Right Icon Bar - Hide when AI Chat is open */}

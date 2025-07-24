@@ -68,7 +68,7 @@ export function UnifiedCalendarHeader({
 
   return (
     <div className={cn(
-      "relative h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4",
+      "sticky top-0 z-40 h-16 bg-white dark:bg-gray-900 px-4 flex-shrink-0",
       className
     )}>
       <div className="h-full flex items-center justify-between">

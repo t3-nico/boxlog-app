@@ -95,7 +95,7 @@ export function CalendarHeader({
   const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
-    <header className="relative h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-4">
+    <header className="relative h-16 bg-white dark:bg-gray-900 px-4">
       <div className="h-full flex items-center justify-between">
         {/* 左側: ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">

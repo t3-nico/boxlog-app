@@ -91,21 +91,21 @@ export function FullDayCalendarLayout({
 
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
-      <div className="flex h-full overflow-y-auto full-day-scroll">
+      <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
         <div 
           className="flex-shrink-0 sticky left-0 z-10"
-          style={{ height: `${24 * HOUR_HEIGHT}px` }}
+          style={{ height: `${25 * HOUR_HEIGHT}px` }}
         >
           <TimeAxisLabels 
             startHour={0} 
-            endHour={24} 
+            endHour={25} 
             interval={60}
             planRecordMode={planRecordMode}
           />
         </div>
         <div 
           className="flex-1 flex relative" 
-          style={{ height: `${24 * HOUR_HEIGHT}px` }}
+          style={{ height: `${25 * HOUR_HEIGHT}px` }}
         >
           {/* bothモードの場合は中央に分割線を表示 */}
           {planRecordMode === 'both' && (
@@ -128,10 +128,10 @@ export function FullDayCalendarLayout({
               <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
                 {/* 時間グリッド背景 */}
                 <div className="absolute inset-0">
-                  {Array.from({ length: 24 }, (_, hour) => (
+                  {Array.from({ length: 25 }, (_, hour) => (
                     <div
                       key={hour}
-                      className="border-b border-gray-100 dark:border-gray-800"
+                      className="border-b border-gray-100 dark:border-gray-800 last:border-b-0"
                       style={{ height: `${HOUR_HEIGHT}px` }}
                     />
                   ))}

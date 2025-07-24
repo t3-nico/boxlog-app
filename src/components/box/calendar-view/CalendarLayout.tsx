@@ -23,18 +23,26 @@ export function CalendarLayout({
   onCreateEvent
 }: CalendarLayoutProps) {
   return (
-    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* ヘッダー */}
-      <CalendarHeader
-        viewType={viewType}
-        currentDate={currentDate}
-        onNavigate={onNavigate}
-        onViewChange={onViewChange}
-        onCreateEvent={onCreateEvent}
-      />
+    <div 
+      className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
+      style={{ overscrollBehavior: 'none' }}
+    >
+      {/* 固定ヘッダー - flex-shrink-0で縮まないように */}
+      <div className="flex-shrink-0" style={{ position: 'sticky', top: 0, zIndex: 50 }}>
+        <CalendarHeader
+          viewType={viewType}
+          currentDate={currentDate}
+          onNavigate={onNavigate}
+          onViewChange={onViewChange}
+          onCreateEvent={onCreateEvent}
+        />
+      </div>
       
-      {/* メインコンテンツ */}
-      <main className="flex-1 overflow-hidden">
+      {/* スクロール可能なメインコンテンツ */}
+      <main 
+        className="flex-1 min-h-0 overflow-hidden" 
+        style={{ overscrollBehavior: 'none' }}
+      >
         {children}
       </main>
     </div>
