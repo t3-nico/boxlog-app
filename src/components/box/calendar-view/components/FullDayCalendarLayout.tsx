@@ -93,7 +93,7 @@ export function FullDayCalendarLayout({
     <div ref={containerRef} className="flex-1 overflow-hidden">
       <div className="flex h-full overflow-y-auto full-day-scroll">
         <div 
-          className="flex-shrink-0 sticky left-0 bg-white dark:bg-gray-900 z-10"
+          className="flex-shrink-0 sticky left-0 z-10"
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
           <TimeAxisLabels 
@@ -104,7 +104,7 @@ export function FullDayCalendarLayout({
           />
         </div>
         <div 
-          className="flex-1 relative" 
+          className="flex-1 flex relative" 
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
           {/* bothモードの場合は中央に分割線を表示 */}

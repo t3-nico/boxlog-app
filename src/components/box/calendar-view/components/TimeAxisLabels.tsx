@@ -84,7 +84,7 @@ export function CompactTimeAxisLabels({
   return (
     <div 
       className={cn(
-        "shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900",
+        "shrink-0 bg-white dark:bg-gray-900",
         className
       )}
       style={{ width: TIME_LABEL_WIDTH * 0.75 }}
@@ -126,7 +126,7 @@ export function BusinessHoursLabels({
   return (
     <div 
       className={cn(
-        "shrink-0 border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900",
+        "shrink-0 bg-white dark:bg-gray-900",
         className
       )}
       style={{ width: TIME_LABEL_WIDTH }}

@@ -13,7 +13,7 @@ interface DateHeaderProps {
 
 export function DateHeader({ dates, className = '', planRecordMode }: DateHeaderProps) {
   return (
-    <div className={cn("flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900", className)}>
+    <div className={cn("flex-shrink-0 bg-white dark:bg-gray-900", className)}>
       <div className="flex">
         {/* 時間軸のスペース */}
         <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-900"></div>

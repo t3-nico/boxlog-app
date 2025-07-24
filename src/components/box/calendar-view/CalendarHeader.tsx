@@ -10,7 +10,7 @@ import {
   CheckCircle,
   Plus
 } from 'lucide-react'
-import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear } from 'date-fns'
+import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear, getWeek } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { CalendarViewType } from './types'
@@ -41,7 +41,8 @@ const displayModeOptions = [
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
   switch (viewType) {
     case 'day':
-      return format(date, 'EEEE, MMMM d, yyyy')
+      const weekNumber = getWeek(date, { weekStartsOn: 1 })
+      return `${format(date, 'MMMM yyyy')}|week${weekNumber}`
     case '3day':
       const start3 = subDays(date, 1)
       const end3 = addDays(date, 1)
@@ -131,9 +132,25 @@ export function CalendarHeader({
           </div>
           
           {/* 現在の日付（左寄せ） */}
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {formatHeaderDate(viewType, currentDate)}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              {(() => {
+                const fullDate = formatHeaderDate(viewType, currentDate)
+                if (fullDate.includes('|week')) {
+                  const [monthYear, weekPart] = fullDate.split('|')
+                  return (
+                    <>
+                      {monthYear}
+                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                        {weekPart}
+                      </span>
+                    </>
+                  )
+                }
+                return fullDate
+              })()}
+            </h1>
+          </div>
         </div>
         
         {/* 右側: 新規イベント作成、表示モードとビュー切り替えドロップダウン */}

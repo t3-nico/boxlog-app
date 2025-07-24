@@ -109,7 +109,7 @@ export function formatShortDate(date: Date): string {
  * 曜日の短縮表示
  */
 export function formatShortWeekday(date: Date): string {
-  return format(date, 'E', { locale: ja })
+  return format(date, 'E')
 }
 
 /**
