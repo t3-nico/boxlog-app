@@ -75,11 +75,13 @@ function CurrentTimeLine({
 function TimeAxisLabels({ 
   startHour, 
   endHour, 
-  interval 
+  interval,
+  planRecordMode 
 }: { 
   startHour: number
   endHour: number
-  interval: number 
+  interval: number
+  planRecordMode?: 'plan' | 'record' | 'both'
 }) {
   const { timeFormat } = useCalendarSettingsStore()
   const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i)
@@ -92,6 +94,11 @@ function TimeAxisLabels({
           className="relative"
           style={{ height: `${HOUR_HEIGHT}px` }}
         >
+          {/* bothモードの場合は中央に分割線を表示 */}
+          {planRecordMode === 'both' && (
+            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5"></div>
+          )}
+          
           {/* 正時ラベル */}
           <div className="absolute -top-2 left-0 right-0 text-xs text-gray-600 dark:text-gray-400 text-center font-medium">
             {timeFormat === '12h' 
@@ -272,6 +279,7 @@ export function RefinedTimeGrid({
   children,
   className
 }: RefinedTimeGridProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [isInitialized, setIsInitialized] = useState(false)
   
@@ -300,6 +308,7 @@ export function RefinedTimeGrid({
         startHour={startHour}
         endHour={endHour}
         interval={gridInterval}
+        planRecordMode={planRecordMode}
       />
       
       {/* スクロール可能なグリッドエリア */}

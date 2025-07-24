@@ -17,6 +17,7 @@ import { useScrollSync, useScrollToTime, useVisibleTimeRange } from './hooks/use
 import { useDragToCreate } from './hooks/useDragToCreate'
 import { filterTasksForDate } from './utils/view-helpers'
 import { HOUR_HEIGHT } from './constants/grid-constants'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { Task } from './types'
 
 interface CreateTaskInput {
@@ -68,6 +69,7 @@ export function TimeGrid({
   onCreateTask,
   className = ''
 }: TimeGridProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -208,6 +210,7 @@ export function TimeGrid({
             interval={gridInterval}
             showBusinessHours={!!businessHours}
             className="z-10"
+            planRecordMode={planRecordMode}
           />
           
           {/* スクロール可能なグリッドエリア */}

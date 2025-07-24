@@ -171,6 +171,7 @@ export function SplitCalendarLayout({
             endHour={24} 
             interval={60}
             className="z-10"
+            planRecordMode={effectivePlanRecordMode}
           />
           <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
             {dates.map((day, dayIndex) => {
@@ -340,6 +341,7 @@ export function SplitCalendarLayout({
             endHour={24} 
             interval={60}
             className="z-10"
+            planRecordMode={effectivePlanRecordMode}
           />
           <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
             {dates.map((day, dayIndex) => {
@@ -418,6 +420,7 @@ export function SplitCalendarLayout({
             endHour={24} 
             interval={60}
             className="z-10"
+            planRecordMode={effectivePlanRecordMode}
           />
           <div className="flex-1 flex overflow-y-auto relative calendar-scroll" style={{ minHeight: `${24 * HOUR_HEIGHT}px` }}>
             {dates.map((day, dayIndex) => {
