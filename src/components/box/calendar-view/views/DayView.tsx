@@ -5,6 +5,7 @@ import { SplitCalendarLayout } from '../components/SplitCalendarLayout'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { DateHeader } from '../components/DateHeader'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
+import type { CalendarEvent } from '@/types/events'
 
 interface CreateTaskInput {
   title: string
@@ -31,8 +32,11 @@ interface CreateRecordInput {
 interface DayViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
+  events: CalendarEvent[]
   currentDate: Date
   onTaskClick?: (task: any) => void
+  onEventClick?: (event: CalendarEvent) => void
+  onCreateEvent?: (date: Date, time?: string) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -46,8 +50,11 @@ interface DayViewProps {
 export function DayView({ 
   dateRange, 
   tasks, 
+  events,
   currentDate,
   onTaskClick,
+  onEventClick,
+  onCreateEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -68,8 +75,11 @@ export function DayView({
         <SplitCalendarLayout
           dates={[currentDate]}
           tasks={tasks}
+          events={events}
           dateRange={dateRange}
           onTaskClick={onTaskClick}
+          onEventClick={onEventClick}
+          onCreateEvent={onCreateEvent}
           onEmptyClick={onEmptyClick}
           onTaskDrag={onTaskDrag}
           onCreateTask={onCreateTask}

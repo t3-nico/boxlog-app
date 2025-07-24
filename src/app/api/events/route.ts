@@ -51,6 +51,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   
+  console.log('Authenticated user ID:', user.id)
+  console.log('Authenticated user email:', user.email)
+  
   const { searchParams } = new URL(req.url)
   console.log('Search params:', Object.fromEntries(searchParams.entries()))
   
@@ -76,22 +79,10 @@ export async function GET(req: NextRequest) {
 
   const { start_date, end_date, event_type, status, tag_ids, search, limit, offset } = parsed.data
 
-  // Build query with tag information
+  // Build query - conditionally include tag information if tables exist
   let query = supabase
     .from('events')
-    .select(`
-      *,
-      event_tags (
-        tag_id,
-        tags (
-          id,
-          name,
-          color,
-          icon,
-          parent_id
-        )
-      )
-    `)
+    .select('*')
     .eq('user_id', user.id)
     .order('start_date', { ascending: true })
     .order('start_time', { ascending: true })
@@ -123,6 +114,9 @@ export async function GET(req: NextRequest) {
   query = query.range(offsetNum, offsetNum + limitNum - 1)
 
   const { data, error } = await query
+
+  console.log('Database query result:', data)
+  console.log('Query error:', error)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
@@ -186,22 +180,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: eventError.message }, { status: 500 })
   }
 
-  // Handle tag associations if provided
-  if (eventData.tag_ids && eventData.tag_ids.length > 0) {
-    const eventTagData = eventData.tag_ids.map((tagId: string) => ({
-      event_id: event.id,
-      tag_id: tagId,
-    }))
-
-    const { error: tagError } = await supabase
-      .from('event_tags')
-      .insert(eventTagData)
-
-    if (tagError) {
-      console.error('Failed to create tag associations:', tagError)
-      // Don't fail the entire request for tag association errors
-    }
-  }
+  // Handle tag associations if provided (temporarily disabled until event_tags table is created)
+  // if (eventData.tag_ids && eventData.tag_ids.length > 0) {
+  //   const eventTagData = eventData.tag_ids.map((tagId: string) => ({
+  //     event_id: event.id,
+  //     tag_id: tagId,
+  //   }))
+  //
+  //   const { error: tagError } = await supabase
+  //     .from('event_tags')
+  //     .insert(eventTagData)
+  //
+  //   if (tagError) {
+  //     console.error('Failed to create tag associations:', tagError)
+  //     // Don't fail the entire request for tag association errors
+  //   }
+  // }
   
   return NextResponse.json(event, { status: 201 })
 }

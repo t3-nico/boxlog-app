@@ -34,19 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   
   const { data, error } = await supabase
     .from('events')
-    .select(`
-      *,
-      event_tags (
-        tag_id,
-        tags (
-          id,
-          name,
-          color,
-          icon,
-          parent_id
-        )
-      )
-    `)
+    .select('*')
     .eq('id', params.id)
     .single()
 
@@ -85,31 +73,31 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: eventError.message }, { status: 500 })
   }
 
-  // Handle tag associations if provided
-  if (tag_ids !== undefined) {
-    // Remove existing associations
-    await supabase
-      .from('event_tags')
-      .delete()
-      .eq('event_id', params.id)
-
-    // Add new associations
-    if (tag_ids.length > 0) {
-      const eventTagData = tag_ids.map(tagId => ({
-        event_id: params.id,
-        tag_id: tagId,
-      }))
-
-      const { error: tagError } = await supabase
-        .from('event_tags')
-        .insert(eventTagData)
-
-      if (tagError) {
-        console.error('Failed to update tag associations:', tagError)
-        // Don't fail the entire request for tag association errors
-      }
-    }
-  }
+  // Handle tag associations if provided (temporarily disabled until event_tags table is created)
+  // if (tag_ids !== undefined) {
+  //   // Remove existing associations
+  //   await supabase
+  //     .from('event_tags')
+  //     .delete()
+  //     .eq('event_id', params.id)
+  //
+  //   // Add new associations
+  //   if (tag_ids.length > 0) {
+  //     const eventTagData = tag_ids.map(tagId => ({
+  //       event_id: params.id,
+  //       tag_id: tagId,
+  //     }))
+  //
+  //     const { error: tagError } = await supabase
+  //       .from('event_tags')
+  //       .insert(eventTagData)
+  //
+  //     if (tagError) {
+  //       console.error('Failed to update tag associations:', tagError)
+  //       // Don't fail the entire request for tag association errors
+  //     }
+  //   }
+  // }
   
   return NextResponse.json(event)
 }

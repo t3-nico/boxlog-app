@@ -7,7 +7,9 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
 import { CalendarTask } from '../utils/time-grid-helpers'
+import { CalendarEventComponent } from './CalendarEvent'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
+import type { CalendarEvent } from '@/types/events'
 
 interface CreateTaskInput {
   title: string
@@ -36,10 +38,16 @@ interface SplitCalendarLayoutProps {
   dates: Date[]
   /** タスクデータ */
   tasks: Task[]
+  /** イベントデータ */
+  events?: CalendarEvent[]
   /** 日付範囲（Records取得用） */
   dateRange: ViewDateRange
   /** タスククリック時のハンドラ */
   onTaskClick?: (task: CalendarTask) => void
+  /** イベントクリック時のハンドラ */
+  onEventClick?: (event: CalendarEvent) => void
+  /** イベント作成時のハンドラ */
+  onCreateEvent?: (date: Date, time?: string) => void
   /** 空の時間スロットクリック時のハンドラ */
   onEmptyClick?: (date: Date, time: string) => void
   /** タスクドラッグ時のハンドラ */
@@ -53,8 +61,11 @@ interface SplitCalendarLayoutProps {
 export function SplitCalendarLayout({
   dates,
   tasks,
+  events = [],
   dateRange,
   onTaskClick,
+  onEventClick,
+  onCreateEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -112,8 +123,6 @@ export function SplitCalendarLayout({
     onTaskClick?.(task)
   }
 
-  // デバッグログ
-  console.log('SplitCalendarLayout render:', { planRecordMode, planTasks: planTasks.length, recordTasks: recordTasks.length })
 
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
@@ -137,6 +146,12 @@ export function SplitCalendarLayout({
                 isSameDay(task.startTime, day)
               ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
               
+              // その日のイベント
+              const dayEvents = events.filter(event => 
+                isSameDay(event.startDate, day)
+              ).sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+              
+              
               return (
                 <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
                   {/* 時間グリッド背景 */}
@@ -153,6 +168,13 @@ export function SplitCalendarLayout({
                   {/* 中央分割線 */}
                   <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 z-10 -translate-x-1"></div>
                   
+                  {/* ラベル */}
+                  <div className="absolute top-0 left-0 right-0 h-6 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 z-30 flex">
+                    <div className="flex-1 text-center text-xs text-gray-600 dark:text-gray-400 py-1">event</div>
+                    <div className="w-px bg-gray-400 dark:bg-gray-600"></div>
+                    <div className="flex-1 text-center text-xs text-gray-600 dark:text-gray-400 py-1">log</div>
+                  </div>
+                  
                   {/* 今日のみに現在時刻線を表示 */}
                   {isToday(day) && (
                     <div
@@ -166,25 +188,25 @@ export function SplitCalendarLayout({
                     </div>
                   )}
                   
-                  {/* 左側：予定（テキストベース） */}
-                  <div className="absolute left-0 top-0 bottom-0 w-1/2 pr-1 overflow-y-auto">
+                  {/* 左側：イベント表示 */}
+                  <div className="absolute left-0 top-6 bottom-0 w-1/2 pr-1 overflow-y-auto">
                     <div className="p-2 space-y-1">
-                      {dayPlanTasks.map(task => (
+                      {dayEvents.map(event => (
                         <div
-                          key={task.id}
-                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1 rounded"
-                          onClick={() => handleTaskClick(task)}
+                          key={event.id}
+                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded"
+                          onClick={() => onEventClick?.(event)}
                         >
                           <div className="flex items-start gap-2">
-                            <div className="text-blue-600 dark:text-blue-400 font-mono text-xs min-w-0 flex-shrink-0">
-                              {task.startTime.toLocaleTimeString('ja-JP', { 
+                            <div className="text-green-600 dark:text-green-400 font-mono text-xs min-w-0 flex-shrink-0">
+                              {event.startDate.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
                                 hour12: false 
                               })}
                             </div>
                             <div className="font-medium truncate flex-1">
-                              {task.title}
+                              {event.title}
                             </div>
                           </div>
                         </div>
@@ -193,16 +215,16 @@ export function SplitCalendarLayout({
                   </div>
                   
                   {/* 右側：記録（テキストベース） */}
-                  <div className="absolute left-1/2 top-0 bottom-0 w-1/2 pl-1 overflow-y-auto">
+                  <div className="absolute left-1/2 top-6 bottom-0 w-1/2 pl-1 overflow-y-auto">
                     <div className="p-2 space-y-1">
                       {dayRecordTasks.map(task => (
                         <div
                           key={task.id}
-                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded"
+                          className="text-xs text-gray-900 dark:text-gray-100 cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/20 p-1 rounded"
                           onClick={() => handleTaskClick(task)}
                         >
                           <div className="flex items-start gap-2">
-                            <div className="text-green-600 dark:text-green-400 font-mono text-xs min-w-0 flex-shrink-0">
+                            <div className="text-orange-600 dark:text-orange-400 font-mono text-xs min-w-0 flex-shrink-0">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',

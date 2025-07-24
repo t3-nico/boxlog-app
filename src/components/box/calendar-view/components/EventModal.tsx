@@ -90,8 +90,9 @@ export function EventModal({
     tagIds: [],
   })
 
-  // タグデータを取得
-  const { data: tags = [], isLoading: tagsLoading } = useTags(true)
+  // タグデータを取得 (temporarily disabled until tags table is created)
+  const tags: any[] = [] // { data: tags = [], isLoading: tagsLoading } = useTags(true)
+  const tagsLoading = false
 
   // フォームデータの初期化
   useEffect(() => {

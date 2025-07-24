@@ -14,15 +14,20 @@ import {
 
 // Utility functions
 const convertEntityToEvent = (entity: EventEntity): Event => {
-  const startDate = new Date(`${entity.start_date}T${entity.start_time || '00:00:00'}`)
+  // ローカルタイムで日付を作成（タイムゾーン変換を避ける）
+  const [year, month, day] = entity.start_date.split('-').map(Number)
+  const [hours, minutes, seconds] = (entity.start_time || '00:00:00').split(':').map(Number)
+  const startDate = new Date(year, month - 1, day, hours, minutes, seconds)
+  
   let endDate: Date | undefined
-
   if (entity.end_date) {
-    endDate = new Date(`${entity.end_date}T${entity.end_time || '23:59:59'}`)
+    const [endYear, endMonth, endDay] = entity.end_date.split('-').map(Number)
+    const [endHours, endMinutes, endSeconds] = (entity.end_time || '23:59:59').split(':').map(Number)
+    endDate = new Date(endYear, endMonth - 1, endDay, endHours, endMinutes, endSeconds)
   }
 
-  // Convert tag data from entity format
-  const tags = entity.event_tags?.map(eventTag => eventTag.tags).filter(Boolean) || []
+  // Convert tag data from entity format (temporarily disabled until event_tags table is created)
+  const tags: any[] = [] // entity.event_tags?.map(eventTag => eventTag.tags).filter(Boolean) || []
 
   return {
     id: entity.id,
@@ -84,22 +89,16 @@ export const useEventStore = create<EventStore>()(
 
       // Event CRUD operations
       fetchEvents: async (filters?: EventFilters) => {
-        console.log('=== useEventStore fetchEvents called ===')
-        console.log('Filters:', filters)
         set({ loading: true, error: null })
         
         try {
           const params = new URLSearchParams()
           
           if (filters?.startDate) {
-            const startDateStr = formatDateForAPI(filters.startDate)
-            console.log('Start date formatted:', startDateStr)
-            params.append('start_date', startDateStr)
+            params.append('start_date', formatDateForAPI(filters.startDate))
           }
           if (filters?.endDate) {
-            const endDateStr = formatDateForAPI(filters.endDate)
-            console.log('End date formatted:', endDateStr)
-            params.append('end_date', endDateStr)
+            params.append('end_date', formatDateForAPI(filters.endDate))
           }
           if (filters?.types?.length) {
             filters.types.forEach(type => params.append('event_type', type))
@@ -114,19 +113,14 @@ export const useEventStore = create<EventStore>()(
             params.append('search', filters.searchQuery)
           }
 
-          const url = `/api/events?${params.toString()}`
-          console.log('Fetch URL:', url)
-          const response = await fetch(url)
-          console.log('Response status:', response.status)
+          const response = await fetch(`/api/events?${params.toString()}`)
           if (!response.ok) {
             const errorText = await response.text()
-            console.log('Error response:', errorText)
             throw new Error(`Failed to fetch events: ${response.status} ${errorText}`)
           }
 
           const data = await response.json()
           const events = data.events.map(convertEntityToEvent)
-
           set({ events, loading: false, filters: filters || {} })
         } catch (error) {
           set({ 
@@ -137,8 +131,6 @@ export const useEventStore = create<EventStore>()(
       },
 
       createEvent: async (eventData: CreateEventRequest) => {
-        console.log('=== useEventStore createEvent called ===')
-        console.log('Event data:', eventData)
         set({ loading: true, error: null })
         
         try {

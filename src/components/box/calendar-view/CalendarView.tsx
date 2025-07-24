@@ -89,7 +89,7 @@ export function CalendarView({ className }: CalendarViewProps) {
   // 表示範囲のイベントを取得
   const filteredEvents = useMemo(() => {
     return getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-  }, [getEventsByDateRange, viewDateRange.start, viewDateRange.end])
+  }, [getEventsByDateRange, viewDateRange.start, viewDateRange.end, events])
   
   // イベントの初期ロードと更新
   useEffect(() => {
