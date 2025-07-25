@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useChat } from 'ai/react'
 import { 
   X,
   ArrowUpCircle,
@@ -40,12 +41,12 @@ interface GitHubFile {
   type: 'file' | 'dir'
 }
 
-interface CodebaseMessage {
+// Vercel AI SDK message type extension
+interface ExtendedMessage {
   id: string
+  role: 'user' | 'assistant' | 'system'
   content: string
-  sender: 'user' | 'assistant'
-  timestamp: Date
-  status?: 'sending' | 'error' | 'sent'
+  createdAt?: Date
   relatedFiles?: string[]
 }
 
@@ -151,16 +152,16 @@ class GitHubCodebaseClient {
   }
 }
 
-function MessageBubble({ message }: { message: CodebaseMessage }) {
-  const isUser = message.sender === 'user'
-  const isAssistant = message.sender === 'assistant'
+function MessageBubble({ message }: { message: ExtendedMessage }) {
+  const isUser = message.role === 'user'
+  const isAssistant = message.role === 'assistant'
   
   return (
-    <AIMessage from={message.sender}>
+    <AIMessage from={message.role}>
       {isAssistant && (
         <AIMessageAvatar 
-          src="/users/codebase-ai-avatar.png"
-          name="Codebase AI"
+          src="/users/support-ai-avatar.png"
+          name="BoxLog Support"
         />
       )}
       
@@ -194,9 +195,9 @@ function MessageBubble({ message }: { message: CodebaseMessage }) {
           </div>
         )}
         
-        {isAssistant && (
+        {isAssistant && message.createdAt && (
           <div className="mt-1 text-xs opacity-60">
-            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         )}
       </AIMessageContent>
@@ -212,27 +213,21 @@ function MessageBubble({ message }: { message: CodebaseMessage }) {
 }
 
 function CodebaseChatInput({ 
-  onSendMessage,
+  input,
+  handleInputChange,
+  handleSubmit,
   isLoading 
 }: { 
-  onSendMessage: (message: string) => Promise<void>
+  input: string
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) {
-  const [inputValue, setInputValue] = useState('')
   const [isComposing, setIsComposing] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (inputValue.trim() && !isLoading) {
-      const message = inputValue.trim()
-      setInputValue('')
-      await onSendMessage(message)
-    }
-  }
 
   const getSubmitStatus = () => {
     if (isLoading) return 'streaming'
-    if (!inputValue.trim()) return 'ready'
+    if (!input.trim()) return 'ready'
     return 'ready'
   }
 
@@ -245,17 +240,17 @@ function CodebaseChatInput({
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
-          <span>Analyzing codebase...</span>
+          <span>Checking support info...</span>
         </div>
       )}
       
       <AIInput onSubmit={handleSubmit}>
         <AIInputTextarea
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          value={input}
+          onChange={handleInputChange}
           onCompositionStart={() => setIsComposing(true)}
           onCompositionEnd={() => setIsComposing(false)}
-          placeholder="Ask about boxlog-web codebase..."
+          placeholder="Ask about BoxLog features and usage..."
           disabled={isLoading}
           minHeight={40}
           maxHeight={120}
@@ -263,12 +258,12 @@ function CodebaseChatInput({
         <AIInputToolbar>
           <AIInputTools>
             <div className="text-xs text-gray-500 dark:text-gray-400 px-2">
-              📚 boxlog-web only
+              📋 BoxLog Usage Support
             </div>
           </AIInputTools>
           
           <AIInputSubmit
-            disabled={!inputValue.trim() || isLoading}
+            disabled={!input.trim() || isLoading}
             status={getSubmitStatus()}
           />
         </AIInputToolbar>
@@ -278,73 +273,45 @@ function CodebaseChatInput({
 }
 
 export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
-  const [messages, setMessages] = useState<CodebaseMessage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
   const [showMenu, setShowMenu] = useState(false)
-  const [githubClient] = useState(() => new GitHubCodebaseClient())
   const [isInitialized, setIsInitialized] = useState(false)
+  
+  // Use Vercel AI SDK's useChat hook
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append, error } = useChat({
+    api: '/api/chat/codebase',
+    onError: (error) => {
+      console.error('Chat error:', error)
+    },
+    onFinish: (message) => {
+      console.log('Message finished:', message)
+    },
+    initialMessages: [
+      {
+        id: '1',
+        role: 'assistant',
+        content: `Hello! I'm the **BoxLog** application support assistant.
 
-  // 初期化処理
+I can help you with:
+
+• 📅 **Calendar Features** - How to use calendar views
+• 📋 **Task Management** - Creating and organizing tasks
+• 🏷️ **Tag System** - Categorizing and filtering
+• 📊 **Progress Tracking** - Monitoring productivity
+• 🔄 **Smart Folders** - Automated organization
+• 🛠️ **Troubleshooting** - Solving common issues
+
+**Note**: I only provide support for BoxLog application usage.
+
+What would you like to know about BoxLog?`
+      }
+    ]
+  })
+
+  // Debug: log messages when they change
   useEffect(() => {
-    if (isOpen && !isInitialized) {
-      initializeCodebase()
-    }
-  }, [isOpen, isInitialized])
+    console.log('Messages updated:', messages)
+  }, [messages])
 
-  const initializeCodebase = async () => {
-    setIsLoading(true)
-    try {
-      // GitHub APIでファイル一覧を取得
-      const files = await githubClient.fetchFileTree()
-      console.log(`Loaded ${files.length} files from boxlog-web repository`)
-      setIsInitialized(true)
-    } catch (error) {
-      console.error('Failed to initialize codebase:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const sendMessage = async (content: string) => {
-    const userMessage: CodebaseMessage = {
-      id: Date.now().toString(),
-      content,
-      sender: 'user',
-      timestamp: new Date(),
-      status: 'sent'
-    }
-
-    setMessages(prev => [...prev, userMessage])
-    setIsLoading(true)
-
-    try {
-      // ここでVercel AI SDKまたは独自のAI APIを呼び出す
-      // 現在はモック応答
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const aiResponse: CodebaseMessage = {
-        id: (Date.now() + 1).toString(),
-        content: `boxlog-webリポジトリについて「${content}」のご質問ですね。\n\n現在このコードベース専用AIは開発中です。近日中に以下の機能を提供予定です：\n\n• コード検索と解析\n• 機能の説明と使い方\n• バグ修正の提案\n• 新機能の実装方法\n\n**注意**: 私はboxlog-webリポジトリの内容についてのみお答えします。`,
-        sender: 'assistant',
-        timestamp: new Date(),
-        relatedFiles: ['src/components/ui/button.tsx', 'README.md']
-      }
-
-      setMessages(prev => [...prev, aiResponse])
-    } catch (error) {
-      console.error('Failed to get AI response:', error)
-      const errorMessage: CodebaseMessage = {
-        id: (Date.now() + 1).toString(),
-        content: 'エラーが発生しました。後でもう一度お試しください。',
-        sender: 'assistant',
-        timestamp: new Date(),
-        status: 'error'
-      }
-      setMessages(prev => [...prev, errorMessage])
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const clearMessages = () => {
     setMessages([])
@@ -365,28 +332,26 @@ export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
       <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-16">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center">
-              <Code2 className="w-4 h-4 text-white" />
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-600 to-blue-600 flex items-center justify-center">
+              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Codebase AI</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">BoxLog Support</h3>
               <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                <Github className="w-3 h-3" />
-                <span>boxlog-web</span>
+                <span>App Usage Support</span>
               </div>
             </div>
           </div>
           
           <div className="flex items-center gap-1">
-            {/* Refresh Button */}
-            <button
-              onClick={initializeCodebase}
-              disabled={isLoading}
-              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors disabled:opacity-50"
-              aria-label="Refresh codebase"
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-            </button>
+            {/* Status indicator */}
+            {isLoading && (
+              <div className="p-1 text-blue-500">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              </div>
+            )}
             
             {/* Menu */}
             <div className="relative">
@@ -409,7 +374,12 @@ export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
                   </button>
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(messages))
+                      const exportMessages = messages.map(msg => ({
+                        role: msg.role,
+                        content: msg.content,
+                        timestamp: msg.createdAt
+                      }))
+                      navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
                       setShowMenu(false)
                     }}
                     className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -439,29 +409,31 @@ export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
           {messages.length === 0 ? (
             <AIMessage from="assistant">
               <AIMessageAvatar 
-                src="/users/codebase-ai-avatar.png"
-                name="Codebase AI"
+                src="/users/support-ai-avatar.png"
+                name="BoxLog Support"
               />
               <AIMessageContent>
                 <CodebaseAIResponse>
-                  こんにちは！私は **boxlog-web** リポジトリ専用のAIアシスタントです。
+                  Hello! I'm the **BoxLog** application support assistant.
                   
-                  以下についてお答えできます：
+                  I can help you with:
                   
-                  • **コードの構造と機能**の説明
-                  • **特定の実装方法**のアドバイス
-                  • **バグやエラー**の解決方法
-                  • **新機能の追加**に関する提案
+                  • 📅 **Calendar Features** - How to use calendar views
+                  • 📋 **Task Management** - Creating and organizing tasks
+                  • 🏷️ **Tag System** - Categorizing and filtering
+                  • 📊 **Progress Tracking** - Monitoring productivity
+                  • 🔄 **Smart Folders** - Automated organization
+                  • 🛠️ **Troubleshooting** - Solving common issues
                   
-                  **注意**: boxlog-webリポジトリの内容についてのみお答えします。
+                  **Note**: I only provide support for BoxLog application usage.
                   
-                  何について知りたいですか？
+                  What would you like to know about BoxLog?
                 </CodebaseAIResponse>
               </AIMessageContent>
             </AIMessage>
           ) : (
             messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
+              <MessageBubble key={message.id} message={message as ExtendedMessage} />
             ))
           )}
         </AIConversationContent>
@@ -470,7 +442,9 @@ export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
       
       {/* Chat Input */}
       <CodebaseChatInput 
-        onSendMessage={sendMessage}
+        input={input}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
         isLoading={isLoading}
       />
     </div>
