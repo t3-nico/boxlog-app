@@ -19,7 +19,7 @@ export function CalendarLayout({
   return (
     <div 
       className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
-      style={{ overscrollBehavior: 'none' }}
+      style={{ overscrollBehavior: 'none', paddingRight: 0, paddingLeft: 0, padding: 0 }}
     >
       {children}
     </div>

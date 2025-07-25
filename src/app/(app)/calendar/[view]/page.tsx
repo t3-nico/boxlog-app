@@ -32,7 +32,7 @@ export default function CalendarViewPage({ params, searchParams }: CalendarViewP
   }
 
   return (
-    <div className="h-screen">
+    <div className="h-screen" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
       <CalendarView 
         initialViewType={view as any}
         initialDate={initialDate}

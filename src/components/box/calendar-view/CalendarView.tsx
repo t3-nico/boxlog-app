@@ -466,7 +466,7 @@ export function CalendarView({
         />
         
         {/* ビュー固有のコンテンツ */}
-        <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-gray-800">
+        <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-gray-800" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
           {renderView()}
         </div>
       </CalendarLayout>
