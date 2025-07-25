@@ -115,8 +115,13 @@ export function CalendarView({
   // 表示範囲のイベントを取得してCalendarEvent型に変換
   const filteredEvents = useMemo(() => {
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-    return convertEventsToCalendarEvents(events)
-  }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end])
+    console.log('Date range:', { start: viewDateRange.start, end: viewDateRange.end })
+    console.log('Events from store:', eventStore.events)
+    console.log('Filtered events:', events)
+    const calendarEvents = convertEventsToCalendarEvents(events)
+    console.log('Calendar events:', calendarEvents)
+    return calendarEvents
+  }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events])
   
   // イベントの初期ロードと更新
   const fetchEventsCallback = useCallback(() => {
@@ -191,25 +196,28 @@ export function CalendarView({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    // CalendarEventからEventに変換して保存（必要なプロパティのみ）
+    // AddPopupで編集するためにselectedEventを設定
     const eventData: Event = {
       id: event.id,
       title: event.title,
       description: event.description,
       startDate: event.startDate,
       endDate: event.endDate,
-      type: event.type,
       status: event.status,
+      priority: event.priority,
       color: event.color,
       location: event.location,
       url: event.url,
       tags: event.tags,
-      createdAt: new Date(), // デフォルト値
-      updatedAt: new Date()  // デフォルト値
+      items: event.items || [],
+      isRecurring: event.isRecurring || false,
+      createdAt: event.createdAt,
+      updatedAt: event.updatedAt
     }
     setSelectedEvent(eventData)
-    setIsEventModalOpen(true)
-  }, [])
+    // AddPopupを開く（編集モード）
+    openPopup('event')
+  }, [openPopup])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
     // AddPopupを開く（eventタブをデフォルトで開く）
@@ -482,8 +490,14 @@ export function CalendarView({
       {/* AddPopup */}
       <AddPopup 
         open={isAddPopupOpen} 
-        onOpenChange={(open) => open ? openPopup() : closePopup()}
+        onOpenChange={(open) => {
+          if (!open) {
+            closePopup()
+            setSelectedEvent(null) // クローズ時にselectedEventをクリア
+          }
+        }}
         defaultTab="event"
+        editingEvent={selectedEvent}
       />
     </>
   )

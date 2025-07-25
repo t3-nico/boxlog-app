@@ -101,7 +101,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
   const [newChecklistItem, setNewChecklistItem] = useState('')
   const { tags } = useSidebarStore()
 
-  // Initialize form with context data
+  // Initialize form with context data (excluding editingEvent)
   useEffect(() => {
     const now = new Date()
     const tomorrow = new Date()
@@ -111,7 +111,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     const defaultStartTime = '09:00'
     const defaultEndTime = '10:00'
     
-    if (contextData) {
+    if (contextData && !contextData.editingEvent) {
       setFormData(prev => ({
         ...prev,
         date: contextData.dueDate 
@@ -122,7 +122,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         color: contextData.defaultColor || '#1a73e8',
         tagIds: contextData.tags || [],
       }))
-    } else {
+    } else if (!contextData) {
       setFormData(prev => ({
         ...prev,
         date: defaultStartDate,
@@ -130,7 +130,33 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         endTime: defaultEndTime,
       }))
     }
-  }, [contextData])
+  }, [contextData?.dueDate, contextData?.defaultColor, contextData?.tags])
+
+  // Handle editing event data separately to avoid infinite loop
+  useEffect(() => {
+    if (contextData?.editingEvent) {
+      const event = contextData.editingEvent
+      const eventDate = event.startDate ? new Date(event.startDate) : new Date()
+      const eventEndDate = event.endDate ? new Date(event.endDate) : null
+      
+      setFormData({
+        title: event.title || '',
+        description: event.description || '',
+        date: eventDate.toISOString().split('T')[0],
+        startTime: eventDate.toTimeString().slice(0, 5),
+        endTime: eventEndDate ? eventEndDate.toTimeString().slice(0, 5) : '',
+        status: event.status || 'inbox',
+        priority: event.priority,
+        color: event.color || '#1a73e8',
+        items: event.items || [],
+        isRecurring: event.isRecurring || false,
+        recurrenceType: undefined,
+        recurrenceInterval: 1,
+        recurrenceEndDate: undefined,
+        tagIds: event.tags?.map(tag => tag.id) || [],
+      })
+    }
+  }, [contextData?.editingEvent?.id]) // Only re-run when editing a different event
 
   const updateFormData = (field: keyof EventFormData, value: any) => {
     let newData = { ...formData, [field]: value }

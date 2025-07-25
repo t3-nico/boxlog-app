@@ -17,12 +17,14 @@ import { EventCreateForm, type EventFormData } from './EventCreateForm'
 import { LogCreateForm, type LogFormData } from './LogCreateForm'
 import { createEvent } from '@/lib/supabase/events'
 import { createTaskRecord } from '@/lib/supabase/task-records'
+import { useEventStore } from '@/stores/useEventStore'
 
 interface AddPopupProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   defaultTab?: 'event' | 'log'
   contextData?: CreateContextData
+  editingEvent?: any // 編集中のイベントデータ
 }
 
 interface CreateContextData {
@@ -34,13 +36,17 @@ interface CreateContextData {
   // Common
   defaultColor?: string
   priority?: 'Low' | 'Medium' | 'High'
+  
+  // Event editing
+  editingEvent?: any
 }
 
 export function AddPopup({ 
   open, 
   onOpenChange, 
   defaultTab = 'event',
-  contextData 
+  contextData,
+  editingEvent 
 }: AddPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<'event' | 'log'>(defaultTab)
@@ -48,6 +54,8 @@ export function AddPopup({
   const [logFormData, setLogFormData] = useState<LogFormData | null>(null)
   const [isEventFormValid, setIsEventFormValid] = useState(false)
   const [isLogFormValid, setIsLogFormValid] = useState(false)
+  
+  const eventStore = useEventStore()
 
   const handleClose = () => {
     onOpenChange(false)
@@ -67,8 +75,39 @@ export function AddPopup({
     setIsSubmitting(true)
     try {
       if (activeTab === 'event' && eventFormData) {
-        await createEvent(eventFormData)
-        console.log('Event created successfully')
+        // 編集モードかどうかで処理を分岐
+        const eventData = {
+          title: eventFormData.title,
+          description: eventFormData.description,
+          startDate: eventFormData.date ? new Date(`${eventFormData.date}T${eventFormData.startTime || '00:00'}:00`) : new Date(),
+          endDate: eventFormData.date && eventFormData.endTime ? new Date(`${eventFormData.date}T${eventFormData.endTime}:00`) : undefined,
+          status: eventFormData.status,
+          priority: eventFormData.priority,
+          color: eventFormData.color,
+          isRecurring: eventFormData.isRecurring,
+          recurrenceRule: eventFormData.isRecurring ? {
+            type: eventFormData.recurrenceType || 'weekly',
+            interval: eventFormData.recurrenceInterval || 1,
+            endDate: eventFormData.recurrenceEndDate || null,
+          } : undefined,
+          items: eventFormData.items,
+          location: eventFormData.location,
+          url: eventFormData.url,
+          tagIds: eventFormData.tagIds,
+        }
+        
+        if (editingEvent) {
+          // 編集モード
+          await eventStore.updateEvent({
+            ...eventData,
+            id: editingEvent.id
+          })
+          console.log('Event updated successfully')
+        } else {
+          // 新規作成モード
+          await eventStore.createEvent(eventData)
+          console.log('Event created successfully')
+        }
       } else if (activeTab === 'log' && logFormData) {
         await createTaskRecord(logFormData)
         console.log('Task record created successfully')
@@ -124,7 +163,10 @@ export function AddPopup({
           {activeTab === 'event' && (
             <div className="p-6 h-full overflow-y-auto">
               <EventCreateForm 
-                contextData={contextData}
+                contextData={{
+                  ...contextData,
+                  editingEvent: editingEvent
+                }}
                 onFormDataChange={setEventFormData}
                 onFormValidChange={setIsEventFormValid}
               />
@@ -162,7 +204,7 @@ export function AddPopup({
                     Creating...
                   </div>
                 ) : (
-                  'Create'
+                  editingEvent ? 'Update' : 'Create'
                 )}
               </Button>
             </div>
