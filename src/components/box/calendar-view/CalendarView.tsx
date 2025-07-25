@@ -196,6 +196,8 @@ export function CalendarView({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
+    console.log('🎯 Event clicked:', event)
+    
     // AddPopupで編集するためにselectedEventを設定
     const eventData: Event = {
       id: event.id,
@@ -214,7 +216,10 @@ export function CalendarView({
       createdAt: event.createdAt,
       updatedAt: event.updatedAt
     }
+    
+    console.log('📋 Setting selected event data:', eventData)
     setSelectedEvent(eventData)
+    
     // AddPopupを開く（編集モード）
     openPopup('event')
   }, [openPopup])

@@ -124,7 +124,12 @@ export const useEventStore = create<EventStore>()(
           }
 
           const data = await response.json()
-          const events = data.events.map(convertEntityToEvent)
+          console.log('Fetched events data:', data)
+          const events = data.events.map((entity: EventEntity) => {
+            const event = convertEntityToEvent(entity)
+            console.log('Converted event:', event)
+            return event
+          })
           set({ events, loading: false, filters: filters || {} })
         } catch (error) {
           set({ 
@@ -138,20 +143,43 @@ export const useEventStore = create<EventStore>()(
         set({ loading: true, error: null })
         
         try {
+          // Convert dates to appropriate format for new API
+          const getDateFromEvent = (date: Date | string | undefined): string | undefined => {
+            if (!date) return undefined
+            if (typeof date === 'string') return date
+            return date.toISOString().split('T')[0] // YYYY-MM-DD
+          }
+          
+          const getTimeFromEvent = (date: Date | string | undefined): string | undefined => {
+            if (!date) return undefined
+            if (typeof date === 'string') return date
+            // Use toLocaleTimeString to get local time in HH:MM format
+            const timeString = date.toLocaleTimeString('en-GB', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            })
+            console.log('📅 Converting date to time:', date, '→', timeString)
+            return timeString
+          }
+
           const apiData = {
             title: eventData.title,
             description: eventData.description,
-            start_date: formatDateForAPI(eventData.startDate),
-            start_time: formatTimeForAPI(eventData.startDate),
-            end_date: eventData.endDate ? formatDateForAPI(eventData.endDate) : undefined,
-            end_time: eventData.endDate ? formatTimeForAPI(eventData.endDate) : undefined,
-            event_type: eventData.type || 'event',
-            status: eventData.status || 'confirmed',
+            date: getDateFromEvent(eventData.startDate),
+            startTime: getTimeFromEvent(eventData.startDate),
+            endTime: getTimeFromEvent(eventData.endDate),
+            status: eventData.status || 'inbox',
+            priority: eventData.priority,
             color: eventData.color || '#3b82f6',
-            recurrence_pattern: eventData.recurrencePattern,
+            isRecurring: eventData.isRecurring || false,
+            recurrenceType: eventData.recurrenceRule?.type,
+            recurrenceInterval: eventData.recurrenceRule?.interval,
+            recurrenceEndDate: eventData.recurrenceRule?.endDate,
+            items: eventData.items || [],
             location: eventData.location,
             url: eventData.url,
-            tag_ids: eventData.tagIds || [],
+            tagIds: eventData.tagIds || [],
           }
 
           const response = await fetch('/api/events', {
@@ -161,7 +189,8 @@ export const useEventStore = create<EventStore>()(
           })
 
           if (!response.ok) {
-            throw new Error('Failed to create event')
+            const errorData = await response.json()
+            throw new Error(errorData.error || 'Failed to create event')
           }
 
           const entity = await response.json()
@@ -285,6 +314,12 @@ export const useEventStore = create<EventStore>()(
       getEventsByDateRange: (startDate: Date, endDate: Date) => {
         const { events } = get()
         return events.filter(event => {
+          // startDateがない場合はフィルタリングから除外
+          if (!event.startDate) {
+            console.warn('Event without startDate:', event)
+            return false
+          }
+          
           const eventStart = event.startDate
           const eventEnd = event.endDate || event.startDate
           

@@ -134,12 +134,28 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
 
   // Handle editing event data separately to avoid infinite loop
   useEffect(() => {
+    console.log('🔄 EventCreateForm editing useEffect triggered:', {
+      hasContextData: !!contextData,
+      hasEditingEvent: !!contextData?.editingEvent,
+      editingEventId: contextData?.editingEvent?.id,
+      editingEvent: contextData?.editingEvent
+    })
+    
     if (contextData?.editingEvent) {
       const event = contextData.editingEvent
+      console.log('📝 Setting form data from editing event:', event)
+      
       const eventDate = event.startDate ? new Date(event.startDate) : new Date()
       const eventEndDate = event.endDate ? new Date(event.endDate) : null
       
-      setFormData({
+      console.log('📅 Processing dates:', {
+        originalStartDate: event.startDate,
+        originalEndDate: event.endDate,
+        eventDate,
+        eventEndDate
+      })
+      
+      const newFormData = {
         title: event.title || '',
         description: event.description || '',
         date: eventDate.toISOString().split('T')[0],
@@ -154,7 +170,10 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         recurrenceInterval: 1,
         recurrenceEndDate: undefined,
         tagIds: event.tags?.map(tag => tag.id) || [],
-      })
+      }
+      
+      console.log('📝 Setting new form data:', newFormData)
+      setFormData(newFormData)
     }
   }, [contextData?.editingEvent?.id]) // Only re-run when editing a different event
 

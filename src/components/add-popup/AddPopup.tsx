@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
@@ -76,11 +77,22 @@ export function AddPopup({
     try {
       if (activeTab === 'event' && eventFormData) {
         // 編集モードかどうかで処理を分岐
+        const startDate = eventFormData.date ? new Date(`${eventFormData.date}T${eventFormData.startTime || '00:00'}:00`) : new Date()
+        const endDate = eventFormData.date && eventFormData.endTime ? new Date(`${eventFormData.date}T${eventFormData.endTime}:00`) : undefined
+        
+        console.log('📅 AddPopup creating event with dates:', {
+          date: eventFormData.date,
+          startTime: eventFormData.startTime,
+          endTime: eventFormData.endTime,
+          startDate,
+          endDate
+        })
+        
         const eventData = {
           title: eventFormData.title,
           description: eventFormData.description,
-          startDate: eventFormData.date ? new Date(`${eventFormData.date}T${eventFormData.startTime || '00:00'}:00`) : new Date(),
-          endDate: eventFormData.date && eventFormData.endTime ? new Date(`${eventFormData.date}T${eventFormData.endTime}:00`) : undefined,
+          startDate,
+          endDate,
           status: eventFormData.status,
           priority: eventFormData.priority,
           color: eventFormData.color,
@@ -128,6 +140,12 @@ export function AddPopup({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[650px] max-h-[85vh] p-0 bg-popover text-popover-foreground flex flex-col">
+        <VisuallyHidden>
+          <DialogTitle>
+            {editingEvent ? 'Edit Event' : 'Create New Item'}
+          </DialogTitle>
+        </VisuallyHidden>
+        
         {/* Tab Navigation at the top - Fixed position */}
         <div className="w-full flex-shrink-0">
           <div className="flex bg-popover p-2">

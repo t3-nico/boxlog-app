@@ -164,10 +164,12 @@ export async function POST(req: NextRequest) {
   
   if (date && startTime) {
     planned_start = `${date}T${startTime}:00`
+    console.log('📅 API converting to planned_start:', { date, startTime, planned_start })
   }
   
   if (date && endTime) {
     planned_end = `${date}T${endTime}:00`
+    console.log('📅 API converting to planned_end:', { date, endTime, planned_end })
   }
 
   // Build recurrence rule if recurring

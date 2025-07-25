@@ -36,6 +36,7 @@ import {
   SidebarSection,
 } from '@/components/sidebar'
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
+import { CodebaseAIChat } from '@/components/codebase-ai-chat'
 import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
@@ -47,6 +48,7 @@ import {
   HelpCircle as QuestionMarkCircleIcon,
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
+  Code2,
 } from 'lucide-react'
 import {
   Calendar as CalendarIcon,
@@ -128,9 +130,11 @@ export function ApplicationLayoutNew({
   
   // AI Chat Sidebar state
   const [isAIChatOpen, setIsAIChatOpen] = useState(false)
+  const [isCodebaseAIChatOpen, setIsCodebaseAIChatOpen] = useState(false)
   
   // Right sidebar visibility state (like Google Calendar)
   const [isRightSidebarHidden, setIsRightSidebarHidden] = useState(false)
+  
   
   // Sidebar state from store
   const { collapsed, setCollapsed } = useSidebarStore()
@@ -426,6 +430,7 @@ export function ApplicationLayoutNew({
                           <PlusCircleIcon className="size-6 sm:size-5 shrink-0 text-orange-600 dark:text-orange-400" data-slot="icon" />
                           <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
                         </button>
+
                       </div>
                     </SidebarSection>
 
@@ -615,7 +620,7 @@ export function ApplicationLayoutNew({
           {/* Main Content */}
           <div className="bg-white dark:bg-gray-800" style={{
             marginLeft: collapsed ? '48px' : '256px', 
-            marginRight: isAIChatOpen ? '320px' : (isRightSidebarHidden ? '0px' : '40px'),
+            marginRight: (isAIChatOpen || isCodebaseAIChatOpen) ? '320px' : '0px',
             transition: 'margin-left 150ms ease, margin-right 150ms ease',
             height: 'calc(100vh - 64px)'
           }}>
@@ -624,21 +629,28 @@ export function ApplicationLayoutNew({
             </div>
           </div>
           
-          {/* Right Icon Bar - Hide when AI Chat is open */}
-          {!isAIChatOpen && !isRightSidebarHidden && (
+          {/* Right Icon Bar - Hide when any AI Chat is open */}
+          {!isAIChatOpen && !isCodebaseAIChatOpen && !isRightSidebarHidden && (
             <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '64px', bottom: '0'}}>
               <button
                 onClick={() => setIsAIChatOpen(true)}
                 className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
-                title="AI Chat"
+                title="AI Assistant"
               >
                 <SparklesIcon className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setIsCodebaseAIChatOpen(true)}
+                className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
+                title="Codebase AI"
+              >
+                <Code2 className="w-5 h-5" />
               </button>
             </div>
           )}
           
           {/* Fixed toggle button at bottom right - always visible when not in AI chat */}
-          {!isAIChatOpen && (
+          {!isAIChatOpen && !isCodebaseAIChatOpen && (
             <button
               onClick={() => setIsRightSidebarHidden(!isRightSidebarHidden)}
               className={`fixed right-2 bottom-4 p-2 rounded-lg transition-colors text-gray-600 dark:text-gray-400 z-40 ${
@@ -656,10 +668,14 @@ export function ApplicationLayoutNew({
             </button>
           )}
           
-          {/* Right Chat Sidebar (conditionally shown) */}
+          {/* Right Chat Sidebars (conditionally shown) */}
           <AIChatSidebar 
             isOpen={isAIChatOpen} 
             onClose={() => setIsAIChatOpen(false)} 
+          />
+          <CodebaseAIChat 
+            isOpen={isCodebaseAIChatOpen} 
+            onClose={() => setIsCodebaseAIChatOpen(false)} 
           />
         </div>
         
