@@ -5,32 +5,21 @@ const supabase = createClient()
 
 export async function createEvent(formData: EventFormData) {
   try {
-    // フォームデータをSupabaseテーブル形式に変換
-    const eventData = {
-      title: formData.title,
-      description: formData.description || null,
-      start_date: formData.startDate,
-      start_time: formData.startTime,
-      end_date: formData.endDate || null,
-      end_time: formData.endTime,
-      event_type: formData.eventType,
-      status: formData.status,
-      color: formData.color,
-      location: formData.location || null,
-      url: formData.url || null,
+    // APIエンドポイントを使用して作成
+    const response = await fetch('/api/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to create event')
     }
 
-    const { data, error } = await supabase
-      .from('events')
-      .insert(eventData)
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Failed to create event:', error)
-      throw error
-    }
-
+    const data = await response.json()
     return data
   } catch (error) {
     console.error('Error creating event:', error)
@@ -40,26 +29,19 @@ export async function createEvent(formData: EventFormData) {
 
 export async function getEvents(startDate?: string, endDate?: string) {
   try {
-    let query = supabase
-      .from('events')
-      .select('*')
-      .order('start_date', { ascending: true })
+    const params = new URLSearchParams()
+    if (startDate) params.append('start_date', startDate)
+    if (endDate) params.append('end_date', endDate)
 
-    if (startDate) {
-      query = query.gte('start_date', startDate)
-    }
-    if (endDate) {
-      query = query.lte('start_date', endDate)
-    }
-
-    const { data, error } = await query
-
-    if (error) {
-      console.error('Failed to fetch events:', error)
-      throw error
+    const response = await fetch(`/api/events?${params.toString()}`)
+    
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch events')
     }
 
-    return data || []
+    const data = await response.json()
+    return data.events || []
   } catch (error) {
     console.error('Error fetching events:', error)
     throw error

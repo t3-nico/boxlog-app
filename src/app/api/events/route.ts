@@ -6,26 +6,25 @@ import { z } from 'zod'
 const createEventSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
-  start_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // YYYY-MM-DD format
-  start_time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/).optional(), // HH:MM:SS format
-  end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  end_time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/).optional(),
-  event_type: z.enum(['event', 'task', 'reminder']).default('event'),
-  status: z.enum(['confirmed', 'tentative', 'cancelled']).default('confirmed'),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), // YYYY-MM-DD format
+  startTime: z.string().regex(/^\d{2}:\d{2}$/).optional(), // HH:MM format
+  endTime: z.string().regex(/^\d{2}:\d{2}$/).optional(), // HH:MM format
+  status: z.enum(['inbox', 'planned', 'in_progress', 'completed', 'cancelled']).default('inbox'),
+  priority: z.enum(['urgent', 'important', 'necessary', 'delegate', 'optional']).optional(),
   color: z.string().default('#3b82f6'),
-  recurrence_pattern: z.object({
-    frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']),
-    interval: z.number().min(1).optional(),
-    endDate: z.string().optional(),
-    count: z.number().min(1).optional(),
-    weekDays: z.array(z.enum(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'])).optional(),
-    monthDay: z.number().min(1).max(31).optional(),
-    monthWeek: z.number().min(1).max(5).optional(),
-    monthWeekDay: z.enum(['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']).optional(),
-  }).optional(),
+  isRecurring: z.boolean().default(false),
+  recurrenceType: z.enum(['daily', 'weekly', 'monthly', 'yearly']).optional(),
+  recurrenceInterval: z.number().min(1).optional(),
+  recurrenceEndDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  items: z.array(z.object({
+    id: z.string(),
+    text: z.string(),
+    completed: z.boolean(),
+    duration: z.number().optional(),
+  })).default([]),
   location: z.string().optional(),
-  url: z.string().url().optional(),
-  tag_ids: z.array(z.string().uuid()).optional(),
+  url: z.string().optional(),
+  tagIds: z.array(z.string().uuid()).default([]),
 })
 
 // Query parameters schema for filtering events
@@ -78,25 +77,30 @@ export async function GET(req: NextRequest) {
 
   const { start_date, end_date, event_type, status, tag_ids, search, limit, offset } = parsed.data
 
-  // Build query - conditionally include tag information if tables exist
+  // Build query with tag information
   let query = supabase
     .from('events')
-    .select('*')
+    .select(`
+      *,
+      event_tags (
+        tag_id,
+        tags (
+          id,
+          name,
+          color
+        )
+      )
+    `)
     .eq('user_id', user.id)
-    .order('start_date', { ascending: true })
-    .order('start_time', { ascending: true })
+    .order('planned_start', { ascending: true })
 
   // Apply filters
   if (start_date) {
-    query = query.gte('start_date', start_date)
+    query = query.gte('planned_start', `${start_date}T00:00:00`)
   }
   
   if (end_date) {
-    query = query.lte('start_date', end_date)
-  }
-  
-  if (event_type) {
-    query = query.eq('event_type', event_type)
+    query = query.lte('planned_start', `${end_date}T23:59:59`)
   }
   
   if (status) {
@@ -148,53 +152,103 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
 
-  const { tag_ids, ...eventData } = parsed.data
+  const { tagIds, date, startTime, endTime, isRecurring, recurrenceType, recurrenceInterval, recurrenceEndDate, items, ...eventData } = parsed.data
 
-  // Validate date logic
-  if (!eventData.start_time || !eventData.end_time) {
-    return NextResponse.json({ 
-      error: 'start_time and end_time are required' 
-    }, { status: 400 })
+  // Convert to database format
+  let planned_start = null
+  let planned_end = null
+  
+  if (date && startTime) {
+    planned_start = `${date}T${startTime}:00`
+  }
+  
+  if (date && endTime) {
+    planned_end = `${date}T${endTime}:00`
   }
 
-  // If end_date is not provided, use start_date
-  if (!eventData.end_date) {
-    eventData.end_date = eventData.start_date
+  // Build recurrence rule if recurring
+  let recurrence_rule = null
+  if (isRecurring && recurrenceType) {
+    recurrence_rule = {
+      type: recurrenceType,
+      interval: recurrenceInterval || 1,
+      endDate: recurrenceEndDate || null,
+    }
   }
 
-  // Add user_id to event data
-  const eventDataWithUser = {
+  // Create event data for database
+  const dbEventData = {
     ...eventData,
-    user_id: user.id
+    user_id: user.id,
+    planned_start,
+    planned_end,
+    is_recurring: isRecurring,
+    recurrence_rule,
+    items: items || [],
   }
 
-  // Create the event
-  const { data: event, error: eventError } = await supabase
-    .from('events')
-    .insert(eventDataWithUser)
-    .select()
-    .single()
+  // Create the event - handle RLS trigger errors gracefully
+  let event
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .insert(dbEventData)
+      .select()
+      .single()
 
-  if (eventError) {
-    return NextResponse.json({ error: eventError.message }, { status: 500 })
+    if (error) {
+      console.error('Event creation error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+    
+    event = data
+  } catch (error: any) {
+    // If it's specifically the event_histories RLS error, the event might still be created
+    if (error.code === '42501' && error.message?.includes('event_histories')) {
+      console.warn('History trigger failed due to RLS, checking if event was created...')
+      
+      // Try to find the event that was just created
+      const { data: createdEvent, error: fetchError } = await supabase
+        .from('events')
+        .select()
+        .eq('title', dbEventData.title)
+        .eq('user_id', user.id)
+        .eq('planned_start', dbEventData.planned_start)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      
+      if (createdEvent && !fetchError) {
+        console.log('Event was created successfully despite history trigger error')
+        event = createdEvent
+      } else {
+        console.error('Event creation failed:', error)
+        return NextResponse.json({ error: error.message }, { status: 500 })
+      }
+    } else {
+      console.error('Event creation error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
   }
 
-  // Handle tag associations if provided (temporarily disabled until event_tags table is created)
-  // if (eventData.tag_ids && eventData.tag_ids.length > 0) {
-  //   const eventTagData = eventData.tag_ids.map((tagId: string) => ({
-  //     event_id: event.id,
-  //     tag_id: tagId,
-  //   }))
-  //
-  //   const { error: tagError } = await supabase
-  //     .from('event_tags')
-  //     .insert(eventTagData)
-  //
-  //   if (tagError) {
-  //     console.error('Failed to create tag associations:', tagError)
-  //     // Don't fail the entire request for tag association errors
-  //   }
-  // }
+  // Skip manual history creation for now to avoid RLS issues
+
+  // Handle tag associations if provided
+  if (tagIds && tagIds.length > 0) {
+    const eventTagData = tagIds.map((tagId: string) => ({
+      event_id: event.id,
+      tag_id: tagId,
+    }))
+
+    const { error: tagError } = await supabase
+      .from('event_tags')
+      .insert(eventTagData)
+
+    if (tagError) {
+      console.error('Failed to create tag associations:', tagError)
+      // Don't fail the entire request for tag association errors
+    }
+  }
   
   return NextResponse.json(event, { status: 201 })
 }

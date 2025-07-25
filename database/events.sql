@@ -114,8 +114,19 @@ CREATE POLICY "Users can manage their own event_tags" ON event_tags
     )
   );
 
+-- SELECT用のポリシー
 CREATE POLICY "Users can view their event histories" ON event_histories
   FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM events 
+      WHERE events.id = event_histories.event_id 
+      AND events.user_id = auth.uid()
+    )
+  );
+
+-- INSERT用のポリシー（トリガー関数用）
+CREATE POLICY "Users can insert event histories" ON event_histories
+  FOR INSERT WITH CHECK (
     EXISTS (
       SELECT 1 FROM events 
       WHERE events.id = event_histories.event_id 
