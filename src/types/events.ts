@@ -1,7 +1,11 @@
 // Event types for calendar functionality
 
 export type EventType = 'event' | 'task' | 'reminder'
-export type EventStatus = 'confirmed' | 'tentative' | 'cancelled'
+export type EventStatus = 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
+export type EventPriority = 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
+
+// Legacy status for backward compatibility
+export type LegacyEventStatus = 'confirmed' | 'tentative' | 'cancelled'
 
 // Recurrence pattern types
 export type RecurrenceFrequency = 'daily' | 'weekly' | 'monthly' | 'yearly'
@@ -18,20 +22,31 @@ export interface RecurrencePattern {
   monthWeekDay?: WeekDay // for monthly recurrence (day of week)
 }
 
+// Checklist item interface
+export interface ChecklistItem {
+  id: string
+  text: string
+  completed: boolean
+  duration?: number // minutes
+  created_at?: string
+}
+
 // Database entity types (matches database schema)
 export interface EventEntity {
   id: string
   user_id: string
   title: string
   description?: string
-  start_date: string // YYYY-MM-DD format
-  start_time?: string // HH:MM:SS format
-  end_date?: string // YYYY-MM-DD format
-  end_time?: string // HH:MM:SS format
+  planned_start?: string // TIMESTAMPTZ format
+  planned_end?: string // TIMESTAMPTZ format
   event_type: EventType
   status: EventStatus
+  priority?: EventPriority
   color: string
-  recurrence_pattern?: RecurrencePattern
+  is_recurring?: boolean
+  recurrence_rule?: any // JSONB
+  parent_event_id?: string
+  items?: ChecklistItem[] // JSONB array
   location?: string
   url?: string
   created_at: string
@@ -60,12 +75,16 @@ export interface Event {
   id: string
   title: string
   description?: string
-  startDate: Date
+  startDate?: Date
   endDate?: Date
   type: EventType
   status: EventStatus
+  priority?: EventPriority
   color: string
-  recurrencePattern?: RecurrencePattern
+  isRecurring?: boolean
+  recurrenceRule?: any
+  parentEventId?: string
+  items?: ChecklistItem[]
   location?: string
   url?: string
   tags?: Array<{
@@ -83,12 +102,16 @@ export interface Event {
 export interface CreateEventRequest {
   title: string
   description?: string
-  startDate: Date
+  startDate?: Date
   endDate?: Date
   type?: EventType
   status?: EventStatus
+  priority?: EventPriority
   color?: string
-  recurrencePattern?: RecurrencePattern
+  isRecurring?: boolean
+  recurrenceRule?: any
+  parentEventId?: string
+  items?: ChecklistItem[]
   location?: string
   url?: string
   tagIds?: string[]
