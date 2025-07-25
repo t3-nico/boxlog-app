@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Heading } from '@/components/heading'
 import { SettingSection, ToggleItem, SelectItem, DatePickerItem } from '@/components/settings-section'
+import { SelectItem as ShadcnSelectItem } from '@/components/ui/select'
 import { useTheme } from '@/contexts/theme-context'
 import { 
   loadLifeCounterSettings, 
@@ -16,6 +17,7 @@ export default function PreferencesSettings() {
   const [notifications, setNotifications] = useState(true)
   const [duration, setDuration] = useState('30')
   const [segment, setSegment] = useState('30')
+  const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('24h')
   const { theme, setTheme } = useTheme()
   
   // Life counter settings
@@ -26,19 +28,30 @@ export default function PreferencesSettings() {
   const [birthDateError, setBirthDateError] = useState<string>('')
   const [isLifeCounterLoaded, setIsLifeCounterLoaded] = useState(false)
 
-  // Load life counter settings on mount
+  // Load settings on mount
   useEffect(() => {
     const settings = loadLifeCounterSettings()
     setLifeCounter(settings)
     setIsLifeCounterLoaded(true)
+    
+    // Load time format from localStorage
+    const savedTimeFormat = localStorage.getItem('timeFormat') as '12h' | '24h'
+    if (savedTimeFormat) {
+      setTimeFormat(savedTimeFormat)
+    }
   }, [])
 
-  // Save life counter settings when they change (but only after initial load)
+  // Save settings when they change (but only after initial load)
   useEffect(() => {
     if (isLifeCounterLoaded) {
       saveLifeCounterSettings(lifeCounter)
     }
   }, [lifeCounter, isLifeCounterLoaded])
+
+  // Save time format when it changes
+  useEffect(() => {
+    localStorage.setItem('timeFormat', timeFormat)
+  }, [timeFormat])
 
   const handleLifeCounterToggle = (enabled: boolean) => {
     setLifeCounter(prev => ({ ...prev, enabled }))
@@ -74,31 +87,40 @@ export default function PreferencesSettings() {
           label="Theme"
           description="Choose your preferred theme setting"
           value={theme}
-          onChange={(e) => setTheme(e.target.value as 'light' | 'dark' | 'system')}
+          onChange={(value) => setTheme(value as 'light' | 'dark' | 'system')}
         >
-          <option value="light">Light</option>
-          <option value="dark">Dark</option>
-          <option value="system">System</option>
+          <ShadcnSelectItem value="light">Light</ShadcnSelectItem>
+          <ShadcnSelectItem value="dark">Dark</ShadcnSelectItem>
+          <ShadcnSelectItem value="system">System</ShadcnSelectItem>
         </SelectItem>
       </SettingSection>
       <SettingSection title="Time & Tags" description="Default behaviors.">
         <SelectItem
+          label="Time format"
+          description="Choose between 12-hour (AM/PM) or 24-hour time format"
+          value={timeFormat}
+          onChange={(value) => setTimeFormat(value as '12h' | '24h')}
+        >
+          <ShadcnSelectItem value="12h">12-hour (AM/PM)</ShadcnSelectItem>
+          <ShadcnSelectItem value="24h">24-hour</ShadcnSelectItem>
+        </SelectItem>
+        <SelectItem
           label="Default block duration"
           value={duration}
-          onChange={(e) => setDuration(e.target.value)}
+          onChange={(value) => setDuration(value)}
         >
-          <option value="15">15 minutes</option>
-          <option value="30">30 minutes</option>
-          <option value="60">60 minutes</option>
+          <ShadcnSelectItem value="15">15 minutes</ShadcnSelectItem>
+          <ShadcnSelectItem value="30">30 minutes</ShadcnSelectItem>
+          <ShadcnSelectItem value="60">60 minutes</ShadcnSelectItem>
         </SelectItem>
         <SelectItem
           label="Time segmentation"
           value={segment}
-          onChange={(e) => setSegment(e.target.value)}
+          onChange={(value) => setSegment(value)}
         >
-          <option value="15">15 minutes</option>
-          <option value="30">30 minutes</option>
-          <option value="60">60 minutes</option>
+          <ShadcnSelectItem value="15">15 minutes</ShadcnSelectItem>
+          <ShadcnSelectItem value="30">30 minutes</ShadcnSelectItem>
+          <ShadcnSelectItem value="60">60 minutes</ShadcnSelectItem>
         </SelectItem>
       </SettingSection>
       <SettingSection title="Life Counter" description="Display remaining days until age 100 in the header.">

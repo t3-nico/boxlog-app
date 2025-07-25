@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { 
   Calendar, Plus, X, Check, Tag as TagIcon, Clock, Repeat,
-  AlertTriangle, Star, Circle, ArrowRight, MoreHorizontal 
+  AlertTriangle, Star, Circle, ArrowRight, MoreHorizontal,
+  FileText, CheckSquare, Type
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -11,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { RichTextEditor } from '@/components/ui/rich-text-editor'
+import { SimpleTags } from '@/components/ui/tags'
 import { 
   Select,
   SelectContent,
@@ -61,6 +63,21 @@ const eventPriorities: { value: EventPriority; label: string; color: string; ico
   { value: 'delegate', label: 'Delegate', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100', icon: ArrowRight },
   { value: 'optional', label: 'Optional', color: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100', icon: MoreHorizontal },
 ]
+
+// Generate 15-minute interval time options
+const generateTimeOptions = () => {
+  const times = []
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const timeValue = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      const displayTime = timeValue // 24-hour format
+      times.push({ value: timeValue, label: displayTime })
+    }
+  }
+  return times
+}
+
+const timeOptions = generateTimeOptions()
 
 
 export function EventCreateForm({ contextData, onFormDataChange, onFormValidChange }: EventCreateFormProps) {
@@ -115,20 +132,26 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     }
   }, [contextData])
 
-  // Tag selection helpers
-  const handleTagToggle = (tagId: string) => {
-    const currentTags = formData.tagIds
-    const newTags = currentTags.includes(tagId)
-      ? currentTags.filter(id => id !== tagId)
-      : [...currentTags, tagId]
-    updateFormData('tagIds', newTags)
-  }
-
-  const selectedTags = tags.filter(tag => formData.tagIds.includes(tag.id))
-  const availableTags = tags.filter(tag => !formData.tagIds.includes(tag.id))
-
   const updateFormData = (field: keyof EventFormData, value: any) => {
-    const newData = { ...formData, [field]: value }
+    let newData = { ...formData, [field]: value }
+    
+    // Auto-set end time when start time is selected
+    if (field === 'startTime' && value && !formData.endTime) {
+      const [hours, minutes] = value.split(':').map(Number)
+      const startTime = new Date()
+      startTime.setHours(hours, minutes, 0, 0)
+      
+      // Add 1 hour
+      const endTime = new Date(startTime.getTime() + 60 * 60 * 1000)
+      const endTimeString = `${endTime.getHours().toString().padStart(2, '0')}:${endTime.getMinutes().toString().padStart(2, '0')}`
+      
+      // Check if the calculated end time exists in our time options
+      const endTimeExists = timeOptions.find(option => option.value === endTimeString)
+      if (endTimeExists) {
+        newData = { ...newData, endTime: endTimeString }
+      }
+    }
+    
     setFormData(newData)
     onFormDataChange?.(newData)
   }
@@ -212,310 +235,279 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
   }, [formData.items])
 
   return (
-    <div className="space-y-6 bg-popover text-popover-foreground">
+    <div className="space-y-4 bg-popover text-popover-foreground -mt-2">
       {/* Title */}
-      <div className="space-y-2">
-        <Label htmlFor="title">
-          Title <span className="text-red-500">*</span>
-        </Label>
+      <div className="pl-7">
         <Input
           id="title"
           placeholder="Event title"
           value={formData.title}
           onChange={(e) => updateFormData('title', e.target.value)}
-          className="text-base"
+          className="text-xl w-full border-0 border-b border-border bg-transparent px-0 py-2 rounded-none focus:border-primary focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
 
-      {/* Status and Priority */}
-      <div className="flex items-end gap-4">
-        <div className="space-y-2">
-          <Label>Status</Label>
-          <Select value={formData.status} onValueChange={(value) => updateFormData('status', value as EventStatus)}>
-            <SelectTrigger className="w-36">
-              <SelectValue>
-                {selectedStatus && (
-                  <Badge className={selectedStatus.color}>
-                    {selectedStatus.label}
-                  </Badge>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {eventStatuses.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
-                  <Badge className={status.color}>
-                    {status.label}
-                  </Badge>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label>Priority</Label>
-          <Select value={formData.priority || 'none'} onValueChange={(value) => updateFormData('priority', value === 'none' ? undefined : value as EventPriority)}>
-            <SelectTrigger className="w-36">
-              <SelectValue placeholder="None">
-                {selectedPriority ? (
-                  <Badge className={selectedPriority.color}>
-                    <selectedPriority.icon className="w-3 h-3 mr-1" />
-                    {selectedPriority.label}
-                  </Badge>
-                ) : (
-                  <span className="text-muted-foreground">None</span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              {eventPriorities.map((priority) => (
-                <SelectItem key={priority.value} value={priority.value}>
-                  <Badge className={priority.color}>
-                    <priority.icon className="w-3 h-3 mr-1" />
-                    {priority.label}
-                  </Badge>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-
       {/* Date and Time - Google Calendar style */}
-      <div className="space-y-2">
-        <Label>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            Date & Time
+      <div className="flex items-start gap-3">
+        <Calendar className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
+        <div className="flex-1 space-y-3">
+          <div className="flex items-center gap-3">
+            <Input
+              type="date"
+              value={formData.date}
+              onChange={(e) => updateFormData('date', e.target.value)}
+              className="w-40"
+            />
+            <Select 
+              value={formData.startTime} 
+              onValueChange={(value) => updateFormData('startTime', value)}
+              disabled={!formData.date}
+            >
+              <SelectTrigger className="w-28">
+                <SelectValue placeholder="Start" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {timeOptions.map((time) => (
+                  <SelectItem key={time.value} value={time.value}>
+                    {time.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-muted-foreground text-sm">-</span>
+            <Select 
+              value={formData.endTime} 
+              onValueChange={(value) => updateFormData('endTime', value)}
+              disabled={!formData.date}
+            >
+              <SelectTrigger className="w-28">
+                <SelectValue placeholder="End" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {timeOptions.map((time) => (
+                  <SelectItem key={time.value} value={time.value}>
+                    {time.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        </Label>
-        <div className="flex items-center gap-3">
-          <Input
-            type="date"
-            value={formData.date}
-            onChange={(e) => updateFormData('date', e.target.value)}
-            className="w-40"
-          />
-          <Input
-            type="time"
-            value={formData.startTime}
-            onChange={(e) => updateFormData('startTime', e.target.value)}
-            disabled={!formData.date}
-            className="w-24"
-            placeholder="Start"
-          />
-          <span className="text-muted-foreground text-sm">-</span>
-          <Input
-            type="time"
-            value={formData.endTime}
-            onChange={(e) => updateFormData('endTime', e.target.value)}
-            disabled={!formData.date}
-            className="w-24"
-            placeholder="End"
-          />
+          
+          {/* Recurrence within Date section */}
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={formData.isRecurring}
+              onCheckedChange={(checked) => updateFormData('isRecurring', checked)}
+            />
+            <span className="text-sm">Repeat</span>
+          </div>
+          
+          {formData.isRecurring && (
+            <div className="space-y-3 ml-6">
+              <div className="flex items-center gap-3">
+                <span className="text-sm w-12">Every</span>
+                <Input
+                  type="number"
+                  value={formData.recurrenceInterval || 1}
+                  onChange={(e) => updateFormData('recurrenceInterval', parseInt(e.target.value) || 1)}
+                  className="w-16"
+                  min="1"
+                />
+                <Select value={formData.recurrenceType || 'weekly'} onValueChange={(value) => updateFormData('recurrenceType', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
+                  <SelectTrigger className="w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Day(s)</SelectItem>
+                    <SelectItem value="weekly">Week(s)</SelectItem>
+                    <SelectItem value="monthly">Month(s)</SelectItem>
+                    <SelectItem value="yearly">Year(s)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <span className="text-sm w-12">Until</span>
+                <Input
+                  type="date"
+                  value={formData.recurrenceEndDate || ''}
+                  onChange={(e) => updateFormData('recurrenceEndDate', e.target.value)}
+                  className="w-40"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Recurrence */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <Checkbox
-            checked={formData.isRecurring}
-            onCheckedChange={(checked) => updateFormData('isRecurring', checked)}
-          />
-          <Label>
-            <div className="flex items-center gap-2">
-              <Repeat className="w-4 h-4" />
-              Repeat
-            </div>
-          </Label>
-        </div>
-        
-        {formData.isRecurring && (
-          <div className="ml-6 space-y-3">
-            <div className="flex items-center gap-3">
-              <span className="text-sm w-12">Every</span>
-              <Input
-                type="number"
-                value={formData.recurrenceInterval || 1}
-                onChange={(e) => updateFormData('recurrenceInterval', parseInt(e.target.value) || 1)}
-                className="w-16"
-                min="1"
-              />
-              <Select value={formData.recurrenceType || 'weekly'} onValueChange={(value) => updateFormData('recurrenceType', value as 'daily' | 'weekly' | 'monthly' | 'yearly')}>
-                <SelectTrigger className="w-28">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Day(s)</SelectItem>
-                  <SelectItem value="weekly">Week(s)</SelectItem>
-                  <SelectItem value="monthly">Month(s)</SelectItem>
-                  <SelectItem value="yearly">Year(s)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <span className="text-sm w-12">Until</span>
-              <Input
-                type="date"
-                value={formData.recurrenceEndDate || ''}
-                onChange={(e) => updateFormData('recurrenceEndDate', e.target.value)}
-                className="w-40"
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-
-      {/* Tags */}
-      <div className="space-y-2">
-        <Label>
-          <div className="flex items-center gap-2">
-            <TagIcon className="w-4 h-4" />
-            Tags
-          </div>
-        </Label>
-        
-        {/* Selected tags */}
-        {selectedTags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-2">
-            {selectedTags.map((tag) => (
-              <Badge
-                key={tag.id}
-                variant="secondary"
-                className="cursor-pointer"
-                style={{ backgroundColor: tag.color + '20', color: tag.color }}
-                onClick={() => handleTagToggle(tag.id)}
-              >
-                {tag.name}
-                <X className="w-3 h-3 ml-1" />
-              </Badge>
-            ))}
-          </div>
-        )}
-        
-        {/* Tag selection */}
-        <Select onValueChange={(value) => handleTagToggle(value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select tags..." />
+      {/* Status */}
+      <div className="flex items-center gap-3">
+        <Circle className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
+        <Select value={formData.status} onValueChange={(value) => updateFormData('status', value as EventStatus)}>
+          <SelectTrigger className="w-40">
+            <SelectValue>
+              {selectedStatus && (
+                <Badge className={selectedStatus.color}>
+                  {selectedStatus.label}
+                </Badge>
+              )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {availableTags.map((tag) => (
-              <SelectItem key={tag.id} value={tag.id}>
-                <div className="flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: tag.color }}
-                  />
-                  <span>{tag.name}</span>
-                  {tag.count && (
-                    <span className="text-xs text-muted-foreground">({tag.count})</span>
-                  )}
-                </div>
+            {eventStatuses.map((status) => (
+              <SelectItem key={status.value} value={status.value}>
+                <Badge className={status.color}>
+                  {status.label}
+                </Badge>
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Description */}
-      <div className="space-y-2">
-        <Label>Description</Label>
-        <RichTextEditor
-          content={formData.description}
-          onChange={(content) => updateFormData('description', content)}
-          placeholder="Add description, notes, or additional details..."
-          minimal={false}
+      {/* Priority */}
+      <div className="flex items-center gap-3">
+        <AlertTriangle className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
+        <Select value={formData.priority || 'none'} onValueChange={(value) => updateFormData('priority', value === 'none' ? undefined : value as EventPriority)}>
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="None">
+              {selectedPriority ? (
+                <Badge className={selectedPriority.color}>
+                  <selectedPriority.icon className="w-3 h-3 mr-1" />
+                  {selectedPriority.label}
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">None</span>
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">None</SelectItem>
+            {eventPriorities.map((priority) => (
+              <SelectItem key={priority.value} value={priority.value}>
+                <Badge className={priority.color}>
+                  <priority.icon className="w-3 h-3 mr-1" />
+                  {priority.label}
+                </Badge>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Tags */}
+      <div className="flex items-start gap-3">
+        <TagIcon className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
+        <SimpleTags
+          value={formData.tagIds}
+          onValueChange={(value) => updateFormData('tagIds', value)}
+          options={tags}
+          placeholder="Select tags..."
+          onCreateTag={(tagName) => {
+            // TODO: Implement tag creation API call
+            console.log('Create new tag:', tagName)
+          }}
         />
       </div>
 
       {/* Checklist Items */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label>Checklist</Label>
-          <div className="text-xs text-muted-foreground flex items-center gap-2">
-            {checklistStats.totalItems > 0 && (
-              <>
-                <span>{checklistStats.completedItems}/{checklistStats.totalItems} items</span>
-                {checklistStats.totalDuration && (
-                  <>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {checklistStats.completedDuration && checklistStats.totalDuration !== checklistStats.completedDuration
-                        ? `${checklistStats.completedDuration} / ${checklistStats.totalDuration}`
+      <div className="flex items-start gap-3">
+        <CheckSquare className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-1" />
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-sm">Checklist</span>
+            <div className="text-xs text-muted-foreground flex items-center gap-2">
+              {checklistStats.totalItems > 0 && (
+                <>
+                  <span>{checklistStats.completedItems}/{checklistStats.totalItems} items</span>
+                  {checklistStats.totalDuration && (
+                    <>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {checklistStats.completedDuration && checklistStats.totalDuration !== checklistStats.completedDuration
+                          ? `${checklistStats.completedDuration} / ${checklistStats.totalDuration}`
                         : checklistStats.totalDuration
-                      }
-                    </span>
-                  </>
-                )}
-              </>
-            )}
+                        }
+                      </span>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="space-y-2">
-          {/* Existing items */}
-          {formData.items.map((item) => (
-            <div key={item.id} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
-              <Checkbox
-                checked={item.completed}
-                onCheckedChange={() => toggleChecklistItem(item.id)}
-              />
+          <div className="space-y-2">
+            {/* Existing items */}
+            {formData.items.map((item) => (
+              <div key={item.id} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                <Checkbox
+                  checked={item.completed}
+                  onCheckedChange={() => toggleChecklistItem(item.id)}
+                />
+                <Input
+                  value={item.text}
+                  onChange={(e) => updateChecklistItemText(item.id, e.target.value)}
+                  className={`flex-1 text-sm ${item.completed ? 'line-through text-muted-foreground' : ''}`}
+                  placeholder="Task description..."
+                />
+                <Input
+                  type="number"
+                  value={item.duration || ''}
+                  onChange={(e) => updateChecklistItemDuration(item.id, e.target.value ? parseInt(e.target.value) : undefined)}
+                  className="w-20 text-sm"
+                  placeholder="min"
+                  min="0"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeChecklistItem(item.id)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+            
+            {/* Add new item */}
+            <div className="flex items-center gap-2">
               <Input
-                value={item.text}
-                onChange={(e) => updateChecklistItemText(item.id, e.target.value)}
-                className={`flex-1 text-sm ${item.completed ? 'line-through text-muted-foreground' : ''}`}
-                placeholder="Task description..."
-              />
-              <Input
-                type="number"
-                value={item.duration || ''}
-                onChange={(e) => updateChecklistItemDuration(item.id, e.target.value ? parseInt(e.target.value) : undefined)}
-                className="w-20 text-sm"
-                placeholder="min"
-                min="0"
+                placeholder="Add checklist item..."
+                value={newChecklistItem}
+                onChange={(e) => setNewChecklistItem(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    addChecklistItem()
+                  }
+                }}
+                className="flex-1"
               />
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={() => removeChecklistItem(item.id)}
-                className="h-8 w-8 p-0"
+                onClick={addChecklistItem}
+                disabled={!newChecklistItem.trim()}
               >
-                <X className="w-4 h-4" />
+                <Plus className="w-4 h-4" />
               </Button>
             </div>
-          ))}
-          
-          {/* Add new item */}
-          <div className="flex items-center gap-2">
-            <Input
-              placeholder="Add checklist item..."
-              value={newChecklistItem}
-              onChange={(e) => setNewChecklistItem(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault()
-                  addChecklistItem()
-                }
-              }}
-              className="flex-1"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addChecklistItem}
-              disabled={!newChecklistItem.trim()}
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
           </div>
+        </div>
+      </div>
+
+      {/* Description - moved to bottom */}
+      <div className="flex items-start gap-3">
+        <FileText className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-3" />
+        <div className="flex-1">
+          <RichTextEditor
+            content={formData.description}
+            onChange={(content) => updateFormData('description', content)}
+            placeholder="Add description, notes, or additional details..."
+            minimal={false}
+          />
         </div>
       </div>
     </div>

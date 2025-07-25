@@ -5,7 +5,13 @@ import { Checkbox, CheckboxField } from '@/components/checkbox'
 import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/dialog'
 import { Description, Field, FieldGroup, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/select'
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useState } from 'react'
 
 export function RefundReview({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) {
@@ -28,13 +34,15 @@ export function RefundReview({ amount, ...props }: { amount: string } & React.Co
             <Field>
               <Label>Reason</Label>
               <Select name="reason" defaultValue="">
-                <option value="" disabled>
-                  Select a reason&hellip;
-                </option>
-                <option value="duplicate">Duplicate</option>
-                <option value="fraudulent">Fraudulent</option>
-                <option value="requested_by_customer">Requested by customer</option>
-                <option value="other">Other</option>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a reason..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="duplicate">Duplicate</SelectItem>
+                  <SelectItem value="fraudulent">Fraudulent</SelectItem>
+                  <SelectItem value="requested_by_customer">Requested by customer</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
               </Select>
             </Field>
             <CheckboxField>

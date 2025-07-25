@@ -4,7 +4,13 @@ import clsx from 'clsx'
 import { Subheading } from './heading'
 import { Text } from './text'
 import { Switch } from './switch'
-import { Select } from './select'
+import { 
+  Select,
+  SelectContent,
+  SelectItem as ShadcnSelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Input } from './input'
 
 export function SettingSection({
@@ -65,7 +71,7 @@ export function SelectItem({
   label: string
   description?: string
   value: string
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void
+  onChange: (value: string) => void
   children: React.ReactNode
 }) {
   return (
@@ -77,8 +83,13 @@ export function SelectItem({
         )}
       </div>
       <div className="w-40">
-        <Select value={value} onChange={onChange} className="w-full">
-          {children}
+        <Select value={value} onValueChange={onChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {children}
+          </SelectContent>
         </Select>
       </div>
     </div>
