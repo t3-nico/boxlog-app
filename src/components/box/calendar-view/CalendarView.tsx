@@ -198,7 +198,6 @@ export function CalendarView({
       description: event.description,
       startDate: event.startDate,
       endDate: event.endDate,
-      isAllDay: event.isAllDay,
       type: event.type,
       status: event.status,
       color: event.color,

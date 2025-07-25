@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Event, CreateEventRequest, UpdateEventRequest, EventType, EventStatus } from '@/types/events'
@@ -67,7 +66,6 @@ export function EventModal({
     startTime: string
     endDate: string
     endTime: string
-    isAllDay: boolean
     type: EventType
     status: EventStatus
     color: string
@@ -81,7 +79,6 @@ export function EventModal({
     startTime: '',
     endDate: '',
     endTime: '',
-    isAllDay: false,
     type: 'event',
     status: 'confirmed',
     color: '#3b82f6',
@@ -103,10 +100,9 @@ export function EventModal({
           title: event.title,
           description: event.description || '',
           startDate: format(event.startDate, 'yyyy-MM-dd'),
-          startTime: event.isAllDay ? '' : format(event.startDate, 'HH:mm'),
+          startTime: format(event.startDate, 'HH:mm'),
           endDate: event.endDate ? format(event.endDate, 'yyyy-MM-dd') : format(event.startDate, 'yyyy-MM-dd'),
-          endTime: event.isAllDay || !event.endDate ? '' : format(event.endDate, 'HH:mm'),
-          isAllDay: event.isAllDay,
+          endTime: event.endDate ? format(event.endDate, 'HH:mm') : '',
           type: event.type,
           status: event.status,
           color: event.color,
@@ -128,8 +124,7 @@ export function EventModal({
           startTime: startTime,
           endDate: format(endDate, 'yyyy-MM-dd'),
           endTime: format(endDate, 'HH:mm'),
-          isAllDay: false,
-          type: 'event',
+                type: 'event',
           status: 'confirmed',
           color: '#3b82f6',
           location: '',
@@ -147,20 +142,15 @@ export function EventModal({
     setLoading(true)
 
     try {
-      const startDateTime = formData.isAllDay 
-        ? new Date(`${formData.startDate}T00:00:00`)
-        : new Date(`${formData.startDate}T${formData.startTime}`)
+      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`)
       
-      const endDateTime = formData.isAllDay
-        ? new Date(`${formData.endDate}T23:59:59`)
-        : new Date(`${formData.endDate}T${formData.endTime}`)
+      const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`)
 
       const eventData = {
         title: formData.title,
         description: formData.description || undefined,
         startDate: startDateTime,
         endDate: endDateTime,
-        isAllDay: formData.isAllDay,
         type: formData.type,
         status: formData.status,
         color: formData.color,
@@ -201,15 +191,6 @@ export function EventModal({
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  // 終日モードの切り替え
-  const handleAllDayToggle = (isAllDay: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      isAllDay,
-      startTime: isAllDay ? '' : '09:00',
-      endTime: isAllDay ? '' : '10:00',
-    }))
-  }
 
   // タグ選択のヘルパー関数
   const handleTagToggle = (tagId: string) => {
@@ -296,15 +277,6 @@ export function EventModal({
             </div>
           </div>
 
-          {/* 終日切り替え */}
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="all-day"
-              checked={formData.isAllDay}
-              onCheckedChange={handleAllDayToggle}
-            />
-            <Label htmlFor="all-day">終日</Label>
-          </div>
 
           {/* 日時設定 */}
           <div className="space-y-4">
@@ -318,17 +290,15 @@ export function EventModal({
                   required
                 />
               </div>
-              {!formData.isAllDay && (
-                <div className="space-y-2">
-                  <Label>開始時刻</Label>
-                  <Input
-                    type="time"
-                    value={formData.startTime}
-                    onChange={(e) => handleChange('startTime', e.target.value)}
-                    required
-                  />
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label>開始時刻</Label>
+                <Input
+                  type="time"
+                  value={formData.startTime}
+                  onChange={(e) => handleChange('startTime', e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -341,17 +311,15 @@ export function EventModal({
                   required
                 />
               </div>
-              {!formData.isAllDay && (
-                <div className="space-y-2">
-                  <Label>終了時刻</Label>
-                  <Input
-                    type="time"
-                    value={formData.endTime}
-                    onChange={(e) => handleChange('endTime', e.target.value)}
-                    required
-                  />
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label>終了時刻</Label>
+                <Input
+                  type="time"
+                  value={formData.endTime}
+                  onChange={(e) => handleChange('endTime', e.target.value)}
+                  required
+                />
+              </div>
             </div>
           </div>
 

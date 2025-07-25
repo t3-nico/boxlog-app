@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, MapPin, Link as LinkIcon, Palette } from 'lucide-react'
+import { Calendar, MapPin, Link as LinkIcon, Palette } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
 import { 
   Select,
   SelectContent,
@@ -24,7 +23,6 @@ interface EventFormData {
   startTime: string
   endDate: string
   endTime: string
-  isAllDay: boolean
   eventType: EventType
   status: EventStatus
   color: string
@@ -70,7 +68,6 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     startTime: '',
     endDate: '',
     endTime: '',
-    isAllDay: false,
     eventType: 'event',
     status: 'confirmed',
     color: '#1a73e8',
@@ -129,9 +126,12 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
 
   // Form validation
   useEffect(() => {
-    const isValid = formData.title.trim() !== '' && formData.startDate !== ''
+    const isValid = formData.title.trim() !== '' && 
+                   formData.startDate !== '' && 
+                   formData.startTime !== '' && 
+                   formData.endTime !== ''
     onFormValidChange?.(isValid)
-  }, [formData.title, formData.startDate, onFormValidChange])
+  }, [formData.title, formData.startDate, formData.startTime, formData.endTime, onFormValidChange])
 
   // Notify parent of form data changes
   useEffect(() => {
@@ -209,18 +209,6 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         </div>
       </div>
 
-      {/* All Day Toggle */}
-      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-        <div className="flex items-center gap-2">
-          <Clock className="w-4 h-4 text-gray-500" />
-          <Label htmlFor="allDay" className="text-sm font-medium">All day event</Label>
-        </div>
-        <Switch
-          id="allDay"
-          checked={formData.isAllDay}
-          onCheckedChange={(checked) => updateFormData('isAllDay', checked)}
-        />
-      </div>
 
       {/* Date and Time */}
       <div className="space-y-4">
@@ -235,20 +223,18 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
             />
           </div>
 
-          {!formData.isAllDay && (
-            <div className="space-y-2">
-              <Label htmlFor="startTime">Start Time</Label>
-              <Input
-                id="startTime"
-                type="time"
-                value={formData.startTime}
-                onChange={(e) => updateFormData('startTime', e.target.value)}
-              />
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="startTime">Start Time <span className="text-red-500">*</span></Label>
+            <Input
+              id="startTime"
+              type="time"
+              value={formData.startTime}
+              onChange={(e) => updateFormData('startTime', e.target.value)}
+            />
+          </div>
         </div>
 
-        {/* End Date and Time - Only show if not all day or different end date */}
+        {/* End Date and Time */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="endDate">End Date</Label>
@@ -260,17 +246,15 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
             />
           </div>
 
-          {!formData.isAllDay && (
-            <div className="space-y-2">
-              <Label htmlFor="endTime">End Time</Label>
-              <Input
-                id="endTime"
-                type="time"
-                value={formData.endTime}
-                onChange={(e) => updateFormData('endTime', e.target.value)}
-              />
-            </div>
-          )}
+          <div className="space-y-2">
+            <Label htmlFor="endTime">End Time <span className="text-red-500">*</span></Label>
+            <Input
+              id="endTime"
+              type="time"
+              value={formData.endTime}
+              onChange={(e) => updateFormData('endTime', e.target.value)}
+            />
+          </div>
         </div>
       </div>
 

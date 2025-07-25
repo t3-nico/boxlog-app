@@ -28,7 +28,6 @@ export interface EventEntity {
   start_time?: string // HH:MM:SS format
   end_date?: string // YYYY-MM-DD format
   end_time?: string // HH:MM:SS format
-  is_all_day: boolean
   event_type: EventType
   status: EventStatus
   color: string
@@ -63,7 +62,6 @@ export interface Event {
   description?: string
   startDate: Date
   endDate?: Date
-  isAllDay: boolean
   type: EventType
   status: EventStatus
   color: string
@@ -87,7 +85,6 @@ export interface CreateEventRequest {
   description?: string
   startDate: Date
   endDate?: Date
-  isAllDay?: boolean
   type?: EventType
   status?: EventStatus
   color?: string

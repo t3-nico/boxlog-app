@@ -82,7 +82,6 @@ export interface CalendarEvent {
   description?: string
   startDate: Date
   endDate?: Date
-  isAllDay: boolean
   type: 'event' | 'task' | 'reminder'
   status: 'confirmed' | 'tentative' | 'cancelled'
   color: string

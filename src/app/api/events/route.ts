@@ -10,7 +10,6 @@ const createEventSchema = z.object({
   start_time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/).optional(), // HH:MM:SS format
   end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   end_time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/).optional(),
-  is_all_day: z.boolean().default(false),
   event_type: z.enum(['event', 'task', 'reminder']).default('event'),
   status: z.enum(['confirmed', 'tentative', 'cancelled']).default('confirmed'),
   color: z.string().default('#3b82f6'),
@@ -152,9 +151,9 @@ export async function POST(req: NextRequest) {
   const { tag_ids, ...eventData } = parsed.data
 
   // Validate date logic
-  if (!eventData.is_all_day && (!eventData.start_time || !eventData.end_time)) {
+  if (!eventData.start_time || !eventData.end_time) {
     return NextResponse.json({ 
-      error: 'start_time and end_time are required for non-all-day events' 
+      error: 'start_time and end_time are required' 
     }, { status: 400 })
   }
 

@@ -40,7 +40,6 @@ const convertEntityToEvent = (entity: EventEntity): Event => {
     description: entity.description,
     startDate,
     endDate,
-    isAllDay: entity.is_all_day,
     type: entity.event_type,
     status: entity.status,
     color: entity.color,
@@ -59,7 +58,6 @@ const convertEventToCreateRequest = (event: Partial<Event>): CreateEventRequest 
     description: event.description,
     startDate: event.startDate!,
     endDate: event.endDate,
-    isAllDay: event.isAllDay,
     type: event.type,
     status: event.status,
     color: event.color,
@@ -143,10 +141,9 @@ export const useEventStore = create<EventStore>()(
             title: eventData.title,
             description: eventData.description,
             start_date: formatDateForAPI(eventData.startDate),
-            start_time: eventData.isAllDay ? undefined : formatTimeForAPI(eventData.startDate),
+            start_time: formatTimeForAPI(eventData.startDate),
             end_date: eventData.endDate ? formatDateForAPI(eventData.endDate) : undefined,
-            end_time: eventData.endDate && !eventData.isAllDay ? formatTimeForAPI(eventData.endDate) : undefined,
-            is_all_day: eventData.isAllDay || false,
+            end_time: eventData.endDate ? formatTimeForAPI(eventData.endDate) : undefined,
             event_type: eventData.type || 'event',
             status: eventData.status || 'confirmed',
             color: eventData.color || '#3b82f6',
@@ -195,21 +192,14 @@ export const useEventStore = create<EventStore>()(
 
           if (eventData.startDate) {
             apiData.start_date = formatDateForAPI(eventData.startDate)
-            if (!eventData.isAllDay) {
-              apiData.start_time = formatTimeForAPI(eventData.startDate)
-            }
+            apiData.start_time = formatTimeForAPI(eventData.startDate)
           }
 
           if (eventData.endDate) {
             apiData.end_date = formatDateForAPI(eventData.endDate)
-            if (!eventData.isAllDay) {
-              apiData.end_time = formatTimeForAPI(eventData.endDate)
-            }
+            apiData.end_time = formatTimeForAPI(eventData.endDate)
           }
 
-          if (eventData.isAllDay !== undefined) {
-            apiData.is_all_day = eventData.isAllDay
-          }
 
           if (eventData.type) apiData.event_type = eventData.type
           if (eventData.status) apiData.status = eventData.status
@@ -311,7 +301,7 @@ export const useEventStore = create<EventStore>()(
           displayEndDate: event.endDate || event.startDate,
           duration: event.endDate 
             ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
-            : event.isAllDay ? 24 * 60 : 60,
+            : 60, // Default to 1 hour for timed events
           isMultiDay: event.endDate ? 
             formatDateForAPI(event.startDate) !== formatDateForAPI(event.endDate) : false,
           isRecurring: !!event.recurrencePattern,
@@ -367,7 +357,7 @@ export const eventSelectors = {
         displayEndDate: event.endDate || event.startDate,
         duration: event.endDate 
           ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
-          : event.isAllDay ? 24 * 60 : 60, // Default to 1 hour for timed events, full day for all-day
+          : 60, // Default to 1 hour for timed events // Default to 1 hour for timed events, full day for all-day
         isMultiDay: event.endDate ? 
           formatDateForAPI(event.startDate) !== formatDateForAPI(event.endDate) : false,
         isRecurring: !!event.recurrencePattern,
@@ -379,8 +369,6 @@ export const eventSelectors = {
     // Sort events within each date
     Object.keys(eventsByDate).forEach(dateKey => {
       eventsByDate[dateKey].sort((a, b) => {
-        if (a.isAllDay && !b.isAllDay) return -1
-        if (!a.isAllDay && b.isAllDay) return 1
         return a.startDate.getTime() - b.startDate.getTime()
       })
     })

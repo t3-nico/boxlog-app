@@ -36,8 +36,8 @@ export function CalendarEventComponent({
 
   // 時間表示のフォーマット
   const timeDisplay = useMemo(() => {
-    if (!showTime || event.isAllDay) {
-      return event.isAllDay ? '終日' : ''
+    if (!showTime) {
+      return ''
     }
 
     const startTime = format(event.displayStartDate, 'HH:mm')

@@ -16,7 +16,6 @@ export function convertEventToCalendarEvent(event: Event): CalendarEvent {
     description: event.description,
     startDate,
     endDate,
-    isAllDay: event.isAllDay,
     type: event.type,
     status: event.status,
     color: event.color,

@@ -10,7 +10,6 @@ const updateEventSchema = z.object({
   start_time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/).optional(),
   end_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   end_time: z.string().regex(/^\d{2}:\d{2}:\d{2}$/).optional(),
-  is_all_day: z.boolean().optional(),
   event_type: z.enum(['event', 'task', 'reminder']).optional(),
   status: z.enum(['confirmed', 'tentative', 'cancelled']).optional(),
   color: z.string().optional(),
@@ -57,7 +56,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const { tag_ids, ...eventData } = parsed.data
 
   // Validate date/time logic if provided
-  if (eventData.is_all_day === false && eventData.start_time && eventData.end_time) {
+  if (eventData.start_time && eventData.end_time) {
     // Additional validation can be added here
   }
 
