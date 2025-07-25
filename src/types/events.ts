@@ -39,7 +39,6 @@ export interface EventEntity {
   description?: string
   planned_start?: string // TIMESTAMPTZ format
   planned_end?: string // TIMESTAMPTZ format
-  event_type: EventType
   status: EventStatus
   priority?: EventPriority
   color: string

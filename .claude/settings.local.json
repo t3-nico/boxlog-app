@@ -35,7 +35,8 @@
       "WebFetch(domain:docs.anthropic.com)",
       "Bash(ls:*)",
       "Bash(npx supabase projects:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npx kibo-ui@latest add:*)"
     ],
     "deny": []
   }

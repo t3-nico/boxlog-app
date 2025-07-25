@@ -82,8 +82,8 @@ export interface CalendarEvent {
   description?: string
   startDate: Date
   endDate?: Date
-  type: 'event' | 'task' | 'reminder'
-  status: 'confirmed' | 'tentative' | 'cancelled'
+  status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
+  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
   color: string
   location?: string
   url?: string
@@ -93,6 +93,12 @@ export interface CalendarEvent {
     color: string
     icon?: string
     parent_id?: string
+  }>
+  items?: Array<{
+    id: string
+    text: string
+    completed: boolean
+    duration?: number
   }>
   createdAt: Date
   updatedAt: Date

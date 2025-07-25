@@ -6,8 +6,8 @@ import type { CalendarEvent } from '../types'
  * Event型をCalendarEvent型に変換する
  */
 export function convertEventToCalendarEvent(event: Event): CalendarEvent {
-  const startDate = event.startDate
-  const endDate = event.endDate || event.startDate
+  const startDate = event.startDate || new Date()
+  const endDate = event.endDate || startDate
   const isMultiDay = !isSameDay(startDate, endDate)
   
   return {
@@ -16,8 +16,8 @@ export function convertEventToCalendarEvent(event: Event): CalendarEvent {
     description: event.description,
     startDate,
     endDate,
-    type: event.type,
     status: event.status,
+    priority: event.priority,
     color: event.color,
     location: event.location,
     url: event.url,
@@ -29,7 +29,8 @@ export function convertEventToCalendarEvent(event: Event): CalendarEvent {
     displayEndDate: endDate,
     duration: differenceInMinutes(endDate, startDate),
     isMultiDay,
-    isRecurring: !!event.recurrencePattern
+    isRecurring: event.isRecurring || false,
+    items: event.items || []
   }
 }
 

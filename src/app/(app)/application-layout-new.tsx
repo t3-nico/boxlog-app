@@ -624,7 +624,7 @@ export function ApplicationLayoutNew({
             transition: 'margin-left 150ms ease, margin-right 150ms ease',
             height: 'calc(100vh - 64px)'
           }}>
-            <div className="h-full overflow-auto pr-0">
+            <div className="h-full overflow-auto" style={{ paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
               {children}
             </div>
           </div>

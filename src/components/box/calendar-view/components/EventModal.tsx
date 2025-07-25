@@ -8,8 +8,8 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { Event, CreateEventRequest, UpdateEventRequest, EventType, EventStatus } from '@/types/events'
-import { X, Calendar, Clock, MapPin, Link, Tag } from 'lucide-react'
+import { Event, CreateEventRequest, UpdateEventRequest, EventStatus, EventPriority } from '@/types/events'
+import { X, Calendar, Clock, MapPin, Link, Tag, AlertTriangle, CheckSquare } from 'lucide-react'
 import { useTags } from '@/hooks/use-tags'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -24,16 +24,20 @@ interface EventModalProps {
   defaultTime?: string
 }
 
-const eventTypeOptions: { value: EventType; label: string; icon: string }[] = [
-  { value: 'event', label: 'イベント', icon: '📅' },
-  { value: 'task', label: 'タスク', icon: '✓' },
-  { value: 'reminder', label: 'リマインダー', icon: '⏰' },
+const statusOptions: { value: EventStatus; label: string; color: string }[] = [
+  { value: 'inbox', label: 'Inbox', color: 'bg-gray-100 text-gray-800' },
+  { value: 'planned', label: 'Planned', color: 'bg-blue-100 text-blue-800' },
+  { value: 'in_progress', label: 'In Progress', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'completed', label: 'Completed', color: 'bg-green-100 text-green-800' },
+  { value: 'cancelled', label: 'Cancelled', color: 'bg-red-100 text-red-800' },
 ]
 
-const statusOptions: { value: EventStatus; label: string }[] = [
-  { value: 'confirmed', label: '確定' },
-  { value: 'tentative', label: '仮' },
-  { value: 'cancelled', label: 'キャンセル' },
+const priorityOptions: { value: EventPriority; label: string; color: string }[] = [
+  { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-800' },
+  { value: 'important', label: 'Important', color: 'bg-orange-100 text-orange-800' },
+  { value: 'necessary', label: 'Necessary', color: 'bg-blue-100 text-blue-800' },
+  { value: 'delegate', label: 'Delegate', color: 'bg-purple-100 text-purple-800' },
+  { value: 'optional', label: 'Optional', color: 'bg-gray-100 text-gray-800' },
 ]
 
 const colorOptions = [
@@ -66,12 +70,13 @@ export function EventModal({
     startTime: string
     endDate: string
     endTime: string
-    type: EventType
     status: EventStatus
+    priority?: EventPriority
     color: string
     location: string
     url: string
     tagIds: string[]
+    items: Array<{ id: string; text: string; completed: boolean; duration?: number }>
   }>({
     title: '',
     description: '',
@@ -79,12 +84,13 @@ export function EventModal({
     startTime: '',
     endDate: '',
     endTime: '',
-    type: 'event',
-    status: 'confirmed',
+    status: 'inbox',
+    priority: undefined,
     color: '#3b82f6',
     location: '',
     url: '',
     tagIds: [],
+    items: [],
   })
 
   // タグデータを取得 (temporarily disabled until tags table is created)
@@ -99,16 +105,17 @@ export function EventModal({
         setFormData({
           title: event.title,
           description: event.description || '',
-          startDate: format(event.startDate, 'yyyy-MM-dd'),
-          startTime: format(event.startDate, 'HH:mm'),
-          endDate: event.endDate ? format(event.endDate, 'yyyy-MM-dd') : format(event.startDate, 'yyyy-MM-dd'),
+          startDate: event.startDate ? format(event.startDate, 'yyyy-MM-dd') : '',
+          startTime: event.startDate ? format(event.startDate, 'HH:mm') : '',
+          endDate: event.endDate ? format(event.endDate, 'yyyy-MM-dd') : (event.startDate ? format(event.startDate, 'yyyy-MM-dd') : ''),
           endTime: event.endDate ? format(event.endDate, 'HH:mm') : '',
-          type: event.type,
           status: event.status,
+          priority: event.priority,
           color: event.color,
           location: event.location || '',
           url: event.url || '',
           tagIds: event.tags?.map(tag => tag.id) || [],
+          items: event.items || [],
         })
       } else {
         // 新規作成モード
@@ -124,8 +131,8 @@ export function EventModal({
           startTime: startTime,
           endDate: format(endDate, 'yyyy-MM-dd'),
           endTime: format(endDate, 'HH:mm'),
-                type: 'event',
-          status: 'confirmed',
+          status: 'planned',
+          priority: undefined,
           color: '#3b82f6',
           location: '',
           url: '',
@@ -151,9 +158,10 @@ export function EventModal({
         description: formData.description || undefined,
         startDate: startDateTime,
         endDate: endDateTime,
-        type: formData.type,
         status: formData.status,
+        priority: formData.priority,
         color: formData.color,
+        items: formData.items,
         location: formData.location || undefined,
         url: formData.url || undefined,
         tagIds: formData.tagIds,
@@ -242,25 +250,6 @@ export function EventModal({
           {/* 種別とステータス */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>種別</Label>
-              <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {eventTypeOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="flex items-center gap-2">
-                        <span>{option.icon}</span>
-                        {option.label}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
               <Label>ステータス</Label>
               <Select value={formData.status} onValueChange={(value) => handleChange('status', value)}>
                 <SelectTrigger>
@@ -269,7 +258,28 @@ export function EventModal({
                 <SelectContent>
                   {statusOptions.map(option => (
                     <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                      <Badge className={option.color}>
+                        {option.label}
+                      </Badge>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>優先度</Label>
+              <Select value={formData.priority || 'none'} onValueChange={(value) => handleChange('priority', value === 'none' ? undefined : value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="選択なし" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">選択なし</SelectItem>
+                  {priorityOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      <Badge className={option.color}>
+                        {option.label}
+                      </Badge>
                     </SelectItem>
                   ))}
                 </SelectContent>

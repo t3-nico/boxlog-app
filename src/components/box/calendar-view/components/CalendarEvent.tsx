@@ -50,16 +50,21 @@ export function CalendarEventComponent({
     return `${startTime}-${endTime}`
   }, [event, showTime])
 
-  // イベント種別に基づくアイコン
-  const getEventIcon = () => {
-    switch (event.type) {
-      case 'task':
-        return '✓'
-      case 'reminder':
-        return '⏰'
-      case 'event':
+  // 優先度に基づくアイコン
+  const getPriorityIcon = () => {
+    switch (event.priority) {
+      case 'urgent':
+        return '🔴'
+      case 'important':
+        return '🟠'
+      case 'necessary':
+        return '🔵'
+      case 'delegate':
+        return '🟣'
+      case 'optional':
+        return '⚪'
       default:
-        return '📅'
+        return ''
     }
   }
 
@@ -68,11 +73,15 @@ export function CalendarEventComponent({
     switch (event.status) {
       case 'cancelled':
         return 'opacity-50 line-through'
-      case 'tentative':
-        return 'opacity-75 border-dashed'
-      case 'confirmed':
+      case 'completed':
+        return 'opacity-75'
+      case 'in_progress':
+        return 'border-2 border-yellow-400'
+      case 'planned':
+        return 'border border-blue-400'
+      case 'inbox':
       default:
-        return ''
+        return 'border border-gray-300'
     }
   }
 
@@ -117,7 +126,9 @@ export function CalendarEventComponent({
         <div className="flex-1 min-w-0">
           {/* タイトル行 */}
           <div className="flex items-center gap-1">
-            <span className="text-xs opacity-60">{getEventIcon()}</span>
+            {event.priority && (
+              <span className="text-xs">{getPriorityIcon()}</span>
+            )}
             <span 
               className={cn(
                 'font-medium truncate',
@@ -127,6 +138,11 @@ export function CalendarEventComponent({
             >
               {displayText}
             </span>
+            {event.items && event.items.length > 0 && (
+              <span className="text-xs opacity-60">
+                ({event.items.filter(item => item.completed).length}/{event.items.length})
+              </span>
+            )}
           </div>
           
           {/* 時間表示 */}
