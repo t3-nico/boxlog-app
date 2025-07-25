@@ -24,7 +24,7 @@ const createEventSchema = z.object({
   })).default([]),
   location: z.string().optional(),
   url: z.string().optional(),
-  tagIds: z.array(z.string().uuid()).default([]),
+  tagIds: z.array(z.string()).default([]),
 })
 
 // Query parameters schema for filtering events
@@ -149,7 +149,11 @@ export async function POST(req: NextRequest) {
 
   const parsed = createEventSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error }, { status: 400 })
+    console.log('Validation error:', parsed.error)
+    return NextResponse.json({ 
+      error: 'Validation failed', 
+      details: parsed.error.issues 
+    }, { status: 400 })
   }
 
   const { tagIds, date, startTime, endTime, isRecurring, recurrenceType, recurrenceInterval, recurrenceEndDate, items, ...eventData } = parsed.data
