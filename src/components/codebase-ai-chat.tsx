@@ -173,7 +173,7 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
         </div>
       )}
       
-      <AIMessageContent>
+      <AIMessageContent className="px-4">
         {isAssistant ? (
           <div>
             <CodebaseAIResponse>
@@ -346,10 +346,11 @@ What would you like to know about BoxLog?`
 
   return (
     <div 
-      className="fixed right-0 w-80 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
+      className="fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
       style={{ 
         top: '64px',
-        bottom: '0'
+        bottom: '0',
+        width: '320px'
       }}
     >
       {/* Header */}
@@ -424,7 +425,7 @@ What would you like to know about BoxLog?`
 
       {/* Chat Content */}
       <AIConversation>
-        <AIConversationContent>
+        <AIConversationContent className="pl-0 pr-0 py-4">
           {/* Error display */}
           {error && (
             <div className="mx-4 mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -451,7 +452,7 @@ What would you like to know about BoxLog?`
               <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center flex-shrink-0">
                 <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
               </div>
-              <AIMessageContent>
+              <AIMessageContent className="px-4">
                 <CodebaseAIResponse>
                   Hello! I'm the **BoxLog** application support assistant.
                   

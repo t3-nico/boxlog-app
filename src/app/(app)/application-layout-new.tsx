@@ -623,10 +623,13 @@ export function ApplicationLayoutNew({
             marginLeft: collapsed ? '48px' : '256px', 
             marginRight: (isAIChatOpen || isCodebaseAIChatOpen) ? '320px' : (isRightSidebarHidden ? '0px' : '48px'),
             transition: 'margin-left 150ms ease, margin-right 150ms ease',
-            height: 'calc(100vh - 64px)'
+            height: 'calc(100vh - 64px)',
+            padding: '0 !important'
           }}>
-            <div className="h-full overflow-auto" style={{ paddingRight: 0, paddingLeft: 0, paddingTop: 0, paddingBottom: 0 }}>
-              {children}
+            <div className="h-full overflow-auto" style={{ padding: '0 !important', margin: '0 !important' }}>
+              <div style={{ padding: '0 !important', margin: '0 !important', height: '100%', width: '100%' }}>
+                {children}
+              </div>
             </div>
           </div>
           

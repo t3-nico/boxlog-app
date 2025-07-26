@@ -282,9 +282,10 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
 
   return (
     <div 
-      className="fixed right-0 w-80 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
+      className="fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
       style={{ 
         top: '64px',
+        width: '320px',
         bottom: '0'
       }}
     >

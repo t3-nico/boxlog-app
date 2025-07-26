@@ -78,6 +78,28 @@ async function fetchRelevantFiles(query: string): Promise<CodeContext> {
   }
 }
 
+// Function to detect if text is primarily Japanese (not Chinese)
+function isJapanese(text: string): boolean {
+  // Check for Japanese-specific characters (Hiragana, Katakana)
+  const hiraganaKatakana = /[\u3040-\u309F\u30A0-\u30FF]/
+  const hiraganaKatakanaMatches = text.match(/[\u3040-\u309F\u30A0-\u30FF]/g) || []
+  
+  // Check for Chinese-specific characters (but exclude Japanese usage)
+  const chineseOnly = /[\u4E00-\u9FFF]/
+  const chineseMatches = text.match(/[\u4E00-\u9FFF]/g) || []
+  
+  const totalChars = text.replace(/\s/g, '').length
+  
+  // Must have Hiragana or Katakana to be considered Japanese
+  // If only Chinese characters without Hiragana/Katakana, treat as Chinese (English response)
+  if (hiraganaKatakanaMatches.length === 0 && chineseMatches.length > 0) {
+    return false // Chinese text, should use English
+  }
+  
+  // If more than 10% are Hiragana/Katakana, treat as Japanese
+  return hiraganaKatakanaMatches.length > 0 && (hiraganaKatakanaMatches.length / totalChars) > 0.1
+}
+
 // Function to generate cache key
 function getCacheKey(query: string): string {
   return query.toLowerCase().trim().replace(/\s+/g, ' ')
@@ -146,12 +168,57 @@ export async function POST(req: Request) {
       })
     }
 
+    // Detect language of user query
+    const isUserQueryJapanese = isJapanese(userQuery)
+    console.log('User query language detected:', isUserQueryJapanese ? 'Japanese' : 'English')
+
     // Fetch relevant code context
     const codeContext = await fetchRelevantFiles(userQuery)
     console.log('Code context:', codeContext)
 
-    // Build system prompt with context
-    const systemPrompt = `You are a BoxLog user support assistant. BoxLog is a task management application with calendar, board, and table views.
+    // Build system prompt with context based on detected language
+    const systemPrompt = isUserQueryJapanese ? 
+      `あなたはBoxLogのユーザーサポートアシスタントです。BoxLogはカレンダー、ボード、テーブルビューを持つタスク管理アプリケーションです。
+
+あなたの役割：
+1. BoxLogの機能の使い方をユーザーに教える
+2. タスク管理、スケジューリング、生産性に関するガイダンスを提供
+3. BoxLogのインターフェースと機能を説明する
+4. 一般的な問題のトラブルシューティングサポートを提供
+5. 関連するドキュメントが利用可能な場合は案内する
+
+BoxLogの機能：
+- 📅 カレンダービュー: 日、週、月のスケジューリング表示
+- 📋 タスク管理: 優先度付きのタスク作成、編集、整理
+- 🏷️ タグシステム: タスクの分類とフィルタリング
+- 📊 進捗追跡: 生産性と完了率の監視
+- 🔄 スマートフォルダ: 自動タスク整理
+- 📱 レスポンシブデザイン: デスクトップとモバイルで動作
+
+重要なガイドライン：
+- BoxLogアプリケーションの使用に関する質問にのみ回答してください
+- 関係のないトピックについて聞かれた場合は、丁寧にBoxLogの機能に話題を戻してください
+- 機能の使い方を説明する際は、ステップバイステップの手順を提供してください
+- 有用な場合は https://github.com/t3-nico/boxlog-web のBoxLogドキュメントを参照してください
+- カスタマーサービス担当者のように親切でサポート的であってください
+- 必ず日本語で回答してください
+
+${codeContext.files.length > 0 ? `
+「${codeContext.query}」に関するドキュメント:
+
+${codeContext.files.map(file => `
+ファイル: ${file.path}
+\`\`\`
+${file.content}
+\`\`\`
+`).join('\n\n')}
+` : 'BoxLogアプリケーションの一般的な知識に基づいて回答しています。'}
+
+必ず日本語で回答し、親切でサポート的なカスタマーサービスの口調を保ってください。
+
+BoxLog以外のトピックについて聞かれた場合は以下のように回答してください：
+「申し訳ございませんが、私はBoxLogアプリケーションの使用に関するサポートのみ提供できます。BoxLogの機能や使い方について何かご質問はございますか？」` :
+      `You are a BoxLog user support assistant. BoxLog is a task management application with calendar, board, and table views.
 
 Your role is to:
 1. Help users understand how to use BoxLog features
@@ -196,11 +263,37 @@ If asked about non-BoxLog topics, respond with:
     if (!process.env.OPENAI_API_KEY) {
       console.error('OpenAI API key not found - returning mock streaming response')
       
-      // Create mock response content based on the query
-      let mockContent = `🤖 **MOCK RESPONSE** - Hello! I'm the BoxLog support assistant (currently in mock mode).`
+      // Create mock response content based on the query and language
+      let mockContent = isUserQueryJapanese ? 
+        `🤖 **モック応答** - こんにちは！BoxLogサポートアシスタントです（現在モックモード）。` :
+        `🤖 **MOCK RESPONSE** - Hello! I'm the BoxLog support assistant (currently in mock mode).`
       
       if (userQuery.toLowerCase().includes('dark') || userQuery.includes('ダークモード')) {
-        mockContent = `🤖 **MOCK RESPONSE** - Yes, BoxLog supports **Dark Mode**!
+        mockContent = isUserQueryJapanese ? 
+          `🤖 **モック応答** - はい、BoxLogは**ダークモード**をサポートしています！
+
+## ダークモードの有効化方法：
+
+🌙 **切り替え方法**
+1. 右上のユーザーメニューをクリック
+2. 「設定」を選択
+3. 「外観」タブでダークモードを選択
+
+✨ **ダークモードの特徴**
+- 目に優しい暗い背景
+- 夜間作業時の目の疲労軽減
+- OLEDディスプレイでのバッテリー節約
+
+🎨 **対応範囲**
+- カレンダービュー
+- タスクリスト
+- 設定ページ
+- すべてのポップアップダイアログ
+
+システム設定に基づく自動切り替えも利用可能です。
+
+BoxLogについて他にご質問があればお気軽にどうぞ！` :
+          `🤖 **MOCK RESPONSE** - Yes, BoxLog supports **Dark Mode**!
 
 ## How to Enable Dark Mode:
 
@@ -224,7 +317,44 @@ Auto-switching based on system preferences is also available.
 
 Feel free to ask any other questions about BoxLog!`
       } else if (userQuery.toLowerCase().includes('features') || userQuery.toLowerCase().includes('機能')) {
-        mockContent = `🤖 **MOCK RESPONSE** - ## BoxLog Main Features:
+        mockContent = isUserQueryJapanese ?
+          `🤖 **モック応答** - ## BoxLogの主な機能：
+
+📅 **カレンダービュー**
+- 日次、週次、月次のタスク表示
+- ドラッグ&ドロップでタスク管理
+- タイムライン可視化
+
+📋 **タスク管理**
+- タスクの作成、編集、削除
+- 優先度レベル（低、中、高）
+- ステータス追跡（保留、進行中、完了）
+- 期限管理
+
+🏷️ **タグシステム**
+- カスタムタグでタスク分類
+- 色分けによる整理
+- 複数タグでのフィルタリング
+
+🔄 **スマートフォルダ**
+- 自動タスク整理
+- カスタムフィルタルール
+- 動的コンテンツ更新
+
+📊 **進捗追跡**
+- 完了統計
+- 時間追跡
+- 生産性インサイト
+
+📱 **クロスプラットフォーム**
+- レスポンシブウェブデザイン
+- モバイル対応インターフェース
+- リアルタイム同期
+
+詳細な使用ガイドは [BoxLogドキュメント](https://github.com/t3-nico/boxlog-web) をご覧ください
+
+どの機能について詳しく知りたいですか？` :
+          `🤖 **MOCK RESPONSE** - ## BoxLog Main Features:
 
 📅 **Calendar View**
 - Daily, weekly, monthly task display
@@ -261,7 +391,23 @@ For detailed usage guides, visit: [BoxLog Documentation](https://github.com/t3-n
 
 What specific feature would you like to know more about?`
       } else {
-        mockContent = `🤖 **MOCK RESPONSE** - Thank you for your question: "${userQuery}"
+        mockContent = isUserQueryJapanese ?
+          `🤖 **モック応答** - ご質問「${userQuery}」をありがとうございます
+
+以下についてサポートできます：
+- **カレンダー機能** - スケジューリングと時間管理
+- **タスク管理** - タスクの作成と整理
+- **タグと整理** - 作業の分類
+- **スマートフォルダ** - 自動整理
+- **設定と環境設定** - BoxLogのカスタマイズ
+- **トラブルシューティング** - 一般的な問題の解決
+
+もう少し具体的に何について知りたいか教えていただけますか？
+
+包括的なガイドについては、[BoxLogドキュメント](https://github.com/t3-nico/boxlog-web) をご確認ください
+
+*注意：これはモック応答です。OpenAI APIキーが設定されていません。*` :
+          `🤖 **MOCK RESPONSE** - Thank you for your question: "${userQuery}"
 
 I can help you with:
 - **Calendar features** - scheduling and time management
