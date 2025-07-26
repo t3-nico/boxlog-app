@@ -39,6 +39,8 @@ interface EventFormData {
   recurrenceInterval?: number
   recurrenceEndDate?: string
   tagIds: string[]
+  location?: string
+  url?: string
 }
 
 interface EventCreateFormProps {
@@ -96,6 +98,8 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     recurrenceInterval: 1,
     recurrenceEndDate: undefined,
     tagIds: [],
+    location: '',
+    url: '',
   })
 
   const [newChecklistItem, setNewChecklistItem] = useState('')
@@ -170,6 +174,8 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         recurrenceInterval: 1,
         recurrenceEndDate: undefined,
         tagIds: event.tags?.map(tag => tag.id) || [],
+        location: event.location || '',
+        url: event.url || '',
       }
       
       console.log('📝 Setting new form data:', newFormData)
