@@ -11,7 +11,8 @@ import {
   MoreVertical,
   Trash2,
   Copy,
-  RefreshCw
+  RefreshCw,
+  BotMessageSquare
 } from 'lucide-react'
 import {
   AIInput,
@@ -276,31 +277,14 @@ export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
   
-  // Use Vercel AI SDK's useChat hook with enhanced error handling
+  // Use Vercel AI SDK's useChat hook with simple configuration
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append, error, reload } = useChat({
     api: '/api/chat/codebase',
     onError: (error) => {
       console.error('Chat error:', error)
-      // Add user-friendly error message
-      const errorMessage = {
-        id: 'error-' + Date.now(),
-        role: 'assistant' as const,
-        content: `I apologize, but I encountered an error: ${error.message}. Please try asking your question again.`,
-        createdAt: new Date()
-      }
-      setMessages(prev => [...prev, errorMessage])
     },
     onFinish: (message) => {
       console.log('Message finished:', message)
-    },
-    onResponse: (response) => {
-      console.log('Response received:', response.status, response.headers.get('content-type'))
-    },
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: {
-      // Add any additional data if needed
     },
     initialMessages: [
       {
@@ -350,9 +334,7 @@ What would you like to know about BoxLog?`
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-600 to-blue-600 flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
+              <BotMessageSquare className="w-4 h-4 text-white" />
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">BoxLog Support</h3>

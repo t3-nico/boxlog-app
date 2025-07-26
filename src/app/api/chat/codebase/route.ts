@@ -127,33 +127,13 @@ export async function POST(req: Request) {
     if (cachedResponse) {
       console.log('Using cached response for query:', userQuery)
       
-      // Create a mock provider for cached responses
-      const cachedProvider = {
-        languageModel: () => ({
-          doStream: async function* () {
-            // Stream cached content quickly
-            const words = cachedResponse.split(' ')
-            for (const word of words) {
-              yield {
-                type: 'text-delta',
-                textDelta: word + ' ',
-              }
-              await new Promise(resolve => setTimeout(resolve, 10)) // Faster for cached
-            }
-          },
-          provider: 'cache',
-          modelId: 'cached-response',
-          maxTokens: 600,
-        })
-      }
-      
-      const result = await streamText({
-        model: cachedProvider.languageModel() as any,
-        messages,
-        system: systemPrompt,
+      // Return simple JSON response for cached content
+      return NextResponse.json({
+        id: 'cache-' + Date.now(),
+        role: 'assistant',
+        content: cachedResponse,
+        createdAt: new Date().toISOString()
       })
-      
-      return result.toDataStreamResponse()
     }
 
     // Fetch relevant code context
@@ -202,19 +182,15 @@ Always respond in English and maintain a helpful, customer service tone.
 If asked about non-BoxLog topics, respond with:
 "I'm sorry, but I can only provide support for BoxLog application usage. Do you have any questions about BoxLog features or how to use them?"`
 
-    // Check if OpenAI API key is available
+    // Check if OpenAI API key is available - use mock streaming
     if (!process.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key not found - using mock provider')
+      console.error('OpenAI API key not found - returning mock streaming response')
       
-      // Create a mock language model provider
-      const createMockProvider = () => ({
-        languageModel: () => ({
-          doStream: async function* ({ prompt, messages }: any) {
-            // Create mock response content based on the query
-            let mockContent = `Hello! I'm the BoxLog support assistant.`
-            
-            if (userQuery.toLowerCase().includes('dark') || userQuery.includes('ダークモード')) {
-              mockContent = `Yes, BoxLog supports **Dark Mode**!
+      // Create mock response content based on the query
+      let mockContent = `Hello! I'm the BoxLog support assistant.`
+      
+      if (userQuery.toLowerCase().includes('dark') || userQuery.includes('ダークモード')) {
+        mockContent = `Yes, BoxLog supports **Dark Mode**!
 
 ## How to Enable Dark Mode:
 
@@ -237,8 +213,8 @@ If asked about non-BoxLog topics, respond with:
 Auto-switching based on system preferences is also available.
 
 Feel free to ask any other questions about BoxLog!`
-            } else if (userQuery.toLowerCase().includes('features') || userQuery.toLowerCase().includes('機能')) {
-              mockContent = `## BoxLog Main Features:
+      } else if (userQuery.toLowerCase().includes('features') || userQuery.toLowerCase().includes('機能')) {
+        mockContent = `## BoxLog Main Features:
 
 📅 **Calendar View**
 - Daily, weekly, monthly task display
@@ -274,8 +250,8 @@ Feel free to ask any other questions about BoxLog!`
 For detailed usage guides, visit: [BoxLog Documentation](https://github.com/t3-nico/boxlog-web)
 
 What specific feature would you like to know more about?`
-            } else {
-              mockContent = `Thank you for your question: "${userQuery}"
+      } else {
+        mockContent = `Thank you for your question: "${userQuery}"
 
 I can help you with:
 - **Calendar features** - scheduling and time management
@@ -288,48 +264,40 @@ I can help you with:
 Could you please be more specific about what you'd like to know?
 
 For comprehensive guides, check: [BoxLog Documentation](https://github.com/t3-nico/boxlog-web)`
-            }
+      }
 
-            // Apply token limiting
-            const maxTokens = 600
-            const estimatedTokens = mockContent.split(' ').length * 1.3
-            if (estimatedTokens > maxTokens) {
-              const wordsToKeep = Math.floor(maxTokens / 1.3)
-              const words = mockContent.split(' ')
-              mockContent = words.slice(0, wordsToKeep).join(' ') + '...\n\n*Response truncated to stay within token limits.*'
-            }
+      // Apply token limiting
+      const maxTokens = 600
+      const estimatedTokens = mockContent.split(' ').length * 1.3
+      if (estimatedTokens > maxTokens) {
+        const wordsToKeep = Math.floor(maxTokens / 1.3)
+        const words = mockContent.split(' ')
+        mockContent = words.slice(0, wordsToKeep).join(' ') + '...\n\n*Response truncated to stay within token limits.*'
+      }
 
-            // Cache the response
-            cacheResponse(userQuery, mockContent)
+      // Cache the response
+      cacheResponse(userQuery, mockContent)
+      
+      console.log('Creating mock streaming response')
 
-            // Stream the content word by word
-            const words = mockContent.split(' ')
-            for (const word of words) {
-              yield {
-                type: 'text-delta',
-                textDelta: word + ' ',
-              }
-              await new Promise(resolve => setTimeout(resolve, 30))
-            }
-          },
-          
-          // Required properties for the model
-          provider: 'mock',
-          modelId: 'mock-model',
-          maxTokens: 600,
-        })
+      // Create a mock streaming response using the proper format
+      const encoder = new TextEncoder()
+      
+      const stream = new ReadableStream({
+        start(controller) {
+          // Send the response content as a streaming data chunk
+          const chunk = `0:"${mockContent.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`
+          controller.enqueue(encoder.encode(chunk))
+          controller.close()
+        }
       })
 
-      const mockProvider = createMockProvider()
-      
-      // Use the official streamText with our mock provider
-      const result = await streamText({
-        model: mockProvider.languageModel() as any,
-        messages,
-        system: systemPrompt,
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache'
+        }
       })
-      
-      return result.toDataStreamResponse()
     }
 
     console.log('Starting OpenAI stream with enhanced token limiting...')
@@ -374,8 +342,22 @@ For comprehensive guides, check: [BoxLog Documentation](https://github.com/t3-ni
     return result.toDataStreamResponse()
   } catch (error) {
     console.error('Chat API error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : ''
+    
+    console.error('Error details:', {
+      message: errorMessage,
+      stack: errorStack,
+      type: typeof error,
+      error: error
+    })
+    
     return NextResponse.json(
-      { error: 'Failed to process chat request' },
+      { 
+        error: 'Failed to process chat request',
+        details: errorMessage,
+        type: 'api_error'
+      },
       { status: 500 }
     )
   }
