@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 import { useChat } from 'ai/react'
+import { useAuthContext } from '@/contexts/AuthContext'
+import { Avatar } from '@/components/avatar'
 import { 
   X,
   ArrowUpCircle,
@@ -154,16 +156,21 @@ class GitHubCodebaseClient {
 }
 
 function MessageBubble({ message }: { message: ExtendedMessage }) {
+  const { user } = useAuthContext()
   const isUser = message.role === 'user'
   const isAssistant = message.role === 'assistant'
+  
+  // ユーザー情報の取得
+  const userDisplayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
+  const profileIcon = user?.user_metadata?.profile_icon
+  const avatarUrl = user?.user_metadata?.avatar_url
   
   return (
     <AIMessage from={message.role}>
       {isAssistant && (
-        <AIMessageAvatar 
-          src="/users/support-ai-avatar.png"
-          name="BoxLog Support"
-        />
+        <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center flex-shrink-0">
+          <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
+        </div>
       )}
       
       <AIMessageContent>
@@ -204,10 +211,25 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
       </AIMessageContent>
       
       {isUser && (
-        <AIMessageAvatar 
-          src="/users/user-avatar.png"
-          name="You"
-        />
+        <div className="flex-shrink-0">
+          {avatarUrl ? (
+            <Avatar
+              src={avatarUrl}
+              className="size-8"
+              initials={userDisplayName.charAt(0).toUpperCase()}
+            />
+          ) : profileIcon ? (
+            <div className="size-8 text-xl flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+              {profileIcon}
+            </div>
+          ) : (
+            <Avatar
+              src={undefined}
+              className="size-8"
+              initials={userDisplayName.charAt(0).toUpperCase()}
+            />
+          )}
+        </div>
       )}
     </AIMessage>
   )
@@ -258,8 +280,9 @@ function CodebaseChatInput({
         />
         <AIInputToolbar>
           <AIInputTools>
-            <div className="text-xs text-gray-500 dark:text-gray-400 px-2">
-              📋 BoxLog Usage Support
+            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 px-2">
+              <BotMessageSquare className="w-4 h-4" />
+              <span>BoxLog Usage Support</span>
             </div>
           </AIInputTools>
           
@@ -333,14 +356,11 @@ What would you like to know about BoxLog?`
       <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-16">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-600 to-blue-600 flex items-center justify-center">
-              <BotMessageSquare className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center">
+              <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">BoxLog Support</h3>
-              <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                <span>App Usage Support</span>
-              </div>
             </div>
           </div>
           
@@ -428,10 +448,9 @@ What would you like to know about BoxLog?`
 
           {messages.length === 0 ? (
             <AIMessage from="assistant">
-              <AIMessageAvatar 
-                src="/users/support-ai-avatar.png"
-                name="BoxLog Support"
-              />
+              <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center flex-shrink-0">
+                <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
+              </div>
               <AIMessageContent>
                 <CodebaseAIResponse>
                   Hello! I'm the **BoxLog** application support assistant.

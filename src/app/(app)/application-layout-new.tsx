@@ -49,6 +49,7 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
   Code2,
+  BotMessageSquare,
 } from 'lucide-react'
 import {
   Calendar as CalendarIcon,
@@ -644,7 +645,7 @@ export function ApplicationLayoutNew({
                 className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
                 title="Codebase AI"
               >
-                <Code2 className="w-5 h-5" />
+                <BotMessageSquare className="w-5 h-5" />
               </button>
             </div>
           )}

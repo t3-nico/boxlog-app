@@ -127,12 +127,22 @@ export async function POST(req: Request) {
     if (cachedResponse) {
       console.log('Using cached response for query:', userQuery)
       
-      // Return simple JSON response for cached content
-      return NextResponse.json({
-        id: 'cache-' + Date.now(),
-        role: 'assistant',
-        content: cachedResponse,
-        createdAt: new Date().toISOString()
+      // Create a streaming response for cached content
+      const encoder = new TextEncoder()
+      
+      const stream = new ReadableStream({
+        start(controller) {
+          const chunk = `0:"${cachedResponse.replace(/"/g, '\\"').replace(/\n/g, '\\n')}"\n`
+          controller.enqueue(encoder.encode(chunk))
+          controller.close()
+        }
+      })
+
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache'
+        }
       })
     }
 
@@ -187,10 +197,10 @@ If asked about non-BoxLog topics, respond with:
       console.error('OpenAI API key not found - returning mock streaming response')
       
       // Create mock response content based on the query
-      let mockContent = `Hello! I'm the BoxLog support assistant.`
+      let mockContent = `🤖 **MOCK RESPONSE** - Hello! I'm the BoxLog support assistant (currently in mock mode).`
       
       if (userQuery.toLowerCase().includes('dark') || userQuery.includes('ダークモード')) {
-        mockContent = `Yes, BoxLog supports **Dark Mode**!
+        mockContent = `🤖 **MOCK RESPONSE** - Yes, BoxLog supports **Dark Mode**!
 
 ## How to Enable Dark Mode:
 
@@ -214,7 +224,7 @@ Auto-switching based on system preferences is also available.
 
 Feel free to ask any other questions about BoxLog!`
       } else if (userQuery.toLowerCase().includes('features') || userQuery.toLowerCase().includes('機能')) {
-        mockContent = `## BoxLog Main Features:
+        mockContent = `🤖 **MOCK RESPONSE** - ## BoxLog Main Features:
 
 📅 **Calendar View**
 - Daily, weekly, monthly task display
@@ -251,7 +261,7 @@ For detailed usage guides, visit: [BoxLog Documentation](https://github.com/t3-n
 
 What specific feature would you like to know more about?`
       } else {
-        mockContent = `Thank you for your question: "${userQuery}"
+        mockContent = `🤖 **MOCK RESPONSE** - Thank you for your question: "${userQuery}"
 
 I can help you with:
 - **Calendar features** - scheduling and time management
@@ -263,7 +273,9 @@ I can help you with:
 
 Could you please be more specific about what you'd like to know?
 
-For comprehensive guides, check: [BoxLog Documentation](https://github.com/t3-nico/boxlog-web)`
+For comprehensive guides, check: [BoxLog Documentation](https://github.com/t3-nico/boxlog-web)
+
+*Note: This is a mock response. OpenAI API key is not configured.*`
       }
 
       // Apply token limiting
