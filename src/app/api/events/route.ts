@@ -1,6 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { type NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { 
+  createErrorResponse, 
+  createSuccessResponse, 
+  handleSupabaseError,
+  UnauthorizedError,
+  ValidationError,
+  NotFoundError
+} from '@/lib/errors'
 
 // Validation schema for creating events
 const createEventSchema = z.object({
@@ -40,14 +48,15 @@ const querySchema = z.object({
 })
 
 export async function GET(req: NextRequest) {
-  console.log('=== GET /api/events called ===')
-  const supabase = createClient()
-  
-  // Check authentication
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  try {
+    console.log('=== GET /api/events called ===')
+    const supabase = createClient()
+    
+    // Check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      throw new UnauthorizedError()
+    }
   
   console.log('Authenticated user ID:', user.id)
   console.log('Authenticated user email:', user.email)
@@ -66,14 +75,11 @@ export async function GET(req: NextRequest) {
     offset: searchParams.get('offset'),
   }
 
-  const parsed = querySchema.safeParse(queryParams)
-  if (!parsed.success) {
-    console.log('Query validation error:', parsed.error)
-    return NextResponse.json({ 
-      error: 'Invalid query parameters', 
-      details: parsed.error.issues 
-    }, { status: 400 })
-  }
+    const parsed = querySchema.safeParse(queryParams)
+    if (!parsed.success) {
+      console.log('Query validation error:', parsed.error)
+      throw new ValidationError('クエリパラメータが無効です', parsed.error.issues)
+    }
 
   const { start_date, end_date, event_type, status, tag_ids, search, limit, offset } = parsed.data
 
@@ -118,43 +124,46 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await query
 
-  console.log('Database query result:', data)
-  console.log('Query error:', error)
+    console.log('Database query result:', data)
+    console.log('Query error:', error)
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    if (error) {
+      throw handleSupabaseError(error)
+    }
+
+    // Note: Tag filtering will be implemented later
+    let filteredData = data
+
+    return NextResponse.json(createSuccessResponse({
+      events: filteredData,
+      total: filteredData?.length || 0,
+    }))
+  } catch (error) {
+    console.error('GET /api/events error:', error)
+    const errorResponse = createErrorResponse(error)
+    return NextResponse.json(errorResponse, { status: errorResponse.error?.status || 500 })
   }
-
-  // Note: Tag filtering will be implemented later
-  let filteredData = data
-
-  return NextResponse.json({
-    events: filteredData,
-    total: filteredData?.length || 0,
-  })
 }
 
 export async function POST(req: NextRequest) {
-  console.log('=== POST /api/events called ===')
-  const supabase = createClient()
-  
-  // Check authentication
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-  
-  const body = await req.json()
-  console.log('Request body:', body)
+  try {
+    console.log('=== POST /api/events called ===')
+    const supabase = createClient()
+    
+    // Check authentication
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      throw new UnauthorizedError()
+    }
+    
+    const body = await req.json()
+    console.log('Request body:', body)
 
-  const parsed = createEventSchema.safeParse(body)
-  if (!parsed.success) {
-    console.log('Validation error:', parsed.error)
-    return NextResponse.json({ 
-      error: 'Validation failed', 
-      details: parsed.error.issues 
-    }, { status: 400 })
-  }
+    const parsed = createEventSchema.safeParse(body)
+    if (!parsed.success) {
+      console.log('Validation error:', parsed.error)
+      throw new ValidationError('入力データが無効です', parsed.error.issues)
+    }
 
   const { tagIds, date, startTime, endTime, isRecurring, recurrenceType, recurrenceInterval, recurrenceEndDate, items, ...eventData } = parsed.data
 
@@ -182,79 +191,83 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Create event data for database
-  const dbEventData = {
-    ...eventData,
-    user_id: user.id,
-    planned_start,
-    planned_end,
-    is_recurring: isRecurring,
-    recurrence_rule,
-    items: items || [],
-  }
-
-  // Create the event - handle RLS trigger errors gracefully
-  let event
-  try {
-    const { data, error } = await supabase
-      .from('events')
-      .insert(dbEventData)
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Event creation error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+    // Create event data for database
+    const dbEventData = {
+      ...eventData,
+      user_id: user.id,
+      planned_start,
+      planned_end,
+      is_recurring: isRecurring,
+      recurrence_rule,
+      items: items || [],
     }
-    
-    event = data
-  } catch (error: any) {
-    // If it's specifically the event_histories RLS error, the event might still be created
-    if (error.code === '42501' && error.message?.includes('event_histories')) {
-      console.warn('History trigger failed due to RLS, checking if event was created...')
-      
-      // Try to find the event that was just created
-      const { data: createdEvent, error: fetchError } = await supabase
+
+    // Create the event - handle RLS trigger errors gracefully
+    let event
+    try {
+      const { data, error } = await supabase
         .from('events')
+        .insert(dbEventData)
         .select()
-        .eq('title', dbEventData.title)
-        .eq('user_id', user.id)
-        .eq('planned_start', dbEventData.planned_start)
-        .order('created_at', { ascending: false })
-        .limit(1)
         .single()
-      
-      if (createdEvent && !fetchError) {
-        console.log('Event was created successfully despite history trigger error')
-        event = createdEvent
-      } else {
-        console.error('Event creation failed:', error)
-        return NextResponse.json({ error: error.message }, { status: 500 })
+
+      if (error) {
+        console.error('Event creation error:', error)
+        throw handleSupabaseError(error)
       }
-    } else {
-      console.error('Event creation error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      
+      event = data
+    } catch (error: any) {
+      // If it's specifically the event_histories RLS error, the event might still be created
+      if (error.code === '42501' && error.message?.includes('event_histories')) {
+        console.warn('History trigger failed due to RLS, checking if event was created...')
+        
+        // Try to find the event that was just created
+        const { data: createdEvent, error: fetchError } = await supabase
+          .from('events')
+          .select()
+          .eq('title', dbEventData.title)
+          .eq('user_id', user.id)
+          .eq('planned_start', dbEventData.planned_start)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single()
+        
+        if (createdEvent && !fetchError) {
+          console.log('Event was created successfully despite history trigger error')
+          event = createdEvent
+        } else {
+          console.error('Event creation failed:', error)
+          throw handleSupabaseError(error)
+        }
+      } else {
+        throw handleSupabaseError(error)
+      }
     }
-  }
 
   // Skip manual history creation for now to avoid RLS issues
 
-  // Handle tag associations if provided
-  if (tagIds && tagIds.length > 0) {
-    const eventTagData = tagIds.map((tagId: string) => ({
-      event_id: event.id,
-      tag_id: tagId,
-    }))
+    // Handle tag associations if provided
+    if (tagIds && tagIds.length > 0) {
+      const eventTagData = tagIds.map((tagId: string) => ({
+        event_id: event.id,
+        tag_id: tagId,
+      }))
 
-    const { error: tagError } = await supabase
-      .from('event_tags')
-      .insert(eventTagData)
+      const { error: tagError } = await supabase
+        .from('event_tags')
+        .insert(eventTagData)
 
-    if (tagError) {
-      console.error('Failed to create tag associations:', tagError)
-      // Don't fail the entire request for tag association errors
+      if (tagError) {
+        console.error('Failed to create tag associations:', tagError)
+        // Don't fail the entire request for tag association errors
+      }
     }
+    
+    return NextResponse.json(createSuccessResponse(event), { status: 201 })
+  } catch (error) {
+    console.error('POST /api/events error:', error)
+    const errorResponse = createErrorResponse(error)
+    return NextResponse.json(errorResponse, { status: errorResponse.error?.status || 500 })
   }
-  
-  return NextResponse.json(event, { status: 201 })
 }

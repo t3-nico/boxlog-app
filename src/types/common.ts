@@ -2,72 +2,25 @@
  * 共通型定義
  * 
  * アプリケーション全体で使用される基本的な型定義
+ * 重複する型定義は unified.ts に移行しています
  */
 
-// タスク関連の基本型
-export interface Task {
-  id: string
-  title: string
-  description?: string
-  tags?: Tag[]
-  status: TaskStatus
-  priority: TaskPriority
-  type: TaskType
-  dueDate?: Date
-  createdAt?: Date
-  updatedAt?: Date
-  selected?: boolean
-  isFavorite?: boolean
-  projectId?: string
-  assignedTo?: string
-  estimatedTime?: number
-  actualTime?: number
-}
-
-export type TaskStatus = 'Todo' | 'In Progress' | 'Done' | 'Cancelled' | 'Backlog'
-export type TaskPriority = 'High' | 'Medium' | 'Low'
-export type TaskType = 'Task' | 'Bug' | 'Feature' | 'Documentation'
-
-// タグ関連の型
-export interface Tag {
-  id: string
-  name: string
-  color: string
-  icon?: string
-  description?: string
-  parent_id?: string | null
-  path?: string
-  level?: number
-  created_at?: Date
-  updated_at?: Date
-  count?: number
-}
-
-export interface TagWithChildren extends Tag {
-  children: TagWithChildren[]
-  parent?: Tag | null
-}
-
-// スマートフォルダ関連の型
-export interface SmartFolder {
-  id: string
-  name: string
-  description?: string
-  icon?: string
-  color?: string
-  rules?: SmartFolderRule[]
-  created_at?: Date
-  updated_at?: Date
-  count?: number
-}
-
-export interface SmartFolderRule {
-  id?: string
-  field: string
-  operator: string
-  value: unknown
-  condition?: 'AND' | 'OR'
-}
+// 統一された型定義を再エクスポート
+export type {
+  Task,
+  TaskEntity,
+  TaskStatus,
+  TaskPriority,
+  TaskType,
+  CreateTaskRequest,
+  UpdateTaskRequest,
+  Tag,
+  TagWithChildren,
+  SmartFolder,
+  SmartFolderRule,
+  ApiError,
+  ApiResponse
+} from './unified'
 
 // 検索可能な共通インターフェース
 export interface Searchable {
@@ -132,7 +85,8 @@ export interface NotificationSettings {
   tagUpdates: boolean
 }
 
-// API レスポンス関連の型
+// レガシー型定義（後方互換性のため、将来的に削除予定）
+// 新しいコードでは unified.ts の ApiResponse, ApiError を使用してください
 export interface APIResponse<T = unknown> {
   data?: T
   error?: APIError

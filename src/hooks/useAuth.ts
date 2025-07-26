@@ -3,6 +3,12 @@
 import { useEffect, useState, useCallback } from 'react'
 import { User, Session, AuthError } from '@supabase/supabase-js'
 import { supabaseBrowser } from '@/lib/supabase-browser'
+import { 
+  handleClientError,
+  UnauthorizedError,
+  ValidationError,
+  getErrorMessage 
+} from '@/lib/errors'
 
 interface AuthState {
   user: User | null
@@ -29,21 +35,21 @@ export function useAuth() {
     }
   }, [])
 
-  // エラーハンドリング関数
+  // 認証エラーハンドリング関数
   const handleAuthError = useCallback((error: AuthError | null) => {
     if (!error) return null
 
     // エラーメッセージの日本語化
     const errorMessages: Record<string, string> = {
-      'Invalid login credentials': 'Invalid email or password. If you don\'t have an account, please sign up.',
-      'Email not confirmed': 'Please confirm your email address.',
-      'User already registered': 'This email address is already registered.',
-      'Password should be at least 6 characters': 'Password must be at least 6 characters.',
-      'Too many requests': 'Too many requests. Please try again later.',
-      'Email rate limit exceeded': 'Email sending limit exceeded. Please try again later.'
+      'Invalid login credentials': 'メールアドレスまたはパスワードが正しくありません',
+      'Email not confirmed': 'メールアドレスを確認してください',
+      'User already registered': 'このメールアドレスは既に登録されています',
+      'Password should be at least 6 characters': 'パスワードは6文字以上で入力してください',
+      'Too many requests': 'リクエストが多すぎます。しばらく待ってから再試行してください',
+      'Email rate limit exceeded': 'メール送信の制限に達しました。しばらく待ってから再試行してください'
     }
 
-    return errorMessages[error.message] || error.message
+    return errorMessages[error.message] || handleClientError(error)
   }, [])
 
   useEffect(() => {
@@ -99,7 +105,14 @@ export function useAuth() {
 
   const signUp = async (email: string, password: string, metadata?: any) => {
     if (!supabase) {
-      return { data: null, error: 'Supabase not initialized' }
+      return { data: null, error: 'Supabaseが初期化されていません' }
+    }
+
+    // バリデーション
+    if (!email || !password) {
+      const error = 'メールアドレスとパスワードは必須です'
+      setAuthState(prev => ({ ...prev, error }))
+      return { data: null, error }
     }
 
     setAuthState(prev => ({ ...prev, loading: true, error: null }))
