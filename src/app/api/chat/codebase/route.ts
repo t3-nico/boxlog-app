@@ -125,21 +125,35 @@ export async function POST(req: Request) {
     // Check cache first (Cost optimization: Cache feature)
     const cachedResponse = getCachedResponse(userQuery)
     if (cachedResponse) {
-      const encoder = new TextEncoder()
-      const stream = new ReadableStream({
-        start(controller) {
-          // Send cached content as a single chunk
-          controller.enqueue(encoder.encode(cachedResponse))
-          controller.close()
-        }
+      console.log('Using cached response for query:', userQuery)
+      
+      // Create a mock provider for cached responses
+      const cachedProvider = {
+        languageModel: () => ({
+          doStream: async function* () {
+            // Stream cached content quickly
+            const words = cachedResponse.split(' ')
+            for (const word of words) {
+              yield {
+                type: 'text-delta',
+                textDelta: word + ' ',
+              }
+              await new Promise(resolve => setTimeout(resolve, 10)) // Faster for cached
+            }
+          },
+          provider: 'cache',
+          modelId: 'cached-response',
+          maxTokens: 600,
+        })
+      }
+      
+      const result = await streamText({
+        model: cachedProvider.languageModel() as any,
+        messages,
+        system: systemPrompt,
       })
-
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'Cache-Control': 'no-cache',
-        },
-      })
+      
+      return result.toDataStreamResponse()
     }
 
     // Fetch relevant code context
@@ -190,13 +204,17 @@ If asked about non-BoxLog topics, respond with:
 
     // Check if OpenAI API key is available
     if (!process.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key not found - returning mock streaming response')
+      console.error('OpenAI API key not found - using mock provider')
       
-      // Create mock response content based on the query
-      let mockContent = `こんにちは！BoxLogアプリケーションのサポートです。`
-      
-      if (userQuery.toLowerCase().includes('dark') || userQuery.includes('ダークモード')) {
-        mockContent = `Yes, BoxLog supports **Dark Mode**!
+      // Create a mock language model provider
+      const createMockProvider = () => ({
+        languageModel: () => ({
+          doStream: async function* ({ prompt, messages }: any) {
+            // Create mock response content based on the query
+            let mockContent = `Hello! I'm the BoxLog support assistant.`
+            
+            if (userQuery.toLowerCase().includes('dark') || userQuery.includes('ダークモード')) {
+              mockContent = `Yes, BoxLog supports **Dark Mode**!
 
 ## How to Enable Dark Mode:
 
@@ -219,68 +237,141 @@ If asked about non-BoxLog topics, respond with:
 Auto-switching based on system preferences is also available.
 
 Feel free to ask any other questions about BoxLog!`
-      } else {
-        mockContent = `Thank you for your question: "${userQuery}"
-
-## BoxLog Main Features:
+            } else if (userQuery.toLowerCase().includes('features') || userQuery.toLowerCase().includes('機能')) {
+              mockContent = `## BoxLog Main Features:
 
 📅 **Calendar View**
 - Daily, weekly, monthly task display
 - Drag & drop task management
+- Timeline visualization
 
 📋 **Task Management**
 - Create, edit, delete tasks
-- Priority and status settings
-- Progress tracking
+- Priority levels (Low, Medium, High)
+- Status tracking (Pending, In Progress, Completed)
+- Due date management
 
 🏷️ **Tag System**
-- Categorize tasks by tags
-- Color-coded visual organization
+- Categorize tasks with custom tags
+- Color-coded organization
+- Filter by multiple tags
 
-For detailed usage, check the [BoxLog Web Documentation](https://github.com/t3-nico/boxlog-web).
+🔄 **Smart Folders**
+- Automated task organization
+- Custom filter rules
+- Dynamic content updates
 
-Feel free to ask any other questions about BoxLog!`
-      }
+📊 **Progress Tracking**
+- Completion statistics
+- Time tracking
+- Productivity insights
 
-      // Cache the mock response
-      cacheResponse(userQuery, mockContent)
+📱 **Cross-Platform**
+- Responsive web design
+- Mobile-friendly interface
+- Real-time synchronization
 
-      // Return a simple streaming response that useChat can handle
-      const encoder = new TextEncoder()
-      const stream = new ReadableStream({
-        start(controller) {
-          // Send the complete content as a single chunk to avoid duplication
-          controller.enqueue(encoder.encode(mockContent))
-          controller.close()
-        }
+For detailed usage guides, visit: [BoxLog Documentation](https://github.com/t3-nico/boxlog-web)
+
+What specific feature would you like to know more about?`
+            } else {
+              mockContent = `Thank you for your question: "${userQuery}"
+
+I can help you with:
+- **Calendar features** - scheduling and time management
+- **Task management** - creating and organizing tasks  
+- **Tags and organization** - categorizing your work
+- **Smart folders** - automated organization
+- **Settings and preferences** - customizing BoxLog
+- **Troubleshooting** - solving common issues
+
+Could you please be more specific about what you'd like to know?
+
+For comprehensive guides, check: [BoxLog Documentation](https://github.com/t3-nico/boxlog-web)`
+            }
+
+            // Apply token limiting
+            const maxTokens = 600
+            const estimatedTokens = mockContent.split(' ').length * 1.3
+            if (estimatedTokens > maxTokens) {
+              const wordsToKeep = Math.floor(maxTokens / 1.3)
+              const words = mockContent.split(' ')
+              mockContent = words.slice(0, wordsToKeep).join(' ') + '...\n\n*Response truncated to stay within token limits.*'
+            }
+
+            // Cache the response
+            cacheResponse(userQuery, mockContent)
+
+            // Stream the content word by word
+            const words = mockContent.split(' ')
+            for (const word of words) {
+              yield {
+                type: 'text-delta',
+                textDelta: word + ' ',
+              }
+              await new Promise(resolve => setTimeout(resolve, 30))
+            }
+          },
+          
+          // Required properties for the model
+          provider: 'mock',
+          modelId: 'mock-model',
+          maxTokens: 600,
+        })
       })
 
-      return new Response(stream, {
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'Cache-Control': 'no-cache',
-        },
+      const mockProvider = createMockProvider()
+      
+      // Use the official streamText with our mock provider
+      const result = await streamText({
+        model: mockProvider.languageModel() as any,
+        messages,
+        system: systemPrompt,
       })
+      
+      return result.toDataStreamResponse()
     }
 
-    console.log('Starting OpenAI stream...')
-    // Stream the response with cost optimization
-    const result = await streamText({
-      model: openai('gpt-3.5-turbo'), // Cost optimization: Use GPT-3.5 instead of GPT-4
-      system: systemPrompt,
-      messages,
-      temperature: 0.7,
-      maxTokens: 800, // Cost optimization: Limit response length
-    })
+    console.log('Starting OpenAI stream with enhanced token limiting...')
+    
+    // Enhanced token limiting: Truncate system prompt if too long
+    let optimizedSystemPrompt = systemPrompt
+    const systemTokenEstimate = systemPrompt.split(' ').length * 1.3
+    if (systemTokenEstimate > 1500) {
+      const wordsToKeep = Math.floor(1500 / 1.3)
+      const words = systemPrompt.split(' ')
+      optimizedSystemPrompt = words.slice(0, wordsToKeep).join(' ') + '\n\n[System prompt truncated for token efficiency]'
+    }
 
-    // Get the response content and cache it
-    const response = result.toDataStreamResponse()
+    // Enhanced token limiting: Limit conversation history
+    const maxHistoryTokens = 1000
+    let limitedMessages = [...messages]
+    let historyTokens = 0
     
-    // Note: In a real implementation, we'd need to capture the streamed content
-    // and cache it after completion. For now, the cache works with mock responses.
+    for (let i = limitedMessages.length - 1; i >= 0; i--) {
+      const messageTokens = limitedMessages[i].content.split(' ').length * 1.3
+      if (historyTokens + messageTokens > maxHistoryTokens) {
+        limitedMessages = limitedMessages.slice(i + 1)
+        break
+      }
+      historyTokens += messageTokens
+    }
+
+    console.log(`Token optimization: System prompt: ${Math.floor(systemTokenEstimate)} tokens, History: ${Math.floor(historyTokens)} tokens`)
+
+    // Stream the response with aggressive cost optimization
+    const result = await streamText({
+      model: openai('gpt-3.5-turbo'), // Cost optimization: Use GPT-3.5 instead of GPT-4 (90% cheaper)
+      system: optimizedSystemPrompt,
+      messages: limitedMessages,
+      temperature: 0.7,
+      maxTokens: 600, // Cost optimization: Further reduced response length
+      frequencyPenalty: 0.1, // Reduce repetition
+      presencePenalty: 0.1, // Encourage conciseness
+    })
     
-    console.log('OpenAI stream created successfully')
-    return response
+    console.log('OpenAI stream created successfully with token limits')
+    return result.toDataStreamResponse()
   } catch (error) {
     console.error('Chat API error:', error)
     return NextResponse.json(

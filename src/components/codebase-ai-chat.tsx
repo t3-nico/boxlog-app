@@ -276,14 +276,31 @@ export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
   const [showMenu, setShowMenu] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
   
-  // Use Vercel AI SDK's useChat hook
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append, error } = useChat({
+  // Use Vercel AI SDK's useChat hook with enhanced error handling
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append, error, reload } = useChat({
     api: '/api/chat/codebase',
     onError: (error) => {
       console.error('Chat error:', error)
+      // Add user-friendly error message
+      const errorMessage = {
+        id: 'error-' + Date.now(),
+        role: 'assistant' as const,
+        content: `I apologize, but I encountered an error: ${error.message}. Please try asking your question again.`,
+        createdAt: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
     },
     onFinish: (message) => {
       console.log('Message finished:', message)
+    },
+    onResponse: (response) => {
+      console.log('Response received:', response.status, response.headers.get('content-type'))
+    },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: {
+      // Add any additional data if needed
     },
     initialMessages: [
       {
@@ -406,6 +423,27 @@ What would you like to know about BoxLog?`
       {/* Chat Content */}
       <AIConversation>
         <AIConversationContent>
+          {/* Error display */}
+          {error && (
+            <div className="mx-4 mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium">Connection Error</span>
+              </div>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                Unable to connect to BoxLog support. Please check your connection and try again.
+              </p>
+              <button
+                onClick={() => reload()}
+                className="mt-2 text-xs text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100 underline"
+              >
+                Retry last message
+              </button>
+            </div>
+          )}
+
           {messages.length === 0 ? (
             <AIMessage from="assistant">
               <AIMessageAvatar 
