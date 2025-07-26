@@ -166,6 +166,56 @@ Primary state is managed through Zustand stores:
 - **Use descriptive commit messages with proper prefixes**
 - **Follow 8px grid guidelines for new components**
 
+### 🤖 AI Chatbot System ✅ **実装完了**
+
+BoxLogアプリケーション専用のRAG（Retrieval Augmented Generation）AIチャットボットシステムを実装しました。
+
+#### **コア機能**
+- **RAG検索**: GitHub API経由でt3-nico/boxlog-webリポジトリから関連情報を検索
+- **多言語対応**: 質問言語を自動検出（日本語↔英語）で適切な言語で回答
+- **コスト最適化**: GPT-3.5 Turbo使用、600トークン制限、1時間キャッシュ
+- **ストリーミング**: Vercel AI SDK useChat hookとの完全統合
+
+#### **レイアウトシステム**
+- **3カラム構成**: 左サイドバー(256px) | メインコンテンツ(可変) | AIチャット(320px)
+- **Googleカレンダー風**: 全領域が同時表示される直感的なレイアウト
+- **完全レスポンシブ**: 全画面サイズで最適表示
+- **ゼロパディング**: メインコンテンツは端から端まで完全表示
+
+#### **UI/UXデザイン**
+- **統一アイコン**: bot-message-square で全インターフェース統一
+- **ユーザーアバター**: アカウント設定の絵文字/画像を連携表示
+- **Neutralカラー**: グレートーンでBoxLog全体デザインと統一
+- **アクセシビリティ**: ARIA対応、キーボードナビゲーション
+
+#### **技術実装**
+```typescript
+// 言語自動検出
+function isJapanese(text: string): boolean {
+  const hiraganaKatakana = /[\u3040-\u309F\u30A0-\u30FF]/
+  // ひらがな・カタカナの存在で日本語判定（中国語除外）
+}
+
+// RAG検索
+async function fetchRelevantFiles(query: string): Promise<CodeContext> {
+  // GitHub Search API でリポジトリ検索
+  // 関連ファイルの内容取得
+  // システムプロンプトに組み込み
+}
+```
+
+#### **コンポーネント配置**
+- **AIChatSidebar**: `/src/components/ai-chat-sidebar.tsx` - 汎用AIチャット
+- **CodebaseAIChat**: `/src/components/codebase-ai-chat.tsx` - BoxLog専用サポート
+- **API Route**: `/src/app/api/chat/codebase/route.ts` - RAGエンドポイント
+- **Layout Integration**: `application-layout-new.tsx` - 3カラムレイアウト
+
+#### **使用方法**
+1. 右サイドバーのbotアイコンをクリック
+2. 日本語/英語で質問入力
+3. BoxLog機能について自動的にリポジトリから検索して回答
+4. OpenAI未設定時はモック応答で動作確認可能
+
 ### 📚 Documentation
 
 Detailed documentation has been moved to specialized files and is automatically loaded by Claude Code via `.claude/settings.local.json`:

@@ -1,4 +1,7 @@
 {
+  "claudeMd": [
+    "docs/ai-chatbot/system-overview.md"
+  ],
   "permissions": {
     "allow": [
       "Bash(rm:*)",
