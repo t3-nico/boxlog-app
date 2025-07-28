@@ -14,6 +14,7 @@ import { SearchResult } from '@/config/command-palette'
 import { SearchEngine } from '@/lib/search-engine'
 import { Task as BoxTask } from '@/types/box'
 import { commandRegistry, registerDefaultCommands } from '@/lib/command-registry'
+import { generateCompassCommands } from '@/lib/compass-commands'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useSidebarStore } from '@/stores/sidebarStore'
@@ -23,7 +24,8 @@ import {
   CheckSquare,
   Tag,
   Bot,
-  Folder
+  Folder,
+  BookOpen
 } from 'lucide-react'
 
 interface CommandPaletteProps {
@@ -109,6 +111,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         type: 'command' as const
       }))
       
+      // Get compass documentation commands
+      const compassCommands = generateCompassCommands()
+      const compassResults: SearchResult[] = compassCommands.map(command => ({
+        ...command,
+        type: 'command' as const
+      }))
+      
       // Get recent tasks
       const recentTasks = tasks.slice(0, 5) // Get 5 most recent tasks
       const taskResults: SearchResult[] = recentTasks.map(task => ({
@@ -130,6 +139,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       
       const initialResults: SearchResult[] = [
         ...commandResults,
+        ...compassResults,
         ...taskResults
       ]
       
@@ -201,6 +211,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       'tasks': { label: 'Recent Items', icon: CheckSquare },
       'tags': { label: 'Tags', icon: Tag },
       'ai': { label: 'AI', icon: Bot },
+      'compass': { label: 'Compass Docs', icon: BookOpen },
     }
     return categoryMap[category] || { label: category, icon: Folder }
   }

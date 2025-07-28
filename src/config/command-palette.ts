@@ -51,6 +51,12 @@ export const COMMAND_PALETTE_CONFIG = {
       icon: 'sparkles',
       priority: 6 
     },
+    { 
+      id: 'compass', 
+      label: 'Compass Docs', 
+      icon: 'book-open',
+      priority: 7 
+    },
   ],
   
   // Animation settings
