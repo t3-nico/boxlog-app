@@ -19,7 +19,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/components/ui/kibo-ui/*": ["./src/components/ui/kibo-ui/*"]
+      "@/components/ui/kibo-ui/*": ["./src/components/ui/kibo-ui/*"],
+      "@compass/*": ["./compass/src/*"]
     },
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
