@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/ui/kibo-ui/*": ["./src/components/ui/kibo-ui/*"],
-      "@compass/*": ["./compass/src/*"]
+      "@compass/*": ["./compass/dist/*"]
     },
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
