@@ -33,8 +33,10 @@ jobs:
         run: |
           cd compass
           git fetch origin
-          git checkout dev
-          git pull origin dev
+          # Get the branch that triggered the webhook (dev or main)
+          TARGET_BRANCH="${{ github.event.client_payload.compass_ref || 'dev' }}"
+          git checkout $TARGET_BRANCH
+          git pull origin $TARGET_BRANCH
           cd ..
           
       - name: Check for changes
@@ -59,50 +61,24 @@ jobs:
           echo "message=$COMPASS_MESSAGE" >> $GITHUB_OUTPUT
           cd ..
 
-      - name: Create Pull Request
+      - name: Commit and push changes
         if: steps.changes.outputs.changes == 'true'
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: |
-            feat: compassサブモジュールを最新版に自動更新
-            
-            - Compass commit: ${{ steps.compass_info.outputs.commit }}
-            - 変更内容: ${{ steps.compass_info.outputs.message }}
-            
-            🤖 自動生成プルリクエスト
-          title: "🔄 Compass自動同期: ${{ steps.compass_info.outputs.message }}"
-          body: |
-            ## 📝 概要
-            
-            Compassリポジトリの更新を自動検出し、サブモジュールを最新版に同期しました。
-            
-            ## 🔄 変更内容
-            
-            - **Compass Commit**: `${{ steps.compass_info.outputs.commit }}`
-            - **変更概要**: ${{ steps.compass_info.outputs.message }}
-            
-            ## ✅ チェック項目
-            
-            - [ ] ドキュメント内容を確認
-            - [ ] 関連するコードに影響がないか確認
-            - [ ] CI/CDが正常に動作するか確認
-            
-            ---
-            
-            🤖 このプルリクエストは自動生成されました。
-            不要な場合はクローズしてください。
-          branch: auto-sync/compass-update-${{ github.run_number }}
-          delete-branch: true
-          draft: false
-          labels: |
-            compass
-            auto-sync
-            documentation
-
-      - name: Auto-approve and merge (optional)
-        if: steps.changes.outputs.changes == 'true' && contains(steps.compass_info.outputs.message, '[auto-merge]')
         run: |
-          echo "Auto-merge tag detected. Consider setting up auto-merge rules."
-          # gh pr merge --auto --squash --delete-branch
-          # (Requires GITHUB_TOKEN with appropriate permissions)
+          git add compass
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "feat: compassサブモジュールを自動更新
+
+          - Compass commit: ${{ steps.compass_info.outputs.commit }}
+          - 変更内容: ${{ steps.compass_info.outputs.message }}
+          
+          🤖 自動更新 by GitHub Actions"
+          git push
+
+      - name: Create summary comment
+        if: steps.changes.outputs.changes == 'true'
+        run: |
+          echo "✅ Compass submodule updated successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "- **Compass Commit**: ${{ steps.compass_info.outputs.commit }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Changes**: ${{ steps.compass_info.outputs.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Updated Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
