@@ -1,72 +1,120 @@
-# CLAUDE.md
+# CLAUDE.md - BoxLog App メインリポジトリ
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、BoxLog App メインリポジトリでの Claude Code (claude.ai/code) の動作指針を定義します。
 
-## 🗣️ Communication Language
+## 🗣️ コミュニケーション言語
 
-**IMPORTANT: Always respond in Japanese (日本語) unless specifically requested otherwise by the user.**
+**重要: 基本的に日本語で応答してください。** ただし、技術的に一般的な英語（feature、bug、commit、etc.）は適宜使用可能です。
 
-## 📚 Documentation Location
+## 📚 ドキュメント配置
 
-**重要: 主要なドキュメントはcompassリポジトリで一元管理されています。**
+**重要: 主要なドキュメントはCompassサブモジュールで一元管理されています。**
 
 詳細なドキュメントは以下の場所を参照してください：
-- **メインドキュメント**: `compass/knowledge/app-docs/CLAUDE.md`
+- **App専用AI指示書**: `compass/ai-context/app/CLAUDE.md` ← **開発時はこちらを主に参照**
 - **技術ドキュメント**: `compass/knowledge/app-docs/`
 - **アーキテクチャ**: `compass/architecture/`
-- **設計システム**: `compass/design-system/`
+- **デザインシステム**: `compass/design-system/`
 
-## 🔄 Compass Submodule
+## 🔄 Compass サブモジュール連携
 
-このリポジトリにはcompassサブモジュールが統合されており、以下のようにアクセス可能です：
+このリポジトリには Compass サブモジュールが統合されており、以下のように連携しています：
 
+### サブモジュール操作
 ```bash
 # Compassの最新情報を取得
 git submodule update --remote
 
-# Compass内で作業
+# Compass内で作業（ドキュメント更新など）
 cd compass
-git status
-git add .
-git commit -m "Update documentation"
-git push origin dev
+git checkout -b feature/update-docs
+# 編集作業
+git add . && git commit -m "docs: ドキュメント更新"
+git push origin feature/update-docs
+# PR作成・マージ
+
+# メインリポジトリに戻ってサブモジュール更新を反映
+cd ..
+git add compass
+git commit -m "chore: compassサブモジュール更新"
 ```
 
-## 🚀 Quick Commands
+### 自動同期システム
+Compass の `dev`/`main` ブランチへの push により、このリポジトリへの自動同期が実行されます：
+```
+Compass更新 → GitHub Actions → 自動でこのリポジトリのサブモジュール更新
+```
+
+## 🚀 開発コマンド
 
 ```bash
-# Start development server
+# 開発サーバー起動
 npm run dev
 
-# Build for production
+# プロダクションビルド
 npm run build
 
-# Run linting
+# リンティング実行
 npm run lint
 
-# Run tests
+# テスト実行
 npm test
 ```
 
-## 🏗️ Architecture
+## 🏗️ プロジェクト概要
 
-This is a Next.js 14 application with TypeScript, integrated with the compass knowledge management system for documentation and shared resources.
+BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケーションです。Compass ナレッジマネジメントシステムと統合し、ドキュメントとリソースを一元管理しています。
 
-### Key Technologies
+### 主要技術スタック
 
-- **Frontend**: Next.js 14 with App Router, React 18, TypeScript
-- **UI Components**: shadcn/ui (primary), kiboUI (advanced features)
-- **Documentation**: Compass submodule for centralized knowledge management
-- **Database**: Supabase (PostgreSQL)
-- **Styling**: Tailwind CSS v4 with 8px grid system
+- **フロントエンド**: Next.js 14（App Router）, React 18, TypeScript
+- **UIコンポーネント**: shadcn/ui（基本）, kiboUI（高度な機能）
+- **ドキュメント**: Compass サブモジュールによる一元管理
+- **データベース**: Supabase（PostgreSQL）
+- **スタイリング**: Tailwind CSS v4 + 8pxグリッドシステム
 
-### Component Priority
+### コンポーネント選択優先度
 
-1. **🥇 shadcn/ui (FIRST CHOICE)** - Basic UI components
-2. **🥈 kiboUI (ADVANCED FEATURES)** - AI components, Kanban, etc.
-3. **🥉 Custom Implementation (LAST RESORT)** - Only when no library option exists
+1. **🥇 shadcn/ui（第一選択）** - 基本UIコンポーネント
+2. **🥈 kiboUI（高度な機能）** - AI コンポーネント、Kanban など
+3. **🥉 カスタム実装（最後の手段）** - ライブラリオプションが存在しない場合のみ
+
+## 🎯 開発ワークフロー
+
+### ブランチ戦略
+- **dev**: 開発・統合ブランチ（メイン作業）
+- **main**: 本番環境ブランチ
+- **feature/***: 機能開発ブランチ
+- **fix/***: バグ修正ブランチ
+
+### 重要なルール
+1. **コミット前に `npm run lint` を必ず実行**
+2. **新しいコンポーネントはライト・ダークモード両方をテスト**
+3. **8pxグリッドシステムに準拠**
+4. **TypeScript を厳密に使用（`any` 型を避ける）**
+
+## 📋 開発時の指針
+
+### Claude Code 使用時
+- **詳細な技術指示**: `compass/ai-context/app/CLAUDE.md` を参照
+- **コンポーネント実装**: shadcn/ui → kiboUI → カスタム の順で検討
+- **デザインシステム**: Compass の統一トークンを使用
+
+### ドキュメント更新
+1. **App関連**: `compass/knowledge/app-docs/` で管理
+2. **サブモジュール更新**: 上記のサブモジュール操作手順に従う
+3. **変更追跡**: コミットメッセージで修正元を明記
+
+## 🔗 重要なリンク
+
+- **詳細技術ドキュメント**: `compass/ai-context/app/CLAUDE.md`
+- **コンポーネントガイド**: `compass/knowledge/app-docs/components/`
+- **デザインシステム**: `compass/design-system/`
+- **Git ワークフロー**: `compass/knowledge/app-docs/development/git-workflow.md`
 
 ---
 
-*For complete documentation, refer to `compass/knowledge/app-docs/CLAUDE.md`*
-*Last Updated: 2025-01-28*
+**📖 このドキュメントについて**: BoxLog App メインリポジトリ概要  
+**詳細指示書**: `compass/ai-context/app/CLAUDE.md` ← **開発時はこちらを主に参照**  
+**最終更新**: 2025-07-29  
+**バージョン**: v2.0 - Compass統合・日本語ベース版
