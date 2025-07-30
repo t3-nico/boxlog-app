@@ -105,28 +105,28 @@ export const TrashItemCard = ({ item }: TrashItemCardProps) => {
   const IconComponent = getItemTypeIcon(item.type)
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+    <div className="bg-card rounded-lg border border-border p-4 hover:border-border transition-colors">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-3">
             {/* アイテムタイプアイコン */}
             <div className="flex-shrink-0">
-              <IconComponent className="w-5 h-5 text-gray-400" data-slot="icon" />
+              <IconComponent className="w-5 h-5 text-muted-foreground" data-slot="icon" />
             </div>
             
             {/* アイテム名とタイプ */}
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              <h3 className="text-sm font-medium text-foreground truncate">
                 {item.data.name || item.data.title || 'Unnamed item'}
               </h3>
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">
                 {getItemTypeLabel(item.type)}
               </span>
             </div>
           </div>
           
           {/* 削除情報 */}
-          <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="mt-2 text-sm text-muted-foreground">
             <div>
               Deleted {formatRelativeTime(item.deletedAt)}
               {item.originalPath && ` from ${item.originalPath}`}
@@ -138,7 +138,7 @@ export const TrashItemCard = ({ item }: TrashItemCardProps) => {
             {daysUntilExpiration <= 3 && (
               <ExclamationTriangleIcon className="w-4 h-4 text-amber-500" data-slot="icon" />
             )}
-            <span className={`${daysUntilExpiration <= 3 ? 'text-amber-600 dark:text-amber-400 font-medium' : 'text-gray-400 dark:text-gray-500'}`}>
+            <span className={`${daysUntilExpiration <= 3 ? 'text-[var(--color-warning-600)] font-medium' : 'text-muted-foreground'}`}>
               {daysUntilExpiration > 0 
                 ? `Expires in ${daysUntilExpiration} day${daysUntilExpiration === 1 ? '' : 's'}`
                 : 'Expires soon'

@@ -173,7 +173,7 @@ export function ApplicationLayoutNew({
       <ToastProvider>
         <div className="flex flex-col h-screen">
         {/* Fixed Header - Full width at top */}
-        <header className="fixed top-0 left-0 right-0 z-20 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-16">
+        <header className="fixed top-0 left-0 right-0 z-20 bg-background border-b border-border h-16">
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
@@ -348,21 +348,21 @@ export function ApplicationLayoutNew({
                           e.stopPropagation()
                           openCommandPalette()
                         }}
-                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
                         title="Search (⌘K)"
                       >
                         <MagnifyingGlassIcon className="size-5 text-gray-600 dark:text-gray-400" />
                       </button>
                       <button
                         onClick={() => window.open('#', '_blank')}
-                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
                         title="Help"
                       >
                         <QuestionMarkCircleIcon className="size-5 text-gray-600 dark:text-gray-400" />
                       </button>
                       <button
                         onClick={() => router.push('/settings')}
-                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
                         title="Settings"
                       >
                         <Cog6ToothIcon className="size-5 text-gray-600 dark:text-gray-400" />
@@ -378,14 +378,14 @@ export function ApplicationLayoutNew({
         {/* Body - Layout container */}
         <div className="flex-1" style={{paddingTop: '64px'}}>
           {/* Left Sidebar - Fixed Position */}
-          <div className={`${collapsed ? 'w-12' : 'w-64'} fixed left-0 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-10`} style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
+          <div className={`${collapsed ? 'w-12' : 'w-64'} fixed left-0 bg-background border-r border-border z-10`} style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
             <div className={`h-full flex flex-col ${collapsed ? 'p-2' : 'p-4'}`}>
               {/* Collapsed sidebar - expand button */}
               {collapsed && !inSettings && (
                 <div className="flex justify-center mb-4">
                   <button
                     onClick={() => setCollapsed(false)}
-                    className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                    className="p-2 rounded-md hover:bg-accent/50 transition-colors"
                     title="Open sidebar"
                   >
                     <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -405,7 +405,7 @@ export function ApplicationLayoutNew({
                           </h1>
                           <button
                             onClick={() => setCollapsed(true)}
-                            className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                            className="p-2 rounded-md hover:bg-accent/50 transition-colors"
                             title="Close sidebar"
                           >
                             <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
@@ -619,7 +619,7 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="bg-white dark:bg-gray-800" style={{
+          <div className="bg-background" style={{
             marginLeft: collapsed ? '48px' : '256px', 
             marginRight: (isAIChatOpen || isCodebaseAIChatOpen) ? '320px' : (isRightSidebarHidden ? '0px' : '48px'),
             transition: 'margin-left 150ms ease, margin-right 150ms ease',
@@ -635,17 +635,17 @@ export function ApplicationLayoutNew({
           
           {/* Right Icon Bar - Hide when any AI Chat is open */}
           {!isAIChatOpen && !isCodebaseAIChatOpen && !isRightSidebarHidden && (
-            <div className="w-12 fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center py-4 gap-2 z-40" style={{top: '64px', bottom: '0'}}>
+            <div className="w-12 fixed right-0 bg-background border-l border-border flex flex-col items-center py-4 gap-2 z-40" style={{top: '64px', bottom: '0'}}>
               <button
                 onClick={() => setIsAIChatOpen(true)}
-                className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
+                className="p-2 rounded-lg transition-colors hover:bg-accent/50 text-gray-600 dark:text-gray-400"
                 title="AI Assistant"
               >
                 <SparklesIcon className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setIsCodebaseAIChatOpen(true)}
-                className="p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
+                className="p-2 rounded-lg transition-colors hover:bg-accent/50 text-gray-600 dark:text-gray-400"
                 title="Codebase AI"
               >
                 <BotMessageSquare className="w-5 h-5" />

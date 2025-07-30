@@ -30,7 +30,7 @@ export function SettingSection({
         <Subheading>{title}</Subheading>
         {description && <Text>{description}</Text>}
       </div>
-      <div className="divide-y divide-zinc-950/5 rounded-lg border border-zinc-950/5 dark:divide-white/10 dark:border-white/10">
+      <div className="divide-y divide-border rounded-lg border border-border">
         {children}
       </div>
     </section>
@@ -51,9 +51,9 @@ export function ToggleItem({
   return (
     <div className="flex items-center justify-between px-4 py-3">
       <div className="space-y-1">
-        <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
+        <p className="text-sm font-medium text-foreground">{label}</p>
         {description && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
+          <p className="text-sm text-muted-foreground">{description}</p>
         )}
       </div>
       <Switch checked={value} onChange={onChange} />
@@ -77,9 +77,9 @@ export function SelectItem({
   return (
     <div className="flex items-center justify-between px-4 py-3">
       <div className="space-y-1">
-        <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
+        <p className="text-sm font-medium text-foreground">{label}</p>
         {description && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
+          <p className="text-sm text-muted-foreground">{description}</p>
         )}
       </div>
       <div className="w-40">
@@ -110,9 +110,9 @@ export function DatePickerItem({
   return (
     <div className="flex items-center justify-between px-4 py-3">
       <div className="space-y-1">
-        <p className="text-sm font-medium text-zinc-950 dark:text-white">{label}</p>
+        <p className="text-sm font-medium text-foreground">{label}</p>
         {description && (
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
+          <p className="text-sm text-muted-foreground">{description}</p>
         )}
       </div>
       <div className="w-40">

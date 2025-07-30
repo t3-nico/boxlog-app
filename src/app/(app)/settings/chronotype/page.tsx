@@ -99,7 +99,7 @@ const typeColors = {
   focus: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300',
   creative: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
   rest: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-  admin: 'bg-gray-100 dark:bg-gray-800/30 text-gray-700 dark:text-gray-300',
+  admin: 'bg-muted text-gray-700 dark:text-gray-300',
   sleep: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
 }
 
@@ -285,7 +285,7 @@ export default function ChronoTypePage() {
 
       {/* 診断セクション */}
       {showDiagnosis ? (
-        <div id="diagnosis-section" className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div id="diagnosis-section" className="bg-card rounded-lg border border-border p-6">
           {diagnosisResult ? (
             /* 診断結果表示 */
             <div className="text-center">
@@ -314,7 +314,7 @@ export default function ChronoTypePage() {
               <div className="flex gap-3 justify-center">
                 <button
                   onClick={resetDiagnosis}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-card border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   もう一度診断
                 </button>
@@ -355,7 +355,7 @@ export default function ChronoTypePage() {
                     <button
                       key={index}
                       onClick={() => handleAnswerSelect(diagnosisQuestions[currentQuestion].id, option.value)}
-                      className="w-full p-4 text-left border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                      className="w-full p-4 text-left border border-border rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
                     >
                       {option.text}
                     </button>
@@ -374,7 +374,7 @@ export default function ChronoTypePage() {
         </div>
       ) : (
         /* クロノタイププロファイル選択 */
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-card rounded-lg border border-border p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
               クロノタイプを選択
@@ -403,7 +403,7 @@ export default function ChronoTypePage() {
                 className={`p-4 border-2 rounded-lg text-left transition-all ${
                   selectedProfile === profile.id
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    : 'border-border hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
@@ -430,7 +430,7 @@ export default function ChronoTypePage() {
 
       {/* 選択されたプロファイルのスケジュール表示 */}
       {currentProfile && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-card rounded-lg border border-border p-6">
           <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
             {currentProfile.name} のスケジュール
           </h2>
@@ -458,7 +458,7 @@ export default function ChronoTypePage() {
       )}
 
       {/* カレンダー表示設定 */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-card rounded-lg border border-border p-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -489,7 +489,7 @@ export default function ChronoTypePage() {
             setSelectedProfile('bear')
             updateSettings({ chronotype: { ...chronotype, type: 'bear' } })
           }}
-          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-card border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           Reset
         </button>
@@ -510,7 +510,7 @@ export default function ChronoTypePage() {
       </div>
 
       {/* クロノタイプ説明セクション */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mt-8">
+      <div className="bg-card rounded-lg border border-border p-6 mt-8">
         <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
           クロノタイプとは？
         </h2>
@@ -597,7 +597,7 @@ export default function ChronoTypePage() {
                 <Moon className="h-4 w-4 text-blue-600 dark:text-blue-400" data-slot="icon" />
                 <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Rest</span>
               </div>
-              <div className="flex items-center gap-2 p-2 bg-gray-100 dark:bg-gray-800/30 rounded">
+              <div className="flex items-center gap-2 p-2 bg-muted rounded">
                 <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
               </div>
@@ -615,7 +615,7 @@ export default function ChronoTypePage() {
               <strong>Sleep</strong>：睡眠時間、休息を推奨する時間帯
             </p>
 
-            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg mt-6">
+            <div className="bg-muted p-4 rounded-lg mt-6">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 💡 <strong>ヒント</strong>：クロノタイプは遺伝的要因が大きく、完全に変えることは困難です。
                 重要なのは自分のタイプを受け入れ、それに合わせて作業スケジュールを最適化することです。
@@ -623,7 +623,7 @@ export default function ChronoTypePage() {
             </div>
 
             {/* 診断ボタン */}
-            <div className="text-center mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="text-center mt-6 pt-6 border-t border-border">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 自分のクロノタイプが分からない方は、診断をお試しください
               </p>

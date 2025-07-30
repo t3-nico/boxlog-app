@@ -4,7 +4,7 @@
   ],
   "permissions": {
     "allow": [
-      "Bash(cp:*)"
+      "Bash(npm run lint)"
     ],
     "deny": []
   }

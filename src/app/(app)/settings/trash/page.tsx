@@ -12,25 +12,25 @@ import { Button } from '@/components/ui/button'
 function TrashLoadingSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+      <div className="border-b border-border pb-4">
         <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
-          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+          <div className="h-8 bg-muted rounded w-1/4 mb-2"></div>
+          <div className="h-4 bg-muted rounded w-1/2"></div>
         </div>
       </div>
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
           <div key={i} className="animate-pulse">
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+            <div className="bg-card rounded-lg border border-border p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-2"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-1"></div>
-                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+                  <div className="h-4 bg-muted rounded w-1/3 mb-2"></div>
+                  <div className="h-4 bg-muted rounded w-1/2 mb-1"></div>
+                  <div className="h-4 bg-muted rounded w-1/4"></div>
                 </div>
                 <div className="flex space-x-2">
-                  <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
-                  <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="h-8 w-16 bg-muted rounded"></div>
+                  <div className="h-8 w-16 bg-muted rounded"></div>
                 </div>
               </div>
             </div>
@@ -69,7 +69,7 @@ export default function TrashPage() {
   return (
     <div className="space-y-6 p-10">
       {/* ページヘッダー */}
-      <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
+      <div className="border-b border-border pb-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -94,19 +94,19 @@ export default function TrashPage() {
         {/* 統計情報 */}
         {stats.totalItems > 0 && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+            <div className="bg-muted p-3 rounded-lg">
               <div className="text-sm text-gray-500 dark:text-gray-400">Total Items</div>
               <div className="text-lg font-semibold">{stats.totalItems}</div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+            <div className="bg-muted p-3 rounded-lg">
               <div className="text-sm text-gray-500 dark:text-gray-400">Tasks</div>
               <div className="text-lg font-semibold">{stats.itemsByType.task || 0}</div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+            <div className="bg-muted p-3 rounded-lg">
               <div className="text-sm text-gray-500 dark:text-gray-400">Events</div>
               <div className="text-lg font-semibold">{stats.itemsByType.event || 0}</div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+            <div className="bg-muted p-3 rounded-lg">
               <div className="text-sm text-gray-500 dark:text-gray-400">Tags</div>
               <div className="text-lg font-semibold">{stats.itemsByType.tag || 0}</div>
             </div>

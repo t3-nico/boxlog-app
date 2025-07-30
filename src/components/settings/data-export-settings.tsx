@@ -24,7 +24,7 @@ export default function DataExportSettings() {
 
       <SettingSection title="Data Deletion" description="Request deletion of your data.">
         <div className="px-4 py-4">
-          <Button type="button" className="bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800">
+          <Button type="button" className="bg-[var(--color-error-600)] text-white hover:bg-[var(--color-error-700)]">
             Request deletion
           </Button>
         </div>

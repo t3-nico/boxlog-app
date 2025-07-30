@@ -434,7 +434,7 @@ export default function AccountSettings() {
               value={email}
               placeholder="Email address"
               readOnly
-              className="bg-gray-50 dark:bg-gray-800 cursor-not-allowed"
+              className="bg-muted cursor-not-allowed"
             />
             <div className="flex justify-end">
               <Button
@@ -450,8 +450,8 @@ export default function AccountSettings() {
 
           {/* メールアドレス変更フォーム */}
           {showEmailChange && (
-            <div className="space-y-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+            <div className="space-y-4 border border-border rounded-lg p-4 bg-muted/50">
+              <div className="text-sm font-medium text-foreground mb-3">
                 Change Email Address
               </div>
               
@@ -472,7 +472,7 @@ export default function AccountSettings() {
                 />
                 
                 {emailChangeError && (
-                  <div className="text-sm text-red-600 dark:text-red-400">
+                  <div className="text-sm text-[var(--color-error-500)]">
                     {emailChangeError}
                   </div>
                 )}
@@ -500,7 +500,7 @@ export default function AccountSettings() {
                 </div>
               </form>
               
-              <div className="text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600 pt-3">
+              <div className="text-xs text-muted-foreground border-t border-border pt-3">
                 <p className="font-medium mb-1">Important:</p>
                 <ul className="space-y-1">
                   <li>• A confirmation email will be sent to your new address</li>
@@ -513,7 +513,7 @@ export default function AccountSettings() {
           
           {/* Profile Picture Section */}
           <div className="space-y-4">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="text-sm font-medium text-foreground">
               Profile Picture
             </label>
             
@@ -523,18 +523,18 @@ export default function AccountSettings() {
                 <img 
                   src={uploadedAvatar} 
                   alt="Profile avatar" 
-                  className="w-16 h-16 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700" 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-border" 
                 />
               ) : (
-                <div className="w-16 h-16 text-4xl flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
+                <div className="w-16 h-16 text-4xl flex items-center justify-center rounded-full bg-muted border-2 border-border">
                   {selectedIcon}
                 </div>
               )}
               <div className="flex-1">
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-muted-foreground">
                   {uploadedAvatar ? 'Custom avatar image' : 'Using emoji icon'}
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   JPG, PNG, GIF up to 2MB
                 </div>
               </div>
@@ -573,7 +573,7 @@ export default function AccountSettings() {
                   type="button"
                   variant="ghost"
                   onClick={() => setUploadedAvatar(null)}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950/20"
+                  className="text-[var(--color-error-500)] hover:text-[var(--color-error-600)] hover:bg-[var(--color-error-100)]"
                 >
                   Remove
                 </Button>
@@ -584,16 +584,16 @@ export default function AccountSettings() {
           {/* アイコン選択セクション */}
           {!uploadedAvatar && (
             <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="text-sm font-medium text-foreground">
                 Profile Icon (Emoji)
               </label>
               <div className="flex items-center gap-4 mb-4">
                 <div className="text-4xl">{selectedIcon}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="text-sm text-muted-foreground">
                   Current profile icon
                 </div>
               </div>
-              <div className="grid grid-cols-10 gap-2 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+              <div className="grid grid-cols-10 gap-2 p-4 border border-border rounded-lg bg-muted/50">
                 {availableIcons.map((icon) => (
                   <button
                     key={icon}
@@ -604,7 +604,7 @@ export default function AccountSettings() {
                       transition-all duration-200 hover:scale-110
                       ${selectedIcon === icon 
                         ? 'bg-blue-500 text-white ring-2 ring-blue-400 ring-offset-2' 
-                        : 'bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
+                        : 'bg-card hover:bg-accent/50 border border-border'
                       }
                     `}
                   >
@@ -649,7 +649,7 @@ export default function AccountSettings() {
             placeholder="Confirm new password"
             required
           />
-          {passwordError && <p className="text-red-600 text-base/6 text-sm/6">{passwordError}</p>}
+          {passwordError && <p className="text-[var(--color-error-500)] text-base/6 text-sm/6">{passwordError}</p>}
           <div className="flex justify-end">
             <Button type="submit" disabled={isLoading}>
               {isLoading ? 'Updating...' : 'Update password'}
@@ -684,12 +684,12 @@ export default function AccountSettings() {
 
           {/* 2FA有効化の場合の設定UI */}
           {!twoFactorEnabled && showQRCode && (
-            <div className="space-y-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
+            <div className="space-y-4 border border-border rounded-lg p-4 bg-muted/50">
               <div className="text-center">
                 <Subheading level={4} className="!text-sm font-medium mb-2">
                   Scan QR Code with Authenticator App
                 </Subheading>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-xs text-muted-foreground mb-4">
                   Use Google Authenticator, Microsoft Authenticator, or any other TOTP authenticator app.
                 </p>
                 
@@ -698,14 +698,14 @@ export default function AccountSettings() {
                   <img 
                     src={qrCodeUri} 
                     alt="2FA QR Code" 
-                    className="w-48 h-48 border border-gray-300 dark:border-gray-600"
+                    className="w-48 h-48 border border-border"
                   />
                 </div>
                 
                 {/* 手動入力用シークレット */}
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+                <div className="text-xs text-muted-foreground mb-4">
                   <p className="mb-1">If you can't scan the QR code, enter this secret manually:</p>
-                  <code className="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded text-xs font-mono break-all">
+                  <code className="px-2 py-1 bg-muted rounded text-xs font-mono break-all">
                     {secret}
                   </code>
                 </div>
@@ -750,19 +750,19 @@ export default function AccountSettings() {
 
           {/* 2FA有効時の情報表示 */}
           {twoFactorEnabled && (
-            <div className="border border-green-200 dark:border-green-800 rounded-lg p-4 bg-green-50 dark:bg-green-950/20">
+            <div className="border border-[var(--color-success-300)] rounded-lg p-4 bg-[var(--color-success-100)]">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                <span className="text-sm font-medium text-[var(--color-success-700)]">
                   Two-Factor Authentication Enabled
                 </span>
               </div>
-              <p className="text-xs text-green-600 dark:text-green-400">
+              <p className="text-xs text-[var(--color-success-600)]">
                 Your account is protected with an additional security layer.
                 Verification codes from your authenticator app are required when signing in.
               </p>
               <div className="mt-3">
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-muted-foreground">
                   Registered devices: {mfaFactors.length}
                 </p>
               </div>
@@ -775,20 +775,20 @@ export default function AccountSettings() {
         title="Danger Zone"
         description="Irreversible and destructive actions"
       >
-        <div className="border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950/20">
+        <div className="border border-[var(--color-error-300)] rounded-lg bg-[var(--color-error-100)]">
           <div className="flex justify-between items-start px-4 py-4">
             <div className="space-y-2 flex-1">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <Subheading level={3} className="!text-base text-red-700 dark:text-red-400 font-semibold">
+                <Subheading level={3} className="!text-base text-[var(--color-error-700)] font-semibold">
                   Delete Account
                 </Subheading>
               </div>
-              <p className="text-red-600 dark:text-red-400 text-sm leading-relaxed">
+              <p className="text-[var(--color-error-600)] text-sm leading-relaxed">
                 ⚠️ <strong>This action cannot be undone.</strong><br />
                 This will permanently delete your account and remove all associated data from our servers.
               </p>
-              <ul className="text-xs text-red-600 dark:text-red-400 space-y-1 ml-4">
+              <ul className="text-xs text-[var(--color-error-600)] space-y-1 ml-4">
                 <li>• All your tasks and projects will be deleted</li>
                 <li>• Your profile and settings will be removed</li>
                 <li>• This action is immediate and irreversible</li>
@@ -798,7 +798,7 @@ export default function AccountSettings() {
               type="button" 
               onClick={handleDeleteAccount} 
               disabled={isLoading}
-              className="ml-4 bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-700 dark:hover:bg-red-800 disabled:opacity-50 transition-all duration-200 font-medium"
+              className="ml-4 bg-[var(--color-error-600)] text-white hover:bg-[var(--color-error-700)] focus:ring-2 focus:ring-[var(--color-error-500)] focus:ring-offset-2 disabled:opacity-50 transition-all duration-200 font-medium"
             >
               {isLoading ? (
                 <>
