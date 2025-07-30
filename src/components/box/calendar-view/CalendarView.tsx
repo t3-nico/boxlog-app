@@ -14,6 +14,7 @@ import { ScheduleView } from './views/ScheduleView'
 import { TaskReviewModal } from './components/TaskReviewModal'
 import { EventModal } from './components/EventModal'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
+import { CalendarEventPopup } from './components/CalendarEventPopup'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
@@ -49,9 +50,14 @@ export function CalendarView({
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
   const [eventDefaultDate, setEventDefaultDate] = useState<Date | undefined>(undefined)
   const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
+  const [eventDefaultEndTime, setEventDefaultEndTime] = useState<string | undefined>(undefined)
   
-  // AddPopup hook
+  // カレンダー専用ポップアップの状態
+  const [isCalendarEventPopupOpen, setIsCalendarEventPopupOpen] = useState(false)
+  
+  // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup } = useAddPopup()
+  
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
   const { planRecordMode } = useCalendarSettingsStore()
@@ -115,11 +121,7 @@ export function CalendarView({
   // 表示範囲のイベントを取得してCalendarEvent型に変換
   const filteredEvents = useMemo(() => {
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-    console.log('Date range:', { start: viewDateRange.start, end: viewDateRange.end })
-    console.log('Events from store:', eventStore.events)
-    console.log('Filtered events:', events)
     const calendarEvents = convertEventsToCalendarEvents(events)
-    console.log('Calendar events:', calendarEvents)
     return calendarEvents
   }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events])
   
@@ -196,8 +198,6 @@ export function CalendarView({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    console.log('🎯 Event clicked:', event)
-    
     // AddPopupで編集するためにselectedEventを設定
     const eventData: Event = {
       id: event.id,
@@ -217,7 +217,6 @@ export function CalendarView({
       updatedAt: event.updatedAt
     }
     
-    console.log('📋 Setting selected event data:', eventData)
     setSelectedEvent(eventData)
     
     // AddPopupを開く（編集モード）
@@ -225,9 +224,34 @@ export function CalendarView({
   }, [openPopup])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    // AddPopupを開く（eventタブをデフォルトで開く）
-    openPopup('event')
-  }, [openPopup])
+    // 日付と時間をセット（同期的に実行）
+    if (date) {
+      setEventDefaultDate(date)
+      if (time) {
+        // time が "HH:mm-HH:mm" 形式の場合は分割
+        if (time.includes('-')) {
+          const [startTime, endTime] = time.split('-')
+          setEventDefaultTime(startTime)
+          setEventDefaultEndTime(endTime)
+        } else {
+          setEventDefaultTime(time)
+          setEventDefaultEndTime(undefined)
+        }
+      } else {
+        // 時間が指定されていない場合はデフォルト値をクリア
+        setEventDefaultTime(undefined)
+        setEventDefaultEndTime(undefined)
+      }
+    } else {
+      // 日付が指定されていない場合はすべてクリア
+      setEventDefaultDate(undefined)
+      setEventDefaultTime(undefined)
+      setEventDefaultEndTime(undefined)
+    }
+    
+    // カレンダー専用ポップアップを開く（状態の競合なし）
+    setIsCalendarEventPopupOpen(true)
+  }, [])
   
   const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
     try {
@@ -492,7 +516,24 @@ export function CalendarView({
         defaultTime={eventDefaultTime}
       />
       
-      {/* AddPopup */}
+      {/* カレンダー専用ポップアップ */}
+      <CalendarEventPopup
+        open={isCalendarEventPopupOpen}
+        onOpenChange={(open) => {
+          setIsCalendarEventPopupOpen(open)
+          if (!open) {
+            // クローズ時に状態をクリア
+            setEventDefaultDate(undefined)
+            setEventDefaultTime(undefined)
+            setEventDefaultEndTime(undefined)
+          }
+        }}
+        defaultDate={eventDefaultDate}
+        defaultTime={eventDefaultTime}
+        defaultEndTime={eventDefaultEndTime}
+      />
+      
+      {/* AddPopup（編集用） */}
       <AddPopup 
         open={isAddPopupOpen} 
         onOpenChange={(open) => {

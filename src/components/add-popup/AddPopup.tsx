@@ -26,6 +26,9 @@ interface AddPopupProps {
   defaultTab?: 'event' | 'log'
   contextData?: CreateContextData
   editingEvent?: any // 編集中のイベントデータ
+  defaultDate?: Date
+  defaultTime?: string
+  defaultEndTime?: string
 }
 
 interface CreateContextData {
@@ -47,7 +50,10 @@ export function AddPopup({
   onOpenChange, 
   defaultTab = 'event',
   contextData,
-  editingEvent 
+  editingEvent,
+  defaultDate,
+  defaultTime,
+  defaultEndTime 
 }: AddPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<'event' | 'log'>(defaultTab)
@@ -187,6 +193,9 @@ export function AddPopup({
                 }}
                 onFormDataChange={setEventFormData}
                 onFormValidChange={setIsEventFormValid}
+                defaultDate={defaultDate}
+                defaultTime={defaultTime}
+                defaultEndTime={defaultEndTime}
               />
             </div>
           )}

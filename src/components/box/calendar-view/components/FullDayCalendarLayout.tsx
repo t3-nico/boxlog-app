@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useMemo, useRef, useState, useEffect } from 'react'
-import { isToday, isSameDay } from 'date-fns'
+import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react'
+import { isToday, isSameDay, format } from 'date-fns'
 import { TimeAxisLabels } from './TimeAxisLabels'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
@@ -25,6 +25,14 @@ interface FullDayCalendarLayoutProps {
   onCreateEvent?: (date: Date, time?: string) => void
 }
 
+interface DragState {
+  isDragging: boolean
+  startDate: Date | null
+  startY: number
+  currentY: number
+  dayIndex: number
+}
+
 export function FullDayCalendarLayout({
   dates,
   tasks,
@@ -36,6 +44,15 @@ export function FullDayCalendarLayout({
   const containerRef = useRef<HTMLDivElement>(null)
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
+  
+  // ドラッグ状態管理
+  const [dragState, setDragState] = useState<DragState>({
+    isDragging: false,
+    startDate: null,
+    startY: 0,
+    currentY: 0,
+    dayIndex: -1
+  })
   
 
   // Recordsの取得
@@ -88,6 +105,107 @@ export function FullDayCalendarLayout({
     return () => clearTimeout(timer)
   }, [])
 
+  // Y座標から時間を計算する関数（Googleカレンダー準拠）
+  const getTimeFromY = useCallback((y: number, dayIndex: number): Date => {
+    // Y座標を時間に変換（48px = 1時間）
+    const totalHours = y / HOUR_HEIGHT
+    
+    // 30分単位にスナップ（より安全な計算方法）
+    const totalMinutes = Math.round(totalHours * 60)
+    const snappedMinutes = Math.round(totalMinutes / 30) * 30 // 30分単位でスナップ
+    
+    const hours = Math.floor(snappedMinutes / 60)
+    const minutes = snappedMinutes % 60
+    
+    // 基準日付を安全に複製（タイムゾーンの問題を避けるため）
+    const baseDate = dates[dayIndex]
+    const resultDate = new Date(baseDate)
+    resultDate.setHours(hours, minutes, 0, 0)
+    
+    
+    return resultDate
+  }, [dates])
+
+  // マウスダウンハンドラー
+  const handleMouseDown = useCallback((e: React.MouseEvent, dayIndex: number) => {
+    // イベント要素上でのクリックは無視
+    if ((e.target as HTMLElement).closest('[data-event]')) {
+      return
+    }
+
+    // 日付コンテナ（グリッド部分）の境界を取得
+    const dayContainer = e.currentTarget
+    const rect = dayContainer.getBoundingClientRect()
+    const scrollTop = containerRef.current?.querySelector('.full-day-scroll')?.scrollTop || 0
+    
+    // Y座標をグリッド開始位置（0時）からの相対位置として計算
+    const y = e.clientY - rect.top + scrollTop
+    
+    const startDate = getTimeFromY(y, dayIndex)
+    
+    setDragState({
+      isDragging: true,
+      startDate,
+      startY: y,
+      currentY: y,
+      dayIndex
+    })
+  }, [getTimeFromY])
+
+  // マウス移動ハンドラー
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!dragState.isDragging) return
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const scrollTop = containerRef.current?.querySelector('.full-day-scroll')?.scrollTop || 0
+    const y = e.clientY - rect.top + scrollTop
+    
+    setDragState(prev => ({
+      ...prev,
+      currentY: y
+    }))
+  }, [dragState.isDragging])
+
+  // マウスアップハンドラー
+  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+    if (!dragState.isDragging || !dragState.startDate) return
+    
+    const endDate = getTimeFromY(dragState.currentY, dragState.dayIndex)
+    
+    // 開始時刻と終了時刻を正しい順序に（上から下へのドラッグを基準）
+    const [start, end] = dragState.startY <= dragState.currentY 
+      ? [dragState.startDate, endDate]
+      : [endDate, dragState.startDate]
+    
+    // 最小30分の長さを確保（より安全な日付操作）
+    const minDuration = 30 * 60 * 1000 // 30分
+    let finalEnd = new Date(end)
+    if (end.getTime() - start.getTime() < minDuration) {
+      finalEnd = new Date(start.getTime() + minDuration)
+    }
+    
+    
+    // イベント作成（日付が確実に正しく設定されるように改善）
+    if (onCreateEvent) {
+      const startTime = format(start, 'HH:mm')
+      const endTime = format(finalEnd, 'HH:mm')
+      
+      // 日付部分を確実に保持するため、基準日付を使用
+      const eventDate = new Date(dates[dragState.dayIndex])
+      
+      onCreateEvent(eventDate, `${startTime}-${endTime}`)
+    }
+    
+    // ドラッグ状態をリセット
+    setDragState({
+      isDragging: false,
+      startDate: null,
+      startY: 0,
+      currentY: 0,
+      dayIndex: -1
+    })
+  }, [dragState, getTimeFromY, onCreateEvent])
+
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
       <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
@@ -110,8 +228,8 @@ export function FullDayCalendarLayout({
           {dates.map((day, dayIndex) => {
             // その日のイベント
             const dayEvents = events.filter(event => 
-              isSameDay(event.startDate, day)
-            ).sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+              event.startDate && isSameDay(event.startDate, day)
+            ).sort((a, b) => (a.startDate?.getTime() || 0) - (b.startDate?.getTime() || 0))
             
             
             // その日の記録（Log）
@@ -120,7 +238,14 @@ export function FullDayCalendarLayout({
             ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
             
             return (
-              <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
+              <div 
+                key={day.toISOString()} 
+                className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0"
+                onMouseDown={(e) => handleMouseDown(e, dayIndex)}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                style={{ cursor: dragState.isDragging ? 'grabbing' : 'pointer' }}
+              >
                 {/* bothモードの場合は各日付の中央に分割線を表示 */}
                 {planRecordMode === 'both' && (
                   <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
@@ -136,6 +261,20 @@ export function FullDayCalendarLayout({
                     />
                   ))}
                 </div>
+                
+                {/* ドラッグ中の選択範囲表示 */}
+                {dragState.isDragging && dragState.dayIndex === dayIndex && dragState.startDate && (
+                  <div
+                    className="absolute bg-blue-200 dark:bg-blue-800 opacity-30 z-10 pointer-events-none"
+                    style={{
+                      left: planRecordMode === 'both' ? '2px' : '4px',
+                      right: planRecordMode === 'both' ? '50%' : '4px',
+                      top: `${Math.min(dragState.startY, dragState.currentY)}px`,
+                      height: `${Math.abs(dragState.currentY - dragState.startY)}px`,
+                      minHeight: '24px'
+                    }}
+                  />
+                )}
                 
                 
                 {/* 今日のみに現在時刻線を表示 */}
@@ -153,6 +292,8 @@ export function FullDayCalendarLayout({
                 
                 {/* イベント表示 */}
                 {(planRecordMode === 'plan' || planRecordMode === 'both') && dayEvents.map(event => {
+                  if (!event.startDate) return null
+                  
                   const startTime = `${String(event.startDate.getHours()).padStart(2, '0')}:${String(event.startDate.getMinutes()).padStart(2, '0')}`
                   const endTime = event.endDate ? `${String(event.endDate.getHours()).padStart(2, '0')}:${String(event.endDate.getMinutes()).padStart(2, '0')}` : null
                   const eventColor = event.color || '#1a73e8'
@@ -178,6 +319,7 @@ export function FullDayCalendarLayout({
                   return (
                     <div
                       key={event.id}
+                      data-event="true"
                       className="absolute rounded-md cursor-pointer hover:shadow-lg transition-all duration-200 z-20 border border-white/20"
                       style={{
                         left: leftPosition,
@@ -242,6 +384,7 @@ export function FullDayCalendarLayout({
                   return (
                     <div
                       key={record.id}
+                      data-event="true"
                       className="absolute rounded-md cursor-pointer hover:shadow-lg transition-all duration-200 z-20 border border-white/20"
                       style={{
                         left: leftPosition,
