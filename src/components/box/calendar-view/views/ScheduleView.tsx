@@ -185,13 +185,13 @@ export function ScheduleView({
                     <div className="flex items-center gap-3">
                       <div className={`text-sm font-medium ${
                         isToday(date) 
-                          ? 'text-blue-600 dark:text-blue-400' 
+                          ? 'text-accent-foreground' 
                           : 'text-gray-900 dark:text-white'
                       }`}>
                         {format(date, 'M月d日(E)', { locale: ja })}
                       </div>
                       {isToday(date) && (
-                        <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-full">
+                        <span className="text-xs px-2 py-1 bg-accent/50 text-muted-foreground rounded-full">
                           今日
                         </span>
                       )}
@@ -208,7 +208,7 @@ export function ScheduleView({
                             className="flex items-start gap-3 p-2 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
                             onClick={() => handleTaskClick(task)}
                           >
-                            <div className="text-xs text-blue-600 dark:text-blue-400 font-mono min-w-0 flex-shrink-0 mt-1">
+                            <div className="text-xs text-muted-foreground font-mono min-w-0 flex-shrink-0 mt-1">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
@@ -244,7 +244,7 @@ export function ScheduleView({
           {/* 右側：記録 */}
           <div className="w-1/2">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-sm font-medium text-green-600 dark:text-green-400">
+              <h3 className="text-sm font-medium text-muted-foreground">
                 記録 (Record)
               </h3>
             </div>
@@ -256,13 +256,13 @@ export function ScheduleView({
                     <div className="flex items-center gap-3">
                       <div className={`text-sm font-medium ${
                         isToday(date) 
-                          ? 'text-green-600 dark:text-green-400' 
+                          ? 'text-muted-foreground' 
                           : 'text-gray-900 dark:text-white'
                       }`}>
                         {format(date, 'M月d日(E)', { locale: ja })}
                       </div>
                       {isToday(date) && (
-                        <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 rounded-full">
+                        <span className="text-xs px-2 py-1 bg-accent/50 text-muted-foreground rounded-full">
                           今日
                         </span>
                       )}
@@ -279,7 +279,7 @@ export function ScheduleView({
                             className="flex items-start gap-3 p-2 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
                             onClick={() => handleTaskClick(task)}
                           >
-                            <div className="text-xs text-green-600 dark:text-green-400 font-mono min-w-0 flex-shrink-0 mt-1">
+                            <div className="text-xs text-muted-foreground font-mono min-w-0 flex-shrink-0 mt-1">
                               {task.startTime.toLocaleTimeString('ja-JP', { 
                                 hour: '2-digit', 
                                 minute: '2-digit',
@@ -290,7 +290,7 @@ export function ScheduleView({
                               <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                                 {task.title}
                               </div>
-                              <div className="text-xs text-green-600 dark:text-green-400 mt-1">
+                              <div className="text-xs text-muted-foreground mt-1">
                                 {task.endTime.toLocaleTimeString('ja-JP', { 
                                   hour: '2-digit', 
                                   minute: '2-digit',
@@ -363,8 +363,8 @@ export function ScheduleView({
                         >
                           <div className={`text-xs font-mono min-w-0 flex-shrink-0 mt-1 ${
                             task.isPlan 
-                              ? 'text-blue-600 dark:text-blue-400' 
-                              : 'text-green-600 dark:text-green-400'
+                              ? 'text-accent-foreground' 
+                              : 'text-muted-foreground'
                           }`}>
                             {task.startTime.toLocaleTimeString('ja-JP', { 
                               hour: '2-digit', 
@@ -376,17 +376,17 @@ export function ScheduleView({
                             <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                               {task.title}
                               {task.isPlan && (
-                                <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(予定)</span>
+                                <span className="ml-2 text-xs text-muted-foreground">(予定)</span>
                               )}
                               {task.isRecord && (
-                                <span className="ml-2 text-xs text-green-600 dark:text-green-400">(記録)</span>
+                                <span className="ml-2 text-xs text-muted-foreground">(記録)</span>
                               )}
                             </div>
                             {task.isRecord && (
                               <div className={`text-xs mt-1 ${
                                 task.isPlan 
-                                  ? 'text-blue-600 dark:text-blue-400' 
-                                  : 'text-green-600 dark:text-green-400'
+                                  ? 'text-accent-foreground' 
+                                  : 'text-muted-foreground'
                               }`}>
                                 {task.endTime.toLocaleTimeString('ja-JP', { 
                                   hour: '2-digit', 

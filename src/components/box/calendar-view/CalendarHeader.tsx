@@ -101,7 +101,7 @@ export function CalendarHeader({
                   return (
                     <>
                       {monthYear}
-                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent text-accent-foreground">
                         {weekPart}
                       </span>
                     </>
@@ -159,7 +159,7 @@ export function CalendarHeader({
           <div className="relative">
             <button
               onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground bg-accent border border-border rounded-lg hover:bg-accent/80 transition-colors shadow-sm"
             >
               <span>{currentViewOption?.label || 'View'}</span>
               <ChevronDown className="w-4 h-4" />
@@ -186,8 +186,8 @@ export function CalendarHeader({
                         className={cn(
                           "w-full text-left px-4 py-2 text-sm hover:bg-accent/50 transition-colors",
                           viewType === option.value 
-                            ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
-                            : 'text-gray-700 dark:text-gray-300'
+                            ? 'bg-accent text-accent-foreground' 
+                            : 'text-muted-foreground'
                         )}
                       >
                         {option.label}
