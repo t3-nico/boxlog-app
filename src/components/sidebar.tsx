@@ -16,7 +16,7 @@ export function Sidebar({
     <nav
       {...props}
       data-collapsed={collapsed ? 'true' : undefined}
-      className={clsx(className, 'group flex h-full min-h-0 flex-col bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700')}
+      className={clsx(className, 'group flex h-full min-h-0 flex-col bg-sidebar border-r border-sidebar-border')}
     />
   )
 }
@@ -68,7 +68,7 @@ export function SidebarSection({ className, ...props }: React.ComponentPropsWith
 }
 
 export function SidebarDivider({ className, ...props }: React.ComponentPropsWithoutRef<'hr'>) {
-  return <hr {...props} className={clsx(className, 'my-4 border-t border-zinc-950/5 lg:-mx-4 dark:border-white/5')} />
+  return <hr {...props} className={clsx(className, 'my-4 border-t border-sidebar-border lg:-mx-4')} />
 }
 
 export function SidebarSpacer({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
@@ -77,7 +77,7 @@ export function SidebarSpacer({ className, ...props }: React.ComponentPropsWitho
 
 export function SidebarHeading({ className, ...props }: React.ComponentPropsWithoutRef<'h3'>) {
   return (
-    <h3 {...props} className={clsx(className, 'mb-1 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400')} />
+    <h3 {...props} className={clsx(className, 'mb-1 px-2 text-xs/6 font-medium text-sidebar-foreground/70')} />
   )
 }
 
@@ -100,28 +100,23 @@ export const SidebarItem = forwardRef(function SidebarItem(
   ref: React.ForwardedRef<HTMLAnchorElement | HTMLButtonElement>
 ) {
   let currentClasses = clsx(
-    'data-current:bg-zinc-950/10 data-current:*:data-[slot=icon]:text-zinc-950',
-    'dark:data-current:bg-white/10 dark:data-current:*:data-[slot=icon]:text-white'
+    'data-current:bg-sidebar-accent data-current:*:data-[slot=icon]:text-sidebar-accent-foreground'
   )
 
   let classes = clsx(
     // Base
-    'flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5',
+    'flex w-full items-center gap-3 rounded-lg px-2 py-3 text-left text-base/6 font-medium text-sidebar-foreground sm:py-2 sm:text-sm/5',
     'group-data-[collapsed=true]:justify-center group-data-[collapsed=true]:px-2',
     // Leading icon/icon-only
-    '*:data-[slot=icon]:size-6 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:text-zinc-500 sm:*:data-[slot=icon]:size-5',
+    '*:data-[slot=icon]:size-6 *:data-[slot=icon]:shrink-0 *:data-[slot=icon]:text-sidebar-foreground/70 sm:*:data-[slot=icon]:size-5',
     // Trailing icon (down chevron or similar)
     '*:last:data-[slot=icon]:ml-auto *:last:data-[slot=icon]:size-5 sm:*:last:data-[slot=icon]:size-4',
     // Avatar
     '*:data-[slot=avatar]:-m-1 *:data-[slot=avatar]:size-7 sm:*:data-[slot=avatar]:size-6',
     // Hover
-    'data-hover:bg-zinc-950/50 data-hover:*:data-[slot=icon]:text-zinc-950',
+    'data-hover:bg-sidebar-accent data-hover:*:data-[slot=icon]:text-sidebar-accent-foreground',
     // Active
-    'data-active:bg-zinc-950/5 data-active:*:data-[slot=icon]:text-zinc-950',
-    // Dark mode
-    'dark:text-white dark:*:data-[slot=icon]:text-zinc-400',
-    'dark:data-hover:bg-white/5 dark:data-hover:*:data-[slot=icon]:text-white',
-    'dark:data-active:bg-white/5 dark:data-active:*:data-[slot=icon]:text-white',
+    'data-active:bg-sidebar-accent/50 data-active:*:data-[slot=icon]:text-sidebar-accent-foreground',
     currentClasses
   )
 

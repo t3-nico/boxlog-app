@@ -67,7 +67,7 @@ export function CalendarHeader({
               "px-4 py-2 text-sm font-medium border rounded-md transition-colors",
               isToday
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600 border-gray-200 dark:border-gray-600"
-                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                : "border-border text-muted-foreground hover:bg-accent/50"
             )}
           >
             Today
@@ -77,14 +77,14 @@ export function CalendarHeader({
           <div className="flex items-center gap-1">
             <button
               onClick={() => onNavigate('prev')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              className="p-1 hover:bg-accent/50 rounded-full transition-colors"
               title="Previous period"
             >
               <ChevronLeft className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
             <button
               onClick={() => onNavigate('next')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              className="p-1 hover:bg-accent/50 rounded-full transition-colors"
               title="Next period"
             >
               <ChevronRight className="h-6 w-6 text-gray-600 dark:text-gray-400" />
@@ -123,7 +123,7 @@ export function CalendarHeader({
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'both'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
               <Columns3 className="w-4 h-4" />
@@ -135,7 +135,7 @@ export function CalendarHeader({
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'plan'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
               <ClipboardList className="w-4 h-4" />
@@ -147,7 +147,7 @@ export function CalendarHeader({
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'record'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
               <CheckCircle className="w-4 h-4" />
@@ -184,7 +184,7 @@ export function CalendarHeader({
                           setIsViewDropdownOpen(false)
                         }}
                         className={cn(
-                          "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+                          "w-full text-left px-4 py-2 text-sm hover:bg-accent/50 transition-colors",
                           viewType === option.value 
                             ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
                             : 'text-gray-700 dark:text-gray-300'

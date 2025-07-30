@@ -1,66 +1,52 @@
 /* Simplified Theme CSS - Let Tailwind handle most of the dark mode */
+/* Updated to use Compass Neutral Color System */
 
-/* Neutral color palette definition */
+/* ライトモード - Compass Neutral System */
 :root {
-  --color-neutral-50: 250 250 250;
-  --color-neutral-100: 245 245 245;
-  --color-neutral-200: 229 229 229;
-  --color-neutral-300: 212 212 212;
-  --color-neutral-400: 163 163 163;
-  --color-neutral-500: 115 115 115;
-  --color-neutral-600: 82 82 82;
-  --color-neutral-700: 64 64 64;
-  --color-neutral-800: 38 38 38;
-  --color-neutral-900: 23 23 23;
-  --color-neutral-950: 10 10 10;
-}
-
-/* ライトモード */
-:root {
-  /* 背景 */
-  --bg-primary: 250 250 250;    /* neutral-50相当 - メイン背景 */
-  --bg-secondary: 245 245 245;  /* neutral-100相当 - サイドバー背景 */
-  --bg-card: 229 229 229;       /* neutral-200相当 - カード背景 */
+  /* 背景 - CompassのlightModeNeutralに準拠 */
+  --bg-primary: 255 255 255;    /* neutral-0 - メイン背景 */
+  --bg-secondary: 250 250 250;  /* neutral-50 - サイドバー背景 */
+  --bg-card: 245 245 245;       /* neutral-100 - カード背景 */
   
-  /* テキスト */
-  --text-primary: 23 23 23;     /* neutral-900相当 */
-  --text-secondary: 82 82 82;   /* neutral-600相当 */
-  --text-muted: 115 115 115;    /* neutral-500相当 */
+  /* テキスト - CompassのlightModeNeutralに準拠 */
+  --text-primary: 23 23 23;     /* neutral-900 */
+  --text-secondary: 82 82 82;   /* neutral-600 */
+  --text-muted: 163 163 163;    /* neutral-400 */
   
   /* アイコン */
-  --icon-primary: 115 115 115;  /* neutral-500相当 - 通常のアイコン色 */
-  --icon-secondary: 163 163 163; /* neutral-400相当 - セカンダリアイコン色 */
+  --icon-primary: 115 115 115;  /* neutral-500 - 通常のアイコン色 */
+  --icon-secondary: 163 163 163; /* neutral-400 - セカンダリアイコン色 */
   
-  /* ボーダー */
-  --border-primary: 229 229 229;  /* neutral-200相当 */
-  --border-secondary: 212 212 212; /* neutral-300相当 */
+  /* ボーダー - CompassのlightModeNeutralに準拠 */
+  --border-primary: 229 229 229;  /* neutral-200 */
+  --border-secondary: 212 212 212; /* neutral-300 */
   
   /* ホバー */
-  --hover-bg: 229 229 229;      /* neutral-200相当 - ホバー背景 */
-  --hover-text: 23 23 23;       /* neutral-900相当 - ホバー時のテキスト色 */
-  --hover-icon: 23 23 23;       /* neutral-900相当 - ホバー時のアイコン色 */
+  --hover-bg: 229 229 229;      /* neutral-200 - ホバー背景 */
+  --hover-text: 23 23 23;       /* neutral-900 - ホバー時のテキスト色 */
+  --hover-icon: 23 23 23;       /* neutral-900 - ホバー時のアイコン色 */
 }
 
-/* ダークモード */
+/* ダークモード - Compass Neutral System */
 .dark {
-  /* 背景 */
-  --bg-primary: 23 23 23;       /* neutral-900相当 */
-  --bg-secondary: 10 10 10;     /* neutral-950相当 */
-  --bg-card: 38 38 38;          /* neutral-800相当 */
+  /* 背景 - CompassのdarkModeNeutralに準拠 */
+  --bg-primary: 10 10 10;       /* neutral-950 */
+  --bg-secondary: 23 23 23;     /* neutral-900 */
+  --bg-card: 38 38 38;          /* neutral-800 */
   
-  /* テキスト */
-  --text-primary: 250 250 250;  /* neutral-100相当 */
-  --text-secondary: 163 163 163; /* neutral-400相当 */
-  --text-muted: 163 163 163;    /* neutral-400相当 */
+  /* テキスト - CompassのdarkModeNeutralに準拠 */
+  --text-primary: 250 250 250;  /* neutral-50 */
+  --text-secondary: 212 212 212; /* neutral-300 */
+  --text-muted: 115 115 115;    /* neutral-500 */
   
-  /* ボーダー */
-  --border-primary: 64 64 64;   /* neutral-700相当 */
-  --border-secondary: 82 82 82; /* neutral-600相当 */
+  /* ボーダー - CompassのdarkModeNeutralに準拠 */
+  --border-primary: 64 64 64;   /* neutral-700 */
+  --border-secondary: 82 82 82; /* neutral-600 */
   
   /* ホバー */
-  --hover-bg: 64 64 64;         /* neutral-700相当 */
-  --hover-text: 250 250 250;    /* neutral-100相当 - ホバー時のテキスト色 */
-  --hover-icon: 250 250 250;    /* neutral-100相当 - ホバー時のアイコン色 */
+  --hover-bg: 64 64 64;         /* neutral-700 - ホバー背景 */
+  --hover-text: 250 250 250;    /* neutral-50 - ホバー時のテキスト色 */
+  --hover-icon: 250 250 250;    /* neutral-50 - ホバー時のアイコン色 */
 }
 
 /* Tailwind classes redefined with CSS variables */

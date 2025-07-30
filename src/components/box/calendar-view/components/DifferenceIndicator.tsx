@@ -90,10 +90,10 @@ export function DifferenceIndicator({ tasks, records, className }: DifferenceInd
                 `}
                 stroke={
                   diff.severity === 'high' 
-                    ? (isDelayed ? '#dc2626' : '#2563eb')
+                    ? 'var(--color-error-500)'
                     : diff.severity === 'medium'
-                    ? (isDelayed ? '#ea580c' : '#0284c7') 
-                    : (isDelayed ? '#eab308' : '#0891b2')
+                    ? 'var(--color-warning-500)'
+                    : 'var(--color-neutral-600)'
                 }
                 strokeWidth={diff.severity === 'high' ? '3' : '2'}
                 fill="none"
