@@ -8,6 +8,8 @@ import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
 import { CalendarTask } from '../utils/time-grid-helpers'
+import { getTimeFromY, dateToLocalStrings } from '@/utils/dateHelpers'
+import { getCurrentTimeInUserTimezone } from '@/utils/timezone'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -106,25 +108,12 @@ export function FullDayCalendarLayout({
     return () => clearTimeout(timer)
   }, [])
 
-  // Y座標から時間を計算する関数（Googleカレンダー準拠）
-  const getTimeFromY = useCallback((y: number, dayIndex: number): Date => {
-    // Y座標を時間に変換（48px = 1時間）
-    const totalHours = y / HOUR_HEIGHT
-    
-    // 15分単位にスナップ（00, 15, 30, 45分刻み）
-    const totalMinutes = Math.round(totalHours * 60)
-    const snappedMinutes = Math.round(totalMinutes / 15) * 15 // 15分単位でスナップ
-    
-    const hours = Math.floor(snappedMinutes / 60)
-    const minutes = snappedMinutes % 60
-    
-    // 基準日付を安全に複製（タイムゾーンの問題を避けるため）
+  // Y座標から時間を計算する関数（タイムゾーン対応版）
+  const getTimeFromYPosition = useCallback((y: number, dayIndex: number): Date => {
     const baseDate = dates[dayIndex]
-    const resultDate = new Date(baseDate)
-    resultDate.setHours(hours, minutes, 0, 0)
     
-    
-    return resultDate
+    // dateHelpers.tsのタイムゾーン対応版を使用
+    return getTimeFromY(y, baseDate, HOUR_HEIGHT)
   }, [dates])
 
   // マウスダウンハンドラー
@@ -142,7 +131,7 @@ export function FullDayCalendarLayout({
     // Y座標をグリッド開始位置（0時）からの相対位置として計算
     const y = e.clientY - rect.top + scrollTop
     
-    const startDate = getTimeFromY(y, dayIndex)
+    const startDate = getTimeFromYPosition(y, dayIndex)
     
     setDragState({
       isDragging: true,
@@ -151,7 +140,7 @@ export function FullDayCalendarLayout({
       currentY: y,
       dayIndex
     })
-  }, [getTimeFromY])
+  }, [getTimeFromYPosition])
 
   // マウス移動ハンドラー
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -171,7 +160,7 @@ export function FullDayCalendarLayout({
   const handleMouseUp = useCallback((e: React.MouseEvent) => {
     if (!dragState.isDragging || !dragState.startDate) return
     
-    const endDate = getTimeFromY(dragState.currentY, dragState.dayIndex)
+    const endDate = getTimeFromYPosition(dragState.currentY, dragState.dayIndex)
     
     // 開始時刻と終了時刻を正しい順序に（上から下へのドラッグを基準）
     const [start, end] = dragState.startY <= dragState.currentY 
@@ -186,15 +175,24 @@ export function FullDayCalendarLayout({
     }
     
     
-    // イベント作成（日付が確実に正しく設定されるように改善）
+    // イベント作成（タイムゾーン対応版）
     if (onCreateEvent) {
-      const startTime = format(start, 'HH:mm')
-      const endTime = format(finalEnd, 'HH:mm')
+      // ユーザータイムゾーンでの日付・時刻文字列を取得
+      const startStrings = dateToLocalStrings(start)
+      const endStrings = dateToLocalStrings(finalEnd)
       
       // 日付部分を確実に保持するため、基準日付を使用
       const eventDate = new Date(dates[dragState.dayIndex])
       
-      onCreateEvent(eventDate, `${startTime}-${endTime}`)
+      console.log('🌐 カレンダードラッグ - イベント作成:', {
+        baseDate: eventDate.toISOString(),
+        start: start.toISOString(),
+        end: finalEnd.toISOString(),
+        startTime: startStrings.time,
+        endTime: endStrings.time
+      })
+      
+      onCreateEvent(eventDate, `${startStrings.time}-${endStrings.time}`)
     }
     
     // ドラッグ状態をリセット
@@ -205,7 +203,7 @@ export function FullDayCalendarLayout({
       currentY: 0,
       dayIndex: -1
     })
-  }, [dragState, getTimeFromY, onCreateEvent])
+  }, [dragState, getTimeFromYPosition, onCreateEvent])
 
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
@@ -279,17 +277,23 @@ export function FullDayCalendarLayout({
                 )}
                 
                 
-                {/* 今日のみに現在時刻線を表示 */}
+                {/* 今日のみに現在時刻線を表示（タイムゾーン対応版） */}
                 {isToday(day) && (
-                  <div
-                    className="absolute left-0 right-0 h-0.5 bg-red-500 z-30 flex items-center"
-                    style={{
-                      top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT}px`
-                    }}
-                  >
-                    <div className="w-2 h-2 bg-red-500 rounded-full -ml-1 flex-shrink-0"></div>
-                    <div className="flex-1 h-0.5 bg-red-500"></div>
-                  </div>
+                  (() => {
+                    const currentTime = getCurrentTimeInUserTimezone()
+                    const currentHours = currentTime.getHours() + currentTime.getMinutes() / 60
+                    return (
+                      <div
+                        className="absolute left-0 right-0 h-0.5 bg-red-500 z-30 flex items-center"
+                        style={{
+                          top: `${currentHours * HOUR_HEIGHT}px`
+                        }}
+                      >
+                        <div className="w-2 h-2 bg-red-500 rounded-full -ml-1 flex-shrink-0"></div>
+                        <div className="flex-1 h-0.5 bg-red-500"></div>
+                      </div>
+                    )
+                  })()
                 )}
                 
                 {/* イベント表示 */}

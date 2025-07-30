@@ -2,16 +2,32 @@
 
 import React, { useState, useEffect } from 'react'
 import { Clock, Sun, Moon, Zap } from 'lucide-react'
+import { getCurrentTimeInUserTimezone, useTimezoneChange } from '@/utils/timezone'
 
 export function ClockCard() {
-  const [time, setTime] = useState(new Date())
+  const [time, setTime] = useState(getCurrentTimeInUserTimezone())
+
+  // 時刻の更新関数
+  const updateTime = () => {
+    setTime(getCurrentTimeInUserTimezone())
+  }
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
+    // 1秒ごとに更新
+    const timer = setInterval(updateTime, 1000)
 
     return () => clearInterval(timer)
+  }, [])
+
+  // タイムゾーン変更をリッスン
+  useEffect(() => {
+    const cleanup = useTimezoneChange((newTimezone) => {
+      console.log('🌐 時計カード: タイムゾーン変更を検知:', newTimezone)
+      // タイムゾーン変更時に即座に時刻を更新
+      updateTime()
+    })
+
+    return cleanup
   }, [])
 
   // クロノタイプと現在時刻から状態を判定

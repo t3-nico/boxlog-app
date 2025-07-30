@@ -3,17 +3,39 @@ import { getCurrentTimezone, getTimezoneOffset, utcToUserTimezone, userTimezoneT
 
 // DB保存用: ユーザータイムゾーン → UTC（ISO文字列で返す）
 export const localToUTC = (dateStr: string, timeStr: string): string => {
-  // ユーザータイムゾーンの時間として入力された値を解釈
+  const timezone = getCurrentTimezone();
+  
+  console.log('🌐 localToUTC - 開始:', {
+    input: { date: dateStr, time: timeStr },
+    userTimezone: timezone
+  });
+  
+  // UTCの場合：入力値をそのままUTCとして扱う
+  if (timezone === 'UTC') {
+    const dateTimeStr = `${dateStr}T${timeStr}:00.000Z`;
+    const utcDate = new Date(dateTimeStr);
+    
+    console.log('🌐 localToUTC - UTC直接:', {
+      input: `${dateStr}T${timeStr}:00`,
+      output: utcDate.toISOString()
+    });
+    
+    return utcDate.toISOString();
+  }
+  
+  // その他のタイムゾーン：ユーザータイムゾーンからUTCに変換
   const dateTimeStr = `${dateStr}T${timeStr}:00`;
-  const localDate = new Date(dateTimeStr);
+  
+  // ユーザータイムゾーンでの時刻として解釈
+  const userTimezoneDate = new Date(dateTimeStr);
   
   // ユーザータイムゾーンからUTCに変換
-  const utcDate = userTimezoneToUtc(localDate);
+  const utcDate = userTimezoneToUtc(userTimezoneDate);
   
-  console.log('🌐 localToUTC conversion:', {
+  console.log('🌐 localToUTC - タイムゾーン変換:', {
     input: { date: dateStr, time: timeStr },
-    timezone: getCurrentTimezone(),
-    localDate: localDate.toLocaleString(),
+    timezone: timezone,
+    userTimezoneDate: userTimezoneDate.toLocaleString(),
     utcDate: utcDate.toISOString()
   });
   
@@ -22,22 +44,47 @@ export const localToUTC = (dateStr: string, timeStr: string): string => {
 
 // フォーム表示用: UTC → ユーザータイムゾーン
 export const utcToLocal = (utcString: string): { date: string; time: string } => {
+  const timezone = getCurrentTimezone();
   const utcDate = new Date(utcString);
   
-  // UTCからユーザータイムゾーンに変換
-  const localDate = utcToUserTimezone(utcDate);
-  
-  console.log('🌐 utcToLocal conversion:', {
+  console.log('🌐 utcToLocal - 開始:', {
     input: utcString,
-    timezone: getCurrentTimezone(),
-    utcDate: utcDate.toISOString(),
-    localDate: localDate.toLocaleString()
+    userTimezone: timezone,
+    utcDate: utcDate.toISOString()
   });
   
-  return {
+  // UTCの場合：UTCのまま表示
+  if (timezone === 'UTC') {
+    const result = {
+      date: format(utcDate, 'yyyy-MM-dd'),
+      time: format(utcDate, 'HH:mm')
+    };
+    
+    console.log('🌐 utcToLocal - UTC直接:', {
+      input: utcString,
+      output: result
+    });
+    
+    return result;
+  }
+  
+  // その他のタイムゾーン：UTCからユーザータイムゾーンに変換
+  const localDate = utcToUserTimezone(utcDate);
+  
+  const result = {
     date: format(localDate, 'yyyy-MM-dd'),
     time: format(localDate, 'HH:mm')
   };
+  
+  console.log('🌐 utcToLocal - タイムゾーン変換:', {
+    input: utcString,
+    timezone: timezone,
+    utcDate: utcDate.toISOString(),
+    localDate: localDate.toLocaleString(),
+    output: result
+  });
+  
+  return result;
 };
 
 // カレンダー表示用: UTC → フォーマット済み文字列
@@ -45,6 +92,56 @@ export const formatEventTime = (utcString: string): string => {
   const utcDate = new Date(utcString);
   const localDate = utcToUserTimezone(utcDate);
   return format(localDate, 'M月d日 HH:mm');
+};
+
+// カレンダードラッグ用: Y座標から時刻を計算（ユーザータイムゾーンベース）
+export const getTimeFromY = (
+  yPosition: number, 
+  baseDate: Date, 
+  hourHeight: number = 48
+): Date => {
+  const timezone = getCurrentTimezone();
+  
+  // 24時間分の高さで正規化
+  const totalMinutes = Math.round((yPosition / (hourHeight * 24)) * (24 * 60));
+  
+  // 15分単位にスナップ
+  const snappedMinutes = Math.round(totalMinutes / 15) * 15;
+  
+  console.log('🌐 getTimeFromY - ドラッグ計算:', {
+    yPosition,
+    totalMinutes,
+    snappedMinutes,
+    timezone
+  });
+  
+  // ユーザータイムゾーンでの日付として作成
+  if (timezone === 'UTC') {
+    // UTC設定の場合：UTC時刻として作成
+    const utcDate = new Date(baseDate);
+    utcDate.setUTCHours(0, 0, 0, 0);
+    utcDate.setUTCMinutes(snappedMinutes);
+    
+    console.log('🌐 getTimeFromY - UTC結果:', {
+      baseDate: baseDate.toISOString(),
+      result: utcDate.toISOString()
+    });
+    
+    return utcDate;
+  } else {
+    // その他のタイムゾーン：ローカル時刻として作成
+    const localDate = new Date(baseDate);
+    localDate.setHours(0, 0, 0, 0);
+    localDate.setMinutes(snappedMinutes);
+    
+    console.log('🌐 getTimeFromY - ローカル結果:', {
+      baseDate: baseDate.toISOString(),
+      result: localDate.toISOString(),
+      timezone
+    });
+    
+    return localDate;
+  }
 };
 
 // 時間の妥当性チェック
@@ -105,12 +202,13 @@ export const createDateFromStrings = (dateStr: string, timeStr: string): Date =>
 
 // デバッグ用: 時間変換の検証
 export const debugTimeConversion = (label: string, originalDate: Date, utcString?: string) => {
+  const timezone = getCurrentTimezone();
   console.log(`🕐 ${label}:`, {
     original: originalDate,
     originalISO: originalDate.toISOString(),
     localFormat: format(originalDate, 'yyyy-MM-dd HH:mm'),
     utcString: utcString,
-    timezone: TIMEZONE,
+    timezone: timezone,
     offset: originalDate.getTimezoneOffset()
   });
 };

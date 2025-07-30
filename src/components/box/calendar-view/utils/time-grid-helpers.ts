@@ -135,6 +135,7 @@ export function generateTimeLabels(interval: number): string[] {
 
 /**
  * 現在時刻の位置を計算（パーセンテージ）
+ * @deprecated このファイルの関数は非推奨です。代わりに utils/timezone.ts の getCurrentTimePosition を使用してください
  */
 export function getCurrentTimePosition(): number {
   const now = new Date()

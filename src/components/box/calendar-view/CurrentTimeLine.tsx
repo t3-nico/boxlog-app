@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react'
-import { getCurrentTimePosition } from './utils/time-grid-helpers'
+import { getCurrentTimePosition, getCurrentTimeInUserTimezone, formatCurrentTime, useTimezoneChange } from '@/utils/timezone'
 
 interface CurrentTimeLineProps {
   containerRef: React.RefObject<HTMLDivElement>
@@ -15,17 +15,23 @@ export function CurrentTimeLine({
   isVisible = true 
 }: CurrentTimeLineProps) {
   const [currentTimePosition, setCurrentTimePosition] = useState(getCurrentTimePosition())
-  const [currentTime, setCurrentTime] = useState(new Date())
+  const [currentTime, setCurrentTime] = useState(getCurrentTimeInUserTimezone())
   const hasScrolledToCurrentTime = useRef(false)
+
+  // 現在時刻の更新関数
+  const updateCurrentTime = () => {
+    const userTime = getCurrentTimeInUserTimezone()
+    setCurrentTime(userTime)
+    setCurrentTimePosition(getCurrentTimePosition())
+    
+    console.log('🕐 CurrentTimeLine updated:', {
+      userTime: userTime.toLocaleString(),
+      position: getCurrentTimePosition()
+    })
+  }
 
   // 現在時刻の更新（1分ごと）
   useEffect(() => {
-    const updateCurrentTime = () => {
-      const now = new Date()
-      setCurrentTime(now)
-      setCurrentTimePosition(getCurrentTimePosition())
-    }
-
     // 初回実行
     updateCurrentTime()
 
@@ -33,6 +39,17 @@ export function CurrentTimeLine({
     const interval = setInterval(updateCurrentTime, 60000)
 
     return () => clearInterval(interval)
+  }, [])
+
+  // タイムゾーン変更をリッスン
+  useEffect(() => {
+    const cleanup = useTimezoneChange((newTimezone) => {
+      console.log('🌐 タイムゾーン変更を検知:', newTimezone)
+      // タイムゾーン変更時に即座に現在時刻を更新
+      updateCurrentTime()
+    })
+
+    return cleanup
   }, [])
 
   // 初回レンダリング時に現在時刻へスクロール
@@ -59,14 +76,7 @@ export function CurrentTimeLine({
     }
   }, [containerRef, currentTimePosition, isVisible])
 
-  // 現在時刻の表示フォーマット
-  const formatCurrentTime = (date: Date): string => {
-    return date.toLocaleTimeString('ja-JP', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
-  }
+  // 現在時刻の表示フォーマット（utils/timezone.tsの関数を使用）
 
   if (!isVisible) {
     return null

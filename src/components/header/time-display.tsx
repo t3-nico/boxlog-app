@@ -5,20 +5,37 @@ import { Clock as ClockIcon, Sun as SunIcon, Moon as MoonIcon, GraduationCap as 
 import { useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
+import { getCurrentTimeInUserTimezone, useTimezoneChange } from '@/utils/timezone'
 
 export function TimeDisplay() {
-  const [time, setTime] = React.useState(new Date())
+  const [time, setTime] = React.useState(getCurrentTimeInUserTimezone())
   const [mounted, setMounted] = React.useState(false)
   const router = useRouter()
   const { chronotype } = useCalendarSettingsStore()
 
+  // 時刻の更新関数
+  const updateTime = () => {
+    setTime(getCurrentTimeInUserTimezone())
+  }
+
   React.useEffect(() => {
     setMounted(true)
-    const timer = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
+    
+    // 1秒ごとに更新
+    const timer = setInterval(updateTime, 1000)
 
     return () => clearInterval(timer)
+  }, [])
+
+  // タイムゾーン変更をリッスン
+  React.useEffect(() => {
+    const cleanup = useTimezoneChange((newTimezone) => {
+      console.log('🌐 ヘッダー時刻表示: タイムゾーン変更を検知:', newTimezone)
+      // タイムゾーン変更時に即座に時刻を更新
+      updateTime()
+    })
+
+    return cleanup
   }, [])
 
   // 現在のクロノタイプステータスを取得

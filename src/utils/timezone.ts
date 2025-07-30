@@ -45,6 +45,11 @@ export const getUserTimezone = (): string | null => {
 };
 
 /**
+ * タイムゾーン変更通知用のカスタムイベント
+ */
+const TIMEZONE_CHANGE_EVENT = 'timezone-change';
+
+/**
  * ユーザーのタイムゾーン設定をローカルストレージに保存
  */
 export const setUserTimezone = (timezone: string): void => {
@@ -53,9 +58,30 @@ export const setUserTimezone = (timezone: string): void => {
   try {
     localStorage.setItem('user-timezone', timezone);
     console.log('タイムゾーン設定を保存:', timezone);
+    
+    // タイムゾーン変更を他のコンポーネントに通知
+    window.dispatchEvent(new CustomEvent(TIMEZONE_CHANGE_EVENT, { detail: { timezone } }));
   } catch (error) {
     console.error('タイムゾーン設定の保存に失敗:', error);
   }
+};
+
+/**
+ * タイムゾーン変更通知をリッスンするためのフック
+ */
+export const useTimezoneChange = (callback: (timezone: string) => void): void => {
+  if (typeof window === 'undefined') return;
+  
+  const handleTimezoneChange = (event: CustomEvent) => {
+    callback(event.detail.timezone);
+  };
+  
+  window.addEventListener(TIMEZONE_CHANGE_EVENT, handleTimezoneChange as EventListener);
+  
+  // クリーンアップ関数を返すため、useEffectで使用する際はreturnで返す
+  return () => {
+    window.removeEventListener(TIMEZONE_CHANGE_EVENT, handleTimezoneChange as EventListener);
+  };
 };
 
 /**
@@ -76,25 +102,92 @@ export const getCurrentTimezone = (): string => {
 
 /**
  * タイムゾーンのオフセット（分）を取得
- * UTC+9 = -540分 (JSTの場合)
+ * UTC+9 = 540分 (JSTの場合)
  */
 export const getTimezoneOffset = (timezone: string): number => {
   try {
-    // 現在時刻でのオフセットを計算
-    const now = new Date();
-    const utc = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
-    const target = new Date(utc.toLocaleString('en-US', { timeZone: timezone }));
+    // UTCの場合は0を返す
+    if (timezone === 'UTC') {
+      console.log(`タイムゾーン ${timezone} のオフセット: 0分`);
+      return 0;
+    }
     
-    const offsetMs = target.getTime() - utc.getTime();
+    // Intl.DateTimeFormat APIを使用してオフセットを正確に計算
+    const now = new Date();
+    
+    // UTC時刻での各部分を取得
+    const utcFormatter = new Intl.DateTimeFormat('en', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    // 対象タイムゾーンでの各部分を取得
+    const targetFormatter = new Intl.DateTimeFormat('en', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    const utcParts = utcFormatter.formatToParts(now);
+    const targetParts = targetFormatter.formatToParts(now);
+    
+    // 年月日時分を取得
+    const getPartValue = (parts: Intl.DateTimeFormatPart[], type: string) => 
+      parseInt(parts.find(p => p.type === type)?.value || '0');
+    
+    const utcYear = getPartValue(utcParts, 'year');
+    const utcMonth = getPartValue(utcParts, 'month');
+    const utcDay = getPartValue(utcParts, 'day');
+    const utcHour = getPartValue(utcParts, 'hour');
+    const utcMinute = getPartValue(utcParts, 'minute');
+    
+    const targetYear = getPartValue(targetParts, 'year');
+    const targetMonth = getPartValue(targetParts, 'month');
+    const targetDay = getPartValue(targetParts, 'day');
+    const targetHour = getPartValue(targetParts, 'hour');
+    const targetMinute = getPartValue(targetParts, 'minute');
+    
+    // UTC時刻とターゲット時刻のDateオブジェクトを作成
+    const utcDate = new Date(Date.UTC(utcYear, utcMonth - 1, utcDay, utcHour, utcMinute));
+    const targetDate = new Date(Date.UTC(targetYear, targetMonth - 1, targetDay, targetHour, targetMinute));
+    
+    // オフセットを分で計算
+    const offsetMs = targetDate.getTime() - utcDate.getTime();
     const offsetMinutes = Math.round(offsetMs / 60000);
     
-    console.log(`タイムゾーン ${timezone} のオフセット: ${offsetMinutes}分`);
+    console.log(`🌐 タイムゾーン ${timezone} のオフセット計算:`, {
+      now: now.toISOString(),
+      utc: `${utcYear}-${utcMonth.toString().padStart(2, '0')}-${utcDay.toString().padStart(2, '0')} ${utcHour.toString().padStart(2, '0')}:${utcMinute.toString().padStart(2, '0')}`,
+      target: `${targetYear}-${targetMonth.toString().padStart(2, '0')}-${targetDay.toString().padStart(2, '0')} ${targetHour.toString().padStart(2, '0')}:${targetMinute.toString().padStart(2, '0')}`,
+      offsetMinutes: offsetMinutes
+    });
+    
     return offsetMinutes;
   } catch (error) {
     console.error(`タイムゾーン ${timezone} のオフセット計算に失敗:`, error);
-    // フォールバック: Asia/Tokyoの場合は540分（UTC+9）
-    if (timezone === 'Asia/Tokyo') return 540;
-    return 0; // UTCをフォールバック
+    // フォールバック: 既知のタイムゾーンの固定値
+    const knownOffsets: { [key: string]: number } = {
+      'Asia/Tokyo': 540,      // UTC+9
+      'Asia/Seoul': 540,      // UTC+9
+      'Asia/Shanghai': 480,   // UTC+8
+      'Australia/Sydney': 600, // UTC+10 (標準時、サマータイム考慮なし)
+      'Europe/London': 0,     // UTC+0 (標準時)
+      'Europe/Paris': 60,     // UTC+1 (標準時)
+      'America/New_York': -300, // UTC-5 (標準時)
+      'America/Los_Angeles': -480, // UTC-8 (標準時)
+      'UTC': 0
+    };
+    
+    return knownOffsets[timezone] || 0;
   }
 };
 
@@ -103,6 +196,17 @@ export const getTimezoneOffset = (timezone: string): number => {
  */
 export const utcToUserTimezone = (utcDate: Date): Date => {
   const timezone = getCurrentTimezone();
+  
+  // UTCの場合はそのまま返す
+  if (timezone === 'UTC') {
+    console.log('UTC → UTC変換（変換なし）:', {
+      timezone,
+      utc: utcDate.toISOString(),
+      result: utcDate.toISOString()
+    });
+    return new Date(utcDate);
+  }
+  
   const offset = getTimezoneOffset(timezone);
   
   // オフセットを適用（offsetは分単位）
@@ -123,6 +227,17 @@ export const utcToUserTimezone = (utcDate: Date): Date => {
  */
 export const userTimezoneToUtc = (localDate: Date): Date => {
   const timezone = getCurrentTimezone();
+  
+  // UTCの場合はそのまま返す
+  if (timezone === 'UTC') {
+    console.log('UTC → UTC変換（変換なし）:', {
+      timezone,
+      local: localDate.toISOString(),
+      result: localDate.toISOString()
+    });
+    return new Date(localDate);
+  }
+  
   const offset = getTimezoneOffset(timezone);
   
   // オフセットを逆適用（offsetは分単位）
@@ -159,4 +274,66 @@ export const formatTimezoneInfo = (timezone: string): string => {
   } catch (error) {
     return timezone;
   }
+};
+
+/**
+ * ユーザーのタイムゾーンでの現在時刻を取得（シンプル版）
+ */
+export const getCurrentTimeInUserTimezone = (): Date => {
+  const timezone = getCurrentTimezone();
+  const now = new Date();
+  
+  // UTCの場合は現在のUTC時刻を返す
+  if (timezone === 'UTC') {
+    const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+    console.log('🌐 現在のUTC時刻:', {
+      local: now.toLocaleString(),
+      utc: utcTime.toISOString()
+    });
+    return utcTime;
+  }
+  
+  // ブラウザネイティブのtoLocaleString()を使用してタイムゾーン変換
+  try {
+    const timeString = now.toLocaleString('sv-SE', { timeZone: timezone });
+    const userTime = new Date(timeString);
+    
+    console.log('🌐 現在のユーザータイムゾーン時刻:', {
+      timezone,
+      now: now.toISOString(),
+      timeString,
+      userTime: userTime.toISOString()
+    });
+    
+    return userTime;
+  } catch (error) {
+    console.error(`タイムゾーン ${timezone} での時刻取得に失敗:`, error);
+    // フォールバック: UTC時刻をオフセット計算で変換
+    const utcTime = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+    return utcToUserTimezone(utcTime);
+  }
+};
+
+/**
+ * ユーザーのタイムゾーンでの現在時刻位置を計算（カレンダー用）
+ */
+export const getCurrentTimePosition = (): number => {
+  const currentTime = getCurrentTimeInUserTimezone();
+  const currentMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
+  
+  // 24時間 = 1440分を100%とする
+  return (currentMinutes / 1440) * 100;
+};
+
+/**
+ * ユーザーのタイムゾーンで時刻をフォーマット
+ */
+export const formatCurrentTime = (date?: Date): string => {
+  const currentTime = date || getCurrentTimeInUserTimezone();
+  
+  return currentTime.toLocaleTimeString('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 };
