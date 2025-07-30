@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,7 @@ interface CalendarEventPopupProps {
   defaultTime?: string
   defaultEndTime?: string
   editingEvent?: any
+  onSuccess?: () => void
 }
 
 export function CalendarEventPopup({ 
@@ -29,7 +31,8 @@ export function CalendarEventPopup({
   defaultDate,
   defaultTime,
   defaultEndTime,
-  editingEvent
+  editingEvent,
+  onSuccess
 }: CalendarEventPopupProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [eventFormData, setEventFormData] = useState<EventFormData | null>(null)
@@ -85,11 +88,18 @@ export function CalendarEventPopup({
         })
       } else {
         // 新規作成モード
-        await eventStore.createEvent(eventData)
+        console.log('🚀 Creating event with data:', eventData)
+        const createdEvent = await eventStore.createEvent(eventData)
+        console.log('✅ Event created successfully:', createdEvent)
       }
       
       // Close popup on success
       handleClose()
+      
+      // Trigger success callback to refresh calendar
+      if (onSuccess) {
+        onSuccess()
+      }
     } catch (error) {
       console.error('Failed to submit form:', error)
       // TODO: Show error message to user
@@ -105,6 +115,9 @@ export function CalendarEventPopup({
           <DialogTitle>
             {editingEvent ? 'Edit Calendar Event' : 'Create Calendar Event'}
           </DialogTitle>
+          <DialogDescription>
+            {editingEvent ? 'Edit your calendar event details' : 'Create a new calendar event'}
+          </DialogDescription>
         </VisuallyHidden>
         
         {/* Header */}

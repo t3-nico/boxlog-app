@@ -110,9 +110,9 @@ export function FullDayCalendarLayout({
     // Y座標を時間に変換（48px = 1時間）
     const totalHours = y / HOUR_HEIGHT
     
-    // 30分単位にスナップ（より安全な計算方法）
+    // 15分単位にスナップ（00, 15, 30, 45分刻み）
     const totalMinutes = Math.round(totalHours * 60)
-    const snappedMinutes = Math.round(totalMinutes / 30) * 30 // 30分単位でスナップ
+    const snappedMinutes = Math.round(totalMinutes / 15) * 15 // 15分単位でスナップ
     
     const hours = Math.floor(snappedMinutes / 60)
     const minutes = snappedMinutes % 60
@@ -177,8 +177,8 @@ export function FullDayCalendarLayout({
       ? [dragState.startDate, endDate]
       : [endDate, dragState.startDate]
     
-    // 最小30分の長さを確保（より安全な日付操作）
-    const minDuration = 30 * 60 * 1000 // 30分
+    // 最小15分の長さを確保（より安全な日付操作）
+    const minDuration = 15 * 60 * 1000 // 15分
     let finalEnd = new Date(end)
     if (end.getTime() - start.getTime() < minDuration) {
       finalEnd = new Date(start.getTime() + minDuration)
@@ -271,7 +271,7 @@ export function FullDayCalendarLayout({
                       right: planRecordMode === 'both' ? '50%' : '4px',
                       top: `${Math.min(dragState.startY, dragState.currentY)}px`,
                       height: `${Math.abs(dragState.currentY - dragState.startY)}px`,
-                      minHeight: '24px'
+                      minHeight: '12px'
                     }}
                   />
                 )}
@@ -309,7 +309,7 @@ export function FullDayCalendarLayout({
                     const endHour = event.endDate.getHours()
                     const endMinute = event.endDate.getMinutes()
                     const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
-                    height = Math.max(duration * HOUR_HEIGHT, 24) // 最小24px
+                    height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
                   }
                   
                   // bothモードの場合は左側のみ、planモードの場合は全幅
@@ -375,7 +375,7 @@ export function FullDayCalendarLayout({
                   const endMinute = record.endTime.getMinutes()
                   const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT + (planRecordMode === 'both' ? 24 : 0)
                   const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
-                  const height = Math.max(duration * HOUR_HEIGHT, 24) // 最小24px
+                  const height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
                   
                   // bothモードの場合は右側のみ、recordモードの場合は全幅
                   const leftPosition = planRecordMode === 'both' ? '50%' : '4px'

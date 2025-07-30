@@ -203,12 +203,18 @@ export async function POST(req: NextRequest) {
     }
 
     // Create the event - handle RLS trigger errors gracefully
+    console.log('💾 Inserting event data:', dbEventData)
     let event
     try {
       const { data, error } = await supabase
         .from('events')
         .insert(dbEventData)
-        .select()
+        .select(`
+          *,
+          event_tags(
+            tags(*)
+          )
+        `)
         .single()
 
       if (error) {
@@ -217,6 +223,8 @@ export async function POST(req: NextRequest) {
       }
       
       event = data
+      console.log('✅ Event created successfully:', event)
+      console.log('📅 Event planned_start:', event.planned_start, 'planned_end:', event.planned_end)
     } catch (error: any) {
       // If it's specifically the event_histories RLS error, the event might still be created
       if (error.code === '42501' && error.message?.includes('event_histories')) {
@@ -225,7 +233,12 @@ export async function POST(req: NextRequest) {
         // Try to find the event that was just created
         const { data: createdEvent, error: fetchError } = await supabase
           .from('events')
-          .select()
+          .select(`
+            *,
+            event_tags(
+              tags(*)
+            )
+          `)
           .eq('title', dbEventData.title)
           .eq('user_id', user.id)
           .eq('planned_start', dbEventData.planned_start)
@@ -264,6 +277,7 @@ export async function POST(req: NextRequest) {
       }
     }
     
+    console.log('🚀 Returning event to client:', event)
     return NextResponse.json(createSuccessResponse(event), { status: 201 })
   } catch (error) {
     console.error('POST /api/events error:', error)

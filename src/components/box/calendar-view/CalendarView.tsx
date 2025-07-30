@@ -120,8 +120,20 @@ export function CalendarView({
   
   // 表示範囲のイベントを取得してCalendarEvent型に変換
   const filteredEvents = useMemo(() => {
+    // サーバーサイドでは空配列を返してhydrationエラーを防ぐ
+    if (typeof window === 'undefined') {
+      return []
+    }
+    
+    console.log('🔍 CalendarView filtering events:', {
+      dateRange: { start: viewDateRange.start, end: viewDateRange.end },
+      totalEvents: eventStore.events.length,
+      allEvents: eventStore.events
+    })
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
+    console.log('📅 Filtered events by date range:', events)
     const calendarEvents = convertEventsToCalendarEvents(events)
+    console.log('🎯 Final calendar events:', calendarEvents)
     return calendarEvents
   }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events])
   
@@ -531,6 +543,11 @@ export function CalendarView({
         defaultDate={eventDefaultDate}
         defaultTime={eventDefaultTime}
         defaultEndTime={eventDefaultEndTime}
+        onSuccess={() => {
+          // イベント作成成功時にカレンダーを更新
+          console.log('🔄 Event creation success callback triggered')
+          fetchEventsCallback()
+        }}
       />
       
       {/* AddPopup（編集用） */}

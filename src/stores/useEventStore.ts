@@ -15,6 +15,7 @@ import {
 // Utility functions
 const convertEntityToEvent = (entity: EventEntity): Event => {
   console.log('🔍 Converting entity:', entity)
+  console.log('🔍 Entity planned_start:', entity.planned_start, 'planned_end:', entity.planned_end)
   
   // planned_startとplanned_endを使用
   let startDate: Date | undefined
@@ -22,12 +23,24 @@ const convertEntityToEvent = (entity: EventEntity): Event => {
   
   if (entity.planned_start) {
     startDate = new Date(entity.planned_start)
-    console.log('📅 Created startDate:', startDate, 'from', entity.planned_start)
+    console.log('📅 Created startDate:', startDate, 'isValid:', !isNaN(startDate.getTime()), 'from', entity.planned_start)
+    // 無効な日付の場合はundefinedにする
+    if (isNaN(startDate.getTime())) {
+      console.warn('❌ Invalid startDate created from:', entity.planned_start)
+      startDate = undefined
+    }
+  } else {
+    console.warn('❌ No planned_start found in entity:', entity.id)
   }
   
   if (entity.planned_end) {
     endDate = new Date(entity.planned_end)
-    console.log('📅 Created endDate:', endDate, 'from', entity.planned_end)
+    console.log('📅 Created endDate:', endDate, 'isValid:', !isNaN(endDate.getTime()), 'from', entity.planned_end)
+    // 無効な日付の場合はundefinedにする
+    if (isNaN(endDate.getTime())) {
+      console.warn('❌ Invalid endDate created from:', entity.planned_end)
+      endDate = undefined
+    }
   }
 
   // Convert tag data from entity format
@@ -125,11 +138,20 @@ export const useEventStore = create<EventStore>()(
 
           const data = await response.json()
           console.log('Fetched events data:', data)
-          const events = data.events.map((entity: EventEntity) => {
-            const event = convertEntityToEvent(entity)
-            console.log('Converted event:', event)
-            return event
-          })
+          const events = (data.data?.events || data.events || [])
+            .map((entity: EventEntity) => {
+              const event = convertEntityToEvent(entity)
+              console.log('Converted event:', event)
+              return event
+            })
+            .filter(event => {
+              // startDateが無効なイベントを除外
+              if (!event.startDate) {
+                console.warn('🚫 Filtering out event without valid startDate:', event.id)
+                return false
+              }
+              return true
+            })
           set({ events, loading: false, filters: filters || {} })
         } catch (error) {
           set({ 
@@ -193,13 +215,23 @@ export const useEventStore = create<EventStore>()(
             throw new Error(errorData.error || 'Failed to create event')
           }
 
-          const entity = await response.json()
+          const responseData = await response.json()
+          console.log('📦 Received response from API:', responseData)
+          const entity = responseData.data || responseData // APIレスポンス形式に対応
+          console.log('📦 Extracted entity:', entity)
           const newEvent = convertEntityToEvent(entity)
+          console.log('🔄 Converted to event:', newEvent)
 
-          set(state => ({
-            events: [...state.events, newEvent],
-            loading: false,
-          }))
+          // 有効なstartDateがある場合のみ追加
+          if (newEvent.startDate) {
+            set(state => ({
+              events: [...state.events, newEvent],
+              loading: false,
+            }))
+          } else {
+            console.error('❌ Cannot add event without valid startDate:', newEvent)
+            throw new Error('Event creation failed: Invalid date')
+          }
 
           return newEvent
         } catch (error) {
