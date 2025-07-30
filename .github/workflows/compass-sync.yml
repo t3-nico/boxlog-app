@@ -1,84 +1,40 @@
-name: Compass Submodule Auto Sync
+name: Sync Compass Submodule
 
 on:
   repository_dispatch:
     types: [compass-updated]
-  workflow_dispatch:
-    inputs:
-      compass_ref:
-        description: 'Compass repository reference to sync'
-        required: false
-        default: 'dev'
 
 jobs:
   sync-compass:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
+    
     steps:
-      - name: Checkout app repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          submodules: recursive
-
-      - name: Configure Git
+          token: ${{ secrets.APP_WEB_REPO_TOKEN }}
+      
+      - name: Setup Git authentication for submodules
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
-      - name: Update compass submodule
+          git config --global url."https://${{ secrets.APP_WEB_REPO_TOKEN }}@github.com/".insteadOf "https://github.com/"
+      
+      - name: Initialize and update submodules
         run: |
-          cd compass
-          git fetch origin
-          # Get the branch that triggered the webhook (dev or main)
-          TARGET_BRANCH="${{ github.event.client_payload.compass_ref || 'dev' }}"
-          git checkout $TARGET_BRANCH
-          git pull origin $TARGET_BRANCH
-          cd ..
+          git submodule init
+          git submodule update --remote compass
           
       - name: Check for changes
-        id: changes
+        id: check_changes
         run: |
-          if git diff --quiet compass; then
-            echo "changes=false" >> $GITHUB_OUTPUT
-            echo "No changes in compass submodule"
-          else
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "Changes detected in compass submodule"
-          fi
-
-      - name: Get compass commit info
-        if: steps.changes.outputs.changes == 'true'
-        id: compass_info
-        run: |
-          cd compass
-          COMPASS_COMMIT=$(git rev-parse HEAD)
-          COMPASS_MESSAGE=$(git log -1 --pretty=format:"%s")
-          echo "commit=$COMPASS_COMMIT" >> $GITHUB_OUTPUT
-          echo "message=$COMPASS_MESSAGE" >> $GITHUB_OUTPUT
-          cd ..
-
+          git diff --quiet || echo "changes=true" >> $GITHUB_OUTPUT
+          
       - name: Commit and push changes
-        if: steps.changes.outputs.changes == 'true'
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
-          git add compass
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git commit -m "feat: compassサブモジュールを自動更新
-
-          - Compass commit: ${{ steps.compass_info.outputs.commit }}
-          - 変更内容: ${{ steps.compass_info.outputs.message }}
-          
-          🤖 自動更新 by GitHub Actions"
+          git add compass
+          git commit -m "[auto] Compass submodule updated to ${{ github.event.client_payload.sha }}"
           git push
-
-      - name: Create summary comment
-        if: steps.changes.outputs.changes == 'true'
-        run: |
-          echo "✅ Compass submodule updated successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "- **Compass Commit**: ${{ steps.compass_info.outputs.commit }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Changes**: ${{ steps.compass_info.outputs.message }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Updated Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        env:
+          GITHUB_TOKEN: ${{ secrets.APP_WEB_REPO_TOKEN }}
