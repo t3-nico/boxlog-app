@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { isToday, isWeekend, format } from 'date-fns'
 import { cn } from '../utils/view-helpers'
 import { formatShortWeekday } from '../utils/view-helpers'
+import { getCalendarTimezoneLabel, useTimezoneChange } from '@/utils/timezone'
 
 interface DateHeaderProps {
   dates: Date[]
@@ -12,11 +13,25 @@ interface DateHeaderProps {
 }
 
 export function DateHeader({ dates, className = '', planRecordMode }: DateHeaderProps) {
+  const [timezoneLabel, setTimezoneLabel] = useState(getCalendarTimezoneLabel())
+  
+  // タイムゾーン変更をリッスン
+  useEffect(() => {
+    const cleanup = useTimezoneChange(() => {
+      setTimezoneLabel(getCalendarTimezoneLabel())
+    })
+    return cleanup
+  }, [])
+  
   return (
     <div className={cn("flex-shrink-0 bg-white dark:bg-gray-900", className)}>
       <div className="flex">
-        {/* 時間軸のスペース */}
-        <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-900"></div>
+        {/* タイムゾーン表示エリア */}
+        <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-900 flex items-end justify-center pb-2">
+          <div className="text-xs font-medium text-gray-600 dark:text-gray-400 text-center px-1">
+            {timezoneLabel}
+          </div>
+        </div>
         
         {/* 日付ヘッダー */}
         {dates.map((day) => (

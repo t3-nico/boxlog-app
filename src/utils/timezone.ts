@@ -350,6 +350,129 @@ export const formatTimezoneInfo = (timezone: string): string => {
 };
 
 /**
+ * カレンダー表示用のタイムゾーンラベルを生成
+ */
+export const getCalendarTimezoneLabel = (): string => {
+  const timezone = getCurrentTimezone();
+  
+  // UTCの場合は特別表示
+  if (timezone === 'UTC') {
+    return 'UTC+0';
+  }
+  
+  try {
+    // より確実なオフセット計算
+    const now = new Date();
+    
+    // Intl.DateTimeFormat APIを使用してオフセットを正確に計算
+    const utcFormatter = new Intl.DateTimeFormat('en', {
+      timeZone: 'UTC',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    const localFormatter = new Intl.DateTimeFormat('en', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    const utcParts = utcFormatter.formatToParts(now);
+    const localParts = localFormatter.formatToParts(now);
+    
+    const getPartValue = (parts: Intl.DateTimeFormatPart[], type: string) => 
+      parseInt(parts.find(p => p.type === type)?.value || '0');
+    
+    // UTC時刻
+    const utcHour = getPartValue(utcParts, 'hour');
+    const utcMinute = getPartValue(utcParts, 'minute');
+    const utcDay = getPartValue(utcParts, 'day');
+    const utcMonth = getPartValue(utcParts, 'month');
+    const utcYear = getPartValue(utcParts, 'year');
+    
+    // ローカル時刻
+    const localHour = getPartValue(localParts, 'hour');
+    const localMinute = getPartValue(localParts, 'minute');
+    const localDay = getPartValue(localParts, 'day');
+    const localMonth = getPartValue(localParts, 'month');
+    const localYear = getPartValue(localParts, 'year');
+    
+    // 時刻を分に変換して差分を計算
+    const utcTotalMinutes = utcYear * 525600 + utcMonth * 43800 + utcDay * 1440 + utcHour * 60 + utcMinute;
+    const localTotalMinutes = localYear * 525600 + localMonth * 43800 + localDay * 1440 + localHour * 60 + localMinute;
+    
+    let offsetMinutes = localTotalMinutes - utcTotalMinutes;
+    
+    // 日付変更による調整（-12時間から+12時間の範囲に収める）
+    if (offsetMinutes > 720) offsetMinutes -= 1440;
+    if (offsetMinutes < -720) offsetMinutes += 1440;
+    
+    const hours = Math.floor(Math.abs(offsetMinutes) / 60);
+    const minutes = Math.abs(offsetMinutes) % 60;
+    const sign = offsetMinutes >= 0 ? '+' : '-';
+    
+    console.log('🌐 タイムゾーンオフセット計算:', {
+      timezone,
+      utc: `${utcYear}-${utcMonth}-${utcDay} ${utcHour}:${utcMinute}`,
+      local: `${localYear}-${localMonth}-${localDay} ${localHour}:${localMinute}`,
+      offsetMinutes,
+      hours,
+      minutes,
+      sign
+    });
+    
+    if (minutes === 0) {
+      return `UTC${sign}${hours}`;
+    } else {
+      return `UTC${sign}${hours}:${minutes.toString().padStart(2, '0')}`;
+    }
+  } catch (error) {
+    console.error('タイムゾーンラベル生成エラー:', error);
+    // フォールバック: 既知のオフセットを使用
+    const knownOffsets: { [key: string]: string } = {
+      'Asia/Tokyo': 'UTC+9',
+      'Asia/Seoul': 'UTC+9',
+      'Asia/Shanghai': 'UTC+8',
+      'Australia/Sydney': 'UTC+10',
+      'Europe/London': 'UTC+0',
+      'Europe/Paris': 'UTC+1',
+      'America/New_York': 'UTC-5',
+      'America/Los_Angeles': 'UTC-8',
+      'UTC': 'UTC+0'
+    };
+    
+    return knownOffsets[timezone] || 'UTC+0';
+  }
+};
+
+/**
+ * タイムゾーンの短縮表示名を取得
+ */
+export const getShortTimezoneDisplay = (timezone: string): string => {
+  const shortNames: { [key: string]: string } = {
+    'Asia/Tokyo': 'JST',
+    'Asia/Seoul': 'KST', 
+    'Asia/Shanghai': 'CST',
+    'Australia/Sydney': 'AEST',
+    'Europe/London': 'GMT',
+    'Europe/Paris': 'CET',
+    'America/New_York': 'EST',
+    'America/Los_Angeles': 'PST',
+    'UTC': 'UTC'
+  };
+  
+  return shortNames[timezone] || timezone.split('/').pop() || timezone;
+};
+
+/**
  * ユーザーのタイムゾーンでの現在時刻を取得（シンプル版）
  */
 export const getCurrentTimeInUserTimezone = (): Date => {
