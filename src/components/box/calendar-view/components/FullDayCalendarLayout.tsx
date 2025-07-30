@@ -4,6 +4,9 @@ import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import { isToday, isSameDay, format } from 'date-fns'
 import { TimeAxisLabels } from './TimeAxisLabels'
+import { DnDProvider } from './dnd/DnDProvider'
+import { DraggableEvent } from './dnd/DraggableEvent'
+import { CalendarDropZone } from './dnd/CalendarDropZone'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
@@ -26,6 +29,8 @@ interface FullDayCalendarLayoutProps {
   onEventClick?: (event: CalendarEvent) => void
   /** イベント作成時のハンドラ */
   onCreateEvent?: (date: Date, time?: string) => void
+  /** イベント更新時のハンドラ */
+  onUpdateEvent?: (event: CalendarEvent) => void
 }
 
 interface DragState {
@@ -42,8 +47,10 @@ export function FullDayCalendarLayout({
   events = [],
   dateRange,
   onEventClick,
-  onCreateEvent
+  onCreateEvent,
+  onUpdateEvent
 }: FullDayCalendarLayoutProps) {
+  console.log('🎯 FullDayCalendarLayout onUpdateEvent:', typeof onUpdateEvent, !!onUpdateEvent)
   const containerRef = useRef<HTMLDivElement>(null)
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
@@ -206,23 +213,23 @@ export function FullDayCalendarLayout({
   }, [dragState, getTimeFromYPosition, onCreateEvent])
 
   return (
-    <div ref={containerRef} className="flex-1 overflow-hidden">
-      <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
-        <div 
-          className="flex-shrink-0 sticky left-0 z-10"
-          style={{ height: `${25 * HOUR_HEIGHT}px` }}
-        >
-          <TimeAxisLabels 
-            startHour={0} 
-            endHour={25} 
-            interval={60}
-            planRecordMode={planRecordMode}
-          />
-        </div>
-        <div 
-          className="flex-1 flex relative" 
-          style={{ height: `${25 * HOUR_HEIGHT}px` }}
-        >
+      <div ref={containerRef} className="flex-1 overflow-hidden">
+        <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
+          <div 
+            className="flex-shrink-0 sticky left-0 z-10"
+            style={{ height: `${25 * HOUR_HEIGHT}px` }}
+          >
+            <TimeAxisLabels 
+              startHour={0} 
+              endHour={25} 
+              interval={60}
+              planRecordMode={planRecordMode}
+            />
+          </div>
+          <div 
+            className="flex-1 flex relative" 
+            style={{ height: `${25 * HOUR_HEIGHT}px` }}
+          >
           
           {dates.map((day, dayIndex) => {
             // その日のイベント（タイムゾーン変換済み）
@@ -244,14 +251,20 @@ export function FullDayCalendarLayout({
             ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
             
             return (
-              <div 
-                key={day.toISOString()} 
-                className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0"
-                onMouseDown={(e) => handleMouseDown(e, dayIndex)}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                style={{ cursor: dragState.isDragging ? 'grabbing' : 'pointer' }}
+              <CalendarDropZone
+                key={day.toISOString()}
+                date={day}
+                dayIndex={dayIndex}
+                onEventUpdate={onUpdateEvent}
+                className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
               >
+                <div
+                  onMouseDown={(e) => handleMouseDown(e, dayIndex)}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  style={{ cursor: dragState.isDragging ? 'grabbing' : 'pointer' }}
+                  className="absolute inset-0"
+                >
                 {/* bothモードの場合は各日付の中央に分割線を表示 */}
                 {planRecordMode === 'both' && (
                   <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
@@ -283,8 +296,8 @@ export function FullDayCalendarLayout({
                 )}
                 
                 
-                {/* 今日のみに現在時刻線を表示（タイムゾーン対応版） */}
-                {isToday(day) && (
+                {/* 今日のみに現在時刻線を表示（クライアントサイドのみ） */}
+                {typeof window !== 'undefined' && isToday(day) && (
                   (() => {
                     const currentTime = getCurrentTimeInUserTimezone()
                     const currentHours = currentTime.getHours() + currentTime.getMinutes() / 60
@@ -304,6 +317,7 @@ export function FullDayCalendarLayout({
                 
                 {/* イベント表示（タイムゾーン対応版） */}
                 {(planRecordMode === 'plan' || planRecordMode === 'both') && dayEvents.map(event => {
+                  console.log('🎯 イベントレンダリング:', { title: event.title, id: event.id })
                   if (!event.startDate) return null
                   
                   // UTC時刻をユーザータイムゾーンに変換
@@ -343,31 +357,18 @@ export function FullDayCalendarLayout({
                   const rightPosition = planRecordMode === 'both' ? '50%' : '4px'
                   
                   return (
-                    <div
+                    <DraggableEvent
                       key={event.id}
-                      data-event="true"
-                      className="absolute rounded-md cursor-pointer hover:shadow-lg transition-all duration-200 z-20 border border-white/20"
+                      event={event}
+                      dayIndex={dayIndex}
+                      topPosition={topPosition}
+                      onEventClick={onEventClick}
                       style={{
                         left: leftPosition,
                         right: rightPosition,
                         top: `${topPosition}px`,
                         height: `${height}px`,
                         backgroundColor: eventColor
-                      }}
-                      onClick={(e) => {
-                        try {
-                          console.log('🖱️ Event card clicked:', event)
-                          console.log('🖱️ onEventClick function:', onEventClick)
-                          e.stopPropagation()
-                          if (onEventClick) {
-                            console.log('🖱️ Calling onEventClick...')
-                            onEventClick(event)
-                          } else {
-                            console.error('❌ onEventClick is undefined!')
-                          }
-                        } catch (error) {
-                          console.error('❌ Error in onClick handler:', error)
-                        }
                       }}
                     >
                       <div className="p-1.5 h-full overflow-hidden text-white">
@@ -398,7 +399,7 @@ export function FullDayCalendarLayout({
                           )}
                         </div>
                       </div>
-                    </div>
+                    </DraggableEvent>
                   )
                 })}
                 
@@ -461,11 +462,12 @@ export function FullDayCalendarLayout({
                     </div>
                   )
                 })}
-              </div>
+                </div>
+              </CalendarDropZone>
             )
           })}
+          </div>
         </div>
       </div>
-    </div>
   )
 }

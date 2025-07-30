@@ -67,10 +67,10 @@ export const setUserTimezone = (timezone: string): void => {
 };
 
 /**
- * タイムゾーン変更通知をリッスンするためのフック
+ * タイムゾーン変更通知をリッスンするためのユーティリティ関数
  */
-export const useTimezoneChange = (callback: (timezone: string) => void): void => {
-  if (typeof window === 'undefined') return;
+export const listenToTimezoneChange = (callback: (timezone: string) => void): (() => void) => {
+  if (typeof window === 'undefined') return () => {};
   
   const handleTimezoneChange = (event: CustomEvent) => {
     callback(event.detail.timezone);
@@ -78,7 +78,7 @@ export const useTimezoneChange = (callback: (timezone: string) => void): void =>
   
   window.addEventListener(TIMEZONE_CHANGE_EVENT, handleTimezoneChange as EventListener);
   
-  // クリーンアップ関数を返すため、useEffectで使用する際はreturnで返す
+  // クリーンアップ関数を返す
   return () => {
     window.removeEventListener(TIMEZONE_CHANGE_EVENT, handleTimezoneChange as EventListener);
   };

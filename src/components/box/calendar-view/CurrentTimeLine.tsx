@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react'
-import { getCurrentTimePosition, getCurrentTimeInUserTimezone, formatCurrentTime, useTimezoneChange } from '@/utils/timezone'
+import { getCurrentTimePosition, getCurrentTimeInUserTimezone, formatCurrentTime, listenToTimezoneChange } from '@/utils/timezone'
 
 interface CurrentTimeLineProps {
   containerRef: React.RefObject<HTMLDivElement>
@@ -43,14 +43,14 @@ export function CurrentTimeLine({
 
   // タイムゾーン変更をリッスン
   useEffect(() => {
-    const cleanup = useTimezoneChange((newTimezone) => {
+    const cleanup = listenToTimezoneChange((newTimezone) => {
       console.log('🌐 タイムゾーン変更を検知:', newTimezone)
       // タイムゾーン変更時に即座に現在時刻を更新
       updateCurrentTime()
     })
 
     return cleanup
-  }, [])
+  }, [updateCurrentTime])
 
   // 初回レンダリング時に現在時刻へスクロール
   useEffect(() => {

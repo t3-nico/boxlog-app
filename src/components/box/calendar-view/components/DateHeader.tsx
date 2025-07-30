@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { isToday, isWeekend, format } from 'date-fns'
 import { cn } from '../utils/view-helpers'
 import { formatShortWeekday } from '../utils/view-helpers'
-import { getCalendarTimezoneLabel, useTimezoneChange } from '@/utils/timezone'
+import { getCalendarTimezoneLabel, listenToTimezoneChange } from '@/utils/timezone'
 
 interface DateHeaderProps {
   dates: Date[]
@@ -17,11 +17,11 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
   
   // タイムゾーン変更をリッスン
   useEffect(() => {
-    const cleanup = useTimezoneChange(() => {
+    const cleanup = listenToTimezoneChange(() => {
       setTimezoneLabel(getCalendarTimezoneLabel())
     })
     return cleanup
-  }, [])
+  }, [setTimezoneLabel])
   
   return (
     <div className={cn("flex-shrink-0 bg-white dark:bg-gray-900", className)}>

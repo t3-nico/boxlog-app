@@ -44,7 +44,7 @@ export function TimeAxisLabels({
         <div
           key={hour}
           className={cn(
-            "relative",
+            "relative border-b border-gray-100 dark:border-gray-800",
             showBusinessHours && !isBusinessHour(hour) && "bg-gray-50/50 dark:bg-gray-800/20"
           )}
           style={{ height: HOUR_HEIGHT }}
@@ -52,9 +52,9 @@ export function TimeAxisLabels({
           {/* クロノタイプ縦線インジケーター（右端に表示） */}
           <ChronotypeIndicator hour={hour} className="z-0" />
           
-          {/* 正時のラベルのみ表示（24時は除く） */}
-          {hour > 0 && hour < 24 && (
-            <div className="absolute -top-2 right-2 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-2 z-10">
+          {/* 正時のラベルのみ表示（0時と24時以降は除く） */}
+          {hour >= 0 && hour < 24 && (
+            <div className="absolute -top-3 right-2 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-1 z-10">
               {formatHourLabel(hour)}
             </div>
           )}

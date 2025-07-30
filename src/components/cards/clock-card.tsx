@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react'
 import { Clock, Sun, Moon, Zap } from 'lucide-react'
-import { getCurrentTimeInUserTimezone, useTimezoneChange } from '@/utils/timezone'
+import { getCurrentTimeInUserTimezone, listenToTimezoneChange } from '@/utils/timezone'
 
 export function ClockCard() {
-  const [time, setTime] = useState(getCurrentTimeInUserTimezone())
+  const [time, setTime] = useState<Date | null>(null)
 
   // 時刻の更新関数
   const updateTime = () => {
@@ -13,6 +13,9 @@ export function ClockCard() {
   }
 
   useEffect(() => {
+    // 初回設定（クライアントサイドのみ）
+    setTime(getCurrentTimeInUserTimezone())
+    
     // 1秒ごとに更新
     const timer = setInterval(updateTime, 1000)
 
@@ -21,14 +24,14 @@ export function ClockCard() {
 
   // タイムゾーン変更をリッスン
   useEffect(() => {
-    const cleanup = useTimezoneChange((newTimezone) => {
+    const cleanup = listenToTimezoneChange((newTimezone) => {
       console.log('🌐 時計カード: タイムゾーン変更を検知:', newTimezone)
       // タイムゾーン変更時に即座に時刻を更新
       updateTime()
     })
 
     return cleanup
-  }, [])
+  }, [updateTime])
 
   // クロノタイプと現在時刻から状態を判定
   const getChronotypeStatus = (currentTime: Date) => {

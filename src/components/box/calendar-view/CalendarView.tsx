@@ -16,6 +16,7 @@ import { EventModal } from './components/EventModal'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { CalendarEventPopup } from './components/CalendarEventPopup'
 import { EventTestPopup } from './components/EventTestPopup'
+import { DnDProvider } from './components/dnd/DnDProvider'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
@@ -130,21 +131,40 @@ export function CalendarView({
       return []
     }
     
-    console.log('🔍 Filtering events, total store events:', eventStore.events.length)
+    console.log('🔍 Filtering events for view:', viewType, {
+      totalStoreEvents: eventStore.events.length,
+      dateRange: { start: viewDateRange.start, end: viewDateRange.end }
+    })
+    
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
     console.log('🔍 Events in date range:', events.length)
+    
+    events.forEach((event, index) => {
+      console.log(`📋 Event ${index + 1}:`, {
+        id: event.id,
+        title: event.title,
+        startDate: event.startDate?.toISOString(),
+        endDate: event.endDate?.toISOString()
+      })
+    })
+    
     const calendarEvents = convertEventsToCalendarEvents(events)
     console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
-  }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events])
+  }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events, viewType])
   
   // イベントの初期ロードと更新
   const fetchEventsCallback = useCallback(() => {
+    console.log('🌐 Fetching events for date range:', {
+      start: viewDateRange.start.toISOString(),
+      end: viewDateRange.end.toISOString(),
+      viewType
+    })
     eventStore.fetchEvents({
       startDate: viewDateRange.start,
       endDate: viewDateRange.end
     })
-  }, [eventStore.fetchEvents, viewDateRange.start, viewDateRange.end])
+  }, [eventStore.fetchEvents, viewDateRange.start, viewDateRange.end, viewType])
 
   useEffect(() => {
     fetchEventsCallback()
@@ -271,6 +291,39 @@ export function CalendarView({
       console.error('Failed to delete event:', error)
     }
   }, [eventStore])
+
+  // イベント更新ハンドラー（ドラッグ&ドロップ用）
+  const handleUpdateEvent = useCallback(async (updatedEvent: CalendarEvent) => {
+    console.log('🔄 handleUpdateEvent called:', {
+      id: updatedEvent.id,
+      title: updatedEvent.title,
+      originalStart: updatedEvent.startDate?.toISOString(),
+      originalEnd: updatedEvent.endDate?.toISOString()
+    })
+    
+    try {
+      const updateRequest: UpdateEventRequest = {
+        id: updatedEvent.id,
+        title: updatedEvent.title,
+        startDate: updatedEvent.startDate,
+        endDate: updatedEvent.endDate,
+        location: updatedEvent.location,
+        description: updatedEvent.description,
+        color: updatedEvent.color
+      }
+      
+      console.log('📤 Sending update request:', updateRequest)
+      await eventStore.updateEvent(updateRequest)
+      console.log('✅ Event updated successfully:', updatedEvent.title)
+      
+      // 手動でイベントリストを再取得
+      console.log('🔄 Fetching events after update...')
+      await fetchEventsCallback()
+      
+    } catch (error) {
+      console.error('❌ Failed to update event:', error)
+    }
+  }, [eventStore, fetchEventsCallback])
   
   // URLを更新する関数
   const updateURL = useCallback((newViewType: CalendarViewType, newDate?: Date) => {
@@ -362,6 +415,7 @@ export function CalendarView({
 
   // ビューコンポーネントのレンダリング
   const renderView = () => {
+    console.log('🎯 CalendarView handleUpdateEvent:', typeof handleUpdateEvent, !!handleUpdateEvent)
     const commonProps = {
       dateRange: viewDateRange,
       tasks: filteredTasks,
@@ -372,12 +426,14 @@ export function CalendarView({
       onTaskClick: handleTaskClick,
       onEventClick: handleEventClick,
       onCreateEvent: handleCreateEvent,
+      onUpdateEvent: handleUpdateEvent,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),
       onNavigateNext: () => handleNavigate('next'),
       onNavigateToday: () => handleNavigate('today')
     }
 
+    console.log('🎯 Current viewType:', viewType)
     switch (viewType) {
       case 'day':
         return <DayView {...commonProps} />
@@ -472,23 +528,24 @@ export function CalendarView({
   }, [viewDateRange.days])
 
   return (
-    <>
-      <CalendarLayout>
-        {/* 共通ヘッダー - すべてのビューで同じインスタンス */}
-        <UnifiedCalendarHeader
-          viewType={viewType}
-          currentDate={currentDate}
-          dates={displayDates}
-          planRecordMode={planRecordMode}
-          onNavigate={handleNavigate}
-          onViewChange={handleViewChange}
-        />
-        
-        {/* ビュー固有のコンテンツ */}
-        <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-gray-800" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
-          {renderView()}
-        </div>
-      </CalendarLayout>
+    <DnDProvider>
+      <>
+        <CalendarLayout>
+          {/* 共通ヘッダー - すべてのビューで同じインスタンス */}
+          <UnifiedCalendarHeader
+            viewType={viewType}
+            currentDate={currentDate}
+            dates={displayDates}
+            planRecordMode={planRecordMode}
+            onNavigate={handleNavigate}
+            onViewChange={handleViewChange}
+          />
+          
+          {/* ビュー固有のコンテンツ */}
+          <div className="flex-1 min-h-0 overflow-hidden bg-white dark:bg-gray-800" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
+            {renderView()}
+          </div>
+        </CalendarLayout>
       
       {/* タスクレビューモーダル */}
       <TaskReviewModal
@@ -555,6 +612,7 @@ export function CalendarView({
         defaultTab="event"
         editingEvent={selectedEvent}
       />
-    </>
+      </>
+    </DnDProvider>
   )
 }
