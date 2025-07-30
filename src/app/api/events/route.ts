@@ -9,6 +9,7 @@ import {
   ValidationError,
   NotFoundError
 } from '@/lib/errors'
+import { localToUTC } from '@/utils/dateHelpers'
 
 // Validation schema for creating events
 const createEventSchema = z.object({
@@ -49,7 +50,6 @@ const querySchema = z.object({
 
 export async function GET(req: NextRequest) {
   try {
-    console.log('=== GET /api/events called ===')
     const supabase = createClient()
     
     // Check authentication
@@ -58,11 +58,7 @@ export async function GET(req: NextRequest) {
       throw new UnauthorizedError()
     }
   
-  console.log('Authenticated user ID:', user.id)
-  console.log('Authenticated user email:', user.email)
-  
   const { searchParams } = new URL(req.url)
-  console.log('Search params:', Object.fromEntries(searchParams.entries()))
   
   const queryParams = {
     start_date: searchParams.get('start_date'),
@@ -77,7 +73,6 @@ export async function GET(req: NextRequest) {
 
     const parsed = querySchema.safeParse(queryParams)
     if (!parsed.success) {
-      console.log('Query validation error:', parsed.error)
       throw new ValidationError('クエリパラメータが無効です', parsed.error.issues)
     }
 
@@ -124,9 +119,6 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await query
 
-    console.log('Database query result:', data)
-    console.log('Query error:', error)
-
     if (error) {
       throw handleSupabaseError(error)
     }
@@ -139,7 +131,6 @@ export async function GET(req: NextRequest) {
       total: filteredData?.length || 0,
     }))
   } catch (error) {
-    console.error('GET /api/events error:', error)
     const errorResponse = createErrorResponse(error)
     return NextResponse.json(errorResponse, { status: errorResponse.error?.status || 500 })
   }
@@ -147,7 +138,6 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('=== POST /api/events called ===')
     const supabase = createClient()
     
     // Check authentication
@@ -157,11 +147,9 @@ export async function POST(req: NextRequest) {
     }
     
     const body = await req.json()
-    console.log('Request body:', body)
 
     const parsed = createEventSchema.safeParse(body)
     if (!parsed.success) {
-      console.log('Validation error:', parsed.error)
       throw new ValidationError('入力データが無効です', parsed.error.issues)
     }
 
@@ -172,13 +160,20 @@ export async function POST(req: NextRequest) {
   let planned_end = null
   
   if (date && startTime) {
-    planned_start = `${date}T${startTime}:00`
-    console.log('📅 API converting to planned_start:', { date, startTime, planned_start })
+    // ローカル時間（JST）をUTCに変換してISO形式で保存
+    planned_start = localToUTC(date, startTime)
+    console.log('🕐 API POST: Converting local to UTC for planned_start:', {
+      input: { date, startTime },
+      output: planned_start
+    })
   }
   
   if (date && endTime) {
-    planned_end = `${date}T${endTime}:00`
-    console.log('📅 API converting to planned_end:', { date, endTime, planned_end })
+    planned_end = localToUTC(date, endTime)
+    console.log('🕐 API POST: Converting local to UTC for planned_end:', {
+      input: { date, endTime },
+      output: planned_end
+    })
   }
 
   // Build recurrence rule if recurring
@@ -203,7 +198,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Create the event - handle RLS trigger errors gracefully
-    console.log('💾 Inserting event data:', dbEventData)
     let event
     try {
       const { data, error } = await supabase
@@ -218,18 +212,13 @@ export async function POST(req: NextRequest) {
         .single()
 
       if (error) {
-        console.error('Event creation error:', error)
         throw handleSupabaseError(error)
       }
       
       event = data
-      console.log('✅ Event created successfully:', event)
-      console.log('📅 Event planned_start:', event.planned_start, 'planned_end:', event.planned_end)
     } catch (error: any) {
       // If it's specifically the event_histories RLS error, the event might still be created
       if (error.code === '42501' && error.message?.includes('event_histories')) {
-        console.warn('History trigger failed due to RLS, checking if event was created...')
-        
         // Try to find the event that was just created
         const { data: createdEvent, error: fetchError } = await supabase
           .from('events')
@@ -247,10 +236,8 @@ export async function POST(req: NextRequest) {
           .single()
         
         if (createdEvent && !fetchError) {
-          console.log('Event was created successfully despite history trigger error')
           event = createdEvent
         } else {
-          console.error('Event creation failed:', error)
           throw handleSupabaseError(error)
         }
       } else {
@@ -272,15 +259,12 @@ export async function POST(req: NextRequest) {
         .insert(eventTagData)
 
       if (tagError) {
-        console.error('Failed to create tag associations:', tagError)
         // Don't fail the entire request for tag association errors
       }
     }
     
-    console.log('🚀 Returning event to client:', event)
     return NextResponse.json(createSuccessResponse(event), { status: 201 })
   } catch (error) {
-    console.error('POST /api/events error:', error)
     const errorResponse = createErrorResponse(error)
     return NextResponse.json(errorResponse, { status: errorResponse.error?.status || 500 })
   }

@@ -177,6 +177,14 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
   }, [defaultDate, defaultTime, defaultEndTime, getSmartDefaultTimes])
 
   // contextDataの処理（カレンダー以外からの呼び出し）
+  // タイムゾーン安全な日付変換ユーティリティ
+  const formatDateForForm = (date: Date): string => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
   useEffect(() => {
     // カレンダーからの値がある場合は無視
     if (defaultDate || defaultTime || defaultEndTime) return
@@ -185,14 +193,14 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     
-    const defaultStartDate = tomorrow.toISOString().split('T')[0]
+    const defaultStartDate = formatDateForForm(tomorrow)
     const smartTimes = getSmartDefaultTimes()
     
     if (contextData && !contextData.editingEvent) {
       setFormData(prev => ({
         ...prev,
         date: contextData.dueDate 
-          ? contextData.dueDate.toISOString().split('T')[0]
+          ? formatDateForForm(contextData.dueDate)
           : defaultStartDate,
         startTime: smartTimes.start,
         endTime: smartTimes.end,
@@ -212,17 +220,19 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
 
   // Handle editing event data separately to avoid infinite loop
   useEffect(() => {
-    
     if (contextData?.editingEvent) {
       const event = contextData.editingEvent
+      console.log('📝 EventCreateForm: Setting up editing for event:', event)
       
       const eventDate = event.startDate ? new Date(event.startDate) : new Date()
       const eventEndDate = event.endDate ? new Date(event.endDate) : null
+      console.log('📝 EventCreateForm: Parsed dates - start:', eventDate, 'end:', eventEndDate)
+      
       
       const newFormData = {
         title: event.title || '',
         description: event.description || '',
-        date: eventDate.toISOString().split('T')[0],
+        date: formatDateForForm(eventDate),
         startTime: eventDate.toTimeString().slice(0, 5),
         endTime: eventEndDate ? eventEndDate.toTimeString().slice(0, 5) : '',
         status: event.status || 'inbox',
@@ -238,6 +248,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         url: event.url || '',
       }
       
+      console.log('📝 EventCreateForm: Setting form data:', newFormData)
       setFormData(newFormData)
     }
   }, [contextData?.editingEvent?.id]) // Only re-run when editing a different event

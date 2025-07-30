@@ -15,6 +15,7 @@ import { TaskReviewModal } from './components/TaskReviewModal'
 import { EventModal } from './components/EventModal'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { CalendarEventPopup } from './components/CalendarEventPopup'
+import { EventTestPopup } from './components/EventTestPopup'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
@@ -54,6 +55,10 @@ export function CalendarView({
   
   // カレンダー専用ポップアップの状態
   const [isCalendarEventPopupOpen, setIsCalendarEventPopupOpen] = useState(false)
+  
+  // テスト用ポップアップの状態
+  const [isTestPopupOpen, setIsTestPopupOpen] = useState(false)
+  const [testEvent, setTestEvent] = useState<CalendarEvent | null>(null)
   
   // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup } = useAddPopup()
@@ -125,15 +130,11 @@ export function CalendarView({
       return []
     }
     
-    console.log('🔍 CalendarView filtering events:', {
-      dateRange: { start: viewDateRange.start, end: viewDateRange.end },
-      totalEvents: eventStore.events.length,
-      allEvents: eventStore.events
-    })
+    console.log('🔍 Filtering events, total store events:', eventStore.events.length)
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-    console.log('📅 Filtered events by date range:', events)
+    console.log('🔍 Events in date range:', events.length)
     const calendarEvents = convertEventsToCalendarEvents(events)
-    console.log('🎯 Final calendar events:', calendarEvents)
+    console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
   }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events])
   
@@ -210,30 +211,12 @@ export function CalendarView({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    // AddPopupで編集するためにselectedEventを設定
-    const eventData: Event = {
-      id: event.id,
-      title: event.title,
-      description: event.description,
-      startDate: event.startDate,
-      endDate: event.endDate,
-      status: event.status,
-      priority: event.priority,
-      color: event.color,
-      location: event.location,
-      url: event.url,
-      tags: event.tags,
-      items: event.items || [],
-      isRecurring: event.isRecurring || false,
-      createdAt: event.createdAt,
-      updatedAt: event.updatedAt
-    }
+    console.log('🖱️ Event clicked:', event)
     
-    setSelectedEvent(eventData)
-    
-    // AddPopupを開く（編集モード）
-    openPopup('event')
-  }, [openPopup])
+    // テスト用ポップアップを開く
+    setTestEvent(event)
+    setIsTestPopupOpen(true)
+  }, [])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
     // 日付と時間をセット（同期的に実行）
@@ -545,7 +528,17 @@ export function CalendarView({
         defaultEndTime={eventDefaultEndTime}
         onSuccess={() => {
           // イベント作成成功時にカレンダーを更新
-          console.log('🔄 Event creation success callback triggered')
+          fetchEventsCallback()
+        }}
+      />
+      
+      {/* テスト用ポップアップ */}
+      <EventTestPopup
+        open={isTestPopupOpen}
+        onOpenChange={setIsTestPopupOpen}
+        event={testEvent}
+        onSuccess={() => {
+          console.log('🔄 EventTestPopup success callback triggered')
           fetchEventsCallback()
         }}
       />

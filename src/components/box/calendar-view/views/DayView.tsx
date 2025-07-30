@@ -1,7 +1,35 @@
 'use client'
 
 import React from 'react'
-import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
+import dynamic from 'next/dynamic'
+
+const FullDayCalendarLayout = dynamic(
+  () => import('../components/FullDayCalendarLayout').then(mod => ({ default: mod.FullDayCalendarLayout })),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="flex-1 flex relative" style={{ height: `${25 * 48}px` }}>
+        {/* ローディング中のスケルトン */}
+        <div className="flex-shrink-0 sticky left-0 z-10" style={{ height: `${25 * 48}px` }}>
+          <div className="w-16 h-full bg-gray-50 dark:bg-gray-800" />
+        </div>
+        <div className="flex-1 flex relative">
+          <div className="flex-1 relative border-r border-gray-200 dark:border-gray-700">
+            <div className="absolute inset-0">
+              {Array.from({ length: 25 }, (_, hour) => (
+                <div
+                  key={hour}
+                  className="border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                  style={{ height: '48px' }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+)
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
 import type { CalendarEvent } from '@/types/events'

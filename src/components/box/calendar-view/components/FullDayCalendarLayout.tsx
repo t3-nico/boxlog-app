@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { isToday, isSameDay, format } from 'date-fns'
 import { TimeAxisLabels } from './TimeAxisLabels'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
@@ -227,9 +228,10 @@ export function FullDayCalendarLayout({
           
           {dates.map((day, dayIndex) => {
             // その日のイベント
-            const dayEvents = events.filter(event => 
-              event.startDate && isSameDay(event.startDate, day)
-            ).sort((a, b) => (a.startDate?.getTime() || 0) - (b.startDate?.getTime() || 0))
+            const dayEvents = events.filter(event => {
+              if (!event.startDate) return false
+              return isSameDay(event.startDate, day)
+            }).sort((a, b) => (a.startDate?.getTime() || 0) - (b.startDate?.getTime() || 0))
             
             
             // その日の記録（Log）
@@ -282,7 +284,7 @@ export function FullDayCalendarLayout({
                   <div
                     className="absolute left-0 right-0 h-0.5 bg-red-500 z-30 flex items-center"
                     style={{
-                      top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT + (planRecordMode === 'both' ? 24 : 0)}px`
+                      top: `${(new Date().getHours() + new Date().getMinutes() / 60) * HOUR_HEIGHT}px`
                     }}
                   >
                     <div className="w-2 h-2 bg-red-500 rounded-full -ml-1 flex-shrink-0"></div>
@@ -301,7 +303,7 @@ export function FullDayCalendarLayout({
                   // 開始位置と高さを計算
                   const startHour = event.startDate.getHours()
                   const startMinute = event.startDate.getMinutes()
-                  const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT + (planRecordMode === 'both' ? 24 : 0)
+                  const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
                   
                   // 終了時刻がある場合は実際の長さ、ない場合は1時間
                   let height = HOUR_HEIGHT // デフォルト1時間
@@ -328,7 +330,21 @@ export function FullDayCalendarLayout({
                         height: `${height}px`,
                         backgroundColor: eventColor
                       }}
-                      onClick={() => onEventClick?.(event)}
+                      onClick={(e) => {
+                        try {
+                          console.log('🖱️ Event card clicked:', event)
+                          console.log('🖱️ onEventClick function:', onEventClick)
+                          e.stopPropagation()
+                          if (onEventClick) {
+                            console.log('🖱️ Calling onEventClick...')
+                            onEventClick(event)
+                          } else {
+                            console.error('❌ onEventClick is undefined!')
+                          }
+                        } catch (error) {
+                          console.error('❌ Error in onClick handler:', error)
+                        }
+                      }}
                     >
                       <div className="p-1.5 h-full overflow-hidden text-white">
                         {/* メインコンテンツ */}
@@ -373,7 +389,7 @@ export function FullDayCalendarLayout({
                   const startMinute = record.startTime.getMinutes()
                   const endHour = record.endTime.getHours()
                   const endMinute = record.endTime.getMinutes()
-                  const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT + (planRecordMode === 'both' ? 24 : 0)
+                  const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
                   const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
                   const height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
                   

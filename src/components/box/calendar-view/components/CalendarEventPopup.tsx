@@ -56,9 +56,42 @@ export function CalendarEventPopup({
     setIsSubmitting(true)
     try {
       // 編集モードかどうかで処理を分岐
-      const startDate = eventFormData.date ? new Date(`${eventFormData.date}T${eventFormData.startTime || '00:00'}:00`) : new Date()
-      const endDate = eventFormData.date && eventFormData.endTime ? new Date(`${eventFormData.date}T${eventFormData.endTime}:00`) : undefined
+      // タイムゾーン安全な日付作成
+      let startDate: Date
+      if (eventFormData.date) {
+        const [year, month, day] = eventFormData.date.split('-').map(Number)
+        const [hours, minutes] = (eventFormData.startTime || '00:00').split(':').map(Number)
+        startDate = new Date()
+        startDate.setFullYear(year, month - 1, day)
+        startDate.setHours(hours, minutes, 0, 0)
+      } else {
+        startDate = new Date()
+      }
       
+      let endDate: Date | undefined
+      if (eventFormData.date && eventFormData.endTime) {
+        const [year, month, day] = eventFormData.date.split('-').map(Number)
+        const [endHours, endMinutes] = eventFormData.endTime.split(':').map(Number)
+        endDate = new Date()
+        endDate.setFullYear(year, month - 1, day)
+        endDate.setHours(endHours, endMinutes, 0, 0)
+        
+        // 終了時間が開始時間より早い場合は翌日扱い
+        if (endDate <= startDate) {
+          endDate.setDate(endDate.getDate() + 1)
+        }
+      }
+      console.log('🆕 CREATE FLOW - Form data:', {
+        date: eventFormData.date,
+        startTime: eventFormData.startTime,
+        endTime: eventFormData.endTime
+      })
+      console.log('🆕 CREATE FLOW - Converted dates:', {
+        startDate: startDate,
+        startDateISO: startDate.toISOString(),
+        endDate: endDate,
+        endDateISO: endDate?.toISOString()
+      })
       
       const eventData = {
         title: eventFormData.title,

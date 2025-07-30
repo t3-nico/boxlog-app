@@ -149,9 +149,23 @@ export function EventModal({
     setLoading(true)
 
     try {
-      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}`)
+      // タイムゾーン安全な日付作成
+      const [startYear, startMonth, startDay] = formData.startDate.split('-').map(Number)
+      const [startHours, startMinutes] = formData.startTime.split(':').map(Number)
+      const startDateTime = new Date()
+      startDateTime.setFullYear(startYear, startMonth - 1, startDay)
+      startDateTime.setHours(startHours, startMinutes, 0, 0)
       
-      const endDateTime = new Date(`${formData.endDate}T${formData.endTime}`)
+      const [endYear, endMonth, endDay] = formData.endDate.split('-').map(Number)
+      const [endHours, endMinutes] = formData.endTime.split(':').map(Number)
+      let endDateTime = new Date()
+      endDateTime.setFullYear(endYear, endMonth - 1, endDay)
+      endDateTime.setHours(endHours, endMinutes, 0, 0)
+      
+      // 終了時間が開始時間より早い場合は翌日扱い
+      if (endDateTime <= startDateTime) {
+        endDateTime.setDate(endDateTime.getDate() + 1)
+      }
 
       const eventData = {
         title: formData.title,
