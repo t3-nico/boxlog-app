@@ -192,7 +192,7 @@ export const getTimezoneOffset = (timezone: string): number => {
 };
 
 /**
- * UTC時間をユーザーのタイムゾーンに変換
+ * UTC時間をユーザーのタイムゾーンに変換（最適化版）
  */
 export const utcToUserTimezone = (utcDate: Date): Date => {
   const timezone = getCurrentTimezone();
@@ -207,23 +207,50 @@ export const utcToUserTimezone = (utcDate: Date): Date => {
     return new Date(utcDate);
   }
   
-  const offset = getTimezoneOffset(timezone);
-  
-  // オフセットを適用（offsetは分単位）
-  const localDate = new Date(utcDate.getTime() + offset * 60000);
-  
-  console.log('UTC → ユーザータイムゾーン変換:', {
-    timezone,
-    utc: utcDate.toISOString(),
-    local: localDate.toISOString(),
-    offset: `${offset}分`
-  });
-  
-  return localDate;
+  // UTC時刻を指定タイムゾーンの各部分に分解
+  try {
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    
+    const parts = formatter.formatToParts(utcDate);
+    const getValue = (type: string) => parts.find(p => p.type === type)?.value || '0';
+    
+    const year = parseInt(getValue('year'));
+    const month = parseInt(getValue('month')) - 1; // Date constructor expects 0-based month
+    const day = parseInt(getValue('day'));
+    const hour = parseInt(getValue('hour'));
+    const minute = parseInt(getValue('minute'));
+    const second = parseInt(getValue('second'));
+    
+    // ローカル時刻として作成（変換済み）
+    const convertedDate = new Date(year, month, day, hour, minute, second);
+    
+    console.log('UTC → ユーザータイムゾーン変換（Intl API）:', {
+      timezone,
+      utc: utcDate.toISOString(),
+      parts: { year, month: month + 1, day, hour, minute, second },
+      converted: convertedDate.toISOString(),
+      convertedLocal: convertedDate.toLocaleString()
+    });
+    
+    return convertedDate;
+  } catch (error) {
+    console.error(`UTC→タイムゾーン変換エラー (${timezone}):`, error);
+    // フォールバック: 元の日付をそのまま返す
+    return new Date(utcDate);
+  }
 };
 
 /**
- * ユーザーのタイムゾーンの時間をUTCに変換
+ * ユーザーのタイムゾーンの時間をUTCに変換（最適化版）
  */
 export const userTimezoneToUtc = (localDate: Date): Date => {
   const timezone = getCurrentTimezone();
@@ -238,19 +265,65 @@ export const userTimezoneToUtc = (localDate: Date): Date => {
     return new Date(localDate);
   }
   
-  const offset = getTimezoneOffset(timezone);
+  // ローカル日時の各部分を取得
+  const year = localDate.getFullYear();
+  const month = localDate.getMonth();
+  const day = localDate.getDate();
+  const hour = localDate.getHours();
+  const minute = localDate.getMinutes();
+  const second = localDate.getSeconds();
+  const millisecond = localDate.getMilliseconds();
   
-  // オフセットを逆適用（offsetは分単位）
-  const utcDate = new Date(localDate.getTime() - offset * 60000);
-  
-  console.log('ユーザータイムゾーン → UTC変換:', {
-    timezone,
-    local: localDate.toISOString(),
-    utc: utcDate.toISOString(),
-    offset: `${offset}分`
-  });
-  
-  return utcDate;
+  try {
+    // 指定タイムゾーンでの同じ時刻を表すUTC時刻を逆算
+    // まず仮のUTC時刻を作成
+    let testUtc = new Date(Date.UTC(year, month, day, hour, minute, second, millisecond));
+    
+    // この仮UTC時刻を指定タイムゾーンで表示
+    const formatter = new Intl.DateTimeFormat('en-CA', {
+      timeZone: timezone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    
+    const parts = formatter.formatToParts(testUtc);
+    const getValue = (type: string) => parts.find(p => p.type === type)?.value || '0';
+    
+    const displayYear = parseInt(getValue('year'));
+    const displayMonth = parseInt(getValue('month')) - 1;
+    const displayDay = parseInt(getValue('day'));
+    const displayHour = parseInt(getValue('hour'));
+    const displayMinute = parseInt(getValue('minute'));
+    const displaySecond = parseInt(getValue('second'));
+    
+    // 表示される時刻と目標時刻の差分を計算
+    const targetTime = new Date(year, month, day, hour, minute, second, millisecond).getTime();
+    const displayTime = new Date(displayYear, displayMonth, displayDay, displayHour, displayMinute, displaySecond, millisecond).getTime();
+    const diff = targetTime - displayTime;
+    
+    // 差分を適用してUTC時刻を調整
+    const utcDate = new Date(testUtc.getTime() + diff);
+    
+    console.log('ユーザータイムゾーン → UTC変換（Intl API）:', {
+      timezone,
+      local: localDate.toISOString(),
+      target: { year, month: month + 1, day, hour, minute, second },
+      display: { year: displayYear, month: displayMonth + 1, day: displayDay, hour: displayHour, minute: displayMinute, second: displaySecond },
+      diff: `${diff / 60000}分`,
+      utc: utcDate.toISOString()
+    });
+    
+    return utcDate;
+  } catch (error) {
+    console.error(`タイムゾーン→UTC変換エラー (${timezone}):`, error);
+    // フォールバック: 元の日付をそのまま返す
+    return new Date(localDate);
+  }
 };
 
 /**

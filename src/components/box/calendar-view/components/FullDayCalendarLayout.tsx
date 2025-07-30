@@ -9,7 +9,7 @@ import { useRecordsStore } from '@/stores/useRecordsStore'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
 import { CalendarTask } from '../utils/time-grid-helpers'
 import { getTimeFromY, dateToLocalStrings } from '@/utils/dateHelpers'
-import { getCurrentTimeInUserTimezone } from '@/utils/timezone'
+import { getCurrentTimeInUserTimezone, utcToUserTimezone } from '@/utils/timezone'
 import type { ViewDateRange, Task, TaskRecord } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -225,11 +225,17 @@ export function FullDayCalendarLayout({
         >
           
           {dates.map((day, dayIndex) => {
-            // その日のイベント
+            // その日のイベント（タイムゾーン変換済み）
             const dayEvents = events.filter(event => {
               if (!event.startDate) return false
-              return isSameDay(event.startDate, day)
-            }).sort((a, b) => (a.startDate?.getTime() || 0) - (b.startDate?.getTime() || 0))
+              // UTC時刻をユーザータイムゾーンに変換してから日付比較
+              const userTimezoneStart = utcToUserTimezone(event.startDate)
+              return isSameDay(userTimezoneStart, day)
+            }).sort((a, b) => {
+              const aUserTime = a.startDate ? utcToUserTimezone(a.startDate).getTime() : 0
+              const bUserTime = b.startDate ? utcToUserTimezone(b.startDate).getTime() : 0
+              return aUserTime - bUserTime
+            })
             
             
             // その日の記録（Log）
@@ -296,27 +302,41 @@ export function FullDayCalendarLayout({
                   })()
                 )}
                 
-                {/* イベント表示 */}
+                {/* イベント表示（タイムゾーン対応版） */}
                 {(planRecordMode === 'plan' || planRecordMode === 'both') && dayEvents.map(event => {
                   if (!event.startDate) return null
                   
-                  const startTime = `${String(event.startDate.getHours()).padStart(2, '0')}:${String(event.startDate.getMinutes()).padStart(2, '0')}`
-                  const endTime = event.endDate ? `${String(event.endDate.getHours()).padStart(2, '0')}:${String(event.endDate.getMinutes()).padStart(2, '0')}` : null
+                  // UTC時刻をユーザータイムゾーンに変換
+                  const userStartDate = utcToUserTimezone(event.startDate)
+                  const userEndDate = event.endDate ? utcToUserTimezone(event.endDate) : null
+                  
+                  const startTime = `${String(userStartDate.getHours()).padStart(2, '0')}:${String(userStartDate.getMinutes()).padStart(2, '0')}`
+                  const endTime = userEndDate ? `${String(userEndDate.getHours()).padStart(2, '0')}:${String(userEndDate.getMinutes()).padStart(2, '0')}` : null
                   const eventColor = event.color || '#1a73e8'
                   
-                  // 開始位置と高さを計算
-                  const startHour = event.startDate.getHours()
-                  const startMinute = event.startDate.getMinutes()
+                  // 開始位置と高さを計算（ユーザータイムゾーンベース）
+                  const startHour = userStartDate.getHours()
+                  const startMinute = userStartDate.getMinutes()
                   const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
                   
                   // 終了時刻がある場合は実際の長さ、ない場合は1時間
                   let height = HOUR_HEIGHT // デフォルト1時間
-                  if (event.endDate) {
-                    const endHour = event.endDate.getHours()
-                    const endMinute = event.endDate.getMinutes()
+                  if (userEndDate) {
+                    const endHour = userEndDate.getHours()
+                    const endMinute = userEndDate.getMinutes()
                     const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
                     height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
                   }
+                  
+                  console.log('🌐 イベント表示 - タイムゾーン変換:', {
+                    title: event.title,
+                    utcStart: event.startDate.toISOString(),
+                    userStart: userStartDate.toISOString(),
+                    startTime,
+                    endTime,
+                    topPosition,
+                    height
+                  })
                   
                   // bothモードの場合は左側のみ、planモードの場合は全幅
                   const leftPosition = planRecordMode === 'both' ? '2px' : '4px'
