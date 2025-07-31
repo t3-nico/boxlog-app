@@ -103,10 +103,9 @@ function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <AIMessage from={message.sender}>
       {isAssistant && (
-        <AIMessageAvatar 
-          src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.091z'/%3e%3c/svg%3e"
-          name="Claude"
-        />
+        <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+          <Sparkles className="w-4 h-4 text-foreground" />
+        </div>
       )}
       
       <AIMessageContent>
@@ -215,7 +214,7 @@ function ChatInput() {
   }
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-border bg-background">
+    <div className="flex-shrink-0 p-4 bg-background">
       {/* Typing indicator */}
       {state.isTyping && (
         <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
@@ -290,12 +289,10 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
       }}
     >
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-border bg-background h-16">
+      <div className="flex-shrink-0 bg-background h-16">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
-            </div>
+            <Sparkles className="w-6 h-6 text-foreground" />
             <div>
               <h3 className="text-sm font-semibold text-foreground">AI Assistant</h3>
             </div>
@@ -355,10 +352,9 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
         <AIConversationContent>
           {state.messages.length === 0 ? (
             <AIMessage from="assistant">
-              <AIMessageAvatar 
-                src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.091z'/%3e%3c/svg%3e"
-                name="Claude"
-              />
+              <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-foreground" />
+              </div>
               <AIMessageContent>
                 <AIBranch>
                   <AIBranchMessages>

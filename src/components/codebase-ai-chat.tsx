@@ -168,12 +168,12 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
   return (
     <AIMessage from={message.role}>
       {isAssistant && (
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-          <BotMessageSquare className="w-5 h-5 text-primary-foreground" />
+        <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+          <BotMessageSquare className="w-4 h-4 text-foreground" />
         </div>
       )}
       
-      <AIMessageContent className="px-4">
+      <AIMessageContent>
         {isAssistant ? (
           <div>
             <CodebaseAIResponse>
@@ -255,7 +255,7 @@ function CodebaseChatInput({
   }
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-border bg-background">
+    <div className="flex-shrink-0 p-4 bg-background">
       {isLoading && (
         <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
           <div className="flex gap-1">
@@ -354,12 +354,10 @@ What would you like to know about BoxLog?`
       }}
     >
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-border bg-background h-16">
+      <div className="flex-shrink-0 bg-background h-16">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <BotMessageSquare className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <BotMessageSquare className="w-6 h-6 text-foreground" />
             <div>
               <h3 className="text-sm font-semibold text-foreground">BoxLog Support</h3>
             </div>
@@ -425,10 +423,10 @@ What would you like to know about BoxLog?`
 
       {/* Chat Content */}
       <AIConversation>
-        <AIConversationContent className="pl-0 pr-0 py-4">
+        <AIConversationContent className="px-4 py-4">
           {/* Error display */}
           {error && (
-            <div className="mx-4 mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -449,10 +447,10 @@ What would you like to know about BoxLog?`
 
           {messages.length === 0 ? (
             <AIMessage from="assistant">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                <BotMessageSquare className="w-5 h-5 text-primary-foreground" />
+              <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+                <BotMessageSquare className="w-4 h-4 text-foreground" />
               </div>
-              <AIMessageContent className="px-4">
+              <AIMessageContent>
                 <CodebaseAIResponse>
                   Hello! I'm the **BoxLog** application support assistant.
                   

@@ -445,19 +445,9 @@ export function ApplicationLayoutNew({
                       </div>
                     </div>
 
-                    {/* 下部固定エリア - LiveカードとUpgradeボタン */}
-                    <div className="flex-shrink-0 space-y-3">
+                    {/* 下部固定エリア - 時間表示カード */}
+                    <div className="flex-shrink-0">
                       <CurrentScheduleCard collapsed={collapsed} events={events} />
-                      
-                      {/* Upgrade Button */}
-                      <button
-                        onClick={() => router.push('/upgrade')}
-                        className="flex w-full items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 px-3 py-2 text-left text-xs font-medium text-white hover:from-purple-600 hover:to-blue-600 transition-all duration-200"
-                        title="Unlock premium features"
-                      >
-                        <SparklesIcon className="size-4 shrink-0" />
-                        <span>Upgrade</span>
-                      </button>
                     </div>
                   </>
                 )}
