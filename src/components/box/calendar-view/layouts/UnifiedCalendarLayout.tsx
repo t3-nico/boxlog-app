@@ -286,7 +286,7 @@ export function UnifiedCalendarLayout({
           {planRecordMode === 'both' ? (
             // 分割表示モード - 左右50%で計画と記録を分割
             <div 
-              className="relative h-full bg-white dark:bg-gray-900"
+              className="relative h-full bg-background"
               onMouseDown={handleMouseDown}
               style={{ height: '100%' }}
             >
@@ -353,7 +353,7 @@ export function UnifiedCalendarLayout({
                         </div>
                         
                         {/* 各日付の中央区切り線 */}
-                        <div className="w-px bg-gray-400 dark:bg-gray-500 z-20" style={{ boxShadow: '0 0 1px rgba(0,0,0,0.1)' }} />
+                        <div className="w-px bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] z-20" style={{ boxShadow: '0 0 1px rgba(0,0,0,0.1)' }} />
                         
                         {/* 右側：記録タスク */}
                         <div className="w-1/2 relative bg-green-50/20 dark:bg-green-900/10">

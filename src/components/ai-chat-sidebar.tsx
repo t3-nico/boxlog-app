@@ -62,8 +62,8 @@ const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: stri
       [&_p]:leading-relaxed [&_p]:my-2
       [&_ul]:my-2 [&_ol]:my-2
       [&_li]:my-1
-      [&_pre]:bg-gray-100 [&_pre]:dark:bg-gray-800
-      [&_code]:bg-gray-100 [&_code]:dark:bg-gray-800 [&_code]:px-1 [&_code]:py-1 [&_code]:rounded
+      [&_pre]:bg-muted [&_pre]:rounded
+      [&_code]:bg-muted [&_code]:px-1 [&_code]:py-1 [&_code]:rounded
       [&_h1]:text-lg [&_h1]:font-semibold [&_h1]:mt-4 [&_h1]:mb-2
       [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2
       [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1
@@ -104,7 +104,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
     <AIMessage from={message.sender}>
       {isAssistant && (
         <AIMessageAvatar 
-          src="/users/claude-avatar.png"
+          src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.091z'/%3e%3c/svg%3e"
           name="Claude"
         />
       )}
@@ -154,7 +154,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
       
       {isUser && (
         <AIMessageAvatar 
-          src="/users/user-avatar.png"
+          src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'/%3e%3c/svg%3e"
           name="You"
         />
       )}
@@ -184,7 +184,7 @@ function ChatInput() {
   const toggleVoiceInput = () => {
     if (!isListening) {
       // 音声認識開始
-      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
         const recognition = new SpeechRecognition()
         
@@ -215,14 +215,14 @@ function ChatInput() {
   }
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
+    <div className="flex-shrink-0 p-4 border-t border-border bg-background">
       {/* Typing indicator */}
       {state.isTyping && (
-        <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
           <div className="flex gap-1">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span>Claude is thinking...</span>
         </div>
@@ -282,7 +282,7 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
 
   return (
     <div 
-      className="fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
+      className="fixed right-0 bg-background border-l border-border z-50 flex flex-col"
       style={{ 
         top: '64px',
         width: '320px',
@@ -290,14 +290,14 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
       }}
     >
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-16">
+      <div className="flex-shrink-0 border-b border-border bg-background h-16">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">AI Assistant</h3>
+              <h3 className="text-sm font-semibold text-foreground">AI Assistant</h3>
             </div>
           </div>
           
@@ -306,20 +306,20 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                className="p-1 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
                 aria-label="Menu options"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
               
               {showMenu && (
-                <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+                <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
                   <button
                     onClick={() => {
                       clearMessages()
                       setShowMenu(false)
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                     Clear chat
@@ -329,7 +329,7 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
                       navigator.clipboard.writeText(JSON.stringify(state.messages))
                       setShowMenu(false)
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
                   >
                     <Copy className="w-4 h-4" />
                     Export chat
@@ -341,7 +341,7 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              className="p-1 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
               aria-label="Close AI chat"
             >
               <X className="h-4 w-4" />
@@ -356,7 +356,7 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
           {state.messages.length === 0 ? (
             <AIMessage from="assistant">
               <AIMessageAvatar 
-                src="/users/claude-avatar.png"
+                src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.847a4.5 4.5 0 003.09 3.09L15.75 12l-2.847.813a4.5 4.5 0 00-3.09 3.091z'/%3e%3c/svg%3e"
                 name="Claude"
               />
               <AIMessageContent>

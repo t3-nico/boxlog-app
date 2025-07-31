@@ -168,8 +168,8 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
   return (
     <AIMessage from={message.role}>
       {isAssistant && (
-        <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center flex-shrink-0">
-          <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
+        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+          <BotMessageSquare className="w-5 h-5 text-primary-foreground" />
         </div>
       )}
       
@@ -180,10 +180,10 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
               {message.content}
             </CodebaseAIResponse>
             {message.relatedFiles && message.relatedFiles.length > 0 && (
-              <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
-                <div className="font-medium text-gray-700 dark:text-gray-300 mb-1">関連ファイル:</div>
+              <div className="mt-2 p-2 bg-muted rounded text-xs">
+                <div className="font-medium text-card-foreground mb-1">関連ファイル:</div>
                 {message.relatedFiles.map((file, index) => (
-                  <div key={index} className="text-gray-600 dark:text-gray-400 font-mono">
+                  <div key={index} className="text-muted-foreground font-mono">
                     {file}
                   </div>
                 ))}
@@ -219,7 +219,7 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
               initials={userDisplayName.charAt(0).toUpperCase()}
             />
           ) : profileIcon ? (
-            <div className="size-8 text-xl flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700">
+            <div className="size-8 text-xl flex items-center justify-center rounded-full bg-muted">
               {profileIcon}
             </div>
           ) : (
@@ -255,9 +255,9 @@ function CodebaseChatInput({
   }
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
+    <div className="flex-shrink-0 p-4 border-t border-border bg-background">
       {isLoading && (
-        <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
           <div className="flex gap-1">
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -280,7 +280,7 @@ function CodebaseChatInput({
         />
         <AIInputToolbar>
           <AIInputTools>
-            <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 px-2">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground px-2">
               <BotMessageSquare className="w-4 h-4" />
               <span>BoxLog Usage Support</span>
             </div>
@@ -346,7 +346,7 @@ What would you like to know about BoxLog?`
 
   return (
     <div 
-      className="fixed right-0 bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 z-50 flex flex-col"
+      className="fixed right-0 bg-background border-l border-border z-50 flex flex-col"
       style={{ 
         top: '64px',
         bottom: '0',
@@ -354,14 +354,14 @@ What would you like to know about BoxLog?`
       }}
     >
       {/* Header */}
-      <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-16">
+      <div className="flex-shrink-0 border-b border-border bg-background h-16">
         <div className="flex items-center justify-between px-4 h-full">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center">
-              <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+              <BotMessageSquare className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">BoxLog Support</h3>
+              <h3 className="text-sm font-semibold text-foreground">BoxLog Support</h3>
             </div>
           </div>
           
@@ -377,17 +377,17 @@ What would you like to know about BoxLog?`
             <div className="relative">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                className="p-1 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
                 aria-label="Menu options"
               >
                 <MoreVertical className="h-4 w-4" />
               </button>
               
               {showMenu && (
-                <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+                <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
                   <button
                     onClick={clearMessages}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                     Clear chat
@@ -402,7 +402,7 @@ What would you like to know about BoxLog?`
                       navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
                       setShowMenu(false)
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
                   >
                     <Copy className="w-4 h-4" />
                     Export chat
@@ -414,7 +414,7 @@ What would you like to know about BoxLog?`
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              className="p-1 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
               aria-label="Close codebase AI chat"
             >
               <X className="h-4 w-4" />
@@ -449,8 +449,8 @@ What would you like to know about BoxLog?`
 
           {messages.length === 0 ? (
             <AIMessage from="assistant">
-              <div className="w-8 h-8 rounded-full bg-gray-600 dark:bg-gray-400 flex items-center justify-center flex-shrink-0">
-                <BotMessageSquare className="w-5 h-5 text-white dark:text-gray-900" />
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                <BotMessageSquare className="w-5 h-5 text-primary-foreground" />
               </div>
               <AIMessageContent className="px-4">
                 <CodebaseAIResponse>

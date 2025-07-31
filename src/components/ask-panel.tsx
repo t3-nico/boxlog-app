@@ -118,7 +118,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
           {!isEditing && (
             <button
               onClick={handleEdit}
-              className="absolute -left-8 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute -left-8 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <Pencil className="w-4 h-4" />
             </button>
@@ -136,11 +136,11 @@ function MessageBubble({ message }: MessageBubbleProps) {
       </div>
       
       {/* AI Message Bubble */}
-      <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] break-words">
+      <div className="bg-background text-foreground rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%] break-words border border-border">
         <div className="text-sm leading-relaxed whitespace-pre-wrap">
           {message.content}
         </div>
-        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <div className="mt-1 text-xs text-muted-foreground">
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
@@ -180,11 +180,11 @@ function ChatInput() {
     <div className="flex-shrink-0 p-4">
       {/* Typing indicator */}
       {state.isTyping && (
-        <div className="flex items-center gap-2 mb-3 text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
           <div className="flex gap-1">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span>Claude is thinking...</span>
         </div>
@@ -200,7 +200,7 @@ function ChatInput() {
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
             placeholder="Ask Claude..."
-            className="w-full resize-none rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-3 pr-12 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 max-h-32 min-h-[44px] placeholder-gray-500 dark:placeholder-gray-400 scrollbar-hide"
+            className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 pr-12 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 max-h-32 min-h-[44px] placeholder-muted-foreground scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             disabled={state.isTyping}
             rows={1}
@@ -209,7 +209,7 @@ function ChatInput() {
           <button
             type="submit"
             disabled={!state.inputValue.trim() || state.isTyping}
-            className="absolute right-2 bottom-2 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 disabled:text-gray-300 dark:disabled:text-gray-600 disabled:cursor-not-allowed transition-colors focus:outline-none"
+            className="absolute right-2 bottom-2 p-2 text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 disabled:cursor-not-allowed transition-colors focus:outline-none"
           >
             <ArrowUpCircle className="h-6 w-6" />
           </button>
@@ -250,7 +250,7 @@ function AskPanelHeader({
   const activeTabData = tabs.find(tab => tab.id === activeTab)!
 
   return (
-    <div className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex-shrink-0 border-b border-border">
       {/* Header with collapse button and active tab info */}
       <div className="px-4 py-3">
         <div className="flex items-center justify-between">
@@ -260,8 +260,8 @@ function AskPanelHeader({
               <activeTabData.icon className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">{activeTabData.label}</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <h3 className="font-semibold text-foreground">{activeTabData.label}</h3>
+              <p className="text-xs text-muted-foreground">
                 {activeTab === 'ai' ? 'Your AI assistant' : 'Documentation & support'}
               </p>
             </div>
@@ -273,19 +273,19 @@ function AskPanelHeader({
               <div className="relative">
                 <button
                   onClick={() => setShowMenu(!showMenu)}
-                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
                 >
                   <MoreVertical className="h-4 w-4" />
                 </button>
                 
                 {showMenu && (
-                  <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+                  <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
                     <button
                       onClick={() => {
                         clearMessages()
                         setShowMenu(false)
                       }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                       Clear conversation
@@ -295,7 +295,7 @@ function AskPanelHeader({
                         navigator.clipboard.writeText(JSON.stringify({}))
                         setShowMenu(false)
                       }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
                     >
                       <Copy className="w-4 h-4" />
                       Export conversation
@@ -308,7 +308,7 @@ function AskPanelHeader({
             {/* Close Button */}
             <button
               onClick={toggleCollapsed}
-              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
               title="Close panel"
             >
               <X className="h-4 w-4" />
@@ -337,27 +337,27 @@ function AIIntroduction() {
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-4">
           <Sparkles className="w-8 h-8 text-white" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Ask Claude</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+        <h3 className="text-lg font-semibold text-foreground mb-2">Ask Claude</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">
           I&apos;m your AI assistant for productivity and task management. I can help you analyze patterns, organize tasks, and optimize your workflow.
         </p>
       </div>
 
       {/* Quick Actions */}
       <div className="space-y-3">
-        <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Quick actions</div>
+        <div className="text-sm font-medium text-foreground mb-3">Quick actions</div>
         {quickPrompts.map((prompt, index) => (
           <button
             key={index}
             onClick={() => sendMessage(prompt.text)}
-            className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left"
+            className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors text-left"
           >
             <span className="text-xl">{prompt.emoji}</span>
             <div className="flex-1">
-              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              <div className="text-sm font-medium text-foreground">
                 {prompt.text}
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
+              <div className="text-xs text-muted-foreground">
                 {prompt.description}
               </div>
             </div>
@@ -392,8 +392,8 @@ function PanelMenuSelection({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
   return (
     <div className="p-6">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">BoxLog Assistant</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <h3 className="text-lg font-semibold text-foreground mb-2">BoxLog Assistant</h3>
+        <p className="text-sm text-muted-foreground">
           Choose from the available tools and resources
         </p>
       </div>
@@ -405,25 +405,25 @@ function PanelMenuSelection({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
             <button
               key={item.id}
               onClick={() => onSelectTab(item.id)}
-              className="w-full flex items-center gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left group"
+              className="w-full flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left group"
             >
               <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center group-hover:scale-105 transition-transform`}>
                 <ItemIcon className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">{item.title}</h4>
+                  <h4 className="font-medium text-foreground">{item.title}</h4>
                   {item.badge && (
                     <span className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-full">
                       {item.badge}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {item.description}
                 </p>
               </div>
-              <ChevronRight className="w-6 h-6 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+              <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-foreground transition-colors" />
             </button>
           )
         })}
@@ -467,8 +467,8 @@ function HelpContent() {
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center mx-auto mb-4">
           <Book className="w-8 h-8 text-white" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Help & Support</h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <h3 className="text-lg font-semibold text-foreground mb-2">Help & Support</h3>
+        <p className="text-sm text-muted-foreground">
           Find answers and learn how to make the most of BoxLog
         </p>
       </div>
@@ -476,22 +476,22 @@ function HelpContent() {
       <div className="space-y-6">
         {helpSections.map((section, sectionIndex) => (
           <div key={sectionIndex}>
-            <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{section.title}</h4>
+            <h4 className="font-medium text-foreground mb-3">{section.title}</h4>
             <div className="space-y-2">
               {section.items.map((item, itemIndex) => (
                 <button
                   key={itemIndex}
-                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group"
+                  className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
                 >
                   <div>
-                    <div className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                    <div className="font-medium text-foreground mb-1">
                       {item.title}
                     </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-muted-foreground">
                       {item.description}
                     </div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </button>
               ))}
             </div>
@@ -499,12 +499,12 @@ function HelpContent() {
         ))}
       </div>
 
-      <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+      <div className="mt-8 p-4 bg-background rounded-lg border border-border">
         <div className="flex items-center gap-3 mb-2">
           <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          <span className="font-medium text-gray-900 dark:text-gray-100">Need more help?</span>
+          <span className="font-medium text-foreground">Need more help?</span>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+        <p className="text-sm text-muted-foreground mb-3">
           Can&apos;t find what you&apos;re looking for? Contact our support team.
         </p>
         <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
@@ -583,19 +583,19 @@ export function AskPanel() {
   if (collapsed) {
     return (
       <div 
-        className="h-full bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col items-center transition-all duration-300"
+        className="h-full bg-background border-l border-border flex flex-col items-center transition-all duration-300"
         style={{ width: `${currentWidth}px` }}
       >
         {/* Menu Icons */}
         <div className="flex flex-col items-center px-4 pt-4 space-y-2">
           <button
             onClick={() => handleDirectTabSelect('ai')}
-            className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group relative"
+            className="p-3 rounded-lg hover:bg-accent/50 transition-colors group relative"
             title="AI Assistant"
           >
             <Sparkles className="size-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" />
             {state.unreadCount > 0 && (
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-background rounded-full flex items-center justify-center">
                 <span className="text-xs text-white font-bold">{Math.min(state.unreadCount, 9)}</span>
               </div>
             )}
@@ -603,7 +603,7 @@ export function AskPanel() {
           
           <button
             onClick={() => handleDirectTabSelect('help')}
-            className="p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group"
+            className="p-3 rounded-lg hover:bg-accent/50 transition-colors group"
             title="Help & Support"
           >
             <HelpCircle className="size-6 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform" />
@@ -616,7 +616,7 @@ export function AskPanel() {
   // Expanded state - show menu selection or specific tab content
   return (
     <div 
-      className="h-full bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden transition-all duration-300
+      className="h-full bg-background border-l border-border flex flex-col overflow-hidden transition-all duration-300
                  max-lg:fixed max-lg:inset-0 max-lg:z-50"
       style={{ 
         width: isMobile ? '100%' : `${currentWidth}px`
@@ -637,12 +637,12 @@ export function AskPanel() {
               <div className="flex items-center p-4">
                 <button
                   onClick={toggleCollapsed}
-                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
                   title="Collapse panel"
                 >
                   <PanelRight className="size-6" />
                 </button>
-                <h3 className="ml-3 text-lg font-semibold text-gray-900 dark:text-gray-100">Assistant</h3>
+                <h3 className="ml-3 text-lg font-semibold text-foreground">Assistant</h3>
               </div>
               
               {/* Menu Items - Sidebar style */}
@@ -650,15 +650,15 @@ export function AskPanel() {
                 <div className="space-y-2" style={{ maxWidth: '256px' }}>
                   <button
                     onClick={() => handleTabSelect('ai')}
-                    className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                    className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-accent/50 transition-colors group"
                   >
                     <Sparkles className="size-6 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900 dark:text-gray-100">AI Chat</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Ask Claude for help</div>
+                      <div className="font-medium text-foreground">AI Chat</div>
+                      <div className="text-xs text-muted-foreground">Ask Claude for help</div>
                     </div>
                     {state.unreadCount > 0 && (
-                      <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                      <div className="w-5 h-5 bg-background rounded-full flex items-center justify-center">
                         <span className="text-xs text-white font-bold">{Math.min(state.unreadCount, 9)}</span>
                       </div>
                     )}
@@ -666,12 +666,12 @@ export function AskPanel() {
                   
                   <button
                     onClick={() => handleTabSelect('help')}
-                    className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+                    className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-accent/50 transition-colors group"
                   >
                     <HelpCircle className="size-6 text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform shrink-0" />
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900 dark:text-gray-100">Help & Support</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">Documentation & guides</div>
+                      <div className="font-medium text-foreground">Help & Support</div>
+                      <div className="text-xs text-muted-foreground">Documentation & guides</div>
                     </div>
                   </button>
                 </div>
@@ -688,7 +688,7 @@ export function AskPanel() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-sm font-medium flex-shrink-0">
                       <Sparkles className="w-4 h-4" />
                     </div>
-                    <div className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-tl-sm px-4 py-3">
+                    <div className="bg-background text-foreground rounded-2xl rounded-tl-sm px-4 py-3 border border-border">
                       <div className="text-sm leading-relaxed">
                         Hi! I&apos;m Claude, your AI assistant in BoxLog. I can help you with:
                       </div>
@@ -698,7 +698,7 @@ export function AskPanel() {
                         <li>• Scheduling and time management</li>
                         <li>• Answering questions about your data</li>
                       </ul>
-                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+                      <div className="text-sm text-muted-foreground mt-3">
                         Try one of the quick actions below, or ask me anything!
                       </div>
                     </div>

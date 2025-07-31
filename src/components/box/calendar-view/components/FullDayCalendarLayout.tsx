@@ -103,7 +103,7 @@ export function FullDayCalendarLayout({
           />
         </div>
         <div 
-          className="flex-1 flex relative" 
+          className="flex-1 flex relative bg-background" 
           style={{ height: `${25 * HOUR_HEIGHT}px` }}
         >
           
@@ -120,10 +120,10 @@ export function FullDayCalendarLayout({
             ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
             
             return (
-              <div key={day.toISOString()} className="flex-1 relative border-r border-gray-200 dark:border-gray-700 last:border-r-0">
+              <div key={day.toISOString()} className="flex-1 relative border-r border-border last:border-r-0">
                 {/* bothモードの場合は各日付の中央に分割線を表示 */}
                 {planRecordMode === 'both' && (
-                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] -translate-x-0.5 z-20"></div>
                 )}
                 
                 {/* 時間グリッド背景 */}
