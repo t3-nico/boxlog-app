@@ -80,14 +80,14 @@ export function CurrentTimeLine({
       {/* 現在時刻ライン */}
       <div className="relative">
         {/* 時刻表示ドット */}
-        <div className="absolute -left-1 -top-2 w-4 h-4 bg-red-500 rounded-full shadow-sm"></div>
+        <div className="absolute -left-1 -top-2 w-4 h-4 bg-[var(--color-error-500)] rounded-full shadow-sm"></div>
         
         {/* 現在時刻ライン */}
-        <div className="h-2 bg-red-500 shadow-sm"></div>
+        <div className="h-2 bg-[var(--color-error-500)] shadow-sm"></div>
         
         {/* 時刻テキスト */}
         <div className="absolute -top-6 left-4">
-          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded shadow-sm font-medium">
+          <span className="bg-[var(--color-error-500)] text-white text-xs px-2 py-1 rounded shadow-sm font-medium">
             {formatCurrentTime(currentTime)}
           </span>
         </div>

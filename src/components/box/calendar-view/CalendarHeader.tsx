@@ -55,7 +55,7 @@ export function CalendarHeader({
   const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
-    <header className="relative h-16 bg-white dark:bg-gray-900 px-4">
+    <header className="relative h-16 bg-background px-4">
       <div className="h-full flex items-center justify-between">
         {/* 左側: ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
@@ -66,7 +66,7 @@ export function CalendarHeader({
             className={cn(
               "px-4 py-2 text-sm font-medium border rounded-md transition-colors",
               isToday
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600 border-gray-200 dark:border-gray-600"
+                ? "bg-muted text-muted-foreground cursor-not-allowed border-border"
                 : "border-border text-muted-foreground hover:bg-accent/50"
             )}
           >
@@ -116,13 +116,13 @@ export function CalendarHeader({
         {/* 右側: 表示モードとビュー切り替えドロップダウン */}
         <div className="flex items-center gap-3">
           {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}
-          <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex items-center bg-muted rounded-lg p-1">
             <button
               onClick={() => updateSettings({ planRecordMode: 'both' })}
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'both'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
@@ -134,7 +134,7 @@ export function CalendarHeader({
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'plan'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
@@ -146,7 +146,7 @@ export function CalendarHeader({
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'record'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
+                  ? 'bg-background text-foreground shadow-sm'
                   : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
@@ -174,7 +174,7 @@ export function CalendarHeader({
                 />
                 
                 {/* Dropdown */}
-                <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50">
+                <div className="absolute right-0 top-full mt-1 w-40 bg-background border border-border rounded-md shadow-lg z-50">
                   <div className="py-1">
                     {viewOptions.map((option) => (
                       <button

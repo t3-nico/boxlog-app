@@ -83,7 +83,7 @@ export function SharedTimeAxis({
   }, [showCurrentTime, startHour, endHour])
 
   return (
-    <div className={cn("w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 relative", className)}>
+    <div className={cn("w-16 flex-shrink-0 bg-background border-r border-border relative", className)}>
       {/* 時間ラベル */}
       {timeSlots.map((slot, index) => {
         if (!slot.isMainHour && gridInterval < 60) {
@@ -93,7 +93,7 @@ export function SharedTimeAxis({
         return (
           <div
             key={`${slot.hours}-${slot.minutes}`}
-            className="absolute right-2 transform -translate-y-1/2 text-xs text-gray-500 dark:text-gray-400"
+            className="absolute right-2 transform -translate-y-1/2 text-xs text-muted-foreground"
             style={{
               top: `${(index * gridInterval / 60) * HOUR_HEIGHT}px`
             }}
@@ -106,7 +106,7 @@ export function SharedTimeAxis({
       {/* 営業時間のハイライト */}
       {showBusinessHours && (
         <div
-          className="absolute left-0 w-2 bg-blue-200 dark:bg-blue-800 opacity-50"
+          className="absolute left-0 w-2 bg-[var(--color-primary-200)] opacity-50"
           style={{
             top: `${((businessHours.start - startHour) * 60 / 60) * HOUR_HEIGHT}px`,
             height: `${((businessHours.end - businessHours.start) * 60 / 60) * HOUR_HEIGHT}px`
@@ -121,7 +121,7 @@ export function SharedTimeAxis({
           style={{ top: `${currentTimePosition.top}px` }}
         >
           {/* 時刻ラベル */}
-          <div className="absolute right-2 transform -translate-y-1/2 text-xs font-medium text-red-600 dark:text-red-400 bg-white dark:bg-gray-800 px-1 rounded">
+          <div className="absolute right-2 transform -translate-y-1/2 text-xs font-medium text-[var(--color-error-600)] bg-background px-1 rounded">
             {currentTimePosition.time}
           </div>
           {/* ドット */}
@@ -136,8 +136,8 @@ export function SharedTimeAxis({
           className={cn(
             "absolute right-0 w-2 border-t",
             slot.isMainHour 
-              ? "border-gray-300 dark:border-gray-600" 
-              : "border-gray-200 dark:border-gray-700"
+              ? "border-border" 
+              : "border-border/50"
           )}
           style={{
             top: `${(index * gridInterval / 60) * HOUR_HEIGHT}px`

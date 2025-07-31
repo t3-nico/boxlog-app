@@ -13,18 +13,18 @@ interface DateHeaderProps {
 
 export function DateHeader({ dates, className = '', planRecordMode }: DateHeaderProps) {
   return (
-    <div className={cn("flex-shrink-0 bg-white dark:bg-gray-900", className)}>
+    <div className={cn("flex-shrink-0 bg-background", className)}>
       <div className="flex">
         {/* 時間軸のスペース */}
-        <div className="w-16 flex-shrink-0 bg-white dark:bg-gray-900"></div>
+        <div className="w-16 flex-shrink-0 bg-background"></div>
         
         {/* 日付ヘッダー */}
         {dates.map((day) => (
           <div
             key={day.toISOString()}
             className={cn(
-              "flex-1 px-2 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative",
-              isWeekend(day) && "bg-gray-50/50 dark:bg-gray-800/50"
+              "flex-1 px-2 py-3 text-center border-r border-border last:border-r-0 relative",
+              isWeekend(day) && "bg-muted/50"
             )}
           >
             
@@ -32,8 +32,8 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
             <div className={cn(
               "text-xs font-medium uppercase tracking-wide mb-1",
               isToday(day) 
-                ? "text-blue-600 dark:text-blue-400" 
-                : "text-gray-600 dark:text-gray-400"
+                ? "text-accent-foreground" 
+                : "text-muted-foreground"
             )}>
               {formatShortWeekday(day)}
             </div>
@@ -42,8 +42,8 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
             <div className={cn(
               "text-lg font-semibold",
               isToday(day) 
-                ? "bg-blue-600 dark:bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto"
-                : "text-gray-900 dark:text-white"
+                ? "bg-accent text-accent-foreground rounded-full w-8 h-8 flex items-center justify-center mx-auto"
+                : "text-foreground"
             )}>
               {format(day, 'd')}
             </div>
