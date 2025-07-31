@@ -392,35 +392,32 @@ export function ApplicationLayoutNew({
         
         {/* Body - Layout container */}
         <div className="flex-1" style={{paddingTop: '64px'}}>
-          {/* Left Sidebar - Fixed Position */}
-          <div className={`${collapsed ? 'w-12' : 'w-64'} fixed left-0 bg-background border-r border-border z-10`} style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
-            <div className={`h-full flex flex-col gap-6 ${collapsed ? 'p-2' : 'p-4'}`}>
-              {!inSettings && (
-                <>
-                  {/* Createボタン */}
-                  <div className="flex-shrink-0">
-                    <SidebarSection>
-                      <div className="relative">
-                        <ShadButton
-                          onClick={(e) => {
-                            e.preventDefault()
-                            openPopup('event')
-                          }}
-                          variant="default"
-                          className={clsx(
-                            'w-[136px] h-[56px] py-4 px-4 flex items-center gap-2',
-                            collapsed && 'w-[56px] px-2 justify-center'
-                          )}
-                        >
-                          <span className={clsx('truncate', collapsed && 'hidden')}>Create</span>
-                          <PlusCircleIcon className="size-5 shrink-0" />
-                        </ShadButton>
-                      </div>
-                    </SidebarSection>
-                  </div>
+          {/* Left Sidebar - Hidden when collapsed */}
+          {!collapsed && (
+            <div className="w-64 fixed left-0 bg-background border-r border-border z-10" style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
+              <div className="h-full flex flex-col gap-6 p-4">
+                {!inSettings && (
+                  <>
+                    {/* Createボタン */}
+                    <div className="flex-shrink-0">
+                      <SidebarSection>
+                        <div className="relative">
+                          <ShadButton
+                            onClick={(e) => {
+                              e.preventDefault()
+                              openPopup('event')
+                            }}
+                            variant="default"
+                            className="w-[136px] h-[56px] py-4 px-4 flex items-center gap-2 font-semibold"
+                          >
+                            <span className="truncate">Create</span>
+                            <PlusCircleIcon className="size-5 shrink-0 text-primary-foreground" />
+                          </ShadButton>
+                        </div>
+                      </SidebarSection>
+                    </div>
 
-                  {/* 日付選択カレンダー */}
-                  {!collapsed && (
+                    {/* 日付選択カレンダー */}
                     <div className="flex-shrink-0">
                       <Calendar
                         mode="single"
@@ -430,11 +427,9 @@ export function ApplicationLayoutNew({
                         weekStartsOn={1}
                       />
                     </div>
-                  )}
 
-                  {/* 中央スクロールエリア - スマートフォルダーとタグ */}
-                  <div className="flex-1 overflow-y-auto min-h-0">
-                    {!collapsed && (
+                    {/* 中央スクロールエリア - スマートフォルダーとタグ */}
+                    <div className="flex-1 overflow-y-auto min-h-0">
                       <div className="space-y-6">
                         <SmartFolderList
                           collapsed={collapsed}
@@ -448,11 +443,9 @@ export function ApplicationLayoutNew({
                           selectedTagIds={filters.tags || []}
                         />
                       </div>
-                    )}
-                  </div>
+                    </div>
 
-                  {/* 下部固定エリア - LiveカードとUpgradeボタン */}
-                  {!collapsed && (
+                    {/* 下部固定エリア - LiveカードとUpgradeボタン */}
                     <div className="flex-shrink-0 space-y-3">
                       <CurrentScheduleCard collapsed={collapsed} events={events} />
                       
@@ -466,142 +459,139 @@ export function ApplicationLayoutNew({
                         <span>Upgrade</span>
                       </button>
                     </div>
-                  )}
+                  </>
+                )}
 
-                </>
-              )}
+                {inSettings && (
+                  <>
+                    <SidebarSection>
+                      <SidebarHeading>General</SidebarHeading>
+                      <SidebarItem
+                        href="/settings/account"
+                        current={pathname.startsWith('/settings/account')}
+                        indicator={false}
+                      >
+                        <UserIcon data-slot="icon" />
+                        <SidebarLabel>Account</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/settings/preferences"
+                        current={pathname.startsWith('/settings/preferences')}
+                        indicator={false}
+                      >
+                        <AdjustmentsVerticalIcon data-slot="icon" />
+                        <SidebarLabel>Preferences</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/settings/notifications"
+                        current={pathname.startsWith('/settings/notifications')}
+                        indicator={false}
+                      >
+                        <BellIcon data-slot="icon" />
+                        <SidebarLabel>Notifications</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/settings/calendar"
+                        current={pathname.startsWith('/settings/calendar')}
+                        indicator={false}
+                      >
+                        <CalendarIcon data-slot="icon" />
+                        <SidebarLabel>Calendar</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
 
-              {inSettings && (
-                <>
-                  <SidebarSection>
-                    <SidebarHeading>General</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/account"
-                      current={pathname.startsWith('/settings/account')}
-                      indicator={false}
-                    >
-                      <UserIcon data-slot="icon" />
-                      <SidebarLabel>Account</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/preferences"
-                      current={pathname.startsWith('/settings/preferences')}
-                      indicator={false}
-                    >
-                      <AdjustmentsVerticalIcon data-slot="icon" />
-                      <SidebarLabel>Preferences</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/notifications"
-                      current={pathname.startsWith('/settings/notifications')}
-                      indicator={false}
-                    >
-                      <BellIcon data-slot="icon" />
-                      <SidebarLabel>Notifications</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/calendar"
-                      current={pathname.startsWith('/settings/calendar')}
-                      indicator={false}
-                    >
-                      <CalendarIcon data-slot="icon" />
-                      <SidebarLabel>Calendar</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>Customization</SidebarHeading>
+                      <SidebarItem
+                        href="/settings/tags"
+                        current={pathname.startsWith('/settings/tags')}
+                        indicator={false}
+                      >
+                        <TagIcon data-slot="icon" />
+                        <SidebarLabel>Tags</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/settings/templates"
+                        current={pathname.startsWith('/settings/templates')}
+                        indicator={false}
+                      >
+                        <ClipboardDocumentListIcon data-slot="icon" />
+                        <SidebarLabel>Task Templates</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
 
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Customization</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/tags"
-                      current={pathname.startsWith('/settings/tags')}
-                      indicator={false}
-                    >
-                      <TagIcon data-slot="icon" />
-                      <SidebarLabel>Tags</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/templates"
-                      current={pathname.startsWith('/settings/templates')}
-                      indicator={false}
-                    >
-                      <ClipboardDocumentListIcon data-slot="icon" />
-                      <SidebarLabel>Task Templates</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>Integration</SidebarHeading>
+                      <SidebarItem
+                        href="/settings/integration"
+                        current={pathname.startsWith('/settings/integration')}
+                        indicator={false}
+                      >
+                        <LinkIcon data-slot="icon" />
+                        <SidebarLabel>Calendar & Integration</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
 
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Integration</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/integration"
-                      current={pathname.startsWith('/settings/integration')}
-                      indicator={false}
-                    >
-                      <LinkIcon data-slot="icon" />
-                      <SidebarLabel>Calendar & Integration</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>Data</SidebarHeading>
+                      <SidebarItem
+                        href="/settings/plan-billing"
+                        current={pathname.startsWith('/settings/plan-billing')}
+                        indicator={false}
+                      >
+                        <CreditCardIcon data-slot="icon" />
+                        <SidebarLabel>Plan & Billing</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/settings/data-export"
+                        current={pathname.startsWith('/settings/data-export')}
+                        indicator={false}
+                      >
+                        <ArrowDownTrayIcon data-slot="icon" />
+                        <SidebarLabel>Data & Export</SidebarLabel>
+                      </SidebarItem>
+                      <SidebarItem
+                        href="/settings/trash"
+                        current={pathname.startsWith('/settings/trash')}
+                        indicator={false}
+                      >
+                        <TrashIcon data-slot="icon" />
+                        <SidebarLabel>Trash</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
 
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Data</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/plan-billing"
-                      current={pathname.startsWith('/settings/plan-billing')}
-                      indicator={false}
-                    >
-                      <CreditCardIcon data-slot="icon" />
-                      <SidebarLabel>Plan & Billing</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/data-export"
-                      current={pathname.startsWith('/settings/data-export')}
-                      indicator={false}
-                    >
-                      <ArrowDownTrayIcon data-slot="icon" />
-                      <SidebarLabel>Data & Export</SidebarLabel>
-                    </SidebarItem>
-                    <SidebarItem
-                      href="/settings/trash"
-                      current={pathname.startsWith('/settings/trash')}
-                      indicator={false}
-                    >
-                      <TrashIcon data-slot="icon" />
-                      <SidebarLabel>Trash</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>Personal</SidebarHeading>
+                      <SidebarItem
+                        href="/settings/chronotype"
+                        current={pathname.startsWith('/settings/chronotype')}
+                        indicator={false}
+                      >
+                        <ClockIcon data-slot="icon" />
+                        <SidebarLabel>Chronotype</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
 
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>Personal</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/chronotype"
-                      current={pathname.startsWith('/settings/chronotype')}
-                      indicator={false}
-                    >
-                      <ClockIcon data-slot="icon" />
-                      <SidebarLabel>Chronotype</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-
-                  <SidebarSection className="mt-8">
-                    <SidebarHeading>About</SidebarHeading>
-                    <SidebarItem
-                      href="/settings/legal"
-                      current={pathname.startsWith('/settings/legal')}
-                      indicator={false}
-                    >
-                      <InformationCircleIcon data-slot="icon" />
-                      <SidebarLabel>About / Legal</SidebarLabel>
-                    </SidebarItem>
-                  </SidebarSection>
-                </>
-              )}
-              
-              
+                    <SidebarSection className="mt-8">
+                      <SidebarHeading>About</SidebarHeading>
+                      <SidebarItem
+                        href="/settings/legal"
+                        current={pathname.startsWith('/settings/legal')}
+                        indicator={false}
+                      >
+                        <InformationCircleIcon data-slot="icon" />
+                        <SidebarLabel>About / Legal</SidebarLabel>
+                      </SidebarItem>
+                    </SidebarSection>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          )}
           
           {/* Main Content */}
           <div className="bg-background relative z-10" style={{
-            marginLeft: collapsed ? '48px' : '256px', 
+            marginLeft: collapsed ? '0px' : '256px',
             marginRight: (isAIChatOpen || isCodebaseAIChatOpen) ? '320px' : (isRightSidebarHidden ? '0px' : '48px'),
             transition: 'margin-left 150ms ease, margin-right 150ms ease',
             height: 'calc(100vh - 64px)',
