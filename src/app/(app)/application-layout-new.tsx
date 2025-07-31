@@ -28,6 +28,7 @@ import {
 } from '@/components/dropdown'
 import * as Headless from '@headlessui/react'
 import { Button } from '@/components/button'
+import { Button as ShadButton } from '@/components/ui/button'
 import { NavbarItem } from '@/components/navbar'
 import {
   SidebarHeading,
@@ -393,55 +394,48 @@ export function ApplicationLayoutNew({
         <div className="flex-1" style={{paddingTop: '64px'}}>
           {/* Left Sidebar - Fixed Position */}
           <div className={`${collapsed ? 'w-12' : 'w-64'} fixed left-0 bg-background border-r border-border z-10`} style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
-            <div className={`h-full flex flex-col ${collapsed ? 'p-2' : 'p-4'}`}>
+            <div className={`h-full flex flex-col gap-6 ${collapsed ? 'p-2' : 'p-4'}`}>
               {!inSettings && (
                 <>
-                  {/* 上部固定エリア - タイトルとAddボタン */}
+                  {/* Createボタン */}
                   <div className="flex-shrink-0">
                     <SidebarSection>
-                      
                       <div className="relative">
-                        <button
+                        <ShadButton
                           onClick={(e) => {
                             e.preventDefault()
                             openPopup('event')
                           }}
+                          variant="default"
                           className={clsx(
-                            'flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium sm:py-2 sm:text-sm/5',
-                            'text-orange-600 dark:text-orange-400',
-                            'hover:bg-orange-50 dark:hover:bg-orange-900/20',
-                            'transition-colors duration-200',
-                            'focus:outline-none focus:ring-2 focus:ring-orange-500',
-                            collapsed && 'justify-center'
+                            'w-[136px] h-[56px] py-4 px-4 flex items-center gap-2',
+                            collapsed && 'w-[56px] px-2 justify-center'
                           )}
                         >
-                          <PlusCircleIcon className="size-6 sm:size-5 shrink-0 text-orange-600 dark:text-orange-400" data-slot="icon" />
-                          <span className={clsx('truncate', collapsed && 'hidden')}>Add</span>
-                        </button>
-
+                          <span className={clsx('truncate', collapsed && 'hidden')}>Create</span>
+                          <PlusCircleIcon className="size-5 shrink-0" />
+                        </ShadButton>
                       </div>
                     </SidebarSection>
-
-                    {/* 日付選択カレンダー */}
-                    {!collapsed && (
-                      <div>
-                        <Calendar
-                          mode="single"
-                          selected={selectedDate}
-                          onSelect={handleDateSelect}
-                          className="w-full p-0"
-                          weekStartsOn={1}
-                        />
-                      </div>
-                    )}
-
-                    <div className="h-2" />
                   </div>
 
-                  {/* 中央スクロールエリア - スマートフォルダーとタグのみ */}
+                  {/* 日付選択カレンダー */}
                   {!collapsed && (
-                    <div className="flex-1 overflow-y-auto min-h-0">
-                      <div className="space-y-3">
+                    <div className="flex-shrink-0">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={handleDateSelect}
+                        className="w-full p-0"
+                        weekStartsOn={1}
+                      />
+                    </div>
+                  )}
+
+                  {/* 中央スクロールエリア - スマートフォルダーとタグ */}
+                  <div className="flex-1 overflow-y-auto min-h-0">
+                    {!collapsed && (
+                      <div className="space-y-6">
                         <SmartFolderList
                           collapsed={collapsed}
                           onSelectFolder={handleSelectSmartFolder}
@@ -454,8 +448,8 @@ export function ApplicationLayoutNew({
                           selectedTagIds={filters.tags || []}
                         />
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
 
                   {/* 下部固定エリア - LiveカードとUpgradeボタン */}
                   {!collapsed && (
