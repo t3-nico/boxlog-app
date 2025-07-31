@@ -213,23 +213,23 @@ export function FullDayCalendarLayout({
   }, [dragState, getTimeFromYPosition, onCreateEvent])
 
   return (
-      <div ref={containerRef} className="flex-1 overflow-hidden">
-        <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
-          <div 
-            className="flex-shrink-0 sticky left-0 z-10"
-            style={{ height: `${25 * HOUR_HEIGHT}px` }}
-          >
-            <TimeAxisLabels 
-              startHour={0} 
-              endHour={25} 
-              interval={60}
-              planRecordMode={planRecordMode}
-            />
-          </div>
-          <div 
-            className="flex-1 flex relative" 
-            style={{ height: `${25 * HOUR_HEIGHT}px` }}
-          >
+    <div ref={containerRef} className="flex-1 overflow-hidden">
+      <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
+        <div 
+          className="flex-shrink-0 sticky left-0 z-10"
+          style={{ height: `${25 * HOUR_HEIGHT}px` }}
+        >
+          <TimeAxisLabels 
+            startHour={0} 
+            endHour={25} 
+            interval={60}
+            planRecordMode={planRecordMode}
+          />
+        </div>
+        <div 
+          className="flex-1 flex relative bg-background" 
+          style={{ height: `${25 * HOUR_HEIGHT}px` }}
+        >
           
           {dates.map((day, dayIndex) => {
             // その日のイベント（タイムゾーン変換済み）
@@ -256,7 +256,7 @@ export function FullDayCalendarLayout({
                 date={day}
                 dayIndex={dayIndex}
                 onEventUpdate={onUpdateEvent}
-                className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
+                className="flex-1 border-r border-border last:border-r-0"
               >
                 <div
                   onMouseDown={(e) => handleMouseDown(e, dayIndex)}
@@ -267,7 +267,7 @@ export function FullDayCalendarLayout({
                 >
                 {/* bothモードの場合は各日付の中央に分割線を表示 */}
                 {planRecordMode === 'both' && (
-                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gray-400 dark:bg-gray-600 -translate-x-0.5 z-20"></div>
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] -translate-x-0.5 z-20"></div>
                 )}
                 
                 {/* 時間グリッド背景 */}

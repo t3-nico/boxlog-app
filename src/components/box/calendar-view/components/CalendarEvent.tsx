@@ -188,7 +188,7 @@ export function CalendarEventComponent({
           {onEdit && (
             <button
               onClick={handleEdit}
-              className="w-4 h-4 rounded text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center"
+              className="w-4 h-4 rounded text-xs bg-muted hover:bg-accent/50 flex items-center justify-center"
               title="編集"
             >
               ✏️
@@ -197,7 +197,7 @@ export function CalendarEventComponent({
           {onDelete && (
             <button
               onClick={handleDelete}
-              className="w-4 h-4 rounded text-xs bg-red-100 dark:bg-red-900 hover:bg-red-200 dark:hover:bg-red-800 text-red-600 dark:text-red-400 flex items-center justify-center"
+              className="w-4 h-4 rounded text-xs bg-destructive/10 hover:bg-destructive/20 text-destructive flex items-center justify-center"
               title="削除"
             >
               ×

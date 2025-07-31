@@ -121,7 +121,7 @@ export function SplitTaskCard({
         </div>
 
         {/* 中央の分割線 */}
-        <div className="w-2 bg-gray-300 dark:bg-gray-600 flex-shrink-0"></div>
+        <div className="w-2 bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] flex-shrink-0"></div>
 
         {/* 右側: 実績タスク */}
         <div 

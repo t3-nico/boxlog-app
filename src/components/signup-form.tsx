@@ -77,7 +77,7 @@ export function SignupForm({
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-2xl font-bold text-green-600">Registration Complete</h1>
+          <h1 className="text-2xl font-bold text-foreground">Registration Complete</h1>
           <p className="text-muted-foreground text-sm text-balance">
             A confirmation email has been sent. Please check it to activate your account.
           </p>

@@ -55,7 +55,7 @@ export function CalendarHeader({
   const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
-    <header className="relative h-16 bg-white dark:bg-gray-900 px-4">
+    <header className="relative h-16 bg-background px-4">
       <div className="h-full flex items-center justify-between">
         {/* 左側: ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
@@ -66,8 +66,8 @@ export function CalendarHeader({
             className={cn(
               "px-4 py-2 text-sm font-medium border rounded-md transition-colors",
               isToday
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-600 border-gray-200 dark:border-gray-600"
-                : "border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                ? "bg-muted text-muted-foreground cursor-not-allowed border-border"
+                : "border-border text-muted-foreground hover:bg-accent/50"
             )}
           >
             Today
@@ -77,14 +77,14 @@ export function CalendarHeader({
           <div className="flex items-center gap-1">
             <button
               onClick={() => onNavigate('prev')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              className="p-1 hover:bg-accent/50 rounded-full transition-colors"
               title="Previous period"
             >
               <ChevronLeft className="h-6 w-6 text-gray-600 dark:text-gray-400" />
             </button>
             <button
               onClick={() => onNavigate('next')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+              className="p-1 hover:bg-accent/50 rounded-full transition-colors"
               title="Next period"
             >
               <ChevronRight className="h-6 w-6 text-gray-600 dark:text-gray-400" />
@@ -101,7 +101,7 @@ export function CalendarHeader({
                   return (
                     <>
                       {monthYear}
-                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
+                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent text-accent-foreground">
                         {weekPart}
                       </span>
                     </>
@@ -116,14 +116,14 @@ export function CalendarHeader({
         {/* 右側: 表示モードとビュー切り替えドロップダウン */}
         <div className="flex items-center gap-3">
           {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}
-          <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+          <div className="flex items-center bg-muted rounded-lg p-1">
             <button
               onClick={() => updateSettings({ planRecordMode: 'both' })}
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'both'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
               <Columns3 className="w-4 h-4" />
@@ -134,8 +134,8 @@ export function CalendarHeader({
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'plan'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
               <ClipboardList className="w-4 h-4" />
@@ -146,8 +146,8 @@ export function CalendarHeader({
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
                 planRecordMode === 'record'
-                  ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:bg-accent/50'
               )}
             >
               <CheckCircle className="w-4 h-4" />
@@ -159,7 +159,7 @@ export function CalendarHeader({
           <div className="relative">
             <button
               onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-100 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground bg-accent border border-border rounded-lg hover:bg-accent/80 transition-colors shadow-sm"
             >
               <span>{currentViewOption?.label || 'View'}</span>
               <ChevronDown className="w-4 h-4" />
@@ -174,7 +174,7 @@ export function CalendarHeader({
                 />
                 
                 {/* Dropdown */}
-                <div className="absolute right-0 top-full mt-1 w-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50">
+                <div className="absolute right-0 top-full mt-1 w-40 bg-background border border-border rounded-md shadow-lg z-50">
                   <div className="py-1">
                     {viewOptions.map((option) => (
                       <button
@@ -184,10 +184,10 @@ export function CalendarHeader({
                           setIsViewDropdownOpen(false)
                         }}
                         className={cn(
-                          "w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+                          "w-full text-left px-4 py-2 text-sm hover:bg-accent/50 transition-colors",
                           viewType === option.value 
-                            ? 'bg-blue-50 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
-                            : 'text-gray-700 dark:text-gray-300'
+                            ? 'bg-accent text-accent-foreground' 
+                            : 'text-muted-foreground'
                         )}
                       >
                         {option.label}

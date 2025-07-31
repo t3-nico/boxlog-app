@@ -41,7 +41,7 @@ export function GridBackground({
         {dates.map((date, index) => (
           <div
             key={date.toISOString()}
-            className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
+            className="flex-1 border-r border-border last:border-r-0"
             style={{ height: totalHeight }}
           />
         ))}
@@ -54,7 +54,7 @@ export function GridBackground({
             key={hour}
             className={cn(
               "absolute w-full border-t",
-              hour === 0 ? "border-transparent" : "border-gray-200 dark:border-gray-700"
+              hour === 0 ? "border-transparent" : "border-border"
             )}
             style={{ top: index * HOUR_HEIGHT }}
           />
@@ -92,7 +92,7 @@ export function SimpleGridBackground({
         {dates.map((date, index) => (
           <div
             key={date.toISOString()}
-            className="flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0"
+            className="flex-1 border-r border-border last:border-r-0"
           />
         ))}
       </div>
@@ -105,8 +105,8 @@ export function SimpleGridBackground({
             className={cn(
               "absolute w-full border-t",
               i % (60 / gridInterval) === 0 
-                ? "border-gray-200 dark:border-gray-700" 
-                : "border-gray-100 dark:border-gray-800 border-dashed"
+                ? "border-border" 
+                : "border-border/50 border-dashed"
             )}
             style={{ top: i * intervalHeight }}
           />
@@ -206,8 +206,8 @@ export function CustomGrid({
             key={date.toISOString()}
             className={cn(
               "flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0",
-              isWeekend(date) && "bg-gray-50/50 dark:bg-gray-800/20",
-              isToday(date) && "bg-blue-50/30 dark:bg-blue-900/10"
+              isWeekend(date) && "bg-muted/50",
+              isToday(date) && "bg-accent/30"
             )}
           />
         ))}
@@ -224,8 +224,8 @@ export function CustomGrid({
               className={cn(
                 "absolute w-full border-t",
                 slot.minute === 0 
-                  ? "border-gray-200 dark:border-gray-700" 
-                  : "border-gray-100 dark:border-gray-800 border-dashed"
+                  ? "border-border" 
+                  : "border-border/50 border-dashed"
               )}
               style={{ top: position }}
             />
@@ -267,7 +267,7 @@ export function DropZoneHighlight({
   return (
     <div 
       className={cn(
-        "absolute bg-blue-200/50 dark:bg-blue-800/50 border-2 border-blue-400 dark:border-blue-600 border-dashed pointer-events-none",
+        "absolute bg-accent/50 border-2 border-accent border-dashed pointer-events-none",
         className
       )}
       style={{ 

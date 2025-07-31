@@ -34,7 +34,7 @@ export function TimeAxisLabels({
   return (
     <div 
       className={cn(
-        "shrink-0 bg-white dark:bg-gray-900 relative",
+        "shrink-0 bg-background relative",
         className
       )}
       style={{ width: TIME_LABEL_WIDTH }}
@@ -44,17 +44,17 @@ export function TimeAxisLabels({
         <div
           key={hour}
           className={cn(
-            "relative border-b border-gray-100 dark:border-gray-800",
-            showBusinessHours && !isBusinessHour(hour) && "bg-gray-50/50 dark:bg-gray-800/20"
+            "relative",
+            showBusinessHours && !isBusinessHour(hour) && "bg-muted/50"
           )}
           style={{ height: HOUR_HEIGHT }}
         >
           {/* クロノタイプ縦線インジケーター（右端に表示） */}
           <ChronotypeIndicator hour={hour} className="z-0" />
           
-          {/* 正時のラベルのみ表示（0時と24時以降は除く） */}
-          {hour >= 0 && hour < 24 && (
-            <div className="absolute -top-3 right-2 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-1 z-10">
+          {/* 正時のラベルのみ表示（24時は除く） */}
+          {hour > 0 && hour < 24 && (
+            <div className="absolute -top-2 right-2 text-xs text-muted-foreground bg-background px-2 z-10">
               {formatHourLabel(hour)}
             </div>
           )}
@@ -84,7 +84,7 @@ export function CompactTimeAxisLabels({
   return (
     <div 
       className={cn(
-        "shrink-0 bg-white dark:bg-gray-900",
+        "shrink-0 bg-background",
         className
       )}
       style={{ width: TIME_LABEL_WIDTH * 0.75 }}
@@ -97,7 +97,7 @@ export function CompactTimeAxisLabels({
         >
           {/* 正時のラベルのみ表示 */}
           {hour > 0 && (
-            <div className="absolute -top-2 right-1 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-2">
+            <div className="absolute -top-2 right-1 text-xs text-muted-foreground bg-background px-2">
               {formatHourLabel(hour)}
             </div>
           )}
@@ -126,7 +126,7 @@ export function BusinessHoursLabels({
   return (
     <div 
       className={cn(
-        "shrink-0 bg-white dark:bg-gray-900",
+        "shrink-0 bg-background",
         className
       )}
       style={{ width: TIME_LABEL_WIDTH }}
@@ -138,7 +138,7 @@ export function BusinessHoursLabels({
           style={{ height: HOUR_HEIGHT }}
         >
           {/* 正時のラベルのみ表示 */}
-          <div className="absolute -top-2 right-2 text-xs text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-900 px-2">
+          <div className="absolute -top-2 right-2 text-xs text-muted-foreground bg-background px-2">
             {formatHourLabel(hour)}
           </div>
         </div>

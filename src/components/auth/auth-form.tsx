@@ -146,11 +146,11 @@ export function AuthForm({ mode }: AuthFormProps) {
             {...register('email')}
             type="email"
             id="email"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-input px-3 py-2 shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
             placeholder="you@example.com"
           />
           {errors.email && (
-            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+            <p className="mt-1 text-sm text-destructive">{errors.email.message}</p>
           )}
         </div>
 
@@ -162,24 +162,24 @@ export function AuthForm({ mode }: AuthFormProps) {
             {...register('password')}
             type="password"
             id="password"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="mt-1 block w-full rounded-md border border-input px-3 py-2 shadow-sm focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
             placeholder="••••••••"
           />
           {errors.password && (
-            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+            <p className="mt-1 text-sm text-destructive">{errors.password.message}</p>
           )}
         </div>
 
         {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="rounded-md bg-destructive/10 p-4">
+            <p className="text-sm text-destructive">{error}</p>
           </div>
         )}
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ring disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Loading...' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>

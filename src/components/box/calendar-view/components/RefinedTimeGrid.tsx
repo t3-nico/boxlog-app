@@ -60,7 +60,7 @@ function CurrentTimeLine({
     >
       {/* 時刻表示 */}
       <motion.div
-        className="absolute left-16 top-0 -translate-y-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded shadow-sm"
+        className="absolute left-16 top-0 -translate-y-1/2 bg-[var(--color-error-500)] text-white text-xs px-2 py-1 rounded shadow-sm"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2, duration: 0.3 }}
@@ -87,7 +87,7 @@ function TimeAxisLabels({
   const hours = Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i)
   
   return (
-    <div className="relative w-16 flex-shrink-0 bg-gray-50 dark:bg-gray-900">
+    <div className="relative w-16 flex-shrink-0 bg-background">
       
       {hours.map(hour => (
         <div 
@@ -96,7 +96,7 @@ function TimeAxisLabels({
           style={{ height: `${HOUR_HEIGHT}px` }}
         >
           {/* 正時ラベル */}
-          <div className="absolute -top-2 left-0 right-0 text-xs text-gray-600 dark:text-gray-400 text-center font-medium">
+          <div className="absolute -top-2 left-0 right-0 text-xs text-muted-foreground text-center font-medium">
             {timeFormat === '12h' 
               ? format(new Date().setHours(hour, 0, 0, 0), 'ha')
               : `${hour.toString().padStart(2, '0')}:00`
@@ -172,7 +172,7 @@ function GridBackground({
             
             {/* 垂直区切り線 */}
             {dateIndex < dates.length - 1 && (
-              <div className="absolute right-0 top-0 bottom-0 w-px bg-gray-200 dark:border-gray-700" />
+              <div className="absolute right-0 top-0 bottom-0 w-px bg-border" />
             )}
             
             {/* 時間グリッド */}
@@ -382,7 +382,7 @@ export function SplitRefinedTimeGrid({
         
         {/* 中央区切り線 */}
         <motion.div
-          className="w-px bg-gray-400 dark:bg-gray-600 z-20"
+          className="w-px bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] z-20"
           initial={{ scaleY: 0 }}
           animate={{ scaleY: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}

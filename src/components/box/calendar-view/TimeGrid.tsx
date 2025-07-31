@@ -178,7 +178,7 @@ export function TimeGrid({
   }, [isInitialized, scrollToTime, scrollToTimeFunc])
   
   return (
-    <div className={`h-full flex flex-col bg-white dark:bg-gray-900 ${className}`}>
+    <div className={`h-full flex flex-col bg-background ${className}`}>
       {/* 全日イベントエリア */}
       {showAllDay && allDayTasks.length > 0 && (
         <AllDaySection
@@ -216,7 +216,7 @@ export function TimeGrid({
           {/* スクロール可能なグリッドエリア */}
           <div
             ref={scrollContainerRef}
-            className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600"
+            className="flex-1 overflow-auto scrollbar-thin scrollbar-thumb-border"
             onScroll={handleScroll}
             style={{ height: '100%' }}
           >
@@ -388,7 +388,7 @@ function DayColumn({
   return (
     <div
       ref={setDropZoneRef}
-      className={`flex-1 border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative ${
+      className={`flex-1 border-r border-border last:border-r-0 relative ${
         isDragging ? 'cursor-grabbing' : onMouseDown ? 'cursor-crosshair' : 'cursor-pointer'
       }`}
       onClick={handleTimeSlotClick}

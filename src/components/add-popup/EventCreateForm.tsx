@@ -243,7 +243,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         recurrenceType: undefined,
         recurrenceInterval: 1,
         recurrenceEndDate: undefined,
-        tagIds: event.tags?.map(tag => tag.id) || [],
+        tagIds: event.tags?.map((tag: any) => tag.id) || [],
         location: event.location || '',
         url: event.url || '',
       }
