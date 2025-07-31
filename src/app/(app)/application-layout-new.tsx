@@ -177,6 +177,20 @@ export function ApplicationLayoutNew({
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
             <div className="flex items-center gap-4">
+              {/* Sidebar toggle button */}
+              {!inSettings && (
+                <button
+                  onClick={() => setCollapsed(!collapsed)}
+                  className="p-2 rounded-md hover:bg-accent/50 transition-colors"
+                  title={collapsed ? "Open sidebar" : "Close sidebar"}
+                >
+                  {collapsed ? (
+                    <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  ) : (
+                    <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                  )}
+                </button>
+              )}
               {!inSettings && (
                 <Headless.Menu as="div" className="relative">
                   <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
@@ -198,7 +212,7 @@ export function ApplicationLayoutNew({
                     </SidebarLabel>
                     <ChevronDownIcon data-slot="icon" />
                   </Headless.MenuButton>
-                  <Headless.MenuItems className="absolute left-0 mt-2 w-80 lg:w-64 origin-top-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-2 z-50">
+                  <Headless.MenuItems className="absolute left-0 mt-2 w-80 lg:w-64 origin-top-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-2 z-[99999]">
                     <Headless.MenuItem>
                       {({ focus }) => (
                         <a
@@ -380,38 +394,11 @@ export function ApplicationLayoutNew({
           {/* Left Sidebar - Fixed Position */}
           <div className={`${collapsed ? 'w-12' : 'w-64'} fixed left-0 bg-background border-r border-border z-10`} style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
             <div className={`h-full flex flex-col ${collapsed ? 'p-2' : 'p-4'}`}>
-              {/* Collapsed sidebar - expand button */}
-              {collapsed && !inSettings && (
-                <div className="flex justify-center mb-4">
-                  <button
-                    onClick={() => setCollapsed(false)}
-                    className="p-2 rounded-md hover:bg-accent/50 transition-colors"
-                    title="Open sidebar"
-                  >
-                    <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  </button>
-                </div>
-              )}
               {!inSettings && (
                 <>
                   {/* 上部固定エリア - タイトルとAddボタン */}
                   <div className="flex-shrink-0">
                     <SidebarSection>
-                      {/* 動的ページタイトル表示 - 開いている時のみ */}
-                      {!collapsed && (
-                        <div className="mb-3 px-2 flex items-center justify-between">
-                          <h1 className="text-lg font-semibold text-zinc-950 dark:text-white">
-                            {pageTitle}
-                          </h1>
-                          <button
-                            onClick={() => setCollapsed(true)}
-                            className="p-2 rounded-md hover:bg-accent/50 transition-colors"
-                            title="Close sidebar"
-                          >
-                            <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                          </button>
-                        </div>
-                      )}
                       
                       <div className="relative">
                         <button
@@ -619,7 +606,7 @@ export function ApplicationLayoutNew({
           </div>
           
           {/* Main Content */}
-          <div className="bg-background" style={{
+          <div className="bg-background relative z-10" style={{
             marginLeft: collapsed ? '48px' : '256px', 
             marginRight: (isAIChatOpen || isCodebaseAIChatOpen) ? '320px' : (isRightSidebarHidden ? '0px' : '48px'),
             transition: 'margin-left 150ms ease, margin-right 150ms ease',
