@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useDrag } from 'react-dnd'
 import { cn } from '@/lib/utils'
 import type { CalendarEvent } from '@/types/events'
@@ -9,6 +9,7 @@ export interface DraggedEventData {
   event: CalendarEvent
   dayIndex: number
   originalTop: number
+  mouseOffsetY: number // マウスカーソルとカード上部のオフセット
 }
 
 interface DraggableEventProps {
@@ -34,14 +35,31 @@ export function DraggableEvent({
 }: DraggableEventProps) {
   const ref = useRef<HTMLDivElement>(null)
   
-  const [{ isDragging }, drag] = useDrag({
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: DRAG_TYPE.EVENT,
-    item: (): DraggedEventData => {
-      console.log('🎯 ドラッグ開始:', { event: event.title, dayIndex, topPosition })
+    item: (monitor): DraggedEventData => {
+      const initialClientOffset = monitor.getInitialClientOffset()
+      
+      // マウスカーソルとカード上部のオフセットを計算
+      let mouseOffsetY = 0
+      if (initialClientOffset && ref.current) {
+        const rect = ref.current.getBoundingClientRect()
+        mouseOffsetY = initialClientOffset.y - rect.top
+      }
+      
+      console.log('🎯 ドラッグ開始:', { 
+        event: event.title, 
+        dayIndex, 
+        topPosition,
+        mouseOffsetY,
+        cardTop: ref.current?.getBoundingClientRect().top
+      })
+      
       return {
         event,
         dayIndex,
-        originalTop: topPosition
+        originalTop: topPosition,
+        mouseOffsetY
       }
     },
     end: (_, monitor) => {
@@ -56,7 +74,12 @@ export function DraggableEvent({
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })
-  })
+  }), [event, dayIndex, topPosition])
+
+  // カスタムドラッグプレビューを使用するため、デフォルトのプレビューを無効化
+  useEffect(() => {
+    preview(new Image(), { captureDraggingState: true })
+  }, [preview])
 
   drag(ref)
 
@@ -73,7 +96,7 @@ export function DraggableEvent({
       data-event="true"
       className={cn(
         "absolute rounded-md hover:shadow-lg transition-all duration-200 z-20 border border-white/20",
-        isDragging ? "opacity-50 cursor-grabbing" : "cursor-pointer hover:cursor-grab"
+        isDragging ? "opacity-20 cursor-grabbing" : "cursor-pointer hover:cursor-grab active:cursor-grabbing"
       )}
       style={style}
       onClick={handleClick}

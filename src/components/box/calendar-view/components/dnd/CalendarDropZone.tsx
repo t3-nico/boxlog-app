@@ -45,10 +45,16 @@ export function CalendarDropZone({
 
       const rect = dropRef.current.getBoundingClientRect()
       const scrollTop = dropRef.current.closest('.full-day-scroll')?.scrollTop || 0
-      const relativeY = dropResult.y - rect.top + scrollTop
+      
+      // マウスオフセットを考慮してカード上部の位置を計算
+      const mouseOffsetY = item.mouseOffsetY || 0
+      const cardTopY = dropResult.y - mouseOffsetY
+      const relativeY = cardTopY - rect.top + scrollTop
 
       console.log('📍 ドロップ位置情報:', {
         clientY: dropResult.y,
+        mouseOffsetY,
+        cardTopY,
         rectTop: rect.top,
         scrollTop,
         relativeY

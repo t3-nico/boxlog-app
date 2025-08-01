@@ -40,6 +40,7 @@ interface WeekViewProps {
   onTaskClick?: (task: any) => void
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
+  onUpdateEvent?: (event: CalendarEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -59,6 +60,7 @@ export function WeekView({
   onTaskClick,
   onEventClick,
   onCreateEvent,
+  onUpdateEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -95,6 +97,7 @@ export function WeekView({
             dateRange={dateRange}
             onEventClick={onEventClick}
             onCreateEvent={onCreateEvent}
+            onUpdateEvent={onUpdateEvent}
           />
         </div>
       </div>

@@ -7,6 +7,7 @@ import { TimeAxisLabels } from './TimeAxisLabels'
 import { DnDProvider } from './dnd/DnDProvider'
 import { DraggableEvent } from './dnd/DraggableEvent'
 import { CalendarDropZone } from './dnd/CalendarDropZone'
+import { DragPreview } from './dnd/DragPreview'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { HOUR_HEIGHT } from '../constants/grid-constants'
@@ -41,6 +42,43 @@ interface DragState {
   dayIndex: number
 }
 
+// 現在時刻線コンポーネント（SSR対応）
+function CurrentTimeLine({ day }: { day: Date }) {
+  const [currentTime, setCurrentTime] = useState<Date | null>(null)
+  
+  useEffect(() => {
+    // クライアントサイドでのみ現在時刻を設定
+    if (isToday(day)) {
+      setCurrentTime(getCurrentTimeInUserTimezone())
+      
+      // 1分ごとに更新
+      const interval = setInterval(() => {
+        setCurrentTime(getCurrentTimeInUserTimezone())
+      }, 60000)
+      
+      return () => clearInterval(interval)
+    }
+  }, [day])
+  
+  if (!currentTime || !isToday(day)) {
+    return null
+  }
+  
+  const currentHours = currentTime.getHours() + currentTime.getMinutes() / 60
+  
+  return (
+    <div
+      className="absolute left-0 right-0 h-0.5 bg-red-500 z-30 flex items-center"
+      style={{
+        top: `${currentHours * HOUR_HEIGHT}px`
+      }}
+    >
+      <div className="w-2 h-2 bg-red-500 rounded-full -ml-1 flex-shrink-0"></div>
+      <div className="flex-1 h-0.5 bg-red-500"></div>
+    </div>
+  )
+}
+
 export function FullDayCalendarLayout({
   dates,
   tasks,
@@ -50,7 +88,7 @@ export function FullDayCalendarLayout({
   onCreateEvent,
   onUpdateEvent
 }: FullDayCalendarLayoutProps) {
-  console.log('🎯 FullDayCalendarLayout onUpdateEvent:', typeof onUpdateEvent, !!onUpdateEvent)
+  console.log('🎯 FullDayCalendarLayout rendered with dates.length:', dates.length, 'events.length:', events.length)
   const containerRef = useRef<HTMLDivElement>(null)
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
@@ -214,6 +252,7 @@ export function FullDayCalendarLayout({
 
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
+      <DragPreview />
       <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
         <div 
           className="flex-shrink-0 sticky left-0 z-10"
@@ -231,18 +270,65 @@ export function FullDayCalendarLayout({
           style={{ height: `${25 * HOUR_HEIGHT}px` }}
         >
           
+          {/* DayView用の簡潔なイベント確認 */}
+          {dates.length === 1 && (() => {
+            const day = dates[0]
+            const dayString = day.toDateString()
+            const matchingEvents = events.filter(e => e.startDate?.toDateString() === dayString)
+            
+            console.log('📅 DayView Debug:', {
+              day: dayString,
+              totalEvents: events.length,
+              matchingEvents: matchingEvents.length,
+              eventsForDay: matchingEvents.map(e => ({
+                title: e.title,
+                startTime: e.startDate?.toLocaleTimeString('ja-JP')
+              }))
+            })
+            
+            return null
+          })()}
+          
           {dates.map((day, dayIndex) => {
-            // その日のイベント（タイムゾーン変換済み）
+            
+            
+            // 修正候補2: 日付のみで確実に比較（時刻を無視）
             const dayEvents = events.filter(event => {
               if (!event.startDate) return false
-              // UTC時刻をユーザータイムゾーンに変換してから日付比較
-              const userTimezoneStart = utcToUserTimezone(event.startDate)
-              return isSameDay(userTimezoneStart, day)
+              
+              // 時刻を無視して年月日のみで比較
+              const eventYear = event.startDate.getFullYear()
+              const eventMonth = event.startDate.getMonth()
+              const eventDate = event.startDate.getDate()
+              
+              const dayYear = day.getFullYear()
+              const dayMonth = day.getMonth()
+              const dayDate = day.getDate()
+              
+              const matches = eventYear === dayYear && eventMonth === dayMonth && eventDate === dayDate
+              
+              // 従来の比較も併用してデバッグ
+              const eventDateString = event.startDate.toDateString()
+              const dayDateString = day.toDateString()
+              const stringMatches = eventDateString === dayDateString
+              
+              // DayView専用の簡潔なフィルタリング確認
+              const isMatch = matches
+              if (dates.length === 1) {
+                console.log(`✅ Event "${event.title}": ${isMatch ? 'MATCHED' : 'NO MATCH'}`)
+              }
+              
+              return matches
             }).sort((a, b) => {
-              const aUserTime = a.startDate ? utcToUserTimezone(a.startDate).getTime() : 0
-              const bUserTime = b.startDate ? utcToUserTimezone(b.startDate).getTime() : 0
-              return aUserTime - bUserTime
+              const aTime = a.startDate ? a.startDate.getTime() : 0
+              const bTime = b.startDate ? b.startDate.getTime() : 0
+              return aTime - bTime
             })
+            
+            // DayView専用のイベント数確認
+            if (dates.length === 1) {
+              console.log(`📋 Final: ${dayEvents.length} events will be displayed for ${day.toDateString()}`)
+            }
             
             
             // その日の記録（Log）
@@ -277,7 +363,16 @@ export function FullDayCalendarLayout({
                       key={hour}
                       className="border-b border-gray-100 dark:border-gray-800 last:border-b-0"
                       style={{ height: `${HOUR_HEIGHT}px` }}
-                    />
+                    >
+                      {/* 15分刻みの補助線 */}
+                      {[1, 2, 3].map((quarter) => (
+                        <div
+                          key={quarter}
+                          className="absolute w-full border-b border-gray-50 dark:border-gray-900"
+                          style={{ top: `${(HOUR_HEIGHT / 4) * quarter}px` }}
+                        />
+                      ))}
+                    </div>
                   ))}
                 </div>
                 
@@ -296,33 +391,17 @@ export function FullDayCalendarLayout({
                 )}
                 
                 
-                {/* 今日のみに現在時刻線を表示（クライアントサイドのみ） */}
-                {typeof window !== 'undefined' && isToday(day) && (
-                  (() => {
-                    const currentTime = getCurrentTimeInUserTimezone()
-                    const currentHours = currentTime.getHours() + currentTime.getMinutes() / 60
-                    return (
-                      <div
-                        className="absolute left-0 right-0 h-0.5 bg-red-500 z-30 flex items-center"
-                        style={{
-                          top: `${currentHours * HOUR_HEIGHT}px`
-                        }}
-                      >
-                        <div className="w-2 h-2 bg-red-500 rounded-full -ml-1 flex-shrink-0"></div>
-                        <div className="flex-1 h-0.5 bg-red-500"></div>
-                      </div>
-                    )
-                  })()
-                )}
+                {/* 今日のみに現在時刻線を表示（useEffectで制御） */}
+                <CurrentTimeLine day={day} />
                 
                 {/* イベント表示（タイムゾーン対応版） */}
                 {(planRecordMode === 'plan' || planRecordMode === 'both') && dayEvents.map(event => {
                   console.log('🎯 イベントレンダリング:', { title: event.title, id: event.id })
                   if (!event.startDate) return null
                   
-                  // UTC時刻をユーザータイムゾーンに変換
-                  const userStartDate = utcToUserTimezone(event.startDate)
-                  const userEndDate = event.endDate ? utcToUserTimezone(event.endDate) : null
+                  // シンプルに直接使用
+                  const userStartDate = event.startDate
+                  const userEndDate = event.endDate
                   
                   const startTime = `${String(userStartDate.getHours()).padStart(2, '0')}:${String(userStartDate.getMinutes()).padStart(2, '0')}`
                   const endTime = userEndDate ? `${String(userEndDate.getHours()).padStart(2, '0')}:${String(userEndDate.getMinutes()).padStart(2, '0')}` : null
@@ -341,16 +420,6 @@ export function FullDayCalendarLayout({
                     const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
                     height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
                   }
-                  
-                  console.log('🌐 イベント表示 - タイムゾーン変換:', {
-                    title: event.title,
-                    utcStart: event.startDate.toISOString(),
-                    userStart: userStartDate.toISOString(),
-                    startTime,
-                    endTime,
-                    topPosition,
-                    height
-                  })
                   
                   // bothモードの場合は左側のみ、planモードの場合は全幅
                   const leftPosition = planRecordMode === 'both' ? '2px' : '4px'

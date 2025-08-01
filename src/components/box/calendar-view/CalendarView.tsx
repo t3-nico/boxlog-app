@@ -131,10 +131,8 @@ export function CalendarView({
       return []
     }
     
-    console.log('🔍 Filtering events for view:', viewType, {
-      totalStoreEvents: eventStore.events.length,
-      dateRange: { start: viewDateRange.start, end: viewDateRange.end }
-    })
+    console.log('🔍 [' + viewType + '] eventStore.events.length:', eventStore.events.length)
+    console.log('🔍 [' + viewType + '] dateRange:', { start: viewDateRange.start.toISOString(), end: viewDateRange.end.toISOString() })
     
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
     console.log('🔍 Events in date range:', events.length)
@@ -151,7 +149,7 @@ export function CalendarView({
     const calendarEvents = convertEventsToCalendarEvents(events)
     console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
-  }, [eventStore.getEventsByDateRange, viewDateRange.start, viewDateRange.end, eventStore.events, viewType])
+  }, [eventStore, viewDateRange.start, viewDateRange.end, viewType])
   
   // イベントの初期ロードと更新
   const fetchEventsCallback = useCallback(() => {
@@ -434,8 +432,10 @@ export function CalendarView({
     }
 
     console.log('🎯 Current viewType:', viewType)
+    console.log('🎯 ViewDateRange:', viewDateRange)
     switch (viewType) {
       case 'day':
+        console.log('🎯 Rendering DayView with events:', filteredEvents.length)
         return <DayView {...commonProps} />
       case 'split-day':
         return (

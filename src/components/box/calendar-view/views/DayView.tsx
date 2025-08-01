@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
@@ -65,12 +65,19 @@ export function DayView({
   onNavigateNext,
   onNavigateToday
 }: DayViewProps) {
-  console.log('🎯 DayView:', { 
-    onUpdateEvent: typeof onUpdateEvent, 
-    hasOnUpdateEvent: !!onUpdateEvent,
-    eventsCount: events.length,
-    dateRange: { start: dateRange.start, end: dateRange.end }
-  })
+  // DayView専用の簡潔なデバッグログ
+  console.log('📅 DayView - Events:', events.length, 'Current Date:', currentDate.toDateString())
+  
+  // 修正候補1: currentDateの時刻をリセット
+  const normalizedCurrentDate = useMemo(() => {
+    const normalized = new Date(currentDate);
+    normalized.setHours(0, 0, 0, 0);
+    console.log('🔧 DayView - Normalized currentDate:', {
+      original: currentDate.toISOString(),
+      normalized: normalized.toISOString()
+    });
+    return normalized;
+  }, [currentDate])
   return (
     <CalendarViewAnimation viewType="day">
       <div 
@@ -83,7 +90,7 @@ export function DayView({
           style={{ overscrollBehavior: 'none' }}
         >
           <FullDayCalendarLayout
-            dates={[currentDate]}
+            dates={[normalizedCurrentDate]}
             tasks={tasks}
             events={events}
             dateRange={dateRange}

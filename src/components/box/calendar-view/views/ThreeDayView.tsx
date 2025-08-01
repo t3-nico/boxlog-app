@@ -37,6 +37,7 @@ interface ThreeDayViewProps {
   onTaskClick?: (task: any) => void
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
+  onUpdateEvent?: (event: CalendarEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -55,6 +56,7 @@ export function ThreeDayView({
   onTaskClick,
   onEventClick,
   onCreateEvent,
+  onUpdateEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -65,11 +67,43 @@ export function ThreeDayView({
   onNavigateToday
 }: ThreeDayViewProps) {
   // 3日間の日付を計算（昨日、今日、明日）
-  const days = useMemo(() => [
-    subDays(currentDate, 1),
-    currentDate,
-    addDays(currentDate, 1)
-  ], [currentDate])
+  const days = useMemo(() => {
+    const today = new Date(currentDate);
+    today.setHours(0, 0, 0, 0);
+    
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    
+    const calculatedDays = [yesterday, today, tomorrow];
+    
+    // デバッグ: 生成される3日間の日付配列の値
+    console.log('🔍 ThreeDayView - currentDate input:', {
+      value: currentDate,
+      type: typeof currentDate,
+      isDate: currentDate instanceof Date,
+      toString: currentDate.toString(),
+      toISOString: currentDate instanceof Date ? currentDate.toISOString() : 'not a date',
+      toDateString: currentDate instanceof Date ? currentDate.toDateString() : 'not a date'
+    })
+    
+    console.log('🔍 ThreeDayView - days (FIXED):', calculatedDays.map((d, index) => ({
+      index,
+      label: index === 0 ? '昨日' : index === 1 ? '今日' : '明日',
+      value: d,
+      type: typeof d,
+      isDate: d instanceof Date,
+      toString: d.toString(),
+      toISOString: d instanceof Date ? d.toISOString() : 'not a date',
+      toDateString: d instanceof Date ? d.toDateString() : 'not a date'
+    })))
+    
+    return calculatedDays
+  }, [currentDate])
+  
+  console.log('🎯 ThreeDayView - About to render FullDayCalendarLayout with days:', days.length)
 
   return (
     <CalendarViewAnimation viewType="3day">
@@ -89,6 +123,7 @@ export function ThreeDayView({
             dateRange={dateRange}
             onEventClick={onEventClick}
             onCreateEvent={onCreateEvent}
+            onUpdateEvent={onUpdateEvent}
           />
         </div>
       </div>
