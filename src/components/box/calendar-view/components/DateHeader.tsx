@@ -34,7 +34,7 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
           <div
             key={day.toISOString()}
             className={cn(
-              "flex-1 px-2 py-3 text-center border-r border-border last:border-r-0 relative",
+              "flex-1 px-2 py-3 text-center border-r border-border last:border-r-0 relative h-[72px] flex flex-col justify-center",
               isWeekend(day) && "bg-muted/50"
             )}
           >
@@ -53,7 +53,7 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
             <div className={cn(
               "text-lg font-semibold",
               isToday(day) 
-                ? "bg-accent text-accent-foreground rounded-full w-8 h-8 flex items-center justify-center mx-auto"
+                ? "bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto"
                 : "text-foreground"
             )}>
               {format(day, 'd')}

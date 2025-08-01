@@ -107,6 +107,11 @@ export function ApplicationLayoutNew({
   
   // 日付選択時のハンドラー
   const handleDateSelect = (date: Date | undefined) => {
+    // 既に選択されている日付を再クリックした場合は選択状態を維持
+    if (!date && selectedDate) {
+      return
+    }
+    
     setSelectedDate(date)
     if (date && isCalendarPage) {
       // カレンダーページの場合、選択した日付にナビゲート
