@@ -26,8 +26,12 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
   return (
     <div className={cn("flex-shrink-0 bg-background", className)}>
       <div className="flex">
-        {/* 時間軸のスペース */}
-        <div className="w-16 flex-shrink-0 bg-background"></div>
+        {/* 時間軸のスペース（タイムゾーン表示付き） */}
+        <div className="w-16 flex-shrink-0 bg-background h-[72px] flex items-end justify-center pb-2">
+          <div className="text-xs text-muted-foreground font-medium">
+            {timezoneLabel}
+          </div>
+        </div>
         
         {/* 日付ヘッダー */}
         {dates.map((day) => (
