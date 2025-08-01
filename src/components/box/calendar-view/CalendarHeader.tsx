@@ -101,7 +101,7 @@ export function CalendarHeader({
                   return (
                     <>
                       {monthYear}
-                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-accent text-accent-foreground">
+                      <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border border-secondary text-secondary-foreground bg-transparent">
                         {weekPart}
                       </span>
                     </>
