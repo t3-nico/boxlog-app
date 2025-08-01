@@ -452,7 +452,7 @@ export function ApplicationLayoutNew({
 
                     {/* 下部固定エリア - 時間表示カード */}
                     <div className="flex-shrink-0">
-                      <CurrentScheduleCard collapsed={collapsed} events={events} />
+                      <CurrentScheduleCard collapsed={collapsed} />
                     </div>
                   </>
                 )}
