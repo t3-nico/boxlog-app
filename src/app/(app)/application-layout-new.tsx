@@ -39,6 +39,7 @@ import {
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { CodebaseAIChat } from '@/components/codebase-ai-chat'
 import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
+import { LifeProgressCard } from '@/components/sidebar/life-progress-card'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
@@ -451,8 +452,9 @@ export function ApplicationLayoutNew({
                     </div>
 
                     {/* 下部固定エリア - 時間表示カード */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 space-y-3">
                       <CurrentScheduleCard collapsed={collapsed} />
+                      <LifeProgressCard collapsed={collapsed} />
                     </div>
                   </>
                 )}
