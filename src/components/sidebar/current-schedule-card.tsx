@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Clock, Calendar } from 'lucide-react'
+import { Clock, Calendar, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { useEventStore } from '@/stores/useEventStore'
 import type { Event } from '@/types/events'
@@ -21,6 +22,7 @@ interface CurrentScheduleCardProps {
 export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardProps) {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null)
+  const router = useRouter()
   
   // ストアから実際のイベントデータを取得
   const eventStore = useEventStore()
@@ -206,8 +208,17 @@ export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardPr
   }
 
   if (!currentEvent) {
+    const handleNoEventClick = () => {
+      const today = new Date()
+      const dateParam = today.toISOString().split('T')[0]
+      router.push(`/calendar/day?date=${dateParam}`)
+    }
+    
     return (
-      <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg border">
+      <div 
+        className="p-4 bg-secondary rounded-lg border border-secondary cursor-pointer hover:bg-secondary/80 transition-colors"
+        onClick={handleNoEventClick}
+      >
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
           <span className="text-xs">No current events</span>
@@ -218,34 +229,36 @@ export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardPr
 
   const borderColor = getChronotypeColor()
   
+  // 今日のカレンダーday viewに移動する関数
+  const handleClick = () => {
+    const today = new Date()
+    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
+    router.push(`/calendar/day?date=${dateParam}`)
+  }
+  
   return (
     <div 
-      className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+      className="p-4 bg-secondary rounded-lg cursor-pointer hover:bg-secondary/80 transition-colors flex flex-col"
       style={{
-        border: `2px solid ${borderColor}`
+        border: `2px solid ${borderColor}`,
+        gap: '8px'
       }}
+      onClick={handleClick}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-        <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+      <div className="flex items-center" style={{ gap: '4px' }}>
+        <div className="border border-gray-300 dark:border-gray-600 px-2 py-1 rounded text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
           Live
-        </span>
+        </div>
+        <div className="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-400 tabular-nums">
+          <span>{currentEvent.startDate && formatTime(new Date(currentEvent.startDate))}</span>
+          <ArrowRight className="w-4 h-4 mx-1 text-gray-400 dark:text-gray-500" />
+          <span>{currentEvent.endDate && formatTime(new Date(currentEvent.endDate))}</span>
+        </div>
       </div>
       
-      <h3 className="font-medium text-gray-900 dark:text-white text-xs mb-2">
+      <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight">
         {currentEvent.title}
       </h3>
-      
-      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
-        <Clock className="w-4 h-4" />
-        <span>
-          {currentEvent.startDate && formatTime(new Date(currentEvent.startDate))} - {currentEvent.endDate && formatTime(new Date(currentEvent.endDate))}
-        </span>
-      </div>
-      
-      <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-        ⏰ {currentEvent.endDate && getRemainingTime(new Date(currentEvent.endDate))}
-      </div>
     </div>
   )
 }
