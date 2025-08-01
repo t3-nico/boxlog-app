@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
 import { Calendar } from '@/components/ui/calendar'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter, usePathname } from 'next/navigation'
@@ -594,11 +595,13 @@ export function ApplicationLayoutNew({
             height: 'calc(100vh - 64px)',
             padding: '0 !important'
           }}>
-            <div className="h-full overflow-auto" style={{ padding: '0 !important', margin: '0 !important' }}>
-              <div style={{ padding: '0 !important', margin: '0 !important', height: '100%', width: '100%' }}>
-                {children}
+            <ScrollArea className="h-full" style={{ padding: '0px', margin: '0px' }}>
+              <div style={{ padding: '0px', margin: '0px', height: '100%', width: '100%' }}>
+                <div style={{ padding: '0px', margin: '0px', height: '100%', width: '100%' }}>
+                  {children}
+                </div>
               </div>
-            </div>
+            </ScrollArea>
           </div>
           
           {/* Right Icon Bar - Hide when any AI Chat is open */}

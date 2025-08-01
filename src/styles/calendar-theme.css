@@ -254,15 +254,15 @@
   }
 }
 
-/* スクロールバーの洗練 */
+/* Googleカレンダー風スクロールバー */
 .cal-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--cal-gray-300) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
 .cal-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 12px;
+  height: 12px;
 }
 
 .cal-scrollbar::-webkit-scrollbar-track {
@@ -270,13 +270,75 @@
 }
 
 .cal-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--cal-gray-300);
-  border-radius: 3px;
-  transition: background-color var(--cal-transition-base);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.2s ease;
 }
 
 .cal-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--cal-gray-400);
+  background: rgba(0, 0, 0, 0.4);
+  background-clip: content-box;
+}
+
+.cal-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ダークモード対応 */
+.dark .cal-scrollbar {
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.dark .cal-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: content-box;
+}
+
+.dark .cal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+  background-clip: content-box;
+}
+
+/* カレンダー用の確実に表示されるスクロールバー */
+.calendar-scrollbar {
+  scrollbar-width: auto;
+  scrollbar-color: #888 #f1f1f1;
+}
+
+.calendar-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 6px;
+}
+
+.calendar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* ダークモード対応 */
+.dark .calendar-scrollbar {
+  scrollbar-color: #666 #333;
+}
+
+.dark .calendar-scrollbar::-webkit-scrollbar-track {
+  background: #333;
+}
+
+.dark .calendar-scrollbar::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+.dark .calendar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #888;
 }
 
 /* タイムスロットのホバー効果 */
@@ -380,3 +442,28 @@
   background: var(--cal-gray-800);
   border: 1px solid var(--cal-gray-700);
 }
+
+
+/* Googleカレンダー風の小さなカレンダー */
+
+/* 基本的な日付ボタン - 外枠やリングを完全に無効化 */
+.rdp-day {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+}
+
+.rdp-day:hover,
+.rdp-day:focus,
+.rdp-day:focus-visible,
+.rdp-day:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+}
+
+

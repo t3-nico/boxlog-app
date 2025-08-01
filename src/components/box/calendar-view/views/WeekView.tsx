@@ -87,7 +87,7 @@ export function WeekView({
       >
         {/* スクロール可能なメインコンテンツ */}
         <div 
-          className="flex-1 min-h-0 overflow-hidden" 
+          className="flex-1 min-h-0" 
           style={{ overscrollBehavior: 'none' }}
         >
           <FullDayCalendarLayout

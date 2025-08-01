@@ -38,7 +38,7 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
           <div
             key={day.toISOString()}
             className={cn(
-              "flex-1 px-2 py-3 text-center border-r border-border last:border-r-0 relative h-[72px] flex flex-col justify-center",
+              "flex-1 px-2 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative h-[72px] flex flex-col justify-center",
               isWeekend(day) && "bg-muted/50"
             )}
           >

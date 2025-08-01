@@ -53,6 +53,16 @@ export function TimeDisplay() {
       }
     }
 
+    if (!time) {
+      return {
+        status: 'Loading...',
+        label: 'Loading...',
+        icon: ClockIcon,
+        color: 'text-gray-500 dark:text-gray-400',
+        bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700'
+      }
+    }
+
     const currentHour = time.getHours()
     
     const profile = chronotype.type === 'custom' && chronotype.customZones
@@ -145,7 +155,7 @@ export function TimeDisplay() {
       <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-bold tabular-nums text-gray-600 dark:text-gray-300">
-          {mounted ? time.toLocaleTimeString('en-US', { 
+          {mounted && time ? time.toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit',
             second: '2-digit',

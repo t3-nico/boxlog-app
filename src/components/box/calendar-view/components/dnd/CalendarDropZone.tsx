@@ -63,7 +63,11 @@ export function CalendarDropZone({
       // 新しい開始時間を計算（15分単位にスナップ）
       const minutesFromStart = Math.round(relativeY * MINUTES_PER_PIXEL)
       const snappedMinutes = Math.round(minutesFromStart / 15) * 15
-      const newStartTime = addMinutes(startOfDay(date), snappedMinutes)
+      
+      // 正しい日付（JST）で計算するため、dateを直接使用
+      const targetDate = new Date(date)
+      targetDate.setHours(0, 0, 0, 0) // 時刻をリセット
+      const newStartTime = addMinutes(targetDate, snappedMinutes)
       
       // イベントの長さを保持
       if (!item.event.startDate || !item.event.endDate) {
@@ -83,7 +87,7 @@ export function CalendarDropZone({
         endDate: newEndTime
       }
 
-      console.log('🎯 イベントドロップ詳細:', {
+      console.log('🎯 イベントドロップ詳細 (FIXED):', {
         originalStartUTC: item.event.startDate.toISOString(),
         originalStartLocal: userStartDate.toISOString(),
         newStartLocal: newStartTime.toISOString(),
@@ -93,7 +97,12 @@ export function CalendarDropZone({
         minutesFromStart,
         snappedMinutes,
         duration,
-        dateUsed: date.toISOString()
+        inputDate: date.toISOString(),
+        targetDate: targetDate.toISOString(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        newStartDateString: newStartTime.toDateString(),
+        targetDateString: date.toDateString(),
+        hoursMinutes: `${Math.floor(snappedMinutes / 60)}:${String(snappedMinutes % 60).padStart(2, '0')}`
       })
 
       try {

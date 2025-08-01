@@ -296,7 +296,13 @@ export function CalendarView({
       id: updatedEvent.id,
       title: updatedEvent.title,
       originalStart: updatedEvent.startDate?.toISOString(),
-      originalEnd: updatedEvent.endDate?.toISOString()
+      originalEnd: updatedEvent.endDate?.toISOString(),
+      startDateString: updatedEvent.startDate?.toDateString(),
+      endDateString: updatedEvent.endDate?.toDateString(),
+      currentViewDateRange: {
+        start: viewDateRange.start.toISOString(),
+        end: viewDateRange.end.toISOString()
+      }
     })
     
     try {
@@ -542,7 +548,7 @@ export function CalendarView({
           />
           
           {/* ビュー固有のコンテンツ */}
-          <div className="flex-1 min-h-0 overflow-hidden bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
+          <div className="flex-1 min-h-0 bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
             {renderView()}
           </div>
         </CalendarLayout>
