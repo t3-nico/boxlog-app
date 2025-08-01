@@ -62,13 +62,7 @@ export function CalendarHeader({
           {/* 今日ボタン */}
           <button
             onClick={() => onNavigate('today')}
-            disabled={isToday}
-            className={cn(
-              "px-4 py-2 text-sm font-medium border rounded-md transition-colors",
-              isToday
-                ? "bg-muted text-muted-foreground cursor-not-allowed border-border"
-                : "border-border text-muted-foreground hover:bg-accent/50"
-            )}
+            className="px-4 py-2 text-sm font-medium border rounded-md transition-colors bg-secondary text-secondary-foreground hover:bg-secondary/80"
           >
             Today
           </button>

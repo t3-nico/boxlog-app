@@ -65,11 +65,11 @@ export function SplitDayHeader({ date, tasks, records }: SplitDayHeaderProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <Calendar className={`w-6 h-6 ${
-            dateInfo.isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
+            dateInfo.isToday ? 'text-neutral-600 dark:text-neutral-400' : 'text-gray-500 dark:text-gray-400'
           }`} />
           <div>
             <h1 className={`text-2xl font-bold ${
-              dateInfo.isToday ? 'text-blue-900 dark:text-blue-100' : 'text-gray-900 dark:text-white'
+              dateInfo.isToday ? 'text-neutral-700 dark:text-neutral-300' : 'text-gray-900 dark:text-white'
             }`}>
               {dateInfo.displayName}
             </h1>

@@ -138,7 +138,7 @@ export function DayGroup({
           "flex items-center justify-between p-3 mb-3 rounded-lg cursor-pointer transition-all duration-200",
           "border border-gray-200 dark:border-gray-700",
           "hover:bg-gray-50 dark:hover:bg-gray-800",
-          dateInfo.isToday && "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700",
+          dateInfo.isToday && "bg-neutral-100 dark:bg-neutral-800/50 border-neutral-200 dark:border-neutral-700",
           dateInfo.isYesterday && "bg-gray-50 dark:bg-gray-800/50",
           dateInfo.isTomorrow && "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700"
         )}
@@ -147,12 +147,12 @@ export function DayGroup({
         <div className="flex items-center space-x-3">
           <Calendar className={cn(
             "w-5 h-5",
-            dateInfo.isToday ? "text-blue-600 dark:text-blue-400" : "text-gray-500 dark:text-gray-400"
+            dateInfo.isToday ? "text-neutral-600 dark:text-neutral-400" : "text-gray-500 dark:text-gray-400"
           )} />
           <div>
             <h3 className={cn(
               "text-lg font-semibold",
-              dateInfo.isToday ? "text-blue-900 dark:text-blue-100" : "text-gray-900 dark:text-white"
+              dateInfo.isToday ? "text-neutral-700 dark:text-neutral-300" : "text-gray-900 dark:text-white"
             )}>
               {dateInfo.displayName}
             </h3>

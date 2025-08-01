@@ -117,13 +117,8 @@ export function UnifiedCalendarHeader({
         <div className="flex items-center">
           <button
             onClick={onNavigateToday}
-            className={cn(
-              "px-3 py-2 text-sm rounded-md transition-colors",
-              dates.some(date => isToday(date))
-                ? "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-default"
-                : "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800"
-            )}
-            disabled={dates.some(date => isToday(date)) || !onNavigateToday}
+            className="px-3 py-2 text-sm rounded-md transition-colors bg-secondary text-secondary-foreground hover:bg-secondary/80"
+            disabled={!onNavigateToday}
           >
             今日
           </button>
@@ -141,7 +136,7 @@ export function UnifiedCalendarHeader({
             key={date.toISOString()}
             className={cn(
               "flex-1 px-2 py-2 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 min-w-[200px]",
-              isToday(date) && "bg-blue-50 dark:bg-blue-900/20"
+              isToday(date) && "bg-neutral-100 dark:bg-neutral-800/50"
             )}
           >
             <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -150,7 +145,7 @@ export function UnifiedCalendarHeader({
             <div className={cn(
               "text-sm font-medium",
               isToday(date) 
-                ? "text-blue-700 dark:text-blue-300" 
+                ? "text-neutral-600 dark:text-neutral-400" 
                 : "text-gray-900 dark:text-white"
             )}>
               {format(date, 'd')}
