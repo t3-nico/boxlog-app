@@ -135,7 +135,7 @@ export function UnifiedCalendarHeader({
           <div
             key={date.toISOString()}
             className={cn(
-              "flex-1 px-2 py-2 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 min-w-[200px]",
+              "flex-1 px-2 py-2 text-center min-w-[200px]",
               isToday(date) && "bg-neutral-100 dark:bg-neutral-800/50"
             )}
           >

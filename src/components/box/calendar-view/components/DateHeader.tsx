@@ -27,7 +27,7 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
     <div className={cn("flex-shrink-0 bg-background", className)}>
       <div className="flex">
         {/* 時間軸のスペース（タイムゾーン表示付き） */}
-        <div className="w-16 flex-shrink-0 bg-background h-[72px] flex items-end justify-center pb-2">
+        <div className="flex-shrink-0 bg-background h-[72px] flex items-end justify-center pb-2" style={{ width: '64px' }}>
           <div className="text-xs text-muted-foreground font-medium">
             {timezoneLabel}
           </div>
@@ -37,10 +37,7 @@ export function DateHeader({ dates, className = '', planRecordMode }: DateHeader
         {dates.map((day) => (
           <div
             key={day.toISOString()}
-            className={cn(
-              "flex-1 px-2 py-3 text-center border-r border-gray-200 dark:border-gray-700 last:border-r-0 relative h-[72px] flex flex-col justify-center",
-              isWeekend(day) && "bg-muted/50"
-            )}
+            className="flex-1 px-2 py-3 text-center relative h-[72px] flex flex-col justify-center"
           >
             
             {/* 曜日 */}
