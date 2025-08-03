@@ -101,6 +101,7 @@ export function FullDayCalendarLayout({
     currentY: 0,
     dayIndex: -1
   })
+  
 
   // Recordsの取得
   useEffect(() => {
@@ -111,7 +112,7 @@ export function FullDayCalendarLayout({
 
   // Task[]をCalendarTask[]に変換（実績用）
   const recordTasks: CalendarTask[] = useMemo(() => {
-    if (planRecordMode === 'plan') return []
+    if (planRecordMode === 'plan' || planRecordMode === 'none') return []
     
     return records.map(record => ({
       id: record.id,
@@ -139,157 +140,396 @@ export function FullDayCalendarLayout({
       const scrollHour = Math.max(0, currentHour - 2)
       const scrollPosition = scrollHour * HOUR_HEIGHT
       
-      // 親のScrollAreaを探す
-      const scrollContainer = document.querySelector('[data-slot="scroll-area-viewport"]')
-      if (scrollContainer) {
-        scrollContainer.scrollTop = scrollPosition
-        console.log('📍 初期スクロール設定:', { currentHour, scrollHour, scrollPosition, scrollTop: scrollContainer.scrollTop })
-      } else {
-        console.log('❌ ScrollArea のビューポートが見つかりません')
+      if (containerRef.current) {
+        const scrollContainer = containerRef.current.querySelector('.full-day-scroll')
+        if (scrollContainer) {
+          scrollContainer.scrollTop = scrollPosition
+        }
       }
     }
     
     // レンダリング完了後にスクロール
-    const timer = setTimeout(scrollToCurrentTime, 500)
+    const timer = setTimeout(scrollToCurrentTime, 200)
     return () => clearTimeout(timer)
   }, [])
 
+  // Y座標から時間を計算する関数（タイムゾーン対応版）
+  const getTimeFromYPosition = useCallback((y: number, dayIndex: number): Date => {
+    const baseDate = dates[dayIndex]
+    
+    // dateHelpers.tsのタイムゾーン対応版を使用
+    return getTimeFromY(y, baseDate, HOUR_HEIGHT)
+  }, [dates])
+
+  // マウスダウンハンドラー
+  const handleMouseDown = useCallback((e: React.MouseEvent, dayIndex: number) => {
+    // イベント要素上でのクリックは無視
+    if ((e.target as HTMLElement).closest('[data-event]')) {
+      return
+    }
+
+    // 日付コンテナ（グリッド部分）の境界を取得
+    const dayContainer = e.currentTarget
+    const rect = dayContainer.getBoundingClientRect()
+    const scrollTop = containerRef.current?.querySelector('.full-day-scroll')?.scrollTop || 0
+    
+    // Y座標をグリッド開始位置（0時）からの相対位置として計算
+    const y = e.clientY - rect.top + scrollTop
+    
+    const startDate = getTimeFromYPosition(y, dayIndex)
+    
+    setDragState({
+      isDragging: true,
+      startDate,
+      startY: y,
+      currentY: y,
+      dayIndex
+    })
+  }, [getTimeFromYPosition])
+
+  // マウス移動ハンドラー
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!dragState.isDragging) return
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const scrollTop = containerRef.current?.querySelector('.full-day-scroll')?.scrollTop || 0
+    const y = e.clientY - rect.top + scrollTop
+    
+    setDragState(prev => ({
+      ...prev,
+      currentY: y
+    }))
+  }, [dragState.isDragging])
+
+  // マウスアップハンドラー
+  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+    if (!dragState.isDragging || !dragState.startDate) return
+    
+    const endDate = getTimeFromYPosition(dragState.currentY, dragState.dayIndex)
+    
+    // 開始時刻と終了時刻を正しい順序に（上から下へのドラッグを基準）
+    const [start, end] = dragState.startY <= dragState.currentY 
+      ? [dragState.startDate, endDate]
+      : [endDate, dragState.startDate]
+    
+    // 最小15分の長さを確保（より安全な日付操作）
+    const minDuration = 15 * 60 * 1000 // 15分
+    let finalEnd = new Date(end)
+    if (end.getTime() - start.getTime() < minDuration) {
+      finalEnd = new Date(start.getTime() + minDuration)
+    }
+    
+    
+    // イベント作成（タイムゾーン対応版）
+    if (onCreateEvent) {
+      // ユーザータイムゾーンでの日付・時刻文字列を取得
+      const startStrings = dateToLocalStrings(start)
+      const endStrings = dateToLocalStrings(finalEnd)
+      
+      // 日付部分を確実に保持するため、基準日付を使用
+      const eventDate = new Date(dates[dragState.dayIndex])
+      
+      console.log('🌐 カレンダードラッグ - イベント作成:', {
+        baseDate: eventDate.toISOString(),
+        start: start.toISOString(),
+        end: finalEnd.toISOString(),
+        startTime: startStrings.time,
+        endTime: endStrings.time
+      })
+      
+      onCreateEvent(eventDate, `${startStrings.time}-${endStrings.time}`)
+    }
+    
+    // ドラッグ状態をリセット
+    setDragState({
+      isDragging: false,
+      startDate: null,
+      startY: 0,
+      currentY: 0,
+      dayIndex: -1
+    })
+  }, [dragState, getTimeFromYPosition, onCreateEvent])
+
   return (
-    <div ref={containerRef} className="flex-1 flex flex-col min-h-0">
+    <div ref={containerRef} className="flex-1 overflow-hidden">
       <DragPreview />
-      {/* カレンダーコンテンツ */}
-      <div className="flex pr-3" style={{ height: `${24 * HOUR_HEIGHT}px`, minHeight: `${24 * HOUR_HEIGHT}px` }}>
-          {/* 時間軸ラベル - スクロールと一緒に動く */}
-          <div className="flex-shrink-0 bg-background border-r border-border z-20">
-            <TimeAxisLabels 
-              startHour={0} 
-              endHour={24} 
-              interval={60}
-              planRecordMode={planRecordMode}
-            />
-          </div>
+      <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
+        <div 
+          className="flex-shrink-0 sticky left-0 z-10"
+          style={{ height: `${24 * HOUR_HEIGHT}px` }}
+        >
+          <TimeAxisLabels 
+            startHour={0} 
+            endHour={24} 
+            interval={60}
+            planRecordMode={planRecordMode}
+          />
+        </div>
+        <div 
+          className="flex-1 flex relative bg-background" 
+          style={{ height: `${24 * HOUR_HEIGHT}px` }}
+        >
           
-          {/* カレンダーグリッド部分 */}
-          <div className="flex flex-1 relative bg-background">
-            {dates.map((day, dayIndex) => {
-              // 日付のみで確実に比較（時刻を無視）
-              const dayEvents = events.filter(event => {
-                if (!event.startDate) return false
-                
-                // 時刻を無視して年月日のみで比較
-                const eventYear = event.startDate.getFullYear()
-                const eventMonth = event.startDate.getMonth()
-                const eventDate = event.startDate.getDate()
-                
-                const dayYear = day.getFullYear()
-                const dayMonth = day.getMonth()
-                const dayDate = day.getDate()
-                
-                return eventYear === dayYear && eventMonth === dayMonth && eventDate === dayDate
-              }).sort((a, b) => {
-                const aTime = a.startDate ? a.startDate.getTime() : 0
-                const bTime = b.startDate ? b.startDate.getTime() : 0
-                return aTime - bTime
-              })
+          {/* DayView用の簡潔なイベント確認 */}
+          {dates.length === 1 && (() => {
+            const day = dates[0]
+            const dayString = day.toDateString()
+            const matchingEvents = events.filter(e => e.startDate?.toDateString() === dayString)
+            
+            console.log('📅 DayView Debug:', {
+              day: dayString,
+              totalEvents: events.length,
+              matchingEvents: matchingEvents.length,
+              eventsForDay: matchingEvents.map(e => ({
+                title: e.title,
+                startTime: e.startDate?.toLocaleTimeString('ja-JP')
+              }))
+            })
+            
+            return null
+          })()}
+          
+          {dates.map((day, dayIndex) => {
+            
+            
+            // 修正候補2: 日付のみで確実に比較（時刻を無視）
+            const dayEvents = events.filter(event => {
+              if (!event.startDate) return false
               
-              // その日の記録（Log）
-              const dayRecords = recordTasks.filter(record => 
-                isSameDay(record.startTime, day)
-              ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+              // 時刻を無視して年月日のみで比較
+              const eventYear = event.startDate.getFullYear()
+              const eventMonth = event.startDate.getMonth()
+              const eventDate = event.startDate.getDate()
               
-              return (
-                <CalendarDropZone
-                  key={day.toISOString()}
-                  date={day}
-                  dayIndex={dayIndex}
-                  onEventUpdate={onUpdateEvent}
-                  className="flex-1 border-r border-border last:border-r-0"
+              const dayYear = day.getFullYear()
+              const dayMonth = day.getMonth()
+              const dayDate = day.getDate()
+              
+              const matches = eventYear === dayYear && eventMonth === dayMonth && eventDate === dayDate
+              
+              // 従来の比較も併用してデバッグ
+              const eventDateString = event.startDate.toDateString()
+              const dayDateString = day.toDateString()
+              const stringMatches = eventDateString === dayDateString
+              
+              // DayView専用の簡潔なフィルタリング確認
+              const isMatch = matches
+              if (dates.length === 1) {
+                console.log(`✅ Event "${event.title}": ${isMatch ? 'MATCHED' : 'NO MATCH'}`)
+              }
+              
+              return matches
+            }).sort((a, b) => {
+              const aTime = a.startDate ? a.startDate.getTime() : 0
+              const bTime = b.startDate ? b.startDate.getTime() : 0
+              return aTime - bTime
+            })
+            
+            // DayView専用のイベント数確認
+            if (dates.length === 1) {
+              console.log(`📋 Final: ${dayEvents.length} events will be displayed for ${day.toDateString()}`)
+            }
+            
+            
+            // その日の記録（Log）
+            const dayRecords = recordTasks.filter(record => 
+              isSameDay(record.startTime, day)
+            ).sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
+            
+            return (
+              <CalendarDropZone
+                key={day.toISOString()}
+                date={day}
+                dayIndex={dayIndex}
+                onEventUpdate={onUpdateEvent}
+                className="flex-1 border-r border-border last:border-r-0"
+              >
+                <div
+                  onMouseDown={(e) => handleMouseDown(e, dayIndex)}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                  style={{ cursor: dragState.isDragging ? 'grabbing' : 'pointer' }}
+                  className="absolute inset-0"
                 >
-                  <div className="absolute inset-0">
-                    {/* 時間グリッド背景 */}
-                    <div className="absolute inset-0">
-                      {Array.from({ length: 24 }, (_, hour) => (
-                        <div
-                          key={hour}
-                          className="border-b border-gray-100 dark:border-gray-800 last:border-b-0"
-                          style={{ height: `${HOUR_HEIGHT}px` }}
-                        />
-                      ))}
+                {/* bothモードまたはnoneモードの場合は各日付の中央に分割線を表示 */}
+                {(planRecordMode === 'both' || planRecordMode === 'none') && (
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] -translate-x-0.5 z-20"></div>
+                )}
+                
+                {/* 時間グリッド背景 */}
+                <div className="absolute inset-0">
+                  {Array.from({ length: 24 }, (_, hour) => (
+                    <div
+                      key={hour}
+                      className="border-b border-gray-100 dark:border-gray-800 last:border-b-0"
+                      style={{ height: `${HOUR_HEIGHT}px` }}
+                    >
+                      {/* 15分刻みの補助線を削除 */}
                     </div>
-                    
-                    {/* Plan/Record分割線（両方表示モードの時のみ） */}
-                    {planRecordMode === 'both' && (
-                      <div className="absolute top-0 bottom-0 left-1/2 w-px bg-gray-200 dark:bg-gray-700 z-10" />
-                    )}
-                    
-                    {/* 今日のみに現在時刻線を表示 */}
-                    <CurrentTimeLine day={day} />
-                    
-                    {/* イベント表示 */}
-                    {(planRecordMode === 'plan' || planRecordMode === 'both') && dayEvents.map(event => {
-                      if (!event.startDate) return null
-                      
-                      const userStartDate = event.startDate
-                      const userEndDate = event.endDate
-                      
-                      const startTime = `${String(userStartDate.getHours()).padStart(2, '0')}:${String(userStartDate.getMinutes()).padStart(2, '0')}`
-                      const endTime = userEndDate ? `${String(userEndDate.getHours()).padStart(2, '0')}:${String(userEndDate.getMinutes()).padStart(2, '0')}` : null
-                      const eventColor = event.color || '#1a73e8'
-                      
-                      // 開始位置と高さを計算
-                      const startHour = userStartDate.getHours()
-                      const startMinute = userStartDate.getMinutes()
-                      const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
-                      
-                      // 終了時刻がある場合は実際の長さ、ない場合は1時間
-                      let height = HOUR_HEIGHT // デフォルト1時間
-                      if (userEndDate) {
-                        const endHour = userEndDate.getHours()
-                        const endMinute = userEndDate.getMinutes()
-                        const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
-                        height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
-                      }
-                      
-                      // bothモードの場合は左側のみ、planモードの場合は全幅
-                      const leftPosition = planRecordMode === 'both' ? '2px' : '4px'
-                      const rightPosition = planRecordMode === 'both' ? '50%' : '4px'
-                      
-                      return (
-                        <DraggableEvent
-                          key={event.id}
-                          event={event}
-                          dayIndex={dayIndex}
-                          topPosition={topPosition}
-                          onEventClick={onEventClick}
-                          style={{
-                            left: leftPosition,
-                            right: rightPosition,
-                            top: `${topPosition}px`,
-                            height: `${height}px`,
-                            backgroundColor: eventColor
-                          }}
-                        >
-                          <div className="p-1.5 h-full overflow-hidden text-white">
-                            <div className="flex flex-col h-full">
-                              <div className="flex-1 min-h-0">
-                                <div className="text-xs font-medium leading-tight line-clamp-2 mb-0.5">
-                                  {event.title}
-                                </div>
-                                <div className="text-xs opacity-90 leading-tight">
-                                  {startTime}{endTime && ` - ${endTime}`}
-                                </div>
-                              </div>
+                  ))}
+                </div>
+                
+                {/* ドラッグ中の選択範囲表示 */}
+                {dragState.isDragging && dragState.dayIndex === dayIndex && dragState.startDate && (
+                  <div
+                    className="absolute bg-blue-200 dark:bg-blue-800 opacity-30 z-10 pointer-events-none"
+                    style={{
+                      left: planRecordMode === 'both' ? '2px' : '4px',
+                      right: planRecordMode === 'both' ? '50%' : '4px',
+                      top: `${Math.min(dragState.startY, dragState.currentY)}px`,
+                      height: `${Math.abs(dragState.currentY - dragState.startY)}px`,
+                      minHeight: '12px'
+                    }}
+                  />
+                )}
+                
+                
+                {/* 今日のみに現在時刻線を表示（useEffectで制御） */}
+                <CurrentTimeLine day={day} />
+                
+                {/* イベント表示（タイムゾーン対応版） */}
+                {(planRecordMode === 'plan' || planRecordMode === 'both') && dayEvents.map(event => {
+                  console.log('🎯 イベントレンダリング:', { title: event.title, id: event.id })
+                  if (!event.startDate) return null
+                  
+                  // シンプルに直接使用
+                  const userStartDate = event.startDate
+                  const userEndDate = event.endDate
+                  
+                  const startTime = `${String(userStartDate.getHours()).padStart(2, '0')}:${String(userStartDate.getMinutes()).padStart(2, '0')}`
+                  const endTime = userEndDate ? `${String(userEndDate.getHours()).padStart(2, '0')}:${String(userEndDate.getMinutes()).padStart(2, '0')}` : null
+                  const eventColor = event.color || '#1a73e8'
+                  
+                  // 開始位置と高さを計算（ユーザータイムゾーンベース）
+                  const startHour = userStartDate.getHours()
+                  const startMinute = userStartDate.getMinutes()
+                  const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                  
+                  // 終了時刻がある場合は実際の長さ、ない場合は1時間
+                  let height = HOUR_HEIGHT // デフォルト1時間
+                  if (userEndDate) {
+                    const endHour = userEndDate.getHours()
+                    const endMinute = userEndDate.getMinutes()
+                    const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
+                    height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
+                  }
+                  
+                  // bothモードの場合は左側のみ、planモードの場合は全幅
+                  const leftPosition = planRecordMode === 'both' ? '2px' : '4px'
+                  const rightPosition = planRecordMode === 'both' ? '50%' : '4px'
+                  
+                  return (
+                    <DraggableEvent
+                      key={event.id}
+                      event={event}
+                      dayIndex={dayIndex}
+                      topPosition={topPosition}
+                      onEventClick={onEventClick}
+                      style={{
+                        left: leftPosition,
+                        right: rightPosition,
+                        top: `${topPosition}px`,
+                        height: `${height}px`,
+                        backgroundColor: eventColor
+                      }}
+                    >
+                      <div className="p-1.5 h-full overflow-hidden text-white">
+                        {/* メインコンテンツ */}
+                        <div className="flex flex-col h-full">
+                          {/* タイトルと時間 */}
+                          <div className="flex-1 min-h-0">
+                            {/* タイトル */}
+                            <div className="text-xs font-medium leading-tight line-clamp-2 mb-0.5">
+                              {event.title}
+                            </div>
+                            
+                            {/* 時間 */}
+                            <div className="text-xs opacity-90 leading-tight">
+                              {startTime}{endTime && ` - ${endTime}`}
                             </div>
                           </div>
-                        </DraggableEvent>
-                      )
-                    })}
-                  </div>
-                </CalendarDropZone>
-              )
-            })}
+                          
+                          {/* 場所（高さがある場合のみ） */}
+                          {event.location && height > 60 && (
+                            <div className="flex items-center gap-1 text-xs opacity-90 mt-1">
+                              <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <span className="truncate">{event.location}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </DraggableEvent>
+                  )
+                })}
+                
+                {/* 記録（Log）表示 */}
+                {(planRecordMode === 'record' || planRecordMode === 'both') && dayRecords.map(record => {
+                  const startTime = `${String(record.startTime.getHours()).padStart(2, '0')}:${String(record.startTime.getMinutes()).padStart(2, '0')}`
+                  const endTime = `${String(record.endTime.getHours()).padStart(2, '0')}:${String(record.endTime.getMinutes()).padStart(2, '0')}`
+                  const recordColor = record.color || '#10b981'
+                  
+                  // 開始位置と高さを計算
+                  const startHour = record.startTime.getHours()
+                  const startMinute = record.startTime.getMinutes()
+                  const endHour = record.endTime.getHours()
+                  const endMinute = record.endTime.getMinutes()
+                  const topPosition = (startHour + startMinute / 60) * HOUR_HEIGHT
+                  const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
+                  const height = Math.max(duration * HOUR_HEIGHT, 12) // 最小12px（15分相当）
+                  
+                  // bothモードの場合は右側のみ、recordモードの場合は全幅
+                  const leftPosition = planRecordMode === 'both' ? '50%' : '4px'
+                  const rightPosition = '4px'
+                  
+                  return (
+                    <div
+                      key={record.id}
+                      data-event="true"
+                      className="absolute rounded-md cursor-pointer hover:shadow-lg transition-all duration-200 z-20 border border-white/20"
+                      style={{
+                        left: leftPosition,
+                        right: rightPosition,
+                        top: `${topPosition}px`,
+                        height: `${height}px`,
+                        backgroundColor: recordColor
+                      }}
+                    >
+                      <div className="p-1.5 h-full overflow-hidden text-white">
+                        {/* メインコンテンツ */}
+                        <div className="flex flex-col h-full">
+                          {/* タイトルと時間 */}
+                          <div className="flex-1 min-h-0">
+                            {/* タイトル */}
+                            <div className="text-xs font-medium leading-tight line-clamp-2 mb-0.5">
+                              {record.title}
+                            </div>
+                            
+                            {/* 時間 */}
+                            <div className="text-xs opacity-90 leading-tight">
+                              {startTime} - {endTime}
+                            </div>
+                          </div>
+                          
+                          {/* 説明（高さがある場合のみ） */}
+                          {record.description && height > 60 && (
+                            <div className="text-xs opacity-80 leading-tight mt-1 line-clamp-2">
+                              {record.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+                </div>
+              </CalendarDropZone>
+            )
+          })}
           </div>
         </div>
-    </div>
+      </div>
   )
 }

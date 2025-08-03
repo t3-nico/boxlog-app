@@ -41,6 +41,7 @@ import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { CodebaseAIChat } from '@/components/codebase-ai-chat'
 import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
 import { LifeProgressCard } from '@/components/sidebar/life-progress-card'
+import { CalendarDisplayMode } from '@/components/sidebar/calendar-display-mode'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
@@ -184,7 +185,7 @@ export function ApplicationLayoutNew({
         <header className="fixed top-0 left-0 right-0 z-20 bg-background border-b border-border h-16">
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               {/* Sidebar toggle button */}
               {!inSettings && (
                 <button
@@ -203,15 +204,15 @@ export function ApplicationLayoutNew({
                 <Headless.Menu as="div" className="relative">
                   <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
                     {user?.user_metadata?.avatar_url ? (
-                      <Avatar src={user.user_metadata.avatar_url} className="w-5 h-5" />
+                      <Avatar src={user.user_metadata.avatar_url} className="w-5 h-5 border border-gray-300 dark:border-gray-600" />
                     ) : user?.user_metadata?.profile_icon ? (
-                      <div className="w-5 h-5 text-sm flex items-center justify-center">
+                      <div className="w-5 h-5 text-sm flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600">
                         {user.user_metadata.profile_icon}
                       </div>
                     ) : (
                       <Avatar 
                         src={undefined}
-                        className="w-5 h-5"
+                        className="w-5 h-5 border border-gray-300 dark:border-gray-600"
                         initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                       />
                     )}
@@ -433,6 +434,11 @@ export function ApplicationLayoutNew({
                         className="w-full p-0"
                         weekStartsOn={1}
                       />
+                    </div>
+                    
+                    {/* カレンダー表示モード選択 */}
+                    <div className="flex-shrink-0">
+                      <CalendarDisplayMode />
                     </div>
 
                     {/* 中央スクロールエリア - スマートフォルダーとタグ */}

@@ -4,14 +4,10 @@ import { useState } from 'react'
 import { 
   ChevronLeft, 
   ChevronRight,
-  ChevronDown,
-  Columns3,
-  ClipboardList,
-  CheckCircle
+  ChevronDown
 } from 'lucide-react'
 import { format, startOfWeek, endOfWeek, addDays, subDays, isSameMonth, isSameYear, getWeek } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import type { CalendarViewType } from './types'
 
 interface CalendarHeaderProps {
@@ -30,11 +26,6 @@ const viewOptions = [
   { value: 'schedule' as CalendarViewType, label: 'Event' },
 ]
 
-const displayModeOptions = [
-  { value: 'both', label: 'Both', icon: Columns3 },
-  { value: 'plan', label: 'Event', icon: ClipboardList },
-  { value: 'record', label: 'Record', icon: CheckCircle },
-] as const
 
 function formatHeaderDate(viewType: CalendarViewType, date: Date): string {
   // すべてのビューで統一した「July 2025 week30」形式
@@ -51,7 +42,6 @@ export function CalendarHeader({
   const [isViewDropdownOpen, setIsViewDropdownOpen] = useState(false)
   const isToday = new Date().toDateString() === currentDate.toDateString()
   
-  const { planRecordMode, updateSettings } = useCalendarSettingsStore()
   const currentViewOption = viewOptions.find(option => option.value === viewType)
 
   return (
@@ -107,47 +97,8 @@ export function CalendarHeader({
           </div>
         </div>
         
-        {/* 右側: 表示モードとビュー切り替えドロップダウン */}
+        {/* 右側: ビュー切り替えドロップダウン */}
         <div className="flex items-center gap-3">
-          {/* 表示モード切り替え（両方/予定/記録） - セグメントコントロール */}
-          <div className="flex items-center bg-muted rounded-lg p-1">
-            <button
-              onClick={() => updateSettings({ planRecordMode: 'both' })}
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
-                planRecordMode === 'both'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:bg-accent/50'
-              )}
-            >
-              <Columns3 className="w-4 h-4" />
-              <span>Both</span>
-            </button>
-            <button
-              onClick={() => updateSettings({ planRecordMode: 'plan' })}
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
-                planRecordMode === 'plan'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:bg-accent/50'
-              )}
-            >
-              <ClipboardList className="w-4 h-4" />
-              <span>Event</span>
-            </button>
-            <button
-              onClick={() => updateSettings({ planRecordMode: 'record' })}
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200",
-                planRecordMode === 'record'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:bg-accent/50'
-              )}
-            >
-              <CheckCircle className="w-4 h-4" />
-              <span>Record</span>
-            </button>
-          </div>
           
           {/* ビュー切り替えドロップダウン */}
           <div className="relative">
