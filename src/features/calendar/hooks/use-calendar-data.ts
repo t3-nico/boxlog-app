@@ -117,9 +117,9 @@ export function useCalendarData({
       const newTask: Partial<Task> = {
         title: '新しいタスク',
         dueDate: startDate,
-        type: 'Feature',
-        status: 'Todo',
-        priority: 'Medium',
+        type: 'task',
+        status: 'backlog',
+        priority: 'medium',
         selected: false,
         createdAt: new Date(),
         updatedAt: new Date()

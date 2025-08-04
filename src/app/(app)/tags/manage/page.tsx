@@ -75,6 +75,7 @@ export default function TagsManagePage() {
         level: createParentTag ? (createParentTag.level + 1) as any : 0,
         path: createParentTag ? `${createParentTag.path}/${data.name}` : `#${data.name}`,
         description: data.description || null,
+        icon: null,
         is_active: true,
         created_at: new Date(),
         updated_at: new Date(),

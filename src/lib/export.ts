@@ -240,8 +240,8 @@ function generatePrintHTML(tasks: Task[]): string {
 
 function generateSummaryHTML(tasks: Task[]): string {
   const totalTasks = tasks.length
-  const completedTasks = tasks.filter(t => t.status === 'Done').length
-  const inProgressTasks = tasks.filter(t => t.status === 'In Progress').length
+  const completedTasks = tasks.filter(t => t.status === 'completed').length
+  const inProgressTasks = tasks.filter(t => t.status === 'scheduled').length
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
   
   return `

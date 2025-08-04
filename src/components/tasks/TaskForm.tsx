@@ -49,9 +49,9 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
   const [formData, setFormData] = useState<TaskFormData>({
     task: '',
     title: '',
-    type: 'Feature',
-    status: 'Todo',
-    priority: 'Medium',
+    type: 'task',
+    status: 'backlog',
+    priority: 'medium',
     tags: [],
   })
   
@@ -69,9 +69,9 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
       setFormData({
         task: `TASK-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
         title: '',
-        type: 'Feature',
-        status: 'Todo',
-        priority: 'Medium',
+        type: 'task',
+        status: 'backlog',
+        priority: 'medium',
         tags: [],
       })
     }

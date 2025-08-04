@@ -1,6 +1,6 @@
 'use client'
 
-import { Tag } from '@/types/box'
+import { Tag } from '@/types/unified'
 import { Badge } from '@/components/ui/badge'
 
 interface TagBadgeProps {

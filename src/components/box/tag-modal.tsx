@@ -61,13 +61,20 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
     const parentTag = selectedParentId ? getTagById(selectedParentId) : null
     const level: TagLevel = parentTag ? (parentTag.level + 1) as TagLevel : 1
 
+    const path = parentTag ? `${parentTag.path}/${name.trim()}` : name.trim()
+    
     const tagData = {
       name: name.trim(),
       color: selectedColor,
-      description: description.trim() || undefined,
-      icon: icon.trim() || undefined,
-      parent_id: selectedParentId || undefined,
+      description: description.trim() || null,
+      icon: icon.trim() || null,
+      parent_id: selectedParentId || null,
       level,
+      path,
+      created_at: new Date(),
+      user_id: '', // サーバー側で設定される
+      is_active: true,
+      updated_at: new Date(),
     }
     
     if (tag) {

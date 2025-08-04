@@ -1,12 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { Tag, Task } from '@/types/box'
+import { Task } from '@/types/box'
+import { Tag } from '@/types/unified'
 
 interface TagStore {
   tags: Tag[]
   
   // Actions
-  addTag: (tag: Omit<Tag, 'id' | 'createdAt' | 'updatedAt' | 'children' | 'path'>) => Promise<boolean>
+  addTag: (tag: Omit<Tag, 'id' | 'created_at' | 'updated_at'>) => Promise<boolean>
   updateTag: (id: string, updates: Partial<Tag>) => Promise<boolean>
   deleteTag: (id: string) => Promise<boolean>
   getTagById: (id: string) => Tag | undefined

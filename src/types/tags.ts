@@ -11,6 +11,7 @@ export interface Tag {
   level: TagLevel
   path: string
   description: string | null
+  icon: string | null
   is_active: boolean
   created_at: Date
   updated_at: Date
