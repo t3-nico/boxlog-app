@@ -3,7 +3,9 @@
 import React, { useMemo } from 'react'
 import { addDays, subDays } from 'date-fns'
 import { CalendarViewAnimation } from '../components/ViewTransition'
-import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
+import { GoogleLikeCalendar } from '../components/GoogleLikeCalendar'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useRecordsStore } from '@/stores/useRecordsStore'
 import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -66,6 +68,9 @@ export function ThreeDayView({
   onNavigateNext,
   onNavigateToday
 }: ThreeDayViewProps) {
+  const { planRecordMode } = useCalendarSettingsStore()
+  const { records } = useRecordsStore()
+
   // 3日間の日付を計算（昨日、今日、明日）
   const days = useMemo(() => {
     const today = new Date(currentDate);
@@ -77,55 +82,22 @@ export function ThreeDayView({
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
     
-    const calculatedDays = [yesterday, today, tomorrow];
-    
-    // デバッグ: 生成される3日間の日付配列の値
-    console.log('🔍 ThreeDayView - currentDate input:', {
-      value: currentDate,
-      type: typeof currentDate,
-      isDate: currentDate instanceof Date,
-      toString: currentDate.toString(),
-      toISOString: currentDate instanceof Date ? currentDate.toISOString() : 'not a date',
-      toDateString: currentDate instanceof Date ? currentDate.toDateString() : 'not a date'
-    })
-    
-    console.log('🔍 ThreeDayView - days (FIXED):', calculatedDays.map((d, index) => ({
-      index,
-      label: index === 0 ? '昨日' : index === 1 ? '今日' : '明日',
-      value: d,
-      type: typeof d,
-      isDate: d instanceof Date,
-      toString: d.toString(),
-      toISOString: d instanceof Date ? d.toISOString() : 'not a date',
-      toDateString: d instanceof Date ? d.toDateString() : 'not a date'
-    })))
-    
-    return calculatedDays
+    return [yesterday, today, tomorrow];
   }, [currentDate])
-  
-  console.log('🎯 ThreeDayView - About to render FullDayCalendarLayout with days:', days.length)
 
   return (
     <CalendarViewAnimation viewType="3day">
-      <div 
-        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
-        style={{ overscrollBehavior: 'none' }}
-      >
-        {/* スクロール可能なメインコンテンツ */}
-        <div 
-          className="flex-1 min-h-0" 
-          style={{ overscrollBehavior: 'none' }}
-        >
-          <FullDayCalendarLayout
-            dates={days}
-            tasks={tasks}
-            events={events}
-            dateRange={dateRange}
-            onEventClick={onEventClick}
-            onCreateEvent={onCreateEvent}
-            onUpdateEvent={onUpdateEvent}
-          />
-        </div>
+      <div className="h-full">
+        <GoogleLikeCalendar
+          events={events}
+          currentDate={currentDate}
+          onEventClick={onEventClick}
+          onCreateEvent={onCreateEvent}
+          onUpdateEvent={onUpdateEvent}
+          initialView="timeGridWeek" // 3日表示に最も近い
+          planRecordMode={planRecordMode}
+          tasks={records}
+        />
       </div>
     </CalendarViewAnimation>
   )

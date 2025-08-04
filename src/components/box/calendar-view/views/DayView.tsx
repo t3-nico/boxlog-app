@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { FullDayCalendarLayout } from '../components/FullDayCalendarLayout'
+import { GoogleLikeCalendar } from '../components/GoogleLikeCalendar'
 import { CalendarViewAnimation } from '../components/ViewTransition'
+import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useRecordsStore } from '@/stores/useRecordsStore'
 import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
@@ -68,6 +70,12 @@ export function DayView({
   // DayView専用の簡潔なデバッグログ
   console.log('📅 DayView - Events:', events.length, 'Current Date:', currentDate.toDateString())
   
+  // FullCalendarを使用（クリーンアップ済み）
+  
+  // BoxLog設定とレコードデータ
+  const { planRecordMode } = useCalendarSettingsStore()
+  const { records } = useRecordsStore()
+  
   // 修正候補1: currentDateの時刻をリセット
   const normalizedCurrentDate = useMemo(() => {
     const normalized = new Date(currentDate);
@@ -78,27 +86,20 @@ export function DayView({
     });
     return normalized;
   }, [currentDate])
+
   return (
     <CalendarViewAnimation viewType="day">
-      <div 
-        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
-        style={{ overscrollBehavior: 'none' }}
-      >
-        {/* スクロール可能なメインコンテンツ */}
-        <div 
-          className="flex-1 min-h-0" 
-          style={{ overscrollBehavior: 'none' }}
-        >
-          <FullDayCalendarLayout
-            dates={[normalizedCurrentDate]}
-            tasks={tasks}
-            events={events}
-            dateRange={dateRange}
-            onEventClick={onEventClick}
-            onCreateEvent={onCreateEvent}
-            onUpdateEvent={onUpdateEvent}
-          />
-        </div>
+      <div className="h-full">
+        <GoogleLikeCalendar
+          events={events}
+          currentDate={normalizedCurrentDate}
+          onEventClick={onEventClick}
+          onCreateEvent={onCreateEvent}
+          onUpdateEvent={onUpdateEvent}
+          initialView="timeGridDay"
+          planRecordMode={planRecordMode}
+          tasks={records}
+        />
       </div>
     </CalendarViewAnimation>
   )

@@ -1,11 +1,17 @@
 {
-  "claudeMd": [
-    "docs/ai-chatbot/system-overview.md"
-  ],
   "permissions": {
     "allow": [
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint:*)",
+      "WebFetch(domain:uxdaystokyo.com)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:fullcalendar.io)"
     ],
     "deny": []
-  }
+  },
+  "claudeMd": [
+    "docs/ai-chatbot/system-overview.md"
+  ]
 }

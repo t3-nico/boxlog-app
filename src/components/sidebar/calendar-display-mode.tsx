@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { SidebarHeading, SidebarSection } from '@/components/sidebar'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 
 export function CalendarDisplayMode() {
   const { planRecordMode, updateSettings } = useCalendarSettingsStore()
@@ -11,6 +12,9 @@ export function CalendarDisplayMode() {
   // チェックボックスの状態を管理
   const [eventChecked, setEventChecked] = useState(false)
   const [logChecked, setLogChecked] = useState(false)
+  
+  // 折りたたみ状態を管理
+  const [isCollapsed, setIsCollapsed] = useState(false)
 
   // planRecordModeの変更を監視してチェックボックス状態を更新
   useEffect(() => {
@@ -70,35 +74,50 @@ export function CalendarDisplayMode() {
 
   return (
     <SidebarSection>
-      <SidebarHeading>Calendar</SidebarHeading>
-      <div className="space-y-2 px-2">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="event-checkbox"
-            checked={eventChecked}
-            onCheckedChange={handleEventChange}
-          />
-          <label
-            htmlFor="event-checkbox"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300"
-          >
-            Event
-          </label>
+      {/* クリック可能な見出し */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="flex items-center justify-between w-full text-left group"
+      >
+        <SidebarHeading>Calendar</SidebarHeading>
+        {isCollapsed ? (
+          <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors" />
+        )}
+      </button>
+      
+      {/* 折りたたみ可能なコンテンツ */}
+      {!isCollapsed && (
+        <div className="space-y-2 px-2 mt-2">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="event-checkbox"
+              checked={eventChecked}
+              onCheckedChange={handleEventChange}
+            />
+            <label
+              htmlFor="event-checkbox"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300"
+            >
+              Event
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="log-checkbox"
+              checked={logChecked}
+              onCheckedChange={handleLogChange}
+            />
+            <label
+              htmlFor="log-checkbox"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300"
+            >
+              Log
+            </label>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="log-checkbox"
-            checked={logChecked}
-            onCheckedChange={handleLogChange}
-          />
-          <label
-            htmlFor="log-checkbox"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300"
-          >
-            Log
-          </label>
-        </div>
-      </div>
+      )}
     </SidebarSection>
   )
 }

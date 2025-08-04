@@ -1,0 +1,385 @@
+/* 最小限のFullCalendarスタイル（デバッグ用） */
+
+.boxlogCalendar {
+  /* 基本設定のみ */
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Googleカレンダーダークモード対応 */
+.boxlogCalendar[data-theme="dark"] {
+  --fc-border-color: #5f6368; /* Google dark border */
+  --fc-button-text-color: #e8eaed; /* Google dark text */
+  --fc-button-hover-bg-color: #303134; /* Google dark hover */
+  --fc-button-active-bg-color: #1e3a8a; /* Google dark blue */
+  --fc-today-bg-color: rgba(138, 180, 248, 0.12); /* Google dark blue tint */
+  --fc-page-bg-color: #202124; /* Google dark background */
+  background-color: #202124;
+}
+
+/* ダークモード時のイベント改善 */
+.boxlogCalendar[data-theme="dark"] .fc-event {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-event:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* まず基本表示を復元 */
+.boxlogCalendar .fc-timegrid-slot {
+  /* デフォルトに戻す */
+}
+
+.boxlogCalendar .fc-timegrid-axis {
+  /* デフォルトに戻す */
+}
+
+.boxlogCalendar .fc-timegrid-slot-label {
+  /* デフォルトに戻す */
+}
+
+/* 30分刻みの補助線（Googleカレンダーは表示しない） */
+.boxlogCalendar .fc-timegrid-slot-minor {
+  border-top: none !important;
+}
+
+/* Googleカレンダー風イベントスタイル */
+.boxlogCalendar .fc-event {
+  border-radius: 4px !important; /* Googleカレンダーの角丸 */
+  border: none !important;
+  font-size: 12px !important; /* Googleカレンダーのフォントサイズ */
+  font-weight: 500 !important;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3) !important; /* Google風シャドウ */
+  margin: 1px !important;
+  cursor: pointer !important;
+  transition: box-shadow 0.2s ease !important;
+}
+
+.boxlogCalendar .fc-event:hover {
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.4) !important;
+  transform: none !important; /* Googleカレンダーはtransformしない */
+}
+
+/* Googleカレンダー風イベント内容 */
+.boxlogCalendar .fc-event-title {
+  font-weight: 500 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.boxlogCalendar .fc-event-time {
+  font-weight: 400 !important;
+  font-size: 11px !important;
+  opacity: 0.9 !important;
+}
+
+/* Googleカレンダー風現在時刻線 */
+.boxlogCalendar .fc-timegrid-now-indicator-line {
+  border-color: #ea4335 !important; /* Google Red */
+  border-width: 2px !important;
+  z-index: 10 !important;
+}
+
+.boxlogCalendar .fc-timegrid-now-indicator-arrow {
+  border-top-color: #ea4335 !important; /* Google Red */
+  border-left-color: #ea4335 !important;
+  border-right-color: #ea4335 !important;
+}
+
+/* Googleカレンダー風選択範囲 */
+.boxlogCalendar .fc-highlight {
+  background-color: rgba(26, 115, 232, 0.12) !important; /* Google blue highlight */
+  border: 1px solid rgba(26, 115, 232, 0.3) !important;
+}
+
+/* 一時的に無効化 */
+.boxlogCalendar .fc-timegrid {
+  /* border: none !important;
+  background-color: #ffffff !important; */
+}
+
+.boxlogCalendar .fc-timegrid-body {
+  /* border: none !important; */
+}
+
+/* 基本動作確認のため、ヘッダー非表示を一時的に緩和 */
+.boxlogCalendar .fc-header-toolbar {
+  /* 一時的にコメントアウト display: none !important; */
+}
+
+.boxlogCalendar .fc-toolbar {
+  /* 一時的にコメントアウト display: none !important; */
+}
+
+.boxlogCalendar .fc-col-header-cell {
+  /* 一時的にコメントアウト display: none !important; */
+}
+
+/* Googleカレンダー風のメインカラム */
+.boxlogCalendar .fc-timegrid-col {
+  background-color: #ffffff !important;
+  border-right: none !important;
+}
+
+/* Googleカレンダー風の時間スロット */
+.boxlogCalendar .fc-timegrid-slot {
+  border-right: none !important;
+}
+
+/* ダークモード対応 */
+.boxlogCalendar[data-theme="dark"] .fc-timegrid-axis {
+  background-color: #202124 !important;
+  border-right-color: #5f6368 !important;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-timegrid-slot {
+  border-top-color: #353639 !important;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-timegrid-col {
+  background-color: #202124 !important;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-timegrid {
+  background-color: #202124 !important;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-timegrid-slot-label {
+  color: #9aa0a6 !important; /* Google dark gray */
+}
+
+/* 週末の薄いハイライト */
+.boxlogCalendar .fc-day-sat,
+.boxlogCalendar .fc-day-sun {
+  background-color: rgba(156, 163, 175, 0.05) !important; /* gray-400 with low opacity */
+}
+
+/* ビジネス時間の範囲 */
+.boxlogCalendar .fc-non-business {
+  background-color: rgba(156, 163, 175, 0.03) !important;
+}
+
+/* Googleカレンダー風スクロールバー */
+.boxlogCalendar .fc-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: #dadce0 transparent;
+}
+
+.boxlogCalendar .fc-scroller::-webkit-scrollbar {
+  width: 8px; /* Googleカレンダーのスリムなスクロールバー */
+}
+
+.boxlogCalendar .fc-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.boxlogCalendar .fc-scroller::-webkit-scrollbar-thumb {
+  background-color: #dadce0; /* Google gray */
+  border-radius: 4px;
+}
+
+.boxlogCalendar .fc-scroller::-webkit-scrollbar-thumb:hover {
+  background-color: #9aa0a6; /* Google darker gray */
+}
+
+/* ダークモードのスクロールバー */
+.boxlogCalendar[data-theme="dark"] .fc-scroller {
+  scrollbar-color: #5f6368 transparent;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-scroller::-webkit-scrollbar-thumb {
+  background-color: #5f6368;
+}
+
+.boxlogCalendar[data-theme="dark"] .fc-scroller::-webkit-scrollbar-thumb:hover {
+  background-color: #9aa0a6;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .boxlogCalendar .fc-timegrid-slot-label {
+    font-size: 0.625rem; /* text-xs on mobile */
+  }
+  
+  .boxlogCalendar .fc-event {
+    font-size: 0.625rem !important;
+    padding: 2px 6px !important;
+  }
+  
+  /* モバイルでのPlan/Record分割改善 */
+  .boxlogCalendar[data-mode="both"] .fc-col-header-cell::before {
+    font-size: 0.625rem;
+    padding: 2px 4px;
+    content: 'Plan                 Record';
+  }
+  
+  /* モバイルでのイベント表示改善 */
+  .boxlogCalendar[data-mode="both"] .fc-event[data-type="plan"] {
+    width: 46% !important;
+    left: 2% !important;
+  }
+  
+  .boxlogCalendar[data-mode="both"] .fc-event[data-type="record"] {
+    width: 46% !important;
+    left: 52% !important;
+  }
+}
+
+/* タブレット対応 */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .boxlogCalendar .fc-event {
+    font-size: 0.7rem !important;
+    padding: 3px 6px !important;
+  }
+  
+  .boxlogCalendar .fc-timegrid-slot-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* BoxLog Plan/Record分割表示 - Googleカレンダー風 */
+.boxlogCalendar[data-mode="both"] .fc-timegrid-col {
+  position: relative;
+}
+
+.boxlogCalendar[data-mode="both"] .fc-timegrid-col::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background-color: #dadce0; /* Google border */
+  z-index: 10;
+  pointer-events: none;
+}
+
+.boxlogCalendar[data-mode="both"][data-theme="dark"] .fc-timegrid-col::after {
+  background-color: #5f6368; /* Google dark border */
+}
+
+/* Plan領域のイベント - Googleカレンダー風 */
+.boxlogCalendar[data-mode="both"] .fc-event[data-type="plan"] {
+  width: 48% !important;
+  left: 1% !important;
+  right: auto !important;
+  margin-right: 2px !important;
+}
+
+/* Record領域のイベント - Googleカレンダー風 */
+.boxlogCalendar[data-mode="both"] .fc-event[data-type="record"] {
+  width: 48% !important;
+  left: 51% !important;
+  right: auto !important;
+  background-color: #34a853 !important; /* Google Green */
+  border-color: #34a853 !important;
+  margin-left: 2px !important;
+}
+
+.boxlogCalendar[data-mode="both"] .fc-event[data-type="record"]::before {
+  content: '📝';
+  margin-right: 4px;
+}
+
+/* Plan/Recordモード時のヘッダー調整 */
+.boxlogCalendar[data-mode="both"] .fc-col-header-cell {
+  position: relative;
+}
+
+.boxlogCalendar[data-mode="both"] .fc-col-header-cell::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background-color: rgb(229 231 235);
+  z-index: 5;
+}
+
+.boxlogCalendar[data-mode="both"][data-theme="dark"] .fc-col-header-cell::after {
+  background-color: rgb(55 65 81);
+}
+
+/* Plan/Recordラベル - Googleカレンダー風 */
+.boxlogCalendar[data-mode="both"] .fc-timegrid-body::before {
+  content: '';
+  position: absolute;
+  top: -36px;
+  left: 48px; /* 時間軸の幅分オフセット */
+  right: 0;
+  height: 36px;
+  background-color: #f8f9fa; /* Google light gray */
+  border-bottom: 1px solid #dadce0; /* Google border */
+  z-index: 15;
+}
+
+.boxlogCalendar[data-mode="both"] .fc-timegrid-body::after {
+  content: 'Plan                           Record';
+  position: absolute;
+  top: -30px;
+  left: 48px; /* 時間軸の幅分オフセット */
+  right: 0;
+  padding: 8px 16px;
+  font-size: 11px; /* Googleカレンダーの小さなフォント */
+  font-weight: 500;
+  color: #5f6368; /* Google gray */
+  text-align: center;
+  z-index: 16;
+  display: flex;
+  justify-content: space-between;
+  white-space: pre;
+  line-height: 20px;
+  font-family: 'Google Sans', 'Roboto', sans-serif;
+}
+
+/* Plan/Recordラベルのダークモード対応 */
+.boxlogCalendar[data-mode="both"][data-theme="dark"] .fc-timegrid-body::before {
+  background-color: #303134; /* Google dark background */
+  border-bottom-color: #5f6368; /* Google dark border */
+}
+
+.boxlogCalendar[data-mode="both"][data-theme="dark"] .fc-timegrid-body::after {
+  color: #9aa0a6; /* Google dark gray */
+}
+
+/* Googleカレンダー風アクセシビリティ */
+.boxlogCalendar .fc-event:focus {
+  outline: 2px solid #1a73e8 !important; /* Google Blue */
+  outline-offset: 1px !important;
+}
+
+.boxlogCalendar .fc-daygrid-event:focus,
+.boxlogCalendar .fc-timegrid-event:focus {
+  box-shadow: 0 0 0 2px #1a73e8 !important; /* Google Blue */
+}
+
+/* キーボードナビゲーション */
+.boxlogCalendar .fc-event[tabindex] {
+  cursor: pointer;
+}
+
+/* Googleカレンダー風の全体レイアウト */
+.boxlogCalendar {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
+  overflow: hidden;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .boxlogCalendar .fc-timegrid-axis {
+    width: 40px !important;
+  }
+  
+  .boxlogCalendar .fc-timegrid-slot-label {
+    font-size: 10px !important;
+    padding: 0 4px 0 0 !important;
+  }
+  
+  .boxlogCalendar .fc-event {
+    font-size: 11px !important;
+  }
+}

@@ -91,7 +91,7 @@ export function LifeProgressCard({ collapsed = false }: LifeProgressCardProps) {
           </span>
         </div>
         <div className="text-xs font-mono text-slate-500 dark:text-slate-400">
-          {Math.round(lifeProgress.progressPercentage)}%/100%
+          Lv.{lifeProgress.age} / 100
         </div>
       </div>
       

@@ -217,11 +217,22 @@ export const useEventStore = create<EventStore>()(
 
           // 有効なstartDateがある場合のみ追加
           if (newEvent.startDate) {
-            set(state => ({
-              events: [...state.events, newEvent],
-              loading: false,
-            }))
+            console.log('✅ Adding new event to store:', {
+              id: newEvent.id,
+              title: newEvent.title,
+              startDate: newEvent.startDate,
+              startDateISO: newEvent.startDate.toISOString()
+            })
+            set(state => {
+              const newEvents = [...state.events, newEvent]
+              console.log('📊 Store events count after addition:', newEvents.length)
+              return {
+                events: newEvents,  
+                loading: false,
+              }
+            })
           } else {
+            console.error('❌ Event creation failed: Invalid date', newEvent)
             throw new Error('Event creation failed: Invalid date')
           }
 
@@ -384,6 +395,10 @@ export const useEventStore = create<EventStore>()(
         const { events } = get()
         console.log('📅 getEventsByDateRange called with:', { startDate, endDate, totalEvents: events.length })
         
+        // 日付範囲を年月日のみで比較するため、時刻をリセット
+        const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
+        const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+        
         const filteredEvents = events.filter(event => {
           // startDateがない場合はフィルタリングから除外
           if (!event.startDate) {
@@ -391,15 +406,21 @@ export const useEventStore = create<EventStore>()(
             return false
           }
           
-          const eventStart = event.startDate
-          const eventEnd = event.endDate || event.startDate
+          // イベントの日付も年月日のみで比較
+          const eventStartDateOnly = new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate())
+          let eventEndDateOnly = eventStartDateOnly
+          if (event.endDate) {
+            eventEndDateOnly = new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate())
+          }
           
-          const inRange = (eventStart >= startDate && eventStart <= endDate) ||
-                         (eventEnd >= startDate && eventEnd <= endDate) ||
-                         (eventStart <= startDate && eventEnd >= endDate)
+          const inRange = (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
+                         (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
+                         (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
           
           if (inRange) {
-            console.log('✅ Event in range:', event.id, event.title, eventStart)
+            console.log('✅ Event in range:', event.id, event.title, `${event.startDate.toDateString()} ${event.startDate.toTimeString().substring(0, 8)}`)
+          } else {
+            console.log('❌ Event NOT in range:', event.id, event.title, `${event.startDate.toDateString()} ${event.startDate.toTimeString().substring(0, 8)}`)
           }
           
           return inRange
@@ -439,6 +460,7 @@ export const useEventStore = create<EventStore>()(
       partialize: (state) => ({
         filters: state.filters,
         selectedEventId: state.selectedEventId,
+        // events: state.events, // イベントをpersistから除外（一時的にテスト）
       }),
     }
   )

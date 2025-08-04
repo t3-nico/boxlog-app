@@ -1,12 +1,9 @@
 'use client'
 
-import React, { useMemo } from 'react'
-import { isWeekend } from 'date-fns'
+import React, { useState } from 'react'
 import { CalendarViewAnimation } from '../components/ViewTransition'
 import { GoogleLikeCalendar } from '../components/GoogleLikeCalendar'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
-import { useRecordsStore } from '@/stores/useRecordsStore'
-import type { ViewDateRange, Task, TaskRecord, CalendarViewType } from '../types'
+import type { ViewDateRange, Task, CalendarViewType } from '../types'
 import type { CalendarEvent } from '@/types/events'
 
 interface CreateTaskInput {
@@ -31,12 +28,11 @@ interface CreateRecordInput {
   interruptions?: number
 }
 
-interface WeekViewProps {
+interface MonthViewProps {
   dateRange: ViewDateRange
   tasks: Task[]
   events: CalendarEvent[]
   currentDate: Date
-  showWeekends?: boolean
   onTaskClick?: (task: any) => void
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
@@ -51,12 +47,11 @@ interface WeekViewProps {
   onNavigateToday?: () => void
 }
 
-export function WeekView({ 
-  dateRange, 
-  tasks, 
+export function MonthView({
+  dateRange,
+  tasks,
   events,
   currentDate,
-  showWeekends = true,
   onTaskClick,
   onEventClick,
   onCreateEvent,
@@ -69,31 +64,34 @@ export function WeekView({
   onNavigatePrev,
   onNavigateNext,
   onNavigateToday
-}: WeekViewProps) {
-  const { planRecordMode } = useCalendarSettingsStore()
-  const { records } = useRecordsStore()
-  // FullCalendarを使用（クリーンアップ済み）
-  
-  // 表示する日付を計算（土日を除外するかどうか）
-  const displayDays = useMemo(() => {
-    return showWeekends 
-      ? dateRange.days 
-      : dateRange.days.filter(day => !isWeekend(day))
-  }, [dateRange.days, showWeekends])
+}: MonthViewProps) {
+  // 月表示はFullCalendarがほぼ完璧なので、常にFullCalendar版を使用
+  const [useFullCalendar] = useState(true)
 
   return (
-    <CalendarViewAnimation viewType="week">
-      <div className="h-full">
-        <GoogleLikeCalendar
-          events={events}
-          currentDate={currentDate}
-          onEventClick={onEventClick}
-          onCreateEvent={onCreateEvent}
-          onUpdateEvent={onUpdateEvent}
-          initialView={showWeekends ? "timeGridWeek" : "timeGridWeek"}
-          planRecordMode={planRecordMode}
-          tasks={records}
-        />
+    <CalendarViewAnimation viewType="month">
+      <div className="h-full flex flex-col">
+        {/* ヘッダー情報 */}
+        <div className="p-2 border-b flex justify-between items-center bg-white dark:bg-gray-900">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            📅 FullCalendar Month View
+          </span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {events.length} events • {tasks.length} tasks
+          </span>
+        </div>
+        
+        {/* FullCalendar月表示 */}
+        <div className="flex-1">
+          <GoogleLikeCalendar
+            events={events}
+            currentDate={currentDate}
+            onEventClick={onEventClick}
+            onCreateEvent={onCreateEvent}
+            onUpdateEvent={onUpdateEvent}
+            initialView="dayGridMonth"
+          />
+        </div>
       </div>
     </CalendarViewAnimation>
   )

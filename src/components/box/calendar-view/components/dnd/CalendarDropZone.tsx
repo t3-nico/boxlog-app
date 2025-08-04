@@ -44,7 +44,12 @@ export function CalendarDropZone({
       }
 
       const rect = dropRef.current.getBoundingClientRect()
-      const scrollTop = dropRef.current.closest('.full-day-scroll')?.scrollTop || 0
+      // スクロール可能な親要素を探す（複数のセレクタを試す）
+      const scrollContainer = dropRef.current.closest('[data-slot="scroll-area-viewport"]') ||
+                             dropRef.current.closest('.overflow-y-auto') ||
+                             dropRef.current.closest('.overflow-auto') ||
+                             dropRef.current.parentElement
+      const scrollTop = scrollContainer?.scrollTop || 0
       
       // マウスオフセットを考慮してカード上部の位置を計算
       const mouseOffsetY = item.mouseOffsetY || 0

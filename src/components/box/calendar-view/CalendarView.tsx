@@ -10,6 +10,7 @@ import { SplitDayView } from './views/SplitDayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
+import { MonthView } from './views/MonthView'
 import { ScheduleView } from './views/ScheduleView'
 import { TaskReviewModal } from './components/TaskReviewModal'
 import { EventModal } from './components/EventModal'
@@ -135,10 +136,25 @@ export function CalendarView({
     console.log('🔍 [' + viewType + '] dateRange:', { start: viewDateRange.start.toISOString(), end: viewDateRange.end.toISOString() })
     
     const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-    console.log('🔍 Events in date range:', events.length)
+    console.log('🔍 Events in date range:', events.length, 'Total events in store:', eventStore.events.length)
+    console.log('🔍 Date range filter:', {
+      start: viewDateRange.start.toISOString(),
+      end: viewDateRange.end.toISOString()
+    })
+    
+    // すべてのイベントをログ出力
+    eventStore.events.forEach((event, index) => {
+      console.log(`📋 Store Event ${index + 1}:`, {
+        id: event.id,
+        title: event.title,
+        startDate: event.startDate?.toISOString(),
+        endDate: event.endDate?.toISOString(),
+        inRange: events.some(e => e.id === event.id) ? 'YES' : 'NO'
+      })
+    })
     
     events.forEach((event, index) => {
-      console.log(`📋 Event ${index + 1}:`, {
+      console.log(`✅ Filtered Event ${index + 1}:`, {
         id: event.id,
         title: event.title,
         startDate: event.startDate?.toISOString(),
@@ -467,6 +483,8 @@ export function CalendarView({
         return <WeekView {...commonProps} showWeekends={false} />
       case '2week':
         return <TwoWeekView {...commonProps} />
+      case 'month':
+        return <MonthView {...commonProps} />
       case 'schedule':
         return (
           <ScheduleView 
