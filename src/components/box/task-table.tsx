@@ -250,7 +250,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {(['Todo', 'In Progress', 'Done', 'Cancelled', 'Backlog'] as TaskStatus[]).map((statusOption) => (
+              {(['backlog', 'scheduled', 'completed', 'rescheduled', 'stopped', 'delegated'] as TaskStatus[]).map((statusOption) => (
                 <DropdownMenuItem
                   key={statusOption}
                   onClick={() => handleStatusChange(row.original.id, statusOption)}
@@ -299,7 +299,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {(['High', 'Medium', 'Low'] as TaskPriority[]).map((priorityOption) => (
+              {(['urgent', 'high', 'medium', 'low'] as TaskPriority[]).map((priorityOption) => (
                 <DropdownMenuItem
                   key={priorityOption}
                   onClick={() => handlePriorityChange(row.original.id, priorityOption)}

@@ -377,7 +377,7 @@ export function Dashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <Badge color={task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'yellow' : 'green'}>
+                  <Badge color={task.priority === 'high' ? 'red' : task.priority === 'medium' ? 'yellow' : 'green'}>
                     {task.priority}
                   </Badge>
                   <p className="text-xs text-gray-500 mt-1">
