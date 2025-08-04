@@ -51,6 +51,7 @@ interface ExtendedMessage {
   content: string
   createdAt?: Date
   relatedFiles?: string[]
+  status?: 'sending' | 'sent' | 'error'
 }
 
 interface CodebaseAIChatProps {
@@ -158,15 +159,18 @@ class GitHubCodebaseClient {
 function MessageBubble({ message }: { message: ExtendedMessage }) {
   const { user } = useAuthContext()
   const isUser = message.role === 'user'
-  const isAssistant = message.role === 'assistant'
+  const isAssistant = message.role === 'assistant' || message.role === 'system'
   
   // ユーザー情報の取得
   const userDisplayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
   const profileIcon = user?.user_metadata?.profile_icon
   const avatarUrl = user?.user_metadata?.avatar_url
   
+  // AIMessage componentは'user'または'assistant'のみ受け付けるため、'system'を'assistant'として扱う
+  const messageFrom = message.role === 'system' ? 'assistant' : message.role as 'user' | 'assistant'
+  
   return (
-    <AIMessage from={message.role}>
+    <AIMessage from={messageFrom}>
       {isAssistant && (
         <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
           <BotMessageSquare className="w-4 h-4 text-foreground" />
@@ -242,7 +246,7 @@ function CodebaseChatInput({
   isLoading 
 }: { 
   input: string
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) {

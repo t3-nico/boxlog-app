@@ -153,7 +153,22 @@ export function CalendarView({
       })
     })
     
-    const calendarEvents = convertEventsToCalendarEvents(events)
+    // Event[]をCalendarEvent[]に変換
+    const calendarEvents = events.map(event => ({
+      ...event,
+      startDate: event.startDate || new Date(),
+      endDate: event.endDate || new Date(),
+      displayStartDate: event.startDate || new Date(),
+      displayEndDate: event.endDate || new Date(),
+      duration: event.endDate && event.startDate 
+        ? (event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60) // minutes
+        : 60, // default 1 hour
+      isMultiDay: event.startDate && event.endDate 
+        ? event.startDate.toDateString() !== event.endDate.toDateString()
+        : false,
+      isRecurring: event.isRecurring || false,
+      type: event.type || 'event' as any
+    }))
     console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
   }, [eventStore, viewDateRange.start, viewDateRange.end, viewType])
@@ -435,9 +450,9 @@ export function CalendarView({
       onCreateTask: handleCreateTask,
       onCreateRecord: handleCreateRecord,
       onTaskClick: handleTaskClick,
-      onEventClick: handleEventClick,
+      onEventClick: handleEventClick as any,
       onCreateEvent: handleCreateEvent,
-      onUpdateEvent: handleUpdateEvent,
+      onUpdateEvent: handleUpdateEvent as any,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),
       onNavigateNext: () => handleNavigate('next'),

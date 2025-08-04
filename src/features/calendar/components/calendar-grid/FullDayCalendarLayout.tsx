@@ -111,7 +111,7 @@ export function FullDayCalendarLayout({
 
   // Task[]をCalendarTask[]に変換（実績用）
   const recordTasks: CalendarTask[] = useMemo(() => {
-    if (planRecordMode === 'plan' || planRecordMode === 'none') return []
+    if (planRecordMode === 'plan') return []
     
     return records.map(record => ({
       id: record.id,
@@ -351,7 +351,7 @@ export function FullDayCalendarLayout({
                   className="absolute inset-0"
                 >
                 {/* bothモードまたはnoneモードの場合は各日付の中央に分割線を表示 */}
-                {(planRecordMode === 'both' || planRecordMode === 'none') && (
+                {planRecordMode === 'both' && (
                   <div className="absolute left-1/2 top-0 bottom-0 w-px bg-[var(--color-neutral-300)] dark:bg-[var(--color-neutral-600)] -translate-x-0.5 z-20"></div>
                 )}
                 

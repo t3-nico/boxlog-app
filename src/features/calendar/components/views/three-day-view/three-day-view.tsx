@@ -118,11 +118,11 @@ export function ThreeDayView({
           <FullDayCalendarLayout
             dates={days}
             tasks={tasks}
-            events={events}
+            events={events as any}
             dateRange={dateRange}
-            onEventClick={onEventClick}
+            onEventClick={onEventClick as any}
             onCreateEvent={onCreateEvent}
-            onUpdateEvent={onUpdateEvent}
+            onUpdateEvent={onUpdateEvent as any}
           />
         </div>
       </div>

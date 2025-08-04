@@ -8,10 +8,11 @@ export * from './components'
 export * from './types/calendar.types'
 
 // Calendar Constants
-export * from './constants/calendar-constants'
+export { HOUR_HEIGHT, MINUTE_HEIGHT as CALENDAR_MINUTE_HEIGHT, BUSINESS_HOURS as CALENDAR_BUSINESS_HOURS } from './constants/calendar-constants'
 
 // Calendar Hooks
 export * from './hooks'
 
-// Calendar Utils/Lib
-export * from './lib'
+// Calendar Utils/Lib (excluding conflicting exports)
+export { calculateViewDateRange, getNextPeriod, getPreviousPeriod, filterTasksForDateRange } from './lib/view-helpers'
+export { isValidViewType } from './lib/calendar-helpers'

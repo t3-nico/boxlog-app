@@ -31,10 +31,6 @@ export function CalendarDisplayMode() {
         setEventChecked(true)
         setLogChecked(true)
         break
-      case 'none':
-        setEventChecked(false)
-        setLogChecked(false)
-        break
       default:
         setEventChecked(false)
         setLogChecked(false)

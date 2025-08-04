@@ -170,6 +170,6 @@ function simpleMarkdownToHtml(markdown: string): string {
     .replace(/```([^`]*)```/gim, '<pre><code>$1</code></pre>')
     .replace(/`([^`]*)`/gim, '<code>$1</code>')
     .replace(/^\- (.*$)/gim, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/gims, '<ul>$1</ul>')
+    .replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>')
     .replace(/\n/gim, '<br>')
 }

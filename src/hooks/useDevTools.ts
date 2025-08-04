@@ -60,8 +60,9 @@ export function useDevTools(componentName?: string, config: DevToolsConfig = {})
     const messageLevelIndex = levels.indexOf(level)
 
     if (messageLevelIndex <= currentLevelIndex && messageLevelIndex > 0) {
-      const prefix = componentName ? `[${componentName}]` : '[DevTools]'
-      console[level as keyof Console](`${prefix} ${message}`, data || '')
+      const prefixText = componentName ? `[${componentName}]` : '[DevTools]'
+      const logMessage = `${prefixText} ${message}`
+      ;(console as any)[level](logMessage, data || '')
     }
   }, [componentName, logLevel])
 
@@ -337,9 +338,9 @@ export function useReactDevTools(componentName: string, enabled = process.env.NO
     if (!enabled || typeof window === 'undefined') return
 
     // React DevToolsが利用可能かチェック
-    if (window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+    if ((window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       // DevTools用の追加情報を設定
-      window.__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot = (...args) => {
+      (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot = (...args: any[]) => {
         // コミット情報のログ出力など
         if (process.env.NODE_ENV === 'development') {
           console.debug(`[${componentName}] React DevTools: Fiber root committed`)

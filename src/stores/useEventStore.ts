@@ -61,6 +61,7 @@ const convertEntityToEvent = (entity: EventEntity): Event => {
     tags,
     createdAt: new Date(entity.created_at),
     updatedAt: new Date(entity.updated_at),
+    type: 'event' as any
   }
   
   return event
@@ -75,7 +76,6 @@ const convertEventToCreateRequest = (event: Partial<Event>): CreateEventRequest 
     type: event.type,
     status: event.status,
     color: event.color,
-    recurrencePattern: event.recurrencePattern,
     location: event.location,
     url: event.url,
     tagIds: event.tags?.map(tag => tag.id),
@@ -143,7 +143,7 @@ export const useEventStore = create<EventStore>()(
           const data = await response.json()
           const events = (data.data?.events || data.events || [])
             .map((entity: EventEntity) => convertEntityToEvent(entity))
-            .filter(event => {
+            .filter((event: Event) => {
               // startDateが無効なイベントを除外
               return event.startDate !== undefined
             })
@@ -434,14 +434,14 @@ export const useEventStore = create<EventStore>()(
         const { events } = get()
         const convertToCalendarEvent = (event: Event): CalendarEvent => ({
           ...event,
-          displayStartDate: event.startDate,
-          displayEndDate: event.endDate || event.startDate,
-          duration: event.endDate 
+          displayStartDate: event.startDate || new Date(),
+          displayEndDate: event.endDate || event.startDate || new Date(),
+          duration: event.endDate && event.startDate
             ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
             : 60, // Default to 1 hour for timed events
-          isMultiDay: event.endDate ? 
+          isMultiDay: event.endDate && event.startDate ? 
             formatDateForAPI(event.startDate) !== formatDateForAPI(event.endDate) : false,
-          isRecurring: !!event.recurrencePattern,
+          isRecurring: event.isRecurring || false,
         })
         
         return {
@@ -483,6 +483,7 @@ export const eventSelectors = {
     const eventsByDate: EventsByDate = {}
     
     state.events.forEach(event => {
+      if (!event.startDate) return
       const dateKey = formatDateForAPI(event.startDate)
       if (!eventsByDate[dateKey]) {
         eventsByDate[dateKey] = []
@@ -498,7 +499,7 @@ export const eventSelectors = {
           : 60, // Default to 1 hour for timed events // Default to 1 hour for timed events, full day for all-day
         isMultiDay: event.endDate ? 
           formatDateForAPI(event.startDate) !== formatDateForAPI(event.endDate) : false,
-        isRecurring: !!event.recurrencePattern,
+        isRecurring: event.isRecurring || false,
       }
       
       eventsByDate[dateKey].push(calendarEvent)

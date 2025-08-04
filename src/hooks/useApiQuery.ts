@@ -9,8 +9,7 @@ import {
   createErrorResponse, 
   createSuccessResponse,
   handleSupabaseError,
-  handleClientError,
-  ApiResponse 
+  handleClientError
 } from '@/lib/errors'
 
 // === 基本設定 ===
@@ -64,7 +63,7 @@ export function useApiQuery<T = any>(config: ApiQueryConfig<T>) {
 
         // データ変換
         const transformedData = config.transform ? config.transform(data) : data
-        return transformedData
+        return transformedData as T
       } catch (error) {
         throw new Error(handleClientError(error))
       }
@@ -235,7 +234,7 @@ export const queryKeys = {
 /**
  * エラーハンドリング付きのAPIレスポンス変換
  */
-export function transformApiResponse<T>(data: T, error?: any): ApiResponse<T> {
+export function transformApiResponse<T>(data: T, error?: any): any {
   if (error) {
     return createErrorResponse(error)
   }

@@ -81,13 +81,16 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         createdAt: task.createdAt,
         updatedAt: task.updatedAt,
         selected: task.selected,
+        userId: 'default', // Add missing property
+        created_at: task.createdAt, // Add missing property
+        updated_at: task.updatedAt, // Add missing property
       }))
       
       const searchResults = await SearchEngine.search({
         query: searchQuery,
         limit: 10,
       }, {
-        tasks: convertedTasks,
+        tasks: convertedTasks as any,
         tags: tags as unknown as import('@/types/common').Tag[],
         smartFolders: smartFolders as unknown as import('@/types/common').SmartFolder[],
       })
