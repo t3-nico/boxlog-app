@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Tag } from '@/types/box'
+import { Tag } from '@/types/unified'
 import { useTagStore, tagColors, colorCategories } from '@/lib/tag-store'
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
@@ -44,8 +44,8 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
       setName(tag.name)
       setDescription(tag.description || '')
       setSelectedColor(tag.color)
-      setIcon(tag.icon || '')
-      setSelectedParentId(tag.parentId || '')
+      setIcon((tag as any).icon || '')
+      setSelectedParentId((tag as any).parentId || '')
     } else {
       setName('')
       setDescription('')
@@ -68,7 +68,7 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
       icon: icon.trim() || undefined,
       parentId: selectedParentId || undefined,
       level,
-      order: tag?.order ?? 0,
+      order: (tag as any)?.order ?? 0,
     }
     
     if (tag) {

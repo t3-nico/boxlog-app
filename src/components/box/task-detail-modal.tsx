@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Task, TaskStatus, TaskPriority, Comment, Attachment } from '@/types/box'
+import { Task, Comment, Attachment } from '@/types/box'
+import { TaskStatus, TaskPriority } from '@/types/unified'
 import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
 import {

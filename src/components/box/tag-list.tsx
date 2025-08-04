@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Tag } from '@/types/box'
+import { Tag } from '@/types/unified'
 import { useTagStore } from '@/lib/tag-store'
 import { useBoxStore } from '@/lib/box-store'
 import { Button } from '@/components/button'

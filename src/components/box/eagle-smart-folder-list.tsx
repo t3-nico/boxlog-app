@@ -33,11 +33,11 @@ export function EagleSmartFolderList({
   // Sort folders by order and separate system vs user folders
   const systemFolders = smartFolders
     .filter(f => f.isSystem)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => a.orderIndex - b.orderIndex)
   
   const userFolders = smartFolders
     .filter(f => !f.isSystem)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => a.orderIndex - b.orderIndex)
 
   const toggleExpanded = useCallback((folderId: string) => {
     setExpandedFolders(prev => {
@@ -149,7 +149,7 @@ export function EagleSmartFolderList({
         {hasChildren && isExpanded && (
           <div className="mt-1">
             {childFolders
-              .sort((a, b) => a.order - b.order)
+              .sort((a, b) => a.orderIndex - b.orderIndex)
               .map(childFolder => renderFolder(childFolder, level + 1))}
           </div>
         )}
