@@ -53,7 +53,7 @@ export function ClockCard() {
     }
   }
 
-  const chronoStatus = getChronotypeStatus(time)
+  const chronoStatus = time ? getChronotypeStatus(time) : { status: 'moderate', label: 'Loading...', color: 'gray', icon: Clock }
 
   const getStatusColors = (color: string) => {
     switch (color) {
@@ -96,12 +96,12 @@ export function ClockCard() {
             <div className="text-lg font-bold tabular-nums
               text-gray-900
               dark:text-white dark:drop-shadow-sm">
-              {time.toLocaleTimeString('en-US', { 
+              {time?.toLocaleTimeString('en-US', { 
                 hour: '2-digit', 
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: false 
-              })}
+              }) || '--:--:--'}
             </div>
             {/* Chronotype Status Badge - Clickable */}
             <a
