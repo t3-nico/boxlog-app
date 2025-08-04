@@ -1,5 +1,6 @@
-// Import types from unified.ts
+// Import and re-export types from unified.ts
 import { TaskType, TaskStatus, TaskPriority } from './unified'
+export { TaskType, TaskStatus, TaskPriority }
 
 export interface Attachment {
   id: string
