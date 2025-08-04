@@ -31,10 +31,10 @@ export function EagleFolderList({
   const tasks = getSortedTasks()
   const isCollapsed = isSectionCollapsed('folders')
 
-  // Get root tags (level 1) sorted by order
+  // Get root tags (level 1) sorted by name
   const rootTags = tags
     .filter(tag => tag.level === 1)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const toggleExpanded = useCallback((tagId: string) => {
     setExpandedFolders(prev => {
@@ -62,7 +62,7 @@ export function EagleFolderList({
     // Count tasks that have this tag or any child tags
     const getAllDescendantTagIds = (tagId: string): string[] => {
       const result = [tagId]
-      const childTags = tags.filter(t => t.parentId === tagId)
+      const childTags = tags.filter(t => t.parent_id === tagId)
       for (const child of childTags) {
         result.push(...getAllDescendantTagIds(child.id))
       }
@@ -77,8 +77,8 @@ export function EagleFolderList({
 
   const getChildTags = (parentId: string): Tag[] => {
     return tags
-      .filter(tag => tag.parentId === parentId)
-      .sort((a, b) => a.order - b.order)
+      .filter(tag => tag.parent_id === parentId)
+      .sort((a, b) => a.name.localeCompare(b.name))
   }
 
   const renderTag = (tag: Tag, level: number = 0): JSX.Element => {

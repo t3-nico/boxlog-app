@@ -45,7 +45,7 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
       setDescription(tag.description || '')
       setSelectedColor(tag.color)
       setIcon((tag as any).icon || '')
-      setSelectedParentId((tag as any).parentId || '')
+      setSelectedParentId((tag as any).parent_id || '')
     } else {
       setName('')
       setDescription('')
@@ -66,9 +66,8 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
       color: selectedColor,
       description: description.trim() || undefined,
       icon: icon.trim() || undefined,
-      parentId: selectedParentId || undefined,
+      parent_id: selectedParentId || undefined,
       level,
-      order: (tag as any)?.order ?? 0,
     }
     
     if (tag) {
