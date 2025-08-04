@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Tag } from '@/types/unified'
+import { Tag, TagLevel } from '@/types/unified'
 import { useTagStore, tagColors, colorCategories } from '@/lib/tag-store'
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
@@ -59,7 +59,7 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
     if (!name.trim()) return
 
     const parentTag = selectedParentId ? getTagById(selectedParentId) : null
-    const level = parentTag ? parentTag.level + 1 : 1
+    const level: TagLevel = parentTag ? (parentTag.level + 1) as TagLevel : 1
 
     const tagData = {
       name: name.trim(),

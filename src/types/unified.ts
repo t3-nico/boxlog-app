@@ -92,7 +92,7 @@ export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
 // === 再エクスポート（統一のため） ===
 
 // tags.tsから最新の定義を再エクスポート
-export type { Tag, TagWithChildren, CreateTagRequest, UpdateTagRequest } from './tags'
+export type { Tag, TagWithChildren, CreateTagRequest, UpdateTagRequest, TagLevel } from './tags'
 
 // smart-folders.tsから最新の定義を再エクスポート  
 export type { SmartFolder, SmartFolderRule, CreateSmartFolderRequest } from './smart-folders'

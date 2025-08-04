@@ -1,6 +1,6 @@
 // Import and re-export types from unified.ts
-import { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event } from './unified'
-export { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event }
+import { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event, TagLevel } from './unified'
+export { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event, TagLevel }
 
 export interface Attachment {
   id: string
