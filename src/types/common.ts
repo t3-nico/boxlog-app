@@ -124,8 +124,8 @@ export interface PaginatedResponse<T = unknown> {
 // フィルター関連の型
 export interface FilterOptions {
   tags?: string[]
-  status?: TaskStatus[]
-  priority?: TaskPriority[]
+  status?: import('./unified').TaskStatus[]
+  priority?: import('./unified').TaskPriority[]
   dateRange?: {
     start: Date
     end: Date
@@ -143,7 +143,7 @@ export interface BaseEntity {
   name?: string
   title?: string
   description?: string
-  tags?: Tag[]
+  tags?: import('./unified').Tag[]
   status?: string
   priority?: string
   isFavorite?: boolean

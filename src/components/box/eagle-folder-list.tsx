@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useTagStore } from '@/lib/tag-store'
 import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
-import { Tag } from '@/types/box'
+import { Tag } from '@/types/unified'
 import { 
   ChevronRight,
   ChevronDown,
@@ -125,9 +125,9 @@ export function EagleFolderList({
               />
               
               {/* Icon if available */}
-              {tag.icon && (
+              {(tag as any).icon && (
                 <span className="text-sm mr-2 flex-shrink-0">
-                  {tag.icon}
+                  {(tag as any).icon}
                 </span>
               )}
               

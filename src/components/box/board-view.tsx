@@ -9,7 +9,8 @@ import {
   KanbanCard,
   type DragEndEvent
 } from '@/components/ui/kibo-ui/kanban'
-import { Task, TaskStatus } from '@/types/box'
+import { Task } from '@/types/box'
+import { TaskStatus } from '@/types/unified'
 import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
 import { useTagStore } from '@/lib/tag-store'

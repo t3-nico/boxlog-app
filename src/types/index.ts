@@ -3,15 +3,15 @@ import { Database } from './supabase'
 // Export unified types first (highest priority)
 export * from './unified'
 
-// Re-export other type modules
+// Re-export other type modules (excluding types already in unified)
 export * from './common'
 export * from './box'
-export * from './tags'
-export * from './smart-folders'
+// export * from './tags' // Already exported from unified
+// export * from './smart-folders' // Already exported from unified  
 export * from './sidebar'
 export * from './chronotype'
 export * from './trash'
-export * from './events'
+// export * from './events' // Already exported from unified
 
 // Supabase database types
 export type Profile = Database['public']['Tables']['profiles']['Row']

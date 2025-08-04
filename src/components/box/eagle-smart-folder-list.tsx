@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useSmartFolderStore } from '@/lib/smart-folder-store'
 import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
-import { SmartFolder } from '@/types/box'
+import { SmartFolder } from '@/types/unified'
 import { 
   ChevronRight,
   ChevronDown,
@@ -84,13 +84,11 @@ export function EagleSmartFolderList({
   }
 
   const renderFolder = (folder: SmartFolder, level: number = 0): JSX.Element => {
-    const hasChildren = folder.children && folder.children.length > 0
+    const hasChildren = false // SmartFolders don't have hierarchical structure
     const isExpanded = expandedFolders.has(folder.id)
     const isSelected = selectedFolderId === folder.id
     const taskCount = getTaskCountForFolder(folder)
-    const childFolders = hasChildren 
-      ? smartFolders.filter(f => folder.children?.includes(f.id))
-      : []
+    const childFolders: SmartFolder[] = [] // No children for SmartFolders
 
     return (
       <div key={folder.id} className="select-none">
