@@ -20,7 +20,7 @@ import {
   Bug,
   Lightbulb
 } from 'lucide-react'
-import { TaskStatus, TaskPriority, TaskType } from '@/types/common'
+import { TaskStatus, TaskPriority, TaskType } from '@/types/box'
 
 interface IconProps {
   className?: string
