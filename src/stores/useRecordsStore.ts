@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { isSameDay, addMinutes, differenceInMinutes } from 'date-fns'
-import type { TaskRecord, Task, RecordAdjustments, RecordStats } from '@/components/box/calendar-view/types'
+import type { TaskRecord, Task, RecordAdjustments, RecordStats } from '@/features/calendar/types/calendar.types'
 
 interface RecordsStore {
   records: TaskRecord[]

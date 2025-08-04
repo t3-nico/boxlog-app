@@ -1,8 +1,8 @@
 'use client'
 
-import { CalendarView } from '@/components/box/calendar-view'
+import { CalendarView } from '@/features/calendar'
 import { redirect } from 'next/navigation'
-import { isValidViewType } from '@/components/box/calendar-view/utils/calendar-helpers'
+import { isValidViewType } from '@/features/calendar/lib/calendar-helpers'
 
 interface CalendarViewPageProps {
   params: {

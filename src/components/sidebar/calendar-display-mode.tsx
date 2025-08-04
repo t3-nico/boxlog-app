@@ -77,41 +77,43 @@ export function CalendarDisplayMode() {
       {/* クリック可能な見出し */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="flex items-center justify-between w-full text-left group"
+        className="flex items-center justify-between w-full text-left group hover:bg-accent/50 rounded-md px-2 py-1 -mx-2 -my-1 transition-colors"
       >
         <SidebarHeading>Calendar</SidebarHeading>
         {isCollapsed ? (
-          <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors" />
+          <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-all duration-200 group-hover:scale-110" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-colors" />
+          <ChevronDown className="w-4 h-4 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 transition-all duration-200 group-hover:scale-110" />
         )}
       </button>
       
       {/* 折りたたみ可能なコンテンツ */}
       {!isCollapsed && (
         <div className="space-y-2 px-2 mt-2">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 hover:bg-accent/30 rounded-md px-2 py-1 -mx-2 transition-colors cursor-pointer group">
             <Checkbox
               id="event-checkbox"
               checked={eventChecked}
               onCheckedChange={handleEventChange}
+              className="transition-transform group-hover:scale-110"
             />
             <label
               htmlFor="event-checkbox"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300 cursor-pointer flex-1 transition-colors group-hover:text-gray-900 dark:group-hover:text-gray-100"
             >
               Event
             </label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 hover:bg-accent/30 rounded-md px-2 py-1 -mx-2 transition-colors cursor-pointer group">
             <Checkbox
               id="log-checkbox"
               checked={logChecked}
               onCheckedChange={handleLogChange}
+              className="transition-transform group-hover:scale-110"
             />
             <label
               htmlFor="log-checkbox"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-700 dark:text-gray-300 cursor-pointer flex-1 transition-colors group-hover:text-gray-900 dark:group-hover:text-gray-100"
             >
               Log
             </label>
