@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Task, TaskStatus, TaskPriority } from '@/types/box'
+import { Task } from '@/types/box'
+import { TaskStatus, TaskPriority } from '@/types/unified'
 import { useBoxStore } from '@/lib/box-store'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'

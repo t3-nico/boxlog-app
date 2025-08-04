@@ -58,15 +58,15 @@ interface TaskDetailModalProps {
 const getStatusIcon = (status: TaskStatus) => {
   const iconProps = "h-4 w-4"
   switch (status) {
-    case 'Todo':
+    case 'backlog':
       return <Circle className={`${iconProps} text-gray-500`} />
-    case 'In Progress':
+    case 'scheduled':
       return <Clock className={`${iconProps} text-muted-foreground`} />
-    case 'Done':
+    case 'completed':
       return <CheckCircle2 className={`${iconProps} text-[var(--color-success-500)]`} />
-    case 'Backlog':
+    case 'rescheduled':
       return <Minus className={`${iconProps} text-gray-400`} />
-    case 'Cancelled':
+    case 'stopped':
       return <XCircle className={`${iconProps} text-[var(--color-error-500)]`} />
     default:
       return <Circle className={`${iconProps} text-gray-500`} />
@@ -76,11 +76,11 @@ const getStatusIcon = (status: TaskStatus) => {
 const getPriorityIcon = (priority: TaskPriority) => {
   const iconProps = "h-4 w-4"
   switch (priority) {
-    case 'High':
+    case 'high':
       return <ArrowUp className={`${iconProps} text-[var(--color-error-500)]`} />
-    case 'Medium':
+    case 'medium':
       return <Minus className={`${iconProps} text-[var(--color-warning-500)]`} />
-    case 'Low':
+    case 'low':
       return <ArrowDown className={`${iconProps} text-[var(--color-success-500)]`} />
     default:
       return <Minus className={`${iconProps} text-gray-500`} />
