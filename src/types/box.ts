@@ -1,7 +1,5 @@
-// Legacy task types - use unified.ts types instead
-// export type TaskType = 'Bug' | 'Feature' | 'Documentation'
-// export type TaskStatus = 'Todo' | 'In Progress' | 'Backlog' | 'Cancelled' | 'Done'
-// export type TaskPriority = 'Low' | 'Medium' | 'High'
+// Import types from unified.ts
+import { TaskType, TaskStatus, TaskPriority } from './unified'
 
 export interface Attachment {
   id: string

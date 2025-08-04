@@ -28,16 +28,18 @@ import {
 const getStatusIcon = (status: TaskStatus) => {
   const iconProps = "h-4 w-4"
   switch (status) {
-    case 'Todo':
+    case 'backlog':
       return <Circle className={`${iconProps} text-gray-500`} />
-    case 'In Progress':
+    case 'scheduled':
       return <Clock className={`${iconProps} text-blue-500`} />
-    case 'Done':
+    case 'completed':
       return <CheckCircle2 className={`${iconProps} text-green-500`} />
-    case 'Backlog':
+    case 'rescheduled':
       return <Minus className={`${iconProps} text-gray-400`} />
-    case 'Cancelled':
+    case 'stopped':
       return <XCircle className={`${iconProps} text-red-500`} />
+    case 'delegated':
+      return <Circle className={`${iconProps} text-purple-500`} />
     default:
       return <Circle className={`${iconProps} text-gray-500`} />
   }
@@ -46,12 +48,14 @@ const getStatusIcon = (status: TaskStatus) => {
 const getPriorityIcon = (priority: TaskPriority) => {
   const iconProps = "h-4 w-4"
   switch (priority) {
-    case 'High':
+    case 'high':
       return <ArrowUp className={`${iconProps} text-red-500`} />
-    case 'Medium':
+    case 'medium':
       return <Minus className={`${iconProps} text-yellow-500`} />
-    case 'Low':
+    case 'low':
       return <ArrowDown className={`${iconProps} text-green-500`} />
+    case 'urgent':
+      return <ArrowUp className={`${iconProps} text-red-700`} />
     default:
       return <Minus className={`${iconProps} text-gray-500`} />
   }
@@ -72,16 +76,18 @@ const getTaskTypeBadge = (type: string) => {
 
 const getStatusBadge = (status: TaskStatus) => {
   switch (status) {
-    case 'Todo':
+    case 'backlog':
       return <Badge color="zinc">{status}</Badge>
-    case 'In Progress':
+    case 'scheduled':
       return <Badge color="blue">{status}</Badge>
-    case 'Done':
+    case 'completed':
       return <Badge color="green">{status}</Badge>
-    case 'Backlog':
+    case 'rescheduled':
       return <Badge color="yellow">{status}</Badge>
-    case 'Cancelled':
+    case 'stopped':
       return <Badge color="red">{status}</Badge>
+    case 'delegated':
+      return <Badge color="purple">{status}</Badge>
     default:
       return <Badge color="zinc">{status}</Badge>
   }
@@ -89,12 +95,14 @@ const getStatusBadge = (status: TaskStatus) => {
 
 const getPriorityBadge = (priority: TaskPriority) => {
   switch (priority) {
-    case 'High':
+    case 'high':
       return <Badge color="red">{priority}</Badge>
-    case 'Medium':
+    case 'medium':
       return <Badge color="yellow">{priority}</Badge>
-    case 'Low':
+    case 'low':
       return <Badge color="green">{priority}</Badge>
+    case 'urgent':
+      return <Badge color="red">{priority}</Badge>
     default:
       return <Badge color="zinc">{priority}</Badge>
   }
@@ -204,25 +212,29 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
               </DropdownButton>
             </motion.div>
             <DropdownMenu>
-              <DropdownItem onClick={() => handleStatusChange('Todo')}>
+              <DropdownItem onClick={() => handleStatusChange('backlog')}>
                 <Circle className="mr-2 h-4 w-4 text-gray-500" />
-                Todo
-              </DropdownItem>
-              <DropdownItem onClick={() => handleStatusChange('In Progress')}>
-                <Clock className="mr-2 h-4 w-4 text-blue-500" />
-                In Progress
-              </DropdownItem>
-              <DropdownItem onClick={() => handleStatusChange('Backlog')}>
-                <Minus className="mr-2 h-4 w-4 text-gray-400" />
                 Backlog
               </DropdownItem>
-              <DropdownItem onClick={() => handleStatusChange('Done')}>
-                <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
-                Done
+              <DropdownItem onClick={() => handleStatusChange('scheduled')}>
+                <Clock className="mr-2 h-4 w-4 text-blue-500" />
+                Scheduled
               </DropdownItem>
-              <DropdownItem onClick={() => handleStatusChange('Cancelled')}>
+              <DropdownItem onClick={() => handleStatusChange('completed')}>
+                <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
+                Completed
+              </DropdownItem>
+              <DropdownItem onClick={() => handleStatusChange('rescheduled')}>
+                <Minus className="mr-2 h-4 w-4 text-yellow-500" />
+                Rescheduled
+              </DropdownItem>
+              <DropdownItem onClick={() => handleStatusChange('stopped')}>
                 <XCircle className="mr-2 h-4 w-4 text-red-500" />
-                Cancelled
+                Stopped
+              </DropdownItem>
+              <DropdownItem onClick={() => handleStatusChange('delegated')}>
+                <Circle className="mr-2 h-4 w-4 text-purple-500" />
+                Delegated
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -237,15 +249,19 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
               </DropdownButton>
             </motion.div>
             <DropdownMenu>
-              <DropdownItem onClick={() => handlePriorityChange('High')}>
+              <DropdownItem onClick={() => handlePriorityChange('urgent')}>
+                <ArrowUp className="mr-2 h-4 w-4 text-red-700" />
+                Urgent
+              </DropdownItem>
+              <DropdownItem onClick={() => handlePriorityChange('high')}>
                 <ArrowUp className="mr-2 h-4 w-4 text-red-500" />
                 High
               </DropdownItem>
-              <DropdownItem onClick={() => handlePriorityChange('Medium')}>
+              <DropdownItem onClick={() => handlePriorityChange('medium')}>
                 <Minus className="mr-2 h-4 w-4 text-yellow-500" />
                 Medium
               </DropdownItem>
-              <DropdownItem onClick={() => handlePriorityChange('Low')}>
+              <DropdownItem onClick={() => handlePriorityChange('low')}>
                 <ArrowDown className="mr-2 h-4 w-4 text-green-500" />
                 Low
               </DropdownItem>

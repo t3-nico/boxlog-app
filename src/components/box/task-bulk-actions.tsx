@@ -143,23 +143,27 @@ export function TaskBulkActions() {
           <DropdownMenuContent>
             <DropdownMenuItem onClick={() => handleBulkStatusChange('backlog')}>
               <Circle className="mr-2 h-4 w-4 text-gray-500" />
-              Todo
+              Backlog
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleBulkStatusChange('scheduled')}>
               <Clock className="mr-2 h-4 w-4 text-blue-500" />
-              In Progress
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkStatusChange('backlog')}>
-              <Minus className="mr-2 h-4 w-4 text-gray-400" />
-              Backlog
+              Scheduled
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleBulkStatusChange('completed')}>
               <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
-              Done
+              Completed
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('rescheduled')}>
+              <Minus className="mr-2 h-4 w-4 text-yellow-500" />
+              Rescheduled
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleBulkStatusChange('stopped')}>
               <XCircle className="mr-2 h-4 w-4 text-red-500" />
-              Cancelled
+              Stopped
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('delegated')}>
+              <Circle className="mr-2 h-4 w-4 text-purple-500" />
+              Delegated
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -172,6 +176,10 @@ export function TaskBulkActions() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('urgent')}>
+              <ArrowUp className="mr-2 h-4 w-4 text-red-700" />
+              Urgent
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleBulkPriorityChange('high')}>
               <ArrowUp className="mr-2 h-4 w-4 text-red-500" />
               High
