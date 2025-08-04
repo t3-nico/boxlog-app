@@ -436,7 +436,7 @@ export function useMemoryMonitor(enabled = process.env.NODE_ENV === 'development
 
 // === エクスポート ===
 
-export default {
+const OptimizationHooks = {
   useDeepMemo,
   useOnChange,
   useConditionalEffect,
@@ -448,3 +448,5 @@ export default {
   useLazyLoad,
   useMemoryMonitor
 }
+
+export default OptimizationHooks
