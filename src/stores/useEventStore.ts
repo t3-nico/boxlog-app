@@ -508,7 +508,9 @@ export const eventSelectors = {
     // Sort events within each date
     Object.keys(eventsByDate).forEach(dateKey => {
       eventsByDate[dateKey].sort((a, b) => {
-        return a.startDate.getTime() - b.startDate.getTime()
+        const aTime = a.startDate?.getTime() || 0
+        const bTime = b.startDate?.getTime() || 0
+        return aTime - bTime
       })
     })
     
@@ -526,7 +528,11 @@ export const eventSelectors = {
     const futureDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
     
     return state.events.filter(event => 
-      event.startDate >= now && event.startDate <= futureDate
-    ).sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+      event.startDate && event.startDate >= now && event.startDate <= futureDate
+    ).sort((a, b) => {
+      const aTime = a.startDate?.getTime() || 0
+      const bTime = b.startDate?.getTime() || 0
+      return aTime - bTime
+    })
   },
 }

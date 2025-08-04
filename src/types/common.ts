@@ -28,7 +28,7 @@ export interface Searchable {
   title?: string
   name?: string
   description?: string
-  tags?: Tag[]
+  tags?: import('./unified').Tag[]
   createdAt?: Date
   updatedAt?: Date
   [key: string]: unknown
