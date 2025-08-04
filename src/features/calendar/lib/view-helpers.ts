@@ -1,7 +1,8 @@
-import { format } from 'date-fns'
+import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, eachDayOfInterval, isWithinInterval } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { isSameDay, isToday, isWeekend } from 'date-fns'
 import type { CalendarTask } from './time-grid-helpers'
+import type { CalendarViewType, ViewDateRange, Task } from '../types/calendar.types'
 
 /**
  * タスクの色クラスを取得
@@ -196,4 +197,107 @@ export function calculateHeightFromDuration(startTime: Date, endTime: Date): num
  */
 export function cn(...classes: (string | undefined | null | boolean)[]): string {
   return classes.filter(Boolean).join(' ')
+}
+
+/**
+ * ビューの日付範囲を計算
+ */
+export function calculateViewDateRange(viewType: CalendarViewType, currentDate: Date): ViewDateRange {
+  let start: Date, end: Date, days: Date[]
+
+  switch (viewType) {
+    case 'day':
+      start = new Date(currentDate)
+      start.setHours(0, 0, 0, 0)
+      end = new Date(currentDate)
+      end.setHours(23, 59, 59, 999)
+      days = [new Date(start)]
+      break
+
+    case '3day':
+      const threeDayStart = subDays(currentDate, 1)
+      threeDayStart.setHours(0, 0, 0, 0)
+      const threeDayEnd = addDays(currentDate, 1)
+      threeDayEnd.setHours(23, 59, 59, 999)
+      start = threeDayStart
+      end = threeDayEnd
+      days = eachDayOfInterval({ start, end })
+      break
+
+    case 'week':
+    case 'week-no-weekend':
+      start = startOfWeek(currentDate, { weekStartsOn: 1 }) // 月曜日開始
+      end = endOfWeek(currentDate, { weekStartsOn: 1 })
+      days = eachDayOfInterval({ start, end })
+      break
+
+    case 'month':
+      start = startOfMonth(currentDate)
+      end = endOfMonth(currentDate)
+      days = eachDayOfInterval({ start, end })
+      break
+
+    default:
+      // デフォルトは日表示
+      start = new Date(currentDate)
+      start.setHours(0, 0, 0, 0)
+      end = new Date(currentDate)
+      end.setHours(23, 59, 59, 999)
+      days = [new Date(start)]
+  }
+
+  return { start, end, days }
+}
+
+/**
+ * 次の期間を取得
+ */
+export function getNextPeriod(viewType: CalendarViewType, currentDate: Date): Date {
+  switch (viewType) {
+    case 'day':
+      return addDays(currentDate, 1)
+    case '3day':
+      return addDays(currentDate, 3)
+    case 'week':
+    case 'week-no-weekend':
+      return addWeeks(currentDate, 1)
+    case 'month':
+      return addMonths(currentDate, 1)
+    default:
+      return addDays(currentDate, 1)
+  }
+}
+
+/**
+ * 前の期間を取得
+ */
+export function getPreviousPeriod(viewType: CalendarViewType, currentDate: Date): Date {
+  switch (viewType) {
+    case 'day':
+      return subDays(currentDate, 1)
+    case '3day':
+      return subDays(currentDate, 3)
+    case 'week':
+    case 'week-no-weekend':
+      return subWeeks(currentDate, 1)
+    case 'month':
+      return subMonths(currentDate, 1)
+    default:
+      return subDays(currentDate, 1)
+  }
+}
+
+/**
+ * 日付範囲内のタスクをフィルタリング
+ */
+export function filterTasksForDateRange(tasks: Task[], dateRange: ViewDateRange): Task[] {
+  return tasks.filter(task => {
+    if (!task.planned_start) return false
+    
+    const taskDate = new Date(task.planned_start)
+    return isWithinInterval(taskDate, {
+      start: dateRange.start,
+      end: dateRange.end
+    })
+  })
 }

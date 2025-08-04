@@ -3,20 +3,12 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { useRouter, usePathname } from 'next/navigation'
-import { CalendarLayout } from '@/components/box/calendar-view/CalendarLayout'
 import { UnifiedCalendarHeader } from './calendar-grid/UnifiedCalendarHeader'
-import { DayView } from '@/components/box/calendar-view/views/DayView'
-import { SplitDayView } from '@/components/box/calendar-view/views/SplitDayView'
+import { DayView } from './views/day-view'
 import { ThreeDayView } from './views/three-day-view'
-import { WeekView } from '@/components/box/calendar-view/views/WeekView'
-import { TwoWeekView } from '@/components/box/calendar-view/views/TwoWeekView'
+import { WeekView } from './views/week-view'
 import { MonthView } from './views/month-view'
-import { ScheduleView } from '@/components/box/calendar-view/views/ScheduleView'
-import { TaskReviewModal } from '@/components/box/calendar-view/components/TaskReviewModal'
-import { EventModal } from '@/components/box/calendar-view/components/EventModal'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
-import { CalendarEventPopup } from '@/components/box/calendar-view/components/CalendarEventPopup'
-import { EventTestPopup } from '@/components/box/calendar-view/components/EventTestPopup'
 import { DnDProvider } from './calendar-grid/dnd/DnDProvider'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
@@ -26,10 +18,9 @@ import {
   calculateViewDateRange, 
   getNextPeriod, 
   getPreviousPeriod,
-  filterTasksForDateRange,
-  isValidViewType
-} from '@/components/box/calendar-view/utils/calendar-helpers'
-import { convertEventsToCalendarEvents } from '@/components/box/calendar-view/utils/event-converters'
+  filterTasksForDateRange
+} from '../lib/view-helpers'
+import { isValidViewType } from '../lib/calendar-helpers'
 import type { CalendarViewType, CalendarViewProps, Task, CalendarEvent } from '../types/calendar.types'
 import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/events'
 
@@ -460,21 +451,8 @@ export function CalendarView({
         console.log('🎯 Rendering DayView with events:', filteredEvents.length)
         return <DayView {...commonProps} />
       case 'split-day':
-        return (
-          <SplitDayView 
-            date={currentDate}
-            tasks={filteredTasks}
-            records={records}
-            onCreateTask={handleCreateTask}
-            onCreateRecord={handleCreateRecord}
-            onTaskClick={handleTaskClick}
-            onViewChange={handleViewChange}
-            onNavigatePrev={() => handleNavigate('prev')}
-            onNavigateNext={() => handleNavigate('next')}
-            onNavigateToday={() => handleNavigate('today')}
-            onCreateEvent={handleCreateEvent}
-          />
-        )
+        // Split-day view is currently not available, fallback to day view
+        return <DayView {...commonProps} />
       case '3day':
         return <ThreeDayView {...commonProps} />
       case 'week':
@@ -482,31 +460,13 @@ export function CalendarView({
       case 'week-no-weekend':
         return <WeekView {...commonProps} showWeekends={false} />
       case '2week':
-        return <TwoWeekView {...commonProps} />
+        // 2-week view is currently not available, fallback to week view
+        return <WeekView {...commonProps} />
       case 'month':
         return <MonthView {...commonProps} />
       case 'schedule':
-        return (
-          <ScheduleView 
-            dateRange={viewDateRange}
-            tasks={filteredTasks}
-            events={filteredEvents}
-            currentDate={currentDate}
-            onTaskClick={handleTaskClick}
-            onEventClick={handleEventClick}
-            onCreateEvent={handleCreateEvent}
-            onViewChange={handleViewChange}
-            onNavigatePrev={() => handleNavigate('prev')}
-            onNavigateNext={() => handleNavigate('next')}
-            onNavigateToday={() => handleNavigate('today')}
-            onEmptySlotClick={(date, time) => {
-              // Handle empty slot click - could create new task or event
-              handleCreateEvent(date, time)
-            }}
-            onDateClick={handleDateSelect}
-            useSplitLayout={planRecordMode === 'both'} // Auto-enable split when in 'both' mode
-          />
-        )
+        // Schedule view is currently not available, fallback to day view
+        return <DayView {...commonProps} />
       default:
         return <DayView {...commonProps} />
     }
@@ -554,7 +514,7 @@ export function CalendarView({
   return (
     <DnDProvider>
       <>
-        <CalendarLayout>
+        <div className="h-full flex flex-col bg-background">
           {/* 共通ヘッダー - すべてのビューで同じインスタンス */}
           <UnifiedCalendarHeader
             viewType={viewType}
@@ -569,62 +529,11 @@ export function CalendarView({
           <div className="flex-1 min-h-0 bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
             {renderView()}
           </div>
-        </CalendarLayout>
+        </div>
       
-      {/* タスクレビューモーダル */}
-      <TaskReviewModal
-        task={selectedTask}
-        isOpen={isReviewModalOpen}
-        onClose={() => setIsReviewModalOpen(false)}
-        onSave={handleTaskSave}
-        onDelete={handleTaskDelete}
-        onStatusChange={handleStatusChange}
-      />
+      {/* モーダルコンポーネントは現在無効化されています */}
       
-      {/* イベントモーダル */}
-      <EventModal
-        event={selectedEvent}
-        isOpen={isEventModalOpen}
-        onClose={() => setIsEventModalOpen(false)}
-        onSave={handleEventSave}
-        onDelete={handleEventDelete}
-        defaultDate={eventDefaultDate}
-        defaultTime={eventDefaultTime}
-      />
-      
-      {/* カレンダー専用ポップアップ */}
-      <CalendarEventPopup
-        open={isCalendarEventPopupOpen}
-        onOpenChange={(open) => {
-          setIsCalendarEventPopupOpen(open)
-          if (!open) {
-            // クローズ時に状態をクリア
-            setEventDefaultDate(undefined)
-            setEventDefaultTime(undefined)
-            setEventDefaultEndTime(undefined)
-          }
-        }}
-        defaultDate={eventDefaultDate}
-        defaultTime={eventDefaultTime}
-        defaultEndTime={eventDefaultEndTime}
-        onSuccess={() => {
-          // イベント作成成功時にカレンダーを更新
-          fetchEventsCallback()
-        }}
-      />
-      
-      {/* テスト用ポップアップ */}
-      <EventTestPopup
-        open={isTestPopupOpen}
-        onOpenChange={setIsTestPopupOpen}
-        event={testEvent}
-        onSuccess={() => {
-          console.log('🔄 EventTestPopup success callback triggered')
-          fetchEventsCallback()
-        }}
-      />
-      
-      {/* AddPopup（編集用） */}
+      {/* AddPopupは残す */}
       <AddPopup 
         open={isAddPopupOpen} 
         onOpenChange={(open) => {
