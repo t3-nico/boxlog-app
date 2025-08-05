@@ -41,16 +41,21 @@ export interface TagHierarchy {
 // タグ作成用入力型
 export interface CreateTagInput {
   name: string
+  color: string
+  description?: string | null
+  icon?: string | null
   parent_id?: string | null
-  color?: string
-  description?: string
+  level: TagLevel
 }
 
 // タグ更新用入力型
 export interface UpdateTagInput {
   name?: string
   color?: string
-  description?: string
+  description?: string | null
+  icon?: string | null
+  parent_id?: string | null
+  level?: TagLevel
   is_active?: boolean
 }
 

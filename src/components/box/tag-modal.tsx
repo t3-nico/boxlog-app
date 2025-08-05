@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Tag, TagLevel } from '@/types/unified'
+import { Tag, TagLevel, CreateTagInput, UpdateTagInput } from '@/types/tags'
 import { useTagStore, tagColors, colorCategories } from '@/lib/tag-store'
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
@@ -59,28 +59,30 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
     if (!name.trim()) return
 
     const parentTag = selectedParentId ? getTagById(selectedParentId) : null
-    const level: TagLevel = parentTag ? (parentTag.level + 1) as TagLevel : 1
-
-    const path = parentTag ? `${parentTag.path}/${name.trim()}` : name.trim()
-    
-    const tagData = {
-      name: name.trim(),
-      color: selectedColor,
-      description: description.trim() || null,
-      icon: icon.trim() || null,
-      parent_id: selectedParentId || null,
-      level,
-      path,
-      created_at: new Date(),
-      user_id: '', // サーバー側で設定される
-      is_active: true,
-      updated_at: new Date(),
-    }
+    const level: TagLevel = parentTag ? (parentTag.level + 1) as TagLevel : 0
     
     if (tag) {
-      await updateTag(tag.id, tagData)
+      // 更新の場合
+      const updateData: UpdateTagInput = {
+        name: name.trim(),
+        color: selectedColor,
+        description: description.trim() || null,
+        icon: icon.trim() || null,
+        parent_id: selectedParentId || null,
+        level,
+      }
+      await updateTag(tag.id, updateData)
     } else {
-      await addTag(tagData)
+      // 新規作成の場合
+      const createData: CreateTagInput = {
+        name: name.trim(),
+        color: selectedColor,
+        description: description.trim() || null,
+        icon: icon.trim() || null,
+        parent_id: selectedParentId || null,
+        level,
+      }
+      await addTag(createData)
     }
     
     onClose()
