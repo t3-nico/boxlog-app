@@ -4,12 +4,28 @@ Next.js 14 + TypeScript で構築されたタスク管理アプリケーショ�
 
 ## 🚀 クイックスタート
 
+### 初回セットアップ
+
 ```bash
+# 依存関係のインストール
 npm install
+
+# 1Password Developer Securityの設定
+# 詳細: docs/1PASSWORD_SETUP.md
+op signin
+
+# 開発サーバー起動（1Password経由で秘密情報を安全に取得）
 npm run dev
 ```
 
 開発サーバーが起動したら [http://localhost:3000](http://localhost:3000) にアクセスしてください。
+
+### 🔐 セキュリティ
+
+BoxLogでは機密情報管理に **1Password Developer Security** を使用しています：
+- APIキー、データベース接続情報などは1Passwordで安全に管理
+- 開発時は自動的に1Password経由で秘密情報を取得
+- セットアップ手順: [`docs/1PASSWORD_SETUP.md`](./docs/1PASSWORD_SETUP.md)
 
 ## 🏗️ プロジェクト構造
 
