@@ -189,14 +189,98 @@ op run --env-file=.env.local -- printenv | grep SUPABASE
 4. **監査ログ**: 1Passwordの Activity Log を定期的に確認
 5. **バックアップ**: 重要な秘密情報は複数の場所に安全に保管
 
+## 🛠️ 開発ツールとスクリプト
+
+### 開発チーム管理ツール
+
+```bash
+# 包括的な開発ツール（推奨）
+./scripts/1password-dev-tools.sh status      # 接続状態確認
+./scripts/1password-dev-tools.sh health      # 健全性チェック
+./scripts/1password-dev-tools.sh team-setup  # 新メンバーセットアップ
+./scripts/1password-dev-tools.sh audit       # セキュリティ監査
+```
+
+### VS Code統合
+
+BoxLogプロジェクトはVS Code統合設定済み：
+- **拡張機能**: 1Password for VS Code (自動推奨)
+- **タスク統合**: Ctrl/Cmd+Shift+P → "Tasks: Run Task" → "🔐 Dev Server"
+- **環境変数**: VS Code統合ターミナルで自動設定
+
+### シェルプラグイン
+
+```bash
+# GitHub CLI、AWS CLI等の認証を1Password経由に
+./scripts/setup-shell-plugins.sh
+```
+
+### セキュリティ監視
+
+```bash
+# 定期的なセキュリティチェック
+./scripts/security-monitor.sh
+
+# ログは logs/security/ に保存
+# Cronジョブで定期実行推奨：
+# 0 9 * * * cd /path/to/boxlog-app && ./scripts/security-monitor.sh
+```
+
+## 🚀 CI/CD統合
+
+### GitHub Actions
+
+CI/CDパイプラインでの1Password使用方法：
+- **セットアップガイド**: [`docs/CI_CD_SETUP.md`](./CI_CD_SETUP.md)
+- **Service Account**: 限定権限でのCI/CD専用アカウント
+- **自動デプロイ**: 本番環境への安全なデプロイ
+
+## 📊 監視とメンテナンス
+
+### セキュリティ監査項目
+
+1. **アクセスログ**: 1Password Activity Log の定期確認
+2. **権限管理**: 不要なアクセス権限の削除
+3. **トークンローテーション**: Service Account Token の定期更新
+4. **ファイル権限**: 機密ファイルの適切な権限設定
+
+### 推奨メンテナンススケジュール
+
+- **毎日**: 自動セキュリティ監視スクリプト実行
+- **毎週**: チーム全体でのアクセス権限レビュー
+- **毎月**: Service Account Token ローテーション
+- **四半期**: 包括的なセキュリティ監査
+
+## 🎯 パフォーマンス最適化
+
+### 高速化設定
+
+```bash
+# 1Password CLIキャッシュ設定
+export OP_CACHE=true
+
+# 複数セッション管理
+export OP_SESSION_my="your-session-token"
+```
+
+### バッチ処理
+
+```bash
+# 複数の環境変数を一度に処理
+op run --env-file=.env.local -- npm run build
+```
+
 ## 参考リンク
 
 - [1Password Developer Documentation](https://developer.1password.com/)
 - [1Password CLI Reference](https://developer.1password.com/docs/cli/reference/)
 - [Secret References](https://developer.1password.com/docs/cli/secret-references/)
+- [Service Accounts](https://developer.1password.com/docs/service-accounts/)
+- [GitHub Actions Integration](https://developer.1password.com/docs/ci-cd/github-actions/)
+- [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=1Password.op-vscode)
 
 ---
 
 **作成日**: 2025-08-05  
 **更新日**: 2025-08-05  
-**バージョン**: 1.0
+**バージョン**: 2.0 - フル機能統合版
