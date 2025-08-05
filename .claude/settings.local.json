@@ -9,7 +9,11 @@
       "Bash(npx tsc:*)",
       "WebFetch(domain:fullcalendar.io)",
       "Bash(rm:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(npm run typecheck:*)"
     ],
     "deny": []
   },
