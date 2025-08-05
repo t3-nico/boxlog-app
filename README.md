@@ -27,6 +27,14 @@ BoxLogでは機密情報管理に **1Password Developer Security** を使用し�
 - 開発時は自動的に1Password経由で秘密情報を取得
 - セットアップ手順: [`docs/1PASSWORD_SETUP.md`](./docs/1PASSWORD_SETUP.md)
 
+### 🤖 Cursor AI統合
+
+**Cursor AI + 1Password** で最高の開発体験を実現：
+- **AI安全性**: 秘密情報をAIが学習しない設計
+- **スマート補完**: 1Password形式のコードスニペット自動生成
+- **ワンクリック操作**: キーボードショートカットで瞬時に実行
+- **セットアップガイド**: [`docs/CURSOR_SETUP.md`](./docs/CURSOR_SETUP.md)
+
 ## 🏗️ プロジェクト構造
 
 BoxLogは機能別モジュール設計（Feature-Based Architecture）を採用しています：
