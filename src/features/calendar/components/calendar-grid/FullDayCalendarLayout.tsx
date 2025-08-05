@@ -247,7 +247,7 @@ export function FullDayCalendarLayout({
       currentY: 0,
       dayIndex: -1
     })
-  }, [dragState, getTimeFromYPosition, onCreateEvent])
+  }, [dragState, getTimeFromYPosition, onCreateEvent, dates])
 
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">

@@ -216,7 +216,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         endTime: smartTimes.end,
       }))
     }
-  }, [contextData?.dueDate, contextData?.defaultColor, contextData?.tags, contextData?.editingEvent, getSmartDefaultTimes, defaultDate, defaultTime, defaultEndTime])
+  }, [contextData, getSmartDefaultTimes, defaultDate, defaultTime, defaultEndTime])
 
   // Handle editing event data separately to avoid infinite loop
   useEffect(() => {
@@ -251,7 +251,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
       console.log('📝 EventCreateForm: Setting form data:', newFormData)
       setFormData(newFormData)
     }
-  }, [contextData?.editingEvent?.id]) // Only re-run when editing a different event
+  }, [contextData?.editingEvent]) // Only re-run when editing a different event
 
   const updateFormData = (field: keyof EventFormData, value: any) => {
     let newData = { ...formData, [field]: value }

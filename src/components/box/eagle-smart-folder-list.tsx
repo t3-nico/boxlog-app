@@ -68,12 +68,12 @@ export function EagleSmartFolderList({
           return tasks.length
         case 'recent':
           const recentTasks = tasks.filter(task => {
-            const daysDiff = Math.floor((Date.now() - task.updatedAt.getTime()) / (1000 * 60 * 60 * 24))
+            const daysDiff = Math.floor((Date.now() - new Date(task.updated_at).getTime()) / (1000 * 60 * 60 * 24))
             return daysDiff <= 7
           })
           return recentTasks.length
         case 'favorites':
-          return tasks.filter(task => task.selected).length
+          return 0 // TODO: Implement favorites logic with new Task type
         case 'trash':
           return 0 // Implement trash logic when needed
         default:

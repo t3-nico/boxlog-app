@@ -1,6 +1,6 @@
 // Import and re-export types from unified.ts
-import { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event, TagLevel } from './unified'
-export { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event, TagLevel }
+import type { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event, TagLevel, Task } from './unified'
+export type { TaskType, TaskStatus, TaskPriority, Tag, SmartFolder, Event, TagLevel, Task }
 
 export interface Attachment {
   id: string
@@ -75,24 +75,25 @@ export interface SidebarSection {
 // System smart folder types
 export type SystemSmartFolderType = 'all' | 'recent' | 'favorites' | 'trash'
 
-export interface Task {
-  id: string
-  task: string // TASK-8782 format
-  title: string
-  type: TaskType
-  status: TaskStatus
-  priority: TaskPriority
-  selected: boolean
-  description?: string
-  dueDate?: Date
-  createdAt: Date
-  updatedAt: Date
-  attachments?: Attachment[]
-  comments?: Comment[]
-  estimatedHours?: number
-  actualHours?: number
-  tags?: string[] // Tag IDs
-}
+// Legacy Task interface - use unified.ts Task type instead
+// export interface Task {
+//   id: string
+//   task: string // TASK-8782 format
+//   title: string
+//   type: TaskType
+//   status: TaskStatus
+//   priority: TaskPriority
+//   selected: boolean
+//   description?: string
+//   dueDate?: Date
+//   createdAt: Date
+//   updatedAt: Date
+//   attachments?: Attachment[]
+//   comments?: Comment[]
+//   estimatedHours?: number
+//   actualHours?: number
+//   tags?: string[] // Tag IDs
+// }
 
 export interface TaskFilters {
   search: string

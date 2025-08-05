@@ -114,7 +114,7 @@ export function CalendarView({
   // 表示範囲のタスクを取得
   const filteredTasks = useMemo(() => {
     return taskStore.getTasksForDateRange(viewDateRange.start, viewDateRange.end)
-  }, [taskStore.getTasksForDateRange, viewDateRange.start, viewDateRange.end])
+  }, [taskStore, viewDateRange.start, viewDateRange.end])
   
   // 表示範囲のイベントを取得してCalendarEvent型に変換
   const filteredEvents = useMemo(() => {
@@ -184,7 +184,7 @@ export function CalendarView({
       startDate: viewDateRange.start,
       endDate: viewDateRange.end
     })
-  }, [eventStore.fetchEvents, viewDateRange.start, viewDateRange.end, viewType])
+  }, [eventStore, viewDateRange.start, viewDateRange.end, viewType])
 
   useEffect(() => {
     fetchEventsCallback()
@@ -349,7 +349,7 @@ export function CalendarView({
     } catch (error) {
       console.error('❌ Failed to update event:', error)
     }
-  }, [eventStore, fetchEventsCallback])
+  }, [eventStore, fetchEventsCallback, viewDateRange.start, viewDateRange.end])
   
   // URLを更新する関数
   const updateURL = useCallback((newViewType: CalendarViewType, newDate?: Date) => {

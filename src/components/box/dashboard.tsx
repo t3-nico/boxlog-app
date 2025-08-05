@@ -146,7 +146,7 @@ export function Dashboard() {
 
     // This month's tasks
     const thisMonthTasks = tasks.filter(task => 
-      task.createdAt && new Date(task.createdAt) >= thisMonth
+      task.created_at && new Date(task.created_at) >= thisMonth
     )
     const thisMonthCompleted = thisMonthTasks.filter(task => task.status === 'completed').length
     const thisMonthRate = thisMonthTasks.length > 0 
@@ -155,16 +155,16 @@ export function Dashboard() {
 
     // Overdue and upcoming tasks
     const overdueTasks = tasks.filter(task => 
-      task.dueDate && 
-      new Date(task.dueDate) < now && 
+      task.due_date && 
+      new Date(task.due_date) < now && 
       task.status !== 'completed' && 
       task.status !== 'stopped'
     )
     
     const upcomingTasks = tasks.filter(task => 
-      task.dueDate && 
-      new Date(task.dueDate) <= nextWeek && 
-      new Date(task.dueDate) >= now &&
+      task.due_date && 
+      new Date(task.due_date) <= nextWeek && 
+      new Date(task.due_date) >= now &&
       task.status !== 'completed' && 
       task.status !== 'stopped'
     )
@@ -318,7 +318,7 @@ export function Dashboard() {
               <div className="space-y-1">
                 {stats.overdue.slice(0, 3).map(task => (
                   <div key={task.id} className="text-xs text-gray-600 pl-7">
-                    {task.task}: {task.title.slice(0, 40)}...
+                    {task.id}: {task.title.slice(0, 40)}...
                   </div>
                 ))}
               </div>
@@ -337,7 +337,7 @@ export function Dashboard() {
               <div className="space-y-1">
                 {stats.upcoming.slice(0, 3).map(task => (
                   <div key={task.id} className="text-xs text-gray-600 pl-7">
-                    {task.task}: {task.title.slice(0, 40)}...
+                    {task.id}: {task.title.slice(0, 40)}...
                   </div>
                 ))}
               </div>
@@ -363,7 +363,7 @@ export function Dashboard() {
         <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Tasks</h3>
         <div className="space-y-3">
           {tasks
-            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+            .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
             .slice(0, 5)
             .map(task => (
               <div key={task.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
@@ -372,7 +372,7 @@ export function Dashboard() {
                     {task.status}
                   </Badge>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{task.task}</p>
+                    <p className="text-sm font-medium text-gray-900">{task.id}</p>
                     <p className="text-xs text-gray-500">{task.title.slice(0, 60)}...</p>
                   </div>
                 </div>
@@ -381,7 +381,7 @@ export function Dashboard() {
                     {task.priority}
                   </Badge>
                   <p className="text-xs text-gray-500 mt-1">
-                    {new Date(task.updatedAt).toLocaleDateString()}
+                    {new Date(task.updated_at).toLocaleDateString()}
                   </p>
                 </div>
               </div>

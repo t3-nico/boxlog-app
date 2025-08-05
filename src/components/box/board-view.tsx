@@ -9,8 +9,7 @@ import {
   KanbanCard,
   type DragEndEvent
 } from '@/components/ui/kibo-ui/kanban'
-import { Task } from '@/types/box'
-import { TaskStatus } from '@/types/unified'
+import { Task, TaskStatus } from '@/types/unified'
 import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
 import { useTagStore } from '@/lib/tag-store'
@@ -226,7 +225,7 @@ export function BoardView({ className, onEditTask, onAddTask }: BoardViewProps) 
 
                     {/* Footer with ID and priority */}
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="font-mono">{item.task.task}</span>
+                      <span className="font-mono">{item.task.id}</span>
                       <div className="flex items-center gap-1">
                         {getPriorityIcon(item.task.priority)}
                         <span>{item.task.priority}</span>
