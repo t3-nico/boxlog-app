@@ -3,6 +3,7 @@
 import { Input } from '@/components/ui/input'
 import { Listbox, ListboxLabel, ListboxOption } from '@/components/listbox'
 import { getCountries } from '@/data'
+import Image from 'next/image'
 import { useState } from 'react'
 
 export function Address() {
@@ -38,7 +39,13 @@ export function Address() {
       >
         {countries.map((country) => (
           <ListboxOption key={country.code} value={country}>
-            <img className="w-5 sm:w-4" src={country.flagUrl} alt={country.name + ' flag'} />
+            <Image 
+              className="w-5 sm:w-4 object-cover" 
+              src={country.flagUrl} 
+              alt={country.name + ' flag'}
+              width={20}
+              height={15}
+            />
             <ListboxLabel>{country.name}</ListboxLabel>
           </ListboxOption>
         ))}

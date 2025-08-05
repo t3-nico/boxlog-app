@@ -101,7 +101,7 @@ export function LogCreateForm({ contextData, onFormDataChange, onFormValidChange
     if (formData.actualStart && formData.actualEnd && formData.actualStart === formData.actualEnd) {
       setFormData(prev => ({ ...prev, actualEnd: formData.actualStart }))
     }
-  }, [formData.actualStart])
+  }, [formData.actualStart, formData.actualEnd])
 
   const updateFormData = (field: keyof LogFormData, value: any) => {
     const newData = { ...formData, [field]: value }

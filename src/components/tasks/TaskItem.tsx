@@ -19,7 +19,7 @@ export function TaskItem({ task, onEdit, onSelect }: TaskItemProps) {
   const { updateTask, deleteTask } = useBoxStore()
   
   const handleStatusToggle = () => {
-    const newStatus = task.status === 'Done' ? 'Todo' : 'Done'
+    const newStatus = task.status === 'completed' ? 'backlog' : 'completed'
     updateTask(task.id, { status: newStatus })
   }
   
@@ -41,17 +41,17 @@ export function TaskItem({ task, onEdit, onSelect }: TaskItemProps) {
       onClick={handleClick}
     >
       <Checkbox
-        checked={task.status === 'Done'}
+        checked={task.status === 'completed'}
         onCheckedChange={handleStatusToggle}
         onClick={(e: React.MouseEvent) => e.stopPropagation()}
       />
       
       <div className="flex-1 space-y-1">
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-mono text-gray-500">{task.task}</span>
+          <span className="text-sm font-mono text-gray-500">{task.id}</span>
           <h3
             className={`font-medium ${
-              task.status === 'Done' ? 'line-through text-gray-500' : ''
+              task.status === 'completed' ? 'line-through text-gray-500' : ''
             }`}
           >
             {task.title}

@@ -109,7 +109,7 @@ export function TaskSidebar({ onNewTask }: TaskSidebarProps) {
             <Filter className="h-4 w-4 text-gray-500" />
           </div>
           <div className="space-y-2">
-            {(['Todo', 'In Progress', 'Backlog', 'Done', 'Cancelled'] as TaskStatus[]).map((status) => (
+            {(['backlog', 'scheduled', 'completed', 'rescheduled', 'stopped', 'delegated'] as TaskStatus[]).map((status) => (
               <div key={status} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -135,7 +135,7 @@ export function TaskSidebar({ onNewTask }: TaskSidebarProps) {
         <div className="space-y-3">
           <Label>優先度</Label>
           <div className="space-y-2">
-            {(['High', 'Medium', 'Low'] as TaskPriority[]).map((priority) => (
+            {(['urgent', 'high', 'medium', 'low'] as TaskPriority[]).map((priority) => (
               <div key={priority} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Checkbox

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { SmartFolder } from '@/types/box'
+import { SmartFolder } from '@/types/unified'
 import { useSmartFolderStore } from '@/lib/smart-folder-store'
 import { useBoxStore } from '@/lib/box-store'
 import { Button } from '@/components/button'
@@ -18,7 +18,7 @@ import {
   DropdownItem,
   DropdownMenu,
 } from '@/components/dropdown'
-import { SmartFolderModal } from './smart-folder-modal'
+// import { SmartFolderModal } from './smart-folder-modal' // Temporarily disabled
 
 interface SmartFolderListProps {
   onSelectFolder: (folderId: string) => void
@@ -128,11 +128,6 @@ export function SmartFolderList({ onSelectFolder, selectedFolderId }: SmartFolde
             
             <span className="text-sm truncate">
               {folder.name}
-              {folder.level > 1 && (
-                <span className="text-xs text-gray-500 ml-1">
-                  (L{folder.level})
-                </span>
-              )}
             </span>
             {taskCount > 0 && (
               <span className={`text-xs px-2 py-1 rounded-full ${
@@ -198,6 +193,7 @@ export function SmartFolderList({ onSelectFolder, selectedFolderId }: SmartFolde
         {getRootFolders().map(folder => renderFolderItem(folder))}
       </div>
 
+      {/* Temporarily disabled SmartFolderModal
       {showCreateModal && (
         <SmartFolderModal
           open={showCreateModal}
@@ -206,6 +202,7 @@ export function SmartFolderList({ onSelectFolder, selectedFolderId }: SmartFolde
           parentId={parentForNewFolder}
         />
       )}
+      */}
     </div>
   )
 }

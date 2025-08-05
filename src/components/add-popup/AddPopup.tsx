@@ -26,6 +26,9 @@ interface AddPopupProps {
   defaultTab?: 'event' | 'log'
   contextData?: CreateContextData
   editingEvent?: any // 編集中のイベントデータ
+  defaultDate?: Date
+  defaultTime?: string
+  defaultEndTime?: string
 }
 
 interface CreateContextData {
@@ -47,8 +50,13 @@ export function AddPopup({
   onOpenChange, 
   defaultTab = 'event',
   contextData,
-  editingEvent 
+  editingEvent,
+  defaultDate,
+  defaultTime,
+  defaultEndTime 
 }: AddPopupProps) {
+  console.log('🔍 AddPopup rendered with:', { open, editingEvent, defaultTab })
+  
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeTab, setActiveTab] = useState<'event' | 'log'>(defaultTab)
   const [eventFormData, setEventFormData] = useState<EventFormData | null>(null)
@@ -77,8 +85,31 @@ export function AddPopup({
     try {
       if (activeTab === 'event' && eventFormData) {
         // 編集モードかどうかで処理を分岐
-        const startDate = eventFormData.date ? new Date(`${eventFormData.date}T${eventFormData.startTime || '00:00'}:00`) : new Date()
-        const endDate = eventFormData.date && eventFormData.endTime ? new Date(`${eventFormData.date}T${eventFormData.endTime}:00`) : undefined
+        // タイムゾーン安全な日付作成
+        let startDate: Date
+        if (eventFormData.date) {
+          const [year, month, day] = eventFormData.date.split('-').map(Number)
+          const [hours, minutes] = (eventFormData.startTime || '00:00').split(':').map(Number)
+          startDate = new Date()
+          startDate.setFullYear(year, month - 1, day)
+          startDate.setHours(hours, minutes, 0, 0)
+        } else {
+          startDate = new Date()
+        }
+        
+        let endDate: Date | undefined
+        if (eventFormData.date && eventFormData.endTime) {
+          const [year, month, day] = eventFormData.date.split('-').map(Number)
+          const [endHours, endMinutes] = eventFormData.endTime.split(':').map(Number)
+          endDate = new Date()
+          endDate.setFullYear(year, month - 1, day)
+          endDate.setHours(endHours, endMinutes, 0, 0)
+          
+          // 終了時間が開始時間より早い場合は翌日扱い
+          if (endDate <= startDate) {
+            endDate.setDate(endDate.getDate() + 1)
+          }
+        }
         
         console.log('📅 AddPopup creating event with dates:', {
           date: eventFormData.date,
@@ -187,6 +218,9 @@ export function AddPopup({
                 }}
                 onFormDataChange={setEventFormData}
                 onFormValidChange={setIsEventFormValid}
+                defaultDate={defaultDate}
+                defaultTime={defaultTime}
+                defaultEndTime={defaultEndTime}
               />
             </div>
           )}

@@ -9,7 +9,7 @@ import {
   KanbanCard,
   type DragEndEvent
 } from '@/components/ui/kibo-ui/kanban'
-import { Task, TaskStatus } from '@/types/box'
+import { Task, TaskStatus } from '@/types/unified'
 import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
 import { useTagStore } from '@/lib/tag-store'
@@ -35,10 +35,10 @@ import { cn } from '@/lib/utils'
 
 // Column definitions for kanban
 const columns = [
-  { id: 'Todo', name: 'Todo', color: 'bg-gray-50 dark:bg-gray-900/50' },
-  { id: 'In Progress', name: 'In Progress', color: 'bg-blue-50 dark:bg-blue-900/20' },
-  { id: 'Done', name: 'Done', color: 'bg-green-50 dark:bg-green-900/20' },
-  { id: 'Backlog', name: 'Backlog', color: 'bg-yellow-50 dark:bg-yellow-900/20' },
+  { id: 'backlog', name: 'Backlog', color: 'bg-gray-50 dark:bg-gray-900/50' },
+  { id: 'scheduled', name: 'Scheduled', color: 'bg-blue-50 dark:bg-blue-900/20' },
+  { id: 'completed', name: 'Completed', color: 'bg-green-50 dark:bg-green-900/20' },
+  { id: 'rescheduled', name: 'Rescheduled', color: 'bg-yellow-50 dark:bg-yellow-900/20' },
 ]
 
 interface KanbanTaskData {
@@ -225,7 +225,7 @@ export function BoardView({ className, onEditTask, onAddTask }: BoardViewProps) 
 
                     {/* Footer with ID and priority */}
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="font-mono">{item.task.task}</span>
+                      <span className="font-mono">{item.task.id}</span>
                       <div className="flex items-center gap-1">
                         {getPriorityIcon(item.task.priority)}
                         <span>{item.task.priority}</span>

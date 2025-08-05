@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { 
   Calendar, Plus, X, Check, Tag as TagIcon, Clock, Repeat,
   AlertTriangle, Star, Circle, ArrowRight, MoreHorizontal,
@@ -47,6 +47,9 @@ interface EventCreateFormProps {
   contextData?: CreateContextData
   onFormDataChange?: (data: EventFormData) => void
   onFormValidChange?: (isValid: boolean) => void
+  defaultDate?: Date
+  defaultTime?: string
+  defaultEndTime?: string
 }
 
 
@@ -82,7 +85,7 @@ const generateTimeOptions = () => {
 const timeOptions = generateTimeOptions()
 
 
-export function EventCreateForm({ contextData, onFormDataChange, onFormValidChange }: EventCreateFormProps) {
+export function EventCreateForm({ contextData, onFormDataChange, onFormValidChange, defaultDate, defaultTime, defaultEndTime }: EventCreateFormProps) {
   const [formData, setFormData] = useState<EventFormData>({
     title: '',
     description: '',
@@ -105,64 +108,131 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
   const [newChecklistItem, setNewChecklistItem] = useState('')
   const { tags } = useSidebarStore()
 
-  // Initialize form with context data (excluding editingEvent)
+  // スマートな時間設定を計算する関数
+  const getSmartDefaultTimes = useCallback((providedTime?: string, providedEndTime?: string) => {
+    const now = new Date()
+    
+    if (providedTime) {
+      // defaultTimeが明示的に指定されている場合（カレンダードラッグなど）
+      const [hours, minutes] = providedTime.split(':').map(Number)
+      const endDate = new Date()
+      endDate.setHours(hours + 1, minutes) // 1時間後
+      return {
+        start: providedTime,
+        end: providedEndTime || `${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`
+      }
+    } else {
+      // 自動設定：現在時刻を30分単位で切り上げ
+      const currentMinutes = now.getMinutes()
+      const roundedMinutes = Math.ceil(currentMinutes / 30) * 30
+      
+      const startTime = new Date(now)
+      if (roundedMinutes >= 60) {
+        startTime.setHours(now.getHours() + 1, 0, 0, 0)
+      } else {
+        startTime.setHours(now.getHours(), roundedMinutes, 0, 0)
+      }
+      
+      const endTime = new Date(startTime.getTime() + 60 * 60 * 1000) // 1時間後
+      
+      return {
+        start: `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`,
+        end: `${endTime.getHours().toString().padStart(2, '0')}:${endTime.getMinutes().toString().padStart(2, '0')}`
+      }
+    }
+  }, [])
+
+  // カレンダーからの値（defaultDate, defaultTime, defaultEndTime）が変更された時の処理
   useEffect(() => {
+    if (defaultDate || defaultTime || defaultEndTime) {
+      
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      
+      const defaultStartDate = defaultDate 
+        ? defaultDate.toISOString().split('T')[0]
+        : tomorrow.toISOString().split('T')[0]
+      
+      const smartTimes = getSmartDefaultTimes(defaultTime, defaultEndTime)
+      
+      setFormData({
+        title: '',
+        description: '',
+        date: defaultStartDate,
+        startTime: smartTimes.start,
+        endTime: smartTimes.end,
+        status: 'inbox',
+        priority: undefined,
+        color: '#1a73e8',
+        items: [],
+        isRecurring: false,
+        recurrenceType: undefined,
+        recurrenceInterval: 1,
+        recurrenceEndDate: undefined,
+        tagIds: [],
+        location: '',
+        url: '',
+      })
+    }
+  }, [defaultDate, defaultTime, defaultEndTime, getSmartDefaultTimes])
+
+  // contextDataの処理（カレンダー以外からの呼び出し）
+  // タイムゾーン安全な日付変換ユーティリティ
+  const formatDateForForm = (date: Date): string => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  useEffect(() => {
+    // カレンダーからの値がある場合は無視
+    if (defaultDate || defaultTime || defaultEndTime) return
+    
     const now = new Date()
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
     
-    const defaultStartDate = tomorrow.toISOString().split('T')[0]
-    const defaultStartTime = '09:00'
-    const defaultEndTime = '10:00'
+    const defaultStartDate = formatDateForForm(tomorrow)
+    const smartTimes = getSmartDefaultTimes()
     
     if (contextData && !contextData.editingEvent) {
       setFormData(prev => ({
         ...prev,
         date: contextData.dueDate 
-          ? contextData.dueDate.toISOString().split('T')[0]
+          ? formatDateForForm(contextData.dueDate)
           : defaultStartDate,
-        startTime: defaultStartTime,
-        endTime: defaultEndTime,
+        startTime: smartTimes.start,
+        endTime: smartTimes.end,
         color: contextData.defaultColor || '#1a73e8',
         tagIds: contextData.tags || [],
       }))
     } else if (!contextData) {
+      // 初期状態
       setFormData(prev => ({
         ...prev,
         date: defaultStartDate,
-        startTime: defaultStartTime,
-        endTime: defaultEndTime,
+        startTime: smartTimes.start,
+        endTime: smartTimes.end,
       }))
     }
-  }, [contextData?.dueDate, contextData?.defaultColor, contextData?.tags])
+  }, [contextData, getSmartDefaultTimes, defaultDate, defaultTime, defaultEndTime])
 
   // Handle editing event data separately to avoid infinite loop
   useEffect(() => {
-    console.log('🔄 EventCreateForm editing useEffect triggered:', {
-      hasContextData: !!contextData,
-      hasEditingEvent: !!contextData?.editingEvent,
-      editingEventId: contextData?.editingEvent?.id,
-      editingEvent: contextData?.editingEvent
-    })
-    
     if (contextData?.editingEvent) {
       const event = contextData.editingEvent
-      console.log('📝 Setting form data from editing event:', event)
+      console.log('📝 EventCreateForm: Setting up editing for event:', event)
       
       const eventDate = event.startDate ? new Date(event.startDate) : new Date()
       const eventEndDate = event.endDate ? new Date(event.endDate) : null
+      console.log('📝 EventCreateForm: Parsed dates - start:', eventDate, 'end:', eventEndDate)
       
-      console.log('📅 Processing dates:', {
-        originalStartDate: event.startDate,
-        originalEndDate: event.endDate,
-        eventDate,
-        eventEndDate
-      })
       
       const newFormData = {
         title: event.title || '',
         description: event.description || '',
-        date: eventDate.toISOString().split('T')[0],
+        date: formatDateForForm(eventDate),
         startTime: eventDate.toTimeString().slice(0, 5),
         endTime: eventEndDate ? eventEndDate.toTimeString().slice(0, 5) : '',
         status: event.status || 'inbox',
@@ -178,10 +248,10 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         url: event.url || '',
       }
       
-      console.log('📝 Setting new form data:', newFormData)
+      console.log('📝 EventCreateForm: Setting form data:', newFormData)
       setFormData(newFormData)
     }
-  }, [contextData?.editingEvent?.id]) // Only re-run when editing a different event
+  }, [contextData?.editingEvent]) // Only re-run when editing a different event
 
   const updateFormData = (field: keyof EventFormData, value: any) => {
     let newData = { ...formData, [field]: value }
@@ -456,7 +526,6 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
           placeholder="Select tags..."
           onCreateTag={(tagName) => {
             // TODO: Implement tag creation API call
-            console.log('Create new tag:', tagName)
           }}
         />
       </div>

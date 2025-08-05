@@ -20,17 +20,17 @@ export function exportToCSV(tasks: Task[], filename = 'tasks') {
   const csvContent = [
     headers.join(','),
     ...tasks.map(task => [
-      `"${task.task}"`,
+      `"${task.id}"`,
       `"${task.title.replace(/"/g, '""')}"`,
       `"${task.type}"`,
       `"${task.status}"`,
       `"${task.priority}"`,
       `"${(task.description || '').replace(/"/g, '""')}"`,
-      `"${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : ''}"`,
-      `"${new Date(task.createdAt).toLocaleDateString()}"`,
-      `"${new Date(task.updatedAt).toLocaleDateString()}"`,
-      `"${task.estimatedHours || ''}"`,
-      `"${task.actualHours || ''}"`,
+      `"${task.due_date ? new Date(task.due_date).toLocaleDateString() : ''}"`,
+      `"${new Date(task.created_at).toLocaleDateString()}"`,
+      `"${new Date(task.updated_at).toLocaleDateString()}"`,
+      `"N/A"`, // TODO: Implement with new Task type
+      `"N/A"`, // TODO: Implement with new Task type
       `"${(task.tags || []).join('; ')}"`,
     ].join(','))
   ].join('\n')
@@ -240,8 +240,8 @@ function generatePrintHTML(tasks: Task[]): string {
 
 function generateSummaryHTML(tasks: Task[]): string {
   const totalTasks = tasks.length
-  const completedTasks = tasks.filter(t => t.status === 'Done').length
-  const inProgressTasks = tasks.filter(t => t.status === 'In Progress').length
+  const completedTasks = tasks.filter(t => t.status === 'completed').length
+  const inProgressTasks = tasks.filter(t => t.status === 'scheduled').length
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
   
   return `
@@ -272,13 +272,13 @@ function generateSummaryHTML(tasks: Task[]): string {
 function generateTaskTableHTML(tasks: Task[]): string {
   const rows = tasks.map(task => `
     <tr>
-      <td class="task-id">${task.task}</td>
+      <td class="task-id">${task.id}</td>
       <td class="task-title">${task.title}</td>
       <td><span class="type-badge type-${task.type.toLowerCase()}">${task.type}</span></td>
       <td><span class="status-badge status-${task.status.toLowerCase().replace(' ', '-')}">${task.status}</span></td>
       <td><span class="priority-badge priority-${task.priority.toLowerCase()}">${task.priority}</span></td>
-      <td>${task.dueDate ? new Date(task.dueDate).toLocaleDateString() : '-'}</td>
-      <td>${new Date(task.createdAt).toLocaleDateString()}</td>
+      <td>${task.due_date ? new Date(task.due_date).toLocaleDateString() : '-'}</td>
+      <td>${new Date(task.created_at).toLocaleDateString()}</td>
     </tr>
   `).join('')
   

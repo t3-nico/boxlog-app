@@ -49,16 +49,16 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
   const [formData, setFormData] = useState<TaskFormData>({
     task: '',
     title: '',
-    type: 'Feature',
-    status: 'Todo',
-    priority: 'Medium',
+    type: 'task',
+    status: 'backlog',
+    priority: 'medium',
     tags: [],
   })
   
   useEffect(() => {
     if (task) {
       setFormData({
-        task: task.task,
+        task: task.id,
         title: task.title,
         type: task.type,
         status: task.status,
@@ -69,9 +69,9 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
       setFormData({
         task: `TASK-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
         title: '',
-        type: 'Feature',
-        status: 'Todo',
-        priority: 'Medium',
+        type: 'task',
+        status: 'backlog',
+        priority: 'medium',
         tags: [],
       })
     }
@@ -100,11 +100,9 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
         const now = new Date()
         result = await addTask({
           ...formData,
-          selected: false,
-          createdAt: now,
-          updatedAt: now,
-          attachments: [],
-          comments: [],
+          created_at: now.toISOString(),
+          updated_at: now.toISOString(),
+          userId: 'default-user', // TODO: Get from auth context
         })
         if (result) {
           success('Task created', 'New task has been successfully created')

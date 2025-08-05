@@ -15,7 +15,7 @@ import {
   Tag as TagIcon,
   Plus as PlusIcon
 } from 'lucide-react'
-import type { TagWithChildren, CreateTagInput } from '@/types/tags'
+import type { TagWithChildren, CreateTagInput, TagLevel } from '@/types/tags'
 import { TAG_PRESET_COLORS, getCSSVariableValue } from '@/config/theme/colors'
 
 interface TagCreateModalProps {
@@ -251,11 +251,15 @@ export function TagCreateModal({
     
     setIsLoading(true)
     try {
+      const selectedParentTag = allTags.find(tag => tag.id === formData.parent_id)
+      const level: TagLevel = selectedParentTag ? (selectedParentTag.level + 1) as TagLevel : 0
+      
       await onSave({
         name: formData.name.trim(),
         parent_id: formData.parent_id,
         color: formData.color,
-        description: formData.description.trim() || undefined
+        description: formData.description.trim() || null,
+        level
       })
       onClose()
     } catch (error) {

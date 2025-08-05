@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useBoxStore } from '@/lib/box-store'
-import { TaskStatus, TaskPriority } from '@/types/box'
+import { TaskStatus, TaskPriority } from '@/types/unified'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toast'
 import {
@@ -141,25 +141,29 @@ export function TaskBulkActions() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleBulkStatusChange('Todo')}>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('backlog')}>
               <Circle className="mr-2 h-4 w-4 text-gray-500" />
-              Todo
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkStatusChange('In Progress')}>
-              <Clock className="mr-2 h-4 w-4 text-blue-500" />
-              In Progress
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkStatusChange('Backlog')}>
-              <Minus className="mr-2 h-4 w-4 text-gray-400" />
               Backlog
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkStatusChange('Done')}>
-              <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
-              Done
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('scheduled')}>
+              <Clock className="mr-2 h-4 w-4 text-blue-500" />
+              Scheduled
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkStatusChange('Cancelled')}>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('completed')}>
+              <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
+              Completed
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('rescheduled')}>
+              <Minus className="mr-2 h-4 w-4 text-yellow-500" />
+              Rescheduled
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('stopped')}>
               <XCircle className="mr-2 h-4 w-4 text-red-500" />
-              Cancelled
+              Stopped
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkStatusChange('delegated')}>
+              <Circle className="mr-2 h-4 w-4 text-purple-500" />
+              Delegated
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -172,15 +176,19 @@ export function TaskBulkActions() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleBulkPriorityChange('High')}>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('urgent')}>
+              <ArrowUp className="mr-2 h-4 w-4 text-red-700" />
+              Urgent
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('high')}>
               <ArrowUp className="mr-2 h-4 w-4 text-red-500" />
               High
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkPriorityChange('Medium')}>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('medium')}>
               <Minus className="mr-2 h-4 w-4 text-yellow-500" />
               Medium
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleBulkPriorityChange('Low')}>
+            <DropdownMenuItem onClick={() => handleBulkPriorityChange('low')}>
               <ArrowDown className="mr-2 h-4 w-4 text-green-500" />
               Low
             </DropdownMenuItem>

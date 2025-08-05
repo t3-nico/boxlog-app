@@ -28,7 +28,7 @@ export default function CalendarSettingsPage() {
           label="Timezone"
           description="Select your timezone for calendar display"
           value={settings.timezone}
-          onChange={(e) => settings.updateSettings({ timezone: e.target.value })}
+          onChange={(value) => settings.updateSettings({ timezone: value })}
         >
           {/* 主要なタイムゾーンを上部に表示 */}
           <option value="Asia/Tokyo">🇯🇵 Tokyo (GMT+9)</option>
@@ -51,7 +51,7 @@ export default function CalendarSettingsPage() {
           label="Time format"
           description="Choose between 12-hour or 24-hour time display"
           value={settings.timeFormat}
-          onChange={(e) => settings.updateSettings({ timeFormat: e.target.value as '12h' | '24h' })}
+          onChange={(value) => settings.updateSettings({ timeFormat: value as '12h' | '24h' })}
         >
           <option value="24h">24-hour (13:00)</option>
           <option value="12h">12-hour (1:00 PM)</option>
@@ -80,7 +80,7 @@ export default function CalendarSettingsPage() {
           label="Week starts on"
           description="Choose which day your calendar week starts on"
           value={String(settings.weekStartsOn)}
-          onChange={(e) => settings.updateSettings({ weekStartsOn: Number(e.target.value) as 0 | 1 | 6 })}
+          onChange={(value) => settings.updateSettings({ weekStartsOn: Number(value) as 0 | 1 | 6 })}
         >
           <option value="0">Sunday</option>
           <option value="1">Monday</option>
@@ -113,7 +113,7 @@ export default function CalendarSettingsPage() {
           label="Default task duration"
           description="Default duration when creating new tasks"
           value={String(settings.defaultDuration)}
-          onChange={(e) => settings.updateSettings({ defaultDuration: Number(e.target.value) })}
+          onChange={(value) => settings.updateSettings({ defaultDuration: Number(value) })}
         >
           <option value="15">15 minutes</option>
           <option value="30">30 minutes</option>
@@ -132,9 +132,9 @@ export default function CalendarSettingsPage() {
           label="Business hours start"
           description="When your business hours begin"
           value={String(settings.businessHours.start)}
-          onChange={(e) => 
+          onChange={(value) => 
             settings.updateSettings({ 
-              businessHours: { ...settings.businessHours, start: Number(e.target.value) }
+              businessHours: { ...settings.businessHours, start: Number(value) }
             })
           }
         >
@@ -150,9 +150,9 @@ export default function CalendarSettingsPage() {
           label="Business hours end"
           description="When your business hours end"
           value={String(settings.businessHours.end)}
-          onChange={(e) => 
+          onChange={(value) => 
             settings.updateSettings({ 
-              businessHours: { ...settings.businessHours, end: Number(e.target.value) }
+              businessHours: { ...settings.businessHours, end: Number(value) }
             })
           }
         >

@@ -1,8 +1,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Clock, Calendar } from 'lucide-react'
+import { Clock, Calendar, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useEventStore } from '@/stores/useEventStore'
+import type { Event } from '@/types/events'
 import { 
   CHRONOTYPE_PRESETS, 
   getProductivityZoneForHour, 
@@ -11,34 +14,82 @@ import {
 } from '@/types/chronotype'
 import { CHRONOTYPE_COLORS, getCSSVariableValue } from '@/config/theme/colors'
 
-interface ScheduleEvent {
-  id: string
-  title: string
-  startTime: Date
-  endTime: Date
-  description?: string
-}
-
-interface Event {
-  id: number
-  name: string
-  date: string
-  time: string
-  location: string
-  status: string
-}
 
 interface CurrentScheduleCardProps {
   collapsed?: boolean
-  events?: Event[]
 }
 
-export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentScheduleCardProps) {
+export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardProps) {
   const [currentTime, setCurrentTime] = useState(new Date())
-  const [currentEvent, setCurrentEvent] = useState<ScheduleEvent | null>(null)
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null)
+  const router = useRouter()
   
-  // クロノタイプ設定を取得
+  // ストアから実際のイベントデータを取得
+  const eventStore = useEventStore()
   const { chronotype } = useCalendarSettingsStore()
+
+  // 今日のイベントを独立してフェッチ
+  const [todayEvents, setTodayEvents] = useState<Event[]>([])
+  
+  useEffect(() => {
+    const fetchTodayEvents = async () => {
+      try {
+        const today = new Date()
+        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+        const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+        
+        console.log('🔍 Fetching today events:', {
+          todayStart: todayStart.toISOString(),
+          todayEnd: todayEnd.toISOString()
+        })
+        
+        const params = new URLSearchParams()
+        params.append('start_date', todayStart.toISOString().split('T')[0])
+        params.append('end_date', todayEnd.toISOString().split('T')[0])
+        
+        const apiUrl = `/api/events?${params}`
+        console.log('🌐 Calling API:', apiUrl)
+        
+        const response = await fetch(apiUrl)
+        console.log('🌐 API response status:', response.status)
+        
+        if (response.ok) {
+          const data = await response.json()
+          console.log('📦 Raw API response:', data)
+          
+          const events = data.data?.events || data.events || data.data || data || []
+          console.log('📥 Extracted events:', events.length, events)
+          
+          // EventEntity を Event に変換
+          const convertedEvents = events.map((entity: any) => {
+            return {
+              id: entity.id,
+              title: entity.title,
+              description: entity.description,
+              startDate: entity.planned_start ? new Date(entity.planned_start) : undefined,
+              endDate: entity.planned_end ? new Date(entity.planned_end) : undefined,
+              status: entity.status,
+              priority: entity.priority,
+              color: entity.color,
+              location: entity.location,
+              url: entity.url,
+              tags: entity.event_tags?.map((et: any) => et.tags).filter(Boolean) || []
+            }
+          }).filter((event: Event) => event.startDate) // startDateがあるもののみ
+          
+          setTodayEvents(convertedEvents)
+        } else {
+          console.error('❌ API request failed:', response.status, response.statusText)
+          const errorText = await response.text()
+          console.error('❌ Error response:', errorText)
+        }
+      } catch (error) {
+        console.error('❌ Failed to fetch today events:', error)
+      }
+    }
+    
+    fetchTodayEvents()
+  }, [])
 
   // リアルタイム時間更新
   useEffect(() => {
@@ -76,62 +127,48 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
     }
   }
 
-  // 現在の予定を取得（実際のイベントデータから）
+  // 現在進行中のイベントを取得
   useEffect(() => {
-    if (!events || events.length === 0) {
+    const now = new Date()
+    
+    console.log('🔍 CurrentScheduleCard debug:', {
+      todayEventsCount: todayEvents.length,
+      currentTime: now.toISOString()
+    })
+    
+    if (todayEvents.length === 0) {
       setCurrentEvent(null)
       return
     }
-
-    const now = new Date()
-    const today = now.toDateString()
-
-    // 今日のイベントを探す
-    const todayEvents = events.filter(event => {
-      try {
-        const eventDate = new Date(event.date)
-        return eventDate.toDateString() === today && event.status === 'On Sale'
-      } catch {
-        return false
-      }
+    
+    // 現在時刻にアクティブなイベントを検索
+    const activeEvent = todayEvents.find(event => {
+      if (!event.startDate || !event.endDate) return false
+      
+      const startTime = new Date(event.startDate)
+      const endTime = new Date(event.endDate)
+      
+      const isActive = now >= startTime && now <= endTime
+      
+      console.log('🕐 Checking event:', {
+        title: event.title,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        currentTime: now.toISOString(),
+        isActive
+      })
+      
+      return isActive
     })
-
-    if (todayEvents.length > 0) {
-      const event = todayEvents[0]
-      // イベント時間をパース（例：「10 PM」→ 22:00）
-      const timeMatch = event.time.match(/(\d+)\s*(AM|PM)/i)
-      if (timeMatch) {
-        const hour = parseInt(timeMatch[1])
-        const ampm = timeMatch[2].toUpperCase()
-        let eventHour = hour
-        if (ampm === 'PM' && hour !== 12) eventHour += 12
-        if (ampm === 'AM' && hour === 12) eventHour = 0
-
-        const eventStart = new Date(now)
-        eventStart.setHours(eventHour, 0, 0, 0)
-        
-        const eventEnd = new Date(eventStart)
-        eventEnd.setHours(eventHour + 2) // 2時間のイベントと仮定
-
-        const scheduleEvent: ScheduleEvent = {
-          id: event.id.toString(),
-          title: event.name,
-          startTime: eventStart,
-          endTime: eventEnd,
-          description: event.location
-        }
-
-        setCurrentEvent(scheduleEvent)
-      }
-    } else {
-      setCurrentEvent(null)
-    }
-  }, [events, currentTime])
+    
+    console.log('🎯 Final active event:', activeEvent?.title || 'None')
+    setCurrentEvent(activeEvent || null)
+  }, [currentTime, todayEvents])
 
   // 残り時間を計算
-  const getRemainingTime = (endTime: Date): string => {
+  const getRemainingTime = (endDate: Date): string => {
     const now = new Date()
-    const remaining = endTime.getTime() - now.getTime()
+    const remaining = endDate.getTime() - now.getTime()
     
     if (remaining <= 0) return 'Ended'
     
@@ -171,8 +208,17 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
   }
 
   if (!currentEvent) {
+    const handleNoEventClick = () => {
+      const today = new Date()
+      const dateParam = today.toISOString().split('T')[0]
+      router.push(`/calendar/day?date=${dateParam}`)
+    }
+    
     return (
-      <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg border">
+      <div 
+        className="p-4 bg-secondary rounded-lg border border-secondary cursor-pointer hover:bg-secondary/80 transition-colors"
+        onClick={handleNoEventClick}
+      >
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
           <span className="text-xs">No current events</span>
@@ -183,34 +229,36 @@ export function CurrentScheduleCard({ collapsed = false, events = [] }: CurrentS
 
   const borderColor = getChronotypeColor()
   
+  // 今日のカレンダーday viewに移動する関数
+  const handleClick = () => {
+    const today = new Date()
+    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
+    router.push(`/calendar/day?date=${dateParam}`)
+  }
+  
   return (
     <div 
-      className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+      className="p-4 bg-secondary rounded-lg cursor-pointer hover:bg-secondary/80 transition-colors flex flex-col"
       style={{
-        border: `2px solid ${borderColor}`
+        border: `2px solid ${borderColor}`,
+        gap: '8px'
       }}
+      onClick={handleClick}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-        <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+      <div className="flex items-center" style={{ gap: '4px' }}>
+        <div className="border border-gray-300 dark:border-gray-600 px-2 py-1 rounded text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
           Live
-        </span>
+        </div>
+        <div className="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-400 tabular-nums">
+          <span>{currentEvent.startDate && formatTime(new Date(currentEvent.startDate))}</span>
+          <ArrowRight className="w-4 h-4 mx-1 text-gray-400 dark:text-gray-500" />
+          <span>{currentEvent.endDate && formatTime(new Date(currentEvent.endDate))}</span>
+        </div>
       </div>
       
-      <h3 className="font-medium text-gray-900 dark:text-white text-xs mb-2">
+      <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight">
         {currentEvent.title}
       </h3>
-      
-      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 mb-2">
-        <Clock className="w-4 h-4" />
-        <span>
-          {formatTime(currentEvent.startTime)} - {formatTime(currentEvent.endTime)}
-        </span>
-      </div>
-      
-      <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-        ⏰ {getRemainingTime(currentEvent.endTime)}
-      </div>
     </div>
   )
 }

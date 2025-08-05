@@ -12,12 +12,20 @@ import {
   getLifeCounterDebugInfo,
   type LifeCounterSettings 
 } from '@/lib/life-counter'
+import { 
+  SUPPORTED_TIMEZONES, 
+  getCurrentTimezone, 
+  setUserTimezone, 
+  formatTimezoneInfo,
+  type TimezoneValue 
+} from '@/utils/timezone'
 
 export default function PreferencesSettings() {
   const [notifications, setNotifications] = useState(true)
   const [duration, setDuration] = useState('30')
   const [segment, setSegment] = useState('30')
   const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('24h')
+  const [timezone, setTimezone] = useState<string>('')
   const { theme, setTheme } = useTheme()
   
   // Life counter settings
@@ -39,6 +47,11 @@ export default function PreferencesSettings() {
     if (savedTimeFormat) {
       setTimeFormat(savedTimeFormat)
     }
+    
+    // Load current timezone
+    const currentTimezone = getCurrentTimezone()
+    setTimezone(currentTimezone)
+    console.log('現在のタイムゾーン設定:', currentTimezone)
   }, [])
 
   // Save settings when they change (but only after initial load)
@@ -52,6 +65,13 @@ export default function PreferencesSettings() {
   useEffect(() => {
     localStorage.setItem('timeFormat', timeFormat)
   }, [timeFormat])
+
+  // Handle timezone change
+  const handleTimezoneChange = (newTimezone: string) => {
+    setTimezone(newTimezone)
+    setUserTimezone(newTimezone)
+    console.log('タイムゾーン設定を更新:', newTimezone)
+  }
 
   const handleLifeCounterToggle = (enabled: boolean) => {
     setLifeCounter(prev => ({ ...prev, enabled }))
@@ -95,6 +115,18 @@ export default function PreferencesSettings() {
         </SelectItem>
       </SettingSection>
       <SettingSection title="Time & Tags" description="Default behaviors.">
+        <SelectItem
+          label="Timezone"
+          description="Select your timezone for accurate event display"
+          value={timezone}
+          onChange={handleTimezoneChange}
+        >
+          {SUPPORTED_TIMEZONES.map((tz) => (
+            <ShadcnSelectItem key={tz.value} value={tz.value}>
+              {tz.label}
+            </ShadcnSelectItem>
+          ))}
+        </SelectItem>
         <SelectItem
           label="Time format"
           description="Choose between 12-hour (AM/PM) or 24-hour time format"

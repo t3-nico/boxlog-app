@@ -5,21 +5,41 @@ import { Clock as ClockIcon, Sun as SunIcon, Moon as MoonIcon, GraduationCap as 
 import { useRouter } from 'next/navigation'
 import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
+import { getCurrentTimeInUserTimezone, listenToTimezoneChange } from '@/utils/timezone'
 
 export function TimeDisplay() {
-  const [time, setTime] = React.useState(new Date())
+  const [time, setTime] = React.useState<Date | null>(null)
   const [mounted, setMounted] = React.useState(false)
   const router = useRouter()
   const { chronotype } = useCalendarSettingsStore()
 
+  // 時刻の更新関数
+  const updateTime = () => {
+    setTime(getCurrentTimeInUserTimezone())
+  }
+
   React.useEffect(() => {
     setMounted(true)
-    const timer = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
+    
+    // 初回設定（クライアントサイドのみ）
+    setTime(getCurrentTimeInUserTimezone())
+    
+    // 1秒ごとに更新
+    const timer = setInterval(updateTime, 1000)
 
     return () => clearInterval(timer)
   }, [])
+
+  // タイムゾーン変更をリッスン
+  React.useEffect(() => {
+    const cleanup = listenToTimezoneChange((newTimezone) => {
+      console.log('🌐 ヘッダー時刻表示: タイムゾーン変更を検知:', newTimezone)
+      // タイムゾーン変更時に即座に時刻を更新
+      updateTime()
+    })
+
+    return cleanup
+  }, [updateTime])
 
   // 現在のクロノタイプステータスを取得
   const getCurrentChronoStatus = () => {
@@ -27,6 +47,16 @@ export function TimeDisplay() {
       return {
         status: 'Off',
         label: 'Chronotype Off',
+        icon: ClockIcon,
+        color: 'text-gray-500 dark:text-gray-400',
+        bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700'
+      }
+    }
+
+    if (!time) {
+      return {
+        status: 'Loading...',
+        label: 'Loading...',
         icon: ClockIcon,
         color: 'text-gray-500 dark:text-gray-400',
         bgColor: 'hover:bg-gray-50 dark:hover:bg-gray-700'
@@ -125,7 +155,7 @@ export function TimeDisplay() {
       <ClockIcon className="w-4 h-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
       <div className="flex items-center gap-1">
         <div className="text-base font-bold tabular-nums text-gray-600 dark:text-gray-300">
-          {mounted ? time.toLocaleTimeString('en-US', { 
+          {mounted && time ? time.toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit',
             second: '2-digit',

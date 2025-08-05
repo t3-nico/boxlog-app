@@ -32,7 +32,7 @@ export function TaskDetail({ task, onEdit, onClose }: TaskDetailProps) {
         <div className="flex items-start justify-between mb-6">
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <span className="text-sm font-mono text-gray-500">{task.task}</span>
+              <span className="text-sm font-mono text-gray-500">{task.id}</span>
             </div>
             <h1 className="text-2xl font-bold mb-2">{task.title}</h1>
             <div className="flex items-center space-x-2">
@@ -68,7 +68,7 @@ export function TaskDetail({ task, onEdit, onClose }: TaskDetailProps) {
         <div className="space-y-4 text-sm text-gray-600">
           <div>
             <span className="font-medium">タスクID:</span>{' '}
-            <span className="font-mono">{task.task}</span>
+            <span className="font-mono">{task.id}</span>
           </div>
           <div>
             <span className="font-medium">タイトル:</span>{' '}

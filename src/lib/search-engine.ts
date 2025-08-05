@@ -166,8 +166,8 @@ export class SearchEngine {
       metadata: {
         status: task.status,
         priority: task.priority,
-        dueDate: task.dueDate?.toISOString(),
-        tags: task.tags?.map(tag => tag.name) || [],
+        dueDate: task.due_date,
+        tags: task.tags || [],
       },
     }))
     

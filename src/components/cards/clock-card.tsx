@@ -2,17 +2,36 @@
 
 import React, { useState, useEffect } from 'react'
 import { Clock, Sun, Moon, Zap } from 'lucide-react'
+import { getCurrentTimeInUserTimezone, listenToTimezoneChange } from '@/utils/timezone'
 
 export function ClockCard() {
-  const [time, setTime] = useState(new Date())
+  const [time, setTime] = useState<Date | null>(null)
+
+  // 時刻の更新関数
+  const updateTime = () => {
+    setTime(getCurrentTimeInUserTimezone())
+  }
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
+    // 初回設定（クライアントサイドのみ）
+    setTime(getCurrentTimeInUserTimezone())
+    
+    // 1秒ごとに更新
+    const timer = setInterval(updateTime, 1000)
 
     return () => clearInterval(timer)
   }, [])
+
+  // タイムゾーン変更をリッスン
+  useEffect(() => {
+    const cleanup = listenToTimezoneChange((newTimezone) => {
+      console.log('🌐 時計カード: タイムゾーン変更を検知:', newTimezone)
+      // タイムゾーン変更時に即座に時刻を更新
+      updateTime()
+    })
+
+    return cleanup
+  }, [updateTime])
 
   // クロノタイプと現在時刻から状態を判定
   const getChronotypeStatus = (currentTime: Date) => {
@@ -34,7 +53,7 @@ export function ClockCard() {
     }
   }
 
-  const chronoStatus = getChronotypeStatus(time)
+  const chronoStatus = time ? getChronotypeStatus(time) : { status: 'moderate', label: 'Loading...', color: 'gray', icon: Clock }
 
   const getStatusColors = (color: string) => {
     switch (color) {
@@ -77,12 +96,12 @@ export function ClockCard() {
             <div className="text-lg font-bold tabular-nums
               text-gray-900
               dark:text-white dark:drop-shadow-sm">
-              {time.toLocaleTimeString('en-US', { 
+              {time?.toLocaleTimeString('en-US', { 
                 hour: '2-digit', 
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: false 
-              })}
+              }) || '--:--:--'}
             </div>
             {/* Chronotype Status Badge - Clickable */}
             <a

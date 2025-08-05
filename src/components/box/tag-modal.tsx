@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Tag } from '@/types/box'
+import { Tag, TagLevel, CreateTagInput, UpdateTagInput } from '@/types/tags'
 import { useTagStore, tagColors, colorCategories } from '@/lib/tag-store'
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
@@ -44,8 +44,8 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
       setName(tag.name)
       setDescription(tag.description || '')
       setSelectedColor(tag.color)
-      setIcon(tag.icon || '')
-      setSelectedParentId(tag.parentId || '')
+      setIcon((tag as any).icon || '')
+      setSelectedParentId((tag as any).parent_id || '')
     } else {
       setName('')
       setDescription('')
@@ -59,22 +59,30 @@ export function TagModal({ open, onClose, tag, parentId }: TagModalProps) {
     if (!name.trim()) return
 
     const parentTag = selectedParentId ? getTagById(selectedParentId) : null
-    const level = parentTag ? parentTag.level + 1 : 1
-
-    const tagData = {
-      name: name.trim(),
-      color: selectedColor,
-      description: description.trim() || undefined,
-      icon: icon.trim() || undefined,
-      parentId: selectedParentId || undefined,
-      level,
-      order: tag?.order ?? 0,
-    }
+    const level: TagLevel = parentTag ? (parentTag.level + 1) as TagLevel : 0
     
     if (tag) {
-      await updateTag(tag.id, tagData)
+      // 更新の場合
+      const updateData: UpdateTagInput = {
+        name: name.trim(),
+        color: selectedColor,
+        description: description.trim() || null,
+        icon: icon.trim() || null,
+        parent_id: selectedParentId || null,
+        level,
+      }
+      await updateTag(tag.id, updateData)
     } else {
-      await addTag(tagData)
+      // 新規作成の場合
+      const createData: CreateTagInput = {
+        name: name.trim(),
+        color: selectedColor,
+        description: description.trim() || null,
+        icon: icon.trim() || null,
+        parent_id: selectedParentId || null,
+        level,
+      }
+      await addTag(createData)
     }
     
     onClose()

@@ -4,7 +4,7 @@ import React, { useState, useCallback } from 'react'
 import { useSmartFolderStore } from '@/lib/smart-folder-store'
 import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
-import { SmartFolder } from '@/types/box'
+import { SmartFolder } from '@/types/unified'
 import { 
   ChevronRight,
   ChevronDown,
@@ -33,11 +33,11 @@ export function EagleSmartFolderList({
   // Sort folders by order and separate system vs user folders
   const systemFolders = smartFolders
     .filter(f => f.isSystem)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => a.orderIndex - b.orderIndex)
   
   const userFolders = smartFolders
     .filter(f => !f.isSystem)
-    .sort((a, b) => a.order - b.order)
+    .sort((a, b) => a.orderIndex - b.orderIndex)
 
   const toggleExpanded = useCallback((folderId: string) => {
     setExpandedFolders(prev => {
@@ -68,12 +68,12 @@ export function EagleSmartFolderList({
           return tasks.length
         case 'recent':
           const recentTasks = tasks.filter(task => {
-            const daysDiff = Math.floor((Date.now() - task.updatedAt.getTime()) / (1000 * 60 * 60 * 24))
+            const daysDiff = Math.floor((Date.now() - new Date(task.updated_at).getTime()) / (1000 * 60 * 60 * 24))
             return daysDiff <= 7
           })
           return recentTasks.length
         case 'favorites':
-          return tasks.filter(task => task.selected).length
+          return 0 // TODO: Implement favorites logic with new Task type
         case 'trash':
           return 0 // Implement trash logic when needed
         default:
@@ -84,13 +84,11 @@ export function EagleSmartFolderList({
   }
 
   const renderFolder = (folder: SmartFolder, level: number = 0): JSX.Element => {
-    const hasChildren = folder.children && folder.children.length > 0
+    const hasChildren = false // SmartFolders don't have hierarchical structure
     const isExpanded = expandedFolders.has(folder.id)
     const isSelected = selectedFolderId === folder.id
     const taskCount = getTaskCountForFolder(folder)
-    const childFolders = hasChildren 
-      ? smartFolders.filter(f => folder.children?.includes(f.id))
-      : []
+    const childFolders: SmartFolder[] = [] // No children for SmartFolders
 
     return (
       <div key={folder.id} className="select-none">
@@ -151,7 +149,7 @@ export function EagleSmartFolderList({
         {hasChildren && isExpanded && (
           <div className="mt-1">
             {childFolders
-              .sort((a, b) => a.order - b.order)
+              .sort((a, b) => a.orderIndex - b.orderIndex)
               .map(childFolder => renderFolder(childFolder, level + 1))}
           </div>
         )}

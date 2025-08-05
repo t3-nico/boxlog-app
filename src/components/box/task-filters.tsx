@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useBoxStore } from '@/lib/box-store'
 import { useTagStore } from '@/lib/tag-store'
-import { TaskStatus, TaskPriority, TaskType } from '@/types/box'
+import { TaskStatus, TaskPriority, TaskType } from '@/types/unified'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,9 +17,9 @@ import { ExportMenu } from './export-menu'
 import { TagBadge } from '@/components/tags/tag-badge'
 import { Search, ChevronDown, Plus } from 'lucide-react'
 
-const statusOptions: TaskStatus[] = ['Todo', 'In Progress', 'Backlog', 'Cancelled', 'Done']
-const priorityOptions: TaskPriority[] = ['High', 'Medium', 'Low']
-const typeOptions: TaskType[] = ['Bug', 'Feature', 'Documentation']
+const statusOptions: TaskStatus[] = ['backlog', 'scheduled', 'completed', 'rescheduled', 'stopped', 'delegated']
+const priorityOptions: TaskPriority[] = ['low', 'medium', 'high', 'urgent']
+const typeOptions: TaskType[] = ['task', 'milestone', 'meeting', 'reminder']
 
 interface TaskFiltersProps {
   className?: string

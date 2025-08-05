@@ -11,12 +11,12 @@ export interface Notification {
   priority: 'low' | 'normal' | 'high'
 }
 
-export interface SmartFolder extends Omit<BoxSmartFolder, 'createdAt' | 'updatedAt'> {
+export interface SidebarSmartFolder extends Omit<BoxSmartFolder, 'createdAt' | 'updatedAt'> {
   count: number
   orderIndex: number
 }
 
-export interface Tag {
+export interface SidebarTag {
   id: string
   name: string
   count: number
@@ -41,10 +41,10 @@ export interface SidebarState {
   notifications: Notification[]
   
   // スマートフォルダ
-  smartFolders: SmartFolder[]
+  smartFolders: SidebarSmartFolder[]
   
   // タグ関連
-  tags: Tag[]
+  tags: SidebarTag[]
   tagCounts: Record<string, number>
   expandedTags: string[]
   
@@ -65,14 +65,14 @@ export interface SidebarActions {
   setNotifications: (notifications: Notification[]) => void
   
   // スマートフォルダ操作
-  setSmartFolders: (folders: SmartFolder[]) => void
-  addSmartFolder: (folder: SmartFolder) => void
+  setSmartFolders: (folders: SidebarSmartFolder[]) => void
+  addSmartFolder: (folder: SidebarSmartFolder) => void
   
   // タグ操作
-  setTags: (tags: Tag[]) => void
-  updateTag: (tagId: string, updates: Partial<Tag>) => void
+  setTags: (tags: SidebarTag[]) => void
+  updateTag: (tagId: string, updates: Partial<SidebarTag>) => void
   deleteTag: (tagId: string) => void
-  addTag: (tag: Tag) => void
+  addTag: (tag: SidebarTag) => void
   updateTagCounts: (counts: Record<string, number>) => void
   toggleTagExpansion: (tagId: string) => void
   

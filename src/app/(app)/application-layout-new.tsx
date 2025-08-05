@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
 import { Calendar } from '@/components/ui/calendar'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
 import { useRouter, usePathname } from 'next/navigation'
@@ -39,6 +40,8 @@ import {
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { CodebaseAIChat } from '@/components/codebase-ai-chat'
 import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
+import { LifeProgressCard } from '@/components/sidebar/life-progress-card'
+import { CalendarDisplayMode } from '@/components/sidebar/calendar-display-mode'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
@@ -107,6 +110,11 @@ export function ApplicationLayoutNew({
   
   // 日付選択時のハンドラー
   const handleDateSelect = (date: Date | undefined) => {
+    // 既に選択されている日付を再クリックした場合は選択状態を維持
+    if (!date && selectedDate) {
+      return
+    }
+    
     setSelectedDate(date)
     if (date && isCalendarPage) {
       // カレンダーページの場合、選択した日付にナビゲート
@@ -177,7 +185,7 @@ export function ApplicationLayoutNew({
         <header className="fixed top-0 left-0 right-0 z-20 bg-background border-b border-border h-16">
           <div className="flex items-center justify-between px-4 h-full">
             {/* Left side - Logo and menu */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               {/* Sidebar toggle button */}
               {!inSettings && (
                 <button
@@ -196,15 +204,15 @@ export function ApplicationLayoutNew({
                 <Headless.Menu as="div" className="relative">
                   <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
                     {user?.user_metadata?.avatar_url ? (
-                      <Avatar src={user.user_metadata.avatar_url} className="w-5 h-5" />
+                      <Avatar src={user.user_metadata.avatar_url} className="w-5 h-5 border border-gray-300 dark:border-gray-600" />
                     ) : user?.user_metadata?.profile_icon ? (
-                      <div className="w-5 h-5 text-sm flex items-center justify-center">
+                      <div className="w-5 h-5 text-sm flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600">
                         {user.user_metadata.profile_icon}
                       </div>
                     ) : (
                       <Avatar 
                         src={undefined}
-                        className="w-5 h-5"
+                        className="w-5 h-5 border border-gray-300 dark:border-gray-600"
                         initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                       />
                     )}
@@ -427,6 +435,11 @@ export function ApplicationLayoutNew({
                         weekStartsOn={1}
                       />
                     </div>
+                    
+                    {/* カレンダー表示モード選択 */}
+                    <div className="flex-shrink-0">
+                      <CalendarDisplayMode />
+                    </div>
 
                     {/* 中央スクロールエリア - スマートフォルダーとタグ */}
                     <div className="flex-1 overflow-y-auto min-h-0">
@@ -446,8 +459,9 @@ export function ApplicationLayoutNew({
                     </div>
 
                     {/* 下部固定エリア - 時間表示カード */}
-                    <div className="flex-shrink-0">
-                      <CurrentScheduleCard collapsed={collapsed} events={events} />
+                    <div className="flex-shrink-0 space-y-3">
+                      <CurrentScheduleCard collapsed={collapsed} />
+                      <LifeProgressCard collapsed={collapsed} />
                     </div>
                   </>
                 )}
@@ -587,11 +601,13 @@ export function ApplicationLayoutNew({
             height: 'calc(100vh - 64px)',
             padding: '0 !important'
           }}>
-            <div className="h-full overflow-auto" style={{ padding: '0 !important', margin: '0 !important' }}>
-              <div style={{ padding: '0 !important', margin: '0 !important', height: '100%', width: '100%' }}>
-                {children}
+            <ScrollArea className="h-full" style={{ padding: '0px', margin: '0px' }}>
+              <div style={{ padding: '0px', margin: '0px', height: '100%', width: '100%' }}>
+                <div style={{ padding: '0px', margin: '0px', height: '100%', width: '100%' }}>
+                  {children}
+                </div>
               </div>
-            </div>
+            </ScrollArea>
           </div>
           
           {/* Right Icon Bar - Hide when any AI Chat is open */}

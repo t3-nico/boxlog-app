@@ -7,6 +7,7 @@ import { Heading, Subheading } from '@/components/heading'
 import { Link } from '@/components/link'
 import { getReview } from '@/data'
 import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
+import Image from 'next/image'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { RefundReview } from './refund'
@@ -113,7 +114,13 @@ export default async function Review({ params }: { params: { id: string } }) {
           <DescriptionTerm>Country</DescriptionTerm>
           <DescriptionDetails>
             <span className="inline-flex gap-3">
-              <img src={review.customer.countryFlagUrl} alt={review.customer.country} />
+              <Image 
+                src={review.customer.countryFlagUrl} 
+                alt={review.customer.country}
+                width={24}
+                height={16}
+                className="object-cover"
+              />
               {review.customer.country}
             </span>
           </DescriptionDetails>

@@ -3,7 +3,8 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useBoxStore } from '@/lib/box-store'
-import { Task, TaskStatus, TaskPriority } from '@/types/box'
+import { Task } from '@/types/box'
+import { TaskStatus, TaskPriority } from '@/types/unified'
 import { Badge } from '@/components/ui/badge'
 import {
   BarChart3,
@@ -137,46 +138,46 @@ export function Dashboard() {
 
     // Basic counts
     const totalTasks = tasks.length
-    const completedTasks = tasks.filter(task => task.status === 'Done').length
-    const inProgressTasks = tasks.filter(task => task.status === 'In Progress').length
+    const completedTasks = tasks.filter(task => task.status === 'completed').length
+    const inProgressTasks = tasks.filter(task => task.status === 'scheduled').length
     
     // Completion rate
     const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
     // This month's tasks
     const thisMonthTasks = tasks.filter(task => 
-      task.createdAt && new Date(task.createdAt) >= thisMonth
+      task.created_at && new Date(task.created_at) >= thisMonth
     )
-    const thisMonthCompleted = thisMonthTasks.filter(task => task.status === 'Done').length
+    const thisMonthCompleted = thisMonthTasks.filter(task => task.status === 'completed').length
     const thisMonthRate = thisMonthTasks.length > 0 
       ? Math.round((thisMonthCompleted / thisMonthTasks.length) * 100) 
       : 0
 
     // Overdue and upcoming tasks
     const overdueTasks = tasks.filter(task => 
-      task.dueDate && 
-      new Date(task.dueDate) < now && 
-      task.status !== 'Done' && 
-      task.status !== 'Cancelled'
+      task.due_date && 
+      new Date(task.due_date) < now && 
+      task.status !== 'completed' && 
+      task.status !== 'stopped'
     )
     
     const upcomingTasks = tasks.filter(task => 
-      task.dueDate && 
-      new Date(task.dueDate) <= nextWeek && 
-      new Date(task.dueDate) >= now &&
-      task.status !== 'Done' && 
-      task.status !== 'Cancelled'
+      task.due_date && 
+      new Date(task.due_date) <= nextWeek && 
+      new Date(task.due_date) >= now &&
+      task.status !== 'completed' && 
+      task.status !== 'stopped'
     )
 
     // Status distribution
     const statusCounts = tasks.reduce((acc, task) => {
-      acc[task.status] = (acc[task.status] || 0) + 1
+      acc[task.status as TaskStatus] = (acc[task.status as TaskStatus] || 0) + 1
       return acc
     }, {} as Record<TaskStatus, number>)
 
     // Priority distribution
     const priorityCounts = tasks.reduce((acc, task) => {
-      acc[task.priority] = (acc[task.priority] || 0) + 1
+      acc[task.priority as TaskPriority] = (acc[task.priority as TaskPriority] || 0) + 1
       return acc
     }, {} as Record<TaskPriority, number>)
 
@@ -211,20 +212,22 @@ export function Dashboard() {
 
   function getStatusColor(status: TaskStatus): string {
     switch (status) {
-      case 'Todo': return '#6b7280'
-      case 'In Progress': return '#3b82f6'
-      case 'Done': return '#10b981'
-      case 'Cancelled': return '#ef4444'
-      case 'Backlog': return '#9ca3af'
+      case 'backlog': return '#6b7280'
+      case 'scheduled': return '#3b82f6'
+      case 'completed': return '#10b981'
+      case 'stopped': return '#ef4444'
+      case 'rescheduled': return '#f59e0b'
+      case 'delegated': return '#9ca3af'
       default: return '#6b7280'
     }
   }
 
   function getPriorityColor(priority: TaskPriority): string {
     switch (priority) {
-      case 'High': return '#ef4444'
-      case 'Medium': return '#f59e0b'
-      case 'Low': return '#10b981'
+      case 'high': return '#ef4444'
+      case 'urgent': return '#dc2626'
+      case 'medium': return '#f59e0b'
+      case 'low': return '#10b981'
       default: return '#6b7280'
     }
   }
@@ -315,7 +318,7 @@ export function Dashboard() {
               <div className="space-y-1">
                 {stats.overdue.slice(0, 3).map(task => (
                   <div key={task.id} className="text-xs text-gray-600 pl-7">
-                    {task.task}: {task.title.slice(0, 40)}...
+                    {task.id}: {task.title.slice(0, 40)}...
                   </div>
                 ))}
               </div>
@@ -334,7 +337,7 @@ export function Dashboard() {
               <div className="space-y-1">
                 {stats.upcoming.slice(0, 3).map(task => (
                   <div key={task.id} className="text-xs text-gray-600 pl-7">
-                    {task.task}: {task.title.slice(0, 40)}...
+                    {task.id}: {task.title.slice(0, 40)}...
                   </div>
                 ))}
               </div>
@@ -360,25 +363,25 @@ export function Dashboard() {
         <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Tasks</h3>
         <div className="space-y-3">
           {tasks
-            .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+            .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
             .slice(0, 5)
             .map(task => (
               <div key={task.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                 <div className="flex items-center space-x-3">
-                  <Badge color={task.status === 'Done' ? 'green' : task.status === 'In Progress' ? 'blue' : 'zinc'}>
+                  <Badge color={task.status === 'completed' ? 'green' : task.status === 'scheduled' ? 'blue' : 'zinc'}>
                     {task.status}
                   </Badge>
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{task.task}</p>
+                    <p className="text-sm font-medium text-gray-900">{task.id}</p>
                     <p className="text-xs text-gray-500">{task.title.slice(0, 60)}...</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <Badge color={task.priority === 'High' ? 'red' : task.priority === 'Medium' ? 'yellow' : 'green'}>
+                  <Badge color={task.priority === 'high' ? 'red' : task.priority === 'medium' ? 'yellow' : 'green'}>
                     {task.priority}
                   </Badge>
                   <p className="text-xs text-gray-500 mt-1">
-                    {new Date(task.updatedAt).toLocaleDateString()}
+                    {new Date(task.updated_at).toLocaleDateString()}
                   </p>
                 </div>
               </div>
