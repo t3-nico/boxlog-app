@@ -5,7 +5,7 @@ import { isWeekend } from 'date-fns'
 import { CalendarViewAnimation } from '../../calendar-grid/ViewTransition'
 import { FullDayCalendarLayout } from '../../calendar-grid/FullDayCalendarLayout'
 import { UnifiedCalendarHeader } from '../../calendar-grid/UnifiedCalendarHeader'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import type { 
   ViewDateRange, 
   Task, 

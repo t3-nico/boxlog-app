@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Tag, TagLevel, CreateTagInput, UpdateTagInput } from '@/types/tags'
-import { useTagStore, tagColors, colorCategories } from '@/lib/tag-store'
+import { useTagStore, tagColors, colorCategories } from '@/features/tags/stores/tag-store'
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'

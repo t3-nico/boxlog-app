@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { SidebarHeading, SidebarSection } from '@/components/sidebar'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ChevronDown, ChevronRight } from 'lucide-react'

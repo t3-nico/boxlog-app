@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useBoxStore } from '@/lib/box-store'
-import { useTagStore } from '@/lib/tag-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { Task, TaskStatus, TaskPriority, TaskType } from '@/types/box'
 import {
   TableProvider,
@@ -40,7 +40,7 @@ import {
   Edit,
   Eye,
 } from 'lucide-react'
-import { TagBadge } from '@/components/tags/tag-badge'
+import { TagBadge } from '@/features/tags/components/tag-badge'
 import { 
   TASK_STATUS_COLORS, 
   TASK_PRIORITY_COLORS, 

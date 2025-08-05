@@ -8,7 +8,7 @@ import {
   Sun,
   Clock
 } from 'lucide-react'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, type ChronotypeType } from '@/types/chronotype'
 
 interface ChronoTypeSchedule {

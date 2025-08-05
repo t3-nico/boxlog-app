@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { generateId } from '@/lib/tasks'
-import { TagSelector } from '@/components/tags/tag-selector'
+import { TagSelector } from '@/features/tags/components/tag-selector'
 
 interface TaskFormData {
   task: string

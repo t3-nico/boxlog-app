@@ -7,7 +7,7 @@ import {
   Tag as TagIcon,
   ChevronDown as ChevronDownIcon
 } from 'lucide-react'
-import { useTags } from '@/hooks/use-tags'
+import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren } from '@/types/tags'
 
 interface TagFilterProps {
