@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { useSmartFolderStore } from '@/lib/smart-folder-store'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
 import { SmartFolder } from '@/types/unified'

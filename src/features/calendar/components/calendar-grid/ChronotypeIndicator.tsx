@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour, PRODUCTIVITY_COLORS } from '@/types/chronotype'
 
 interface ChronotypeIndicatorProps {

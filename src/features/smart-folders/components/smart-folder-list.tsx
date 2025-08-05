@@ -12,7 +12,7 @@ import {
 import { SmartFolder } from '@/types/smart-folders'
 import { SmartFolderDialog } from './smart-folder-dialog'
 import { SmartFolderContextMenu } from './smart-folder-context-menu'
-import { useSmartFolders, useCreateSmartFolder, useUpdateSmartFolder, useDeleteSmartFolder, useReorderSmartFolders } from '@/lib/hooks/use-smart-folders'
+import { useSmartFolders, useCreateSmartFolder, useUpdateSmartFolder, useDeleteSmartFolder, useReorderSmartFolders } from '@/features/smart-folders/hooks/use-smart-folders'
 import { useActiveState } from '@/hooks/useActiveState'
 import { clsx } from 'clsx'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'

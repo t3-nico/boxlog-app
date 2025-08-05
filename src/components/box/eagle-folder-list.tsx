@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useCallback } from 'react'
-import { useTagStore } from '@/lib/tag-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { useSidebarStore } from '@/lib/sidebar-store'
 import { useBoxStore } from '@/lib/box-store'
 import { Tag } from '@/types/unified'

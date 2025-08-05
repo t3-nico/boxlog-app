@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import { Avatar } from '@/components/avatar'
 import { useAuthContext } from '@/contexts/AuthContext'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 
 interface PageHeaderProps {

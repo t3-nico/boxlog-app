@@ -7,9 +7,9 @@ import {
   Search,
   Filter
 } from 'lucide-react'
-import { TagTreeView } from '@/components/tags/tag-tree-view'
-import { TagCreateModal } from '@/components/tags/tag-create-modal'
-import { TagEditModal } from '@/components/tags/tag-edit-modal'
+import { TagTreeView } from '@/features/tags/components/tag-tree-view'
+import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
+import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
 import { 
   useTags, 
   useCreateTag, 
@@ -18,7 +18,7 @@ import {
   useMoveTag, 
   useRenameTag,
   useOptimisticTagUpdate 
-} from '@/hooks/use-tags'
+} from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren, CreateTagInput, UpdateTagInput } from '@/types/tags'
 
 export default function TagsManagePage() {

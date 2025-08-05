@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BoardView } from '@/components/box/board-view'
+import { BoardView } from '@/features/board/components/board-view'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { TaskFilters } from '@/components/box/task-filters'
 import { Heading } from '@/components/heading'

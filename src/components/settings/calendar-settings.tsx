@@ -2,7 +2,7 @@
 
 import { Heading } from '@/components/heading'
 import { SettingSection, ToggleItem, SelectItem } from '@/components/settings-section'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { getTimeZones, formatInTimeZone, formatHour } from '@/utils/timezone-utils'
 import { format } from 'date-fns'
 

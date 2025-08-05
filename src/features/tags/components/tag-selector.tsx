@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Tag } from '@/types/box'
-import { useTagStore } from '@/lib/tag-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { TagBadge } from './tag-badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

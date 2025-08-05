@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { SmartFolderRule } from '@/types/smart-folders'
-import { AdvancedRuleEngine } from '@/lib/smart-folders/rule-engine'
+import { AdvancedRuleEngine } from '@/features/smart-folders/lib/rule-engine'
 import { 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon,

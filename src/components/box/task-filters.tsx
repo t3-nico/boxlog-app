@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useBoxStore } from '@/lib/box-store'
-import { useTagStore } from '@/lib/tag-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { TaskStatus, TaskPriority, TaskType } from '@/types/unified'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,7 @@ import {
 } from '@/components/dropdown'
 import { TaskForm } from '@/components/tasks/TaskForm'
 import { ExportMenu } from './export-menu'
-import { TagBadge } from '@/components/tags/tag-badge'
+import { TagBadge } from '@/features/tags/components/tag-badge'
 import { Search, ChevronDown, Plus } from 'lucide-react'
 
 const statusOptions: TaskStatus[] = ['backlog', 'scheduled', 'completed', 'rescheduled', 'stopped', 'delegated']

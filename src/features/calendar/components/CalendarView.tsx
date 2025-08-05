@@ -11,7 +11,7 @@ import { MonthView } from './views/month-view'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { DnDProvider } from './calendar-grid/dnd/DnDProvider'
 import { useRecordsStore } from '@/stores/useRecordsStore'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useEventStore } from '@/stores/useEventStore'
 import { 

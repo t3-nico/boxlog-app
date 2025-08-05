@@ -12,10 +12,10 @@ import {
 import { Task, TaskStatus } from '@/types/unified'
 import { useBoxStore } from '@/lib/box-store'
 import { useToast } from '@/components/ui/toast'
-import { useTagStore } from '@/lib/tag-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { TagBadge } from '@/components/tags/tag-badge'
+import { TagBadge } from '@/features/tags/components/tag-badge'
 import {
   DropdownMenu,
   DropdownMenuContent,

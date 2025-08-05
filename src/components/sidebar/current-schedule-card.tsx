@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { Clock, Calendar, ArrowRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useCalendarSettingsStore } from '@/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { useEventStore } from '@/stores/useEventStore'
 import type { Event } from '@/types/events'
 import { 

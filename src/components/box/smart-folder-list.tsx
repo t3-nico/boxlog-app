@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { SmartFolder } from '@/types/unified'
-import { useSmartFolderStore } from '@/lib/smart-folder-store'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { useBoxStore } from '@/lib/box-store'
 import { Button } from '@/components/button'
 import { 
