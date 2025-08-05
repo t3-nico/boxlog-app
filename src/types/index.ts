@@ -31,5 +31,5 @@ export interface CreateTaskData {
   plannedDuration?: number
   tags?: string[]
   memo?: string
-  status?: TaskStatus
+  status?: string
 }

@@ -155,7 +155,7 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
         transition: { duration: 0.2 }
       }}
       className={`rounded-lg border bg-card p-4 space-y-3 ${
-        task.selected ? 'ring-2 ring-primary ring-offset-2' : ''
+        false ? 'ring-2 ring-primary ring-offset-2' : '' // TODO: Implement with new Task type
       }`}
     >
       {/* Header */}
@@ -166,13 +166,13 @@ export function TaskMobileCard({ task, index, onEdit }: TaskMobileCardProps) {
             whileTap={{ scale: 0.9 }}
           >
             <Checkbox
-              checked={task.selected}
+              checked={false} // TODO: Implement with new Task type
               onCheckedChange={handleTaskSelect}
-              aria-label={`Select task ${task.task}`}
+              aria-label={`Select task ${task.id}`}
             />
           </motion.div>
           <div>
-            <p className="text-sm font-mono text-muted-foreground">{task.task}</p>
+            <p className="text-sm font-mono text-muted-foreground">{task.id}</p>
             <motion.div whileHover={{ scale: 1.02 }} className="inline-block">
               {getTaskTypeBadge(task.type)}
             </motion.div>

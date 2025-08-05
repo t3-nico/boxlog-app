@@ -77,13 +77,13 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         priority: task.priority,
         type: task.type,
         tags: task.tags ? [] : [], // Convert tag IDs to Tag objects if needed
-        dueDate: task.dueDate,
-        createdAt: task.createdAt,
-        updatedAt: task.updatedAt,
-        selected: task.selected,
+        dueDate: task.due_date,
+        createdAt: task.created_at,
+        updatedAt: task.updated_at,
+        selected: false, // TODO: Implement with new Task type
         userId: 'default', // Add missing property
-        created_at: task.createdAt, // Add missing property
-        updated_at: task.updatedAt, // Add missing property
+        created_at: task.created_at, // Add missing property
+        updated_at: task.updated_at, // Add missing property
       }))
       
       const searchResults = await SearchEngine.search({

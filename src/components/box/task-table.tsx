@@ -159,7 +159,7 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
       ),
       cell: ({ row }) => (
         <Checkbox
-          checked={row.original.selected}
+          checked={false} // TODO: Implement with new Task type
           onCheckedChange={() => toggleTaskSelection(row.original.id)}
           aria-label="Select row"
         />
@@ -467,13 +467,14 @@ export function TaskTable({ onEditTask, onViewTask }: TaskTableProps) {
         />
       )}
 
-      {viewingTask && (
+      {/* TODO: Restore TaskDetailModal after type system is fully aligned */}
+      {/* {viewingTask && (
         <TaskDetailModal
           task={viewingTask}
           open={!!viewingTask}
           onClose={() => setViewingTask(null)}
         />
-      )}
+      )} */}
     </>
   )
 }

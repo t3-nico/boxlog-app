@@ -8,7 +8,8 @@
       "WebFetch(domain:uxdaystokyo.com)",
       "Bash(npx tsc:*)",
       "WebFetch(domain:fullcalendar.io)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   },

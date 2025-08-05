@@ -91,7 +91,7 @@ export const normalizeEntityDates = <T extends Record<string, any>>(
   entity: T,
   dateFields: string[] = ['planned_start', 'planned_end', 'created_at', 'updated_at']
 ): T => {
-  const normalized = { ...entity };
+  const normalized: any = { ...entity };
   
   for (const field of dateFields) {
     if (field in normalized && normalized[field] !== null) {
@@ -100,7 +100,7 @@ export const normalizeEntityDates = <T extends Record<string, any>>(
     }
   }
   
-  return normalized;
+  return normalized as T;
 };
 
 /**

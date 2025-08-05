@@ -58,7 +58,7 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
   useEffect(() => {
     if (task) {
       setFormData({
-        task: task.task,
+        task: task.id,
         title: task.title,
         type: task.type,
         status: task.status,
@@ -100,11 +100,9 @@ export function TaskForm({ task, open, onClose }: TaskFormProps) {
         const now = new Date()
         result = await addTask({
           ...formData,
-          selected: false,
-          createdAt: now,
-          updatedAt: now,
-          attachments: [],
-          comments: [],
+          created_at: now.toISOString(),
+          updated_at: now.toISOString(),
+          userId: 'default-user', // TODO: Get from auth context
         })
         if (result) {
           success('Task created', 'New task has been successfully created')

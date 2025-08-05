@@ -48,7 +48,7 @@ export function TaskItem({ task, onEdit, onSelect }: TaskItemProps) {
       
       <div className="flex-1 space-y-1">
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-mono text-gray-500">{task.task}</span>
+          <span className="text-sm font-mono text-gray-500">{task.id}</span>
           <h3
             className={`font-medium ${
               task.status === 'completed' ? 'line-through text-gray-500' : ''

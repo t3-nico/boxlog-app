@@ -38,8 +38,8 @@ export function useCalendarData({
   const calendarTasks = useMemo(() => {
     // 期間内のタスクをフィルタリング
     const filtered = tasks.filter(task => {
-      if (!task.dueDate) return false
-      return isWithinInterval(task.dueDate, {
+      if (!task.due_date) return false
+      return isWithinInterval(new Date(task.due_date), {
         start: dateRange.start,
         end: dateRange.end
       })
@@ -47,7 +47,7 @@ export function useCalendarData({
     
     // カレンダー表示用に変換
     const converted: CalendarTaskExtended[] = filtered.map(task => {
-      const startDate = task.dueDate || new Date()
+      const startDate = task.due_date ? new Date(task.due_date) : new Date()
       const duration = 60 // デフォルト1時間
       
       return {
@@ -73,7 +73,7 @@ export function useCalendarData({
     
     try {
       await onTaskUpdate(taskId, {
-        dueDate: newStart
+        due_date: newStart.toISOString()
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to move task')
@@ -116,13 +116,13 @@ export function useCalendarData({
     try {
       const newTask: Partial<Task> = {
         title: '新しいタスク',
-        dueDate: startDate,
+        due_date: startDate.toISOString(),
         type: 'task',
         status: 'backlog',
         priority: 'medium',
-        selected: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        userId: 'default-user' // TODO: Get from auth context
       }
       
       await onTaskCreate(newTask)

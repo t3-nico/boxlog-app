@@ -5,8 +5,8 @@ import {
   SidebarState, 
   SidebarActions, 
   Notification,
-  SmartFolder,
-  Tag 
+  SidebarSmartFolder as SmartFolder,
+  SidebarTag as Tag 
 } from '@/types/sidebar'
 
 // モック通知データ

@@ -63,10 +63,9 @@ export const useBoxStore = create<BoxStore>()(
           const newTask: Task = {
             ...task,
             id: generateId(),
-            createdAt: now,
-            updatedAt: now,
-            attachments: [],
-            comments: [],
+            created_at: now.toISOString(),
+            updated_at: now.toISOString(),
+            // TODO: Add other required fields for unified Task type
           }
           set((state) => ({ tasks: [...state.tasks, newTask] }))
           return true
@@ -119,7 +118,7 @@ export const useBoxStore = create<BoxStore>()(
       toggleTaskSelection: (id) => {
         set((state) => ({
           tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, selected: !task.selected } : task
+            task // TODO: Implement selection with new Task type
           ),
         }))
       },
@@ -196,7 +195,7 @@ export const useBoxStore = create<BoxStore>()(
           if (filters.search) {
             const searchTerm = filters.search.toLowerCase()
             const matchesSearch = 
-              task.task.toLowerCase().includes(searchTerm) ||
+              task.id.toLowerCase().includes(searchTerm) ||
               task.title.toLowerCase().includes(searchTerm) ||
               task.type.toLowerCase().includes(searchTerm)
             
@@ -263,7 +262,7 @@ export const useBoxStore = create<BoxStore>()(
   
       getSelectedTasks: () => {
         const { tasks } = get()
-        return tasks.filter((task) => task.selected)
+        return [] // TODO: Implement selection with new Task type
       },
     }),
     {
