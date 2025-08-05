@@ -47,19 +47,31 @@ Compass更新 → GitHub Actions → 自動でこのリポジトリのサブモ�
 
 ## 🚀 開発コマンド
 
+**重要**: すべての開発コマンドは1Password Developer Security経由で実行されます。
+
 ```bash
-# 開発サーバー起動
+# 開発サーバー起動（1Password経由）
 npm run dev
 
-# プロダクションビルド
+# プロダクションビルド（1Password経由）
 npm run build
 
 # リンティング実行
 npm run lint
 
-# テスト実行
+# テスト実行（1Password経由）
 npm test
+
+# 型チェック（1Password経由）
+npm run typecheck
 ```
+
+### 🔐 1Password連携
+
+BoxLogでは機密情報管理に1Password Developer Securityを使用：
+- **セットアップ**: `docs/1PASSWORD_SETUP.md` を参照
+- **環境変数**: `.env.local` で1Password参照形式を使用
+- **フォールバック**: 緊急時は `npm run dev:fallback` で従来通り実行可能
 
 ## 🏗️ プロジェクト概要
 

@@ -46,8 +46,11 @@ next-env.d.ts
 Thumbs.db
 
 # Logs
-logs
+logs/
 *.log
+
+# 1Password Security Logs
+logs/security/
 
 # Runtime data
 pids

@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "op run --env-file=.env.local -- next dev",
+    "build": "op run --env-file=.env.local -- next build",
+    "start": "op run --env-file=.env.local -- next start",
     "lint": "next lint",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "typecheck": "tsc --noEmit"
+    "test": "op run --env-file=.env.local -- vitest",
+    "test:watch": "op run --env-file=.env.local -- vitest --watch",
+    "test:ui": "op run --env-file=.env.local -- vitest --ui",
+    "test:coverage": "op run --env-file=.env.local -- vitest --coverage",
+    "typecheck": "op run --env-file=.env.local -- tsc --noEmit",
+    "dev:fallback": "next dev",
+    "build:fallback": "next build",
+    "start:fallback": "next start"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",

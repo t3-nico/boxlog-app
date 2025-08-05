@@ -13,7 +13,9 @@
       "Bash(mkdir:*)",
       "Bash(ls:*)",
       "Bash(tree:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(npm run typecheck:*)",
+      "WebFetch(domain:1password.com)",
+      "WebFetch(domain:developer.1password.com)"
     ],
     "deny": []
   },
