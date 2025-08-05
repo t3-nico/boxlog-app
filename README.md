@@ -1,15 +1,20 @@
-# Catalyst Demo
+# BoxLog App
 
-To run the Catalyst demo, first install the npm dependencies:
+Next.js 14 + TypeScript で構築されたタスク管理アプリケーション
+
+## 🚀 クイックスタート
 
 ```bash
 npm install
-```
-
-Next, run the development server:
-
-```bash
 npm run dev
 ```
 
-Finally, open [http://localhost:3000](http://localhost:3000) in your browser to view the website.
+開発サーバーが起動したら [http://localhost:3000](http://localhost:3000) にアクセスしてください。
+
+## 📚 詳細ドキュメント
+
+すべてのドキュメントは [`docs/`](./docs/) で管理されています。
+
+- [開発ガイド](./docs/development/)
+- [アーキテクチャ](./docs/ARCHITECTURE.md)
+- [コントリビューション](./docs/CONTRIBUTING.md)
