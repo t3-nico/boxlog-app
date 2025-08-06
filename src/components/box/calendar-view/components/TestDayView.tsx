@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useMemo, useCallback, useState, useEffect } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import { PureCalendarLayout } from './PureCalendarLayout'
 import { SimpleTestPopup } from './SimpleTestPopup'
 import type { CalendarEvent } from '@/types/events'
@@ -19,6 +20,8 @@ const getWeekStart = (date: Date) => {
 }
 
 export function TestDayView({ currentDate: initialCurrentDate, events }: TestDayViewProps) {
+  const router = useRouter()
+  const pathname = usePathname()
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [selectedTime, setSelectedTime] = useState<string>('09:00')
@@ -29,6 +32,27 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
   // Step 11 & 17: 表示モード用のstate
   const [viewMode, setViewMode] = useState<'day' | '3day' | 'week' | '2week'>('week')
   const [currentDate, setCurrentDate] = useState(initialCurrentDate)
+  
+  // Props変更時にcurrentDateを更新
+  useEffect(() => {
+    setCurrentDate(initialCurrentDate)
+  }, [initialCurrentDate])
+  
+  // 日付をURLフォーマットに変換するヘルパー関数
+  const formatDateForUrl = useCallback((date: Date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }, [])
+  
+  // URLを更新してナビゲートする関数
+  const updateUrlWithDate = useCallback((date: Date) => {
+    const dateParam = formatDateForUrl(date)
+    const currentView = pathname.split('/calendar/')[1]?.split('?')[0] || 'day'
+    const newUrl = `/calendar/${currentView}?date=${dateParam}`
+    router.push(newUrl)
+  }, [router, pathname, formatDateForUrl])
   
   // Step 11 & 17: 表示する日付の配列を生成
   const displayDates = useMemo(() => {
@@ -153,24 +177,21 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
   }, [viewMode])
 
   const navigatePrevious = useCallback(() => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev)
-      newDate.setDate(newDate.getDate() - getDaysToMove())
-      return newDate
-    })
-  }, [getDaysToMove])
+    const newDate = new Date(currentDate)
+    newDate.setDate(newDate.getDate() - getDaysToMove())
+    updateUrlWithDate(newDate)
+  }, [currentDate, getDaysToMove, updateUrlWithDate])
 
   const navigateNext = useCallback(() => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev)
-      newDate.setDate(newDate.getDate() + getDaysToMove())
-      return newDate
-    })
-  }, [getDaysToMove])
+    const newDate = new Date(currentDate)
+    newDate.setDate(newDate.getDate() + getDaysToMove())
+    updateUrlWithDate(newDate)
+  }, [currentDate, getDaysToMove, updateUrlWithDate])
 
   const navigateToday = useCallback(() => {
-    setCurrentDate(new Date())
-  }, [])
+    const today = new Date()
+    updateUrlWithDate(today)
+  }, [updateUrlWithDate])
 
   // Step 18: グローバルキーボードイベント
   useEffect(() => {
@@ -263,7 +284,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
             
             <button
               onClick={navigateToday}
-              className="px-3 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
               今日
             </button>
@@ -394,7 +415,6 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
             </div>
           </div>
         )}
-
       </div>
       
       {/* カレンダー本体 */}

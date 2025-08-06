@@ -8,7 +8,7 @@ import { Calendar } from '@/components/ui/calendar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { ViewSwitcher } from '@/components/ui/view-switcher'
 import { getPageTitle, getCurrentViewIcon } from '@/config/views'
@@ -95,6 +95,7 @@ export function ApplicationLayoutNew({
   hideHeader?: boolean
 }) {
   let pathname = usePathname()
+  const searchParams = useSearchParams()
   let inSettings = pathname.startsWith('/settings')
   let inReview = pathname.startsWith('/review')
   let is404Page = pathname === '/404' || pathname.includes('not-found') || pathname === '/_not-found'
@@ -106,6 +107,22 @@ export function ApplicationLayoutNew({
   
   // カレンダーページかどうかを判定
   const isCalendarPage = pathname.startsWith('/calendar')
+  
+  // URLから日付を取得してselectedDateを同期
+  useEffect(() => {
+    if (isCalendarPage) {
+      const dateParam = searchParams.get('date')
+      if (dateParam) {
+        const parsedDate = new Date(dateParam)
+        if (!isNaN(parsedDate.getTime())) {
+          setSelectedDate(parsedDate)
+        }
+      } else {
+        // dateパラメータがない場合は今日の日付
+        setSelectedDate(new Date())
+      }
+    }
+  }, [pathname, isCalendarPage, searchParams])
   
   
   // 日付選択時のハンドラー
