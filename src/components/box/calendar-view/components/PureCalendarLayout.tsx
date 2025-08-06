@@ -41,7 +41,7 @@ function TimeAxisLabels() {
             width: '100%'
           }}
         >
-          {hour > 0 && (
+          {hour > 0 && hour < 24 && (
             <span className="leading-none">
               {hour.toString().padStart(2, '0')}:00
             </span>
@@ -826,10 +826,10 @@ function CalendarGrid({
 
             {/* 15分単位のスロット */}
             <div className="absolute inset-0 cursor-crosshair z-10">
-              {Array.from({ length: 92 }, (_, slotIndex) => {
-                // 92個のスロット（23時間 × 4）1:00-23:45
-                const hour = Math.floor((slotIndex + 4) / 4)  // +4 to start from 1:00
-                const minute = ((slotIndex + 4) % 4) * 15
+              {Array.from({ length: 97 }, (_, slotIndex) => {
+                // 97個のスロット（24時間 × 4 + 1）0:00-24:00
+                const hour = Math.floor(slotIndex / 4)
+                const minute = (slotIndex % 4) * 15
                 const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
                 
                 // このスロットがクリックされたかチェック
