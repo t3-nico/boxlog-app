@@ -101,6 +101,7 @@ const initialState = {
   error: null,
   filters: {},
   selectedEventId: null,
+  lastFetchedRange: null as { start: string; end: string } | null,
 }
 
 export const useEventStore = create<EventStore>()(
@@ -110,6 +111,9 @@ export const useEventStore = create<EventStore>()(
 
       // Event CRUD operations
       fetchEvents: async (filters?: EventFilters) => {
+        // キャッシュ機構を一時的に無効化
+        console.log('🌐 [CACHE DISABLED] fetchEvents called')
+        
         set({ loading: true, error: null })
         
         try {
@@ -134,6 +138,7 @@ export const useEventStore = create<EventStore>()(
             params.append('search', filters.searchQuery)
           }
 
+          console.log('🌐 Making API request:', `/api/events?${params.toString()}`)
           const response = await fetch(`/api/events?${params.toString()}`)
           if (!response.ok) {
             const errorText = await response.text()

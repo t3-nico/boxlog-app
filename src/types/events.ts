@@ -174,6 +174,7 @@ export interface EventState {
   error: string | null
   filters: EventFilters
   selectedEventId: string | null
+  lastFetchedRange: { start: string; end: string } | null
 }
 
 export interface EventActions {

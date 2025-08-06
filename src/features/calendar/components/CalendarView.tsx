@@ -26,18 +26,18 @@ import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/even
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
-  initialDate?: Date
+  initialDate?: Date | null
 }
 
 export function CalendarView({ 
   className,
   initialViewType = 'day',
-  initialDate = new Date()
+  initialDate
 }: CalendarViewExtendedProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [viewType, setViewType] = useState<CalendarViewType>(initialViewType)
-  const [currentDate, setCurrentDate] = useState(initialDate)
+  const [currentDate, setCurrentDate] = useState<Date>(() => initialDate || new Date())
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
@@ -91,10 +91,10 @@ export function CalendarView({
   
   // URLパラメータの日付変更を検知
   useEffect(() => {
-    if (initialDate && (!currentDate || initialDate.getTime() !== currentDate.getTime())) {
+    if (initialDate && initialDate.getTime() !== currentDate.getTime()) {
       setCurrentDate(initialDate)
     }
-  }, [initialDate, currentDate])
+  }, [initialDate])
 
   // ビュータイプをLocalStorageに保存
   useEffect(() => {
@@ -123,38 +123,44 @@ export function CalendarView({
       return []
     }
     
-    console.log('🔍 [' + viewType + '] eventStore.events.length:', eventStore.events.length)
+    console.log('🔍 [' + viewType + '] events.length:', events.length)
     console.log('🔍 [' + viewType + '] dateRange:', { start: viewDateRange.start.toISOString(), end: viewDateRange.end.toISOString() })
     
-    const events = eventStore.getEventsByDateRange(viewDateRange.start, viewDateRange.end)
-    console.log('🔍 Events in date range:', events.length, 'Total events in store:', eventStore.events.length)
-    console.log('🔍 Date range filter:', {
-      start: viewDateRange.start.toISOString(),
-      end: viewDateRange.end.toISOString()
+    // 日付範囲を年月日のみで比較するため、時刻をリセット
+    const startDateOnly = new Date(viewDateRange.start.getFullYear(), viewDateRange.start.getMonth(), viewDateRange.start.getDate())
+    const endDateOnly = new Date(viewDateRange.end.getFullYear(), viewDateRange.end.getMonth(), viewDateRange.end.getDate())
+    
+    const filteredByRange = events.filter(event => {
+      // startDateがない場合はフィルタリングから除外
+      if (!event.startDate) {
+        console.log('❌ Event has no startDate:', event.id, event.title)
+        return false
+      }
+      
+      // イベントの日付も年月日のみで比較
+      const eventStartDateOnly = new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate())
+      let eventEndDateOnly = eventStartDateOnly
+      if (event.endDate) {
+        eventEndDateOnly = new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate())
+      }
+      
+      const inRange = (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
+                     (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
+                     (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
+      
+      if (inRange) {
+        console.log('✅ Event in range:', event.id, event.title, `${event.startDate.toDateString()} ${event.startDate.toTimeString().substring(0, 8)}`)
+      } else {
+        console.log('❌ Event NOT in range:', event.id, event.title, `${event.startDate.toDateString()} ${event.startDate.toTimeString().substring(0, 8)}`)
+      }
+      
+      return inRange
     })
     
-    // すべてのイベントをログ出力
-    eventStore.events.forEach((event, index) => {
-      console.log(`📋 Store Event ${index + 1}:`, {
-        id: event.id,
-        title: event.title,
-        startDate: event.startDate?.toISOString(),
-        endDate: event.endDate?.toISOString(),
-        inRange: events.some(e => e.id === event.id) ? 'YES' : 'NO'
-      })
-    })
-    
-    events.forEach((event, index) => {
-      console.log(`✅ Filtered Event ${index + 1}:`, {
-        id: event.id,
-        title: event.title,
-        startDate: event.startDate?.toISOString(),
-        endDate: event.endDate?.toISOString()
-      })
-    })
+    console.log('🔍 Events in date range:', filteredByRange.length, 'Total events in store:', events.length)
     
     // Event[]をCalendarEvent[]に変換
-    const calendarEvents = events.map(event => ({
+    const calendarEvents = filteredByRange.map(event => ({
       ...event,
       startDate: event.startDate || new Date(),
       endDate: event.endDate || new Date(),
@@ -171,24 +177,12 @@ export function CalendarView({
     }))
     console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
-  }, [eventStore, viewDateRange.start, viewDateRange.end, viewType])
+  }, [events, viewDateRange.start, viewDateRange.end, viewType])
   
-  // イベントの初期ロードと更新
-  const fetchEventsCallback = useCallback(() => {
-    console.log('🌐 Fetching events for date range:', {
-      start: viewDateRange.start.toISOString(),
-      end: viewDateRange.end.toISOString(),
-      viewType
-    })
-    eventStore.fetchEvents({
-      startDate: viewDateRange.start,
-      endDate: viewDateRange.end
-    })
-  }, [eventStore, viewDateRange.start, viewDateRange.end, viewType])
-
-  useEffect(() => {
-    fetchEventsCallback()
-  }, [fetchEventsCallback])
+  // イベントの初期ロードと更新 - 完全に無効化
+  // useEffect(() => {
+  //   console.log('🌐 [COMPLETELY DISABLED]')
+  // }, [])
 
   // レコード取得（一時的にモックデータを使用）
   const records = useMemo(() => [
@@ -342,14 +336,10 @@ export function CalendarView({
       await eventStore.updateEvent(updateRequest)
       console.log('✅ Event updated successfully:', updatedEvent.title)
       
-      // 手動でイベントリストを再取得
-      console.log('🔄 Fetching events after update...')
-      await fetchEventsCallback()
-      
     } catch (error) {
       console.error('❌ Failed to update event:', error)
     }
-  }, [eventStore, fetchEventsCallback, viewDateRange.start, viewDateRange.end])
+  }, [eventStore, viewDateRange.start, viewDateRange.end])
   
   // URLを更新する関数
   const updateURL = useCallback((newViewType: CalendarViewType, newDate?: Date) => {
