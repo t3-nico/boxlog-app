@@ -8,14 +8,16 @@ interface Tag {
   id: string
   name: string
   color: string
+  parentId?: string | null
+  isExpanded?: boolean
 }
 
 interface TagManagementModalProps {
   isOpen: boolean
   onClose: () => void
   tags: Tag[]
-  onCreateTag: (tag: Omit<Tag, 'id'>) => void
-  onUpdateTag: (id: string, updates: Partial<Tag>) => void
+  onCreateTag: (tag: { name: string; color: string; parentId?: string | null }) => void
+  onUpdateTag: (id: string, updates: { name?: string; color?: string; parentId?: string | null }) => void
   onDeleteTag: (id: string) => void
 }
 
@@ -29,9 +31,11 @@ export function TagManagementModal({
 }: TagManagementModalProps) {
   const [newTagName, setNewTagName] = useState('')
   const [newTagColor, setNewTagColor] = useState('#3b82f6')
+  const [newTagParentId, setNewTagParentId] = useState<string | null>(null)
   const [editingTag, setEditingTag] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editColor, setEditColor] = useState('')
+  const [editParentId, setEditParentId] = useState<string | null>(null)
 
   const presetColors = [
     '#ef4444', // red
@@ -48,10 +52,12 @@ export function TagManagementModal({
     if (newTagName.trim() && !tags.some(t => t.name === newTagName.trim())) {
       onCreateTag({
         name: newTagName.trim(),
-        color: newTagColor
+        color: newTagColor,
+        parentId: newTagParentId
       })
       setNewTagName('')
       setNewTagColor('#3b82f6')
+      setNewTagParentId(null)
     }
   }
 
@@ -59,17 +65,20 @@ export function TagManagementModal({
     setEditingTag(tag.id)
     setEditName(tag.name)
     setEditColor(tag.color)
+    setEditParentId(tag.parentId || null)
   }
 
   const handleSaveEdit = () => {
     if (editingTag && editName.trim()) {
       onUpdateTag(editingTag, {
         name: editName.trim(),
-        color: editColor
+        color: editColor,
+        parentId: editParentId
       })
       setEditingTag(null)
       setEditName('')
       setEditColor('')
+      setEditParentId(null)
     }
   }
 
@@ -77,6 +86,26 @@ export function TagManagementModal({
     setEditingTag(null)
     setEditName('')
     setEditColor('')
+    setEditParentId(null)
+  }
+
+  // 親タグとして選択可能なタグを取得（循環参照を防ぐ）
+  const getAvailableParentTags = (excludeId?: string) => {
+    if (!excludeId) return tags
+    
+    // 自分自身と自分の子孫は親として選択できない
+    const descendants = new Set<string>()
+    const findDescendants = (parentId: string) => {
+      tags.forEach(tag => {
+        if (tag.parentId === parentId) {
+          descendants.add(tag.id)
+          findDescendants(tag.id)
+        }
+      })
+    }
+    findDescendants(excludeId)
+    
+    return tags.filter(tag => tag.id !== excludeId && !descendants.has(tag.id))
   }
 
   if (!isOpen) return null
@@ -131,6 +160,24 @@ export function TagManagementModal({
               </div>
               
               <div>
+                <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
+                  Parent Tag (Optional)
+                </label>
+                <select
+                  value={newTagParentId || ''}
+                  onChange={(e) => setNewTagParentId(e.target.value || null)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">None (Root Level)</option>
+                  {getAvailableParentTags().map(tag => (
+                    <option key={tag.id} value={tag.id}>
+                      {tag.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
                 <label className="block text-xs font-medium mb-2 text-gray-600 dark:text-gray-400">
                   Color
                 </label>
@@ -181,32 +228,48 @@ export function TagManagementModal({
                     {editingTag === tag.id ? (
                       <>
                         {/* Edit Mode */}
-                        <div className="flex gap-2">
-                          {presetColors.map(color => (
-                            <button
-                              key={color}
-                              onClick={() => setEditColor(color)}
-                              className={`w-6 h-6 rounded transition-all ${
-                                editColor === color ? 'ring-2 ring-blue-500' : ''
-                              }`}
-                              style={{ backgroundColor: color }}
-                            />
-                          ))}
+                        <div className="flex-1 space-y-2">
+                          <input
+                            type="text"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                handleSaveEdit()
+                              } else if (e.key === 'Escape') {
+                                handleCancelEdit()
+                              }
+                            }}
+                            autoFocus
+                          />
+                          
+                          <select
+                            value={editParentId || ''}
+                            onChange={(e) => setEditParentId(e.target.value || null)}
+                            className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                          >
+                            <option value="">None (Root Level)</option>
+                            {getAvailableParentTags(editingTag!).map(parentTag => (
+                              <option key={parentTag.id} value={parentTag.id}>
+                                {parentTag.name}
+                              </option>
+                            ))}
+                          </select>
+                          
+                          <div className="flex gap-2">
+                            {presetColors.map(color => (
+                              <button
+                                key={color}
+                                onClick={() => setEditColor(color)}
+                                className={`w-6 h-6 rounded transition-all ${
+                                  editColor === color ? 'ring-2 ring-blue-500' : ''
+                                }`}
+                                style={{ backgroundColor: color }}
+                              />
+                            ))}
+                          </div>
                         </div>
-                        <input
-                          type="text"
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          className="flex-1 px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveEdit()
-                            } else if (e.key === 'Escape') {
-                              handleCancelEdit()
-                            }
-                          }}
-                          autoFocus
-                        />
                         <div className="flex gap-1">
                           <button
                             onClick={handleSaveEdit}
@@ -229,9 +292,16 @@ export function TagManagementModal({
                           className="w-4 h-4 rounded-full flex-shrink-0"
                           style={{ backgroundColor: tag.color }}
                         />
-                        <span className="flex-1 text-sm text-gray-900 dark:text-white truncate">
-                          {tag.name}
-                        </span>
+                        <div className="flex-1">
+                          <span className="text-sm text-gray-900 dark:text-white">
+                            {tag.name}
+                          </span>
+                          {tag.parentId && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Parent: {tags.find(t => t.id === tag.parentId)?.name || 'Unknown'}
+                            </div>
+                          )}
+                        </div>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleEditTag(tag)}

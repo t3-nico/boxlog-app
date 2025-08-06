@@ -108,13 +108,14 @@ export function ApplicationLayoutNew({
   const { isOpen, openPopup, closePopup } = useAddPopup()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   
-  // カレンダータグ機能のstate
+  // カレンダータグ機能のstate（階層化対応）
   const [calendarTags, setCalendarTags] = useState([
-    { id: '1', name: 'Important', color: '#ef4444' },
-    { id: '2', name: 'Meeting', color: '#3b82f6' },
-    { id: '3', name: 'Work', color: '#10b981' },
-    { id: '4', name: 'Break', color: '#8b5cf6' },
-    { id: '5', name: 'Learning', color: '#f59e0b' },
+    { id: '1', name: 'Work', color: '#3b82f6', parentId: null, isExpanded: true },
+    { id: '2', name: 'Meeting', color: '#8b5cf6', parentId: '1', isExpanded: true },
+    { id: '3', name: 'Development', color: '#10b981', parentId: '1', isExpanded: false },
+    { id: '4', name: 'Personal', color: '#f59e0b', parentId: null, isExpanded: true },
+    { id: '5', name: 'Learning', color: '#06b6d4', parentId: '4' },
+    { id: '6', name: 'Important', color: '#ef4444', parentId: null },
   ])
   const [selectedCalendarTags, setSelectedCalendarTags] = useState<string[]>([])
   const [calendarTagFilterMode, setCalendarTagFilterMode] = useState<'AND' | 'OR'>('OR')
@@ -215,23 +216,35 @@ export function ApplicationLayoutNew({
     )
   }
 
-  const handleCreateCalendarTag = (tag: { name: string; color: string }) => {
+  const handleCreateCalendarTag = (tag: { name: string; color: string; parentId?: string | null }) => {
     const newTag = {
       id: Date.now().toString(),
+      parentId: null,
+      isExpanded: true,
       ...tag
     }
     setCalendarTags(prev => [...prev, newTag])
   }
 
-  const handleUpdateCalendarTag = (id: string, updates: { name?: string; color?: string }) => {
+  const handleUpdateCalendarTag = (id: string, updates: { name?: string; color?: string; parentId?: string | null }) => {
     setCalendarTags(prev => prev.map(tag =>
       tag.id === id ? { ...tag, ...updates } : tag
     ))
   }
 
   const handleDeleteCalendarTag = (id: string) => {
-    setCalendarTags(prev => prev.filter(tag => tag.id !== id))
+    // 子タグの親IDをnullに更新
+    setCalendarTags(prev => prev
+      .filter(tag => tag.id !== id)
+      .map(tag => tag.parentId === id ? { ...tag, parentId: null } : tag)
+    )
     setSelectedCalendarTags(prev => prev.filter(tagId => tagId !== id))
+  }
+
+  const handleToggleTagExpand = (tagId: string) => {
+    setCalendarTags(prev => prev.map(tag =>
+      tag.id === tagId ? { ...tag, isExpanded: !tag.isExpanded } : tag
+    ))
   }
 
   // 動的ページタイトルとアイコンを取得
@@ -518,6 +531,7 @@ export function ApplicationLayoutNew({
                             selectedTags={selectedCalendarTags}
                             tagFilterMode={calendarTagFilterMode}
                             onTagSelect={handleCalendarTagSelect}
+                            onToggleExpand={handleToggleTagExpand}
                             onFilterModeChange={setCalendarTagFilterMode}
                             onManageTags={() => setShowTagManagement(true)}
                             onCreateTag={() => setShowQuickTagCreate(true)}

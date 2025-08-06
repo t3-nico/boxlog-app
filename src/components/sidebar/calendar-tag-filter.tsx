@@ -3,12 +3,15 @@
 import React, { useState } from 'react'
 import { Plus, Settings, Filter } from 'lucide-react'
 import { SidebarSection, SidebarHeading } from '@/components/sidebar'
+import { HierarchicalTagList } from './hierarchical-tag-list'
 
 // Tag interface
 interface Tag {
   id: string
   name: string
   color: string
+  parentId?: string | null
+  isExpanded?: boolean
 }
 
 interface CalendarTagFilterProps {
@@ -17,6 +20,7 @@ interface CalendarTagFilterProps {
   selectedTags: string[]
   tagFilterMode: 'AND' | 'OR'
   onTagSelect: (tagId: string) => void
+  onToggleExpand?: (tagId: string) => void
   onFilterModeChange: (mode: 'AND' | 'OR') => void
   onManageTags: () => void
   onCreateTag: () => void
@@ -28,6 +32,7 @@ export function CalendarTagFilter({
   selectedTags,
   tagFilterMode,
   onTagSelect,
+  onToggleExpand,
   onFilterModeChange,
   onManageTags,
   onCreateTag
@@ -125,40 +130,18 @@ export function CalendarTagFilter({
       )}
 
       {/* Tag List */}
-      <div className="space-y-1 max-h-48 overflow-y-auto">
+      <div className="max-h-48 overflow-y-auto">
         {tags.length === 0 ? (
           <div className="text-xs text-gray-500 dark:text-gray-400 py-2 text-center">
             No tags yet
           </div>
         ) : (
-          tags.map(tag => {
-            const isSelected = selectedTags.includes(tag.id)
-            return (
-              <div
-                key={tag.id}
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer group"
-                onClick={() => onTagSelect(tag.id)}
-              >
-                <div
-                  className="w-3 h-3 rounded-full border-2"
-                  style={{
-                    backgroundColor: isSelected ? tag.color : 'transparent',
-                    borderColor: tag.color
-                  }}
-                />
-                <span className={`flex-1 text-sm truncate ${
-                  isSelected 
-                    ? 'font-medium text-gray-900 dark:text-white' 
-                    : 'text-gray-600 dark:text-gray-400'
-                }`}>
-                  {tag.name}
-                </span>
-                {isSelected && (
-                  <div className="w-2 h-2 rounded-full bg-blue-500" />
-                )}
-              </div>
-            )
-          })
+          <HierarchicalTagList
+            tags={tags}
+            selectedTags={selectedTags}
+            onTagSelect={onTagSelect}
+            onToggleExpand={onToggleExpand}
+          />
         )}
       </div>
 
