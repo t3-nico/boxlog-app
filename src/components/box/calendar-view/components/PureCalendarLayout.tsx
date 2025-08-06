@@ -77,15 +77,22 @@ function CalendarGrid({
   const [dragEnd, setDragEnd] = useState<string | null>(null)
   const [dragDate, setDragDate] = useState<Date | null>(null)
 
-  // Step 6: 保存された予定のstate
-  const [savedEvents, setSavedEvents] = useState<Array<{
+  // Step 12: 繰り返し設定を含む予定の型定義
+  interface RecurringEvent {
     id: string
     title: string
     startTime: string
     endTime: string
     date: string
     color: string
-  }>>([])
+    recurrence?: {
+      type: 'daily' | 'weekly' | 'monthly'
+      until: string // 終了日 "YYYY-MM-DD"
+    }
+  }
+
+  // Step 6: 保存された予定のstate
+  const [savedEvents, setSavedEvents] = useState<RecurringEvent[]>([])
 
   // Step 7: 選択状態の管理
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
@@ -109,6 +116,16 @@ function CalendarGrid({
     x: number
     y: number
   } | null>(null)
+
+  // Step 12: 繰り返し設定の管理
+  const [showRecurrenceOptions, setShowRecurrenceOptions] = useState<{
+    eventId: string
+    x: number
+    y: number
+  } | null>(null)
+
+  // Step 15: 現在時刻の管理
+  const [currentTime, setCurrentTime] = useState(new Date())
 
   // プリセットカラー
   const presetColors = [
@@ -134,6 +151,80 @@ function CalendarGrid({
     return { top, height }
   }, [])
 
+  // Step 12: 繰り返し予定の生成関数
+  const generateRecurringEvents = useCallback((baseEvent: RecurringEvent): RecurringEvent[] => {
+    if (!baseEvent.recurrence) return [baseEvent]
+    
+    const events: RecurringEvent[] = []
+    const startDate = new Date(baseEvent.date)
+    const endDate = new Date(baseEvent.recurrence.until)
+    
+    let currentDate = new Date(startDate)
+    let iterationCount = 0
+    
+    while (currentDate <= endDate && iterationCount < 365) { // 安全制限: 最大365回
+      events.push({
+        ...baseEvent,
+        id: `${baseEvent.id}_${currentDate.toISOString().split('T')[0]}`,
+        date: currentDate.toISOString().split('T')[0]
+      })
+      
+      // 次の日付を計算
+      switch (baseEvent.recurrence.type) {
+        case 'daily':
+          currentDate.setDate(currentDate.getDate() + 1)
+          break
+        case 'weekly':
+          currentDate.setDate(currentDate.getDate() + 7)
+          break
+        case 'monthly':
+          currentDate.setMonth(currentDate.getMonth() + 1)
+          break
+      }
+      
+      iterationCount++
+    }
+    
+    return events
+  }, [])
+
+  // Step 12: 全ての予定（繰り返し含む）を展開
+  const expandedEvents = useMemo(() => {
+    const expanded = savedEvents.flatMap(event => generateRecurringEvents(event))
+    console.log('🎯 Step 12 Debug: expandedEvents生成:', {
+      savedEventsCount: savedEvents.length,
+      expandedEventsCount: expanded.length,
+      savedEvents: savedEvents.map(e => ({ id: e.id, title: e.title, date: e.date, hasRecurrence: !!e.recurrence })),
+      expandedEvents: expanded.map(e => ({ id: e.id, title: e.title, date: e.date }))
+    })
+    return expanded
+  }, [savedEvents, generateRecurringEvents])
+
+  // Step 15: 現在時刻の更新（1分ごと）
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 60000) // 60秒ごと
+    
+    return () => clearInterval(timer)
+  }, [])
+
+  // Step 15: 現在時刻の位置計算
+  const getCurrentTimePosition = useCallback(() => {
+    const now = currentTime
+    const hours = now.getHours()
+    const minutes = now.getMinutes()
+    
+    // HOUR_HEIGHT = 80px なので、1分あたり 80/60 = 4/3 px
+    return (hours * 60 + minutes) * (HOUR_HEIGHT / 60)
+  }, [currentTime])
+
+  // Step 15: 今日かどうかの判定
+  const isToday = useCallback((date: Date) => {
+    const today = new Date()
+    return date.toDateString() === today.toDateString()
+  }, [])
+
   // Step 7: キーボードイベント（Delete削除）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -147,7 +238,9 @@ function CalendarGrid({
         if (selectedEventId) {
           e.preventDefault()
           console.log('🎯 Step 7: 予定削除:', selectedEventId)
-          setSavedEvents(prev => prev.filter(event => event.id !== selectedEventId))
+          // 繰り返し予定の場合、ベースIDで削除
+          const baseEventId = selectedEventId.split('_')[0]
+          setSavedEvents(prev => prev.filter(event => event.id !== baseEventId))
           setSelectedEventId(null)
         }
       } else if (e.key === 'Escape') {
@@ -196,7 +289,7 @@ function CalendarGrid({
       })
 
       if (newHour >= 0 && newHour < 24) {
-        const draggingEvent = savedEvents.find(e => e.id === draggingEventId)
+        const draggingEvent = expandedEvents.find(e => e.id === draggingEventId)
         if (draggingEvent) {
           // 元の予定の長さを維持
           const [originalStartHours, originalStartMinutes] = draggingEvent.startTime.split(':').map(Number)
@@ -245,9 +338,10 @@ function CalendarGrid({
           newTime: `${draggedTime.start} - ${draggedTime.end}` 
         })
         
-        // 実際に予定を更新
+        // 実際に予定を更新（繰り返し予定の場合、ベースイベントを更新）
+        const baseEventId = draggingEventId.split('_')[0]
         setSavedEvents(prev => prev.map(event => 
-          event.id === draggingEventId 
+          event.id === baseEventId 
             ? { 
                 ...event, 
                 startTime: draggedTime.start,
@@ -283,7 +377,7 @@ function CalendarGrid({
       const deltaY = e.clientY - resizingEvent.startY
       const deltaMinutes = Math.round(deltaY / (HOUR_HEIGHT / 4)) * 15 // 15分単位でスナップ
 
-      const resizingEventData = savedEvents.find(evt => evt.id === resizingEvent.id)
+      const resizingEventData = expandedEvents.find(evt => evt.id === resizingEvent.id)
       if (!resizingEventData) return
 
       const [startHours, startMinutes] = resizingEventData.startTime.split(':').map(Number)
@@ -303,9 +397,10 @@ function CalendarGrid({
       const newEndMinutes = newEndTotalMinutes % 60
       const newEndTime = `${String(newEndHours).padStart(2, '0')}:${String(newEndMinutes).padStart(2, '0')}`
 
-      // 予定を更新
+      // 予定を更新（繰り返し予定の場合、ベースイベントを更新）
+      const baseEventId = resizingEvent.id.split('_')[0]
       setSavedEvents(prev => prev.map(evt => 
-        evt.id === resizingEvent.id 
+        evt.id === baseEventId 
           ? { ...evt, endTime: newEndTime }
           : evt
       ))
@@ -617,16 +712,23 @@ function CalendarGrid({
                       // Step 6: 保存処理
                       const title = e.currentTarget.value.trim()
                       if (title && newEvent) {
-                        const newEventData = {
+                        const newEventData: RecurringEvent = {
                           id: Date.now().toString(),
                           title,
                           startTime: newEvent.startTime,
                           endTime: newEvent.endTime,
-                          date: newEvent.date.toDateString(),
+                          date: newEvent.date.toISOString().split('T')[0], // YYYY-MM-DD形式で統一
                           color: '#3b82f6'
                         }
                         setSavedEvents(prev => [...prev, newEventData])
                         console.log('🎯 Step 6: 予定を保存:', newEventData)
+                        
+                        // Step 12: 繰り返し設定オプションを表示
+                        setShowRecurrenceOptions({
+                          eventId: newEventData.id,
+                          x: 300,
+                          y: 200
+                        })
                       }
                       setNewEvent(null)
                     } else if (e.key === 'Escape') {
@@ -642,19 +744,26 @@ function CalendarGrid({
               </div>
             )}
 
-            {/* Step 6: 保存された予定の表示 */}
-            {savedEvents
-              .filter(event => event.date === date.toDateString())
+            {/* Step 6: 保存された予定の表示（繰り返し含む） */}
+            {expandedEvents
+              .filter(event => {
+                // 日付形式を統一して比較
+                const eventDateString = new Date(event.date).toDateString()
+                const targetDateString = date.toDateString()
+                return eventDateString === targetDateString
+              })
               .map((event, index) => {
                 const { top, height } = calculatePositionFromTime(event.startTime, event.endTime)
                 
                 // 同じ時間帯の他の予定をチェック（重複対応）
-                const overlappingEvents = savedEvents.filter(otherEvent => 
-                  otherEvent.date === event.date && 
-                  otherEvent.id !== event.id &&
-                  otherEvent.startTime < event.endTime && 
-                  otherEvent.endTime > event.startTime
-                )
+                const overlappingEvents = expandedEvents.filter(otherEvent => {
+                  const otherEventDateString = new Date(otherEvent.date).toDateString()
+                  const currentEventDateString = new Date(event.date).toDateString()
+                  return otherEventDateString === currentEventDateString && 
+                    otherEvent.id !== event.id &&
+                    otherEvent.startTime < event.endTime && 
+                    otherEvent.endTime > event.startTime
+                })
                 
                 const overlapCount = overlappingEvents.length + 1
                 const eventIndex = overlappingEvents.findIndex(e => e.id < event.id)
@@ -664,7 +773,7 @@ function CalendarGrid({
                 return (
                   <div
                     key={event.id}
-                    className={`absolute px-1 text-white text-xs rounded cursor-move hover:opacity-90 transition-all duration-200 z-25 ${selectedEventId === event.id ? 'ring-2 ring-white shadow-lg' : ''} ${draggingEventId === event.id ? 'opacity-50' : ''}`}
+                    className={`absolute px-1 text-white text-xs rounded cursor-move hover:opacity-90 transition-all duration-200 z-25 ${selectedEventId === event.id.split('_')[0] ? 'ring-2 ring-white shadow-lg' : ''} ${draggingEventId === event.id ? 'opacity-50' : ''}`}
                     style={{
                       top: `${top}px`,
                       height: `${Math.max(height, 20)}px`, // 最小20px
@@ -691,15 +800,23 @@ function CalendarGrid({
                         }
                         
                         // 選択状態も設定
-                        setSelectedEventId(event.id)
+                        // 繰り返し予定の場合、ベースイベントIDを使用
+                        const baseEventId = event.id.split('_')[0]
+                        setSelectedEventId(baseEventId)
                       }
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
                       // ドラッグ中でない場合のみ選択処理
                       if (!draggingEventId) {
-                        console.log('🎯 Step 7: 予定選択:', event)
-                        setSelectedEventId(selectedEventId === event.id ? null : event.id)
+                        // 繰り返し予定の場合、ベースイベントIDを使用
+                        const baseEventId = event.id.split('_')[0]
+                        console.log('🎯 Step 7: 予定選択:', { 
+                          clickedEvent: event, 
+                          baseEventId,
+                          currentSelected: selectedEventId 
+                        })
+                        setSelectedEventId(selectedEventId === baseEventId ? null : baseEventId)
                       }
                     }}
                     onContextMenu={(e) => {
@@ -743,8 +860,13 @@ function CalendarGrid({
 
             {/* Step 8: ドラッグ中のゴースト表示 */}
             {draggingEventId && dragPreviewPosition && (() => {
-              const draggingEvent = savedEvents.find(e => e.id === draggingEventId)
-              if (!draggingEvent || draggingEvent.date !== date.toDateString()) return null
+              const draggingEvent = expandedEvents.find(e => e.id === draggingEventId)
+              if (!draggingEvent) return null
+              
+              // 日付形式を統一して比較
+              const draggingEventDateString = new Date(draggingEvent.date).toDateString()
+              const targetDateString = date.toDateString()
+              if (draggingEventDateString !== targetDateString) return null
 
               const { height } = calculatePositionFromTime(draggingEvent.startTime, draggingEvent.endTime)
               
@@ -821,6 +943,37 @@ function CalendarGrid({
                 </div>
               )
             })}
+
+            {/* Step 15: 現在時刻ライン（今日のみ表示） */}
+            {isToday(date) && (
+              <>
+                {/* 現在時刻の赤いライン */}
+                <div
+                  className="absolute left-0 right-0 border-t-2 border-red-500 pointer-events-none z-30"
+                  style={{
+                    top: `${getCurrentTimePosition()}px`
+                  }}
+                >
+                  {/* 左端の赤い丸 */}
+                  <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full" />
+                </div>
+                
+                {/* 現在時刻の表示 */}
+                <div
+                  className="absolute left-1 pointer-events-none z-30"
+                  style={{
+                    top: `${getCurrentTimePosition() - 10}px`
+                  }}
+                >
+                  <span className="bg-gray-800 text-white text-xs px-1 py-0.5 rounded shadow-md">
+                    {currentTime.toLocaleTimeString('ja-JP', { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         )
       })}
@@ -840,7 +993,8 @@ function CalendarGrid({
           </div>
           <div className="grid grid-cols-4 gap-2">
             {presetColors.map(color => {
-              const currentEvent = savedEvents.find(e => e.id === colorPickerEvent.id)
+              const baseEventId = colorPickerEvent.id.split('_')[0]
+              const currentEvent = savedEvents.find(e => e.id === baseEventId)
               const isSelected = currentEvent?.color === color
               
               return (
@@ -853,8 +1007,10 @@ function CalendarGrid({
                   title={`Color: ${color}`}
                   onClick={() => {
                     console.log('🎯 Step 10: 色変更:', { eventId: colorPickerEvent.id, newColor: color })
+                    // 繰り返し予定の場合、ベースイベントを更新
+                    const baseEventId = colorPickerEvent.id.split('_')[0]
                     setSavedEvents(prev => prev.map(evt =>
-                      evt.id === colorPickerEvent.id
+                      evt.id === baseEventId
                         ? { ...evt, color }
                         : evt
                     ))
@@ -866,12 +1022,133 @@ function CalendarGrid({
           </div>
         </div>
       )}
+      
+      {/* Step 12: 繰り返し設定オプション */}
+      {showRecurrenceOptions && (
+        <div
+          className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-50"
+          style={{
+            left: Math.min(showRecurrenceOptions.x, window.innerWidth - 300),
+            top: Math.min(showRecurrenceOptions.y, window.innerHeight - 200)
+          }}
+        >
+          <div className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+            繰り返し設定
+          </div>
+          
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                繰り返しパターン
+              </label>
+              <select 
+                className="w-full text-xs p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                onChange={(e) => {
+                  const recurrenceType = e.target.value as 'daily' | 'weekly' | 'monthly' | ''
+                  if (recurrenceType) {
+                    // デフォルトで30日後を終了日に設定
+                    const endDate = new Date()
+                    endDate.setDate(endDate.getDate() + 30)
+                    const endDateString = endDate.toISOString().split('T')[0]
+                    
+                    setSavedEvents(prev => prev.map(event => 
+                      event.id === showRecurrenceOptions.eventId 
+                        ? { 
+                            ...event, 
+                            recurrence: {
+                              type: recurrenceType,
+                              until: endDateString
+                            }
+                          }
+                        : event
+                    ))
+                  } else {
+                    // 繰り返しを削除
+                    setSavedEvents(prev => prev.map(event => 
+                      event.id === showRecurrenceOptions.eventId 
+                        ? { ...event, recurrence: undefined }
+                        : event
+                    ))
+                  }
+                }}
+              >
+                <option value="">繰り返しなし</option>
+                <option value="daily">毎日</option>
+                <option value="weekly">毎週</option>
+                <option value="monthly">毎月</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                終了日
+              </label>
+              <input
+                type="date"
+                className="w-full text-xs p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
+                defaultValue={(() => {
+                  const date = new Date()
+                  date.setDate(date.getDate() + 30)
+                  return date.toISOString().split('T')[0]
+                })()}
+                min={new Date().toISOString().split('T')[0]}
+                onChange={(e) => {
+                  const selectedEvent = savedEvents.find(event => event.id === showRecurrenceOptions.eventId)
+                  if (selectedEvent?.recurrence) {
+                    setSavedEvents(prev => prev.map(event => 
+                      event.id === showRecurrenceOptions.eventId 
+                        ? { 
+                            ...event, 
+                            recurrence: {
+                              ...event.recurrence!,
+                              until: e.target.value
+                            }
+                          }
+                        : event
+                    ))
+                  }
+                }}
+              />
+            </div>
+            
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => setShowRecurrenceOptions(null)}
+                className="flex-1 px-3 py-2 text-xs bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+              >
+                完了
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 // メインコンポーネント
 export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick }: PureCalendarLayoutProps) {
+  // Step 15: 初期スクロール位置の調整
+  useEffect(() => {
+    const scrollContainer = document.querySelector('.overflow-y-auto')
+    if (scrollContainer) {
+      const now = new Date()
+      const hours = now.getHours()
+      const minutes = now.getMinutes()
+      const currentPosition = (hours * 60 + minutes) * (HOUR_HEIGHT / 60)
+      
+      // 現在時刻の少し上（2時間分上）にスクロール
+      const scrollTarget = Math.max(0, currentPosition - 160)
+      scrollContainer.scrollTop = scrollTarget
+      
+      console.log('🎯 Step 15: 初期スクロール位置設定:', {
+        currentTime: `${hours}:${minutes.toString().padStart(2, '0')}`,
+        currentPosition,
+        scrollTarget
+      })
+    }
+  }, [])
+
   return (
     <div className="flex-1 overflow-hidden">
       <div className="flex h-full overflow-y-auto">
