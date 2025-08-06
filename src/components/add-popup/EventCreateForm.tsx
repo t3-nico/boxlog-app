@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { 
   Calendar, Plus, X, Check, Tag as TagIcon, Clock, Repeat,
   AlertTriangle, Star, Circle, ArrowRight, MoreHorizontal,
@@ -107,6 +107,22 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
 
   const [newChecklistItem, setNewChecklistItem] = useState('')
   const { tags } = useSidebarStore()
+  
+  // 無限ループ防止用のref
+  const previousDefaultsRef = useRef<{
+    date?: Date,
+    time?: string,
+    endTime?: string
+  }>({})
+  
+  const hasDefaultsChanged = useMemo(() => {
+    const prev = previousDefaultsRef.current
+    return (
+      prev.date !== defaultDate ||
+      prev.time !== defaultTime ||
+      prev.endTime !== defaultEndTime
+    )
+  }, [defaultDate, defaultTime, defaultEndTime])
 
   // スマートな時間設定を計算する関数
   const getSmartDefaultTimes = useCallback((providedTime?: string, providedEndTime?: string) => {
@@ -144,8 +160,9 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
 
   // カレンダーからの値（defaultDate, defaultTime, defaultEndTime）が変更された時の処理
   useEffect(() => {
+    if (!hasDefaultsChanged) return
+    
     if (defaultDate || defaultTime || defaultEndTime) {
-      
       const tomorrow = new Date()
       tomorrow.setDate(tomorrow.getDate() + 1)
       
@@ -155,26 +172,21 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
       
       const smartTimes = getSmartDefaultTimes(defaultTime, defaultEndTime)
       
-      setFormData({
-        title: '',
-        description: '',
+      setFormData(prevData => ({
+        ...prevData, // 既存のデータを保持
         date: defaultStartDate,
         startTime: smartTimes.start,
         endTime: smartTimes.end,
-        status: 'inbox',
-        priority: undefined,
-        color: '#1a73e8',
-        items: [],
-        isRecurring: false,
-        recurrenceType: undefined,
-        recurrenceInterval: 1,
-        recurrenceEndDate: undefined,
-        tagIds: [],
-        location: '',
-        url: '',
-      })
+      }))
+      
+      // 前回の値を更新
+      previousDefaultsRef.current = {
+        date: defaultDate,
+        time: defaultTime,
+        endTime: defaultEndTime
+      }
     }
-  }, [defaultDate, defaultTime, defaultEndTime, getSmartDefaultTimes])
+  }, [hasDefaultsChanged, defaultDate, defaultTime, defaultEndTime, getSmartDefaultTimes])
 
   // contextDataの処理（カレンダー以外からの呼び出し）
   // タイムゾーン安全な日付変換ユーティリティ
@@ -216,7 +228,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         endTime: smartTimes.end,
       }))
     }
-  }, [contextData, getSmartDefaultTimes, defaultDate, defaultTime, defaultEndTime])
+  }, [contextData, getSmartDefaultTimes])
 
   // Handle editing event data separately to avoid infinite loop
   useEffect(() => {

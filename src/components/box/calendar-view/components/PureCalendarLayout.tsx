@@ -106,6 +106,15 @@ function CalendarGrid({
   // Step 18: コピー・ペースト用のstate
   const [copiedEvent, setCopiedEvent] = useState<RecurringEvent | null>(null)
   const [draggedTime, setDraggedTime] = useState<{ start: string; end: string } | null>(null)
+  
+  // Step 20: 複製とリサイズ用のstate
+  const [isDuplicating, setIsDuplicating] = useState(false)
+  const [adjustingStart, setAdjustingStart] = useState<{
+    id: string
+    initialStartTime: string
+    initialEndTime: string
+    startY: number
+  } | null>(null)
 
   // Step 9: リサイズ状態の管理
   const [resizingEvent, setResizingEvent] = useState<{
@@ -298,6 +307,63 @@ function CalendarGrid({
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [selectedEventId])
+  
+  // Step 20: 開始時刻変更の処理
+  useEffect(() => {
+    if (!adjustingStart) return
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = e.clientY - adjustingStart.startY
+      const deltaMinutes = Math.round(deltaY / (HOUR_HEIGHT / 4)) * 15 // 15分単位
+      
+      const [startHour, startMinute] = adjustingStart.initialStartTime.split(':').map(Number)
+      const [endHour, endMinute] = adjustingStart.initialEndTime.split(':').map(Number)
+      
+      let newStartMinutes = startHour * 60 + startMinute + deltaMinutes
+      
+      // 0:00～23:45の範囲に制限
+      newStartMinutes = Math.max(0, Math.min(newStartMinutes, 23 * 60 + 45))
+      
+      const newStartHour = Math.floor(newStartMinutes / 60)
+      const newStartMin = newStartMinutes % 60
+      const newStartTime = `${String(newStartHour).padStart(2, '0')}:${String(newStartMin).padStart(2, '0')}`
+      
+      // 終了時刻は固定で、開始時刻が終了時刻を超えないようにする
+      const endMinutes = endHour * 60 + endMinute
+      if (newStartMinutes >= endMinutes) {
+        // 開始時刻が終了時刻を超える場合は、開始時刻を終了時刻の15分前に設定
+        const adjustedStartMinutes = Math.max(0, endMinutes - 15)
+        const adjustedStartHour = Math.floor(adjustedStartMinutes / 60)
+        const adjustedStartMin = adjustedStartMinutes % 60
+        const adjustedStartTime = `${String(adjustedStartHour).padStart(2, '0')}:${String(adjustedStartMin).padStart(2, '0')}`
+        
+        setSavedEvents(prev => prev.map(evt => 
+          evt.id === adjustingStart.id 
+            ? { ...evt, startTime: adjustedStartTime }
+            : evt
+        ))
+        return
+      }
+      
+      setSavedEvents(prev => prev.map(evt => 
+        evt.id === adjustingStart.id 
+          ? { ...evt, startTime: newStartTime }
+          : evt
+      ))
+    }
+    
+    const handleMouseUp = () => {
+      setAdjustingStart(null)
+    }
+    
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [adjustingStart])
 
   // Step 8: グローバルなマウス移動・終了処理
   useEffect(() => {
@@ -404,6 +470,14 @@ function CalendarGrid({
       setDragOffset(0)
       setDragPreviewPosition(null)
       setDraggedTime(null)
+      
+      // Step 20: 複製完了処理
+      if (isDuplicating) {
+        setTimeout(() => {
+          setIsDuplicating(false)
+          console.log('🎯 Step 20: 複製完了')
+        }, 100)
+      }
     }
 
     document.addEventListener('mousemove', handleMouseMove)
@@ -758,7 +832,7 @@ function CalendarGrid({
                 <input
                   type="text"
                   className="w-full bg-transparent text-white placeholder-blue-100 outline-none text-xs font-medium"
-                  placeholder="予定を追加"
+                  placeholder="Add event"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -786,7 +860,7 @@ function CalendarGrid({
                       setNewEvent(null)
                     } else if (e.key === 'Escape') {
                       // キャンセル
-                      console.log('🎯 Step 6: キャンセル')
+                      console.log('🎯 Step 6: Cancel')
                       setNewEvent(null)
                     }
                   }}
@@ -826,7 +900,7 @@ function CalendarGrid({
                 return (
                   <div
                     key={event.id}
-                    className={`absolute px-1 text-white text-xs rounded cursor-move hover:opacity-90 transition-all duration-200 z-25 ${selectedEventId === event.id.split('_')[0] ? 'ring-2 ring-white shadow-lg' : ''} ${draggingEventId === event.id ? 'opacity-50' : ''}`}
+                    className={`absolute px-1 text-white text-xs rounded cursor-move hover:opacity-90 transition-all duration-200 z-25 ${selectedEventId === event.id.split('_')[0] ? 'ring-2 ring-white shadow-lg' : ''} ${draggingEventId === event.id ? 'opacity-50' : ''} ${isDuplicating && draggingEventId === event.id ? 'ring-2 ring-green-400 shadow-lg' : ''}`}
                     style={{
                       top: `${top}px`,
                       height: `${Math.max(height, 20)}px`, // 最小20px
@@ -840,8 +914,24 @@ function CalendarGrid({
                       if (e.button === 0) { // 左クリックのみ
                         e.preventDefault()
                         e.stopPropagation()
-                        console.log('🎯 Step 8: ドラッグ開始:', event)
-                        setDraggingEventId(event.id)
+                        
+                        // Step 20: Altキーが押されている場合は複製モード
+                        if (e.altKey) {
+                          console.log('🎯 Step 20: 複製モード開始:', event)
+                          const newEventId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                          const duplicatedEvent: RecurringEvent = {
+                            ...event,
+                            id: newEventId,
+                            title: event.title + ' (Copy)'
+                          }
+                          setSavedEvents(prev => [...prev, duplicatedEvent])
+                          setDraggingEventId(duplicatedEvent.id)
+                          setIsDuplicating(true)
+                        } else {
+                          console.log('🎯 Step 8: ドラッグ開始:', event)
+                          setDraggingEventId(event.id)
+                          setIsDuplicating(false)
+                        }
                         
                         // カレンダー全体の位置を取得
                         const calendarGrid = document.querySelector('[data-calendar-grid]') as HTMLElement
@@ -894,6 +984,9 @@ function CalendarGrid({
                   >
                     <div className="font-medium truncate">
                       {event.title}
+                      {isDuplicating && draggingEventId === event.id && (
+                        <span className="ml-1 text-xs opacity-75">(Duplicating)</span>
+                      )}
                     </div>
                     {height > 30 && (
                       <div className="text-xs opacity-80 truncate">
@@ -901,7 +994,24 @@ function CalendarGrid({
                       </div>
                     )}
                     
-                    {/* Step 9: リサイズハンドル */}
+                    {/* Step 20: 上端リサイズハンドル（開始時刻変更） */}
+                    <div
+                      className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors duration-200"
+                      title="Drag to change start time"
+                      onMouseDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        console.log('🎯 Step 20: 開始時刻変更開始:', event)
+                        setAdjustingStart({
+                          id: event.id,
+                          initialStartTime: event.startTime,
+                          initialEndTime: event.endTime,
+                          startY: e.clientY
+                        })
+                      }}
+                    />
+                    
+                    {/* Step 9: 下端リサイズハンドル（終了時刻変更） */}
                     <div
                       className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors duration-200"
                       title="Drag to resize duration"
@@ -1051,7 +1161,7 @@ function CalendarGrid({
           }}
         >
           <div className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">
-            予定の色を選択
+            Select event color
           </div>
           <div className="grid grid-cols-4 gap-2">
             {presetColors.map(color => {
@@ -1095,13 +1205,13 @@ function CalendarGrid({
           }}
         >
           <div className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
-            繰り返し設定
+            Repeat settings
           </div>
           
           <div className="space-y-3">
             <div>
               <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                繰り返しパターン
+                Repeat pattern
               </label>
               <select 
                 className="w-full text-xs p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
@@ -1134,16 +1244,16 @@ function CalendarGrid({
                   }
                 }}
               >
-                <option value="">繰り返しなし</option>
-                <option value="daily">毎日</option>
-                <option value="weekly">毎週</option>
-                <option value="monthly">毎月</option>
+                <option value="">No repeat</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
               </select>
             </div>
             
             <div>
               <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                終了日
+                End date
               </label>
               <input
                 type="date"
@@ -1178,7 +1288,7 @@ function CalendarGrid({
                 onClick={() => setShowRecurrenceOptions(null)}
                 className="flex-1 px-3 py-2 text-xs bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
               >
-                完了
+                Done
               </button>
             </div>
           </div>
@@ -1196,11 +1306,11 @@ function CalendarGrid({
           
           {/* モーダル本体 */}
           <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 w-96 p-6">
-            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">予定の編集</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Edit Event</h2>
             
             {/* タイトル */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">タイトル</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Title</label>
               <input
                 type="text"
                 className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -1214,7 +1324,7 @@ function CalendarGrid({
             
             {/* 日付 */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">日付</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Date</label>
               <input
                 type="date"
                 className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -1229,7 +1339,7 @@ function CalendarGrid({
             {/* 開始時刻と終了時刻 */}
             <div className="mb-4 grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">開始時刻</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Start time</label>
                 <input
                   type="time"
                   className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -1242,7 +1352,7 @@ function CalendarGrid({
               </div>
               
               <div>
-                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">終了時刻</label>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">End time</label>
                 <input
                   type="time"
                   className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
@@ -1257,11 +1367,11 @@ function CalendarGrid({
             
             {/* メモ */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">メモ</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Notes</label>
               <textarea
                 className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 rows={3}
-                placeholder="詳細メモ..."
+                placeholder="Detailed notes..."
                 value={editingEvent.memo || ''}
                 onChange={(e) => setEditingEvent({
                   ...editingEvent,
@@ -1272,7 +1382,7 @@ function CalendarGrid({
             
             {/* 色選択 */}
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">色</label>
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Color</label>
               <div className="flex gap-2 flex-wrap">
                 {presetColors.map(color => (
                   <button
@@ -1298,7 +1408,7 @@ function CalendarGrid({
                 onClick={() => setEditingEvent(null)}
                 className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                キャンセル
+                Cancel
               </button>
               <button
                 onClick={() => {
@@ -1311,7 +1421,7 @@ function CalendarGrid({
                 }}
                 className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
               >
-                保存
+                Save
               </button>
             </div>
           </div>

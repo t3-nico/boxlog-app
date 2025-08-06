@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { format } from 'date-fns'
 import { useRouter, usePathname } from 'next/navigation'
-import { UnifiedCalendarHeader } from './calendar-grid/UnifiedCalendarHeader'
 import { DayView } from './views/day-view'
 import { ThreeDayView } from './views/three-day-view'
 import { WeekView } from './views/week-view'
@@ -54,7 +53,7 @@ export function CalendarView({
   const [testEvent, setTestEvent] = useState<CalendarEvent | null>(null)
   
   // AddPopup hook（編集時のみ使用）
-  const { isOpen: isAddPopupOpen, openPopup, closePopup } = useAddPopup()
+  const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
   
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
@@ -253,34 +252,31 @@ export function CalendarView({
   }, [])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    // 日付と時間をセット（同期的に実行）
-    if (date) {
-      setEventDefaultDate(date)
-      if (time) {
-        // time が "HH:mm-HH:mm" 形式の場合は分割
-        if (time.includes('-')) {
-          const [startTime, endTime] = time.split('-')
-          setEventDefaultTime(startTime)
-          setEventDefaultEndTime(endTime)
-        } else {
-          setEventDefaultTime(time)
-          setEventDefaultEndTime(undefined)
-        }
+    // AddPopupを開く（日付と時刻を渡す）
+    openEventPopup({
+      dueDate: date || new Date(),
+      status: 'Todo'
+    })
+    
+    // デフォルト値を設定（AddPopupが開いた後に使用される）
+    let startTime: string | undefined
+    let endTime: string | undefined
+    
+    if (time) {
+      // time が "HH:mm-HH:mm" 形式の場合は分割
+      if (time.includes('-')) {
+        [startTime, endTime] = time.split('-')
       } else {
-        // 時間が指定されていない場合はデフォルト値をクリア
-        setEventDefaultTime(undefined)
-        setEventDefaultEndTime(undefined)
+        startTime = time
+        endTime = undefined
       }
-    } else {
-      // 日付が指定されていない場合はすべてクリア
-      setEventDefaultDate(undefined)
-      setEventDefaultTime(undefined)
-      setEventDefaultEndTime(undefined)
     }
     
-    // カレンダー専用ポップアップを開く（状態の競合なし）
-    setIsCalendarEventPopupOpen(true)
-  }, [])
+    setEventDefaultDate(date || undefined)
+    setEventDefaultTime(startTime || '09:00')
+    setEventDefaultEndTime(endTime)
+    setSelectedEvent(null)
+  }, [openEventPopup])
   
   const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
     try {
@@ -431,7 +427,6 @@ export function CalendarView({
 
   // ビューコンポーネントのレンダリング
   const renderView = () => {
-    console.log('🎯 CalendarView handleUpdateEvent:', typeof handleUpdateEvent, !!handleUpdateEvent)
     const commonProps = {
       dateRange: viewDateRange,
       tasks: filteredTasks,
@@ -443,17 +438,15 @@ export function CalendarView({
       onEventClick: handleEventClick as any,
       onCreateEvent: handleCreateEvent,
       onUpdateEvent: handleUpdateEvent as any,
+      onEmptyClick: handleEmptyClick,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),
       onNavigateNext: () => handleNavigate('next'),
       onNavigateToday: () => handleNavigate('today')
     }
 
-    console.log('🎯 Current viewType:', viewType)
-    console.log('🎯 ViewDateRange:', viewDateRange)
     switch (viewType) {
       case 'day':
-        console.log('🎯 Rendering DayView with events:', filteredEvents.length)
         return <DayView {...commonProps} />
       case 'split-day':
         // Split-day view is currently not available, fallback to day view
@@ -511,6 +504,19 @@ export function CalendarView({
     // ここで Supabase やローカルストレージに記録を保存
   }, [])
 
+  // 空き時間クリック用のハンドラー
+  const handleEmptyClick = useCallback((date: Date, time: string) => {
+    openEventPopup({
+      dueDate: date,
+      status: 'Todo'
+    })
+    
+    setEventDefaultDate(date)
+    setEventDefaultTime(time)
+    setEventDefaultEndTime(undefined)
+    setSelectedEvent(null)
+  }, [openEventPopup])
+
   // 表示される日付の配列を計算
   const displayDates = useMemo(() => {
     return viewDateRange.days
@@ -520,15 +526,6 @@ export function CalendarView({
     <DnDProvider>
       <>
         <div className="h-full flex flex-col bg-background">
-          {/* 共通ヘッダー - すべてのビューで同じインスタンス */}
-          <UnifiedCalendarHeader
-            viewType={viewType}
-            currentDate={currentDate}
-            dates={displayDates}
-            planRecordMode={planRecordMode}
-            onNavigate={handleNavigate}
-            onViewChange={handleViewChange}
-          />
           
           {/* ビュー固有のコンテンツ */}
           <div className="flex-1 min-h-0 bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
@@ -536,19 +533,24 @@ export function CalendarView({
           </div>
         </div>
       
-      {/* モーダルコンポーネントは現在無効化されています */}
-      
-      {/* AddPopupは残す */}
+      {/* AddPopup - useAddPopupフックで管理 */}
       <AddPopup 
         open={isAddPopupOpen} 
         onOpenChange={(open) => {
           if (!open) {
             closePopup()
-            setSelectedEvent(null) // クローズ時にselectedEventをクリア
+            setSelectedEvent(null)
+            // デフォルト値もクリア
+            setEventDefaultDate(undefined)
+            setEventDefaultTime(undefined)
+            setEventDefaultEndTime(undefined)
           }
         }}
         defaultTab="event"
         editingEvent={selectedEvent}
+        defaultDate={eventDefaultDate}
+        defaultTime={eventDefaultTime}
+        defaultEndTime={eventDefaultEndTime}
       />
       </>
     </DnDProvider>
