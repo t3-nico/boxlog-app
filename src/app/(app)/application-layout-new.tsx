@@ -16,6 +16,9 @@ import { useBoxStore } from '@/lib/box-store'
 import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
 import { DynamicSidebarSection } from '@/components/sidebar/DynamicSidebarSection'
 import { TagsList } from '@/features/tags/components/tags-list'
+import { CalendarTagFilter } from '@/components/sidebar/calendar-tag-filter'
+import { TagManagementModal } from '@/components/sidebar/tag-management-modal'
+import { QuickTagCreateModal } from '@/components/sidebar/quick-tag-create-modal'
 import { SmartFolderList } from '@/features/smart-folders/components/smart-folder-list'
 import { sidebarConfig } from '@/config/sidebarConfig'
 import { useCommandPalette } from '@/components/providers'
@@ -105,6 +108,19 @@ export function ApplicationLayoutNew({
   const { isOpen, openPopup, closePopup } = useAddPopup()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   
+  // カレンダータグ機能のstate
+  const [calendarTags, setCalendarTags] = useState([
+    { id: '1', name: 'Important', color: '#ef4444' },
+    { id: '2', name: 'Meeting', color: '#3b82f6' },
+    { id: '3', name: 'Work', color: '#10b981' },
+    { id: '4', name: 'Break', color: '#8b5cf6' },
+    { id: '5', name: 'Learning', color: '#f59e0b' },
+  ])
+  const [selectedCalendarTags, setSelectedCalendarTags] = useState<string[]>([])
+  const [calendarTagFilterMode, setCalendarTagFilterMode] = useState<'AND' | 'OR'>('OR')
+  const [showTagManagement, setShowTagManagement] = useState(false)
+  const [showQuickTagCreate, setShowQuickTagCreate] = useState(false)
+  
   // カレンダーページかどうかを判定
   const isCalendarPage = pathname.startsWith('/calendar')
   
@@ -188,6 +204,34 @@ export function ApplicationLayoutNew({
     } catch (error) {
       console.error('Logout error:', error)
     }
+  }
+
+  // カレンダータグ管理ハンドラー
+  const handleCalendarTagSelect = (tagId: string) => {
+    setSelectedCalendarTags(prev =>
+      prev.includes(tagId)
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    )
+  }
+
+  const handleCreateCalendarTag = (tag: { name: string; color: string }) => {
+    const newTag = {
+      id: Date.now().toString(),
+      ...tag
+    }
+    setCalendarTags(prev => [...prev, newTag])
+  }
+
+  const handleUpdateCalendarTag = (id: string, updates: { name?: string; color?: string }) => {
+    setCalendarTags(prev => prev.map(tag =>
+      tag.id === id ? { ...tag, ...updates } : tag
+    ))
+  }
+
+  const handleDeleteCalendarTag = (id: string) => {
+    setCalendarTags(prev => prev.filter(tag => tag.id !== id))
+    setSelectedCalendarTags(prev => prev.filter(tagId => tagId !== id))
   }
 
   // 動的ページタイトルとアイコンを取得
@@ -467,11 +511,24 @@ export function ApplicationLayoutNew({
                           selectedFolderId={filters.smartFolder || ''}
                         />
 
-                        <TagsList
-                          collapsed={collapsed}
-                          onSelectTag={handleSelectTag}
-                          selectedTagIds={filters.tags || []}
-                        />
+                        {isCalendarPage ? (
+                          <CalendarTagFilter
+                            collapsed={collapsed}
+                            tags={calendarTags}
+                            selectedTags={selectedCalendarTags}
+                            tagFilterMode={calendarTagFilterMode}
+                            onTagSelect={handleCalendarTagSelect}
+                            onFilterModeChange={setCalendarTagFilterMode}
+                            onManageTags={() => setShowTagManagement(true)}
+                            onCreateTag={() => setShowQuickTagCreate(true)}
+                          />
+                        ) : (
+                          <TagsList
+                            collapsed={collapsed}
+                            onSelectTag={handleSelectTag}
+                            selectedTagIds={filters.tags || []}
+                          />
+                        )}
                       </div>
                     </div>
 
@@ -682,6 +739,23 @@ export function ApplicationLayoutNew({
           open={isOpen} 
           onOpenChange={(open) => open ? openPopup() : closePopup()}
           defaultTab="event"
+        />
+        
+        {/* カレンダータグ管理モーダル */}
+        <TagManagementModal
+          isOpen={showTagManagement}
+          onClose={() => setShowTagManagement(false)}
+          tags={calendarTags}
+          onCreateTag={handleCreateCalendarTag}
+          onUpdateTag={handleUpdateCalendarTag}
+          onDeleteTag={handleDeleteCalendarTag}
+        />
+        
+        {/* クイックタグ作成モーダル */}
+        <QuickTagCreateModal
+          isOpen={showQuickTagCreate}
+          onClose={() => setShowQuickTagCreate(false)}
+          onCreateTag={handleCreateCalendarTag}
         />
         </div>
       </ToastProvider>
