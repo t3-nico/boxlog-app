@@ -85,6 +85,7 @@ function CalendarGrid({
     endTime: string
     date: string
     color: string
+    memo?: string // Step 16: メモ欄を追加
     recurrence?: {
       type: 'daily' | 'weekly' | 'monthly'
       until: string // 終了日 "YYYY-MM-DD"
@@ -101,6 +102,9 @@ function CalendarGrid({
   const [draggingEventId, setDraggingEventId] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState(0)
   const [dragPreviewPosition, setDragPreviewPosition] = useState<{ top: number; startTime: string; endTime: string } | null>(null)
+  
+  // Step 18: コピー・ペースト用のstate
+  const [copiedEvent, setCopiedEvent] = useState<RecurringEvent | null>(null)
   const [draggedTime, setDraggedTime] = useState<{ start: string; end: string } | null>(null)
 
   // Step 9: リサイズ状態の管理
@@ -126,6 +130,9 @@ function CalendarGrid({
 
   // Step 15: 現在時刻の管理
   const [currentTime, setCurrentTime] = useState(new Date())
+
+  // Step 16: 編集モーダル用のstate
+  const [editingEvent, setEditingEvent] = useState<RecurringEvent | null>(null)
 
   // プリセットカラー
   const presetColors = [
@@ -225,6 +232,18 @@ function CalendarGrid({
     return date.toDateString() === today.toDateString()
   }, [])
 
+  // Step 16: 時間変換ヘルパー関数
+  const timeStringToMinutes = useCallback((timeString: string) => {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    return hours * 60 + minutes
+  }, [])
+
+  const minutesToTimeString = useCallback((minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
+  }, [])
+
   // Step 7: キーボードイベント（Delete削除）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -242,6 +261,33 @@ function CalendarGrid({
           const baseEventId = selectedEventId.split('_')[0]
           setSavedEvents(prev => prev.filter(event => event.id !== baseEventId))
           setSelectedEventId(null)
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        // Step 18: コピー (Ctrl+C / Cmd+C)
+        if (selectedEventId) {
+          e.preventDefault()
+          const baseEventId = selectedEventId.split('_')[0]
+          const eventToCopy = savedEvents.find(event => event.id === baseEventId)
+          if (eventToCopy) {
+            setCopiedEvent(eventToCopy)
+            console.log('📋 Step 18: 予定をコピー:', eventToCopy.title)
+          }
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        // Step 18: ペースト (Ctrl+V / Cmd+V)
+        if (copiedEvent && clickedSlot) {
+          e.preventDefault()
+          const newId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+          const selectedDate = clickedSlot.date.toISOString().split('T')[0]
+          
+          const pastedEvent: RecurringEvent = {
+            ...copiedEvent,
+            id: newId,
+            date: selectedDate
+          }
+          
+          setSavedEvents(prev => [...prev, pastedEvent])
+          console.log('📋 Step 18: 予定をペースト:', pastedEvent.title, 'to', selectedDate)
         }
       } else if (e.key === 'Escape') {
         // Escで選択解除
@@ -617,7 +663,14 @@ function CalendarGrid({
   }
 
   return (
-    <div className="flex-1 flex relative bg-background" style={{ height: `${24 * HOUR_HEIGHT}px` }} data-calendar-grid>
+    <div 
+      className="flex-1 grid relative bg-background" 
+      style={{ 
+        height: `${24 * HOUR_HEIGHT}px`,
+        gridTemplateColumns: `repeat(${dates.length}, 1fr)`
+      }} 
+      data-calendar-grid
+    >
       {dates.map((date, index) => {
         const dateKey = format(date, 'yyyy-MM-dd')
         const dayEvents = eventsByDate.get(dateKey) || []
@@ -625,7 +678,7 @@ function CalendarGrid({
         return (
           <div
             key={dateKey}
-            className="flex-1 border-r border-border last:border-r-0 relative"
+            className="border-r border-border last:border-r-0 relative"
             data-calendar-container
           >
             {/* ドラッグ範囲の表示 */}
@@ -809,7 +862,6 @@ function CalendarGrid({
                       e.stopPropagation()
                       // ドラッグ中でない場合のみ選択処理
                       if (!draggingEventId) {
-                        // 繰り返し予定の場合、ベースイベントIDを使用
                         const baseEventId = event.id.split('_')[0]
                         console.log('🎯 Step 7: 予定選択:', { 
                           clickedEvent: event, 
@@ -817,6 +869,16 @@ function CalendarGrid({
                           currentSelected: selectedEventId 
                         })
                         setSelectedEventId(selectedEventId === baseEventId ? null : baseEventId)
+                      }
+                    }}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation()
+                      // ダブルクリックで編集モーダル表示
+                      console.log('🎯 Step 16: 編集モーダル表示:', event)
+                      const baseEventId = event.id.split('_')[0]
+                      const baseEvent = savedEvents.find(e => e.id === baseEventId)
+                      if (baseEvent) {
+                        setEditingEvent(baseEvent)
                       }
                     }}
                     onContextMenu={(e) => {
@@ -1121,6 +1183,139 @@ function CalendarGrid({
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Step 16: 編集モーダル */}
+      {editingEvent && (
+        <>
+          {/* オーバーレイ */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setEditingEvent(null)}
+          />
+          
+          {/* モーダル本体 */}
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 w-96 p-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">予定の編集</h2>
+            
+            {/* タイトル */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">タイトル</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                value={editingEvent.title}
+                onChange={(e) => setEditingEvent({
+                  ...editingEvent,
+                  title: e.target.value
+                })}
+              />
+            </div>
+            
+            {/* 日付 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">日付</label>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                value={editingEvent.date}
+                onChange={(e) => setEditingEvent({
+                  ...editingEvent,
+                  date: e.target.value
+                })}
+              />
+            </div>
+            
+            {/* 開始時刻と終了時刻 */}
+            <div className="mb-4 grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">開始時刻</label>
+                <input
+                  type="time"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  value={editingEvent.startTime}
+                  onChange={(e) => setEditingEvent({
+                    ...editingEvent,
+                    startTime: e.target.value
+                  })}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">終了時刻</label>
+                <input
+                  type="time"
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  value={editingEvent.endTime}
+                  onChange={(e) => setEditingEvent({
+                    ...editingEvent,
+                    endTime: e.target.value
+                  })}
+                />
+              </div>
+            </div>
+            
+            {/* メモ */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">メモ</label>
+              <textarea
+                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                rows={3}
+                placeholder="詳細メモ..."
+                value={editingEvent.memo || ''}
+                onChange={(e) => setEditingEvent({
+                  ...editingEvent,
+                  memo: e.target.value
+                })}
+              />
+            </div>
+            
+            {/* 色選択 */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">色</label>
+              <div className="flex gap-2 flex-wrap">
+                {presetColors.map(color => (
+                  <button
+                    key={color}
+                    className={`w-8 h-8 rounded transition-all ${
+                      editingEvent.color === color 
+                        ? 'ring-2 ring-offset-2 ring-gray-800 dark:ring-gray-200 scale-110' 
+                        : 'hover:scale-105'
+                    }`}
+                    style={{ backgroundColor: color }}
+                    onClick={() => setEditingEvent({
+                      ...editingEvent,
+                      color
+                    })}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* ボタン */}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setEditingEvent(null)}
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={() => {
+                  // 予定を更新
+                  setSavedEvents(prev => prev.map(e => 
+                    e.id === editingEvent.id ? editingEvent : e
+                  ))
+                  setEditingEvent(null)
+                  console.log('🎯 Step 16: 予定更新:', editingEvent)
+                }}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   )
