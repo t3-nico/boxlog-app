@@ -443,7 +443,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
                   return (
                     <div 
                       key={date.toISOString()} 
-                      className="border-r border-border last:border-r-0 text-center bg-gray-50 dark:bg-gray-800 py-2 px-1"
+                      className="border-r border-border last:border-r-0 text-center py-2 px-1"
                     >
                       <div className={`text-xs ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
                         {viewMode === '2week' ? weekdays[adjustedIndex].charAt(0) : weekdays[adjustedIndex]}

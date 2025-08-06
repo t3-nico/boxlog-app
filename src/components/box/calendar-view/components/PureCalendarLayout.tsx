@@ -4,6 +4,13 @@ import React, { useMemo, useCallback, useState, useEffect } from 'react'
 import { format, isToday } from 'date-fns'
 import type { CalendarEvent } from '@/types/events'
 
+// Step 21: Tag interface
+interface Tag {
+  id: string
+  name: string
+  color: string
+}
+
 // 定数定義
 const HOUR_HEIGHT = 80 // 1時間の高さ（px）
 const TIME_AXIS_WIDTH = 64 // 時間軸の幅（px）
@@ -34,9 +41,11 @@ function TimeAxisLabels() {
             width: '100%'
           }}
         >
-          <span className="leading-none">
-            {hour.toString().padStart(2, '0')}:00
-          </span>
+          {hour > 0 && (
+            <span className="leading-none">
+              {hour.toString().padStart(2, '0')}:00
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -85,6 +94,7 @@ function CalendarGrid({
     endTime: string
     date: string
     color: string
+    tagIds?: string[] // Step 21: 複数タグのID配列
     memo?: string // Step 16: メモ欄を追加
     recurrence?: {
       type: 'daily' | 'weekly' | 'monthly'
@@ -94,6 +104,19 @@ function CalendarGrid({
 
   // Step 6: 保存された予定のstate
   const [savedEvents, setSavedEvents] = useState<RecurringEvent[]>([])
+
+  // Step 21: タグ機能のstate
+  const [tags, setTags] = useState<Tag[]>([
+    { id: '1', name: 'Important', color: '#ef4444' },
+    { id: '2', name: 'Meeting', color: '#3b82f6' },
+    { id: '3', name: 'Work', color: '#10b981' },
+    { id: '4', name: 'Break', color: '#8b5cf6' },
+    { id: '5', name: 'Learning', color: '#f59e0b' },
+  ])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [tagFilterMode, setTagFilterMode] = useState<'AND' | 'OR'>('OR')
+  const [newEventTags, setNewEventTags] = useState<string[]>([])
+  const [showTagModal, setShowTagModal] = useState(false)
 
   // Step 7: 選択状態の管理
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
@@ -204,17 +227,38 @@ function CalendarGrid({
     return events
   }, [])
 
-  // Step 12: 全ての予定（繰り返し含む）を展開
+  // Step 21: タグフィルタリング機能
+  const getFilteredEvents = useCallback((events: RecurringEvent[]) => {
+    if (selectedTags.length === 0) return events
+    
+    return events.filter(event => {
+      if (!event.tagIds || event.tagIds.length === 0) {
+        return false
+      }
+      
+      if (tagFilterMode === 'AND') {
+        // すべてのタグを含む
+        return selectedTags.every(tagId => event.tagIds?.includes(tagId))
+      } else {
+        // いずれかのタグを含む
+        return selectedTags.some(tagId => event.tagIds?.includes(tagId))
+      }
+    })
+  }, [selectedTags, tagFilterMode])
+
+  // Step 12: 全ての予定（繰り返し含む）を展開してフィルタリング
   const expandedEvents = useMemo(() => {
     const expanded = savedEvents.flatMap(event => generateRecurringEvents(event))
-    console.log('🎯 Step 12 Debug: expandedEvents生成:', {
+    const filtered = getFilteredEvents(expanded)
+    console.log('🎯 Step 21 Debug: expandedEvents生成とフィルタリング:', {
       savedEventsCount: savedEvents.length,
       expandedEventsCount: expanded.length,
-      savedEvents: savedEvents.map(e => ({ id: e.id, title: e.title, date: e.date, hasRecurrence: !!e.recurrence })),
-      expandedEvents: expanded.map(e => ({ id: e.id, title: e.title, date: e.date }))
+      filteredEventsCount: filtered.length,
+      selectedTags,
+      tagFilterMode
     })
-    return expanded
-  }, [savedEvents, generateRecurringEvents])
+    return filtered
+  }, [savedEvents, generateRecurringEvents, getFilteredEvents])
 
   // Step 15: 現在時刻の更新（1分ごと）
   useEffect(() => {
@@ -782,10 +826,10 @@ function CalendarGrid({
 
             {/* 15分単位のスロット */}
             <div className="absolute inset-0 cursor-crosshair z-10">
-              {Array.from({ length: 96 }, (_, slotIndex) => {
-                // 96個のスロット（24時間 × 4）
-                const hour = Math.floor(slotIndex / 4)
-                const minute = (slotIndex % 4) * 15
+              {Array.from({ length: 92 }, (_, slotIndex) => {
+                // 92個のスロット（23時間 × 4）1:00-23:45
+                const hour = Math.floor((slotIndex + 4) / 4)  // +4 to start from 1:00
+                const minute = ((slotIndex + 4) % 4) * 15
                 const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
                 
                 // このスロットがクリックされたかチェック
@@ -845,7 +889,8 @@ function CalendarGrid({
                           startTime: newEvent.startTime,
                           endTime: newEvent.endTime,
                           date: newEvent.date.toISOString().split('T')[0], // YYYY-MM-DD形式で統一
-                          color: '#3b82f6'
+                          color: '#3b82f6',
+                          tagIds: newEventTags
                         }
                         setSavedEvents(prev => [...prev, newEventData])
                         console.log('🎯 Step 6: 予定を保存:', newEventData)
@@ -858,15 +903,48 @@ function CalendarGrid({
                         })
                       }
                       setNewEvent(null)
+                      setNewEventTags([])
                     } else if (e.key === 'Escape') {
                       // キャンセル
                       console.log('🎯 Step 6: Cancel')
                       setNewEvent(null)
+                      setNewEventTags([])
                     }
                   }}
                 />
                 <div className="text-xs opacity-90 mt-1">
                   {newEvent.startTime} - {newEvent.endTime}
+                </div>
+                
+                {/* Step 21: タグ選択UI */}
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {tags.map(tag => {
+                    const isSelected = newEventTags.includes(tag.id)
+                    return (
+                      <button
+                        key={tag.id}
+                        onClick={() => {
+                          setNewEventTags(prev =>
+                            isSelected
+                              ? prev.filter(id => id !== tag.id)
+                              : [...prev, tag.id]
+                          )
+                        }}
+                        className={`
+                          px-2 py-1 text-[10px] rounded transition-all
+                          ${isSelected
+                            ? 'text-white'
+                            : 'bg-white/20 hover:bg-white/30'
+                          }
+                        `}
+                        style={{
+                          backgroundColor: isSelected ? tag.color : undefined
+                        }}
+                      >
+                        {tag.name}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -991,6 +1069,51 @@ function CalendarGrid({
                     {height > 30 && (
                       <div className="text-xs opacity-80 truncate">
                         {event.startTime} - {event.endTime}
+                      </div>
+                    )}
+                    
+                    {/* Step 21: Tag badges */}
+                    {event.tagIds && event.tagIds.length > 0 && height > 50 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {event.tagIds.slice(0, 3).map(tagId => {
+                          const tag = tags.find(t => t.id === tagId)
+                          if (!tag) return null
+                          return (
+                            <span
+                              key={tagId}
+                              className="inline-block px-1 py-0.5 rounded text-xs font-medium"
+                              style={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                color: tag.color,
+                                fontSize: '10px'
+                              }}
+                            >
+                              {tag.name}
+                            </span>
+                          )
+                        })}
+                        {event.tagIds.length > 3 && (
+                          <span className="inline-block px-1 py-0.5 rounded text-xs font-medium bg-white/90 text-gray-600" style={{ fontSize: '10px' }}>
+                            +{event.tagIds.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Step 21: タグ管理ボタン */}
+                    {height > 35 && (
+                      <div className="absolute top-1 right-1">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowTagModal(true)
+                            setSelectedEventId(event.id.split('_')[0])
+                          }}
+                          className="opacity-0 hover:opacity-100 bg-white/20 hover:bg-white/30 rounded px-1 py-0.5 text-xs transition-opacity"
+                          title="Manage tags"
+                        >
+                          🏷️
+                        </button>
                       </div>
                     )}
                     
@@ -1380,6 +1503,43 @@ function CalendarGrid({
               />
             </div>
             
+            {/* Step 21: タグ選択 */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Tags</label>
+              <div className="flex flex-wrap gap-2">
+                {tags.map(tag => {
+                  const isSelected = editingEvent.tagIds?.includes(tag.id) || false
+                  return (
+                    <button
+                      key={tag.id}
+                      onClick={() => {
+                        const currentTags = editingEvent.tagIds || []
+                        const newTags = isSelected
+                          ? currentTags.filter(id => id !== tag.id)
+                          : [...currentTags, tag.id]
+                        setEditingEvent({
+                          ...editingEvent,
+                          tagIds: newTags
+                        })
+                      }}
+                      className={`
+                        px-2 py-1 text-xs rounded transition-all
+                        ${isSelected
+                          ? 'text-white'
+                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300'
+                        }
+                      `}
+                      style={{
+                        backgroundColor: isSelected ? tag.color : undefined
+                      }}
+                    >
+                      {tag.name}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            
             {/* 色選択 */}
             <div className="mb-6">
               <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Color</label>
@@ -1422,6 +1582,216 @@ function CalendarGrid({
                 className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
               >
                 Save
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+      
+      {/* Step 21: タグ管理モーダル */}
+      {showTagModal && (
+        <>
+          {/* オーバーレイ */}
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setShowTagModal(false)}
+          />
+          
+          {/* モーダル本体 */}
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 w-96 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tag Management</h2>
+              <button
+                onClick={() => setShowTagModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            {/* タグフィルタリング */}
+            <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Filter Events by Tags</h3>
+              <div className="flex gap-2 mb-2">
+                <button
+                  onClick={() => setTagFilterMode('OR')}
+                  className={`px-2 py-1 text-xs rounded ${
+                    tagFilterMode === 'OR' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  OR (any tag)
+                </button>
+                <button
+                  onClick={() => setTagFilterMode('AND')}
+                  className={`px-2 py-1 text-xs rounded ${
+                    tagFilterMode === 'AND' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
+                  }`}
+                >
+                  AND (all tags)
+                </button>
+              </div>
+              
+              <div className="flex flex-wrap gap-2">
+                {tags.map(tag => {
+                  const isSelected = selectedTags.includes(tag.id)
+                  return (
+                    <button
+                      key={tag.id}
+                      onClick={() => {
+                        setSelectedTags(prev =>
+                          isSelected
+                            ? prev.filter(id => id !== tag.id)
+                            : [...prev, tag.id]
+                        )
+                      }}
+                      className={`
+                        px-2 py-1 text-xs rounded transition-all
+                        ${isSelected
+                          ? 'text-white'
+                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300'
+                        }
+                      `}
+                      style={{
+                        backgroundColor: isSelected ? tag.color : undefined
+                      }}
+                    >
+                      {tag.name}
+                    </button>
+                  )
+                })}
+              </div>
+              
+              {selectedTags.length > 0 && (
+                <button
+                  onClick={() => setSelectedTags([])}
+                  className="mt-2 text-xs text-gray-500 hover:text-gray-700"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+            
+            {/* イベントのタグ編集（選択されたイベントがある場合） */}
+            {selectedEventId && (() => {
+              const selectedEvent = savedEvents.find(e => e.id === selectedEventId)
+              if (!selectedEvent) return null
+              
+              return (
+                <div className="mb-4 p-3 border rounded-lg">
+                  <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Edit Tags for: {selectedEvent.title}
+                  </h3>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map(tag => {
+                      const isSelected = selectedEvent.tagIds?.includes(tag.id) || false
+                      return (
+                        <button
+                          key={tag.id}
+                          onClick={() => {
+                            const currentTags = selectedEvent.tagIds || []
+                            const newTags = isSelected
+                              ? currentTags.filter(id => id !== tag.id)
+                              : [...currentTags, tag.id]
+                            
+                            setSavedEvents(prev => prev.map(e => 
+                              e.id === selectedEventId 
+                                ? { ...e, tagIds: newTags }
+                                : e
+                            ))
+                          }}
+                          className={`
+                            px-2 py-1 text-xs rounded transition-all
+                            ${isSelected
+                              ? 'text-white'
+                              : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300'
+                            }
+                          `}
+                          style={{
+                            backgroundColor: isSelected ? tag.color : undefined
+                          }}
+                        >
+                          {tag.name}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+            
+            {/* 新しいタグの作成 */}
+            <div className="mb-4 p-3 border rounded-lg">
+              <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Create New Tag</h3>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  placeholder="Tag name"
+                  className="flex-1 px-2 py-1 text-xs border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const name = e.currentTarget.value.trim()
+                      if (name && !tags.some(t => t.name === name)) {
+                        const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899']
+                        const newTag = {
+                          id: Date.now().toString(),
+                          name,
+                          color: colors[Math.floor(Math.random() * colors.length)]
+                        }
+                        setTags(prev => [...prev, newTag])
+                        e.currentTarget.value = ''
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <p className="text-xs text-gray-500">Press Enter to create a tag</p>
+            </div>
+            
+            {/* 既存タグの管理 */}
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Existing Tags</h3>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {tags.map(tag => (
+                  <div key={tag.id} className="flex items-center gap-2">
+                    <div
+                      className="w-4 h-4 rounded"
+                      style={{ backgroundColor: tag.color }}
+                    />
+                    <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">
+                      {tag.name}
+                    </span>
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete tag "${tag.name}"?`)) {
+                          setTags(prev => prev.filter(t => t.id !== tag.id))
+                          // イベントからもタグを削除
+                          setSavedEvents(prev => prev.map(e => ({
+                            ...e,
+                            tagIds: e.tagIds?.filter(id => id !== tag.id) || []
+                          })))
+                        }
+                      }}
+                      className="text-xs text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* 閉じるボタン */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowTagModal(false)}
+                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+              >
+                Done
               </button>
             </div>
           </div>
