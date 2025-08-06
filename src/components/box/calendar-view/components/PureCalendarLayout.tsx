@@ -96,6 +96,32 @@ function CalendarGrid({
   const [dragPreviewPosition, setDragPreviewPosition] = useState<{ top: number; startTime: string; endTime: string } | null>(null)
   const [draggedTime, setDraggedTime] = useState<{ start: string; end: string } | null>(null)
 
+  // Step 9: リサイズ状態の管理
+  const [resizingEvent, setResizingEvent] = useState<{
+    id: string
+    initialEndTime: string
+    startY: number
+  } | null>(null)
+
+  // Step 10: カラーピッカー状態の管理
+  const [colorPickerEvent, setColorPickerEvent] = useState<{
+    id: string
+    x: number
+    y: number
+  } | null>(null)
+
+  // プリセットカラー
+  const presetColors = [
+    '#3b82f6', // blue
+    '#10b981', // green
+    '#f59e0b', // yellow
+    '#ef4444', // red
+    '#8b5cf6', // purple
+    '#ec4899', // pink
+    '#6b7280', // gray
+    '#1f2937', // dark gray
+  ]
+
   // 時刻から位置と高さを計算するヘルパー関数
   const calculatePositionFromTime = useCallback((startTime: string, endTime: string) => {
     const [startHours, startMinutes] = startTime.split(':').map(Number)
@@ -248,6 +274,80 @@ function CalendarGrid({
       document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [draggingEventId, dragOffset, savedEvents, draggedTime])
+
+  // Step 9: リサイズ処理
+  useEffect(() => {
+    if (!resizingEvent) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = e.clientY - resizingEvent.startY
+      const deltaMinutes = Math.round(deltaY / (HOUR_HEIGHT / 4)) * 15 // 15分単位でスナップ
+
+      const resizingEventData = savedEvents.find(evt => evt.id === resizingEvent.id)
+      if (!resizingEventData) return
+
+      const [startHours, startMinutes] = resizingEventData.startTime.split(':').map(Number)
+      const [initialEndHours, initialEndMinutes] = resizingEvent.initialEndTime.split(':').map(Number)
+      
+      // 新しい終了時間を計算
+      const initialEndTotalMinutes = initialEndHours * 60 + initialEndMinutes
+      const newEndTotalMinutes = Math.max(
+        (startHours * 60 + startMinutes) + 15, // 最小15分
+        Math.min(
+          initialEndTotalMinutes + deltaMinutes,
+          23 * 60 + 45 // 23:45まで（日またぎ防止）
+        )
+      )
+
+      const newEndHours = Math.floor(newEndTotalMinutes / 60)
+      const newEndMinutes = newEndTotalMinutes % 60
+      const newEndTime = `${String(newEndHours).padStart(2, '0')}:${String(newEndMinutes).padStart(2, '0')}`
+
+      // 予定を更新
+      setSavedEvents(prev => prev.map(evt => 
+        evt.id === resizingEvent.id 
+          ? { ...evt, endTime: newEndTime }
+          : evt
+      ))
+
+      console.log('🎯 Step 9: リサイズ中:', {
+        deltaY,
+        deltaMinutes,
+        originalEndTime: resizingEvent.initialEndTime,
+        newEndTime
+      })
+    }
+
+    const handleMouseUp = () => {
+      console.log('🎯 Step 9: リサイズ完了')
+      setResizingEvent(null)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [resizingEvent, savedEvents])
+
+  // Step 10: カラーピッカーの外側クリックで閉じる
+  useEffect(() => {
+    if (!colorPickerEvent) return
+
+    const handleClickOutside = (e: MouseEvent) => {
+      // カラーピッカー自体のクリックは無視
+      const target = e.target as HTMLElement
+      if (target.closest('[data-color-picker]')) {
+        return
+      }
+      setColorPickerEvent(null)
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [colorPickerEvent])
 
   // クリックスロットを自動でクリアするタイマー
   useEffect(() => {
@@ -602,6 +702,16 @@ function CalendarGrid({
                         setSelectedEventId(selectedEventId === event.id ? null : event.id)
                       }
                     }}
+                    onContextMenu={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      console.log('🎯 Step 10: カラーピッカー表示:', event)
+                      setColorPickerEvent({
+                        id: event.id,
+                        x: e.clientX,
+                        y: e.clientY
+                      })
+                    }}
                   >
                     <div className="font-medium truncate">
                       {event.title}
@@ -611,6 +721,22 @@ function CalendarGrid({
                         {event.startTime} - {event.endTime}
                       </div>
                     )}
+                    
+                    {/* Step 9: リサイズハンドル */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors duration-200"
+                      title="Drag to resize duration"
+                      onMouseDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                        console.log('🎯 Step 9: リサイズ開始:', event)
+                        setResizingEvent({
+                          id: event.id,
+                          initialEndTime: event.endTime,
+                          startY: e.clientY
+                        })
+                      }}
+                    />
                   </div>
                 )
               })}
@@ -698,6 +824,48 @@ function CalendarGrid({
           </div>
         )
       })}
+      
+      {/* Step 10: カラーピッカー */}
+      {colorPickerEvent && (
+        <div
+          data-color-picker
+          className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-50"
+          style={{
+            left: Math.min(colorPickerEvent.x, window.innerWidth - 200), // 画面端を超えないように調整
+            top: Math.min(colorPickerEvent.y, window.innerHeight - 120)
+          }}
+        >
+          <div className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-300">
+            予定の色を選択
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            {presetColors.map(color => {
+              const currentEvent = savedEvents.find(e => e.id === colorPickerEvent.id)
+              const isSelected = currentEvent?.color === color
+              
+              return (
+                <button
+                  key={color}
+                  className={`w-8 h-8 rounded-md hover:scale-110 transition-transform duration-200 ${
+                    isSelected ? 'ring-2 ring-gray-400 ring-offset-2' : ''
+                  }`}
+                  style={{ backgroundColor: color }}
+                  title={`Color: ${color}`}
+                  onClick={() => {
+                    console.log('🎯 Step 10: 色変更:', { eventId: colorPickerEvent.id, newColor: color })
+                    setSavedEvents(prev => prev.map(evt =>
+                      evt.id === colorPickerEvent.id
+                        ? { ...evt, color }
+                        : evt
+                    ))
+                    setColorPickerEvent(null)
+                  }}
+                />
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
