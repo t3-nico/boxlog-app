@@ -156,12 +156,6 @@ function CalendarGrid({
     y: number
   } | null>(null)
 
-  // Step 12: 繰り返し設定の管理
-  const [showRecurrenceOptions, setShowRecurrenceOptions] = useState<{
-    eventId: string
-    x: number
-    y: number
-  } | null>(null)
 
   // Step 15: 現在時刻の管理
   const [currentTime, setCurrentTime] = useState(new Date())
@@ -891,19 +885,12 @@ function CalendarGrid({
                           title,
                           startTime: newEvent.startTime,
                           endTime: newEvent.endTime,
-                          date: newEvent.date.toISOString().split('T')[0], // YYYY-MM-DD形式で統一
+                          date: `${newEvent.date.getFullYear()}-${String(newEvent.date.getMonth() + 1).padStart(2, '0')}-${String(newEvent.date.getDate()).padStart(2, '0')}`, // ローカル日付でYYYY-MM-DD形式
                           color: '#3b82f6',
                           tagIds: newEventTags
                         }
                         setSavedEvents(prev => [...prev, newEventData])
                         console.log('🎯 Step 6: 予定を保存:', newEventData)
-                        
-                        // Step 12: 繰り返し設定オプションを表示
-                        setShowRecurrenceOptions({
-                          eventId: newEventData.id,
-                          x: 300,
-                          y: 200
-                        })
                       }
                       setNewEvent(null)
                       setNewEventTags([])
@@ -1321,105 +1308,6 @@ function CalendarGrid({
         </div>
       )}
       
-      {/* Step 12: 繰り返し設定オプション */}
-      {showRecurrenceOptions && (
-        <div
-          className="fixed bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 z-50"
-          style={{
-            left: Math.min(showRecurrenceOptions.x, window.innerWidth - 300),
-            top: Math.min(showRecurrenceOptions.y, window.innerHeight - 200)
-          }}
-        >
-          <div className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">
-            Repeat settings
-          </div>
-          
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                Repeat pattern
-              </label>
-              <select 
-                className="w-full text-xs p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                onChange={(e) => {
-                  const recurrenceType = e.target.value as 'daily' | 'weekly' | 'monthly' | ''
-                  if (recurrenceType) {
-                    // デフォルトで30日後を終了日に設定
-                    const endDate = new Date()
-                    endDate.setDate(endDate.getDate() + 30)
-                    const endDateString = endDate.toISOString().split('T')[0]
-                    
-                    setSavedEvents(prev => prev.map(event => 
-                      event.id === showRecurrenceOptions.eventId 
-                        ? { 
-                            ...event, 
-                            recurrence: {
-                              type: recurrenceType,
-                              until: endDateString
-                            }
-                          }
-                        : event
-                    ))
-                  } else {
-                    // 繰り返しを削除
-                    setSavedEvents(prev => prev.map(event => 
-                      event.id === showRecurrenceOptions.eventId 
-                        ? { ...event, recurrence: undefined }
-                        : event
-                    ))
-                  }
-                }}
-              >
-                <option value="">No repeat</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
-                End date
-              </label>
-              <input
-                type="date"
-                className="w-full text-xs p-2 border rounded dark:bg-gray-700 dark:border-gray-600"
-                defaultValue={(() => {
-                  const date = new Date()
-                  date.setDate(date.getDate() + 30)
-                  return date.toISOString().split('T')[0]
-                })()}
-                min={new Date().toISOString().split('T')[0]}
-                onChange={(e) => {
-                  const selectedEvent = savedEvents.find(event => event.id === showRecurrenceOptions.eventId)
-                  if (selectedEvent?.recurrence) {
-                    setSavedEvents(prev => prev.map(event => 
-                      event.id === showRecurrenceOptions.eventId 
-                        ? { 
-                            ...event, 
-                            recurrence: {
-                              ...event.recurrence!,
-                              until: e.target.value
-                            }
-                          }
-                        : event
-                    ))
-                  }
-                }}
-              />
-            </div>
-            
-            <div className="flex gap-2 pt-2">
-              <button
-                onClick={() => setShowRecurrenceOptions(null)}
-                className="flex-1 px-3 py-2 text-xs bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       
       {/* Step 16: 編集モーダル */}
       {editingEvent && (
@@ -1488,6 +1376,68 @@ function CalendarGrid({
                     endTime: e.target.value
                   })}
                 />
+              </div>
+            </div>
+            
+            {/* Repeat */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Repeat</label>
+              <div className="space-y-3">
+                <select
+                  className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  value={editingEvent.recurrence?.type || ''}
+                  onChange={(e) => {
+                    const recurrenceType = e.target.value as 'daily' | 'weekly' | 'monthly' | ''
+                    if (recurrenceType) {
+                      // デフォルトで30日後を終了日に設定
+                      const endDate = new Date()
+                      endDate.setDate(endDate.getDate() + 30)
+                      const endDateString = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`
+                      
+                      setEditingEvent({
+                        ...editingEvent,
+                        recurrence: {
+                          type: recurrenceType,
+                          until: endDateString
+                        }
+                      })
+                    } else {
+                      setEditingEvent({
+                        ...editingEvent,
+                        recurrence: undefined
+                      })
+                    }
+                  }}
+                >
+                  <option value="">No repeat</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+                
+                {/* 繰り返し終了日設定 */}
+                {editingEvent.recurrence && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">End date</label>
+                    <input
+                      type="date"
+                      className="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      value={editingEvent.recurrence.until || ''}
+                      min={new Date().toISOString().split('T')[0]}
+                      onChange={(e) => {
+                        if (editingEvent.recurrence) {
+                          setEditingEvent({
+                            ...editingEvent,
+                            recurrence: {
+                              ...editingEvent.recurrence,
+                              until: e.target.value
+                            }
+                          })
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             </div>
             
