@@ -3,6 +3,8 @@
 import React, { useMemo, useCallback, useState, useEffect } from 'react'
 import { format, isToday } from 'date-fns'
 import type { CalendarEvent } from '@/types/events'
+import { useNotifications } from '@/components/box/calendar-view/hooks/useNotifications'
+import { NotificationDisplay } from '@/components/ui/notification-display'
 
 // Step 21: Tag interface
 interface Tag {
@@ -11,8 +13,8 @@ interface Tag {
   color: string
 }
 
-// 定数定義
-const HOUR_HEIGHT = 80 // 1時間の高さ（px）
+// 定数定義 - 他のコンポーネントと統一
+const HOUR_HEIGHT = 48 // 1時間の高さ（px）- FullDayCalendarLayoutと統一
 const TIME_AXIS_WIDTH = 64 // 時間軸の幅（px）
 
 interface PureCalendarLayoutProps {
@@ -96,6 +98,7 @@ function CalendarGrid({
     color: string
     tagIds?: string[] // Step 21: 複数タグのID配列
     memo?: string // Step 16: メモ欄を追加
+    reminders?: Array<{id: string, type: 'notification', minutesBefore: number, isTriggered?: boolean}> // Step 23: リマインダー
     recurrence?: {
       type: 'daily' | 'weekly' | 'monthly'
       until: string // 終了日 "YYYY-MM-DD"
@@ -1488,6 +1491,69 @@ function CalendarGrid({
               </div>
             </div>
             
+            {/* リマインダー */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Reminders</label>
+              <div className="w-full p-3 border rounded-lg dark:bg-gray-700 dark:border-gray-600 min-h-[44px] flex items-center gap-2 flex-wrap">
+                {/* 既存のリマインダーを表示 */}
+                {(editingEvent.reminders || []).map((reminder) => (
+                  <div key={reminder.id} className="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-md text-sm">
+                    {reminder.minutesBefore < 60 ? `${reminder.minutesBefore}分前` :
+                     reminder.minutesBefore < 1440 ? `${reminder.minutesBefore / 60}時間前` :
+                     `${reminder.minutesBefore / 1440}日前`}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newReminders = (editingEvent.reminders || []).filter(r => r.id !== reminder.id)
+                        setEditingEvent({ ...editingEvent, reminders: newReminders })
+                      }}
+                      className="ml-1 text-blue-600 dark:text-blue-300 hover:text-red-600 dark:hover:text-red-400 text-sm"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                
+                {/* 追加用ドロップダウン */}
+                {(!editingEvent.reminders || editingEvent.reminders.length < 3) && (
+                  <select
+                    className="text-sm px-2 py-1 border border-dashed border-gray-400 dark:border-gray-500 rounded-md bg-transparent text-gray-600 dark:text-gray-300 hover:border-gray-600 dark:hover:border-gray-400 focus:outline-none focus:border-blue-500"
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        const minutesBefore = parseInt(e.target.value)
+                        const newReminder = {
+                          id: Math.random().toString(36).substr(2, 9),
+                          type: 'notification' as const,
+                          minutesBefore,
+                          isTriggered: false
+                        }
+                        const newReminders = [...(editingEvent.reminders || []), newReminder]
+                        setEditingEvent({ ...editingEvent, reminders: newReminders })
+                        e.target.value = ''
+                      }
+                    }}
+                    value=""
+                  >
+                    <option value="">+ Add notification</option>
+                    {[5, 10, 15, 30, 60, 1440]
+                      .filter(preset => !(editingEvent.reminders || []).some(r => r.minutesBefore === preset))
+                      .map((minutes) => (
+                        <option key={minutes} value={minutes}>
+                          {minutes < 60 ? `${minutes}分前` :
+                           minutes < 1440 ? `${minutes / 60}時間前` :
+                           `${minutes / 1440}日前`}
+                        </option>
+                      ))}
+                  </select>
+                )}
+                
+                {/* 空の状態のプレースホルダー */}
+                {(!editingEvent.reminders || editingEvent.reminders.length === 0) && (
+                  <span className="text-gray-400 dark:text-gray-500 text-sm">No reminders</span>
+                )}
+              </div>
+            </div>
+            
             {/* メモ */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Notes</label>
@@ -1803,6 +1869,18 @@ function CalendarGrid({
 
 // メインコンポーネント
 export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick }: PureCalendarLayoutProps) {
+  // Step 23: 通知機能は一旦無効化（エラー回避のため）
+  const visibleNotifications: Array<{
+    id: string
+    eventId: string
+    title: string
+    message: string
+    timestamp: Date
+  }> = []
+  
+  const dismissNotification = (_id: string) => {}
+  const clearAllNotifications = () => {}
+
   // Step 15: 初期スクロール位置の調整
   useEffect(() => {
     const scrollContainer = document.querySelector('.overflow-y-auto')
@@ -1838,6 +1916,13 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick 
           onEventClick={onEventClick}
         />
       </div>
+      
+      {/* 通知表示 */}
+      <NotificationDisplay
+        notifications={visibleNotifications}
+        onDismiss={dismissNotification}
+        onClearAll={clearAllNotifications}
+      />
     </div>
   )
 }

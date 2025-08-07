@@ -13,6 +13,8 @@ import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useEventStore } from '@/stores/useEventStore'
+import { useNotifications } from '@/components/box/calendar-view/hooks/useNotifications'
+import { NotificationDisplay } from '@/components/ui/notification-display'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -80,6 +82,21 @@ export function CalendarView({
     getEventsByDateRange
   } = eventStore
   
+  // 通知機能の統合
+  const {
+    permission: notificationPermission,
+    hasRequested: hasRequestedNotification,
+    visibleNotifications,
+    requestPermission: requestNotificationPermission,
+    dismissNotification,
+    clearAllNotifications
+  } = useNotifications({
+    events,
+    onReminderTriggered: (event, reminder) => {
+      console.log('🔔 Reminder triggered:', event.title, reminder.minutesBefore + '分前')
+    }
+  })
+  
   // LocalStorageからビュータイプを復元
   useEffect(() => {
     const saved = localStorage.getItem('calendar-view-type')
@@ -87,6 +104,13 @@ export function CalendarView({
       setViewType(saved as CalendarViewType)
     }
   }, [])
+  
+  // 通知許可のリクエスト（初回のみ）
+  useEffect(() => {
+    if (!hasRequestedNotification && (notificationPermission as string) === 'default') {
+      requestNotificationPermission()
+    }
+  }, [hasRequestedNotification, notificationPermission, requestNotificationPermission])
   
   // URLパラメータの日付変更を検知
   useEffect(() => {
@@ -551,6 +575,13 @@ export function CalendarView({
         defaultDate={eventDefaultDate}
         defaultTime={eventDefaultTime}
         defaultEndTime={eventDefaultEndTime}
+      />
+      
+      {/* 通知表示 */}
+      <NotificationDisplay
+        notifications={visibleNotifications}
+        onDismiss={dismissNotification}
+        onClearAll={clearAllNotifications}
       />
       </>
     </DnDProvider>

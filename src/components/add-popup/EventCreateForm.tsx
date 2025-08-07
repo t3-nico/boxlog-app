@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { 
   Calendar, Plus, X, Check, Tag as TagIcon, Clock, Repeat,
   AlertTriangle, Star, Circle, ArrowRight, MoreHorizontal,
-  FileText, CheckSquare, Type
+  FileText, CheckSquare, Type, Bell
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { CreateContextData } from './AddPopup'
-import type { EventType, EventStatus, EventPriority, ChecklistItem } from '@/types/events'
+import type { EventType, EventStatus, EventPriority, ChecklistItem, Reminder, REMINDER_PRESETS } from '@/types/events'
 
 interface EventFormData {
   title: string
@@ -41,6 +41,7 @@ interface EventFormData {
   tagIds: string[]
   location?: string
   url?: string
+  reminders: Reminder[]
 }
 
 interface EventCreateFormProps {
@@ -103,10 +104,39 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     tagIds: [],
     location: '',
     url: '',
+    reminders: [],
   })
 
   const [newChecklistItem, setNewChecklistItem] = useState('')
   const { tags } = useSidebarStore()
+
+  // リマインダー関連の定数とヘルパー関数
+  const reminderPresets = [5, 10, 15, 30, 60, 1440] // 5分, 10分, 15分, 30分, 1時間, 24時間
+  
+  const formatReminderLabel = (minutes: number) => {
+    if (minutes < 60) {
+      return `${minutes}分前`
+    } else if (minutes < 1440) {
+      const hours = minutes / 60
+      return `${hours}時間前`
+    } else {
+      const days = minutes / 1440
+      return `${days}日前`
+    }
+  }
+
+  // 過去のイベントかどうかをチェック
+  const isEventInPast = useMemo(() => {
+    if (!formData.date || !formData.startTime) return false
+    
+    const [year, month, day] = formData.date.split('-').map(Number)
+    const [hours, minutes] = formData.startTime.split(':').map(Number)
+    const eventDateTime = new Date()
+    eventDateTime.setFullYear(year, month - 1, day)
+    eventDateTime.setHours(hours, minutes, 0, 0)
+    
+    return eventDateTime < new Date()
+  }, [formData.date, formData.startTime])
   
   // 無限ループ防止用のref
   const previousDefaultsRef = useRef<{
@@ -258,6 +288,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
         tagIds: event.tags?.map((tag: any) => tag.id) || [],
         location: event.location || '',
         url: event.url || '',
+        reminders: event.reminders || [],
       }
       
       console.log('📝 EventCreateForm: Setting form data:', newFormData)
@@ -338,6 +369,24 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
     updateFormData('items', formData.items.map(item => 
       item.id === itemId ? { ...item, duration } : item
     ))
+  }
+
+  // リマインダー管理ハンドラー
+  const addReminder = (minutesBefore: number) => {
+    if (formData.reminders.length >= 3) return // 最大3つまで
+    
+    const newReminder: Reminder = {
+      id: Math.random().toString(36).substr(2, 9),
+      type: 'notification',
+      minutesBefore,
+      isTriggered: false
+    }
+    
+    updateFormData('reminders', [...formData.reminders, newReminder])
+  }
+
+  const removeReminder = (reminderId: string) => {
+    updateFormData('reminders', formData.reminders.filter(reminder => reminder.id !== reminderId))
   }
 
   // Calculate totals for checklist
@@ -540,6 +589,51 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
             // TODO: Implement tag creation API call
           }}
         />
+      </div>
+
+      {/* Reminders - Google Calendar Style */}
+      <div className="flex items-center gap-3">
+        <Bell className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+        <div className="flex-1 flex items-center gap-2">
+          {/* 既存のリマインダーを表示 */}
+          {formData.reminders.map((reminder) => (
+            <div key={reminder.id} className="flex items-center gap-1 bg-blue-100 dark:bg-blue-900/20 px-2 py-1 rounded text-xs">
+              {formatReminderLabel(reminder.minutesBefore)}
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => removeReminder(reminder.id)}
+                className="h-4 w-4 p-0 ml-1 hover:bg-transparent"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            </div>
+          ))}
+          
+          {/* 追加ボタン */}
+          {!isEventInPast && formData.reminders.length < 3 && (
+            <Select onValueChange={(value) => addReminder(parseInt(value))}>
+              <SelectTrigger className="w-auto h-8 text-xs border-dashed">
+                <SelectValue placeholder="通知を追加" />
+              </SelectTrigger>
+              <SelectContent>
+                {reminderPresets
+                  .filter(preset => !formData.reminders.some(reminder => reminder.minutesBefore === preset))
+                  .map((minutes) => (
+                    <SelectItem key={minutes} value={minutes.toString()}>
+                      {formatReminderLabel(minutes)}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+          )}
+          
+          {/* 過去のイベントの場合 */}
+          {isEventInPast && (
+            <span className="text-xs text-muted-foreground">過去の予定には設定できません</span>
+          )}
+        </div>
       </div>
 
       {/* Checklist Items */}

@@ -136,6 +136,7 @@ export function AddPopup({
           items: eventFormData.items,
           location: eventFormData.location,
           url: eventFormData.url,
+          reminders: eventFormData.reminders,
           tagIds: eventFormData.tagIds,
         }
         
