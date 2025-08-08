@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { format, isToday } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { CalendarEvent } from '@/types/events'
-import { useNotifications } from '@/components/box/calendar-view/hooks/useNotifications'
+import { useNotifications } from '../../hooks/useNotifications'
 import { NotificationDisplay } from '@/components/ui/notification-display'
 
 // Step 21: Tag interface

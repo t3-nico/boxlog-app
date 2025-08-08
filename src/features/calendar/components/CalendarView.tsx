@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useRouter, usePathname } from 'next/navigation'
 import { DayView } from './views/day-view'
@@ -13,7 +13,7 @@ import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useEventStore } from '@/stores/useEventStore'
-import { useNotifications } from '@/components/box/calendar-view/hooks/useNotifications'
+import { useNotifications } from '../hooks/useNotifications'
 import { NotificationDisplay } from '@/components/ui/notification-display'
 import { 
   calculateViewDateRange, 
@@ -129,11 +129,6 @@ export function CalendarView({
     return calculateViewDateRange(viewType, currentDate)
   }, [viewType, currentDate])
 
-  // recordsの初期ロード（将来的にstatsビューで使用）
-  // useEffect(() => {
-  //   fetchRecords(viewDateRange)
-  // }, [viewDateRange, fetchRecords])
-  
   // 表示範囲のタスクを取得
   const filteredTasks = useMemo(() => {
     return taskStore.getTasksForDateRange(viewDateRange.start, viewDateRange.end)
@@ -202,11 +197,6 @@ export function CalendarView({
     return calendarEvents
   }, [events, viewDateRange.start, viewDateRange.end, viewType])
   
-  // イベントの初期ロードと更新 - 完全に無効化
-  // useEffect(() => {
-  //   console.log('🌐 [COMPLETELY DISABLED]')
-  // }, [])
-
   // レコード取得（一時的にモックデータを使用）
   const records = useMemo(() => [
     {

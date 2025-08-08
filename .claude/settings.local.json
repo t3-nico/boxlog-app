@@ -15,7 +15,8 @@
       "Bash(tree:*)",
       "Bash(npm run typecheck:*)",
       "WebFetch(domain:1password.com)",
-      "WebFetch(domain:developer.1password.com)"
+      "WebFetch(domain:developer.1password.com)",
+      "Bash(cp:*)"
     ],
     "deny": []
   },

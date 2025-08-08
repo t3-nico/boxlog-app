@@ -3,8 +3,8 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
-import { PureCalendarLayout } from './PureCalendarLayout'
-import { SimpleTestPopup } from './SimpleTestPopup'
+import { PureCalendarLayout } from '../../calendar-grid/PureCalendarLayout'
+import { SimpleTestPopup } from '../../SimpleTestPopup'
 import type { CalendarEvent } from '@/types/events'
 
 interface TestDayViewProps {

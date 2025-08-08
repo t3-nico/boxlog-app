@@ -1,10 +1,8 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { FullDayCalendarLayout } from '../../calendar-grid/FullDayCalendarLayout'
 import { CalendarViewAnimation } from '../../calendar-grid/ViewTransition'
-// テスト用のインポート
-import { TestDayView } from '@/components/box/calendar-view/components/TestDayView'
+import { TestDayView } from './TestDayView'
 import type { 
   ViewDateRange, 
   Task, 
@@ -66,7 +64,7 @@ export function DayView({
     return normalized;
   }, [currentDate])
 
-  // テスト用にPureCalendarLayoutを使用
+  // TestDayViewを使用
   return (
     <CalendarViewAnimation viewType="day">
       <TestDayView 
