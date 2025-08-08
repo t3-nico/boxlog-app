@@ -100,6 +100,7 @@ function CalendarGrid({
   const [draggedEventDimensions, setDraggedEventDimensions] = useState({ width: 0, height: 0 })
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null)
   const [snapTargetTime, setSnapTargetTime] = useState<{ hours: number; minutes: number } | null>(null)
+  const [dragOffsetFromTop, setDragOffsetFromTop] = useState(0) // マウスカーソルと予定上端の相対位置
   const draggedEventRef = useRef<HTMLDivElement>(null)
 
   // Step 12: 繰り返し設定を含む予定の型定義
@@ -145,6 +146,11 @@ function CalendarGrid({
   // Step 24: 日付間ドラッグ用の状態
   const [dragTargetDate, setDragTargetDate] = useState<Date | null>(null)
   const [originalDate, setOriginalDate] = useState<Date | null>(null)
+  
+  // ドラッグ検出用の状態
+  const [isDragPending, setIsDragPending] = useState(false)
+  const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null)
+  const [pendingEventId, setPendingEventId] = useState<string | null>(null)
   
   // Step 18: コピー・ペースト用のstate
   const [copiedEvent, setCopiedEvent] = useState<RecurringEvent | null>(null)
@@ -423,20 +429,16 @@ function CalendarGrid({
     }
   }, [adjustingStart])
 
-  // Step 24改: Googleカレンダー風スナップ関数
+  // Step 24改: 15分単位カクカクスナップ関数
   const snapToQuarter = useCallback((minutes: number) => {
-    const target = Math.round(minutes / 15) * 15
-    const diff = target - minutes
-    // 近づいたら磁石のように引き寄せる
-    if (Math.abs(diff) < 5) {
-      return target
-    }
-    return minutes
+    // 常に15分単位にスナップ（カクカク動作）
+    return Math.round(minutes / 15) * 15
   }, [])
 
   // Step 24: マウス移動ハンドラーをuseCallbackで定義
   const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!draggingEventId) return
+    
 
     // Step 24改: マウス位置の即座更新
     setMousePosition({ x: e.clientX, y: e.clientY })
@@ -470,16 +472,16 @@ function CalendarGrid({
       setSnapTargetTime(null)
     }
 
-    // Step 24: パフォーマンス最適化 - フレーム単位での更新制限
+    // Step 24: パフォーマンス最適化 - カクカクスナップのための更新制限緩和
     const now = performance.now()
-    if (now - lastUpdateTime < 16) return // 60fps制限
+    if (now - lastUpdateTime < 8) return // 120fps制限（よりレスポンシブに）
     setLastUpdateTime(now)
 
     try {
-      // カレンダーコンテナを正確に特定
-      const calendarContainer = document.querySelector('[data-calendar-container]') as HTMLElement
+      // カレンダーグリッド全体を取得（個別の日付列ではなく）
+      const calendarContainer = document.querySelector('[data-calendar-grid]') as HTMLElement
       if (!calendarContainer) {
-        console.log('🎯 Step 8: カレンダーコンテナが見つからない')
+        console.log('🎯 Step 8: カレンダーグリッドが見つからない')
         return
       }
 
@@ -488,9 +490,21 @@ function CalendarGrid({
       const scrollTop = scrollContainer ? scrollContainer.scrollTop : 0
       
       // Step 24: より精密な横方向（日付）のドラッグ検知
-      const relativeX = e.clientX - containerRect.left - TIME_AXIS_WIDTH
-      const availableWidth = containerRect.width - TIME_AXIS_WIDTH
+      // 注意: PureCalendarLayoutには時間軸が含まれていないため、TIME_AXIS_WIDTHを引く必要はない
+      const relativeX = e.clientX - containerRect.left
+      const availableWidth = containerRect.width
       const columnWidth = availableWidth / dates.length
+      
+      // デバッグログ（頻度を下げる）
+      if (Math.random() < 0.1) {  // 10%の確率でログ出力
+        console.log('🎯 日付計算:', {
+          datesLength: dates.length,
+          relativeX,
+          availableWidth,
+          columnWidth,
+          mouseX: e.clientX
+        })
+      }
       
       // より滑らかな計算 - 境界での動作を改善
       let targetColumnIndex = Math.floor(relativeX / columnWidth)
@@ -498,6 +512,9 @@ function CalendarGrid({
       targetColumnIndex = Math.max(0, Math.min(dates.length - 1, targetColumnIndex))
       
       const targetDate = dates[targetColumnIndex]
+      if (Math.random() < 0.1) {  // 10%の確率でログ出力
+        console.log('🎯 ターゲット日付:', targetDate?.toLocaleDateString('ja-JP'), 'index:', targetColumnIndex)
+      }
       
       // Step 24: スムーズな状態更新
       requestAnimationFrame(() => {
@@ -581,7 +598,7 @@ function CalendarGrid({
     } catch (error) {
       console.warn('🎯 Step 8: マウス移動エラー:', error)
     }
-  }, [draggingEventId, dragTargetDate, lastUpdateTime, dates, originalDate, expandedEvents])
+  }, [draggingEventId, dragTargetDate, lastUpdateTime, dates, originalDate, expandedEvents, snapToQuarter])
 
   // Step 24: マウスアップハンドラーをuseCallbackで定義
   const handleMouseUp = useCallback(() => {
@@ -597,11 +614,19 @@ function CalendarGrid({
     if (draggingEventId && draggedTime) {
       console.log('🎯 Step 8: 予定移動完了:', { 
         eventId: draggingEventId, 
-        newTime: `${draggedTime.start} - ${draggedTime.end}` 
+        newTime: `${draggedTime.start} - ${draggedTime.end}`,
+        dragTargetDate: dragTargetDate?.toLocaleDateString('ja-JP'),
+        originalDate: originalDate?.toLocaleDateString('ja-JP')
       })
       
       // Step 24: 日付変更の処理を追加
       const draggingEvent = expandedEvents.find(e => e.id === draggingEventId)
+      console.log('🔍 ドラッグイベント検索結果:', {
+        found: !!draggingEvent,
+        draggingEventId,
+        expandedEventsCount: expandedEvents.length
+      })
+      
       if (draggingEvent && dragTargetDate && originalDate) {
         const isDifferentDay = dragTargetDate.toDateString() !== originalDate.toDateString()
         
@@ -618,16 +643,28 @@ function CalendarGrid({
           
           // 実際に予定を更新（日付と時間の両方）
           const baseEventId = draggingEventId.split('_')[0]
-          setSavedEvents(prev => prev.map(event => 
-            event.id === baseEventId 
-              ? { 
-                  ...event, 
-                  date: newDateString,  // Step 24: 日付を変更
-                  startTime: draggedTime.start,
-                  endTime: draggedTime.end
-                }
-              : event
-          ))
+          
+          console.log('🔄 日付変更実行:', {
+            baseEventId,
+            oldDate: draggingEvent.date,
+            newDate: newDateString,
+            newTime: `${draggedTime.start} - ${draggedTime.end}`
+          })
+          
+          setSavedEvents(prev => {
+            const updated = prev.map(event => 
+              event.id === baseEventId 
+                ? { 
+                    ...event, 
+                    date: newDateString,  // Step 24: 日付を変更
+                    startTime: draggedTime.start,
+                    endTime: draggedTime.end
+                  }
+                : event
+            )
+            console.log('🔄 更新後のイベント:', updated.find(e => e.id === baseEventId))
+            return updated
+          })
         } else {
           // 同じ日内での時間変更のみ
           const baseEventId = draggingEventId.split('_')[0]
@@ -712,8 +749,12 @@ function CalendarGrid({
     // Step 24改: Googleカレンダー風UX状態をリセット
     setMousePosition({ x: 0, y: 0 })
     setDraggedEventDimensions({ width: 0, height: 0 })
+    setDragOffsetFromTop(0)
     setHoveredDate(null)
     setSnapTargetTime(null)
+    setIsDragPending(false)
+    setDragStartPos(null)
+    setPendingEventId(null)
     document.body.style.cursor = 'default'
     
     // Step 20: 複製完了処理
@@ -723,7 +764,74 @@ function CalendarGrid({
         console.log('🎯 Step 20: 複製完了')
       }, 100)
     }
-  }, [draggingEventId, draggedTime, dragTargetDate, originalDate, expandedEvents, isDuplicating, setSavedEvents, isDragging, dragStart, dragEnd, dragDate])
+  }, [draggingEventId, draggedTime, dragTargetDate, originalDate, expandedEvents, isDuplicating, isDragging, dragStart, dragEnd, dragDate])
+
+  // ドラッグ準備状態のマウス移動・終了処理
+  useEffect(() => {
+    if (!isDragPending) return
+
+    const handlePendingMouseMove = (e: MouseEvent) => {
+      if (!dragStartPos || !pendingEventId) return
+      
+      // 最小移動距離（5px）を超えたらドラッグ開始
+      const deltaX = Math.abs(e.clientX - dragStartPos.x)
+      const deltaY = Math.abs(e.clientY - dragStartPos.y)
+      const minDragDistance = 5
+      
+      if (deltaX > minDragDistance || deltaY > minDragDistance) {
+        console.log('🎯 ドラッグ開始検出:', { deltaX, deltaY })
+        
+        // 実際のドラッグ開始処理
+        const targetEvent = expandedEvents.find(e => e.id === pendingEventId)
+        if (targetEvent) {
+          const targetDate = dates.find(d => new Date(targetEvent.date).toDateString() === d.toDateString())
+          if (targetDate) {
+            // ドラッグ状態を設定
+            setOriginalDate(targetDate)
+            setDragTargetDate(targetDate)
+            
+            // イベント情報を記録
+            const eventElement = document.querySelector(`[title*="${targetEvent.title}"]`) as HTMLElement
+            if (eventElement) {
+              const rect = eventElement.getBoundingClientRect()
+              const offsetFromTop = dragStartPos.y - rect.top
+              
+              setMousePosition({ x: e.clientX, y: e.clientY })
+              setDraggedEventDimensions({ 
+                width: Math.max(100, rect.width || 100),
+                height: Math.max(20, rect.height || 20)
+              })
+              setDragOffsetFromTop(offsetFromTop)
+              document.body.style.cursor = 'grabbing'
+            }
+            
+            setDraggingEventId(pendingEventId)
+            setIsDuplicating(false)
+          }
+        }
+        
+        // ドラッグ準備状態をクリア
+        setIsDragPending(false)
+        setDragStartPos(null)
+        setPendingEventId(null)
+      }
+    }
+
+    const handlePendingMouseUp = () => {
+      // ドラッグしないでマウスアップした場合はクリックとして処理
+      setIsDragPending(false)
+      setDragStartPos(null)
+      setPendingEventId(null)
+    }
+
+    document.addEventListener('mousemove', handlePendingMouseMove)
+    document.addEventListener('mouseup', handlePendingMouseUp)
+
+    return () => {
+      document.removeEventListener('mousemove', handlePendingMouseMove)
+      document.removeEventListener('mouseup', handlePendingMouseUp)
+    }
+  }, [isDragPending, dragStartPos, pendingEventId, expandedEvents, dates])
 
   // Step 8: グローバルなマウス移動・終了処理
   useEffect(() => {
@@ -752,8 +860,12 @@ function CalendarGrid({
         setOriginalDate(null)
         setMousePosition({ x: 0, y: 0 })
         setDraggedEventDimensions({ width: 0, height: 0 })
+        setDragOffsetFromTop(0)
         setHoveredDate(null)
         setSnapTargetTime(null)
+        setIsDragPending(false)
+        setDragStartPos(null)
+        setPendingEventId(null)
         document.body.style.cursor = 'default'
       }
     }
@@ -1191,8 +1303,8 @@ function CalendarGrid({
                       // Step 24: ドラッグ中の元の予定表示を改善
                       draggingEventId === event.id 
                         ? dragTargetDate && originalDate && dragTargetDate.toDateString() !== originalDate.toDateString()
-                          ? 'opacity-15 scale-95 blur-[0.5px]' // 日付移動中は大幅に透明化+軽いブラー
-                          : 'opacity-60 scale-98' // 同日内移動時も軽くスケール
+                          ? 'opacity-30 scale-95 blur-[0.5px]' // 日付移動中は適度に透明化+軽いブラー
+                          : 'opacity-60 scale-98' // 同日内移動時は濃めに表示
                         : ''
                     } ${
                       isDuplicating && draggingEventId === event.id ? 'ring-2 ring-green-400 shadow-lg' : ''
@@ -1206,73 +1318,22 @@ function CalendarGrid({
                     }}
                     title={`${event.title} (${event.startTime} - ${event.endTime})`}
                     onMouseDown={(e) => {
-                      // Step 8: ドラッグ開始
+                      // ドラッグ準備状態にする
                       if (e.button === 0) { // 左クリックのみ
-                        e.preventDefault()
-                        e.stopPropagation()
+                        e.stopPropagation() // preventDefault()は削除（クリックを妨げないため）
                         
-                        // Step 24: originalDateを設定
-                        setOriginalDate(date)
-                        setDragTargetDate(date) // 初期値として現在の日付を設定
-                        console.log('🏷️ Step 24: ドラッグ開始時の日付設定:', {
-                          eventTitle: event.title,
-                          originalDate: date.toDateString()
-                        })
+                        // ドラッグ準備状態を設定
+                        setIsDragPending(true)
+                        setDragStartPos({ x: e.clientX, y: e.clientY })
+                        setPendingEventId(event.id)
                         
-                        // Step 24改: Googleカレンダー風UX - マウス位置とイベントサイズを安全に記録
-                        try {
-                          const rect = e.currentTarget.getBoundingClientRect()
-                          setMousePosition({ x: e.clientX, y: e.clientY })
-                          setDraggedEventDimensions({ 
-                            width: Math.max(100, rect.width || 100),  // 最小幅確保
-                            height: Math.max(20, rect.height || 20)   // 最小高さ確保
-                          })
-                          document.body.style.cursor = e.altKey ? 'copy' : 'grabbing'
-                        } catch (error) {
-                          console.warn('ドラッグ開始時エラー:', error)
-                          // フォールバック値を設定
-                          setMousePosition({ x: e.clientX, y: e.clientY })
-                          setDraggedEventDimensions({ width: 150, height: 25 })
-                          document.body.style.cursor = 'grabbing'
-                        }
-                        
-                        // Step 20: Altキーが押されている場合は複製モード
-                        if (e.altKey) {
-                          console.log('🎯 Step 20: 複製モード開始:', event)
-                          const newEventId = `event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-                          const duplicatedEvent: RecurringEvent = {
-                            ...event,
-                            id: newEventId,
-                            title: event.title + ' (Copy)'
-                          }
-                          setSavedEvents(prev => [...prev, duplicatedEvent])
-                          setDraggingEventId(duplicatedEvent.id)
-                          setIsDuplicating(true)
-                        } else {
-                          console.log('🎯 Step 8: ドラッグ開始:', event)
-                          setDraggingEventId(event.id)
-                          setIsDuplicating(false)
-                        }
-                        
-                        // カレンダー全体の位置を取得
-                        const calendarGrid = document.querySelector('[data-calendar-grid]') as HTMLElement
-                        if (calendarGrid) {
-                          const gridRect = calendarGrid.getBoundingClientRect()
-                          // マウスのY座標からカレンダーグリッド上端までの距離
-                          setDragOffset(e.clientY - gridRect.top)
-                          console.log('🎯 Step 8: ドラッグオフセット設定:', e.clientY - gridRect.top)
-                        }
-                        
-                        // 選択状態も設定
-                        // 繰り返し予定の場合、ベースイベントIDを使用
-                        const baseEventId = event.id.split('_')[0]
-                        setSelectedEventId(baseEventId)
+                        console.log('🎯 ドラッグ準備:', event.title)
                       }
                     }}
                     onClick={(e) => {
                       e.stopPropagation()
                       // ドラッグ中でない場合のみ選択処理
-                      if (!draggingEventId) {
+                      if (!draggingEventId && !isDragPending) {
                         const baseEventId = event.id.split('_')[0]
                         console.log('🎯 Step 7: 予定選択:', { 
                           clickedEvent: event, 
@@ -1396,65 +1457,16 @@ function CalendarGrid({
                 )
               })}
 
-            {/* Step 24: 改善されたドラッグ中のプレビュー表示 */}
-            {draggingEventId && dragPreviewPosition && (() => {
-              const draggingEvent = expandedEvents.find(e => e.id === draggingEventId)
-              if (!draggingEvent) return null
-              
-              // Step 24: dragTargetDateがある場合は、そのtargetDateと比較
-              // ない場合は元の日付と比較（後方互換性）
-              let shouldShowPreview = false
-              if (dragTargetDate) {
-                shouldShowPreview = dragTargetDate.toDateString() === date.toDateString()
-              } else {
-                // 従来のロジック（同じ日付のみ）
-                const draggingEventDateString = new Date(draggingEvent.date).toDateString()
-                const targetDateString = date.toDateString()
-                shouldShowPreview = draggingEventDateString === targetDateString
-              }
-
-              if (!shouldShowPreview) return null
-
-              const { height } = calculatePositionFromTime(draggingEvent.startTime, draggingEvent.endTime)
-              
-              // Step 24: 日付が変わった場合は異なるスタイル
-              const isDateChanged = dragTargetDate && originalDate && 
-                dragTargetDate.toDateString() !== originalDate.toDateString()
-              
-              return (
-                <div 
-                  className={`absolute left-0 right-0 px-1 text-white text-xs rounded pointer-events-none z-30 transition-all ease-out ${
-                    isTransitioning ? 'duration-75' : 'duration-200'
-                  } ${
-                    isDateChanged 
-                      ? 'opacity-90 border-2 border-blue-400 shadow-xl scale-105 transform-gpu' 
-                      : 'opacity-70 border-2 border-white'
-                  }`}
-                  style={{
-                    top: `${dragPreviewPosition.top}px`,
-                    height: `${Math.max(height, 20)}px`,
-                    backgroundColor: draggingEvent.color
-                  }}
-                >
-                  <div className="font-medium truncate">
-                    {draggingEvent.title}
-                    {isDateChanged && (
-                      <span className="ml-1 text-xs opacity-75">→ {dragTargetDate?.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}</span>
-                    )}
-                  </div>
-                  {height > 30 && (
-                    <div className="text-xs opacity-80 truncate">
-                      {dragPreviewPosition.startTime} - {dragPreviewPosition.endTime}
-                    </div>
-                  )}
-                  {isDateChanged && height > 45 && (
-                    <div className="text-xs opacity-60 truncate">
-                      日付移動中...
-                    </div>
-                  )}
-                </div>
-              )
-            })()}
+            {/* Step 24: 時間軸上のスナップガイド（移動先の日付列のみに表示） */}
+            {draggingEventId && snapTargetTime && dragTargetDate && 
+             dragTargetDate.toDateString() === date.toDateString() && (
+              <div 
+                className="absolute left-0 right-0 h-px bg-blue-400 shadow-sm pointer-events-none z-20 animate-pulse"
+                style={{
+                  top: `${(snapTargetTime.hours + snapTargetTime.minutes / 60) * HOUR_HEIGHT}px`
+                }}
+              />
+            )}
 
             {/* イベント表示 */}
             {dayEvents.map((event) => {
@@ -2094,56 +2106,59 @@ function CalendarGrid({
         </>
       )}
 
-      {/* Step 24改: Googleカレンダー風第3層 - マウス追従ポータル（安定化） */}
-      {typeof window !== 'undefined' && 
-       draggingEventId && 
-       mousePosition.x > 0 && mousePosition.y > 0 && 
-       draggedEventDimensions.width > 0 && draggedEventDimensions.height > 0 && 
-        createPortal(
-          <div
-            className="fixed pointer-events-none z-[9999] transition-all duration-75 ease-out transform-gpu"
+      
+      {/* グローバル ドラッグプレビュー - マウスカーソル位置に追従 */}
+      {draggingEventId && mousePosition.x > 0 && mousePosition.y > 0 && (() => {
+        const draggingEvent = expandedEvents.find(e => e.id === draggingEventId)
+        if (!draggingEvent) return null
+        
+        // 日付変更の検出
+        const isDateChanged = dragTargetDate && originalDate && 
+          dragTargetDate.toDateString() !== originalDate.toDateString()
+        
+        return createPortal(
+          <div 
+            className={`fixed pointer-events-none z-[9999] transition-all ease-out duration-75 transform-gpu ${
+              isDateChanged 
+                ? 'opacity-95 scale-110 rotate-1 shadow-2xl' 
+                : 'opacity-85 scale-105'
+            }`}
             style={{
-              left: Math.max(0, Math.min(window.innerWidth - draggedEventDimensions.width, mousePosition.x - draggedEventDimensions.width / 2)),
-              top: Math.max(0, Math.min(window.innerHeight - draggedEventDimensions.height, mousePosition.y - draggedEventDimensions.height / 2)),
-              width: draggedEventDimensions.width,
-              height: Math.max(20, draggedEventDimensions.height), // 最小高さ確保
-              transform: 'scale(1.05)',
-              opacity: 0.85
+              left: `${mousePosition.x + 8}px`, // マウスカーソルから少しずらす
+              top: `${mousePosition.y - dragOffsetFromTop}px`, // 掴んだ位置を維持
+              width: `${Math.max(draggedEventDimensions.width, 120)}px`,
+              height: `${Math.max(draggedEventDimensions.height, 24)}px`
             }}
           >
-            {(() => {
-              const draggedEvent = expandedEvents.find(e => e.id === draggingEventId)
-              if (!draggedEvent) return null
-              
-              return (
-                <div
-                  className="w-full h-full px-2 py-1 text-white text-xs rounded shadow-2xl border-2 border-white/30"
-                  style={{
-                    backgroundColor: draggedEvent.color,
-                    backdropFilter: 'blur(1px)'
-                  }}
-                >
-                  <div className="font-medium truncate">{draggedEvent.title}</div>
-                  <div className="text-xs opacity-90 truncate">
-                    {draggedEvent.startTime} - {draggedEvent.endTime}
-                  </div>
-                  {/* スナップターゲット表示 - 条件を厳しくして安定化 */}
-                  {snapTargetTime && 
-                   snapTargetTime.hours >= 0 && snapTargetTime.hours < 24 && 
-                   snapTargetTime.minutes >= 0 && snapTargetTime.minutes < 60 && (
-                    <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
-                      <div className="px-3 py-1 bg-blue-600 text-white text-xs rounded-full shadow-lg border border-blue-500">
-                        {String(snapTargetTime.hours).padStart(2, '0')}:{String(snapTargetTime.minutes).padStart(2, '0')}
-                      </div>
-                    </div>
-                  )}
+            <div
+              className={`w-full h-full px-2 py-1 text-white text-xs rounded-md shadow-2xl border-2 ${
+                isDateChanged 
+                  ? 'border-blue-400 bg-gradient-to-r from-blue-500/95 to-blue-600/95' 
+                  : 'border-white/50'
+              }`}
+              style={{
+                backgroundColor: isDateChanged ? undefined : draggingEvent.color
+              }}
+            >
+              <div className="font-medium truncate flex items-center">
+                {draggingEvent.title}
+                {isDateChanged && <span className="ml-1 text-[10px]">📅</span>}
+              </div>
+              {draggedEventDimensions.height > 30 && draggedTime && (
+                <div className="text-[10px] opacity-90 truncate">
+                  {draggedTime.start} - {draggedTime.end}
                 </div>
-              )
-            })()}
+              )}
+              {isDateChanged && dragTargetDate && (
+                <div className="text-[10px] opacity-75 truncate">
+                  → {dragTargetDate.toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric' })}
+                </div>
+              )}
+            </div>
           </div>,
           document.body
         )
-      }
+      })()}
     </div>
   )
 }
