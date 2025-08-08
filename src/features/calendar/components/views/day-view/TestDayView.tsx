@@ -38,10 +38,28 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [currentDate, setCurrentDate] = useState(initialCurrentDate)
   
+  // スクロールバー幅の動的計算
+  const [scrollbarWidth, setScrollbarWidth] = useState(0)
+  
   // Update currentDate when props change
   useEffect(() => {
     setCurrentDate(initialCurrentDate)
   }, [initialCurrentDate])
+  
+  // スクロールバー幅を計算
+  useEffect(() => {
+    // グリッドエリアのスクロールコンテナを探す
+    const scrollContainer = document.querySelector('.flex-1.min-h-0.overflow-hidden > div')
+    if (scrollContainer) {
+      // 実際のスクロールコンテナ（PureCalendarLayout内）を取得
+      const actualScrollContainer = scrollContainer.querySelector('.overflow-y-auto')
+      if (actualScrollContainer) {
+        // スクロールバーの幅を計算（全体幅 - クライアント領域幅）
+        const width = actualScrollContainer.getBoundingClientRect().width - actualScrollContainer.clientWidth
+        setScrollbarWidth(width)
+      }
+    }
+  }, [viewMode]) // viewModeが変わったときも再計算
   
   // Helper function to convert date to URL format
   const formatDateForUrl = useCallback((date: Date) => {
@@ -412,7 +430,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
 
         {/* 第2層: 日付ヘッダー - 高さ固定 */}
         <div className="flex-shrink-0">
-          <div className="flex" style={{ marginRight: '8px' }}>
+          <div className="flex" style={{ marginRight: `${scrollbarWidth}px` }}>
             <div className="w-16 flex-shrink-0" /> {/* Time column space */}
             <div className="flex flex-1">
                 {displayDates.map((date, index) => {
