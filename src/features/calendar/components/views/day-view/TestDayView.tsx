@@ -315,8 +315,8 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
   }, [navigatePrevious, navigateNext, navigateToday])
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
-      {/* Step 11: Header */}
+    <div className="h-[calc(100vh-4rem)] overflow-hidden flex flex-col bg-gray-50 dark:bg-gray-900">
+      {/* 第1層: ナビゲーション - 高さ固定 */}
       <div className="flex-shrink-0 bg-background border-b border-border">
         {/* Navigation */}
         <div className="flex items-center justify-between p-4">
@@ -421,19 +421,11 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
           </div>
         </div>
 
-        {/* Step 11 & 17: Date header display (including day view) */}
-        <div className="border-t border-border">
+        {/* 第2層: 日付ヘッダー - 高さ固定 */}
+        <div className="flex-shrink-0 border-t border-border">
           <div className="flex">
             <div className="w-16 border-r border-border flex-shrink-0" /> {/* Time column space */}
-            <div 
-              className={`grid ${
-                viewMode === 'day' ? 'grid-cols-1' :
-                viewMode === '3day' ? 'grid-cols-3' :
-                viewMode === 'week' ? 'grid-cols-7' :
-                viewMode === '2week' ? 'grid-cols-14' :
-                'grid-cols-1'
-              } flex-1`}
-            >
+            <div className="flex flex-1">
                 {displayDates.map((date, index) => {
                   const isToday = date.toDateString() === new Date().toDateString()
                   const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -443,7 +435,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
                   return (
                     <div 
                       key={date.toISOString()} 
-                      className="border-r border-border last:border-r-0 text-center py-2 px-1"
+                      className="flex-1 border-r border-border last:border-r-0 text-center py-2 px-1"
                     >
                       <div className={`text-xs ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
                         {viewMode === '2week' ? weekdays[adjustedIndex].charAt(0) : weekdays[adjustedIndex]}
@@ -463,8 +455,8 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
           </div>
       </div>
       
-      {/* カレンダー本体 */}
-      <div className="flex-1 min-h-0">
+      {/* 第3層: グリッドエリア - 残り高さ全部、スクロール制御 */}
+      <div className="flex-1 min-h-0 overflow-hidden">
         <PureCalendarLayout
           dates={displayDates}
           events={allEvents}

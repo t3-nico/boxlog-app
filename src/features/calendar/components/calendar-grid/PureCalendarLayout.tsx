@@ -41,8 +41,9 @@ function TimeAxisLabels() {
           className="absolute flex items-center justify-end pr-3 text-xs text-muted-foreground"
           style={{
             top: `${hour * HOUR_HEIGHT}px`,
-            height: `${HOUR_HEIGHT}px`,
-            width: '100%'
+            height: '1px',
+            width: '100%',
+            transform: 'translateY(-50%)'
           }}
         >
           {hour > 0 && hour < 24 && (
@@ -1037,8 +1038,8 @@ function CalendarGrid({
 
             {/* 15分単位のスロット */}
             <div className="absolute inset-0 cursor-crosshair z-10">
-              {Array.from({ length: 97 }, (_, slotIndex) => {
-                // 97個のスロット（24時間 × 4 + 1）0:00-24:00
+              {Array.from({ length: 96 }, (_, slotIndex) => {
+                // 96個のスロット（24時間 × 4）0:00-23:45
                 const hour = Math.floor(slotIndex / 4)
                 const minute = (slotIndex % 4) * 15
                 const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
@@ -2183,18 +2184,21 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick 
   }, [])
 
   return (
-    <div className="flex-1 overflow-hidden">
-      <div className="flex h-full overflow-y-auto">
+    <div className="h-full overflow-hidden flex flex-col">
+      {/* 時間軸とカレンダーグリッドが一緒にスクロール */}
+      <div className="flex-1 flex overflow-y-auto min-h-0">
         {/* 時間軸ラベル */}
         <TimeAxisLabels />
         
-        {/* カレンダーグリッド */}
-        <CalendarGrid 
-          dates={dates} 
-          events={events}
-          onCreateEvent={onCreateEvent}
-          onEventClick={onEventClick}
-        />
+        {/* カレンダーグリッド本体 */}
+        <div className="flex-1">
+          <CalendarGrid 
+            dates={dates} 
+            events={events}
+            onCreateEvent={onCreateEvent}
+            onEventClick={onEventClick}
+          />
+        </div>
       </div>
       
       {/* 通知表示 */}
