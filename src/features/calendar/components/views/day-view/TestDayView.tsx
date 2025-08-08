@@ -315,7 +315,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
   }, [navigatePrevious, navigateNext, navigateToday])
 
   return (
-    <div className="h-[calc(100vh-4rem)] overflow-hidden flex flex-col bg-gray-50 dark:bg-gray-900">
+    <div className="h-[calc(100vh-4rem)] overflow-hidden flex flex-col bg-background">
       {/* 第1層: ナビゲーション - 高さ固定 */}
       <div className="flex-shrink-0 bg-background border-b border-border">
         {/* Navigation */}
