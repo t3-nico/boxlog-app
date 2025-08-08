@@ -37,6 +37,8 @@ interface ThreeDayViewProps {
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
+  onDeleteEvent?: (eventId: string) => void
+  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -56,6 +58,8 @@ export function ThreeDayView({
   onEventClick,
   onCreateEvent,
   onUpdateEvent,
+  onDeleteEvent,
+  onRestoreEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -123,6 +127,8 @@ export function ThreeDayView({
             onEventClick={onEventClick as any}
             onCreateEvent={onCreateEvent}
             onUpdateEvent={onUpdateEvent as any}
+            onDeleteEvent={onDeleteEvent}
+            onRestoreEvent={onRestoreEvent}
           />
         </div>
       </div>

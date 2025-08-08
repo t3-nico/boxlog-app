@@ -1,11 +1,13 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, isSameDay, isToday } from 'date-fns'
+import { X } from 'lucide-react'
 import { TimeAxisLabels } from '../time-slots'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
+import { DeleteToast } from '@/components/ui/delete-toast'
 import { HOUR_HEIGHT } from '../../constants/calendar-constants'
 import type { ViewDateRange, Task, TaskRecord } from '../../types/calendar.types'
 import type { CalendarEvent } from '@/types/events'
@@ -18,6 +20,8 @@ interface FullDayCalendarLayoutProps {
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
+  onDeleteEvent?: (eventId: string) => void
+  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
 }
 
 // 現在時刻線コンポーネント（シンプル版）
@@ -46,12 +50,18 @@ export function FullDayCalendarLayout({
   dateRange,
   onEventClick,
   onCreateEvent,
-  onUpdateEvent
+  onUpdateEvent,
+  onDeleteEvent,
+  onRestoreEvent
 }: FullDayCalendarLayoutProps) {
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()
   const containerRef = useRef<HTMLDivElement>(null)
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  
+  // 削除機能用のstate
+  const [deletedEvent, setDeletedEvent] = useState<CalendarEvent | null>(null)
   
   // ドラッグ機能は一時的に無効化
   const enableDragToCreate = false
@@ -62,6 +72,59 @@ export function FullDayCalendarLayout({
       fetchRecords(dateRange)
     }
   }, [planRecordMode, dateRange, fetchRecords])
+  
+  // 削除処理関数（トースト機能付き）
+  const handleDeleteEvent = useCallback((eventId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    
+    // 削除対象のイベントを見つける
+    const eventToDelete = events.find(event => event.id === eventId)
+    if (!eventToDelete) return
+    
+    // 確認なしで即座に削除（トーストで元に戻せるため）
+    onDeleteEvent?.(eventId)
+    
+    // 削除されたイベントをトースト用に保存
+    setDeletedEvent(eventToDelete)
+    
+    // 選択状態をクリア
+    if (selectedEventId === eventId) {
+      setSelectedEventId(null)
+    }
+  }, [onDeleteEvent, selectedEventId, events])
+  
+  // Undoハンドラー（削除を元に戻す）
+  const handleUndoDelete = useCallback(async (restoredEvent: any) => {
+    console.log('🔄 Restoring event:', restoredEvent.title)
+    
+    // 上位コンポーネントに復元を委譲
+    if (onRestoreEvent) {
+      await onRestoreEvent(restoredEvent)
+    }
+    
+    setDeletedEvent(null)
+  }, [onRestoreEvent])
+  
+  // トースト閉じるハンドラー
+  const handleDismissToast = useCallback(() => {
+    setDeletedEvent(null)
+  }, [])
+  
+  // キーボードショートカット（Delete/Backspace）
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedEventId && (e.key === 'Delete' || e.key === 'Backspace')) {
+        e.preventDefault()
+        handleDeleteEvent(selectedEventId)
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [selectedEventId, handleDeleteEvent])
   
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = useCallback((
@@ -199,7 +262,7 @@ export function FullDayCalendarLayout({
                     <div
                       key={event.id}
                       data-event-block
-                      className="absolute rounded-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-200 z-20 border border-white/20"
+                      className={`absolute rounded-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-200 z-20 border border-white/20 group ${selectedEventId === event.id ? 'ring-2 ring-blue-400 ring-offset-2' : ''}`}
                       style={{
                         left: leftPosition,
                         width: widthValue,
@@ -209,9 +272,19 @@ export function FullDayCalendarLayout({
                       }}
                       onClick={(e) => {
                         e.stopPropagation()
+                        setSelectedEventId(event.id)
                         onEventClick?.(event)
                       }}
                     >
+                      {/* ホバー時の削除ボタン */}
+                      <button
+                        onClick={(e) => handleDeleteEvent(event.id, e)}
+                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-0.5 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-700 rounded shadow-lg transition-all duration-200 z-30"
+                        title="予定を削除"
+                      >
+                        <X className="w-3 h-3 text-gray-700 dark:text-gray-300" />
+                      </button>
+                      
                       <div className="p-1 sm:p-1.5 h-full overflow-hidden text-white">
                         <div className="flex flex-col h-full">
                           <div className="flex-1 min-h-0">
@@ -240,6 +313,13 @@ export function FullDayCalendarLayout({
           })}
         </div>
       </div>
+      
+      {/* 削除完了トースト */}
+      <DeleteToast
+        deletedEvent={deletedEvent}
+        onUndo={handleUndoDelete}
+        onDismiss={handleDismissToast}
+      />
     </div>
   )
 }

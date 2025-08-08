@@ -9,6 +9,7 @@ import { WeekView } from './views/week-view'
 import { MonthView } from './views/month-view'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { DnDProvider } from './calendar-grid/dnd/DnDProvider'
+import { TrashView } from './calendar-grid/TrashView'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { useTaskStore } from '@/stores/useTaskStore'
@@ -53,6 +54,9 @@ export function CalendarView({
   // テスト用ポップアップの状態
   const [isTestPopupOpen, setIsTestPopupOpen] = useState(false)
   const [testEvent, setTestEvent] = useState<CalendarEvent | null>(null)
+  
+  // ゴミ箱の状態
+  const [isTrashViewOpen, setIsTrashViewOpen] = useState(false)
   
   // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
@@ -134,7 +138,7 @@ export function CalendarView({
     return taskStore.getTasksForDateRange(viewDateRange.start, viewDateRange.end)
   }, [taskStore, viewDateRange.start, viewDateRange.end])
   
-  // 表示範囲のイベントを取得してCalendarEvent型に変換
+  // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
     // サーバーサイドでは空配列を返してhydrationエラーを防ぐ
     if (typeof window === 'undefined') {
@@ -149,6 +153,11 @@ export function CalendarView({
     const endDateOnly = new Date(viewDateRange.end.getFullYear(), viewDateRange.end.getMonth(), viewDateRange.end.getDate())
     
     const filteredByRange = events.filter(event => {
+      // 削除済みイベントを除外
+      if (event.isDeleted) {
+        return false
+      }
+      
       // startDateがない場合はフィルタリングから除外
       if (!event.startDate) {
         console.log('❌ Event has no startDate:', event.id, event.title)
@@ -308,13 +317,118 @@ export function CalendarView({
   
   const handleEventDelete = useCallback(async (eventId: string) => {
     try {
-      await eventStore.deleteEvent(eventId)
+      // 物理削除（実際にデータから削除）
+      const eventToDelete = eventStore.events.find(e => e.id === eventId)
+      if (eventToDelete) {
+        await eventStore.deleteEvent(eventId)
+        console.log('🗑️ Event permanently deleted:', eventToDelete.title)
+      }
+      
       setIsEventModalOpen(false)
       setSelectedEvent(null)
     } catch (error) {
       console.error('Failed to delete event:', error)
     }
   }, [eventStore])
+  
+  const handleEventRestore = useCallback(async (event: CalendarEvent) => {
+    try {
+      const createRequest: CreateEventRequest = {
+        title: event.title,
+        startDate: event.startDate,
+        endDate: event.endDate,
+        location: event.location,
+        description: event.description,
+        color: event.color
+      }
+      
+      await eventStore.createEvent(createRequest)
+      console.log('🔄 Event restored:', event.title)
+    } catch (error) {
+      console.error('Failed to restore event:', error)
+    }
+  }, [eventStore])
+  
+  // ゴミ箱関連のハンドラー
+  const handleTrashOpen = useCallback(() => {
+    setIsTrashViewOpen(true)
+  }, [])
+  
+  const handleTrashClose = useCallback(() => {
+    setIsTrashViewOpen(false)
+  }, [])
+  
+  const handleRestore = useCallback(async (eventId: string) => {
+    try {
+      const eventToRestore = events.find(e => e.id === eventId)
+      if (eventToRestore) {
+        const updateRequest: UpdateEventRequest = {
+          ...eventToRestore,
+          isDeleted: false,
+          deletedAt: null
+        }
+        await eventStore.updateEvent(updateRequest)
+        console.log('🔄 Event restored:', eventToRestore.title)
+      }
+    } catch (error) {
+      console.error('Failed to restore event:', error)
+    }
+  }, [events, eventStore])
+  
+  const handleDeletePermanently = useCallback(async (eventIds: string[]) => {
+    try {
+      await Promise.all(eventIds.map(id => eventStore.deleteEvent(id)))
+      console.log('💀 Events permanently deleted:', eventIds.length)
+    } catch (error) {
+      console.error('Failed to permanently delete events:', error)
+    }
+  }, [eventStore])
+  
+  // 削除済みイベントを取得
+  const trashedEvents = useMemo(() => {
+    return events
+      .filter(event => event.isDeleted && event.deletedAt)
+      .map(event => ({
+        ...event,
+        startDate: event.startDate || new Date(),
+        endDate: event.endDate || new Date(),
+        displayStartDate: event.startDate || new Date(),
+        displayEndDate: event.endDate || new Date(),
+        duration: event.endDate && event.startDate 
+          ? (event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60)
+          : 60,
+        isMultiDay: event.startDate && event.endDate 
+          ? event.startDate.toDateString() !== event.endDate.toDateString()
+          : false,
+        isRecurring: event.isRecurring || false,
+        type: event.type || 'event' as any
+      }))
+  }, [events])
+  
+  // 30日経過した予定を自動削除
+  useEffect(() => {
+    const checkAndCleanup = async () => {
+      const now = new Date()
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      
+      const expiredEvents = events.filter(event => 
+        event.isDeleted && 
+        event.deletedAt && 
+        event.deletedAt < thirtyDaysAgo
+      )
+      
+      if (expiredEvents.length > 0) {
+        console.log('🧹 Auto-deleting expired events:', expiredEvents.length)
+        await Promise.all(expiredEvents.map(event => eventStore.deleteEvent(event.id)))
+      }
+    }
+    
+    // 1日1回チェック
+    const interval = setInterval(checkAndCleanup, 24 * 60 * 60 * 1000)
+    checkAndCleanup() // 初回実行
+    
+    return () => clearInterval(interval)
+  }, [events, eventStore])
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
   const handleUpdateEvent = useCallback(async (updatedEvent: CalendarEvent) => {
@@ -452,6 +566,8 @@ export function CalendarView({
       onEventClick: handleEventClick as any,
       onCreateEvent: handleCreateEvent,
       onUpdateEvent: handleUpdateEvent as any,
+      onDeleteEvent: handleEventDelete,
+      onRestoreEvent: handleEventRestore,
       onEmptyClick: handleEmptyClick,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),
@@ -573,6 +689,16 @@ export function CalendarView({
         onDismiss={dismissNotification}
         onClearAll={clearAllNotifications}
       />
+      
+      {/* ゴミ箱ビュー */}
+      {isTrashViewOpen && (
+        <TrashView
+          onClose={handleTrashClose}
+          trashedEvents={trashedEvents}
+          onRestore={handleRestore}
+          onDeletePermanently={handleDeletePermanently}
+        />
+      )}
       </>
     </DnDProvider>
   )

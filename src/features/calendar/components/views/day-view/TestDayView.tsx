@@ -10,6 +10,7 @@ import type { CalendarEvent } from '@/types/events'
 interface TestDayViewProps {
   currentDate: Date
   events: CalendarEvent[]
+  onDeleteEvent?: (eventId: string) => void
 }
 
 // Get week start (Monday)
@@ -20,7 +21,7 @@ const getWeekStart = (date: Date) => {
   return new Date(d.setDate(diff))
 }
 
-export function TestDayView({ currentDate: initialCurrentDate, events }: TestDayViewProps) {
+export function TestDayView({ currentDate: initialCurrentDate, events, onDeleteEvent }: TestDayViewProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -469,6 +470,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
           events={allEvents}
           onCreateEvent={handleCreateEvent}
           onEventClick={handleEventClick}
+          onDeleteEvent={onDeleteEvent}
         />
       </div>
       

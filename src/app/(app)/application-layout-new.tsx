@@ -22,6 +22,7 @@ import { QuickTagCreateModal } from '@/components/sidebar/quick-tag-create-modal
 import { SmartFolderList } from '@/features/smart-folders/components/smart-folder-list'
 import { sidebarConfig } from '@/config/sidebarConfig'
 import { useCommandPalette } from '@/components/providers'
+import { CalendarSettingsMenu } from '@/features/calendar/components/calendar-grid/CalendarSettingsMenu'
 import {
   Dropdown,
   DropdownButton,
@@ -125,6 +126,12 @@ export function ApplicationLayoutNew({
   // カレンダーページかどうかを判定
   const isCalendarPage = pathname.startsWith('/calendar')
   
+  // ページ状態の監視
+  
+  // Settings menu state for header
+  const [showHeaderSettingsMenu, setShowHeaderSettingsMenu] = useState(false)
+  const headerSettingsRef = useRef<HTMLButtonElement>(null)
+  
   // URLから日付を取得してselectedDateを同期
   useEffect(() => {
     if (isCalendarPage) {
@@ -140,6 +147,18 @@ export function ApplicationLayoutNew({
       }
     }
   }, [pathname, isCalendarPage, searchParams])
+  
+  // Close header settings menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headerSettingsRef.current && !headerSettingsRef.current.contains(event.target as Node)) {
+        setShowHeaderSettingsMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
   
   
   // 日付選択時のハンドラー
@@ -434,40 +453,70 @@ export function ApplicationLayoutNew({
                   </Dropdown>
                   
                   {!hideHeader && !is404Page && (
-                    <>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          openCommandPalette()
-                        }}
-                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        title="Search (⌘K)"
-                      >
-                        <MagnifyingGlassIcon className="size-5 text-gray-600 dark:text-gray-400" />
-                      </button>
-                      <button
-                        onClick={() => window.open('#', '_blank')}
-                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        title="Help"
-                      >
-                        <QuestionMarkCircleIcon className="size-5 text-gray-600 dark:text-gray-400" />
-                      </button>
-                      <button
-                        onClick={() => router.push('/settings')}
-                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        title="Settings"
-                      >
-                        <Cog6ToothIcon className="size-5 text-gray-600 dark:text-gray-400" />
-                      </button>
-                    </>
-                  )}
-                  
+                      <>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            openCommandPalette()
+                          }}
+                          className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                          title="Search (⌘K)"
+                        >
+                          <MagnifyingGlassIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                        <button
+                          onClick={() => window.open('#', '_blank')}
+                          className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                          title="Help"
+                        >
+                          <QuestionMarkCircleIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                        <button
+                          ref={headerSettingsRef}
+                          onClick={() => {
+                            console.log('⚙️ Settings icon clicked, isCalendarPage:', isCalendarPage)
+                            if (isCalendarPage) {
+                              console.log('📅 Opening calendar settings menu, current state:', showHeaderSettingsMenu)
+                              setShowHeaderSettingsMenu(!showHeaderSettingsMenu)
+                            } else {
+                              console.log('🔄 Navigating to /settings')
+                              router.push('/settings')
+                            }
+                          }}
+                          className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                          title={isCalendarPage ? "Calendar Settings" : "Settings"}
+                        >
+                          <Cog6ToothIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                      </>
+                    )}
                 </>
               )}
             </div>
           </div>
         </header>
+        
+        {/* Header Settings Menu */}
+        {isCalendarPage && (
+          <CalendarSettingsMenu
+            isOpen={showHeaderSettingsMenu}
+            onClose={() => setShowHeaderSettingsMenu(false)}
+            anchorEl={headerSettingsRef.current}
+            onPrintClick={() => {
+              console.log('Print calendar from header')
+              setShowHeaderSettingsMenu(false)
+            }}
+            onTrashClick={() => {
+              console.log('🗑️ Open trash from header - onTrashClick called')
+              setShowHeaderSettingsMenu(false)
+              // /settings/trashページに遷移
+              console.log('🔄 Navigating to /settings/trash')
+              router.push('/settings/trash')
+            }}
+            trashedCount={0} // TODO: 削除済みイベント数を渡す
+          />
+        )}
         
         {/* Body - Layout container */}
         <div className="flex-1" style={{paddingTop: '64px'}}>

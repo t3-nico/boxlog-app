@@ -3,10 +3,12 @@
 import React, { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { format, isToday } from 'date-fns'
+import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CalendarEvent } from '@/types/events'
 import { useNotifications } from '../../hooks/useNotifications'
 import { NotificationDisplay } from '@/components/ui/notification-display'
+import { DeleteToast } from '@/components/ui/delete-toast'
 
 // Step 21: Tag interface
 interface Tag {
@@ -24,6 +26,7 @@ interface PureCalendarLayoutProps {
   events: CalendarEvent[]
   onCreateEvent?: (date: Date, time: string) => void
   onEventClick?: (event: CalendarEvent) => void
+  onDeleteEvent?: (eventId: string) => void
 }
 
 // 時間ラベルコンポーネント
@@ -62,12 +65,14 @@ function CalendarGrid({
   dates, 
   events, 
   onCreateEvent,
-  onEventClick 
+  onEventClick,
+  onDeleteEvent 
 }: { 
   dates: Date[], 
   events: CalendarEvent[], 
   onCreateEvent?: (date: Date, time: string) => void,
-  onEventClick?: (event: CalendarEvent) => void
+  onEventClick?: (event: CalendarEvent) => void,
+  onDeleteEvent?: (eventId: string) => void
 }) {
   // Phase 1.4: クリックされたスロットのstate
   const [clickedSlot, setClickedSlot] = useState<{
@@ -185,6 +190,22 @@ function CalendarGrid({
 
   // Step 16: 編集モーダル用のstate
   const [editingEvent, setEditingEvent] = useState<RecurringEvent | null>(null)
+  
+  // 削除機能用のstate
+  const [selectedEventForDelete, setSelectedEventForDelete] = useState<string | null>(null)
+  const [deletedCalendarEvent, setDeletedCalendarEvent] = useState<any | null>(null)
+  
+  // コンテキストメニュー用のstate
+  const [contextMenu, setContextMenu] = useState<{
+    x: number
+    y: number
+    eventId: string
+    items: Array<{
+      label: string
+      action: () => void
+      danger?: boolean
+    }>
+  } | null>(null)
 
   // プリセットカラー
   const presetColors = [
@@ -317,6 +338,93 @@ function CalendarGrid({
     return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`
   }, [])
 
+  // 削除処理関数（トースト機能付き）
+  const handleDeleteEvent = useCallback((eventId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    
+    // 削除対象のイベントを見つける
+    const eventToDelete = savedEvents.find(event => event.id === eventId)
+    if (!eventToDelete) return
+    
+    // 確認なしで即座に削除（トーストで元に戻せるため）
+    onDeleteEvent?.(eventId)
+    
+    // savedEventsからも削除
+    setSavedEvents(prev => {
+      const updatedEvents = prev.filter(event => event.id !== eventId)
+      // ローカルストレージにも反映
+      localStorage.setItem('calendar-events', JSON.stringify(updatedEvents))
+      return updatedEvents
+    })
+    
+    // 削除されたイベントをトースト用に保存（CalendarEvent形式に変換）
+    const startDate = eventToDelete.date ? new Date(`${eventToDelete.date}T${eventToDelete.startTime}`) : undefined
+    const endDate = eventToDelete.date ? new Date(`${eventToDelete.date}T${eventToDelete.endTime}`) : undefined
+    
+    const calendarEventFormat = {
+      id: eventToDelete.id,
+      title: eventToDelete.title,
+      startDate: startDate,
+      endDate: endDate,
+      color: eventToDelete.color,
+      location: undefined,
+      description: eventToDelete.memo
+    }
+    setDeletedCalendarEvent(calendarEventFormat)
+    
+    // 選択状態をクリア
+    if (selectedEventForDelete === eventId) {
+      setSelectedEventForDelete(null)
+    }
+    if (selectedEventId === eventId) {
+      setSelectedEventId(null)
+    }
+  }, [onDeleteEvent, selectedEventForDelete, selectedEventId, savedEvents])
+  
+  // Undoハンドラー（削除を元に戻す）
+  const handleUndoCalendarEvent = useCallback((restoredEvent: any) => {
+    // 削除されたイベントを savedEvents に復元
+    const restoredRecurringEvent: RecurringEvent = {
+      id: restoredEvent.id,
+      title: restoredEvent.title,
+      color: restoredEvent.color,
+      startTime: restoredEvent.startDate ? format(restoredEvent.startDate, 'HH:mm') : '09:00',
+      endTime: restoredEvent.endDate ? format(restoredEvent.endDate, 'HH:mm') : '10:00',
+      date: restoredEvent.startDate ? format(restoredEvent.startDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+      memo: restoredEvent.description
+    }
+    
+    setSavedEvents(prev => {
+      const updatedEvents = [...prev, restoredRecurringEvent]
+      // ローカルストレージにも反映
+      localStorage.setItem('calendar-events', JSON.stringify(updatedEvents))
+      return updatedEvents
+    })
+    
+    setDeletedCalendarEvent(null)
+    console.log('🔄 Restored event to calendar:', restoredEvent.title)
+  }, [])
+  
+  // トースト閉じるハンドラー  
+  const handleDismissCalendarToast = useCallback(() => {
+    setDeletedCalendarEvent(null)
+  }, [])
+  
+  // コンテキストメニューを閉じる処理
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (contextMenu) {
+        setContextMenu(null)
+      }
+    }
+    
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [contextMenu])
+
   // Step 7: キーボードイベント（Delete削除）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -330,10 +438,8 @@ function CalendarGrid({
         if (selectedEventId) {
           e.preventDefault()
           console.log('🎯 Step 7: 予定削除:', selectedEventId)
-          // 繰り返し予定の場合、ベースIDで削除
           const baseEventId = selectedEventId.split('_')[0]
-          setSavedEvents(prev => prev.filter(event => event.id !== baseEventId))
-          setSelectedEventId(null)
+          handleDeleteEvent(baseEventId)
         }
       } else if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
         // Step 18: コピー (Ctrl+C / Cmd+C)
@@ -1295,7 +1401,7 @@ function CalendarGrid({
                 return (
                   <div
                     key={event.id}
-                    className={`absolute px-1 text-white text-xs rounded cursor-move hover:opacity-90 transition-all ease-out transform-gpu z-25 ${
+                    className={`absolute px-1 text-white text-xs rounded cursor-move hover:opacity-90 transition-all ease-out transform-gpu z-25 group ${
                       isTransitioning && draggingEventId === event.id ? 'duration-100' : 'duration-300'
                     } ${
                       selectedEventId === event.id.split('_')[0] ? 'ring-2 ring-white shadow-lg' : ''
@@ -1356,14 +1462,58 @@ function CalendarGrid({
                     onContextMenu={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      console.log('🎯 Step 10: カラーピッカー表示:', event)
-                      setColorPickerEvent({
-                        id: event.id,
+                      const baseEventId = event.id.split('_')[0]
+                      setContextMenu({
                         x: e.clientX,
-                        y: e.clientY
+                        y: e.clientY,
+                        eventId: baseEventId,
+                        items: [
+                          { 
+                            label: '編集', 
+                            action: () => {
+                              const baseEvent = savedEvents.find(e => e.id === baseEventId)
+                              if (baseEvent) {
+                                setEditingEvent(baseEvent)
+                              }
+                              setContextMenu(null)
+                            }
+                          },
+                          { 
+                            label: '色を変更', 
+                            action: () => {
+                              setColorPickerEvent({
+                                id: event.id,
+                                x: e.clientX,
+                                y: e.clientY
+                              })
+                              setContextMenu(null)
+                            }
+                          },
+                          { 
+                            label: '削除', 
+                            action: () => {
+                              handleDeleteEvent(baseEventId)
+                              setContextMenu(null)
+                            },
+                            danger: true
+                          }
+                        ]
                       })
                     }}
                   >
+                    {/* ホバー時の削除ボタン */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const baseEventId = event.id.split('_')[0]
+                        handleDeleteEvent(baseEventId, e)
+                      }}
+                      className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 p-0.5 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-700 rounded shadow-lg transition-all duration-200 z-30"
+                      title="予定を削除"
+                    >
+                      <X className="w-2 h-2 text-gray-700 dark:text-gray-300" />
+                    </button>
+                    
                     <div className="font-medium truncate">
                       {event.title}
                       {isDuplicating && draggingEventId === event.id && (
@@ -2159,12 +2309,46 @@ function CalendarGrid({
           document.body
         )
       })()}
+      
+      {/* コンテキストメニュー */}
+      {contextMenu && (
+        <div
+          className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg py-1 min-w-[150px]"
+          style={{
+            left: contextMenu.x,
+            top: contextMenu.y
+          }}
+        >
+          {contextMenu.items.map((item, index) => (
+            <button
+              key={index}
+              onClick={(e) => {
+                e.stopPropagation()
+                item.action()
+              }}
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                item.danger ? 'text-red-600 hover:text-red-700' : 'text-gray-900 dark:text-gray-100'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      )}
+      
+      {/* 削除完了トースト */}
+      <DeleteToast
+        deletedEvent={deletedCalendarEvent}
+        onUndo={handleUndoCalendarEvent}
+        onDismiss={handleDismissCalendarToast}
+      />
     </div>
   )
 }
 
 // メインコンポーネント
-export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick }: PureCalendarLayoutProps) {
+export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick, onDeleteEvent }: PureCalendarLayoutProps) {
+  
   // Step 23: 通知機能は一旦無効化（エラー回避のため）
   const visibleNotifications: Array<{
     id: string
@@ -2212,6 +2396,7 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick 
             events={events}
             onCreateEvent={onCreateEvent}
             onEventClick={onEventClick}
+            onDeleteEvent={onDeleteEvent}
           />
         </div>
       </div>

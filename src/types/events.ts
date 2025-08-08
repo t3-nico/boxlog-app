@@ -33,6 +33,12 @@ export interface Reminder {
 // Reminder preset constants (in minutes)
 export const REMINDER_PRESETS = [5, 10, 15, 30, 60, 1440] as const // 5分, 10分, 15分, 30分, 1時間, 24時間
 
+// Trash functionality types
+export interface TrashInfo {
+  daysUntilPermanentDelete: number
+  deletedBy?: string
+}
+
 // Checklist item interface
 export interface ChecklistItem {
   id: string
@@ -108,6 +114,9 @@ export interface Event {
   }>
   createdAt: Date
   updatedAt: Date
+  // Trash functionality
+  deletedAt?: Date | null
+  isDeleted?: boolean
 }
 
 // Form types for creating/editing events
