@@ -317,7 +317,7 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
   return (
     <div className="h-[calc(100vh-4rem)] overflow-hidden flex flex-col bg-background">
       {/* 第1層: ナビゲーション - 高さ固定 */}
-      <div className="flex-shrink-0 bg-background border-b border-border">
+      <div className="flex-shrink-0 bg-background">
         {/* Navigation */}
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
@@ -407,24 +407,13 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
                 </div>
               )}
             </div>
-            
-            {/* Step 18: Help button */}
-            <div className="border-l border-gray-300 dark:border-gray-600 pl-2">
-              <button
-                onClick={() => setShowShortcuts(true)}
-                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                title="Keyboard shortcuts (?)"
-              >
-                <span className="text-gray-500 dark:text-gray-400">?</span>
-              </button>
-            </div>
           </div>
         </div>
 
         {/* 第2層: 日付ヘッダー - 高さ固定 */}
-        <div className="flex-shrink-0 border-t border-border">
-          <div className="flex">
-            <div className="w-16 border-r border-border flex-shrink-0" /> {/* Time column space */}
+        <div className="flex-shrink-0">
+          <div className="flex" style={{ marginRight: '8px' }}>
+            <div className="w-16 flex-shrink-0" /> {/* Time column space */}
             <div className="flex flex-1">
                 {displayDates.map((date, index) => {
                   const isToday = date.toDateString() === new Date().toDateString()
@@ -435,15 +424,15 @@ export function TestDayView({ currentDate: initialCurrentDate, events }: TestDay
                   return (
                     <div 
                       key={date.toISOString()} 
-                      className="flex-1 border-r border-border last:border-r-0 text-center py-2 px-1"
+                      className="flex-1 text-center py-2"
                     >
                       <div className={`text-xs ${isToday ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
                         {viewMode === '2week' ? weekdays[adjustedIndex].charAt(0) : weekdays[adjustedIndex]}
                       </div>
-                      <div className={`text-sm font-semibold ${isToday ? 'text-white bg-blue-500 dark:bg-blue-600 rounded-full' : ''} flex items-center justify-center mx-auto`}
+                      <div className={`text-sm font-semibold ${isToday ? 'text-white bg-blue-500 dark:bg-blue-600 rounded-full' : ''} flex items-center justify-center mx-auto mt-1`}
                       style={{
                         width: isToday ? '28px' : '20px',
-                        height: '20px'
+                        height: isToday ? '28px' : '20px'
                       }}>
                         {date.getDate()}
                       </div>

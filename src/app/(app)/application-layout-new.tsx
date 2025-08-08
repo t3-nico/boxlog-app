@@ -386,14 +386,10 @@ export function ApplicationLayoutNew({
                   <SidebarLabel>Back to app</SidebarLabel>
                 </SidebarItem>
               )}
+              
+              {/* View Switcher - moved to left side */}
+              {!inSettings && <div className="ml-16"><ViewSwitcher /></div>}
             </div>
-            
-            {/* Center - View Switcher */}
-            {!inSettings && (
-              <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <ViewSwitcher />
-              </div>
-            )}
             
             {/* Right side - Notifications, theme toggle, AI icon */}
             <div className="flex items-center gap-2">
@@ -466,6 +462,7 @@ export function ApplicationLayoutNew({
                       </button>
                     </>
                   )}
+                  
                 </>
               )}
             </div>
