@@ -4,21 +4,20 @@ import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
-import { Calendar } from '@/components/ui/calendar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { ViewSwitcher } from '@/components/ui/view-switcher'
 import { getPageTitle, getCurrentViewIcon } from '@/config/views'
 import { useBoxStore } from '@/lib/box-store'
 import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
-import { DynamicSidebarSection } from '@/components/sidebar/DynamicSidebarSection'
-import { TagsList } from '@/features/tags/components/tags-list'
-import { SmartFolderList } from '@/features/smart-folders/components/smart-folder-list'
+import { TagManagementModal } from '@/features/tags/components/tag-management-modal'
+import { QuickTagCreateModal } from '@/features/tags/components/quick-tag-create-modal'
 import { sidebarConfig } from '@/config/sidebarConfig'
 import { useCommandPalette } from '@/components/providers'
+import { CalendarSettingsMenu } from '@/features/calendar/components/calendar-grid/CalendarSettingsMenu'
 import {
   Dropdown,
   DropdownButton,
@@ -39,10 +38,13 @@ import {
 } from '@/components/sidebar'
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { CodebaseAIChat } from '@/components/codebase-ai-chat'
-import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
-import { LifeProgressCard } from '@/components/sidebar/life-progress-card'
-import { CalendarDisplayMode } from '@/components/sidebar/calendar-display-mode'
-import { AddPopup, useAddPopup } from '@/components/add-popup'
+import { CommonSidebarSections } from '@/components/sidebar/CommonSidebarSections'
+import { CommonBottomSections } from '@/components/sidebar/CommonBottomSections'
+import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
+import { BoardSidebarSections } from '@/features/board/components/sidebar'
+import { TableSidebarSections } from '@/features/table/components/sidebar'
+import { StatsSidebarSections } from '@/features/stats/components/sidebar'
+import { AddPopup, useAddPopup } from '@/features/calendar/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
@@ -95,6 +97,7 @@ export function ApplicationLayoutNew({
   hideHeader?: boolean
 }) {
   let pathname = usePathname()
+  const searchParams = useSearchParams()
   let inSettings = pathname.startsWith('/settings')
   let inReview = pathname.startsWith('/review')
   let is404Page = pathname === '/404' || pathname.includes('not-found') || pathname === '/_not-found'
@@ -104,8 +107,59 @@ export function ApplicationLayoutNew({
   const { isOpen, openPopup, closePopup } = useAddPopup()
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   
-  // カレンダーページかどうかを判定
+  // カレンダータグ機能のstate（階層化対応）
+  const [calendarTags, setCalendarTags] = useState([
+    { id: '1', name: 'Work', color: '#3b82f6', parentId: null, isExpanded: true },
+    { id: '2', name: 'Meeting', color: '#8b5cf6', parentId: '1', isExpanded: true },
+    { id: '3', name: 'Development', color: '#10b981', parentId: '1', isExpanded: false },
+    { id: '4', name: 'Personal', color: '#f59e0b', parentId: null, isExpanded: true },
+    { id: '5', name: 'Learning', color: '#06b6d4', parentId: '4' },
+    { id: '6', name: 'Important', color: '#ef4444', parentId: null },
+  ])
+  const [selectedCalendarTags, setSelectedCalendarTags] = useState<string[]>([])
+  const [calendarTagFilterMode, setCalendarTagFilterMode] = useState<'AND' | 'OR'>('OR')
+  const [showTagManagement, setShowTagManagement] = useState(false)
+  const [showQuickTagCreate, setShowQuickTagCreate] = useState(false)
+  
+  // ページタイプの判定
   const isCalendarPage = pathname.startsWith('/calendar')
+  const isBoardPage = pathname.startsWith('/board')
+  const isTablePage = pathname.startsWith('/table') 
+  const isStatsPage = pathname.startsWith('/stats')
+  
+  // ページ状態の監視
+  
+  // Settings menu state for header
+  const [showHeaderSettingsMenu, setShowHeaderSettingsMenu] = useState(false)
+  const headerSettingsRef = useRef<HTMLButtonElement>(null)
+  
+  // URLから日付を取得してselectedDateを同期
+  useEffect(() => {
+    if (isCalendarPage) {
+      const dateParam = searchParams.get('date')
+      if (dateParam) {
+        const parsedDate = new Date(dateParam)
+        if (!isNaN(parsedDate.getTime())) {
+          setSelectedDate(parsedDate)
+        }
+      } else {
+        // dateパラメータがない場合は今日の日付
+        setSelectedDate(new Date())
+      }
+    }
+  }, [pathname, isCalendarPage, searchParams])
+  
+  // Close header settings menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headerSettingsRef.current && !headerSettingsRef.current.contains(event.target as Node)) {
+        setShowHeaderSettingsMenu(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
   
   
   // 日付選択時のハンドラー
@@ -171,6 +225,46 @@ export function ApplicationLayoutNew({
     } catch (error) {
       console.error('Logout error:', error)
     }
+  }
+
+  // カレンダータグ管理ハンドラー
+  const handleCalendarTagSelect = (tagId: string) => {
+    setSelectedCalendarTags(prev =>
+      prev.includes(tagId)
+        ? prev.filter(id => id !== tagId)
+        : [...prev, tagId]
+    )
+  }
+
+  const handleCreateCalendarTag = (tag: { name: string; color: string; parentId?: string | null }) => {
+    const newTag = {
+      id: Date.now().toString(),
+      parentId: null,
+      isExpanded: true,
+      ...tag
+    }
+    setCalendarTags(prev => [...prev, newTag])
+  }
+
+  const handleUpdateCalendarTag = (id: string, updates: { name?: string; color?: string; parentId?: string | null }) => {
+    setCalendarTags(prev => prev.map(tag =>
+      tag.id === id ? { ...tag, ...updates } : tag
+    ))
+  }
+
+  const handleDeleteCalendarTag = (id: string) => {
+    // 子タグの親IDをnullに更新
+    setCalendarTags(prev => prev
+      .filter(tag => tag.id !== id)
+      .map(tag => tag.parentId === id ? { ...tag, parentId: null } : tag)
+    )
+    setSelectedCalendarTags(prev => prev.filter(tagId => tagId !== id))
+  }
+
+  const handleToggleTagExpand = (tagId: string) => {
+    setCalendarTags(prev => prev.map(tag =>
+      tag.id === tagId ? { ...tag, isExpanded: !tag.isExpanded } : tag
+    ))
   }
 
   // 動的ページタイトルとアイコンを取得
@@ -312,14 +406,10 @@ export function ApplicationLayoutNew({
                   <SidebarLabel>Back to app</SidebarLabel>
                 </SidebarItem>
               )}
+              
+              {/* View Switcher - moved to left side */}
+              {!inSettings && <div className="ml-16"><ViewSwitcher /></div>}
             </div>
-            
-            {/* Center - View Switcher */}
-            {!inSettings && (
-              <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <ViewSwitcher />
-              </div>
-            )}
             
             {/* Right side - Notifications, theme toggle, AI icon */}
             <div className="flex items-center gap-2">
@@ -364,50 +454,81 @@ export function ApplicationLayoutNew({
                   </Dropdown>
                   
                   {!hideHeader && !is404Page && (
-                    <>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          openCommandPalette()
-                        }}
-                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        title="Search (⌘K)"
-                      >
-                        <MagnifyingGlassIcon className="size-5 text-gray-600 dark:text-gray-400" />
-                      </button>
-                      <button
-                        onClick={() => window.open('#', '_blank')}
-                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        title="Help"
-                      >
-                        <QuestionMarkCircleIcon className="size-5 text-gray-600 dark:text-gray-400" />
-                      </button>
-                      <button
-                        onClick={() => router.push('/settings')}
-                        className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
-                        title="Settings"
-                      >
-                        <Cog6ToothIcon className="size-5 text-gray-600 dark:text-gray-400" />
-                      </button>
-                    </>
-                  )}
+                      <>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            e.stopPropagation()
+                            openCommandPalette()
+                          }}
+                          className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                          title="Search (⌘K)"
+                        >
+                          <MagnifyingGlassIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                        <button
+                          onClick={() => window.open('#', '_blank')}
+                          className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                          title="Help"
+                        >
+                          <QuestionMarkCircleIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                        <button
+                          ref={headerSettingsRef}
+                          onClick={() => {
+                            console.log('⚙️ Settings icon clicked, isCalendarPage:', isCalendarPage)
+                            if (isCalendarPage) {
+                              console.log('📅 Opening calendar settings menu, current state:', showHeaderSettingsMenu)
+                              setShowHeaderSettingsMenu(!showHeaderSettingsMenu)
+                            } else {
+                              console.log('🔄 Navigating to /settings')
+                              router.push('/settings')
+                            }
+                          }}
+                          className="p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                          title={isCalendarPage ? "Calendar Settings" : "Settings"}
+                        >
+                          <Cog6ToothIcon className="size-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                      </>
+                    )}
                 </>
               )}
             </div>
           </div>
         </header>
         
+        {/* Header Settings Menu */}
+        {isCalendarPage && (
+          <CalendarSettingsMenu
+            isOpen={showHeaderSettingsMenu}
+            onClose={() => setShowHeaderSettingsMenu(false)}
+            anchorEl={headerSettingsRef.current}
+            onPrintClick={() => {
+              console.log('Print calendar from header')
+              setShowHeaderSettingsMenu(false)
+            }}
+            onTrashClick={() => {
+              console.log('🗑️ Open trash from header - onTrashClick called')
+              setShowHeaderSettingsMenu(false)
+              // /settings/trashページに遷移
+              console.log('🔄 Navigating to /settings/trash')
+              router.push('/settings/trash')
+            }}
+            trashedCount={0} // TODO: 削除済みイベント数を渡す
+          />
+        )}
+        
         {/* Body - Layout container */}
         <div className="flex-1" style={{paddingTop: '64px'}}>
           {/* Left Sidebar - Hidden when collapsed */}
           {!collapsed && (
             <div className="w-64 fixed left-0 bg-background border-r border-border z-10" style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
-              <div className="h-full flex flex-col gap-6 p-4">
+              <div className="h-full flex flex-col p-4">
                 {!inSettings && (
                   <>
-                    {/* Createボタン */}
-                    <div className="flex-shrink-0">
+                    {/* Createボタン - 一番上に固定 */}
+                    <div className="flex-shrink-0 mb-6">
                       <SidebarSection>
                         <div className="relative">
                           <ShadButton
@@ -425,43 +546,58 @@ export function ApplicationLayoutNew({
                       </SidebarSection>
                     </div>
 
-                    {/* 日付選択カレンダー */}
-                    <div className="flex-shrink-0">
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={handleDateSelect}
-                        className="w-full p-0"
-                        weekStartsOn={1}
-                      />
-                    </div>
-                    
-                    {/* カレンダー表示モード選択 */}
-                    <div className="flex-shrink-0">
-                      <CalendarDisplayMode />
-                    </div>
+                    {/* 中央コンテンツエリア - 上に寄せて配置 */}
+                    <div className="flex-1 flex flex-col gap-6 min-h-0">
+                      {/* 全ページ共通部分 */}
+                      <CommonSidebarSections collapsed={collapsed} />
 
-                    {/* 中央スクロールエリア - スマートフォルダーとタグ */}
-                    <div className="flex-1 overflow-y-auto min-h-0">
+                      {/* ページ別専用部分 */}
                       <div className="space-y-6">
-                        <SmartFolderList
-                          collapsed={collapsed}
-                          onSelectFolder={handleSelectSmartFolder}
-                          selectedFolderId={filters.smartFolder || ''}
-                        />
+                        {isCalendarPage && (
+                          <CalendarSidebarSections
+                            collapsed={collapsed}
+                            selectedDate={selectedDate}
+                            onDateSelect={handleDateSelect}
+                            tags={calendarTags}
+                            selectedTags={selectedCalendarTags}
+                            tagFilterMode={calendarTagFilterMode}
+                            onTagSelect={handleCalendarTagSelect}
+                            onToggleExpand={() => handleToggleTagExpand('')}
+                            onFilterModeChange={setCalendarTagFilterMode}
+                            onManageTags={() => setShowTagManagement(true)}
+                            onCreateTag={() => setShowQuickTagCreate(true)}
+                          />
+                        )}
 
-                        <TagsList
-                          collapsed={collapsed}
-                          onSelectTag={handleSelectTag}
-                          selectedTagIds={filters.tags || []}
-                        />
+                        {isBoardPage && (
+                          <BoardSidebarSections
+                            collapsed={collapsed}
+                            onSelectTag={handleSelectTag}
+                            selectedTagIds={filters.tags || []}
+                          />
+                        )}
+
+                        {isTablePage && (
+                          <TableSidebarSections
+                            collapsed={collapsed}
+                            onSelectTag={handleSelectTag}
+                            selectedTagIds={filters.tags || []}
+                          />
+                        )}
+
+                        {isStatsPage && (
+                          <StatsSidebarSections
+                            collapsed={collapsed}
+                            onSelectTag={handleSelectTag}
+                            selectedTagIds={filters.tags || []}
+                          />
+                        )}
                       </div>
                     </div>
 
-                    {/* 下部固定エリア - 時間表示カード */}
-                    <div className="flex-shrink-0 space-y-3">
-                      <CurrentScheduleCard collapsed={collapsed} />
-                      <LifeProgressCard collapsed={collapsed} />
+                    {/* スケジュールカード - 一番下に固定 */}
+                    <div className="flex-shrink-0 mt-6">
+                      <CommonBottomSections collapsed={collapsed} />
                     </div>
                   </>
                 )}
@@ -665,6 +801,23 @@ export function ApplicationLayoutNew({
           open={isOpen} 
           onOpenChange={(open) => open ? openPopup() : closePopup()}
           defaultTab="event"
+        />
+        
+        {/* カレンダータグ管理モーダル */}
+        <TagManagementModal
+          isOpen={showTagManagement}
+          onClose={() => setShowTagManagement(false)}
+          tags={calendarTags}
+          onCreateTag={handleCreateCalendarTag}
+          onUpdateTag={handleUpdateCalendarTag}
+          onDeleteTag={handleDeleteCalendarTag}
+        />
+        
+        {/* クイックタグ作成モーダル */}
+        <QuickTagCreateModal
+          isOpen={showQuickTagCreate}
+          onClose={() => setShowQuickTagCreate(false)}
+          onCreateTag={handleCreateCalendarTag}
         />
         </div>
       </ToastProvider>

@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import { FullDayCalendarLayout } from '../../calendar-grid/FullDayCalendarLayout'
 import { CalendarViewAnimation } from '../../calendar-grid/ViewTransition'
+import { TestDayView } from './TestDayView'
 import type { 
   ViewDateRange, 
   Task, 
@@ -22,6 +22,8 @@ interface DayViewProps {
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
+  onDeleteEvent?: (eventId: string) => void
+  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -41,6 +43,8 @@ export function DayView({
   onEventClick,
   onCreateEvent,
   onUpdateEvent,
+  onDeleteEvent,
+  onRestoreEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -53,7 +57,7 @@ export function DayView({
   // DayView専用の簡潔なデバッグログ
   console.log('📅 DayView - Events:', events.length, 'Current Date:', currentDate.toDateString())
   
-  // 修正候補1: currentDateの時刻をリセット
+  // currentDateの時刻をリセット
   const normalizedCurrentDate = useMemo(() => {
     const normalized = new Date(currentDate);
     normalized.setHours(0, 0, 0, 0);
@@ -63,29 +67,18 @@ export function DayView({
     });
     return normalized;
   }, [currentDate])
-  
+
+  // TestDayViewを使用
   return (
     <CalendarViewAnimation viewType="day">
-      <div 
-        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
-        style={{ overscrollBehavior: 'none' }}
-      >
-        {/* スクロール可能なメインコンテンツ */}
-        <div 
-          className="flex-1 min-h-0" 
-          style={{ overscrollBehavior: 'none' }}
-        >
-          <FullDayCalendarLayout
-            dates={[normalizedCurrentDate]}
-            tasks={tasks}
-            events={events}
-            dateRange={dateRange}
-            onEventClick={onEventClick}
-            onCreateEvent={onCreateEvent}
-            onUpdateEvent={onUpdateEvent}
-          />
-        </div>
-      </div>
+      <TestDayView 
+        currentDate={normalizedCurrentDate}
+        events={events}
+        onDeleteEvent={onDeleteEvent}
+        onCreateEvent={onCreateEvent}
+        onEmptyClick={onEmptyClick}
+        onEventClick={onEventClick}
+      />
     </CalendarViewAnimation>
   )
 }

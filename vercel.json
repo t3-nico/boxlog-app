@@ -1,0 +1,6 @@
+{
+  "buildCommand": "yarn build:fallback",
+  "devCommand": "yarn dev:fallback",
+  "installCommand": "yarn install",
+  "framework": "nextjs"
+}

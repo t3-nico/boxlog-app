@@ -22,6 +22,23 @@ export interface RecurrencePattern {
   monthWeekDay?: WeekDay // for monthly recurrence (day of week)
 }
 
+// Reminder interface
+export interface Reminder {
+  id: string
+  type: 'notification'
+  minutesBefore: number
+  isTriggered?: boolean
+}
+
+// Reminder preset constants (in minutes)
+export const REMINDER_PRESETS = [5, 10, 15, 30, 60, 1440] as const // 5分, 10分, 15分, 30分, 1時間, 24時間
+
+// Trash functionality types
+export interface TrashInfo {
+  daysUntilPermanentDelete: number
+  deletedBy?: string
+}
+
 // Checklist item interface
 export interface ChecklistItem {
   id: string
@@ -48,6 +65,7 @@ export interface EventEntity {
   items?: ChecklistItem[] // JSONB array
   location?: string
   url?: string
+  reminders?: Reminder[] // JSONB array
   created_at: string
   updated_at: string
   event_tags?: Array<{
@@ -86,6 +104,7 @@ export interface Event {
   items?: ChecklistItem[]
   location?: string
   url?: string
+  reminders?: Reminder[]
   tags?: Array<{
     id: string
     name: string
@@ -95,6 +114,9 @@ export interface Event {
   }>
   createdAt: Date
   updatedAt: Date
+  // Trash functionality
+  deletedAt?: Date | null
+  isDeleted?: boolean
 }
 
 // Form types for creating/editing events
@@ -113,6 +135,7 @@ export interface CreateEventRequest {
   items?: ChecklistItem[]
   location?: string
   url?: string
+  reminders?: Reminder[]
   tagIds?: string[]
 }
 
@@ -174,6 +197,7 @@ export interface EventState {
   error: string | null
   filters: EventFilters
   selectedEventId: string | null
+  lastFetchedRange: { start: string; end: string } | null
 }
 
 export interface EventActions {

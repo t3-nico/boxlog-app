@@ -1,10 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
+import { getCurrentTimezone, listenToTimezoneChange } from '@/utils/timezone'
 
 interface CalendarSettings {
   // タイムゾーン設定
   timezone: string // 例: 'Asia/Tokyo', 'America/New_York'
+  showUTCOffset: boolean // UTC表示のON/OFF
   
   // 時間表示形式
   timeFormat: '24h' | '12h'
@@ -40,9 +42,8 @@ interface CalendarSettingsStore extends CalendarSettings {
 }
 
 const defaultSettings: CalendarSettings = {
-  timezone: typeof window !== 'undefined' 
-    ? Intl.DateTimeFormat().resolvedOptions().timeZone 
-    : 'Asia/Tokyo',
+  timezone: 'Asia/Tokyo', // デフォルトはJST、useEffectで実際の値に更新
+  showUTCOffset: true,
   timeFormat: '24h',
   weekStartsOn: 1, // 月曜始まり
   defaultDuration: 60,
@@ -63,16 +64,32 @@ const defaultSettings: CalendarSettings = {
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
   persist(
-    (set) => ({
-      ...defaultSettings,
+    (set, get) => {
+      // タイムゾーン変更リスナーをセットアップ
+      if (typeof window !== 'undefined') {
+        const cleanup = listenToTimezoneChange((newTimezone) => {
+          const currentState = get()
+          if (currentState.timezone !== newTimezone) {
+            console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone)
+            set({ ...currentState, timezone: newTimezone })
+          }
+        })
+        
+        // クリーンアップ関数は保存されない（Zustandの制約）
+        // 必要に応じて手動でクリーンアップ
+      }
       
-      updateSettings: (newSettings) => set((state) => ({
-        ...state,
-        ...newSettings
-      })),
-      
-      resetSettings: () => set(defaultSettings)
-    }),
+      return {
+        ...defaultSettings,
+        
+        updateSettings: (newSettings) => set((state) => ({
+          ...state,
+          ...newSettings
+        })),
+        
+        resetSettings: () => set(defaultSettings)
+      }
+    },
     {
       name: 'calendar-settings',
     }

@@ -1,4 +1,4 @@
-import { Database } from './supabase'
+// import { Database } from './supabase' // Disabled for localStorage-only mode
 
 // Export unified types first (highest priority)
 export * from './unified'
@@ -13,14 +13,42 @@ export * from './chronotype'
 export * from './trash'
 // export * from './events' // Already exported from unified
 
-// Supabase database types
-export type Profile = Database['public']['Tables']['profiles']['Row']
-export type UserValues = Database['public']['Tables']['user_values']['Row']
-export type SmartFilter = Database['public']['Tables']['smart_filters']['Row']
+// Local storage stub types (replacing Supabase types)
+export interface Profile {
+  id: string
+  email?: string
+  name?: string
+}
 
-export type TaskInsert = Database['public']['Tables']['tasks']['Insert']
-export type TaskUpdate = Database['public']['Tables']['tasks']['Update']
-export type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
+export interface UserValues {
+  id: string
+  user_id: string
+  key: string
+  value: string
+}
+
+export interface SmartFilter {
+  id: string
+  name: string
+  criteria: any
+}
+
+export interface TaskInsert {
+  title: string
+  status?: string
+  planned_start?: string
+}
+
+export interface TaskUpdate {
+  title?: string
+  status?: string
+  planned_start?: string
+}
+
+export interface ProfileUpdate {
+  name?: string
+  email?: string
+}
 
 // Task type is now imported from unified.ts
 // export type TaskStatus is now imported from unified.ts

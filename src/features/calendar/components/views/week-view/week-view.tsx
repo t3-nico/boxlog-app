@@ -26,6 +26,8 @@ interface WeekViewProps {
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
+  onDeleteEvent?: (eventId: string) => void
+  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
@@ -46,6 +48,8 @@ export function WeekView({
   onEventClick,
   onCreateEvent,
   onUpdateEvent,
+  onDeleteEvent,
+  onRestoreEvent,
   onEmptyClick,
   onTaskDrag,
   onCreateTask,
@@ -83,6 +87,8 @@ export function WeekView({
             onEventClick={onEventClick}
             onCreateEvent={onCreateEvent}
             onUpdateEvent={onUpdateEvent}
+            onDeleteEvent={onDeleteEvent}
+            onRestoreEvent={onRestoreEvent}
           />
         </div>
       </div>

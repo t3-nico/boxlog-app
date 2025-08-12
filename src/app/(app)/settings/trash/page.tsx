@@ -1,136 +1,74 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Trash2, RotateCcw, AlertTriangle } from 'lucide-react'
-import { useTrashStore } from '@/stores/trashStore'
-import { TrashItemCard } from '@/components/settings/TrashItemCard'
-import { EmptyTrashModal } from '@/components/settings/EmptyTrashModal'
-import { EmptyTrashState } from '@/components/settings/EmptyTrashState'
-import { Button } from '@/components/ui/button'
-
-// ローディングスケルトンコンポーネント
-function TrashLoadingSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="border-b border-border pb-4">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/4 mb-2"></div>
-          <div className="h-4 bg-muted rounded w-1/2"></div>
-        </div>
-      </div>
-      <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="animate-pulse">
-            <div className="bg-card rounded-lg border border-border p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="h-4 bg-muted rounded w-1/3 mb-2"></div>
-                  <div className="h-4 bg-muted rounded w-1/2 mb-1"></div>
-                  <div className="h-4 bg-muted rounded w-1/4"></div>
-                </div>
-                <div className="flex space-x-2">
-                  <div className="h-8 w-16 bg-muted rounded"></div>
-                  <div className="h-8 w-16 bg-muted rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEventStore } from '@/stores/useEventStore'
+import { TrashView } from '@/features/calendar/components/calendar-grid/TrashView'
+import type { CalendarEvent, UpdateEventRequest } from '@/types/events'
 
 export default function TrashPage() {
-  const { 
-    deletedItems, 
-    loading, 
-    loadTrashItems, 
-    emptyTrash, 
-    getTrashStats 
-  } = useTrashStore()
+  const eventStore = useEventStore()
+  const { events } = eventStore
   
-  const [showEmptyModal, setShowEmptyModal] = useState(false)
-  const stats = getTrashStats()
-
-  useEffect(() => {
-    loadTrashItems()
-  }, [loadTrashItems])
-
-  const handleEmptyTrash = async () => {
-    await emptyTrash()
-    setShowEmptyModal(false)
-  }
-
-  if (loading) {
-    return <TrashLoadingSkeleton />
-  }
+  // 削除済みイベントを取得してCalendarEvent型に変換
+  const trashedEvents = useMemo(() => {
+    return events
+      .filter(event => event.isDeleted && event.deletedAt)
+      .map(event => ({
+        ...event,
+        startDate: event.startDate || new Date(),
+        endDate: event.endDate || new Date(),
+        displayStartDate: event.startDate || new Date(),
+        displayEndDate: event.endDate || new Date(),
+        duration: event.endDate && event.startDate 
+          ? (event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60)
+          : 60,
+        isMultiDay: event.startDate && event.endDate 
+          ? event.startDate.toDateString() !== event.endDate.toDateString()
+          : false,
+        isRecurring: event.isRecurring || false,
+        type: event.type || 'event' as any
+      }))
+  }, [events])
+  
+  const handleRestore = useCallback(async (eventId: string) => {
+    try {
+      const eventToRestore = events.find(e => e.id === eventId)
+      if (eventToRestore) {
+        const updateRequest: UpdateEventRequest = {
+          ...eventToRestore,
+          isDeleted: false,
+          deletedAt: null
+        }
+        await eventStore.updateEvent(updateRequest)
+        console.log('🔄 Event restored:', eventToRestore.title)
+      }
+    } catch (error) {
+      console.error('Failed to restore event:', error)
+    }
+  }, [events, eventStore])
+  
+  const handleDeletePermanently = useCallback(async (eventIds: string[]) => {
+    try {
+      await Promise.all(eventIds.map(id => eventStore.deleteEvent(id)))
+      console.log('💀 Events permanently deleted:', eventIds.length)
+    } catch (error) {
+      console.error('Failed to permanently delete events:', error)
+    }
+  }, [eventStore])
+  
+  const handleClose = useCallback(() => {
+    // 設定ページなので閉じるボタンは無効にする、または前のページに戻る
+    window.history.back()
+  }, [])
 
   return (
-    <div className="space-y-6 p-10">
-      {/* ページヘッダー */}
-      <div className="border-b border-border pb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-              Trash
-            </h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Deleted items are kept for 30 days before being permanently removed
-            </p>
-          </div>
-          
-          {deletedItems.length > 0 && (
-            <Button 
-              color="red"
-              onClick={() => setShowEmptyModal(true)}
-            >
-              <Trash2 className="w-4 h-4 mr-2" data-slot="icon" />
-              Empty Trash
-            </Button>
-          )}
-        </div>
-        
-        {/* 統計情報 */}
-        {stats.totalItems > 0 && (
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-muted p-3 rounded-lg">
-              <div className="text-sm text-gray-500 dark:text-gray-400">Total Items</div>
-              <div className="text-lg font-semibold">{stats.totalItems}</div>
-            </div>
-            <div className="bg-muted p-3 rounded-lg">
-              <div className="text-sm text-gray-500 dark:text-gray-400">Tasks</div>
-              <div className="text-lg font-semibold">{stats.itemsByType.task || 0}</div>
-            </div>
-            <div className="bg-muted p-3 rounded-lg">
-              <div className="text-sm text-gray-500 dark:text-gray-400">Events</div>
-              <div className="text-lg font-semibold">{stats.itemsByType.event || 0}</div>
-            </div>
-            <div className="bg-muted p-3 rounded-lg">
-              <div className="text-sm text-gray-500 dark:text-gray-400">Tags</div>
-              <div className="text-lg font-semibold">{stats.itemsByType.tag || 0}</div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ゴミ箱アイテムリスト */}
-      {deletedItems.length > 0 ? (
-        <div className="space-y-4">
-          {deletedItems.map(item => (
-            <TrashItemCard key={item.id} item={item} />
-          ))}
-        </div>
-      ) : (
-        <EmptyTrashState />
-      )}
-
-      {/* 空にする確認モーダル */}
-      <EmptyTrashModal
-        open={showEmptyModal}
-        onClose={() => setShowEmptyModal(false)}
-        onConfirm={handleEmptyTrash}
-        itemCount={stats.totalItems}
+    <div className="min-h-screen bg-background">
+      <TrashView
+        onClose={handleClose}
+        trashedEvents={trashedEvents}
+        onRestore={handleRestore}
+        onDeletePermanently={handleDeletePermanently}
+        isModal={false}
       />
     </div>
   )

@@ -1,14 +1,27 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { User, Session, AuthError } from '@supabase/supabase-js'
-import { supabaseBrowser } from '@/lib/supabase-browser'
 import { 
   handleClientError,
   UnauthorizedError,
   ValidationError,
   getErrorMessage 
 } from '@/lib/errors'
+
+// Local types for localStorage mode
+interface User {
+  id: string
+  email?: string
+}
+
+interface Session {
+  user: User
+  access_token: string
+}
+
+interface AuthError {
+  message: string
+}
 
 interface AuthState {
   user: User | null
@@ -25,258 +38,77 @@ export function useAuth() {
     error: null,
   })
 
-  // クライアントサイドでのみsupabaseインスタンスを作成
-  const [supabase, setSupabase] = useState<ReturnType<typeof supabaseBrowser> | null>(null)
-
   useEffect(() => {
-    // クライアントサイドでのみ初期化
-    if (typeof window !== 'undefined') {
-      setSupabase(supabaseBrowser())
-    }
-  }, [])
-
-  // 認証エラーハンドリング関数
-  const handleAuthError = useCallback((error: AuthError | null) => {
-    if (!error) return null
-
-    // エラーメッセージの日本語化
-    const errorMessages: Record<string, string> = {
-      'Invalid login credentials': 'メールアドレスまたはパスワードが正しくありません',
-      'Email not confirmed': 'メールアドレスを確認してください',
-      'User already registered': 'このメールアドレスは既に登録されています',
-      'Password should be at least 6 characters': 'パスワードは6文字以上で入力してください',
-      'Too many requests': 'リクエストが多すぎます。しばらく待ってから再試行してください',
-      'Email rate limit exceeded': 'メール送信の制限に達しました。しばらく待ってから再試行してください'
-    }
-
-    return errorMessages[error.message] || handleClientError(error)
-  }, [])
-
-  useEffect(() => {
-    if (!supabase) return
-
-    // 現在のセッションを取得
-    const getSession = async () => {
+    // ローカル専用モード: localStorage からユーザー情報を読み込み
+    const initializeLocalAuth = () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
-        if (error) {
-          setAuthState(prev => ({
-            ...prev,
-            error: handleAuthError(error),
+        const savedUser = localStorage.getItem('boxlog-user')
+        if (savedUser) {
+          const userData = JSON.parse(savedUser)
+          const session: Session = {
+            user: userData,
+            access_token: 'local-token'
+          }
+          setAuthState({
+            user: userData,
+            session,
             loading: false,
-          }))
-          return
+            error: null
+          })
+        } else {
+          // デフォルトユーザーを作成
+          const defaultUser: User = {
+            id: 'local-user-' + Date.now(),
+            email: 'user@localhost'
+          }
+          localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
+          const session: Session = {
+            user: defaultUser,
+            access_token: 'local-token'
+          }
+          setAuthState({
+            user: defaultUser,
+            session,
+            loading: false,
+            error: null
+          })
         }
-
-        setAuthState({
-          user: session?.user ?? null,
-          session,
-          loading: false,
-          error: null,
-        })
       } catch (error) {
-        setAuthState(prev => ({
-          ...prev,
-          error: 'セッションの取得に失敗しました',
-          loading: false,
-        }))
-      }
-    }
-
-    getSession()
-
-    // 認証状態の変更を監視
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email || 'No user')
-        
         setAuthState({
-          user: session?.user ?? null,
-          session,
+          user: null,
+          session: null,
           loading: false,
-          error: null,
+          error: 'Failed to initialize local auth'
         })
       }
-    )
+    }
 
-    return () => subscription.unsubscribe()
-  }, [supabase, handleAuthError])
+    initializeLocalAuth()
+  }, [])
 
+  // ローカル専用モード用のスタブメソッド
   const signUp = async (email: string, password: string, metadata?: any) => {
-    if (!supabase) {
-      return { data: null, error: 'Supabaseが初期化されていません' }
-    }
-
-    // バリデーション
-    if (!email || !password) {
-      const error = 'メールアドレスとパスワードは必須です'
-      setAuthState(prev => ({ ...prev, error }))
-      return { data: null, error }
-    }
-
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata,
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = '登録中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-      return { data: null, error: errorMessage }
-    }
+    return { data: null, error: 'Sign up disabled in localStorage mode' }
   }
 
   const signIn = async (email: string, password: string) => {
-    if (!supabase) {
-      return { data: null, error: 'Supabase not initialized' }
-    }
-
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'ログイン中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-      return { data: null, error: errorMessage }
-    }
+    return { data: { user: authState.user, session: authState.session }, error: null }
   }
 
   const signInWithOAuth = async (provider: 'google' | 'apple') => {
-    if (!supabase) {
-      return { data: null, error: 'Supabase not initialized' }
-    }
-
-    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
-
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState((prev) => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'OAuth login failed'
-      setAuthState((prev) => ({ ...prev, error: errorMessage, loading: false }))
-      return { data: null, error: errorMessage }
-    }
+    return { data: null, error: 'OAuth disabled in localStorage mode' }
   }
 
   const signOut = async () => {
-    if (!supabase) {
-      return { error: 'Supabase not initialized' }
-    }
-
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
-    try {
-      const { error } = await supabase.auth.signOut()
-      
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { error: null }
-    } catch (error) {
-      const errorMessage = 'ログアウト中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-      return { error: errorMessage }
-    }
+    return { error: null }
   }
 
   const resetPassword = async (email: string) => {
-    if (!supabase) {
-      return { data: null, error: 'Supabase not initialized' }
-    }
-
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
-    try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'パスワードリセット中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-      return { data: null, error: errorMessage }
-    }
+    return { data: null, error: 'Password reset disabled in localStorage mode' }
   }
 
   const updatePassword = async (password: string) => {
-    if (!supabase) {
-      return { data: null, error: 'Supabase not initialized' }
-    }
-
-    setAuthState(prev => ({ ...prev, loading: true, error: null }))
-
-    try {
-      const { data, error } = await supabase.auth.updateUser({
-        password,
-      })
-
-      if (error) {
-        const errorMessage = handleAuthError(error)
-        setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-        return { data, error: errorMessage }
-      }
-
-      setAuthState(prev => ({ ...prev, loading: false }))
-      return { data, error: null }
-    } catch (error) {
-      const errorMessage = 'パスワード更新中にエラーが発生しました'
-      setAuthState(prev => ({ ...prev, error: errorMessage, loading: false }))
-      return { data: null, error: errorMessage }
-    }
+    return { data: null, error: 'Password update disabled in localStorage mode' }
   }
 
   const clearError = () => {
@@ -296,4 +128,4 @@ export function useAuth() {
     updatePassword,
     clearError,
   }
-} 
+}

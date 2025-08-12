@@ -32,63 +32,65 @@ export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardPr
   const [todayEvents, setTodayEvents] = useState<Event[]>([])
   
   useEffect(() => {
-    const fetchTodayEvents = async () => {
-      try {
-        const today = new Date()
-        const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-        const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
-        
-        console.log('🔍 Fetching today events:', {
-          todayStart: todayStart.toISOString(),
-          todayEnd: todayEnd.toISOString()
-        })
-        
-        const params = new URLSearchParams()
-        params.append('start_date', todayStart.toISOString().split('T')[0])
-        params.append('end_date', todayEnd.toISOString().split('T')[0])
-        
-        const apiUrl = `/api/events?${params}`
-        console.log('🌐 Calling API:', apiUrl)
-        
-        const response = await fetch(apiUrl)
-        console.log('🌐 API response status:', response.status)
-        
-        if (response.ok) {
-          const data = await response.json()
-          console.log('📦 Raw API response:', data)
-          
-          const events = data.data?.events || data.events || data.data || data || []
-          console.log('📥 Extracted events:', events.length, events)
-          
-          // EventEntity を Event に変換
-          const convertedEvents = events.map((entity: any) => {
-            return {
-              id: entity.id,
-              title: entity.title,
-              description: entity.description,
-              startDate: entity.planned_start ? new Date(entity.planned_start) : undefined,
-              endDate: entity.planned_end ? new Date(entity.planned_end) : undefined,
-              status: entity.status,
-              priority: entity.priority,
-              color: entity.color,
-              location: entity.location,
-              url: entity.url,
-              tags: entity.event_tags?.map((et: any) => et.tags).filter(Boolean) || []
-            }
-          }).filter((event: Event) => event.startDate) // startDateがあるもののみ
-          
-          setTodayEvents(convertedEvents)
-        } else {
-          console.error('❌ API request failed:', response.status, response.statusText)
-          const errorText = await response.text()
-          console.error('❌ Error response:', errorText)
-        }
-      } catch (error) {
-        console.error('❌ Failed to fetch today events:', error)
-      }
-    }
+    console.log('🔍 [DISABLED] Would fetch today events - disabled for debugging')
     
-    fetchTodayEvents()
+    // const fetchTodayEvents = async () => {
+    //   try {
+    //     const today = new Date()
+    //     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    //     const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
+        
+    //     console.log('🔍 Fetching today events:', {
+    //       todayStart: todayStart.toISOString(),
+    //       todayEnd: todayEnd.toISOString()
+    //     })
+        
+    //     const params = new URLSearchParams()
+    //     params.append('start_date', todayStart.toISOString().split('T')[0])
+    //     params.append('end_date', todayEnd.toISOString().split('T')[0])
+        
+    //     const apiUrl = `/api/events?${params}`
+    //     console.log('🌐 Calling API:', apiUrl)
+        
+    //     const response = await fetch(apiUrl)
+    //     console.log('🌐 API response status:', response.status)
+        
+    //     if (response.ok) {
+    //       const data = await response.json()
+    //       console.log('📦 Raw API response:', data)
+          
+    //       const events = data.data?.events || data.events || data.data || data || []
+    //       console.log('📥 Extracted events:', events.length, events)
+          
+    //       // EventEntity を Event に変換
+    //       const convertedEvents = events.map((entity: any) => {
+    //         return {
+    //           id: entity.id,
+    //           title: entity.title,
+    //           description: entity.description,
+    //           startDate: entity.planned_start ? new Date(entity.planned_start) : undefined,
+    //           endDate: entity.planned_end ? new Date(entity.planned_end) : undefined,
+    //           status: entity.status,
+    //           priority: entity.priority,
+    //           color: entity.color,
+    //           location: entity.location,
+    //           url: entity.url,
+    //           tags: entity.event_tags?.map((et: any) => et.tags).filter(Boolean) || []
+    //         }
+    //       }).filter((event: Event) => event.startDate) // startDateがあるもののみ
+          
+    //       setTodayEvents(convertedEvents)
+    //     } else {
+    //       console.error('❌ API request failed:', response.status, response.statusText)
+    //       const errorText = await response.text()
+    //       console.error('❌ Error response:', errorText)
+    //     }
+    //   } catch (error) {
+    //     console.error('❌ Failed to fetch today events:', error)
+    //   }
+    // }
+    
+    // fetchTodayEvents()
   }, [])
 
   // リアルタイム時間更新

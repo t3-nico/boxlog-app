@@ -1,7 +1,8 @@
 'use client'
 
 import { create } from 'zustand'
-import { CreateContextData } from '@/components/add-popup/AddPopup'
+import { useCallback } from 'react'
+import { CreateContextData } from '@/features/calendar/components/add-popup/AddPopup'
 
 type TabType = 'event' | 'log'
 
@@ -26,6 +27,8 @@ export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
 
   // Actions
   openPopup: (tab = 'event', context: CreateContextData | null = null) => {
+    console.log('🎪 useAddPopup: openPopup called', { tab, context })
+    
     // Smart tab selection based on context
     let selectedTab = tab
     if (context && !tab) {
@@ -43,11 +46,15 @@ export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
       }
     }
 
+    console.log('🎪 useAddPopup: Setting state', { isOpen: true, activeTab: selectedTab, contextData: context })
+    
     set({
       isOpen: true,
       activeTab: selectedTab,
       contextData: context,
     })
+    
+    console.log('🎪 useAddPopup: State set successfully')
   },
 
   closePopup: () => {
@@ -70,6 +77,15 @@ export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
 export const useAddPopup = () => {
   const store = useAddPopupStore()
   
+  // useCallbackでメモ化して毎回新しい関数が作成されるのを防ぐ
+  const openEventPopup = useCallback((context?: CreateContextData | null) => {
+    store.openPopup('event', context)
+  }, [store.openPopup])
+  
+  const openLogPopup = useCallback((context?: CreateContextData | null) => {
+    store.openPopup('log', context)
+  }, [store.openPopup])
+  
   return {
     // State
     isOpen: store.isOpen,
@@ -82,11 +98,9 @@ export const useAddPopup = () => {
     setActiveTab: store.setActiveTab,
     setContextData: store.setContextData,
     
-    // Convenience methods
-    openEventPopup: (context?: CreateContextData | null) => 
-      store.openPopup('event', context),
-    openLogPopup: (context?: CreateContextData | null) => 
-      store.openPopup('log', context),
+    // Convenience methods (メモ化済み)
+    openEventPopup,
+    openLogPopup,
   }
 }
 
