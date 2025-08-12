@@ -19,6 +19,7 @@ import {
   formatTimezoneInfo,
   type TimezoneValue 
 } from '@/utils/timezone'
+import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 
 export default function PreferencesSettings() {
   const [notifications, setNotifications] = useState(true)
@@ -27,6 +28,10 @@ export default function PreferencesSettings() {
   const [timeFormat, setTimeFormat] = useState<'12h' | '24h'>('24h')
   const [timezone, setTimezone] = useState<string>('')
   const { theme, setTheme } = useTheme()
+  
+  // Calendar settings store for timezone sync
+  const { updateSettings: updateCalendarSettings, showUTCOffset, timezone: calendarTimezone } = useCalendarSettingsStore()
+  
   
   // Life counter settings
   const [lifeCounter, setLifeCounter] = useState<LifeCounterSettings>({
@@ -70,6 +75,8 @@ export default function PreferencesSettings() {
   const handleTimezoneChange = (newTimezone: string) => {
     setTimezone(newTimezone)
     setUserTimezone(newTimezone)
+    // Calendar settings store も同期
+    updateCalendarSettings({ timezone: newTimezone })
     console.log('タイムゾーン設定を更新:', newTimezone)
   }
 
@@ -136,6 +143,12 @@ export default function PreferencesSettings() {
           <ShadcnSelectItem value="12h">12-hour (AM/PM)</ShadcnSelectItem>
           <ShadcnSelectItem value="24h">24-hour</ShadcnSelectItem>
         </SelectItem>
+        <ToggleItem
+          label="Show timezone offset in calendar"
+          description="Display UTC offset (e.g., UTC+9) in the calendar header"
+          value={showUTCOffset}
+          onChange={(enabled) => updateCalendarSettings({ showUTCOffset: enabled })}
+        />
         <SelectItem
           label="Default block duration"
           value={duration}

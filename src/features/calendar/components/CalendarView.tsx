@@ -9,9 +9,10 @@ import { WeekView } from './views/week-view'
 import { MonthView } from './views/month-view'
 import { AddPopup, useAddPopup } from '@/components/add-popup'
 import { DnDProvider } from './calendar-grid/dnd/DnDProvider'
-import { TrashView } from './calendar-grid/TrashView'
+import { TrashModal } from '@/components/modals/TrashModal'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
+import { getCurrentTimezone } from '@/utils/timezone'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useEventStore } from '@/stores/useEventStore'
 import { useNotifications } from '../hooks/useNotifications'
@@ -48,22 +49,16 @@ export function CalendarView({
   const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
   const [eventDefaultEndTime, setEventDefaultEndTime] = useState<string | undefined>(undefined)
   
-  // カレンダー専用ポップアップの状態
-  const [isCalendarEventPopupOpen, setIsCalendarEventPopupOpen] = useState(false)
-  
-  // テスト用ポップアップの状態
-  const [isTestPopupOpen, setIsTestPopupOpen] = useState(false)
-  const [testEvent, setTestEvent] = useState<CalendarEvent | null>(null)
   
   // ゴミ箱の状態
-  const [isTrashViewOpen, setIsTrashViewOpen] = useState(false)
+  const [isTrashModalOpen, setIsTrashModalOpen] = useState(false)
   
   // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
   
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
-  const { planRecordMode } = useCalendarSettingsStore()
+  const { planRecordMode, timezone, updateSettings } = useCalendarSettingsStore()
   const taskStore = useTaskStore()
   const { 
     tasks, 
@@ -85,6 +80,8 @@ export function CalendarView({
     deleteEvent,
     getEventsByDateRange
   } = eventStore
+  
+  
   
   // 通知機能の統合
   const {
@@ -128,6 +125,17 @@ export function CalendarView({
     localStorage.setItem('calendar-view-type', viewType)
   }, [viewType])
 
+  // タイムゾーン設定の初期化
+  useEffect(() => {
+    if (timezone === 'Asia/Tokyo') { // デフォルト値の場合のみ実際のタイムゾーンに更新
+      const actualTimezone = getCurrentTimezone()
+      if (actualTimezone !== 'Asia/Tokyo') {
+        console.log('🌐 Initializing timezone from', timezone, 'to', actualTimezone)
+        updateSettings({ timezone: actualTimezone })
+      }
+    }
+  }, [timezone, updateSettings])
+
   // ビューに応じた期間計算
   const viewDateRange = useMemo(() => {
     return calculateViewDateRange(viewType, currentDate)
@@ -164,11 +172,21 @@ export function CalendarView({
         return false
       }
       
+      // startDateをDateオブジェクトに変換（文字列の場合に対応）
+      const startDate = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
+      if (isNaN(startDate.getTime())) {
+        console.log('❌ Event has invalid startDate:', event.id, event.title, event.startDate)
+        return false
+      }
+      
       // イベントの日付も年月日のみで比較
-      const eventStartDateOnly = new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate())
+      const eventStartDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
       let eventEndDateOnly = eventStartDateOnly
       if (event.endDate) {
-        eventEndDateOnly = new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate())
+        const endDate = event.endDate instanceof Date ? event.endDate : new Date(event.endDate)
+        if (!isNaN(endDate.getTime())) {
+          eventEndDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
+        }
       }
       
       const inRange = (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
@@ -176,9 +194,9 @@ export function CalendarView({
                      (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
       
       if (inRange) {
-        console.log('✅ Event in range:', event.id, event.title, `${event.startDate.toDateString()} ${event.startDate.toTimeString().substring(0, 8)}`)
+        console.log('✅ Event in range:', event.id, event.title, `${startDate.toDateString()} ${startDate.toTimeString().substring(0, 8)}`)
       } else {
-        console.log('❌ Event NOT in range:', event.id, event.title, `${event.startDate.toDateString()} ${event.startDate.toTimeString().substring(0, 8)}`)
+        console.log('❌ Event NOT in range:', event.id, event.title, `${startDate.toDateString()} ${startDate.toTimeString().substring(0, 8)}`)
       }
       
       return inRange
@@ -186,22 +204,38 @@ export function CalendarView({
     
     console.log('🔍 Events in date range:', filteredByRange.length, 'Total events in store:', events.length)
     
-    // Event[]をCalendarEvent[]に変換
-    const calendarEvents = filteredByRange.map(event => ({
-      ...event,
-      startDate: event.startDate || new Date(),
-      endDate: event.endDate || new Date(),
-      displayStartDate: event.startDate || new Date(),
-      displayEndDate: event.endDate || new Date(),
-      duration: event.endDate && event.startDate 
-        ? (event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60) // minutes
-        : 60, // default 1 hour
-      isMultiDay: event.startDate && event.endDate 
-        ? event.startDate.toDateString() !== event.endDate.toDateString()
-        : false,
-      isRecurring: event.isRecurring || false,
-      type: event.type || 'event' as any
-    }))
+    // Event[]をCalendarEvent[]に変換（安全な日付処理）
+    const calendarEvents = filteredByRange.map(event => {
+      // startDate を安全にDateオブジェクトに変換
+      const startDate = event.startDate 
+        ? (event.startDate instanceof Date ? event.startDate : new Date(event.startDate))
+        : new Date()
+      
+      // endDate を安全にDateオブジェクトに変換
+      const endDate = event.endDate 
+        ? (event.endDate instanceof Date ? event.endDate : new Date(event.endDate))
+        : new Date()
+      
+      // 無効な日付の場合はデフォルト値を使用
+      const validStartDate = isNaN(startDate.getTime()) ? new Date() : startDate
+      const validEndDate = isNaN(endDate.getTime()) ? new Date() : endDate
+      
+      return {
+        ...event,
+        startDate: validStartDate,
+        endDate: validEndDate,
+        displayStartDate: validStartDate,
+        displayEndDate: validEndDate,
+        duration: event.endDate && event.startDate 
+          ? (validEndDate.getTime() - validStartDate.getTime()) / (1000 * 60) // minutes
+          : 60, // default 1 hour
+        isMultiDay: event.startDate && event.endDate 
+          ? validStartDate.toDateString() !== validEndDate.toDateString()
+          : false,
+        isRecurring: event.isRecurring || false,
+        type: event.type || 'event' as any
+      }
+    })
     console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
   }, [events, viewDateRange.start, viewDateRange.end, viewType])
@@ -267,12 +301,17 @@ export function CalendarView({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    console.log('🖱️ Event clicked:', event)
+    console.log('🖱️ CalendarView: Event clicked:', event.title, 'ID:', event.id)
+    console.log('🖱️ CalendarView: Full event data:', event)
     
-    // テスト用ポップアップを開く
-    setTestEvent(event)
-    setIsTestPopupOpen(true)
-  }, [])
+    // 編集用にselectedEventを設定
+    setSelectedEvent(event as any)
+    
+    // AddPopupを編集モードで開く
+    openEventPopup({
+      editingEvent: event
+    })
+  }, [openEventPopup])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
     // AddPopupを開く（日付と時刻を渡す）
@@ -351,27 +390,29 @@ export function CalendarView({
   
   // ゴミ箱関連のハンドラー
   const handleTrashOpen = useCallback(() => {
-    setIsTrashViewOpen(true)
+    setIsTrashModalOpen(true)
   }, [])
   
   const handleTrashClose = useCallback(() => {
-    setIsTrashViewOpen(false)
+    setIsTrashModalOpen(false)
   }, [])
   
-  const handleRestore = useCallback(async (eventId: string) => {
+  const handleRestore = useCallback(async (eventIds: string[]) => {
     try {
-      const eventToRestore = events.find(e => e.id === eventId)
-      if (eventToRestore) {
-        const updateRequest: UpdateEventRequest = {
-          ...eventToRestore,
-          isDeleted: false,
-          deletedAt: null
+      await Promise.all(eventIds.map(async (eventId) => {
+        const eventToRestore = events.find(e => e.id === eventId)
+        if (eventToRestore) {
+          const updateRequest: UpdateEventRequest = {
+            ...eventToRestore,
+            isDeleted: false,
+            deletedAt: null
+          }
+          await eventStore.updateEvent(updateRequest)
+          console.log('🔄 Event restored:', eventToRestore.title)
         }
-        await eventStore.updateEvent(updateRequest)
-        console.log('🔄 Event restored:', eventToRestore.title)
-      }
+      }))
     } catch (error) {
-      console.error('Failed to restore event:', error)
+      console.error('Failed to restore events:', error)
     }
   }, [events, eventStore])
   
@@ -567,7 +608,7 @@ export function CalendarView({
       onCreateEvent: handleCreateEvent,
       onUpdateEvent: handleUpdateEvent as any,
       onDeleteEvent: handleEventDelete,
-      onRestoreEvent: handleEventRestore,
+      // onRestoreEvent: handleEventRestore,
       onEmptyClick: handleEmptyClick,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),
@@ -656,7 +697,6 @@ export function CalendarView({
     <DnDProvider>
       <>
         <div className="h-full flex flex-col bg-background">
-          
           {/* ビュー固有のコンテンツ */}
           <div className="flex-1 min-h-0 bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
             {renderView()}
@@ -678,6 +718,9 @@ export function CalendarView({
         }}
         defaultTab="event"
         editingEvent={selectedEvent}
+        contextData={{
+          editingEvent: selectedEvent
+        }}
         defaultDate={eventDefaultDate}
         defaultTime={eventDefaultTime}
         defaultEndTime={eventDefaultEndTime}
@@ -690,15 +733,14 @@ export function CalendarView({
         onClearAll={clearAllNotifications}
       />
       
-      {/* ゴミ箱ビュー */}
-      {isTrashViewOpen && (
-        <TrashView
-          onClose={handleTrashClose}
-          trashedEvents={trashedEvents}
-          onRestore={handleRestore}
-          onDeletePermanently={handleDeletePermanently}
-        />
-      )}
+      {/* ゴミ箱モーダル */}
+      <TrashModal
+        isOpen={isTrashModalOpen}
+        onClose={handleTrashClose}
+        trashedEvents={trashedEvents}
+        onRestore={handleRestore}
+        onPermanentDelete={handleDeletePermanently}
+      />
       </>
     </DnDProvider>
   )
