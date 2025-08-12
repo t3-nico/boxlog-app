@@ -1,14 +1,12 @@
 /**
- * 統一されたAPI操作フック
- * React QueryとSupabaseを使用したデータ取得・更新の共通パターン
+ * 統一されたAPI操作フック (localStorage専用モード)
+ * Supabaseの代わりにlocalStorageを使用
  */
 
 import { useQuery, useMutation, useQueryClient, QueryKey } from '@tanstack/react-query'
-import { createClient } from '@/lib/supabase/client'
 import { 
   createErrorResponse, 
   createSuccessResponse,
-  handleSupabaseError,
   handleClientError
 } from '@/lib/errors'
 
@@ -28,215 +26,172 @@ export interface ApiQueryConfig<T> {
 export interface ApiMutationConfig<TData, TVariables> {
   table: string
   operation: 'insert' | 'update' | 'delete' | 'upsert'
-  onSuccess?: (data: TData) => void
-  onError?: (error: string) => void
+  transform?: (data: any) => TData
   invalidateQueries?: QueryKey[]
-  optimisticUpdate?: {
-    queryKey: QueryKey
-    updater: (old: any, variables: TVariables) => any
-  }
+  onSuccess?: (data: TData) => void
+  onError?: (error: any) => void
 }
 
-// === データ取得フック ===
+// === ローカルストレージ専用フック ===
 
+/**
+ * データ取得フック（localStorage専用）
+ */
 export function useApiQuery<T = any>(config: ApiQueryConfig<T>) {
-  const supabase = createClient()
-
   return useQuery({
     queryKey: config.queryKey,
-    queryFn: async (): Promise<T> => {
+    queryFn: () => {
+      // ローカルストレージから該当テーブルのデータを取得
       try {
-        let query = supabase
-          .from(config.table)
-          .select(config.select || '*')
-
-        // フィルター適用
-        if (config.filter) {
-          query = config.filter(query)
+        const data = localStorage.getItem(`boxlog-${config.table}`)
+        const parsedData = data ? JSON.parse(data) : []
+        
+        // フィルターがある場合は適用
+        let filteredData = parsedData
+        if (config.filter && Array.isArray(parsedData)) {
+          filteredData = parsedData.filter(config.filter)
         }
-
-        const { data, error } = await query
-
-        if (error) {
-          throw handleSupabaseError(error)
-        }
-
-        // データ変換
-        const transformedData = config.transform ? config.transform(data) : data
-        return transformedData as T
+        
+        // 変換がある場合は適用
+        return config.transform ? config.transform(filteredData) : filteredData
       } catch (error) {
-        throw new Error(handleClientError(error))
+        console.error(`Error reading ${config.table} from localStorage:`, error)
+        return []
       }
     },
-    enabled: config.enabled,
-    staleTime: config.staleTime || 5 * 60 * 1000, // 5分
-    gcTime: config.cacheTime || 10 * 60 * 1000, // 10分
-    retry: (failureCount, error) => {
-      // 認証エラーの場合はリトライしない
-      if (error.message.includes('認証') || error.message.includes('Unauthorized')) {
-        return false
-      }
-      return failureCount < 3
-    },
+    enabled: config.enabled !== false,
+    staleTime: config.staleTime || 1000 * 60 * 5, // 5分
+    cacheTime: config.cacheTime || 1000 * 60 * 30, // 30分
   })
 }
 
-// === データ更新フック ===
-
+/**
+ * データ更新フック（localStorage専用）
+ */
 export function useApiMutation<TData = any, TVariables = any>(
   config: ApiMutationConfig<TData, TVariables>
 ) {
   const queryClient = useQueryClient()
-  const supabase = createClient()
 
   return useMutation({
-    mutationFn: async (variables: TVariables): Promise<TData> => {
+    mutationFn: async (variables: TVariables) => {
       try {
-        let query: any
+        const storageKey = `boxlog-${config.table}`
+        const existingData = localStorage.getItem(storageKey)
+        let data = existingData ? JSON.parse(existingData) : []
 
         switch (config.operation) {
           case 'insert':
-            query = supabase.from(config.table).insert(variables).select().single()
-            break
+            const newItem = {
+              id: Date.now().toString(),
+              ...variables,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }
+            data.push(newItem)
+            localStorage.setItem(storageKey, JSON.stringify(data))
+            return config.transform ? config.transform(newItem) : newItem
+
           case 'update':
-            const { id, ...updateData } = variables as any
-            query = supabase.from(config.table).update(updateData).eq('id', id).select().single()
-            break
+            if (typeof variables === 'object' && variables && 'id' in variables) {
+              const itemId = (variables as any).id
+              const itemIndex = data.findIndex((item: any) => item.id === itemId)
+              if (itemIndex !== -1) {
+                data[itemIndex] = {
+                  ...data[itemIndex],
+                  ...variables,
+                  updated_at: new Date().toISOString(),
+                }
+                localStorage.setItem(storageKey, JSON.stringify(data))
+                return config.transform ? config.transform(data[itemIndex]) : data[itemIndex]
+              }
+            }
+            throw new Error('Item not found for update')
+
           case 'delete':
-            const deleteId = (variables as any).id
-            query = supabase.from(config.table).delete().eq('id', deleteId).select().single()
-            break
+            if (typeof variables === 'string' || (typeof variables === 'object' && variables && 'id' in variables)) {
+              const itemId = typeof variables === 'string' ? variables : (variables as any).id
+              const filteredData = data.filter((item: any) => item.id !== itemId)
+              localStorage.setItem(storageKey, JSON.stringify(filteredData))
+              return itemId
+            }
+            throw new Error('Invalid delete operation')
+
           case 'upsert':
-            query = supabase.from(config.table).upsert(variables).select().single()
-            break
+            if (typeof variables === 'object' && variables && 'id' in variables) {
+              const itemId = (variables as any).id
+              const itemIndex = data.findIndex((item: any) => item.id === itemId)
+              
+              if (itemIndex !== -1) {
+                // 更新
+                data[itemIndex] = {
+                  ...data[itemIndex],
+                  ...variables,
+                  updated_at: new Date().toISOString(),
+                }
+              } else {
+                // 挿入
+                const newItem = {
+                  ...variables,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                }
+                data.push(newItem)
+              }
+              
+              localStorage.setItem(storageKey, JSON.stringify(data))
+              const result = itemIndex !== -1 ? data[itemIndex] : data[data.length - 1]
+              return config.transform ? config.transform(result) : result
+            }
+            throw new Error('Invalid upsert operation')
+
           default:
             throw new Error(`Unsupported operation: ${config.operation}`)
         }
-
-        const { data, error } = await query
-
-        if (error) {
-          throw handleSupabaseError(error)
-        }
-
-        return data
       } catch (error) {
-        throw new Error(handleClientError(error))
+        console.error(`Error in ${config.operation} operation:`, error)
+        throw error
       }
     },
-    onSuccess: (data, variables) => {
-      // 楽観的更新のロールバック（成功時は不要だが、念のため）
-      if (config.optimisticUpdate) {
-        queryClient.setQueryData(config.optimisticUpdate.queryKey, data)
-      }
-
-      // 関連クエリの無効化
+    onSuccess: (data) => {
+      // クエリキャッシュを無効化
       if (config.invalidateQueries) {
         config.invalidateQueries.forEach(queryKey => {
           queryClient.invalidateQueries({ queryKey })
         })
       }
-
-      config.onSuccess?.(data)
-    },
-    onError: (error, variables, context) => {
-      // 楽観的更新のロールバック
-      if (config.optimisticUpdate && context) {
-        queryClient.setQueryData(config.optimisticUpdate.queryKey, context)
-      }
-
-      config.onError?.(error.message)
-    },
-    onMutate: async (variables) => {
-      // 楽観的更新
-      if (config.optimisticUpdate) {
-        await queryClient.cancelQueries({ queryKey: config.optimisticUpdate.queryKey })
-        
-        const previousData = queryClient.getQueryData(config.optimisticUpdate.queryKey)
-        
-        queryClient.setQueryData(
-          config.optimisticUpdate.queryKey,
-          (old: any) => config.optimisticUpdate!.updater(old, variables)
-        )
-
-        return previousData
+      
+      // カスタム成功ハンドラー
+      if (config.onSuccess) {
+        config.onSuccess(data)
       }
     },
+    onError: (error) => {
+      console.error(`Mutation error:`, error)
+      if (config.onError) {
+        config.onError(error)
+      }
+    }
   })
-}
-
-// === 特殊なフック ===
-
-/**
- * ユーザー固有のデータを取得するフック
- */
-export function useUserApiQuery<T = any>(config: Omit<ApiQueryConfig<T>, 'filter'>) {
-  const supabase = createClient()
-
-  return useApiQuery({
-    ...config,
-    filter: (query) => {
-      return query.eq('user_id', 'current_user_id') // 実際のユーザーIDに置き換え
-    },
-    enabled: config.enabled !== false, // ユーザーがログインしている場合のみ
-  })
-}
-
-/**
- * リアルタイム購読付きクエリフック
- */
-export function useRealtimeQuery<T = any>(
-  config: ApiQueryConfig<T> & { 
-    channel?: string
-    event?: string 
-  }
-) {
-  const queryClient = useQueryClient()
-  const supabase = createClient()
-  const query = useApiQuery(config)
-
-  // リアルタイム購読
-  // useEffect(() => {
-  //   if (!config.channel) return
-
-  //   const subscription = supabase
-  //     .channel(config.channel)
-  //     .on('postgres_changes', {
-  //       event: config.event || '*',
-  //       schema: 'public',
-  //       table: config.table,
-  //     }, () => {
-  //       queryClient.invalidateQueries({ queryKey: config.queryKey })
-  //     })
-  //     .subscribe()
-
-  //   return () => {
-  //     subscription.unsubscribe()
-  //   }
-  // }, [config.channel, config.table, config.event, config.queryKey, queryClient, supabase])
-
-  return query
 }
 
 // === ヘルパー関数 ===
 
 /**
- * クエリキー生成ヘルパー
+ * テーブル全体をクリア
  */
-export const queryKeys = {
-  all: ['api'] as const,
-  table: (table: string) => [...queryKeys.all, table] as const,
-  item: (table: string, id: string) => [...queryKeys.table(table), id] as const,
-  filter: (table: string, filter: Record<string, any>) => 
-    [...queryKeys.table(table), 'filter', filter] as const,
+export function clearLocalTable(tableName: string) {
+  localStorage.removeItem(`boxlog-${tableName}`)
 }
 
 /**
- * エラーハンドリング付きのAPIレスポンス変換
+ * すべてのBoxLogデータをクリア
  */
-export function transformApiResponse<T>(data: T, error?: any): any {
-  if (error) {
-    return createErrorResponse(error)
-  }
-  return createSuccessResponse(data)
+export function clearAllLocalData() {
+  const keys = Object.keys(localStorage)
+  keys.forEach(key => {
+    if (key.startsWith('boxlog-')) {
+      localStorage.removeItem(key)
+    }
+  })
 }

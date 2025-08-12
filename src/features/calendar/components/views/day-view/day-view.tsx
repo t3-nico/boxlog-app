@@ -75,6 +75,9 @@ export function DayView({
         currentDate={normalizedCurrentDate}
         events={events}
         onDeleteEvent={onDeleteEvent}
+        onCreateEvent={onCreateEvent}
+        onEmptyClick={onEmptyClick}
+        onEventClick={onEventClick}
       />
     </CalendarViewAnimation>
   )

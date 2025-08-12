@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { calendarService } from '../services/calendar-service'
+// import { calendarService } from '../services/calendar-service' // Removed - using localStorage
 import type {
   Calendar,
   CreateCalendarInput,
@@ -11,13 +11,14 @@ import type {
 } from '../types/calendar.types'
 
 // ========================================
-// Calendar Management Hooks
+// Calendar Management Hooks (localStorage-based)
 // ========================================
 
 export function useCalendars(userId: string) {
+  // TODO: Implement localStorage-based calendar management
   return useQuery({
     queryKey: ['calendars', userId],
-    queryFn: () => calendarService.getCalendars(userId),
+    queryFn: () => Promise.resolve([]), // Temporary stub
     enabled: !!userId
   })
 }
@@ -25,7 +26,7 @@ export function useCalendars(userId: string) {
 export function useCalendar(calendarId: string) {
   return useQuery({
     queryKey: ['calendar', calendarId],
-    queryFn: () => calendarService.getCalendar(calendarId),
+    queryFn: () => Promise.resolve(null), // Temporary stub
     enabled: !!calendarId
   })
 }
@@ -35,7 +36,7 @@ export function useCreateCalendar(userId: string) {
 
   return useMutation({
     mutationFn: (input: CreateCalendarInput) => 
-      calendarService.createCalendar(userId, input),
+      Promise.resolve({} as Calendar), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendars', userId] })
     }
@@ -47,10 +48,10 @@ export function useUpdateCalendar() {
 
   return useMutation({
     mutationFn: ({ calendarId, input }: { calendarId: string; input: UpdateCalendarInput }) =>
-      calendarService.updateCalendar(calendarId, input),
+      Promise.resolve({} as Calendar), // Temporary stub
     onSuccess: (calendar) => {
-      queryClient.invalidateQueries({ queryKey: ['calendars', calendar.userId] })
-      queryClient.invalidateQueries({ queryKey: ['calendar', calendar.id] })
+      // queryClient.invalidateQueries({ queryKey: ['calendars', calendar.userId] })
+      // queryClient.invalidateQueries({ queryKey: ['calendar', calendar.id] })
     }
   })
 }
@@ -59,7 +60,7 @@ export function useDeleteCalendar() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: calendarService.deleteCalendar,
+    mutationFn: (calendarId: string) => Promise.resolve(), // Temporary stub
     onSuccess: (_, calendarId) => {
       queryClient.invalidateQueries({ queryKey: ['calendars'] })
       queryClient.removeQueries({ queryKey: ['calendar', calendarId] })
@@ -71,7 +72,7 @@ export function useSetDefaultCalendar() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: calendarService.setDefaultCalendar,
+    mutationFn: (calendarId: string) => Promise.resolve(), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendars'] })
     }
@@ -85,7 +86,7 @@ export function useSetDefaultCalendar() {
 export function useCalendarShares(calendarId: string) {
   return useQuery({
     queryKey: ['calendar-shares', calendarId],
-    queryFn: () => calendarService.getCalendarShares(calendarId),
+    queryFn: () => Promise.resolve([]), // Temporary stub
     enabled: !!calendarId
   })
 }
@@ -95,9 +96,9 @@ export function useShareCalendar() {
 
   return useMutation({
     mutationFn: (input: CalendarShareInput) =>
-      calendarService.shareCalendar(input),
+      Promise.resolve({} as CalendarShare), // Temporary stub
     onSuccess: (share) => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
+      // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
     }
   })
 }
@@ -107,9 +108,9 @@ export function useUpdateCalendarShare() {
 
   return useMutation({
     mutationFn: ({ shareId, permission }: { shareId: string; permission: 'view' | 'edit' | 'admin' }) =>
-      calendarService.updateCalendarShare(shareId, permission),
+      Promise.resolve({} as CalendarShare), // Temporary stub
     onSuccess: (share) => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
+      // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
     }
   })
 }
@@ -118,7 +119,7 @@ export function useRevokeCalendarShare() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: calendarService.revokeCalendarShare,
+    mutationFn: (shareId: string) => Promise.resolve(), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-shares'] })
     }
@@ -131,7 +132,7 @@ export function useCreatePublicShareLink() {
       calendarId: string
       permission: 'view' | 'edit'
       expiresInDays?: number
-    }) => calendarService.createPublicShareLink(calendarId, permission, expiresInDays)
+    }) => Promise.resolve('') // Temporary stub
   })
 }
 
@@ -142,7 +143,7 @@ export function useCreatePublicShareLink() {
 export function useCalendarViewState(userId: string) {
   return useQuery({
     queryKey: ['calendar-view-state', userId],
-    queryFn: () => calendarService.getViewState(userId),
+    queryFn: () => Promise.resolve(null), // Temporary stub
     enabled: !!userId,
     staleTime: 1000 * 60 * 5 // 5分間はキャッシュを維持
   })
@@ -153,7 +154,7 @@ export function useUpdateViewState(userId: string) {
   
   return useMutation({
     mutationFn: (updates: Partial<CalendarViewState>) =>
-      calendarService.updateViewState(userId, updates),
+      Promise.resolve({} as CalendarViewState), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-view-state', userId] })
     }

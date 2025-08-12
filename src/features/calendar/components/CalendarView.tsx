@@ -7,14 +7,13 @@ import { DayView } from './views/day-view'
 import { ThreeDayView } from './views/three-day-view'
 import { WeekView } from './views/week-view'
 import { MonthView } from './views/month-view'
-import { AddPopup, useAddPopup } from '@/components/add-popup'
+import { AddPopup, useAddPopup } from './add-popup'
 import { DnDProvider } from './calendar-grid/dnd/DnDProvider'
-import { TrashModal } from '@/components/modals/TrashModal'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/utils/timezone'
 import { useTaskStore } from '@/stores/useTaskStore'
-import { useEventStore } from '@/stores/useEventStore'
+import { useEventStore, initializeEventStore } from '@/stores/useEventStore'
 import { useNotifications } from '../hooks/useNotifications'
 import { NotificationDisplay } from '@/components/ui/notification-display'
 import { 
@@ -50,8 +49,6 @@ export function CalendarView({
   const [eventDefaultEndTime, setEventDefaultEndTime] = useState<string | undefined>(undefined)
   
   
-  // ゴミ箱の状態
-  const [isTrashModalOpen, setIsTrashModalOpen] = useState(false)
   
   // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
@@ -104,6 +101,12 @@ export function CalendarView({
     if (saved && isValidViewType(saved)) {
       setViewType(saved as CalendarViewType)
     }
+  }, [])
+  
+  // 🚀 初回ロード時にローカルストレージからイベントを読み込み
+  useEffect(() => {
+    console.log('🚀 CalendarView: Initializing event store on mount')
+    initializeEventStore()
   }, [])
   
   // 通知許可のリクエスト（初回のみ）
@@ -305,14 +308,16 @@ export function CalendarView({
   }, [openEventPopup])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    console.log('🆕 handleCreateEvent called:', { date, time })
+    console.log('🆕🆕🆕 handleCreateEvent called:', { date, time })
+    console.log('🆕🆕🆕 This should appear in console when clicking calendar!')
     
     // AddPopupを開く（日付と時刻を渡す）
-    console.log('🆕 Opening event popup...')
+    console.log('🆕🆕🆕 Opening event popup...')
     openEventPopup({
       dueDate: date || new Date(),
       status: 'Todo'
     })
+    console.log('🆕🆕🆕 openEventPopup called successfully')
     
     // デフォルト値を設定（AddPopupが開いた後に使用される）
     let startTime: string | undefined
@@ -382,14 +387,6 @@ export function CalendarView({
     }
   }, [eventStore])
   
-  // ゴミ箱関連のハンドラー
-  const handleTrashOpen = useCallback(() => {
-    setIsTrashModalOpen(true)
-  }, [])
-  
-  const handleTrashClose = useCallback(() => {
-    setIsTrashModalOpen(false)
-  }, [])
   
   const handleRestore = useCallback(async (eventIds: string[]) => {
     try {
@@ -728,15 +725,6 @@ export function CalendarView({
         notifications={visibleNotifications}
         onDismiss={dismissNotification}
         onClearAll={clearAllNotifications}
-      />
-      
-      {/* ゴミ箱モーダル */}
-      <TrashModal
-        isOpen={isTrashModalOpen}
-        onClose={handleTrashClose}
-        trashedEvents={trashedEvents}
-        onRestore={handleRestore}
-        onPermanentDelete={handleDeletePermanently}
       />
       </>
     </DnDProvider>

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { eventService } from '../services/event-service'
+// import { eventService } from '../services/event-service' // Removed - using localStorage via useEventStore
 import type {
   ExtendedEvent,
   CreateEventInput,
@@ -14,9 +14,10 @@ import type {
 // ========================================
 
 export function useEvents(filter: CalendarFilter) {
+  // NOTE: Events are now managed by useEventStore (localStorage)
   return useQuery({
     queryKey: ['events', filter],
-    queryFn: () => eventService.getEvents(filter),
+    queryFn: () => Promise.resolve([]), // Temporary stub - use useEventStore instead
     enabled: !!(filter.startDate && filter.endDate)
   })
 }
@@ -24,7 +25,7 @@ export function useEvents(filter: CalendarFilter) {
 export function useEvent(eventId: string) {
   return useQuery({
     queryKey: ['event', eventId],
-    queryFn: () => eventService.getEvent(eventId),
+    queryFn: () => Promise.resolve(null), // Temporary stub - use useEventStore instead
     enabled: !!eventId
   })
 }
@@ -34,7 +35,7 @@ export function useCreateEvent(userId: string) {
 
   return useMutation({
     mutationFn: (input: CreateEventInput) =>
-      eventService.createEvent(userId, input),
+      Promise.resolve({} as ExtendedEvent), // Temporary stub - use useEventStore instead
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
     }
@@ -46,10 +47,10 @@ export function useUpdateEvent() {
 
   return useMutation({
     mutationFn: ({ eventId, input }: { eventId: string; input: UpdateEventInput }) =>
-      eventService.updateEvent(eventId, input),
+      Promise.resolve({} as ExtendedEvent), // Temporary stub - use useEventStore instead
     onSuccess: (event) => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
-      queryClient.invalidateQueries({ queryKey: ['event', event.id] })
+      // queryClient.invalidateQueries({ queryKey: ['event', event.id] })
     }
   })
 }
@@ -58,7 +59,7 @@ export function useDeleteEvent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: eventService.deleteEvent,
+    mutationFn: (eventId: string) => Promise.resolve(), // Temporary stub - use useEventStore instead
     onSuccess: (_, eventId) => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       queryClient.removeQueries({ queryKey: ['event', eventId] })
@@ -67,7 +68,7 @@ export function useDeleteEvent() {
 }
 
 // ========================================
-// Recurring Event Hooks
+// Recurring Event Hooks (Disabled - localStorage doesn't support advanced recurrence)
 // ========================================
 
 export function useCreateRecurrencePattern() {
@@ -77,10 +78,10 @@ export function useCreateRecurrencePattern() {
     mutationFn: ({ eventId, pattern }: {
       eventId: string
       pattern: Omit<RecurrencePattern, 'id' | 'eventId' | 'createdAt' | 'updatedAt'>
-    }) => eventService.createRecurrencePattern(eventId, pattern),
+    }) => Promise.resolve({} as RecurrencePattern), // Temporary stub
     onSuccess: (pattern) => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
-      queryClient.invalidateQueries({ queryKey: ['event', pattern.eventId] })
+      // queryClient.invalidateQueries({ queryKey: ['event', pattern.eventId] })
     }
   })
 }
@@ -92,10 +93,10 @@ export function useUpdateRecurrencePattern() {
     mutationFn: ({ patternId, updates }: {
       patternId: string
       updates: Partial<RecurrencePattern>
-    }) => eventService.updateRecurrencePattern(patternId, updates),
+    }) => Promise.resolve({} as RecurrencePattern), // Temporary stub
     onSuccess: (pattern) => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
-      queryClient.invalidateQueries({ queryKey: ['event', pattern.eventId] })
+      // queryClient.invalidateQueries({ queryKey: ['event', pattern.eventId] })
     }
   })
 }
@@ -104,7 +105,7 @@ export function useDeleteRecurrencePattern() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: eventService.deleteRecurrencePattern,
+    mutationFn: (eventId: string) => Promise.resolve(), // Temporary stub
     onSuccess: (_, eventId) => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       queryClient.invalidateQueries({ queryKey: ['event', eventId] })
@@ -115,7 +116,7 @@ export function useDeleteRecurrencePattern() {
 export function useRecurringEventInstances(filter: CalendarFilter) {
   return useQuery({
     queryKey: ['recurring-instances', filter],
-    queryFn: () => eventService.getRecurringEventInstances(filter),
+    queryFn: () => Promise.resolve([]), // Temporary stub
     enabled: !!(filter.startDate && filter.endDate && filter.includeRecurring)
   })
 }
@@ -128,7 +129,7 @@ export function useCreateEventInstance() {
       eventId: string
       date: Date
       duration: number
-    }) => eventService.createEventInstance(eventId, date, duration),
+    }) => Promise.resolve({} as EventInstance), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       queryClient.invalidateQueries({ queryKey: ['recurring-instances'] })
@@ -143,7 +144,7 @@ export function useUpdateEventInstance() {
     mutationFn: ({ instanceId, overrides }: {
       instanceId: string
       overrides: Partial<ExtendedEvent>
-    }) => eventService.updateEventInstance(instanceId, overrides),
+    }) => Promise.resolve({} as EventInstance), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       queryClient.invalidateQueries({ queryKey: ['recurring-instances'] })

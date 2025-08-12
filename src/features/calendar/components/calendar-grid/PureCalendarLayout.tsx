@@ -1113,7 +1113,9 @@ function CalendarGrid({
     // クリックしたスロットも設定
     setClickedSlot({ date, hour: hours, minute: minutes })
     
-    // onCreateEvent?.(date, time) // ポップアップを削除
+    // イベント作成コールバックを呼び出し
+    console.log('🎯 PureCalendarLayout: Calling onCreateEvent', { date, time })
+    onCreateEvent?.(date, time)
   }, [onCreateEvent])
 
   // 空き時間クリックハンドラー（既存のコードは残す）

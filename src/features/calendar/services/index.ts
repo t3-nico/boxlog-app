@@ -1,6 +1,4 @@
-// Calendar Services Export
-export { calendarService, CalendarService } from './calendar-service'
-export { eventService, EventService } from './event-service'
+// Calendar Services Export - Supabase services removed, using localStorage instead
 
 // Re-export types for convenience
 export type {

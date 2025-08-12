@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { ApplicationLayout } from './(app)/application-layout'
+import { ApplicationLayoutNew } from './(app)/application-layout-new'
 
 // 404ページのコンテンツコンポーネント
 function NotFoundContent() {
@@ -40,8 +40,8 @@ export default function NotFound() {
   const reviews: any[] = []
 
   return (
-    <ApplicationLayout events={events} reviews={reviews} hideHeader={true}>
+    <ApplicationLayoutNew events={events} reviews={reviews} hideHeader={true}>
       <NotFoundContent />
-    </ApplicationLayout>
+    </ApplicationLayoutNew>
   )
 }

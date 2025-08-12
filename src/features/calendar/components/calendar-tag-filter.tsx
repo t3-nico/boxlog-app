@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { Plus, Settings, Filter } from 'lucide-react'
 import { SidebarSection, SidebarHeading } from '@/components/sidebar'
-import { HierarchicalTagList } from './hierarchical-tag-list'
+import { TagsList } from '@/features/tags/components/tags-list'
 
 // Tag interface
 interface Tag {
@@ -136,11 +136,10 @@ export function CalendarTagFilter({
             No tags yet
           </div>
         ) : (
-          <HierarchicalTagList
-            tags={tags}
-            selectedTags={selectedTags}
-            onTagSelect={onTagSelect}
-            onToggleExpand={onToggleExpand}
+          <TagsList
+            collapsed={false}
+            onSelectTag={onTagSelect}
+            selectedTagIds={selectedTags}
           />
         )}
       </div>

@@ -13,6 +13,9 @@ interface TestDayViewProps {
   currentDate: Date
   events: CalendarEvent[]
   onDeleteEvent?: (eventId: string) => void
+  onCreateEvent?: (date: Date, time?: string) => void
+  onEmptyClick?: (date: Date, time: string) => void
+  onEventClick?: (event: CalendarEvent) => void
 }
 
 // Get week start (Monday)
@@ -23,7 +26,14 @@ const getWeekStart = (date: Date) => {
   return new Date(d.setDate(diff))
 }
 
-export function TestDayView({ currentDate: initialCurrentDate, events, onDeleteEvent }: TestDayViewProps) {
+export function TestDayView({ 
+  currentDate: initialCurrentDate, 
+  events, 
+  onDeleteEvent, 
+  onCreateEvent, 
+  onEmptyClick, 
+  onEventClick 
+}: TestDayViewProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [isPopupOpen, setIsPopupOpen] = useState(false)
@@ -163,16 +173,31 @@ export function TestDayView({ currentDate: initialCurrentDate, events, onDeleteE
   const handleCreateEvent = useCallback((date: Date, time: string) => {
     console.log('🎯 Creating event at:', { date: date.toDateString(), time })
     
-    setSelectedDate(date)
-    setSelectedTime(time)
-    setIsPopupOpen(true)
-  }, [])
+    // 親コンポーネントのハンドラーがあれば呼び出す
+    if (onEmptyClick) {
+      onEmptyClick(date, time)
+    } else if (onCreateEvent) {
+      onCreateEvent(date, time)
+    } else {
+      // フォールバック: 古いSimpleTestPopupを使用
+      setSelectedDate(date)
+      setSelectedTime(time)
+      setIsPopupOpen(true)
+    }
+  }, [onEmptyClick, onCreateEvent])
 
   // イベントクリックハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
     console.log('🖱️ Event clicked:', event.title)
-    alert(`Event clicked: ${event.title} at ${event.startDate?.toLocaleTimeString()}`)
-  }, [])
+    
+    // 親コンポーネントのハンドラーがあれば呼び出す
+    if (onEventClick) {
+      onEventClick(event)
+    } else {
+      // フォールバック: 古いアラートを表示
+      alert(`Event clicked: ${event.title} at ${event.startDate?.toLocaleTimeString()}`)
+    }
+  }, [onEventClick])
 
   // モックデータを削除してクリーンな状態に
   const testEvents = useMemo(() => {

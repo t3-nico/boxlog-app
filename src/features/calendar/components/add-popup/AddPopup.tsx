@@ -16,8 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { EventCreateForm, type EventFormData } from './EventCreateForm'
 import { LogCreateForm, type LogFormData } from './LogCreateForm'
-import { createEvent } from '@/lib/supabase/events'
-import { createTaskRecord } from '@/lib/supabase/task-records'
+// import { createTaskRecord } from '@/lib/supabase/task-records' // Temporarily commented out - using localStorage instead
 import { useEventStore } from '@/stores/useEventStore'
 
 interface AddPopupProps {
@@ -76,8 +75,17 @@ export function AddPopup({
   }
 
   const handleSubmit = async () => {
+    console.log('🎯 AddPopup: Submit button clicked', { 
+      activeTab, 
+      hasEventData: !!eventFormData,
+      isEventFormValid,
+      hasLogData: !!logFormData,
+      isLogFormValid
+    })
+    
     if (!((activeTab === 'event' && eventFormData && isEventFormValid) || 
           (activeTab === 'log' && logFormData && isLogFormValid))) {
+      console.log('❌ AddPopup: Form validation failed, skipping submit')
       return
     }
 
@@ -142,19 +150,21 @@ export function AddPopup({
         
         if (editingEvent) {
           // 編集モード
+          console.log('🔄 AddPopup: Updating existing event', editingEvent.id)
           await eventStore.updateEvent({
             ...eventData,
             id: editingEvent.id
           })
-          console.log('Event updated successfully')
+          console.log('✅ AddPopup: Event updated successfully')
         } else {
           // 新規作成モード
+          console.log('🚀 AddPopup: Creating new event with data:', eventData)
           await eventStore.createEvent(eventData)
-          console.log('Event created successfully')
+          console.log('✅ AddPopup: Event created successfully')
         }
       } else if (activeTab === 'log' && logFormData) {
-        await createTaskRecord(logFormData)
-        console.log('Task record created successfully')
+        // TODO: Implement localStorage-based log creation
+        console.log('Log creation temporarily disabled - localStorage implementation needed:', logFormData)
       }
       
       // Close popup on success

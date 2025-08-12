@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+// import { createClient } from '@/lib/supabase/client' // Disabled for localStorage mode
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -22,7 +22,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  // const supabase = createClient() // Disabled for localStorage mode
 
   const {
     register,
@@ -37,23 +37,11 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError(null)
 
     try {
+      // ローカル専用モード: 常にダッシュボードにリダイレクト
       if (mode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({
-          email: data.email,
-          password: data.password,
-        })
-        if (error) throw error
         router.push('/dashboard')
       } else {
-        const { error } = await supabase.auth.signUp({
-          email: data.email,
-          password: data.password,
-          options: {
-            emailRedirectTo: `${location.origin}/auth/callback`,
-          },
-        })
-        if (error) throw error
-        router.push('/login?message=Check your email to confirm your account')
+        router.push('/dashboard')
       }
     } catch (error: any) {
       setError(error.message)
@@ -67,18 +55,11 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${location.origin}/auth/callback`,
-          queryParams: provider === 'apple' ? {
-            response_type: 'code id_token',
-          } : undefined,
-        },
-      })
-      if (error) throw error
+      // ローカル専用モード: OAuth無効
+      setError(`${provider} login disabled in localStorage mode`)
     } catch (error: any) {
       setError(error.message)
+    } finally {
       setIsLoading(false)
     }
   }

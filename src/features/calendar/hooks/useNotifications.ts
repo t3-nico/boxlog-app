@@ -183,6 +183,6 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
     requestPermission,
     dismissNotification,
     clearAllNotifications,
-    isSupported: 'Notification' in window
+    isSupported: typeof window !== 'undefined' && 'Notification' in window
   }
 }

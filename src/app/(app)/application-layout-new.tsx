@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import clsx from 'clsx'
 import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
-import { Calendar } from '@/components/ui/calendar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAuthContext } from '@/contexts/AuthContext'
@@ -14,12 +13,8 @@ import { ViewSwitcher } from '@/components/ui/view-switcher'
 import { getPageTitle, getCurrentViewIcon } from '@/config/views'
 import { useBoxStore } from '@/lib/box-store'
 import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
-import { DynamicSidebarSection } from '@/components/sidebar/DynamicSidebarSection'
-import { TagsList } from '@/features/tags/components/tags-list'
-import { CalendarTagFilter } from '@/components/sidebar/calendar-tag-filter'
-import { TagManagementModal } from '@/components/sidebar/tag-management-modal'
-import { QuickTagCreateModal } from '@/components/sidebar/quick-tag-create-modal'
-import { SmartFolderList } from '@/features/smart-folders/components/smart-folder-list'
+import { TagManagementModal } from '@/features/tags/components/tag-management-modal'
+import { QuickTagCreateModal } from '@/features/tags/components/quick-tag-create-modal'
 import { sidebarConfig } from '@/config/sidebarConfig'
 import { useCommandPalette } from '@/components/providers'
 import { CalendarSettingsMenu } from '@/features/calendar/components/calendar-grid/CalendarSettingsMenu'
@@ -43,10 +38,13 @@ import {
 } from '@/components/sidebar'
 import { AIChatSidebar } from '@/components/ai-chat-sidebar'
 import { CodebaseAIChat } from '@/components/codebase-ai-chat'
-import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
-import { LifeProgressCard } from '@/components/sidebar/life-progress-card'
-import { CalendarDisplayMode } from '@/components/sidebar/calendar-display-mode'
-import { AddPopup, useAddPopup } from '@/components/add-popup'
+import { CommonSidebarSections } from '@/components/sidebar/CommonSidebarSections'
+import { CommonBottomSections } from '@/components/sidebar/CommonBottomSections'
+import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
+import { BoardSidebarSections } from '@/features/board/components/sidebar'
+import { TableSidebarSections } from '@/features/table/components/sidebar'
+import { StatsSidebarSections } from '@/features/stats/components/sidebar'
+import { AddPopup, useAddPopup } from '@/features/calendar/components/add-popup'
 import { getEvents, getReviews } from '@/data'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
@@ -123,8 +121,11 @@ export function ApplicationLayoutNew({
   const [showTagManagement, setShowTagManagement] = useState(false)
   const [showQuickTagCreate, setShowQuickTagCreate] = useState(false)
   
-  // カレンダーページかどうかを判定
+  // ページタイプの判定
   const isCalendarPage = pathname.startsWith('/calendar')
+  const isBoardPage = pathname.startsWith('/board')
+  const isTablePage = pathname.startsWith('/table') 
+  const isStatsPage = pathname.startsWith('/stats')
   
   // ページ状態の監視
   
@@ -523,11 +524,11 @@ export function ApplicationLayoutNew({
           {/* Left Sidebar - Hidden when collapsed */}
           {!collapsed && (
             <div className="w-64 fixed left-0 bg-background border-r border-border z-10" style={{top: '64px', bottom: '0', transition: 'width 150ms ease'}}>
-              <div className="h-full flex flex-col gap-6 p-4">
+              <div className="h-full flex flex-col p-4">
                 {!inSettings && (
                   <>
-                    {/* Createボタン */}
-                    <div className="flex-shrink-0">
+                    {/* Createボタン - 一番上に固定 */}
+                    <div className="flex-shrink-0 mb-6">
                       <SidebarSection>
                         <div className="relative">
                           <ShadButton
@@ -545,45 +546,47 @@ export function ApplicationLayoutNew({
                       </SidebarSection>
                     </div>
 
-                    {/* 日付選択カレンダー */}
-                    <div className="flex-shrink-0">
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={handleDateSelect}
-                        className="w-full p-0"
-                        weekStartsOn={1}
-                      />
-                    </div>
-                    
-                    {/* カレンダー表示モード選択 */}
-                    <div className="flex-shrink-0">
-                      <CalendarDisplayMode />
-                    </div>
+                    {/* 中央コンテンツエリア - 上に寄せて配置 */}
+                    <div className="flex-1 flex flex-col gap-6 min-h-0">
+                      {/* 全ページ共通部分 */}
+                      <CommonSidebarSections collapsed={collapsed} />
 
-                    {/* 中央スクロールエリア - スマートフォルダーとタグ */}
-                    <div className="flex-1 overflow-y-auto min-h-0">
+                      {/* ページ別専用部分 */}
                       <div className="space-y-6">
-                        <SmartFolderList
-                          collapsed={collapsed}
-                          onSelectFolder={handleSelectSmartFolder}
-                          selectedFolderId={filters.smartFolder || ''}
-                        />
-
-                        {isCalendarPage ? (
-                          <CalendarTagFilter
+                        {isCalendarPage && (
+                          <CalendarSidebarSections
                             collapsed={collapsed}
+                            selectedDate={selectedDate}
+                            onDateSelect={handleDateSelect}
                             tags={calendarTags}
                             selectedTags={selectedCalendarTags}
                             tagFilterMode={calendarTagFilterMode}
                             onTagSelect={handleCalendarTagSelect}
-                            onToggleExpand={handleToggleTagExpand}
+                            onToggleExpand={() => handleToggleTagExpand('')}
                             onFilterModeChange={setCalendarTagFilterMode}
                             onManageTags={() => setShowTagManagement(true)}
                             onCreateTag={() => setShowQuickTagCreate(true)}
                           />
-                        ) : (
-                          <TagsList
+                        )}
+
+                        {isBoardPage && (
+                          <BoardSidebarSections
+                            collapsed={collapsed}
+                            onSelectTag={handleSelectTag}
+                            selectedTagIds={filters.tags || []}
+                          />
+                        )}
+
+                        {isTablePage && (
+                          <TableSidebarSections
+                            collapsed={collapsed}
+                            onSelectTag={handleSelectTag}
+                            selectedTagIds={filters.tags || []}
+                          />
+                        )}
+
+                        {isStatsPage && (
+                          <StatsSidebarSections
                             collapsed={collapsed}
                             onSelectTag={handleSelectTag}
                             selectedTagIds={filters.tags || []}
@@ -592,10 +595,9 @@ export function ApplicationLayoutNew({
                       </div>
                     </div>
 
-                    {/* 下部固定エリア - 時間表示カード */}
-                    <div className="flex-shrink-0 space-y-3">
-                      <CurrentScheduleCard collapsed={collapsed} />
-                      <LifeProgressCard collapsed={collapsed} />
+                    {/* スケジュールカード - 一番下に固定 */}
+                    <div className="flex-shrink-0 mt-6">
+                      <CommonBottomSections collapsed={collapsed} />
                     </div>
                   </>
                 )}
