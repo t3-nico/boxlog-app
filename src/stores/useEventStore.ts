@@ -61,7 +61,10 @@ const convertEntityToEvent = (entity: EventEntity): Event => {
     tags,
     createdAt: new Date(entity.created_at),
     updatedAt: new Date(entity.updated_at),
-    type: 'event' as any
+    type: 'event' as any,
+    // ゴミ箱機能のフィールドを追加
+    isDeleted: (entity as any).is_deleted || false,
+    deletedAt: (entity as any).deleted_at ? new Date((entity as any).deleted_at) : null
   }
   
   return event
@@ -94,9 +97,31 @@ const formatTimeForAPI = (date: Date): string => {
   return date.toTimeString().split(' ')[0] // HH:MM:SS
 }
 
-// Initial state
+// 一度だけ実行されるクリーンアップ処理
+const cleanupOldTestEvents = () => {
+  if (typeof window === 'undefined') return
+  
+  const cleanupKey = 'event-store-cleaned-v3'
+  const hasBeenCleaned = localStorage.getItem(cleanupKey)
+  
+  if (!hasBeenCleaned) {
+    // 古いテスト用localStorageデータを完全削除
+    console.log('🧹 Before cleanup - localStorage data:', localStorage.getItem('event-store'))
+    localStorage.removeItem('event-store')
+    localStorage.setItem(cleanupKey, 'true')
+    console.log('🧹 After cleanup - localStorage data:', localStorage.getItem('event-store'))
+    console.log('🧹 Cleaned old test events from localStorage')
+  } else {
+    console.log('🧹 Cleanup already performed')
+  }
+}
+
+// クリーンアップを実行
+cleanupOldTestEvents()
+
+// Initial state - テスト予定を削除してクリーンな状態から開始
 const initialState = {
-  events: [],
+  events: [], // 空の配列から開始
   loading: false,
   error: null,
   filters: {},
@@ -165,6 +190,40 @@ export const useEventStore = create<EventStore>()(
         set({ loading: true, error: null })
         
         try {
+          // 🚧 ローカルテスト用: API呼び出しをスキップ
+          const LOCAL_TEST_MODE = true // 後でfalseにしてSupabase連携を有効化
+          
+          if (LOCAL_TEST_MODE) {
+            const newEvent = {
+              id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              title: eventData.title,
+              description: eventData.description,
+              startDate: eventData.startDate,
+              endDate: eventData.endDate,
+              status: eventData.status || 'inbox',
+              priority: eventData.priority,
+              color: eventData.color || '#3b82f6',
+              isRecurring: eventData.isRecurring || false,
+              recurrenceRule: eventData.recurrenceRule,
+              items: eventData.items || [],
+              location: eventData.location,
+              url: eventData.url,
+              reminders: eventData.reminders || [],
+              tags: [],
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              type: 'event' as any,
+              isDeleted: false,
+              deletedAt: null
+            }
+            
+            set(state => ({
+              events: [...state.events, newEvent],
+              loading: false
+            }))
+            
+            return newEvent
+          }
           // Convert dates to appropriate format for new API
           // 更新時は直接ローカル時間を取得（UTC変換を避ける）
           const getDateFromEvent = (date: Date | string | undefined): string | undefined => {
@@ -284,9 +343,32 @@ export const useEventStore = create<EventStore>()(
             location: eventData.location,
             url: eventData.url,
             tagIds: eventData.tagIds || [],
+            // ゴミ箱機能のフィールドを追加
+            isDeleted: eventData.isDeleted,
+            deletedAt: eventData.deletedAt?.toISOString(),
           }
 
           console.log('🕐 date-fns-tz UPDATE API: Sending PUT request with data:', apiData)
+          console.log('🗑️ EventStore: isDeleted =', eventData.isDeleted, 'deletedAt =', eventData.deletedAt)
+          
+          // 🚧 ローカルテスト用: API呼び出しをスキップしてローカルのみ更新
+          const LOCAL_TEST_MODE = true // 後でfalseにしてSupabase連携を有効化
+          
+          if (LOCAL_TEST_MODE) {
+            const { events } = get()
+            const updatedEvents = events.map(e => {
+              if (e.id === eventData.id) {
+                return {
+                  ...e,
+                  ...eventData,
+                  updatedAt: new Date()
+                }
+              }
+              return e
+            })
+            set({ events: updatedEvents, loading: false })
+            return updatedEvents.find(e => e.id === eventData.id)!
+          }
           console.log('🕐 date-fns-tz UPDATE API: Converting dates:', {
             originalStartDate: eventData.startDate?.toISOString(),
             convertedDate: apiData.date,
@@ -358,6 +440,19 @@ export const useEventStore = create<EventStore>()(
         set({ loading: true, error: null })
         
         try {
+          // 🚧 ローカルテスト用: API呼び出しをスキップ
+          const LOCAL_TEST_MODE = true // 後でfalseにしてSupabase連携を有効化
+          
+          if (LOCAL_TEST_MODE) {
+            console.log('🚧 LOCAL TEST MODE: Permanently deleting event from local store:', eventId)
+            set(state => ({
+              events: state.events.filter(event => event.id !== eventId),
+              selectedEventId: state.selectedEventId === eventId ? null : state.selectedEventId,
+              loading: false,
+            }))
+            return
+          }
+          
           const response = await fetch(`/api/events/${eventId}`, {
             method: 'DELETE',
           })
@@ -465,8 +560,86 @@ export const useEventStore = create<EventStore>()(
       partialize: (state) => ({
         filters: state.filters,
         selectedEventId: state.selectedEventId,
-        // events: state.events, // イベントをpersistから除外（一時的にテスト）
+        events: state.events, // 🚧 ローカルテスト用: イベントをlocalStorageに保存
       }),
+      // Date型のシリアライゼーション/デシリアライゼーション
+      serialize: (state) => {
+        return JSON.stringify({
+          ...state,
+          events: state.events?.map(event => ({
+            ...event,
+            startDate: event.startDate?.toISOString(),
+            endDate: event.endDate?.toISOString(),
+            createdAt: event.createdAt?.toISOString(),
+            updatedAt: event.updatedAt?.toISOString(),
+            deletedAt: event.deletedAt?.toISOString(),
+          }))
+        })
+      },
+      deserialize: (str) => {
+        const state = JSON.parse(str)
+        const deserializedEvents = state.events?.map((event: any) => {
+          // 古い形式のイベントを新しい形式に変換
+          if (event.date && event.startTime && !event.startDate) {
+            console.log('🔄 Converting old format event:', event.title)
+            
+            // date + startTime を startDate に変換
+            const [year, month, day] = event.date.split('-').map(Number)
+            const [hours, minutes] = event.startTime.split(':').map(Number)
+            const startDate = new Date(year, month - 1, day, hours, minutes)
+            
+            // endTime があれば endDate に変換
+            let endDate = null
+            if (event.endTime) {
+              const [endHours, endMinutes] = event.endTime.split(':').map(Number)
+              endDate = new Date(year, month - 1, day, endHours, endMinutes)
+              
+              // 終了時間が開始時間より早い場合は翌日扱い
+              if (endDate <= startDate) {
+                endDate.setDate(endDate.getDate() + 1)
+              }
+            }
+            
+            return {
+              id: event.id,
+              title: event.title,
+              description: event.description || '',
+              startDate: startDate,
+              endDate: endDate,
+              status: event.status || 'inbox',
+              priority: event.priority,
+              color: event.color || '#3b82f6',
+              isRecurring: event.isRecurring || false,
+              recurrenceRule: event.recurrenceRule,
+              items: event.items || [],
+              location: event.location,
+              url: event.url,
+              reminders: event.reminders || [],
+              tags: event.tags || [],
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              type: 'event',
+              isDeleted: false,
+              deletedAt: null
+            }
+          }
+          
+          // 新しい形式のイベントは通常通り変換
+          return {
+            ...event,
+            startDate: event.startDate ? new Date(event.startDate) : null,
+            endDate: event.endDate ? new Date(event.endDate) : null,
+            createdAt: event.createdAt ? new Date(event.createdAt) : new Date(),
+            updatedAt: event.updatedAt ? new Date(event.updatedAt) : new Date(),
+            deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
+          }
+        }) || []
+        
+        return {
+          ...state,
+          events: deserializedEvents
+        }
+      },
     }
   )
 )

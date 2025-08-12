@@ -174,95 +174,10 @@ export function TestDayView({ currentDate: initialCurrentDate, events, onDeleteE
     alert(`Event clicked: ${event.title} at ${event.startDate?.toLocaleTimeString()}`)
   }, [])
 
-  // テスト用の静的イベントデータ（タイムゾーン対応）
+  // モックデータを削除してクリーンな状態に
   const testEvents = useMemo(() => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    
-    // JST基準のイベント時刻をユーザーのタイムゾーンに変換
-    const createTimezoneAwareDate = (jstHour: number, jstMinute: number = 0) => {
-      // JST（UTC+9）での基準日時を作成
-      const jstBaseDate = new Date(today.getTime() + jstHour * 60 * 60 * 1000 + jstMinute * 60 * 1000)
-      
-      // JSTをUTCに変換（-9時間）
-      const utcDate = new Date(jstBaseDate.getTime() - 9 * 60 * 60 * 1000)
-      
-      // UTCをユーザーのタイムゾーンに変換
-      try {
-        // Intl.DateTimeFormat を使用してタイムゾーン変換
-        const formatter = new Intl.DateTimeFormat('sv-SE', {
-          timeZone: timezone,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        })
-        
-        const parts = formatter.formatToParts(utcDate)
-        const getValue = (type: string) => parts.find(p => p.type === type)?.value || '0'
-        
-        const year = parseInt(getValue('year'))
-        const month = parseInt(getValue('month')) - 1 // Date constructor expects 0-based month
-        const day = parseInt(getValue('day'))
-        const hour = parseInt(getValue('hour'))
-        const minute = parseInt(getValue('minute'))
-        const second = parseInt(getValue('second'))
-        
-        // 新しいDateオブジェクトを作成
-        const userTime = new Date(year, month, day, hour, minute, second)
-        
-        console.log('🕒 タイムゾーン変換:', {
-          timezone,
-          jst: `${jstHour}:${jstMinute.toString().padStart(2, '0')}`,
-          utc: utcDate.toISOString(),
-          userTime: userTime.toISOString()
-        })
-        
-        return userTime
-      } catch (error) {
-        console.warn('タイムゾーン変換エラー、JSTをそのまま使用:', error)
-        return jstBaseDate
-      }
-    }
-    
-    return [
-      {
-        id: 'test-1',
-        title: 'Morning Meeting',
-        startDate: createTimezoneAwareDate(9, 0), // JST 9:00
-        endDate: createTimezoneAwareDate(10, 0),  // JST 10:00
-        color: '#3b82f6',
-        location: 'Conference Room A',
-        description: 'Team standup meeting'
-      },
-      {
-        id: 'test-2', 
-        title: 'Lunch Break',
-        startDate: createTimezoneAwareDate(12, 0), // JST 12:00
-        endDate: createTimezoneAwareDate(13, 0),   // JST 13:00
-        color: '#10b981',
-        location: 'Cafeteria'
-      },
-      {
-        id: 'test-3',
-        title: 'Project Review',
-        startDate: createTimezoneAwareDate(14, 30), // JST 14:30
-        endDate: createTimezoneAwareDate(16, 0),    // JST 16:00
-        color: '#f59e0b',
-        description: 'Quarterly project review session'
-      },
-      {
-        id: 'test-4',
-        title: 'Short Task',
-        startDate: createTimezoneAwareDate(16, 15), // JST 16:15
-        endDate: createTimezoneAwareDate(16, 30),   // JST 16:30
-        color: '#ef4444'
-      }
-    ] as CalendarEvent[]
-  }, [timezone])
+    return [] as CalendarEvent[]
+  }, [])
 
   // 実際のイベントとテストイベントをマージ
   const allEvents = useMemo(() => {

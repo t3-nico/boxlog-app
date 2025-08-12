@@ -153,8 +153,8 @@ export function CalendarView({
       return []
     }
     
-    console.log('🔍 [' + viewType + '] events.length:', events.length)
-    console.log('🔍 [' + viewType + '] dateRange:', { start: viewDateRange.start.toISOString(), end: viewDateRange.end.toISOString() })
+    // console.log('🔍 [' + viewType + '] events.length:', events.length)
+    // console.log('🔍 [' + viewType + '] dateRange:', { start: viewDateRange.start.toISOString(), end: viewDateRange.end.toISOString() })
     
     // 日付範囲を年月日のみで比較するため、時刻をリセット
     const startDateOnly = new Date(viewDateRange.start.getFullYear(), viewDateRange.start.getMonth(), viewDateRange.start.getDate())
@@ -168,14 +168,12 @@ export function CalendarView({
       
       // startDateがない場合はフィルタリングから除外
       if (!event.startDate) {
-        console.log('❌ Event has no startDate:', event.id, event.title)
         return false
       }
       
       // startDateをDateオブジェクトに変換（文字列の場合に対応）
       const startDate = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
       if (isNaN(startDate.getTime())) {
-        console.log('❌ Event has invalid startDate:', event.id, event.title, event.startDate)
         return false
       }
       
@@ -189,20 +187,10 @@ export function CalendarView({
         }
       }
       
-      const inRange = (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
-                     (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
-                     (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
-      
-      if (inRange) {
-        console.log('✅ Event in range:', event.id, event.title, `${startDate.toDateString()} ${startDate.toTimeString().substring(0, 8)}`)
-      } else {
-        console.log('❌ Event NOT in range:', event.id, event.title, `${startDate.toDateString()} ${startDate.toTimeString().substring(0, 8)}`)
-      }
-      
-      return inRange
+      return (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
+             (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
+             (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
     })
-    
-    console.log('🔍 Events in date range:', filteredByRange.length, 'Total events in store:', events.length)
     
     // Event[]をCalendarEvent[]に変換（安全な日付処理）
     const calendarEvents = filteredByRange.map(event => {
@@ -236,7 +224,6 @@ export function CalendarView({
         type: event.type || 'event' as any
       }
     })
-    console.log('🔍 Final calendar events:', calendarEvents.length)
     return calendarEvents
   }, [events, viewDateRange.start, viewDateRange.end, viewType])
   
@@ -301,8 +288,12 @@ export function CalendarView({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    console.log('🖱️ CalendarView: Event clicked:', event.title, 'ID:', event.id)
-    console.log('🖱️ CalendarView: Full event data:', event)
+    // デバッグ用: タイトルバーを一時的に変更
+    const originalTitle = document.title
+    document.title = `編集: ${event.title}`
+    setTimeout(() => {
+      document.title = originalTitle
+    }, 2000)
     
     // 編集用にselectedEventを設定
     setSelectedEvent(event as any)
@@ -314,7 +305,10 @@ export function CalendarView({
   }, [openEventPopup])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
+    console.log('🆕 handleCreateEvent called:', { date, time })
+    
     // AddPopupを開く（日付と時刻を渡す）
+    console.log('🆕 Opening event popup...')
     openEventPopup({
       dueDate: date || new Date(),
       status: 'Todo'
@@ -677,6 +671,8 @@ export function CalendarView({
 
   // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback((date: Date, time: string) => {
+    console.log('🕐 handleEmptyClick called:', { date, time })
+    
     openEventPopup({
       dueDate: date,
       status: 'Todo'
@@ -697,6 +693,7 @@ export function CalendarView({
     <DnDProvider>
       <>
         <div className="h-full flex flex-col bg-background">
+          
           {/* ビュー固有のコンテンツ */}
           <div className="flex-1 min-h-0 bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
             {renderView()}
