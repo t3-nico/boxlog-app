@@ -31,22 +31,27 @@ export function UserMenu() {
   return (
     <Headless.Menu as="div" className="relative">
       <Headless.MenuButton className="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-accent transition-colors group">
-        {user?.user_metadata?.avatar_url ? (
-          <Avatar 
-            src={user.user_metadata.avatar_url} 
-            className="w-8 h-8 border border-gray-300 dark:border-gray-600" 
-          />
-        ) : user?.user_metadata?.profile_icon ? (
-          <div className="w-8 h-8 text-sm flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-accent">
-            {user.user_metadata.profile_icon}
-          </div>
-        ) : (
-          <Avatar 
-            src={undefined}
-            className="w-8 h-8 border border-gray-300 dark:border-gray-600"
-            initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
-          />
-        )}
+        <div className="relative">
+          {user?.user_metadata?.avatar_url ? (
+            <Avatar 
+              src={user.user_metadata.avatar_url} 
+              className="w-8 h-8 border border-gray-300 dark:border-gray-600" 
+            />
+          ) : user?.user_metadata?.profile_icon ? (
+            <div className="w-8 h-8 text-sm flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-accent">
+              {user.user_metadata.profile_icon}
+            </div>
+          ) : (
+            <Avatar 
+              src={undefined}
+              className="w-8 h-8 border border-gray-300 dark:border-gray-600"
+              initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+            />
+          )}
+          
+          {/* Online Status Indicator */}
+          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-background rounded-full"></div>
+        </div>
         
         {/* Tooltip */}
         <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">

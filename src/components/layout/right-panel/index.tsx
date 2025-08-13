@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useNavigationStore } from '@/store/navigation.store'
-import { AiChatSidebar as AIChatSidebar, CodebaseAiChat as CodebaseAIChat } from '@/features/aichat'
+import { AiChatSidebar as AIChatSidebar } from '@/features/aichat'
 import { RightPanelToggle } from './toggle'
 import { RightPanelActions } from './actions'
 
@@ -10,15 +10,13 @@ export function RightPanel() {
   const { 
     isRightPanelHidden, 
     isAIChatOpen, 
-    isCodebaseAIChatOpen,
-    setAIChatOpen,
-    setCodebaseAIChatOpen 
+    setAIChatOpen
   } = useNavigationStore()
 
   return (
     <>
       {/* Right Icon Bar - Show when no AI chat is open and panel is visible */}
-      {!isAIChatOpen && !isCodebaseAIChatOpen && !isRightPanelHidden && (
+      {!isAIChatOpen && !isRightPanelHidden && (
         <RightPanelActions />
       )}
       
@@ -29,10 +27,6 @@ export function RightPanel() {
       <AIChatSidebar 
         isOpen={isAIChatOpen} 
         onClose={() => setAIChatOpen(false)} 
-      />
-      <CodebaseAIChat 
-        isOpen={isCodebaseAIChatOpen} 
-        onClose={() => setCodebaseAIChatOpen(false)} 
       />
     </>
   )

@@ -9,6 +9,7 @@ import {
   User as UserIcon,
   PlusCircle as CreateIcon,
   HelpCircle as HelpIcon,
+  Sparkles as AIIcon,
 } from 'lucide-react'
 
 export interface NavigationItem {
@@ -84,6 +85,14 @@ export const primaryNavigation: NavigationSection[] = [
         tooltip: 'Notifications',
         badge: 3
       },
+      {
+        id: 'ai-chat',
+        label: 'AI Chat',
+        href: '/ai-chat',
+        icon: AIIcon,
+        isActive: (pathname) => pathname.startsWith('/ai-chat'),
+        tooltip: 'AI Assistant'
+      },
     ]
   },
   {
@@ -116,6 +125,7 @@ export const pageConfig = {
   '/board': { title: 'Board', description: 'カンバン形式でタスクを管理' },
   '/table': { title: 'Table', description: 'テーブル形式でタスクを表示' },
   '/stats': { title: 'Stats', description: '分析と統計情報' },
+  '/ai-chat': { title: 'AI Chat', description: 'AI assistant and document chat' },
   '/help': { title: 'Help', description: 'Help and support' },
   '/settings': { title: 'Settings', description: 'アプリケーション設定' },
 }

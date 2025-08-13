@@ -7,6 +7,7 @@ import { BoardSidebarSections } from '@/features/board/components/sidebar'
 import { TableSidebarSections } from '@/features/table/components/sidebar'
 import { StatsSidebarSections } from '@/features/stats/components/sidebar'
 import { HelpSidebarSections } from '@/features/help/components/sidebar'
+import { AIChatSidebarSections } from '@/features/aichat/components/sidebar'
 
 interface PageContentProps {
   pathname: string
@@ -17,6 +18,7 @@ export function PageContent({ pathname }: PageContentProps) {
   const isBoardPage = pathname.startsWith('/board')
   const isTablePage = pathname.startsWith('/table')
   const isStatsPage = pathname.startsWith('/stats')
+  const isAIChatPage = pathname.startsWith('/ai-chat')
   const isHelpPage = pathname.startsWith('/help')
 
   return (
@@ -64,6 +66,10 @@ export function PageContent({ pathname }: PageContentProps) {
             onSelectTag={() => {}}
             selectedTagIds={[]}
           />
+        )}
+
+        {isAIChatPage && (
+          <AIChatSidebarSections collapsed={false} />
         )}
 
         {isHelpPage && (

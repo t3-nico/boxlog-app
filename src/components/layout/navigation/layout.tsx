@@ -35,14 +35,7 @@ export function DashboardLayout({
           )}
           
           {/* Main Content Area - Flexible */}
-          <div 
-            className="flex-1 relative z-10"
-            style={{
-              marginRight: isRightPanelHidden ? '0px' : '48px',
-              transition: 'margin-right 150ms ease',
-              height: '100vh'
-            }}
-          >
+          <div className="flex-1 relative z-10">
             {/* Secondary Nav Toggle Button */}
             <SecondaryNavToggle />
             

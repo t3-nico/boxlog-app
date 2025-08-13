@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { useNavigationStore } from '@/store/navigation.store'
-import { Sparkles as SparklesIcon, BotMessageSquare } from 'lucide-react'
+import { Sparkles as SparklesIcon } from 'lucide-react'
 
 export function RightPanelActions() {
-  const { setAIChatOpen, setCodebaseAIChatOpen } = useNavigationStore()
+  const { setAIChatOpen } = useNavigationStore()
 
   return (
     <div className="w-12 bg-background border-l border-border flex flex-col items-center py-4 gap-2 z-40">
@@ -15,13 +15,6 @@ export function RightPanelActions() {
         title="AI Assistant"
       >
         <SparklesIcon className="w-5 h-5" />
-      </button>
-      <button
-        onClick={() => setCodebaseAIChatOpen(true)}
-        className="p-2 rounded-lg transition-colors hover:bg-accent/50 text-gray-600 dark:text-gray-400"
-        title="Codebase AI"
-      >
-        <BotMessageSquare className="w-5 h-5" />
       </button>
     </div>
   )

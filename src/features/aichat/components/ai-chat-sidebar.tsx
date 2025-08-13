@@ -81,6 +81,7 @@ const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: stri
 interface AIChatSidebarProps {
   isOpen: boolean
   onClose: () => void
+  isMainView?: boolean
 }
 
 interface MessageBubbleProps {
@@ -273,7 +274,7 @@ function ChatInput() {
   )
 }
 
-export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
+export function AIChatSidebar({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) {
   const { state, clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
 
@@ -281,8 +282,11 @@ export function AIChatSidebar({ isOpen, onClose }: AIChatSidebarProps) {
 
   return (
     <div 
-      className="fixed right-0 bg-background border-l border-border z-50 flex flex-col"
-      style={{ 
+      className={isMainView 
+        ? "h-full bg-background flex flex-col"
+        : "fixed right-0 bg-background border-l border-border z-50 flex flex-col"
+      }
+      style={isMainView ? {} : { 
         top: '64px',
         width: '320px',
         bottom: '0'
