@@ -8,6 +8,7 @@ import {
   Settings as SettingsIcon,
   User as UserIcon,
   PlusCircle as CreateIcon,
+  HelpCircle as HelpIcon,
 } from 'lucide-react'
 
 export interface NavigationItem {
@@ -89,6 +90,14 @@ export const primaryNavigation: NavigationSection[] = [
     id: 'user',
     items: [
       {
+        id: 'help',
+        label: 'Help',
+        href: '/help',
+        icon: HelpIcon,
+        isActive: (pathname) => pathname.startsWith('/help'),
+        tooltip: 'Help & Support'
+      },
+      {
         id: 'settings',
         label: 'Settings',
         href: '/settings',
@@ -107,6 +116,7 @@ export const pageConfig = {
   '/board': { title: 'Board', description: 'カンバン形式でタスクを管理' },
   '/table': { title: 'Table', description: 'テーブル形式でタスクを表示' },
   '/stats': { title: 'Stats', description: '分析と統計情報' },
+  '/help': { title: 'Help', description: 'Help and support' },
   '/settings': { title: 'Settings', description: 'アプリケーション設定' },
 }
 

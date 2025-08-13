@@ -23,7 +23,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
-import { useAskPanelStore, askPanelSelectors } from '@/stores/useAskPanelStore'
+import { useAskPanelStore, askPanelSelectors } from '../stores/useAskPanelStore'
 import { Button } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 

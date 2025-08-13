@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { getPageTitle } from '@/lib/navigation/config'
 import { useNavigationStore } from '@/store/navigation.store'
 import { SecondaryNavHeader } from './header'
-import { CreateButton } from './create-button'
 import { PageContent } from './page-content'
 import { BottomContent } from './bottom-content'
 import { SettingsNavigation } from './settings-navigation'
@@ -25,9 +24,6 @@ export function SecondaryNavigation() {
             {/* Page Title & Close Button */}
             <SecondaryNavHeader title={pageTitle} />
             
-            {/* Create Button */}
-            <CreateButton />
-            
             {/* Page-specific Content */}
             <PageContent pathname={pathname} />
             
@@ -37,7 +33,7 @@ export function SecondaryNavigation() {
         ) : (
           <>
             {/* Settings Navigation */}
-            <SecondaryNavHeader title="Settings" isSettings />
+            <SecondaryNavHeader title="Settings" />
             <SettingsNavigation />
           </>
         )}

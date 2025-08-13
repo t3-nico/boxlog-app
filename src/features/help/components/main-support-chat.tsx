@@ -1,0 +1,382 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { useChat } from 'ai/react'
+import { useAuthContext } from '@/features/auth'
+import { Avatar } from '@/components/avatar'
+import { 
+  MoreVertical,
+  Trash2,
+  Copy,
+  RefreshCw,
+  BotMessageSquare
+} from 'lucide-react'
+import {
+  AIInput,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputSubmit,
+  AIInputButton,
+  AIInputTools
+} from '@/components/ui/kibo-ui/ai/input'
+import {
+  AIConversation,
+  AIConversationContent,
+  AIConversationScrollButton
+} from '@/components/ui/kibo-ui/ai/conversation'
+import {
+  AIMessage,
+  AIMessageContent,
+  AIMessageAvatar
+} from '@/components/ui/kibo-ui/ai/message'
+import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
+
+// Vercel AI SDK message type extension
+interface ExtendedMessage {
+  id: string
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  createdAt?: Date
+  relatedFiles?: string[]
+  status?: 'sending' | 'sent' | 'error'
+}
+
+// BoxLog専用のAI Responseコンポーネント
+const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
+  <AIResponse
+    className="prose prose-sm dark:prose-invert max-w-none
+      [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
+      [&_p]:leading-relaxed [&_p]:my-2
+      [&_ul]:my-2 [&_ol]:my-2
+      [&_li]:my-1
+      [&_pre]:bg-gray-100 [&_pre]:dark:bg-gray-800 [&_pre]:p-3 [&_pre]:rounded
+      [&_code]:bg-gray-100 [&_code]:dark:bg-gray-800 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono
+      [&_h1]:text-lg [&_h1]:font-semibold [&_h1]:mt-4 [&_h1]:mb-2
+      [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2
+      [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1
+      [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic"
+    options={{
+      disallowedElements: ['script', 'iframe'],
+      remarkPlugins: [],
+    }}
+    {...props}
+  >
+    {children}
+  </AIResponse>
+)
+
+function MessageBubble({ message }: { message: ExtendedMessage }) {
+  const { user } = useAuthContext()
+  const isUser = message.role === 'user'
+  const isAssistant = message.role === 'assistant' || message.role === 'system'
+  
+  // ユーザー情報の取得
+  const userDisplayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
+  const profileIcon = user?.user_metadata?.profile_icon
+  const avatarUrl = user?.user_metadata?.avatar_url
+  
+  // AIMessage componentは'user'または'assistant'のみ受け付けるため、'system'を'assistant'として扱う
+  const messageFrom = message.role === 'system' ? 'assistant' : message.role as 'user' | 'assistant'
+  
+  return (
+    <AIMessage from={messageFrom}>
+      {isAssistant && (
+        <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+          <BotMessageSquare className="w-4 h-4 text-foreground" />
+        </div>
+      )}
+      
+      <AIMessageContent>
+        {isAssistant ? (
+          <div>
+            <CodebaseAIResponse>
+              {message.content}
+            </CodebaseAIResponse>
+            {message.relatedFiles && message.relatedFiles.length > 0 && (
+              <div className="mt-2 p-2 bg-muted rounded text-xs">
+                <div className="font-medium text-card-foreground mb-1">関連ファイル:</div>
+                {message.relatedFiles.map((file, index) => (
+                  <div key={index} className="text-muted-foreground font-mono">
+                    {file}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">
+            {message.content}
+            {message.status && (
+              <div className="mt-1 text-xs opacity-75">
+                {message.status === 'sending' && 'Sending...'}
+                {message.status === 'error' && 'Send Error'}
+                {message.status === 'sent' && 'Sent'}
+              </div>
+            )}
+          </div>
+        )}
+        
+        {isAssistant && message.createdAt && (
+          <div className="mt-1 text-xs opacity-60">
+            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </div>
+        )}
+      </AIMessageContent>
+      
+      {isUser && (
+        <div className="flex-shrink-0">
+          {avatarUrl ? (
+            <Avatar
+              src={avatarUrl}
+              className="size-8"
+              initials={userDisplayName.charAt(0).toUpperCase()}
+            />
+          ) : profileIcon ? (
+            <div className="size-8 text-xl flex items-center justify-center rounded-full bg-muted">
+              {profileIcon}
+            </div>
+          ) : (
+            <Avatar
+              src={undefined}
+              className="size-8"
+              initials={userDisplayName.charAt(0).toUpperCase()}
+            />
+          )}
+        </div>
+      )}
+    </AIMessage>
+  )
+}
+
+function MainSupportChatInput({ 
+  input,
+  handleInputChange,
+  handleSubmit,
+  isLoading 
+}: { 
+  input: string
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
+  handleSubmit: (e: React.FormEvent) => void
+  isLoading: boolean
+}) {
+  const [isComposing, setIsComposing] = useState(false)
+
+  const getSubmitStatus = () => {
+    if (isLoading) return 'streaming'
+    if (!input.trim()) return 'ready'
+    return 'ready'
+  }
+
+  return (
+    <div className="flex-shrink-0 p-6 bg-background">
+      {isLoading && (
+        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
+          <div className="flex gap-1">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+          </div>
+          <span>Checking support info...</span>
+        </div>
+      )}
+      
+      <AIInput onSubmit={handleSubmit}>
+        <AIInputTextarea
+          value={input}
+          onChange={handleInputChange}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
+          placeholder="Ask about BoxLog features and usage..."
+          disabled={isLoading}
+          minHeight={40}
+          maxHeight={120}
+        />
+        <AIInputToolbar>
+          <AIInputTools>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground px-2">
+              <BotMessageSquare className="w-4 h-4" />
+              <span>BoxLog Usage Support</span>
+            </div>
+          </AIInputTools>
+          
+          <AIInputSubmit
+            disabled={!input.trim() || isLoading}
+            status={getSubmitStatus()}
+          />
+        </AIInputToolbar>
+      </AIInput>
+    </div>
+  )
+}
+
+export function MainSupportChat() {
+  const [showMenu, setShowMenu] = useState(false)
+  
+  // Use Vercel AI SDK's useChat hook with simple configuration
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append, error, reload } = useChat({
+    api: '/api/chat/codebase',
+    onError: (error) => {
+      console.error('Chat error:', error)
+    },
+    onFinish: (message) => {
+      console.log('Message finished:', message)
+    },
+    initialMessages: [
+      {
+        id: '1',
+        role: 'assistant',
+        content: `Hello! I'm the **BoxLog** application support assistant.
+
+I can help you with:
+
+• 📅 **Calendar Features** - How to use calendar views
+• 📋 **Task Management** - Creating and organizing tasks
+• 🏷️ **Tag System** - Categorizing and filtering
+• 📊 **Progress Tracking** - Monitoring productivity
+• 🔄 **Smart Folders** - Automated organization
+• 🛠️ **Troubleshooting** - Solving common issues
+
+**Note**: I only provide support for BoxLog application usage.
+
+What would you like to know about BoxLog?`
+      }
+    ]
+  })
+
+  const clearMessages = () => {
+    setMessages([])
+    setShowMenu(false)
+  }
+
+  return (
+    <div className="h-full flex flex-col bg-background">
+      {/* Header */}
+      <div className="flex-shrink-0 p-6 border-b border-border bg-background">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center">
+              <BotMessageSquare className="w-5 h-5 text-foreground" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">BoxLog Support</h3>
+              <p className="text-sm text-muted-foreground">
+                Your AI assistant for BoxLog usage
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1">
+            {/* Status indicator */}
+            {isLoading && (
+              <div className="p-2 text-blue-500">
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              </div>
+            )}
+            
+            {/* Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+              
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+                  <button
+                    onClick={clearMessages}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Clear conversation
+                  </button>
+                  <button
+                    onClick={() => {
+                      const exportMessages = messages.map(msg => ({
+                        role: msg.role,
+                        content: msg.content,
+                        timestamp: msg.createdAt
+                      }))
+                      navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
+                      setShowMenu(false)
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
+                  >
+                    <Copy className="w-4 h-4" />
+                    Export conversation
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat Content */}
+      <AIConversation>
+        <AIConversationContent className="px-6 py-6">
+          {/* Error display */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium">Connection Error</span>
+              </div>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                Unable to connect to BoxLog support. Please check your connection and try again.
+              </p>
+              <button
+                onClick={() => reload()}
+                className="mt-2 text-xs text-red-800 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100 underline"
+              >
+                Retry last message
+              </button>
+            </div>
+          )}
+
+          {messages.length === 0 ? (
+            <AIMessage from="assistant">
+              <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+                <BotMessageSquare className="w-4 h-4 text-foreground" />
+              </div>
+              <AIMessageContent>
+                <CodebaseAIResponse>
+                  Hello! I'm the **BoxLog** application support assistant.
+                  
+                  I can help you with:
+                  
+                  • 📅 **Calendar Features** - How to use calendar views
+                  • 📋 **Task Management** - Creating and organizing tasks
+                  • 🏷️ **Tag System** - Categorizing and filtering
+                  • 📊 **Progress Tracking** - Monitoring productivity
+                  • 🔄 **Smart Folders** - Automated organization
+                  • 🛠️ **Troubleshooting** - Solving common issues
+                  
+                  **Note**: I only provide support for BoxLog application usage.
+                  
+                  What would you like to know about BoxLog?
+                </CodebaseAIResponse>
+              </AIMessageContent>
+            </AIMessage>
+          ) : (
+            messages.map((message) => (
+              <MessageBubble key={message.id} message={message as ExtendedMessage} />
+            ))
+          )}
+        </AIConversationContent>
+        <AIConversationScrollButton />
+      </AIConversation>
+      
+      {/* Chat Input */}
+      <MainSupportChatInput 
+        input={input}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        isLoading={isLoading}
+      />
+    </div>
+  )
+}

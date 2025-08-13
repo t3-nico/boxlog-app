@@ -6,6 +6,7 @@ import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
 import { BoardSidebarSections } from '@/features/board/components/sidebar'
 import { TableSidebarSections } from '@/features/table/components/sidebar'
 import { StatsSidebarSections } from '@/features/stats/components/sidebar'
+import { HelpSidebarSections } from '@/features/help/components/sidebar'
 
 interface PageContentProps {
   pathname: string
@@ -16,6 +17,7 @@ export function PageContent({ pathname }: PageContentProps) {
   const isBoardPage = pathname.startsWith('/board')
   const isTablePage = pathname.startsWith('/table')
   const isStatsPage = pathname.startsWith('/stats')
+  const isHelpPage = pathname.startsWith('/help')
 
   return (
     <div className="flex-1 flex flex-col gap-6 min-h-0">
@@ -62,6 +64,10 @@ export function PageContent({ pathname }: PageContentProps) {
             onSelectTag={() => {}}
             selectedTagIds={[]}
           />
+        )}
+
+        {isHelpPage && (
+          <HelpSidebarSections collapsed={false} />
         )}
       </div>
     </div>
