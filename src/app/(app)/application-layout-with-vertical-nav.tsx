@@ -212,6 +212,15 @@ export function ApplicationLayoutWithVerticalNav({
               <div className="h-full flex flex-col p-4">
                 {!inSettings && (
                   <>
+                    {/* ページタイトル */}
+                    <div className="flex-shrink-0 mb-4">
+                      <div className="px-2">
+                        <h1 className="text-xl font-semibold text-foreground">
+                          {getPageTitle(pathname)}
+                        </h1>
+                      </div>
+                    </div>
+
                     {/* Createボタン - 一番上に固定 */}
                     <div className="flex-shrink-0 mb-6">
                       <SidebarSection>
