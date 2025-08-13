@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { 
   CHRONOTYPE_PRESETS, 
   getProductivityZoneForHour, 

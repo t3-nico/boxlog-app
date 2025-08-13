@@ -1,6 +1,6 @@
 'use client'
 
-import AccountSettings from '@/components/settings/account-settings'
+import AccountSettings from '@/features/settings/components/account-settings'
 
 export default function AccountSettingsPage() {
   return <AccountSettings />

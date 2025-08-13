@@ -1,6 +1,6 @@
 'use client'
 
-import IntegrationSettings from '@/components/settings/integration-settings'
+import IntegrationSettings from '@/features/settings/components/integration-settings'
 
 export default function IntegrationPage() {
   return <IntegrationSettings />

@@ -1,6 +1,6 @@
 'use client'
 
-import DataExportSettings from '@/components/settings/data-export-settings'
+import DataExportSettings from '@/features/settings/components/data-export-settings'
 
 export default function DataExportPage() {
   return <DataExportSettings />

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
-import { formatTimeWithSettings, formatHour } from '@/utils/timezone-utils'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { formatTimeWithSettings, formatHour } from '@/features/settings/utils/timezone-utils'
 
 export function useFormattedTime() {
   const { timeFormat, timezone } = useCalendarSettingsStore()

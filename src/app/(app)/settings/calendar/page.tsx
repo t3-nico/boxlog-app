@@ -1,6 +1,6 @@
 'use client'
 
-import CalendarSettingsPage from '@/components/settings/calendar-settings'
+import CalendarSettingsPage from '@/features/settings/components/calendar-settings'
 
 export default function CalendarPage() {
   return <CalendarSettingsPage />

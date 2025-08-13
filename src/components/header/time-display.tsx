@@ -3,7 +3,7 @@
 import React from 'react'
 import { Clock as ClockIcon, Sun as SunIcon, Moon as MoonIcon, GraduationCap as AcademicCapIcon, Lightbulb as LightBulbIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 import { getCurrentTimeInUserTimezone, listenToTimezoneChange } from '@/utils/timezone'
 

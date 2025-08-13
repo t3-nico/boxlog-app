@@ -1,6 +1,6 @@
 'use client'
 
-import AboutLegalSettings from '@/components/settings/about-legal-settings'
+import AboutLegalSettings from '@/features/settings/components/about-legal-settings'
 
 export default function LegalPage() {
   return <AboutLegalSettings />

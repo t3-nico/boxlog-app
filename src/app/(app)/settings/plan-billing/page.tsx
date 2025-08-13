@@ -1,6 +1,6 @@
 'use client'
 
-import PlanBillingSettings from '@/components/settings/plan-billing-settings'
+import PlanBillingSettings from '@/features/settings/components/plan-billing-settings'
 
 export default function PlanBillingPage() {
   return <PlanBillingSettings />

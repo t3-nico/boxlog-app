@@ -1,6 +1,6 @@
 'use client'
 
-import TagsSettings from '@/components/settings/tags-settings'
+import TagsSettings from '@/features/settings/components/tags-settings'
 
 export default function TagsPage() {
   return <TagsSettings />

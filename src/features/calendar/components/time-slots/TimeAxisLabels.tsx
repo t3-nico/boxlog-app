@@ -4,7 +4,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { HOUR_HEIGHT, TIME_LABEL_WIDTH, BUSINESS_HOURS } from '../../constants/calendar-constants'
 import { formatTimeForDisplay } from '../../lib/time-grid-helpers'
-import { useFormattedTime } from '@/hooks/useFormattedTime'
+import { useFormattedTime } from '@/features/settings/hooks/useFormattedTime'
 import { ChronotypeIndicatorCompact, ChronotypeIndicator } from '../calendar-grid'
 
 interface TimeAxisLabelsProps {
