@@ -14,8 +14,8 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { getCurrentTimezone } from '@/utils/timezone'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useEventStore, initializeEventStore } from '@/stores/useEventStore'
-import { useNotifications } from '../hooks/useNotifications'
-import { NotificationDisplay } from '@/components/ui/notification-display'
+import { useNotifications } from '@/features/notifications/hooks/useNotifications'
+import { NotificationDisplay } from '@/features/notifications/components/notification-display'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 

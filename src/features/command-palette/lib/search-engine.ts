@@ -1,4 +1,4 @@
-import { SearchResult, SearchOptions } from '@/config/command-palette'
+import { SearchResult, SearchOptions } from '../config/command-palette'
 import { commandRegistry } from './command-registry'
 import { Task, Tag, SmartFolder } from '@/types/common'
 

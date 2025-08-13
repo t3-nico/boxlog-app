@@ -40,7 +40,7 @@ export const useSidebarMenu = () => {
               id: `tag-${tag.id}`,
               label: tag.name,
               icon: 'TagIcon',
-              href: `/tags/${tag.id}`,
+              href: `/settings/tags`, // タグ管理ページに統一
               tooltip: `${tag.count} items tagged with ${tag.name}`,
               count: tag.count
             }))

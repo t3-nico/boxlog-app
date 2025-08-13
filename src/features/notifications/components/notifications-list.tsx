@@ -3,7 +3,16 @@
 import { useState } from 'react'
 import { BellRing } from 'lucide-react'
 
-const notifications = [
+interface SystemNotification {
+  id: number
+  title: string
+  content: string
+  date: string
+  isRead: boolean
+  type: 'system' | 'feature' | 'important'
+}
+
+const defaultNotifications: SystemNotification[] = [
   {
     id: 1,
     title: 'システムメンテナンスのお知らせ',
@@ -30,7 +39,13 @@ const notifications = [
   }
 ]
 
-export default function NotificationsPage() {
+interface NotificationsListProps {
+  notifications?: SystemNotification[]
+}
+
+export const NotificationsList: React.FC<NotificationsListProps> = ({ 
+  notifications = defaultNotifications 
+}) => {
   const [notificationList, setNotificationList] = useState(notifications)
 
   const markAsRead = (id: number) => {
@@ -44,13 +59,13 @@ export default function NotificationsPage() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'system':
-        return 'text-blue-600 bg-blue-50'
+        return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30'
       case 'feature':
-        return 'text-green-600 bg-green-50'
+        return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/30'
       case 'important':
-        return 'text-red-600 bg-red-50'
+        return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/30'
       default:
-        return 'text-gray-600 bg-gray-50'
+        return 'text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-800'
     }
   }
 
@@ -68,20 +83,20 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="mb-8">
+    <div className="space-y-6">
+      <div>
         <div className="flex items-center gap-3 mb-2">
-          <BellRing className="h-8 w-8 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">お知らせ</h1>
+          <BellRing className="h-6 w-6 text-blue-600" />
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">お知らせ</h2>
         </div>
-        <p className="text-gray-600 dark:text-gray-300">最新のお知らせや更新情報をご確認いただけます。</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">最新のお知らせや更新情報をご確認いただけます。</p>
       </div>
 
       <div className="space-y-4">
         {notificationList.map((notification) => (
           <div
             key={notification.id}
-            className={`bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 p-6 ${
+            className={`bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 ${
               !notification.isRead ? 'border-l-4 border-l-blue-500' : ''
             }`}
           >
@@ -96,7 +111,7 @@ export default function NotificationsPage() {
                     {getTypeLabel(notification.type)}
                   </span>
                   {!notification.isRead && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                       未読
                     </span>
                   )}
@@ -110,7 +125,7 @@ export default function NotificationsPage() {
               {!notification.isRead && (
                 <button
                   onClick={() => markAsRead(notification.id)}
-                  className="ml-4 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                  className="ml-4 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
                 >
                   既読にする
                 </button>

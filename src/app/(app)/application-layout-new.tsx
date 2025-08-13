@@ -15,7 +15,7 @@ import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
 import { TagManagementModal } from '@/features/tags/components/tag-management-modal'
 import { QuickTagCreateModal } from '@/features/tags/components/quick-tag-create-modal'
 import { sidebarConfig } from '@/config/sidebarConfig'
-import { useCommandPalette } from '@/components/providers'
+import { useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
 import { CalendarSettingsMenu } from '@/features/calendar/components/calendar-grid/CalendarSettingsMenu'
 import {
   Dropdown,

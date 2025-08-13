@@ -1,4 +1,4 @@
-import { Command } from '@/config/command-palette'
+import { Command } from '../config/command-palette'
 
 class CommandRegistry {
   private commands = new Map<string, Command>()

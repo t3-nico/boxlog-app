@@ -10,11 +10,11 @@ import {
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
-import { SearchResult } from '@/config/command-palette'
-import { SearchEngine } from '@/lib/search-engine'
+import { SearchResult } from '../config/command-palette'
+import { SearchEngine } from '../lib/search-engine'
 import { Task as BoxTask } from '@/types/box'
-import { commandRegistry, registerDefaultCommands } from '@/lib/command-registry'
-import { generateCompassCommands } from '@/lib/compass-commands'
+import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
+import { generateCompassCommands } from '../lib/compass-commands'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTaskStore } from '@/stores/useTaskStore'
 import { useSidebarStore } from '@/stores/sidebarStore'

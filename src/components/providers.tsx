@@ -4,24 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
 import { AuthProvider } from '@/features/auth'
 import { ChatProvider } from '@/contexts/chat-context'
-import { CommandPalette } from '@/components/command-palette'
+import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
 import { ToastProvider } from '@/components/ui/toast'
 
-interface CommandPaletteContextType {
-  open: () => void
-  close: () => void
-  isOpen: boolean
-}
-
-const CommandPaletteContext = createContext<CommandPaletteContextType | null>(null)
-
-export function useCommandPalette() {
-  const context = useContext(CommandPaletteContext)
-  if (!context) {
-    throw new Error('useCommandPalette must be used within CommandPaletteProvider')
-  }
-  return context
-}
+// CommandPalette context moved to features/command-palette
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -51,37 +37,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   )
 }
 
-function CommandPaletteProvider({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false)
-  
-  const openCommandPalette = useCallback(() => {
-    setIsOpen(true)
-  }, [])
-  
-  const closeCommandPalette = useCallback(() => {
-    setIsOpen(false)
-  }, [])
+// CommandPaletteProvider implementation moved to features/command-palette
 
-  // Global keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        openCommandPalette()
-        return
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [openCommandPalette])
-
-  return (
-    <CommandPaletteContext.Provider value={{ open: openCommandPalette, close: closeCommandPalette, isOpen }}>
-      {children}
-      <CommandPalette isOpen={isOpen} onClose={closeCommandPalette} />
-    </CommandPaletteContext.Provider>
-  )
-}
+export { useCommandPalette }

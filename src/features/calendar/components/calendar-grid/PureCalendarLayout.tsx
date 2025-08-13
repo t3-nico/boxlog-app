@@ -6,8 +6,8 @@ import { format, isToday } from 'date-fns'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CalendarEvent } from '@/types/events'
-import { useNotifications } from '../../hooks/useNotifications'
-import { NotificationDisplay } from '@/components/ui/notification-display'
+import { useNotifications } from '@/features/notifications/hooks/useNotifications'
+import { NotificationDisplay } from '@/features/notifications/components/notification-display'
 import { DeleteToast } from '@/components/ui/delete-toast'
 
 // Step 21: Tag interface
