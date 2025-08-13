@@ -34,8 +34,7 @@ import {
   SidebarLabel,
   SidebarSection,
 } from '@/components/sidebar'
-import { AIChatSidebar } from '@/components/ai-chat-sidebar'
-import { CodebaseAIChat } from '@/components/codebase-ai-chat'
+import { AiChatSidebar as AIChatSidebar, CodebaseAiChat as CodebaseAIChat } from '@/features/aichat'
 import { CommonSidebarSections } from '@/components/sidebar/CommonSidebarSections'
 import { CommonBottomSections } from '@/components/sidebar/CommonBottomSections'
 import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
