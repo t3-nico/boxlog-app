@@ -1,12 +1,32 @@
 'use client'
 
 import React from 'react'
+import { PlusCircle as PlusCircleIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useAddPopup } from '@/features/calendar/components/add-popup'
 
 interface CommonSidebarSectionsProps {
   collapsed: boolean
 }
 
 export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps) {
-  // 現在は共通部分なし - 将来的に共通機能を追加予定
-  return null
+  const { openPopup } = useAddPopup()
+  
+  if (collapsed) return null
+
+  return (
+    <div className="mb-3">
+      <Button
+        onClick={(e) => {
+          e.preventDefault()
+          openPopup('event')
+        }}
+        variant="default"
+        className="w-[136px] h-[56px] py-4 px-4 flex items-center gap-2 font-semibold"
+      >
+        <span className="truncate">Create</span>
+        <PlusCircleIcon className="size-5 shrink-0 text-primary-foreground" />
+      </Button>
+    </div>
+  )
 }

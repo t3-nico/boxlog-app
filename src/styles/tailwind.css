@@ -6,6 +6,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Ensure full height for html and body */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 @theme {
   --font-sans: Inter, sans-serif;
   --font-sans--font-feature-settings: 'cv11';
