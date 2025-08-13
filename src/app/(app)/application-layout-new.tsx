@@ -11,7 +11,6 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { ViewSwitcher } from '@/components/ui/view-switcher'
 import { getPageTitle, getCurrentViewIcon } from '@/config/views'
-import { useBoxStore } from '@/lib/box-store'
 import { useSidebarStore, sidebarSelectors } from '@/stores/sidebarStore'
 import { TagManagementModal } from '@/features/tags/components/tag-management-modal'
 import { QuickTagCreateModal } from '@/features/tags/components/quick-tag-create-modal'
@@ -44,7 +43,6 @@ import { BoardSidebarSections } from '@/features/board/components/sidebar'
 import { TableSidebarSections } from '@/features/table/components/sidebar'
 import { StatsSidebarSections } from '@/features/stats/components/sidebar'
 import { AddPopup, useAddPopup } from '@/features/calendar/components/add-popup'
-import { getEvents, getReviews } from '@/data'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
   ChevronDown as ChevronDownIcon,
