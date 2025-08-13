@@ -7,7 +7,7 @@ import type {
   CalendarFilter,
   RecurrencePattern,
   EventInstance
-} from '../types/calendar.types'
+} from '@/features/calendar/types/calendar.types'
 
 // ========================================
 // Event Management Hooks

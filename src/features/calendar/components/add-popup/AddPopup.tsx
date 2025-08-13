@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import { EventCreateForm, type EventFormData } from './EventCreateForm'
 import { LogCreateForm, type LogFormData } from './LogCreateForm'
 // import { createTaskRecord } from '@/lib/supabase/task-records' // Temporarily commented out - using localStorage instead
-import { useEventStore } from '@/stores/useEventStore'
+import { useEventStore } from '@/features/events'
 
 interface AddPopupProps {
   open: boolean

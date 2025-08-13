@@ -2,7 +2,7 @@
 
 import { createPortal } from 'react-dom'
 import { Settings, Copy, Printer, Mail, Download, Trash2 } from 'lucide-react'
-import type { CalendarEvent } from '@/types/events'
+import type { CalendarEvent } from '@/features/events'
 
 interface EventActionMenuProps {
   event: CalendarEvent

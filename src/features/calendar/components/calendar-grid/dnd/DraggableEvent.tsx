@@ -3,7 +3,7 @@
 import React, { useRef, useEffect } from 'react'
 import { useDrag } from 'react-dnd'
 import { cn } from '@/lib/utils'
-import type { CalendarEvent } from '@/types/events'
+import type { CalendarEvent } from '@/features/events'
 
 export interface DraggedEventData {
   event: CalendarEvent

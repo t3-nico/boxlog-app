@@ -9,7 +9,7 @@ import {
   Calendar,
   Clock
 } from 'lucide-react'
-import type { CalendarEvent } from '@/types/events'
+import type { CalendarEvent } from '@/features/events'
 
 interface TrashViewProps {
   onClose: () => void

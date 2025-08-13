@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState, useMemo, useCallback } from 'react'
-import { useEventStore } from '@/stores/useEventStore'
+import { useEventStore } from '@/features/events'
 import { TrashView } from '@/features/calendar/components/calendar-grid/TrashView'
-import type { CalendarEvent, UpdateEventRequest } from '@/types/events'
+import type { CalendarEvent, UpdateEventRequest } from '@/features/events'
 
 export default function TrashPage() {
   const eventStore = useEventStore()

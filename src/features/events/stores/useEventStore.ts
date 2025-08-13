@@ -7,7 +7,7 @@ import {
   UpdateEventRequest,
   EventsByDate,
   CalendarEvent
-} from '@/types/events'
+} from '../types/events'
 
 // ローカルストレージのキー
 const STORAGE_KEY = 'boxlog-events'

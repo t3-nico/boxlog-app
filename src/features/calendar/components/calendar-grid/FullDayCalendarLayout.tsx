@@ -10,7 +10,7 @@ import { useAddPopup } from '@/hooks/useAddPopup'
 import { DeleteToast } from '@/components/ui/delete-toast'
 import { HOUR_HEIGHT } from '../../constants/calendar-constants'
 import type { ViewDateRange, Task, TaskRecord } from '../../types/calendar.types'
-import type { CalendarEvent } from '@/types/events'
+import type { CalendarEvent } from '@/features/events'
 
 interface FullDayCalendarLayoutProps {
   dates: Date[]

@@ -7,7 +7,7 @@ import { addMinutes, startOfDay, differenceInMinutes } from 'date-fns'
 import { DRAG_TYPE, DraggedEventData } from './DraggableEvent'
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import { utcToUserTimezone, userTimezoneToUtc } from '@/utils/timezone'
-import type { CalendarEvent } from '@/types/events'
+import type { CalendarEvent } from '@/features/events'
 
 interface CalendarDropZoneProps {
   date: Date

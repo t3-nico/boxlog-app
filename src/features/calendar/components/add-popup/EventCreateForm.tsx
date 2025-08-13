@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/select'
 import { useSidebarStore } from '@/stores/sidebarStore'
 import { CreateContextData } from './AddPopup'
-import type { EventType, EventStatus, EventPriority, ChecklistItem, Reminder, REMINDER_PRESETS } from '@/types/events'
+import type { EventType, EventStatus, EventPriority, ChecklistItem, Reminder, REMINDER_PRESETS } from '@/features/events'
 
 interface EventFormData {
   title: string

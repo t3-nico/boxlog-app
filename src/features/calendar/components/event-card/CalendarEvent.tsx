@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import { format } from 'date-fns'
-import { CalendarEvent } from '@/types/events'
+import { CalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
 
 interface CalendarEventProps {

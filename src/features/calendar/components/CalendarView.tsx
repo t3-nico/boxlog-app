@@ -13,7 +13,7 @@ import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/utils/timezone'
 import { useTaskStore } from '@/stores/useTaskStore'
-import { useEventStore, initializeEventStore } from '@/stores/useEventStore'
+import { useEventStore, initializeEventStore } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { NotificationDisplay } from '@/features/notifications/components/notification-display'
 import { 
@@ -24,7 +24,7 @@ import {
 } from '../lib/view-helpers'
 import { isValidViewType } from '../lib/calendar-helpers'
 import type { CalendarViewType, CalendarViewProps, Task, CalendarEvent } from '../types/calendar.types'
-import type { Event, CreateEventRequest, UpdateEventRequest } from '@/types/events'
+import type { Event, CreateEventRequest, UpdateEventRequest } from '@/features/events'
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType

@@ -14,7 +14,7 @@ import type {
   CreateTaskInput,
   CreateRecordInput
 } from '../../../types/calendar.types'
-import type { CalendarEvent } from '@/types/events'
+import type { CalendarEvent } from '@/features/events'
 
 interface WeekViewProps {
   dateRange: ViewDateRange

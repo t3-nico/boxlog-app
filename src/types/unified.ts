@@ -98,4 +98,4 @@ export type { Tag, TagWithChildren, CreateTagInput, UpdateTagInput, TagLevel } f
 export type { SmartFolder, SmartFolderRule, CreateSmartFolderInput } from './smart-folders'
 
 // events.tsから最新の定義を再エクスポート
-export type { Event, EventEntity, CalendarEvent, CreateEventRequest, UpdateEventRequest } from './events'
+export type { Event, EventEntity, CalendarEvent, CreateEventRequest, UpdateEventRequest } from '@/features/events'
