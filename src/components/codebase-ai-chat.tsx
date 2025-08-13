@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useChat } from 'ai/react'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { Avatar } from '@/components/avatar'
 import { 
   X,

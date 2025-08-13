@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
-import { AuthProvider } from '@/contexts/AuthContext'
+import { AuthProvider } from '@/features/auth'
 import { ChatProvider } from '@/contexts/chat-context'
 import { CommandPalette } from '@/components/command-palette'
 import { ToastProvider } from '@/components/ui/toast'

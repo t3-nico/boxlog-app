@@ -30,11 +30,9 @@ const saveToLocalStorage = (events: Event[]) => {
     }))
     
     localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsToSave))
-    console.log('💾 Saved events:', events.length)
     
     // 直ちに確認
     const saved = localStorage.getItem(STORAGE_KEY)
-    console.log('💾 Saved data exists:', !!saved)
   } catch (error) {
     console.error('💾 Save failed:', error)
   }
@@ -46,7 +44,6 @@ const loadFromLocalStorage = (): Event[] => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) {
-      console.log('📖 No data in localStorage')
       return []
     }
     
@@ -60,7 +57,6 @@ const loadFromLocalStorage = (): Event[] => {
       deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
     }))
     
-    console.log('📖 Loaded events:', events.length)
     return events
   } catch (error) {
     console.error('📖 Load failed:', error)
@@ -87,7 +83,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
   // ストア初期化後にローカルストレージから読み込み
   fetchEvents: async (filters?: EventFilters) => {
-    console.log('🔄 fetchEvents called')
     set({ loading: true })
     
     // ローカルストレージから読み込み
@@ -99,12 +94,10 @@ export const useEventStore = create<EventStore>()((set, get) => ({
       error: null 
     })
     
-    console.log('🔄 Events loaded from localStorage:', events.length)
   },
 
   // イベント作成
   createEvent: async (eventData: CreateEventRequest) => {
-    console.log('🚀 Creating event:', eventData.title)
     set({ loading: true, error: null })
     
     try {
@@ -131,13 +124,8 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         deletedAt: null
       }
       
-      console.log('✅ Created event object:', newEvent)
-      
       const currentEvents = get().events
-      console.log('📊 Current events count:', currentEvents.length)
-      
       const newEvents = [...currentEvents, newEvent]
-      console.log('📊 New events count:', newEvents.length)
       
       // ストアを更新
       set({ 
@@ -147,14 +135,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
       
       // ローカルストレージに保存
       saveToLocalStorage(newEvents)
-      
-      console.log('🎉 Event created successfully:', newEvent.title)
-      
-      // 確認のため再度ストア状態をチェック
-      setTimeout(() => {
-        const finalEvents = get().events
-        console.log('🔍 Final store check:', finalEvents.length)
-      }, 100)
       
       return newEvent
     } catch (error) {
@@ -169,7 +149,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
   // イベント更新
   updateEvent: async (eventData: UpdateEventRequest) => {
-    console.log('🔄 Updating event:', eventData.id)
     set({ loading: true, error: null })
     
     try {
@@ -188,7 +167,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
       saveToLocalStorage(updatedEvents)
       
       const updatedEvent = updatedEvents.find(e => e.id === eventData.id)
-      console.log('✅ Event updated:', updatedEvent?.title)
       
       return updatedEvent!
     } catch (error) {
@@ -203,7 +181,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
   // イベント削除
   deleteEvent: async (eventId: string) => {
-    console.log('🗑️ Deleting event:', eventId)
     set({ loading: true, error: null })
     
     try {
@@ -217,8 +194,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
       })
       
       saveToLocalStorage(filteredEvents)
-      
-      console.log('✅ Event deleted')
     } catch (error) {
       console.error('❌ Delete event failed:', error)
       set({ 
@@ -246,11 +221,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
   getEventsByDateRange: (startDate: Date, endDate: Date) => {
     const { events } = get()
-    console.log('📅 Getting events for date range:', { 
-      start: startDate.toDateString(), 
-      end: endDate.toDateString(),
-      totalEvents: events.length 
-    })
     
     const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
     const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
@@ -269,7 +239,6 @@ export const useEventStore = create<EventStore>()((set, get) => ({
              (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
     })
     
-    console.log('📅 Filtered events result:', filteredEvents.length)
     return filteredEvents
   },
 
@@ -374,7 +343,6 @@ let isInitialized = false
 export const initializeEventStore = () => {
   if (!isBrowser || isInitialized) return
   
-  console.log('🚀 Initializing event store from localStorage')
   isInitialized = true
   useEventStore.getState().fetchEvents()
 }

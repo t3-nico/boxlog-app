@@ -18,7 +18,8 @@
       "WebFetch(domain:developer.1password.com)",
       "Bash(cp:*)",
       "Bash(curl:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(ANALYZE=true npm run build:fallback)"
     ],
     "deny": []
   },

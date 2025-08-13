@@ -1,6 +1,6 @@
 import { getEvents, getReviews } from '@/data'
 import { ApplicationLayoutNew } from './application-layout-new'
-import { AuthGuard } from '@/components/auth-guard'
+import { AuthGuard } from '@/features/auth'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let events = await getEvents()

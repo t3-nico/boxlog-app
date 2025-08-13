@@ -105,7 +105,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/kibo-ui/select';
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 
 export type { BundledLanguage } from 'shiki';

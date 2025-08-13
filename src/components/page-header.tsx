@@ -15,7 +15,7 @@ import {
   GraduationCap as AcademicCapIcon
 } from 'lucide-react'
 import { Avatar } from '@/components/avatar'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { useCalendarSettingsStore } from '@/features/calendar/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'
 

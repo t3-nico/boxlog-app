@@ -5,20 +5,12 @@ import { getCurrentTimezone, getTimezoneOffset, utcToUserTimezone, userTimezoneT
 export const localToUTC = (dateStr: string, timeStr: string): string => {
   const timezone = getCurrentTimezone();
   
-  console.log('🌐 localToUTC - 開始:', {
-    input: { date: dateStr, time: timeStr },
-    userTimezone: timezone
-  });
   
   // UTCの場合：入力値をそのままUTCとして扱う
   if (timezone === 'UTC') {
     const dateTimeStr = `${dateStr}T${timeStr}:00.000Z`;
     const utcDate = new Date(dateTimeStr);
     
-    console.log('🌐 localToUTC - UTC直接:', {
-      input: `${dateStr}T${timeStr}:00`,
-      output: utcDate.toISOString()
-    });
     
     return utcDate.toISOString();
   }
@@ -32,12 +24,6 @@ export const localToUTC = (dateStr: string, timeStr: string): string => {
   // ユーザータイムゾーンからUTCに変換
   const utcDate = userTimezoneToUtc(userTimezoneDate);
   
-  console.log('🌐 localToUTC - タイムゾーン変換:', {
-    input: { date: dateStr, time: timeStr },
-    timezone: timezone,
-    userTimezoneDate: userTimezoneDate.toLocaleString(),
-    utcDate: utcDate.toISOString()
-  });
   
   return utcDate.toISOString();
 };
@@ -47,11 +33,6 @@ export const utcToLocal = (utcString: string): { date: string; time: string } =>
   const timezone = getCurrentTimezone();
   const utcDate = new Date(utcString);
   
-  console.log('🌐 utcToLocal - 開始:', {
-    input: utcString,
-    userTimezone: timezone,
-    utcDate: utcDate.toISOString()
-  });
   
   // UTCの場合：UTCのまま表示
   if (timezone === 'UTC') {
@@ -60,10 +41,6 @@ export const utcToLocal = (utcString: string): { date: string; time: string } =>
       time: format(utcDate, 'HH:mm')
     };
     
-    console.log('🌐 utcToLocal - UTC直接:', {
-      input: utcString,
-      output: result
-    });
     
     return result;
   }
@@ -76,13 +53,6 @@ export const utcToLocal = (utcString: string): { date: string; time: string } =>
     time: format(localDate, 'HH:mm')
   };
   
-  console.log('🌐 utcToLocal - タイムゾーン変換:', {
-    input: utcString,
-    timezone: timezone,
-    utcDate: utcDate.toISOString(),
-    localDate: localDate.toLocaleString(),
-    output: result
-  });
   
   return result;
 };
@@ -108,12 +78,6 @@ export const getTimeFromY = (
   // 15分単位にスナップ
   const snappedMinutes = Math.round(totalMinutes / 15) * 15;
   
-  console.log('🌐 getTimeFromY - ドラッグ計算:', {
-    yPosition,
-    totalMinutes,
-    snappedMinutes,
-    timezone
-  });
   
   // ユーザータイムゾーンでの日付として作成
   if (timezone === 'UTC') {
@@ -122,10 +86,6 @@ export const getTimeFromY = (
     utcDate.setUTCHours(0, 0, 0, 0);
     utcDate.setUTCMinutes(snappedMinutes);
     
-    console.log('🌐 getTimeFromY - UTC結果:', {
-      baseDate: baseDate.toISOString(),
-      result: utcDate.toISOString()
-    });
     
     return utcDate;
   } else {
@@ -134,11 +94,6 @@ export const getTimeFromY = (
     localDate.setHours(0, 0, 0, 0);
     localDate.setMinutes(snappedMinutes);
     
-    console.log('🌐 getTimeFromY - ローカル結果:', {
-      baseDate: baseDate.toISOString(),
-      result: localDate.toISOString(),
-      timezone
-    });
     
     return localDate;
   }
@@ -203,12 +158,5 @@ export const createDateFromStrings = (dateStr: string, timeStr: string): Date =>
 // デバッグ用: 時間変換の検証
 export const debugTimeConversion = (label: string, originalDate: Date, utcString?: string) => {
   const timezone = getCurrentTimezone();
-  console.log(`🕐 ${label}:`, {
-    original: originalDate,
-    originalISO: originalDate.toISOString(),
-    localFormat: format(originalDate, 'yyyy-MM-dd HH:mm'),
-    utcString: utcString,
-    timezone: timezone,
-    offset: originalDate.getTimezoneOffset()
-  });
+  // Debug logging removed for production
 };

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { sidebarConfig, MenuSection, MenuItem } from '@/config/sidebarConfig'
 import { useSidebarStore } from '@/stores/sidebarStore'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 
 export const useSidebarMenu = () => {
   const { user } = useAuthContext()

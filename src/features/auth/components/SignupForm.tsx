@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuthContext } from "@/contexts/AuthContext"
+import { useAuthContext } from "../contexts/AuthContext"
 
 export function SignupForm({
   className,

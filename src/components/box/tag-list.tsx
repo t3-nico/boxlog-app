@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Tag } from '@/types/unified'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { useBoxStore } from '@/lib/box-store'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { 
   Plus, 
   MoreHorizontal,

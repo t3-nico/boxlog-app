@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { SmartFolder } from '@/types/unified'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { useBoxStore } from '@/lib/box-store'
-import { Button } from '@/components/button'
+import { Button } from '@/components/ui/button'
 import { 
   Folder, 
   Plus, 

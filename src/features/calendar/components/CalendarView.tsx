@@ -91,7 +91,7 @@ export function CalendarView({
   } = useNotifications({
     events,
     onReminderTriggered: (event, reminder) => {
-      console.log('🔔 Reminder triggered:', event.title, reminder.minutesBefore + '分前')
+      // Reminder triggered for event
     }
   })
   
@@ -105,7 +105,6 @@ export function CalendarView({
   
   // 🚀 初回ロード時にローカルストレージからイベントを読み込み
   useEffect(() => {
-    console.log('🚀 CalendarView: Initializing event store on mount')
     initializeEventStore()
   }, [])
   
@@ -133,7 +132,6 @@ export function CalendarView({
     if (timezone === 'Asia/Tokyo') { // デフォルト値の場合のみ実際のタイムゾーンに更新
       const actualTimezone = getCurrentTimezone()
       if (actualTimezone !== 'Asia/Tokyo') {
-        console.log('🌐 Initializing timezone from', timezone, 'to', actualTimezone)
         updateSettings({ timezone: actualTimezone })
       }
     }
@@ -308,16 +306,11 @@ export function CalendarView({
   }, [openEventPopup])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    console.log('🆕🆕🆕 handleCreateEvent called:', { date, time })
-    console.log('🆕🆕🆕 This should appear in console when clicking calendar!')
-    
     // AddPopupを開く（日付と時刻を渡す）
-    console.log('🆕🆕🆕 Opening event popup...')
     openEventPopup({
       dueDate: date || new Date(),
       status: 'Todo'
     })
-    console.log('🆕🆕🆕 openEventPopup called successfully')
     
     // デフォルト値を設定（AddPopupが開いた後に使用される）
     let startTime: string | undefined
@@ -359,7 +352,6 @@ export function CalendarView({
       const eventToDelete = eventStore.events.find(e => e.id === eventId)
       if (eventToDelete) {
         await eventStore.deleteEvent(eventId)
-        console.log('🗑️ Event permanently deleted:', eventToDelete.title)
       }
       
       setIsEventModalOpen(false)
@@ -381,7 +373,6 @@ export function CalendarView({
       }
       
       await eventStore.createEvent(createRequest)
-      console.log('🔄 Event restored:', event.title)
     } catch (error) {
       console.error('Failed to restore event:', error)
     }
@@ -399,7 +390,6 @@ export function CalendarView({
             deletedAt: null
           }
           await eventStore.updateEvent(updateRequest)
-          console.log('🔄 Event restored:', eventToRestore.title)
         }
       }))
     } catch (error) {
@@ -410,7 +400,6 @@ export function CalendarView({
   const handleDeletePermanently = useCallback(async (eventIds: string[]) => {
     try {
       await Promise.all(eventIds.map(id => eventStore.deleteEvent(id)))
-      console.log('💀 Events permanently deleted:', eventIds.length)
     } catch (error) {
       console.error('Failed to permanently delete events:', error)
     }
@@ -450,7 +439,6 @@ export function CalendarView({
       )
       
       if (expiredEvents.length > 0) {
-        console.log('🧹 Auto-deleting expired events:', expiredEvents.length)
         await Promise.all(expiredEvents.map(event => eventStore.deleteEvent(event.id)))
       }
     }
@@ -464,19 +452,6 @@ export function CalendarView({
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
   const handleUpdateEvent = useCallback(async (updatedEvent: CalendarEvent) => {
-    console.log('🔄 handleUpdateEvent called:', {
-      id: updatedEvent.id,
-      title: updatedEvent.title,
-      originalStart: updatedEvent.startDate?.toISOString(),
-      originalEnd: updatedEvent.endDate?.toISOString(),
-      startDateString: updatedEvent.startDate?.toDateString(),
-      endDateString: updatedEvent.endDate?.toDateString(),
-      currentViewDateRange: {
-        start: viewDateRange.start.toISOString(),
-        end: viewDateRange.end.toISOString()
-      }
-    })
-    
     try {
       const updateRequest: UpdateEventRequest = {
         id: updatedEvent.id,
@@ -488,9 +463,7 @@ export function CalendarView({
         color: updatedEvent.color
       }
       
-      console.log('📤 Sending update request:', updateRequest)
       await eventStore.updateEvent(updateRequest)
-      console.log('✅ Event updated successfully:', updatedEvent.title)
       
     } catch (error) {
       console.error('❌ Failed to update event:', error)
@@ -668,8 +641,6 @@ export function CalendarView({
 
   // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback((date: Date, time: string) => {
-    console.log('🕐 handleEmptyClick called:', { date, time })
-    
     openEventPopup({
       dueDate: date,
       status: 'Todo'

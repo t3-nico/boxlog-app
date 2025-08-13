@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '../contexts/AuthContext'
 
 interface AuthGuardProps {
   children: React.ReactNode

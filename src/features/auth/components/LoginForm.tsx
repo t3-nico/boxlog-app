@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '../contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/ui/button'
 import { GoogleIcon, AppleIcon } from '@/components/icons'
@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label'
 import { Heading } from '@/components/heading'
 import { Input } from '@/components/ui/input'
 
-export default function LoginForm() {
+function LoginFormComponent({ localMode = false }: { localMode?: boolean }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -34,7 +34,12 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    // setError(null) は削除済み
+    
+    // ローカルモードの場合は認証をスキップ
+    if (localMode) {
+      router.push('/calendar')
+      return
+    }
 
     try {
       await signIn(email, password)
@@ -54,6 +59,31 @@ export default function LoginForm() {
       setError(error.message)
     }
     setLoading(false)
+  }
+
+  // ローカルモード用の簡易UI
+  if (localMode) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="w-full max-w-md space-y-8 p-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold">BoxLog</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              ローカル専用モード
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+            >
+              {loading ? "起動中..." : "アプリを開始"}
+            </Button>
+          </form>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -124,3 +154,7 @@ export default function LoginForm() {
     </form>
   )
 }
+
+// Named exportとDefault exportの両方をサポート
+export const LoginForm = LoginFormComponent
+export default LoginFormComponent

@@ -5,7 +5,7 @@ import { Checkbox, CheckboxField } from '@/components/checkbox'
 import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/dialog'
 import { Description, Field, FieldGroup, Label } from '@/components/fieldset'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/select'
+import { Select } from '@/components/ui/select'
 import { useState } from 'react'
 
 export function RefundReview({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) {

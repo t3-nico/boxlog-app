@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/ui/button'
 import { Field, Label } from '@/components/fieldset'

@@ -2,7 +2,7 @@
 
 import type { ComponentProps } from 'react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea, ScrollBar } from '@/components/ui/kibo-ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 export type AISuggestionsProps = ComponentProps<typeof ScrollArea>;

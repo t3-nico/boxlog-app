@@ -6,7 +6,7 @@ import { Avatar } from '@/components/avatar'
 import { ToastProvider } from '@/components/ui/toast'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
-import { useAuthContext } from '@/contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { ViewSwitcher } from '@/components/ui/view-switcher'
@@ -27,7 +27,6 @@ import {
   DropdownMenu,
 } from '@/components/dropdown'
 import * as Headless from '@headlessui/react'
-import { Button } from '@/components/button'
 import { Button as ShadButton } from '@/components/ui/button'
 import { NavbarItem } from '@/components/navbar'
 import {

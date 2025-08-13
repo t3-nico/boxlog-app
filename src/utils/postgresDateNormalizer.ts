@@ -15,7 +15,6 @@ import { debugDateFormat } from './debugDateFormat';
 export const normalizePostgresDate = (dateValue: any, fieldName: string = 'date'): Date | null => {
   // nullまたはundefinedの場合
   if (dateValue === null || dateValue === undefined) {
-    console.log(`⚠️ ${fieldName} is null or undefined`);
     return null;
   }
   
@@ -50,11 +49,6 @@ export const normalizePostgresDate = (dateValue: any, fieldName: string = 'date'
       // PostgreSQLがUTCで保存しているが、タイムゾーン情報がない場合
       // 明示的にUTCとして扱う（Zを追加）
       normalizedDate = new Date(dateValue + 'Z');
-      console.log('📍 Treating as UTC (adding Z):', {
-        input: dateValue,
-        utc: normalizedDate.toISOString(),
-        local: normalizedDate.toLocaleString('ja-JP')
-      });
     }
     // ケース3: 標準的なISO 8601形式
     else {
@@ -68,11 +62,6 @@ export const normalizePostgresDate = (dateValue: any, fieldName: string = 'date'
       return null;
     }
     
-    console.log(`✅ Successfully normalized ${fieldName}:`, {
-      original: dateValue,
-      normalized: normalizedDate.toISOString(),
-      local: normalizedDate.toLocaleString('ja-JP')
-    });
     
     return normalizedDate;
   } catch (error: any) {

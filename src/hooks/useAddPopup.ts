@@ -27,7 +27,6 @@ export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
 
   // Actions
   openPopup: (tab = 'event', context: CreateContextData | null = null) => {
-    console.log('🎪 useAddPopup: openPopup called', { tab, context })
     
     // Smart tab selection based on context
     let selectedTab = tab
@@ -46,7 +45,6 @@ export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
       }
     }
 
-    console.log('🎪 useAddPopup: Setting state', { isOpen: true, activeTab: selectedTab, contextData: context })
     
     set({
       isOpen: true,
@@ -54,7 +52,6 @@ export const useAddPopupStore = create<AddPopupStore>((set, get) => ({
       contextData: context,
     })
     
-    console.log('🎪 useAddPopup: State set successfully')
   },
 
   closePopup: () => {

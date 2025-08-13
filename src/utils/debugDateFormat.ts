@@ -4,74 +4,10 @@
  */
 
 export const debugDateFormat = (label: string, dateValue: any) => {
-  console.group(`🔍 DATE DEBUG: ${label}`);
-  
-  console.log('Raw value:', dateValue);
-  console.log('Type:', typeof dateValue);
-  
+  // Debug logging removed for production
   if (dateValue === null || dateValue === undefined) {
-    console.log('⚠️ Value is null or undefined');
-    console.groupEnd();
     return;
   }
-  
-  // 文字列の場合、形式を分析
-  if (typeof dateValue === 'string') {
-    console.log('String length:', dateValue.length);
-    console.log('Contains T:', dateValue.includes('T'));
-    console.log('Contains Z:', dateValue.includes('Z'));
-    console.log('Contains +:', dateValue.includes('+'));
-    console.log('Contains space:', dateValue.includes(' '));
-    
-    // 各種パースを試みる
-    const parseAttempts = [
-      { method: 'new Date()', result: null as Date | null, error: null as string | null },
-      { method: 'Date.parse()', result: null as number | null, error: null as string | null },
-    ];
-    
-    // new Date()
-    try {
-      const d = new Date(dateValue);
-      parseAttempts[0].result = d;
-      console.log('✅ new Date() success:', {
-        valid: !isNaN(d.getTime()),
-        iso: d.toISOString(),
-        local: d.toLocaleString('ja-JP'),
-        year: d.getFullYear(),
-        month: d.getMonth() + 1,
-        date: d.getDate(),
-        hours: d.getHours(),
-        minutes: d.getMinutes(),
-        timezoneOffset: d.getTimezoneOffset()
-      });
-    } catch (e: any) {
-      parseAttempts[0].error = e.message;
-      console.error('❌ new Date() failed:', e.message);
-    }
-    
-    // Date.parse()
-    try {
-      const timestamp = Date.parse(dateValue);
-      parseAttempts[1].result = timestamp;
-      console.log('✅ Date.parse() success:', {
-        timestamp,
-        valid: !isNaN(timestamp),
-        asDate: new Date(timestamp).toISOString()
-      });
-    } catch (e: any) {
-      parseAttempts[1].error = e.message;
-      console.error('❌ Date.parse() failed:', e.message);
-    }
-  }
-  
-  // ブラウザ情報
-  console.log('Browser info:', {
-    userAgent: navigator.userAgent,
-    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    timezoneOffset: new Date().getTimezoneOffset()
-  });
-  
-  console.groupEnd();
 };
 
 /**
