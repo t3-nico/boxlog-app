@@ -1,5 +1,5 @@
 import { getEvents, getReviews } from '@/data'
-import { ApplicationLayoutNew } from './application-layout-new'
+import { ApplicationLayoutWithVerticalNav } from './application-layout-with-vertical-nav'
 import { AuthGuard } from '@/features/auth'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -8,7 +8,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <AuthGuard>
-      <ApplicationLayoutNew events={events} reviews={reviews}>{children}</ApplicationLayoutNew>
+      <ApplicationLayoutWithVerticalNav events={events} reviews={reviews}>{children}</ApplicationLayoutWithVerticalNav>
     </AuthGuard>
   )
 }

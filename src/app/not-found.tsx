@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { ApplicationLayoutNew } from './(app)/application-layout-new'
+import { ApplicationLayoutWithVerticalNav } from './(app)/application-layout-with-vertical-nav'
 
 // 404ページのコンテンツコンポーネント
 function NotFoundContent() {
@@ -40,8 +40,8 @@ export default function NotFound() {
   const reviews: any[] = []
 
   return (
-    <ApplicationLayoutNew events={events} reviews={reviews} hideHeader={true}>
+    <ApplicationLayoutWithVerticalNav events={events} reviews={reviews} hideHeader={true}>
       <NotFoundContent />
-    </ApplicationLayoutNew>
+    </ApplicationLayoutWithVerticalNav>
   )
 }

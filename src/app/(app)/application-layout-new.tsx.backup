@@ -36,6 +36,7 @@ import {
   SidebarSection,
 } from '@/components/sidebar'
 import { AiChatSidebar as AIChatSidebar, CodebaseAiChat as CodebaseAIChat } from '@/features/aichat'
+import { VerticalNavMenu } from '@/components/layout/VerticalNavMenu'
 import { CommonSidebarSections } from '@/components/sidebar/CommonSidebarSections'
 import { CommonBottomSections } from '@/components/sidebar/CommonBottomSections'
 import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
@@ -271,27 +272,11 @@ export function ApplicationLayoutNew({
   return (
     <ThemeProvider>
       <ToastProvider>
-        <div className="flex flex-col h-screen">
-        {/* Fixed Header - Full width at top */}
-        <header className="fixed top-0 left-0 right-0 z-20 bg-background border-b border-border h-16">
-          <div className="flex items-center justify-between px-4 h-full">
-            {/* Left side - Logo and menu */}
-            <div className="flex items-center gap-2">
-              {/* Sidebar toggle button */}
-              {!inSettings && (
-                <button
-                  onClick={() => setCollapsed(!collapsed)}
-                  className="p-2 rounded-md hover:bg-accent/50 transition-colors"
-                  title={collapsed ? "Open sidebar" : "Close sidebar"}
-                >
-                  {collapsed ? (
-                    <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  ) : (
-                    <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  )}
-                </button>
-              )}
-              {!inSettings && (
+        <div className="flex h-screen">
+          {/* L1: Vertical Navigation Menu */}
+          <VerticalNavMenu />
+          {/* L2: Left Sidebar - Hidden when collapsed */}
+          {!collapsed && (
                 <Headless.Menu as="div" className="relative">
                   <Headless.MenuButton className="flex cursor-pointer select-none items-center gap-3 rounded-lg px-2 py-2 text-left text-base/6 font-medium text-zinc-950 sm:py-2 sm:text-sm/5 data-[slot=icon]:*:size-6 data-[slot=icon]:*:shrink-0 data-[slot=icon]:*:text-zinc-500 sm:data-[slot=icon]:*:size-5 data-[hover]:bg-zinc-950/5 data-[slot=icon]:*:data-[hover]:text-zinc-950 data-[active]:bg-zinc-950/5 data-[slot=icon]:*:data-[active]:text-zinc-950 data-[slot=current]:*:data-[slot=icon]:text-zinc-950 dark:text-white dark:data-[slot=icon]:*:text-zinc-400 dark:data-[hover]:bg-white/5 data-[slot=icon]:*:data-[hover]:text-white dark:data-[active]:bg-white/5 data-[slot=icon]:*:data-[active]:text-white dark:data-[slot=current]:*:data-[slot=icon]:text-white forced-colors:data-[slot=current]:*:data-[slot=icon]:text-[Highlight]">
                     {user?.user_metadata?.avatar_url ? (
