@@ -1,0 +1,69 @@
+'use client'
+
+import React from 'react'
+import { CommonSidebarSections } from '../shared'
+import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
+import { BoardSidebarSections } from '@/features/board/components/sidebar'
+import { TableSidebarSections } from '@/features/table/components/sidebar'
+import { StatsSidebarSections } from '@/features/stats/components/sidebar'
+
+interface PageContentProps {
+  pathname: string
+}
+
+export function PageContent({ pathname }: PageContentProps) {
+  const isCalendarPage = pathname.startsWith('/calendar')
+  const isBoardPage = pathname.startsWith('/board')
+  const isTablePage = pathname.startsWith('/table')
+  const isStatsPage = pathname.startsWith('/stats')
+
+  return (
+    <div className="flex-1 flex flex-col gap-6 min-h-0">
+      {/* Common sections for all pages */}
+      <CommonSidebarSections collapsed={false} />
+
+      {/* Page-specific sections */}
+      <div className="space-y-6">
+        {isCalendarPage && (
+          <CalendarSidebarSections
+            collapsed={false}
+            selectedDate={new Date()}
+            onDateSelect={() => {}}
+            tags={[]}
+            selectedTags={[]}
+            tagFilterMode="OR"
+            onTagSelect={() => {}}
+            onToggleExpand={() => {}}
+            onFilterModeChange={() => {}}
+            onManageTags={() => {}}
+            onCreateTag={() => {}}
+          />
+        )}
+
+        {isBoardPage && (
+          <BoardSidebarSections
+            collapsed={false}
+            onSelectTag={() => {}}
+            selectedTagIds={[]}
+          />
+        )}
+
+        {isTablePage && (
+          <TableSidebarSections
+            collapsed={false}
+            onSelectTag={() => {}}
+            selectedTagIds={[]}
+          />
+        )}
+
+        {isStatsPage && (
+          <StatsSidebarSections
+            collapsed={false}
+            onSelectTag={() => {}}
+            selectedTagIds={[]}
+          />
+        )}
+      </div>
+    </div>
+  )
+}

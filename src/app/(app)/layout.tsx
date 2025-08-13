@@ -1,14 +1,16 @@
 import { getEvents, getReviews } from '@/data'
-import { ApplicationLayoutWithVerticalNav } from './application-layout-with-vertical-nav'
+import { DashboardLayout } from '@/components/layout/navigation/layout'
 import { AuthGuard } from '@/features/auth'
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
   let events = await getEvents()
   let reviews = await getReviews()
 
   return (
     <AuthGuard>
-      <ApplicationLayoutWithVerticalNav events={events} reviews={reviews}>{children}</ApplicationLayoutWithVerticalNav>
+      <DashboardLayout events={events} reviews={reviews}>
+        {children}
+      </DashboardLayout>
     </AuthGuard>
   )
 }

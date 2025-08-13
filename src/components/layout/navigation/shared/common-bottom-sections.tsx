@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CurrentScheduleCard } from '@/components/sidebar/current-schedule-card'
+import { CurrentScheduleCard } from './current-schedule-card'
 
 interface CommonBottomSectionsProps {
   collapsed: boolean

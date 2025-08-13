@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { SidebarHeading, SidebarSection } from '@/components/sidebar'
+import { SidebarHeading, SidebarSection } from '@/components/layout/navigation/shared'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 

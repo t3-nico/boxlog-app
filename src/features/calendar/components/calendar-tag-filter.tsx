@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { Plus, Settings, Filter } from 'lucide-react'
-import { SidebarSection, SidebarHeading } from '@/components/sidebar'
+import { SidebarSection, SidebarHeading } from '@/components/layout/navigation/shared'
 import { TagsList } from '@/features/tags/components/tags-list'
 
 // Tag interface
