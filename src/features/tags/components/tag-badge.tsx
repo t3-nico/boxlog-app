@@ -1,7 +1,7 @@
 'use client'
 
 import { Tag } from '@/types/tags'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/components/shadcn-ui/badge'
 
 interface TagBadgeProps {
   tag: Tag

@@ -3,7 +3,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Avatar } from '@/components/avatar'
+import { Avatar } from '@/components/shadcn-ui/avatar'
 import { useAuthContext } from '@/features/auth'
 import * as Headless from '@headlessui/react'
 import {

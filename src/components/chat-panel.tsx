@@ -12,7 +12,7 @@ import {
   Check
 } from 'lucide-react'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
-import { Avatar } from '@/components/avatar'
+import { Avatar } from '@/components/shadcn-ui/avatar'
 
 interface MessageBubbleProps {
   message: ChatMessage

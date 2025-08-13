@@ -1,8 +1,8 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
-import { Listbox, ListboxLabel, ListboxOption } from '@/components/listbox'
-import { getCountries } from '@/data'
+import { Input } from '@/components/shadcn-ui/input'
+import { Listbox, ListboxLabel, ListboxOption } from '@/components/custom'
+import { getCountries } from '@/lib/data'
 import Image from 'next/image'
 import { useState } from 'react'
 

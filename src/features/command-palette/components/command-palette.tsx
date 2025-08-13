@@ -9,7 +9,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command'
+} from '@/components/shadcn-ui/command'
 import { SearchResult } from '../config/command-palette'
 import { SearchEngine } from '../lib/search-engine'
 import { Task as BoxTask } from '@/types/box'
@@ -17,7 +17,8 @@ import { commandRegistry, registerDefaultCommands } from '../lib/command-registr
 import { generateCompassCommands } from '../lib/compass-commands'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTaskStore } from '@/stores/useTaskStore'
-import { useSidebarStore } from '@/stores/sidebarStore'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { 
   Navigation,
   Plus,
@@ -39,7 +40,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   
   // Store data
   const { tasks } = useTaskStore()
-  const { tags, smartFolders } = useSidebarStore()
+  const tags = useTagStore(state => state.tags)
+  const smartFolders = useSmartFolderStore(state => state.smartFolders)
   
   // State
   const [query, setQuery] = useState('')

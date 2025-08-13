@@ -11,7 +11,7 @@ import {
   Trash2 as TrashIcon
 } from 'lucide-react'
 import { tagIconMapping, TagIconName } from '@/config/tagIcons'
-import { useSidebarStore } from '@/stores/sidebarStore'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { TagEditDialog } from './tag-edit-dialog'
 import { useActiveState } from '@/hooks/useActiveState'
 import { clsx } from 'clsx'
@@ -189,9 +189,14 @@ export function TagsList({
   const [isExpanded, setIsExpanded] = useState(false)
   
   // Zustandストアからデータを取得
-  const tags = useSidebarStore(state => state.tags)
-  const expandedTags = useSidebarStore(state => state.expandedTags)
-  const toggleTagExpansion = useSidebarStore(state => state.toggleTagExpansion)
+  const tags = useTagStore(state => state.tags)
+  // TODO: Move expanded state to tag store
+  const [expandedTags, setExpandedTags] = useState<string[]>([])
+  const toggleTagExpansion = (tagId: string) => {
+    setExpandedTags(prev => 
+      prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
+    )
+  }
   
   // 表示するタグリストを計算（階層構造）
   const displayTags = useCallback(() => {
@@ -232,8 +237,8 @@ export function TagsList({
   }, [toggleTagExpansion])
   
   const [editingTag, setEditingTag] = useState<any>(null)
-  const updateTag = useSidebarStore(state => state.updateTag)
-  const deleteTag = useSidebarStore(state => state.deleteTag)
+  const updateTag = useTagStore(state => state.updateTag)
+  const deleteTag = useTagStore(state => state.deleteTag)
 
   const handleEditTag = useCallback((tag: any) => {
     setEditingTag(tag)

@@ -1,11 +1,11 @@
-import { Avatar } from '@/components/avatar'
+import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list'
-import { Divider } from '@/components/divider'
-import { Heading, Subheading } from '@/components/heading'
-import { Link } from '@/components/link'
-import { getReview } from '@/data'
+import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/custom'
+import { Separator } from '@/components/shadcn-ui/separator'
+import { Heading, Subheading } from '@/components/custom'
+import { Link } from '@/components/custom'
+import { getReview } from '@/lib/data'
 import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -69,7 +69,7 @@ export default async function Review({ params }: { params: { id: string } }) {
       </div>
       <div className="mt-12">
         <Subheading>Summary</Subheading>
-        <Divider className="mt-4" />
+        <Separator className="mt-4" />
         <DescriptionList>
           <DescriptionTerm>Customer</DescriptionTerm>
           <DescriptionDetails>{review.customer.name}</DescriptionDetails>
@@ -94,7 +94,7 @@ export default async function Review({ params }: { params: { id: string } }) {
       </div>
       <div className="mt-12">
         <Subheading>Payment method</Subheading>
-        <Divider className="mt-4" />
+        <Separator className="mt-4" />
         <DescriptionList>
           <DescriptionTerm>Transaction ID</DescriptionTerm>
           <DescriptionDetails>{review.payment.transactionId}</DescriptionDetails>

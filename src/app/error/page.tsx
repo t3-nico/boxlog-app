@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertCircle, Home, RefreshCw } from 'lucide-react'
 

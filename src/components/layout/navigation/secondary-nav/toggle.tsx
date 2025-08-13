@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { useNavigationStore } from '@/store/navigation.store'
+import { useNavigationStore } from '@/stores/navigation.store'
 import { PanelRight } from 'lucide-react'
 
 export function SecondaryNavToggle() {

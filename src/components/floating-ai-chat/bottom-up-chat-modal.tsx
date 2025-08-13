@@ -11,7 +11,7 @@ import {
   Minimize2,
   Maximize2
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { useAIPanel } from '@/contexts/ai-panel-context'
 

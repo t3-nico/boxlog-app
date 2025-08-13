@@ -9,11 +9,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/shadcn-ui/dialog'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
+import { Badge } from '@/components/shadcn-ui/badge'
 import { EventCreateForm, type EventFormData } from './EventCreateForm'
 import { LogCreateForm, type LogFormData } from './LogCreateForm'
 // import { createTaskRecord } from '@/lib/supabase/task-records' // Temporarily commented out - using localStorage instead

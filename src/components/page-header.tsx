@@ -14,7 +14,7 @@ import {
   Clock as ClockIcon,
   GraduationCap as AcademicCapIcon
 } from 'lucide-react'
-import { Avatar } from '@/components/avatar'
+import { Avatar } from '@/components/shadcn-ui/avatar'
 import { useAuthContext } from '@/features/auth'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, getProductivityZoneForHour } from '@/types/chronotype'

@@ -1,14 +1,14 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ToastProvider } from '@/components/ui/toast'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { ToastProvider } from '@/components/shadcn-ui/toast'
+import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { ChatProvider } from '@/contexts/chat-context'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { PrimaryNavigation } from './primary-nav'
 import { SecondaryNavigation, SecondaryNavToggle } from './secondary-nav'
-import { useNavigationStore } from '@/store/navigation.store'
+import { useNavigationStore } from '@/stores/navigation.store'
 import { FloatingAIChat } from '@/components/floating-ai-chat'
 
 interface DashboardLayoutProps {
@@ -40,14 +40,14 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <SecondaryNavToggle />
         
         {/* Main Content with AI Panel */}
-        <div className="flex-1 relative overflow-hidden">
+        <div className="flex-1 relative overflow-hidden bg-red-500">
           <ScrollArea 
-            className="h-full transition-all duration-300"
+            className="transition-all duration-300"
             style={{ 
               height: effectivePanelHeight > 0 ? `calc(100% - ${effectivePanelHeight}px)` : '100%'
             }}
           >
-            <div className="w-full h-full">
+            <div className="w-full">
               {children}
             </div>
           </ScrollArea>

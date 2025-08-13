@@ -3,8 +3,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Search, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Input } from '@/components/shadcn-ui/input'
+import { Button } from '@/components/shadcn-ui/button'
 import { useSearch, useSearchHistory } from '../hooks/use-search'
 import type { SearchResultType } from '../types'
 

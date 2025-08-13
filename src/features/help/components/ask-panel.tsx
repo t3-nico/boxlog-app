@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { useAskPanelStore, askPanelSelectors } from '../stores/useAskPanelStore'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 import { usePathname } from 'next/navigation'
 
 interface MessageBubbleProps {

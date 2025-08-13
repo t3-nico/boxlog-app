@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { Tag } from '@/types/box'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { TagBadge } from './tag-badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/shadcn-ui/dropdown-menu'
 import { ChevronDown as ChevronDownIcon, Plus as PlusIcon } from 'lucide-react'
 
 interface TagSelectorProps {

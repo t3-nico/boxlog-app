@@ -3,7 +3,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { NavigationItem, isNavItemActive } from '@/lib/navigation/config'
+import { NavigationItem, isNavItemActive } from '@/components/layout/navigation/navigation/config'
 import { useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
 
 interface NavItemProps {

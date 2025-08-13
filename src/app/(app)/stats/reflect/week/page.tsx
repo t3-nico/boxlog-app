@@ -1,4 +1,4 @@
-import { Heading } from '@/components/heading'
+import { Heading } from '@/components/custom'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

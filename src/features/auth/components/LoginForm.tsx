@@ -4,12 +4,12 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthContext } from '../contexts/AuthContext'
 import { Logo } from '@/app/logo'
-import { Button } from '@/components/ui/button'
-import { GoogleIcon, AppleIcon } from '@/components/icons'
+import { Button } from '@/components/shadcn-ui/button'
+import { GoogleIcon, AppleIcon } from '@/components/custom'
 import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Label } from '@/components/ui/label'
-import { Heading } from '@/components/heading'
-import { Input } from '@/components/ui/input'
+import { Label } from '@/components/shadcn-ui/label'
+import { Heading } from '@/components/custom'
+import { Input } from '@/components/shadcn-ui/input'
 
 function LoginFormComponent({ localMode = false }: { localMode?: boolean }) {
   const [email, setEmail] = useState('')

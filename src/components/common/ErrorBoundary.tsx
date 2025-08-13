@@ -6,7 +6,7 @@
 'use client'
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { handleClientError } from '@/lib/errors'
 

@@ -19,7 +19,7 @@ import {
 import { SmartFolder, SmartFolderRule, CreateSmartFolderInput, UpdateSmartFolderInput } from '@/types/smart-folders'
 import { RuleEditor } from './rule-editor'
 import { RulePreview } from './rule-preview'
-import { createSmartFolderSchema, updateSmartFolderSchema } from '@/lib/validations/smart-folders'
+import { createSmartFolderSchema, updateSmartFolderSchema } from '@/features/smart-folders/validations/smart-folders'
 import { z } from 'zod'
 
 interface SmartFolderDialogProps {

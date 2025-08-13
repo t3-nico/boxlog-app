@@ -1,17 +1,17 @@
-import { Button } from '@/components/ui/button'
-import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Divider } from '@/components/divider'
-import { Label } from '@/components/fieldset'
-import { Heading, Subheading } from '@/components/heading'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/shadcn-ui/button'
+import { Checkbox } from '@/components/shadcn-ui/checkbox'
+import { Separator } from '@/components/shadcn-ui/separator'
+import { Label } from '@/components/custom'
+import { Heading, Subheading } from '@/components/custom'
+import { Input } from '@/components/shadcn-ui/input'
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
   SelectValue 
-} from '@/components/ui/select'
-import { Textarea } from '@/components/textarea'
+} from '@/components/shadcn-ui/select'
+import { Textarea } from '@/components/shadcn-ui/textarea'
 import type { Metadata } from 'next'
 import { Address } from '../address'
 
@@ -23,7 +23,7 @@ export default function Settings() {
   return (
     <form method="post" className="mx-auto max-w-4xl p-10">
       <Heading>Settings</Heading>
-      <Divider className="my-10 mt-6" />
+      <Separator className="my-10 mt-6" />
 
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
@@ -35,7 +35,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <Divider className="my-10" soft />
+      <Separator className="my-10" soft />
 
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
@@ -47,7 +47,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <Divider className="my-10" soft />
+      <Separator className="my-10" soft />
 
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
@@ -63,7 +63,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <Divider className="my-10" soft />
+      <Separator className="my-10" soft />
 
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
@@ -73,7 +73,7 @@ export default function Settings() {
         <Address />
       </section>
 
-      <Divider className="my-10" soft />
+      <Separator className="my-10" soft />
 
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
@@ -93,7 +93,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <Divider className="my-10" soft />
+      <Separator className="my-10" soft />
 
       <div className="flex justify-end gap-4">
         <Button type="reset" variant="ghost">

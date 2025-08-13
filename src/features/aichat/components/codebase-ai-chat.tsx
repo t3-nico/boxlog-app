@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useChat } from 'ai/react'
 import { useAuthContext } from '@/features/auth'
-import { Avatar } from '@/components/avatar'
+import { Avatar } from '@/components/shadcn-ui/avatar'
 import { 
   X,
   ArrowUpCircle,
@@ -23,18 +23,18 @@ import {
   AIInputSubmit,
   AIInputButton,
   AIInputTools
-} from '@/components/ui/kibo-ui/ai/input'
+} from '@/components/kibo-ui/ai/input'
 import {
   AIConversation,
   AIConversationContent,
   AIConversationScrollButton
-} from '@/components/ui/kibo-ui/ai/conversation'
+} from '@/components/kibo-ui/ai/conversation'
 import {
   AIMessage,
   AIMessageContent,
   AIMessageAvatar
-} from '@/components/ui/kibo-ui/ai/message'
-import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
+} from '@/components/kibo-ui/ai/message'
+import { AIResponse } from '@/components/kibo-ui/ai/response'
 
 // GitHub APIの型定義
 interface GitHubFile {

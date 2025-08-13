@@ -9,7 +9,7 @@ import {
   MoreVertical,
 } from 'lucide-react'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 interface MessageBubbleProps {
   message: ChatMessage

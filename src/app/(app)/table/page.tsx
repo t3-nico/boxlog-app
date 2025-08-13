@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Heading } from '@/components/heading'
+import { Heading } from '@/components/custom'
 import { useChatContext } from '@/contexts/chat-context'
-import { TaskTable } from '@/components/box/task-table'
+import { TaskTable } from '@/features/table'
 
 export default function Table() {
   const { toggleChat, state } = useChatContext()

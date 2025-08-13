@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthContext } from '@/features/auth'
 import { Logo } from '@/app/logo'
-import { Button } from '@/components/ui/button'
-import { Field, Label } from '@/components/fieldset'
-import { Heading } from '@/components/heading'
-import { Input } from '@/components/ui/input'
-import { Text } from '@/components/text'
+import { Button } from '@/components/shadcn-ui/button'
+import { Field, Label } from '@/components/custom'
+import { Heading } from '@/components/custom'
+import { Input } from '@/components/shadcn-ui/input'
+import { Text } from '@/components/custom'
 
 export default function ResetPassword() {
   const router = useRouter()

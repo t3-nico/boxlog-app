@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Calendar } from '@/components/ui/calendar'
+import { Calendar } from '@/components/shadcn-ui/calendar'
 import { CalendarDisplayMode } from '../calendar-display-mode'
 import { CalendarTagFilter } from '../calendar-tag-filter'
 interface CalendarSidebarSectionsProps {

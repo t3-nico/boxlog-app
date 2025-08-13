@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Dialog, DialogActions, DialogBody, DialogTitle } from '@/components/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
+import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
 import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/tagIcons'
 
 interface Tag {

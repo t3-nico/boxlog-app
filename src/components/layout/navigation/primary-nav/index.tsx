@@ -3,7 +3,7 @@
 import React from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { primaryNavigation } from '@/lib/navigation/config'
+import { primaryNavigation } from '@/components/layout/navigation/navigation/config'
 import { NavItem } from './nav-item'
 import { UserMenu } from './user-menu'
 

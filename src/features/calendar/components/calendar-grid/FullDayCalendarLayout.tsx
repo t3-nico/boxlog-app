@@ -7,7 +7,7 @@ import { TimeAxisLabels } from '../time-slots'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/stores/useRecordsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
-import { DeleteToast } from '@/components/ui/delete-toast'
+import { DeleteToast } from '@/components/shadcn-ui/delete-toast'
 import { HOUR_HEIGHT } from '../../constants/calendar-constants'
 import type { ViewDateRange, Task, TaskRecord } from '../../types/calendar.types'
 import type { CalendarEvent } from '@/features/events'
@@ -183,7 +183,7 @@ export function FullDayCalendarLayout({
 
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
-      <div className="flex h-full overflow-y-auto full-day-scroll pb-4">
+      <div className="flex h-full overflow-y-auto full-day-scroll">
         {/* 時間軸ラベル */}
         <div 
           className="flex-shrink-0 sticky left-0 z-10 bg-background shadow-sm"

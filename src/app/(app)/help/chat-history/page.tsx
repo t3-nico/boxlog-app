@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { Heading } from '@/components/heading'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Heading } from '@/components/custom'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
 import { 
   MessageCircle, 
   MessageSquare, 
@@ -14,7 +14,7 @@ import {
   Calendar,
   Search
 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/shadcn-ui/input'
 
 export default function ChatHistoryPage() {
   // Mock data - In actual implementation, fetch from appropriate data source

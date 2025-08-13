@@ -6,21 +6,21 @@ import {
   AlertTriangle, Star, Circle, ArrowRight, MoreHorizontal,
   FileText, CheckSquare, Type, Bell
 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { RichTextEditor } from '@/components/ui/rich-text-editor'
-import { SimpleTags } from '@/components/ui/tags'
+import { Input } from '@/components/shadcn-ui/input'
+import { Label } from '@/components/shadcn-ui/label'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
+import { Checkbox } from '@/components/shadcn-ui/checkbox'
+import { RichTextEditor } from '@/components/shadcn-ui/rich-text-editor'
+import { SimpleTags } from '@/components/shadcn-ui/tags'
 import { 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useSidebarStore } from '@/stores/sidebarStore'
+} from '@/components/shadcn-ui/select'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { CreateContextData } from './AddPopup'
 import type { EventType, EventStatus, EventPriority, ChecklistItem, Reminder, REMINDER_PRESETS } from '@/features/events'
 
@@ -108,7 +108,7 @@ export function EventCreateForm({ contextData, onFormDataChange, onFormValidChan
   })
 
   const [newChecklistItem, setNewChecklistItem] = useState('')
-  const { tags } = useSidebarStore()
+  const tags = useTagStore(state => state.tags)
 
   // リマインダー関連の定数とヘルパー関数
   const reminderPresets = [5, 10, 15, 30, 60, 1440] // 5分, 10分, 15分, 30分, 1時間, 24時間

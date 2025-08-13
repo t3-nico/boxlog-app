@@ -33,18 +33,18 @@ import {
   AIInputModelSelectContent,
   AIInputModelSelectItem,
   AIInputModelSelectValue
-} from '@/components/ui/kibo-ui/ai/input'
+} from '@/components/kibo-ui/ai/input'
 import {
   AIConversation,
   AIConversationContent,
   AIConversationScrollButton
-} from '@/components/ui/kibo-ui/ai/conversation'
+} from '@/components/kibo-ui/ai/conversation'
 import {
   AIMessage,
   AIMessageContent,
   AIMessageAvatar
-} from '@/components/ui/kibo-ui/ai/message'
-import { AIResponse } from '@/components/ui/kibo-ui/ai/response'
+} from '@/components/kibo-ui/ai/message'
+import { AIResponse } from '@/components/kibo-ui/ai/response'
 import {
   AIBranch,
   AIBranchMessages,
@@ -52,7 +52,7 @@ import {
   AIBranchPrevious,
   AIBranchNext,
   AIBranchPage
-} from '@/components/ui/kibo-ui/ai/branch'
+} from '@/components/kibo-ui/ai/branch'
 
 // BoxLog用のカスタムAI Responseコンポーネント
 const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (

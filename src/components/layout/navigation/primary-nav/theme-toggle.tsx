@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
+import { SimpleThemeToggle } from '@/components/shadcn-ui/theme-toggle'
 
 export function ThemeToggle() {
   return (

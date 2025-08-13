@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import type { CalendarEvent } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { NotificationDisplay } from '@/features/notifications/components/notification-display'
-import { DeleteToast } from '@/components/ui/delete-toast'
+import { DeleteToast } from '@/components/shadcn-ui/delete-toast'
 
 // Step 21: Tag interface
 interface Tag {

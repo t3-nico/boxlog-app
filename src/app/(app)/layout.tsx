@@ -1,4 +1,4 @@
-import { getEvents, getReviews } from '@/data'
+import { getEvents, getReviews } from '@/lib/data'
 import { DashboardLayout } from '@/components/layout/navigation/layout'
 import { AuthGuard } from '@/features/auth'
 

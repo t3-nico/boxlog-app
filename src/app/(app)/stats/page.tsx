@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { BarChart3 } from 'lucide-react'
-import { Heading } from '@/components/heading'
+import { Heading } from '@/components/custom'
 import { useChatContext } from '@/contexts/chat-context'
 
 export default function Stats() {

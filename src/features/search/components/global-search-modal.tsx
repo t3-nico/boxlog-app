@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from '@/components/shadcn-ui/dialog'
 import { SearchBar } from './search-bar'
 import { useSearch, useSearchHistory } from '../hooks/use-search'
 import { cn } from '@/lib/utils'

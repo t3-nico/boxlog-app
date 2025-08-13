@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from 'react'
 import { CheckCircle, Clock, Calendar, Star, Zap, Focus, AlertTriangle } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/shadcn-ui/input'
+import { Textarea } from '@/components/shadcn-ui/textarea'
+import { Label } from '@/components/shadcn-ui/label'
+import { Badge } from '@/components/shadcn-ui/badge'
 import { 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/shadcn-ui/select'
 import { CreateContextData } from './AddPopup'
 
 interface LogFormData {

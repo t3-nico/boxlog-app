@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect, createContext, useContext } from 'rea
 import { AuthProvider } from '@/features/auth'
 import { ChatProvider } from '@/contexts/chat-context'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
-import { ToastProvider } from '@/components/ui/toast'
+import { ToastProvider } from '@/components/shadcn-ui/toast'
 
 // CommandPalette context moved to features/command-palette
 
