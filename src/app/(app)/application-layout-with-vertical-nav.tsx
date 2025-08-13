@@ -214,10 +214,17 @@ export function ApplicationLayoutWithVerticalNav({
                   <>
                     {/* ページタイトル */}
                     <div className="flex-shrink-0 mb-4">
-                      <div className="px-2">
+                      <div className="px-2 flex items-center justify-between">
                         <h1 className="text-xl font-semibold text-foreground">
                           {getPageTitle(pathname)}
                         </h1>
+                        <button
+                          onClick={() => setCollapsed(true)}
+                          className="p-1 rounded-md hover:bg-accent/50 transition-colors"
+                          title="Close sidebar"
+                        >
+                          <PanelLeft className="w-4 h-4 text-muted-foreground" />
+                        </button>
                       </div>
                     </div>
 
@@ -439,19 +446,15 @@ export function ApplicationLayoutWithVerticalNav({
             transition: 'margin-right 150ms ease',
             height: '100vh'
           }}>
-            {/* L2 Toggle Button - Fixed position relative to main content */}
-            {!inSettings && (
+            {/* L2 Toggle Button - Only show when collapsed */}
+            {!inSettings && collapsed && (
               <div className="absolute top-4 left-4 z-20">
                 <button
-                  onClick={() => setCollapsed(!collapsed)}
+                  onClick={() => setCollapsed(false)}
                   className="p-2 rounded-md hover:bg-accent/50 transition-colors bg-background border border-border shadow-sm"
-                  title={collapsed ? "Open sidebar" : "Close sidebar"}
+                  title="Open sidebar"
                 >
-                  {collapsed ? (
-                    <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  ) : (
-                    <PanelLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  )}
+                  <PanelRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                 </button>
               </div>
             )}
