@@ -46,7 +46,7 @@ export const views = [
 export function getPageTitle(pathname: string): string {
   // ホームページの完全一致を最初にチェック
   if (pathname === '/') {
-    return 'Dashboard'
+    return 'BoxLog'
   }
   
   // その他のページはstartsWith でチェック

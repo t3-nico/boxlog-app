@@ -23,7 +23,6 @@ import {
   SquareKanban as BoardIcon,
   TableProperties as TableIcon,
   BarChart3 as StatsIcon,
-  Home as HomeIcon,
 } from 'lucide-react'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import {
@@ -56,13 +55,6 @@ export function VerticalNavMenu({ className }: VerticalNavMenuProps) {
 
   // ナビゲーションアイテムの定義
   const navigationItems = [
-    {
-      id: 'home',
-      icon: HomeIcon,
-      label: 'Dashboard',
-      href: '/',
-      isActive: pathname === '/'
-    },
     {
       id: 'calendar',
       icon: CalendarIcon,
