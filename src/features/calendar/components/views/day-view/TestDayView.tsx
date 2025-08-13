@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react'
 import { PureCalendarLayout } from '../../calendar-grid/PureCalendarLayout'
 import { SimpleTestPopup } from '../../SimpleTestPopup'
-import { useCalendarSettingsStore } from '../../../stores/useCalendarSettingsStore'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { TimeAxisHeader } from '../../TimeAxisHeader'
 import type { CalendarEvent } from '@/features/events'
 
