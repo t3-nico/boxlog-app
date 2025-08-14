@@ -463,7 +463,7 @@ export function TestDayView({
       </div>
       
       {/* 第3層: グリッドエリア - 残り高さ全部、スクロール制御 */}
-      <div className="flex-1 min-h-0 overflow-hidden">
+      <div className="flex-1 overflow-hidden">
         <PureCalendarLayout
           dates={displayDates}
           events={allEvents}

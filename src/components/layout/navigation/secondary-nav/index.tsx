@@ -11,7 +11,7 @@ import { PanelLeft } from 'lucide-react'
 
 export { SecondaryNavToggle } from './toggle'
 
-function SecondaryNavHeader({ title }: { title: string }) {
+const SecondaryNavHeader = React.memo(({ title }: { title: string }) => {
   const { setSecondaryNavCollapsed } = useNavigationStore()
 
   return (
@@ -31,7 +31,7 @@ function SecondaryNavHeader({ title }: { title: string }) {
       </div>
     </div>
   )
-}
+})
 
 export function SecondaryNavigation() {
   const pathname = usePathname()

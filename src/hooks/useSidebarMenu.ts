@@ -8,8 +8,11 @@ export const useSidebarMenu = () => {
   const { user } = useAuthContext()
   const smartFolders = useSmartFolderStore(state => state.smartFolders)
   const tags = useTagStore(state => state.tags)
+  
   // TODO: Move preferences to settings store
-  const preferences = { hiddenSections: [] as string[] } // Temporary fallback
+  const preferences = useMemo(() => ({ 
+    hiddenSections: [] as string[] 
+  }), []) // Temporary fallback
   
   const filteredMenu = useMemo(() => {
     return sidebarConfig

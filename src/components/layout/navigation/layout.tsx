@@ -9,7 +9,7 @@ import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { PrimaryNavigation } from './primary-nav'
 import { SecondaryNavigation, SecondaryNavToggle } from './secondary-nav'
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
-import { FloatingAIChat } from '@/components/floating-ai-chat'
+import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 
 interface DashboardLayoutProps {
   events?: any
@@ -40,20 +40,11 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <SecondaryNavToggle />
         
         {/* Main Content with AI Panel */}
-        <div className="flex-1 relative overflow-hidden">
-          <ScrollArea 
-            className="h-full transition-all duration-300"
-            style={{ 
-              height: '100%'
-            }}
-          >
-            <div className="w-full h-full p-0">
-              {children}
-            </div>
-          </ScrollArea>
+        <div className="flex-1 relative">
+          {children}
           
           {/* Floating AI Chat within main area */}
-          <FloatingAIChat />
+          <DynamicFloatingAIChat />
         </div>
       </div>
     </div>
