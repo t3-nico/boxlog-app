@@ -660,9 +660,9 @@ export function CalendarView({
   return (
     <DnDProvider>
       <>
-        <div className="h-screen flex flex-col">
+        <div className="h-full flex flex-col bg-red-500">
           {/* ビュー固有のコンテンツ */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden bg-blue-500">
             {renderView()}
           </div>
         </div>

@@ -18,7 +18,7 @@ interface Tag {
 }
 
 // 定数定義 - 他のコンポーネントと統一
-const HOUR_HEIGHT = 48 // 1時間の高さ（px）- FullDayCalendarLayoutと統一
+const HOUR_HEIGHT = 72 // 1時間の高さ（px）- より広いスペースに変更
 const TIME_AXIS_WIDTH = 64 // 時間軸の幅（px）
 
 interface PureCalendarLayoutProps {
@@ -31,29 +31,27 @@ interface PureCalendarLayoutProps {
 
 // 時間ラベルコンポーネント
 function TimeAxisLabels() {
-  const hours = Array.from({ length: 24 }, (_, i) => i)
+  const hours = Array.from({ length: 23 }, (_, i) => i + 1) // 1-23時
   
   return (
     <div 
-      className="flex-shrink-0 relative bg-background border-r border-border"
-      style={{ width: `${TIME_AXIS_WIDTH}px`, height: `${24 * HOUR_HEIGHT}px` }}
+      className="flex-shrink-0 relative bg-background border-r border-border h-full"
+      style={{ width: `${TIME_AXIS_WIDTH}px` }}
     >
       {hours.map((hour) => (
         <div
           key={hour}
           className="absolute flex items-center justify-end pr-3 text-xs text-muted-foreground"
           style={{
-            top: `${hour * HOUR_HEIGHT}px`,
+            top: `${((hour - 1) / 23) * 100}%`,
             height: '1px',
             width: '100%',
             transform: 'translateY(-50%)'
           }}
         >
-          {hour > 0 && hour < 24 && (
-            <span className="leading-none">
-              {hour.toString().padStart(2, '0')}:00
-            </span>
-          )}
+          <span className="leading-none">
+            {hour.toString().padStart(2, '0')}:00
+          </span>
         </div>
       ))}
     </div>
@@ -1171,25 +1169,27 @@ function CalendarGrid({
 
     const hours = event.startDate.getHours()
     const minutes = event.startDate.getMinutes()
-    const top = (hours + minutes / 60) * HOUR_HEIGHT
+    
+    // 0時は表示範囲外、1-23時の範囲で計算
+    const adjustedHour = Math.max(1, Math.min(23, hours))
+    const topPercentage = ((adjustedHour - 1 + minutes / 60) / 23) * 100
 
     // 終了時刻がある場合は実際の長さ、ない場合は1時間
-    let height = HOUR_HEIGHT
+    let heightPercentage = (1 / 23) * 100 // 1時間のパーセンテージ
     if (event.endDate) {
-      const endHours = event.endDate.getHours()
+      const endHours = Math.max(1, Math.min(23, event.endDate.getHours()))
       const endMinutes = event.endDate.getMinutes()
-      const duration = (endHours + endMinutes / 60) - (hours + minutes / 60)
-      height = Math.max(duration * HOUR_HEIGHT, 30) // 最小30px
+      const duration = (endHours + endMinutes / 60) - (adjustedHour + minutes / 60)
+      heightPercentage = Math.max((duration / 23) * 100, 1) // 最小1%
     }
 
-    return { top, height }
+    return { top: topPercentage, height: heightPercentage }
   }
 
   return (
     <div 
-      className="flex-1 grid relative bg-background" 
+      className="flex-1 grid relative bg-background h-full" 
       style={{ 
-        height: `${24 * HOUR_HEIGHT}px`,
         gridTemplateColumns: `repeat(${dates.length}, 1fr)`
       }} 
       data-calendar-grid
@@ -1258,9 +1258,9 @@ function CalendarGrid({
 
             {/* 15分単位のスロット */}
             <div className="absolute inset-0 cursor-crosshair z-10">
-              {Array.from({ length: 96 }, (_, slotIndex) => {
-                // 96個のスロット（24時間 × 4）0:00-23:45
-                const hour = Math.floor(slotIndex / 4)
+              {Array.from({ length: 92 }, (_, slotIndex) => {
+                // 92個のスロット（23時間 × 4）1:00-23:45
+                const hour = Math.floor(slotIndex / 4) + 1 // 1時からスタート
                 const minute = (slotIndex % 4) * 15
                 const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
                 
@@ -1280,7 +1280,7 @@ function CalendarGrid({
                       ${(slotIndex + 1) % 4 === 0 ? 'border-b border-gray-100 dark:border-gray-800' : ''}
                       ${isClicked ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
                     `}
-                    style={{ height: `${HOUR_HEIGHT / 4}px` }}
+                    style={{ height: `${100 / 23 / 4}%` }}
                     title={`${timeString} - Click to create event or drag to select range`}
                     onMouseDown={() => handleMouseDown(timeString, date)}
                     onMouseEnter={() => handleMouseEnter(timeString, date)}
@@ -1418,8 +1418,8 @@ function CalendarGrid({
                       isDuplicating && draggingEventId === event.id ? 'ring-2 ring-green-400 shadow-lg' : ''
                     }`}
                     style={{
-                      top: `${top}px`,
-                      height: `${Math.max(height, 20)}px`, // 最小20px
+                      top: `${top}%`,
+                      height: `${Math.max(height, 1)}%`, // 最小1%
                       left: `${leftOffset}%`,
                       width: `${width}%`,
                       backgroundColor: event.color
@@ -1635,8 +1635,8 @@ function CalendarGrid({
                   style={{
                     left: '4px',
                     right: '4px',
-                    top: `${top}px`,
-                    height: `${height}px`,
+                    top: `${top}%`,
+                    height: `${height}%`,
                     backgroundColor: eventColor
                   }}
                   onClick={(e) => {
@@ -2385,9 +2385,9 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick,
   }, [])
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full overflow-hidden flex flex-col bg-yellow-500">
       {/* 時間軸とカレンダーグリッドが一緒にスクロール */}
-      <div className="flex-1 flex overflow-y-auto overflow-x-hidden" style={{ paddingRight: '8px' }}>
+      <div className="flex-1 flex overflow-auto min-h-0 bg-purple-500">
         {/* 時間軸ラベル */}
         <TimeAxisLabels />
         

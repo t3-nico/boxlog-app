@@ -40,7 +40,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <SecondaryNavToggle />
         
         {/* Main Content with AI Panel */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative overflow-hidden">
           {children}
           
           {/* Floating AI Chat within main area */}
