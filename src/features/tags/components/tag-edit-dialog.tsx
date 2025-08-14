@@ -58,10 +58,13 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
   if (!tag) return null
 
   return (
-    <Dialog open={open} onClose={handleClose} size="sm">
-      <form onSubmit={handleSubmit}>
-        <DialogTitle>タグを編集</DialogTitle>
-        <DialogBody className="space-y-4">
+    <Dialog open={open} onOpenChange={() => handleClose()}>
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>タグを編集</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               タグ名
@@ -149,14 +152,15 @@ export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps
               ))}
             </div>
           </div>
-        </DialogBody>
-        <DialogActions>
-          <Button type="button" variant="outline" onClick={handleClose}>
-            キャンセル
-          </Button>
-          <Button type="submit">保存</Button>
-        </DialogActions>
-      </form>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={handleClose}>
+              キャンセル
+            </Button>
+            <Button type="submit">保存</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   )
 }

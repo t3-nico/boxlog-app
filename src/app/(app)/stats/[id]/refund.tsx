@@ -21,12 +21,15 @@ export function RefundReview({ amount, ...props }: { amount: string } & React.Co
   return (
     <>
       <Button type="button" onClick={() => setIsOpen(true)} {...props} />
-      <Dialog open={isOpen} onClose={setIsOpen}>
-        <DialogTitle>Refund payment</DialogTitle>
-        <DialogDescription>
-          The refund will be reflected in the customer’s bank account 2 to 3 business days after processing.
-        </DialogDescription>
-        <DialogBody>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Refund payment</DialogTitle>
+            <DialogDescription>
+              The refund will be reflected in the customer's bank account 2 to 3 business days after processing.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
           <FieldGroup>
             <Field>
               <Label>Amount</Label>
@@ -56,13 +59,14 @@ export function RefundReview({ amount, ...props }: { amount: string } & React.Co
               </div>
             </Field>
           </FieldGroup>
-        </DialogBody>
-        <DialogActions>
-          <Button variant="ghost" onClick={() => setIsOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={() => setIsOpen(false)}>Refund</Button>
-        </DialogActions>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setIsOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => setIsOpen(false)}>Refund</Button>
+          </DialogFooter>
+        </DialogContent>
       </Dialog>
     </>
   )
