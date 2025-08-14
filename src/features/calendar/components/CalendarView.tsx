@@ -663,7 +663,7 @@ export function CalendarView({
         <div className="h-full flex flex-col bg-background">
           
           {/* ビュー固有のコンテンツ */}
-          <div className="flex-1 min-h-0 bg-background" style={{ paddingRight: 0, paddingLeft: 0, padding: 0 }}>
+          <div className="flex-1 min-h-0 bg-background" style={{ margin: 0, padding: 0 }}>
             {renderView()}
           </div>
         </div>
@@ -689,13 +689,6 @@ export function CalendarView({
         defaultDate={eventDefaultDate}
         defaultTime={eventDefaultTime}
         defaultEndTime={eventDefaultEndTime}
-      />
-      
-      {/* 通知表示 */}
-      <NotificationDisplay
-        notifications={visibleNotifications}
-        onDismiss={dismissNotification}
-        onClearAll={clearAllNotifications}
       />
       </>
     </DnDProvider>

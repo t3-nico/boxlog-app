@@ -1,14 +1,16 @@
 // Auth feature exports
-export * from './components/AuthForm'
-export * from './components/AuthGuard'
-export * from './components/AuthLayout'
-export * from './components/LoginForm'
-export * from './components/PasswordResetForm'
-export * from './components/ProtectedRoute'
-export * from './components/SignupForm'
+// Component exports - individually exported to avoid conflicts
+export { AuthForm } from './components/AuthForm'
+export { AuthGuard } from './components/AuthGuard'
+export { AuthLayout } from './components/AuthLayout'
+export { LoginForm } from './components/LoginForm'
+export { PasswordResetForm } from './components/PasswordResetForm'
+export { default as ProtectedRoute } from './components/ProtectedRoute'
+export { SignupForm } from './components/SignupForm'
 
-export * from './contexts/AuthContext'
-export * from './hooks/useAuth'
-export * from './lib/auth-config'
+// Context and hooks
+export { AuthProvider, useAuthContext } from './contexts/AuthContext'
+export { useAuth } from './hooks/useAuth'
+export { AUTH_CONFIG as authConfig } from './lib/auth-config'
 
 // Note: LoginFormDisabled and useAuthForm are currently unused and excluded from exports

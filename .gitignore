@@ -102,7 +102,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public - Next.jsではpublicディレクトリを管理
 
 # Storybook build outputs
 .out

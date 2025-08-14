@@ -35,15 +35,15 @@ function TimeAxisLabels() {
   
   return (
     <div 
-      className="flex-shrink-0 relative bg-background border-r border-border"
-      style={{ width: `${TIME_AXIS_WIDTH}px`, height: `${24 * HOUR_HEIGHT}px` }}
+      className="flex-shrink-0 relative bg-background border-r border-border h-full"
+      style={{ width: `${TIME_AXIS_WIDTH}px` }}
     >
       {hours.map((hour) => (
         <div
           key={hour}
           className="absolute flex items-center justify-end pr-3 text-xs text-muted-foreground"
           style={{
-            top: `${hour * HOUR_HEIGHT}px`,
+            top: `${(hour / 24) * 100}%`,
             height: '1px',
             width: '100%',
             transform: 'translateY(-50%)'
@@ -825,9 +825,9 @@ function CalendarGrid({
       const [fStartHours, fStartMinutes] = finalStartTime.split(':').map(Number)
       const [fEndHours, fEndMinutes] = finalEndTime.split(':').map(Number)
       
-      const top = (fStartHours + fStartMinutes / 60) * HOUR_HEIGHT
+      const top = ((fStartHours + fStartMinutes / 60) / 24) * 100 // パーセンテージ
       const duration = ((fEndHours + fEndMinutes / 60) - (fStartHours + fStartMinutes / 60))
-      const height = Math.max(duration * HOUR_HEIGHT, HOUR_HEIGHT / 4) // 最小15分
+      const height = Math.max((duration / 24) * 100, (1 / 24 / 4) * 100) // 最小15分（1時間の1/4）
       
       setNewEvent({
         date: dragDate,
@@ -1097,8 +1097,8 @@ function CalendarGrid({
     const endTime = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
     
     // Y位置とボックス高さ計算
-    const top = (hours + minutes / 60) * HOUR_HEIGHT
-    const height = (30 / 60) * HOUR_HEIGHT // 30分 = 0.5時間
+    const top = ((hours + minutes / 60) / 24) * 100 // パーセンテージ
+    const height = ((30 / 60) / 24) * 100 // 30分のパーセンテージ
     
     console.log('🎯 Step 3: Creating event box at:', { time, endTime, top, height })
     
@@ -1171,15 +1171,15 @@ function CalendarGrid({
 
     const hours = event.startDate.getHours()
     const minutes = event.startDate.getMinutes()
-    const top = (hours + minutes / 60) * HOUR_HEIGHT
+    const top = ((hours + minutes / 60) / 24) * 100 // パーセンテージ
 
     // 終了時刻がある場合は実際の長さ、ない場合は1時間
-    let height = HOUR_HEIGHT
+    let height = (1 / 24) * 100 // 1時間のパーセンテージ
     if (event.endDate) {
       const endHours = event.endDate.getHours()
       const endMinutes = event.endDate.getMinutes()
       const duration = (endHours + endMinutes / 60) - (hours + minutes / 60)
-      height = Math.max(duration * HOUR_HEIGHT, 30) // 最小30px
+      height = Math.max((duration / 24) * 100, 2) // 最小2%
     }
 
     return { top, height }
@@ -1189,8 +1189,8 @@ function CalendarGrid({
     <div 
       className="flex-1 grid relative bg-background" 
       style={{ 
-        height: `${24 * HOUR_HEIGHT}px`,
-        gridTemplateColumns: `repeat(${dates.length}, 1fr)`
+        gridTemplateColumns: `repeat(${dates.length}, 1fr)`,
+        minHeight: `${24 * HOUR_HEIGHT}px` // 24時間分の最小高さを確保
       }} 
       data-calendar-grid
     >
@@ -1242,15 +1242,15 @@ function CalendarGrid({
               const earlierTime = startTotalMinutes <= endTotalMinutes ? startTotalMinutes : endTotalMinutes
               const laterTime = startTotalMinutes <= endTotalMinutes ? endTotalMinutes : startTotalMinutes
               
-              const top = (earlierTime / 60) * HOUR_HEIGHT
-              const height = ((laterTime - earlierTime) / 60) * HOUR_HEIGHT
+              const top = ((earlierTime / 60) / 24) * 100 // パーセンテージ
+              const height = (((laterTime - earlierTime) / 60) / 24) * 100 // パーセンテージ
               
               return (
                 <div 
                   className="absolute left-0 right-0 bg-blue-200 dark:bg-blue-600 opacity-50 pointer-events-none z-15"
                   style={{
-                    top: `${top}px`,
-                    height: `${height}px`
+                    top: `${top}%`,
+                    height: `${height}%`
                   }}
                 />
               )
@@ -1301,8 +1301,8 @@ function CalendarGrid({
               <div 
                 className="absolute left-1 right-1 bg-blue-500 text-white p-1 rounded shadow-md z-30"
                 style={{
-                  top: `${newEvent.top}px`,
-                  height: `${newEvent.height}px`
+                  top: `${newEvent.top}%`,
+                  height: `${newEvent.height}%`
                 }}
               >
                 <input
@@ -1418,8 +1418,8 @@ function CalendarGrid({
                       isDuplicating && draggingEventId === event.id ? 'ring-2 ring-green-400 shadow-lg' : ''
                     }`}
                     style={{
-                      top: `${top}px`,
-                      height: `${Math.max(height, 20)}px`, // 最小20px
+                      top: `${top}%`,
+                      height: `${Math.max(height, 2)}%`, // 最小2%
                       left: `${leftOffset}%`,
                       width: `${width}%`,
                       backgroundColor: event.color
@@ -1635,8 +1635,8 @@ function CalendarGrid({
                   style={{
                     left: '4px',
                     right: '4px',
-                    top: `${top}px`,
-                    height: `${height}px`,
+                    top: `${top}%`,
+                    height: `${height}%`,
                     backgroundColor: eventColor
                   }}
                   onClick={(e) => {
@@ -2387,7 +2387,7 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick,
   return (
     <div className="h-full overflow-hidden flex flex-col">
       {/* 時間軸とカレンダーグリッドが一緒にスクロール */}
-      <div className="flex-1 flex overflow-auto min-h-0 bg-transparent">
+      <div className="flex-1 flex overflow-auto min-h-0">
         {/* 時間軸ラベル */}
         <TimeAxisLabels />
         
@@ -2402,13 +2402,6 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick,
           />
         </div>
       </div>
-      
-      {/* 通知表示 */}
-      <NotificationDisplay
-        notifications={visibleNotifications}
-        onDismiss={dismissNotification}
-        onClearAll={clearAllNotifications}
-      />
     </div>
   )
 }

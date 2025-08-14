@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# BoxLog App - Task Management Application
+Sitemap: https://your-domain.com/sitemap.xml

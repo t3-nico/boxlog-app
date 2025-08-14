@@ -22,7 +22,8 @@
       "Bash(ANALYZE=true npm run build:fallback)",
       "WebSearch"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   },
   "claudeMd": [
     "docs/ai-chatbot/system-overview.md"

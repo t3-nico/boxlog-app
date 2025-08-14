@@ -8,7 +8,7 @@ import { ChatProvider } from '@/contexts/chat-context'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { PrimaryNavigation } from './primary-nav'
 import { SecondaryNavigation, SecondaryNavToggle } from './secondary-nav'
-import { useNavigationStore } from './stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 import { FloatingAIChat } from '@/components/floating-ai-chat'
 
 interface DashboardLayoutProps {
@@ -44,10 +44,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
           <ScrollArea 
             className="h-full transition-all duration-300"
             style={{ 
-              height: effectivePanelHeight > 0 ? `calc(100vh - ${effectivePanelHeight}px)` : '100vh'
+              height: '100%'
             }}
           >
-            <div className="w-full h-full">
+            <div className="w-full h-full p-0">
               {children}
             </div>
           </ScrollArea>
