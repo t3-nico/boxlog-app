@@ -2387,7 +2387,7 @@ export function PureCalendarLayout({ dates, events, onCreateEvent, onEventClick,
   return (
     <div className="h-full overflow-hidden flex flex-col">
       {/* 時間軸とカレンダーグリッドが一緒にスクロール */}
-      <div className="flex-1 flex overflow-y-auto min-h-0 bg-transparent">
+      <div className="flex-1 flex overflow-auto min-h-0 bg-transparent">
         {/* 時間軸ラベル */}
         <TimeAxisLabels />
         

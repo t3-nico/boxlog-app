@@ -40,14 +40,14 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <SecondaryNavToggle />
         
         {/* Main Content with AI Panel */}
-        <div className="flex-1 relative overflow-hidden bg-red-500">
+        <div className="flex-1 relative overflow-hidden">
           <ScrollArea 
-            className="transition-all duration-300"
+            className="h-full transition-all duration-300"
             style={{ 
-              height: effectivePanelHeight > 0 ? `calc(100% - ${effectivePanelHeight}px)` : '100%'
+              height: effectivePanelHeight > 0 ? `calc(100vh - ${effectivePanelHeight}px)` : '100vh'
             }}
           >
-            <div className="w-full">
+            <div className="w-full h-full">
               {children}
             </div>
           </ScrollArea>

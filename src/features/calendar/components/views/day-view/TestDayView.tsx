@@ -328,7 +328,7 @@ export function TestDayView({
   }, [navigatePrevious, navigateNext, navigateToday])
 
   return (
-    <div className="h-[calc(100vh-4rem)] overflow-hidden flex flex-col bg-background">
+    <div className="h-full w-full max-w-screen-xl mx-auto overflow-hidden flex flex-col bg-background">
       {/* 第1層: ナビゲーション - 高さ固定 */}
       <div className="flex-shrink-0 bg-background">
         {/* Navigation */}
