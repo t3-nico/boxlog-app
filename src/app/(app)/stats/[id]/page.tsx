@@ -1,6 +1,6 @@
 import { Avatar } from '@/components/shadcn-ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/custom'
 import { Separator } from '@/components/shadcn-ui/separator'
 import { Heading, Subheading } from '@/components/custom'
