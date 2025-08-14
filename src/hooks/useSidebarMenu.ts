@@ -1,13 +1,15 @@
 import { useMemo } from 'react'
-import { sidebarConfig, MenuSection, MenuItem } from '@/config/sidebarConfig'
-import { useSidebarStore } from '@/stores/sidebarStore'
+import { sidebarConfig, MenuSection, MenuItem } from '@/config/ui/sidebarConfig'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { useAuthContext } from '@/features/auth'
 
 export const useSidebarMenu = () => {
   const { user } = useAuthContext()
-  const smartFolders = useSidebarStore(state => state.smartFolders)
-  const tags = useSidebarStore(state => state.tags)
-  const preferences = useSidebarStore(state => state.preferences)
+  const smartFolders = useSmartFolderStore(state => state.smartFolders)
+  const tags = useTagStore(state => state.tags)
+  // TODO: Move preferences to settings store
+  const preferences = { hiddenSections: [] as string[] } // Temporary fallback
   
   const filteredMenu = useMemo(() => {
     return sidebarConfig

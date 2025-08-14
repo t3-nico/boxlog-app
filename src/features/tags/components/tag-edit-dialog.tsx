@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
-import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/tagIcons'
+import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/ui/tagIcons'
 
 interface Tag {
   id: string

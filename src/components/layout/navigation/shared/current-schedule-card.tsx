@@ -12,7 +12,7 @@ import {
   PRODUCTIVITY_COLORS,
   type ProductivityZone 
 } from '@/types/chronotype'
-import { CHRONOTYPE_COLORS, getCSSVariableValue } from '@/config/theme/colors'
+import { CHRONOTYPE_COLORS, getCSSVariableValue } from '@/config/ui/theme'
 
 
 interface CurrentScheduleCardProps {

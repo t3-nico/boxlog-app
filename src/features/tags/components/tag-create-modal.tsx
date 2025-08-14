@@ -16,7 +16,7 @@ import {
   Plus as PlusIcon
 } from 'lucide-react'
 import type { TagWithChildren, CreateTagInput, TagLevel } from '@/types/tags'
-import { TAG_PRESET_COLORS, getCSSVariableValue } from '@/config/theme/colors'
+import { TAG_PRESET_COLORS, getCSSVariableValue } from '@/config/ui/theme'
 
 interface TagCreateModalProps {
   isOpen: boolean

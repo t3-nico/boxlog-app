@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useBoxStore } from '@/lib/box-store'
+import { useBoxStore } from '@/features/box-management/stores/box-store'
 
 export function useFilterUrlSync() {
   const router = useRouter()

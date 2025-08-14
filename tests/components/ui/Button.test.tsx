@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/shadcn-ui/button'
 
 describe('Button Component', () => {
   it('renders correctly', () => {

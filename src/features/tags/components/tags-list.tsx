@@ -10,12 +10,12 @@ import {
   Pencil as PencilIcon,
   Trash2 as TrashIcon
 } from 'lucide-react'
-import { tagIconMapping, TagIconName } from '@/config/tagIcons'
+import { tagIconMapping, TagIconName } from '@/config/ui/tagIcons'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { TagEditDialog } from './tag-edit-dialog'
 import { useActiveState } from '@/hooks/useActiveState'
 import { clsx } from 'clsx'
-import { DEFAULT_TAG_COLOR } from '@/config/theme/colors'
+import { DEFAULT_TAG_COLOR } from '@/config/ui/theme'
 
 interface TagsListProps {
   collapsed?: boolean

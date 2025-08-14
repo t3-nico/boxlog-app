@@ -1,6 +1,6 @@
 'use client'
 
-import { useTrashStore } from '@/stores/trashStore'
+import { useTrashStore } from '@/features/trash/stores/trashStore'
 import { DeletedItem } from '@/types/trash'
 
 export const useDelete = () => {

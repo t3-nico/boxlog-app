@@ -3,7 +3,7 @@
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
-import { views } from '@/config/views'
+import { views } from '@/config/ui/views'
 
 export function ViewSwitcher() {
   const pathname = usePathname()

@@ -7,13 +7,6 @@ import {
 
 export const views = [
   {
-    id: 'home',
-    label: 'Dashboard',
-    path: '/',
-    icon: CalendarIcon,
-    description: 'タスクの概要とダッシュボード',
-  },
-  {
     id: 'calendar',
     label: 'Calendar',
     path: '/calendar',

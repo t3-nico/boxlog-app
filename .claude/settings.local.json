@@ -19,7 +19,8 @@
       "Bash(cp:*)",
       "Bash(curl:*)",
       "Bash(grep:*)",
-      "Bash(ANALYZE=true npm run build:fallback)"
+      "Bash(ANALYZE=true npm run build:fallback)",
+      "WebSearch"
     ],
     "deny": []
   },

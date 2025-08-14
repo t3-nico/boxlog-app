@@ -16,7 +16,7 @@ import { Task as BoxTask } from '@/types/box'
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
 import { generateCompassCommands } from '../lib/compass-commands'
 import { useDebounce } from '@/hooks/use-debounce'
-import { useTaskStore } from '@/stores/useTaskStore'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { 

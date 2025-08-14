@@ -8,7 +8,7 @@ import { ChatProvider } from '@/contexts/chat-context'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { PrimaryNavigation } from './primary-nav'
 import { SecondaryNavigation, SecondaryNavToggle } from './secondary-nav'
-import { useNavigationStore } from '@/stores/navigation.store'
+import { useNavigationStore } from './stores/navigation.store'
 import { FloatingAIChat } from '@/components/floating-ai-chat'
 
 interface DashboardLayoutProps {
