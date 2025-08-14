@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { isToday, isWeekend, format } from 'date-fns'
 import { cn } from '../../lib/view-helpers'
 import { formatShortWeekday } from '../../lib/view-helpers'
-import { getCalendarTimezoneLabel, listenToTimezoneChange } from '@/utils/timezone'
+import { getCalendarTimezoneLabel, listenToTimezoneChange } from '@/features/settings/utils/timezone'
 
 interface DateHeaderProps {
   dates: Date[]

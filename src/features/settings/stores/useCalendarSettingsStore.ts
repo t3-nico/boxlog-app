@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { ChronotypeType, ProductivityZone } from '@/types/chronotype'
-import { getCurrentTimezone, listenToTimezoneChange } from '@/utils/timezone'
+import { getCurrentTimezone, listenToTimezoneChange } from '../utils/timezone'
 
 interface CalendarSettings {
   // タイムゾーン設定
