@@ -1,17 +1,18 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Checkbox, CheckboxField } from '@/components/checkbox'
-import { Dialog, DialogActions, DialogBody, DialogDescription, DialogTitle } from '@/components/dialog'
-import { Description, Field, FieldGroup, Label } from '@/components/custom'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/shadcn-ui/button'
+import { Checkbox } from '@/components/shadcn-ui/checkbox'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
+import { Description, Field, FieldGroup } from '@/components/custom'
+import { Label } from '@/components/shadcn-ui/label'
+import { Input } from '@/components/shadcn-ui/input'
 import { 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/shadcn-ui/select'
 import { useState } from 'react'
 
 export function RefundReview({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) {
@@ -45,11 +46,15 @@ export function RefundReview({ amount, ...props }: { amount: string } & React.Co
                 </SelectContent>
               </Select>
             </Field>
-            <CheckboxField>
-              <Checkbox name="notify" />
-              <Label>Notify customer</Label>
-              <Description>An email notification will be sent to this customer.</Description>
-            </CheckboxField>
+            <Field>
+              <div className="flex items-start space-x-2">
+                <Checkbox id="notify" name="notify" />
+                <div className="space-y-1">
+                  <Label htmlFor="notify">Notify customer</Label>
+                  <Description>An email notification will be sent to this customer.</Description>
+                </div>
+              </div>
+            </Field>
           </FieldGroup>
         </DialogBody>
         <DialogActions>

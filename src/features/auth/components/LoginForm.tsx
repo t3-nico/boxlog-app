@@ -6,7 +6,7 @@ import { useAuthContext } from '../contexts/AuthContext'
 import { Logo } from '@/app/logo'
 import { Button } from '@/components/shadcn-ui/button'
 import { GoogleIcon, AppleIcon } from '@/components/custom'
-import { Checkbox, CheckboxField } from '@/components/checkbox'
+import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Label } from '@/components/shadcn-ui/label'
 import { Heading } from '@/components/custom'
 import { Input } from '@/components/shadcn-ui/input'
@@ -132,10 +132,10 @@ function LoginFormComponent({ localMode = false }: { localMode?: boolean }) {
       </div>
       {error && <p className="text-red-600 font-bold text-lg text-base/6 sm:text-sm/6">{error}</p>}
       <div className="flex items-center justify-between">
-        <CheckboxField>
-          <Checkbox name="remember" />
-          <Label>Remember me</Label>
-        </CheckboxField>
+        <div className="flex items-center space-x-2">
+          <Checkbox id="remember" name="remember" />
+          <Label htmlFor="remember">Remember me</Label>
+        </div>
         <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">
           <a href="/auth/password" className="text-zinc-950 underline decoration-zinc-950/50 data-hover:decoration-zinc-950 dark:text-white dark:decoration-white/50 dark:data-hover:decoration-white">
             <strong className="font-medium text-zinc-950 dark:text-white">Forgot your password?</strong>

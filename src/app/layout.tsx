@@ -1,6 +1,6 @@
 import '@/styles/tailwind.css'
 import type { Metadata } from 'next'
-import { Providers } from '@/components/providers'
+import { Providers } from '@/components/common'
 
 export const dynamic = 'force-dynamic'
 

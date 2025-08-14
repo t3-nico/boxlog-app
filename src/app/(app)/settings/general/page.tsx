@@ -1,7 +1,7 @@
 import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Separator } from '@/components/shadcn-ui/separator'
-import { Label } from '@/components/custom'
+import { Label } from '@/components/shadcn-ui/label'
 import { Heading, Subheading } from '@/components/custom'
 import { Input } from '@/components/shadcn-ui/input'
 import { 
@@ -56,10 +56,10 @@ export default function Settings() {
         </div>
         <div className="space-y-4">
           <Input type="email" aria-label="Organization Email" name="email" defaultValue="info@example.com" />
-          <CheckboxField>
-            <Checkbox name="email_is_public" defaultChecked />
-            <Label>Show email on public profile</Label>
-          </CheckboxField>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="email_is_public" name="email_is_public" defaultChecked />
+            <Label htmlFor="email_is_public">Show email on public profile</Label>
+          </div>
         </div>
       </section>
 
