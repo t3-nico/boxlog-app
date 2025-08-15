@@ -1,18 +1,23 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useDrop } from 'react-dnd'
 import { cn } from '@/lib/utils'
-import { addMinutes, startOfDay, differenceInMinutes } from 'date-fns'
+import { addMinutes, startOfDay, differenceInMinutes, format } from 'date-fns'
 import { DRAG_TYPE, DraggedEventData } from './DraggableEvent'
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import { utcToUserTimezone, userTimezoneToUtc } from '@/features/settings/utils/timezone'
 import type { CalendarEvent } from '@/features/events'
 
+// スナップ間隔のオプション
+export type SnapInterval = 5 | 10 | 15 | 30
+
 interface CalendarDropZoneProps {
   date: Date
   dayIndex: number
   onEventUpdate?: (event: CalendarEvent) => void
+  snapInterval?: SnapInterval // スナップ間隔（デフォルト15分）
+  showDropIndicator?: boolean // ドロップインジケーターを表示するか
   children: React.ReactNode
   className?: string
 }
@@ -23,60 +28,85 @@ export function CalendarDropZone({
   date,
   dayIndex,
   onEventUpdate,
+  snapInterval = 15,
+  showDropIndicator = true,
   children,
   className
 }: CalendarDropZoneProps) {
   const dropRef = useRef<HTMLDivElement>(null)
+  const [dropPosition, setDropPosition] = useState<number | null>(null)
+  const [hoveredTime, setHoveredTime] = useState<string | null>(null)
   
-  const [{ isOver, canDrop }, drop] = useDrop({
+  // ドロップ位置のリアルタイム更新
+  const [{ isOver, canDrop, item }, drop] = useDrop({
     accept: DRAG_TYPE.EVENT,
-    drop: (item: DraggedEventData, monitor) => {
-      console.log('🎯 ドロップ受信:', { event: item.event.title, dayIndex, hasCallback: !!onEventUpdate })
-      const dropResult = monitor.getClientOffset()
-      if (!dropResult || !dropRef.current) {
-        console.log('❌ ドロップ失敗: dropResult または dropRef がない')
-        return
-      }
+    hover: (draggedItem: DraggedEventData, monitor) => {
+      if (!dropRef.current || !showDropIndicator) return
       
-      if (!onEventUpdate) {
-        console.log('❌ onEventUpdate コールバックが存在しません')
-        return
-      }
-
+      const hoverClientOffset = monitor.getClientOffset()
+      if (!hoverClientOffset) return
+      
       const rect = dropRef.current.getBoundingClientRect()
-      // スクロール可能な親要素を探す（複数のセレクタを試す）
       const scrollContainer = dropRef.current.closest('[data-slot="scroll-area-viewport"]') ||
                              dropRef.current.closest('.overflow-y-auto') ||
                              dropRef.current.closest('.overflow-auto') ||
                              dropRef.current.parentElement
       const scrollTop = scrollContainer?.scrollTop || 0
       
-      // マウスオフセットを考慮してカード上部の位置を計算
+      // マウスオフセットを考慮したカード上部の位置
+      const mouseOffsetY = draggedItem.mouseOffsetY || 0
+      const cardTopY = hoverClientOffset.y - mouseOffsetY
+      const relativeY = cardTopY - rect.top + scrollTop
+      
+      // スナップ位置を計算
+      const minutesFromStart = Math.round(relativeY * MINUTES_PER_PIXEL)
+      const snappedMinutes = Math.round(minutesFromStart / snapInterval) * snapInterval
+      const snappedY = (snappedMinutes / MINUTES_PER_PIXEL)
+      
+      setDropPosition(snappedY)
+      
+      // 時刻表示を更新
+      const targetDate = new Date(date)
+      targetDate.setHours(0, 0, 0, 0)
+      const hoverTime = addMinutes(targetDate, snappedMinutes)
+      setHoveredTime(format(hoverTime, 'HH:mm'))
+    },
+    drop: (item: DraggedEventData, monitor) => {
+      const dropResult = monitor.getClientOffset()
+      if (!dropResult || !dropRef.current) {
+        setDropPosition(null)
+        setHoveredTime(null)
+        return
+      }
+      
+      if (!onEventUpdate) {
+        setDropPosition(null)
+        setHoveredTime(null)
+        return
+      }
+
+      const rect = dropRef.current.getBoundingClientRect()
+      const scrollContainer = dropRef.current.closest('[data-slot="scroll-area-viewport"]') ||
+                             dropRef.current.closest('.overflow-y-auto') ||
+                             dropRef.current.closest('.overflow-auto') ||
+                             dropRef.current.parentElement
+      const scrollTop = scrollContainer?.scrollTop || 0
+      
       const mouseOffsetY = item.mouseOffsetY || 0
       const cardTopY = dropResult.y - mouseOffsetY
       const relativeY = cardTopY - rect.top + scrollTop
 
-      console.log('📍 ドロップ位置情報:', {
-        clientY: dropResult.y,
-        mouseOffsetY,
-        cardTopY,
-        rectTop: rect.top,
-        scrollTop,
-        relativeY
-      })
-
-      // 新しい開始時間を計算（15分単位にスナップ）
+      // 新しい開始時間を計算（設定可能な間隔でスナップ）
       const minutesFromStart = Math.round(relativeY * MINUTES_PER_PIXEL)
-      const snappedMinutes = Math.round(minutesFromStart / 15) * 15
+      const snappedMinutes = Math.round(minutesFromStart / snapInterval) * snapInterval
       
-      // 正しい日付（JST）で計算するため、dateを直接使用
       const targetDate = new Date(date)
-      targetDate.setHours(0, 0, 0, 0) // 時刻をリセット
+      targetDate.setHours(0, 0, 0, 0)
       const newStartTime = addMinutes(targetDate, snappedMinutes)
       
-      // イベントの長さを保持
       if (!item.event.startDate || !item.event.endDate) {
-        console.log('❌ イベントの開始時刻または終了時刻が存在しません')
+        setDropPosition(null)
+        setHoveredTime(null)
         return
       }
       
@@ -85,43 +115,39 @@ export function CalendarDropZone({
       const duration = differenceInMinutes(userEndDate, userStartDate)
       const newEndTime = addMinutes(newStartTime, duration)
 
-      // 既にローカル時間で計算されているので、UTC変換は不要
       const updatedEvent: CalendarEvent = {
         ...item.event,
         startDate: newStartTime,
         endDate: newEndTime
       }
 
-      console.log('🎯 イベントドロップ詳細 (FIXED):', {
-        originalStartUTC: item.event.startDate.toISOString(),
-        originalStartLocal: userStartDate.toISOString(),
-        newStartLocal: newStartTime.toISOString(),
-        newEndLocal: newEndTime.toISOString(),
-        dayIndex: item.dayIndex,
-        newDayIndex: dayIndex,
-        minutesFromStart,
-        snappedMinutes,
-        duration,
-        inputDate: date.toISOString(),
-        targetDate: targetDate.toISOString(),
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        newStartDateString: newStartTime.toDateString(),
-        targetDateString: date.toDateString(),
-        hoursMinutes: `${Math.floor(snappedMinutes / 60)}:${String(snappedMinutes % 60).padStart(2, '0')}`
-      })
-
       try {
         onEventUpdate(updatedEvent)
-        console.log('✅ onEventUpdate 呼び出し成功')
+        // ドロップ完了後にインジケーターをクリア
+        setTimeout(() => {
+          setDropPosition(null)
+          setHoveredTime(null)
+        }, 100)
       } catch (error) {
         console.error('❌ onEventUpdate 呼び出しエラー:', error)
+        setDropPosition(null)
+        setHoveredTime(null)
       }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
+      canDrop: monitor.canDrop(),
+      item: monitor.getItem() as DraggedEventData | null
     })
   })
+
+  // hover終了時にインジケーターをクリア
+  useEffect(() => {
+    if (!isOver) {
+      setDropPosition(null)
+      setHoveredTime(null)
+    }
+  }, [isOver])
 
   drop(dropRef)
 
@@ -129,11 +155,44 @@ export function CalendarDropZone({
     <div
       ref={dropRef}
       className={cn(
-        "relative flex-1",
+        "relative flex-1 transition-colors duration-200",
+        isOver && canDrop && "bg-primary/5",
         className
       )}
     >
       {children}
+      
+      {/* ドロップ位置インジケーター */}
+      {showDropIndicator && isOver && canDrop && dropPosition !== null && (
+        <>
+          <div
+            className="absolute left-0 right-0 h-[2px] bg-primary z-50 pointer-events-none"
+            style={{ 
+              top: `${dropPosition}px`,
+              boxShadow: '0 0 8px rgba(var(--primary), 0.5)'
+            }}
+          >
+            {/* 時刻ラベル */}
+            {hoveredTime && (
+              <div className="absolute -left-12 -top-2 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded">
+                {hoveredTime}
+              </div>
+            )}
+          </div>
+          
+          {/* ドロッププレビューアウトライン */}
+          {item && (
+            <div
+              className="absolute left-0 right-0 border-2 border-primary/30 rounded-md pointer-events-none z-40"
+              style={{
+                top: `${dropPosition}px`,
+                height: `${item.height || 40}px`,
+                backgroundColor: 'rgba(var(--primary), 0.05)'
+              }}
+            />
+          )}
+        </>
+      )}
     </div>
   )
 }

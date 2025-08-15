@@ -6,11 +6,13 @@ import { DRAG_TYPE } from './DraggableEvent'
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
 const MINUTES_PER_PIXEL = 60 / HOUR_HEIGHT
 
 export function DragPreview() {
   const [mounted, setMounted] = useState(false)
+  const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
   
   useEffect(() => {
     setMounted(true)
@@ -43,9 +45,9 @@ export function DragPreview() {
   const cardTopY = currentOffset.y - (item.mouseOffsetY || 0)
   const relativeY = cardTopY - gridRect.top + scrollTop
   
-  // 15分単位にスナップ
+  // 設定可能な間隔でスナップ
   const minutesFromStart = relativeY * MINUTES_PER_PIXEL
-  const snappedMinutes = Math.round(minutesFromStart / 15) * 15
+  const snappedMinutes = Math.round(minutesFromStart / snapInterval) * snapInterval
   const snappedY = (snappedMinutes / MINUTES_PER_PIXEL) - scrollTop + gridRect.top
   
   // 時刻を計算

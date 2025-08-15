@@ -6,9 +6,11 @@ export { ChronotypeIndicator, ChronotypeIndicatorCompact, ChronotypeGridOverlay 
 
 // DnD components
 export { DnDProvider } from './dnd/DnDProvider'
-export { DraggableEvent, DRAG_TYPE } from './dnd/DraggableEvent'
+export { DraggableEvent, CustomDragLayer, DRAG_TYPE } from './dnd/DraggableEvent'
 export { CalendarDropZone } from './dnd/CalendarDropZone'
 export { DragPreview } from './dnd/DragPreview'
+export { EventResizeHandle } from './dnd/EventResizeHandle'
 
 // Types
 export type { DraggedEventData } from './dnd/DraggableEvent'
+export type { SnapInterval } from './dnd/CalendarDropZone'

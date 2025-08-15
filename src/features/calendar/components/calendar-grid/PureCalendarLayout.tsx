@@ -9,6 +9,7 @@ import type { CalendarEvent } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { NotificationDisplay } from '@/features/notifications/components/notification-display'
 import { DeleteToast } from '@/components/shadcn-ui/delete-toast'
+import { EventResizeHandle } from './dnd/EventResizeHandle'
 
 // Step 21: Tag interface
 interface Tag {
@@ -161,21 +162,9 @@ function CalendarGrid({
   const [copiedEvent, setCopiedEvent] = useState<RecurringEvent | null>(null)
   const [draggedTime, setDraggedTime] = useState<{ start: string; end: string } | null>(null)
   
-  // Step 20: 複製とリサイズ用のstate
+  // Step 20: 複製用のstate
   const [isDuplicating, setIsDuplicating] = useState(false)
-  const [adjustingStart, setAdjustingStart] = useState<{
-    id: string
-    initialStartTime: string
-    initialEndTime: string
-    startY: number
-  } | null>(null)
-
-  // Step 9: リサイズ状態の管理
-  const [resizingEvent, setResizingEvent] = useState<{
-    id: string
-    initialEndTime: string
-    startY: number
-  } | null>(null)
+  // 旧いリサイズ処理はEventResizeHandleコンポーネントに移行済み
 
   // Step 10: カラーピッカー状態の管理
   const [colorPickerEvent, setColorPickerEvent] = useState<{
@@ -478,62 +467,7 @@ function CalendarGrid({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [selectedEventId])
   
-  // Step 20: 開始時刻変更の処理
-  useEffect(() => {
-    if (!adjustingStart) return
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaY = e.clientY - adjustingStart.startY
-      const deltaMinutes = Math.round(deltaY / (HOUR_HEIGHT / 4)) * 15 // 15分単位
-      
-      const [startHour, startMinute] = adjustingStart.initialStartTime.split(':').map(Number)
-      const [endHour, endMinute] = adjustingStart.initialEndTime.split(':').map(Number)
-      
-      let newStartMinutes = startHour * 60 + startMinute + deltaMinutes
-      
-      // 0:00～23:45の範囲に制限
-      newStartMinutes = Math.max(0, Math.min(newStartMinutes, 23 * 60 + 45))
-      
-      const newStartHour = Math.floor(newStartMinutes / 60)
-      const newStartMin = newStartMinutes % 60
-      const newStartTime = `${String(newStartHour).padStart(2, '0')}:${String(newStartMin).padStart(2, '0')}`
-      
-      // 終了時刻は固定で、開始時刻が終了時刻を超えないようにする
-      const endMinutes = endHour * 60 + endMinute
-      if (newStartMinutes >= endMinutes) {
-        // 開始時刻が終了時刻を超える場合は、開始時刻を終了時刻の15分前に設定
-        const adjustedStartMinutes = Math.max(0, endMinutes - 15)
-        const adjustedStartHour = Math.floor(adjustedStartMinutes / 60)
-        const adjustedStartMin = adjustedStartMinutes % 60
-        const adjustedStartTime = `${String(adjustedStartHour).padStart(2, '0')}:${String(adjustedStartMin).padStart(2, '0')}`
-        
-        setSavedEvents(prev => prev.map(evt => 
-          evt.id === adjustingStart.id 
-            ? { ...evt, startTime: adjustedStartTime }
-            : evt
-        ))
-        return
-      }
-      
-      setSavedEvents(prev => prev.map(evt => 
-        evt.id === adjustingStart.id 
-          ? { ...evt, startTime: newStartTime }
-          : evt
-      ))
-    }
-    
-    const handleMouseUp = () => {
-      setAdjustingStart(null)
-    }
-    
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-    
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [adjustingStart])
+  // 開始時刻変更の処理はEventResizeHandleコンポーネントに移行済み
 
   // Step 24改: 15分単位カクカクスナップ関数
   const snapToQuarter = useCallback((minutes: number) => {
@@ -980,63 +914,7 @@ function CalendarGrid({
     return () => document.removeEventListener('keydown', handleEscape)
   }, [draggingEventId])
 
-  // Step 9: リサイズ処理
-  useEffect(() => {
-    if (!resizingEvent) return
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaY = e.clientY - resizingEvent.startY
-      const deltaMinutes = Math.round(deltaY / (HOUR_HEIGHT / 4)) * 15 // 15分単位でスナップ
-
-      const resizingEventData = expandedEvents.find(evt => evt.id === resizingEvent.id)
-      if (!resizingEventData) return
-
-      const [startHours, startMinutes] = resizingEventData.startTime.split(':').map(Number)
-      const [initialEndHours, initialEndMinutes] = resizingEvent.initialEndTime.split(':').map(Number)
-      
-      // 新しい終了時間を計算
-      const initialEndTotalMinutes = initialEndHours * 60 + initialEndMinutes
-      const newEndTotalMinutes = Math.max(
-        (startHours * 60 + startMinutes) + 15, // 最小15分
-        Math.min(
-          initialEndTotalMinutes + deltaMinutes,
-          23 * 60 + 45 // 23:45まで（日またぎ防止）
-        )
-      )
-
-      const newEndHours = Math.floor(newEndTotalMinutes / 60)
-      const newEndMinutes = newEndTotalMinutes % 60
-      const newEndTime = `${String(newEndHours).padStart(2, '0')}:${String(newEndMinutes).padStart(2, '0')}`
-
-      // 予定を更新（繰り返し予定の場合、ベースイベントを更新）
-      const baseEventId = resizingEvent.id.split('_')[0]
-      setSavedEvents(prev => prev.map(evt => 
-        evt.id === baseEventId 
-          ? { ...evt, endTime: newEndTime }
-          : evt
-      ))
-
-      console.log('🎯 Step 9: リサイズ中:', {
-        deltaY,
-        deltaMinutes,
-        originalEndTime: resizingEvent.initialEndTime,
-        newEndTime
-      })
-    }
-
-    const handleMouseUp = () => {
-      console.log('🎯 Step 9: リサイズ完了')
-      setResizingEvent(null)
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [resizingEvent, savedEvents])
+  // 終了時刻リサイズ処理はEventResizeHandleコンポーネントに移行済み
 
   // Step 10: カラーピッカーの外側クリックで閉じる
   useEffect(() => {
@@ -1573,37 +1451,39 @@ function CalendarGrid({
                       </div>
                     )}
                     
-                    {/* Step 20: 上端リサイズハンドル（開始時刻変更） */}
-                    <div
-                      className="absolute top-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors duration-200"
-                      title="Drag to change start time"
-                      onMouseDown={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        console.log('🎯 Step 20: 開始時刻変更開始:', event)
-                        setAdjustingStart({
-                          id: event.id,
-                          initialStartTime: event.startTime,
-                          initialEndTime: event.endTime,
-                          startY: e.clientY
-                        })
+                    {/* 改善されたリサイズハンドル */}
+                    <EventResizeHandle
+                      type="start"
+                      eventId={event.id}
+                      currentTime={event.startTime}
+                      otherTime={event.endTime}
+                      onTimeChange={(newTime) => {
+                        const baseEventId = event.id.split('_')[0]
+                        setSavedEvents(prev => prev.map(evt => 
+                          evt.id === baseEventId 
+                            ? { ...evt, startTime: newTime }
+                            : evt
+                        ))
                       }}
+                      minDuration={30}
+                      maxTime="23:45"
                     />
                     
-                    {/* Step 9: 下端リサイズハンドル（終了時刻変更） */}
-                    <div
-                      className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-white/20 transition-colors duration-200"
-                      title="Drag to resize duration"
-                      onMouseDown={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        console.log('🎯 Step 9: リサイズ開始:', event)
-                        setResizingEvent({
-                          id: event.id,
-                          initialEndTime: event.endTime,
-                          startY: e.clientY
-                        })
+                    <EventResizeHandle
+                      type="end"
+                      eventId={event.id}
+                      currentTime={event.endTime}
+                      otherTime={event.startTime}
+                      onTimeChange={(newTime) => {
+                        const baseEventId = event.id.split('_')[0]
+                        setSavedEvents(prev => prev.map(evt => 
+                          evt.id === baseEventId 
+                            ? { ...evt, endTime: newTime }
+                            : evt
+                        ))
                       }}
+                      minDuration={30}
+                      maxTime="23:59"
                     />
                   </div>
                 )
