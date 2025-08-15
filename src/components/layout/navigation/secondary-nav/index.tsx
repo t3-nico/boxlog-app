@@ -33,6 +33,8 @@ const SecondaryNavHeader = React.memo(({ title }: { title: string }) => {
   )
 })
 
+SecondaryNavHeader.displayName = 'SecondaryNavHeader'
+
 export function SecondaryNavigation() {
   const pathname = usePathname()
   const pageTitle = getPageTitle(pathname)
