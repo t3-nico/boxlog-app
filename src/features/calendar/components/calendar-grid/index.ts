@@ -11,6 +11,17 @@ export { CalendarDropZone } from './dnd/CalendarDropZone'
 export { DragPreview } from './dnd/DragPreview'
 export { EventResizeHandle } from './dnd/EventResizeHandle'
 
+// Interaction components
+export { EventInteractionHandler } from './interactions/EventInteractionHandler'
+export { UndoToast, useUndoManager, createUndoActions } from './interactions/UndoToast'
+export { KeyboardShortcuts, KeyboardShortcutsHelp, usePerformanceMonitor } from './interactions/KeyboardShortcuts'
+
+// Animation components
+export { AnimatedEventCard } from './animations/AnimatedEventCard'
+
+// Virtualization and Performance components
+export { VirtualCalendarGrid } from './virtualization/VirtualCalendarGrid'
+
 // Types
 export type { DraggedEventData } from './dnd/DraggableEvent'
 export type { SnapInterval } from './dnd/CalendarDropZone'

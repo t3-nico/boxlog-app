@@ -20,7 +20,8 @@
       "Bash(curl:*)",
       "Bash(grep:*)",
       "Bash(ANALYZE=true npm run build:fallback)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
