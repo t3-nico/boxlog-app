@@ -15,22 +15,31 @@ BoxLogアプリケーションのカレンダー機能は、タスク管理と�
 
 ### コアコンポーネント
 
-- **CalendarView**: メインのカレンダービューコンポーネント
+- **CalendarController**: メインのカレンダーコントローラーコンポーネント（旧CalendarView）
+- **CalendarLayout**: 統合レイアウト管理システム（NEW）
 - **Views**: 各ビュータイプ（Day, Week, Month等）の実装
 - **Interactions**: ドラッグ&ドロップ、キーボードショートカット等
-- **Layouts**: カレンダーのレイアウト管理
+- **Sidebar**: ミニカレンダー、クイックアクション、フィルター等の統合サイドバー
 
 ### ディレクトリ構造
 
 ```
 src/features/calendar/
-├── components/           # UIコンポーネント
-│   ├── CalendarView.tsx     # メインビュー
+├── components/              # UIコンポーネント
+│   ├── CalendarController.tsx  # メインコントローラー（旧CalendarView）
+│   ├── layout/                # レイアウトシステム（NEW）
+│   │   ├── CalendarLayout.tsx    # 統合レイアウトコンポーネント
+│   │   ├── Header/              # ヘッダーコンポーネント群
+│   │   ├── Sidebar/             # サイドバーコンポーネント群
+│   │   └── MobileLayout/        # モバイル専用レイアウト
 │   ├── views/               # ビュータイプ別実装
 │   ├── interactions/        # インタラクション機能
-│   ├── layout/              # レイアウト関連
-│   └── common/              # 共通コンポーネント
+│   ├── shared/              # 共通コンポーネント
+│   ├── event/               # イベント関連コンポーネント
+│   ├── common/              # 基本共通コンポーネント
+│   └── overlays/            # オーバーレイ系コンポーネント
 ├── hooks/               # カレンダー専用フック
+│   └── ui/                  # UIフック（useCalendarLayoutなど）
 ├── lib/                 # ユーティリティ関数
 ├── types/               # TypeScript型定義
 ├── constants/           # 定数定義
@@ -54,6 +63,13 @@ src/features/calendar/
 | `schedule` | スケジュール表示 | `/calendar/schedule` |
 
 ## 🚀 主要機能
+
+### 🏛️ レイアウトシステム（NEW）
+
+- **統合レイアウト管理**: ヘッダー、サイドバー、メインコンテンツの一元管理
+- **レスポンシブデザイン**: デスクトップ・タブレット・モバイル最適化
+- **サイドバー統合**: ミニカレンダー、クイックアクション、フィルター機能
+- **状態永続化**: ユーザー設定の自動保存・復元
 
 ### ✨ インタラクション
 
@@ -87,9 +103,14 @@ src/features/calendar/
 
 詳細な技術ドキュメントは以下を参照：
 
-- [コンポーネント構成](./\_\_docs\_\_/components.md)
-- [開発ガイドライン](./\_\_docs\_\_/development.md)
-- [API仕様](./\_\_docs\_\_/api.md)
+### 🏛️ レイアウトシステム（NEW）
+- [カレンダーレイアウトシステム](./layout/layout-system.md) - 統合レイアウト管理の詳細
+- [サイドバーコンポーネント詳細ガイド](./layout/sidebar-components.md) - サイドバー機能の実装方法
+
+### 📚 一般ドキュメント
+- [コンポーネント構成](./components.md)
+- [開発ガイドライン](./development.md)  
+- [API仕様](./api.md)
 
 ## 🛠️ 開発環境
 

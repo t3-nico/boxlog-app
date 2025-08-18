@@ -13,8 +13,6 @@ export * from './interactions'
 // Common Components
 export * from './common'
 
-// Overlay Components
-export * from './overlays'
 
 // Views
 export * from './views'
