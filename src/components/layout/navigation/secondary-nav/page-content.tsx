@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { CommonSidebarSections } from '../shared'
-import { CalendarSidebarSections } from '@/features/calendar/components/sidebar'
+import { Sidebar } from '@/features/calendar/components/layout'
 import { BoardSidebarSections } from '@/features/board/components/sidebar'
 import { TableSidebarSections } from '@/features/table/components/sidebar'
 import { StatsSidebarSections } from '@/features/stats/components/sidebar'
@@ -29,18 +29,10 @@ export function PageContent({ pathname }: PageContentProps) {
       {/* Page-specific sections */}
       <div className="space-y-6">
         {isCalendarPage && (
-          <CalendarSidebarSections
+          <Sidebar
             collapsed={false}
             selectedDate={new Date()}
             onDateSelect={() => {}}
-            tags={[]}
-            selectedTags={[]}
-            tagFilterMode="OR"
-            onTagSelect={() => {}}
-            onToggleExpand={() => {}}
-            onFilterModeChange={() => {}}
-            onManageTags={() => {}}
-            onCreateTag={() => {}}
           />
         )}
 

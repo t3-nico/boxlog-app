@@ -14,7 +14,7 @@ export const DynamicFloatingAIChat = dynamic(
 
 // カレンダービューの動的インポート
 export const DynamicCalendarView = dynamic(
-  () => import('@/features/calendar/components/CalendarView').then(mod => ({ default: mod.CalendarView })),
+  () => import('@/features/calendar/components/CalendarController').then(mod => ({ default: mod.CalendarController })),
   {
     loading: () => (
       <div className="h-full flex items-center justify-center">
@@ -26,7 +26,7 @@ export const DynamicCalendarView = dynamic(
 
 // AddPopupの動的インポート
 export const DynamicAddPopup = dynamic(
-  () => import('@/features/calendar/components/add-popup').then(mod => ({ default: mod.AddPopup })),
+  () => import('@/features/calendar/components/event').then(mod => ({ default: mod.AddPopup })),
   {
     ssr: false,
     loading: () => null

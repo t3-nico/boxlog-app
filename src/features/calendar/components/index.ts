@@ -1,17 +1,20 @@
-// Main Calendar View Component
-export { CalendarView } from './CalendarView'
+// Main Calendar Controller Component
+export { CalendarController } from './CalendarController'
 
-// Add Popup Components
-export * from './add-popup'
+// Layout Components
+export * from './layout'
 
-// Calendar Grid Components
-export * from './calendar-grid'
+// Event Components
+export * from './event'
 
-// Time Slots Components
-export * from './time-slots'
+// Interaction Components
+export * from './interactions'
 
-// Event Card Components
-export * from './event-card'
+// Common Components
+export * from './common'
+
+// Overlay Components
+export * from './overlays'
 
 // Views
 export * from './views'

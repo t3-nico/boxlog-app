@@ -3,7 +3,7 @@
 import React from 'react'
 import { PlusCircle as PlusCircleIcon } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
-import { useAddPopup } from '@/features/calendar/components/add-popup'
+import { useAddPopup } from '@/features/calendar/components/event'
 
 interface CommonSidebarSectionsProps {
   collapsed: boolean

@@ -1,5 +1,5 @@
 // Main Calendar Entry Point
-export { CalendarView } from './components/CalendarView'
+export { CalendarController } from './components/CalendarController'
 
 // Calendar Components
 export * from './components'
