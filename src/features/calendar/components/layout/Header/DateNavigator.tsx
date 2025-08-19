@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export type NavigationDirection = 'prev' | 'next' | 'today'
@@ -42,7 +42,7 @@ export function DateNavigator({
           onClick={() => onNavigate('today')}
           className={cn(
             'px-4 py-2 text-sm font-medium',
-            'border rounded-md transition-colors',
+            'rounded-md transition-colors',
             'bg-secondary text-secondary-foreground',
             'hover:bg-secondary/80',
             'flex items-center gap-2',
@@ -50,7 +50,6 @@ export function DateNavigator({
           )}
           title="Go to today"
         >
-          <Calendar className="h-4 w-4" />
           <span>{todayLabel}</span>
         </button>
       )}

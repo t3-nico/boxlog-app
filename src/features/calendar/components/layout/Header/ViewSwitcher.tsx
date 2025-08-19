@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -8,6 +8,7 @@ export type ViewOption = {
   value: string
   label: string
   icon?: React.ReactNode
+  shortcut?: string
 }
 
 interface ViewSwitcherProps {
@@ -39,23 +40,52 @@ export function ViewSwitcher({
     setIsOpen(false)
   }
 
+  // ショートカットキー機能
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl、Alt、Metaキーが押されている場合は無視
+      if (event.ctrlKey || event.altKey || event.metaKey) {
+        return
+      }
+      
+      // 入力フィールドにフォーカスがある場合は無視
+      const activeElement = document.activeElement
+      if (activeElement && (
+        activeElement.tagName === 'INPUT' || 
+        activeElement.tagName === 'TEXTAREA' ||
+        activeElement.getAttribute('contenteditable') === 'true'
+      )) {
+        return
+      }
+
+      const key = event.key.toUpperCase()
+      const option = options.find(opt => opt.shortcut?.toUpperCase() === key)
+      
+      if (option && option.value !== currentView) {
+        event.preventDefault()
+        onChange(option.value)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [options, currentView, onChange])
+
   return (
     <div className={cn('relative', className)}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'flex items-center gap-2 px-4 py-2 text-sm font-medium',
-          'bg-accent border border-border rounded-lg',
-          'hover:bg-accent/80 transition-colors shadow-sm',
+          'rounded-md transition-colors',
+          'bg-secondary text-secondary-foreground',
+          'hover:bg-secondary/80',
           buttonClassName
         )}
       >
         {currentOption?.icon}
         <span>{currentOption?.label || 'View'}</span>
-        <ChevronDown className={cn(
-          'w-4 h-4 transition-transform',
-          isOpen && 'rotate-180'
-        )} />
+        <ChevronDown className="w-4 h-4" />
       </button>
 
       {isOpen && (
@@ -81,14 +111,21 @@ export function ViewSwitcher({
                   className={cn(
                     'w-full text-left px-4 py-2 text-sm',
                     'hover:bg-accent/50 transition-colors',
-                    'flex items-center gap-2',
+                    'flex items-center justify-between gap-2',
                     currentView === option.value 
                       ? 'bg-accent text-accent-foreground font-medium' 
                       : 'text-muted-foreground'
                   )}
                 >
-                  {option.icon}
-                  <span>{option.label}</span>
+                  <div className="flex items-center gap-2">
+                    {option.icon}
+                    <span>{option.label}</span>
+                  </div>
+                  {option.shortcut && (
+                    <span className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
+                      {option.shortcut}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

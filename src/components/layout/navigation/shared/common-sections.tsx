@@ -31,7 +31,7 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
             openPopup('event')
           }}
           variant="default"
-          className="w-full h-[56px] py-4 px-4 flex items-center gap-2 font-semibold"
+          className="w-full h-[56px] py-4 px-4 flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
         >
           <span className="truncate">Create</span>
           <PlusCircleIcon className="size-5 shrink-0 text-primary-foreground" />
