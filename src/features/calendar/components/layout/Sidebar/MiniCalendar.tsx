@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useState, useMemo, useCallback } from 'react'
+import React, { memo, useState, useMemo, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
@@ -16,7 +16,6 @@ import {
   addMonths,
   subMonths
 } from 'date-fns'
-import { ja } from 'date-fns/locale'
 
 export interface MiniCalendarProps {
   selectedDate?: Date
@@ -38,6 +37,18 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
   firstDayOfWeek = 1 // Monday default
 }) => {
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(selectedDate))
+  
+  // selectedDate が変更されたら、必要に応じて表示月を自動調整
+  React.useEffect(() => {
+    const selectedMonth = startOfMonth(selectedDate)
+    const currentDisplayMonth = currentMonth
+    
+    // 選択された日付の月が現在表示している月と異なる場合、月を移動
+    if (selectedMonth.getTime() !== currentDisplayMonth.getTime()) {
+      console.log('📅 MiniCalendar: Auto-adjusting month to:', selectedMonth)
+      setCurrentMonth(selectedMonth)
+    }
+  }, [selectedDate, currentMonth])
 
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonth)
@@ -52,7 +63,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
     const start = firstDayOfWeek === 0 ? 0 : 1 // Sunday or Monday
     return Array.from({ length: 7 }, (_, i) => {
       const dayIndex = (start + i) % 7
-      return format(new Date(2024, 0, dayIndex), 'E', { locale: ja })
+      return format(new Date(2024, 0, dayIndex), 'E')
     })
   }, [firstDayOfWeek])
 
@@ -71,11 +82,6 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
     onDateSelect?.(date)
   }, [disabledDates, onDateSelect])
 
-  const handleTodayClick = useCallback(() => {
-    const today = new Date()
-    setCurrentMonth(startOfMonth(today))
-    onDateSelect?.(today)
-  }, [onDateSelect])
 
   const getWeekNumber = useCallback((date: Date) => {
     const start = new Date(date.getFullYear(), 0, 1)
@@ -86,11 +92,11 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
   return (
     <div 
       className={cn(
-        "mini-calendar bg-background border rounded-lg p-3 select-none",
+        "mini-calendar w-full bg-background p-2 select-none",
         className
       )}
       role="application"
-      aria-label="ミニカレンダー"
+      aria-label="Mini Calendar"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
@@ -99,25 +105,21 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
           size="sm"
           onClick={handlePrevMonth}
           className="h-7 w-7 p-0"
-          aria-label="前月"
+          aria-label="Previous Month"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
         
-        <Button
-          variant="ghost" 
-          onClick={handleTodayClick}
-          className="font-medium text-sm hover:bg-accent"
-        >
-          {format(currentMonth, 'yyyy年MM月', { locale: ja })}
-        </Button>
+        <div className="font-medium text-sm">
+          {format(currentMonth, 'MMM yyyy')}
+        </div>
         
         <Button
           variant="ghost"
           size="sm"
           onClick={handleNextMonth}
           className="h-7 w-7 p-0"
-          aria-label="次月"
+          aria-label="Next Month"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -125,18 +127,18 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
 
       {/* Week headers */}
       <div className={cn(
-        "grid grid-cols-7 gap-1 mb-2",
+        "grid grid-cols-7 gap-0.5 mb-2",
         showWeekNumbers && "grid-cols-8"
       )}>
         {showWeekNumbers && (
-          <div className="h-6 text-xs text-muted-foreground flex items-center justify-center">
+          <div className="h-5 text-xs text-muted-foreground flex items-center justify-center">
             W
           </div>
         )}
         {weekDays.map((day, index) => (
           <div 
             key={index}
-            className="h-6 text-xs font-medium text-muted-foreground flex items-center justify-center"
+            className="h-5 text-xs font-medium text-muted-foreground flex items-center justify-center"
           >
             {day}
           </div>
@@ -145,7 +147,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
 
       {/* Calendar grid */}
       <div className={cn(
-        "grid grid-cols-7 gap-1",
+        "grid grid-cols-7 gap-0.5",
         showWeekNumbers && "grid-cols-8"
       )}>
         {/* Render weeks */}
@@ -158,7 +160,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
             showWeekNumbers && (
               <div
                 key={`week-${weekIndex}`}
-                className="h-8 text-xs text-muted-foreground flex items-center justify-center"
+                className="h-7 w-7 text-xs text-muted-foreground flex items-center justify-center"
               >
                 {getWeekNumber(weekDays[0])}
               </div>
@@ -183,7 +185,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                   disabled={isDisabled}
                   className={cn(
                     // Base styles
-                    "h-8 text-xs rounded-md transition-colors",
+                    "h-7 w-7 text-xs rounded-md transition-colors",
                     "hover:bg-accent focus:bg-accent focus:outline-none",
                     
                     // Current month vs other months
@@ -213,7 +215,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                       "hover:bg-transparent focus:bg-transparent"
                     ]
                   )}
-                  aria-label={format(date, 'yyyy年MM月dd日 EEEE', { locale: ja })}
+                  aria-label={format(date, 'EEEE, MMMM d, yyyy')}
                   aria-pressed={isSelected}
                   aria-current={isToday ? 'date' : undefined}
                 >
@@ -225,17 +227,6 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
         }).flat().filter(Boolean)}
       </div>
 
-      {/* Today shortcut */}
-      <div className="mt-3 pt-2 border-t">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleTodayClick}
-          className="w-full h-7 text-xs"
-        >
-          今日に戻る
-        </Button>
-      </div>
     </div>
   )
 })

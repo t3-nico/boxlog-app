@@ -26,7 +26,7 @@ const viewOptions = [
   { value: 'week-no-weekend' as CalendarViewType, label: 'Weekdays' },
   { value: 'week' as CalendarViewType, label: 'Week' },
   { value: '2week' as CalendarViewType, label: '2 Weeks' },
-  { value: 'schedule' as CalendarViewType, label: 'Event' },
+  { value: 'schedule' as CalendarViewType, label: 'Schedule' },
 ]
 
 /**
@@ -45,7 +45,7 @@ export function CalendarHeader({
   leftSlot
 }: CalendarHeaderProps) {
   return (
-    <header className="relative h-16 bg-background px-4 border-b border-border">
+    <header className="relative h-16 bg-background px-4">
       <div className="h-full flex items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">

@@ -27,6 +27,66 @@ interface SharedComponentProps {
 
 ## 📦 コンポーネントカタログ
 
+### 🏗️ Layout Components (v2.0)
+
+#### ScrollableCalendarLayout
+**責務:** 統一されたスクロール可能レイアウトシステム  
+**使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView
+
+```typescript
+interface ScrollableCalendarLayoutProps {
+  children: React.ReactNode
+  className?: string
+  timezone?: string
+  scrollToHour?: number            // 初期スクロール位置
+  showTimeColumn?: boolean         // 時間軸表示制御
+  showCurrentTime?: boolean        // 現在時刻線表示制御
+  showTimezone?: boolean           // UTC/タイムゾーン表示制御
+  timeColumnWidth?: number         // 時間軸幅 (default: 64px)
+  onTimeClick?: (hour: number, minute: number) => void
+  displayDates?: Date[]            // 表示対象日付
+  viewMode?: 'day' | '3day' | 'week' | '2week'
+  header?: React.ReactNode         // ヘッダーコンテンツ
+}
+
+// 使用例
+<ScrollableCalendarLayout
+  timezone="Asia/Tokyo"
+  scrollToHour={8}
+  showTimeColumn={true}
+  showTimezone={true}
+  onTimeClick={(hour, minute) => handleTimeClick(hour, minute)}
+  header={<DateHeader date={currentDate} />}
+>
+  {/* ビューコンテンツ */}
+</ScrollableCalendarLayout>
+```
+
+**主要特徴:**
+- 時間ラベルとグリッド線の完全同期
+- UTCタイムゾーンの左端固定配置
+- レスポンシブHOUR_HEIGHT対応
+- 統一されたスクロール動作
+
+#### CalendarLayoutWithHeader
+**責務:** ヘッダー付きレイアウトのラッパー  
+**内部実装:** ScrollableCalendarLayoutを使用
+
+```typescript
+interface CalendarLayoutWithHeaderProps extends ScrollableCalendarLayoutProps {
+  header: React.ReactNode
+}
+
+// 使用例
+<CalendarLayoutWithHeader
+  header={headerComponent}
+  timezone={timezone}
+  viewMode="week"
+>
+  {/* ビューコンテンツ */}
+</CalendarLayoutWithHeader>
+```
+
 ### 🕒 Time & Date Components
 
 #### TimeColumn

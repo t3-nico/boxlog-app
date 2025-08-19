@@ -6,7 +6,7 @@
 
 import React, { memo, useRef, useEffect, useCallback } from 'react'
 import { TimeColumn } from '../TimeColumn'
-import { HourLines, HalfHourLines } from '../GridLines'
+import { HourLines, HalfHourLines, QuarterHourLines } from '../GridLines'
 import { CurrentTimeLine } from '../CurrentTimeLine'
 import { useViewDimensions } from '../../hooks/useViewDimensions'
 import { pixelsToTimeValues, calculateScrollPosition } from '../../utils/gridCalculator'
@@ -24,6 +24,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   endHour = 24,
   hourHeight = HOUR_HEIGHT,
   showHalfHourLines = true,
+  showQuarterHourLines = false,
   showCurrentTime = true,
   className = '',
   children,
@@ -103,6 +104,14 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
         
         {showHalfHourLines && (
           <HalfHourLines
+            startHour={startHour}
+            endHour={endHour}
+            hourHeight={hourHeight}
+          />
+        )}
+        
+        {showQuarterHourLines && (
+          <QuarterHourLines
             startHour={startHour}
             endHour={endHour}
             hourHeight={hourHeight}

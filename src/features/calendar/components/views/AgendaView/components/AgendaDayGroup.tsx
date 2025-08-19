@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { format, isToday } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/shadcn-ui/button'
@@ -48,19 +47,14 @@ export function AgendaDayGroup({
                 todayFlag ? 'text-primary' : 'text-foreground'
               )}
             >
-              {format(date, 'M月d日', { locale: ja })}
+              {format(date, 'MMM d')}
             </span>
             <span className="text-sm text-muted-foreground">
-              {format(date, 'EEEE', { locale: ja })}
+              {format(date, 'EEEE')}
             </span>
-            {todayFlag && (
-              <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
-                今日
-              </span>
-            )}
             {events.length > 0 && (
               <span className="text-xs text-muted-foreground">
-                {events.length}件
+                {events.length} events
               </span>
             )}
           </div>
@@ -74,7 +68,7 @@ export function AgendaDayGroup({
               className="h-8 w-8 p-0"
             >
               <Plus className="h-4 w-4" />
-              <span className="sr-only">予定を追加</span>
+              <span className="sr-only">Add event</span>
             </Button>
           )}
         </div>
@@ -94,7 +88,7 @@ export function AgendaDayGroup({
         ) : (
           <div className="px-4 py-8 text-center">
             <div className="text-muted-foreground text-sm">
-              予定はありません
+              No events
             </div>
             {onCreateEvent && (
               <Button
@@ -104,7 +98,7 @@ export function AgendaDayGroup({
                 className="mt-2"
               >
                 <Plus className="h-4 w-4 mr-1" />
-                予定を追加
+                Add Event
               </Button>
             )}
           </div>

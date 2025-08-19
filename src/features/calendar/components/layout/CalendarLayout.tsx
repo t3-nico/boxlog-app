@@ -3,11 +3,11 @@
 import { memo, useState, useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { CalendarHeader } from './Header'
-import { Sidebar } from './Sidebar'
+// import { Sidebar } from './Sidebar' // 削除: showSidebar={false}で使用していない
 import { Button } from '@/components/shadcn-ui/button'
 import { Menu } from 'lucide-react'
 import type { CalendarViewType } from '../../types/calendar.types'
-import type { SidebarProps } from './Sidebar'
+// import type { SidebarProps } from './Sidebar' // 削除: Sidebarコンポーネントを使用しなくなったため
 
 interface CalendarLayoutProps {
   children: React.ReactNode
@@ -35,18 +35,18 @@ interface CalendarLayoutProps {
   onDateSelect?: (date: Date) => void
   highlightedDates?: Date[]
   
-  calendars?: SidebarProps['calendars']
+  calendars?: any[] // SidebarPropsから分離
   selectedCalendarIds?: string[]
-  onCalendarToggle?: SidebarProps['onCalendarToggle']
-  onCalendarSelect?: SidebarProps['onCalendarSelect']
+  onCalendarToggle?: (calendarId: string, enabled: boolean) => void
+  onCalendarSelect?: (calendarId: string) => void
   onCalendarCreate?: () => void
-  onCalendarEdit?: SidebarProps['onCalendarEdit']
-  onCalendarDelete?: SidebarProps['onCalendarDelete']
+  onCalendarEdit?: (calendarId: string) => void
+  onCalendarDelete?: (calendarId: string) => void
   
-  tags?: SidebarProps['tags']
+  tags?: any[] // SidebarPropsから分離
   selectedTagIds?: string[]
-  onTagToggle?: SidebarProps['onTagToggle']
-  onTagCreate?: SidebarProps['onTagCreate']
+  onTagToggle?: (tagId: string, enabled: boolean) => void
+  onTagCreate?: () => void
   onTagClearAll?: () => void
   
   onCreateEvent?: () => void
@@ -192,7 +192,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(({
             size="sm"
             onClick={toggleSidebar}
             className="md:hidden h-8 w-8 p-0"
-            aria-label={sidebarCollapsed ? 'サイドバーを開く' : 'サイドバーを閉じる'}
+            aria-label={sidebarCollapsed ? 'Open sidebar' : 'Close sidebar'}
           >
             <Menu className="h-4 w-4" />
           </Button>
@@ -201,66 +201,19 @@ export const CalendarLayout = memo<CalendarLayoutProps>(({
 
       {/* メインコンテンツエリア */}
       <div className="flex-1 flex min-h-0">
-        {/* サイドバー */}
-        {showSidebar && (
-          <Sidebar
-            collapsed={sidebarCollapsed}
-            onCollapsedChange={handleSidebarCollapsedChange}
-            
-            // Data & handlers
-            selectedDate={selectedDate}
-            onDateSelect={onDateSelect}
-            highlightedDates={highlightedDates}
-            
-            calendars={calendars}
-            selectedCalendarIds={selectedCalendarIds}
-            onCalendarToggle={onCalendarToggle}
-            onCalendarSelect={onCalendarSelect}
-            onCalendarCreate={onCalendarCreate}
-            onCalendarEdit={onCalendarEdit}
-            onCalendarDelete={onCalendarDelete}
-            
-            tags={tags}
-            selectedTagIds={selectedTagIds}
-            onTagToggle={onTagToggle}
-            onTagCreate={onTagCreate}
-            onTagClearAll={onTagClearAll}
-            
-            onCreateEvent={onCreateEvent}
-            onCreateTask={onCreateTask}
-            onCreateLog={onCreateLog}
-            onOpenSettings={onOpenSettings}
-            onExport={onExport}
-            onImport={onImport}
-            onSyncCalendars={onSyncCalendars}
-            onGoToToday={onGoToToday}
-            
-            // Display options
-            showMiniCalendar={showMiniCalendar}
-            showCalendarList={showCalendarList}
-            showTagFilter={showTagFilter}
-            showQuickActions={showQuickActions}
-            
-            // モバイル対応
-            className={cn(
-              // モバイルでは絶対位置にしてオーバーレイ表示
-              showMobileMenuButton && !sidebarCollapsed && [
-                'md:relative md:translate-x-0',
-                'absolute left-0 top-0 z-40 h-full',
-                'shadow-lg md:shadow-none'
-              ]
-            )}
-          />
-        )}
+        {/* サイドバー - 削除: showSidebar={false}のため使用していない */}
+        {/* {showSidebar && (
+          ... Sidebar component removed ...
+        )} */}
 
-        {/* モバイルでサイドバー展開時の背景オーバーレイ */}
-        {showSidebar && showMobileMenuButton && !sidebarCollapsed && (
+        {/* モバイルでサイドバー展開時の背景オーバーレイ - 削除: サイドバー使用しないため */}
+        {/* {showSidebar && showMobileMenuButton && !sidebarCollapsed && (
           <div 
             className="fixed inset-0 bg-black/50 z-30 md:hidden"
             onClick={() => handleSidebarCollapsedChange(true)}
             aria-hidden="true"
           />
-        )}
+        )} */}
 
         {/* メインコンテンツ */}
         <main className="flex-1 flex flex-col min-h-0 min-w-0 bg-background">

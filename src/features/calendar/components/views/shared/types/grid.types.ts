@@ -20,8 +20,9 @@ export interface GridPosition {
 export interface TimeGridProps {
   startHour?: number // 開始時間（デフォルト: 0）
   endHour?: number // 終了時間（デフォルト: 24）
-  hourHeight?: number // 1時間の高さ（デフォルト: 60）
+  hourHeight?: number // 1時間の高さ（デフォルト: 72）
   showHalfHourLines?: boolean // 30分線を表示するか
+  showQuarterHourLines?: boolean // 15分線を表示するか
   showCurrentTime?: boolean // 現在時刻線を表示するか
   className?: string
   children?: React.ReactNode
@@ -52,6 +53,9 @@ export interface CurrentTimeLineProps {
   className?: string
   showDot?: boolean // 現在時刻のドットを表示するか
   updateInterval?: number // 更新間隔（ミリ秒）
+  // 複数日ビュー用の新しいProps
+  displayDates?: Date[]  // 表示している日付の配列
+  viewMode?: 'day' | '3day' | 'week' | '2week'
 }
 
 export interface TimeRange {

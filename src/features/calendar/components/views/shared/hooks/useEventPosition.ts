@@ -4,7 +4,7 @@
 
 import { useMemo } from 'react'
 import type { TimedEvent, EventPosition } from '../types/event.types'
-import { calculateEventColumns, calculateEventPosition } from '../utils/eventPositioning'
+import { calculateViewEventColumns, calculateEventPosition } from '../utils/eventPositioning'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface UseEventPositionOptions {
@@ -27,7 +27,7 @@ export function useEventPosition(
     if (events.length === 0) return positions
     
     // イベントの列配置を計算
-    const columns = calculateEventColumns(events)
+    const columns = calculateViewEventColumns(events)
     
     // 各イベントの位置を計算
     events.forEach(event => {

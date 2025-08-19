@@ -18,11 +18,20 @@ export function useCurrentTime(options: UseCurrentTimeOptions = {}) {
     if (!enabled) return
     
     // 初回更新
-    setCurrentTime(new Date())
+    const now = new Date()
+    setCurrentTime(now)
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('useCurrentTime initialized:', now.toLocaleTimeString())
+    }
     
     // 定期更新
     const interval = setInterval(() => {
-      setCurrentTime(new Date())
+      const newTime = new Date()
+      setCurrentTime(newTime)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('useCurrentTime updated:', newTime.toLocaleTimeString())
+      }
     }, updateInterval)
     
     return () => clearInterval(interval)

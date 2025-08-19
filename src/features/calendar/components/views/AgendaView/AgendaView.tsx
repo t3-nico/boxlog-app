@@ -5,7 +5,6 @@ import { addDays } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { TimezoneOffset } from '../shared'
-import { AgendaHeader } from './components/AgendaHeader'
 import { AgendaDayGroup } from './components/AgendaDayGroup'
 import { AgendaEventItem } from './components/AgendaEventItem'
 import { AgendaEmptyState } from './components/AgendaEmptyState'
@@ -114,19 +113,23 @@ export function AgendaView({
   return (
     <CalendarViewAnimation viewType="agenda">
       <div className={cn('flex flex-col h-full bg-background', className)}>
-        {/* ヘッダー */}
-        <AgendaHeader
-          startDate={displayStartDate}
-          endDate={displayEndDate}
-          totalEvents={totalEvents}
-          todayIndex={todayIndex}
-          onScrollToToday={todayIndex !== -1 ? scrollToToday : undefined}
-        />
-        
-        {/* タイムゾーン表示 */}
-        <div className="shrink-0 px-4 py-1 border-b bg-muted/20">
-          <div className="flex justify-end">
-            <TimezoneOffset timezone={timezone} />
+        {/* 日付ヘッダー - 他のビューと統一 */}
+        <div className="shrink-0 border-b border-border bg-background h-16">
+          <div className="flex h-full">
+            {/* タイムゾーンと空白スペース */}
+            <div 
+              className="shrink-0 bg-muted/5 flex items-end justify-center pb-1"
+              style={{ width: '64px' }}
+            >
+              <TimezoneOffset timezone={timezone} className="text-xs" />
+            </div>
+            
+            {/* Scheduleラベル */}
+            <div className="flex-1 flex items-center justify-center px-2">
+              <div className="text-center text-lg font-medium">
+                Schedule
+              </div>
+            </div>
           </div>
         </div>
         

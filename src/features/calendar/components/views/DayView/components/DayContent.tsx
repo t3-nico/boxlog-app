@@ -4,8 +4,7 @@ import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { EventBlock } from '../../shared'
 import type { DayContentProps } from '../DayView.types'
-
-const HOUR_HEIGHT = 72 // 1時間の高さ（px）
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 
 export function DayContent({
   date,

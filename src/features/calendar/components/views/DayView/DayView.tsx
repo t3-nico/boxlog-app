@@ -5,13 +5,13 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { DateHeader, TimeColumn, CurrentTimeLine, TimezoneOffset } from '../shared'
+import { DateHeader, CalendarLayoutWithHeader } from '../shared'
 import { DayContent } from './components/DayContent'
 import { useDayView } from './hooks/useDayView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 import type { DayViewProps } from './DayView.types'
 
-const HOUR_HEIGHT = 72 // 1時間の高さ（px）
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
 export function DayView({
@@ -35,8 +35,14 @@ export function DayView({
   onNavigateNext,
   onNavigateToday
 }: DayViewProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const { timezone } = useCalendarSettingsStore()
+  
+  // レスポンシブな時間高さ
+  const HOUR_HEIGHT = useResponsiveHourHeight({
+    mobile: 48,
+    tablet: 60,
+    desktop: 72
+  })
   
   // OldDayViewと同様の表示日付配列を計算
   const displayDates = useMemo(() => {
@@ -58,81 +64,50 @@ export function DayView({
     events,
     onEventUpdate: onUpdateEvent
   })
-  
-  // 初回レンダリング時に現在時刻へスクロール
-  useEffect(() => {
-    if (isToday) {
-      // 少し遅延させてスクロール（レンダリング完了後）
-      const timer = setTimeout(() => {
-        scrollToNow()
-      }, 100)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [isToday, scrollToNow])
-  
+
+  // 空き時間クリックハンドラー
+  const handleEmptySlotClick = React.useCallback((hour: number, minute: number) => {
+    const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+    onEmptyClick?.(date, timeString)
+  }, [onEmptyClick, date])
+
+  const headerComponent = (
+    <div className="border-b border-border bg-background h-16 flex items-center justify-center px-2">
+      <DateHeader
+        date={date}
+        className="text-center"
+        showDayName={true}
+        showMonthYear={false}
+        dayNameFormat="short"
+        dateFormat="d"
+        isToday={isToday}
+        isSelected={false}
+      />
+    </div>
+  )
+
   return (
     <CalendarViewAnimation viewType="day">
-      <div className={cn('flex flex-col h-full bg-background', className)}>
-        {/* 日付ヘッダー - 大きく表示 */}
-        <div className="shrink-0 border-b border-border bg-background">
-          <div className="flex items-center justify-between px-4 py-2">
-            <DateHeader
-              date={date}
-              className="flex-1 text-center"
-              showDayName={true}
-              showMonthYear={false}
-              dayNameFormat="long"
-              dateFormat="d日 EEEE"
-              isToday={isToday}
-            />
-            {/* タイムゾーン表示 */}
-            <TimezoneOffset timezone={timezone} />
-          </div>
-        </div>
-      
-      {/* メインコンテンツエリア */}
-      <div className="flex flex-1 min-h-0">
-        {/* 時間軸列 */}
-        <div 
-          className="shrink-0 border-r border-border bg-muted/5"
-          style={{ width: TIME_COLUMN_WIDTH }}
-        >
-          <TimeColumn
-            startHour={0}
-            endHour={24}
-            interval={60}
-            showBusinessHours={false}
-            className="h-full"
-          />
-        </div>
-        
-        {/* スクロール可能なコンテンツエリア */}
-        <div 
-          ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto relative"
-        >
-          {/* 現在時刻線（今日の場合のみ） */}
-          {isToday && (
-            <CurrentTimeLine
-              startHour={0}
-              className="absolute left-0 right-0 z-20 pointer-events-none"
-            />
-          )}
-          
-          {/* 日のコンテンツ */}
-          <DayContent
-            date={date}
-            events={dayEvents}
-            eventStyles={eventStyles}
-            onEventClick={onEventClick}
-            onEmptyClick={onEmptyClick}
-            onEventUpdate={onUpdateEvent}
-            className="min-h-full"
-          />
-        </div>
-      </div>
-      </div>
+      <CalendarLayoutWithHeader
+        header={headerComponent}
+        timezone={timezone}
+        scrollToHour={isToday ? undefined : 8}
+        displayDates={displayDates}
+        viewMode="day"
+        onTimeClick={handleEmptySlotClick}
+        className={cn('bg-background', className)}
+      >
+        {/* 日のコンテンツ */}
+        <DayContent
+          date={date}
+          events={dayEvents}
+          eventStyles={eventStyles}
+          onEventClick={onEventClick}
+          onEmptyClick={onEmptyClick}
+          onEventUpdate={onUpdateEvent}
+          className="absolute inset-0"
+        />
+      </CalendarLayoutWithHeader>
     </CalendarViewAnimation>
   )
 }

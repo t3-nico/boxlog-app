@@ -482,8 +482,8 @@ export class AccessibilityTestRunner {
   }
 }
 
-// 開発時の自動監査
-if (process.env.NODE_ENV === 'development') {
+// 開発時の自動監査（クライアントサイドのみ）
+if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   // ページ読み込み後に自動実行
   window.addEventListener('load', async () => {
     const testRunner = new AccessibilityTestRunner()

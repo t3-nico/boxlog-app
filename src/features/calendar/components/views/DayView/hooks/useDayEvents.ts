@@ -2,8 +2,7 @@ import { useMemo } from 'react'
 import { isSameDay, isValid } from 'date-fns'
 import type { CalendarEvent } from '@/features/events'
 import type { UseDayEventsOptions, UseDayEventsReturn, EventPosition } from '../DayView.types'
-
-const HOUR_HEIGHT = 72 // 1時間の高さ（px）
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 const EVENT_PADDING = 2 // イベント間のパディング
 const MAX_COLUMNS = 5 // 最大同時イベント列数
 const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ

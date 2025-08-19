@@ -25,4 +25,13 @@ export {
 } from './ViewTransition'
 
 export { AnimatedEventCard } from './AnimatedEventCard'
-export { EventAnimations } from './EventAnimations'
+export { 
+  eventAnimations, 
+  motionPresets,
+  AnimatedEventItem,
+  CreatingEventPreview,
+  DeletingEvent,
+  PulseEffect,
+  SmoothLayoutGroup,
+  StatusAnimation
+} from './EventAnimations'

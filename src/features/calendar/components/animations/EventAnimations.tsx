@@ -135,7 +135,7 @@ export function CreatingEventPreview({
   date,
   startTime,
   endTime,
-  title = '新しいイベント',
+  title = 'New Event',
   color = '#3B82F6',
   onConfirm,
   onCancel,
@@ -207,7 +207,7 @@ export function CreatingEventPreview({
             onKeyDown={handleKeyDown}
             className="text-sm font-medium bg-transparent border-none outline-none w-full"
             style={{ color }}
-            placeholder="イベントタイトル"
+            placeholder="Event title"
           />
         ) : (
           <div
@@ -230,13 +230,13 @@ export function CreatingEventPreview({
             onClick={handleConfirm}
             className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
-            保存
+            Save
           </button>
           <button
             onClick={handleCancel}
             className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
           >
-            キャンセル
+            Cancel
           </button>
         </div>
       </div>

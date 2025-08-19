@@ -28,13 +28,6 @@ export function PageContent({ pathname }: PageContentProps) {
 
       {/* Page-specific sections */}
       <div className="space-y-6">
-        {isCalendarPage && (
-          <Sidebar
-            collapsed={false}
-            selectedDate={new Date()}
-            onDateSelect={() => {}}
-          />
-        )}
 
         {isBoardPage && (
           <BoardSidebarSections

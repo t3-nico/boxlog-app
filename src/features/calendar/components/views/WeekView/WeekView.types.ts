@@ -46,6 +46,7 @@ export interface WeekGridProps {
   events: CalendarEvent[]
   eventsByDate: Record<string, CalendarEvent[]>
   todayIndex: number
+  timezone: string
   onEventClick?: (event: CalendarEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onEventUpdate?: (event: CalendarEvent) => void

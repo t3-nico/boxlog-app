@@ -144,8 +144,8 @@ export function useTwoWeekView({
     const currentHour = now.getHours()
     const currentMinutes = now.getMinutes()
     
-    // 1時間 = 72px として計算
-    const HOUR_HEIGHT = 72
+    // shared/constants から HOUR_HEIGHT を使用
+    const HOUR_HEIGHT = 72 // TODO: import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
     const scrollTop = Math.max(0, (currentHour + currentMinutes / 60 - 2) * HOUR_HEIGHT)
     
     scrollContainerRef.current.scrollTo({

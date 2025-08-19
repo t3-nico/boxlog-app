@@ -710,6 +710,94 @@ const viewType: CalendarViewType = 'week'
 
 ---
 
+## 🔄 統一スクロールレイアウトシステム (v2.0)
+
+2025年8月に導入された新しい統一レイアウトシステムの詳細。
+
+### 🎯 主要改善点
+
+1. **時間ラベルとグリッド線の完全同期**
+   - TimeColumnがスクロール可能領域内に配置
+   - `sticky left-0 z-10`でスクロール時も左端固定
+   - 時間ラベルとグリッド線が常に水平に揃う
+
+2. **UTCタイムゾーン表示の統一**
+   - 全ビューで日付ヘッダーの一番左に固定配置
+   - ScrollableCalendarLayoutによる自動配置
+
+3. **レスポンシブHOUR_HEIGHT対応**
+   ```typescript
+   const HOUR_HEIGHT = useResponsiveHourHeight({
+     mobile: 48,   // モバイル: 48px
+     tablet: 60,   // タブレット: 60px  
+     desktop: 72   // デスクトップ: 72px
+   })
+   ```
+
+4. **2WeekViewの画面幅対応**
+   - 14日分を画面幅に均等分割
+   - 週ごとの太い区切り線を削除
+   - 日付ヘッダーの縦線を削除
+
+### 🏗️ ScrollableCalendarLayout構造
+
+```typescript
+interface ScrollableCalendarLayoutProps {
+  children: React.ReactNode
+  header?: React.ReactNode        // 統合ヘッダー
+  timezone?: string
+  scrollToHour?: number
+  showTimeColumn?: boolean
+  showCurrentTime?: boolean
+  showTimezone?: boolean          // UTC表示制御
+  timeColumnWidth?: number
+  onTimeClick?: (hour: number, minute: number) => void
+  displayDates?: Date[]
+  viewMode?: 'day' | '3day' | 'week' | '2week'
+}
+```
+
+### 📐 レイアウト階層
+
+```
+ScrollableCalendarLayout
+├── ヘッダーエリア（非スクロール）
+│   ├── UTC/タイムゾーン表示（左端固定）
+│   └── 各ビューの日付ヘッダー
+└── スクロール可能コンテンツエリア
+    ├── TimeColumn（sticky left-0）
+    ├── CurrentTimeLine（絶対位置）
+    └── メインコンテンツ（children）
+```
+
+### 🔧 実装例
+
+```tsx
+// 統一レイアウトの使用
+<CalendarLayoutWithHeader
+  header={headerComponent}
+  timezone={timezone}
+  scrollToHour={isToday ? undefined : 8}
+  displayDates={displayDates}
+  viewMode="week"
+  onTimeClick={handleTimeClick}
+>
+  {/* ビュー固有のコンテンツ */}
+</CalendarLayoutWithHeader>
+```
+
+### 📱 ビュー別の適用状況
+
+| ビュー | 適用状況 | 特記事項 |
+|--------|----------|----------|
+| DayView | ✅ 適用済み | 統一レイアウトに移行 |
+| ThreeDayView | ✅ 適用済み | - |
+| WeekView | ✅ 適用済み | - |
+| TwoWeekView | ✅ 適用済み | 画面幅対応・縦線削除 |
+| AgendaView | ❌ 対象外 | リストベースのため |
+
+---
+
 ## ベストプラクティス
 
 ### 🏆 推奨事項

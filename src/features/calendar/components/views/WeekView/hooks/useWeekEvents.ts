@@ -6,8 +6,7 @@ import type {
   WeekEventPosition 
 } from '../WeekView.types'
 import type { CalendarEvent } from '@/features/events'
-
-const HOUR_HEIGHT = 72 // 1時間の高さ（px）
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 const DAY_COLUMN_WIDTH = 100 / 7 // 各日の列幅（%）
 
 /**

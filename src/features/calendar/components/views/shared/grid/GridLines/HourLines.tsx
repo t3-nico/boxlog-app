@@ -18,7 +18,7 @@ interface HourLinesProps {
 export const HourLines = memo<HourLinesProps>(function HourLines({
   startHour = 0,
   endHour = 24,
-  hourHeight = 60,
+  hourHeight = 72,
   className = ''
 }) {
   const { hours } = useTimeGrid({ startHour, endHour, hourHeight })

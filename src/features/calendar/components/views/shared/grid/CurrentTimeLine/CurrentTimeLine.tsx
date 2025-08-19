@@ -12,29 +12,38 @@ import type { CurrentTimeLineProps } from '../../types/grid.types'
 
 export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLine({
   hourHeight = HOUR_HEIGHT,
-  timeColumnWidth = 60,
+  timeColumnWidth = 64,
   containerWidth = 800,
   className = '',
   showDot = true,
-  updateInterval = 60000 // 1分間隔
+  updateInterval = 60000,
+  displayDates,
+  viewMode = 'day'
 }) {
   const currentTime = useCurrentTime({ updateInterval })
   
   // 現在時刻のY座標を計算
   const topPosition = timeToPixels(currentTime, hourHeight)
   
-  // 今日かどうかを判定（今日でなければ表示しない）
-  const isToday = new Date().toDateString() === currentTime.toDateString()
-  
-  if (!isToday) {
-    return null
-  }
+  // デバッグ用のログ（開発環境のみ）
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('CurrentTimeLine rendered:', {
+        currentTime: currentTime.toLocaleTimeString(),
+        topPosition,
+        hourHeight,
+        timeColumnWidth,
+        className
+      })
+    }
+  }, [currentTime, topPosition, hourHeight, timeColumnWidth, className])
   
   return (
     <div
       className={`absolute left-0 right-0 pointer-events-none ${className}`}
       style={{
         top: `${topPosition}px`,
+        height: '2px',
         zIndex: Z_INDEX.CURRENT_TIME
       }}
     >
@@ -51,16 +60,20 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
         />
       )}
       
-      {/* 時刻線 */}
+      {/* 時刻線 - グリッド全体に表示 */}
       <div
-        className={`${CURRENT_TIME_LINE_COLOR} h-0.5`}
+        className="absolute bg-red-500 shadow-lg"
         style={{
-          marginLeft: `${timeColumnWidth}px`,
-          width: `${containerWidth - timeColumnWidth}px`
+          left: `${timeColumnWidth}px`,
+          right: '0px',
+          top: '0px',
+          height: '2px',
+          background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.9) 0%, rgba(239, 68, 68, 0.7) 100%)',
+          boxShadow: '0 1px 3px rgba(239, 68, 68, 0.5)'
         }}
       />
       
-      {/* 現在時刻ラベル（オプション） */}
+      {/* 現在時刻ラベル */}
       <div
         className="absolute text-xs font-medium text-red-600 dark:text-red-400 bg-white dark:bg-gray-900 px-1 rounded"
         style={{
@@ -94,13 +107,6 @@ export const CurrentTimeLineForColumn = memo<{
   
   // 現在時刻のY座標を計算
   const topPosition = timeToPixels(currentTime, hourHeight)
-  
-  // 今日かどうかを判定
-  const isToday = new Date().toDateString() === currentTime.toDateString()
-  
-  if (!isToday) {
-    return null
-  }
   
   return (
     <div

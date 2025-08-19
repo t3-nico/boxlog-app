@@ -13,7 +13,7 @@ import { TimeLabel } from './TimeLabel'
 export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
   startHour = 0,
   endHour = 24,
-  hourHeight = 60,
+  hourHeight = 72,
   format = '24h',
   className = ''
 }) {

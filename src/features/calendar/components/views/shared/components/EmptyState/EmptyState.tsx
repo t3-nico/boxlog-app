@@ -8,8 +8,8 @@ import React, { memo } from 'react'
 import type { EmptyStateProps } from '../../types/view.types'
 
 export const EmptyState = memo<EmptyStateProps>(function EmptyState({
-  message = 'イベントがありません',
-  description = 'クリックして新しいイベントを作成しましょう',
+  message = 'No events',
+  description = 'Click to create a new event',
   icon,
   action,
   className = ''

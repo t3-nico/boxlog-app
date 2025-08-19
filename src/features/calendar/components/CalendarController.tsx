@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { format } from 'date-fns'
 import { useRouter, usePathname } from 'next/navigation'
+import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView as MonthView } from './views/TwoWeekView'
+import { AgendaView } from './views/AgendaView'
 import { AddPopup } from '@/features/events/components/forms'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { DnDProvider } from '../providers/DnDProvider'
@@ -41,29 +43,46 @@ export function CalendarController({
 }: CalendarViewExtendedProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const calendarNavigation = useCalendarNavigation()
+  
+  // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
+  const contextAvailable = calendarNavigation !== null
   
   // URLを更新する関数（useCalendarLayoutより前に定義）
   const updateURL = useCallback((newViewType: CalendarViewType, newDate?: Date) => {
     const dateToUse = newDate || new Date()
     const dateString = format(dateToUse, 'yyyy-MM-dd')
-    router.push(`/calendar/${newViewType}?date=${dateString}`)
+    const newURL = `/calendar/${newViewType}?date=${dateString}`
+    console.log('🔗 updateURL called:', { newViewType, dateToUse, newURL })
+    router.push(newURL)
   }, [router])
 
-  // カレンダーレイアウト状態管理
-  const {
-    viewType,
-    currentDate,
-    navigateRelative,
-    changeView,
-    navigateToDate,
-    sidebarOpen,
-    toggleSidebar
-  } = useCalendarLayout({
+  // カレンダーレイアウト状態管理（Context が利用できない場合のフォールバック）
+  const layoutHook = useCalendarLayout({
     initialViewType,
     initialDate: initialDate || new Date(),
-    onViewChange: (view) => updateURL(view, currentDate),
-    onDateChange: (date) => updateURL(viewType, date)
+    onViewChange: contextAvailable ? () => {} : (view) => updateURL(view, currentDate),
+    onDateChange: contextAvailable ? () => {} : (date) => updateURL(viewType, date)
   })
+  
+  // Context が利用可能な場合はそれを使用、そうでない場合は layoutHook を使用
+  const viewType = contextAvailable ? calendarNavigation.viewType : layoutHook.viewType
+  const currentDate = contextAvailable ? calendarNavigation.currentDate : layoutHook.currentDate
+  const navigateRelative = contextAvailable ? calendarNavigation.navigateRelative : layoutHook.navigateRelative
+  const changeView = contextAvailable ? calendarNavigation.changeView : layoutHook.changeView
+  const navigateToDate = contextAvailable ? calendarNavigation.navigateToDate : layoutHook.navigateToDate
+  const sidebarOpen = layoutHook.sidebarOpen
+  const toggleSidebar = layoutHook.toggleSidebar
+  
+  // デバッグ用ログ
+  React.useEffect(() => {
+    console.log('📊 CalendarController state:', {
+      contextAvailable,
+      viewType,
+      currentDate,
+      initialDate
+    })
+  }, [contextAvailable, viewType, currentDate, initialDate])
   
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
@@ -133,12 +152,13 @@ export function CalendarController({
     }
   }, [hasRequestedNotification, notificationPermission, requestNotificationPermission])
   
-  // URLパラメータの日付変更を検知
+  // URLパラメータの日付変更を検知（Context利用時は無効にする）
   useEffect(() => {
-    if (initialDate && initialDate.getTime() !== currentDate.getTime()) {
-      setCurrentDate(initialDate)
+    if (!contextAvailable && initialDate && initialDate.getTime() !== currentDate.getTime()) {
+      console.log('🔄 URL date change detected (fallback mode):', { initialDate, currentDate })
+      navigateToDate(initialDate)
     }
-  }, [initialDate])
+  }, [contextAvailable, initialDate, currentDate, navigateToDate])
 
 
   // タイムゾーン設定の初期化
@@ -486,8 +506,9 @@ export function CalendarController({
   
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback((direction: 'prev' | 'next' | 'today') => {
+    console.log('🧭 handleNavigate called:', direction, 'current date:', currentDate)
     navigateRelative(direction)
-  }, [navigateRelative])
+  }, [navigateRelative, currentDate])
 
   const handleViewChange = useCallback((newView: CalendarViewType) => {
     changeView(newView)
@@ -581,13 +602,11 @@ export function CalendarController({
       case 'week-no-weekend':
         return <WeekView {...commonProps} showWeekends={false} />
       case '2week':
-        // 2-week view is currently not available, fallback to week view
-        return <WeekView {...commonProps} />
+        return <MonthView {...commonProps} />
       case 'month':
         return <MonthView {...commonProps} />
       case 'schedule':
-        // Schedule view is currently not available, fallback to day view
-        return <DayView {...commonProps} />
+        return <AgendaView {...commonProps} />
       default:
         return <DayView {...commonProps} />
     }
@@ -657,8 +676,8 @@ export function CalendarController({
         onViewChange={handleViewChange}
         showHeaderActions={false}
         
-        // Sidebar props
-        showSidebar={true}
+        // Sidebar props (disabled - using app-level sidebar)
+        showSidebar={false}
         sidebarCollapsed={!sidebarOpen}
         onSidebarCollapsedChange={(collapsed) => toggleSidebar()}
         

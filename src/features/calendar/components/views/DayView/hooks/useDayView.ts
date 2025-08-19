@@ -3,8 +3,7 @@ import { isToday } from 'date-fns'
 import type { CSSProperties } from 'react'
 import { useDayEvents } from './useDayEvents'
 import type { UseDayViewOptions, UseDayViewReturn, TimeSlot } from '../DayView.types'
-
-const HOUR_HEIGHT = 72 // 1時間の高さ（px）
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 const QUARTER_INTERVAL = 15 // 15分間隔
 
 export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {

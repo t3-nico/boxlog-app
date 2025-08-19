@@ -41,6 +41,13 @@ export { useTimeGrid } from './hooks/useTimeGrid'
 export { useEventPosition, usePositionedEvents } from './hooks/useEventPosition'
 export { useScrollSync } from './hooks/useScrollSync'
 export { useViewDimensions } from './hooks/useViewDimensions'
+export { useResponsiveHourHeight, useBreakpoint } from './hooks/useResponsiveHourHeight'
+
+// ===== プロバイダー =====
+export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'
+
+// ===== レイアウト =====
+export { ScrollableCalendarLayout, CalendarLayoutWithHeader } from './components/ScrollableCalendarLayout'
 
 // 型定義のエクスポート（互換性のため）
 export type { PositionedEvent } from './hooks/useEventPosition'

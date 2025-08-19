@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Clock, MapPin, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AgendaEventItemProps } from '../AgendaView.types'
@@ -28,13 +27,13 @@ export function AgendaEventItem({
 }: AgendaEventItemProps) {
   // 時間範囲の表示テキストを生成
   const timeRange = React.useMemo(() => {
-    if (!event.startDate) return '時刻未設定'
+    if (!event.startDate) return 'No time set'
     
     const start = event.startDate instanceof Date 
       ? event.startDate 
       : new Date(event.startDate)
     
-    if (isNaN(start.getTime())) return '時刻未設定'
+    if (isNaN(start.getTime())) return 'No time set'
     
     // 終日イベントの判定
     const isAllDay = start.getHours() === 0 && start.getMinutes() === 0 &&
@@ -42,7 +41,7 @@ export function AgendaEventItem({
         (event.endDate instanceof Date ? event.endDate : new Date(event.endDate)).getHours() === 23)
     
     if (isAllDay) {
-      return '終日'
+      return 'All day'
     }
     
     const startTime = format(start, 'HH:mm')
@@ -93,7 +92,7 @@ export function AgendaEventItem({
         <div className="flex-1 min-w-0">
           {/* タイトル */}
           <div className="font-medium text-foreground mb-1 truncate">
-            {event.title || '無題のイベント'}
+            {event.title || 'Untitled Event'}
           </div>
           
           {/* 日付（showDateがtrueの場合のみ） */}
@@ -103,8 +102,7 @@ export function AgendaEventItem({
               <span>
                 {format(
                   event.startDate instanceof Date ? event.startDate : new Date(event.startDate),
-                  'M月d日(E)',
-                  { locale: ja }
+                  'MMM d (E)'
                 )}
               </span>
             </div>

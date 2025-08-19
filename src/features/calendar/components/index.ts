@@ -16,6 +16,5 @@ export * from './overlays'
 // Common Components
 export * from './common'
 
-
-// Views
+// Views (avoid naming conflicts)
 export * from './views'

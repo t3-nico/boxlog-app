@@ -4,13 +4,11 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { TimeColumn, CurrentTimeLine } from '../../shared'
-import { DateHeader } from '../../shared'
+import { DateHeader, CalendarLayoutWithHeader } from '../../shared'
 import { EventBlock } from '../../shared/components/EventBlock'
+import { TimezoneOffset } from '../../shared'
 import { useWeekEvents } from '../hooks/useWeekEvents'
 import type { WeekGridProps } from '../WeekView.types'
-
-const HOUR_HEIGHT = 72 // 1時間の高さ（px）
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
 /**
@@ -31,15 +29,20 @@ export function WeekGrid({
   onEventClick,
   onEmptyClick,
   onEventUpdate,
+  timezone,
   className
 }: WeekGridProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  
+  // 一時的に固定値でデバッグ
+  const HOUR_HEIGHT = 72
   
   // イベント位置計算
   const { eventPositions } = useWeekEvents({
     weekDates,
     events
   })
+  
   
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = useCallback((
@@ -87,154 +90,118 @@ export function WeekGrid({
     }
   }, [todayIndex])
   
-  return (
-    <div className={cn('flex flex-col h-full bg-background', className)}>
-      {/* 日付ヘッダー行 */}
-      <div className="shrink-0 border-b border-border bg-background">
-        <div className="flex">
-          {/* 時間列の空白スペース */}
-          <div 
-            className="shrink-0 border-r border-border bg-muted/5"
-            style={{ width: TIME_COLUMN_WIDTH }}
+  
+  const headerComponent = (
+    <div className="border-b border-border bg-background h-16 flex">
+      {/* 7日分の日付ヘッダー */}
+      {weekDates.map((date, index) => (
+        <div
+          key={date.toISOString()}
+          className="flex-1 flex items-center justify-center px-1"
+        >
+          <DateHeader
+            date={date}
+            className="text-center"
+            showDayName={true}
+            showMonthYear={false}
+            dayNameFormat="short"
+            dateFormat="d"
+            isToday={isToday(date)}
+            isSelected={false}
           />
           
-          {/* 7日分の日付ヘッダー */}
-          {weekDates.map((date, index) => (
+          {/* イベント数インジケーター */}
+          {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
+            <div className="text-center mt-1">
+              <span className="inline-block w-2 h-2 bg-primary rounded-full" />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+
+  return (
+    <CalendarLayoutWithHeader
+      header={headerComponent}
+      timezone={timezone}
+      scrollToHour={todayIndex !== -1 ? undefined : 8}
+      displayDates={weekDates}
+      viewMode="week"
+      onTimeClick={(hour, minute) => {
+        // WeekViewでは最初にクリックされた日付を使用
+        const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+        onEmptyClick?.(weekDates[0], timeString)
+      }}
+      className={cn('bg-background', className)}
+    >
+      {/* 7日分のグリッド */}
+      <div className="flex h-full">
+        {weekDates.map((date, dayIndex) => {
+          const dateKey = format(date, 'yyyy-MM-dd')
+          const dayEvents = eventsByDate[dateKey] || []
+          
+          return (
             <div
               key={date.toISOString()}
               className={cn(
-                'flex-1 border-r border-border last:border-r-0 py-2 px-1',
-                isToday(date) && 'bg-primary/5',
-                isWeekend(date) && 'bg-muted/20'
+                'flex-1 border-r border-border last:border-r-0 relative'
               )}
+              style={{ width: `${100 / 7}%` }}
             >
-              <DateHeader
-                date={date}
-                className="text-center"
-                showDayName={true}
-                showMonthYear={false}
-                dayNameFormat="short"
-                dateFormat="d"
-                isToday={isToday(date)}
-                isSelected={index === todayIndex}
-              />
-              
-              {/* イベント数インジケーター */}
-              {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
-                <div className="text-center mt-1">
-                  <span className="inline-block w-2 h-2 bg-primary rounded-full" />
+              {/* クリック可能な背景エリア */}
+              <div
+                onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
+                className="absolute inset-0 z-10 cursor-cell"
+              >
+                {/* 時間グリッド背景 */}
+                <div className="absolute inset-0">
+                  {Array.from({ length: 24 }, (_, hour) => (
+                    <div
+                      key={hour}
+                      className={cn(
+                        'border-b border-border/50 last:border-b-0 transition-colors',
+                        'hover:bg-primary/5'
+                      )}
+                      style={{ height: `${HOUR_HEIGHT}px` }}
+                      title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
+                    />
+                  ))}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-      
-      {/* メインコンテンツエリア */}
-      <div className="flex flex-1 min-h-0">
-        {/* 時間軸列 */}
-        <div 
-          className="shrink-0 border-r border-border bg-muted/5"
-          style={{ width: TIME_COLUMN_WIDTH }}
-        >
-          <TimeColumn
-            startHour={0}
-            endHour={24}
-            interval={60}
-            showBusinessHours={false}
-            className="h-full"
-          />
-        </div>
-        
-        {/* スクロール可能なグリッドエリア */}
-        <div 
-          ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto relative"
-          style={{ height: `${24 * HOUR_HEIGHT}px` }}
-        >
-          {/* 現在時刻線（今日がある場合のみ全体を横断） */}
-          {todayIndex !== -1 && (
-            <CurrentTimeLine
-              startHour={0}
-              className="absolute left-0 right-0 z-20 pointer-events-none"
-            />
-          )}
-          
-          {/* 7日分のグリッド */}
-          <div className="flex h-full">
-            {weekDates.map((date, dayIndex) => {
-              const dateKey = format(date, 'yyyy-MM-dd')
-              const dayEvents = eventsByDate[dateKey] || []
+              </div>
               
-              return (
-                <div
-                  key={date.toISOString()}
-                  className={cn(
-                    'flex-1 border-r border-border last:border-r-0 relative',
-                    isWeekend(date) && 'bg-muted/10'
-                  )}
-                  style={{ width: `${100 / 7}%` }}
-                >
-                  {/* クリック可能な背景エリア */}
+              {/* イベント表示 */}
+              {dayEvents.map(event => {
+                const position = eventPositions.find(pos => 
+                  pos.event.id === event.id && pos.dayIndex === dayIndex
+                )
+                
+                if (!position) return null
+                
+                return (
                   <div
-                    onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
-                    className="absolute inset-0 z-10 cursor-cell"
+                    key={event.id}
+                    data-event-block
+                    className="absolute z-20"
+                    style={{
+                      top: `${position.top}px`,
+                      height: `${position.height}px`,
+                      left: '2px',
+                      right: '2px'
+                    }}
                   >
-                    {/* 時間グリッド背景 */}
-                    <div className="absolute inset-0">
-                      {Array.from({ length: 24 }, (_, hour) => (
-                        <div
-                          key={hour}
-                          className={cn(
-                            'border-b border-border/50 last:border-b-0 transition-colors',
-                            'hover:bg-primary/5'
-                          )}
-                          style={{ height: `${HOUR_HEIGHT}px` }}
-                          title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
-                        />
-                      ))}
-                    </div>
+                    <EventBlock
+                      event={event}
+                      onClick={() => onEventClick?.(event)}
+                      className="h-full w-full"
+                    />
                   </div>
-                  
-                  {/* 今日のハイライト（縦線） */}
-                  {isToday(date) && (
-                    <div className="absolute inset-y-0 left-0 w-1 bg-primary z-15" />
-                  )}
-                  
-                  {/* イベント表示 */}
-                  {dayEvents.map(event => {
-                    const position = eventPositions.find(pos => 
-                      pos.event.id === event.id && pos.dayIndex === dayIndex
-                    )
-                    
-                    if (!position) return null
-                    
-                    return (
-                      <div
-                        key={event.id}
-                        data-event-block
-                        className="absolute z-20"
-                        style={{
-                          top: `${position.top}px`,
-                          height: `${position.height}px`,
-                          left: '2px',
-                          right: '2px'
-                        }}
-                      >
-                        <EventBlock
-                          event={event}
-                          onClick={() => onEventClick?.(event)}
-                          className="h-full w-full"
-                        />
-                      </div>
-                    )
-                  })}
-                </div>
-              )
-            })}
-          </div>
-        </div>
+                )
+              })}
+            </div>
+          )
+        })}
       </div>
-    </div>
+    </CalendarLayoutWithHeader>
   )
 }

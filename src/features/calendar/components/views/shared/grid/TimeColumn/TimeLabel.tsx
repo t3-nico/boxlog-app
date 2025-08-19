@@ -25,11 +25,14 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
 }) {
   return (
     <div
-      className="absolute flex items-start justify-center w-full text-xs text-gray-500 dark:text-gray-400 font-medium select-none"
+      className="absolute w-full text-xs text-gray-500 dark:text-gray-400 font-medium select-none"
       style={{
         top: `${position}px`,
-        height: `${hourHeight}px`,
-        paddingTop: isFirst ? '4px' : '0px'
+        height: '0px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingRight: '8px'
       }}
     >
       {/* 0時は表示しない（見た目がすっきりする） */}

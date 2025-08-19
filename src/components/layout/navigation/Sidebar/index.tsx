@@ -39,20 +39,21 @@ export function Sidebar() {
   const pathname = usePathname()
   const pageTitle = getPageTitle(pathname)
   const isSettings = pathname.startsWith('/settings')
+  const isCalendar = pathname.startsWith('/calendar')
 
   return (
     <div className="w-64 bg-background border-r border-border">
       <div className="h-full flex flex-col p-4">
         {!isSettings ? (
           <>
-            {/* Page Title & Close Button */}
-            <SidebarHeader title={pageTitle} />
+            {/* Page Title & Close Button (簡潔表示: カレンダーページ) */}
+            <SidebarHeader title={isCalendar ? 'Calendar' : pageTitle} />
             
             {/* Page-specific Content */}
             <PageContent pathname={pathname} />
             
-            {/* Bottom Content (Schedule Card, etc.) */}
-            <BottomContent />
+            {/* Bottom Content (Schedule Card, etc.) - 除外: カレンダーページ */}
+            {!isCalendar && <BottomContent />}
           </>
         ) : (
           <>

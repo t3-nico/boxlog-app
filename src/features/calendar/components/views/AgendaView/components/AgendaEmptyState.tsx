@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { Calendar, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/shadcn-ui/button'
@@ -26,8 +25,8 @@ export function AgendaEmptyState({
   
   // 期間の表示テキストを生成
   const periodText = React.useMemo(() => {
-    const start = format(startDate, 'M月d日', { locale: ja })
-    const end = format(endDate, 'M月d日', { locale: ja })
+    const start = format(startDate, 'MMM d')
+    const end = format(endDate, 'MMM d')
     
     // 同じ日の場合
     if (format(startDate, 'yyyy-MM-dd') === format(endDate, 'yyyy-MM-dd')) {
@@ -61,11 +60,11 @@ export function AgendaEmptyState({
       
       {/* メッセージ */}
       <h3 className="text-lg font-medium text-foreground mb-2">
-        予定がありません
+        No events
       </h3>
       <p className="text-muted-foreground mb-6 max-w-md">
-        {periodText}の期間には予定が登録されていません。
-        新しい予定を追加して、スケジュールを管理しましょう。
+        No events are scheduled for {periodText}.
+        Add new events to manage your schedule.
       </p>
       
       {/* アクションボタン */}
@@ -76,7 +75,7 @@ export function AgendaEmptyState({
             className="flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
-            今日の予定を追加
+            Add Today's Event
           </Button>
           
           {/* 開始日が今日でない場合は、開始日での作成ボタンも表示 */}
@@ -87,7 +86,7 @@ export function AgendaEmptyState({
               className="flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
-              {format(startDate, 'M/d')}に予定を追加
+              Add Event on {format(startDate, 'M/d')}
             </Button>
           )}
         </div>
@@ -96,7 +95,7 @@ export function AgendaEmptyState({
       {/* 追加のヒント */}
       <div className="mt-8 text-xs text-muted-foreground max-w-sm">
         <p>
-          💡 ヒント: カレンダーの空いている時間をクリックしても予定を追加できます
+          💡 Tip: You can also add events by clicking on empty time slots in the calendar
         </p>
       </div>
     </div>

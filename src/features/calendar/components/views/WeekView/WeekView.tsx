@@ -97,25 +97,6 @@ export function WeekView({
   return (
     <CalendarViewAnimation viewType="week">
       <div className={cn('flex flex-col h-full bg-background', className)}>
-        {/* ヘッダー情報 */}
-        <div className="shrink-0 border-b border-border bg-background">
-          <div className="flex items-center justify-between px-4 py-2">
-            {/* 週表示情報 */}
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-muted-foreground">
-                {displayDates.length === 7 ? '週表示' : `${displayDates.length}日表示`}
-              </div>
-              {todayIndex !== -1 && (
-                <div className="text-xs px-2 py-1 bg-primary/10 text-primary rounded">
-                  今日: {todayIndex + 1}日目
-                </div>
-              )}
-            </div>
-            
-            {/* タイムゾーン表示 */}
-            <TimezoneOffset timezone={timezone} />
-          </div>
-        </div>
         
         {/* メインコンテンツエリア */}
         <div className="flex-1 min-h-0">
@@ -124,6 +105,7 @@ export function WeekView({
             events={events}
             eventsByDate={eventsByDate}
             todayIndex={todayIndex}
+            timezone={timezone}
             onEventClick={onEventClick}
             onEmptyClick={(date, time) => {
               onEmptyClick?.(date, time)

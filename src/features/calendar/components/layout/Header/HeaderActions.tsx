@@ -39,7 +39,7 @@ export function HeaderActions({
         <button
           onClick={onSettings}
           className={buttonClass}
-          title="設定"
+          title="Settings"
           aria-label="Settings"
         >
           <Settings className={iconSize} />
@@ -51,7 +51,7 @@ export function HeaderActions({
         <button
           onClick={onExport}
           className={buttonClass}
-          title="エクスポート"
+          title="Export"
           aria-label="Export"
         >
           <Download className={iconSize} />
@@ -63,7 +63,7 @@ export function HeaderActions({
         <button
           onClick={onImport}
           className={buttonClass}
-          title="インポート"
+          title="Import"
           aria-label="Import"
         >
           <Upload className={iconSize} />
@@ -75,7 +75,7 @@ export function HeaderActions({
         <button
           onClick={onMore}
           className={buttonClass}
-          title="その他"
+          title="More"
           aria-label="More options"
         >
           <MoreHorizontal className={iconSize} />

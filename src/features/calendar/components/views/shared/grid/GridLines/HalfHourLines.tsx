@@ -18,7 +18,7 @@ interface HalfHourLinesProps {
 export const HalfHourLines = memo<HalfHourLinesProps>(function HalfHourLines({
   startHour = 0,
   endHour = 24,
-  hourHeight = 60,
+  hourHeight = 72,
   className = ''
 }) {
   const { hours } = useTimeGrid({ startHour, endHour, hourHeight })

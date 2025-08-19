@@ -48,7 +48,7 @@ export function detectOverlapGroups(events: TimedEvent[]): TimedEvent[][] {
 /**
  * 重複するイベントの列配置を計算
  */
-export function calculateEventColumns(events: TimedEvent[]): Map<string, EventColumn> {
+export function calculateViewEventColumns(events: TimedEvent[]): Map<string, EventColumn> {
   const columnMap = new Map<string, EventColumn>()
   
   if (events.length === 0) return columnMap

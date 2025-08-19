@@ -3,7 +3,7 @@
  */
 
 // グリッドレイアウト
-export const HOUR_HEIGHT = 60 // 1時間の高さ(px)
+export const HOUR_HEIGHT = 72 // 1時間の高さ(px)
 export const HALF_HOUR_HEIGHT = HOUR_HEIGHT / 2 // 30分の高さ(px)
 export const MINUTE_HEIGHT = HOUR_HEIGHT / 60 // 1分の高さ(px)
 

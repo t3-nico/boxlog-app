@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import type { DateHeaderProps } from './DateHeader.types'
 
@@ -30,20 +29,20 @@ export function DateHeader({
   }
 
   const dayName = showDayName 
-    ? format(date, dayNameFormat === 'short' ? 'EEE' : dayNameFormat === 'long' ? 'EEEE' : 'EEEEE', { locale: ja })
+    ? format(date, dayNameFormat === 'short' ? 'EEE' : dayNameFormat === 'long' ? 'EEEE' : 'EEEEE')
     : undefined
 
-  const dateString = format(date, dateFormat, { locale: ja })
-  const monthYear = showMonthYear ? format(date, 'yyyy年M月', { locale: ja }) : undefined
+  const dateString = format(date, dateFormat)
+  const monthYear = showMonthYear ? format(date, 'MMM yyyy') : undefined
 
   return (
     <div
       className={cn(
-        'text-center cursor-pointer transition-colors',
+        'text-center',
         today && 'text-primary font-semibold',
         isSelected && 'bg-primary/10 rounded-md',
         weekend && !today && 'text-muted-foreground',
-        'hover:bg-accent/50',
+        onClick && 'cursor-pointer',
         className
       )}
       onClick={handleClick}

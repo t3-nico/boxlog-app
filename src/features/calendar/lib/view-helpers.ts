@@ -1,5 +1,4 @@
 import { format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, eachDayOfInterval, isWithinInterval } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { isSameDay, isToday, isWeekend } from 'date-fns'
 import type { CalendarTask } from './time-grid-helpers'
 import type { CalendarViewType, ViewDateRange, Task } from '../types/calendar.types'
@@ -103,7 +102,7 @@ export function filterBusinessHours(timeLabels: string[]): string[] {
  * 日付の短縮表示
  */
 export function formatShortDate(date: Date): string {
-  return format(date, 'M/d', { locale: ja })
+  return format(date, 'M/d')
 }
 
 /**
@@ -117,14 +116,14 @@ export function formatShortWeekday(date: Date): string {
  * 日付と曜日の組み合わせ表示
  */
 export function formatDateWithWeekday(date: Date): string {
-  return format(date, 'M/d(E)', { locale: ja })
+  return format(date, 'M/d (E)')
 }
 
 /**
  * 完全な日付表示
  */
 export function formatFullDate(date: Date): string {
-  return format(date, 'yyyy年M月d日(E)', { locale: ja })
+  return format(date, 'MMM d, yyyy (E)')
 }
 
 /**

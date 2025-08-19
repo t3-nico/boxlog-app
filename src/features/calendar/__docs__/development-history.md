@@ -263,6 +263,297 @@ components/
 
 ---
 
+## 2025-08-19: 統一スクロールレイアウトシステム実装
+
+### 🎯 目的
+- 時間ラベルとグリッド線の完全同期
+- UTCタイムゾーン表示の統一
+- レスポンシブHOUR_HEIGHT対応
+- 全ビューでの一貫したスクロール動作
+
+### 📁 主要な変更内容
+
+#### 1. ScrollableCalendarLayout の新規作成
+**ファイル:** `src/features/calendar/components/views/shared/components/ScrollableCalendarLayout.tsx`
+
+**機能:**
+- 統一されたスクロール可能レイアウトシステム
+- TimeColumnとグリッドコンテンツの同期スクロール
+- UTCタイムゾーンの左端固定配置
+- レスポンシブHOUR_HEIGHT対応
+
+**技術的詳細:**
+```typescript
+interface ScrollableCalendarLayoutProps {
+  children: React.ReactNode
+  header?: React.ReactNode        // 統合ヘッダー
+  timezone?: string
+  scrollToHour?: number           // 初期スクロール位置
+  showTimeColumn?: boolean        // 時間軸表示制御
+  showCurrentTime?: boolean       // 現在時刻線表示制御
+  showTimezone?: boolean          // UTC表示制御
+  timeColumnWidth?: number        // 時間軸幅 (default: 64px)
+  onTimeClick?: (hour: number, minute: number) => void
+  displayDates?: Date[]           // 表示対象日付
+  viewMode?: 'day' | '3day' | 'week' | '2week'
+}
+```
+
+**アーキテクチャ:**
+```
+ScrollableCalendarLayout
+├── ヘッダーエリア（非スクロール）
+│   ├── UTC/タイムゾーン表示（左端固定）
+│   └── 各ビューの日付ヘッダー
+└── スクロール可能コンテンツエリア
+    ├── TimeColumn（sticky left-0）
+    ├── CurrentTimeLine（絶対位置）
+    └── メインコンテンツ（children）
+```
+
+#### 2. useResponsiveHourHeight フックの実装
+**ファイル:** `src/features/calendar/components/views/shared/hooks/useResponsiveHourHeight.ts`
+
+**機能:**
+- デバイスサイズに応じた動的HOUR_HEIGHT制御
+- ブレークポイント対応：モバイル(48px)、タブレット(60px)、デスクトップ(72px)
+- リアルタイムリサイズ対応
+
+**実装:**
+```typescript
+export function useResponsiveHourHeight(
+  config: Partial<ResponsiveHourHeightConfig> = {}
+): number {
+  const finalConfig = { ...DEFAULT_CONFIG, ...config }
+  const [hourHeight, setHourHeight] = useState<number>(HOUR_HEIGHT)
+  
+  useEffect(() => {
+    const updateHourHeight = () => {
+      const width = window.innerWidth
+      if (width < 768) {
+        setHourHeight(finalConfig.mobile)
+      } else if (width < 1024) {
+        setHourHeight(finalConfig.tablet)
+      } else {
+        setHourHeight(finalConfig.desktop)
+      }
+    }
+    updateHourHeight()
+    window.addEventListener('resize', updateHourHeight)
+    return () => window.removeEventListener('resize', updateHourHeight)
+  }, [finalConfig.mobile, finalConfig.tablet, finalConfig.desktop])
+  
+  return hourHeight
+}
+```
+
+#### 3. 各ビューの統一レイアウト移行
+
+**DayView の修正:**
+- 独自レイアウトから`CalendarLayoutWithHeader`に移行
+- TimeColumn、CurrentTimeLine、TimezoneOffsetの個別配置を削除
+- 統一されたヘッダーシステムに対応
+
+**Before:**
+```tsx
+<div className="flex flex-col h-full">
+  <div className="shrink-0 border-b">
+    <div className="flex h-full">
+      <div style={{ width: TIME_COLUMN_WIDTH }}>
+        <TimezoneOffset />
+      </div>
+      <div className="flex-1">
+        <DateHeader />
+      </div>
+    </div>
+  </div>
+  <div className="flex flex-1">
+    <div style={{ width: TIME_COLUMN_WIDTH }}>
+      <TimeColumn />
+    </div>
+    <div className="flex-1 overflow-y-auto">
+      <CurrentTimeLine />
+      <DayContent />
+    </div>
+  </div>
+</div>
+```
+
+**After:**
+```tsx
+<CalendarLayoutWithHeader
+  header={headerComponent}
+  timezone={timezone}
+  scrollToHour={isToday ? undefined : 8}
+  displayDates={displayDates}
+  viewMode="day"
+  onTimeClick={handleTimeClick}
+>
+  <DayContent />
+</CalendarLayoutWithHeader>
+```
+
+**ThreeDayView、WeekView、TwoWeekView の修正:**
+- 全て同様に統一レイアウトシステムに移行
+- ヘッダーコンポーネントから時間列オフセットを削除
+- 一貫したスクロール動作を実現
+
+#### 4. TwoWeekView の画面幅対応改善
+
+**変更点:**
+- 14日分を`overflow-x-auto`から`flex-1`による画面幅均等分割に変更
+- 週ごとの太い区切り線（`border-l-2 border-l-primary/20`）を削除
+- 日付ヘッダーの縦線（`border-r border-border`）を削除
+
+**Before:**
+```tsx
+<div className="flex overflow-x-auto">
+  {twoWeekDates.map((date, index) => {
+    const isFirstOfWeek = index % 7 === 0
+    const weekIndex = Math.floor(index / 7)
+    
+    return (
+      <div
+        className={cn(
+          'shrink-0 border-r border-border',
+          isFirstOfWeek && weekIndex > 0 && 'border-l-2 border-l-primary/20'
+        )}
+        style={{ minWidth: '80px' }}
+      >
+```
+
+**After:**
+```tsx
+<div className="flex">
+  {twoWeekDates.map((date, index) => (
+    <div
+      className="flex-1"
+      style={{ width: `${100 / 14}%` }}
+    >
+```
+
+#### 5. 時間ラベルの完全同期実現
+
+**問題:** 
+- TimeColumnが固定位置にあり、グリッドコンテンツとは別のスクロール領域
+- スクロール時に時間ラベルとグリッド線がずれる
+
+**解決策:**
+- TimeColumnをスクロール可能領域内に移動
+- `sticky left-0 z-10`でスクロール時も左端に固定表示
+- グリッドコンテンツと同じスクロールコンテナ内で同期
+
+**実装:**
+```tsx
+<div className="flex-1 overflow-y-auto relative" onClick={handleGridClick}>
+  <div className="flex w-full" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
+    {/* 時間軸列 - スクロールと同期 */}
+    {showTimeColumn && (
+      <div className="shrink-0 bg-muted/5 sticky left-0 z-10"
+           style={{ width: timeColumnWidth }}>
+        <TimeColumn
+          startHour={0}
+          endHour={24}
+          hourHeight={HOUR_HEIGHT}
+          format="24h"
+          className="h-full"
+        />
+      </div>
+    )}
+    
+    {/* グリッドコンテンツエリア */}
+    <div className="flex-1 relative">
+      {showCurrentTime && <CurrentTimeLine />}
+      {children}
+    </div>
+  </div>
+</div>
+```
+
+### 📊 技術的改善点
+
+#### 1. HOUR_HEIGHT の統一
+**Before:** 複数の定数が散在
+- `calendar-constants.ts`: 48px
+- `grid.constants.ts`: 60px  
+- 各ビューファイル: 72px
+
+**After:** 統一された定数とレスポンシブ対応
+- `grid.constants.ts`: `export const HOUR_HEIGHT = 72`
+- `useResponsiveHourHeight`: デバイス別動的調整
+
+#### 2. コンポーネント統合
+**Before:** 各ビューが個別レイアウト実装
+- 重複コード
+- 一貫性のないスクロール動作
+- UTCタイムゾーン表示位置のばらつき
+
+**After:** 統一レイアウトシステム
+- `ScrollableCalendarLayout`による一元管理
+- 全ビューで一貫したスクロール動作
+- UTCタイムゾーンの左端固定配置
+
+#### 3. レスポンシブ対応の強化
+- 動的HOUR_HEIGHT調整
+- ブレークポイント対応
+- リアルタイムリサイズ対応
+
+### 🎯 達成された改善点
+
+1. **時間ラベルとグリッド線の完全同期**
+   - Googleカレンダーと同様の正確な位置合わせ
+   - スクロール時の同期動作
+
+2. **UTCタイムゾーン表示の統一**
+   - 全ビューで左端固定配置
+   - 一貫したタイムゾーン情報表示
+
+3. **レスポンシブデザインの向上**
+   - デバイスサイズに応じた最適なHOUR_HEIGHT
+   - 動的調整によるユーザビリティ向上
+
+4. **2WeekViewの使いやすさ向上**
+   - 画面幅に完全対応
+   - 不要な境界線削除によるクリーンな見た目
+
+5. **コードの保守性向上**
+   - 統一レイアウトシステムによる重複削除
+   - 一貫したコンポーネント設計
+
+### 🔧 影響範囲
+
+**修正されたファイル:**
+- `ScrollableCalendarLayout.tsx` (新規)
+- `useResponsiveHourHeight.ts` (新規)
+- `DayView.tsx`
+- `ThreeDayView.tsx`
+- `WeekGrid.tsx`
+- `TwoWeekView.tsx`
+- `grid.constants.ts`
+- `TimeLabel.tsx`
+- `useTimeGrid.ts`
+
+**ドキュメント更新:**
+- `layout-system.md` - 統一レイアウトシステム追加
+- `shared-components.md` - 新規コンポーネント情報追加
+- `views-architecture.md` - TwoWeekView仕様更新
+
+### 📝 今後の予定
+
+1. **パフォーマンス最適化**
+   - 大量イベント表示時の仮想化対応
+   - メモ化の最適化
+
+2. **アクセシビリティ向上**
+   - キーボードナビゲーション強化
+   - スクリーンリーダー対応改善
+
+3. **機能拡張**
+   - カスタムHOUR_HEIGHT設定
+   - タイムゾーン切り替え機能
+
+---
+
 ## 🏗️ アーキテクチャ概要
 
 ### ビュー階層
