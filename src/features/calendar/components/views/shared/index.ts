@@ -1,17 +1,59 @@
-// ビュー間で共有されるコンポーネント
+/**
+ * 共有カレンダーコンポーネントのメインエクスポート
+ */
 
-// グリッド関連
-export * from './grid'
+// ===== グリッドシステム =====
+// TimeGrid - メインのタイムグリッド
+export { TimeGrid } from './grid/TimeGrid'
+export type * from './grid/TimeGrid'
 
-// イベント表示関連
-export * from './event'
+// TimeColumn - 時間列
+export { TimeColumn, TimeLabel } from './grid/TimeColumn'
 
-// ヘッダー関連
-export * from './header'
+// GridLines - グリッド線
+export { HourLines, HalfHourLines } from './grid/GridLines'
 
-// ユーティリティ関連
-export * from './utils'
+// CurrentTimeLine - 現在時刻線
+export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine'
 
-// フックと型定義（既存の共有リソース）
-export * from '../../shared/hooks'
-export type * from '../../shared/types'
+// ===== UIコンポーネント =====
+// EventBlock - イベント表示
+export { EventBlock, EventContent } from './components/EventBlock'
+export type * from './components/EventBlock'
+
+
+// DayColumn - 日列（イベント表示エリアのみ）
+export { DayColumn } from './components/DayColumn'
+
+// EmptyState - 空状態
+export { EmptyState } from './components/EmptyState'
+
+// TimezoneOffset - タイムゾーン表示
+export { TimezoneOffset } from './components/TimezoneOffset'
+
+// DateHeader - 日付ヘッダー
+export { DateHeader, DateHeaderRow } from './components/DateHeader'
+export type * from './components/DateHeader'
+
+// ===== カスタムフック =====
+export { useCurrentTime } from './hooks/useCurrentTime'
+export { useTimeGrid } from './hooks/useTimeGrid'
+export { useEventPosition, usePositionedEvents } from './hooks/useEventPosition'
+export { useScrollSync } from './hooks/useScrollSync'
+export { useViewDimensions } from './hooks/useViewDimensions'
+
+// 型定義のエクスポート（互換性のため）
+export type { PositionedEvent } from './hooks/useEventPosition'
+
+// ===== ユーティリティ関数 =====
+export * from './utils/gridCalculator'
+export * from './utils/eventPositioning'
+export * from './utils/dateHelpers'
+
+// ===== 定数 =====
+export * from './constants/grid.constants'
+
+// ===== 型定義 =====
+export type * from './types/grid.types'
+export type * from './types/event.types'
+export type * from './types/view.types'

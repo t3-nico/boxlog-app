@@ -1,0 +1,47 @@
+'use client'
+
+import React from 'react'
+import { cn } from '@/lib/utils'
+import { DateHeader } from './DateHeader'
+import type { DateHeaderRowProps } from './DateHeader.types'
+
+export function DateHeaderRow({
+  dates,
+  className,
+  selectedDate,
+  showDayNames = true,
+  showMonthYear = false,
+  dayNameFormat = 'short',
+  dateFormat = 'd',
+  onDateClick,
+  onDateDoubleClick
+}: DateHeaderRowProps) {
+  return (
+    <div className={cn(
+      'flex border-b border-border bg-background',
+      className
+    )}>
+      {dates.map((date, index) => (
+        <DateHeader
+          key={date.toISOString()}
+          date={date}
+          className={cn(
+            'flex-1',
+            // 最後の日付以外は右ボーダーを表示
+            index < dates.length - 1 && 'border-r'
+          )}
+          isSelected={selectedDate ? 
+            date.toDateString() === selectedDate.toDateString() : 
+            false
+          }
+          showDayName={showDayNames}
+          showMonthYear={showMonthYear}
+          dayNameFormat={dayNameFormat}
+          dateFormat={dateFormat}
+          onClick={onDateClick}
+          onDoubleClick={onDateDoubleClick}
+        />
+      ))}
+    </div>
+  )
+}

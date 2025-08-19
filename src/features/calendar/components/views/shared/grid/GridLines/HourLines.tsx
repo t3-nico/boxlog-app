@@ -1,0 +1,39 @@
+/**
+ * 1時間ごとの横線コンポーネント
+ */
+
+'use client'
+
+import React, { memo } from 'react'
+import { useTimeGrid } from '../../hooks/useTimeGrid'
+import { HOUR_LINE_COLOR } from '../../constants/grid.constants'
+
+interface HourLinesProps {
+  startHour?: number
+  endHour?: number
+  hourHeight?: number
+  className?: string
+}
+
+export const HourLines = memo<HourLinesProps>(function HourLines({
+  startHour = 0,
+  endHour = 24,
+  hourHeight = 60,
+  className = ''
+}) {
+  const { hours } = useTimeGrid({ startHour, endHour, hourHeight })
+  
+  return (
+    <div className={`absolute inset-0 pointer-events-none ${className}`}>
+      {hours.map((hour) => (
+        <div
+          key={hour.hour}
+          className={`absolute w-full border-t ${HOUR_LINE_COLOR}`}
+          style={{
+            top: `${hour.position}px`
+          }}
+        />
+      ))}
+    </div>
+  )
+})

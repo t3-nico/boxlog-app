@@ -1,5 +1,4 @@
 // ヘッダー関連の共有コンポーネント（ビュー専用）
-export { DateHeader } from './DateHeader'
 
 // ページ全体のヘッダー機能は layout/Header/ を使用
 export { ViewSwitcher } from '../../../layout/Header/ViewSwitcher'

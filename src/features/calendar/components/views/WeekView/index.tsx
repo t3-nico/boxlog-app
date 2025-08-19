@@ -1,97 +1,15 @@
-'use client'
+// WeekView - 週表示ビューコンポーネント
+export { WeekView } from './WeekView'
 
-import React, { useMemo } from 'react'
-import { isWeekend } from 'date-fns'
-import { CalendarViewAnimation } from '../../interactions/ViewTransition'
-import { FullDayCalendarLayout } from '../../shared/layouts/FullDayCalendarLayout'
-import { UnifiedCalendarHeader } from '../../shared/layouts/UnifiedCalendarHeader'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import type { 
-  ViewDateRange, 
-  Task, 
-  TaskRecord, 
-  CalendarViewType,
-  CreateTaskInput,
-  CreateRecordInput
-} from '../../../types/calendar.types'
-import type { CalendarEvent } from '@/features/events'
+// 型定義
+export type * from './WeekView.types'
 
-interface WeekViewProps {
-  dateRange: ViewDateRange
-  tasks: Task[]
-  events: CalendarEvent[]
-  currentDate: Date
-  showWeekends?: boolean
-  onTaskClick?: (task: any) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
-  onEmptyClick?: (date: Date, time: string) => void
-  onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreateTaskInput) => void
-  onCreateRecord?: (record: CreateRecordInput) => void
-  onViewChange?: (viewType: CalendarViewType) => void
-  onNavigatePrev?: () => void
-  onNavigateNext?: () => void
-  onNavigateToday?: () => void
-}
+// フック
+export { useWeekView } from './hooks/useWeekView'
+export { useWeekEvents } from './hooks/useWeekEvents'
 
-export function WeekView({ 
-  dateRange, 
-  tasks, 
-  events,
-  currentDate,
-  showWeekends = true,
-  onTaskClick,
-  onEventClick,
-  onCreateEvent,
-  onUpdateEvent,
-  onDeleteEvent,
-  onRestoreEvent,
-  onEmptyClick,
-  onTaskDrag,
-  onCreateTask,
-  onCreateRecord,
-  onViewChange,
-  onNavigatePrev,
-  onNavigateNext,
-  onNavigateToday
-}: WeekViewProps) {
-  const { planRecordMode } = useCalendarSettingsStore()
-  
-  // 表示する日付を計算（土日を除外するかどうか）
-  const displayDays = useMemo(() => {
-    return showWeekends 
-      ? dateRange.days 
-      : dateRange.days.filter(day => !isWeekend(day))
-  }, [dateRange.days, showWeekends])
+// サブコンポーネント
+export { WeekGrid } from './components/WeekGrid'
 
-  return (
-    <CalendarViewAnimation viewType="week">
-      <div 
-        className="h-full flex flex-col bg-gray-50 dark:bg-gray-900" 
-        style={{ overscrollBehavior: 'none' }}
-      >
-        {/* スクロール可能なメインコンテンツ */}
-        <div 
-          className="flex-1 min-h-0" 
-          style={{ overscrollBehavior: 'none' }}
-        >
-          <FullDayCalendarLayout
-            dates={displayDays}
-            tasks={tasks}
-            events={events}
-            dateRange={dateRange}
-            onEventClick={onEventClick}
-            onCreateEvent={onCreateEvent}
-            onUpdateEvent={onUpdateEvent}
-            onDeleteEvent={onDeleteEvent}
-            onRestoreEvent={onRestoreEvent}
-          />
-        </div>
-      </div>
-    </CalendarViewAnimation>
-  )
-}
+// 後方互換性のためのレガシーレイアウト
+export { WeekCalendarLayout } from './WeekCalendarLayout'

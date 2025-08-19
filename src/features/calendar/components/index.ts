@@ -4,11 +4,14 @@ export { CalendarController } from './CalendarController'
 // Layout Components
 export * from './layout'
 
-// Event Components
-export * from './event'
+// Calendar-Specific Components
+export * from './calendar-specific'
 
-// Interaction Components
-export * from './interactions'
+// Animation Components
+export * from './animations'
+
+// Overlay Components
+export * from './overlays'
 
 // Common Components
 export * from './common'

@@ -48,7 +48,6 @@ src/features/calendar/components/
 - **GoogleStyleCalendar.tsx**: Google Calendar風レイアウト
 - **PureCalendarLayout.tsx**: シンプルなカレンダーレイアウト
 - **FullDayCalendarLayout.tsx**: 全日表示レイアウト
-- **UnifiedCalendarHeader.tsx**: 統一カレンダーヘッダー
 
 ### UI部品 (views/shared/components/)
 - **DateNavigator.tsx**: 日付ナビゲーション

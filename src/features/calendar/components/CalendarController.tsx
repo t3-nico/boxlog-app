@@ -7,8 +7,9 @@ import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView as MonthView } from './views/TwoWeekView'
-import { AddPopup, useAddPopup } from './event'
-import { DnDProvider } from './interactions/dnd/DnDProvider'
+import { AddPopup } from '@/features/events/components/forms'
+import { useAddPopup } from '@/hooks/useAddPopup'
+import { DnDProvider } from '../providers/DnDProvider'
 import { CalendarLayout } from './layout/CalendarLayout'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
@@ -559,7 +560,7 @@ export function CalendarController({
       onCreateEvent: handleCreateEvent,
       onUpdateEvent: handleUpdateEvent as any,
       onDeleteEvent: handleEventDelete,
-      // onRestoreEvent: handleEventRestore,
+      onRestoreEvent: handleEventRestore,
       onEmptyClick: handleEmptyClick,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),

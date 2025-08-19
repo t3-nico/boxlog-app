@@ -1,143 +1,89 @@
-# Calendar Feature
+# Calendar Feature Documentation
 
-BoxLogアプリケーションのカレンダー機能は、タスク管理と時間追跡を統合したカレンダービューを提供します。
+## 📚 ドキュメント一覧
 
-## 📋 概要
+このディレクトリには `/src/features/calendar/` の開発・保守に関するドキュメントが含まれています。
 
-カレンダー機能では、以下の要素を統合的に管理できます：
+---
 
-- **Tasks**: 予定されたタスク（計画段階）
-- **TaskRecords**: 実際に実行された作業の記録
-- **Events**: 一般的なカレンダーイベント
-- **Calendars**: 複数のカレンダー管理
+## 📄 利用可能なドキュメント
 
-## 🏗️ アーキテクチャ
+### 1. [development-history.md](./development-history.md)
+**開発履歴・作業記録**
+- 時系列順の開発作業記録
+- リファクタリング・統合作業の詳細
+- Before/After の比較
+- 技術的な決定事項
 
-### コアコンポーネント
+**対象読者:** 開発者、プロジェクトマネージャー、第三者レビュー
 
-- **CalendarController**: メインのカレンダーコントローラーコンポーネント（旧CalendarView）
-- **CalendarLayout**: 統合レイアウト管理システム（NEW）
-- **Views**: 各ビュータイプ（Day, Week, Month等）の実装
-- **Interactions**: ドラッグ&ドロップ、キーボードショートカット等
-- **Sidebar**: ミニカレンダー、クイックアクション、フィルター等の統合サイドバー
+### 2. [component-structure.md](./component-structure.md)
+**コンポーネント構造・アーキテクチャ**
+- 現在のファイル構造
+- 各コンポーネントの役割・特徴
+- Props インターフェース
+- データフローの説明
 
-### ディレクトリ構造
+**対象読者:** 開発者、新規参加者、アーキテクト
 
-```
-src/features/calendar/
-├── components/              # UIコンポーネント
-│   ├── CalendarController.tsx  # メインコントローラー（旧CalendarView）
-│   ├── layout/                # レイアウトシステム（NEW）
-│   │   ├── CalendarLayout.tsx    # 統合レイアウトコンポーネント
-│   │   ├── Header/              # ヘッダーコンポーネント群
-│   │   ├── Sidebar/             # サイドバーコンポーネント群
-│   │   └── MobileLayout/        # モバイル専用レイアウト
-│   ├── views/               # ビュータイプ別実装
-│   ├── interactions/        # インタラクション機能
-│   ├── shared/              # 共通コンポーネント
-│   ├── event/               # イベント関連コンポーネント
-│   ├── common/              # 基本共通コンポーネント
-│   └── overlays/            # オーバーレイ系コンポーネント
-├── hooks/               # カレンダー専用フック
-│   └── ui/                  # UIフック（useCalendarLayoutなど）
-├── lib/                 # ユーティリティ関数
-├── types/               # TypeScript型定義
-├── constants/           # 定数定義
-├── services/            # API・データサービス
-├── stores/              # 状態管理
-├── utils/               # パフォーマンス最適化等
-└── __docs__/            # ドキュメント
-```
+---
 
-## 🎯 対応ビュータイプ
+## 🎯 ドキュメントの使い方
 
-| ビュー | 説明 | URL |
-|--------|------|-----|
-| `day` | 日表示 | `/calendar/day` |
-| `split-day` | 分割日表示 | `/calendar/split-day` |
-| `3day` | 3日表示 | `/calendar/3day` |
-| `week` | 週表示 | `/calendar/week` |
-| `week-no-weekend` | 平日のみ週表示 | `/calendar/week-no-weekend` |
-| `2week` | 2週間表示 | `/calendar/2week` |
-| `month` | 月表示 | `/calendar/month` |
-| `schedule` | スケジュール表示 | `/calendar/schedule` |
+### 開発者向け
+1. **新規参加時:** `component-structure.md` でアーキテクチャを理解
+2. **機能追加時:** 既存の構造を把握してから実装
+3. **バグ修正時:** 関連コンポーネントの責務を確認
 
-## 🚀 主要機能
+### プロジェクト管理者向け
+1. **進捗確認:** `development-history.md` で作業履歴を確認
+2. **技術レビュー:** アーキテクチャの妥当性を評価
+3. **リソース計画:** 今後の開発予定を把握
 
-### 🏛️ レイアウトシステム（NEW）
+### 第三者レビュー向け
+1. **コード品質評価:** 構造の一貫性・保守性を確認
+2. **技術的債務:** 改善点・リスクの特定
+3. **ベストプラクティス:** 設計パターンの妥当性評価
 
-- **統合レイアウト管理**: ヘッダー、サイドバー、メインコンテンツの一元管理
-- **レスポンシブデザイン**: デスクトップ・タブレット・モバイル最適化
-- **サイドバー統合**: ミニカレンダー、クイックアクション、フィルター機能
-- **状態永続化**: ユーザー設定の自動保存・復元
+---
 
-### ✨ インタラクション
+## 🔧 保守について
 
-- **ドラッグ&ドロップ**: イベントの移動・リサイズ
-- **キーボードショートカット**: 高速操作
-- **コンテキストメニュー**: 右クリックメニュー
-- **Undo/Redo**: 操作の取り消し・やり直し
+### ドキュメント更新タイミング
+- **大きな構造変更時** - 必須
+- **新しいビュー追加時** - 推奨
+- **重要なリファクタリング時** - 推奨
+- **四半期レビュー時** - 定期更新
 
-### 🎨 アクセシビリティ
+### 更新責任者
+- **開発履歴:** 作業実施者
+- **構造ドキュメント:** アーキテクト・リードエンジニア
 
-- **WCAG 2.1 AAA準拠**: 完全なアクセシビリティサポート
-- **キーボード操作**: マウス操作不要
-- **スクリーンリーダー対応**: ARIA属性による支援
-- **高コントラスト対応**: 視覚的アクセシビリティ
+---
 
-### ⚡ パフォーマンス
+## 📊 関連リソース
 
-- **仮想化**: 大量データの効率的表示
-- **メモ化**: 不要な再レンダリングを防止
-- **遅延ローディング**: コンポーネントの動的読み込み
-- **Web Worker**: 重い処理をバックグラウンドで実行
+### コードベース
+- `/src/features/calendar/components/` - メインコンポーネント群
+- `/src/features/calendar/types/` - 型定義
+- `/src/features/calendar/hooks/` - カスタムフック
+- `/src/features/calendar/stores/` - 状態管理
 
-## 🔗 関連ファイル
+### 外部ドキュメント
+- `compass/ai-context/app/CLAUDE.md` - AI開発指示書
+- `compass/knowledge/app-docs/` - 技術ドキュメント
+- プロジェクトルートの `README.md` - プロジェクト概要
 
-- **ルーティング**: `src/app/(app)/calendar/[view]/page.tsx`
-- **型定義**: `src/features/calendar/types/calendar.types.ts`
-- **定数**: `src/features/calendar/constants/calendar-constants.ts`
-- **テスト**: `src/features/calendar/__tests__/`
+---
 
-## 📖 ドキュメント
+## 🏷️ バージョン情報
 
-詳細な技術ドキュメントは以下を参照：
+- **初版作成:** 2025-01-XX
+- **最終更新:** 2025-01-XX
+- **ドキュメント形式:** Markdown
+- **メンテナンス:** 開発チーム
 
-### 🏛️ レイアウトシステム（NEW）
-- [カレンダーレイアウトシステム](./layout/layout-system.md) - 統合レイアウト管理の詳細
-- [サイドバーコンポーネント詳細ガイド](./layout/sidebar-components.md) - サイドバー機能の実装方法
+---
 
-### 📚 一般ドキュメント
-- [コンポーネント構成](./components.md)
-- [開発ガイドライン](./development.md)  
-- [API仕様](./api.md)
-
-## 🛠️ 開発環境
-
-### 必要なコマンド
-
-```bash
-# 開発サーバー起動
-npm run dev
-
-# 型チェック
-npm run typecheck
-
-# リンティング
-npm run lint
-
-# テスト実行
-npm test
-```
-
-### デバッグ
-
-カレンダー機能のデバッグには以下の環境変数を使用：
-
-```bash
-DEBUG_CALENDAR=true npm run dev
-```
-
-## 🏷️ タグ
-
-`#calendar` `#feature` `#nextjs` `#typescript` `#task-management`
+*このドキュメントディレクトリは、Calendar機能の開発・保守を支援するために作成されました。*  
+*質問や改善提案があれば、開発チームまでお知らせください。*

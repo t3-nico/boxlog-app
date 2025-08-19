@@ -1,5 +1,8 @@
 // Event Feature Exports
 
+// Components
+export * from './components'
+
 // Types
 export * from './types/events'
 
