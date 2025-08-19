@@ -1,4 +1,4 @@
-import '@/styles/tailwind.css'
+import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Providers } from '@/components/common'
 
