@@ -13,8 +13,6 @@ export { HOUR_HEIGHT, MINUTE_HEIGHT as CALENDAR_MINUTE_HEIGHT, BUSINESS_HOURS as
 // Calendar Hooks
 export * from './hooks'
 
-// Calendar Services
-export * from './services'
 
 // Calendar Utils/Lib (excluding conflicting exports)
 export { calculateViewDateRange, getNextPeriod, getPreviousPeriod, filterTasksForDateRange } from './lib/view-helpers'

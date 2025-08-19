@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, isSameDay, isToday } from 'date-fns'
 import { X } from 'lucide-react'
-import { TimeAxisLabels } from '../TimeAxisLabels'
+import { TimeColumn } from '../shared/grid/TimeColumn'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
@@ -189,11 +189,10 @@ export function WeekCalendarLayout({
           className="flex-shrink-0 sticky left-0 z-10 bg-background shadow-sm"
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
-          <TimeAxisLabels 
+          <TimeColumn 
             startHour={0} 
             endHour={24} 
             interval={60}
-            planRecordMode={planRecordMode}
             className="w-16"
           />
         </div>

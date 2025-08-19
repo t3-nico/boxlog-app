@@ -32,8 +32,8 @@ export { EmptyState } from './components/EmptyState'
 export { TimezoneOffset } from './components/TimezoneOffset'
 
 // DateHeader - 日付ヘッダー
-export { DateHeader, DateHeaderRow } from './components/DateHeader'
-export type * from './components/DateHeader'
+export { DateHeader, DateHeaderRow } from './header/DateHeader'
+export type * from './header/DateHeader'
 
 // ===== カスタムフック =====
 export { useCurrentTime } from './hooks/useCurrentTime'

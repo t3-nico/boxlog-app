@@ -5,7 +5,7 @@ import { useDrop } from 'react-dnd'
 import { cn } from '@/lib/utils'
 import { addMinutes, startOfDay, differenceInMinutes, format } from 'date-fns'
 import { DRAG_TYPE, DraggedEventData } from './DraggableEvent'
-import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
+import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
 import { utcToUserTimezone, userTimezoneToUtc } from '@/features/settings/utils/timezone'
 import type { CalendarEvent } from '@/features/events'
 

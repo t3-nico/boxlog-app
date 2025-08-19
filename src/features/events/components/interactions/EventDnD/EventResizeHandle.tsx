@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { cn } from '@/lib/utils'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
+import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
 import { format, addMinutes, startOfDay } from 'date-fns'
 
 interface EventResizeHandleProps {

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDragLayer } from 'react-dnd'
 import { DRAG_TYPE } from './DraggableEvent'
-import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
+import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'

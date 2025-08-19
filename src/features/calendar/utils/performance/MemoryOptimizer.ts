@@ -382,11 +382,11 @@ export class MemoryOptimizer {
   /**
    * メモリ効率的なイテレーター
    */
-  *createMemoryEfficientIterator<T>(
+  async *createMemoryEfficientIterator<T>(
     items: T[], 
     batchSize: number = 100,
     processFunc?: (item: T) => void
-  ): Generator<T[], void, unknown> {
+  ): AsyncGenerator<T[], void, unknown> {
     for (let i = 0; i < items.length; i += batchSize) {
       const batch = items.slice(i, i + batchSize)
       
