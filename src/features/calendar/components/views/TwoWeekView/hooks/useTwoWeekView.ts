@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useRef } from 'react'
+import { useMemo } from 'react'
 import { 
   addDays, 
   startOfWeek, 
@@ -28,7 +28,6 @@ export function useTwoWeekView({
   events = [],
   onEventUpdate
 }: UseTwoWeekViewOptions): UseTwoWeekViewReturn {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   
   // 2週間（14日）の日付を生成
   const twoWeekDates = useMemo(() => {
@@ -119,47 +118,12 @@ export function useTwoWeekView({
     return grouped
   }, [twoWeekDates, events])
   
-  // 今日の日付にスクロール（横スクロール）
-  const scrollToToday = useCallback(() => {
-    if (!scrollContainerRef.current || todayIndex === -1) return
-    
-    // 各日の幅を計算（100% / 14 = 約7.14%）
-    const containerWidth = scrollContainerRef.current.scrollWidth
-    const dayWidth = containerWidth / 14
-    
-    // 今日の位置にスクロール（中央に表示するため調整）
-    const scrollLeft = Math.max(0, (todayIndex * dayWidth) - (scrollContainerRef.current.clientWidth / 2))
-    
-    scrollContainerRef.current.scrollTo({
-      left: scrollLeft,
-      behavior: 'smooth'
-    })
-  }, [todayIndex])
-  
-  // 現在時刻にスクロール（縦スクロール）
-  const scrollToNow = useCallback(() => {
-    if (!scrollContainerRef.current || !isCurrentTwoWeeks) return
-    
-    const now = new Date()
-    const currentHour = now.getHours()
-    const currentMinutes = now.getMinutes()
-    
-    // shared/constants から HOUR_HEIGHT を使用
-    const HOUR_HEIGHT = 72 // TODO: import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-    const scrollTop = Math.max(0, (currentHour + currentMinutes / 60 - 2) * HOUR_HEIGHT)
-    
-    scrollContainerRef.current.scrollTo({
-      top: scrollTop,
-      behavior: 'smooth'
-    })
-  }, [isCurrentTwoWeeks])
+  // スクロール処理はScrollableCalendarLayoutに委譲
   
   return {
     twoWeekDates,
     eventsByDate,
     todayIndex,
-    scrollToToday,
-    scrollToNow,
     currentWeekIndex,
     isCurrentTwoWeeks
   }

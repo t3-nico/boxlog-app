@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useRef } from 'react'
+import { useMemo } from 'react'
 import { isToday } from 'date-fns'
 import type { CSSProperties } from 'react'
 import { useDayEvents } from './useDayEvents'
@@ -7,7 +7,6 @@ import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 const QUARTER_INTERVAL = 15 // 15分間隔
 
 export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   
   // イベントデータ処理
   const { dayEvents, eventPositions } = useDayEvents({ date, events })
@@ -56,24 +55,11 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
     return styles
   }, [eventPositions])
   
-  // 現在時刻へのスクロール
-  const scrollToNow = useCallback(() => {
-    if (!scrollContainerRef.current || !isTodayFlag) return
-    
-    const now = new Date()
-    const currentHour = now.getHours() + now.getMinutes() / 60
-    const targetPosition = (currentHour - 1) * HOUR_HEIGHT // 1時間前にスクロール
-    
-    scrollContainerRef.current.scrollTo({
-      top: Math.max(0, targetPosition),
-      behavior: 'smooth'
-    })
-  }, [isTodayFlag])
+  // スクロール処理はScrollableCalendarLayoutに委譲
   
   return {
     dayEvents,
     eventStyles,
-    scrollToNow,
     isToday: isTodayFlag,
     timeSlots
   }

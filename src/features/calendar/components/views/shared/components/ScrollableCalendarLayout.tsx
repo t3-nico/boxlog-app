@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useEffect, useCallback, useState } from 'react'
 import { cn } from '@/lib/utils'
 import { TimeColumn, CurrentTimeLine, TimezoneOffset } from '../'
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
@@ -22,6 +22,10 @@ interface ScrollableCalendarLayoutProps {
   displayDates?: Date[]
   viewMode?: 'day' | '3day' | 'week' | '2week'
   header?: React.ReactNode
+  
+  // スクロール機能の追加
+  enableKeyboardNavigation?: boolean
+  onScrollPositionChange?: (scrollTop: number) => void
 }
 
 const TIME_COLUMN_WIDTH = 64
@@ -38,14 +42,23 @@ export function ScrollableCalendarLayout({
   onTimeClick,
   displayDates = [],
   viewMode = 'week',
-  header
+  header,
+  enableKeyboardNavigation = true,
+  onScrollPositionChange
 }: ScrollableCalendarLayoutProps) {
+  // ScrollableCalendarLayout がレンダリングされました
+  
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>()
+  const [isScrolling, setIsScrolling] = useState(false)
+  
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
     desktop: 72
   })
+
+  // ScrollableCalendarLayoutの初期化完了
   
   // 初期スクロール位置の設定
   useEffect(() => {
@@ -60,6 +73,111 @@ export function ScrollableCalendarLayout({
       }, 100)
     }
   }, [scrollToHour, HOUR_HEIGHT])
+
+  // スクロールイベントの処理
+  const handleScroll = useCallback(() => {
+    if (!scrollContainerRef.current) return
+    
+    const scrollTop = scrollContainerRef.current.scrollTop
+    setIsScrolling(true)
+    
+    if (onScrollPositionChange) {
+      onScrollPositionChange(scrollTop)
+    }
+    
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false)
+    }, 150)
+  }, [onScrollPositionChange])
+
+  // スクロールリスナーの設定
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+    
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  // キーボードナビゲーション（グローバルキーボードイベントも監視）
+  const handleKeyDown = useCallback((e: React.KeyboardEvent | KeyboardEvent) => {
+    // キーボードイベント処理開始
+    
+    if (!enableKeyboardNavigation || !scrollContainerRef.current) {
+      // キーボード処理をスキップ
+      return
+    }
+    
+    const container = scrollContainerRef.current
+    const currentScroll = container.scrollTop
+    
+    // スクロール実行
+    
+    switch (e.key) {
+      case 'PageUp':
+        e.preventDefault()
+        const newScrollUp = Math.max(0, currentScroll - container.clientHeight)
+        container.scrollTop = newScrollUp
+        // PageUp スクロール実行
+        break
+      case 'PageDown':
+        e.preventDefault()
+        const newScrollDown = currentScroll + container.clientHeight
+        container.scrollTop = newScrollDown
+        // PageDown スクロール実行
+        break
+      case 'Home':
+        if (e.ctrlKey) {
+          e.preventDefault()
+          container.scrollTop = 0
+          // Ctrl+Home スクロール実行
+        }
+        break
+      case 'End':
+        if (e.ctrlKey) {
+          e.preventDefault()
+          const newScrollEnd = container.scrollHeight
+          container.scrollTop = newScrollEnd
+          // Ctrl+End スクロール実行
+        }
+        break
+      case 'ArrowUp':
+        if (e.ctrlKey) {
+          e.preventDefault()
+          const newScrollArrowUp = Math.max(0, currentScroll - HOUR_HEIGHT)
+          container.scrollTop = newScrollArrowUp
+          // Ctrl+ArrowUp スクロール実行
+        }
+        break
+      case 'ArrowDown':
+        if (e.ctrlKey) {
+          e.preventDefault()
+          const newScrollArrowDown = currentScroll + HOUR_HEIGHT
+          container.scrollTop = newScrollArrowDown
+          // Ctrl+ArrowDown スクロール実行
+        }
+        break
+    }
+  }, [enableKeyboardNavigation, HOUR_HEIGHT])
+
+  // グローバルキーボードイベントのリスナー
+  useEffect(() => {
+    if (!enableKeyboardNavigation) {
+      return
+    }
+    
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      handleKeyDown(e)
+    }
+    
+    document.addEventListener('keydown', handleGlobalKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleGlobalKeyDown)
+    }
+  }, [enableKeyboardNavigation, handleKeyDown])
   
   // グリッドクリックハンドラー
   const handleGridClick = useCallback((e: React.MouseEvent) => {
@@ -108,8 +226,15 @@ export function ScrollableCalendarLayout({
         {/* メインスクロールエリア */}
         <div 
           ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto relative"
+          className={cn(
+            'flex-1 overflow-y-auto relative',
+            enableKeyboardNavigation && 'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2'
+          )}
           onClick={handleGridClick}
+          onKeyDown={handleKeyDown}
+          tabIndex={enableKeyboardNavigation ? 0 : -1}
+          role={enableKeyboardNavigation ? "region" : undefined}
+          aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
         >
           <div 
             className="flex w-full"
@@ -166,6 +291,7 @@ export function CalendarLayoutWithHeader({
   children,
   ...props
 }: CalendarLayoutWithHeaderProps) {
+  // CalendarLayoutWithHeader が呼び出されました
   return (
     <ScrollableCalendarLayout {...props} header={header}>
       {children}

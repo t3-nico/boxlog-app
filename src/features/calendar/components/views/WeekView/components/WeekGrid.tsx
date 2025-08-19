@@ -32,8 +32,6 @@ export function WeekGrid({
   timezone,
   className
 }: WeekGridProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  
   // 一時的に固定値でデバッグ
   const HOUR_HEIGHT = 72
   
@@ -57,8 +55,7 @@ export function WeekGrid({
     
     // クリック位置から時刻を計算
     const rect = e.currentTarget.getBoundingClientRect()
-    const parentScrollTop = scrollContainerRef.current?.scrollTop || 0
-    const clickY = e.clientY - rect.top + parentScrollTop
+    const clickY = e.clientY - rect.top
     
     // 15分単位でスナップ
     const totalMinutes = Math.max(0, Math.floor((clickY / HOUR_HEIGHT) * 60))
@@ -71,24 +68,7 @@ export function WeekGrid({
     onEmptyClick?.(date, timeString)
   }, [onEmptyClick])
   
-  // 初回レンダリング時に現在時刻へスクロール（今日がある場合のみ）
-  useEffect(() => {
-    if (todayIndex !== -1 && scrollContainerRef.current) {
-      const now = new Date()
-      const currentHour = now.getHours()
-      const currentMinutes = now.getMinutes()
-      
-      // 少し上に余裕を持たせてスクロール
-      const scrollTop = Math.max(0, (currentHour + currentMinutes / 60 - 2) * HOUR_HEIGHT)
-      
-      setTimeout(() => {
-        scrollContainerRef.current?.scrollTo({
-          top: scrollTop,
-          behavior: 'smooth'
-        })
-      }, 100)
-    }
-  }, [todayIndex])
+  // スクロール処理はScrollableCalendarLayoutに任せる（削除）
   
   
   const headerComponent = (
@@ -133,6 +113,7 @@ export function WeekGrid({
         const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
         onEmptyClick?.(weekDates[0], timeString)
       }}
+      enableKeyboardNavigation={true}
       className={cn('bg-background', className)}
     >
       {/* 7日分のグリッド */}

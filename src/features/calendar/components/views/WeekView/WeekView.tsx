@@ -67,7 +67,6 @@ export function WeekView({
     weekDates,
     eventsByDate,
     todayIndex,
-    scrollToNow,
     isCurrentWeek
   } = useWeekView({
     startDate: weekStartDate,
@@ -83,16 +82,7 @@ export function WeekView({
       : weekDates.filter(day => !isWeekend(day))
   }, [weekDates, showWeekends])
   
-  // 初回レンダリング時に現在時刻へスクロール（現在の週の場合のみ）
-  useEffect(() => {
-    if (isCurrentWeek) {
-      const timer = setTimeout(() => {
-        scrollToNow()
-      }, 100)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [isCurrentWeek, scrollToNow])
+  // 初期スクロールはScrollableCalendarLayoutに委譲
   
   return (
     <CalendarViewAnimation viewType="week">

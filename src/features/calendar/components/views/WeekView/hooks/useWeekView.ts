@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useRef } from 'react'
+import { useMemo } from 'react'
 import { 
   startOfWeek, 
   addDays, 
@@ -29,7 +29,6 @@ export function useWeekView({
   weekStartsOn = 0, // 0: 日曜始まり, 1: 月曜始まり
   onEventUpdate
 }: UseWeekViewOptions): UseWeekViewReturn {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   
   // 週の開始日を計算（日曜または月曜）
   const weekStart = useMemo(() => {
@@ -114,29 +113,12 @@ export function useWeekView({
     return grouped
   }, [weekDates, events])
   
-  // 現在時刻にスクロール
-  const scrollToNow = useCallback(() => {
-    if (!scrollContainerRef.current || !isCurrentWeek) return
-    
-    const now = new Date()
-    const currentHour = now.getHours()
-    const currentMinutes = now.getMinutes()
-    
-    // shared/constants から HOUR_HEIGHT を使用
-    const HOUR_HEIGHT = 72 // TODO: import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-    const scrollTop = Math.max(0, (currentHour + currentMinutes / 60 - 2) * HOUR_HEIGHT)
-    
-    scrollContainerRef.current.scrollTo({
-      top: scrollTop,
-      behavior: 'smooth'
-    })
-  }, [isCurrentWeek])
+  // スクロール処理はScrollableCalendarLayoutに委譲
   
   return {
     weekDates,
     eventsByDate,
     todayIndex,
-    scrollToNow,
     isCurrentWeek
   }
 }

@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useRef } from 'react'
+import { useMemo } from 'react'
 import { 
   addDays, 
   subDays, 
@@ -27,7 +27,6 @@ export function useThreeDayView({
   events = [],
   onEventUpdate
 }: UseThreeDayViewOptions): UseThreeDayViewReturn {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
   
   // 3日間の日付を生成（centerDateを中心に前後1日）
   const threeDayDates = useMemo(() => {
@@ -116,30 +115,13 @@ export function useThreeDayView({
     return grouped
   }, [threeDayDates, events])
   
-  // 現在時刻にスクロール
-  const scrollToNow = useCallback(() => {
-    if (!scrollContainerRef.current || !isCurrentDay) return
-    
-    const now = new Date()
-    const currentHour = now.getHours()
-    const currentMinutes = now.getMinutes()
-    
-    // shared/constants から HOUR_HEIGHT を使用
-    const HOUR_HEIGHT = 72 // TODO: import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-    const scrollTop = Math.max(0, (currentHour + currentMinutes / 60 - 2) * HOUR_HEIGHT)
-    
-    scrollContainerRef.current.scrollTo({
-      top: scrollTop,
-      behavior: 'smooth'
-    })
-  }, [isCurrentDay])
+  // スクロール処理はScrollableCalendarLayoutに委譲
   
   return {
     threeDayDates,
     eventsByDate,
     centerIndex,
     todayIndex,
-    scrollToNow,
     isCurrentDay
   }
 }

@@ -70,8 +70,7 @@ export function TwoWeekView({
     twoWeekDates,
     eventsByDate,
     isCurrentTwoWeeks,
-    todayIndex,
-    scrollToNow
+    todayIndex
   } = useTwoWeekView({
     startDate: displayStartDate,
     events,
@@ -104,16 +103,7 @@ export function TwoWeekView({
     onEmptyClick?.(date, timeString)
   }, [onEmptyClick, HOUR_HEIGHT])
 
-  // 初回レンダリング時に現在時刻へスクロール（今日がある場合のみ）
-  useEffect(() => {
-    if (isCurrentTwoWeeks && todayIndex !== -1) {
-      const timer = setTimeout(() => {
-        scrollToNow()
-      }, 100)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [isCurrentTwoWeeks, todayIndex, scrollToNow])
+  // 初期スクロールはScrollableCalendarLayoutに委謗
 
   const headerComponent = (
     <div className="border-b border-border bg-background h-16 flex">
@@ -148,19 +138,24 @@ export function TwoWeekView({
 
   return (
     <CalendarViewAnimation viewType="2week">
-      <CalendarLayoutWithHeader
-        header={headerComponent}
-        timezone={timezone}
-        scrollToHour={isCurrentTwoWeeks && todayIndex !== -1 ? undefined : 8}
-        displayDates={twoWeekDates}
-        viewMode="2week"
-        onTimeClick={(hour, minute) => {
-          // TwoWeekViewでは最初にクリックされた日付を使用
-          const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-          onEmptyClick?.(twoWeekDates[0], timeString)
-        }}
-        className={cn('bg-background', className)}
-      >
+      <div className={cn('flex flex-col h-full bg-background', className)}>
+        
+        {/* メインコンテンツエリア */}
+        <div className="flex-1 min-h-0">
+          <CalendarLayoutWithHeader
+            header={headerComponent}
+            timezone={timezone}
+            scrollToHour={isCurrentTwoWeeks && todayIndex !== -1 ? undefined : 8}
+            displayDates={twoWeekDates}
+            viewMode="2week"
+            onTimeClick={(hour, minute) => {
+              // TwoWeekViewでは最初にクリックされた日付を使用
+              const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+              onEmptyClick?.(twoWeekDates[0], timeString)
+            }}
+            enableKeyboardNavigation={true}
+            className="h-full"
+          >
         {/* 14日分のグリッド（画面幅に均等分割） */}
         <div className="flex h-full">
           {twoWeekDates.map((date, dayIndex) => {
@@ -235,7 +230,9 @@ export function TwoWeekView({
             )
           })}
         </div>
-      </CalendarLayoutWithHeader>
+          </CalendarLayoutWithHeader>
+        </div>
+      </div>
     </CalendarViewAnimation>
   )
 }

@@ -53,8 +53,7 @@ export function ThreeDayView({
   const {
     threeDayDates,
     eventsByDate,
-    isCurrentDay,
-    scrollToNow
+    isCurrentDay
   } = useThreeDayView({
     centerDate: displayCenterDate,
     events,
@@ -88,15 +87,7 @@ export function ThreeDayView({
   }, [onEmptyClick, HOUR_HEIGHT])
 
   // Scroll to current time on initial render (only if center date is today)
-  useEffect(() => {
-    if (isCurrentDay) {
-      const timer = setTimeout(() => {
-        scrollToNow()
-      }, 100)
-      
-      return () => clearTimeout(timer)
-    }
-  }, [isCurrentDay, scrollToNow])
+  // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
     <div className="border-b border-border bg-background h-16 flex">
@@ -129,19 +120,24 @@ export function ThreeDayView({
   )
 
   return (
-    <CalendarLayoutWithHeader
-      header={headerComponent}
-      timezone={timezone}
-      scrollToHour={isCurrentDay ? undefined : 8}
-      displayDates={threeDayDates}
-      viewMode="3day"
-      onTimeClick={(hour, minute) => {
-        // ThreeDayViewでは最初にクリックされた日付を使用
-        const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-        onEmptyClick?.(threeDayDates[0], timeString)
-      }}
-      className={cn('bg-background', className)}
-    >
+    <div className={cn('flex flex-col h-full bg-background', className)}>
+      
+      {/* メインコンテンツエリア */}
+      <div className="flex-1 min-h-0">
+        <CalendarLayoutWithHeader
+          header={headerComponent}
+          timezone={timezone}
+          scrollToHour={isCurrentDay ? undefined : 8}
+          displayDates={threeDayDates}
+          viewMode="3day"
+          onTimeClick={(hour, minute) => {
+            // ThreeDayViewでは最初にクリックされた日付を使用
+            const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+            onEmptyClick?.(threeDayDates[0], timeString)
+          }}
+          enableKeyboardNavigation={true}
+          className="h-full"
+        >
       {/* 3日分のグリッド */}
       <div className="flex h-full">
         {threeDayDates.map((date, dayIndex) => {
@@ -217,6 +213,8 @@ export function ThreeDayView({
           )
         })}
       </div>
-    </CalendarLayoutWithHeader>
+        </CalendarLayoutWithHeader>
+      </div>
+    </div>
   )
 }

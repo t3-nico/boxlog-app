@@ -6,6 +6,53 @@
 
 ---
 
+## 2025-08-19: カレンダービューキーボードナビゲーション統一修正
+
+### 🎯 目的
+- 全カレンダービュー（Day/3Day/Week/2Week）で統一されたキーボードナビゲーション
+- ScrollableCalendarLayoutを使った一貫したスクロール体験の実現
+
+### 🔧 作業内容
+
+#### 1. 問題の特定
+- Week Viewではキーボードナビゲーション（PageUp/PageDown、Ctrl+矢印キー）が動作
+- Day/3Day/2Week Viewでは同じ操作でスクロールが動作しない問題を発見
+
+#### 2. 根本原因の分析
+- Week Viewと他ビューのレイアウト構造の差異を特定
+- ScrollableCalendarLayoutが適切な高さを取得できない構造的問題
+
+#### 3. レイアウト構造の統一
+全ビューで以下の統一レイアウト構造を適用：
+```tsx
+<CalendarViewAnimation viewType="xxx">
+  <div className="flex flex-col h-full bg-background">
+    <div className="flex-1 min-h-0">
+      <CalendarLayoutWithHeader className="h-full">
+        {/* コンテンツ */}
+      </CalendarLayoutWithHeader>
+    </div>
+  </div>
+</CalendarViewAnimation>
+```
+
+#### 4. 修正対象ファイル
+- `DayView/DayView.tsx`
+- `ThreeDayView/ThreeDayView.tsx` 
+- `TwoWeekView/TwoWeekView.tsx`
+- `ScrollableCalendarLayout.tsx` (デバッグログ削除)
+
+### ✅ 結果
+全ビューで統一されたキーボードナビゲーションが動作：
+- PageUp/PageDown: 画面単位スクロール
+- Ctrl+Home/End: 最上部/最下部移動
+- Ctrl+↑/↓: 1時間単位スクロール
+
+### 📚 関連ドキュメント
+詳細: `keyboard-navigation-fix.md`
+
+---
+
 ## 2025-01-XX: Calendar Views リファクタリング & 統合
 
 ### 🎯 目的

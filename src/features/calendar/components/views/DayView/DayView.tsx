@@ -56,7 +56,6 @@ export function DayView({
   const {
     dayEvents,
     eventStyles,
-    scrollToNow,
     isToday,
     timeSlots
   } = useDayView({
@@ -88,26 +87,33 @@ export function DayView({
 
   return (
     <CalendarViewAnimation viewType="day">
-      <CalendarLayoutWithHeader
-        header={headerComponent}
-        timezone={timezone}
-        scrollToHour={isToday ? undefined : 8}
-        displayDates={displayDates}
-        viewMode="day"
-        onTimeClick={handleEmptySlotClick}
-        className={cn('bg-background', className)}
-      >
-        {/* 日のコンテンツ */}
-        <DayContent
-          date={date}
-          events={dayEvents}
-          eventStyles={eventStyles}
-          onEventClick={onEventClick}
-          onEmptyClick={onEmptyClick}
-          onEventUpdate={onUpdateEvent}
-          className="absolute inset-0"
-        />
-      </CalendarLayoutWithHeader>
+      <div className={cn('flex flex-col h-full bg-background', className)}>
+        
+        {/* メインコンテンツエリア */}
+        <div className="flex-1 min-h-0">
+          <CalendarLayoutWithHeader
+            header={headerComponent}
+            timezone={timezone}
+            scrollToHour={isToday ? undefined : 8}
+            displayDates={displayDates}
+            viewMode="day"
+            onTimeClick={handleEmptySlotClick}
+            enableKeyboardNavigation={true}
+            className="h-full"
+          >
+            {/* 日のコンテンツ */}
+            <DayContent
+              date={date}
+              events={dayEvents}
+              eventStyles={eventStyles}
+              onEventClick={onEventClick}
+              onEmptyClick={onEmptyClick}
+              onEventUpdate={onUpdateEvent}
+              className="absolute inset-0"
+            />
+          </CalendarLayoutWithHeader>
+        </div>
+      </div>
     </CalendarViewAnimation>
   )
 }
