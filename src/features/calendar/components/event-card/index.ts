@@ -1,1 +1,0 @@
-export { CalendarEventComponent } from './CalendarEvent'

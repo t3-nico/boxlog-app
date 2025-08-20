@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { useCallback } from 'react'
-import { CreateContextData } from '@/features/calendar/components/add-popup/AddPopup'
+import { CreateContextData } from '@/features/events/components/forms/AddPopup'
 
 type TabType = 'event' | 'log'
 

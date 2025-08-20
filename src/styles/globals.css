@@ -1,0 +1,275 @@
+/**
+ * Global Styles - Tailwind CSS + Theme System Integration
+ * BoxLog App - Main Stylesheet
+ */
+
+/* Tailwind CSS */
+@import 'tailwindcss';
+
+/* Tailwind v4 テーマ設定 - Compass Neutral カラーシステム */
+@theme {
+  /* Compass Neutral ライトモード */
+  --color-background: #ffffff;        /* neutral-0 */
+  --color-foreground: #171717;        /* neutral-900 */
+  --color-card: #ffffff;              /* neutral-0 */
+  --color-card-foreground: #171717;   /* neutral-900 */
+  --color-popover: #ffffff;           /* neutral-0 */
+  --color-popover-foreground: #171717; /* neutral-900 */
+  --color-primary: #3b82f6;           /* blue-500 */
+  --color-primary-foreground: #ffffff; /* white */
+  --color-secondary: #fafafa;         /* neutral-50 */
+  --color-secondary-foreground: #171717; /* neutral-900 */
+  --color-muted: #fafafa;             /* neutral-50 */
+  --color-muted-foreground: #737373;  /* neutral-500 */
+  --color-accent: #fafafa;            /* neutral-50 */
+  --color-accent-foreground: #171717; /* neutral-900 */
+  --color-destructive: #ef4444;       /* red-500 */
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e5e5e5;            /* neutral-200 */
+  --color-input: #ffffff;             /* neutral-0 */
+  --color-ring: #3b82f6;              /* blue-500 */
+
+  /* 基本ボーダー半径 */
+  --radius: 0.375rem;
+}
+
+/* ===== 統一テーマシステム ===== */
+
+:root {
+  /* カレンダー固有の変数 */
+  --calendar-hour-height: 4.5rem;
+  --calendar-time-column-width: 4rem;
+  --calendar-header-height: 4rem;
+  --calendar-sidebar-width: 16rem;
+  --calendar-current-timeline: #ef4444;
+}
+
+/* Compass Neutral ダークモード */
+[data-theme="dark"] {
+  --color-background: #0a0a0a;        /* neutral-950 */
+  --color-foreground: #fafafa;        /* neutral-50 */
+  --color-card: #171717;              /* neutral-900 */
+  --color-card-foreground: #fafafa;   /* neutral-50 */
+  --color-popover: #171717;           /* neutral-900 */
+  --color-popover-foreground: #fafafa; /* neutral-50 */
+  --color-primary: #60a5fa;           /* blue-400 */
+  --color-primary-foreground: #0a0a0a; /* neutral-950 */
+  --color-secondary: #262626;         /* neutral-800 */
+  --color-secondary-foreground: #fafafa; /* neutral-50 */
+  --color-muted: #262626;             /* neutral-800 */
+  --color-muted-foreground: #a3a3a3;  /* neutral-400 */
+  --color-accent: #262626;            /* neutral-800 */
+  --color-accent-foreground: #fafafa; /* neutral-50 */
+  --color-destructive: #ef4444;       /* red-500 */
+  --color-destructive-foreground: #ffffff;
+  --color-border: #404040;            /* neutral-700 */
+  --color-input: #171717;             /* neutral-900 */
+  --color-ring: #60a5fa;              /* blue-400 */
+}
+
+/* システム設定に従う（Compass Neutral）*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-background: #0a0a0a;        /* neutral-950 */
+    --color-foreground: #fafafa;        /* neutral-50 */
+    --color-card: #171717;              /* neutral-900 */
+    --color-card-foreground: #fafafa;   /* neutral-50 */
+    --color-popover: #171717;           /* neutral-900 */
+    --color-popover-foreground: #fafafa; /* neutral-50 */
+    --color-primary: #60a5fa;           /* blue-400 */
+    --color-primary-foreground: #0a0a0a; /* neutral-950 */
+    --color-secondary: #262626;         /* neutral-800 */
+    --color-secondary-foreground: #fafafa; /* neutral-50 */
+    --color-muted: #262626;             /* neutral-800 */
+    --color-muted-foreground: #a3a3a3;  /* neutral-400 */
+    --color-accent: #262626;            /* neutral-800 */
+    --color-accent-foreground: #fafafa; /* neutral-50 */
+    --color-destructive: #ef4444;       /* red-500 */
+    --color-destructive-foreground: #ffffff;
+    --color-border: #404040;            /* neutral-700 */
+    --color-input: #171717;             /* neutral-900 */
+    --color-ring: #60a5fa;              /* blue-400 */
+  }
+}
+
+/* レスポンシブ対応のカレンダー変数 */
+@media (max-width: 639px) {
+  :root {
+    --calendar-hour-height: 3rem;
+    --calendar-time-column-width: 3rem;
+    --calendar-header-height: 3.5rem;
+    --calendar-sidebar-width: 100%;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  :root {
+    --calendar-hour-height: 3.75rem;
+    --calendar-time-column-width: 4rem;
+    --calendar-header-height: 4rem;
+    --calendar-sidebar-width: 18rem;
+  }
+}
+
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --border: 0 0 0;
+    --ring: 0 0 0;
+  }
+  
+  [data-theme="dark"] {
+    --border: 255 255 255;
+    --ring: 255 255 255;
+  }
+}
+
+/* ===== Base Layer Customizations ===== */
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Focus styles for accessibility */
+  *:focus-visible {
+    outline: 2px solid rgb(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Selection styles */
+  ::selection {
+    background-color: rgb(var(--primary) / 0.2);
+  }
+}
+
+/* ===== Component Layer ===== */
+
+@layer components {
+  /* カレンダー関連のベーススタイル */
+  .calendar-grid {
+    --hour-height: var(--calendar-hour-height);
+    --time-column-width: var(--calendar-time-column-width);
+  }
+
+  .calendar-time-line {
+    background-color: rgb(var(--calendar-current-timeline));
+    height: 2px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+  }
+
+  .calendar-time-line::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -3px;
+    width: 8px;
+    height: 8px;
+    background-color: rgb(var(--calendar-current-timeline));
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* ボタンの基本スタイル */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+    @apply disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+
+  /* カードコンポーネント */
+  .card {
+    @apply rounded-lg border bg-card text-card-foreground shadow-sm;
+  }
+
+  .card-header {
+    @apply flex flex-col space-y-1.5 p-6;
+  }
+
+  .card-content {
+    @apply p-6 pt-0;
+  }
+}
+
+/* ===== Utility Layer ===== */
+
+@layer utilities {
+  /* アニメーション無効化ユーティリティ */
+  .no-animation {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* カレンダー専用ユーティリティ */
+  .calendar-hour-slot {
+    height: var(--calendar-hour-height);
+    min-height: var(--calendar-hour-height);
+  }
+
+  .calendar-time-column {
+    width: var(--calendar-time-column-width);
+    min-width: var(--calendar-time-column-width);
+  }
+
+  /* Glass effect */
+  .glass {
+    @apply backdrop-blur-sm bg-background/80 border border-border/50;
+  }
+
+  /* Text utilities for better readability */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* ===== Print Styles ===== */
+
+@media print {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

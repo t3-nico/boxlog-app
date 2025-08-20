@@ -1,8 +1,8 @@
 'use client'
 
-import { CalendarView } from '@/features/calendar'
+import { CalendarController } from '@/features/calendar'
 import { redirect } from 'next/navigation'
-import { isValidViewType } from '@/features/calendar/lib/calendar-helpers'
+import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 
 interface CalendarViewPageProps {
   params: {
@@ -11,6 +11,22 @@ interface CalendarViewPageProps {
   searchParams: {
     date?: string
   }
+}
+
+// 有効なビュータイプかチェック
+function isValidViewType(view: string): view is CalendarViewType {
+  const validTypes: CalendarViewType[] = [
+    'day',
+    'split-day', 
+    '3day',
+    'week',
+    'week-no-weekend',
+    '2week',
+    'month',
+    'schedule'
+  ]
+  
+  return validTypes.includes(view as CalendarViewType)
 }
 
 export default function CalendarViewPage({ params, searchParams }: CalendarViewPageProps) {
@@ -32,8 +48,8 @@ export default function CalendarViewPage({ params, searchParams }: CalendarViewP
   }
 
   return (
-    <CalendarView 
-      initialViewType={view as any}
+    <CalendarController 
+      initialViewType={view}
       initialDate={initialDate}
     />
   )

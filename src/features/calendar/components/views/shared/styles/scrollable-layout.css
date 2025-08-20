@@ -1,0 +1,164 @@
+/* ScrollableCalendarLayout 印刷専用スタイル */
+
+@media print {
+  /* スクロールバー非表示 */
+  .scrollbar-thin {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  /* 印刷時のページブレーク制御 */
+  .print-page-break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  
+  /* 印刷時の色調整 */
+  .print-text-black {
+    color: black !important;
+  }
+  
+  .print-bg-white {
+    background-color: white !important;
+  }
+  
+  /* 印刷時のレイアウト調整 */
+  .print-overflow-visible {
+    overflow: visible !important;
+  }
+  
+  .print-h-auto {
+    height: auto !important;
+  }
+  
+  .print-hidden {
+    display: none !important;
+  }
+  
+  .print-static {
+    position: static !important;
+  }
+  
+  .print-block {
+    display: block !important;
+  }
+  
+  .print-transform-none {
+    transform: none !important;
+  }
+}
+
+/* タッチデバイス最適化 */
+.touch-optimized {
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* スクロールバーカスタマイズ - ライトモード */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--card));
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.7);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--muted-foreground) / 0.9);
+}
+
+/* ダークモード専用スクロールバー */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--muted) / 0.3);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.6);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--muted-foreground) / 0.8);
+}
+
+/* Firefox対応 */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.5) hsl(var(--card));
+}
+
+.dark .custom-scrollbar {
+  scrollbar-color: hsl(var(--muted-foreground) / 0.4) hsl(var(--muted) / 0.3);
+}
+
+/* パフォーマンス最適化 */
+.scroll-performance {
+  will-change: scroll-position;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* カレンダービューアニメーション */
+@keyframes calendar-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes calendar-zoom-out {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes calendar-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.calendar-zoom-in {
+  animation: calendar-zoom-in 0.3s ease-out;
+}
+
+.calendar-zoom-out {
+  animation: calendar-zoom-out 0.3s ease-out;
+}
+
+.calendar-slide-in {
+  animation: calendar-slide-in 0.2s ease-out;
+}

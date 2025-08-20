@@ -165,6 +165,26 @@ export default function CalendarSettings() {
             </Select>
             <p className="text-sm text-muted-foreground">Default duration when creating new tasks</p>
           </div>
+          
+          {/* ドラッグ&ドロップのスナップ間隔 */}
+          <div className="space-y-3">
+            <Label>Drag & Drop snap interval</Label>
+            <Select
+              value={String(settings.snapInterval)}
+              onValueChange={(value) => settings.updateSettings({ snapInterval: Number(value) as 5 | 10 | 15 | 30 })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select snap interval" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5 minutes</SelectItem>
+                <SelectItem value="10">10 minutes</SelectItem>
+                <SelectItem value="15">15 minutes</SelectItem>
+                <SelectItem value="30">30 minutes</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-muted-foreground">Grid snap interval when dragging events in the calendar</p>
+          </div>
         </div>
       </div>
       

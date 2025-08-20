@@ -23,14 +23,14 @@ export function isValidViewType(view: string): view is CalendarViewType {
  */
 export function getViewDisplayName(viewType: CalendarViewType): string {
   const displayNames: Record<CalendarViewType, string> = {
-    'day': '日',
-    'split-day': '分割日',
-    '3day': '3日',
-    'week': '週',
-    'week-no-weekend': '平日',
-    '2week': '2週間',
-    'month': '月',
-    'schedule': 'スケジュール'
+    'day': 'Day',
+    'split-day': 'Split Day',
+    '3day': '3 Days',
+    'week': 'Week',
+    'week-no-weekend': 'Weekdays',
+    '2week': '2 Weeks',
+    'month': 'Month',
+    'schedule': 'Schedule'
   }
   
   return displayNames[viewType] || viewType

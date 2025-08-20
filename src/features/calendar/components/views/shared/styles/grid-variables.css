@@ -1,0 +1,74 @@
+/**
+ * カレンダーグリッドのCSS変数定義
+ */
+
+:root {
+  /* デフォルト値 */
+  --calendar-hour-height: 72px;
+  --calendar-half-hour-height: 36px;
+  --calendar-quarter-hour-height: 18px;
+  --calendar-minute-height: 1.2px;
+  --calendar-grid-height: 1728px; /* 24 * 72px */
+  
+  /* タイムゾーン列幅 */
+  --calendar-time-column-width: 64px;
+  
+  /* グリッド線のスタイル */
+  --calendar-hour-line-color: theme('colors.gray.200');
+  --calendar-half-hour-line-color: theme('colors.gray.100');
+  --calendar-quarter-hour-line-color: theme('colors.gray.50');
+  
+  /* ダークモード */
+  &.dark {
+    --calendar-hour-line-color: theme('colors.gray.700');
+    --calendar-half-hour-line-color: theme('colors.gray.800');
+    --calendar-quarter-hour-line-color: theme('colors.gray.900');
+  }
+}
+
+/* レスポンシブブレークポイント */
+@media (max-width: 767px) {
+  :root {
+    /* モバイル: 小さめ */
+    --calendar-hour-height: 48px;
+    --calendar-half-hour-height: 24px;
+    --calendar-quarter-hour-height: 12px;
+    --calendar-minute-height: 0.8px;
+    --calendar-grid-height: 1152px; /* 24 * 48px */
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    /* タブレット: 中間 */
+    --calendar-hour-height: 60px;
+    --calendar-half-hour-height: 30px;
+    --calendar-quarter-hour-height: 15px;
+    --calendar-minute-height: 1px;
+    --calendar-grid-height: 1440px; /* 24 * 60px */
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    /* デスクトップ: 標準 */
+    --calendar-hour-height: 72px;
+    --calendar-half-hour-height: 36px;
+    --calendar-quarter-hour-height: 18px;
+    --calendar-minute-height: 1.2px;
+    --calendar-grid-height: 1728px; /* 24 * 72px */
+  }
+}
+
+/* CSS変数を使用するユーティリティクラス */
+.calendar-hour-height {
+  height: var(--calendar-hour-height);
+}
+
+.calendar-grid-height {
+  height: var(--calendar-grid-height);
+}
+
+.calendar-time-column-width {
+  width: var(--calendar-time-column-width);
+}
