@@ -218,85 +218,77 @@ export function useHighContrast() {
       return
     }
 
-    // ハイコントラストテーマを適用
+    // ハイコントラストテーマを適用（Tailwindクラスベース）
     document.documentElement.setAttribute('data-high-contrast', currentTheme)
     
-    Object.entries(theme.colors).forEach(([key, value]) => {
-      document.documentElement.style.setProperty(`--contrast-${key}`, value)
-    })
-
-    // CSS変数をTailwindクラスでも使用可能にする
+    // シンプルなCSSクラスのみ使用
     const style = document.createElement('style')
     style.textContent = `
-      [data-high-contrast] {
-        --tw-bg-opacity: 1;
-        --tw-text-opacity: 1;
-        --tw-border-opacity: 1;
+      [data-high-contrast="dark"] {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+      }
+      
+      [data-high-contrast="light"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
       }
       
       [data-high-contrast] .contrast-bg {
-        background-color: var(--contrast-background);
+        background-color: ${currentTheme === 'dark' ? '#000000' : '#ffffff'} !important;
       }
       
       [data-high-contrast] .contrast-text {
-        color: var(--contrast-foreground);
+        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
       
       [data-high-contrast] .contrast-border {
-        border-color: var(--contrast-border);
+        border-color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
       
       [data-high-contrast] .contrast-focus {
-        outline-color: var(--contrast-focus);
-        box-shadow: 0 0 0 2px var(--contrast-focus);
+        outline-color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
+        box-shadow: 0 0 0 2px ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
       
       [data-high-contrast] .contrast-selected {
-        background-color: var(--contrast-selected);
+        background-color: ${currentTheme === 'dark' ? '#333333' : '#cccccc'} !important;
       }
       
       [data-high-contrast] .contrast-primary {
-        color: var(--contrast-primary);
-      }
-      
-      [data-high-contrast] .contrast-accent {
-        color: var(--contrast-accent);
-      }
-      
-      [data-high-contrast] .contrast-error {
-        color: var(--contrast-error);
+        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
       
       [data-high-contrast] .contrast-warning {
-        color: var(--contrast-warning);
+        color: #ff6600 !important;
       }
       
       [data-high-contrast] .contrast-success {
-        color: var(--contrast-success);
+        color: #00aa00 !important;
       }
       
       /* フォーカススタイルの強化 */
       [data-high-contrast] *:focus {
-        outline: 3px solid var(--contrast-focus) !important;
+        outline: 3px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
         outline-offset: 2px !important;
       }
       
       /* ボタンスタイルの強化 */
       [data-high-contrast] button,
       [data-high-contrast] [role="button"] {
-        border: 2px solid var(--contrast-border) !important;
-        background-color: var(--contrast-background) !important;
-        color: var(--contrast-foreground) !important;
+        border: 2px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
+        background-color: ${currentTheme === 'dark' ? '#000000' : '#ffffff'} !important;
+        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
       
       [data-high-contrast] button:hover,
       [data-high-contrast] [role="button"]:hover {
-        background-color: var(--contrast-selected) !important;
+        background-color: ${currentTheme === 'dark' ? '#333333' : '#cccccc'} !important;
       }
       
       /* リンクスタイルの強化 */
       [data-high-contrast] a {
-        color: var(--contrast-accent) !important;
+        color: ${currentTheme === 'dark' ? '#00aaff' : '#0066cc'} !important;
         text-decoration: underline !important;
       }
       
@@ -304,16 +296,16 @@ export function useHighContrast() {
       [data-high-contrast] input,
       [data-high-contrast] textarea,
       [data-high-contrast] select {
-        border: 2px solid var(--contrast-border) !important;
-        background-color: var(--contrast-background) !important;
-        color: var(--contrast-foreground) !important;
+        border: 2px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
+        background-color: ${currentTheme === 'dark' ? '#000000' : '#ffffff'} !important;
+        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
       
       /* 選択状態の強化 */
       [data-high-contrast] [aria-selected="true"],
       [data-high-contrast] .selected {
-        background-color: var(--contrast-selected) !important;
-        border: 2px solid var(--contrast-focus) !important;
+        background-color: ${currentTheme === 'dark' ? '#333333' : '#cccccc'} !important;
+        border: 2px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
       }
     `
     

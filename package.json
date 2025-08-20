@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "op run --env-file=.env.local -- next dev",
-    "build": "npm run generate:css && op run --env-file=.env.local -- next build",
+    "build": "op run --env-file=.env.local -- next build",
     "start": "op run --env-file=.env.local -- next start",
     "lint": "next lint",
     "test": "op run --env-file=.env.local -- vitest",
@@ -12,9 +12,8 @@
     "test:ui": "op run --env-file=.env.local -- vitest --ui",
     "test:coverage": "op run --env-file=.env.local -- vitest --coverage",
     "typecheck": "op run --env-file=.env.local -- tsc --noEmit",
-    "generate:css": "npx tsx src/styles/generate-css.ts",
     "dev:fallback": "next dev",
-    "build:fallback": "npm run generate:css && next build",
+    "build:fallback": "next build",
     "start:fallback": "next start"
   },
   "dependencies": {

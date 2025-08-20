@@ -105,11 +105,11 @@ export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardPr
   // クロノタイプ設定に完全対応した色変更
   const getChronotypeColor = () => {
     if (!chronotype || !chronotype.enabled) {
-      return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // デフォルト青
+      return 'rgb(59 130 246)' // デフォルト青 (blue-500)
     }
 
     if (chronotype.type === 'custom') {
-      return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // カスタムの場合はデフォルト
+      return 'rgb(59 130 246)' // カスタムの場合はデフォルト
     }
 
     try {
@@ -118,14 +118,14 @@ export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardPr
       const zone = getProductivityZoneForHour(profile, currentHour)
       
       if (!zone || !PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]) {
-        return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // フォールバック
+        return 'rgb(59 130 246)' // フォールバック
       }
 
       const colors = PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]
       return colors.border
     } catch (error) {
       console.error('Chronotype color calculation error:', error)
-      return `rgb(${getCSSVariableValue('--color-info') || 'var(--color-info)'})` // エラー時のフォールバック
+      return 'rgb(59 130 246)' // エラー時のフォールバック
     }
   }
 

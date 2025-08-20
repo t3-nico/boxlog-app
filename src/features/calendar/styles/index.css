@@ -1,13 +1,10 @@
 /**
  * Calendar Styles Index
  * カレンダー機能の全スタイルを統合
+ * 
+ * 注：calendar-core.cssとcalendar-grid.cssは削除されました
+ * 代わりにTailwindの標準クラスとcalendar-constants.tsを使用してください
  */
-
-/* カレンダーの中核スタイル（基本変数・レスポンシブ・現在時刻線）*/
-@import './calendar-core.css';
-
-/* グリッド詳細設定（サブ時間単位・グリッド線・ユーティリティクラス）*/
-@import './calendar-grid.css';
 
 /* レイアウト・スクロール・印刷・アニメーション */
 @import './calendar-layout.css';

@@ -5,7 +5,12 @@
 'use client'
 
 import React, { useMemo, useEffect, useState } from 'react'
-import { currentTimeLineStyles } from '@/styles/themes/components'
+const currentTimeLineStyles = {
+  container: 'absolute z-30 pointer-events-none w-full',
+  label: 'absolute bg-red-500 text-white text-xs px-1 py-0.5 rounded text-[11px] top-[-10px]',
+  dot: 'absolute w-2 h-2 bg-red-500 rounded-full top-[-3px]',
+  line: 'absolute h-[2px] bg-red-500'
+} as const
 import { cn } from '@/lib/utils'
 
 interface CurrentTimeLineProps {

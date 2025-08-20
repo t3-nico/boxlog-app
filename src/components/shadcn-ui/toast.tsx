@@ -90,26 +90,26 @@ function getToastIcon(type: Toast['type']) {
   const iconProps = "h-6 w-6"
   switch (type) {
     case 'success':
-      return <CheckCircleIcon className={`${iconProps} text-[var(--color-success-500)]`} data-slot="icon" />
+      return <CheckCircleIcon className={`${iconProps} text-green-500`} data-slot="icon" />
     case 'error':
-      return <XCircleIcon className={`${iconProps} text-[var(--color-error-500)]`} data-slot="icon" />
+      return <XCircleIcon className={`${iconProps} text-red-500`} data-slot="icon" />
     case 'warning':
-      return <ExclamationTriangleIcon className={`${iconProps} text-[var(--color-warning-500)]`} data-slot="icon" />
+      return <ExclamationTriangleIcon className={`${iconProps} text-amber-500`} data-slot="icon" />
     case 'info':
-      return <InformationCircleIcon className={`${iconProps} text-muted-foreground`} data-slot="icon" />
+      return <InformationCircleIcon className={`${iconProps} text-blue-500`} data-slot="icon" />
   }
 }
 
 function getToastStyles(type: Toast['type']) {
   switch (type) {
     case 'success':
-      return 'bg-[var(--color-success-50)] border-[var(--color-success-500)] text-[var(--color-success-900)]'
+      return 'bg-green-50 border-green-500 text-green-900 dark:bg-green-900/20 dark:border-green-400 dark:text-green-100'
     case 'error':
-      return 'bg-[var(--color-error-50)] border-[var(--color-error-500)] text-[var(--color-error-900)]'
+      return 'bg-red-50 border-red-500 text-red-900 dark:bg-red-900/20 dark:border-red-400 dark:text-red-100'
     case 'warning':
-      return 'bg-[var(--color-warning-50)] border-[var(--color-warning-500)] text-[var(--color-warning-900)]'
+      return 'bg-amber-50 border-amber-500 text-amber-900 dark:bg-amber-900/20 dark:border-amber-400 dark:text-amber-100'
     case 'info':
-      return 'bg-card border-border text-card-foreground'
+      return 'bg-blue-50 border-blue-500 text-blue-900 dark:bg-blue-900/20 dark:border-blue-400 dark:text-blue-100'
   }
 }
 
