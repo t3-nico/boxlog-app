@@ -23,7 +23,9 @@
       "WebSearch",
       "Bash(npm test:*)",
       "Bash(npm run dev:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npx tsx:*)",
+      "Bash(npm run generate:css:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

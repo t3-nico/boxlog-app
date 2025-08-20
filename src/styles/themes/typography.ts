@@ -1,81 +1,30 @@
 /**
  * タイポグラフィ設定 - フォント、サイズ、行間の定義
+ * デザイントークンシステムと統合済み
  */
 
-// フォントファミリー
-export const fontFamily = {
-  sans: [
-    'Inter',
-    '-apple-system',
-    'BlinkMacSystemFont',
-    'Segoe UI',
-    'Roboto',
-    'Helvetica Neue',
-    'Arial',
-    'sans-serif'
-  ],
-  mono: [
-    'JetBrains Mono',
-    'Monaco',
-    'Cascadia Code',
-    'Segoe UI Mono',
-    'Roboto Mono',
-    'Oxygen Mono',
-    'Ubuntu Monospace',
-    'Source Code Pro',
-    'Fira Mono',
-    'Droid Sans Mono',
-    'Courier New',
-    'monospace'
-  ],
-} as const
+import { 
+  primitiveTypography,
+  typographyTokens,
+} from './design-tokens'
 
-// フォントサイズ（14pxベース）
-export const fontSize = {
-  xs: ['0.75rem', { lineHeight: '1rem' }],      // 12px
-  sm: ['0.875rem', { lineHeight: '1.25rem' }],  // 14px
-  base: ['1rem', { lineHeight: '1.5rem' }],     // 16px
-  lg: ['1.125rem', { lineHeight: '1.75rem' }],  // 18px
-  xl: ['1.25rem', { lineHeight: '1.75rem' }],   // 20px
-  '2xl': ['1.5rem', { lineHeight: '2rem' }],    // 24px
-  '3xl': ['1.875rem', { lineHeight: '2.25rem' }], // 30px
-  '4xl': ['2.25rem', { lineHeight: '2.5rem' }], // 36px
-  '5xl': ['3rem', { lineHeight: '1' }],         // 48px
-  '6xl': ['3.75rem', { lineHeight: '1' }],      // 60px
-} as const
+// フォントファミリー（デザイントークンから取得）
+export const fontFamily = primitiveTypography.fontFamily
 
-// フォント太さ
-export const fontWeight = {
-  thin: '100',
-  extraLight: '200',
-  light: '300',
-  normal: '400',
-  medium: '500',
-  semiBold: '600',
-  bold: '700',
-  extraBold: '800',
-  black: '900',
-} as const
+// フォントサイズ（デザイントークンから取得、Tailwind形式）
+export const fontSize = Object.entries(primitiveTypography.fontSize).reduce((acc, [key, value]) => {
+  acc[key as keyof typeof primitiveTypography.fontSize] = [value.rem, { lineHeight: value.lineHeight }]
+  return acc
+}, {} as Record<keyof typeof primitiveTypography.fontSize, [string, { lineHeight: string }]>)
 
-// 行間
-export const lineHeight = {
-  none: '1',
-  tight: '1.25',
-  snug: '1.375',
-  normal: '1.5',
-  relaxed: '1.625',
-  loose: '2',
-} as const
+// フォント太さ（デザイントークンから取得）
+export const fontWeight = primitiveTypography.fontWeight
 
-// 文字間隔
-export const letterSpacing = {
-  tighter: '-0.05em',
-  tight: '-0.025em',
-  normal: '0em',
-  wide: '0.025em',
-  wider: '0.05em',
-  widest: '0.1em',
-} as const
+// 行間（デザイントークンから取得）
+export const lineHeight = primitiveTypography.lineHeight
+
+// 文字間隔（デザイントークンから取得）
+export const letterSpacing = primitiveTypography.letterSpacing
 
 // テキストサイズ設定（意味的）
 export const textStyles = {

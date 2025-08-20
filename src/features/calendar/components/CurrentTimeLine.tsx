@@ -5,6 +5,8 @@
 'use client'
 
 import React, { useMemo, useEffect, useState } from 'react'
+import { currentTimeLineStyles } from '@/styles/themes/components'
+import { cn } from '@/lib/utils'
 
 interface CurrentTimeLineProps {
   hourHeight: number
@@ -75,21 +77,19 @@ export function CurrentTimeLine({
   
   return (
     <div
-      className="absolute z-30 pointer-events-none"
+      className={cn(currentTimeLineStyles.container)}
       style={{
         top: `${topPosition}px`,
-        left: 0,  // 左端から開始
-        right: 0, // 右端まで伸ばす
-        width: '100%', // 明示的に100%幅を指定
+        left: 0,
+        right: 0,
+        width: '100%'
       }}
     >
       {/* 時刻ラベル */}
       <div 
-        className="absolute bg-red-500 text-white text-xs px-1 py-0.5 rounded"
+        className={cn(currentTimeLineStyles.label)}
         style={{
-          top: '-10px',
-          left: `${timeColumnWidth - 40}px`, // 時間列の位置に配置
-          fontSize: '11px',
+          left: `${timeColumnWidth - 40}px`
         }}
       >
         {timeString}
@@ -97,21 +97,19 @@ export function CurrentTimeLine({
       
       {/* 赤い点 */}
       <div 
-        className="absolute w-2 h-2 bg-red-500 rounded-full"
+        className={cn(currentTimeLineStyles.dot)}
         style={{
-          top: '-3px', // 線の中央に配置
-          left: `${timeColumnWidth}px`, // 時間列の右端
+          left: `${timeColumnWidth}px`
         }}
       />
       
       {/* 赤い線 - 時間列の右から画面端まで */}
       <div 
-        className="absolute h-[2px] bg-red-500"
+        className={cn(currentTimeLineStyles.line)}
         style={{
-          top: 0,
-          left: `${timeColumnWidth}px`, // 時間列の幅分だけ左をオフセット
-          right: 0, // 右端まで
-          width: `calc(100% - ${timeColumnWidth}px)`, // 時間列を除いた幅
+          left: `${timeColumnWidth}px`,
+          right: 0,
+          width: `calc(100% - ${timeColumnWidth}px)`
         }}
       />
     </div>

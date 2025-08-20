@@ -9,6 +9,8 @@ import { EventContent } from './EventContent'
 import { useEventPosition } from '../../hooks/useEventPosition'
 import { MIN_EVENT_HEIGHT, Z_INDEX, TRANSITION_DURATION } from '../../constants/grid.constants'
 import type { EventBlockProps, TimedEvent } from '../../types/event.types'
+import { eventBlockVariants, calendarZIndex } from '@/styles/themes/components'
+import { cn } from '@/lib/utils'
 
 export const EventBlock = memo<EventBlockProps>(function EventBlock({
   event,
@@ -75,21 +77,18 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     }
   }
   
-  // CSSクラスを組み立て
-  const eventClasses = [
-    'rounded-md shadow-sm border-l-4 px-2 py-1 overflow-hidden',
-    'hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1',
-    isSelected ? 'ring-2 ring-blue-500 ring-offset-1' : '',
-    isHovered ? 'shadow-lg' : '',
-    // カラー設定（Tailwindクラス）
-    eventColor === 'blue' ? 'bg-blue-100 border-blue-500 text-blue-900 dark:bg-blue-900 dark:text-blue-100' :
-    eventColor === 'red' ? 'bg-red-100 border-red-500 text-red-900 dark:bg-red-900 dark:text-red-100' :
-    eventColor === 'green' ? 'bg-green-100 border-green-500 text-green-900 dark:bg-green-900 dark:text-green-100' :
-    eventColor === 'yellow' ? 'bg-yellow-100 border-yellow-500 text-yellow-900 dark:bg-yellow-900 dark:text-yellow-100' :
-    eventColor === 'purple' ? 'bg-purple-100 border-purple-500 text-purple-900 dark:bg-purple-900 dark:text-purple-100' :
-    'bg-gray-100 border-gray-500 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+  // 状態に応じたスタイルを決定
+  const eventState = isDragging ? 'dragging' : isSelected ? 'selected' : isHovered ? 'hovered' : 'default'
+  
+  // CSSクラスを組み立て（中央管理のスタイルを使用）
+  const eventClasses = cn(
+    eventBlockVariants({
+      color: eventColor as any,
+      state: eventState,
+      size: position.height < 30 ? 'compact' : 'default'
+    }),
     className
-  ].filter(Boolean).join(' ')
+  )
   
   return (
     <div

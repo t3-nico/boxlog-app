@@ -361,6 +361,32 @@ export const motionConfig = {
   },
 } as const
 
+// 統一エクスポート
+export const allKeyframes = keyframes
+export const animationConfig = {
+  animation: {
+    spin: `spin 1s ${easing.linear} infinite`,
+    pulse: `pulse 2s ${easing.ease} infinite`,
+    bounce: `bounce 1s infinite`,
+    fadeIn: `fadeIn ${duration.normal} ${easing.standard}`,
+    fadeOut: `fadeOut ${duration.normal} ${easing.standard}`,
+    slideInUp: `slideInUp ${duration.normal} ${easing.standard}`,
+    slideInDown: `slideInDown ${duration.normal} ${easing.standard}`,
+    slideInLeft: `slideInLeft ${duration.normal} ${easing.standard}`,
+    slideInRight: `slideInRight ${duration.normal} ${easing.standard}`,
+    scaleIn: `scaleIn ${duration.normal} ${easing.standard}`,
+    scaleOut: `scaleOut ${duration.normal} ${easing.standard}`,
+    shake: `shake ${duration.slow} ${easing.easeInOut}`,
+  }
+}
+
+export const unifiedAnimations = {
+  keyframes,
+  calendar: calendarAnimations,
+  components: componentAnimations,
+  motion: motionConfig
+}
+
 // 型定義
 export type EasingKey = keyof typeof easing
 export type DurationKey = keyof typeof duration

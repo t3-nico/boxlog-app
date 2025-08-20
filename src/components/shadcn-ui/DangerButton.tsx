@@ -7,6 +7,7 @@
 import React from 'react'
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
+import { dangerButtonVariants } from '@/styles/themes/components'
 
 interface DangerButtonProps extends React.ComponentProps<typeof Button> {
   children: React.ReactNode
@@ -32,8 +33,7 @@ export function DangerButton({
   return (
     <Button
       className={cn(
-        'bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 focus:ring-red-500 dark:focus:ring-red-400',
-        'disabled:bg-red-400 disabled:cursor-not-allowed',
+        dangerButtonVariants({ intent: 'delete' }),
         className
       )}
       onClick={handleClick}
