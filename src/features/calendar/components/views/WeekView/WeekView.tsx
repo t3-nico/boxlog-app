@@ -38,7 +38,7 @@ export function WeekView({
   events,
   currentDate,
   showWeekends = true,
-  weekStartsOn = 0, // 0: 日曜始まり, 1: 月曜始まり
+  weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
   className,
   onTaskClick,
   onEventClick,
@@ -81,6 +81,7 @@ export function WeekView({
       ? weekDates 
       : weekDates.filter(day => !isWeekend(day))
   }, [weekDates, showWeekends])
+  
   
   // 初期スクロールはScrollableCalendarLayoutに委譲
   

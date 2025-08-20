@@ -16,7 +16,7 @@ const SidebarHeader = React.memo(({ title }: { title: string }) => {
 
   return (
     <div className="flex-shrink-0 mb-4">
-      <div className="px-2 flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-foreground">
           {title}
         </h1>

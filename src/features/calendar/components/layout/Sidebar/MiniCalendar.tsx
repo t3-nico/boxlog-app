@@ -92,7 +92,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
   return (
     <div 
       className={cn(
-        "mini-calendar w-full bg-background p-2 select-none",
+        "mini-calendar w-full bg-background select-none",
         className
       )}
       role="application"
@@ -104,13 +104,13 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
           variant="ghost"
           size="sm"
           onClick={handlePrevMonth}
-          className="h-7 w-7 p-0"
+          className="h-8 w-8 p-0"
           aria-label="Previous Month"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
         
-        <div className="font-medium text-sm">
+        <div className="font-medium text-base">
           {format(currentMonth, 'MMM yyyy')}
         </div>
         
@@ -118,7 +118,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
           variant="ghost"
           size="sm"
           onClick={handleNextMonth}
-          className="h-7 w-7 p-0"
+          className="h-8 w-8 p-0"
           aria-label="Next Month"
         >
           <ChevronRight className="h-4 w-4" />
@@ -131,14 +131,14 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
         showWeekNumbers && "grid-cols-8"
       )}>
         {showWeekNumbers && (
-          <div className="h-5 text-xs text-muted-foreground flex items-center justify-center">
+          <div className="h-6 text-xs text-muted-foreground flex items-center justify-center">
             W
           </div>
         )}
         {weekDays.map((day, index) => (
           <div 
             key={index}
-            className="h-5 text-xs font-medium text-muted-foreground flex items-center justify-center"
+            className="h-6 text-xs font-medium text-muted-foreground flex items-center justify-center"
           >
             {day}
           </div>
@@ -160,7 +160,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
             showWeekNumbers && (
               <div
                 key={`week-${weekIndex}`}
-                className="h-7 w-7 text-xs text-muted-foreground flex items-center justify-center"
+                className="h-8 w-8 text-xs text-muted-foreground flex items-center justify-center"
               >
                 {getWeekNumber(weekDays[0])}
               </div>
@@ -185,7 +185,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                   disabled={isDisabled}
                   className={cn(
                     // Base styles
-                    "h-7 w-7 text-xs rounded-md transition-colors",
+                    "h-8 w-8 text-sm rounded-md transition-colors",
                     "hover:bg-accent focus:bg-accent focus:outline-none",
                     
                     // Current month vs other months
@@ -201,7 +201,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                     
                     // Today indicator
                     isToday && !isSelected && [
-                      "bg-accent font-semibold"
+                      "bg-primary/20 text-primary font-semibold border border-primary/30"
                     ],
                     
                     // Highlighted dates (events, etc.)

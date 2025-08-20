@@ -25,7 +25,7 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
 }) {
   return (
     <div
-      className="absolute w-full text-xs text-gray-500 dark:text-gray-400 font-medium select-none"
+      className="absolute w-full text-xs text-muted-foreground font-medium select-none"
       style={{
         top: `${position}px`,
         height: '0px',
@@ -37,7 +37,7 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
     >
       {/* 0時は表示しない（見た目がすっきりする） */}
       {!(hour === 0 && isFirst) && (
-        <span className="bg-white dark:bg-gray-900 px-1">
+        <span className="bg-background px-1">
           {label}
         </span>
       )}

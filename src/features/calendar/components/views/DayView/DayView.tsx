@@ -44,13 +44,18 @@ export function DayView({
     desktop: 72
   })
   
-  // OldDayViewと同様の表示日付配列を計算
+  // 表示する日付（currentDateを使用）
   const displayDates = useMemo(() => {
-    return dateRange.days.length > 0 ? dateRange.days : [currentDate]
-  }, [dateRange.days, currentDate])
+    const date = new Date(currentDate)
+    date.setHours(0, 0, 0, 0)
+    console.log('🔧 DayView: currentDateを表示します', {
+      currentDate: date.toDateString()
+    })
+    return [date]
+  }, [currentDate])
   
   // 最初の日付を使用（Day表示なので1日のみ）
-  const date = displayDates[0] || currentDate
+  const date = displayDates[0]
   
   // DayView専用ロジック
   const {
@@ -87,7 +92,7 @@ export function DayView({
 
   return (
     <CalendarViewAnimation viewType="day">
-      <div className={cn('flex flex-col h-full bg-background', className)}>
+      <div className={cn('flex flex-col h-full bg-background overflow-x-hidden', className)}>
         
         {/* メインコンテンツエリア */}
         <div className="flex-1 min-h-0">

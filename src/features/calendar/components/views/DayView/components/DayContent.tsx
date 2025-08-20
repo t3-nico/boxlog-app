@@ -65,7 +65,7 @@ export function DayContent({
   ))
   
   return (
-    <div className={cn('relative flex-1 bg-background', className)}>
+    <div className={cn('relative flex-1 bg-background overflow-hidden', className)}>
       {/* クリック可能な背景グリッド */}
       <div
         className="absolute inset-0 cursor-pointer"
@@ -76,7 +76,7 @@ export function DayContent({
       </div>
       
       {/* イベント表示エリア */}
-      <div className="relative" style={{ height: 24 * HOUR_HEIGHT }}>
+      <div className="relative w-full" style={{ height: 24 * HOUR_HEIGHT }}>
         {events.map(event => {
           const style = eventStyles[event.id]
           if (!style) return null

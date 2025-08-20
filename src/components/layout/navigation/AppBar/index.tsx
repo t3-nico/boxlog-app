@@ -15,7 +15,7 @@ export function AppBar() {
       'w-[60px] bg-background border-r border-border flex flex-col'
     )}>
       {/* Main Navigation Items */}
-      <div className="flex-1 flex flex-col items-center py-4 gap-2">
+      <div className="flex-1 flex flex-col items-center py-3 gap-2">
         {primaryNavigation.filter(section => section.id !== 'user').map((section, sectionIndex, filteredSections) => (
           <React.Fragment key={section.id}>
             {section.items.map((item) => (

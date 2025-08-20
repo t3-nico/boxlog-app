@@ -4,10 +4,11 @@
 
 'use client'
 
-import React, { useRef, useEffect, useCallback, useState } from 'react'
+import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
-import { TimeColumn, CurrentTimeLine, TimezoneOffset } from '../'
+import { TimeColumn, TimezoneOffset } from '../'
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
+import '../styles/scrollable-layout.css'
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode
@@ -51,12 +52,67 @@ export function ScrollableCalendarLayout({
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout>()
   const [isScrolling, setIsScrolling] = useState(false)
+  const [containerWidth, setContainerWidth] = useState(800)
   
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
     desktop: 72
   })
+
+  // 今日の列の位置を計算
+  const todayColumnPosition = useMemo(() => {
+    if (!displayDates || displayDates.length === 0) {
+      return null
+    }
+    
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    // 今日のインデックスを見つける
+    const todayIndex = displayDates.findIndex(date => {
+      if (!date) return false
+      const d = new Date(date)
+      d.setHours(0, 0, 0, 0)
+      return d.getTime() === today.getTime()
+    })
+    
+    if (todayIndex === -1) {
+      return null
+    }
+    
+    // 単一日表示の場合
+    if (displayDates.length === 1) {
+      return {
+        left: 0,
+        width: '100%'
+      }
+    }
+    
+    // 複数日表示の場合、列の幅と位置を計算
+    const columnWidth = 100 / displayDates.length // パーセント
+    const leftPosition = (todayIndex * columnWidth) // パーセント
+    
+    return {
+      left: `${leftPosition}%`,
+      width: `${columnWidth}%`
+    }
+  }, [displayDates])
+  
+  // 今日が表示範囲に含まれるか判定
+  const shouldShowCurrentTimeLine = useMemo(() => {
+    return showCurrentTime && todayColumnPosition !== null
+  }, [showCurrentTime, todayColumnPosition])
+  
+  // 現在時刻の位置を計算
+  const [currentTime, setCurrentTime] = useState(new Date())
+  const currentTimePosition = useMemo(() => {
+    const hours = currentTime.getHours()
+    const minutes = currentTime.getMinutes()
+    const totalHours = hours + (minutes / 60)
+    return totalHours * HOUR_HEIGHT
+  }, [currentTime, HOUR_HEIGHT])
+  
 
   // ScrollableCalendarLayoutの初期化完了
   
@@ -73,6 +129,20 @@ export function ScrollableCalendarLayout({
       }, 100)
     }
   }, [scrollToHour, HOUR_HEIGHT])
+  
+  // コンテナ幅の動的取得
+  useEffect(() => {
+    const updateContainerWidth = () => {
+      if (scrollContainerRef.current) {
+        const width = scrollContainerRef.current.offsetWidth
+        setContainerWidth(width)
+      }
+    }
+    
+    updateContainerWidth()
+    window.addEventListener('resize', updateContainerWidth)
+    return () => window.removeEventListener('resize', updateContainerWidth)
+  }, [])
 
   // スクロールイベントの処理
   const handleScroll = useCallback(() => {
@@ -179,6 +249,18 @@ export function ScrollableCalendarLayout({
     }
   }, [enableKeyboardNavigation, handleKeyDown])
   
+  // 1分ごとに現在時刻を更新
+  useEffect(() => {
+    if (!shouldShowCurrentTimeLine) return
+    
+    const updateCurrentTime = () => setCurrentTime(new Date())
+    updateCurrentTime() // 初回実行
+    
+    const timer = setInterval(updateCurrentTime, 60000) // 1分ごと
+    
+    return () => clearInterval(timer)
+  }, [shouldShowCurrentTimeLine])
+  
   // グリッドクリックハンドラー
   const handleGridClick = useCallback((e: React.MouseEvent) => {
     if (!onTimeClick || !scrollContainerRef.current) return
@@ -227,7 +309,7 @@ export function ScrollableCalendarLayout({
         <div 
           ref={scrollContainerRef}
           className={cn(
-            'flex-1 overflow-y-auto relative',
+            'flex-1 overflow-y-auto overflow-x-hidden relative custom-scrollbar scroll-performance',
             enableKeyboardNavigation && 'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2'
           )}
           onClick={handleGridClick}
@@ -237,10 +319,10 @@ export function ScrollableCalendarLayout({
           aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
         >
           <div 
-            className="flex w-full"
+            className="flex w-full relative"
             style={{ height: `${24 * HOUR_HEIGHT}px` }}
           >
-            {/* 時間軸列 - スクロールと同期 */}
+            {/* 時間軸列 */}
             {showTimeColumn && (
               <div 
                 className="shrink-0 bg-muted/5 sticky left-0 z-10"
@@ -258,19 +340,32 @@ export function ScrollableCalendarLayout({
             
             {/* グリッドコンテンツエリア */}
             <div className="flex-1 relative">
-              {/* 現在時刻線 */}
-              {showCurrentTime && (
-                <CurrentTimeLine
-                  hourHeight={HOUR_HEIGHT}
-                  timeColumnWidth={showTimeColumn ? timeColumnWidth : 0}
-                  className="absolute left-0 right-0 z-20 pointer-events-none"
-                  displayDates={displayDates}
-                  viewMode={viewMode}
-                />
-              )}
-              
               {/* メインコンテンツ */}
               {children}
+              
+              {/* 現在時刻線 - 今日の列のみに表示 */}
+              {shouldShowCurrentTimeLine && todayColumnPosition && (
+                <>
+                  {/* 横線 - 今日の列のみ */}
+                  <div
+                    className="absolute h-[2px] bg-blue-600 dark:bg-blue-400 z-40 pointer-events-none shadow-sm"
+                    style={{ 
+                      top: `${currentTimePosition}px`,
+                      left: todayColumnPosition.left,
+                      width: todayColumnPosition.width
+                    }}
+                  />
+                  
+                  {/* 点 - 今日の列の左端 */}
+                  <div
+                    className="absolute w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full z-40 pointer-events-none shadow-md border border-white dark:border-gray-800"
+                    style={{
+                      top: `${currentTimePosition - 4}px`,
+                      left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left
+                    }}
+                  />
+                </>
+              )}
             </div>
           </div>
         </div>

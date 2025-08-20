@@ -6,7 +6,6 @@
 
 import React, { memo, useMemo } from 'react'
 import { EventBlock } from '../EventBlock'
-import { CurrentTimeLineForColumn } from '../../grid/CurrentTimeLine'
 import { EmptyState } from '../EmptyState'
 import { useEventPosition } from '../../hooks/useEventPosition'
 import { filterEventsByDate, sortTimedEvents } from '../../utils/eventPositioning'
@@ -75,13 +74,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
           minHeight: `${24 * hourHeight}px`
         }}
       >
-        {/* 現在時刻線（今日のみ） */}
-        {isTodayActual && (
-          <CurrentTimeLineForColumn
-            hourHeight={hourHeight}
-            showDot={true}
-          />
-        )}
+        {/* 現在時刻線はScrollableCalendarLayoutで統一表示 */}
         
         {/* イベント */}
         {dayEvents.map((event) => {

@@ -425,69 +425,22 @@ export function CalendarViewAnimation({
       (previousViewType === 'month' && viewType === 'week') ||
       (previousViewType === 'week' && viewType === 'day')
     ) {
-      return 'animate-zoomIn'
+      return 'calendar-zoom-in'
     }
     
     if (
       (previousViewType === 'day' && viewType === 'week') ||
       (previousViewType === 'week' && viewType === 'month')
     ) {
-      return 'animate-zoomOut'
+      return 'calendar-zoom-out'
     }
     
-    return 'animate-slideIn'
+    return 'calendar-slide-in'
   }
   
   return (
     <div className={`${getAnimationClass()} h-full`}>
       {children}
-      
-      <style jsx>{`
-        @keyframes zoomIn {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        @keyframes zoomOut {
-          from {
-            opacity: 0;
-            transform: scale(1.05);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        
-        .animate-zoomIn {
-          animation: zoomIn 0.3s ease-out;
-        }
-        
-        .animate-zoomOut {
-          animation: zoomOut 0.3s ease-out;
-        }
-        
-        .animate-slideIn {
-          animation: slideIn 0.2s ease-out;
-        }
-      `}</style>
     </div>
   )
 }

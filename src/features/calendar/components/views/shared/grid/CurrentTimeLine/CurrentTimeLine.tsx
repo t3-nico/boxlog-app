@@ -1,13 +1,13 @@
 /**
- * 現在時刻線コンポーネント
+ * 現在時刻線コンポーネント - シンプル版
  */
 
 'use client'
 
-import React, { memo } from 'react'
+import React, { memo, useMemo } from 'react'
 import { useCurrentTime } from '../../hooks/useCurrentTime'
 import { timeToPixels } from '../../utils/gridCalculator'
-import { HOUR_HEIGHT, CURRENT_TIME_LINE_COLOR, CURRENT_TIME_DOT_SIZE, Z_INDEX } from '../../constants/grid.constants'
+import { HOUR_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
 import type { CurrentTimeLineProps } from '../../types/grid.types'
 
 export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLine({
@@ -25,24 +25,88 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
   // 現在時刻のY座標を計算
   const topPosition = timeToPixels(currentTime, hourHeight)
   
-  // デバッグ用のログ（開発環境のみ）
-  React.useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('CurrentTimeLine rendered:', {
-        currentTime: currentTime.toLocaleTimeString(),
-        topPosition,
-        hourHeight,
-        timeColumnWidth,
-        className
-      })
+  // 今日かどうかをチェック
+  const shouldShow = useMemo(() => {
+    if (!displayDates || displayDates.length === 0) {
+      return true // displayDatesがない場合は表示
     }
-  }, [currentTime, topPosition, hourHeight, timeColumnWidth, className])
+    
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    const hasToday = displayDates.some(date => {
+      const d = new Date(date)
+      d.setHours(0, 0, 0, 0)
+      return d.getTime() === today.getTime()
+    })
+    
+    console.log('🔧 CurrentTimeLine shouldShow:', {
+      viewMode,
+      hasToday,
+      displayDatesCount: displayDates.length,
+      today: today.toDateString()
+    })
+    
+    return hasToday
+  }, [displayDates, viewMode])
+  
+  // 今日の列位置を計算（複数日表示の場合）
+  const columnInfo = useMemo(() => {
+    if (!displayDates || displayDates.length <= 1) {
+      // 単一日表示の場合は全幅
+      return {
+        left: timeColumnWidth,
+        width: '100%'
+      }
+    }
+    
+    // 複数日表示の場合、今日の列を特定
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    const todayIndex = displayDates.findIndex(date => {
+      const d = new Date(date)
+      d.setHours(0, 0, 0, 0)
+      return d.getTime() === today.getTime()
+    })
+    
+    if (todayIndex === -1) {
+      return null // 今日が見つからない場合
+    }
+    
+    // 今日の列の位置とサイズを計算
+    const availableWidth = containerWidth - timeColumnWidth
+    const columnWidth = availableWidth / displayDates.length
+    const left = timeColumnWidth + (todayIndex * columnWidth)
+    
+    console.log('🔧 CurrentTimeLine 列計算:', {
+      containerWidth,
+      timeColumnWidth,
+      availableWidth,
+      displayDatesLength: displayDates.length,
+      todayIndex,
+      columnWidth,
+      left
+    })
+    
+    return {
+      left,
+      width: columnWidth
+    }
+  }, [displayDates, timeColumnWidth, containerWidth])
+  
+  // 今日が含まれていない場合は表示しない
+  if (!shouldShow || !columnInfo) {
+    return null
+  }
   
   return (
     <div
-      className={`absolute left-0 right-0 pointer-events-none ${className}`}
+      className={`absolute pointer-events-none ${className}`}
       style={{
         top: `${topPosition}px`,
+        left: `${columnInfo.left}px`,
+        width: typeof columnInfo.width === 'string' ? columnInfo.width : `${columnInfo.width}px`,
         height: '2px',
         zIndex: Z_INDEX.CURRENT_TIME
       }}
@@ -50,24 +114,20 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       {/* 時間列のドット */}
       {showDot && (
         <div
-          className={`absolute ${CURRENT_TIME_LINE_COLOR} rounded-full border-2 border-white dark:border-gray-900`}
+          className="absolute bg-red-500 rounded-full border-2 border-white dark:border-gray-900"
           style={{
-            left: `${timeColumnWidth - CURRENT_TIME_DOT_SIZE / 2}px`,
-            top: `${-CURRENT_TIME_DOT_SIZE / 2}px`,
-            width: `${CURRENT_TIME_DOT_SIZE}px`,
-            height: `${CURRENT_TIME_DOT_SIZE}px`
+            left: `-6px`,
+            top: `-4px`,
+            width: '8px',
+            height: '8px'
           }}
         />
       )}
       
-      {/* 時刻線 - グリッド全体に表示 */}
+      {/* 時刻線 */}
       <div
-        className="absolute bg-red-500 shadow-lg"
+        className="w-full h-full bg-red-500 shadow-lg"
         style={{
-          left: `${timeColumnWidth}px`,
-          right: '0px',
-          top: '0px',
-          height: '2px',
           background: 'linear-gradient(90deg, rgba(239, 68, 68, 0.9) 0%, rgba(239, 68, 68, 0.7) 100%)',
           boxShadow: '0 1px 3px rgba(239, 68, 68, 0.5)'
         }}
@@ -75,10 +135,10 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       
       {/* 現在時刻ラベル */}
       <div
-        className="absolute text-xs font-medium text-red-600 dark:text-red-400 bg-white dark:bg-gray-900 px-1 rounded"
+        className="absolute text-xs font-medium text-red-600 dark:text-red-400 bg-white dark:bg-gray-900 px-1 rounded whitespace-nowrap"
         style={{
-          left: `${timeColumnWidth + 4}px`,
-          top: `-10px`
+          left: '4px',
+          top: '-12px'
         }}
       >
         {currentTime.toLocaleTimeString('ja-JP', { 
@@ -119,18 +179,18 @@ export const CurrentTimeLineForColumn = memo<{
       {/* ドット（列の左端） */}
       {showDot && (
         <div
-          className={`absolute ${CURRENT_TIME_LINE_COLOR} rounded-full border-2 border-white dark:border-gray-900`}
+          className="absolute bg-red-500 rounded-full border-2 border-white dark:border-gray-900"
           style={{
-            left: `${-CURRENT_TIME_DOT_SIZE / 2}px`,
-            top: `${-CURRENT_TIME_DOT_SIZE / 2}px`,
-            width: `${CURRENT_TIME_DOT_SIZE}px`,
-            height: `${CURRENT_TIME_DOT_SIZE}px`
+            left: `-4px`,
+            top: `-4px`,
+            width: '8px',
+            height: '8px'
           }}
         />
       )}
       
       {/* 時刻線 */}
-      <div className={`${CURRENT_TIME_LINE_COLOR} h-0.5 w-full`} />
+      <div className="bg-red-500 h-0.5 w-full" />
     </div>
   )
 })

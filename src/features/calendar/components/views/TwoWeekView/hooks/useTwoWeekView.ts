@@ -31,8 +31,8 @@ export function useTwoWeekView({
   
   // 2週間（14日）の日付を生成
   const twoWeekDates = useMemo(() => {
-    // startDateを週の開始日に正規化（日曜始まり）
-    const weekStart = startOfWeek(startDate, { weekStartsOn: 0 })
+    // startDateを週の開始日に正規化（月曜始まり）
+    const weekStart = startOfWeek(startDate, { weekStartsOn: 1 })
     
     // 14日分の日付を生成
     return Array.from({ length: 14 }, (_, index) => 

@@ -46,8 +46,15 @@ export function ThreeDayView({
     desktop: 72
   })
   
-  // Center date to display (use currentDate if not specified)
-  const displayCenterDate = centerDate || currentDate
+  // ThreeDayViewではcenterDateまたはcurrentDateを中心とした3日間を表示
+  const displayCenterDate = useMemo(() => {
+    const date = new Date(centerDate || currentDate)
+    date.setHours(0, 0, 0, 0)
+    console.log('🔧 ThreeDayView: centerDateを中心とした3日間を表示します', {
+      centerDate: date.toDateString()
+    })
+    return date
+  }, [centerDate, currentDate])
   
   // ThreeDayView specific logic
   const {
@@ -59,6 +66,9 @@ export function ThreeDayView({
     events,
     HOUR_HEIGHT
   })
+  
+  // 3日間の日付配列を使用（CurrentTimeLine表示のため）
+  const displayDates = useMemo(() => threeDayDates, [threeDayDates])
 
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = React.useCallback((
@@ -128,7 +138,7 @@ export function ThreeDayView({
           header={headerComponent}
           timezone={timezone}
           scrollToHour={isCurrentDay ? undefined : 8}
-          displayDates={threeDayDates}
+          displayDates={displayDates}
           viewMode="3day"
           onTimeClick={(hour, minute) => {
             // ThreeDayViewでは最初にクリックされた日付を使用

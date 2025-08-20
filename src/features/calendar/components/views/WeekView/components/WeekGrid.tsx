@@ -41,6 +41,14 @@ export function WeekGrid({
     events
   })
   
+  // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）
+  const currentTimeDisplayDates = React.useMemo(() => {
+    console.log('🔧 WeekGrid: displayDatesを設定', {
+      weekDates: weekDates.map(d => d.toDateString())
+    })
+    return weekDates
+  }, [weekDates])
+  
   
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = useCallback((
@@ -106,7 +114,7 @@ export function WeekGrid({
       header={headerComponent}
       timezone={timezone}
       scrollToHour={todayIndex !== -1 ? undefined : 8}
-      displayDates={weekDates}
+      displayDates={currentTimeDisplayDates}
       viewMode="week"
       onTimeClick={(hour, minute) => {
         // WeekViewでは最初にクリックされた日付を使用

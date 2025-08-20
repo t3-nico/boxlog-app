@@ -15,6 +15,7 @@ export { HourLines, HalfHourLines } from './grid/GridLines'
 
 // CurrentTimeLine - 現在時刻線
 export { CurrentTimeLine, CurrentTimeLineForColumn } from './grid/CurrentTimeLine'
+export { CurrentTimeLine as SimpleCurrentTimeLine } from '../../CurrentTimeLine'
 
 // ===== UIコンポーネント =====
 // EventBlock - イベント表示
@@ -56,6 +57,7 @@ export type { PositionedEvent } from './hooks/useEventPosition'
 export * from './utils/gridCalculator'
 export * from './utils/eventPositioning'
 export * from './utils/dateHelpers'
+
 
 // ===== 定数 =====
 export * from './constants/grid.constants'

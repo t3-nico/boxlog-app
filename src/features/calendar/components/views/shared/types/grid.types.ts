@@ -28,6 +28,7 @@ export interface TimeGridProps {
   children?: React.ReactNode
   onTimeClick?: (hour: number, minute: number) => void
   scrollToHour?: number // 初期スクロール位置
+  displayDates?: Date[] // 表示日付（現在時刻線の表示判定に使用）
 }
 
 export interface TimeColumnProps {

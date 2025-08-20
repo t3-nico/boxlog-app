@@ -16,12 +16,12 @@ export const EVENT_VERTICAL_PADDING = 2 // イベントの上下パディング(
 export const TIME_COLUMN_WIDTH = 60 // 時間列の幅(px)
 export const TIME_LABEL_HEIGHT = HOUR_HEIGHT // 時間ラベルの高さ(px)
 
-// グリッド線のスタイル
-export const HOUR_LINE_COLOR = 'border-gray-200 dark:border-gray-700'
-export const HALF_HOUR_LINE_COLOR = 'border-gray-100 dark:border-gray-800'
+// グリッド線のスタイル（Compass Neutral対応）
+export const HOUR_LINE_COLOR = 'border-border'
+export const HALF_HOUR_LINE_COLOR = 'border-border/50'
 
 // 現在時刻線
-export const CURRENT_TIME_LINE_COLOR = 'bg-red-500'
+export const CURRENT_TIME_LINE_COLOR = 'bg-primary'
 export const CURRENT_TIME_DOT_SIZE = 8 // 現在時刻のドットサイズ(px)
 
 
@@ -36,9 +36,9 @@ export const TRANSITION_DURATION = 150 // トランジション時間(ms)
 export const SCROLL_TO_HOUR = 8 // 初期表示時にスクロールする時間（8時）
 export const SCROLL_BEHAVIOR = 'smooth' as const
 
-// カラー（Tailwind CSS クラス）
-export const GRID_BACKGROUND = 'bg-white dark:bg-gray-900'
-export const GRID_BORDER = 'border-gray-200 dark:border-gray-700'
+// カラー（Compass Neutral 対応）
+export const GRID_BACKGROUND = 'bg-background'
+export const GRID_BORDER = 'border-border'
 
 // Z-index層
 export const Z_INDEX = {

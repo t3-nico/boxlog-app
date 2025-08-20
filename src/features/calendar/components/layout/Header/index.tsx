@@ -21,12 +21,12 @@ interface CalendarHeaderProps {
 }
 
 const viewOptions = [
-  { value: 'day' as CalendarViewType, label: 'Day' },
-  { value: '3day' as CalendarViewType, label: '3 Days' },
-  { value: 'week-no-weekend' as CalendarViewType, label: 'Weekdays' },
-  { value: 'week' as CalendarViewType, label: 'Week' },
-  { value: '2week' as CalendarViewType, label: '2 Weeks' },
-  { value: 'schedule' as CalendarViewType, label: 'Schedule' },
+  { value: 'day' as CalendarViewType, label: 'Day', shortcut: 'D' },
+  { value: '3day' as CalendarViewType, label: '3 Days', shortcut: '3' },
+  { value: 'week-no-weekend' as CalendarViewType, label: 'Weekdays', shortcut: 'W' },
+  { value: 'week' as CalendarViewType, label: 'Week', shortcut: '7' },
+  { value: '2week' as CalendarViewType, label: '2 Weeks', shortcut: '2' },
+  { value: 'schedule' as CalendarViewType, label: 'Schedule', shortcut: 'S' },
 ]
 
 /**
@@ -45,8 +45,8 @@ export function CalendarHeader({
   leftSlot
 }: CalendarHeaderProps) {
   return (
-    <header className="relative h-16 bg-background px-4">
-      <div className="h-full flex items-center justify-between">
+    <header className="relative bg-background px-4 py-4">
+      <div className="flex items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
           {/* カスタムスロット（モバイルメニューボタンなど） */}

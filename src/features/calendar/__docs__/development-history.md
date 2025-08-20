@@ -601,6 +601,282 @@ export function useResponsiveHourHeight(
 
 ---
 
+## 2025-08-20: 現在時刻線（CurrentTimeLine）統一実装
+
+### 🎯 目的
+- 全カレンダービューで統一された現在時刻線表示
+- ScrollableCalendarLayout内での完全制御
+- 当日のスロット（列）のみに現在時刻線を表示
+- 視認性の良い色とシンプルなデザインの実現
+
+### 🔧 作業内容
+
+#### 1. 問題の特定と課題
+**問題点:**
+- 現在時刻線が各ビューでまちまちな表示
+- DayColumn、TimeGrid、ScrollableCalendarLayoutで重複実装
+- 今日以外の日付でも画面全幅に表示される
+- 赤色（red-500）で視認性が低い
+
+**課題:**
+- 複数の CurrentTimeLine 実装が存在し制御が複雑
+- 各ビューの構造に依存した表示ロジック
+- 時間表記が不要な情報として表示
+
+#### 2. 重複実装の統一化
+
+**重複していた実装箇所:**
+```typescript
+// 1. ScrollableCalendarLayout.tsx
+<CurrentTimeLine hourHeight={HOUR_HEIGHT} displayDates={displayDates} />
+
+// 2. DayColumn.tsx  
+{isTodayActual && <CurrentTimeLineForColumn hourHeight={hourHeight} />}
+
+// 3. TimeGrid.tsx
+{showCurrentTime && <SimpleCurrentTimeLine />}
+```
+
+**統一後の実装:**
+```typescript
+// ScrollableCalendarLayout.tsx のみで制御
+{shouldShowCurrentTimeLine && todayColumnPosition && (
+  <>
+    {/* 横線 - 今日の列のみ */}
+    <div className="absolute h-[2px] bg-blue-600 dark:bg-blue-400 z-40 pointer-events-none shadow-sm" />
+    {/* 点 - 今日の列の左端 */}
+    <div className="absolute w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full z-40 pointer-events-none shadow-md border border-white dark:border-gray-800" />
+  </>
+)}
+```
+
+#### 3. 今日の列のみ表示機能実装
+
+**列位置計算ロジック:**
+```typescript
+const todayColumnPosition = useMemo(() => {
+  if (!displayDates || displayDates.length === 0) return null
+  
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const todayIndex = displayDates.findIndex(date => {
+    if (!date) return false
+    const d = new Date(date)
+    d.setHours(0, 0, 0, 0)
+    return d.getTime() === today.getTime()
+  })
+  
+  if (todayIndex === -1) return null
+  
+  // 単一日表示の場合
+  if (displayDates.length === 1) {
+    return { left: 0, width: '100%' }
+  }
+  
+  // 複数日表示の場合、列の幅と位置を計算
+  const columnWidth = 100 / displayDates.length
+  const leftPosition = (todayIndex * columnWidth)
+  
+  return {
+    left: `${leftPosition}%`,
+    width: `${columnWidth}%`
+  }
+}, [displayDates])
+```
+
+**表示制御:**
+```typescript
+const shouldShowCurrentTimeLine = useMemo(() => {
+  return showCurrentTime && todayColumnPosition !== null
+}, [showCurrentTime, todayColumnPosition])
+```
+
+#### 4. 視覚デザインの改善
+
+**色の変更:**
+- **Before**: `bg-red-500` (赤色、低コントラスト)
+- **After**: `bg-blue-600 dark:bg-blue-400` (青色、ダークモード対応)
+
+**時間表記の削除:**
+- 時刻ラベル（例: "14:30"）の表示を完全削除
+- `currentTimeString` 生成ロジックも削除
+
+**視覚効果の追加:**
+- 横線: `shadow-sm` 追加
+- 点: `shadow-md` と `border border-white dark:border-gray-800` 追加
+
+#### 5. リアルタイム更新機能
+
+**1分ごとの自動更新:**
+```typescript
+const [currentTime, setCurrentTime] = useState(new Date())
+
+useEffect(() => {
+  if (!shouldShowCurrentTimeLine) return
+  
+  const updateCurrentTime = () => setCurrentTime(new Date())
+  updateCurrentTime()
+  
+  const timer = setInterval(updateCurrentTime, 60000)
+  return () => clearInterval(timer)
+}, [shouldShowCurrentTimeLine])
+```
+
+**位置計算:**
+```typescript
+const currentTimePosition = useMemo(() => {
+  const hours = currentTime.getHours()
+  const minutes = currentTime.getMinutes()
+  const totalHours = hours + (minutes / 60)
+  return totalHours * HOUR_HEIGHT
+}, [currentTime, HOUR_HEIGHT])
+```
+
+### 📊 各ビューでの動作
+
+#### DayView
+- **表示範囲**: 全幅（100%）
+- **条件**: `displayDates = [currentDate]` で今日の場合のみ表示
+
+#### WeekView  
+- **表示範囲**: 今日の曜日列のみ（1/7幅 ≈ 14.3%）
+- **条件**: `displayDates = [日, 月, 火, 水, 木, 金, 土]` で今日が含まれる場合
+
+#### ThreeDayView
+- **表示範囲**: 今日の列のみ（1/3幅 ≈ 33.3%）
+- **条件**: `displayDates = [yesterday, today, tomorrow]` で今日が含まれる場合
+
+#### TwoWeekView
+- **表示範囲**: 今日の列のみ（1/14幅 ≈ 7.1%）
+- **条件**: `displayDates = [14日間の配列]` で今日が含まれる場合
+
+### 🎯 技術的改善点
+
+#### 1. 制御の一元化
+**Before**: 3箇所での分散実装
+```
+- ScrollableCalendarLayout (グローバル制御)
+- DayColumn (列レベル制御)  
+- TimeGrid (グリッドレベル制御)
+```
+
+**After**: 1箇所での統一制御
+```
+ScrollableCalendarLayout
+└── 直接JSX描画による完全制御
+```
+
+#### 2. 依存関係の簡略化
+**Before**: CurrentTimeLineコンポーネントへの依存
+```typescript
+import { CurrentTimeLine } from '../CurrentTimeLine'
+<CurrentTimeLine hourHeight={...} displayDates={...} />
+```
+
+**After**: 自己完結型の実装
+```typescript
+// インポート不要、直接JSX描画
+<div className="absolute h-[2px] bg-blue-600..." />
+```
+
+#### 3. 精確な位置制御
+**Before**: 画面全幅やビュー依存の表示
+```css
+left: 0;
+right: 0;
+width: 100%;
+```
+
+**After**: 数学的に正確な列位置
+```css
+left: `${(todayIndex * 100) / displayDates.length}%`;
+width: `${100 / displayDates.length}%`;
+```
+
+### ✅ 達成された改善点
+
+1. **統一性の確保**
+   - 全ビューで同じ表示ロジック
+   - 一貫したビジュアルデザイン
+   - 統一された更新タイミング
+
+2. **精確性の向上**
+   - 当日の列のみへの正確な表示
+   - 数学的計算による位置精度
+   - リアルタイム時刻同期
+
+3. **視認性の改善**
+   - 青色による高コントラスト
+   - ダークモード完全対応
+   - 影効果による立体感
+
+4. **保守性の向上**
+   - 単一ファイルでの完全制御
+   - 重複コードの完全削除
+   - シンプルな実装構造
+
+5. **パフォーマンスの向上**
+   - 不要なコンポーネント削除
+   - 直接描画による軽量化
+   - 条件分岐の最適化
+
+### 🔧 修正されたファイル
+
+**メインファイル:**
+- `ScrollableCalendarLayout.tsx` - 現在時刻線の完全制御実装
+
+**削除されたファイル:**
+- `SimpleCurrentTimeLine.tsx` - 重複実装のため削除
+
+**修正されたファイル:**
+- `DayColumn.tsx` - CurrentTimeLineForColumn使用を削除
+- `TimeGrid.tsx` - CurrentTimeLine使用をコメントアウト
+- `CurrentTimeLine.tsx` - 最終的には使用されないが保持
+
+**型定義更新:**
+- `TimeGridProps` - displayDatesプロパティ追加
+
+### 📱 ユーザー体験の向上
+
+#### Before (修正前)
+```
+❌ ビューによって現在時刻線がバラバラ
+❌ 今日以外でも画面全幅に表示
+❌ 赤色で視認性が低い
+❌ 不要な時間表記が表示
+❌ 重複による表示の重なり
+```
+
+#### After (修正後)
+```
+✅ 全ビューで統一された表示
+✅ 当日のスロットのみに正確表示
+✅ 青色で高い視認性
+✅ シンプルで清潔なデザイン
+✅ 1本の美しい現在時刻線
+```
+
+### 📝 技術ドキュメント
+
+**アーキテクチャ:**
+```
+ScrollableCalendarLayout
+├── todayColumnPosition: 今日の列位置計算
+├── shouldShowCurrentTimeLine: 表示条件判定
+├── currentTimePosition: Y座標計算
+└── JSX直接描画: 現在時刻線表示
+    ├── 横線 (bg-blue-600, 今日の列幅)
+    └── 点 (bg-blue-600, 列左端)
+```
+
+**依存関係:**
+```
+各ビュー → displayDates → ScrollableCalendarLayout → 現在時刻線表示
+```
+
+---
+
 ## 🏗️ アーキテクチャ概要
 
 ### ビュー階層

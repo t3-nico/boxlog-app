@@ -142,8 +142,8 @@
   }
 
   body {
-    background-color: rgb(var(--color-background));
-    color: rgb(var(--color-foreground));
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -152,13 +152,13 @@
 
   /* Focus styles for accessibility */
   *:focus-visible {
-    outline: 2px solid rgb(var(--color-ring));
+    outline: 2px solid rgb(var(--ring));
     outline-offset: 2px;
   }
 
   /* Selection styles */
   ::selection {
-    background-color: rgb(var(--color-primary) / 0.2);
+    background-color: rgb(var(--primary) / 0.2);
   }
 }
 

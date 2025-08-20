@@ -62,8 +62,15 @@ export function TwoWeekView({
     desktop: 72
   })
   
-  // 開始日（指定がない場合はdateRange.startを使用）
-  const displayStartDate = startDate || dateRange.start
+  // TwoWeekViewではdateRangeの開始日を使用
+  const displayStartDate = useMemo(() => {
+    const date = new Date(dateRange.start)
+    date.setHours(0, 0, 0, 0)
+    console.log('🔧 TwoWeekView: dateRange.startを使用します', {
+      startDate: date.toDateString()
+    })
+    return date
+  }, [dateRange.start])
   
   // TwoWeekView専用ロジック
   const {

@@ -7,7 +7,7 @@
 import React, { memo, useRef, useEffect, useCallback } from 'react'
 import { TimeColumn } from '../TimeColumn'
 import { HourLines, HalfHourLines, QuarterHourLines } from '../GridLines'
-import { CurrentTimeLine } from '../CurrentTimeLine'
+import { SimpleCurrentTimeLine } from '../../'
 import { useViewDimensions } from '../../hooks/useViewDimensions'
 import { pixelsToTimeValues, calculateScrollPosition } from '../../utils/gridCalculator'
 import { 
@@ -29,7 +29,8 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   className = '',
   children,
   onTimeClick,
-  scrollToHour = SCROLL_TO_HOUR
+  scrollToHour = SCROLL_TO_HOUR,
+  displayDates = []
 }) {
   const { containerRef, dimensions, scrollToTime, updateDimensions } = useViewDimensions({
     hourHeight,
@@ -118,14 +119,14 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
           />
         )}
         
-        {/* 現在時刻線 */}
-        {showCurrentTime && (
-          <CurrentTimeLine
+        {/* 現在時刻線 - ScrollableCalendarLayoutで統一表示するためコメントアウト */}
+        {/* showCurrentTime && (
+          <SimpleCurrentTimeLine
             hourHeight={hourHeight}
+            displayDates={displayDates}
             timeColumnWidth={TIME_COLUMN_WIDTH}
-            containerWidth={dimensions.contentWidth + TIME_COLUMN_WIDTH}
           />
-        )}
+        ) */}
         
         {/* 子コンポーネント（イベント等） */}
         {children}
