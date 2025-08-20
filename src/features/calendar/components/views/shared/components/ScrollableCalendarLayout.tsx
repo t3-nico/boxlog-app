@@ -8,7 +8,6 @@ import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { TimeColumn, TimezoneOffset } from '../'
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
-import '../styles/scrollable-layout.css'
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode

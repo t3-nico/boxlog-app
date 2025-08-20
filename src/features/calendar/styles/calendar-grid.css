@@ -1,0 +1,55 @@
+/**
+ * Calendar Grid Styles
+ * グリッド詳細設定（サブ時間単位、グリッド線色、ユーティリティクラス）
+ */
+
+:root {
+  /* サブ時間単位の高さ - calendar-core.cssの基本設定を拡張 */
+  --calendar-half-hour-height: calc(var(--calendar-hour-height) / 2);
+  --calendar-quarter-hour-height: calc(var(--calendar-hour-height) / 4);
+  --calendar-minute-height: calc(var(--calendar-hour-height) / 60);
+  --calendar-grid-height: calc(var(--calendar-hour-height) * 24); /* 24時間分 */
+  
+  /* グリッド線のスタイル - Compass Neutral準拠 */
+  --calendar-hour-line-color: rgb(var(--color-border));
+  --calendar-half-hour-line-color: rgb(var(--color-border) / 0.5);
+  --calendar-quarter-hour-line-color: rgb(var(--color-border) / 0.2);
+}
+
+/* ===== Grid Utility Classes ===== */
+
+/* 時間単位の高さ設定 */
+.calendar-hour-height {
+  height: var(--calendar-hour-height);
+}
+
+.calendar-half-hour-height {
+  height: var(--calendar-half-hour-height);
+}
+
+.calendar-quarter-hour-height {
+  height: var(--calendar-quarter-hour-height);
+}
+
+/* グリッド全体の高さ */
+.calendar-grid-height {
+  height: var(--calendar-grid-height);
+}
+
+/* 時間軸カラムの幅 */
+.calendar-time-column-width {
+  width: var(--calendar-time-column-width);
+}
+
+/* グリッド線のスタイル */
+.calendar-hour-line {
+  border-color: var(--calendar-hour-line-color);
+}
+
+.calendar-half-hour-line {
+  border-color: var(--calendar-half-hour-line-color);
+}
+
+.calendar-quarter-hour-line {
+  border-color: var(--calendar-quarter-hour-line-color);
+}

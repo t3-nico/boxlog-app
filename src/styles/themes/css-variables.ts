@@ -10,7 +10,6 @@ import {
   darkModeColors,
   brandColors,
   semanticColors,
-  calendarColors,
 } from './colors'
 import { componentSizes, borderRadius, spacing } from './spacing'
 import { boxShadow, darkBoxShadow } from './shadows'
@@ -53,13 +52,6 @@ export const CSS_VARIABLE_NAMES = {
   
   // Layout
   RADIUS: '--radius',
-  
-  // Calendar specific
-  CALENDAR_HOUR_HEIGHT: '--calendar-hour-height',
-  CALENDAR_TIME_COLUMN_WIDTH: '--calendar-time-column-width',
-  CALENDAR_HEADER_HEIGHT: '--calendar-header-height',
-  CALENDAR_SIDEBAR_WIDTH: '--calendar-sidebar-width',
-  CALENDAR_CURRENT_TIMELINE: '--calendar-current-timeline',
 } as const
 
 export type CSSVariableName = typeof CSS_VARIABLE_NAMES[keyof typeof CSS_VARIABLE_NAMES]
@@ -152,42 +144,16 @@ export const generateCommonVariables = (): Record<string, string> => {
   return {
     // Layout（デザイントークンから取得）
     [CSS_VARIABLE_NAMES.RADIUS]: primitiveBorderRadius.base.rem,
-    
-    // Calendar specific - デフォルトはdesktop値を使用
-    [CSS_VARIABLE_NAMES.CALENDAR_HOUR_HEIGHT]: componentSizes.calendar.hourHeight.desktop || '4.5rem',
-    [CSS_VARIABLE_NAMES.CALENDAR_TIME_COLUMN_WIDTH]: componentSizes.calendar.timeColumnWidth,
-    [CSS_VARIABLE_NAMES.CALENDAR_HEADER_HEIGHT]: '4rem', // デフォルト値
-    [CSS_VARIABLE_NAMES.CALENDAR_SIDEBAR_WIDTH]: '16rem', // デフォルト値
-    [CSS_VARIABLE_NAMES.CALENDAR_CURRENT_TIMELINE]: semanticState.error.icon.light.rgb, // エラーカラーを使用
   }
 }
 
 /**
  * レスポンシブ用CSS変数を生成
+ * 現在はCalendar変数を除外したため、空の実装
  */
 export const generateResponsiveVariables = (breakpoint: 'mobile' | 'tablet' | 'desktop' = 'desktop'): Record<string, string> => {
-  const responsiveConfig = {
-    mobile: {
-      [CSS_VARIABLE_NAMES.CALENDAR_HOUR_HEIGHT]: '3rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_TIME_COLUMN_WIDTH]: '3rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_HEADER_HEIGHT]: '3.5rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_SIDEBAR_WIDTH]: '100%',
-    },
-    tablet: {
-      [CSS_VARIABLE_NAMES.CALENDAR_HOUR_HEIGHT]: '3.75rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_TIME_COLUMN_WIDTH]: '4rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_HEADER_HEIGHT]: '4rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_SIDEBAR_WIDTH]: '18rem',
-    },
-    desktop: {
-      [CSS_VARIABLE_NAMES.CALENDAR_HOUR_HEIGHT]: componentSizes.calendar.hourHeight.desktop || '4.5rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_TIME_COLUMN_WIDTH]: componentSizes.calendar.timeColumnWidth,
-      [CSS_VARIABLE_NAMES.CALENDAR_HEADER_HEIGHT]: '4rem',
-      [CSS_VARIABLE_NAMES.CALENDAR_SIDEBAR_WIDTH]: '16rem',
-    },
-  }
-  
-  return responsiveConfig[breakpoint]
+  // Calendar変数は独立したスタイルファイルで管理
+  return {}
 }
 
 /**

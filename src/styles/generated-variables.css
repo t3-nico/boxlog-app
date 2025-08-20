@@ -2,17 +2,12 @@
  * 自動生成されたCSS変数
  * このファイルは直接編集しないでください。
  * 変更はsrc/styles/themes/内のTypeScriptファイルで行ってください。
- * 生成日時: 2025-08-20T03:37:53.590Z
+ * 生成日時: 2025-08-20T08:37:10.448Z
  */
 
 /* Tailwind v4 テーマ設定 - Compass Neutral カラーシステム */
 @theme {
   --radius: 0.375rem;
-  --calendar-hour-height: 4.5rem;
-  --calendar-time-column-width: 4rem;
-  --calendar-header-height: 4rem;
-  --calendar-sidebar-width: 16rem;
-  --calendar-current-timeline: 239 68 68;
   --color-background: 255 255 255;
   --color-foreground: 23 23 23;
   --color-card: 255 255 255;
@@ -552,25 +547,6 @@
     --color-border: 64 64 64;
     --color-input: 38 38 38;
     --color-ring: 96 165 250;
-  }
-}
-
-/* レスポンシブ対応のカレンダー変数 */
-@media (max-width: 639px) {
-  :root {
-    --calendar-hour-height: 3rem;
-    --calendar-time-column-width: 3rem;
-    --calendar-header-height: 3.5rem;
-    --calendar-sidebar-width: 100%;
-  }
-}
-
-@media (min-width: 640px) and (max-width: 1023px) {
-  :root {
-    --calendar-hour-height: 3.75rem;
-    --calendar-time-column-width: 4rem;
-    --calendar-header-height: 4rem;
-    --calendar-sidebar-width: 18rem;
   }
 }
 

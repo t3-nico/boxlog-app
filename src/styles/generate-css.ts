@@ -157,25 +157,8 @@ ${formatCSSVariables(darkVars, '    ')}
 
 `)
   
-  // レスポンシブ設定
-  const mobileVars = generateResponsiveVariables('mobile')
-  content.push(`/* レスポンシブ対応のカレンダー変数 */
-@media (max-width: 639px) {
-  :root {
-${formatCSSVariables(mobileVars, '    ')}
-  }
-}
-
-`)
-  
-  const tabletVars = generateResponsiveVariables('tablet')
-  content.push(`@media (min-width: 640px) and (max-width: 1023px) {
-  :root {
-${formatCSSVariables(tabletVars, '    ')}
-  }
-}
-
-`)
+  // レスポンシブ設定は空のためコメントアウト
+  /* レスポンシブ設定はCalendar専用スタイルで管理 */
   
   // アクセシビリティ設定
   content.push(`/* アクセシビリティ対応 */
