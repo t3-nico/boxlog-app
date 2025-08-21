@@ -6,43 +6,61 @@ import { cn } from '@/lib/utils'
 import { primaryNavigation } from '@/components/layout/navigation/navigation/config'
 import { AppBarItem } from './app-bar-item'
 import { UserMenu } from './user-menu'
+import { ThemeToggle } from './theme-toggle'
+import { background, text, border } from '@/config/theme/colors'
 
 export function AppBar() {
   const pathname = usePathname()
-
+  
   return (
     <div className={cn(
-      'w-[60px] bg-background border-r border-border flex flex-col'
+      'w-16 flex flex-col',
+      background.base,
+      text.primary
     )}>
       {/* Main Navigation Items */}
-      <div className="flex-1 flex flex-col items-center py-3 gap-2">
+      <div className={cn(
+        'flex-1 flex flex-col items-center py-3'
+      )}>
         {primaryNavigation.filter(section => section.id !== 'user').map((section, sectionIndex, filteredSections) => (
           <React.Fragment key={section.id}>
-            {section.items.map((item) => (
-              <AppBarItem
-                key={item.id}
-                item={item}
-                pathname={pathname}
-              />
+            {section.items.map((item, itemIndex) => (
+              <div key={item.id} className={itemIndex > 0 ? 'mt-2' : ''}>
+                <AppBarItem
+                  item={item}
+                  pathname={pathname}
+                />
+              </div>
             ))}
             {/* Add separator between sections, except before last section */}
             {sectionIndex < filteredSections.length - 1 && (
-              <div className="w-8 h-px bg-border my-2" />
+              <div className={cn(
+                'w-6 h-px mt-6 mb-6',
+                border.DEFAULT
+              )} />
             )}
           </React.Fragment>
         ))}
       </div>
 
       {/* Bottom Section: Settings & User */}
-      <div className="flex flex-col items-center pb-4 gap-2">
-        {primaryNavigation.find(section => section.id === 'user')?.items.map((item) => (
-          <AppBarItem
-            key={item.id}
-            item={item}
-            pathname={pathname}
-          />
+      <div className={cn(
+        'flex flex-col items-center pb-4'
+      )}>
+        {primaryNavigation.find(section => section.id === 'user')?.items.map((item, itemIndex) => (
+          <div key={item.id} className={itemIndex > 0 ? 'mt-2' : ''}>
+            <AppBarItem
+              item={item}
+              pathname={pathname}
+            />
+          </div>
         ))}
-        <UserMenu />
+        <div className="mt-2">
+          <ThemeToggle />
+        </div>
+        <div className="mt-2">
+          <UserMenu />
+        </div>
       </div>
     </div>
   )

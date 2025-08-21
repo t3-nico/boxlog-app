@@ -13,6 +13,7 @@ import { useNavigationStore } from '@/features/navigation/stores/navigation.stor
 import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
+import { background } from '@/config/theme/colors'
 
 interface DashboardLayoutProps {
   events?: any
@@ -64,7 +65,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       )}
       
       {/* Main Content Area - Flexible */}
-      <div className="flex-1 relative z-10 flex flex-col">
+      <div className={`flex-1 relative z-10 flex flex-col ${background.surface}`}>
         {/* Secondary Nav Toggle Button */}
         <SecondaryNavToggle />
         

@@ -2,11 +2,13 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { PlusCircle as PlusCircleIcon } from 'lucide-react'
+import { Plus, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { MiniCalendar } from '@/features/calendar/components/layout/Sidebar/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
+import { primary, text, colorUtils } from '@/config/theme/colors'
+import { body } from '@/config/theme/typography'
 
 interface CommonSidebarSectionsProps {
   collapsed: boolean
@@ -31,10 +33,13 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
             openPopup('event')
           }}
           variant="default"
-          className="w-full h-[56px] py-4 px-4 flex items-center gap-2 font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+          className={`w-full h-[56px] py-4 px-4 flex items-center justify-between ${primary.DEFAULT} ${text.onPrimary} ${primary.hover}`}
         >
-          <span className="truncate">Create</span>
-          <PlusCircleIcon className="size-5 shrink-0 text-primary-foreground" />
+          <div className="flex items-center gap-2">
+            <Plus className={`size-5 shrink-0 ${text.onPrimary}`} />
+            <span className={`truncate ${body.large} ${text.onPrimary}`}>Create</span>
+          </div>
+          <ChevronDown className={`size-4 shrink-0 ${text.onPrimary}`} />
         </Button>
       </div>
 

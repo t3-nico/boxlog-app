@@ -7,6 +7,7 @@
 import React, { memo } from 'react'
 import { formatDate } from '../../utils/dateHelpers'
 import type { DayHeaderProps } from '../../types/view.types'
+import { primary } from '@/config/theme/colors'
 
 export const DayHeader = memo<DayHeaderProps>(function DayHeader({
   date,
@@ -26,9 +27,9 @@ export const DayHeader = memo<DayHeaderProps>(function DayHeader({
     'flex items-center justify-center py-2 px-1 text-center transition-colors',
     onClick ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700' : '',
     isToday 
-      ? 'bg-blue-500 text-white font-semibold' 
+      ? `${primary.DEFAULT} text-white font-semibold rounded-lg shadow-md ring-2 ring-blue-600/30 dark:ring-blue-400/30` 
       : isSelected 
-        ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
+        ? `bg-blue-600/20 dark:bg-blue-400/20 ${primary.text}`
         : isWeekend 
           ? 'text-gray-500 dark:text-gray-400' 
           : 'text-gray-900 dark:text-gray-100',
@@ -48,7 +49,7 @@ export const DayHeader = memo<DayHeaderProps>(function DayHeader({
     >
       <div className="flex flex-col items-center min-w-0">
         {/* 曜日 */}
-        <div className={`text-xs ${isToday ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>
+        <div className={`text-xs ${isToday ? 'text-white opacity-75' : 'text-gray-500 dark:text-gray-400'}`}>
           {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
         </div>
         
@@ -59,7 +60,7 @@ export const DayHeader = memo<DayHeaderProps>(function DayHeader({
         
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
-          <div className={`text-xs ${isToday ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'}`}>
+          <div className={`text-xs ${isToday ? 'text-white opacity-75' : 'text-gray-500 dark:text-gray-400'}`}>
             {date.toLocaleDateString('ja-JP', { month: 'short' })}
           </div>
         )}

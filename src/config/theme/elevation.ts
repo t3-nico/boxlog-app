@@ -343,9 +343,3 @@ export type ComponentState = 'default' | 'hover' | 'active' | 'focus' | 'error' 
  * }
  * ```
  */
-
-export {
-  borders,
-  elevation,
-  patterns,
-}

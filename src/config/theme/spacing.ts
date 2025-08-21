@@ -314,3 +314,19 @@ export function getAvailableSpacingOptions() {
     patterns: Object.keys(patterns),
   }
 }
+
+// ============================================
+// 統合オブジェクト
+// ============================================
+
+export const spacing = {
+  space,
+  patterns,
+  spacingGuide,
+  stackGap,
+  inlineGap,
+  cardVariants,
+  gridGap,
+  gridCols,
+  pageContainerStyles,
+} as const

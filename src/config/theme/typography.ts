@@ -13,28 +13,28 @@ export const heading = {
    * @usage 1ページに1つだけ
    * @example "ダッシュボード" "設定" "カレンダー"
    */
-  h1: 'text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50',
+  h1: 'text-2xl md:text-3xl font-medium tracking-tight text-neutral-900 dark:text-neutral-50',
   
   /**
    * h2: セクションタイトル
    * @usage 大きな区切り
    * @example "今日のタスク" "今週の予定" "完了済み"
    */
-  h2: 'text-2xl md:text-3xl font-semibold text-neutral-900 dark:text-neutral-50',
+  h2: 'text-xl md:text-2xl font-semibold text-neutral-900 dark:text-neutral-50',
   
   /**
    * h3: サブセクション
    * @usage セクション内の区切り
    * @example "午前のタスク" "重要" "その他"
    */
-  h3: 'text-xl md:text-2xl font-medium text-neutral-800 dark:text-neutral-100',
+  h3: 'text-lg md:text-xl font-medium text-neutral-800 dark:text-neutral-100',
   
   /**
    * h4: カードタイトル
    * @usage カード・モーダルの見出し
    * @example タスクカードのタイトル
    */
-  h4: 'text-lg font-medium text-neutral-800 dark:text-neutral-100',
+  h4: 'text-base font-medium text-neutral-800 dark:text-neutral-100',
   
   /**
    * h5: グループラベル
@@ -396,7 +396,11 @@ export function getDefaultTag(variant: TypographyVariant): keyof JSX.IntrinsicEl
  * ```
  */
 
-export {
+// ============================================
+// 統合オブジェクト
+// ============================================
+
+export const typography = {
   heading,
   body,
   special,
@@ -404,5 +408,4 @@ export {
   linkStates,
   linkPatterns,
   patterns,
-  type TypographyVariant,
-}
+} as const

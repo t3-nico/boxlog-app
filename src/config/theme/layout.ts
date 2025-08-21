@@ -52,12 +52,12 @@ export const columns = {
     default: 'w-16',        // 64px - アイコンのみ ✅
     expanded: 'w-20',       // 80px - 少し広め
     
-    // スタイル
-    style: 'bg-neutral-900 dark:bg-neutral-950 text-white',
+    // スタイル（テスト用に一時削除）
+    // style: 'bg-neutral-900 dark:bg-neutral-950 text-white',
     
     // 内容
     content: {
-      item: 'w-12 h-12 flex items-center justify-center rounded-lg hover:bg-neutral-800',
+      item: 'w-10 h-10 flex items-center justify-center rounded-lg hover:bg-neutral-800',
       itemActive: 'bg-blue-600',
       divider: 'mx-3 my-2 border-t border-neutral-700',
     },

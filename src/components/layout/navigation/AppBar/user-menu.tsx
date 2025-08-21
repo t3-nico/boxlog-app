@@ -14,6 +14,8 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
 } from 'lucide-react'
+import { componentRadius, animations, spacing } from '@/config/theme'
+import { border, background, text, semantic } from '@/config/theme/colors'
 
 export function UserMenu() {
   const router = useRouter()
@@ -30,42 +32,81 @@ export function UserMenu() {
 
   return (
     <Headless.Menu as="div" className="relative">
-      <Headless.MenuButton className="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-accent transition-colors group">
+      <Headless.MenuButton className={cn(
+        'w-10 h-10 flex items-center justify-center hover:bg-accent group',
+        componentRadius.button.md,
+        animations.transition.fast
+      )}>
         <div className="relative">
           {user?.user_metadata?.avatar_url ? (
             <Avatar 
               src={user.user_metadata.avatar_url} 
-              className="w-8 h-8 border border-gray-300 dark:border-gray-600" 
+              className={cn(
+                'w-8 h-8',
+                border.DEFAULT,
+                componentRadius.media.avatar
+              )}
             />
           ) : user?.user_metadata?.profile_icon ? (
-            <div className="w-8 h-8 text-sm flex items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 bg-accent">
+            <div className={cn(
+              'w-8 h-8 text-sm flex items-center justify-center bg-accent',
+              border.DEFAULT,
+              componentRadius.media.avatar
+            )}>
               {user.user_metadata.profile_icon}
             </div>
           ) : (
             <Avatar 
               src={undefined}
-              className="w-8 h-8 border border-gray-300 dark:border-gray-600"
+              className={cn(
+                'w-8 h-8',
+                border.DEFAULT,
+                componentRadius.media.avatar
+              )}
               initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
             />
           )}
           
           {/* Online Status Indicator */}
-          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-background rounded-full"></div>
+          <div className={cn(
+            'absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2',
+            semantic.success.DEFAULT,
+            background.base,
+            componentRadius.badge.status
+          )}></div>
         </div>
         
         {/* Tooltip */}
-        <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+        <div className={cn(
+          'absolute left-full ml-2 px-2 py-1',
+          'bg-popover text-popover-foreground text-xs shadow-lg',
+          'opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50',
+          componentRadius.input.text,
+          animations.transition.fast
+        )}>
           {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
         </div>
       </Headless.MenuButton>
 
-      <Headless.MenuItems className="absolute left-full bottom-0 ml-2 w-64 origin-bottom-left rounded-xl bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75 shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 p-2 z-50">
+      <Headless.MenuItems className={cn(
+        'absolute left-full bottom-0 ml-2 w-64 origin-bottom-left',
+        'backdrop-blur-xl shadow-lg z-50',
+        background.surface,
+        border.subtle,
+        'ring-1',
+        componentRadius.modal.container,
+        spacing.space[2] // p-2
+      )}>
         {/* User Info */}
-        <div className="px-3 py-2 border-b border-zinc-950/10 dark:border-white/10 mb-1">
-          <div className="font-medium text-zinc-950 dark:text-white">
+        <div className={cn(
+          'px-3 py-2 border-b',
+          border.subtle,
+          spacing.patterns.form.label // mb-1
+        )}>
+          <div className={cn('font-medium', text.primary)}>
             {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
           </div>
-          <div className="text-sm text-zinc-500 dark:text-zinc-400">
+          <div className={cn('text-sm', text.muted)}>
             {user?.email}
           </div>
         </div>
@@ -75,29 +116,33 @@ export function UserMenu() {
             <button
               onClick={() => router.push('/settings')}
               className={cn(
-                'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
-                focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium',
+                componentRadius.navigation.menu,
+                animations.transition.fast,
+                focus ? background.hover : ''
               )}
             >
-              <Cog8ToothIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-              <span className="text-zinc-950 dark:text-white">Settings</span>
+              <Cog8ToothIcon className={cn('w-4 h-4', text.muted)} />
+              <span className={text.primary}>Settings</span>
             </button>
           )}
         </Headless.MenuItem>
 
-        <div className="my-1 h-px bg-zinc-950/10 dark:bg-white/10" />
+        <div className={cn('my-1 h-px', border.subtle)} />
 
         <Headless.MenuItem>
           {({ focus }) => (
             <a
               href="#"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
-                focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
+                componentRadius.navigation.menu,
+                animations.transition.fast,
+                focus ? background.hover : ''
               )}
             >
-              <ShieldCheckIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-              <span className="text-zinc-950 dark:text-white">Privacy policy</span>
+              <ShieldCheckIcon className={cn('w-4 h-4', text.muted)} />
+              <span className={text.primary}>Privacy policy</span>
             </a>
           )}
         </Headless.MenuItem>
@@ -107,12 +152,14 @@ export function UserMenu() {
             <a
               href="#"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
-                focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
+                componentRadius.navigation.menu,
+                animations.transition.fast,
+                focus ? background.hover : ''
               )}
             >
-              <LightBulbIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-              <span className="text-zinc-950 dark:text-white">Share feedback</span>
+              <LightBulbIcon className={cn('w-4 h-4', text.muted)} />
+              <span className={text.primary}>Share feedback</span>
             </a>
           )}
         </Headless.MenuItem>
@@ -122,12 +169,14 @@ export function UserMenu() {
             <a
               href="#"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
-                focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
+                componentRadius.navigation.menu,
+                animations.transition.fast,
+                focus ? background.hover : ''
               )}
             >
-              <QuestionMarkCircleIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-              <span className="text-zinc-950 dark:text-white">Support</span>
+              <QuestionMarkCircleIcon className={cn('w-4 h-4', text.muted)} />
+              <span className={text.primary}>Support</span>
             </a>
           )}
         </Headless.MenuItem>
@@ -137,29 +186,33 @@ export function UserMenu() {
             <a
               href="#"
               className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
-                focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
+                componentRadius.navigation.menu,
+                animations.transition.fast,
+                focus ? background.hover : ''
               )}
             >
-              <SparklesIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-              <span className="text-zinc-950 dark:text-white">Changelog</span>
+              <SparklesIcon className={cn('w-4 h-4', text.muted)} />
+              <span className={text.primary}>Changelog</span>
             </a>
           )}
         </Headless.MenuItem>
 
-        <div className="my-1 h-px bg-zinc-950/10 dark:bg-white/10" />
+        <div className={cn('my-1 h-px', border.subtle)} />
 
         <Headless.MenuItem>
           {({ focus }) => (
             <button
               onClick={handleSignOut}
               className={cn(
-                'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors',
-                focus ? 'bg-zinc-950/5 dark:bg-white/5' : ''
+                'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium',
+                componentRadius.navigation.menu,
+                animations.transition.fast,
+                focus ? background.hover : ''
               )}
             >
-              <ArrowRightStartOnRectangleIcon className="w-4 h-4 text-zinc-500 dark:text-zinc-400" />
-              <span className="text-zinc-950 dark:text-white">Logout</span>
+              <ArrowRightStartOnRectangleIcon className={cn('w-4 h-4', text.muted)} />
+              <span className={text.primary}>Logout</span>
             </button>
           )}
         </Headless.MenuItem>

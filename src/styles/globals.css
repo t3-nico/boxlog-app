@@ -1,1 +1,13 @@
 @import 'tailwindcss';
+
+/* Tailwind v4 ダークモード設定 */
+@variant dark (.dark &);
+
+/* ブラウザUIのダークモード対応 */
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}

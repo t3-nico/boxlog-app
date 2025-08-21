@@ -4,6 +4,7 @@ import React, { memo, useState, useMemo, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
+import { primary } from '@/config/theme/colors'
 import { 
   startOfMonth, 
   endOfMonth, 
@@ -195,18 +196,23 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                     
                     // Selected state
                     isSelected && [
-                      "bg-primary text-primary-foreground",
-                      "hover:bg-primary focus:bg-primary"
+                      primary.DEFAULT,
+                      'text-white'
                     ],
                     
                     // Today indicator
                     isToday && !isSelected && [
-                      "bg-primary/20 text-primary font-semibold border border-primary/30"
+                      'bg-blue-600/20 dark:bg-blue-400/20',
+                      primary.text,
+                      "font-semibold border",
+                      primary.border
                     ],
                     
                     // Highlighted dates (events, etc.)
                     isHighlighted && !isSelected && [
-                      "ring-2 ring-primary/20 bg-primary/10"
+                      'ring-2 ring-blue-600/20 dark:ring-blue-400/20',
+                      'bg-blue-600/10 dark:bg-blue-400/10',
+                      primary.text
                     ],
                     
                     // Disabled state

@@ -8,7 +8,7 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/hooks/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // Tailwind v4では@themeディレクティブをCSSで直接定義
+  // Tailwind v4では設定をCSS内で行う
 }
 
 export default config

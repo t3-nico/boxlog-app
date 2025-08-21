@@ -104,6 +104,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 2. **新しいコンポーネントはライト・ダークモード両方をテスト**
 3. **8pxグリッドシステムに準拠**
 4. **TypeScript を厳密に使用（`any` 型を避ける）**
+5. **すべてのスタイリングは `/src/config/theme` を必ず使用**
 
 ## 📋 開発時の指針
 
@@ -124,9 +125,117 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - **デザインシステム**: `compass/design-system/`
 - **Git ワークフロー**: `compass/knowledge/app-docs/development/git-workflow.md`
 
+## 🎨 デザインシステム（Theme）の厳守
+
+### 必須要件
+BoxLogでは統一されたデザインシステムを採用しています。
+**すべてのスタイリングは `/src/config/theme` を使用してください。**
+
+### ❌ 禁止事項（絶対にやらないこと）
+
+```tsx
+// ❌ Tailwindクラスの直接指定
+<div className="bg-white text-gray-700 p-4">
+
+// ❌ 色の直接指定
+<button className="bg-blue-600 hover:bg-blue-700">
+
+// ❌ サイズの直接指定
+<h1 className="text-3xl font-bold">
+
+// ❌ 任意値の使用
+<div className="p-[13px] text-[#3B82F6]">
+
+// ❌ ダークモードの個別指定
+<div className="bg-white dark:bg-gray-900">
+```
+
+### ✅ 正しい実装方法
+
+```tsx
+// ✅ 必ずthemeをインポート
+import { colors, typography, spacing, borders, rounded, animations } from '@/config/theme'
+
+// ✅ themeの値を使用
+<div className={colors.background.base}>
+  <h1 className={typography.heading.h1}>
+    タイトル
+  </h1>
+  <button className={`${colors.primary.DEFAULT} ${spacing.button.md} ${rounded.component.button.md}`}>
+    ボタン
+  </button>
+</div>
+```
+
+### 📁 利用可能なthemeファイル
+
+- `colors.ts` - すべての色定義（primary, secondary, semantic, background, text, border）
+- `typography.ts` - 文字スタイル（heading, body, link, special）
+- `spacing.ts` - 余白（8pxグリッド準拠）
+- `layout.ts` - レイアウト（3カラム構成、コンテナ、グリッド）
+- `animations.ts` - アニメーション（transition, hover, loading, feedback）
+- `elevation.ts` - 影と境界線（borders, elevation）
+- `rounded.ts` - 角丸（component別、サイズ別）
+- `icons.ts` - アイコンサイズと色
+
+### 🔍 実装前の確認事項
+
+1. **themeに定義があるか確認**
+   ```bash
+   # 例：青色を使いたい場合
+   # colors.tsを確認 → primary.DEFAULT がある → これを使う
+   ```
+
+2. **themeにない場合**
+   - 安易に直接指定しない
+   - 本当に必要か検討
+   - 必要なら`theme/`に追加してから使用
+
+3. **コンポーネント作成時**
+   ```tsx
+   // 新規コンポーネントの最初の行
+   import { colors, typography, spacing } from '@/config/theme'
+   // これを書くことから始める
+   ```
+
+### 💡 なぜthemeを使うのか
+
+1. **一貫性** - アプリ全体で統一されたデザイン
+2. **保守性** - 色やサイズの変更が1箇所で完結
+3. **ダークモード** - 自動対応（個別指定不要）
+4. **型安全** - TypeScriptの補完とチェック
+5. **8pxグリッド** - 整然としたレイアウト
+
+### 🚨 レビュー基準
+
+PRレビュー時、以下があれば修正を要求：
+- Tailwindクラスの直接指定
+- 色コード（#FFFFFFなど）の直接指定
+- `dark:` プレフィックスの使用
+- カスタム値（p-[13px]など）の使用
+- themeのインポートがないコンポーネント
+
+### 📋 移行チェックコマンド
+
+```bash
+# 直接指定が残っていないか確認
+grep -r "bg-\|text-\|border-" --include="*.tsx" src/ | grep -v "config/theme"
+
+# themeを使用しているファイル数
+grep -r "from '@/config/theme'" --include="*.tsx" src/ | wc -l
+```
+
+### 🎯 目標
+
+**100% theme経由でのスタイリング**を実現し、デザインの変更が`/src/config/theme`の編集だけで完結する状態を維持する。
+
+---
+
+**重要**: この規則は例外なく適用されます。「今回だけ」「仮で」といった理由での直接指定も認めません。
+
 ---
 
 **📖 このドキュメントについて**: BoxLog App メインリポジトリ概要  
 **詳細指示書**: `compass/ai-context/app/CLAUDE.md` ← **開発時はこちらを主に参照**  
-**最終更新**: 2025-07-29  
-**バージョン**: v2.0 - Compass統合・日本語ベース版
+**最終更新**: 2025-08-21  
+**バージョン**: v2.1 - Theme使用ルール追加版

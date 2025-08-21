@@ -498,13 +498,3 @@ export type PatternType = keyof typeof patterns
  * }
  * ```
  */
-
-export {
-  transition,
-  hover,
-  loading,
-  appear,
-  feedback,
-  patterns,
-  keyframes,
-}

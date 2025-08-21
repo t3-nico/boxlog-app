@@ -44,7 +44,7 @@ export {
 } from './rounded'
 
 // アニメーションシステム（レガシー互換性用）
-export { animations } from './animations'
+// animations は下記で詳細エクスポートしているため削除
 
 // 詳細なカラーシステムをエクスポート
 export { colors } from './colors'
@@ -52,8 +52,8 @@ export { colors } from './colors'
 // アイコンシステムをエクスポート
 export { icons, icon, iconPatterns, commonIcons, iconUtils } from './icons'
 
-// 角丸システムをエクスポート
-export { rounded, radius, componentRadius, specialRadius, radiusUtils } from './rounded'
+// 角丸ユーティリティをエクスポート（roundedは上記で既にエクスポート済み）
+export { radiusUtils } from './rounded'
 
 // アニメーションシステムをエクスポート
 export { 
@@ -157,18 +157,16 @@ export type {
 } from './types'
 
 // ============================================
-// Typographyデータとユーティリティ
+// Typographyデータとユーティリティ（追加分のみ）
 // ============================================
 
 export {
-  heading,
-  body,
-  special,
+  // heading, body, special は上記で既にエクスポート済み
   link,
   linkStates,
   linkPatterns,
-  patterns,
-  type TypographyVariant,
+  // patterns は spacingPatterns として既にエクスポート済み
+  // type TypographyVariant は上記で既にエクスポート済み
   getTypographyStyle,
   isTypographyVariant,
   getDefaultTag
@@ -178,36 +176,23 @@ export {
 // Typographyコンポーネント
 // ============================================
 
-export {
-  Typography,
-  H1, H2, H3, H4, H5, H6,
-  BodyLarge, Body, BodySmall,
-  Label, ErrorText, Caption, Code,
-  PageTitle,
-  SectionTitle,
-  CardTitle,
-  TypographyShowcase
-} from '@/components/theme/Typography'
+// Note: Typography コンポーネントは削除済み
+// 必要な場合は shadcn/ui や kiboUI を使用してください
 
 // ============================================
-// Spacingデータとユーティリティ
+// Spacingデータとユーティリティ（追加分のみ）
 // ============================================
 
 export {
-  // 8pxグリッド基本値とパターン
-  space,
-  patterns,
-  spacingGuide,
+  // space, spacingGuide, spacing は上記で既にエクスポート済み
+  // patterns は spacingPatterns として既にエクスポート済み
   stackGap,
   inlineGap,
   cardVariants,
   gridGap,
   gridCols,
   pageContainerStyles,
-  type SpacingSize8px,
-  type CardVariant,
-  type GridGap,
-  type GridCols,
+  // type SpacingSize8px, CardVariant, GridGap, GridCols は上記で既にエクスポート済み
   getStackGap,
   getInlineGap,
   getCardVariant,
@@ -225,26 +210,8 @@ export {
 // Spacingコンポーネント（8pxグリッド対応）
 // ============================================
 
-export {
-  // 8pxグリッド推奨コンポーネント
-  Stack,
-  Inline,
-  PageContainer,
-  Card,
-  FormGroup,
-  Grid,
-  
-  // 従来のSpacingコンポーネント（互換性維持）
-  Spacing,
-  PageSpacing,
-  SectionSpacing,
-  ContentSpacing,
-  CardSpacing,
-  InlineSpacing,
-  ResponsivePageSpacing,
-  ResponsiveSectionSpacing,
-  SpacingShowcase
-} from '@/components/theme/Spacing'
+// Note: Spacing コンポーネントは削除済み
+// 必要な場合は Tailwind CSS クラスを直接使用してください
 
 // ColorShowcaseはcolors.Showcaseでアクセス可能
 
@@ -394,32 +361,14 @@ export function showAvailableComponents() {
   
   console.group('🧩 Available Components')
   
-  console.log('Typography:', [
-    'Typography',
-    'PageTitle',
-    'SectionTitle', 
-    'CardTitle',
-    'Body',
-    'Caption',
-    'ErrorText'
-  ])
+  console.log('Typography tokens:', Object.keys(typography))
   
-  console.log('Spacing (8pxグリッド):', [
-    'Stack',        // 縦並び
-    'Inline',       // 横並び  
-    'PageContainer', // ページ余白
-    'Card',         // カード
-    'FormGroup',    // フォーム
-    'Grid'          // グリッド
-  ])
+  console.log('Spacing tokens:', Object.keys(spacing))
   
-  console.log('Spacing (従来):', [
-    'Spacing',
-    'PageSpacing',
-    'SectionSpacing',
-    'ContentSpacing',
-    'CardSpacing',
-    'InlineSpacing'
+  console.log('Available UI libraries:', [
+    'shadcn/ui',    // 基本UIコンポーネント
+    'kiboUI',       // 高度な機能
+    'Tailwind CSS'  // 直接クラス使用
   ])
   
   console.groupEnd()
@@ -429,26 +378,7 @@ export function showAvailableComponents() {
 // 型ガード関数
 // ============================================
 
-/**
- * タイポグラフィバリアントかどうかを判定
- */
-export function isTypographyVariant(value: string): value is keyof typeof typography {
-  return value in typography
-}
-
-/**
- * スペーシングカテゴリかどうかを判定
- */
-export function isSpacingCategory(value: string): value is keyof typeof spacing {
-  return value in spacing
-}
-
-/**
- * カラーカテゴリかどうかを判定
- */
-export function isColorCategory(value: string): value is keyof typeof colors {
-  return value in colors
-}
+// 型ガード関数は各ファイルから個別エクスポートされているため、ここでは削除
 
 // ============================================
 // エクスポートされたオブジェクトの型

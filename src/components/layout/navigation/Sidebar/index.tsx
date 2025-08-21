@@ -8,6 +8,9 @@ import { PageContent } from './page-content'
 import { BottomContent } from './bottom-content'
 import { SettingsNavigation } from './settings-navigation'
 import { PanelLeft } from 'lucide-react'
+import { background, border } from '@/config/theme/colors'
+import { icon } from '@/config/theme/icons'
+import { heading } from '@/config/theme/typography'
 
 export { SidebarToggle as SecondaryNavToggle } from './toggle'
 
@@ -17,7 +20,7 @@ const SidebarHeader = React.memo(({ title }: { title: string }) => {
   return (
     <div className="flex-shrink-0 mb-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-foreground">
+        <h1 className={heading.h1}>
           {title}
         </h1>
         
@@ -26,7 +29,7 @@ const SidebarHeader = React.memo(({ title }: { title: string }) => {
           className="p-1 rounded-md hover:bg-accent/50 transition-colors"
           title="Close sidebar"
         >
-          <PanelLeft className="w-4 h-4 text-muted-foreground" />
+          <PanelLeft className={`${icon.size.md} text-muted-foreground`} />
         </button>
       </div>
     </div>
@@ -42,7 +45,7 @@ export function Sidebar() {
   const isCalendar = pathname.startsWith('/calendar')
 
   return (
-    <div className="w-64 bg-background border-r border-border">
+    <div className={`w-64 ${background.surface} border-r ${border.DEFAULT}`}>
       <div className="h-full flex flex-col p-4">
         {!isSettings ? (
           <>
