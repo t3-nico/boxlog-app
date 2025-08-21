@@ -12,7 +12,7 @@ import {
 } from '@/components/shadcn-ui/command'
 import { SearchResult } from '../config/command-palette'
 import { SearchEngine } from '../lib/search-engine'
-import { Task as BoxTask } from '@/types/box'
+import { Task } from '@/types/unified'
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
 import { generateCompassCommands } from '../lib/compass-commands'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -70,8 +70,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const performSearch = useCallback(async (searchQuery: string) => {
     setIsLoading(true)
     try {
-      // Convert BoxTask[] to common.Task[] for SearchEngine
-      const convertedTasks = (tasks as unknown as BoxTask[]).map((task) => ({
+      // Convert Task[] to common.Task[] for SearchEngine
+      const convertedTasks = (tasks as unknown as Task[]).map((task) => ({
         id: task.id,
         title: task.title,
         description: task.description,

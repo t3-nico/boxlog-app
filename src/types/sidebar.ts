@@ -1,4 +1,4 @@
-import { SmartFolder as BoxSmartFolder, FolderCondition } from './box'
+import { SmartFolder } from './smart-folders'
 
 export interface Notification {
   id: string
@@ -11,7 +11,7 @@ export interface Notification {
   priority: 'low' | 'normal' | 'high'
 }
 
-export interface SidebarSmartFolder extends Omit<BoxSmartFolder, 'createdAt' | 'updatedAt'> {
+export interface SidebarSmartFolder extends Omit<SmartFolder, 'createdAt' | 'updatedAt'> {
   count: number
   orderIndex: number
 }

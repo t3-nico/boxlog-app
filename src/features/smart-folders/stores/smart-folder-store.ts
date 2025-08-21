@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { SmartFolder, FolderCondition, Task, FilterField, FilterOperator, FilterLogic } from '@/types/box'
+import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
+import { Task } from '@/types/unified'
 
 interface SmartFolderStore {
   smartFolders: SmartFolder[]
@@ -20,7 +21,7 @@ interface SmartFolderStore {
   canAddChild: (parentId: string) => boolean
   
   // Condition helpers
-  evaluateTask: (task: Task, conditions: FolderCondition[]) => boolean
+  evaluateTask: (task: Task, rules: SmartFolderRule[]) => boolean
   getMatchingTasks: (tasks: Task[], folderId: string) => Task[]
   getTaskCount: (tasks: Task[], folderId: string) => number
 }

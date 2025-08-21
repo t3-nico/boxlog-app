@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { isWithinInterval, addMinutes } from 'date-fns'
-import { Task, TaskStatus } from '@/types/box'
+import { Task, TaskStatus } from '@/types/unified'
 import type { ViewDateRange } from '../types/calendar.types'
 
 interface CalendarTaskExtended extends Task {

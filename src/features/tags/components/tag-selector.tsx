@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Tag } from '@/types/box'
+import { Tag } from '@/types/unified'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { TagBadge } from './tag-badge'
 import { Button } from '@/components/shadcn-ui/button'

@@ -4,47 +4,175 @@
  */
 
 // ============================================
-// コアテーマトークン
+// コアテーマトークン（直接インポート）
 // ============================================
 
-export {
-  typography,
-  spacing,
-  layout,
-  borders,
-  animations,
-  examples
-} from './theme'
+// タイポグラフィシステム
+export { heading, body, special, patterns as typographyPatterns, typography } from './typography'
+
+// スペーシングシステム
+export { space, patterns as spacingPatterns, spacingGuide, spacing } from './spacing'
+
+// レイアウトシステム  
+export { 
+  layout, 
+  flexPatterns, 
+  gridPatterns, 
+  responsiveContainer, 
+  layoutUtils,
+  // BoxLog 3カラムレイアウト
+  columns,
+  layoutPatterns,
+  layoutHelpers,
+  // Z-Index システム
+  zIndex,
+  zIndexClasses,
+  componentZIndex,
+  breakpoints
+} from './layout'
+
+// 境界線・角丸・影システム
+export { 
+  rounded, 
+  borders, 
+  radius, 
+  componentRadius, 
+  specialRadius,
+  // フォーム要素システム
+  formStyles,
+  formUtils
+} from './rounded'
+
+// アニメーションシステム（レガシー互換性用）
+export { animations } from './animations'
 
 // 詳細なカラーシステムをエクスポート
 export { colors } from './colors'
+
+// アイコンシステムをエクスポート
+export { icons, icon, iconPatterns, commonIcons, iconUtils } from './icons'
+
+// 角丸システムをエクスポート
+export { rounded, radius, componentRadius, specialRadius, radiusUtils } from './rounded'
+
+// アニメーションシステムをエクスポート
+export { 
+  transition, 
+  hover, 
+  loading, 
+  appear, 
+  feedback, 
+  patterns as animationPatterns,
+  keyframes,
+  animationGuide,
+  getAnimationDelay,
+  getStagedAnimation,
+  getLoadingAnimation,
+  getConditionalAnimation,
+  combineAnimations,
+  animations
+} from './animations'
+
+// エレベーションシステムをエクスポート
+export {
+  borders as elevationBorders,
+  elevation,
+  patterns as elevationPatterns,
+  elevationGuide,
+  getElevation,
+  getBorderForState,
+  getCardClasses,
+  getInputClasses,
+  getTemporaryUIElevation
+} from './elevation'
 
 // ============================================
 // 型定義
 // ============================================
 
 export type {
+  // 基本型
   TypographyVariant,
   SpacingCategory,
   SpacingSize,
   LayoutType,
   ColorCategory,
   SemanticColor,
+  
+  // リンク型
+  LinkVariant,
+  LinkState,
+  LinkPattern,
+  
+  // アニメーション型
+  TransitionVariant,
+  HoverVariant,
+  LoadingVariant,
+  AppearVariant,
+  FeedbackVariant,
+  AnimationPattern,
+  
+  // エレベーション型
+  ElevationLevel,
+  ElevationBorder,
+  ElevationPattern,
+  UIType,
+  ComponentState,
+  
+  // コンポーネントProps型
   TypographyProps,
+  LinkProps,
   SpacingProps,
   ContainerProps,
   GridProps,
   CardProps,
   AlertProps,
   ButtonProps,
+  AnimatedProps,
+  ElevatedProps,
+  
+  // テーマ型
   Theme,
   ResponsiveValue,
   DesignToken,
   NestedKeys,
   SpacingPath,
   ColorPath,
-  ThemeValue
+  ThemeValue,
+  
+  // 8pxグリッド対応型
+  SpacingSize8px,
+  StackProps,
+  InlineProps,
+  PageContainerProps,
+  FormGroupProps,
+  CardVariant,
+  GridGap,
+  GridCols,
+  
+  // その他の型
+  ZIndexLevel,
+  FormFieldState,
+  FormFieldType
 } from './types'
+
+// ============================================
+// Typographyデータとユーティリティ
+// ============================================
+
+export {
+  heading,
+  body,
+  special,
+  link,
+  linkStates,
+  linkPatterns,
+  patterns,
+  type TypographyVariant,
+  getTypographyStyle,
+  isTypographyVariant,
+  getDefaultTag
+} from './typography'
 
 // ============================================
 // Typographyコンポーネント
@@ -52,20 +180,61 @@ export type {
 
 export {
   Typography,
+  H1, H2, H3, H4, H5, H6,
+  BodyLarge, Body, BodySmall,
+  Label, ErrorText, Caption, Code,
   PageTitle,
   SectionTitle,
   CardTitle,
-  Body,
-  Caption,
-  ErrorText,
   TypographyShowcase
-} from './components/Typography'
+} from '@/components/theme/Typography'
 
 // ============================================
-// Spacingコンポーネント
+// Spacingデータとユーティリティ
 // ============================================
 
 export {
+  // 8pxグリッド基本値とパターン
+  space,
+  patterns,
+  spacingGuide,
+  stackGap,
+  inlineGap,
+  cardVariants,
+  gridGap,
+  gridCols,
+  pageContainerStyles,
+  type SpacingSize8px,
+  type CardVariant,
+  type GridGap,
+  type GridCols,
+  getStackGap,
+  getInlineGap,
+  getCardVariant,
+  getGridGap,
+  getGridCols,
+  getPageContainerStyles,
+  is8pxGrid,
+  pxToTailwindSpacing,
+  getSpacingType,
+  validateSpacing,
+  getAvailableSpacingOptions
+} from './spacing'
+
+// ============================================
+// Spacingコンポーネント（8pxグリッド対応）
+// ============================================
+
+export {
+  // 8pxグリッド推奨コンポーネント
+  Stack,
+  Inline,
+  PageContainer,
+  Card,
+  FormGroup,
+  Grid,
+  
+  // 従来のSpacingコンポーネント（互換性維持）
   Spacing,
   PageSpacing,
   SectionSpacing,
@@ -74,10 +243,8 @@ export {
   InlineSpacing,
   ResponsivePageSpacing,
   ResponsiveSectionSpacing,
-  SpacingShowcase,
-  ConditionalSpacing,
-  DynamicSpacing
-} from './components/Spacing'
+  SpacingShowcase
+} from '@/components/theme/Spacing'
 
 // ColorShowcaseはcolors.Showcaseでアクセス可能
 
@@ -85,20 +252,24 @@ export {
 // デフォルトテーマオブジェクト
 // ============================================
 
-import { 
-  typography, 
-  spacing, 
-  layout, 
-  colors, 
-  borders, 
-  animations 
-} from './theme'
+// テーマオブジェクトを各ファイルから直接作成
+import { typography } from './typography'
+import { spacing } from './spacing' 
+import { layout } from './layout'
+import { colors } from './colors'
+import { icons } from './icons'
+import { rounded, borders } from './rounded'
+import { animations } from './animations'
+import { elevation } from './elevation'
 
 export const theme = {
   typography,
   spacing,
   layout,
   colors,
+  icons,
+  rounded,
+  elevation,
   borders,
   animations
 } as const
@@ -233,15 +404,22 @@ export function showAvailableComponents() {
     'ErrorText'
   ])
   
-  console.log('Spacing:', [
+  console.log('Spacing (8pxグリッド):', [
+    'Stack',        // 縦並び
+    'Inline',       // 横並び  
+    'PageContainer', // ページ余白
+    'Card',         // カード
+    'FormGroup',    // フォーム
+    'Grid'          // グリッド
+  ])
+  
+  console.log('Spacing (従来):', [
     'Spacing',
     'PageSpacing',
     'SectionSpacing',
     'ContentSpacing',
     'CardSpacing',
-    'InlineSpacing',
-    'ResponsivePageSpacing',
-    'ResponsiveSectionSpacing'
+    'InlineSpacing'
   ])
   
   console.groupEnd()
