@@ -3,10 +3,10 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { NavigationItem, isNavItemActive } from '@/components/layout/navigation/navigation/config'
+import { NavigationItem, isNavItemActive } from '@/config/navigation/config'
 import { useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
-import { componentRadius, columns, animations, icons, typography } from '@/config/theme'
-import { selection, text, background } from '@/config/theme/colors'
+import { componentRadius, columns, animations, icons, typography, colors } from '@/config/theme'
+import { selection, text, background, secondary } from '@/config/theme/colors'
 
 interface AppBarItemProps {
   item: NavigationItem

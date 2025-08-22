@@ -11,4 +11,4 @@ export { CommonSidebarSections } from './common-sections'
 export { CommonBottomSections } from './common-bottom-sections'
 
 // Schedule Card
-export { CurrentScheduleCard } from './current-schedule-card'
+export { CurrentScheduleCard } from '@/features/calendar/components/current-schedule-card'

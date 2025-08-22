@@ -78,7 +78,7 @@ export const selection = {
   // 背景（薄い青、backgroundより少し明るく）
   DEFAULT: 'bg-blue-50 dark:bg-blue-950/50',
   hover: 'hover:bg-blue-100 dark:hover:bg-blue-950/70',
-  active: 'bg-blue-200 dark:bg-blue-900/40',
+  active: 'bg-blue-200 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/40',
   
   // ボーダー（左の青いバー）
   border: 'border-l-2 border-blue-600 dark:border-blue-400',

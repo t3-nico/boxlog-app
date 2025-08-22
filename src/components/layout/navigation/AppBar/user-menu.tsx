@@ -42,15 +42,15 @@ export function UserMenu() {
             <Avatar 
               src={user.user_metadata.avatar_url} 
               className={cn(
-                'w-8 h-8',
-                border.DEFAULT,
+                'w-8 h-8 border',
+                border.universal,
                 componentRadius.media.avatar
               )}
             />
           ) : user?.user_metadata?.profile_icon ? (
             <div className={cn(
-              'w-8 h-8 text-sm flex items-center justify-center bg-accent',
-              border.DEFAULT,
+              'w-8 h-8 text-sm flex items-center justify-center bg-accent border',
+              border.universal,
               componentRadius.media.avatar
             )}>
               {user.user_metadata.profile_icon}
@@ -59,8 +59,8 @@ export function UserMenu() {
             <Avatar 
               src={undefined}
               className={cn(
-                'w-8 h-8',
-                border.DEFAULT,
+                'w-8 h-8 border',
+                border.universal,
                 componentRadius.media.avatar
               )}
               initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}

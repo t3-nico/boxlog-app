@@ -3,7 +3,7 @@
 import { format, getWeek } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { heading } from '@/config/theme/typography'
-import { secondary } from '@/config/theme/colors'
+import { secondary, border } from '@/config/theme/colors'
 
 interface DateRangeDisplayProps {
   date: Date
@@ -87,11 +87,10 @@ function WeekBadge({
   return (
     <h6 className={cn(
       'inline-flex items-center px-2 py-1',
-      'rounded-xs',
+      'rounded-xs border',
       heading.h6,
-      secondary.border,
+      border.universal,
       secondary.text,
-      'bg-transparent',
       className
     )}>
       week{weekNumber}

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
+import { useNavigationStore } from '../stores/navigation.store'
 import { PanelRight } from 'lucide-react'
 import { background, border, secondary, text } from '@/config/theme/colors'
 
@@ -17,7 +17,7 @@ export function SidebarToggle() {
   }
 
   return (
-    <div className="absolute top-4 left-4 z-20">
+    <div className="absolute bottom-4 left-4 z-20">
       <button
         onClick={() => setSecondaryNavCollapsed(false)}
         className={`p-2 rounded-md transition-colors ${background.surface} border ${border.DEFAULT} shadow-sm ${secondary.hover}`}

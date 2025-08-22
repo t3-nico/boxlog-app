@@ -3,7 +3,7 @@
 import React from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { primaryNavigation } from '@/components/layout/navigation/navigation/config'
+import { primaryNavigation } from '@/config/navigation/config'
 import { AppBarItem } from './app-bar-item'
 import { UserMenu } from './user-menu'
 import { ThemeToggle } from './theme-toggle'

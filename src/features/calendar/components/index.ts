@@ -1,6 +1,9 @@
 // Main Calendar Controller Component
 export { CalendarController } from './CalendarController'
 
+// Schedule Card
+export { CurrentScheduleCard } from './current-schedule-card'
+
 // Layout Components
 export * from './layout'
 
