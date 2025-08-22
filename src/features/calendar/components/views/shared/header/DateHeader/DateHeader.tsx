@@ -4,6 +4,7 @@ import React from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { cn } from '@/lib/utils'
 import type { DateHeaderProps } from './DateHeader.types'
+import { primary, secondary, selection } from '@/config/theme/colors'
 
 export function DateHeader({
   date,
@@ -38,11 +39,15 @@ export function DateHeader({
   return (
     <div
       className={cn(
-        'text-center',
-        today && 'text-primary font-semibold',
-        isSelected && 'bg-primary/10 rounded-md',
+        'text-center py-2 px-1 transition-colors',
+        // ホバー効果（当日以外のみ）
+        onClick && !today && 'cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20',
+        // クリック可能だが当日の場合
+        onClick && today && 'cursor-pointer',
+        // 選択状態（当日以外）
+        isSelected && !today && `${selection.active} ${selection.text}`,
+        // 週末（当日以外）
         weekend && !today && 'text-muted-foreground',
-        onClick && 'cursor-pointer',
         className
       )}
       onClick={handleClick}
@@ -56,17 +61,14 @@ export function DateHeader({
       
       <div className="flex flex-col items-center">
         {dayName && (
-          <div className={cn(
-            'text-xs font-medium',
-            today ? 'text-primary' : 'text-muted-foreground'
-          )}>
+          <div className="text-xs font-medium text-muted-foreground">
             {dayName}
           </div>
         )}
         
         <div className={cn(
-          'text-lg font-medium',
-          today && 'bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center'
+          'text-lg font-medium w-8 h-8 rounded-full flex items-center justify-center',
+          today && 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold'
         )}>
           {dateString}
         </div>

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { secondary, selection, background, border, text } from '@/config/theme/colors'
+import { radius } from '@/config/theme/rounded'
 
 export type ViewOption = {
   value: string
@@ -78,8 +80,9 @@ export function ViewSwitcher({
         className={cn(
           'flex items-center gap-2 px-4 py-2 text-sm font-medium',
           'rounded-md transition-colors',
-          'bg-secondary text-secondary-foreground',
-          'hover:bg-secondary/80',
+          secondary.DEFAULT,
+          secondary.text,
+          secondary.hover,
           buttonClassName
         )}
       >
@@ -99,8 +102,10 @@ export function ViewSwitcher({
           {/* Dropdown */}
           <div className={cn(
             'absolute right-0 top-full mt-1',
-            'min-w-[160px] bg-background border border-border',
-            'rounded-md shadow-lg z-50',
+            'min-w-[160px]',
+            background.base,
+            radius.md,
+            'shadow-lg z-50',
             dropdownClassName
           )}>
             <div className="py-1">
@@ -110,11 +115,11 @@ export function ViewSwitcher({
                   onClick={() => handleSelect(option.value)}
                   className={cn(
                     'w-full text-left px-4 py-2 text-sm',
-                    'hover:bg-accent/50 transition-colors',
+                    'transition-colors',
                     'flex items-center justify-between gap-2',
                     currentView === option.value 
-                      ? 'bg-accent text-accent-foreground font-medium' 
-                      : 'text-muted-foreground'
+                      ? `${selection.active} ${selection.text} font-medium` 
+                      : `${text.muted} ${secondary.hover}`
                   )}
                 >
                   <div className="flex items-center gap-2">

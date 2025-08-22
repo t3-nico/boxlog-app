@@ -4,7 +4,7 @@ import React, { memo, useState, useMemo, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
-import { primary } from '@/config/theme/colors'
+import { primary, secondary, selection } from '@/config/theme/colors'
 import { 
   startOfMonth, 
   endOfMonth, 
@@ -101,29 +101,33 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={handlePrevMonth}
-          className="h-8 w-8 p-0"
+          className={cn(
+            'p-1.5 rounded-full transition-colors',
+            secondary.hover,
+            'text-muted-foreground hover:text-foreground'
+          )}
           aria-label="Previous Month"
         >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+          <ChevronLeft className="h-5 w-5" />
+        </button>
         
         <div className="font-medium text-base">
           {format(currentMonth, 'MMM yyyy')}
         </div>
         
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={handleNextMonth}
-          className="h-8 w-8 p-0"
+          className={cn(
+            'p-1.5 rounded-full transition-colors',
+            secondary.hover,
+            'text-muted-foreground hover:text-foreground'
+          )}
           aria-label="Next Month"
         >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+          <ChevronRight className="h-5 w-5" />
+        </button>
       </div>
 
       {/* Week headers */}
@@ -187,25 +191,27 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                   className={cn(
                     // Base styles
                     "h-8 w-8 text-sm rounded-md transition-colors",
-                    "hover:bg-accent focus:bg-accent focus:outline-none",
+                    "focus:outline-none",
+                    
+                    // Hover state (only for non-today dates)
+                    !isToday && selection.hover,
                     
                     // Current month vs other months
                     isCurrentMonth 
                       ? "text-foreground" 
                       : "text-muted-foreground/50",
                     
-                    // Selected state
-                    isSelected && [
-                      primary.DEFAULT,
-                      'text-white'
+                    // Selected state (only for non-today dates)
+                    isSelected && !isToday && [
+                      selection.active,
+                      selection.text,
                     ],
                     
-                    // Today indicator
-                    isToday && !isSelected && [
-                      'bg-blue-600/20 dark:bg-blue-400/20',
-                      primary.text,
-                      "font-semibold border",
-                      primary.border
+                    // Today indicator (always maintains this style regardless of selected/hover state)
+                    isToday && [
+                      "!bg-neutral-200 dark:!bg-neutral-800",
+                      "!text-neutral-900 dark:!text-neutral-100",
+                      "font-semibold"
                     ],
                     
                     // Highlighted dates (events, etc.)

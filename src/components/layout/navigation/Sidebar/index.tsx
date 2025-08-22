@@ -8,7 +8,7 @@ import { PageContent } from './page-content'
 import { BottomContent } from './bottom-content'
 import { SettingsNavigation } from './settings-navigation'
 import { PanelLeft } from 'lucide-react'
-import { background, border } from '@/config/theme/colors'
+import { background, border, secondary, text } from '@/config/theme/colors'
 import { icon } from '@/config/theme/icons'
 import { heading } from '@/config/theme/typography'
 
@@ -26,10 +26,10 @@ const SidebarHeader = React.memo(({ title }: { title: string }) => {
         
         <button
           onClick={() => setSecondaryNavCollapsed(true)}
-          className="p-1 rounded-md hover:bg-accent/50 transition-colors"
+          className={`p-1 rounded-md transition-colors ${secondary.hover}`}
           title="Close sidebar"
         >
-          <PanelLeft className={`${icon.size.md} text-muted-foreground`} />
+          <PanelLeft className={`${icon.size.md} ${text.muted}`} />
         </button>
       </div>
     </div>
@@ -45,7 +45,7 @@ export function Sidebar() {
   const isCalendar = pathname.startsWith('/calendar')
 
   return (
-    <div className={`w-64 ${background.surface} border-r ${border.DEFAULT}`}>
+    <div className={`w-64 lg:w-64 md:w-56 sm:w-full ${background.surface} border-r ${border.DEFAULT}`}>
       <div className="h-full flex flex-col p-4">
         {!isSettings ? (
           <>

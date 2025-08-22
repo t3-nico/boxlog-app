@@ -7,7 +7,7 @@
 import React, { memo } from 'react'
 import { formatDate } from '../../utils/dateHelpers'
 import type { DayHeaderProps } from '../../types/view.types'
-import { primary } from '@/config/theme/colors'
+import { primary, secondary, selection } from '@/config/theme/colors'
 
 export const DayHeader = memo<DayHeaderProps>(function DayHeader({
   date,
@@ -24,12 +24,16 @@ export const DayHeader = memo<DayHeaderProps>(function DayHeader({
   
   // ヘッダーのスタイルクラス
   const headerClasses = [
-    'flex items-center justify-center py-2 px-1 text-center transition-colors',
-    onClick ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700' : '',
+    'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-lg',
+    // ホバー効果（当日以外のみ）
+    onClick && !isToday ? 'cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20' : '',
+    // クリック可能だが当日の場合
+    onClick && isToday ? 'cursor-pointer' : '',
+    // 当日スタイル（ミニカレンダーと同じ）
     isToday 
-      ? `${primary.DEFAULT} text-white font-semibold rounded-lg shadow-md ring-2 ring-blue-600/30 dark:ring-blue-400/30` 
+      ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold' 
       : isSelected 
-        ? `bg-blue-600/20 dark:bg-blue-400/20 ${primary.text}`
+        ? `${selection.active} ${selection.text}`
         : isWeekend 
           ? 'text-gray-500 dark:text-gray-400' 
           : 'text-gray-900 dark:text-gray-100',
@@ -49,18 +53,18 @@ export const DayHeader = memo<DayHeaderProps>(function DayHeader({
     >
       <div className="flex flex-col items-center min-w-0">
         {/* 曜日 */}
-        <div className={`text-xs ${isToday ? 'text-white opacity-75' : 'text-gray-500 dark:text-gray-400'}`}>
+        <div className={`text-xs ${isToday ? 'text-neutral-900 dark:text-neutral-100 opacity-75' : 'text-gray-500 dark:text-gray-400'}`}>
           {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
         </div>
         
         {/* 日付 */}
-        <div className={`text-lg font-semibold ${isToday ? 'text-white' : ''}`}>
+        <div className={`text-lg font-semibold ${isToday ? 'text-neutral-900 dark:text-neutral-100' : ''}`}>
           {date.getDate()}
         </div>
         
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
-          <div className={`text-xs ${isToday ? 'text-white opacity-75' : 'text-gray-500 dark:text-gray-400'}`}>
+          <div className={`text-xs ${isToday ? 'text-neutral-900 dark:text-neutral-100 opacity-75' : 'text-gray-500 dark:text-gray-400'}`}>
             {date.toLocaleDateString('ja-JP', { month: 'short' })}
           </div>
         )}

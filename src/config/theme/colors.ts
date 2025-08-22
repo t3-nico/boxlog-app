@@ -46,8 +46,8 @@ export const primary = {
  */
 export const secondary = {
   // ボタン背景（グレー）
-  DEFAULT: 'bg-neutral-200 dark:bg-neutral-800',
-  hover: 'hover:bg-neutral-300 dark:hover:bg-neutral-700',
+  DEFAULT: 'bg-neutral-300 dark:bg-neutral-700',
+  hover: 'hover:bg-neutral-400 dark:hover:bg-neutral-600',
   active: 'active:bg-neutral-400 dark:active:bg-neutral-600',
   disabled: 'disabled:bg-neutral-100 dark:disabled:bg-neutral-900',
   
@@ -116,17 +116,13 @@ export const ghost = {
  */
 export const background = {
   // レベル0: ページ背景（最も明るい/暗い）
-  base: 'bg-neutral-50 dark:bg-neutral-950',
+  base: 'bg-neutral-100 dark:bg-neutral-900',
   
   // レベル1: カード・セクション
-  surface: 'bg-white dark:bg-neutral-900',  // カードは白OK
+  surface: 'bg-neutral-200 dark:bg-neutral-800',  // カードは白OK
   
   // レベル2: ネストされた要素
-  elevated: 'bg-neutral-100 dark:bg-neutral-800',
-  
-  // ホバー（Neutral系）
-  hover: 'hover:bg-neutral-100 dark:hover:bg-neutral-800',
-  hoverStrong: 'hover:bg-neutral-200 dark:hover:bg-neutral-700',
+  elevated: 'bg-neutral-300 dark:bg-neutral-700',
 } as const
 
 // ============================================

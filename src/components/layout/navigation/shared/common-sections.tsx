@@ -7,7 +7,7 @@ import { Button } from '@/components/shadcn-ui/button'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { MiniCalendar } from '@/features/calendar/components/layout/Sidebar/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { primary, text, colorUtils } from '@/config/theme/colors'
+import { primary, text } from '@/config/theme/colors'
 import { body } from '@/config/theme/typography'
 
 interface CommonSidebarSectionsProps {
@@ -33,13 +33,13 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
             openPopup('event')
           }}
           variant="default"
-          className={`w-full h-[56px] py-4 px-4 flex items-center justify-between ${primary.DEFAULT} ${text.onPrimary} ${primary.hover}`}
+          className={`w-full h-[56px] py-4 px-4 flex items-center justify-between ${primary.DEFAULT} ${primary.hover}`}
         >
           <div className="flex items-center gap-2">
-            <Plus className={`size-5 shrink-0 ${text.onPrimary}`} />
-            <span className={`truncate ${body.large} ${text.onPrimary}`}>Create</span>
+            <Plus className={`size-5 shrink-0 ${primary.text}`} />
+            <span className={`truncate ${body.large} ${primary.text}`}>Create</span>
           </div>
-          <ChevronDown className={`size-4 shrink-0 ${text.onPrimary}`} />
+          <ChevronDown className={`size-4 shrink-0 ${primary.text}`} />
         </Button>
       </div>
 

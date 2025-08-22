@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { selection, secondary, text } from '@/config/theme/colors'
 
 export type NavigationDirection = 'prev' | 'next' | 'today'
 
@@ -43,8 +44,9 @@ export function DateNavigator({
           className={cn(
             'px-4 py-2 text-sm font-medium',
             'rounded-md transition-colors',
-            'bg-secondary text-secondary-foreground',
-            'hover:bg-secondary/80',
+            secondary.DEFAULT,
+            secondary.text,
+            secondary.hover,
             'flex items-center gap-2',
             buttonClassName
           )}
@@ -61,8 +63,9 @@ export function DateNavigator({
             onClick={() => onNavigate('prev')}
             className={cn(
               'p-1.5 rounded-full transition-colors',
-              'hover:bg-accent/50',
-              'text-muted-foreground hover:text-foreground'
+              secondary.hover,
+              text.muted,
+              'hover:text-foreground'
             )}
             title="Previous period"
             aria-label="Previous"
@@ -73,8 +76,9 @@ export function DateNavigator({
             onClick={() => onNavigate('next')}
             className={cn(
               'p-1.5 rounded-full transition-colors',
-              'hover:bg-accent/50',
-              'text-muted-foreground hover:text-foreground'
+              secondary.hover,
+              text.muted,
+              'hover:text-foreground'
             )}
             title="Next period"
             aria-label="Next"

@@ -35,8 +35,7 @@ export function AppBar() {
             {/* Add separator between sections, except before last section */}
             {sectionIndex < filteredSections.length - 1 && (
               <div className={cn(
-                'w-6 h-px mt-6 mb-6',
-                border.DEFAULT
+                'w-6 h-px mt-6 mb-6 bg-neutral-300 dark:bg-neutral-700'
               )} />
             )}
           </React.Fragment>

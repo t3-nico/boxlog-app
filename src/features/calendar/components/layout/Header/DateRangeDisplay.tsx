@@ -2,6 +2,8 @@
 
 import { format, getWeek } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { heading } from '@/config/theme/typography'
+import { secondary } from '@/config/theme/colors'
 
 interface DateRangeDisplayProps {
   date: Date
@@ -47,9 +49,9 @@ export function DateRangeDisplay({
     
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <h1 className="text-xl font-semibold">
+        <h2 className={heading.h2}>
           {rangeText}
-        </h1>
+        </h2>
         {showWeekNumber && (
           <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
         )}
@@ -62,9 +64,9 @@ export function DateRangeDisplay({
   
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <h1 className="text-xl font-semibold">
+      <h2 className={heading.h2}>
         {formattedDate}
-      </h1>
+      </h2>
       {showWeekNumber && (
         <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
       )}
@@ -83,15 +85,17 @@ function WeekBadge({
   className?: string 
 }) {
   return (
-    <span className={cn(
+    <h6 className={cn(
       'inline-flex items-center px-2 py-1',
-      'rounded-full text-xs font-medium',
-      'border border-secondary text-secondary-foreground',
+      'rounded-xs',
+      heading.h6,
+      secondary.border,
+      secondary.text,
       'bg-transparent',
       className
     )}>
       week{weekNumber}
-    </span>
+    </h6>
   )
 }
 

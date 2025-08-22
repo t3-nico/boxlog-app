@@ -3,6 +3,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { selection, text, primary } from '@/config/theme/colors'
+import { body } from '@/config/theme/typography'
 
 // Sidebar Section
 interface SidebarSectionProps {
@@ -27,7 +29,8 @@ interface SidebarHeadingProps {
 export function SidebarHeading({ className, children }: SidebarHeadingProps) {
   return (
     <h3 className={cn(
-      'px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2',
+      'px-2 text-xs font-semibold uppercase tracking-wider mb-2',
+      text.muted,
       className
     )}>
       {children}
@@ -55,9 +58,10 @@ export function SidebarItem({
 }: SidebarItemProps) {
   const baseClasses = cn(
     'group flex items-center gap-3 rounded-lg px-2 py-2 text-sm font-medium transition-colors',
+    body.regular,
     current
-      ? 'bg-accent text-accent-foreground'
-      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
+      ? `${selection.active} ${selection.text}`
+      : `${text.muted} ${selection.hover}`,
     className
   )
 
@@ -65,7 +69,7 @@ export function SidebarItem({
     <>
       {children}
       {indicator && current && (
-        <div className="ml-auto w-1 h-4 bg-primary rounded-full" />
+        <div className={`ml-auto w-1 h-4 ${primary.DEFAULT} rounded-full`} />
       )}
     </>
   )
