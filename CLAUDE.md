@@ -8,42 +8,13 @@
 
 ## 📚 ドキュメント配置
 
-**重要: 主要なドキュメントはCompassサブモジュールで一元管理されています。**
+**重要: このリポジトリ内でドキュメントを直接管理しています。**
 
-詳細なドキュメントは以下の場所を参照してください：
-- **App専用AI指示書**: `compass/ai-context/app/CLAUDE.md` ← **開発時はこちらを主に参照**
-- **技術ドキュメント**: `compass/knowledge/app-docs/`
-- **アーキテクチャ**: `compass/architecture/`
-- **デザインシステム**: `compass/design-system/`
-
-## 🔄 Compass サブモジュール連携
-
-このリポジトリには Compass サブモジュールが統合されており、以下のように連携しています：
-
-### サブモジュール操作
-```bash
-# Compassの最新情報を取得
-git submodule update --remote
-
-# Compass内で作業（ドキュメント更新など）
-cd compass
-git checkout -b feature/update-docs
-# 編集作業
-git add . && git commit -m "docs: ドキュメント更新"
-git push origin feature/update-docs
-# PR作成・マージ
-
-# メインリポジトリに戻ってサブモジュール更新を反映
-cd ..
-git add compass
-git commit -m "chore: compassサブモジュール更新"
-```
-
-### 自動同期システム
-Compass の `dev`/`main` ブランチへの push により、このリポジトリへの自動同期が実行されます：
-```
-Compass更新 → GitHub Actions → 自動でこのリポジトリのサブモジュール更新
-```
+プロジェクトのドキュメントは以下の場所に配置されています：
+- **開発ドキュメント**: `docs/` ディレクトリ
+- **コンポーネントガイド**: `src/components/` の各ディレクトリ
+- **型定義・API**: TypeScript定義ファイル
+- **設定ファイル**: `src/config/` ディレクトリ
 
 ## 🚀 開発コマンド
 
@@ -75,13 +46,13 @@ BoxLogでは機密情報管理に1Password Developer Securityを使用：
 
 ## 🏗️ プロジェクト概要
 
-BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケーションです。Compass ナレッジマネジメントシステムと統合し、ドキュメントとリソースを一元管理しています。
+BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケーションです。
 
 ### 主要技術スタック
 
 - **フロントエンド**: Next.js 14（App Router）, React 18, TypeScript
 - **UIコンポーネント**: shadcn/ui（基本）, kiboUI（高度な機能）
-- **ドキュメント**: Compass サブモジュールによる一元管理
+- **ドキュメント**: リポジトリ内で直接管理
 - **データベース**: Supabase（PostgreSQL）
 - **スタイリング**: Tailwind CSS v4 + 8pxグリッドシステム
 
@@ -109,21 +80,21 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 ## 📋 開発時の指針
 
 ### Claude Code 使用時
-- **詳細な技術指示**: `compass/ai-context/app/CLAUDE.md` を参照
 - **コンポーネント実装**: shadcn/ui → kiboUI → カスタム の順で検討
-- **デザインシステム**: Compass の統一トークンを使用
+- **デザインシステム**: `/src/config/theme` の統一トークンを使用
+- **型安全**: TypeScript を厳密に使用
 
 ### ドキュメント更新
-1. **App関連**: `compass/knowledge/app-docs/` で管理
-2. **サブモジュール更新**: 上記のサブモジュール操作手順に従う
-3. **変更追跡**: コミットメッセージで修正元を明記
+1. **開発ドキュメント**: `docs/` ディレクトリで管理
+2. **コンポーネント**: インラインコメントとJSDoc
+3. **変更追跡**: コミットメッセージで修正内容を明記
 
 ## 🔗 重要なリンク
 
-- **詳細技術ドキュメント**: `compass/ai-context/app/CLAUDE.md`
-- **コンポーネントガイド**: `compass/knowledge/app-docs/components/`
-- **デザインシステム**: `compass/design-system/`
-- **Git ワークフロー**: `compass/knowledge/app-docs/development/git-workflow.md`
+- **デザインシステム**: `/src/config/theme/`
+- **コンポーネント**: `/src/components/`
+- **開発ドキュメント**: `/docs/`
+- **TypeScript設定**: `tsconfig.json`
 
 ## 🎨 デザインシステム（Theme）の厳守
 
@@ -235,7 +206,6 @@ grep -r "from '@/config/theme'" --include="*.tsx" src/ | wc -l
 
 ---
 
-**📖 このドキュメントについて**: BoxLog App メインリポジトリ概要  
-**詳細指示書**: `compass/ai-context/app/CLAUDE.md` ← **開発時はこちらを主に参照**  
-**最終更新**: 2025-08-21  
-**バージョン**: v2.1 - Theme使用ルール追加版
+**📖 このドキュメントについて**: BoxLog App メインリポジトリ開発指針  
+**最終更新**: 2025-08-22  
+**バージョン**: v3.0 - サブモジュール削除・独立運用版
