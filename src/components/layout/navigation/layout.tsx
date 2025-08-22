@@ -14,6 +14,7 @@ import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { background } from '@/config/theme/colors'
+import { TaskFooter } from '../TaskFooter'
 
 interface DashboardLayoutProps {
   events?: any
@@ -55,28 +56,34 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   }
 
   const content = (
-    <div className="flex h-screen">
-      {/* L1: App Bar (60px) */}
-      <AppBar />
-      
-      {/* L2: Secondary Navigation (240px) - Collapsible */}
-      {!isSecondaryNavCollapsed && (
-        <SecondaryNavigation />
-      )}
-      
-      {/* Main Content Area - Flexible */}
-      <div className={`flex-1 relative z-10 flex flex-col ${background.surface}`}>
-        {/* Secondary Nav Toggle Button */}
-        <SecondaryNavToggle />
+    <div className="flex flex-col h-screen">
+      {/* メインコンテンツエリア（AppBar + Sidebar + Content） */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* L1: App Bar (60px) */}
+        <AppBar />
         
-        {/* Main Content with AI Panel */}
-        <div className="flex-1 relative overflow-hidden">
-          {children}
+        {/* L2: Secondary Navigation (240px) - Collapsible */}
+        {!isSecondaryNavCollapsed && (
+          <SecondaryNavigation />
+        )}
+        
+        {/* Main Content Area - Flexible */}
+        <div className={`flex-1 relative z-10 flex flex-col ${background.surface}`}>
+          {/* Secondary Nav Toggle Button */}
+          <SecondaryNavToggle />
           
-          {/* Floating AI Chat within main area */}
-          <DynamicFloatingAIChat />
+          {/* Main Content with AI Panel */}
+          <div className="flex-1 relative overflow-hidden">
+            {children}
+            
+            {/* Floating AI Chat within main area */}
+            <DynamicFloatingAIChat />
+          </div>
         </div>
       </div>
+      
+      {/* Task Execution Footer - 全画面幅、最下部 */}
+      <TaskFooter />
     </div>
   )
 

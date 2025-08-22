@@ -15,6 +15,7 @@ export function AppBar() {
   return (
     <div className={cn(
       'w-16 flex flex-col',
+      'relative z-50',  // AppBarを最前面に
       background.base,
       text.primary
     )}>

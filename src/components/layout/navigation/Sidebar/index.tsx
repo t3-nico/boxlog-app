@@ -34,7 +34,7 @@ export function Sidebar() {
   const { setSecondaryNavCollapsed } = useNavigationStore()
 
   return (
-    <div className={`w-64 lg:w-64 md:w-56 sm:w-full ${background.surface} border-r ${border.universal}`}>
+    <div className={`w-64 lg:w-64 md:w-56 sm:w-full relative z-50 ${background.surface} border-r ${border.universal}`}>
       <div className="h-full flex flex-col p-4">
         {!isSettings ? (
           <>
