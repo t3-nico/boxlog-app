@@ -14,7 +14,6 @@ import { SearchResult } from '../config/command-palette'
 import { SearchEngine } from '../lib/search-engine'
 import { Task } from '@/types/unified'
 import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
-import { generateCompassCommands } from '../lib/compass-commands'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useTagStore } from '@/features/tags/stores/tag-store'
@@ -116,12 +115,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
         type: 'command' as const
       }))
       
-      // Get compass documentation commands
-      const compassCommands = generateCompassCommands()
-      const compassResults: SearchResult[] = compassCommands.map(command => ({
-        ...command,
-        type: 'command' as const
-      }))
+      // Skip compass commands as they were removed
       
       // Get recent tasks
       const recentTasks = tasks.slice(0, 5) // Get 5 most recent tasks
@@ -144,7 +138,6 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       
       const initialResults: SearchResult[] = [
         ...commandResults,
-        ...compassResults,
         ...taskResults
       ]
       
