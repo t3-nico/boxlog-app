@@ -45,20 +45,23 @@ export const primary = {
  * @note すべてNeutral系で統一
  */
 export const secondary = {
-  // ボタン背景（グレー）
+  // ボタン背景（グレー、elevatedレベル）
   DEFAULT: 'bg-neutral-300 dark:bg-neutral-700',
   hover: 'hover:bg-neutral-400 dark:hover:bg-neutral-600',
-  active: 'active:bg-neutral-400 dark:active:bg-neutral-600',
-  disabled: 'disabled:bg-neutral-100 dark:disabled:bg-neutral-900',
+  active: 'active:bg-neutral-500 dark:active:bg-neutral-500',
+  disabled: 'disabled:bg-neutral-200 dark:disabled:bg-neutral-800',
   
-  // テキスト
+  // テキスト（強いコントラスト）
   text: 'text-neutral-900 dark:text-neutral-100',
   
   // ボーダー（アウトラインボタン用）
-  border: 'border border-neutral-300 dark:border-neutral-700',
+  border: 'border border-neutral-200 dark:border-neutral-800',
   
   // リング
   ring: 'ring-2 ring-neutral-400 dark:ring-neutral-600 ring-offset-2',
+  
+  // 今日ハイライト（当日表示用）
+  today: 'bg-neutral-400 dark:bg-neutral-600',
 } as const
 
 // ============================================
@@ -72,16 +75,16 @@ export const secondary = {
  * @note ボタンには使用しない
  */
 export const selection = {
-  // 背景（薄い青）
-  DEFAULT: 'bg-blue-50 dark:bg-blue-900/20',
-  hover: 'hover:bg-blue-50 dark:hover:bg-blue-900/20',
-  active: 'bg-blue-100 dark:bg-blue-900/30',
+  // 背景（薄い青、backgroundより少し明るく）
+  DEFAULT: 'bg-blue-50 dark:bg-blue-950/50',
+  hover: 'hover:bg-blue-100 dark:hover:bg-blue-950/70',
+  active: 'bg-blue-200 dark:bg-blue-900/40',
   
   // ボーダー（左の青いバー）
   border: 'border-l-2 border-blue-600 dark:border-blue-400',
   
-  // テキスト（選択時に少し濃く）
-  text: 'text-blue-900 dark:text-blue-100',
+  // テキスト（選択時に少し濃く、コントラスト強化）
+  text: 'text-blue-800 dark:text-blue-200',
 } as const
 
 // ============================================
@@ -134,23 +137,23 @@ export const background = {
  * @description 文字色の階層
  */
 export const text = {
-  // 見出し・重要（最も濃い）
-  primary: 'text-neutral-900 dark:text-neutral-50',
+  // 見出し・重要（最も濃い、背景とのコントラスト確保）
+  primary: 'text-neutral-900 dark:text-neutral-100',
   
   // 本文（少し薄い）
-  secondary: 'text-neutral-700 dark:text-neutral-200',
+  secondary: 'text-neutral-800 dark:text-neutral-200',
   
   // 補助・説明（さらに薄い）
-  muted: 'text-neutral-500 dark:text-neutral-400',
+  muted: 'text-neutral-600 dark:text-neutral-400',
   
   // 無効（最も薄い）
-  disabled: 'text-neutral-400 dark:text-neutral-600',
+  disabled: 'text-neutral-500 dark:text-neutral-500',
   
   // ボタン内の白文字
   white: 'text-white',
   
   // リンク（Neutral系）
-  link: 'text-neutral-700 dark:text-neutral-300 underline underline-offset-2',
+  link: 'text-neutral-800 dark:text-neutral-300 underline underline-offset-2',
   linkHover: 'hover:text-neutral-900 dark:hover:text-neutral-100',
 } as const
 
@@ -163,14 +166,16 @@ export const text = {
  * @description 境界線の濃さ
  */
 export const border = {
-  // 薄い
-  subtle: 'border-neutral-100 dark:border-neutral-800',
+  // 既存（モード別）
+  subtle: 'border-neutral-50 dark:border-neutral-950',
+  DEFAULT: 'border-neutral-100 dark:border-neutral-900',
+  strong: 'border-neutral-200 dark:border-neutral-800',
   
-  // 標準
-  DEFAULT: 'border-neutral-200 dark:border-neutral-800',
+  // 🆕 汎用（追加）
+  universal: 'border-neutral-400',  // シンプルに1つ
   
-  // 濃い
-  strong: 'border-neutral-300 dark:border-neutral-700',
+  // 🆕 透明度ベース（オプション）
+  alpha: 'border-neutral-900/20 dark:border-neutral-100/20',
 } as const
 
 // ============================================

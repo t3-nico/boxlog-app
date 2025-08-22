@@ -68,7 +68,7 @@ export function DateHeader({
         
         <div className={cn(
           'text-lg font-medium w-8 h-8 rounded-full flex items-center justify-center',
-          today && 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold'
+          today && `${secondary.today} ${secondary.text} font-semibold`
         )}>
           {dateString}
         </div>

@@ -4,7 +4,7 @@ import React, { memo, useState, useMemo, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
-import { primary, secondary, selection } from '@/config/theme/colors'
+import { primary, secondary, selection, background } from '@/config/theme/colors'
 import { 
   startOfMonth, 
   endOfMonth, 
@@ -209,8 +209,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                     
                     // Today indicator (always maintains this style regardless of selected/hover state)
                     isToday && [
-                      "!bg-neutral-200 dark:!bg-neutral-800",
-                      "!text-neutral-900 dark:!text-neutral-100",
+                      `!${secondary.today}`,
+                      secondary.text,
                       "font-semibold"
                     ],
                     
