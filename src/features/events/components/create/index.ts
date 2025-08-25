@@ -1,3 +1,7 @@
 export { CreateEventModal } from './CreateEventModal'
 export { CreateEventForm } from './CreateEventForm'
 export { CreateEventTrigger } from './CreateEventTrigger'
+export { EssentialCreate } from './EssentialCreate'
+export { TitleInput } from './TitleInput'
+export { DateSelector } from './DateSelector'
+export { TagInput } from './TagInput'
