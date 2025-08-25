@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { CommonSidebarSections } from '../shared'
-import { Sidebar } from '@/features/calendar/components/layout'
+import { CreateButton } from './create-button'
 import { BoardSidebarSections } from '@/features/board/components/sidebar'
 import { TableSidebarSections } from '@/features/table/components/sidebar'
 import { StatsSidebarSections } from '@/features/stats/components/sidebar'
@@ -21,8 +21,14 @@ export function PageContent({ pathname }: PageContentProps) {
   const isAIChatPage = pathname.startsWith('/ai-chat')
   const isHelpPage = pathname.startsWith('/help')
 
+  // Createボタンを表示するページを定義（calendar, table, boardのみ）
+  const showCreateButton = isCalendarPage || isTablePage || isBoardPage
+
   return (
-    <div className="flex-1 flex flex-col gap-6 min-h-0">
+    <div className="flex-1 flex flex-col min-h-0">
+      {/* Createボタン（特定ページのみ表示） */}
+      {showCreateButton && <CreateButton />}
+      
       {/* Common sections for all pages */}
       <CommonSidebarSections collapsed={false} />
 

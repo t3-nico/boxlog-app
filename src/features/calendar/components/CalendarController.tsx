@@ -9,7 +9,7 @@ import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView as MonthView } from './views/TwoWeekView'
 import { AgendaView } from './views/AgendaView'
-import { AddPopup } from '@/features/events/components/forms'
+import { CreateEventModal } from '@/features/events/components/create'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { DnDProvider } from '../providers/DnDProvider'
 import { CalendarLayout } from './layout/CalendarLayout'
@@ -699,28 +699,8 @@ export function CalendarController({
         </div>
       </CalendarLayout>
       
-      {/* AddPopup - useAddPopupフックで管理 */}
-      <AddPopup 
-        open={isAddPopupOpen} 
-        onOpenChange={(open) => {
-          if (!open) {
-            closePopup()
-            setSelectedEvent(null)
-            // デフォルト値もクリア
-            setEventDefaultDate(undefined)
-            setEventDefaultTime(undefined)
-            setEventDefaultEndTime(undefined)
-          }
-        }}
-        defaultTab="event"
-        editingEvent={selectedEvent}
-        contextData={{
-          editingEvent: selectedEvent
-        }}
-        defaultDate={eventDefaultDate}
-        defaultTime={eventDefaultTime}
-        defaultEndTime={eventDefaultEndTime}
-      />
+      {/* CreateEventModal - useCreateModalStoreで管理 */}
+      <CreateEventModal />
     </DnDProvider>
   )
 }

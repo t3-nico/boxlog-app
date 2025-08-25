@@ -12,6 +12,7 @@ import { Sidebar as SecondaryNavigation, SecondaryNavToggle } from './Sidebar'
 import { useNavigationStore } from './stores/navigation.store'
 import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
+import { CreateEventModal } from '@/features/events/components/create/CreateEventModal'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { background } from '@/config/theme/colors'
 import { TaskFooter } from '../TaskFooter'
@@ -84,6 +85,9 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       
       {/* Task Execution Footer - 全画面幅、最下部 */}
       <TaskFooter />
+      
+      {/* Global Create Event Modal */}
+      <CreateEventModal />
     </div>
   )
 

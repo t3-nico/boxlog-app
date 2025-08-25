@@ -24,9 +24,9 @@ export const DynamicCalendarView = dynamic(
   }
 )
 
-// AddPopupの動的インポート
-export const DynamicAddPopup = dynamic(
-  () => import('@/features/events/components/forms').then(mod => ({ default: mod.AddPopup })),
+// CreateEventModalの動的インポート
+export const DynamicCreateEventModal = dynamic(
+  () => import('@/features/events/components/create').then(mod => ({ default: mod.CreateEventModal })),
   {
     ssr: false,
     loading: () => null
