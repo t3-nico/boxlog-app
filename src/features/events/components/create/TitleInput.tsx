@@ -24,31 +24,31 @@ export function TitleInput({
   const [isFocused, setIsFocused] = useState(false)
   const [animatedValue, setAnimatedValue] = useState('')
   
-  // オートフォーカス
+  // Auto focus
   useEffect(() => {
     if (autoFocus && inputRef.current) {
       const focusInput = () => {
         inputRef.current?.focus()
       }
-      // 即座に + 遅延で確実にフォーカス
+      // Focus immediately + delayed for reliability
       focusInput()
       setTimeout(focusInput, 100)
     }
   }, [autoFocus])
 
-  // 文字入力アニメーション
+  // Text input animation
   useEffect(() => {
     if (value.length > animatedValue.length) {
-      // 文字が追加された場合、1文字ずつアニメーション
+      // When characters are added, animate one by one
       const newChar = value[value.length - 1]
       setAnimatedValue(prev => prev + newChar)
     } else {
-      // 削除された場合は即座に更新
+      // When deleted, update immediately
       setAnimatedValue(value)
     }
   }, [value])
 
-  // スマート入力解析
+  // Smart input analysis
   useEffect(() => {
     if (value && onSmartExtract) {
       const smartExtract = () => {
@@ -65,7 +65,7 @@ export function TitleInput({
         const tagMatches = value.match(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g) || []
         const tags = tagMatches.map(tag => tag.slice(1)) // #を除去
         
-        // タイトルからタグを除去
+        // Remove tags from title
         const cleanTitle = value.replace(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g, '').trim()
         
         // 日付の推測
@@ -123,7 +123,7 @@ export function TitleInput({
 
   return (
     <div className="relative">
-      {/* メイン入力フィールド */}
+      {/* Main input field */}
       <div className="relative">
         <input
           ref={inputRef}
@@ -155,7 +155,7 @@ export function TitleInput({
           }}
         />
         
-        {/* プレースホルダーのカスタムアニメーション */}
+        {/* Custom placeholder animation */}
         <AnimatePresence>
           {!value && !isFocused && (
             <motion.div
@@ -173,7 +173,7 @@ export function TitleInput({
         </AnimatePresence>
       </div>
 
-      {/* プログレスバー（入力開始で表示） */}
+      {/* Progress bar (shown when input starts) */}
       <AnimatePresence>
         {isFocused && (
           <motion.div

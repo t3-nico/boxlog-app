@@ -32,6 +32,10 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
                 console.log('❌ Navigation not available')
               }
             }}
+            onMonthChange={(date) => {
+              // 月移動時はミニカレンダーの表示のみ変更、メインカレンダーは移動しない
+              console.log('📅 MiniCalendar month changed (display only):', date)
+            }}
           />
         </div>
       )}

@@ -16,7 +16,7 @@ export type CalendarEvent = TimedEvent
 
 export interface EventBlockProps {
   event: CalendarEvent
-  position: EventPosition
+  position?: EventPosition // positionをオプショナルに変更
   onClick?: (event: CalendarEvent) => void
   onDoubleClick?: (event: CalendarEvent) => void
   onContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void

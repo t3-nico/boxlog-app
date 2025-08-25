@@ -79,13 +79,13 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         {/* イベント */}
         {dayEvents.map((event) => {
           const position = eventPositions.get(event.id)
-          if (!position) return null
+          // positionが見つからない場合は、デフォルト位置を使用してレンダリング
           
           return (
             <EventBlock
               key={event.id}
               event={event}
-              position={position}
+              position={position} // undefinedでも大丈夫（EventBlock側で対応済み）
               onClick={onEventClick}
               onDoubleClick={onEventDoubleClick}
               onContextMenu={onEventContextMenu}

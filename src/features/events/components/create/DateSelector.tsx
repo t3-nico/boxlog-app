@@ -1,226 +1,446 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
-import { Calendar, Clock } from 'lucide-react'
-import { text, background, border, primary } from '@/config/theme/colors'
-import { body, heading } from '@/config/theme/typography'
+import React, { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Calendar, Bell, Repeat, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+import { text, background, border } from '@/config/theme/colors'
+import { body } from '@/config/theme/typography'
 import { rounded } from '@/config/theme/rounded'
 
 interface DateSelectorProps {
   value: Date
-  endValue?: Date
+  endValue: Date
   onChange: (date: Date) => void
-  onEndChange?: (date: Date) => void
+  onEndChange: (date: Date) => void
   onTabNext?: () => void
 }
 
-export function DateSelector({ value, endValue, onChange, onEndChange, onTabNext }: DateSelectorProps) {
+// Generate 15-minute interval time options
+const generateTimeOptions = () => {
+  const options = []
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 15) {
+      const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      options.push({ value: timeString, display: timeString, raw: { hour, minute } })
+    }
+  }
+  return options
+}
+
+export function DateSelector({ 
+  value, 
+  endValue, 
+  onChange, 
+  onEndChange,
+  onTabNext 
+}: DateSelectorProps) {
+  // Duration (minutes)
+  const [duration, setDuration] = useState(60)
   
-  // 日付を文字列に変換するヘルパー関数
+  // タイムピッカー状態
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false)
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false)
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const timeOptions = generateTimeOptions()
+  const startTimeRef = useRef<HTMLDivElement>(null)
+  const endTimeRef = useRef<HTMLDivElement>(null)
+  const dateRef = useRef<HTMLDivElement>(null)
+
+  // Calculate duration
+  useEffect(() => {
+    const durationMs = endValue.getTime() - value.getTime()
+    const durationMinutes = Math.floor(durationMs / (1000 * 60))
+    setDuration(Math.max(0, durationMinutes))
+  }, [value, endValue])
+
+  // Convert date to input format
   const formatDateForInput = (date: Date) => {
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
+    return date.toISOString().split('T')[0]
   }
 
-  const formatTimeForInput = (date: Date) => {
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${hours}:${minutes}`
-  }
-
-  // 終了時間のデフォルト値（開始時間の1時間後）
-  const defaultEndTime = endValue || new Date(value.getTime() + 60 * 60 * 1000)
-
-  // 日付変更ハンドラー
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value)
-    // 既存の時間を保持
-    newDate.setHours(value.getHours(), value.getMinutes())
-    onChange(newDate)
+  // Format date for display
+  const formatDateForDisplay = (date: Date) => {
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
     
-    // 終了日も同じ日に更新
-    if (onEndChange) {
-      const newEndDate = new Date(e.target.value)
-      newEndDate.setHours(defaultEndTime.getHours(), defaultEndTime.getMinutes())
-      onEndChange(newEndDate)
+    if (date.toDateString() === today.toDateString()) {
+      return 'Today'
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return 'Tomorrow'
+    } else {
+      return `${date.getMonth() + 1}/${date.getDate()}`
     }
   }
 
-  // 開始時間変更ハンドラー
+  // Generate calendar dates for mini calendar
+  const generateCalendarDays = (currentDate: Date) => {
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const firstDay = new Date(year, month, 1)
+    const lastDay = new Date(year, month + 1, 0)
+    const startDate = new Date(firstDay)
+    startDate.setDate(startDate.getDate() - firstDay.getDay()) // Start week on Sunday
+    
+    const days = []
+    for (let i = 0; i < 42; i++) { // 6 weeks × 7 days
+      const currentDay = new Date(startDate)
+      currentDay.setDate(startDate.getDate() + i)
+      days.push(currentDay)
+    }
+    return days
+  }
+
+  const [calendarDate, setCalendarDate] = useState(value)
+  const calendarDays = generateCalendarDays(calendarDate)
+
+  // Convert time to input format
+  const formatTimeForInput = (date: Date) => {
+    return date.toTimeString().slice(0, 5)
+  }
+
+  // Format duration
+  const formatDuration = (minutes: number) => {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    if (hours > 0) {
+      return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`
+    }
+    return `${mins}m`
+  }
+
+  // Date change handler
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDate = new Date(e.target.value)
+    newDate.setHours(value.getHours(), value.getMinutes())
+    onChange(newDate)
+    
+    // Adjust end time to same date
+    const newEndDate = new Date(e.target.value)
+    newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
+    onEndChange(newEndDate)
+  }
+
+  // Start time change handler
   const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':').map(Number)
     const newDate = new Date(value)
     newDate.setHours(hours, minutes)
     onChange(newDate)
-    
-    // 終了時間が開始時間より早い場合、自動で1時間後に設定
-    if (onEndChange && defaultEndTime <= newDate) {
-      const newEndDate = new Date(newDate.getTime() + 60 * 60 * 1000)
-      onEndChange(newEndDate)
-    }
   }
 
-  // 終了時間変更ハンドラー
+  // End time change handler
   const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!onEndChange) return
     const [hours, minutes] = e.target.value.split(':').map(Number)
-    const newDate = new Date(value) // 開始日と同じ日
+    const newEndDate = new Date(endValue)
+    newEndDate.setHours(hours, minutes)
+    onEndChange(newEndDate)
+  }
+
+  // Time selection handler
+  const handleStartTimeSelect = (timeString: string) => {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    const newDate = new Date(value)
     newDate.setHours(hours, minutes)
-    onEndChange(newDate)
+    onChange(newDate)
+    setShowStartTimePicker(false)
   }
 
-  // クイック日付ボタン
-  const quickDateOptions = [
-    { 
-      label: '今日', 
-      getValue: () => {
-        const today = new Date()
-        today.setHours(value.getHours(), value.getMinutes())
-        return today
-      }
-    },
-    { 
-      label: '明日', 
-      getValue: () => {
-        const tomorrow = new Date()
-        tomorrow.setDate(tomorrow.getDate() + 1)
-        tomorrow.setHours(value.getHours(), value.getMinutes())
-        return tomorrow
-      }
-    },
-    { 
-      label: '来週', 
-      getValue: () => {
-        const nextWeek = new Date()
-        nextWeek.setDate(nextWeek.getDate() + 7)
-        nextWeek.setHours(value.getHours(), value.getMinutes())
-        return nextWeek
-      }
-    }
-  ]
-
-  // キーボードショートカット
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Tab' && !e.shiftKey) {
-      e.preventDefault()
-      onTabNext?.()
-    }
+  const handleEndTimeSelect = (timeString: string) => {
+    const [hours, minutes] = timeString.split(':').map(Number)
+    const newEndDate = new Date(endValue)
+    newEndDate.setHours(hours, minutes)
+    onEndChange(newEndDate)
+    setShowEndTimePicker(false)
   }
+
+  // Date selection handler
+  const handleDateSelect = (selectedDate: Date) => {
+    const newDate = new Date(selectedDate)
+    newDate.setHours(value.getHours(), value.getMinutes())
+    onChange(newDate)
+    
+    // Adjust end time to same date
+    const newEndDate = new Date(selectedDate)
+    newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
+    onEndChange(newEndDate)
+    
+    setShowDatePicker(false)
+  }
+
+  // Calendar month navigation
+  const handlePrevMonth = () => {
+    const newDate = new Date(calendarDate)
+    newDate.setMonth(newDate.getMonth() - 1)
+    setCalendarDate(newDate)
+  }
+
+  const handleNextMonth = () => {
+    const newDate = new Date(calendarDate)
+    newDate.setMonth(newDate.getMonth() + 1)
+    setCalendarDate(newDate)
+  }
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (startTimeRef.current && !startTimeRef.current.contains(event.target as Node)) {
+        setShowStartTimePicker(false)
+      }
+      if (endTimeRef.current && !endTimeRef.current.contains(event.target as Node)) {
+        setShowEndTimePicker(false)
+      }
+      if (dateRef.current && !dateRef.current.contains(event.target as Node)) {
+        setShowDatePicker(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
-    <div className="space-y-6" onKeyDown={handleKeyDown} tabIndex={0}>
-      {/* 日付入力セクション */}
-      <div className="space-y-4">
-        <div className={`flex items-center gap-2 ${text.primary}`}>
-          <Calendar size={20} />
-          <span className={`${body.DEFAULT} font-semibold`}>日付</span>
+    <div className="space-y-4">
+      {/* Date and time in one row */}
+      <div className="flex gap-3 items-end">
+        {/* Date selector */}
+        <div className="w-36 relative" ref={dateRef}>
+          <label className={`${body.small} ${text.muted} block mb-2`}>
+            Date
+          </label>
+          <button
+            onClick={() => setShowDatePicker(!showDatePicker)}
+            className={`
+              w-full p-3 ${background.surface} ${border.universal} 
+              ${rounded.component.input.md} ${body.DEFAULT} text-left
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              hover:${background.elevated} transition-colors duration-200
+              flex items-center justify-between
+            `}
+          >
+            <span>{formatDateForDisplay(value)}</span>
+            <Calendar size={14} className={text.muted} />
+          </button>
+
+          {/* Mini calendar popup */}
+          <AnimatePresence>
+            {showDatePicker && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className={`
+                  absolute top-full left-0 mt-1 z-50 w-64
+                  ${background.base} ${border.universal} ${rounded.component.button.lg}
+                  shadow-lg p-4
+                `}
+              >
+                {/* Calendar header */}
+                <div className="flex items-center justify-between mb-4">
+                  <button
+                    onClick={handlePrevMonth}
+                    className={`p-1 rounded hover:${background.surface} transition-colors`}
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <h3 className={`${body.DEFAULT} font-semibold ${text.primary}`}>
+                    {calendarDate.getFullYear()}/{(calendarDate.getMonth() + 1).toString().padStart(2, '0')}
+                  </h3>
+                  <button
+                    onClick={handleNextMonth}
+                    className={`p-1 rounded hover:${background.surface} transition-colors`}
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+
+                {/* Day headers */}
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                    <div key={day} className={`text-center p-2 ${body.small} ${text.muted}`}>
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Calendar dates */}
+                <div className="grid grid-cols-7 gap-1">
+                  {calendarDays.map((day, index) => {
+                    const isCurrentMonth = day.getMonth() === calendarDate.getMonth()
+                    const isSelected = day.toDateString() === value.toDateString()
+                    const isToday = day.toDateString() === new Date().toDateString()
+                    
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => handleDateSelect(day)}
+                        className={`
+                          p-2 text-center rounded transition-colors duration-150
+                          ${isSelected 
+                            ? 'bg-blue-500 text-white' 
+                            : isToday 
+                              ? `${background.elevated} ${text.primary} font-semibold`
+                              : isCurrentMonth 
+                                ? `hover:${background.surface} ${text.primary}`
+                                : `${text.muted} hover:${background.surface}`
+                          }
+                          ${body.small}
+                        `}
+                      >
+                        {day.getDate()}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Quick select */}
+                <div className="flex gap-2 mt-4 pt-3 border-t border-neutral-200 dark:border-neutral-800">
+                  <button
+                    onClick={() => handleDateSelect(new Date())}
+                    className={`
+                      px-3 py-1.5 rounded ${body.small}
+                      ${background.surface} ${text.secondary} hover:${background.elevated}
+                      transition-colors duration-150
+                    `}
+                  >
+                    Today
+                  </button>
+                  <button
+                    onClick={() => {
+                      const tomorrow = new Date()
+                      tomorrow.setDate(tomorrow.getDate() + 1)
+                      handleDateSelect(tomorrow)
+                    }}
+                    className={`
+                      px-3 py-1.5 rounded ${body.small}
+                      ${background.surface} ${text.secondary} hover:${background.elevated}
+                      transition-colors duration-150
+                    `}
+                  >
+                    Tomorrow
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* クイック日付選択 */}
-        <div className="flex gap-2">
-          {quickDateOptions.map((option, index) => (
-            <motion.button
-              key={option.label}
-              onClick={() => {
-                const selectedDate = option.getValue()
-                onChange(selectedDate)
-                // 終了時間も同じ日に更新
-                if (onEndChange) {
-                  const newEndDate = new Date(selectedDate)
-                  newEndDate.setHours(defaultEndTime.getHours(), defaultEndTime.getMinutes())
-                  onEndChange(newEndDate)
-                }
-              }}
-              className={`
-                flex-1 py-3 px-4 rounded-lg font-medium transition-all duration-200
-                ${background.elevated} ${text.secondary} hover:${background.surface}
-              `}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              {option.label}
-            </motion.button>
-          ))}
+        {/* Start time */}
+        <div className="w-24 relative" ref={startTimeRef}>
+          <label className={`${body.small} ${text.muted} block mb-2`}>
+            Start
+          </label>
+          <button
+            onClick={() => setShowStartTimePicker(!showStartTimePicker)}
+            className={`
+              w-full p-3 ${background.surface} ${border.universal} 
+              ${rounded.component.input.md} ${body.DEFAULT} text-left
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              hover:${background.elevated} transition-colors duration-200
+              flex items-center justify-between
+            `}
+          >
+            <span>{formatTimeForInput(value)}</span>
+            <Clock size={14} className={text.muted} />
+          </button>
+
+          {/* Time picker dropdown */}
+          <AnimatePresence>
+            {showStartTimePicker && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className={`
+                  absolute top-full left-0 mt-1 z-50 w-32
+                  ${background.base} ${border.universal} ${rounded.component.button.lg}
+                  shadow-lg max-h-48 overflow-y-auto
+                `}
+              >
+                {timeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleStartTimeSelect(option.value)}
+                    className={`
+                      w-full px-3 py-2 text-left text-sm
+                      hover:${background.surface} transition-colors duration-150
+                      ${formatTimeForInput(value) === option.value ? `${background.elevated}` : ''}
+                    `}
+                  >
+                    {option.display}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* 日付入力フィールド */}
-        <input
-          type="date"
-          value={formatDateForInput(value)}
-          onChange={handleDateChange}
-          className={`
-            w-full p-4 text-center text-lg font-medium
-            ${background.surface} ${border.universal} ${rounded.component.button.md}
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-            ${text.primary}
-          `}
-        />
-      </div>
+        {/* End time */}
+        <div className="w-24 relative" ref={endTimeRef}>
+          <label className={`${body.small} ${text.muted} block mb-2`}>
+            End
+          </label>
+          <button
+            onClick={() => setShowEndTimePicker(!showEndTimePicker)}
+            className={`
+              w-full p-3 ${background.surface} ${border.universal} 
+              ${rounded.component.input.md} ${body.DEFAULT} text-left
+              focus:outline-none focus:ring-2 focus:ring-blue-500
+              hover:${background.elevated} transition-colors duration-200
+              flex items-center justify-between
+            `}
+          >
+            <span>{formatTimeForInput(endValue)}</span>
+            <Clock size={14} className={text.muted} />
+          </button>
 
-      {/* 時間入力セクション */}
-      <div className="space-y-4">
-        <div className={`flex items-center gap-2 ${text.primary}`}>
-          <Clock size={20} />
-          <span className={`${body.DEFAULT} font-semibold`}>時間</span>
+          {/* Time picker dropdown */}
+          <AnimatePresence>
+            {showEndTimePicker && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className={`
+                  absolute top-full left-0 mt-1 z-50 w-32
+                  ${background.base} ${border.universal} ${rounded.component.button.lg}
+                  shadow-lg max-h-48 overflow-y-auto
+                `}
+              >
+                {timeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleEndTimeSelect(option.value)}
+                    className={`
+                      w-full px-3 py-2 text-left text-sm
+                      hover:${background.surface} transition-colors duration-150
+                      ${formatTimeForInput(endValue) === option.value ? `${background.elevated}` : ''}
+                    `}
+                  >
+                    {option.display}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* 開始時間 */}
-          <div>
-            <label className={`block ${body.small} font-medium ${text.secondary} mb-2`}>
-              開始時間
-            </label>
-            <input
-              type="time"
-              value={formatTimeForInput(value)}
-              onChange={handleStartTimeChange}
-              className={`
-                w-full p-3 text-center text-lg font-medium
-                ${background.surface} ${border.universal} ${rounded.component.button.md}
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-                ${text.primary}
-              `}
-            />
-          </div>
-
-          {/* 終了時間 */}
-          <div>
-            <label className={`block ${body.small} font-medium ${text.secondary} mb-2`}>
-              終了時間
-            </label>
-            <input
-              type="time"
-              value={formatTimeForInput(defaultEndTime)}
-              onChange={handleEndTimeChange}
-              className={`
-                w-full p-3 text-center text-lg font-medium
-                ${background.surface} ${border.universal} ${rounded.component.button.md}
-                focus:outline-none focus:ring-2 focus:ring-blue-500
-                ${text.primary}
-              `}
-            />
-          </div>
-        </div>
-
-        {/* 継続時間表示 */}
-        {onEndChange && (
-          <div className={`text-center ${body.small} ${text.muted}`}>
-            継続時間: {Math.round((defaultEndTime.getTime() - value.getTime()) / (1000 * 60))}分
-          </div>
+        {/* Duration display - right of end time */}
+        {duration > 0 && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex items-center gap-1.5 mt-auto mb-3"
+          >
+            <div className={`${body.small} ${text.muted} flex items-center gap-1.5`}>
+              <Clock size={12} />
+              <span>{formatDuration(duration)}</span>
+            </div>
+          </motion.div>
         )}
+
       </div>
 
-      {/* ヘルプテキスト */}
-      <div className={`${body.small} ${text.muted} text-center`}>
-        <kbd className="px-2 py-1 bg-neutral-100 dark:bg-neutral-800 rounded text-xs">Tab</kbd>
-        {' '}でタグ選択へ進む
-      </div>
     </div>
   )
 }

@@ -76,13 +76,21 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   // イベントの色を決定
   const eventColor = event.color || 'blue'
   
+  // positionが未定義の場合のデフォルト値
+  const safePosition = position || {
+    top: 0,
+    left: 0,
+    width: 100,
+    height: MIN_EVENT_HEIGHT
+  }
+
   // 動的スタイルを計算
   const dynamicStyle: React.CSSProperties = {
     position: 'absolute',
-    top: `${position.top}px`,
-    left: `${position.left}%`,
-    width: `${position.width}%`,
-    height: `${Math.max(position.height, MIN_EVENT_HEIGHT)}px`,
+    top: `${safePosition.top}px`,
+    left: `${safePosition.left}%`,
+    width: `${safePosition.width}%`,
+    height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
     zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
     transition: isDragging || isResizing ? 'none' : `all ${TRANSITION_DURATION}ms ease-in-out`,
     cursor: isDragging ? 'grabbing' : 'grab',
@@ -128,7 +136,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     eventBlockVariants({
       color: eventColor as any,
       state: eventState,
-      size: position.height < 30 ? 'compact' : 'default'
+      size: safePosition.height < 30 ? 'compact' : 'default'
     }),
     className
   )
@@ -152,8 +160,8 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     >
       <EventContent
         event={event as TimedEvent}
-        isCompact={position.height < 40}
-        showTime={position.height >= 30}
+        isCompact={safePosition.height < 40}
+        showTime={safePosition.height >= 30}
       />
     </div>
   )

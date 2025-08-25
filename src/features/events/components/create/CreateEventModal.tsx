@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { useCreateModalStore, useCreateModalKeyboardShortcuts } from '../../stores/useCreateModalStore'
-import { EssentialCreate } from './EssentialCreate'
+import { EssentialSingleView } from './EssentialSingleView'
 import { useCreateEvent } from '../../hooks/useCreateEvent'
 import type { CreateEventRequest } from '../../types/events'
 
@@ -30,7 +30,7 @@ export function CreateEventModal() {
     endDate: Date
     tags: { id: string; name: string; color: string }[]
   }) => {
-    // EssentialCreateのデータをCreateEventRequestに変換
+    // EssentialSingleViewのデータをCreateEventRequestに変換
     const createRequest: CreateEventRequest = {
       title: data.title,
       description: '',
@@ -52,7 +52,7 @@ export function CreateEventModal() {
   }
   
   return (
-    <EssentialCreate
+    <EssentialSingleView
       isOpen={isOpen}
       onClose={closeModal}
       onSave={handleSave}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Clock, Tag } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/components/shadcn-ui/input'
@@ -35,6 +35,9 @@ export function CreateEventForm({
   isSubmitting,
   error
 }: CreateEventFormProps) {
+  // タイトル入力フィールドのref
+  const titleInputRef = useRef<HTMLInputElement>(null)
+
   // フォームデータの状態管理
   const [formData, setFormData] = useState<CreateEventRequest>({
     title: initialData.title || '',
@@ -81,6 +84,26 @@ export function CreateEventForm({
     onSubmit(formData)
   }
 
+  // コンポーネント表示時にタイトルフィールドにオートフォーカス
+  useEffect(() => {
+    const focusTitle = () => {
+      if (titleInputRef.current) {
+        titleInputRef.current.focus()
+        // 既存のテキストがある場合は末尾にカーソルを移動
+        const length = titleInputRef.current.value.length
+        titleInputRef.current.setSelectionRange(length, length)
+      }
+    }
+
+    // 即座に実行
+    focusTitle()
+    
+    // 少し遅延してもう一度実行（確実にフォーカス）
+    const timeoutId = setTimeout(focusTitle, 100)
+    
+    return () => clearTimeout(timeoutId)
+  }, [])
+
   // Ctrl+Enter での送信
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -112,16 +135,120 @@ export function CreateEventForm({
     <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">
       {/* 基本情報セクション - 常時表示 */}
       <div className="space-y-4">
-        {/* タイトル */}
+        {/* タイトル - Big Tech Style */}
         <div>
-          <Label htmlFor="title" className={`${body.small} font-medium`}>Title *</Label>
           <Input
+            ref={titleInputRef}
             id="title"
             autoFocus
             placeholder="What needs to be done?"
             value={formData.title}
             onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className={`${heading.h3} ${border.universal}`}
+            className={`text-3xl md:text-4xl font-medium ${border.universal} py-6 px-6 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 text-neutral-900 dark:text-neutral-50`}
+          />
+        </div>
+
+        {/* 日付・時間 - 重要項目 */}
+        <div className="space-y-3">
+          <Label className={`${body.small} font-medium`}>Date & Time</Label>
+          
+          {/* 日付 */}
+          <div>
+            <Label htmlFor="event-date" className={`${body.small} ${text.muted}`}>Date</Label>
+            <Input
+              type="date"
+              id="event-date"
+              value={formatDateForInput(formData.startDate)}
+              onChange={(e) => {
+                const date = new Date(e.target.value)
+                // 既存の時間を保持
+                if (formData.startDate) {
+                  date.setHours(formData.startDate.getHours(), formData.startDate.getMinutes())
+                }
+                setFormData(prev => ({ ...prev, startDate: date }))
+              }}
+              className={border.universal}
+            />
+          </div>
+          
+          {/* 開始・終了時間 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="start-time" className={`${body.small} ${text.muted}`}>Start Time</Label>
+              <Input
+                type="time"
+                id="start-time"
+                value={formatTimeForInput(formData.startDate)}
+                onChange={(e) => {
+                  const [hours, minutes] = e.target.value.split(':').map(Number)
+                  const date = new Date(formData.startDate || new Date())
+                  date.setHours(hours, minutes)
+                  setFormData(prev => ({ ...prev, startDate: date }))
+                }}
+                className={border.universal}
+              />
+            </div>
+            <div>
+              <Label htmlFor="end-time" className={`${body.small} ${text.muted}`}>End Time</Label>
+              <Input
+                type="time"
+                id="end-time"
+                value={formatTimeForInput(formData.endDate)}
+                onChange={(e) => {
+                  const [hours, minutes] = e.target.value.split(':').map(Number)
+                  const date = new Date(formData.startDate || new Date())
+                  date.setHours(hours, minutes)
+                  setFormData(prev => ({ ...prev, endDate: date }))
+                }}
+                className={border.universal}
+              />
+            </div>
+          </div>
+
+          {/* リピート設定 */}
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isRecurring}
+                onChange={(e) => setFormData(prev => ({ ...prev, isRecurring: e.target.checked }))}
+                className={`rounded ${border.universal}`}
+              />
+              <span className={`${body.small} font-medium`}>Repeat</span>
+            </label>
+            
+            {formData.isRecurring && (
+              <Select
+                value={formData.recurrenceRule?.frequency || 'daily'}
+                onValueChange={(value) => setFormData(prev => ({ 
+                  ...prev, 
+                  recurrenceRule: { 
+                    ...prev.recurrenceRule,
+                    frequency: value as 'daily' | 'weekly' | 'monthly' | 'yearly'
+                  }
+                }))}
+              >
+                <SelectTrigger className={`w-28 ${border.universal}`}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </div>
+
+        {/* タグ - 重要項目 */}
+        <div>
+          <Label htmlFor="tags" className={`${body.small} font-medium`}>Tags</Label>
+          <Input
+            id="tags"
+            placeholder="Add tags..."
+            className={border.universal}
           />
         </div>
 
@@ -208,64 +335,6 @@ export function CreateEventForm({
         </div>
       </div>
 
-      {/* 日時設定セクション */}
-      <div className="space-y-4">
-        <SectionHeader
-          icon={Clock}
-          title="Date & Time"
-        />
-        
-        <div className="space-y-4">
-          {/* 日付 */}
-          <div>
-            <Label htmlFor="event-date" className={`${body.small} font-medium`}>Date</Label>
-            <Input
-              type="date"
-              id="event-date"
-              value={formatDateForInput(formData.startDate)}
-              onChange={(e) => {
-                const date = new Date(e.target.value)
-                setFormData(prev => ({ ...prev, startDate: date }))
-              }}
-              className={border.universal}
-            />
-          </div>
-          
-          {/* 開始・終了時間 */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label htmlFor="start-time" className={`${body.small} font-medium`}>Start Time</Label>
-              <Input
-                type="time"
-                id="start-time"
-                value={formatTimeForInput(formData.startDate)}
-                onChange={(e) => {
-                  const [hours, minutes] = e.target.value.split(':').map(Number)
-                  const date = new Date(formData.startDate || new Date())
-                  date.setHours(hours, minutes)
-                  setFormData(prev => ({ ...prev, startDate: date }))
-                }}
-                className={border.universal}
-              />
-            </div>
-            <div>
-              <Label htmlFor="end-time" className={`${body.small} font-medium`}>End Time</Label>
-              <Input
-                type="time"
-                id="end-time"
-                value={formatTimeForInput(formData.endDate)}
-                onChange={(e) => {
-                  const [hours, minutes] = e.target.value.split(':').map(Number)
-                  const date = new Date(formData.startDate || new Date())
-                  date.setHours(hours, minutes)
-                  setFormData(prev => ({ ...prev, endDate: date }))
-                }}
-                className={border.universal}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
 
 
       <AnimatePresence>

@@ -21,6 +21,7 @@ import {
 export interface MiniCalendarProps {
   selectedDate?: Date
   onDateSelect?: (date: Date) => void
+  onMonthChange?: (date: Date) => void
   className?: string
   highlightedDates?: Date[]
   disabledDates?: Date[]
@@ -31,6 +32,7 @@ export interface MiniCalendarProps {
 export const MiniCalendar = memo<MiniCalendarProps>(({
   selectedDate = new Date(),
   onDateSelect,
+  onMonthChange,
   className,
   highlightedDates = [],
   disabledDates = [],
@@ -42,14 +44,16 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
   // selectedDate が変更されたら、必要に応じて表示月を自動調整
   React.useEffect(() => {
     const selectedMonth = startOfMonth(selectedDate)
-    const currentDisplayMonth = currentMonth
     
-    // 選択された日付の月が現在表示している月と異なる場合、月を移動
-    if (selectedMonth.getTime() !== currentDisplayMonth.getTime()) {
-      console.log('📅 MiniCalendar: Auto-adjusting month to:', selectedMonth)
-      setCurrentMonth(selectedMonth)
-    }
-  }, [selectedDate, currentMonth])
+    // 現在の表示月と選択された日付の月が異なる場合のみ調整
+    setCurrentMonth(prev => {
+      if (selectedMonth.getTime() !== prev.getTime()) {
+        console.log('📅 MiniCalendar: Auto-adjusting month to:', selectedMonth)
+        return selectedMonth
+      }
+      return prev
+    })
+  }, [selectedDate])
 
   const calendarDays = useMemo(() => {
     const monthStart = startOfMonth(currentMonth)
@@ -69,12 +73,16 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
   }, [firstDayOfWeek])
 
   const handlePrevMonth = useCallback(() => {
-    setCurrentMonth(prev => subMonths(prev, 1))
-  }, [])
+    const newMonth = subMonths(currentMonth, 1)
+    setCurrentMonth(newMonth)
+    onMonthChange?.(newMonth)
+  }, [currentMonth, onMonthChange])
 
   const handleNextMonth = useCallback(() => {
-    setCurrentMonth(prev => addMonths(prev, 1))
-  }, [])
+    const newMonth = addMonths(currentMonth, 1)
+    setCurrentMonth(newMonth)
+    onMonthChange?.(newMonth)
+  }, [currentMonth, onMonthChange])
 
   const handleDateClick = useCallback((date: Date) => {
     if (disabledDates.some(disabled => isSameDay(disabled, date))) {

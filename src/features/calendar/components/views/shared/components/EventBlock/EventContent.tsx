@@ -21,8 +21,10 @@ export const EventContent = memo<EventContentProps>(function EventContent({
   showTime = true,
   timeFormat = '24h'
 }) {
-  // 継続時間を計算
-  const durationMinutes = Math.floor((event.end.getTime() - event.start.getTime()) / (1000 * 60))
+  // 継続時間を計算（安全なDate処理）
+  const startTime = event.start?.getTime ? event.start.getTime() : new Date().getTime()
+  const endTime = event.end?.getTime ? event.end.getTime() : new Date(startTime + 60 * 60 * 1000).getTime()
+  const durationMinutes = Math.floor((endTime - startTime) / (1000 * 60))
   const isShortEvent = durationMinutes <= 30
   
   if (isCompact || isShortEvent) {
@@ -42,7 +44,11 @@ export const EventContent = memo<EventContentProps>(function EventContent({
       {/* 時間表示 */}
       {showTime && (
         <div className="text-xs opacity-75 leading-tight mb-0.5">
-          {formatTimeRange(event.start, event.end, timeFormat)}
+          {formatTimeRange(
+            event.start || new Date(), 
+            event.end || new Date(startTime + 60 * 60 * 1000), 
+            timeFormat
+          )}
         </div>
       )}
       

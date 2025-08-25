@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Plus, Calendar } from 'lucide-react'
+import { Plus, Calendar, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { useCreateModalStore } from '../../stores/useCreateModalStore'
 import { primary, text } from '@/config/theme/colors'
@@ -41,19 +41,26 @@ export function CreateEventTrigger({
       <Button
         onClick={handleClick}
         className={`
-          w-full h-14
-          ${primary.DEFAULT} ${primary.hover}
-          px-4 py-2
+          h-12 w-full
+          ${primary.DEFAULT} ${primary.hover} ${primary.active}
+          ${primary.text} font-medium
+          px-4
           ${rounded.component.button.md}
-          flex items-center justify-start
+          shadow-sm hover:shadow-md
+          transition-all duration-200
+          flex items-center justify-between
+          group
           ${className}
         `}
-        title="Create new event (⌘N)"
+        title="Create new event"
       >
-        <div className="flex items-center gap-2">
-          <Plus className={`${icon.size.md} shrink-0`} />
-          <span className={`${body.large} font-medium`}>Create</span>
+        <div className="flex items-center gap-3">
+          <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
+            <Plus className="w-3 h-3" />
+          </div>
+          <span className="text-[15px] font-medium">Create</span>
         </div>
+        <ChevronDown className="w-4 h-4 opacity-60 group-hover:opacity-80 transition-opacity" />
       </Button>
     )
   }
