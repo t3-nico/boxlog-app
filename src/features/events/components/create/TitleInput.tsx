@@ -147,6 +147,7 @@ export function TitleInput({
             dark:placeholder:text-neutral-500
             ${text.primary}
             transition-all duration-300
+            pl-3
             ${isFocused ? 'transform scale-105' : 'transform scale-100'}
           `}
           style={{ 

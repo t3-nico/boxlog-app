@@ -237,7 +237,7 @@ export function TagInput({
             onKeyDown={handleKeyDown}
             placeholder="Enter tag and press Enter to add..."
             className={`
-              w-full p-3 pr-20 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-20 py-3 ${background.surface} ${border.universal} 
               ${rounded.component.button.md} ${body.DEFAULT}
               focus:outline-none focus:ring-2 focus:ring-blue-500
               transition-all duration-200

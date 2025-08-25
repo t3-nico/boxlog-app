@@ -211,7 +211,7 @@ export function DateSelector({
           <button
             onClick={() => setShowDatePicker(!showDatePicker)}
             className={`
-              w-full p-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-3 py-3 ${background.surface} ${border.universal} 
               ${rounded.component.input.md} ${body.DEFAULT} text-left
               focus:outline-none focus:ring-2 focus:ring-blue-500
               hover:${background.elevated} transition-colors duration-200
@@ -333,7 +333,7 @@ export function DateSelector({
           <button
             onClick={() => setShowStartTimePicker(!showStartTimePicker)}
             className={`
-              w-full p-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-3 py-3 ${background.surface} ${border.universal} 
               ${rounded.component.input.md} ${body.DEFAULT} text-left
               focus:outline-none focus:ring-2 focus:ring-blue-500
               hover:${background.elevated} transition-colors duration-200
@@ -383,7 +383,7 @@ export function DateSelector({
           <button
             onClick={() => setShowEndTimePicker(!showEndTimePicker)}
             className={`
-              w-full p-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-3 py-3 ${background.surface} ${border.universal} 
               ${rounded.component.input.md} ${body.DEFAULT} text-left
               focus:outline-none focus:ring-2 focus:ring-blue-500
               hover:${background.elevated} transition-colors duration-200
