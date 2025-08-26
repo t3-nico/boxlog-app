@@ -32,14 +32,16 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
         const eventDate = event.startDate!
         console.log('📅 Event found:', {
           title: event.title,
-          startDate: eventDate.toISOString(),
-          localDateString: eventDate.toLocaleDateString(),
-          getDate: eventDate.getDate(),
-          getMonth: eventDate.getMonth(),
-          getFullYear: eventDate.getFullYear()
+          startDate: eventDate instanceof Date ? eventDate.toISOString() : eventDate,
+          localDateString: eventDate instanceof Date ? eventDate.toLocaleDateString() : 'Invalid Date',
+          getDate: eventDate instanceof Date ? eventDate.getDate() : 'N/A',
+          getMonth: eventDate instanceof Date ? eventDate.getMonth() : 'N/A',
+          getFullYear: eventDate instanceof Date ? eventDate.getFullYear() : 'N/A'
         })
         
         // UTCの問題を避けるため、ローカルタイムで日付のみを抽出
+        if (!(eventDate instanceof Date)) return
+        
         const year = eventDate.getFullYear()
         const month = eventDate.getMonth()
         const day = eventDate.getDate()

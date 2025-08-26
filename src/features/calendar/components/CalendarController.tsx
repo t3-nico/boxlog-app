@@ -374,7 +374,6 @@ export function CalendarController({
   
   // イベントの右クリックハンドラー
   const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
-    console.log('🎯 CalendarController: Right-click handler called', event.title, { x: mouseEvent.clientX, y: mouseEvent.clientY })
     setContextMenuEvent(event)
     setContextMenuPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY })
   }, [])
@@ -956,25 +955,17 @@ export function CalendarController({
       />
       
       {/* イベントコンテキストメニュー */}
-      {(() => {
-        console.log('🎯 Context menu render check:', {
-          hasEvent: !!contextMenuEvent,
-          hasPosition: !!contextMenuPosition,
-          event: contextMenuEvent?.title,
-          position: contextMenuPosition
-        })
-        return contextMenuEvent && contextMenuPosition ? (
-          <EventContextMenu
-            event={contextMenuEvent}
-            position={contextMenuPosition}
-            onClose={handleCloseContextMenu}
-            onEdit={handleEditEvent}
-            onDelete={handleDeleteEvent}
-            onDuplicate={handleDuplicateEvent}
-            onViewDetails={handleViewDetails}
-          />
-        ) : null
-      })()}
+      {contextMenuEvent && contextMenuPosition && (
+        <EventContextMenu
+          event={contextMenuEvent}
+          position={contextMenuPosition}
+          onClose={handleCloseContextMenu}
+          onEdit={handleEditEvent}
+          onDelete={handleDeleteEvent}
+          onDuplicate={handleDuplicateEvent}
+          onViewDetails={handleViewDetails}
+        />
+      )}
     </DnDProvider>
   )
 }

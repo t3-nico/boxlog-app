@@ -111,7 +111,6 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   }
   
   const handleContextMenu = (e: React.MouseEvent) => {
-    console.log('🎯 EventBlock: handleContextMenu called', event.title, onContextMenu)
     e.preventDefault()
     e.stopPropagation()
     onContextMenu?.(event, e)

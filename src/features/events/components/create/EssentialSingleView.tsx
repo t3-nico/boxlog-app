@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat } from 'lucide-react'
 import { TitleInput } from './TitleInput'
@@ -173,48 +173,6 @@ export function EssentialSingleView({
     return Math.min(progress, 100)
   }
 
-  // キーボードショートカット
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return
-
-      if (e.key === 'Escape') {
-        onClose()
-      }
-
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && isValid) {
-        e.preventDefault()
-        handleSave()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, isValid])
-
-  // スマート抽出のハンドリング
-  const handleSmartExtract = (extracted: {
-    title: string
-    date?: Date
-    tags: string[]
-  }) => {
-    setTitle(extracted.title)
-    if (extracted.date) {
-      setDate(extracted.date)
-    }
-    // 抽出されたタグを既存タグに追加
-    const newTags = extracted.tags
-      .filter(tagName => !tags.some(tag => tag.name === tagName))
-      .map(tagName => ({
-        id: Date.now().toString() + Math.random(),
-        name: tagName,
-        color: generateTagColor(tagName)
-      }))
-    if (newTags.length > 0) {
-      setTags(prev => [...prev, ...newTags])
-    }
-  }
-
   // タグの色生成
   const generateTagColor = (name: string): string => {
     const colors = [
@@ -229,7 +187,7 @@ export function EssentialSingleView({
   }
 
   // 保存処理
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!isValid) return
 
     setIsSubmitting(true)
@@ -258,6 +216,48 @@ export function EssentialSingleView({
       setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setIsSubmitting(false)
+    }
+  }, [isValid, onSave, title, date, endDate, tags, onClose])
+
+  // キーボードショートカット
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isOpen) return
+
+      if (e.key === 'Escape') {
+        onClose()
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && isValid) {
+        e.preventDefault()
+        handleSave()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isOpen, isValid, onClose, handleSave])
+
+  // スマート抽出のハンドリング
+  const handleSmartExtract = (extracted: {
+    title: string
+    date?: Date
+    tags: string[]
+  }) => {
+    setTitle(extracted.title)
+    if (extracted.date) {
+      setDate(extracted.date)
+    }
+    // 抽出されたタグを既存タグに追加
+    const newTags = extracted.tags
+      .filter(tagName => !tags.some(tag => tag.name === tagName))
+      .map(tagName => ({
+        id: Date.now().toString() + Math.random(),
+        name: tagName,
+        color: generateTagColor(tagName)
+      }))
+    if (newTags.length > 0) {
+      setTags(prev => [...prev, ...newTags])
     }
   }
 

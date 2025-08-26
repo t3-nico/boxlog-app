@@ -444,7 +444,7 @@ async function restoreItemByType(item: TrashItem): Promise<void> {
       // Dynamically import to avoid circular dependencies
       const { useEventStore } = await import('@/features/events/stores/useEventStore')
       const eventStore = useEventStore.getState()
-      await eventStore.createEvent(item.originalData)
+      await eventStore.restoreEvent(item.originalData)
       break
     }
     

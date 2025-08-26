@@ -4,11 +4,13 @@ import type { CalendarEvent } from '@/features/events'
 import type { UseDayEventsOptions, UseDayEventsReturn, EventPosition } from '../DayView.types'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 const EVENT_PADDING = 2 // イベント間のパディング
-const MAX_COLUMNS = 5 // 最大同時イベント列数
+const MAX_COLUMNS = 2 // 最大同時イベント列数（2列に制限）
 const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ
 
 export function useDayEvents({ date, events }: UseDayEventsOptions): UseDayEventsReturn {
-  const { dayEvents, eventPositions, maxConcurrentEvents } = useMemo(() => {
+  const { dayEvents, eventPositions, maxConcurrentEvents, skippedEventsCount } = useMemo(() => {
+    let skippedCount = 0
+    
     // 当日のイベントのみフィルター
     const filteredEvents = events.filter(event => {
       if (!event.startDate || !isValid(new Date(event.startDate))) {
@@ -46,34 +48,53 @@ export function useDayEvents({ date, events }: UseDayEventsOptions): UseDayEvent
       const startTime = startDate.getTime()
       const endTime = endDate.getTime()
       
-      // 使用可能な列を見つける
+      // 使用可能な列を見つける（最大2列、重複回避）
       let column = 0
-      for (let i = 0; i < eventColumns.length; i++) {
+      let placed = false
+      
+      // 既存の列で使用可能なものを探す
+      for (let i = 0; i < eventColumns.length && i < MAX_COLUMNS; i++) {
         if (eventColumns[i].endTime <= startTime) {
-          column = eventColumns[i].column
-          eventColumns[i] = { endTime, column }
+          // この列は使用可能
+          column = i
+          eventColumns[i] = { endTime, column: i }
+          placed = true
           break
-        }
-        if (i === eventColumns.length - 1) {
-          column = eventColumns.length
-          if (column < MAX_COLUMNS) {
-            eventColumns.push({ endTime, column })
-          }
         }
       }
       
-      if (eventColumns.length === 0) {
-        column = 0
+      // 使用可能な列がない場合、新しい列を作成
+      if (!placed && eventColumns.length < MAX_COLUMNS) {
+        column = eventColumns.length
         eventColumns.push({ endTime, column })
+        placed = true
+      }
+      
+      // それでも配置できない場合（3つ以上の重複）はスキップ
+      if (!placed) {
+        console.warn(`⚠️ Event "${event.title}" skipped: maximum 2 overlapping events allowed`)
+        skippedCount++
+        return // このイベントを配置せずにスキップ
       }
 
       // 同時実行イベント数を計算
       const concurrentEvents = eventColumns.filter(col => col.endTime > startTime).length
       const totalColumns = Math.min(concurrentEvents, MAX_COLUMNS)
       
-      // 幅と左位置を計算
-      const widthPercentage = Math.min(95 / totalColumns, 95) // 最大95%幅
-      const leftPercentage = (column * widthPercentage) + 2.5 // 2.5%のマージン
+      // 幅と左位置を計算（50%ずつでp-2相当のgap）
+      let widthPercentage: number
+      let leftPercentage: number
+      
+      if (totalColumns === 1) {
+        // 1列の場合は全幅
+        widthPercentage = 95
+        leftPercentage = 0
+      } else {
+        // 2列の場合は50%ずつでp-2（8px）のgap
+        const gapSize = 2 // p-2相当（8px相当の%）
+        widthPercentage = (95 - gapSize) / 2 // (95% - gap) / 2列 = 約46.5%
+        leftPercentage = column === 0 ? 0 : (widthPercentage + gapSize) // 左列は0%、右列は幅+gap
+      }
 
       positions.push({
         event,
@@ -83,7 +104,8 @@ export function useDayEvents({ date, events }: UseDayEventsOptions): UseDayEvent
         width: widthPercentage,
         zIndex: 10 + index,
         column,
-        totalColumns
+        totalColumns,
+        opacity: totalColumns > 1 ? 0.95 : 1.0 // 重複時は少し透明度を下げて区別しやすく
       })
     })
 
@@ -92,13 +114,15 @@ export function useDayEvents({ date, events }: UseDayEventsOptions): UseDayEvent
     return {
       dayEvents: sortedEvents,
       eventPositions: positions,
-      maxConcurrentEvents: maxConcurrent
+      maxConcurrentEvents: maxConcurrent,
+      skippedEventsCount: skippedCount
     }
   }, [date, events])
 
   return {
     dayEvents,
     eventPositions,
-    maxConcurrentEvents
+    maxConcurrentEvents,
+    skippedEventsCount
   }
 }

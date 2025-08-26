@@ -38,7 +38,6 @@ export function DayView({
   onNavigateNext,
   onNavigateToday
 }: DayViewProps) {
-  console.log('🔍 DayView: onEventContextMenu received', !!onEventContextMenu)
   const { timezone } = useCalendarSettingsStore()
   
   // レスポンシブな時間高さ
@@ -117,7 +116,7 @@ export function DayView({
               onEmptyClick={onEmptyClick}
               onEventUpdate={onUpdateEvent}
               onTimeRangeSelect={onTimeRangeSelect}
-              className="absolute inset-0"
+              className="absolute inset-y-0 left-0 right-0"
             />
           </CalendarLayoutWithHeader>
         </div>

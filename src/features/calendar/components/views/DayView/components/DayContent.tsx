@@ -2,6 +2,7 @@
 
 import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
+import { space } from '@/config/theme/spacing'
 import { EventBlock, CalendarDragSelection, DateTimeSelection } from '../../shared'
 import type { DayContentProps } from '../DayView.types'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
@@ -41,7 +42,6 @@ export function DayContent({
   
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback((event: any, mouseEvent: React.MouseEvent) => {
-    console.log('🖱️ Right-click on event:', event.title, mouseEvent)
     onEventContextMenu?.(event, mouseEvent)
   }, [onEventContextMenu])
   
@@ -73,7 +73,7 @@ export function DayContent({
       </CalendarDragSelection>
       
       {/* イベント表示エリア */}
-      <div className="relative w-full pointer-events-none" style={{ height: 24 * HOUR_HEIGHT }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ height: 24 * HOUR_HEIGHT }}>
         {events.map(event => {
           const style = eventStyles[event.id]
           if (!style) return null
@@ -87,13 +87,19 @@ export function DayContent({
             >
               {/* EventBlockの内容部分のみクリック可能 */}
               <div 
-                className="pointer-events-auto m-1 h-[calc(100%-8px)]"
+                className="pointer-events-auto absolute inset-0"
               >
                 <EventBlock
                   event={event}
+                  position={{
+                    top: 0,
+                    left: 0, 
+                    width: 100,
+                    height: parseFloat(style.height?.toString() || '20')
+                  }}
                   onClick={() => handleEventClick(event)}
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  className="h-full w-full cursor-pointer hover:shadow-md transition-shadow"
+                  className="h-full w-full cursor-pointer hover:shadow-lg transition-shadow !bg-blue-500 !text-white !rounded-sm !border-l-0 !shadow-md"
                 />
               </div>
             </div>

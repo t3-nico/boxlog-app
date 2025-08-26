@@ -230,7 +230,12 @@ export const useEventStore = create<EventStore>()((set, get) => ({
       })
       
       saveToLocalStorage(updatedEvents)
-      console.log('✅ Event moved to unified trash:', eventToDelete.title)
+      console.log('✅ Event moved to unified trash:', {
+        title: eventToDelete.title,
+        id: eventToDelete.id,
+        startDate: eventToDelete.startDate,
+        endDate: eventToDelete.endDate
+      })
     } catch (error) {
       console.error('❌ Soft delete event failed:', error)
       set({ 
@@ -242,10 +247,55 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   },
   
   // イベント復元（統一ゴミ箱から復元される際に使用）
-  restoreEvent: async (eventId: string) => {
-    // この関数は統一ゴミ箱システムから呼び出されるため、
-    // 実際の復元処理はcreateEventを使用する
-    console.log('restoreEvent called - this should use createEvent instead')
+  restoreEvent: async (eventData: Event) => {
+    set({ loading: true, error: null })
+    
+    try {
+      const currentEvents = get().events
+      
+      // 既に存在するイベントかチェック
+      const existingEvent = currentEvents.find(event => event.id === eventData.id)
+      if (existingEvent) {
+        console.log('Event already exists, skipping restore:', eventData.id)
+        set({ loading: false })
+        return
+      }
+      
+      // イベントを復元（日付データを適切に変換）
+      const restoredEvent = {
+        ...eventData,
+        startDate: eventData.startDate ? (eventData.startDate instanceof Date ? eventData.startDate : new Date(eventData.startDate)) : null,
+        endDate: eventData.endDate ? (eventData.endDate instanceof Date ? eventData.endDate : new Date(eventData.endDate)) : null,
+        createdAt: eventData.createdAt ? (eventData.createdAt instanceof Date ? eventData.createdAt : new Date(eventData.createdAt)) : new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+        isDeleted: false
+      }
+      
+      const updatedEvents = [...currentEvents, restoredEvent]
+      
+      set({ 
+        events: updatedEvents,
+        loading: false 
+      })
+      
+      saveToLocalStorage(updatedEvents)
+      console.log('✅ Event restored to calendar:', {
+        title: restoredEvent.title,
+        id: restoredEvent.id,
+        originalStartDate: eventData.startDate,
+        originalEndDate: eventData.endDate,
+        restoredStartDate: restoredEvent.startDate,
+        restoredEndDate: restoredEvent.endDate
+      })
+    } catch (error) {
+      console.error('❌ Restore event failed:', error)
+      set({ 
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to restore event'
+      })
+      throw error
+    }
   },
   
   // 物理削除（統一ゴミ箱システムが管理するため、通常は使用されない）

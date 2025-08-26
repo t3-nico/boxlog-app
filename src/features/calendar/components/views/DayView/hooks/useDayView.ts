@@ -41,14 +41,15 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
   const eventStyles = useMemo((): Record<string, CSSProperties> => {
     const styles: Record<string, CSSProperties> = {}
     
-    eventPositions.forEach(({ event, top, height, left, width, zIndex }) => {
+    eventPositions.forEach(({ event, top, height, left, width, zIndex, opacity }) => {
       styles[event.id] = {
         position: 'absolute',
         top: `${top}px`,
         height: `${height}px`,
         left: `${left}%`,
         width: `${width}%`,
-        zIndex
+        zIndex,
+        opacity: opacity || 1.0
       }
     })
     
