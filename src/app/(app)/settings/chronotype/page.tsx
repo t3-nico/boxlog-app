@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
   GraduationCap,
   Lightbulb,
@@ -12,6 +12,12 @@ import { SettingsLayout } from '@/features/settings/components'
 import { colors, typography, spacing } from '@/config/theme'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, type ChronotypeType } from '@/types/chronotype'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+
+interface ChronotypeAutoSaveSettings {
+  type: ChronotypeType
+  enabled: boolean
+}
 
 interface ChronoTypeSchedule {
   id: string
@@ -198,14 +204,30 @@ const diagnosisQuestions: DiagnosisQuestion[] = [
 
 export default function ChronoTypePage() {
   const { chronotype, updateSettings } = useCalendarSettingsStore()
-  const [selectedProfile, setSelectedProfile] = useState<string>(chronotype.type || 'bear')
   const [customSchedules, setCustomSchedules] = useState<ChronoTypeSchedule[]>([])
   const [showDiagnosis, setShowDiagnosis] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
   const [diagnosisResult, setDiagnosisResult] = useState<string | null>(null)
 
-  const currentProfile = chronoTypeProfiles.find(p => p.id === selectedProfile)
+  // クロノタイプ設定の自動保存
+  const chronoSettings = useAutoSaveSettings<ChronotypeAutoSaveSettings>({
+    initialValues: {
+      type: chronotype.type || 'bear',
+      enabled: chronotype.enabled
+    },
+    onSave: async (values) => {
+      // クロノタイプ設定API呼び出しシミュレーション
+      await new Promise(resolve => setTimeout(resolve, 600))
+      console.log('Saving chronotype settings:', values)
+      // 実際のstore更新
+      updateSettings({ chronotype: values })
+    },
+    successMessage: 'クロノタイプ設定を保存しました',
+    debounceMs: 1200
+  })
+
+  const currentProfile = chronoTypeProfiles.find(p => p.id === chronoSettings.values.type)
 
   const getTypeIcon = (type: ChronoTypeSchedule['type']) => {
     const IconComponent = typeIcons[type]
@@ -241,13 +263,7 @@ export default function ChronoTypePage() {
     const resultType = Object.entries(typeScores).find(([_, score]) => score === maxScore)?.[0] || 'bear'
     
     setDiagnosisResult(resultType)
-    setSelectedProfile(resultType)
-    updateSettings({ 
-      chronotype: { 
-        ...chronotype, 
-        type: resultType as ChronotypeType 
-      } 
-    })
+    chronoSettings.updateValue('type', resultType as ChronotypeType)
   }
 
   const startDiagnosis = () => {
@@ -390,16 +406,10 @@ export default function ChronoTypePage() {
               <button
                 key={profile.id}
                 onClick={() => {
-                  setSelectedProfile(profile.id)
-                  updateSettings({ 
-                    chronotype: { 
-                      ...chronotype, 
-                      type: profile.id as ChronotypeType 
-                    } 
-                  })
+                  chronoSettings.updateValue('type', profile.id as ChronotypeType)
                 }}
                 className={`p-4 border-2 rounded-lg text-left transition-all ${
-                  selectedProfile === profile.id
+                  chronoSettings.values.type === profile.id
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                     : 'border-border hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
@@ -469,10 +479,8 @@ export default function ChronoTypePage() {
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={chronotype.enabled}
-              onChange={(e) => updateSettings({ 
-                chronotype: { ...chronotype, enabled: e.target.checked } 
-              })}
+              checked={chronoSettings.values.enabled}
+              onChange={(e) => chronoSettings.updateValue('enabled', e.target.checked)}
               className="sr-only peer"
             />
             <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -480,32 +488,6 @@ export default function ChronoTypePage() {
         </div>
       </div>
 
-      {/* 保存ボタン */}
-      <div className="flex justify-end gap-3">
-        <button 
-          onClick={() => {
-            setSelectedProfile('bear')
-            updateSettings({ chronotype: { ...chronotype, type: 'bear' } })
-          }}
-          className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-card border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          Reset
-        </button>
-        <button 
-          onClick={() => {
-            updateSettings({ 
-              chronotype: { 
-                ...chronotype, 
-                type: selectedProfile as ChronotypeType 
-              } 
-            })
-            alert('Settings saved successfully!')
-          }}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-        >
-          Save Settings
-        </button>
-      </div>
 
       {/* クロノタイプ説明セクション */}
       <div className="bg-card rounded-lg border border-border p-6 mt-8">
@@ -634,6 +616,7 @@ export default function ChronoTypePage() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </SettingsLayout>
   )

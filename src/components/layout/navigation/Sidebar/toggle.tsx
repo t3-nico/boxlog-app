@@ -20,7 +20,7 @@ export function SidebarToggle() {
     <div className="absolute bottom-4 left-4 z-20">
       <button
         onClick={() => setSecondaryNavCollapsed(false)}
-        className={`p-2 rounded-md transition-colors ${background.surface} border ${border.DEFAULT} shadow-sm ${secondary.hover}`}
+        className={`p-2 rounded-md transition-colors ${background.surface} border ${border.alpha} shadow-sm ${secondary.hover}`}
         title="Open sidebar"
       >
         <PanelRight className={`w-4 h-4 ${text.muted}`} />

@@ -3,52 +3,66 @@
 import { useState } from 'react'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
 import { Bell, BellRing, Settings as SettingsIcon } from 'lucide-react'
+import { SettingsCard, SettingField } from '@/features/settings/components'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { Switch } from '@/components/shadcn-ui/switch'
+import { colors, spacing, typography } from '@/config/theme'
+
+interface NotificationAutoSaveSettings {
+  emailNotifications: boolean
+  pushNotifications: boolean
+  browserNotifications: boolean
+  weeklyDigest: boolean
+  systemNotifications: boolean
+}
 
 export default function NotificationSettings() {
   const [activeTab, setActiveTab] = useState<'list' | 'settings'>('list')
-  const [notificationSettings, setNotificationSettings] = useState({
-    emailNotifications: true,
-    pushNotifications: false,
-    browserNotifications: true,
-    weeklyDigest: true,
-    systemNotifications: true
+
+  // 通知設定の自動保存
+  const notifications = useAutoSaveSettings<NotificationAutoSaveSettings>({
+    initialValues: {
+      emailNotifications: true,
+      pushNotifications: false,
+      browserNotifications: true,
+      weeklyDigest: true,
+      systemNotifications: true
+    },
+    onSave: async (values) => {
+      // 通知設定API呼び出しシミュレーション
+      await new Promise(resolve => setTimeout(resolve, 500))
+      console.log('Saving notification settings:', values)
+    },
+    successMessage: '通知設定を保存しました',
+    debounceMs: 800
   })
 
-  const handleSettingChange = (setting: string, value: boolean) => {
-    setNotificationSettings(prev => ({
-      ...prev,
-      [setting]: value
-    }))
-  }
-
   return (
-    <div className="space-y-6">
+    <div className={spacing.stackGap.lg}>
       {/* タブナビゲーション */}
-      <div>
-        <div className="flex items-center gap-4 mb-4">
-          <button
-            onClick={() => setActiveTab('list')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'list'
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-            }`}
-          >
-            <BellRing className="w-4 h-4" />
-            お知らせ一覧
-          </button>
-          <button
-            onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === 'settings'
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-            }`}
-          >
-            <SettingsIcon className="w-4 h-4" />
-            通知設定
-          </button>
-        </div>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setActiveTab('list')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'list'
+              ? `${colors.primary.light} ${colors.primary.text}`
+              : `${colors.text.secondary} hover:${colors.text.primary}`
+          }`}
+        >
+          <BellRing className="w-4 h-4" />
+          お知らせ一覧
+        </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'settings'
+              ? `${colors.primary.light} ${colors.primary.text}`
+              : `${colors.text.secondary} hover:${colors.text.primary}`
+          }`}
+        >
+          <SettingsIcon className="w-4 h-4" />
+          通知設定
+        </button>
       </div>
 
       {/* コンテンツエリア */}
@@ -57,91 +71,68 @@ export default function NotificationSettings() {
       )}
 
       {activeTab === 'settings' && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-lg font-medium flex items-center gap-2">
-              <Bell className="w-5 h-5" />
-              通知設定
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              通知の受信方法を設定できます
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            {/* Email通知 */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div>
-                <h3 className="font-medium">メール通知</h3>
-                <p className="text-sm text-muted-foreground">重要なお知らせをメールで受信</p>
+        <div className={spacing.stackGap.lg}>
+          {/* メール・プッシュ通知 */}
+          <SettingsCard
+            title={
+              <div className="flex items-center gap-2">
+                <Bell className="w-5 h-5" />
+                <span>通知配信設定</span>
               </div>
-              <input
-                type="checkbox"
-                checked={notificationSettings.emailNotifications}
-                onChange={(e) => handleSettingChange('emailNotifications', e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
-            </div>
+            }
+            description="メール、プッシュ、ブラウザ通知の設定"
+            isSaving={notifications.isSaving}
+          >
+            <div className={spacing.stackGap.md}>
+              <SettingField label="メール通知" description="重要なお知らせをメールで受信">
+                <Switch
+                  checked={notifications.values.emailNotifications}
+                  onCheckedChange={(checked) => notifications.updateValue('emailNotifications', checked)}
+                />
+              </SettingField>
 
-            {/* Push通知 */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div>
-                <h3 className="font-medium">プッシュ通知</h3>
-                <p className="text-sm text-muted-foreground">モバイルデバイスへのプッシュ通知</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={notificationSettings.pushNotifications}
-                onChange={(e) => handleSettingChange('pushNotifications', e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
-            </div>
+              <SettingField label="プッシュ通知" description="モバイルデバイスへのプッシュ通知">
+                <Switch
+                  checked={notifications.values.pushNotifications}
+                  onCheckedChange={(checked) => notifications.updateValue('pushNotifications', checked)}
+                />
+              </SettingField>
 
-            {/* ブラウザ通知 */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div>
-                <h3 className="font-medium">ブラウザ通知</h3>
-                <p className="text-sm text-muted-foreground">ブラウザでの通知表示</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={notificationSettings.browserNotifications}
-                onChange={(e) => handleSettingChange('browserNotifications', e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
+              <SettingField label="ブラウザ通知" description="ブラウザでの通知表示">
+                <Switch
+                  checked={notifications.values.browserNotifications}
+                  onCheckedChange={(checked) => notifications.updateValue('browserNotifications', checked)}
+                />
+              </SettingField>
             </div>
+          </SettingsCard>
 
-            {/* 週次ダイジェスト */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div>
-                <h3 className="font-medium">週次ダイジェスト</h3>
-                <p className="text-sm text-muted-foreground">週単位のアクティビティサマリー</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={notificationSettings.weeklyDigest}
-                onChange={(e) => handleSettingChange('weeklyDigest', e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
+          {/* コンテンツ通知 */}
+          <SettingsCard
+            title="コンテンツ通知"
+            description="定期的な情報配信とシステム通知"
+            isSaving={notifications.isSaving}
+          >
+            <div className={spacing.stackGap.md}>
+              <SettingField label="週次ダイジェスト" description="週単位のアクティビティサマリーをメールで配信">
+                <Switch
+                  checked={notifications.values.weeklyDigest}
+                  onCheckedChange={(checked) => notifications.updateValue('weeklyDigest', checked)}
+                />
+              </SettingField>
+
+              <SettingField label="システム通知" description="メンテナンス・アップデート情報を受信">
+                <Switch
+                  checked={notifications.values.systemNotifications}
+                  onCheckedChange={(checked) => notifications.updateValue('systemNotifications', checked)}
+                />
+              </SettingField>
             </div>
+          </SettingsCard>
 
-            {/* システム通知 */}
-            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div>
-                <h3 className="font-medium">システム通知</h3>
-                <p className="text-sm text-muted-foreground">メンテナンス・アップデート情報</p>
-              </div>
-              <input
-                type="checkbox"
-                checked={notificationSettings.systemNotifications}
-                onChange={(e) => handleSettingChange('systemNotifications', e.target.checked)}
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
+          {/* ヒント情報 */}
           <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
+            <p className={`text-sm text-blue-800 dark:text-blue-200 ${typography.body.sm}`}>
               💡 ヒント: ブラウザ通知を有効にするには、ブラウザの設定で通知を許可してください。
             </p>
           </div>

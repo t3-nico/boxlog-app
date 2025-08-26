@@ -79,7 +79,7 @@ export function TaskFooter() {
         'w-full',
         background.base,
         'backdrop-blur-md',
-        border.DEFAULT,
+        border.alpha,
         'border-t',
         elevation.lg,  // エレベーション追加
         'transition-transform duration-300 ease-out'

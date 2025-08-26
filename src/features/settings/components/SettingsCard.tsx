@@ -3,6 +3,7 @@
 import React from 'react'
 import { colors, typography, spacing, rounded } from '@/config/theme'
 import { cn } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
 
 interface SettingsCardProps {
   title?: string
@@ -11,6 +12,7 @@ interface SettingsCardProps {
   className?: string
   actions?: React.ReactNode
   noPadding?: boolean
+  isSaving?: boolean
 }
 
 export function SettingsCard({
@@ -19,15 +21,18 @@ export function SettingsCard({
   children,
   className,
   actions,
-  noPadding = false
+  noPadding = false,
+  isSaving = false
 }: SettingsCardProps) {
   return (
     <div className={cn(
-      `${colors.background.surface} ${rounded.lg} border ${colors.border.DEFAULT}`,
+      `${colors.background.surface} ${rounded.lg} border ${colors.border.alpha}`,
+      "transition-all duration-200",
+      isSaving && "border-blue-300 dark:border-blue-700",
       className
     )}>
-      {(title || description || actions) && (
-        <div className={`${spacing.cardVariants.default} border-b ${colors.border.DEFAULT}`}>
+      {(title || description || actions || isSaving) && (
+        <div className={`${spacing.cardVariants.default} border-b ${colors.border.alpha}`}>
           <div className="flex items-start justify-between">
             <div>
               {title && (
@@ -41,11 +46,22 @@ export function SettingsCard({
                 </p>
               )}
             </div>
-            {actions && (
-              <div className={`ml-4 flex-shrink-0`}>
-                {actions}
-              </div>
-            )}
+            
+            <div className="ml-4 flex-shrink-0 flex items-center gap-3">
+              {/* 保存中インジケーター（控えめ） */}
+              {isSaving && (
+                <div className={`flex items-center gap-2 ${typography.body.small} ${colors.primary.text} text-blue-600 dark:text-blue-400`}>
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <span>保存中...</span>
+                </div>
+              )}
+              
+              {actions && (
+                <div>
+                  {actions}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -213,7 +213,7 @@ export default function TagsSettingsPage() {
       actions={
         <button
           onClick={() => handleCreateTag()}
-          className={`inline-flex items-center gap-2 px-4 py-2 ${colors.primary.DEFAULT} text-white ${spacing.button.DEFAULT} transition-colors`}
+          className={`inline-flex items-center gap-2 px-4 py-2 ${colors.primary.DEFAULT} ${colors.primary.hover} text-white rounded-lg transition-colors`}
         >
           <Tag className="w-4 h-4" data-slot="icon" />
           新しいタグ
@@ -230,7 +230,7 @@ export default function TagsSettingsPage() {
               placeholder="タグを検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border ${colors.border.DEFAULT} rounded-lg ${colors.background.surface} ${colors.text.primary} focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              className={`w-full pl-10 pr-4 py-2 border ${colors.border.alpha} rounded-lg ${colors.background.surface} ${colors.text.primary} focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
             />
           </div>
           
@@ -250,7 +250,7 @@ export default function TagsSettingsPage() {
         </div>
       
         {/* メインコンテンツ */}
-        <div className={`${colors.background.surface} rounded-xl shadow-sm border ${colors.border.DEFAULT}`}>
+        <div className={`${colors.background.surface} rounded-xl shadow-sm border ${colors.border.alpha}`}>
           <TagTreeView
             tags={filteredTags}
             onCreateTag={handleCreateTag}
@@ -263,7 +263,7 @@ export default function TagsSettingsPage() {
         
         {/* 統計情報 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.DEFAULT}`}>
+          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.alpha}`}>
             <div className={`${typography.heading.h2} font-bold ${colors.text.primary}`}>
               {tags.length}
             </div>
@@ -272,7 +272,7 @@ export default function TagsSettingsPage() {
             </div>
           </div>
           
-          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.DEFAULT}`}>
+          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.alpha}`}>
             <div className={`${typography.heading.h2} font-bold ${colors.text.primary}`}>
               {tags.filter(t => t.level === 0).length}
             </div>
@@ -281,7 +281,7 @@ export default function TagsSettingsPage() {
             </div>
           </div>
           
-          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.DEFAULT}`}>
+          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.alpha}`}>
             <div className={`${typography.heading.h2} font-bold ${colors.text.primary}`}>
               {tags.filter(t => !t.is_active).length}
             </div>

@@ -3,10 +3,26 @@
 import { Button } from '@/components/shadcn-ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
-import { Label } from '@/components/shadcn-ui/label'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
 import { format } from 'date-fns'
+import { SettingsCard, SettingField } from '@/features/settings/components'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { colors, spacing } from '@/config/theme'
+
+interface CalendarAutoSaveSettings {
+  timezone: string
+  timeFormat: '12h' | '24h'
+  weekStartsOn: 0 | 1 | 6
+  showWeekNumbers: boolean
+  showDeclinedEvents: boolean
+  defaultDuration: number
+  snapInterval: 5 | 10 | 15 | 30
+  businessHours: {
+    start: number
+    end: number
+  }
+}
 
 export default function CalendarSettings() {
   const settings = useCalendarSettingsStore()
@@ -15,267 +31,261 @@ export default function CalendarSettings() {
     const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
     return format(date, formatString)
   }
-  
+
+  // 自動保存システム
+  const autoSave = useAutoSaveSettings<CalendarAutoSaveSettings>({
+    initialValues: {
+      timezone: settings.timezone,
+      timeFormat: settings.timeFormat,
+      weekStartsOn: settings.weekStartsOn,
+      showWeekNumbers: settings.showWeekNumbers,
+      showDeclinedEvents: settings.showDeclinedEvents,
+      defaultDuration: settings.defaultDuration,
+      snapInterval: settings.snapInterval,
+      businessHours: settings.businessHours,
+    },
+    onSave: async (values) => {
+      // カレンダー設定更新API呼び出しシミュレーション
+      await new Promise(resolve => setTimeout(resolve, 500))
+      console.log('Saving calendar settings:', values)
+      // 実際のstore更新
+      settings.updateSettings(values)
+    },
+    successMessage: 'カレンダー設定を保存しました',
+    debounceMs: 800
+  })
+
+  const handleResetSettings = () => {
+    if (confirm('カレンダー設定をすべてデフォルトに戻しますか？')) {
+      settings.resetSettings()
+      // 自動保存の値もリセット
+      autoSave.updateValues({
+        timezone: 'Asia/Tokyo',
+        timeFormat: '24h',
+        weekStartsOn: 1,
+        showWeekNumbers: false,
+        showDeclinedEvents: false,
+        defaultDuration: 60,
+        snapInterval: 15,
+        businessHours: { start: 9, end: 18 },
+      })
+    }
+  }
+
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-8">
-      <div>
-        <h1 className="text-2xl font-bold">Calendar Settings</h1>
-        <p className="text-muted-foreground mt-2">Configure how dates and times are displayed in your calendar</p>
-      </div>
-      
+    <div className={spacing.stackGap.lg}>
       {/* Time & Timezone Section */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold">Time & Timezone</h2>
-          <p className="text-sm text-muted-foreground">Configure how dates and times are displayed</p>
-        </div>
-        
-        <div className="space-y-6 rounded-lg border p-6">
-          {/* タイムゾーン設定 */}
-          <div className="space-y-3">
-            <Label>Timezone</Label>
+      <SettingsCard
+        title="時間とタイムゾーン"
+        description="日付と時間の表示方法を設定"
+        isSaving={autoSave.isSaving}
+      >
+        <div className={spacing.stackGap.md}>
+          <SettingField label="タイムゾーン" description="カレンダー表示に使用するタイムゾーン">
             <Select
-              value={settings.timezone}
-              onValueChange={(value) => settings.updateSettings({ timezone: value })}
+              value={autoSave.values.timezone}
+              onValueChange={(value) => autoSave.updateValue('timezone', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select timezone" />
+                <SelectValue placeholder="タイムゾーンを選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Asia/Tokyo">🇯🇵 Tokyo (GMT+9)</SelectItem>
-                <SelectItem value="America/New_York">🇺🇸 New York (GMT-5)</SelectItem>
-                <SelectItem value="Europe/London">🇬🇧 London (GMT+0)</SelectItem>
-                <SelectItem value="America/Los_Angeles">🇺🇸 Los Angeles (GMT-8)</SelectItem>
+                <SelectItem value="Asia/Tokyo">🇯🇵 東京 (GMT+9)</SelectItem>
+                <SelectItem value="America/New_York">🇺🇸 ニューヨーク (GMT-5)</SelectItem>
+                <SelectItem value="Europe/London">🇬🇧 ロンドン (GMT+0)</SelectItem>
+                <SelectItem value="America/Los_Angeles">🇺🇸 ロサンゼルス (GMT-8)</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">Select your timezone for calendar display</p>
-          </div>
+          </SettingField>
           
-          {/* 時間表示形式 */}
-          <div className="space-y-3">
-            <Label>Time format</Label>
+          <SettingField label="時間表示形式" description="12時間表記または24時間表記を選択">
             <Select
-              value={settings.timeFormat}
-              onValueChange={(value) => settings.updateSettings({ timeFormat: value as '12h' | '24h' })}
+              value={autoSave.values.timeFormat}
+              onValueChange={(value) => autoSave.updateValue('timeFormat', value as '12h' | '24h')}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select time format" />
+                <SelectValue placeholder="時間表示形式を選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="24h">24-hour (13:00)</SelectItem>
-                <SelectItem value="12h">12-hour (1:00 PM)</SelectItem>
+                <SelectItem value="24h">24時間表記 (13:00)</SelectItem>
+                <SelectItem value="12h">12時間表記 (1:00 PM)</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">Choose between 12-hour or 24-hour time display</p>
-          </div>
+          </SettingField>
           
           {/* プレビュー表示 */}
-          <div className="p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">Preview:</p>
-            <div className="space-y-2">
+          <div className={`p-4 ${colors.background.muted} rounded-lg`}>
+            <p className={`text-sm ${colors.text.secondary} mb-2`}>プレビュー:</p>
+            <div className={spacing.stackGap.xs}>
               <p className="font-medium">
-                Current time: {formatTimeWithSettings(new Date(), settings.timeFormat)}
+                現在時刻: {formatTimeWithSettings(new Date(), autoSave.values.timeFormat)}
               </p>
-              <p className="text-sm text-muted-foreground">
-                Full format: {format(new Date(), 'yyyy/MM/dd HH:mm')}
+              <p className={`text-sm ${colors.text.secondary}`}>
+                完全表記: {format(new Date(), 'yyyy/MM/dd HH:mm')}
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </SettingsCard>
       
       {/* Week & Calendar Display Section */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold">Week & Calendar Display</h2>
-          <p className="text-sm text-muted-foreground">Customize how weeks and calendar views are displayed</p>
-        </div>
-        
-        <div className="space-y-6 rounded-lg border p-6">
-          {/* 週の開始曜日 */}
-          <div className="space-y-3">
-            <Label>Week starts on</Label>
+      <SettingsCard
+        title="週とカレンダー表示"
+        description="週の表示方法とカレンダーのカスタマイズ"
+        isSaving={autoSave.isSaving}
+      >
+        <div className={spacing.stackGap.md}>
+          <SettingField label="週の開始曜日" description="カレンダーの週の開始日を選択">
             <Select
-              value={String(settings.weekStartsOn)}
-              onValueChange={(value) => settings.updateSettings({ weekStartsOn: Number(value) as 0 | 1 | 6 })}
+              value={String(autoSave.values.weekStartsOn)}
+              onValueChange={(value) => autoSave.updateValue('weekStartsOn', Number(value) as 0 | 1 | 6)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select start day" />
+                <SelectValue placeholder="開始日を選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="0">Sunday</SelectItem>
-                <SelectItem value="1">Monday</SelectItem>
-                <SelectItem value="6">Saturday</SelectItem>
+                <SelectItem value="0">日曜日</SelectItem>
+                <SelectItem value="1">月曜日</SelectItem>
+                <SelectItem value="6">土曜日</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">Choose which day your calendar week starts on</p>
-          </div>
+          </SettingField>
           
-          {/* 週番号表示 */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <Label>Show week numbers</Label>
-              <p className="text-sm text-muted-foreground">Display week numbers in calendar views</p>
-            </div>
+          <SettingField label="週番号を表示" description="カレンダービューで週番号を表示">
             <Switch
-              checked={settings.showWeekNumbers}
-              onCheckedChange={(checked) => settings.updateSettings({ showWeekNumbers: checked })}
+              checked={autoSave.values.showWeekNumbers}
+              onCheckedChange={(checked) => autoSave.updateValue('showWeekNumbers', checked)}
             />
-          </div>
+          </SettingField>
           
-          {/* 辞退したイベント表示 */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <Label>Show declined events</Label>
-              <p className="text-sm text-muted-foreground">Display events that have been declined</p>
-            </div>
+          <SettingField label="辞退したイベントを表示" description="辞退したイベントもカレンダーに表示">
             <Switch
-              checked={settings.showDeclinedEvents}
-              onCheckedChange={(checked) => settings.updateSettings({ showDeclinedEvents: checked })}
+              checked={autoSave.values.showDeclinedEvents}
+              onCheckedChange={(checked) => autoSave.updateValue('showDeclinedEvents', checked)}
             />
-          </div>
+          </SettingField>
         </div>
-      </div>
+      </SettingsCard>
       
       {/* Default Task Settings Section */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold">Default Task Settings</h2>
-          <p className="text-sm text-muted-foreground">Set default behavior for new tasks and events</p>
-        </div>
-        
-        <div className="space-y-6 rounded-lg border p-6">
-          {/* デフォルトのタスク時間 */}
-          <div className="space-y-3">
-            <Label>Default task duration</Label>
+      <SettingsCard
+        title="デフォルトタスク設定"
+        description="新しいタスクとイベントのデフォルト動作"
+        isSaving={autoSave.isSaving}
+      >
+        <div className={spacing.stackGap.md}>
+          <SettingField label="デフォルトタスク時間" description="新しいタスク作成時のデフォルト時間">
             <Select
-              value={String(settings.defaultDuration)}
-              onValueChange={(value) => settings.updateSettings({ defaultDuration: Number(value) })}
+              value={String(autoSave.values.defaultDuration)}
+              onValueChange={(value) => autoSave.updateValue('defaultDuration', Number(value))}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select duration" />
+                <SelectValue placeholder="時間を選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="15">15 minutes</SelectItem>
-                <SelectItem value="30">30 minutes</SelectItem>
-                <SelectItem value="60">1 hour</SelectItem>
-                <SelectItem value="90">1 hour 30 minutes</SelectItem>
-                <SelectItem value="120">2 hours</SelectItem>
+                <SelectItem value="15">15分</SelectItem>
+                <SelectItem value="30">30分</SelectItem>
+                <SelectItem value="60">1時間</SelectItem>
+                <SelectItem value="90">1時間30分</SelectItem>
+                <SelectItem value="120">2時間</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">Default duration when creating new tasks</p>
-          </div>
+          </SettingField>
           
-          {/* ドラッグ&ドロップのスナップ間隔 */}
-          <div className="space-y-3">
-            <Label>Drag & Drop snap interval</Label>
+          <SettingField label="ドラッグ&ドロップのスナップ間隔" description="カレンダーでイベントをドラッグする際のグリッド間隔">
             <Select
-              value={String(settings.snapInterval)}
-              onValueChange={(value) => settings.updateSettings({ snapInterval: Number(value) as 5 | 10 | 15 | 30 })}
+              value={String(autoSave.values.snapInterval)}
+              onValueChange={(value) => autoSave.updateValue('snapInterval', Number(value) as 5 | 10 | 15 | 30)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select snap interval" />
+                <SelectValue placeholder="間隔を選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="5">5 minutes</SelectItem>
-                <SelectItem value="10">10 minutes</SelectItem>
-                <SelectItem value="15">15 minutes</SelectItem>
-                <SelectItem value="30">30 minutes</SelectItem>
+                <SelectItem value="5">5分</SelectItem>
+                <SelectItem value="10">10分</SelectItem>
+                <SelectItem value="15">15分</SelectItem>
+                <SelectItem value="30">30分</SelectItem>
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">Grid snap interval when dragging events in the calendar</p>
-          </div>
+          </SettingField>
         </div>
-      </div>
+      </SettingsCard>
       
       {/* Business Hours Section */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold">Business Hours</h2>
-          <p className="text-sm text-muted-foreground">Define your working hours for calendar display</p>
-        </div>
-        
-        <div className="space-y-6 rounded-lg border p-6">
-          {/* 営業開始時間 */}
-          <div className="space-y-3">
-            <Label>Business hours start</Label>
+      <SettingsCard
+        title="営業時間"
+        description="作業時間をカレンダーに定義"
+        isSaving={autoSave.isSaving}
+      >
+        <div className={spacing.stackGap.md}>
+          <SettingField label="営業開始時間" description="営業時間の開始時間">
             <Select
-              value={String(settings.businessHours.start)}
+              value={String(autoSave.values.businessHours.start)}
               onValueChange={(value) => 
-                settings.updateSettings({ 
-                  businessHours: { ...settings.businessHours, start: Number(value) }
+                autoSave.updateValue('businessHours', { 
+                  ...autoSave.values.businessHours, 
+                  start: Number(value) 
                 })
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Start time" />
+                <SelectValue placeholder="開始時間" />
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 24 }, (_, i) => (
                   <SelectItem key={i} value={String(i)}>
-                    {formatHour(i, settings.timeFormat)}
+                    {formatHour(i, autoSave.values.timeFormat)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">When your business hours begin</p>
-          </div>
+          </SettingField>
           
-          {/* 営業終了時間 */}
-          <div className="space-y-3">
-            <Label>Business hours end</Label>
+          <SettingField label="営業終了時間" description="営業時間の終了時間">
             <Select
-              value={String(settings.businessHours.end)}
+              value={String(autoSave.values.businessHours.end)}
               onValueChange={(value) => 
-                settings.updateSettings({ 
-                  businessHours: { ...settings.businessHours, end: Number(value) }
+                autoSave.updateValue('businessHours', { 
+                  ...autoSave.values.businessHours, 
+                  end: Number(value) 
                 })
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="End time" />
+                <SelectValue placeholder="終了時間" />
               </SelectTrigger>
               <SelectContent>
                 {Array.from({ length: 24 }, (_, i) => (
                   <SelectItem key={i} value={String(i)}>
-                    {formatHour(i, settings.timeFormat)}
+                    {formatHour(i, autoSave.values.timeFormat)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-sm text-muted-foreground">When your business hours end</p>
-          </div>
+          </SettingField>
           
           {/* 営業時間プレビュー */}
-          <div className="p-4 bg-muted rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">Business hours:</p>
+          <div className={`p-4 ${colors.background.muted} rounded-lg`}>
+            <p className={`text-sm ${colors.text.secondary} mb-2`}>営業時間:</p>
             <p className="font-medium">
-              {formatHour(settings.businessHours.start, settings.timeFormat)} - {formatHour(settings.businessHours.end, settings.timeFormat)}
+              {formatHour(autoSave.values.businessHours.start, autoSave.values.timeFormat)} - {formatHour(autoSave.values.businessHours.end, autoSave.values.timeFormat)}
             </p>
           </div>
         </div>
-      </div>
+      </SettingsCard>
       
       {/* Reset Settings Section */}
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-lg font-semibold">Reset Settings</h2>
-          <p className="text-sm text-muted-foreground">Restore all calendar settings to their default values</p>
-        </div>
-        
-        <div className="rounded-lg border p-6">
-          <Button
-            variant="destructive"
-            onClick={() => {
-              if (confirm('Are you sure you want to reset all calendar settings to their defaults?')) {
-                settings.resetSettings()
-              }
-            }}
-          >
-            Reset to Defaults
-          </Button>
-        </div>
-      </div>
+      <SettingsCard
+        title="設定のリセット"
+        description="すべてのカレンダー設定をデフォルト値に戻す"
+      >
+        <Button
+          variant="destructive"
+          onClick={handleResetSettings}
+        >
+          デフォルトに戻す
+        </Button>
+      </SettingsCard>
     </div>
   )
 }
