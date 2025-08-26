@@ -96,9 +96,10 @@ export function useEventsByDate(date: Date) {
 }
 
 /**
- * イベント作成
+ * イベント作成（簡易版）
+ * @deprecated useCreateEventフックを使用してください
  */
-export function useCreateEvent() {
+export function useCreateEventSimple() {
   const queryClient = useQueryClient()
   const { createEvent } = useEventStore()
 
@@ -198,7 +199,7 @@ export function useEventStats() {
  */
 export function useEventManagement(filters?: EventFilters) {
   const eventsQuery = useEvents(filters)
-  const createMutation = useCreateEvent()
+  const createMutation = useCreateEventSimple()
   const updateMutation = useUpdateEvent()
   const deleteMutation = useDeleteEvent()
 

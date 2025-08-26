@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Event, Reminder } from '@/features/events'
 
 interface NotificationPermissionState {
@@ -46,7 +46,7 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
   }
 
   // 通知の表示
-  const showNotification = (event: Event, reminder: Reminder) => {
+  const showNotification = useCallback((event: Event, reminder: Reminder) => {
     const title = `リマインダー: ${event.title}`
     const message = `${reminder.minutesBefore}分前の通知です`
     
@@ -82,7 +82,7 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
 
     // コールバック実行
     onReminderTriggered?.(event, reminder)
-  }
+  }, [permission.status, onReminderTriggered])
 
   // 画面内通知の表示
   const showInAppNotification = (event: Event, reminder: Reminder, title: string, message: string) => {
@@ -103,7 +103,7 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
   }
 
   // リマインダーのチェック
-  const checkReminders = () => {
+  const checkReminders = useCallback(() => {
     const now = new Date()
     
     events.forEach(event => {
@@ -125,7 +125,7 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
         }
       })
     })
-  }
+  }, [events, showNotification])
 
   // 画面内通知の削除
   const dismissNotification = (notificationId: string) => {
@@ -148,18 +148,22 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
 
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [events])
+  }, [checkReminders])
 
-  // 定期チェック（1分ごと）
+  // 通知権限の初期化（マウント時のみ）
   useEffect(() => {
-    // 初期チェック
     if ('Notification' in window) {
       setPermission({ 
         status: Notification.permission, 
         hasRequested: Notification.permission !== 'default' 
       })
-      checkReminders()
     }
+  }, [])
+
+  // 定期チェック（1分ごと）
+  useEffect(() => {
+    // 初回チェック
+    checkReminders()
 
     // 1分ごとの定期チェック
     intervalRef.current = setInterval(checkReminders, 60000)
@@ -169,7 +173,7 @@ export const useNotifications = ({ events, onReminderTriggered }: UseNotificatio
         clearInterval(intervalRef.current)
       }
     }
-  }, [events])
+  }, [checkReminders])
 
   // eventsが変更された時にトリガー済みリストをクリア
   useEffect(() => {

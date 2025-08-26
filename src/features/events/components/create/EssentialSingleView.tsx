@@ -29,6 +29,7 @@ interface EssentialSingleViewProps {
   initialData?: {
     title?: string
     date?: Date
+    endDate?: Date
     tags?: Tag[]
   }
 }
@@ -69,6 +70,11 @@ export function EssentialSingleView({
     return now
   })
   const [endDate, setEndDate] = useState(() => {
+    // endDateが直接指定されている場合はそれを使用
+    if (initialData?.endDate) {
+      return initialData.endDate
+    }
+    
     let startTime
     if (initialData?.date) {
       startTime = new Date(initialData.date)
@@ -103,6 +109,46 @@ export function EssentialSingleView({
     return defaultEnd
   })
   const [tags, setTags] = useState<Tag[]>(initialData?.tags || [])
+
+  // 前回のinitialDataを保存するRef
+  const prevInitialDataRef = useRef<typeof initialData | null>(null)
+  
+  // モーダルが開かれた時、またはinitialDataが実際に変更された時のみ更新
+  useEffect(() => {
+    if (isOpen && initialData) {
+      // 前回と同じ値かチェック（深い比較ではなく、キー値の比較）
+      const prev = prevInitialDataRef.current
+      const hasChanged = !prev || 
+        prev.title !== initialData.title ||
+        prev.date?.getTime() !== initialData.date?.getTime() ||
+        prev.endDate?.getTime() !== initialData.endDate?.getTime()
+      
+      if (hasChanged) {
+        console.log('🔄 Updating form with new initialData:', initialData)
+        
+        if (initialData.title !== undefined) {
+          setTitle(initialData.title)
+        }
+        if (initialData.date) {
+          setDate(initialData.date)
+        }
+        if (initialData.endDate) {
+          setEndDate(initialData.endDate)
+        } else if (initialData.date) {
+          // endDateが指定されていない場合は開始時刻の1時間後
+          const newEndDate = new Date(initialData.date)
+          newEndDate.setTime(newEndDate.getTime() + 60 * 60 * 1000)
+          setEndDate(newEndDate)
+        }
+        if (initialData.tags) {
+          setTags(initialData.tags)
+        }
+        
+        // 現在の値を保存
+        prevInitialDataRef.current = initialData
+      }
+    }
+  }, [isOpen, initialData])
   
   // UI状態
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -209,7 +255,7 @@ export function EssentialSingleView({
       }, 1500)
       
     } catch (err) {
-      setError(err instanceof Error ? err.message : '保存に失敗しました')
+      setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setIsSubmitting(false)
     }
@@ -387,7 +433,7 @@ export function EssentialSingleView({
                             : `${background.surface} ${text.secondary} hover:${background.elevated}`
                           }
                         `}
-                        title="メモを追加"
+                        title="Add memo"
                       >
                         <FileText size={18} />
                       </button>
@@ -401,7 +447,7 @@ export function EssentialSingleView({
                             : `${background.surface} ${text.secondary} hover:${background.elevated}`
                           }
                         `}
-                        title="リマインダー設定"
+                        title="Set reminder"
                       >
                         <Bell size={18} />
                       </button>
@@ -412,7 +458,7 @@ export function EssentialSingleView({
                           p-3 rounded-lg transition-all duration-200
                           ${background.surface} ${text.secondary} hover:${background.elevated}
                         `}
-                        title="リピート設定"
+                        title="Set repeat"
                       >
                         <Repeat size={18} />
                       </button>
@@ -424,7 +470,7 @@ export function EssentialSingleView({
                         p-3 rounded-lg transition-all duration-200
                         ${background.surface} ${text.secondary} hover:${background.elevated}
                       `}
-                      title="その他のオプション"
+                      title="More options"
                     >
                       <MoreHorizontal size={18} />
                     </button>
@@ -442,7 +488,7 @@ export function EssentialSingleView({
                         <textarea
                           value={memo}
                           onChange={(e) => setMemo(e.target.value)}
-                          placeholder="メモやコメントを入力..."
+                          placeholder="Enter memo or comments..."
                           className={`
                             w-full p-3 ${background.surface} ${text.primary}
                             border border-neutral-200 dark:border-neutral-700
@@ -488,7 +534,7 @@ export function EssentialSingleView({
                   </div>
                   <div>
                     <kbd className="px-2 py-1 bg-neutral-100 dark:bg-neutral-800 rounded text-xs">Esc</kbd>
-                    <span className="ml-2">で閉じる</span>
+                    <span className="ml-2">to close</span>
                   </div>
                 </div>
                 
@@ -502,7 +548,7 @@ export function EssentialSingleView({
                       border border-neutral-200 dark:border-neutral-700
                     `}
                   >
-                    キャンセル
+                    Cancel
                   </button>
                   <motion.button
                     onClick={handleSave}

@@ -25,23 +25,23 @@ export function useCreateEvent(): UseCreateEventReturn {
     try {
       // バリデーション
       if (!data.title?.trim()) {
-        throw new Error('タイトルは必須です')
+        throw new Error('Title is required')
       }
       
       // 日時の整合性チェック
       if (data.startDate && data.endDate) {
         if (data.endDate < data.startDate) {
-          throw new Error('終了日時は開始日時より後に設定してください')
+          throw new Error('End time must be after start time')
         }
       }
       
       // イベント作成
       const createdEvent = await eventStore.createEvent(data)
       
-      // 成功通知
+      // 成功通知（英語に変更）
       success(
-        'イベントを作成しました',
-        `「${createdEvent.title}」を作成しました`
+        'Event Created',
+        `"${createdEvent.title}" has been created`
       )
       
       // 作成したイベントの日付にスクロール（カレンダービューの場合）
@@ -68,12 +68,12 @@ export function useCreateEvent(): UseCreateEventReturn {
       
       return createdEvent
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'イベントの作成に失敗しました'
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create event'
       setError(new Error(errorMessage))
       
       // エラー通知
       toastError(
-        'エラー',
+        'Error',
         errorMessage
       )
       

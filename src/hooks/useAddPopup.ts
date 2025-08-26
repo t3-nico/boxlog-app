@@ -5,9 +5,10 @@ import { useCreateModalStore } from '@/features/events/stores/useCreateModalStor
 // Legacy hook - 新しいuseCreateModalStoreへの移行用
 // TODO: 段階的に削除予定
 export function useAddPopup() {
-  const { openModal, closeModal } = useCreateModalStore()
+  const { openModal, closeModal, isOpen } = useCreateModalStore()
   
   return {
+    isOpen,
     openPopup: (type: 'event' | 'log' = 'event', context?: any) => {
       // 'event' の場合のみ新しいモーダルを開く
       if (type === 'event') {
@@ -20,6 +21,15 @@ export function useAddPopup() {
         })
       }
       // 'log' は一旦無視（必要に応じて後で対応）
+    },
+    openEventPopup: (context?: any) => {
+      openModal({
+        initialData: context?.editingEvent || context?.initialData || {},
+        context: {
+          source: context?.source || 'sidebar',
+          date: context?.dueDate || context?.date
+        }
+      })
     },
     closePopup: closeModal
   }

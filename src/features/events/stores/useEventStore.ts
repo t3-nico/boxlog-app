@@ -73,27 +73,34 @@ const formatDate = (date: Date): string => {
 }
 
 export const useEventStore = create<EventStore>()((set, get) => ({
-  // 初期状態 - シンプルに空配列から開始
-  events: [],
+  // 初期状態 - ローカルストレージから読み込む
+  events: loadFromLocalStorage(),
   loading: false,
   error: null,
   filters: {},
   selectedEventId: null,
   lastFetchedRange: null,
 
-  // ストア初期化後にローカルストレージから読み込み
+  // イベント取得（必要に応じてフィルタリング）
   fetchEvents: async (filters?: EventFilters) => {
     set({ loading: true })
     
-    // ローカルストレージから読み込み
-    const events = loadFromLocalStorage()
-    
-    set({ 
-      events, 
-      loading: false,
-      error: null 
-    })
-    
+    try {
+      // ローカルストレージから読み込み
+      const events = loadFromLocalStorage()
+      
+      set({ 
+        events, 
+        loading: false,
+        error: null 
+      })
+    } catch (error) {
+      console.error('❌ Fetch events failed:', error)
+      set({ 
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch events'
+      })
+    }
   },
 
   // イベント作成
@@ -116,10 +123,10 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         location: eventData.location,
         url: eventData.url,
         reminders: eventData.reminders || [],
-        tags: [],
+        tags: eventData.tagIds || [],  // tagIdsからtagsに変換
         createdAt: new Date(),
         updatedAt: new Date(),
-        type: 'event' as any,
+        type: eventData.type || 'event',  // typeフィールドを正しく設定
         isDeleted: false,
         deletedAt: null
       }
@@ -179,29 +186,145 @@ export const useEventStore = create<EventStore>()((set, get) => ({
     }
   },
 
-  // イベント削除
+  // イベント削除（後方互換性のため残す - 内部でsoftDeleteEventを呼ぶ）
   deleteEvent: async (eventId: string) => {
+    return get().softDeleteEvent(eventId)
+  },
+  
+  // 論理削除（ソフトデリート）- 統一ゴミ箱連携
+  softDeleteEvent: async (eventId: string) => {
     set({ loading: true, error: null })
     
     try {
       const currentEvents = get().events
-      const filteredEvents = currentEvents.filter(event => event.id !== eventId)
+      const eventToDelete = currentEvents.find(event => event.id === eventId)
+      
+      if (!eventToDelete) {
+        throw new Error(`Event with ID ${eventId} not found`)
+      }
+
+      // 統一ゴミ箱にアイテムを追加
+      const { useTrashStore } = await import('@/features/trash/stores/useTrashStore')
+      await useTrashStore.getState().addItem({
+        id: eventId,
+        type: 'event',
+        title: eventToDelete.title,
+        description: eventToDelete.description,
+        deletedFrom: '/calendar',
+        originalData: eventToDelete,
+        metadata: {
+          color: eventToDelete.color,
+          tags: eventToDelete.tags?.map(tag => typeof tag === 'string' ? tag : tag.name) || [],
+          subtitle: eventToDelete.startDate ? eventToDelete.startDate.toLocaleDateString() : undefined,
+          priority: eventToDelete.priority === 'urgent' ? 'high' : eventToDelete.priority === 'important' ? 'medium' : 'low'
+        }
+      })
+
+      // eventsから削除（物理削除）
+      const updatedEvents = currentEvents.filter(event => event.id !== eventId)
       
       set({ 
-        events: filteredEvents,
+        events: updatedEvents,
         selectedEventId: get().selectedEventId === eventId ? null : get().selectedEventId,
         loading: false 
       })
       
-      saveToLocalStorage(filteredEvents)
+      saveToLocalStorage(updatedEvents)
+      console.log('✅ Event moved to unified trash:', eventToDelete.title)
     } catch (error) {
-      console.error('❌ Delete event failed:', error)
+      console.error('❌ Soft delete event failed:', error)
       set({ 
         loading: false,
         error: error instanceof Error ? error.message : 'Failed to delete event'
       })
       throw error
     }
+  },
+  
+  // イベント復元（統一ゴミ箱から復元される際に使用）
+  restoreEvent: async (eventId: string) => {
+    // この関数は統一ゴミ箱システムから呼び出されるため、
+    // 実際の復元処理はcreateEventを使用する
+    console.log('restoreEvent called - this should use createEvent instead')
+  },
+  
+  // 物理削除（統一ゴミ箱システムが管理するため、通常は使用されない）
+  hardDeleteEvent: async (eventId: string) => {
+    console.log('hardDeleteEvent called - unified trash system manages permanent deletion')
+  },
+  
+  // バッチ論理削除 - 統一ゴミ箱連携
+  batchSoftDelete: async (eventIds: string[]) => {
+    set({ loading: true, error: null })
+    
+    try {
+      const currentEvents = get().events
+      const eventsToDelete = currentEvents.filter(event => eventIds.includes(event.id))
+      
+      if (eventsToDelete.length === 0) {
+        set({ loading: false })
+        return
+      }
+
+      // 統一ゴミ箱にアイテムを一括追加
+      const { useTrashStore } = await import('@/features/trash/stores/useTrashStore')
+      const trashItems = eventsToDelete.map(event => ({
+        id: event.id,
+        type: 'event' as const,
+        title: event.title,
+        description: event.description,
+        deletedFrom: '/calendar',
+        originalData: event,
+        metadata: {
+          color: event.color,
+          tags: event.tags?.map(tag => typeof tag === 'string' ? tag : tag.name) || [],
+          subtitle: event.startDate ? event.startDate.toLocaleDateString() : undefined,
+          priority: event.priority === 'urgent' ? 'high' as const : event.priority === 'important' ? 'medium' as const : 'low' as const
+        }
+      }))
+
+      await useTrashStore.getState().addItems(trashItems)
+
+      // eventsから削除（物理削除）
+      const updatedEvents = currentEvents.filter(event => !eventIds.includes(event.id))
+      
+      set({ 
+        events: updatedEvents,
+        selectedEventId: eventIds.includes(get().selectedEventId || '') ? null : get().selectedEventId,
+        loading: false 
+      })
+      
+      saveToLocalStorage(updatedEvents)
+      console.log('✅ Events moved to unified trash:', eventsToDelete.length, 'events')
+    } catch (error) {
+      console.error('❌ Batch soft delete failed:', error)
+      set({ 
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to delete events'
+      })
+      throw error
+    }
+  },
+  
+  // バッチ復元（統一ゴミ箱システムが管理）
+  batchRestore: async (eventIds: string[]) => {
+    console.log('batchRestore called - unified trash system manages restoration')
+  },
+  
+  // バッチ物理削除（統一ゴミ箱システムが管理）
+  batchHardDelete: async (eventIds: string[]) => {
+    console.log('batchHardDelete called - unified trash system manages permanent deletion')
+  },
+  
+  // ゴミ箱をクリア（統一ゴミ箱システムが管理）
+  clearTrash: async () => {
+    console.log('clearTrash called - unified trash system manages this operation')
+  },
+  
+  // ゴミ箱内のイベントを取得（統一ゴミ箱から取得）
+  getTrashedEvents: () => {
+    console.log('getTrashedEvents called - use unified trash system instead')
+    return []
   },
 
   // その他のメソッド
@@ -226,6 +349,8 @@ export const useEventStore = create<EventStore>()((set, get) => ({
     const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
     
     const filteredEvents = events.filter(event => {
+      // 削除済みイベントは除外
+      if (event.isDeleted) return false
       if (!event.startDate) return false
       
       const eventStartDateOnly = new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate())
@@ -244,6 +369,9 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
   getEventsGroupedByType: () => {
     const { events } = get()
+    // 削除済みイベントを除外
+    const activeEvents = events.filter(event => !event.isDeleted)
+    
     const convertToCalendarEvent = (event: Event): CalendarEvent => ({
       ...event,
       displayStartDate: event.startDate || new Date(),
@@ -257,9 +385,9 @@ export const useEventStore = create<EventStore>()((set, get) => ({
     })
     
     return {
-      events: events.filter(e => e.type === 'event').map(convertToCalendarEvent),
-      tasks: events.filter(e => e.type === 'task').map(convertToCalendarEvent),
-      reminders: events.filter(e => e.type === 'reminder').map(convertToCalendarEvent),
+      events: activeEvents.filter(e => e.type === 'event').map(convertToCalendarEvent),
+      tasks: activeEvents.filter(e => e.type === 'task').map(convertToCalendarEvent),
+      reminders: activeEvents.filter(e => e.type === 'reminder').map(convertToCalendarEvent),
     }
   },
 
@@ -282,7 +410,10 @@ export const eventSelectors = {
   getEventsByDate: (state: EventStore): EventsByDate => {
     const eventsByDate: EventsByDate = {}
     
-    state.events.forEach(event => {
+    // 削除済みイベントを除外
+    const activeEvents = state.events.filter(event => !event.isDeleted)
+    
+    activeEvents.forEach(event => {
       if (!event.startDate) return
       const dateKey = formatDate(event.startDate)
       if (!eventsByDate[dateKey]) {

@@ -21,8 +21,31 @@ export function CreateEventModal() {
   const convertedInitialData = {
     title: initialData.title || '',
     date: initialData.startDate || context.date || new Date(),
+    endDate: initialData.endDate || (initialData.startDate ? new Date(initialData.startDate.getTime() + 60 * 60 * 1000) : undefined), // 1時間後
     tags: [] // 既存のtagIdsから変換が必要な場合
   }
+  
+  console.log('🔄 CreateEventModal データ変換:', {
+    source: context?.source,
+    viewType: context?.viewType,
+    originalStartDate: initialData.startDate?.toLocaleString(),
+    originalEndDate: initialData.endDate?.toLocaleString(),
+    contextDate: context?.date?.toLocaleString(),
+    convertedDate: convertedInitialData.date.toLocaleString(),
+    convertedEndDate: convertedInitialData.endDate?.toLocaleString()
+  })
+  
+  
+  // デバッグ用ログ
+  useEffect(() => {
+    if (isOpen) {
+      console.log('📅 CreateEventModal opened with data:', {
+        initialData,
+        context,
+        convertedInitialData
+      })
+    }
+  }, [isOpen, initialData, context])
   
   const handleSave = async (data: {
     title: string
@@ -34,7 +57,7 @@ export function CreateEventModal() {
     const createRequest: CreateEventRequest = {
       title: data.title,
       description: '',
-      type: 'task',
+      type: 'event',  // 'task'ではなく'event'を使用
       status: 'planned',
       priority: 'necessary',
       color: '#3b82f6',
@@ -49,6 +72,7 @@ export function CreateEventModal() {
     }
     
     await createEvent(createRequest)
+    closeModal()  // 作成成功後にモーダルを閉じる
   }
   
   return (
