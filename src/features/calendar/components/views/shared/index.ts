@@ -26,6 +26,14 @@ export type * from './components/EventBlock'
 // DayColumn - 日列（イベント表示エリアのみ）
 export { DayColumn } from './components/DayColumn'
 
+// ドラッグ選択レイヤー（新設計）
+export { CalendarDragSelection } from './components/CalendarDragSelection'
+export type { DateTimeSelection, TimeRange } from './components/CalendarDragSelection'
+
+// 旧版（後方互換性のため保持）
+export { DragSelectionLayer } from './components/DragSelectionLayer'
+export type { TimeSelection } from './components/DragSelectionLayer'
+
 // EmptyState - 空状態
 export { EmptyState } from './components/EmptyState'
 

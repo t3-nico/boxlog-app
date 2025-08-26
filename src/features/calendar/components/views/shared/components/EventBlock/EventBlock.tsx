@@ -111,6 +111,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   }
   
   const handleContextMenu = (e: React.MouseEvent) => {
+    console.log('🎯 EventBlock: handleContextMenu called', event.title, onContextMenu)
     e.preventDefault()
     e.stopPropagation()
     onContextMenu?.(event, e)
@@ -155,7 +156,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
-      aria-label={`イベント: ${event.title}`}
+      aria-label={`Event: ${event.title}`}
       aria-selected={isSelected}
     >
       <EventContent

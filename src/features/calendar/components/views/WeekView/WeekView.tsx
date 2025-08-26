@@ -42,11 +42,13 @@ export function WeekView({
   className,
   onTaskClick,
   onEventClick,
+  onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
   onRestoreEvent,
   onEmptyClick,
+  onTimeRangeSelect,
   onTaskDrag,
   onCreateTask,
   onCreateRecord,
@@ -98,10 +100,12 @@ export function WeekView({
             todayIndex={todayIndex}
             timezone={timezone}
             onEventClick={onEventClick}
+            onEventContextMenu={onEventContextMenu}
             onEmptyClick={(date, time) => {
               onEmptyClick?.(date, time)
             }}
             onEventUpdate={onUpdateEvent}
+            onTimeRangeSelect={onTimeRangeSelect}
             className="h-full"
           />
         </div>

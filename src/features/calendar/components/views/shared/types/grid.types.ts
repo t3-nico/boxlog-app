@@ -17,6 +17,13 @@ export interface GridPosition {
   height: number
 }
 
+export interface TimeSelection {
+  startHour: number
+  startMinute: number
+  endHour: number
+  endMinute: number
+}
+
 export interface TimeGridProps {
   startHour?: number // 開始時間（デフォルト: 0）
   endHour?: number // 終了時間（デフォルト: 24）
@@ -27,6 +34,7 @@ export interface TimeGridProps {
   className?: string
   children?: React.ReactNode
   onTimeClick?: (hour: number, minute: number) => void
+  onTimeRangeSelect?: (selection: TimeSelection) => void // ドラッグ選択時のコールバック
   scrollToHour?: number // 初期スクロール位置
   displayDates?: Date[] // 表示日付（現在時刻線の表示判定に使用）
 }

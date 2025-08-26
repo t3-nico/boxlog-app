@@ -27,6 +27,7 @@ export function WeekGrid({
   eventsByDate,
   todayIndex,
   onEventClick,
+  onEventContextMenu,
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
@@ -151,12 +152,13 @@ export function WeekGrid({
                   onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
                   style={{ height: 24 * HOUR_HEIGHT }}
                 >
-                  {/* 時間グリッド背景 */}
+                  {/* 時間グリッド背景（23時は下線なし） */}
                   {Array.from({ length: 24 }, (_, hour) => (
                     <div
                       key={hour}
                       className={cn(
-                        'relative border-b border-neutral-900/20 dark:border-neutral-100/20'
+                        'relative',
+                        hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''
                       )}
                       style={{ height: HOUR_HEIGHT }}
                     />
@@ -193,6 +195,7 @@ export function WeekGrid({
                         <EventBlock
                           event={event}
                           onClick={undefined} // 親のonClickを使用
+                          onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
                           showTime={true}
                           showDuration={true}
                           variant="week"

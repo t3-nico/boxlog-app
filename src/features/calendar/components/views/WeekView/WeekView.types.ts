@@ -8,6 +8,7 @@ import type {
   CreateTaskInput,
   CreateRecordInput
 } from '../../../types/calendar.types'
+import type { DateTimeSelection } from '../shared'
 
 // WeekViewのメインProps
 export interface WeekViewProps {
@@ -22,11 +23,13 @@ export interface WeekViewProps {
   // Event handlers
   onTaskClick?: (task: any) => void
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
   onDeleteEvent?: (eventId: string) => void
   onRestoreEvent?: (event: CalendarEvent) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
+  onTimeRangeSelect?: (selection: DateTimeSelection) => void
   
   // Task handlers
   onTaskDrag?: (taskId: string, newDate: Date) => void
@@ -48,8 +51,10 @@ export interface WeekGridProps {
   todayIndex: number
   timezone: string
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onEventUpdate?: (event: CalendarEvent) => void
+  onTimeRangeSelect?: (selection: DateTimeSelection) => void
   className?: string
 }
 

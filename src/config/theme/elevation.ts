@@ -43,6 +43,7 @@ export const borders = {
    * @usage 成功状態
    */
   success: 'border-green-500 dark:border-green-400',
+  
 }
 
 // ============================================
@@ -232,6 +233,7 @@ export function getInputClasses(state: {
 export function getTemporaryUIElevation(component: 'dropdown' | 'modal' | 'tooltip' | 'contextMenu' | 'popover' | 'dialog'): string {
   return patterns[component]
 }
+
 
 // ============================================
 // 型定義

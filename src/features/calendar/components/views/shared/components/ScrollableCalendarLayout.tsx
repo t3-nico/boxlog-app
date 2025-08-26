@@ -317,6 +317,32 @@ export function ScrollableCalendarLayout({
           role={enableKeyboardNavigation ? "region" : undefined}
           aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
         >
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              width: 8px;
+            }
+            div::-webkit-scrollbar-track {
+              background-color: rgb(229 229 229); /* neutral-200 - surface light */
+            }
+            div::-webkit-scrollbar-thumb {
+              background-color: rgb(163 163 163); /* neutral-400 for visibility */
+              border-radius: 4px;
+            }
+            div::-webkit-scrollbar-thumb:hover {
+              background-color: rgb(115 115 115); /* neutral-500 */
+            }
+            @media (prefers-color-scheme: dark) {
+              div::-webkit-scrollbar-track {
+                background-color: rgb(38 38 38); /* neutral-800 - surface dark */
+              }
+              div::-webkit-scrollbar-thumb {
+                background-color: rgb(115 115 115); /* neutral-500 */
+              }
+              div::-webkit-scrollbar-thumb:hover {
+                background-color: rgb(163 163 163); /* neutral-400 */
+              }
+            }
+          `}</style>
           <div 
             className="flex w-full relative"
             style={{ height: `${24 * HOUR_HEIGHT}px` }}

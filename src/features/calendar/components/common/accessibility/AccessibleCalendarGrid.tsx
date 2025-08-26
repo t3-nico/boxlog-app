@@ -237,7 +237,7 @@ export function AccessibleCalendarGrid({
             key={slot.time}
             role="row"
             aria-rowindex={slotIndex + 2}
-            className="flex border-b border-neutral-900/20 dark:border-neutral-100/20"
+            className={`flex ${slot.hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
             style={{ height: hourHeight }}
           >
             {/* 時間ラベル */}

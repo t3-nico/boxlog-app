@@ -22,6 +22,7 @@ export function AgendaDayGroup({
   events,
   isToday: isTodayProp,
   onEventClick,
+  onEventContextMenu,
   onCreateEvent,
   className
 }: AgendaDayGroupProps) {
@@ -82,6 +83,7 @@ export function AgendaDayGroup({
               key={event.id} 
               event={event}
               onEventClick={onEventClick}
+              onEventContextMenu={onEventContextMenu}
               showDate={false} // 日付グループ内では日付は表示しない
             />
           ))

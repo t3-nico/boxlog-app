@@ -37,9 +37,11 @@ export function TwoWeekView({
   events,
   currentDate,
   startDate,
+  showWeekends = true,
   className,
   onTaskClick,
   onEventClick,
+  onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
@@ -84,6 +86,18 @@ export function TwoWeekView({
     HOUR_HEIGHT
   })
 
+  // 表示日付配列（週末フィルタリング対応）
+  const displayDates = useMemo(() => {
+    if (showWeekends) {
+      return twoWeekDates
+    }
+    // 週末を除外（土曜日=6、日曜日=0）
+    return twoWeekDates.filter(date => {
+      const day = date.getDay()
+      return day !== 0 && day !== 6
+    })
+  }, [twoWeekDates, showWeekends])
+
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = React.useCallback((
     e: React.MouseEvent<HTMLDivElement>,
@@ -114,12 +128,12 @@ export function TwoWeekView({
 
   const headerComponent = (
     <div className="bg-background h-16 flex">
-      {/* 14日分のヘッダー（画面幅に均等分割） */}
-      {twoWeekDates.map((date, index) => (
+      {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
+      {displayDates.map((date, index) => (
         <div
           key={date.toISOString()}
           className="flex-1 flex items-center justify-center px-1"
-          style={{ width: `${100 / 14}%` }}
+          style={{ width: `${100 / displayDates.length}%` }}
         >
           <DateHeader
             date={date}
@@ -153,19 +167,19 @@ export function TwoWeekView({
             header={headerComponent}
             timezone={timezone}
             scrollToHour={isCurrentTwoWeeks && todayIndex !== -1 ? undefined : 8}
-            displayDates={twoWeekDates}
+            displayDates={displayDates}
             viewMode="2week"
             onTimeClick={(hour, minute) => {
               // TwoWeekViewでは最初にクリックされた日付を使用
               const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-              onEmptyClick?.(twoWeekDates[0], timeString)
+              onEmptyClick?.(displayDates[0], timeString)
             }}
             enableKeyboardNavigation={true}
             className="h-full"
           >
-        {/* 14日分のグリッド（画面幅に均等分割） */}
+        {/* 表示日数分のグリッド（週末フィルタリング対応） */}
         <div className="flex h-full">
-          {twoWeekDates.map((date, dayIndex) => {
+          {displayDates.map((date, dayIndex) => {
             const dateKey = format(date, 'yyyy-MM-dd')
             const dayEvents = eventsByDate[dateKey] || []
             
@@ -173,7 +187,7 @@ export function TwoWeekView({
               <div
                 key={date.toISOString()}
                 className="flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative"
-                style={{ width: `${100 / 14}%` }}
+                style={{ width: `${100 / displayDates.length}%` }}
               >
                 {/* クリック可能な背景エリア */}
                 <div
@@ -186,8 +200,8 @@ export function TwoWeekView({
                       <div
                         key={hour}
                         className={cn(
-                          'border-b border-neutral-900/20 dark:border-neutral-100/20 last:border-b-0 transition-colors',
-                          'hover:bg-primary/5'
+                          hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : '',
+                          'transition-colors hover:bg-primary/5'
                         )}
                         style={{ height: `${HOUR_HEIGHT}px` }}
                         title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
@@ -227,6 +241,7 @@ export function TwoWeekView({
                       <EventBlock
                         event={event}
                         onClick={() => onEventClick?.(event)}
+                        onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
                         className="h-full w-full"
                         compact={true}
                       />

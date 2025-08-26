@@ -19,6 +19,7 @@ import type { AgendaEventItemProps } from '../AgendaView.types'
 export function AgendaEventItem({
   event,
   onEventClick,
+  onEventContextMenu,
   onEventUpdate,
   onEventDelete,
   compact = false,
@@ -68,6 +69,13 @@ export function AgendaEventItem({
     onEventClick?.(event)
   }
   
+  // 右クリックハンドラー
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (onEventContextMenu) {
+      onEventContextMenu(event, e)
+    }
+  }
+  
   return (
     <div 
       className={cn(
@@ -78,6 +86,7 @@ export function AgendaEventItem({
       )}
       style={{ borderLeftColor: eventColor }}
       onClick={handleClick}
+      onContextMenu={handleContextMenu}
     >
       <div className="flex gap-4">
         {/* 時間表示 */}

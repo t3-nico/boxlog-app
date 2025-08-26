@@ -48,6 +48,7 @@ export function AgendaView({
   className,
   onTaskClick,
   onEventClick,
+  onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
@@ -153,6 +154,7 @@ export function AgendaView({
                       events={dayEvents}
                       isToday={todayIndex === agendaDates.indexOf(date)}
                       onEventClick={onEventClick}
+                      onEventContextMenu={onEventContextMenu}
                       onCreateEvent={handleCreateEvent}
                     />
                   )
@@ -166,6 +168,7 @@ export function AgendaView({
                     key={event.id}
                     event={event}
                     onEventClick={onEventClick}
+                    onEventContextMenu={onEventContextMenu}
                     onEventUpdate={onUpdateEvent}
                     onEventDelete={onDeleteEvent}
                     showDate={true} // グループ化しない場合は日付を表示

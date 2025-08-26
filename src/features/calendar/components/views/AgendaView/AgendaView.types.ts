@@ -22,6 +22,7 @@ export interface AgendaViewProps {
   // Event handlers
   onTaskClick?: (task: any) => void
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
   onDeleteEvent?: (eventId: string) => void
@@ -66,6 +67,7 @@ export interface AgendaDayGroupProps {
   events: CalendarEvent[]
   isToday?: boolean
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date) => void
   className?: string
 }
@@ -74,6 +76,7 @@ export interface AgendaDayGroupProps {
 export interface AgendaEventItemProps {
   event: CalendarEvent
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onEventUpdate?: (event: CalendarEvent) => void
   onEventDelete?: (eventId: string) => void
   compact?: boolean
