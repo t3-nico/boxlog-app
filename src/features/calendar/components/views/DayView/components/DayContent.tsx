@@ -2,7 +2,7 @@
 
 import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
-import { EventBlock } from '../../shared'
+import { EventBlock, CalendarDragSelection, DateTimeSelection } from '../../shared'
 import type { DayContentProps } from '../DayView.types'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 
@@ -11,11 +11,12 @@ export function DayContent({
   events,
   eventStyles,
   onEventClick,
+  onEventContextMenu,
   onEmptyClick,
   onEventUpdate,
+  onTimeRangeSelect,
   className
 }: DayContentProps) {
-  
   // 空白クリックハンドラー
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
@@ -38,45 +39,41 @@ export function DayContent({
     onEventClick?.(event)
   }, [onEventClick])
   
-  // 時間グリッドの生成
+  // イベント右クリックハンドラー
+  const handleEventContextMenu = useCallback((event: any, mouseEvent: React.MouseEvent) => {
+    console.log('🖱️ Right-click on event:', event.title, mouseEvent)
+    onEventContextMenu?.(event, mouseEvent)
+  }, [onEventContextMenu])
+  
+  // 時間グリッドの生成（1時間単位、23時は下線なし）
   const timeGrid = Array.from({ length: 24 }, (_, hour) => (
     <div
       key={hour}
-      className="relative border-b border-border/30"
+      className={`relative ${hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
       style={{ height: HOUR_HEIGHT }}
-    >
-      {/* 15分間隔のサブグリッド */}
-      <div className="absolute inset-0">
-        {[15, 30, 45].map(minute => (
-          <div
-            key={minute}
-            className="absolute w-full border-b border-border/10"
-            style={{ top: `${(minute / 60) * HOUR_HEIGHT}px` }}
-          />
-        ))}
-      </div>
-      
-      {/* 30分線を少し濃く */}
-      <div
-        className="absolute w-full border-b border-border/20"
-        style={{ top: `${HOUR_HEIGHT / 2}px` }}
-      />
-    </div>
+    />
   ))
-  
+
   return (
     <div className={cn('relative flex-1 bg-background overflow-hidden', className)}>
-      {/* クリック可能な背景グリッド */}
-      <div
-        className="absolute inset-0 cursor-pointer"
-        onClick={handleEmptyClick}
-        style={{ height: 24 * HOUR_HEIGHT }}
+      {/* 新しいCalendarDragSelectionを使用 */}
+      <CalendarDragSelection
+        date={date}
+        className="absolute inset-0"
+        onTimeRangeSelect={onTimeRangeSelect}
       >
-        {timeGrid}
-      </div>
+        {/* クリック可能な背景グリッド */}
+        <div
+          className={`absolute inset-0 cursor-pointer`}
+          onClick={handleEmptyClick}
+          style={{ height: 24 * HOUR_HEIGHT }}
+        >
+          {timeGrid}
+        </div>
+      </CalendarDragSelection>
       
       {/* イベント表示エリア */}
-      <div className="relative w-full" style={{ height: 24 * HOUR_HEIGHT }}>
+      <div className="relative w-full pointer-events-none" style={{ height: 24 * HOUR_HEIGHT }}>
         {events.map(event => {
           const style = eventStyles[event.id]
           if (!style) return null
@@ -85,16 +82,20 @@ export function DayContent({
             <div
               key={event.id}
               style={style}
-              className="absolute"
+              className="absolute pointer-events-none"
+              data-event-block="true"
             >
-              <EventBlock
-                event={event}
-                onClick={() => handleEventClick(event)}
-                showTime={true}
-                showDuration={true}
-                variant="day" // 日表示専用のバリアント
-                className="h-full w-full cursor-pointer hover:shadow-md transition-shadow"
-              />
+              {/* EventBlockの内容部分のみクリック可能 */}
+              <div 
+                className="pointer-events-auto m-1 h-[calc(100%-8px)]"
+              >
+                <EventBlock
+                  event={event}
+                  onClick={() => handleEventClick(event)}
+                  onContextMenu={(event, e) => handleEventContextMenu(event, e)}
+                  className="h-full w-full cursor-pointer hover:shadow-md transition-shadow"
+                />
+              </div>
             </div>
           )
         })}
