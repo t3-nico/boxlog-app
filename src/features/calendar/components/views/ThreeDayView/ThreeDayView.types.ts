@@ -16,11 +16,13 @@ export interface ThreeDayViewProps {
   events: CalendarEvent[]
   currentDate: Date
   centerDate?: Date // 中央に表示する日付（指定がない場合はcurrentDateを使用）
+  showWeekends?: boolean // 週末の表示/非表示（デフォルト: true）
   className?: string
   
   // Event handlers
   onTaskClick?: (task: any) => void
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void
   onDeleteEvent?: (eventId: string) => void
@@ -123,6 +125,7 @@ export interface ThreeDayGridProps {
   centerIndex: number
   todayIndex: number
   onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onEmptyClick?: (date: Date, time: string) => void
   onEventUpdate?: (event: CalendarEvent) => void
   className?: string

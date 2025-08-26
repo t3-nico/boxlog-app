@@ -23,6 +23,7 @@ interface CalendarSettings {
   // 表示設定
   showWeekNumbers: boolean
   showDeclinedEvents: boolean
+  showWeekends: boolean
   
   // クロノタイプ設定
   chronotype: {
@@ -55,6 +56,7 @@ const defaultSettings: CalendarSettings = {
   },
   showWeekNumbers: false,
   showDeclinedEvents: false,
+  showWeekends: true, // デフォルトは週末も表示
   chronotype: {
     enabled: true,
     type: 'bear',

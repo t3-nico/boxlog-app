@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { secondary, selection, background, border, text } from '@/config/theme/colors'
 import { radius } from '@/config/theme/rounded'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
 export type ViewOption = {
   value: string
@@ -36,10 +37,28 @@ export function ViewSwitcher({
 }: ViewSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false)
   const currentOption = options.find(opt => opt.value === currentView)
+  const { showWeekends, updateSettings } = useCalendarSettingsStore()
 
   const handleSelect = (value: string) => {
     onChange(value)
     setIsOpen(false)
+  }
+
+  const handleWeekendToggle = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    
+    // アニメーション付きで切り替え
+    const newValue = !showWeekends
+    
+    // 即座に視覚的なフィードバックを提供
+    const checkIcon = e.currentTarget.querySelector('[data-check-icon]')
+    if (checkIcon) {
+      checkIcon.classList.add('scale-110')
+      setTimeout(() => checkIcon.classList.remove('scale-110'), 150)
+    }
+    
+    // 設定を更新（これによりカレンダーが再レンダリングされる）
+    updateSettings({ showWeekends: newValue })
   }
 
   // ショートカットキー機能
@@ -87,7 +106,7 @@ export function ViewSwitcher({
         )}
       >
         {currentOption?.icon}
-        <span>{currentOption?.label || 'View'}</span>
+        <span>{currentOption?.label || 'Day'}</span>
         <ChevronDown className="w-4 h-4" />
       </button>
 
@@ -108,31 +127,76 @@ export function ViewSwitcher({
             'shadow-lg z-50',
             dropdownClassName
           )}>
-            <div className="py-1">
-              {options.map((option) => (
+            <div>
+              {/* ビューオプション */}
+              <div className="py-1">
+                {options.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSelect(option.value)}
+                    className={cn(
+                      'w-full text-left px-4 py-2 text-sm',
+                      'transition-colors',
+                      'flex items-center justify-between gap-2',
+                      currentView === option.value 
+                        ? `${selection.active} ${selection.text} font-medium` 
+                        : `${text.muted} ${secondary.hover}`
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      {option.icon}
+                      <span>{option.label}</span>
+                    </div>
+                    {option.shortcut && (
+                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
+                        {option.shortcut}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+              
+              {/* ボーダー */}
+              <div className="border-t border-neutral-900/10 dark:border-neutral-100/10" />
+              
+              {/* 週末表示オプション（すべてのビューに反映） */}
+              <div className="py-1">
                 <button
-                  key={option.value}
-                  onClick={() => handleSelect(option.value)}
+                  onClick={handleWeekendToggle}
                   className={cn(
-                    'w-full text-left px-4 py-2 text-sm',
+                    'w-full px-4 py-2 text-sm',
+                    'flex items-center gap-2',
                     'transition-colors',
-                    'flex items-center justify-between gap-2',
-                    currentView === option.value 
-                      ? `${selection.active} ${selection.text} font-medium` 
-                      : `${text.muted} ${secondary.hover}`
+                    'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded',
+                    text.secondary,
+                    secondary.hover
                   )}
+                  role="checkbox"
+                  aria-checked={showWeekends}
+                  aria-label={`週末表示を${showWeekends ? '無効' : '有効'}にする`}
+                  aria-describedby="weekend-toggle-description"
                 >
-                  <div className="flex items-center gap-2">
-                    {option.icon}
-                    <span>{option.label}</span>
+                  <div className={cn(
+                    'w-4 h-4 border border-neutral-300 dark:border-neutral-600 rounded flex items-center justify-center transition-all duration-200',
+                    showWeekends && 'bg-primary border-primary'
+                  )}>
+                    {showWeekends && (
+                      <Check 
+                        className="w-3 h-3 text-white transition-transform duration-150" 
+                        data-check-icon
+                      />
+                    )}
                   </div>
-                  {option.shortcut && (
-                    <span className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
-                      {option.shortcut}
-                    </span>
-                  )}
+                  <span>週末表示</span>
                 </button>
-              ))}
+                {/* アクセシビリティ用の説明（スクリーンリーダー向け） */}
+                <div 
+                  id="weekend-toggle-description" 
+                  className="sr-only"
+                >
+                  キーボードショートカット: Cmd+W または Ctrl+W で切り替え可能
+                </div>
+              </div>
             </div>
           </div>
         </>

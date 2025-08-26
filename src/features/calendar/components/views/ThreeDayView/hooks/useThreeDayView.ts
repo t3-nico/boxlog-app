@@ -25,8 +25,9 @@ import type { CalendarEvent } from '@/features/events'
 export function useThreeDayView({
   centerDate,
   events = [],
-  onEventUpdate
-}: UseThreeDayViewOptions): UseThreeDayViewReturn {
+  onEventUpdate,
+  showWeekends = true
+}: UseThreeDayViewOptions & { showWeekends?: boolean }): UseThreeDayViewReturn {
   
   // 3日間の日付を生成（centerDateを中心に前後1日）
   const threeDayDates = useMemo(() => {
@@ -34,12 +35,44 @@ export function useThreeDayView({
     const center = new Date(centerDate)
     center.setHours(0, 0, 0, 0)
     
-    // 前日、中央日、翌日を生成
-    const yesterday = subDays(center, 1)
-    const tomorrow = addDays(center, 1)
-    
-    return [yesterday, center, tomorrow]
-  }, [centerDate])
+    if (showWeekends) {
+      // 週末表示ON: 従来通りの連続3日間
+      const yesterday = subDays(center, 1)
+      const tomorrow = addDays(center, 1)
+      return [yesterday, center, tomorrow]
+    } else {
+      // 週末表示OFF: 平日のみ3日間
+      const dates: Date[] = []
+      let currentDate = new Date(center)
+      
+      // 中央の日付から開始して、平日を前後に収集
+      dates.push(new Date(currentDate))
+      
+      // 前の平日を1日分収集
+      let prevDate = new Date(currentDate)
+      let prevCount = 0
+      while (prevCount < 1) {
+        prevDate = subDays(prevDate, 1)
+        if (prevDate.getDay() !== 0 && prevDate.getDay() !== 6) { // 平日のみ
+          dates.unshift(new Date(prevDate))
+          prevCount++
+        }
+      }
+      
+      // 次の平日を1日分収集
+      let nextDate = new Date(currentDate)
+      let nextCount = 0
+      while (nextCount < 1) {
+        nextDate = addDays(nextDate, 1)
+        if (nextDate.getDay() !== 0 && nextDate.getDay() !== 6) { // 平日のみ
+          dates.push(new Date(nextDate))
+          nextCount++
+        }
+      }
+      
+      return dates
+    }
+  }, [centerDate, showWeekends])
   
   // 中央の日付のインデックス（常に1）
   const centerIndex = 1

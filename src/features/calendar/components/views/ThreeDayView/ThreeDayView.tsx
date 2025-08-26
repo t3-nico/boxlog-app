@@ -21,9 +21,11 @@ export function ThreeDayView({
   events,
   currentDate,
   centerDate,
+  showWeekends = true,
   className,
   onTaskClick,
   onEventClick,
+  onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
@@ -46,15 +48,12 @@ export function ThreeDayView({
     desktop: 72
   })
   
-  // ThreeDayViewではcenterDateまたはcurrentDateを中心とした3日間を表示
+  // ThreeDayViewではcurrentDateを中心とした3日間を表示
   const displayCenterDate = useMemo(() => {
-    const date = new Date(centerDate || currentDate)
+    const date = new Date(currentDate)
     date.setHours(0, 0, 0, 0)
-    console.log('🔧 ThreeDayView: centerDateを中心とした3日間を表示します', {
-      centerDate: date.toDateString()
-    })
     return date
-  }, [centerDate, currentDate])
+  }, [currentDate])
   
   // ThreeDayView specific logic
   const {
@@ -64,11 +63,14 @@ export function ThreeDayView({
   } = useThreeDayView({
     centerDate: displayCenterDate,
     events,
-    HOUR_HEIGHT
+    HOUR_HEIGHT,
+    showWeekends
   })
   
-  // 3日間の日付配列を使用（CurrentTimeLine表示のため）
-  const displayDates = useMemo(() => threeDayDates, [threeDayDates])
+  // 3日間の日付配列を使用（週末表示設定を考慮）
+  const displayDates = useMemo(() => {
+    return threeDayDates
+  }, [threeDayDates])
 
   // 空き時間クリックハンドラー
   const handleEmptySlotClick = React.useCallback((
@@ -101,8 +103,8 @@ export function ThreeDayView({
 
   const headerComponent = (
     <div className="bg-background h-16 flex">
-      {/* 3日分のヘッダー */}
-      {threeDayDates.map((date, index) => (
+      {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
+      {displayDates.map((date, index) => (
         <div
           key={date.toISOString()}
           className="flex-1 flex items-center justify-center px-1"
@@ -143,14 +145,14 @@ export function ThreeDayView({
           onTimeClick={(hour, minute) => {
             // ThreeDayViewでは最初にクリックされた日付を使用
             const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-            onEmptyClick?.(threeDayDates[0], timeString)
+            onEmptyClick?.(displayDates[0], timeString)
           }}
           enableKeyboardNavigation={true}
           className="h-full"
         >
-      {/* 3日分のグリッド */}
+      {/* 表示日数分のグリッド（週末フィルタリング対応） */}
       <div className="flex h-full">
-        {threeDayDates.map((date, dayIndex) => {
+        {displayDates.map((date, dayIndex) => {
           const dateKey = format(date, 'yyyy-MM-dd')
           const dayEvents = eventsByDate[dateKey] || []
           
@@ -173,8 +175,8 @@ export function ThreeDayView({
                     <div
                       key={hour}
                       className={cn(
-                        'border-b border-neutral-900/20 dark:border-neutral-100/20 last:border-b-0 transition-colors',
-                        'hover:bg-primary/5'
+                        hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : '',
+                        'transition-colors hover:bg-primary/5'
                       )}
                       style={{ height: `${HOUR_HEIGHT}px` }}
                       title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
@@ -214,6 +216,7 @@ export function ThreeDayView({
                     <EventBlock
                       event={event}
                       onClick={() => onEventClick?.(event)}
+                      onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
                       className="h-full w-full"
                     />
                   </div>

@@ -18,9 +18,14 @@ import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
 import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-import { useEventStore, initializeEventStore } from '@/features/events'
+import { useEventStore, initializeEventStore, useCreateModalStore } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { NotificationDisplay } from '@/features/notifications/components/notification-display'
+import { WeekendEventNotification } from './notifications/WeekendEventNotification'
+import { useWeekendEventNotification } from '../hooks/useWeekendEventNotification'
+import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
+import { EventContextMenu } from './shared/EventContextMenu'
+import { useEventContextActions } from '../hooks/useEventContextActions'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -92,14 +97,22 @@ export function CalendarController({
   const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
   const [eventDefaultEndTime, setEventDefaultEndTime] = useState<string | undefined>(undefined)
   
+  // コンテキストメニュー状態
+  const [contextMenuEvent, setContextMenuEvent] = useState<any>(null)
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
   
+  // イベントコンテキストアクション
+  const { handleDeleteEvent, handleEditEvent, handleDuplicateEvent, handleViewDetails } = useEventContextActions()
   
   // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
   
   
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
-  const { planRecordMode, timezone, updateSettings } = useCalendarSettingsStore()
+  const { planRecordMode, timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
+  
+  // キーボードショートカット（Cmd/Ctrl + W）
+  useWeekendToggleShortcut()
   const taskStore = useTaskStore()
   const { 
     tasks, 
@@ -122,6 +135,9 @@ export function CalendarController({
     getEventsByDateRange
   } = eventStore
   
+  const createModal = useCreateModalStore()
+  const { openModal: openCreateModal, openEditModal } = createModal
+  
   
   
   // 通知機能の統合
@@ -140,9 +156,11 @@ export function CalendarController({
   })
   
   
-  // 🚀 初回ロード時にローカルストレージからイベントを読み込み
+  // 🚀 初回ロード時にイベントストアを初期化（マウント時のみ）
   useEffect(() => {
-    initializeEventStore()
+    console.log('🚀 Initializing EventStore...')
+    // マウント時のみ実行される初期化処理は不要
+    // useEventStoreはすでにlocalStorageから初期化されている
   }, [])
   
   // 通知許可のリクエスト（初回のみ）
@@ -150,7 +168,15 @@ export function CalendarController({
     if (!hasRequestedNotification && (notificationPermission as string) === 'default') {
       requestNotificationPermission()
     }
-  }, [hasRequestedNotification, notificationPermission, requestNotificationPermission])
+  }, [hasRequestedNotification, notificationPermission])
+  
+  // week-no-weekendでアクセスされた場合の処理
+  useEffect(() => {
+    if (viewType === 'week-no-weekend') {
+      console.log('📅 week-no-weekend detected, setting showWeekends=false')
+      updateSettings({ showWeekends: false })
+    }
+  }, [viewType, updateSettings])
   
   // URLパラメータの日付変更を検知（Context利用時は無効にする）
   useEffect(() => {
@@ -158,10 +184,10 @@ export function CalendarController({
       console.log('🔄 URL date change detected (fallback mode):', { initialDate, currentDate })
       navigateToDate(initialDate)
     }
-  }, [contextAvailable, initialDate, currentDate, navigateToDate])
+  }, [contextAvailable, initialDate])
 
 
-  // タイムゾーン設定の初期化
+  // タイムゾーン設定の初期化（マウント時のみ）
   useEffect(() => {
     if (timezone === 'Asia/Tokyo') { // デフォルト値の場合のみ実際のタイムゾーンに更新
       const actualTimezone = getCurrentTimezone()
@@ -169,7 +195,7 @@ export function CalendarController({
         updateSettings({ timezone: actualTimezone })
       }
     }
-  }, [timezone, updateSettings])
+  }, [])
 
   // ビューに応じた期間計算
   const viewDateRange = useMemo(() => {
@@ -178,8 +204,8 @@ export function CalendarController({
 
   // 表示範囲のタスクを取得
   const filteredTasks = useMemo(() => {
-    return taskStore.getTasksForDateRange(viewDateRange.start, viewDateRange.end)
-  }, [taskStore, viewDateRange.start, viewDateRange.end])
+    return getTasksForDateRange(viewDateRange.start, viewDateRange.end)
+  }, [getTasksForDateRange, viewDateRange.start, viewDateRange.end])
   
   // 表示範囲のイベントを取得してCalendarEvent型に変換（削除済みを除外）
   const filteredEvents = useMemo(() => {
@@ -323,69 +349,136 @@ export function CalendarController({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    // デバッグ用: タイトルバーを一時的に変更
-    const originalTitle = document.title
-    document.title = `編集: ${event.title}`
-    setTimeout(() => {
-      document.title = originalTitle
-    }, 2000)
+    console.log('🖱️ Event clicked:', event.title)
     
-    // 編集用にselectedEventを設定
-    setSelectedEvent(event as any)
-    
-    // AddPopupを編集モードで開く
-    openEventPopup({
-      editingEvent: event
+    // CreateEventModalを編集モードで開く
+    openEditModal(event.id, {
+      title: event.title,
+      description: event.description,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      type: event.type,
+      status: event.status,
+      priority: event.priority,
+      color: event.color,
+      location: event.location,
+      url: event.url,
+      reminders: event.reminders,
+      tagIds: event.tags?.map(tag => tag.id) || []
+    }, {
+      source: 'calendar',
+      date: event.startDate,
+      viewType
     })
-  }, [openEventPopup])
+  }, [openEditModal, viewType])
+  
+  // イベントの右クリックハンドラー
+  const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
+    console.log('🎯 CalendarController: Right-click handler called', event.title, { x: mouseEvent.clientX, y: mouseEvent.clientY })
+    setContextMenuEvent(event)
+    setContextMenuPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY })
+  }, [])
+  
+  // コンテキストメニューを閉じる
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenuEvent(null)
+    setContextMenuPosition(null)
+  }, [])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    // AddPopupを開く（日付と時刻を渡す）
-    openEventPopup({
-      dueDate: date || new Date(),
-      status: 'Todo'
-    })
+    console.log('➕ Create event requested:', { date, time })
     
-    // デフォルト値を設定（AddPopupが開いた後に使用される）
-    let startTime: string | undefined
-    let endTime: string | undefined
+    // 時刻の解析
+    let startTime: Date | undefined
+    let endTime: Date | undefined
     
-    if (time) {
-      // time が "HH:mm-HH:mm" 形式の場合は分割
-      if (time.includes('-')) {
-        [startTime, endTime] = time.split('-')
+    if (date) {
+      if (time) {
+        if (time.includes('-')) {
+          const [start, end] = time.split('-')
+          const [startHour, startMin] = start.split(':').map(Number)
+          const [endHour, endMin] = end.split(':').map(Number)
+          
+          startTime = new Date(date)
+          startTime.setHours(startHour, startMin, 0, 0)
+          
+          endTime = new Date(date)
+          endTime.setHours(endHour, endMin, 0, 0)
+        } else {
+          const [hour, min] = time.split(':').map(Number)
+          startTime = new Date(date)
+          startTime.setHours(hour, min, 0, 0)
+          
+          endTime = new Date(date)
+          endTime.setHours(hour + 1, min, 0, 0) // デフォルト1時間
+        }
       } else {
-        startTime = time
-        endTime = undefined
+        startTime = new Date(date)
+        startTime.setHours(9, 0, 0, 0) // デフォルト9:00
+        
+        endTime = new Date(date)
+        endTime.setHours(10, 0, 0, 0) // デフォルト10:00
       }
     }
     
-    setEventDefaultDate(date || undefined)
-    setEventDefaultTime(startTime || '09:00')
-    setEventDefaultEndTime(endTime)
-    setSelectedEvent(null)
-  }, [openEventPopup])
+    // CreateEventModalを新規作成モードで開く
+    openCreateModal({
+      initialData: {
+        startDate: startTime,
+        endDate: endTime,
+        type: 'event',
+        status: 'planned',
+        priority: 'necessary'
+      },
+      context: {
+        source: 'calendar',
+        date: date,
+        viewType
+      }
+    })
+  }, [openCreateModal, viewType])
   
   const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
     try {
+      let savedEvent: Event
+      
       if ('id' in eventData) {
-        await eventStore.updateEvent(eventData as UpdateEventRequest)
+        // 更新の場合
+        savedEvent = await eventStore.updateEvent(eventData as UpdateEventRequest)
+        console.log('✅ Event updated:', savedEvent.title)
       } else {
-        await eventStore.createEvent(eventData as CreateEventRequest)
+        // 新規作成の場合
+        savedEvent = await eventStore.createEvent(eventData as CreateEventRequest)
+        console.log('✅ Event created:', savedEvent.title)
+        
+        // 作成されたイベントの日付にカレンダーを移動
+        if (savedEvent.startDate) {
+          navigateToDate(savedEvent.startDate)
+        }
       }
+      
       setIsEventModalOpen(false)
       setSelectedEvent(null)
+      setEventDefaultDate(undefined)
+      setEventDefaultTime(undefined)
+      setEventDefaultEndTime(undefined)
+      
+      // イベントリストを強制更新
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('calendar-refresh'))
+      }, 100)
+      
     } catch (error) {
       console.error('Failed to save event:', error)
     }
-  }, [eventStore])
+  }, [eventStore, navigateToDate])
   
   const handleEventDelete = useCallback(async (eventId: string) => {
     try {
-      // 物理削除（実際にデータから削除）
+      // 論理削除（ソフトデリート）を使用
       const eventToDelete = eventStore.events.find(e => e.id === eventId)
       if (eventToDelete) {
-        await eventStore.deleteEvent(eventId)
+        await eventStore.softDeleteEvent(eventId)
       }
       
       setIsEventModalOpen(false)
@@ -397,16 +490,8 @@ export function CalendarController({
   
   const handleEventRestore = useCallback(async (event: CalendarEvent) => {
     try {
-      const createRequest: CreateEventRequest = {
-        title: event.title,
-        startDate: event.startDate,
-        endDate: event.endDate,
-        location: event.location,
-        description: event.description,
-        color: event.color
-      }
-      
-      await eventStore.createEvent(createRequest)
+      await eventStore.restoreEvent(event.id)
+      console.log('✅ Event restored:', event.id, event.title)
     } catch (error) {
       console.error('Failed to restore event:', error)
     }
@@ -415,25 +500,25 @@ export function CalendarController({
   
   const handleRestore = useCallback(async (eventIds: string[]) => {
     try {
-      await Promise.all(eventIds.map(async (eventId) => {
-        const eventToRestore = events.find(e => e.id === eventId)
-        if (eventToRestore) {
-          const updateRequest: UpdateEventRequest = {
-            ...eventToRestore,
-            isDeleted: false,
-            deletedAt: null
-          }
-          await eventStore.updateEvent(updateRequest)
-        }
-      }))
+      if (eventIds.length === 1) {
+        await eventStore.restoreEvent(eventIds[0])
+      } else {
+        await eventStore.batchRestore(eventIds)
+      }
+      console.log('✅ Events restored:', eventIds.length, 'events')
     } catch (error) {
       console.error('Failed to restore events:', error)
     }
-  }, [events, eventStore])
+  }, [eventStore])
   
   const handleDeletePermanently = useCallback(async (eventIds: string[]) => {
     try {
-      await Promise.all(eventIds.map(id => eventStore.deleteEvent(id)))
+      if (eventIds.length === 1) {
+        await eventStore.hardDeleteEvent(eventIds[0])
+      } else {
+        await eventStore.batchHardDelete(eventIds)
+      }
+      console.log('✅ Events permanently deleted:', eventIds.length, 'events')
     } catch (error) {
       console.error('Failed to permanently delete events:', error)
     }
@@ -463,17 +548,11 @@ export function CalendarController({
   // 30日経過した予定を自動削除
   useEffect(() => {
     const checkAndCleanup = async () => {
-      const now = new Date()
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-      
-      const expiredEvents = events.filter(event => 
-        event.isDeleted && 
-        event.deletedAt && 
-        event.deletedAt < thirtyDaysAgo
-      )
-      
-      if (expiredEvents.length > 0) {
-        await Promise.all(expiredEvents.map(event => eventStore.deleteEvent(event.id)))
+      try {
+        await eventStore.clearTrash()
+        console.log('✅ Old trash cleaned up automatically')
+      } catch (error) {
+        console.error('❌ Failed to clean up old trash:', error)
       }
     }
     
@@ -482,7 +561,7 @@ export function CalendarController({
     checkAndCleanup() // 初回実行
     
     return () => clearInterval(interval)
-  }, [events, eventStore])
+  }, [eventStore])
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
   const handleUpdateEvent = useCallback(async (updatedEvent: CalendarEvent) => {
@@ -506,13 +585,90 @@ export function CalendarController({
   
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback((direction: 'prev' | 'next' | 'today') => {
-    console.log('🧭 handleNavigate called:', direction, 'current date:', currentDate)
+    console.log('🧭 handleNavigate called:', direction, 'current date:', currentDate, 'viewType:', viewType, 'showWeekends:', showWeekends)
+    
+    // DayViewまたは3DayViewかつ週末表示がOFFの場合は、特別な処理
+    if ((viewType === 'day' || viewType === '3day') && !showWeekends) {
+      if (direction === 'today') {
+        const today = new Date()
+        const todayDayOfWeek = today.getDay()
+        
+        // 今日が土日の場合は次の月曜日に調整
+        if (todayDayOfWeek === 0 || todayDayOfWeek === 6) {
+          const adjustedToday = new Date(today)
+          if (todayDayOfWeek === 6) { // 土曜日
+            adjustedToday.setDate(adjustedToday.getDate() + 2) // 月曜日
+          } else if (todayDayOfWeek === 0) { // 日曜日
+            adjustedToday.setDate(adjustedToday.getDate() + 1) // 月曜日
+          }
+          
+          console.log('📅 Today is weekend, adjusting to Monday:', adjustedToday.toDateString())
+          navigateToDate(adjustedToday)
+          return
+        }
+        
+        // 今日が平日の場合は通常処理
+        navigateRelative(direction)
+        return
+      }
+      
+      // prev/nextの場合は土日をスキップ
+      const multiplier = direction === 'next' ? 1 : -1
+      let newDate = new Date(currentDate)
+      
+      if (viewType === 'day') {
+        // DayViewは1日ずつ移動して土日をスキップ
+        do {
+          newDate.setDate(newDate.getDate() + multiplier)
+          console.log('📅 Checking date:', newDate.toDateString(), 'dayOfWeek:', newDate.getDay())
+        } while (newDate.getDay() === 0 || newDate.getDay() === 6) // 土日をスキップ
+      } else if (viewType === '3day') {
+        // 3DayViewは平日中心に移動（3営業日分移動）
+        let daysToMove = 0
+        const targetDays = 3
+        
+        while (daysToMove < targetDays) {
+          newDate.setDate(newDate.getDate() + multiplier)
+          const dayOfWeek = newDate.getDay()
+          
+          // 平日の場合のみカウント
+          if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+            daysToMove++
+          }
+          
+          console.log('📅 3DayView checking date:', newDate.toDateString(), 'dayOfWeek:', dayOfWeek, 'daysToMove:', daysToMove)
+        }
+        
+        // 最終的に平日でない場合は、次の平日まで調整
+        while (newDate.getDay() === 0 || newDate.getDay() === 6) {
+          newDate.setDate(newDate.getDate() + (multiplier > 0 ? 1 : -1))
+        }
+      }
+      
+      console.log('📅 Weekend skip navigation:', {
+        viewType,
+        from: currentDate.toDateString(),
+        to: newDate.toDateString(),
+        direction
+      })
+      
+      navigateToDate(newDate)
+      return
+    }
+    
+    // 通常のナビゲーション（週末表示ON、または他のビュー）
     navigateRelative(direction)
-  }, [navigateRelative, currentDate])
+  }, [navigateRelative, navigateToDate, currentDate, viewType, showWeekends])
 
   const handleViewChange = useCallback((newView: CalendarViewType) => {
+    // week-no-weekendが選択された場合は、週末表示をOFFにしてweekに統一
+    if (newView === 'week-no-weekend') {
+      updateSettings({ showWeekends: false })
+      newView = 'week'
+    }
+    
     changeView(newView)
-  }, [changeView])
+  }, [changeView, updateSettings])
 
   // キーボードショートカット
   useEffect(() => {
@@ -549,7 +705,9 @@ export function CalendarController({
             break
           case '5':
             e.preventDefault()
-            handleViewChange('week-no-weekend')
+            // 週末なし表示: showWeekendsをOFFにしてweekビューを使用
+            updateSettings({ showWeekends: false })
+            handleViewChange('week')
             break
           case '14':
             e.preventDefault()
@@ -578,11 +736,13 @@ export function CalendarController({
       onCreateRecord: handleCreateRecord,
       onTaskClick: handleTaskClick,
       onEventClick: handleEventClick as any,
+      onEventContextMenu: handleEventContextMenu,
       onCreateEvent: handleCreateEvent,
       onUpdateEvent: handleUpdateEvent as any,
       onDeleteEvent: handleEventDelete,
       onRestoreEvent: handleEventRestore,
       onEmptyClick: handleEmptyClick,
+      onTimeRangeSelect: handleDateTimeRangeSelect,
       onViewChange: handleViewChange,
       onNavigatePrev: () => handleNavigate('prev'),
       onNavigateNext: () => handleNavigate('next'),
@@ -591,18 +751,20 @@ export function CalendarController({
 
     switch (viewType) {
       case 'day':
-        return <DayView {...commonProps} />
+        return <DayView {...commonProps} showWeekends={showWeekends} />
       case 'split-day':
         // Split-day view is currently not available, fallback to day view
         return <DayView {...commonProps} />
       case '3day':
-        return <ThreeDayView {...commonProps} />
+        // 3DayViewに週末表示設定を渡す
+        return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
       case 'week':
-        return <WeekView {...commonProps} />
+        return <WeekView {...commonProps} showWeekends={showWeekends} />
       case 'week-no-weekend':
+        // 後方互換性のため残す（設定より優先）
         return <WeekView {...commonProps} showWeekends={false} />
       case '2week':
-        return <MonthView {...commonProps} />
+        return <MonthView {...commonProps} showWeekends={showWeekends} />
       case 'month':
         return <MonthView {...commonProps} />
       case 'schedule':
@@ -614,8 +776,31 @@ export function CalendarController({
   
   // 日付選択ハンドラー
   const handleDateSelect = useCallback((date: Date) => {
+    // 週末表示がOFFで、かつ選択された日付が週末の場合
+    if (!showWeekends) {
+      const dayOfWeek = date.getDay()
+      if (dayOfWeek === 0 || dayOfWeek === 6) { // 日曜日または土曜日
+        let adjustedDate = new Date(date)
+        
+        // 土曜日の場合は翌月曜日に、日曜日の場合も翌月曜日に調整
+        if (dayOfWeek === 6) { // 土曜日
+          adjustedDate.setDate(adjustedDate.getDate() + 2) // 月曜日
+        } else if (dayOfWeek === 0) { // 日曜日
+          adjustedDate.setDate(adjustedDate.getDate() + 1) // 月曜日
+        }
+        
+        console.log('📅 Weekend date selected, adjusting:', {
+          original: date.toDateString(),
+          adjusted: adjustedDate.toDateString()
+        })
+        
+        navigateToDate(adjustedDate)
+        return
+      }
+    }
+    
     navigateToDate(date)
-  }, [navigateToDate])
+  }, [navigateToDate, showWeekends])
 
   // タスク作成ハンドラー
   const handleCreateTask = useCallback((taskData: {
@@ -648,21 +833,84 @@ export function CalendarController({
 
   // 空き時間クリック用のハンドラー
   const handleEmptyClick = useCallback((date: Date, time: string) => {
-    openEventPopup({
-      dueDate: date,
-      status: 'Todo'
+    console.log('🖱️ Empty time clicked:', { date, time })
+    handleCreateEvent(date, time)
+  }, [handleCreateEvent])
+
+  // ドラッグ選択ハンドラー
+  const handleTimeRangeSelect = useCallback((selection: { startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
+    console.log('🎯 Time range selected (DayView):', selection)
+    
+    // 現在の日付に時間を設定
+    const today = currentDate
+    const startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.startHour, selection.startMinute)
+    const endTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.endHour, selection.endMinute)
+    
+    // CreateEventModalを開く
+    openCreateModal({
+      initialData: {
+        startDate: startTime,
+        endDate: endTime,
+        type: 'event',
+        status: 'planned',
+        priority: 'necessary'
+      },
+      context: {
+        source: 'calendar',
+        date: today,
+        viewType
+      }
+    })
+  }, [currentDate, openCreateModal, viewType])
+  
+  // 統一された時間範囲選択ハンドラー（全ビュー共通）
+  const handleDateTimeRangeSelect = useCallback((selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
+    console.log('🎯 Unified DateTimeRange selected:', { 
+      date: selection.date.toDateString(),
+      dateISO: selection.date.toISOString(),
+      timeRange: `${selection.startHour}:${String(selection.startMinute).padStart(2, '0')} - ${selection.endHour}:${String(selection.endMinute).padStart(2, '0')}`,
+      viewType,
+      rawSelection: selection
     })
     
-    setEventDefaultDate(date)
-    setEventDefaultTime(time)
-    setEventDefaultEndTime(undefined)
-    setSelectedEvent(null)
-  }, [openEventPopup])
+    // 指定された日付に時間を設定
+    const startTime = new Date(selection.date.getFullYear(), selection.date.getMonth(), selection.date.getDate(), selection.startHour, selection.startMinute)
+    const endTime = new Date(selection.date.getFullYear(), selection.date.getMonth(), selection.date.getDate(), selection.endHour, selection.endMinute)
+    
+    console.log('🕒 Created DateTime objects:', {
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      startTimeLocal: startTime.toLocaleString(),
+      endTimeLocal: endTime.toLocaleString()
+    })
+    
+    // CreateEventModalを開く
+    openCreateModal({
+      initialData: {
+        startDate: startTime,
+        endDate: endTime,
+        type: 'event',
+        status: 'planned',
+        priority: 'necessary'
+      },
+      context: {
+        source: 'calendar',
+        date: selection.date,
+        viewType
+      }
+    })
+  }, [openCreateModal, viewType])
 
   // 表示される日付の配列を計算
   const displayDates = useMemo(() => {
     return viewDateRange.days
   }, [viewDateRange.days])
+
+  // 週末のイベント通知
+  const hiddenWeekendEventCount = useWeekendEventNotification(
+    events,
+    viewDateRange
+  )
 
   return (
     <DnDProvider>
@@ -701,6 +949,32 @@ export function CalendarController({
       
       {/* CreateEventModal - useCreateModalStoreで管理 */}
       <CreateEventModal />
+      
+      {/* 週末イベント非表示通知 */}
+      <WeekendEventNotification 
+        hiddenEventCount={hiddenWeekendEventCount}
+      />
+      
+      {/* イベントコンテキストメニュー */}
+      {(() => {
+        console.log('🎯 Context menu render check:', {
+          hasEvent: !!contextMenuEvent,
+          hasPosition: !!contextMenuPosition,
+          event: contextMenuEvent?.title,
+          position: contextMenuPosition
+        })
+        return contextMenuEvent && contextMenuPosition ? (
+          <EventContextMenu
+            event={contextMenuEvent}
+            position={contextMenuPosition}
+            onClose={handleCloseContextMenu}
+            onEdit={handleEditEvent}
+            onDelete={handleDeleteEvent}
+            onDuplicate={handleDuplicateEvent}
+            onViewDetails={handleViewDetails}
+          />
+        ) : null
+      })()}
     </DnDProvider>
   )
 }

@@ -1,0 +1,142 @@
+'use client'
+
+import React, { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+
+interface WeekendToggleTransitionProps {
+  children: React.ReactNode
+  className?: string
+}
+
+/**
+ * 週末表示切り替え時のスムーズなトランジション効果を提供
+ */
+export function WeekendToggleTransition({
+  children,
+  className
+}: WeekendToggleTransitionProps) {
+  const { showWeekends } = useCalendarSettingsStore()
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [previousShowWeekends, setPreviousShowWeekends] = useState(showWeekends)
+
+  useEffect(() => {
+    if (showWeekends !== previousShowWeekends) {
+      setIsTransitioning(true)
+      setPreviousShowWeekends(showWeekends)
+      
+      // 300msのトランジション時間
+      const timer = setTimeout(() => {
+        setIsTransitioning(false)
+      }, 300)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [showWeekends, previousShowWeekends])
+
+  return (
+    <div 
+      className={cn(
+        'transition-all duration-300 ease-in-out',
+        isTransitioning && 'opacity-95',
+        className
+      )}
+      style={{
+        transform: isTransitioning ? 'scale(0.98)' : 'scale(1)'
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+/**
+ * 週末カラムの個別アニメーション効果
+ */
+export function WeekendColumnTransition({
+  children,
+  isWeekendColumn = false,
+  className
+}: {
+  children: React.ReactNode
+  isWeekendColumn?: boolean
+  className?: string
+}) {
+  const { showWeekends } = useCalendarSettingsStore()
+  const [isVisible, setIsVisible] = useState(showWeekends || !isWeekendColumn)
+
+  useEffect(() => {
+    if (isWeekendColumn) {
+      if (showWeekends) {
+        setIsVisible(true)
+      } else {
+        // フェードアウトしてから非表示
+        const timer = setTimeout(() => {
+          setIsVisible(false)
+        }, 200)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [showWeekends, isWeekendColumn])
+
+  if (isWeekendColumn && !showWeekends && !isVisible) {
+    return null
+  }
+
+  return (
+    <div
+      className={cn(
+        'transition-all duration-300 ease-in-out',
+        isWeekendColumn && !showWeekends && 'opacity-0 scale-95 pointer-events-none',
+        isWeekendColumn && showWeekends && 'opacity-100 scale-100',
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
+}
+
+/**
+ * グリッドレイアウトの動的調整アニメーション
+ */
+export function GridLayoutTransition({
+  children,
+  totalColumns,
+  className
+}: {
+  children: React.ReactNode
+  totalColumns: number
+  className?: string
+}) {
+  const [previousColumns, setPreviousColumns] = useState(totalColumns)
+  const [isAdjusting, setIsAdjusting] = useState(false)
+
+  useEffect(() => {
+    if (totalColumns !== previousColumns) {
+      setIsAdjusting(true)
+      setPreviousColumns(totalColumns)
+      
+      const timer = setTimeout(() => {
+        setIsAdjusting(false)
+      }, 300)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [totalColumns, previousColumns])
+
+  return (
+    <div
+      className={cn(
+        'transition-all duration-300 ease-in-out',
+        isAdjusting && 'opacity-90',
+        className
+      )}
+      style={{
+        gridTemplateColumns: `repeat(${totalColumns}, minmax(0, 1fr))`
+      }}
+    >
+      {children}
+    </div>
+  )
+}

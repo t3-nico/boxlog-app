@@ -183,9 +183,30 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
               const isSelected = selectedDate && isSameDay(date, selectedDate)
               const isToday = isSameDay(date, new Date())
               const isCurrentMonth = isSameMonth(date, currentMonth)
-              const isHighlighted = highlightedDates.some(highlighted => 
-                isSameDay(highlighted, date)
-              )
+              const isHighlighted = highlightedDates.some(highlighted => {
+                // より厳密な日付比較：年・月・日が完全に一致するかチェック
+                const dateYear = date.getFullYear()
+                const dateMonth = date.getMonth()
+                const dateDay = date.getDate()
+                
+                const highlightYear = highlighted.getFullYear()
+                const highlightMonth = highlighted.getMonth()
+                const highlightDay = highlighted.getDate()
+                
+                const match = dateYear === highlightYear && 
+                             dateMonth === highlightMonth && 
+                             dateDay === highlightDay
+                
+                if (match) {
+                  console.log('🔍 Highlight match found:', {
+                    date: `${dateYear}-${dateMonth}-${dateDay}`,
+                    highlighted: `${highlightYear}-${highlightMonth}-${highlightDay}`,
+                    dateString: date.toDateString(),
+                    highlightedString: highlighted.toDateString()
+                  })
+                }
+                return match
+              })
               const isDisabled = disabledDates.some(disabled => 
                 isSameDay(disabled, date)
               )
@@ -223,10 +244,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                     ],
                     
                     // Highlighted dates (events, etc.)
-                    isHighlighted && !isSelected && [
-                      'ring-2 ring-blue-600/20 dark:ring-blue-400/20',
-                      'bg-blue-600/10 dark:bg-blue-400/10',
-                      primary.text
+                    isHighlighted && !isSelected && !isToday && [
+                      'ring-2 ring-blue-500/30 dark:ring-blue-400/30',
+                      'bg-blue-500/10 dark:bg-blue-400/10'
                     ],
                     
                     // Disabled state

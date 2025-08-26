@@ -19,9 +19,11 @@ export function DayView({
   tasks,
   events,
   currentDate,
+  showWeekends = true,
   className,
   onTaskClick,
   onEventClick,
+  onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
   onDeleteEvent,
@@ -36,6 +38,7 @@ export function DayView({
   onNavigateNext,
   onNavigateToday
 }: DayViewProps) {
+  console.log('🔍 DayView: onEventContextMenu received', !!onEventContextMenu)
   const { timezone } = useCalendarSettingsStore()
   
   // レスポンシブな時間高さ
@@ -45,13 +48,10 @@ export function DayView({
     desktop: 72
   })
   
-  // 表示する日付（currentDateを使用）
+  // 表示する日付
   const displayDates = useMemo(() => {
     const date = new Date(currentDate)
     date.setHours(0, 0, 0, 0)
-    console.log('🔧 DayView: currentDateを表示します', {
-      currentDate: date.toDateString()
-    })
     return [date]
   }, [currentDate])
   
@@ -113,6 +113,7 @@ export function DayView({
               events={dayEvents}
               eventStyles={eventStyles}
               onEventClick={onEventClick}
+              onEventContextMenu={onEventContextMenu}
               onEmptyClick={onEmptyClick}
               onEventUpdate={onUpdateEvent}
               onTimeRangeSelect={onTimeRangeSelect}
