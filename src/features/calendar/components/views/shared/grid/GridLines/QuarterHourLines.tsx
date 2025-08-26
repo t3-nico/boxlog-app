@@ -28,7 +28,7 @@ export const QuarterHourLines = memo<QuarterHourLinesProps>(function QuarterHour
         // 15分線
         <div
           key={`quarter-1-${hour.hour}`}
-          className="absolute w-full border-t border-dotted border-gray-100 dark:border-gray-800 opacity-50"
+          className="absolute w-full border-t border-dotted border-neutral-900/20 dark:border-neutral-100/20 opacity-50"
           style={{
             top: `${hour.position + hourHeight / 4}px`
           }}
@@ -36,7 +36,7 @@ export const QuarterHourLines = memo<QuarterHourLinesProps>(function QuarterHour
         // 45分線
         <div
           key={`quarter-3-${hour.hour}`}
-          className="absolute w-full border-t border-dotted border-gray-100 dark:border-gray-800 opacity-50"
+          className="absolute w-full border-t border-dotted border-neutral-900/20 dark:border-neutral-100/20 opacity-50"
           style={{
             top: `${hour.position + (hourHeight * 3) / 4}px`
           }}

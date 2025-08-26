@@ -9,6 +9,7 @@ import { TimeColumn } from '../TimeColumn'
 import { HourLines, HalfHourLines, QuarterHourLines } from '../GridLines'
 import { SimpleCurrentTimeLine } from '../../'
 import { useViewDimensions } from '../../hooks/useViewDimensions'
+import { useTimeSelection } from '../../hooks/useTimeSelection'
 import { pixelsToTimeValues, calculateScrollPosition } from '../../utils/gridCalculator'
 import { 
   HOUR_HEIGHT, 
@@ -29,12 +30,39 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   className = '',
   children,
   onTimeClick,
+  onTimeRangeSelect,
   scrollToHour = SCROLL_TO_HOUR,
   displayDates = []
 }) {
   const { containerRef, dimensions, scrollToTime, updateDimensions } = useViewDimensions({
     hourHeight,
     timeColumnWidth: TIME_COLUMN_WIDTH
+  })
+  
+  // ドラッグ選択機能
+  const {
+    isSelecting,
+    handleMouseDown,
+    selectionStyle
+  } = useTimeSelection({
+    hourHeight,
+    timeColumnWidth: TIME_COLUMN_WIDTH,
+    onTimeRangeSelect: onTimeRangeSelect ? (selection) => {
+      // TimeSelectionをDate形式に変換してコールバックを呼ぶ
+      const today = new Date()
+      const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.startHour, selection.startMinute)
+      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.endHour, selection.endMinute)
+      
+      // 時間範囲の文字列を作成
+      const startTimeStr = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`
+      const endTimeStr = `${String(selection.endHour).padStart(2, '0')}:${String(selection.endMinute).padStart(2, '0')}`
+      const timeRangeStr = `${startTimeStr}-${endTimeStr}`
+      
+      console.log('🎯 Time range selected:', { selection, timeRangeStr })
+      
+      // onTimeRangeSelectに渡すためのカスタムコールバック
+      onTimeRangeSelect(selection)
+    } : undefined
   })
   
   const hasScrolledToInitial = useRef(false)
@@ -54,9 +82,10 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
     }
   }, [scrollToHour, hourHeight, dimensions.containerHeight, containerRef])
   
-  // グリッドクリックハンドラー
+  // グリッドクリックハンドラー（ドラッグしていない場合のみ）
   const handleGridClick = useCallback((e: React.MouseEvent) => {
-    if (!onTimeClick || !containerRef.current) return
+    // ドラッグ中はクリックを無視
+    if (isSelecting || !onTimeClick || !containerRef.current) return
     
     const rect = containerRef.current.getBoundingClientRect()
     const y = e.clientY - rect.top + containerRef.current.scrollTop
@@ -71,14 +100,15 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
     if (hour >= startHour && hour < endHour) {
       onTimeClick(hour, minute)
     }
-  }, [onTimeClick, containerRef, hourHeight, startHour, endHour])
+  }, [isSelecting, onTimeClick, containerRef, hourHeight, startHour, endHour])
   
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-auto ${GRID_BACKGROUND} ${className}`}
+      className={`relative overflow-auto ${GRID_BACKGROUND} ${className} ${isSelecting ? 'select-none' : ''}`}
       style={{ height: '100%' }}
       onClick={handleGridClick}
+      onMouseDown={handleMouseDown}
     >
       {/* 時間列（固定） */}
       <TimeColumn
@@ -127,6 +157,15 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
             timeColumnWidth={TIME_COLUMN_WIDTH}
           />
         ) */}
+        
+        {/* ドラッグ選択範囲の表示 */}
+        {selectionStyle && (
+          <div style={selectionStyle} className="drag-selection">
+            <div className="absolute inset-0 flex items-center justify-center text-white text-sm font-medium">
+              新しいイベント
+            </div>
+          </div>
+        )}
         
         {/* 子コンポーネント（イベント等） */}
         {children}

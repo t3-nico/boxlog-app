@@ -51,7 +51,7 @@ export function AgendaHeader({
   
   return (
     <div className={cn(
-      'agenda-header border-b bg-background/95 backdrop-blur-sm',
+      'agenda-header bg-background/95 backdrop-blur-sm',
       'sticky top-0 z-20 px-4 py-3',
       className
     )}>

@@ -62,7 +62,7 @@ export function MobileHeader({
 
   return (
     <header className={cn(
-      'relative h-14 bg-background border-b border-border',
+      'relative h-14 bg-background',
       'flex items-center justify-between px-4',
       'sticky top-0 z-40',
       className

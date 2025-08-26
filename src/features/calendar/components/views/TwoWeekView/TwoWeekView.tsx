@@ -113,7 +113,7 @@ export function TwoWeekView({
   // 初期スクロールはScrollableCalendarLayoutに委謗
 
   const headerComponent = (
-    <div className="border-b border-border bg-background h-16 flex">
+    <div className="bg-background h-16 flex">
       {/* 14日分のヘッダー（画面幅に均等分割） */}
       {twoWeekDates.map((date, index) => (
         <div
@@ -172,7 +172,7 @@ export function TwoWeekView({
             return (
               <div
                 key={date.toISOString()}
-                className="flex-1 border-r border-border last:border-r-0 relative"
+                className="flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative"
                 style={{ width: `${100 / 14}%` }}
               >
                 {/* クリック可能な背景エリア */}
@@ -186,7 +186,7 @@ export function TwoWeekView({
                       <div
                         key={hour}
                         className={cn(
-                          'border-b border-border/50 last:border-b-0 transition-colors',
+                          'border-b border-neutral-900/20 dark:border-neutral-100/20 last:border-b-0 transition-colors',
                           'hover:bg-primary/5'
                         )}
                         style={{ height: `${HOUR_HEIGHT}px` }}

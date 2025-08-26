@@ -288,7 +288,7 @@ export function ScrollableCalendarLayout({
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
         {showTimeColumn && showTimezone && (
           <div 
-            className="shrink-0 bg-muted/5 flex items-end justify-center pb-1 border-b border-border"
+            className="shrink-0 bg-muted/5 flex items-end justify-center pb-1"
             style={{ width: timeColumnWidth }}
           >
             <TimezoneOffset timezone={timezone} className="text-xs" />

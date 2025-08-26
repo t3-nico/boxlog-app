@@ -10,7 +10,7 @@ import { EmptyState } from '../EmptyState'
 import { useEventPosition } from '../../hooks/useEventPosition'
 import { filterEventsByDate, sortTimedEvents } from '../../utils/eventPositioning'
 import { isToday, isWeekend } from '../../utils/dateHelpers'
-import { HOUR_HEIGHT, GRID_BACKGROUND, GRID_BORDER, Z_INDEX } from '../../constants/grid.constants'
+import { HOUR_HEIGHT, GRID_BACKGROUND, Z_INDEX } from '../../constants/grid.constants'
 import type { DayColumnProps, TimedEvent } from '../../types/view.types'
 
 export const DayColumn = memo<DayColumnProps>(function DayColumn({
@@ -58,8 +58,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   const columnClasses = [
     'relative flex-1 min-w-0',
     GRID_BACKGROUND,
-    GRID_BORDER,
-    'border-r last:border-r-0',
+    'border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0',
     isWeekendActual ? 'bg-gray-50 dark:bg-gray-800/50' : '',
     className
   ].filter(Boolean).join(' ')

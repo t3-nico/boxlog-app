@@ -165,7 +165,7 @@ export function MobileDrawer({
         aria-label={title}
       >
         {/* ヘッダー */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
+        <div className="flex items-center justify-between p-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
             onClick={onClose}
@@ -178,7 +178,7 @@ export function MobileDrawer({
 
         {/* ユーザー情報 */}
         {userInfo && (
-          <div className="p-4 border-b border-border">
+          <div className="p-4">
             <div className="flex items-center gap-3">
               {userInfo.avatar ? (
                 <img

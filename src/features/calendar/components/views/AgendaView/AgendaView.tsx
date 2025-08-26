@@ -114,7 +114,7 @@ export function AgendaView({
     <CalendarViewAnimation viewType="agenda">
       <div className={cn('flex flex-col h-full bg-background', className)}>
         {/* 日付ヘッダー - 他のビューと統一 */}
-        <div className="shrink-0 border-b border-border bg-background h-16">
+        <div className="shrink-0 bg-background h-16">
           <div className="flex h-full">
             {/* タイムゾーンと空白スペース */}
             <div 

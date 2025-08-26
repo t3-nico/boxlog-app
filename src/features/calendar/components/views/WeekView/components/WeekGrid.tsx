@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { DateHeader, CalendarLayoutWithHeader } from '../../shared'
+import { DateHeader, CalendarLayoutWithHeader, CalendarDragSelection, DateTimeSelection } from '../../shared'
 import { EventBlock } from '../../shared/components/EventBlock'
 import { TimezoneOffset } from '../../shared'
 import { useWeekEvents } from '../hooks/useWeekEvents'
@@ -29,6 +29,7 @@ export function WeekGrid({
   onEventClick,
   onEmptyClick,
   onEventUpdate,
+  onTimeRangeSelect,
   timezone,
   className
 }: WeekGridProps) {
@@ -80,7 +81,7 @@ export function WeekGrid({
   
   
   const headerComponent = (
-    <div className="border-b border-border bg-background h-16 flex">
+    <div className="bg-background h-16 flex">
       {/* 7日分の日付ヘッダー */}
       {weekDates.map((date, index) => (
         <div
@@ -134,59 +135,74 @@ export function WeekGrid({
             <div
               key={date.toISOString()}
               className={cn(
-                'flex-1 border-r border-border last:border-r-0 relative'
+                'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative'
               )}
               style={{ width: `${100 / 7}%` }}
             >
-              {/* クリック可能な背景エリア */}
-              <div
-                onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
-                className="absolute inset-0 z-10 cursor-cell"
+              {/* 新しいCalendarDragSelectionを使用 */}
+              <CalendarDragSelection
+                date={date}
+                className="absolute inset-0 z-10"
+                onTimeRangeSelect={onTimeRangeSelect}
               >
-                {/* 時間グリッド背景 */}
-                <div className="absolute inset-0">
+                {/* クリック可能な背景エリア */}
+                <div
+                  className={`absolute inset-0 cursor-pointer`}
+                  onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
+                  style={{ height: 24 * HOUR_HEIGHT }}
+                >
+                  {/* 時間グリッド背景 */}
                   {Array.from({ length: 24 }, (_, hour) => (
                     <div
                       key={hour}
                       className={cn(
-                        'border-b border-border/50 last:border-b-0 transition-colors',
-                        'hover:bg-primary/5'
+                        'relative border-b border-neutral-900/20 dark:border-neutral-100/20'
                       )}
-                      style={{ height: `${HOUR_HEIGHT}px` }}
-                      title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
+                      style={{ height: HOUR_HEIGHT }}
                     />
                   ))}
                 </div>
-              </div>
+              </CalendarDragSelection>
               
-              {/* イベント表示 */}
-              {dayEvents.map(event => {
-                const position = eventPositions.find(pos => 
-                  pos.event.id === event.id && pos.dayIndex === dayIndex
-                )
-                
-                if (!position) return null
-                
-                return (
-                  <div
-                    key={event.id}
-                    data-event-block
-                    className="absolute z-20"
-                    style={{
-                      top: `${position.top}px`,
-                      height: `${position.height}px`,
-                      left: '2px',
-                      right: '2px'
-                    }}
-                  >
-                    <EventBlock
-                      event={event}
-                      onClick={() => onEventClick?.(event)}
-                      className="h-full w-full"
-                    />
-                  </div>
-                )
-              })}
+              {/* イベント表示エリア（DayViewと同じパターン） */}
+              <div className="relative w-full pointer-events-none" style={{ height: 24 * HOUR_HEIGHT }}>
+                {dayEvents.map(event => {
+                  const position = eventPositions.find(pos => 
+                    pos.event.id === event.id && pos.dayIndex === dayIndex
+                  )
+                  
+                  if (!position) return null
+                  
+                  return (
+                    <div
+                      key={event.id}
+                      className="absolute pointer-events-none"
+                      data-event-block="true"
+                      style={{
+                        top: `${position.top}px`,
+                        height: `${position.height}px`,
+                        left: '2px',
+                        right: '2px'
+                      }}
+                    >
+                      {/* EventBlockの内容部分のみクリック可能 */}
+                      <div 
+                        className="pointer-events-auto m-1 h-[calc(100%-8px)]"
+                        onClick={() => onEventClick?.(event)}
+                      >
+                        <EventBlock
+                          event={event}
+                          onClick={undefined} // 親のonClickを使用
+                          showTime={true}
+                          showDuration={true}
+                          variant="week"
+                          className="h-full w-full cursor-pointer hover:shadow-md transition-shadow pointer-events-none"
+                        />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           )
         })}

@@ -40,7 +40,7 @@ export function GridAlignmentTest() {
   ]
   
   return (
-    <div className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-lg z-50 max-w-xs">
+    <div className="fixed bottom-4 right-4 bg-white dark:bg-gray-800 border border-neutral-900/20 dark:border-neutral-100/20 rounded-lg p-4 shadow-lg z-50 max-w-xs">
       <h3 className="font-semibold text-sm mb-3">グリッド整列テスト</h3>
       
       <div className="space-y-2 text-xs">
@@ -68,7 +68,7 @@ export function GridAlignmentTest() {
         ))}
       </div>
       
-      <div className="mt-3 pt-2 border-t border-gray-200 dark:border-gray-600">
+      <div className="mt-3 pt-2 border-t border-neutral-900/20 dark:border-neutral-100/20">
         <div className="text-xs text-gray-500">
           CSS変数: <code>var(--calendar-hour-height)</code>
         </div>

@@ -18,7 +18,7 @@ export function DateHeaderRow({
 }: DateHeaderRowProps) {
   return (
     <div className={cn(
-      'flex border-b border-border bg-background',
+      'flex bg-background',
       className
     )}>
       {dates.map((date, index) => (
@@ -28,7 +28,7 @@ export function DateHeaderRow({
           className={cn(
             'flex-1',
             // 最後の日付以外は右ボーダーを表示
-            index < dates.length - 1 && 'border-r'
+            index < dates.length - 1 && 'border-r border-neutral-900/20 dark:border-neutral-100/20'
           )}
           isSelected={selectedDate ? 
             date.toDateString() === selectedDate.toDateString() : 

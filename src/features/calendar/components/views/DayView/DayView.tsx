@@ -27,6 +27,7 @@ export function DayView({
   onDeleteEvent,
   onRestoreEvent,
   onEmptyClick,
+  onTimeRangeSelect,
   onTaskDrag,
   onCreateTask,
   onCreateRecord,
@@ -76,7 +77,7 @@ export function DayView({
   }, [onEmptyClick, date])
 
   const headerComponent = (
-    <div className="border-b border-border bg-background h-16 flex items-center justify-center px-2">
+    <div className="bg-background h-16 flex items-center justify-center px-2">
       <DateHeader
         date={date}
         className="text-center"
@@ -114,6 +115,7 @@ export function DayView({
               onEventClick={onEventClick}
               onEmptyClick={onEmptyClick}
               onEventUpdate={onUpdateEvent}
+              onTimeRangeSelect={onTimeRangeSelect}
               className="absolute inset-0"
             />
           </CalendarLayoutWithHeader>

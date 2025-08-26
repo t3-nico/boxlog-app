@@ -100,7 +100,7 @@ export function ThreeDayView({
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
-    <div className="border-b border-border bg-background h-16 flex">
+    <div className="bg-background h-16 flex">
       {/* 3日分のヘッダー */}
       {threeDayDates.map((date, index) => (
         <div
@@ -158,7 +158,7 @@ export function ThreeDayView({
             <div
               key={date.toISOString()}
               className={cn(
-                'flex-1 border-r border-border last:border-r-0 relative'
+                'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative'
               )}
               style={{ width: `${100 / 3}%` }}
             >
@@ -173,7 +173,7 @@ export function ThreeDayView({
                     <div
                       key={hour}
                       className={cn(
-                        'border-b border-border/50 last:border-b-0 transition-colors',
+                        'border-b border-neutral-900/20 dark:border-neutral-100/20 last:border-b-0 transition-colors',
                         'hover:bg-primary/5'
                       )}
                       style={{ height: `${HOUR_HEIGHT}px` }}

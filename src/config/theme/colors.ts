@@ -172,7 +172,7 @@ export const border = {
   strong: 'border-neutral-200 dark:border-neutral-800',
   
   // 🆕 汎用（追加）
-  universal: 'border-neutral-400',  // シンプルに1つ
+  universal: 'border-neutral-900/20 dark:border-neutral-100/20',  // alphaスタイル
   
   // 🆕 透明度ベース（オプション）
   alpha: 'border-neutral-900/20 dark:border-neutral-100/20',
@@ -274,4 +274,22 @@ export const button = {
   danger: `${semantic.error.DEFAULT} ${text.white} hover:bg-red-700 dark:hover:bg-red-600 ${state.focus.outline}`,
 } as const
 
-// 以下省略（他の部分は同じ）
+// ============================================
+// 統合colorsオブジェクト
+// ============================================
+
+/**
+ * すべての色定義を統合したオブジェクト
+ */
+export const colors = {
+  primary,
+  secondary,
+  selection,
+  text,
+  background,
+  border,
+  semantic,
+  state,
+  button,
+  ghost
+} as const

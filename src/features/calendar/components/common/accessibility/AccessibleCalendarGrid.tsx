@@ -237,14 +237,14 @@ export function AccessibleCalendarGrid({
             key={slot.time}
             role="row"
             aria-rowindex={slotIndex + 2}
-            className="flex border-b border-gray-200"
+            className="flex border-b border-neutral-900/20 dark:border-neutral-100/20"
             style={{ height: hourHeight }}
           >
             {/* 時間ラベル */}
             <div
               role="rowheader"
               aria-colindex={1}
-              className="w-16 p-1 text-xs text-gray-500 border-r"
+              className="w-16 p-1 text-xs text-gray-500 border-r border-neutral-900/20 dark:border-neutral-100/20"
             >
               <span aria-label={formatTimeForAria(slot.time)}>
                 {slot.time}
@@ -266,7 +266,7 @@ export function AccessibleCalendarGrid({
                   {...getCellAriaProps(date, slot.time)}
                   aria-colindex={dateIndex + 2}
                   className={cn(
-                    "flex-1 border-r border-gray-200 relative p-1",
+                    "flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 relative p-1",
                     "hover:bg-gray-50 focus:bg-blue-50 focus:outline-none",
                     navigationState.selectedDate.toDateString() === date.toDateString() &&
                     navigationState.selectedTime === slot.time &&
