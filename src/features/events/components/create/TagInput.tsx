@@ -6,6 +6,7 @@ import { X, Plus, Hash, TrendingUp, Tag } from 'lucide-react'
 import { text, background, border, primary, semantic } from '@/config/theme/colors'
 import { body } from '@/config/theme/typography'
 import { rounded } from '@/config/theme/rounded'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 
 interface Tag {
   id: string
@@ -31,6 +32,9 @@ export function TagInput({
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  
+  // タグストアのフックを使用
+  const { addTag: addTagToStore, getTagById, getAllTags } = useTagStore()
 
   // Popular tags (in practice, would be fetched from database)
   const trendingTags: Tag[] = [
@@ -109,24 +113,50 @@ export function TagInput({
   }
 
   // Add tag
-  const addTag = (tagName: string) => {
+  const addTag = async (tagName: string) => {
     if (selectedTags.length >= 5) return // 最大5個制限
     
-    const newTag: Tag = {
-      id: Date.now().toString(),
-      name: tagName,
-      color: generateTagColor(tagName)
-    }
-    
     if (!selectedTags.some(tag => tag.name === tagName)) {
-      // Clear input value then add tag (immediate reflection)
-      setInputValue('')
-      setShowSuggestions(false)
+      // 既存のタグを確認
+      const existingTags = getAllTags()
+      let tagToAdd = existingTags.find(t => t.name === tagName)
       
-      // Add tag with short animation delay
-      setTimeout(() => {
-        onChange([...selectedTags, newTag])
-      }, 50)
+      // タグが存在しない場合は新規作成
+      if (!tagToAdd) {
+        const color = generateTagColor(tagName)
+        
+        // タグストアに追加
+        const success = await addTagToStore({
+          name: tagName,
+          color,
+          level: 1,  // デフォルトレベル
+          icon: '🏷️'  // デフォルトアイコン
+        })
+        
+        if (success) {
+          // 追加されたタグを取得
+          const updatedTags = getAllTags()
+          tagToAdd = updatedTags.find(t => t.name === tagName)
+        }
+      }
+      
+      if (tagToAdd) {
+        // Clear input value then add tag (immediate reflection)
+        setInputValue('')
+        setShowSuggestions(false)
+        
+        // コンポーネント用のTag型に変換
+        const newTag: Tag = {
+          id: tagToAdd.id,
+          name: tagToAdd.name,
+          color: tagToAdd.color
+        }
+        
+        // Add tag with short animation delay
+        setTimeout(() => {
+          onChange([...selectedTags, newTag])
+        }, 50)
+      }
     } else {
       setInputValue('')
       setShowSuggestions(false)

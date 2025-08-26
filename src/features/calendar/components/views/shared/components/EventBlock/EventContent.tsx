@@ -38,12 +38,19 @@ export const EventContent = memo<EventContentProps>(function EventContent({
     )
   }
   
-  // 通常表示：時間 + タイトル + 説明（オプション）
+  // 通常表示：タイトル + 日付 + タグの順番
   return (
     <div className="flex flex-col h-full">
-      {/* 時間表示 */}
+      {/* タイトル */}
+      <div className="text-sm font-medium leading-tight mb-1 flex-shrink-0">
+        <span className="line-clamp-2">
+          {event.title}
+        </span>
+      </div>
+      
+      {/* 時間表示（日付） */}
       {showTime && (
-        <div className="text-xs opacity-75 leading-tight mb-0.5">
+        <div className="text-xs opacity-75 leading-tight mb-1">
           {formatTimeRange(
             event.start || new Date(), 
             event.end || new Date(startTime + 60 * 60 * 1000), 
@@ -52,19 +59,24 @@ export const EventContent = memo<EventContentProps>(function EventContent({
         </div>
       )}
       
-      {/* タイトル */}
-      <div className="text-sm font-medium leading-tight mb-1 flex-shrink-0">
-        <span className="line-clamp-2">
-          {event.title}
-        </span>
-      </div>
-      
-      {/* 説明（高さに余裕がある場合のみ） */}
-      {event.description && (
-        <div className="text-xs opacity-75 leading-tight flex-1 overflow-hidden">
-          <span className="line-clamp-2">
-            {event.description}
-          </span>
+      {/* タグ表示 */}
+      {event.tags && event.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-auto w-full">
+          {event.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag.id}
+              className="inline-flex items-center px-1.5 py-0.5 text-xs rounded-sm bg-white/30 text-white leading-tight flex-shrink-0"
+              style={{ backgroundColor: `${tag.color}40` }}
+            >
+              {tag.icon && <span className="mr-0.5">{tag.icon}</span>}
+              {tag.name}
+            </span>
+          ))}
+          {event.tags.length > 3 && (
+            <span className="text-xs opacity-75 px-1">
+              +{event.tags.length - 3}
+            </span>
+          )}
         </div>
       )}
     </div>

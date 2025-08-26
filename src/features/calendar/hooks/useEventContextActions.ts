@@ -50,12 +50,25 @@ export function useEventContextActions() {
       const startDate = event.startDate || (event.start_time ? new Date(event.start_time) : new Date())
       const endDate = event.endDate || (event.end_time ? new Date(event.end_time) : new Date())
       
-      // 翌日に設定
-      const newStartDate = new Date(startDate.getTime() + 24 * 60 * 60 * 1000)
-      const newEndDate = new Date(endDate.getTime() + 24 * 60 * 60 * 1000)
+      console.log('🔍 Duplicating event:', {
+        original: {
+          title: event.title,
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString()
+        }
+      })
+      
+      // 同じ日時に設定（複製）
+      const newStartDate = new Date(startDate)
+      const newEndDate = new Date(endDate)
+
+      console.log('📅 New event dates:', {
+        newStartDate: newStartDate.toISOString(),
+        newEndDate: newEndDate.toISOString()
+      })
 
       // イベントストアに新しいイベントを作成
-      await createEvent({
+      const newEvent = await createEvent({
         title: `${event.title} (コピー)`,
         description: event.description,
         startDate: newStartDate,
@@ -70,9 +83,16 @@ export function useEventContextActions() {
         tagIds: event.tags?.map(tag => tag.id) || []
       })
 
+      console.log('✅ Duplicated event created:', {
+        id: newEvent.id,
+        title: newEvent.title,
+        startDate: newEvent.startDate,
+        endDate: newEvent.endDate
+      })
+
       success(`「${event.title}」を複製しました`)
     } catch (err) {
-      console.error('Failed to duplicate event:', err)
+      console.error('❌ Failed to duplicate event:', err)
       error('イベントの複製に失敗しました')
     }
   }, [createEvent, success, error])

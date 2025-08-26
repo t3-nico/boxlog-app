@@ -155,7 +155,7 @@ export function calculateEventPosition(
   const top = (startMinutes * hourHeight) / 60
   const height = Math.max(((endMinutes - startMinutes) * hourHeight) / 60, 20) // 最小高さ20px
   
-  // 列配置から横位置を計算
+  // 列配置から横位置を計算（幅は100%、マージンで間隔調整）
   const width = 100 / column.totalColumns
   const left = width * column.columnIndex
   

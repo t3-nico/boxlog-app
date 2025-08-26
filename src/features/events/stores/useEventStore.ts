@@ -8,6 +8,7 @@ import {
   EventsByDate,
   CalendarEvent
 } from '../types/events'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 
 // ローカルストレージのキー
 const STORAGE_KEY = 'boxlog-events'
@@ -72,9 +73,27 @@ const formatDate = (date: Date): string => {
   return `${year}-${month}-${day}`
 }
 
+// 既存イベントからテストタグを削除する関数
+const cleanExistingEvents = (): Event[] => {
+  const events = loadFromLocalStorage()
+  
+  // 既存イベントからテストタグ（会議、作業）を削除
+  const cleanedEvents = events.map(event => ({
+    ...event,
+    tags: [] // すべてのタグをクリア
+  }))
+  
+  // クリーンなイベントを保存
+  if (cleanedEvents.length > 0) {
+    saveToLocalStorage(cleanedEvents)
+  }
+  
+  return cleanedEvents
+}
+
 export const useEventStore = create<EventStore>()((set, get) => ({
-  // 初期状態 - ローカルストレージから読み込む
-  events: loadFromLocalStorage(),
+  // 初期状態 - タグをクリーンアップしてから読み込む
+  events: cleanExistingEvents(),
   loading: false,
   error: null,
   filters: {},
@@ -123,7 +142,7 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         location: eventData.location,
         url: eventData.url,
         reminders: eventData.reminders || [],
-        tags: eventData.tagIds || [],  // tagIdsからtagsに変換
+        tags: eventData.tagIds ? useTagStore.getState().getTagsByIds(eventData.tagIds) : [],  // tagIdsからタグ情報を取得
         createdAt: new Date(),
         updatedAt: new Date(),
         type: eventData.type || 'event',  // typeフィールドを正しく設定
@@ -160,11 +179,17 @@ export const useEventStore = create<EventStore>()((set, get) => ({
     
     try {
       const currentEvents = get().events
-      const updatedEvents = currentEvents.map(event => 
-        event.id === eventData.id 
-          ? { ...event, ...eventData, updatedAt: new Date() }
-          : event
-      )
+      const updatedEvents = currentEvents.map(event => {
+        if (event.id === eventData.id) {
+          const updatedEvent = { ...event, ...eventData, updatedAt: new Date() }
+          // tagIdsが提供されている場合は、タグ情報を解決
+          if (eventData.tagIds) {
+            updatedEvent.tags = useTagStore.getState().getTagsByIds(eventData.tagIds)
+          }
+          return updatedEvent
+        }
+        return event
+      })
       
       set({ 
         events: updatedEvents, 

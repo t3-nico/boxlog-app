@@ -75,6 +75,12 @@ export function DayView({
     onEmptyClick?.(date, timeString)
   }, [onEmptyClick, date])
 
+  // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
+  const handleDateHeaderClick = React.useCallback((clickedDate: Date) => {
+    // DayViewで日付ヘッダーをクリックした場合、その日付に移動
+    onNavigateToday?.()
+  }, [onNavigateToday])
+
   const headerComponent = (
     <div className="bg-background h-16 flex items-center justify-center px-2">
       <DateHeader
@@ -86,6 +92,7 @@ export function DayView({
         dateFormat="d"
         isToday={isToday}
         isSelected={false}
+        onClick={handleDateHeaderClick}
       />
     </div>
   )

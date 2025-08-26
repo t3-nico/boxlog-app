@@ -10,6 +10,12 @@ export interface TimedEvent {
   start: Date
   end: Date
   isReadOnly?: boolean
+  tags?: Array<{
+    id: string
+    name: string
+    color: string
+    icon?: string
+  }>
 }
 
 export type CalendarEvent = TimedEvent

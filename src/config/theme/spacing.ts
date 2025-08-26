@@ -319,6 +319,19 @@ export function getAvailableSpacingOptions() {
 // 統合オブジェクト
 // ============================================
 
+/**
+ * コンポーネント固有のスペーシング定義
+ */
+export const component = {
+  navbar: 'px-6 py-4',  // ナビゲーションバー
+  sidebar: 'p-6',       // サイドバー内部
+  modal: 'p-6',         // モーダル内部
+  card: 'p-6',          // カード内部
+  section: 'py-8',      // セクション間
+  divider: 'my-4',      // 区切り線周り
+  eventBlock: 'mr-2',   // イベントブロック右マージン（p-2サイズの8px）
+} as const
+
 export const spacing = {
   space,
   patterns,
@@ -329,4 +342,5 @@ export const spacing = {
   gridGap,
   gridCols,
   pageContainerStyles,
+  component,
 } as const

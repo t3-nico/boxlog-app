@@ -86,14 +86,13 @@ export function useDayEvents({ date, events }: UseDayEventsOptions): UseDayEvent
       let leftPercentage: number
       
       if (totalColumns === 1) {
-        // 1列の場合は全幅
-        widthPercentage = 95
+        // 1列の場合は全幅（マージンはEventBlock側で処理）
+        widthPercentage = 100
         leftPercentage = 0
       } else {
-        // 2列の場合は50%ずつでp-2（8px）のgap
-        const gapSize = 2 // p-2相当（8px相当の%）
-        widthPercentage = (95 - gapSize) / 2 // (95% - gap) / 2列 = 約46.5%
-        leftPercentage = column === 0 ? 0 : (widthPercentage + gapSize) // 左列は0%、右列は幅+gap
+        // 2列の場合は50%ずつ（マージンはEventBlock側で処理）
+        widthPercentage = 100 / totalColumns
+        leftPercentage = column * widthPercentage
       }
 
       positions.push({

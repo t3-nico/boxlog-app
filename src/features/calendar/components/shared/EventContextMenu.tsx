@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { Edit2, Trash2, Copy, Calendar } from 'lucide-react'
+import { Edit2, Trash2, Copy } from 'lucide-react'
 import { colors, spacing, typography, rounded, elevation } from '@/config/theme'
 import type { CalendarEvent } from '@/features/events/types/events'
 
@@ -81,12 +81,6 @@ export function EventContextMenu({
   }
 
   const menuItems = [
-    {
-      icon: Calendar,
-      label: '詳細を表示',
-      action: () => onViewDetails?.(event),
-      available: !!onViewDetails
-    },
     {
       icon: Edit2,
       label: '編集',

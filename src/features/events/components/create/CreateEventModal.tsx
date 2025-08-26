@@ -5,24 +5,34 @@ import { useCreateModalStore, useCreateModalKeyboardShortcuts } from '../../stor
 import { EssentialSingleView } from './EssentialSingleView'
 import { useCreateEvent } from '../../hooks/useCreateEvent'
 import type { CreateEventRequest } from '../../types/events'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useEventStore } from '../../stores/useEventStore'
 
 export function CreateEventModal() {
   const { 
     isOpen, 
     initialData, 
     context,
+    isEditMode,
+    editingEventId,
     closeModal
   } = useCreateModalStore()
   
   const { createEvent, isCreating, error } = useCreateEvent()
+  const { updateEvent } = useEventStore()
   const { handleKeyDown } = useCreateModalKeyboardShortcuts()
+  const { getTagsByIds } = useTagStore()
   
   // EssentialCreateに渡すデータの変換
   const convertedInitialData = {
     title: initialData.title || '',
     date: initialData.startDate || context.date || new Date(),
     endDate: initialData.endDate || (initialData.startDate ? new Date(initialData.startDate.getTime() + 60 * 60 * 1000) : undefined), // 1時間後
-    tags: [] // 既存のtagIdsから変換が必要な場合
+    tags: initialData.tagIds ? getTagsByIds(initialData.tagIds).map(tag => ({
+      id: tag.id,
+      name: tag.name,
+      color: tag.color
+    })) : [] // 既存のtagIdsからタグ情報を変換
   }
   
   console.log('🔄 CreateEventModal データ変換:', {
@@ -71,8 +81,18 @@ export function CreateEventModal() {
       tagIds: data.tags.map(tag => tag.id)
     }
     
-    await createEvent(createRequest)
-    closeModal()  // 作成成功後にモーダルを閉じる
+    if (isEditMode && editingEventId) {
+      // 編集モード：既存イベントを更新
+      await updateEvent({
+        id: editingEventId,
+        ...createRequest
+      })
+    } else {
+      // 新規作成モード
+      await createEvent(createRequest)
+    }
+    
+    closeModal()  // 作成・更新成功後にモーダルを閉じる
   }
   
   return (

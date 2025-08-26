@@ -10,9 +10,10 @@ import { useEventPosition } from '../../hooks/useEventPosition'
 import { MIN_EVENT_HEIGHT, Z_INDEX, TRANSITION_DURATION } from '../../constants/grid.constants'
 import type { EventBlockProps, TimedEvent } from '../../types/event.types'
 import { cva } from 'class-variance-authority'
+import { spacing } from '@/config/theme'
 
 const eventBlockVariants = cva(
-  'rounded-md shadow-sm border-l-4 px-2 py-1 overflow-hidden hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all cursor-grab',
+  `rounded-md shadow-sm border-l-4 px-2 py-1 overflow-hidden hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all cursor-grab ${spacing.component.eventBlock}`,
   {
     variants: {
       color: {
