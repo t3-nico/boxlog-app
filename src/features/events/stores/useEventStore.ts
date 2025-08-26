@@ -211,6 +211,20 @@ export const useEventStore = create<EventStore>()((set, get) => ({
     }
   },
 
+  // イベント時間更新（ドラッグ&ドロップ用）
+  updateEventTime: async (eventId: string, startTime: Date, endTime: Date) => {
+    try {
+      return await get().updateEvent({
+        id: eventId,
+        startDate: startTime,
+        endDate: endTime
+      })
+    } catch (error) {
+      console.error('❌ Update event time failed:', error)
+      throw error
+    }
+  },
+
   // イベント削除（後方互換性のため残す - 内部でsoftDeleteEventを呼ぶ）
   deleteEvent: async (eventId: string) => {
     return get().softDeleteEvent(eventId)

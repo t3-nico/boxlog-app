@@ -68,7 +68,8 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   isSelected = false,
   isResizing = false,
   className = '',
-  style = {}
+  style = {},
+  previewTime = null
 }) {
   const [isHovered, setIsHovered] = useState(false)
   
@@ -95,8 +96,6 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
     transition: isDragging || isResizing ? 'none' : `all ${TRANSITION_DURATION}ms ease-in-out`,
     cursor: isDragging ? 'grabbing' : 'grab',
-    transform: isDragging ? 'scale(1.02)' : 'scale(1)',
-    opacity: isDragging ? 0.8 : 1,
     ...style
   }
   
@@ -160,9 +159,14 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       aria-selected={isSelected}
     >
       <EventContent
-        event={event as TimedEvent}
+        event={{
+          ...event,
+          start: event.startDate || new Date(),
+          end: event.endDate || new Date()
+        } as TimedEvent}
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
+        previewTime={previewTime}
       />
     </div>
   )

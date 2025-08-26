@@ -13,13 +13,15 @@ interface EventContentProps {
   isCompact?: boolean
   showTime?: boolean
   timeFormat?: '12h' | '24h'
+  previewTime?: { start: Date; end: Date } | null // ドラッグ中のプレビュー時間
 }
 
 export const EventContent = memo<EventContentProps>(function EventContent({
   event,
   isCompact = false,
   showTime = true,
-  timeFormat = '24h'
+  timeFormat = '24h',
+  previewTime = null
 }) {
   // 継続時間を計算（安全なDate処理）
   const startTime = event.start?.getTime ? event.start.getTime() : new Date().getTime()
@@ -50,11 +52,19 @@ export const EventContent = memo<EventContentProps>(function EventContent({
       
       {/* 時間表示（日付） */}
       {showTime && (
-        <div className="text-xs opacity-75 leading-tight mb-1">
-          {formatTimeRange(
-            event.start || new Date(), 
-            event.end || new Date(startTime + 60 * 60 * 1000), 
-            timeFormat
+        <div className={`text-xs leading-tight mb-1 ${
+          previewTime 
+            ? 'font-semibold' 
+            : 'opacity-75'
+        }`}>
+          {previewTime ? (
+            formatTimeRange(previewTime.start, previewTime.end, timeFormat)
+          ) : (
+            formatTimeRange(
+              event.start || new Date(), 
+              event.end || new Date(startTime + 60 * 60 * 1000), 
+              timeFormat
+            )
           )}
         </div>
       )}

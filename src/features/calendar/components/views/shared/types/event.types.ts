@@ -33,6 +33,7 @@ export interface EventBlockProps {
   isResizing?: boolean
   className?: string
   style?: React.CSSProperties
+  previewTime?: { start: Date; end: Date } | null
 }
 
 export interface EventPosition {

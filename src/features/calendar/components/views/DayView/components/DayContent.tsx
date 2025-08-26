@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { space } from '@/config/theme/spacing'
 import { EventBlock, CalendarDragSelection, DateTimeSelection } from '../../shared'
 import type { DayContentProps } from '../DayView.types'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
+import { useDragAndDrop } from '../hooks/useDragAndDrop'
 
 export function DayContent({
   date,
@@ -18,6 +19,25 @@ export function DayContent({
   onTimeRangeSelect,
   className
 }: DayContentProps) {
+  // ドラッグ&ドロップ機能
+  const { dragState, handlers } = useDragAndDrop({
+    onEventUpdate,
+    date,
+    events
+  })
+
+  // グローバルマウスイベント処理
+  useEffect(() => {
+    if (dragState.isDragging) {
+      document.addEventListener('mousemove', handlers.handleMouseMove)
+      document.addEventListener('mouseup', handlers.handleMouseUp)
+      
+      return () => {
+        document.removeEventListener('mousemove', handlers.handleMouseMove)
+        document.removeEventListener('mouseup', handlers.handleMouseUp)
+      }
+    }
+  }, [dragState.isDragging, handlers.handleMouseMove, handlers.handleMouseUp])
   // 空白クリックハンドラー
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
@@ -78,16 +98,37 @@ export function DayContent({
           const style = eventStyles[event.id]
           if (!style) return null
           
+          const isDragging = dragState.draggedEventId === event.id
+          const currentTop = parseFloat(style.top?.toString() || '0')
+          const currentHeight = parseFloat(style.height?.toString() || '20')
+          
+          // ドラッグ中の位置調整（15分単位スナッピング）
+          let adjustedStyle = { ...style }
+          if (isDragging && dragState.snappedPosition) {
+            adjustedStyle = {
+              ...style,
+              top: `${dragState.snappedPosition.top}px`,
+              zIndex: 1000,
+              transition: 'none' // スナッピング時はtransitionを無効化
+            }
+          }
+          
           return (
             <div
               key={event.id}
-              style={style}
+              style={adjustedStyle}
               className="absolute pointer-events-none"
               data-event-block="true"
             >
               {/* EventBlockの内容部分のみクリック可能 */}
               <div 
                 className="pointer-events-auto absolute inset-0"
+                onMouseDown={(e) => handlers.handleMouseDown(event.id, e, {
+                  top: currentTop,
+                  left: 0,
+                  width: 100,
+                  height: currentHeight
+                })}
               >
                 <EventBlock
                   event={event}
@@ -95,11 +136,13 @@ export function DayContent({
                     top: 0,
                     left: 0, 
                     width: 100,
-                    height: parseFloat(style.height?.toString() || '20')
+                    height: currentHeight
                   }}
                   onClick={() => handleEventClick(event)}
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  className="h-full w-full cursor-pointer hover:shadow-lg transition-shadow !bg-blue-500 !text-white !rounded-sm !border-l-0 !shadow-md"
+                  isDragging={isDragging}
+                  previewTime={isDragging ? dragState.previewTime : null}
+                  className={`h-full w-full transition-shadow !bg-blue-500 !text-white !rounded-sm !border-l-0 !shadow-md ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>
             </div>

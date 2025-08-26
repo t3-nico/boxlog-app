@@ -11,6 +11,7 @@ import { useDayView } from './hooks/useDayView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 import type { DayViewProps } from './DayView.types'
+import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
 
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
@@ -39,6 +40,10 @@ export function DayView({
   onNavigateToday
 }: DayViewProps) {
   const { timezone } = useCalendarSettingsStore()
+  const { updateEventTime } = useEventStore()
+  
+  // イベントストアから最新のデータを取得
+  const storeEvents = useEventStore(eventSelectors.getEvents)
   
   // レスポンシブな時間高さ
   const HOUR_HEIGHT = useResponsiveHourHeight({
@@ -57,7 +62,22 @@ export function DayView({
   // 最初の日付を使用（Day表示なので1日のみ）
   const date = displayDates[0]
   
-  // DayView専用ロジック
+  // ドラッグイベント用のハンドラー
+  const handleEventTimeUpdate = React.useCallback(async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
+    try {
+      await updateEventTime(eventId, updates.startTime, updates.endTime)
+      // 必要に応じて親コンポーネントに通知
+      if (onUpdateEvent) {
+        // イベントが更新されたことを親に通知
+        const updatedEvent = { id: eventId, startDate: updates.startTime, endDate: updates.endTime }
+        onUpdateEvent(eventId, updatedEvent as any)
+      }
+    } catch (error) {
+      console.error('Failed to update event time:', error)
+    }
+  }, [updateEventTime, onUpdateEvent])
+
+  // DayView専用ロジック（ストアから最新のイベントデータを使用）
   const {
     dayEvents,
     eventStyles,
@@ -65,7 +85,7 @@ export function DayView({
     timeSlots
   } = useDayView({
     date,
-    events,
+    events: storeEvents, // ストアから取得した最新データを使用
     onEventUpdate: onUpdateEvent
   })
 
@@ -121,7 +141,7 @@ export function DayView({
               onEventClick={onEventClick}
               onEventContextMenu={onEventContextMenu}
               onEmptyClick={onEmptyClick}
-              onEventUpdate={onUpdateEvent}
+              onEventUpdate={handleEventTimeUpdate}
               onTimeRangeSelect={onTimeRangeSelect}
               className="absolute inset-y-0 left-0 right-0"
             />

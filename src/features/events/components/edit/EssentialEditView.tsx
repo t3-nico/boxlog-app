@@ -2,10 +2,10 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat } from 'lucide-react'
-import { TitleInput } from './TitleInput'
-import { DateSelector } from './DateSelector'
-import { TagInput } from './TagInput'
+import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, Trash2 } from 'lucide-react'
+import { TitleInput } from '../create/TitleInput'
+import { DateSelector } from '../create/DateSelector'
+import { TagInput } from '../create/TagInput'
 import { background, text, primary, semantic } from '@/config/theme/colors'
 import { body, heading } from '@/config/theme/typography'
 import { rounded } from '@/config/theme/rounded'
@@ -17,7 +17,7 @@ interface Tag {
   frequency?: number
 }
 
-interface EssentialSingleViewProps {
+interface EssentialEditViewProps {
   isOpen: boolean
   onClose: () => void
   onSave: (data: {
@@ -27,90 +27,36 @@ interface EssentialSingleViewProps {
     tags: Tag[]
     description?: string
   }) => Promise<void>
-  initialData?: {
-    title?: string
-    date?: Date
-    endDate?: Date
-    tags?: Tag[]
+  onDelete?: () => Promise<void>
+  initialData: {
+    title: string
+    date: Date
+    endDate: Date
+    tags: Tag[]
     description?: string
   }
 }
 
-export function EssentialSingleView({ 
+export function EssentialEditView({ 
   isOpen, 
   onClose, 
   onSave, 
+  onDelete,
   initialData 
-}: EssentialSingleViewProps) {
+}: EssentialEditViewProps) {
+  // 値の検証とフォールバック
+  const safeInitialDate = initialData.date instanceof Date ? initialData.date : new Date()
+  const safeInitialEndDate = initialData.endDate instanceof Date ? initialData.endDate : new Date(safeInitialDate.getTime() + 60 * 60 * 1000)
+  
   // メインフィールドの状態
-  const [title, setTitle] = useState(initialData?.title || '')
-  const [date, setDate] = useState(() => {
-    if (initialData?.date) return initialData.date
-    // 現在時刻から15分単位で切り上げ
-    const now = new Date()
-    const minutes = now.getMinutes()
-    let roundedMinutes
-    
-    if (minutes === 0) {
-      roundedMinutes = 0
-    } else if (minutes <= 15) {
-      roundedMinutes = 15
-    } else if (minutes <= 30) {
-      roundedMinutes = 30
-    } else if (minutes <= 45) {
-      roundedMinutes = 45
-    } else {
-      roundedMinutes = 60
-    }
-    
-    if (roundedMinutes === 60) {
-      now.setHours(now.getHours() + 1)
-      now.setMinutes(0, 0, 0)
-    } else {
-      now.setMinutes(roundedMinutes, 0, 0)
-    }
-    return now
-  })
-  const [endDate, setEndDate] = useState(() => {
-    // endDateが直接指定されている場合はそれを使用
-    if (initialData?.endDate) {
-      return initialData.endDate
-    }
-    
-    let startTime
-    if (initialData?.date) {
-      startTime = new Date(initialData.date)
-    } else {
-      // 現在時刻から15分単位で切り上げ
-      const now = new Date()
-      const minutes = now.getMinutes()
-      let roundedMinutes
-      
-      if (minutes === 0) {
-        roundedMinutes = 0
-      } else if (minutes <= 15) {
-        roundedMinutes = 15
-      } else if (minutes <= 30) {
-        roundedMinutes = 30
-      } else if (minutes <= 45) {
-        roundedMinutes = 45
-      } else {
-        roundedMinutes = 60
-      }
-      
-      if (roundedMinutes === 60) {
-        now.setHours(now.getHours() + 1)
-        now.setMinutes(0, 0, 0)
-      } else {
-        now.setMinutes(roundedMinutes, 0, 0)
-      }
-      startTime = now
-    }
-    const defaultEnd = new Date(startTime)
-    defaultEnd.setTime(defaultEnd.getTime() + 60 * 60 * 1000) // 1時間後
-    return defaultEnd
-  })
-  const [tags, setTags] = useState<Tag[]>(initialData?.tags || [])
+  const [title, setTitle] = useState(initialData.title)
+  const [date, setDate] = useState(safeInitialDate)
+  const [endDate, setEndDate] = useState(safeInitialEndDate)
+  const [tags, setTags] = useState<Tag[]>(initialData.tags)
+  
+  // 追加オプション状態
+  const [showMemo, setShowMemo] = useState(!!initialData.description)
+  const [memo, setMemo] = useState(initialData.description || '')
 
   // 前回のinitialDataを保存するRef
   const prevInitialDataRef = useRef<typeof initialData | null>(null)
@@ -118,37 +64,21 @@ export function EssentialSingleView({
   // モーダルが開かれた時、またはinitialDataが実際に変更された時のみ更新
   useEffect(() => {
     if (isOpen && initialData) {
-      // 前回と同じ値かチェック（深い比較ではなく、キー値の比較）
+      // 前回と同じ値かチェック
       const prev = prevInitialDataRef.current
       const hasChanged = !prev || 
         prev.title !== initialData.title ||
         prev.date?.getTime() !== initialData.date?.getTime() ||
-        prev.endDate?.getTime() !== initialData.endDate?.getTime()
+        prev.endDate?.getTime() !== initialData.endDate?.getTime() ||
+        prev.description !== initialData.description
       
       if (hasChanged) {
-        console.log('🔄 Updating form with new initialData:', initialData)
-        
-        if (initialData.title !== undefined) {
-          setTitle(initialData.title)
-        }
-        if (initialData.date) {
-          setDate(initialData.date)
-        }
-        if (initialData.endDate) {
-          setEndDate(initialData.endDate)
-        } else if (initialData.date) {
-          // endDateが指定されていない場合は開始時刻の1時間後
-          const newEndDate = new Date(initialData.date)
-          newEndDate.setTime(newEndDate.getTime() + 60 * 60 * 1000)
-          setEndDate(newEndDate)
-        }
-        if (initialData.tags) {
-          setTags(initialData.tags)
-        }
-        if (initialData.description) {
-          setMemo(initialData.description)
-          setShowMemo(true)
-        }
+        setTitle(initialData.title)
+        setDate(initialData.date instanceof Date ? initialData.date : new Date())
+        setEndDate(initialData.endDate instanceof Date ? initialData.endDate : new Date(Date.now() + 60 * 60 * 1000))
+        setTags(initialData.tags)
+        setMemo(initialData.description || '')
+        setShowMemo(!!initialData.description)
         
         // 現在の値を保存
         prevInitialDataRef.current = initialData
@@ -158,39 +88,15 @@ export function EssentialSingleView({
   
   // UI状態
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
   
-  // 追加オプション状態
-  const [showMemo, setShowMemo] = useState(false)
-  const [memo, setMemo] = useState('')
   const [reminder, setReminder] = useState<number | null>(null)
   const [priority, setPriority] = useState<'low' | 'necessary' | 'high'>('necessary')
   
   // 入力データの検証
   const isValid = title.trim().length > 0
-
-  // プログレス計算
-  const getProgress = () => {
-    let progress = 0
-    if (title.trim().length > 0) progress += 33.33  // タイトル入力済み
-    if (date) progress += 33.33  // 日付設定済み
-    if (tags.length > 0) progress += 33.34  // タグ選択済み
-    return Math.min(progress, 100)
-  }
-
-  // タグの色生成
-  const generateTagColor = (name: string): string => {
-    const colors = [
-      '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
-      '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1'
-    ]
-    const hash = name.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0)
-      return a & a
-    }, 0)
-    return colors[Math.abs(hash) % colors.length]
-  }
 
   // 保存処理
   const handleSave = useCallback(async () => {
@@ -213,10 +119,6 @@ export function EssentialSingleView({
       setTimeout(() => {
         onClose()
         setShowSuccess(false)
-        // リセット
-        setTitle('')
-        setDate(new Date())
-        setTags([])
       }, 1500)
       
     } catch (err) {
@@ -224,7 +126,24 @@ export function EssentialSingleView({
     } finally {
       setIsSubmitting(false)
     }
-  }, [isValid, onSave, title, date, endDate, tags, onClose])
+  }, [isValid, onSave, title, date, endDate, tags, memo, onClose])
+
+  // 削除処理
+  const handleDelete = useCallback(async () => {
+    if (!onDelete) return
+    
+    setIsDeleting(true)
+    setError(null)
+
+    try {
+      await onDelete()
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete')
+    } finally {
+      setIsDeleting(false)
+    }
+  }, [onDelete, onClose])
 
   // キーボードショートカット
   useEffect(() => {
@@ -245,27 +164,9 @@ export function EssentialSingleView({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, isValid, onClose, handleSave])
 
-  // スマート抽出のハンドリング
-  const handleSmartExtract = (extracted: {
-    title: string
-    date?: Date
-    tags: string[]
-  }) => {
-    setTitle(extracted.title)
-    if (extracted.date) {
-      setDate(extracted.date)
-    }
-    // 抽出されたタグを既存タグに追加
-    const newTags = extracted.tags
-      .filter(tagName => !tags.some(tag => tag.name === tagName))
-      .map(tagName => ({
-        id: Date.now().toString() + Math.random(),
-        name: tagName,
-        color: generateTagColor(tagName)
-      }))
-    if (newTags.length > 0) {
-      setTags(prev => [...prev, ...newTags])
-    }
+  // スマート抽出のハンドリング（編集時は無効化）
+  const handleSmartExtract = () => {
+    // 編集時はスマート抽出を使用しない
   }
 
   if (!isOpen) return null
@@ -308,7 +209,7 @@ export function EssentialSingleView({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    Create Event
+                    Edit Event
                   </motion.h1>
                   
                   {/* 控えめなプログレス指標 */}
@@ -471,6 +372,7 @@ export function EssentialSingleView({
                       </button>
                     </div>
 
+
                     {/* その他すべて */}
                     <button
                       className={`
@@ -532,7 +434,36 @@ export function EssentialSingleView({
               </AnimatePresence>
 
               {/* フッター */}
-              <div className="flex justify-end items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800">
+              <div className="flex justify-between items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800">
+                {/* 削除ボタン（左端） */}
+                <div>
+                  {onDelete && (
+                    <button
+                      onClick={handleDelete}
+                      disabled={isDeleting}
+                      className={`
+                        px-6 py-3 rounded-lg font-medium flex items-center gap-2
+                        transition-all duration-200
+                        ${semantic.error.surface} ${semantic.error.text} hover:opacity-90
+                        border border-red-200 dark:border-red-800
+                      `}
+                    >
+                      {isDeleting ? (
+                        <>
+                          <Loader2 size={18} className="animate-spin" />
+                          Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 size={18} />
+                          Delete
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+                
+                {/* Cancel・Update ボタン（右端） */}
                 <div className="flex gap-3">
                   <button
                     onClick={onClose}
@@ -562,10 +493,10 @@ export function EssentialSingleView({
                     {isSubmitting ? (
                       <>
                         <Loader2 size={18} className="animate-spin" />
-                        Creating...
+                        Updating...
                       </>
                     ) : (
-                      <span>Create</span>
+                      <span>Update Event</span>
                     )}
                   </motion.button>
                 </div>
@@ -595,7 +526,7 @@ export function EssentialSingleView({
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4 }}
                     >
-                      Created!
+                      Updated!
                     </motion.h2>
                     <motion.p
                       className={`${body.DEFAULT} ${text.secondary}`}

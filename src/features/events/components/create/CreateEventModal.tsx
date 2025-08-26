@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import { useCreateModalStore, useCreateModalKeyboardShortcuts } from '../../stores/useCreateModalStore'
 import { EssentialSingleView } from './EssentialSingleView'
+import { EssentialEditView } from '../edit/EssentialEditView'
 import { useCreateEvent } from '../../hooks/useCreateEvent'
 import type { CreateEventRequest } from '../../types/events'
 import { useTagStore } from '@/features/tags/stores/tag-store'
@@ -19,7 +20,7 @@ export function CreateEventModal() {
   } = useCreateModalStore()
   
   const { createEvent, isCreating, error } = useCreateEvent()
-  const { updateEvent } = useEventStore()
+  const { updateEvent, softDeleteEvent } = useEventStore()
   const { handleKeyDown } = useCreateModalKeyboardShortcuts()
   const { getTagsByIds } = useTagStore()
   
@@ -28,6 +29,7 @@ export function CreateEventModal() {
     title: initialData.title || '',
     date: initialData.startDate || context.date || new Date(),
     endDate: initialData.endDate || (initialData.startDate ? new Date(initialData.startDate.getTime() + 60 * 60 * 1000) : undefined), // 1時間後
+    description: initialData.description || '', // 説明フィールドを追加
     tags: initialData.tagIds ? getTagsByIds(initialData.tagIds).map(tag => ({
       id: tag.id,
       name: tag.name,
@@ -57,17 +59,19 @@ export function CreateEventModal() {
     }
   }, [isOpen, initialData, context])
   
+  
   const handleSave = async (data: {
     title: string
     date: Date
     endDate: Date
     tags: { id: string; name: string; color: string }[]
+    description?: string
   }) => {
     // EssentialSingleViewのデータをCreateEventRequestに変換
     const createRequest: CreateEventRequest = {
       title: data.title,
-      description: '',
-      type: 'event',  // 'task'ではなく'event'を使用
+      description: data.description || '',
+      type: 'event',
       status: 'planned',
       priority: 'necessary',
       color: '#3b82f6',
@@ -94,7 +98,28 @@ export function CreateEventModal() {
     
     closeModal()  // 作成・更新成功後にモーダルを閉じる
   }
+
+  const handleDelete = async () => {
+    if (editingEventId) {
+      await softDeleteEvent(editingEventId)
+      closeModal()
+    }
+  }
   
+  // 編集モードの場合はEssentialEditViewを使用
+  if (isEditMode && editingEventId) {
+    return (
+      <EssentialEditView
+        isOpen={isOpen}
+        onClose={closeModal}
+        onSave={handleSave}
+        onDelete={handleDelete}
+        initialData={convertedInitialData}
+      />
+    )
+  }
+
+  // 新規作成モードの場合はEssentialSingleViewを使用
   return (
     <EssentialSingleView
       isOpen={isOpen}
