@@ -1,3 +1,5 @@
+import { SettingsLayout } from '@/features/settings/components'
+import { colors, typography, spacing } from '@/config/theme'
 import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Separator } from '@/components/shadcn-ui/separator'
@@ -21,9 +23,12 @@ export const metadata: Metadata = {
 
 export default function Settings() {
   return (
-    <form method="post" className="mx-auto max-w-4xl p-10">
-      <Heading>Settings</Heading>
-      <Separator className="my-10 mt-6" />
+    <SettingsLayout
+      title="一般設定"
+      description="組織の基本情報と設定を管理します"
+    >
+      <form method="post" className="max-w-4xl">
+        <Separator className="my-10 mt-6" />
 
       <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <div className="space-y-1">
@@ -101,6 +106,7 @@ export default function Settings() {
         </Button>
         <Button type="submit">Save changes</Button>
       </div>
-    </form>
+      </form>
+    </SettingsLayout>
   )
 }

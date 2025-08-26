@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { 
   GraduationCap,
   Lightbulb,
@@ -8,6 +8,8 @@ import {
   Sun,
   Clock
 } from 'lucide-react'
+import { SettingsLayout } from '@/features/settings/components'
+import { colors, typography, spacing } from '@/config/theme'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { CHRONOTYPE_PRESETS, type ChronotypeType } from '@/types/chronotype'
 
@@ -273,15 +275,11 @@ export default function ChronoTypePage() {
   const progress = ((currentQuestion + 1) / diagnosisQuestions.length) * 100
 
   return (
-    <div className="space-y-6 max-w-4xl p-10">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
-          Chronotype Settings
-        </h1>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          あなたの体内時計に合わせて最適な作業スケジュールを設定します
-        </p>
-      </div>
+    <SettingsLayout
+      title="Chronotype Settings"
+      description="あなたの体内時計に合わせて最適な作業スケジュールを設定します"
+    >
+      <div className={spacing.stackGap.lg}>
 
       {/* 診断セクション */}
       {showDiagnosis ? (
@@ -637,6 +635,6 @@ export default function ChronoTypePage() {
           </div>
         </div>
       </div>
-    </div>
+    </SettingsLayout>
   )
 }

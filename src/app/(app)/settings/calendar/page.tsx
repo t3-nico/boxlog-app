@@ -1,7 +1,14 @@
 'use client'
 
-import CalendarSettingsPage from '@/features/settings/components/calendar-settings'
+import { SettingsLayout, CalendarSettings } from '@/features/settings/components'
 
 export default function CalendarPage() {
-  return <CalendarSettingsPage />
+  return (
+    <SettingsLayout
+      title="カレンダー"
+      description="カレンダー表示設定とタイムゾーンの管理"
+    >
+      <CalendarSettings />
+    </SettingsLayout>
+  )
 }

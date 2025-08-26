@@ -1,8 +1,15 @@
 'use client'
 
-import PreferencesSettings from '@/features/settings/components/preferences-settings'
+import { SettingsLayout, PreferencesSettings } from '@/features/settings/components'
 
 export default function PreferencesPage() {
-  return <PreferencesSettings />
+  return (
+    <SettingsLayout
+      title="環境設定"
+      description="アプリケーションの表示や動作設定"
+    >
+      <PreferencesSettings />
+    </SettingsLayout>
+  )
 }
 

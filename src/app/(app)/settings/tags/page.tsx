@@ -7,6 +7,8 @@ import {
   Search,
   Filter
 } from 'lucide-react'
+import { SettingsLayout } from '@/features/settings/components'
+import { colors, typography, spacing } from '@/config/theme'
 import { TagTreeView } from '@/features/tags/components/tag-tree-view'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
@@ -184,71 +186,61 @@ export default function TagsSettingsPage() {
   
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <SettingsLayout
+        title="タグ管理"
+        description="階層構造でタグを整理・管理できます"
+      >
         <div className="text-center">
-          <div className="text-red-600 dark:text-red-400 mb-4">
+          <div className={`${colors.semantic.error.text} mb-4`}>
             <Tag className="w-12 h-12 mx-auto mb-2" data-slot="icon" />
             <p>タグの読み込みに失敗しました</p>
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className={`px-4 py-2 ${colors.primary.DEFAULT} text-white rounded-lg hover:${colors.primary.hover} transition-colors`}
           >
             再読み込み
           </button>
         </div>
-      </div>
+      </SettingsLayout>
     )
   }
   
   return (
-    <div className="space-y-6">
-      {/* ヘッダー */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Tag className="w-6 h-6 text-blue-600" data-slot="icon" />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                タグ管理
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                階層構造でタグを整理・管理できます
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleCreateTag()}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Tag className="w-4 h-4" data-slot="icon" />
-              新しいタグ
-            </button>
-          </div>
-        </div>
-        
+    <SettingsLayout
+      title="タグ管理"
+      description="階層構造でタグを整理・管理できます"
+      actions={
+        <button
+          onClick={() => handleCreateTag()}
+          className={`inline-flex items-center gap-2 px-4 py-2 ${colors.primary.DEFAULT} text-white ${spacing.button.DEFAULT} transition-colors`}
+        >
+          <Tag className="w-4 h-4" data-slot="icon" />
+          新しいタグ
+        </button>
+      }
+    >
+      <div className={spacing.stackGap.lg}>
         {/* 検索・フィルター */}
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" data-slot="icon" />
+            <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${colors.text.muted}`} data-slot="icon" />
             <input
               type="text"
               placeholder="タグを検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className={`w-full pl-10 pr-4 py-2 border ${colors.border.DEFAULT} rounded-lg ${colors.background.surface} ${colors.text.primary} focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
             />
           </div>
           
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowInactive(!showInactive)}
-              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg ${typography.body.small} font-medium transition-colors ${
                 showInactive
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                  : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  ? `${colors.primary.light} ${colors.primary.text}`
+                  : `${colors.background.elevated} ${colors.text.secondary} hover:${colors.background.elevated}`
               }`}
             >
               <Filter className="w-4 h-4" data-slot="icon" />
@@ -256,68 +248,68 @@ export default function TagsSettingsPage() {
             </button>
           </div>
         </div>
-      </div>
       
-      {/* メインコンテンツ */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
-        <TagTreeView
-          tags={filteredTags}
-          onCreateTag={handleCreateTag}
-          onEditTag={handleEditTag}
-          onDeleteTag={handleDeleteTag}
-          onRenameTag={handleRenameTag}
-          isLoading={isLoading}
+        {/* メインコンテンツ */}
+        <div className={`${colors.background.surface} rounded-xl shadow-sm border ${colors.border.DEFAULT}`}>
+          <TagTreeView
+            tags={filteredTags}
+            onCreateTag={handleCreateTag}
+            onEditTag={handleEditTag}
+            onDeleteTag={handleDeleteTag}
+            onRenameTag={handleRenameTag}
+            isLoading={isLoading}
+          />
+        </div>
+        
+        {/* 統計情報 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.DEFAULT}`}>
+            <div className={`${typography.heading.h2} font-bold ${colors.text.primary}`}>
+              {tags.length}
+            </div>
+            <div className={`${typography.body.small} ${colors.text.muted}`}>
+              総タグ数
+            </div>
+          </div>
+          
+          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.DEFAULT}`}>
+            <div className={`${typography.heading.h2} font-bold ${colors.text.primary}`}>
+              {tags.filter(t => t.level === 0).length}
+            </div>
+            <div className={`${typography.body.small} ${colors.text.muted}`}>
+              ルートタグ数
+            </div>
+          </div>
+          
+          <div className={`${colors.background.surface} rounded-lg ${spacing.cardVariants.default} border ${colors.border.DEFAULT}`}>
+            <div className={`${typography.heading.h2} font-bold ${colors.text.primary}`}>
+              {tags.filter(t => !t.is_active).length}
+            </div>
+            <div className={`${typography.body.small} ${colors.text.muted}`}>
+              非アクティブタグ数
+            </div>
+          </div>
+        </div>
+        
+        {/* モーダル */}
+        <TagCreateModal
+          isOpen={showCreateModal}
+          onClose={handleCloseModals}
+          onSave={handleSaveNewTag}
+          parentTag={createParentTag}
+          allTags={tags}
+        />
+        
+        <TagEditModal
+          isOpen={showEditModal}
+          onClose={handleCloseModals}
+          onSave={handleSaveTag}
+          onDelete={handleDeleteSelectedTag}
+          onMove={handleMoveTag}
+          tag={selectedTag}
+          allTags={tags}
         />
       </div>
-      
-      {/* 統計情報 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {tags.length}
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            総タグ数
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {tags.filter(t => t.level === 0).length}
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            ルートタグ数
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-800">
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {tags.filter(t => !t.is_active).length}
-          </div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
-            非アクティブタグ数
-          </div>
-        </div>
-      </div>
-      
-      {/* モーダル */}
-      <TagCreateModal
-        isOpen={showCreateModal}
-        onClose={handleCloseModals}
-        onSave={handleSaveNewTag}
-        parentTag={createParentTag}
-        allTags={tags}
-      />
-      
-      <TagEditModal
-        isOpen={showEditModal}
-        onClose={handleCloseModals}
-        onSave={handleSaveTag}
-        onDelete={handleDeleteSelectedTag}
-        onMove={handleMoveTag}
-        tag={selectedTag}
-        allTags={tags}
-      />
-    </div>
+    </SettingsLayout>
   )
 }
