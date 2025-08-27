@@ -49,6 +49,13 @@ export function EssentialSingleView({
   isEditMode = false,
   initialData 
 }: EssentialSingleViewProps) {
+  
+  console.log('🔷 EssentialSingleView 初期化:', {
+    初期データ開始: initialData?.date,
+    初期データ終了: initialData?.endDate,
+    フォーマット開始: initialData?.date?.toLocaleTimeString(),
+    フォーマット終了: initialData?.endDate?.toLocaleTimeString()
+  })
   // 2択式シンプルモード（最速入力と詳細予定のみ）
   type ScheduleMode = 'defer' | 'schedule' // 後で決める | 今すぐ予定する
   

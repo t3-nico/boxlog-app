@@ -34,6 +34,9 @@ export function DateSelector({
   onEndChange,
   onTabNext 
 }: DateSelectorProps) {
+  // 一時的なログ
+  console.log(`📅 DateSelector: ${value.toLocaleTimeString()} → ${endValue.toLocaleTimeString()}`)
+  
   // Duration (minutes)
   const [duration, setDuration] = useState(60)
   

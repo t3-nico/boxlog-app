@@ -38,7 +38,7 @@ export function DayContent({
       }
     }
   }, [dragState.isDragging, handlers.handleMouseMove, handlers.handleMouseUp])
-  // 空白クリックハンドラー
+  // 空白クリックハンドラー（現在使用されていない - CalendarDragSelectionが処理）
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
     
@@ -86,11 +86,12 @@ export function DayContent({
         date={date}
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
+        onSingleClick={onEmptyClick}
+        disabled={false} // 現在はイベントドラッグがないので無効化しない
       >
-        {/* クリック可能な背景グリッド */}
+        {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}
         <div
-          className={`absolute inset-0 cursor-pointer`}
-          onClick={handleEmptyClick}
+          className={`absolute inset-0`}
           style={{ height: 24 * HOUR_HEIGHT }}
         >
           {timeGrid}
@@ -148,7 +149,7 @@ export function DayContent({
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
                   isDragging={isDragging}
                   previewTime={isDragging ? dragState.previewTime : null}
-                  className={`h-full w-full transition-shadow !bg-blue-500 !text-white !rounded-sm !border-l-0 !shadow-md ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                  className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>
             </div>

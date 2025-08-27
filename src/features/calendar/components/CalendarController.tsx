@@ -24,7 +24,7 @@ import { NotificationDisplay } from '@/features/notifications/components/notific
 import { WeekendEventNotification } from './notifications/WeekendEventNotification'
 import { useWeekendEventNotification } from '../hooks/useWeekendEventNotification'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
-import { EventContextMenu } from './shared/EventContextMenu'
+import { EventContextMenu } from './views/shared/components'
 import { useEventContextActions } from '../hooks/useEventContextActions'
 import { 
   calculateViewDateRange, 
@@ -864,23 +864,17 @@ export function CalendarController({
   
   // 統一された時間範囲選択ハンドラー（全ビュー共通）
   const handleDateTimeRangeSelect = useCallback((selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
-    console.log('🎯 Unified DateTimeRange selected:', { 
-      date: selection.date.toDateString(),
-      dateISO: selection.date.toISOString(),
-      timeRange: `${selection.startHour}:${String(selection.startMinute).padStart(2, '0')} - ${selection.endHour}:${String(selection.endMinute).padStart(2, '0')}`,
-      viewType,
-      rawSelection: selection
-    })
-    
     // 指定された日付に時間を設定
     const startTime = new Date(selection.date.getFullYear(), selection.date.getMonth(), selection.date.getDate(), selection.startHour, selection.startMinute)
     const endTime = new Date(selection.date.getFullYear(), selection.date.getMonth(), selection.date.getDate(), selection.endHour, selection.endMinute)
     
-    console.log('🕒 Created DateTime objects:', {
-      startTime: startTime.toISOString(),
-      endTime: endTime.toISOString(),
-      startTimeLocal: startTime.toLocaleString(),
-      endTimeLocal: endTime.toLocaleString()
+    console.log('🟨 モーダルに渡すデータ:')
+    console.log('選択:', selection)
+    console.log('開始時間:', startTime.toLocaleTimeString())
+    console.log('終了時間:', endTime.toLocaleTimeString())
+    console.log('openCreateModalに渡すデータ:', {
+      startDate: startTime,
+      endDate: endTime
     })
     
     // CreateEventModalを開く

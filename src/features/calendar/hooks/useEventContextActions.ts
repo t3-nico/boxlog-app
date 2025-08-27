@@ -24,12 +24,12 @@ export function useEventContextActions() {
   }, [softDeleteEvent, success, error])
 
   const handleEditEvent = useCallback((event: CalendarEvent) => {
-    // CreateEventModalを編集モードで開く
+    // CreateEventModalを編集モードで開く（直接クリックと同じ形式に統一）
     openEditModal(event.id, {
       title: event.title,
       description: event.description,
-      startDate: event.startDate || event.start_time ? new Date(event.start_time) : new Date(),
-      endDate: event.endDate || event.end_time ? new Date(event.end_time) : new Date(),
+      startDate: event.startDate,
+      endDate: event.endDate,
       type: event.type,
       status: event.status,
       priority: event.priority,
@@ -40,7 +40,7 @@ export function useEventContextActions() {
       tagIds: event.tags?.map(tag => tag.id) || []
     }, {
       source: 'context-menu',
-      date: event.startDate || new Date(),
+      date: event.startDate,
       viewType: 'day'
     })
   }, [openEditModal])

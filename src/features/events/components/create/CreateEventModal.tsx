@@ -24,11 +24,20 @@ export function CreateEventModal() {
   const { handleKeyDown } = useCreateModalKeyboardShortcuts()
   const { getTagsByIds } = useTagStore()
   
+  console.log('🟩 モーダルが受け取った:', {
+    受け取った開始: initialData.startDate,
+    受け取った終了: initialData.endDate,
+    フォーマット開始: initialData.startDate?.toLocaleTimeString(),
+    フォーマット終了: initialData.endDate?.toLocaleTimeString(),
+    コンテキスト日付: context.date,
+    ソース: context?.source
+  })
+
   // EssentialCreateに渡すデータの変換
   const convertedInitialData = {
     title: initialData.title || '',
     date: initialData.startDate || context.date || new Date(),
-    endDate: initialData.endDate || (initialData.startDate ? new Date(initialData.startDate.getTime() + 60 * 60 * 1000) : undefined), // 1時間後
+    endDate: initialData.endDate || (initialData.startDate ? new Date(initialData.startDate.getTime() + 60 * 60 * 1000) : new Date(Date.now() + 60 * 60 * 1000)), // 終了日時が無い場合は1時間後
     description: initialData.description || '', // 説明フィールドを追加
     tags: initialData.tagIds ? getTagsByIds(initialData.tagIds).map(tag => ({
       id: tag.id,
@@ -37,15 +46,13 @@ export function CreateEventModal() {
     })) : [] // 既存のtagIdsからタグ情報を変換
   }
   
-  console.log('🔄 CreateEventModal データ変換:', {
-    source: context?.source,
-    viewType: context?.viewType,
-    originalStartDate: initialData.startDate?.toLocaleString(),
-    originalEndDate: initialData.endDate?.toLocaleString(),
-    contextDate: context?.date?.toLocaleString(),
-    convertedDate: convertedInitialData.date.toLocaleString(),
-    convertedEndDate: convertedInitialData.endDate?.toLocaleString()
+  console.log('🟪 フォーム初期値変換後:', {
+    変換後開始: convertedInitialData.date,
+    変換後終了: convertedInitialData.endDate,
+    フォーマット開始: convertedInitialData.date.toLocaleTimeString(),
+    フォーマット終了: convertedInitialData.endDate?.toLocaleTimeString()
   })
+  
   
   
   // デバッグ用ログ
@@ -67,6 +74,13 @@ export function CreateEventModal() {
     tags: { id: string; name: string; color: string }[]
     description?: string
   }) => {
+    console.log('⚪ API送信データ準備:', {
+      フォームから受け取った開始: data.date,
+      フォームから受け取った終了: data.endDate,
+      フォーマット開始: data.date.toLocaleTimeString(),
+      フォーマット終了: data.endDate.toLocaleTimeString()
+    })
+    
     // EssentialSingleViewのデータをCreateEventRequestに変換
     const createRequest: CreateEventRequest = {
       title: data.title,
@@ -84,6 +98,13 @@ export function CreateEventModal() {
       items: [],
       tagIds: data.tags.map(tag => tag.id)
     }
+    
+    console.log('⚪ 最終API送信データ:', {
+      送信開始: createRequest.startDate,
+      送信終了: createRequest.endDate,
+      フォーマット開始: createRequest.startDate.toLocaleTimeString(),
+      フォーマット終了: createRequest.endDate.toLocaleTimeString()
+    })
     
     if (isEditMode && editingEventId) {
       // 編集モード：既存イベントを更新

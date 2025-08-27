@@ -107,7 +107,7 @@ export function EventContextMenu({
       ref={menuRef}
       className={`
         fixed z-50 min-w-[180px] 
-        ${colors.background.surface} 
+        ${colors.background.base} 
         ${rounded.md} 
         ${elevation.md}
         border ${colors.border.alpha}
@@ -119,21 +119,6 @@ export function EventContextMenu({
         top: adjustedPosition.y
       }}
     >
-      {/* メニューヘッダー */}
-      <div className={`${spacing.cardVariants.compact} border-b ${colors.border.alpha} mb-1`}>
-        <div className={`font-medium ${colors.text.primary} truncate`}>
-          {event.title}
-        </div>
-        <div className={`text-xs ${colors.text.secondary}`}>
-          {new Date(event.start_time).toLocaleString('ja-JP', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })}
-        </div>
-      </div>
-
       {/* メニューアイテム */}
       <div className="space-y-1">
         {menuItems.map((item, index) => {

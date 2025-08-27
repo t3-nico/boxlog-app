@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useRef } from 'react'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useToast } from '@/components/shadcn-ui/toast'
+import { calendarColors } from '@/features/calendar/theme'
 
 export interface DragState {
   isDragging: boolean
@@ -56,14 +57,23 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
   const createGhostElement = useCallback((originalElement: HTMLElement, originalPosition: { top: number; left: number; width: number; height: number }) => {
     const ghost = originalElement.cloneNode(true) as HTMLElement
     
+    // 元のクラスをクリアして、scheduledのactiveカラーを適用
+    ghost.className = ''
+    ghost.classList.add('rounded-md', 'shadow-sm', 'px-2', 'py-1', 'overflow-hidden')
+    
+    // scheduledのactiveカラーを適用（colors.tsから参照）
+    const activeColorClasses = calendarColors.event.scheduled.active?.split(' ') || []
+    activeColorClasses.forEach(cls => {
+      if (cls) ghost.classList.add(cls)
+    })
+    
     // ゴーストのスタイル設定（元の位置に固定）
     ghost.style.position = 'absolute'
     ghost.style.top = `${originalPosition.top}px`
     ghost.style.left = `${originalPosition.left}%`
     ghost.style.width = `${originalPosition.width}%`
     ghost.style.height = `${originalPosition.height}px`
-    ghost.style.opacity = '0.3'
-    ghost.style.filter = 'grayscale(80%)'
+    ghost.style.opacity = '0.6'
     ghost.style.pointerEvents = 'none'
     ghost.style.zIndex = '500' // ドラッグ要素より低い
     ghost.style.transition = 'none'
