@@ -26,18 +26,43 @@ export function DayContent({
     events
   })
 
-  // グローバルマウスイベント処理
+  // グローバルマウスイベント処理とカーソル固定
   useEffect(() => {
-    if (dragState.isDragging) {
+    if (dragState.isDragging || dragState.isResizing) {
       document.addEventListener('mousemove', handlers.handleMouseMove)
       document.addEventListener('mouseup', handlers.handleMouseUp)
+      
+      // リサイズ中は全画面でカーソルを強制的に固定
+      if (dragState.isResizing) {
+        document.body.style.setProperty('cursor', 'ns-resize', 'important')
+        document.body.style.setProperty('user-select', 'none', 'important')
+        document.documentElement.style.setProperty('cursor', 'ns-resize', 'important')
+        // 全ての要素にカーソルを適用
+        const style = document.createElement('style')
+        style.id = 'resize-cursor-override'
+        style.textContent = '* { cursor: ns-resize !important; }'
+        document.head.appendChild(style)
+      } else if (dragState.isDragging) {
+        document.body.style.setProperty('cursor', 'grabbing', 'important')
+        document.body.style.setProperty('user-select', 'none', 'important')
+        document.documentElement.style.setProperty('cursor', 'grabbing', 'important')
+      }
       
       return () => {
         document.removeEventListener('mousemove', handlers.handleMouseMove)
         document.removeEventListener('mouseup', handlers.handleMouseUp)
+        // カーソルを完全にリセット
+        document.body.style.removeProperty('cursor')
+        document.body.style.removeProperty('user-select')
+        document.documentElement.style.removeProperty('cursor')
+        // CSSオーバーライドを削除
+        const styleEl = document.getElementById('resize-cursor-override')
+        if (styleEl) {
+          styleEl.remove()
+        }
       }
     }
-  }, [dragState.isDragging, handlers.handleMouseMove, handlers.handleMouseUp])
+  }, [dragState.isDragging, dragState.isResizing, handlers.handleMouseMove, handlers.handleMouseUp])
   // 空白クリックハンドラー（現在使用されていない - CalendarDragSelectionが処理）
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
@@ -55,20 +80,35 @@ export function DayContent({
     onEmptyClick(date, timeString)
   }, [date, onEmptyClick])
   
-  // イベントクリックハンドラー（ドラッグ後のクリックは無視）
+  // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
   const handleEventClick = useCallback((event: any) => {
-    // ドラッグ操作中またはドラッグ直後のクリックは無視
-    if (dragState.isDragging || dragState.recentlyDragged) {
+    console.log('DayContent handleEventClick called:', {
+      event: event,
+      isDragging: dragState.isDragging,
+      isResizing: dragState.isResizing,
+      recentlyDragged: dragState.recentlyDragged,
+      hasOnEventClick: !!onEventClick,
+      eventTitle: event.title
+    })
+    
+    // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
+    if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
+      console.log('DayContent click ignored - dragging/resizing/recently dragged')
       return
     }
     
+    console.log('DayContent calling onEventClick...') // デバッグ用
     onEventClick?.(event)
-  }, [onEventClick, dragState.isDragging, dragState.recentlyDragged])
+  }, [onEventClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
   
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback((event: any, mouseEvent: React.MouseEvent) => {
+    // ドラッグ操作中またはリサイズ操作中は右クリックを無視
+    if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
+      return
+    }
     onEventContextMenu?.(event, mouseEvent)
-  }, [onEventContextMenu])
+  }, [onEventContextMenu, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
   
   // 時間グリッドの生成（1時間単位、23時は下線なし）
   const timeGrid = Array.from({ length: 24 }, (_, hour) => (
@@ -87,7 +127,7 @@ export function DayContent({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
-        disabled={false} // 現在はイベントドラッグがないので無効化しない
+        disabled={dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized} // ドラッグ・リサイズ中・直後は背景クリックを無効化
       >
         {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}
         <div
@@ -104,19 +144,30 @@ export function DayContent({
           const style = eventStyles[event.id]
           if (!style) return null
           
-          const isDragging = dragState.draggedEventId === event.id
+          const isDragging = dragState.draggedEventId === event.id && dragState.isDragging
+          const isResizingThis = dragState.isResizing && dragState.draggedEventId === event.id
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
           
-          // ドラッグ中の位置調整（15分単位スナッピング）
+          // ドラッグ・リサイズ中の位置調整（15分単位スナッピング）
           let adjustedStyle = { ...style }
-          if (isDragging && dragState.snappedPosition) {
-            adjustedStyle = {
-              ...style,
-              top: `${dragState.snappedPosition.top}px`,
-              zIndex: 1000,
-              transition: 'none', // スナッピング時はtransitionを無効化
-              opacity: 1 // ドラッグ中の要素は通常表示
+          if (dragState.snappedPosition && (isDragging || isResizingThis)) {
+            if (isDragging) {
+              // ドラッグ中：位置のみ変更
+              adjustedStyle = {
+                ...adjustedStyle,
+                top: `${dragState.snappedPosition.top}px`,
+                zIndex: 1000
+              }
+            } else if (isResizingThis) {
+              // リサイズ中：サイズをリアルタイムで調整
+              const resizeHeight = dragState.snappedPosition.height || currentHeight
+              
+              adjustedStyle = {
+                ...adjustedStyle,
+                height: `${resizeHeight}px`,
+                zIndex: 1000
+              }
             }
           }
           
@@ -130,12 +181,17 @@ export function DayContent({
               {/* EventBlockの内容部分のみクリック可能 */}
               <div 
                 className="pointer-events-auto absolute inset-0"
-                onMouseDown={(e) => handlers.handleMouseDown(event.id, e, {
-                  top: currentTop,
-                  left: 0,
-                  width: 100,
-                  height: currentHeight
-                })}
+                onMouseDown={(e) => {
+                  // 左クリックのみドラッグ開始
+                  if (e.button === 0) {
+                    handlers.handleMouseDown(event.id, e, {
+                      top: currentTop,
+                      left: 0,
+                      width: 100,
+                      height: currentHeight
+                    })
+                  }
+                }}
               >
                 <EventBlock
                   event={event}
@@ -143,12 +199,20 @@ export function DayContent({
                     top: 0,
                     left: 0, 
                     width: 100,
-                    height: currentHeight
+                    height: isResizingThis && dragState.snappedPosition ? 
+                      dragState.snappedPosition.height : currentHeight
                   }}
                   onClick={() => handleEventClick(event)}
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
+                  onResizeStart={(event, direction, e, position) => handlers.handleResizeStart(event.id, direction, e, {
+                    top: currentTop,
+                    left: 0,
+                    width: 100,
+                    height: currentHeight
+                  })}
                   isDragging={isDragging}
-                  previewTime={isDragging ? dragState.previewTime : null}
+                  isResizing={isResizingThis}
+                  previewTime={(isDragging || isResizingThis) ? dragState.previewTime : null}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

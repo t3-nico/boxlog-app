@@ -22,6 +22,8 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   onContextMenu,
   onDragStart,
   onDragEnd,
+  onResizeStart,
+  onResizeEnd,
   isDragging = false,
   isSelected = false,
   isResizing = false,
@@ -52,8 +54,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     width: `${safePosition.width}%`,
     height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
     zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
-    transition: isDragging || isResizing ? 'none' : `all ${TRANSITION_DURATION}ms ease-in-out`,
-    cursor: isDragging ? 'grabbing' : 'grab',
+    cursor: isDragging ? 'grabbing' : 'pointer',
     ...style
   }
   
@@ -93,14 +94,13 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   const eventClasses = cn(
     // 基本スタイル
     'rounded-md shadow-sm px-2 py-1 overflow-hidden',
-    'focus:outline-none focus:ring-2 focus:ring-offset-1 transition-all cursor-grab',
+    'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照
     scheduledColors.background,
     scheduledColors.text,
     // 状態別スタイル
-    isDragging && 'cursor-grabbing',
+    isDragging ? 'cursor-grabbing' : 'cursor-pointer',
     isSelected && 'ring-2 ring-blue-500 ring-offset-1',
-    isHovered && 'shadow-lg',
     // サイズ別スタイル
     safePosition.height < 30 ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-sm',
     className
@@ -132,6 +132,26 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
+      />
+      
+      {/* 下部リサイズハンドル */}
+      <div
+        className="absolute bottom-0 left-0 right-0 cursor-ns-resize"
+        onMouseDown={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          onResizeStart?.(event, 'bottom', e, {
+            top: safePosition.top,
+            left: safePosition.left,
+            width: safePosition.width,
+            height: safePosition.height
+          })
+        }}
+        style={{ 
+          height: '8px',
+          zIndex: 10
+        }}
+        title="ドラッグして終了時間を調整"
       />
     </div>
   )

@@ -7,13 +7,15 @@ import { calendarColors } from '@/features/calendar/theme'
 
 export interface DragState {
   isDragging: boolean
+  isResizing: boolean
   draggedEventId: string | null
   dragStartPosition: { x: number; y: number } | null
   currentPosition: { x: number; y: number } | null
   originalPosition: { top: number; left: number; width: number; height: number } | null
-  snappedPosition: { top: number } | null
+  snappedPosition: { top: number; height?: number } | null
   previewTime: { start: Date; end: Date } | null
   recentlyDragged: boolean // ドラッグ終了直後のクリック防止用
+  recentlyResized: boolean // リサイズ終了直後のクリック防止用（より厳格）
   ghostElement: HTMLElement | null // ゴースト要素
 }
 
@@ -22,6 +24,7 @@ export interface DragHandlers {
   handleMouseMove: (e: MouseEvent) => void
   handleMouseUp: () => void
   handleEventDrop: (eventId: string, newStartTime: Date) => void
+  handleResizeStart: (eventId: string, direction: 'top' | 'bottom', e: React.MouseEvent, originalPosition: { top: number; left: number; width: number; height: number }) => void
 }
 
 interface UseDragAndDropProps {
@@ -34,6 +37,7 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
   const { success } = useToast()
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
+    isResizing: false,
     draggedEventId: null,
     dragStartPosition: null,
     currentPosition: null,
@@ -41,6 +45,7 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     snappedPosition: null,
     previewTime: null,
     recentlyDragged: false,
+    recentlyResized: false,
     ghostElement: null
   })
 
@@ -88,6 +93,9 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     e: React.MouseEvent, 
     originalPosition: { top: number; left: number; width: number; height: number }
   ) => {
+    // 左クリック以外は無視
+    if (e.button !== 0) return
+    
     e.preventDefault()
     e.stopPropagation()
 
@@ -148,42 +156,70 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
 
   // マウス移動処理
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragState.isDragging || !dragDataRef.current) return
+    if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
 
-    const deltaY = e.clientY - dragDataRef.current.startY
-    const newTop = dragDataRef.current.originalTop + deltaY
+    const dragData = dragDataRef.current
+    const deltaY = e.clientY - dragData.startY
     
-    // 5px以上移動した場合のみドラッグと判定
+    // 5px以上移動した場合のみドラッグ/リサイズと判定
     if (Math.abs(deltaY) > 5) {
-      dragDataRef.current.hasMoved = true
+      dragData.hasMoved = true
     }
     
-    // 15分単位にスナップ
-    const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
-    
-    // プレビュー時間を計算
-    const event = events.find(e => e.id === dragDataRef.current!.eventId)
-    let durationMs = 60 * 60 * 1000 // デフォルト1時間
-    
-    if (event?.startDate && event?.endDate) {
-      durationMs = event.endDate.getTime() - event.startDate.getTime()
-    } else if (dragDataRef.current.eventDuration) {
-      durationMs = (dragDataRef.current.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
+    if (dragState.isResizing) {
+      // リサイズ処理
+      const newHeight = Math.max(15, dragData.eventDuration + deltaY) // 最小15px
+      const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
+      const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight) // 最小15分
+      
+      // リサイズ中のプレビュー時間を計算
+      const event = events.find(e => e.id === dragData.eventId)
+      let previewTime = null
+      
+      if (event?.startDate) {
+        const newDurationMs = (finalHeight / HOUR_HEIGHT) * 60 * 60 * 1000
+        const previewEndTime = new Date(event.startDate.getTime() + newDurationMs)
+        previewTime = { start: event.startDate, end: previewEndTime }
+      }
+      
+      setDragState(prev => ({
+        ...prev,
+        currentPosition: { x: e.clientX, y: e.clientY },
+        snappedPosition: { 
+          top: dragData.originalTop, 
+          height: finalHeight
+        },
+        previewTime
+      }))
+    } else if (dragState.isDragging) {
+      // ドラッグ処理
+      const newTop = dragData.originalTop + deltaY
+      const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
+      
+      // プレビュー時間を計算
+      const event = events.find(e => e.id === dragData.eventId)
+      let durationMs = 60 * 60 * 1000 // デフォルト1時間
+      
+      if (event?.startDate && event?.endDate) {
+        durationMs = event.endDate.getTime() - event.startDate.getTime()
+      } else if (dragData.eventDuration) {
+        durationMs = (dragData.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
+      }
+      
+      const previewStartTime = new Date(date)
+      previewStartTime.setHours(hour, minute, 0, 0)
+      const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
+      
+      const currentPosition = { x: e.clientX, y: e.clientY }
+      
+      setDragState(prev => ({
+        ...prev,
+        currentPosition,
+        snappedPosition: { top: snappedTop },
+        previewTime: { start: previewStartTime, end: previewEndTime }
+      }))
     }
-    
-    const previewStartTime = new Date(date)
-    previewStartTime.setHours(hour, minute, 0, 0)
-    const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
-    
-    const currentPosition = { x: e.clientX, y: e.clientY }
-    
-    setDragState(prev => ({
-      ...prev,
-      currentPosition,
-      snappedPosition: { top: snappedTop },
-      previewTime: { start: previewStartTime, end: previewEndTime }
-    }))
-  }, [dragState.isDragging, snapToQuarterHour, events, date])
+  }, [dragState.isDragging, dragState.isResizing, snapToQuarterHour, events, date])
 
   // ドラッグ終了
   const handleMouseUp = useCallback(() => {
@@ -192,9 +228,10 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
       dragState.ghostElement.parentElement.removeChild(dragState.ghostElement)
     }
 
-    if (!dragState.isDragging || !dragDataRef.current || !dragState.currentPosition || !dragState.dragStartPosition) {
+    if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current || !dragState.currentPosition || !dragState.dragStartPosition) {
       setDragState({
         isDragging: false,
+        isResizing: false,
         draggedEventId: null,
         dragStartPosition: null,
         currentPosition: null,
@@ -202,9 +239,61 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
         snappedPosition: null,
         previewTime: null,
         recentlyDragged: false,
+        recentlyResized: false,
         ghostElement: null
       })
       dragDataRef.current = null
+      return
+    }
+
+    if (dragState.isResizing) {
+      // リサイズ終了処理
+      console.log('🟡 リサイズ終了:', { 
+        eventId: dragDataRef.current.eventId,
+        newHeight: dragState.snappedPosition?.height
+      })
+      
+      // 実際にリサイズが発生した場合のみ更新
+      if (onEventUpdate && dragDataRef.current.hasMoved && dragState.snappedPosition?.height) {
+        const event = events.find(e => e.id === dragDataRef.current.eventId)
+        if (event?.startDate) {
+          const newDurationMs = (dragState.snappedPosition.height / HOUR_HEIGHT) * 60 * 60 * 1000
+          const newEndTime = new Date(event.startDate.getTime() + newDurationMs)
+          
+          onEventUpdate(dragDataRef.current.eventId, { 
+            startTime: event.startDate, 
+            endTime: newEndTime 
+          })
+        }
+      }
+      
+      // リサイズが実際に発生したかを記録
+      const actuallyResized = dragDataRef.current.hasMoved
+      
+      // リサイズ状態をリセット
+      setDragState({
+        isDragging: false,
+        isResizing: false,
+        draggedEventId: null,
+        dragStartPosition: null,
+        currentPosition: null,
+        originalPosition: null,
+        snappedPosition: null,
+        previewTime: null,
+        recentlyDragged: actuallyResized, // 実際にリサイズした場合のみクリック無効化
+        recentlyResized: actuallyResized, // リサイズ専用フラグ（より厳格）
+        ghostElement: null
+      })
+      
+      dragDataRef.current = null
+      
+      // 実際にリサイズが発生した場合のみ、1000ms後にフラグを解除（リサイズは長い無効化が必要）
+      if (actuallyResized) {
+        setTimeout(() => {
+          setDragState(prev => ({ ...prev, recentlyDragged: false, recentlyResized: false }))
+        }, 1000)
+      }
+      
       return
     }
 
@@ -256,6 +345,7 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     // ドラッグ状態をリセット
     setDragState({
       isDragging: false,
+      isResizing: false,
       draggedEventId: null,
       dragStartPosition: null,
       currentPosition: null,
@@ -263,15 +353,16 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
       snappedPosition: null,
       previewTime: null,
       recentlyDragged: actuallyDragged, // 実際にドラッグした場合のみクリック無効化
+      recentlyResized: false, // ドラッグ終了時はリサイズフラグをクリア
       ghostElement: null
     })
     dragDataRef.current = null
 
-    // 実際にドラッグが発生した場合のみ、300ms後にrecentlyDraggedを解除
+    // 実際にドラッグが発生した場合のみ、500ms後にrecentlyDraggedを解除
     if (actuallyDragged) {
       setTimeout(() => {
         setDragState(prev => ({ ...prev, recentlyDragged: false }))
-      }, 300)
+      }, 500)
     }
   }, [dragState, onEventUpdate, date])
 
@@ -291,13 +382,52 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     }
   }, [onEventUpdate, events])
 
+  // リサイズ開始
+  const handleResizeStart = useCallback((
+    eventId: string,
+    direction: 'top' | 'bottom',
+    e: React.MouseEvent,
+    originalPosition: { top: number; left: number; width: number; height: number }
+  ) => {
+    // 左クリック以外は無視
+    if (e.button !== 0) return
+    
+    console.log('🟡 リサイズ開始:', { eventId, direction, originalPosition })
+    
+    const startPosition = { x: e.clientX, y: e.clientY }
+    
+    // ドラッグデータを設定
+    dragDataRef.current = {
+      eventId,
+      startY: e.clientY,
+      originalTop: originalPosition.top,
+      eventDuration: originalPosition.height,
+      hasMoved: false,
+      originalElement: null
+    }
+
+    setDragState({
+      isDragging: false,
+      isResizing: true,
+      draggedEventId: eventId,
+      dragStartPosition: startPosition,
+      currentPosition: startPosition,
+      originalPosition,
+      snappedPosition: { top: originalPosition.top, height: originalPosition.height },
+      previewTime: null,
+      recentlyDragged: false,
+      ghostElement: null
+    })
+  }, [])
+
   return {
     dragState,
     handlers: {
       handleMouseDown,
       handleMouseMove,
       handleMouseUp,
-      handleEventDrop
+      handleEventDrop,
+      handleResizeStart
     }
   }
 }

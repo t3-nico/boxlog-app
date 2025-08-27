@@ -87,6 +87,8 @@ export function CalendarDragSelection({
     // 無効化されている場合は何もしない
     if (disabled) {
       console.log('❌ CalendarDragSelection が無効になっています')
+      e.preventDefault()
+      e.stopPropagation()
       return
     }
     
@@ -180,6 +182,16 @@ export function CalendarDragSelection({
     }
 
     const handleGlobalMouseUp = () => {
+      // 無効化されている場合は何もしない
+      if (disabled) {
+        console.log('❌ CalendarDragSelection が無効 - マウスアップ無視')
+        setIsSelecting(false)
+        setSelection(null)
+        setSelectionStart(null)
+        isDragging.current = false
+        return
+      }
+      
       if (selection) {
         if (isDragging.current && onTimeRangeSelect) {
           // ドラッグした場合：時間範囲選択
