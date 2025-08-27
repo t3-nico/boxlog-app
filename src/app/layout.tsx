@@ -3,6 +3,7 @@ import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Providers } from '@/components/common'
 import { background } from '@/config/theme/colors'
+import { ToastContainer } from '@/lib/toast'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,6 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={background.base}>
         <Providers>
           {children}
+          <ToastContainer />
         </Providers>
       </body>
     </html>
