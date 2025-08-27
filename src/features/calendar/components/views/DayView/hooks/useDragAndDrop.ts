@@ -13,6 +13,7 @@ export interface DragState {
   snappedPosition: { top: number } | null
   previewTime: { start: Date; end: Date } | null
   recentlyDragged: boolean // ドラッグ終了直後のクリック防止用
+  ghostElement: HTMLElement | null // ゴースト要素
 }
 
 export interface DragHandlers {
@@ -38,7 +39,8 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     originalPosition: null,
     snappedPosition: null,
     previewTime: null,
-    recentlyDragged: false
+    recentlyDragged: false,
+    ghostElement: null
   })
 
   const dragDataRef = useRef<{
@@ -47,7 +49,28 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     originalTop: number
     eventDuration: number
     hasMoved: boolean // マウスが実際に移動したかの判定
+    originalElement: HTMLElement | null // 元の要素への参照
   } | null>(null)
+
+  // ゴースト要素作成
+  const createGhostElement = useCallback((originalElement: HTMLElement, originalPosition: { top: number; left: number; width: number; height: number }) => {
+    const ghost = originalElement.cloneNode(true) as HTMLElement
+    
+    // ゴーストのスタイル設定（元の位置に固定）
+    ghost.style.position = 'absolute'
+    ghost.style.top = `${originalPosition.top}px`
+    ghost.style.left = `${originalPosition.left}%`
+    ghost.style.width = `${originalPosition.width}%`
+    ghost.style.height = `${originalPosition.height}px`
+    ghost.style.opacity = '0.3'
+    ghost.style.filter = 'grayscale(80%)'
+    ghost.style.pointerEvents = 'none'
+    ghost.style.zIndex = '500' // ドラッグ要素より低い
+    ghost.style.transition = 'none'
+    ghost.classList.add('event-ghost')
+    
+    return ghost
+  }, [])
 
   // ドラッグ開始
   const handleMouseDown = useCallback((
@@ -60,13 +83,32 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
 
     const startPosition = { x: e.clientX, y: e.clientY }
     
+    // 元のイベント要素を取得
+    const originalElement = (e.target as HTMLElement).closest('[data-event-block="true"]') as HTMLElement
+    
+    // ゴースト要素作成
+    let ghostElement: HTMLElement | null = null
+    if (originalElement) {
+      ghostElement = createGhostElement(originalElement, originalPosition)
+      
+      // カレンダーグリッドの親要素にゴーストを挿入
+      const calendarGrid = originalElement.closest('[data-calendar-grid]') || originalElement.closest('.absolute.inset-0')
+      if (calendarGrid) {
+        const eventArea = calendarGrid.querySelector('.absolute.inset-0:last-child')
+        if (eventArea) {
+          eventArea.appendChild(ghostElement)
+        }
+      }
+    }
+    
     // ドラッグデータを設定
     dragDataRef.current = {
       eventId,
       startY: e.clientY,
       originalTop: originalPosition.top,
       eventDuration: originalPosition.height,
-      hasMoved: false
+      hasMoved: false,
+      originalElement
     }
 
     setDragState({
@@ -76,9 +118,11 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
       currentPosition: startPosition,
       originalPosition,
       snappedPosition: { top: originalPosition.top },
-      previewTime: null
+      previewTime: null,
+      recentlyDragged: false,
+      ghostElement
     })
-  }, [])
+  }, [createGhostElement])
 
   // 15分単位でスナップする関数
   const snapToQuarterHour = useCallback((yPosition: number): { snappedTop: number; hour: number; minute: number } => {
@@ -133,6 +177,11 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
 
   // ドラッグ終了
   const handleMouseUp = useCallback(() => {
+    // ゴースト要素のクリーンアップ
+    if (dragState.ghostElement && dragState.ghostElement.parentElement) {
+      dragState.ghostElement.parentElement.removeChild(dragState.ghostElement)
+    }
+
     if (!dragState.isDragging || !dragDataRef.current || !dragState.currentPosition || !dragState.dragStartPosition) {
       setDragState({
         isDragging: false,
@@ -142,7 +191,8 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
         originalPosition: null,
         snappedPosition: null,
         previewTime: null,
-        recentlyDragged: false
+        recentlyDragged: false,
+        ghostElement: null
       })
       dragDataRef.current = null
       return
@@ -202,7 +252,8 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
       originalPosition: null,
       snappedPosition: null,
       previewTime: null,
-      recentlyDragged: actuallyDragged // 実際にドラッグした場合のみクリック無効化
+      recentlyDragged: actuallyDragged, // 実際にドラッグした場合のみクリック無効化
+      ghostElement: null
     })
     dragDataRef.current = null
 

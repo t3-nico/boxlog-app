@@ -27,7 +27,7 @@ const eventBlockVariants = cva(
       state: {
         default: '',
         selected: 'ring-2 ring-blue-500 ring-offset-1',
-        dragging: 'cursor-grabbing scale-[1.02] opacity-80',
+        dragging: 'cursor-grabbing',
         hovered: 'shadow-lg'
       },
       size: {

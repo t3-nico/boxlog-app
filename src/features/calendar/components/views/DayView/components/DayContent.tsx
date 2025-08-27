@@ -80,7 +80,7 @@ export function DayContent({
   ))
 
   return (
-    <div className={cn('relative flex-1 bg-background overflow-hidden', className)}>
+    <div className={cn('relative flex-1 bg-background overflow-hidden', className)} data-calendar-grid>
       {/* 新しいCalendarDragSelectionを使用 */}
       <CalendarDragSelection
         date={date}
@@ -114,7 +114,8 @@ export function DayContent({
               ...style,
               top: `${dragState.snappedPosition.top}px`,
               zIndex: 1000,
-              transition: 'none' // スナッピング時はtransitionを無効化
+              transition: 'none', // スナッピング時はtransitionを無効化
+              opacity: 1 // ドラッグ中の要素は通常表示
             }
           }
           
