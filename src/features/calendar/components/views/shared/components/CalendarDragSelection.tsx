@@ -125,32 +125,8 @@ export function CalendarDragSelection({
     }
 
     const handleGlobalMouseUp = () => {
-      if (selection && isDragging.current) {
-        const startTotalMinutes = selection.startHour * 60 + selection.startMinute
-        const endTotalMinutes = selection.endHour * 60 + selection.endMinute
-        const durationMinutes = endTotalMinutes - startTotalMinutes
-
-        if (durationMinutes >= 15 && onTimeRangeSelect) {
-          // 日付付きの完全な選択情報を作成
-          const dateTimeSelection: DateTimeSelection = {
-            date: date,
-            startHour: selection.startHour,
-            startMinute: selection.startMinute,
-            endHour: selection.endHour,
-            endMinute: selection.endMinute
-          }
-          
-          console.log('🎯 CalendarDragSelection completed:', {
-            date: date.toDateString(),
-            dateISO: date.toISOString(),
-            timeRange: `${selection.startHour}:${selection.startMinute.toString().padStart(2, '0')} - ${selection.endHour}:${selection.endMinute.toString().padStart(2, '0')}`,
-            duration: `${durationMinutes}分`,
-            selection
-          })
-          
-          onTimeRangeSelect(dateTimeSelection)
-        }
-      }
+      // ドラッグ後のポップアップ表示を無効化
+      // onTimeRangeSelectは呼び出さない（ドラッグでのイベント作成を無効）
 
       setIsSelecting(false)
       setTimeout(() => {

@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react'
 import { useCreateModalStore, useCreateModalKeyboardShortcuts } from '../../stores/useCreateModalStore'
 import { EssentialSingleView } from './EssentialSingleView'
-import { EssentialEditView } from '../edit/EssentialEditView'
+// import { EssentialEditView } from '../edit/EssentialEditView' // 統一UIでEssentialSingleViewを使用
 import { useCreateEvent } from '../../hooks/useCreateEvent'
 import type { CreateEventRequest } from '../../types/events'
 import { useTagStore } from '@/features/tags/stores/tag-store'
@@ -106,15 +106,16 @@ export function CreateEventModal() {
     }
   }
   
-  // 編集モードの場合はEssentialEditViewを使用
+  // 編集モードの場合もEssentialSingleViewを使用（統一UI）
   if (isEditMode && editingEventId) {
     return (
-      <EssentialEditView
+      <EssentialSingleView
         isOpen={isOpen}
         onClose={closeModal}
         onSave={handleSave}
         onDelete={handleDelete}
         initialData={convertedInitialData}
+        isEditMode={true}
       />
     )
   }

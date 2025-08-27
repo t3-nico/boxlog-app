@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, Trash2 } from 'lucide-react'
+import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, Trash2, ChevronDown, Calendar, Clock, Zap } from 'lucide-react'
 import { TitleInput } from '../create/TitleInput'
 import { DateSelector } from '../create/DateSelector'
 import { TagInput } from '../create/TagInput'
@@ -22,18 +22,23 @@ interface EssentialEditViewProps {
   onClose: () => void
   onSave: (data: {
     title: string
-    date: Date
-    endDate: Date
+    date?: Date
+    endDate?: Date
     tags: Tag[]
     description?: string
+    estimatedDuration?: number
+    priority?: 'low' | 'medium' | 'high'
+    status?: 'backlog' | 'scheduled'
   }) => Promise<void>
   onDelete?: () => Promise<void>
   initialData: {
     title: string
-    date: Date
-    endDate: Date
+    date?: Date
+    endDate?: Date
     tags: Tag[]
     description?: string
+    estimatedDuration?: number
+    priority?: 'low' | 'medium' | 'high'
   }
 }
 
@@ -44,6 +49,33 @@ export function EssentialEditView({
   onDelete,
   initialData 
 }: EssentialEditViewProps) {
+  // スケジュールモード（プログレッシブ開示の核心）
+  type ScheduleMode = 'later' | 'specify' | 'today' | 'tomorrow'
+  
+  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>(() => {
+    // 初期データから適切なモードを判定（編集モード専用）
+    if (initialData.date) {
+      // 時刻情報がある場合は時間指定モード
+      const hasTime = initialData.date.getHours() !== 0 || initialData.date.getMinutes() !== 0
+      if (hasTime) return 'specify'
+      
+      // 時刻情報がない場合は日付をチェック
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const tomorrow = new Date(today)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      
+      const eventDate = new Date(initialData.date)
+      eventDate.setHours(0, 0, 0, 0)
+      
+      if (eventDate.getTime() === today.getTime()) return 'today'
+      if (eventDate.getTime() === tomorrow.getTime()) return 'tomorrow'
+      return 'specify' // その他の日付
+    }
+    
+    return 'later' // 日付なしの場合
+  })
+  
   // 値の検証とフォールバック
   const safeInitialDate = initialData.date instanceof Date ? initialData.date : new Date()
   const safeInitialEndDate = initialData.endDate instanceof Date ? initialData.endDate : new Date(safeInitialDate.getTime() + 60 * 60 * 1000)

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
+import { useToast } from '@/components/shadcn-ui/toast'
 
 export interface DragState {
   isDragging: boolean
@@ -11,6 +12,7 @@ export interface DragState {
   originalPosition: { top: number; left: number; width: number; height: number } | null
   snappedPosition: { top: number } | null
   previewTime: { start: Date; end: Date } | null
+  recentlyDragged: boolean // ドラッグ終了直後のクリック防止用
 }
 
 export interface DragHandlers {
@@ -27,6 +29,7 @@ interface UseDragAndDropProps {
 }
 
 export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropProps) {
+  const { success } = useToast()
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
     draggedEventId: null,
@@ -34,7 +37,8 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     currentPosition: null,
     originalPosition: null,
     snappedPosition: null,
-    previewTime: null
+    previewTime: null,
+    recentlyDragged: false
   })
 
   const dragDataRef = useRef<{
@@ -42,6 +46,7 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     startY: number
     originalTop: number
     eventDuration: number
+    hasMoved: boolean // マウスが実際に移動したかの判定
   } | null>(null)
 
   // ドラッグ開始
@@ -60,7 +65,8 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
       eventId,
       startY: e.clientY,
       originalTop: originalPosition.top,
-      eventDuration: originalPosition.height
+      eventDuration: originalPosition.height,
+      hasMoved: false
     }
 
     setDragState({
@@ -92,6 +98,11 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
 
     const deltaY = e.clientY - dragDataRef.current.startY
     const newTop = dragDataRef.current.originalTop + deltaY
+    
+    // 5px以上移動した場合のみドラッグと判定
+    if (Math.abs(deltaY) > 5) {
+      dragDataRef.current.hasMoved = true
+    }
     
     // 15分単位にスナップ
     const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
@@ -128,7 +139,10 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
         draggedEventId: null,
         dragStartPosition: null,
         currentPosition: null,
-        originalPosition: null
+        originalPosition: null,
+        snappedPosition: null,
+        previewTime: null,
+        recentlyDragged: false
       })
       dragDataRef.current = null
       return
@@ -146,8 +160,8 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
     const newStartTime = new Date(date)
     newStartTime.setHours(hour, minute, 0, 0)
 
-    // イベント更新を実行
-    if (onEventUpdate && dragDataRef.current.eventId) {
+    // イベント更新を実行（実際にドラッグが発生した場合のみ）
+    if (onEventUpdate && dragDataRef.current.eventId && dragDataRef.current.hasMoved) {
       // 実際のイベントデータから期間を計算
       const event = events.find(e => e.id === dragDataRef.current.eventId)
       let durationMs = 60 * 60 * 1000 // デフォルト1時間
@@ -165,12 +179,20 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
         startTime: newStartTime,
         endTime: newEndTime
       }).then(() => {
-        console.log('Event time updated successfully')
+        // Toast通知のみを表示（詳細モーダルは開かない）
+        const event = events.find(e => e.id === dragDataRef.current!.eventId)
+        const eventTitle = event?.title || 'イベント'
+        const timeFormat = `${newStartTime.getHours()}:${newStartTime.getMinutes().toString().padStart(2, '0')}`
+        
+        success('イベントを移動しました', `${eventTitle}を${timeFormat}に移動しました`)
       }).catch((error) => {
         console.error('Failed to update event time:', error)
       })
     }
 
+    // 実際にドラッグが発生した場合のみrecentlyDraggedを設定
+    const actuallyDragged = dragDataRef.current?.hasMoved || false
+    
     // ドラッグ状態をリセット
     setDragState({
       isDragging: false,
@@ -179,9 +201,17 @@ export function useDragAndDrop({ onEventUpdate, date, events }: UseDragAndDropPr
       currentPosition: null,
       originalPosition: null,
       snappedPosition: null,
-      previewTime: null
+      previewTime: null,
+      recentlyDragged: actuallyDragged // 実際にドラッグした場合のみクリック無効化
     })
     dragDataRef.current = null
+
+    // 実際にドラッグが発生した場合のみ、300ms後にrecentlyDraggedを解除
+    if (actuallyDragged) {
+      setTimeout(() => {
+        setDragState(prev => ({ ...prev, recentlyDragged: false }))
+      }, 300)
+    }
   }, [dragState, onEventUpdate, date])
 
   // イベントドロップのヘルパー

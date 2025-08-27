@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat } from 'lucide-react'
+import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, ChevronDown, Calendar, Clock, Zap, Trash2 } from 'lucide-react'
 import { TitleInput } from './TitleInput'
 import { DateSelector } from './DateSelector'
 import { TagInput } from './TagInput'
@@ -22,10 +22,13 @@ interface EssentialSingleViewProps {
   onClose: () => void
   onSave: (data: {
     title: string
-    date: Date
-    endDate: Date
+    date?: Date
+    endDate?: Date
     tags: Tag[]
     description?: string
+    estimatedDuration?: number // 分
+    priority?: 'low' | 'medium' | 'high'
+    status?: 'backlog' | 'scheduled'
   }) => Promise<void>
   initialData?: {
     title?: string
@@ -33,6 +36,8 @@ interface EssentialSingleViewProps {
     endDate?: Date
     tags?: Tag[]
     description?: string
+    estimatedDuration?: number
+    priority?: 'low' | 'medium' | 'high'
   }
 }
 
@@ -40,36 +45,63 @@ export function EssentialSingleView({
   isOpen, 
   onClose, 
   onSave, 
+  onDelete,
+  isEditMode = false,
   initialData 
 }: EssentialSingleViewProps) {
+  // 2択式シンプルモード（最速入力と詳細予定のみ）
+  type ScheduleMode = 'defer' | 'schedule' // 後で決める | 今すぐ予定する
+  
+  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>(() => {
+    // 初期データがある場合（編集モード）は適切なモードを選択
+    if (initialData?.date) {
+      // 時刻情報があるか、日付情報があれば予定モード
+      return 'schedule'
+    }
+    
+    // 新規作成の場合はlocalStorageから前回の選択を復元
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('boxlog-create-mode')
+      if (saved && ['defer', 'schedule'].includes(saved)) {
+        return saved as ScheduleMode
+      }
+    }
+    
+    return 'defer' // デフォルトは「後で決める」
+  })
+
   // メインフィールドの状態
   const [title, setTitle] = useState(initialData?.title || '')
   const [date, setDate] = useState(() => {
     if (initialData?.date) return initialData.date
-    // 現在時刻から15分単位で切り上げ
-    const now = new Date()
-    const minutes = now.getMinutes()
-    let roundedMinutes
-    
-    if (minutes === 0) {
-      roundedMinutes = 0
-    } else if (minutes <= 15) {
-      roundedMinutes = 15
-    } else if (minutes <= 30) {
-      roundedMinutes = 30
-    } else if (minutes <= 45) {
-      roundedMinutes = 45
-    } else {
-      roundedMinutes = 60
+    // scheduleMode が 'specify' の場合のみ時刻を設定
+    if (scheduleMode === 'specify') {
+      // 現在時刻から15分単位で切り上げ
+      const now = new Date()
+      const minutes = now.getMinutes()
+      let roundedMinutes
+      
+      if (minutes === 0) {
+        roundedMinutes = 0
+      } else if (minutes <= 15) {
+        roundedMinutes = 15
+      } else if (minutes <= 30) {
+        roundedMinutes = 30
+      } else if (minutes <= 45) {
+        roundedMinutes = 45
+      } else {
+        roundedMinutes = 60
+      }
+      
+      if (roundedMinutes === 60) {
+        now.setHours(now.getHours() + 1)
+        now.setMinutes(0, 0, 0)
+      } else {
+        now.setMinutes(roundedMinutes, 0, 0)
+      }
+      return now
     }
-    
-    if (roundedMinutes === 60) {
-      now.setHours(now.getHours() + 1)
-      now.setMinutes(0, 0, 0)
-    } else {
-      now.setMinutes(roundedMinutes, 0, 0)
-    }
-    return now
+    return new Date() // フォールバック
   })
   const [endDate, setEndDate] = useState(() => {
     // endDateが直接指定されている場合はそれを使用
@@ -111,6 +143,10 @@ export function EssentialSingleView({
     return defaultEnd
   })
   const [tags, setTags] = useState<Tag[]>(initialData?.tags || [])
+  
+  // 新しいフィールド（プログレッシブ開示用）
+  const [estimatedDuration, setEstimatedDuration] = useState<number>(initialData?.estimatedDuration || 30) // デフォルト30分
+  const [taskPriority, setTaskPriority] = useState<'low' | 'medium' | 'high'>(initialData?.priority || 'medium')
 
   // 前回のinitialDataを保存するRef
   const prevInitialDataRef = useRef<typeof initialData | null>(null)
@@ -149,6 +185,19 @@ export function EssentialSingleView({
           setMemo(initialData.description)
           setShowMemo(true)
         }
+        if (initialData.estimatedDuration) {
+          setEstimatedDuration(initialData.estimatedDuration)
+        }
+        if (initialData.priority) {
+          setTaskPriority(initialData.priority)
+        }
+        
+        // 編集モードでのスケジュールモード更新（2択式）
+        if (initialData.date) {
+          setScheduleMode('schedule') // 日付があれば予定モード
+        } else {
+          setScheduleMode('defer') // 日付がなければ後で決めるモード
+        }
         
         // 現在の値を保存
         prevInitialDataRef.current = initialData
@@ -160,12 +209,55 @@ export function EssentialSingleView({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [fastInputMode, setFastInputMode] = useState(false) // 高速入力モード
   
   // 追加オプション状態
   const [showMemo, setShowMemo] = useState(false)
   const [memo, setMemo] = useState('')
   const [reminder, setReminder] = useState<number | null>(null)
   const [priority, setPriority] = useState<'low' | 'necessary' | 'high'>('necessary')
+  
+  // 2択モードの変更ハンドラー（シンプル化）
+  const handleScheduleModeChange = (newMode: ScheduleMode) => {
+    setScheduleMode(newMode)
+    // 新規作成の場合のみlocalStorageに保存（編集時は保存しない）
+    if (!initialData && typeof window !== 'undefined') {
+      localStorage.setItem('boxlog-create-mode', newMode)
+    }
+    
+    // モード変更時の日付設定
+    if (newMode === 'schedule') {
+      // 今すぐ予定するモード: 現在時刻から15分単位で切り上げ
+      const now = new Date()
+      const minutes = now.getMinutes()
+      let roundedMinutes
+      
+      if (minutes === 0) {
+        roundedMinutes = 0
+      } else if (minutes <= 15) {
+        roundedMinutes = 15
+      } else if (minutes <= 30) {
+        roundedMinutes = 30
+      } else if (minutes <= 45) {
+        roundedMinutes = 45
+      } else {
+        roundedMinutes = 60
+      }
+      
+      if (roundedMinutes === 60) {
+        now.setHours(now.getHours() + 1)
+        now.setMinutes(0, 0, 0)
+      } else {
+        now.setMinutes(roundedMinutes, 0, 0)
+      }
+      setDate(now)
+      
+      const defaultEnd = new Date(now)
+      defaultEnd.setTime(defaultEnd.getTime() + 60 * 60 * 1000) // 1時間後
+      setEndDate(defaultEnd)
+    }
+    // 'defer'モードの場合は何もしない（時刻情報は保存時にnullになる）
+  }
   
   // 入力データの検証
   const isValid = title.trim().length > 0
@@ -200,50 +292,133 @@ export function EssentialSingleView({
     setError(null)
 
     try {
-      await onSave({ 
-        title, 
-        date, 
-        endDate, 
+      // 2択モードに応じてデータを整形
+      let saveData: any = {
+        title,
         tags,
         description: memo || undefined
-      })
+      }
       
-      // 成功アニメーション
-      setShowSuccess(true)
-      setTimeout(() => {
-        onClose()
-        setShowSuccess(false)
-        // リセット
+      if (scheduleMode === 'schedule') {
+        // 今すぐ予定するモード
+        saveData.date = date
+        saveData.endDate = endDate
+        saveData.status = 'scheduled'
+      } else {
+        // 後で決めるモード
+        saveData.date = null
+        saveData.endDate = null
+        saveData.estimatedDuration = estimatedDuration
+        saveData.priority = taskPriority
+        saveData.status = 'backlog'
+      }
+      
+      await onSave(saveData)
+      
+      // 高速入力モードの判定（後で決める + Cmd+Enter）
+      const isQuickInput = scheduleMode === 'defer' && !isEditMode
+      
+      if (isQuickInput && fastInputMode) {
+        // 高速入力モード: モーダルを閉じずにフォームをリセット
         setTitle('')
-        setDate(new Date())
         setTags([])
-      }, 1500)
+        setMemo('')
+        setShowMemo(false)
+        setEstimatedDuration(30)
+        setTaskPriority('medium')
+        
+        // タイトルフィールドにフォーカスを戻す
+        setTimeout(() => {
+          const titleInput = document.querySelector('input[placeholder*="イベント"], input[placeholder*="title"]') as HTMLInputElement
+          if (titleInput) {
+            titleInput.focus()
+          }
+        }, 100)
+      } else {
+        // 通常モード: 成功アニメーションしてモーダルを閉じる
+        setShowSuccess(true)
+        setTimeout(() => {
+          onClose()
+          setShowSuccess(false)
+          // リセット
+          setTitle('')
+          setDate(new Date())
+          setTags([])
+          setFastInputMode(false)
+        }, 1500)
+      }
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
       setIsSubmitting(false)
     }
-  }, [isValid, onSave, title, date, endDate, tags, onClose])
+  }, [isValid, onSave, title, date, endDate, tags, onClose, scheduleMode, estimatedDuration, taskPriority, memo])
 
-  // キーボードショートカット
+  // キーボードショートカット（2択式対応）
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
 
       if (e.key === 'Escape') {
         onClose()
+        return
       }
 
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && isValid) {
+      // Cmd+Enter で高速入力モードを有効化
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        if (isValid) {
+          e.preventDefault()
+          if (scheduleMode === 'defer' && !isEditMode) {
+            setFastInputMode(true)
+          }
+          handleSave()
+        }
+        return
+      }
+      
+      // Enter で通常保存（後で決めるモードのみ）
+      if (e.key === 'Enter' && scheduleMode === 'defer') {
+        if (isValid) {
+          e.preventDefault()
+          handleSave()
+        }
+        return
+      }
+
+      // 数字キーでモード切り替え
+      if (e.key === '1') {
         e.preventDefault()
-        handleSave()
+        handleScheduleModeChange('defer')
+        return
+      }
+      
+      if (e.key === '2') {
+        e.preventDefault()
+        handleScheduleModeChange('schedule')
+        return
+      }
+
+      // Tabキーでモード切り替え（タイトル入力時以外）
+      if (e.key === 'Tab' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault()
+        const newMode = scheduleMode === 'defer' ? 'schedule' : 'defer'
+        handleScheduleModeChange(newMode)
+        return
+      }
+
+      // Spaceキーでモード切り替え（入力フィールド以外）
+      if (e.key === ' ' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault()
+        const newMode = scheduleMode === 'defer' ? 'schedule' : 'defer'
+        handleScheduleModeChange(newMode)
+        return
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, isValid, onClose, handleSave])
+  }, [isOpen, isValid, onClose, handleSave, scheduleMode, handleScheduleModeChange])
 
   // スマート抽出のハンドリング
   const handleSmartExtract = (extracted: {
@@ -308,8 +483,19 @@ export function EssentialSingleView({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
                   >
-                    Create Event
+                    {isEditMode ? 'Edit Event' : fastInputMode ? 'Quick Add Mode' : 'Create Event'}
                   </motion.h1>
+                  
+                  {/* 高速入力モード表示 */}
+                  {fastInputMode && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="ml-3 px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-xs font-medium rounded-full"
+                    >
+                      Fast Mode
+                    </motion.div>
+                  )}
                   
                   {/* 控えめなプログレス指標 */}
                   <div className="flex items-center gap-4">
@@ -402,16 +588,113 @@ export function EssentialSingleView({
                   autoFocus={true}
                 />
               </div>
-
-              {/* 日付セクション */}
-              <div>
-                <DateSelector
-                  value={date}
-                  endValue={endDate}
-                  onChange={setDate}
-                  onEndChange={setEndDate}
-                />
+              
+              {/* 2択式スケジュール選択セクション */}
+              <div className="space-y-4">
+                <div>
+                  <label className={`block text-sm font-medium ${text.primary} mb-3`}>
+                    いつ実行しますか？
+                  </label>
+                  
+                  {/* ラジオボタン選択グループ */}
+                  <div className="flex gap-4">
+                    {/* 後で決める選択肢 */}
+                    <label 
+                      className={`
+                        flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200
+                        border-2 ${scheduleMode === 'defer' 
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                          : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300'
+                        }
+                      `}
+                    >
+                      <input
+                        type="radio"
+                        name="scheduleMode"
+                        value="defer"
+                        checked={scheduleMode === 'defer'}
+                        onChange={(e) => handleScheduleModeChange(e.target.value as ScheduleMode)}
+                        className="sr-only"
+                      />
+                      <div className={`
+                        w-4 h-4 rounded-full border-2 flex items-center justify-center
+                        ${scheduleMode === 'defer' 
+                          ? 'border-blue-500 bg-blue-500' 
+                          : 'border-neutral-300 dark:border-neutral-600'
+                        }
+                      `}>
+                        {scheduleMode === 'defer' && (
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className={`text-sm font-medium ${text.primary}`}>
+                          後で決める
+                        </div>
+                      </div>
+                    </label>
+                    
+                    {/* 今すぐ予定する選択肢 */}
+                    <label 
+                      className={`
+                        flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200
+                        border-2 ${scheduleMode === 'schedule' 
+                          ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                          : 'border-neutral-200 dark:border-neutral-700 hover:border-neutral-300'
+                        }
+                      `}
+                    >
+                      <input
+                        type="radio"
+                        name="scheduleMode"
+                        value="schedule"
+                        checked={scheduleMode === 'schedule'}
+                        onChange={(e) => handleScheduleModeChange(e.target.value as ScheduleMode)}
+                        className="sr-only"
+                      />
+                      <div className={`
+                        w-4 h-4 rounded-full border-2 flex items-center justify-center
+                        ${scheduleMode === 'schedule' 
+                          ? 'border-blue-500 bg-blue-500' 
+                          : 'border-neutral-300 dark:border-neutral-600'
+                        }
+                      `}>
+                        {scheduleMode === 'schedule' && (
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className={`text-sm font-medium ${text.primary}`}>
+                          今すぐ予定する
+                        </div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                
+                {/* プログレッシブ開示: 今すぐ予定するモードのみ日時フィールドを表示 */}
+                <AnimatePresence>
+                  {scheduleMode === 'schedule' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="pt-4 border-t border-neutral-200 dark:border-neutral-700"
+                    >
+                      <DateSelector
+                        value={date}
+                        endValue={endDate}
+                        onChange={setDate}
+                        onEndChange={setEndDate}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                
               </div>
+
+              {/* 日付セクションはスケジュール選択に統合 */}
 
               {/* Tags section */}
               <div className="pt-2">
@@ -532,7 +815,33 @@ export function EssentialSingleView({
               </AnimatePresence>
 
               {/* フッター */}
-              <div className="flex justify-end items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800">
+              <div className={`flex items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800 ${isEditMode ? 'justify-between' : 'justify-end'}`}>
+                {/* 編集モードのみ削除ボタンを左端に表示 */}
+                {isEditMode && onDelete && (
+                  <motion.button
+                    onClick={async () => {
+                      if (window.confirm('この予定を削除しますか？')) {
+                        try {
+                          await onDelete()
+                          onClose()
+                        } catch (error) {
+                          setError(error instanceof Error ? error.message : '削除に失敗しました')
+                        }
+                      }
+                    }}
+                    className={`
+                      px-4 py-3 rounded-lg font-medium flex items-center gap-2
+                      ${semantic.error.background} ${semantic.error.text}
+                      hover:opacity-80 transition-all duration-200
+                    `}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Trash2 size={18} />
+                    Delete
+                  </motion.button>
+                )}
+                
                 <div className="flex gap-3">
                   <button
                     onClick={onClose}
@@ -562,10 +871,10 @@ export function EssentialSingleView({
                     {isSubmitting ? (
                       <>
                         <Loader2 size={18} className="animate-spin" />
-                        Creating...
+                        {isEditMode ? 'Updating...' : 'Creating...'}
                       </>
                     ) : (
-                      <span>Create</span>
+                      <span>{isEditMode ? 'Update' : 'Create'}</span>
                     )}
                   </motion.button>
                 </div>

@@ -12,6 +12,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 import type { DayViewProps } from './DayView.types'
 import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
+import { useToast } from '@/components/shadcn-ui/toast'
 
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
@@ -41,6 +42,7 @@ export function DayView({
 }: DayViewProps) {
   const { timezone } = useCalendarSettingsStore()
   const { updateEventTime } = useEventStore()
+  const { success } = useToast()
   
   // イベントストアから最新のデータを取得
   const storeEvents = useEventStore(eventSelectors.getEvents)
@@ -66,16 +68,13 @@ export function DayView({
   const handleEventTimeUpdate = React.useCallback(async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
     try {
       await updateEventTime(eventId, updates.startTime, updates.endTime)
-      // 必要に応じて親コンポーネントに通知
-      if (onUpdateEvent) {
-        // イベントが更新されたことを親に通知
-        const updatedEvent = { id: eventId, startDate: updates.startTime, endDate: updates.endTime }
-        onUpdateEvent(eventId, updatedEvent as any)
-      }
+      // ドラッグ&ドロップ後は詳細モーダルを開かない
+      // Toast通知はuseDragAndDropで処理される
+      console.log('Event time updated via drag & drop:', eventId, updates)
     } catch (error) {
       console.error('Failed to update event time:', error)
     }
-  }, [updateEventTime, onUpdateEvent])
+  }, [updateEventTime])
 
   // DayView専用ロジック（ストアから最新のイベントデータを使用）
   const {

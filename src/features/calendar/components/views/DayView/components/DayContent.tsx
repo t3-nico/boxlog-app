@@ -55,10 +55,15 @@ export function DayContent({
     onEmptyClick(date, timeString)
   }, [date, onEmptyClick])
   
-  // イベントクリックハンドラー
+  // イベントクリックハンドラー（ドラッグ後のクリックは無視）
   const handleEventClick = useCallback((event: any) => {
+    // ドラッグ操作中またはドラッグ直後のクリックは無視
+    if (dragState.isDragging || dragState.recentlyDragged) {
+      return
+    }
+    
     onEventClick?.(event)
-  }, [onEventClick])
+  }, [onEventClick, dragState.isDragging, dragState.recentlyDragged])
   
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback((event: any, mouseEvent: React.MouseEvent) => {
