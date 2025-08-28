@@ -5,7 +5,8 @@ import { format, isToday, isWeekend } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { 
   DateDisplay, 
-  CalendarLayoutWithHeader
+  CalendarLayoutWithHeader,
+  HourLines
 } from '../shared'
 import { EventBlock } from '../shared/components/EventBlock'
 import { useThreeDayView } from './hooks/useThreeDayView'
@@ -72,6 +73,41 @@ export function ThreeDayView({
     return threeDayDates
   }, [threeDayDates])
 
+  // ThreeDayView用のシンプルなイベントスタイル計算
+  const eventStyles = useMemo(() => {
+    const styles: Record<string, React.CSSProperties> = {}
+    
+    Object.entries(eventsByDate).forEach(([dateKey, dayEvents]) => {
+      dayEvents.forEach(event => {
+        // イベント位置計算（startDate/endDate を使用）
+        const startDate = event.startDate || new Date()
+        const startHour = startDate.getHours()
+        const startMinute = startDate.getMinutes()
+        const top = (startHour + startMinute / 60) * HOUR_HEIGHT
+        
+        // 高さ計算
+        let height = HOUR_HEIGHT // デフォルト1時間
+        if (event.endDate) {
+          const endHour = event.endDate.getHours()
+          const endMinute = event.endDate.getMinutes()
+          const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
+          height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
+        }
+        
+        styles[event.id] = {
+          position: 'absolute',
+          top: `${top}px`,
+          height: `${height}px`,
+          left: '2px',
+          right: '2px',
+          zIndex: 20
+        }
+      })
+    })
+    
+    return styles
+  }, [eventsByDate, HOUR_HEIGHT])
+
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
   // Scroll to current time on initial render (only if center date is today)
@@ -128,15 +164,13 @@ export function ThreeDayView({
         >
           {/* DayViewと同じ構造：CalendarLayoutWithHeaderの子要素として直接配置 */}
           <div className="relative h-full">
-            {/* 時間グリッド線（全幅に適用） */}
+            {/* 共通の時間グリッド線 */}
             <div className="absolute inset-0 pointer-events-none">
-              {Array.from({ length: 24 }, (_, hour) => (
-                <div
-                  key={hour}
-                  className={`relative ${hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
-                  style={{ height: `${HOUR_HEIGHT}px` }}
-                />
-              ))}
+              <HourLines 
+                startHour={0}
+                endHour={24}
+                hourHeight={HOUR_HEIGHT}
+              />
             </div>
             
             {/* 3日分のカラム */}
@@ -153,34 +187,17 @@ export function ThreeDayView({
                     )}
                     style={{ width: `${100 / displayDates.length}%` }}
                   >
-                  {/* イベント表示 */}
+                  {/* イベント表示 - 共通のeventStylesを使用 */}
                   {dayEvents.map(event => {
-                    // イベント位置計算（startDate/endDate を使用）
-                    const startDate = event.startDate || new Date()
-                    const startHour = startDate.getHours()
-                    const startMinute = startDate.getMinutes()
-                    const top = (startHour + startMinute / 60) * HOUR_HEIGHT
-                    
-                    // 高さ計算
-                    let height = HOUR_HEIGHT // デフォルト1時間
-                    if (event.endDate) {
-                      const endHour = event.endDate.getHours()
-                      const endMinute = event.endDate.getMinutes()
-                      const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
-                      height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
-                    }
+                    const style = eventStyles[event.id]
+                    if (!style) return null
                     
                     return (
                       <div
                         key={event.id}
                         data-event-block
                         className="absolute z-20"
-                        style={{
-                          top: `${top}px`,
-                          height: `${height}px`,
-                          left: '2px',
-                          right: '2px'
-                        }}
+                        style={style}
                       >
                         <EventBlock
                           event={{

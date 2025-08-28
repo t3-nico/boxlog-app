@@ -7,6 +7,7 @@ import { EventBlock, CalendarDragSelection, DateTimeSelection } from '../../shar
 import type { DayContentProps } from '../DayView.types'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
+import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
 
 export function DayContent({
   date,
@@ -25,6 +26,9 @@ export function DayContent({
     date,
     events
   })
+
+  // 時間計算機能
+  const { calculateTimeFromEvent } = useTimeCalculation()
 
   // グローバルマウスイベント処理とカーソル固定
   useEffect(() => {
@@ -67,18 +71,9 @@ export function DayContent({
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
     
-    const rect = e.currentTarget.getBoundingClientRect()
-    const clickY = e.clientY - rect.top
-    
-    // クリック位置から時刻を計算
-    const hourDecimal = clickY / HOUR_HEIGHT
-    const hour = Math.floor(hourDecimal)
-    const minute = Math.round((hourDecimal - hour) * 60 / 15) * 15 // 15分単位に丸める
-    
-    const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-    
+    const { timeString } = calculateTimeFromEvent(e)
     onEmptyClick(date, timeString)
-  }, [date, onEmptyClick])
+  }, [date, onEmptyClick, calculateTimeFromEvent])
   
   // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
   const handleEventClick = useCallback((event: any) => {

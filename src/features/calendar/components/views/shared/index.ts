@@ -60,6 +60,8 @@ export type { EventLayout } from './hooks/useEventLayoutCalculator'
 export { useTimeSlots } from './hooks/useTimeSlots'
 export { useIsToday } from './hooks/useIsToday'
 export { useEventStyles } from './hooks/useEventStyles'
+export { useTimeCalculation } from './hooks/useTimeCalculation'
+export type { TimeCalculationResult, UseTimeCalculationOptions } from './hooks/useTimeCalculation'
 
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'
