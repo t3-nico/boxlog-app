@@ -248,10 +248,6 @@ export function useCalendarLayout(options?: {
           newDate.setMonth(state.currentDate.getMonth() + multiplier)
           break
           
-        case 'schedule':
-          newDate = new Date(state.currentDate)
-          newDate.setDate(state.currentDate.getDate() + (1 * multiplier))
-          break
           
         default:
           newDate = new Date(state.currentDate)
@@ -277,7 +273,6 @@ export function useCalendarLayout(options?: {
     switch (state.viewType) {
       case 'day':
       case 'split-day':
-      case 'schedule':
         break
 
       case '3day': {
@@ -336,7 +331,7 @@ export function useCalendarLayout(options?: {
       day: 'numeric'
     }
 
-    if (state.viewType === 'day' || state.viewType === 'split-day' || state.viewType === 'schedule') {
+    if (state.viewType === 'day' || state.viewType === 'split-day') {
       return state.currentDate.toLocaleDateString('ja-JP', {
         year: 'numeric',
         month: 'long',

@@ -28,11 +28,6 @@ const defaultItems: MobileNavItem[] = [
     icon: <Calendar className="h-5 w-5" />
   },
   {
-    id: 'agenda',
-    label: 'リスト',
-    icon: <List className="h-5 w-5" />
-  },
-  {
     id: 'profile',
     label: 'プロフィール',
     icon: <User className="h-5 w-5" />

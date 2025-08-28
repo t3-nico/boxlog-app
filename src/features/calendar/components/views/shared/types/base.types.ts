@@ -15,7 +15,7 @@ export type ViewDateRange = {
 
 export type Task = any // 既存との互換性のため
 export type TaskRecord = any
-export type CalendarViewType = 'day' | 'week' | 'month' | '3day' | '2week' | 'timeline' | 'schedule' | 'agenda'
+export type CalendarViewType = 'day' | 'week' | 'month' | '3day' | '2week'
 export type CreateTaskInput = any
 export type CreateRecordInput = any
 

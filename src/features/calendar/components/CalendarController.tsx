@@ -7,8 +7,7 @@ import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
-import { TwoWeekView as MonthView } from './views/TwoWeekView'
-import { ScheduleView } from './views/ScheduleView'
+import { TwoWeekView } from './views/TwoWeekView'
 import { CreateEventModal } from '@/features/events/components/create'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { DnDProvider } from '../providers/DnDProvider'
@@ -214,12 +213,19 @@ export function CalendarController({
       return []
     }
     
-    // console.log('🔍 [' + viewType + '] events.length:', events.length)
-    // console.log('🔍 [' + viewType + '] dateRange:', { start: viewDateRange.start.toISOString(), end: viewDateRange.end.toISOString() })
-    
     // 日付範囲を年月日のみで比較するため、時刻をリセット
     const startDateOnly = new Date(viewDateRange.start.getFullYear(), viewDateRange.start.getMonth(), viewDateRange.start.getDate())
     const endDateOnly = new Date(viewDateRange.end.getFullYear(), viewDateRange.end.getMonth(), viewDateRange.end.getDate())
+    
+    if (viewType === '2week') {
+      console.log('🔧 TwoWeekView FilteredEvents Debug:', {
+        viewType,
+        totalEvents: events.length,
+        dateRange: { start: viewDateRange.start.toDateString(), end: viewDateRange.end.toDateString() },
+        startDateOnly: startDateOnly.toDateString(),
+        endDateOnly: endDateOnly.toDateString()
+      })
+    }
     
     const filteredByRange = events.filter(event => {
       // 削除済みイベントを除外
@@ -285,6 +291,18 @@ export function CalendarController({
         type: event.type || 'event' as any
       }
     })
+    
+    if (viewType === '2week') {
+      console.log('🔧 TwoWeekView Filtered Result:', {
+        filteredEventsCount: calendarEvents.length,
+        sampleEvents: calendarEvents.slice(0, 3).map(e => ({
+          id: e.id,
+          title: e.title,
+          startDate: e.startDate.toISOString()
+        }))
+      })
+    }
+    
     return calendarEvents
   }, [events, viewDateRange.start, viewDateRange.end, viewType])
   
@@ -712,10 +730,6 @@ export function CalendarController({
             e.preventDefault()
             handleViewChange('2week')
             break
-          case 'a':
-            e.preventDefault()
-            handleViewChange('schedule')
-            break
         }
       }
     }
@@ -763,30 +777,10 @@ export function CalendarController({
         // 後方互換性のため残す（設定より優先）
         return <WeekView {...commonProps} showWeekends={false} />
       case '2week':
-        return <MonthView {...commonProps} showWeekends={showWeekends} />
+        return <TwoWeekView {...commonProps} showWeekends={showWeekends} />
       case 'month':
-        return <MonthView {...commonProps} />
-      case 'schedule':
-        // CalendarEventをScheduleEventに変換
-        const scheduleEvents = filteredEvents.map(event => ({
-          ...event,
-          endDate: event.endDate || event.startDate, // endDateが必須なので、ない場合はstartDateを使用
-          isAllDay: event.duration >= 1440 || false, // 1440分 = 24時間以上は終日とする
-          attendees: [], // 現在のCalendarEventには参加者情報がないので空配列
-        }))
-        
-        return <ScheduleView 
-          events={scheduleEvents}
-          dateRange={viewDateRange}
-          onEventClick={handleEventClick as any}
-          onEventEdit={(event) => handleEventClick(event as any)}
-          onEventDelete={handleEventDelete}
-          onDateClick={handleCreateEvent}
-          onNavigate={handleNavigate}
-          currentDate={currentDate}
-          showWeekends={showWeekends}
-          displayDays={14}
-        />
+        // MonthViewはまだ実装されていないため、TwoWeekViewを使用
+        return <TwoWeekView {...commonProps} />
       default:
         return <DayView {...commonProps} />
     }

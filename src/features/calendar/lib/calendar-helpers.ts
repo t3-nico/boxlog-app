@@ -11,8 +11,7 @@ export function isValidViewType(view: string): view is CalendarViewType {
     'week',
     'week-no-weekend',
     '2week',
-    'month',
-    'schedule'
+    'month'
   ]
   
   return validTypes.includes(view as CalendarViewType)
@@ -29,8 +28,7 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     'week': 'Week',
     'week-no-weekend': 'Weekdays',
     '2week': '2 Weeks',
-    'month': 'Month',
-    'schedule': 'Schedule'
+    'month': 'Month'
   }
   
   return displayNames[viewType] || viewType
