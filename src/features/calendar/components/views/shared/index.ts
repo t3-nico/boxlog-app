@@ -51,6 +51,12 @@ export { useEventPosition, usePositionedEvents } from './hooks/useEventPosition'
 export { useScrollSync } from './hooks/useScrollSync'
 export { useViewDimensions } from './hooks/useViewDimensions'
 export { useResponsiveHourHeight, useBreakpoint } from './hooks/useResponsiveHourHeight'
+export { useViewEvents } from './hooks/useViewEvents'
+export type { EventPosition } from './hooks/useViewEvents'
+export { useDragAndDrop } from './hooks/useDragAndDrop'
+export type { DragState, DragHandlers } from './hooks/useDragAndDrop'
+export { useEventLayoutCalculator } from './hooks/useEventLayoutCalculator'
+export type { EventLayout } from './hooks/useEventLayoutCalculator'
 
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'
