@@ -22,7 +22,7 @@ import type {
 export function useWeekView({
   startDate,
   events = [],
-  weekStartsOn = 0, // 0: 日曜始まり, 1: 月曜始まり
+  weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
   onEventUpdate
 }: UseWeekViewOptions): UseWeekViewReturn {
   
@@ -33,6 +33,13 @@ export function useWeekView({
     weekStartsOn
   })
   
+  console.log('🔍 [useWeekView] 生成された日付:', {
+    startDate: startDate.toISOString(),
+    weekDates: weekDates.map(d => d.toISOString()),
+    weekDatesKeys: weekDates.map(d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`),
+    weekStartsOn
+  })
+  
   // Phase 3統合フック: 現在期間判定とtodayIndex計算
   const { isCurrentPeriod: isCurrentWeek, todayIndex } = useCurrentPeriod({
     dates: weekDates,
@@ -40,11 +47,30 @@ export function useWeekView({
     weekStartsOn
   })
   
+  console.log('🔍 [useWeekView] イベントデータ:', {
+    eventsCount: events.length,
+    eventsSample: events.slice(0, 3).map(e => ({
+      id: e.id,
+      title: e.title,
+      startDate: e.startDate instanceof Date ? e.startDate.toISOString() : e.startDate,
+      endDate: e.endDate instanceof Date ? e.endDate.toISOString() : e.endDate
+    }))
+  })
+  
   // Phase 3統合フック: イベント日付グループ化（80-90行が1行に！）
   const { eventsByDate } = useEventsByDate({
     dates: weekDates,
     events,
     sortType: 'standard'
+  })
+  
+  console.log('🔍 [useWeekView] グループ化結果:', {
+    eventsByDateKeys: Object.keys(eventsByDate),
+    eventsByDateCounts: Object.entries(eventsByDate).map(([key, events]) => ({
+      key,
+      count: events.length
+    })),
+    totalGroupedEvents: Object.values(eventsByDate).reduce((sum, events) => sum + events.length, 0)
   })
   
   // スクロール処理はScrollableCalendarLayoutに委譲

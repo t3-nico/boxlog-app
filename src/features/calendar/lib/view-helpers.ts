@@ -230,6 +230,14 @@ export function calculateViewDateRange(viewType: CalendarViewType, currentDate: 
       days = eachDayOfInterval({ start, end })
       break
 
+    case '2week':
+      // 2週間表示：現在の週の開始日から2週間分
+      start = startOfWeek(currentDate, { weekStartsOn: 1 }) // 月曜日開始
+      end = addDays(start, 13) // 14日間 (0-13)
+      end.setHours(23, 59, 59, 999) // 終日まで
+      days = eachDayOfInterval({ start, end })
+      break
+
     case 'month':
       start = startOfMonth(currentDate)
       end = endOfMonth(currentDate)
@@ -260,6 +268,8 @@ export function getNextPeriod(viewType: CalendarViewType, currentDate: Date): Da
     case 'week':
     case 'week-no-weekend':
       return addWeeks(currentDate, 1)
+    case '2week':
+      return addWeeks(currentDate, 2) // 2週間進む
     case 'month':
       return addMonths(currentDate, 1)
     default:
@@ -279,6 +289,8 @@ export function getPreviousPeriod(viewType: CalendarViewType, currentDate: Date)
     case 'week':
     case 'week-no-weekend':
       return subWeeks(currentDate, 1)
+    case '2week':
+      return subWeeks(currentDate, 2) // 2週間戻る
     case 'month':
       return subMonths(currentDate, 1)
     default:
