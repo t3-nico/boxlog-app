@@ -62,6 +62,7 @@ export { useIsToday } from './hooks/useIsToday'
 export { useEventStyles } from './hooks/useEventStyles'
 export { useTimeCalculation } from './hooks/useTimeCalculation'
 export type { TimeCalculationResult, UseTimeCalculationOptions } from './hooks/useTimeCalculation'
+export { useGlobalDragCursor } from './hooks/useGlobalDragCursor'
 
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'

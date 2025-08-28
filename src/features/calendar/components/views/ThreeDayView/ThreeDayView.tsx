@@ -6,10 +6,12 @@ import { cn } from '@/lib/utils'
 import { 
   DateDisplay, 
   CalendarLayoutWithHeader,
-  HourLines
+  HourLines,
+  useEventStyles,
+  useEventPosition
 } from '../shared'
-import { EventBlock } from '../shared/components/EventBlock'
 import { useThreeDayView } from './hooks/useThreeDayView'
+import { ThreeDayContent } from './components'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import type { ThreeDayViewProps } from './ThreeDayView.types'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
@@ -73,13 +75,12 @@ export function ThreeDayView({
     return threeDayDates
   }, [threeDayDates])
 
-  // ThreeDayView用のシンプルなイベントスタイル計算
-  const eventStyles = useMemo(() => {
-    const styles: Record<string, React.CSSProperties> = {}
+  // イベント位置計算（共通フック使用）
+  const eventPositions = useMemo(() => {
+    const positions: any[] = []
     
-    Object.entries(eventsByDate).forEach(([dateKey, dayEvents]) => {
+    Object.entries(eventsByDate).forEach(([dateKey, dayEvents], dayIndex) => {
       dayEvents.forEach(event => {
-        // イベント位置計算（startDate/endDate を使用）
         const startDate = event.startDate || new Date()
         const startHour = startDate.getHours()
         const startMinute = startDate.getMinutes()
@@ -94,19 +95,23 @@ export function ThreeDayView({
           height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
         }
         
-        styles[event.id] = {
-          position: 'absolute',
-          top: `${top}px`,
-          height: `${height}px`,
-          left: '2px',
-          right: '2px',
-          zIndex: 20
-        }
+        positions.push({
+          event,
+          top,
+          height,
+          left: 1, // 各カラム内での位置（%）
+          width: 98, // カラム幅の98%を使用
+          zIndex: 20,
+          opacity: 1.0
+        })
       })
     })
     
-    return styles
+    return positions
   }, [eventsByDate, HOUR_HEIGHT])
+  
+  // 共通フック使用してスタイル計算
+  const eventStyles = useEventStyles(eventPositions)
 
   // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
@@ -187,31 +192,28 @@ export function ThreeDayView({
                     )}
                     style={{ width: `${100 / displayDates.length}%` }}
                   >
-                  {/* イベント表示 - 共通のeventStylesを使用 */}
-                  {dayEvents.map(event => {
-                    const style = eventStyles[event.id]
-                    if (!style) return null
-                    
-                    return (
-                      <div
-                        key={event.id}
-                        data-event-block
-                        className="absolute z-20"
-                        style={style}
-                      >
-                        <EventBlock
-                          event={{
-                            ...event,
-                            start: event.startDate || new Date(),
-                            end: event.endDate || new Date()
-                          }}
-                          onClick={() => onEventClick?.(event)}
-                          onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
-                          className="h-full w-full"
-                        />
-                      </div>
-                    )
-                  })}
+                    <ThreeDayContent
+                      date={date}
+                      events={dayEvents}
+                      eventStyles={eventStyles}
+                      onEventClick={onEventClick}
+                      onEventContextMenu={onEventContextMenu}
+                      onEmptyClick={onEmptyClick}
+                      onEventUpdate={onUpdateEvent}
+                      onTimeRangeSelect={(date, startTime, endTime) => {
+                        // 時間範囲選択時の処理（必要に応じて実装）
+                        const startDate = new Date(date)
+                        const [startHour, startMinute] = startTime.split(':').map(Number)
+                        startDate.setHours(startHour, startMinute, 0, 0)
+                        
+                        const endDate = new Date(date)
+                        const [endHour, endMinute] = endTime.split(':').map(Number)
+                        endDate.setHours(endHour, endMinute, 0, 0)
+                        
+                        onCreateEvent?.(startDate, endDate)
+                      }}
+                      className="h-full"
+                    />
                   </div>
                 )
               })}

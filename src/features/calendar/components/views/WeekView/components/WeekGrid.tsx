@@ -4,11 +4,19 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { DateDisplay, CalendarLayoutWithHeader, CalendarDragSelection, DateTimeSelection } from '../../shared'
+import { 
+  DateDisplay, 
+  CalendarLayoutWithHeader, 
+  CalendarDragSelection, 
+  DateTimeSelection,
+  HourLines
+} from '../../shared'
 import { EventBlock } from '../../shared/components/EventBlock'
 import { TimezoneOffset } from '../../shared'
 import { useWeekEvents } from '../hooks/useWeekEvents'
 import type { WeekGridProps } from '../WeekView.types'
+import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
+import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
 /**
@@ -34,8 +42,12 @@ export function WeekGrid({
   timezone,
   className
 }: WeekGridProps) {
-  // 一時的に固定値でデバッグ
-  const HOUR_HEIGHT = 72
+  // レスポンシブな時間高さ（ThreeDayViewと同じパターン）
+  const HOUR_HEIGHT = useResponsiveHourHeight({
+    mobile: 48,
+    tablet: 60,
+    desktop: 72
+  })
   
   // イベント位置計算
   const { eventPositions } = useWeekEvents({
@@ -51,8 +63,10 @@ export function WeekGrid({
     return weekDates
   }, [weekDates])
   
+  // 時間計算機能（共通化）
+  const { calculateTimeFromEvent } = useTimeCalculation()
   
-  // 空き時間クリックハンドラー
+  // 空き時間クリックハンドラー（共通化済みロジックを使用）
   const handleEmptySlotClick = useCallback((
     e: React.MouseEvent<HTMLDivElement>,
     date: Date,
@@ -63,20 +77,9 @@ export function WeekGrid({
       return
     }
     
-    // クリック位置から時刻を計算
-    const rect = e.currentTarget.getBoundingClientRect()
-    const clickY = e.clientY - rect.top
-    
-    // 15分単位でスナップ
-    const totalMinutes = Math.max(0, Math.floor((clickY / HOUR_HEIGHT) * 60))
-    const hours = Math.floor(totalMinutes / 60)
-    const minutes = Math.round((totalMinutes % 60) / 15) * 15
-    
-    // 時刻文字列
-    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-    
+    const { timeString } = calculateTimeFromEvent(e)
     onEmptyClick?.(date, timeString)
-  }, [onEmptyClick])
+  }, [onEmptyClick, calculateTimeFromEvent])
   
   // スクロール処理はScrollableCalendarLayoutに任せる（削除）
   
@@ -127,7 +130,16 @@ export function WeekGrid({
       className={cn('bg-background', className)}
     >
       {/* 7日分のグリッド */}
-      <div className="flex h-full">
+      <div className="flex h-full relative">
+        {/* 共通のグリッド線（ThreeDayViewと同じパターン） */}
+        <div className="absolute inset-0 pointer-events-none">
+          <HourLines 
+            startHour={0}
+            endHour={24}
+            hourHeight={HOUR_HEIGHT}
+          />
+        </div>
+        
         {weekDates.map((date, dayIndex) => {
           const dateKey = format(date, 'yyyy-MM-dd')
           const dayEvents = eventsByDate[dateKey] || []
@@ -146,24 +158,12 @@ export function WeekGrid({
                 className="absolute inset-0 z-10"
                 onTimeRangeSelect={onTimeRangeSelect}
               >
-                {/* クリック可能な背景エリア */}
+                {/* クリック可能な背景エリア（グリッド生成を削除） */}
                 <div
                   className={`absolute inset-0 cursor-pointer`}
                   onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
                   style={{ height: 24 * HOUR_HEIGHT }}
-                >
-                  {/* 時間グリッド背景（23時は下線なし） */}
-                  {Array.from({ length: 24 }, (_, hour) => (
-                    <div
-                      key={hour}
-                      className={cn(
-                        'relative',
-                        hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''
-                      )}
-                      style={{ height: HOUR_HEIGHT }}
-                    />
-                  ))}
-                </div>
+                />
               </CalendarDragSelection>
               
               {/* イベント表示エリア（DayViewと同じパターン） */}

@@ -1,16 +1,26 @@
 'use client'
 
 import React, { useCallback } from 'react'
+import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { space } from '@/config/theme/spacing'
-import { EventBlock, CalendarDragSelection, DateTimeSelection } from '../../shared'
-import type { DayContentProps } from '../DayView.types'
+import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-import { useDragAndDrop } from '../hooks/useDragAndDrop'
-import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
-import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
+import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
+import type { CalendarEvent } from '@/features/events'
 
-export function DayContent({
+interface ThreeDayContentProps {
+  date: Date
+  events: CalendarEvent[]
+  eventStyles: Record<string, React.CSSProperties>
+  onEventClick?: (event: CalendarEvent) => void
+  onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  onEmptyClick?: (date: Date, timeString: string) => void
+  onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => void
+  onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
+  className?: string
+}
+
+export function ThreeDayContent({
   date,
   events,
   eventStyles,
@@ -20,7 +30,7 @@ export function DayContent({
   onEventUpdate,
   onTimeRangeSelect,
   className
-}: DayContentProps) {
+}: ThreeDayContentProps) {
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate,
@@ -33,7 +43,8 @@ export function DayContent({
 
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
-  // 空白クリックハンドラー（現在使用されていない - CalendarDragSelectionが処理）
+
+  // 空白クリックハンドラー
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
     
@@ -42,61 +53,39 @@ export function DayContent({
   }, [date, onEmptyClick, calculateTimeFromEvent])
   
   // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
-  const handleEventClick = useCallback((event: any) => {
-    console.log('DayContent handleEventClick called:', {
-      event: event,
-      isDragging: dragState.isDragging,
-      isResizing: dragState.isResizing,
-      recentlyDragged: dragState.recentlyDragged,
-      hasOnEventClick: !!onEventClick,
-      eventTitle: event.title
-    })
-    
+  const handleEventClick = useCallback((event: CalendarEvent) => {
     // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
     if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
-      console.log('DayContent click ignored - dragging/resizing/recently dragged')
       return
     }
     
-    console.log('DayContent calling onEventClick...') // デバッグ用
     onEventClick?.(event)
   }, [onEventClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
   
   // イベント右クリックハンドラー
-  const handleEventContextMenu = useCallback((event: any, mouseEvent: React.MouseEvent) => {
+  const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
     // ドラッグ操作中またはリサイズ操作中は右クリックを無視
     if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
       return
     }
     onEventContextMenu?.(event, mouseEvent)
   }, [onEventContextMenu, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
-  
-  // 時間グリッドの生成（1時間単位、23時は下線なし）
-  const timeGrid = Array.from({ length: 24 }, (_, hour) => (
-    <div
-      key={hour}
-      className={`relative ${hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
-      style={{ height: HOUR_HEIGHT }}
-    />
-  ))
 
   return (
-    <div className={cn('relative flex-1 bg-background overflow-hidden', className)} data-calendar-grid>
-      {/* 新しいCalendarDragSelectionを使用 */}
+    <div className={cn('relative flex-1 bg-background overflow-hidden h-full', className)} data-calendar-grid>
+      {/* CalendarDragSelectionを使用 */}
       <CalendarDragSelection
         date={date}
         className="absolute inset-0"
-        onTimeRangeSelect={onTimeRangeSelect}
+        onTimeRangeSelect={(startTime, endTime) => onTimeRangeSelect?.(date, startTime, endTime)}
         onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized} // ドラッグ・リサイズ中・直後は背景クリックを無効化
+        disabled={dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized}
       >
-        {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}
+        {/* 背景グリッドはHourLinesがレンダリング済み */}
         <div
-          className={`absolute inset-0`}
+          className="absolute inset-0"
           style={{ height: 24 * HOUR_HEIGHT }}
-        >
-          {timeGrid}
-        </div>
+        />
       </CalendarDragSelection>
       
       {/* イベント表示エリア */}

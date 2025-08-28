@@ -5,12 +5,18 @@ import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
+import { 
+  DateDisplay, 
+  CalendarLayoutWithHeader,
+  HourLines,
+  CalendarDragSelection
+} from '../shared'
 import { EventBlock } from '../shared/components/EventBlock'
 import { useTwoWeekView } from './hooks/useTwoWeekView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import type { TwoWeekViewProps } from './TwoWeekView.types'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
+import { useTimeCalculation } from '../shared/hooks/useTimeCalculation'
 
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
@@ -98,7 +104,10 @@ export function TwoWeekView({
     })
   }, [twoWeekDates, showWeekends])
 
-  // 空き時間クリックハンドラー
+  // 時間計算機能（共通化）
+  const { calculateTimeFromEvent } = useTimeCalculation()
+  
+  // 空き時間クリックハンドラー（共通化済みロジックを使用）
   const handleEmptySlotClick = React.useCallback((
     e: React.MouseEvent<HTMLDivElement>,
     date: Date,
@@ -109,20 +118,9 @@ export function TwoWeekView({
       return
     }
     
-    // クリック位置から時刻を計算
-    const rect = e.currentTarget.getBoundingClientRect()
-    const clickY = e.clientY - rect.top
-    
-    // 15分単位でスナップ
-    const totalMinutes = Math.max(0, Math.floor((clickY / HOUR_HEIGHT) * 60))
-    const hours = Math.floor(totalMinutes / 60)
-    const minutes = Math.round((totalMinutes % 60) / 15) * 15
-    
-    // 時刻文字列
-    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-    
+    const { timeString } = calculateTimeFromEvent(e)
     onEmptyClick?.(date, timeString)
-  }, [onEmptyClick, HOUR_HEIGHT])
+  }, [onEmptyClick, calculateTimeFromEvent])
 
   // 初期スクロールはScrollableCalendarLayoutに委謗
 
@@ -178,7 +176,16 @@ export function TwoWeekView({
             className="h-full"
           >
         {/* 表示日数分のグリッド（週末フィルタリング対応） */}
-        <div className="flex h-full">
+        <div className="flex h-full relative">
+          {/* 共通のグリッド線（ThreeDayView・WeekViewと同じパターン） */}
+          <div className="absolute inset-0 pointer-events-none">
+            <HourLines 
+              startHour={0}
+              endHour={24}
+              hourHeight={HOUR_HEIGHT}
+            />
+          </div>
+          
           {displayDates.map((date, dayIndex) => {
             const dateKey = format(date, 'yyyy-MM-dd')
             const dayEvents = eventsByDate[dateKey] || []
@@ -189,65 +196,74 @@ export function TwoWeekView({
                 className="flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative"
                 style={{ width: `${100 / displayDates.length}%` }}
               >
-                {/* クリック可能な背景エリア */}
-                <div
-                  onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
-                  className="absolute inset-0 z-10 cursor-cell"
+                {/* 新しいCalendarDragSelectionを使用 */}
+                <CalendarDragSelection
+                  date={date}
+                  className="absolute inset-0 z-10"
+                  onTimeRangeSelect={(date, startTime, endTime) => {
+                    // 時間範囲選択時の処理
+                    const startDate = new Date(date)
+                    const [startHour, startMinute] = startTime.split(':').map(Number)
+                    startDate.setHours(startHour, startMinute, 0, 0)
+                    
+                    const endDate = new Date(date)
+                    const [endHour, endMinute] = endTime.split(':').map(Number)
+                    endDate.setHours(endHour, endMinute, 0, 0)
+                    
+                    onCreateEvent?.(startDate, endDate)
+                  }}
+                  onSingleClick={onEmptyClick}
                 >
-                  {/* 時間グリッド背景 */}
-                  <div className="absolute inset-0">
-                    {Array.from({ length: 24 }, (_, hour) => (
-                      <div
-                        key={hour}
-                        className={cn(
-                          hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : '',
-                          'transition-colors hover:bg-primary/5'
-                        )}
-                        style={{ height: `${HOUR_HEIGHT}px` }}
-                        title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
-                      />
-                    ))}
-                  </div>
-                </div>
+                  {/* クリック可能な背景エリア（グリッド生成を削除） */}
+                  <div
+                    className={`absolute inset-0 cursor-cell`}
+                    style={{ height: 24 * HOUR_HEIGHT }}
+                  />
+                </CalendarDragSelection>
                 
-                {/* イベント表示 */}
-                {dayEvents.map(event => {
-                  // 簡単なイベント位置計算（後で改善）
-                  const startHour = parseInt(event.startTime?.split(':')[0] || '0')
-                  const startMinute = parseInt(event.startTime?.split(':')[1] || '0')
-                  const top = (startHour + startMinute / 60) * HOUR_HEIGHT
-                  
-                  // 簡単な高さ計算
-                  let height = HOUR_HEIGHT // デフォルト1時間
-                  if (event.endTime) {
-                    const endHour = parseInt(event.endTime.split(':')[0])
-                    const endMinute = parseInt(event.endTime.split(':')[1])
-                    const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
-                    height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
-                  }
-                  
-                  return (
-                    <div
-                      key={event.id}
-                      data-event-block
-                      className="absolute z-20"
-                      style={{
-                        top: `${top}px`,
-                        height: `${height}px`,
-                        left: '1px',
-                        right: '1px'
-                      }}
-                    >
-                      <EventBlock
-                        event={event}
-                        onClick={() => onEventClick?.(event)}
-                        onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
-                        className="h-full w-full"
-                        compact={true}
-                      />
-                    </div>
-                  )
-                })}
+                {/* イベント表示エリア */}
+                <div className="absolute inset-0 pointer-events-none" style={{ height: 24 * HOUR_HEIGHT }}>
+                  {dayEvents.map(event => {
+                    // startDate/endDateを使用した統一的なイベント位置計算
+                    const startDate = event.startDate || new Date()
+                    const startHour = startDate.getHours()
+                    const startMinute = startDate.getMinutes()
+                    const top = (startHour + startMinute / 60) * HOUR_HEIGHT
+                    
+                    // 高さ計算（統一）
+                    let height = HOUR_HEIGHT // デフォルト1時間
+                    if (event.endDate) {
+                      const endHour = event.endDate.getHours()
+                      const endMinute = event.endDate.getMinutes()
+                      const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
+                      height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
+                    }
+                    
+                    return (
+                      <div
+                        key={event.id}
+                        data-event-block
+                        className="absolute z-20 pointer-events-none"
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                          left: '2px',
+                          right: '2px'
+                        }}
+                      >
+                        <div className="pointer-events-auto h-full w-full">
+                          <EventBlock
+                            event={event}
+                            onClick={() => onEventClick?.(event)}
+                            onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
+                            className="h-full w-full"
+                            compact={true}
+                          />
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )
           })}
