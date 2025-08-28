@@ -73,9 +73,13 @@ export interface TimeRange {
 }
 
 export interface TimeSlot {
-  hour: number
-  minute: number
-  date: Date
+  time: string        // "09:15"
+  hour: number        // 9
+  minute: number      // 15
+  label: string       // "9:00" または "09:15"
+  isHour: boolean     // true if 正時(00分)
+  isHalfHour: boolean // true if 30分
+  isQuarterHour: boolean // true if 15分または45分
 }
 
 export interface GridEvent {

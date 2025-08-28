@@ -1,10 +1,8 @@
-import { useMemo } from 'react'
-import { isToday } from 'date-fns'
-import type { CSSProperties } from 'react'
 import { useDayEvents } from './useDayEvents'
-import type { UseDayViewOptions, UseDayViewReturn, TimeSlot } from '../DayView.types'
-import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-const QUARTER_INTERVAL = 15 // 15分間隔
+import type { UseDayViewOptions, UseDayViewReturn } from '../DayView.types'
+import { useTimeSlots } from '../../shared/hooks/useTimeSlots'
+import { useIsToday } from '../../shared/hooks/useIsToday'
+import { useEventStyles } from '../../shared/hooks/useEventStyles'
 
 export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
   
@@ -12,49 +10,13 @@ export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): 
   const { dayEvents, eventPositions } = useDayEvents({ date, events })
   
   // 今日かどうかの判定
-  const isTodayFlag = useMemo(() => isToday(date), [date])
+  const isTodayFlag = useIsToday(date)
   
   // 時間スロットの生成（0:00-23:45、15分間隔）
-  const timeSlots = useMemo((): TimeSlot[] => {
-    const slots: TimeSlot[] = []
-    
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += QUARTER_INTERVAL) {
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
-        
-        slots.push({
-          time: timeString,
-          hour,
-          minute,
-          label: minute === 0 ? `${hour}:00` : timeString,
-          isHour: minute === 0,
-          isHalfHour: minute === 30,
-          isQuarterHour: minute === 15 || minute === 45
-        })
-      }
-    }
-    
-    return slots
-  }, [])
+  const timeSlots = useTimeSlots()
   
   // イベントのCSSスタイルを計算
-  const eventStyles = useMemo((): Record<string, CSSProperties> => {
-    const styles: Record<string, CSSProperties> = {}
-    
-    eventPositions.forEach(({ event, top, height, left, width, zIndex, opacity }) => {
-      styles[event.id] = {
-        position: 'absolute',
-        top: `${top}px`,
-        height: `${height}px`,
-        left: `${left}%`,
-        width: `${width}%`,
-        zIndex,
-        opacity: opacity || 1.0
-      }
-    })
-    
-    return styles
-  }, [eventPositions])
+  const eventStyles = useEventStyles(eventPositions)
   
   // スクロール処理はScrollableCalendarLayoutに委譲
   

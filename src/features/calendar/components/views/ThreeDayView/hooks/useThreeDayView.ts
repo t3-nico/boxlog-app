@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { 
   addDays, 
   subDays, 
@@ -149,12 +149,16 @@ export function useThreeDayView({
   }, [threeDayDates, events])
   
   // スクロール処理はScrollableCalendarLayoutに委譲
+  const scrollToNow = useCallback(() => {
+    // ScrollableCalendarLayoutが処理するため、ここでは何もしない
+  }, [])
   
   return {
     threeDayDates,
     eventsByDate,
     centerIndex,
     todayIndex,
-    isCurrentDay
+    isCurrentDay,
+    scrollToNow
   }
 }

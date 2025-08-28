@@ -3,14 +3,15 @@
 import React, { useEffect, useMemo } from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
+import { 
+  DateDisplay, 
+  CalendarLayoutWithHeader
+} from '../shared'
 import { EventBlock } from '../shared/components/EventBlock'
 import { useThreeDayView } from './hooks/useThreeDayView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import type { ThreeDayViewProps } from './ThreeDayView.types'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
-
-const TIME_COLUMN_WIDTH = 64 // Width of time column (px)
 
 /**
  * ThreeDayView - 3-day view component
@@ -63,7 +64,6 @@ export function ThreeDayView({
   } = useThreeDayView({
     centerDate: displayCenterDate,
     events,
-    HOUR_HEIGHT,
     showWeekends
   })
   
@@ -72,31 +72,7 @@ export function ThreeDayView({
     return threeDayDates
   }, [threeDayDates])
 
-  // 空き時間クリックハンドラー
-  const handleEmptySlotClick = React.useCallback((
-    e: React.MouseEvent<HTMLDivElement>,
-    date: Date,
-    dayIndex: number
-  ) => {
-    // イベントブロック上のクリックは無視
-    if ((e.target as HTMLElement).closest('[data-event-block]')) {
-      return
-    }
-    
-    // クリック位置から時刻を計算
-    const rect = e.currentTarget.getBoundingClientRect()
-    const clickY = e.clientY - rect.top
-    
-    // 15分単位でスナップ
-    const totalMinutes = Math.max(0, Math.floor((clickY / HOUR_HEIGHT) * 60))
-    const hours = Math.floor(totalMinutes / 60)
-    const minutes = Math.round((totalMinutes % 60) / 15) * 15
-    
-    // 時刻文字列
-    const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
-    
-    onEmptyClick?.(date, timeString)
-  }, [onEmptyClick, HOUR_HEIGHT])
+  // TimeGrid が空き時間クリック処理を担当するため、この関数は不要
 
   // Scroll to current time on initial render (only if center date is today)
   // 初期スクロールはScrollableCalendarLayoutに委譲
@@ -150,82 +126,80 @@ export function ThreeDayView({
           enableKeyboardNavigation={true}
           className="h-full"
         >
-      {/* 表示日数分のグリッド（週末フィルタリング対応） */}
-      <div className="flex h-full">
-        {displayDates.map((date, dayIndex) => {
-          const dateKey = format(date, 'yyyy-MM-dd')
-          const dayEvents = eventsByDate[dateKey] || []
-          
-          return (
-            <div
-              key={date.toISOString()}
-              className={cn(
-                'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative'
-              )}
-              style={{ width: `${100 / 3}%` }}
-            >
-              {/* クリック可能な背景エリア */}
-              <div
-                onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
-                className="absolute inset-0 z-10 cursor-cell"
-              >
-                {/* 時間グリッド背景 */}
-                <div className="absolute inset-0">
-                  {Array.from({ length: 24 }, (_, hour) => (
-                    <div
-                      key={hour}
-                      className={cn(
-                        hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : '',
-                        'transition-colors hover:bg-primary/5'
-                      )}
-                      style={{ height: `${HOUR_HEIGHT}px` }}
-                      title={`${date.toLocaleDateString()} ${hour}:00 - ${hour + 1}:00`}
-                    />
-                  ))}
-                </div>
-              </div>
-              
-              {/* イベント表示 */}
-              {dayEvents.map(event => {
-                // 簡単なイベント位置計算（後で改善）
-                const startHour = parseInt(event.startTime?.split(':')[0] || '0')
-                const startMinute = parseInt(event.startTime?.split(':')[1] || '0')
-                const top = (startHour + startMinute / 60) * HOUR_HEIGHT
-                
-                // 簡単な高さ計算
-                let height = HOUR_HEIGHT // デフォルト1時間
-                if (event.endTime) {
-                  const endHour = parseInt(event.endTime.split(':')[0])
-                  const endMinute = parseInt(event.endTime.split(':')[1])
-                  const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
-                  height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
-                }
+          {/* DayViewと同じ構造：CalendarLayoutWithHeaderの子要素として直接配置 */}
+          <div className="relative h-full">
+            {/* 時間グリッド線（全幅に適用） */}
+            <div className="absolute inset-0 pointer-events-none">
+              {Array.from({ length: 24 }, (_, hour) => (
+                <div
+                  key={hour}
+                  className={`relative ${hour < 23 ? 'border-b border-neutral-900/20 dark:border-neutral-100/20' : ''}`}
+                  style={{ height: `${HOUR_HEIGHT}px` }}
+                />
+              ))}
+            </div>
+            
+            {/* 3日分のカラム */}
+            <div className="flex h-full relative">
+              {displayDates.map((date, dayIndex) => {
+                const dateKey = format(date, 'yyyy-MM-dd')
+                const dayEvents = eventsByDate[dateKey] || []
                 
                 return (
                   <div
-                    key={event.id}
-                    data-event-block
-                    className="absolute z-20"
-                    style={{
-                      top: `${top}px`,
-                      height: `${height}px`,
-                      left: '2px',
-                      right: '2px'
-                    }}
+                    key={date.toISOString()}
+                    className={cn(
+                      'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative'
+                    )}
+                    style={{ width: `${100 / displayDates.length}%` }}
                   >
-                    <EventBlock
-                      event={event}
-                      onClick={() => onEventClick?.(event)}
-                      onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
-                      className="h-full w-full"
-                    />
+                  {/* イベント表示 */}
+                  {dayEvents.map(event => {
+                    // イベント位置計算（startDate/endDate を使用）
+                    const startDate = event.startDate || new Date()
+                    const startHour = startDate.getHours()
+                    const startMinute = startDate.getMinutes()
+                    const top = (startHour + startMinute / 60) * HOUR_HEIGHT
+                    
+                    // 高さ計算
+                    let height = HOUR_HEIGHT // デフォルト1時間
+                    if (event.endDate) {
+                      const endHour = event.endDate.getHours()
+                      const endMinute = event.endDate.getMinutes()
+                      const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
+                      height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
+                    }
+                    
+                    return (
+                      <div
+                        key={event.id}
+                        data-event-block
+                        className="absolute z-20"
+                        style={{
+                          top: `${top}px`,
+                          height: `${height}px`,
+                          left: '2px',
+                          right: '2px'
+                        }}
+                      >
+                        <EventBlock
+                          event={{
+                            ...event,
+                            start: event.startDate || new Date(),
+                            end: event.endDate || new Date()
+                          }}
+                          onClick={() => onEventClick?.(event)}
+                          onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
+                          className="h-full w-full"
+                        />
+                      </div>
+                    )
+                  })}
                   </div>
                 )
               })}
             </div>
-          )
-        })}
-      </div>
+          </div>
         </CalendarLayoutWithHeader>
       </div>
     </div>

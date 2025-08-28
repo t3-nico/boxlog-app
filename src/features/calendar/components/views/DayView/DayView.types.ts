@@ -8,7 +8,7 @@ import type {
   CreateTaskInput,
   CreateRecordInput
 } from '../../../types/calendar.types'
-import type { DateTimeSelection } from '../shared'
+import type { DateTimeSelection, TimeSlot } from '../shared'
 
 // OldDayViewのPropsを統合した完全版
 export interface DayViewProps {
@@ -75,7 +75,6 @@ export interface UseDayViewOptions {
 export interface UseDayViewReturn {
   dayEvents: CalendarEvent[]
   eventStyles: Record<string, CSSProperties>
-  scrollToNow: () => void
   isToday: boolean
   timeSlots: TimeSlot[]
 }
@@ -91,15 +90,6 @@ export interface UseDayEventsReturn {
   maxConcurrentEvents: number
 }
 
-export interface TimeSlot {
-  time: string
-  hour: number
-  minute: number
-  label: string
-  isHour: boolean
-  isHalfHour: boolean
-  isQuarterHour: boolean
-}
 
 export interface EventPosition {
   event: CalendarEvent
