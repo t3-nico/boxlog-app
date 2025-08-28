@@ -15,7 +15,7 @@ import type { WeekViewProps } from './WeekView.types'
  * 
  * @description
  * 構成:
- * 1. shared/header/DateHeaderRow で7日分の日付表示
+ * 1. shared/DateDisplay で7日分の日付表示
  * 2. shared/grid/TimeColumn で時間軸
  * 3. shared/grid/TimeGrid でグリッド
  * 4. 7つの shared/components/DayColumn を横並び
@@ -25,7 +25,7 @@ import type { WeekViewProps } from './WeekView.types'
  * レイアウト:
  * ┌────┬────┬────┬────┬────┬────┬────┬────┐
  * │    │ 17 │ 18 │ 19 │ 20 │ 21 │ 22 │ 23 │
- * │    │ 日 │ 月 │ 火 │ 水 │ 木 │ 金 │ 土 │ ← DateHeaderRow
+ * │    │ 日 │ 月 │ 火 │ 水 │ 木 │ 金 │ 土 │ ← DateDisplay
  * │    │    │    │    │ ● │    │    │    │ ← 今日マーカー
  * ├────┼────┼────┼────┼────┼────┼────┼────┤
  * │ 9  │    │ EV │    │    │ EV │    │    │

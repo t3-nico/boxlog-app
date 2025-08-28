@@ -95,7 +95,7 @@ export interface ThreeDayViewSettings {
 }
 
 // 日付ヘッダーの情報
-export interface ThreeDayDateHeader {
+export interface ThreeDayDateDisplay {
   date: Date
   dayName: string
   dayNumber: number

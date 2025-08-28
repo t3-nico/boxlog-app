@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { DateHeader, CalendarLayoutWithHeader, CalendarDragSelection, DateTimeSelection } from '../../shared'
+import { DateDisplay, CalendarLayoutWithHeader, CalendarDragSelection, DateTimeSelection } from '../../shared'
 import { EventBlock } from '../../shared/components/EventBlock'
 import { TimezoneOffset } from '../../shared'
 import { useWeekEvents } from '../hooks/useWeekEvents'
@@ -89,7 +89,7 @@ export function WeekGrid({
           key={date.toISOString()}
           className="flex-1 flex items-center justify-center px-1"
         >
-          <DateHeader
+          <DateDisplay
             date={date}
             className="text-center"
             showDayName={true}

@@ -127,7 +127,7 @@ export interface WeekViewSettings {
 }
 
 // 日付ヘッダーの情報
-export interface WeekDateHeader {
+export interface WeekDateDisplay {
   date: Date
   dayName: string
   dayNumber: number

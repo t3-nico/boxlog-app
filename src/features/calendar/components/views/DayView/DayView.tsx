@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { DateHeader, CalendarLayoutWithHeader } from '../shared'
+import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
 import { DayContent } from './components/DayContent'
 import { useDayView } from './hooks/useDayView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
@@ -102,7 +102,7 @@ export function DayView({
 
   const headerComponent = (
     <div className="bg-background h-16 flex items-center justify-center px-2">
-      <DateHeader
+      <DateDisplay
         date={date}
         className="text-center"
         showDayName={true}

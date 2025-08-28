@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { DateHeader } from './DateHeader'
-import type { DateHeaderRowProps } from './DateHeader.types'
+import { DateDisplay } from './DateDisplay'
+import type { DateDisplayRowProps } from './DateDisplay.types'
 
-export function DateHeaderRow({
+export function DateDisplayRow({
   dates,
   className,
   selectedDate,
@@ -15,14 +15,14 @@ export function DateHeaderRow({
   dateFormat = 'd',
   onDateClick,
   onDateDoubleClick
-}: DateHeaderRowProps) {
+}: DateDisplayRowProps) {
   return (
     <div className={cn(
       'flex bg-background',
       className
     )}>
       {dates.map((date, index) => (
-        <DateHeader
+        <DateDisplay
           key={date.toISOString()}
           date={date}
           className={cn(

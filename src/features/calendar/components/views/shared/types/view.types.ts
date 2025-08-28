@@ -27,7 +27,7 @@ export interface DayColumnProps {
   className?: string
 }
 
-export interface DayHeaderProps {
+export interface DayDisplayProps {
   date: Date
   isToday?: boolean
   isWeekend?: boolean

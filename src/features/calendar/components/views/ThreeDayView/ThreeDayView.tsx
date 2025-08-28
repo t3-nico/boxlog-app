@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { DateHeader, CalendarLayoutWithHeader } from '../shared'
+import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
 import { EventBlock } from '../shared/components/EventBlock'
 import { useThreeDayView } from './hooks/useThreeDayView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
@@ -109,7 +109,7 @@ export function ThreeDayView({
           key={date.toISOString()}
           className="flex-1 flex items-center justify-center px-1"
         >
-          <DateHeader
+          <DateDisplay
             date={date}
             className="text-center"
             showDayName={true}

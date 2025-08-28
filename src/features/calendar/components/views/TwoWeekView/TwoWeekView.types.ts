@@ -98,7 +98,7 @@ export interface TwoWeekViewSettings {
 }
 
 // 日付ヘッダーの情報
-export interface TwoWeekDateHeader {
+export interface TwoWeekDateDisplay {
   date: Date
   dayName: string
   dayNumber: number

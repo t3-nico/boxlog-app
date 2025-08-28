@@ -3,10 +3,10 @@
 import React from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { cn } from '@/lib/utils'
-import type { DateHeaderProps } from './DateHeader.types'
+import type { DateDisplayProps } from './DateDisplay.types'
 import { primary, secondary, selection } from '@/config/theme/colors'
 
-export function DateHeader({
+export function DateDisplay({
   date,
   className,
   isToday: todayProp,
@@ -17,7 +17,7 @@ export function DateHeader({
   dateFormat = 'd',
   onClick,
   onDoubleClick
-}: DateHeaderProps) {
+}: DateDisplayProps) {
   const today = todayProp ?? isToday(date)
   const weekend = isWeekend(date)
 

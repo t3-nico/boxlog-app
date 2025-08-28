@@ -1,4 +1,4 @@
-export interface DateHeaderProps {
+export interface DateDisplayProps {
   date: Date
   className?: string
   isToday?: boolean
@@ -11,7 +11,7 @@ export interface DateHeaderProps {
   onDoubleClick?: (date: Date) => void
 }
 
-export interface DateHeaderRowProps {
+export interface DateDisplayRowProps {
   dates: Date[]
   className?: string
   selectedDate?: Date
@@ -23,7 +23,7 @@ export interface DateHeaderRowProps {
   onDateDoubleClick?: (date: Date) => void
 }
 
-export interface DateHeaderStyleProps {
+export interface DateDisplayStyleProps {
   isToday: boolean
   isSelected: boolean
   isWeekend?: boolean

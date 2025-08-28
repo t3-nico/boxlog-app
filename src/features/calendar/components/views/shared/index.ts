@@ -40,9 +40,9 @@ export { EmptyState } from './components/EmptyState'
 // TimezoneOffset - タイムゾーン表示
 export { TimezoneOffset } from './components/TimezoneOffset'
 
-// DateHeader - 日付ヘッダー
-export { DateHeader, DateHeaderRow } from './header/DateHeader'
-export type * from './header/DateHeader'
+// DateDisplay - 日付表示
+export { DateDisplay, DateDisplayRow, DayDisplay } from './DateDisplay'
+export type * from './DateDisplay'
 
 // ===== カスタムフック =====
 export { useCurrentTime } from './hooks/useCurrentTime'

@@ -5,7 +5,7 @@ import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { DateHeader, CalendarLayoutWithHeader } from '../shared'
+import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
 import { EventBlock } from '../shared/components/EventBlock'
 import { useTwoWeekView } from './hooks/useTwoWeekView'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
@@ -135,7 +135,7 @@ export function TwoWeekView({
           className="flex-1 flex items-center justify-center px-1"
           style={{ width: `${100 / displayDates.length}%` }}
         >
-          <DateHeader
+          <DateDisplay
             date={date}
             className="text-center"
             showDayName={true}

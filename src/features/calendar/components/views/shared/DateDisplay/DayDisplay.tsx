@@ -5,11 +5,11 @@
 'use client'
 
 import React, { memo } from 'react'
-import { formatDate } from '../../utils/dateHelpers'
-import type { DayHeaderProps } from '../../types/view.types'
+import { formatDate } from '../utils/dateHelpers'
+import type { DayDisplayProps } from '../types/view.types'
 import { primary, secondary, selection } from '@/config/theme/colors'
 
-export const DayHeader = memo<DayHeaderProps>(function DayHeader({
+export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   date,
   isToday = false,
   isWeekend = false,
