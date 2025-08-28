@@ -64,6 +64,14 @@ export { useTimeCalculation } from './hooks/useTimeCalculation'
 export type { TimeCalculationResult, UseTimeCalculationOptions } from './hooks/useTimeCalculation'
 export { useGlobalDragCursor } from './hooks/useGlobalDragCursor'
 
+// Phase 3: 統合カスタムフック
+export { useEventsByDate } from './hooks/useEventsByDate'
+export type { UseEventsByDateOptions, UseEventsByDateReturn } from './hooks/useEventsByDate'
+export { useCurrentPeriod } from './hooks/useCurrentPeriod'
+export type { UseCurrentPeriodOptions, UseCurrentPeriodReturn } from './hooks/useCurrentPeriod'
+export { useDateUtilities } from './hooks/useDateUtilities'
+export type { UseDateUtilitiesOptions, UseDateUtilitiesReturn } from './hooks/useDateUtilities'
+
 // ===== プロバイダー =====
 export { CalendarGridProvider, useCalendarGridVars } from './components/CalendarGridProvider'
 
@@ -77,12 +85,14 @@ export type { PositionedEvent } from './hooks/useEventPosition'
 export * from './utils/gridCalculator'
 export * from './utils/eventPositioning'
 export * from './utils/dateHelpers'
+export * from './utils/eventSorting'
 
 
 // ===== 定数 =====
 export * from './constants/grid.constants'
 
 // ===== 型定義 =====
+export type * from './types/base.types'
 export type * from './types/grid.types'
 export type * from './types/event.types'
 export type * from './types/view.types'

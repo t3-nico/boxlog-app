@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { format, isSameDay } from 'date-fns'
+import { isSameDay } from 'date-fns'
+import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared'
 import type { 
   UseWeekEventsOptions, 
   UseWeekEventsReturn,
@@ -28,13 +29,13 @@ export function useWeekEvents({
     
     // 各日付のキーを初期化
     weekDates.forEach(date => {
-      const dateKey = format(date, 'yyyy-MM-dd')
+      const dateKey = getDateKey(date)
       grouped[dateKey] = []
     })
     
     // イベントを適切な日付に配置
     events.forEach(event => {
-      if (!event.startDate) return
+      if (!isValidEvent(event)) return
       
       const eventStart = event.startDate instanceof Date 
         ? event.startDate 
@@ -46,7 +47,7 @@ export function useWeekEvents({
       // 週の範囲内の日付を確認
       weekDates.forEach(date => {
         if (isSameDay(eventStart, date)) {
-          const dateKey = format(date, 'yyyy-MM-dd')
+          const dateKey = getDateKey(date)
           if (grouped[dateKey]) {
             grouped[dateKey].push(event)
           }
@@ -55,15 +56,7 @@ export function useWeekEvents({
     })
     
     // 各日のイベントを時刻順にソート
-    Object.keys(grouped).forEach(dateKey => {
-      grouped[dateKey].sort((a, b) => {
-        const aTime = a.startDate ? a.startDate.getTime() : 0
-        const bTime = b.startDate ? b.startDate.getTime() : 0
-        return aTime - bTime
-      })
-    })
-    
-    return grouped
+    return sortEventsByDateKeys(grouped)
   }, [weekDates, events])
   
   // イベントの位置情報を計算
@@ -71,7 +64,7 @@ export function useWeekEvents({
     const positions: WeekEventPosition[] = []
     
     weekDates.forEach((date, dayIndex) => {
-      const dateKey = format(date, 'yyyy-MM-dd')
+      const dateKey = getDateKey(date)
       const dayEvents = eventsByDate[dateKey] || []
       
       // その日のイベントの重なりを検出

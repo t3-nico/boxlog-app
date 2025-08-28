@@ -8,7 +8,7 @@ import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView as MonthView } from './views/TwoWeekView'
-import { AgendaView } from './views/AgendaView'
+import { ScheduleView } from './views/ScheduleView'
 import { CreateEventModal } from '@/features/events/components/create'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { DnDProvider } from '../providers/DnDProvider'
@@ -767,7 +767,26 @@ export function CalendarController({
       case 'month':
         return <MonthView {...commonProps} />
       case 'schedule':
-        return <AgendaView {...commonProps} />
+        // CalendarEventをScheduleEventに変換
+        const scheduleEvents = filteredEvents.map(event => ({
+          ...event,
+          endDate: event.endDate || event.startDate, // endDateが必須なので、ない場合はstartDateを使用
+          isAllDay: event.duration >= 1440 || false, // 1440分 = 24時間以上は終日とする
+          attendees: [], // 現在のCalendarEventには参加者情報がないので空配列
+        }))
+        
+        return <ScheduleView 
+          events={scheduleEvents}
+          dateRange={viewDateRange}
+          onEventClick={handleEventClick as any}
+          onEventEdit={(event) => handleEventClick(event as any)}
+          onEventDelete={handleEventDelete}
+          onDateClick={handleCreateEvent}
+          onNavigate={handleNavigate}
+          currentDate={currentDate}
+          showWeekends={showWeekends}
+          displayDays={14}
+        />
       default:
         return <DayView {...commonProps} />
     }

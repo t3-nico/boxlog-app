@@ -1,44 +1,10 @@
-import type { CalendarEvent } from '@/features/events'
-import type { 
-  ViewDateRange, 
-  Task, 
-  TaskRecord, 
-  CalendarViewType,
-  CreateTaskInput,
-  CreateRecordInput
-} from '../../../types/calendar.types'
+import type { BaseViewProps, CalendarEvent } from '../shared'
 
-// AgendaViewのメインProps
-export interface AgendaViewProps {
-  dateRange: ViewDateRange
-  tasks: Task[]
-  events: CalendarEvent[]
-  currentDate: Date
+// AgendaViewの固有Props（BaseViewPropsを継承して95%削減）
+export interface AgendaViewProps extends BaseViewProps {
   startDate?: Date // 表示開始日（指定がない場合はdateRange.startを使用）
   endDate?: Date // 表示終了日（指定がない場合は30日後）
   groupByDate?: boolean // 日付グループ化（デフォルト: true）
-  className?: string
-  
-  // Event handlers
-  onTaskClick?: (task: any) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
-  onEmptyClick?: (date: Date, time: string) => void
-  
-  // Task handlers
-  onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreateTaskInput) => void
-  onCreateRecord?: (record: CreateRecordInput) => void
-  
-  // Navigation handlers
-  onViewChange?: (viewType: CalendarViewType) => void
-  onNavigatePrev?: () => void
-  onNavigateNext?: () => void
-  onNavigateToday?: () => void
 }
 
 // useAgendaViewフックのオプション

@@ -1,17 +1,13 @@
 import { useMemo, useCallback } from 'react'
 import { 
-  addDays, 
-  subDays, 
-  isToday, 
-  isSameDay, 
-  format 
-} from 'date-fns'
-import { ja } from 'date-fns/locale'
+  useEventsByDate,
+  useCurrentPeriod,
+  useDateUtilities
+} from '../../shared'
 import type { 
   UseThreeDayViewOptions, 
   UseThreeDayViewReturn 
 } from '../ThreeDayView.types'
-import type { CalendarEvent } from '@/features/events'
 
 /**
  * ThreeDayView専用のロジックを管理するフック
@@ -29,124 +25,28 @@ export function useThreeDayView({
   showWeekends = true
 }: UseThreeDayViewOptions & { showWeekends?: boolean }): UseThreeDayViewReturn {
   
-  // 3日間の日付を生成（centerDateを中心に前後1日）
-  const threeDayDates = useMemo(() => {
-    // centerDateを正規化（時刻をリセット）
-    const center = new Date(centerDate)
-    center.setHours(0, 0, 0, 0)
-    
-    if (showWeekends) {
-      // 週末表示ON: 従来通りの連続3日間
-      const yesterday = subDays(center, 1)
-      const tomorrow = addDays(center, 1)
-      return [yesterday, center, tomorrow]
-    } else {
-      // 週末表示OFF: 平日のみ3日間
-      const dates: Date[] = []
-      let currentDate = new Date(center)
-      
-      // 中央の日付から開始して、平日を前後に収集
-      dates.push(new Date(currentDate))
-      
-      // 前の平日を1日分収集
-      let prevDate = new Date(currentDate)
-      let prevCount = 0
-      while (prevCount < 1) {
-        prevDate = subDays(prevDate, 1)
-        if (prevDate.getDay() !== 0 && prevDate.getDay() !== 6) { // 平日のみ
-          dates.unshift(new Date(prevDate))
-          prevCount++
-        }
-      }
-      
-      // 次の平日を1日分収集
-      let nextDate = new Date(currentDate)
-      let nextCount = 0
-      while (nextCount < 1) {
-        nextDate = addDays(nextDate, 1)
-        if (nextDate.getDay() !== 0 && nextDate.getDay() !== 6) { // 平日のみ
-          dates.push(new Date(nextDate))
-          nextCount++
-        }
-      }
-      
-      return dates
-    }
-  }, [centerDate, showWeekends])
+  // Phase 3統合フック: 3日間の日付を生成（centerDateを中心に前後1日）
+  const { dates: threeDayDates } = useDateUtilities({
+    referenceDate: centerDate,
+    viewType: 'threeday',
+    showWeekends
+  })
+  
+  // Phase 3統合フック: 現在期間判定とtodayIndex計算、相対インデックス計算
+  const { isCurrentPeriod: isCurrentDay, todayIndex, relativeDayIndex } = useCurrentPeriod({
+    dates: threeDayDates,
+    periodType: 'threeday'
+  })
   
   // 中央の日付のインデックス（常に1）
   const centerIndex = 1
   
-  // 今日が3日間の中のどこにあるかを計算（-1 if not in range）
-  const todayIndex = useMemo(() => {
-    const today = new Date()
-    return threeDayDates.findIndex(date => isSameDay(date, today))
-  }, [threeDayDates])
-  
-  // 中央の日付が今日かどうか
-  const isCurrentDay = useMemo(() => {
-    return isToday(threeDayDates[centerIndex])
-  }, [threeDayDates, centerIndex])
-  
-  // イベントを日付ごとにグループ化
-  const eventsByDate = useMemo(() => {
-    const grouped: Record<string, CalendarEvent[]> = {}
-    
-    // 各日付のキーを初期化
-    threeDayDates.forEach(date => {
-      const dateKey = format(date, 'yyyy-MM-dd')
-      grouped[dateKey] = []
-    })
-    
-    // イベントを適切な日付に配置
-    events.forEach(event => {
-      if (!event.startDate) return
-      
-      const eventStart = event.startDate instanceof Date 
-        ? event.startDate 
-        : new Date(event.startDate)
-      
-      // 無効な日付は除外
-      if (isNaN(eventStart.getTime())) return
-      
-      // マルチデイイベントの場合は複数日にまたがって表示
-      if (event.isMultiDay && event.endDate) {
-        const eventEnd = event.endDate instanceof Date 
-          ? event.endDate 
-          : new Date(event.endDate)
-        
-        if (!isNaN(eventEnd.getTime())) {
-          // 3日間の範囲内の日付のみ処理
-          threeDayDates.forEach(date => {
-            if (date >= eventStart && date <= eventEnd) {
-              const dateKey = format(date, 'yyyy-MM-dd')
-              if (grouped[dateKey]) {
-                grouped[dateKey].push(event)
-              }
-            }
-          })
-          return
-        }
-      }
-      
-      // 単日イベントの場合
-      const dateKey = format(eventStart, 'yyyy-MM-dd')
-      if (grouped[dateKey]) {
-        grouped[dateKey].push(event)
-      }
-    })
-    
-    // 各日のイベントを時刻順にソート
-    Object.keys(grouped).forEach(dateKey => {
-      grouped[dateKey].sort((a, b) => {
-        const aTime = a.startDate ? a.startDate.getTime() : 0
-        const bTime = b.startDate ? b.startDate.getTime() : 0
-        return aTime - bTime
-      })
-    })
-    
-    return grouped
-  }, [threeDayDates, events])
+  // Phase 3統合フック: イベント日付グループ化（60-80行が1行に！）
+  const { eventsByDate } = useEventsByDate({
+    dates: threeDayDates,
+    events,
+    sortType: 'standard'
+  })
   
   // スクロール処理はScrollableCalendarLayoutに委譲
   const scrollToNow = useCallback(() => {

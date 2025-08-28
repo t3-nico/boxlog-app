@@ -173,3 +173,45 @@ export function addMinutes(date: Date, minutes: number): Date {
   result.setMinutes(result.getMinutes() + minutes)
   return result
 }
+
+/**
+ * 日付キー生成（yyyy-MM-dd形式）
+ * 全ビューで共通使用
+ */
+export function getDateKey(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * イベントの妥当性をチェック
+ */
+export function isValidEvent(event: any): boolean {
+  if (!event.startDate) return false
+  
+  const eventStart = event.startDate instanceof Date 
+    ? event.startDate 
+    : new Date(event.startDate)
+    
+  return !isNaN(eventStart.getTime())
+}
+
+/**
+ * イベントの日付を正規化（DateまたはstringをDateに変換）
+ */
+export function normalizeEventDate(eventDate: Date | string): Date | null {
+  if (!eventDate) return null
+  
+  const date = eventDate instanceof Date ? eventDate : new Date(eventDate)
+  return isNaN(date.getTime()) ? null : date
+}
+
+/**
+ * 今日のインデックスを取得（日付配列内での位置）
+ */
+export function getTodayIndex(dates: Date[]): number {
+  const today = new Date()
+  return dates.findIndex(date => isSameDay(date, today))
+}

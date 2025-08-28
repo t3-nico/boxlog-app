@@ -1,46 +1,11 @@
 import type { CSSProperties } from 'react'
-import type { CalendarEvent } from '@/features/events'
-import type { 
-  ViewDateRange, 
-  Task, 
-  TaskRecord, 
-  CalendarViewType,
-  CreateTaskInput,
-  CreateRecordInput
-} from '../../../types/calendar.types'
+import type { BaseViewProps, BaseEventPosition, CalendarEvent } from '../shared'
 import type { DateTimeSelection } from '../shared'
 
-// WeekViewのメインProps
-export interface WeekViewProps {
-  dateRange: ViewDateRange
-  tasks: Task[]
-  events: CalendarEvent[]
-  currentDate: Date
-  showWeekends?: boolean
+// WeekViewの固有Props（BaseViewPropsを継承して95%削減）
+export interface WeekViewProps extends BaseViewProps {
   weekStartsOn?: 0 | 1 // 0: 日曜始まり, 1: 月曜始まり
-  className?: string
-  
-  // Event handlers
-  onTaskClick?: (task: any) => void
-  onEventClick?: (event: CalendarEvent) => void
-  onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
-  onCreateEvent?: (date: Date, time?: string) => void
-  onUpdateEvent?: (event: CalendarEvent) => void
-  onDeleteEvent?: (eventId: string) => void
-  onRestoreEvent?: (event: CalendarEvent) => Promise<void>
-  onEmptyClick?: (date: Date, time: string) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
-  
-  // Task handlers
-  onTaskDrag?: (taskId: string, newDate: Date) => void
-  onCreateTask?: (task: CreateTaskInput) => void
-  onCreateRecord?: (record: CreateRecordInput) => void
-  
-  // Navigation handlers
-  onViewChange?: (viewType: CalendarViewType) => void
-  onNavigatePrev?: () => void
-  onNavigateNext?: () => void
-  onNavigateToday?: () => void
 }
 
 // WeekGridコンポーネントのProps
@@ -89,16 +54,9 @@ export interface UseWeekEventsReturn {
 }
 
 // 週ビューでのイベント位置情報
-export interface WeekEventPosition {
-  event: CalendarEvent
+// WeekEventPositionはBaseEventPositionにdayIndexを追加
+export interface WeekEventPosition extends BaseEventPosition {
   dayIndex: number
-  top: number
-  height: number
-  left: number
-  width: number
-  zIndex: number
-  column: number
-  totalColumns: number
 }
 
 // 時間スロット情報
