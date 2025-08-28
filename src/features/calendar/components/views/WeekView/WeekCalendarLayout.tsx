@@ -98,8 +98,6 @@ export function WeekCalendarLayout({
   
   // Undoハンドラー（削除を元に戻す）
   const handleUndoDelete = useCallback(async (restoredEvent: any) => {
-    console.log('🔄 Restoring event:', restoredEvent.title)
-    
     // 上位コンポーネントに復元を委譲
     if (onRestoreEvent) {
       await onRestoreEvent(restoredEvent)

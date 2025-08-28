@@ -41,19 +41,20 @@ export function CalendarDragSelection({
   disabled = false
 }: CalendarDragSelectionProps) {
   
-  console.log('🟢 CalendarDragSelection マウント:', {
-    date: date.toDateString(),
-    disabled,
-    hasOnTimeRangeSelect: !!onTimeRangeSelect,
-    hasOnSingleClick: !!onSingleClick,
-    className
-  })
   // ドラッグ選択の状態
   const [isSelecting, setIsSelecting] = useState(false)
   const [selection, setSelection] = useState<TimeRange | null>(null)
   const [selectionStart, setSelectionStart] = useState<{ hour: number; minute: number } | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
+  
+  // 状態をクリアするヘルパー関数
+  const clearSelectionState = () => {
+    setIsSelecting(false)
+    setSelection(null)
+    setSelectionStart(null)
+    isDragging.current = false
+  }
   
   // 時間をフォーマットするヘルパー関数
   const formatTime = (hour: number, minute: number): string => {
@@ -78,11 +79,6 @@ export function CalendarDragSelection({
 
   // マウスダウン開始
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    console.log('🔴 handleMouseDown呼び出し:', {
-      disabled,
-      button: e.button,
-      target: (e.target as HTMLElement).tagName
-    })
     
     // 無効化されている場合は何もしない
     if (disabled) {
@@ -95,15 +91,8 @@ export function CalendarDragSelection({
     // イベントブロック上のクリックは無視
     const target = e.target as HTMLElement
     const eventBlock = target.closest('[data-event-block]')
-    console.log('🔍 クリック対象チェック:', {
-      targetTag: target.tagName,
-      targetClass: target.className,
-      hasEventBlock: !!eventBlock,
-      eventBlockData: eventBlock?.getAttribute('data-event-block')
-    })
     
     if (eventBlock) {
-      console.log('🚫 イベントブロック上のクリック - CalendarDragSelection無視')
       return
     }
     
@@ -112,11 +101,6 @@ export function CalendarDragSelection({
     
     const startTime = pixelsToTime(y)
     
-    console.log('🟦 ドラッグ開始:', {
-      マウスY座標: e.clientY,
-      計算された時間: startTime,
-      フォーマット済み: `${startTime.hour}:${String(startTime.minute).padStart(2, '0')}`
-    })
     
     setSelectionStart(startTime)
     setSelection({
@@ -184,11 +168,7 @@ export function CalendarDragSelection({
     const handleGlobalMouseUp = () => {
       // 無効化されている場合は何もしない
       if (disabled) {
-        console.log('❌ CalendarDragSelection が無効 - マウスアップ無視')
-        setIsSelecting(false)
-        setSelection(null)
-        setSelectionStart(null)
-        isDragging.current = false
+        clearSelectionState()
         return
       }
       
@@ -203,46 +183,47 @@ export function CalendarDragSelection({
             endMinute: selection.endMinute
           }
           
-          console.log('🟥 ドラッグ終了:', {
-            開始時間: selectionStart,
-            終了時間: selection,
-            開始フォーマット: `${selectionStart?.hour}:${String(selectionStart?.minute).padStart(2, '0')}`,
-            終了フォーマット: `${selection.endHour}:${String(selection.endMinute).padStart(2, '0')}`,
-            最終選択範囲: `${selection.startHour}:${String(selection.startMinute).padStart(2, '0')} → ${selection.endHour}:${String(selection.endMinute).padStart(2, '0')}`
-          })
           
           onTimeRangeSelect(dateTimeSelection)
         } else if (!isDragging.current && onSingleClick && selectionStart) {
           // ドラッグしなかった場合：単一クリック
           const timeString = formatTime(selectionStart.hour, selectionStart.minute)
           
-          console.log('🟨 単一クリック:', {
-            クリック時間: selectionStart,
-            フォーマット済み: timeString
-          })
           
           onSingleClick(date, timeString)
         }
       }
 
-      setIsSelecting(false)
-      setTimeout(() => {
-        setSelection(null)
-        setSelectionStart(null)
-        setTimeout(() => {
-          isDragging.current = false
-        }, 50)
-      }, 100)
+      clearSelectionState()
+    }
+
+    // Escキーでドラッグをキャンセル
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        clearSelectionState()
+      }
     }
 
     document.addEventListener('mousemove', handleGlobalMouseMove)
     document.addEventListener('mouseup', handleGlobalMouseUp)
+    document.addEventListener('keydown', handleKeyDown)
 
     return () => {
       document.removeEventListener('mousemove', handleGlobalMouseMove)
       document.removeEventListener('mouseup', handleGlobalMouseUp)
+      document.removeEventListener('keydown', handleKeyDown)
     }
   }, [isSelecting, selectionStart, selection, pixelsToTime, onTimeRangeSelect, date])
+
+  // モーダルキャンセル時のカスタムイベントリスナー
+  useEffect(() => {
+    const handleCalendarDragCancel = () => {
+      clearSelectionState()
+    }
+    
+    window.addEventListener('calendar-drag-cancel', handleCalendarDragCancel)
+    return () => window.removeEventListener('calendar-drag-cancel', handleCalendarDragCancel)
+  }, [])
 
   // 選択範囲のスタイルを計算
   const selectionStyle: React.CSSProperties | null = selection ? (() => {

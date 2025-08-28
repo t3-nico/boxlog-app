@@ -30,6 +30,8 @@ interface EssentialSingleViewProps {
     priority?: 'low' | 'medium' | 'high'
     status?: 'backlog' | 'scheduled'
   }) => Promise<void>
+  onDelete?: () => Promise<void>
+  isEditMode?: boolean
   initialData?: {
     title?: string
     date?: Date
@@ -50,12 +52,6 @@ export function EssentialSingleView({
   initialData 
 }: EssentialSingleViewProps) {
   
-  console.log('🔷 EssentialSingleView 初期化:', {
-    初期データ開始: initialData?.date,
-    初期データ終了: initialData?.endDate,
-    フォーマット開始: initialData?.date?.toLocaleTimeString(),
-    フォーマット終了: initialData?.endDate?.toLocaleTimeString()
-  })
   // 2択式シンプルモード（最速入力と詳細予定のみ）
   type ScheduleMode = 'defer' | 'schedule' // 後で決める | 今すぐ予定する
   
@@ -169,7 +165,6 @@ export function EssentialSingleView({
         prev.endDate?.getTime() !== initialData.endDate?.getTime()
       
       if (hasChanged) {
-        console.log('🔄 Updating form with new initialData:', initialData)
         
         if (initialData.title !== undefined) {
           setTitle(initialData.title)
@@ -291,6 +286,13 @@ export function EssentialSingleView({
     return colors[Math.abs(hash) % colors.length]
   }
 
+  // モーダルキャンセル時の処理（ドラッグ選択をクリア）
+  const handleCancel = () => {
+    // カスタムイベントを発行してドラッグ選択状態をクリア
+    window.dispatchEvent(new CustomEvent('calendar-drag-cancel'))
+    onClose()
+  }
+
   // 保存処理
   const handleSave = useCallback(async () => {
     if (!isValid) return
@@ -368,7 +370,7 @@ export function EssentialSingleView({
       if (!isOpen) return
 
       if (e.key === 'Escape') {
-        onClose()
+        handleCancel()
         return
       }
 
@@ -425,7 +427,7 @@ export function EssentialSingleView({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, isValid, onClose, handleSave, scheduleMode, handleScheduleModeChange])
+  }, [isOpen, isValid, handleCancel, handleSave, scheduleMode, handleScheduleModeChange])
 
   // スマート抽出のハンドリング
   const handleSmartExtract = (extracted: {
@@ -462,7 +464,7 @@ export function EssentialSingleView({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={onClose}
+            onClick={handleCancel}
           />
 
           {/* メインカード */}
@@ -572,7 +574,7 @@ export function EssentialSingleView({
                 </div>
                 
                 <button
-                  onClick={onClose}
+                  onClick={handleCancel}
                   className={`
                     p-2 rounded-lg transition-colors duration-200
                     hover:${background.surface} ${text.secondary}
@@ -851,7 +853,7 @@ export function EssentialSingleView({
                 
                 <div className="flex gap-3">
                   <button
-                    onClick={onClose}
+                    onClick={handleCancel}
                     className={`
                       px-6 py-3 rounded-lg font-medium
                       ${background.surface} ${text.secondary}

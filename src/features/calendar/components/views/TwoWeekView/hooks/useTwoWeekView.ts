@@ -21,6 +21,7 @@ import type {
 export function useTwoWeekView({
   startDate,
   events = [],
+  weekStartsOn = 1, // デフォルトは月曜始まり
   onEventUpdate
 }: UseTwoWeekViewOptions): UseTwoWeekViewReturn {
   
@@ -28,18 +29,20 @@ export function useTwoWeekView({
   const { dates: twoWeekDates } = useDateUtilities({
     referenceDate: startDate,
     viewType: 'twoweek',
-    weekStartsOn: 1 // 月曜始まり
+    weekStartsOn // WeekViewと統一
   })
+  
   
   // Phase 3統合フック: 現在期間判定とtodayIndex計算、週インデックス計算
   const { isCurrentPeriod: isCurrentTwoWeeks, todayIndex } = useCurrentPeriod({
     dates: twoWeekDates,
     periodType: 'twoweek',
-    weekStartsOn: 1
+    weekStartsOn // WeekViewと統一
   })
   
   // 今日がある週のインデックス（0: 第1週, 1: 第2週）
   const currentWeekIndex = todayIndex === -1 ? -1 : Math.floor(todayIndex / 7)
+  
   
   // Phase 3統合フック: イベント日付グループ化（80-90行が1行に！）
   const { eventsByDate } = useEventsByDate({
@@ -47,6 +50,7 @@ export function useTwoWeekView({
     events,
     sortType: 'standard'
   })
+  
   
   // スクロール処理はScrollableCalendarLayoutに委譲
   const scrollToToday = useCallback(() => {

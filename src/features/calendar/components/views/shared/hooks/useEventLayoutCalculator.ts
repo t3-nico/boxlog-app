@@ -199,11 +199,6 @@ function isOverlapping(event1: CalendarEvent, event2: CalendarEvent): boolean {
   
   const isOverlap = start1 < end2 && start2 < end1
   
-  console.log(`🔄 重複判定:`, {
-    event1: { id: event1.id, title: event1.title, start: start1, end: end1 },
-    event2: { id: event2.id, title: event2.title, start: start2, end: end2 },
-    結果: isOverlap
-  })
   
   return isOverlap
 }
@@ -219,14 +214,6 @@ function calculateMaxConcurrent(events: CalendarEvent[]): number {
     const start = new Date(event.start)
     const end = new Date(event.end)
     
-    console.log(`📅 イベント時間処理:`, {
-      eventId: event.id,
-      title: event.title,
-      originalStart: event.start,
-      originalEnd: event.end,
-      processedStart: start,
-      processedEnd: end
-    })
     
     timePoints.push({ time: start, type: 'start', eventId: event.id })
     timePoints.push({ time: end, type: 'end', eventId: event.id })
@@ -242,15 +229,6 @@ function calculateMaxConcurrent(events: CalendarEvent[]): number {
   let current = 0
   let max = 0
   
-  console.log('🔍 同時重複数計算:', {
-    イベント数: events.length,
-    イベントタイトル: events.map(e => e.title),
-    時間ポイント: timePoints.map(p => ({
-      時刻: p.time.toLocaleTimeString(),
-      タイプ: p.type,
-      イベントID: p.eventId
-    }))
-  })
   
   timePoints.forEach((point, index) => {
     if (point.type === 'start') {

@@ -45,18 +45,11 @@ export function DragSelectionLayer({
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     // イベントブロック上のクリックは無視
     const target = e.target as HTMLElement
-    console.log('🖱️ マウスダウン試行', { 
-      target: target.tagName, 
-      classList: target.classList.toString(),
-      hasEventBlock: !!target.closest('[data-event-block]')
-    })
     
     if (target.closest('[data-event-block]')) {
-      console.log('🚫 イベントブロック上のクリックなのでスキップ')
       return
     }
     
-    console.log('✅ マウスダウン開始')
     
     const rect = e.currentTarget.getBoundingClientRect()
     const y = e.clientY - rect.top
@@ -84,7 +77,6 @@ export function DragSelectionLayer({
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!containerRef.current || !selectionStart) return
       
-      console.log('🖱️ ドラッグ中')
       
       const rect = containerRef.current.getBoundingClientRect()
       const y = e.clientY - rect.top
@@ -125,12 +117,10 @@ export function DragSelectionLayer({
         endMinute: Math.min(59, endMinute)
       }
       
-      console.log('🔄 選択範囲更新', { newSelection })
       setSelection(newSelection)
     }
 
     const handleGlobalMouseUp = () => {
-      console.log('🖱️ マウスアップ', { selection, isDragging: isDragging.current, hasCallback: !!onTimeRangeSelect })
       
       if (selection && isDragging.current) {
         const startTotalMinutes = selection.startHour * 60 + selection.startMinute

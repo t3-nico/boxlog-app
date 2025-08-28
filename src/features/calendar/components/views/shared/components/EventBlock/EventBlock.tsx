@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import { EventContent } from './EventContent'
 import { useEventPosition } from '../../hooks/useEventPosition'
 import { MIN_EVENT_HEIGHT, Z_INDEX, TRANSITION_DURATION } from '../../constants/grid.constants'
@@ -86,6 +86,21 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       onDragEnd?.(event)
     }
   }
+  
+  // Escキーでドラッグをキャンセル
+  useEffect(() => {
+    if (!isDragging) return
+    
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        // ドラッグ状態をリセット（親コンポーネントに委ねる）
+        onDragEnd?.(event)
+      }
+    }
+    
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isDragging, onDragEnd, event])
   
   // 状態に応じたスタイルを決定
   const eventState = isDragging ? 'dragging' : isSelected ? 'selected' : isHovered ? 'hovered' : 'default'

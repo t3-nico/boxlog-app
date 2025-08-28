@@ -3,7 +3,6 @@
 import React, { useEffect } from 'react'
 import { useCreateModalStore, useCreateModalKeyboardShortcuts } from '../../stores/useCreateModalStore'
 import { EssentialSingleView } from './EssentialSingleView'
-// import { EssentialEditView } from '../edit/EssentialEditView' // 統一UIでEssentialSingleViewを使用
 import { useCreateEvent } from '../../hooks/useCreateEvent'
 import type { CreateEventRequest } from '../../types/events'
 import { useTagStore } from '@/features/tags/stores/tag-store'
@@ -24,14 +23,6 @@ export function CreateEventModal() {
   const { handleKeyDown } = useCreateModalKeyboardShortcuts()
   const { getTagsByIds } = useTagStore()
   
-  console.log('🟩 モーダルが受け取った:', {
-    受け取った開始: initialData.startDate,
-    受け取った終了: initialData.endDate,
-    フォーマット開始: initialData.startDate?.toLocaleTimeString(),
-    フォーマット終了: initialData.endDate?.toLocaleTimeString(),
-    コンテキスト日付: context.date,
-    ソース: context?.source
-  })
 
   // EssentialCreateに渡すデータの変換
   const convertedInitialData = {
@@ -46,27 +37,23 @@ export function CreateEventModal() {
     })) : [] // 既存のtagIdsからタグ情報を変換
   }
   
-  console.log('🟪 フォーム初期値変換後:', {
-    変換後開始: convertedInitialData.date,
-    変換後終了: convertedInitialData.endDate,
-    フォーマット開始: convertedInitialData.date.toLocaleTimeString(),
-    フォーマット終了: convertedInitialData.endDate?.toLocaleTimeString()
-  })
   
   
   
   // デバッグ用ログ
   useEffect(() => {
     if (isOpen) {
-      console.log('📅 CreateEventModal opened with data:', {
-        initialData,
-        context,
-        convertedInitialData
-      })
     }
   }, [isOpen, initialData, context])
   
   
+  // モーダルキャンセル時の処理
+  const handleCancel = () => {
+    // カスタムイベントを発行してドラッグ選択状態をクリア
+    window.dispatchEvent(new CustomEvent('calendar-drag-cancel'))
+    closeModal()
+  }
+
   const handleSave = async (data: {
     title: string
     date: Date
@@ -74,12 +61,6 @@ export function CreateEventModal() {
     tags: { id: string; name: string; color: string }[]
     description?: string
   }) => {
-    console.log('⚪ API送信データ準備:', {
-      フォームから受け取った開始: data.date,
-      フォームから受け取った終了: data.endDate,
-      フォーマット開始: data.date.toLocaleTimeString(),
-      フォーマット終了: data.endDate.toLocaleTimeString()
-    })
     
     // EssentialSingleViewのデータをCreateEventRequestに変換
     const createRequest: CreateEventRequest = {
@@ -99,12 +80,6 @@ export function CreateEventModal() {
       tagIds: data.tags.map(tag => tag.id)
     }
     
-    console.log('⚪ 最終API送信データ:', {
-      送信開始: createRequest.startDate,
-      送信終了: createRequest.endDate,
-      フォーマット開始: createRequest.startDate.toLocaleTimeString(),
-      フォーマット終了: createRequest.endDate.toLocaleTimeString()
-    })
     
     if (isEditMode && editingEventId) {
       // 編集モード：既存イベントを更新
