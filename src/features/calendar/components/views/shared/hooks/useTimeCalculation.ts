@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { format } from 'date-fns'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface TimeCalculationResult {
@@ -79,8 +80,65 @@ export function useTimeCalculation({
     return calculateTimeFromY(clickY)
   }, [calculateTimeFromY])
   
+  /**
+   * 終日イベントかどうかを判定
+   * @param startDate 開始日時
+   * @param endDate 終了日時（オプション）
+   * @returns 終日イベントの場合true
+   */
+  const isAllDayEvent = useCallback((startDate: Date, endDate?: Date | null): boolean => {
+    if (!startDate) return false
+    
+    const start = startDate instanceof Date ? startDate : new Date(startDate)
+    if (isNaN(start.getTime())) return false
+    
+    // 開始時刻が0:00で、終了時刻が23:59または設定されていない場合は終日と判定
+    const isStartMidnight = start.getHours() === 0 && start.getMinutes() === 0
+    
+    if (!endDate) {
+      return isStartMidnight
+    }
+    
+    const end = endDate instanceof Date ? endDate : new Date(endDate)
+    if (isNaN(end.getTime())) return isStartMidnight
+    
+    const isEndLateNight = end.getHours() === 23 && end.getMinutes() >= 59
+    const isEndMidnight = end.getHours() === 0 && end.getMinutes() === 0
+    
+    return isStartMidnight && (isEndLateNight || isEndMidnight)
+  }, [])
+  
+  /**
+   * 時間範囲をフォーマットする
+   * @param startDate 開始日時
+   * @param endDate 終了日時（オプション）
+   * @returns フォーマットされた時間範囲文字列
+   */
+  const formatTimeRange = useCallback((startDate: Date, endDate?: Date | null): string => {
+    if (!startDate) return 'No time set'
+    
+    const start = startDate instanceof Date ? startDate : new Date(startDate)
+    if (isNaN(start.getTime())) return 'No time set'
+    
+    const startTime = format(start, 'HH:mm')
+    
+    if (!endDate) {
+      return startTime
+    }
+    
+    const end = endDate instanceof Date ? endDate : new Date(endDate)
+    if (isNaN(end.getTime())) {
+      return startTime
+    }
+    
+    const endTime = format(end, 'HH:mm')
+    return `${startTime} - ${endTime}`
+  }, [])
+  
   return {
     calculateTimeFromY,
-    calculateTimeFromEvent
+    calculateTimeFromEvent,
+    isAllDayEvent,
+    formatTimeRange
   }
 }

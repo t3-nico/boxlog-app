@@ -3,34 +3,36 @@
 import React, { useCallback } from 'react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor } from '../../shared'
+import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor, useEventStyles } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 import type { CalendarEvent } from '@/features/events'
 
-interface ThreeDayContentProps {
+interface WeekContentProps {
   date: Date
   events: CalendarEvent[]
-  eventStyles: Record<string, React.CSSProperties>
+  eventPositions: any[] // WeekEventPosition[]
   onEventClick?: (event: CalendarEvent) => void
   onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
-  onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => void
+  onEventUpdate?: (event: CalendarEvent) => void
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   className?: string
+  dayIndex: number // 週内での日付インデックス（0-6）
 }
 
-export function ThreeDayContent({
+export function WeekContent({
   date,
   events,
-  eventStyles,
+  eventPositions,
   onEventClick,
   onEventContextMenu,
   onEmptyClick,
   onEventUpdate,
   onTimeRangeSelect,
-  className
-}: ThreeDayContentProps) {
+  className,
+  dayIndex
+}: WeekContentProps) {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
@@ -65,6 +67,23 @@ export function ThreeDayContent({
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
+  // この日のイベント位置をuseEventStylesで変換
+  const dayEventPositions = React.useMemo(() => {
+    return eventPositions
+      .filter(pos => pos.dayIndex === dayIndex)
+      .map(pos => ({
+        event: pos.event,
+        top: pos.top,
+        height: pos.height,
+        left: 2, // 列内での位置（px）
+        width: 96, // 列幅の96%使用
+        zIndex: pos.zIndex,
+        opacity: 1.0
+      }))
+  }, [eventPositions, dayIndex])
+
+  const eventStyles = useEventStyles(dayEventPositions)
+
   // 空白クリックハンドラー
   const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
@@ -97,7 +116,7 @@ export function ThreeDayContent({
       {/* CalendarDragSelectionを使用 */}
       <CalendarDragSelection
         date={date}
-        className="absolute inset-0"
+        className="absolute inset-0 z-10"
         onTimeRangeSelect={(startTime, endTime) => onTimeRangeSelect?.(date, startTime, endTime)}
         onSingleClick={onEmptyClick}
         disabled={dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized}
@@ -184,6 +203,9 @@ export function ThreeDayContent({
                   isDragging={isDragging}
                   isResizing={isResizingThis}
                   previewTime={(isDragging || isResizingThis) ? dragState.previewTime : null}
+                  showTime={true}
+                  showDuration={true}
+                  variant="week"
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

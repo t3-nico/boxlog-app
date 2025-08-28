@@ -5,6 +5,7 @@ import { format, isToday } from 'date-fns'
 import { Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/shadcn-ui/button'
+import { DateDisplay } from '../../shared'
 import { AgendaEventItem } from './AgendaEventItem'
 import type { AgendaDayGroupProps } from '../AgendaView.types'
 
@@ -42,17 +43,20 @@ export function AgendaDayGroup({
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span 
+            {/* 統一されたDateDisplayを使用 */}
+            <DateDisplay
+              date={date}
+              showDayName={true}
+              showMonthYear={false}
+              dayNameFormat="long"
+              dateFormat="MMM d"
+              isToday={todayFlag}
+              isSelected={false}
               className={cn(
                 'text-lg font-medium',
                 todayFlag ? 'text-primary' : 'text-foreground'
               )}
-            >
-              {format(date, 'MMM d')}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {format(date, 'EEEE')}
-            </span>
+            />
             {events.length > 0 && (
               <span className="text-xs text-muted-foreground">
                 {events.length} events

@@ -4,6 +4,7 @@ import React from 'react'
 import { format } from 'date-fns'
 import { Clock, MapPin, Calendar } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
 import type { AgendaEventItemProps } from '../AgendaView.types'
 
 /**
@@ -26,7 +27,10 @@ export function AgendaEventItem({
   showDate = false,
   className
 }: AgendaEventItemProps) {
-  // 時間範囲の表示テキストを生成
+  // 共通の時間計算機能を使用
+  const { formatTimeRange, isAllDayEvent } = useTimeCalculation()
+  
+  // 時間範囲の表示テキストを生成（共通化）
   const timeRange = React.useMemo(() => {
     if (!event.startDate) return 'No time set'
     
@@ -36,30 +40,14 @@ export function AgendaEventItem({
     
     if (isNaN(start.getTime())) return 'No time set'
     
-    // 終日イベントの判定
-    const isAllDay = start.getHours() === 0 && start.getMinutes() === 0 &&
-      (!event.endDate || 
-        (event.endDate instanceof Date ? event.endDate : new Date(event.endDate)).getHours() === 23)
-    
-    if (isAllDay) {
+    // 共通の判定を使用
+    if (isAllDayEvent(start, event.endDate)) {
       return 'All day'
     }
     
-    const startTime = format(start, 'HH:mm')
-    
-    if (event.endDate) {
-      const end = event.endDate instanceof Date 
-        ? event.endDate 
-        : new Date(event.endDate)
-      
-      if (!isNaN(end.getTime())) {
-        const endTime = format(end, 'HH:mm')
-        return `${startTime} - ${endTime}`
-      }
-    }
-    
-    return startTime
-  }, [event.startDate, event.endDate])
+    // 共通のフォーマット機能を使用
+    return formatTimeRange(start, event.endDate)
+  }, [event.startDate, event.endDate, formatTimeRange, isAllDayEvent])
   
   // イベントの色を取得
   const eventColor = event.color || '#3b82f6'

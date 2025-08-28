@@ -38,13 +38,11 @@ export interface DayDisplayProps {
 }
 
 export interface EmptyStateProps {
-  message?: string
+  title?: string
   description?: string
-  icon?: React.ReactNode
-  action?: {
-    label: string
-    onClick: () => void
-  }
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>> | React.ReactNode
+  actions?: React.ReactNode
+  hint?: string
   className?: string
 }
 

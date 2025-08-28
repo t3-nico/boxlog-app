@@ -5,6 +5,7 @@ import { format } from 'date-fns'
 import { Calendar, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/shadcn-ui/button'
+import { EmptyState } from '../../shared'
 import type { AgendaEmptyStateProps } from '../AgendaView.types'
 
 /**
@@ -48,27 +49,12 @@ export function AgendaEmptyState({
   }
   
   return (
-    <div className={cn(
-      'agenda-empty-state flex flex-col items-center justify-center',
-      'py-16 px-8 text-center',
-      className
-    )}>
-      {/* アイコン */}
-      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-        <Calendar className="w-8 h-8 text-muted-foreground" />
-      </div>
-      
-      {/* メッセージ */}
-      <h3 className="text-lg font-medium text-foreground mb-2">
-        No events
-      </h3>
-      <p className="text-muted-foreground mb-6 max-w-md">
-        No events are scheduled for {periodText}.
-        Add new events to manage your schedule.
-      </p>
-      
-      {/* アクションボタン */}
-      {onCreateEvent && (
+    <EmptyState
+      icon={Calendar}
+      title="No events"
+      description={`No events are scheduled for ${periodText}. Add new events to manage your schedule.`}
+      className={className}
+      actions={onCreateEvent ? (
         <div className="flex flex-col sm:flex-row gap-3">
           <Button
             onClick={handleCreateToday}
@@ -90,14 +76,8 @@ export function AgendaEmptyState({
             </Button>
           )}
         </div>
-      )}
-      
-      {/* 追加のヒント */}
-      <div className="mt-8 text-xs text-muted-foreground max-w-sm">
-        <p>
-          💡 Tip: You can also add events by clicking on empty time slots in the calendar
-        </p>
-      </div>
-    </div>
+      ) : undefined}
+      hint="💡 Tip: You can also add events by clicking on empty time slots in the calendar"
+    />
   )
 }

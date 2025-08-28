@@ -25,15 +25,20 @@ export const HourLines = memo<HourLinesProps>(function HourLines({
   
   return (
     <div className={`absolute inset-0 pointer-events-none ${className}`}>
-      {hours.map((hour) => (
-        <div
-          key={hour.hour}
-          className={`absolute w-full border-t ${HOUR_LINE_COLOR}`}
-          style={{
-            top: `${hour.position}px`
-          }}
-        />
-      ))}
+      {hours.map((hour) => {
+        // 0時間目（1時の上の部分）の境界線はスキップ
+        if (hour.hour === startHour) return null
+        
+        return (
+          <div
+            key={hour.hour}
+            className={`absolute w-full border-t ${HOUR_LINE_COLOR}`}
+            style={{
+              top: `${hour.position}px`
+            }}
+          />
+        )
+      })}
     </div>
   )
 })

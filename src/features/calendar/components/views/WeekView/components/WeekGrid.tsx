@@ -1,23 +1,18 @@
 'use client'
 
-import React, { useRef, useEffect, useCallback } from 'react'
+import React from 'react'
 import { format, isToday, isWeekend } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { 
   DateDisplay, 
-  CalendarLayoutWithHeader, 
-  CalendarDragSelection, 
-  DateTimeSelection,
+  CalendarLayoutWithHeader,
   HourLines
 } from '../../shared'
-import { EventBlock } from '../../shared/components/EventBlock'
-import { TimezoneOffset } from '../../shared'
 import { useWeekEvents } from '../hooks/useWeekEvents'
+import { WeekContent } from './WeekContent'
 import type { WeekGridProps } from '../WeekView.types'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
-import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
-const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
 /**
  * WeekGrid - 週表示のメイングリッドコンポーネント
@@ -63,25 +58,6 @@ export function WeekGrid({
     return weekDates
   }, [weekDates])
   
-  // 時間計算機能（共通化）
-  const { calculateTimeFromEvent } = useTimeCalculation()
-  
-  // 空き時間クリックハンドラー（共通化済みロジックを使用）
-  const handleEmptySlotClick = useCallback((
-    e: React.MouseEvent<HTMLDivElement>,
-    date: Date,
-    dayIndex: number
-  ) => {
-    // イベントブロック上のクリックは無視
-    if ((e.target as HTMLElement).closest('[data-event-block]')) {
-      return
-    }
-    
-    const { timeString } = calculateTimeFromEvent(e)
-    onEmptyClick?.(date, timeString)
-  }, [onEmptyClick, calculateTimeFromEvent])
-  
-  // スクロール処理はScrollableCalendarLayoutに任せる（削除）
   
   
   const headerComponent = (
@@ -152,60 +128,21 @@ export function WeekGrid({
               )}
               style={{ width: `${100 / 7}%` }}
             >
-              {/* 新しいCalendarDragSelectionを使用 */}
-              <CalendarDragSelection
+              <WeekContent
                 date={date}
-                className="absolute inset-0 z-10"
-                onTimeRangeSelect={onTimeRangeSelect}
-              >
-                {/* クリック可能な背景エリア（グリッド生成を削除） */}
-                <div
-                  className={`absolute inset-0 cursor-pointer`}
-                  onClick={(e) => handleEmptySlotClick(e, date, dayIndex)}
-                  style={{ height: 24 * HOUR_HEIGHT }}
-                />
-              </CalendarDragSelection>
-              
-              {/* イベント表示エリア（DayViewと同じパターン） */}
-              <div className="relative w-full pointer-events-none" style={{ height: 24 * HOUR_HEIGHT }}>
-                {dayEvents.map(event => {
-                  const position = eventPositions.find(pos => 
-                    pos.event.id === event.id && pos.dayIndex === dayIndex
-                  )
-                  
-                  if (!position) return null
-                  
-                  return (
-                    <div
-                      key={event.id}
-                      className="absolute pointer-events-none"
-                      data-event-block="true"
-                      style={{
-                        top: `${position.top}px`,
-                        height: `${position.height}px`,
-                        left: '2px',
-                        right: '2px'
-                      }}
-                    >
-                      {/* EventBlockの内容部分のみクリック可能 */}
-                      <div 
-                        className="pointer-events-auto m-1 h-[calc(100%-8px)]"
-                        onClick={() => onEventClick?.(event)}
-                      >
-                        <EventBlock
-                          event={event}
-                          onClick={undefined} // 親のonClickを使用
-                          onContextMenu={onEventContextMenu ? (e) => onEventContextMenu(event, e) : undefined}
-                          showTime={true}
-                          showDuration={true}
-                          variant="week"
-                          className="h-full w-full cursor-pointer hover:shadow-md transition-shadow pointer-events-none"
-                        />
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+                events={dayEvents}
+                eventPositions={eventPositions}
+                onEventClick={onEventClick}
+                onEventContextMenu={onEventContextMenu}
+                onEmptyClick={onEmptyClick}
+                onEventUpdate={onEventUpdate}
+                onTimeRangeSelect={(date, startTime, endTime) => {
+                  // 時間範囲選択時の処理
+                  onTimeRangeSelect?.(date, startTime, endTime)
+                }}
+                className="h-full"
+                dayIndex={dayIndex}
+              />
             </div>
           )
         })}
