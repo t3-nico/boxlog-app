@@ -308,7 +308,7 @@ export function ScrollableCalendarLayout({
         <div 
           ref={scrollContainerRef}
           className={cn(
-            'flex-1 overflow-y-auto overflow-x-hidden relative custom-scrollbar scroll-performance',
+            'flex-1 overflow-y-auto overflow-x-visible relative custom-scrollbar scroll-performance',
             enableKeyboardNavigation && 'focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2'
           )}
           onClick={handleGridClick}
@@ -364,7 +364,7 @@ export function ScrollableCalendarLayout({
             )}
             
             {/* グリッドコンテンツエリア */}
-            <div className="flex-1 relative">
+            <div className="flex-1 relative overflow-visible">
               {/* メインコンテンツ */}
               {children}
               

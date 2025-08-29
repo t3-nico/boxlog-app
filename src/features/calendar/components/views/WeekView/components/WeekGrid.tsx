@@ -14,6 +14,7 @@ import { useWeekEvents } from '../hooks/useWeekEvents'
 import { WeekContent } from './WeekContent'
 import type { WeekGridProps } from '../WeekView.types'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
+import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
 /**
  * WeekGrid - 週表示のメイングリッドコンポーネント
@@ -107,7 +108,7 @@ export function WeekGrid({
       className={cn('bg-background', className)}
     >
       {/* 7日分のグリッド */}
-      <div className="flex h-full relative">
+      <div className="flex h-full relative overflow-visible">
         {/* 共通のグリッド線（ThreeDayViewと同じパターン） */}
         <div className="absolute inset-0 pointer-events-none">
           <HourLines 
@@ -123,16 +124,17 @@ export function WeekGrid({
           
           console.log('🔧 WeekGrid日付処理:', {
             date: date.toDateString(),
+            dayOfWeek: date.getDay(), // 0=日曜, 1=月曜, 2=火曜, 3=水曜...
+            dayIndex,
             dateKey,
-            dayEventsCount: dayEvents.length,
-            availableKeys: Object.keys(eventsByDate)
+            dayEventsCount: dayEvents.length
           })
           
           return (
             <div
               key={date.toISOString()}
               className={cn(
-                'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative'
+                'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative overflow-visible'
               )}
               style={{ width: `${100 / 7}%` }}
             >
@@ -144,9 +146,15 @@ export function WeekGrid({
                 onEventContextMenu={onEventContextMenu}
                 onEmptyClick={onEmptyClick}
                 onEventUpdate={onEventUpdate}
-                onTimeRangeSelect={(date, startTime, endTime) => {
-                  // 時間範囲選択時の処理
-                  onTimeRangeSelect?.(date, startTime, endTime)
+                onTimeRangeSelect={(selection) => {
+                  // 時間範囲選択時の処理: そのまま渡す（DayViewと同じ方式）
+                  console.log('🔧 WeekGrid: 直接渡し:', {
+                    selectionDate: selection.date.toDateString(),
+                    startHour: selection.startHour,
+                    startMinute: selection.startMinute
+                  })
+                  
+                  onTimeRangeSelect?.(selection)
                 }}
                 className="h-full"
                 dayIndex={dayIndex}

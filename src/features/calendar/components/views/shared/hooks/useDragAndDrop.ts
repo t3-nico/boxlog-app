@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useState, useCallback, useRef } from 'react'
+import { format } from 'date-fns'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { calendarColors } from '@/features/calendar/theme'
+import { formatTimeRange } from '../utils/dateHelpers'
 import useCalendarToast from '@/features/calendar/lib/toast'
 
 export interface DragState {
@@ -16,7 +18,7 @@ export interface DragState {
   previewTime: { start: Date; end: Date } | null
   recentlyDragged: boolean // ドラッグ終了直後のクリック防止用
   recentlyResized: boolean // リサイズ終了直後のクリック防止用（より厳格）
-  ghostElement: HTMLElement | null // ゴースト要素
+  dragElement: HTMLElement | null // ドラッグ要素（position: fixed）
   targetDateIndex?: number // ドラッグ先の日付インデックス（日付間移動用）
   originalDateIndex?: number // ドラッグ元の日付インデックス
 }
@@ -69,35 +71,42 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
     originalElement: HTMLElement | null // 元の要素への参照
     originalDateIndex: number // ドラッグ開始時の日付インデックス
     columnWidth?: number // カラムの幅（日付間移動用）
+    dragElement?: HTMLElement | null // position: fixed ドラッグ要素
+    initialRect?: DOMRect | null // 初期位置情報
   } | null>(null)
 
-  // ゴースト要素作成
-  const createGhostElement = useCallback((originalElement: HTMLElement, originalPosition: { top: number; left: number; width: number; height: number }) => {
-    const ghost = originalElement.cloneNode(true) as HTMLElement
+  // ドラッグ要素作成（position: fixed で自由移動）
+  const createDragElement = useCallback((originalElement: HTMLElement) => {
+    const rect = originalElement.getBoundingClientRect()
+    const dragElement = originalElement.cloneNode(true) as HTMLElement
     
-    // 元のクラスをクリアして、scheduledのactiveカラーを適用
-    ghost.className = ''
-    ghost.classList.add('rounded-md', 'shadow-sm', 'px-2', 'py-1', 'overflow-hidden')
+    // 元のクラスをクリアして、draggingスタイルを適用
+    dragElement.className = ''
+    dragElement.classList.add('rounded-md', 'shadow-lg', 'px-2', 'py-1', 'overflow-hidden')
     
     // scheduledのactiveカラーを適用（colors.tsから参照）
     const activeColorClasses = calendarColors.event.scheduled.active?.split(' ') || []
     activeColorClasses.forEach(cls => {
-      if (cls) ghost.classList.add(cls)
+      if (cls) dragElement.classList.add(cls)
     })
     
-    // ゴーストのスタイル設定（元の位置に固定）
-    ghost.style.position = 'absolute'
-    ghost.style.top = `${originalPosition.top}px`
-    ghost.style.left = `${originalPosition.left}%`
-    ghost.style.width = `${originalPosition.width}%`
-    ghost.style.height = `${originalPosition.height}px`
-    ghost.style.opacity = '0.6'
-    ghost.style.pointerEvents = 'none'
-    ghost.style.zIndex = '500' // ドラッグ要素より低い
-    ghost.style.transition = 'none'
-    ghost.classList.add('event-ghost')
+    // 重要: position: fixed で画面全体を基準に配置（親要素の制約を無視）
+    dragElement.style.position = 'fixed'
+    dragElement.style.left = `${rect.left}px`
+    dragElement.style.top = `${rect.top}px`
+    dragElement.style.width = `${rect.width}px`
+    dragElement.style.height = `${rect.height}px`
+    dragElement.style.opacity = '0.9'
+    dragElement.style.pointerEvents = 'none' // マウスイベントを透過
+    dragElement.style.zIndex = '9999' // 最上位レイヤー
+    dragElement.style.transition = 'none'
+    dragElement.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)'
+    dragElement.classList.add('dragging-element')
     
-    return ghost
+    // bodyに追加（親要素の制約を受けない）
+    document.body.appendChild(dragElement)
+    
+    return { dragElement, initialRect: rect }
   }, [])
 
   // ドラッグ開始
@@ -136,19 +145,16 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       }
     }
     
-    // ゴースト要素作成
-    let ghostElement: HTMLElement | null = null
+    // ドラッグ要素作成（position: fixed）
+    let dragElement: HTMLElement | null = null
+    let initialRect: DOMRect | null = null
     if (originalElement) {
-      ghostElement = createGhostElement(originalElement, originalPosition)
+      const result = createDragElement(originalElement)
+      dragElement = result.dragElement
+      initialRect = result.initialRect
       
-      // カレンダーグリッドの親要素にゴーストを挿入
-      const calendarGrid = originalElement.closest('[data-calendar-grid]') || originalElement.closest('.absolute.inset-0')
-      if (calendarGrid) {
-        const eventArea = calendarGrid.querySelector('.absolute.inset-0:last-child')
-        if (eventArea) {
-          eventArea.appendChild(ghostElement)
-        }
-      }
+      // 元の要素を半透明に
+      originalElement.style.opacity = '0.3'
     }
     
     // ドラッグデータを設定
@@ -161,7 +167,9 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       hasMoved: false,
       originalElement,
       originalDateIndex: dateIndex,
-      columnWidth
+      columnWidth,
+      dragElement,
+      initialRect
     }
 
     setDragState({
@@ -177,11 +185,11 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       previewTime: null,
       recentlyDragged: false,
       recentlyResized: false,
-      ghostElement,
+      dragElement,
       originalDateIndex: dateIndex,
       targetDateIndex: dateIndex
     })
-  }, [createGhostElement, viewMode])
+  }, [createDragElement, viewMode])
 
   // 15分単位でスナップする関数
   const snapToQuarterHour = useCallback((yPosition: number): { snappedTop: number; hour: number; minute: number } => {
@@ -273,19 +281,40 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       const newTop = dragData.originalTop + deltaY
       const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
       
-      // 水平方向の位置計算（日付をまたぐ時のみ）
-      let snappedLeft = undefined // デフォルトは元の位置を維持
+      // 水平方向の位置計算（常に現在のターゲット日付位置を表示）
+      let snappedLeft = undefined
       
-      if (viewMode !== 'day' && displayDates && targetDateIndex !== dragData.originalDateIndex) {
-        // 異なる日付に移動した場合のみ、その日付位置にスナップ
+      if (viewMode !== 'day' && displayDates) {
+        // 常に現在のターゲット日付位置を計算
         const columnWidthPercent = 100 / displayDates.length
         snappedLeft = targetDateIndex * columnWidthPercent + 1 // 1%のマージン
         
-        console.log('🔧 日付間移動 - 水平移動実行:', {
-          originalDateIndex: dragData.originalDateIndex,
-          targetDateIndex,
-          columnWidthPercent,
-          snappedLeft
+        // デバッグログは日付が変わった時のみ
+        if (targetDateIndex !== dragData.originalDateIndex) {
+          console.log('🔧 日付間移動 - 水平移動実行:', {
+            originalDateIndex: dragData.originalDateIndex,
+            targetDateIndex,
+            columnWidthPercent,
+            snappedLeft
+          })
+        }
+      }
+      
+      // position: fixed でドラッグ要素を直接移動
+      if (dragData.dragElement && dragData.initialRect) {
+        const newLeft = dragData.initialRect.left + deltaX
+        const newTop = dragData.initialRect.top + deltaY
+        
+        dragData.dragElement.style.left = `${newLeft}px`
+        dragData.dragElement.style.top = `${newTop}px`
+        
+        console.log('🎯 ドラッグ要素移動:', {
+          deltaX,
+          deltaY,
+          newLeft,
+          newTop,
+          originalLeft: dragData.initialRect.left,
+          originalTop: dragData.initialRect.top
         })
       }
       
@@ -316,12 +345,27 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       
       const currentPosition = { x: e.clientX, y: e.clientY }
       
+      // ドラッグ要素の時間表示を直接更新
+      if (dragData.dragElement) {
+        const timeElement = dragData.dragElement.querySelector('.event-time')
+        if (timeElement) {
+          const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h')
+          timeElement.textContent = formattedTimeRange
+          
+          console.log('🕐 ドラッグ要素時間更新:', {
+            formattedTimeRange,
+            start: previewStartTime.toLocaleTimeString(),
+            end: previewEndTime.toLocaleTimeString()
+          })
+        }
+      }
+      
       setDragState(prev => ({
         ...prev,
         currentPosition,
         snappedPosition: { 
           top: snappedTop, 
-          ...(snappedLeft !== undefined && { left: snappedLeft }) // 他の日付への移動時のみleftを設定
+          left: snappedLeft // 常に現在のターゲット日付位置を表示
         },
         previewTime: { start: previewStartTime, end: previewEndTime },
         targetDateIndex
@@ -331,9 +375,14 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
 
   // ドラッグ終了
   const handleMouseUp = useCallback(() => {
-    // ゴースト要素のクリーンアップ
-    if (dragState.ghostElement && dragState.ghostElement.parentElement) {
-      dragState.ghostElement.parentElement.removeChild(dragState.ghostElement)
+    // ドラッグ要素のクリーンアップ
+    if (dragState.dragElement) {
+      dragState.dragElement.remove()
+    }
+    
+    // 元の要素の透明度を戻す
+    if (dragDataRef.current?.originalElement) {
+      dragDataRef.current.originalElement.style.opacity = '1'
     }
 
     if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current || !dragState.currentPosition || !dragState.dragStartPosition) {
@@ -348,7 +397,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
         previewTime: null,
         recentlyDragged: false,
         recentlyResized: false,
-        ghostElement: null
+        dragElement: null
       })
       dragDataRef.current = null
       return
@@ -423,7 +472,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
         previewTime: null,
         recentlyDragged: actuallyResized, // 実際にリサイズした場合のみクリック無効化
         recentlyResized: actuallyResized, // リサイズ専用フラグ（より厳格）
-        ghostElement: null
+        dragElement: null
       })
       
       dragDataRef.current = null
