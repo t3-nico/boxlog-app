@@ -86,6 +86,7 @@ export * from './utils/gridCalculator'
 export * from './utils/eventPositioning'
 export * from './utils/dateHelpers'
 export * from './utils/eventSorting'
+export * from './utils/eventGhost'
 
 
 // ===== 定数 =====

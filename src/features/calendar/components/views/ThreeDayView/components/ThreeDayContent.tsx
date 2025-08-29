@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor } from '../../shared'
+import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 import type { CalendarEvent } from '@/features/events'
@@ -122,28 +122,8 @@ export function ThreeDayContent({
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
           
-          // ドラッグ・リサイズ中の位置調整（15分単位スナッピング）
-          let adjustedStyle = { ...style }
-          if (dragState.snappedPosition && (isDragging || isResizingThis)) {
-            if (isDragging) {
-              // ドラッグ中：マウスに追従して移動
-              adjustedStyle = {
-                ...adjustedStyle,
-                top: `${dragState.snappedPosition.top}px`,
-                left: dragState.snappedPosition.left !== undefined ? `${dragState.snappedPosition.left}%` : adjustedStyle.left,
-                zIndex: 1000
-              }
-            } else if (isResizingThis) {
-              // リサイズ中：サイズをリアルタイムで調整
-              const resizeHeight = dragState.snappedPosition.height || currentHeight
-              
-              adjustedStyle = {
-                ...adjustedStyle,
-                height: `${resizeHeight}px`,
-                zIndex: 1000
-              }
-            }
-          }
+          // ゴースト表示スタイル（共通化）
+          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
           
           return (
             <div
@@ -186,7 +166,7 @@ export function ThreeDayContent({
                   })}
                   isDragging={isDragging}
                   isResizing={isResizingThis}
-                  previewTime={(isDragging || isResizingThis) ? dragState.previewTime : null}
+                  previewTime={calculatePreviewTime(event.id, dragState)}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

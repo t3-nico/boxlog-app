@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { space } from '@/config/theme/spacing'
-import { EventBlock, CalendarDragSelection, DateTimeSelection } from '../../shared'
+import { EventBlock, CalendarDragSelection, DateTimeSelection, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
 import type { DayContentProps } from '../DayView.types'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
@@ -110,27 +110,8 @@ export function DayContent({
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
           
-          // ドラッグ・リサイズ中の位置調整（15分単位スナッピング）
-          let adjustedStyle = { ...style }
-          if (dragState.snappedPosition && (isDragging || isResizingThis)) {
-            if (isDragging) {
-              // ドラッグ中：位置のみ変更
-              adjustedStyle = {
-                ...adjustedStyle,
-                top: `${dragState.snappedPosition.top}px`,
-                zIndex: 1000
-              }
-            } else if (isResizingThis) {
-              // リサイズ中：サイズをリアルタイムで調整
-              const resizeHeight = dragState.snappedPosition.height || currentHeight
-              
-              adjustedStyle = {
-                ...adjustedStyle,
-                height: `${resizeHeight}px`,
-                zIndex: 1000
-              }
-            }
-          }
+          // ゴースト表示スタイル（共通化）
+          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
           
           return (
             <div
@@ -173,7 +154,7 @@ export function DayContent({
                   })}
                   isDragging={isDragging}
                   isResizing={isResizingThis}
-                  previewTime={(isDragging || isResizingThis) ? dragState.previewTime : null}
+                  previewTime={calculatePreviewTime(event.id, dragState)}
                   className={`h-full w-full ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 />
               </div>

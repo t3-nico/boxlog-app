@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react'
 import { format } from 'date-fns'
 import { cn } from '@/lib/utils'
-import { EventBlock, DirectDragSelection, useTimeCalculation, useGlobalDragCursor, useEventStyles } from '../../shared'
+import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor, useEventStyles, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 import type { CalendarEvent } from '@/features/events'
@@ -162,27 +162,8 @@ export function WeekContent({
           const currentTop = parseFloat(style.top?.toString() || '0')
           const currentHeight = parseFloat(style.height?.toString() || '20')
           
-          // ドラッグ・リサイズ中の位置調整
-          let adjustedStyle = { ...style }
-          
-          if (isDragging) {
-            // ドラッグ中：元の位置にゴーストとして表示（移動させない）
-            adjustedStyle = {
-              ...adjustedStyle,
-              opacity: 0.3 // ゴースト表示（半透明）
-            }
-          } else if (dragState.snappedPosition && isResizingThis) {
-            if (isResizingThis) {
-              // リサイズ中：サイズをリアルタイムで調整
-              const resizeHeight = dragState.snappedPosition.height || currentHeight
-              
-              adjustedStyle = {
-                ...adjustedStyle,
-                height: `${resizeHeight}px`,
-                zIndex: 1000
-              }
-            }
-          }
+          // ゴースト表示スタイル（共通化）
+          const adjustedStyle = calculateEventGhostStyle(style, event.id, dragState)
           
           return (
             <div
@@ -225,7 +206,7 @@ export function WeekContent({
                   })}
                   isDragging={isDragging}
                   isResizing={isResizingThis}
-                  previewTime={isResizingThis ? dragState.previewTime : null}
+                  previewTime={calculatePreviewTime(event.id, dragState)}
                   showTime={true}
                   showDuration={true}
                   variant="week"

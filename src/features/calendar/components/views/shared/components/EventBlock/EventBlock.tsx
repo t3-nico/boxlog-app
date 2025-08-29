@@ -110,8 +110,8 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     // 基本スタイル
     'rounded-md shadow-sm px-2 py-1 overflow-hidden',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
-    // colors.tsのscheduledカラーを参照
-    scheduledColors.background,
+    // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
+    isDragging ? scheduledColors.active : scheduledColors.background,
     scheduledColors.text,
     // 状態別スタイル
     isDragging ? 'cursor-grabbing' : 'cursor-pointer',
