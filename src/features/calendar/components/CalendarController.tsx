@@ -20,8 +20,6 @@ import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useEventStore, initializeEventStore, useCreateModalStore } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { NotificationDisplay } from '@/features/notifications/components/notification-display'
-import { WeekendEventNotification } from './notifications/WeekendEventNotification'
-import { useWeekendEventNotification } from '../hooks/useWeekendEventNotification'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { EventContextMenu } from './views/shared/components'
 import { useEventContextActions } from '../hooks/useEventContextActions'
@@ -133,6 +131,18 @@ export function CalendarController({
     deleteEvent,
     getEventsByDateRange
   } = eventStore
+
+  // デバッグ: イベントストアの状態を確認
+  console.log('🔍 EventStore状態確認:', {
+    eventsCount: events.length,
+    events: events.slice(0, 3).map(e => ({
+      id: e.id,
+      title: e.title,
+      startDate: e.startDate?.toISOString?.(),
+      endDate: e.endDate?.toISOString?.(),
+      isDeleted: e.isDeleted
+    }))
+  })
   
   const createModal = useCreateModalStore()
   const { openModal: openCreateModal, openEditModal } = createModal
@@ -198,7 +208,22 @@ export function CalendarController({
 
   // ビューに応じた期間計算
   const viewDateRange = useMemo(() => {
-    return calculateViewDateRange(viewType, currentDate)
+    const dateRange = calculateViewDateRange(viewType, currentDate)
+    
+    // TwoWeekView診断ログ
+    if (viewType === '2week') {
+      console.log('[CalendarController] 2week範囲計算:', {
+        viewType,
+        currentDate: currentDate.toDateString(),
+        calculatedRange: {
+          start: dateRange.start.toDateString(),
+          end: dateRange.end.toDateString(),
+          dayCount: dateRange.days.length
+        }
+      })
+    }
+    
+    return dateRange
   }, [viewType, currentDate])
 
   // 表示範囲のタスクを取得
@@ -213,19 +238,19 @@ export function CalendarController({
       return []
     }
     
+    
     // 日付範囲を年月日のみで比較するため、時刻をリセット
     const startDateOnly = new Date(viewDateRange.start.getFullYear(), viewDateRange.start.getMonth(), viewDateRange.start.getDate())
     const endDateOnly = new Date(viewDateRange.end.getFullYear(), viewDateRange.end.getMonth(), viewDateRange.end.getDate())
     
-    if (viewType === '2week') {
-      console.log('🔧 TwoWeekView FilteredEvents Debug:', {
-        viewType,
-        totalEvents: events.length,
-        dateRange: { start: viewDateRange.start.toDateString(), end: viewDateRange.end.toDateString() },
-        startDateOnly: startDateOnly.toDateString(),
-        endDateOnly: endDateOnly.toDateString()
-      })
-    }
+    // 全ビューでデバッグログを追加
+    console.log(`🔧 ${viewType} FilteredEvents Debug:`, {
+      viewType,
+      totalEvents: events.length,
+      dateRange: { start: viewDateRange.start.toDateString(), end: viewDateRange.end.toDateString() },
+      startDateOnly: startDateOnly.toDateString(),
+      endDateOnly: endDateOnly.toDateString()
+    })
     
     const filteredByRange = events.filter(event => {
       // 削除済みイベントを除外
@@ -257,6 +282,21 @@ export function CalendarController({
       return (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
              (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
              (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
+    })
+    
+    // 全ビューでフィルタリング結果のログを出力
+    console.log(`[CalendarController] ${viewType}イベントフィルタリング:`, {
+      totalEvents: events.length,
+      filteredCount: filteredByRange.length,
+      dateRange: { 
+        start: startDateOnly.toDateString(), 
+        end: endDateOnly.toDateString() 
+      },
+      sampleEvents: filteredByRange.slice(0, 3).map(e => ({
+        title: e.title,
+        startDate: e.startDate?.toDateString?.() || e.startDate,
+        originalStartDate: e.startDate instanceof Date ? e.startDate.toISOString() : e.startDate
+      }))
     })
     
     // Event[]をCalendarEvent[]に変換（安全な日付処理）
@@ -403,7 +443,13 @@ export function CalendarController({
   }, [])
   
   const handleCreateEvent = useCallback((date?: Date, time?: string) => {
-    console.log('➕ Create event requested:', { date, time })
+    console.log('➕ Create event requested:', { 
+      date: date?.toISOString(), 
+      dateString: date?.toDateString(),
+      time,
+      currentDate: currentDate.toISOString(),
+      viewType 
+    })
     
     // 時刻の解析
     let startTime: Date | undefined
@@ -581,24 +627,59 @@ export function CalendarController({
   }, [eventStore])
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
-  const handleUpdateEvent = useCallback(async (updatedEvent: CalendarEvent) => {
+  // 新規作成後の一時的なクリック無効化
+  const [recentlyCreated, setRecentlyCreated] = useState(false)
+
+  const handleUpdateEvent = useCallback(async (eventIdOrEvent: string | CalendarEvent, updates?: { startTime: Date; endTime: Date }) => {
     try {
-      const updateRequest: UpdateEventRequest = {
-        id: updatedEvent.id,
-        title: updatedEvent.title,
-        startDate: updatedEvent.startDate,
-        endDate: updatedEvent.endDate,
-        location: updatedEvent.location,
-        description: updatedEvent.description,
-        color: updatedEvent.color
+      // ドラッグ&ドロップからの呼び出し（eventId + updates形式）
+      if (typeof eventIdOrEvent === 'string' && updates) {
+        const eventId = eventIdOrEvent
+        const event = events.find(e => e.id === eventId)
+        if (!event) {
+          console.error('❌ Event not found for update:', eventId)
+          return
+        }
+        
+        console.log('🔧 イベント更新:', {
+          eventId,
+          oldStartDate: event.startDate?.toISOString?.(),
+          newStartTime: updates.startTime.toISOString(),
+          newEndTime: updates.endTime.toISOString()
+        })
+        
+        const updateRequest: UpdateEventRequest = {
+          id: eventId,
+          title: event.title,
+          startDate: updates.startTime,
+          endDate: updates.endTime,
+          location: event.location,
+          description: event.description,
+          color: event.color
+        }
+        
+        await eventStore.updateEvent(updateRequest)
+      } 
+      // 従来の呼び出し（CalendarEventオブジェクト形式）
+      else if (typeof eventIdOrEvent === 'object') {
+        const updatedEvent = eventIdOrEvent
+        const updateRequest: UpdateEventRequest = {
+          id: updatedEvent.id,
+          title: updatedEvent.title,
+          startDate: updatedEvent.startDate,
+          endDate: updatedEvent.endDate,
+          location: updatedEvent.location,
+          description: updatedEvent.description,
+          color: updatedEvent.color
+        }
+        
+        await eventStore.updateEvent(updateRequest)
       }
-      
-      await eventStore.updateEvent(updateRequest)
       
     } catch (error) {
       console.error('❌ Failed to update event:', error)
     }
-  }, [eventStore, viewDateRange.start, viewDateRange.end])
+  }, [eventStore, events])
   
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback((direction: 'prev' | 'next' | 'today') => {
@@ -912,11 +993,6 @@ export function CalendarController({
     return viewDateRange.days
   }, [viewDateRange.days])
 
-  // 週末のイベント通知
-  const hiddenWeekendEventCount = useWeekendEventNotification(
-    events,
-    viewDateRange
-  )
 
   return (
     <DnDProvider>
@@ -955,11 +1031,6 @@ export function CalendarController({
       
       {/* CreateEventModal - useCreateModalStoreで管理 */}
       <CreateEventModal />
-      
-      {/* 週末イベント非表示通知 */}
-      <WeekendEventNotification 
-        hiddenEventCount={hiddenWeekendEventCount}
-      />
       
       {/* イベントコンテキストメニュー */}
       {contextMenuEvent && contextMenuPosition && (
