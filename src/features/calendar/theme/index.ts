@@ -7,14 +7,20 @@ export {
   type CalendarColors 
 } from './colors'
 
+// Styles - 基本スタイル定義（レイアウト、印刷、トランジション）
+export { 
+  calendarStyles, 
+  calendarCustomCSS,
+  type CalendarStyles 
+} from './styles'
 
-// Animations
+// Animations - アニメーション定義（pulse、fadeIn、dragScale など）
 export { 
   calendarAnimations, 
   type CalendarAnimations 
 } from './animations'
 
-// Utilities
+// Utilities - ヘルパー関数
 export { 
   getEventColor, 
   getStatusColor, 
