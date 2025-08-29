@@ -61,17 +61,9 @@ export function DateSelector({
 
   // Format date for display
   const formatDateForDisplay = (date: Date) => {
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    
-    if (date.toDateString() === today.toDateString()) {
-      return 'Today'
-    } else if (date.toDateString() === tomorrow.toDateString()) {
-      return 'Tomorrow'
-    } else {
-      return `${date.getMonth() + 1}/${date.getDate()}`
-    }
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    const dayOfWeek = weekdays[date.getDay()]
+    return `${date.getMonth() + 1}/${date.getDate()} (${dayOfWeek})`
   }
 
   // Generate calendar dates for mini calendar

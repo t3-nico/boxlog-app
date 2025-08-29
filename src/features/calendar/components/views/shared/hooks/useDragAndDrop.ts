@@ -559,7 +559,10 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
         const event = events.find(e => e.id === dragDataRef.current!.eventId)
         const previousStartTime = event?.startDate || date
         
-        if (event) {
+        // 時間が実際に変更されたかチェック
+        const timeChanged = Math.abs(newStartTime.getTime() - previousStartTime.getTime()) > 1000 // 1秒以上の差
+        
+        if (event && timeChanged) {
           const eventData = {
             id: event.id,
             title: event.title || 'イベント',
@@ -597,6 +600,12 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
             // 移動成功として扱う
             calendarToast.eventMoved(eventData, newStartTime)
           }
+        } else if (event && !timeChanged) {
+          console.log('🔧 時間変更なし - Toast表示をスキップ:', {
+            previousTime: previousStartTime.toISOString(),
+            newTime: newStartTime.toISOString(),
+            timeDifference: Math.abs(newStartTime.getTime() - previousStartTime.getTime())
+          })
         }
       } catch (error) {
         console.error('Failed to update event time:', error)

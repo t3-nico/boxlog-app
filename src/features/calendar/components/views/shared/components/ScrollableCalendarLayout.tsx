@@ -8,6 +8,7 @@ import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 import { TimeColumn, TimezoneOffset } from '../'
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
+import { secondary, semantic } from '@/config/theme/colors'
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode
@@ -373,7 +374,7 @@ export function ScrollableCalendarLayout({
                 <>
                   {/* 横線 - 今日の列のみ */}
                   <div
-                    className="absolute h-[2px] bg-blue-600 dark:bg-blue-400 z-40 pointer-events-none shadow-sm"
+                    className={cn("absolute h-[2px] z-40 pointer-events-none shadow-sm bg-blue-600 dark:bg-blue-500")}
                     style={{ 
                       top: `${currentTimePosition}px`,
                       left: todayColumnPosition.left,
@@ -383,7 +384,7 @@ export function ScrollableCalendarLayout({
                   
                   {/* 点 - 今日の列の左端 */}
                   <div
-                    className="absolute w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full z-40 pointer-events-none shadow-md border border-white dark:border-gray-800"
+                    className={cn("absolute w-2 h-2 rounded-full z-40 pointer-events-none shadow-md border border-white dark:border-gray-800 bg-blue-600 dark:bg-blue-500")}
                     style={{
                       top: `${currentTimePosition - 4}px`,
                       left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left
