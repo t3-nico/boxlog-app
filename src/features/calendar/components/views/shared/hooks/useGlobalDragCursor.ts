@@ -30,10 +30,16 @@ export function useGlobalDragCursor(
         style.textContent = '* { cursor: ns-resize !important; }'
         document.head.appendChild(style)
       } else if (dragState.isDragging) {
-        // ドラッグ中はgrabbing カーソル
+        // ドラッグ中はgrabbing カーソル - より強力な適用
         document.body.style.setProperty('cursor', 'grabbing', 'important')
         document.body.style.setProperty('user-select', 'none', 'important')
         document.documentElement.style.setProperty('cursor', 'grabbing', 'important')
+        
+        // 全ての要素にカーソルを適用（Tailwindクラス優先度対策）
+        const style = document.createElement('style')
+        style.id = 'drag-cursor-override'
+        style.textContent = '* { cursor: grabbing !important; }'
+        document.head.appendChild(style)
       }
       
       // クリーンアップ関数
@@ -48,9 +54,13 @@ export function useGlobalDragCursor(
         document.documentElement.style.removeProperty('cursor')
         
         // CSSオーバーライドを削除
-        const styleEl = document.getElementById('resize-cursor-override')
-        if (styleEl) {
-          styleEl.remove()
+        const resizeStyleEl = document.getElementById('resize-cursor-override')
+        if (resizeStyleEl) {
+          resizeStyleEl.remove()
+        }
+        const dragStyleEl = document.getElementById('drag-cursor-override')
+        if (dragStyleEl) {
+          dragStyleEl.remove()
         }
       }
     }

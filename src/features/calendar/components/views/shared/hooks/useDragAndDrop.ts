@@ -82,7 +82,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
     
     // 元のクラスをクリアして、draggingスタイルを適用
     dragElement.className = ''
-    dragElement.classList.add('rounded-md', 'shadow-lg', 'px-2', 'py-1', 'overflow-hidden')
+    dragElement.classList.add('rounded-md', 'px-2', 'py-1', 'overflow-hidden')
     
     // scheduledのactiveカラーを適用（colors.tsから参照）
     const activeColorClasses = calendarColors.event.scheduled.active?.split(' ') || []
@@ -100,7 +100,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
     dragElement.style.pointerEvents = 'none' // マウスイベントを透過
     dragElement.style.zIndex = '9999' // 最上位レイヤー
     dragElement.style.transition = 'none'
-    dragElement.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)'
+    dragElement.style.boxShadow = 'none'
     dragElement.classList.add('dragging-element')
     
     // bodyに追加（親要素の制約を受けない）
