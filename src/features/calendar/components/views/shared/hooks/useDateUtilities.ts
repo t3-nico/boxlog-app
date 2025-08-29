@@ -78,20 +78,31 @@ export function useDateUtilities({
       }
       
       case 'threeday': {
-        // 中央日の前後1日を含む3日間
+        // 週末非表示の場合は次の平日3日を表示
+        if (!showWeekends) {
+          const weekdayDates: Date[] = []
+          let checkDate = new Date(referenceDate)
+          
+          // referenceDateから開始して、平日3日分を収集
+          while (weekdayDates.length < 3) {
+            const day = checkDate.getDay()
+            // 平日（月〜金）の場合のみ追加
+            if (day !== 0 && day !== 6) {
+              weekdayDates.push(new Date(checkDate))
+            }
+            // 次の日をチェック
+            checkDate = addDays(checkDate, 1)
+          }
+          
+          return weekdayDates
+        }
+        
+        // 週末表示の場合は従来通り中央日の前後1日を含む3日間
         const threeDayDates = [
           subDays(referenceDate, 1), // 前日
           referenceDate,             // 当日
           addDays(referenceDate, 1)  // 翌日
         ]
-        
-        // 週末フィルタリング（ThreeDayViewでは通常使わないが一応対応）
-        if (!showWeekends) {
-          return threeDayDates.filter(date => {
-            const day = date.getDay()
-            return day !== 0 && day !== 6
-          })
-        }
         
         return threeDayDates
       }

@@ -47,6 +47,18 @@ export function useEventsByDate({
   const eventsByDate = useMemo(() => {
     const grouped: Record<string, CalendarEvent[]> = {}
     
+    console.log('🔧 useEventsByDate: グループ化開始:', {
+      datesCount: dates.length,
+      eventsCount: events.length,
+      sortType,
+      sampleDates: dates.slice(0, 3).map(d => ({ date: d.toDateString(), key: getDateKey(d) })),
+      sampleEvents: events.slice(0, 3).map(e => ({
+        id: e.id,
+        title: e.title,
+        startDate: e.startDate?.toISOString?.() || e.startDate,
+        isValid: isValidEvent(e)
+      }))
+    })
     
     // Step 1: 各日付のキーを初期化
     dates.forEach(date => {
@@ -120,11 +132,23 @@ export function useEventsByDate({
     
     
     // Step 3: 各日のイベントを適切にソート
-    if (sortType === 'agenda') {
-      return sortAgendaEventsByDateKeys(grouped)
-    } else {
-      return sortEventsByDateKeys(grouped)
-    }
+    const sortedResult = sortType === 'agenda' 
+      ? sortAgendaEventsByDateKeys(grouped) 
+      : sortEventsByDateKeys(grouped)
+    
+    console.log('🔧 useEventsByDate: グループ化完了:', {
+      processedCount,
+      skippedCount,
+      resultKeys: Object.keys(sortedResult),
+      resultCounts: Object.entries(sortedResult).map(([key, events]) => ({ date: key, count: events.length })),
+      nonEmptyDates: Object.entries(sortedResult).filter(([key, events]) => events.length > 0).map(([key, events]) => ({ 
+        date: key, 
+        count: events.length,
+        eventTitles: events.map(e => e.title).slice(0, 2)
+      }))
+    })
+    
+    return sortedResult
   }, [dates, events, sortType])
   
   // 統計情報も提供

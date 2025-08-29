@@ -4,12 +4,14 @@ import type { BaseViewProps, CalendarEvent } from '../shared'
 // TwoWeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface TwoWeekViewProps extends BaseViewProps {
   startDate?: Date // 開始日（指定がない場合はdateRange.startを使用）
+  weekStartsOn?: 0 | 1 // 週の開始日（0: 日曜始まり, 1: 月曜始まり）
 }
 
 // useTwoWeekViewフックのオプション
 export interface UseTwoWeekViewOptions {
   startDate: Date
   events: CalendarEvent[]
+  weekStartsOn?: 0 | 1 // 週の開始日（0: 日曜始まり, 1: 月曜始まり）
   onEventUpdate?: (event: CalendarEvent) => void
 }
 

@@ -7,7 +7,8 @@ import { cn } from '@/lib/utils'
 import { 
   DateDisplay, 
   CalendarLayoutWithHeader,
-  HourLines
+  HourLines,
+  getDateKey
 } from '../../shared'
 import { useWeekEvents } from '../hooks/useWeekEvents'
 import { WeekContent } from './WeekContent'
@@ -80,7 +81,7 @@ export function WeekGrid({
           />
           
           {/* イベント数インジケーター */}
-          {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
+          {eventsByDate[getDateKey(date)]?.length > 0 && (
             <div className="text-center mt-1">
               <span className="inline-block w-2 h-2 bg-primary rounded-full" />
             </div>
@@ -98,7 +99,7 @@ export function WeekGrid({
       displayDates={currentTimeDisplayDates}
       viewMode="week"
       onTimeClick={(hour, minute) => {
-        // WeekViewでは最初にクリックされた日付を使用
+        // WeekViewでは週の最初の日付を使用（日付は後でWeekContentで決定）
         const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
         onEmptyClick?.(weekDates[0], timeString)
       }}
@@ -117,8 +118,15 @@ export function WeekGrid({
         </div>
         
         {weekDates.map((date, dayIndex) => {
-          const dateKey = format(date, 'yyyy-MM-dd')
+          const dateKey = getDateKey(date)
           const dayEvents = eventsByDate[dateKey] || []
+          
+          console.log('🔧 WeekGrid日付処理:', {
+            date: date.toDateString(),
+            dateKey,
+            dayEventsCount: dayEvents.length,
+            availableKeys: Object.keys(eventsByDate)
+          })
           
           return (
             <div
@@ -142,6 +150,7 @@ export function WeekGrid({
                 }}
                 className="h-full"
                 dayIndex={dayIndex}
+                displayDates={weekDates}
               />
             </div>
           )

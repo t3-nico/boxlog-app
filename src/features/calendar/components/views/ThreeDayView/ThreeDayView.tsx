@@ -213,6 +213,8 @@ export function ThreeDayView({
                         onCreateEvent?.(startDate, endDate)
                       }}
                       className="h-full"
+                      dayIndex={dayIndex}
+                      displayDates={displayDates}
                     />
                   </div>
                 )

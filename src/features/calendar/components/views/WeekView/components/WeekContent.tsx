@@ -19,6 +19,7 @@ interface WeekContentProps {
   onTimeRangeSelect?: (date: Date, startTime: string, endTime: string) => void
   className?: string
   dayIndex: number // 週内での日付インデックス（0-6）
+  displayDates?: Date[] // 週の全日付配列（日付間移動用）
 }
 
 export function WeekContent({
@@ -31,34 +32,33 @@ export function WeekContent({
   onEventUpdate,
   onTimeRangeSelect,
   className,
-  dayIndex
+  dayIndex,
+  displayDates
 }: WeekContentProps) {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return
       
-      // 既存のイベントを検索
-      const event = events.find(e => e.id === eventId)
-      if (!event) return
+      console.log('🔧 WeekContent: イベント更新要求:', {
+        eventId,
+        startTime: updates.startTime.toISOString(),
+        endTime: updates.endTime.toISOString()
+      })
       
-      // イベントを更新
-      const updatedEvent = {
-        ...event,
-        startDate: updates.startTime,
-        endDate: updates.endTime
-      }
-      
-      onEventUpdate(updatedEvent)
+      // CalendarControllerの新しい型に合わせて呼び出し
+      await onEventUpdate(eventId, updates)
     },
-    [onEventUpdate, events]
+    [onEventUpdate]
   )
 
-  // ドラッグ&ドロップ機能
+  // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
     date,
-    events
+    events,
+    displayDates,
+    viewMode: 'week'
   })
 
   // 時間計算機能
@@ -143,10 +143,11 @@ export function WeekContent({
           let adjustedStyle = { ...style }
           if (dragState.snappedPosition && (isDragging || isResizingThis)) {
             if (isDragging) {
-              // ドラッグ中：位置のみ変更
+              // ドラッグ中：マウスに追従して移動
               adjustedStyle = {
                 ...adjustedStyle,
                 top: `${dragState.snappedPosition.top}px`,
+                left: dragState.snappedPosition.left !== undefined ? `${dragState.snappedPosition.left}%` : adjustedStyle.left,
                 zIndex: 1000
               }
             } else if (isResizingThis) {
@@ -179,7 +180,7 @@ export function WeekContent({
                       left: 0,
                       width: 100,
                       height: currentHeight
-                    })
+                    }, dayIndex) // 日付インデックスを渡す
                   }
                 }}
               >

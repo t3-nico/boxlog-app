@@ -213,9 +213,9 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
     }
     
-    // 日付インデックスを計算（複数日付ビューの場合）- 大きな水平移動のみ反応
+    // 日付インデックスを計算（複数日付ビューの場合）- リアルタイム追跡
     let targetDateIndex = dragData.originalDateIndex
-    if (viewMode !== 'day' && displayDates && Math.abs(deltaX) > 30) { // 閾値を30pxに下げて試す
+    if (viewMode !== 'day' && displayDates && dragData.hasMoved) { // hasMoved（5px以上）で判定
       // 複数の方法でグリッドコンテナを取得（ドラッグ中も同じ方法で）
       const gridContainer = (dragData.originalElement?.closest('.flex')) as HTMLElement ||
                            (document.querySelector('.flex.h-full.relative') as HTMLElement) ||
@@ -229,10 +229,11 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
         const columnIndex = Math.floor(relativeX / dragData.columnWidth)
         const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
         
-        // 元の日付から大きく離れた場合のみ更新
-        if (Math.abs(newTargetIndex - dragData.originalDateIndex) > 0) {
-          targetDateIndex = newTargetIndex
-          
+        // 常に更新（リアルタイム追跡のため）
+        targetDateIndex = newTargetIndex
+        
+        // デバッグログは大きな移動時のみ
+        if (Math.abs(newTargetIndex - dragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
           console.log('🔧 日付間移動:', {
             originalIndex: dragData.originalDateIndex,
             newTargetIndex,
@@ -272,11 +273,11 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       const newTop = dragData.originalTop + deltaY
       const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
       
-      // 水平方向の位置計算（他の日付への移動時のみ）
+      // 水平方向の位置計算（日付をまたぐ時のみ）
       let snappedLeft = undefined // デフォルトは元の位置を維持
       
       if (viewMode !== 'day' && displayDates && targetDateIndex !== dragData.originalDateIndex) {
-        // 異なる日付カラムに移動した場合のみ、その日付位置にスナップ
+        // 異なる日付に移動した場合のみ、その日付位置にスナップ
         const columnWidthPercent = 100 / displayDates.length
         snappedLeft = targetDateIndex * columnWidthPercent + 1 // 1%のマージン
         
@@ -447,16 +448,23 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
     const minute = Math.round(Math.max(0, (hourDecimal - hour) * 60 / 15)) * 15
 
     // ターゲット日付を決定（日付間移動を考慮、エッジケース対応）
-    const targetDateIndex = dragState.targetDateIndex || dragDataRef.current.originalDateIndex
+    const targetDateIndex = dragState.targetDateIndex !== undefined ? dragState.targetDateIndex : dragDataRef.current.originalDateIndex
     let targetDate = date
     
     if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
       targetDate = displayDates[targetDateIndex]
+      console.log('🎯 ドロップ時のターゲット日付決定:', {
+        targetDateIndex,
+        targetDate: targetDate.toDateString(),
+        originalDateIndex: dragDataRef.current.originalDateIndex,
+        displayDates: displayDates.map(d => d.toDateString())
+      })
     }
     
     // 日付が無効な場合は元の日付を使用
     if (!targetDate || isNaN(targetDate.getTime())) {
       targetDate = date
+      console.log('⚠️ 無効な日付のためデフォルト使用:', targetDate.toDateString())
     }
 
     // 新しい開始時刻を作成
@@ -484,6 +492,15 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       
       // イベント更新を実行
       try {
+        console.log('🚀 イベント更新実行:', {
+          eventId: dragDataRef.current.eventId,
+          newStartTime: newStartTime.toISOString(),
+          newEndTime: newEndTime.toISOString(),
+          targetDate: targetDate.toDateString(),
+          targetDateIndex,
+          originalDateIndex: dragDataRef.current.originalDateIndex
+        })
+        
         const promise = onEventUpdate(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime

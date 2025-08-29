@@ -8,7 +8,8 @@ import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { 
   DateDisplay, 
   CalendarLayoutWithHeader,
-  HourLines
+  HourLines,
+  getDateKey
 } from '../shared'
 import { useTwoWeekView } from './hooks/useTwoWeekView'
 import { TwoWeekContent } from './components'
@@ -40,6 +41,7 @@ export function TwoWeekView({
   currentDate,
   startDate,
   showWeekends = true,
+  weekStartsOn = 1, // デフォルトは月曜始まり
   className,
   onTaskClick,
   onEventClick,
@@ -85,7 +87,19 @@ export function TwoWeekView({
   } = useTwoWeekView({
     startDate: displayStartDate,
     events,
-    HOUR_HEIGHT
+    weekStartsOn
+  })
+  
+  // TwoWeekView診断ログ
+  console.log('[TwoWeekView] コンポーネント受信データ:', {
+    receivedEventsCount: events?.length || 0,
+    startDate: displayStartDate.toDateString(),
+    generatedDatesCount: twoWeekDates.length,
+    eventsByDateKeys: Object.keys(eventsByDate),
+    eventsByDateCounts: Object.entries(eventsByDate).map(([key, events]) => ({
+      date: key,
+      count: events.length
+    }))
   })
 
   // 表示日付配列（週末フィルタリング対応）
@@ -165,8 +179,15 @@ export function TwoWeekView({
           </div>
           
           {displayDates.map((date, dayIndex) => {
-            const dateKey = format(date, 'yyyy-MM-dd')
+            const dateKey = getDateKey(date)
             const dayEvents = eventsByDate[dateKey] || []
+            
+            console.log('🔧 TwoWeekView日付処理:', {
+              date: date.toDateString(),
+              dateKey,
+              dayEventsCount: dayEvents.length,
+              availableKeys: Object.keys(eventsByDate)
+            })
             
             return (
               <div
@@ -196,6 +217,7 @@ export function TwoWeekView({
                   onCreateEvent={onCreateEvent}
                   className="h-full"
                   dayIndex={dayIndex}
+                  displayDates={displayDates}
                 />
               </div>
             )
