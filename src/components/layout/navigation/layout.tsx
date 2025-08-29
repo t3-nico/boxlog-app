@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { ToastProvider } from '@/components/shadcn-ui/toast'
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { ChatProvider } from '@/contexts/chat-context'
@@ -115,11 +114,9 @@ export function DashboardLayout({
     <ThemeProvider>
       <AIPanelProvider>
         <ChatProvider>
-          <ToastProvider>
-            <DashboardLayoutContent>
-              {children}
-            </DashboardLayoutContent>
-          </ToastProvider>
+          <DashboardLayoutContent>
+            {children}
+          </DashboardLayoutContent>
         </ChatProvider>
       </AIPanelProvider>
     </ThemeProvider>

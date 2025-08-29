@@ -5,7 +5,6 @@ import { useState, useCallback, useEffect, createContext, useContext } from 'rea
 import { AuthProvider } from '@/features/auth'
 import { ChatProvider } from '@/contexts/chat-context'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
-import { ToastProvider } from '@/components/shadcn-ui/toast'
 import { PreloadResources } from './PreloadResources'
 
 // CommandPalette context moved to features/command-palette
@@ -38,12 +37,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <ChatProvider>
-          <ToastProvider>
-            <CommandPaletteProvider>
-              <PreloadResources />
-              {children}
-            </CommandPaletteProvider>
-          </ToastProvider>
+          <CommandPaletteProvider>
+            <PreloadResources />
+            {children}
+          </CommandPaletteProvider>
         </ChatProvider>
       </AuthProvider>
     </QueryClientProvider>

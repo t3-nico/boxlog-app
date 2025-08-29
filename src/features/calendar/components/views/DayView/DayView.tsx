@@ -12,7 +12,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 import type { DayViewProps } from './DayView.types'
 import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
-import { useToast } from '@/components/shadcn-ui/toast'
+import useCalendarToast from '@/features/calendar/lib/toast'
 
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
@@ -42,7 +42,7 @@ export function DayView({
 }: DayViewProps) {
   const { timezone } = useCalendarSettingsStore()
   const { updateEventTime } = useEventStore()
-  const { success } = useToast()
+  const toast = useCalendarToast()
   
   // イベントストアから最新のデータを取得
   const storeEvents = useEventStore(eventSelectors.getEvents)

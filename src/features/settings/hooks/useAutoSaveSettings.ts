@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { useToast } from '@/components/shadcn-ui/toast'
+import { useToast } from '@/lib/toast'
 
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T

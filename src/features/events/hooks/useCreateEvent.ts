@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useEventStore } from '../stores/useEventStore'
-import { useToast } from '@/components/shadcn-ui/toast'
+import useCalendarToast from '@/features/calendar/lib/toast'
 import type { CreateEventRequest, Event } from '../types/events'
 
 interface UseCreateEventReturn {
@@ -16,7 +16,7 @@ export function useCreateEvent(): UseCreateEventReturn {
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const eventStore = useEventStore()
-  const { success, error: toastError } = useToast()
+  const toast = useCalendarToast()
   
   const createEvent = useCallback(async (data: CreateEventRequest): Promise<Event> => {
     setIsCreating(true)
@@ -38,11 +38,8 @@ export function useCreateEvent(): UseCreateEventReturn {
       // イベント作成
       const createdEvent = await eventStore.createEvent(data)
       
-      // 成功通知（英語に変更）
-      success(
-        'Event Created',
-        `"${createdEvent.title}" has been created`
-      )
+      // 成功通知
+      toast.success(`「${createdEvent.title}」を作成しました`)
       
       // 作成したイベントの日付にスクロール（カレンダービューの場合）
       const pathname = window.location.pathname
@@ -72,16 +69,13 @@ export function useCreateEvent(): UseCreateEventReturn {
       setError(new Error(errorMessage))
       
       // エラー通知
-      toastError(
-        'Error',
-        errorMessage
-      )
+      toast.error(errorMessage)
       
       throw err
     } finally {
       setIsCreating(false)
     }
-  }, [eventStore, success, toastError])
+  }, [eventStore, toast])
   
   const reset = useCallback(() => {
     setError(null)
