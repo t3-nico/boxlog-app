@@ -191,7 +191,7 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
       originalDateIndex: dateIndex,
       targetDateIndex: dateIndex
     })
-  }, [createDragElement, viewMode])
+  }, [createDragElement, viewMode, displayDates])
 
   // 15分単位でスナップする関数
   const snapToQuarterHour = useCallback((yPosition: number): { snappedTop: number; hour: number; minute: number } => {

@@ -55,86 +55,80 @@ export const classifyNetworkError = (error: any): NetworkErrorInfo => {
   }
 }
 
-// ネットワークエラーハンドリング関数
-export const handleNetworkError = (error: any, retryFn?: () => void | Promise<void>) => {
-  const toast = useCalendarToast()
-  const errorInfo = classifyNetworkError(error)
-
-  switch (errorInfo.type) {
-    case 'offline':
-      return toast.warning('オフラインです', {
-        description: 'インターネット接続を確認してください',
-        duration: 5000
-      })
-
-    case 'timeout':
-      return toast.error('タイムアウトしました', {
-        description: 'しばらく待ってから再試行してください',
-        duration: 8000,
-        ...(retryFn && {
-          retryAction: retryFn
-        })
-      })
-
-    case 'unauthorized':
-      return toast.error('認証エラー', {
-        description: 'ログインし直してください',
-        duration: 8000,
-        viewAction: () => {
-          window.location.href = '/login'
-        }
-      })
-
-    case 'forbidden':
-      return toast.error('権限エラー', {
-        description: 'この操作を実行する権限がありません',
-        duration: 8000,
-        viewAction: () => {
-          window.location.href = '/settings/permissions'
-        }
-      })
-
-    case 'not_found':
-      return toast.error('データが見つかりません', {
-        description: 'データが削除されているか、アクセス権限がありません',
-        duration: 6000
-      })
-
-    case 'conflict':
-      return toast.warning('データが競合しています', {
-        description: '他のユーザーによって変更されています。画面を更新してください',
-        duration: 8000,
-        viewAction: () => {
-          window.location.reload()
-        }
-      })
-
-    case 'server_error':
-      return toast.error('サーバーエラー', {
-        description: 'しばらく待ってから再試行してください',
-        duration: 8000,
-        ...(retryFn && {
-          retryAction: retryFn
-        })
-      })
-
-    default:
-      return toast.error('エラーが発生しました', {
-        description: errorInfo.message || '予期しないエラーです',
-        duration: 6000,
-        ...(retryFn && {
-          retryAction: retryFn
-        })
-      })
-  }
-}
-
-// カスタムフック版
+// ネットワークエラーハンドリング用のカスタムフック
 export const useNetworkErrorHandler = () => {
   const toast = useCalendarToast()
+  
+  const handleNetworkError = useCallback((error: any, retryFn?: () => void | Promise<void>) => {
+    const errorInfo = classifyNetworkError(error)
 
-  const handleError = useCallback((error: any, retryFn?: () => void | Promise<void>) => {
-    return handleNetworkError(error, retryFn)
+    switch (errorInfo.type) {
+      case 'offline':
+        return toast.warning('オフラインです', {
+          description: 'インターネット接続を確認してください',
+          duration: 5000
+        })
+
+      case 'timeout':
+        return toast.error('タイムアウトしました', {
+          description: 'しばらく待ってから再試行してください',
+          duration: 8000,
+          ...(retryFn && {
+            retryAction: retryFn
+          })
+        })
+
+      case 'unauthorized':
+        return toast.error('認証エラー', {
+          description: '再度ログインしてください',
+          duration: 10000,
+          viewAction: () => {
+            window.location.href = '/login'
+          }
+        })
+
+      case 'forbidden':
+        return toast.error('アクセス拒否', {
+          description: 'この操作を実行する権限がありません',
+          duration: 8000
+        })
+
+      case 'not_found':
+        return toast.warning('データが見つかりません', {
+          description: 'データが削除されているか移動されています',
+          duration: 6000,
+          ...(retryFn && {
+            retryAction: retryFn
+          })
+        })
+
+      case 'conflict':
+        return toast.warning('データが更新されています', {
+          description: '他のユーザーがデータを変更しました。最新のデータを確認してください',
+          duration: 8000,
+          ...(retryFn && {
+            retryAction: retryFn
+          })
+        })
+
+      case 'server_error':
+        return toast.error('サーバーエラー', {
+          description: 'サーバーで問題が発生しています。しばらく待ってから再試行してください',
+          duration: 10000,
+          ...(retryFn && {
+            retryAction: retryFn
+          })
+        })
+
+      default:
+        return toast.error('エラーが発生しました', {
+          description: errorInfo.message || '予期しないエラーです',
+          duration: 6000,
+          ...(retryFn && {
+            retryAction: retryFn
+          })
+        })
+    }
   }, [toast])
 
   const handlePermissionError = useCallback((action: string) => {
@@ -156,7 +150,7 @@ export const useNetworkErrorHandler = () => {
   }, [toast])
 
   return {
-    handleError,
+    handleError: handleNetworkError,
     handlePermissionError,
     handleValidationError,
     classifyError: classifyNetworkError
