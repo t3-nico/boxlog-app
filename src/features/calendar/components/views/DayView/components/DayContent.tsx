@@ -21,9 +21,24 @@ export function DayContent({
   onTimeRangeSelect,
   className
 }: DayContentProps) {
+  // ドラッグ&ドロップ機能用にonEventUpdateを変換
+  const handleEventUpdate = useCallback(
+    async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
+      if (!onEventUpdate) return
+      
+      // 型変換して呼び出し
+      await onEventUpdate(eventId, {
+        startDate: updates.startTime,
+        endDate: updates.endTime
+      })
+    },
+    [onEventUpdate]
+  )
+
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
-    onEventUpdate,
+    onEventUpdate: handleEventUpdate,
+    onEventClick,
     date,
     events
   })
@@ -41,35 +56,24 @@ export function DayContent({
     onEmptyClick(date, timeString)
   }, [date, onEmptyClick, calculateTimeFromEvent])
   
-  // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
+  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
   const handleEventClick = useCallback((event: any) => {
-    console.log('DayContent handleEventClick called:', {
-      event: event,
-      isDragging: dragState.isDragging,
-      isResizing: dragState.isResizing,
-      recentlyDragged: dragState.recentlyDragged,
-      hasOnEventClick: !!onEventClick,
-      eventTitle: event.title
-    })
-    
-    // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
-    if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
-      console.log('DayContent click ignored - dragging/resizing/recently dragged')
+    // ドラッグ・リサイズ操作中のクリックは無視
+    if (dragState.isDragging || dragState.isResizing) {
       return
     }
     
-    console.log('DayContent calling onEventClick...') // デバッグ用
     onEventClick?.(event)
-  }, [onEventClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
+  }, [onEventClick, dragState.isDragging, dragState.isResizing])
   
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback((event: any, mouseEvent: React.MouseEvent) => {
     // ドラッグ操作中またはリサイズ操作中は右クリックを無視
-    if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
+    if (dragState.isDragging || dragState.isResizing) {
       return
     }
     onEventContextMenu?.(event, mouseEvent)
-  }, [onEventContextMenu, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
+  }, [onEventContextMenu, dragState.isDragging, dragState.isResizing])
   
   // 時間グリッドの生成（1時間単位、23時は下線なし）
   const timeGrid = Array.from({ length: 24 }, (_, hour) => (
@@ -88,7 +92,7 @@ export function DayContent({
         className="absolute inset-0"
         onTimeRangeSelect={onTimeRangeSelect}
         onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized} // ドラッグ・リサイズ中・直後は背景クリックを無効化
+        disabled={dragState.isDragging || dragState.isResizing} // ドラッグ・リサイズ中は背景クリックを無効化
       >
         {/* 背景グリッド（CalendarDragSelectionが全イベントを処理） */}
         <div

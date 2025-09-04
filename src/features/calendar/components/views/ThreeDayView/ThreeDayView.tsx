@@ -70,16 +70,25 @@ export function ThreeDayView({
     showWeekends
   })
   
-  // 3日間の日付配列を使用（週末表示設定を考慮）
+  // 統一された日付配列を使用（週末表示設定も考慮済み）
   const displayDates = useMemo(() => {
     return threeDayDates
   }, [threeDayDates])
 
-  // イベント位置計算（共通フック使用）
+  // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
     const positions: any[] = []
     
-    Object.entries(eventsByDate).forEach(([dateKey, dayEvents], dayIndex) => {
+    // displayDates（統一フィルタリング済み）を基準にイベントを配置
+    displayDates.forEach((displayDate, dayIndex) => {
+      const dateKey = format(displayDate, 'yyyy-MM-dd')
+      
+      // 元のevents配列から直接フィルタリング（週末設定に依存しない）
+      const dayEvents = events.filter(event => {
+        const eventDate = event.startDate || new Date()
+        return format(eventDate, 'yyyy-MM-dd') === dateKey
+      })
+      
       dayEvents.forEach(event => {
         const startDate = event.startDate || new Date()
         const startHour = startDate.getHours()
@@ -108,7 +117,7 @@ export function ThreeDayView({
     })
     
     return positions
-  }, [eventsByDate, HOUR_HEIGHT])
+  }, [events, displayDates, HOUR_HEIGHT])
   
   // 共通フック使用してスタイル計算
   const eventStyles = useEventStyles(eventPositions)
@@ -178,11 +187,15 @@ export function ThreeDayView({
               />
             </div>
             
-            {/* 3日分のカラム */}
+            {/* displayDatesに基づくカラム（週末フィルタリング対応） */}
             <div className="flex h-full relative">
               {displayDates.map((date, dayIndex) => {
                 const dateKey = format(date, 'yyyy-MM-dd')
-                const dayEvents = eventsByDate[dateKey] || []
+                // 統一フィルタリング済みの日付に対応するイベントを取得
+                const dayEvents = events.filter(event => {
+                  const eventDate = event.startDate || new Date()
+                  return format(eventDate, 'yyyy-MM-dd') === dateKey
+                })
                 
                 return (
                   <div

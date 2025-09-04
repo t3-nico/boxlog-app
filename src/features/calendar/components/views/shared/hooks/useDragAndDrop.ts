@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { format } from 'date-fns'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { calendarColors } from '@/features/calendar/theme'
@@ -21,6 +21,7 @@ export interface DragState {
   dragElement: HTMLElement | null // ドラッグ要素（position: fixed）
   targetDateIndex?: number // ドラッグ先の日付インデックス（日付間移動用）
   originalDateIndex?: number // ドラッグ元の日付インデックス
+  ghostElement: HTMLElement | null // ゴースト要素
 }
 
 export interface DragHandlers {
@@ -33,6 +34,7 @@ export interface DragHandlers {
 
 interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void
+  onEventClick?: (event: any) => void // クリック処理用
   date: Date  // DayViewでは単一日付、他のビューでは基準日付
   events: any[] // イベントデータを受け取る
   displayDates?: Date[] // WeekView/TwoWeekView/ThreeDayView用の日付配列
@@ -44,7 +46,7 @@ interface UseDragAndDropProps {
  * 全てのビュー（Day, Week, ThreeDay等）で利用可能
  * 高機能版：ゴースト要素、詳細な状態管理、5px移動閾値、日付間移動を含む
  */
-export function useDragAndDrop({ onEventUpdate, date, events, displayDates, viewMode = 'day' }: UseDragAndDropProps) {
+export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, displayDates, viewMode = 'day' }: UseDragAndDropProps) {
   const calendarToast = useCalendarToast()
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
@@ -240,7 +242,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
         // 常に更新（リアルタイム追跡のため）
         targetDateIndex = newTargetIndex
         
-        // デバッグログは大きな移動時のみ
+        // デバッグログ
         if (Math.abs(newTargetIndex - dragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
           console.log('🔧 日付間移動:', {
             originalIndex: dragData.originalDateIndex,
@@ -385,6 +387,31 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       dragDataRef.current.originalElement.style.opacity = '1'
     }
 
+    // クリック処理：5px未満の移動の場合はクリックとして処理
+    if (dragDataRef.current && !dragDataRef.current.hasMoved && onEventClick) {
+      const eventToClick = events.find(e => e.id === dragDataRef.current!.eventId)
+      if (eventToClick) {
+        // 状態をリセットしてからクリック処理を実行
+        setDragState({
+          isDragging: false,
+          isResizing: false,
+          draggedEventId: null,
+          dragStartPosition: null,
+          currentPosition: null,
+          originalPosition: null,
+          snappedPosition: null,
+          previewTime: null,
+          recentlyDragged: false,
+          recentlyResized: false,
+          dragElement: null
+        })
+        dragDataRef.current = null
+        
+        onEventClick(eventToClick)
+        return
+      }
+    }
+
     if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current || !dragState.currentPosition || !dragState.dragStartPosition) {
       setDragState({
         isDragging: false,
@@ -505,8 +532,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       console.log('🎯 ドロップ時のターゲット日付決定:', {
         targetDateIndex,
         targetDate: targetDate.toDateString(),
-        originalDateIndex: dragDataRef.current.originalDateIndex,
-        displayDates: displayDates.map(d => d.toDateString())
+        originalDateIndex: dragDataRef.current.originalDateIndex
       })
     }
     
@@ -545,9 +571,7 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
           eventId: dragDataRef.current.eventId,
           newStartTime: newStartTime.toISOString(),
           newEndTime: newEndTime.toISOString(),
-          targetDate: targetDate.toDateString(),
-          targetDateIndex,
-          originalDateIndex: dragDataRef.current.originalDateIndex
+          targetDate: targetDate.toDateString()
         })
         
         const promise = onEventUpdate(dragDataRef.current.eventId, {
@@ -697,6 +721,20 @@ export function useDragAndDrop({ onEventUpdate, date, events, displayDates, view
       ghostElement: null
     })
   }, [])
+
+  // マウスイベントリスナーを設定
+  useEffect(() => {
+    if (dragState.isDragging || dragState.isResizing) {
+      // ドラッグまたはリサイズ中の場合、ドキュメント全体でマウスイベントをリッスン
+      document.addEventListener('mousemove', handleMouseMove, { passive: false })
+      document.addEventListener('mouseup', handleMouseUp)
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+      }
+    }
+  }, [dragState.isDragging, dragState.isResizing, handleMouseMove, handleMouseUp])
 
   return {
     dragState,

@@ -46,8 +46,11 @@ export function TwoWeekContent({
         endTime: updates.endTime.toISOString()
       })
       
-      // CalendarControllerの新しい型に合わせて呼び出し
-      await onEventUpdate(eventId, updates)
+      // 型変換して呼び出し
+      await onEventUpdate(eventId, {
+        startDate: updates.startTime,
+        endDate: updates.endTime
+      })
     },
     [onEventUpdate]
   )
@@ -55,6 +58,7 @@ export function TwoWeekContent({
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
+    onEventClick,
     date,
     events,
     displayDates,
@@ -67,8 +71,9 @@ export function TwoWeekContent({
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
 
-  // この日のイベント位置をuseEventStylesで変換
+  // この日のイベント位置を統一方式で変換
   const dayEventPositions = React.useMemo(() => {
+    // 渡されたeventsは既にdisplayDatesでフィルタリング済みのため、直接変換
     return events.map(event => {
       // startDate/endDateを使用した統一的なイベント位置計算
       const startDate = event.startDate || new Date()
