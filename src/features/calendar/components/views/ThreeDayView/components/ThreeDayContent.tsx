@@ -46,8 +46,11 @@ export function ThreeDayContent({
         endTime: updates.endTime.toISOString()
       })
       
-      // CalendarControllerの新しい型に合わせて呼び出し
-      await onEventUpdate(eventId, updates)
+      // handleUpdateEvent形式で呼び出し
+      await onEventUpdate(eventId, {
+        startTime: updates.startTime,
+        endTime: updates.endTime
+      })
     },
     [onEventUpdate]
   )
@@ -55,6 +58,7 @@ export function ThreeDayContent({
   // ドラッグ&ドロップ機能（日付間移動対応）
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
+    onEventClick,
     date,
     events,
     displayDates,
@@ -75,24 +79,24 @@ export function ThreeDayContent({
     onEmptyClick(date, timeString)
   }, [date, onEmptyClick, calculateTimeFromEvent])
   
-  // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
+  // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
-    if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
+    // ドラッグ・リサイズ操作中のクリックは無視
+    if (dragState.isDragging || dragState.isResizing) {
       return
     }
     
     onEventClick?.(event)
-  }, [onEventClick, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
+  }, [onEventClick, dragState.isDragging, dragState.isResizing])
   
   // イベント右クリックハンドラー
   const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
     // ドラッグ操作中またはリサイズ操作中は右クリックを無視
-    if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
+    if (dragState.isDragging || dragState.isResizing) {
       return
     }
     onEventContextMenu?.(event, mouseEvent)
-  }, [onEventContextMenu, dragState.isDragging, dragState.isResizing, dragState.recentlyDragged])
+  }, [onEventContextMenu, dragState.isDragging, dragState.isResizing])
 
   return (
     <div className={cn('relative flex-1 bg-background overflow-hidden h-full', className)} data-calendar-grid>
@@ -102,7 +106,7 @@ export function ThreeDayContent({
         className="absolute inset-0"
         onTimeRangeSelect={(startTime, endTime) => onTimeRangeSelect?.(date, startTime, endTime)}
         onSingleClick={onEmptyClick}
-        disabled={dragState.isDragging || dragState.isResizing || dragState.recentlyDragged || dragState.recentlyResized}
+        disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 背景グリッドはHourLinesがレンダリング済み */}
         <div
@@ -156,7 +160,7 @@ export function ThreeDayContent({
                     height: isResizingThis && dragState.snappedPosition ? 
                       dragState.snappedPosition.height : currentHeight
                   }}
-                  onClick={() => handleEventClick(event)}
+                  // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
                   onResizeStart={(event, direction, e, position) => handlers.handleResizeStart(event.id, direction, e, {
                     top: currentTop,

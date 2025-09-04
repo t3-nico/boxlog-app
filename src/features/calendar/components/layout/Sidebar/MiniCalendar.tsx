@@ -4,7 +4,11 @@ import React, { memo, useState, useMemo, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
-import { primary, secondary, selection, background } from '@/config/theme/colors'
+import { primary, secondary, selection, background, displayPeriod } from '@/config/theme/colors'
+import { calendarColors } from '@/features/calendar/theme/colors'
+
+const selectedState = calendarColors.states.selected
+const displayPeriodState = calendarColors.states.displayPeriod
 import { 
   startOfMonth, 
   endOfMonth, 
@@ -24,6 +28,7 @@ export interface MiniCalendarProps {
   onMonthChange?: (date: Date) => void
   className?: string
   highlightedDates?: Date[]
+  displayedPeriodDates?: Date[]
   disabledDates?: Date[]
   showWeekNumbers?: boolean
   firstDayOfWeek?: 0 | 1 // 0: Sunday, 1: Monday
@@ -35,6 +40,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
   onMonthChange,
   className,
   highlightedDates = [],
+  displayedPeriodDates = [],
   disabledDates = [],
   showWeekNumbers = false,
   firstDayOfWeek = 1 // Monday default
@@ -207,6 +213,9 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                 }
                 return match
               })
+              const isInDisplayedPeriod = displayedPeriodDates.some(periodDate => 
+                isSameDay(periodDate, date)
+              )
               const isDisabled = disabledDates.some(disabled => 
                 isSameDay(disabled, date)
               )
@@ -230,10 +239,14 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                       ? "text-foreground" 
                       : "text-muted-foreground/50",
                     
+                    // Displayed period (weakest highlight - 表示中の期間)
+                    isInDisplayedPeriod && !isSelected && !isToday && !isHighlighted && [
+                      displayPeriodState.background,
+                    ],
+                    
                     // Selected state (only for non-today dates)
                     isSelected && !isToday && [
-                      selection.active,
-                      selection.text,
+                      selectedState.background,
                     ],
                     
                     // Today indicator (always maintains this style regardless of selected/hover state)

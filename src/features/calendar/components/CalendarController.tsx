@@ -407,8 +407,6 @@ export function CalendarController({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    console.log('🖱️ Event clicked:', event.title)
-    
     // CreateEventModalを編集モードで開く
     openEditModal(event.id, {
       title: event.title,

@@ -42,11 +42,10 @@ export function CreateEventModal() {
   
   
   
-  // デバッグ用ログ
+  // 初期化処理
   useEffect(() => {
-    if (isOpen) {
-    }
-  }, [isOpen, initialData, context])
+    // 必要に応じて初期化処理を追加
+  }, [isOpen, isEditMode, editingEventId, initialData, context])
   
   
   // モーダルキャンセル時の処理

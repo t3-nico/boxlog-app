@@ -78,13 +78,37 @@ export const selection = {
   // 背景（薄い青、backgroundより少し明るく）
   DEFAULT: 'bg-blue-50 dark:bg-blue-950/50',
   hover: 'hover:bg-blue-100 dark:hover:bg-blue-950/70',
-  active: 'bg-blue-200 dark:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/40',
+  active: 'active:bg-blue-200 dark:active:bg-blue-900/40 hover:bg-blue-200 dark:hover:bg-blue-900/40',
   
   // ボーダー（左の青いバー）
   border: 'border-l-2 border-blue-600 dark:border-blue-400',
   
   // テキスト（選択時に少し濃く、コントラスト強化）
   text: 'text-blue-800 dark:text-blue-200',
+} as const
+
+// ============================================
+// 表示期間ハイライト（カレンダー表示中の期間）
+// ============================================
+
+/**
+ * 表示期間ハイライト
+ * @description カレンダービューで表示中の期間を示すスタイル
+ * @usage 3日表示、週表示、2週間表示などでアクティブな期間をハイライト
+ * @note 選択よりも弱く、今日よりも弱い、最も控えめなハイライト
+ */
+export const displayPeriod = {
+  // 背景（非常に薄いグレー、背景色との差を最小限に）
+  DEFAULT: 'bg-neutral-50 dark:bg-neutral-850/30',
+  
+  // ホバー時の背景（少し濃く）
+  hover: 'hover:bg-neutral-100 dark:hover:bg-neutral-800/40',
+  
+  // ボーダー（極薄のボーダー）
+  border: 'border border-neutral-200/50 dark:border-neutral-700/50',
+  
+  // テキスト（通常テキストと同じ）
+  text: 'text-foreground',
 } as const
 
 // ============================================
@@ -285,6 +309,7 @@ export const colors = {
   primary,
   secondary,
   selection,
+  displayPeriod,
   text,
   background,
   border,

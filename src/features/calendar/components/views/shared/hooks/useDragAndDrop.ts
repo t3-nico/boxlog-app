@@ -235,19 +235,24 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
         const rect = gridContainer.getBoundingClientRect()
         const relativeX = Math.max(0, Math.min(e.clientX - rect.left, rect.width)) // 境界内に制限
         
-        // より確実なカラムインデックス計算
+        // カラムインデックス計算（displayDates配列のインデックスに基づく）
         const columnIndex = Math.floor(relativeX / dragData.columnWidth)
         const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
         
         // 常に更新（リアルタイム追跡のため）
         targetDateIndex = newTargetIndex
         
-        // デバッグログ
+        // デバッグログ（非連続日付対応の詳細情報を含む）
         if (Math.abs(newTargetIndex - dragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
-          console.log('🔧 日付間移動:', {
+          console.log('🔧 日付間移動（非連続日付対応）:', {
             originalIndex: dragData.originalDateIndex,
+            originalDate: displayDates[dragData.originalDateIndex]?.toDateString?.(),
             newTargetIndex,
-            targetDate: displayDates[newTargetIndex]?.toDateString?.()
+            targetDate: displayDates[newTargetIndex]?.toDateString?.(),
+            relativeX,
+            columnWidth: dragData.columnWidth,
+            columnIndex,
+            isNonConsecutive: displayDates.length < 7 // 7日未満は週末非表示と推定
           })
         }
       }
@@ -330,10 +335,20 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
         durationMs = (dragData.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
       }
       
-      // ターゲット日付を決定（エッジケース対応）
+      // ターゲット日付を決定（非連続日付配列対応）
       let targetDate = date
       if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
         targetDate = displayDates[targetDateIndex]
+        
+        // デバッグログ：プレビュー時の日付計算
+        if (targetDateIndex !== dragData.originalDateIndex) {
+          console.log('🎯 プレビュー日付計算（非連続対応）:', {
+            targetDateIndex,
+            originalDateIndex: dragData.originalDateIndex,
+            targetDate: targetDate.toDateString(),
+            originalDate: displayDates[dragData.originalDateIndex]?.toDateString?.()
+          })
+        }
       }
       
       // 日付が無効な場合は元の日付を使用
@@ -523,16 +538,20 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
     const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
     const minute = Math.round(Math.max(0, (hourDecimal - hour) * 60 / 15)) * 15
 
-    // ターゲット日付を決定（日付間移動を考慮、エッジケース対応）
+    // ターゲット日付を決定（日付間移動を考慮、非連続日付配列対応）
     const targetDateIndex = dragState.targetDateIndex !== undefined ? dragState.targetDateIndex : dragDataRef.current.originalDateIndex
     let targetDate = date
     
     if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
       targetDate = displayDates[targetDateIndex]
-      console.log('🎯 ドロップ時のターゲット日付決定:', {
+      console.log('🎯 ドロップ時のターゲット日付決定（非連続対応）:', {
         targetDateIndex,
         targetDate: targetDate.toDateString(),
-        originalDateIndex: dragDataRef.current.originalDateIndex
+        originalDateIndex: dragDataRef.current.originalDateIndex,
+        originalDate: displayDates[dragDataRef.current.originalDateIndex]?.toDateString?.(),
+        displayDatesLength: displayDates.length,
+        isNonConsecutive: displayDates.length < 7, // 週末フィルタリング推定
+        allDisplayDates: displayDates.map(d => d.toDateString())
       })
     }
     

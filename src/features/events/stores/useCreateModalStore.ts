@@ -49,15 +49,6 @@ export const useCreateModalStore = create<CreateModalStore>((set) => ({
       context = {}
     } = options
     
-    console.log('🟦 useCreateModalStore.openModal called:', {
-      options,
-      initialData,
-      hasStartDate: !!initialData.startDate,
-      hasEndDate: !!initialData.endDate,
-      startDate: initialData.startDate,
-      endDate: initialData.endDate
-    })
-    
     set({
       isOpen: true,
       initialData,
@@ -69,8 +60,6 @@ export const useCreateModalStore = create<CreateModalStore>((set) => ({
       isEditMode: false,
       editingEventId: null
     })
-    
-    console.log('🟦 State updated. New initialData should be:', initialData)
   },
   
   openEditModal: (eventId, eventData, context = {}) => {

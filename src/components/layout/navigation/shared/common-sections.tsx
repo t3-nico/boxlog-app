@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { MiniCalendar } from '@/features/calendar/components/layout/Sidebar/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useEventStore } from '@/features/events/stores/useEventStore'
+import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers'
 interface CommonSidebarSectionsProps {
   collapsed: boolean
 }
@@ -64,6 +65,24 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
     console.log('📅 Final highlighted dates count:', dates.length)
     return dates
   }, [events])
+
+  // 表示中の期間の日付を計算
+  const displayedPeriodDates = useMemo(() => {
+    if (!calendarNavigation) return []
+    
+    const { viewType, currentDate } = calendarNavigation
+    const viewDateRange = calculateViewDateRange(viewType, currentDate)
+    
+    console.log('📅 Calculated displayed period:', {
+      viewType,
+      currentDate: currentDate.toDateString(),
+      periodStart: viewDateRange.start.toDateString(),
+      periodEnd: viewDateRange.end.toDateString(),
+      daysCount: viewDateRange.days.length
+    })
+    
+    return viewDateRange.days
+  }, [calendarNavigation])
   
   if (collapsed) return null
 
@@ -75,6 +94,7 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
           <MiniCalendar
             selectedDate={calendarNavigation?.currentDate || new Date()}
             highlightedDates={[]} // 一時的に完全無効化
+            displayedPeriodDates={displayedPeriodDates}
             onDateSelect={(date) => {
               console.log('📅 MiniCalendar date selected:', date)
               if (calendarNavigation) {

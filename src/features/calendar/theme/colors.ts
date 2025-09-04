@@ -21,6 +21,7 @@ export interface CalendarColors {
   states: {
     ghost: ColorSet         // ゴースト表示
     selected: ColorSet      // 選択時
+    displayPeriod: ColorSet // 表示期間
     conflict: ColorSet      // 衝突時
   }
 }
@@ -103,9 +104,15 @@ export const calendarColors: CalendarColors = {
       text: 'text-neutral-500/50 dark:text-neutral-400/50'
     },
     
-    // selected - 選択時（青、やや濃い）
+    // selected - 選択時（青、濃い）
     selected: {
-      background: 'bg-blue-100 dark:bg-blue-900/50',
+      background: 'bg-blue-200 dark:bg-blue-800/60',
+      text: 'inherit'
+    },
+    
+    // displayPeriod - 表示期間（青、薄い）
+    displayPeriod: {
+      background: 'bg-blue-50 dark:bg-blue-900/30',
       text: 'inherit'
     },
     

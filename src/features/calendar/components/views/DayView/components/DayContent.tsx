@@ -26,10 +26,10 @@ export function DayContent({
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
       if (!onEventUpdate) return
       
-      // 型変換して呼び出し
+      // handleUpdateEvent形式で呼び出し
       await onEventUpdate(eventId, {
-        startDate: updates.startTime,
-        endDate: updates.endTime
+        startTime: updates.startTime,
+        endTime: updates.endTime
       })
     },
     [onEventUpdate]
@@ -148,7 +148,7 @@ export function DayContent({
                     height: isResizingThis && dragState.snappedPosition ? 
                       dragState.snappedPosition.height : currentHeight
                   }}
-                  onClick={() => handleEventClick(event)}
+                  // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
                   onResizeStart={(event, direction, e, position) => handlers.handleResizeStart(event.id, direction, e, {
                     top: currentTop,
