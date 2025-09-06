@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CommonBottomSections } from '../shared'
+import { CommonBottomSections } from './shared'
 
 export function BottomContent() {
   return (

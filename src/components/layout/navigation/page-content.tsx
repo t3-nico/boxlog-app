@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { CommonSidebarSections } from '../shared'
+import { CommonSidebarSections } from './shared'
 import { CreateButton } from './create-button'
 import { BoardSidebarSections } from '@/features/board/components/sidebar'
 import { TableSidebarSections } from '@/features/table/components/sidebar'

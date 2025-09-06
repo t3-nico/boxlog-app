@@ -2,6 +2,11 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface NavigationState {
+  // Primary Navigation (Sidebar) State
+  isSidebarOpen: boolean
+  setSidebarOpen: (open: boolean) => void
+  toggleSidebar: () => void
+  
   // Secondary Navigation (L2) State
   isSecondaryNavCollapsed: boolean
   setSecondaryNavCollapsed: (collapsed: boolean) => void
@@ -26,6 +31,12 @@ interface NavigationState {
 export const useNavigationStore = create<NavigationState>()(
   persist(
     (set, get) => ({
+      // Primary Navigation State
+      isSidebarOpen: true,
+      setSidebarOpen: (open) => set({ isSidebarOpen: open }),
+      toggleSidebar: () => 
+        set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+      
       // Secondary Navigation State
       isSecondaryNavCollapsed: false,
       setSecondaryNavCollapsed: (collapsed) => 
@@ -55,6 +66,7 @@ export const useNavigationStore = create<NavigationState>()(
     {
       name: 'navigation-store',
       partialize: (state) => ({
+        isSidebarOpen: state.isSidebarOpen,
         isSecondaryNavCollapsed: state.isSecondaryNavCollapsed,
         primaryNavWidth: state.primaryNavWidth,
         secondaryNavWidth: state.secondaryNavWidth,

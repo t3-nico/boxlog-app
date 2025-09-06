@@ -7,7 +7,7 @@ import {
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-} from '../shared'
+} from '@/components/layout/navigation/shared'
 import {
   User as UserIcon,
   SlidersVertical as AdjustmentsVerticalIcon,

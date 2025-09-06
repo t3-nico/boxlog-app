@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { CreateEventTrigger } from '@/features/events/components/create/CreateEventTrigger'
-import { SidebarSection } from '../shared'
+import { SidebarSection } from './shared'
 import { usePathname } from 'next/navigation'
 
 export function CreateButton() {

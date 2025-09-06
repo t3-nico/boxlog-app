@@ -1,5 +1,5 @@
 import { getEvents, getReviews } from '@/lib/data'
-import { DashboardLayout } from '@/components/layout/navigation/layout'
+import { DashboardLayout } from '@/components/layout/layout'
 import { AuthGuard } from '@/features/auth'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {

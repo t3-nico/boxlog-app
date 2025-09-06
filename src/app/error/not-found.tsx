@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { DashboardLayout } from '@/components/layout/navigation/layout'
+import { DashboardLayout } from '@/components/layout/layout'
 
 // 404ページのコンテンツコンポーネント
 function NotFoundContent() {
