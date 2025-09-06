@@ -89,8 +89,8 @@ export function UserMenu() {
       </Headless.MenuButton>
 
       <Headless.MenuItems className={cn(
-        'absolute left-full bottom-0 ml-2 w-64 origin-bottom-left',
-        'backdrop-blur-xl shadow-lg z-50',
+        'absolute left-0 top-full mt-2 w-64 origin-top-left',
+        'backdrop-blur-xl shadow-lg z-[9999]',
         background.surface,
         border.subtle,
         'ring-1',

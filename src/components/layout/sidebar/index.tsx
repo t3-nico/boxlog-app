@@ -7,9 +7,8 @@ import { primaryNavigation } from '@/config/navigation/config'
 import { SidebarItem } from './sidebar-item'
 import { UserMenu } from './user-menu'
 import { ThemeToggle } from './theme-toggle'
-import { ResizeHandle } from './resize-handle'
 import { useNavigationStore } from './stores/navigation.store'
-import { background, text, border } from '@/config/theme/colors'
+import { background, text, border, selection, semantic } from '@/config/theme/colors'
 import { PanelLeftClose } from 'lucide-react'
 import { componentRadius, animations, spacing } from '@/config/theme'
 
@@ -17,13 +16,38 @@ export function Sidebar() {
   const pathname = usePathname()
   const primaryNavWidth = useNavigationStore((state) => state.primaryNavWidth)
   const { toggleSidebar } = useNavigationStore()
+  const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    
+    const startX = e.clientX
+    const startWidth = useNavigationStore.getState().primaryNavWidth
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const newWidth = startWidth + (e.clientX - startX)
+      
+      // 幅制限を直接ここで実装
+      const constrainedWidth = Math.max(200, Math.min(480, newWidth))
+      setPrimaryNavWidth(constrainedWidth)
+    }
+
+    const handleMouseUp = () => {
+      document.removeEventListener('mousemove', handleMouseMove)
+      document.removeEventListener('mouseup', handleMouseUp)
+    }
+
+    document.addEventListener('mousemove', handleMouseMove)
+    document.addEventListener('mouseup', handleMouseUp)
+  }
   
   return (
     <div 
       className={cn(
-        'flex relative z-50',
+        'flex relative z-[9999] border-r',
         background.base,
-        text.primary
+        text.primary,
+        border.universal
       )}
       style={{ width: `${primaryNavWidth}px` }}
     >
@@ -101,8 +125,19 @@ export function Sidebar() {
           </div>
         </div>
         
-        {/* Resize Handle */}
-        <ResizeHandle />
+        {/* Border Hover & Resize Area */}
+        <div
+          onMouseDown={handleMouseDown}
+          className={cn(
+            'absolute -right-1 top-0 w-3 h-full cursor-ew-resize group'
+          )}
+        >
+          {/* Visual Color Change - 1px width */}
+          <div className={cn(
+            'absolute right-1 top-0 w-px h-full transition-colors',
+            'group-hover:bg-blue-600 dark:group-hover:bg-blue-500'
+          )} />
+        </div>
       </div>
   )
 }

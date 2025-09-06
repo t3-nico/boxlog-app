@@ -36,7 +36,7 @@ export function SidebarItem({ item, pathname }: SidebarItemProps) {
         animations.transition.fast,
         'relative group',
         isActive
-          ? `${selection.active} ${selection.text}`
+          ? `${selection.text} ${selection.DEFAULT}`
           : `bg-transparent ${text.muted} ${selection.hover}`
       )}
     >
