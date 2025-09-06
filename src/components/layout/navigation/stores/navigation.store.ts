@@ -11,8 +11,16 @@ interface NavigationState {
   primaryNavWidth: number
   secondaryNavWidth: number
   
+  // Resizable AppBar Settings
+  minWidth: number
+  maxWidth: number
+  defaultWidth: number
+  
   setPrimaryNavWidth: (width: number) => void
   setSecondaryNavWidth: (width: number) => void
+  
+  // AppBar resize methods
+  setPrimaryNavWidthConstrained: (width: number) => void
 }
 
 export const useNavigationStore = create<NavigationState>()(
@@ -26,11 +34,23 @@ export const useNavigationStore = create<NavigationState>()(
         set((state) => ({ isSecondaryNavCollapsed: !state.isSecondaryNavCollapsed })),
       
       // Column Widths
-      primaryNavWidth: 60,
+      primaryNavWidth: 280, // デフォルト幅
       secondaryNavWidth: 240,
+      
+      // Resizable Settings
+      minWidth: 200,
+      maxWidth: 480,
+      defaultWidth: 280,
       
       setPrimaryNavWidth: (width) => set({ primaryNavWidth: width }),
       setSecondaryNavWidth: (width) => set({ secondaryNavWidth: width }),
+      
+      // AppBar resize with constraints
+      setPrimaryNavWidthConstrained: (width) => {
+        const { minWidth, maxWidth } = get()
+        const constrainedWidth = Math.max(minWidth, Math.min(maxWidth, width))
+        set({ primaryNavWidth: constrainedWidth })
+      },
     }),
     {
       name: 'navigation-store',

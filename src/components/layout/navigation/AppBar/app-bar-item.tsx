@@ -31,7 +31,7 @@ export function AppBarItem({ item, pathname }: AppBarItemProps) {
     <button
       onClick={handleClick}
       className={cn(
-        columns.nav.content.item,
+        'w-full flex items-center gap-3 px-3 py-2 text-left',
         componentRadius.button.md,
         animations.transition.fast,
         'relative group',
@@ -41,11 +41,12 @@ export function AppBarItem({ item, pathname }: AppBarItemProps) {
       )}
     >
       <Icon className={icons.size.lg} />
+      <span className="font-medium">{item.label}</span>
       
       {/* Badge */}
       {item.badge && (
         <div className={cn(
-          'absolute -top-1 -right-1 w-5 h-5',
+          'ml-auto w-5 h-5',
           'bg-destructive text-destructive-foreground text-xs font-medium',
           'flex items-center justify-center',
           componentRadius.badge.pill
@@ -53,18 +54,6 @@ export function AppBarItem({ item, pathname }: AppBarItemProps) {
           {item.badge}
         </div>
       )}
-      
-      
-      {/* Tooltip */}
-      <div className={cn(
-        'absolute left-full ml-2 px-2 py-1',
-        `${background.surface} text-xs ${text.primary} shadow-lg`,
-        'opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50',
-        componentRadius.input.text,
-        animations.transition.fast
-      )}>
-        {item.tooltip || item.label}
-      </div>
     </button>
   )
 }
