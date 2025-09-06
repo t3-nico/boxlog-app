@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from '../../sidebar/stores/navigation.store'
 import { PanelRight } from 'lucide-react'
 import { background, border, secondary, text } from '@/config/theme/colors'
 

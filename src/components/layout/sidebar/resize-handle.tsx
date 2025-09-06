@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from './stores/navigation.store'
 
 export function ResizeHandle() {
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)

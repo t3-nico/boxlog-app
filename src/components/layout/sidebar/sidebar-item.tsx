@@ -8,12 +8,12 @@ import { useCommandPalette } from '@/features/command-palette/hooks/use-command-
 import { componentRadius, columns, animations, icons, typography, colors } from '@/config/theme'
 import { selection, text, background, secondary } from '@/config/theme/colors'
 
-interface AppBarItemProps {
+interface SidebarItemProps {
   item: NavigationItem
   pathname: string
 }
 
-export function AppBarItem({ item, pathname }: AppBarItemProps) {
+export function SidebarItem({ item, pathname }: SidebarItemProps) {
   const router = useRouter()
   const { open: openCommandPalette } = useCommandPalette()
   const Icon = item.icon

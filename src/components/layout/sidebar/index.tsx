@@ -4,14 +4,14 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { primaryNavigation } from '@/config/navigation/config'
-import { AppBarItem } from './app-bar-item'
+import { SidebarItem } from './sidebar-item'
 import { UserMenu } from './user-menu'
 import { ThemeToggle } from './theme-toggle'
 import { ResizeHandle } from './resize-handle'
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from './stores/navigation.store'
 import { background, text, border } from '@/config/theme/colors'
 
-export function AppBar() {
+export function Sidebar() {
   const pathname = usePathname()
   const primaryNavWidth = useNavigationStore((state) => state.primaryNavWidth)
   
@@ -25,7 +25,7 @@ export function AppBar() {
       )}
       style={{ width: `${primaryNavWidth}px` }}
     >
-        {/* AppBar Content */}
+        {/* Sidebar Content */}
         <div className="flex-1 flex flex-col">
           {/* Main Navigation Items */}
           <div className={cn(
@@ -34,7 +34,7 @@ export function AppBar() {
             {primaryNavigation.filter(section => section.id !== 'user').map((section, sectionIndex, filteredSections) => (
               <React.Fragment key={section.id}>
                 {section.items.map((item) => (
-                  <AppBarItem
+                  <SidebarItem
                     key={item.id}
                     item={item}
                     pathname={pathname}
@@ -55,7 +55,7 @@ export function AppBar() {
             'flex flex-col px-3 pb-4 space-y-1'
           )}>
             {primaryNavigation.find(section => section.id === 'user')?.items.map((item) => (
-              <AppBarItem
+              <SidebarItem
                 key={item.id}
                 item={item}
                 pathname={pathname}

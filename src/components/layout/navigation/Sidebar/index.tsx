@@ -3,7 +3,7 @@
 import React from 'react'
 import { usePathname } from 'next/navigation'
 import { getPageTitle } from '@/config/navigation/config'
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from '../../sidebar/stores/navigation.store'
 import { PageContent } from './page-content'
 import { BottomContent } from './bottom-content'
 import { SettingsNavigation } from './settings-navigation'

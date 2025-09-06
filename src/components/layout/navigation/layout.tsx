@@ -6,9 +6,9 @@ import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { ChatProvider } from '@/contexts/chat-context'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
-import { AppBar } from './AppBar'
+import { Sidebar } from '../sidebar'
 import { Sidebar as SecondaryNavigation, SecondaryNavToggle } from './Sidebar'
-import { useNavigationStore } from './stores/navigation.store'
+import { useNavigationStore } from '../sidebar/stores/navigation.store'
 import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { CreateEventModal } from '@/features/events/components/create/CreateEventModal'
@@ -59,8 +59,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     <div className="flex flex-col h-screen">
       {/* メインコンテンツエリア（AppBar + Sidebar + Content） */}
       <div className="flex flex-1 overflow-hidden">
-        {/* L1: App Bar (60px) */}
-        <AppBar />
+        {/* L1: Primary Sidebar */}
+        <Sidebar />
         
         {/* L2: Secondary Navigation (240px) - Collapsible */}
         {!isSecondaryNavCollapsed && (
