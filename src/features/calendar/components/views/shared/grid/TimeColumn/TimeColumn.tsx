@@ -27,7 +27,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
   
   return (
     <div
-      className={`sticky left-0 ${background.surface} border-r border-neutral-900/20 dark:border-neutral-100/20 z-10 ${className}`}
+      className={`sticky left-0 ${background.base} border-r border-neutral-900/20 dark:border-neutral-100/20 z-10 ${className}`}
       style={{
         width: `${TIME_COLUMN_WIDTH}px`,
         height: `${gridHeight}px`

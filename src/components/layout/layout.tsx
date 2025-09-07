@@ -14,7 +14,8 @@ import { CalendarNavigationProvider } from '@/features/calendar/contexts/Calenda
 import { CreateEventModal } from '@/features/events/components/create/CreateEventModal'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { background } from '@/config/theme/colors'
-import { TaskFooter } from './TaskFooter'
+import { Header } from './header'
+import { Inspector } from './inspector'
 
 interface DashboardLayoutProps {
   events?: any
@@ -57,33 +58,42 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
   const content = (
     <div className="flex flex-col h-screen">
-      {/* メインコンテンツエリア（AppBar + Sidebar + Content） */}
+      {/* メインレイアウト - 3カラム構成 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* L1: Primary Sidebar */}
+        {/* L1: Primary Sidebar - 左端独立 */}
         <Sidebar />
         
-        {/* L2: Secondary Navigation (240px) - Collapsible */}
-        {!isSecondaryNavCollapsed && (
-          <SecondaryNavigation />
-        )}
-        
-        {/* Main Content Area - Flexible */}
-        <div className={`flex-1 relative z-10 flex flex-col ${background.surface}`}>
-          {/* Secondary Nav Toggle Button */}
-          <SecondaryNavToggle />
+        {/* L2: Navigation + Main Content Area - 中央、Headerで覆われる */}
+        <div className="flex-1 flex flex-col">
+          {/* Header Area - Navigation + Main Content のみ */}
+          <Header>
+            {/* Secondary Nav Toggle Button */}
+            <SecondaryNavToggle />
+          </Header>
           
-          {/* Main Content with AI Panel */}
-          <div className="flex-1 relative overflow-hidden">
-            {children}
+          {/* Navigation + Main Content */}
+          <div className="flex flex-1 overflow-hidden">
+            {/* Secondary Navigation (240px) - Collapsible */}
+            {!isSecondaryNavCollapsed && (
+              <SecondaryNavigation />
+            )}
             
-            {/* Floating AI Chat within main area */}
-            <DynamicFloatingAIChat />
+            {/* Main Content Area */}
+            <div className={`flex-1 relative z-10 flex ${background.base}`}>
+              {/* Main Content with AI Panel */}
+              <div className="flex-1 relative overflow-hidden">
+                {children}
+                
+                {/* Floating AI Chat within main area */}
+                <DynamicFloatingAIChat />
+              </div>
+            </div>
           </div>
         </div>
+        
+        {/* L3: Inspector - 右端独立 */}
+        <Inspector />
       </div>
-      
-      {/* Task Execution Footer - 全画面幅、最下部 */}
-      <TaskFooter />
       
       {/* Global Create Event Modal */}
       <CreateEventModal />

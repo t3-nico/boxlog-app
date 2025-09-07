@@ -4,11 +4,13 @@ import { useCallback } from 'react'
 import { useEventStore } from '@/features/events/stores/useEventStore'
 import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 import useCalendarToast from '@/features/calendar/lib/toast'
+import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
 import type { CalendarEvent } from '@/features/events/types/events'
 
 export function useEventContextActions() {
   const { softDeleteEvent, updateEvent, createEvent } = useEventStore()
   const { openEditModal } = useCreateModalStore()
+  const { setInspectorOpen, setActiveContent } = useInspectorStore()
   const calendarToast = useCalendarToast()
 
   const handleDeleteEvent = useCallback(async (event: CalendarEvent) => {
@@ -157,10 +159,14 @@ export function useEventContextActions() {
   }, [createEvent, calendarToast, openEditModal])
 
   const handleViewDetails = useCallback((event: CalendarEvent) => {
-    // イベント詳細表示の処理
-    console.log('View event details:', event)
-    // TODO: 詳細モーダルの呼び出し
-  }, [])
+    // Inspectorを開いてイベント詳細を表示
+    setActiveContent('calendar')
+    setInspectorOpen(true)
+    
+    // 将来的にはここでeventデータをInspectorに渡す処理を追加
+    // 例: setSelectedEvent(event) など
+    console.log('View event details in Inspector:', event)
+  }, [setActiveContent, setInspectorOpen])
 
   return {
     handleDeleteEvent,

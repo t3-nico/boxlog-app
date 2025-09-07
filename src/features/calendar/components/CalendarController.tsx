@@ -23,6 +23,7 @@ import { NotificationDisplay } from '@/features/notifications/components/notific
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { EventContextMenu } from './views/shared/components'
 import { useEventContextActions } from '../hooks/useEventContextActions'
+import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -994,38 +995,38 @@ export function CalendarController({
 
   return (
     <DnDProvider>
-      <CalendarLayout
-        className={className}
-        
-        // Header props
-        viewType={viewType}
-        currentDate={currentDate}
-        onNavigate={handleNavigate}
-        onViewChange={handleViewChange}
-        showHeaderActions={false}
-        
-        // Sidebar props (disabled - using app-level sidebar)
-        showSidebar={false}
-        sidebarCollapsed={!sidebarOpen}
-        onSidebarCollapsedChange={(collapsed) => toggleSidebar()}
-        
-        // Calendar integration props
-        selectedDate={currentDate}
-        onDateSelect={handleDateSelect}
-        onCreateEvent={handleCreateEvent}
-        onGoToToday={() => handleNavigate('today')}
-        
-        // Display options
-        showMiniCalendar={true}
-        showCalendarList={false} // まだカレンダーリストはないので無効
-        showTagFilter={false} // まだタグフィルターはないので無効
-        showQuickActions={true}
-      >
-        {/* ビュー固有のコンテンツ */}
-        <div className="flex-1 overflow-hidden">
-          {renderView()}
-        </div>
-      </CalendarLayout>
+        <CalendarLayout
+          className={className}
+          
+          // Header props
+          viewType={viewType}
+          currentDate={currentDate}
+          onNavigate={handleNavigate}
+          onViewChange={handleViewChange}
+          showHeaderActions={false}
+          
+          // Sidebar props (disabled - using app-level sidebar)
+          showSidebar={false}
+          sidebarCollapsed={!sidebarOpen}
+          onSidebarCollapsedChange={(collapsed) => toggleSidebar()}
+          
+          // Calendar integration props
+          selectedDate={currentDate}
+          onDateSelect={handleDateSelect}
+          onCreateEvent={handleCreateEvent}
+          onGoToToday={() => handleNavigate('today')}
+          
+          // Display options
+          showMiniCalendar={true}
+          showCalendarList={false} // まだカレンダーリストはないので無効
+          showTagFilter={false} // まだタグフィルターはないので無効
+          showQuickActions={true}
+        >
+          {/* ビュー固有のコンテンツ */}
+          <div className="flex-1 overflow-hidden">
+            {renderView()}
+          </div>
+        </CalendarLayout>
       
       {/* CreateEventModal - useCreateModalStoreで管理 */}
       <CreateEventModal />

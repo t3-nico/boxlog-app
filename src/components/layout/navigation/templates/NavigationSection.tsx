@@ -1,0 +1,94 @@
+'use client'
+
+import React from 'react'
+import { cn } from '@/lib/utils'
+import { heading } from '@/config/theme/typography'
+import { text } from '@/config/theme/colors'
+
+export interface NavigationSectionProps {
+  title?: string
+  children: React.ReactNode
+  className?: string
+  titleClassName?: string
+  contentClassName?: string
+  collapsible?: boolean
+  defaultCollapsed?: boolean
+  icon?: React.ComponentType<{ className?: string }>
+}
+
+export function NavigationSection({
+  title,
+  children,
+  className,
+  titleClassName,
+  contentClassName,
+  collapsible = false,
+  defaultCollapsed = false,
+  icon: Icon
+}: NavigationSectionProps) {
+  const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
+
+  const handleToggle = () => {
+    if (collapsible) {
+      setIsCollapsed(!isCollapsed)
+    }
+  }
+
+  return (
+    <div className={cn('space-y-2', className)}>
+      {/* Section Header */}
+      {title && (
+        <div
+          className={cn(
+            'flex items-center',
+            collapsible && 'cursor-pointer hover:opacity-70 transition-opacity',
+            titleClassName
+          )}
+          onClick={handleToggle}
+        >
+          {Icon && (
+            <Icon className={cn(
+              'w-4 h-4 mr-2 flex-shrink-0',
+              text.muted
+            )} />
+          )}
+          
+          <h3 className={cn(
+            'flex-1',
+            heading.h4,
+            text.muted,
+            'text-xs font-semibold uppercase tracking-wider'
+          )}>
+            {title}
+          </h3>
+
+          {collapsible && (
+            <svg
+              className={cn(
+                'w-4 h-4 transition-transform',
+                text.muted,
+                isCollapsed ? 'rotate-0' : 'rotate-90'
+              )}
+              fill="none"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          )}
+        </div>
+      )}
+
+      {/* Section Content */}
+      {(!collapsible || !isCollapsed) && (
+        <div className={cn(
+          'space-y-1',
+          contentClassName
+        )}>
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}

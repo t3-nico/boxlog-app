@@ -45,7 +45,7 @@ export function Sidebar() {
     <div 
       className={cn(
         'flex relative z-[9999] border-r',
-        background.base,
+        background.surface,
         text.primary,
         border.universal
       )}
