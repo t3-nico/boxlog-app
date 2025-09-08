@@ -6,8 +6,11 @@ import { cn } from '@/lib/utils'
 import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
 import { background, text, border, ghost } from '@/config/theme/colors'
-import { componentRadius, animations } from '@/config/theme'
+import { componentRadius, animations, layout, icon } from '@/config/theme'
 import { PanelRightClose } from 'lucide-react'
+
+const { compact } = layout.heights.header
+const { sm } = icon.size
 
 export function Inspector() {
   const pathname = usePathname()
@@ -70,7 +73,8 @@ export function Inspector() {
       <div className="flex-1 flex flex-col">
         {/* Inspector Header with Close Button */}
         <div className={cn(
-          'flex items-center justify-end px-3 py-3',
+          'flex items-center justify-end px-3',
+          compact, // 40px height
           background.surface
         )}>
           <button
@@ -85,7 +89,7 @@ export function Inspector() {
               'flex-shrink-0'
             )}
           >
-            <PanelRightClose className="w-4 h-4" />
+            <PanelRightClose className={sm} />
           </button>
         </div>
         

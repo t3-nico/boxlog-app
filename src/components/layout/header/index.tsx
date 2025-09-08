@@ -3,6 +3,10 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { background, border } from '@/config/theme/colors'
+import { layout, spacing } from '@/config/theme'
+
+const { compact } = layout.heights.header
+const space4 = spacing.space[4] // p-4: 16px all around
 
 interface HeaderProps {
   className?: string
@@ -13,10 +17,10 @@ export function Header({ className, children }: HeaderProps) {
   return (
     <div
       className={cn(
-        'h-16', // 64px height
+        compact, // 40px height
         'w-full',
-        'flex items-center justify-between',
-        'px-6 py-4', // horizontal: 24px, vertical: 16px
+        'flex items-center justify-start',
+        space4, // 16px all around
         background.base, // ベース背景
         border.universal,
         'border-b',

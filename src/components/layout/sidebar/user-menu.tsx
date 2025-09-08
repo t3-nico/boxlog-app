@@ -14,7 +14,9 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
 } from 'lucide-react'
-import { componentRadius, animations, spacing } from '@/config/theme'
+import { componentRadius, animations, spacing, icon } from '@/config/theme'
+
+const { md, lg } = icon.size
 import { border, background, text, semantic } from '@/config/theme/colors'
 
 export function UserMenu() {
@@ -42,14 +44,14 @@ export function UserMenu() {
             <Avatar 
               src={user.user_metadata.avatar_url} 
               className={cn(
-                'w-8 h-8 border',
+                lg, 'border',
                 border.universal,
                 componentRadius.media.avatar
               )}
             />
           ) : user?.user_metadata?.profile_icon ? (
             <div className={cn(
-              'w-8 h-8 text-sm flex items-center justify-center bg-accent border',
+              lg, 'text-sm flex items-center justify-center bg-accent border',
               border.universal,
               componentRadius.media.avatar
             )}>
@@ -59,7 +61,7 @@ export function UserMenu() {
             <Avatar 
               src={undefined}
               className={cn(
-                'w-8 h-8 border',
+                lg, 'border',
                 border.universal,
                 componentRadius.media.avatar
               )}
@@ -122,7 +124,7 @@ export function UserMenu() {
                 focus ? background.hover : ''
               )}
             >
-              <Cog8ToothIcon className={cn('w-4 h-4', text.muted)} />
+              <Cog8ToothIcon className={cn(md, text.muted)} />
               <span className={text.primary}>Settings</span>
             </button>
           )}
@@ -141,7 +143,7 @@ export function UserMenu() {
                 focus ? background.hover : ''
               )}
             >
-              <ShieldCheckIcon className={cn('w-4 h-4', text.muted)} />
+              <ShieldCheckIcon className={cn(md, text.muted)} />
               <span className={text.primary}>Privacy policy</span>
             </a>
           )}
@@ -158,7 +160,7 @@ export function UserMenu() {
                 focus ? background.hover : ''
               )}
             >
-              <LightBulbIcon className={cn('w-4 h-4', text.muted)} />
+              <LightBulbIcon className={cn(md, text.muted)} />
               <span className={text.primary}>Share feedback</span>
             </a>
           )}
@@ -175,7 +177,7 @@ export function UserMenu() {
                 focus ? background.hover : ''
               )}
             >
-              <QuestionMarkCircleIcon className={cn('w-4 h-4', text.muted)} />
+              <QuestionMarkCircleIcon className={cn(md, text.muted)} />
               <span className={text.primary}>Support</span>
             </a>
           )}
@@ -192,7 +194,7 @@ export function UserMenu() {
                 focus ? background.hover : ''
               )}
             >
-              <SparklesIcon className={cn('w-4 h-4', text.muted)} />
+              <SparklesIcon className={cn(md, text.muted)} />
               <span className={text.primary}>Changelog</span>
             </a>
           )}
@@ -211,7 +213,7 @@ export function UserMenu() {
                 focus ? background.hover : ''
               )}
             >
-              <ArrowRightStartOnRectangleIcon className={cn('w-4 h-4', text.muted)} />
+              <ArrowRightStartOnRectangleIcon className={cn(md, text.muted)} />
               <span className={text.primary}>Logout</span>
             </button>
           )}

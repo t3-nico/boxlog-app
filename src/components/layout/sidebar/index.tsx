@@ -10,7 +10,11 @@ import { ThemeToggle } from './theme-toggle'
 import { useNavigationStore } from './stores/navigation.store'
 import { background, text, border, selection, semantic } from '@/config/theme/colors'
 import { PanelLeftClose } from 'lucide-react'
-import { componentRadius, animations, spacing } from '@/config/theme'
+import { componentRadius, animations, spacing, layout, icon } from '@/config/theme'
+
+const { compact } = layout.heights.header
+const { sm } = icon.size
+const gap1wo = 'gap-1' // 4px - theme準拠の最小gap
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -55,10 +59,11 @@ export function Sidebar() {
         <div className="flex-1 flex flex-col">
           {/* Top Section: User Menu & Close Button */}
           <div className={cn(
-            'flex items-center justify-between px-3 py-3'
+            'flex items-center justify-between px-3',
+            compact // 40px height
           )}>
             {/* User Menu with Name */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className={cn("flex items-center min-w-0 flex-1", gap1wo)}>
               <UserMenu />
               <div className={cn(
                 'min-w-0 flex-1',
@@ -81,7 +86,7 @@ export function Sidebar() {
                 'flex-shrink-0'
               )}
             >
-              <PanelLeftClose className="w-4 h-4" />
+              <PanelLeftClose className={sm} />
             </button>
           </div>
 

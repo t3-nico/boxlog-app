@@ -32,6 +32,27 @@ export const layout = {
     sidebar: 'grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6',
     twoColumn: 'grid grid-cols-1 md:grid-cols-2 gap-6',
   },
+  
+  /**
+   * よく使われるコンポーネントの高さ
+   */
+  heights: {
+    header: {
+      compact: 'h-10',    // 40px - コンパクトヘッダー
+      default: 'h-12',    // 48px - 標準ヘッダー
+      large: 'h-16',      // 64px - 大きいヘッダー
+    },
+    button: {
+      sm: 'h-8',         // 32px - 小ボタン
+      md: 'h-10',        // 40px - 標準ボタン
+      lg: 'h-12',        // 48px - 大ボタン
+    },
+    input: {
+      sm: 'h-8',         // 32px - 小入力
+      md: 'h-10',        // 40px - 標準入力
+      lg: 'h-12',        // 48px - 大入力
+    },
+  },
 } as const
 
 // ============================================
