@@ -4,7 +4,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { NavigationItem, isNavItemActive } from '@/config/navigation/config'
-import { useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
+import { useGlobalSearch } from '@/features/search'
 import { componentRadius, columns, animations, icons, typography, colors } from '@/config/theme'
 import { selection, text, background, secondary } from '@/config/theme/colors'
 
@@ -15,13 +15,13 @@ interface SidebarItemProps {
 
 export function SidebarItem({ item, pathname }: SidebarItemProps) {
   const router = useRouter()
-  const { open: openCommandPalette } = useCommandPalette()
+  const { open: openGlobalSearch } = useGlobalSearch()
   const Icon = item.icon
   const isActive = isNavItemActive(item, pathname)
 
   const handleClick = () => {
     if (item.id === 'search') {
-      openCommandPalette()
+      openGlobalSearch()
     } else {
       router.push(item.href)
     }
@@ -31,7 +31,7 @@ export function SidebarItem({ item, pathname }: SidebarItemProps) {
     <button
       onClick={handleClick}
       className={cn(
-        'w-full flex items-center gap-3 px-3 py-2 text-left',
+        'w-full flex items-center gap-3 p-1 text-left',
         componentRadius.button.md,
         animations.transition.fast,
         'relative group',
@@ -40,8 +40,8 @@ export function SidebarItem({ item, pathname }: SidebarItemProps) {
           : `bg-transparent ${text.muted} ${selection.hover}`
       )}
     >
-      <Icon className={icons.size.lg} />
-      <span className="font-medium">{item.label}</span>
+      <Icon className={icons.size.md} />
+      <span className={cn("font-medium", typography.heading.h5)}>{item.label}</span>
       
       {/* Badge */}
       {item.badge && (

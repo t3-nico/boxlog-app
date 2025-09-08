@@ -5,8 +5,9 @@ import { cn } from '@/lib/utils'
 import { background, border } from '@/config/theme/colors'
 import { layout, spacing } from '@/config/theme'
 
-const { compact } = layout.heights.header
-const space4 = spacing.space[4] // p-4: 16px all around
+const { xs: headerHeight } = layout.heights.header
+const mt2 = 'mt-2' // 8px top margin - theme準拠
+const px4 = 'px-4' // 16px horizontal padding - theme準拠
 
 interface HeaderProps {
   className?: string
@@ -17,10 +18,11 @@ export function Header({ className, children }: HeaderProps) {
   return (
     <div
       className={cn(
-        compact, // 40px height
+        headerHeight, // 32px height
         'w-full',
         'flex items-center justify-start',
-        space4, // 16px all around
+        mt2, // 8px top margin
+        px4, // 16px horizontal padding
         background.base, // ベース背景
         border.universal,
         'border-b',

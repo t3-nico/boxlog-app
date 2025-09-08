@@ -13,6 +13,10 @@ export {
   useSearchHistory, 
   useSearchSuggestions 
 } from './hooks/use-search'
+export { 
+  useGlobalSearch, 
+  GlobalSearchProvider 
+} from './hooks/use-global-search'
 
 // Search Engine
 export { SearchEngine, FuzzySearch } from './lib/search-engine'

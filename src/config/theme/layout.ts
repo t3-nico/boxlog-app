@@ -38,6 +38,7 @@ export const layout = {
    */
   heights: {
     header: {
+      xs: 'h-8',         // 32px - 極小ヘッダー
       compact: 'h-10',    // 40px - コンパクトヘッダー
       default: 'h-12',    // 48px - 標準ヘッダー
       large: 'h-16',      // 64px - 大きいヘッダー

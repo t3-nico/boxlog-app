@@ -3,6 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { background, border } from '@/config/theme/colors'
+import { typography } from '@/config/theme'
 
 export interface NavigationSection {
   id: string
@@ -72,7 +73,7 @@ export function NavigationTemplate({
               {/* Section Title */}
               {section.title && (
                 <div className="mb-2">
-                  <h3 className="text-sm font-medium text-muted-foreground">
+                  <h3 className={cn(typography.body.base, 'font-medium text-muted-foreground')}>
                     {section.title}
                   </h3>
                 </div>

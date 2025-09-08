@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { heading } from '@/config/theme/typography'
+import { typography } from '@/config/theme'
 import { text } from '@/config/theme/colors'
 
 export interface NavigationSectionProps {
@@ -57,7 +57,7 @@ export function NavigationSection({
             'flex-1',
             heading.h4,
             text.muted,
-            'text-xs font-semibold uppercase tracking-wider'
+typography.body.xs, 'font-semibold uppercase tracking-wider'
           )}>
             {title}
           </h3>

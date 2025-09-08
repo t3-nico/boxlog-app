@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { CheckSquare, Clock, Flag, User, MessageSquare, Paperclip } from 'lucide-react'
 import { background, text, border } from '@/config/theme/colors'
+import { typography } from '@/config/theme'
 
 export function TaskInspectorContent() {
   return (
@@ -12,7 +13,7 @@ export function TaskInspectorContent() {
       <div className="p-4 space-y-6">
         {/* タスク詳細セクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             タスク詳細
           </h3>
           
@@ -26,10 +27,10 @@ export function TaskInspectorContent() {
               <div className="flex items-start gap-3">
                 <CheckSquare className="w-4 h-4 mt-0.5 text-blue-600 dark:text-blue-400" />
                 <div className="flex-1">
-                  <p className={cn('text-sm font-medium', text.primary)}>
+                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                     新機能のUI設計
                   </p>
-                  <p className={cn('text-xs mt-1', text.muted)}>
+                  <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
                     ユーザー体験を向上させる新しいインターface設計
                   </p>
                 </div>
@@ -45,10 +46,10 @@ export function TaskInspectorContent() {
               <div className="flex items-center gap-3 mb-3">
                 <Clock className="w-4 h-4 text-orange-600 dark:text-orange-400" />
                 <div>
-                  <p className={cn('text-sm font-medium', text.primary)}>
+                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                     期限: 2024年9月15日
                   </p>
-                  <p className={cn('text-xs', text.muted)}>
+                  <p className={cn(typography.body.xs, text.muted)}>
                     残り8日
                   </p>
                 </div>
@@ -56,7 +57,7 @@ export function TaskInspectorContent() {
               
               {/* 進捗バー */}
               <div className="space-y-2">
-                <div className="flex justify-between text-xs">
+                <div className={cn('flex justify-between', typography.body.xs)}>
                   <span className={text.muted}>進捗</span>
                   <span className={text.primary}>75%</span>
                 </div>
@@ -75,10 +76,10 @@ export function TaskInspectorContent() {
               <div className="flex items-center gap-3">
                 <Flag className="w-4 h-4 text-red-600 dark:text-red-400" />
                 <div>
-                  <p className={cn('text-sm font-medium', text.primary)}>
+                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                     優先度: 高
                   </p>
-                  <p className={cn('text-xs', text.muted)}>
+                  <p className={cn(typography.body.xs, text.muted)}>
                     今週中に完了必須
                   </p>
                 </div>
@@ -94,10 +95,10 @@ export function TaskInspectorContent() {
               <div className="flex items-center gap-3">
                 <User className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                 <div>
-                  <p className={cn('text-sm font-medium', text.primary)}>
+                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                     担当者: 田中太郎
                   </p>
-                  <p className={cn('text-xs', text.muted)}>
+                  <p className={cn(typography.body.xs, text.muted)}>
                     UI/UXデザイナー
                   </p>
                 </div>
@@ -108,7 +109,7 @@ export function TaskInspectorContent() {
 
         {/* サブタスクセクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             サブタスク
           </h3>
           
@@ -140,7 +141,7 @@ export function TaskInspectorContent() {
                     )}
                   </div>
                   <p className={cn(
-                    'text-sm',
+                    typography.body.base,
                     subtask.completed 
                       ? cn('line-through', text.muted)
                       : text.primary
@@ -155,7 +156,7 @@ export function TaskInspectorContent() {
 
         {/* コメントセクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             コメント
           </h3>
           
@@ -184,14 +185,14 @@ export function TaskInspectorContent() {
                   <MessageSquare className="w-4 h-4 mt-0.5 text-gray-600 dark:text-gray-400" />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={cn('text-xs font-medium', text.primary)}>
+                      <span className={cn(typography.body.xs, 'font-medium', text.primary)}>
                         {comment.author}
                       </span>
-                      <span className={cn('text-xs', text.muted)}>
+                      <span className={cn(typography.body.xs, text.muted)}>
                         {comment.time}
                       </span>
                     </div>
-                    <p className={cn('text-sm', text.primary)}>
+                    <p className={cn(typography.body.base, text.primary)}>
                       {comment.content}
                     </p>
                   </div>
@@ -203,7 +204,7 @@ export function TaskInspectorContent() {
 
         {/* 添付ファイルセクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             添付ファイル
           </h3>
           
@@ -224,10 +225,10 @@ export function TaskInspectorContent() {
                 <div className="flex items-center gap-3">
                   <Paperclip className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                   <div className="flex-1">
-                    <p className={cn('text-sm font-medium', text.primary)}>
+                    <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                       {file.name}
                     </p>
-                    <p className={cn('text-xs', text.muted)}>
+                    <p className={cn(typography.body.xs, text.muted)}>
                       {file.size}
                     </p>
                   </div>

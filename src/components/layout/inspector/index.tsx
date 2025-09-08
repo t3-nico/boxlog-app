@@ -9,7 +9,7 @@ import { background, text, border, ghost } from '@/config/theme/colors'
 import { componentRadius, animations, layout, icon } from '@/config/theme'
 import { PanelRightClose } from 'lucide-react'
 
-const { compact } = layout.heights.header
+const { xs } = layout.heights.header
 const { sm } = icon.size
 
 export function Inspector() {
@@ -73,8 +73,8 @@ export function Inspector() {
       <div className="flex-1 flex flex-col">
         {/* Inspector Header with Close Button */}
         <div className={cn(
-          'flex items-center justify-end px-3',
-          compact, // 40px height
+          'flex items-center justify-end px-2 mt-2',
+          xs, // 32px height
           background.surface
         )}>
           <button

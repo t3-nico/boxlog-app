@@ -10,11 +10,16 @@ import { ThemeToggle } from './theme-toggle'
 import { useNavigationStore } from './stores/navigation.store'
 import { background, text, border, selection, semantic } from '@/config/theme/colors'
 import { PanelLeftClose } from 'lucide-react'
-import { componentRadius, animations, spacing, layout, icon } from '@/config/theme'
+import { componentRadius, animations, spacing, layout, icon, typography } from '@/config/theme'
 
-const { compact } = layout.heights.header
+const { xs } = layout.heights.header
 const { sm } = icon.size
 const gap1wo = 'gap-1' // 4px - theme準拠の最小gap
+const space2 = spacing.space[2] // p-2: 8px all around
+const px2 = 'px-2' // 8px horizontal padding - theme準拠
+const py2 = 'py-2' // 8px vertical padding - theme準拠
+const mx2 = 'mx-2' // 8px horizontal margin - theme準拠
+const my2 = 'my-2' // 8px vertical margin - theme準拠
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -57,25 +62,12 @@ export function Sidebar() {
     >
         {/* Sidebar Content */}
         <div className="flex-1 flex flex-col">
-          {/* Top Section: User Menu & Close Button */}
+          {/* Top Section: Close Button */}
           <div className={cn(
-            'flex items-center justify-between px-3',
-            compact // 40px height
+            'flex items-center justify-end mt-2',
+            xs, // 32px height
+            px2 // 8px horizontal padding
           )}>
-            {/* User Menu with Name */}
-            <div className={cn("flex items-center min-w-0 flex-1", gap1wo)}>
-              <UserMenu />
-              <div className={cn(
-                'min-w-0 flex-1',
-                text.primary,
-                'font-medium text-sm'
-              )}>
-                <div className="truncate">
-                  User Name
-                </div>
-              </div>
-            </div>
-
             {/* Close Panel Button */}
             <button
               onClick={() => toggleSidebar()}
@@ -92,7 +84,9 @@ export function Sidebar() {
 
           {/* Main Navigation Items */}
           <div className={cn(
-            'flex-1 flex flex-col px-3 py-3 space-y-1'
+            'flex flex-col space-y-1',
+            px2, // 8px horizontal padding
+            py2 // 8px vertical padding - theme準拠
           )}>
             {primaryNavigation.filter(section => section.id !== 'user').map((section, sectionIndex, filteredSections) => (
               <React.Fragment key={section.id}>
@@ -106,16 +100,19 @@ export function Sidebar() {
                 {/* Add separator between sections, except before last section */}
                 {sectionIndex < filteredSections.length - 1 && (
                   <div className={cn(
-                    'h-px mx-3 my-2 bg-border'
+                    'h-px bg-border',
+                    mx2, // 8px horizontal margin - theme準拠
+                    my2 // 8px vertical margin - theme準拠
                   )} />
                 )}
               </React.Fragment>
             ))}
           </div>
 
-          {/* Bottom Section: Settings & Theme Toggle */}
+          {/* Settings & Theme Toggle */}
           <div className={cn(
-            'flex flex-col px-3 pb-4 space-y-1'
+            'flex flex-col space-y-1',
+            px2 // 8px horizontal padding
           )}>
             {primaryNavigation.find(section => section.id === 'user')?.items.map((item) => (
               <SidebarItem
@@ -124,8 +121,34 @@ export function Sidebar() {
                 pathname={pathname}
               />
             ))}
-            <div className="flex items-center justify-start mt-2">
+            <div className={cn(
+              'flex items-center justify-start mt-2',
+              px2 // 8px horizontal padding
+            )}>
               <ThemeToggle />
+            </div>
+          </div>
+
+          {/* Bottom Section: User Account - 一番下 */}
+          <div className={cn(
+            'flex flex-col pb-4 mt-auto',
+            px2 // 8px horizontal padding
+          )}>
+            <div className={cn(
+              "flex items-center justify-start",
+              gap1wo,
+              xs // 32px height
+            )}>
+              <UserMenu />
+              <div className={cn(
+                'min-w-0 flex-1',
+                text.primary,
+                typography.heading.h5
+              )}>
+                <div className="truncate">
+                  User Name
+                </div>
+              </div>
             </div>
           </div>
         </div>

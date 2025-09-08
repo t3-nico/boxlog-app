@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { Info, Settings, HelpCircle, Zap, BarChart3, FileText } from 'lucide-react'
 import { background, text, border } from '@/config/theme/colors'
+import { typography } from '@/config/theme'
 
 export function DefaultInspectorContent() {
   return (
@@ -12,7 +13,7 @@ export function DefaultInspectorContent() {
       <div className="p-4 space-y-6">
         {/* ページ情報セクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             ページ情報
           </h3>
           
@@ -24,10 +25,10 @@ export function DefaultInspectorContent() {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 mt-0.5 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className={cn('text-sm font-medium', text.primary)}>
+                <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                   BoxLog Dashboard
                 </p>
-                <p className={cn('text-xs mt-1', text.muted)}>
+                <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
                   右側のInspectorパネルでは、選択したアイテムの詳細情報や関連する操作を確認できます。
                 </p>
               </div>
@@ -37,7 +38,7 @@ export function DefaultInspectorContent() {
 
         {/* クイックアクションセクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             クイックアクション
           </h3>
           
@@ -80,10 +81,10 @@ export function DefaultInspectorContent() {
                 <div className="flex items-center gap-3">
                   <action.icon className={cn('w-4 h-4', action.color)} />
                   <div className="flex-1">
-                    <p className={cn('text-sm font-medium', text.primary)}>
+                    <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                       {action.title}
                     </p>
-                    <p className={cn('text-xs', text.muted)}>
+                    <p className={cn(typography.body.xs, text.muted)}>
                       {action.description}
                     </p>
                   </div>
@@ -95,7 +96,7 @@ export function DefaultInspectorContent() {
 
         {/* 最近のアクティビティセクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             最近のアクティビティ
           </h3>
           
@@ -136,12 +137,12 @@ export function DefaultInspectorContent() {
                     'bg-orange-500'
                   )} />
                   <div className="flex-1">
-                    <p className={cn('text-sm', text.primary)}>
+                    <p className={cn(typography.body.base, text.primary)}>
                       <span className={text.muted}>{activity.action}</span>
                       {' '}
                       <span className="font-medium">{activity.item}</span>
                     </p>
-                    <p className={cn('text-xs mt-1', text.muted)}>
+                    <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
                       {activity.time}
                     </p>
                   </div>
@@ -153,7 +154,7 @@ export function DefaultInspectorContent() {
 
         {/* ヒントセクション */}
         <div className="space-y-3">
-          <h3 className={cn('text-sm font-semibold', text.primary)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             ヒント
           </h3>
           
@@ -165,10 +166,10 @@ export function DefaultInspectorContent() {
             <div className="flex items-start gap-3">
               <FileText className="w-4 h-4 mt-0.5 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className={cn('text-sm font-medium text-blue-900 dark:text-blue-100')}>
+                <p className={cn(typography.body.base, 'font-medium text-blue-900 dark:text-blue-100')}>
                   Inspectorの活用法
                 </p>
-                <p className={cn('text-xs mt-1 text-blue-700 dark:text-blue-300')}>
+                <p className={cn(typography.body.xs, 'mt-1 text-blue-700 dark:text-blue-300')}>
                   カレンダーのイベントやタスクを選択すると、ここに詳細情報が表示されます。効率的な作業のために活用してください。
                 </p>
               </div>

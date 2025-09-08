@@ -14,7 +14,7 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
 } from 'lucide-react'
-import { componentRadius, animations, spacing, icon } from '@/config/theme'
+import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
 
 const { md, lg } = icon.size
 import { border, background, text, semantic } from '@/config/theme/colors'
@@ -105,10 +105,10 @@ export function UserMenu() {
           border.subtle,
           spacing.patterns.form.label // mb-1
         )}>
-          <div className={cn('font-medium', text.primary)}>
+          <div className={cn(typography.body.base, 'font-medium', text.primary)}>
             {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
           </div>
-          <div className={cn('text-sm', text.muted)}>
+          <div className={cn(typography.body.sm, text.muted)}>
             {user?.email}
           </div>
         </div>

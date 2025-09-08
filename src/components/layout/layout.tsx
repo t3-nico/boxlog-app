@@ -17,6 +17,11 @@ import { background } from '@/config/theme/colors'
 import { Header } from './header'
 import { InspectorToggle } from './header/inspector-toggle'
 import { SidebarToggle } from './header/sidebar-toggle'
+import { PageTitle } from './header/page-title'
+import { useGlobalSearch, GlobalSearchProvider } from '@/features/search'
+import { Search } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { componentRadius, animations, icon } from '@/config/theme'
 import { Inspector } from './inspector'
 
 interface DashboardLayoutProps {
@@ -28,8 +33,11 @@ interface DashboardLayoutProps {
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const { isSecondaryNavCollapsed, isSidebarOpen } = useNavigationStore()
   const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanel()
+  const { open: openGlobalSearch } = useGlobalSearch()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  
+  const { sm } = icon.size
 
   // Calculate the effective panel height (0 when closed or minimized)
   const effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
@@ -78,11 +86,30 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               <SecondaryNavToggle />
             </div>
             
-            {/* Spacer to push Inspector Toggle to the right */}
-            <div className="flex-1" />
+            {/* Left: Page Title */}
+            <div className="flex-1 flex justify-start">
+              <PageTitle />
+            </div>
             
-            {/* Right side: Inspector Toggle Button */}
-            <InspectorToggle />
+            {/* Right side: Search & Inspector Toggle */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  console.log('Search button clicked')
+                  openGlobalSearch()
+                }}
+                className={cn(
+                  'w-8 h-8 flex items-center justify-center',
+                  background.hover,
+                  componentRadius.button.sm,
+                  animations.transition.fast,
+                  'flex-shrink-0'
+                )}
+              >
+                <Search className={sm} />
+              </button>
+              <InspectorToggle />
+            </div>
           </Header>
           
           {/* Navigation + Main Content */}
@@ -136,13 +163,15 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <ThemeProvider>
-      <AIPanelProvider>
-        <ChatProvider>
-          <DashboardLayoutContent>
-            {children}
-          </DashboardLayoutContent>
-        </ChatProvider>
-      </AIPanelProvider>
+      <GlobalSearchProvider>
+        <AIPanelProvider>
+          <ChatProvider>
+            <DashboardLayoutContent>
+              {children}
+            </DashboardLayoutContent>
+          </ChatProvider>
+        </AIPanelProvider>
+      </GlobalSearchProvider>
     </ThemeProvider>
   )
 }

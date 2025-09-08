@@ -3,7 +3,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils'
 import { useRouter } from 'next/navigation'
-import { componentRadius, animations, icons } from '@/config/theme'
+import { componentRadius, animations, icons, typography } from '@/config/theme'
 import { text, selection } from '@/config/theme/colors'
 
 export interface NavigationItemProps {
@@ -45,8 +45,8 @@ export function NavigationItem({
 
   const variantStyles = {
     default: 'px-3 py-2 gap-3',
-    compact: 'px-2 py-1.5 gap-2 text-sm',
-    minimal: 'px-1 py-1 gap-2 text-sm'
+    compact: 'px-2 py-1.5 gap-2',
+    minimal: 'px-1 py-1 gap-2'
   }
 
   const iconSizes = {
@@ -64,6 +64,7 @@ export function NavigationItem({
         componentRadius.button.md,
         animations.transition.fast,
         variantStyles[variant],
+        (variant === 'compact' || variant === 'minimal') && typography.body.base,
         isActive
           ? `${selection.text} ${selection.DEFAULT}`
           : `${text.primary} hover:${selection.hover.replace('hover:', '')}`,
@@ -92,7 +93,8 @@ export function NavigationItem({
       {/* Badge */}
       {badge && (
         <span className={cn(
-          'ml-auto px-2 py-0.5 text-xs rounded-full',
+          'ml-auto px-2 py-0.5 rounded-full',
+          typography.body.xs,
           'bg-accent text-accent-foreground',
           'font-medium',
           componentRadius.badge.pill
