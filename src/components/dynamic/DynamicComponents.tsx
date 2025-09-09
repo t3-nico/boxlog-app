@@ -24,14 +24,7 @@ export const DynamicCalendarView = dynamic(
   }
 )
 
-// CreateEventModalの動的インポート
-export const DynamicCreateEventModal = dynamic(
-  () => import('@/features/events/components/create').then(mod => ({ default: mod.CreateEventModal })),
-  {
-    ssr: false,
-    loading: () => null
-  }
-)
+// CreateEventModalは廃止 - Inspector統合により削除
 
 // 重いUIコンポーネントの動的インポート
 export const DynamicRichTextEditor = dynamic(

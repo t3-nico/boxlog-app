@@ -7,6 +7,7 @@ import { useInspectorStore } from './stores/inspector.store'
 import { CalendarInspectorContent } from './content/CalendarInspectorContent'
 import { TaskInspectorContent } from './content/TaskInspectorContent'
 import { DefaultInspectorContent } from './content/DefaultInspectorContent'
+import { CreateEventInspectorContent } from './content/CreateEventInspectorContent'
 import { background, text } from '@/config/theme/colors'
 
 export function InspectorContent() {
@@ -24,6 +25,8 @@ export function InspectorContent() {
           return <TaskInspectorContent />
         case 'event':
           return <CalendarInspectorContent />
+        case 'create-event':
+          return <CreateEventInspectorContent />
         default:
           return <DefaultInspectorContent />
       }

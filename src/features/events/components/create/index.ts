@@ -1,4 +1,5 @@
 export { CreateEventModal } from './CreateEventModal'
+export { CreateEventInspector } from './CreateEventModal'
 export { CreateEventForm } from './CreateEventForm'
 export { CreateEventTrigger } from './CreateEventTrigger'
 export { EssentialCreate } from './EssentialCreate'

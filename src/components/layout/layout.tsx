@@ -11,7 +11,6 @@ import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigat
 import { useNavigationStore } from './sidebar/stores/navigation.store'
 import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { CreateEventModal } from '@/features/events/components/create/CreateEventModal'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { background } from '@/config/theme/colors'
 import { Header } from './header'
@@ -137,8 +136,6 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <Inspector />
       </div>
       
-      {/* Global Create Event Modal */}
-      <CreateEventModal />
     </div>
   )
 

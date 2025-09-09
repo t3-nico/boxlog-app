@@ -8,7 +8,6 @@ import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
-import { CreateEventModal } from '@/features/events/components/create'
 import { useAddPopup } from '@/hooks/useAddPopup'
 import { DnDProvider } from '../providers/DnDProvider'
 import { CalendarLayout } from './layout/CalendarLayout'
@@ -23,7 +22,7 @@ import { NotificationDisplay } from '@/features/notifications/components/notific
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { EventContextMenu } from './views/shared/components'
 import { useEventContextActions } from '../hooks/useEventContextActions'
-import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
+import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -146,7 +145,7 @@ export function CalendarController({
   })
   
   const createModal = useCreateModalStore()
-  const { openModal: openCreateModal, openEditModal } = createModal
+  const { openCreateInspector, openEditInspector } = useCreateEventInspector()
   
   
   
@@ -408,8 +407,8 @@ export function CalendarController({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    // CreateEventModalを編集モードで開く
-    openEditModal(event.id, {
+    // CreateEventInspectorを編集モードで開く
+    openEditInspector(event.id, {
       title: event.title,
       description: event.description,
       startDate: event.startDate,
@@ -427,7 +426,7 @@ export function CalendarController({
       date: event.startDate,
       viewType
     })
-  }, [openEditModal, viewType])
+  }, [openEditInspector, viewType])
   
   // イベントの右クリックハンドラー
   const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
@@ -483,8 +482,8 @@ export function CalendarController({
       }
     }
     
-    // CreateEventModalを新規作成モードで開く
-    openCreateModal({
+    // CreateEventInspectorを新規作成モードで開く
+    openCreateInspector({
       initialData: {
         startDate: startTime,
         endDate: endTime,
@@ -498,7 +497,7 @@ export function CalendarController({
         viewType
       }
     })
-  }, [openCreateModal, viewType])
+  }, [openCreateInspector, viewType])
   
   const handleEventSave = useCallback(async (eventData: CreateEventRequest | UpdateEventRequest) => {
     try {
@@ -938,8 +937,8 @@ export function CalendarController({
     const startTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.startHour, selection.startMinute)
     const endTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.endHour, selection.endMinute)
     
-    // CreateEventModalを開く
-    openCreateModal({
+    // CreateEventInspectorを開く
+    openCreateInspector({
       initialData: {
         startDate: startTime,
         endDate: endTime,
@@ -953,7 +952,7 @@ export function CalendarController({
         viewType
       }
     })
-  }, [currentDate, openCreateModal, viewType])
+  }, [currentDate, openCreateInspector, viewType])
   
   // 統一された時間範囲選択ハンドラー（全ビュー共通）
   const handleDateTimeRangeSelect = useCallback((selection: { date: Date; startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
@@ -970,8 +969,8 @@ export function CalendarController({
       endDate: endTime
     })
     
-    // CreateEventModalを開く
-    openCreateModal({
+    // CreateEventInspectorを開く
+    openCreateInspector({
       initialData: {
         startDate: startTime,
         endDate: endTime,
@@ -985,7 +984,7 @@ export function CalendarController({
         viewType
       }
     })
-  }, [openCreateModal, viewType])
+  }, [openCreateInspector, viewType])
 
   // 表示される日付の配列を計算
   const displayDates = useMemo(() => {
@@ -1023,8 +1022,6 @@ export function CalendarController({
           </div>
         </CalendarLayout>
       
-      {/* CreateEventModal - useCreateModalStoreで管理 */}
-      <CreateEventModal />
       
       {/* イベントコンテキストメニュー */}
       {contextMenuEvent && contextMenuPosition && (
