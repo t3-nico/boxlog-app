@@ -19,6 +19,7 @@ import { InspectorToggle } from './header/inspector-toggle'
 import { SidebarToggle } from './header/sidebar-toggle'
 import { PageTitle } from './header/page-title'
 import { useGlobalSearch, GlobalSearchProvider } from '@/features/search'
+import { NotificationModalProvider } from '@/features/notifications'
 import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { componentRadius, animations, icon } from '@/config/theme'
@@ -82,8 +83,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               {/* Sidebar Toggle Button - Sidebarが閉じている時のみ表示 */}
               {!isSidebarOpen && <SidebarToggle />}
               
-              {/* Secondary Nav Toggle Button */}
-              <SecondaryNavToggle />
+              {/* Secondary Nav Toggle Button - Hidden on Calendar pages */}
+              {!isCalendarPage && <SecondaryNavToggle />}
             </div>
             
             {/* Left: Page Title */}
@@ -114,8 +115,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
           
           {/* Navigation + Main Content */}
           <div className="flex flex-1 overflow-hidden">
-            {/* Secondary Navigation (240px) - Collapsible */}
-            {!isSecondaryNavCollapsed && (
+            {/* Secondary Navigation (240px) - Collapsible - Hidden on Calendar pages */}
+            {!isSecondaryNavCollapsed && !isCalendarPage && (
               <SecondaryNavigation />
             )}
             
@@ -164,13 +165,15 @@ export function DashboardLayout({
   return (
     <ThemeProvider>
       <GlobalSearchProvider>
-        <AIPanelProvider>
-          <ChatProvider>
-            <DashboardLayoutContent>
-              {children}
-            </DashboardLayoutContent>
-          </ChatProvider>
-        </AIPanelProvider>
+        <NotificationModalProvider>
+          <AIPanelProvider>
+            <ChatProvider>
+              <DashboardLayoutContent>
+                {children}
+              </DashboardLayoutContent>
+            </ChatProvider>
+          </AIPanelProvider>
+        </NotificationModalProvider>
       </GlobalSearchProvider>
     </ThemeProvider>
   )

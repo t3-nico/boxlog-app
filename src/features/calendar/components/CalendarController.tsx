@@ -1005,11 +1005,6 @@ export function CalendarController({
           onViewChange={handleViewChange}
           showHeaderActions={false}
           
-          // Sidebar props (disabled - using app-level sidebar)
-          showSidebar={false}
-          sidebarCollapsed={!sidebarOpen}
-          onSidebarCollapsedChange={(collapsed) => toggleSidebar()}
-          
           // Calendar integration props
           selectedDate={currentDate}
           onDateSelect={handleDateSelect}

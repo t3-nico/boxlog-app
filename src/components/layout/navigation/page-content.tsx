@@ -29,8 +29,8 @@ export function PageContent({ pathname }: PageContentProps) {
       {/* Createボタン（特定ページのみ表示） */}
       {showCreateButton && <CreateButton />}
       
-      {/* Common sections for all pages */}
-      <CommonSidebarSections collapsed={false} />
+      {/* Common sections for non-calendar pages */}
+      {!isCalendarPage && <CommonSidebarSections collapsed={false} />}
 
       {/* Page-specific sections */}
       <div className="space-y-6">

@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react'
 import { usePathname } from 'next/navigation'
-import { MiniCalendar } from '@/features/calendar/components/layout/Sidebar/MiniCalendar'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useEventStore } from '@/features/events/stores/useEventStore'
 import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers'
@@ -86,31 +86,5 @@ export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps)
   
   if (collapsed) return null
 
-  return (
-    <div className="space-y-4">
-      {/* Calendar Mini Calendar */}
-      {isCalendarPage && (
-        <div>
-          <MiniCalendar
-            selectedDate={calendarNavigation?.currentDate || new Date()}
-            highlightedDates={[]} // 一時的に完全無効化
-            displayedPeriodDates={displayedPeriodDates}
-            onDateSelect={(date) => {
-              console.log('📅 MiniCalendar date selected:', date)
-              if (calendarNavigation) {
-                console.log('✅ Navigation available, calling navigateToDate')
-                calendarNavigation.navigateToDate(date)
-              } else {
-                console.log('❌ Navigation not available')
-              }
-            }}
-            onMonthChange={(date) => {
-              // 月移動時はミニカレンダーの表示のみ変更、メインカレンダーは移動しない
-              console.log('📅 MiniCalendar month changed (display only):', date)
-            }}
-          />
-        </div>
-      )}
-    </div>
-  )
+  return null
 }

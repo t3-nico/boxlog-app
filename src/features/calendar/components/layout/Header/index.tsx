@@ -18,6 +18,9 @@ interface CalendarHeaderProps {
   showActions?: boolean
   // 左側のカスタムコンテンツ（モバイルメニューボタンなど）
   leftSlot?: React.ReactNode
+  // 日付選択機能
+  onDateSelect?: (date: Date) => void
+  showMiniCalendar?: boolean
 }
 
 const viewOptions = [
@@ -40,7 +43,9 @@ export function CalendarHeader({
   onExport,
   onImport,
   showActions = false,
-  leftSlot
+  leftSlot,
+  onDateSelect,
+  showMiniCalendar = false
 }: CalendarHeaderProps) {
   return (
     <header className="relative bg-background px-4 py-4">
@@ -61,6 +66,8 @@ export function CalendarHeader({
             date={currentDate}
             viewType={viewType}
             showWeekNumber={true}
+            clickable={showMiniCalendar}
+            onDateSelect={onDateSelect}
           />
         </div>
         

@@ -1,9 +1,11 @@
 'use client'
 
 import { format, getWeek } from 'date-fns'
+import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { heading } from '@/config/theme/typography'
 import { secondary, border } from '@/config/theme/colors'
+import { MiniCalendarPopover } from '@/components/common/popover/MiniCalendarPopover'
 
 interface DateRangeDisplayProps {
   date: Date
@@ -13,6 +15,8 @@ interface DateRangeDisplayProps {
   formatPattern?: string
   className?: string
   weekBadgeClassName?: string
+  onDateSelect?: (date: Date) => void
+  clickable?: boolean
 }
 
 /**
@@ -26,7 +30,9 @@ export function DateRangeDisplay({
   showWeekNumber = true,
   formatPattern = 'MMMM yyyy',
   className,
-  weekBadgeClassName
+  weekBadgeClassName,
+  onDateSelect,
+  clickable = false
 }: DateRangeDisplayProps) {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
   
@@ -47,31 +53,73 @@ export function DateRangeDisplay({
       rangeText = `${format(date, 'd MMM yyyy')} - ${format(endDate, 'd MMM yyyy')}`
     }
     
-    return (
+    const content = (
       <div className={cn('flex items-center gap-2', className)}>
-        <h2 className={heading.h2}>
+        <h2 className={cn(
+          heading.h2,
+          clickable && onDateSelect && 'cursor-pointer hover:text-primary transition-colors'
+        )}>
           {rangeText}
         </h2>
+        {clickable && onDateSelect && (
+          <ChevronDown className="w-4 h-4 text-muted-foreground" />
+        )}
         {showWeekNumber && (
           <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
         )}
       </div>
     )
+
+    if (clickable && onDateSelect) {
+      return (
+        <MiniCalendarPopover
+          selectedDate={date}
+          onDateSelect={onDateSelect}
+          align="start"
+          side="bottom"
+        >
+          {content}
+        </MiniCalendarPopover>
+      )
+    }
+
+    return content
   }
   
   // 単一日付表示
   const formattedDate = format(date, formatPattern)
   
-  return (
+  const content = (
     <div className={cn('flex items-center gap-2', className)}>
-      <h2 className={heading.h2}>
+      <h2 className={cn(
+        heading.h2,
+        clickable && onDateSelect && 'cursor-pointer hover:text-primary transition-colors'
+      )}>
         {formattedDate}
       </h2>
+      {clickable && onDateSelect && (
+        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+      )}
       {showWeekNumber && (
         <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
       )}
     </div>
   )
+
+  if (clickable && onDateSelect) {
+    return (
+      <MiniCalendarPopover
+        selectedDate={date}
+        onDateSelect={onDateSelect}
+        align="start"
+        side="bottom"
+      >
+        {content}
+      </MiniCalendarPopover>
+    )
+  }
+
+  return content
 }
 
 /**
