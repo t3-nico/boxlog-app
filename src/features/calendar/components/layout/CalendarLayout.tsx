@@ -69,7 +69,10 @@ export const CalendarLayout = memo<CalendarLayoutProps>(({
       />
 
       {/* メインコンテンツ */}
-      <main className="flex-1 flex flex-col min-h-0 min-w-0 bg-background">
+      <main 
+        data-calendar-main 
+        className="flex-1 flex flex-col min-h-0 min-w-0 bg-background"
+      >
         {children}
       </main>
     </div>

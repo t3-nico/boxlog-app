@@ -210,8 +210,24 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
     if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
 
     const dragData = dragDataRef.current
-    const deltaX = e.clientX - dragData.startX
-    const deltaY = e.clientY - dragData.startY
+    
+    // カレンダーコンテナ境界を取得
+    const calendarContainer = document.querySelector('[data-calendar-main]') as HTMLElement ||
+                              document.querySelector('.calendar-main') as HTMLElement ||
+                              document.querySelector('main') as HTMLElement
+    
+    let constrainedX = e.clientX
+    let constrainedY = e.clientY
+    
+    // 境界制限を適用
+    if (calendarContainer) {
+      const rect = calendarContainer.getBoundingClientRect()
+      constrainedX = Math.max(rect.left, Math.min(rect.right, e.clientX))
+      constrainedY = Math.max(rect.top, Math.min(rect.bottom, e.clientY))
+    }
+    
+    const deltaX = constrainedX - dragData.startX
+    const deltaY = constrainedY - dragData.startY
     
     // 5px以上移動した場合のみドラッグ/リサイズと判定
     if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
@@ -233,7 +249,7 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
       
       if (gridContainer && dragData.columnWidth > 0) {
         const rect = gridContainer.getBoundingClientRect()
-        const relativeX = Math.max(0, Math.min(e.clientX - rect.left, rect.width)) // 境界内に制限
+        const relativeX = Math.max(0, Math.min(constrainedX - rect.left, rect.width)) // 制限されたX座標を使用
         
         // カラムインデックス計算（displayDates配列のインデックスに基づく）
         const columnIndex = Math.floor(relativeX / dragData.columnWidth)
@@ -276,7 +292,7 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
       
       setDragState(prev => ({
         ...prev,
-        currentPosition: { x: e.clientX, y: e.clientY },
+        currentPosition: { x: constrainedX, y: constrainedY },
         snappedPosition: { 
           top: dragData.originalTop, 
           height: finalHeight
@@ -307,10 +323,23 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
         }
       }
       
-      // position: fixed でドラッグ要素を直接移動
+      // position: fixed でドラッグ要素を直接移動（境界制限適用）
       if (dragData.dragElement && dragData.initialRect) {
-        const newLeft = dragData.initialRect.left + deltaX
-        const newTop = dragData.initialRect.top + deltaY
+        let newLeft = dragData.initialRect.left + deltaX
+        let newTop = dragData.initialRect.top + deltaY
+        
+        // カレンダーコンテナ境界内に制限
+        if (calendarContainer) {
+          const containerRect = calendarContainer.getBoundingClientRect()
+          const elementWidth = dragData.dragElement.offsetWidth
+          const elementHeight = dragData.dragElement.offsetHeight
+          
+          // 要素全体がコンテナ内に収まるように制限
+          newLeft = Math.max(containerRect.left, 
+                    Math.min(containerRect.right - elementWidth, newLeft))
+          newTop = Math.max(containerRect.top, 
+                   Math.min(containerRect.bottom - elementHeight, newTop))
+        }
         
         dragData.dragElement.style.left = `${newLeft}px`
         dragData.dragElement.style.top = `${newTop}px`
@@ -360,7 +389,7 @@ export function useDragAndDrop({ onEventUpdate, onEventClick, date, events, disp
       previewStartTime.setHours(hour, minute, 0, 0)
       const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
       
-      const currentPosition = { x: e.clientX, y: e.clientY }
+      const currentPosition = { x: constrainedX, y: constrainedY }
       
       // ドラッグ要素の時間表示を直接更新
       if (dragData.dragElement) {
