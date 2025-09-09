@@ -31,7 +31,7 @@ export function SidebarItem({ item, pathname }: SidebarItemProps) {
     <button
       onClick={handleClick}
       className={cn(
-        'w-full flex items-center gap-3 p-1 text-left',
+        'w-full flex items-center gap-3 p-2 text-left',
         componentRadius.button.md,
         animations.transition.fast,
         'relative group',

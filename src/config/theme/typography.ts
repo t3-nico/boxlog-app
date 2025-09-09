@@ -52,9 +52,9 @@ export const heading = {
    * h6: 最小見出し
    * @usage 補助的な見出し
    * @example ヘルプテキストの見出し
-   * @size 13px
+   * @size 12px
    */
-  h6: 'text-[13px] font-medium text-neutral-600 dark:text-neutral-300',
+  h6: 'text-xs font-medium text-neutral-600 dark:text-neutral-300',
 }
 
 // ============================================
@@ -76,15 +76,15 @@ export const body = {
    * @example 説明文、本文、リスト項目
    * @size 14px
    */
-  DEFAULT: 'text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed',
+  DEFAULT: 'text-sm text-neutral-700 dark:text-neutral-300 leading-tight',
   
   /**
    * 小さい本文
    * @usage 補足・注釈
    * @example 更新日時、補足説明、ヘルプテキスト
-   * @size 13px
+   * @size 12px
    */
-  small: 'text-[13px] text-neutral-600 dark:text-neutral-400 leading-normal',
+  small: 'text-xs text-neutral-600 dark:text-neutral-400 leading-tight',
 }
 
 // ============================================
@@ -106,7 +106,7 @@ export const special = {
    * @example "必須項目です" "形式が正しくありません"
    * @size 13px
    */
-  error: 'text-[13px] text-red-600 dark:text-red-400',
+  error: 'text-xs text-red-600 dark:text-red-400',
   
   /**
    * キャプション
@@ -120,9 +120,9 @@ export const special = {
    * コード
    * @usage コード・技術的な表記
    * @example "npm install" "Ctrl+S"
-   * @size 13px
+   * @size 12px
    */
-  code: 'text-[13px] font-mono bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded',
+  code: 'text-xs font-mono bg-neutral-100 dark:bg-neutral-800 px-1 py-0.5 rounded',
 }
 
 // ============================================
@@ -154,16 +154,16 @@ export const sidebar = {
   /**
    * サイドバーサブアイテム
    * @usage サイドバーの子項目
-   * @size 13px
+   * @size 12px
    */
-  subItem: 'text-[13px] text-neutral-600 dark:text-neutral-400 pl-4',
+  subItem: 'text-xs text-neutral-600 dark:text-neutral-400 pl-4',
   
   /**
    * サイドバーバッジ
    * @usage カウント表示など
-   * @size 11px
+   * @size 12px
    */
-  badge: 'text-[11px] font-medium text-neutral-500 dark:text-neutral-500',
+  badge: 'text-xs font-medium text-neutral-500 dark:text-neutral-500',
 }
 
 // ============================================
@@ -375,7 +375,7 @@ export const patterns = {
  * - text-lg: 18px
  * - text-xl: 20px
  * - text-2xl: 24px
- * - text-[Npx]: カスタムサイズ
+ * - text-Npx: カスタムサイズ
  */
 
 // ============================================

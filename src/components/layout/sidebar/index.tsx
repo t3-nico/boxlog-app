@@ -9,11 +9,14 @@ import { UserMenu } from './user-menu'
 import { ThemeToggle } from './theme-toggle'
 import { useNavigationStore } from './stores/navigation.store'
 import { background, text, border, selection, semantic } from '@/config/theme/colors'
-import { PanelLeftClose } from 'lucide-react'
+import { PanelLeftClose, Bell, Plus } from 'lucide-react'
+import { useNotificationModal } from '@/features/notifications'
 import { componentRadius, animations, spacing, layout, icon, typography } from '@/config/theme'
+import { useAuthContext } from '@/features/auth'
+import { Avatar } from '@/components/shadcn-ui/avatar'
 
 const { xs } = layout.heights.header
-const { sm } = icon.size
+const { sm, lg, xl } = icon.size
 const gap1wo = 'gap-1' // 4px - theme準拠の最小gap
 const space2 = spacing.space[2] // p-2: 8px all around
 const px2 = 'px-2' // 8px horizontal padding - theme準拠
@@ -26,6 +29,8 @@ export function Sidebar() {
   const primaryNavWidth = useNavigationStore((state) => state.primaryNavWidth)
   const { toggleSidebar } = useNavigationStore()
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
+  const { open: openNotifications, notificationCount } = useNotificationModal()
+  const { user } = useAuthContext()
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -62,33 +67,74 @@ export function Sidebar() {
     >
         {/* Sidebar Content */}
         <div className="flex-1 flex flex-col">
-          {/* Top Section: Close Button */}
+          {/* Top Section: Account & Actions */}
           <div className={cn(
-            'flex items-center justify-end mt-2',
+            'flex items-center justify-between mt-2',
             xs, // 32px height
             px2 // 8px horizontal padding
           )}>
-            {/* Close Panel Button */}
-            <button
-              onClick={() => toggleSidebar()}
-              className={cn(
-                'w-8 h-8 flex items-center justify-center hover:bg-accent',
-                componentRadius.button.sm,
-                animations.transition.fast,
-                'flex-shrink-0'
-              )}
-            >
-              <PanelLeftClose className={sm} />
-            </button>
+            {/* Left: Empty Space */}
+            <div></div>
+            
+            {/* Right: Action Buttons */}
+            <div className="flex items-center gap-1">
+              {/* Notification Button */}
+              <button
+                onClick={openNotifications}
+                className={cn(
+                  'w-8 h-8 flex items-center justify-center hover:bg-accent relative',
+                  componentRadius.button.sm,
+                  animations.transition.fast,
+                  'flex-shrink-0'
+                )}
+              >
+                <Bell className={sm} />
+                {notificationCount > 0 && (
+                  <span className={cn(
+                    'absolute -top-1 -right-1 w-4 h-4',
+                    'bg-red-500 text-white text-xs',
+                    'flex items-center justify-center',
+                    componentRadius.badge.pill
+                  )}>
+                    {notificationCount}
+                  </span>
+                )}
+              </button>
+              
+              {/* Create New Button */}
+              <button
+                className={cn(
+                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                  componentRadius.button.sm,
+                  animations.transition.fast,
+                  'flex-shrink-0'
+                )}
+              >
+                <Plus className={sm} />
+              </button>
+              
+              {/* Close Panel Button */}
+              <button
+                onClick={() => toggleSidebar()}
+                className={cn(
+                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                  componentRadius.button.sm,
+                  animations.transition.fast,
+                  'flex-shrink-0'
+                )}
+              >
+                <PanelLeftClose className={sm} />
+              </button>
+            </div>
           </div>
 
-          {/* Main Navigation Items */}
+          {/* All Navigation Items */}
           <div className={cn(
-            'flex flex-col space-y-1',
+            'flex flex-col space-y-0 flex-1',
             px2, // 8px horizontal padding
             py2 // 8px vertical padding - theme準拠
           )}>
-            {primaryNavigation.filter(section => section.id !== 'user').map((section, sectionIndex, filteredSections) => (
+            {primaryNavigation.map((section) => (
               <React.Fragment key={section.id}>
                 {section.items.map((item) => (
                   <SidebarItem
@@ -97,59 +143,90 @@ export function Sidebar() {
                     pathname={pathname}
                   />
                 ))}
-                {/* Add separator between sections, except before last section */}
-                {sectionIndex < filteredSections.length - 1 && (
-                  <div className={cn(
-                    'h-px bg-border',
-                    mx2, // 8px horizontal margin - theme準拠
-                    my2 // 8px vertical margin - theme準拠
-                  )} />
-                )}
               </React.Fragment>
             ))}
           </div>
 
-          {/* Settings & Theme Toggle */}
+          {/* Theme Toggle */}
           <div className={cn(
-            'flex flex-col space-y-1',
+            'pb-4',
             px2 // 8px horizontal padding
           )}>
-            {primaryNavigation.find(section => section.id === 'user')?.items.map((item) => (
-              <SidebarItem
-                key={item.id}
-                item={item}
-                pathname={pathname}
-              />
-            ))}
             <div className={cn(
-              'flex items-center justify-start mt-2',
-              px2 // 8px horizontal padding
+              'flex items-center justify-start'
             )}>
               <ThemeToggle />
             </div>
           </div>
 
-          {/* Bottom Section: User Account - 一番下 */}
+          {/* Bottom Section: User Account */}
           <div className={cn(
-            'flex flex-col pb-4 mt-auto',
+            'mb-2', // 8px bottom margin
             px2 // 8px horizontal padding
           )}>
-            <div className={cn(
-              "flex items-center justify-start",
-              gap1wo,
-              xs // 32px height
-            )}>
-              <UserMenu />
+            {/* User Account Info */}
+            <UserMenu>
               <div className={cn(
-                'min-w-0 flex-1',
-                text.primary,
-                typography.heading.h5
+                "flex items-center cursor-pointer hover:bg-accent w-full",
+                'gap-2', // 8px gap
+                componentRadius.button.md,
+                animations.transition.fast,
+                'p-2', // 全方向8px
+                'border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600' // クリック範囲を明確に
               )}>
-                <div className="truncate">
-                  User Name
+                {/* Avatar Icon Only */}
+                <div className="flex-shrink-0">
+                  {user?.user_metadata?.avatar_url ? (
+                    <Avatar 
+                      src={user.user_metadata.avatar_url} 
+                      className={cn(
+                        lg, 'border',
+                        border.universal,
+                        componentRadius.media.avatar
+                      )}
+                    />
+                  ) : user?.user_metadata?.profile_icon ? (
+                    <div className={cn(
+                      lg, 'text-sm flex items-center justify-center bg-accent border',
+                      border.universal,
+                      componentRadius.media.avatar
+                    )}>
+                      {user.user_metadata.profile_icon}
+                    </div>
+                  ) : (
+                    <Avatar 
+                      src={undefined}
+                      className={cn(
+                        lg, 'border',
+                        border.universal,
+                        componentRadius.media.avatar
+                      )}
+                      initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                    />
+                  )}
+                </div>
+                
+                <div className={cn(
+                  'min-w-0 flex-1 flex flex-col justify-center'
+                )}>
+                  <div className={cn(
+                    'truncate',
+                    text.primary,
+                    typography.body.DEFAULT,
+                    'font-medium'
+                  )}>
+                    tomoya
+                  </div>
+                  <div className={cn(
+                    'truncate',
+                    text.muted,
+                    typography.body.small
+                  )}>
+                    Free Plan
+                  </div>
                 </div>
               </div>
-            </div>
+            </UserMenu>
           </div>
         </div>
         

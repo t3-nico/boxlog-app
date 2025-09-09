@@ -1,11 +1,36 @@
 'use client'
 
+/**
+ * UserMenu コンポーネント
+ * 
+ * ユーザーアカウント情報の表示とメニュー機能を提供
+ * 
+ * ## 主要機能
+ * - アバター表示（URL/アイコン/イニシャル対応）
+ * - ドロップダウンメニュー（設定、サポート、ログアウト等）
+ * - children props対応で外部からトリガー要素をカスタマイズ可能
+ * 
+ * ## v4.0での変更点
+ * - Headless UI → shadcn/ui DropdownMenu に移行（プロジェクトルール準拠）
+ * - Radix UI ベースによるアクセシビリティ自動改善
+ * - side="top" align="start" で真上・左寄せ配置
+ * 
+ * @param {React.ReactNode} children - カスタムトリガー要素（未指定時はデフォルトボタン）
+ */
+
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { useAuthContext } from '@/features/auth'
-import * as Headless from '@headlessui/react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/shadcn-ui/dropdown-menu'
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
   Settings as Cog8ToothIcon,
@@ -19,7 +44,11 @@ import { componentRadius, animations, spacing, icon, typography } from '@/config
 const { md, lg } = icon.size
 import { border, background, text, semantic } from '@/config/theme/colors'
 
-export function UserMenu() {
+interface UserMenuProps {
+  children?: React.ReactNode
+}
+
+export function UserMenu({ children }: UserMenuProps) {
   const router = useRouter()
   const { user, signOut } = useAuthContext()
 
@@ -33,192 +62,109 @@ export function UserMenu() {
   }
 
   return (
-    <Headless.Menu as="div" className="relative">
-      <Headless.MenuButton className={cn(
-        'w-10 h-10 flex items-center justify-center hover:bg-accent group',
-        componentRadius.button.md,
-        animations.transition.fast
-      )}>
-        <div className="relative">
-          {user?.user_metadata?.avatar_url ? (
-            <Avatar 
-              src={user.user_metadata.avatar_url} 
-              className={cn(
-                lg, 'border',
-                border.universal,
-                componentRadius.media.avatar
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        {children ? children : (
+          <button className={cn(
+            'flex items-center justify-center hover:bg-accent group',
+            componentRadius.button.lg,
+            animations.transition.fast
+          )}>
+            <div className="relative">
+              {user?.user_metadata?.avatar_url ? (
+                <Avatar 
+                  src={user.user_metadata.avatar_url} 
+                  className={cn(
+                    lg, 'border',
+                    border.universal,
+                    componentRadius.media.avatar
+                  )}
+                />
+              ) : user?.user_metadata?.profile_icon ? (
+                <div className={cn(
+                  lg, 'text-sm flex items-center justify-center bg-accent border',
+                  border.universal,
+                  componentRadius.media.avatar
+                )}>
+                  {user.user_metadata.profile_icon}
+                </div>
+              ) : (
+                <Avatar 
+                  src={undefined}
+                  className={cn(
+                    lg, 'border',
+                    border.universal,
+                    componentRadius.media.avatar
+                  )}
+                  initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                />
               )}
-            />
-          ) : user?.user_metadata?.profile_icon ? (
-            <div className={cn(
-              lg, 'text-sm flex items-center justify-center bg-accent border',
-              border.universal,
-              componentRadius.media.avatar
-            )}>
-              {user.user_metadata.profile_icon}
             </div>
-          ) : (
-            <Avatar 
-              src={undefined}
-              className={cn(
-                lg, 'border',
-                border.universal,
-                componentRadius.media.avatar
-              )}
-              initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
-            />
-          )}
-          
-          {/* Online Status Indicator */}
-          <div className={cn(
-            'absolute -bottom-0.5 -right-0.5 w-3 h-3 border-2',
-            semantic.success.DEFAULT,
-            background.base,
-            componentRadius.badge.status
-          )}></div>
-        </div>
-        
-        {/* Tooltip */}
-        <div className={cn(
-          'absolute left-full ml-2 px-2 py-1',
-          'bg-popover text-popover-foreground text-xs shadow-lg',
-          'opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50',
-          componentRadius.input.text,
-          animations.transition.fast
-        )}>
-          {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
-        </div>
-      </Headless.MenuButton>
+          </button>
+        )}
+      </DropdownMenuTrigger>
 
-      <Headless.MenuItems className={cn(
-        'absolute left-0 top-full mt-2 w-64 origin-top-left',
-        'backdrop-blur-xl shadow-lg z-[9999]',
-        background.surface,
-        border.subtle,
-        'ring-1',
-        componentRadius.modal.container,
-        spacing.space[2] // p-2
-      )}>
+      <DropdownMenuContent 
+        className="w-64 z-[9999]"
+        side="top" 
+        align="start"
+      >
         {/* User Info */}
-        <div className={cn(
-          'px-3 py-2 border-b',
-          border.subtle,
-          spacing.patterns.form.label // mb-1
-        )}>
-          <div className={cn(typography.body.base, 'font-medium', text.primary)}>
-            {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user?.email}
+            </p>
           </div>
-          <div className={cn(typography.body.sm, text.muted)}>
-            {user?.email}
-          </div>
-        </div>
+        </DropdownMenuLabel>
+        
+        <DropdownMenuSeparator />
 
-        <Headless.MenuItem>
-          {({ focus }) => (
-            <button
-              onClick={() => router.push('/settings')}
-              className={cn(
-                'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium',
-                componentRadius.navigation.menu,
-                animations.transition.fast,
-                focus ? background.hover : ''
-              )}
-            >
-              <Cog8ToothIcon className={cn(md, text.muted)} />
-              <span className={text.primary}>Settings</span>
-            </button>
-          )}
-        </Headless.MenuItem>
+        <DropdownMenuItem onClick={() => router.push('/settings')}>
+          <Cog8ToothIcon className={cn(md, 'mr-2')} />
+          Settings
+        </DropdownMenuItem>
 
-        <div className={cn('my-1 h-px', border.subtle)} />
+        <DropdownMenuSeparator />
 
-        <Headless.MenuItem>
-          {({ focus }) => (
-            <a
-              href="#"
-              className={cn(
-                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
-                componentRadius.navigation.menu,
-                animations.transition.fast,
-                focus ? background.hover : ''
-              )}
-            >
-              <ShieldCheckIcon className={cn(md, text.muted)} />
-              <span className={text.primary}>Privacy policy</span>
-            </a>
-          )}
-        </Headless.MenuItem>
+        <DropdownMenuItem asChild>
+          <a href="#">
+            <ShieldCheckIcon className={cn(md, 'mr-2')} />
+            Privacy policy
+          </a>
+        </DropdownMenuItem>
 
-        <Headless.MenuItem>
-          {({ focus }) => (
-            <a
-              href="#"
-              className={cn(
-                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
-                componentRadius.navigation.menu,
-                animations.transition.fast,
-                focus ? background.hover : ''
-              )}
-            >
-              <LightBulbIcon className={cn(md, text.muted)} />
-              <span className={text.primary}>Share feedback</span>
-            </a>
-          )}
-        </Headless.MenuItem>
+        <DropdownMenuItem asChild>
+          <a href="#">
+            <LightBulbIcon className={cn(md, 'mr-2')} />
+            Share feedback
+          </a>
+        </DropdownMenuItem>
 
-        <Headless.MenuItem>
-          {({ focus }) => (
-            <a
-              href="#"
-              className={cn(
-                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
-                componentRadius.navigation.menu,
-                animations.transition.fast,
-                focus ? background.hover : ''
-              )}
-            >
-              <QuestionMarkCircleIcon className={cn(md, text.muted)} />
-              <span className={text.primary}>Support</span>
-            </a>
-          )}
-        </Headless.MenuItem>
+        <DropdownMenuItem asChild>
+          <a href="#">
+            <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
+            Support
+          </a>
+        </DropdownMenuItem>
 
-        <Headless.MenuItem>
-          {({ focus }) => (
-            <a
-              href="#"
-              className={cn(
-                'flex items-center gap-3 px-3 py-2 text-left text-sm font-medium',
-                componentRadius.navigation.menu,
-                animations.transition.fast,
-                focus ? background.hover : ''
-              )}
-            >
-              <SparklesIcon className={cn(md, text.muted)} />
-              <span className={text.primary}>Changelog</span>
-            </a>
-          )}
-        </Headless.MenuItem>
+        <DropdownMenuItem asChild>
+          <a href="#">
+            <SparklesIcon className={cn(md, 'mr-2')} />
+            Changelog
+          </a>
+        </DropdownMenuItem>
 
-        <div className={cn('my-1 h-px', border.subtle)} />
+        <DropdownMenuSeparator />
 
-        <Headless.MenuItem>
-          {({ focus }) => (
-            <button
-              onClick={handleSignOut}
-              className={cn(
-                'flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium',
-                componentRadius.navigation.menu,
-                animations.transition.fast,
-                focus ? background.hover : ''
-              )}
-            >
-              <ArrowRightStartOnRectangleIcon className={cn(md, text.muted)} />
-              <span className={text.primary}>Logout</span>
-            </button>
-          )}
-        </Headless.MenuItem>
-      </Headless.MenuItems>
-    </Headless.Menu>
+        <DropdownMenuItem onClick={handleSignOut}>
+          <ArrowRightStartOnRectangleIcon className={cn(md, 'mr-2')} />
+          Logout
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
