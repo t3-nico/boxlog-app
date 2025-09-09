@@ -8,3 +8,6 @@ export { VirtualCalendarGrid } from './virtualization/VirtualCalendarGrid'
 // MiniCalendar component (moved from layout/Sidebar)
 export { MiniCalendar } from './MiniCalendar'
 export type { MiniCalendarProps } from './MiniCalendar'
+
+// MiniCalendarPopover component (moved from components/common)
+export { MiniCalendarPopover } from './MiniCalendarPopover'

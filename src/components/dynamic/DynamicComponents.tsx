@@ -3,14 +3,7 @@
 import dynamic from 'next/dynamic'
 import { ComponentType } from 'react'
 
-// AI Chat関連の動的インポート
-export const DynamicFloatingAIChat = dynamic(
-  () => import('@/components/floating-ai-chat').then(mod => ({ default: mod.FloatingAIChat })),
-  {
-    ssr: false,
-    loading: () => null
-  }
-)
+// AI Chat関連の動的インポート（FloatingAIChat削除済み - Inspector統合）
 
 // カレンダービューの動的インポート
 export const DynamicCalendarView = dynamic(

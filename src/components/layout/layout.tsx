@@ -9,7 +9,6 @@ import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { Sidebar } from './sidebar'
 import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
 import { useNavigationStore } from './sidebar/stores/navigation.store'
-import { DynamicFloatingAIChat } from '@/components/dynamic/DynamicComponents'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { background } from '@/config/theme/colors'
@@ -125,8 +124,6 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
               <div className="flex-1 relative overflow-hidden">
                 {children}
                 
-                {/* Floating AI Chat within main area */}
-                <DynamicFloatingAIChat />
               </div>
             </div>
           </div>

@@ -78,7 +78,6 @@ src/components/layout/
 - **構成**:
   - SecondaryNavToggle（Navigation折りたたみ時）
   - 各ページの実際の内容
-  - FloatingAIChat
 - **機能**: レスポンシブ対応
 
 ## 🔄 状態管理

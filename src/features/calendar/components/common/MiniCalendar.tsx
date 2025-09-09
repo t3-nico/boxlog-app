@@ -220,6 +220,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
                 isSameDay(disabled, date)
               )
 
+
               return (
                 <button
                   key={`${weekIndex}-${dayIndex}`}

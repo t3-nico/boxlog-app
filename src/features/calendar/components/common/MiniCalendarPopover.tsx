@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn-ui/popover'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { MiniCalendarProps } from '@/features/calendar/components/common/MiniCalendar'
+import { background, secondary } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 interface MiniCalendarPopoverProps extends Omit<MiniCalendarProps, 'className'> {
   children: React.ReactNode
@@ -40,11 +42,11 @@ export function MiniCalendarPopover({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild className={className}>
+      <PopoverTrigger asChild className={cn(secondary.hover, 'transition-colors', className)}>
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className={`w-auto p-4 ${popoverClassName || ''}`}
+        className={cn('w-auto p-4 border-none', background.surface, popoverClassName)}
         align={align}
         side={side}
       >

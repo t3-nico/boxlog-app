@@ -7,7 +7,10 @@ import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
 import { background, text, border, ghost } from '@/config/theme/colors'
 import { componentRadius, animations, layout, icon } from '@/config/theme'
-import { PanelRightClose } from 'lucide-react'
+import { PanelRightClose, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
+import { InspectorAIChat } from './inspector-ai-chat'
+import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 const { xs } = layout.heights.header
 const { sm } = icon.size
@@ -92,9 +95,38 @@ export function Inspector() {
             <PanelRightClose className={sm} />
           </button>
         </div>
-        
-        {/* Inspector Content */}
-        <InspectorContent />
+
+        {/* Inspector Tabs */}
+        <Tabs defaultValue="overview" className="flex-1 flex flex-col">
+          <div className={cn("px-2 pb-2 border-b", border.universal)}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview" className="flex items-center gap-1">
+                <Calendar className="w-4 h-4" />
+                概要
+              </TabsTrigger>
+              <TabsTrigger value="ai" className="flex items-center gap-1">
+                <BotMessageSquare className="w-4 h-4" />
+                AI
+              </TabsTrigger>
+              <TabsTrigger value="tasks" className="flex items-center gap-1">
+                <ListTodo className="w-4 h-4" />
+                タスク
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          
+          <div className="flex-1 overflow-auto">
+            <TabsContent value="overview" className="p-0 m-0">
+              <InspectorContent />
+            </TabsContent>
+            <TabsContent value="ai" className="p-0 m-0 h-full">
+              <InspectorAIChat />
+            </TabsContent>
+            <TabsContent value="tasks" className="p-0 m-0 h-full">
+              <UnscheduledTasksList />
+            </TabsContent>
+          </div>
+        </Tabs>
       </div>
     </div>
   )

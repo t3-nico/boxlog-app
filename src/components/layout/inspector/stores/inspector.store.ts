@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 interface InspectorState {
   // Inspector State
@@ -19,6 +20,10 @@ interface InspectorState {
   // Content Management
   activeContent: string | null
   setActiveContent: (content: string | null) => void
+  
+  // Event Management
+  selectedEvent: CalendarEvent | null
+  setSelectedEvent: (event: CalendarEvent | null) => void
   
   // Inspector resize methods
   setInspectorWidthConstrained: (width: number) => void
@@ -45,6 +50,10 @@ export const useInspectorStore = create<InspectorState>()(
       // Content Management
       activeContent: 'calendar', // テスト用: カレンダーコンテンツ表示
       setActiveContent: (content) => set({ activeContent: content }),
+      
+      // Event Management
+      selectedEvent: null,
+      setSelectedEvent: (event) => set({ selectedEvent: event }),
       
       // Inspector resize with constraints
       setInspectorWidthConstrained: (width) => {

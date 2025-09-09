@@ -23,6 +23,7 @@ import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { EventContextMenu } from './views/shared/components'
 import { useEventContextActions } from '../hooks/useEventContextActions'
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
+import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
 import { 
   calculateViewDateRange, 
   getNextPeriod, 
@@ -88,7 +89,6 @@ export function CalendarController({
   
   const [selectedTask, setSelectedTask] = useState<any>(null)
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [isEventModalOpen, setIsEventModalOpen] = useState(false)
   const [eventDefaultDate, setEventDefaultDate] = useState<Date | undefined>(undefined)
   const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
@@ -146,6 +146,7 @@ export function CalendarController({
   
   const createModal = useCreateModalStore()
   const { openCreateInspector, openEditInspector } = useCreateEventInspector()
+  const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
   
   
   
@@ -407,26 +408,11 @@ export function CalendarController({
   
   // イベント関連のハンドラー
   const handleEventClick = useCallback((event: CalendarEvent) => {
-    // CreateEventInspectorを編集モードで開く
-    openEditInspector(event.id, {
-      title: event.title,
-      description: event.description,
-      startDate: event.startDate,
-      endDate: event.endDate,
-      type: event.type,
-      status: event.status,
-      priority: event.priority,
-      color: event.color,
-      location: event.location,
-      url: event.url,
-      reminders: event.reminders,
-      tagIds: event.tags?.map(tag => tag.id) || []
-    }, {
-      source: 'calendar',
-      date: event.startDate,
-      viewType
-    })
-  }, [openEditInspector, viewType])
+    // イベント詳細表示モードでInspectorを開く
+    setSelectedEvent(event)
+    setActiveContent('event')
+    setInspectorOpen(true)
+  }, [setSelectedEvent, setActiveContent, setInspectorOpen])
   
   // イベントの右クリックハンドラー
   const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
