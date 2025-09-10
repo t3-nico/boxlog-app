@@ -256,6 +256,281 @@ npm run test:watch
 npm run test:coverage
 ```
 
+## 📱 レスポンシブデザイン実装ガイド
+
+### 🎯 基本方針
+BoxLogはデスクトップ優先のアプリケーションですが、タブレット・モバイルでも快適に使用できる必要があります。
+
+### 📐 ブレークポイント（必須使用）
+```tsx
+// src/config/theme/layout.ts から必ずインポート
+import { breakpoints } from '@/config/theme/layout'
+
+// 統一ブレークポイント
+// sm: 640px   - スマートフォン横向き
+// md: 768px   - タブレット縦向き  
+// lg: 1024px  - タブレット横向き・小型PC
+// xl: 1280px  - デスクトップ
+// 2xl: 1536px - 大型デスクトップ
+```
+
+### 🏗️ BoxLog 3カラムレイアウトの実装
+
+```tsx
+// src/config/theme/layout.ts のパターンを必ず使用
+import { layoutPatterns, columns } from '@/config/theme/layout'
+
+// ❌ 禁止：独自実装
+<div className="w-64 bg-gray-100">
+
+// ✅ 正しい実装：テーマのレイアウトシステム使用
+<div className={columns.sidebar.default}>
+```
+
+### 📋 実装アプローチ（機能に応じて選択）
+
+#### A. デスクトップ重視の画面（管理画面、ダッシュボード等）
+```tsx
+// デスクトップを基準に設計し、小画面で段階的に調整
+<div className="grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
+  {/* デスクトップ：4カラム → タブレット：2カラム → モバイル：1カラム */}
+</div>
+
+// 複雑なテーブルはモバイルで横スクロール許可
+<div className="w-full overflow-x-auto">
+  <table className="min-w-[800px]">
+    {/* 最小幅を確保し、スクロール可能に */}
+  </table>
+</div>
+```
+
+#### B. コンテンツ中心の画面（記事、プロフィール等）
+```tsx
+// モバイルでも読みやすさを重視
+<article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+  <h1 className="text-xl sm:text-2xl lg:text-3xl">
+  <p className="text-sm sm:text-base leading-relaxed">
+</article>
+```
+
+#### C. インタラクティブな画面（カレンダー、ボード等）
+```tsx
+// デバイスに応じて異なるUIを提供
+{/* デスクトップ：フル機能 */}
+<div className="hidden lg:block">
+  <FullCalendarView />
+</div>
+
+{/* タブレット：簡易版 */}
+<div className="hidden md:block lg:hidden">
+  <CompactCalendarView />
+</div>
+
+{/* モバイル：リスト形式 */}
+<div className="block md:hidden">
+  <MobileListView />
+</div>
+```
+
+### 🛠️ 実装パターン集
+
+#### 1. レイアウトの切り替え
+```tsx
+// フレックスボックスの方向転換
+<div className="flex flex-col lg:flex-row gap-4">
+  {/* モバイル：縦並び、デスクトップ：横並び */}
+</div>
+
+// グリッドの動的調整
+<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+  {/* 段階的にカラム数を増やす */}
+</div>
+```
+
+#### 2. 表示/非表示の制御
+```tsx
+// プログレッシブエンハンスメント
+<aside className="hidden lg:block">
+  {/* デスクトップのみ表示（追加情報） */}
+</aside>
+
+// グレースフルデグラデーション
+<nav className="hidden md:flex">
+  {/* タブレット以上で表示 */}
+</nav>
+<button className="md:hidden">
+  {/* モバイルのみハンバーガーメニュー */}
+</button>
+```
+
+#### 3. スペーシングの調整
+```tsx
+// デバイスサイズに応じた余白
+<section className="py-8 md:py-12 lg:py-16">
+  <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
+    {/* 画面が大きくなるにつれて余白も増加 */}
+  </div>
+</section>
+```
+
+#### 4. タッチ対応の考慮
+```tsx
+// モバイルでのタッチターゲット最小44px確保
+<button className="p-2 sm:p-3 min-h-[44px] min-w-[44px]">
+  <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+</button>
+
+// ホバー効果はタッチデバイスで控えめに
+<div className="hover:bg-gray-100 lg:hover:scale-105">
+  {/* デスクトップのみスケール効果 */}
+</div>
+```
+
+### 📱 コンポーネント別実装例
+
+#### FloatingActionButton（FAB）レスポンシブ実装
+```tsx
+// レスポンシブ位置調整の実例
+className={cn(
+  'fixed z-50',
+  // モバイル: 中央寄り、ボトムナビの上
+  'right-4 bottom-20',
+  // タブレット: やや右寄り
+  'md:right-6 md:bottom-6',
+  // デスクトップ: より右寄り
+  'lg:right-8',
+  // 大画面: さらに右寄り
+  'xl:right-12',
+  // 超大画面: 最大右寄り
+  '2xl:right-16',
+)}
+
+// サイズとアイコンもレスポンシブ対応
+const sizeMap = {
+  sm: 'w-12 h-12 md:w-14 md:h-14',
+  md: 'w-14 h-14 md:w-16 md:h-16', 
+  lg: 'w-16 h-16 md:w-18 md:h-18'
+}
+```
+
+#### データテーブル
+```tsx
+// アプローチ1: レスポンシブテーブル（優先度列の表示切り替え）
+<table>
+  <thead>
+    <tr>
+      <th>名前</th> {/* 常に表示 */}
+      <th className="hidden sm:table-cell">日付</th>
+      <th className="hidden lg:table-cell">詳細</th>
+    </tr>
+  </thead>
+</table>
+
+// アプローチ2: モバイルでカード形式に変換
+<div className="hidden md:block">
+  <Table data={data} />
+</div>
+<div className="md:hidden space-y-4">
+  {data.map(item => <Card key={item.id} {...item} />)}
+</div>
+```
+
+#### フォーム
+```tsx
+// 入力フィールドの配置最適化
+<form className="space-y-6">
+  {/* 2カラムレイアウト（大画面） */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Input label="姓" />
+    <Input label="名" />
+  </div>
+  
+  {/* フル幅（全デバイス） */}
+  <Input label="メールアドレス" className="w-full" />
+  
+  {/* ボタングループ */}
+  <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+    <Button variant="secondary" className="w-full sm:w-auto">
+      キャンセル
+    </Button>
+    <Button variant="primary" className="w-full sm:w-auto">
+      保存
+    </Button>
+  </div>
+</form>
+```
+
+### 🔍 実装前チェックリスト
+
+```typescript
+// 各画面/コンポーネント実装時に確認
+const responsiveChecklist = {
+  layout: {
+    desktop: "1280px以上で最適表示か？",
+    tablet: "768px〜1024pxで使いやすいか？", 
+    mobile: "375px〜640pxで必要機能にアクセス可能か？"
+  },
+  interaction: {
+    touch: "タッチターゲットは44px以上か？",
+    hover: "ホバー依存の機能はないか？",
+    scroll: "横スクロールは意図的か？"
+  },
+  performance: {
+    images: "適切なサイズ/フォーマットか？",
+    lazyLoad: "遅延読み込みは設定済みか？",
+    critical: "重要なコンテンツは優先表示か？"
+  }
+}
+```
+
+### 🚀 実装の優先順位
+
+1. **必須対応**（すべての画面）
+   - 基本的な表示崩れがない
+   - 主要機能へのアクセスが可能
+   - テキストが読める
+
+2. **推奨対応**（主要画面）
+   - UIの最適化
+   - タッチ操作の改善
+   - レイアウトの調整
+
+3. **オプション対応**（補助機能）
+   - アニメーションの追加
+   - 高度なインタラクション
+   - デバイス固有の最適化
+
+### 💡 判断基準
+
+画面の性質に応じて適切なアプローチを選択：
+
+- **データ密度が高い** → デスクトップ優先、モバイルは簡略化
+- **頻繁に使用する** → 全デバイスで快適な操作性を確保
+- **閲覧中心** → モバイルでも読みやすさを重視
+- **作業効率重視** → デスクトップで最大効率、モバイルは最小限
+
+### ⚠️ よくある実装ミス
+
+```tsx
+// ❌ 固定幅の使用
+<div className="w-[1200px]">
+
+// ✅ 最大幅とレスポンシブ幅
+<div className="w-full max-w-7xl">
+
+// ❌ px単位の固定フォントサイズ
+<p style={{ fontSize: '16px' }}>
+
+// ✅ レスポンシブなフォントサイズ
+<p className="text-sm sm:text-base lg:text-lg">
+
+// ❌ ホバーのみのインタラクション
+<div className="opacity-0 hover:opacity-100">
+
+// ✅ フォーカスとタッチも考慮
+<div className="opacity-0 hover:opacity-100 focus:opacity-100 active:opacity-100">
+```
+
 ---
 
 **📖 このドキュメントについて**: BoxLog App メインリポジトリ開発指針  

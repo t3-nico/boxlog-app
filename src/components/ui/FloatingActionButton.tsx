@@ -19,26 +19,28 @@ interface FloatingActionButtonProps {
 }
 
 const sizeMap = {
-  sm: 'w-12 h-12',
-  md: 'w-14 h-14', 
-  lg: 'w-16 h-16'
+  sm: 'w-12 h-12 md:w-14 md:h-14',
+  md: 'w-14 h-14 md:w-16 md:h-16', 
+  lg: 'w-16 h-16 md:w-18 md:h-18'
 }
 
 const iconSizeMap = {
-  sm: 'w-5 h-5',
-  md: 'w-6 h-6',
-  lg: 'w-7 h-7'
+  sm: 'w-5 h-5 md:w-6 md:h-6',
+  md: 'w-6 h-6 md:w-7 md:h-7',
+  lg: 'w-7 h-7 md:w-8 md:h-8'
 }
 
 export function FloatingActionButton({
   onClick,
-  icon = <Plus className={iconSizeMap.md} />,
+  icon,
   className,
   size = 'md',
   variant = 'primary',
   disabled = false,
   'aria-label': ariaLabel = 'アクションを実行'
 }: FloatingActionButtonProps) {
+  // レスポンシブ対応のデフォルトアイコン
+  const defaultIcon = <Plus className={iconSizeMap[size]} />
   return (
     <button
       onClick={onClick}
@@ -46,9 +48,18 @@ export function FloatingActionButton({
       aria-label={ariaLabel}
       className={cn(
         // ベーススタイル
-        'fixed right-6 z-50',
-        // モバイル: ボトムナビの上（bottom-20）、デスクトップ: 通常位置（bottom-6）
-        'bottom-20 md:bottom-6',
+        'fixed z-50',
+        // レスポンシブ位置調整
+        // モバイル（〜768px）: 中央寄り、ボトムナビの上
+        'right-4 bottom-20',
+        // タブレット（768px〜1024px）: やや右寄り
+        'md:right-6 md:bottom-6',
+        // デスクトップ（1024px〜）: より右寄り
+        'lg:right-8',
+        // 大画面（1280px〜）: さらに右寄り
+        'xl:right-12',
+        // 超大画面（1536px〜）: 最大右寄り
+        '2xl:right-16',
         'flex items-center justify-center',
         sizeMap[size],
         componentRadius.button.lg,
@@ -76,7 +87,7 @@ export function FloatingActionButton({
         className
       )}
     >
-      {icon}
+      {icon || defaultIcon}
     </button>
   )
 }
