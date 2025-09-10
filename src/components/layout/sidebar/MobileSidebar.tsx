@@ -160,19 +160,6 @@ export function MobileSidebar() {
                 )}
               </button>
               
-              {/* Create New Button */}
-              <button
-                className={cn(
-                  'w-8 h-8 flex items-center justify-center',
-                  'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600',
-                  'text-white',
-                  componentRadius.button.sm,
-                  animations.transition.fast,
-                  'flex-shrink-0'
-                )}
-              >
-                <Plus className={sm} />
-              </button>
             </div>
           </div>
 

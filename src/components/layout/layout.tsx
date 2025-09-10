@@ -22,6 +22,8 @@ import { Search } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { componentRadius, animations, icon } from '@/config/theme'
 import { Inspector } from './inspector'
+import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
+import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspector'
 
 interface DashboardLayoutProps {
   events?: any
@@ -33,6 +35,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const { isSecondaryNavCollapsed, isSidebarOpen } = useNavigationStore()
   const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanel()
   const { open: openGlobalSearch } = useGlobalSearch()
+  const { openCreateInspector } = useCreateEventInspector()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   
@@ -137,6 +140,17 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         {/* L3: Inspector - 右端独立 */}
         <Inspector />
       </div>
+      
+      {/* Floating Action Button */}
+      <FloatingActionButton 
+        onClick={() => openCreateInspector({
+          context: {
+            source: 'fab'
+          }
+        })}
+        size="sm"
+        aria-label="新しいイベントを作成"
+      />
       
     </div>
   )
