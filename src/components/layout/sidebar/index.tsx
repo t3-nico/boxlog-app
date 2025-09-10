@@ -9,7 +9,7 @@ import { UserMenu } from './user-menu'
 import { ThemeToggle } from './theme-toggle'
 import { useNavigationStore } from './stores/navigation.store'
 import { background, text, border, selection, semantic } from '@/config/theme/colors'
-import { PanelLeftClose, Bell, Plus } from 'lucide-react'
+import { PanelLeftClose, Bell, Plus, Search } from 'lucide-react'
 import { useNotificationModal } from '@/features/notifications'
 import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
 import { layout } from '@/config/theme/layout'
@@ -74,11 +74,35 @@ export function Sidebar() {
             xs, // 32px height
             px2 // 8px horizontal padding
           )}>
-            {/* Left: Empty Space */}
-            <div></div>
+            {/* Left: Close Panel Button */}
+            <div className="flex items-center mr-4">
+              <button
+                onClick={() => toggleSidebar()}
+                className={cn(
+                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                  componentRadius.button.sm,
+                  animations.transition.fast,
+                  'flex-shrink-0'
+                )}
+              >
+                <PanelLeftClose className={sm} />
+              </button>
+            </div>
             
             {/* Right: Action Buttons */}
             <div className="flex items-center gap-1">
+              {/* Search Button */}
+              <button
+                className={cn(
+                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                  componentRadius.button.sm,
+                  animations.transition.fast,
+                  'flex-shrink-0'
+                )}
+              >
+                <Search className={sm} />
+              </button>
+              
               {/* Notification Button */}
               <button
                 onClick={openNotifications}
@@ -105,26 +129,15 @@ export function Sidebar() {
               {/* Create New Button */}
               <button
                 className={cn(
-                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                  'w-8 h-8 flex items-center justify-center',
+                  'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600',
+                  'text-white',
                   componentRadius.button.sm,
                   animations.transition.fast,
                   'flex-shrink-0'
                 )}
               >
                 <Plus className={sm} />
-              </button>
-              
-              {/* Close Panel Button */}
-              <button
-                onClick={() => toggleSidebar()}
-                className={cn(
-                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
-                  componentRadius.button.sm,
-                  animations.transition.fast,
-                  'flex-shrink-0'
-                )}
-              >
-                <PanelLeftClose className={sm} />
               </button>
             </div>
           </div>
@@ -137,13 +150,43 @@ export function Sidebar() {
           )}>
             {primaryNavigation.map((section) => (
               <React.Fragment key={section.id}>
-                {section.items.map((item) => (
-                  <SidebarItem
-                    key={item.id}
-                    item={item}
-                    pathname={pathname}
-                  />
-                ))}
+                {section.label && (
+                  <div className={cn(
+                    'px-2 py-2 mt-4 first:mt-0',
+                    typography.body.small,
+                    'font-medium uppercase tracking-wider',
+                    text.muted
+                  )}>
+                    {section.label}
+                  </div>
+                )}
+                {section.items.length > 0 ? (
+                  section.items.map((item) => (
+                    <SidebarItem
+                      key={item.id}
+                      item={item}
+                      pathname={pathname}
+                    />
+                  ))
+                ) : (
+                  section.id === 'smart-folders' && (
+                    <div className={cn(px2, py2)}>
+                      <button className={cn(
+                        'w-full flex items-center',
+                        gap1wo,
+                        'hover:bg-accent',
+                        componentRadius.button.sm,
+                        animations.transition.fast,
+                        space2,
+                        text.muted,
+                        typography.body.small
+                      )}>
+                        <Plus className={sm} />
+                        <span>Add smart folder</span>
+                      </button>
+                    </div>
+                  )
+                )}
               </React.Fragment>
             ))}
           </div>

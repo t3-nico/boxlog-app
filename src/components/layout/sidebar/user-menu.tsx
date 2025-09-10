@@ -144,11 +144,9 @@ export function UserMenu({ children }: UserMenuProps) {
           </a>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
-          <a href="#">
-            <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
-            Support
-          </a>
+        <DropdownMenuItem onClick={() => router.push('/help')}>
+          <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
+          Help
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>

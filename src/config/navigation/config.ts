@@ -10,6 +10,9 @@ import {
   PlusCircle as CreateIcon,
   HelpCircle as HelpIcon,
   Sparkles as AIIcon,
+  Tag as TagIcon,
+  FileText as TemplateIcon,
+  Trash as TrashIcon,
 } from 'lucide-react'
 
 export interface NavigationItem {
@@ -31,7 +34,8 @@ export interface NavigationSection {
 // L1 Primary Navigation Configuration
 export const primaryNavigation: NavigationSection[] = [
   {
-    id: 'main',
+    id: 'views',
+    label: 'Views',
     items: [
       {
         id: 'calendar',
@@ -68,52 +72,48 @@ export const primaryNavigation: NavigationSection[] = [
     ]
   },
   {
-    id: 'actions',
+    id: 'tools',
+    label: 'Tools',
     items: [
       {
-        id: 'search',
-        label: 'Search',
-        href: '#',
-        icon: SearchIcon,
-        tooltip: 'Search (⌘K)'
-      },
-      {
-        id: 'notifications',
-        label: 'Notifications',
-        href: '/notifications',
-        icon: BellIcon,
-        tooltip: 'Notifications',
-        badge: 3
-      },
-      {
         id: 'ai-chat',
-        label: 'AI Chat',
+        label: 'AI assistant',
         href: '/ai-chat',
         icon: AIIcon,
         isActive: (pathname) => pathname.startsWith('/ai-chat'),
         tooltip: 'AI Assistant'
       },
+      {
+        id: 'all-tags',
+        label: 'All tags',
+        href: '/tags',
+        icon: TagIcon,
+        isActive: (pathname) => pathname.startsWith('/tags'),
+        tooltip: 'View all tags'
+      },
+      {
+        id: 'templates',
+        label: 'Templates',
+        href: '/templates',
+        icon: TemplateIcon,
+        isActive: (pathname) => pathname.startsWith('/templates'),
+        tooltip: 'Event templates'
+      },
+      {
+        id: 'trash',
+        label: 'Trash',
+        href: '/trash',
+        icon: TrashIcon,
+        isActive: (pathname) => pathname.startsWith('/trash'),
+        tooltip: 'Deleted items'
+      },
     ]
   },
   {
-    id: 'user',
+    id: 'smart-folders',
+    label: 'Smart Folders',
     items: [
-      {
-        id: 'help',
-        label: 'Help',
-        href: '/help',
-        icon: HelpIcon,
-        isActive: (pathname) => pathname.startsWith('/help'),
-        tooltip: 'Help & Support'
-      },
-      {
-        id: 'settings',
-        label: 'Settings',
-        href: '/settings',
-        icon: SettingsIcon,
-        isActive: (pathname) => pathname.startsWith('/settings'),
-        tooltip: 'Settings'
-      },
+      // Smart folders will be dynamically populated
     ]
   }
 ]
@@ -126,6 +126,9 @@ export const pageConfig = {
   '/table': { title: 'Table', description: 'テーブル形式でタスクを表示' },
   '/stats': { title: 'Stats', description: '分析と統計情報' },
   '/ai-chat': { title: 'AI Chat', description: 'AI assistant and document chat' },
+  '/tags': { title: 'Tags', description: 'すべてのタグを管理' },
+  '/templates': { title: 'Templates', description: 'イベントテンプレートの管理' },
+  '/trash': { title: 'Trash', description: '削除されたアイテム' },
   '/help': { title: 'Help', description: 'Help and support' },
   '/settings': { title: 'Settings', description: 'アプリケーション設定' },
 }
