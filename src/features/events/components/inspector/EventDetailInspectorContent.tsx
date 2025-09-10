@@ -13,7 +13,16 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
-  Calendar
+  Calendar,
+  Clock,
+  Plus,
+  Edit3,
+  MessageSquare,
+  Bell,
+  Activity,
+  ArrowRight,
+  RefreshCw,
+  Circle
 } from 'lucide-react'
 import { background, text, border } from '@/config/theme/colors'
 import { typography, spacing } from '@/config/theme'
@@ -150,29 +159,12 @@ export function EventDetailInspectorContent({
                   text.primary
                 )}
               />
-              <Textarea
-                value={formData.description}
-                onChange={(e) => handleDescriptionChange(e.target.value)}
-                placeholder="メモを入力..."
-                rows={2}
-                className={cn(
-                  typography.body.DEFAULT,
-                  'border-none shadow-none resize-none p-2',
-                  background.base,
-                  text.primary
-                )}
-              />
             </>
           ) : (
             <>
               <p className={cn(typography.body.base, 'font-medium', text.primary)}>
                 {formData.title}
               </p>
-              {formData.description && (
-                <p className={cn(typography.body.small, text.muted)}>
-                  {formData.description}
-                </p>
-              )}
             </>
           )}
         </div>
@@ -290,8 +282,38 @@ export function EventDetailInspectorContent({
           </div>
         </div>
 
+        {/* メモ */}
+        <div className={cn('space-y-3 p-4 border-b', border.universal)}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
+            メモ
+          </h3>
+          {isEditable ? (
+            <Textarea
+              value={formData.description}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
+              placeholder="メモを入力..."
+              rows={3}
+              className={cn(
+                typography.body.DEFAULT,
+                'border-none shadow-none resize-none p-2',
+                background.base,
+                text.primary
+              )}
+            />
+          ) : (
+            formData.description ? (
+              <p className={cn(typography.body.DEFAULT, text.primary)}>
+                {formData.description}
+              </p>
+            ) : (
+              <p className={cn(typography.body.DEFAULT, text.muted)}>
+                メモがありません
+              </p>
+            )
+          )}
+        </div>
 
-        {/* 詳細情報（折りたたみ） */}
+        {/* アクティビティ（タイムライン） */}
         <div className={cn('space-y-3 p-4 border-b', border.universal)}>
           <button
             onClick={() => setIsDetailOpen(!isDetailOpen)}
@@ -302,7 +324,7 @@ export function EventDetailInspectorContent({
               text.primary
             )}
           >
-            詳細情報
+            アクティビティ
             {isDetailOpen ? (
               <ChevronDown className="w-4 h-4" />
             ) : (
@@ -310,41 +332,194 @@ export function EventDetailInspectorContent({
             )}
           </button>
           
-          {isDetailOpen && (
+          {isDetailOpen && !isCreateMode && (
             <div className="space-y-3 pt-3">
-              <div className="space-y-2">
-                {!isCreateMode && (
-                  <>
-                    <div className="flex justify-between">
-                      <span className={cn(typography.body.xs, text.muted)}>作成</span>
-                      <span className={cn(typography.body.xs, text.primary)}>
-                        {event ? format(event.startDate, 'yyyy/MM/dd HH:mm') : '-'}
+              <div className="relative">
+                <div className="space-y-2">
+                  {/* 2分前: 時間変更 */}
+                  <div className="flex gap-3 relative">
+                    <div className="w-12 flex-shrink-0 text-right">
+                      <span className={cn(typography.body.small, text.muted)}>2分前</span>
+                    </div>
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={cn(
+                        'w-5 h-5 rounded-lg flex items-center justify-center border',
+                        background.surface,
+                        border.strong,
+                        text.muted
+                      )}>
+                        <Clock className="w-3 h-3" />
+                      </div>
+                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
+                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
+                    </div>
+                    <div className="flex-1 pb-1">
+                      <div className={cn(typography.body.small, 'leading-relaxed')}>
+                        <span className="flex items-center gap-1.5 flex-wrap">
+                          <span className={text.muted}>時間変更:</span>
+                          <span className={cn(text.muted, 'font-mono text-xs')}>14:00-15:00</span>
+                          <ArrowRight className={cn('w-3 h-3', text.muted)} />
+                          <span className={cn(text.primary, 'font-mono text-xs font-medium')}>15:00-16:00</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 15分前: ステータス変更（自動） */}
+                  <div className="flex gap-3 relative">
+                    <div className="w-12 flex-shrink-0 text-right">
+                      <span className={cn(typography.body.small, text.muted)}>15分前</span>
+                    </div>
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={cn(
+                        'w-5 h-5 rounded-lg flex items-center justify-center border',
+                        background.surface,
+                        border.strong,
+                        text.muted
+                      )}>
+                        <Activity className="w-3 h-3" />
+                      </div>
+                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
+                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
+                    </div>
+                    <div className="flex-1 pb-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className={cn(typography.body.small, 'leading-relaxed')}>
+                          <span className="flex items-center gap-1.5 flex-wrap">
+                            <span className={text.muted}>ステータス:</span>
+                            <span className={text.muted}>予定</span>
+                            <ArrowRight className={cn('w-3 h-3', text.muted)} />
+                            <span className={cn(text.primary, 'font-medium')}>進行中</span>
+                          </span>
+                        </div>
+                        <RefreshCw 
+                          className={cn('w-3 h-3 flex-shrink-0 mt-0.5', text.muted)} 
+                          title="システムによる自動更新" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 45分前: リマインダー設定（自動） */}
+                  <div className="flex gap-3 relative">
+                    <div className="w-12 flex-shrink-0 text-right">
+                      <span className={cn(typography.body.small, text.muted)}>45分前</span>
+                    </div>
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={cn(
+                        'w-5 h-5 rounded-lg flex items-center justify-center border',
+                        background.surface,
+                        border.strong,
+                        text.muted
+                      )}>
+                        <Bell className="w-3 h-3" />
+                      </div>
+                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
+                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
+                    </div>
+                    <div className="flex-1 pb-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <span className={cn(typography.body.small, text.primary)}>
+                          15分前にリマインド設定
+                        </span>
+                        <RefreshCw 
+                          className={cn('w-3 h-3 flex-shrink-0 mt-0.5', text.muted)} 
+                          title="システムによる自動更新" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 1時間前: タグ追加 */}
+                  <div className="flex gap-3 relative">
+                    <div className="w-12 flex-shrink-0 text-right">
+                      <span className={cn(typography.body.small, text.muted)}>1時間前</span>
+                    </div>
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={cn(
+                        'w-5 h-5 rounded-lg flex items-center justify-center border',
+                        background.surface,
+                        border.strong,
+                        text.muted
+                      )}>
+                        <TagIcon className="w-3 h-3" />
+                      </div>
+                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
+                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
+                    </div>
+                    <div className="flex-1 pb-1">
+                      <div className={cn(typography.body.small, 'leading-relaxed')}>
+                        <span className="flex items-center gap-1.5">
+                          <span className={text.muted}>タグ追加:</span>
+                          <span className={cn(
+                            'px-2 py-0.5 text-xs rounded-full border',
+                            background.surface,
+                            text.primary,
+                            border.strong
+                          )}>
+                            重要
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 2時間前: メモ更新 */}
+                  <div className="flex gap-3 relative">
+                    <div className="w-12 flex-shrink-0 text-right">
+                      <span className={cn(typography.body.small, text.muted)}>2時間前</span>
+                    </div>
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={cn(
+                        'w-5 h-5 rounded-lg flex items-center justify-center border',
+                        background.surface,
+                        border.strong,
+                        text.muted
+                      )}>
+                        <FileText className="w-3 h-3" />
+                      </div>
+                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
+                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
+                    </div>
+                    <div className="flex-1 pb-1">
+                      <span className={cn(typography.body.small, text.primary)}>
+                        メモを更新
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className={cn(typography.body.xs, text.muted)}>更新</span>
-                      <span className={cn(typography.body.xs, text.primary)}>
-                        {event ? format(event.startDate, 'yyyy/MM/dd HH:mm') : '-'}
+                  </div>
+
+                  {/* 3時間前: 作成 */}
+                  <div className="flex gap-3 relative">
+                    <div className="w-12 flex-shrink-0 text-right">
+                      <span className={cn(typography.body.small, text.muted)}>3時間前</span>
+                    </div>
+                    <div className="flex flex-col items-center relative z-10">
+                      <div className={cn(
+                        'w-5 h-5 rounded-lg flex items-center justify-center border',
+                        background.surface,
+                        border.strong,
+                        text.muted
+                      )}>
+                        <Circle className="w-3 h-3" />
+                      </div>
+                      {/* 最後のアイテムは接続線なし */}
+                    </div>
+                    <div className="flex-1 pb-1">
+                      <span className={cn(typography.body.small, text.primary)}>
+                        作成
                       </span>
                     </div>
-                  </>
-                )}
-                <div className="flex justify-between">
-                  <span className={cn(typography.body.xs, text.muted)}>繰り返し</span>
-                  <span className={cn(typography.body.xs, text.primary)}>
-                    {formData.isRecurring ? 'あり' : 'なし'}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className={cn(typography.body.xs, text.muted)}>リマインダー</span>
-                  <span className={cn(typography.body.xs, text.primary)}>
-                    {formData.reminders && formData.reminders.length > 0 
-                      ? `${formData.reminders.map(r => r.minutesBefore).join(', ')}分前`
-                      : 'なし'
-                    }
-                  </span>
+                  </div>
                 </div>
               </div>
+            </div>
+          )}
+          
+          {isDetailOpen && isCreateMode && (
+            <div className="pt-3 text-center">
+              <span className={cn(typography.body.small, text.muted)}>
+                作成後にアクティビティが表示されます
+              </span>
             </div>
           )}
         </div>
