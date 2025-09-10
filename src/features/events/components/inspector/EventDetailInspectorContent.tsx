@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { Textarea } from '@/components/shadcn-ui/textarea'
+import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
 import { 
   Tag as TagIcon,
   Trash2,
@@ -50,6 +51,7 @@ export function EventDetailInspectorContent({
   onClose
 }: EventDetailInspectorContentProps) {
   const [isDetailOpen, setIsDetailOpen] = useState(true)
+  const [showTimeline, setShowTimeline] = useState(true)
   const [formData, setFormData] = useState({
     title: event?.title || '',
     description: event?.description || '',
@@ -64,6 +66,133 @@ export function EventDetailInspectorContent({
   // 編集モード管理 - 常に編集可能
   const isEditable = true
   const isCreateMode = mode === 'create'
+
+  // タイムラインデータ
+  const timelineEvents = [
+    {
+      id: 1,
+      timestamp: new Date(Date.now() - 2 * 60000),
+      relativeTime: '2分前',
+      type: 'modified',
+      field: 'time',
+      oldValue: '14:00-15:00',
+      newValue: '15:00-16:00',
+      automatic: false
+    },
+    {
+      id: 2,
+      timestamp: new Date(Date.now() - 15 * 60000),
+      relativeTime: '15分前',
+      type: 'status',
+      field: 'status',
+      oldValue: '予定',
+      newValue: '進行中',
+      automatic: true
+    },
+    {
+      id: 3,
+      timestamp: new Date(Date.now() - 45 * 60000),
+      relativeTime: '45分前',
+      type: 'reminder',
+      field: 'reminder',
+      value: '15分前にリマインド設定',
+      automatic: true
+    },
+    {
+      id: 4,
+      timestamp: new Date(Date.now() - 60 * 60000),
+      relativeTime: '1時間前',
+      type: 'modified',
+      field: 'tags',
+      action: 'added',
+      value: '重要',
+      automatic: false
+    },
+    {
+      id: 5,
+      timestamp: new Date(Date.now() - 2 * 3600000),
+      relativeTime: '2時間前',
+      type: 'modified',
+      field: 'memo',
+      action: 'updated',
+      automatic: false
+    },
+    {
+      id: 6,
+      timestamp: new Date(Date.now() - 3 * 3600000),
+      relativeTime: '3時間前',
+      type: 'created',
+      automatic: false
+    }
+  ]
+
+  // イベントタイプごとのアイコンを取得
+  const getEventIcon = (event: any) => {
+    if (event.type === 'created') return <Circle className="w-3 h-3" />
+    if (event.type === 'status') return <Activity className="w-3 h-3" />
+    if (event.type === 'reminder') return <Bell className="w-3 h-3" />
+    
+    if (event.field === 'time') return <Clock className="w-3 h-3" />
+    if (event.field === 'tags') return <TagIcon className="w-3 h-3" />
+    if (event.field === 'memo') return <FileText className="w-3 h-3" />
+    
+    return <Edit3 className="w-3 h-3" />
+  }
+
+  // イベントの説明文を生成
+  const getEventDescription = (event: any) => {
+    if (event.type === 'created') {
+      return <span className={text.primary}>作成</span>
+    }
+    
+    if (event.type === 'status') {
+      return (
+        <span className="flex items-center gap-1.5 flex-wrap">
+          <span className={text.muted}>ステータス:</span>
+          <span className={text.muted}>{event.oldValue}</span>
+          <ArrowRight className={cn('w-3 h-3', text.muted)} />
+          <span className={cn(text.primary, 'font-medium')}>{event.newValue}</span>
+        </span>
+      )
+    }
+    
+    if (event.type === 'reminder') {
+      return <span className={text.primary}>{event.value}</span>
+    }
+    
+    if (event.field === 'time') {
+      return (
+        <span className="flex items-center gap-1.5 flex-wrap">
+          <span className={text.muted}>時間変更:</span>
+          <span className={cn(text.muted, 'font-mono text-xs')}>{event.oldValue}</span>
+          <ArrowRight className={cn('w-3 h-3', text.muted)} />
+          <span className={cn(text.primary, 'font-mono text-xs font-medium')}>{event.newValue}</span>
+        </span>
+      )
+    }
+    
+    if (event.field === 'tags' && event.action === 'added') {
+      return (
+        <span className="flex items-center gap-1.5">
+          <span className={text.muted}>タグ追加:</span>
+          <span className={cn(
+            'px-2 py-0.5 text-xs rounded-full border',
+            background.accent,
+            text.primary,
+            border.universal
+          )}>
+            {event.value}
+          </span>
+        </span>
+      )
+    }
+    
+    if (event.field === 'memo') {
+      return <span className={text.primary}>メモを更新</span>
+    }
+    
+    return <span className={text.muted}>更新</span>
+  }
 
   // ステータス判定（予定 vs 記録）
   const isCompleted = event?.status === 'completed'
@@ -139,10 +268,10 @@ export function EventDetailInspectorContent({
   }
 
   return (
-    <ScrollArea className="h-full p-0 m-0">
-      <div className="space-y-0">
-        {/* タイトル */}
-        <div className={cn('space-y-3 p-4 border-b', border.universal)}>
+    <ScrollArea className="h-full p-0 m-0 w-full">
+      <div className="space-y-0 max-w-full overflow-hidden">
+        {/* 予定 */}
+        <div className={cn('space-y-3 p-4 border-b max-w-full', border.universal)}>
           <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             予定
           </h3>
@@ -154,7 +283,7 @@ export function EventDetailInspectorContent({
                 placeholder={isCreateMode ? "タイトルを入力..." : ""}
                 className={cn(
                   typography.heading.h4,
-                  'md:text-base border-none shadow-none p-2',
+                  'md:text-base border-none shadow-none p-2 w-full max-w-full',
                   background.base,
                   text.primary
                 )}
@@ -162,7 +291,7 @@ export function EventDetailInspectorContent({
             </>
           ) : (
             <>
-              <p className={cn(typography.body.base, 'font-medium', text.primary)}>
+              <p className={cn(typography.body.base, 'font-medium break-words', text.primary)}>
                 {formData.title}
               </p>
             </>
@@ -170,11 +299,11 @@ export function EventDetailInspectorContent({
         </div>
 
         {/* 時間 */}
-        <div className={cn('space-y-3 p-4 border-b', border.universal)}>
+        <div className={cn('space-y-3 p-4 border-b max-w-full', border.universal)}>
           <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             時間
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-3 max-w-full">
             {isEditable ? (
               <Input
                 type="date"
@@ -182,17 +311,17 @@ export function EventDetailInspectorContent({
                 onChange={(e) => handleDateChange(e.target.value)}
                 className={cn(
                   typography.body.DEFAULT,
-                  'border border-input rounded-md px-3 py-2 w-auto',
+                  'border border-input rounded-md px-3 py-2 w-full max-w-full',
                   background.base,
                   text.primary
                 )}
               />
             ) : (
-              <div className={cn(typography.body.base, 'font-medium', text.primary)}>
+              <div className={cn(typography.body.base, 'font-medium break-words', text.primary)}>
                 {format(formData.startDate, 'yyyy年M月d日（E）', { locale: ja })}
               </div>
             )}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 max-w-full">
                   {isEditable ? (
                     <>
                       <Input
@@ -206,12 +335,12 @@ export function EventDetailInspectorContent({
                         }}
                         className={cn(
                           typography.body.DEFAULT,
-                          'border border-input rounded-md px-3 py-2 text-center flex-1',
+                          'border border-input rounded-md px-3 py-2 text-center flex-1 min-w-0',
                           background.base,
                           text.primary
                         )}
                       />
-                      <span className={cn(typography.body.DEFAULT, text.muted)}>→</span>
+                      <span className={cn(typography.body.DEFAULT, text.muted, 'flex-shrink-0')}>→</span>
                       <Input
                         type="time"
                         value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
@@ -227,14 +356,14 @@ export function EventDetailInspectorContent({
                         }}
                         className={cn(
                           typography.body.DEFAULT,
-                          'border border-input rounded-md px-3 py-2 text-center flex-1',
+                          'border border-input rounded-md px-3 py-2 text-center flex-1 min-w-0',
                           background.base,
                           text.primary
                         )}
                       />
                     </>
                   ) : (
-                    <span className={cn(typography.body.DEFAULT, text.primary)}>
+                    <span className={cn(typography.body.DEFAULT, text.primary, 'break-words')}>
                       {format(formData.startDate, 'HH:mm')} → {formData.endDate ? format(formData.endDate, 'HH:mm') : '未設定'}
                     </span>
                   )}
@@ -242,20 +371,19 @@ export function EventDetailInspectorContent({
           </div>
         </div>
 
-
-        {/* タグセクション */}
-        <div className={cn('space-y-3 p-4 border-b', border.universal)}>
+        {/* タグ */}
+        <div className={cn('space-y-3 p-4 border-b max-w-full', border.universal)}>
           <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             タグ
           </h3>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 max-w-full">
             {formData.tags && formData.tags.length > 0 ? (
               formData.tags.map((tag) => (
                 <span
                   key={tag.id}
                   className={cn(
-                    'px-3 py-1 rounded-full border',
+                    'px-3 py-1 rounded-full border flex-shrink-0',
                     typography.body.xs,
                     background.surface,
                     border.subtle,
@@ -272,7 +400,7 @@ export function EventDetailInspectorContent({
               <Button
                 variant="outline"
                 size="sm"
-                className={cn(typography.body.xs, text.muted)}
+                className={cn(typography.body.xs, text.muted, 'max-w-full')}
                 disabled={!isEditable}
               >
                 <TagIcon className="w-3 h-3 mr-1" />
@@ -287,36 +415,33 @@ export function EventDetailInspectorContent({
           <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             メモ
           </h3>
-          {isEditable ? (
-            <Textarea
-              value={formData.description}
-              onChange={(e) => handleDescriptionChange(e.target.value)}
-              placeholder="メモを入力..."
-              rows={3}
-              className={cn(
-                typography.body.DEFAULT,
-                'border-none shadow-none resize-none p-2',
-                background.base,
-                text.primary
-              )}
-            />
-          ) : (
-            formData.description ? (
-              <p className={cn(typography.body.DEFAULT, text.primary)}>
-                {formData.description}
-              </p>
+          <div className="max-w-full">
+            {isEditable ? (
+              <TiptapEditor
+                value={formData.description}
+                onChange={(value) => handleDescriptionChange(value)}
+                placeholder="メモを入力..."
+                className="min-h-[120px] max-w-full"
+              />
             ) : (
-              <p className={cn(typography.body.DEFAULT, text.muted)}>
-                メモがありません
-              </p>
-            )
-          )}
+              formData.description ? (
+                <div 
+                  className={cn(typography.body.DEFAULT, text.primary, 'break-words max-w-full')}
+                  dangerouslySetInnerHTML={{ __html: formData.description }}
+                />
+              ) : (
+                <p className={cn(typography.body.DEFAULT, text.muted)}>
+                  メモがありません
+                </p>
+              )
+            )}
+          </div>
         </div>
 
         {/* アクティビティ（タイムライン） */}
         <div className={cn('space-y-3 p-4 border-b', border.universal)}>
           <button
-            onClick={() => setIsDetailOpen(!isDetailOpen)}
+            onClick={() => setShowTimeline(!showTimeline)}
             className={cn(
               'w-full flex items-center justify-between p-0 bg-transparent border-none outline-none cursor-pointer',
               typography.heading.h6,
@@ -325,197 +450,60 @@ export function EventDetailInspectorContent({
             )}
           >
             アクティビティ
-            {isDetailOpen ? (
+            {showTimeline ? (
               <ChevronDown className="w-4 h-4" />
             ) : (
               <ChevronRight className="w-4 h-4" />
             )}
           </button>
           
-          {isDetailOpen && !isCreateMode && (
-            <div className="space-y-3 pt-3">
-              <div className="relative">
+          {showTimeline && !isCreateMode && (
+            <div className="space-y-3 pt-3 max-w-full">
+              <div className="relative max-w-full">
                 <div className="space-y-2">
-                  {/* 2分前: 時間変更 */}
-                  <div className="flex gap-3 relative">
-                    <div className="w-12 flex-shrink-0 text-right">
-                      <span className={cn(typography.body.small, text.muted)}>2分前</span>
-                    </div>
-                    <div className="flex flex-col items-center relative z-10">
-                      <div className={cn(
-                        'w-5 h-5 rounded-lg flex items-center justify-center border',
-                        background.surface,
-                        border.strong,
-                        text.muted
-                      )}>
-                        <Clock className="w-3 h-3" />
-                      </div>
-                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
-                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <div className={cn(typography.body.small, 'leading-relaxed')}>
-                        <span className="flex items-center gap-1.5 flex-wrap">
-                          <span className={text.muted}>時間変更:</span>
-                          <span className={cn(text.muted, 'font-mono text-xs')}>14:00-15:00</span>
-                          <ArrowRight className={cn('w-3 h-3', text.muted)} />
-                          <span className={cn(text.primary, 'font-mono text-xs font-medium')}>15:00-16:00</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 15分前: ステータス変更（自動） */}
-                  <div className="flex gap-3 relative">
-                    <div className="w-12 flex-shrink-0 text-right">
-                      <span className={cn(typography.body.small, text.muted)}>15分前</span>
-                    </div>
-                    <div className="flex flex-col items-center relative z-10">
-                      <div className={cn(
-                        'w-5 h-5 rounded-lg flex items-center justify-center border',
-                        background.surface,
-                        border.strong,
-                        text.muted
-                      )}>
-                        <Activity className="w-3 h-3" />
-                      </div>
-                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
-                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className={cn(typography.body.small, 'leading-relaxed')}>
-                          <span className="flex items-center gap-1.5 flex-wrap">
-                            <span className={text.muted}>ステータス:</span>
-                            <span className={text.muted}>予定</span>
-                            <ArrowRight className={cn('w-3 h-3', text.muted)} />
-                            <span className={cn(text.primary, 'font-medium')}>進行中</span>
-                          </span>
+                  {timelineEvents.map((event, index) => {
+                    const isLast = index === timelineEvents.length - 1
+                    
+                    return (
+                      <div key={event.id} className="flex gap-3 relative max-w-full">
+                        <div className="w-12 flex-shrink-0 text-right">
+                          <span className={cn(typography.body.small, text.muted)}>{event.relativeTime}</span>
                         </div>
-                        <RefreshCw 
-                          className={cn('w-3 h-3 flex-shrink-0 mt-0.5', text.muted)} 
-                          title="システムによる自動更新" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 45分前: リマインダー設定（自動） */}
-                  <div className="flex gap-3 relative">
-                    <div className="w-12 flex-shrink-0 text-right">
-                      <span className={cn(typography.body.small, text.muted)}>45分前</span>
-                    </div>
-                    <div className="flex flex-col items-center relative z-10">
-                      <div className={cn(
-                        'w-5 h-5 rounded-lg flex items-center justify-center border',
-                        background.surface,
-                        border.strong,
-                        text.muted
-                      )}>
-                        <Bell className="w-3 h-3" />
-                      </div>
-                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
-                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <span className={cn(typography.body.small, text.primary)}>
-                          15分前にリマインド設定
-                        </span>
-                        <RefreshCw 
-                          className={cn('w-3 h-3 flex-shrink-0 mt-0.5', text.muted)} 
-                          title="システムによる自動更新" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 1時間前: タグ追加 */}
-                  <div className="flex gap-3 relative">
-                    <div className="w-12 flex-shrink-0 text-right">
-                      <span className={cn(typography.body.small, text.muted)}>1時間前</span>
-                    </div>
-                    <div className="flex flex-col items-center relative z-10">
-                      <div className={cn(
-                        'w-5 h-5 rounded-lg flex items-center justify-center border',
-                        background.surface,
-                        border.strong,
-                        text.muted
-                      )}>
-                        <TagIcon className="w-3 h-3" />
-                      </div>
-                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
-                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <div className={cn(typography.body.small, 'leading-relaxed')}>
-                        <span className="flex items-center gap-1.5">
-                          <span className={text.muted}>タグ追加:</span>
-                          <span className={cn(
-                            'px-2 py-0.5 text-xs rounded-full border',
+                        <div className="flex flex-col items-center relative z-10 flex-shrink-0">
+                          <div className={cn(
+                            'w-5 h-5 rounded-lg flex items-center justify-center border',
                             background.surface,
-                            text.primary,
-                            border.strong
+                            border.strong,
+                            text.muted
                           )}>
-                            重要
-                          </span>
-                        </span>
+                            {getEventIcon(event)}
+                          </div>
+                          {!isLast && (
+                            <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
+                          )}
+                        </div>
+                        <div className="flex-1 pb-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2 max-w-full">
+                            <div className={cn(typography.body.small, 'leading-relaxed break-words min-w-0 flex-1')}>
+                              {getEventDescription(event)}
+                            </div>
+                            {event.automatic && (
+                              <RefreshCw 
+                                className={cn('w-3 h-3 flex-shrink-0 mt-0.5', text.muted)} 
+                                title="システムによる自動更新" 
+                              />
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* 2時間前: メモ更新 */}
-                  <div className="flex gap-3 relative">
-                    <div className="w-12 flex-shrink-0 text-right">
-                      <span className={cn(typography.body.small, text.muted)}>2時間前</span>
-                    </div>
-                    <div className="flex flex-col items-center relative z-10">
-                      <div className={cn(
-                        'w-5 h-5 rounded-lg flex items-center justify-center border',
-                        background.surface,
-                        border.strong,
-                        text.muted
-                      )}>
-                        <FileText className="w-3 h-3" />
-                      </div>
-                      {/* 接続線 - アイコンボックスの下から次のアイコンまで */}
-                      <div className={cn('w-px h-6 border-l mt-1', border.universal)} />
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <span className={cn(typography.body.small, text.primary)}>
-                        メモを更新
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* 3時間前: 作成 */}
-                  <div className="flex gap-3 relative">
-                    <div className="w-12 flex-shrink-0 text-right">
-                      <span className={cn(typography.body.small, text.muted)}>3時間前</span>
-                    </div>
-                    <div className="flex flex-col items-center relative z-10">
-                      <div className={cn(
-                        'w-5 h-5 rounded-lg flex items-center justify-center border',
-                        background.surface,
-                        border.strong,
-                        text.muted
-                      )}>
-                        <Circle className="w-3 h-3" />
-                      </div>
-                      {/* 最後のアイテムは接続線なし */}
-                    </div>
-                    <div className="flex-1 pb-1">
-                      <span className={cn(typography.body.small, text.primary)}>
-                        作成
-                      </span>
-                    </div>
-                  </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>
           )}
           
-          {isDetailOpen && isCreateMode && (
+          {showTimeline && isCreateMode && (
             <div className="pt-3 text-center">
               <span className={cn(typography.body.small, text.muted)}>
                 作成後にアクティビティが表示されます

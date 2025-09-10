@@ -93,7 +93,7 @@ export function InspectorContent() {
   
   return (
     <div className={cn(
-      'flex-1 overflow-hidden',
+      'flex-1 overflow-auto',
       background.surface
     )}>
       {getContentComponent()}

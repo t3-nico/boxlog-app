@@ -22,7 +22,9 @@ export function Header({ className, children }: HeaderProps) {
         headerHeight, // 32px height
         'w-full',
         'flex items-center justify-start',
-        'pr-2', // 8px right padding only
+        'px-2', // 8px horizontal padding for mobile
+        'md:px-4', // 16px horizontal padding for desktop
+        'md:mt-2', // 8px top margin for desktop only
         background.base, // ベース背景
         border.universal,
         'border-b',
