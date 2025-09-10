@@ -398,12 +398,12 @@ export function EventDetailInspectorContent({
               ))
             ) : (
               <Button
-                variant="outline"
+                variant="secondary"
                 size="sm"
                 className={cn(typography.body.xs, text.muted, 'max-w-full')}
                 disabled={!isEditable}
               >
-                <TagIcon className="w-3 h-3 mr-1" />
+                <Plus className="w-3 h-3 mr-1" />
                 タグを追加
               </Button>
             )}
@@ -525,7 +525,7 @@ export function EventDetailInspectorContent({
             <>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => event && onDuplicate?.(event)}
                   disabled={!event}
@@ -535,7 +535,7 @@ export function EventDetailInspectorContent({
                   複製
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="secondary"
                   size="sm"
                   onClick={() => event && onTemplateCreate?.(event)}
                   disabled={!event}

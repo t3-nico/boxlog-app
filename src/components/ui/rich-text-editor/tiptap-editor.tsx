@@ -6,6 +6,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import TaskList from '@tiptap/extension-task-list'
 import TaskItem from '@tiptap/extension-task-item'
+import ListItem from '@tiptap/extension-list-item'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/shadcn-ui/button'
 import { Bold, Italic, Underline, List, ListOrdered, CheckSquare } from 'lucide-react'
@@ -27,10 +28,20 @@ export function TiptapEditor({
 }: TiptapEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      TaskList,
+      StarterKit.configure({
+        listItem: false, // StarterKitのListItemを無効化
+      }),
+      ListItem,
+      TaskList.configure({
+        HTMLAttributes: {
+          class: 'task-list',
+        },
+      }),
       TaskItem.configure({
         nested: true,
+        HTMLAttributes: {
+          class: 'task-item',
+        },
       }),
     ],
     content: value,
@@ -59,6 +70,15 @@ export function TiptapEditor({
       editor.commands.setContent(value)
     }
   }, [editor, value])
+
+  // デバッグ: TaskListが正しくレンダリングされているか確認
+  React.useEffect(() => {
+    if (editor) {
+      console.log('Editor initialized with TaskList/TaskItem extensions')
+      const extensions = editor.extensionManager.extensions
+      console.log('Extensions:', extensions.map(ext => ext.name))
+    }
+  }, [editor])
 
   const toggleBold = () => editor?.chain().focus().toggleBold().run()
   const toggleItalic = () => editor?.chain().focus().toggleItalic().run()
@@ -177,7 +197,7 @@ export function TiptapEditor({
       {/* プレースホルダー */}
       {editor.isEmpty && (
         <div className={cn(
-          'absolute top-[52px] left-3 pointer-events-none',
+          'absolute top-[60px] left-3 pointer-events-none',
           text.muted,
           typography.body.DEFAULT
         )}>
