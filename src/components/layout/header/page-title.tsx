@@ -52,8 +52,10 @@ export function PageTitle() {
   return (
     <h1 className={cn(
       typography.heading.h5, // コンパクトヘッダー用サイズ
+      'md:text-base', // デスクトップでは通常サイズ
+      'text-sm', // モバイルでは小さめサイズ
       text.primary,
-      'font-semibold truncate'
+      'font-semibold truncate text-center md:text-left'
     )}>
       {title}
     </h1>

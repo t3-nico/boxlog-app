@@ -46,7 +46,9 @@ export function FloatingActionButton({
       aria-label={ariaLabel}
       className={cn(
         // ベーススタイル
-        'fixed bottom-6 right-6 z-50',
+        'fixed right-6 z-50',
+        // モバイル: ボトムナビの上（bottom-20）、デスクトップ: 通常位置（bottom-6）
+        'bottom-20 md:bottom-6',
         'flex items-center justify-center',
         sizeMap[size],
         componentRadius.button.lg,

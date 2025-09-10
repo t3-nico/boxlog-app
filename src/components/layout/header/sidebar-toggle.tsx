@@ -18,7 +18,7 @@ export function SidebarToggle() {
     <button
       onClick={() => toggleSidebar()}
       className={cn(
-        'w-8 h-8 flex items-center justify-center mr-4',
+        'w-8 h-8 flex items-center justify-center',
         componentRadius.button.sm,
         animations.transition.fast,
         ghost.text,

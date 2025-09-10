@@ -24,6 +24,8 @@ import { componentRadius, animations, icon } from '@/config/theme'
 import { Inspector } from './inspector'
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspector'
+import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 interface DashboardLayoutProps {
   events?: any
@@ -36,6 +38,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanel()
   const { open: openGlobalSearch } = useGlobalSearch()
   const { openCreateInspector } = useCreateEventInspector()
+  const isMobile = useMediaQuery('(max-width: 768px)')
   const pathname = usePathname()
   const searchParams = useSearchParams()
   
@@ -79,43 +82,44 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex flex-col">
           {/* Header Area - Navigation + Main Content のみ */}
           <Header>
-            {/* Left side buttons */}
-            <div className="flex items-center gap-2">
-              {/* Sidebar Toggle Button - モバイル: 常に表示、デスクトップ: サイドバーが閉じている時のみ表示 */}
-              <div className="md:hidden">
-                <SidebarToggle />
-              </div>
-              <div className="hidden md:block">
-                {!isSidebarOpen && <SidebarToggle />}
-              </div>
-              
-              {/* Secondary Nav Toggle Button - Hidden on Calendar pages */}
-              {!isCalendarPage && <SecondaryNavToggle />}
-            </div>
-            
-            {/* Left: Page Title */}
-            <div className="flex-1 flex justify-start">
+            {/* Mobile Layout */}
+            <div className="md:hidden flex items-center justify-center w-full">
+              {/* Center: Page Title */}
               <PageTitle />
             </div>
             
-            {/* Right side: Search & Inspector Toggle */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  console.log('Search button clicked')
-                  openGlobalSearch()
-                }}
-                className={cn(
-                  'w-8 h-8 flex items-center justify-center',
-                  background.hover,
-                  componentRadius.button.sm,
-                  animations.transition.fast,
-                  'flex-shrink-0'
-                )}
-              >
-                <Search className={sm} />
-              </button>
-              <InspectorToggle />
+            {/* Desktop Layout */}
+            <div className="hidden md:flex items-center w-full">
+              {/* Left side buttons */}
+              <div className="flex items-center gap-2">
+                {!isSidebarOpen && <SidebarToggle />}
+                {!isCalendarPage && <SecondaryNavToggle />}
+              </div>
+              
+              {/* Center: Page Title */}
+              <div className="flex-1 flex justify-start">
+                <PageTitle />
+              </div>
+              
+              {/* Right side: Search & Inspector Toggle */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    console.log('Search button clicked')
+                    openGlobalSearch()
+                  }}
+                  className={cn(
+                    'w-8 h-8 flex items-center justify-center',
+                    background.hover,
+                    componentRadius.button.sm,
+                    animations.transition.fast,
+                    'flex-shrink-0'
+                  )}
+                >
+                  <Search className={sm} />
+                </button>
+                <InspectorToggle />
+              </div>
             </div>
           </Header>
           
@@ -151,6 +155,9 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
         size="sm"
         aria-label="新しいイベントを作成"
       />
+      
+      {/* Mobile Bottom Navigation */}
+      {isMobile && <MobileBottomNavigation />}
       
     </div>
   )

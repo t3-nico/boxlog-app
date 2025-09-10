@@ -8,6 +8,7 @@ import { layout, spacing } from '@/config/theme'
 const { xs: headerHeight } = layout.heights.header
 const mt2 = 'mt-2' // 8px top margin - theme準拠
 const px4 = 'px-4' // 16px horizontal padding - theme準拠
+const px2 = 'px-2' // 8px horizontal padding for mobile - theme準拠
 
 interface HeaderProps {
   className?: string
@@ -21,8 +22,7 @@ export function Header({ className, children }: HeaderProps) {
         headerHeight, // 32px height
         'w-full',
         'flex items-center justify-start',
-        mt2, // 8px top margin
-        px4, // 16px horizontal padding
+        'pr-2', // 8px right padding only
         background.base, // ベース背景
         border.universal,
         'border-b',
