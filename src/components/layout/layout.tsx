@@ -69,8 +69,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     <div className="flex flex-col h-screen">
       {/* メインレイアウト - 3カラム構成 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* L1: Primary Sidebar - 左端独立（条件付き表示） */}
-        {isSidebarOpen && <Sidebar />}
+        {/* L1: Primary Sidebar - モバイル: 常に表示（画面外可能）、デスクトップ: 条件付き表示 */}
+        <Sidebar />
         
         {/* L2: Navigation + Main Content Area - 中央、Headerで覆われる */}
         <div className="flex-1 flex flex-col">
@@ -78,8 +78,13 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
           <Header>
             {/* Left side buttons */}
             <div className="flex items-center gap-2">
-              {/* Sidebar Toggle Button - Sidebarが閉じている時のみ表示 */}
-              {!isSidebarOpen && <SidebarToggle />}
+              {/* Sidebar Toggle Button - モバイル: 常に表示、デスクトップ: サイドバーが閉じている時のみ表示 */}
+              <div className="md:hidden">
+                <SidebarToggle />
+              </div>
+              <div className="hidden md:block">
+                {!isSidebarOpen && <SidebarToggle />}
+              </div>
               
               {/* Secondary Nav Toggle Button - Hidden on Calendar pages */}
               {!isCalendarPage && <SecondaryNavToggle />}

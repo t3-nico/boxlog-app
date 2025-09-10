@@ -2,8 +2,9 @@
 
 import React from 'react'
 import { cn } from '@/lib/utils'
-import { PanelLeftOpen } from 'lucide-react'
+import { PanelLeftOpen, Menu } from 'lucide-react'
 import { useNavigationStore } from '../sidebar/stores/navigation.store'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { componentRadius, animations, icon } from '@/config/theme'
 import { ghost } from '@/config/theme/colors'
 
@@ -11,6 +12,7 @@ const { sm } = icon.size
 
 export function SidebarToggle() {
   const { toggleSidebar } = useNavigationStore()
+  const isMobile = useMediaQuery('(max-width: 768px)')
 
   return (
     <button
@@ -26,7 +28,8 @@ export function SidebarToggle() {
       )}
       title="サイドバーを開く"
     >
-      <PanelLeftOpen className={sm} />
+      {/* モバイル：ハンバーガーメニュー、デスクトップ：パネルアイコン */}
+      {isMobile ? <Menu className={sm} /> : <PanelLeftOpen className={sm} />}
     </button>
   )
 }

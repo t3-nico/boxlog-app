@@ -11,9 +11,10 @@ import { selection, text, background, secondary } from '@/config/theme/colors'
 interface SidebarItemProps {
   item: NavigationItem
   pathname: string
+  onItemClick?: () => void // Sidebarを閉じるコールバック
 }
 
-export function SidebarItem({ item, pathname }: SidebarItemProps) {
+export function SidebarItem({ item, pathname, onItemClick }: SidebarItemProps) {
   const router = useRouter()
   const { open: openGlobalSearch } = useGlobalSearch()
   const Icon = item.icon
@@ -24,6 +25,11 @@ export function SidebarItem({ item, pathname }: SidebarItemProps) {
       openGlobalSearch()
     } else {
       router.push(item.href)
+    }
+    
+    // ページクリック時にSidebarを閉じる
+    if (onItemClick) {
+      onItemClick()
     }
   }
 
