@@ -8,13 +8,14 @@ import { SidebarItem } from './sidebar-item'
 import { UserMenu } from './user-menu'
 import { ThemeToggle } from './theme-toggle'
 import { useNavigationStore } from './stores/navigation.store'
-import { background, text, border } from '@/config/theme/colors'
+import { background, text, border, primary, secondary } from '@/config/theme/colors'
 import { PanelLeftClose, Bell, Plus, Search } from 'lucide-react'
 import { useNotificationModal } from '@/features/notifications'
 import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
-import { layout } from '@/config/theme/layout'
+import { layout, breakpoints } from '@/config/theme/layout'
 import { useAuthContext } from '@/features/auth'
 import { Avatar } from '@/components/shadcn-ui/avatar'
+import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 
 const { xs } = layout.heights.header
 const { sm, lg } = icon.size
@@ -29,6 +30,7 @@ export function DesktopSidebar() {
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
   const { open: openNotifications, notificationCount } = useNotificationModal()
   const { user } = useAuthContext()
+  const { openCreateInspector } = useCreateEventInspector()
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -81,7 +83,8 @@ export function DesktopSidebar() {
             <button
               onClick={() => toggleSidebar()}
               className={cn(
-                'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                'w-8 h-8 flex items-center justify-center',
+                secondary.hover,
                 componentRadius.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
@@ -96,7 +99,8 @@ export function DesktopSidebar() {
             {/* Search Button */}
             <button
               className={cn(
-                'w-8 h-8 flex items-center justify-center hover:bg-accent',
+                'w-8 h-8 flex items-center justify-center',
+                secondary.hover,
                 componentRadius.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
@@ -109,7 +113,8 @@ export function DesktopSidebar() {
             <button
               onClick={openNotifications}
               className={cn(
-                'w-8 h-8 flex items-center justify-center hover:bg-accent relative',
+                'w-8 h-8 flex items-center justify-center relative',
+                secondary.hover,
                 componentRadius.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
@@ -128,6 +133,26 @@ export function DesktopSidebar() {
               )}
             </button>
             
+            {/* Create Button - PC only, rightmost position */}
+            <button
+              onClick={() => openCreateInspector({
+                context: {
+                  source: 'sidebar'
+                }
+              })}
+              className={cn(
+                'w-8 h-8 flex items-center justify-center',
+                primary.DEFAULT,
+                primary.hover,
+                primary.text,
+                componentRadius.button.sm,
+                animations.transition.fast,
+                'flex-shrink-0'
+              )}
+              aria-label="新しいイベントを作成"
+            >
+              <Plus className={sm} />
+            </button>
           </div>
         </div>
 
@@ -200,12 +225,13 @@ export function DesktopSidebar() {
           {/* User Account Info */}
           <UserMenu>
             <div className={cn(
-              "flex items-center cursor-pointer hover:bg-accent w-full",
+              "flex items-center cursor-pointer w-full",
+              secondary.hover,
               'gap-2', // 8px gap
               componentRadius.button.md,
               animations.transition.fast,
               'p-2', // 全方向8px
-              'border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
+              'border border-transparent'
             )}>
               {/* Avatar Icon Only */}
               <div className="flex-shrink-0">

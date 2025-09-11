@@ -152,7 +152,7 @@ export function InspectorAIChat() {
           {/* Menu */}
           <div className="relative">
             <Button
-              variant="ghost"
+              variant="secondary"
               size="sm"
               onClick={() => setShowMenu(!showMenu)}
               className="p-1 h-6 w-6"

@@ -1,8 +1,7 @@
 'use client'
 
 import React from 'react'
-import { columns } from '@/config/theme/layout'
-import { colors, typography, spacing } from '@/config/theme'
+import { colors, typography, spacing, background } from '@/config/theme'
 
 interface SettingsLayoutProps {
   children: React.ReactNode
@@ -18,9 +17,9 @@ export function SettingsLayout({
   actions
 }: SettingsLayoutProps) {
   return (
-    <div className={`${columns.main.default} flex flex-col h-full ${colors.background.surface}`}>
+    <div className={`flex-1 flex flex-col h-full ${background.surface}`}>
       {/* ヘッダー部分 */}
-      <div className={`${columns.main.padding.md} pb-4 flex-shrink-0`}>
+      <div className="p-6 pb-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
             <h2 className={typography.heading.h2}>

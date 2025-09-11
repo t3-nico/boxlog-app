@@ -10,8 +10,14 @@ import ListItem from '@tiptap/extension-list-item'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/shadcn-ui/button'
 import { Bold, Italic, Underline, List, ListOrdered, CheckSquare } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
 import { typography } from '@/config/theme'
+import { background, text, border, selection } from '@/config/theme/colors'
+import { 
+  Tooltip, 
+  TooltipContent, 
+  TooltipProvider, 
+  TooltipTrigger 
+} from '@/components/shadcn-ui/tooltip'
 
 interface TiptapEditorProps {
   value?: string
@@ -92,101 +98,156 @@ export function TiptapEditor({
   }
 
   return (
-    <div className={cn(
-      'w-full border rounded-lg overflow-hidden relative max-w-full',
-      background.base,
-      border.universal,
-      className
-    )}>
-      {/* ツールバー */}
+    <TooltipProvider>
       <div className={cn(
-        'flex items-center gap-0 pl-2 pr-2 py-2 border-b overflow-x-auto',
-        background.surface,
-        border.universal
+        'w-full border rounded-lg overflow-hidden relative max-w-full',
+        background.base,
+        border.universal,
+        className
       )}>
-        {/* テキスト装飾 */}
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={toggleBold}
-          className={cn(
-            'h-8 !px-2 p-0 flex-shrink-0',
-            editor.isActive('bold') && 'bg-accent'
-          )}
-          title="太字"
-        >
-          <Bold className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={toggleItalic}
-          className={cn(
-            'h-8 !px-2 p-0 flex-shrink-0',
-            editor.isActive('italic') && 'bg-accent'
-          )}
-          title="斜体"
-        >
-          <Italic className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={toggleUnderline}
-          className={cn(
-            'h-8 !px-2 p-0 flex-shrink-0',
-            editor.isActive('underline') && 'bg-accent'
-          )}
-          title="下線"
-        >
-          <Underline className="h-4 w-4" />
-        </Button>
+        {/* ツールバー */}
+        <div className={cn(
+          'flex items-center gap-0 pl-2 pr-2 py-2 border-b overflow-x-auto',
+          background.surface,
+          border.universal
+        )}>
+          {/* テキスト装飾 */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleBold}
+                className={cn(
+                  'h-8 !px-2 p-0 flex-shrink-0',
+                  editor.isActive('bold') && selection.DEFAULT,
+                  editor.isActive('bold') && selection.text,
+                  selection.hover,
+                  'hover:text-blue-700 dark:hover:text-blue-300'
+                )}
+              >
+                <Bold className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>太字</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleItalic}
+                className={cn(
+                  'h-8 !px-2 p-0 flex-shrink-0',
+                  editor.isActive('italic') && selection.DEFAULT,
+                  editor.isActive('italic') && selection.text,
+                  selection.hover,
+                  'hover:text-blue-700 dark:hover:text-blue-300'
+                )}
+              >
+                <Italic className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>斜体</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleUnderline}
+                className={cn(
+                  'h-8 !px-2 p-0 flex-shrink-0',
+                  editor.isActive('underline') && selection.DEFAULT,
+                  editor.isActive('underline') && selection.text,
+                  selection.hover,
+                  'hover:text-blue-700 dark:hover:text-blue-300'
+                )}
+              >
+                <Underline className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>下線</p>
+            </TooltipContent>
+          </Tooltip>
         
         <div className={cn('w-px h-6 mx-1 flex-shrink-0', border.universal)} />
         
         {/* リスト */}
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={toggleBulletList}
-          className={cn(
-            'h-8 !px-2 p-0 flex-shrink-0',
-            editor.isActive('bulletList') && 'bg-accent'
-          )}
-          title="箇条書き"
-        >
-          <List className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={toggleOrderedList}
-          className={cn(
-            'h-8 !px-2 p-0 flex-shrink-0',
-            editor.isActive('orderedList') && 'bg-accent'
-          )}
-          title="番号付きリスト"
-        >
-          <ListOrdered className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={toggleTaskList}
-          className={cn(
-            'h-8 !px-2 p-0 flex-shrink-0',
-            editor.isActive('taskList') && 'bg-accent'
-          )}
-          title="チェックリスト"
-        >
-          <CheckSquare className="h-4 w-4" />
-        </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleBulletList}
+                className={cn(
+                  'h-8 !px-2 p-0 flex-shrink-0',
+                  editor.isActive('bulletList') && selection.DEFAULT,
+                  editor.isActive('bulletList') && selection.text,
+                  selection.hover,
+                  'hover:text-blue-700 dark:hover:text-blue-300'
+                )}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>箇条書き</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleOrderedList}
+                className={cn(
+                  'h-8 !px-2 p-0 flex-shrink-0',
+                  editor.isActive('orderedList') && selection.DEFAULT,
+                  editor.isActive('orderedList') && selection.text,
+                  selection.hover,
+                  'hover:text-blue-700 dark:hover:text-blue-300'
+                )}
+              >
+                <ListOrdered className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>番号付きリスト</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleTaskList}
+                className={cn(
+                  'h-8 !px-2 p-0 flex-shrink-0',
+                  editor.isActive('taskList') && selection.DEFAULT,
+                  editor.isActive('taskList') && selection.text,
+                  selection.hover,
+                  'hover:text-blue-700 dark:hover:text-blue-300'
+                )}
+              >
+                <CheckSquare className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>チェックリスト</p>
+            </TooltipContent>
+          </Tooltip>
       </div>
 
       {/* 編集エリア */}
@@ -204,6 +265,7 @@ export function TiptapEditor({
           {placeholder}
         </div>
       )}
-    </div>
+      </div>
+    </TooltipProvider>
   )
 }

@@ -47,19 +47,13 @@ export function FloatingActionButton({
       disabled={disabled}
       aria-label={ariaLabel}
       className={cn(
-        // ベーススタイル
-        'fixed z-50',
+        // ベーススタイル - タブレット以下のみ表示
+        'fixed z-50 lg:hidden',
         // レスポンシブ位置調整
         // モバイル（〜768px）: 中央寄り、ボトムナビの上
         'right-4 bottom-20',
         // タブレット（768px〜1024px）: やや右寄り
         'md:right-6 md:bottom-6',
-        // デスクトップ（1024px〜）: より右寄り
-        'lg:right-8',
-        // 大画面（1280px〜）: さらに右寄り
-        'xl:right-12',
-        // 超大画面（1536px〜）: 最大右寄り
-        '2xl:right-16',
         'flex items-center justify-center',
         sizeMap[size],
         componentRadius.button.lg,

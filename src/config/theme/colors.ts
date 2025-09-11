@@ -197,20 +197,22 @@ export const semantic = {
     border: 'border-green-600 dark:border-green-500',
   },
   
-  // エラー・削除
+  // 警告（Orange版）
+  warning: {
+    DEFAULT: 'bg-orange-600 dark:bg-orange-500',
+    light: 'bg-orange-50 dark:bg-orange-900/20',
+    text: 'text-orange-600 dark:text-orange-400',
+    border: 'border-orange-600 dark:border-orange-500',
+    hover: 'hover:bg-orange-100 dark:hover:bg-orange-900/20',
+  },
+
+  // エラー（削除など）
   error: {
     DEFAULT: 'bg-red-600 dark:bg-red-500',
     light: 'bg-red-50 dark:bg-red-900/20',
     text: 'text-red-600 dark:text-red-400',
     border: 'border-red-600 dark:border-red-500',
-  },
-  
-  // 警告
-  warning: {
-    DEFAULT: 'bg-amber-600 dark:bg-amber-500',
-    light: 'bg-amber-50 dark:bg-amber-900/20',
-    text: 'text-amber-600 dark:text-amber-400',
-    border: 'border-amber-600 dark:border-amber-500',
+    hover: 'hover:bg-red-700 dark:hover:bg-red-600',  // 追加
   },
   
   // 情報

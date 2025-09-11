@@ -25,7 +25,8 @@
       "Bash(npm run dev:*)",
       "Bash(npm run dev:*)",
       "Bash(npx tsx:*)",
-      "Bash(npm run generate:css:*)"
+      "Bash(npm run generate:css:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
