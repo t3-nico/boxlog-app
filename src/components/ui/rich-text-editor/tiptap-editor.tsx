@@ -53,7 +53,7 @@ export function TiptapEditor({
     editorProps: {
       attributes: {
         class: cn(
-          'w-full min-h-[120px] p-3 outline-none',
+          'w-full min-h-[120px] pl-3 pr-3 py-3 outline-none',
           'focus:ring-2 focus:ring-ring focus:ring-offset-2',
           typography.body.DEFAULT,
           text.primary,
@@ -93,14 +93,14 @@ export function TiptapEditor({
 
   return (
     <div className={cn(
-      'w-full border rounded-lg overflow-hidden relative',
+      'w-full border rounded-lg overflow-hidden relative max-w-full',
       background.base,
       border.universal,
       className
     )}>
       {/* ツールバー */}
       <div className={cn(
-        'flex items-center gap-1 p-2 border-b overflow-x-auto',
+        'flex items-center gap-0 pl-2 pr-2 py-2 border-b overflow-x-auto',
         background.surface,
         border.universal
       )}>
@@ -111,7 +111,7 @@ export function TiptapEditor({
           size="sm"
           onClick={toggleBold}
           className={cn(
-            'h-8 w-8 p-0 flex-shrink-0',
+            'h-8 !px-2 p-0 flex-shrink-0',
             editor.isActive('bold') && 'bg-accent'
           )}
           title="太字"
@@ -124,7 +124,7 @@ export function TiptapEditor({
           size="sm"
           onClick={toggleItalic}
           className={cn(
-            'h-8 w-8 p-0 flex-shrink-0',
+            'h-8 !px-2 p-0 flex-shrink-0',
             editor.isActive('italic') && 'bg-accent'
           )}
           title="斜体"
@@ -137,7 +137,7 @@ export function TiptapEditor({
           size="sm"
           onClick={toggleUnderline}
           className={cn(
-            'h-8 w-8 p-0 flex-shrink-0',
+            'h-8 !px-2 p-0 flex-shrink-0',
             editor.isActive('underline') && 'bg-accent'
           )}
           title="下線"
@@ -154,7 +154,7 @@ export function TiptapEditor({
           size="sm"
           onClick={toggleBulletList}
           className={cn(
-            'h-8 w-8 p-0 flex-shrink-0',
+            'h-8 !px-2 p-0 flex-shrink-0',
             editor.isActive('bulletList') && 'bg-accent'
           )}
           title="箇条書き"
@@ -167,7 +167,7 @@ export function TiptapEditor({
           size="sm"
           onClick={toggleOrderedList}
           className={cn(
-            'h-8 w-8 p-0 flex-shrink-0',
+            'h-8 !px-2 p-0 flex-shrink-0',
             editor.isActive('orderedList') && 'bg-accent'
           )}
           title="番号付きリスト"
@@ -180,7 +180,7 @@ export function TiptapEditor({
           size="sm"
           onClick={toggleTaskList}
           className={cn(
-            'h-8 w-8 p-0 flex-shrink-0',
+            'h-8 !px-2 p-0 flex-shrink-0',
             editor.isActive('taskList') && 'bg-accent'
           )}
           title="チェックリスト"

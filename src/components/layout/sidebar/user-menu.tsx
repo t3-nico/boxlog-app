@@ -42,7 +42,7 @@ import {
 import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
 
 const { md, lg } = icon.size
-import { border, background, text, semantic } from '@/config/theme/colors'
+import { border, background, text, semantic, selection } from '@/config/theme/colors'
 
 interface UserMenuProps {
   children?: React.ReactNode
@@ -105,7 +105,11 @@ export function UserMenu({ children }: UserMenuProps) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent 
-        className="w-64 z-[9999]"
+        className={cn(
+          "w-64 z-[9999]",
+          background.surface,
+          border.universal
+        )}
         side="top" 
         align="start"
       >
@@ -123,33 +127,48 @@ export function UserMenu({ children }: UserMenuProps) {
         
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => router.push('/settings')}>
+        <DropdownMenuItem 
+          onClick={() => router.push('/settings')}
+          className={cn('focus:bg-transparent', selection.hover)}
+        >
           <Cog8ToothIcon className={cn(md, 'mr-2')} />
           Settings
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem 
+          asChild
+          className={cn('focus:bg-transparent', selection.hover)}
+        >
           <a href="#">
             <ShieldCheckIcon className={cn(md, 'mr-2')} />
             Privacy policy
           </a>
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem 
+          asChild
+          className={cn('focus:bg-transparent', selection.hover)}
+        >
           <a href="#">
             <LightBulbIcon className={cn(md, 'mr-2')} />
             Share feedback
           </a>
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => router.push('/help')}>
+        <DropdownMenuItem 
+          onClick={() => router.push('/help')}
+          className={cn('focus:bg-transparent', selection.hover)}
+        >
           <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
           Help
         </DropdownMenuItem>
 
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem 
+          asChild
+          className={cn('focus:bg-transparent', selection.hover)}
+        >
           <a href="#">
             <SparklesIcon className={cn(md, 'mr-2')} />
             Changelog
@@ -158,7 +177,13 @@ export function UserMenu({ children }: UserMenuProps) {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={handleSignOut}>
+        <DropdownMenuItem 
+          onClick={handleSignOut}
+          className={cn(
+            'focus:bg-transparent focus:text-accent-foreground',
+            semantic.warning.hover
+          )}
+        >
           <ArrowRightStartOnRectangleIcon className={cn(md, 'mr-2')} />
           Logout
         </DropdownMenuItem>

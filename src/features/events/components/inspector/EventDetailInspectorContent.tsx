@@ -23,6 +23,8 @@ import {
   Activity,
   ArrowRight,
   RefreshCw,
+  Repeat,
+  BellRing,
   Circle
 } from 'lucide-react'
 import { background, text, border } from '@/config/theme/colors'
@@ -199,23 +201,17 @@ export function EventDetailInspectorContent({
   const isPast = event?.endDate ? new Date() > event.endDate : event?.startDate ? new Date() > event.startDate : false
 
   // 自動保存機能（debounce付き）
-  const debouncedSave = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout
-      return (data: typeof formData) => {
-        clearTimeout(timeoutId)
-        timeoutId = setTimeout(() => {
-          if (onSave) {
-            onSave({
-              ...data,
-              id: event?.id || `temp-${Date.now()}`
-            })
-          }
-        }, 500) // 500ms後に保存
+  const debouncedSave = useCallback((data: typeof formData) => {
+    const timeoutId = setTimeout(() => {
+      if (onSave) {
+        onSave({
+          ...data,
+          id: event?.id || `temp-${Date.now()}`
+        })
       }
-    })(),
-    [onSave, event?.id]
-  )
+    }, 500) // 500ms後に保存
+    return () => clearTimeout(timeoutId)
+  }, [onSave, event?.id])
 
   // フォームデータが変更された時の自動保存
   useEffect(() => {
@@ -248,7 +244,7 @@ export function EventDetailInspectorContent({
     updateFormData('location', value)
   }
 
-  const handleDateChange = (value: string) => {
+  function handleDateChange(value: string) {
     if (value) {
       const newDate = new Date(value)
       if (!isNaN(newDate.getTime())) {
@@ -268,107 +264,125 @@ export function EventDetailInspectorContent({
   }
 
   return (
-    <ScrollArea className="h-full p-0 m-0 w-full">
+    <div className="h-full p-0 m-0 w-full overflow-y-auto">
       <div className="space-y-0 max-w-full overflow-hidden">
         {/* 予定 */}
-        <div className={cn('space-y-3 p-4 border-b max-w-full', border.universal)}>
+        <div className={cn('space-y-3 p-4 max-w-full border-b', border.universal)}>
           <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             予定
           </h3>
-          {isEditable ? (
-            <>
-              <Input
+          
+          {/* タイトル with Priority */}
+          <div className="flex items-start gap-3">
+            <div className={cn('w-1 h-8 rounded-full flex-shrink-0', 'bg-blue-600 dark:bg-blue-500')} />
+            {isEditable ? (
+              <input
+                type="text"
                 value={formData.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 placeholder={isCreateMode ? "タイトルを入力..." : ""}
                 className={cn(
-                  typography.heading.h4,
-                  'md:text-base border-none shadow-none p-2 w-full max-w-full',
-                  background.base,
-                  text.primary
-                )}
-              />
-            </>
-          ) : (
-            <>
-              <p className={cn(typography.body.base, 'font-medium break-words', text.primary)}>
-                {formData.title}
-              </p>
-            </>
-          )}
-        </div>
-
-        {/* 時間 */}
-        <div className={cn('space-y-3 p-4 border-b max-w-full', border.universal)}>
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
-            時間
-          </h3>
-          <div className="space-y-3 max-w-full">
-            {isEditable ? (
-              <Input
-                type="date"
-                value={format(formData.startDate, 'yyyy-MM-dd')}
-                onChange={(e) => handleDateChange(e.target.value)}
-                className={cn(
-                  typography.body.DEFAULT,
-                  'border border-input rounded-md px-3 py-2 w-full max-w-full',
-                  background.base,
-                  text.primary
+                  'flex-1 bg-transparent outline-none w-full',
+                  typography.heading.h3,
+                  text.primary,
+                  'placeholder:text-neutral-600 dark:placeholder:text-neutral-400'
                 )}
               />
             ) : (
+              <h3 className={cn(typography.heading.h3, 'break-words flex-1', text.primary)}>
+                {formData.title}
+              </h3>
+            )}
+          </div>
+          
+          {/* 日付と時間 */}
+          <div className="space-y-3 max-w-full">
+            {isEditable ? (
+              <div className="flex items-center gap-2 flex-wrap">
+                <Input
+                  type="date"
+                  value={format(formData.startDate, 'yyyy-MM-dd')}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  className={cn(
+                    typography.body.DEFAULT,
+                    'rounded-md px-3 py-2 w-auto',
+                    '[&::-webkit-calendar-picker-indicator]:hidden',
+                    border.universal,
+                    background.base,
+                    text.primary
+                  )}
+                  style={{ width: `${format(formData.startDate, 'yyyy-MM-dd').length + 2}ch` }}
+                />
+                <Input
+                  type="time"
+                  value={format(formData.startDate, 'HH:mm')}
+                  onChange={(e) => {
+                    const [hours, minutes] = e.target.value.split(':')
+                    const newDate = new Date(formData.startDate)
+                    newDate.setHours(parseInt(hours), parseInt(minutes))
+                    updateFormData('startDate', newDate)
+                  }}
+                  className={cn(
+                    typography.body.DEFAULT,
+                    'rounded-md px-3 py-2 text-center w-fit',
+                    '[&::-webkit-calendar-picker-indicator]:hidden',
+                    border.universal,
+                    background.base,
+                    text.primary
+                  )}
+                />
+                <span className={cn(typography.body.DEFAULT, text.muted, 'flex-shrink-0')}>→</span>
+                <Input
+                  type="time"
+                  value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const [hours, minutes] = e.target.value.split(':')
+                      const newDate = new Date(formData.startDate)
+                      newDate.setHours(parseInt(hours), parseInt(minutes))
+                      updateFormData('endDate', newDate)
+                    } else {
+                      updateFormData('endDate', null)
+                    }
+                  }}
+                  className={cn(
+                    typography.body.DEFAULT,
+                    'rounded-md px-3 py-2 text-center w-fit',
+                    '[&::-webkit-calendar-picker-indicator]:hidden',
+                    border.universal,
+                    background.base,
+                    text.primary
+                  )}
+                />
+              </div>
+            ) : (
               <div className={cn(typography.body.base, 'font-medium break-words', text.primary)}>
-                {format(formData.startDate, 'yyyy年M月d日（E）', { locale: ja })}
+                {format(formData.startDate, 'yyyy年M月d日（E）', { locale: ja })} {format(formData.startDate, 'HH:mm')} → {formData.endDate ? format(formData.endDate, 'HH:mm') : '未設定'}
               </div>
             )}
-            <div className="flex items-center gap-2 max-w-full">
-                  {isEditable ? (
-                    <>
-                      <Input
-                        type="time"
-                        value={format(formData.startDate, 'HH:mm')}
-                        onChange={(e) => {
-                          const [hours, minutes] = e.target.value.split(':')
-                          const newDate = new Date(formData.startDate)
-                          newDate.setHours(parseInt(hours), parseInt(minutes))
-                          updateFormData('startDate', newDate)
-                        }}
-                        className={cn(
-                          typography.body.DEFAULT,
-                          'border border-input rounded-md px-3 py-2 text-center flex-1 min-w-0',
-                          background.base,
-                          text.primary
-                        )}
-                      />
-                      <span className={cn(typography.body.DEFAULT, text.muted, 'flex-shrink-0')}>→</span>
-                      <Input
-                        type="time"
-                        value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            const [hours, minutes] = e.target.value.split(':')
-                            const newDate = new Date(formData.startDate)
-                            newDate.setHours(parseInt(hours), parseInt(minutes))
-                            updateFormData('endDate', newDate)
-                          } else {
-                            updateFormData('endDate', null)
-                          }
-                        }}
-                        className={cn(
-                          typography.body.DEFAULT,
-                          'border border-input rounded-md px-3 py-2 text-center flex-1 min-w-0',
-                          background.base,
-                          text.primary
-                        )}
-                      />
-                    </>
-                  ) : (
-                    <span className={cn(typography.body.DEFAULT, text.primary, 'break-words')}>
-                      {format(formData.startDate, 'HH:mm')} → {formData.endDate ? format(formData.endDate, 'HH:mm') : '未設定'}
-                    </span>
-                  )}
-            </div>
           </div>
+        </div>
+
+        {/* アクションボタングループ */}
+        <div className={cn('flex items-center gap-2 p-4 border-b', border.universal)}>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-1.5"
+            disabled={!isEditable}
+          >
+            <BellRing className="w-4 h-4" />
+            通知
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex items-center gap-1.5"
+            disabled={!isEditable}
+          >
+            <Repeat className="w-4 h-4" />
+            リピート
+          </Button>
         </div>
 
         {/* タグ */}
@@ -400,7 +414,7 @@ export function EventDetailInspectorContent({
               <Button
                 variant="secondary"
                 size="sm"
-                className={cn(typography.body.xs, text.muted, 'max-w-full')}
+                className={cn(typography.body.xs, 'max-w-full')}
                 disabled={!isEditable}
               >
                 <Plus className="w-3 h-3 mr-1" />
@@ -415,13 +429,13 @@ export function EventDetailInspectorContent({
           <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
             メモ
           </h3>
-          <div className="max-w-full">
+          <div className="w-full">
             {isEditable ? (
               <TiptapEditor
                 value={formData.description}
                 onChange={(value) => handleDescriptionChange(value)}
                 placeholder="メモを入力..."
-                className="min-h-[120px] max-w-full"
+                className="min-h-[120px] w-full"
               />
             ) : (
               formData.description ? (
@@ -560,6 +574,6 @@ export function EventDetailInspectorContent({
           )}
         </div>
       </div>
-    </ScrollArea>
+    </div>
   )
 }

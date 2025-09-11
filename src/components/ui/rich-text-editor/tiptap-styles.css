@@ -1,6 +1,8 @@
 /* Tiptap Editor Styles */
 .tiptap-editor-content .ProseMirror {
   outline: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* リスト表示の修正 */
@@ -37,25 +39,93 @@
 }
 
 /* タスクリスト */
-.tiptap-editor-content .ProseMirror ul[data-type="taskList"] {
-  list-style: none;
-  padding-left: 0;
+.tiptap-editor-content .ProseMirror ul[data-type="taskList"],
+.tiptap-editor-content .ProseMirror .task-list {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0.75rem 0 !important;
 }
 
-.tiptap-editor-content .ProseMirror li[data-type="taskItem"] {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  list-style: none;
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"],
+.tiptap-editor-content .ProseMirror .task-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0.5rem !important;
+  list-style: none !important;
+  margin: 0.25rem 0 !important;
 }
 
 .tiptap-editor-content .ProseMirror li[data-type="taskItem"] > label {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
   margin-top: 0.125rem;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > label > input[type="checkbox"] {
+  cursor: pointer;
+  pointer-events: auto;
+  margin: 0 0 0 8px !important;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+  flex-shrink: 0;
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > label > input[type="checkbox"]:checked {
+  background: hsl(217 91% 60%);
+  border-color: hsl(217 91% 60%);
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > label > input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > label > input[type="checkbox"]:hover {
+  border-color: hsl(217 91% 60%);
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > label > input[type="checkbox"]:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(217 91% 60%);
 }
 
 .tiptap-editor-content .ProseMirror li[data-type="taskItem"] > div {
   flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > div p {
+  margin: 0;
+  display: inline;
+}
+
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"] > div {
+  display: inline;
+}
+
+/* チェック済みタスクのスタイル */
+.tiptap-editor-content .ProseMirror li[data-type="taskItem"][data-checked="true"] > div {
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 
 /* 段落 */
