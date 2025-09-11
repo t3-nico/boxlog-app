@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "timestamp": "2025-09-11T04:43:50.778Z",
+      "totalFiles": 575,
+      "totalErrors": 4586,
+      "totalWarnings": 1845,
+      "themeViolations": 2758,
+      "complianceIssues": 1,
+      "performanceIssues": 12,
+      "todoIssues": 0,
+      "complexityIssues": 165,
+      "todoCount": 70,
+      "todoHealthScore": 100,
+      "bundleSize": 55309001,
+      "overallScore": 25
+    }
+  ]
+}

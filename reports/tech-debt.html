@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoxLog 技術的負債レポート</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #6366f1);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .subtitle {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .metric-card.error { border-left-color: var(--error-color); }
+        .metric-card.warning { border-left-color: var(--warning-color); }
+        .metric-card.success { border-left-color: var(--success-color); }
+        
+        .metric-card h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-card .description {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        .hotspots-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .hotspots-table th,
+        .hotspots-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .hotspots-table th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .hotspots-table tr:hover {
+            background: var(--bg-color);
+        }
+        
+        .debt-score {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .debt-score.high { background: #fee2e2; color: var(--error-color); }
+        .debt-score.medium { background: #fef3c7; color: var(--warning-color); }
+        .debt-score.low { background: #d1fae5; color: var(--success-color); }
+        
+        .recommendations {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .recommendation {
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .recommendation.critical {
+            background: #fef2f2;
+            border-left-color: var(--error-color);
+        }
+        
+        .recommendation.high {
+            background: #fffbeb;
+            border-left-color: var(--warning-color);
+        }
+        
+        .recommendation.medium {
+            background: #f0f9ff;
+            border-left-color: var(--primary-color);
+        }
+        
+        .recommendation h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .recommendation ul {
+            margin: 0.5rem 0 0 1.5rem;
+        }
+        
+        .chart-container {
+            height: 300px;
+            margin: 1rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            border-radius: 8px;
+            color: #6b7280;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header { padding: 1rem; }
+            .header h1 { font-size: 2rem; }
+            .summary-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 BoxLog 技術的負債レポート</h1>
+        <div class="subtitle">生成日時: 2025/9/11 13:43:50</div>
+    </div>
+
+    <div class="container">
+        <div class="summary-grid">
+            <div class="metric-card error">
+                <h3>ESLintエラー</h3>
+                <div class="value">4586</div>
+                <div class="description">修正が必要な重大な問題</div>
+            </div>
+            
+            <div class="metric-card warning">
+                <h3>ESLint警告</h3>
+                <div class="value">1845</div>
+                <div class="description">改善推奨の問題</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>テーマ違反</h3>
+                <div class="value">2758</div>
+                <div class="description">デザインシステム違反</div>
+            </div>
+            
+            <div class="metric-card error">
+                <h3>コンプライアンス</h3>
+                <div class="value">1</div>
+                <div class="description">アクセシビリティ・セキュリティ</div>
+            </div>
+            
+            <div class="metric-card">
+                <h3>パフォーマンス</h3>
+                <div class="value">12</div>
+                <div class="description">最適化が必要な箇所</div>
+            </div>
+            
+            <div class="metric-card error">
+                <h3>総合健康スコア</h3>
+                <div class="value">25/100</div>
+                <div class="description">技術的負債の総合評価</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔥 問題の多いファイル (技術的負債ホットスポット)</h2>
+            <table class="hotspots-table">
+                <thead>
+                    <tr>
+                        <th>ファイル</th>
+                        <th>エラー</th>
+                        <th>警告</th>
+                        <th>負債スコア</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                        <tr>
+                            <td><code>src/features/tags/components/tag-edit-modal.tsx</code></td>
+                            <td>218</td>
+                            <td>15</td>
+                            <td><span class="debt-score high">1000</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/smart-folders/components/smart-folder-dialog.tsx</code></td>
+                            <td>197</td>
+                            <td>6</td>
+                            <td><span class="debt-score high">886</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/app/(app)/settings/chronotype/page.tsx</code></td>
+                            <td>187</td>
+                            <td>5</td>
+                            <td><span class="debt-score high">836.5</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/events/components/EventTrashView.tsx</code></td>
+                            <td>157</td>
+                            <td>0</td>
+                            <td><span class="debt-score high">706.5</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/tags/components/tag-create-modal.tsx</code></td>
+                            <td>129</td>
+                            <td>12</td>
+                            <td><span class="debt-score high">591.5</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/tags/components/tag-filter.tsx</code></td>
+                            <td>112</td>
+                            <td>8</td>
+                            <td><span class="debt-score high">513.5</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/smart-folders/components/rule-preview.tsx</code></td>
+                            <td>103</td>
+                            <td>3</td>
+                            <td><span class="debt-score high">462</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/tags/components/tag-management-modal.tsx</code></td>
+                            <td>90</td>
+                            <td>6</td>
+                            <td><span class="debt-score high">411</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/help/components/ask-panel.tsx</code></td>
+                            <td>71</td>
+                            <td>23</td>
+                            <td><span class="debt-score high">333.5</span></td>
+                        </tr>
+                    
+                        <tr>
+                            <td><code>src/features/tags/components/tag-tree-view.tsx</code></td>
+                            <td>71</td>
+                            <td>14</td>
+                            <td><span class="debt-score high">331.5</span></td>
+                        </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>💡 改善提案</h2>
+            <div class="recommendations">
+                
+                    <div class="recommendation critical">
+                        <h4>ESLintエラーの修正</h4>
+                        <p>4586個のESLintエラーがあります。</p>
+                        <ul>
+                            <li>エラーレベルの問題を優先的に修正</li><li>CI/CDでエラー時のビルド停止を検討</li>
+                        </ul>
+                    </div>
+                
+                    <div class="recommendation high">
+                        <h4>テーマシステム違反の修正</h4>
+                        <p>2758個のテーマ違反があります。</p>
+                        <ul>
+                            <li>直接的なTailwindクラス使用をtheme経由に変更</li><li>チーム向けテーマガイドラインの共有</li>
+                        </ul>
+                    </div>
+                
+                    <div class="recommendation critical">
+                        <h4>コンプライアンス問題の対応</h4>
+                        <p>1個のコンプライアンス問題があります。</p>
+                        <ul>
+                            <li>アクセシビリティ違反の修正</li><li>セキュリティ問題の即座な対応</li><li>GDPR遵守の確認</li>
+                        </ul>
+                    </div>
+                
+                    <div class="recommendation medium">
+                        <h4>バンドルサイズの最適化</h4>
+                        <p>バンドルサイズが推奨サイズを超過しています。</p>
+                        <ul>
+                            <li>動的インポートの導入</li><li>未使用コードの削除</li><li>Tree-shakingの最適化</li>
+                        </ul>
+                    </div>
+                
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📈 トレンド分析</h2>
+            <div class="chart-container">
+                <p>📊 過去1回の分析データを保持<br>
+                チャート表示機能は今後実装予定</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📋 TODO/FIXME 分析</h2>
+            <p><strong>総TODO数:</strong> 70</p>
+            <p><strong>構造化率:</strong> 100%</p>
+            <p><strong>期限切れ:</strong> 0個</p>
+            <p><strong>健康スコア:</strong> 100/100</p>
+        </div>
+
+        <div class="section">
+            <h2>📦 バンドルサイズ分析</h2>
+            
+                <p><strong>総サイズ:</strong> 54012.7 KB</p>
+                <p><strong>JavaScript:</strong> 53777.2 KB</p>
+                <p><strong>CSS:</strong> 229.4 KB</p>
+                <p><strong>サイズ評価:</strong> 🔴 改善推奨</p>
+            
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>📊 BoxLog Technical Debt Visualization System v1.0.0</p>
+        <p>継続的な品質改善のためのレポートです</p>
+    </div>
+</body>
+</html>

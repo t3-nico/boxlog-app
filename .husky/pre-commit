@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# BoxLog Pre-commit Hook
+# コミット前に品質チェックを実行
+
+echo "🔍 Running pre-commit checks..."
+
+# Lint-staged実行（変更されたファイルのみ）
+npx lint-staged
