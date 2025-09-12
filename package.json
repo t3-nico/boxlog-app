@@ -39,6 +39,7 @@
     "debt:json": "node scripts/tech-debt-report.js --json-only",
     "debt:analyze": "npm run lint:all && npm run todo:check && npm run debt:report",
     "eslint:setup": "node .eslint/scripts/setup.js",
+    "setup:eslint-plugins": "node .eslint/scripts/setup.js",
     "postinstall": "npm run eslint:setup",
     "dev:fallback": "next dev",
     "build:fallback": "next build",

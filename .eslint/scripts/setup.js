@@ -19,9 +19,8 @@ function setupCustomPlugins() {
   console.log('🔧 カスタムプラグインをセットアップ中...');
   
   const pluginSources = [
-    { src: '.eslint/rules/theme', dest: 'node_modules/eslint-plugin-boxlog-theme' },
-    { src: '.eslint/rules/todo', dest: 'node_modules/eslint-plugin-boxlog-todo' },
-    { src: '.eslint/rules/compliance', dest: 'node_modules/eslint-plugin-boxlog-compliance' }
+    { src: 'config/eslint/custom-rules/theme', dest: 'node_modules/eslint-plugin-boxlog-theme' },
+    { src: 'config/eslint/custom-rules/compliance', dest: 'node_modules/eslint-plugin-boxlog-compliance' }
   ];
   
   pluginSources.forEach(({ src, dest }) => {
