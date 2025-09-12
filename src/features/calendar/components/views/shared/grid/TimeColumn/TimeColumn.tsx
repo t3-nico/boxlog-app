@@ -5,10 +5,12 @@
 'use client'
 
 import React, { memo } from 'react'
-import { useTimeGrid } from '../../hooks/useTimeGrid'
+
 import { TIME_COLUMN_WIDTH } from '../../constants/grid.constants'
-import { background } from '@/config/theme/colors'
+import { useTimeGrid } from '../../hooks/useTimeGrid'
+
 import type { TimeColumnProps } from '../../types/grid.types'
+
 import { TimeLabel } from './TimeLabel'
 
 export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
@@ -27,7 +29,7 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
   
   return (
     <div
-      className={`sticky left-0 ${background.base} border-r border-neutral-900/20 dark:border-neutral-100/20 z-10 ${className}`}
+      className={`sticky left-0 ${colors.background.base} border-r border-neutral-900/20 dark:border-neutral-100/20 z-10 ${className}`}
       style={{
         width: `${TIME_COLUMN_WIDTH}px`,
         height: `${gridHeight}px`

@@ -1,5 +1,6 @@
 'use client'
 
+import { colors, typography, spacing, rounded } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
 import { TrashView } from '@/features/trash/components/TrashView'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
@@ -17,7 +18,7 @@ export default function TrashPage() {
         stats.totalItems > 0 && (
           <button
             onClick={emptyTrash}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+            className={`${spacing.padding.md} ${typography.body.sm} ${typography.weight.medium} ${colors.text.white} ${colors.background.danger} ${colors.hover.danger} ${rounded.component.button.lg} ${colors.transition.colors}`}
           >
             ゴミ箱を空にする
           </button>

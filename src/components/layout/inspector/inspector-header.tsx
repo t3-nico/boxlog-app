@@ -1,32 +1,37 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { useInspectorStore } from './stores/inspector.store'
-import { componentRadius, animations } from '@/config/theme'
-import { background, text, border, secondary } from '@/config/theme/colors'
+
 import { PanelRightClose } from 'lucide-react'
+
 import { 
   Tooltip, 
   TooltipContent, 
   TooltipProvider, 
   TooltipTrigger 
 } from '@/components/shadcn-ui/tooltip'
+import { rounded, animations, colors, typography, spacing } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
-export function InspectorHeader() {
+import { useInspectorStore } from './stores/inspector.store'
+
+
+export const InspectorHeader = () => {
   const { toggleInspector } = useInspectorStore()
   
   return (
     <TooltipProvider>
       <div className={cn(
-        'flex items-center justify-between px-4 py-3 border-b',
-        border.subtle
+        'flex items-center justify-between',
+        spacing.padding.lg,
+        colors.border.bottom
       )}>
         {/* Inspector Title */}
         <div className={cn(
           'flex items-center gap-2',
-          text.primary,
-          'font-medium text-sm'
+          colors.text.primary,
+          typography.body.sm,
+          'font-medium'
         )}>
           <span>詳細情報</span>
         </div>
@@ -36,7 +41,7 @@ export function InspectorHeader() {
           <TooltipTrigger asChild>
             <button
               onClick={() => toggleInspector()}
-              className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 flex-shrink-0"
+              className={`w-8 h-8 flex items-center justify-center ${rounded.component.button.md} ${colors.hover.subtle} ${animations.transition.fast} flex-shrink-0`}
             >
               <PanelRightClose className="w-4 h-4" />
             </button>

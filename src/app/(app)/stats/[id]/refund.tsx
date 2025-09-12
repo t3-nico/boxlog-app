@@ -1,11 +1,13 @@
 'use client'
 
+import { useState } from 'react'
+
+import { Description, Field, FieldGroup } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
-import { Description, Field, FieldGroup } from '@/components/custom'
-import { Label } from '@/components/shadcn-ui/label'
 import { Input } from '@/components/shadcn-ui/input'
+import { Label } from '@/components/shadcn-ui/label'
 import { 
   Select,
   SelectContent,
@@ -13,10 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn-ui/select'
-import { useState } from 'react'
 
-export function RefundReview({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) {
-  let [isOpen, setIsOpen] = useState(false)
+
+export const RefundReview = ({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) => {
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <>

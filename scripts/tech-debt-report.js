@@ -6,10 +6,12 @@
  * 技術的負債を包括的に分析し、視覚的なレポートを生成
  */
 
-const { ESLint } = require('eslint');
-const fs = require('fs');
-const path = require('path');
 const { execSync } = require('child_process');
+const fs = require('fs');
+
+const path = require('path');
+
+const { ESLint } = require('eslint');
 
 // レポート設定
 const REPORT_CONFIG = {

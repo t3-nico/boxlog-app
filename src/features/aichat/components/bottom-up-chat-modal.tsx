@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+
 import { 
   X, 
   ArrowUpCircle, 
@@ -11,16 +12,17 @@ import {
   Minimize2,
   Maximize2
 } from 'lucide-react'
+
 import { Button } from '@/components/shadcn-ui/button'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { useAIPanel } from '@/contexts/ai-panel-context'
+import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 
 interface BottomUpChatModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+const MessageBubble = ({ message }: { message: ChatMessage }) => {
   const isUser = message.sender === 'user'
   
   if (isUser) {
@@ -61,7 +63,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   )
 }
 
-function ChatInput() {
+const ChatInput = () => {
   const { state, sendMessage, setInputValue } = useChatContext()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -84,8 +86,8 @@ function ChatInput() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      const scrollHeight = textareaRef.current.scrollHeight
-      textareaRef.current.style.height = Math.min(scrollHeight, 120) + 'px'
+      const {scrollHeight} = textareaRef.current
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 120)  }px`
     }
   }, [state.inputValue])
 
@@ -131,7 +133,7 @@ function ChatInput() {
   )
 }
 
-export function BottomUpChatModal({ isOpen, onClose }: BottomUpChatModalProps) {
+export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) => {
   const { state, clearMessages } = useChatContext()
   const { 
     panelHeight, 

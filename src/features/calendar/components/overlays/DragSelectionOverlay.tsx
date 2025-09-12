@@ -5,7 +5,6 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import type { InteractionState } from '@/features/calendar/hooks/interaction/useInteractionManager'
 
 interface DragSelectionOverlayProps {
   dragState: {
@@ -24,11 +23,11 @@ function timeToMinutes(timeString: string): number {
   return hours * 60 + minutes
 }
 
-export function DragSelectionOverlay({ 
+export const DragSelectionOverlay = ({ 
   dragState, 
   hourHeight = 72,
   className 
-}: DragSelectionOverlayProps) {
+}: DragSelectionOverlayProps) => {
   if (!dragState.isDragging || !dragState.dragDate || !dragState.dragStartTime || !dragState.dragEndTime) {
     return null
   }

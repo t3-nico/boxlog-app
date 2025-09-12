@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, createContext, useContext, ReactNode } from 'react'
+
 import { CommandPalette } from '../components/command-palette'
 
 interface CommandPaletteContextType {
@@ -19,7 +20,7 @@ export function useCommandPalette() {
   return context
 }
 
-export function CommandPaletteProvider({ children }: { children: ReactNode }) {
+export const CommandPaletteProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const open = useCallback(() => setIsOpen(true), [])

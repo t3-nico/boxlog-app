@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+
+import { usePathname } from 'next/navigation'
+
 import { 
   X, 
   ArrowUpCircle,
@@ -13,25 +16,22 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageSquare,
-  Lightbulb,
-  TrendingUp,
-  Calendar,
-  Clock,
   PanelRight,
   HelpCircle,
   Book,
   ExternalLink
 } from 'lucide-react'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
-import { useAskPanelStore, askPanelSelectors } from '../stores/useAskPanelStore'
+
 import { Button } from '@/components/shadcn-ui/button'
-import { usePathname } from 'next/navigation'
+import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+
+import { useAskPanelStore, askPanelSelectors } from '../stores/useAskPanelStore'
 
 interface MessageBubbleProps {
   message: ChatMessage
 }
 
-function MessageBubble({ message }: MessageBubbleProps) {
+const MessageBubble = ({ message }: MessageBubbleProps) => {
   const isUser = message.sender === 'user'
   const { editMessage } = useChatContext()
   const [isEditing, setIsEditing] = useState(false)
@@ -148,7 +148,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
   )
 }
 
-function ChatInput() {
+const ChatInput = () => {
   const { state, sendMessage, setInputValue } = useChatContext()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -171,8 +171,8 @@ function ChatInput() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      const scrollHeight = textareaRef.current.scrollHeight
-      textareaRef.current.style.height = Math.min(scrollHeight, 200) + 'px'
+      const {scrollHeight} = textareaRef.current
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 200)  }px`
     }
   }, [state.inputValue])
 
@@ -219,7 +219,7 @@ function ChatInput() {
   )
 }
 
-function AskPanelHeader({ 
+const AskPanelHeader = ({ 
   activeTab, 
   onTabChange, 
   onBackToMenu 
@@ -227,7 +227,7 @@ function AskPanelHeader({
   activeTab: 'ai' | 'help'
   onTabChange: (tab: 'ai' | 'help' | 'menu') => void
   onBackToMenu: () => void
-}) {
+}) => {
   const { clearMessages } = useChatContext()
   const { toggleCollapsed } = useAskPanelStore()
   const [showMenu, setShowMenu] = useState(false)
@@ -320,7 +320,7 @@ function AskPanelHeader({
   )
 }
 
-function AIIntroduction() {
+const AIIntroduction = () => {
   const { sendMessage } = useChatContext()
 
   const quickPrompts = [
@@ -369,7 +369,7 @@ function AIIntroduction() {
 }
 
 // メニュー選択画面（collapsed状態から開いた時の初期画面）
-function PanelMenuSelection({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) {
+const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) => {
   const menuItems = [
     {
       id: 'ai' as const,
@@ -433,7 +433,7 @@ function PanelMenuSelection({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
 }
 
 // Help画面のコンテンツ
-function HelpContent() {
+const HelpContent = () => {
   const helpSections = [
     {
       title: 'Getting Started',
@@ -515,7 +515,7 @@ function HelpContent() {
   )
 }
 
-export function AskPanel() {
+export const AskPanel = () => {
   const { state, markAsRead, sendMessage } = useChatContext()
   const isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
   const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
@@ -631,8 +631,7 @@ export function AskPanel() {
       <div className="flex-1 overflow-y-auto">
         {showTabSelection ? (
           // Menu selection screen - sidebar style
-          <>
-            <div className="flex flex-col h-full w-64">
+          <div className="flex flex-col h-full w-64">
               {/* Header with collapse button */}
               <div className="flex items-center p-4">
                 <button
@@ -677,7 +676,6 @@ export function AskPanel() {
                 </div>
               </div>
             </div>
-          </>
         ) : activeTab === 'ai' ? (
           // AI Chat content
           <>
@@ -728,7 +726,7 @@ export function AskPanel() {
 }
 
 // Ask Panel Toggle Button for Header
-export function AskPanelToggleButton() {
+export const AskPanelToggleButton = () => {
   const { open, toggleCollapsed } = useAskPanelStore()
   const isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
   const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)

@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
+
 import { useEventPositioning } from '../../shared/hooks/useEventPositioning'
 import type { EventPosition } from '../DayView.types'
 

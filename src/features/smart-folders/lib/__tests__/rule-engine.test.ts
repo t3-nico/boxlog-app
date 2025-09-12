@@ -1,8 +1,10 @@
 // スマートフォルダ ルール評価エンジンのテスト
 
 import { describe, it, expect, beforeEach } from 'vitest'
-import { AdvancedRuleEngine } from '../rule-engine'
+
 import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
+
+import { AdvancedRuleEngine } from '../rule-engine'
 
 describe('AdvancedRuleEngine', () => {
   beforeEach(() => {

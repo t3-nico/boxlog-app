@@ -8,6 +8,7 @@ import type {
 import { Children, useCallback, useEffect, useRef } from 'react';
 
 import { Loader2Icon, SendIcon, SquareIcon, XIcon } from 'lucide-react';
+
 import { Button } from '@/components/shadcn-ui/button';
 import {
   Select,
@@ -107,7 +108,7 @@ export const AIInputTextarea = ({
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
-      const form = e.currentTarget.form;
+      const {form} = e.currentTarget;
       if (form) {
         form.requestSubmit();
       }

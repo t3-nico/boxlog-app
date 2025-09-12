@@ -1,10 +1,12 @@
 'use client'
 
 import React from 'react'
+
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import { selection, text, primary } from '@/config/theme/colors'
+
 import { typography } from '@/config/theme'
+import { selection, text, primary } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 // Sidebar Section
 interface SidebarSectionProps {
@@ -12,7 +14,7 @@ interface SidebarSectionProps {
   children: React.ReactNode
 }
 
-export function SidebarSection({ className, children }: SidebarSectionProps) {
+export const SidebarSection = ({ className, children }: SidebarSectionProps) => {
   return (
     <div className={cn('space-y-2', className)}>
       {children}
@@ -26,7 +28,7 @@ interface SidebarHeadingProps {
   children: React.ReactNode
 }
 
-export function SidebarHeading({ className, children }: SidebarHeadingProps) {
+export const SidebarHeading = ({ className, children }: SidebarHeadingProps) => {
   return (
     <h3 className={cn(
       'px-2 font-semibold uppercase tracking-wider mb-2',
@@ -49,14 +51,14 @@ interface SidebarItemProps {
   onClick?: () => void
 }
 
-export function SidebarItem({ 
+export const SidebarItem = ({ 
   href, 
   current = false, 
   indicator = true, 
   className, 
   children,
   onClick
-}: SidebarItemProps) {
+}: SidebarItemProps) => {
   const baseClasses = cn(
     'group flex items-center gap-3 rounded-lg px-2 py-2 font-medium transition-colors',
     typography.body.base,
@@ -96,7 +98,7 @@ interface SidebarLabelProps {
   children: React.ReactNode
 }
 
-export function SidebarLabel({ className, children }: SidebarLabelProps) {
+export const SidebarLabel = ({ className, children }: SidebarLabelProps) => {
   return (
     <span className={cn('truncate', className)}>
       {children}

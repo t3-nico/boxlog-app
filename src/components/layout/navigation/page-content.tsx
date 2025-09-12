@@ -1,19 +1,22 @@
 'use client'
 
 import React from 'react'
-import { CommonSidebarSections } from './shared'
-import { CreateButton } from './create-button'
-import { BoardSidebarSections } from '@/features/board/components/sidebar'
-import { TableSidebarSections } from '@/features/table/components/sidebar'
-import { StatsSidebarSections } from '@/features/stats/components/sidebar'
-import { HelpSidebarSections } from '@/features/help/components/sidebar'
+
 import { AIChatSidebarSections } from '@/features/aichat/components/sidebar'
+import { BoardSidebarSections } from '@/features/board/components/sidebar'
+
+import { HelpSidebarSections } from '@/features/help/components/sidebar'
+import { StatsSidebarSections } from '@/features/stats/components/sidebar'
+import { TableSidebarSections } from '@/features/table/components/sidebar'
+
+import { CreateButton } from './create-button'
+import { CommonSidebarSections } from './shared'
 
 interface PageContentProps {
   pathname: string
 }
 
-export function PageContent({ pathname }: PageContentProps) {
+export const PageContent = ({ pathname }: PageContentProps) => {
   const isCalendarPage = pathname.startsWith('/calendar')
   const isBoardPage = pathname.startsWith('/board')
   const isTablePage = pathname.startsWith('/table')

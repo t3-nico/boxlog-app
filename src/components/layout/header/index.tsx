@@ -1,33 +1,28 @@
 'use client'
 
 import React from 'react'
+
+import { colors, layout, spacing } from '@/config/theme'
 import { cn } from '@/lib/utils'
-import { background, border } from '@/config/theme/colors'
-import { layout, spacing } from '@/config/theme'
 
 const { xs: headerHeight } = layout.heights.header
-const mt2 = 'mt-2' // 8px top margin - theme準拠
-const px4 = 'px-4' // 16px horizontal padding - theme準拠
-const px2 = 'px-2' // 8px horizontal padding for mobile - theme準拠
 
 interface HeaderProps {
   className?: string
   children?: React.ReactNode
 }
 
-export function Header({ className, children }: HeaderProps) {
+export const Header = ({ className, children }: HeaderProps) => {
   return (
     <div
       className={cn(
         headerHeight, // 32px height
         'w-full',
-        'flex items-center justify-start',
-        'px-2', // 8px horizontal padding for mobile
-        'md:px-4', // 16px horizontal padding for desktop
-        'md:mt-2', // 8px top margin for desktop only
-        background.base, // ベース背景
-        border.universal,
-        'border-b',
+        layout.flexbox.start,
+        spacing.padding.responsive.x,
+        'md:mt-2',
+        colors.background.base,
+        colors.border.default,
         'shrink-0', // フレックス時に縮まないようにする
         className
       )}

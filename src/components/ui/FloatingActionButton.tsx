@@ -1,10 +1,12 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
+
 import { Plus } from 'lucide-react'
+
 import { componentRadius, icon } from '@/config/theme'
-import { primary, background, text } from '@/config/theme/colors'
+import { primary, text } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 const { lg } = icon.size
 
@@ -30,7 +32,7 @@ const iconSizeMap = {
   lg: 'w-7 h-7 md:w-8 md:h-8'
 }
 
-export function FloatingActionButton({
+export const FloatingActionButton = ({
   onClick,
   icon,
   className,
@@ -38,7 +40,7 @@ export function FloatingActionButton({
   variant = 'primary',
   disabled = false,
   'aria-label': ariaLabel = 'アクションを実行'
-}: FloatingActionButtonProps) {
+}: FloatingActionButtonProps) => {
   // レスポンシブ対応のデフォルトアイコン
   const defaultIcon = <Plus className={iconSizeMap[size]} />
   return (
@@ -67,7 +69,7 @@ export function FloatingActionButton({
           'focus:outline-none'
         ],
         variant === 'secondary' && [
-          background.surface,
+          colors.background.surface,
           text.primary,
           'border border-border',
           'hover:bg-accent focus:ring-4 focus:ring-accent/20'

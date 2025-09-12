@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useRef, useEffect, useState } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import { text, border, semantic } from '@/config/theme/colors'
+
+import { text, semantic } from '@/config/theme/colors'
 import { body } from '@/config/theme/typography'
 
 interface TitleInputProps {
@@ -13,13 +15,13 @@ interface TitleInputProps {
   autoFocus?: boolean
 }
 
-export function TitleInput({ 
+export const TitleInput = ({ 
   value, 
   onChange, 
   onSmartExtract,
   onTabNext,
   autoFocus = false 
-}: TitleInputProps) {
+}: TitleInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [animatedValue, setAnimatedValue] = useState('')

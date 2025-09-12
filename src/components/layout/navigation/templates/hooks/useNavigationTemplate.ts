@@ -1,5 +1,6 @@
-import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
+
+import { usePathname } from 'next/navigation'
 
 export interface NavigationConfig {
   id: string

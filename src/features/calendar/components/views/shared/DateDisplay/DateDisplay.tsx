@@ -1,12 +1,15 @@
 'use client'
 
 import React from 'react'
-import { format, isToday, isWeekend } from 'date-fns'
-import { cn } from '@/lib/utils'
-import type { DateDisplayProps } from './DateDisplay.types'
-import { primary, secondary, selection } from '@/config/theme/colors'
 
-export function DateDisplay({
+import { format, isToday, isWeekend } from 'date-fns'
+
+import { secondary, selection } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+import type { DateDisplayProps } from './DateDisplay.types'
+
+export const DateDisplay = ({
   date,
   className,
   isToday: todayProp,
@@ -17,7 +20,7 @@ export function DateDisplay({
   dateFormat = 'd',
   onClick,
   onDoubleClick
-}: DateDisplayProps) {
+}: DateDisplayProps) => {
   const today = todayProp ?? isToday(date)
   const weekend = isWeekend(date)
 

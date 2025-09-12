@@ -2,6 +2,7 @@
 
 import type { HTMLAttributes } from 'react';
 import { memo } from 'react';
+
 import ReactMarkdown, { type Options } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 

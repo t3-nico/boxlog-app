@@ -1,20 +1,23 @@
 'use client'
 
 import React from 'react'
-import { format, isToday, isWeekend } from 'date-fns'
-import { ja } from 'date-fns/locale'
+
+import { isToday } from 'date-fns'
+
 import { cn } from '@/lib/utils'
+
 import { 
   DateDisplay, 
   CalendarLayoutWithHeader,
   HourLines,
   getDateKey
 } from '../../shared'
-import { useWeekEvents } from '../hooks/useWeekEvents'
-import { WeekContent } from './WeekContent'
-import type { WeekGridProps } from '../WeekView.types'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
-import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
+import { useWeekEvents } from '../hooks/useWeekEvents'
+
+import type { WeekGridProps } from '../WeekView.types'
+
+import { WeekContent } from './WeekContent'
 
 /**
  * WeekGrid - 週表示のメイングリッドコンポーネント
@@ -26,7 +29,7 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
  * - スクロール同期
  * - 現在時刻線の表示
  */
-export function WeekGrid({
+export const WeekGrid = ({
   weekDates,
   events,
   eventsByDate,
@@ -38,7 +41,7 @@ export function WeekGrid({
   onTimeRangeSelect,
   timezone,
   className
-}: WeekGridProps) {
+}: WeekGridProps) => {
   // レスポンシブな時間高さ（ThreeDayViewと同じパターン）
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,

@@ -1,7 +1,7 @@
 'use client'
 
-import { Tag } from '@/types/tags'
 import { Badge } from '@/components/shadcn-ui/badge'
+import { Tag } from '@/types/tags'
 
 interface TagBadgeProps {
   tag: Tag
@@ -12,14 +12,14 @@ interface TagBadgeProps {
   onRemove?: () => void
 }
 
-export function TagBadge({ 
+export const TagBadge = ({ 
   tag, 
   size = 'sm', 
   showIcon = true, 
   showPath = false,
   onClick, 
   onRemove 
-}: TagBadgeProps) {
+}: TagBadgeProps) => {
   const sizeClasses = {
     sm: 'text-xs px-2 py-1',
     md: 'text-sm px-3 py-2',
@@ -34,7 +34,7 @@ export function TagBadge({
         ${onClick ? 'hover:opacity-80' : ''}
       `}
       style={{ 
-        backgroundColor: tag.color + '20', 
+        backgroundColor: `${tag.color  }20`, 
         color: tag.color,
         border: `1px solid ${tag.color}40`
       }}

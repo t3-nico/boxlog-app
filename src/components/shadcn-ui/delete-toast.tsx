@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+
 import { CheckCircle, RotateCcw, X } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 interface DeletedEvent {
@@ -22,12 +24,12 @@ interface DeleteToastProps {
   autoHideDelay?: number
 }
 
-export function DeleteToast({
+export const DeleteToast = ({
   deletedEvent,
   onUndo,
   onDismiss,
   autoHideDelay = 6000 // 6秒後に自動非表示
-}: DeleteToastProps) {
+}: DeleteToastProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const [timeLeft, setTimeLeft] = useState(autoHideDelay / 1000)
 

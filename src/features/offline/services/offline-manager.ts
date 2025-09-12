@@ -279,7 +279,7 @@ export class OfflineManager {
     const conflictRecord = {
       id: generateId(),
       actionId: action.id,
-      conflicts: conflicts,
+      conflicts,
       createdAt: new Date(),
       resolvedAt: null,
       resolution: null

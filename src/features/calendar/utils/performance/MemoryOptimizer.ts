@@ -84,7 +84,7 @@ export class MemoryOptimizer {
    * 現在のメモリ使用量を取得
    */
   getMemoryStats(): MemoryStats {
-    const memory = (performance as any).memory
+    const {memory} = (performance as any)
     
     if (!memory) {
       return {
@@ -349,7 +349,7 @@ export class MemoryOptimizer {
    */
   optimizeLargeObjects<T>(obj: T, compressFunc?: (obj: T) => string): T | string {
     const objString = JSON.stringify(obj)
-    const size = new Blob([objString]).size
+    const {size} = new Blob([objString])
     
     // 1MB以上のオブジェクトは圧縮を検討
     if (size > 1024 * 1024) {

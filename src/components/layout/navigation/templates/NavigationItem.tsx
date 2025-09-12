@@ -1,10 +1,12 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
+
 import { useRouter } from 'next/navigation'
+
 import { componentRadius, animations, icons, typography } from '@/config/theme'
 import { text, selection } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 export interface NavigationItemProps {
   label: string
@@ -19,7 +21,7 @@ export interface NavigationItemProps {
   children?: React.ReactNode
 }
 
-export function NavigationItem({
+export const NavigationItem = ({
   label,
   href,
   icon: Icon,
@@ -30,7 +32,7 @@ export function NavigationItem({
   variant = 'default',
   disabled = false,
   children
-}: NavigationItemProps) {
+}: NavigationItemProps) => {
   const router = useRouter()
 
   const handleClick = () => {

@@ -1,6 +1,5 @@
-import type { CalendarEvent } from '@/features/events'
-import type { UseDayEventsOptions, UseDayEventsReturn } from '../DayView.types'
 import { useViewEvents } from '../../shared/hooks/useViewEvents'
+import type { UseDayEventsOptions, UseDayEventsReturn } from '../DayView.types'
 
 /**
  * DayView用のイベント処理フック

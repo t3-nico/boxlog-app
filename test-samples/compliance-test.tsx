@@ -25,7 +25,7 @@ fetch('http://unsecure-api.com/users', {
 });
 
 // ❌ WCAG違反: アクセシビリティ不備
-export function ComplianceTestComponent() {
+export const ComplianceTestComponent = () => {
   const handleSubmit = () => {
     // ❌ 監査ログなしの重要操作
     deleteUserData();

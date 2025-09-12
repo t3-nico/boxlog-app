@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+
 import { X, Calendar, Settings, Download, Upload, User, Bell, Palette } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 export type DrawerMenuItem = {
@@ -71,14 +73,14 @@ const defaultMenuItems: DrawerMenuItem[] = [
  * モバイル用ドロワーメニュー
  * 左側からスライドインするサイドメニュー
  */
-export function MobileDrawer({
+export const MobileDrawer = ({
   isOpen,
   onClose,
   title = 'メニュー',
   items = defaultMenuItems,
   userInfo,
   className
-}: MobileDrawerProps) {
+}: MobileDrawerProps) => {
   const drawerRef = useRef<HTMLDivElement>(null)
 
   // ESCキーでクローズ

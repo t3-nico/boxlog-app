@@ -1,5 +1,20 @@
 'use client';
 
+import type {
+  ComponentProps,
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+} from 'react';
+
+import {
+  cloneElement,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+
 import {
   type IconType,
   SiAstro,
@@ -79,19 +94,8 @@ import {
   transformerNotationHighlight,
   transformerNotationWordHighlight,
 } from '@shikijs/transformers';
-import type {
-  ComponentProps,
-  HTMLAttributes,
-  ReactElement,
-  ReactNode,
-} from 'react';
-import {
-  cloneElement,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+
+import { CheckIcon, CopyIcon } from 'lucide-react';
 import {
   type BundledLanguage,
   type CodeOptionsMultipleThemes,
@@ -108,7 +112,6 @@ import {
 } from '@/components/shadcn-ui/select';
 import { cn } from '@/lib/utils';
 
-import { CheckIcon, CopyIcon } from 'lucide-react';
 
 export type { BundledLanguage } from 'shiki';
 

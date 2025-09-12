@@ -8,7 +8,7 @@ interface SortableItemProps {
   children: React.ReactNode
 }
 
-export function SortableItem({ id, children }: SortableItemProps) {
+export const SortableItem = ({ id, children }: SortableItemProps) => {
   const {
     attributes,
     listeners,

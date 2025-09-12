@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+
 import { 
   ChevronRight as ChevronRightIcon,
   ChevronDown as ChevronDownIcon,
@@ -10,12 +11,13 @@ import {
   Pencil as PencilIcon,
   Trash2 as TrashIcon
 } from 'lucide-react'
+
 import { tagIconMapping, TagIconName } from '@/config/ui/tagIcons'
 import { useTagStore } from '@/features/tags/stores/tag-store'
-import { TagEditDialog } from './tag-edit-dialog'
+
 import { useActiveState } from '@/hooks/useActiveState'
-import { clsx } from 'clsx'
-import { DEFAULT_TAG_COLOR } from '@/config/ui/theme'
+
+import { TagEditDialog } from './tag-edit-dialog'
 
 interface TagsListProps {
   collapsed?: boolean
@@ -36,7 +38,7 @@ interface TagItemProps {
   onDeleteTag: (tag: any) => void
 }
 
-function TagItem({
+const TagItem = ({
   tag,
   level,
   isExpanded,
@@ -47,7 +49,7 @@ function TagItem({
   onSelectTag,
   onEditTag,
   onDeleteTag
-}: TagItemProps) {
+}: TagItemProps) => {
   const [showMenu, setShowMenu] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
   const { isTagActive } = useActiveState()
@@ -181,11 +183,11 @@ function TagItem({
   )
 }
 
-export function TagsList({ 
+export const TagsList = ({ 
   collapsed = false, 
   onSelectTag = () => {},
   selectedTagIds = []
-}: TagsListProps) {
+}: TagsListProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
   // Zustandストアからデータを取得

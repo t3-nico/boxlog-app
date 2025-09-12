@@ -1,12 +1,9 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import { 
-  handleClientError,
-  UnauthorizedError,
-  ValidationError,
-  getErrorMessage 
-} from '@/lib/errors'
+import { useEffect, useState } from 'react'
+
+
+
 
 // Local types for localStorage mode
 interface User {
@@ -58,7 +55,7 @@ export function useAuth() {
         } else {
           // デフォルトユーザーを作成
           const defaultUser: User = {
-            id: 'local-user-' + Date.now(),
+            id: `local-user-${  Date.now()}`,
             email: 'user@localhost'
           }
           localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))

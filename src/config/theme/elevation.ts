@@ -90,7 +90,9 @@ export const patterns = {
   /**
    * 常設UI（影なし）
    */
-  card: borders.default,
+  card: {
+    default: borders.default,
+  },
   sidebar: borders.default,
   input: borders.default,
   button: borders.default,

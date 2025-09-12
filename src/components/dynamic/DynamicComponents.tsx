@@ -1,7 +1,6 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { ComponentType } from 'react'
 
 // AI Chat関連の動的インポート（FloatingAIChat削除済み - Inspector統合）
 

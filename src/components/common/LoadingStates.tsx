@@ -7,10 +7,11 @@
 
 import React from 'react'
 
-import { cn } from '@/lib/utils'
-import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
-
 import { Loader2, RefreshCw } from 'lucide-react'
+
+import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
+import { cn } from '@/lib/utils'
+
 
 // === 型定義 ===
 
@@ -46,11 +47,11 @@ export interface LoadingButtonProps {
 
 // === スピナーコンポーネント ===
 
-export function LoadingSpinner({ 
+export const LoadingSpinner = ({ 
   size = 'md', 
   className = '', 
   'aria-label': ariaLabel = 'Loading...' 
-}: LoadingSpinnerProps) {
+}: LoadingSpinnerProps) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6',
@@ -73,11 +74,11 @@ export function LoadingSpinner({
 
 // === リフレッシュスピナー ===
 
-export function RefreshSpinner({ 
+export const RefreshSpinner = ({ 
   size = 'md', 
   className = '', 
   'aria-label': ariaLabel = 'Refreshing...' 
-}: LoadingSpinnerProps) {
+}: LoadingSpinnerProps) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6',
@@ -100,13 +101,13 @@ export function RefreshSpinner({
 
 // === ローディングオーバーレイ ===
 
-export function LoadingOverlay({ 
+export const LoadingOverlay = ({ 
   isLoading, 
   children, 
   message = '読み込み中...', 
   className = '',
   spinnerSize = 'md'
-}: LoadingOverlayProps) {
+}: LoadingOverlayProps) => {
   return (
     <div className={cn('relative', className)}>
       {children}
@@ -128,11 +129,11 @@ export function LoadingOverlay({
 
 // === ローディングカード ===
 
-export function LoadingCard({ 
+export const LoadingCard = ({ 
   title = '読み込み中', 
   message = 'データを読み込んでいます...', 
   className = '' 
-}: LoadingCardProps) {
+}: LoadingCardProps) => {
   return (
     <div className={cn(
       `flex flex-col items-center justify-center ${spacing.padding.xl} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
@@ -151,7 +152,7 @@ export function LoadingCard({
 
 // === ローディングボタン ===
 
-export function LoadingButton({ 
+export const LoadingButton = ({ 
   isLoading, 
   children, 
   loadingText, 
@@ -159,7 +160,7 @@ export function LoadingButton({
   disabled = false,
   onClick,
   variant = 'default'
-}: LoadingButtonProps) {
+}: LoadingButtonProps) => {
   const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
   
   const variantClasses = {
@@ -195,7 +196,7 @@ export interface SkeletonProps {
   className?: string
 }
 
-export function Skeleton({ className = '' }: SkeletonProps) {
+export const Skeleton = ({ className = '' }: SkeletonProps) => {
   return (
     <div
       className={cn(
@@ -213,7 +214,7 @@ export interface SkeletonTextProps {
   className?: string
 }
 
-export function SkeletonText({ lines = 3, className = '' }: SkeletonTextProps) {
+export const SkeletonText = ({ lines = 3, className = '' }: SkeletonTextProps) => {
   return (
     <div className={cn(`${spacing.stack.sm}`, className)}>
       {Array.from({ length: lines }, (_, i) => (
@@ -237,11 +238,11 @@ export interface SkeletonCardProps {
   className?: string
 }
 
-export function SkeletonCard({ 
+export const SkeletonCard = ({ 
   showAvatar = false, 
   showImage = false, 
   className = '' 
-}: SkeletonCardProps) {
+}: SkeletonCardProps) => {
   return (
     <div className={cn(
       `${spacing.padding.md} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
@@ -283,7 +284,7 @@ export interface DataLoadingProps {
   className?: string
 }
 
-export function DataLoading({
+export const DataLoading = ({
   isLoading,
   isError,
   isEmpty,
@@ -292,7 +293,7 @@ export function DataLoading({
   errorComponent,
   emptyComponent,
   className = ''
-}: DataLoadingProps) {
+}: DataLoadingProps) => {
   if (isLoading) {
     return (
       <div className={cn(`flex justify-center items-center ${spacing.padding.xl}`, className)}>

@@ -1,16 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { cn } from "@/lib/utils"
+
 import { Button } from "@/components/shadcn-ui/button"
 import { Input } from "@/components/shadcn-ui/input"
 import { Label } from "@/components/shadcn-ui/label"
+import { cn } from "@/lib/utils"
+
 import { useAuthContext } from "../contexts/AuthContext"
 
-export function PasswordResetForm({
+export const PasswordResetForm = ({
   className,
   ...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<"form">) => {
   const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

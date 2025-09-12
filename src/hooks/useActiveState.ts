@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname, useSearchParams } from 'next/navigation'
+
 import { useBoxStore } from '@/features/box-management/stores/box-store'
 
 export const useActiveState = () => {

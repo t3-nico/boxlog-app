@@ -7,7 +7,7 @@
  * 新規作成・編集は右側のInspectorパネルで行われます。
  * 後方互換性のため残していますが、何も表示しません。
  */
-export function CreateEventModal() {
+export const CreateEventModal = () => {
   return null
 }
 

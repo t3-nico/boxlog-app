@@ -1,9 +1,12 @@
 'use client'
 
-import React, { useEffect, useMemo, useRef } from 'react'
-import { format, isToday, isWeekend } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import React, { useMemo } from 'react'
+
+import { format, isToday } from 'date-fns'
+
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { 
   DateDisplay, 
@@ -11,11 +14,14 @@ import {
   HourLines,
   getDateKey
 } from '../shared'
-import { useTwoWeekView } from './hooks/useTwoWeekView'
-import { TwoWeekContent } from './components'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import type { TwoWeekViewProps } from './TwoWeekView.types'
+
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
+
+import { TwoWeekContent } from './components'
+import { useTwoWeekView } from './hooks/useTwoWeekView'
+
+import type { TwoWeekViewProps } from './TwoWeekView.types'
+
 
 /**
  * TwoWeekView - 2週間表示ビューコンポーネント
@@ -34,7 +40,7 @@ import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight
  * │    │  │  │  │  │  │  │  │  │  │  │  │  │  │  │
  * └────┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
  */
-export function TwoWeekView({
+export const TwoWeekView = ({
   dateRange,
   tasks,
   events,
@@ -58,7 +64,7 @@ export function TwoWeekView({
   onNavigatePrev,
   onNavigateNext,
   onNavigateToday
-}: TwoWeekViewProps) {
+}: TwoWeekViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
   // レスポンシブな時間高さ

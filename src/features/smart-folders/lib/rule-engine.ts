@@ -1,12 +1,11 @@
 // スマートフォルダ ルール評価エンジン（拡張版）
 
+import { BaseEntity } from '@/types/common'
 import { 
   SmartFolderRule, 
   SmartFolderRuleField,
-  SmartFolderRuleOperator,
   RuleEvaluationContext 
 } from '@/types/smart-folders'
-import { BaseEntity } from '@/types/common'
 
 // ルール評価結果のキャッシュ
 interface RuleEvaluationCache {

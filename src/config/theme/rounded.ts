@@ -139,6 +139,7 @@ export const componentRadius = {
     compact: radius.md,     // コンパクトカード → 8px
     hover: radius.lg,       // ホバー時も同じ → 12px
     hero: radius.xl,        // ヒーローカード → 16px
+    md: radius.md,          // 中サイズカード → 8px （エイリアス）
   },
   
   /**
@@ -152,6 +153,7 @@ export const componentRadius = {
     checkbox: radius.sm,    // チェックボックス → 4px
     radio: radius.full,     // ラジオ → 円形
     search: radius.full,    // 検索ボックス → ピル型
+    sm: radius.sm,          // 小サイズ入力 → 4px （エイリアス）
   },
   
   /**
@@ -648,7 +650,7 @@ export const formUtils = {
   getHelpClasses: (
     type: 'default' | 'error' | 'success' = 'default'
   ): string => {
-    const base = formStyles.help.base
+    const {base} = formStyles.help
     
     switch (type) {
       case 'error':
@@ -661,4 +663,4 @@ export const formUtils = {
   },
 } as const
 
-export default rounded
+// export default rounded

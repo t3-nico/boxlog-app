@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { cn } from '@/lib/utils'
+
 import { format } from 'date-fns'
+
 import type { CalendarEvent } from '@/features/events'
+import { cn } from '@/lib/utils'
 
 interface AnimatedEventCardProps {
   event: CalendarEvent
@@ -18,7 +20,7 @@ interface AnimatedEventCardProps {
   className?: string
 }
 
-export function AnimatedEventCard({
+export const AnimatedEventCard = ({
   event,
   style,
   isSelected = false,
@@ -29,7 +31,7 @@ export function AnimatedEventCard({
   onContextMenu,
   children,
   className
-}: AnimatedEventCardProps) {
+}: AnimatedEventCardProps) => {
   const [isVisible, setIsVisible] = useState(!isNew)
   const [isHovered, setIsHovered] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
@@ -105,7 +107,7 @@ export function AnimatedEventCard({
     // ホバー時は明度を上げる
     if (isHovered && !isSelected) {
       // 色を10%明るくする
-      const color = event.color
+      const {color} = event
       if (color.startsWith('#')) {
         const r = parseInt(color.slice(1, 3), 16)
         const g = parseInt(color.slice(3, 5), 16)

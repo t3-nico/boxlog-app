@@ -51,7 +51,7 @@ interface ChatProviderProps {
   children: React.ReactNode
 }
 
-export function ChatProvider({ children }: ChatProviderProps) {
+export const ChatProvider = ({ children }: ChatProviderProps) => {
   const [state, setState] = useState<ChatState>({
     isOpen: false,
     messages: [],

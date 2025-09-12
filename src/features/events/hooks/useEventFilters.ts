@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+
 import type { EventFilters, Event, EventType, EventStatus } from '../types/events'
 
 export function useEventFilters(initialFilters?: Partial<EventFilters>) {

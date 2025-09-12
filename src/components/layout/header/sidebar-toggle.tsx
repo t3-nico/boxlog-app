@@ -1,22 +1,26 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
+
 import { PanelLeftOpen, Menu } from 'lucide-react'
-import { useNavigationStore } from '../sidebar/stores/navigation.store'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { componentRadius, animations, icon } from '@/config/theme'
-import { ghost, secondary } from '@/config/theme/colors'
+
 import { 
   Tooltip, 
   TooltipContent, 
   TooltipProvider, 
   TooltipTrigger 
 } from '@/components/shadcn-ui/tooltip'
+import { componentRadius, animations, icon } from '@/config/theme'
+import { secondary } from '@/config/theme/colors'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { cn } from '@/lib/utils'
+
+import { useNavigationStore } from '../sidebar/stores/navigation.store'
+
 
 const { sm } = icon.size
 
-export function SidebarToggle() {
+export const SidebarToggle = () => {
   const { toggleSidebar } = useNavigationStore()
   const isMobile = useMediaQuery('(max-width: 768px)')
 

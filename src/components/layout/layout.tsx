@@ -1,31 +1,31 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { ThemeProvider } from '@/contexts/theme-context'
-import { ChatProvider } from '@/contexts/chat-context'
+import { Search } from 'lucide-react'
+
+import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
-import { Sidebar } from './sidebar'
-import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
-import { useNavigationStore } from './sidebar/stores/navigation.store'
+import { ChatProvider } from '@/contexts/chat-context'
+import { ThemeProvider } from '@/contexts/theme-context'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
-import { background } from '@/config/theme/colors'
+import { NotificationModalProvider } from '@/features/notifications'
+import { useGlobalSearch, GlobalSearchProvider } from '@/features/search'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { cn } from '@/lib/utils'
 import { Header } from './header'
 import { InspectorToggle } from './header/inspector-toggle'
 import { SidebarToggle } from './header/sidebar-toggle'
 import { PageTitle } from './header/page-title'
-import { useGlobalSearch, GlobalSearchProvider } from '@/features/search'
-import { NotificationModalProvider } from '@/features/notifications'
-import { Search } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { componentRadius, animations, icon } from '@/config/theme'
 import { Inspector } from './inspector'
-import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
+import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
+import { Sidebar } from './sidebar'
+import { useNavigationStore } from './sidebar/stores/navigation.store'
+import { colors, rounded, animations, icons } from '@/config/theme'
+
 
 interface DashboardLayoutProps {
   events?: any
@@ -33,7 +33,7 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
+const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { isSecondaryNavCollapsed, isSidebarOpen } = useNavigationStore()
   const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanel()
   const { open: openGlobalSearch } = useGlobalSearch()
@@ -42,7 +42,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   
-  const { sm } = icon.size
+  const { sm } = icons.size
 
   // Calculate the effective panel height (0 when closed or minimized)
   const effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
@@ -110,8 +110,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                   }}
                   className={cn(
                     'w-8 h-8 flex items-center justify-center',
-                    background.hover,
-                    componentRadius.button.sm,
+                    colors.hover.subtle,
+                    rounded.component.button.sm,
                     animations.transition.fast,
                     'flex-shrink-0'
                   )}
@@ -131,7 +131,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             )}
             
             {/* Main Content Area */}
-            <div className={`flex-1 relative z-10 flex ${background.base}`}>
+            <div className={`flex-1 relative z-10 flex ${colors.background.base}`}>
               {/* Main Content with AI Panel */}
               <div className="flex-1 relative overflow-hidden">
                 {children}
@@ -177,11 +177,11 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   return content
 }
 
-export function DashboardLayout({ 
+export const DashboardLayout = ({ 
   events, 
   reviews, 
   children 
-}: DashboardLayoutProps) {
+}: DashboardLayoutProps) => {
   return (
     <ThemeProvider>
       <GlobalSearchProvider>

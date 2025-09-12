@@ -364,7 +364,7 @@ interface FocusTrapProps {
   onDeactivate?: () => void
 }
 
-export function FocusTrap({
+export const FocusTrap = ({
   enabled,
   children,
   className,
@@ -374,7 +374,7 @@ export function FocusTrap({
   escapeDeactivates = true,
   onActivate,
   onDeactivate
-}: FocusTrapProps) {
+}: FocusTrapProps) => {
   const { containerRef } = useFocusTrap({
     enabled,
     autoFocus,

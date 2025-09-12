@@ -6,9 +6,9 @@
  * 自動的にTODO/FIXMEレポートを生成し、GitHubとの統合を行う
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // レポート生成設定
 const REPORT_CONFIG = {

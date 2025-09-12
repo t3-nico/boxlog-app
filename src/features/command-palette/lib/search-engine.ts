@@ -1,7 +1,9 @@
-import { SearchResult, SearchOptions } from '../config/command-palette'
-import { commandRegistry } from './command-registry'
-import { Task, Tag, SmartFolder } from '@/types/common'
 import { FuzzySearch } from '@/features/search'
+import { Task, Tag, SmartFolder } from '@/types/common'
+
+import { SearchResult, SearchOptions } from '../config/command-palette'
+
+import { commandRegistry } from './command-registry'
 
 
 export class SearchEngine {
@@ -14,7 +16,7 @@ export class SearchEngine {
     smartFolders?: SmartFolder[]
   }): Promise<SearchResult[]> {
     const { query, categories, limit = 10 } = options
-    let results: SearchResult[] = []
+    const results: SearchResult[] = []
     
     // Search commands
     const commands = commandRegistry.search(query, categories)

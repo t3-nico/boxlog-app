@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { X, Plus } from 'lucide-react'
 
 // Tag interface
@@ -16,11 +17,11 @@ interface QuickTagCreateModalProps {
   onCreateTag: (tag: Omit<Tag, 'id'>) => void
 }
 
-export function QuickTagCreateModal({
+export const QuickTagCreateModal = ({
   isOpen,
   onClose,
   onCreateTag
-}: QuickTagCreateModalProps) {
+}: QuickTagCreateModalProps) => {
   const [tagName, setTagName] = useState('')
   const [selectedColor, setSelectedColor] = useState('#3b82f6')
 

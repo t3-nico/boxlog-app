@@ -1,26 +1,28 @@
+import { notFound } from 'next/navigation'
+
+import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
+import type { Metadata } from 'next'
+
+import { DescriptionDetails, DescriptionList, DescriptionTerm , Heading, Subheading , Link } from '@/components/custom'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
-import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/custom'
 import { Separator } from '@/components/shadcn-ui/separator'
-import { Heading, Subheading } from '@/components/custom'
-import { Link } from '@/components/custom'
+import { colors, typography } from '@/config/theme'
 import { getReview } from '@/lib/data'
-import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+
 import { RefundReview } from './refund'
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  let review = await getReview(params.id)
+  const review = await getReview(params.id)
 
   return {
     title: review && `Review #${review.id}`,
   }
 }
 
-export default async function Review({ params }: { params: { id: string } }) {
-  let review = await getReview(params.id)
+export default async function ReviewPage({ params }: { params: { id: string } }) {
+  const review = await getReview(params.id)
 
   if (!review) {
     notFound()
@@ -29,8 +31,8 @@ export default async function Review({ params }: { params: { id: string } }) {
   return (
     <>
       <div className="max-lg:hidden">
-        <Link href="/review" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
-          <ChevronLeft className="size-4 text-zinc-400 dark:text-zinc-500" data-slot="icon" />
+        <Link href="/review" className={`inline-flex items-center gap-2 ${typography.body.sm} ${colors.text.tertiary}`}>
+          <ChevronLeft className={`size-4 ${colors.text.muted}`} data-slot="icon" />
           Reviews
         </Link>
       </div>
@@ -41,12 +43,12 @@ export default async function Review({ params }: { params: { id: string } }) {
         </div>
         <div className="isolate mt-3 flex flex-wrap justify-between gap-x-6 gap-y-4">
           <div className="flex flex-wrap gap-x-10 gap-y-4 py-2">
-            <span className="flex items-center gap-3 text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white">
-              <Banknote className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+            <span className={`flex items-center gap-3 ${typography.body.base} sm:${typography.body.sm} ${colors.text.primary}`}>
+              <Banknote className={`size-4 shrink-0 ${colors.text.muted}`} />
               <span>US{review.amount.usd}</span>
             </span>
-            <span className="flex items-center gap-3 text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white">
-              <CreditCard className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" />
+            <span className={`flex items-center gap-3 ${typography.body.base} sm:${typography.body.sm} ${colors.text.primary}`}>
+              <CreditCard className={`size-4 shrink-0 ${colors.text.muted}`} />
               <span className="inline-flex gap-3">
                 {review.payment.card.type}{' '}
                 <span>
@@ -54,8 +56,8 @@ export default async function Review({ params }: { params: { id: string } }) {
                 </span>
               </span>
             </span>
-            <span className="flex items-center gap-3 text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white">
-              <Calendar className="size-4 shrink-0 text-zinc-400 dark:text-zinc-500" data-slot="icon" />
+            <span className={`flex items-center gap-3 ${typography.body.base} sm:${typography.body.sm} ${colors.text.primary}`}>
+              <Calendar className={`size-4 shrink-0 ${colors.text.muted}`} data-slot="icon" />
               <span>{review.date}</span>
             </span>
           </div>

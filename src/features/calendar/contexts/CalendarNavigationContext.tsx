@@ -1,8 +1,11 @@
 'use client'
 
 import React, { createContext, useContext, useCallback, useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
 import { format } from 'date-fns'
+
 import type { CalendarViewType } from '../types/calendar.types'
 
 interface CalendarNavigationContextValue {
@@ -15,7 +18,7 @@ interface CalendarNavigationContextValue {
 
 const CalendarNavigationContext = createContext<CalendarNavigationContextValue | null>(null)
 
-export function CalendarNavigationProvider({ 
+export const CalendarNavigationProvider = ({ 
   children,
   initialDate = new Date(),
   initialView = 'week' as CalendarViewType
@@ -23,7 +26,7 @@ export function CalendarNavigationProvider({
   children: React.ReactNode
   initialDate?: Date
   initialView?: CalendarViewType
-}) {
+}) => {
   const router = useRouter()
   const [currentDate, setCurrentDate] = useState(initialDate)
   const [viewType, setViewType] = useState<CalendarViewType>(initialView)

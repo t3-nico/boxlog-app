@@ -1,20 +1,21 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
+
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import {
+  Input
+} from '@headlessui/react'
 import { 
   Plus as PlusIcon, 
   Trash2 as TrashIcon,
   Menu as Bars3Icon
 } from 'lucide-react'
-import { 
-  Button,
-  Field,
-  Input,
-  Label
-} from '@headlessui/react'
+
 import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
+
+
 import { SortableItem } from './sortable-rule-item'
 
 interface RuleEditorProps {
@@ -141,7 +142,7 @@ const SELECT_OPTIONS: Record<string, Array<{ value: any; label: string }>> = {
   ]
 }
 
-export function RuleEditor({ rules, onChange }: RuleEditorProps) {
+export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {

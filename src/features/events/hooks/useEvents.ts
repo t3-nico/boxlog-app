@@ -1,9 +1,10 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { useEventStore } from '../stores/useEventStore'
-import { useEventFilters } from './useEventFilters'
-import type { Event, EventFilters } from '../types/events'
+
+import type { EventFilters } from '../types/events'
 
 /**
  * イベントデータ取得の最適化されたhook

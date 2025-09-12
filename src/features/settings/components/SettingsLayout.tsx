@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { colors, typography, spacing, background } from '@/config/theme'
+
+import { colors, typography, spacing, layout } from '@/config/theme'
 
 interface SettingsLayoutProps {
   children: React.ReactNode
@@ -10,23 +11,23 @@ interface SettingsLayoutProps {
   actions?: React.ReactNode
 }
 
-export function SettingsLayout({
+export const SettingsLayout = ({
   children,
   title,
   description,
   actions
-}: SettingsLayoutProps) {
+}: SettingsLayoutProps) => {
   return (
-    <div className={`flex-1 flex flex-col h-full ${background.surface}`}>
+    <div className={`flex-1 flex flex-col h-full ${colors.background.surface}`}>
       {/* ヘッダー部分 */}
-      <div className="p-6 pb-4 flex-shrink-0">
+      <div className={`${spacing.page.md} pb-4 flex-shrink-0`}>
         <div className="flex items-center justify-between">
           <div>
             <h2 className={typography.heading.h2}>
               {title}
             </h2>
             {description && (
-              <p className={`mt-1 ${typography.body.small} ${colors.text.muted}`}>
+              <p className={`${spacing.component.stack.xs} ${typography.body.small} ${colors.text.muted}`}>
                 {description}
               </p>
             )}
@@ -41,7 +42,7 @@ export function SettingsLayout({
 
       {/* メインコンテンツ */}
       <div 
-        className={`flex-1 overflow-auto ${columns.main.padding.md} pt-0`}
+        className={`flex-1 overflow-auto ${layout.columns.main.padding.md} pt-0`}
       >
         <style jsx>{`
           div::-webkit-scrollbar {
@@ -69,7 +70,7 @@ export function SettingsLayout({
             }
           }
         `}</style>
-        <div className="max-w-6xl">
+        <div className={layout.container.maxWidth.xl}>
           {children}
         </div>
       </div>

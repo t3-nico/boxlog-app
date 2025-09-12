@@ -1,19 +1,20 @@
 'use client'
 
 import React from 'react'
-import { Heading } from '@/components/custom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
-import { Badge } from '@/components/shadcn-ui/badge'
-import { Button } from '@/components/shadcn-ui/button'
+
 import { 
   MessageCircle, 
   MessageSquare, 
-  Clock, 
   Trash2, 
   Eye,
   Calendar,
   Search
 } from 'lucide-react'
+
+import { Heading } from '@/components/custom'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { Input } from '@/components/shadcn-ui/input'
 import { colors, typography, spacing } from '@/config/theme'
 
@@ -93,7 +94,7 @@ export default function ChatHistoryPage() {
     if (status === 'active') {
       return <Badge variant="default" className={colors.primary.DEFAULT}>Active</Badge>
     }
-    return <Badge variant="secondary" className={`${colors.background.success} ${colors.text.success}`}>Resolved</Badge>
+    return <Badge variant="secondary" className={`${colors.semantic.success.light} ${colors.semantic.success.text}`}>Resolved</Badge>
   }
 
   const formatDate = (timestamp: string) => {
@@ -119,7 +120,7 @@ export default function ChatHistoryPage() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="flex-1 relative">
-          <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${colors.text.tertiary}`} />
+          <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${colors.text.muted}`} />
           <Input
             placeholder="Search chats..."
             value={searchQuery}
@@ -137,7 +138,7 @@ export default function ChatHistoryPage() {
             >
               {status === 'all' ? 'All' : status === 'active' ? 'Active' : 'Resolved'}
               {status !== 'all' && (
-                <span className="ml-1 text-xs">
+                <span className={`ml-1 ${typography.body.small}`}>
                   ({chatSessions.filter(s => s.status === status).length})
                 </span>
               )}
@@ -151,7 +152,7 @@ export default function ChatHistoryPage() {
         {filteredSessions.length === 0 ? (
           <Card>
             <CardContent className={`${spacing.padding.xl} text-center`}>
-              <MessageCircle className={`w-12 h-12 ${colors.text.tertiary} mx-auto ${spacing.margin.md}`} />
+              <MessageCircle className={`w-12 h-12 ${colors.text.muted} mx-auto ${spacing.margin.md}`} />
               <p className={colors.text.secondary}>
                 {searchQuery ? 'No chats found matching your search criteria' : 'No chat history available'}
               </p>
@@ -165,11 +166,11 @@ export default function ChatHistoryPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       {session.status === 'active' ? (
-                        <MessageSquare className="w-5 h-5 text-blue-500" />
+                        <MessageSquare className={`w-5 h-5 ${colors.semantic.info.text}`} />
                       ) : (
-                        <MessageCircle className={`w-5 h-5 ${colors.text.tertiary}`} />
+                        <MessageCircle className={`w-5 h-5 ${colors.text.muted}`} />
                       )}
-                      <CardTitle className="text-lg font-semibold">
+                      <CardTitle className={`${typography.heading.h3}`}>
                         {session.title}
                       </CardTitle>
                       {getStatusBadge(session.status)}
@@ -177,7 +178,7 @@ export default function ChatHistoryPage() {
                     <p className={`${typography.body.sm} ${colors.text.secondary} ${spacing.margin.sm}`}>
                       {session.summary}
                     </p>
-                    <div className={`flex items-center gap-4 ${typography.body.xs} ${colors.text.tertiary}`}>
+                    <div className={`flex items-center gap-4 ${typography.body.sm} ${colors.text.muted}`}>
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {formatDate(session.timestamp)}
@@ -193,7 +194,7 @@ export default function ChatHistoryPage() {
                       <Eye className="w-4 h-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm" className={`${colors.text.danger} ${colors.hover.danger}`}>
+                    <Button variant="outline" size="sm" className={`${colors.semantic.error.text} ${colors.semantic.error.hover}`}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -202,7 +203,7 @@ export default function ChatHistoryPage() {
               <CardContent className="pt-0">
                 <div className="flex gap-1 flex-wrap">
                   {session.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
+                    <Badge key={index} variant="outline" className={typography.body.small}>
                       {tag}
                     </Badge>
                   ))}
@@ -218,7 +219,7 @@ export default function ChatHistoryPage() {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardContent className={`${spacing.padding.md} text-center`}>
-              <div className={`${typography.heading.h2} ${typography.weight.bold} ${colors.text.primary}`}>
+              <div className={`${typography.heading.h2} ${colors.text.primary}`}>
                 {chatSessions.length}
               </div>
               <div className={`${typography.body.sm} ${colors.text.secondary}`}>
@@ -228,7 +229,7 @@ export default function ChatHistoryPage() {
           </Card>
           <Card>
             <CardContent className={`${spacing.padding.md} text-center`}>
-              <div className={`${typography.heading.h2} ${typography.weight.bold} ${colors.text.info}`}>
+              <div className={`${typography.heading.h2} ${colors.semantic.info.text}`}>
                 {chatSessions.filter(s => s.status === 'active').length}
               </div>
               <div className={`${typography.body.sm} ${colors.text.secondary}`}>
@@ -238,7 +239,7 @@ export default function ChatHistoryPage() {
           </Card>
           <Card>
             <CardContent className={`${spacing.padding.md} text-center`}>
-              <div className={`${typography.heading.h2} ${typography.weight.bold} ${colors.text.success}`}>
+              <div className={`${typography.heading.h2} ${colors.semantic.success.text}`}>
                 {chatSessions.filter(s => s.status === 'resolved').length}
               </div>
               <div className={`${typography.body.sm} ${colors.text.secondary}`}>

@@ -1,24 +1,25 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+
+import { Clock, TrendingUp } from 'lucide-react'
+
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/shadcn-ui/dialog'
-import { SearchBar } from './search-bar'
-import { useSearch, useSearchHistory } from '../hooks/use-search'
-import { cn } from '@/lib/utils'
-import { Clock, TrendingUp } from 'lucide-react'
+
+import { useSearchHistory } from '../hooks/use-search'
 import type { SearchResult } from '../types'
+
+import { SearchBar } from './search-bar'
 
 interface GlobalSearchModalProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
+export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) => {
   const { history } = useSearchHistory()
   const [selectedResult, setSelectedResult] = useState<SearchResult | null>(null)
 

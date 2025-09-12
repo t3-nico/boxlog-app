@@ -1,9 +1,10 @@
 import clsx from 'clsx'
 
-import { Link } from './link'
 import { colors, typography, spacing, rounded } from '@/config/theme'
 
-export function Text({ className, ...props }: React.ComponentPropsWithoutRef<'p'>) {
+import { Link } from './link'
+
+export const Text = ({ className, ...props }: React.ComponentPropsWithoutRef<'p'>) => {
   return (
     <p
       data-slot="text"
@@ -13,7 +14,7 @@ export function Text({ className, ...props }: React.ComponentPropsWithoutRef<'p'
   )
 }
 
-export function TextLink({ className, ...props }: React.ComponentPropsWithoutRef<typeof Link>) {
+export const TextLink = ({ className, ...props }: React.ComponentPropsWithoutRef<typeof Link>) => {
   return (
     <Link
       {...props}
@@ -25,11 +26,11 @@ export function TextLink({ className, ...props }: React.ComponentPropsWithoutRef
   )
 }
 
-export function Strong({ className, ...props }: React.ComponentPropsWithoutRef<'strong'>) {
+export const Strong = ({ className, ...props }: React.ComponentPropsWithoutRef<'strong'>) => {
   return <strong {...props} className={clsx(className, `font-medium ${colors.text.primary}`)} />
 }
 
-export function Code({ className, ...props }: React.ComponentPropsWithoutRef<'code'>) {
+export const Code = ({ className, ...props }: React.ComponentPropsWithoutRef<'code'>) => {
   return (
     <code
       {...props}

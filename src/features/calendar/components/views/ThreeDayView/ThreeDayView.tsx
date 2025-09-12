@@ -1,25 +1,30 @@
 'use client'
 
-import React, { useEffect, useMemo } from 'react'
-import { format, isToday, isWeekend } from 'date-fns'
+import React, { useMemo } from 'react'
+
+import { format, isToday } from 'date-fns'
+
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
+
 import { 
   DateDisplay, 
   CalendarLayoutWithHeader,
   HourLines,
-  useEventStyles,
-  useEventPosition
+  useEventStyles
 } from '../shared'
-import { useThreeDayView } from './hooks/useThreeDayView'
-import { ThreeDayContent } from './components'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import type { ThreeDayViewProps } from './ThreeDayView.types'
+
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
+
+import { ThreeDayContent } from './components'
+import { useThreeDayView } from './hooks/useThreeDayView'
+import type { ThreeDayViewProps } from './ThreeDayView.types'
+
 
 /**
  * ThreeDayView - 3-day view component
  */
-export function ThreeDayView({
+export const ThreeDayView = ({
   dateRange,
   tasks,
   events,
@@ -42,7 +47,7 @@ export function ThreeDayView({
   onNavigatePrev,
   onNavigateNext,
   onNavigateToday
-}: ThreeDayViewProps) {
+}: ThreeDayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
   // レスポンシブな時間高さ

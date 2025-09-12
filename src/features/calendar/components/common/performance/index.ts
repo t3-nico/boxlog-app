@@ -54,9 +54,10 @@ export {
 
 // 統合パフォーマンス管理フック
 import { useEffect, useRef } from 'react'
-import { getPerformanceMonitor } from '../../../utils/performance/PerformanceMonitor'
-import { getMemoryOptimizer } from '../../../utils/performance/MemoryOptimizer'
+
 import { getBatteryOptimizer } from '../../../utils/performance/BatteryOptimizer'
+import { getMemoryOptimizer } from '../../../utils/performance/MemoryOptimizer'
+import { getPerformanceMonitor } from '../../../utils/performance/PerformanceMonitor'
 
 export function useIntegratedPerformanceOptimization() {
   const performanceMonitor = useRef(getPerformanceMonitor())

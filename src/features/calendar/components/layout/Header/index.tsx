@@ -1,10 +1,12 @@
 'use client'
 
-import { ViewSwitcher } from './ViewSwitcher'
+import type { CalendarViewType } from '../../../types/calendar.types'
+
 import { DateNavigator } from './DateNavigator'
 import { DateRangeDisplay } from './DateRangeDisplay'
 import { HeaderActions } from './HeaderActions'
-import type { CalendarViewType } from '../../../types/calendar.types'
+import { ViewSwitcher } from './ViewSwitcher'
+
 
 interface CalendarHeaderProps {
   viewType: CalendarViewType
@@ -34,7 +36,7 @@ const viewOptions = [
  * カレンダーヘッダー
  * 共通コンポーネントを組み合わせたカレンダーヘッダー
  */
-export function CalendarHeader({
+export const CalendarHeader = ({
   viewType,
   currentDate,
   onNavigate,
@@ -46,7 +48,7 @@ export function CalendarHeader({
   leftSlot,
   onDateSelect,
   showMiniCalendar = false
-}: CalendarHeaderProps) {
+}: CalendarHeaderProps) => {
   return (
     <header className="relative bg-background px-4 py-4">
       <div className="flex items-center justify-between">

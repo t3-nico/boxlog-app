@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+
 import { useRouter } from 'next/navigation'
+
 // import { createClient } from '@/lib/supabase/client' // Disabled for localStorage mode
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const authSchema = z.object({
@@ -18,7 +20,7 @@ interface AuthFormProps {
   mode: 'login' | 'signup'
 }
 
-export function AuthForm({ mode }: AuthFormProps) {
+export const AuthForm = ({ mode }: AuthFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

@@ -1,7 +1,9 @@
 'use client'
 
-import React, { ReactNode, createContext, useContext, useState, useEffect, useRef, useMemo } from 'react'
+import React, { ReactNode, createContext, useContext, useState, useEffect, useRef } from 'react'
+
 import { motion, AnimatePresence, useReducedMotion, LayoutGroup, useMotionValue, useSpring } from 'framer-motion'
+
 import { cn } from '@/lib/utils'
 
 // ビュータイプの定義
@@ -72,12 +74,12 @@ interface EventCollapseProps {
 }
 
 // 高度なビュー切り替えアニメーション
-export function AdvancedViewTransition({ 
+export const AdvancedViewTransition = ({ 
   currentView, 
   children, 
   className,
   onTransitionComplete 
-}: AdvancedViewTransitionProps) {
+}: AdvancedViewTransitionProps) => {
   const prefersReducedMotion = useReducedMotion()
   const [previousView, setPreviousView] = useState<CalendarView>(currentView)
   
@@ -154,13 +156,13 @@ export function AdvancedViewTransition({
 }
 
 // 高度なスライド遷移コンポーネント
-export function AdvancedSlideTransition({ 
+export const AdvancedSlideTransition = ({ 
   direction, 
   children, 
   className,
   duration = ANIMATION_CONFIG.slideTransition.duration,
   onComplete 
-}: AdvancedSlideTransitionProps) {
+}: AdvancedSlideTransitionProps) => {
   const prefersReducedMotion = useReducedMotion()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -222,12 +224,12 @@ export function AdvancedSlideTransition({
 }
 
 // イベント展開/折りたたみコンポーネント
-export function EventCollapse({ 
+export const EventCollapse = ({ 
   isExpanded, 
   children, 
   maxHeight = 300,
   className 
-}: EventCollapseProps) {
+}: EventCollapseProps) => {
   const prefersReducedMotion = useReducedMotion()
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState<number>(0)
@@ -269,7 +271,7 @@ interface ViewTransitionProps {
   className?: string
 }
 
-export function ViewTransition({ children, viewType, className = '' }: ViewTransitionProps) {
+export const ViewTransition = ({ children, viewType, className = '' }: ViewTransitionProps) => {
   return (
     <AdvancedViewTransition 
       currentView={viewType as CalendarView} 
@@ -286,7 +288,7 @@ interface TaskDragAnimationProps {
   children: ReactNode
 }
 
-export function TaskDragAnimation({ isDragging, children }: TaskDragAnimationProps) {
+export const TaskDragAnimation = ({ isDragging, children }: TaskDragAnimationProps) => {
   return (
     <div
       className={`transition-all duration-150 ${
@@ -305,7 +307,7 @@ interface HoverEffectProps {
   disabled?: boolean
 }
 
-export function HoverEffect({ children, isHovered, disabled = false }: HoverEffectProps) {
+export const HoverEffect = ({ children, isHovered, disabled = false }: HoverEffectProps) => {
   if (disabled) return <>{children}</>
   
   return (
@@ -329,12 +331,12 @@ interface FadeTransitionProps {
   className?: string
 }
 
-export function FadeTransition({ 
+export const FadeTransition = ({ 
   show, 
   children, 
   duration = 200,
   className = '' 
-}: FadeTransitionProps) {
+}: FadeTransitionProps) => {
   return (
     <div
       className={`transition-opacity duration-${duration} ${
@@ -355,13 +357,13 @@ interface SlideTransitionProps {
   className?: string
 }
 
-export function SlideTransition({
+export const SlideTransition = ({
   show,
   direction = 'up',
   children,
   duration = 200,
   className = ''
-}: SlideTransitionProps) {
+}: SlideTransitionProps) => {
   const getTransform = () => {
     if (show) return 'translate-0'
     
@@ -391,7 +393,7 @@ interface TaskCreateAnimationProps {
   isNew?: boolean
 }
 
-export function TaskCreateAnimation({ children, isNew = false }: TaskCreateAnimationProps) {
+export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnimationProps) => {
   return (
     <div
       className={`${
@@ -412,11 +414,11 @@ interface CalendarViewAnimationProps {
   previousViewType?: 'day' | 'split-day' | '3day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
 }
 
-export function CalendarViewAnimation({ 
+export const CalendarViewAnimation = ({ 
   children, 
   viewType, 
   previousViewType 
-}: CalendarViewAnimationProps) {
+}: CalendarViewAnimationProps) => {
   const getAnimationClass = () => {
     if (!previousViewType) return ''
     
@@ -453,12 +455,12 @@ interface SkeletonAnimationProps {
   className?: string
 }
 
-export function SkeletonAnimation({ 
+export const SkeletonAnimation = ({ 
   show, 
   count = 3, 
   height = 'h-8',
   className = '' 
-}: SkeletonAnimationProps) {
+}: SkeletonAnimationProps) => {
   if (!show) return null
   
   return (
@@ -483,7 +485,7 @@ interface TaskHoverTooltipProps {
   position?: { x: number; y: number }
 }
 
-export function TaskHoverTooltip({ show, children, position }: TaskHoverTooltipProps) {
+export const TaskHoverTooltip = ({ show, children, position }: TaskHoverTooltipProps) => {
   if (!show) return null
   
   return (
@@ -509,7 +511,7 @@ interface AnimationWrapperProps {
   className?: string
 }
 
-export function AnimationWrapper({ children, disabled = false, className = '' }: AnimationWrapperProps) {
+export const AnimationWrapper = ({ children, disabled = false, className = '' }: AnimationWrapperProps) => {
   return (
     <div className={`${disabled ? '' : 'transition-all duration-150'} ${className}`}>
       {children}
@@ -539,7 +541,7 @@ interface AnimationProviderProps {
   config?: Partial<AnimationContextType>
 }
 
-export function AnimationProvider({ children, config = {} }: AnimationProviderProps) {
+export const AnimationProvider = ({ children, config = {} }: AnimationProviderProps) => {
   const defaultConfig: AnimationContextType = {
     enabled: true,
     reducedMotion: false,
@@ -561,11 +563,11 @@ interface StaggeredAnimationProps {
   className?: string
 }
 
-export function StaggeredAnimation({ 
+export const StaggeredAnimation = ({ 
   children, 
   staggerDelay = 0.05,
   className 
-}: StaggeredAnimationProps) {
+}: StaggeredAnimationProps) => {
   const prefersReducedMotion = useReducedMotion()
   
   const containerVariants = {
@@ -624,12 +626,12 @@ interface SpringAnimationProps {
   className?: string
 }
 
-export function SpringAnimation({ 
+export const SpringAnimation = ({ 
   children, 
   isActive, 
   springConfig = { stiffness: 300, damping: 30, mass: 1 },
   className 
-}: SpringAnimationProps) {
+}: SpringAnimationProps) => {
   const scaleValue = useMotionValue(1)
   const springScale = useSpring(scaleValue, springConfig)
 
@@ -657,7 +659,7 @@ interface ParallaxProps {
   className?: string
 }
 
-export function Parallax({ children, offset, className }: ParallaxProps) {
+export const Parallax = ({ children, offset, className }: ParallaxProps) => {
   const prefersReducedMotion = useReducedMotion()
   const y = useMotionValue(0)
   const springY = useSpring(y, { stiffness: 400, damping: 90 })
@@ -698,11 +700,11 @@ interface PerformanceIndicatorProps {
   className?: string
 }
 
-export function PerformanceIndicator({ 
+export const PerformanceIndicator = ({ 
   isLoading, 
   progress = 0, 
   className 
-}: PerformanceIndicatorProps) {
+}: PerformanceIndicatorProps) => {
   const prefersReducedMotion = useReducedMotion()
   
   return (
@@ -814,7 +816,7 @@ interface TouchAnimationProps {
   className?: string
 }
 
-export function TouchAnimation({ children, onTap, className }: TouchAnimationProps) {
+export const TouchAnimation = ({ children, onTap, className }: TouchAnimationProps) => {
   const prefersReducedMotion = useReducedMotion()
   
   return (
@@ -838,12 +840,12 @@ interface OptimizedListAnimationProps {
   className?: string
 }
 
-export function OptimizedListAnimation({
+export const OptimizedListAnimation = ({
   children,
   itemHeight,
   visibleItems,
   className
-}: OptimizedListAnimationProps) {
+}: OptimizedListAnimationProps) => {
   const prefersReducedMotion = useReducedMotion()
   const [scrollY, setScrollY] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)

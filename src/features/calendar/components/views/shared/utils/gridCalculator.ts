@@ -2,7 +2,7 @@
  * グリッド計算ユーティリティ
  */
 
-import { HOUR_HEIGHT, MINUTE_HEIGHT } from '../constants/grid.constants'
+import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 /**
  * 時刻をピクセル位置に変換

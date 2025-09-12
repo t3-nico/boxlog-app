@@ -1,3 +1,6 @@
+import type { HTMLAttributes, ReactNode } from 'react';
+import { createContext, memo, useCallback, useContext } from 'react';
+
 import type {
   Cell,
   Column,
@@ -8,8 +11,6 @@ import type {
   SortingState,
   Table,
 } from '@tanstack/react-table';
-import type { HTMLAttributes, ReactNode } from 'react';
-import { createContext, memo, useCallback, useContext } from 'react';
 
 import {
   flexRender,
@@ -20,6 +21,7 @@ import {
 import { atom, useAtom } from 'jotai';
 
 import { ArrowDownIcon, ArrowUpIcon, ChevronsUpDownIcon } from 'lucide-react';
+
 import { Button } from '@/components/shadcn-ui/button';
 import {
   DropdownMenu,
@@ -58,12 +60,12 @@ export type TableProviderProps<TData, TValue> = {
   className?: string;
 };
 
-export function TableProvider<TData, TValue>({
+export const TableProvider = <TData, TValue>({
   columns,
   data,
   children,
   className,
-}: TableProviderProps<TData, TValue>) {
+}: TableProviderProps<TData, TValue>) => {
   const [sorting, setSorting] = useAtom(sortingAtom);
   const table = useReactTable({
     data,
@@ -144,11 +146,11 @@ export interface TableColumnHeaderProps<TData, TValue>
   title: string;
 }
 
-export function TableColumnHeader<TData, TValue>({
+export const TableColumnHeader = <TData, TValue>({
   column,
   title,
   className,
-}: TableColumnHeaderProps<TData, TValue>) {
+}: TableColumnHeaderProps<TData, TValue>) => {
   // Extract inline event handlers to prevent unnecessary re-renders
   const handleSortAsc = useCallback(() => {
     column.toggleSorting(false);

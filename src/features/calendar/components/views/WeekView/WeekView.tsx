@@ -1,13 +1,17 @@
 'use client'
 
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
+
 import { isWeekend } from 'date-fns'
+
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
+
 import { WeekGrid } from './components/WeekGrid'
 import { useWeekView } from './hooks/useWeekView'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { TimezoneOffset } from '../shared'
+
 import type { WeekViewProps } from './WeekView.types'
 
 /**
@@ -32,7 +36,7 @@ import type { WeekViewProps } from './WeekView.types'
  * │10  │    │    │ EV │    │    │    │    │
  * └────┴────┴────┴────┴────┴────┴────┴────┘
  */
-export function WeekView({
+export const WeekView = ({
   dateRange,
   tasks,
   events,
@@ -56,7 +60,7 @@ export function WeekView({
   onNavigatePrev,
   onNavigateNext,
   onNavigateToday
-}: WeekViewProps) {
+}: WeekViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
   // 週の開始日を計算（通常は dateRange.start を使用）

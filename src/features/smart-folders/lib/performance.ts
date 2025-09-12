@@ -1,6 +1,7 @@
 // スマートフォルダ パフォーマンス最適化
 
-import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
+import { SmartFolderRule } from '@/types/smart-folders'
+
 import { AdvancedRuleEngine } from './rule-engine'
 
 // インデックスマネージャー

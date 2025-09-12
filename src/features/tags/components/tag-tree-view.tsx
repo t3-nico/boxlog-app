@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+
 import { 
   ChevronRight as ChevronRightIcon,
   ChevronDown as ChevronDownIcon,
@@ -10,6 +11,7 @@ import {
   Pencil as PencilIcon,
   Trash2 as TrashIcon
 } from 'lucide-react'
+
 import type { TagWithChildren } from '@/types/tags'
 
 interface TagTreeViewProps {
@@ -34,7 +36,7 @@ interface TagTreeNodeProps {
   onRenameTag: (tag: TagWithChildren, newName: string) => void
 }
 
-function TagTreeNode({
+const TagTreeNode = ({
   tag,
   level,
   isExpanded,
@@ -43,7 +45,7 @@ function TagTreeNode({
   onEditTag,
   onDeleteTag,
   onRenameTag
-}: TagTreeNodeProps) {
+}: TagTreeNodeProps) => {
   const [showMenu, setShowMenu] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(tag.name)
@@ -223,7 +225,7 @@ function TagTreeNode({
   )
 }
 
-export function TagTreeView({
+export const TagTreeView = ({
   tags,
   onCreateTag,
   onEditTag,
@@ -232,7 +234,7 @@ export function TagTreeView({
   expandedNodes = new Set(),
   onToggleExpanded = () => {},
   isLoading = false
-}: TagTreeViewProps) {
+}: TagTreeViewProps) => {
   const [localExpandedNodes, setLocalExpandedNodes] = useState<Set<string>>(expandedNodes)
   
   const handleToggleExpanded = useCallback((tagId: string) => {

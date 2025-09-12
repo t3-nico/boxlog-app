@@ -19,18 +19,9 @@
  */
 
 import React from 'react'
+
 import { useRouter } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Avatar } from '@/components/shadcn-ui/avatar'
-import { useAuthContext } from '@/features/auth'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/shadcn-ui/dropdown-menu'
+
 import {
   LogOut as ArrowRightStartOnRectangleIcon,
   Settings as Cog8ToothIcon,
@@ -39,16 +30,27 @@ import {
   ShieldCheck as ShieldCheckIcon,
   Sparkles as SparklesIcon,
 } from 'lucide-react'
-import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
 
-const { md, lg } = icon.size
-import { border, background, text, semantic, selection } from '@/config/theme/colors'
+import { Avatar } from '@/components/shadcn-ui/avatar'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/shadcn-ui/dropdown-menu'
+import { rounded, animations, icons, colors } from '@/config/theme'
+import { useAuthContext } from '@/features/auth'
+import { cn } from '@/lib/utils'
+
+const { md, lg } = icons.size
 
 interface UserMenuProps {
   children?: React.ReactNode
 }
 
-export function UserMenu({ children }: UserMenuProps) {
+export const UserMenu = ({ children }: UserMenuProps) => {
   const router = useRouter()
   const { user, signOut } = useAuthContext()
 
@@ -66,8 +68,9 @@ export function UserMenu({ children }: UserMenuProps) {
       <DropdownMenuTrigger asChild>
         {children ? children : (
           <button className={cn(
-            'flex items-center justify-center hover:bg-accent group',
-            componentRadius.button.lg,
+            'flex items-center justify-center group',
+            colors.hover.subtle,
+            rounded.component.button.lg,
             animations.transition.fast
           )}>
             <div className="relative">
@@ -76,15 +79,15 @@ export function UserMenu({ children }: UserMenuProps) {
                   src={user.user_metadata.avatar_url} 
                   className={cn(
                     lg, 'border',
-                    border.universal,
-                    componentRadius.media.avatar
+                    colors.border.default,
+                    rounded.component.avatar.md
                   )}
                 />
               ) : user?.user_metadata?.profile_icon ? (
                 <div className={cn(
                   lg, 'text-sm flex items-center justify-center bg-accent border',
-                  border.universal,
-                  componentRadius.media.avatar
+                  colors.border.default,
+                  rounded.component.avatar.md
                 )}>
                   {user.user_metadata.profile_icon}
                 </div>
@@ -93,8 +96,8 @@ export function UserMenu({ children }: UserMenuProps) {
                   src={undefined}
                   className={cn(
                     lg, 'border',
-                    border.universal,
-                    componentRadius.media.avatar
+                    colors.border.default,
+                    rounded.component.avatar.md
                   )}
                   initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                 />
@@ -107,8 +110,8 @@ export function UserMenu({ children }: UserMenuProps) {
       <DropdownMenuContent 
         className={cn(
           "w-64 z-[9999]",
-          background.surface,
-          border.universal
+          colors.background.surface,
+          colors.border.default
         )}
         side="top" 
         align="start"
@@ -129,7 +132,7 @@ export function UserMenu({ children }: UserMenuProps) {
 
         <DropdownMenuItem 
           onClick={() => router.push('/settings')}
-          className={cn('focus:bg-transparent', selection.hover)}
+          className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <Cog8ToothIcon className={cn(md, 'mr-2')} />
           Settings
@@ -139,7 +142,7 @@ export function UserMenu({ children }: UserMenuProps) {
 
         <DropdownMenuItem 
           asChild
-          className={cn('focus:bg-transparent', selection.hover)}
+          className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <a href="#">
             <ShieldCheckIcon className={cn(md, 'mr-2')} />
@@ -149,7 +152,7 @@ export function UserMenu({ children }: UserMenuProps) {
 
         <DropdownMenuItem 
           asChild
-          className={cn('focus:bg-transparent', selection.hover)}
+          className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <a href="#">
             <LightBulbIcon className={cn(md, 'mr-2')} />
@@ -159,7 +162,7 @@ export function UserMenu({ children }: UserMenuProps) {
 
         <DropdownMenuItem 
           onClick={() => router.push('/help')}
-          className={cn('focus:bg-transparent', selection.hover)}
+          className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
           Help
@@ -167,7 +170,7 @@ export function UserMenu({ children }: UserMenuProps) {
 
         <DropdownMenuItem 
           asChild
-          className={cn('focus:bg-transparent', selection.hover)}
+          className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <a href="#">
             <SparklesIcon className={cn(md, 'mr-2')} />
@@ -181,7 +184,7 @@ export function UserMenu({ children }: UserMenuProps) {
           onClick={handleSignOut}
           className={cn(
             'focus:bg-transparent focus:text-accent-foreground',
-            semantic.warning.hover
+            colors.semantic.warning.hover
           )}
         >
           <ArrowRightStartOnRectangleIcon className={cn(md, 'mr-2')} />

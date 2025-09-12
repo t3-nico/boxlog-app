@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import { MainSupportChat } from '@/features/help/components/main-support-chat'
 
 export default function HelpPage() {

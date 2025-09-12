@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
+
 import { Button } from '@/components/shadcn-ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
 import { Input } from '@/components/shadcn-ui/input'
 import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/ui/tagIcons'
 
@@ -22,7 +23,7 @@ interface TagEditDialogProps {
   onSave: (tag: Tag) => void
 }
 
-export function TagEditDialog({ tag, open, onClose, onSave }: TagEditDialogProps) {
+export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps) => {
   const [name, setName] = useState('')
   const [color, setColor] = useState('#6b7280')
   const [icon, setIcon] = useState<TagIconName>('TagIcon')

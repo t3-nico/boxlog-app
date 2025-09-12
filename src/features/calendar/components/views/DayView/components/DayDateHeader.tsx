@@ -1,8 +1,10 @@
 'use client'
 
 import React from 'react'
+
 import { format, isToday } from 'date-fns'
 import { ja } from 'date-fns/locale'
+
 import { cn } from '@/lib/utils'
 
 interface DayDateHeaderProps {
@@ -15,11 +17,11 @@ interface DayDateHeaderProps {
  * DayView専用の日付ヘッダー
  * シンプルな日付表示
  */
-export function DayDateHeader({ 
+export const DayDateHeader = ({ 
   date, 
   timezone,
   className 
-}: DayDateHeaderProps) {
+}: DayDateHeaderProps) => {
   const today = isToday(date)
   
   return (

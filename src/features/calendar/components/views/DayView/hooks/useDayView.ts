@@ -1,8 +1,9 @@
-import { useDayEvents } from './useDayEvents'
-import type { UseDayViewOptions, UseDayViewReturn } from '../DayView.types'
-import { useTimeSlots } from '../../shared/hooks/useTimeSlots'
-import { useIsToday } from '../../shared/hooks/useIsToday'
 import { useEventStyles } from '../../shared/hooks/useEventStyles'
+import { useIsToday } from '../../shared/hooks/useIsToday'
+import { useTimeSlots } from '../../shared/hooks/useTimeSlots'
+import type { UseDayViewOptions, UseDayViewReturn } from '../DayView.types'
+
+import { useDayEvents } from './useDayEvents'
 
 export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
   

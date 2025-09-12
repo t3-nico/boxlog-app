@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+
 import { useChat } from 'ai/react'
-import { useAuthContext } from '@/features/auth'
-import { Avatar } from '@/components/shadcn-ui/avatar'
+
 import { 
   MoreVertical,
   Trash2,
@@ -11,25 +11,26 @@ import {
   RefreshCw,
   BotMessageSquare
 } from 'lucide-react'
-import {
-  AIInput,
-  AIInputTextarea,
-  AIInputToolbar,
-  AIInputSubmit,
-  AIInputButton,
-  AIInputTools
-} from '@/components/kibo-ui/ai/input'
+
 import {
   AIConversation,
   AIConversationContent,
   AIConversationScrollButton
 } from '@/components/kibo-ui/ai/conversation'
 import {
+  AIInput,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputSubmit,
+  AIInputTools
+} from '@/components/kibo-ui/ai/input'
+import {
   AIMessage,
-  AIMessageContent,
-  AIMessageAvatar
+  AIMessageContent
 } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
+import { Avatar } from '@/components/shadcn-ui/avatar'
+import { useAuthContext } from '@/features/auth'
 
 // Vercel AI SDK message type extension
 interface ExtendedMessage {
@@ -65,7 +66,7 @@ const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: st
   </AIResponse>
 )
 
-function MessageBubble({ message }: { message: ExtendedMessage }) {
+const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
   const { user } = useAuthContext()
   const isUser = message.role === 'user'
   const isAssistant = message.role === 'assistant' || message.role === 'system'
@@ -148,7 +149,7 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
   )
 }
 
-function MainSupportChatInput({ 
+const MainSupportChatInput = ({ 
   input,
   handleInputChange,
   handleSubmit,
@@ -158,7 +159,7 @@ function MainSupportChatInput({
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
-}) {
+}) => {
   const [isComposing, setIsComposing] = useState(false)
 
   const getSubmitStatus = () => {
@@ -209,7 +210,7 @@ function MainSupportChatInput({
   )
 }
 
-export function MainSupportChat() {
+export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
   
   // Use Vercel AI SDK's useChat hook with simple configuration

@@ -1,7 +1,9 @@
 'use client'
 
 import React from 'react'
+
 import { Calendar, Clock, Users, Settings } from 'lucide-react'
+
 import { NavigationTemplate, NavigationSection, NavigationItem } from '../'
 import { CreateButton } from '../../create-button'
 
@@ -9,7 +11,7 @@ import { CreateButton } from '../../create-button'
  * Calendar機能用のナビゲーション例
  * 各featureで同様のパターンで実装可能
  */
-export function CalendarNavigationExample() {
+export const CalendarNavigationExample = () => {
   return (
     <NavigationTemplate
       sections={[

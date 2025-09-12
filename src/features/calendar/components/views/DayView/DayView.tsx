@@ -1,22 +1,27 @@
 'use client'
 
-import React, { useEffect, useRef, useMemo } from 'react'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+import React, { useMemo } from 'react'
+
+
+import useCalendarToast from '@/features/calendar/lib/toast'
+import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
+
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
-import { DayContent } from './components/DayContent'
-import { useDayView } from './hooks/useDayView'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
+
+import { DayContent } from './components/DayContent'
 import type { DayViewProps } from './DayView.types'
-import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
-import useCalendarToast from '@/features/calendar/lib/toast'
+import { useDayView } from './hooks/useDayView'
+
+
 
 const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
-export function DayView({
+export const DayView = ({
   dateRange,
   tasks,
   events,
@@ -39,7 +44,7 @@ export function DayView({
   onNavigatePrev,
   onNavigateNext,
   onNavigateToday
-}: DayViewProps) {
+}: DayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   const { updateEventTime } = useEventStore()
   const toast = useCalendarToast()

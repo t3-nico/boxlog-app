@@ -1,7 +1,7 @@
 // スマートフォルダパフォーマンス最適化システム
 
-import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
-import { AdvancedSmartFolderRule } from './advanced-rules'
+import { SmartFolder } from '@/types/smart-folders'
+
 
 // インクリメンタル更新管理
 export class IncrementalUpdateManager {

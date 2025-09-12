@@ -5,9 +5,11 @@
 'use client'
 
 import React, { memo } from 'react'
-import { formatDate } from '../utils/dateHelpers'
+
+import { selection } from '@/config/theme/colors'
+
 import type { DayDisplayProps } from '../types/view.types'
-import { primary, secondary, selection } from '@/config/theme/colors'
+import { formatDate } from '../utils/dateHelpers'
 
 export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   date,

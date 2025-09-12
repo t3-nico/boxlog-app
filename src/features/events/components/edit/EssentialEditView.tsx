@@ -1,14 +1,19 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, Trash2, ChevronDown, Calendar, Clock, Zap } from 'lucide-react'
-import { TitleInput } from '../create/TitleInput'
+import { X, Loader2, Check, FileText, Bell, MoreHorizontal, Repeat, Trash2 } from 'lucide-react'
+
+import { text, primary, semantic } from '@/config/theme/colors'
+
+import { rounded } from '@/config/theme/rounded'
+import { body, heading } from '@/config/theme/typography'
+
 import { DateSelector } from '../create/DateSelector'
 import { TagInput } from '../create/TagInput'
-import { background, text, primary, semantic } from '@/config/theme/colors'
-import { body, heading } from '@/config/theme/typography'
-import { rounded } from '@/config/theme/rounded'
+
+import { TitleInput } from '../create/TitleInput'
 
 interface Tag {
   id: string
@@ -42,13 +47,13 @@ interface EssentialEditViewProps {
   }
 }
 
-export function EssentialEditView({ 
+export const EssentialEditView = ({ 
   isOpen, 
   onClose, 
   onSave, 
   onDelete,
   initialData 
-}: EssentialEditViewProps) {
+}: EssentialEditViewProps) => {
   // スケジュールモード（プログレッシブ開示の核心）
   type ScheduleMode = 'later' | 'specify' | 'today' | 'tomorrow'
   
@@ -224,7 +229,7 @@ export function EssentialEditView({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className={`
               relative w-full max-w-2xl mx-4
-              ${background.base} ${rounded.modal}
+              ${colors.background.base} ${rounded.modal}
               shadow-2xl
             `}
             style={{
@@ -315,7 +320,7 @@ export function EssentialEditView({
                   onClick={onClose}
                   className={`
                     p-2 rounded-lg transition-colors duration-200
-                    hover:${background.surface} ${text.secondary}
+                    hover:${colors.background.surface} ${text.secondary}
                   `}
                 >
                   <X size={20} />
@@ -370,7 +375,7 @@ export function EssentialEditView({
                           p-3 rounded-lg transition-all duration-200 flex items-center gap-2
                           ${showMemo || memo 
                             ? `${primary.DEFAULT} text-white` 
-                            : `${background.surface} ${text.secondary} hover:${background.elevated}`
+                            : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
                           }
                         `}
                         title="Add memo"
@@ -384,7 +389,7 @@ export function EssentialEditView({
                           p-3 rounded-lg transition-all duration-200
                           ${reminder 
                             ? `${primary.DEFAULT} text-white` 
-                            : `${background.surface} ${text.secondary} hover:${background.elevated}`
+                            : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
                           }
                         `}
                         title="Set reminder"
@@ -396,7 +401,7 @@ export function EssentialEditView({
                       <button
                         className={`
                           p-3 rounded-lg transition-all duration-200
-                          ${background.surface} ${text.secondary} hover:${background.elevated}
+                          ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                         `}
                         title="Set repeat"
                       >
@@ -409,7 +414,7 @@ export function EssentialEditView({
                     <button
                       className={`
                         p-3 rounded-lg transition-all duration-200
-                        ${background.surface} ${text.secondary} hover:${background.elevated}
+                        ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                       `}
                       title="More options"
                     >
@@ -431,7 +436,7 @@ export function EssentialEditView({
                           onChange={(e) => setMemo(e.target.value)}
                           placeholder="Enter memo or comments..."
                           className={`
-                            w-full p-3 ${background.surface} ${text.primary}
+                            w-full p-3 ${colors.background.surface} ${text.primary}
                             border border-neutral-200 dark:border-neutral-700
                             rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500
                           `}
@@ -501,8 +506,8 @@ export function EssentialEditView({
                     onClick={onClose}
                     className={`
                       px-6 py-3 rounded-lg font-medium
-                      ${background.surface} ${text.secondary}
-                      hover:${background.elevated} transition-all duration-200
+                      ${colors.background.surface} ${text.secondary}
+                      hover:${colors.background.elevated} transition-all duration-200
                       border border-neutral-200 dark:border-neutral-700
                     `}
                   >
@@ -516,7 +521,7 @@ export function EssentialEditView({
                       transition-all duration-200
                       ${isValid && !isSubmitting
                         ? `${primary.DEFAULT} text-white hover:opacity-90 shadow-lg hover:shadow-xl`
-                        : `${background.surface} ${text.muted} cursor-not-allowed`
+                        : `${colors.background.surface} ${text.muted} cursor-not-allowed`
                       }
                     `}
                     whileHover={isValid && !isSubmitting ? { scale: 1.02 } : {}}

@@ -1,13 +1,17 @@
 'use client'
 
 import React, { useRef, useState, useEffect } from 'react'
+
+import { addMinutes, differenceInMinutes, format } from 'date-fns'
 import { useDrop } from 'react-dnd'
-import { cn } from '@/lib/utils'
-import { addMinutes, startOfDay, differenceInMinutes, format } from 'date-fns'
-import { DRAG_TYPE, DraggedEventData } from './DraggableEvent'
+
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
-import { utcToUserTimezone, userTimezoneToUtc } from '@/features/settings/utils/timezone'
 import type { CalendarEvent } from '@/features/events'
+import { utcToUserTimezone } from '@/features/settings/utils/timezone'
+import { cn } from '@/lib/utils'
+
+import { DRAG_TYPE, DraggedEventData } from './DraggableEvent'
+
 
 // スナップ間隔のオプション
 export type SnapInterval = 5 | 10 | 15 | 30
@@ -24,7 +28,7 @@ interface CalendarDropZoneProps {
 
 const MINUTES_PER_PIXEL = 60 / HOUR_HEIGHT
 
-export function CalendarDropZone({
+export const CalendarDropZone = ({
   date,
   dayIndex,
   onEventUpdate,
@@ -32,7 +36,7 @@ export function CalendarDropZone({
   showDropIndicator = true,
   children,
   className
-}: CalendarDropZoneProps) {
+}: CalendarDropZoneProps) => {
   const dropRef = useRef<HTMLDivElement>(null)
   const [dropPosition, setDropPosition] = useState<number | null>(null)
   const [hoveredTime, setHoveredTime] = useState<string | null>(null)

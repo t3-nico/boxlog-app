@@ -1,14 +1,16 @@
 'use client'
 
-import { Input } from '@/components/shadcn-ui/input'
-import { Listbox, ListboxLabel, ListboxOption } from '@/components/custom'
-import { getCountries } from '@/lib/data'
-import Image from 'next/image'
 import { useState } from 'react'
 
-export function Address() {
-  let countries = getCountries()
-  let [country, setCountry] = useState(countries[0])
+import Image from 'next/image'
+
+import { Listbox, ListboxLabel, ListboxOption } from '@/components/custom'
+import { Input } from '@/components/shadcn-ui/input'
+import { getCountries } from '@/lib/data'
+
+export const Address = () => {
+  const countries = getCountries()
+  const [country, setCountry] = useState(countries[0])
 
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -42,7 +44,7 @@ export function Address() {
             <Image 
               className="w-5 sm:w-4 object-cover" 
               src={country.flagUrl} 
-              alt={country.name + ' flag'}
+              alt={`${country.name  } flag`}
               width={20}
               height={15}
             />

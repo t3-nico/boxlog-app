@@ -1,16 +1,21 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+
 import { format, isSameDay, isToday } from 'date-fns'
 import { X } from 'lucide-react'
-import { TimeColumn } from '../shared/grid/TimeColumn'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-import { useAddPopup } from '@/hooks/useAddPopup'
+
 import { DeleteToast } from '@/components/shadcn-ui/delete-toast'
-import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
-import type { ViewDateRange, Task, TaskRecord } from '../../../types/calendar.types'
+import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarEvent } from '@/features/events'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useAddPopup } from '@/hooks/useAddPopup'
+
+import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
+import type { ViewDateRange, Task } from '../../../types/calendar.types'
+
+
+import { TimeColumn } from '../shared/grid/TimeColumn'
 
 interface WeekCalendarLayoutProps {
   dates: Date[]
@@ -25,7 +30,7 @@ interface WeekCalendarLayoutProps {
 }
 
 // 現在時刻線コンポーネント（シンプル版）
-function CurrentTimeLine({ day }: { day: Date }) {
+const CurrentTimeLine = ({ day }: { day: Date }) => {
   if (!isToday(day)) return null
   
   const now = new Date()
@@ -43,7 +48,7 @@ function CurrentTimeLine({ day }: { day: Date }) {
   )
 }
 
-export function WeekCalendarLayout({
+export const WeekCalendarLayout = ({
   dates,
   tasks,
   events = [],
@@ -53,7 +58,7 @@ export function WeekCalendarLayout({
   onUpdateEvent,
   onDeleteEvent,
   onRestoreEvent
-}: WeekCalendarLayoutProps) {
+}: WeekCalendarLayoutProps) => {
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
   const { records, fetchRecords } = useRecordsStore()

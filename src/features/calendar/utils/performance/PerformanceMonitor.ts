@@ -377,7 +377,7 @@ export class PerformanceMonitor {
    * メモリ情報の取得
    */
   private getMemoryInfo(): MemoryInfo {
-    const memory = (performance as any).memory
+    const {memory} = (performance as any)
     
     if (memory) {
       const used = memory.usedJSHeapSize
@@ -440,7 +440,7 @@ export class PerformanceMonitor {
     recommendations: string[]
     score: number
   } {
-    const metrics = this.metrics
+    const {metrics} = this
     const issues: string[] = []
     const recommendations: string[] = []
     let score = 100

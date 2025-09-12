@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import { format } from 'date-fns'
+
+import type { CalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
+
 import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor, useEventStyles, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
-import type { CalendarEvent } from '@/features/events'
+
 
 interface TwoWeekContentProps {
   date: Date
@@ -22,7 +24,7 @@ interface TwoWeekContentProps {
   displayDates?: Date[] // 2週間の全日付配列（日付間移動用）
 }
 
-export function TwoWeekContent({
+export const TwoWeekContent = ({
   date,
   events,
   onEventClick,
@@ -34,7 +36,7 @@ export function TwoWeekContent({
   className,
   dayIndex,
   displayDates
-}: TwoWeekContentProps) {
+}: TwoWeekContentProps) => {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {

@@ -1,12 +1,16 @@
 'use client'
 
 import React from 'react'
-import { usePathname } from 'next/navigation'
-import { useNavigationStore } from '../sidebar/stores/navigation.store'
-import { PanelRight } from 'lucide-react'
-import { background, border, secondary, text } from '@/config/theme/colors'
 
-export function NavigationToggle() {
+import { usePathname } from 'next/navigation'
+
+import { PanelRight } from 'lucide-react'
+
+import { border, secondary, text } from '@/config/theme/colors'
+
+import { useNavigationStore } from '../sidebar/stores/navigation.store'
+
+export const NavigationToggle = () => {
   const pathname = usePathname()
   const { isSecondaryNavCollapsed, setSecondaryNavCollapsed } = useNavigationStore()
   const isSettings = pathname.startsWith('/settings')
@@ -20,7 +24,7 @@ export function NavigationToggle() {
     <div className="absolute bottom-4 left-4 z-20">
       <button
         onClick={() => setSecondaryNavCollapsed(false)}
-        className={`p-2 rounded-md transition-colors ${background.surface} border ${border.alpha} shadow-sm ${secondary.hover}`}
+        className={`p-2 rounded-md transition-colors ${colors.background.surface} border ${border.alpha} shadow-sm ${secondary.hover}`}
         title="Open sidebar"
       >
         <PanelRight className={`w-4 h-4 ${text.muted}`} />

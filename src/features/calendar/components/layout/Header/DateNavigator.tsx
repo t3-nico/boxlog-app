@@ -1,8 +1,9 @@
 'use client'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+import { secondary, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
-import { selection, secondary, text } from '@/config/theme/colors'
 
 export type NavigationDirection = 'prev' | 'next' | 'today'
 
@@ -26,7 +27,7 @@ const arrowSizes = {
  * 日付ナビゲーション
  * 前後移動と今日への移動を提供
  */
-export function DateNavigator({
+export const DateNavigator = ({
   onNavigate,
   todayLabel = 'Today',
   showTodayButton = true,
@@ -34,7 +35,7 @@ export function DateNavigator({
   className,
   buttonClassName,
   arrowSize = 'md'
-}: DateNavigatorProps) {
+}: DateNavigatorProps) => {
   return (
     <div className={cn('flex items-center gap-2', className)}>
       {/* 今日ボタン */}
@@ -94,11 +95,11 @@ export function DateNavigator({
 /**
  * コンパクトな日付ナビゲーション（矢印のみ）
  */
-export function CompactDateNavigator({
+export const CompactDateNavigator = ({
   onNavigate,
   className,
   arrowSize = 'sm'
-}: Pick<DateNavigatorProps, 'onNavigate' | 'className' | 'arrowSize'>) {
+}: Pick<DateNavigatorProps, 'onNavigate' | 'className' | 'arrowSize'>) => {
   return (
     <DateNavigator
       onNavigate={onNavigate}

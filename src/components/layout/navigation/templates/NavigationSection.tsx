@@ -1,9 +1,10 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
+
 import { typography } from '@/config/theme'
 import { text } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 export interface NavigationSectionProps {
   title?: string
@@ -16,7 +17,7 @@ export interface NavigationSectionProps {
   icon?: React.ComponentType<{ className?: string }>
 }
 
-export function NavigationSection({
+export const NavigationSection = ({
   title,
   children,
   className,
@@ -25,7 +26,7 @@ export function NavigationSection({
   collapsible = false,
   defaultCollapsed = false,
   icon: Icon
-}: NavigationSectionProps) {
+}: NavigationSectionProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
 
   const handleToggle = () => {

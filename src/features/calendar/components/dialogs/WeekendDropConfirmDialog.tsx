@@ -1,10 +1,11 @@
 'use client'
 
 import React from 'react'
-import { Calendar, AlertTriangle } from 'lucide-react'
+
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { cn } from '@/lib/utils'
+import { Calendar, AlertTriangle } from 'lucide-react'
+
 import { Button } from '@/components/shadcn-ui/button'
 import { 
   Dialog, 
@@ -14,7 +15,8 @@ import {
   DialogDescription,
   DialogFooter 
 } from '@/components/shadcn-ui/dialog'
-import { primary, secondary, background, text } from '@/config/theme/colors'
+import { primary, text } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 interface WeekendDropConfirmDialogProps {
   isOpen: boolean
@@ -30,7 +32,7 @@ interface WeekendDropConfirmDialogProps {
  * 週末へのドラッグ&ドロップ時の確認ダイアログ
  * 週末表示がOFFの時に、イベントを平日に移動するか確認
  */
-export function WeekendDropConfirmDialog({
+export const WeekendDropConfirmDialog = ({
   isOpen,
   eventTitle,
   originalDate,
@@ -38,7 +40,7 @@ export function WeekendDropConfirmDialog({
   onConfirm,
   onCancel,
   onClose
-}: WeekendDropConfirmDialogProps) {
+}: WeekendDropConfirmDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[500px]">
@@ -65,7 +67,7 @@ export function WeekendDropConfirmDialog({
           {/* イベント情報 */}
           <div className={cn(
             'p-4 rounded-lg border',
-            background.surface,
+            colors.background.surface,
             'border-border'
           )}>
             <div className="flex items-start gap-3">

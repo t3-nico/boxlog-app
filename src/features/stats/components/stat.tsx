@@ -1,15 +1,16 @@
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Separator } from '@/components/shadcn-ui/separator'
+import { typography, colors } from '@/config/theme'
 
-export function Stat({ title, value, change }: { title: string; value: string; change: string }) {
+export const Stat = ({ title, value, change }: { title: string; value: string; change: string }) => {
   return (
     <div>
       <Separator />
-      <div className="mt-6 text-lg/6 font-medium sm:text-sm/6">{title}</div>
-      <div className="mt-3 text-3xl/8 font-semibold sm:text-2xl/8">{value}</div>
-      <div className="mt-3 text-sm/6 sm:text-xs/6">
-        <Badge color={change.startsWith('+') ? 'lime' : 'pink'}>{change}</Badge>{' '}
-        <span className="text-zinc-500">from last week</span>
+      <div className={`mt-6 ${typography.heading.h6} font-medium`}>{title}</div>
+      <div className={`mt-3 ${typography.heading.h2} font-semibold`}>{value}</div>
+      <div className={`mt-3 ${typography.body.small}`}>
+        <Badge className={change.startsWith('+') ? colors.semantic.success.DEFAULT : colors.semantic.error.DEFAULT}>{change}</Badge>{' '}
+        <span className={colors.text.muted}>from last week</span>
       </div>
     </div>
   )

@@ -95,7 +95,7 @@ export const trashOperations = {
    */
   truncateTitle: (title: string, maxLength = 50): string => {
     if (title.length <= maxLength) return title
-    return title.slice(0, maxLength - 3) + '...'
+    return `${title.slice(0, maxLength - 3)  }...`
   },
 
   /**
@@ -104,7 +104,7 @@ export const trashOperations = {
   truncateDescription: (description: string | undefined, maxLength = 100): string => {
     if (!description) return ''
     if (description.length <= maxLength) return description
-    return description.slice(0, maxLength - 3) + '...'
+    return `${description.slice(0, maxLength - 3)  }...`
   },
 
   /**

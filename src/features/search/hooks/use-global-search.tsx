@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, createContext, useContext, ReactNode } from 'react'
+
 import { GlobalSearchModal } from '../components/global-search-modal'
 
 interface GlobalSearchContextType {
@@ -19,7 +20,7 @@ export function useGlobalSearch() {
   return context
 }
 
-export function GlobalSearchProvider({ children }: { children: ReactNode }) {
+export const GlobalSearchProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const open = useCallback(() => {

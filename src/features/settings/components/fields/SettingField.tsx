@@ -1,8 +1,9 @@
 'use client'
 
 import React from 'react'
-import { colors, typography, spacing } from '@/config/theme'
+
 import { Label } from '@/components/shadcn-ui/label'
+import { colors, typography, spacing } from '@/config/theme'
 
 interface SettingFieldProps {
   label: string
@@ -11,12 +12,12 @@ interface SettingFieldProps {
   required?: boolean
 }
 
-export function SettingField({ 
+export const SettingField = ({ 
   label, 
   description, 
   children,
   required 
-}: SettingFieldProps) {
+}: SettingFieldProps) => {
   return (
     <div className={spacing.stackGap.sm}>
       <Label className={`${typography.body.small} font-medium ${colors.text.primary}`}>

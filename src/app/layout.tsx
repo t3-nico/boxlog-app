@@ -1,9 +1,12 @@
 // app/layout.tsx（最終版）
 import '@/styles/globals.css'
 import type { Metadata } from 'next'
+
 import { Providers } from '@/components/common'
-import { background } from '@/config/theme/colors'
 import { ToastContainer } from '@/lib/toast'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/react'
+import { colors } from '@/config/theme'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,11 +28,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
       </head>
-      <body className={background.base}>
+      <body className={colors.background.base}>
         <Providers>
           {children}
           <ToastContainer />
         </Providers>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   )

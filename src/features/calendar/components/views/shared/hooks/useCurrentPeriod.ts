@@ -4,7 +4,9 @@
  */
 
 import { useMemo } from 'react'
+
 import { isSameWeek, isSameDay } from 'date-fns'
+
 import { getTodayIndex } from '../utils/dateHelpers'
 
 export interface UseCurrentPeriodOptions {

@@ -58,7 +58,7 @@ module.exports = {
       return {
         Property(node) {
           const key = node.key.name || node.key.value || '';
-          const value = node.value;
+          const {value} = node;
 
           // Check for retention period configuration
           if (['retentionDays', 'retention_days', 'ttl', 'expires_in'].includes(key)) {
@@ -166,7 +166,7 @@ module.exports = {
 
           if (functionName && functionName.toLowerCase().includes('delete')) {
             // Check for audit logging
-            let parent = node.parent;
+            let {parent} = node;
             while (parent && parent.type !== 'FunctionDeclaration') {
               parent = parent.parent;
             }
@@ -333,7 +333,7 @@ module.exports = {
             key.toLowerCase().includes(field.toLowerCase())
           )) {
             // Check if data is being processed for analytics/reporting
-            let parent = node.parent;
+            let {parent} = node;
             while (parent) {
               if (parent.type === 'CallExpression') {
                 const functionName = parent.callee.name ||

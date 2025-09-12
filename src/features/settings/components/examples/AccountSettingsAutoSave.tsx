@@ -1,11 +1,12 @@
 'use client'
 
 import React from 'react'
+
+import { Input } from '@/components/shadcn-ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
+import { Switch } from '@/components/shadcn-ui/switch'
 import { SettingsLayout, SettingsCard, SettingField } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { Input } from '@/components/shadcn-ui/input'
-import { Switch } from '@/components/shadcn-ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 
 interface ProfileSettings {
   displayName: string

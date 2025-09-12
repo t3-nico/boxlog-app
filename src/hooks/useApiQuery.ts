@@ -4,11 +4,9 @@
  */
 
 import { useQuery, useMutation, useQueryClient, QueryKey } from '@tanstack/react-query'
-import { 
-  createErrorResponse, 
-  createSuccessResponse,
-  handleClientError
-} from '@/lib/errors'
+
+
+
 
 // === 基本設定 ===
 
@@ -78,7 +76,7 @@ export function useApiMutation<TData = any, TVariables = any>(
       try {
         const storageKey = `boxlog-${config.table}`
         const existingData = localStorage.getItem(storageKey)
-        let data = existingData ? JSON.parse(existingData) : []
+        const data = existingData ? JSON.parse(existingData) : []
 
         switch (config.operation) {
           case 'insert':

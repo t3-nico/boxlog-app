@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { cn } from '@/lib/utils'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
-import { format, addMinutes, startOfDay } from 'date-fns'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { cn } from '@/lib/utils'
+
 
 interface EventResizeHandleProps {
   type: 'start' | 'end'
@@ -25,7 +26,7 @@ interface ResizeState {
   isInvalid: boolean
 }
 
-export function EventResizeHandle({
+export const EventResizeHandle = ({
   type,
   eventId,
   currentTime,
@@ -34,7 +35,7 @@ export function EventResizeHandle({
   maxTime = "23:45",
   otherTime,
   className
-}: EventResizeHandleProps) {
+}: EventResizeHandleProps) => {
   const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
   const [resizeState, setResizeState] = useState<ResizeState>({
     isResizing: false,

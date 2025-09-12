@@ -1,12 +1,13 @@
 'use client'
 
 import React from 'react'
+
 import { useRouter } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import { NavigationItem, isNavItemActive } from '@/config/navigation/config'
+import { rounded, animations, icons, typography, colors } from '@/config/theme'
 import { useGlobalSearch } from '@/features/search'
-import { componentRadius, columns, animations, icons, typography, colors } from '@/config/theme'
-import { selection, text, background, secondary } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 interface SidebarItemProps {
   item: NavigationItem
@@ -14,7 +15,7 @@ interface SidebarItemProps {
   onItemClick?: () => void // Sidebarを閉じるコールバック
 }
 
-export function SidebarItem({ item, pathname, onItemClick }: SidebarItemProps) {
+export const SidebarItem = ({ item, pathname, onItemClick }: SidebarItemProps) => {
   const router = useRouter()
   const { open: openGlobalSearch } = useGlobalSearch()
   const Icon = item.icon
@@ -38,12 +39,12 @@ export function SidebarItem({ item, pathname, onItemClick }: SidebarItemProps) {
       onClick={handleClick}
       className={cn(
         'w-full flex items-center gap-3 p-2 text-left',
-        componentRadius.button.md,
+        rounded.component.button.md,
         animations.transition.fast,
         'relative group',
         isActive
-          ? `${selection.text} ${selection.DEFAULT}`
-          : `bg-transparent ${text.muted} ${selection.hover}`
+          ? `${colors.text.onPrimary} ${colors.primary.DEFAULT}`
+          : `bg-transparent ${colors.text.muted} ${colors.hover.subtle}`
       )}
     >
       <Icon className={icons.size.md} />
@@ -55,7 +56,7 @@ export function SidebarItem({ item, pathname, onItemClick }: SidebarItemProps) {
           'ml-auto w-5 h-5',
           'bg-destructive text-destructive-foreground text-xs font-medium',
           'flex items-center justify-center',
-          componentRadius.badge.pill
+          rounded.component.badge.pill
         )}>
           {item.badge}
         </div>

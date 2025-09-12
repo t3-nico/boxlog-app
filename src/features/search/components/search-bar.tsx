@@ -1,10 +1,13 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+
 import { Search, X, Loader2 } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Input } from '@/components/shadcn-ui/input'
+
 import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
+import { cn } from '@/lib/utils'
+
 import { useSearch, useSearchHistory } from '../hooks/use-search'
 import type { SearchResultType } from '../types'
 
@@ -17,14 +20,14 @@ interface SearchBarProps {
   autoFocus?: boolean
 }
 
-export function SearchBar({
+export const SearchBar = ({
   className,
   placeholder = 'Search tasks, tags, events...',
   types,
   onResultSelect,
   showResults = true,
   autoFocus = false
-}: SearchBarProps) {
+}: SearchBarProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -152,7 +155,7 @@ export function SearchBar({
 }
 
 // Compact search bar for header/navbar
-export function CompactSearchBar({ className }: { className?: string }) {
+export const CompactSearchBar = ({ className }: { className?: string }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   
   if (!isExpanded) {

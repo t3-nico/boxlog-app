@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { 
   Plus, 
   Edit3, 
   Trash2,
   ExternalLink
 } from 'lucide-react'
+
 import { Button } from '@/components/shadcn-ui/button'
 
 interface Document {
@@ -25,7 +27,7 @@ interface ChatHistoryItem {
   timestamp: Date
 }
 
-export function AIChatSidebarSections({ collapsed }: { collapsed: boolean }) {
+export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => {
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: '1',

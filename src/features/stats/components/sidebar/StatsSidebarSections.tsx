@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import { TagsList } from '@/features/tags/components/tags-list'
 
 interface StatsSidebarSectionsProps {
@@ -10,11 +11,11 @@ interface StatsSidebarSectionsProps {
   selectedTagIds: string[]
 }
 
-export function StatsSidebarSections({
+export const StatsSidebarSections = ({
   collapsed,
   onSelectTag,
   selectedTagIds
-}: StatsSidebarSectionsProps) {
+}: StatsSidebarSectionsProps) => {
   return (
     <>
       {/* 期間設定（将来拡張予定） */}

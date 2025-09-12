@@ -1,6 +1,7 @@
 'use client'
 
 import { Settings, Download, Upload, MoreHorizontal } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 interface HeaderActionsProps {
@@ -16,14 +17,14 @@ interface HeaderActionsProps {
  * ヘッダーアクションボタン群
  * 設定、インポート/エクスポート、その他のアクション
  */
-export function HeaderActions({
+export const HeaderActions = ({
   onSettings,
   onExport,
   onImport,
   onMore,
   className,
   compact = false
-}: HeaderActionsProps) {
+}: HeaderActionsProps) => {
   const buttonClass = cn(
     'p-2 rounded-md transition-colors',
     'hover:bg-accent/50 text-muted-foreground hover:text-foreground',

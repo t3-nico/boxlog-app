@@ -5,9 +5,9 @@
  * 直接Tailwindクラスの使用を検出してレポートします
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // 検出対象のパターン（正規表現）
 const VIOLATION_PATTERNS = [
@@ -137,7 +137,7 @@ function main() {
   const endTime = Date.now();
   const duration = endTime - startTime;
   
-  console.log('\n' + '='.repeat(60));
+  console.log(`\n${  '='.repeat(60)}`);
   console.log('📊 スキャン結果');
   console.log('='.repeat(60));
   console.log(`チェックファイル数: ${checkedFiles}`);

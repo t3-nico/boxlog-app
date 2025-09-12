@@ -1,16 +1,17 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+
 import { useDragLayer } from 'react-dnd'
-import { DRAG_TYPE } from './DraggableEvent'
+
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+
+import { DRAG_TYPE } from './DraggableEvent'
 
 const MINUTES_PER_PIXEL = 60 / HOUR_HEIGHT
 
-export function DragPreview() {
+export const DragPreview = () => {
   const [mounted, setMounted] = useState(false)
   const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
   
@@ -29,7 +30,7 @@ export function DragPreview() {
   }
 
   // ドラッグ中のイベント情報
-  const event = item.event
+  const {event} = item
   const eventDuration = event.endDate && event.startDate
     ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
     : 60 // デフォルト1時間

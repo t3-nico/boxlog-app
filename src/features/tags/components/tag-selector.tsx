@@ -1,18 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { Tag } from '@/types/unified'
-import { useTagStore } from '@/features/tags/stores/tag-store'
-import { TagBadge } from './tag-badge'
+
+import { ChevronDown as ChevronDownIcon } from 'lucide-react'
+
 import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/shadcn-ui/dropdown-menu'
-import { ChevronDown as ChevronDownIcon, Plus as PlusIcon } from 'lucide-react'
+import { Input } from '@/components/shadcn-ui/input'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { Tag } from '@/types/unified'
+
+import { TagBadge } from './tag-badge'
+
+
 
 interface TagSelectorProps {
   selectedTagIds: string[]
@@ -21,12 +26,12 @@ interface TagSelectorProps {
   placeholder?: string
 }
 
-export function TagSelector({
+export const TagSelector = ({
   selectedTagIds,
   onTagsChange,
   maxTags,
   placeholder = 'Select tags...'
-}: TagSelectorProps) {
+}: TagSelectorProps) => {
   const { getAllTags, getTagHierarchy } = useTagStore()
   const [searchQuery, setSearchQuery] = useState('')
   

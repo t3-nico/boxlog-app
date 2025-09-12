@@ -1,14 +1,17 @@
 'use client'
 
 import React from 'react'
-import { Plus, Calendar, ChevronDown } from 'lucide-react'
+
+import { Plus, ChevronDown } from 'lucide-react'
+
 import { Button } from '@/components/shadcn-ui/button'
-import { useCreateModalStore } from '../../stores/useCreateModalStore'
-import { primary, text } from '@/config/theme/colors'
-import { body } from '@/config/theme/typography'
+
+import { primary } from '@/config/theme/colors'
+import { elevation } from '@/config/theme/elevation'
 import { icon } from '@/config/theme/icons'
 import { rounded } from '@/config/theme/rounded'
-import { elevation } from '@/config/theme/elevation'
+
+import { useCreateModalStore } from '../../stores/useCreateModalStore'
 import type { CreateEventRequest } from '../../types/events'
 
 interface CreateEventTriggerProps {
@@ -18,12 +21,12 @@ interface CreateEventTriggerProps {
   source?: 'sidebar' | 'calendar' | 'table' | 'kanban'
 }
 
-export function CreateEventTrigger({
+export const CreateEventTrigger = ({
   variant = 'sidebar',
   className = '',
   initialData,
   source = 'sidebar'
-}: CreateEventTriggerProps) {
+}: CreateEventTriggerProps) => {
   const { openModal } = useCreateModalStore()
   
   const handleClick = () => {

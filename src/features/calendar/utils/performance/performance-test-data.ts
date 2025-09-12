@@ -74,7 +74,7 @@ export function generateTestEvents(count: number, dateRange: Date[] = []): Calen
         color: category.color,
         icon: category.icon
       }],
-      duration: duration,
+      duration,
       isMultiDay: duration > 240, // 4時間以上はマルチデイとして扱う
       isRecurring: i % 15 === 0, // 15個に1つは繰り返し
       createdAt: new Date(),

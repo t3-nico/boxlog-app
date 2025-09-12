@@ -1,20 +1,25 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+
 import { X, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
+
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
+import { colors, rounded, animations, icons } from '@/config/theme'
+import { cn } from '@/lib/utils'
+
+import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
-import { background, text, border } from '@/config/theme/colors'
-import { componentRadius, animations, icon, appear } from '@/config/theme'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-import { InspectorAIChat } from './inspector-ai-chat'
+
+
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
-const { sm } = icon.size
+const { sm } = icons.size
 
-export function MobileInspector() {
+export const MobileInspector = () => {
   const pathname = usePathname()
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
   const { toggleInspector } = useInspectorStore()
@@ -37,7 +42,7 @@ export function MobileInspector() {
         className={cn(
           'fixed inset-0 z-[9998]',
           'bg-black bg-opacity-50',
-          appear.fadeIn
+          animations.appear.fadeIn
         )}
         onClick={() => toggleInspector()}
       />
@@ -48,9 +53,9 @@ export function MobileInspector() {
           'fixed inset-0 z-[9999]',
           'flex flex-col',
           'overflow-hidden', // コンテナ自体のスクロールを防ぐ
-          background.surface,
-          text.primary,
-          appear.slideUp
+          colors.background.surface,
+          colors.text.primary,
+          animations.appear.slideUp
         )}
         onKeyDown={handleKeyDown}
         aria-label="インスペクター"
@@ -61,16 +66,16 @@ export function MobileInspector() {
         <div className={cn(
           'flex items-center justify-start p-4',
           'border-b',
-          border.universal,
-          background.surface
+          colors.border.default,
+          colors.background.surface
         )}>
           <button
             onClick={() => toggleInspector()}
             className={cn(
               'w-10 h-10 flex items-center justify-center',
-              componentRadius.button.sm,
+              rounded.component.button.sm,
               animations.transition.fast,
-              'hover:bg-accent',
+              colors.hover.subtle,
               'flex-shrink-0'
             )}
             aria-label="インスペクターを閉じる"
@@ -81,7 +86,7 @@ export function MobileInspector() {
 
         {/* Inspector Tabs */}
         <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
-          <div className={cn("px-4 pb-2 border-b flex-shrink-0", border.universal)}>
+          <div className={cn("px-4 pb-2 border-b flex-shrink-0", colors.border.default)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />

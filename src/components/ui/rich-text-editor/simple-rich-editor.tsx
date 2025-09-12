@@ -1,11 +1,13 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/shadcn-ui/button'
+import React, { useCallback } from 'react'
+
 import { Bold, Italic, Underline, List, ListOrdered, CheckSquare, Link } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
+
+import { Button } from '@/components/shadcn-ui/button'
 import { typography } from '@/config/theme'
+import { text, border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 interface SimpleRichEditorProps {
   value?: string
@@ -14,12 +16,12 @@ interface SimpleRichEditorProps {
   className?: string
 }
 
-export function SimpleRichEditor({ 
+export const SimpleRichEditor = ({ 
   value = '', 
   onChange, 
   placeholder = "入力してください...", 
   className 
-}: SimpleRichEditorProps) {
+}: SimpleRichEditorProps) => {
   const editorRef = React.useRef<HTMLDivElement>(null)
 
   const handleContentChange = useCallback((e: React.FormEvent<HTMLDivElement>) => {
@@ -101,14 +103,14 @@ export function SimpleRichEditor({
   return (
     <div className={cn(
       'w-full border rounded-lg overflow-hidden relative',
-      background.base,
+      colors.background.base,
       border.universal,
       className
     )}>
       {/* ツールバー */}
       <div className={cn(
         'flex items-center gap-1 p-2 border-b overflow-x-auto',
-        background.surface,
+        colors.background.surface,
         border.universal
       )}>
         {/* テキスト装飾 */}

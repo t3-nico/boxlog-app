@@ -5,6 +5,7 @@
 'use client'
 
 import { useEffect, useCallback, useRef } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
 
 export interface KeyboardShortcutHandlers {

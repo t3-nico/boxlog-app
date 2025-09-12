@@ -5,6 +5,7 @@
 'use client'
 
 import React, { useMemo, useEffect, useState } from 'react'
+
 const currentTimeLineStyles = {
   container: 'absolute z-30 pointer-events-none w-full',
   label: 'absolute bg-red-500 text-white text-xs px-1 py-0.5 rounded text-[11px] top-[-10px]',
@@ -19,11 +20,11 @@ interface CurrentTimeLineProps {
   timeColumnWidth?: number
 }
 
-export function CurrentTimeLine({
+export const CurrentTimeLine = ({
   hourHeight,
   displayDates,
   timeColumnWidth = 0
-}: CurrentTimeLineProps) {
+}: CurrentTimeLineProps) => {
   const [currentTime, setCurrentTime] = useState(new Date())
   
   // 現在時刻を1分ごとに更新

@@ -1,14 +1,17 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, ChevronDown, Calendar, Clock, Zap, Trash2, X } from 'lucide-react'
-import { TitleInput } from './TitleInput'
+import { Loader2, Check, FileText, Bell, MoreHorizontal, Repeat, Trash2, X } from 'lucide-react'
+
+import { text, primary, semantic } from '@/config/theme/colors'
+
+import { body, heading } from '@/config/theme/typography'
+
 import { DateSelector } from './DateSelector'
 import { TagInput } from './TagInput'
-import { background, text, primary, semantic } from '@/config/theme/colors'
-import { body, heading } from '@/config/theme/typography'
-import { rounded } from '@/config/theme/rounded'
+import { TitleInput } from './TitleInput'
 
 interface Tag {
   id: string
@@ -42,13 +45,13 @@ interface EssentialInspectorViewProps {
   }
 }
 
-export function EssentialInspectorView({ 
+export const EssentialInspectorView = ({ 
   onClose, 
   onSave, 
   onDelete,
   isEditMode = false,
   initialData 
-}: EssentialInspectorViewProps) {
+}: EssentialInspectorViewProps) => {
   
   // 2択式シンプルモード（最速入力と詳細予定のみ）
   type ScheduleMode = 'defer' | 'schedule' // 後で決める | 今すぐ予定する
@@ -284,7 +287,7 @@ export function EssentialInspectorView({
 
     try {
       // 2択モードに応じてデータを整形
-      let saveData: any = {
+      const saveData: any = {
         title,
         tags,
         description: memo || undefined
@@ -428,7 +431,7 @@ export function EssentialInspectorView({
   }
 
   return (
-    <div className={`h-full flex flex-col ${background.base}`}>
+    <div className={`h-full flex flex-col ${colors.background.base}`}>
       {/* Inspector Header */}
       <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-700 flex-shrink-0">
         <div className="flex items-center gap-3">
@@ -452,7 +455,7 @@ export function EssentialInspectorView({
           onClick={onClose}
           className={`
             p-2 rounded-lg transition-colors duration-200
-            hover:${background.surface} ${text.secondary}
+            hover:${colors.background.surface} ${text.secondary}
           `}
         >
           <X size={18} />
@@ -596,7 +599,7 @@ export function EssentialInspectorView({
                   p-2 rounded-lg transition-all duration-200 flex items-center gap-2
                   ${showMemo || memo 
                     ? `${primary.DEFAULT} text-white` 
-                    : `${background.surface} ${text.secondary} hover:${background.elevated}`
+                    : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
                   }
                 `}
                 title="Add memo"
@@ -610,7 +613,7 @@ export function EssentialInspectorView({
                   p-2 rounded-lg transition-all duration-200
                   ${reminder 
                     ? `${primary.DEFAULT} text-white` 
-                    : `${background.surface} ${text.secondary} hover:${background.elevated}`
+                    : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
                   }
                 `}
                 title="Set reminder"
@@ -622,7 +625,7 @@ export function EssentialInspectorView({
               <button
                 className={`
                   p-2 rounded-lg transition-all duration-200
-                  ${background.surface} ${text.secondary} hover:${background.elevated}
+                  ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                 `}
                 title="Set repeat"
               >
@@ -633,7 +636,7 @@ export function EssentialInspectorView({
               <button
                 className={`
                   p-2 rounded-lg transition-all duration-200
-                  ${background.surface} ${text.secondary} hover:${background.elevated}
+                  ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                 `}
                 title="More options"
               >
@@ -655,7 +658,7 @@ export function EssentialInspectorView({
                     onChange={(e) => setMemo(e.target.value)}
                     placeholder="Enter memo or comments..."
                     className={`
-                      w-full p-3 ${background.surface} ${text.primary}
+                      w-full p-3 ${colors.background.surface} ${text.primary}
                       border border-neutral-200 dark:border-neutral-700
                       rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500
                       text-sm
@@ -724,8 +727,8 @@ export function EssentialInspectorView({
             onClick={onClose}
             className={`
               px-4 py-2 rounded-lg font-medium text-sm
-              ${background.surface} ${text.secondary}
-              hover:${background.elevated} transition-all duration-200
+              ${colors.background.surface} ${text.secondary}
+              hover:${colors.background.elevated} transition-all duration-200
               border border-neutral-200 dark:border-neutral-700
             `}
           >
@@ -739,7 +742,7 @@ export function EssentialInspectorView({
               transition-all duration-200
               ${isValid && !isSubmitting
                 ? `${primary.DEFAULT} text-white hover:opacity-90`
-                : `${background.surface} ${text.muted} cursor-not-allowed`
+                : `${colors.background.surface} ${text.muted} cursor-not-allowed`
               }
             `}
             whileHover={isValid && !isSubmitting ? { scale: 1.02 } : {}}

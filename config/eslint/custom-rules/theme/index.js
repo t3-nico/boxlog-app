@@ -2,8 +2,8 @@
  * BoxLog Theme ESLintプラグイン
  */
 
-const performanceRules = require('./performance-rules');
 const bundleOptimizationRules = require('./bundle-optimization-rules');
+const performanceRules = require('./performance-rules');
 
 module.exports = {
   rules: {

@@ -87,7 +87,7 @@ module.exports = {
 
     // theme関連のインポートを追跡
     let hasThemeImport = false;
-    let themeImports = new Set();
+    const themeImports = new Set();
 
     // 色関連クラスの検出パターン
     const COLOR_PATTERNS = [
@@ -152,8 +152,8 @@ module.exports = {
           const finalMessageId = isNewFile ? 'newFileViolation' : 'legacyFileWarning';
 
           context.report({
-            node: node,
-            messageId: messageId,
+            node,
+            messageId,
             data: {
               class: violationClass,
               suggestion,
@@ -165,7 +165,7 @@ module.exports = {
           if (!hasThemeImport) {
             const neededImport = getNeededImport(violationClass);
             context.report({
-              node: node,
+              node,
               messageId: 'missingThemeImport',
               data: {
                 imports: neededImport,
@@ -207,7 +207,7 @@ module.exports = {
             checkClassName(node.value, node.value.value);
           } else if (node.value.type === 'JSXExpressionContainer') {
             // JSX式: className={`bg-${color}-500`}
-            const expression = node.value.expression;
+            const {expression} = node.value;
             
             if (expression.type === 'TemplateLiteral') {
               // テンプレートリテラルの静的部分をチェック

@@ -140,7 +140,7 @@ export class LocalStorageService {
   // ストレージサイズ計算
   private calculateStorageSize(): number {
     let total = 0
-    for (let key in localStorage) {
+    for (const key in localStorage) {
       if (localStorage.hasOwnProperty(key)) {
         total += localStorage[key].length + key.length
       }

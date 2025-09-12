@@ -1,11 +1,6 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
-
-import { Button } from '@/components/shadcn-ui/button'
-import { colors, typography, spacing, rounded, animations } from '@/config/theme'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
-
 import { 
   ArrowUpCircle, 
   Sparkles, 
@@ -14,18 +9,34 @@ import {
   Copy
 } from 'lucide-react'
 
-function MessageBubble({ message }: { message: ChatMessage }) {
+import { Button } from '@/components/shadcn-ui/button'
+import { cn } from '@/lib/utils'
+import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { colors, typography, spacing, rounded, animations } from '@/config/theme'
+
+
+const MessageBubble = ({ message }: { message: ChatMessage }) => {
   const isUser = message.sender === 'user'
   
   if (isUser) {
     return (
-      <div className={`${spacing.margin.md} flex justify-end`}>
-        <div className={`${colors.primary.DEFAULT} ${colors.text.onPrimary} rounded-2xl rounded-tr-sm ${spacing.padding.md} max-w-[80%] break-words`}>
-          <div className={`${typography.body.sm} leading-relaxed whitespace-pre-wrap`}>
+      <div className={cn(spacing.margin.md, 'flex justify-end')}>
+        <div className={cn(
+          colors.primary.DEFAULT,
+          colors.text.onPrimary,
+          'rounded-2xl rounded-tr-sm max-w-[80%] break-words',
+          spacing.padding.md
+        )}>
+          <div className={cn(typography.body.sm, 'leading-relaxed whitespace-pre-wrap')}>
             {message.content}
           </div>
           {message.status && (
-            <div className={`${spacing.margin.xs} ${typography.body.xs} ${colors.text.onPrimary} opacity-75`}>
+            <div className={cn(
+              spacing.margin.xs,
+              typography.body.xs,
+              colors.text.onPrimary,
+              'opacity-75'
+            )}>
               {message.status === 'sending' && 'Sending...'}
               {message.status === 'error' && 'Error sending message'}
             </div>
@@ -36,18 +47,33 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   }
   
   return (
-    <div className={`${spacing.margin.md} flex justify-start items-start gap-3`}>
+    <div className={cn(spacing.margin.md, 'flex justify-start items-start gap-3')}>
       {/* AI Avatar */}
-      <div className={`w-8 h-8 ${rounded.full} ${colors.gradient.primaryTertiary} flex items-center justify-center ${colors.text.onPrimary} flex-shrink-0`}>
+      <div className={cn(
+        'w-8 h-8 flex items-center justify-center flex-shrink-0',
+        rounded.full,
+        colors.gradient.primaryTertiary,
+        colors.text.onPrimary
+      )}>
         <Sparkles className="w-4 h-4" />
       </div>
       
       {/* AI Message Bubble */}
-      <div className={`${colors.background.card} ${colors.text.primary} rounded-2xl rounded-tl-sm ${spacing.padding.md} max-w-[80%] break-words ${colors.border.default}`}>
-        <div className={`${typography.body.sm} leading-relaxed whitespace-pre-wrap`}>
+      <div className={cn(
+        'rounded-2xl rounded-tl-sm max-w-[80%] break-words',
+        colors.background.card,
+        colors.text.primary,
+        colors.border.default,
+        spacing.padding.md
+      )}>
+        <div className={cn(typography.body.sm, 'leading-relaxed whitespace-pre-wrap')}>
           {message.content}
         </div>
-        <div className={`${spacing.margin.xs} ${typography.body.small} ${colors.text.muted}`}>
+        <div className={cn(
+          spacing.margin.xs,
+          typography.body.small,
+          colors.text.muted
+        )}>
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
@@ -55,7 +81,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   )
 }
 
-function ChatInput() {
+const ChatInput = () => {
   const { state, sendMessage, setInputValue } = useChatContext()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -78,13 +104,18 @@ function ChatInput() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      const scrollHeight = textareaRef.current.scrollHeight
-      textareaRef.current.style.height = Math.min(scrollHeight, 120) + 'px'
+      const {scrollHeight} = textareaRef.current
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 120)  }px`
     }
   }, [state.inputValue])
 
   return (
-    <div className={`flex-shrink-0 ${spacing.padding.md} ${colors.border.top} ${colors.background.base}`}>
+    <div className={cn(
+      'flex-shrink-0',
+      spacing.padding.md,
+      colors.border.top,
+      colors.background.base
+    )}>
       {/* Typing indicator */}
       {state.isTyping && (
         <div className={`flex items-center gap-2 ${spacing.margin.sm} ${typography.body.sm} ${colors.text.muted}`}>
@@ -125,7 +156,7 @@ function ChatInput() {
   )
 }
 
-export function InspectorAIChat() {
+export const InspectorAIChat = () => {
   const { state, clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)

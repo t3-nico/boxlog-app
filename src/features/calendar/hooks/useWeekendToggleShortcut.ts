@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 
 /**
@@ -19,7 +20,7 @@ export function useWeekendToggleShortcut() {
       event.stopPropagation()
 
       // 入力フィールドにフォーカスがある場合は無視
-      const activeElement = document.activeElement
+      const {activeElement} = document
       const isInputField = activeElement && (
         activeElement.tagName === 'INPUT' ||
         activeElement.tagName === 'TEXTAREA' ||

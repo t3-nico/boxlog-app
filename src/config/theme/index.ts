@@ -47,7 +47,7 @@ export {
 // animations は下記で詳細エクスポートしているため削除
 
 // 詳細なカラーシステムをエクスポート
-export { colors } from './colors'
+export { colors, primary, secondary, selection, text, background, border, semantic, state, button, ghost } from './colors'
 
 // アイコンシステムをエクスポート
 export { icons, icon, iconPatterns, commonIcons, iconUtils } from './icons'
@@ -85,6 +85,12 @@ export {
   getInputClasses,
   getTemporaryUIElevation
 } from './elevation'
+
+// エレベーションで定義されたcardパターンもエクスポート
+import { animations } from './animations'
+import { colors } from './colors'
+import { patterns , elevation } from './elevation'
+export const {card} = patterns
 
 // ============================================
 // 型定義
@@ -220,14 +226,11 @@ export {
 // ============================================
 
 // テーマオブジェクトを各ファイルから直接作成
-import { typography } from './typography'
-import { spacing } from './spacing' 
-import { layout } from './layout'
-import { colors } from './colors'
 import { icons } from './icons'
-import { rounded, borders } from './rounded'
-import { animations } from './animations'
-import { elevation } from './elevation'
+import { layout } from './layout'
+import { rounded } from './rounded'
+import { spacing } from './spacing' 
+import { typography } from './typography'
 
 export const theme = {
   typography,
@@ -237,7 +240,7 @@ export const theme = {
   icons,
   rounded,
   elevation,
-  borders,
+  borders: rounded.borders,
   animations
 } as const
 

@@ -1,12 +1,14 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { useNavigationStore } from './stores/navigation.store'
-import { border } from '@/config/theme/colors'
-import { animations } from '@/config/theme'
 
-export function ResizeHandle() {
+import { animations } from '@/config/theme'
+import { border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+import { useNavigationStore } from './stores/navigation.store'
+
+export const ResizeHandle = () => {
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
 
   const handleMouseDown = (e: React.MouseEvent) => {

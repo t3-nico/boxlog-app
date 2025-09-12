@@ -1,6 +1,4 @@
 import { 
-  startOfWeek, 
-  endOfWeek, 
   isWithinInterval, 
   isSameDay,
   addDays,
@@ -10,6 +8,7 @@ import {
   startOfDay,
   endOfDay
 } from 'date-fns'
+
 import { CalendarEvent } from '@/features/events/types/events'
 
 export interface EventSegment extends CalendarEvent {

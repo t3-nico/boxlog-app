@@ -1,6 +1,11 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy , useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { clsx } from 'clsx'
 import { 
   Plus as PlusIcon,
   ChevronRight as ChevronRightIcon,
@@ -9,16 +14,13 @@ import {
   Folder as FolderIcon,
   Menu as Bars3Icon
 } from 'lucide-react'
-import { SmartFolder } from '@/types/smart-folders'
-import { SmartFolderDialog } from './smart-folder-dialog'
-import { SmartFolderContextMenu } from './smart-folder-context-menu'
+
 import { useSmartFolders, useCreateSmartFolder, useUpdateSmartFolder, useDeleteSmartFolder, useReorderSmartFolders } from '@/features/smart-folders/hooks/use-smart-folders'
 import { useActiveState } from '@/hooks/useActiveState'
-import { clsx } from 'clsx'
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+import { SmartFolder } from '@/types/smart-folders'
+
+import { SmartFolderContextMenu } from './smart-folder-context-menu'
+import { SmartFolderDialog } from './smart-folder-dialog'
 
 interface SmartFolderListProps {
   collapsed?: boolean
@@ -29,7 +31,7 @@ interface SmartFolderListProps {
 }
 
 // ソート可能なフォルダアイテム
-function SortableSmartFolderItem({ 
+const SortableSmartFolderItem = ({ 
   folder, 
   isSelected, 
   isCollapsed, 
@@ -41,7 +43,7 @@ function SortableSmartFolderItem({
   isCollapsed: boolean
   onClick: () => void
   onContextMenu: (e: React.MouseEvent, folder: SmartFolder) => void
-}) {
+}) => {
   const { isSmartFolderActive } = useActiveState()
   const isActive = isSmartFolderActive(folder.id)
   
@@ -132,13 +134,13 @@ function SortableSmartFolderItem({
   )
 }
 
-export function SmartFolderList({ 
+export const SmartFolderList = ({ 
   collapsed = false, 
   currentPath = '', 
   selectedFolderId = '',
   onSelectFolder,
   previewItems = []
-}: SmartFolderListProps) {
+}: SmartFolderListProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)

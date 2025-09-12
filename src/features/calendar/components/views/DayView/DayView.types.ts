@@ -1,9 +1,10 @@
 import type { CSSProperties } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
+
 import type { 
   ViewDateRange, 
   Task, 
-  TaskRecord, 
   CalendarViewType,
   CreateTaskInput,
   CreateRecordInput

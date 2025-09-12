@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { cn } from '@/lib/utils'
+
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { cn } from '@/lib/utils'
 
 interface WeekendToggleTransitionProps {
   children: React.ReactNode
@@ -12,10 +13,10 @@ interface WeekendToggleTransitionProps {
 /**
  * 週末表示切り替え時のスムーズなトランジション効果を提供
  */
-export function WeekendToggleTransition({
+export const WeekendToggleTransition = ({
   children,
   className
-}: WeekendToggleTransitionProps) {
+}: WeekendToggleTransitionProps) => {
   const { showWeekends } = useCalendarSettingsStore()
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [previousShowWeekends, setPreviousShowWeekends] = useState(showWeekends)
@@ -53,7 +54,7 @@ export function WeekendToggleTransition({
 /**
  * 週末カラムの個別アニメーション効果
  */
-export function WeekendColumnTransition({
+export const WeekendColumnTransition = ({
   children,
   isWeekendColumn = false,
   className
@@ -61,7 +62,7 @@ export function WeekendColumnTransition({
   children: React.ReactNode
   isWeekendColumn?: boolean
   className?: string
-}) {
+}) => {
   const { showWeekends } = useCalendarSettingsStore()
   const [isVisible, setIsVisible] = useState(showWeekends || !isWeekendColumn)
 
@@ -100,7 +101,7 @@ export function WeekendColumnTransition({
 /**
  * グリッドレイアウトの動的調整アニメーション
  */
-export function GridLayoutTransition({
+export const GridLayoutTransition = ({
   children,
   totalColumns,
   className
@@ -108,7 +109,7 @@ export function GridLayoutTransition({
   children: React.ReactNode
   totalColumns: number
   className?: string
-}) {
+}) => {
   const [previousColumns, setPreviousColumns] = useState(totalColumns)
   const [isAdjusting, setIsAdjusting] = useState(false)
 

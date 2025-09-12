@@ -1,12 +1,15 @@
 'use client'
 
+import { useCallback } from 'react'
+
+import Placeholder from '@tiptap/extension-placeholder'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Placeholder from '@tiptap/extension-placeholder'
 import { Bold, Italic, List, ListOrdered, Quote, Heading1, Heading2, Heading3 } from 'lucide-react'
+
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
-import { useCallback } from 'react'
+
 
 interface RichTextEditorProps {
   content: string
@@ -16,13 +19,13 @@ interface RichTextEditorProps {
   minimal?: boolean
 }
 
-export function RichTextEditor({ 
+export const RichTextEditor = ({ 
   content, 
   onChange, 
   placeholder = "Add description...", 
   className,
   minimal = false 
-}: RichTextEditorProps) {
+}: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({

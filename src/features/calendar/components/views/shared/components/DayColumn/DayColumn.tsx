@@ -5,13 +5,14 @@
 'use client'
 
 import React, { memo, useMemo } from 'react'
-import { EventBlock } from '../EventBlock'
-import { EmptyState } from '../EmptyState'
+
+import { HOUR_HEIGHT, GRID_BACKGROUND } from '../../constants/grid.constants'
 import { useEventPosition } from '../../hooks/useEventPosition'
-import { filterEventsByDate, sortTimedEvents } from '../../utils/eventPositioning'
+import type { DayColumnProps } from '../../types/view.types'
 import { isToday, isWeekend } from '../../utils/dateHelpers'
-import { HOUR_HEIGHT, GRID_BACKGROUND, Z_INDEX } from '../../constants/grid.constants'
-import type { DayColumnProps, TimedEvent } from '../../types/view.types'
+import { filterEventsByDate, sortTimedEvents } from '../../utils/eventPositioning'
+import { EmptyState } from '../EmptyState'
+import { EventBlock } from '../EventBlock'
 
 export const DayColumn = memo<DayColumnProps>(function DayColumn({
   date,

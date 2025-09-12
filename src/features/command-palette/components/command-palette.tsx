@@ -1,23 +1,9 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+
 import { useRouter, useSearchParams } from 'next/navigation'
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/shadcn-ui/command'
-import { SearchResult } from '../config/command-palette'
-import { SearchEngine } from '../lib/search-engine'
-import { Task } from '@/types/unified'
-import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
-import { useDebounce } from '@/hooks/use-debounce'
-import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-import { useTagStore } from '@/features/tags/stores/tag-store'
-import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
+
 import { 
   Navigation,
   Plus,
@@ -28,12 +14,32 @@ import {
   BookOpen
 } from 'lucide-react'
 
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/shadcn-ui/command'
+
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
+import { useDebounce } from '@/hooks/use-debounce'
+import { Task } from '@/types/unified'
+
+import { SearchResult } from '../config/command-palette'
+import { commandRegistry, registerDefaultCommands } from '../lib/command-registry'
+import { SearchEngine } from '../lib/search-engine'
+
+
 interface CommandPaletteProps {
   isOpen: boolean
   onClose: () => void
 }
 
-export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
+export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -216,7 +222,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
 
   // Group results by category
   const groupedResults = results.reduce((groups: Record<string, SearchResult[]>, result) => {
-    const category = result.category
+    const {category} = result
     if (!groups[category]) {
       groups[category] = []
     }

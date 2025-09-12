@@ -5,9 +5,11 @@
  */
 
 import React from 'react'
+
+import { cva } from 'class-variance-authority'
+
 import { Button } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
-import { cva, type VariantProps } from 'class-variance-authority'
 
 const dangerButtonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-red-500 focus-visible:ring-red-500/20 focus-visible:ring-[3px] bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-500/20',
@@ -30,14 +32,14 @@ interface DangerButtonProps extends React.ComponentProps<typeof Button> {
   confirmText?: string
 }
 
-export function DangerButton({ 
+export const DangerButton = ({ 
   children, 
   loading = false, 
   confirmText,
   className,
   onClick,
   ...props 
-}: DangerButtonProps) {
+}: DangerButtonProps) => {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (confirmText && !window.confirm(confirmText)) {
       return

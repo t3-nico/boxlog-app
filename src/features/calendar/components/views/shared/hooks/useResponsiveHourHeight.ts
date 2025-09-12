@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect } from 'react'
+
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 interface ResponsiveHourHeightConfig {

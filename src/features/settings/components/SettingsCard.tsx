@@ -1,9 +1,11 @@
 'use client'
 
 import React from 'react'
+
+import { Loader2 } from 'lucide-react'
+
 import { colors, typography, spacing, rounded } from '@/config/theme'
 import { cn } from '@/lib/utils'
-import { Loader2 } from 'lucide-react'
 
 interface SettingsCardProps {
   title?: string
@@ -15,7 +17,7 @@ interface SettingsCardProps {
   isSaving?: boolean
 }
 
-export function SettingsCard({
+export const SettingsCard = ({
   title,
   description,
   children,
@@ -23,7 +25,7 @@ export function SettingsCard({
   actions,
   noPadding = false,
   isSaving = false
-}: SettingsCardProps) {
+}: SettingsCardProps) => {
   return (
     <div className={cn(
       `${colors.background.surface} ${rounded.lg} border ${colors.border.alpha}`,

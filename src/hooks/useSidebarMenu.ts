@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
+
 import { sidebarConfig, MenuSection, MenuItem } from '@/config/ui/sidebarConfig'
-import { useTagStore } from '@/features/tags/stores/tag-store'
-import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { useAuthContext } from '@/features/auth'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 
 export const useSidebarMenu = () => {
   const { user } = useAuthContext()

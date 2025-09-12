@@ -1,12 +1,14 @@
 'use client'
 
 import React from 'react'
+
 import { Calendar, CheckSquare, Bell } from 'lucide-react'
+
 import { Badge } from '@/components/shadcn-ui/badge'
-import { semantic, text } from '@/config/theme/colors'
-import { body } from '@/config/theme/typography'
+import { semantic } from '@/config/theme/colors'
 import { icon } from '@/config/theme/icons'
-import { spacing } from '@/config/theme/spacing'
+import { body } from '@/config/theme/typography'
+
 import type { EventType } from '../../types/events'
 
 interface EventTypeBadgeProps {
@@ -41,13 +43,13 @@ const typeConfig = {
   }
 } as const
 
-export function EventTypeBadge({
+export const EventTypeBadge = ({
   type,
   variant = 'default',
   size = 'md',
   showIcon = true,
   className = ''
-}: EventTypeBadgeProps) {
+}: EventTypeBadgeProps) => {
   const config = typeConfig[type]
   const Icon = config.icon
 

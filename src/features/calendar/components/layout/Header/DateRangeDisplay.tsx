@@ -2,10 +2,11 @@
 
 import { format, getWeek } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { heading } from '@/config/theme/typography'
+
 import { secondary, border } from '@/config/theme/colors'
+import { heading } from '@/config/theme/typography'
 import { MiniCalendarPopover } from '@/features/calendar/components/common'
+import { cn } from '@/lib/utils'
 
 interface DateRangeDisplayProps {
   date: Date
@@ -23,7 +24,7 @@ interface DateRangeDisplayProps {
  * 日付範囲表示
  * 単一日付または期間を表示し、オプションで週番号も表示
  */
-export function DateRangeDisplay({
+export const DateRangeDisplay = ({
   date,
   endDate,
   viewType,
@@ -33,7 +34,7 @@ export function DateRangeDisplay({
   weekBadgeClassName,
   onDateSelect,
   clickable = false
-}: DateRangeDisplayProps) {
+}: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
   
   // 期間表示の場合
@@ -147,13 +148,13 @@ export function DateRangeDisplay({
 /**
  * 週番号バッジ
  */
-function WeekBadge({ 
+const WeekBadge = ({ 
   weekNumber, 
   className 
 }: { 
   weekNumber: number
   className?: string 
-}) {
+}) => {
   return (
     <h6 className={cn(
       'inline-flex items-center px-2 py-1',
@@ -171,11 +172,11 @@ function WeekBadge({
 /**
  * コンパクトな日付表示（モバイル用）
  */
-export function CompactDateDisplay({
+export const CompactDateDisplay = ({
   date,
   showWeekNumber = false,
   className
-}: Pick<DateRangeDisplayProps, 'date' | 'showWeekNumber' | 'className'>) {
+}: Pick<DateRangeDisplayProps, 'date' | 'showWeekNumber' | 'className'>) => {
   return (
     <div className={cn('flex items-center gap-1', className)}>
       <span className="text-base font-medium">

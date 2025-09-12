@@ -1,14 +1,16 @@
 'use client'
 
 import React from 'react'
+
 import { Table, Filter, Download, Eye } from 'lucide-react'
-import { NavigationTemplate, NavigationSection, NavigationItem } from '../'
+
+import { NavigationTemplate, NavigationItem } from '../'
 import { CreateButton } from '../../create-button'
 
 /**
  * Table機能用のナビゲーション例
  */
-export function TableNavigationExample() {
+export const TableNavigationExample = () => {
   return (
     <NavigationTemplate
       sections={[

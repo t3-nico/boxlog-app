@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { ja } from 'date-fns/locale'
+
 import { 
   useEventsByDate,
   useCurrentPeriod,

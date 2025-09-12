@@ -1,18 +1,18 @@
 'use client'
 
-import { useState } from 'react'
 import { BarChart3 } from 'lucide-react'
-import { Heading } from '@/components/custom'
-import { useChatContext } from '@/contexts/chat-context'
-import { colors, typography, spacing, elevation, rounded } from '@/config/theme'
 
-export default function Stats() {
+import { Heading } from '@/components/custom'
+import { colors, typography, spacing, rounded, layout } from '@/config/theme'
+import { useChatContext } from '@/contexts/chat-context'
+
+export default function StatsPage() {
   const { toggleChat, state } = useChatContext()
 
   return (
     <div className="flex flex-col h-full relative">
-      <div className={`flex-1 ${spacing.page.default} transition-all duration-300 ${state.isOpen ? 'mr-80' : ''}`}>
-        <div className="mx-auto max-w-6xl">
+      <div className={`flex-1 ${spacing.page.default} transition-all duration-300 ${state.isOpen ? layout.chat.offset : ''}`}>
+        <div className={`mx-auto ${layout.container.xl}`}>
           <Heading>Stats View</Heading>
           <div className={`${spacing.margin.xl} flex items-center justify-center h-64 ${colors.background.subtle} ${rounded.component.card.lg} border-2 border-dashed ${colors.border.subtle}`}>
             <div className="text-center">

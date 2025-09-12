@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
+
+import { colors, typography, spacing, icons, rounded } from '@/config/theme'
+
 import { useTrashStore } from '../stores/useTrashStore'
-import { trashOperations } from '../utils/trash-operations'
-import { colors, typography, spacing, icons, rounded, elevation } from '@/config/theme'
 
 interface TrashActionsProps {
   className?: string

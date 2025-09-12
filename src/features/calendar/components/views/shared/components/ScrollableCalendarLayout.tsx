@@ -5,10 +5,11 @@
 'use client'
 
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
+
 import { cn } from '@/lib/utils'
+
 import { TimeColumn, TimezoneOffset } from '../'
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
-import { secondary, semantic } from '@/config/theme/colors'
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode
@@ -31,7 +32,7 @@ interface ScrollableCalendarLayoutProps {
 
 const TIME_COLUMN_WIDTH = 64
 
-export function ScrollableCalendarLayout({
+export const ScrollableCalendarLayout = ({
   children,
   className = '',
   timezone,
@@ -46,7 +47,7 @@ export function ScrollableCalendarLayout({
   header,
   enableKeyboardNavigation = true,
   onScrollPositionChange
-}: ScrollableCalendarLayoutProps) {
+}: ScrollableCalendarLayoutProps) => {
   // ScrollableCalendarLayout がレンダリングされました
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -148,7 +149,7 @@ export function ScrollableCalendarLayout({
   const handleScroll = useCallback(() => {
     if (!scrollContainerRef.current) return
     
-    const scrollTop = scrollContainerRef.current.scrollTop
+    const {scrollTop} = scrollContainerRef.current
     setIsScrolling(true)
     
     if (onScrollPositionChange) {
@@ -407,11 +408,11 @@ interface CalendarLayoutWithHeaderProps extends ScrollableCalendarLayoutProps {
   header: React.ReactNode
 }
 
-export function CalendarLayoutWithHeader({
+export const CalendarLayoutWithHeader = ({
   header,
   children,
   ...props
-}: CalendarLayoutWithHeaderProps) {
+}: CalendarLayoutWithHeaderProps) => {
   // CalendarLayoutWithHeader が呼び出されました
   return (
     <ScrollableCalendarLayout {...props} header={header}>

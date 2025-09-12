@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { X, Bell, BellOff, Settings, Check, Clock, Calendar } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
-import { background, border, text, semantic } from '@/config/theme/colors'
-import { useNotifications } from '../hooks/useNotifications'
+
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
+import { border, text } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
 // import { formatDistanceToNow } from 'date-fns'
 // import { ja } from 'date-fns/locale'
 
@@ -15,7 +17,7 @@ interface NotificationModalProps {
   onClose: () => void
 }
 
-export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
+export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all')
   
   // Mock data - 実際のデータは useNotifications から取得
@@ -65,7 +67,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
       {/* Modal */}
       <div className={cn(
         'relative w-full max-w-md mx-4',
-        background.surface,
+        colors.background.surface,
         border.subtle,
         'ring-1 shadow-lg',
         componentRadius.modal.container,
@@ -89,7 +91,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
             <button
               className={cn(
                 'w-8 h-8 flex items-center justify-center',
-                background.hover,
+                colors.background.hover,
                 componentRadius.button.sm,
                 animations.transition.fast
               )}
@@ -101,7 +103,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
               onClick={onClose}
               className={cn(
                 'w-8 h-8 flex items-center justify-center',
-                background.hover,
+                colors.background.hover,
                 componentRadius.button.sm,
                 animations.transition.fast
               )}
@@ -244,7 +246,7 @@ export function NotificationModal({ isOpen, onClose }: NotificationModalProps) {
               'w-full py-2',
               typography.body.sm,
               text.primary,
-              background.hover,
+              colors.background.hover,
               componentRadius.button.md,
               animations.transition.fast
             )}>

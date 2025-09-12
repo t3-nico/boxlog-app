@@ -1,11 +1,13 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+
 import { motion, AnimatePresence, Reorder } from 'framer-motion'
-import { X, Plus, Hash, TrendingUp, Tag } from 'lucide-react'
-import { text, background, border, primary, semantic } from '@/config/theme/colors'
-import { body } from '@/config/theme/typography'
+import { X, Hash, TrendingUp, Tag } from 'lucide-react'
+
+import { text, border, semantic } from '@/config/theme/colors'
 import { rounded } from '@/config/theme/rounded'
+import { body } from '@/config/theme/typography'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 
 interface Tag {
@@ -22,12 +24,12 @@ interface TagInputProps {
   contextualSuggestions?: string[]
 }
 
-export function TagInput({ 
+export const TagInput = ({ 
   selectedTags, 
   onChange, 
   onTabNext,
   contextualSuggestions = []
-}: TagInputProps) {
+}: TagInputProps) => {
   const [inputValue, setInputValue] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(0)
@@ -267,7 +269,7 @@ export function TagInput({
             onKeyDown={handleKeyDown}
             placeholder="Enter tag and press Enter to add..."
             className={`
-              w-full pl-3 pr-20 py-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-20 py-3 ${colors.background.surface} ${border.universal} 
               ${rounded.component.button.md} ${body.DEFAULT}
               focus:outline-none focus:ring-2 focus:ring-blue-500
               transition-all duration-200
@@ -290,7 +292,7 @@ export function TagInput({
                   Enter
                 </div>
                 <div className={`
-                  px-2 py-1 ${background.elevated} ${text.secondary} 
+                  px-2 py-1 ${colors.background.elevated} ${text.secondary} 
                   rounded text-xs font-medium
                   border border-neutral-300 dark:border-neutral-600
                 `}>
@@ -323,7 +325,7 @@ export function TagInput({
               exit={{ opacity: 0, y: 10 }}
               className={`
                 absolute top-full left-0 right-0 mt-2 z-50
-                ${background.base} ${border.universal} ${rounded.component.button.lg}
+                ${colors.background.base} ${border.universal} ${rounded.component.button.lg}
                 shadow-lg max-h-60 overflow-y-auto
               `}
             >
@@ -335,8 +337,8 @@ export function TagInput({
                     w-full flex items-center gap-3 px-4 py-3 text-left
                     transition-colors duration-150
                     ${index === focusedSuggestionIndex 
-                      ? `${background.elevated}` 
-                      : `hover:${background.surface}`
+                      ? `${colors.background.elevated}` 
+                      : `hover:${colors.background.surface}`
                     }
                     ${index === 0 ? 'rounded-t-lg' : ''}
                     ${index === suggestions.length - 1 ? 'rounded-b-lg' : ''}
@@ -471,7 +473,7 @@ export function TagInput({
                       className={`
                         flex items-center gap-2 px-3 py-2 rounded-full
                         font-medium text-sm cursor-move
-                        ${background.elevated} ${border.universal}
+                        ${colors.background.elevated} ${border.universal}
                       `}
                       style={{ borderColor: tag.color }}
                       whileHover={{ scale: 1.05 }}

@@ -1,21 +1,26 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname } from 'next/navigation'
+
+import { PanelRightClose, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
+
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
+import { colors, rounded, animations, layout, icons } from '@/config/theme'
 import { cn } from '@/lib/utils'
+
+import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
-import { background, text, border, ghost } from '@/config/theme/colors'
-import { componentRadius, animations, layout, icon } from '@/config/theme'
-import { PanelRightClose, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-import { InspectorAIChat } from './inspector-ai-chat'
+
+
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 const { xs } = layout.heights.header
-const { sm } = icon.size
+const { sm } = icons.size
 
-export function DesktopInspector() {
+export const DesktopInspector = () => {
   const pathname = usePathname()
   const inspectorWidth = useInspectorStore((state) => state.inspectorWidth)
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
@@ -52,9 +57,9 @@ export function DesktopInspector() {
     <div 
       className={cn(
         'flex relative z-[9999] border-l',
-        background.surface,
-        text.primary,
-        border.universal
+        colors.background.surface,
+        colors.text.primary,
+        colors.border.default
       )}
       style={{ width: `${inspectorWidth}px` }}
     >
@@ -78,27 +83,26 @@ export function DesktopInspector() {
         <div className={cn(
           'flex items-center justify-end px-2 mt-2',
           xs, // 32px height
-          background.surface
+          colors.background.surface
         )}>
           <button
             onClick={() => toggleInspector()}
             className={cn(
               'w-8 h-8 flex items-center justify-center',
-              componentRadius.button.sm,
+              rounded.component.button.sm,
               animations.transition.fast,
-              ghost.text,
-              ghost.hover,
-              ghost.active,
+              colors.ghost.text,
+              colors.hover.ghost,
               'flex-shrink-0'
             )}
           >
-            <PanelRightClose className={sm} />
+            <PanelRightClose className="w-5 h-5" />
           </button>
         </div>
 
         {/* Inspector Tabs */}
         <Tabs defaultValue="overview" className="flex-1 flex flex-col">
-          <div className={cn("px-2 pb-2 border-b", border.universal)}>
+          <div className={cn("px-2 pb-2 border-b", colors.border.default)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
                 <Calendar className="w-4 h-4" />

@@ -2,32 +2,25 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { Menu } from 'lucide-react'
-import { useNavigationStore } from './stores/navigation.store'
-import { useNotificationModal } from '@/features/notifications'
-import { useAuthContext } from '@/features/auth'
-import { primaryNavigation } from '@/config/navigation/config'
-import { SidebarItem } from './sidebar-item'
-import { UserMenu } from './user-menu'
-import { ThemeToggle } from './theme-toggle'
-import { 
-  Sheet, 
-  SheetContent, 
-  SheetTrigger 
-} from '@/components/shadcn-ui/sheet'
-import { componentRadius, animations, spacing, icon, typography, appear } from '@/config/theme'
-import { background, text, border, ghost } from '@/config/theme/colors'
-import { layout } from '@/config/theme/layout'
-import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Bell, Plus, Search } from 'lucide-react'
 
-const { xs } = layout.heights.header
-const { sm, lg } = icon.size
-const px2 = 'px-2'
-const py2 = 'py-2'
+import { Avatar } from '@/components/shadcn-ui/avatar'
+import { Sheet, SheetContent } from '@/components/shadcn-ui/sheet'
+import { primaryNavigation } from '@/config/navigation/config'
+import { useAuthContext } from '@/features/auth'
+import { useNotificationModal } from '@/features/notifications'
+import { cn } from '@/lib/utils'
+import { SidebarItem } from './sidebar-item'
+import { useNavigationStore } from './stores/navigation.store'
+import { ThemeToggle } from './theme-toggle'
+import { UserMenu } from './user-menu'
+import { colors, spacing, typography, rounded, animations, icons, layout } from '@/config/theme'
 
-export function MobileSidebar() {
+
+const { xs } = layout.heights.header
+const { sm, lg } = icons.size
+
+export const MobileSidebar = () => {
   const pathname = usePathname()
   const { isSidebarOpen, toggleSidebar } = useNavigationStore()
   const { open: openNotifications, notificationCount } = useNotificationModal()
@@ -96,10 +89,10 @@ export function MobileSidebar() {
         side="left" 
         className={cn(
           'w-4/5 p-0', // 画面の80%幅、パディングなし
-          appear.slideLeft, // テーマのslideLeftアニメーション
-          background.surface,
-          text.primary,
-          border.universal,
+          animations.appear.slideLeft, // テーマのslideLeftアニメーション
+          colors.background.surface,
+          colors.text.primary,
+          colors.border.default,
           '[&_*[class*="sheet-close"]]:!hidden', // 閉じるボタンを完全非表示
           '[&_.lucide-x]:!hidden', // Xアイコンを完全非表示
           '[&_svg[class*="lucide-x"]]:!hidden' // SVG Xアイコンを完全非表示
@@ -119,9 +112,10 @@ export function MobileSidebar() {
         <div className="flex-1 flex flex-col h-full">
           {/* Top Section: Account & Actions */}
           <div className={cn(
-            'flex items-center justify-end mt-2', // 右側にボタン配置（左側の閉じるボタンなし）
+            'flex items-center justify-end', // 右側にボタン配置（左側の閉じるボタンなし）
+            spacing.margin.top.sm,
             xs, // 32px height
-            px2 // 8px horizontal padding
+            spacing.padding.horizontal.sm // 8px horizontal padding
           )}>
             {/* Right: Action Buttons */}
             <div className="flex items-center gap-1">

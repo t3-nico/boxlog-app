@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+
 import { 
   Dialog, 
   DialogPanel, 
@@ -15,8 +16,9 @@ import {
   Tag as TagIcon,
   Plus as PlusIcon
 } from 'lucide-react'
+
+import { TAG_PRESET_COLORS } from '@/config/ui/theme'
 import type { TagWithChildren, CreateTagInput, TagLevel } from '@/types/tags'
-import { TAG_PRESET_COLORS, getCSSVariableValue } from '@/config/ui/theme'
 
 interface TagCreateModalProps {
   isOpen: boolean
@@ -44,13 +46,13 @@ const DEFAULT_COLORS = TAG_PRESET_COLORS.map(cssVar =>
   CSS_VAR_TO_HEX[cssVar as keyof typeof CSS_VAR_TO_HEX] || cssVar
 )
 
-function ColorPicker({ 
+const ColorPicker = ({ 
   value, 
   onChange 
 }: { 
   value: string; 
   onChange: (color: string) => void 
-}) {
+}) => {
   const [customColor, setCustomColor] = useState(value)
   
   useEffect(() => {
@@ -95,7 +97,7 @@ function ColorPicker({
   )
 }
 
-function ParentTagSelector({
+const ParentTagSelector = ({
   value,
   onChange,
   allTags,
@@ -105,7 +107,7 @@ function ParentTagSelector({
   onChange: (parentId: string | null) => void
   allTags: TagWithChildren[]
   maxLevel?: number
-}) {
+}) => {
   const renderTagOption = (tag: TagWithChildren, level = 0): JSX.Element[] => {
     const options: JSX.Element[] = []
     const indent = '　'.repeat(level) // 全角スペースでインデント
@@ -141,7 +143,7 @@ function ParentTagSelector({
   )
 }
 
-function TagPreview({ 
+const TagPreview = ({ 
   name, 
   color, 
   parentTag 
@@ -149,7 +151,7 @@ function TagPreview({
   name: string; 
   color: string; 
   parentTag?: TagWithChildren | null 
-}) {
+}) => {
   const path = parentTag ? `${parentTag.path}/${name}` : `#${name}`
   
   return (
@@ -178,13 +180,13 @@ function TagPreview({
   )
 }
 
-export function TagCreateModal({
+export const TagCreateModal = ({
   isOpen,
   onClose,
   onSave,
   parentTag,
   allTags = []
-}: TagCreateModalProps) {
+}: TagCreateModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
     parent_id: parentTag?.id || null,

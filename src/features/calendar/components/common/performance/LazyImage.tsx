@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
+
 import { cn } from '@/lib/utils'
 
 interface LazyImageProps {
@@ -53,7 +54,7 @@ function getImageObserver(rootMargin: string = '50px', threshold: number = 0.1):
   return imageObserver
 }
 
-export function LazyImage({
+export const LazyImage = ({
   src,
   alt,
   className,
@@ -66,7 +67,7 @@ export function LazyImage({
   onError,
   rootMargin = '50px',
   threshold = 0.1
-}: LazyImageProps) {
+}: LazyImageProps) => {
   const [state, setState] = useState<ImageState>({
     isLoaded: false,
     isIntersecting: priority, // 優先度が高い場合は即座に読み込み
@@ -294,12 +295,12 @@ async function loadIcon(name: string): Promise<string> {
   }
 }
 
-export function LazyIcon({ 
+export const LazyIcon = ({ 
   name, 
   size = 24, 
   className, 
   priority = false 
-}: LazyIconProps) {
+}: LazyIconProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [isIntersecting, setIsIntersecting] = useState(priority)

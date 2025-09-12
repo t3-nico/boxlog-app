@@ -1,10 +1,11 @@
 'use client'
 
 import { useCallback } from 'react'
-import { useEventStore } from '@/features/events/stores/useEventStore'
-import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
-import useCalendarToast from '@/features/calendar/lib/toast'
+
 import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
+import useCalendarToast from '@/features/calendar/lib/toast'
+import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
+import { useEventStore } from '@/features/events/stores/useEventStore'
 import type { CalendarEvent } from '@/features/events/types/events'
 
 export function useEventContextActions() {

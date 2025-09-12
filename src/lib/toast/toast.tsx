@@ -1,11 +1,14 @@
 'use client'
 
 import React from 'react'
+
 import { motion } from 'framer-motion'
 import { X, CheckCircle, XCircle, AlertTriangle, Info, Loader2 } from 'lucide-react'
-import type { Toast as ToastType } from './types'
+
+import { semantic, text, border } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
-import { semantic, background, text, border } from '@/config/theme/colors'
+
+import type { Toast as ToastType } from './types'
 
 const icons = {
   success: CheckCircle,
@@ -41,7 +44,7 @@ const styles = {
     icon: semantic.info.text,
   },
   loading: {
-    background: background.surface,
+    background: colors.background.surface,
     border: `border-l-4 ${border.DEFAULT}`,
     text: text.primary,
     icon: text.muted,
@@ -53,7 +56,7 @@ interface ToastProps {
   onRemove: () => void
 }
 
-export function Toast({ toast, onRemove }: ToastProps) {
+export const Toast = ({ toast, onRemove }: ToastProps) => {
   const Icon = icons[toast.type]
   const style = styles[toast.type]
   

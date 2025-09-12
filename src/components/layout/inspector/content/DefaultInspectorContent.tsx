@@ -1,13 +1,15 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { Info, Settings, HelpCircle, Zap, BarChart3, FileText } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
-import { typography } from '@/config/theme'
 
-export function DefaultInspectorContent() {
+import { Info, Settings, HelpCircle, Zap, BarChart3, FileText } from 'lucide-react'
+
+import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+import { typography } from '@/config/theme'
+import { text, border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+export const DefaultInspectorContent = () => {
   return (
     <ScrollArea className="h-full">
       <div className="p-4 space-y-6">
@@ -19,7 +21,7 @@ export function DefaultInspectorContent() {
           
           <div className={cn(
             'p-4 rounded-lg border',
-            background.surface,
+            colors.background.surface,
             border.subtle
           )}>
             <div className="flex items-start gap-3">
@@ -73,7 +75,7 @@ export function DefaultInspectorContent() {
                 key={index}
                 className={cn(
                   'p-3 rounded-lg border',
-                  background.surface,
+                  colors.background.surface,
                   border.subtle,
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
@@ -125,7 +127,7 @@ export function DefaultInspectorContent() {
                 key={index}
                 className={cn(
                   'p-3 rounded-lg border',
-                  background.surface,
+                  colors.background.surface,
                   border.subtle
                 )}
               >

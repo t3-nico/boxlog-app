@@ -3,6 +3,7 @@
  */
 
 import { useRef, useEffect, useCallback } from 'react'
+
 import type { ScrollSyncOptions } from '../types/view.types'
 
 export function useScrollSync(options: ScrollSyncOptions = {}) {

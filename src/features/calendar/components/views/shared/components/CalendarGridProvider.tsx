@@ -5,6 +5,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
+
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
 
 interface CalendarGridProviderProps {
@@ -16,10 +17,10 @@ interface CalendarGridProviderProps {
   }
 }
 
-export function CalendarGridProvider({ 
+export const CalendarGridProvider = ({ 
   children, 
   hourHeightConfig = {}
-}: CalendarGridProviderProps) {
+}: CalendarGridProviderProps) => {
   const hourHeight = useResponsiveHourHeight(hourHeightConfig)
   
   useEffect(() => {

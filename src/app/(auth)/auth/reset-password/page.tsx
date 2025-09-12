@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useAuthContext } from '@/features/auth'
+
 import { Logo } from '@/app/logo'
+import { Field, Label , Heading , Text } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
-import { Field, Label } from '@/components/custom'
-import { Heading } from '@/components/custom'
 import { Input } from '@/components/shadcn-ui/input'
-import { Text } from '@/components/custom'
+import { colors, spacing, typography } from '@/config/theme'
+import { useAuthContext } from '@/features/auth'
 
 export default function ResetPassword() {
   const router = useRouter()
@@ -69,16 +70,16 @@ export default function ResetPassword() {
 
   if (success) {
     return (
-      <div className="space-y-6 text-center">
-        <Heading level={2} className="text-green-600">Password Updated</Heading>
+      <div className={`${spacing.stack.md} text-center`}>
+        <Heading level={2} className={colors.semantic.success.text}>Password Updated</Heading>
         <Text>Your password has been updated.</Text>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
-      <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
+    <form onSubmit={handleSubmit} className={`grid w-full max-w-sm grid-cols-1 ${spacing.gap.xl}`}>
+      <Logo className={`h-6 ${colors.text.primary} forced-colors:text-[CanvasText]`} />
       <Heading>Set a new password</Heading>
       <Field>
         <Label>New Password</Label>
@@ -102,11 +103,11 @@ export default function ResetPassword() {
           minLength={6}
         />
       </Field>
-      {error && <Text className="text-red-600">{error}</Text>}
+      {error && <Text className={colors.semantic.error.text}>{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>
-      <button type="button" onClick={() => router.push('/auth')} className="text-blue-600 hover:text-blue-700 text-sm">
+      <button type="button" onClick={() => router.push('/auth')} className={`${colors.primary.text} ${colors.hover.primary} ${typography.body.sm}`}>
         Back to login
       </button>
     </form>

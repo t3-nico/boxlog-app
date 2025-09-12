@@ -1,14 +1,19 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, Loader2 } from 'lucide-react'
-import { TitleInput } from './TitleInput'
+
+import { text, primary, semantic } from '@/config/theme/colors'
+
+import { rounded } from '@/config/theme/rounded'
+import { body, heading } from '@/config/theme/typography'
+
 import { DateSelector } from './DateSelector'
 import { TagInput } from './TagInput'
-import { background, text, primary, semantic } from '@/config/theme/colors'
-import { body, heading } from '@/config/theme/typography'
-import { rounded } from '@/config/theme/rounded'
+
+import { TitleInput } from './TitleInput'
 
 interface Tag {
   id: string
@@ -33,12 +38,12 @@ interface EssentialCreateProps {
   }
 }
 
-export function EssentialCreate({ 
+export const EssentialCreate = ({ 
   isOpen, 
   onClose, 
   onSave, 
   initialData 
-}: EssentialCreateProps) {
+}: EssentialCreateProps) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [title, setTitle] = useState(initialData?.title || '')
   const [date, setDate] = useState(initialData?.date || new Date())
@@ -212,7 +217,7 @@ export function EssentialCreate({
             exit="exit"
             className={`
               relative w-full max-w-2xl mx-4
-              ${background.base} ${rounded.modal}
+              ${colors.background.base} ${rounded.modal}
               shadow-2xl
             `}
             style={{
@@ -233,7 +238,7 @@ export function EssentialCreate({
                 onClick={onClose}
                 className={`
                   p-2 rounded-lg transition-colors duration-200
-                  hover:${background.surface} ${text.secondary}
+                  hover:${colors.background.surface} ${text.secondary}
                 `}
               >
                 <X size={24} />
@@ -251,7 +256,7 @@ export function EssentialCreate({
                         transition-all duration-300
                         ${index <= currentStep 
                           ? `${primary.DEFAULT} text-white` 
-                          : `${background.surface} ${text.muted}`
+                          : `${colors.background.surface} ${text.muted}`
                         }
                       `}
                       animate={index === currentStep ? { scale: [1, 1.1, 1] } : {}}
@@ -272,7 +277,7 @@ export function EssentialCreate({
                     {index < 2 && (
                       <div className={`
                         w-8 h-0.5 mx-2
-                        ${index < currentStep ? primary.DEFAULT : background.surface}
+                        ${index < currentStep ? primary.DEFAULT : colors.background.surface}
                       `} />
                     )}
                   </div>
@@ -307,7 +312,7 @@ export function EssentialCreate({
                           px-6 py-3 rounded-lg font-medium transition-all duration-200
                           ${title.trim() 
                             ? `${primary.DEFAULT} text-white hover:opacity-90` 
-                            : `${background.surface} ${text.muted} cursor-not-allowed`
+                            : `${colors.background.surface} ${text.muted} cursor-not-allowed`
                           }
                         `}
                       >
@@ -338,8 +343,8 @@ export function EssentialCreate({
                         onClick={handleTabPrev}
                         className={`
                           px-6 py-3 rounded-lg font-medium
-                          ${background.surface} ${text.secondary}
-                          hover:${background.elevated} transition-all duration-200
+                          ${colors.background.surface} ${text.secondary}
+                          hover:${colors.background.elevated} transition-all duration-200
                         `}
                       >
                         ← Back
@@ -377,8 +382,8 @@ export function EssentialCreate({
                         onClick={handleTabPrev}
                         className={`
                           px-6 py-3 rounded-lg font-medium
-                          ${background.surface} ${text.secondary}
-                          hover:${background.elevated} transition-all duration-200
+                          ${colors.background.surface} ${text.secondary}
+                          hover:${colors.background.elevated} transition-all duration-200
                         `}
                       >
                         ← Back
@@ -391,7 +396,7 @@ export function EssentialCreate({
                           transition-all duration-200
                           ${isValid && !isSubmitting
                             ? `${primary.DEFAULT} text-white hover:opacity-90 transform hover:scale-105`
-                            : `${background.surface} ${text.muted} cursor-not-allowed`
+                            : `${colors.background.surface} ${text.muted} cursor-not-allowed`
                           }
                         `}
                       >

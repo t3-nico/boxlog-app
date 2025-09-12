@@ -1,6 +1,7 @@
 // スマートフォルダのReact Query hooks
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
 import { SmartFolder, CreateSmartFolderInput, UpdateSmartFolderInput } from '@/types/smart-folders'
 
 // API関数
@@ -106,7 +107,7 @@ export function useCreateSmartFolder() {
       
       // 新しいフォルダを一時的に追加
       const optimisticFolder: SmartFolder = {
-        id: 'temp-' + Date.now(),
+        id: `temp-${  Date.now()}`,
         name: newFolder.name,
         description: newFolder.description,
         userId: 'current-user', // 実際のユーザーIDを設定

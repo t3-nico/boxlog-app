@@ -3,9 +3,10 @@
  */
 
 import { useMemo } from 'react'
+
+import { HOUR_HEIGHT } from '../constants/grid.constants'
 import type { TimedEvent, EventPosition } from '../types/event.types'
 import { calculateViewEventColumns, calculateEventPosition } from '../utils/eventPositioning'
-import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface UseEventPositionOptions {
   hourHeight?: number

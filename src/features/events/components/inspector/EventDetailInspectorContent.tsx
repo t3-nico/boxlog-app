@@ -1,12 +1,9 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
-import { Textarea } from '@/components/shadcn-ui/textarea'
-import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
+
+import { format } from 'date-fns'
+import { ja } from 'date-fns/locale'
 import { 
   Tag as TagIcon,
   Trash2,
@@ -14,11 +11,9 @@ import {
   FileText,
   ChevronDown,
   ChevronRight,
-  Calendar,
   Clock,
   Plus,
   Edit3,
-  MessageSquare,
   Bell,
   Activity,
   ArrowRight,
@@ -27,11 +22,18 @@ import {
   BellRing,
   Circle
 } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
-import { typography, spacing } from '@/config/theme'
+
+import { Button } from '@/components/shadcn-ui/button'
+import { Input } from '@/components/shadcn-ui/input'
+import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
+
+
+import { typography } from '@/config/theme'
+import { text, border } from '@/config/theme/colors'
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
-import { format } from 'date-fns'
-import { ja } from 'date-fns/locale'
+
+
+import { cn } from '@/lib/utils'
 
 interface EventDetailInspectorContentProps {
   event?: CalendarEvent | null  // 新規作成時はnull/undefined
@@ -43,7 +45,7 @@ interface EventDetailInspectorContentProps {
   onClose?: () => void
 }
 
-export function EventDetailInspectorContent({
+export const EventDetailInspectorContent = ({
   event,
   mode = event ? 'view' : 'create',
   onSave,
@@ -51,7 +53,7 @@ export function EventDetailInspectorContent({
   onDuplicate,
   onTemplateCreate,
   onClose
-}: EventDetailInspectorContentProps) {
+}: EventDetailInspectorContentProps) => {
   const [isDetailOpen, setIsDetailOpen] = useState(true)
   const [showTimeline, setShowTimeline] = useState(true)
   const [formData, setFormData] = useState({
@@ -179,7 +181,7 @@ export function EventDetailInspectorContent({
           <span className={text.muted}>タグ追加:</span>
           <span className={cn(
             'px-2 py-0.5 text-xs rounded-full border',
-            background.accent,
+            colors.background.accent,
             text.primary,
             border.universal
           )}>
@@ -308,7 +310,7 @@ export function EventDetailInspectorContent({
                     'rounded-md px-3 py-2 w-auto',
                     '[&::-webkit-calendar-picker-indicator]:hidden',
                     border.universal,
-                    background.base,
+                    colors.background.base,
                     text.primary
                   )}
                   style={{ width: `${format(formData.startDate, 'yyyy-MM-dd').length + 2}ch` }}
@@ -327,7 +329,7 @@ export function EventDetailInspectorContent({
                     'rounded-md px-3 py-2 text-center w-fit',
                     '[&::-webkit-calendar-picker-indicator]:hidden',
                     border.universal,
-                    background.base,
+                    colors.background.base,
                     text.primary
                   )}
                 />
@@ -350,7 +352,7 @@ export function EventDetailInspectorContent({
                     'rounded-md px-3 py-2 text-center w-fit',
                     '[&::-webkit-calendar-picker-indicator]:hidden',
                     border.universal,
-                    background.base,
+                    colors.background.base,
                     text.primary
                   )}
                 />
@@ -399,7 +401,7 @@ export function EventDetailInspectorContent({
                   className={cn(
                     'px-3 py-1 rounded-full border flex-shrink-0',
                     typography.body.xs,
-                    background.surface,
+                    colors.background.surface,
                     border.subtle,
                     text.muted,
                     'hover:bg-accent cursor-pointer transition-colors'
@@ -486,7 +488,7 @@ export function EventDetailInspectorContent({
                         <div className="flex flex-col items-center relative z-10 flex-shrink-0">
                           <div className={cn(
                             'w-5 h-5 rounded-lg flex items-center justify-center border',
-                            background.surface,
+                            colors.background.surface,
                             border.strong,
                             text.muted
                           )}>

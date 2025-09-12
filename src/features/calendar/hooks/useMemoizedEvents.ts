@@ -1,6 +1,7 @@
 'use client'
 
-import { useMemo, useCallback, useRef, useEffect } from 'react'
+import { useMemo, useRef, useEffect } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
 
 // メモ化キーの生成

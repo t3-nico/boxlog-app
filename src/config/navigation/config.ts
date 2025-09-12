@@ -3,12 +3,6 @@ import {
   SquareKanban as BoardIcon,
   TableProperties as TableIcon,
   BarChart3 as StatsIcon,
-  Search as SearchIcon,
-  Bell as BellIcon,
-  Settings as SettingsIcon,
-  User as UserIcon,
-  PlusCircle as CreateIcon,
-  HelpCircle as HelpIcon,
   Sparkles as AIIcon,
   Tag as TagIcon,
   FileText as TemplateIcon,
@@ -165,5 +159,5 @@ export function isNavItemActive(item: NavigationItem, pathname: string): boolean
   if (item.isActive) {
     return item.isActive(pathname)
   }
-  return pathname === item.href || pathname.startsWith(item.href + '/')
+  return pathname === item.href || pathname.startsWith(`${item.href  }/`)
 }

@@ -1,11 +1,10 @@
-import { SettingsLayout } from '@/features/settings/components'
-import { colors, typography, spacing } from '@/config/theme'
+import type { Metadata } from 'next'
+
+import { Subheading } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
-import { Separator } from '@/components/shadcn-ui/separator'
-import { Label } from '@/components/shadcn-ui/label'
-import { Heading, Subheading } from '@/components/custom'
 import { Input } from '@/components/shadcn-ui/input'
+import { Label } from '@/components/shadcn-ui/label'
 import { 
   Select, 
   SelectContent, 
@@ -13,77 +12,80 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/shadcn-ui/select'
+import { Separator } from '@/components/shadcn-ui/separator'
 import { Textarea } from '@/components/shadcn-ui/textarea'
-import type { Metadata } from 'next'
+import { colors, typography, spacing, layout } from '@/config/theme'
+import { SettingsLayout } from '@/features/settings/components'
+
 import { Address } from '../address'
 
 export const metadata: Metadata = {
   title: 'Settings',
 }
 
-export default function Settings() {
+export default function SettingsPage() {
   return (
     <SettingsLayout
       title="一般設定"
       description="組織の基本情報と設定を管理します"
     >
-      <form method="post" className="max-w-4xl">
-        <Separator className="my-10 mt-6" />
+      <form method="post" className={layout.container.xl}>
+        <Separator className={`${spacing.component.stack.xl} ${spacing.component.stack.lg}`} />
 
-      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div className="space-y-1">
+      <section className={`grid ${spacing.component.gap.xl} ${spacing.component.gap.lg} sm:grid-cols-2`}>
+        <div className={spacing.component.stack.xs}>
           <Subheading>Organization Name</Subheading>
-          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This will be displayed on your public profile.</p>
+          <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>This will be displayed on your public profile.</p>
         </div>
         <div>
           <Input aria-label="Organization Name" name="name" defaultValue="Catalyst" />
         </div>
       </section>
 
-      <Separator className="my-10" soft />
+      <Separator className={spacing.component.stack.xl} soft />
 
-      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div className="space-y-1">
+      <section className={`grid ${spacing.component.gap.xl} ${spacing.component.gap.lg} sm:grid-cols-2`}>
+        <div className={spacing.component.stack.xs}>
           <Subheading>Organization Bio</Subheading>
-          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This will be displayed on your public profile. Maximum 240 characters.</p>
+          <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>This will be displayed on your public profile. Maximum 240 characters.</p>
         </div>
         <div>
           <Textarea aria-label="Organization Bio" name="bio" />
         </div>
       </section>
 
-      <Separator className="my-10" soft />
+      <Separator className={spacing.component.stack.xl} soft />
 
-      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div className="space-y-1">
+      <section className={`grid ${spacing.component.gap.xl} ${spacing.component.gap.lg} sm:grid-cols-2`}>
+        <div className={spacing.component.stack.xs}>
           <Subheading>Organization Email</Subheading>
-          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This is how customers can contact you for support.</p>
+          <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>This is how customers can contact you for support.</p>
         </div>
-        <div className="space-y-4">
+        <div className={spacing.component.stack.md}>
           <Input type="email" aria-label="Organization Email" name="email" defaultValue="info@example.com" />
-          <div className="flex items-center space-x-2">
+          <div className={`flex items-center ${spacing.component.gap.xs}`}>
             <Checkbox id="email_is_public" name="email_is_public" defaultChecked />
             <Label htmlFor="email_is_public">Show email on public profile</Label>
           </div>
         </div>
       </section>
 
-      <Separator className="my-10" soft />
+      <Separator className={spacing.component.stack.xl} soft />
 
-      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div className="space-y-1">
+      <section className={`grid ${spacing.component.gap.xl} ${spacing.component.gap.lg} sm:grid-cols-2`}>
+        <div className={spacing.component.stack.xs}>
           <Subheading>Address</Subheading>
-          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">This is where your organization is registered.</p>
+          <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>This is where your organization is registered.</p>
         </div>
         <Address />
       </section>
 
-      <Separator className="my-10" soft />
+      <Separator className={spacing.component.stack.xl} soft />
 
-      <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div className="space-y-1">
+      <section className={`grid ${spacing.component.gap.xl} ${spacing.component.gap.lg} sm:grid-cols-2`}>
+        <div className={spacing.component.stack.xs}>
           <Subheading>Currency</Subheading>
-          <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">The currency that your organization will be collecting.</p>
+          <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>The currency that your organization will be collecting.</p>
         </div>
         <div>
           <Select defaultValue="cad" name="currency">
@@ -98,9 +100,9 @@ export default function Settings() {
         </div>
       </section>
 
-      <Separator className="my-10" soft />
+      <Separator className={spacing.component.stack.xl} soft />
 
-      <div className="flex justify-end gap-4">
+      <div className={`flex justify-end ${spacing.component.gap.md}`}>
         <Button type="reset" variant="ghost">
           Reset
         </Button>

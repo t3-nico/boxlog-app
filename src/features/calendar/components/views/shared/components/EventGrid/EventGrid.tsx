@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useCallback, useEffect } from 'react'
+
 import { cn } from '@/lib/utils'
-import { EventBlock } from '../EventBlock'
-import { CalendarDragSelection } from '../CalendarDragSelection'
+
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
 import { useDragAndDrop } from '../../hooks/useDragAndDrop'
 import type { CalendarEvent } from '../../types/event.types'
+import { CalendarDragSelection } from '../CalendarDragSelection'
+import { EventBlock } from '../EventBlock'
 
 export interface EventGridProps {
   date: Date
@@ -26,7 +28,7 @@ export interface EventGridProps {
  * 共通のイベントグリッドコンポーネント
  * 全てのビュー（Day, Week, ThreeDay等）で利用可能
  */
-export function EventGrid({
+export const EventGrid = ({
   date,
   events,
   eventStyles,
@@ -37,7 +39,7 @@ export function EventGrid({
   onTimeRangeSelect,
   className,
   showTimeGrid = true
-}: EventGridProps) {
+}: EventGridProps) => {
   
   // ドラッグ&ドロップ機能
   const { dragState, handlers } = useDragAndDrop({
@@ -135,7 +137,7 @@ export function EventGrid({
           const isResizing = dragState.isResizing && dragState.draggedEventId === event.id
           
           // ドラッグ・リサイズ中の位置調整
-          let adjustedStyle = { ...style }
+          const adjustedStyle = { ...style }
           if (dragState.snappedPosition && (isDragging || isResizing)) {
             if (isDragging) {
               adjustedStyle.top = `${dragState.snappedPosition.top}px`

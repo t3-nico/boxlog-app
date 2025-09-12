@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { handleClientError } from '@/lib/errors'
+
 
 // === 型定義 ===
 
@@ -208,7 +208,7 @@ function useMemoryMonitor(enabled = true) {
     if (!enabled || !('memory' in performance)) return
 
     const updateMemoryStats = () => {
-      const memory = (performance as any).memory
+      const {memory} = (performance as any)
       if (!memory) return
 
       const stats = {

@@ -1,16 +1,18 @@
 'use client'
 
 import React from 'react'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { useInspectorStore } from './stores/inspector.store'
-import { CalendarInspectorContent } from './content/CalendarInspectorContent'
-import { TaskInspectorContent } from './content/TaskInspectorContent'
-import { DefaultInspectorContent } from './content/DefaultInspectorContent'
-import { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
-import { background, text } from '@/config/theme/colors'
 
-export function InspectorContent() {
+import { usePathname } from 'next/navigation'
+
+import { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
+import { cn } from '@/lib/utils'
+
+import { CalendarInspectorContent } from './content/CalendarInspectorContent'
+import { DefaultInspectorContent } from './content/DefaultInspectorContent'
+import { TaskInspectorContent } from './content/TaskInspectorContent'
+import { useInspectorStore } from './stores/inspector.store'
+
+export const InspectorContent = () => {
   const pathname = usePathname()
   const activeContent = useInspectorStore((state) => state.activeContent)
   const selectedEvent = useInspectorStore((state) => state.selectedEvent)
@@ -94,7 +96,7 @@ export function InspectorContent() {
   return (
     <div className={cn(
       'flex-1 overflow-auto',
-      background.surface
+      colors.background.surface
     )}>
       {getContentComponent()}
     </div>

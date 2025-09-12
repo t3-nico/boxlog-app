@@ -231,8 +231,8 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
   
   // 各イベントが実際に占有できる列数を計算
   positions.forEach(pos => {
-    const start = pos.start
-    const end = pos.end
+    const {start} = pos
+    const {end} = pos
     const myColumn = pos.column!
     
     // 同じ時間帯に存在する他のイベントの最大列番号を見つける

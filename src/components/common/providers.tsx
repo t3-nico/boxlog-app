@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { PreloadResources } from './PreloadResources'
-import { AuthProvider } from '@/features/auth'
 import { ChatProvider } from '@/contexts/chat-context'
+import { AuthProvider } from '@/features/auth'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
+
+import { PreloadResources } from './PreloadResources'
 
 // CommandPalette context moved to features/command-palette
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export const Providers = ({ children }: { children: React.ReactNode }) => {
   const [queryClient] = useState(
     () =>
       new QueryClient({

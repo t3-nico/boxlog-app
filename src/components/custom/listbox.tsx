@@ -1,10 +1,11 @@
 'use client'
 
 import { Fragment } from 'react'
+
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 
-import { colors, typography, spacing, rounded } from '@/config/theme'
+import { colors } from '@/config/theme'
 
 export function Listbox<T>({
   className,
@@ -111,7 +112,7 @@ export function ListboxOption<T>({
   Headless.ListboxOptionProps<'div', T>,
   'as' | 'className'
 >) {
-  let sharedClasses = clsx(
+  const sharedClasses = clsx(
     // Base
     'flex min-w-0 items-center',
     // Icons
@@ -160,11 +161,11 @@ export function ListboxOption<T>({
   )
 }
 
-export function ListboxLabel({ className, ...props }: React.ComponentPropsWithoutRef<'span'>) {
+export const ListboxLabel = ({ className, ...props }: React.ComponentPropsWithoutRef<'span'>) => {
   return <span {...props} className={clsx(className, 'ml-3 truncate first:ml-0 sm:ml-2 sm:first:ml-0')} />
 }
 
-export function ListboxDescription({ className, children, ...props }: React.ComponentPropsWithoutRef<'span'>) {
+export const ListboxDescription = ({ className, children, ...props }: React.ComponentPropsWithoutRef<'span'>) => {
   return (
     <span
       {...props}

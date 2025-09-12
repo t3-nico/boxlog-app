@@ -1,10 +1,12 @@
 'use client'
 
 import React from 'react'
-import { AskPanel } from './ask-panel'
+
 import { useAskPanelStore } from '../stores/useAskPanelStore'
 
-export function HelpAskPanel() {
+import { AskPanel } from './ask-panel'
+
+export const HelpAskPanel = () => {
   const { open, expand } = useAskPanelStore()
 
   // Ensure the panel is open and not collapsed when used in main content

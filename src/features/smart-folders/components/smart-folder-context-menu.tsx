@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+
 import {
   Pencil as PencilIcon,
   Trash2 as TrashIcon,
@@ -9,6 +10,7 @@ import {
   EyeOff as EyeSlashIcon,
   Star as StarIcon
 } from 'lucide-react'
+
 import { SmartFolder } from '@/types/smart-folders'
 
 interface SmartFolderContextMenuProps {
@@ -22,7 +24,7 @@ interface SmartFolderContextMenuProps {
   onClose: () => void
 }
 
-export function SmartFolderContextMenu({
+export const SmartFolderContextMenu = ({
   x,
   y,
   folder,
@@ -31,7 +33,7 @@ export function SmartFolderContextMenu({
   onDuplicate,
   onToggleActive,
   onClose
-}: SmartFolderContextMenuProps) {
+}: SmartFolderContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null)
 
   // 外側クリックで閉じる

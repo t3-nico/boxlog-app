@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback, useEffect, createContext, useContext, ReactNode } from 'react'
+import { useState, useCallback, createContext, useContext, ReactNode } from 'react'
+
 import { NotificationModal } from '../components/NotificationModal'
 
 interface NotificationModalContextType {
@@ -21,7 +22,7 @@ export function useNotificationModal() {
   return context
 }
 
-export function NotificationModalProvider({ children }: { children: ReactNode }) {
+export const NotificationModalProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [notificationCount, setNotificationCount] = useState(0)
 

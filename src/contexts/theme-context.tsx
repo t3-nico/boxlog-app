@@ -27,7 +27,7 @@ interface ThemeProviderProps {
   children: ReactNode
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>('system')
   const [colorScheme, setColorScheme] = useState<ColorScheme>('blue')
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')

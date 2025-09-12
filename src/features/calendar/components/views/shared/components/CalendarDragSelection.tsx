@@ -1,10 +1,12 @@
 'use client'
 
 import React, { useCallback, useState, useRef, useEffect } from 'react'
-import { cn } from '@/lib/utils'
-import { HOUR_HEIGHT } from '../constants/grid.constants'
+
 import { getEventColor } from '@/features/calendar/theme'
 import { calendarStyles } from '@/features/calendar/theme/styles'
+import { cn } from '@/lib/utils'
+
+import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface TimeRange {
   startHour: number
@@ -32,14 +34,14 @@ interface CalendarDragSelectionProps {
  * - 全ビュー共通のドラッグ選択動作を提供
  * - 統一されたDateTimeSelectionを出力
  */
-export function CalendarDragSelection({
+export const CalendarDragSelection = ({
   date,
   className,
   onTimeRangeSelect,
   onSingleClick,
   children,
   disabled = false
-}: CalendarDragSelectionProps) {
+}: CalendarDragSelectionProps) => {
   
   // ドラッグ選択の状態
   const [isSelecting, setIsSelecting] = useState(false)

@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useEffect, useState, useRef } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
+
 import { CalendarEvent } from '@/features/events'
 
 // アニメーション設定
@@ -57,7 +59,7 @@ interface AnimatedEventItemProps {
   style?: React.CSSProperties
 }
 
-export function AnimatedEventItem({
+export const AnimatedEventItem = ({
   event,
   children,
   isSelected = false,
@@ -67,7 +69,7 @@ export function AnimatedEventItem({
   onAnimationComplete,
   className,
   style
-}: AnimatedEventItemProps) {
+}: AnimatedEventItemProps) => {
   const [isVisible, setIsVisible] = useState(!isCreating)
   
   useEffect(() => {
@@ -131,7 +133,7 @@ interface CreatingEventPreviewProps {
   className?: string
 }
 
-export function CreatingEventPreview({
+export const CreatingEventPreview = ({
   date,
   startTime,
   endTime,
@@ -141,7 +143,7 @@ export function CreatingEventPreview({
   onCancel,
   dayWidth,
   className
-}: CreatingEventPreviewProps) {
+}: CreatingEventPreviewProps) => {
   const [eventTitle, setEventTitle] = useState(title)
   const [isEditing, setIsEditing] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -251,7 +253,7 @@ interface DeletingEventProps {
   children: React.ReactNode
 }
 
-export function DeletingEvent({ event, onAnimationComplete, children }: DeletingEventProps) {
+export const DeletingEvent = ({ event, onAnimationComplete, children }: DeletingEventProps) => {
   return (
     <motion.div
       key={`deleting-${event.id}`}
@@ -272,7 +274,7 @@ interface PulseEffectProps {
   intensity?: 'low' | 'medium' | 'high'
 }
 
-export function PulseEffect({ isActive, children, intensity = 'medium' }: PulseEffectProps) {
+export const PulseEffect = ({ isActive, children, intensity = 'medium' }: PulseEffectProps) => {
   const pulseVariants = {
     low: { scale: [1, 1.01, 1] },
     medium: { scale: [1, 1.02, 1] },
@@ -294,7 +296,7 @@ export function PulseEffect({ isActive, children, intensity = 'medium' }: PulseE
 }
 
 // スムーズなレイアウト変更
-export function SmoothLayoutGroup({ children }: { children: React.ReactNode }) {
+export const SmoothLayoutGroup = ({ children }: { children: React.ReactNode }) => {
   return (
     <motion.div layout transition={{ duration: 0.2, ease: 'easeOut' }}>
       {children}
@@ -315,7 +317,7 @@ interface StatusAnimationProps {
   duration?: number
 }
 
-export function StatusAnimation({ type, children, duration = 2000 }: StatusAnimationProps) {
+export const StatusAnimation = ({ type, children, duration = 2000 }: StatusAnimationProps) => {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {

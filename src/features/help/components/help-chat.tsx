@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+
 import { 
   ArrowUpCircle,
   Sparkles,
@@ -8,14 +9,14 @@ import {
   Copy,
   MoreVertical,
 } from 'lucide-react'
+
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
-import { Button } from '@/components/shadcn-ui/button'
 
 interface MessageBubbleProps {
   message: ChatMessage
 }
 
-function MessageBubble({ message }: MessageBubbleProps) {
+const MessageBubble = ({ message }: MessageBubbleProps) => {
   const isUser = message.sender === 'user'
   
   if (isUser) {
@@ -56,7 +57,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
   )
 }
 
-function ChatInput() {
+const ChatInput = () => {
   const { state, sendMessage, setInputValue } = useChatContext()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -79,8 +80,8 @@ function ChatInput() {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      const scrollHeight = textareaRef.current.scrollHeight
-      textareaRef.current.style.height = Math.min(scrollHeight, 200) + 'px'
+      const {scrollHeight} = textareaRef.current
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 200)  }px`
     }
   }, [state.inputValue])
 
@@ -126,7 +127,7 @@ function ChatInput() {
   )
 }
 
-function ChatHeader() {
+const ChatHeader = () => {
   const { clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
 
@@ -183,7 +184,7 @@ function ChatHeader() {
   )
 }
 
-function WelcomeMessage() {
+const WelcomeMessage = () => {
   const { sendMessage } = useChatContext()
 
   const quickPrompts = [
@@ -235,7 +236,7 @@ function WelcomeMessage() {
   )
 }
 
-export function HelpChat() {
+export const HelpChat = () => {
   const { state } = useChatContext()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 

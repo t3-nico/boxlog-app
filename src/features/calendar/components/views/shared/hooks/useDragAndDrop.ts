@@ -1,11 +1,15 @@
 'use client'
 
 import React, { useState, useCallback, useRef, useEffect } from 'react'
-import { format } from 'date-fns'
-import { HOUR_HEIGHT } from '../constants/grid.constants'
-import { calendarColors } from '@/features/calendar/theme'
-import { formatTimeRange } from '../utils/dateHelpers'
+
 import useCalendarToast from '@/features/calendar/lib/toast'
+import { calendarColors } from '@/features/calendar/theme'
+
+import { HOUR_HEIGHT } from '../constants/grid.constants'
+
+
+import { formatTimeRange } from '../utils/dateHelpers'
+
 
 export interface DragState {
   isDragging: boolean

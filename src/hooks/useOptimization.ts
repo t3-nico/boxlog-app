@@ -411,7 +411,7 @@ export function useMemoryMonitor(enabled = process.env.NODE_ENV === 'development
     if (!enabled || !('memory' in performance)) return
 
     const updateMemoryInfo = () => {
-      const memory = (performance as any).memory
+      const {memory} = (performance as any)
       if (memory) {
         const usedMB = Math.round(memory.usedJSHeapSize / 1048576)
         const totalMB = Math.round(memory.totalJSHeapSize / 1048576)

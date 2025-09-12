@@ -1,23 +1,27 @@
 'use client'
 
 import React from 'react'
+
 import './tiptap-styles.css'
+import ListItem from '@tiptap/extension-list-item'
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import TaskList from '@tiptap/extension-task-list'
-import TaskItem from '@tiptap/extension-task-item'
-import ListItem from '@tiptap/extension-list-item'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/shadcn-ui/button'
+
 import { Bold, Italic, Underline, List, ListOrdered, CheckSquare } from 'lucide-react'
-import { typography } from '@/config/theme'
-import { background, text, border, selection } from '@/config/theme/colors'
+
+import { Button } from '@/components/shadcn-ui/button'
 import { 
   Tooltip, 
   TooltipContent, 
   TooltipProvider, 
   TooltipTrigger 
 } from '@/components/shadcn-ui/tooltip'
+import { typography } from '@/config/theme'
+import { text, border, selection } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
 
 interface TiptapEditorProps {
   value?: string
@@ -26,12 +30,12 @@ interface TiptapEditorProps {
   className?: string
 }
 
-export function TiptapEditor({ 
+export const TiptapEditor = ({ 
   value = '', 
   onChange, 
   placeholder = "入力してください...", 
   className 
-}: TiptapEditorProps) {
+}: TiptapEditorProps) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -81,7 +85,7 @@ export function TiptapEditor({
   React.useEffect(() => {
     if (editor) {
       console.log('Editor initialized with TaskList/TaskItem extensions')
-      const extensions = editor.extensionManager.extensions
+      const {extensions} = editor.extensionManager
       console.log('Extensions:', extensions.map(ext => ext.name))
     }
   }, [editor])
@@ -101,14 +105,14 @@ export function TiptapEditor({
     <TooltipProvider>
       <div className={cn(
         'w-full border rounded-lg overflow-hidden relative max-w-full',
-        background.base,
+        colors.background.base,
         border.universal,
         className
       )}>
         {/* ツールバー */}
         <div className={cn(
           'flex items-center gap-0 pl-2 pr-2 py-2 border-b overflow-x-auto',
-          background.surface,
+          colors.background.surface,
           border.universal
         )}>
           {/* テキスト装飾 */}

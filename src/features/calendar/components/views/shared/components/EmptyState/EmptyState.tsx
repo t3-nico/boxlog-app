@@ -5,6 +5,7 @@
 'use client'
 
 import React, { memo } from 'react'
+
 import type { EmptyStateProps } from '../../types/view.types'
 
 export const EmptyState = memo<EmptyStateProps>(function EmptyState({

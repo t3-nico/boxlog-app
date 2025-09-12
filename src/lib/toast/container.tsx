@@ -1,10 +1,13 @@
 'use client'
 
 import React from 'react'
+
 import { AnimatePresence } from 'framer-motion'
+
+import { cn } from '@/lib/utils'
+
 import { useToastStore } from './store'
 import { Toast } from './toast'
-import { cn } from '@/lib/utils'
 
 const positionClasses = {
   'top-left': 'top-4 left-4',
@@ -15,7 +18,7 @@ const positionClasses = {
   'bottom-right': 'bottom-4 right-4',
 }
 
-export function ToastContainer() {
+export const ToastContainer = () => {
   const { toasts, position, removeToast } = useToastStore()
   
   return (

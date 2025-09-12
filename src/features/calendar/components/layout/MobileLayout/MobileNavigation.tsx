@@ -1,6 +1,7 @@
 'use client'
 
-import { Calendar, List, Plus, User, Settings } from 'lucide-react'
+import { Calendar, Plus, User, Settings } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 
 export type MobileNavItem = {
@@ -43,14 +44,14 @@ const defaultItems: MobileNavItem[] = [
  * モバイル用下部ナビゲーション
  * タブバーとFABを組み合わせた設計
  */
-export function MobileNavigation({
+export const MobileNavigation = ({
   items = defaultItems,
   activeItem,
   onItemClick,
   showAddButton = true,
   onAddClick,
   className
-}: MobileNavigationProps) {
+}: MobileNavigationProps) => {
   const handleItemClick = (item: MobileNavItem) => {
     if (item.disabled) return
     item.onClick?.()

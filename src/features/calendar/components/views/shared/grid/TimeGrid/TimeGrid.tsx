@@ -5,20 +5,19 @@
 'use client'
 
 import React, { memo, useRef, useEffect, useCallback } from 'react'
-import { TimeColumn } from '../TimeColumn'
-import { HourLines, HalfHourLines, QuarterHourLines } from '../GridLines'
-import { SimpleCurrentTimeLine } from '../../'
-import { useViewDimensions } from '../../hooks/useViewDimensions'
-import { useTimeSelection } from '../../hooks/useTimeSelection'
-import { pixelsToTimeValues, calculateScrollPosition } from '../../utils/gridCalculator'
+
 import { 
   HOUR_HEIGHT, 
   TIME_COLUMN_WIDTH, 
   GRID_BACKGROUND,
-  SCROLL_TO_HOUR,
-  SCROLL_BEHAVIOR 
+  SCROLL_TO_HOUR 
 } from '../../constants/grid.constants'
+import { useTimeSelection } from '../../hooks/useTimeSelection'
+import { useViewDimensions } from '../../hooks/useViewDimensions'
 import type { TimeGridProps } from '../../types/grid.types'
+import { pixelsToTimeValues, calculateScrollPosition } from '../../utils/gridCalculator'
+import { HourLines, HalfHourLines, QuarterHourLines } from '../GridLines'
+import { TimeColumn } from '../TimeColumn'
 
 export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   startHour = 0,

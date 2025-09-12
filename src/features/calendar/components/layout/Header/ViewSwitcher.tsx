@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
 import { ChevronDown, Check } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { secondary, selection, background, border, text } from '@/config/theme/colors'
+
+import { secondary, selection, text } from '@/config/theme/colors'
 import { radius } from '@/config/theme/rounded'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { cn } from '@/lib/utils'
 
 export type ViewOption = {
   value: string
@@ -27,14 +29,14 @@ interface ViewSwitcherProps {
  * ビュー切り替えドロップダウン
  * 汎用的なビュー切り替えコンポーネント
  */
-export function ViewSwitcher({
+export const ViewSwitcher = ({
   options,
   currentView,
   onChange,
   className,
   buttonClassName,
   dropdownClassName
-}: ViewSwitcherProps) {
+}: ViewSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const currentOption = options.find(opt => opt.value === currentView)
   const { showWeekends, updateSettings } = useCalendarSettingsStore()
@@ -70,7 +72,7 @@ export function ViewSwitcher({
       }
       
       // 入力フィールドにフォーカスがある場合は無視
-      const activeElement = document.activeElement
+      const {activeElement} = document
       if (activeElement && (
         activeElement.tagName === 'INPUT' || 
         activeElement.tagName === 'TEXTAREA' ||
@@ -122,7 +124,7 @@ export function ViewSwitcher({
           <div className={cn(
             'absolute right-0 top-full mt-1',
             'min-w-[160px]',
-            background.base,
+            colors.background.base,
             radius.md,
             'shadow-lg z-50',
             dropdownClassName

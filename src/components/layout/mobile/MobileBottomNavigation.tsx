@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
 import { 
   Calendar as CalendarIcon,
   SquareKanban as BoardIcon,
@@ -10,11 +9,13 @@ import {
   BarChart3 as StatsIcon,
   Menu as MenuIcon
 } from 'lucide-react'
-import { useNavigationStore } from '../sidebar/stores/navigation.store'
-import { background, text, border } from '@/config/theme/colors'
-import { componentRadius, animations, icon, typography } from '@/config/theme'
 
-const { sm } = icon.size
+import { cn } from '@/lib/utils'
+import { useNavigationStore } from '../sidebar/stores/navigation.store'
+import { colors, animations, icons, typography, spacing, rounded } from '@/config/theme'
+
+
+const { sm } = icons.size
 
 interface BottomNavItem {
   id: string
@@ -55,7 +56,7 @@ const bottomNavItems: BottomNavItem[] = [
   }
 ]
 
-export function MobileBottomNavigation() {
+export const MobileBottomNavigation = () => {
   const router = useRouter()
   const pathname = usePathname()
   const { toggleSidebar } = useNavigationStore()
@@ -73,9 +74,9 @@ export function MobileBottomNavigation() {
       className={cn(
         'fixed bottom-0 left-0 right-0 z-50',
         'flex items-center',
-        'h-16', // 64px height
-        background.surface,
-        border.universal,
+        spacing.height.navigation, // 64px height
+        colors.background.surface,
+        colors.border.default,
         'border-t'
       )}
     >
@@ -92,21 +93,22 @@ export function MobileBottomNavigation() {
               'flex-1 flex flex-col items-center justify-center',
               'h-full px-1 py-2',
               animations.transition.fast,
-              'active:bg-accent'
+              colors.hover.subtle
             )}
           >
             <Icon 
               className={cn(
                 sm, 
                 'mb-1',
-                isActive ? 'text-blue-600 dark:text-blue-400' : text.muted
+                isActive ? colors.text.primary : colors.text.muted
               )} 
             />
             <span 
               className={cn(
                 typography.body.small,
-                'text-xs leading-tight',
-                isActive ? 'text-blue-600 dark:text-blue-400 font-medium' : text.muted
+                typography.body.xs,
+              'leading-tight',
+                isActive ? `${colors.text.primary} font-medium` : colors.text.muted
               )}
             >
               {item.label}
@@ -122,11 +124,11 @@ export function MobileBottomNavigation() {
           'flex-1 flex flex-col items-center justify-center',
           'h-full px-1 py-2',
           animations.transition.fast,
-          'active:bg-accent'
+          colors.hover.subtle
         )}
       >
-        <MenuIcon className={cn(sm, 'mb-1', text.muted)} />
-        <span className={cn(typography.body.small, 'text-xs leading-tight', text.muted)}>
+        <MenuIcon className={cn(sm, 'mb-1', colors.text.muted)} />
+        <span className={cn(typography.body.xs, 'leading-tight', colors.text.muted)}>
           Menu
         </span>
       </button>

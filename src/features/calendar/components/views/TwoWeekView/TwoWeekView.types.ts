@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+
 import type { BaseViewProps, CalendarEvent } from '../shared'
 
 // TwoWeekViewの固有Props（BaseViewPropsを継承して95%削減）

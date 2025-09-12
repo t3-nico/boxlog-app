@@ -1,14 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTheme } from '@/contexts/theme-context'
-import { Button } from '@/components/shadcn-ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/shadcn-ui/dropdown-menu'
+
 import {
   Sun as SunIcon,
   Moon as MoonIcon,
@@ -17,7 +10,17 @@ import {
   Palette as SwatchIcon,
 } from 'lucide-react'
 
-export function ThemeToggle() {
+import { Button } from '@/components/shadcn-ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/shadcn-ui/dropdown-menu'
+import { useTheme } from '@/contexts/theme-context'
+
+
+export const ThemeToggle = () => {
   const { theme, colorScheme, setTheme, setColorScheme, resolvedTheme } = useTheme()
 
   const themeIcons = {
@@ -107,7 +110,7 @@ export function ThemeToggle() {
   )
 }
 
-export function SimpleThemeToggle() {
+export const SimpleThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme()
 
   const toggleTheme = () => {

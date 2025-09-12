@@ -1,16 +1,17 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
+
 import { usePathname } from 'next/navigation'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
+
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
-import { useEventStore } from '@/features/events/stores/useEventStore'
 import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers'
+import { useEventStore } from '@/features/events/stores/useEventStore'
 interface CommonSidebarSectionsProps {
   collapsed: boolean
 }
 
-export function CommonSidebarSections({ collapsed }: CommonSidebarSectionsProps) {
+export const CommonSidebarSections = ({ collapsed }: CommonSidebarSectionsProps) => {
   const pathname = usePathname()
   const isCalendarPage = pathname.startsWith('/calendar')
   const calendarNavigation = useCalendarNavigation()

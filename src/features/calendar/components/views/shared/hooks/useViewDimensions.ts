@@ -3,6 +3,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react'
+
 import type { ViewDimensions } from '../types/view.types'
 
 export interface UseViewDimensionsOptions {

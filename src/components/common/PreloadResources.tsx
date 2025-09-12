@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 /**
  * 重要なリソースをプリロードし、ナビゲーションを高速化
  */
-export function PreloadResources() {
+export const PreloadResources = () => {
   const router = useRouter()
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-import { SystemNotification } from '../types'
 
 export const getNotificationTypeColor = (type: string) => {
   switch (type) {

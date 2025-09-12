@@ -1,6 +1,6 @@
 // 高度なスマートフォルダルール機能
 
-import { SmartFolderRule, SmartFolderRuleField, SmartFolderRuleOperator } from '@/types/smart-folders'
+import { SmartFolderRule, SmartFolderRuleField } from '@/types/smart-folders'
 
 // 拡張ルールタイプ
 export interface AdvancedSmartFolderRule extends SmartFolderRule {
@@ -163,7 +163,7 @@ export class AdvancedRuleEngine {
     const date = new Date(value)
     if (isNaN(date.getTime())) return false
     
-    const timeRange = rule.timeRange
+    const {timeRange} = rule
     if (!timeRange) return true
     
     // 時間帯チェック

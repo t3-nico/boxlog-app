@@ -1,6 +1,6 @@
 import { icons } from '@/config/theme'
 
-export function GoogleIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+export const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => {
   return (
     <svg viewBox="0 0 48 48" aria-hidden="true" className={icons.social} {...props}>
       <path fill="#EA4335" d="M24 9.5c3.6 0 6.8 1.2 9.3 3.6l7-7C35.9 2.5 30.1 0 24 0 15.5 0 8 5.9 3.5 14.5l7.4 5.9C12 15.9 17.5 9.5 24 9.5Z" />
@@ -11,7 +11,7 @@ export function GoogleIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   )
 }
 
-export function AppleIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
+export const AppleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={icons.social} {...props}>
       <path d="M16.5 1.5c-1.3 0-2.8.9-3.6 2-.8 1-1.4 2.5-1.1 3.9 1.5 0 3-.9 3.8-2 0.8-1 1.5-2.6 1.5-3.9Z" fill="currentColor" />

@@ -1,8 +1,11 @@
 import React, { useMemo } from 'react'
-import { TrashItem } from '../types/trash'
+
+import { colors, typography, spacing, icons, rounded } from '@/config/theme'
+
 import { useTrashStore } from '../stores/useTrashStore'
+import { TrashItem } from '../types/trash'
 import { trashOperations } from '../utils/trash-operations'
-import { colors, typography, spacing, icons, rounded, elevation } from '@/config/theme'
+
 
 interface TrashTableProps {
   items: TrashItem[]

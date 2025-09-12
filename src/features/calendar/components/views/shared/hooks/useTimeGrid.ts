@@ -3,6 +3,7 @@
  */
 
 import { useMemo } from 'react'
+
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface TimeGridHours {

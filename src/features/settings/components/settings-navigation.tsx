@@ -1,13 +1,9 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname } from 'next/navigation'
-import {
-  SidebarHeading,
-  SidebarItem,
-  SidebarLabel,
-  SidebarSection,
-} from '@/components/layout/navigation/shared'
+
 import {
   User as UserIcon,
   SlidersVertical as AdjustmentsVerticalIcon,
@@ -23,7 +19,14 @@ import {
   Info as InformationCircleIcon,
 } from 'lucide-react'
 
-export function SettingsNavigation() {
+import {
+  SidebarHeading,
+  SidebarItem,
+  SidebarLabel,
+  SidebarSection,
+} from '@/components/layout/navigation/shared'
+
+export const SettingsNavigation = () => {
   const pathname = usePathname()
 
   return (

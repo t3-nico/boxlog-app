@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+
 import { BellRing } from 'lucide-react'
 
 interface SystemNotification {

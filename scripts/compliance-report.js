@@ -10,9 +10,10 @@
  * - CCPA Compliance
  */
 
-const { ESLint } = require('eslint');
 const fs = require('fs');
 const path = require('path');
+
+const { ESLint } = require('eslint');
 
 // レポート設定
 const REPORT_CONFIG = {

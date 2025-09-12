@@ -3,12 +3,13 @@
  * @description デザインシステムで使用する型とインターfaces
  */
 
-import { typography, spacing, layout, colors, borders, animations, zIndex } from './index'
+import { transition, hover, loading, appear, feedback, patterns as animationPatterns } from './animations'
+import { elevation, borders as elevationBorders, patterns as elevationPatterns } from './elevation'
 import { icons } from './icons'
 import { rounded } from './rounded'
 import { link, linkStates, linkPatterns } from './typography'
-import { transition, hover, loading, appear, feedback, patterns as animationPatterns } from './animations'
-import { elevation, borders as elevationBorders, patterns as elevationPatterns } from './elevation'
+
+import { typography, spacing, layout, colors, borders, animations, zIndex } from './index'
 
 // ============================================
 // 基本型定義

@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react'
+
+import { colors, typography, icons, rounded } from '@/config/theme'
+
 import { useTrashStore } from '../stores/useTrashStore'
+
 import { TrashActions } from './TrashActions'
 import { TrashTable } from './TrashTable'
-import { colors, typography, spacing, icons, rounded, elevation } from '@/config/theme'
 
 interface TrashViewProps {
   className?: string

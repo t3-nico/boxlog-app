@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import type { ToastTemplates, CalendarToastOptions } from './types';
+
+import type { ToastTemplates } from './types';
 
 export const toastTemplates: ToastTemplates = {
   created: {

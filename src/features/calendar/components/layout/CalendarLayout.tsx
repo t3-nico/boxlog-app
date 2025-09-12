@@ -1,9 +1,12 @@
 'use client'
 
 import { memo } from 'react'
+
 import { cn } from '@/lib/utils'
-import { CalendarHeader } from './Header'
+
 import type { CalendarViewType } from '../../types/calendar.types'
+
+import { CalendarHeader } from './Header'
 
 interface CalendarLayoutProps {
   children: React.ReactNode

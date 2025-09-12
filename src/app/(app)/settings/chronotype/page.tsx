@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+
 import { 
   GraduationCap,
   Lightbulb,
@@ -8,11 +9,12 @@ import {
   Sun,
   Clock
 } from 'lucide-react'
+
+import { colors, typography, spacing, rounded } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
-import { colors, typography, spacing } from '@/config/theme'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { CHRONOTYPE_PRESETS, type ChronotypeType } from '@/types/chronotype'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { type ChronotypeType } from '@/types/chronotype'
 
 interface ChronotypeAutoSaveSettings {
   type: ChronotypeType
@@ -104,11 +106,11 @@ const chronoTypeProfiles: ChronoTypeProfile[] = [
 ]
 
 const typeColors = {
-  focus: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300',
-  creative: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300',
-  rest: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300',
-  admin: 'bg-muted text-gray-700 dark:text-gray-300',
-  sleep: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
+  focus: `${colors.semantic.success.DEFAULT} ${colors.semantic.success.text}`,
+  creative: `${colors.semantic.info.DEFAULT} ${colors.semantic.info.text}`,
+  rest: `${colors.semantic.warning.DEFAULT} ${colors.semantic.warning.text}`,
+  admin: `${colors.background.surface} ${colors.text.secondary}`,
+  sleep: `${colors.background.elevated} ${colors.text.muted}`
 }
 
 const typeIcons = {
@@ -116,7 +118,7 @@ const typeIcons = {
   creative: Lightbulb,
   rest: Moon,
   admin: Clock,
-  sleep: () => <span className="text-base">💤</span>
+  sleep: () => <span className={typography.body.DEFAULT}>💤</span>
 }
 
 interface DiagnosisQuestion {
@@ -299,28 +301,28 @@ export default function ChronoTypePage() {
 
       {/* 診断セクション */}
       {showDiagnosis ? (
-        <div id="diagnosis-section" className="bg-card rounded-lg border border-border p-6">
+        <div id="diagnosis-section" className={`${colors.background.card} ${rounded.component.card.md} ${colors.border.default} p-6`}>
           {diagnosisResult ? (
             /* 診断結果表示 */
-            <div className="text-center">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+            <div className={typography.align.center}>
+              <h2 className={`${typography.heading.h2} ${typography.weight.medium} ${colors.text.primary} ${spacing.margin.md}`}>
                 🎉 診断完了！
               </h2>
               <div className="mb-6">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <p className={`${typography.body.sm} ${colors.text.secondary} ${spacing.margin.md}`}>
                   あなたのクロノタイプは...
                 </p>
-                <div className="inline-block p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className={`inline-block p-6 ${colors.semantic.info.light} ${rounded.component.card.md} ${colors.semantic.info.border}`}>
                   <div className="flex items-center gap-3 mb-2">
-                    {diagnosisResult === 'lion' && <Sun className="h-8 w-8 text-yellow-500" data-slot="icon" />}
-                    {diagnosisResult === 'bear' && <Clock className="h-8 w-8 text-blue-500" data-slot="icon" />}
-                    {diagnosisResult === 'wolf' && <Moon className="h-8 w-8 text-purple-500" data-slot="icon" />}
-                    {diagnosisResult === 'dolphin' && <GraduationCap className="h-8 w-8 text-teal-500" data-slot="icon" />}
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
+                    {diagnosisResult === 'lion' && <Sun className={`h-8 w-8 ${colors.semantic.warning.text}`} data-slot="icon" />}
+                    {diagnosisResult === 'bear' && <Clock className={`h-8 w-8 ${colors.semantic.info.text}`} data-slot="icon" />}
+                    {diagnosisResult === 'wolf' && <Moon className={`h-8 w-8 ${colors.primary.text}`} data-slot="icon" />}
+                    {diagnosisResult === 'dolphin' && <GraduationCap className={`h-8 w-8 ${colors.secondary.text}`} data-slot="icon" />}
+                    <h3 className={`${typography.heading.h3} ${typography.weight.bold} ${colors.text.primary}`}>
                       {chronoTypeProfiles.find(p => p.id === diagnosisResult)?.name}
                     </h3>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className={colors.text.secondary}>
                     {chronoTypeProfiles.find(p => p.id === diagnosisResult)?.description}
                   </p>
                 </div>
@@ -328,13 +330,13 @@ export default function ChronoTypePage() {
               <div className="flex gap-3 justify-center">
                 <button
                   onClick={resetDiagnosis}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-card border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className={`${spacing.padding.md} ${typography.body.sm} ${typography.weight.medium} ${colors.text.secondary} ${colors.background.card} ${colors.border.default} ${colors.rounded.lg} ${colors.hover.card} ${colors.transition.colors}`}
                 >
                   もう一度診断
                 </button>
                 <button
                   onClick={() => setShowDiagnosis(false)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                  className={`${spacing.padding.md} ${typography.body.sm} ${typography.weight.medium} ${colors.text.white} ${colors.primary.DEFAULT} ${colors.hover.primary} ${colors.rounded.lg} ${colors.transition.colors}`}
                 >
                   設定に進む
                 </button>
@@ -345,23 +347,23 @@ export default function ChronoTypePage() {
             <div>
               <div className="mb-6">
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                  <h2 className={`${typography.heading.h2} ${colors.text.primary}`}>
                     クロノタイプ診断
                   </h2>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                  <span className={`${typography.body.sm} ${colors.text.muted}`}>
                     {currentQuestion + 1} / {diagnosisQuestions.length}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className={`w-full ${colors.background.elevated} ${rounded.component.button.pill} h-2`}>
                   <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    className={`${colors.primary.DEFAULT} h-2 ${rounded.component.button.pill} transition-all duration-300`}
                     style={{ width: `${progress}%` }}
                   ></div>
                 </div>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+                <h3 className={`${typography.heading.h3} ${colors.text.primary} mb-4`}>
                   {diagnosisQuestions[currentQuestion]?.question}
                 </h3>
                 <div className="space-y-3">
@@ -369,7 +371,7 @@ export default function ChronoTypePage() {
                     <button
                       key={index}
                       onClick={() => handleAnswerSelect(diagnosisQuestions[currentQuestion].id, option.value)}
-                      className="w-full p-4 text-left border border-border rounded-lg hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
+                      className={`w-full p-4 text-left ${colors.border.default} ${rounded.component.card.md} ${colors.hover.border} ${colors.hover.subtle} transition-all`}
                     >
                       {option.text}
                     </button>
@@ -379,7 +381,7 @@ export default function ChronoTypePage() {
 
               <button
                 onClick={resetDiagnosis}
-                className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                className={`${typography.body.sm} ${colors.text.muted} ${colors.hover.text}`}
               >
                 診断をキャンセル
               </button>
@@ -388,14 +390,14 @@ export default function ChronoTypePage() {
         </div>
       ) : (
         /* クロノタイププロファイル選択 */
-        <div className="bg-card rounded-lg border border-border p-6">
+        <div className={`${colors.background.card} ${rounded.component.card.md} ${colors.border.default} p-6`}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h2 className={`${typography.heading.h2} ${colors.text.primary}`}>
               クロノタイプを選択
             </h2>
             <button
               onClick={startDiagnosis}
-              className="px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 rounded-lg transition-colors"
+              className={`${spacing.padding.sm} ${typography.body.sm} ${typography.weight.medium} ${colors.primary.text} ${colors.hover.primary} ${colors.primary.background} ${colors.hover.primary} ${colors.rounded.lg} ${colors.transition.colors}`}
             >
               🔍 診断で決める
             </button>
@@ -410,23 +412,23 @@ export default function ChronoTypePage() {
                 }}
                 className={`p-4 border-2 rounded-lg text-left transition-all ${
                   chronoSettings.values.type === profile.id
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                    : 'border-border hover:border-gray-300 dark:hover:border-gray-600'
+                    ? `${colors.border.info} ${colors.semantic.info.light}`
+                    : `${colors.border.DEFAULT} hover:${colors.border.strong}`
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  {profile.id === 'lion' && <Sun className="h-5 w-5 text-yellow-500" data-slot="icon" />}
-                  {profile.id === 'bear' && <Clock className="h-5 w-5 text-blue-500" data-slot="icon" />}
-                  {profile.id === 'wolf' && <Moon className="h-5 w-5 text-purple-500" data-slot="icon" />}
-                  {profile.id === 'dolphin' && <GraduationCap className="h-5 w-5 text-teal-500" data-slot="icon" />}
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                  {profile.id === 'lion' && <Sun className="h-5 w-5 ${colors.semantic.warning.text}" data-slot="icon" />}
+                  {profile.id === 'bear' && <Clock className="h-5 w-5 ${colors.semantic.info.text}" data-slot="icon" />}
+                  {profile.id === 'wolf' && <Moon className="h-5 w-5 ${colors.primary.text}" data-slot="icon" />}
+                  {profile.id === 'dolphin' && <GraduationCap className="h-5 w-5 ${colors.secondary.text}" data-slot="icon" />}
+                  <h3 className={`${typography.body.semibold} ${colors.text.primary}`}>
                     {profile.name}
                   </h3>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                <p className={`${typography.body.small} ${colors.text.secondary} ${spacing.margin.sm}`}>
                   {profile.description}
                 </p>
-                <div className="text-xs text-gray-500 dark:text-gray-500">
+                <div className={typography.special.caption}>
                   <div>ピーク: {profile.peakHours}</div>
                   <div>低調: {profile.lowHours}</div>
                 </div>
@@ -438,8 +440,8 @@ export default function ChronoTypePage() {
 
       {/* 選択されたプロファイルのスケジュール表示 */}
       {currentProfile && (
-        <div className="bg-card rounded-lg border border-border p-6">
-          <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+        <div className={`${colors.background.card} ${rounded.component.card.md} ${colors.border.default} p-6`}>
+          <h2 className={`${typography.heading.h4} ${colors.text.primary} ${spacing.margin.md}`}>
             {currentProfile.name} のスケジュール
           </h2>
           
@@ -466,13 +468,13 @@ export default function ChronoTypePage() {
       )}
 
       {/* カレンダー表示設定 */}
-      <div className="bg-card rounded-lg border border-border p-6">
+      <div className={`${colors.background.card} ${rounded.component.card.md} ${colors.border.default} p-6`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h2 className={`${typography.heading.h4} ${colors.text.primary}`}>
               Show in Calendar
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className={`${typography.body.small} ${colors.text.secondary}`}>
               Display chronotype indicators in calendar views
             </p>
           </div>
@@ -483,33 +485,33 @@ export default function ChronoTypePage() {
               onChange={(e) => chronoSettings.updateValue('enabled', e.target.checked)}
               className="sr-only peer"
             />
-            <div className="w-12 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <div className={`w-12 h-6 ${colors.background.muted} peer-focus:outline-none peer-focus:ring-4 ${colors.focus.ring} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] ${colors.background.base} after:border ${colors.border.muted} after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:${colors.primary.DEFAULT}`}></div>
           </label>
         </div>
       </div>
 
 
       {/* クロノタイプ説明セクション */}
-      <div className="bg-card rounded-lg border border-border p-6 mt-8">
-        <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
+      <div className={`${colors.background.card} ${rounded.component.card.md} ${colors.border.default} p-6 mt-8`}>
+        <h2 className={`${typography.heading.h2} ${colors.text.primary} mb-4`}>
           クロノタイプとは？
         </h2>
         
-        <div className="prose prose-sm dark:prose-invert max-w-none">
-          <div className="space-y-4 text-gray-600 dark:text-gray-400">
+        <div className="prose prose-sm max-w-none">
+          <div className={`space-y-4 ${colors.text.secondary}`}>
             <p>
               <strong>クロノタイプ（Chronotype）</strong>は、個人の体内時計（概日リズム）によって決まる活動パターンのことです。
               人それぞれ異なる生物学的な時間軸を持っており、これを理解して活用することで生産性と well-being を向上させることができます。
             </p>
 
-            <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mt-6 mb-3">
+            <h3 className={`${typography.heading.h5} ${colors.text.primary} ${spacing.margin.lg}`}>
               📊 4つのクロノタイプ
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                <h4 className="font-medium text-yellow-800 dark:text-yellow-200 mb-2">🦁 Lion (ライオン型・超朝型)</h4>
-                <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+              <div className={`${colors.semantic.warning.light} ${spacing.padding.md} ${rounded.component.card.md} ${colors.border.DEFAULT}`}>
+                <h4 className={`${typography.body.semibold} ${colors.semantic.warning.text} ${spacing.margin.sm}`}>🦁 Lion (ライオン型・超朝型)</h4>
+                <ul className={`${typography.body.small} ${colors.semantic.warning.text} ${spacing.stack.xs}`}>
                   <li>• 人口の約 15%</li>
                   <li>• 早朝（5-7時）起床、7-11時がピーク</li>
                   <li>• 夜は21時頃には疲れる</li>
@@ -517,9 +519,9 @@ export default function ChronoTypePage() {
                 </ul>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">🐻 Bear (クマ型・標準型)</h4>
-                <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+              <div className={`${colors.semantic.info.light} ${spacing.padding.md} ${rounded.component.card.md} ${colors.border.DEFAULT}`}>
+                <h4 className={`${typography.body.semibold} ${colors.semantic.info.text} ${spacing.margin.sm}`}>🐻 Bear (クマ型・標準型)</h4>
+                <ul className={`${typography.body.small} ${colors.semantic.info.text} ${spacing.stack.xs}`}>
                   <li>• 人口の約 55%</li>
                   <li>• 7-8時起床、9-12時と14-17時がピーク</li>
                   <li>• 太陽のサイクルに同調</li>
@@ -527,9 +529,9 @@ export default function ChronoTypePage() {
                 </ul>
               </div>
 
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
-                <h4 className="font-medium text-purple-800 dark:text-purple-200 mb-2">🐺 Wolf (オオカミ型・夜型)</h4>
-                <ul className="text-sm text-purple-700 dark:text-purple-300 space-y-1">
+              <div className={`${colors.background.elevated} ${spacing.padding.md} ${rounded.component.card.md} ${colors.border.DEFAULT}`}>
+                <h4 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>🐺 Wolf (オオカミ型・夜型)</h4>
+                <ul className={`${typography.body.small} ${colors.text.secondary} ${spacing.stack.xs}`}>
                   <li>• 人口の約 20%</li>
                   <li>• 17-22時がピーク、深夜も活動的</li>
                   <li>• 朝は調子が上がりにくい</li>
@@ -537,9 +539,9 @@ export default function ChronoTypePage() {
                 </ul>
               </div>
 
-              <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-lg border border-teal-200 dark:border-teal-800">
-                <h4 className="font-medium text-teal-800 dark:text-teal-200 mb-2">🐬 Dolphin (イルカ型・不規則型)</h4>
-                <ul className="text-sm text-teal-700 dark:text-teal-300 space-y-1">
+              <div className={`${colors.semantic.success.light} ${spacing.padding.md} ${rounded.component.card.md} ${colors.border.DEFAULT}`}>
+                <h4 className={`${typography.body.semibold} ${colors.semantic.success.text} ${spacing.margin.sm}`}>🐬 Dolphin (イルカ型・不規則型)</h4>
+                <ul className={`${typography.body.small} ${colors.semantic.success.text} ${spacing.stack.xs}`}>
                   <li>• 人口の約 10%</li>
                   <li>• 複数の短いピーク時間</li>
                   <li>• 睡眠が浅く、中途覚醒が多い</li>
@@ -548,42 +550,42 @@ export default function ChronoTypePage() {
               </div>
             </div>
 
-            <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mt-6 mb-3">
+            <h3 className={`${typography.heading.h5} ${colors.text.primary} ${spacing.margin.lg}`}>
               🎯 クロノタイプを活用するメリット
             </h3>
 
-            <ul className="list-disc list-inside space-y-2 ml-4">
-              <li><strong>生産性の向上</strong>：自分のピーク時間に重要なタスクを配置</li>
-              <li><strong>ストレス軽減</strong>：体内時計に逆らわない働き方でストレス減少</li>
-              <li><strong>創造性の発揮</strong>：クリエイティブな時間帯を意識的に活用</li>
-              <li><strong>健康の維持</strong>：自然なリズムに合わせた生活で心身の健康をサポート</li>
-              <li><strong>チームワークの改善</strong>：メンバーのクロノタイプを理解した協働</li>
+            <ul className={`list-disc list-inside ${spacing.stack.sm} ml-4 ${colors.text.secondary}`}>
+              <li><strong className={colors.text.primary}>生産性の向上</strong>：自分のピーク時間に重要なタスクを配置</li>
+              <li><strong className={colors.text.primary}>ストレス軽減</strong>：体内時計に逆らわない働き方でストレス減少</li>
+              <li><strong className={colors.text.primary}>創造性の発揮</strong>：クリエイティブな時間帯を意識的に活用</li>
+              <li><strong className={colors.text.primary}>健康の維持</strong>：自然なリズムに合わせた生活で心身の健康をサポート</li>
+              <li><strong className={colors.text.primary}>チームワークの改善</strong>：メンバーのクロノタイプを理解した協働</li>
             </ul>
 
-            <h3 className="text-md font-medium text-gray-900 dark:text-gray-100 mt-6 mb-3">
+            <h3 className={`${typography.heading.h5} ${colors.text.primary} ${spacing.margin.lg}`}>
               📝 作業タイプの分類
             </h3>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3 my-4">
-              <div className="flex items-center gap-2 p-2 bg-green-100 dark:bg-green-900/30 rounded">
-                <GraduationCap className="h-4 w-4 text-green-600 dark:text-green-400" data-slot="icon" />
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">Focus</span>
+              <div className={`flex items-center gap-2 ${spacing.padding.sm} ${colors.semantic.success.light} ${rounded.component.card.sm}`}>
+                <GraduationCap className={`h-4 w-4 ${colors.semantic.success.text}`} data-slot="icon" />
+                <span className={`${typography.body.small} ${typography.body.semibold} ${colors.semantic.success.text}`}>Focus</span>
               </div>
-              <div className="flex items-center gap-2 p-2 bg-purple-100 dark:bg-purple-900/30 rounded">
-                <Lightbulb className="h-4 w-4 text-purple-600 dark:text-purple-400" data-slot="icon" />
-                <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Creative</span>
+              <div className={`flex items-center gap-2 ${spacing.padding.sm} ${colors.background.elevated} ${rounded.component.card.sm}`}>
+                <Lightbulb className={`h-4 w-4 ${colors.text.primary}`} data-slot="icon" />
+                <span className={`${typography.body.small} ${typography.body.semibold} ${colors.text.primary}`}>Creative</span>
               </div>
-              <div className="flex items-center gap-2 p-2 bg-blue-100 dark:bg-blue-900/30 rounded">
-                <Moon className="h-4 w-4 text-blue-600 dark:text-blue-400" data-slot="icon" />
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Rest</span>
+              <div className={`flex items-center gap-2 ${spacing.padding.sm} ${colors.semantic.info.light} ${rounded.component.card.sm}`}>
+                <Moon className={`h-4 w-4 ${colors.semantic.info.text}`} data-slot="icon" />
+                <span className={`${typography.body.small} ${typography.body.semibold} ${colors.semantic.info.text}`}>Rest</span>
               </div>
               <div className="flex items-center gap-2 p-2 bg-muted rounded">
-                <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" data-slot="icon" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Admin</span>
+                <Clock className={`h-4 w-4 ${colors.text.secondary}`} data-slot="icon" />
+                <span className={`${typography.body.small} ${typography.body.semibold} ${colors.text.secondary}`}>Admin</span>
               </div>
-              <div className="flex items-center gap-2 p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded">
+              <div className={`flex items-center gap-2 ${spacing.padding.sm} ${colors.primary.light} ${rounded.component.button.sm}`}>
                 <span className="text-sm">💤</span>
-                <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Sleep</span>
+                <span className={`${typography.body.small} ${typography.weight.medium} ${colors.primary.text}`}>Sleep</span>
               </div>
             </div>
 
@@ -596,20 +598,20 @@ export default function ChronoTypePage() {
             </p>
 
             <div className="bg-muted p-4 rounded-lg mt-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className={`${typography.body.small} ${colors.text.secondary}`}>
                 💡 <strong>ヒント</strong>：クロノタイプは遺伝的要因が大きく、完全に変えることは困難です。
                 重要なのは自分のタイプを受け入れ、それに合わせて作業スケジュールを最適化することです。
               </p>
             </div>
 
             {/* 診断ボタン */}
-            <div className="text-center mt-6 pt-6 border-t border-border">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <div className="text-center mt-6 pt-6 ${colors.border.top}">
+              <p className={`${typography.body.small} ${colors.text.secondary} ${spacing.margin.md}`}>
                 自分のクロノタイプが分からない方は、診断をお試しください
               </p>
               <button
                 onClick={startDiagnosis}
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm"
+                className={`inline-flex items-center gap-2 ${spacing.padding.lg} ${typography.body.sm} ${typography.weight.medium} ${colors.text.white} ${colors.primary.DEFAULT} ${colors.hover.primary} ${colors.rounded.lg} ${colors.transition.colors} ${colors.shadow.sm}`}
               >
                 🔍 クロノタイプ診断を開始
               </button>

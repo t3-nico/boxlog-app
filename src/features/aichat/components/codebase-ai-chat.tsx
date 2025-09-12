@@ -1,40 +1,37 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+
 import { useChat } from 'ai/react'
-import { useAuthContext } from '@/features/auth'
-import { Avatar } from '@/components/shadcn-ui/avatar'
+
 import { 
   X,
-  ArrowUpCircle,
-  Code2,
-  Github,
-  FileSearch,
   MoreVertical,
   Trash2,
   Copy,
   RefreshCw,
   BotMessageSquare
 } from 'lucide-react'
-import {
-  AIInput,
-  AIInputTextarea,
-  AIInputToolbar,
-  AIInputSubmit,
-  AIInputButton,
-  AIInputTools
-} from '@/components/kibo-ui/ai/input'
+
 import {
   AIConversation,
   AIConversationContent,
   AIConversationScrollButton
 } from '@/components/kibo-ui/ai/conversation'
 import {
+  AIInput,
+  AIInputTextarea,
+  AIInputToolbar,
+  AIInputSubmit,
+  AIInputTools
+} from '@/components/kibo-ui/ai/input'
+import {
   AIMessage,
-  AIMessageContent,
-  AIMessageAvatar
+  AIMessageContent
 } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
+import { Avatar } from '@/components/shadcn-ui/avatar'
+import { useAuthContext } from '@/features/auth'
 
 // GitHub APIの型定義
 interface GitHubFile {
@@ -156,7 +153,7 @@ class GitHubCodebaseClient {
   }
 }
 
-function MessageBubble({ message }: { message: ExtendedMessage }) {
+const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
   const { user } = useAuthContext()
   const isUser = message.role === 'user'
   const isAssistant = message.role === 'assistant' || message.role === 'system'
@@ -239,7 +236,7 @@ function MessageBubble({ message }: { message: ExtendedMessage }) {
   )
 }
 
-function CodebaseChatInput({ 
+const CodebaseChatInput = ({ 
   input,
   handleInputChange,
   handleSubmit,
@@ -249,7 +246,7 @@ function CodebaseChatInput({
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
-}) {
+}) => {
   const [isComposing, setIsComposing] = useState(false)
 
   const getSubmitStatus = () => {
@@ -300,7 +297,7 @@ function CodebaseChatInput({
   )
 }
 
-export function CodebaseAIChat({ isOpen, onClose }: CodebaseAIChatProps) {
+export const CodebaseAIChat = ({ isOpen, onClose }: CodebaseAIChatProps) => {
   const [showMenu, setShowMenu] = useState(false)
   const [isInitialized, setIsInitialized] = useState(false)
   

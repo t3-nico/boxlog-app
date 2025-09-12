@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
+
 import { useRouter } from 'next/navigation'
+
 import { useAuthContext } from '../contexts/AuthContext'
 
 interface AuthGuardProps {
@@ -9,7 +11,7 @@ interface AuthGuardProps {
   fallback?: React.ReactNode
 }
 
-export function AuthGuard({ children, fallback }: AuthGuardProps) {
+export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
   const { user, loading } = useAuthContext()
   const router = useRouter()
   

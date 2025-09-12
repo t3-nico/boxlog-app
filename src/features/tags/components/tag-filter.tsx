@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+
 import {
   Filter as FunnelIcon,
   X as XMarkIcon,
   Tag as TagIcon,
   ChevronDown as ChevronDownIcon
 } from 'lucide-react'
+
 import { useTags } from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren } from '@/types/tags'
 
@@ -24,7 +26,7 @@ interface TagFilterItemProps {
   onToggle: (tagId: string) => void
 }
 
-function TagFilterItem({ tag, level, isSelected, onToggle }: TagFilterItemProps) {
+const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps) => {
   const paddingLeft = level * 16 + 8
 
   return (
@@ -69,12 +71,12 @@ function TagFilterItem({ tag, level, isSelected, onToggle }: TagFilterItemProps)
   )
 }
 
-export function TagFilter({ 
+export const TagFilter = ({ 
   showTitle = true, 
   showSelectedCount = true, 
   compact = false,
   className = '' 
-}: TagFilterProps) {
+}: TagFilterProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const { data: allTags = [], isLoading } = useTags(true)
   // Use a simple local state for tag filtering for now
@@ -224,7 +226,7 @@ interface TagChipProps {
   onToggle: (tagId: string) => void
 }
 
-export function TagChip({ tag, isSelected, onToggle }: TagChipProps) {
+export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
   return (
     <button
       onClick={() => onToggle(tag.id)}
@@ -246,7 +248,7 @@ export function TagChip({ tag, isSelected, onToggle }: TagChipProps) {
 /**
  * 横並びタグフィルター（チップ形式）
  */
-export function TagFilterChips({ className = '' }: { className?: string }) {
+export const TagFilterChips = ({ className = '' }: { className?: string }) => {
   const { data: allTags = [], isLoading } = useTags(true)
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const toggleTag = (tagId: string) => {

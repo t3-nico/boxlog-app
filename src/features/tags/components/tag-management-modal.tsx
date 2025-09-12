@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { X, Edit2, Trash2, Check, Plus } from 'lucide-react'
 
 // Tag interface
@@ -21,14 +22,14 @@ interface TagManagementModalProps {
   onDeleteTag: (id: string) => void
 }
 
-export function TagManagementModal({
+export const TagManagementModal = ({
   isOpen,
   onClose,
   tags,
   onCreateTag,
   onUpdateTag,
   onDeleteTag
-}: TagManagementModalProps) {
+}: TagManagementModalProps) => {
   const [newTagName, setNewTagName] = useState('')
   const [newTagColor, setNewTagColor] = useState('#3b82f6')
   const [newTagParentId, setNewTagParentId] = useState<string | null>(null)

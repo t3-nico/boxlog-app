@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+
 import type { Toast, ToastOptions, ToastType, ToastPosition } from './types'
 
 interface ToastStore {

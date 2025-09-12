@@ -5,8 +5,9 @@
 'use client'
 
 import React, { memo } from 'react'
-import { formatTime, formatTimeRange } from '../../utils/dateHelpers'
+
 import type { TimedEvent } from '../../types/event.types'
+import { formatTimeRange } from '../../utils/dateHelpers'
 
 interface EventContentProps {
   event: TimedEvent

@@ -1,17 +1,19 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuthContext } from '../contexts/AuthContext'
-import { Logo } from '@/app/logo'
-import { Button } from '@/components/shadcn-ui/button'
-import { GoogleIcon, AppleIcon } from '@/components/custom'
-import { Checkbox } from '@/components/shadcn-ui/checkbox'
-import { Label } from '@/components/shadcn-ui/label'
-import { Heading } from '@/components/custom'
-import { Input } from '@/components/shadcn-ui/input'
 
-function LoginFormComponent({ localMode = false }: { localMode?: boolean }) {
+import { useRouter } from 'next/navigation'
+
+import { Logo } from '@/app/logo'
+import { GoogleIcon, AppleIcon , Heading } from '@/components/custom'
+import { Button } from '@/components/shadcn-ui/button'
+import { Checkbox } from '@/components/shadcn-ui/checkbox'
+import { Input } from '@/components/shadcn-ui/input'
+import { Label } from '@/components/shadcn-ui/label'
+
+import { useAuthContext } from '../contexts/AuthContext'
+
+const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)

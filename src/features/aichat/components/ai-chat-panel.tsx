@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { X, Send, Sparkles, MoreVertical, Plus } from 'lucide-react'
 
 interface AiChatPanelProps {
@@ -15,7 +16,7 @@ interface Message {
   timestamp: Date
 }
 
-export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
+export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -46,7 +47,7 @@ export function AiChatPanel({ isOpen, onClose }: AiChatPanelProps) {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: 'I received your message: "' + inputValue + '". This is a simulated response.',
+        content: `I received your message: "${  inputValue  }". This is a simulated response.`,
         timestamp: new Date()
       }
       setMessages(prev => [...prev, aiMessage])

@@ -2,29 +2,29 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { primaryNavigation } from '@/config/navigation/config'
-import { SidebarItem } from './sidebar-item'
-import { UserMenu } from './user-menu'
-import { ThemeToggle } from './theme-toggle'
-import { useNavigationStore } from './stores/navigation.store'
-import { background, text, border, primary, secondary } from '@/config/theme/colors'
 import { PanelLeftClose, Bell, Plus, Search } from 'lucide-react'
-import { useNotificationModal } from '@/features/notifications'
-import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
-import { layout, breakpoints } from '@/config/theme/layout'
-import { useAuthContext } from '@/features/auth'
-import { Avatar } from '@/components/shadcn-ui/avatar'
+
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
+import { Avatar } from '@/components/shadcn-ui/avatar'
+import { primaryNavigation } from '@/config/navigation/config'
+import { useAuthContext } from '@/features/auth'
+import { useNotificationModal } from '@/features/notifications'
+import { cn } from '@/lib/utils'
+import { SidebarItem } from './sidebar-item'
+import { useNavigationStore } from './stores/navigation.store'
+import { ThemeToggle } from './theme-toggle'
+import { UserMenu } from './user-menu'
+import { colors, rounded, animations, spacing, icons, typography, layout } from '@/config/theme'
+
+
 
 const { xs } = layout.heights.header
-const { sm, lg } = icon.size
-const gap1wo = 'gap-1'
-const space2 = spacing.space[2]
-const px2 = 'px-2'
-const py2 = 'py-2'
+const { sm, lg } = icons.size
+// テーマから統一的に取得
+const { xs: headerHeight } = layout.heights.header
+const { sm: iconSm, lg: iconLg } = icons.size
 
-export function DesktopSidebar() {
+export const DesktopSidebar = () => {
   const pathname = usePathname()
   const { primaryNavWidth, isSidebarOpen, toggleSidebar } = useNavigationStore()
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
@@ -63,10 +63,11 @@ export function DesktopSidebar() {
   return (
     <div 
       className={cn(
-        'flex relative z-[9999] border-r',
-        background.surface,
-        text.primary,
-        border.universal
+        'flex relative border-r',
+        'z-50',
+        colors.background.surface,
+        colors.text.primary,
+        colors.border.default
       )}
       style={{ width: `${primaryNavWidth}px` }}
     >
@@ -74,59 +75,66 @@ export function DesktopSidebar() {
       <div className="flex-1 flex flex-col">
         {/* Top Section: Account & Actions */}
         <div className={cn(
-          'flex items-center justify-between mt-2',
-          xs, // 32px height
-          px2 // 8px horizontal padding
+          'flex items-center justify-between',
+          spacing.margin.top.sm,
+          headerHeight, // 32px height
+          spacing.padding.horizontal.sm // 8px horizontal padding
         )}>
           {/* Left: Close Panel Button */}
           <div className="flex items-center mr-4">
             <button
               onClick={() => toggleSidebar()}
               className={cn(
-                'w-8 h-8 flex items-center justify-center',
-                secondary.hover,
-                componentRadius.button.sm,
+                spacing.size.button.sm,
+                'flex items-center justify-center',
+                colors.hover.subtle,
+                rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
               )}
             >
-              <PanelLeftClose className={sm} />
+              <PanelLeftClose className={iconSm} />
             </button>
           </div>
           
           {/* Right: Action Buttons */}
-          <div className="flex items-center gap-1">
+          <div className={cn('flex items-center', spacing.gap.xs)}>
             {/* Search Button */}
             <button
               className={cn(
-                'w-8 h-8 flex items-center justify-center',
-                secondary.hover,
-                componentRadius.button.sm,
+                spacing.size.button.sm,
+                'flex items-center justify-center',
+                colors.hover.subtle,
+                rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
               )}
             >
-              <Search className={sm} />
+              <Search className={iconSm} />
             </button>
             
             {/* Notification Button */}
             <button
               onClick={openNotifications}
               className={cn(
-                'w-8 h-8 flex items-center justify-center relative',
-                secondary.hover,
-                componentRadius.button.sm,
+                spacing.size.button.sm,
+                'flex items-center justify-center relative',
+                colors.hover.subtle,
+                rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
               )}
             >
-              <Bell className={sm} />
+              <Bell className={iconSm} />
               {notificationCount > 0 && (
                 <span className={cn(
-                  'absolute -top-1 -right-1 w-4 h-4',
-                  'bg-red-500 text-white text-xs',
+                  'absolute -top-1 -right-1',
+                  spacing.size.badge.sm,
+                  colors.semantic.error.bg,
+                  colors.text.onError,
+                  typography.body.xs,
                   'flex items-center justify-center',
-                  componentRadius.badge.pill
+                  rounded.component.badge.pill
                 )}>
                   {notificationCount}
                 </span>
@@ -141,17 +149,18 @@ export function DesktopSidebar() {
                 }
               })}
               className={cn(
-                'w-8 h-8 flex items-center justify-center',
-                primary.DEFAULT,
-                primary.hover,
-                primary.text,
-                componentRadius.button.sm,
+                spacing.size.button.sm,
+                'flex items-center justify-center',
+                colors.primary.DEFAULT,
+                colors.primary.hover,
+                colors.text.onPrimary,
+                rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
               )}
               aria-label="新しいイベントを作成"
             >
-              <Plus className={sm} />
+              <Plus className={iconSm} />
             </button>
           </div>
         </div>
@@ -159,17 +168,18 @@ export function DesktopSidebar() {
         {/* All Navigation Items */}
         <div className={cn(
           'flex flex-col space-y-0 flex-1',
-          px2, // 8px horizontal padding
-          py2 // 8px vertical padding
+          spacing.padding.horizontal.sm, // 8px horizontal padding
+          spacing.padding.vertical.sm // 8px vertical padding
         )}>
           {primaryNavigation.map((section) => (
             <React.Fragment key={section.id}>
               {section.label && (
                 <div className={cn(
-                  'px-2 py-2 mt-4 first:mt-0',
+                  spacing.padding.sm,
+                  spacing.margin.top.md, 'first:mt-0',
                   typography.body.small,
                   'font-medium uppercase tracking-wider',
-                  text.muted
+                  colors.text.muted
                 )}>
                   {section.label}
                 </div>
@@ -184,18 +194,18 @@ export function DesktopSidebar() {
                 ))
               ) : (
                 section.id === 'smart-folders' && (
-                  <div className={cn(px2, py2)}>
+                  <div className={cn(spacing.padding.sm)}>
                     <button className={cn(
                       'w-full flex items-center',
-                      gap1wo,
-                      'hover:bg-accent',
-                      componentRadius.button.sm,
+                      spacing.gap.xs,
+                      colors.hover.subtle,
+                      rounded.component.button.sm,
                       animations.transition.fast,
-                      space2,
-                      text.muted,
+                      spacing.padding.sm,
+                      colors.text.muted,
                       typography.body.small
                     )}>
-                      <Plus className={sm} />
+                      <Plus className={iconSm} />
                       <span>Add smart folder</span>
                     </button>
                   </div>
@@ -207,8 +217,8 @@ export function DesktopSidebar() {
 
         {/* Theme Toggle */}
         <div className={cn(
-          'pb-4',
-          px2 // 8px horizontal padding
+          spacing.padding.bottom.md,
+          spacing.padding.horizontal.sm // 8px horizontal padding
         )}>
           <div className={cn(
             'flex items-center justify-start'
@@ -219,18 +229,18 @@ export function DesktopSidebar() {
 
         {/* Bottom Section: User Account */}
         <div className={cn(
-          'mb-2', // 8px bottom margin
-          px2 // 8px horizontal padding
+          spacing.margin.bottom.sm, // 8px bottom margin
+          spacing.padding.horizontal.sm // 8px horizontal padding
         )}>
           {/* User Account Info */}
           <UserMenu>
             <div className={cn(
               "flex items-center cursor-pointer w-full",
-              secondary.hover,
-              'gap-2', // 8px gap
-              componentRadius.button.md,
+              colors.hover.subtle,
+              spacing.gap.sm, // 8px gap
+              rounded.component.button.md,
               animations.transition.fast,
-              'p-2', // 全方向8px
+              spacing.padding.sm, // 全方向8px
               'border border-transparent'
             )}>
               {/* Avatar Icon Only */}
@@ -239,16 +249,17 @@ export function DesktopSidebar() {
                   <Avatar 
                     src={user.user_metadata.avatar_url} 
                     className={cn(
-                      lg, 'border',
-                      border.universal,
-                      componentRadius.media.avatar
+                      iconLg, 'border',
+                      colors.border.default,
+                      rounded.component.avatar.md
                     )}
                   />
                 ) : user?.user_metadata?.profile_icon ? (
                   <div className={cn(
-                    lg, 'text-sm flex items-center justify-center bg-accent border',
-                    border.universal,
-                    componentRadius.media.avatar
+                    iconLg, typography.body.sm, 'flex items-center justify-center',
+                    colors.background.accent, 'border',
+                    colors.border.default,
+                    rounded.component.avatar.md
                   )}>
                     {user.user_metadata.profile_icon}
                   </div>
@@ -256,9 +267,9 @@ export function DesktopSidebar() {
                   <Avatar 
                     src={undefined}
                     className={cn(
-                      lg, 'border',
-                      border.universal,
-                      componentRadius.media.avatar
+                      iconLg, 'border',
+                      colors.border.default,
+                      rounded.component.avatar.md
                     )}
                     initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
                   />
@@ -270,7 +281,7 @@ export function DesktopSidebar() {
               )}>
                 <div className={cn(
                   'truncate',
-                  text.primary,
+                  colors.text.primary,
                   typography.body.DEFAULT,
                   'font-medium'
                 )}>
@@ -278,7 +289,7 @@ export function DesktopSidebar() {
                 </div>
                 <div className={cn(
                   'truncate',
-                  text.muted,
+                  colors.text.muted,
                   typography.body.small
                 )}>
                   Free Plan
@@ -299,7 +310,8 @@ export function DesktopSidebar() {
         {/* Visual Color Change - 1px width */}
         <div className={cn(
           'absolute right-1 top-0 w-px h-full transition-colors',
-          'group-hover:bg-blue-600 dark:group-hover:bg-blue-500'
+          colors.primary.DEFAULT,
+          colors.primary.hover
         )} />
       </div>
     </div>

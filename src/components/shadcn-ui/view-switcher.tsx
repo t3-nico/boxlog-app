@@ -1,11 +1,14 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname, useRouter } from 'next/navigation'
+
 import clsx from 'clsx'
+
 import { views } from '@/config/ui/views'
 
-export function ViewSwitcher() {
+export const ViewSwitcher = () => {
   const pathname = usePathname()
   const router = useRouter()
 

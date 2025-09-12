@@ -1,11 +1,12 @@
 'use client'
 
 import React, { memo, useState, useMemo, useCallback } from 'react'
+
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '@/components/shadcn-ui/button'
-import { cn } from '@/lib/utils'
-import { primary, secondary, selection, background, displayPeriod } from '@/config/theme/colors'
+
+import { secondary, selection } from '@/config/theme/colors'
 import { calendarColors } from '@/features/calendar/theme/colors'
+import { cn } from '@/lib/utils'
 
 const selectedState = calendarColors.states.selected
 const displayPeriodState = calendarColors.states.displayPeriod

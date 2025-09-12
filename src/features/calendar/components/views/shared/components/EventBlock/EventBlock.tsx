@@ -5,14 +5,17 @@
 'use client'
 
 import React, { memo, useState, useEffect } from 'react'
-import { EventContent } from './EventContent'
-import { useEventPosition } from '../../hooks/useEventPosition'
-import { MIN_EVENT_HEIGHT, Z_INDEX, TRANSITION_DURATION } from '../../constants/grid.constants'
-import type { EventBlockProps, TimedEvent } from '../../types/event.types'
+
 import { calendarColors } from '@/features/calendar/theme'
-import { spacing } from '@/config/theme'
 
 import { cn } from '@/lib/utils'
+
+import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
+import type { EventBlockProps, TimedEvent } from '../../types/event.types'
+
+
+
+import { EventContent } from './EventContent'
 
 export const EventBlock = memo<EventBlockProps>(function EventBlock({
   event,

@@ -8,9 +8,9 @@
  * - CCPA (California Consumer Privacy Act)
  */
 
+const dataRetentionRules = require('./data-retention');
 const gdprRules = require('./gdpr-compliance');
 const securityRules = require('./security-audit');
-const dataRetentionRules = require('./data-retention');
 
 module.exports = {
   rules: {

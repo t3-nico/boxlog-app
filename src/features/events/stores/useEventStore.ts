@@ -1,4 +1,7 @@
 import { create } from 'zustand'
+
+import { useTagStore } from '@/features/tags/stores/tag-store'
+
 import { 
   Event, 
   EventFilters, 
@@ -8,7 +11,6 @@ import {
   EventsByDate,
   CalendarEvent
 } from '../types/events'
-import { useTagStore } from '@/features/tags/stores/tag-store'
 
 // ローカルストレージのキー
 const STORAGE_KEY = 'boxlog-events'

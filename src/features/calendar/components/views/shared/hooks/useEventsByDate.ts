@@ -4,17 +4,18 @@
  */
 
 import { useMemo } from 'react'
+
 import { isSameDay } from 'date-fns'
+
+import type { CalendarEvent } from '../types/base.types'
 import { 
   getDateKey, 
-  isValidEvent, 
-  normalizeEventDate
+  isValidEvent
 } from '../utils/dateHelpers'
 import { 
   sortEventsByDateKeys,
   sortAgendaEventsByDateKeys 
 } from '../utils/eventSorting'
-import type { CalendarEvent } from '../types/base.types'
 
 export interface UseEventsByDateOptions {
   dates: Date[]

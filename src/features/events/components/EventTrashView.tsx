@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+
 import { useEventTrash } from '../hooks/useEventTrash'
 
 interface EventTrashViewProps {

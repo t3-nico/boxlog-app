@@ -1,13 +1,15 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { Calendar, Clock, MapPin, Users, Tag } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
-import { componentRadius, spacing, typography } from '@/config/theme'
 
-export function CalendarInspectorContent() {
+import { Calendar, Clock, MapPin, Users, Tag } from 'lucide-react'
+
+import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+import { typography } from '@/config/theme'
+import { text, border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+export const CalendarInspectorContent = () => {
   return (
     <ScrollArea className="h-full">
       <div className="p-4 space-y-6">
@@ -21,7 +23,7 @@ export function CalendarInspectorContent() {
             {/* イベント名 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-start gap-3">
@@ -40,7 +42,7 @@ export function CalendarInspectorContent() {
             {/* 時間情報 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-center gap-3">
@@ -59,7 +61,7 @@ export function CalendarInspectorContent() {
             {/* 場所 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-center gap-3">
@@ -78,7 +80,7 @@ export function CalendarInspectorContent() {
             {/* 参加者 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-start gap-3">
@@ -124,7 +126,7 @@ export function CalendarInspectorContent() {
                 key={index}
                 className={cn(
                   'p-3 rounded-lg border',
-                  background.surface,
+                  colors.background.surface,
                   border.subtle,
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
@@ -163,7 +165,7 @@ export function CalendarInspectorContent() {
                 className={cn(
                   'px-3 py-1 rounded-full border',
                   typography.body.xs,
-                  background.surface,
+                  colors.background.surface,
                   border.subtle,
                   text.muted,
                   'hover:bg-accent cursor-pointer transition-colors'

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 import { SmartFolder, SmartFolderRule } from '@/types/smart-folders'
 import { Task } from '@/types/unified'
 
@@ -31,7 +32,7 @@ const generateId = (): string => {
 }
 
 const generateConditionId = (): string => {
-  return 'cond_' + Math.random().toString(36).substring(2)
+  return `cond_${  Math.random().toString(36).substring(2)}`
 }
 
 // Eagle-style system smart folders

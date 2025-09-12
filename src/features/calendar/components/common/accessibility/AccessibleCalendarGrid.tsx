@@ -1,8 +1,10 @@
 'use client'
 
 import React, { useRef, useCallback, useMemo } from 'react'
-import { cn } from '@/lib/utils'
+
 import type { CalendarEvent } from '@/features/events'
+import { cn } from '@/lib/utils'
+
 import { useAccessibilityKeyboard, AccessibilityLiveRegion } from '../../../hooks/useAccessibilityKeyboard'
 
 interface AccessibleCalendarGridProps {
@@ -40,7 +42,7 @@ const generateTimeSlots = (startHour: number, endHour: number) => {
   return slots
 }
 
-export function AccessibleCalendarGrid({
+export const AccessibleCalendarGrid = ({
   dates,
   events,
   currentDate,
@@ -58,7 +60,7 @@ export function AccessibleCalendarGrid({
   startHour = 0,
   endHour = 24,
   className
-}: AccessibleCalendarGridProps) {
+}: AccessibleCalendarGridProps) => {
   const gridRef = useRef<HTMLDivElement>(null)
 
   // アクセシビリティキーボード操作

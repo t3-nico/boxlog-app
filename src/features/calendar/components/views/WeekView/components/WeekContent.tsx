@@ -1,12 +1,14 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import { format } from 'date-fns'
+
+import type { CalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
+
 import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCursor, useEventStyles, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
-import type { CalendarEvent } from '@/features/events'
+
 
 interface WeekContentProps {
   date: Date
@@ -22,7 +24,7 @@ interface WeekContentProps {
   displayDates?: Date[] // 週の全日付配列（日付間移動用）
 }
 
-export function WeekContent({
+export const WeekContent = ({
   date,
   events,
   eventPositions,
@@ -34,7 +36,7 @@ export function WeekContent({
   className,
   dayIndex,
   displayDates
-}: WeekContentProps) {
+}: WeekContentProps) => {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
@@ -215,7 +217,7 @@ export function WeekContent({
           (() => {
             // 週の全イベントからドラッグ中のイベントを探す
             // displayDates配列を使って全日付のイベントを探索
-            let draggedEvent: CalendarEvent | null = null
+            const draggedEvent: CalendarEvent | null = null
             
             // 他のWeekContentインスタンスが保持しているイベントを探すのは困難
             // そのため、親コンポーネントから渡されるevents配列から探す

@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import { TagsList } from '@/features/tags/components/tags-list'
 
 interface BoardSidebarSectionsProps {
@@ -10,11 +11,11 @@ interface BoardSidebarSectionsProps {
   selectedTagIds: string[]
 }
 
-export function BoardSidebarSections({
+export const BoardSidebarSections = ({
   collapsed,
   onSelectTag,
   selectedTagIds
-}: BoardSidebarSectionsProps) {
+}: BoardSidebarSectionsProps) => {
   return (
     <>
       {/* カンバン設定（将来拡張予定） */}

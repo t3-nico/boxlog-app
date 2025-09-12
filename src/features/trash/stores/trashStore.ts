@@ -2,6 +2,7 @@
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 import { DeletedItem, TrashStats, TrashState } from '@/types/trash'
 
 // 30日間をミリ秒で表現

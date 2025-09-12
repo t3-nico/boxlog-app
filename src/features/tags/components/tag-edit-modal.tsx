@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+
 import { 
   Dialog, 
   DialogPanel, 
@@ -17,6 +18,7 @@ import {
   Trash2 as TrashIcon,
   AlertTriangle as ExclamationTriangleIcon
 } from 'lucide-react'
+
 import type { TagWithChildren, UpdateTagInput } from '@/types/tags'
 
 interface TagEditModalProps {
@@ -42,13 +44,13 @@ const DEFAULT_COLORS = [
   '#6B7280', // Gray
 ]
 
-function ColorPicker({ 
+const ColorPicker = ({ 
   value, 
   onChange 
 }: { 
   value: string; 
   onChange: (color: string) => void 
-}) {
+}) => {
   const [customColor, setCustomColor] = useState(value)
   
   useEffect(() => {
@@ -93,7 +95,7 @@ function ColorPicker({
   )
 }
 
-function ParentTagSelector({
+const ParentTagSelector = ({
   value,
   onChange,
   allTags,
@@ -105,7 +107,7 @@ function ParentTagSelector({
   allTags: TagWithChildren[]
   currentTag: TagWithChildren
   maxLevel?: number
-}) {
+}) => {
   // 現在のタグとその子孫を除外するヘルパー
   const getDescendantIds = (tag: TagWithChildren): Set<string> => {
     const ids = new Set([tag.id])
@@ -159,7 +161,7 @@ function ParentTagSelector({
   )
 }
 
-function DeleteConfirmation({
+const DeleteConfirmation = ({
   tag,
   onConfirm,
   onCancel
@@ -167,7 +169,7 @@ function DeleteConfirmation({
   tag: TagWithChildren
   onConfirm: () => void
   onCancel: () => void
-}) {
+}) => {
   const hasChildren = tag.children && tag.children.length > 0
   const childCount = tag.children?.length || 0
   
@@ -213,7 +215,7 @@ function DeleteConfirmation({
   )
 }
 
-export function TagEditModal({
+export const TagEditModal = ({
   isOpen,
   onClose,
   onSave,
@@ -221,7 +223,7 @@ export function TagEditModal({
   onMove,
   tag,
   allTags = []
-}: TagEditModalProps) {
+}: TagEditModalProps) => {
   const [formData, setFormData] = useState({
     name: '',
     color: '#3B82F6',

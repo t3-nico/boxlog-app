@@ -1,9 +1,10 @@
 'use client'
 
 import type React from 'react'
+
 import { usePathname } from 'next/navigation'
 
-export function AuthLayout({ children }: { children: React.ReactNode }) {
+export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
   
   // ログインとサインアップページは shadcn/ui の2カラムレイアウトを使用するため、ラップしない

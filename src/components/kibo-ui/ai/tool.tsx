@@ -2,15 +2,6 @@
 
 import type { ComponentProps, ReactNode } from 'react';
 
-import { Badge } from '@/components/shadcn-ui/badge';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/kibo-ui/collapsible';
-import { cn } from '@/lib/utils';
-import { colors } from '@/config/theme';
-
 import {
   CheckCircleIcon,
   ChevronDownIcon,
@@ -19,6 +10,16 @@ import {
   WrenchIcon,
   XCircleIcon,
 } from 'lucide-react';
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/kibo-ui/collapsible';
+import { Badge } from '@/components/shadcn-ui/badge';
+import { colors } from '@/config/theme';
+import { cn } from '@/lib/utils';
+
 
 export type AIToolStatus = 'pending' | 'running' | 'completed' | 'error';
 

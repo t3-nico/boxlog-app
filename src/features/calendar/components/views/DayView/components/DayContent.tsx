@@ -1,16 +1,17 @@
 'use client'
 
 import React, { useCallback } from 'react'
-import { cn } from '@/lib/utils'
-import { space } from '@/config/theme/spacing'
-import { EventBlock, CalendarDragSelection, DateTimeSelection, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
-import type { DayContentProps } from '../DayView.types'
-import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
-import { useDragAndDrop } from '../hooks/useDragAndDrop'
-import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
-import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
 
-export function DayContent({
+import { cn } from '@/lib/utils'
+
+import { EventBlock, CalendarDragSelection, calculateEventGhostStyle, calculatePreviewTime } from '../../shared'
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
+import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
+import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
+import type { DayContentProps } from '../DayView.types'
+import { useDragAndDrop } from '../hooks/useDragAndDrop'
+
+export const DayContent = ({
   date,
   events,
   eventStyles,
@@ -20,7 +21,7 @@ export function DayContent({
   onEventUpdate,
   onTimeRangeSelect,
   className
-}: DayContentProps) {
+}: DayContentProps) => {
   // ドラッグ&ドロップ機能用にonEventUpdateを変換
   const handleEventUpdate = useCallback(
     async (eventId: string, updates: { startTime: Date; endTime: Date }) => {

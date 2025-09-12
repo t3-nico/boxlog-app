@@ -1,8 +1,9 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { cn } from '@/lib/utils'
+
 import type { CalendarEvent } from '@/features/events'
+import { cn } from '@/lib/utils'
 
 interface VirtualCalendarGridProps {
   dates: Date[]
@@ -34,7 +35,7 @@ interface ViewportInfo {
 const HOUR_HEIGHT = 60 // デフォルトの1時間の高さ
 const BUFFER_SIZE = 2 // 前後2時間分のバッファ
 
-export function VirtualCalendarGrid({
+export const VirtualCalendarGrid = ({
   dates,
   events,
   hourHeight = HOUR_HEIGHT,
@@ -44,7 +45,7 @@ export function VirtualCalendarGrid({
   onEventClick,
   onCreateEvent,
   className
-}: VirtualCalendarGridProps) {
+}: VirtualCalendarGridProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [viewport, setViewport] = useState<ViewportInfo>({
     scrollTop: 0,
@@ -98,7 +99,7 @@ export function VirtualCalendarGrid({
   // スクロールハンドラー（パフォーマンス最適化）
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const target = e.currentTarget
-    const scrollTop = target.scrollTop
+    const {scrollTop} = target
     const containerHeight = target.clientHeight
 
     // 新しい表示範囲を計算

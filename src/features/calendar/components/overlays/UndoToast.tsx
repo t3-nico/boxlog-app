@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { cn } from '@/lib/utils'
+
 import { X, Undo2, RotateCcw } from 'lucide-react'
+
 import type { CalendarEvent } from '@/features/events'
+import { cn } from '@/lib/utils'
 
 interface UndoAction {
   id: string
@@ -20,12 +22,12 @@ interface UndoToastProps {
   autoHideDelay?: number
 }
 
-export function UndoToast({ 
+export const UndoToast = ({ 
   action, 
   onUndo, 
   onDismiss, 
   autoHideDelay = 5000 
-}: UndoToastProps) {
+}: UndoToastProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 

@@ -4,6 +4,7 @@
  */
 
 import type { Event } from '@/features/events/types/events'
+
 import type { TimedEvent } from '../components/views/shared/types/event.types'
 
 /**

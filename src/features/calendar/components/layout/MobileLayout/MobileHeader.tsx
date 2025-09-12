@@ -1,9 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, ChevronLeft, ChevronRight } from 'lucide-react'
+
 import { format, getWeek } from 'date-fns'
+import { Menu, ChevronLeft, ChevronRight } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
+
 import type { CalendarViewType } from '../../../types/calendar.types'
 
 export type MobileNavigationDirection = 'prev' | 'next' | 'today'
@@ -33,7 +36,7 @@ const viewLabels = {
  * モバイル用ヘッダー
  * コンパクトな表示でタッチ操作に最適化
  */
-export function MobileHeader({
+export const MobileHeader = ({
   viewType,
   currentDate,
   onNavigate,
@@ -43,7 +46,7 @@ export function MobileHeader({
   showBackButton = false,
   onBack,
   className
-}: MobileHeaderProps) {
+}: MobileHeaderProps) => {
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
   

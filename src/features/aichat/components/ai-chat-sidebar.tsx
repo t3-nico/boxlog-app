@@ -9,10 +9,10 @@ declare global {
     webkitSpeechRecognition: any;
   }
 }
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+
 import { 
   X,
-  ArrowUpCircle,
   Sparkles,
   Trash2,
   Copy,
@@ -20,7 +20,20 @@ import {
   Mic,
   MicOff
 } from 'lucide-react'
-import { useChatContext } from '@/contexts/chat-context'
+
+import {
+  AIBranch,
+  AIBranchMessages,
+  AIBranchSelector,
+  AIBranchPrevious,
+  AIBranchNext,
+  AIBranchPage
+} from '@/components/kibo-ui/ai/branch'
+import {
+  AIConversation,
+  AIConversationContent,
+  AIConversationScrollButton
+} from '@/components/kibo-ui/ai/conversation'
 import {
   AIInput,
   AIInputTextarea,
@@ -35,24 +48,12 @@ import {
   AIInputModelSelectValue
 } from '@/components/kibo-ui/ai/input'
 import {
-  AIConversation,
-  AIConversationContent,
-  AIConversationScrollButton
-} from '@/components/kibo-ui/ai/conversation'
-import {
   AIMessage,
   AIMessageContent,
   AIMessageAvatar
 } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
-import {
-  AIBranch,
-  AIBranchMessages,
-  AIBranchSelector,
-  AIBranchPrevious,
-  AIBranchNext,
-  AIBranchPage
-} from '@/components/kibo-ui/ai/branch'
+import { useChatContext } from '@/contexts/chat-context'
 
 // BoxLog用のカスタムAI Responseコンポーネント
 const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
@@ -94,7 +95,7 @@ interface MessageBubbleProps {
   }
 }
 
-function MessageBubble({ message }: MessageBubbleProps) {
+const MessageBubble = ({ message }: MessageBubbleProps) => {
   const isUser = message.sender === 'user'
   const isAssistant = message.sender === 'assistant'
   
@@ -162,7 +163,7 @@ function MessageBubble({ message }: MessageBubbleProps) {
   )
 }
 
-function ChatInput() {
+const ChatInput = () => {
   const { state, sendMessage, setInputValue } = useChatContext()
   const [isComposing, setIsComposing] = useState(false)
   const [isListening, setIsListening] = useState(false)
@@ -274,7 +275,7 @@ function ChatInput() {
   )
 }
 
-export function AIChatSidebar({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) {
+export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) => {
   const { state, clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
 

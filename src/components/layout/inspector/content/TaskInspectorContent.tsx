@@ -1,13 +1,15 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { CheckSquare, Clock, Flag, User, MessageSquare, Paperclip } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
-import { typography } from '@/config/theme'
 
-export function TaskInspectorContent() {
+import { CheckSquare, Clock, Flag, User, MessageSquare, Paperclip } from 'lucide-react'
+
+import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+import { typography } from '@/config/theme'
+import { text, border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+export const TaskInspectorContent = () => {
   return (
     <ScrollArea className="h-full">
       <div className="p-4 space-y-6">
@@ -21,7 +23,7 @@ export function TaskInspectorContent() {
             {/* タスク名 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-start gap-3">
@@ -40,7 +42,7 @@ export function TaskInspectorContent() {
             {/* 期限と進捗 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-center gap-3 mb-3">
@@ -70,7 +72,7 @@ export function TaskInspectorContent() {
             {/* 優先度 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-center gap-3">
@@ -89,7 +91,7 @@ export function TaskInspectorContent() {
             {/* 担当者 */}
             <div className={cn(
               'p-3 rounded-lg border',
-              background.surface,
+              colors.background.surface,
               border.subtle
             )}>
               <div className="flex items-center gap-3">
@@ -124,7 +126,7 @@ export function TaskInspectorContent() {
                 key={index}
                 className={cn(
                   'p-3 rounded-lg border',
-                  background.surface,
+                  colors.background.surface,
                   border.subtle,
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
@@ -177,7 +179,7 @@ export function TaskInspectorContent() {
                 key={index}
                 className={cn(
                   'p-3 rounded-lg border',
-                  background.surface,
+                  colors.background.surface,
                   border.subtle
                 )}
               >
@@ -217,7 +219,7 @@ export function TaskInspectorContent() {
                 key={index}
                 className={cn(
                   'p-3 rounded-lg border',
-                  background.surface,
+                  colors.background.surface,
                   border.subtle,
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}

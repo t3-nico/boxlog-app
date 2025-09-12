@@ -1,12 +1,5 @@
 'use client';
 
-import type {
-  Announcements,
-  DndContextProps,
-  DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
-} from '@dnd-kit/core';
 import {
   createContext,
   type HTMLAttributes,
@@ -14,7 +7,14 @@ import {
   useContext,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
+
+import type {
+  Announcements,
+  DndContextProps,
+  DragEndEvent,
+  DragOverEvent,
+  DragStartEvent,
+} from '@dnd-kit/core';
 
 import {
   closestCenter,
@@ -29,7 +29,9 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { createPortal } from 'react-dom';
 import tunnel from 'tunnel-rat';
+
 import { Card } from '@/components/shadcn-ui/card';
 import { ScrollArea, ScrollBar } from '@/components/shadcn-ui/scroll-area';
 import { cn } from '@/lib/utils';

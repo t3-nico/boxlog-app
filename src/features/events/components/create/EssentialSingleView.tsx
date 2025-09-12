@@ -1,14 +1,19 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Loader2, Check, FileText, Bell, Flag, MoreHorizontal, Repeat, ChevronDown, Calendar, Clock, Zap, Trash2 } from 'lucide-react'
-import { TitleInput } from './TitleInput'
+import { X, Loader2, Check, FileText, Bell, MoreHorizontal, Repeat, Trash2 } from 'lucide-react'
+
+import { text, primary, semantic } from '@/config/theme/colors'
+
+import { rounded } from '@/config/theme/rounded'
+import { body, heading } from '@/config/theme/typography'
+
 import { DateSelector } from './DateSelector'
 import { TagInput } from './TagInput'
-import { background, text, primary, semantic } from '@/config/theme/colors'
-import { body, heading } from '@/config/theme/typography'
-import { rounded } from '@/config/theme/rounded'
+
+import { TitleInput } from './TitleInput'
 
 interface Tag {
   id: string
@@ -43,14 +48,14 @@ interface EssentialSingleViewProps {
   }
 }
 
-export function EssentialSingleView({ 
+export const EssentialSingleView = ({ 
   isOpen, 
   onClose, 
   onSave, 
   onDelete,
   isEditMode = false,
   initialData 
-}: EssentialSingleViewProps) {
+}: EssentialSingleViewProps) => {
   
   // 2択式シンプルモード（最速入力と詳細予定のみ）
   type ScheduleMode = 'defer' | 'schedule' // 後で決める | 今すぐ予定する
@@ -302,7 +307,7 @@ export function EssentialSingleView({
 
     try {
       // 2択モードに応じてデータを整形
-      let saveData: any = {
+      const saveData: any = {
         title,
         tags,
         description: memo || undefined
@@ -475,7 +480,7 @@ export function EssentialSingleView({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className={`
               relative w-full max-w-2xl mx-4
-              ${background.base} ${rounded.modal}
+              ${colors.background.base} ${rounded.modal}
               shadow-2xl
             `}
             style={{
@@ -577,7 +582,7 @@ export function EssentialSingleView({
                   onClick={handleCancel}
                   className={`
                     p-2 rounded-lg transition-colors duration-200
-                    hover:${background.surface} ${text.secondary}
+                    hover:${colors.background.surface} ${text.secondary}
                   `}
                 >
                   <X size={20} />
@@ -729,7 +734,7 @@ export function EssentialSingleView({
                           p-3 rounded-lg transition-all duration-200 flex items-center gap-2
                           ${showMemo || memo 
                             ? `${primary.DEFAULT} text-white` 
-                            : `${background.surface} ${text.secondary} hover:${background.elevated}`
+                            : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
                           }
                         `}
                         title="Add memo"
@@ -743,7 +748,7 @@ export function EssentialSingleView({
                           p-3 rounded-lg transition-all duration-200
                           ${reminder 
                             ? `${primary.DEFAULT} text-white` 
-                            : `${background.surface} ${text.secondary} hover:${background.elevated}`
+                            : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
                           }
                         `}
                         title="Set reminder"
@@ -755,7 +760,7 @@ export function EssentialSingleView({
                       <button
                         className={`
                           p-3 rounded-lg transition-all duration-200
-                          ${background.surface} ${text.secondary} hover:${background.elevated}
+                          ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                         `}
                         title="Set repeat"
                       >
@@ -767,7 +772,7 @@ export function EssentialSingleView({
                     <button
                       className={`
                         p-3 rounded-lg transition-all duration-200
-                        ${background.surface} ${text.secondary} hover:${background.elevated}
+                        ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                       `}
                       title="More options"
                     >
@@ -789,7 +794,7 @@ export function EssentialSingleView({
                           onChange={(e) => setMemo(e.target.value)}
                           placeholder="Enter memo or comments..."
                           className={`
-                            w-full p-3 ${background.surface} ${text.primary}
+                            w-full p-3 ${colors.background.surface} ${text.primary}
                             border border-neutral-200 dark:border-neutral-700
                             rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500
                           `}
@@ -856,8 +861,8 @@ export function EssentialSingleView({
                     onClick={handleCancel}
                     className={`
                       px-6 py-3 rounded-lg font-medium
-                      ${background.surface} ${text.secondary}
-                      hover:${background.elevated} transition-all duration-200
+                      ${colors.background.surface} ${text.secondary}
+                      hover:${colors.background.elevated} transition-all duration-200
                       border border-neutral-200 dark:border-neutral-700
                     `}
                   >
@@ -871,7 +876,7 @@ export function EssentialSingleView({
                       transition-all duration-200
                       ${isValid && !isSubmitting
                         ? `${primary.DEFAULT} text-white hover:opacity-90 shadow-lg hover:shadow-xl`
-                        : `${background.surface} ${text.muted} cursor-not-allowed`
+                        : `${colors.background.surface} ${text.muted} cursor-not-allowed`
                       }
                     `}
                     whileHover={isValid && !isSubmitting ? { scale: 1.02 } : {}}

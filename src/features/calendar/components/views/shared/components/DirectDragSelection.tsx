@@ -1,10 +1,12 @@
 'use client'
 
 import React, { useCallback, useState, useRef, useEffect } from 'react'
-import { cn } from '@/lib/utils'
-import { HOUR_HEIGHT } from '../constants/grid.constants'
+
 import { getEventColor } from '@/features/calendar/theme'
 import { calendarStyles } from '@/features/calendar/theme/styles'
+import { cn } from '@/lib/utils'
+
+import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 interface DirectDragSelectionProps {
   weekDates: Date[] // 週の全日付配列
@@ -19,14 +21,14 @@ interface DirectDragSelectionProps {
  * マウス座標から直接日付を計算するドラッグ選択
  * CalendarDragSelectionの問題を回避する緊急ソリューション
  */
-export function DirectDragSelection({
+export const DirectDragSelection = ({
   weekDates,
   className,
   onTimeRangeSelect,
   onSingleClick,
   children,
   disabled = false
-}: DirectDragSelectionProps) {
+}: DirectDragSelectionProps) => {
   const [isSelecting, setIsSelecting] = useState(false)
   const [selection, setSelection] = useState<{
     date: Date
@@ -125,7 +127,7 @@ export function DirectDragSelection({
       }
 
       let startHour = selectionStart.hour
-      let startMinute = selectionStart.minute
+      const startMinute = selectionStart.minute
       let endHour = result.hour
       let endMinute = result.minute
 

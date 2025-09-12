@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
+
 import { Check, ChevronDown, X, Plus, Tag } from "lucide-react"
 
 import { Badge } from "@/components/shadcn-ui/badge"
 import { Button } from "@/components/shadcn-ui/button"
-import { Input } from "@/components/shadcn-ui/input"
 import {
   Command,
   CommandEmpty,
@@ -52,7 +52,7 @@ interface TagsProps {
   onCreateTag?: (tagName: string) => void
 }
 
-export function Tags({ value = [], onValueChange, options, children, onCreateTag }: TagsProps) {
+export const Tags = ({ value = [], onValueChange, options, children, onCreateTag }: TagsProps) => {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState("")
   const containerRef = React.useRef<HTMLDivElement>(null)
@@ -98,7 +98,7 @@ interface TagsTriggerProps {
   placeholder?: string
 }
 
-export function TagsTrigger({ className, placeholder = "Select tags..." }: TagsTriggerProps) {
+export const TagsTrigger = ({ className, placeholder = "Select tags..." }: TagsTriggerProps) => {
   const { value, options, open, setOpen } = useTagsContext()
   const selectedOptions = options.filter(option => value.includes(option.id))
 
@@ -139,7 +139,7 @@ interface TagsValueProps {
   className?: string
 }
 
-export function TagsValue({ className }: TagsValueProps) {
+export const TagsValue = ({ className }: TagsValueProps) => {
   const { value, onValueChange, options } = useTagsContext()
   const selectedOptions = options.filter(option => value.includes(option.id))
 
@@ -185,7 +185,7 @@ interface TagsContentProps {
   className?: string
 }
 
-export function TagsContent({ children, className }: TagsContentProps) {
+export const TagsContent = ({ children, className }: TagsContentProps) => {
   const { open, setOpen } = useTagsContext()
 
   if (!open) return null
@@ -206,7 +206,7 @@ interface TagsInputProps {
   placeholder?: string
 }
 
-export function TagsInput({ placeholder = "Search tags..." }: TagsInputProps) {
+export const TagsInput = ({ placeholder = "Search tags..." }: TagsInputProps) => {
   const { searchValue, setSearchValue } = useTagsContext()
   
   return (
@@ -218,7 +218,7 @@ export function TagsInput({ placeholder = "Search tags..." }: TagsInputProps) {
   )
 }
 
-export function TagsList({ children }: { children: React.ReactNode }) {
+export const TagsList = ({ children }: { children: React.ReactNode }) => {
   const { onCreateTag, searchValue, setSearchValue, options } = useTagsContext()
   
   // Check if searchValue doesn't match any existing tag
@@ -248,7 +248,7 @@ export function TagsList({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function TagsEmpty({ children }: { children: React.ReactNode }) {
+export const TagsEmpty = ({ children }: { children: React.ReactNode }) => {
   return <CommandEmpty>{children}</CommandEmpty>
 }
 
@@ -257,7 +257,7 @@ interface TagsGroupProps {
   heading?: string
 }
 
-export function TagsGroup({ children, heading }: TagsGroupProps) {
+export const TagsGroup = ({ children, heading }: TagsGroupProps) => {
   return <CommandGroup heading={heading}>{children}</CommandGroup>
 }
 
@@ -266,7 +266,7 @@ interface TagsItemProps {
   children: React.ReactNode
 }
 
-export function TagsItem({ value, children }: TagsItemProps) {
+export const TagsItem = ({ value, children }: TagsItemProps) => {
   const { value: selectedValues, onValueChange, setOpen } = useTagsContext()
   const isSelected = selectedValues.includes(value)
 
@@ -304,7 +304,7 @@ interface SimpleTagsProps {
   onCreateTag?: (tagName: string) => void
 }
 
-export function SimpleTags({ value, onValueChange, options, placeholder, className, onCreateTag }: SimpleTagsProps) {
+export const SimpleTags = ({ value, onValueChange, options, placeholder, className, onCreateTag }: SimpleTagsProps) => {
   return (
     <Tags value={value} onValueChange={onValueChange} options={options} onCreateTag={onCreateTag}>
       <div className={cn("", className)}>

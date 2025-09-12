@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { EventType, EventStatus, EventPriority } from '../types/events'
+
 
 // 基本バリデーションスキーマ
 export const EventValidationSchema = z.object({

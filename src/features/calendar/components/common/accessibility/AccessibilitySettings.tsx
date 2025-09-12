@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { cn } from '@/lib/utils'
-import { useHighContrast } from '../../../hooks/useHighContrast'
+
 import { FocusTrap } from '../../../hooks/useFocusTrap'
+import { useHighContrast } from '../../../hooks/useHighContrast'
 
 interface AccessibilitySettingsProps {
   isOpen: boolean
@@ -11,7 +13,7 @@ interface AccessibilitySettingsProps {
   className?: string
 }
 
-export function AccessibilitySettings({ isOpen, onClose, className }: AccessibilitySettingsProps) {
+export const AccessibilitySettings = ({ isOpen, onClose, className }: AccessibilitySettingsProps) => {
   const {
     isHighContrastEnabled,
     currentTheme,

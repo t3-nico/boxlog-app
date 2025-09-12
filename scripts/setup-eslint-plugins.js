@@ -93,7 +93,7 @@ plugins.forEach(plugin => {
 });
 
 // 結果サマリー
-console.log('\n' + '='.repeat(50));
+console.log(`\n${  '='.repeat(50)}`);
 console.log('📊 Setup Summary');
 console.log('='.repeat(50));
 console.log(`✅ Successful: ${successCount}`);

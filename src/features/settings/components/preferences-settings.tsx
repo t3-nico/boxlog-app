@@ -2,9 +2,9 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
+import { spacing } from '@/config/theme'
 import { SettingsCard, SettingField } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { spacing } from '@/config/theme'
 
 interface PreferencesSettings {
   language: 'ja' | 'en'

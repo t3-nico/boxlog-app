@@ -1,8 +1,10 @@
 import { useState, useCallback, useMemo } from 'react'
-import { useEventStore } from '../stores/useEventStore'
-import { eventDeletionUtils } from '../utils/eventDeletion'
-import { Event } from '../types/events'
+
 import { useAddPopup } from '@/hooks/useAddPopup'
+
+import { useEventStore } from '../stores/useEventStore'
+import { Event } from '../types/events'
+import { eventDeletionUtils } from '../utils/eventDeletion'
 
 export interface UseEventTrashOptions {
   autoRefresh?: boolean

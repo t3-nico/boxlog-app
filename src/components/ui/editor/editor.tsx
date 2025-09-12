@@ -1,62 +1,61 @@
 'use client'
 
-import React, { useState } from 'react'
-import { $generateHtmlFromNodes } from '@lexical/html'
-import { $generateNodesFromDOM } from '@lexical/html'
+import React from 'react'
+
+import { CodeNode } from '@lexical/code'
+import { $generateHtmlFromNodes , $generateNodesFromDOM } from '@lexical/html'
+import { LinkNode } from '@lexical/link'
+import { $createListItemNode, $createListNode, ListItemNode, ListNode } from '@lexical/list'
+import { TRANSFORMERS } from '@lexical/markdown'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin'
 import { LexicalComposer } from '@lexical/react/LexicalComposer'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { ListPlugin } from '@lexical/react/LexicalListPlugin'
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin'
-import { TRANSFORMERS } from '@lexical/markdown'
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 
+import { $createHeadingNode, $createQuoteNode, HeadingNode, QuoteNode } from '@lexical/rich-text'
 import {
-  $createParagraphNode,
-  $createTextNode,
   $getRoot,
   $getSelection,
-  EditorState,
   FORMAT_TEXT_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
   $isRangeSelection,
 } from 'lexical'
-import { $createHeadingNode, $createQuoteNode, HeadingNode, QuoteNode } from '@lexical/rich-text'
-import { $createListItemNode, $createListNode, ListItemNode, ListNode } from '@lexical/list'
-import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin'
-import { $createLinkNode, LinkNode } from '@lexical/link'
-import { CodeNode, $createCodeNode } from '@lexical/code'
 
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/shadcn-ui/button'
-import { Separator } from '@/components/shadcn-ui/separator'
 import { 
   Bold, 
   Italic, 
   Underline, 
   List, 
   ListOrdered, 
-  Quote, 
-  Heading1,
+  Quote,
   Heading2,
   Undo,
   Redo,
   CheckSquare
 } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
 
-function ToolbarPlugin() {
+import { Button } from '@/components/shadcn-ui/button'
+import { Separator } from '@/components/shadcn-ui/separator'
+import { text, border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+
+
+const ToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext()
 
   return (
     <div className={cn(
       'flex items-center gap-1 p-2 border-b overflow-x-auto',
-      background.surface,
+      colors.background.surface,
       border.universal
     )}>
       <div className="flex items-center gap-1 flex-shrink-0">
@@ -201,7 +200,7 @@ function ToolbarPlugin() {
   )
 }
 
-function HtmlPlugin({ initialHtml, onChange }: { initialHtml?: string, onChange?: (html: string) => void }) {
+const HtmlPlugin = ({ initialHtml, onChange }: { initialHtml?: string, onChange?: (html: string) => void }) => {
   const [editor] = useLexicalComposerContext()
 
   React.useEffect(() => {
@@ -236,7 +235,7 @@ export interface EditorProps {
   className?: string
 }
 
-export function Editor({ value, onChange, placeholder = "入力してください...", className }: EditorProps) {
+export const Editor = ({ value, onChange, placeholder = "入力してください...", className }: EditorProps) => {
   const initialConfig = {
     namespace: 'editor',
     theme: {
@@ -279,7 +278,7 @@ export function Editor({ value, onChange, placeholder = "入力してくださ�
   return (
     <div className={cn(
       'w-full max-w-full overflow-hidden rounded-lg border',
-      background.base,
+      colors.background.base,
       border.universal,
       className
     )}>

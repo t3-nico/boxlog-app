@@ -7,11 +7,12 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { handleClientError } from '@/lib/errors'
-import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
-
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+
+import { Button } from '@/components/shadcn-ui/button'
+import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
+import { handleClientError } from '@/lib/errors'
+
 
 // === 型定義 ===
 
@@ -220,12 +221,12 @@ interface ErrorDisplayProps {
   className?: string
 }
 
-export function ErrorDisplay({ 
+export const ErrorDisplay = ({ 
   title = 'エラーが発生しました',
   message = '問題が発生しました。再試行してください。',
   action,
   className = ''
-}: ErrorDisplayProps) {
+}: ErrorDisplayProps) => {
   return (
     <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
       <AlertTriangle className={`h-12 w-12 ${colors.semantic.error.text} ${spacing.margin.md}`} />

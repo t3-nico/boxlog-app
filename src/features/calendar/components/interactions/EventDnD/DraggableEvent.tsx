@@ -1,9 +1,11 @@
 'use client'
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
+
 import { useDrag, useDragLayer } from 'react-dnd'
-import { cn } from '@/lib/utils'
+
 import type { CalendarEvent } from '@/features/events'
+import { cn } from '@/lib/utils'
 
 export interface DraggedEventData {
   event: CalendarEvent
@@ -32,7 +34,7 @@ export const DRAG_TYPE = {
 const DRAG_THRESHOLD = 5
 
 // カスタムドラッグレイヤー（ゴーストイメージ）
-export function CustomDragLayer() {
+export const CustomDragLayer = () => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem() as DraggedEventData | null,
     currentOffset: monitor.getSourceClientOffset(),
@@ -60,7 +62,7 @@ export function CustomDragLayer() {
   )
 }
 
-export function DraggableEvent({
+export const DraggableEvent = ({
   event,
   dayIndex,
   topPosition,
@@ -68,7 +70,7 @@ export function DraggableEvent({
   onDragCancel,
   style,
   children
-}: DraggableEventProps) {
+}: DraggableEventProps) => {
   const ref = useRef<HTMLDivElement>(null)
   const [isDragReady, setIsDragReady] = useState(false)
   const [dragStartPos, setDragStartPos] = useState<{ x: number; y: number } | null>(null)

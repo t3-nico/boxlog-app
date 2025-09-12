@@ -1,6 +1,9 @@
 // スマートフォルダ パフォーマンス最適化のテスト
 
 import { describe, it, expect, beforeEach } from 'vitest'
+
+import { SmartFolderRule } from '@/types/smart-folders'
+
 import { 
   IndexManager, 
   BatchProcessor, 
@@ -8,7 +11,6 @@ import {
   CacheManager,
   PerformanceMonitor 
 } from '../performance'
-import { SmartFolderRule } from '@/types/smart-folders'
 
 describe('Performance Optimization', () => {
   beforeEach(() => {

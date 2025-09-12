@@ -1,11 +1,13 @@
 'use client'
 
 import React from 'react'
+
 import { cn } from '@/lib/utils'
+
 import { DateDisplay } from './DateDisplay'
 import type { DateDisplayRowProps } from './DateDisplay.types'
 
-export function DateDisplayRow({
+export const DateDisplayRow = ({
   dates,
   className,
   selectedDate,
@@ -15,7 +17,7 @@ export function DateDisplayRow({
   dateFormat = 'd',
   onDateClick,
   onDateDoubleClick
-}: DateDisplayRowProps) {
+}: DateDisplayRowProps) => {
   return (
     <div className={cn(
       'flex bg-background',

@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, AlertTriangle as ExclamationTriangleIcon, Info as InformationCircleIcon, X as XMarkIcon } from 'lucide-react'
 
@@ -32,7 +33,7 @@ export function useToast() {
   return context
 }
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const generateId = () => Math.random().toString(36).substring(2) + Date.now().toString(36)
@@ -113,7 +114,7 @@ function getToastStyles(type: Toast['type']) {
   }
 }
 
-function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
+const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50, scale: 0.3 }}
@@ -144,7 +145,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   )
 }
 
-function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
+const ToastContainer = ({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) => {
   return (
     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col space-y-2">
       <AnimatePresence mode="popLayout">

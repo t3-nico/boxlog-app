@@ -1,12 +1,15 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { Button } from '@/components/shadcn-ui/button'
+
 import { Plus, GripVertical } from 'lucide-react'
-import { background, text, border } from '@/config/theme/colors'
+
+import { Button } from '@/components/shadcn-ui/button'
+import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+
 import { typography } from '@/config/theme'
+import { text, border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 // 仮のタスクデータ型
 interface UnscheduledTask {
@@ -39,12 +42,12 @@ const mockTasks: UnscheduledTask[] = [
   }
 ]
 
-export function UnscheduledTasksList() {
+export const UnscheduledTasksList = () => {
   const handleTaskDragStart = (e: React.DragEvent, task: UnscheduledTask) => {
     // ドラッグデータにタスク情報を設定
     e.dataTransfer.setData('application/json', JSON.stringify({
       type: 'unscheduled-task',
-      task: task
+      task
     }))
   }
 
@@ -83,7 +86,7 @@ export function UnscheduledTasksList() {
                 'p-4 border-b border-l-4 cursor-move transition-colors hover:bg-accent/50',
                 border.universal,
                 getPriorityColor(task.priority),
-                background.base
+                colors.background.base
               )}
             >
               <div className="flex items-start gap-3">

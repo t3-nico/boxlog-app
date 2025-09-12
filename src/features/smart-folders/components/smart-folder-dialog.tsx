@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+
 import { 
   Dialog, 
   DialogPanel, 
@@ -16,11 +17,14 @@ import {
   Eye as EyeIcon,
   Folder as FolderIcon
 } from 'lucide-react'
+
+import { z } from 'zod'
+
+import { createSmartFolderSchema, updateSmartFolderSchema } from '@/features/smart-folders/validations/smart-folders'
 import { SmartFolder, SmartFolderRule, CreateSmartFolderInput, UpdateSmartFolderInput } from '@/types/smart-folders'
+
 import { RuleEditor } from './rule-editor'
 import { RulePreview } from './rule-preview'
-import { createSmartFolderSchema, updateSmartFolderSchema } from '@/features/smart-folders/validations/smart-folders'
-import { z } from 'zod'
 
 interface SmartFolderDialogProps {
   isOpen: boolean
@@ -30,13 +34,13 @@ interface SmartFolderDialogProps {
   previewItems?: any[]
 }
 
-export function SmartFolderDialog({
+export const SmartFolderDialog = ({
   isOpen,
   onClose,
   onSave,
   folder,
   previewItems = []
-}: SmartFolderDialogProps) {
+}: SmartFolderDialogProps) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',

@@ -1,9 +1,10 @@
 'use client'
 
 import React from 'react'
-import { cn } from '@/lib/utils'
-import { background, border } from '@/config/theme/colors'
+
 import { typography } from '@/config/theme'
+import { border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 export interface NavigationSection {
   id: string
@@ -21,14 +22,14 @@ export interface NavigationTemplateProps {
   spacing?: 'compact' | 'normal' | 'relaxed'
 }
 
-export function NavigationTemplate({
+export const NavigationTemplate = ({
   sections,
   className,
   showHeader = false,
   headerContent,
   footerContent,
   spacing = 'normal'
-}: NavigationTemplateProps) {
+}: NavigationTemplateProps) => {
   const spacingClasses = {
     compact: 'space-y-2 p-3',
     normal: 'space-y-4 p-4',
@@ -44,7 +45,7 @@ export function NavigationTemplate({
   return (
     <div className={cn(
       'w-64 lg:w-64 md:w-56 sm:w-full relative z-50',
-      background.base,
+      colors.background.base,
       'border-r',
       border.universal,
       className

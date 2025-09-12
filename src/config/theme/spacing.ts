@@ -332,6 +332,54 @@ export const component = {
   eventBlock: 'mr-2',   // イベントブロック右マージン（p-2サイズの8px）
 } as const
 
+/**
+ * レイアウト別スペーシング定義
+ */
+export const page = {
+  default: 'px-4 py-8 md:px-6 md:py-10 lg:px-8 lg:py-12',
+  compact: 'px-4 py-6 md:px-6 md:py-8',
+  full: 'p-0',
+} as const
+
+export const section = {
+  default: 'mb-12',
+  compact: 'mb-8',
+  large: 'mb-16',
+} as const
+
+/**
+ * 基本的なマージン設定
+ */
+export const margin = {
+  xs: 'm-1',
+  sm: 'm-2',
+  md: 'm-4',
+  lg: 'm-6',
+  xl: 'm-8',
+} as const
+
+/**
+ * 基本的なパディング設定
+ */
+export const padding = {
+  xs: 'p-1',
+  sm: 'p-2',
+  md: 'p-4',
+  lg: 'p-6',
+  xl: 'p-8',
+} as const
+
+/**
+ * Stack（縦積み）レイアウト用スペーシング
+ */
+export const stack = {
+  xs: 'space-y-1',
+  sm: 'space-y-2',
+  md: 'space-y-4',
+  lg: 'space-y-6',
+  xl: 'space-y-8',
+} as const
+
 export const spacing = {
   space,
   patterns,
@@ -343,4 +391,9 @@ export const spacing = {
   gridCols,
   pageContainerStyles,
   component,
+  page,
+  section,
+  margin,
+  padding,
+  stack,
 } as const

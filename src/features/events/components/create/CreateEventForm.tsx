@@ -1,18 +1,19 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { Clock, Tag } from 'lucide-react'
+
 import { motion, AnimatePresence } from 'framer-motion'
+import { Tag } from 'lucide-react'
+
 import { Input } from '@/components/shadcn-ui/input'
 import { Label } from '@/components/shadcn-ui/label'
-import { Button } from '@/components/shadcn-ui/button'
-import { Textarea } from '@/components/shadcn-ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
-import { body, heading } from '@/config/theme/typography'
-import { text, semantic, primary, background, border } from '@/config/theme/colors'
-import { rounded } from '@/config/theme/rounded'
+import { Textarea } from '@/components/shadcn-ui/textarea'
+import { text, semantic, border } from '@/config/theme/colors'
 import { icon } from '@/config/theme/icons'
-import type { CreateEventRequest, EventType, EventStatus, EventPriority, ChecklistItem, Reminder } from '../../types/events'
+import { body } from '@/config/theme/typography'
+
+import type { CreateEventRequest, EventType, EventStatus, EventPriority } from '../../types/events'
 
 interface CreateEventFormProps {
   initialData: Partial<CreateEventRequest>
@@ -27,14 +28,14 @@ interface CreateEventFormProps {
   error: Error | null
 }
 
-export function CreateEventForm({
+export const CreateEventForm = ({
   initialData,
   context,
   onSubmit,
   onCancel,
   isSubmitting,
   error
-}: CreateEventFormProps) {
+}: CreateEventFormProps) => {
   // タイトル入力フィールドのref
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -90,7 +91,7 @@ export function CreateEventForm({
       if (titleInputRef.current) {
         titleInputRef.current.focus()
         // 既存のテキストがある場合は末尾にカーソルを移動
-        const length = titleInputRef.current.value.length
+        const {length} = titleInputRef.current.value
         titleInputRef.current.setSelectionRange(length, length)
       }
     }

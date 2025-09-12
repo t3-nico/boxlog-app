@@ -127,6 +127,9 @@ export const background = {
   
   // レベル2: ネストされた要素
   elevated: 'bg-neutral-300 dark:bg-neutral-700',
+  
+  // レベル-1: より微細な背景（baseより薄い）
+  subtle: 'bg-neutral-50 dark:bg-neutral-950',
 } as const
 
 // ============================================
@@ -177,6 +180,12 @@ export const border = {
   
   // 🆕 透明度ベース（オプション）
   alpha: 'border-neutral-900/20 dark:border-neutral-100/20',
+  
+  // セマンティック境界線（semantic colorsから参照）
+  info: 'border-blue-600 dark:border-blue-500',
+  warning: 'border-orange-600 dark:border-orange-500',
+  error: 'border-red-600 dark:border-red-500',
+  success: 'border-green-600 dark:border-green-500',
 } as const
 
 // ============================================

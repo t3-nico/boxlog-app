@@ -1,11 +1,13 @@
 'use client'
 
 import React from 'react'
+
 import { ArrowLeft } from 'lucide-react'
+
 import { DashboardLayout } from '@/components/layout/layout'
 
 // 404ページのコンテンツコンポーネント
-function NotFoundContent() {
+const NotFoundContent = () => {
 
   return (
       <div className="flex-1 flex items-center justify-center px-4 py-12 min-h-screen bg-gray-50 dark:bg-gray-900">

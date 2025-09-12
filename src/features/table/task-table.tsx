@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-export function TaskTable() {
+export const TaskTable = () => {
   return (
     <div className="p-4 border rounded-lg">
       <h2 className="text-lg font-semibold mb-4">Task Table</h2>

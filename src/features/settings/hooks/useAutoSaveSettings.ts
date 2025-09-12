@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+
 import { useToast } from '@/lib/toast'
 
 interface UseAutoSaveSettingsOptions<T> {

@@ -1,17 +1,18 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+
 import { 
-  Tag, 
-  Settings,
+  Tag,
   Search,
   Filter
 } from 'lucide-react'
-import { SettingsLayout } from '@/features/settings/components'
+
 import { colors, typography, spacing } from '@/config/theme'
-import { TagTreeView } from '@/features/tags/components/tag-tree-view'
+import { SettingsLayout } from '@/features/settings/components'
 import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
 import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
+import { TagTreeView } from '@/features/tags/components/tag-tree-view'
 import { 
   useTags, 
   useCreateTag, 
@@ -190,14 +191,14 @@ export default function TagsSettingsPage() {
         title="タグ管理"
         description="階層構造でタグを整理・管理できます"
       >
-        <div className="text-center">
+        <div className={typography.align.center}>
           <div className={`${colors.semantic.error.text} mb-4`}>
             <Tag className="w-12 h-12 mx-auto mb-2" data-slot="icon" />
             <p>タグの読み込みに失敗しました</p>
           </div>
           <button
             onClick={() => window.location.reload()}
-            className={`px-4 py-2 ${colors.primary.DEFAULT} text-white rounded-lg hover:${colors.primary.hover} transition-colors`}
+            className={`${spacing.padding.md} ${colors.primary.DEFAULT} ${colors.text.white} ${colors.rounded.lg} ${colors.hover.primary} ${colors.transition.colors}`}
           >
             再読み込み
           </button>
@@ -213,7 +214,7 @@ export default function TagsSettingsPage() {
       actions={
         <button
           onClick={() => handleCreateTag()}
-          className={`inline-flex items-center gap-2 px-4 py-2 ${colors.primary.DEFAULT} ${colors.primary.hover} text-white rounded-lg transition-colors`}
+          className={`inline-flex items-center gap-2 ${spacing.padding.md} ${colors.primary.DEFAULT} ${colors.hover.primary} ${colors.text.white} ${colors.rounded.lg} ${colors.transition.colors}`}
         >
           <Tag className="w-4 h-4" data-slot="icon" />
           新しいタグ
@@ -230,7 +231,7 @@ export default function TagsSettingsPage() {
               placeholder="タグを検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className={`w-full pl-10 pr-4 py-2 border ${colors.border.alpha} rounded-lg ${colors.background.surface} ${colors.text.primary} focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500`}
+              className={`w-full pl-10 pr-4 py-2 ${colors.border.default} ${colors.rounded.lg} ${colors.background.surface} ${colors.text.primary} ${colors.focus.primary}`}
             />
           </div>
           
@@ -240,7 +241,7 @@ export default function TagsSettingsPage() {
               className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg ${typography.body.small} font-medium transition-colors ${
                 showInactive
                   ? `${colors.primary.light} ${colors.primary.text}`
-                  : `${colors.background.elevated} ${colors.text.secondary} hover:${colors.background.elevated}`
+                  : `${colors.background.elevated} ${colors.text.secondary} ${colors.hover.elevated}`
               }`}
             >
               <Filter className="w-4 h-4" data-slot="icon" />

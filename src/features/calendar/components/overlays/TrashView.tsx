@@ -5,6 +5,7 @@
 'use client'
 
 import React from 'react'
+
 import type { CalendarEvent } from '@/features/events'
 
 interface TrashViewProps {
@@ -13,7 +14,7 @@ interface TrashViewProps {
   onPermanentDelete?: (eventId: string) => void
 }
 
-export function TrashView({ events, onRestore, onPermanentDelete }: TrashViewProps) {
+export const TrashView = ({ events, onRestore, onPermanentDelete }: TrashViewProps) => {
   return (
     <div className="p-4">
       <h2 className="text-xl font-semibold mb-4">ゴミ箱</h2>

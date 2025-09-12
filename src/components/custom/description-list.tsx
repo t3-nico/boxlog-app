@@ -2,7 +2,7 @@ import clsx from 'clsx'
 
 import { typography, colors } from '@/config/theme'
 
-export function DescriptionList({ className, ...props }: React.ComponentPropsWithoutRef<'dl'>) {
+export const DescriptionList = ({ className, ...props }: React.ComponentPropsWithoutRef<'dl'>) => {
   return (
     <dl
       {...props}
@@ -14,7 +14,7 @@ export function DescriptionList({ className, ...props }: React.ComponentPropsWit
   )
 }
 
-export function DescriptionTerm({ className, ...props }: React.ComponentPropsWithoutRef<'dt'>) {
+export const DescriptionTerm = ({ className, ...props }: React.ComponentPropsWithoutRef<'dt'>) => {
   return (
     <dt
       {...props}
@@ -26,7 +26,7 @@ export function DescriptionTerm({ className, ...props }: React.ComponentPropsWit
   )
 }
 
-export function DescriptionDetails({ className, ...props }: React.ComponentPropsWithoutRef<'dd'>) {
+export const DescriptionDetails = ({ className, ...props }: React.ComponentPropsWithoutRef<'dd'>) => {
   return (
     <dd
       {...props}

@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
+
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-import { cn } from "@/lib/utils"
-import { background, secondary, selection } from "@/config/theme/colors"
+import { selection } from "@/config/theme/colors"
 import { heading } from "@/config/theme/typography"
+import { cn } from "@/lib/utils"
 
 const Tabs = TabsPrimitive.Root
 

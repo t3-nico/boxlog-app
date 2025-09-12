@@ -1,18 +1,22 @@
 "use client"
 
 import { useState, useEffect } from "react"
+
 import { useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
+
 import { Button } from "@/components/shadcn-ui/button"
 import { Input } from "@/components/shadcn-ui/input"
 import { Label } from "@/components/shadcn-ui/label"
-import { useAuthContext } from "../contexts/AuthContext"
-import { createClient } from "@/lib/supabase/client"
 
-export function LoginForm({
+import { createClient } from "@/lib/supabase/client"
+import { cn } from "@/lib/utils"
+
+import { useAuthContext } from "../contexts/AuthContext"
+
+export const LoginForm = ({
   className,
   ...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<"form">) => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)

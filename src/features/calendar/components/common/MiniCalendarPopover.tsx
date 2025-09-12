@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
+
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn-ui/popover'
+import { secondary } from '@/config/theme/colors'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { MiniCalendarProps } from '@/features/calendar/components/common/MiniCalendar'
-import { background, secondary } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 interface MiniCalendarPopoverProps extends Omit<MiniCalendarProps, 'className'> {
@@ -16,7 +17,7 @@ interface MiniCalendarPopoverProps extends Omit<MiniCalendarProps, 'className'> 
   onOpenChange?: (open: boolean) => void
 }
 
-export function MiniCalendarPopover({
+export const MiniCalendarPopover = ({
   children,
   selectedDate,
   onDateSelect,
@@ -27,7 +28,7 @@ export function MiniCalendarPopover({
   side = 'bottom',
   onOpenChange,
   ...miniCalendarProps
-}: MiniCalendarPopoverProps) {
+}: MiniCalendarPopoverProps) => {
   const [open, setOpen] = useState(false)
 
   const handleDateSelect = (date: Date) => {
@@ -46,7 +47,7 @@ export function MiniCalendarPopover({
         {children}
       </PopoverTrigger>
       <PopoverContent 
-        className={cn('w-auto p-4 border-none', background.surface, popoverClassName)}
+        className={cn('w-auto p-4 border-none'.surface, popoverClassName)}
         align={align}
         side={side}
       >

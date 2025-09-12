@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+
 import { Edit2, Trash2, Copy } from 'lucide-react'
+
 import { colors, spacing, typography, rounded, elevation } from '@/config/theme'
 import type { CalendarEvent } from '@/features/events/types/events'
 
@@ -15,7 +17,7 @@ interface EventContextMenuProps {
   onViewDetails?: (event: CalendarEvent) => void
 }
 
-export function EventContextMenu({
+export const EventContextMenu = ({
   event,
   position,
   onClose,
@@ -23,7 +25,7 @@ export function EventContextMenu({
   onDelete,
   onDuplicate,
   onViewDetails
-}: EventContextMenuProps) {
+}: EventContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null)
   const [adjustedPosition, setAdjustedPosition] = useState(position)
 
@@ -35,8 +37,8 @@ export function EventContextMenu({
       const viewportWidth = window.innerWidth
       const viewportHeight = window.innerHeight
 
-      let x = position.x
-      let y = position.y
+      let {x} = position
+      let {y} = position
 
       // 右端を超える場合は左に表示
       if (x + rect.width > viewportWidth - 10) {

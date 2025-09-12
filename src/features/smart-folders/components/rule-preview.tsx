@@ -1,8 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { SmartFolderRule } from '@/types/smart-folders'
-import { AdvancedRuleEngine } from '@/features/smart-folders/lib/rule-engine'
+
 import { 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon,
@@ -10,6 +9,9 @@ import {
   Filter as FunnelIcon,
   BarChart3 as ChartBarIcon
 } from 'lucide-react'
+
+import { AdvancedRuleEngine } from '@/features/smart-folders/lib/rule-engine'
+import { SmartFolderRule } from '@/types/smart-folders'
 
 interface RulePreviewProps {
   rules: SmartFolderRule[]
@@ -23,7 +25,7 @@ interface PreviewStats {
   matchingItemsList: any[]
 }
 
-export function RulePreview({ rules, items }: RulePreviewProps) {
+export const RulePreview = ({ rules, items }: RulePreviewProps) => {
   // リアルタイムフィルタリング結果
   const previewStats: PreviewStats = useMemo(() => {
     if (rules.length === 0) {

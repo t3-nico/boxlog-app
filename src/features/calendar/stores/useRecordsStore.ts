@@ -1,5 +1,6 @@
-import { create } from 'zustand'
 import { isSameDay, addMinutes, differenceInMinutes } from 'date-fns'
+import { create } from 'zustand'
+
 import type { TaskRecord, Task, RecordAdjustments, RecordStats } from '@/features/calendar/types/calendar.types'
 
 interface RecordsStore {

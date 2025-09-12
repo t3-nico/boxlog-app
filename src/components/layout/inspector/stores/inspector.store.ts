@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 interface InspectorState {

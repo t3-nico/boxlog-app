@@ -79,12 +79,26 @@ export const body = {
   DEFAULT: 'text-sm text-neutral-700 dark:text-neutral-300 leading-tight',
   
   /**
+   * 太字バリエーション
+   * @usage 重要なテキスト、強調表示
+   * @size 14px
+   */
+  semibold: 'text-sm font-semibold text-neutral-800 dark:text-neutral-200 leading-tight',
+  
+  /**
    * 小さい本文
    * @usage 補足・注釈
    * @example 更新日時、補足説明、ヘルプテキスト
    * @size 12px
    */
   small: 'text-xs text-neutral-600 dark:text-neutral-400 leading-tight',
+  
+  /**
+   * さらに小さい本文（smエイリアス）
+   * @usage small と同じ
+   * @size 12px
+   */
+  sm: 'text-xs text-neutral-600 dark:text-neutral-400 leading-tight',
 }
 
 // ============================================

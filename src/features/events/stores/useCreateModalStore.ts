@@ -1,6 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
+
 import type { CreateEventRequest } from '../types/events'
 
 type ModalSource = 'sidebar' | 'calendar' | 'table' | 'kanban' | 'keyboard'

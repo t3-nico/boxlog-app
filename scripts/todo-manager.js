@@ -6,9 +6,9 @@
  * TODO/FIXMEコメントの一元管理、レポート生成、統計情報の提供
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // 🎨 カラー出力
 const colors = {
@@ -272,7 +272,7 @@ function generateConsoleReport(todos, { includeStats, sortBy }) {
       });
     }
     
-    report += '\n' + '─'.repeat(60) + '\n\n';
+    report += `\n${  '─'.repeat(60)  }\n\n`;
   }
   
   // TODO項目一覧

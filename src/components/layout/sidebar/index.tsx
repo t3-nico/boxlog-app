@@ -1,11 +1,13 @@
 'use client'
 
 import React from 'react'
-import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { MobileSidebar } from './MobileSidebar'
-import { DesktopSidebar } from './DesktopSidebar'
 
-export function Sidebar() {
+import { useMediaQuery } from '@/hooks/useMediaQuery'
+
+import { DesktopSidebar } from './DesktopSidebar'
+import { MobileSidebar } from './MobileSidebar'
+
+export const Sidebar = () => {
   const isMobile = useMediaQuery('(max-width: 768px)')
   
   // モバイルではMobileSidebar、デスクトップではDesktopSidebarを表示

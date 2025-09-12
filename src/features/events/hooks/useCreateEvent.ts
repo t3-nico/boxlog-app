@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useEventStore } from '../stores/useEventStore'
+
 import useCalendarToast from '@/features/calendar/lib/toast'
+
+import { useEventStore } from '../stores/useEventStore'
 import type { CreateEventRequest, Event } from '../types/events'
 
 interface UseCreateEventReturn {
@@ -42,7 +44,7 @@ export function useCreateEvent(): UseCreateEventReturn {
       toast.success(`「${createdEvent.title}」を作成しました`)
       
       // 作成したイベントの日付にスクロール（カレンダービューの場合）
-      const pathname = window.location.pathname
+      const {pathname} = window.location
       if (pathname.startsWith('/calendar') && createdEvent.startDate) {
         // カレンダービューの場合、作成したイベントの日付に移動
         const dateStr = createdEvent.startDate.toISOString().split('T')[0]

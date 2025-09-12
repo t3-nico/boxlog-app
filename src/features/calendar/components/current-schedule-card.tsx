@@ -1,25 +1,26 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Clock, Calendar, ArrowRight } from 'lucide-react'
+
 import { useRouter } from 'next/navigation'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+
+import { Calendar, ArrowRight } from 'lucide-react'
+
 import { useEventStore } from '@/features/events'
 import type { Event } from '@/features/events'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { 
   CHRONOTYPE_PRESETS, 
   getProductivityZoneForHour, 
-  PRODUCTIVITY_COLORS,
-  type ProductivityZone 
+  PRODUCTIVITY_COLORS 
 } from '@/types/chronotype'
-import { CHRONOTYPE_COLORS, getCSSVariableValue } from '@/config/ui/theme'
 
 
 interface CurrentScheduleCardProps {
   collapsed?: boolean
 }
 
-export function CurrentScheduleCard({ collapsed = false }: CurrentScheduleCardProps) {
+export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardProps) => {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null)
   const router = useRouter()

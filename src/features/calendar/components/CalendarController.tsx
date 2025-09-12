@@ -1,49 +1,56 @@
 'use client'
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
-import { format } from 'date-fns'
+
 import { useRouter, usePathname } from 'next/navigation'
+
+import { format } from 'date-fns'
+
+import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
+import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
+import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
+import { useEventStore, useCreateModalStore } from '@/features/events'
+import type { Event, CreateEventRequest, UpdateEventRequest } from '@/features/events'
+import { useNotifications } from '@/features/notifications/hooks/useNotifications'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { getCurrentTimezone } from '@/features/settings/utils/timezone'
+import { useAddPopup } from '@/hooks/useAddPopup'
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
+
+import { DnDProvider } from '../providers/DnDProvider'
 import { DayView } from './views/DayView'
 import { ThreeDayView } from './views/ThreeDayView'
 import { WeekView } from './views/WeekView'
 import { TwoWeekView } from './views/TwoWeekView'
-import { useAddPopup } from '@/hooks/useAddPopup'
-import { DnDProvider } from '../providers/DnDProvider'
 import { CalendarLayout } from './layout/CalendarLayout'
+
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
-import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { getCurrentTimezone } from '@/features/settings/utils/timezone'
+
 import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-import { useEventStore, initializeEventStore, useCreateModalStore } from '@/features/events'
-import { useNotifications } from '@/features/notifications/hooks/useNotifications'
-import { NotificationDisplay } from '@/features/notifications/components/notification-display'
+
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
+
 import { EventContextMenu } from './views/shared/components'
+
 import { useEventContextActions } from '../hooks/useEventContextActions'
-import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
-import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
+
+
 import { 
-  calculateViewDateRange, 
-  getNextPeriod, 
-  getPreviousPeriod,
-  filterTasksForDateRange
+  calculateViewDateRange
 } from '../lib/view-helpers'
-import { isValidViewType } from '../lib/calendar-helpers'
-import type { CalendarViewType, CalendarViewProps, Task, CalendarEvent } from '../types/calendar.types'
-import type { Event, CreateEventRequest, UpdateEventRequest } from '@/features/events'
+import type { CalendarViewType, CalendarViewProps, CalendarEvent } from '../types/calendar.types'
+
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
   initialDate?: Date | null
 }
 
-export function CalendarController({ 
+export const CalendarController = ({ 
   className,
   initialViewType = 'day',
   initialDate
-}: CalendarViewExtendedProps) {
+}: CalendarViewExtendedProps) => {
   const router = useRouter()
   const pathname = usePathname()
   const calendarNavigation = useCalendarNavigation()
@@ -74,8 +81,8 @@ export function CalendarController({
   const navigateRelative = contextAvailable ? calendarNavigation.navigateRelative : layoutHook.navigateRelative
   const changeView = contextAvailable ? calendarNavigation.changeView : layoutHook.changeView
   const navigateToDate = contextAvailable ? calendarNavigation.navigateToDate : layoutHook.navigateToDate
-  const sidebarOpen = layoutHook.sidebarOpen
-  const toggleSidebar = layoutHook.toggleSidebar
+  const {sidebarOpen} = layoutHook
+  const {toggleSidebar} = layoutHook
   
   // デバッグ用ログ
   React.useEffect(() => {
@@ -479,7 +486,7 @@ export function CalendarController({
       },
       context: {
         source: 'calendar',
-        date: date,
+        date,
         viewType
       }
     })
@@ -696,7 +703,7 @@ export function CalendarController({
       
       // prev/nextの場合は土日をスキップ
       const multiplier = direction === 'next' ? 1 : -1
-      let newDate = new Date(currentDate)
+      const newDate = new Date(currentDate)
       
       if (viewType === 'day') {
         // DayViewは1日ずつ移動して土日をスキップ
@@ -857,7 +864,7 @@ export function CalendarController({
     if (!showWeekends) {
       const dayOfWeek = date.getDay()
       if (dayOfWeek === 0 || dayOfWeek === 6) { // 日曜日または土曜日
-        let adjustedDate = new Date(date)
+        const adjustedDate = new Date(date)
         
         // 土曜日の場合は翌月曜日に、日曜日の場合も翌月曜日に調整
         if (dayOfWeek === 6) { // 土曜日

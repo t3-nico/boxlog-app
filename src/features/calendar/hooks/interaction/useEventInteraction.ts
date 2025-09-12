@@ -5,6 +5,7 @@
 'use client'
 
 import { useCallback, useState, useRef, useEffect } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
 
 interface TimeRange {

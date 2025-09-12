@@ -1,12 +1,12 @@
+import type { Event } from '@/features/events'
+import type { Task, Tag, SmartFolder } from '@/types/common'
+
 import type { 
   SearchResult, 
   SearchOptions, 
   SearchResultType,
-  SearchProvider,
-  FuzzySearchConfig
+  SearchProvider
 } from '../types'
-import type { Task, Tag, SmartFolder } from '@/types/common'
-import type { Event } from '@/features/events'
 
 // Simple fuzzy search implementation
 export class FuzzySearch {
@@ -111,7 +111,7 @@ export class SearchEngine {
     events?: Event[]
   }): Promise<SearchResult[]> {
     const { query, types, limit = 10 } = options
-    let results: SearchResult[] = []
+    const results: SearchResult[] = []
     
     // Search tasks if provided
     if (stores?.tasks && (!types || types.includes('task'))) {

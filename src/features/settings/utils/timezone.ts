@@ -168,7 +168,7 @@ export const getTimezoneOffset = (timezone: string): number => {
       now: now.toISOString(),
       utc: `${utcYear}-${utcMonth.toString().padStart(2, '0')}-${utcDay.toString().padStart(2, '0')} ${utcHour.toString().padStart(2, '0')}:${utcMinute.toString().padStart(2, '0')}`,
       target: `${targetYear}-${targetMonth.toString().padStart(2, '0')}-${targetDay.toString().padStart(2, '0')} ${targetHour.toString().padStart(2, '0')}:${targetMinute.toString().padStart(2, '0')}`,
-      offsetMinutes: offsetMinutes
+      offsetMinutes
     });
     
     return offsetMinutes;
@@ -264,7 +264,7 @@ export const userTimezoneToUtc = (localDate: Date): Date => {
   try {
     // 指定タイムゾーンでの同じ時刻を表すUTC時刻を逆算
     // まず仮のUTC時刻を作成
-    let testUtc = new Date(Date.UTC(year, month, day, hour, minute, second, millisecond));
+    const testUtc = new Date(Date.UTC(year, month, day, hour, minute, second, millisecond));
     
     // この仮UTC時刻を指定タイムゾーンで表示
     const formatter = new Intl.DateTimeFormat('en-CA', {

@@ -1,7 +1,8 @@
 'use client'
 
-import { CalendarController } from '@/features/calendar'
 import { redirect } from 'next/navigation'
+
+import { CalendarController } from '@/features/calendar'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 
 interface CalendarViewPageProps {

@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
+
 import { useRouter, useSearchParams } from 'next/navigation'
+
 import { useBoxStore } from '@/features/box-management/stores/box-store'
 
 export function useFilterUrlSync() {

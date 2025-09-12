@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useCallback, useState, useRef, useEffect } from 'react'
+
 import { cn } from '@/lib/utils'
+
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 interface TimeSelection {
@@ -21,11 +23,11 @@ interface DragSelectionLayerProps {
  * 汎用ドラッグ選択レイヤー
  * 時間範囲の選択機能を提供する
  */
-export function DragSelectionLayer({
+export const DragSelectionLayer = ({
   className,
   onTimeRangeSelect,
   children
-}: DragSelectionLayerProps) {
+}: DragSelectionLayerProps) => {
   // ドラッグ選択の状態
   const [isSelecting, setIsSelecting] = useState(false)
   const [selection, setSelection] = useState<TimeSelection | null>(null)

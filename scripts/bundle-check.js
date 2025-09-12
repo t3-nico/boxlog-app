@@ -48,7 +48,7 @@ function formatSize(bytes) {
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+  return `${(bytes / Math.pow(k, i)).toFixed(1)  } ${  sizes[i]}`;
 }
 
 /**
@@ -93,7 +93,7 @@ function analyzeBuildStats() {
   const buildManifestPath = path.join('.next', 'build-manifest.json');
   const staticManifestPath = path.join('.next', 'static-manifest.json');
   
-  let stats = {
+  const stats = {
     totalJS: 0,
     initialJS: 0,
     totalCSS: 0,
@@ -113,7 +113,7 @@ function analyzeBuildStats() {
         if (file.endsWith('.js')) {
           const filePath = path.join('.next', 'static', file);
           if (fs.existsSync(filePath)) {
-            const size = fs.statSync(filePath).size;
+            const {size} = fs.statSync(filePath);
             stats.initialJS += size;
             stats.totalJS += size;
           }
@@ -126,7 +126,7 @@ function analyzeBuildStats() {
           if (file.endsWith('.js') && !initialFiles.includes(file)) {
             const filePath = path.join('.next', 'static', file);
             if (fs.existsSync(filePath)) {
-              const size = fs.statSync(filePath).size;
+              const {size} = fs.statSync(filePath);
               stats.totalJS += size;
               stats.chunks.push({ file, size, page });
             }
@@ -141,7 +141,7 @@ function analyzeBuildStats() {
       const cssFiles = fs.readdirSync(staticDir).filter(f => f.endsWith('.css'));
       for (const file of cssFiles) {
         const filePath = path.join(staticDir, file);
-        const size = fs.statSync(filePath).size;
+        const {size} = fs.statSync(filePath);
         stats.totalCSS += size;
         
         // app.css や globals.css を初期読み込みとして扱う

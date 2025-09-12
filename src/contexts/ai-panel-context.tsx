@@ -17,7 +17,7 @@ interface AIPanelProviderProps {
   children: ReactNode
 }
 
-export function AIPanelProvider({ children }: AIPanelProviderProps) {
+export const AIPanelProvider = ({ children }: AIPanelProviderProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [panelHeight, setPanelHeight] = useState(400)
   const [isMinimized, setIsMinimized] = useState(false)

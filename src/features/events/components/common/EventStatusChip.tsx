@@ -1,12 +1,14 @@
 'use client'
 
 import React from 'react'
+
 import { Inbox, Calendar, Play, CheckCircle, X } from 'lucide-react'
+
 import { Badge } from '@/components/shadcn-ui/badge'
-import { semantic, text, secondary } from '@/config/theme/colors'
-import { body } from '@/config/theme/typography'
+import { semantic, text } from '@/config/theme/colors'
 import { icon } from '@/config/theme/icons'
-import { spacing } from '@/config/theme/spacing'
+import { body } from '@/config/theme/typography'
+
 import type { EventStatus } from '../../types/events'
 
 interface EventStatusChipProps {
@@ -55,13 +57,13 @@ const statusConfig = {
   }
 } as const
 
-export function EventStatusChip({
+export const EventStatusChip = ({
   status,
   variant = 'default',
   size = 'md',
   showIcon = true,
   className = ''
-}: EventStatusChipProps) {
+}: EventStatusChipProps) => {
   const config = statusConfig[status]
   const Icon = config.icon
 

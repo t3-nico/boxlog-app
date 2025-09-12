@@ -5,6 +5,8 @@ import { createContext, memo, useContext, useEffect, useState } from 'react';
 
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
 
+import { ChevronDownIcon } from 'lucide-react';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -12,7 +14,6 @@ import {
 } from '@/components/kibo-ui/collapsible';
 import { cn } from '@/lib/utils';
 
-import { ChevronDownIcon } from 'lucide-react';
 import { AIResponse } from './response';
 
 type AIReasoningContextValue = {

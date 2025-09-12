@@ -1,4 +1,4 @@
-export function Logo({ className, ...props }: React.ComponentPropsWithoutRef<'svg'>) {
+export const Logo = ({ className, ...props }: React.ComponentPropsWithoutRef<'svg'>) => {
   return (
     <svg fill="currentColor" viewBox="0 0 113 22" {...props} className={className}>
       <path

@@ -1,13 +1,16 @@
 import { useMemo } from 'react'
+
 import { isSameDay } from 'date-fns'
+
+import type { CalendarEvent } from '@/features/events'
+
 import { getDateKey, isValidEvent, sortEventsByDateKeys } from '../../shared'
+import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import type { 
   UseWeekEventsOptions, 
   UseWeekEventsReturn,
   WeekEventPosition 
 } from '../WeekView.types'
-import type { CalendarEvent } from '@/features/events'
-import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 const DAY_COLUMN_WIDTH = 100 / 7 // 各日の列幅（%）
 
 /**

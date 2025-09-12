@@ -1,17 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
+
 import { useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
+
 import { Button } from "@/components/shadcn-ui/button"
 import { Input } from "@/components/shadcn-ui/input"
 import { Label } from "@/components/shadcn-ui/label"
+import { cn } from "@/lib/utils"
+
 import { useAuthContext } from "../contexts/AuthContext"
 
-export function SignupForm({
+export const SignupForm = ({
   className,
   ...props
-}: React.ComponentProps<"form">) {
+}: React.ComponentProps<"form">) => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")

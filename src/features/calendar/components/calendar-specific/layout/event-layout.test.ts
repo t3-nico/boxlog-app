@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest'
+
+import type { CalendarEvent } from '../../../types/calendar.types'
+
 import {
   detectOverlappingEvents,
   calculateEventColumns,
   applyEventLayout,
   applyResponsiveEventLayout,
-  type EventGroup,
-  type ColumnAssignment,
-  type LayoutedEvent
+  type EventGroup
 } from './event-layout'
-import type { CalendarEvent } from '../../../types/calendar.types'
 
 // テスト用のイベント作成ヘルパー
 function createTestEvent(

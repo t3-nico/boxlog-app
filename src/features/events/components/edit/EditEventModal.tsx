@@ -1,10 +1,12 @@
 'use client'
 
 import React from 'react'
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn-ui/dialog'
-import { CreateEventForm } from '../create/CreateEventForm'
+
 import { useCreateModalStore } from '../../stores/useCreateModalStore'
 import type { Event } from '../../types/events'
+import { CreateEventForm } from '../create/CreateEventForm'
 
 interface EditEventModalProps {
   event: Event
@@ -12,11 +14,11 @@ interface EditEventModalProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function EditEventModal({
+export const EditEventModal = ({
   event,
   open,
   onOpenChange
-}: EditEventModalProps) {
+}: EditEventModalProps) => {
   const { closeModal } = useCreateModalStore()
 
   const handleSubmit = async (data: any) => {

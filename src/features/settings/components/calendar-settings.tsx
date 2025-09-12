@@ -1,14 +1,15 @@
 'use client'
 
+import { format } from 'date-fns'
+
 import { Button } from '@/components/shadcn-ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { formatHour } from '@/features/settings/utils/timezone-utils'
-import { format } from 'date-fns'
+import { colors, spacing } from '@/config/theme'
 import { SettingsCard, SettingField } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { colors, spacing } from '@/config/theme'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { formatHour } from '@/features/settings/utils/timezone-utils'
 
 interface CalendarAutoSaveSettings {
   timezone: string

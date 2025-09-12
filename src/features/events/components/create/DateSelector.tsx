@@ -1,11 +1,13 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
+
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar, Bell, Repeat, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
-import { text, background, border } from '@/config/theme/colors'
-import { body } from '@/config/theme/typography'
+import { Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react'
+
+import { text, border } from '@/config/theme/colors'
 import { rounded } from '@/config/theme/rounded'
+import { body } from '@/config/theme/typography'
 
 interface DateSelectorProps {
   value: Date
@@ -27,13 +29,13 @@ const generateTimeOptions = () => {
   return options
 }
 
-export function DateSelector({ 
+export const DateSelector = ({ 
   value, 
   endValue, 
   onChange, 
   onEndChange,
   onTabNext 
-}: DateSelectorProps) {
+}: DateSelectorProps) => {
   
   // Duration (minutes)
   const [duration, setDuration] = useState(60)
@@ -204,10 +206,10 @@ export function DateSelector({
           <button
             onClick={() => setShowDatePicker(!showDatePicker)}
             className={`
-              w-full pl-3 pr-3 py-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-3 py-3 ${colors.background.surface} ${border.universal} 
               ${rounded.component.input.md} ${body.DEFAULT} text-left
               focus:outline-none focus:ring-2 focus:ring-blue-500
-              hover:${background.elevated} transition-colors duration-200
+              hover:${colors.background.elevated} transition-colors duration-200
               flex items-center justify-between
             `}
           >
@@ -224,7 +226,7 @@ export function DateSelector({
                 exit={{ opacity: 0, y: -10 }}
                 className={`
                   absolute top-full left-0 mt-1 z-50 w-64
-                  ${background.base} ${border.universal} ${rounded.component.button.lg}
+                  ${colors.background.base} ${border.universal} ${rounded.component.button.lg}
                   shadow-lg p-4
                 `}
               >
@@ -232,7 +234,7 @@ export function DateSelector({
                 <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={handlePrevMonth}
-                    className={`p-1 rounded hover:${background.surface} transition-colors`}
+                    className={`p-1 rounded hover:${colors.background.surface} transition-colors`}
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -241,7 +243,7 @@ export function DateSelector({
                   </h3>
                   <button
                     onClick={handleNextMonth}
-                    className={`p-1 rounded hover:${background.surface} transition-colors`}
+                    className={`p-1 rounded hover:${colors.background.surface} transition-colors`}
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -272,10 +274,10 @@ export function DateSelector({
                           ${isSelected 
                             ? 'bg-blue-500 text-white' 
                             : isToday 
-                              ? `${background.elevated} ${text.primary} font-semibold`
+                              ? `${colors.background.elevated} ${text.primary} font-semibold`
                               : isCurrentMonth 
-                                ? `hover:${background.surface} ${text.primary}`
-                                : `${text.muted} hover:${background.surface}`
+                                ? `hover:${colors.background.surface} ${text.primary}`
+                                : `${text.muted} hover:${colors.background.surface}`
                           }
                           ${body.small}
                         `}
@@ -292,7 +294,7 @@ export function DateSelector({
                     onClick={() => handleDateSelect(new Date())}
                     className={`
                       px-3 py-1.5 rounded ${body.small}
-                      ${background.surface} ${text.secondary} hover:${background.elevated}
+                      ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                       transition-colors duration-150
                     `}
                   >
@@ -306,7 +308,7 @@ export function DateSelector({
                     }}
                     className={`
                       px-3 py-1.5 rounded ${body.small}
-                      ${background.surface} ${text.secondary} hover:${background.elevated}
+                      ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
                       transition-colors duration-150
                     `}
                   >
@@ -326,10 +328,10 @@ export function DateSelector({
           <button
             onClick={() => setShowStartTimePicker(!showStartTimePicker)}
             className={`
-              w-full pl-3 pr-3 py-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-3 py-3 ${colors.background.surface} ${border.universal} 
               ${rounded.component.input.md} ${body.DEFAULT} text-left
               focus:outline-none focus:ring-2 focus:ring-blue-500
-              hover:${background.elevated} transition-colors duration-200
+              hover:${colors.background.elevated} transition-colors duration-200
               flex items-center justify-between
             `}
           >
@@ -346,7 +348,7 @@ export function DateSelector({
                 exit={{ opacity: 0, y: -10 }}
                 className={`
                   absolute top-full left-0 mt-1 z-50 w-32
-                  ${background.base} ${border.universal} ${rounded.component.button.lg}
+                  ${colors.background.base} ${border.universal} ${rounded.component.button.lg}
                   shadow-lg max-h-48 overflow-y-auto
                 `}
               >
@@ -356,8 +358,8 @@ export function DateSelector({
                     onClick={() => handleStartTimeSelect(option.value)}
                     className={`
                       w-full px-3 py-2 text-left text-sm
-                      hover:${background.surface} transition-colors duration-150
-                      ${formatTimeForInput(value) === option.value ? `${background.elevated}` : ''}
+                      hover:${colors.background.surface} transition-colors duration-150
+                      ${formatTimeForInput(value) === option.value ? `${colors.background.elevated}` : ''}
                     `}
                   >
                     {option.display}
@@ -376,10 +378,10 @@ export function DateSelector({
           <button
             onClick={() => setShowEndTimePicker(!showEndTimePicker)}
             className={`
-              w-full pl-3 pr-3 py-3 ${background.surface} ${border.universal} 
+              w-full pl-3 pr-3 py-3 ${colors.background.surface} ${border.universal} 
               ${rounded.component.input.md} ${body.DEFAULT} text-left
               focus:outline-none focus:ring-2 focus:ring-blue-500
-              hover:${background.elevated} transition-colors duration-200
+              hover:${colors.background.elevated} transition-colors duration-200
               flex items-center justify-between
             `}
           >
@@ -396,7 +398,7 @@ export function DateSelector({
                 exit={{ opacity: 0, y: -10 }}
                 className={`
                   absolute top-full left-0 mt-1 z-50 w-32
-                  ${background.base} ${border.universal} ${rounded.component.button.lg}
+                  ${colors.background.base} ${border.universal} ${rounded.component.button.lg}
                   shadow-lg max-h-48 overflow-y-auto
                 `}
               >
@@ -406,8 +408,8 @@ export function DateSelector({
                     onClick={() => handleEndTimeSelect(option.value)}
                     className={`
                       w-full px-3 py-2 text-left text-sm
-                      hover:${background.surface} transition-colors duration-150
-                      ${formatTimeForInput(endValue) === option.value ? `${background.elevated}` : ''}
+                      hover:${colors.background.surface} transition-colors duration-150
+                      ${formatTimeForInput(endValue) === option.value ? `${colors.background.elevated}` : ''}
                     `}
                   >
                     {option.display}

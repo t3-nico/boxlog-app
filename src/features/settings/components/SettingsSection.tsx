@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import { colors, typography, spacing } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
@@ -11,12 +12,12 @@ interface SettingsSectionProps {
   className?: string
 }
 
-export function SettingsSection({
+export const SettingsSection = ({
   title,
   description,
   children,
   className
-}: SettingsSectionProps) {
+}: SettingsSectionProps) => {
   return (
     <div className={cn(spacing.stackGap.lg, className)}>
       {(title || description) && (

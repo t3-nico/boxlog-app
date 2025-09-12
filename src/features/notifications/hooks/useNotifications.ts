@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+
 import { Event, Reminder } from '@/features/events'
 
 interface NotificationPermissionState {

@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { NotificationsList } from '@/features/notifications/components/notifications-list'
+
 import { Bell, BellRing, Settings as SettingsIcon } from 'lucide-react'
-import { SettingsCard, SettingField } from '@/features/settings/components'
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+
 import { Switch } from '@/components/shadcn-ui/switch'
 import { colors, spacing, typography } from '@/config/theme'
+import { NotificationsList } from '@/features/notifications/components/notifications-list'
+import { SettingsCard, SettingField } from '@/features/settings/components'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 interface NotificationAutoSaveSettings {
   emailNotifications: boolean

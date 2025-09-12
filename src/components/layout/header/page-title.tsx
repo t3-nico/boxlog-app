@@ -1,10 +1,11 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname } from 'next/navigation'
+
+import { typography, colors } from '@/config/theme'
 import { cn } from '@/lib/utils'
-import { typography } from '@/config/theme'
-import { text } from '@/config/theme/colors'
 
 function getPageTitle(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean)
@@ -45,16 +46,15 @@ function getPageTitle(pathname: string): string {
   }
 }
 
-export function PageTitle() {
+export const PageTitle = () => {
   const pathname = usePathname()
   const title = getPageTitle(pathname)
   
   return (
     <h1 className={cn(
       typography.heading.h5, // コンパクトヘッダー用サイズ
-      'md:text-base', // デスクトップでは通常サイズ
-      'text-sm', // モバイルでは小さめサイズ
-      text.primary,
+      'md:text-base text-sm',
+      colors.text.primary,
       'font-semibold truncate text-center md:text-left'
     )}>
       {title}

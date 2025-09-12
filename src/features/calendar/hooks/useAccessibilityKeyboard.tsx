@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useCallback, useState } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
 
 interface KeyboardNavigationState {
@@ -474,7 +475,7 @@ export function useAccessibilityKeyboard(
 }
 
 // スクリーンリーダー用のライブリージョンコンポーネント
-export function AccessibilityLiveRegion({ announcements }: { announcements: AccessibilityAnnouncement[] }) {
+export const AccessibilityLiveRegion = ({ announcements }: { announcements: AccessibilityAnnouncement[] }) => {
   return (
     <>
       {/* polite な更新用 */}

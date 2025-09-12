@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
+
 import { toast } from '@/lib/toast';
+
 import { toastTemplates } from './templates';
 import type { CalendarAction, CalendarToastOptions, CalendarEvent } from './types';
 

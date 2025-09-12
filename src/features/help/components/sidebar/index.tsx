@@ -1,16 +1,10 @@
 'use client'
 
 import React from 'react'
-import {
-  SidebarHeading,
-  SidebarItem,
-  SidebarLabel,
-  SidebarSection,
-} from '@/components/layout/navigation/shared'
+
 import {
   BookOpen,
   MessageCircle,
-  ExternalLink,
   FileText,
   Video,
   HelpCircle,
@@ -19,11 +13,18 @@ import {
   MessageSquare
 } from 'lucide-react'
 
+import {
+  SidebarHeading,
+  SidebarItem,
+  SidebarLabel,
+  SidebarSection,
+} from '@/components/layout/navigation/shared'
+
 interface HelpSidebarSectionsProps {
   collapsed: boolean
 }
 
-export function HelpSidebarSections({ collapsed }: HelpSidebarSectionsProps) {
+export const HelpSidebarSections = ({ collapsed }: HelpSidebarSectionsProps) => {
   if (collapsed) return null
 
   // Mock data - In actual implementation, fetch from appropriate data source

@@ -1,11 +1,13 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
+
+import { useEventStore } from '@/features/events'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useDebounce } from '@/hooks/use-debounce'
+
 import { SearchEngine } from '../lib/search-engine'
 import type { SearchResult, SearchOptions, SearchResultType } from '../types'
-import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-import { useTagStore } from '@/features/tags/stores/tag-store'
-import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
-import { useEventStore } from '@/features/events'
 
 interface UseSearchOptions {
   types?: SearchResultType[]

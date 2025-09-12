@@ -86,7 +86,7 @@ module.exports = {
         VariableDeclarator(node) {
           if (node.init && node.init.type === 'Literal') {
             const key = node.id.name || '';
-            const value = node.init.value;
+            const {value} = node.init;
             if (typeof value === 'string') {
               checkForSecrets(node, value, key);
             }
@@ -96,7 +96,7 @@ module.exports = {
         Property(node) {
           if (node.value.type === 'Literal') {
             const key = node.key.name || node.key.value || '';
-            const value = node.value.value;
+            const {value} = node.value;
             if (typeof value === 'string') {
               checkForSecrets(node, value, key);
             }
@@ -140,7 +140,7 @@ module.exports = {
           
           if (INPUT_SOURCES.includes(memberExpression)) {
             // Check if validation is present in the same function
-            let parent = node.parent;
+            let {parent} = node;
             let hasValidation = false;
             
             while (parent && parent.type !== 'FunctionDeclaration' && parent.type !== 'ArrowFunctionExpression') {
@@ -200,7 +200,7 @@ module.exports = {
 
           if (SECURITY_CRITICAL_FUNCTIONS.includes(functionName)) {
             // Check if audit logging is present
-            let parent = node.parent;
+            let {parent} = node;
             while (parent && parent.type !== 'FunctionDeclaration' && parent.type !== 'ArrowFunctionExpression') {
               parent = parent.parent;
             }
@@ -264,7 +264,7 @@ module.exports = {
           if (node.callee.property && 
               ['fetch', 'axios', 'request'].includes(node.callee.property.name)) {
             
-            let parent = node.parent;
+            let {parent} = node;
             let hasTryCatch = false;
             
             while (parent) {

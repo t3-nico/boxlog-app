@@ -3,9 +3,10 @@
  */
 
 import React from 'react';
+
 import { colors } from '@/config/theme'; // ✅ OK: theme import
 
-export function TestComponent() {
+export const TestComponent = () => {
   return (
     <div>
       {/* ✅ OK: theme使用 */}
@@ -42,7 +43,7 @@ export function TestComponent() {
 }
 
 // ❌ NG: themeインポートなしで色使用
-export function NoImportComponent() {
+export const NoImportComponent = () => {
   return (
     <div className="bg-purple-600">
       No Import Error

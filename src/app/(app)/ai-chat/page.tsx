@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+
 import { AiChatSidebar } from '@/features/aichat'
 
 export default function AIChatPage() {

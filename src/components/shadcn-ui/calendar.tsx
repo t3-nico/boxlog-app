@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -8,11 +9,10 @@ import {
 } from "lucide-react"
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker"
 
+import { Button , buttonVariants } from "@/components/shadcn-ui/button"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/shadcn-ui/button"
-import { buttonVariants } from "@/components/shadcn-ui/button"
 
-function Calendar({
+const Calendar = ({
   className,
   classNames,
   showOutsideDays = true,
@@ -23,7 +23,7 @@ function Calendar({
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"]
-}) {
+}) => {
   const defaultClassNames = getDefaultClassNames()
 
   return (
@@ -173,12 +173,12 @@ function Calendar({
   )
 }
 
-function CalendarDayButton({
+const CalendarDayButton = ({
   className,
   day,
   modifiers,
   ...props
-}: React.ComponentProps<typeof DayButton>) {
+}: React.ComponentProps<typeof DayButton>) => {
   const defaultClassNames = getDefaultClassNames()
 
   const ref = React.useRef<HTMLButtonElement>(null)

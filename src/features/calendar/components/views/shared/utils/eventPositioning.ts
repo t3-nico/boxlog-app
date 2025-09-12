@@ -2,8 +2,8 @@
  * イベント配置計算ユーティリティ
  */
 
-import type { CalendarEvent, TimedEvent, EventColumn } from '../types/event.types'
 import { MAX_EVENT_COLUMNS } from '../constants/grid.constants'
+import type { CalendarEvent, TimedEvent, EventColumn } from '../types/event.types'
 
 /**
  * イベントが時間的に重複しているか判定

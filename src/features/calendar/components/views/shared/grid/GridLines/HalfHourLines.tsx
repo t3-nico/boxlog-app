@@ -5,8 +5,9 @@
 'use client'
 
 import React, { memo } from 'react'
-import { useTimeGrid } from '../../hooks/useTimeGrid'
+
 import { HALF_HOUR_LINE_COLOR } from '../../constants/grid.constants'
+import { useTimeGrid } from '../../hooks/useTimeGrid'
 
 interface HalfHourLinesProps {
   startHour?: number
