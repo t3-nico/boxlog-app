@@ -1,8 +1,5 @@
 'use client';
 
-import Color from 'color';
-import { PipetteIcon } from 'lucide-react';
-import { Slider } from 'radix-ui';
 import {
   type ComponentProps,
   createContext,
@@ -15,6 +12,11 @@ import {
   useRef,
   useState,
 } from 'react';
+
+import Color from 'color';
+import { Slider } from 'radix-ui';
+
+import { PipetteIcon } from 'lucide-react';
 import { Button } from '@/components/shadcn-ui/button';
 import { Input } from '@/components/shadcn-ui/input';
 import {

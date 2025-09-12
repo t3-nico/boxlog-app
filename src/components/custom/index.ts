@@ -1,8 +1,8 @@
-// Typography
+// Typography components
 export { Heading, Subheading } from './heading'
 export { Text } from './text'
 
-// Form
+// Form components
 export { 
   Fieldset, 
   Field, 
@@ -11,10 +11,10 @@ export {
   Description 
 } from './fieldset'
 
-// Navigation
+// Navigation components
 export { Link } from './link'
 
-// Lists
+// List components
 export { 
   DescriptionList, 
   DescriptionTerm, 
@@ -28,5 +28,5 @@ export {
   ListboxOption 
 } from './listbox'
 
-// Icons
+// Icon components
 export { GoogleIcon, AppleIcon } from './icons'

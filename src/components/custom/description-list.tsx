@@ -1,12 +1,14 @@
 import clsx from 'clsx'
 
+import { typography, colors } from '@/config/theme'
+
 export function DescriptionList({ className, ...props }: React.ComponentPropsWithoutRef<'dl'>) {
   return (
     <dl
       {...props}
       className={clsx(
         className,
-        'grid grid-cols-1 text-base/6 sm:grid-cols-[min(50%,--spacing(80))_auto] sm:text-sm/6'
+        `grid grid-cols-1 ${typography.body.large} sm:grid-cols-[min(50%,--spacing(80))_auto] sm:${typography.body.small}`
       )}
     />
   )
@@ -18,7 +20,7 @@ export function DescriptionTerm({ className, ...props }: React.ComponentPropsWit
       {...props}
       className={clsx(
         className,
-        'col-start-1 border-t border-zinc-950/5 pt-3 text-zinc-500 first:border-none sm:border-t sm:border-zinc-950/5 sm:py-3 dark:border-white/5 dark:text-zinc-400 sm:dark:border-white/5'
+        `col-start-1 border-t ${colors.border.DEFAULT} pt-3 ${colors.text.secondary} first:border-none sm:border-t sm:${colors.border.DEFAULT} sm:py-3`
       )}
     />
   )
@@ -30,7 +32,7 @@ export function DescriptionDetails({ className, ...props }: React.ComponentProps
       {...props}
       className={clsx(
         className,
-        'pt-1 pb-3 text-zinc-950 sm:border-t sm:border-zinc-950/5 sm:py-3 sm:nth-2:border-none dark:text-white dark:sm:border-white/5'
+        `pt-1 pb-3 ${colors.text.primary} sm:border-t sm:${colors.border.DEFAULT} sm:py-3 sm:nth-2:border-none`
       )}
     />
   )

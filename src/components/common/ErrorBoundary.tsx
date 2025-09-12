@@ -6,9 +6,12 @@
 'use client'
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
+
 import { Button } from '@/components/shadcn-ui/button'
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 import { handleClientError } from '@/lib/errors'
+import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
+
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 
 // === 型定義 ===
 
@@ -91,39 +94,39 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトのエラー表示
       return (
-        <div className={`min-h-screen flex items-center justify-center p-4 ${this.props.className || ''}`}>
-          <div className="max-w-lg w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div className="flex items-center mb-4">
-              <AlertTriangle className="h-8 w-8 text-red-500 mr-3" />
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+        <div className={`min-h-screen flex items-center justify-center ${spacing.padding.md} ${this.props.className || ''}`}>
+          <div className={`max-w-lg w-full ${colors.background.surface} ${rounded.component.card.base} ${elevation.lg} ${spacing.padding.lg}`}>
+            <div className={`flex items-center ${spacing.margin.md}`}>
+              <AlertTriangle className={`h-8 w-8 ${colors.semantic.error.text} mr-3`} />
+              <h1 className={`${typography.heading.h2} ${colors.text.primary}`}>
                 予期しないエラーが発生しました
               </h1>
             </div>
 
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
+            <p className={`${colors.text.secondary} ${spacing.margin.lg}`}>
               申し訳ございません。アプリケーションでエラーが発生しました。
               ページを再読み込みするか、ホームページに戻ってお試しください。
             </p>
 
             {/* エラー詳細（開発環境のみ） */}
             {this.props.showDetails && process.env.NODE_ENV === 'development' && this.state.error && (
-              <div className="mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
-                <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+              <div className={`${spacing.margin.lg} ${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}>
+                <h3 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>
                   エラー詳細 (開発環境のみ)
                 </h3>
-                <div className="text-sm text-gray-700 dark:text-gray-300 font-mono">
-                  <p className="mb-2">
+                <div className={`${typography.special.code} ${colors.text.secondary}`}>
+                  <p className={spacing.margin.sm}>
                     <strong>エラーID:</strong> {this.state.errorId}
                   </p>
-                  <p className="mb-2">
+                  <p className={spacing.margin.sm}>
                     <strong>エラー:</strong> {this.state.error.message}
                   </p>
                   {this.state.error.stack && (
                     <details className="mt-2">
-                      <summary className="cursor-pointer text-blue-600 dark:text-blue-400">
+                      <summary className={`cursor-pointer ${colors.primary.DEFAULT}`}>
                         スタックトレース
                       </summary>
-                      <pre className="mt-2 text-xs overflow-auto max-h-40 bg-gray-50 dark:bg-gray-800 p-2 rounded">
+                      <pre className={`mt-2 ${typography.special.code} overflow-auto max-h-40 ${colors.background.base} ${spacing.padding.sm} ${rounded.component.input.text}`}>
                         {this.state.error.stack}
                       </pre>
                     </details>
@@ -133,7 +136,7 @@ export class ErrorBoundary extends Component<Props, State> {
             )}
 
             {/* アクションボタン */}
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className={`flex flex-col sm:flex-row ${spacing.stack.sm}`}>
               <Button
                 onClick={this.handleRetry}
                 className="flex items-center justify-center"
@@ -224,12 +227,12 @@ export function ErrorDisplay({
   className = ''
 }: ErrorDisplayProps) {
   return (
-    <div className={`flex flex-col items-center justify-center p-8 text-center ${className}`}>
-      <AlertTriangle className="h-12 w-12 text-red-500 mb-4" />
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+    <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
+      <AlertTriangle className={`h-12 w-12 ${colors.semantic.error.text} ${spacing.margin.md}`} />
+      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>
         {title}
       </h3>
-      <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md">
+      <p className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md`}>
         {message}
       </p>
       {action && (

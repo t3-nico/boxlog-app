@@ -15,6 +15,7 @@ import {
   Search
 } from 'lucide-react'
 import { Input } from '@/components/shadcn-ui/input'
+import { colors, typography, spacing } from '@/config/theme'
 
 export default function ChatHistoryPage() {
   // Mock data - In actual implementation, fetch from appropriate data source
@@ -90,9 +91,9 @@ export default function ChatHistoryPage() {
 
   const getStatusBadge = (status: 'active' | 'resolved') => {
     if (status === 'active') {
-      return <Badge variant="default" className="bg-blue-500">Active</Badge>
+      return <Badge variant="default" className={colors.primary.DEFAULT}>Active</Badge>
     }
-    return <Badge variant="secondary" className="bg-green-100 text-green-800">Resolved</Badge>
+    return <Badge variant="secondary" className={`${colors.background.success} ${colors.text.success}`}>Resolved</Badge>
   }
 
   const formatDate = (timestamp: string) => {
@@ -107,10 +108,10 @@ export default function ChatHistoryPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl p-8">
-      <div className="mb-8">
+    <div className={`mx-auto max-w-6xl ${spacing.page.default}`}>
+      <div className={spacing.section.default}>
         <Heading>Chat History</Heading>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">
+        <p className={`${spacing.margin.md} ${colors.text.secondary}`}>
           View and manage your past help chat sessions.
         </p>
       </div>
@@ -118,7 +119,7 @@ export default function ChatHistoryPage() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${colors.text.tertiary}`} />
           <Input
             placeholder="Search chats..."
             value={searchQuery}
@@ -149,9 +150,9 @@ export default function ChatHistoryPage() {
       <div className="space-y-4">
         {filteredSessions.length === 0 ? (
           <Card>
-            <CardContent className="py-12 text-center">
-              <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">
+            <CardContent className={`${spacing.padding.xl} text-center`}>
+              <MessageCircle className={`w-12 h-12 ${colors.text.tertiary} mx-auto ${spacing.margin.md}`} />
+              <p className={colors.text.secondary}>
                 {searchQuery ? 'No chats found matching your search criteria' : 'No chat history available'}
               </p>
             </CardContent>
@@ -166,17 +167,17 @@ export default function ChatHistoryPage() {
                       {session.status === 'active' ? (
                         <MessageSquare className="w-5 h-5 text-blue-500" />
                       ) : (
-                        <MessageCircle className="w-5 h-5 text-gray-400" />
+                        <MessageCircle className={`w-5 h-5 ${colors.text.tertiary}`} />
                       )}
                       <CardTitle className="text-lg font-semibold">
                         {session.title}
                       </CardTitle>
                       {getStatusBadge(session.status)}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                    <p className={`${typography.body.sm} ${colors.text.secondary} ${spacing.margin.sm}`}>
                       {session.summary}
                     </p>
-                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    <div className={`flex items-center gap-4 ${typography.body.xs} ${colors.text.tertiary}`}>
                       <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
                         {formatDate(session.timestamp)}
@@ -192,7 +193,7 @@ export default function ChatHistoryPage() {
                       <Eye className="w-4 h-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                    <Button variant="outline" size="sm" className={`${colors.text.danger} ${colors.hover.danger}`}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
@@ -216,31 +217,31 @@ export default function ChatHistoryPage() {
       {chatSessions.length > 0 && (
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            <CardContent className={`${spacing.padding.md} text-center`}>
+              <div className={`${typography.heading.h2} ${typography.weight.bold} ${colors.text.primary}`}>
                 {chatSessions.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className={`${typography.body.sm} ${colors.text.secondary}`}>
                 Total Chats
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">
+            <CardContent className={`${spacing.padding.md} text-center`}>
+              <div className={`${typography.heading.h2} ${typography.weight.bold} ${colors.text.info}`}>
                 {chatSessions.filter(s => s.status === 'active').length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className={`${typography.body.sm} ${colors.text.secondary}`}>
                 Active
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">
+            <CardContent className={`${spacing.padding.md} text-center`}>
+              <div className={`${typography.heading.h2} ${typography.weight.bold} ${colors.text.success}`}>
                 {chatSessions.filter(s => s.status === 'resolved').length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className={`${typography.body.sm} ${colors.text.secondary}`}>
                 Resolved
               </div>
             </CardContent>

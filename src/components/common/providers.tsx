@@ -1,11 +1,13 @@
 'use client'
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useCallback, useEffect, createContext, useContext } from 'react'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import { PreloadResources } from './PreloadResources'
 import { AuthProvider } from '@/features/auth'
 import { ChatProvider } from '@/contexts/chat-context'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
-import { PreloadResources } from './PreloadResources'
 
 // CommandPalette context moved to features/command-palette
 

@@ -1,6 +1,9 @@
+import type React from 'react'
+
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
-import type React from 'react'
+
+import { colors, typography, spacing } from '@/config/theme'
 
 export function Fieldset({
   className,
@@ -24,14 +27,14 @@ export function Legend({
       {...props}
       className={clsx(
         className,
-        'text-base/6 font-semibold text-zinc-950 data-disabled:opacity-50 sm:text-sm/6 dark:text-white'
+        `${typography.body.large} ${typography.body.semibold} ${colors.text.primary} data-disabled:opacity-50 sm:${typography.body.small}`
       )}
     />
   )
 }
 
 export function FieldGroup({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
-  return <div data-slot="control" {...props} className={clsx(className, 'space-y-8')} />
+  return <div data-slot="control" {...props} className={clsx(className, spacing.stack.xl)} />
 }
 
 export function Field({ className, ...props }: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) {
@@ -58,7 +61,7 @@ export function Label({ className, ...props }: { className?: string } & Omit<Hea
       {...props}
       className={clsx(
         className,
-        'text-base/6 text-zinc-950 select-none data-disabled:opacity-50 sm:text-sm/6 dark:text-white'
+        `${typography.body.large} ${colors.text.primary} select-none data-disabled:opacity-50 sm:${typography.body.small}`
       )}
     />
   )
@@ -72,7 +75,7 @@ export function Description({
     <Headless.Description
       data-slot="description"
       {...props}
-      className={clsx(className, 'text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400')}
+      className={clsx(className, `${typography.body.large} ${colors.text.secondary} data-disabled:opacity-50 sm:${typography.body.small}`)}
     />
   )
 }
@@ -85,7 +88,7 @@ export function ErrorMessage({
     <Headless.Description
       data-slot="error"
       {...props}
-      className={clsx(className, 'text-base/6 text-red-600 data-disabled:opacity-50 sm:text-sm/6 dark:text-red-500')}
+      className={clsx(className, `${typography.body.large} ${colors.semantic.error.text} data-disabled:opacity-50 sm:${typography.body.small}`)}
     />
   )
 }

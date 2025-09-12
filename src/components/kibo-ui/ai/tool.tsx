@@ -1,5 +1,16 @@
 'use client';
 
+import type { ComponentProps, ReactNode } from 'react';
+
+import { Badge } from '@/components/shadcn-ui/badge';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/kibo-ui/collapsible';
+import { cn } from '@/lib/utils';
+import { colors } from '@/config/theme';
+
 import {
   CheckCircleIcon,
   ChevronDownIcon,
@@ -8,14 +19,6 @@ import {
   WrenchIcon,
   XCircleIcon,
 } from 'lucide-react';
-import type { ComponentProps, ReactNode } from 'react';
-import { Badge } from '@/components/shadcn-ui/badge';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/kibo-ui/collapsible';
-import { cn } from '@/lib/utils';
 
 export type AIToolStatus = 'pending' | 'running' | 'completed' | 'error';
 
@@ -51,8 +54,8 @@ const getStatusBadge = (status: AIToolStatus) => {
   const icons = {
     pending: <CircleIcon className="size-4" />,
     running: <ClockIcon className="size-4 animate-pulse" />,
-    completed: <CheckCircleIcon className="size-4 text-green-600" />,
-    error: <XCircleIcon className="size-4 text-red-600" />,
+    completed: <CheckCircleIcon className={`size-4 ${colors.semantic.success.DEFAULT}`} />,
+    error: <XCircleIcon className={`size-4 ${colors.semantic.error.DEFAULT}`} />,
   } as const;
 
   return (

@@ -1,15 +1,18 @@
 'use client';
 
+import type { ComponentProps } from 'react';
+import { createContext, memo, useContext, useEffect, useState } from 'react';
+
 import { useControllableState } from '@radix-ui/react-use-controllable-state';
+
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/kibo-ui/collapsible';
-import { ChevronDownIcon } from 'lucide-react';
-import type { ComponentProps } from 'react';
-import { createContext, memo, useContext, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+
+import { ChevronDownIcon } from 'lucide-react';
 import { AIResponse } from './response';
 
 type AIReasoningContextValue = {

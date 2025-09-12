@@ -1,6 +1,11 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+
+import { Button } from '@/components/shadcn-ui/button'
+import { colors, typography, spacing, rounded, animations } from '@/config/theme'
+import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+
 import { 
   ArrowUpCircle, 
   Sparkles, 
@@ -8,21 +13,19 @@ import {
   Trash2, 
   Copy
 } from 'lucide-react'
-import { Button } from '@/components/shadcn-ui/button'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 
 function MessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.sender === 'user'
   
   if (isUser) {
     return (
-      <div className="mb-4 flex justify-end">
-        <div className="bg-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] break-words">
-          <div className="text-sm leading-relaxed whitespace-pre-wrap">
+      <div className={`${spacing.margin.md} flex justify-end`}>
+        <div className={`${colors.primary.DEFAULT} ${colors.text.onPrimary} rounded-2xl rounded-tr-sm ${spacing.padding.md} max-w-[80%] break-words`}>
+          <div className={`${typography.body.sm} leading-relaxed whitespace-pre-wrap`}>
             {message.content}
           </div>
           {message.status && (
-            <div className="mt-1 text-xs text-purple-100 opacity-75">
+            <div className={`${spacing.margin.xs} ${typography.body.xs} ${colors.text.onPrimary} opacity-75`}>
               {message.status === 'sending' && 'Sending...'}
               {message.status === 'error' && 'Error sending message'}
             </div>
@@ -33,18 +36,18 @@ function MessageBubble({ message }: { message: ChatMessage }) {
   }
   
   return (
-    <div className="mb-4 flex justify-start items-start gap-3">
+    <div className={`${spacing.margin.md} flex justify-start items-start gap-3`}>
       {/* AI Avatar */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white flex-shrink-0">
+      <div className={`w-8 h-8 ${rounded.full} ${colors.gradient.primaryTertiary} flex items-center justify-center ${colors.text.onPrimary} flex-shrink-0`}>
         <Sparkles className="w-4 h-4" />
       </div>
       
       {/* AI Message Bubble */}
-      <div className="bg-background text-foreground rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] break-words border border-border">
-        <div className="text-sm leading-relaxed whitespace-pre-wrap">
+      <div className={`${colors.background.card} ${colors.text.primary} rounded-2xl rounded-tl-sm ${spacing.padding.md} max-w-[80%] break-words ${colors.border.default}`}>
+        <div className={`${typography.body.sm} leading-relaxed whitespace-pre-wrap`}>
           {message.content}
         </div>
-        <div className="mt-1 text-xs text-muted-foreground">
+        <div className={`${spacing.margin.xs} ${typography.body.small} ${colors.text.muted}`}>
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
@@ -81,14 +84,14 @@ function ChatInput() {
   }, [state.inputValue])
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-border bg-background">
+    <div className={`flex-shrink-0 ${spacing.padding.md} ${colors.border.top} ${colors.background.base}`}>
       {/* Typing indicator */}
       {state.isTyping && (
-        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
+        <div className={`flex items-center gap-2 ${spacing.margin.sm} ${typography.body.sm} ${colors.text.muted}`}>
           <div className="flex gap-1">
-            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`}></div>
+            <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`} style={{ animationDelay: '0.2s' }}></div>
+            <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`} style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span>AI is thinking...</span>
         </div>
@@ -104,7 +107,7 @@ function ChatInput() {
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
             placeholder="Ask AI anything..."
-            className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 pr-12 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 max-h-32 min-h-[44px] placeholder-muted-foreground"
+            className={`w-full resize-none ${rounded.component.input.lg} ${colors.border.default} ${colors.background.card} ${spacing.padding.md} pr-12 ${typography.body.sm} ${colors.focus.ring} max-h-32 min-h-[44px] ${colors.placeholder.muted}`}
             disabled={state.isTyping}
             rows={1}
           />
@@ -112,7 +115,7 @@ function ChatInput() {
           <button
             type="submit"
             disabled={!state.inputValue.trim() || state.isTyping}
-            className="absolute right-2 bottom-2 p-2 text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 disabled:cursor-not-allowed transition-colors focus:outline-none"
+            className={`absolute right-2 bottom-2 ${spacing.padding.xs} ${colors.text.muted} ${colors.hover.text} disabled:${colors.text.disabled} disabled:cursor-not-allowed ${animations.transition.fast} focus:outline-none`}
           >
             <ArrowUpCircle className="h-6 w-6" />
           </button>
@@ -135,15 +138,15 @@ export function InspectorAIChat() {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className="flex-shrink-0 p-4 border-b border-border bg-background">
+      <div className={`flex-shrink-0 ${spacing.padding.md} ${colors.border.bottom} ${colors.background.base}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-white" />
+            <div className={`w-8 h-8 ${rounded.full} ${colors.gradient.primaryTertiary} flex items-center justify-center`}>
+              <Sparkles className={`w-4 h-4 ${colors.text.onPrimary}`} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-foreground">AI Assistant</h3>
-              <p className="text-xs text-muted-foreground">
+              <h3 className={`${typography.body.sm} ${typography.weight.semibold} ${colors.text.primary}`}>AI Assistant</h3>
+              <p className={`${typography.body.small} ${colors.text.muted}`}>
                 Ask me anything about your tasks
               </p>
             </div>
@@ -161,13 +164,13 @@ export function InspectorAIChat() {
             </Button>
             
             {showMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+              <div className={`absolute right-0 top-full ${spacing.margin.xs} ${colors.background.card} ${colors.border.default} ${rounded.component.card.lg} shadow-lg z-50 min-w-[140px] ${spacing.padding.xs}`}>
                 <button
                   onClick={() => {
                     clearMessages()
                     setShowMenu(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
+                  className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
                 >
                   <Trash2 className="w-4 h-4" />
                   Clear conversation
@@ -183,7 +186,7 @@ export function InspectorAIChat() {
                     navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
                     setShowMenu(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
+                  className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
                 >
                   <Copy className="w-4 h-4" />
                   Export conversation
@@ -195,16 +198,16 @@ export function InspectorAIChat() {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className={`flex-1 overflow-y-auto ${spacing.padding.md}`}>
         {state.messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 text-white" />
+            <div className={`w-16 h-16 ${rounded.full} ${colors.gradient.primaryTertiary} flex items-center justify-center mx-auto ${spacing.margin.md}`}>
+              <Sparkles className={`w-8 h-8 ${colors.text.onPrimary}`} />
             </div>
-            <h3 className="text-lg font-semibold text-foreground mb-2">
-              Hi! I'm your AI assistant
+            <h3 className={`${typography.heading.h3} ${typography.weight.semibold} ${colors.text.primary} ${spacing.margin.xs}`}>
+              Hi! I&apos;m your AI assistant
             </h3>
-            <p className="text-muted-foreground max-w-md text-sm">
+            <p className={`${colors.text.muted} max-w-md ${typography.body.sm}`}>
               I can help you with productivity insights, task management, and answer questions about BoxLog.
             </p>
           </div>

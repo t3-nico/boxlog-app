@@ -79,7 +79,6 @@ import {
   transformerNotationHighlight,
   transformerNotationWordHighlight,
 } from '@shikijs/transformers';
-import { CheckIcon, CopyIcon } from 'lucide-react';
 import type {
   ComponentProps,
   HTMLAttributes,
@@ -98,6 +97,7 @@ import {
   type CodeOptionsMultipleThemes,
   codeToHtml,
 } from 'shiki';
+
 import { Button } from '@/components/shadcn-ui/button';
 import {
   Select,
@@ -107,6 +107,8 @@ import {
   SelectValue,
 } from '@/components/shadcn-ui/select';
 import { cn } from '@/lib/utils';
+
+import { CheckIcon, CopyIcon } from 'lucide-react';
 
 export type { BundledLanguage } from 'shiki';
 
