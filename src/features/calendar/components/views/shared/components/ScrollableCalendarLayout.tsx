@@ -8,7 +8,7 @@ import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 
 import { cn } from '@/lib/utils'
 
-import { TimeColumn } from './TimeColumn'
+import { TimeColumn } from '../grid/TimeColumn/TimeColumn'
 import { TimezoneOffset } from './TimezoneOffset'
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
 

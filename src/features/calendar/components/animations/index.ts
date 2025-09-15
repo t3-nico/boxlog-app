@@ -27,7 +27,7 @@ export {
 export { AnimatedEventCard } from './AnimatedEventCard'
 export { 
   eventAnimations, 
-  motionPresets,
+  tailwindAnimations,
   AnimatedEventItem,
   CreatingEventPreview,
   DeletingEvent,
