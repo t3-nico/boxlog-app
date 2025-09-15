@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-export default function SettingsIndexPage() {
+const SettingsIndexPage = () => {
   const router = useRouter()
 
   useEffect(() => {
@@ -13,4 +13,6 @@ export default function SettingsIndexPage() {
 
   return null
 }
+
+export default SettingsIndexPage
 

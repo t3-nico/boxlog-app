@@ -1,9 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { usePathname } from 'next/navigation'
 
+import { colors } from '@/config/theme'
 import { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
 import { cn } from '@/lib/utils'
 
@@ -19,32 +20,32 @@ export const InspectorContent = () => {
   const { setActiveContent, setSelectedEvent } = useInspectorStore()
   
   // イベント詳細のハンドラー
-  const handleEventSave = (eventData: any) => {
+  const handleEventSave = useCallback((eventData: any) => {
     // TODO: イベント保存処理を実装
     console.log('Save event:', eventData)
-  }
+  }, [])
 
-  const handleEventDelete = (eventId: string) => {
+  const handleEventDelete = useCallback((eventId: string) => {
     // TODO: イベント削除処理を実装
     console.log('Delete event:', eventId)
     setSelectedEvent(null)
     setActiveContent('calendar')
-  }
+  }, [setSelectedEvent, setActiveContent])
 
-  const handleEventDuplicate = (event: any) => {
+  const handleEventDuplicate = useCallback((event: any) => {
     // TODO: イベント複製処理を実装
     console.log('Duplicate event:', event)
-  }
+  }, [])
 
-  const handleTemplateCreate = (event: any) => {
+  const handleTemplateCreate = useCallback((event: any) => {
     // TODO: テンプレート作成処理を実装
     console.log('Create template:', event)
-  }
+  }, [])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setSelectedEvent(null)
     setActiveContent('calendar')
-  }
+  }, [setSelectedEvent, setActiveContent])
 
   // ページに基づいたコンテンツの決定
   const getContentComponent = () => {

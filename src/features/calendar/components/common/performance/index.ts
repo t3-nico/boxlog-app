@@ -84,8 +84,10 @@ export function useIntegratedPerformanceOptimization() {
     })
     
     return () => {
-      performanceMonitor.current.stopMonitoring()
-      memoryOptimizer.current.stopMonitoring()
+      const currentPerformanceMonitor = performanceMonitor.current
+      const currentMemoryOptimizer = memoryOptimizer.current
+      currentPerformanceMonitor.stopMonitoring()
+      currentMemoryOptimizer.stopMonitoring()
     }
   }, [])
   

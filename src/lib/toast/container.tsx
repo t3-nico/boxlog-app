@@ -1,8 +1,7 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
-import { AnimatePresence } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
 
@@ -21,6 +20,10 @@ const positionClasses = {
 export const ToastContainer = () => {
   const { toasts, position, removeToast } = useToastStore()
   
+  const createRemoveHandler = useCallback((toastId: string) => {
+    return () => removeToast(toastId)
+  }, [removeToast])
+  
   return (
     <div
       className={cn(
@@ -30,16 +33,14 @@ export const ToastContainer = () => {
       aria-live="polite"
       aria-atomic="true"
     >
-      <AnimatePresence mode="popLayout">
-        {toasts.map((toast) => (
-          <div key={toast.id} className="pointer-events-auto">
-            <Toast
-              toast={toast}
-              onRemove={() => removeToast(toast.id)}
-            />
-          </div>
-        ))}
-      </AnimatePresence>
+      {toasts.map((toast) => (
+        <div key={toast.id} className="pointer-events-auto">
+          <Toast
+            toast={toast}
+            onRemove={createRemoveHandler(toast.id)}
+          />
+        </div>
+      ))}
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { colors, typography, spacing, layout } from '@/config/theme'
 import { patterns } from '@/config/theme/elevation'
 import { componentRadius } from '@/config/theme/rounded'
 
-export default function BoardPage() {
+const BoardPage = () => {
   return (
     <div className={spacing.page.default}>
       <div className={layout.singleColumn}>
@@ -53,3 +53,5 @@ export default function BoardPage() {
     </div>
   )
 }
+
+export default BoardPage

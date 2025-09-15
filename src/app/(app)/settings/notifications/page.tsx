@@ -2,7 +2,7 @@
 
 import { SettingsLayout, NotificationSettings } from '@/features/settings/components'
 
-export default function NotificationsPage() {
+const NotificationsPage = () => {
   return (
     <SettingsLayout
       title="通知"
@@ -12,4 +12,6 @@ export default function NotificationsPage() {
     </SettingsLayout>
   )
 }
+
+export default NotificationsPage
 

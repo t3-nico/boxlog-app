@@ -7,7 +7,8 @@ import { Input } from '@/components/shadcn-ui/input'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { colors, typography, spacing } from '@/config/theme'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
-import { SettingsCard, SettingField } from '@/features/settings/components'
+import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 interface ProfileSettings {
@@ -21,7 +22,7 @@ interface SecuritySettings {
   twoFactorEnabled: boolean
 }
 
-export default function AccountSettings() {
+const AccountSettings = () => {
   const { user } = useAuthContext()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -355,3 +356,5 @@ export default function AccountSettings() {
     </div>
   )
 }
+
+export default AccountSettings

@@ -4,7 +4,7 @@ import { spacing, layout } from '@/config/theme'
 import { useChatContext } from '@/contexts/chat-context'
 import { TaskTable } from '@/features/table'
 
-export default function TablePage() {
+const TablePage = () => {
   const { toggleChat, state } = useChatContext()
 
   return (
@@ -17,3 +17,5 @@ export default function TablePage() {
     </div>
   )
 }
+
+export default TablePage

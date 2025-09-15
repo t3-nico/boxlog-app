@@ -3,7 +3,7 @@
 import { SettingsLayout } from '@/features/settings/components'
 import DataExportSettings from '@/features/settings/components/data-export-settings'
 
-export default function DataExportPage() {
+const DataExportPage = () => {
   return (
     <SettingsLayout
       title="データエクスポート"
@@ -13,4 +13,6 @@ export default function DataExportPage() {
     </SettingsLayout>
   )
 }
+
+export default DataExportPage
 

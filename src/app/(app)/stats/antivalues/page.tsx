@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: 'AntiValues',
 }
 
-export default function AntiValuesPage() {
+const AntiValuesPage = () => {
   return <Heading>AntiValues</Heading>
 }
+
+export default AntiValuesPage

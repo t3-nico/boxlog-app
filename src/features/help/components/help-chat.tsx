@@ -203,7 +203,7 @@ const WelcomeMessage = () => {
             <Sparkles className="w-8 h-8 text-white" />
           </div>
           <h3 className="text-2xl font-semibold text-foreground mb-4">
-            Hi! I'm Claude, your BoxLog AI assistant
+            Hi! I&apos;m Claude, your BoxLog AI assistant
           </h3>
           <p className="text-lg text-muted-foreground leading-relaxed mb-8">
             I can help you with productivity insights, task management, scheduling advice, 

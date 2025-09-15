@@ -2,6 +2,8 @@
 
 import { AuthLayout } from '@/features/auth'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return <AuthLayout>{children}</AuthLayout>
 }
+
+export default RootLayout

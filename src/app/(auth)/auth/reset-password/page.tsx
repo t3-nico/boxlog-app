@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -11,7 +11,7 @@ import { Input } from '@/components/shadcn-ui/input'
 import { colors, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 
-export default function ResetPassword() {
+const ResetPassword = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { updatePassword } = useAuthContext()
@@ -31,6 +31,14 @@ export default function ResetPassword() {
       router.push('/auth')
     }
   }, [accessToken, refreshToken, router])
+
+  const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value)
+  }, [])
+
+  const handleConfirmPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -87,7 +95,7 @@ export default function ResetPassword() {
           id="password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
           required
           minLength={6}
         />
@@ -98,7 +106,7 @@ export default function ResetPassword() {
           id="confirmPassword"
           type="password"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={handleConfirmPasswordChange}
           required
           minLength={6}
         />
@@ -113,3 +121,5 @@ export default function ResetPassword() {
     </form>
   )
 }
+
+export default ResetPassword

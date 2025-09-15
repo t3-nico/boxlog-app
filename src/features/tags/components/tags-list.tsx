@@ -12,6 +12,7 @@ import {
   Trash2 as TrashIcon
 } from 'lucide-react'
 
+import { colors } from '@/config/theme'
 import { tagIconMapping, TagIconName } from '@/config/ui/tagIcons'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 
@@ -74,7 +75,7 @@ const TagItem = ({
     <div className="space-y-2">
       {/* タグアイテム */}
       <div 
-        className="flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer hover:bg-zinc-950/5 dark:hover:bg-white/5 transition-colors duration-150"
+        className={`flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer ${colors.ghost.hover} transition-colors duration-150`}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
         onMouseEnter={() => setIsHovered(true)}
@@ -94,9 +95,9 @@ const TagItem = ({
                 style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
               >
                 {isExpanded ? (
-                  <ChevronDownIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <ChevronDownIcon className={`h-4 w-4 ${colors.text.muted}`} />
                 ) : (
-                  <ChevronRightIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <ChevronRightIcon className={`h-4 w-4 ${colors.text.muted}`} />
                 )}
               </button>
             )}
@@ -120,7 +121,7 @@ const TagItem = ({
           {/* タグ名 */}
           {!isCollapsed && (
             <div className="flex items-center gap-2 flex-1 min-w-0">
-              <span className="text-sm font-medium truncate text-zinc-950 dark:text-white" title={tag.name}>
+              <span className={`text-sm font-medium truncate ${colors.text.primary}`} title={tag.name}>
                 {tag.name}
               </span>
               {/* アクティブドット */}
@@ -144,19 +145,19 @@ const TagItem = ({
               }`}
               style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
             >
-              <EllipsisHorizontalIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+              <EllipsisHorizontalIcon className={`h-4 w-4 ${colors.text.muted}`} />
             </button>
             
             {/* コンテキストメニュー */}
             {showMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+              <div className={`absolute right-0 top-full mt-1 ${colors.background.surface} ${colors.border.DEFAULT} rounded-lg shadow-lg z-50 min-w-[140px] py-1`}>
                 <button
                   onClick={(e) => {
                     e.stopPropagation()
                     onEditTag(tag)
                     setShowMenu(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-sm ${colors.text.secondary} ${colors.ghost.hover} transition-colors`}
                 >
                   <PencilIcon className="w-4 h-4" />
                   編集
@@ -167,7 +168,7 @@ const TagItem = ({
                     onDeleteTag(tag)
                     setShowMenu(false)
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-sm ${colors.semantic.error.text} ${colors.semantic.error.hover} transition-colors`}
                 >
                   <TrashIcon className="w-4 h-4" />
                   削除
@@ -275,7 +276,7 @@ export const TagsList = ({
       <div className="flex items-center justify-between w-full">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="section-header-toggle flex items-center mb-2 px-2 text-xs/6 font-medium text-zinc-500 dark:text-zinc-400 hover:bg-zinc-950/5 dark:hover:bg-white/5 rounded transition-colors"
+          className={`section-header-toggle flex items-center mb-2 px-2 text-xs/6 font-medium ${colors.text.muted} ${colors.ghost.hover} rounded transition-colors`}
         >
           <span className="peer">Tags</span>
           <span className="ml-1 opacity-0 peer-hover:opacity-100 transition-opacity">
@@ -289,9 +290,9 @@ export const TagsList = ({
         
         <button
           onClick={() => console.log('Create new tag')}
-          className="section-header-button p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded transition-colors"
+          className={`section-header-button p-1 ${colors.ghost.hover} rounded transition-colors`}
         >
-          <PlusIcon className="h-4 w-4 text-gray-400" />
+          <PlusIcon className={`h-4 w-4 ${colors.text.muted}`} />
         </button>
       </div>
       
@@ -319,13 +320,13 @@ export const TagsList = ({
             </>
           ) : (
             <div className="py-4 text-center">
-              <TagIcon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+              <TagIcon className={`w-6 h-6 ${colors.text.muted} mx-auto mb-2`} />
+              <p className={`text-xs ${colors.text.muted} mb-2`}>
                 タグがありません
               </p>
               <button
                 onClick={() => console.log('Create new tag')}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                className={`inline-flex items-center gap-1 px-2 py-1 text-xs ${colors.semantic.info.text} ${colors.selection.hover} rounded transition-colors`}
               >
                 <PlusIcon className="w-4 h-4" />
                 作成

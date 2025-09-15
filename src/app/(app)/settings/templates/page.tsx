@@ -3,7 +3,7 @@
 import { SettingsLayout } from '@/features/settings/components'
 import TemplatesSettings from '@/features/settings/components/templates-settings'
 
-export default function TemplatesPage() {
+const TemplatesPage = () => {
   return (
     <SettingsLayout
       title="テンプレート"
@@ -13,3 +13,5 @@ export default function TemplatesPage() {
     </SettingsLayout>
   )
 }
+
+export default TemplatesPage

@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next'
 
 import { Subheading } from '@/components/custom'
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
   title: 'Settings',
 }
 
-export default function SettingsPage() {
+const SettingsPage = () => {
   return (
     <SettingsLayout
       title="一般設定"
@@ -112,3 +113,5 @@ export default function SettingsPage() {
     </SettingsLayout>
   )
 }
+
+export default SettingsPage

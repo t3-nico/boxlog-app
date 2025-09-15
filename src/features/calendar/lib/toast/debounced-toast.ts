@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import type { CalendarAction, CalendarToastOptions } from './types'
 
-import useCalendarToast from './index'
+import { useCalendarToast } from './use-calendar-toast'
 
 // デバウンス設定
 export interface DebounceConfig {

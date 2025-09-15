@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: 'Connpass',
 }
 
-export default function ConnpassPage() {
+const ConnpassPage = () => {
   return <Heading>Connpass</Heading>
 }
+
+export default ConnpassPage

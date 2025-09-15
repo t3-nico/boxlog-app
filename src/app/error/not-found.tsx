@@ -5,29 +5,30 @@ import React from 'react'
 import { ArrowLeft } from 'lucide-react'
 
 import { DashboardLayout } from '@/components/layout/layout'
+import { colors, typography, spacing } from '@/config/theme'
 
 // 404ページのコンテンツコンポーネント
 const NotFoundContent = () => {
 
   return (
-      <div className="flex-1 flex items-center justify-center px-4 py-12 min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-md w-full text-center space-y-8">
+      <div className={`flex-1 flex items-center justify-center ${spacing.padding.lg} py-12 min-h-screen ${colors.background.surface}`}>
+        <div className={`max-w-md w-full text-center ${spacing.stack.lg}`}>
           {/* Large 404 Typography - Dominant, muted color */}
           <div>
-            <h1 className="text-9xl font-bold select-none text-gray-400 dark:text-gray-500 leading-none">
+            <h1 className={`text-9xl font-bold select-none ${colors.text.tertiary} leading-none`}>
               404
             </h1>
           </div>
 
           {/* Brief explanation */}
           <div>
-            <p className="text-gray-500 dark:text-gray-400 text-base">
-              The page you're looking for doesn't exist
+            <p className={`${colors.text.secondary} ${typography.body.base}`}>
+              The page you&apos;re looking for doesn&apos;t exist
             </p>
           </div>
 
           {/* Message directing to sidebar - Small, with arrow */}
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className={`flex items-center justify-center gap-2 ${typography.body.sm} ${colors.text.secondary}`}>
             <ArrowLeft className="w-4 h-4 animate-pulse" />
             <span>Check the side menu to navigate</span>
           </div>
@@ -36,7 +37,7 @@ const NotFoundContent = () => {
   )
 }
 
-export default function NotFound() {
+const NotFound = () => {
   // Empty arrays for events and reviews since this is a 404 page
   const events: any[] = []
   const reviews: any[] = []
@@ -47,3 +48,5 @@ export default function NotFound() {
     </DashboardLayout>
   )
 }
+
+export default NotFound

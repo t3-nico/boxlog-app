@@ -29,14 +29,14 @@ export function getReviews() {
   return []
 }
 
-export function getEvent(id: string) {
+export function getEvent(_id: string) {
   return null
 }
 
-export function getReview(id: string) {
+export function getReview(_id: string) {
   return null
 }
 
-export function getEventReviews(id: string) {
+export function getEventReviews(_id: string) {
   return []
 }

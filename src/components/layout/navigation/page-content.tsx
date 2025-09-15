@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { AIChatSidebarSections } from '@/features/aichat/components/sidebar'
 import { BoardSidebarSections } from '@/features/board/components/sidebar'
@@ -27,6 +27,8 @@ export const PageContent = ({ pathname }: PageContentProps) => {
   // Createボタンを表示するページを定義（calendar, table, boardのみ）
   const showCreateButton = isCalendarPage || isTablePage || isBoardPage
 
+  const handleSelectTag = useCallback(() => {}, [])
+
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Createボタン（特定ページのみ表示） */}
@@ -41,7 +43,7 @@ export const PageContent = ({ pathname }: PageContentProps) => {
         {isBoardPage && (
           <BoardSidebarSections
             collapsed={false}
-            onSelectTag={() => {}}
+            onSelectTag={handleSelectTag}
             selectedTagIds={[]}
           />
         )}
@@ -49,7 +51,7 @@ export const PageContent = ({ pathname }: PageContentProps) => {
         {isTablePage && (
           <TableSidebarSections
             collapsed={false}
-            onSelectTag={() => {}}
+            onSelectTag={handleSelectTag}
             selectedTagIds={[]}
           />
         )}
@@ -57,7 +59,7 @@ export const PageContent = ({ pathname }: PageContentProps) => {
         {isStatsPage && (
           <StatsSidebarSections
             collapsed={false}
-            onSelectTag={() => {}}
+            onSelectTag={handleSelectTag}
             selectedTagIds={[]}
           />
         )}

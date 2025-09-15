@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
+
 import { 
   ArrowUpCircle, 
   Sparkles, 
@@ -10,9 +11,9 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { cn } from '@/lib/utils'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { colors, typography, spacing, rounded, animations } from '@/config/theme'
+import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { cn } from '@/lib/utils'
 
 
 const MessageBubble = ({ message }: { message: ChatMessage }) => {
@@ -86,19 +87,26 @@ const ChatInput = () => {
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (state.inputValue.trim() && !state.isTyping) {
       await sendMessage(state.inputValue)
     }
-  }
+  }, [state.inputValue, state.isTyping, sendMessage])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
       e.preventDefault()
       handleSubmit(e)
     }
-  }
+  }, [isComposing, handleSubmit])
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }, [setInputValue])
+
+  const handleCompositionStart = useCallback(() => setIsComposing(true), [])
+  const handleCompositionEnd = useCallback(() => setIsComposing(false), [])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -133,10 +141,10 @@ const ChatInput = () => {
           <textarea
             ref={textareaRef}
             value={state.inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
             placeholder="Ask AI anything..."
             className={`w-full resize-none ${rounded.component.input.lg} ${colors.border.default} ${colors.background.card} ${spacing.padding.md} pr-12 ${typography.body.sm} ${colors.focus.ring} max-h-32 min-h-[44px] ${colors.placeholder.muted}`}
             disabled={state.isTyping}
@@ -160,6 +168,23 @@ export const InspectorAIChat = () => {
   const { state, clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  const toggleMenu = useCallback(() => setShowMenu(!showMenu), [showMenu])
+  
+  const handleClearMessages = useCallback(() => {
+    clearMessages()
+    setShowMenu(false)
+  }, [clearMessages])
+
+  const handleExportMessages = useCallback(() => {
+    const exportMessages = state.messages.map(msg => ({
+      sender: msg.sender,
+      content: msg.content,
+      timestamp: msg.timestamp
+    }))
+    navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
+    setShowMenu(false)
+  }, [state.messages])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -188,7 +213,7 @@ export const InspectorAIChat = () => {
             <Button
               variant="secondary"
               size="sm"
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={toggleMenu}
               className="p-1 h-6 w-6"
             >
               <MoreVertical className="h-3 w-3" />
@@ -197,26 +222,14 @@ export const InspectorAIChat = () => {
             {showMenu && (
               <div className={`absolute right-0 top-full ${spacing.margin.xs} ${colors.background.card} ${colors.border.default} ${rounded.component.card.lg} shadow-lg z-50 min-w-[140px] ${spacing.padding.xs}`}>
                 <button
-                  onClick={() => {
-                    clearMessages()
-                    setShowMenu(false)
-                  }}
+                  onClick={handleClearMessages}
                   className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
                 >
                   <Trash2 className="w-4 h-4" />
                   Clear conversation
                 </button>
                 <button
-                  onClick={() => {
-                    // Export functionality
-                    const exportMessages = state.messages.map(msg => ({
-                      sender: msg.sender,
-                      content: msg.content,
-                      timestamp: msg.timestamp
-                    }))
-                    navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
-                    setShowMenu(false)
-                  }}
+                  onClick={handleExportMessages}
                   className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
                 >
                   <Copy className="w-4 h-4" />

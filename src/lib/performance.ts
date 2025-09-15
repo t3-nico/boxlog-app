@@ -3,28 +3,28 @@
  */
 
 // 遅延実行ユーティリティ
-export const debounce = <T extends (...args: any[]) => any>(
+export const debounce = <T extends (..._args: any[]) => any>(
   func: T,
   wait: number
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout | null = null
   
-  return (...args: Parameters<T>) => {
+  return (..._args: Parameters<T>) => {
     if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
+    timeout = setTimeout(() => func(..._args), wait)
   }
 }
 
 // スロットリングユーティリティ
-export const throttle = <T extends (...args: any[]) => any>(
+export const throttle = <T extends (..._args: any[]) => any>(
   func: T,
   limit: number
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle: boolean
   
-  return (...args: Parameters<T>) => {
+  return (..._args: Parameters<T>) => {
     if (!inThrottle) {
-      func(...args)
+      func(..._args)
       inThrottle = true
       setTimeout(() => inThrottle = false, limit)
     }
@@ -33,7 +33,7 @@ export const throttle = <T extends (...args: any[]) => any>(
 
 // Intersection Observer を使用した遅延読み込み
 export const createLazyLoader = (
-  callback: (entries: IntersectionObserverEntry[]) => void,
+  callback: (_entries: IntersectionObserverEntry[]) => void,
   options: IntersectionObserverInit = {}
 ): IntersectionObserver => {
   const defaultOptions: IntersectionObserverInit = {
@@ -119,11 +119,11 @@ export const measureWebVitals = () => {
   if (typeof window === 'undefined') return
 
   // CLS (Cumulative Layout Shift)
-  let cls = 0
+  let _cls = 0
   new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
       if (!(entry as any).hadRecentInput) {
-        cls += (entry as any).value
+        _cls += (entry as any).value
       }
     }
   }).observe({ type: 'layout-shift', buffered: true })

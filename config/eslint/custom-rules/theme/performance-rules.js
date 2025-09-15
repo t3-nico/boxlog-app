@@ -37,7 +37,7 @@ module.exports = {
       ];
 
       let isInRenderFunction = false;
-      let currentFunctionName = '';
+      let _currentFunctionName = '';
 
       return {
         FunctionDeclaration(node) {
@@ -183,11 +183,11 @@ module.exports = {
           }
         },
 
-        JSXElement(node) {
+        JSXElement(_node) {
           componentComplexity += 1;
         },
 
-        ConditionalExpression(node) {
+        ConditionalExpression(_node) {
           componentComplexity += 1;
         },
 

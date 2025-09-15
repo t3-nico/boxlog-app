@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Description, Field, FieldGroup } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
@@ -19,16 +19,19 @@ import {
 
 export const RefundReview = ({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) => {
   const [isOpen, setIsOpen] = useState(false)
+  
+  const handleOpen = useCallback(() => setIsOpen(true), [])
+  const handleClose = useCallback(() => setIsOpen(false), [])
 
   return (
     <>
-      <Button type="button" onClick={() => setIsOpen(true)} {...props} />
+      <Button type="button" onClick={handleOpen} {...props} />
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Refund payment</DialogTitle>
             <DialogDescription>
-              The refund will be reflected in the customer's bank account 2 to 3 business days after processing.
+              The refund will be reflected in the customer&apos;s bank account 2 to 3 business days after processing.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -63,10 +66,10 @@ export const RefundReview = ({ amount, ...props }: { amount: string } & React.Co
           </FieldGroup>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setIsOpen(false)}>
+            <Button variant="ghost" onClick={handleClose}>
               Cancel
             </Button>
-            <Button onClick={() => setIsOpen(false)}>Refund</Button>
+            <Button onClick={handleClose}>Refund</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui
 import { Input } from '@/components/shadcn-ui/input'
 import { colors, typography, spacing } from '@/config/theme'
 
-export default function ChatHistoryPage() {
+const ChatHistoryPage = () => {
   // Mock data - In actual implementation, fetch from appropriate data source
   const chatSessions = [
     {
@@ -80,6 +80,22 @@ export default function ChatHistoryPage() {
   const [searchQuery, setSearchQuery] = React.useState('')
   const [statusFilter, setStatusFilter] = React.useState<'all' | 'active' | 'resolved'>('all')
 
+  const handleSearchChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }, [])
+
+  const handleAllFilter = React.useCallback(() => {
+    setStatusFilter('all')
+  }, [])
+
+  const handleActiveFilter = React.useCallback(() => {
+    setStatusFilter('active')
+  }, [])
+
+  const handleResolvedFilter = React.useCallback(() => {
+    setStatusFilter('resolved')
+  }, [])
+
   const filteredSessions = chatSessions.filter(session => {
     const matchesSearch = session.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          session.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -124,26 +140,38 @@ export default function ChatHistoryPage() {
           <Input
             placeholder="Search chats..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="pl-10"
           />
         </div>
         <div className="flex gap-2">
-          {(['all', 'active', 'resolved'] as const).map((status) => (
-            <Button
-              key={status}
-              variant={statusFilter === status ? "default" : "outline"}
-              size="sm"
-              onClick={() => setStatusFilter(status)}
-            >
-              {status === 'all' ? 'All' : status === 'active' ? 'Active' : 'Resolved'}
-              {status !== 'all' && (
-                <span className={`ml-1 ${typography.body.small}`}>
-                  ({chatSessions.filter(s => s.status === status).length})
-                </span>
-              )}
-            </Button>
-          ))}
+          <Button
+            variant={statusFilter === 'all' ? "default" : "outline"}
+            size="sm"
+            onClick={handleAllFilter}
+          >
+            All
+          </Button>
+          <Button
+            variant={statusFilter === 'active' ? "default" : "outline"}
+            size="sm"
+            onClick={handleActiveFilter}
+          >
+            Active
+            <span className={`ml-1 ${typography.body.small}`}>
+              ({chatSessions.filter(s => s.status === 'active').length})
+            </span>
+          </Button>
+          <Button
+            variant={statusFilter === 'resolved' ? "default" : "outline"}
+            size="sm"
+            onClick={handleResolvedFilter}
+          >
+            Resolved
+            <span className={`ml-1 ${typography.body.small}`}>
+              ({chatSessions.filter(s => s.status === 'resolved').length})
+            </span>
+          </Button>
         </div>
       </div>
 
@@ -202,8 +230,8 @@ export default function ChatHistoryPage() {
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="flex gap-1 flex-wrap">
-                  {session.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline" className={typography.body.small}>
+                  {session.tags.map((tag) => (
+                    <Badge key={tag} variant="outline" className={typography.body.small}>
                       {tag}
                     </Badge>
                   ))}
@@ -252,3 +280,5 @@ export default function ChatHistoryPage() {
     </div>
   )
 }
+
+export default ChatHistoryPage

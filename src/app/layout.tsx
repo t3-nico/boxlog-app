@@ -1,12 +1,14 @@
 // app/layout.tsx（最終版）
 import '@/styles/globals.css'
+
+
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 
 import { Providers } from '@/components/common'
-import { ToastContainer } from '@/lib/toast'
-import { SpeedInsights } from '@vercel/speed-insights/next'
-import { Analytics } from '@vercel/analytics/react'
 import { colors } from '@/config/theme'
+import { ToastContainer } from '@/lib/toast'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
   description: 'BoxLog - Box management application',
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html
       lang="ja"
@@ -39,3 +41,5 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     </html>
   )
 }
+
+export default RootLayout

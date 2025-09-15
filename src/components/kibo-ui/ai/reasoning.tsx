@@ -19,7 +19,7 @@ import { AIResponse } from './response';
 type AIReasoningContextValue = {
   isStreaming: boolean;
   isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+  setIsOpen: (_open: boolean) => void;
   duration: number;
 };
 
@@ -37,7 +37,7 @@ export type AIReasoningProps = ComponentProps<typeof Collapsible> & {
   isStreaming?: boolean;
   open?: boolean;
   defaultOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?: (_open: boolean) => void;
   duration?: number;
 };
 

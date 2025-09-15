@@ -1,6 +1,6 @@
 'use client'
 
-export default function TagsSettings() {
+const TagsSettings = () => {
   return (
     <div className="space-y-6">
       <div>
@@ -17,3 +17,5 @@ export default function TagsSettings() {
     </div>
   )
 }
+
+export default TagsSettings

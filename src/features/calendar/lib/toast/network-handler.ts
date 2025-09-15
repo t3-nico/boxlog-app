@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import useCalendarToast from './index'
+import { useCalendarToast } from './use-calendar-toast'
 
 // ネットワークエラーの種類
 export type NetworkErrorType = 'offline' | 'timeout' | 'server_error' | 'not_found' | 'unauthorized' | 'forbidden' | 'conflict' | 'unknown'

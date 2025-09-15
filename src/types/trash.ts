@@ -21,9 +21,9 @@ export interface TrashState {
   loading: boolean
   
   // アクション
-  moveToTrash: (item: any, type: DeletedItem['type']) => Promise<void>
-  restoreItem: (deletedItemId: string) => Promise<void>
-  permanentDelete: (deletedItemId: string) => Promise<void>
+  moveToTrash: (_item: any, _type: DeletedItem['type']) => Promise<void>
+  restoreItem: (_deletedItemId: string) => Promise<void>
+  permanentDelete: (_deletedItemId: string) => Promise<void>
   emptyTrash: () => Promise<void>
   loadTrashItems: () => Promise<void>
   getTrashStats: () => TrashStats

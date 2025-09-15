@@ -6,7 +6,8 @@ import { Button } from '@/components/shadcn-ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { colors, spacing } from '@/config/theme'
-import { SettingsCard, SettingField } from '@/features/settings/components'
+import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
@@ -25,7 +26,7 @@ interface CalendarAutoSaveSettings {
   }
 }
 
-export default function CalendarSettings() {
+const CalendarSettings = () => {
   const settings = useCalendarSettingsStore()
   
   const formatTimeWithSettings = (date: Date, timeFormat: '12h' | '24h') => {
@@ -290,3 +291,5 @@ export default function CalendarSettings() {
     </div>
   )
 }
+
+export default CalendarSettings

@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 
 import { useNetworkErrorHandler } from './network-handler'
 
-import useCalendarToast from './index'
+import { useCalendarToast } from './use-calendar-toast'
 
 // 楽観的更新の結果
 export interface OptimisticUpdateResult<T> {

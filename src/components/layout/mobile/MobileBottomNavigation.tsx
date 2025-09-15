@@ -1,7 +1,9 @@
 'use client'
 
 import React from 'react'
+
 import { useRouter, usePathname } from 'next/navigation'
+
 import { 
   Calendar as CalendarIcon,
   SquareKanban as BoardIcon,
@@ -10,9 +12,10 @@ import {
   Menu as MenuIcon
 } from 'lucide-react'
 
+import { colors, animations, icons, typography, spacing } from '@/config/theme'
 import { cn } from '@/lib/utils'
+
 import { useNavigationStore } from '../sidebar/stores/navigation.store'
-import { colors, animations, icons, typography, spacing, rounded } from '@/config/theme'
 
 
 const { sm } = icons.size

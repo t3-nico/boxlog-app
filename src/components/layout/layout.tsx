@@ -1,10 +1,13 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname, useSearchParams } from 'next/navigation'
+
 import { Search } from 'lucide-react'
 
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
+import { colors, rounded, animations, icons } from '@/config/theme'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { ChatProvider } from '@/contexts/chat-context'
 import { ThemeProvider } from '@/contexts/theme-context'
@@ -14,23 +17,50 @@ import { NotificationModalProvider } from '@/features/notifications'
 import { useGlobalSearch, GlobalSearchProvider } from '@/features/search'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
+
 import { Header } from './header'
 import { InspectorToggle } from './header/inspector-toggle'
-import { SidebarToggle } from './header/sidebar-toggle'
 import { PageTitle } from './header/page-title'
+import { SidebarToggle } from './header/sidebar-toggle'
 import { Inspector } from './inspector'
 import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
 import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
 import { Sidebar } from './sidebar'
 import { useNavigationStore } from './sidebar/stores/navigation.store'
-import { colors, rounded, animations, icons } from '@/config/theme'
 
 
 interface DashboardLayoutProps {
   events?: any
   reviews?: any
   children: React.ReactNode
+}
+
+// カレンダー設定用のカスタムフック
+const useCalendarProviderProps = (pathname: string, searchParams: URLSearchParams) => {
+  const isCalendarPage = pathname.startsWith('/calendar')
+  
+  if (!isCalendarPage) return { isCalendarPage, calendarProviderProps: null }
+  
+  const pathSegments = pathname.split('/')
+  const view = pathSegments[pathSegments.length - 1] as CalendarViewType
+  const dateParam = searchParams.get('date')
+  
+  let initialDate: Date | undefined
+  if (dateParam) {
+    const parsedDate = new Date(dateParam)
+    if (!isNaN(parsedDate.getTime())) {
+      initialDate = parsedDate
+    }
+  }
+  
+  return {
+    isCalendarPage,
+    calendarProviderProps: {
+      initialDate: initialDate || new Date(),
+      initialView: view || 'week' as CalendarViewType
+    }
+  }
 }
 
 const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
@@ -43,33 +73,8 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
   const searchParams = useSearchParams()
   
   const { sm } = icons.size
-
-  // Calculate the effective panel height (0 when closed or minimized)
-  const effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
-  
-  // カレンダーページの検出
-  const isCalendarPage = pathname.startsWith('/calendar')
-  
-  // カレンダーページの場合のProvider設定
-  let calendarProviderProps = null
-  if (isCalendarPage) {
-    const pathSegments = pathname.split('/')
-    const view = pathSegments[pathSegments.length - 1] as CalendarViewType
-    const dateParam = searchParams.get('date')
-    let initialDate: Date | undefined
-    if (dateParam) {
-      const parsedDate = new Date(dateParam)
-      if (!isNaN(parsedDate.getTime())) {
-        initialDate = parsedDate
-      }
-    }
-    
-    calendarProviderProps = {
-      initialDate: initialDate || new Date(),
-      initialView: view || 'week' as CalendarViewType
-    }
-    
-  }
+  const _effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
+  const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams)
 
   const content = (
     <div className="flex flex-col h-screen">

@@ -3,7 +3,8 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { spacing } from '@/config/theme'
-import { SettingsCard, SettingField } from '@/features/settings/components'
+import { SettingsCard } from './SettingsCard'
+import { SettingField } from './fields/SettingField'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 interface PreferencesSettings {
@@ -15,7 +16,7 @@ interface PreferencesSettings {
   developerMode: boolean
 }
 
-export default function PreferencesSettings() {
+const PreferencesSettings = () => {
   // 設定の自動保存
   const preferences = useAutoSaveSettings<PreferencesSettings>({
     initialValues: {
@@ -125,3 +126,5 @@ export default function PreferencesSettings() {
     </div>
   )
 }
+
+export default PreferencesSettings

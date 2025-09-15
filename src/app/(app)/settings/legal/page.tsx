@@ -3,7 +3,7 @@
 import { SettingsLayout } from '@/features/settings/components'
 import AboutLegalSettings from '@/features/settings/components/about-legal-settings'
 
-export default function LegalPage() {
+const LegalPage = () => {
   return (
     <SettingsLayout
       title="法的情報"
@@ -13,4 +13,6 @@ export default function LegalPage() {
     </SettingsLayout>
   )
 }
+
+export default LegalPage
 

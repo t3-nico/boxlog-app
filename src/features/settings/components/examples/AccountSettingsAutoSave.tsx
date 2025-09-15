@@ -21,7 +21,7 @@ interface PrivacySettings {
   allowNotifications: boolean
 }
 
-export default function AccountSettingsAutoSave() {
+const AccountSettingsAutoSave = () => {
   // プロフィール設定（自動保存）
   const profile = useAutoSaveSettings<ProfileSettings>({
     initialValues: {
@@ -147,9 +147,7 @@ export default function AccountSettingsAutoSave() {
               <SettingField
                 label="プロフィールを公開"
                 description="他のユーザーがあなたのプロフィールを閲覧できます"
-              >
-                <></>
-              </SettingField>
+              />
               <Switch
                 checked={privacy.values.publicProfile}
                 onCheckedChange={(checked) => 
@@ -162,9 +160,7 @@ export default function AccountSettingsAutoSave() {
               <SettingField
                 label="メールアドレスを表示"
                 description="プロフィールにメールアドレスを表示します"
-              >
-                <></>
-              </SettingField>
+              />
               <Switch
                 checked={privacy.values.showEmail}
                 onCheckedChange={(checked) => 
@@ -177,9 +173,7 @@ export default function AccountSettingsAutoSave() {
               <SettingField
                 label="通知を許可"
                 description="システムからの通知を受け取ります"
-              >
-                <></>
-              </SettingField>
+              />
               <Switch
                 checked={privacy.values.allowNotifications}
                 onCheckedChange={(checked) => 
@@ -206,3 +200,5 @@ export default function AccountSettingsAutoSave() {
     </SettingsLayout>
   )
 }
+
+export default AccountSettingsAutoSave

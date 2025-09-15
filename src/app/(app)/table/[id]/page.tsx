@@ -1,7 +1,9 @@
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { ChevronLeft } from 'lucide-react'
 import type { Metadata } from 'next'
+
 
 import { Heading, Subheading , Link } from '@/components/custom'
 import { Badge } from '@/components/shadcn-ui/badge'
@@ -19,7 +21,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function EventPage({ params }: { params: { id: string } }) {
+const EventPage = async ({ params }: { params: { id: string } }) => {
   const event = await getEvent(params.id)
   const reviews = await getEventReviews(params.id)
 
@@ -38,7 +40,14 @@ export default async function EventPage({ params }: { params: { id: string } }) 
       <div className={`${spacing.component.stack.md} flex flex-wrap items-end justify-between ${spacing.component.gap.md}`}>
         <div className={`flex flex-wrap items-center ${spacing.component.gap.lg}`}>
           <div className="w-32 shrink-0">
-            <img className={`aspect-3/2 ${rounded.component.card.md} ${elevation.card.sm}`} src={event.imgUrl} alt={`${event.name  } event image`} />
+            <Image 
+              className={`aspect-3/2 ${rounded.component.card.md} ${elevation.card.sm}`} 
+              src={event.imgUrl} 
+              alt={`${event.name} event image`}
+              width={128}
+              height={85}
+              sizes="128px"
+            />
           </div>
           <div>
             <div className={`flex flex-wrap items-center ${spacing.component.gap.md} gap-y-2`}>
@@ -88,3 +97,5 @@ export default async function EventPage({ params }: { params: { id: string } }) 
     </>
   )
 }
+
+export default EventPage

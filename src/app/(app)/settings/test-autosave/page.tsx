@@ -2,6 +2,8 @@
 
 import AccountSettingsAutoSave from '@/features/settings/components/examples/AccountSettingsAutoSave'
 
-export default function TestAutoSavePage() {
+const TestAutoSavePage = () => {
   return <AccountSettingsAutoSave />
 }
+
+export default TestAutoSavePage

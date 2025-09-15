@@ -6,8 +6,8 @@ import { Heading } from '@/components/custom'
 import { colors, typography, spacing, rounded, layout } from '@/config/theme'
 import { useChatContext } from '@/contexts/chat-context'
 
-export default function StatsPage() {
-  const { toggleChat, state } = useChatContext()
+const StatsPage = () => {
+  const { state } = useChatContext()
 
   return (
     <div className="flex flex-col h-full relative">
@@ -28,3 +28,5 @@ export default function StatsPage() {
     </div>
   )
 }
+
+export default StatsPage

@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: 'Next',
 }
 
-export default function ActNextPage() {
+const ActNextPage = () => {
   return <Heading>Next</Heading>
 }
+
+export default ActNextPage

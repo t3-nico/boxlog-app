@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import Image from 'next/image'
 
@@ -11,6 +11,10 @@ import { getCountries } from '@/lib/data'
 export const Address = () => {
   const countries = getCountries()
   const [country, setCountry] = useState(countries[0])
+  
+  const handleCountryChange = useCallback((newCountry) => {
+    setCountry(newCountry)
+  }, [])
 
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -36,7 +40,7 @@ export const Address = () => {
         placeholder="Country"
         by="code"
         value={country}
-        onChange={(country) => setCountry(country)}
+        onChange={handleCountryChange}
         className="col-span-2"
       >
         {countries.map((country) => (

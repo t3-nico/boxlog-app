@@ -2,7 +2,7 @@
 
 import { SettingsLayout, PreferencesSettings } from '@/features/settings/components'
 
-export default function PreferencesPage() {
+const PreferencesPage = () => {
   return (
     <SettingsLayout
       title="環境設定"
@@ -12,4 +12,6 @@ export default function PreferencesPage() {
     </SettingsLayout>
   )
 }
+
+export default PreferencesPage
 

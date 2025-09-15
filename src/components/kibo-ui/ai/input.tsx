@@ -105,6 +105,11 @@ export const AIInputTextarea = ({
     maxHeight,
   });
 
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    adjustHeight();
+    onChange?.(e);
+  }, [adjustHeight, onChange]);
+
   const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
@@ -124,10 +129,7 @@ export const AIInputTextarea = ({
         className
       )}
       name="message"
-      onChange={(e) => {
-        adjustHeight();
-        onChange?.(e);
-      }}
+      onChange={handleChange}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
       ref={textareaRef}

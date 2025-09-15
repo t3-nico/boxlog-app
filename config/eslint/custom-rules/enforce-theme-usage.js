@@ -9,7 +9,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 
 module.exports = {
   meta: {
@@ -149,7 +149,7 @@ module.exports = {
           const suggestion = getSuggestion ? getSuggestion(violationClass) : '';
 
           const severity = errorLevel.toUpperCase();
-          const finalMessageId = isNewFile ? 'newFileViolation' : 'legacyFileWarning';
+          const _finalMessageId = isNewFile ? 'newFileViolation' : 'legacyFileWarning';
 
           context.report({
             node,

@@ -37,20 +37,20 @@ module.exports = {
       ];
 
       let isInRenderFunction = false;
-      let currentFunctionName = '';
+      let _currentFunctionName = '';
 
       return {
         FunctionDeclaration(node) {
           if (node.id && /^[A-Z]/.test(node.id.name)) {
             isInRenderFunction = true;
-            currentFunctionName = node.id.name;
+            _currentFunctionName = node.id.name;
           }
         },
 
         'FunctionDeclaration:exit'(node) {
           if (node.id && /^[A-Z]/.test(node.id.name)) {
             isInRenderFunction = false;
-            currentFunctionName = '';
+            _currentFunctionName = '';
           }
         },
 
@@ -60,7 +60,7 @@ module.exports = {
               node.parent.id.name && 
               /^[A-Z]/.test(node.parent.id.name)) {
             isInRenderFunction = true;
-            currentFunctionName = node.parent.id.name;
+            _currentFunctionName = node.parent.id.name;
           }
         },
 
@@ -69,7 +69,7 @@ module.exports = {
               node.parent.id.name && 
               /^[A-Z]/.test(node.parent.id.name)) {
             isInRenderFunction = false;
-            currentFunctionName = '';
+            _currentFunctionName = '';
           }
         },
 
@@ -183,11 +183,11 @@ module.exports = {
           }
         },
 
-        JSXElement(node) {
+        JSXElement(_node) {
           componentComplexity += 1;
         },
 
-        ConditionalExpression(node) {
+        ConditionalExpression(_node) {
           componentComplexity += 1;
         },
 

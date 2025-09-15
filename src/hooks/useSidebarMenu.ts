@@ -84,7 +84,7 @@ function canAccessItem(item: MenuItem, user: any): boolean {
   return true
 }
 
-function hasMinimumPlan(userPlan: string = 'free', requiredPlan: string): boolean {
+function _hasMinimumPlan(userPlan: string = 'free', requiredPlan: string): boolean {
   const planHierarchy = { free: 0, pro: 1, enterprise: 2 }
   return (planHierarchy[userPlan as keyof typeof planHierarchy] || 0) >= (planHierarchy[requiredPlan as keyof typeof planHierarchy] || 0)
 }

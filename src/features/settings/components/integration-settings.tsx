@@ -1,6 +1,6 @@
 'use client'
 
-export default function IntegrationSettings() {
+const IntegrationSettings = () => {
   return (
     <div className="space-y-6">
       <div>
@@ -17,3 +17,5 @@ export default function IntegrationSettings() {
     </div>
   )
 }
+
+export default IntegrationSettings

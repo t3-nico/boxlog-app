@@ -30,7 +30,7 @@ function isValidViewType(view: string): view is CalendarViewType {
   return validTypes.includes(view as CalendarViewType)
 }
 
-export default function CalendarViewPage({ params, searchParams }: CalendarViewPageProps) {
+const CalendarViewPage = ({ params, searchParams }: CalendarViewPageProps) => {
   const { view } = params
   const { date } = searchParams
 
@@ -55,3 +55,5 @@ export default function CalendarViewPage({ params, searchParams }: CalendarViewP
     />
   )
 }
+
+export default CalendarViewPage

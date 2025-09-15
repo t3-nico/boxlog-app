@@ -54,33 +54,33 @@ export interface SidebarState {
 
 export interface SidebarActions {
   // UI操作
-  setCollapsed: (collapsed: boolean) => void
-  setActiveSection: (section: string) => void
+  setCollapsed: (_collapsed: boolean) => void
+  setActiveSection: (_section: string) => void
   
   // 通知操作
-  addNotification: (notification: Notification) => void
-  markNotificationRead: (id: string) => void
+  addNotification: (_notification: Notification) => void
+  markNotificationRead: (_id: string) => void
   markAllNotificationsRead: () => void
-  setUnreadCount: (count: number) => void
-  setNotifications: (notifications: Notification[]) => void
+  setUnreadCount: (_count: number) => void
+  setNotifications: (_notifications: Notification[]) => void
   
   // スマートフォルダ操作
-  setSmartFolders: (folders: SidebarSmartFolder[]) => void
-  addSmartFolder: (folder: SidebarSmartFolder) => void
+  setSmartFolders: (_folders: SidebarSmartFolder[]) => void
+  addSmartFolder: (_folder: SidebarSmartFolder) => void
   
   // タグ操作
-  setTags: (tags: SidebarTag[]) => void
-  updateTag: (tagId: string, updates: Partial<SidebarTag>) => void
-  deleteTag: (tagId: string) => void
-  addTag: (tag: SidebarTag) => void
-  updateTagCounts: (counts: Record<string, number>) => void
-  toggleTagExpansion: (tagId: string) => void
+  setTags: (_tags: SidebarTag[]) => void
+  updateTag: (_tagId: string, _updates: Partial<SidebarTag>) => void
+  deleteTag: (_tagId: string) => void
+  addTag: (_tag: SidebarTag) => void
+  updateTagCounts: (_counts: Record<string, number>) => void
+  toggleTagExpansion: (_tagId: string) => void
   
   // 設定操作
-  hideSection: (sectionId: string) => void
-  showSection: (sectionId: string) => void
-  pinItem: (itemId: string) => void
-  unpinItem: (itemId: string) => void
+  hideSection: (_sectionId: string) => void
+  showSection: (_sectionId: string) => void
+  pinItem: (_itemId: string) => void
+  unpinItem: (_itemId: string) => void
 }
 
 export type SidebarStore = SidebarState & SidebarActions

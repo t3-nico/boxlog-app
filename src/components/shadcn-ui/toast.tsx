@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 
-import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, AlertTriangle as ExclamationTriangleIcon, Info as InformationCircleIcon, X as XMarkIcon } from 'lucide-react'
 
 export interface Toast {
@@ -116,13 +115,8 @@ function getToastStyles(type: Toast['type']) {
 
 const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.3 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.5 }}
-      transition={{ duration: 0.3, type: "spring" }}
-      whileHover={{ scale: 1.02 }}
-      className={`relative flex w-full max-w-sm items-start space-x-3 rounded-lg border p-4 shadow-lg ${getToastStyles(toast.type)}`}
+    <div
+      className={`relative flex w-full max-w-sm items-start space-x-3 rounded-lg border p-4 shadow-lg transition-all duration-300 animate-in slide-in-from-bottom-4 fade-in zoom-in hover:scale-[1.02] ${getToastStyles(toast.type)}`}
     >
       <div className="flex-shrink-0">
         {getToastIcon(toast.type)}
@@ -133,26 +127,26 @@ const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
           <p className="mt-1 text-sm opacity-90">{toast.description}</p>
         )}
       </div>
-      <motion.button
+      <button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => onRemove(toast.id)}
         className="flex-shrink-0 ml-2 text-current opacity-50 hover:opacity-100 transition-opacity"
       >
         <XMarkIcon className="h-4 w-4" data-slot="icon" />
-      </motion.button>
-    </motion.div>
+      </button>
+    </div>
   )
 }
 
 const ToastContainer = ({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) => {
   return (
     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col space-y-2">
-      <AnimatePresence mode="popLayout">
+      <div className="space-y-4">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
         ))}
-      </AnimatePresence>
+      </div>
     </div>
   )
 }

@@ -2,7 +2,7 @@ import { DashboardLayout } from '@/components/layout/layout'
 import { AuthGuard } from '@/features/auth'
 import { getEvents, getReviews } from '@/lib/data'
 
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
+const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const events = await getEvents()
   const reviews = await getReviews()
 
@@ -14,3 +14,5 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     </AuthGuard>
   )
 }
+
+export default AppLayout

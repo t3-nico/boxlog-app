@@ -18,7 +18,7 @@
  * @param {React.ReactNode} children - カスタムトリガー要素（未指定時はデフォルトボタン）
  */
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -54,14 +54,22 @@ export const UserMenu = ({ children }: UserMenuProps) => {
   const router = useRouter()
   const { user, signOut } = useAuthContext()
 
-  const handleSignOut = async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await signOut()
       router.push('/auth/login')
     } catch (error) {
       console.error('Logout error:', error)
     }
-  }
+  }, [signOut, router])
+
+  const handleSettingsClick = useCallback(() => {
+    router.push('/settings')
+  }, [router])
+
+  const handleHelpClick = useCallback(() => {
+    router.push('/help')
+  }, [router])
 
   return (
     <DropdownMenu>
@@ -131,7 +139,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem 
-          onClick={() => router.push('/settings')}
+          onClick={handleSettingsClick}
           className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <Cog8ToothIcon className={cn(md, 'mr-2')} />
@@ -161,7 +169,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem 
-          onClick={() => router.push('/help')}
+          onClick={handleHelpClick}
           className={cn('focus:bg-transparent', colors.hover.subtle)}
         >
           <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />

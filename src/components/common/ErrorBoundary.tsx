@@ -19,7 +19,7 @@ import { handleClientError } from '@/lib/errors'
 interface Props {
   children: ReactNode
   fallback?: ReactNode
-  onError?: (error: Error, errorInfo: ErrorInfo) => void
+  onError?: (_error: Error, _errorInfo: ErrorInfo) => void
   showDetails?: boolean
   className?: string
 }

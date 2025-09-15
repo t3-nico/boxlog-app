@@ -1,12 +1,13 @@
 'use client'
 
+import { useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertCircle, Home, RefreshCw } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
 
-export default function ErrorPage() {
+const ErrorPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
@@ -45,6 +46,14 @@ export default function ErrorPage() {
 
   const errorInfo = getErrorMessage()
 
+  const handleGoToLogin = useCallback(() => {
+    router.push('/auth/login')
+  }, [router])
+
+  const handleGoBack = useCallback(() => {
+    router.back()
+  }, [router])
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -65,7 +74,7 @@ export default function ErrorPage() {
 
         <div className="mt-8 space-y-4">
           <Button
-            onClick={() => router.push('/auth/login')}
+            onClick={handleGoToLogin}
             className="w-full flex items-center justify-center gap-2"
           >
             <Home className="h-4 w-4" />
@@ -74,7 +83,7 @@ export default function ErrorPage() {
           
           <Button
             variant="outline"
-            onClick={() => router.back()}
+            onClick={handleGoBack}
             className="w-full flex items-center justify-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
@@ -96,4 +105,6 @@ export default function ErrorPage() {
       </div>
     </div>
   )
-} 
+}
+
+export default ErrorPage 

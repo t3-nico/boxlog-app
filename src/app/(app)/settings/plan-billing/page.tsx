@@ -3,7 +3,7 @@
 import { SettingsLayout } from '@/features/settings/components'
 import PlanBillingSettings from '@/features/settings/components/plan-billing-settings'
 
-export default function PlanBillingPage() {
+const PlanBillingPage = () => {
   return (
     <SettingsLayout
       title="プラン・料金"
@@ -13,4 +13,6 @@ export default function PlanBillingPage() {
     </SettingsLayout>
   )
 }
+
+export default PlanBillingPage
 

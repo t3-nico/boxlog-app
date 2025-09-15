@@ -1,9 +1,9 @@
 import { GalleryVerticalEnd } from "lucide-react"
 
-import { LoginForm } from "@/features/auth"
 import { colors, spacing, typography } from '@/config/theme'
+import { LoginForm } from "@/features/auth"
 
-export default function LoginPage() {
+const LoginPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className={`flex flex-col ${spacing.gap.md} p-6 md:p-10`}>
@@ -39,3 +39,5 @@ export default function LoginPage() {
     </div>
   )
 }
+
+export default LoginPage

@@ -2,10 +2,13 @@ import type { Metadata } from 'next'
 
 import { Heading } from '@/components/custom'
 
+
 export const metadata: Metadata = {
   title: 'Purpose',
 }
 
-export default function PurposePage() {
+const PurposePage = () => {
   return <Heading>Purpose</Heading>
 }
+
+export default PurposePage

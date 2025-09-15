@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { PanelRightClose, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-import { colors, rounded, animations, layout, icons } from '@/config/theme'
+import { colors, rounded, animations, layout } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { InspectorAIChat } from './inspector-ai-chat'
@@ -18,7 +18,6 @@ import { useInspectorStore } from './stores/inspector.store'
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 const { xs } = layout.heights.header
-const { sm } = icons.size
 
 export const DesktopInspector = () => {
   const pathname = usePathname()

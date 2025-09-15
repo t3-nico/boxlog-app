@@ -5,7 +5,7 @@ import React from 'react'
 import { CheckSquare, Clock, Flag, User, MessageSquare, Paperclip } from 'lucide-react'
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { typography } from '@/config/theme'
+import { colors, typography } from '@/config/theme'
 import { text, border } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
@@ -63,8 +63,8 @@ export const TaskInspectorContent = () => {
                   <span className={text.muted}>進捗</span>
                   <span className={text.primary}>75%</span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+                <div className={`w-full ${colors.background.subtle} rounded-full h-2`}>
+                  <div className={`${colors.primary.DEFAULT} h-2 rounded-full`} style={{ width: '75%' }}></div>
                 </div>
               </div>
             </div>

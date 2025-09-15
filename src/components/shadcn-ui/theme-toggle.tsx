@@ -1,6 +1,5 @@
 'use client'
 
-import { motion } from 'framer-motion'
 
 import {
   Sun as SunIcon,
@@ -42,12 +41,12 @@ export const ThemeToggle = () => {
       {/* Theme Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
             <Button variant="ghost" size="sm" className="flex items-center space-x-2">
               {themeIcons[theme]}
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
-          </motion.div>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-32">
           <DropdownMenuItem
@@ -77,12 +76,12 @@ export const ThemeToggle = () => {
       {/* Color Scheme Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
             <Button variant="ghost" size="sm" className="flex items-center space-x-2">
               <SwatchIcon className="h-4 w-4" />
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
-          </motion.div>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-36">
           {colorSchemes.map((scheme) => (
@@ -96,11 +95,7 @@ export const ThemeToggle = () => {
                 <span>{scheme.label}</span>
               </div>
               {colorScheme === scheme.value && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="w-2 h-2 bg-current rounded-full"
-                />
+                <div className="w-2 h-2 bg-current rounded-full animate-in zoom-in duration-200" />
               )}
             </DropdownMenuItem>
           ))}
@@ -118,7 +113,7 @@ export const SimpleThemeToggle = () => {
   }
 
   return (
-    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+    <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
       <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
         {resolvedTheme === 'light' ? (
           <MoonIcon className="h-4 w-4" />
@@ -127,6 +122,6 @@ export const SimpleThemeToggle = () => {
         )}
         <span className="sr-only">Toggle theme</span>
       </Button>
-    </motion.div>
+    </div>
   )
 }

@@ -9,7 +9,14 @@ import { icons } from './icons'
 import { rounded } from './rounded'
 import { link, linkStates, linkPatterns } from './typography'
 
-import { typography, spacing, layout, colors, borders, animations, zIndex } from './index'
+// 循環依存を避けるため、個別ファイルから直接import
+import { colors } from './colors'
+import { typography } from './typography'
+import { spacing } from './spacing'
+import { layout } from './layout'
+import { borders } from './borders'
+import { animations } from './animations'
+import { zIndex } from './z-index'
 
 // ============================================
 // 基本型定義

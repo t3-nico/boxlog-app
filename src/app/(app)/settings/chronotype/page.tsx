@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import React, { useState } from 'react'
@@ -204,9 +205,9 @@ const diagnosisQuestions: DiagnosisQuestion[] = [
   }
 ]
 
-export default function ChronoTypePage() {
+const ChronoTypePage = () => {
   const { chronotype, updateSettings } = useCalendarSettingsStore()
-  const [customSchedules, setCustomSchedules] = useState<ChronoTypeSchedule[]>([])
+  const [_customSchedules, _setCustomSchedules] = useState<ChronoTypeSchedule[]>([])
   const [showDiagnosis, setShowDiagnosis] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
@@ -367,9 +368,9 @@ export default function ChronoTypePage() {
                   {diagnosisQuestions[currentQuestion]?.question}
                 </h3>
                 <div className="space-y-3">
-                  {diagnosisQuestions[currentQuestion]?.options.map((option, index) => (
+                  {diagnosisQuestions[currentQuestion]?.options.map((option) => (
                     <button
-                      key={index}
+                      key={option.value}
                       onClick={() => handleAnswerSelect(diagnosisQuestions[currentQuestion].id, option.value)}
                       className={`w-full p-4 text-left ${colors.border.default} ${rounded.component.card.md} ${colors.hover.border} ${colors.hover.subtle} transition-all`}
                     >
@@ -623,3 +624,5 @@ export default function ChronoTypePage() {
     </SettingsLayout>
   )
 }
+
+export default ChronoTypePage

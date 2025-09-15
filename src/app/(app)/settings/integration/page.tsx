@@ -3,7 +3,7 @@
 import { SettingsLayout } from '@/features/settings/components'
 import IntegrationSettings from '@/features/settings/components/integration-settings'
 
-export default function IntegrationPage() {
+const IntegrationPage = () => {
   return (
     <SettingsLayout
       title="連携設定"
@@ -13,4 +13,6 @@ export default function IntegrationPage() {
     </SettingsLayout>
   )
 }
+
+export default IntegrationPage
 

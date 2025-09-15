@@ -5,9 +5,9 @@ import { SettingsLayout } from '@/features/settings/components'
 import { TrashView } from '@/features/trash/components/TrashView'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 
-export default function TrashPage() {
+const TrashPage = () => {
   const { emptyTrash, getFilteredItems, getStats } = useTrashStore()
-  const items = getFilteredItems()
+  const _items = getFilteredItems()
   const stats = getStats()
 
   return (
@@ -29,3 +29,5 @@ export default function TrashPage() {
     </SettingsLayout>
   )
 }
+
+export default TrashPage

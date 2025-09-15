@@ -2,10 +2,9 @@
 
 import React from 'react'
 
-import { motion } from 'framer-motion'
 import { X, CheckCircle, XCircle, AlertTriangle, Info, Loader2 } from 'lucide-react'
 
-import { semantic, text, border } from '@/config/theme/colors'
+import { semantic, text, border, colors } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 import type { Toast as ToastType } from './types'
@@ -61,15 +60,12 @@ export const Toast = ({ toast, onRemove }: ToastProps) => {
   const style = styles[toast.type]
   
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, x: 100, scale: 0.9 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100, scale: 0.9 }}
-      transition={{ duration: 0.2 }}
+    <div
       className={cn(
         'flex items-start gap-3 p-4 rounded-lg shadow-lg backdrop-blur-sm',
         'min-w-[300px] max-w-[500px]',
+        'transition-all duration-200 ease-out',
+        'animate-in slide-in-from-right-full fade-in zoom-in-95',
         style.background,
         style.border
       )}
@@ -116,6 +112,6 @@ export const Toast = ({ toast, onRemove }: ToastProps) => {
           <X className="w-4 h-4" />
         </button>
       )}
-    </motion.div>
+    </div>
   )
 }

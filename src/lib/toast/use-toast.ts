@@ -24,8 +24,8 @@ export function useToast() {
       promise: Promise<T>,
       messages: {
         loading: string
-        success: string | ((data: T) => string)
-        error: string | ((error: any) => string)
+        success: string | ((_data: T) => string)
+        error: string | ((_error: any) => string)
       }
     ) => {
       const id = addToast('loading', messages.loading)

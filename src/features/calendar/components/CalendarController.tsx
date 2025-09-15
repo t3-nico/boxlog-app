@@ -14,31 +14,34 @@ import type { Event, CreateEventRequest, UpdateEventRequest } from '@/features/e
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
+
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
-import { DnDProvider } from '../providers/DnDProvider'
-import { DayView } from './views/DayView'
-import { ThreeDayView } from './views/ThreeDayView'
-import { WeekView } from './views/WeekView'
-import { TwoWeekView } from './views/TwoWeekView'
-import { CalendarLayout } from './layout/CalendarLayout'
-
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
-
-import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-
-import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
-
-import { EventContextMenu } from './views/shared/components'
-
 import { useEventContextActions } from '../hooks/useEventContextActions'
-
-
+import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { 
   calculateViewDateRange
 } from '../lib/view-helpers'
+import { DnDProvider } from '../providers/DnDProvider'
+
 import type { CalendarViewType, CalendarViewProps, CalendarEvent } from '../types/calendar.types'
+
+import { CalendarLayout } from './layout/CalendarLayout'
+import { DayView } from './views/DayView'
+import { EventContextMenu } from './views/shared/components'
+import { ThreeDayView } from './views/ThreeDayView'
+import { TwoWeekView } from './views/TwoWeekView'
+import { WeekView } from './views/WeekView'
+
+
+
+
+
+
+
 
 
 interface CalendarViewExtendedProps extends CalendarViewProps {

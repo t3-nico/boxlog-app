@@ -7,7 +7,7 @@ import clsx from 'clsx'
 
 import { colors } from '@/config/theme'
 
-export function Listbox<T>({
+export const Listbox = <T,>({
   className,
   placeholder,
   autoFocus,
@@ -20,7 +20,7 @@ export function Listbox<T>({
   autoFocus?: boolean
   'aria-label'?: string
   children?: React.ReactNode
-} & Omit<Headless.ListboxProps<typeof Fragment, T>, 'as' | 'multiple'>) {
+} & Omit<Headless.ListboxProps<typeof Fragment, T>, 'as' | 'multiple'>) => {
   return (
     <Headless.Listbox {...props} multiple={false}>
       <Headless.ListboxButton
@@ -104,14 +104,14 @@ export function Listbox<T>({
   )
 }
 
-export function ListboxOption<T>({
+export const ListboxOption = <T,>({
   children,
   className,
   ...props
 }: { className?: string; children?: React.ReactNode } & Omit<
   Headless.ListboxOptionProps<'div', T>,
   'as' | 'className'
->) {
+>) => {
   const sharedClasses = clsx(
     // Base
     'flex min-w-0 items-center',

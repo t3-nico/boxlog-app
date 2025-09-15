@@ -4,7 +4,7 @@
  * 一貫した見た目とアクセシビリティ機能を提供
  */
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { cva } from 'class-variance-authority'
 
@@ -40,12 +40,12 @@ export const DangerButton = ({
   onClick,
   ...props 
 }: DangerButtonProps) => {
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
     if (confirmText && !window.confirm(confirmText)) {
       return
     }
     onClick?.(e)
-  }
+  }, [confirmText, onClick])
 
   return (
     <Button

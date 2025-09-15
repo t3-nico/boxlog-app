@@ -2,7 +2,7 @@
 
 import { SettingsLayout, AccountSettings } from '@/features/settings/components'
 
-export default function AccountSettingsPage() {
+const AccountSettingsPage = () => {
   return (
     <SettingsLayout
       title="アカウント"
@@ -12,4 +12,6 @@ export default function AccountSettingsPage() {
     </SettingsLayout>
   )
 }
+
+export default AccountSettingsPage
 

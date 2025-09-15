@@ -24,7 +24,7 @@ import {
 } from '@/features/tags/hooks/use-tags'
 import type { TagWithChildren, CreateTagInput, UpdateTagInput } from '@/types/tags'
 
-export default function TagsSettingsPage() {
+const TagsSettingsPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [selectedTag, setSelectedTag] = useState<TagWithChildren | null>(null)
@@ -314,3 +314,5 @@ export default function TagsSettingsPage() {
     </SettingsLayout>
   )
 }
+
+export default TagsSettingsPage

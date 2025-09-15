@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 
-import { motion, AnimatePresence } from 'framer-motion'
 
 import { CalendarEvent } from '@/features/events'
 
@@ -100,23 +99,17 @@ export const AnimatedEventItem = ({
   }
 
   return (
-    <AnimatePresence onExitComplete={onAnimationComplete}>
+    <div>
       {isVisible && (
-        <motion.div
+        <div
           key={event.id}
-          layoutId={event.id}
-          className={className}
+          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 shadow-[0_8px_24px_rgba(59,130,246,0.3)] border-2' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)] z-50' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
           style={style}
-          initial={isCreating ? eventAnimations.create.initial : false}
-          animate={isCreating ? eventAnimations.create.animate : animationVariants[getAnimationVariant()]}
-          exit={eventAnimations.delete.exit}
-          transition={isCreating ? eventAnimations.create.transition : { duration: 0.1 }}
-          whileHover={!isDragging ? { filter: 'brightness(1.1)' } : undefined}
         >
           {children}
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </div>
   )
 }
 
@@ -182,12 +175,8 @@ export const CreatingEventPreview = ({
   }
 
   return (
-    <motion.div
-      initial={eventAnimations.create.initial}
-      animate={eventAnimations.create.animate}
-      exit={eventAnimations.delete.exit}
-      transition={eventAnimations.create.transition}
-      className={`absolute rounded border-l-4 bg-white shadow-lg z-30 ${className}`}
+    <div
+      className={`absolute rounded border-l-4 bg-white shadow-lg z-30 transition-all duration-200 ease-out animate-in fade-in scale-in-95 slide-in-from-bottom-2 ${className}`}
       style={{
         top: `${top}px`,
         height: `${height}px`,
@@ -242,7 +231,7 @@ export const CreatingEventPreview = ({
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -255,15 +244,13 @@ interface DeletingEventProps {
 
 export const DeletingEvent = ({ event, onAnimationComplete, children }: DeletingEventProps) => {
   return (
-    <motion.div
+    <div
       key={`deleting-${event.id}`}
-      initial={{ opacity: 1, scale: 1 }}
-      animate={{ opacity: 0, scale: 0.8, y: -10 }}
-      transition={{ duration: 0.15, ease: 'easeIn' }}
-      onAnimationComplete={onAnimationComplete}
+      className="animate-out fade-out scale-out-95 slide-out-to-bottom-2 duration-150"
+      onAnimationEnd={onAnimationComplete}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
 
@@ -282,25 +269,20 @@ export const PulseEffect = ({ isActive, children, intensity = 'medium' }: PulseE
   }
 
   return (
-    <motion.div
-      animate={isActive ? pulseVariants[intensity] : { scale: 1 }}
-      transition={{
-        duration: 1,
-        repeat: isActive ? Infinity : 0,
-        ease: 'easeInOut'
-      }}
+    <div
+      className={isActive ? 'animate-pulse' : ''}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
 
 // スムーズなレイアウト変更
 export const SmoothLayoutGroup = ({ children }: { children: React.ReactNode }) => {
   return (
-    <motion.div layout transition={{ duration: 0.2, ease: 'easeOut' }}>
+    <div className="transition-all duration-200 ease-out">
       {children}
-    </motion.div>
+    </div>
   )
 }
 
@@ -332,41 +314,26 @@ export const StatusAnimation = ({ type, children, duration = 2000 }: StatusAnima
   }
 
   return (
-    <AnimatePresence>
+    <>
       {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: -20, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -20, scale: 0.9 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          className={`fixed top-4 right-4 p-3 rounded-lg text-white shadow-lg z-50 ${colors[type]}`}
+        <div
+          className={`fixed top-4 right-4 p-3 rounded-lg text-white shadow-lg z-50 transition-all duration-200 ease-out animate-in fade-in slide-in-from-top-5 scale-in-95 ${colors[type]}`}
         >
           {children}
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   )
 }
 
-// フレーマーモーション設定のプリセット
-export const motionPresets = {
+// Tailwindアニメーション設定のプリセット
+export const tailwindAnimations = {
   // 滑らかなスケール変更
-  smoothScale: {
-    type: 'spring',
-    stiffness: 400,
-    damping: 30
-  },
+  smoothScale: 'transition-transform duration-300 ease-out',
   
   // 素早いフェード
-  quickFade: {
-    duration: 0.15,
-    ease: 'easeInOut'
-  },
+  quickFade: 'transition-opacity duration-150 ease-in-out',
   
   // 弾性のあるエントリー
-  bounceIn: {
-    type: 'spring',
-    stiffness: 300,
-    damping: 20
-  }
+  bounceIn: 'animate-in zoom-in duration-300 ease-out'
 } as const

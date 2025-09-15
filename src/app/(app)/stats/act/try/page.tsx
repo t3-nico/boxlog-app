@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: 'Try',
 }
 
-export default function ActTryPage() {
+const ActTryPage = () => {
   return <Heading>Try</Heading>
 }
+
+export default ActTryPage

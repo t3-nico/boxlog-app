@@ -60,7 +60,7 @@ export function useDevTools(componentName?: string, config: DevToolsConfig = {})
     const messageLevelIndex = levels.indexOf(level)
 
     if (messageLevelIndex <= currentLevelIndex && messageLevelIndex > 0) {
-      const prefixText = componentName ? `[${componentName}]` : '[DevTools]'
+      const _prefixText = componentName ? `[${componentName}]` : '[DevTools]'
       const logMessage = `${prefixText} ${message}`
       ;(console as any)[level](logMessage, data || '')
     }

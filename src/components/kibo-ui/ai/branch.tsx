@@ -15,7 +15,7 @@ type AIBranchContextType = {
   goToPrevious: () => void;
   goToNext: () => void;
   branches: ReactElement[];
-  setBranches: (branches: ReactElement[]) => void;
+  setBranches: (_branches: ReactElement[]) => void;
 };
 
 const AIBranchContext = createContext<AIBranchContextType | null>(null);
@@ -32,7 +32,7 @@ const useAIBranch = () => {
 
 export type AIBranchProps = HTMLAttributes<HTMLDivElement> & {
   defaultBranch?: number;
-  onBranchChange?: (branchIndex: number) => void;
+  onBranchChange?: (_branchIndex: number) => void;
 };
 
 export const AIBranch = ({

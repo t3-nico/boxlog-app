@@ -1,20 +1,23 @@
 'use client'
 
 import React from 'react'
+
 import { usePathname } from 'next/navigation'
+
 import { Bell, Plus, Search } from 'lucide-react'
 
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Sheet, SheetContent } from '@/components/shadcn-ui/sheet'
 import { primaryNavigation } from '@/config/navigation/config'
+import { colors, spacing, typography, animations, icons, layout } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
+
 import { SidebarItem } from './sidebar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
-import { colors, spacing, typography, rounded, animations, icons, layout } from '@/config/theme'
 
 
 const { xs } = layout.heights.header

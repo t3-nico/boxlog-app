@@ -1,7 +1,9 @@
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
 import type { Metadata } from 'next'
+
 
 import { DescriptionDetails, DescriptionList, DescriptionTerm , Heading, Subheading , Link } from '@/components/custom'
 import { Avatar } from '@/components/shadcn-ui/avatar'
@@ -21,7 +23,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function ReviewPage({ params }: { params: { id: string } }) {
+const ReviewPage = async ({ params }: { params: { id: string } }) => {
   const review = await getReview(params.id)
 
   if (!review) {
@@ -115,7 +117,13 @@ export default async function ReviewPage({ params }: { params: { id: string } })
           <DescriptionTerm>Country</DescriptionTerm>
           <DescriptionDetails>
             <span className="inline-flex gap-3">
-              <img src={review.customer.countryFlagUrl} alt={review.customer.country} />
+              <Image 
+                src={review.customer.countryFlagUrl} 
+                alt={review.customer.country}
+                width={20}
+                height={15}
+                sizes="20px"
+              />
               {review.customer.country}
             </span>
           </DescriptionDetails>
@@ -128,3 +136,5 @@ export default async function ReviewPage({ params }: { params: { id: string } })
     </>
   )
 }
+
+export default ReviewPage

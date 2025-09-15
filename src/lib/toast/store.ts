@@ -6,11 +6,11 @@ interface ToastStore {
   toasts: Toast[]
   position: ToastPosition
   
-  addToast: (type: ToastType, title: string, options?: ToastOptions) => string
-  updateToast: (id: string, toast: Partial<Toast>) => void
-  removeToast: (id: string) => void
+  addToast: (_type: ToastType, _title: string, _options?: ToastOptions) => string
+  updateToast: (_id: string, _toast: Partial<Toast>) => void
+  removeToast: (_id: string) => void
   clearToasts: () => void
-  setPosition: (position: ToastPosition) => void
+  setPosition: (_position: ToastPosition) => void
 }
 
 const DEFAULT_DURATION = {

@@ -2,7 +2,7 @@
 
 import { SettingsLayout, CalendarSettings } from '@/features/settings/components'
 
-export default function CalendarPage() {
+const CalendarPage = () => {
   return (
     <SettingsLayout
       title="カレンダー"
@@ -12,3 +12,5 @@ export default function CalendarPage() {
     </SettingsLayout>
   )
 }
+
+export default CalendarPage

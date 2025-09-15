@@ -59,7 +59,7 @@ module.exports = {
           
           // 重いライブラリのチェック
           if (HEAVY_LIBRARIES[source]) {
-            const library = HEAVY_LIBRARIES[source];
+            const _library = HEAVY_LIBRARIES[source];
             
             // default importの場合
             if (node.specifiers.some(spec => spec.type === 'ImportDefaultSpecifier')) {
