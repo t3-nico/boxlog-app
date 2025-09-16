@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from 'react'
 
-
-
-
 // Local types for localStorage mode
 interface User {
   id: string
@@ -14,10 +11,6 @@ interface User {
 interface Session {
   user: User
   access_token: string
-}
-
-interface AuthError {
-  message: string
 }
 
 interface AuthState {
@@ -44,30 +37,30 @@ export function useAuth() {
           const userData = JSON.parse(savedUser)
           const session: Session = {
             user: userData,
-            access_token: 'local-token'
+            access_token: 'local-token',
           }
           setAuthState({
             user: userData,
             session,
             loading: false,
-            error: null
+            error: null,
           })
         } else {
           // デフォルトユーザーを作成
           const defaultUser: User = {
-            id: `local-user-${  Date.now()}`,
-            email: 'user@localhost'
+            id: `local-user-${Date.now()}`,
+            email: 'user@localhost',
           }
           localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
           const session: Session = {
             user: defaultUser,
-            access_token: 'local-token'
+            access_token: 'local-token',
           }
           setAuthState({
             user: defaultUser,
             session,
             loading: false,
-            error: null
+            error: null,
           })
         }
       } catch (error) {
@@ -75,7 +68,7 @@ export function useAuth() {
           user: null,
           session: null,
           loading: false,
-          error: 'Failed to initialize local auth'
+          error: 'Failed to initialize local auth',
         })
       }
     }
@@ -84,15 +77,15 @@ export function useAuth() {
   }, [])
 
   // ローカル専用モード用のスタブメソッド
-  const signUp = async (email: string, password: string, metadata?: any) => {
+  const signUp = async (_email: string, _password: string, _metadata?: any) => {
     return { data: null, error: 'Sign up disabled in localStorage mode' }
   }
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (_email: string, _password: string) => {
     return { data: { user: authState.user, session: authState.session }, error: null }
   }
 
-  const signInWithOAuth = async (provider: 'google' | 'apple') => {
+  const signInWithOAuth = async (_provider: 'google' | 'apple') => {
     return { data: null, error: 'OAuth disabled in localStorage mode' }
   }
 
@@ -100,16 +93,16 @@ export function useAuth() {
     return { error: null }
   }
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = async (_email: string) => {
     return { data: null, error: 'Password reset disabled in localStorage mode' }
   }
 
-  const updatePassword = async (password: string) => {
+  const updatePassword = async (_password: string) => {
     return { data: null, error: 'Password update disabled in localStorage mode' }
   }
 
   const clearError = () => {
-    setAuthState(prev => ({ ...prev, error: null }))
+    setAuthState((prev) => ({ ...prev, error: null }))
   }
 
   return {

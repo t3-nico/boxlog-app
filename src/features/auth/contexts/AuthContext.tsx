@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+  const signIn = async (_email: string, _password: string): Promise<AuthResponse> => {
     // ローカル専用モード: 常にログイン済み
     return {
       data: { user, session },
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
-  const signInWithOAuth = async (provider: 'google' | 'apple'): Promise<AuthResponse> => {
+  const signInWithOAuth = async (_provider: 'google' | 'apple'): Promise<AuthResponse> => {
     // ローカル専用モード: OAuth無効
     return {
       data: { user: null, session: null },
@@ -115,12 +115,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error: null }
   }
 
-  const resetPassword = async (email: string) => {
+  const resetPassword = async (_email: string) => {
     // ローカル専用モード: パスワードリセット無効
     return { error: { message: 'Password reset disabled in local mode' } }
   }
 
-  const updatePassword = async (password: string): Promise<AuthResponse> => {
+  const updatePassword = async (_password: string): Promise<AuthResponse> => {
     // ローカル専用モード: パスワード更新無効
     return {
       data: { user: null, session: null },
