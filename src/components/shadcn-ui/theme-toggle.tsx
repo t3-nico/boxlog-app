@@ -1,11 +1,10 @@
 'use client'
 
-
 import {
-  Sun as SunIcon,
-  Moon as MoonIcon,
-  Monitor as ComputerDesktopIcon,
   ChevronDown as ChevronDownIcon,
+  Monitor as ComputerDesktopIcon,
+  Moon as MoonIcon,
+  Sun as SunIcon,
   Palette as SwatchIcon,
 } from 'lucide-react'
 
@@ -18,9 +17,8 @@ import {
 } from '@/components/shadcn-ui/dropdown-menu'
 import { useTheme } from '@/contexts/theme-context'
 
-
 export const ThemeToggle = () => {
-  const { theme, colorScheme, setTheme, setColorScheme, resolvedTheme } = useTheme()
+  const { theme, colorScheme, setTheme, setColorScheme, resolvedTheme: _resolvedTheme } = useTheme()
 
   const themeIcons = {
     light: <SunIcon className="h-4 w-4" data-slot="icon" />,
@@ -49,24 +47,15 @@ export const ThemeToggle = () => {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-32">
-          <DropdownMenuItem
-            onClick={() => setTheme('light')}
-            className={theme === 'light' ? 'bg-accent' : ''}
-          >
+          <DropdownMenuItem onClick={() => setTheme('light')} className={theme === 'light' ? 'bg-accent' : ''}>
             <SunIcon className="mr-2 h-4 w-4" />
             Light
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setTheme('dark')}
-            className={theme === 'dark' ? 'bg-accent' : ''}
-          >
+          <DropdownMenuItem onClick={() => setTheme('dark')} className={theme === 'dark' ? 'bg-accent' : ''}>
             <MoonIcon className="mr-2 h-4 w-4" />
             Dark
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => setTheme('system')}
-            className={theme === 'system' ? 'bg-accent' : ''}
-          >
+          <DropdownMenuItem onClick={() => setTheme('system')} className={theme === 'system' ? 'bg-accent' : ''}>
             <ComputerDesktopIcon className="mr-2 h-4 w-4" />
             System
           </DropdownMenuItem>
@@ -91,11 +80,11 @@ export const ThemeToggle = () => {
               className={`flex items-center justify-between ${colorScheme === scheme.value ? 'bg-accent' : ''}`}
             >
               <div className="flex items-center space-x-2">
-                <div className={`w-4 h-4 rounded-full ${scheme.color}`} />
+                <div className={`h-4 w-4 rounded-full ${scheme.color}`} />
                 <span>{scheme.label}</span>
               </div>
               {colorScheme === scheme.value && (
-                <div className="w-2 h-2 bg-current rounded-full animate-in zoom-in duration-200" />
+                <div className="animate-in zoom-in h-2 w-2 rounded-full bg-current duration-200" />
               )}
             </DropdownMenuItem>
           ))}
@@ -115,11 +104,7 @@ export const SimpleThemeToggle = () => {
   return (
     <div className="transition-transform duration-200 hover:scale-105 active:scale-95">
       <Button variant="ghost" size="sm" onClick={toggleTheme} className="p-2">
-        {resolvedTheme === 'light' ? (
-          <MoonIcon className="h-4 w-4" />
-        ) : (
-          <SunIcon className="h-4 w-4" />
-        )}
+        {resolvedTheme === 'light' ? <MoonIcon className="h-4 w-4" /> : <SunIcon className="h-4 w-4" />}
         <span className="sr-only">Toggle theme</span>
       </Button>
     </div>

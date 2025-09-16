@@ -1,11 +1,11 @@
-"use client"
+'use client'
 
-import * as React from "react"
+import * as React from 'react'
 
-import { Check, ChevronDown, X, Plus, Tag } from "lucide-react"
+import { Check, ChevronDown, Plus, Tag, X } from 'lucide-react'
 
-import { Badge } from "@/components/shadcn-ui/badge"
-import { Button } from "@/components/shadcn-ui/button"
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
 import {
   Command,
   CommandEmpty,
@@ -13,8 +13,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/shadcn-ui/command"
-import { cn } from "@/lib/utils"
+} from '@/components/shadcn-ui/command'
+import { cn } from '@/lib/utils'
 
 export interface TagOption {
   id: string
@@ -39,7 +39,7 @@ const TagsContext = React.createContext<TagsContextType | undefined>(undefined)
 function useTagsContext() {
   const context = React.useContext(TagsContext)
   if (!context) {
-    throw new Error("Tags components must be used within Tags provider")
+    throw new Error('Tags components must be used within Tags provider')
   }
   return context
 }
@@ -54,7 +54,7 @@ interface TagsProps {
 
 export const Tags = ({ value = [], onValueChange, options, children, onCreateTag }: TagsProps) => {
   const [open, setOpen] = React.useState(false)
-  const [searchValue, setSearchValue] = React.useState("")
+  const [searchValue, setSearchValue] = React.useState('')
   const containerRef = React.useRef<HTMLDivElement>(null)
 
   // Close when clicking outside
@@ -98,19 +98,19 @@ interface TagsTriggerProps {
   placeholder?: string
 }
 
-export const TagsTrigger = ({ className, placeholder = "Select tags..." }: TagsTriggerProps) => {
+export const TagsTrigger = ({ className, placeholder = 'Select tags...' }: TagsTriggerProps) => {
   const { value, options, open, setOpen } = useTagsContext()
-  const selectedOptions = options.filter(option => value.includes(option.id))
+  const selectedOptions = options.filter((option) => value.includes(option.id))
 
   return (
     <Button
       variant="outline"
       role="combobox"
       aria-expanded={open}
-      className={cn("min-w-48 min-h-10 h-auto justify-between items-start", className)}
+      className={cn('h-auto min-h-10 min-w-48 items-start justify-between', className)}
       onClick={() => setOpen(!open)}
     >
-      <div className="flex flex-wrap gap-1 flex-1">
+      <div className="flex flex-1 flex-wrap gap-1">
         {selectedOptions.length === 0 ? (
           <span className="text-muted-foreground">{placeholder}</span>
         ) : (
@@ -118,19 +118,19 @@ export const TagsTrigger = ({ className, placeholder = "Select tags..." }: TagsT
             <Badge
               key={option.id}
               variant="secondary"
-              className="text-xs border-0 flex items-center gap-1"
+              className="flex items-center gap-1 border-0 text-xs"
               style={{
                 backgroundColor: option.color ? `${option.color}20` : undefined,
                 color: option.color || undefined,
               }}
             >
-              <Tag className="w-3 h-3" />
+              <Tag className="h-3 w-3" />
               {option.name}
             </Badge>
           ))
         )}
       </div>
-      <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50 mt-1" />
+      <ChevronDown className="ml-2 mt-1 h-4 w-4 shrink-0 opacity-50" />
     </Button>
   )
 }
@@ -141,17 +141,17 @@ interface TagsValueProps {
 
 export const TagsValue = ({ className }: TagsValueProps) => {
   const { value, onValueChange, options } = useTagsContext()
-  const selectedOptions = options.filter(option => value.includes(option.id))
+  const selectedOptions = options.filter((option) => value.includes(option.id))
 
   const handleRemove = (optionId: string) => {
-    const newValue = value.filter(id => id !== optionId)
+    const newValue = value.filter((id) => id !== optionId)
     onValueChange(newValue)
   }
 
   if (selectedOptions.length === 0) return null
 
   return (
-    <div className={cn("flex flex-wrap gap-2 mb-2", className)}>
+    <div className={cn('mb-2 flex flex-wrap gap-2', className)}>
       {selectedOptions.map((option) => (
         <Badge
           key={option.id}
@@ -186,18 +186,18 @@ interface TagsContentProps {
 }
 
 export const TagsContent = ({ children, className }: TagsContentProps) => {
-  const { open, setOpen } = useTagsContext()
+  const { open, setOpen: _setOpen } = useTagsContext()
 
   if (!open) return null
 
   return (
-    <div className={cn(
-      "absolute top-full left-0 z-50 mt-1 min-w-48 max-h-60 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
-      className
-    )}>
-      <Command>
-        {children}
-      </Command>
+    <div
+      className={cn(
+        'bg-popover text-popover-foreground absolute left-0 top-full z-50 mt-1 max-h-60 min-w-48 overflow-hidden rounded-md border shadow-md',
+        className
+      )}
+    >
+      <Command>{children}</Command>
     </div>
   )
 }
@@ -206,25 +206,17 @@ interface TagsInputProps {
   placeholder?: string
 }
 
-export const TagsInput = ({ placeholder = "Search tags..." }: TagsInputProps) => {
+export const TagsInput = ({ placeholder = 'Search tags...' }: TagsInputProps) => {
   const { searchValue, setSearchValue } = useTagsContext()
-  
-  return (
-    <CommandInput 
-      placeholder={placeholder} 
-      value={searchValue}
-      onValueChange={setSearchValue}
-    />
-  )
+
+  return <CommandInput placeholder={placeholder} value={searchValue} onValueChange={setSearchValue} />
 }
 
 export const TagsList = ({ children }: { children: React.ReactNode }) => {
   const { onCreateTag, searchValue, setSearchValue, options } = useTagsContext()
-  
+
   // Check if searchValue doesn't match any existing tag
-  const hasExactMatch = options.some(option => 
-    option.name.toLowerCase() === searchValue.toLowerCase()
-  )
+  const hasExactMatch = options.some((option) => option.name.toLowerCase() === searchValue.toLowerCase())
 
   return (
     <CommandList>
@@ -234,11 +226,11 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
           <CommandItem
             onSelect={() => {
               onCreateTag(searchValue.trim())
-              setSearchValue("")
+              setSearchValue('')
             }}
           >
             <div className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
+              <Plus className="h-4 w-4" />
               <span>Create &quot;{searchValue.trim()}&quot;</span>
             </div>
           </CommandItem>
@@ -267,28 +259,19 @@ interface TagsItemProps {
 }
 
 export const TagsItem = ({ value, children }: TagsItemProps) => {
-  const { value: selectedValues, onValueChange, setOpen } = useTagsContext()
+  const { value: selectedValues, onValueChange, setOpen: _setOpen } = useTagsContext()
   const isSelected = selectedValues.includes(value)
 
   const handleSelect = () => {
-    const newValue = isSelected
-      ? selectedValues.filter(id => id !== value)
-      : [...selectedValues, value]
+    const newValue = isSelected ? selectedValues.filter((id) => id !== value) : [...selectedValues, value]
     onValueChange(newValue)
   }
 
   return (
     <CommandItem onSelect={handleSelect}>
-      <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-2">
-          {children}
-        </div>
-        <Check
-          className={cn(
-            "ml-auto h-4 w-4",
-            isSelected ? "opacity-100" : "opacity-0"
-          )}
-        />
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-2">{children}</div>
+        <Check className={cn('ml-auto h-4 w-4', isSelected ? 'opacity-100' : 'opacity-0')} />
       </div>
     </CommandItem>
   )
@@ -307,7 +290,7 @@ interface SimpleTagsProps {
 export const SimpleTags = ({ value, onValueChange, options, placeholder, className, onCreateTag }: SimpleTagsProps) => {
   return (
     <Tags value={value} onValueChange={onValueChange} options={options} onCreateTag={onCreateTag}>
-      <div className={cn("", className)}>
+      <div className={cn('', className)}>
         <TagsTrigger placeholder={placeholder} />
         <TagsContent>
           <TagsInput />
@@ -316,16 +299,9 @@ export const SimpleTags = ({ value, onValueChange, options, placeholder, classNa
             <TagsGroup>
               {options.map((option) => (
                 <TagsItem key={option.id} value={option.id}>
-                  {option.color && (
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: option.color }}
-                    />
-                  )}
+                  {option.color && <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} />}
                   <span>{option.name}</span>
-                  {option.count && (
-                    <span className="text-xs text-muted-foreground ml-auto">({option.count})</span>
-                  )}
+                  {option.count && <span className="text-muted-foreground ml-auto text-xs">({option.count})</span>}
                 </TagsItem>
               ))}
             </TagsGroup>

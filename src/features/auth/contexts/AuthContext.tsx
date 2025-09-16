@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, ReactNode, useEffect, useState } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 // import { User, Session, AuthResponse, AuthError } from '@supabase/supabase-js' // Disabled for localStorage-only mode
 // import { createClient } from '@/lib/supabase/client' // Disabled for localStorage-only mode
 
@@ -60,19 +60,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(userData)
           setSession({
             user: userData,
-            access_token: 'local-token'
+            access_token: 'local-token',
           })
         } else {
           // デフォルトユーザーを作成
           const defaultUser: User = {
-            id: `local-user-${  Date.now()}`,
-            email: 'user@localhost'
+            id: `local-user-${Date.now()}`,
+            email: 'user@localhost',
           }
           localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
           setUser(defaultUser)
           setSession({
             user: defaultUser,
-            access_token: 'local-token'
+            access_token: 'local-token',
           })
         }
       } catch (err) {
@@ -86,11 +86,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initializeLocalAuth()
   }, [])
 
-  const signUp = async (email: string, password: string, metadata?: UserMetadata): Promise<AuthResponse> => {
+  const signUp = async (_email: string, _password: string, _metadata?: UserMetadata): Promise<AuthResponse> => {
     // ローカル専用モード: サインアップ無効
     return {
       data: { user: null, session: null },
-      error: { message: 'Sign up disabled in local mode' }
+      error: { message: 'Sign up disabled in local mode' },
     }
   }
 
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // ローカル専用モード: 常にログイン済み
     return {
       data: { user, session },
-      error: null
+      error: null,
     }
   }
 
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // ローカル専用モード: OAuth無効
     return {
       data: { user: null, session: null },
-      error: { message: 'OAuth disabled in local mode' }
+      error: { message: 'OAuth disabled in local mode' },
     }
   }
 
@@ -124,7 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // ローカル専用モード: パスワード更新無効
     return {
       data: { user: null, session: null },
-      error: { message: 'Password update disabled in local mode' }
+      error: { message: 'Password update disabled in local mode' },
     }
   }
 
@@ -143,14 +143,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOut,
     resetPassword,
     updatePassword,
-    clearError
+    clearError,
   }
 
-  return (
-    <AuthContext.Provider value={authState}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
 }
 
 export function useAuthContext() {
