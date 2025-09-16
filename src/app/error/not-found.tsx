@@ -1,46 +1,44 @@
 'use client'
 
-import React from 'react'
-
 import { ArrowLeft } from 'lucide-react'
 
 import { DashboardLayout } from '@/components/layout/layout'
-import { colors, typography, spacing } from '@/config/theme'
+import { colors, spacing, typography } from '@/config/theme'
+import type { Event } from '@/types/unified'
 
 // 404ページのコンテンツコンポーネント
 const NotFoundContent = () => {
-
   return (
-      <div className={`flex-1 flex items-center justify-center ${spacing.padding.lg} py-12 min-h-screen ${colors.background.surface}`}>
-        <div className={`max-w-md w-full text-center ${spacing.stack.lg}`}>
-          {/* Large 404 Typography - Dominant, muted color */}
-          <div>
-            <h1 className={`text-9xl font-bold select-none ${colors.text.tertiary} leading-none`}>
-              404
-            </h1>
-          </div>
+    <div
+      className={`flex flex-1 items-center justify-center ${spacing.padding.lg} min-h-screen py-12 ${colors.background.surface}`}
+    >
+      <div className={`w-full max-w-md text-center ${spacing.stack.lg}`}>
+        {/* Large 404 Typography - Dominant, muted color */}
+        <div>
+          <h1 className={`select-none text-9xl font-bold ${colors.text.tertiary} leading-none`}>404</h1>
+        </div>
 
-          {/* Brief explanation */}
-          <div>
-            <p className={`${colors.text.secondary} ${typography.body.base}`}>
-              The page you&apos;re looking for doesn&apos;t exist
-            </p>
-          </div>
+        {/* Brief explanation */}
+        <div>
+          <p className={`${colors.text.secondary} ${typography.body.base}`}>
+            The page you&apos;re looking for doesn&apos;t exist
+          </p>
+        </div>
 
-          {/* Message directing to sidebar - Small, with arrow */}
-          <div className={`flex items-center justify-center gap-2 ${typography.body.sm} ${colors.text.secondary}`}>
-            <ArrowLeft className="w-4 h-4 animate-pulse" />
-            <span>Check the side menu to navigate</span>
-          </div>
+        {/* Message directing to sidebar - Small, with arrow */}
+        <div className={`flex items-center justify-center gap-2 ${typography.body.sm} ${colors.text.secondary}`}>
+          <ArrowLeft className="h-4 w-4 animate-pulse" />
+          <span>Check the side menu to navigate</span>
         </div>
       </div>
+    </div>
   )
 }
 
 const NotFound = () => {
   // Empty arrays for events and reviews since this is a 404 page
-  const events: any[] = []
-  const reviews: any[] = []
+  const events: Event[] = []
+  const reviews: unknown[] = []
 
   return (
     <DashboardLayout events={events} reviews={reviews}>
