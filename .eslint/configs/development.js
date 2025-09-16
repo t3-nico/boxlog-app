@@ -1,22 +1,25 @@
 /**
  * ESLint Development Configuration
- * 
+ *
  * 開発環境用の設定（より緩い設定）
  */
 
-const themeSimple = require('./theme-simple.js');
+const themeSimple = require('./theme-simple.js')
 
 module.exports = {
   ...themeSimple,
-  
+
   rules: {
     ...themeSimple.rules,
-    
+
     // 開発環境固有のルール
     'no-console': 'off',
     'no-debugger': 'warn',
     'unused-imports/no-unused-vars': 'warn',
-    
+
+    // TypeScript any型チェック（開発環境：警告レベル）
+    '@typescript-eslint/no-explicit-any': 'warn',
+
     // 人間中心設計ルールは開発環境では警告レベル（段階的導入）
     'jsx-a11y/alt-text': 'warn',
     'jsx-a11y/click-events-have-key-events': 'warn',
@@ -25,33 +28,39 @@ module.exports = {
     'jsx-a11y/anchor-has-content': 'warn',
     'react/jsx-no-target-blank': 'warn',
     'react/button-has-type': 'warn',
-    
+
     // テーマルールは開発環境では警告レベル（段階的導入）
     'no-restricted-syntax': [
       'warn',
       {
-        'selector': 'Literal[value=/bg-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
-        'message': '🎨 直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。'
+        selector:
+          'Literal[value=/bg-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
+        message:
+          '🎨 直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。',
       },
       {
-        'selector': 'Literal[value=/text-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
-        'message': '🎨 直接的なTailwindテキストカラークラス (text-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。'
+        selector:
+          'Literal[value=/text-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
+        message:
+          '🎨 直接的なTailwindテキストカラークラス (text-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。',
       },
       {
-        'selector': 'Literal[value=/border-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
-        'message': '🎨 直接的なTailwindボーダーカラークラス (border-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。'
-      }
-    ]
+        selector:
+          'Literal[value=/border-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
+        message:
+          '🎨 直接的なTailwindボーダーカラークラス (border-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。',
+      },
+    ],
   },
-  
+
   overrides: [
     ...(themeSimple.overrides || []),
     // 型定義ファイルはテーマルール除外
     {
       files: ['src/types/**/*'],
       rules: {
-        'no-restricted-syntax': 'off'
-      }
-    }
-  ]
-};
+        'no-restricted-syntax': 'off',
+      },
+    },
+  ],
+}
