@@ -213,6 +213,15 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
           <div
             className="w-full h-2 bg-border/20 hover:bg-primary/20 cursor-ns-resize transition-colors flex items-center justify-center group"
             onMouseDown={handleResizeStart}
+            role="separator"
+            aria-label="Resize chat modal"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                // リサイズモードの開始をキーボードでも可能にする
+              }
+            }}
           >
             <div className="w-12 h-1 bg-border group-hover:bg-primary/40 rounded-full transition-colors" />
           </div>

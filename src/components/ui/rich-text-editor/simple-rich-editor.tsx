@@ -202,6 +202,9 @@ export const SimpleRichEditor = ({
         onInput={handleContentChange}
         onKeyDown={handleKeyDown}
         dangerouslySetInnerHTML={{ __html: value }}
+        role="textbox"
+        aria-label="Rich text editor"
+        tabIndex={0}
         className={cn(
           'w-full min-h-[120px] p-3 outline-none resize-none',
           'focus:ring-2 focus:ring-ring focus:ring-offset-2',

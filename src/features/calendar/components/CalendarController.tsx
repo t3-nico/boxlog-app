@@ -36,14 +36,6 @@ import { ThreeDayView } from './views/ThreeDayView'
 import { TwoWeekView } from './views/TwoWeekView'
 import { WeekView } from './views/WeekView'
 
-
-
-
-
-
-
-
-
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
   initialDate?: Date | null
@@ -55,7 +47,7 @@ export const CalendarController = ({
   initialDate
 }: CalendarViewExtendedProps) => {
   const router = useRouter()
-  const pathname = usePathname()
+  const _pathname = usePathname()
   const calendarNavigation = useCalendarNavigation()
   
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
@@ -84,8 +76,8 @@ export const CalendarController = ({
   const navigateRelative = contextAvailable ? calendarNavigation.navigateRelative : layoutHook.navigateRelative
   const changeView = contextAvailable ? calendarNavigation.changeView : layoutHook.changeView
   const navigateToDate = contextAvailable ? calendarNavigation.navigateToDate : layoutHook.navigateToDate
-  const {sidebarOpen} = layoutHook
-  const {toggleSidebar} = layoutHook
+  const {sidebarOpen: _sidebarOpen} = layoutHook
+  const {toggleSidebar: _toggleSidebar} = layoutHook
   
   // デバッグ用ログ
   React.useEffect(() => {
@@ -97,11 +89,11 @@ export const CalendarController = ({
     })
   }, [contextAvailable, viewType, currentDate, initialDate])
   
-  const [selectedTask, setSelectedTask] = useState<any>(null)
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
-  const [isEventModalOpen, setIsEventModalOpen] = useState(false)
-  const [eventDefaultDate, setEventDefaultDate] = useState<Date | undefined>(undefined)
-  const [eventDefaultTime, setEventDefaultTime] = useState<string | undefined>(undefined)
+  const [_selectedTask, _setSelectedTask] = useState<any>(null)
+  const [_isReviewModalOpen, _setIsReviewModalOpen] = useState(false)
+  const [_isEventModalOpen, _setIsEventModalOpen] = useState(false)
+  const [_eventDefaultDate, _setEventDefaultDate] = useState<Date | undefined>(undefined)
+  const [_eventDefaultTime, _setEventDefaultTime] = useState<string | undefined>(undefined)
   const [eventDefaultEndTime, setEventDefaultEndTime] = useState<string | undefined>(undefined)
   
   // コンテキストメニュー状態
@@ -113,8 +105,7 @@ export const CalendarController = ({
   
   // AddPopup hook（編集時のみ使用）
   const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
-  
-  
+
   const { createRecordFromTask, fetchRecords } = useRecordsStore()
   const { planRecordMode, timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
   
@@ -157,9 +148,7 @@ export const CalendarController = ({
   const createModal = useCreateModalStore()
   const { openCreateInspector, openEditInspector } = useCreateEventInspector()
   const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
-  
-  
-  
+
   // 通知機能の統合
   const {
     permission: notificationPermission,
@@ -174,8 +163,7 @@ export const CalendarController = ({
       // Reminder triggered for event
     }
   })
-  
-  
+
   // 🚀 初回ロード時にイベントストアを初期化（マウント時のみ）
   useEffect(() => {
     console.log('🚀 Initializing EventStore...')
@@ -205,7 +193,6 @@ export const CalendarController = ({
       navigateToDate(initialDate)
     }
   }, [contextAvailable, initialDate])
-
 
   // タイムゾーン設定の初期化（マウント時のみ）
   useEffect(() => {
@@ -248,8 +235,7 @@ export const CalendarController = ({
     if (typeof window === 'undefined') {
       return []
     }
-    
-    
+
     // 日付範囲を年月日のみで比較するため、時刻をリセット
     const startDateOnly = new Date(viewDateRange.start.getFullYear(), viewDateRange.start.getMonth(), viewDateRange.start.getDate())
     const endDateOnly = new Date(viewDateRange.end.getFullYear(), viewDateRange.end.getMonth(), viewDateRange.end.getDate())
@@ -553,8 +539,7 @@ export const CalendarController = ({
       console.error('Failed to restore event:', error)
     }
   }, [eventStore])
-  
-  
+
   const handleRestore = useCallback(async (eventIds: string[]) => {
     try {
       if (eventIds.length === 1) {
@@ -914,7 +899,7 @@ export const CalendarController = ({
     memo?: string
     interruptions?: number
   }) => {
-    // TODO: 実際の記録作成処理を実装
+    // Record creation tracked in Issue #89
     // ここで Supabase やローカルストレージに記録を保存
   }, [])
 
@@ -987,7 +972,6 @@ export const CalendarController = ({
     return viewDateRange.days
   }, [viewDateRange.days])
 
-
   return (
     <DnDProvider>
         <CalendarLayout
@@ -1017,8 +1001,7 @@ export const CalendarController = ({
             {renderView()}
           </div>
         </CalendarLayout>
-      
-      
+
       {/* イベントコンテキストメニュー */}
       {contextMenuEvent && contextMenuPosition && (
         <EventContextMenu

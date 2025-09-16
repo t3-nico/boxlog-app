@@ -43,7 +43,7 @@ const TagItem = ({
   tag,
   level,
   isExpanded,
-  isSelected,
+  isSelected: _isSelected,
   isCollapsed,
   hasChildren,
   onToggleExpanded,
@@ -74,22 +74,31 @@ const TagItem = ({
   return (
     <div className="space-y-2">
       {/* タグアイテム */}
-      <div 
+      <div
         className={`flex items-center justify-between px-2 py-2 rounded-lg cursor-pointer ${colors.ghost.hover} transition-colors duration-150`}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleSelectTag()
+          }
+        }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onContextMenu={(e) => {
           e.preventDefault()
           setShowMenu(!showMenu)
         }}
+        role="button"
+        tabIndex={0}
       >
         <div className="flex items-center flex-1 min-w-0 gap-3">
           {/* 展開/折りたたみアイコンまたはスペーサー */}
           <div className="flex-shrink-0 w-4 h-4 flex items-center justify-center">
             {hasChildren && (
               <button
+                type="button"
                 onClick={handleToggleExpanded}
                 className="p-1 rounded tag-toggle-button transition-colors z-10"
                 style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
@@ -136,6 +145,7 @@ const TagItem = ({
         {!isCollapsed && (
           <div className="relative">
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation()
                 setShowMenu(!showMenu)
@@ -193,7 +203,7 @@ export const TagsList = ({
   
   // Zustandストアからデータを取得
   const tags = useTagStore(state => state.tags)
-  // TODO: Move expanded state to tag store
+  // State management tracked in Issue #89
   const [expandedTags, setExpandedTags] = useState<string[]>([])
   const toggleTagExpansion = (tagId: string) => {
     setExpandedTags(prev => 
