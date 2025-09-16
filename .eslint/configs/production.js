@@ -10,8 +10,8 @@ module.exports = {
     'no-console': 'error',
     'no-debugger': 'error',
 
-    // 未使用変数は警告レベル（一時的にエラー数削減のため）
-    'unused-imports/no-unused-vars': 'warn',
+    // 未使用変数は本番環境ではエラーレベル（コードクリーンアップ強制）
+    'unused-imports/no-unused-vars': 'error',
 
     // TypeScript any型チェック（本番環境：エラーレベル）
     '@typescript-eslint/no-explicit-any': 'error',

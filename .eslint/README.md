@@ -219,7 +219,7 @@ eslint --print-config src/app/page.tsx -c .eslint/index.js
 | dangerouslySetHTML      | なし       | なし       | ❌ 未実装   | Meta            |
 | 外部リンク              | warn 警告  | warn 警告  | 🟡 部分実装 | Google          |
 | **📏 コード品質**       |            |            |             |                 |
-| 未使用変数              | warn 警告  | warn 警告  | ✅ 実装済み | Airbnb          |
+| 未使用変数              | warn 警告  | error 禁止 | ✅ 実装済み | Airbnb          |
 | any型                   | warn 警告  | error 禁止 | ✅ 実装済み | Microsoft       |
 | 複雑度                  | なし       | なし       | ❌ 未実装   | Google          |
 | **🧪 テスト**           |            |            |             |                 |
