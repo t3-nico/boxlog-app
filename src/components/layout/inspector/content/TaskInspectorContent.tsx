@@ -85,7 +85,7 @@ export const TaskInspectorContent = () => {
               { title: 'デザインシステム適用', completed: true },
               { title: 'プロトタイプ作成', completed: false },
               { title: 'ユーザーテスト実施', completed: false },
-            ].map((subtask, index) => (
+            ].map((subtask, _index) => (
               <div
                 key={subtask.title}
                 className={cn(
@@ -134,7 +134,7 @@ export const TaskInspectorContent = () => {
                 time: '1時間前',
                 content: 'プロトタイプのレビューお疲れさまでした。修正版をアップしました。',
               },
-            ].map((comment, index) => (
+            ].map((comment, _index) => (
               <div
                 key={`${comment.author}-${comment.time}`}
                 className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}
@@ -162,7 +162,7 @@ export const TaskInspectorContent = () => {
             {[
               { name: 'wireframe_v2.sketch', size: '2.4MB', type: 'design' },
               { name: 'requirements.pdf', size: '1.1MB', type: 'document' },
-            ].map((file, index) => (
+            ].map((file, _index) => (
               <div
                 key={file.name}
                 className={cn(

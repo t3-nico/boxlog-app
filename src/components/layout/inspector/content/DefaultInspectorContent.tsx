@@ -58,7 +58,7 @@ export const DefaultInspectorContent = () => {
                 description: 'サポートとドキュメント',
                 color: 'text-purple-600 dark:text-purple-400',
               },
-            ].map((action, index) => (
+            ].map((action, _index) => (
               <div
                 key={action.title}
                 className={cn(
@@ -104,7 +104,7 @@ export const DefaultInspectorContent = () => {
                 time: '1時間前',
                 type: 'upload',
               },
-            ].map((activity, index) => (
+            ].map((activity, _index) => (
               <div
                 key={`${activity.action}-${activity.item}-${activity.time}`}
                 className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}

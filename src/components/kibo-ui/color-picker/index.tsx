@@ -272,7 +272,7 @@ export type ColorPickerOutputProps = ComponentProps<typeof SelectTrigger>
 
 const formats = ['hex', 'rgb', 'css', 'hsl']
 
-export const ColorPickerOutput = ({ className, ...props }: ColorPickerOutputProps) => {
+export const ColorPickerOutput = ({ className: _className, ...props }: ColorPickerOutputProps) => {
   const { mode, setMode } = useColorPicker()
 
   return (

@@ -338,7 +338,13 @@ export type CodeBlockFilenameProps = HTMLAttributes<HTMLDivElement> & {
   value?: string
 }
 
-export const CodeBlockFilename = ({ className, icon, value, children, ...props }: CodeBlockFilenameProps) => {
+export const CodeBlockFilename = ({
+  className: _className,
+  icon,
+  value,
+  children,
+  ...props
+}: CodeBlockFilenameProps) => {
   const { value: activeValue } = useContext(CodeBlockContext)
   const defaultIcon = Object.entries(filenameIconMap).find(([pattern]) => {
     const regex = new RegExp(`^${pattern.replace(/\\/g, '\\\\').replace(/\./g, '\\.').replace(/\*/g, '.*')}$`)

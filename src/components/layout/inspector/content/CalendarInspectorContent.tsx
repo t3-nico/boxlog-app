@@ -85,7 +85,7 @@ export const CalendarInspectorContent = () => {
               { title: 'プレゼン資料作成', status: '進行中', priority: 'high' },
               { title: 'アジェンダ準備', status: '完了', priority: 'medium' },
               { title: '議事録テンプレート', status: '未着手', priority: 'low' },
-            ].map((task, index) => (
+            ].map((task, _index) => (
               <div
                 key={task.title}
                 className={cn(
