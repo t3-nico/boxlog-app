@@ -10,21 +10,18 @@ import { colors } from '@/config/theme'
 export const Listbox = <T,>({
   className,
   placeholder,
-  autoFocus,
   'aria-label': ariaLabel,
   children: options,
   ...props
 }: {
   className?: string
   placeholder?: React.ReactNode
-  autoFocus?: boolean
   'aria-label'?: string
   children?: React.ReactNode
 } & Omit<Headless.ListboxProps<typeof Fragment, T>, 'as' | 'multiple'>) => {
   return (
     <Headless.Listbox {...props} multiple={false}>
       <Headless.ListboxButton
-        autoFocus={autoFocus}
         data-slot="control"
         aria-label={ariaLabel}
         className={clsx([
@@ -38,7 +35,7 @@ export const Listbox = <T,>({
           // Hide default focus styles
           'focus:outline-hidden',
           // Focus ring
-          'after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-transparent after:ring-inset data-focus:after:ring-2 data-focus:after:ring-blue-500',
+          'data-focus:after:ring-2 data-focus:after:ring-blue-500 after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-inset after:ring-transparent',
           // Disabled state
           'data-disabled:opacity-50 data-disabled:before:bg-zinc-950/5 data-disabled:before:shadow-none',
         ])}
@@ -53,11 +50,11 @@ export const Listbox = <T,>({
             // Set minimum height for when no value is selected
             'min-h-12 sm:min-h-10',
             // Horizontal padding
-            'pr-[calc(--spacing(7)-1px)] pl-[calc(--spacing(3.5)-1px)] sm:pl-[calc(--spacing(3)-1px)]',
+            'pl-[calc(--spacing(3.5)-1px)] pr-[calc(--spacing(7)-1px)] sm:pl-[calc(--spacing(3)-1px)]',
             // Typography
             `text-left text-base/6 ${colors.text.primary} placeholder:${colors.text.secondary} sm:text-sm/6 forced-colors:text-[CanvasText]`,
             // Border
-            'border border-zinc-950/10 group-data-active:border-zinc-950/20 group-data-hover:border-zinc-950/20 dark:border-white/10 dark:group-data-active:border-white/20 dark:group-data-hover:border-white/20',
+            'group-data-active:border-zinc-950/20 group-data-hover:border-zinc-950/20 dark:group-data-active:border-white/20 dark:group-data-hover:border-white/20 border border-zinc-950/10 dark:border-white/10',
             // Background color
             'bg-transparent dark:bg-white/5',
             // Invalid state
@@ -68,7 +65,7 @@ export const Listbox = <T,>({
         />
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <svg
-            className="size-5 stroke-zinc-500 group-data-disabled:stroke-zinc-600 sm:size-4 dark:stroke-zinc-400 forced-colors:stroke-[CanvasText]"
+            className="group-data-disabled:stroke-zinc-600 size-5 stroke-zinc-500 sm:size-4 dark:stroke-zinc-400 forced-colors:stroke-[CanvasText]"
             viewBox="0 0 16 16"
             aria-hidden="true"
             fill="none"
@@ -85,17 +82,17 @@ export const Listbox = <T,>({
           // Anchor positioning
           '[--anchor-offset:-1.625rem] [--anchor-padding:--spacing(4)] sm:[--anchor-offset:-1.375rem]',
           // Base styles
-          'isolate w-max min-w-[calc(var(--button-width)+1.75rem)] scroll-py-1 rounded-xl p-1 select-none',
+          'isolate w-max min-w-[calc(var(--button-width)+1.75rem)] select-none scroll-py-1 rounded-xl p-1',
           // Invisible border that is only visible in `forced-colors` mode for accessibility purposes
-          'outline outline-transparent focus:outline-hidden',
+          'focus:outline-hidden outline outline-transparent',
           // Handle scrolling when menu won't fit in viewport
           'overflow-y-scroll overscroll-contain',
           // Popover background
           'bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75',
           // Shadows
-          'shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 dark:ring-inset',
+          'shadow-lg ring-1 ring-zinc-950/10 dark:ring-inset dark:ring-white/10',
           // Transitions
-          'transition-opacity duration-100 ease-in data-closed:data-leave:opacity-0 data-transition:pointer-events-none'
+          'data-closed:data-leave:opacity-0 data-transition:pointer-events-none transition-opacity duration-100 ease-in'
         )}
       >
         {options}
@@ -118,7 +115,7 @@ export const ListboxOption = <T,>({
     // Icons
     '*:data-[slot=icon]:size-5 *:data-[slot=icon]:shrink-0 sm:*:data-[slot=icon]:size-4',
     `*:data-[slot=icon]:${colors.text.secondary} group-data-focus/option:*:data-[slot=icon]:${colors.text.primaryOnDark}`,
-    'forced-colors:*:data-[slot=icon]:text-[CanvasText] forced-colors:group-data-focus/option:*:data-[slot=icon]:text-[Canvas]',
+    'forced-colors:group-data-focus/option:*:data-[slot=icon]:text-[Canvas] forced-colors:*:data-[slot=icon]:text-[CanvasText]',
     // Avatars
     '*:data-[slot=avatar]:-mx-1 *:data-[slot=avatar]:size-6 sm:*:data-[slot=avatar]:size-5'
   )
@@ -134,19 +131,19 @@ export const ListboxOption = <T,>({
           <div
             className={clsx(
               // Basic layout
-              'group/option grid cursor-default grid-cols-[--spacing(5)_1fr] items-baseline gap-x-2 rounded-lg py-3 pr-3.5 pl-2 sm:grid-cols-[--spacing(4)_1fr] sm:py-2 sm:pr-3 sm:pl-2',
+              'group/option grid cursor-default grid-cols-[--spacing(5)_1fr] items-baseline gap-x-2 rounded-lg py-3 pl-2 pr-3.5 sm:grid-cols-[--spacing(4)_1fr] sm:py-2 sm:pl-2 sm:pr-3',
               // Typography
               'text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
               // Focus
               'outline-hidden data-focus:bg-blue-500 data-focus:text-white',
               // Forced colors mode
-              'forced-color-adjust-none forced-colors:data-focus:bg-[Highlight] forced-colors:data-focus:text-[HighlightText]',
+              'forced-colors:data-focus:bg-[Highlight] forced-colors:data-focus:text-[HighlightText] forced-color-adjust-none',
               // Disabled
               'data-disabled:opacity-50'
             )}
           >
             <svg
-              className="relative hidden size-5 self-center stroke-current group-data-selected/option:inline sm:size-4"
+              className="group-data-selected/option:inline relative hidden size-5 self-center stroke-current sm:size-4"
               viewBox="0 0 16 16"
               fill="none"
               aria-hidden="true"
