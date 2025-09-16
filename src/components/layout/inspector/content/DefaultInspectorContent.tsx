@@ -1,35 +1,25 @@
 'use client'
 
-import React from 'react'
-
-import { Info, Settings, HelpCircle, Zap, BarChart3, FileText } from 'lucide-react'
+import { BarChart3, FileText, HelpCircle, Info, Settings, Zap } from 'lucide-react'
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { typography } from '@/config/theme'
-import { text, border } from '@/config/theme/colors'
+import { border, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export const DefaultInspectorContent = () => {
   return (
     <ScrollArea className="h-full">
-      <div className="p-4 space-y-6">
+      <div className="space-y-6 p-4">
         {/* ページ情報セクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
-            ページ情報
-          </h3>
-          
-          <div className={cn(
-            'p-4 rounded-lg border',
-            colors.background.surface,
-            border.subtle
-          )}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>ページ情報</h3>
+
+          <div className={cn('rounded-lg border p-4', colors.background.surface, border.subtle)}>
             <div className="flex items-start gap-3">
-              <Info className="w-5 h-5 mt-0.5 text-blue-600 dark:text-blue-400" />
+              <Info className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className={cn(typography.body.base, 'font-medium', text.primary)}>
-                  BoxLog Dashboard
-                </p>
+                <p className={cn(typography.body.base, 'font-medium', text.primary)}>BoxLog Dashboard</p>
                 <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
                   右側のInspectorパネルでは、選択したアイテムの詳細情報や関連する操作を確認できます。
                 </p>
@@ -40,55 +30,49 @@ export const DefaultInspectorContent = () => {
 
         {/* クイックアクションセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
-            クイックアクション
-          </h3>
-          
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>クイックアクション</h3>
+
           <div className="space-y-2">
             {[
-              { 
-                icon: Zap, 
-                title: 'ショートカット', 
+              {
+                icon: Zap,
+                title: 'ショートカット',
                 description: 'よく使う機能への素早いアクセス',
-                color: 'text-yellow-600 dark:text-yellow-400'
+                color: 'text-yellow-600 dark:text-yellow-400',
               },
-              { 
-                icon: BarChart3, 
-                title: '統計情報', 
+              {
+                icon: BarChart3,
+                title: '統計情報',
                 description: '現在の使用状況とパフォーマンス',
-                color: 'text-green-600 dark:text-green-400'
+                color: 'text-green-600 dark:text-green-400',
               },
-              { 
-                icon: Settings, 
-                title: '設定', 
+              {
+                icon: Settings,
+                title: '設定',
                 description: 'アプリケーションの個人設定',
-                color: 'text-gray-600 dark:text-gray-400'
+                color: 'text-gray-600 dark:text-gray-400',
               },
-              { 
-                icon: HelpCircle, 
-                title: 'ヘルプ', 
+              {
+                icon: HelpCircle,
+                title: 'ヘルプ',
                 description: 'サポートとドキュメント',
-                color: 'text-purple-600 dark:text-purple-400'
-              }
+                color: 'text-purple-600 dark:text-purple-400',
+              },
             ].map((action, index) => (
               <div
-                key={index}
+                key={action.title}
                 className={cn(
-                  'p-3 rounded-lg border',
+                  'rounded-lg border p-3',
                   colors.background.surface,
                   border.subtle,
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <action.icon className={cn('w-4 h-4', action.color)} />
+                  <action.icon className={cn('h-4 w-4', action.color)} />
                   <div className="flex-1">
-                    <p className={cn(typography.body.base, 'font-medium', text.primary)}>
-                      {action.title}
-                    </p>
-                    <p className={cn(typography.body.xs, text.muted)}>
-                      {action.description}
-                    </p>
+                    <p className={cn(typography.body.base, 'font-medium', text.primary)}>{action.title}</p>
+                    <p className={cn(typography.body.xs, text.muted)}>{action.description}</p>
                   </div>
                 </div>
               </div>
@@ -98,55 +82,50 @@ export const DefaultInspectorContent = () => {
 
         {/* 最近のアクティビティセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
-            最近のアクティビティ
-          </h3>
-          
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>最近のアクティビティ</h3>
+
           <div className="space-y-2">
             {[
               {
                 action: 'タスクを作成',
                 item: '新機能のUI設計',
                 time: '5分前',
-                type: 'create'
+                type: 'create',
               },
               {
                 action: 'イベントを更新',
                 item: '週次ミーティング',
                 time: '15分前',
-                type: 'update'
+                type: 'update',
               },
               {
                 action: 'ファイルをアップロード',
                 item: 'requirements.pdf',
                 time: '1時間前',
-                type: 'upload'
-              }
+                type: 'upload',
+              },
             ].map((activity, index) => (
               <div
-                key={index}
-                className={cn(
-                  'p-3 rounded-lg border',
-                  colors.background.surface,
-                  border.subtle
-                )}
+                key={`${activity.action}-${activity.item}-${activity.time}`}
+                className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}
               >
                 <div className="flex items-start gap-3">
-                  <div className={cn(
-                    'w-2 h-2 rounded-full mt-2',
-                    activity.type === 'create' ? 'bg-green-500' :
-                    activity.type === 'update' ? 'bg-blue-500' :
-                    'bg-orange-500'
-                  )} />
+                  <div
+                    className={cn(
+                      'mt-2 h-2 w-2 rounded-full',
+                      activity.type === 'create'
+                        ? 'bg-green-500'
+                        : activity.type === 'update'
+                          ? 'bg-blue-500'
+                          : 'bg-orange-500'
+                    )}
+                  />
                   <div className="flex-1">
                     <p className={cn(typography.body.base, text.primary)}>
-                      <span className={text.muted}>{activity.action}</span>
-                      {' '}
+                      <span className={text.muted}>{activity.action}</span>{' '}
                       <span className="font-medium">{activity.item}</span>
                     </p>
-                    <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
-                      {activity.time}
-                    </p>
+                    <p className={cn(typography.body.xs, 'mt-1', text.muted)}>{activity.time}</p>
                   </div>
                 </div>
               </div>
@@ -156,17 +135,17 @@ export const DefaultInspectorContent = () => {
 
         {/* ヒントセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
-            ヒント
-          </h3>
-          
-          <div className={cn(
-            'p-4 rounded-lg border',
-            'bg-blue-50 dark:bg-blue-950/30',
-            'border-blue-200 dark:border-blue-800'
-          )}>
+          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>ヒント</h3>
+
+          <div
+            className={cn(
+              'rounded-lg border p-4',
+              'bg-blue-50 dark:bg-blue-950/30',
+              'border-blue-200 dark:border-blue-800'
+            )}
+          >
             <div className="flex items-start gap-3">
-              <FileText className="w-4 h-4 mt-0.5 text-blue-600 dark:text-blue-400" />
+              <FileText className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
                 <p className={cn(typography.body.base, 'font-medium text-blue-900 dark:text-blue-100')}>
                   Inspectorの活用法

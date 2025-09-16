@@ -20,6 +20,9 @@ module.exports = {
     // TypeScript any型チェック（開発環境：警告レベル）
     '@typescript-eslint/no-explicit-any': 'warn',
 
+    // 複雑度チェック（開発環境：警告レベル - リーダブルコード促進）
+    complexity: ['warn', 15],
+
     // 人間中心設計ルールは開発環境では警告レベル（段階的導入）
     'jsx-a11y/alt-text': 'warn',
     'jsx-a11y/click-events-have-key-events': 'warn',

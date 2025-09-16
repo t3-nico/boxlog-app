@@ -16,6 +16,9 @@ module.exports = {
     // TypeScript any型チェック（本番環境：エラーレベル）
     '@typescript-eslint/no-explicit-any': 'error',
 
+    // 複雑度チェック（本番環境：エラーレベル - リーダブルコード必須）
+    complexity: ['error', 10],
+
     // テーマルールは本番環境では厳格に適用
     'no-restricted-syntax': [
       'error',
