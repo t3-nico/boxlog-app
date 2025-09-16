@@ -67,23 +67,24 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
           </DialogHeader>
           <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label htmlFor="tag-name-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               タグ名
             </label>
-            <Input 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
+            <Input
+              id="tag-name-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="タグ名を入力"
               required 
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div id="color-label" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               色
-            </label>
-            
+            </div>
+
             {/* プリセットカラー */}
-            <div className="grid grid-cols-8 gap-2">
+            <div className="grid grid-cols-8 gap-2" role="radiogroup" aria-labelledby="color-label">
               {[
                 '#ef4444', '#f97316', '#f59e0b', '#eab308',
                 '#84cc16', '#22c55e', '#10b981', '#14b8a6',
@@ -108,9 +109,9 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <div id="icon-label" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               アイコン
-            </label>
+            </div>
             
             {/* 現在選択されているアイコンのプレビュー */}
             <div 
@@ -125,7 +126,7 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
             </div>
             
             {/* アイコン選択 */}
-            <div className="max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg">
+            <div className="max-h-64 overflow-y-auto border border-gray-200 dark:border-gray-600 rounded-lg" aria-labelledby="icon-label">
               {Object.entries(tagIconCategories).map(([category, icons]) => (
                 <div key={category} className="p-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
                   <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">{category}</p>
