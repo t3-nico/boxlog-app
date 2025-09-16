@@ -1,6 +1,8 @@
 // features/calendar/theme/utils.ts
 // テーマ関連のユーティリティ関数（Tailwindクラスベース）
 
+import { colors } from '@/config/theme'
+
 import { calendarAnimations } from './animations'
 import { calendarColors } from './colors'
 import type { CalendarColors } from './colors'
@@ -25,7 +27,6 @@ export const getStatusColor = (
 }
 
 // 共通テーマから必要な色クラスを取得するヘルパー
-import { colors } from '@/config/theme'
 
 export const getCommonColor = (
   category: keyof typeof colors,

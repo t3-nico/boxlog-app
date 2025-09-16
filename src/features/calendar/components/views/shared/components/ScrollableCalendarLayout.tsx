@@ -9,8 +9,10 @@ import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react'
 import { cn } from '@/lib/utils'
 
 import { TimeColumn } from '../grid/TimeColumn/TimeColumn'
-import { TimezoneOffset } from './TimezoneOffset'
+
 import { useResponsiveHourHeight } from '../hooks/useResponsiveHourHeight'
+
+import { TimezoneOffset } from './TimezoneOffset'
 
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode

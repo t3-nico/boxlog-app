@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { PanelRightClose, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-import { colors, rounded, animations, layout } from '@/config/theme'
+import { colors, rounded, animations, layout, primary } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { InspectorAIChat } from './inspector-ai-chat'
@@ -20,7 +20,7 @@ import { UnscheduledTasksList } from './UnscheduledTasksList'
 const { xs } = layout.heights.header
 
 export const DesktopInspector = () => {
-  const pathname = usePathname()
+  const _pathname = usePathname()
   const inspectorWidth = useInspectorStore((state) => state.inspectorWidth)
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
   const setInspectorWidthConstrained = useInspectorStore((state) => state.setInspectorWidthConstrained)
@@ -65,14 +65,22 @@ export const DesktopInspector = () => {
       {/* Resize Handle - 左側 */}
       <div
         onMouseDown={handleMouseDown}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+          }
+        }}
         className={cn(
           'absolute -left-1 top-0 w-3 h-full cursor-ew-resize group'
         )}
+        role="button"
+        tabIndex={0}
+        aria-label="インスペクターの幅を調整"
       >
         {/* Visual Color Change - 1px width */}
         <div className={cn(
           'absolute left-1 top-0 w-px h-full transition-colors',
-          'bg-transparent group-hover:bg-blue-600 dark:group-hover:bg-blue-500'
+          `bg-transparent ${primary.hover.replace('hover:', 'group-hover:')}`
         )} />
       </div>
 
@@ -85,6 +93,7 @@ export const DesktopInspector = () => {
           colors.background.surface
         )}>
           <button
+            type="button"
             onClick={() => toggleInspector()}
             className={cn(
               'w-8 h-8 flex items-center justify-center',

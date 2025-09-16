@@ -1,11 +1,13 @@
 'use client'
 
 import { useCallback } from 'react'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertCircle, Home, RefreshCw } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
+import { colors, typography, spacing, layout } from '@/config/theme'
 
 const ErrorPage = () => {
   const router = useRouter()
@@ -55,29 +57,29 @@ const ErrorPage = () => {
   }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className={`min-h-screen flex items-center justify-center ${colors.background.base} ${spacing.page.default}`}>
+      <div className={`${layout.container.small} w-full ${spacing.stack.xl}`}>
         <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/20">
-            <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+          <div className={`mx-auto flex items-center justify-center ${layout.heights.header.large} w-16 rounded-full ${colors.semantic.error.background}`}>
+            <AlertCircle className={`${layout.heights.header.xs} w-8 ${colors.semantic.error.DEFAULT}`} />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
+          <h2 className={`mt-6 ${typography.heading.h1} ${colors.text.primary}`}>
             {errorInfo.title}
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className={`mt-2 ${typography.body.sm} ${colors.text.secondary}`}>
             {errorInfo.description}
           </p>
-          <p className="mt-4 text-sm text-gray-500 dark:text-gray-500">
+          <p className={`mt-4 ${typography.body.sm} ${colors.text.tertiary}`}>
             {errorInfo.suggestion}
           </p>
         </div>
 
-        <div className="mt-8 space-y-4">
+        <div className={`mt-8 ${spacing.stack.md}`}>
           <Button
             onClick={handleGoToLogin}
             className="w-full flex items-center justify-center gap-2"
           >
-            <Home className="h-4 w-4" />
+            <Home className={`${layout.heights.button.sm} w-4`} />
             Go to Login
           </Button>
           
@@ -86,17 +88,17 @@ const ErrorPage = () => {
             onClick={handleGoBack}
             className="w-full flex items-center justify-center gap-2"
           >
-            <RefreshCw className="h-4 w-4" />
+            <RefreshCw className={`${layout.heights.button.sm} w-4`} />
             Go Back
           </Button>
         </div>
 
         <div className="text-center">
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          <p className={`mt-2 ${typography.body.xs} ${colors.text.tertiary}`}>
             Need help?{' '}
             <a
               href="mailto:support@boxlog.com"
-              className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500"
+              className={`${typography.body.medium} ${colors.primary.DEFAULT} hover:${colors.primary.hover}`}
             >
               Contact Support
             </a>

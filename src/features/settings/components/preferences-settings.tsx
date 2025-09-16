@@ -3,9 +3,11 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { spacing } from '@/config/theme'
-import { SettingsCard } from './SettingsCard'
-import { SettingField } from './fields/SettingField'
+
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+
+import { SettingField } from './fields/SettingField'
+import { SettingsCard } from './SettingsCard'
 
 interface PreferencesSettings {
   language: 'ja' | 'en'

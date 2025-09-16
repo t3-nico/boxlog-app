@@ -4,8 +4,8 @@
  * ESLintの unused-imports/no-unused-vars 警告を解決
  */
 
-const fs = require('fs')
 const { execSync } = require('child_process')
+const fs = require('fs')
 
 // ESLintから未使用変数のリストを取得
 function getUnusedVars() {
@@ -42,7 +42,7 @@ function updateFile(filePath, updates) {
     return
   }
   
-  let content = fs.readFileSync(filePath, 'utf8')
+  const content = fs.readFileSync(filePath, 'utf8')
   const lines = content.split('\n')
   
   // 行番号でソートして逆順で処理（行番号がずれないように）

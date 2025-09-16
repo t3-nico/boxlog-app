@@ -56,11 +56,6 @@ export const DateSelector = ({
     setDuration(Math.max(0, durationMinutes))
   }, [value, endValue])
 
-  // Convert date to input format
-  const formatDateForInput = (date: Date) => {
-    return date.toISOString().split('T')[0]
-  }
-
   // Format date for display
   const formatDateForDisplay = (date: Date) => {
     const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']

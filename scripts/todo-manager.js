@@ -6,7 +6,6 @@
  * TODO/FIXMEコメントの一元管理、レポート生成、統計情報の提供
  */
 
-const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -24,10 +23,6 @@ const colors = {
 };
 
 // 📅 日付関連ユーティリティ
-function formatDate(date) {
-  return date.toISOString().split('T')[0];
-}
-
 function getDaysFromNow(dateStr) {
   const targetDate = new Date(dateStr);
   const now = new Date();

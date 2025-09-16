@@ -7,9 +7,11 @@ import { Input } from '@/components/shadcn-ui/input'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { colors, typography, spacing } from '@/config/theme'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
-import { SettingsCard } from './SettingsCard'
-import { SettingField } from './fields/SettingField'
+
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+
+import { SettingField } from './fields/SettingField'
+import { SettingsCard } from './SettingsCard'
 
 interface ProfileSettings {
   displayName: string

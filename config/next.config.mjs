@@ -15,6 +15,10 @@ const nextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
+  eslint: {
+    // devブランチまたは開発環境ではESLintエラーを許可、mainブランチの本番ビルドでは厳格チェック
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development' || process.env.VERCEL_GIT_COMMIT_REF !== 'main',
+  },
   // パフォーマンス最適化設定
   images: {
     formats: ['image/webp', 'image/avif'],
@@ -37,7 +41,9 @@ const nextConfig = {
   // ビルド最適化
   swcMinify: true,
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
+    // mainブランチの本番ビルドでのみconsole.logを削除、devブランチでは残す
+    removeConsole: process.env.NODE_ENV === 'production' && 
+                   (process.env.VERCEL_GIT_COMMIT_REF === 'main' || process.env.VERCEL_GIT_COMMIT_REF === undefined),
   },
 }
 

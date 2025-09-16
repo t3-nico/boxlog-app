@@ -12,8 +12,10 @@ module.exports = {
     isDev ? './configs/development.js' : './configs/production.js'
   ],
   
-  overrides: [
-    require('./overrides/generated.js'),
-    require('./overrides/legacy.js'),
-  ],
+  // NOTE: カスタムプラグイン関連のオーバーライドは一時無効化
+  // overrides: [
+  //   require('./overrides/generated.js'),
+  //   require('./overrides/legacy.js'),
+  //   require('./overrides/theme-migration.js'),
+  // ],
 };

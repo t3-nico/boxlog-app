@@ -330,12 +330,14 @@ const ChronoTypePage = () => {
               </div>
               <div className="flex gap-3 justify-center">
                 <button
+                  type="button"
                   onClick={resetDiagnosis}
                   className={`${spacing.padding.md} ${typography.body.sm} ${typography.weight.medium} ${colors.text.secondary} ${colors.background.card} ${colors.border.default} ${colors.rounded.lg} ${colors.hover.card} ${colors.transition.colors}`}
                 >
                   もう一度診断
                 </button>
                 <button
+                  type="button"
                   onClick={() => setShowDiagnosis(false)}
                   className={`${spacing.padding.md} ${typography.body.sm} ${typography.weight.medium} ${colors.text.white} ${colors.primary.DEFAULT} ${colors.hover.primary} ${colors.rounded.lg} ${colors.transition.colors}`}
                 >
@@ -370,6 +372,7 @@ const ChronoTypePage = () => {
                 <div className="space-y-3">
                   {diagnosisQuestions[currentQuestion]?.options.map((option) => (
                     <button
+                      type="button"
                       key={option.value}
                       onClick={() => handleAnswerSelect(diagnosisQuestions[currentQuestion].id, option.value)}
                       className={`w-full p-4 text-left ${colors.border.default} ${rounded.component.card.md} ${colors.hover.border} ${colors.hover.subtle} transition-all`}
@@ -381,6 +384,7 @@ const ChronoTypePage = () => {
               </div>
 
               <button
+                type="button"
                 onClick={resetDiagnosis}
                 className={`${typography.body.sm} ${colors.text.muted} ${colors.hover.text}`}
               >
@@ -397,6 +401,7 @@ const ChronoTypePage = () => {
               クロノタイプを選択
             </h2>
             <button
+              type="button"
               onClick={startDiagnosis}
               className={`${spacing.padding.sm} ${typography.body.sm} ${typography.weight.medium} ${colors.primary.text} ${colors.hover.primary} ${colors.primary.background} ${colors.hover.primary} ${colors.rounded.lg} ${colors.transition.colors}`}
             >
@@ -407,6 +412,7 @@ const ChronoTypePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {chronoTypeProfiles.map((profile) => (
               <button
+                type="button"
                 key={profile.id}
                 onClick={() => {
                   chronoSettings.updateValue('type', profile.id as ChronotypeType)
@@ -485,6 +491,7 @@ const ChronoTypePage = () => {
               checked={chronoSettings.values.enabled}
               onChange={(e) => chronoSettings.updateValue('enabled', e.target.checked)}
               className="sr-only peer"
+              aria-label="Show chronotype in calendar"
             />
             <div className={`w-12 h-6 ${colors.background.muted} peer-focus:outline-none peer-focus:ring-4 ${colors.focus.ring} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] ${colors.background.base} after:border ${colors.border.muted} after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:${colors.primary.DEFAULT}`}></div>
           </label>
@@ -611,6 +618,7 @@ const ChronoTypePage = () => {
                 自分のクロノタイプが分からない方は、診断をお試しください
               </p>
               <button
+                type="button"
                 onClick={startDiagnosis}
                 className={`inline-flex items-center gap-2 ${spacing.padding.lg} ${typography.body.sm} ${typography.weight.medium} ${colors.text.white} ${colors.primary.DEFAULT} ${colors.hover.primary} ${colors.rounded.lg} ${colors.transition.colors} ${colors.shadow.sm}`}
               >

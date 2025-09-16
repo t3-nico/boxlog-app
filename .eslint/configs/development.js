@@ -4,15 +4,54 @@
  * 開発環境用の設定（より緩い設定）
  */
 
+const themeSimple = require('./theme-simple.js');
+
 module.exports = {
+  ...themeSimple,
+  
   rules: {
-    // コンソールログは開発中は許可
+    ...themeSimple.rules,
+    
+    // 開発環境固有のルール
     'no-console': 'off',
-    
-    // デバッガーは警告レベル
     'no-debugger': 'warn',
-    
-    // 未使用変数は警告レベル
     'unused-imports/no-unused-vars': 'warn',
-  }
+    
+    // 人間中心設計ルールは開発環境では警告レベル（段階的導入）
+    'jsx-a11y/alt-text': 'warn',
+    'jsx-a11y/click-events-have-key-events': 'warn',
+    'jsx-a11y/no-autofocus': 'warn',
+    'jsx-a11y/heading-has-content': 'warn',
+    'jsx-a11y/anchor-has-content': 'warn',
+    'react/jsx-no-target-blank': 'warn',
+    'react/button-has-type': 'warn',
+    
+    // テーマルールは開発環境では警告レベル（段階的導入）
+    'no-restricted-syntax': [
+      'warn',
+      {
+        'selector': 'Literal[value=/bg-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
+        'message': '🎨 直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。'
+      },
+      {
+        'selector': 'Literal[value=/text-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
+        'message': '🎨 直接的なTailwindテキストカラークラス (text-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。'
+      },
+      {
+        'selector': 'Literal[value=/border-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
+        'message': '🎨 直接的なTailwindボーダーカラークラス (border-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。'
+      }
+    ]
+  },
+  
+  overrides: [
+    ...(themeSimple.overrides || []),
+    // 型定義ファイルはテーマルール除外
+    {
+      files: ['src/types/**/*'],
+      rules: {
+        'no-restricted-syntax': 'off'
+      }
+    }
+  ]
 };

@@ -38,7 +38,7 @@ export const RefundReview = ({ amount, ...props }: { amount: string } & React.Co
           <FieldGroup>
             <Field>
               <Label>Amount</Label>
-              <Input name="amount" defaultValue={amount} placeholder="$0.00" autoFocus />
+              <Input name="amount" defaultValue={amount} placeholder="$0.00" />
             </Field>
             <Field>
               <Label>Reason</Label>

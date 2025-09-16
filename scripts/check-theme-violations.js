@@ -5,7 +5,6 @@
  * 直接Tailwindクラスの使用を検出してレポートします
  */
 
-const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 

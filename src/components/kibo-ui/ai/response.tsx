@@ -36,7 +36,7 @@ const components: Options['components'] = {
       {children}
     </ol>
   ),
-  li: ({ node, children, className, ...props }) => (
+  li: ({ node: _node, children, className, ...props }) => (
     <li className={cn('py-1', className)} {...props}>
       {children}
     </li>
@@ -51,7 +51,7 @@ const components: Options['components'] = {
       {children}
     </span>
   ),
-  a: ({ node, children, className, ...props }) => (
+  a: ({ node: _node, children, className, ...props }) => (
     <a
       className={cn('font-medium text-primary underline', className)}
       rel="noreferrer"
@@ -61,7 +61,7 @@ const components: Options['components'] = {
       {children}
     </a>
   ),
-  h1: ({ node, children, className, ...props }) => (
+  h1: ({ node: _node, children, className, ...props }) => (
     <h1
       className={cn('mt-6 mb-2 font-semibold text-3xl', className)}
       {...props}
@@ -69,7 +69,7 @@ const components: Options['components'] = {
       {children}
     </h1>
   ),
-  h2: ({ node, children, className, ...props }) => (
+  h2: ({ node: _node, children, className, ...props }) => (
     <h2
       className={cn('mt-6 mb-2 font-semibold text-2xl', className)}
       {...props}
@@ -77,17 +77,17 @@ const components: Options['components'] = {
       {children}
     </h2>
   ),
-  h3: ({ node, children, className, ...props }) => (
+  h3: ({ node: _node, children, className, ...props }) => (
     <h3 className={cn('mt-6 mb-2 font-semibold text-xl', className)} {...props}>
       {children}
     </h3>
   ),
-  h4: ({ node, children, className, ...props }) => (
+  h4: ({ node: _node, children, className, ...props }) => (
     <h4 className={cn('mt-6 mb-2 font-semibold text-lg', className)} {...props}>
       {children}
     </h4>
   ),
-  h5: ({ node, children, className, ...props }) => (
+  h5: ({ node: _node, children, className, ...props }) => (
     <h5
       className={cn('mt-6 mb-2 font-semibold text-base', className)}
       {...props}
@@ -95,12 +95,12 @@ const components: Options['components'] = {
       {children}
     </h5>
   ),
-  h6: ({ node, children, className, ...props }) => (
+  h6: ({ node: _node, children, className, ...props }) => (
     <h6 className={cn('mt-6 mb-2 font-semibold text-sm', className)} {...props}>
       {children}
     </h6>
   ),
-  pre: ({ node, className, children }) => {
+  pre: ({ node: _node, className, children }) => {
     let language = 'javascript';
 
     if (typeof node?.properties?.className === 'string') {

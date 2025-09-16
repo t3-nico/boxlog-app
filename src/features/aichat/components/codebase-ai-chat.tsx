@@ -453,7 +453,7 @@ What would you like to know about BoxLog?`
               </div>
               <AIMessageContent>
                 <CodebaseAIResponse>
-                  Hello! I'm the **BoxLog** application support assistant.
+                  Hello! I&apos;m the **BoxLog** application support assistant.
                   
                   I can help you with:
                   

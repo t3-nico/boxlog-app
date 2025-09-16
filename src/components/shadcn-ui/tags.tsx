@@ -239,7 +239,7 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
           >
             <div className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
-              <span>Create "{searchValue.trim()}"</span>
+              <span>Create &quot;{searchValue.trim()}&quot;</span>
             </div>
           </CommandItem>
         </CommandGroup>

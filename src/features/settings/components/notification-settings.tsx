@@ -7,9 +7,11 @@ import { Bell, BellRing, Settings as SettingsIcon } from 'lucide-react'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { colors, spacing, typography } from '@/config/theme'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
-import { SettingsCard } from './SettingsCard'
-import { SettingField } from './fields/SettingField'
+
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+
+import { SettingField } from './fields/SettingField'
+import { SettingsCard } from './SettingsCard'
 
 interface NotificationAutoSaveSettings {
   emailNotifications: boolean

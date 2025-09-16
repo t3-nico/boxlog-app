@@ -4,18 +4,18 @@
  */
 
 import { transition, hover, loading, appear, feedback, patterns as animationPatterns } from './animations'
+import { animations } from './animations'
+import { borders } from './borders'
+import { colors } from './colors'
 import { elevation, borders as elevationBorders, patterns as elevationPatterns } from './elevation'
 import { icons } from './icons'
+import { layout } from './layout'
 import { rounded } from './rounded'
+import { spacing } from './spacing'
 import { link, linkStates, linkPatterns } from './typography'
 
 // 循環依存を避けるため、個別ファイルから直接import
-import { colors } from './colors'
 import { typography } from './typography'
-import { spacing } from './spacing'
-import { layout } from './layout'
-import { borders } from './borders'
-import { animations } from './animations'
 import { zIndex } from './z-index'
 
 // ============================================

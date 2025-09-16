@@ -334,7 +334,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                     <Sparkles className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Hi! I'm your AI assistant
+                    Hi! I&apos;m your AI assistant
                   </h3>
                   <p className="text-muted-foreground max-w-md">
                     I can help you with productivity insights, task management, and answer questions about BoxLog.

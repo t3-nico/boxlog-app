@@ -2,14 +2,6 @@
 
 import React, { memo, useState, useMemo, useCallback } from 'react'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-
-import { secondary, selection } from '@/config/theme/colors'
-import { calendarColors } from '@/features/calendar/theme/colors'
-import { cn } from '@/lib/utils'
-
-const selectedState = calendarColors.states.selected
-const displayPeriodState = calendarColors.states.displayPeriod
 import { 
   startOfMonth, 
   endOfMonth, 
@@ -22,6 +14,14 @@ import {
   addMonths,
   subMonths
 } from 'date-fns'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+import { secondary, selection } from '@/config/theme/colors'
+import { calendarColors } from '@/features/calendar/theme/colors'
+import { cn } from '@/lib/utils'
+
+const selectedState = calendarColors.states.selected
+const displayPeriodState = calendarColors.states.displayPeriod
 
 export interface MiniCalendarProps {
   selectedDate?: Date

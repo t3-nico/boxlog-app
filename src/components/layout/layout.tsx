@@ -7,7 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
-import { colors, rounded, animations, icons } from '@/config/theme'
+import { colors, rounded, animations, icons, background, ghost } from '@/config/theme'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { ChatProvider } from '@/contexts/chat-context'
 import { ThemeProvider } from '@/contexts/theme-context'
@@ -109,13 +109,15 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
               {/* Right side: Search & Inspector Toggle */}
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => {
                     console.log('Search button clicked')
                     openGlobalSearch()
                   }}
                   className={cn(
                     'w-8 h-8 flex items-center justify-center',
-                    colors.hover.subtle,
+                    background.subtle,
+                    ghost.hover,
                     rounded.component.button.sm,
                     animations.transition.fast,
                     'flex-shrink-0'
@@ -183,8 +185,8 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 }
 
 export const DashboardLayout = ({ 
-  events, 
-  reviews, 
+  events: _events, 
+  reviews: _reviews, 
   children 
 }: DashboardLayoutProps) => {
   return (

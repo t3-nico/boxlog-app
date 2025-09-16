@@ -9,7 +9,7 @@ import { PanelLeftClose, Bell, Plus, Search } from 'lucide-react'
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { primaryNavigation } from '@/config/navigation/config'
-import { colors, rounded, animations, spacing, icons, typography, layout } from '@/config/theme'
+import { colors, rounded, animations, spacing, icons, typography, layout, ghost, gridGap } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
@@ -21,8 +21,8 @@ import { UserMenu } from './user-menu'
 
 
 
-const { xs } = layout.heights.header
-const { sm, lg } = icons.size
+const { xs: _xs } = layout.heights.header
+const { sm: _sm, lg: _lg } = icons.size
 // テーマから統一的に取得
 const { xs: headerHeight } = layout.heights.header
 const { sm: iconSm, lg: iconLg } = icons.size
@@ -78,19 +78,18 @@ export const DesktopSidebar = () => {
       <div className="flex-1 flex flex-col">
         {/* Top Section: Account & Actions */}
         <div className={cn(
-          'flex items-center justify-between',
-          spacing.margin.top.sm,
-          headerHeight, // 32px height
-          spacing.padding.horizontal.sm // 8px horizontal padding
+          'flex items-center justify-between mt-2 px-2',
+          headerHeight // 32px height
         )}>
           {/* Left: Close Panel Button */}
           <div className="flex items-center mr-4">
             <button
+              type="button"
               onClick={() => toggleSidebar()}
               className={cn(
-                spacing.size.button.sm,
-                'flex items-center justify-center',
-                colors.hover.subtle,
+                layout.heights.button.sm,
+                'w-8 flex items-center justify-center',
+                ghost.hover,
                 rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
@@ -101,13 +100,14 @@ export const DesktopSidebar = () => {
           </div>
           
           {/* Right: Action Buttons */}
-          <div className={cn('flex items-center', spacing.gap.xs)}>
+          <div className={cn('flex items-center', gridGap.tight)}>
             {/* Search Button */}
             <button
+              type="button"
               className={cn(
-                spacing.size.button.sm,
-                'flex items-center justify-center',
-                colors.hover.subtle,
+                layout.heights.button.sm,
+                'w-8 flex items-center justify-center',
+                ghost.hover,
                 rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
@@ -118,11 +118,12 @@ export const DesktopSidebar = () => {
             
             {/* Notification Button */}
             <button
+              type="button"
               onClick={openNotifications}
               className={cn(
-                spacing.size.button.sm,
+                layout.heights.button.sm,
                 'flex items-center justify-center relative',
-                colors.hover.subtle,
+                ghost.hover,
                 rounded.component.button.sm,
                 animations.transition.fast,
                 'flex-shrink-0'
@@ -136,7 +137,7 @@ export const DesktopSidebar = () => {
                   colors.semantic.error.bg,
                   colors.text.onError,
                   typography.body.xs,
-                  'flex items-center justify-center',
+                  'w-8 flex items-center justify-center',
                   rounded.component.badge.pill
                 )}>
                   {notificationCount}
@@ -146,14 +147,15 @@ export const DesktopSidebar = () => {
             
             {/* Create Button - PC only, rightmost position */}
             <button
+              type="button"
               onClick={() => openCreateInspector({
                 context: {
                   source: 'sidebar'
                 }
               })}
               className={cn(
-                spacing.size.button.sm,
-                'flex items-center justify-center',
+                layout.heights.button.sm,
+                'w-8 flex items-center justify-center',
                 colors.primary.DEFAULT,
                 colors.primary.hover,
                 colors.text.onPrimary,
@@ -198,10 +200,10 @@ export const DesktopSidebar = () => {
               ) : (
                 section.id === 'smart-folders' && (
                   <div className={cn(spacing.padding.sm)}>
-                    <button className={cn(
+                    <button type="button" className={cn(
                       'w-full flex items-center',
-                      spacing.gap.xs,
-                      colors.hover.subtle,
+                      gridGap.tight,
+                      ghost.hover,
                       rounded.component.button.sm,
                       animations.transition.fast,
                       spacing.padding.sm,
@@ -239,8 +241,8 @@ export const DesktopSidebar = () => {
           <UserMenu>
             <div className={cn(
               "flex items-center cursor-pointer w-full",
-              colors.hover.subtle,
-              spacing.gap.sm, // 8px gap
+              ghost.hover,
+              gridGap.default, // 8px gap
               rounded.component.button.md,
               animations.transition.fast,
               spacing.padding.sm, // 全方向8px
@@ -306,9 +308,17 @@ export const DesktopSidebar = () => {
       {/* Border Hover & Resize Area */}
       <div
         onMouseDown={handleMouseDown}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+          }
+        }}
         className={cn(
           'absolute -right-1 top-0 w-3 h-full cursor-ew-resize group'
         )}
+        role="button"
+        tabIndex={0}
+        aria-label="サイドバーの幅を調整"
       >
         {/* Visual Color Change - 1px width */}
         <div className={cn(

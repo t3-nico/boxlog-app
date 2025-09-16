@@ -364,7 +364,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                 <AIBranch>
                   <AIBranchMessages>
                     <BoxLogAIResponse>
-                      Hi! I'm **Claude**, your AI assistant. I can help you with:
+                      Hi! I&apos;m **Claude**, your AI assistant. I can help you with:
                       
                       • **Task planning and organization**
                       • **Answering questions**  
@@ -374,9 +374,9 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                       What would you like to know?
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      Welcome to **BoxLog**! I'm Claude, your AI assistant. 
+                      Welcome to **BoxLog**! I&apos;m Claude, your AI assistant. 
                       
-                      I'm here to help you:
+                      I&apos;m here to help you:
                       
                       • **Organize your tasks** and projects
                       • **Answer any questions** you might have
@@ -386,7 +386,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                       How can I assist you today?
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      Hello! I'm **Claude**, ready to help you with BoxLog.
+                      Hello! I&apos;m **Claude**, ready to help you with BoxLog.
                       
                       My capabilities include:
                       

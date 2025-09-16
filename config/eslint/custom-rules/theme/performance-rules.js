@@ -37,7 +37,7 @@ module.exports = {
       ];
 
       let isInRenderFunction = false;
-      let _currentFunctionName = '';
+      const _currentFunctionName = '';
 
       return {
         FunctionDeclaration(node) {

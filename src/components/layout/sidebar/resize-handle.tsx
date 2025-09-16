@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { animations } from '@/config/theme'
+import { animations, primary } from '@/config/theme'
 import { border } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
@@ -37,15 +37,23 @@ export const ResizeHandle = () => {
   return (
     <div
       onMouseDown={handleMouseDown}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+        }
+      }}
       className={cn(
         'w-1 h-full cursor-ew-resize flex-shrink-0',
         border.universal,
-        'hover:bg-blue-600 dark:hover:bg-blue-400',
+        primary.hover,
         animations.transition.fast
       )}
       style={{ 
         minWidth: '4px'
       }}
+      role="button"
+      tabIndex={0}
+      aria-label="サイドバーの幅を調整"
     />
   )
 }
