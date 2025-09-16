@@ -31,15 +31,15 @@ const NotificationSettings = () => {
       pushNotifications: false,
       browserNotifications: true,
       weeklyDigest: true,
-      systemNotifications: true
+      systemNotifications: true,
     },
     onSave: async (values) => {
       // 通知設定API呼び出しシミュレーション
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
       console.log('Saving notification settings:', values)
     },
     successMessage: '通知設定を保存しました',
-    debounceMs: 800
+    debounceMs: 800,
   })
 
   return (
@@ -47,33 +47,33 @@ const NotificationSettings = () => {
       {/* タブナビゲーション */}
       <div className="flex items-center gap-4">
         <button
+          type="button"
           onClick={() => setActiveTab('list')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'list'
               ? `${colors.primary.light} ${colors.primary.text}`
               : `${colors.text.secondary} hover:${colors.text.primary}`
           }`}
         >
-          <BellRing className="w-4 h-4" />
+          <BellRing className="h-4 w-4" />
           お知らせ一覧
         </button>
         <button
+          type="button"
           onClick={() => setActiveTab('settings')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'settings'
               ? `${colors.primary.light} ${colors.primary.text}`
               : `${colors.text.secondary} hover:${colors.text.primary}`
           }`}
         >
-          <SettingsIcon className="w-4 h-4" />
+          <SettingsIcon className="h-4 w-4" />
           通知設定
         </button>
       </div>
 
       {/* コンテンツエリア */}
-      {activeTab === 'list' && (
-        <NotificationsList />
-      )}
+      {activeTab === 'list' && <NotificationsList />}
 
       {activeTab === 'settings' && (
         <div className={spacing.stackGap.lg}>
@@ -81,7 +81,7 @@ const NotificationSettings = () => {
           <SettingsCard
             title={
               <div className="flex items-center gap-2">
-                <Bell className="w-5 h-5" />
+                <Bell className="h-5 w-5" />
                 <span>通知配信設定</span>
               </div>
             }
@@ -136,7 +136,7 @@ const NotificationSettings = () => {
           </SettingsCard>
 
           {/* ヒント情報 */}
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+          <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/30">
             <p className={`text-sm text-blue-800 dark:text-blue-200 ${typography.body.sm}`}>
               💡 ヒント: ブラウザ通知を有効にするには、ブラウザの設定で通知を許可してください。
             </p>

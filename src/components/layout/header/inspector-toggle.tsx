@@ -1,17 +1,10 @@
 'use client'
 
-import React from 'react'
-
 import { PanelRightOpen } from 'lucide-react'
 
 import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from '@/components/shadcn-ui/tooltip'
-import { componentRadius, animations, layout, icon } from '@/config/theme'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
+import { animations, componentRadius, icon, layout } from '@/config/theme'
 import { ghost, secondary } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
@@ -29,16 +22,19 @@ export const InspectorToggle = () => {
 
   return (
     <TooltipProvider>
-      <div className={cn(
-        'flex items-center justify-end',
-        compact // 40px height
-      )}>
+      <div
+        className={cn(
+          'flex items-center justify-end',
+          compact // 40px height
+        )}
+      >
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
+              type="button"
               onClick={() => toggleInspector()}
               className={cn(
-                'w-8 h-8 flex items-center justify-center',
+                'flex h-8 w-8 items-center justify-center',
                 componentRadius.button.sm,
                 animations.transition.fast,
                 ghost.text,

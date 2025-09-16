@@ -16,17 +16,8 @@ interface CalendarViewPageProps {
 
 // 有効なビュータイプかチェック
 function isValidViewType(view: string): view is CalendarViewType {
-  const validTypes: CalendarViewType[] = [
-    'day',
-    'split-day', 
-    '3day',
-    'week',
-    'week-no-weekend',
-    '2week',
-    'month',
-    'schedule'
-  ]
-  
+  const validTypes: CalendarViewType[] = ['day', 'split-day', '3day', 'week', 'week-no-weekend', '2week', 'month']
+
   return validTypes.includes(view as CalendarViewType)
 }
 
@@ -48,12 +39,7 @@ const CalendarViewPage = ({ params, searchParams }: CalendarViewPageProps) => {
     }
   }
 
-  return (
-    <CalendarController 
-      initialViewType={view}
-      initialDate={initialDate}
-    />
-  )
+  return <CalendarController initialViewType={view} initialDate={initialDate} />
 }
 
 export default CalendarViewPage

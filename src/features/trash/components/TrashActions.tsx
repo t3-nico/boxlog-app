@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import { colors, typography, spacing, icons, rounded } from '@/config/theme'
+import { colors, icons, rounded, spacing, typography } from '@/config/theme'
 
 import { useTrashStore } from '../stores/useTrashStore'
 
@@ -19,7 +19,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
     deselectAll,
     getFilteredItems,
     getExpiredItems,
-    getStats
+    getStats,
   } = useTrashStore()
 
   const [showConfirmDialog, setShowConfirmDialog] = useState<{
@@ -46,7 +46,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
         } catch (error) {
           console.error('Restore failed:', error)
         }
-      }
+      },
     })
   }
 
@@ -63,7 +63,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
         } catch (error) {
           console.error('Delete failed:', error)
         }
-      }
+      },
     })
   }
 
@@ -80,7 +80,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
         } catch (error) {
           console.error('Empty trash failed:', error)
         }
-      }
+      },
     })
   }
 
@@ -97,22 +97,24 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
         } catch (error) {
           console.error('Clear expired failed:', error)
         }
-      }
+      },
     })
   }
 
   return (
     <>
-      <div className={`${colors.background.surface} border border-neutral-200 dark:border-neutral-800 ${rounded.lg} ${spacing.cardVariants.default} ${className}`}>
+      <div
+        className={`${colors.background.surface} border border-neutral-200 dark:border-neutral-800 ${rounded.lg} ${spacing.cardVariants.default} ${className}`}
+      >
         {/* 統計情報 */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4 ${typography.body.small} ${colors.text.muted}">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="${typography.body.small} ${colors.text.muted} flex items-center space-x-4">
             <span>
-              総数: <span className="font-medium ${colors.text.primary}">{stats.totalItems}件</span>
+              総数: <span className="${colors.text.primary} font-medium">{stats.totalItems}件</span>
             </span>
             {selectedCount > 0 && (
               <span>
-                選択: <span className="font-medium ${colors.semantic.info.text}">{selectedCount}件</span>
+                選択: <span className="${colors.semantic.info.text} font-medium">{selectedCount}件</span>
               </span>
             )}
             {expiredItems.length > 0 && (
@@ -125,6 +127,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
           {/* 選択解除 */}
           {selectedCount > 0 && (
             <button
+              type="button"
               onClick={deselectAll}
               className={`${typography.body.small} ${colors.text.muted} ${colors.ghost.hover}`}
             >
@@ -134,9 +137,10 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
         </div>
 
         {/* アクションボタン */}
-        <div className="flex flex-wrap ${spacing.gridGap.tight}">
+        <div className="${spacing.gridGap.tight} flex flex-wrap">
           {/* 復元ボタン */}
           <button
+            type="button"
             onClick={handleRestore}
             disabled={selectedCount === 0 || loading}
             className={`px-4 py-2 ${colors.button.primary} ${typography.body.small} font-medium ${rounded.md} ${colors.state.disabled.opacity} transition-colors`}
@@ -146,6 +150,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
 
           {/* 完全削除ボタン */}
           <button
+            type="button"
             onClick={handlePermanentDelete}
             disabled={selectedCount === 0 || loading}
             className={`px-4 py-2 ${colors.button.danger} ${typography.body.small} font-medium ${rounded.md} ${colors.state.disabled.opacity} transition-colors`}
@@ -156,6 +161,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
           {/* 期限切れ削除ボタン */}
           {expiredItems.length > 0 && (
             <button
+              type="button"
               onClick={handleClearExpired}
               disabled={loading}
               className={`px-4 py-2 ${colors.semantic.warning.DEFAULT} hover:brightness-90 disabled:brightness-50 ${colors.text.white} ${typography.body.small} font-medium ${rounded.md} transition-colors`}
@@ -166,6 +172,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
 
           {/* ゴミ箱を空にする */}
           <button
+            type="button"
             onClick={handleEmptyTrash}
             disabled={stats.totalItems === 0 || loading}
             className={`px-4 py-2 ${colors.button.secondary} ${typography.body.small} font-medium ${rounded.md} ${colors.state.disabled.opacity} transition-colors`}
@@ -176,11 +183,11 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
 
         {/* 警告メッセージ */}
         {expiredItems.length > 0 && (
-          <div className="mt-3 ${spacing.cardVariants.default} ${colors.semantic.warning.light} ${colors.semantic.warning.border} ${rounded.md}">
+          <div className="${spacing.cardVariants.default} ${colors.semantic.warning.light} ${colors.semantic.warning.border} ${rounded.md} mt-3">
             <div className="flex items-start">
-              <div className="text-orange-400 mr-2">⚠️</div>
+              <div className="mr-2 text-orange-400">⚠️</div>
               <div>
-                <div className="${typography.body.small} font-medium ${colors.semantic.warning.text}">
+                <div className="${typography.body.small} ${colors.semantic.warning.text} font-medium">
                   {expiredItems.length}件のアイテムが保持期限を過ぎています
                 </div>
                 <div className="${typography.body.small} ${colors.semantic.warning.text} mt-1">
@@ -194,27 +201,25 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
 
       {/* 確認ダイアログ */}
       {showConfirmDialog && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="${colors.background.surface} ${rounded.lg} p-6 max-w-md w-full mx-4 shadow-xl">
-            <div className="flex items-start mb-4">
-              <div className="text-2xl mr-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="${colors.background.surface} ${rounded.lg} mx-4 w-full max-w-md p-6 shadow-xl">
+            <div className="mb-4 flex items-start">
+              <div className="mr-3 text-2xl">
                 {showConfirmDialog.action === 'restore' && '🔄'}
                 {showConfirmDialog.action === 'delete' && '🗑️'}
                 {showConfirmDialog.action === 'empty' && '🗑️'}
                 {showConfirmDialog.action === 'clearExpired' && '⏰'}
               </div>
               <div>
-                <h3 className="${typography.heading.h4} font-semibold ${colors.text.primary}">
+                <h3 className="${typography.heading.h4} ${colors.text.primary} font-semibold">
                   {showConfirmDialog.action === 'restore' && '復元の確認'}
                   {showConfirmDialog.action === 'delete' && '完全削除の確認'}
                   {showConfirmDialog.action === 'empty' && 'ゴミ箱を空にする'}
                   {showConfirmDialog.action === 'clearExpired' && '期限切れアイテムの削除'}
                 </h3>
-                <p className="${typography.body.small} ${colors.text.muted} mt-2">
-                  {showConfirmDialog.message}
-                </p>
-                {(showConfirmDialog.action === 'delete' || 
-                  showConfirmDialog.action === 'empty' || 
+                <p className="${typography.body.small} ${colors.text.muted} mt-2">{showConfirmDialog.message}</p>
+                {(showConfirmDialog.action === 'delete' ||
+                  showConfirmDialog.action === 'empty' ||
                   showConfirmDialog.action === 'clearExpired') && (
                   <p className="${typography.body.small} ${colors.semantic.error.text} mt-2 font-medium">
                     この操作は元に戻せません。
@@ -225,6 +230,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
 
             <div className="flex justify-end space-x-3">
               <button
+                type="button"
                 onClick={() => setShowConfirmDialog(null)}
                 disabled={loading}
                 className={`px-4 py-2 ${typography.body.small} font-medium ${colors.button.outline} transition-colors`}
@@ -232,18 +238,32 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
                 キャンセル
               </button>
               <button
+                type="button"
                 onClick={showConfirmDialog.onConfirm}
                 disabled={loading}
                 className={`px-4 py-2 ${typography.body.small} font-medium ${colors.text.white} ${rounded.md} transition-colors ${colors.state.disabled.opacity} ${
-                  showConfirmDialog.action === 'restore'
-                    ? colors.button.primary
-                    : colors.button.danger
+                  showConfirmDialog.action === 'restore' ? colors.button.primary : colors.button.danger
                 }`}
               >
                 {loading && (
-                  <svg className={`${icons.animation.spin} ${icons.size.sm} ${colors.text.white} inline`} fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className={`${icons.animation.spin} ${icons.size.sm} ${colors.text.white} inline`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                 )}
                 {showConfirmDialog.action === 'restore' && '復元する'}

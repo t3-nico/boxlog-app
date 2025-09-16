@@ -1,6 +1,6 @@
 'use client'
 
-import { colors, typography, spacing, rounded } from '@/config/theme'
+import { colors, rounded, spacing, typography } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
 import { TrashView } from '@/features/trash/components/TrashView'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
@@ -17,6 +17,7 @@ const TrashPage = () => {
       actions={
         stats.totalItems > 0 && (
           <button
+            type="button"
             onClick={emptyTrash}
             className={`${spacing.padding.md} ${typography.body.sm} ${typography.weight.medium} ${colors.text.white} ${colors.background.danger} ${colors.hover.danger} ${rounded.component.button.lg} ${colors.transition.colors}`}
           >

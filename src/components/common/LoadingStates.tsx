@@ -9,9 +9,8 @@ import React from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
-import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
+import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
-
 
 // === 型定義 ===
 
@@ -47,25 +46,21 @@ export interface LoadingButtonProps {
 
 // === スピナーコンポーネント ===
 
-export const LoadingSpinner = ({ 
-  size = 'md', 
-  className = '', 
-  'aria-label': ariaLabel = 'Loading...' 
+export const LoadingSpinner = ({
+  size = 'md',
+  className = '',
+  'aria-label': ariaLabel = 'Loading...',
 }: LoadingSpinnerProps) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6',
     lg: 'h-8 w-8',
-    xl: 'h-12 w-12'
+    xl: 'h-12 w-12',
   }
 
   return (
     <Loader2
-      className={cn(
-        `animate-spin ${colors.text.muted}`,
-        sizeClasses[size],
-        className
-      )}
+      className={cn(`animate-spin ${colors.text.muted}`, sizeClasses[size], className)}
       aria-label={ariaLabel}
       role="status"
     />
@@ -74,25 +69,21 @@ export const LoadingSpinner = ({
 
 // === リフレッシュスピナー ===
 
-export const RefreshSpinner = ({ 
-  size = 'md', 
-  className = '', 
-  'aria-label': ariaLabel = 'Refreshing...' 
+export const RefreshSpinner = ({
+  size = 'md',
+  className = '',
+  'aria-label': ariaLabel = 'Refreshing...',
 }: LoadingSpinnerProps) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-6 w-6',
     lg: 'h-8 w-8',
-    xl: 'h-12 w-12'
+    xl: 'h-12 w-12',
   }
 
   return (
     <RefreshCw
-      className={cn(
-        `animate-spin ${colors.semantic.info.text}`,
-        sizeClasses[size],
-        className
-      )}
+      className={cn(`animate-spin ${colors.semantic.info.text}`, sizeClasses[size], className)}
       aria-label={ariaLabel}
       role="status"
     />
@@ -101,25 +92,23 @@ export const RefreshSpinner = ({
 
 // === ローディングオーバーレイ ===
 
-export const LoadingOverlay = ({ 
-  isLoading, 
-  children, 
-  message = '読み込み中...', 
+export const LoadingOverlay = ({
+  isLoading,
+  children,
+  message = '読み込み中...',
   className = '',
-  spinnerSize = 'md'
+  spinnerSize = 'md',
 }: LoadingOverlayProps) => {
   return (
     <div className={cn('relative', className)}>
       {children}
       {isLoading && (
-        <div className={`absolute inset-0 ${colors.background.base}/80 backdrop-blur-sm flex items-center justify-center z-50`}>
+        <div
+          className={`absolute inset-0 ${colors.background.base}/80 z-50 flex items-center justify-center backdrop-blur-sm`}
+        >
           <div className={`flex flex-col items-center ${spacing.stack.sm}`}>
             <LoadingSpinner size={spinnerSize} />
-            {message && (
-              <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>
-                {message}
-              </p>
-            )}
+            {message && <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>{message}</p>}
           </div>
         </div>
       )}
@@ -129,62 +118,55 @@ export const LoadingOverlay = ({
 
 // === ローディングカード ===
 
-export const LoadingCard = ({ 
-  title = '読み込み中', 
-  message = 'データを読み込んでいます...', 
-  className = '' 
+export const LoadingCard = ({
+  title = '読み込み中',
+  message = 'データを読み込んでいます...',
+  className = '',
 }: LoadingCardProps) => {
   return (
-    <div className={cn(
-      `flex flex-col items-center justify-center ${spacing.padding.xl} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
-      className
-    )}>
+    <div
+      className={cn(
+        `flex flex-col items-center justify-center ${spacing.padding.xl} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
+        className
+      )}
+    >
       <LoadingSpinner size="lg" className={spacing.margin.md} />
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>
-        {title}
-      </h3>
-      <p className={`${colors.text.secondary} text-center max-w-sm`}>
-        {message}
-      </p>
+      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>{title}</h3>
+      <p className={`${colors.text.secondary} max-w-sm text-center`}>{message}</p>
     </div>
   )
 }
 
 // === ローディングボタン ===
 
-export const LoadingButton = ({ 
-  isLoading, 
-  children, 
-  loadingText, 
+export const LoadingButton = ({
+  isLoading,
+  children,
+  loadingText,
   className = '',
   disabled = false,
   onClick,
-  variant = 'default'
+  variant = 'default',
 }: LoadingButtonProps) => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
-  
+  const baseClasses =
+    'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
+
   const variantClasses = {
     default: 'bg-primary text-primary-foreground hover:bg-primary/90',
     outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-    ghost: 'hover:bg-accent hover:text-accent-foreground'
+    ghost: 'hover:bg-accent hover:text-accent-foreground',
   }
 
   const sizeClasses = 'h-10 px-4 py-2'
 
   return (
     <button
-      className={cn(
-        baseClasses,
-        variantClasses[variant],
-        sizeClasses,
-        className
-      )}
+      type="button"
+      className={cn(baseClasses, variantClasses[variant], sizeClasses, className)}
       disabled={isLoading || disabled}
       onClick={onClick}
     >
-      {isLoading && (
-        <LoadingSpinner size="sm" className="mr-2" />
-      )}
+      {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
       {isLoading && loadingText ? loadingText : children}
     </button>
   )
@@ -198,12 +180,7 @@ export interface SkeletonProps {
 
 export const Skeleton = ({ className = '' }: SkeletonProps) => {
   return (
-    <div
-      className={cn(
-        `animate-pulse ${rounded.component.input.text} ${colors.background.elevated}`,
-        className
-      )}
-    />
+    <div className={cn(`animate-pulse ${rounded.component.input.text} ${colors.background.elevated}`, className)} />
   )
 }
 
@@ -238,25 +215,19 @@ export interface SkeletonCardProps {
   className?: string
 }
 
-export const SkeletonCard = ({ 
-  showAvatar = false, 
-  showImage = false, 
-  className = '' 
-}: SkeletonCardProps) => {
+export const SkeletonCard = ({ showAvatar = false, showImage = false, className = '' }: SkeletonCardProps) => {
   return (
-    <div className={cn(
-      `${spacing.padding.md} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
-      className
-    )}>
-      {showImage && (
-        <Skeleton className={`w-full h-40 ${spacing.margin.md}`} />
+    <div
+      className={cn(
+        `${spacing.padding.md} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
+        className
       )}
-      
+    >
+      {showImage && <Skeleton className={`h-40 w-full ${spacing.margin.md}`} />}
+
       <div className={`flex items-start ${spacing.stack.sm}`}>
-        {showAvatar && (
-          <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
-        )}
-        
+        {showAvatar && <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" />}
+
         <div className={`flex-1 ${spacing.stack.sm}`}>
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
@@ -292,11 +263,11 @@ export const DataLoading = ({
   loadingComponent,
   errorComponent,
   emptyComponent,
-  className = ''
+  className = '',
 }: DataLoadingProps) => {
   if (isLoading) {
     return (
-      <div className={cn(`flex justify-center items-center ${spacing.padding.xl}`, className)}>
+      <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
         {loadingComponent || <LoadingSpinner size="lg" />}
       </div>
     )
@@ -304,12 +275,13 @@ export const DataLoading = ({
 
   if (isError) {
     return (
-      <div className={cn(`flex justify-center items-center ${spacing.padding.xl}`, className)}>
+      <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
         {errorComponent || (
           <div className="text-center">
             <p className={`${colors.semantic.error.text} ${spacing.margin.sm}`}>データの読み込みに失敗しました</p>
-            <button 
-              onClick={() => window.location.reload()} 
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
               className={`${colors.semantic.info.text} hover:underline`}
             >
               再試行
@@ -322,10 +294,8 @@ export const DataLoading = ({
 
   if (isEmpty) {
     return (
-      <div className={cn(`flex justify-center items-center ${spacing.padding.xl}`, className)}>
-        {emptyComponent || (
-          <p className={colors.text.muted}>データがありません</p>
-        )}
+      <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
+        {emptyComponent || <p className={colors.text.muted}>データがありません</p>}
       </div>
     )
   }
@@ -338,11 +308,8 @@ export const DataLoading = ({
 export const PresetLoadings = {
   // ページローディング
   Page: () => (
-    <div className="min-h-screen flex items-center justify-center">
-      <LoadingCard 
-        title="ページを読み込み中"
-        message="しばらくお待ちください..."
-      />
+    <div className="flex min-h-screen items-center justify-center">
+      <LoadingCard title="ページを読み込み中" message="しばらくお待ちください..." />
     </div>
   ),
 
@@ -386,7 +353,7 @@ export const PresetLoadings = {
       </div>
       <Skeleton className="h-10 w-24" />
     </div>
-  )
+  ),
 }
 
 const LoadingStates = {
@@ -398,7 +365,7 @@ const LoadingStates = {
   SkeletonText,
   SkeletonCard,
   DataLoading,
-  PresetLoadings
+  PresetLoadings,
 }
 
 export default LoadingStates

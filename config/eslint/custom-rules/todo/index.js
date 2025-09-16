@@ -1,6 +1,6 @@
 /**
  * BoxLog TODO/FIXME Structured Comments ESLint Plugin
- * 
+ *
  * TODO/FIXMEコメントの構造化と管理を強制するカスタムルール
  */
 
@@ -12,7 +12,7 @@ module.exports = {
         docs: {
           description: 'TODO/FIXMEコメントの構造化を強制',
           category: 'Code Quality',
-          recommended: true
+          recommended: true,
         },
         fixable: 'code',
         schema: [
@@ -21,58 +21,59 @@ module.exports = {
             properties: {
               requireIssueId: {
                 type: 'boolean',
-                default: true
+                default: true,
               },
               requireDate: {
-                type: 'boolean', 
-                default: true
+                type: 'boolean',
+                default: true,
               },
               requireAssignee: {
                 type: 'boolean',
-                default: false
+                default: false,
               },
               maxAge: {
                 type: 'integer',
-                default: 90
+                default: 90,
               },
               allowedPrefixes: {
                 type: 'array',
                 items: { type: 'string' },
-                default: ['TODO', 'FIXME', 'HACK', 'NOTE', 'BUG']
-              }
+                default: ['TODO', 'FIXME', 'HACK', 'NOTE', 'BUG'],
+              },
             },
-            additionalProperties: false
-          }
+            additionalProperties: false,
+          },
         ],
         messages: {
-          invalidFormat: 'TODO/FIXMEは構造化してください: // {{prefix}} [{{issueFormat}}] ({{dateFormat}}){{assigneeFormat}}: 説明',
+          invalidFormat:
+            'TODO/FIXMEは構造化してください: // {{prefix}} [{{issueFormat}}] ({{dateFormat}}){{assigneeFormat}}: 説明',
           missingIssueId: 'TODO/FIXMEにはIssue IDが必要です',
           missingDate: 'TODO/FIXMEには期限日が必要です',
           invalidDate: '日付形式が無効です。YYYY-MM-DD形式で入力してください',
           expiredTodo: 'このTODOは期限切れです（{{days}}日経過）',
           missingDescription: 'TODO/FIXMEには説明が必要です',
-          tooVague: 'TODO/FIXMEの説明が曖昧すぎます。具体的な内容を記述してください'
-        }
+          tooVague: 'TODO/FIXMEの説明が曖昧すぎます。具体的な内容を記述してください',
+        },
       },
 
       create(context) {
-        const options = context.options[0] || {};
+        const options = context.options[0] || {}
         const {
           requireIssueId = true,
           requireDate = true,
           requireAssignee = false,
           maxAge = 90,
-          allowedPrefixes = ['TODO', 'FIXME', 'HACK', 'NOTE', 'BUG']
-        } = options;
+          allowedPrefixes = ['TODO', 'FIXME', 'HACK', 'NOTE', 'BUG'],
+        } = options
 
         // 構造化フォーマットの正規表現
         const structuredRegex = new RegExp(
           `^\\s*(${allowedPrefixes.join('|')})\\s*` +
-          `(?:\\[([A-Z]+-\\d+)\\])?\\s*` +
-          `(?:\\((\\d{4}-\\d{2}-\\d{2})\\))?\\s*` +
-          `(?:@([\\w-]+))?\\s*:?\\s*(.*)$`,
+            `(?:\\[([A-Z]+-\\d+)\\])?\\s*` +
+            `(?:\\((\\d{4}-\\d{2}-\\d{2})\\))?\\s*` +
+            `(?:@([\\w-]+))?\\s*:?\\s*(.*)$`,
           'i'
-        );
+        )
 
         // 曖昧な説明をチェック
         const vaguePhrases = [
@@ -83,52 +84,50 @@ module.exports = {
           'improve',
           'refactor',
           'cleanup',
-          'update'
-        ];
+          'update',
+        ]
 
         function validateDate(dateStr) {
-          if (!dateStr) return null;
-          const date = new Date(dateStr);
-          if (isNaN(date.getTime())) return false;
-          return date;
+          if (!dateStr) return null
+          const date = new Date(dateStr)
+          if (isNaN(date.getTime())) return false
+          return date
         }
 
         function getDaysFromToday(date) {
-          const today = new Date();
-          const diffTime = today - date;
-          return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          const today = new Date()
+          const diffTime = today - date
+          return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
         }
 
         function generateStructuredComment(prefix, comment, issueId, date, assignee) {
-          const today = new Date().toISOString().split('T')[0];
+          const today = new Date().toISOString().split('T')[0]
           const parts = [
             prefix,
             issueId ? `[${issueId}]` : '[ISSUE-XXX]',
             date ? `(${date})` : `(${today})`,
-            assignee ? `@${assignee}` : (requireAssignee ? '@assignee' : ''),
-            ':'
-          ].filter(Boolean);
-          
-          return `// ${parts.join(' ')} ${comment || '説明を追加してください'}`;
+            assignee ? `@${assignee}` : requireAssignee ? '@assignee' : '',
+            ':',
+          ].filter(Boolean)
+
+          return `// ${parts.join(' ')} ${comment || '説明を追加してください'}`
         }
 
         return {
           Program() {
-            const sourceCode = context.getSourceCode();
-            const comments = sourceCode.getAllComments();
+            const sourceCode = context.getSourceCode()
+            const comments = sourceCode.getAllComments()
 
-            comments.forEach(comment => {
-              const text = comment.value.trim();
-              
+            comments.forEach((comment) => {
+              const text = comment.value.trim()
+
               // TODO/FIXME等のキーワードが含まれているかチェック
-              const hasKeyword = allowedPrefixes.some(prefix => 
-                new RegExp(`\\b${prefix}\\b`, 'i').test(text)
-              );
+              const hasKeyword = allowedPrefixes.some((prefix) => new RegExp(`\\b${prefix}\\b`, 'i').test(text))
 
-              if (!hasKeyword) return;
+              if (!hasKeyword) return
 
-              const match = structuredRegex.exec(text);
-              
+              const match = structuredRegex.exec(text)
+
               if (!match) {
                 // 構造化されていない場合
                 context.report({
@@ -138,55 +137,53 @@ module.exports = {
                     prefix: 'TODO',
                     issueFormat: 'ISSUE-123',
                     dateFormat: '2024-12-31',
-                    assigneeFormat: requireAssignee ? ' @assignee' : ''
+                    assigneeFormat: requireAssignee ? ' @assignee' : '',
                   },
                   fix(fixer) {
-                    const prefix = allowedPrefixes.find(p => 
-                      new RegExp(`\\b${p}\\b`, 'i').test(text)
-                    ) || 'TODO';
-                    
+                    const prefix = allowedPrefixes.find((p) => new RegExp(`\\b${p}\\b`, 'i').test(text)) || 'TODO'
+
                     const cleanText = text
                       .replace(new RegExp(`\\b(${allowedPrefixes.join('|')})\\b:?\\s*`, 'i'), '')
-                      .trim();
-                    
-                    const structured = generateStructuredComment(prefix, cleanText);
-                    return fixer.replaceText(comment, `/*${structured.slice(2)}*/`);
-                  }
-                });
-                return;
+                      .trim()
+
+                    const structured = generateStructuredComment(prefix, cleanText)
+                    return fixer.replaceText(comment, `/*${structured.slice(2)}*/`)
+                  },
+                })
+                return
               }
 
-              const [, prefix, issueId, date, assignee, description] = match;
+              const [, _prefix, issueId, date, _assignee, description] = match
 
               // Issue ID チェック
               if (requireIssueId && !issueId) {
                 context.report({
                   loc: comment.loc,
-                  messageId: 'missingIssueId'
-                });
+                  messageId: 'missingIssueId',
+                })
               }
 
               // 日付チェック
               if (requireDate && !date) {
                 context.report({
                   loc: comment.loc,
-                  messageId: 'missingDate'
-                });
+                  messageId: 'missingDate',
+                })
               } else if (date) {
-                const parsedDate = validateDate(date);
+                const parsedDate = validateDate(date)
                 if (parsedDate === false) {
                   context.report({
                     loc: comment.loc,
-                    messageId: 'invalidDate'
-                  });
+                    messageId: 'invalidDate',
+                  })
                 } else if (parsedDate && maxAge > 0) {
-                  const daysOld = getDaysFromToday(parsedDate);
+                  const daysOld = getDaysFromToday(parsedDate)
                   if (daysOld > maxAge) {
                     context.report({
                       loc: comment.loc,
                       messageId: 'expiredTodo',
-                      data: { days: daysOld.toString() }
-                    });
+                      data: { days: daysOld.toString() },
+                    })
                   }
                 }
               }
@@ -195,31 +192,30 @@ module.exports = {
               if (!description || description.trim().length === 0) {
                 context.report({
                   loc: comment.loc,
-                  messageId: 'missingDescription'
-                });
+                  messageId: 'missingDescription',
+                })
               } else if (description.trim().length < 10) {
                 context.report({
                   loc: comment.loc,
-                  messageId: 'tooVague'
-                });
+                  messageId: 'tooVague',
+                })
               } else {
                 // 曖昧な説明のチェック
-                const isVague = vaguePhrases.some(phrase => 
-                  description.toLowerCase().includes(phrase) && 
-                  description.trim().length < 30
-                );
-                
+                const isVague = vaguePhrases.some(
+                  (phrase) => description.toLowerCase().includes(phrase) && description.trim().length < 30
+                )
+
                 if (isVague) {
                   context.report({
                     loc: comment.loc,
-                    messageId: 'tooVague'
-                  });
+                    messageId: 'tooVague',
+                  })
                 }
               }
-            });
-          }
-        };
-      }
+            })
+          },
+        }
+      },
     },
 
     'no-orphaned-todos': {
@@ -228,7 +224,7 @@ module.exports = {
         docs: {
           description: '孤立したTODO（対応するIssueが存在しない）を検出',
           category: 'Code Quality',
-          recommended: true
+          recommended: true,
         },
         schema: [
           {
@@ -237,58 +233,58 @@ module.exports = {
               issueTracker: {
                 type: 'string',
                 enum: ['github', 'jira', 'linear', 'notion'],
-                default: 'github'
+                default: 'github',
               },
               validateIssues: {
                 type: 'boolean',
-                default: false
-              }
-            }
-          }
+                default: false,
+              },
+            },
+          },
         ],
         messages: {
           orphanedTodo: 'Issue ID {{issueId}} が見つかりません。有効なIssue IDを使用してください',
-          invalidIssueFormat: 'Issue ID の形式が無効です（{{tracker}}の形式に従ってください）'
-        }
+          invalidIssueFormat: 'Issue ID の形式が無効です（{{tracker}}の形式に従ってください）',
+        },
       },
 
       create(context) {
-        const options = context.options[0] || {};
-        const { issueTracker = 'github' } = options;
+        const options = context.options[0] || {}
+        const { issueTracker = 'github' } = options
 
         const issueFormats = {
           github: /^(GH-\d+|#\d+|[A-Z]+-\d+)$/,
           jira: /^[A-Z]+-\d+$/,
           linear: /^[A-Z]+-\d+$/,
-          notion: /^[A-F0-9-]{36}$/
-        };
+          notion: /^[A-F0-9-]{36}$/,
+        }
 
-        const formatRegex = issueFormats[issueTracker];
+        const formatRegex = issueFormats[issueTracker]
 
         return {
           Program() {
-            const sourceCode = context.getSourceCode();
-            const comments = sourceCode.getAllComments();
+            const sourceCode = context.getSourceCode()
+            const comments = sourceCode.getAllComments()
 
-            comments.forEach(comment => {
-              const text = comment.value.trim();
-              const match = /\[([^\]]+)\]/.exec(text);
-              
+            comments.forEach((comment) => {
+              const text = comment.value.trim()
+              const match = /\[([^\]]+)\]/.exec(text)
+
               if (match) {
-                const issueId = match[1];
-                
+                const issueId = match[1]
+
                 if (!formatRegex.test(issueId)) {
                   context.report({
                     loc: comment.loc,
                     messageId: 'invalidIssueFormat',
-                    data: { tracker: issueTracker }
-                  });
+                    data: { tracker: issueTracker },
+                  })
                 }
               }
-            });
-          }
-        };
-      }
+            })
+          },
+        }
+      },
     },
 
     'todo-complexity': {
@@ -297,7 +293,7 @@ module.exports = {
         docs: {
           description: 'TODO/FIXMEの複雑さと優先度を管理',
           category: 'Code Quality',
-          recommended: true
+          recommended: true,
         },
         schema: [
           {
@@ -305,81 +301,82 @@ module.exports = {
             properties: {
               maxTodosPerFile: {
                 type: 'integer',
-                default: 5
+                default: 5,
               },
               requirePriority: {
                 type: 'boolean',
-                default: false
+                default: false,
               },
               allowedPriorities: {
                 type: 'array',
                 items: { type: 'string' },
-                default: ['P0', 'P1', 'P2', 'P3', 'LOW', 'HIGH', 'CRITICAL']
-              }
-            }
-          }
+                default: ['P0', 'P1', 'P2', 'P3', 'LOW', 'HIGH', 'CRITICAL'],
+              },
+            },
+          },
         ],
         messages: {
-          tooManyTodos: 'このファイルにはTODO/FIXMEが多すぎます（{{count}}/{{max}}）。リファクタリングを検討してください',
+          tooManyTodos:
+            'このファイルにはTODO/FIXMEが多すぎます（{{count}}/{{max}}）。リファクタリングを検討してください',
           missingPriority: 'TODO/FIXMEには優先度が必要です（例: P1, HIGH, CRITICAL）',
-          invalidPriority: '無効な優先度です。使用可能: {{priorities}}'
-        }
+          invalidPriority: '無効な優先度です。使用可能: {{priorities}}',
+        },
       },
 
       create(context) {
-        const options = context.options[0] || {};
+        const options = context.options[0] || {}
         const {
           maxTodosPerFile = 5,
           requirePriority = false,
-          allowedPriorities = ['P0', 'P1', 'P2', 'P3', 'LOW', 'HIGH', 'CRITICAL']
-        } = options;
+          allowedPriorities = ['P0', 'P1', 'P2', 'P3', 'LOW', 'HIGH', 'CRITICAL'],
+        } = options
 
-        let todoCount = 0;
+        let todoCount = 0
 
         return {
           Program() {
-            const sourceCode = context.getSourceCode();
-            const comments = sourceCode.getAllComments();
-            const todoComments = [];
+            const sourceCode = context.getSourceCode()
+            const comments = sourceCode.getAllComments()
+            const todoComments = []
 
-            comments.forEach(comment => {
-              const text = comment.value.trim();
+            comments.forEach((comment) => {
+              const text = comment.value.trim()
               if (/\b(TODO|FIXME|HACK|BUG)\b/i.test(text)) {
-                todoCount++;
-                todoComments.push(comment);
+                todoCount++
+                todoComments.push(comment)
 
                 if (requirePriority) {
-                  const hasPriority = allowedPriorities.some(priority => 
+                  const hasPriority = allowedPriorities.some((priority) =>
                     new RegExp(`\\b${priority}\\b`, 'i').test(text)
-                  );
+                  )
 
                   if (!hasPriority) {
                     context.report({
                       loc: comment.loc,
-                      messageId: 'missingPriority'
-                    });
+                      messageId: 'missingPriority',
+                    })
                   }
                 }
               }
-            });
+            })
 
             if (todoCount > maxTodosPerFile) {
-              const firstTodo = todoComments[0];
+              const firstTodo = todoComments[0]
               if (firstTodo) {
                 context.report({
                   loc: firstTodo.loc,
                   messageId: 'tooManyTodos',
                   data: {
                     count: todoCount.toString(),
-                    max: maxTodosPerFile.toString()
-                  }
-                });
+                    max: maxTodosPerFile.toString(),
+                  },
+                })
               }
             }
-          }
-        };
-      }
-    }
+          },
+        }
+      },
+    },
   },
 
   configs: {
@@ -388,23 +385,29 @@ module.exports = {
       rules: {
         'boxlog-todo/structured-todo': 'warn',
         'boxlog-todo/no-orphaned-todos': 'warn',
-        'boxlog-todo/todo-complexity': 'warn'
-      }
+        'boxlog-todo/todo-complexity': 'warn',
+      },
     },
     strict: {
       plugins: ['boxlog-todo'],
       rules: {
-        'boxlog-todo/structured-todo': ['error', {
-          requireIssueId: true,
-          requireDate: true,
-          maxAge: 60
-        }],
+        'boxlog-todo/structured-todo': [
+          'error',
+          {
+            requireIssueId: true,
+            requireDate: true,
+            maxAge: 60,
+          },
+        ],
         'boxlog-todo/no-orphaned-todos': 'error',
-        'boxlog-todo/todo-complexity': ['error', {
-          maxTodosPerFile: 3,
-          requirePriority: true
-        }]
-      }
-    }
-  }
-};
+        'boxlog-todo/todo-complexity': [
+          'error',
+          {
+            maxTodosPerFile: 3,
+            requirePriority: true,
+          },
+        ],
+      },
+    },
+  },
+}

@@ -12,38 +12,37 @@ export const borders = {
    * 通常の境界線
    * @usage カード、セクション区切り
    */
-  default: 'border border-neutral-200 dark:border-neutral-800',
-  
+  DEFAULT: 'border border-neutral-200 dark:border-neutral-800',
+
   /**
    * ホバー時
    * @usage インタラクティブ要素
    */
   hover: 'hover:border-neutral-300 dark:hover:border-neutral-700',
-  
+
   /**
    * アクティブ/選択
    * @usage 選択されたアイテム
    */
   active: 'border-blue-500 dark:border-blue-400',
-  
+
   /**
    * フォーカス
    * @usage フォーカス時
    */
   focus: 'ring-2 ring-blue-500 ring-offset-2',
-  
+
   /**
    * エラー
    * @usage バリデーションエラー
    */
   error: 'border-red-500 dark:border-red-400',
-  
+
   /**
    * 成功
    * @usage 成功状態
    */
   success: 'border-green-500 dark:border-green-400',
-  
 }
 
 // ============================================
@@ -56,25 +55,25 @@ export const elevation = {
    * @usage 通常のカード、常設UI
    */
   none: '',
-  
+
   /**
    * 小（ほぼ使わない）
    * @usage 微妙な階層差
    */
   sm: 'shadow-sm',
-  
+
   /**
    * 中
    * @usage ドロップダウン、ポップオーバー
    */
   md: 'shadow-md border border-neutral-200 dark:border-neutral-700',
-  
+
   /**
    * 大
    * @usage モーダル、ダイアログ
    */
   lg: 'shadow-lg',
-  
+
   /**
    * 特大
    * @usage 最前面のオーバーレイ
@@ -91,12 +90,12 @@ export const patterns = {
    * 常設UI（影なし）
    */
   card: {
-    default: borders.default,
+    default: borders.DEFAULT,
   },
-  sidebar: borders.default,
-  input: borders.default,
-  button: borders.default,
-  
+  sidebar: borders.DEFAULT,
+  input: borders.DEFAULT,
+  button: borders.DEFAULT,
+
   /**
    * 一時的UI（影あり）
    */
@@ -106,21 +105,21 @@ export const patterns = {
   contextMenu: elevation.md,
   popover: elevation.md,
   dialog: elevation.xl,
-  
+
   /**
    * ホバー（影なし→境界線変化）
    */
   cardHover: `${borders.default} ${borders.hover}`,
   inputHover: `${borders.default} ${borders.hover}`,
   buttonHover: `${borders.default} ${borders.hover}`,
-  
+
   /**
    * 選択状態（影なし→色変化）
    */
   cardActive: `${borders.active} bg-blue-50 dark:bg-blue-900/10`,
   inputActive: `${borders.active}`,
   buttonActive: `${borders.active}`,
-  
+
   /**
    * 状態表示
    */
@@ -142,7 +141,7 @@ export const elevationGuide = {
     temporary: '影あり（階層明確化）',
     minimal: '必要最小限の定義',
   },
-  
+
   // 使い分け
   usage: {
     permanent: {
@@ -158,7 +157,7 @@ export const elevationGuide = {
       reason: '階層を明確に表現',
     },
   },
-  
+
   // 他サービス比較
   comparison: {
     flatDesign: ['Linear', 'Vercel'],
@@ -166,7 +165,7 @@ export const elevationGuide = {
     shadowHeavy: ['Notion', 'Google Material'],
     boxlogChoice: 'hybrid',
   },
-  
+
   // 実装ガイド
   implementation: {
     常設UI: 'borders.default + hover効果',
@@ -232,10 +231,11 @@ export function getInputClasses(state: {
 /**
  * 一時的UIのエレベーションを取得
  */
-export function getTemporaryUIElevation(component: 'dropdown' | 'modal' | 'tooltip' | 'contextMenu' | 'popover' | 'dialog'): string {
+export function getTemporaryUIElevation(
+  component: 'dropdown' | 'modal' | 'tooltip' | 'contextMenu' | 'popover' | 'dialog'
+): string {
   return patterns[component]
 }
-
 
 // ============================================
 // 型定義
@@ -266,7 +266,7 @@ export type ComponentState = 'default' | 'hover' | 'active' | 'focus' | 'error' 
  *     </div>
  *   )
  * }
- * 
+ *
  * // ドロップダウン（影あり）
  * function Dropdown() {
  *   return (
@@ -278,7 +278,7 @@ export type ComponentState = 'default' | 'hover' | 'active' | 'focus' | 'error' 
  *     </div>
  *   )
  * }
- * 
+ *
  * // モーダル（影あり）
  * function Modal() {
  *   return (
@@ -292,11 +292,11 @@ export type ComponentState = 'default' | 'hover' | 'active' | 'focus' | 'error' 
  *     </div>
  *   )
  * }
- * 
+ *
  * // 入力欄（状態管理）
  * function Input({ error, success, ...props }) {
  *   return (
- *     <input 
+ *     <input
  *       className={getInputClasses({
  *         isError: error,
  *         isSuccess: success
@@ -305,23 +305,23 @@ export type ComponentState = 'default' | 'hover' | 'active' | 'focus' | 'error' 
  *     />
  *   )
  * }
- * 
+ *
  * // 条件付きエレベーション
  * function Card({ isPermanent, level = 'md' }) {
  *   const elevationClass = getElevation(
  *     isPermanent ? 'permanent' : 'temporary',
  *     level
  *   )
- *   
+ *
  *   return (
  *     <div className={`p-4 rounded-lg ${elevationClass}`}>
  *       コンテンツ
  *     </div>
  *   )
  * }
- * 
+ *
  * // 実際のBoxLogコンポーネント例
- * function BoxLogCard({ 
+ * function BoxLogCard({
  *   children,
  *   isSelected = false,
  *   hasError = false,
@@ -329,7 +329,7 @@ export type ComponentState = 'default' | 'hover' | 'active' | 'focus' | 'error' 
  *   className = ""
  * }) {
  *   return (
- *     <div 
+ *     <div
  *       className={`
  *         p-6 rounded-lg
  *         ${getCardClasses({
