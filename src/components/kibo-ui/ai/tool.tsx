@@ -1,48 +1,29 @@
-'use client';
+'use client'
 
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react'
 
-import {
-  CheckCircleIcon,
-  ChevronDownIcon,
-  CircleIcon,
-  ClockIcon,
-  WrenchIcon,
-  XCircleIcon,
-} from 'lucide-react';
+import { CheckCircleIcon, ChevronDownIcon, CircleIcon, ClockIcon, WrenchIcon, XCircleIcon } from 'lucide-react'
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/kibo-ui/collapsible';
-import { Badge } from '@/components/shadcn-ui/badge';
-import { colors } from '@/config/theme';
-import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo-ui/collapsible'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { colors } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
-
-export type AIToolStatus = 'pending' | 'running' | 'completed' | 'error';
+export type AIToolStatus = 'pending' | 'running' | 'completed' | 'error'
 
 export type AIToolProps = ComponentProps<typeof Collapsible> & {
-  status?: AIToolStatus;
-};
+  status?: AIToolStatus
+}
 
-export const AITool = ({
-  className,
-  status = 'pending',
-  ...props
-}: AIToolProps) => (
-  <Collapsible
-    className={cn('not-prose mb-4 w-full rounded-md border', className)}
-    {...props}
-  />
-);
+export const AITool = ({ className, status: _status = 'pending', ...props }: AIToolProps) => (
+  <Collapsible className={cn('not-prose mb-4 w-full rounded-md border', className)} {...props} />
+)
 
 export type AIToolHeaderProps = ComponentProps<typeof CollapsibleTrigger> & {
-  status?: AIToolStatus;
-  name: string;
-  description?: string;
-};
+  status?: AIToolStatus
+  name: string
+  description?: string
+}
 
 const getStatusBadge = (status: AIToolStatus) => {
   const labels = {
@@ -50,106 +31,82 @@ const getStatusBadge = (status: AIToolStatus) => {
     running: 'Running',
     completed: 'Completed',
     error: 'Error',
-  } as const;
+  } as const
 
   const icons = {
     pending: <CircleIcon className="size-4" />,
     running: <ClockIcon className="size-4 animate-pulse" />,
     completed: <CheckCircleIcon className={`size-4 ${colors.semantic.success.DEFAULT}`} />,
     error: <XCircleIcon className={`size-4 ${colors.semantic.error.DEFAULT}`} />,
-  } as const;
+  } as const
 
   return (
     <Badge className="rounded-full text-xs" variant="secondary">
       {icons[status]}
       {labels[status]}
     </Badge>
-  );
-};
+  )
+}
 
 export const AIToolHeader = ({
   className,
   status = 'pending',
   name,
-  description,
+  description: _description,
   ...props
 }: AIToolHeaderProps) => (
-  <CollapsibleTrigger
-    className={cn(
-      'flex w-full items-center justify-between gap-4 p-3',
-      className
-    )}
-    {...props}
-  >
+  <CollapsibleTrigger className={cn('flex w-full items-center justify-between gap-4 p-3', className)} {...props}>
     <div className="flex items-center gap-2">
-      <WrenchIcon className="size-4 text-muted-foreground" />
-      <span className="font-medium text-sm">{name}</span>
+      <WrenchIcon className="text-muted-foreground size-4" />
+      <span className="text-sm font-medium">{name}</span>
       {getStatusBadge(status)}
     </div>
-    <ChevronDownIcon className="size-4 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+    <ChevronDownIcon className="text-muted-foreground size-4 transition-transform group-data-[state=open]:rotate-180" />
   </CollapsibleTrigger>
-);
+)
 
-export type AIToolContentProps = ComponentProps<typeof CollapsibleContent>;
+export type AIToolContentProps = ComponentProps<typeof CollapsibleContent>
 
 export const AIToolContent = ({ className, ...props }: AIToolContentProps) => (
-  <CollapsibleContent
-    className={cn('grid gap-4 overflow-hidden border-t p-4 text-sm', className)}
-    {...props}
-  />
-);
+  <CollapsibleContent className={cn('grid gap-4 overflow-hidden border-t p-4 text-sm', className)} {...props} />
+)
 
 export type AIToolParametersProps = ComponentProps<'div'> & {
-  parameters: Record<string, unknown>;
-};
+  parameters: Record<string, unknown>
+}
 
-export const AIToolParameters = ({
-  className,
-  parameters,
-  ...props
-}: AIToolParametersProps) => (
+export const AIToolParameters = ({ className, parameters, ...props }: AIToolParametersProps) => (
   <div className={cn('space-y-2', className)} {...props}>
-    <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-      Parameters
-    </h4>
-    <div className="rounded-md bg-muted/50 p-3">
-      <pre className="overflow-x-auto text-muted-foreground text-xs">
-        {JSON.stringify(parameters, null, 2)}
-      </pre>
+    <h4 className="text-muted-foreground text-xs font-medium uppercase tracking-wide">Parameters</h4>
+    <div className="bg-muted/50 rounded-md p-3">
+      <pre className="text-muted-foreground overflow-x-auto text-xs">{JSON.stringify(parameters, null, 2)}</pre>
     </div>
   </div>
-);
+)
 
 export type AIToolResultProps = ComponentProps<'div'> & {
-  result?: ReactNode;
-  error?: string;
-};
+  result?: ReactNode
+  error?: string
+}
 
-export const AIToolResult = ({
-  className,
-  result,
-  error,
-  ...props
-}: AIToolResultProps) => {
+export const AIToolResult = ({ className, result, error, ...props }: AIToolResultProps) => {
   if (!(result || error)) {
-    return null;
+    return null
   }
 
   return (
     <div className={cn('space-y-2', className)} {...props}>
-      <h4 className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
+      <h4 className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
         {error ? 'Error' : 'Result'}
       </h4>
       <div
         className={cn(
           'overflow-x-auto rounded-md p-3 text-xs',
-          error
-            ? 'bg-destructive/10 text-destructive'
-            : 'bg-muted/50 text-foreground'
+          error ? 'bg-destructive/10 text-destructive' : 'bg-muted/50 text-foreground'
         )}
       >
         {error ? <div>{error}</div> : <div>{result}</div>}
       </div>
     </div>
-  );
-};
+  )
+}

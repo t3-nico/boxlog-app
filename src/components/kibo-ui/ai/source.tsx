@@ -1,38 +1,23 @@
-'use client';
+'use client'
 
-import type { ComponentProps } from 'react';
+import type { ComponentProps } from 'react'
 
-import { BookIcon, ChevronDownIcon } from 'lucide-react';
+import { BookIcon, ChevronDownIcon } from 'lucide-react'
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/kibo-ui/collapsible';
-import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo-ui/collapsible'
+import { cn } from '@/lib/utils'
 
-
-export type AISourcesProps = ComponentProps<'div'>;
+export type AISourcesProps = ComponentProps<'div'>
 
 export const AISources = ({ className, ...props }: AISourcesProps) => (
-  <Collapsible
-    className={cn('not-prose mb-4 text-primary text-xs', className)}
-    {...props}
-  />
-);
+  <Collapsible className={cn('not-prose text-primary mb-4 text-xs', className)} {...props} />
+)
 
-export type AISourcesTriggerProps = ComponentProps<
-  typeof CollapsibleTrigger
-> & {
-  count: number;
-};
+export type AISourcesTriggerProps = ComponentProps<typeof CollapsibleTrigger> & {
+  count: number
+}
 
-export const AISourcesTrigger = ({
-  className,
-  count,
-  children,
-  ...props
-}: AISourcesTriggerProps) => (
+export const AISourcesTrigger = ({ className: _className, count, children, ...props }: AISourcesTriggerProps) => (
   <CollapsibleTrigger className="flex items-center gap-2" {...props}>
     {children ?? (
       <>
@@ -41,35 +26,18 @@ export const AISourcesTrigger = ({
       </>
     )}
   </CollapsibleTrigger>
-);
+)
 
-export type AISourcesContentProps = ComponentProps<typeof CollapsibleContent>;
+export type AISourcesContentProps = ComponentProps<typeof CollapsibleContent>
 
-export const AISourcesContent = ({
-  className,
-  ...props
-}: AISourcesContentProps) => (
-  <CollapsibleContent
-    className={cn('mt-3 flex flex-col gap-2', className)}
-    {...props}
-  />
-);
+export const AISourcesContent = ({ className, ...props }: AISourcesContentProps) => (
+  <CollapsibleContent className={cn('mt-3 flex flex-col gap-2', className)} {...props} />
+)
 
-export type AISourceProps = ComponentProps<'a'>;
+export type AISourceProps = ComponentProps<'a'>
 
-export const AISource = ({
-  href,
-  title,
-  children,
-  ...props
-}: AISourceProps) => (
-  <a
-    className="flex items-center gap-2"
-    href={href}
-    rel="noreferrer"
-    target="_blank"
-    {...props}
-  >
+export const AISource = ({ href, title, children, ...props }: AISourceProps) => (
+  <a className="flex items-center gap-2" href={href} rel="noreferrer" target="_blank" {...props}>
     {children ?? (
       <>
         <BookIcon className="h-4 w-4" />
@@ -77,4 +45,4 @@ export const AISource = ({
       </>
     )}
   </a>
-);
+)
