@@ -61,7 +61,7 @@ function getPercentage(current, max) {
 /**
  * サイズチェック結果の表示
  */
-function displaySizeCheck(name, current, limit, isError = false) {
+function displaySizeCheck(name, current, limit, _isError = false) {
   const percentage = getPercentage(current, limit)
   const isWarning = current > limit * BUNDLE_LIMITS.warningThreshold
   const isOverLimit = current > limit

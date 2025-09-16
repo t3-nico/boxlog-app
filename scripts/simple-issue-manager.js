@@ -110,7 +110,7 @@ function getLastCommit() {
 }
 
 function startSession(title, options = {}) {
-  const config = loadConfig()
+  const _config = loadConfig()
 
   // 既存セッションをチェック
   const existingSession = loadSession()

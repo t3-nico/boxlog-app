@@ -11,6 +11,7 @@
 **重要: このリポジトリ内でドキュメントを直接管理しています。**
 
 プロジェクトのドキュメントは以下の場所に配置されています：
+
 - **開発ドキュメント**: `docs/` ディレクトリ
 - **コンポーネントガイド**: `src/components/` の各ディレクトリ
 - **型定義・API**: TypeScript定義ファイル
@@ -40,6 +41,7 @@ npm run typecheck
 ### 🔐 1Password連携
 
 BoxLogでは機密情報管理に1Password Developer Securityを使用：
+
 - **セットアップ**: `docs/1PASSWORD_SETUP.md` を参照
 - **環境変数**: `.env.local` で1Password参照形式を使用
 - **フォールバック**: 緊急時は `npm run dev:fallback` で従来通り実行可能
@@ -65,12 +67,14 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 ## 🎯 開発ワークフロー
 
 ### ブランチ戦略
+
 - **dev**: 開発・統合ブランチ（メイン作業）
 - **main**: 本番環境ブランチ
-- **feature/***: 機能開発ブランチ
-- **fix/***: バグ修正ブランチ
+- **feature/\***: 機能開発ブランチ
+- **fix/\***: バグ修正ブランチ
 
 ### 重要なルール
+
 1. **コミット前に `npm run lint` を必ず実行**
 2. **新しいコンポーネントはライト・ダークモード両方をテスト**
 3. **8pxグリッドシステムに準拠**
@@ -81,14 +85,152 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 ## 📋 開発時の指針
 
 ### Claude Code 使用時
+
 - **コンポーネント実装**: shadcn/ui → kiboUI → カスタム の順で検討
 - **デザインシステム**: `/src/config/theme` の統一トークンを使用
 - **型安全**: TypeScript を厳密に使用
 
 ### ドキュメント更新
+
 1. **開発ドキュメント**: `docs/` ディレクトリで管理
 2. **コンポーネント**: インラインコメントとJSDoc
 3. **変更追跡**: コミットメッセージで修正内容を明記
+
+## 📋 Issue管理ルール（絶対遵守）
+
+### 🎯 基本方針
+
+**すべての新しい作業はIssueで管理してください。これは絶対のルールです。**
+
+> 「新しい動きをする場合は基本はissueに入れてそこで進捗管理をするって感じにしたい。これを絶対のルールにする。」
+
+### 📝 Issue化が必要な作業
+
+- ✅ **新機能の実装** - すべての機能追加
+- ✅ **バグ修正** - 不具合対応
+- ✅ **リファクタリング** - コード改善
+- ✅ **ドキュメント更新** - 仕様書・README更新
+- ✅ **設定変更** - CI/CD・環境設定
+- ✅ **依存関係更新** - ライブラリアップデート
+- ✅ **パフォーマンス改善** - 最適化作業
+
+### 🚀 Issue作成手順
+
+```bash
+# 1. 新しい作業開始
+npm run issue:start "機能名: 実装内容"
+
+# 2. 進捗更新
+npm run issue:progress "作業内容の詳細"
+
+# 3. 完了報告
+npm run issue:complete "完了内容とテスト結果"
+```
+
+### 🏷️ Issue管理システム
+
+| 機能                             | ステータス | 説明                             |
+| -------------------------------- | ---------- | -------------------------------- |
+| **Issue Manager + テンプレート** | ✅ 対応済  | Claude Code作業進捗をIssue化     |
+| **作業ログ自動化**               | ✅ 完璧    | 4種類のテンプレート + 自動化     |
+| **ステータス管理**               | ✅ 完璧    | ready→in-progress→review→blocked |
+| **詳細追跡**                     | ✅ 完璧    | Issue Timeline + Commit History  |
+| **週次レポート**                 | ✅ 完璧    | Weekly Progress Report           |
+
+### 📊 Issue分類・ラベル
+
+#### 優先度ラベル
+
+- `priority:critical` - 緊急対応必須
+- `priority:high` - 高優先度
+- `priority:medium` - 中優先度（デフォルト）
+- `priority:low` - 低優先度
+
+#### 作業種別ラベル
+
+- `type:feature` - 新機能
+- `type:bugfix` - バグ修正
+- `type:refactor` - リファクタリング
+- `type:docs` - ドキュメント
+- `type:chore` - 雑務・設定
+
+#### サイズ見積もり
+
+- `size:xs` - 1時間未満
+- `size:sm` - 1-4時間
+- `size:md` - 4-8時間
+- `size:lg` - 1-2日
+- `size:xl` - 2日以上
+
+### 📈 週次Progress Report
+
+毎週自動生成される作業サマリー：
+
+- 完了したIssue数・時間
+- 進行中のIssue状況
+- ブロック要因の分析
+- 次週の計画
+
+### 🎯 2年後の追跡可能性
+
+すべてのIssueに以下が記録：
+
+- **開始時刻**: 作業開始タイムスタンプ
+- **ブランチ情報**: 使用ブランチ名
+- **コミット履歴**: 関連するすべてのコミット
+- **進捗ログ**: 詳細な作業内容
+- **完了報告**: 成果物とテスト結果
+
+### 🌿 ブランチ戦略
+
+**Issue管理は細かく行いますが、ブランチは柔軟に運用します。**
+
+#### 基本方針
+
+- ✅ **Issue = 細かく管理** - すべての作業をIssue化
+- ✅ **ブランチ = 自由運用** - 必要に応じて適切な粒度で作成
+- ✅ **Issue ≠ ブランチ** - 1つのブランチで複数Issueに対応可能
+
+#### ブランチ作成の判断基準
+
+```bash
+# ✅ ブランチを作る場合
+- 大きな機能追加（複数日の作業）
+- 実験的な実装
+- 複数人で作業する機能
+- リスクの高い変更
+
+# ✅ ブランチを作らない場合
+- 小さなバグ修正
+- ドキュメント更新
+- 設定ファイルの調整
+- 軽微なリファクタリング
+```
+
+#### Issue-Branch関係の例
+
+```
+feature/user-auth ブランチ
+├── Issue #123: ログイン画面UI実装
+├── Issue #124: 認証API連携
+├── Issue #125: エラーハンドリング追加
+└── Issue #126: テストケース作成
+
+main/dev ブランチ直接
+├── Issue #127: README更新
+├── Issue #128: ESLint設定調整
+└── Issue #129: タイポ修正
+```
+
+### ⚠️ 重要な注意事項
+
+1. **例外は認めません** - どんな小さな作業でもIssue化
+2. **作業前にIssue作成** - コードを書く前に必ずIssue作成
+3. **適切なラベル付与** - 優先度・種別・サイズを必ず設定
+4. **進捗の定期更新** - 作業中は進捗を随時更新
+5. **完了時の詳細報告** - 成果物とテスト結果を必ず記載
+6. **ブランチは柔軟運用** - Issue数に比例してブランチを作る必要はない
+7. **ブランチ操作禁止** - Claude Codeはブランチを操作しない（ユーザー管理）
 
 ## 🔗 重要なリンク
 
@@ -96,10 +238,12 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - **コンポーネント**: `/src/components/`
 - **開発ドキュメント**: `/docs/`
 - **TypeScript設定**: `tsconfig.json`
+- **Issue管理スクリプト**: `/scripts/simple-issue-manager.js`
 
 ## 🎨 デザインシステム（Theme）の厳守
 
 ### 必須要件
+
 BoxLogでは統一されたデザインシステムを採用しています。
 **すべてのスタイリングは `/src/config/theme` を使用してください。**
 
@@ -129,13 +273,9 @@ BoxLogでは統一されたデザインシステムを採用しています。
 import { colors, typography, spacing, borders, rounded, animations } from '@/config/theme'
 
 // ✅ themeの値を使用
-<div className={colors.background.base}>
-  <h1 className={typography.heading.h1}>
-    タイトル
-  </h1>
-  <button className={`${colors.primary.DEFAULT} ${spacing.button.md} ${rounded.component.button.md}`}>
-    ボタン
-  </button>
+;<div className={colors.background.base}>
+  <h1 className={typography.heading.h1}>タイトル</h1>
+  <button className={`${colors.primary.DEFAULT} ${spacing.button.md} ${rounded.component.button.md}`}>ボタン</button>
 </div>
 ```
 
@@ -153,6 +293,7 @@ import { colors, typography, spacing, borders, rounded, animations } from '@/con
 ### 🔍 実装前の確認事項
 
 1. **themeに定義があるか確認**
+
    ```bash
    # 例：青色を使いたい場合
    # colors.tsを確認 → primary.DEFAULT がある → これを使う
@@ -181,6 +322,7 @@ import { colors, typography, spacing, borders, rounded, animations } from '@/con
 ### 🚨 レビュー基準
 
 PRレビュー時、以下があれば修正を要求：
+
 - Tailwindクラスの直接指定
 - 色コード（#FFFFFFなど）の直接指定
 - `dark:` プレフィックスの使用
@@ -240,7 +382,7 @@ taskHelpers.test.ts
 
 // ❌ 避ける命名
 TaskList.spec.tsx
-test/TaskList.tsx
+test / TaskList.tsx
 ```
 
 ### テスト実行コマンド
@@ -259,16 +401,18 @@ npm run test:coverage
 ## 📱 レスポンシブデザイン実装ガイド
 
 ### 🎯 基本方針
+
 BoxLogはデスクトップ優先のアプリケーションですが、タブレット・モバイルでも快適に使用できる必要があります。
 
 ### 📐 ブレークポイント（必須使用）
+
 ```tsx
 // src/config/theme/layout.ts から必ずインポート
 import { breakpoints } from '@/config/theme/layout'
 
 // 統一ブレークポイント
 // sm: 640px   - スマートフォン横向き
-// md: 768px   - タブレット縦向き  
+// md: 768px   - タブレット縦向き
 // lg: 1024px  - タブレット横向き・小型PC
 // xl: 1280px  - デスクトップ
 // 2xl: 1536px - 大型デスクトップ
@@ -290,6 +434,7 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ### 📋 実装アプローチ（機能に応じて選択）
 
 #### A. デスクトップ重視の画面（管理画面、ダッシュボード等）
+
 ```tsx
 // デスクトップを基準に設計し、小画面で段階的に調整
 <div className="grid grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1">
@@ -305,6 +450,7 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ```
 
 #### B. コンテンツ中心の画面（記事、プロフィール等）
+
 ```tsx
 // モバイルでも読みやすさを重視
 <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -314,20 +460,27 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ```
 
 #### C. インタラクティブな画面（カレンダー、ボード等）
+
 ```tsx
 // デバイスに応じて異なるUIを提供
-{/* デスクトップ：フル機能 */}
-<div className="hidden lg:block">
+{
+  /* デスクトップ：フル機能 */
+}
+;<div className="hidden lg:block">
   <FullCalendarView />
 </div>
 
-{/* タブレット：簡易版 */}
-<div className="hidden md:block lg:hidden">
+{
+  /* タブレット：簡易版 */
+}
+;<div className="hidden md:block lg:hidden">
   <CompactCalendarView />
 </div>
 
-{/* モバイル：リスト形式 */}
-<div className="block md:hidden">
+{
+  /* モバイル：リスト形式 */
+}
+;<div className="block md:hidden">
   <MobileListView />
 </div>
 ```
@@ -335,6 +488,7 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ### 🛠️ 実装パターン集
 
 #### 1. レイアウトの切り替え
+
 ```tsx
 // フレックスボックスの方向転換
 <div className="flex flex-col lg:flex-row gap-4">
@@ -348,6 +502,7 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ```
 
 #### 2. 表示/非表示の制御
+
 ```tsx
 // プログレッシブエンハンスメント
 <aside className="hidden lg:block">
@@ -364,16 +519,16 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ```
 
 #### 3. スペーシングの調整
+
 ```tsx
 // デバイスサイズに応じた余白
 <section className="py-8 md:py-12 lg:py-16">
-  <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
-    {/* 画面が大きくなるにつれて余白も増加 */}
-  </div>
+  <div className="px-4 sm:px-6 lg:px-8 xl:px-12">{/* 画面が大きくなるにつれて余白も増加 */}</div>
 </section>
 ```
 
 #### 4. タッチ対応の考慮
+
 ```tsx
 // モバイルでのタッチターゲット最小44px確保
 <button className="p-2 sm:p-3 min-h-[44px] min-w-[44px]">
@@ -389,6 +544,7 @@ import { layoutPatterns, columns } from '@/config/theme/layout'
 ### 📱 コンポーネント別実装例
 
 #### FloatingActionButton（FAB）レスポンシブ実装
+
 ```tsx
 // レスポンシブ位置調整の実例
 className={cn(
@@ -408,12 +564,13 @@ className={cn(
 // サイズとアイコンもレスポンシブ対応
 const sizeMap = {
   sm: 'w-12 h-12 md:w-14 md:h-14',
-  md: 'w-14 h-14 md:w-16 md:h-16', 
+  md: 'w-14 h-14 md:w-16 md:h-16',
   lg: 'w-16 h-16 md:w-18 md:h-18'
 }
 ```
 
 #### データテーブル
+
 ```tsx
 // アプローチ1: レスポンシブテーブル（優先度列の表示切り替え）
 <table>
@@ -436,20 +593,21 @@ const sizeMap = {
 ```
 
 #### フォーム
+
 ```tsx
 // 入力フィールドの配置最適化
 <form className="space-y-6">
   {/* 2カラムレイアウト（大画面） */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
     <Input label="姓" />
     <Input label="名" />
   </div>
-  
+
   {/* フル幅（全デバイス） */}
   <Input label="メールアドレス" className="w-full" />
-  
+
   {/* ボタングループ */}
-  <div className="flex flex-col sm:flex-row gap-3 sm:justify-end">
+  <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
     <Button variant="secondary" className="w-full sm:w-auto">
       キャンセル
     </Button>
@@ -466,20 +624,20 @@ const sizeMap = {
 // 各画面/コンポーネント実装時に確認
 const responsiveChecklist = {
   layout: {
-    desktop: "1280px以上で最適表示か？",
-    tablet: "768px〜1024pxで使いやすいか？", 
-    mobile: "375px〜640pxで必要機能にアクセス可能か？"
+    desktop: '1280px以上で最適表示か？',
+    tablet: '768px〜1024pxで使いやすいか？',
+    mobile: '375px〜640pxで必要機能にアクセス可能か？',
   },
   interaction: {
-    touch: "タッチターゲットは44px以上か？",
-    hover: "ホバー依存の機能はないか？",
-    scroll: "横スクロールは意図的か？"
+    touch: 'タッチターゲットは44px以上か？',
+    hover: 'ホバー依存の機能はないか？',
+    scroll: '横スクロールは意図的か？',
   },
   performance: {
-    images: "適切なサイズ/フォーマットか？",
-    lazyLoad: "遅延読み込みは設定済みか？",
-    critical: "重要なコンテンツは優先表示か？"
-  }
+    images: '適切なサイズ/フォーマットか？',
+    lazyLoad: '遅延読み込みは設定済みか？',
+    critical: '重要なコンテンツは優先表示か？',
+  },
 }
 ```
 

@@ -2,7 +2,7 @@
 
 /**
  * BoxLog Compliance Report Generator
- * 
+ *
  * 国際規格準拠レポートの自動生成
  * - WCAG 2.1 Level AA
  * - GDPR Compliance
@@ -10,10 +10,10 @@
  * - CCPA Compliance
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('fs')
+const path = require('path')
 
-const { ESLint } = require('eslint');
+const { ESLint } = require('eslint')
 
 // レポート設定
 const REPORT_CONFIG = {
@@ -24,7 +24,7 @@ const REPORT_CONFIG = {
       name: 'WCAG 2.1 Level AA',
       rules: ['jsx-a11y/'],
       severity: 'error',
-      description: 'Web Content Accessibility Guidelines'
+      description: 'Web Content Accessibility Guidelines',
     },
     gdpr: {
       name: 'GDPR Compliance',
@@ -32,10 +32,10 @@ const REPORT_CONFIG = {
         'boxlog-compliance/no-personal-data-logging',
         'boxlog-compliance/require-consent-tracking',
         'boxlog-compliance/secure-data-transmission',
-        'boxlog-compliance/no-third-party-tracking'
+        'boxlog-compliance/no-third-party-tracking',
       ],
       severity: 'error',
-      description: 'EU General Data Protection Regulation'
+      description: 'EU General Data Protection Regulation',
     },
     soc2: {
       name: 'SOC 2 Type II',
@@ -44,10 +44,10 @@ const REPORT_CONFIG = {
         'boxlog-compliance/require-input-validation',
         'boxlog-compliance/require-audit-logging',
         'boxlog-compliance/secure-error-handling',
-        'boxlog-compliance/data-encryption-enforcement'
+        'boxlog-compliance/data-encryption-enforcement',
       ],
       severity: 'error',
-      description: 'Service Organization Control 2'
+      description: 'Service Organization Control 2',
     },
     dataRetention: {
       name: 'Data Retention Policy',
@@ -55,27 +55,27 @@ const REPORT_CONFIG = {
         'boxlog-compliance/enforce-data-retention-limits',
         'boxlog-compliance/require-deletion-mechanism',
         'boxlog-compliance/automated-data-cleanup',
-        'boxlog-compliance/data-anonymization'
+        'boxlog-compliance/data-anonymization',
       ],
       severity: 'warn',
-      description: 'Data Protection and Retention Policies'
-    }
-  }
-};
+      description: 'Data Protection and Retention Policies',
+    },
+  },
+}
 
 class ComplianceReporter {
   constructor() {
     this.eslint = new ESLint({
       configFile: './config/eslint/.eslintrc.compliance.json',
-      useEslintrc: false
-    });
-    
-    this.timestamp = new Date().toISOString();
-    this.reportId = `compliance-${Date.now()}`;
-    
+      useEslintrc: false,
+    })
+
+    this.timestamp = new Date().toISOString()
+    this.reportId = `compliance-${Date.now()}`
+
     // レポート出力ディレクトリの作成
     if (!fs.existsSync(REPORT_CONFIG.outputDir)) {
-      fs.mkdirSync(REPORT_CONFIG.outputDir, { recursive: true });
+      fs.mkdirSync(REPORT_CONFIG.outputDir, { recursive: true })
     }
   }
 
@@ -83,48 +83,47 @@ class ComplianceReporter {
    * ESLintルールの結果をフィルタリング
    */
   filterRules(results, rulePrefix) {
-    const filteredResults = [];
-    
-    results.forEach(result => {
-      const filteredMessages = result.messages.filter(message => {
-        return message.ruleId && message.ruleId.startsWith(rulePrefix);
-      });
-      
+    const filteredResults = []
+
+    results.forEach((result) => {
+      const filteredMessages = result.messages.filter((message) => {
+        return message.ruleId && message.ruleId.startsWith(rulePrefix)
+      })
+
       if (filteredMessages.length > 0) {
         filteredResults.push({
           ...result,
           messages: filteredMessages,
-          errorCount: filteredMessages.filter(m => m.severity === 2).length,
-          warningCount: filteredMessages.filter(m => m.severity === 1).length
-        });
+          errorCount: filteredMessages.filter((m) => m.severity === 2).length,
+          warningCount: filteredMessages.filter((m) => m.severity === 1).length,
+        })
       }
-    });
-    
-    return filteredResults;
+    })
+
+    return filteredResults
   }
 
   /**
    * 規制別のコンプライアンス分析
    */
   analyzeCompliance(results) {
-    const complianceAnalysis = {};
-    
+    const complianceAnalysis = {}
+
     Object.entries(REPORT_CONFIG.regulations).forEach(([key, regulation]) => {
-      const regulationResults = [];
-      
-      regulation.rules.forEach(rulePattern => {
-        const ruleResults = this.filterRules(results, rulePattern);
-        regulationResults.push(...ruleResults);
-      });
-      
-      const totalErrors = regulationResults.reduce((sum, result) => sum + result.errorCount, 0);
-      const totalWarnings = regulationResults.reduce((sum, result) => sum + result.warningCount, 0);
-      const totalFiles = regulationResults.length;
-      const affectedFiles = regulationResults.filter(r => r.errorCount > 0 || r.warningCount > 0).length;
-      
-      const complianceScore = totalFiles > 0 
-        ? Math.max(0, 100 - ((totalErrors * 10 + totalWarnings * 5) / totalFiles))
-        : 100;
+      const regulationResults = []
+
+      regulation.rules.forEach((rulePattern) => {
+        const ruleResults = this.filterRules(results, rulePattern)
+        regulationResults.push(...ruleResults)
+      })
+
+      const totalErrors = regulationResults.reduce((sum, result) => sum + result.errorCount, 0)
+      const totalWarnings = regulationResults.reduce((sum, result) => sum + result.warningCount, 0)
+      const totalFiles = regulationResults.length
+      const affectedFiles = regulationResults.filter((r) => r.errorCount > 0 || r.warningCount > 0).length
+
+      const complianceScore =
+        totalFiles > 0 ? Math.max(0, 100 - (totalErrors * 10 + totalWarnings * 5) / totalFiles) : 100
 
       complianceAnalysis[key] = {
         regulation: regulation.name,
@@ -137,63 +136,63 @@ class ComplianceReporter {
         warningCount: totalWarnings,
         results: regulationResults,
         status: this.getComplianceStatus(totalErrors, totalWarnings),
-        recommendations: this.generateRecommendations(key, totalErrors, totalWarnings)
-      };
-    });
-    
-    return complianceAnalysis;
+        recommendations: this.generateRecommendations(key, totalErrors, totalWarnings),
+      }
+    })
+
+    return complianceAnalysis
   }
 
   /**
    * コンプライアンス状況の判定
    */
   getComplianceStatus(errors, warnings) {
-    if (errors === 0 && warnings === 0) return 'COMPLIANT';
-    if (errors === 0) return 'MINOR_ISSUES';
-    if (errors <= 5) return 'MAJOR_ISSUES';
-    return 'NON_COMPLIANT';
+    if (errors === 0 && warnings === 0) return 'COMPLIANT'
+    if (errors === 0) return 'MINOR_ISSUES'
+    if (errors <= 5) return 'MAJOR_ISSUES'
+    return 'NON_COMPLIANT'
   }
 
   /**
    * 修正推奨事項の生成
    */
   generateRecommendations(regulation, errors, warnings) {
-    const recommendations = [];
-    
+    const recommendations = []
+
     if (regulation === 'gdpr' && errors > 0) {
-      recommendations.push('個人データの処理について法的根拠を確認してください');
-      recommendations.push('データ保護設計原則に従ってコードを見直してください');
+      recommendations.push('個人データの処理について法的根拠を確認してください')
+      recommendations.push('データ保護設計原則に従ってコードを見直してください')
     }
-    
+
     if (regulation === 'soc2' && errors > 0) {
-      recommendations.push('セキュリティ統制の実装を強化してください');
-      recommendations.push('監査ログの記録を確実に行ってください');
+      recommendations.push('セキュリティ統制の実装を強化してください')
+      recommendations.push('監査ログの記録を確実に行ってください')
     }
-    
+
     if (regulation === 'wcag' && (errors > 0 || warnings > 0)) {
-      recommendations.push('アクセシビリティ要件を満たすよう修正してください');
-      recommendations.push('スクリーンリーダー対応を確認してください');
+      recommendations.push('アクセシビリティ要件を満たすよう修正してください')
+      recommendations.push('スクリーンリーダー対応を確認してください')
     }
-    
-    return recommendations;
+
+    return recommendations
   }
 
   /**
    * 総合レポートの生成
    */
   async generateComplianceReport() {
-    console.log('🔍 Compliance audit started...');
-    
+    console.log('🔍 Compliance audit started...')
+
     try {
       // ESLint実行
-      const results = await this.eslint.lintFiles(['src/**/*.{ts,tsx}']);
-      
+      const results = await this.eslint.lintFiles(['src/**/*.{ts,tsx}'])
+
       // 規制別分析
-      const compliance = this.analyzeCompliance(results);
-      
+      const compliance = this.analyzeCompliance(results)
+
       // 総合スコア計算
-      const overallScore = this.calculateOverallScore(compliance);
-      
+      const overallScore = this.calculateOverallScore(compliance)
+
       // レポートデータ構築
       const report = {
         metadata: {
@@ -201,7 +200,7 @@ class ComplianceReporter {
           timestamp: this.timestamp,
           version: '1.0.0',
           auditType: 'International Compliance',
-          regulations: Object.keys(REPORT_CONFIG.regulations)
+          regulations: Object.keys(REPORT_CONFIG.regulations),
         },
         summary: {
           overallCompliant: overallScore.compliant,
@@ -210,25 +209,24 @@ class ComplianceReporter {
           totalErrors: results.reduce((sum, r) => sum + r.errorCount, 0),
           totalWarnings: results.reduce((sum, r) => sum + r.warningCount, 0),
           criticalIssues: overallScore.criticalIssues,
-          status: overallScore.status
+          status: overallScore.status,
         },
         compliance,
         recommendations: this.generateGlobalRecommendations(compliance),
-        nextAuditDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30日後
-      };
-      
+        nextAuditDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30日後
+      }
+
       // レポート出力
-      await this.saveReports(report);
-      
-      console.log('📊 Compliance audit completed');
-      console.log(`📈 Overall Score: ${overallScore.score}/100`);
-      console.log(`📋 Status: ${overallScore.status}`);
-      
-      return report;
-      
+      await this.saveReports(report)
+
+      console.log('📊 Compliance audit completed')
+      console.log(`📈 Overall Score: ${overallScore.score}/100`)
+      console.log(`📋 Status: ${overallScore.status}`)
+
+      return report
     } catch (error) {
-      console.error('❌ Compliance audit failed:', error);
-      throw error;
+      console.error('❌ Compliance audit failed:', error)
+      throw error
     }
   }
 
@@ -236,87 +234,87 @@ class ComplianceReporter {
    * 総合スコア計算
    */
   calculateOverallScore(compliance) {
-    const regulations = Object.values(compliance);
-    const totalScore = regulations.reduce((sum, reg) => sum + reg.score, 0);
-    const averageScore = regulations.length > 0 ? totalScore / regulations.length : 0;
-    
-    const criticalIssues = regulations.filter(reg => reg.errorCount > 0).length;
-    const compliant = regulations.every(reg => reg.compliant);
-    
-    let status = 'COMPLIANT';
+    const regulations = Object.values(compliance)
+    const totalScore = regulations.reduce((sum, reg) => sum + reg.score, 0)
+    const averageScore = regulations.length > 0 ? totalScore / regulations.length : 0
+
+    const criticalIssues = regulations.filter((reg) => reg.errorCount > 0).length
+    const compliant = regulations.every((reg) => reg.compliant)
+
+    let status = 'COMPLIANT'
     if (!compliant) {
-      if (criticalIssues > 2) status = 'NON_COMPLIANT';
-      else if (criticalIssues > 0) status = 'MAJOR_ISSUES';
-      else status = 'MINOR_ISSUES';
+      if (criticalIssues > 2) status = 'NON_COMPLIANT'
+      else if (criticalIssues > 0) status = 'MAJOR_ISSUES'
+      else status = 'MINOR_ISSUES'
     }
-    
+
     return {
       score: Math.round(averageScore),
       compliant,
       criticalIssues,
-      status
-    };
+      status,
+    }
   }
 
   /**
    * グローバル推奨事項生成
    */
   generateGlobalRecommendations(compliance) {
-    const recommendations = [];
-    
+    const recommendations = []
+
     const nonCompliantRegulations = Object.entries(compliance)
       .filter(([_, reg]) => !reg.compliant)
-      .map(([key, _]) => key);
-    
+      .map(([key, _]) => key)
+
     if (nonCompliantRegulations.includes('gdpr')) {
       recommendations.push({
         priority: 'HIGH',
         category: 'Legal Compliance',
-        action: 'GDPR違反の修正を最優先で実施してください'
-      });
+        action: 'GDPR違反の修正を最優先で実施してください',
+      })
     }
-    
+
     if (nonCompliantRegulations.includes('soc2')) {
       recommendations.push({
         priority: 'HIGH',
         category: 'Security',
-        action: 'セキュリティ統制の強化を実施してください'
-      });
+        action: 'セキュリティ統制の強化を実施してください',
+      })
     }
-    
+
     if (nonCompliantRegulations.length === 0) {
       recommendations.push({
         priority: 'LOW',
         category: 'Maintenance',
-        action: '現在のコンプライアンス状態を維持してください'
-      });
+        action: '現在のコンプライアンス状態を維持してください',
+      })
     }
-    
-    return recommendations;
+
+    return recommendations
   }
 
   /**
    * レポート保存
    */
   async saveReports(report) {
-    const baseFilename = `${this.reportId}`;
-    
+    const baseFilename = `${this.reportId}`
+
     // JSON形式
-    const jsonPath = path.join(REPORT_CONFIG.outputDir, `${baseFilename}.json`);
-    fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2));
-    console.log(`💾 JSON report saved: ${jsonPath}`);
-    
+    const jsonPath = path.join(REPORT_CONFIG.outputDir, `${baseFilename}.json`)
+    fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2))
+    console.log(`💾 JSON report saved: ${jsonPath}`)
+
     // HTML形式
-    const htmlPath = path.join(REPORT_CONFIG.outputDir, `${baseFilename}.html`);
-    const htmlContent = this.generateHTMLReport(report);
-    fs.writeFileSync(htmlPath, htmlContent);
-    console.log(`📄 HTML report saved: ${htmlPath}`);
-    
+    const htmlPath = path.join(REPORT_CONFIG.outputDir, `${baseFilename}.html`)
+    const htmlContent = this.generateHTMLReport(report)
+    fs.writeFileSync(htmlPath, htmlContent)
+    console.log(`📄 HTML report saved: ${htmlPath}`)
+
     // CSV形式
-    const csvPath = path.join(REPORT_CONFIG.outputDir, `${baseFilename}.csv`);
-    const csvContent = this.generateCSVReport(report);
-    fs.writeFileSync(csvPath, csvContent);
-    console.log(`📊 CSV report saved: ${csvPath}`);
+    const csvPath = path.join(REPORT_CONFIG.outputDir, `${baseFilename}.csv`)
+    const csvContent = this.generateCSVReport(report)
+    fs.writeFileSync(csvPath, csvContent)
+    console.log(`📊 CSV report saved: ${csvPath}`)
   }
 
   /**
@@ -375,7 +373,9 @@ class ComplianceReporter {
             </div>
         </div>
 
-        ${Object.entries(report.compliance).map(([key, reg]) => `
+        ${Object.entries(report.compliance)
+          .map(
+            ([_key, reg]) => `
         <div class="regulation ${reg.compliant ? 'compliant' : 'non-compliant'}">
             <div class="regulation-header">
                 <h2>${reg.regulation}</h2>
@@ -400,22 +400,32 @@ class ComplianceReporter {
                     <div style="color: #ffc107;">${reg.warningCount}</div>
                 </div>
             </div>
-            ${reg.recommendations.length > 0 ? `
+            ${
+              reg.recommendations.length > 0
+                ? `
                 <div class="recommendations">
                     <h4>🔧 Recommendations</h4>
-                    ${reg.recommendations.map(rec => `<div class="recommendation">${rec}</div>`).join('')}
+                    ${reg.recommendations.map((rec) => `<div class="recommendation">${rec}</div>`).join('')}
                 </div>
-            ` : ''}
+            `
+                : ''
+            }
         </div>
-        `).join('')}
+        `
+          )
+          .join('')}
 
         <div class="recommendations">
             <h3>🎯 Global Recommendations</h3>
-            ${report.recommendations.map(rec => `
+            ${report.recommendations
+              .map(
+                (rec) => `
                 <div class="recommendation">
                     <strong>[${rec.priority}] ${rec.category}:</strong> ${rec.action}
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
 
         <div style="text-align: center; margin-top: 30px; color: #666;">
@@ -424,25 +434,25 @@ class ComplianceReporter {
         </div>
     </div>
 </body>
-</html>`;
+</html>`
   }
 
   /**
    * CSVレポート生成
    */
   generateCSVReport(report) {
-    const headers = ['Regulation', 'Score', 'Status', 'Files', 'Errors', 'Warnings', 'Compliant'];
-    const rows = Object.entries(report.compliance).map(([key, reg]) => [
+    const headers = ['Regulation', 'Score', 'Status', 'Files', 'Errors', 'Warnings', 'Compliant']
+    const rows = Object.entries(report.compliance).map(([_key, reg]) => [
       reg.regulation,
       reg.score,
       reg.status,
       reg.totalFiles,
       reg.errorCount,
       reg.warningCount,
-      reg.compliant ? 'Yes' : 'No'
-    ]);
+      reg.compliant ? 'Yes' : 'No',
+    ])
 
-    return [headers, ...rows].map(row => row.join(',')).join('\n');
+    return [headers, ...rows].map((row) => row.join(',')).join('\n')
   }
 
   /**
@@ -450,33 +460,37 @@ class ComplianceReporter {
    */
   getStatusColor(status) {
     switch (status) {
-      case 'COMPLIANT': return '#28a745';
-      case 'MINOR_ISSUES': return '#ffc107';
-      case 'MAJOR_ISSUES': return '#fd7e14';
-      case 'NON_COMPLIANT': return '#dc3545';
-      default: return '#6c757d';
+      case 'COMPLIANT':
+        return '#28a745'
+      case 'MINOR_ISSUES':
+        return '#ffc107'
+      case 'MAJOR_ISSUES':
+        return '#fd7e14'
+      case 'NON_COMPLIANT':
+        return '#dc3545'
+      default:
+        return '#6c757d'
     }
   }
 }
 
 // CLI実行
 async function main() {
-  const reporter = new ComplianceReporter();
-  
+  const reporter = new ComplianceReporter()
+
   try {
-    const report = await reporter.generateComplianceReport();
-    
+    const report = await reporter.generateComplianceReport()
+
     // Slack通知（環境変数でWebhook URLが設定されている場合）
     if (process.env.SLACK_WEBHOOK_URL) {
-      await sendSlackNotification(report);
+      await sendSlackNotification(report)
     }
-    
+
     // 終了コード設定
-    process.exit(report.summary.overallCompliant ? 0 : 1);
-    
+    process.exit(report.summary.overallCompliant ? 0 : 1)
   } catch (error) {
-    console.error('❌ Compliance report generation failed:', error);
-    process.exit(1);
+    console.error('❌ Compliance report generation failed:', error)
+    process.exit(1)
   }
 }
 
@@ -485,7 +499,7 @@ async function main() {
  */
 async function sendSlackNotification(report) {
   try {
-    const webhook = process.env.SLACK_WEBHOOK_URL;
+    const webhook = process.env.SLACK_WEBHOOK_URL
     const message = {
       text: `📊 BoxLog Compliance Report`,
       blocks: [
@@ -493,48 +507,48 @@ async function sendSlackNotification(report) {
           type: 'header',
           text: {
             type: 'plain_text',
-            text: '🛡️ BoxLog Compliance Audit Results'
-          }
+            text: '🛡️ BoxLog Compliance Audit Results',
+          },
         },
         {
           type: 'section',
           fields: [
             {
               type: 'mrkdwn',
-              text: `*Overall Score:* ${report.summary.overallScore}/100`
+              text: `*Overall Score:* ${report.summary.overallScore}/100`,
             },
             {
               type: 'mrkdwn',
-              text: `*Status:* ${report.summary.status}`
+              text: `*Status:* ${report.summary.status}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Errors:* ${report.summary.totalErrors}`
+              text: `*Errors:* ${report.summary.totalErrors}`,
             },
             {
               type: 'mrkdwn',
-              text: `*Warnings:* ${report.summary.totalWarnings}`
-            }
-          ]
-        }
-      ]
-    };
+              text: `*Warnings:* ${report.summary.totalWarnings}`,
+            },
+          ],
+        },
+      ],
+    }
 
     await fetch(webhook, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(message)
-    });
+      body: JSON.stringify(message),
+    })
 
-    console.log('📱 Slack notification sent');
+    console.log('📱 Slack notification sent')
   } catch (error) {
-    console.warn('⚠️ Failed to send Slack notification:', error.message);
+    console.warn('⚠️ Failed to send Slack notification:', error.message)
   }
 }
 
 // CLI実行時
 if (require.main === module) {
-  main();
+  main()
 }
 
-module.exports = { ComplianceReporter };
+module.exports = { ComplianceReporter }
