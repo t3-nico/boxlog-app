@@ -46,6 +46,18 @@ export const NavigationSection = ({
             titleClassName
           )}
           onClick={handleToggle}
+          {...(collapsible && {
+            role: 'button',
+            tabIndex: 0,
+            'aria-expanded': !isCollapsed,
+            'aria-label': `${isCollapsed ? 'Expand' : 'Collapse'} ${title} section`,
+            onKeyDown: (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleToggle()
+              }
+            }
+          })}
         >
           {Icon && (
             <Icon className={cn(

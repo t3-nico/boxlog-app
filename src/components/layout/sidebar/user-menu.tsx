@@ -148,24 +148,26 @@ export const UserMenu = ({ children }: UserMenuProps) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem 
-          asChild
+        <DropdownMenuItem
           className={cn('focus:bg-transparent', colors.hover.subtle)}
+          onClick={() => {
+            // TODO: Implement privacy policy navigation
+            console.log('Privacy policy clicked')
+          }}
         >
-          <a href="#">
-            <ShieldCheckIcon className={cn(md, 'mr-2')} />
-            Privacy policy
-          </a>
+          <ShieldCheckIcon className={cn(md, 'mr-2')} />
+          Privacy policy
         </DropdownMenuItem>
 
-        <DropdownMenuItem 
-          asChild
+        <DropdownMenuItem
           className={cn('focus:bg-transparent', colors.hover.subtle)}
+          onClick={() => {
+            // TODO: Implement feedback navigation
+            console.log('Share feedback clicked')
+          }}
         >
-          <a href="#">
-            <LightBulbIcon className={cn(md, 'mr-2')} />
-            Share feedback
-          </a>
+          <LightBulbIcon className={cn(md, 'mr-2')} />
+          Share feedback
         </DropdownMenuItem>
 
         <DropdownMenuItem 
@@ -176,14 +178,15 @@ export const UserMenu = ({ children }: UserMenuProps) => {
           Help
         </DropdownMenuItem>
 
-        <DropdownMenuItem 
-          asChild
+        <DropdownMenuItem
           className={cn('focus:bg-transparent', colors.hover.subtle)}
+          onClick={() => {
+            // TODO: Implement changelog navigation
+            console.log('Changelog clicked')
+          }}
         >
-          <a href="#">
-            <SparklesIcon className={cn(md, 'mr-2')} />
-            Changelog
-          </a>
+          <SparklesIcon className={cn(md, 'mr-2')} />
+          Changelog
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
