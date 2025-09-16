@@ -1,185 +1,239 @@
-# 📋 .eslint ディレクトリ構成 - BoxLog ESLint システム
+# BoxLog ESLint Configuration
 
-> **BoxLogプロジェクトのESLint設定システムの完全ガイド**
+BoxLogプロジェクトのESLint設定について説明します。
 
----
-
-## 🗂️ ディレクトリ構造
+## 📁 ディレクトリ構造
 
 ```
 .eslint/
-├── 📄 index.js                     # メインエントリーポイント（環境判定）
-├── 📁 configs/                     # 環境別ESLint設定
-│   ├── base.js                     # 全環境共通の基本設定
-│   ├── development.js              # 開発環境用（緩い設定）
-│   ├── production.js               # 本番環境用（厳格設定）
-│   └── theme-safe.js               # テーマ安全設定
-├── 📁 rules/                       # カスタムESLintルール
-│   ├── 🎨 theme/                   # テーマシステム強制ルール
-│   │   ├── index.js                # テーマプラグインメイン
-│   │   ├── enforce-theme-usage.js  # テーマ使用強制
-│   │   ├── no-direct-tailwind.js   # 直接Tailwind禁止
-│   │   ├── performance-rules.js    # パフォーマンス最適化
-│   │   └── bundle-optimization-rules.js # バンドル最適化
-│   ├── 🔒 compliance/              # コンプライアンスルール
-│   │   ├── index.js                # コンプライアンスメイン
-│   │   ├── gdpr-compliance.js      # GDPR準拠チェック
-│   │   ├── security-audit.js       # セキュリティ監査
-│   │   ├── data-retention.js       # データ保持ポリシー
-│   │   └── performance-rules.js    # パフォーマンス監査
-│   └── 📝 todo/                    # TODO管理ルール
-│       └── index.js                # 構造化TODO強制
-├── 📁 overrides/                   # 特別な場合のオーバーライド
-│   ├── generated.js                # 自動生成ファイル用
-│   ├── legacy.js                   # レガシーコード用
-│   └── theme-migration.js          # テーマ移行中ファイル用
-├── 📁 scripts/                     # セットアップ・メンテナンススクリプト
-│   └── setup.js                    # ESLint環境セットアップ
-├── 📁 tests/                       # テスト関連
-│   ├── README.md                   # テスト実行ガイド
-│   ├── compliance-test.tsx         # コンプライアンステスト
-│   ├── performance-test.tsx        # パフォーマンステスト
-│   └── theme-test.tsx              # テーマルールテスト
-├── 📁 fixtures/                    # テスト用サンプルファイル
-│   ├── valid/                      # 正しい例
-│   └── invalid/                    # 間違った例
-├── 📁 cache/                       # キャッシュファイル
-│   └── .eslintcache               # ESLintキャッシュ
-├── 📁 reports/                     # 生成レポート
-│   └── lint-report.html           # HTMLレポート
-├── 📁 docs/                        # 詳細ドキュメント
-│   └── README.md                   # 詳細ガイド
-├── 📄 STATUS_SUMMARY.md            # 📊 現在の設定状況サマリー
-├── 📄 QUICK_REFERENCE.md           # ⚡ 緊急時対応ガイド
-├── 📄 CONFIG_EXAMPLES.md           # 🎛️ 設定例集
-└── 📄 TIMING_SETUP.md              # ⏰ タイミング設定ガイド
+├── index.js               # メインエントリーポイント
+├── configs/               # 設定ファイル群
+│   ├── base.js           # 基本設定
+│   ├── development.js    # 開発環境用設定
+│   ├── production.js     # 本番環境用設定
+│   └── theme-simple.js   # テーマ強制設定
+├── overrides/            # 例外処理設定
+│   ├── generated.js      # 自動生成ファイル用
+│   └── legacy.js         # レガシーコード用
+├── rules/                # カスタムルール
+│   ├── theme/           # テーマシステム関連
+│   ├── todo/            # TODO管理関連
+│   └── compliance/      # コンプライアンス関連
+├── scripts/             # セットアップ・ユーティリティ
+│   └── setup.js         # 初期設定スクリプト
+├── cache/               # ESLintキャッシュ（.gitignore対象）
+├── reports/             # レポート出力先
+├── fixtures/            # テスト用サンプルコード
+└── docs/                # ドキュメント
 ```
 
----
+## 🚀 使い方
 
-## 🎯 主要ファイルの役割
+### 基本コマンド
 
-### 📄 **index.js** - メインエントリーポイント
+```bash
+# 標準リント実行
+npm run lint
 
-```javascript
-// 環境に応じて自動的に設定を切り替え
-const isDev = process.env.NODE_ENV !== 'production'
+# 自動修正付きリント
+npm run lint:fix
 
-module.exports = {
-  extends: [
-    './configs/base.js', // 共通設定
-    isDev ? './configs/development.js' : './configs/production.js',
-  ],
-}
+# キャッシュ付き高速実行
+npm run lint:cache
+
+# HTMLレポート生成
+npm run lint:report
 ```
 
-**🔄 動作**:
+### 環境別実行
 
-- `NODE_ENV`を監視して自動的に環境判定
-- 開発時は緩い設定、本番時は厳格設定を適用
+```bash
+# 開発環境設定でリント（緩い設定）
+npm run lint:dev
 
-### 📁 **configs/** - 環境別設定
-
-#### 📄 **base.js** - 共通基本設定
-
-```javascript
-// 全環境で共有する設定
-module.exports = {
-  extends: ['next/core-web-vitals'],
-  plugins: ['@typescript-eslint', 'import', 'unused-imports'],
-  rules: {
-    'import/order': [
-      'error',
-      {
-        /* 詳細設定 */
-      },
-    ],
-    'unused-imports/no-unused-imports': 'error',
-  },
-}
+# 本番環境設定でリント（厳格な設定）
+npm run lint:prod
 ```
 
-#### 📄 **development.js** - 開発環境設定
+### 特定用途のリント
 
-```javascript
-// 開発効率を重視した緩い設定
-module.exports = {
-  rules: {
-    'no-console': 'off', // console.log許可
-    'no-debugger': 'warn', // debugger警告のみ
-    'unused-imports/no-unused-vars': 'warn', // 未使用変数は警告
-  },
-}
+```bash
+# テーマシステム違反チェック
+npm run lint:theme
+
+# コンプライアンス問題チェック
+npm run lint:compliance
+
+# パフォーマンス問題チェック
+npm run lint:performance
+
+# Import順序チェック
+npm run lint:imports
 ```
 
-#### 📄 **production.js** - 本番環境設定
+## ⚙️ 設定の詳細
 
-```javascript
-// 品質重視の厳格設定
-module.exports = {
-  rules: {
-    'no-console': 'error', // console.log禁止
-    'no-debugger': 'error', // debugger禁止
-    'unused-imports/no-unused-vars': 'error', // 未使用変数エラー
-  },
-}
-```
+### 環境による設定切り替え
+
+- **開発環境** (`NODE_ENV=development`): 警告レベル、デバッグログ許可
+- **本番環境** (`NODE_ENV=production`): エラーレベル、厳格なチェック
+
+### オーバーライド設定
+
+#### 自動生成ファイル (generated.js)
+
+以下のファイルには緩いルールが適用されます：
+
+- `*.generated.*`
+- `src/types/supabase.ts`
+- `src/__generated__/**`
+- `.next/**`
+- ビルドアーティファクト
+
+#### レガシーコード (legacy.js)
+
+段階的移行対象のファイルには緩いルールが適用されます：
+
+- `src/legacy/**`
+- `src/old-components/**`
+- 特定の移行対象ファイル
 
 ---
 
 ## 🎨 カスタムルール詳細
 
-### **theme/** - テーマシステム強制
+## 🔧 セットアップ
 
-BoxLogの統一デザインシステムを強制するカスタムルール群：
+### 初回セットアップ
 
-| ルール                | 目的                 | 例                                                                     |
-| --------------------- | -------------------- | ---------------------------------------------------------------------- |
-| `enforce-theme-usage` | テーマインポート強制 | `import { colors } from '@/config/theme'`                              |
-| `no-direct-tailwind`  | 直接Tailwind禁止     | ❌ `className="bg-blue-500"` → ✅ `className={colors.primary.DEFAULT}` |
-| `performance-rules`   | パフォーマンス最適化 | memo化強制、inline style禁止                                           |
-| `bundle-optimization` | バンドル最適化       | 重いライブラリ警告、dynamic import推奨                                 |
-
-**実際の適用例**:
-
-```typescript
-// ❌ 直接Tailwind（エラー）
-<div className="bg-blue-500 text-white p-4 rounded-lg">
-
-// ✅ テーマシステム使用（正しい）
-import { colors, spacing, rounded } from '@/config/theme'
-<div className={`${colors.primary.DEFAULT} ${colors.text.white} ${spacing.padding.md} ${rounded.component.card.md}`}>
+```bash
+npm run eslint:setup
 ```
 
-### **compliance/** - コンプライアンス
+このコマンドは以下を実行します：
 
-GDPR、セキュリティ、アクセシビリティ要件を自動チェック：
+1. カスタムプラグインをnode_modulesにコピー
+2. キャッシュディレクトリの初期化
+3. レポートディレクトリの初期化
+4. .gitignoreの更新
+5. 設定の検証
 
-| ルール            | チェック内容                                 |
-| ----------------- | -------------------------------------------- |
-| `gdpr-compliance` | 個人データ収集時の同意確認、適切なCookie設定 |
-| `security-audit`  | XSS脆弱性、unsafe操作の検出                  |
-| `data-retention`  | データ保持期間の妥当性チェック               |
+### カスタムルールの更新
 
-### **todo/** - TODO管理
+カスタムルールを更新した場合：
 
-構造化TODOフォーマットを強制：
-
-```typescript
-// ❌ 非構造化TODO（エラー）
-// TODO: これを後で修正する
-
-// ✅ 構造化TODO（正しい）
-// TODO [TASK-123] (2024-12-31) @takayasu: ユーザー認証機能の実装完了
+```bash
+npm run eslint:setup  # セットアップを再実行
+npm run lint:cache    # キャッシュクリア付きでテスト
 ```
+
+## 📊 レポート
+
+### HTMLレポート
+
+```bash
+npm run lint:report
+```
+
+生成されたレポートは `.eslint/reports/lint-report.html` で確認できます。
+
+### 技術的負債レポート
+
+```bash
+npm run debt:analyze
+```
+
+ESLint結果を含む包括的な技術的負債レポートが生成されます。
+
+## 🛠️ トラブルシューティング
+
+### カスタムルールが認識されない
+
+```bash
+# セットアップを再実行
+npm run eslint:setup
+
+# node_modulesを確認
+ls node_modules/eslint-plugin-boxlog-*
+```
+
+### キャッシュをクリアしたい
+
+```bash
+# キャッシュディレクトリを削除
+rm -rf .eslint/cache/*
+
+# またはキャッシュなしで実行
+npm run lint -- --no-cache
+```
+
+### 設定ファイルのエラー
+
+```bash
+# 設定の検証
+node .eslint/scripts/setup.js
+
+# 基本設定のテスト
+eslint --print-config src/app/page.tsx -c .eslint/index.js
+```
+
+## 📝 設定のカスタマイズ
+
+### 新しいルールの追加
+
+1. `.eslint/configs/base.js` にルールを追加
+2. 必要に応じて環境別設定 (development.js, production.js) を調整
+3. `npm run lint:cache` でテスト
+
+### 新しいオーバーライドの追加
+
+1. `.eslint/overrides/` に新しい設定ファイルを作成
+2. `.eslint/index.js` の `overrides` 配列に追加
+3. `npm run eslint:setup` でセットアップを再実行
+
+## 🎯 ベストプラクティス
+
+1. **開発中は `npm run lint:dev`** を使用（緩い設定）
+2. **コミット前は `npm run lint:prod`** を実行（厳格な設定）
+3. **大きな変更後は `npm run lint:report`** でHTMLレポートを確認
+4. **定期的に `npm run debt:analyze`** で技術的負債をチェック
+5. **カスタムルール更新後は `npm run eslint:setup`** を実行
+
+## 🔗 関連ドキュメント
+
+### 📚 内部ドキュメント
+
+- **[📖 詳細ガイド](../README_DETAILED.md)** - 設定の動作原理と詳細解説
+- **[⚡ クイックリファレンス](../QUICK_REFERENCE.md)** - 緊急時対応・よく使うコマンド
+- **[🎛️ 設定例集](../CONFIG_EXAMPLES.md)** - 様々なシーンでの設定例
+
+### 🔧 関連システム
+
+- [技術的負債監視システム](../../reports/tech-debt.html)
+- [TODOマネージャー](../../scripts/todo-manager.js)
+- [Bundle分析システム](../../scripts/bundle-check.js)
+
+### 🌐 外部リソース
+
+- [ESLint公式ドキュメント](https://eslint.org/docs/)
+- [TypeScript ESLint](https://typescript-eslint.io/)
+- [Next.js ESLint設定](https://nextjs.org/docs/basic-features/eslint)
 
 ---
 
-## ⏰ 実行タイミング別設定
+**📝 このドキュメントについて**
 
-### 1️⃣ **保存時（VS Code）**
+- **最終更新**: 2025-09-11
+- **バージョン**: v2.0.0 - 完全統合ESLint構造
+- **対象**: 基本的な使用方法・コマンド一覧
 
-- **設定**: `.vscode/settings.json`
+**💡 読む順序の推奨**
+
+1. **このファイル** - 基本的な使い方
+2. **[QUICK_REFERENCE.md](../QUICK_REFERENCE.md)** - 困った時の緊急対応
+3. **[README_DETAILED.md](../README_DETAILED.md)** - 詳細な仕組み理解
+4. **[CONFIG_EXAMPLES.md](../CONFIG_EXAMPLES.md)** - カスタマイズ時
+
 - **目的**: 即座のフィードバック
 - **モード**: development（緩い設定）
 - **自動修正**: ✅ 有効

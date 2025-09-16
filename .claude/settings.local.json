@@ -26,12 +26,11 @@
       "Bash(npm run dev:*)",
       "Bash(npx tsx:*)",
       "Bash(npm run generate:css:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(gh issue close:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
   },
-  "claudeMd": [
-    "docs/ai-chatbot/system-overview.md"
-  ]
+  "claudeMd": ["docs/ai-chatbot/system-overview.md"]
 }
