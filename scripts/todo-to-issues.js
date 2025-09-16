@@ -12,7 +12,7 @@ const fs = require('fs')
 const path = require('path')
 
 // 既存のTODO管理システムをインポート
-const { TodoParser, analyzeTodosInFile, generateStatistics } = require('./todo-manager.js')
+const { analyzeTodosInFile } = require('./todo-manager.js')
 
 // 🎨 カラー出力
 const colors = {
