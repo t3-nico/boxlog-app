@@ -44,7 +44,12 @@
     "dev:fallback": "next dev",
     "build:fallback": "next build",
     "start:fallback": "next start",
-    "prepare": "husky"
+    "prepare": "husky",
+    "issue:start": "node scripts/simple-issue-manager.js start",
+    "issue:progress": "node scripts/simple-issue-manager.js progress",
+    "issue:note": "node scripts/simple-issue-manager.js note",
+    "issue:complete": "node scripts/simple-issue-manager.js complete",
+    "issue:status": "node scripts/simple-issue-manager.js status"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
