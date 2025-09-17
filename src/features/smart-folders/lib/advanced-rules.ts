@@ -7,32 +7,32 @@ export interface AdvancedSmartFolderRule extends SmartFolderRule {
   // 正規表現フラグ
   isRegex?: boolean
   regexFlags?: string
-  
+
   // カスタムフィールド
   customField?: string
-  
+
   // 時間範囲の詳細設定
   timeRange?: {
     startTime?: string // HH:MM format
-    endTime?: string   // HH:MM format
+    endTime?: string // HH:MM format
     timezone?: string
     excludeWeekends?: boolean
     excludeHolidays?: boolean
   }
-  
+
   // 複合条件のグループ化
   groupId?: string
   groupLogic?: 'AND' | 'OR'
-  
+
   // 重み付け（複数ルールの優先度）
   weight?: number
-  
+
   // 条件の有効期間
   validFrom?: Date
   validUntil?: Date
-  
+
   // 動的パラメータ
-  parameters?: Record<string, any>
+  parameters?: Record<string, unknown>
 }
 
 // 拡張演算子
@@ -40,33 +40,33 @@ export enum AdvancedRuleOperator {
   // 正規表現
   REGEX_MATCH = 'regex_match',
   REGEX_NOT_MATCH = 'regex_not_match',
-  
+
   // 数値範囲
   BETWEEN = 'between',
   NOT_BETWEEN = 'not_between',
-  
+
   // 日付/時間の高度な比較
   WITHIN_HOURS = 'within_hours',
   WITHIN_DAYS = 'within_days',
   WITHIN_WEEKS = 'within_weeks',
   WITHIN_MONTHS = 'within_months',
-  
+
   // 時間帯
   TIME_BETWEEN = 'time_between',
   TIME_NOT_BETWEEN = 'time_not_between',
-  
+
   // 曜日
   DAY_OF_WEEK = 'day_of_week',
   NOT_DAY_OF_WEEK = 'not_day_of_week',
-  
+
   // 配列/リスト操作
   ARRAY_LENGTH = 'array_length',
   ARRAY_CONTAINS_ALL = 'array_contains_all',
   ARRAY_CONTAINS_ANY = 'array_contains_any',
   ARRAY_CONTAINS_NONE = 'array_contains_none',
-  
+
   // カスタム関数
-  CUSTOM_FUNCTION = 'custom_function'
+  CUSTOM_FUNCTION = 'custom_function',
 }
 
 // カスタムフィールド定義
@@ -75,8 +75,8 @@ export interface CustomFieldDefinition {
   name: string
   type: 'string' | 'number' | 'date' | 'boolean' | 'array'
   description: string
-  validator?: (value: any) => boolean
-  extractor: (item: any) => any // アイテムからフィールド値を抽出する関数
+  validator?: (value: unknown) => boolean
+  extractor: (item: unknown) => unknown // アイテムからフィールド値を抽出する関数
 }
 
 // 高度なルール評価エンジン
@@ -101,7 +101,7 @@ export class AdvancedRuleEngine {
   /**
    * 高度なルールの評価
    */
-  static evaluateAdvancedRule(item: any, rule: AdvancedSmartFolderRule): boolean {
+  static evaluateAdvancedRule(item: unknown, rule: AdvancedSmartFolderRule): boolean {
     // 有効期間チェック
     if (!this.isRuleValid(rule)) {
       return false
@@ -109,10 +109,10 @@ export class AdvancedRuleEngine {
 
     // パラメータ置換
     const processedRule = this.processRuleParameters(rule)
-    
+
     // フィールド値の取得（カスタムフィールド対応）
     const fieldValue = this.getAdvancedFieldValue(item, processedRule)
-    
+
     // 演算子による評価
     return this.evaluateAdvancedOperator(fieldValue, processedRule)
   }
@@ -120,23 +120,23 @@ export class AdvancedRuleEngine {
   /**
    * グループ化されたルールの評価
    */
-  static evaluateRuleGroups(item: any, rules: AdvancedSmartFolderRule[]): boolean {
+  static evaluateRuleGroups(item: unknown, rules: AdvancedSmartFolderRule[]): boolean {
     // ルールをグループごとに分類
     const groups = this.groupRules(rules)
-    
+
     // 各グループを評価
-    const groupResults = groups.map(group => this.evaluateGroup(item, group))
-    
+    const groupResults = groups.map((group) => this.evaluateGroup(item, group))
+
     // グループ間のロジック演算（通常はOR）
-    return groupResults.some(result => result)
+    return groupResults.some((result) => result)
   }
 
   /**
    * 正規表現の評価
    */
-  private static evaluateRegex(value: any, pattern: string, flags: string = 'i'): boolean {
+  private static evaluateRegex(value: unknown, pattern: string, flags: string = 'i'): boolean {
     if (typeof value !== 'string') return false
-    
+
     try {
       const regex = new RegExp(pattern, flags)
       return regex.test(value)
@@ -149,23 +149,23 @@ export class AdvancedRuleEngine {
   /**
    * 数値範囲の評価
    */
-  private static evaluateBetween(value: any, range: [number, number]): boolean {
+  private static evaluateBetween(value: unknown, range: [number, number]): boolean {
     const numValue = Number(value)
     if (isNaN(numValue)) return false
-    
+
     return numValue >= range[0] && numValue <= range[1]
   }
 
   /**
    * 日時範囲の評価
    */
-  private static evaluateTimeRange(value: any, rule: AdvancedSmartFolderRule): boolean {
+  private static evaluateTimeRange(value: unknown, rule: AdvancedSmartFolderRule): boolean {
     const date = new Date(value)
     if (isNaN(date.getTime())) return false
-    
-    const {timeRange} = rule
+
+    const { timeRange } = rule
     if (!timeRange) return true
-    
+
     // 時間帯チェック
     if (timeRange.startTime && timeRange.endTime) {
       const timeStr = date.toTimeString().substring(0, 5) // HH:MM
@@ -173,13 +173,13 @@ export class AdvancedRuleEngine {
         return false
       }
     }
-    
+
     // 週末除外
     if (timeRange.excludeWeekends) {
       const dayOfWeek = date.getDay()
       if (dayOfWeek === 0 || dayOfWeek === 6) return false
     }
-    
+
     // 祝日除外（簡易実装）
     if (timeRange.excludeHolidays) {
       // 実際のプロダクションでは祝日APIを使用
@@ -187,7 +187,7 @@ export class AdvancedRuleEngine {
       const dateStr = date.toISOString().split('T')[0]
       if (holidays.includes(dateStr)) return false
     }
-    
+
     return true
   }
 
@@ -195,28 +195,28 @@ export class AdvancedRuleEngine {
    * 配列操作の評価
    */
   private static evaluateArrayOperation(
-    value: any, 
-    operator: AdvancedRuleOperator, 
-    compareValue: any
+    value: unknown,
+    operator: AdvancedRuleOperator,
+    compareValue: unknown
   ): boolean {
     if (!Array.isArray(value)) return false
-    
+
     switch (operator) {
       case AdvancedRuleOperator.ARRAY_LENGTH:
         return value.length === Number(compareValue)
-      
+
       case AdvancedRuleOperator.ARRAY_CONTAINS_ALL:
         const targetAll = Array.isArray(compareValue) ? compareValue : [compareValue]
-        return targetAll.every(item => value.includes(item))
-      
+        return targetAll.every((item) => value.includes(item))
+
       case AdvancedRuleOperator.ARRAY_CONTAINS_ANY:
         const targetAny = Array.isArray(compareValue) ? compareValue : [compareValue]
-        return targetAny.some(item => value.includes(item))
-      
+        return targetAny.some((item) => value.includes(item))
+
       case AdvancedRuleOperator.ARRAY_CONTAINS_NONE:
         const targetNone = Array.isArray(compareValue) ? compareValue : [compareValue]
-        return !targetNone.some(item => value.includes(item))
-      
+        return !targetNone.some((item) => value.includes(item))
+
       default:
         return false
     }
@@ -227,10 +227,10 @@ export class AdvancedRuleEngine {
    */
   private static isRuleValid(rule: AdvancedSmartFolderRule): boolean {
     const now = new Date()
-    
+
     if (rule.validFrom && now < rule.validFrom) return false
     if (rule.validUntil && now > rule.validUntil) return false
-    
+
     return true
   }
 
@@ -239,21 +239,21 @@ export class AdvancedRuleEngine {
    */
   private static processRuleParameters(rule: AdvancedSmartFolderRule): AdvancedSmartFolderRule {
     if (!rule.parameters) return rule
-    
+
     const processedRule = { ...rule }
-    
+
     // 値のパラメータ置換
     if (typeof processedRule.value === 'string') {
       processedRule.value = this.replaceParameters(processedRule.value, rule.parameters)
     }
-    
+
     return processedRule
   }
 
   /**
    * パラメータ置換
    */
-  private static replaceParameters(template: string, parameters: Record<string, any>): string {
+  private static replaceParameters(template: string, parameters: Record<string, unknown>): string {
     return template.replace(/\{\{(\w+)\}\}/g, (match, paramName) => {
       return parameters[paramName] !== undefined ? String(parameters[paramName]) : match
     })
@@ -262,7 +262,7 @@ export class AdvancedRuleEngine {
   /**
    * 高度なフィールド値取得
    */
-  private static getAdvancedFieldValue(item: any, rule: AdvancedSmartFolderRule): any {
+  private static getAdvancedFieldValue(item: unknown, rule: AdvancedSmartFolderRule): unknown {
     // カスタムフィールドの処理
     if (rule.customField) {
       const customField = this.customFields.get(rule.customField)
@@ -270,7 +270,7 @@ export class AdvancedRuleEngine {
         return customField.extractor(item)
       }
     }
-    
+
     // 標準フィールドの処理
     return this.getStandardFieldValue(item, rule.field)
   }
@@ -278,7 +278,7 @@ export class AdvancedRuleEngine {
   /**
    * 標準フィールド値の取得
    */
-  private static getStandardFieldValue(item: any, field: SmartFolderRuleField): any {
+  private static getStandardFieldValue(item: unknown, field: SmartFolderRuleField): unknown {
     const fieldMap: Record<string, string[]> = {
       tag: ['tags', 'tag'],
       created_date: ['createdAt', 'created_at', 'createdDate'],
@@ -288,55 +288,52 @@ export class AdvancedRuleEngine {
       is_favorite: ['isFavorite', 'is_favorite', 'favorite'],
       due_date: ['dueDate', 'due_date', 'deadline'],
       title: ['title', 'name', 'subject'],
-      description: ['description', 'content', 'body']
+      description: ['description', 'content', 'body'],
     }
-    
+
     const possibleKeys = fieldMap[field] || [field]
-    
+
     for (const key of possibleKeys) {
       if (key in item) {
         return item[key]
       }
     }
-    
+
     return undefined
   }
 
   /**
    * 高度な演算子の評価
    */
-  private static evaluateAdvancedOperator(
-    fieldValue: any, 
-    rule: AdvancedSmartFolderRule
-  ): boolean {
-    const operator = rule.operator as any
-    
+  private static evaluateAdvancedOperator(fieldValue: unknown, rule: AdvancedSmartFolderRule): boolean {
+    const operator = rule.operator as string
+
     switch (operator) {
       case AdvancedRuleOperator.REGEX_MATCH:
         return this.evaluateRegex(fieldValue, String(rule.value), rule.regexFlags)
-      
+
       case AdvancedRuleOperator.REGEX_NOT_MATCH:
         return !this.evaluateRegex(fieldValue, String(rule.value), rule.regexFlags)
-      
+
       case AdvancedRuleOperator.BETWEEN:
         return this.evaluateBetween(fieldValue, rule.value as unknown as [number, number])
-      
+
       case AdvancedRuleOperator.NOT_BETWEEN:
         return !this.evaluateBetween(fieldValue, rule.value as unknown as [number, number])
-      
+
       case AdvancedRuleOperator.TIME_BETWEEN:
         return this.evaluateTimeRange(fieldValue, rule)
-      
+
       case AdvancedRuleOperator.ARRAY_LENGTH:
       case AdvancedRuleOperator.ARRAY_CONTAINS_ALL:
       case AdvancedRuleOperator.ARRAY_CONTAINS_ANY:
       case AdvancedRuleOperator.ARRAY_CONTAINS_NONE:
         return this.evaluateArrayOperation(fieldValue, operator, rule.value)
-      
+
       case AdvancedRuleOperator.CUSTOM_FUNCTION:
         const func = this.customFunctions.get(String(rule.value))
         return func ? func(fieldValue, rule) : false
-      
+
       default:
         // 標準演算子にフォールバック
         return this.evaluateStandardOperator(fieldValue, rule)
@@ -346,7 +343,7 @@ export class AdvancedRuleEngine {
   /**
    * 標準演算子の評価（フォールバック）
    */
-  private static evaluateStandardOperator(fieldValue: any, rule: AdvancedSmartFolderRule): boolean {
+  private static evaluateStandardOperator(fieldValue: unknown, rule: AdvancedSmartFolderRule): boolean {
     // 既存のBasicRuleEngineの実装を使用
     // ここでは簡略化
     switch (rule.operator) {
@@ -366,7 +363,7 @@ export class AdvancedRuleEngine {
   private static groupRules(rules: AdvancedSmartFolderRule[]): AdvancedSmartFolderRule[][] {
     const groups: Map<string, AdvancedSmartFolderRule[]> = new Map()
     const ungrouped: AdvancedSmartFolderRule[] = []
-    
+
     for (const rule of rules) {
       if (rule.groupId) {
         if (!groups.has(rule.groupId)) {
@@ -377,28 +374,28 @@ export class AdvancedRuleEngine {
         ungrouped.push(rule)
       }
     }
-    
+
     const result = Array.from(groups.values())
     if (ungrouped.length > 0) {
       result.push(ungrouped)
     }
-    
+
     return result
   }
 
   /**
    * グループの評価
    */
-  private static evaluateGroup(item: any, group: AdvancedSmartFolderRule[]): boolean {
+  private static evaluateGroup(item: unknown, group: AdvancedSmartFolderRule[]): boolean {
     if (group.length === 0) return true
-    
+
     // グループ内のロジック（最初のルールのgroupLogicを使用）
     const groupLogic = group[0].groupLogic || 'AND'
-    
+
     if (groupLogic === 'AND') {
-      return group.every(rule => this.evaluateAdvancedRule(item, rule))
+      return group.every((rule) => this.evaluateAdvancedRule(item, rule))
     } else {
-      return group.some(rule => this.evaluateAdvancedRule(item, rule))
+      return group.some((rule) => this.evaluateAdvancedRule(item, rule))
     }
   }
 }
@@ -435,7 +432,7 @@ export class AdvancedRuleBuilder {
       logic: 'AND',
       isRegex: true,
       regexFlags: flags,
-      groupId: this.currentGroupId
+      groupId: this.currentGroupId,
     })
     return this
   }
@@ -449,7 +446,7 @@ export class AdvancedRuleBuilder {
       operator: AdvancedRuleOperator.BETWEEN as any,
       value: [min, max] as any,
       logic: 'AND',
-      groupId: this.currentGroupId
+      groupId: this.currentGroupId,
     })
     return this
   }
@@ -458,9 +455,9 @@ export class AdvancedRuleBuilder {
    * 時間範囲ルールの追加
    */
   timeRange(
-    field: SmartFolderRuleField, 
-    startTime: string, 
-    endTime: string, 
+    field: SmartFolderRuleField,
+    startTime: string,
+    endTime: string,
     options?: Partial<AdvancedSmartFolderRule['timeRange']>
   ): this {
     this.addRule({
@@ -471,9 +468,9 @@ export class AdvancedRuleBuilder {
       timeRange: {
         startTime,
         endTime,
-        ...options
+        ...options,
       },
-      groupId: this.currentGroupId
+      groupId: this.currentGroupId,
     })
     return this
   }
@@ -515,7 +512,7 @@ export const ADVANCED_RULE_PRESETS = {
   WORK_HOURS: AdvancedRuleBuilder.create()
     .timeRange('created_date', '09:00', '17:00', { excludeWeekends: true })
     .build(),
-  
+
   // 緊急かつ重要なタスク（アイゼンハワーマトリックス）
   URGENT_IMPORTANT: AdvancedRuleBuilder.create()
     .startGroup('urgent', 'AND')
@@ -523,12 +520,12 @@ export const ADVANCED_RULE_PRESETS = {
     .between('priority', 3, 4) // high to urgent
     .endGroup()
     .build(),
-  
+
   // 複雑なタスク（説明が長い、タグが多い）
   COMPLEX_TASKS: AdvancedRuleBuilder.create()
     .startGroup('complexity', 'OR')
     .regex('description', '.{200,}') // 200文字以上の説明
     .between('tag' as any, 3, 10) // 3-10個のタグ
     .endGroup()
-    .build()
+    .build(),
 }

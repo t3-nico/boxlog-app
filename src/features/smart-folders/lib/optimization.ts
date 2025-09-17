@@ -2,14 +2,16 @@
 
 import { SmartFolder } from '@/types/smart-folders'
 
-
 // インクリメンタル更新管理
 export class IncrementalUpdateManager {
-  private static changeTracking: Map<string, {
-    lastUpdated: Date
-    changeCount: number
-    affectedItems: Set<string>
-  }> = new Map()
+  private static changeTracking: Map<
+    string,
+    {
+      lastUpdated: Date
+      changeCount: number
+      affectedItems: Set<string>
+    }
+  > = new Map()
 
   private static observers: Map<string, Function[]> = new Map()
 
@@ -20,7 +22,7 @@ export class IncrementalUpdateManager {
     const tracking = this.changeTracking.get(itemId) || {
       lastUpdated: new Date(),
       changeCount: 0,
-      affectedItems: new Set()
+      affectedItems: new Set(),
     }
 
     tracking.lastUpdated = new Date()
@@ -36,7 +38,7 @@ export class IncrementalUpdateManager {
   /**
    * バッチ更新の処理
    */
-  static processBatchUpdates(items: any[], batchSize: number = 100): Promise<void> {
+  static processBatchUpdates(items: unknown[], batchSize: number = 100): Promise<void> {
     return new Promise((resolve) => {
       const batches = this.createBatches(items, batchSize)
       let processed = 0
@@ -48,13 +50,13 @@ export class IncrementalUpdateManager {
         }
 
         const batch = batches[processed]
-        
+
         // 非同期でバッチを処理
         setTimeout(() => {
-          batch.forEach(item => {
+          batch.forEach((item) => {
             this.trackChange(item.id, 'update')
           })
-          
+
           processed++
           processBatch()
         }, 0)
@@ -77,7 +79,7 @@ export class IncrementalUpdateManager {
       .map(([itemId, tracking]) => ({
         itemId,
         lastUpdated: tracking.lastUpdated,
-        changeCount: tracking.changeCount
+        changeCount: tracking.changeCount,
       }))
   }
 
@@ -110,7 +112,7 @@ export class IncrementalUpdateManager {
   private static notifyAffectedFolders(itemId: string, changeType: string, fields?: string[]) {
     // 全フォルダのオブザーバーに通知（実際はより効率的な実装が必要）
     this.observers.forEach((callbacks, folderId) => {
-      callbacks.forEach(callback => {
+      callbacks.forEach((callback) => {
         callback({ itemId, changeType, fields, timestamp: new Date() })
       })
     })
@@ -135,7 +137,7 @@ export class BackgroundSyncManager {
     type: 'folder' | 'item'
     id: string
     operation: 'create' | 'update' | 'delete'
-    data?: any
+    data?: unknown
     priority: number
   }> = []
 
@@ -167,12 +169,12 @@ export class BackgroundSyncManager {
     type: 'folder' | 'item'
     id: string
     operation: 'create' | 'update' | 'delete'
-    data?: any
+    data?: unknown
     priority?: number
   }) {
     this.syncQueue.push({
       ...item,
-      priority: item.priority || 1
+      priority: item.priority || 1,
     })
 
     // 優先度で並び替え
@@ -188,7 +190,7 @@ export class BackgroundSyncManager {
     const batch = this.syncQueue.splice(0, 10) // 一度に10個まで処理
 
     try {
-      await Promise.all(batch.map(item => this.syncItem(item)))
+      await Promise.all(batch.map((item) => this.syncItem(item)))
     } catch (error) {
       console.error('Background sync error:', error)
       // エラーのあったアイテムをキューに戻す
@@ -199,20 +201,28 @@ export class BackgroundSyncManager {
   /**
    * 個別アイテムの同期
    */
-  private static async syncItem(item: any): Promise<void> {
+  private static async syncItem(item: {
+    type: 'folder' | 'item'
+    id: string
+    operation: 'create' | 'update' | 'delete'
+    data?: unknown
+    priority: number
+  }): Promise<void> {
     const endpoint = item.type === 'folder' ? '/api/smart-folders' : '/api/items'
     const url = item.operation === 'create' ? endpoint : `${endpoint}/${item.id}`
-    
-    const method = ({
-      create: 'POST',
-      update: 'PUT',
-      delete: 'DELETE'
-    } as Record<string, string>)[item.operation]
+
+    const method = (
+      {
+        create: 'POST',
+        update: 'PUT',
+        delete: 'DELETE',
+      } as Record<string, string>
+    )[item.operation]
 
     const response = await fetch(url, {
       method,
       headers: item.operation === 'delete' ? {} : { 'Content-Type': 'application/json' },
-      body: item.operation === 'delete' ? undefined : JSON.stringify(item.data)
+      body: item.operation === 'delete' ? undefined : JSON.stringify(item.data),
     })
 
     if (!response.ok) {
@@ -223,13 +233,16 @@ export class BackgroundSyncManager {
 
 // 高度なキャッシュ戦略
 export class AdvancedCacheManager {
-  private static cache: Map<string, {
-    data: any
-    timestamp: number
-    hits: number
-    computeCost: number
-    dependencies: Set<string>
-  }> = new Map()
+  private static cache: Map<
+    string,
+    {
+      data: unknown
+      timestamp: number
+      hits: number
+      computeCost: number
+      dependencies: Set<string>
+    }
+  > = new Map()
 
   private static readonly TTL = 5 * 60 * 1000 // 5分
   private static readonly MAX_SIZE = 1000
@@ -237,12 +250,7 @@ export class AdvancedCacheManager {
   /**
    * 依存関係を考慮したキャッシュ
    */
-  static setWithDependencies(
-    key: string, 
-    data: any, 
-    dependencies: string[] = [],
-    computeCost: number = 1
-  ) {
+  static setWithDependencies(key: string, data: unknown, dependencies: string[] = [], computeCost: number = 1) {
     if (this.cache.size >= this.MAX_SIZE) {
       this.evictLeastEfficient()
     }
@@ -252,18 +260,18 @@ export class AdvancedCacheManager {
       timestamp: Date.now(),
       hits: 0,
       computeCost,
-      dependencies: new Set(dependencies)
+      dependencies: new Set(dependencies),
     })
   }
 
   /**
    * キャッシュの取得
    */
-  static get(key: string): any | null {
+  static get(key: string): unknown | null {
     const entry = this.cache.get(key)
-    
+
     if (!entry) return null
-    
+
     // TTLチェック
     if (Date.now() - entry.timestamp > this.TTL) {
       this.cache.delete(key)
@@ -296,7 +304,7 @@ export class AdvancedCacheManager {
       // 効率性 = ヒット数 / 計算コスト / 経過時間
       const age = Date.now() - entry.timestamp
       const efficiency = (entry.hits * entry.computeCost) / (age / 1000)
-      
+
       if (efficiency < minEfficiency) {
         minEfficiency = efficiency
         leastEfficient = key
@@ -314,7 +322,7 @@ export class AdvancedCacheManager {
   static getStats() {
     let totalHits = 0
     let totalComputeCost = 0
-    
+
     for (const entry of Array.from(this.cache.values())) {
       totalHits += entry.hits
       totalComputeCost += entry.computeCost
@@ -324,35 +332,35 @@ export class AdvancedCacheManager {
       size: this.cache.size,
       totalHits,
       averageComputeCost: totalComputeCost / this.cache.size || 0,
-      hitRate: totalHits / (totalHits + this.cache.size) || 0
+      hitRate: totalHits / (totalHits + this.cache.size) || 0,
     }
   }
 }
 
 // データベースクエリ最適化
 export class QueryOptimizer {
-  private static queryStats: Map<string, {
-    count: number
-    totalTime: number
-    avgTime: number
-    lastUsed: Date
-  }> = new Map()
+  private static queryStats: Map<
+    string,
+    {
+      count: number
+      totalTime: number
+      avgTime: number
+      lastUsed: Date
+    }
+  > = new Map()
 
   /**
    * クエリの実行と統計収集
    */
-  static async executeQuery<T>(
-    queryId: string,
-    queryFn: () => Promise<T>
-  ): Promise<T> {
+  static async executeQuery<T>(queryId: string, queryFn: () => Promise<T>): Promise<T> {
     const startTime = performance.now()
-    
+
     try {
       const result = await queryFn()
       const executionTime = performance.now() - startTime
-      
+
       this.recordQueryStats(queryId, executionTime)
-      
+
       return result
     } catch (error) {
       const executionTime = performance.now() - startTime
@@ -374,7 +382,7 @@ export class QueryOptimizer {
       .map(([queryId, stats]) => ({
         queryId,
         avgTime: stats.avgTime,
-        count: stats.count
+        count: stats.count,
       }))
       .sort((a, b) => b.avgTime - a.avgTime)
   }
@@ -384,7 +392,7 @@ export class QueryOptimizer {
    */
   static suggestIndexes(folder: SmartFolder): string[] {
     const suggestions: string[] = []
-    
+
     // よく使用されるフィールドのインデックスを提案
     for (const rule of folder.rules) {
       switch (rule.field) {
@@ -402,13 +410,13 @@ export class QueryOptimizer {
           break
       }
     }
-    
+
     // 複合インデックスの提案
     if (folder.rules.length > 1) {
-      const fields = folder.rules.map(r => r.field).slice(0, 3) // 最大3フィールド
+      const fields = folder.rules.map((r) => r.field).slice(0, 3) // 最大3フィールド
       suggestions.push(`CREATE INDEX idx_composite ON tasks(${fields.join(', ')})`)
     }
-    
+
     return Array.from(new Set(suggestions)) // 重複を除去
   }
 
@@ -420,7 +428,7 @@ export class QueryOptimizer {
       count: 0,
       totalTime: 0,
       avgTime: 0,
-      lastUsed: new Date()
+      lastUsed: new Date(),
     }
 
     stats.count++
@@ -434,12 +442,12 @@ export class QueryOptimizer {
 
 // パフォーマンスモニタリング
 export class PerformanceMonitor {
-  private static metrics: Map<string, any[]> = new Map()
+  private static metrics: Map<string, unknown[]> = new Map()
 
   /**
    * メトリクスの記録
    */
-  static recordMetric(name: string, value: any, metadata?: any) {
+  static recordMetric(name: string, value: unknown, metadata?: unknown) {
     if (!this.metrics.has(name)) {
       this.metrics.set(name, [])
     }
@@ -447,7 +455,7 @@ export class PerformanceMonitor {
     this.metrics.get(name)!.push({
       value,
       timestamp: Date.now(),
-      metadata
+      metadata,
     })
 
     // 古いメトリクスを削除（最新1000件を保持）
@@ -466,7 +474,12 @@ export class PerformanceMonitor {
     severity: 'low' | 'medium' | 'high'
     recommendation: string
   }> {
-    const warnings: any[] = []
+    const warnings: Array<{
+      type: string
+      message: string
+      severity: 'low' | 'medium' | 'high'
+      recommendation: string
+    }> = []
 
     // メモリ使用量チェック
     if (AdvancedCacheManager.getStats().size > 800) {
@@ -474,7 +487,7 @@ export class PerformanceMonitor {
         type: 'memory',
         message: 'Cache size is approaching limit',
         severity: 'medium',
-        recommendation: 'Consider increasing cache size or reducing TTL'
+        recommendation: 'Consider increasing cache size or reducing TTL',
       })
     }
 
@@ -485,7 +498,7 @@ export class PerformanceMonitor {
         type: 'query',
         message: `${slowQueries.length} slow queries detected`,
         severity: 'high',
-        recommendation: 'Review and optimize slow queries, consider adding indexes'
+        recommendation: 'Review and optimize slow queries, consider adding indexes',
       })
     }
 
@@ -496,16 +509,21 @@ export class PerformanceMonitor {
    * パフォーマンスレポートの生成
    */
   static generateReport(): {
-    cacheStats: any
-    queryStats: any
-    warnings: any[]
+    cacheStats: ReturnType<typeof AdvancedCacheManager.getStats>
+    queryStats: ReturnType<typeof QueryOptimizer.getSlowQueries>
+    warnings: Array<{
+      type: string
+      message: string
+      severity: 'low' | 'medium' | 'high'
+      recommendation: string
+    }>
     recommendations: string[]
   } {
     return {
       cacheStats: AdvancedCacheManager.getStats(),
       queryStats: QueryOptimizer.getSlowQueries(),
       warnings: this.checkPerformanceWarnings(),
-      recommendations: this.generateRecommendations()
+      recommendations: this.generateRecommendations(),
     }
   }
 
@@ -514,7 +532,7 @@ export class PerformanceMonitor {
    */
   private static generateRecommendations(): string[] {
     const recommendations: string[] = []
-    
+
     const cacheStats = AdvancedCacheManager.getStats()
     if (cacheStats.hitRate < 0.7) {
       recommendations.push('Improve cache hit rate by adjusting TTL or cache strategy')
@@ -563,13 +581,13 @@ export class AutoOptimizationEngine {
     try {
       // キャッシュの最適化
       await this.optimizeCache()
-      
+
       // クエリの最適化
       await this.optimizeQueries()
-      
+
       // メモリの最適化
       await this.optimizeMemory()
-      
+
       console.log('Auto-optimization cycle completed')
     } catch (error) {
       console.error('Auto-optimization error:', error)
@@ -581,7 +599,7 @@ export class AutoOptimizationEngine {
    */
   private static async optimizeCache() {
     const stats = AdvancedCacheManager.getStats()
-    
+
     // ヒット率が低い場合はTTLを調整
     if (stats.hitRate < 0.5) {
       // TTLを延長するロジック（実装依存）
@@ -594,7 +612,7 @@ export class AutoOptimizationEngine {
    */
   private static async optimizeQueries() {
     const slowQueries = QueryOptimizer.getSlowQueries(500)
-    
+
     if (slowQueries.length > 0) {
       console.log(`Found ${slowQueries.length} slow queries for optimization`)
       // 自動インデックス作成やクエリ書き換えのロジック

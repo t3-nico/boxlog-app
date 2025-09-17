@@ -6,13 +6,13 @@ import { Task } from '@/types/unified'
 
 interface SmartFolderStore {
   smartFolders: SmartFolder[]
-  
+
   // Actions
   addSmartFolder: (folder: Omit<SmartFolder, 'id' | 'createdAt' | 'updatedAt' | 'children' | 'path'>) => void
   updateSmartFolder: (id: string, updates: Partial<SmartFolder>) => void
   deleteSmartFolder: (id: string) => void
   getSmartFolder: (id: string) => SmartFolder | undefined
-  
+
   // Hierarchy helpers
   getRootFolders: () => SmartFolder[]
   getChildFolders: (parentId: string) => SmartFolder[]
@@ -20,7 +20,7 @@ interface SmartFolderStore {
   getFolderHierarchy: () => SmartFolder[]
   getFolderPath: (folderId: string) => string
   canAddChild: (parentId: string) => boolean
-  
+
   // Condition helpers
   evaluateTask: (task: Task, rules: SmartFolderRule[]) => boolean
   getMatchingTasks: (tasks: Task[], folderId: string) => Task[]
@@ -32,7 +32,7 @@ const generateId = (): string => {
 }
 
 const generateConditionId = (): string => {
-  return `cond_${  Math.random().toString(36).substring(2)}`
+  return `cond_${Math.random().toString(36).substring(2)}`
 }
 
 // Eagle-style system smart folders
@@ -114,16 +114,16 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         // if (folder.level > 3) {
         //   throw new Error('Maximum hierarchy level is 3')
         // }
-        // 
+        //
         // if (parentFolder && parentFolder.level >= 3) {
         //   throw new Error('Cannot add child to level 3 folder')
         // }
-        
+
         // Generate path - temporarily use folder name only
         const path = folder.name
 
         const maxOrder = smartFolders.length
-        
+
         const newFolder: SmartFolder = {
           ...folder,
           id: generateId(),
@@ -142,16 +142,14 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         //     }
         //   }
         // }
-        
+
         set({ smartFolders: updatedFolders })
       },
 
       updateSmartFolder: (id, updates) => {
         set((state) => ({
           smartFolders: state.smartFolders.map((folder) =>
-            folder.id === id
-              ? { ...folder, ...updates, updatedAt: new Date() }
-              : folder
+            folder.id === id ? { ...folder, ...updates, updatedAt: new Date() } : folder
           ),
         }))
       },
@@ -229,7 +227,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
 
       getFolderPath: (folderId) => {
         const { smartFolders } = get()
-        const folder = smartFolders.find(f => f.id === folderId)
+        const folder = smartFolders.find((f) => f.id === folderId)
         return folder ? folder.name : '' // Path logic tracked in Issue #88
       },
 
@@ -247,7 +245,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
 function evaluateCondition(task: Task, condition: FolderCondition): boolean {
   const { field, operator, value } = condition
 
-  let taskValue: any
+  let taskValue: string | number | boolean | Date | string[] | null | undefined
   switch (field) {
     case 'status':
       taskValue = task.status
@@ -268,17 +266,13 @@ function evaluateCondition(task: Task, condition: FolderCondition): boolean {
   switch (operator) {
     case 'is':
       if (field === 'tags' && Array.isArray(taskValue)) {
-        return Array.isArray(value) 
-          ? value.some(v => taskValue.includes(v))
-          : taskValue.includes(value as string)
+        return Array.isArray(value) ? value.some((v) => taskValue.includes(v)) : taskValue.includes(value as string)
       }
       return taskValue === value
 
     case 'is_not':
       if (field === 'tags' && Array.isArray(taskValue)) {
-        return Array.isArray(value)
-          ? !value.some(v => taskValue.includes(v))
-          : !taskValue.includes(value as string)
+        return Array.isArray(value) ? !value.some((v) => taskValue.includes(v)) : !taskValue.includes(value as string)
       }
       return taskValue !== value
 
@@ -287,9 +281,7 @@ function evaluateCondition(task: Task, condition: FolderCondition): boolean {
         return taskValue.toLowerCase().includes((value as string).toLowerCase())
       }
       if (Array.isArray(taskValue)) {
-        return Array.isArray(value)
-          ? value.some(v => taskValue.includes(v))
-          : taskValue.includes(value as string)
+        return Array.isArray(value) ? value.some((v) => taskValue.includes(v)) : taskValue.includes(value as string)
       }
       return false
 

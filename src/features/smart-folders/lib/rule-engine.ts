@@ -1,11 +1,13 @@
 // スマートフォルダ ルール評価エンジン（拡張版）
 
-import { BaseEntity } from '@/types/common'
-import { 
-  SmartFolderRule, 
-  SmartFolderRuleField,
-  RuleEvaluationContext 
-} from '@/types/smart-folders'
+import { RuleEvaluationContext, SmartFolderRule, SmartFolderRuleField } from '@/types/smart-folders'
+import { Task } from '@/types/unified'
+
+// ルールエンジンで評価可能なアイテムの型
+type EvaluableItem = Task | Record<string, unknown>
+
+// フィールド値の型
+type FieldValue = string | number | boolean | Date | string[] | null | undefined
 
 // ルール評価結果のキャッシュ
 interface RuleEvaluationCache {
@@ -30,26 +32,26 @@ export class AdvancedRuleEngine {
     totalEvaluations: 0,
     cacheHits: 0,
     cacheMisses: 0,
-    averageEvaluationTime: 0
+    averageEvaluationTime: 0,
   }
 
   /**
    * 単一ルールの評価（キャッシュ付き）
    */
   static evaluateRule(
-    item: BaseEntity, 
-    rule: SmartFolderRule, 
-    context: RuleEvaluationContext = { 
-      item, 
-      now: new Date(), 
-      userTimeZone: 'UTC' 
+    item: EvaluableItem,
+    rule: SmartFolderRule,
+    context: RuleEvaluationContext = {
+      item,
+      now: new Date(),
+      userTimeZone: 'UTC',
     }
   ): boolean {
     const startTime = performance.now()
-    
+
     // キャッシュキーの生成
     const cacheKey = this.generateCacheKey(item, rule)
-    
+
     // キャッシュチェック
     const cachedResult = this.getFromCache(cacheKey)
     if (cachedResult !== null) {
@@ -57,15 +59,15 @@ export class AdvancedRuleEngine {
       this.updateStats(performance.now() - startTime)
       return cachedResult
     }
-    
+
     this.stats.cacheMisses++
-    
+
     // ルール評価
     const result = this.evaluateSingleRule(item, rule, context)
-    
+
     // キャッシュに保存
     this.saveToCache(cacheKey, result)
-    
+
     this.updateStats(performance.now() - startTime)
     return result
   }
@@ -73,50 +75,46 @@ export class AdvancedRuleEngine {
   /**
    * ルールセットの評価（AND/OR論理演算）
    */
-  static evaluateRuleSet(
-    item: BaseEntity, 
-    rules: SmartFolderRule[], 
-    context?: RuleEvaluationContext
-  ): boolean {
+  static evaluateRuleSet(item: EvaluableItem, rules: SmartFolderRule[], context?: RuleEvaluationContext): boolean {
     if (rules.length === 0) return true
 
-    const evaluationContext = context || { 
-      item, 
-      now: new Date(), 
-      userTimeZone: 'UTC' 
+    const evaluationContext = context || {
+      item,
+      now: new Date(),
+      userTimeZone: 'UTC',
     }
 
     // グループ化されたルール評価
     const groups = this.groupRulesByLogic(rules)
-    
+
     return this.evaluateRuleGroups(item, groups, evaluationContext)
   }
 
   /**
    * バッチ評価（複数アイテムを効率的に評価）
    */
-  static evaluateBatch<T extends BaseEntity>(
-    items: T[], 
+  static evaluateBatch<T extends EvaluableItem>(
+    items: T[],
     rules: SmartFolderRule[],
     context?: Partial<RuleEvaluationContext>
   ): { item: T; matches: boolean }[] {
     const results: { item: T; matches: boolean }[] = []
-    
+
     // ルールを事前処理して最適化
     const optimizedRules = this.optimizeRules(rules)
-    
+
     for (const item of items) {
       const evaluationContext = {
         item,
         now: new Date(),
         userTimeZone: 'UTC',
-        ...context
+        ...context,
       }
-      
+
       const matches = this.evaluateRuleSet(item, optimizedRules, evaluationContext)
       results.push({ item, matches })
     }
-    
+
     return results
   }
 
@@ -124,12 +122,12 @@ export class AdvancedRuleEngine {
    * 個別ルールの評価（実装部分）
    */
   private static evaluateSingleRule(
-    item: any, 
-    rule: SmartFolderRule, 
+    item: EvaluableItem,
+    rule: SmartFolderRule,
     context: RuleEvaluationContext
   ): boolean {
     const fieldValue = this.getFieldValue(item, rule.field)
-    
+
     switch (rule.field) {
       case 'tag':
         return this.evaluateTagCondition(fieldValue, rule)
@@ -154,10 +152,10 @@ export class AdvancedRuleEngine {
   /**
    * タグ条件の評価
    */
-  private static evaluateTagCondition(fieldValue: any, rule: SmartFolderRule): boolean {
+  private static evaluateTagCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const tags = Array.isArray(fieldValue) ? fieldValue : []
     const ruleValue = rule.value
-    
+
     switch (rule.operator) {
       case 'contains':
         return tags.includes(ruleValue)
@@ -178,24 +176,24 @@ export class AdvancedRuleEngine {
    * 日付条件の評価
    */
   private static evaluateDateCondition(
-    fieldValue: any, 
-    rule: SmartFolderRule, 
+    fieldValue: FieldValue,
+    rule: SmartFolderRule,
     context: RuleEvaluationContext
   ): boolean {
     if (!fieldValue) return rule.operator === 'is_empty'
-    
+
     const fieldDate = new Date(fieldValue)
     if (isNaN(fieldDate.getTime())) return false
-    
+
     let compareDate: Date
-    
+
     // 相対日付の処理（例: "7days", "1month"）
     if (typeof rule.value === 'string' && /^\d+\w+$/.test(rule.value)) {
       compareDate = this.parseRelativeDate(rule.value, context.now)
     } else {
       compareDate = new Date(rule.value as string)
     }
-    
+
     switch (rule.operator) {
       case 'greater_than':
         return fieldDate > compareDate
@@ -215,10 +213,10 @@ export class AdvancedRuleEngine {
   /**
    * ステータス条件の評価
    */
-  private static evaluateStatusCondition(fieldValue: any, rule: SmartFolderRule): boolean {
+  private static evaluateStatusCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const status = String(fieldValue).toLowerCase()
     const ruleValue = String(rule.value).toLowerCase()
-    
+
     switch (rule.operator) {
       case 'equals':
         return status === ruleValue
@@ -236,17 +234,17 @@ export class AdvancedRuleEngine {
   /**
    * 優先度条件の評価
    */
-  private static evaluatePriorityCondition(fieldValue: any, rule: SmartFolderRule): boolean {
+  private static evaluatePriorityCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const priorityMap: Record<string, number> = {
       low: 1,
       medium: 2,
       high: 3,
-      urgent: 4
+      urgent: 4,
     }
-    
+
     const fieldPriority = priorityMap[String(fieldValue).toLowerCase()] || 0
     const rulePriority = priorityMap[String(rule.value).toLowerCase()] || 0
-    
+
     switch (rule.operator) {
       case 'equals':
         return fieldPriority === rulePriority
@@ -268,9 +266,9 @@ export class AdvancedRuleEngine {
   /**
    * ブール値条件の評価
    */
-  private static evaluateBooleanCondition(fieldValue: any, rule: SmartFolderRule): boolean {
+  private static evaluateBooleanCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const boolValue = Boolean(fieldValue)
-    
+
     switch (rule.operator) {
       case 'equals':
         return boolValue === rule.value
@@ -284,10 +282,10 @@ export class AdvancedRuleEngine {
   /**
    * テキスト条件の評価
    */
-  private static evaluateTextCondition(fieldValue: any, rule: SmartFolderRule): boolean {
+  private static evaluateTextCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     const text = String(fieldValue || '').toLowerCase()
     const ruleText = String(rule.value || '').toLowerCase()
-    
+
     switch (rule.operator) {
       case 'contains':
         return text.includes(ruleText)
@@ -313,7 +311,7 @@ export class AdvancedRuleEngine {
   /**
    * 汎用条件の評価
    */
-  private static evaluateGenericCondition(fieldValue: any, rule: SmartFolderRule): boolean {
+  private static evaluateGenericCondition(fieldValue: FieldValue, rule: SmartFolderRule): boolean {
     switch (rule.operator) {
       case 'equals':
         return fieldValue === rule.value
@@ -331,7 +329,7 @@ export class AdvancedRuleEngine {
   /**
    * フィールド値の取得
    */
-  private static getFieldValue(item: BaseEntity, field: SmartFolderRuleField): unknown {
+  private static getFieldValue(item: EvaluableItem, field: SmartFolderRuleField): FieldValue {
     const fieldMap: Record<string, string[]> = {
       tag: ['tags', 'tag'],
       created_date: ['createdAt', 'created_at', 'createdDate'],
@@ -341,17 +339,17 @@ export class AdvancedRuleEngine {
       is_favorite: ['isFavorite', 'is_favorite', 'favorite', 'starred'],
       due_date: ['dueDate', 'due_date', 'deadline'],
       title: ['title', 'name', 'subject'],
-      description: ['description', 'content', 'body']
+      description: ['description', 'content', 'body'],
     }
-    
+
     const possibleKeys = fieldMap[field] || [field]
-    
+
     for (const key of possibleKeys) {
       if (key in item) {
         return item[key]
       }
     }
-    
+
     return undefined
   }
 
@@ -361,16 +359,16 @@ export class AdvancedRuleEngine {
   private static groupRulesByLogic(rules: SmartFolderRule[]): SmartFolderRule[][] {
     const groups: SmartFolderRule[][] = []
     let currentGroup: SmartFolderRule[] = []
-    
+
     for (const rule of rules) {
       currentGroup.push(rule)
-      
+
       if (rule.logic === 'OR' || rule === rules[rules.length - 1]) {
         groups.push([...currentGroup])
         currentGroup = []
       }
     }
-    
+
     return groups
   }
 
@@ -378,21 +376,19 @@ export class AdvancedRuleEngine {
    * グループ化されたルールの評価
    */
   private static evaluateRuleGroups(
-    item: any, 
-    groups: SmartFolderRule[][], 
+    item: EvaluableItem,
+    groups: SmartFolderRule[][],
     context: RuleEvaluationContext
   ): boolean {
     // OR グループの評価（いずれか1つでも true なら true）
     for (const group of groups) {
-      const groupResult = group.every(rule => 
-        this.evaluateRule(item, rule, context)
-      )
-      
+      const groupResult = group.every((rule) => this.evaluateRule(item, rule, context))
+
       if (groupResult) {
         return true
       }
     }
-    
+
     return false
   }
 
@@ -402,11 +398,11 @@ export class AdvancedRuleEngine {
   private static parseRelativeDate(relativeDate: string, now: Date): Date {
     const match = relativeDate.match(/^(\d+)(\w+)$/)
     if (!match) return now
-    
+
     const [, amountStr, unit] = match
     const amount = parseInt(amountStr)
     const result = new Date(now)
-    
+
     switch (unit) {
       case 'days':
       case 'day':
@@ -414,7 +410,7 @@ export class AdvancedRuleEngine {
         break
       case 'weeks':
       case 'week':
-        result.setDate(result.getDate() - (amount * 7))
+        result.setDate(result.getDate() - amount * 7)
         break
       case 'months':
       case 'month':
@@ -433,7 +429,7 @@ export class AdvancedRuleEngine {
         result.setMinutes(result.getMinutes() - amount)
         break
     }
-    
+
     return result
   }
 
@@ -465,16 +461,16 @@ export class AdvancedRuleEngine {
       greater_than: 4,
       less_than: 4,
       greater_equal: 4,
-      less_equal: 4
+      less_equal: 4,
     }
-    
+
     return scores[rule.operator] || 5
   }
 
   /**
    * キャッシュキーの生成
    */
-  private static generateCacheKey(item: BaseEntity, rule: SmartFolderRule): string {
+  private static generateCacheKey(item: EvaluableItem, rule: SmartFolderRule): string {
     const itemId = item.id || JSON.stringify(item).substring(0, 50)
     const ruleKey = `${rule.field}-${rule.operator}-${rule.value}`
     return `${itemId}-${ruleKey}`
@@ -486,12 +482,12 @@ export class AdvancedRuleEngine {
   private static getFromCache(key: string): boolean | null {
     const cached = this.cache.get(key)
     if (!cached) return null
-    
+
     if (Date.now() - cached.timestamp > this.cacheMaxAge) {
       this.cache.delete(key)
       return null
     }
-    
+
     return cached.result
   }
 
@@ -506,11 +502,11 @@ export class AdvancedRuleEngine {
         this.cache.delete(oldestKey)
       }
     }
-    
+
     this.cache.set(key, {
       key,
       result,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     })
   }
 
@@ -519,8 +515,8 @@ export class AdvancedRuleEngine {
    */
   private static updateStats(evaluationTime: number): void {
     this.stats.totalEvaluations++
-    this.stats.averageEvaluationTime = 
-      (this.stats.averageEvaluationTime * (this.stats.totalEvaluations - 1) + evaluationTime) / 
+    this.stats.averageEvaluationTime =
+      (this.stats.averageEvaluationTime * (this.stats.totalEvaluations - 1) + evaluationTime) /
       this.stats.totalEvaluations
   }
 
@@ -546,7 +542,7 @@ export class AdvancedRuleEngine {
       totalEvaluations: 0,
       cacheHits: 0,
       cacheMisses: 0,
-      averageEvaluationTime: 0
+      averageEvaluationTime: 0,
     }
   }
 }
