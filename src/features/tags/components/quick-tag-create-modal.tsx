@@ -60,8 +60,16 @@ export const QuickTagCreateModal = ({
     <>
       {/* Overlay */}
       <div 
+        role="button"
+        tabIndex={0}
         className="fixed inset-0 bg-black bg-opacity-50 z-50"
         onClick={handleClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            handleClose()
+          }
+        }}
+        aria-label="モーダルを閉じる"
       />
       
       {/* Modal */}

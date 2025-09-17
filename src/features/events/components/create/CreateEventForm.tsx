@@ -15,6 +15,20 @@ import { body } from '@/config/theme/typography'
 
 import type { CreateEventRequest, EventType, EventStatus, EventPriority } from '../../types/events'
 
+// シンプルな見出しコンポーネント
+const SectionHeader = ({ 
+  icon: Icon, 
+  title 
+}: { 
+  icon: React.ComponentType<any>, 
+  title: string 
+}) => (
+  <div className="flex items-center gap-2">
+    <Icon className={`${icon.size.md} ${text.secondary}`} />
+    <h3 className={`${body.large} font-semibold`}>{title}</h3>
+  </div>
+)
+
 interface CreateEventFormProps {
   initialData: Partial<CreateEventRequest>
   context: {
@@ -118,19 +132,6 @@ export const CreateEventForm = ({
   }, [formData, isValid, onSubmit])
 
 
-  // シンプルな見出しコンポーネント
-  const SectionHeader = ({ 
-    icon: Icon, 
-    title 
-  }: { 
-    icon: React.ComponentType<any>, 
-    title: string 
-  }) => (
-    <div className="flex items-center gap-2">
-      <Icon className={`${icon.size.md} ${text.secondary}`} />
-      <h3 className={`${body.large} font-semibold`}>{title}</h3>
-    </div>
-  )
 
   return (
     <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">

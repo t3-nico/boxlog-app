@@ -201,13 +201,14 @@ export const CreatingEventPreview = ({
             placeholder="Event title"
           />
         ) : (
-          <div
+          <button
+            type="button"
             onClick={handleTitleClick}
-            className="text-sm font-medium cursor-text truncate"
+            className="text-sm font-medium cursor-text truncate text-left w-full bg-transparent border-none p-0"
             style={{ color }}
           >
             {eventTitle}
-          </div>
+          </button>
         )}
 
         {/* 時間表示 */}
@@ -218,12 +219,14 @@ export const CreatingEventPreview = ({
         {/* アクションボタン */}
         <div className="flex gap-1 mt-auto">
           <button
+            type="button"
             onClick={handleConfirm}
             className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
             Save
           </button>
           <button
+            type="button"
             onClick={handleCancel}
             className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
           >

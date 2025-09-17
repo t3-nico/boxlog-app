@@ -66,6 +66,8 @@ const SortableSmartFolderItem = ({
     <div
       ref={setNodeRef}
       style={style}
+      role="button"
+      tabIndex={0}
       className={clsx(
         'group flex items-center justify-between px-2 py-2 rounded-md cursor-pointer transition-colors duration-150',
         {
@@ -76,6 +78,13 @@ const SortableSmartFolderItem = ({
       )}
       onClick={onClick}
       onContextMenu={(e) => onContextMenu(e, folder)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      aria-label={`スマートフォルダー: ${folder.name}`}
     >
       <div className="flex items-center flex-1 min-w-0 gap-2">
         {/* ドラッグハンドル */}

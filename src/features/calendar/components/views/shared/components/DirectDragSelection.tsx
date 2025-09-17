@@ -223,10 +223,28 @@ export const DirectDragSelection = ({
   )
 
   return (
-    <div 
+    <div
       ref={containerRef}
+      role="button"
+      tabIndex={0}
       className={cn('absolute inset-0', className)}
       onMouseDown={handleMouseDown}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          // キーボードからの操作用のダミーイベントを作成
+          const rect = containerRef.current?.getBoundingClientRect()
+          if (rect) {
+            const mockEvent = {
+              clientX: rect.left + rect.width / 2,
+              clientY: rect.top + rect.height / 2,
+              preventDefault: () => {}
+            } as React.MouseEvent
+            handleMouseDown(mockEvent)
+          }
+        }
+      }}
+      aria-label="Time slot selection area"
     >
       {children}
       

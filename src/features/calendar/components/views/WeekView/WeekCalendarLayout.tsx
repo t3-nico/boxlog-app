@@ -55,13 +55,13 @@ export const WeekCalendarLayout = ({
   dateRange,
   onEventClick,
   onCreateEvent,
-  onUpdateEvent,
+  onUpdateEvent: _onUpdateEvent,
   onDeleteEvent,
   onRestoreEvent
 }: WeekCalendarLayoutProps) => {
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
-  const { records, fetchRecords } = useRecordsStore()
+  const { records: _records, fetchRecords } = useRecordsStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
   
@@ -69,7 +69,7 @@ export const WeekCalendarLayout = ({
   const [deletedEvent, setDeletedEvent] = useState<CalendarEvent | null>(null)
   
   // ドラッグ機能は一時的に無効化
-  const enableDragToCreate = false
+  const _enableDragToCreate = false
   
   // Records取得
   useEffect(() => {
@@ -205,7 +205,7 @@ export const WeekCalendarLayout = ({
           className="flex-1 flex relative bg-background" 
           style={{ height: `${24 * HOUR_HEIGHT}px` }}
         >
-          {dates.map((day, dayIndex) => {
+          {dates.map((day, _dayIndex) => {
             // その日のイベントをフィルタリング
             const dayEvents = events.filter(event => {
               if (!event.startDate) return false
@@ -223,8 +223,17 @@ export const WeekCalendarLayout = ({
               >
                 {/* クリック可能な背景エリア */}
                 <div
+                  role="button"
+                  tabIndex={0}
                   onClick={(e) => handleEmptySlotClick(e, day)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleEmptySlotClick(e as any, day)
+                    }
+                  }}
                   className="absolute inset-0 z-10 cursor-cell"
+                  aria-label={`${format(day, 'yyyy年M月d日')}の予定を追加`}
                 >
                   {/* 分割線（bothモード時のみ） */}
                   {planRecordMode === 'both' && (
@@ -264,6 +273,8 @@ export const WeekCalendarLayout = ({
                     <div
                       key={event.id}
                       data-event-block
+                      role="button"
+                      tabIndex={0}
                       className={`absolute rounded-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-all duration-200 z-20 border border-white/20 group ${selectedEventId === event.id ? 'ring-2 ring-blue-400 ring-offset-2' : ''}`}
                       style={{
                         left: leftPosition,
@@ -277,9 +288,19 @@ export const WeekCalendarLayout = ({
                         setSelectedEventId(event.id)
                         onEventClick?.(event)
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setSelectedEventId(event.id)
+                          onEventClick?.(event)
+                        }
+                      }}
+                      aria-label={`イベント: ${event.title}${event.startDate ? ` (${format(event.startDate, 'HH:mm')}開始)` : ''}`}
                     >
                       {/* ホバー時の削除ボタン */}
                       <button
+                        type="button"
                         onClick={(e) => handleDeleteEvent(event.id, e)}
                         className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-0.5 bg-white/90 dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-700 rounded shadow-lg transition-all duration-200 z-30"
                         title="予定を削除"

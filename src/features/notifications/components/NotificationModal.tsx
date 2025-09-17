@@ -55,24 +55,40 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
   if (!isOpen) return null
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-start justify-center pt-20"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') onClose()
+      }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+      <div 
+        role="button"
+        tabIndex={0}
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm" 
+        onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') onClose()
+        }}
+        aria-label="モーダルを閉じる"
+      />
       
       {/* Modal */}
-      <div className={cn(
-        'relative w-full max-w-md mx-4',
-        colors.background.surface,
-        border.subtle,
-        'ring-1 shadow-lg',
-        componentRadius.modal.container,
-        animations.transition.fast
-      )}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={cn(
+          'relative w-full max-w-md mx-4',
+          colors.background.surface,
+          border.subtle,
+          'ring-1 shadow-lg',
+          componentRadius.modal.container,
+          animations.transition.fast
+        )}
+      >
         {/* Header */}
         <div className={cn(
           'flex items-center justify-between',
