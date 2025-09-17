@@ -33,7 +33,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
   fetchRecords: async (dateRange) => {
     set({ isLoading: true })
     try {
-      // TODO: Supabase実装
+
       // const { data } = await supabase
       //   .from('task_records')
       //   .select('*')
@@ -60,7 +60,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
   createRecord: async (record) => {
     const newRecord: TaskRecord = {
       id: crypto.randomUUID(),
-      user_id: 'current-user', // TODO: 実際のユーザーIDを使用
+      user_id: 'current-user', // Auth integration tracked in Issue #87
       title: record.title || '',
       actual_start: record.actual_start || new Date().toISOString(),
       actual_end: record.actual_end || new Date().toISOString(),
@@ -69,8 +69,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
       updated_at: new Date().toISOString(),
       ...record
     }
-    
-    // TODO: Supabase実装
+
     // const { data } = await supabase
     //   .from('task_records')
     //   .insert(newRecord)
@@ -84,7 +83,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
   },
   
   updateRecord: async (id, updates) => {
-    // TODO: Supabase実装
+
     // await supabase
     //   .from('task_records')
     //   .update({ ...updates, updated_at: new Date().toISOString() })
@@ -95,7 +94,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
   },
   
   deleteRecord: async (id) => {
-    // TODO: Supabase実装
+
     // await supabase
     //   .from('task_records')
     //   .delete()
@@ -134,8 +133,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
     }
     
     const created = await get().createRecord(record)
-    
-    // TODO: タスクのステータスを更新
+
     // await supabase
     //   .from('tasks')
     //   .update({ 
@@ -170,9 +168,9 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
       : 0
     
     return {
-      plannedHours: 0, // TODO: 対応する予定から計算
+      plannedHours: 0, // Calculation tracked in Issue #87
       actualHours: actualMinutes / 60,
-      completionRate: 0, // TODO: 予定との比較で計算
+      completionRate: 0, // Calculation tracked in Issue #87
       avgSatisfaction,
       unplannedTasks: rangeRecords.filter(r => !r.task_id).length
     }

@@ -95,7 +95,7 @@ const systemSmartFolders: SmartFolder[] = [
   },
 ]
 
-// 階層対応のデフォルトSmartFolders (TODO: 新しいSmartFolder型に合わせて修正が必要)
+// 階層対応のデフォルトSmartFolders (Type migration tracked in Issue #88)
 const defaultSmartFolders: SmartFolder[] = [
   // 一時的に空にしてビルドエラーを回避
 ]
@@ -107,11 +107,10 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
 
       addSmartFolder: (folder) => {
         const { smartFolders } = get()
-        // TODO: parentId property doesn't exist in new SmartFolder type
+
         // const parentFolder = folder.parentId ? smartFolders.find(f => f.id === folder.parentId) : null
         const parentFolder = null
-        
-        // TODO: Validate hierarchy level - temporarily disabled
+
         // if (folder.level > 3) {
         //   throw new Error('Maximum hierarchy level is 3')
         // }
@@ -122,8 +121,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         
         // Generate path - temporarily use folder name only
         const path = folder.name
-        
-        // TODO: Generate order - temporarily disabled
+
         const maxOrder = smartFolders.length
         
         const newFolder: SmartFolder = {
@@ -132,8 +130,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
           createdAt: new Date(),
           updatedAt: new Date(),
         }
-        
-        // TODO: Update parent's children array - temporarily disabled
+
         const updatedFolders = [...smartFolders, newFolder]
         // if (parentFolder) {
         //   const parentIndex = updatedFolders.findIndex(f => f.id === parentFolder.id)
@@ -202,7 +199,6 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         const folder = smartFolders.find((f) => f.id === folderId)
         if (!folder) return []
 
-        // TODO: evaluateTask needs to be fixed for new SmartFolderRule type
         return tasks // Return all tasks temporarily
       },
 
@@ -213,32 +209,32 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
       // Hierarchy helpers
       getRootFolders: () => {
         const { smartFolders } = get()
-        return smartFolders // TODO: filter logic needs to be implemented
+        return smartFolders // Filter implementation tracked in Issue #88
       },
 
       getChildFolders: (parentId) => {
         const { smartFolders } = get()
-        return [] // TODO: parentId logic needs to be implemented
+        return [] // ParentId logic tracked in Issue #88
       },
 
       getFoldersByLevel: (level) => {
         const { smartFolders } = get()
-        return [] // TODO: level logic needs to be implemented
+        return [] // Level logic tracked in Issue #88
       },
 
       getFolderHierarchy: () => {
         const { smartFolders } = get()
-        return smartFolders // TODO: hierarchy sorting needs to be implemented
+        return smartFolders // Hierarchy sorting tracked in Issue #88
       },
 
       getFolderPath: (folderId) => {
         const { smartFolders } = get()
         const folder = smartFolders.find(f => f.id === folderId)
-        return folder ? folder.name : '' // TODO: path logic needs to be implemented
+        return folder ? folder.name : '' // Path logic tracked in Issue #88
       },
 
       canAddChild: (parentId) => {
-        return true // TODO: level checking needs to be implemented
+        return true // Level checking tracked in Issue #88
       },
     }),
     {

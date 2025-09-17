@@ -21,24 +21,24 @@ export const InspectorContent = () => {
   
   // イベント詳細のハンドラー
   const handleEventSave = useCallback((eventData: any) => {
-    // TODO: イベント保存処理を実装
+    // Event handling tracked in Issue #89
     console.log('Save event:', eventData)
   }, [])
 
   const handleEventDelete = useCallback((eventId: string) => {
-    // TODO: イベント削除処理を実装
+    // Event handling tracked in Issue #89
     console.log('Delete event:', eventId)
     setSelectedEvent(null)
     setActiveContent('calendar')
   }, [setSelectedEvent, setActiveContent])
 
   const handleEventDuplicate = useCallback((event: any) => {
-    // TODO: イベント複製処理を実装
+    // Event handling tracked in Issue #89
     console.log('Duplicate event:', event)
   }, [])
 
   const handleTemplateCreate = useCallback((event: any) => {
-    // TODO: テンプレート作成処理を実装
+    // Template creation tracked in Issue #89
     console.log('Create template:', event)
   }, [])
 

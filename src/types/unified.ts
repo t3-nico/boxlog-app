@@ -38,7 +38,7 @@ export interface TaskEntity extends BaseTask {
 export interface Task extends Omit<BaseTask, 'user_id' | 'smart_folder_id'> {
   userId: string
   smartFolderId?: string
-  tagObjects?: any[] // TODO: Fix after Tag type is properly imported
+  tagObjects?: any[] // Type fix tracked in Issue #84
 }
 
 // === API関連 ===

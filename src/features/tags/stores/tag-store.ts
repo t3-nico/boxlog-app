@@ -123,7 +123,7 @@ export const colorCategories = {
   tech: ['#1f2937', '#111827', '#0c4a6e', '#075985', '#0369a1']
 }
 
-// 3階層対応の初期タグデータ (TODO: 新しいTag型に合わせて修正が必要)
+// 3階層対応の初期タグデータ (Type migration tracked in Issue #84)
 const initialTags: Tag[] = [
   // 一時的に空にしてビルドエラーを回避
 ]
@@ -154,7 +154,7 @@ export const useTagStore = create<TagStore>()(
             id: generateId(),
             name: tagData.name,
             parent_id: tagData.parent_id || null,
-            user_id: 'current-user', // TODO: Get from auth context
+            user_id: 'current-user', // Auth integration tracked in Issue #87
             color: tagData.color,
             level: tagData.level,
             path,

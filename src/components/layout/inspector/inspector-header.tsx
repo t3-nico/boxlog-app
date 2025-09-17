@@ -40,6 +40,7 @@ export const InspectorHeader = () => {
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <button
+              type="button"
               onClick={() => toggleInspector()}
               className={`w-8 h-8 flex items-center justify-center ${rounded.component.button.md} ${colors.hover.subtle} ${animations.transition.fast} flex-shrink-0`}
             >

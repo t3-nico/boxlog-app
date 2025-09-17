@@ -85,7 +85,7 @@ export const ThreeDayView = ({
     const positions: any[] = []
     
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
-    displayDates.forEach((displayDate, dayIndex) => {
+    displayDates.forEach((displayDate, _dayIndex) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
       
       // 元のevents配列から直接フィルタリング（週末設定に依存しない）

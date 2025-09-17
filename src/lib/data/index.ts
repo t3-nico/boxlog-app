@@ -1,5 +1,5 @@
 // Temporary data module
-// TODO: Replace with proper data implementation
+// Data implementation tracked in Issue #83
 
 export interface Country {
   code: string

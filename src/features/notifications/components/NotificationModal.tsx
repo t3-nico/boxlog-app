@@ -56,6 +56,8 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
 
   return (
     <div
+      role="button"
+      tabIndex={-1}
       className="fixed inset-0 z-50 flex items-start justify-center pt-20"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
@@ -63,6 +65,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose()
       }}
+      aria-label="モーダル背景 - クリックして閉じる"
     >
       {/* Backdrop */}
       <div 

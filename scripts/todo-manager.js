@@ -414,30 +414,9 @@ function sortTodos(todos, sortBy) {
   }
 }
 
-// 🚀 メイン実行関数
-async function main() {
-  const args = process.argv.slice(2);
-  
-  // コマンドライン引数の解析
-  const options = {
-    directory: process.cwd(),
-    format: 'console',
-    sortBy: 'file',
-    includeStats: true,
-    outputFile: null,
-    filterType: null,
-    filterPriority: null,
-    showLegacyOnly: false,
-    showOverdueOnly: false
-  };
-  
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    
-    switch (arg) {
-      case '--help':
-      case '-h':
-        console.log(`
+// 📝 ヘルプ表示
+function showHelp() {
+  console.log(`
 ${colors.bold}BoxLog TODO/FIXME Manager${colors.reset}
 
 使用方法:
@@ -460,107 +439,152 @@ ${colors.bold}BoxLog TODO/FIXME Manager${colors.reset}
   npm run todo:check -- --sort priority --type FIXME
   npm run todo:check -- --overdue
         `);
-        process.exit(0);
-        
+  process.exit(0);
+}
+
+// ⚙️ コマンドライン引数解析
+function parseCommandLineArgs(args) {
+  const options = {
+    directory: process.cwd(),
+    format: 'console',
+    sortBy: 'file',
+    includeStats: true,
+    outputFile: null,
+    filterType: null,
+    filterPriority: null,
+    showLegacyOnly: false,
+    showOverdueOnly: false
+  };
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+
+    switch (arg) {
+      case '--help':
+      case '-h':
+        showHelp();
+        break;
+
       case '--format':
       case '-f':
         options.format = args[++i];
         break;
-        
+
       case '--sort':
       case '-s':
         options.sortBy = args[++i];
         break;
-        
+
       case '--output':
       case '-o':
         options.outputFile = args[++i];
         break;
-        
+
       case '--type':
       case '-t':
         options.filterType = args[++i];
         break;
-        
+
       case '--priority':
       case '-p':
         options.filterPriority = args[++i];
         break;
-        
+
       case '--legacy':
         options.showLegacyOnly = true;
         break;
-        
+
       case '--overdue':
         options.showOverdueOnly = true;
         break;
-        
+
       case '--no-stats':
         options.includeStats = false;
         break;
     }
   }
-  
-  if (options.format !== 'json') {
-    console.log(`${colors.cyan}🔍 TODO/FIXMEを検索中...${colors.reset}`);
-  }
-  
-  // ファイル検索と解析
-  const parser = new TodoParser();
-  const files = findSourceFiles(options.directory);
-  let allTodos = [];
-  
-  files.forEach(file => {
-    const todos = analyzeTodosInFile(file, parser);
-    allTodos = allTodos.concat(todos);
-  });
-  
-  // フィルタリング
+
+  return options;
+}
+
+// 🔍 TODOフィルタリング
+function filterTodos(todos, options) {
+  let filteredTodos = todos;
+
   if (options.filterType) {
-    allTodos = allTodos.filter(todo => todo.type === options.filterType.toUpperCase());
+    filteredTodos = filteredTodos.filter(todo => todo.type === options.filterType.toUpperCase());
   }
-  
+
   if (options.filterPriority) {
-    allTodos = allTodos.filter(todo => todo.priority === options.filterPriority.toUpperCase());
+    filteredTodos = filteredTodos.filter(todo => todo.priority === options.filterPriority.toUpperCase());
   }
-  
+
   if (options.showLegacyOnly) {
-    allTodos = allTodos.filter(todo => !todo.isStructured);
+    filteredTodos = filteredTodos.filter(todo => !todo.isStructured);
   }
-  
+
   if (options.showOverdueOnly) {
-    allTodos = allTodos.filter(todo => todo.daysUntilDeadline !== null && todo.daysUntilDeadline < 0);
+    filteredTodos = filteredTodos.filter(todo => todo.daysUntilDeadline !== null && todo.daysUntilDeadline < 0);
   }
-  
-  // レポート生成
-  const report = generateReport(allTodos, options);
-  
-  // 出力
+
+  return filteredTodos;
+}
+
+// 📊 結果出力とサマリー
+function outputResults(allTodos, options, report) {
   if (options.outputFile) {
     fs.writeFileSync(options.outputFile, report);
     console.log(`${colors.green}✅ レポートを保存しました: ${options.outputFile}${colors.reset}`);
   } else {
     console.log(report);
   }
-  
-  // 統計サマリー
+
   const stats = generateStatistics(allTodos);
   if (options.format !== 'json') {
     if (stats.total === 0) {
       console.log(`${colors.green}🎉 TODO/FIXMEは見つかりませんでした！${colors.reset}`);
     } else {
       console.log(`${colors.blue}📋 ${stats.total}個のTODO/FIXMEを発見${colors.reset}`);
-      
+
       if (stats.overdue > 0) {
         console.log(`${colors.red}⚠️ ${stats.overdue}個の期限切れTODOがあります${colors.reset}`);
         process.exit(1);
       }
-      
+
       if (stats.expiringSoon > 0) {
         console.log(`${colors.yellow}🕐 ${stats.expiringSoon}個のTODOが期限間近です${colors.reset}`);
       }
     }
   }
+}
+
+// 🚀 メイン実行関数
+async function main() {
+  const args = process.argv.slice(2);
+  const options = parseCommandLineArgs(args);
+
+  if (options.format !== 'json') {
+    console.log(`${colors.cyan}🔍 TODO/FIXMEを検索中...${colors.reset}`);
+  }
+
+  // ファイル検索と解析
+  const parser = new TodoParser();
+  const files = findSourceFiles(options.directory);
+  let allTodos = [];
+
+  files.forEach(file => {
+    const todos = analyzeTodosInFile(file, parser);
+    allTodos = allTodos.concat(todos);
+  });
+
+  // フィルタリング
+  allTodos = filterTodos(allTodos, options);
+
+  // レポート生成
+  const report = generateReport(allTodos, options);
+
+  // 出力
+  outputResults(allTodos, options, report);
 }
 
 // CLI実行

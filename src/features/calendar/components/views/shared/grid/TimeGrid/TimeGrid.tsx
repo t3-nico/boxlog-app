@@ -104,10 +104,29 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   return (
     <div
       ref={containerRef}
+      role="button"
+      tabIndex={0}
       className={`relative overflow-auto ${GRID_BACKGROUND} ${className} ${isSelecting ? 'select-none' : ''}`}
       style={{ height: '100%' }}
       onClick={handleGridClick}
       onMouseDown={handleMouseDown}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          // キーボードからの操作用のダミーイベントを作成
+          const rect = containerRef.current?.getBoundingClientRect()
+          if (rect) {
+            const mockEvent = {
+              currentTarget: containerRef.current,
+              clientX: rect.left + rect.width / 2,
+              clientY: rect.top + rect.height / 2,
+              stopPropagation: () => {}
+            } as React.MouseEvent
+            handleGridClick(mockEvent)
+          }
+        }
+      }}
+      aria-label="Time grid - click to create event"
     >
       <style jsx>{`
         div::-webkit-scrollbar {

@@ -68,11 +68,20 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
     <div className={columnClasses}>
       {/* イベント表示エリア */}
       <div
+        role="button"
+        tabIndex={0}
         className="relative flex-1 cursor-pointer"
         onClick={handleTimeClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleTimeClick(e as any)
+          }
+        }}
         style={{
           minHeight: `${24 * hourHeight}px`
         }}
+        aria-label={`Day column for ${date.toDateString()}`}
       >
         {/* 現在時刻線はScrollableCalendarLayoutで統一表示 */}
         

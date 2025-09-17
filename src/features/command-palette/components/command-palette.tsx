@@ -87,7 +87,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
         dueDate: task.due_date,
         createdAt: task.created_at,
         updatedAt: task.updated_at,
-        selected: false, // TODO: Implement with new Task type
+        selected: false, // Task type implementation tracked in Issue #84
         userId: 'default', // Add missing property
         created_at: task.created_at, // Add missing property
         updated_at: task.updated_at, // Add missing property

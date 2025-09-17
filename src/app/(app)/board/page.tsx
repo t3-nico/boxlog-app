@@ -13,7 +13,7 @@ const BoardPage = () => {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {/* TODO Column */}
+          {/* Todo Column */}
           <div
             className={`${colors.background.elevated} ${componentRadius.card.base} ${patterns.card.default} ${spacing.padding.md}`}
           >

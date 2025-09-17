@@ -222,6 +222,7 @@ export const InspectorAIChat = () => {
             {showMenu && (
               <div className={`absolute right-0 top-full ${spacing.margin.xs} ${colors.background.card} ${colors.border.default} ${rounded.component.card.lg} shadow-lg z-50 min-w-[140px] ${spacing.padding.xs}`}>
                 <button
+                  type="button"
                   onClick={handleClearMessages}
                   className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
                 >
@@ -229,6 +230,7 @@ export const InspectorAIChat = () => {
                   Clear conversation
                 </button>
                 <button
+                  type="button"
                   onClick={handleExportMessages}
                   className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
                 >

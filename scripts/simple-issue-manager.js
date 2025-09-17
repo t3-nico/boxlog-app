@@ -373,51 +373,49 @@ ${colors.bold}特徴:${colors.reset}
 `)
 }
 
-// メイン実行
-function main() {
-  const args = process.argv.slice(2)
-
-  if (args.length === 0) {
-    showHelp()
-    return
+// コマンド解析
+function parseStartCommand(commandArgs) {
+  if (commandArgs.length === 0) {
+    console.error(`${colors.red}❌ タイトルを指定してください${colors.reset}`)
+    return null
   }
 
-  const command = args[0]
-  const commandArgs = args.slice(1)
+  const title = commandArgs[0]
+  const options = {
+    priority: 'medium',
+    size: 'medium',
+    labels: [],
+    force: false,
+  }
 
+  for (let i = 1; i < commandArgs.length; i++) {
+    switch (commandArgs[i]) {
+      case '--priority':
+        options.priority = commandArgs[++i]
+        break
+      case '--size':
+        options.size = commandArgs[++i]
+        break
+      case '--label':
+        options.labels.push(commandArgs[++i])
+        break
+      case '--force':
+        options.force = true
+        break
+    }
+  }
+
+  return { title, options }
+}
+
+// コマンド実行
+function executeCommand(command, commandArgs) {
   switch (command) {
     case 'start': {
-      if (commandArgs.length === 0) {
-        console.error(`${colors.red}❌ タイトルを指定してください${colors.reset}`)
-        return
+      const parsed = parseStartCommand(commandArgs)
+      if (parsed) {
+        startSession(parsed.title, parsed.options)
       }
-
-      const title = commandArgs[0]
-      const options = {
-        priority: 'medium',
-        size: 'medium',
-        labels: [],
-        force: false,
-      }
-
-      for (let i = 1; i < commandArgs.length; i++) {
-        switch (commandArgs[i]) {
-          case '--priority':
-            options.priority = commandArgs[++i]
-            break
-          case '--size':
-            options.size = commandArgs[++i]
-            break
-          case '--label':
-            options.labels.push(commandArgs[++i])
-            break
-          case '--force':
-            options.force = true
-            break
-        }
-      }
-
-      startSession(title, options)
       break
     }
 
@@ -457,6 +455,21 @@ function main() {
       console.error(`${colors.red}❌ 不明なコマンド: ${command}${colors.reset}`)
       showHelp()
   }
+}
+
+// メイン実行
+function main() {
+  const args = process.argv.slice(2)
+
+  if (args.length === 0) {
+    showHelp()
+    return
+  }
+
+  const command = args[0]
+  const commandArgs = args.slice(1)
+
+  executeCommand(command, commandArgs)
 }
 
 if (require.main === module) {

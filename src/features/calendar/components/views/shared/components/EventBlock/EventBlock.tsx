@@ -135,6 +135,12 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       onMouseUp={handleMouseUp}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick(e as any)
+        }
+      }}
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}

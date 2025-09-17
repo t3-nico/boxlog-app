@@ -5,7 +5,7 @@ import { useChatContext } from '@/contexts/chat-context'
 import { TaskTable } from '@/features/table'
 
 const TablePage = () => {
-  const { toggleChat, state } = useChatContext()
+  const { toggleChat: _toggleChat, state } = useChatContext()
 
   return (
     <div className="flex flex-col h-full relative">

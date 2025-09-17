@@ -127,20 +127,31 @@ async function analyzeESLintResults() {
 }
 
 /**
+ * ルールカテゴリマップ
+ */
+const RULE_CATEGORY_MAP = {
+  theme: ['boxlog-theme', 'theme'],
+  compliance: ['boxlog-compliance', 'jsx-a11y', 'security'],
+  performance: ['performance', 'memo', 'callback'],
+  todo: ['boxlog-todo', 'todo'],
+  complexity: ['complexity', 'max-', 'cyclomatic'],
+  imports: ['import', 'unused-imports'],
+  react: ['react', 'jsx'],
+  typescript: ['@typescript-eslint']
+};
+
+/**
  * ルールのカテゴリ分類
  */
 function categorizeRule(ruleId) {
   if (!ruleId) return 'other';
-  
-  if (ruleId.includes('boxlog-theme') || ruleId.includes('theme')) return 'theme';
-  if (ruleId.includes('boxlog-compliance') || ruleId.includes('jsx-a11y') || ruleId.includes('security')) return 'compliance';
-  if (ruleId.includes('performance') || ruleId.includes('memo') || ruleId.includes('callback')) return 'performance';
-  if (ruleId.includes('boxlog-todo') || ruleId.includes('todo')) return 'todo';
-  if (ruleId.includes('complexity') || ruleId.includes('max-') || ruleId.includes('cyclomatic')) return 'complexity';
-  if (ruleId.includes('import') || ruleId.includes('unused-imports')) return 'imports';
-  if (ruleId.includes('react') || ruleId.includes('jsx')) return 'react';
-  if (ruleId.includes('@typescript-eslint')) return 'typescript';
-  
+
+  for (const [category, patterns] of Object.entries(RULE_CATEGORY_MAP)) {
+    if (patterns.some(pattern => ruleId.includes(pattern))) {
+      return category;
+    }
+  }
+
   return 'other';
 }
 

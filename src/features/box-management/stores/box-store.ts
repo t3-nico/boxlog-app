@@ -1,5 +1,5 @@
 // Temporary box store implementation
-// TODO: Replace with proper implementation
+// Implementation tracked in Issue #89
 
 import { create } from 'zustand'
 

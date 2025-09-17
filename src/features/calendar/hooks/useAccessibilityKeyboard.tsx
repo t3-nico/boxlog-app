@@ -4,7 +4,14 @@ import { useEffect, useRef, useCallback, useState } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
 
-interface KeyboardNavigationState {
+import {
+  handleArrowKeys,
+  handleActionKeys,
+  handleNavigationKeys,
+  handleEventDetailKeys
+} from './keyboardHandlers'
+
+export interface NavigationState {
   selectedDate: Date
   selectedTime: string
   selectedEventId: string | null
@@ -41,7 +48,7 @@ export function useAccessibilityKeyboard(
   currentDate: Date,
   callbacks: KeyboardCallbacks
 ) {
-  const [navigationState, setNavigationState] = useState<KeyboardNavigationState>({
+  const [navigationState, setNavigationState] = useState<NavigationState>({
     selectedDate: new Date(currentDate),
     selectedTime: '09:00',
     selectedEventId: null,
@@ -251,127 +258,41 @@ export function useAccessibilityKeyboard(
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // モーダルやフォームが開いている場合は処理しない
     if (
-      navigationState.isInEventCreationMode || 
+      navigationState.isInEventCreationMode ||
       navigationState.isInEventEditMode ||
       event.target !== document.body
     ) {
       return
     }
 
-    const { key, ctrlKey, shiftKey, altKey } = event
+    const { ctrlKey, altKey } = event
 
     // 修飾キーの組み合わせチェック
     if (ctrlKey || altKey) return
 
-    switch (key) {
-      case 'ArrowRight':
-        event.preventDefault()
-        if (shiftKey) {
-          navigateDate('next', 'week')
-        } else {
-          navigateDate('next', 'day')
-        }
-        break
-
-      case 'ArrowLeft':
-        event.preventDefault()
-        if (shiftKey) {
-          navigateDate('previous', 'week')
-        } else {
-          navigateDate('previous', 'day')
-        }
-        break
-
-      case 'ArrowUp':
-        event.preventDefault()
-        if (navigationState.selectedEventId) {
-          navigateEvents('previous')
-        } else {
-          navigateTime('previous')
-        }
-        break
-
-      case 'ArrowDown':
-        event.preventDefault()
-        if (navigationState.selectedEventId) {
-          navigateEvents('next')
-        } else {
-          navigateTime('next')
-        }
-        break
-
-      case 'Tab':
-        if (!shiftKey) {
-          event.preventDefault()
-          navigateEvents('next')
-        }
-        break
-
-      case 'Enter':
-        event.preventDefault()
-        if (navigationState.selectedEventId) {
-          editCurrentEvent()
-        } else {
-          createEvent()
-        }
-        break
-
-      case 'Delete':
-      case 'Backspace':
-        event.preventDefault()
-        deleteCurrentEvent()
-        break
-
-      case 'Escape':
-        event.preventDefault()
-        handleEscape()
-        break
-
-      case 'F1':
-        event.preventDefault()
-        showKeyboardHelp()
-        break
-
-      case 'Home':
-        event.preventDefault()
-        setNavigationState(prev => ({ ...prev, selectedTime: TIME_SLOTS[0] }))
-        announce(`${TIME_SLOTS[0]}に移動しました`)
-        break
-
-      case 'End':
-        event.preventDefault()
-        setNavigationState(prev => ({ ...prev, selectedTime: TIME_SLOTS[TIME_SLOTS.length - 1] }))
-        announce(`${TIME_SLOTS[TIME_SLOTS.length - 1]}に移動しました`)
-        break
-
-      case 'PageUp':
-        event.preventDefault()
-        navigateDate('previous', 'week')
-        break
-
-      case 'PageDown':
-        event.preventDefault()
-        navigateDate('next', 'week')
-        break
-
-      case ' ': // スペースキー
-        event.preventDefault()
-        if (navigationState.selectedEventId) {
-          const event = events.find(e => e.id === navigationState.selectedEventId)
-          if (event) {
-            const timeString = event.startDate?.toLocaleTimeString('ja-JP', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-            const endTimeString = event.endDate?.toLocaleTimeString('ja-JP', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-            announce(`${event.title}。${timeString}から${endTimeString}まで。${event.description || '説明なし'}`)
-          }
-        }
-        break
+    // キーボードハンドラーを分割して呼び出し
+    const handlerProps = {
+      event,
+      navigationState,
+      navigateDate,
+      navigateTime,
+      navigateEvents,
+      editCurrentEvent,
+      createEvent,
+      deleteCurrentEvent,
+      handleEscape,
+      showKeyboardHelp,
+      setNavigationState,
+      announce,
+      events,
+      TIME_SLOTS
     }
+
+    // ヘルパー関数を直接呼び出し
+    handleArrowKeys(handlerProps)
+    handleActionKeys(handlerProps)
+    handleNavigationKeys(handlerProps)
+    handleEventDetailKeys(handlerProps)
   }, [
     navigationState,
     navigateDate,

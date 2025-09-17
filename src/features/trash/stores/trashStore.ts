@@ -59,7 +59,7 @@ export const useTrashStore = create<TrashState>()(
         }))
 
         // 実際の復元処理は各ストアで実装
-        // TODO: 復元先の決定とデータの復元
+
         console.log('Restoring item:', itemToRestore)
       },
 

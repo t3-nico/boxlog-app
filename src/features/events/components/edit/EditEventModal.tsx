@@ -22,7 +22,7 @@ export const EditEventModal = ({
   const { closeModal } = useCreateModalStore()
 
   const handleSubmit = async (data: any) => {
-    // TODO: イベント更新処理を実装
+    // Event update tracked in Issue #89
     console.log('Updating event:', event.id, data)
     onOpenChange(false)
   }

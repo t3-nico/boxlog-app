@@ -118,7 +118,7 @@ export const ChatProvider = ({ children }: ChatProviderProps) => {
         )
       }))
 
-      // TODO: 実際のAPI呼び出し
+      // API implementation tracked in Issue #87
       await new Promise(resolve => setTimeout(resolve, 1000))
 
       // アシスタントの返信をシミュレート

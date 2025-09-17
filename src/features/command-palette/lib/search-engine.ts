@@ -5,7 +5,6 @@ import { SearchResult, SearchOptions } from '../config/command-palette'
 
 import { commandRegistry } from './command-registry'
 
-
 export class SearchEngine {
   /**
    * Search across all available data sources
@@ -81,7 +80,7 @@ export class SearchEngine {
       icon: 'check-square',
       type: 'task' as const,
       action: () => {
-        // TODO: Implement task navigation
+        // Navigation implementation tracked in Issue #86
         console.log('Navigate to task:', task.id)
       },
       metadata: {
@@ -118,7 +117,7 @@ export class SearchEngine {
         icon: 'tag',
         type: 'tag' as const,
         action: () => {
-          // TODO: Implement tag filtering
+          // Filtering implementation tracked in Issue #86
           console.log('Filter by tag:', tag.id)
         },
         metadata: {
@@ -153,7 +152,7 @@ export class SearchEngine {
         icon: 'folder',
         type: 'smart-folder' as const,
         action: () => {
-          // TODO: Implement smart folder navigation
+          // Navigation implementation tracked in Issue #86
           console.log('Navigate to smart folder:', folder.id)
         },
       }
@@ -166,7 +165,7 @@ export class SearchEngine {
    * Get recent items for empty search
    */
   static getRecentItems(): SearchResult[] {
-    // TODO: Implement recent items tracking
+    // Recent items tracking tracked in Issue #86
     // This could be stored in localStorage or a store
     return [
       {
@@ -185,7 +184,7 @@ export class SearchEngine {
    * Get suggested actions based on context
    */
   static getSuggestions(): SearchResult[] {
-    // TODO: Implement context-aware suggestions
+    // Context suggestions tracked in Issue #86
     // Based on current page, time of day, recent actions, etc.
     return []
   }

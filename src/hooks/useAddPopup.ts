@@ -3,7 +3,7 @@
 import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 
 // Legacy hook - 新しいuseCreateModalStoreへの移行用
-// TODO: 段階的に削除予定
+// Scheduled for removal - tracked in Issue #89
 export function useAddPopup() {
   const { openModal, closeModal, isOpen } = useCreateModalStore()
   

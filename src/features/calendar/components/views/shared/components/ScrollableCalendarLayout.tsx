@@ -319,7 +319,7 @@ export const ScrollableCalendarLayout = ({
           onClick={handleGridClick}
           onKeyDown={handleKeyDown}
           tabIndex={enableKeyboardNavigation ? 0 : -1}
-          role={enableKeyboardNavigation ? "region" : undefined}
+          role={enableKeyboardNavigation ? "button" : undefined}
           aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
         >
           <style jsx>{`

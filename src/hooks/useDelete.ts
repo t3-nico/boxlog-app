@@ -32,22 +32,22 @@ export const useDelete = () => {
 
   const deleteTask = async (task: any, originalPath?: string) => {
     await deleteWithTrash(task, 'task', originalPath)
-    // TODO: タスクストアから削除処理を追加
+    // Delete implementation tracked in Issue #85
   }
 
   const deleteEvent = async (event: any, originalPath?: string) => {
     await deleteWithTrash(event, 'event', originalPath)
-    // TODO: イベントストアから削除処理を追加
+    // Delete implementation tracked in Issue #85
   }
 
   const deleteTag = async (tag: any, originalPath?: string) => {
     await deleteWithTrash(tag, 'tag', originalPath)
-    // TODO: タグストアから削除処理を追加
+    // Delete implementation tracked in Issue #85
   }
 
   const deleteSmartFolder = async (folder: any, originalPath?: string) => {
     await deleteWithTrash(folder, 'smart-folder', originalPath)
-    // TODO: スマートフォルダストアから削除処理を追加
+    // Delete implementation tracked in Issue #85
   }
 
   return {

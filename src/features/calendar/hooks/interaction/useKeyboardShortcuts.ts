@@ -8,6 +8,14 @@ import { useEffect, useCallback, useRef } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
 
+import {
+  handleBasicNavigation,
+  handleSelectedEventActions,
+  handleGlobalShortcuts,
+  handleSingleKeyShortcuts,
+  type KeyboardShortcutCallbacks
+} from './keyboardShortcutHandlers'
+
 export interface KeyboardShortcutHandlers {
   selectedEvent?: CalendarEvent | null
   onCreateEvent?: (date: Date, time: string) => void
@@ -79,110 +87,35 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions = {}) 
     const { key, ctrlKey, metaKey, shiftKey } = e
     const isModKey = ctrlKey || metaKey
     
-    // 基本的なナビゲーション
-    switch (key) {
-      case 'Escape':
-        e.preventDefault()
-        onEscape?.()
-        return
-        
-      case 'ArrowUp':
-        if (!isModKey) {
-          e.preventDefault()
-          onSelectPrevious?.()
-          return
-        }
-        break
-        
-      case 'ArrowDown':
-        if (!isModKey) {
-          e.preventDefault()
-          onSelectNext?.()
-          return
-        }
-        break
+    // コールバック集約
+    const callbacks: KeyboardShortcutCallbacks = {
+      onEscape,
+      onSelectPrevious,
+      onSelectNext,
+      onDeleteEvent,
+      onEditEvent,
+      onDuplicateEvent,
+      onCopy,
+      onUndo,
+      onRedo,
+      onPaste,
+      onCreateEvent,
+      onToggleHelp: onShowHelp
     }
-    
-    // 選択されたイベントに対する操作
-    if (selectedEvent) {
-      switch (key) {
-        case 'Delete':
-        case 'Backspace':
-          e.preventDefault()
-          debounceAction(() => onDeleteEvent?.(selectedEvent), 0)
-          return
-          
-        case 'Enter':
-          e.preventDefault()
-          debounceAction(() => onEditEvent?.(selectedEvent), 0)
-          return
-          
-        case 'd':
-          if (isModKey) {
-            e.preventDefault()
-            debounceAction(() => onDuplicateEvent?.(selectedEvent))
-            return
-          }
-          break
-          
-        case 'c':
-          if (isModKey) {
-            e.preventDefault()
-            debounceAction(() => onCopy?.(selectedEvent))
-            return
-          }
-          break
-      }
+
+    // コンテキスト作成
+    const context = {
+      event: e,
+      selectedEvent,
+      debounceAction,
+      callbacks
     }
-    
-    // グローバルショートカット
-    if (isModKey) {
-      switch (key) {
-        case 'z':
-          e.preventDefault()
-          if (shiftKey) {
-            debounceAction(() => onRedo?.())
-          } else {
-            debounceAction(() => onUndo?.())
-          }
-          return
-          
-        case 'v':
-          e.preventDefault()
-          const now = new Date()
-          const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-          debounceAction(() => onPaste?.(now, timeString))
-          return
-          
-        case 'n':
-          e.preventDefault()
-          const createNow = new Date()
-          const createTimeString = `${String(createNow.getHours()).padStart(2, '0')}:${String(createNow.getMinutes()).padStart(2, '0')}`
-          debounceAction(() => onCreateEvent?.(createNow, createTimeString))
-          return
-      }
-    }
-    
-    // 単一キーショートカット
-    switch (key) {
-      case 'a':
-        if (!isModKey) {
-          e.preventDefault()
-          const today = new Date()
-          debounceAction(() => onCreateEvent?.(today, '09:00'))
-          return
-        }
-        break
-        
-      case 'h':
-      case '?':
-        if (!isModKey) {
-          e.preventDefault()
-          onShowHelp?.()
-          return
-        }
-        break
-    }
+
+    // 分離されたハンドラーで処理
+    if (handleBasicNavigation(context)) return
+    if (handleSelectedEventActions(context)) return
+    if (handleGlobalShortcuts(context)) return
+    if (handleSingleKeyShortcuts(context)) return
   }, [
     isEnabled,
     selectedEvent,

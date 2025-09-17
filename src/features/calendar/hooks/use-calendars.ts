@@ -17,7 +17,7 @@ import type {
 // ========================================
 
 export function useCalendars(userId: string) {
-  // TODO: Implement localStorage-based calendar management
+  // Calendar management tracked in Issue #87
   return useQuery({
     queryKey: ['calendars', userId],
     queryFn: () => Promise.resolve([]), // Temporary stub

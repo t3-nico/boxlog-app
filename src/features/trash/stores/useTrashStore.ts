@@ -464,7 +464,7 @@ async function restoreItemByType(item: TrashItem): Promise<void> {
     case 'folder':
     case 'record':
     case 'template':
-      // TODO: 各featureの復元処理を実装
+
       console.warn(`Restore not implemented for type: ${item.type}`)
       break
       

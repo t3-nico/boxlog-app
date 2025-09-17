@@ -9,7 +9,6 @@ import { EventBlock, CalendarDragSelection, useTimeCalculation, useGlobalDragCur
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 
-
 interface WeekContentProps {
   date: Date
   events: CalendarEvent[]
@@ -232,7 +231,7 @@ export const WeekContent = ({
               hasSnappedPosition: !!dragState.snappedPosition
             })
             
-            // TODO: 適切な実装が必要
+            // Implementation tracked in Issue #89
             return null
           })()
         )}

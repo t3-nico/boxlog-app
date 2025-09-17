@@ -125,7 +125,7 @@ export function useCalendarData({
         priority: 'medium',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        userId: 'default-user' // TODO: Get from auth context
+        userId: 'default-user' // Auth integration tracked in Issue #87
       }
       
       await onTaskCreate(newTask)

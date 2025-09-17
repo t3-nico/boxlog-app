@@ -1,0 +1,8 @@
+{
+  "issueNumber": "131",
+  "issueUrl": "https://github.com/t3-nico/boxlog-app/issues/131",
+  "title": "複雑度20-29関数の段階的リファクタリング - リーダブルコード品質向上",
+  "startTime": "2025-09-17T03:39:41.192Z",
+  "currentBranch": "dev",
+  "startCommit": "7355be1 - fix: Phase 1 - jsx-a11y/no-static-element-interactions violations"
+}

@@ -1,6 +1,9 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
+
+import { useEventDetailInspector } from './hooks/useEventDetailInspector'
+import { getEventIcon, getEventDescription } from './utils/eventTimelineHelpers'
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
@@ -54,17 +57,29 @@ export const EventDetailInspectorContent = ({
   onTemplateCreate,
   onClose
 }: EventDetailInspectorContentProps) => {
-  const [isDetailOpen, setIsDetailOpen] = useState(true)
-  const [showTimeline, setShowTimeline] = useState(true)
-  const [formData, setFormData] = useState({
-    title: event?.title || '',
-    description: event?.description || '',
-    location: event?.location || '',
-    startDate: event?.startDate || new Date(),
-    endDate: event?.endDate || null,
-    tags: event?.tags || [],
-    isRecurring: event?.isRecurring || false,
-    reminders: event?.reminders || []
+
+  // カスタムフックで状態管理とロジックを抽出
+  const {
+    isDetailOpen,
+    showTimeline,
+    formData,
+    isValid,
+    setIsDetailOpen,
+    setShowTimeline,
+    updateFormData,
+    updateFormDataBulk,
+    handleSave,
+    handleDelete,
+    handleDuplicate,
+    handleTemplateCreate
+  } = useEventDetailInspector({
+    event,
+    mode,
+    onSave,
+    onDelete,
+    onDuplicate,
+    onTemplateCreate,
+    onClose
   })
   
   // 編集モード管理 - 常に編集可能
@@ -130,73 +145,6 @@ export const EventDetailInspectorContent = ({
     }
   ]
 
-  // イベントタイプごとのアイコンを取得
-  const getEventIcon = (event: any) => {
-    if (event.type === 'created') return <Circle className="w-3 h-3" />
-    if (event.type === 'status') return <Activity className="w-3 h-3" />
-    if (event.type === 'reminder') return <Bell className="w-3 h-3" />
-    
-    if (event.field === 'time') return <Clock className="w-3 h-3" />
-    if (event.field === 'tags') return <TagIcon className="w-3 h-3" />
-    if (event.field === 'memo') return <FileText className="w-3 h-3" />
-    
-    return <Edit3 className="w-3 h-3" />
-  }
-
-  // イベントの説明文を生成
-  const getEventDescription = (event: any) => {
-    if (event.type === 'created') {
-      return <span className={text.primary}>作成</span>
-    }
-    
-    if (event.type === 'status') {
-      return (
-        <span className="flex items-center gap-1.5 flex-wrap">
-          <span className={text.muted}>ステータス:</span>
-          <span className={text.muted}>{event.oldValue}</span>
-          <ArrowRight className={cn('w-3 h-3', text.muted)} />
-          <span className={cn(text.primary, 'font-medium')}>{event.newValue}</span>
-        </span>
-      )
-    }
-    
-    if (event.type === 'reminder') {
-      return <span className={text.primary}>{event.value}</span>
-    }
-    
-    if (event.field === 'time') {
-      return (
-        <span className="flex items-center gap-1.5 flex-wrap">
-          <span className={text.muted}>時間変更:</span>
-          <span className={cn(text.muted, 'font-mono text-xs')}>{event.oldValue}</span>
-          <ArrowRight className={cn('w-3 h-3', text.muted)} />
-          <span className={cn(text.primary, 'font-mono text-xs font-medium')}>{event.newValue}</span>
-        </span>
-      )
-    }
-    
-    if (event.field === 'tags' && event.action === 'added') {
-      return (
-        <span className="flex items-center gap-1.5">
-          <span className={text.muted}>タグ追加:</span>
-          <span className={cn(
-            'px-2 py-0.5 text-xs rounded-full border',
-            colors.background.accent,
-            text.primary,
-            border.universal
-          )}>
-            {event.value}
-          </span>
-        </span>
-      )
-    }
-    
-    if (event.field === 'memo') {
-      return <span className={text.primary}>メモを更新</span>
-    }
-    
-    return <span className={text.muted}>更新</span>
-  }
 
   // ステータス判定（予定 vs 記録）
   const isCompleted = event?.status === 'completed'

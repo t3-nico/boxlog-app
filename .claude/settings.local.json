@@ -27,10 +27,22 @@
       "Bash(npx tsx:*)",
       "Bash(npm run generate:css:*)",
       "Bash(npm ls:*)",
-      "Bash(gh issue close:*)"
+      "Bash(gh issue close:*)",
+      "Bash(node:*)",
+      "Bash(gh issue list:*)",
+      "Bash(npm run issue:start:*)",
+      "Bash(npm run issue:progress:*)",
+      "Bash(gh issue edit:*)",
+      "Bash(gh label:*)",
+      "Bash(npm run issue:complete:*)",
+      "Bash(node scripts/simple-issue-manager.js:*)",
+      "Bash(sort:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
   },
-  "claudeMd": ["docs/ai-chatbot/system-overview.md"]
+  "claudeMd": [
+    "docs/ai-chatbot/system-overview.md"
+  ]
 }

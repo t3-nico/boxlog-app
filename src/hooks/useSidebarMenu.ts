@@ -10,7 +10,7 @@ export const useSidebarMenu = () => {
   const smartFolders = useSmartFolderStore(state => state.smartFolders)
   const tags = useTagStore(state => state.tags)
   
-  // TODO: Move preferences to settings store
+  // Settings migration tracked in Issue #85
   const preferences = useMemo(() => ({ 
     hiddenSections: [] as string[] 
   }), []) // Temporary fallback

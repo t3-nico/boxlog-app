@@ -104,31 +104,70 @@ function estimateTodoSize(todo) {
 }
 
 /**
+ * カテゴリ分類ルール
+ */
+const CATEGORY_RULES = [
+  { patterns: ['test'], categories: ['test'] },
+  { patterns: ['doc', 'document'], categories: ['docs'] },
+  { patterns: ['ui', 'component'], categories: ['ui', 'frontend'] },
+  { patterns: ['api', 'server'], categories: ['api', 'backend'] },
+  { patterns: ['security'], categories: ['security'] },
+  { patterns: ['performance'], categories: ['performance'] },
+  { patterns: ['accessibility', 'a11y'], categories: ['accessibility'] }
+];
+
+/**
+ * デフォルトカテゴリマップ
+ */
+const DEFAULT_CATEGORY_MAP = {
+  '.tsx': ['frontend'],
+  '.jsx': ['frontend'],
+  '.js': ['refactor'],
+  '.ts': ['refactor']
+};
+
+/**
+ * パターンマッチング
+ */
+function matchesPatterns(text, file, patterns) {
+  return patterns.some(pattern =>
+    text.includes(pattern) || file.includes(pattern)
+  );
+}
+
+/**
+ * デフォルトカテゴリ取得
+ */
+function getDefaultCategories(file) {
+  for (const [extension, categories] of Object.entries(DEFAULT_CATEGORY_MAP)) {
+    if (file.includes(extension)) {
+      return categories;
+    }
+  }
+  return ['feature'];
+}
+
+/**
  * TODOのカテゴリを判定
  */
 function categorizeTodo(todo) {
-  const text = todo.text.toLowerCase()
-  const file = todo.file.toLowerCase()
-
-  const categories = []
+  const text = todo.text.toLowerCase();
+  const file = todo.file.toLowerCase();
+  const categories = [];
 
   // 技術領域による分類
-  if (file.includes('test') || text.includes('test')) categories.push('test')
-  if (file.includes('doc') || text.includes('document')) categories.push('docs')
-  if (file.includes('ui') || file.includes('component')) categories.push('ui', 'frontend')
-  if (file.includes('api') || file.includes('server')) categories.push('api', 'backend')
-  if (file.includes('security') || text.includes('security')) categories.push('security')
-  if (file.includes('performance') || text.includes('performance')) categories.push('performance')
-  if (file.includes('accessibility') || text.includes('a11y')) categories.push('accessibility')
-
-  // デフォルト
-  if (categories.length === 0) {
-    if (file.includes('.tsx') || file.includes('.jsx')) categories.push('frontend')
-    else if (file.includes('.js') || file.includes('.ts')) categories.push('refactor')
-    else categories.push('feature')
+  for (const rule of CATEGORY_RULES) {
+    if (matchesPatterns(text, file, rule.patterns)) {
+      categories.push(...rule.categories);
+    }
   }
 
-  return categories
+  // デフォルト分類
+  if (categories.length === 0) {
+    categories.push(...getDefaultCategories(file));
+  }
+
+  return categories;
 }
 
 /**

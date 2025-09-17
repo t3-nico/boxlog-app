@@ -44,26 +44,26 @@ export const TwoWeekView = ({
   dateRange,
   tasks: _tasks,
   events,
-  currentDate,
-  startDate,
+  currentDate: _currentDate,
+  startDate: _startDate,
   showWeekends = true,
   weekStartsOn = 1, // デフォルトは月曜始まり
   className,
-  onTaskClick,
+  onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
-  onDeleteEvent,
-  onRestoreEvent,
+  onDeleteEvent: _onDeleteEvent,
+  onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
-  onTaskDrag,
-  onCreateTask,
-  onCreateRecord,
-  onViewChange,
-  onNavigatePrev,
-  onNavigateNext,
-  onNavigateToday
+  onTaskDrag: _onTaskDrag,
+  onCreateTask: _onCreateTask,
+  onCreateRecord: _onCreateRecord,
+  onViewChange: _onViewChange,
+  onNavigatePrev: _onNavigatePrev,
+  onNavigateNext: _onNavigateNext,
+  onNavigateToday: _onNavigateToday
 }: TwoWeekViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
@@ -125,7 +125,7 @@ export const TwoWeekView = ({
   const headerComponent = (
     <div className="bg-background h-16 flex">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
-      {displayDates.map((date, index) => (
+      {displayDates.map((date, _index) => (
         <div
           key={date.toISOString()}
           className="flex-1 flex items-center justify-center px-1"

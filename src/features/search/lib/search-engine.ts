@@ -167,7 +167,7 @@ export class SearchEngine {
       type: 'task' as SearchResultType,
       icon: 'check-square',
       action: () => {
-        // TODO: Implement task navigation
+        // Navigation implementation tracked in Issue #86
         console.log('Navigate to task:', task.id)
       },
       metadata: {
@@ -203,7 +203,7 @@ export class SearchEngine {
         type: 'tag' as SearchResultType,
         icon: 'tag',
         action: () => {
-          // TODO: Implement tag filtering
+          // Filtering implementation tracked in Issue #86
           console.log('Filter by tag:', tag.id)
         },
         metadata: {
@@ -237,7 +237,7 @@ export class SearchEngine {
         type: 'smart-folder' as SearchResultType,
         icon: 'folder',
         action: () => {
-          // TODO: Implement smart folder navigation
+          // Navigation implementation tracked in Issue #86
           console.log('Navigate to smart folder:', folder.id)
         },
       }
@@ -268,7 +268,7 @@ export class SearchEngine {
         type: 'event' as SearchResultType,
         icon: 'calendar',
         action: () => {
-          // TODO: Implement event navigation
+          // Navigation implementation tracked in Issue #86
           console.log('Navigate to event:', event.id)
         },
         metadata: {
@@ -287,7 +287,7 @@ export class SearchEngine {
    * Get recent items for empty search
    */
   static getRecentItems(): SearchResult[] {
-    // TODO: Implement recent items tracking
+    // Recent items tracking tracked in Issue #86
     // This could be stored in localStorage or a store
     return [
       {
@@ -305,7 +305,7 @@ export class SearchEngine {
    * Get suggested actions based on context
    */
   static getSuggestions(): SearchResult[] {
-    // TODO: Implement context-aware suggestions
+    // Context suggestions tracked in Issue #86
     // Based on current page, time of day, recent actions, etc.
     return []
   }
