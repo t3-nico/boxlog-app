@@ -158,6 +158,70 @@ npm run issue:complete "完了内容とテスト結果"
 - `type:docs` - ドキュメント
 - `type:chore` - 雑務・設定
 
+#### 技術スタック・フレームワークラベル
+
+- `tech:react` - React関連の作業
+- `tech:nextjs` - Next.js関連の作業
+- `tech:typescript` - TypeScript関連の作業
+- `tech:tailwind` - Tailwind CSS関連の作業
+- `tech:supabase` - Supabase関連の作業
+- `tech:shadcn` - shadcn/ui関連の作業
+- `tech:radix` - Radix UI関連の作業
+- `tech:framer-motion` - Framer Motion関連の作業
+- `tech:lexical` - Lexical（エディタ）関連の作業
+- `tech:jotai` - Jotai（状態管理）関連の作業
+- `tech:zustand` - Zustand（状態管理）関連の作業
+- `tech:tanstack` - TanStack関連の作業
+
+#### 機能・コンポーネントラベル
+
+- `area:calendar` - カレンダー機能
+- `area:board` - ボード・Kanban機能
+- `area:table` - テーブル・データ表示機能
+- `area:auth` - 認証・ログイン機能
+- `area:search` - 検索機能
+- `area:tags` - タグ管理機能
+- `area:smart-folders` - スマートフォルダ機能
+- `area:ai-chat` - AI チャット機能
+- `area:command-palette` - コマンドパレット機能
+- `area:settings` - 設定画面
+- `area:trash` - ゴミ箱機能
+- `area:notifications` - 通知機能
+- `area:offline` - オフライン機能
+- `area:stats` - 統計・アナリティクス機能
+- `area:help` - ヘルプ・サポート機能
+
+#### UI・UX・デザイン関連ラベル
+
+- `ui:theme` - テーマ・デザインシステム関連
+- `ui:responsive` - レスポンシブデザイン関連
+- `ui:accessibility` - アクセシビリティ関連
+- `ui:animation` - アニメーション関連
+- `ui:dark-mode` - ダークモード関連
+- `ui:mobile` - モバイル固有のUI
+- `ui:desktop` - デスクトップ固有のUI
+- `ui:layout` - レイアウト関連
+
+#### パフォーマンス・品質関連ラベル
+
+- `perf:optimization` - パフォーマンス最適化
+- `perf:memory` - メモリ使用量最適化
+- `perf:loading` - 読み込み速度改善
+- `perf:bundle` - バンドルサイズ最適化
+- `quality:testing` - テスト関連
+- `quality:lint` - Lint・コード品質
+- `quality:type-safety` - 型安全性向上
+- `quality:security` - セキュリティ関連
+
+#### 開発環境・ツール関連ラベル
+
+- `dev:setup` - 開発環境セットアップ
+- `dev:build` - ビルド・デプロイ関連
+- `dev:ci-cd` - CI/CD関連
+- `dev:tooling` - 開発ツール関連
+- `dev:config` - 設定ファイル関連
+- `dev:1password` - 1Password連携関連
+
 #### サイズ見積もり
 
 - `size:xs` - 1時間未満
