@@ -465,9 +465,9 @@ export const SkeletonAnimation = ({
   
   return (
     <div className={`space-y-2 ${className}`}>
-      {Array.from({ length: count }).map((_, index) => (
+      {Array.from({ length: count }, (_, index) => (
         <div
-          key={index}
+          key={`skeleton-${Date.now()}-${index}`}
           className={`${height} bg-gray-200 dark:bg-gray-700 rounded animate-pulse`}
           style={{
             animationDelay: `${index * 0.1}s`
@@ -603,7 +603,7 @@ export const StaggeredAnimation = ({
     >
       {children.map((child, index) => (
         <motion.div
-          key={index}
+          key={`stagger-${Date.now()}-${index}`}
           variants={itemVariants}
           style={GPU_OPTIMIZED_STYLES}
         >
@@ -876,7 +876,7 @@ export const OptimizedListAnimation = ({
         <AnimatePresence mode="popLayout">
           {visibleChildren.map((child, index) => (
             <motion.div
-              key={startIndex + index}
+              key={`list-item-${startIndex + index}-${Date.now()}`}
               initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? false : { opacity: 0, y: -20 }}

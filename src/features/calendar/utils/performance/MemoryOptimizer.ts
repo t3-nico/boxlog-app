@@ -41,7 +41,7 @@ export class MemoryOptimizer {
   private timers: Set<NodeJS.Timeout> = new Set()
   private intervals: Set<NodeJS.Timer> = new Set()
   private observers: Set<MutationObserver | IntersectionObserver | ResizeObserver> = new Set()
-  private weakRefs: Set<WeakRef<any>> = new Set()
+  private weakRefs: Set<WeakRef<object>> = new Set()
   private memoryHistory: MemoryStats[] = []
   private cleanupCallbacks: Map<string, () => void> = new Map()
   private monitoringInterval: NodeJS.Timer | null = null
@@ -84,7 +84,7 @@ export class MemoryOptimizer {
    * 現在のメモリ使用量を取得
    */
   getMemoryStats(): MemoryStats {
-    const {memory} = (performance as any)
+    const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory
     
     if (!memory) {
       return {
@@ -149,8 +149,8 @@ export class MemoryOptimizer {
     this.cleanupWeakReferences()
     
     // 手動でのメモリ解放を促進
-    if ((window as any).gc) {
-      (window as any).gc()
+    if ((window as Window & { gc?: () => void }).gc) {
+      (window as Window & { gc?: () => void }).gc()
     }
     
     // 大きなオブジェクトの削除を促進
@@ -160,7 +160,7 @@ export class MemoryOptimizer {
   /**
    * イベントリスナーの追跡登録
    */
-  trackEventListener(element: EventTarget, type: string, listener: EventListener, options?: any): void {
+  trackEventListener(element: EventTarget, type: string, listener: EventListener, options?: boolean | AddEventListenerOptions): void {
     element.addEventListener(type, listener, options)
     this.listeners.add(listener)
     
@@ -231,7 +231,7 @@ export class MemoryOptimizer {
    * WeakRefのクリーンアップ
    */
   private cleanupWeakReferences(): void {
-    const validRefs = new Set<WeakRef<any>>()
+    const validRefs = new Set<WeakRef<object>>()
     
     for (const ref of this.weakRefs) {
       if (ref.deref() !== undefined) {
@@ -246,7 +246,7 @@ export class MemoryOptimizer {
    * メモリリークの検出
    */
   private detectMemoryLeaks(): void {
-    const stats = this.getMemoryStats()
+    const _stats = this.getMemoryStats()
     
     // 継続的なメモリ増加の検出
     if (this.memoryHistory.length >= 10) {
@@ -310,12 +310,12 @@ export class MemoryOptimizer {
     this.cleanupWeakReferences()
     
     // 期限切れタイマーの削除
-    const currentTime = Date.now()
+    const _currentTime = Date.now()
     const expiredTimers = new Set<NodeJS.Timeout>()
     
     for (const timer of this.timers) {
       // タイマーの状態確認（実装依存）
-      if ((timer as any)._destroyed || (timer as any)._idleTimeout === -1) {
+      if ((timer as NodeJS.Timeout & { _destroyed?: boolean; _idleTimeout?: number })._destroyed || (timer as NodeJS.Timeout & { _destroyed?: boolean; _idleTimeout?: number })._idleTimeout === -1) {
         expiredTimers.add(timer)
       }
     }

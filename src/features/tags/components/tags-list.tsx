@@ -15,8 +15,9 @@ import {
 import { colors } from '@/config/theme'
 import { tagIconMapping, TagIconName } from '@/config/ui/tagIcons'
 import { useTagStore } from '@/features/tags/stores/tag-store'
-
 import { useActiveState } from '@/hooks/useActiveState'
+import { Tag } from '@/types/tags'
+
 
 import { TagEditDialog } from './tag-edit-dialog'
 
@@ -27,7 +28,7 @@ interface TagsListProps {
 }
 
 interface TagItemProps {
-  tag: any
+  tag: Tag
   level: number
   isExpanded: boolean
   isSelected: boolean
@@ -35,8 +36,8 @@ interface TagItemProps {
   hasChildren: boolean
   onToggleExpanded: (tagId: string) => void
   onSelectTag: (tagId: string) => void
-  onEditTag: (tag: any) => void
-  onDeleteTag: (tag: any) => void
+  onEditTag: (tag: Tag) => void
+  onDeleteTag: (tag: Tag) => void
 }
 
 const TagItem = ({
@@ -214,7 +215,7 @@ export const TagsList = ({
   // 表示するタグリストを計算（階層構造）
   const displayTags = useCallback(() => {
     const result: Array<{
-      tag: any
+      tag: Tag
       level: number
       hasChildren: boolean
       isExpanded: boolean
@@ -249,15 +250,15 @@ export const TagsList = ({
     toggleTagExpansion(tagId)
   }, [toggleTagExpansion])
   
-  const [editingTag, setEditingTag] = useState<any>(null)
+  const [editingTag, setEditingTag] = useState<Tag | null>(null)
   const updateTag = useTagStore(state => state.updateTag)
   const deleteTag = useTagStore(state => state.deleteTag)
 
-  const handleEditTag = useCallback((tag: any) => {
+  const handleEditTag = useCallback((tag: Tag) => {
     setEditingTag(tag)
   }, [])
   
-  const handleDeleteTag = useCallback((tag: any) => {
+  const handleDeleteTag = useCallback((tag: Tag) => {
     if (tag.count > 0) {
       alert('このタグは使用中のため削除できません。')
       return
@@ -267,7 +268,7 @@ export const TagsList = ({
     }
   }, [deleteTag])
 
-  const handleSaveTag = useCallback((updatedTag: any) => {
+  const handleSaveTag = useCallback((updatedTag: Partial<Tag>) => {
     updateTag(editingTag.id, {
       name: updatedTag.name,
       color: updatedTag.color,

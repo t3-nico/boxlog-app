@@ -6,7 +6,7 @@ import { AdvancedRuleEngine } from './rule-engine'
 
 // インデックスマネージャー
 export class IndexManager {
-  private static indexes: Map<string, Map<any, Set<string>>> = new Map()
+  private static indexes: Map<string, Map<unknown, Set<string>>> = new Map()
 
   /**
    * フィールドインデックスの構築
@@ -14,8 +14,8 @@ export class IndexManager {
   static buildIndex<T extends { id: string }>(
     items: T[], 
     field: string
-  ): Map<any, Set<string>> {
-    const index = new Map<any, Set<string>>()
+  ): Map<unknown, Set<string>> {
+    const index = new Map<unknown, Set<string>>()
     
     for (const item of items) {
       const value = this.getFieldValue(item, field)
@@ -104,7 +104,7 @@ export class IndexManager {
   /**
    * フィールド値の取得
    */
-  private static getFieldValue(item: any, field: string): any {
+  private static getFieldValue(item: Record<string, unknown>, field: string): unknown {
     const keys = field.split('.')
     let value = item
     
@@ -118,7 +118,7 @@ export class IndexManager {
   /**
    * 値の正規化
    */
-  private static normalizeValue(value: any): any {
+  private static normalizeValue(value: unknown): unknown {
     if (typeof value === 'string') {
       return value.toLowerCase().trim()
     }
@@ -136,20 +136,20 @@ export class BatchProcessor {
    */
   static async processBatch<T>(
     items: T[],
-    processor: (item: T) => Promise<any>,
+    processor: (item: T) => Promise<unknown>,
     options: {
       batchSize?: number
       concurrency?: number
       onProgress?: (processed: number, total: number) => void
     } = {}
-  ): Promise<any[]> {
+  ): Promise<unknown[]> {
     const {
       batchSize = 100,
       concurrency = 4,
       onProgress
     } = options
 
-    const results: any[] = []
+    const results: unknown[] = []
     const batches = this.createBatches(items, batchSize)
     
     for (let i = 0; i < batches.length; i += concurrency) {
@@ -177,8 +177,8 @@ export class BatchProcessor {
    */
   private static async processSingleBatch<T>(
     batch: T[],
-    processor: (item: T) => Promise<any>
-  ): Promise<any[]> {
+    processor: (item: T) => Promise<unknown>
+  ): Promise<unknown[]> {
     return Promise.all(batch.map(processor))
   }
 
@@ -298,7 +298,7 @@ export class QueryOptimizer {
 // メモリキャッシュマネージャー
 export class CacheManager {
   private static cache: Map<string, {
-    data: any
+    data: unknown
     timestamp: number
     hits: number
   }> = new Map()
@@ -309,7 +309,7 @@ export class CacheManager {
   /**
    * キャッシュに保存
    */
-  static set(key: string, data: any): void {
+  static set(key: string, data: unknown): void {
     // サイズ制限チェック
     if (this.cache.size >= this.maxSize) {
       this.evictLeastUsed()
@@ -325,7 +325,7 @@ export class CacheManager {
   /**
    * キャッシュから取得
    */
-  static get(key: string): any | null {
+  static get(key: string): unknown | null {
     const entry = this.cache.get(key)
     
     if (!entry) return null
@@ -452,7 +452,7 @@ export class PerformanceMonitor {
     minTime: number
     maxTime: number
   }> {
-    const result: Record<string, any> = {}
+    const result: Record<string, {count: number, averageTime: number, minTime: number, maxTime: number}> = {}
     
     for (const [name, metric] of Array.from(this.metrics.entries())) {
       result[name] = {

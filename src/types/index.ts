@@ -30,7 +30,7 @@ export interface UserValues {
 export interface SmartFilter {
   id: string
   name: string
-  criteria: any
+  criteria: Record<string, unknown>
 }
 
 export interface TaskInsert {

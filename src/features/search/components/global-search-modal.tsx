@@ -57,7 +57,6 @@ export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) =
             <div className="border-b p-4">
               <SearchBar
                 placeholder="Search everything..."
-                autoFocus
                 onResultSelect={handleResultSelect}
                 showResults={false}
                 className="w-full"
@@ -73,9 +72,10 @@ export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) =
                     Recent Searches
                   </div>
                   <div className="space-y-1">
-                    {history.slice(0, 5).map((query, index) => (
+                    {history.slice(0, 5).map((query) => (
                       <button
-                        key={index}
+                        key={`history-${query}`}
+                        type="button"
                         className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent"
                         onClick={() => {
                           // Trigger search with this query
@@ -95,13 +95,13 @@ export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) =
                   Suggested
                 </div>
                 <div className="space-y-1">
-                  <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent">
+                  <button type="button" className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent">
                     High priority tasks
                   </button>
-                  <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent">
+                  <button type="button" className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent">
                     Today&apos;s events
                   </button>
-                  <button className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent">
+                  <button type="button" className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent">
                     Untagged items
                   </button>
                 </div>

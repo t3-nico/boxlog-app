@@ -19,9 +19,9 @@ export const EditEventModal = ({
   open,
   onOpenChange
 }: EditEventModalProps) => {
-  const { closeModal } = useCreateModalStore()
+  const { closeModal: _closeModal } = useCreateModalStore()
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: unknown) => {
     // Event update tracked in Issue #89
     console.log('Updating event:', event.id, data)
     onOpenChange(false)

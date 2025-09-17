@@ -26,7 +26,7 @@ export interface EventPositionInfo {
 
 interface UseEventPositioningOptions {
   date: Date
-  events: any[] // CalendarEvent型を拡張したイベント配列
+  events: CalendarEvent[] // CalendarEvent型を拡張したイベント配列
   viewType?: 'day' | 'week' | 'month'
 }
 
@@ -37,7 +37,7 @@ interface UseEventPositioningOptions {
 export function useEventPositioning({ 
   date, 
   events = [], // デフォルト値を空配列に設定
-  viewType = 'day' 
+  _viewType = 'day' 
 }: UseEventPositioningOptions) {
   
   // 当日のイベントのみフィルター（Day/Week共通）

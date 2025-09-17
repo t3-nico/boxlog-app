@@ -26,6 +26,7 @@ export const ViewSwitcher = () => {
         return (
           <button
             key={view.id}
+            type="button"
             onClick={() => handleViewChange(view.path)}
             className={clsx(
               'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200',

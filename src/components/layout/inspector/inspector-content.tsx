@@ -5,6 +5,7 @@ import React, { useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 
 import { colors } from '@/config/theme'
+import type { CalendarEvent } from '@/features/events'
 import { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
 import { cn } from '@/lib/utils'
 
@@ -20,7 +21,7 @@ export const InspectorContent = () => {
   const { setActiveContent, setSelectedEvent } = useInspectorStore()
   
   // イベント詳細のハンドラー
-  const handleEventSave = useCallback((eventData: any) => {
+  const handleEventSave = useCallback((eventData: Partial<CalendarEvent>) => {
     // Event handling tracked in Issue #89
     console.log('Save event:', eventData)
   }, [])
@@ -32,12 +33,12 @@ export const InspectorContent = () => {
     setActiveContent('calendar')
   }, [setSelectedEvent, setActiveContent])
 
-  const handleEventDuplicate = useCallback((event: any) => {
+  const handleEventDuplicate = useCallback((event: CalendarEvent) => {
     // Event handling tracked in Issue #89
     console.log('Duplicate event:', event)
   }, [])
 
-  const handleTemplateCreate = useCallback((event: any) => {
+  const handleTemplateCreate = useCallback((event: CalendarEvent) => {
     // Template creation tracked in Issue #89
     console.log('Create template:', event)
   }, [])

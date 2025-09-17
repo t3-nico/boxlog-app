@@ -64,7 +64,7 @@ export class BatteryOptimizer {
   private async initializeBatteryAPI(): Promise<void> {
     try {
       if ('getBattery' in navigator) {
-        const battery = await (navigator as any).getBattery()
+        const battery = await (navigator as Navigator & { getBattery(): Promise<BatteryManager> }).getBattery()
         
         this.batteryInfo = {
           charging: battery.charging,
@@ -93,7 +93,7 @@ export class BatteryOptimizer {
   private handleBatteryChange(event: Event): void {
     if (!this.batteryInfo) return
 
-    const battery = event.target as any
+    const battery = event.target as BatteryManager
     this.batteryInfo = {
       charging: battery.charging,
       chargingTime: battery.chargingTime,
@@ -368,7 +368,7 @@ export class BatteryOptimizer {
    */
   private resumeBackgroundTasks(): void {
     // 遅延されたネットワークリクエストを実行
-    for (const [key, request] of this.networkRequestQueue) {
+    for (const [_key, request] of this.networkRequestQueue) {
       request()
     }
     this.networkRequestQueue.clear()

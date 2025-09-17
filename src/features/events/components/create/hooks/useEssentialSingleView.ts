@@ -20,7 +20,7 @@ interface UseEssentialSingleViewProps {
   estimatedDuration: number
   taskPriority: string
   fastInputMode: boolean
-  onSave: (data: any) => Promise<void>
+  onSave: (data: unknown) => Promise<void>
   onClose: () => void
   formActions: {
     setTitle: (title: string) => void
@@ -110,7 +110,7 @@ export const useEssentialSingleView = ({
 
   // データ整形処理
   const prepareSaveData = useCallback(() => {
-    const saveData: any = {
+    const saveData: Record<string, unknown> = {
       title,
       tags,
       description: memo || undefined

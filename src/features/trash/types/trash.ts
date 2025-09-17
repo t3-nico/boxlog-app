@@ -36,7 +36,7 @@ export interface TrashItem {
   deletedFrom?: string
   
   /** 復元用の完全なデータ */
-  originalData: Record<string, any>
+  originalData: Record<string, unknown>
   
   /** 表示用のメタデータ */
   metadata?: {
@@ -236,7 +236,7 @@ export interface DeleteResult {
 /**
  * TrashItemのタイプガード関数
  */
-export const isTrashItem = (item: any): item is TrashItem => {
+export const isTrashItem = (item: unknown): item is TrashItem => {
   return (
     typeof item === 'object' &&
     item !== null &&

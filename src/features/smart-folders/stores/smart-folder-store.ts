@@ -109,7 +109,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         const { smartFolders } = get()
 
         // const parentFolder = folder.parentId ? smartFolders.find(f => f.id === folder.parentId) : null
-        const parentFolder = null
+        const _parentFolder = null
 
         // if (folder.level > 3) {
         //   throw new Error('Maximum hierarchy level is 3')
@@ -120,9 +120,9 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         // }
 
         // Generate path - temporarily use folder name only
-        const path = folder.name
+        const _path = folder.name
 
-        const maxOrder = smartFolders.length
+        const _maxOrder = smartFolders.length
 
         const newFolder: SmartFolder = {
           ...folder,
@@ -210,13 +210,13 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         return smartFolders // Filter implementation tracked in Issue #88
       },
 
-      getChildFolders: (parentId) => {
-        const { smartFolders } = get()
+      getChildFolders: (_parentId) => {
+        const { smartFolders: _smartFolders } = get()
         return [] // ParentId logic tracked in Issue #88
       },
 
-      getFoldersByLevel: (level) => {
-        const { smartFolders } = get()
+      getFoldersByLevel: (_level) => {
+        const { smartFolders: _smartFolders } = get()
         return [] // Level logic tracked in Issue #88
       },
 
@@ -231,7 +231,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         return folder ? folder.name : '' // Path logic tracked in Issue #88
       },
 
-      canAddChild: (parentId) => {
+      canAddChild: (_parentId) => {
         return true // Level checking tracked in Issue #88
       },
     }),

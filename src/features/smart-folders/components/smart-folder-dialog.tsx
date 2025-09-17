@@ -31,7 +31,7 @@ interface SmartFolderDialogProps {
   onClose: () => void
   onSave: (data: CreateSmartFolderInput | UpdateSmartFolderInput) => Promise<void>
   folder?: SmartFolder
-  previewItems?: any[]
+  previewItems?: unknown[]
 }
 
 export const SmartFolderDialog = ({
@@ -120,7 +120,7 @@ export const SmartFolderDialog = ({
   }, [])
 
   // フィールドの更新
-  const updateField = useCallback((field: string, value: any) => {
+  const updateField = useCallback((field: string, value: unknown) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }, [])
 

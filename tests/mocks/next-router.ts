@@ -19,7 +19,7 @@ export const mockNextRouter = {
 
 // Next.js Image のモック
 export const mockNextImage = {
-  default: ({ src, alt, ...props }: any) => {
+  default: ({ src, alt, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) => {
     // eslint-disable-next-line @next/next/no-img-element
     return React.createElement('img', { src, alt, ...props })
   },

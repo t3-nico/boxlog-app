@@ -10,7 +10,7 @@ import { text, primary, colors } from '@/config/theme/colors'
 interface EditOptionsProps {
   title: string
   date?: Date
-  tags: any[]
+  tags: Tag[]
   showMemo: boolean
   memo: string
   onToggleMemo: () => void

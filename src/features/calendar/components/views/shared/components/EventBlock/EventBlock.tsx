@@ -26,10 +26,10 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   onDragStart,
   onDragEnd,
   onResizeStart,
-  onResizeEnd,
+  _onResizeEnd,
   isDragging = false,
   isSelected = false,
-  isResizing = false,
+  _isResizing = false,
   className = '',
   style = {},
   previewTime = null
@@ -106,7 +106,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   }, [isDragging, onDragEnd, event])
   
   // 状態に応じたスタイルを決定
-  const eventState = isDragging ? 'dragging' : isSelected ? 'selected' : isHovered ? 'hovered' : 'default'
+  const _eventState = isDragging ? 'dragging' : isSelected ? 'selected' : isHovered ? 'hovered' : 'default'
   
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const eventClasses = cn(
@@ -138,14 +138,15 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          handleClick(e as any)
+          // キーボードイベントの場合はeventオブジェクトを直接渡す
+          onClick?.(event)
         }
       }}
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
       aria-label={`Event: ${event.title}`}
-      aria-selected={isSelected}
+      aria-pressed={isSelected}
     >
       <EventContent
         event={{

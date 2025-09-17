@@ -36,7 +36,7 @@ export const TagInput = ({
   const inputRef = useRef<HTMLInputElement>(null)
   
   // タグストアのフックを使用
-  const { addTag: addTagToStore, getTagById, getAllTags } = useTagStore()
+  const { addTag: addTagToStore, getTagById: _getTagById, getAllTags } = useTagStore()
 
   // Popular tags (in practice, would be fetched from database)
   const trendingTags: Tag[] = [
@@ -170,71 +170,104 @@ export const TagInput = ({
     onChange(selectedTags.filter(tag => tag.id !== tagId))
   }
 
-  // キーボード操作
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Tab') {
-      e.preventDefault()
-      if (showSuggestions && suggestions.length > 0) {
-        addTag(suggestions[focusedSuggestionIndex].name)
-      } else {
-        onTabNext?.()
+  // キーボード操作のヘルパー関数群
+  const handleTabKey = () => {
+    if (showSuggestions && suggestions.length > 0) {
+      addTag(suggestions[focusedSuggestionIndex].name)
+    } else {
+      onTabNext?.()
+    }
+  }
+
+  const handleEnterKey = () => {
+    if (showSuggestions && suggestions.length > 0) {
+      addTag(suggestions[focusedSuggestionIndex].name)
+    } else if (inputValue.trim().length > 0) {
+      // Remove # if present, otherwise add as is
+      const tagName = inputValue.startsWith('#') ? inputValue.slice(1).trim() : inputValue.trim()
+      if (tagName) {
+        addTag(tagName)
       }
-      return
     }
+  }
 
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      if (showSuggestions && suggestions.length > 0) {
-        addTag(suggestions[focusedSuggestionIndex].name)
-      } else if (inputValue.trim().length > 0) {
-        // Remove # if present, otherwise add as is
-        const tagName = inputValue.startsWith('#') ? inputValue.slice(1).trim() : inputValue.trim()
-        if (tagName) {
-          addTag(tagName)
-        }
-      }
-      return
-    }
+  const handleArrowDown = () => {
+    setFocusedSuggestionIndex(
+      (focusedSuggestionIndex + 1) % suggestions.length
+    )
+  }
 
-    if (e.key === 'ArrowDown' && showSuggestions) {
-      e.preventDefault()
-      setFocusedSuggestionIndex(
-        (focusedSuggestionIndex + 1) % suggestions.length
-      )
-    }
+  const handleArrowUp = () => {
+    setFocusedSuggestionIndex(
+      focusedSuggestionIndex === 0
+        ? suggestions.length - 1
+        : focusedSuggestionIndex - 1
+    )
+  }
 
-    if (e.key === 'ArrowUp' && showSuggestions) {
-      e.preventDefault()
-      setFocusedSuggestionIndex(
-        focusedSuggestionIndex === 0 
-          ? suggestions.length - 1 
-          : focusedSuggestionIndex - 1
-      )
-    }
+  const handleEscapeKey = () => {
+    setShowSuggestions(false)
+    setInputValue('')
+  }
 
-    if (e.key === 'Escape') {
-      setShowSuggestions(false)
-      setInputValue('')
-    }
-
-    if (e.key === 'Backspace' && !inputValue && selectedTags.length > 0) {
+  const handleBackspaceKey = () => {
+    if (!inputValue && selectedTags.length > 0) {
       removeTag(selectedTags[selectedTags.length - 1].id)
     }
+  }
 
-    // スペースキーで処理
-    if (e.key === ' ') {
-      if (!inputValue.trim()) {
-        // Show popular tags when empty
-        e.preventDefault()
-        setShowSuggestions(true)
-      } else {
-        // Add as new tag when input exists
-        e.preventDefault()
-        const tagName = inputValue.startsWith('#') ? inputValue.slice(1).trim() : inputValue.trim()
-        if (tagName) {
-          addTag(tagName)
-        }
+  const handleSpaceKey = () => {
+    if (!inputValue.trim()) {
+      // Show popular tags when empty
+      setShowSuggestions(true)
+    } else {
+      // Add as new tag when input exists
+      const tagName = inputValue.startsWith('#') ? inputValue.slice(1).trim() : inputValue.trim()
+      if (tagName) {
+        addTag(tagName)
       }
+    }
+  }
+
+  // キーボード操作（リファクタリング済み）
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'Tab':
+        e.preventDefault()
+        handleTabKey()
+        return
+
+      case 'Enter':
+        e.preventDefault()
+        handleEnterKey()
+        return
+
+      case 'ArrowDown':
+        if (showSuggestions) {
+          e.preventDefault()
+          handleArrowDown()
+        }
+        break
+
+      case 'ArrowUp':
+        if (showSuggestions) {
+          e.preventDefault()
+          handleArrowUp()
+        }
+        break
+
+      case 'Escape':
+        handleEscapeKey()
+        break
+
+      case 'Backspace':
+        handleBackspaceKey()
+        break
+
+      case ' ':
+        e.preventDefault()
+        handleSpaceKey()
+        break
     }
   }
 

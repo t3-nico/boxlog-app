@@ -13,6 +13,131 @@ interface AccessibilitySettingsProps {
   className?: string
 }
 
+// ヘッダーコンポーネント
+const AccessibilityHeader = ({ onClose, getContrastClassName }: {
+  onClose: () => void
+  getContrastClassName: (defaultClass: string, contrastClass: string) => string
+}) => (
+  <div className={cn(
+    "flex items-center justify-between p-6 border-b",
+    getContrastClassName("border-gray-200", "contrast-border")
+  )}>
+    <div>
+      <h2
+        id="accessibility-settings-title"
+        className={cn(
+          "text-2xl font-bold text-gray-900",
+          getContrastClassName("text-gray-900", "contrast-text")
+        )}
+      >
+        アクセシビリティ設定
+      </h2>
+      <p
+        id="accessibility-settings-description"
+        className={cn(
+          "text-sm text-gray-600 mt-1",
+          getContrastClassName("text-gray-600", "contrast-text")
+        )}
+      >
+        視覚的・操作的なアクセシビリティを調整できます
+      </p>
+    </div>
+
+    <button
+      type="button"
+      onClick={onClose}
+      className={cn(
+        "p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100",
+        "focus:outline-none focus:ring-2 focus:ring-blue-500",
+        getContrastClassName(
+          "text-gray-400 hover:text-gray-600 hover:bg-gray-100",
+          "contrast-text hover:contrast-selected focus:contrast-focus"
+        )
+      )}
+      aria-label="設定を閉じる"
+    >
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+)
+
+// ハイコントラスト設定コンポーネント
+const HighContrastSection = ({
+  isHighContrastEnabled,
+  isSystemHighContrast,
+  handleToggleHighContrast,
+  getContrastClassName
+}: {
+  isHighContrastEnabled: boolean
+  isSystemHighContrast: boolean
+  handleToggleHighContrast: () => void
+  getContrastClassName: (defaultClass: string, contrastClass: string) => string
+}) => (
+  <section>
+    <h3 className={cn(
+      "text-lg font-semibold text-gray-900 mb-4",
+      getContrastClassName("text-gray-900", "contrast-text")
+    )}>
+      ハイコントラストモード
+    </h3>
+
+    {/* システム設定の表示 */}
+    {isSystemHighContrast && (
+      <div className={cn(
+        "mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md",
+        getContrastClassName("bg-blue-50 border-blue-200", "contrast-selected contrast-border")
+      )}>
+        <p className={cn(
+          "text-sm text-blue-800",
+          getContrastClassName("text-blue-800", "contrast-text")
+        )}>
+          <span className="font-medium">システム設定：</span>
+          OSでハイコントラストモードが有効になっています
+        </p>
+      </div>
+    )}
+
+    {/* ハイコントラスト有効/無効切り替え */}
+    <div className="flex items-center justify-between mb-4">
+      <label
+        htmlFor="high-contrast-toggle"
+        className={cn(
+          "text-sm font-medium text-gray-700",
+          getContrastClassName("text-gray-700", "contrast-text")
+        )}
+      >
+        ハイコントラストモードを有効にする
+      </label>
+
+      <button
+        id="high-contrast-toggle"
+        type="button"
+        role="switch"
+        aria-checked={isHighContrastEnabled}
+        onClick={handleToggleHighContrast}
+        className={cn(
+          "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+          "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+          isHighContrastEnabled
+            ? "bg-blue-600"
+            : "bg-gray-200",
+          getContrastClassName(
+            isHighContrastEnabled ? "bg-blue-600" : "bg-gray-200",
+            "contrast-selected"
+          )
+        )}
+      >
+        <span className={cn(
+          "inline-block h-4 w-4 transform rounded-full bg-white transition",
+          isHighContrastEnabled ? "translate-x-6" : "translate-x-1"
+        )} />
+      </button>
+    </div>
+  </section>
+)
+
 export const AccessibilitySettings = ({ isOpen, onClose, className }: AccessibilitySettingsProps) => {
   const {
     isHighContrastEnabled,
@@ -56,127 +181,28 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
         aria-labelledby="accessibility-settings-title"
         aria-describedby="accessibility-settings-description"
       >
-        {/* ヘッダー */}
-        <div className={cn(
-          "flex items-center justify-between p-6 border-b",
-          getContrastClassName("border-gray-200", "contrast-border")
-        )}>
-          <div>
-            <h2 
-              id="accessibility-settings-title"
-              className={cn(
-                "text-2xl font-bold text-gray-900",
-                getContrastClassName("text-gray-900", "contrast-text")
-              )}
-            >
-              アクセシビリティ設定
-            </h2>
-            <p 
-              id="accessibility-settings-description"
-              className={cn(
-                "text-sm text-gray-600 mt-1",
-                getContrastClassName("text-gray-600", "contrast-text")
-              )}
-            >
-              視覚的・操作的なアクセシビリティを調整できます
-            </p>
-          </div>
-          
-          <button
-            onClick={onClose}
-            className={cn(
-              "p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100",
-              "focus:outline-none focus:ring-2 focus:ring-blue-500",
-              getContrastClassName(
-                "text-gray-400 hover:text-gray-600 hover:bg-gray-100",
-                "contrast-text hover:contrast-selected focus:contrast-focus"
-              )
-            )}
-            aria-label="設定を閉じる"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+        <AccessibilityHeader onClose={onClose} getContrastClassName={getContrastClassName} />
 
         {/* コンテンツ */}
         <div className="p-6 space-y-8">
-          {/* ハイコントラストモード設定 */}
-          <section>
-            <h3 className={cn(
-              "text-lg font-semibold text-gray-900 mb-4",
-              getContrastClassName("text-gray-900", "contrast-text")
-            )}>
-              ハイコントラストモード
-            </h3>
-            
-            {/* システム設定の表示 */}
-            {isSystemHighContrast && (
-              <div className={cn(
-                "mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md",
-                getContrastClassName("bg-blue-50 border-blue-200", "contrast-selected contrast-border")
+          <HighContrastSection
+            isHighContrastEnabled={isHighContrastEnabled}
+            isSystemHighContrast={isSystemHighContrast}
+            handleToggleHighContrast={handleToggleHighContrast}
+            getContrastClassName={getContrastClassName}
+          />
+
+          {/* テーマ選択 */}
+          {isHighContrastEnabled && (
+            <div className="space-y-3">
+              <h4 className={cn(
+                "text-md font-medium text-gray-800",
+                getContrastClassName("text-gray-800", "contrast-text")
               )}>
-                <p className={cn(
-                  "text-sm text-blue-800",
-                  getContrastClassName("text-blue-800", "contrast-text")
-                )}>
-                  <span className="font-medium">システム設定：</span>
-                  OSでハイコントラストモードが有効になっています
-                </p>
-              </div>
-            )}
-
-            {/* ハイコントラスト有効/無効切り替え */}
-            <div className="flex items-center justify-between mb-4">
-              <label 
-                htmlFor="high-contrast-toggle"
-                className={cn(
-                  "text-sm font-medium text-gray-700",
-                  getContrastClassName("text-gray-700", "contrast-text")
-                )}
-              >
-                ハイコントラストモードを有効にする
-              </label>
-              
-              <button
-                id="high-contrast-toggle"
-                role="switch"
-                aria-checked={isHighContrastEnabled}
-                onClick={handleToggleHighContrast}
-                className={cn(
-                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
-                  "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-                  isHighContrastEnabled 
-                    ? getContrastClassName("bg-blue-600", "contrast-accent")
-                    : getContrastClassName("bg-gray-200", "contrast-border"),
-                  getContrastClassName("", "border-2 contrast-border")
-                )}
-              >
-                <span className="sr-only">
-                  ハイコントラストモードを{isHighContrastEnabled ? '無効' : '有効'}にする
-                </span>
-                <span
-                  className={cn(
-                    "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
-                    isHighContrastEnabled ? "translate-x-6" : "translate-x-1",
-                    getContrastClassName("bg-white", "contrast-bg")
-                  )}
-                />
-              </button>
-            </div>
-
-            {/* テーマ選択 */}
-            {isHighContrastEnabled && (
-              <div className="space-y-3">
-                <h4 className={cn(
-                  "text-md font-medium text-gray-800",
-                  getContrastClassName("text-gray-800", "contrast-text")
-                )}>
                   コントラストテーマ
-                </h4>
-                
-                <div className="grid grid-cols-1 gap-3">
+              </h4>
+
+              <div className="grid grid-cols-1 gap-3">
                   {availableThemes.map((theme) => (
                     <label
                       key={theme.key}
@@ -241,7 +267,6 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                 </div>
               </div>
             )}
-          </section>
 
           {/* コントラスト比の検証結果 */}
           {isHighContrastEnabled && (
@@ -349,6 +374,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
         )}>
           <div className="flex justify-end space-x-3">
             <button
+              type="button"
               onClick={onClose}
               className={cn(
                 "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md",

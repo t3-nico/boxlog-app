@@ -121,7 +121,7 @@ export class OfflineManager {
     }
   }
 
-  private emit(event: string, data?: any) {
+  private emit(event: string, data?: unknown) {
     const listeners = this.eventListeners.get(event)
     if (listeners) {
       listeners.forEach(callback => callback(data))
@@ -300,7 +300,7 @@ export class OfflineManager {
   // 競合解決
   async resolveConflict(conflictId: string, resolution: {
     choice: 'local' | 'server' | 'merge'
-    mergedData?: any
+    mergedData?: unknown
   }) {
     if (!this.db) {
       throw new Error('Database not available')
@@ -359,7 +359,7 @@ export class OfflineManager {
   }
 
   // 強制同期
-  private async forceSyncData(entity: string, data: any, actionId: string): Promise<SyncResult> {
+  private async forceSyncData(entity: string, data: unknown, actionId: string): Promise<SyncResult> {
     try {
       const response = await fetch('/api/sync/force', {
         method: 'POST',
@@ -398,7 +398,7 @@ export class OfflineManager {
     }
   }
 
-  private async updateLocalCache(entity: string, data: any) {
+  private async updateLocalCache(entity: string, data: unknown) {
     if (!this.db) return
 
     const transaction = this.db.transaction(['cache'], 'readwrite')
@@ -412,7 +412,7 @@ export class OfflineManager {
     }))
   }
 
-  private async markConflictResolved(conflictId: string, resolution: any) {
+  private async markConflictResolved(conflictId: string, resolution: unknown) {
     if (!this.db) return
 
     const transaction = this.db.transaction(['conflicts'], 'readwrite')
@@ -426,7 +426,7 @@ export class OfflineManager {
     }
   }
 
-  private async handleSyncFailure(action: OfflineAction, error: any) {
+  private async handleSyncFailure(action: OfflineAction, error: unknown) {
     const retryCount = (action.retryCount || 0) + 1
     const maxRetries = 3
 

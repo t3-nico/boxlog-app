@@ -12,7 +12,7 @@ export interface UseEventTrashOptions {
 }
 
 export const useEventTrash = (options: UseEventTrashOptions = {}) => {
-  const { autoRefresh = true, sortByDeletedDate = true } = options
+  const { autoRefresh: _autoRefresh = true, sortByDeletedDate = true } = options
   
   const [selectedEventIds, setSelectedEventIds] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)

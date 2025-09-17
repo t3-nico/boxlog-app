@@ -81,7 +81,7 @@ const roundToNextQuarterHour = (date?: Date): Date => {
 
 export const useEssentialInspectorForm = ({
   initialData,
-  isEditMode = false,
+  _isEditMode = false,
   onSave,
   onClose
 }: UseEssentialInspectorFormProps) => {

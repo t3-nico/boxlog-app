@@ -123,7 +123,7 @@ const getValueInputType = (field: SmartFolderRuleField, operator: SmartFolderRul
 }
 
 // 選択肢の定義
-const SELECT_OPTIONS: Record<string, Array<{ value: any; label: string }>> = {
+const SELECT_OPTIONS: Record<string, Array<{ value: string | boolean; label: string }>> = {
   status: [
     { value: 'todo', label: 'To Do' },
     { value: 'in_progress', label: 'In Progress' },
@@ -175,7 +175,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
   }, [rules, onChange])
 
   // ドラッグ&ドロップ処理
-  const handleDragEnd = useCallback((event: any) => {
+  const handleDragEnd = useCallback((event: { active: { id: string }; over: { id: string } }) => {
     const { active, over } = event
     
     if (active.id !== over.id) {

@@ -43,7 +43,7 @@ export function useAutoSaveSettings<T>({
 }: UseAutoSaveSettingsOptions<T>) {
   const [values, setValues] = useState<T>(initialValues)
   const [isSaving, setIsSaving] = useState(false)
-  const { success, error } = useToast()
+  const { success, error: _error } = useToast()
   const lastSavedValues = useRef<T>(initialValues)
 
   // デバウンスされた保存関数

@@ -11,7 +11,7 @@ import { heading } from '@/config/theme/typography'
 interface EditHeaderProps {
   title: string
   date?: Date
-  tags: any[]
+  tags: Tag[]
   onClose: () => void
 }
 

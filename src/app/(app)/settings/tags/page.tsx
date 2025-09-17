@@ -76,7 +76,7 @@ const TagsSettingsPage = () => {
           parent_id: data.parent_id || null,
           user_id: 'current-user',
           color: data.color || '#3B82F6',
-          level: createParentTag ? ((createParentTag.level + 1) as any) : 0,
+          level: createParentTag ? (createParentTag.level + 1) : 0,
           path: createParentTag ? `${createParentTag.path}/${data.name}` : `#${data.name}`,
           description: data.description || null,
           icon: null,

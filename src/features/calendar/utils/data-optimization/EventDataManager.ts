@@ -169,8 +169,8 @@ export class EventDataManager {
     const cached = this.getFromCache(cacheKey)
     if (cached) return cached
 
-    const startKey = this.getDateKey(startDate)
-    const endKey = this.getDateKey(endDate)
+    const _startKey = this.getDateKey(startDate)
+    const _endKey = this.getDateKey(endDate)
     const eventIds = new Set<string>()
 
     // 日付範囲をイテレート
@@ -234,8 +234,8 @@ export class EventDataManager {
       events = Array.from(this.events.values())
     }
 
-    const startTime = startHour * 60 * 60 * 1000 // ミリ秒
-    const endTime = endHour * 60 * 60 * 1000
+    const _startTime = startHour * 60 * 60 * 1000 // ミリ秒
+    const _endTime = endHour * 60 * 60 * 1000
 
     const result = events.filter(event => {
       const eventHour = new Date(event.startTime).getHours()
@@ -398,7 +398,7 @@ export class EventDataManager {
     }
   }
 
-  private clearRelatedCache(eventId: string): void {
+  private clearRelatedCache(_eventId: string): void {
     // 関連するキャッシュをクリア
     this.queryCache.clear() // 簡単のため全クリア
   }

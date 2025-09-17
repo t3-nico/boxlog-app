@@ -54,7 +54,7 @@ interface SmartFolderListProps {
 // ソート可能なフォルダアイテム
 const SortableSmartFolderItem = ({
   folder,
-  isSelected,
+  _isSelected,
   isCollapsed,
   onClick,
   onContextMenu,
@@ -157,7 +157,7 @@ const SortableSmartFolderItem = ({
 
 export const SmartFolderList = ({
   collapsed = false,
-  currentPath = '',
+  _currentPath = '',
   selectedFolderId = '',
   onSelectFolder,
   previewItems = [],
@@ -173,7 +173,7 @@ export const SmartFolderList = ({
   } | null>(null)
 
   // React Query hooks
-  const { data: smartFolders = [], isLoading } = useSmartFolders()
+  const { data: smartFolders = [], isLoading: _isLoading } = useSmartFolders()
   const createMutation = useCreateSmartFolder()
   const updateMutation = useUpdateSmartFolder()
   const deleteMutation = useDeleteSmartFolder()

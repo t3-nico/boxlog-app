@@ -77,7 +77,7 @@ export function useAuth() {
   }, [])
 
   // ローカル専用モード用のスタブメソッド
-  const signUp = async (_email: string, _password: string, _metadata?: any) => {
+  const signUp = async (_email: string, _password: string, _metadata?: Record<string, unknown>) => {
     return { data: null, error: 'Sign up disabled in localStorage mode' }
   }
 

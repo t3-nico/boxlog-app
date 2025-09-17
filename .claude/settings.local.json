@@ -37,7 +37,8 @@
       "Bash(npm run issue:complete:*)",
       "Bash(node scripts/simple-issue-manager.js:*)",
       "Bash(sort:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(awk:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

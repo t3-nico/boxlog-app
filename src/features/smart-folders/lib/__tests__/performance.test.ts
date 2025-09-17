@@ -93,7 +93,7 @@ describe('Performance Optimization', () => {
     }))
 
     it('バッチ処理の実行', async () => {
-      const processor = async (item: any) => ({
+      const processor = async (item: unknown) => ({
         ...item,
         processed: true
       })
@@ -111,7 +111,7 @@ describe('Performance Optimization', () => {
     it('進捗コールバック', async () => {
       const progressCalls: Array<{ processed: number; total: number }> = []
       
-      const processor = async (item: any) => item
+      const processor = async (item: unknown) => item
 
       await BatchProcessor.processBatch(
         testItems.slice(0, 20),

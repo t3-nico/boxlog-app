@@ -66,7 +66,7 @@ export const MobileNavigation = ({
       className
     )}>
       <div className="relative flex items-center justify-around px-2 py-2 pb-safe">
-        {items.map((item, index) => (
+        {items.map((item, _index) => (
           <button
             key={item.id}
             onClick={() => handleItemClick(item)}

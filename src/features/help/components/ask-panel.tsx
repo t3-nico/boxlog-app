@@ -90,12 +90,14 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
                 />
                 <div className="flex items-center gap-2 mt-2 pt-2 border-t border-blue-500">
                   <button
+                    type="button"
                     onClick={handleSave}
                     className="p-1 hover:bg-blue-500 rounded transition-colors"
                   >
                     <Check className="w-4 h-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={handleCancel}
                     className="p-1 hover:bg-blue-500 rounded transition-colors"
                   >
@@ -117,6 +119,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           </div>
           {!isEditing && (
             <button
+              type="button"
               onClick={handleEdit}
               className="absolute -left-8 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
             >
@@ -219,10 +222,10 @@ const ChatInput = () => {
   )
 }
 
-const AskPanelHeader = ({ 
-  activeTab, 
-  onTabChange, 
-  onBackToMenu 
+const AskPanelHeader = ({
+  activeTab,
+  _onTabChange,
+  _onBackToMenu
 }: { 
   activeTab: 'ai' | 'help'
   onTabChange: (tab: 'ai' | 'help' | 'menu') => void
@@ -272,6 +275,7 @@ const AskPanelHeader = ({
             {activeTab === 'ai' && (
               <div className="relative">
                 <button
+                  type="button"
                   onClick={() => setShowMenu(!showMenu)}
                   className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
                 >
@@ -281,6 +285,7 @@ const AskPanelHeader = ({
                 {showMenu && (
                   <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
                     <button
+                      type="button"
                       onClick={() => {
                         clearMessages()
                         setShowMenu(false)
@@ -291,6 +296,7 @@ const AskPanelHeader = ({
                       Clear conversation
                     </button>
                     <button
+                      type="button"
                       onClick={() => {
                         navigator.clipboard.writeText(JSON.stringify({}))
                         setShowMenu(false)
@@ -307,6 +313,7 @@ const AskPanelHeader = ({
             
             {/* Close Button */}
             <button
+              type="button"
               onClick={toggleCollapsed}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
               title="Close panel"
@@ -348,6 +355,7 @@ const AIIntroduction = () => {
         <div className="text-sm font-medium text-foreground mb-3">Quick actions</div>
         {quickPrompts.map((prompt, index) => (
           <button
+            type="button"
             key={index}
             onClick={() => sendMessage(prompt.text)}
             className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors text-left"
@@ -369,7 +377,7 @@ const AIIntroduction = () => {
 }
 
 // メニュー選択画面（collapsed状態から開いた時の初期画面）
-const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) => {
+const _PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) => {
   const menuItems = [
     {
       id: 'ai' as const,
@@ -403,6 +411,7 @@ const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
           const ItemIcon = item.icon
           return (
             <button
+              type="button"
               key={item.id}
               onClick={() => onSelectTab(item.id)}
               className="w-full flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left group"
@@ -480,6 +489,7 @@ const HelpContent = () => {
             <div className="space-y-2">
               {section.items.map((item, itemIndex) => (
                 <button
+                  type="button"
                   key={itemIndex}
                   className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-accent/50 transition-colors text-left group"
                 >
@@ -507,7 +517,7 @@ const HelpContent = () => {
         <p className="text-sm text-muted-foreground mb-3">
           Can&apos;t find what you&apos;re looking for? Contact our support team.
         </p>
-        <button className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
+        <button type="button" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium">
           Contact Support →
         </button>
       </div>
@@ -516,11 +526,11 @@ const HelpContent = () => {
 }
 
 export const AskPanel = () => {
-  const { state, markAsRead, sendMessage } = useChatContext()
-  const isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
+  const { state, markAsRead, sendMessage: _sendMessage } = useChatContext()
+  const _isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
   const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
   const currentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
-  const { toggleCollapsed, collapse } = useAskPanelStore()
+  const { toggleCollapsed, collapse: _collapse } = useAskPanelStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
   const [isMobile, setIsMobile] = useState(false)
@@ -589,6 +599,7 @@ export const AskPanel = () => {
         {/* Menu Icons */}
         <div className="flex flex-col items-center px-4 pt-4 space-y-2">
           <button
+            type="button"
             onClick={() => handleDirectTabSelect('ai')}
             className="p-3 rounded-lg hover:bg-accent/50 transition-colors group relative"
             title="AI Assistant"
@@ -602,6 +613,7 @@ export const AskPanel = () => {
           </button>
           
           <button
+            type="button"
             onClick={() => handleDirectTabSelect('help')}
             className="p-3 rounded-lg hover:bg-accent/50 transition-colors group"
             title="Help & Support"
@@ -635,6 +647,7 @@ export const AskPanel = () => {
               {/* Header with collapse button */}
               <div className="flex items-center p-4">
                 <button
+                  type="button"
                   onClick={toggleCollapsed}
                   className="p-2 text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded transition-colors"
                   title="Collapse panel"
@@ -648,6 +661,7 @@ export const AskPanel = () => {
               <div className="flex-1 px-4 pb-4">
                 <div className="space-y-2" style={{ maxWidth: '256px' }}>
                   <button
+                    type="button"
                     onClick={() => handleTabSelect('ai')}
                     className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-accent/50 transition-colors group"
                   >
@@ -664,6 +678,7 @@ export const AskPanel = () => {
                   </button>
                   
                   <button
+                    type="button"
                     onClick={() => handleTabSelect('help')}
                     className="w-full flex items-center gap-3 px-3 py-3 text-left rounded-lg hover:bg-accent/50 transition-colors group"
                   >

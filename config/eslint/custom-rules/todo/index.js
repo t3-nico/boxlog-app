@@ -113,106 +113,133 @@ module.exports = {
           return `// ${parts.join(' ')} ${comment || '説明を追加してください'}`
         }
 
+        // Helper function: Check if comment has TODO/FIXME keywords
+        const hasKeywordInComment = (text) => {
+          return allowedPrefixes.some((prefix) => new RegExp(`\\b${prefix}\\b`, 'i').test(text))
+        }
+
+        // Helper function: Handle unstructured comments
+        const handleUnstructuredComment = (comment, text) => {
+          context.report({
+            loc: comment.loc,
+            messageId: 'invalidFormat',
+            data: {
+              prefix: 'TODO',
+              issueFormat: 'ISSUE-123',
+              dateFormat: '2024-12-31',
+              assigneeFormat: requireAssignee ? ' @assignee' : '',
+            },
+            fix(fixer) {
+              const prefix = allowedPrefixes.find((p) => new RegExp(`\\b${p}\\b`, 'i').test(text)) || 'TODO'
+              const cleanText = text
+                .replace(new RegExp(`\\b(${allowedPrefixes.join('|')})\\b:?\\s*`, 'i'), '')
+                .trim()
+              const structured = generateStructuredComment(prefix, cleanText)
+              return fixer.replaceText(comment, `/*${structured.slice(2)}*/`)
+            },
+          })
+        }
+
+        // Helper function: Validate issue ID
+        const validateIssueId = (comment, issueId) => {
+          if (requireIssueId && !issueId) {
+            context.report({
+              loc: comment.loc,
+              messageId: 'missingIssueId',
+            })
+          }
+        }
+
+        // Helper function: Validate date
+        const validateDateField = (comment, date) => {
+          if (requireDate && !date) {
+            context.report({
+              loc: comment.loc,
+              messageId: 'missingDate',
+            })
+            return
+          }
+          
+          if (!date) return
+          
+          const parsedDate = validateDate(date)
+          if (parsedDate === false) {
+            context.report({
+              loc: comment.loc,
+              messageId: 'invalidDate',
+            })
+            return
+          }
+          
+          if (parsedDate && maxAge > 0) {
+            const daysOld = getDaysFromToday(parsedDate)
+            if (daysOld > maxAge) {
+              context.report({
+                loc: comment.loc,
+                messageId: 'expiredTodo',
+                data: { days: daysOld.toString() },
+              })
+            }
+          }
+        }
+
+        // Helper function: Validate description
+        const validateDescription = (comment, description) => {
+          if (!description || description.trim().length === 0) {
+            context.report({
+              loc: comment.loc,
+              messageId: 'missingDescription',
+            })
+            return
+          }
+          
+          if (description.trim().length < 10) {
+            context.report({
+              loc: comment.loc,
+              messageId: 'tooVague',
+            })
+            return
+          }
+          
+          // Check for vague descriptions
+          const isVague = vaguePhrases.some(
+            (phrase) => description.toLowerCase().includes(phrase) && description.trim().length < 30
+          )
+          
+          if (isVague) {
+            context.report({
+              loc: comment.loc,
+              messageId: 'tooVague',
+            })
+          }
+        }
+
+        // Main validation function: Process individual comment
+        const processComment = (comment) => {
+          const text = comment.value.trim()
+          
+          if (!hasKeywordInComment(text)) return
+          
+          const match = structuredRegex.exec(text)
+          
+          if (!match) {
+            handleUnstructuredComment(comment, text)
+            return
+          }
+          
+          const [, _prefix, issueId, date, _assignee, description] = match
+          
+          validateIssueId(comment, issueId)
+          validateDateField(comment, date)
+          validateDescription(comment, description)
+        }
+
         return {
           Program() {
             const sourceCode = context.getSourceCode()
             const comments = sourceCode.getAllComments()
 
-            comments.forEach((comment) => {
-              const text = comment.value.trim()
-
-              // TODO/FIXME等のキーワードが含まれているかチェック
-              const hasKeyword = allowedPrefixes.some((prefix) => new RegExp(`\\b${prefix}\\b`, 'i').test(text))
-
-              if (!hasKeyword) return
-
-              const match = structuredRegex.exec(text)
-
-              if (!match) {
-                // 構造化されていない場合
-                context.report({
-                  loc: comment.loc,
-                  messageId: 'invalidFormat',
-                  data: {
-                    prefix: 'TODO',
-                    issueFormat: 'ISSUE-123',
-                    dateFormat: '2024-12-31',
-                    assigneeFormat: requireAssignee ? ' @assignee' : '',
-                  },
-                  fix(fixer) {
-                    const prefix = allowedPrefixes.find((p) => new RegExp(`\\b${p}\\b`, 'i').test(text)) || 'TODO'
-
-                    const cleanText = text
-                      .replace(new RegExp(`\\b(${allowedPrefixes.join('|')})\\b:?\\s*`, 'i'), '')
-                      .trim()
-
-                    const structured = generateStructuredComment(prefix, cleanText)
-                    return fixer.replaceText(comment, `/*${structured.slice(2)}*/`)
-                  },
-                })
-                return
-              }
-
-              const [, _prefix, issueId, date, _assignee, description] = match
-
-              // Issue ID チェック
-              if (requireIssueId && !issueId) {
-                context.report({
-                  loc: comment.loc,
-                  messageId: 'missingIssueId',
-                })
-              }
-
-              // 日付チェック
-              if (requireDate && !date) {
-                context.report({
-                  loc: comment.loc,
-                  messageId: 'missingDate',
-                })
-              } else if (date) {
-                const parsedDate = validateDate(date)
-                if (parsedDate === false) {
-                  context.report({
-                    loc: comment.loc,
-                    messageId: 'invalidDate',
-                  })
-                } else if (parsedDate && maxAge > 0) {
-                  const daysOld = getDaysFromToday(parsedDate)
-                  if (daysOld > maxAge) {
-                    context.report({
-                      loc: comment.loc,
-                      messageId: 'expiredTodo',
-                      data: { days: daysOld.toString() },
-                    })
-                  }
-                }
-              }
-
-              // 説明チェック
-              if (!description || description.trim().length === 0) {
-                context.report({
-                  loc: comment.loc,
-                  messageId: 'missingDescription',
-                })
-              } else if (description.trim().length < 10) {
-                context.report({
-                  loc: comment.loc,
-                  messageId: 'tooVague',
-                })
-              } else {
-                // 曖昧な説明のチェック
-                const isVague = vaguePhrases.some(
-                  (phrase) => description.toLowerCase().includes(phrase) && description.trim().length < 30
-                )
-
-                if (isVague) {
-                  context.report({
-                    loc: comment.loc,
-                    messageId: 'tooVague',
-                  })
-                }
-              }
-            })
+            comments.forEach(processComment)
           },
         }
       },

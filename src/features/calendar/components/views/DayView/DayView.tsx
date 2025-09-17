@@ -19,41 +19,41 @@ import { useDayView } from './hooks/useDayView'
 
 
 
-const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
+const _TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
 export const DayView = ({
-  dateRange,
+  _dateRange,
   tasks: _tasks,
-  events,
+  _events,
   currentDate,
-  showWeekends = true,
+  _showWeekends = true,
   className,
-  onTaskClick,
+  _onTaskClick,
   onEventClick,
   onEventContextMenu,
-  onCreateEvent,
+  _onCreateEvent,
   onUpdateEvent,
-  onDeleteEvent,
-  onRestoreEvent,
+  _onDeleteEvent,
+  _onRestoreEvent,
   onEmptyClick,
   onTimeRangeSelect,
-  onTaskDrag,
-  onCreateTask,
-  onCreateRecord,
-  onViewChange,
-  onNavigatePrev,
-  onNavigateNext,
+  _onTaskDrag,
+  _onCreateTask,
+  _onCreateRecord,
+  _onViewChange,
+  _onNavigatePrev,
+  _onNavigateNext,
   onNavigateToday
 }: DayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   const { updateEventTime } = useEventStore()
-  const toast = useCalendarToast()
+  const _toast = useCalendarToast()
   
   // イベントストアから最新のデータを取得
   const storeEvents = useEventStore(eventSelectors.getEvents)
   
   // レスポンシブな時間高さ
-  const HOUR_HEIGHT = useResponsiveHourHeight({
+  const _HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
     desktop: 72
@@ -86,7 +86,7 @@ export const DayView = ({
     dayEvents,
     eventStyles,
     isToday,
-    timeSlots
+    _timeSlots
   } = useDayView({
     date,
     events: storeEvents, // ストアから取得した最新データを使用
@@ -100,7 +100,7 @@ export const DayView = ({
   }, [onEmptyClick, date])
 
   // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
-  const handleDateHeaderClick = React.useCallback((clickedDate: Date) => {
+  const handleDateHeaderClick = React.useCallback((_clickedDate: Date) => {
     // DayViewで日付ヘッダーをクリックした場合、その日付に移動
     onNavigateToday?.()
   }, [onNavigateToday])

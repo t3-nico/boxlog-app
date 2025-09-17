@@ -27,7 +27,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
   className = ''
 }) {
   // 今日・週末の判定（propsで上書き可能）
-  const isTodayActual = isTodayProp ?? isToday(date)
+  const _isTodayActual = isTodayProp ?? isToday(date)
   const isWeekendActual = isWeekendProp ?? isWeekend(date)
   
   // この日のイベントをフィルタリング
@@ -75,7 +75,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
-            handleTimeClick(e as any)
+            handleTimeClick(e as unknown)
           }
         }}
         style={{

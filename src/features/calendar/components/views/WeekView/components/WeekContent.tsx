@@ -12,7 +12,7 @@ import { useDragAndDrop } from '../../shared/hooks/useDragAndDrop'
 interface WeekContentProps {
   date: Date
   events: CalendarEvent[]
-  eventPositions: any[] // WeekEventPosition[]
+  eventPositions: unknown[] // WeekEventPosition[]
   onEventClick?: (event: CalendarEvent) => void
   onEventContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
   onEmptyClick?: (date: Date, timeString: string) => void
@@ -91,7 +91,7 @@ export const WeekContent = ({
   const eventStyles = useEventStyles(dayEventPositions)
 
   // 空白クリックハンドラー
-  const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const _handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
     
     const { timeString } = calculateTimeFromEvent(e)
@@ -99,7 +99,7 @@ export const WeekContent = ({
   }, [date, onEmptyClick, calculateTimeFromEvent])
   
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handleEventClick = useCallback((event: CalendarEvent) => {
+  const _handleEventClick = useCallback((event: CalendarEvent) => {
     // ドラッグ・リサイズ操作中のクリックは無視
     if (dragState.isDragging || dragState.isResizing) {
       return
@@ -190,7 +190,7 @@ export const WeekContent = ({
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, position) => handlers.handleResizeStart(event.id, direction, e, {
+                  onResizeStart={(event, direction, e, _position) => handlers.handleResizeStart(event.id, direction, e, {
                     top: currentTop,
                     left: 0,
                     width: 100,
@@ -216,7 +216,7 @@ export const WeekContent = ({
           (() => {
             // 週の全イベントからドラッグ中のイベントを探す
             // displayDates配列を使って全日付のイベントを探索
-            const draggedEvent: CalendarEvent | null = null
+            const _draggedEvent: CalendarEvent | null = null
             
             // 他のWeekContentインスタンスが保持しているイベントを探すのは困難
             // そのため、親コンポーネントから渡されるevents配列から探す

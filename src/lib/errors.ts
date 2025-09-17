@@ -142,7 +142,7 @@ export function validateEmail(email: unknown): string {
 
 // === Supabaseエラーハンドリング ===
 
-export function handleSupabaseError(error: any): AppError {
+export function handleSupabaseError(error: { code?: string; message?: string; [key: string]: unknown }): AppError {
   // Supabaseの特定のエラーコードに対する処理
   if (error?.code === 'PGRST301') {
     return new NotFoundError()

@@ -142,7 +142,7 @@ export const ruleBuilderSchema = z.object({
 
 // フィルタリング結果のスキーマ
 export const smartFolderFilterResultSchema = z.object({
-  items: z.array(z.any()),
+  items: z.array(z.unknown()),
   totalCount: z.number(),
   folderId: z.string().uuid()
 })
@@ -203,7 +203,7 @@ export const searchSmartFoldersSchema = z.object({
 // ルール評価用のスキーマ
 export const evaluateRulesSchema = z.object({
   rules: z.array(smartFolderRuleSchema),
-  item: z.any(),
+  item: z.unknown(),
   context: z.object({
     now: z.date().optional(),
     userTimeZone: z.string().optional()

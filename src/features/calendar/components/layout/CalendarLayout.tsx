@@ -48,7 +48,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(({
   showHeaderActions = false,
   
   // Date selection for mini calendar
-  selectedDate,
+  _selectedDate,
   onDateSelect
 }) => {
 

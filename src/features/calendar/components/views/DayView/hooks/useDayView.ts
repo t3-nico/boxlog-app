@@ -5,7 +5,7 @@ import type { UseDayViewOptions, UseDayViewReturn } from '../DayView.types'
 
 import { useDayEvents } from './useDayEvents'
 
-export function useDayView({ date, events, onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
+export function useDayView({ date, events, onEventUpdate: _onEventUpdate }: UseDayViewOptions): UseDayViewReturn {
   
   // イベントデータ処理
   const { dayEvents, eventPositions } = useDayEvents({ date, events })

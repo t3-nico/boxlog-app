@@ -102,7 +102,7 @@ export const WeekCalendarLayout = ({
   }, [onDeleteEvent, selectedEventId, events])
   
   // Undoハンドラー（削除を元に戻す）
-  const handleUndoDelete = useCallback(async (restoredEvent: any) => {
+  const handleUndoDelete = useCallback(async (restoredEvent: CalendarEvent) => {
     // 上位コンポーネントに復元を委譲
     if (onRestoreEvent) {
       await onRestoreEvent(restoredEvent)
@@ -229,7 +229,7 @@ export const WeekCalendarLayout = ({
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
-                      handleEmptySlotClick(e as any, day)
+                      handleEmptySlotClick(e as unknown, day)
                     }
                   }}
                   className="absolute inset-0 z-10 cursor-cell"

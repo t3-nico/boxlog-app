@@ -131,8 +131,10 @@ export class PerformanceMonitor {
     // First Input Delay
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      entries.forEach((entry: any) => {
-        this.updateMetric('fid', entry.processingStart - entry.startTime)
+      entries.forEach((entry) => {
+        // PerformanceEventTiming interface for first-input entries
+        const eventEntry = entry as PerformanceEventTiming
+        this.updateMetric('fid', eventEntry.processingStart - eventEntry.startTime)
       })
     })
     fidObserver.observe({ entryTypes: ['first-input'] })
@@ -142,9 +144,11 @@ export class PerformanceMonitor {
     const clsObserver = new PerformanceObserver((list) => {
       let clsValue = 0
       const entries = list.getEntries()
-      entries.forEach((entry: any) => {
-        if (!entry.hadRecentInput) {
-          clsValue += entry.value
+      entries.forEach((entry) => {
+        // LayoutShift interface for layout-shift entries
+        const layoutEntry = entry as LayoutShift
+        if (!layoutEntry.hadRecentInput) {
+          clsValue += layoutEntry.value
         }
       })
       this.updateMetric('cls', clsValue)
@@ -195,13 +199,16 @@ export class PerformanceMonitor {
   private setupNavigationTiming(): void {
     const navigationObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries()
-      entries.forEach((entry: any) => {
+      entries.forEach((entry) => {
+        // PerformanceNavigationTiming interface for navigation entries
+        const navEntry = entry as PerformanceNavigationTiming
+
         // Time to First Byte
-        const ttfb = entry.responseStart - entry.requestStart
+        const ttfb = navEntry.responseStart - navEntry.requestStart
         this.updateMetric('ttfb', ttfb)
 
         // Page Load Time
-        const loadTime = entry.loadEventEnd - entry.navigationStart
+        const loadTime = navEntry.loadEventEnd - navEntry.navigationStart
         if (loadTime > 0) {
           this.updateMetric('initialLoadTime', loadTime)
         }
@@ -310,14 +317,16 @@ export class PerformanceMonitor {
   /**
    * メトリクス値の更新
    */
-  private updateMetric(key: keyof PerformanceMetrics, value: any): void {
-    this.metrics[key] = value as any
-    
+  private updateMetric(key: keyof PerformanceMetrics, value: number | MemoryInfo): void {
+    ;(this.metrics as Record<string, unknown>)[key] = value
+
     // 履歴に追加
     this.addToHistory()
-    
-    // 閾値チェック
-    this.checkThresholds(key, value)
+
+    // 閾値チェック（数値の場合のみ）
+    if (typeof value === 'number') {
+      this.checkThresholds(key, value)
+    }
   }
 
   /**
@@ -377,7 +386,7 @@ export class PerformanceMonitor {
    * メモリ情報の取得
    */
   private getMemoryInfo(): MemoryInfo {
-    const {memory} = (performance as any)
+    const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } }).memory
     
     if (memory) {
       const used = memory.usedJSHeapSize
@@ -410,7 +419,7 @@ export class PerformanceMonitor {
   /**
    * コールバックの実行
    */
-  private triggerCallback(event: string, data: any): void {
+  private triggerCallback(event: string, data: unknown): void {
     const callbacks = this.callbacks.get(event)
     if (callbacks) {
       callbacks.forEach(callback => callback(data))
@@ -435,7 +444,7 @@ export class PerformanceMonitor {
    * パフォーマンスレポートの生成
    */
   generateReport(): {
-    summary: any
+    summary: Record<string, unknown>
     issues: string[]
     recommendations: string[]
     score: number

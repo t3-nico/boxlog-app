@@ -11,7 +11,7 @@ interface UndoAction {
   id: string
   type: 'create' | 'delete' | 'edit' | 'move'
   description: string
-  data: any
+  data: CalendarEvent | { eventId: string; oldPosition?: { startTime: Date; endTime: Date }; newPosition?: { startTime: Date; endTime: Date } }
   timestamp: number
 }
 
@@ -56,7 +56,7 @@ export const UndoToast = ({
     } else {
       setIsVisible(false)
     }
-  }, [action, autoHideDelay])
+  }, [action, autoHideDelay, handleDismiss])
 
   const handleUndo = useCallback(() => {
     if (action) {

@@ -105,6 +105,109 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
     return Math.ceil((days + start.getDay() + 1) / 7)
   }, [])
 
+  // 日付のクラス名を計算するヘルパー関数
+  const _getDayButtonClassNames = useCallback((
+    date: Date,
+    isSelected: boolean,
+    isToday: boolean,
+    isCurrentMonth: boolean,
+    isHighlighted: boolean,
+    isInDisplayedPeriod: boolean,
+    isDisabled: boolean
+  ) => {
+    return cn(
+      // Base styles
+      "h-8 w-8 text-sm rounded-md transition-colors",
+      "focus:outline-none",
+
+      // Hover state (only for non-today dates)
+      !isToday && selection.hover,
+
+      // Current month vs other months
+      isCurrentMonth
+        ? "text-foreground"
+        : "text-muted-foreground/50",
+
+      // Displayed period (weakest highlight - 表示中の期間)
+      isInDisplayedPeriod && !isSelected && !isToday && !isHighlighted && [
+        displayPeriodState.background,
+      ],
+
+      // Selected state (only for non-today dates)
+      isSelected && !isToday && [
+        selectedState.background,
+      ],
+
+      // Today indicator (always maintains this style regardless of selected/hover state)
+      isToday && [
+        `!${secondary.today}`,
+        secondary.text,
+        "font-semibold"
+      ],
+
+      // Highlighted dates (events, etc.)
+      isHighlighted && !isSelected && !isToday && [
+        'ring-2 ring-blue-500/30 dark:ring-blue-400/30',
+        'bg-blue-500/10 dark:bg-blue-400/10'
+      ],
+
+      // Disabled state
+      isDisabled && [
+        "opacity-25 cursor-not-allowed",
+        "hover:bg-transparent focus:bg-transparent"
+      ]
+    )
+  }, [])
+
+  // 日付のハイライト状態を判定するヘルパー関数
+  const _getDateStates = useCallback((date: Date) => {
+    const isSelected = selectedDate && isSameDay(date, selectedDate)
+    const isToday = isSameDay(date, new Date())
+    const isCurrentMonth = isSameMonth(date, currentMonth)
+
+    const isHighlighted = highlightedDates.some(highlighted => {
+      // より厳密な日付比較：年・月・日が完全に一致するかチェック
+      const dateYear = date.getFullYear()
+      const dateMonth = date.getMonth()
+      const dateDay = date.getDate()
+
+      const highlightYear = highlighted.getFullYear()
+      const highlightMonth = highlighted.getMonth()
+      const highlightDay = highlighted.getDate()
+
+      const match = dateYear === highlightYear &&
+                   dateMonth === highlightMonth &&
+                   dateDay === highlightDay
+
+      if (match) {
+        console.log('🔍 Highlight match found:', {
+          date: `${dateYear}-${dateMonth}-${dateDay}`,
+          highlighted: `${highlightYear}-${highlightMonth}-${highlightDay}`,
+          dateString: date.toDateString(),
+          highlightedString: highlighted.toDateString()
+        })
+      }
+      return match
+    })
+
+    const isInDisplayedPeriod = displayedPeriodDates.some(periodDate =>
+      isSameDay(periodDate, date)
+    )
+
+    const isDisabled = disabledDates.some(disabled =>
+      isSameDay(disabled, date)
+    )
+
+    return {
+      isSelected,
+      isToday,
+      isCurrentMonth,
+      isHighlighted,
+      isInDisplayedPeriod,
+      isDisabled
+    }
+  }, [selectedDate, currentMonth, highlightedDates, displayedPeriodDates, disabledDates])
+
   return (
     <div 
       className={cn(
@@ -117,6 +220,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <button
+          type="button"
           onClick={handlePrevMonth}
           className={cn(
             'p-1.5 rounded-full transition-colors',
@@ -133,6 +237,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
         </div>
         
         <button
+          type="button"
           onClick={handleNextMonth}
           className={cn(
             'p-1.5 rounded-full transition-colors',
@@ -156,8 +261,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
           </div>
         )}
         {weekDays.map((day, index) => (
-          <div 
-            key={index}
+          <div
+            key={`weekday-${day}-${index}`}
             className="h-6 text-xs font-medium text-muted-foreground flex items-center justify-center"
           >
             {day}
@@ -187,92 +292,26 @@ export const MiniCalendar = memo<MiniCalendarProps>(({
             ),
             // Days of the week
             ...weekDays.map((date, dayIndex) => {
-              const isSelected = selectedDate && isSameDay(date, selectedDate)
-              const isToday = isSameDay(date, new Date())
-              const isCurrentMonth = isSameMonth(date, currentMonth)
-              const isHighlighted = highlightedDates.some(highlighted => {
-                // より厳密な日付比較：年・月・日が完全に一致するかチェック
-                const dateYear = date.getFullYear()
-                const dateMonth = date.getMonth()
-                const dateDay = date.getDate()
-                
-                const highlightYear = highlighted.getFullYear()
-                const highlightMonth = highlighted.getMonth()
-                const highlightDay = highlighted.getDate()
-                
-                const match = dateYear === highlightYear && 
-                             dateMonth === highlightMonth && 
-                             dateDay === highlightDay
-                
-                if (match) {
-                  console.log('🔍 Highlight match found:', {
-                    date: `${dateYear}-${dateMonth}-${dateDay}`,
-                    highlighted: `${highlightYear}-${highlightMonth}-${highlightDay}`,
-                    dateString: date.toDateString(),
-                    highlightedString: highlighted.toDateString()
-                  })
-                }
-                return match
-              })
-              const isInDisplayedPeriod = displayedPeriodDates.some(periodDate => 
-                isSameDay(periodDate, date)
-              )
-              const isDisabled = disabledDates.some(disabled => 
-                isSameDay(disabled, date)
-              )
-
+              const states = _getDateStates(date)
 
               return (
                 <button
-                  key={`${weekIndex}-${dayIndex}`}
+                  key={`day-${date.toISOString().split('T')[0]}-${dayIndex}`}
                   type="button"
                   onClick={() => handleDateClick(date)}
-                  disabled={isDisabled}
-                  className={cn(
-                    // Base styles
-                    "h-8 w-8 text-sm rounded-md transition-colors",
-                    "focus:outline-none",
-                    
-                    // Hover state (only for non-today dates)
-                    !isToday && selection.hover,
-                    
-                    // Current month vs other months
-                    isCurrentMonth 
-                      ? "text-foreground" 
-                      : "text-muted-foreground/50",
-                    
-                    // Displayed period (weakest highlight - 表示中の期間)
-                    isInDisplayedPeriod && !isSelected && !isToday && !isHighlighted && [
-                      displayPeriodState.background,
-                    ],
-                    
-                    // Selected state (only for non-today dates)
-                    isSelected && !isToday && [
-                      selectedState.background,
-                    ],
-                    
-                    // Today indicator (always maintains this style regardless of selected/hover state)
-                    isToday && [
-                      `!${secondary.today}`,
-                      secondary.text,
-                      "font-semibold"
-                    ],
-                    
-                    // Highlighted dates (events, etc.)
-                    isHighlighted && !isSelected && !isToday && [
-                      'ring-2 ring-blue-500/30 dark:ring-blue-400/30',
-                      'bg-blue-500/10 dark:bg-blue-400/10'
-                    ],
-                    
-                    // Disabled state
-                    isDisabled && [
-                      "opacity-25 cursor-not-allowed",
-                      "hover:bg-transparent focus:bg-transparent"
-                    ]
+                  disabled={states.isDisabled}
+                  className={_getDayButtonClassNames(
+                    date,
+                    states.isSelected,
+                    states.isToday,
+                    states.isCurrentMonth,
+                    states.isHighlighted,
+                    states.isInDisplayedPeriod,
+                    states.isDisabled
                   )}
                   aria-label={format(date, 'EEEE, MMMM d, yyyy')}
-                  aria-pressed={isSelected}
-                  aria-current={isToday ? 'date' : undefined}
+                  aria-pressed={states.isSelected}
+                  aria-current={states.isToday ? 'date' : undefined}
                 >
                   {format(date, 'd')}
                 </button>

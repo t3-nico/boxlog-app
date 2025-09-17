@@ -113,7 +113,7 @@ export const useCalendarToast = () => {
 
 ### `network-handler.ts` - エラーハンドリング
 ```typescript
-export const handleNetworkError = (error: any, retryFn?: () => void)
+export const handleNetworkError = (error: Error | unknown, retryFn?: () => void)
 export const useNetworkErrorHandler = () => { ... }
 ```
 

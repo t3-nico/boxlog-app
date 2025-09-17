@@ -60,7 +60,7 @@ export interface EventEntity {
   priority?: EventPriority
   color: string
   is_recurring?: boolean
-  recurrence_rule?: any // JSONB
+  recurrence_rule?: Record<string, unknown> // JSONB
   parent_event_id?: string
   items?: ChecklistItem[] // JSONB array
   location?: string
@@ -99,7 +99,7 @@ export interface Event {
   priority?: EventPriority
   color: string
   isRecurring?: boolean
-  recurrenceRule?: any
+  recurrenceRule?: Record<string, unknown>
   parentEventId?: string
   items?: ChecklistItem[]
   location?: string
@@ -130,7 +130,7 @@ export interface CreateEventRequest {
   priority?: EventPriority
   color?: string
   isRecurring?: boolean
-  recurrenceRule?: any
+  recurrenceRule?: Record<string, unknown>
   parentEventId?: string
   items?: ChecklistItem[]
   location?: string

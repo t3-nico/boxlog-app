@@ -40,8 +40,8 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
   const {
     date,
     onCreateEvent,
-    onEventClick,
-    onEventDoubleClick,
+    _onEventClick,
+    _onEventDoubleClick,
     onShowContextMenu,
     onCreateQuickEvent,
     hourHeight = 60,
@@ -207,7 +207,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
   }, [clickState, calculateEndTime, getYFromTime, clickThreshold])
 
   // マウスアップハンドラー
-  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+  const handleMouseUp = useCallback((_e: React.MouseEvent) => {
     if (!clickState?.isClicking) return
 
     if (clickState.isDragging && timeRange) {
@@ -251,11 +251,11 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
     if (!clickState?.isClicking) return
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
-      handleMouseMove(e as any)
+      handleMouseMove(e as unknown)
     }
 
     const handleGlobalMouseUp = (e: MouseEvent) => {
-      handleMouseUp(e as any)
+      handleMouseUp(e as unknown)
     }
 
     document.addEventListener('mousemove', handleGlobalMouseMove)

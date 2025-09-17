@@ -73,7 +73,7 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
     (set, get) => {
       // タイムゾーン変更リスナーをセットアップ
       if (typeof window !== 'undefined') {
-        const cleanup = listenToTimezoneChange((newTimezone) => {
+        const _cleanup = listenToTimezoneChange((newTimezone) => {
           const currentState = get()
           if (currentState.timezone !== newTimezone) {
             console.log('📅 Preferencesからのタイムゾーン変更を検出:', newTimezone)

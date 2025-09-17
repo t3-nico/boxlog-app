@@ -10,24 +10,32 @@ import { useQuery, useMutation, useQueryClient, QueryKey } from '@tanstack/react
 
 // === 基本設定 ===
 
+// 基本的なデータ型定義
+interface BaseRecord {
+  id: string
+  created_at?: string
+  updated_at?: string
+  [key: string]: unknown
+}
+
 export interface ApiQueryConfig<T> {
   queryKey: QueryKey
   table: string
   select?: string
-  filter?: (query: any) => any
-  transform?: (data: any) => T
+  filter?: (query: BaseRecord) => boolean
+  transform?: (data: BaseRecord[]) => T
   enabled?: boolean
   staleTime?: number
   cacheTime?: number
 }
 
-export interface ApiMutationConfig<TData, TVariables> {
+export interface ApiMutationConfig<TData, _TVariables> {
   table: string
   operation: 'insert' | 'update' | 'delete' | 'upsert'
-  transform?: (data: any) => TData
+  transform?: (data: BaseRecord) => TData
   invalidateQueries?: QueryKey[]
   onSuccess?: (data: TData) => void
-  onError?: (error: any) => void
+  onError?: (error: Error) => void
 }
 
 // === ローカルストレージ専用フック ===
@@ -35,7 +43,7 @@ export interface ApiMutationConfig<TData, TVariables> {
 /**
  * データ取得フック（localStorage専用）
  */
-export function useApiQuery<T = any>(config: ApiQueryConfig<T>) {
+export function useApiQuery<T = BaseRecord[]>(config: ApiQueryConfig<T>) {
   return useQuery({
     queryKey: config.queryKey,
     queryFn: () => {
@@ -63,10 +71,90 @@ export function useApiQuery<T = any>(config: ApiQueryConfig<T>) {
   })
 }
 
+// CRUD操作のヘルパー関数
+function performInsert<TData, TVariables extends Record<string, unknown>>(
+  data: BaseRecord[],
+  variables: TVariables,
+  config: ApiMutationConfig<TData, TVariables>,
+  storageKey: string
+): TData | BaseRecord {
+  const newItem: BaseRecord = {
+    id: Date.now().toString(),
+    ...variables,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+  data.push(newItem)
+  localStorage.setItem(storageKey, JSON.stringify(data))
+  return config.transform ? config.transform(newItem) : newItem
+}
+
+function performUpdate<TData, TVariables extends Record<string, unknown> & { id: string }>(
+  data: BaseRecord[],
+  variables: TVariables,
+  config: ApiMutationConfig<TData, TVariables>,
+  storageKey: string
+): TData | BaseRecord {
+  const itemId = variables.id
+  const itemIndex = data.findIndex((item: BaseRecord) => item.id === itemId)
+  if (itemIndex !== -1) {
+    data[itemIndex] = {
+      ...data[itemIndex],
+      ...variables,
+      updated_at: new Date().toISOString(),
+    }
+    localStorage.setItem(storageKey, JSON.stringify(data))
+    return config.transform ? config.transform(data[itemIndex]) : data[itemIndex]
+  }
+  throw new Error('Item not found for update')
+}
+
+function performDelete<_TData, TVariables extends string | { id: string }>(
+  data: BaseRecord[],
+  variables: TVariables,
+  storageKey: string
+): string {
+  const itemId = typeof variables === 'string' ? variables : variables.id
+  const filteredData = data.filter((item: BaseRecord) => item.id !== itemId)
+  localStorage.setItem(storageKey, JSON.stringify(filteredData))
+  return itemId
+}
+
+function performUpsert<TData, TVariables extends Record<string, unknown> & { id: string }>(
+  data: BaseRecord[],
+  variables: TVariables,
+  config: ApiMutationConfig<TData, TVariables>,
+  storageKey: string
+): TData | BaseRecord {
+  const itemId = variables.id
+  const itemIndex = data.findIndex((item: BaseRecord) => item.id === itemId)
+
+  if (itemIndex !== -1) {
+    // 更新
+    data[itemIndex] = {
+      ...data[itemIndex],
+      ...variables,
+      updated_at: new Date().toISOString(),
+    }
+  } else {
+    // 挿入
+    const newItem: BaseRecord = {
+      ...variables,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+    data.push(newItem)
+  }
+
+  localStorage.setItem(storageKey, JSON.stringify(data))
+  const result = itemIndex !== -1 ? data[itemIndex] : data[data.length - 1]
+  return config.transform ? config.transform(result) : result
+}
+
 /**
  * データ更新フック（localStorage専用）
  */
-export function useApiMutation<TData = any, TVariables = any>(
+export function useApiMutation<TData = BaseRecord, TVariables = Partial<BaseRecord>>(
   config: ApiMutationConfig<TData, TVariables>
 ) {
   const queryClient = useQueryClient()
@@ -80,68 +168,16 @@ export function useApiMutation<TData = any, TVariables = any>(
 
         switch (config.operation) {
           case 'insert':
-            const newItem = {
-              id: Date.now().toString(),
-              ...variables,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-            }
-            data.push(newItem)
-            localStorage.setItem(storageKey, JSON.stringify(data))
-            return config.transform ? config.transform(newItem) : newItem
+            return performInsert(data, variables, config, storageKey)
 
           case 'update':
-            if (typeof variables === 'object' && variables && 'id' in variables) {
-              const itemId = (variables as any).id
-              const itemIndex = data.findIndex((item: any) => item.id === itemId)
-              if (itemIndex !== -1) {
-                data[itemIndex] = {
-                  ...data[itemIndex],
-                  ...variables,
-                  updated_at: new Date().toISOString(),
-                }
-                localStorage.setItem(storageKey, JSON.stringify(data))
-                return config.transform ? config.transform(data[itemIndex]) : data[itemIndex]
-              }
-            }
-            throw new Error('Item not found for update')
+            return performUpdate(data, variables, config, storageKey)
 
           case 'delete':
-            if (typeof variables === 'string' || (typeof variables === 'object' && variables && 'id' in variables)) {
-              const itemId = typeof variables === 'string' ? variables : (variables as any).id
-              const filteredData = data.filter((item: any) => item.id !== itemId)
-              localStorage.setItem(storageKey, JSON.stringify(filteredData))
-              return itemId
-            }
-            throw new Error('Invalid delete operation')
+            return performDelete(data, variables, storageKey)
 
           case 'upsert':
-            if (typeof variables === 'object' && variables && 'id' in variables) {
-              const itemId = (variables as any).id
-              const itemIndex = data.findIndex((item: any) => item.id === itemId)
-              
-              if (itemIndex !== -1) {
-                // 更新
-                data[itemIndex] = {
-                  ...data[itemIndex],
-                  ...variables,
-                  updated_at: new Date().toISOString(),
-                }
-              } else {
-                // 挿入
-                const newItem = {
-                  ...variables,
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString(),
-                }
-                data.push(newItem)
-              }
-              
-              localStorage.setItem(storageKey, JSON.stringify(data))
-              const result = itemIndex !== -1 ? data[itemIndex] : data[data.length - 1]
-              return config.transform ? config.transform(result) : result
-            }
-            throw new Error('Invalid upsert operation')
+            return performUpsert(data, variables, config, storageKey)
 
           default:
             throw new Error(`Unsupported operation: ${config.operation}`)

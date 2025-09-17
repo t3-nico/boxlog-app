@@ -111,7 +111,7 @@ export class IncrementalUpdateManager {
    */
   private static notifyAffectedFolders(itemId: string, changeType: string, fields?: string[]) {
     // 全フォルダのオブザーバーに通知（実際はより効率的な実装が必要）
-    this.observers.forEach((callbacks, folderId) => {
+    this.observers.forEach((callbacks, _folderId) => {
       callbacks.forEach((callback) => {
         callback({ itemId, changeType, fields, timestamp: new Date() })
       })

@@ -2,14 +2,20 @@ import { create } from 'zustand'
 
 import { useTagStore } from '@/features/tags/stores/tag-store'
 
-import { 
-  Event, 
-  EventFilters, 
+import {
+  Event,
+  EventFilters,
   EventStore,
   CreateEventRequest,
   UpdateEventRequest,
   EventsByDate,
-  CalendarEvent
+  CalendarEvent,
+  EventType,
+  EventStatus,
+  EventPriority,
+  RecurrencePattern,
+  ChecklistItem,
+  Reminder
 } from '../types/events'
 
 // ローカルストレージのキー
@@ -35,23 +41,54 @@ const saveToLocalStorage = (events: Event[]) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsToSave))
     
     // 直ちに確認
-    const saved = localStorage.getItem(STORAGE_KEY)
+    const _saved = localStorage.getItem(STORAGE_KEY)
   } catch (error) {
     console.error('💾 Save failed:', error)
   }
 }
 
+// LocalStorageに保存されたイベントデータの型定義
+interface StoredEventData {
+  id: string
+  title: string
+  description?: string
+  startDate?: string | null
+  endDate?: string | null
+  type: EventType
+  status: EventStatus
+  priority?: EventPriority
+  color: string
+  isRecurring?: boolean
+  recurrenceRule?: RecurrencePattern
+  parentEventId?: string
+  items?: ChecklistItem[]
+  location?: string
+  url?: string
+  reminders?: Reminder[]
+  tags?: Array<{
+    id: string
+    name: string
+    color: string
+    icon?: string
+    parent_id?: string
+  }>
+  createdAt?: string
+  updatedAt?: string
+  deletedAt?: string | null
+  isDeleted?: boolean
+}
+
 const loadFromLocalStorage = (): Event[] => {
   if (!isBrowser) return []
-  
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) {
       return []
     }
-    
-    const parsed = JSON.parse(stored)
-    const events = parsed.map((event: any) => ({
+
+    const parsed = JSON.parse(stored) as StoredEventData[]
+    const events = parsed.map((event: StoredEventData) => ({
       ...event,
       startDate: event.startDate ? new Date(event.startDate) : null,
       endDate: event.endDate ? new Date(event.endDate) : null,
@@ -59,7 +96,7 @@ const loadFromLocalStorage = (): Event[] => {
       updatedAt: event.updatedAt ? new Date(event.updatedAt) : new Date(),
       deletedAt: event.deletedAt ? new Date(event.deletedAt) : null,
     }))
-    
+
     return events
   } catch (error) {
     console.error('📖 Load failed:', error)
@@ -103,7 +140,7 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   lastFetchedRange: null,
 
   // イベント取得（必要に応じてフィルタリング）
-  fetchEvents: async (filters?: EventFilters) => {
+  fetchEvents: async (_filters?: EventFilters) => {
     set({ loading: true })
     
     try {
@@ -340,7 +377,7 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   },
   
   // 物理削除（統一ゴミ箱システムが管理するため、通常は使用されない）
-  hardDeleteEvent: async (eventId: string) => {
+  hardDeleteEvent: async (_eventId: string) => {
     console.log('hardDeleteEvent called - unified trash system manages permanent deletion')
   },
   
@@ -398,12 +435,12 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   },
   
   // バッチ復元（統一ゴミ箱システムが管理）
-  batchRestore: async (eventIds: string[]) => {
+  batchRestore: async (_eventIds: string[]) => {
     console.log('batchRestore called - unified trash system manages restoration')
   },
   
   // バッチ物理削除（統一ゴミ箱システムが管理）
-  batchHardDelete: async (eventIds: string[]) => {
+  batchHardDelete: async (_eventIds: string[]) => {
     console.log('batchHardDelete called - unified trash system manages permanent deletion')
   },
   

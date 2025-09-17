@@ -65,7 +65,7 @@ export const AnimatedEventItem = ({
   isHovered = false,
   isDragging = false,
   isCreating = false,
-  onAnimationComplete,
+  _onAnimationComplete,
   className,
   style
 }: AnimatedEventItemProps) => {
@@ -80,14 +80,14 @@ export const AnimatedEventItem = ({
   }, [isCreating])
 
   // アニメーション状態の決定
-  const getAnimationVariant = () => {
+  const _getAnimationVariant = () => {
     if (isDragging) return 'dragging'
     if (isSelected) return 'selected'
     if (isHovered) return 'hover'
     return 'default'
   }
 
-  const animationVariants = {
+  const _animationVariants = {
     default: {
       scale: 1,
       boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -127,7 +127,7 @@ interface CreatingEventPreviewProps {
 }
 
 export const CreatingEventPreview = ({
-  date,
+  _date,
   startTime,
   endTime,
   title = 'New Event',
@@ -264,8 +264,8 @@ interface PulseEffectProps {
   intensity?: 'low' | 'medium' | 'high'
 }
 
-export const PulseEffect = ({ isActive, children, intensity = 'medium' }: PulseEffectProps) => {
-  const pulseVariants = {
+export const PulseEffect = ({ isActive, children, intensity: _intensity = 'medium' }: PulseEffectProps) => {
+  const _pulseVariants = {
     low: { scale: [1, 1.01, 1] },
     medium: { scale: [1, 1.02, 1] },
     high: { scale: [1, 1.05, 1] }

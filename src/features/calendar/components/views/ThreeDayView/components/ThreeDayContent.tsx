@@ -74,7 +74,7 @@ export const ThreeDayContent = ({
   useGlobalDragCursor(dragState, handlers)
 
   // 空白クリックハンドラー
-  const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const _handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
     
     const { timeString } = calculateTimeFromEvent(e)
@@ -82,7 +82,7 @@ export const ThreeDayContent = ({
   }, [date, onEmptyClick, calculateTimeFromEvent])
   
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const handleEventClick = useCallback((event: CalendarEvent) => {
+  const _handleEventClick = useCallback((event: CalendarEvent) => {
     // ドラッグ・リサイズ操作中のクリックは無視
     if (dragState.isDragging || dragState.isResizing) {
       return
@@ -164,7 +164,7 @@ export const ThreeDayContent = ({
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, position) => handlers.handleResizeStart(event.id, direction, e, {
+                  onResizeStart={(event, direction, e, _position) => handlers.handleResizeStart(event.id, direction, e, {
                     top: currentTop,
                     left: 0,
                     width: 100,

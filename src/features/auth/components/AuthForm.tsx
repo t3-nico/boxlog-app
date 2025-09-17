@@ -45,8 +45,8 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
       } else {
         router.push('/dashboard')
       }
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An unknown error occurred')
     } finally {
       setIsLoading(false)
     }
@@ -59,8 +59,8 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     try {
       // ローカル専用モード: OAuth無効
       setError(`${provider} login disabled in localStorage mode`)
-    } catch (error: any) {
-      setError(error.message)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An unknown error occurred')
     } finally {
       setIsLoading(false)
     }

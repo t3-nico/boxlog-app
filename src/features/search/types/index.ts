@@ -11,7 +11,7 @@ export interface SearchResult {
   description?: string
   type: SearchResultType
   icon?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   score?: number
   action?: () => void
 }
@@ -32,7 +32,7 @@ export interface SearchFilters {
   tags?: string[]
   status?: string[]
   priority?: string[]
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // Search context for advanced features
@@ -57,7 +57,7 @@ export interface FuzzySearchConfig {
 }
 
 // Search providers interface
-export interface SearchProvider<T = any> {
+export interface SearchProvider<T = unknown> {
   type: SearchResultType
   search: (query: string, options?: Partial<SearchOptions>) => Promise<SearchResult[]>
   getById?: (id: string) => Promise<T | null>

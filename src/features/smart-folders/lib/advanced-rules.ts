@@ -408,7 +408,7 @@ export class AdvancedRuleBuilder {
   /**
    * グループの開始
    */
-  startGroup(groupId: string, logic: 'AND' | 'OR' = 'AND'): this {
+  startGroup(groupId: string, _logic: 'AND' | 'OR' = 'AND'): this {
     this.currentGroupId = groupId
     return this
   }
@@ -427,7 +427,7 @@ export class AdvancedRuleBuilder {
   regex(field: SmartFolderRuleField, pattern: string, flags?: string): this {
     this.addRule({
       field,
-      operator: AdvancedRuleOperator.REGEX_MATCH as any,
+      operator: AdvancedRuleOperator.REGEX_MATCH as AdvancedRuleOperator,
       value: pattern,
       logic: 'AND',
       isRegex: true,
@@ -443,8 +443,8 @@ export class AdvancedRuleBuilder {
   between(field: SmartFolderRuleField, min: number, max: number): this {
     this.addRule({
       field,
-      operator: AdvancedRuleOperator.BETWEEN as any,
-      value: [min, max] as any,
+      operator: AdvancedRuleOperator.BETWEEN as AdvancedRuleOperator,
+      value: [min, max] as [number, number],
       logic: 'AND',
       groupId: this.currentGroupId,
     })
@@ -462,7 +462,7 @@ export class AdvancedRuleBuilder {
   ): this {
     this.addRule({
       field,
-      operator: AdvancedRuleOperator.TIME_BETWEEN as any,
+      operator: AdvancedRuleOperator.TIME_BETWEEN as AdvancedRuleOperator,
       value: null,
       logic: 'AND',
       timeRange: {
@@ -525,7 +525,7 @@ export const ADVANCED_RULE_PRESETS = {
   COMPLEX_TASKS: AdvancedRuleBuilder.create()
     .startGroup('complexity', 'OR')
     .regex('description', '.{200,}') // 200文字以上の説明
-    .between('tag' as any, 3, 10) // 3-10個のタグ
+    .between('tag' as SmartFolderRuleField, 3, 10) // 3-10個のタグ
     .endGroup()
     .build(),
 }

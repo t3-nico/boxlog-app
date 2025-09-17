@@ -501,7 +501,7 @@ export class TemplateApplicator {
   /**
    * ルールのパラメータ化（動的値の設定）
    */
-  static parameterizeRules(rules: SmartFolderRule[], parameters: Record<string, any>): SmartFolderRule[] {
+  static parameterizeRules(rules: SmartFolderRule[], parameters: Record<string, unknown>): SmartFolderRule[] {
     return rules.map(rule => ({
       ...rule,
       value: this.replaceParameters(rule.value, parameters)
@@ -511,7 +511,7 @@ export class TemplateApplicator {
   /**
    * パラメータ置換
    */
-  private static replaceParameters(value: any, parameters: Record<string, any>): any {
+  private static replaceParameters(value: unknown, parameters: Record<string, unknown>): unknown {
     if (typeof value !== 'string') return value
 
     // ${parameter} 形式のパラメータを置換
@@ -573,7 +573,7 @@ export class TemplateAnalytics {
   /**
    * 推奨テンプレートの生成
    */
-  static getRecommendedTemplates(userBehavior: any): SmartFolderTemplate[] {
+  static getRecommendedTemplates(_userBehavior: Record<string, unknown>): SmartFolderTemplate[] {
     // ユーザーの行動パターンに基づいて推奨テンプレートを選択
     // ここでは簡単な実装
     return TemplateManager.getPopularTemplates(3)

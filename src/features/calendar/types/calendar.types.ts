@@ -151,7 +151,7 @@ export interface Calendar {
   syncToken?: string
   lastSyncedAt?: Date
   isShared: boolean
-  shareSettings?: Record<string, any>
+  shareSettings?: Record<string, unknown>
   createdAt: Date
   updatedAt: Date
 }
@@ -239,7 +239,7 @@ export interface CalendarViewState {
   showWeekNumbers: boolean
   firstDayOfWeek: number // 0=日曜, 1=月曜
   timeFormat: '12h' | '24h'
-  customSettings?: Record<string, any>
+  customSettings?: Record<string, unknown>
   createdAt: Date
   updatedAt: Date
 }
@@ -257,7 +257,7 @@ export interface UpdateCalendarInput {
   description?: string
   color?: string
   isVisible?: boolean
-  shareSettings?: Record<string, any>
+  shareSettings?: Record<string, unknown>
 }
 
 export interface CreateEventInput {

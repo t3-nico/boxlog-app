@@ -79,7 +79,7 @@ function timeToMinutes(date: Date): number {
 /**
  * 同じ日のイベントかどうかを判定
  */
-function isSameDay(date1: Date, date2: Date): boolean {
+function _isSameDay(date1: Date, date2: Date): boolean {
   return date1.getFullYear() === date2.getFullYear() &&
          date1.getMonth() === date2.getMonth() &&
          date1.getDate() === date2.getDate()
@@ -258,7 +258,7 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
     const totalColumns = maxColumns
     
     // 幅と位置を計算（マージンを考慮）
-    const baseWidth = 100 / totalColumns
+    const _baseWidth = 100 / totalColumns
     
     // 2列制限での幅と位置計算
     let width: number
@@ -319,7 +319,7 @@ export function applyEventLayout(
   })
   
   // レイアウト情報を適用
-  const layoutedEvents: LayoutedEvent[] = events.map((event, index) => {
+  const layoutedEvents: LayoutedEvent[] = events.map((event, _index) => {
     const assignment = allAssignments.get(event.id)
     
     // 時間を位置に変換

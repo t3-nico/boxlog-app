@@ -62,7 +62,7 @@ class LRUCache<K, V> {
 
 // グローバルキャッシュインスタンス
 const eventCache = new LRUCache<string, MemoizedEventData>(100)
-const computationCache = new LRUCache<string, any>(200)
+const computationCache = new LRUCache<string, unknown>(200)
 
 // ハッシュ関数（高速化のため単純な実装）
 function fastHash(input: string): string {
@@ -88,7 +88,7 @@ function generateMemoKey(
   events: CalendarEvent[],
   startDate: Date,
   endDate: Date,
-  filters: any,
+  filters: Record<string, unknown>,
   viewType: string
 ): string {
   const key: MemoizationKey = {
@@ -104,7 +104,7 @@ export function useMemoizedEvents(
   events: CalendarEvent[],
   startDate: Date,
   endDate: Date,
-  filters: any = {},
+  filters: Record<string, unknown> = {},
   viewType: string = 'week'
 ) {
   const previousKey = useRef<string>('')
@@ -199,7 +199,7 @@ export function useMemoizedEvents(
 }
 
 // フィルターの適用
-function applyFilters(events: CalendarEvent[], filters: any): CalendarEvent[] {
+function applyFilters(events: CalendarEvent[], filters: Record<string, unknown>): CalendarEvent[] {
   if (!filters || Object.keys(filters).length === 0) {
     return events
   }
@@ -283,7 +283,7 @@ function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
 // 計算結果のメモ化用フック
 export function useMemoizedComputation<T>(
   computeFunction: () => T,
-  dependencies: any[],
+  dependencies: unknown[],
   cacheKey?: string
 ): T {
   const key = cacheKey || fastHash(JSON.stringify(dependencies))
@@ -297,13 +297,13 @@ export function useMemoizedComputation<T>(
     const result = computeFunction()
     computationCache.set(key, result)
     return result
-  }, dependencies)
+  }, [key, computeFunction, ...dependencies])
 }
 
 // 複雑な計算の非同期メモ化
 export function useAsyncMemoizedComputation<T>(
   computeFunction: () => Promise<T>,
-  dependencies: any[],
+  dependencies: unknown[],
   cacheKey?: string
 ): { data: T | null; loading: boolean; error: Error | null } {
   const key = cacheKey || fastHash(JSON.stringify(dependencies))
@@ -332,7 +332,8 @@ export function useAsyncMemoizedComputation<T>(
       })
 
     return { data, loading, error }
-  }, dependencies)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, computeFunction, ...dependencies])
 }
 
 // カレンダー専用のメモ化フック

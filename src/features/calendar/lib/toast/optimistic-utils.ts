@@ -42,7 +42,7 @@ export const useOptimisticUpdate = () => {
         errorMessage,
         customErrorHandling = false,
         enableRetry = true,
-        operationDescription = '操作',
+        _operationDescription = '操作',
       } = options
 
       // 楽観的更新を実行

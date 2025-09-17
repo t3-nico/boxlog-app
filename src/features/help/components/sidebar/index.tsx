@@ -95,7 +95,7 @@ export const HelpSidebarSections = ({ collapsed }: HelpSidebarSectionsProps) => 
       <SidebarSection>
         <div className="flex items-center justify-between">
           <SidebarHeading>Chat History</SidebarHeading>
-          <button className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+          <button type="button" className="text-xs text-muted-foreground hover:text-foreground transition-colors">
             View All
           </button>
         </div>

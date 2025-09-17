@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect, useMemo } from 'react'
 
+import Image from 'next/image'
+
 import { cn } from '@/lib/utils'
 
 interface LazyImageProps {
@@ -100,42 +102,14 @@ export const LazyImage = ({
     }
   }, [priority, state.isIntersecting, rootMargin, threshold])
 
-  // 画像の読み込み処理
+  // 画像の読み込み開始フラグ設定
   useEffect(() => {
-    if (!state.isIntersecting || state.isLoaded || state.hasError || state.isLoading) {
+    if (!state.isIntersecting || state.isLoading) {
       return
     }
 
     setState(prev => ({ ...prev, isLoading: true }))
-
-    // 新しい Image オブジェクトで事前読み込み
-    const img = new Image()
-    
-    img.onload = () => {
-      setState(prev => ({ 
-        ...prev, 
-        isLoaded: true, 
-        isLoading: false 
-      }))
-      onLoad?.()
-    }
-
-    img.onerror = () => {
-      setState(prev => ({ 
-        ...prev, 
-        hasError: true, 
-        isLoading: false 
-      }))
-      onError?.()
-    }
-
-    img.src = src
-
-    return () => {
-      img.onload = null
-      img.onerror = null
-    }
-  }, [state.isIntersecting, state.isLoaded, state.hasError, state.isLoading, src, onLoad, onError])
+  }, [state.isIntersecting, state.isLoading])
 
   // プレースホルダーのスタイル
   const placeholderStyle = useMemo(() => {
@@ -206,10 +180,12 @@ export const LazyImage = ({
               <span className="text-xs">読み込み中...</span>
             </div>
           ) : placeholder ? (
-            <img 
-              src={placeholder} 
+            <Image
+              src={placeholder}
               alt={alt}
-              className="w-full h-full object-cover opacity-50"
+              fill
+              className="object-cover opacity-50"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
             <div className="text-gray-400">
@@ -223,17 +199,32 @@ export const LazyImage = ({
 
       {/* 実際の画像 */}
       {state.isIntersecting && !state.hasError && (
-        <img
+        <Image
           ref={imgRef}
           src={src}
           alt={alt}
+          fill
           className={cn(
-            "w-full h-full object-cover transition-opacity duration-300",
+            "object-cover transition-opacity duration-300",
             state.isLoaded ? "opacity-100" : "opacity-0"
           )}
-          style={{
-            width: width || '100%',
-            height: height || 'auto'
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={priority}
+          onLoad={() => {
+            setState(prev => ({
+              ...prev,
+              isLoaded: true,
+              isLoading: false
+            }))
+            onLoad?.()
+          }}
+          onError={() => {
+            setState(prev => ({
+              ...prev,
+              hasError: true,
+              isLoading: false
+            }))
+            onError?.()
           }}
         />
       )}

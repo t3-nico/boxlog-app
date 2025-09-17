@@ -102,7 +102,7 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
   const fieldMappings: Array<{
     requestField: keyof UpdateEventRequest
     entityField: keyof Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>
-    transform?: (value: any) => any
+    transform?: (value: unknown) => unknown
   }> = [
     { requestField: 'title', entityField: 'title' },
     { requestField: 'description', entityField: 'description', transform: (v) => v || null },

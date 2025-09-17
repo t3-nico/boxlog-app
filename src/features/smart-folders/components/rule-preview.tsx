@@ -15,14 +15,14 @@ import { SmartFolderRule } from '@/types/smart-folders'
 
 interface RulePreviewProps {
   rules: SmartFolderRule[]
-  items: any[]
+  items: unknown[]
 }
 
 interface PreviewStats {
   totalItems: number
   matchingItems: number
   matchPercentage: number
-  matchingItemsList: any[]
+  matchingItemsList: unknown[]
 }
 
 export const RulePreview = ({ rules, items }: RulePreviewProps) => {

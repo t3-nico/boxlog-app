@@ -72,7 +72,7 @@ export function useEventsByDate({
     let processedCount = 0
     let skippedCount = 0
     
-    events.forEach((event, index) => {
+    events.forEach((event, _index) => {
       if (!isValidEvent(event)) {
         skippedCount++
         return
@@ -142,7 +142,7 @@ export function useEventsByDate({
       skippedCount,
       resultKeys: Object.keys(sortedResult),
       resultCounts: Object.entries(sortedResult).map(([key, events]) => ({ date: key, count: events.length })),
-      nonEmptyDates: Object.entries(sortedResult).filter(([key, events]) => events.length > 0).map(([key, events]) => ({ 
+      nonEmptyDates: Object.entries(sortedResult).filter(([_key, events]) => events.length > 0).map(([key, events]) => ({ 
         date: key, 
         count: events.length,
         eventTitles: events.map(e => e.title).slice(0, 2)

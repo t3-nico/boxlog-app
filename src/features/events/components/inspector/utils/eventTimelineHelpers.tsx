@@ -1,13 +1,61 @@
 import React from 'react'
+
 import { Activity, Bell, Clock, FileText, Edit3, ArrowRight } from 'lucide-react'
 import { Tag as TagIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+
 import { text, colors } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
+
+// Timeline event types
+interface BaseTimelineEvent {
+  type: string
+  field?: string
+  action?: string
+  value?: string
+  oldValue?: string
+  newValue?: string
+}
+
+interface CreatedEvent extends BaseTimelineEvent {
+  type: 'created'
+}
+
+interface StatusEvent extends BaseTimelineEvent {
+  type: 'status'
+  oldValue: string
+  newValue: string
+}
+
+interface ReminderEvent extends BaseTimelineEvent {
+  type: 'reminder'
+  value: string
+}
+
+interface TimeEvent extends BaseTimelineEvent {
+  field: 'time'
+  oldValue: string
+  newValue: string
+}
+
+interface TagEvent extends BaseTimelineEvent {
+  field: 'tags'
+  action: 'added' | 'removed'
+  oldValue?: string
+  newValue?: string
+}
+
+interface MemoEvent extends BaseTimelineEvent {
+  field: 'memo'
+  action: 'added' | 'updated'
+  newValue: string
+}
+
+export type TimelineEvent = CreatedEvent | StatusEvent | ReminderEvent | TimeEvent | TagEvent | MemoEvent
 
 /**
  * イベントタイプに基づいてアイコンを取得
  */
-export const getEventIcon = (event: any) => {
+export const getEventIcon = (event: TimelineEvent) => {
   if (event.type === 'created') return <Edit3 className="w-3 h-3" />
   if (event.type === 'status') return <Activity className="w-3 h-3" />
   if (event.type === 'reminder') return <Bell className="w-3 h-3" />
@@ -29,7 +77,7 @@ export const renderCreatedEventDescription = () => {
 /**
  * ステータス変更イベントの説明文を生成
  */
-export const renderStatusEventDescription = (event: any) => {
+export const renderStatusEventDescription = (event: StatusEvent) => {
   return (
     <span className="flex items-center gap-1.5 flex-wrap">
       <span className={text.muted}>ステータス:</span>
@@ -43,14 +91,14 @@ export const renderStatusEventDescription = (event: any) => {
 /**
  * リマインダーイベントの説明文を生成
  */
-export const renderReminderEventDescription = (event: any) => {
+export const renderReminderEventDescription = (event: ReminderEvent) => {
   return <span className={text.primary}>{event.value}</span>
 }
 
 /**
  * 時間変更イベントの説明文を生成
  */
-export const renderTimeEventDescription = (event: any) => {
+export const renderTimeEventDescription = (event: TimeEvent) => {
   return (
     <span className="flex items-center gap-1.5 flex-wrap">
       <span className={text.muted}>時間変更:</span>
@@ -64,7 +112,7 @@ export const renderTimeEventDescription = (event: any) => {
 /**
  * タグ追加イベントの説明文を生成
  */
-export const renderTagAddedEventDescription = (event: any) => {
+export const renderTagAddedEventDescription = (event: TagEvent) => {
   return (
     <span className="flex items-center gap-1.5">
       <span className={text.muted}>タグ追加:</span>
@@ -82,7 +130,7 @@ export const renderTagAddedEventDescription = (event: any) => {
 /**
  * タグ削除イベントの説明文を生成
  */
-export const renderTagRemovedEventDescription = (event: any) => {
+export const renderTagRemovedEventDescription = (event: TagEvent) => {
   return (
     <span className="flex items-center gap-1.5">
       <span className={text.muted}>タグ削除:</span>
@@ -99,7 +147,7 @@ export const renderTagRemovedEventDescription = (event: any) => {
 /**
  * メモイベントの説明文を生成
  */
-export const renderMemoEventDescription = (event: any) => {
+export const renderMemoEventDescription = (event: MemoEvent) => {
   return (
     <span className="flex items-center gap-1.5">
       <span className={text.muted}>メモ{event.action === 'added' ? '追加' : '更新'}:</span>
@@ -113,7 +161,7 @@ export const renderMemoEventDescription = (event: any) => {
 /**
  * イベントの説明文を生成（メイン関数）
  */
-export const getEventDescription = (event: any) => {
+export const getEventDescription = (event: TimelineEvent) => {
   if (event.type === 'created') {
     return renderCreatedEventDescription()
   }

@@ -83,7 +83,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
 
   // コンテキストメニュー状態
-  const [contextMenuEvent, setContextMenuEvent] = useState<any>(null)
+  const [contextMenuEvent, setContextMenuEvent] = useState<CalendarEvent | null>(null)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
   // イベントコンテキストアクション
@@ -139,7 +139,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     if (!hasRequestedNotification && (notificationPermission as string) === 'default') {
       requestNotificationPermission()
     }
-  }, [hasRequestedNotification, notificationPermission])
+  }, [hasRequestedNotification, notificationPermission, requestNotificationPermission])
 
   // week-no-weekendでアクセスされた場合の処理
   useEffect(() => {
@@ -155,7 +155,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       console.log('🔄 URL date change detected (fallback mode):', { initialDate, currentDate })
       navigateToDate(initialDate)
     }
-  }, [contextAvailable, initialDate])
+  }, [contextAvailable, initialDate, currentDate, navigateToDate])
 
   // タイムゾーン設定の初期化（マウント時のみ）
   useEffect(() => {
@@ -166,7 +166,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         updateSettings({ timezone: actualTimezone })
       }
     }
-  }, [])
+  }, [timezone, updateSettings])
 
   // ビューに応じた期間計算
   const viewDateRange = useMemo(() => {
@@ -303,7 +303,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         isMultiDay:
           event.startDate && event.endDate ? validStartDate.toDateString() !== validEndDate.toDateString() : false,
         isRecurring: event.isRecurring || false,
-        type: event.type || ('event' as any),
+        type: event.type || 'event',
       }
     })
 
@@ -410,7 +410,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         },
       })
     },
-    [openCreateInspector, viewType]
+    [openCreateInspector, viewType, currentDate]
   )
 
 
@@ -462,7 +462,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // イベント更新ハンドラー（ドラッグ&ドロップ用）
   // 新規作成後の一時的なクリック無効化
-  const [recentlyCreated, setRecentlyCreated] = useState(false)
+  const [_recentlyCreated, _setRecentlyCreated] = useState(false)
 
   const handleUpdateEvent = useCallback(
     async (eventIdOrEvent: string | CalendarEvent, updates?: { startTime: Date; endTime: Date }) => {
@@ -517,6 +517,93 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [eventStore, events]
   )
 
+  // 土日をスキップする日付計算ユーティリティ
+  const skipWeekendsForDay = (startDate: Date, direction: 'prev' | 'next') => {
+    const multiplier = direction === 'next' ? 1 : -1
+    const newDate = new Date(startDate)
+    
+    do {
+      newDate.setDate(newDate.getDate() + multiplier)
+      console.log('📅 Checking date:', newDate.toDateString(), 'dayOfWeek:', newDate.getDay())
+    } while (newDate.getDay() === 0 || newDate.getDay() === 6)
+    
+    return newDate
+  }
+
+  const skipWeekendsFor3Day = (startDate: Date, direction: 'prev' | 'next') => {
+    const multiplier = direction === 'next' ? 1 : -1
+    const newDate = new Date(startDate)
+    let daysToMove = 0
+    const targetDays = 3
+
+    while (daysToMove < targetDays) {
+      newDate.setDate(newDate.getDate() + multiplier)
+      const dayOfWeek = newDate.getDay()
+
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+        daysToMove++
+      }
+
+      console.log(
+        '📅 3DayView checking date:',
+        newDate.toDateString(),
+        'dayOfWeek:',
+        dayOfWeek,
+        'daysToMove:',
+        daysToMove
+      )
+    }
+
+    // 最終的に平日でない場合は調整
+    while (newDate.getDay() === 0 || newDate.getDay() === 6) {
+      newDate.setDate(newDate.getDate() + (multiplier > 0 ? 1 : -1))
+    }
+    
+    return newDate
+  }
+
+  const handleTodayWithWeekendSkip = () => {
+    const today = new Date()
+    const todayDayOfWeek = today.getDay()
+
+    if (todayDayOfWeek === 0 || todayDayOfWeek === 6) {
+      const adjustedToday = new Date(today)
+      if (todayDayOfWeek === 6) {
+        adjustedToday.setDate(adjustedToday.getDate() + 2) // 月曜日
+      } else if (todayDayOfWeek === 0) {
+        adjustedToday.setDate(adjustedToday.getDate() + 1) // 月曜日
+      }
+
+      console.log('📅 Today is weekend, adjusting to Monday:', adjustedToday.toDateString())
+      navigateToDate(adjustedToday)
+      return true
+    }
+    
+    return false
+  }
+
+  const handleWeekendSkipNavigation = (direction: 'prev' | 'next') => {
+    let newDate: Date
+    
+    if (viewType === 'day') {
+      newDate = skipWeekendsForDay(currentDate, direction)
+    } else if (viewType === '3day') {
+      newDate = skipWeekendsFor3Day(currentDate, direction)
+    } else {
+      return false
+    }
+
+    console.log('📅 Weekend skip navigation:', {
+      viewType,
+      from: currentDate.toDateString(),
+      to: newDate.toDateString(),
+      direction,
+    })
+
+    navigateToDate(newDate)
+    return true
+  }
+
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback(
     (direction: 'prev' | 'next' | 'today') => {
@@ -531,93 +618,36 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         showWeekends
       )
 
-      // DayViewまたは3DayViewかつ週末表示がOFFの場合は、特別な処理
-      if ((viewType === 'day' || viewType === '3day') && !showWeekends) {
-        if (direction === 'today') {
-          const today = new Date()
-          const todayDayOfWeek = today.getDay()
-
-          // 今日が土日の場合は次の月曜日に調整
-          if (todayDayOfWeek === 0 || todayDayOfWeek === 6) {
-            const adjustedToday = new Date(today)
-            if (todayDayOfWeek === 6) {
-              // 土曜日
-              adjustedToday.setDate(adjustedToday.getDate() + 2) // 月曜日
-            } else if (todayDayOfWeek === 0) {
-              // 日曜日
-              adjustedToday.setDate(adjustedToday.getDate() + 1) // 月曜日
-            }
-
-            console.log('📅 Today is weekend, adjusting to Monday:', adjustedToday.toDateString())
-            navigateToDate(adjustedToday)
-            return
-          }
-
-          // 今日が平日の場合は通常処理
-          navigateRelative(direction)
-          return
-        }
-
-        // prev/nextの場合は土日をスキップ
-        const multiplier = direction === 'next' ? 1 : -1
-        const newDate = new Date(currentDate)
-
-        if (viewType === 'day') {
-          // DayViewは1日ずつ移動して土日をスキップ
-          do {
-            newDate.setDate(newDate.getDate() + multiplier)
-            console.log('📅 Checking date:', newDate.toDateString(), 'dayOfWeek:', newDate.getDay())
-          } while (newDate.getDay() === 0 || newDate.getDay() === 6) // 土日をスキップ
-        } else if (viewType === '3day') {
-          // 3DayViewは平日中心に移動（3営業日分移動）
-          let daysToMove = 0
-          const targetDays = 3
-
-          while (daysToMove < targetDays) {
-            newDate.setDate(newDate.getDate() + multiplier)
-            const dayOfWeek = newDate.getDay()
-
-            // 平日の場合のみカウント
-            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-              daysToMove++
-            }
-
-            console.log(
-              '📅 3DayView checking date:',
-              newDate.toDateString(),
-              'dayOfWeek:',
-              dayOfWeek,
-              'daysToMove:',
-              daysToMove
-            )
-          }
-
-          // 最終的に平日でない場合は、次の平日まで調整
-          while (newDate.getDay() === 0 || newDate.getDay() === 6) {
-            newDate.setDate(newDate.getDate() + (multiplier > 0 ? 1 : -1))
-          }
-        }
-
-        console.log('📅 Weekend skip navigation:', {
-          viewType,
-          from: currentDate.toDateString(),
-          to: newDate.toDateString(),
-          direction,
-        })
-
-        navigateToDate(newDate)
+      // 特別な処理が必要かチェック
+      const needsWeekendSkip = (viewType === 'day' || viewType === '3day') && !showWeekends
+      
+      if (!needsWeekendSkip) {
+        navigateRelative(direction)
         return
       }
 
-      // 通常のナビゲーション（週末表示ON、または他のビュー）
+      // 週末スキップ処理
+      if (direction === 'today') {
+        if (handleTodayWithWeekendSkip()) {
+          return
+        }
+        navigateRelative(direction)
+        return
+      }
+
+      // prev/nextの週末スキップ処理
+      if (handleWeekendSkipNavigation(direction)) {
+        return
+      }
+
+      // フォールバックとして通常処理
       navigateRelative(direction)
     },
-    [navigateRelative, navigateToDate, currentDate, viewType, showWeekends]
+    [navigateRelative, currentDate, viewType, showWeekends, handleTodayWithWeekendSkip, handleWeekendSkipNavigation]
   )
 
   const handleViewChange = useCallback(
     (newView: CalendarViewType) => {
-      // week-no-weekendが選択された場合は、週末表示をOFFにしてweekに統一
       if (newView === 'week-no-weekend') {
         updateSettings({ showWeekends: false })
         newView = 'week'
@@ -677,7 +707,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [viewType, handleNavigate, handleViewChange])
+  }, [viewType, handleNavigate, handleViewChange, updateSettings])
 
   // ビューコンポーネントのレンダリング
   const renderView = () => {
@@ -689,10 +719,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onCreateTask: handleCreateTask,
       onCreateRecord: handleCreateRecord,
       onTaskClick: handleTaskClick,
-      onEventClick: handleEventClick as any,
+      onEventClick: handleEventClick,
       onEventContextMenu: handleEventContextMenu,
       onCreateEvent: handleCreateEvent,
-      onUpdateEvent: handleUpdateEvent as any,
+      onUpdateEvent: handleUpdateEvent,
       onDeleteEvent: handleEventDelete,
       onRestoreEvent: handleEventRestore,
       onEmptyClick: handleEmptyClick,
@@ -772,14 +802,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       description?: string
       tags?: string[]
     }) => {
-      const newTask = taskStore.createTask(taskData)
+      taskStore.createTask(taskData)
     },
     [taskStore]
   )
 
   // 記録作成ハンドラー
   const handleCreateRecord = useCallback(
-    (recordData: {
+    (_recordData: {
       title: string
       actual_start: Date
       actual_end: Date
@@ -806,7 +836,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   )
 
   // ドラッグ選択ハンドラー
-  const handleTimeRangeSelect = useCallback(
+  const _handleTimeRangeSelect = useCallback(
     (selection: { startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
       console.log('🎯 Time range selected (DayView):', selection)
 
@@ -894,7 +924,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   )
 
   // 表示される日付の配列を計算
-  const displayDates = useMemo(() => {
+  const _displayDates = useMemo(() => {
     return viewDateRange.days
   }, [viewDateRange.days])
 

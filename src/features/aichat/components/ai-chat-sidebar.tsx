@@ -4,10 +4,37 @@ import * as React from 'react'
 import { useState } from 'react'
 
 // Speech Recognition API types
+interface SpeechRecognitionEvent {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string
+        confidence: number
+      }
+    }
+    length: number
+  }
+}
+
+interface SpeechRecognition {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  onresult: ((event: SpeechRecognitionEvent) => void) | null
+  onend: (() => void) | null
+  onerror: ((event: Event) => void) | null
+  start(): void
+  stop(): void
+}
+
 declare global {
   interface Window {
-    SpeechRecognition: any
-    webkitSpeechRecognition: any
+    SpeechRecognition: {
+      new(): SpeechRecognition
+    }
+    webkitSpeechRecognition: {
+      new(): SpeechRecognition
+    }
   }
 }
 
@@ -40,7 +67,7 @@ import { AIResponse } from '@/components/kibo-ui/ai/response'
 import { useChatContext } from '@/contexts/chat-context'
 
 // BoxLog用のカスタムAI Responseコンポーネント
-const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
+const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
   <AIResponse
     className="prose prose-sm dark:prose-invert [&_pre]:bg-muted [&_code]:bg-muted max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:px-1 [&_code]:py-1 [&_h1]:mb-2 [&_h1]:mt-4 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_ul]:my-2"
     options={{
@@ -90,7 +117,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           <AIBranch onBranchChange={(index) => console.log('Branch changed to:', index)}>
             <AIBranchMessages>
               {(message.content as string[]).map((content, index) => (
-                <BoxLogAIResponse key={index}>{content}</BoxLogAIResponse>
+                <BoxLogAIResponse key={`content-${message.id}-${index}`}>{content}</BoxLogAIResponse>
               ))}
             </AIBranchMessages>
             <AIBranchSelector from="assistant">
@@ -166,10 +193,10 @@ const ChatInput = () => {
         recognition.onstart = () => setIsListening(true)
         recognition.onend = () => setIsListening(false)
 
-        recognition.onresult = (event: any) => {
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
           const transcript = Array.from(event.results)
-            .map((result: any) => result[0])
-            .map((result: any) => result.transcript)
+            .map((result) => result[0])
+            .map((result) => result.transcript)
             .join('')
 
           setInputValue(transcript)
@@ -285,6 +312,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
             {/* Menu */}
             <div className="relative">
               <button
+                type="button"
                 onClick={() => setShowMenu(!showMenu)}
                 className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-1 transition-colors"
                 aria-label="Menu options"
@@ -295,6 +323,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
               {showMenu && (
                 <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
+                    type="button"
                     onClick={() => {
                       clearMessages()
                       setShowMenu(false)
@@ -305,6 +334,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                     Clear chat
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       navigator.clipboard.writeText(JSON.stringify(state.messages))
                       setShowMenu(false)
@@ -320,6 +350,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
 
             {/* Close Button */}
             <button
+              type="button"
               onClick={onClose}
               className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-1 transition-colors"
               aria-label="Close AI chat"

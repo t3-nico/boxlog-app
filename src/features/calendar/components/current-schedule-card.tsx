@@ -26,11 +26,11 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   const router = useRouter()
   
   // ストアから実際のイベントデータを取得
-  const eventStore = useEventStore()
+  const _eventStore = useEventStore()
   const { chronotype } = useCalendarSettingsStore()
 
   // 今日のイベントを独立してフェッチ
-  const [todayEvents, setTodayEvents] = useState<Event[]>([])
+  const [todayEvents, _setTodayEvents] = useState<Event[]>([])
   
   useEffect(() => {
     console.log('🔍 [DISABLED] Would fetch today events - disabled for debugging')
@@ -64,7 +64,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     //       console.log('📥 Extracted events:', events.length, events)
           
     //       // EventEntity を Event に変換
-    //       const convertedEvents = events.map((entity: any) => {
+    //       const convertedEvents = events.map((entity: EventEntity) => {
     //         return {
     //           id: entity.id,
     //           title: entity.title,
@@ -76,7 +76,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     //           color: entity.color,
     //           location: entity.location,
     //           url: entity.url,
-    //           tags: entity.event_tags?.map((et: any) => et.tags).filter(Boolean) || []
+    //           tags: entity.event_tags?.map((et: EventTagEntity) => et.tags).filter(Boolean) || []
     //         }
     //       }).filter((event: Event) => event.startDate) // startDateがあるもののみ
           
@@ -169,7 +169,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   }, [currentTime, todayEvents])
 
   // 残り時間を計算
-  const getRemainingTime = (endDate: Date): string => {
+  const _getRemainingTime = (endDate: Date): string => {
     const now = new Date()
     const remaining = endDate.getTime() - now.getTime()
     
@@ -218,9 +218,18 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     }
     
     return (
-      <div 
+      <div
+        role="button"
+        tabIndex={0}
+        aria-label="Navigate to calendar view"
         className="p-4 bg-secondary rounded-lg border border-secondary cursor-pointer hover:bg-secondary/80 transition-colors"
         onClick={handleNoEventClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleNoEventClick()
+          }
+        }}
       >
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
@@ -240,13 +249,22 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   }
   
   return (
-    <div 
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Current event: ${currentEvent.title}`}
       className="p-4 bg-secondary rounded-lg cursor-pointer hover:bg-secondary/80 transition-colors flex flex-col"
       style={{
         border: `2px solid ${borderColor}`,
         gap: '8px'
       }}
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
     >
       <div className="flex items-center" style={{ gap: '4px' }}>
         <div className="border border-gray-300 dark:border-gray-600 px-2 py-1 rounded text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">

@@ -107,7 +107,7 @@ const useTimelineData = () => {
 }
 
 // カスタムフック: 自動保存機能
-const useAutoSave = (formData: any, onSave?: Function, event?: CalendarEvent, isEditable?: boolean) => {
+const useAutoSave = (formData: Partial<CalendarEvent>, onSave?: (eventData: Partial<CalendarEvent>) => void, event?: CalendarEvent, isEditable?: boolean) => {
   const debouncedSave = useCallback((data: typeof formData) => {
     const timeoutId = setTimeout(() => {
       if (onSave) {
@@ -128,7 +128,7 @@ const useAutoSave = (formData: any, onSave?: Function, event?: CalendarEvent, is
 }
 
 // カスタムフック: フォームハンドラー
-const useFormHandlers = (formData: any, updateFormData: Function) => {
+const useFormHandlers = (formData: Partial<CalendarEvent>, updateFormData: (field: keyof CalendarEvent, value: unknown) => void) => {
   const handleTitleChange = (value: string) => {
     updateFormData('title', value)
   }
@@ -224,7 +224,14 @@ const EventScheduleSection = ({
   handleTitleChange, 
   handleDateChange, 
   updateFormData 
-}: any) => (
+}: {
+  formData: Partial<CalendarEvent>
+  isEditable: boolean
+  isCreateMode: boolean
+  handleTitleChange: (value: string) => void
+  handleDateChange: (value: string) => void
+  updateFormData: (field: keyof CalendarEvent, value: unknown) => void
+}) => (
   <div className={cn('space-y-3 p-4 max-w-full border-b', border.universal)}>
     <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
       予定
@@ -430,6 +437,7 @@ const ActionButtonsSection = ({ isEditable }: { isEditable: boolean }) => (
         {/* アクティビティ（タイムライン） */}
         <div className={cn('space-y-3 p-4 border-b', border.universal)}>
           <button
+            type="button"
             onClick={() => setShowTimeline(!showTimeline)}
             className={cn(
               'w-full flex items-center justify-between p-0 bg-transparent border-none outline-none cursor-pointer',

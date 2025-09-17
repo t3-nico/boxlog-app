@@ -1,13 +1,15 @@
 // キーボードショートカットハンドラーの分離
 
+import type { CalendarEvent } from '@/features/events/types/events'
+
 export interface KeyboardShortcutCallbacks {
   onEscape?: () => void
   onSelectPrevious?: () => void
   onSelectNext?: () => void
-  onDeleteEvent?: (event: any) => void
-  onEditEvent?: (event: any) => void
-  onDuplicateEvent?: (event: any) => void
-  onCopy?: (event: any) => void
+  onDeleteEvent?: (event: CalendarEvent) => void
+  onEditEvent?: (event: CalendarEvent) => void
+  onDuplicateEvent?: (event: CalendarEvent) => void
+  onCopy?: (event: CalendarEvent) => void
   onUndo?: () => void
   onRedo?: () => void
   onPaste?: (date: Date, time: string) => void
@@ -17,7 +19,7 @@ export interface KeyboardShortcutCallbacks {
 
 export interface KeyboardEventContext {
   event: KeyboardEvent
-  selectedEvent: any
+  selectedEvent: CalendarEvent | null
   debounceAction: (action: () => void, delay?: number) => void
   callbacks: KeyboardShortcutCallbacks
 }

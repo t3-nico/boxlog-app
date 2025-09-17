@@ -6,13 +6,13 @@ import Image from 'next/image'
 
 import { Listbox, ListboxLabel, ListboxOption } from '@/components/custom'
 import { Input } from '@/components/shadcn-ui/input'
-import { getCountries } from '@/lib/data'
+import { getCountries, type Country } from '@/lib/data'
 
 export const Address = () => {
   const countries = getCountries()
-  const [country, setCountry] = useState(countries[0])
-  
-  const handleCountryChange = useCallback((newCountry) => {
+  const [country, setCountry] = useState<Country>(countries[0])
+
+  const handleCountryChange = useCallback((newCountry: Country) => {
     setCountry(newCountry)
   }, [])
 

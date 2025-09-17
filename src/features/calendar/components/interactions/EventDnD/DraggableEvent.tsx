@@ -211,6 +211,9 @@ export const DraggableEvent = ({
     <div
       ref={ref}
       data-event="true"
+      role="button"
+      tabIndex={0}
+      aria-label={`Event: ${event.title}`}
       className={cn(
         "absolute rounded-md hover:shadow-lg z-20 border border-white/20",
         isDragging && "opacity-40 scale-105",
@@ -223,6 +226,12 @@ export const DraggableEvent = ({
         transition: isDragging ? 'opacity 0.2s' : 'all 0.2s'
       }}
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick(e as unknown as React.MouseEvent)
+        }
+      }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

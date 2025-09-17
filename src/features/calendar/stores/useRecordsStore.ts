@@ -3,6 +3,39 @@ import { create } from 'zustand'
 
 import type { TaskRecord, Task, RecordAdjustments, RecordStats } from '@/features/calendar/types/calendar.types'
 
+// ヘルパー関数: 計画時間の計算
+const calculatePlannedTimes = (task: Task) => {
+  const plannedStart = new Date(task.planned_start!)
+  const plannedEnd = task.planned_end
+    ? new Date(task.planned_end)
+    : addMinutes(plannedStart, task.planned_duration || 60)
+  return { plannedStart, plannedEnd }
+}
+
+// ヘルパー関数: レベル値の検証
+const validateLevel = (level: number | undefined): 1 | 2 | 3 | 4 | 5 | undefined => {
+  return level && level >= 1 && level <= 5 ? level as 1 | 2 | 3 | 4 | 5 : undefined
+}
+
+// ヘルパー関数: タスクレコードの構築
+const buildTaskRecord = (task: Task, adjustments: RecordAdjustments | undefined, plannedStart: Date, plannedEnd: Date): Partial<TaskRecord> => {
+  return {
+    task_id: task.id,
+    title: task.title,
+    actual_start: (adjustments?.actualStart || plannedStart).toISOString(),
+    actual_end: (adjustments?.actualEnd || plannedEnd).toISOString(),
+    actual_duration: adjustments?.actualEnd && adjustments?.actualStart
+      ? differenceInMinutes(adjustments.actualEnd, adjustments.actualStart)
+      : task.planned_duration || 60,
+    tags: task.tags,
+    memo: task.memo,
+    satisfaction: validateLevel(adjustments?.satisfaction),
+    focus_level: validateLevel(adjustments?.focusLevel),
+    energy_level: validateLevel(adjustments?.energyLevel),
+    interruptions: adjustments?.interruptions || 0
+  }
+}
+
 interface RecordsStore {
   records: TaskRecord[]
   isLoading: boolean
@@ -105,43 +138,9 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
   },
   
   createRecordFromTask: async (task, adjustments) => {
-    const plannedStart = new Date(task.planned_start!)
-    const plannedEnd = task.planned_end 
-      ? new Date(task.planned_end) 
-      : addMinutes(plannedStart, task.planned_duration || 60)
-    
-    const record: Partial<TaskRecord> = {
-      task_id: task.id,
-      title: task.title,
-      actual_start: (adjustments?.actualStart || plannedStart).toISOString(),
-      actual_end: (adjustments?.actualEnd || plannedEnd).toISOString(),
-      actual_duration: adjustments?.actualEnd && adjustments?.actualStart
-        ? differenceInMinutes(adjustments.actualEnd, adjustments.actualStart)
-        : task.planned_duration || 60,
-      tags: task.tags,
-      memo: task.memo,
-      satisfaction: adjustments?.satisfaction && adjustments.satisfaction >= 1 && adjustments.satisfaction <= 5 
-        ? adjustments.satisfaction as 1 | 2 | 3 | 4 | 5 
-        : undefined,
-      focus_level: adjustments?.focusLevel && adjustments.focusLevel >= 1 && adjustments.focusLevel <= 5 
-        ? adjustments.focusLevel as 1 | 2 | 3 | 4 | 5 
-        : undefined,
-      energy_level: adjustments?.energyLevel && adjustments.energyLevel >= 1 && adjustments.energyLevel <= 5 
-        ? adjustments.energyLevel as 1 | 2 | 3 | 4 | 5 
-        : undefined,
-      interruptions: adjustments?.interruptions || 0
-    }
-    
+    const { plannedStart, plannedEnd } = calculatePlannedTimes(task)
+    const record = buildTaskRecord(task, adjustments, plannedStart, plannedEnd)
     const created = await get().createRecord(record)
-
-    // await supabase
-    //   .from('tasks')
-    //   .update({ 
-    //     status: 'completed',
-    //     record_id: created.id 
-    //   })
-    //   .eq('id', task.id)
-    
     return created
   },
   

@@ -25,7 +25,7 @@ export function useToast() {
       messages: {
         loading: string
         success: string | ((_data: T) => string)
-        error: string | ((_error: any) => string)
+        error: string | ((_error: Error) => string)
       }
     ) => {
       const id = addToast('loading', messages.loading)

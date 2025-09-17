@@ -17,7 +17,7 @@ interface PerformanceMetrics {
 
 interface ErrorInfo {
   error: Error
-  errorInfo?: any
+  errorInfo?: { componentStack?: string; errorBoundary?: string }
   timestamp: number
   component?: string
 }
@@ -54,15 +54,32 @@ export function useDevTools(componentName?: string, config: DevToolsConfig = {})
   const renderStats = useRenderTracker(componentName, enableRenderTracking)
 
   // ログ出力
-  const log = useCallback((level: string, message: string, data?: any) => {
+  const log = useCallback((level: string, message: string, data?: unknown) => {
     const levels = ['none', 'error', 'warn', 'info', 'debug']
     const currentLevelIndex = levels.indexOf(logLevel)
     const messageLevelIndex = levels.indexOf(level)
 
     if (messageLevelIndex <= currentLevelIndex && messageLevelIndex > 0) {
-      const _prefixText = componentName ? `[${componentName}]` : '[DevTools]'
+      const prefixText = componentName ? `[${componentName}]` : '[DevTools]'
       const logMessage = `${prefixText} ${message}`
-      ;(console as any)[level](logMessage, data || '')
+
+      // TypeScript安全なコンソールメソッド呼び出し
+      switch (level) {
+        case 'error':
+          console.error(logMessage, data || '')
+          break
+        case 'warn':
+          console.warn(logMessage, data || '')
+          break
+        case 'info':
+          console.info(logMessage, data || '')
+          break
+        case 'debug':
+          console.debug(logMessage, data || '')
+          break
+        default:
+          console.log(logMessage, data || '')
+      }
     }
   }, [componentName, logLevel])
 
@@ -134,7 +151,7 @@ function usePerformanceMonitor(componentName?: string, enabled = true) {
 function useErrorHandler(componentName?: string, enabled = true) {
   const [errors, setErrors] = useState<ErrorInfo[]>([])
 
-  const reportError = useCallback((error: Error, errorInfo?: any) => {
+  const reportError = useCallback((error: Error, errorInfo?: unknown) => {
     if (!enabled) return
 
     const errorData: ErrorInfo = {
@@ -208,7 +225,7 @@ function useMemoryMonitor(enabled = true) {
     if (!enabled || !('memory' in performance)) return
 
     const updateMemoryStats = () => {
-      const {memory} = (performance as any)
+      const memory = (performance as unknown as { memory: { usedJSHeapSize: number; totalJSHeapSize: number } }).memory
       if (!memory) return
 
       const stats = {
@@ -240,7 +257,7 @@ function useMemoryMonitor(enabled = true) {
  */
 function useRenderTracker(componentName?: string, enabled = true) {
   const renderCountRef = useRef(0)
-  const propsRef = useRef<any>({})
+  const _propsRef = useRef<Record<string, unknown>>({})
   const [renderHistory, setRenderHistory] = useState<Array<{
     count: number
     timestamp: number
@@ -316,7 +333,7 @@ export function useProfiler(name: string, enabled = process.env.NODE_ENV === 'de
 /**
  * デバッグ情報表示フック
  */
-export function useDebugInfo(data: any, label?: string, enabled = process.env.NODE_ENV === 'development') {
+export function useDebugInfo(data: unknown, label?: string, enabled = process.env.NODE_ENV === 'development') {
   useEffect(() => {
     if (!enabled) return
 
@@ -333,14 +350,21 @@ export function useDebugInfo(data: any, label?: string, enabled = process.env.NO
 /**
  * React DevToolsとの統合
  */
+interface WindowWithReactDevTools extends Window {
+  __REACT_DEVTOOLS_GLOBAL_HOOK__?: {
+    onCommitFiberRoot?: (...args: unknown[]) => void
+  }
+}
+
 export function useReactDevTools(componentName: string, enabled = process.env.NODE_ENV === 'development') {
   useEffect(() => {
     if (!enabled || typeof window === 'undefined') return
 
     // React DevToolsが利用可能かチェック
-    if ((window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+    const windowWithDevTools = window as WindowWithReactDevTools
+    if (windowWithDevTools.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       // DevTools用の追加情報を設定
-      (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot = (...args: any[]) => {
+      windowWithDevTools.__REACT_DEVTOOLS_GLOBAL_HOOK__.onCommitFiberRoot = (..._args: unknown[]) => {
         // コミット情報のログ出力など
         if (process.env.NODE_ENV === 'development') {
           console.debug(`[${componentName}] React DevTools: Fiber root committed`)

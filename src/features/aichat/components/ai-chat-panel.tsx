@@ -71,6 +71,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
         </div>
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={() => {
               // 新規チャットの処理
               setMessages([{
@@ -87,12 +88,14 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
             <Plus className="w-4 h-4 text-muted-foreground" />
           </button>
           <button
+            type="button"
             className="p-2 hover:bg-accent/50 rounded-md transition-colors"
             title="詳細オプション"
           >
             <MoreVertical className="w-4 h-4 text-muted-foreground" />
           </button>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 hover:bg-accent/50 rounded-md transition-colors"
             title="閉じる"
@@ -134,6 +137,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
             rows={2}
           />
           <button
+            type="button"
             onClick={handleSendMessage}
             disabled={!inputValue.trim()}
             className="self-end p-2 bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400 rounded-md transition-colors"

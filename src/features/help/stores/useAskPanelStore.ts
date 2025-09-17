@@ -55,7 +55,7 @@ const initialState: AskPanelState = {
 
 export const useAskPanelStore = create<AskPanelStore>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       ...initialState,
 
       // 基本操作

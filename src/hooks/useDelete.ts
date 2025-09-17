@@ -1,12 +1,25 @@
 'use client'
 
+import { Event } from '@/features/events/types/events'
 import { useTrashStore } from '@/features/trash/stores/trashStore'
+import { SmartFolder } from '@/types/smart-folders'
 import { DeletedItem } from '@/types/trash'
+import { Task } from '@/types/unified'
+
+// 削除可能なアイテムの共通インターフェース
+interface DeletableItem {
+  id: string
+  title?: string
+  name?: string
+  path?: string
+  folder?: string
+  originalPath?: string
+}
 
 export const useDelete = () => {
   const { moveToTrash } = useTrashStore()
 
-  const deleteWithTrash = async (item: any, type: DeletedItem['type'], originalPath?: string) => {
+  const deleteWithTrash = async (item: DeletableItem, type: DeletedItem['type'], originalPath?: string) => {
     try {
       // 1. アイテムにパス情報を追加
       const itemWithPath = {
@@ -30,22 +43,22 @@ export const useDelete = () => {
     }
   }
 
-  const deleteTask = async (task: any, originalPath?: string) => {
+  const deleteTask = async (task: Task, originalPath?: string) => {
     await deleteWithTrash(task, 'task', originalPath)
     // Delete implementation tracked in Issue #85
   }
 
-  const deleteEvent = async (event: any, originalPath?: string) => {
+  const deleteEvent = async (event: Event, originalPath?: string) => {
     await deleteWithTrash(event, 'event', originalPath)
     // Delete implementation tracked in Issue #85
   }
 
-  const deleteTag = async (tag: any, originalPath?: string) => {
+  const deleteTag = async (tag: DeletableItem, originalPath?: string) => {
     await deleteWithTrash(tag, 'tag', originalPath)
     // Delete implementation tracked in Issue #85
   }
 
-  const deleteSmartFolder = async (folder: any, originalPath?: string) => {
+  const deleteSmartFolder = async (folder: SmartFolder, originalPath?: string) => {
     await deleteWithTrash(folder, 'smart-folder', originalPath)
     // Delete implementation tracked in Issue #85
   }

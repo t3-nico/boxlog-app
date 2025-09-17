@@ -203,8 +203,8 @@ function validateNonTextContent(element: HTMLElement): WCAGValidationResult {
 
 function validateInfoAndRelationships(element: HTMLElement): WCAGValidationResult {
   const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6')
-  const lists = element.querySelectorAll('ul, ol')
-  const tables = element.querySelectorAll('table')
+  const _lists = element.querySelectorAll('ul, ol')
+  const _tables = element.querySelectorAll('table')
   const forms = element.querySelectorAll('form')
   
   const issues: string[] = []
@@ -244,7 +244,7 @@ function validateInfoAndRelationships(element: HTMLElement): WCAGValidationResul
   }
 }
 
-function validateContrastMinimum(element: HTMLElement): WCAGValidationResult {
+function validateContrastMinimum(_element: HTMLElement): WCAGValidationResult {
   // 簡易的なコントラスト比チェック
   // 実際の実装では、計算されたスタイルとコントラスト比の詳細な計算が必要
   return {
@@ -256,7 +256,7 @@ function validateContrastMinimum(element: HTMLElement): WCAGValidationResult {
   }
 }
 
-function validateContrastEnhanced(element: HTMLElement): WCAGValidationResult {
+function validateContrastEnhanced(_element: HTMLElement): WCAGValidationResult {
   return {
     criterion: '1.4.6 Contrast (Enhanced)',
     level: 'AAA',
@@ -292,7 +292,7 @@ function validateKeyboardAccess(element: HTMLElement): WCAGValidationResult {
 
 function validateNoKeyboardTrap(element: HTMLElement): WCAGValidationResult {
   // フォーカストラップの実装状況をチェック
-  const modalElements = element.querySelectorAll('[role="dialog"], [role="alertdialog"], .modal')
+  const _modalElements = element.querySelectorAll('[role="dialog"], [role="alertdialog"], .modal')
   
   return {
     criterion: '2.1.2 No Keyboard Trap',
@@ -335,7 +335,7 @@ function validateFocusOrder(element: HTMLElement): WCAGValidationResult {
   }
 }
 
-function validateFocusVisible(element: HTMLElement): WCAGValidationResult {
+function validateFocusVisible(_element: HTMLElement): WCAGValidationResult {
   // CSS でフォーカス表示が適切に設定されているかチェック
   return {
     criterion: '2.4.7 Focus Visible',
@@ -360,7 +360,7 @@ function validateLanguageOfPage(): WCAGValidationResult {
   }
 }
 
-function validateOnFocus(element: HTMLElement): WCAGValidationResult {
+function validateOnFocus(_element: HTMLElement): WCAGValidationResult {
   return {
     criterion: '3.2.1 On Focus',
     level: 'A',

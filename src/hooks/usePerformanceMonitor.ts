@@ -50,7 +50,7 @@ export const useMemoryMonitor = (componentName: string, enabled = false) => {
   useEffect(() => {
     if (!enabled || !('memory' in performance)) return
     
-    const {memory} = (performance as any)
+    const {memory} = (performance as unknown)
     if (memory) {
       console.log(`💾 ${componentName} memory usage:`, {
         used: `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`,

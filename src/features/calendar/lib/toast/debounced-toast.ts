@@ -48,7 +48,7 @@ export const useDebouncedToast = () => {
 
   // デバウンス実行関数
   const createDebouncedFunction = useCallback(
-    <Args extends any[]>(
+    <Args extends unknown[]>(
       fn: (...args: Args) => string,
       config: DebounceConfig,
       key: string = 'default'

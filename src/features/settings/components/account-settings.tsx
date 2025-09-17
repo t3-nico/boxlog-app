@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 
+import Image from 'next/image'
+
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { Switch } from '@/components/shadcn-ui/switch'
@@ -27,7 +29,7 @@ interface SecuritySettings {
 const AccountSettings = () => {
   const { user } = useAuthContext()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
+  const [_isUploading, _setIsUploading] = useState(false)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -179,11 +181,14 @@ const AccountSettings = () => {
             {/* Current Avatar Display */}
             <div className="flex items-center gap-4 mb-4">
               {uploadedAvatar ? (
-                <img 
-                  src={uploadedAvatar} 
-                  alt="プロフィール画像" 
-                  className="w-16 h-16 rounded-full object-cover border-2"
+                <Image
+                  src={uploadedAvatar}
+                  alt="プロフィール画像"
+                  width={64}
+                  height={64}
+                  className="rounded-full object-cover border-2"
                   style={{ borderColor: 'var(--border)' }}
+                  sizes="64px"
                 />
               ) : (
                 <div className={`w-16 h-16 text-4xl flex items-center justify-center rounded-full ${colors.background.muted} border-2`}

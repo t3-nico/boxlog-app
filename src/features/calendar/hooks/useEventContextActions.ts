@@ -9,7 +9,7 @@ import { useEventStore } from '@/features/events/stores/useEventStore'
 import type { CalendarEvent } from '@/features/events/types/events'
 
 export function useEventContextActions() {
-  const { softDeleteEvent, updateEvent, createEvent } = useEventStore()
+  const { softDeleteEvent, updateEvent: _updateEvent, createEvent } = useEventStore()
   const { openEditModal } = useCreateModalStore()
   const { setInspectorOpen, setActiveContent } = useInspectorStore()
   const calendarToast = useCalendarToast()
@@ -17,7 +17,7 @@ export function useEventContextActions() {
   const handleDeleteEvent = useCallback(async (event: CalendarEvent) => {
     try {
       // イベントのバックアップを作成
-      const eventBackup = { ...event }
+      const _eventBackup = { ...event }
       
       // EventStoreのsoftDeleteEventが既にTrashStoreとの統合を行っている
       await softDeleteEvent(event.id)
@@ -71,88 +71,121 @@ export function useEventContextActions() {
     })
   }, [openEditModal])
 
+  // イベントの日付データを正規化
+  const normalizeEventDates = (event: CalendarEvent) => {
+    const startDate = event.startDate || (event.start_time ? new Date(event.start_time) : new Date())
+    const endDate = event.endDate || (event.end_time ? new Date(event.end_time) : new Date())
+    return { startDate, endDate }
+  }
+
+  // 複製イベントデータを作成
+  const createDuplicateEventData = (event: CalendarEvent, newStartDate: Date, newEndDate: Date) => ({
+    title: `${event.title} (コピー)`,
+    description: event.description,
+    startDate: newStartDate,
+    endDate: newEndDate,
+    type: event.type || 'event',
+    status: event.status || 'planned',
+    priority: event.priority || 'necessary',
+    color: event.color,
+    location: event.location,
+    url: event.url,
+    reminders: event.reminders || [],
+    tagIds: event.tags?.map(tag => tag.id) || []
+  })
+
+  // Toast用のイベントデータを作成
+  const createToastEventData = (newEvent: CalendarEvent) => {
+    const duration = newEvent.startDate && newEvent.endDate 
+      ? Math.round((newEvent.endDate.getTime() - newEvent.startDate.getTime()) / (1000 * 60))
+      : 60
+    
+    const isMultiDay = newEvent.startDate && newEvent.endDate 
+      ? newEvent.startDate.toDateString() !== newEvent.endDate.toDateString()
+      : false
+    
+    return {
+      id: newEvent.id,
+      title: newEvent.title || 'イベント',
+      displayStartDate: newEvent.startDate || new Date(),
+      displayEndDate: newEvent.endDate || new Date(),
+      duration,
+      isMultiDay,
+      isRecurring: newEvent.isRecurring || false
+    }
+  }
+
+  // 編集モーダル用のデータを作成
+  const createEditModalData = (newEvent: CalendarEvent) => ({
+    title: newEvent.title,
+    description: newEvent.description,
+    startDate: newEvent.startDate,
+    endDate: newEvent.endDate,
+    type: newEvent.type,
+    status: newEvent.status,
+    priority: newEvent.priority,
+    color: newEvent.color,
+    location: newEvent.location,
+    url: newEvent.url,
+    reminders: newEvent.reminders,
+    tagIds: newEvent.tags?.map(tag => tag.id) || []
+  })
+
+  const logDuplicationStart = (event: CalendarEvent, startDate: Date, endDate: Date) => {
+    console.log('🔍 Duplicating event:', {
+      original: {
+        title: event.title,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString()
+      }
+    })
+  }
+
+  const logNewEventDates = (newStartDate: Date, newEndDate: Date) => {
+    console.log('📅 New event dates:', {
+      newStartDate: newStartDate.toISOString(),
+      newEndDate: newEndDate.toISOString()
+    })
+  }
+
+  const logDuplicationSuccess = (newEvent: CalendarEvent) => {
+    console.log('✅ Duplicated event created:', {
+      id: newEvent.id,
+      title: newEvent.title,
+      startDate: newEvent.startDate,
+      endDate: newEvent.endDate
+    })
+  }
+
+  const showDuplicationSuccess = (newEvent: CalendarEvent) => {
+    const toastEventData = createToastEventData(newEvent)
+    const editModalData = createEditModalData(newEvent)
+
+    calendarToast.eventCreated(toastEventData, {
+      viewAction: () => {
+        openEditModal(newEvent.id, editModalData, {
+          source: 'duplicate',
+          date: newEvent.startDate,
+          viewType: 'day'
+        })
+      }
+    })
+  }
+
   const handleDuplicateEvent = useCallback(async (event: CalendarEvent) => {
     try {
-      const startDate = event.startDate || (event.start_time ? new Date(event.start_time) : new Date())
-      const endDate = event.endDate || (event.end_time ? new Date(event.end_time) : new Date())
+      const { startDate, endDate } = normalizeEventDates(event)
+      logDuplicationStart(event, startDate, endDate)
       
-      console.log('🔍 Duplicating event:', {
-        original: {
-          title: event.title,
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
-        }
-      })
-      
-      // 同じ日時に設定（複製）
       const newStartDate = new Date(startDate)
       const newEndDate = new Date(endDate)
+      logNewEventDates(newStartDate, newEndDate)
 
-      console.log('📅 New event dates:', {
-        newStartDate: newStartDate.toISOString(),
-        newEndDate: newEndDate.toISOString()
-      })
+      const duplicateData = createDuplicateEventData(event, newStartDate, newEndDate)
+      const newEvent = await createEvent(duplicateData)
+      logDuplicationSuccess(newEvent)
 
-      // イベントストアに新しいイベントを作成
-      const newEvent = await createEvent({
-        title: `${event.title} (コピー)`,
-        description: event.description,
-        startDate: newStartDate,
-        endDate: newEndDate,
-        type: event.type || 'event',
-        status: event.status || 'planned',
-        priority: event.priority || 'necessary',
-        color: event.color,
-        location: event.location,
-        url: event.url,
-        reminders: event.reminders || [],
-        tagIds: event.tags?.map(tag => tag.id) || []
-      })
-
-      console.log('✅ Duplicated event created:', {
-        id: newEvent.id,
-        title: newEvent.title,
-        startDate: newEvent.startDate,
-        endDate: newEvent.endDate
-      })
-
-      // Calendar Toast用のイベントデータを作成
-      const newEventData = {
-        id: newEvent.id,
-        title: newEvent.title || 'イベント',
-        displayStartDate: newEvent.startDate || new Date(),
-        displayEndDate: newEvent.endDate || new Date(),
-        duration: newEvent.startDate && newEvent.endDate ? 
-          Math.round((newEvent.endDate.getTime() - newEvent.startDate.getTime()) / (1000 * 60)) : 60,
-        isMultiDay: newEvent.startDate && newEvent.endDate ? 
-          newEvent.startDate.toDateString() !== newEvent.endDate.toDateString() : false,
-        isRecurring: newEvent.isRecurring || false
-      }
-
-      // Calendar Toast で複製通知
-      calendarToast.eventCreated(newEventData, {
-        viewAction: () => {
-          // 複製されたイベントの詳細表示や編集画面を開く
-          openEditModal(newEvent.id, {
-            title: newEvent.title,
-            description: newEvent.description,
-            startDate: newEvent.startDate,
-            endDate: newEvent.endDate,
-            type: newEvent.type,
-            status: newEvent.status,
-            priority: newEvent.priority,
-            color: newEvent.color,
-            location: newEvent.location,
-            url: newEvent.url,
-            reminders: newEvent.reminders,
-            tagIds: newEvent.tags?.map(tag => tag.id) || []
-          }, {
-            source: 'duplicate',
-            date: newEvent.startDate,
-            viewType: 'day'
-          })
-        }
-      })
+      showDuplicationSuccess(newEvent)
     } catch (err) {
       console.error('❌ Failed to duplicate event:', err)
       calendarToast.error('予定の複製に失敗しました')

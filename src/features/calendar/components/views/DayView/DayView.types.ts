@@ -21,7 +21,7 @@ export interface DayViewProps {
   className?: string
   
   // Event handlers
-  onTaskClick?: (task: any) => void
+  onTaskClick?: (task: CalendarEvent) => void
   onEventClick?: (event: CalendarEvent) => void
   onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void

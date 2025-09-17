@@ -45,7 +45,7 @@ export const addToTrash = async (item: {
   title: string
   description?: string
   deletedFrom?: string
-  originalData: Record<string, any>
+  originalData: Record<string, unknown>
   metadata?: {
     color?: string
     icon?: string

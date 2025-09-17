@@ -51,7 +51,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   // State
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [_isLoading, setIsLoading] = useState(false)
   
   // Debounced search query
   const debouncedQuery = useDebounce(query, 300)
@@ -97,7 +97,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
         query: searchQuery,
         limit: 10,
       }, {
-        tasks: convertedTasks as any,
+        tasks: convertedTasks as unknown as import('@/types/common').Task[],
         tags: tags as unknown as import('@/types/common').Tag[],
         smartFolders: smartFolders as unknown as import('@/types/common').SmartFolder[],
       })
@@ -209,7 +209,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   
   // Get category display info
   const getCategoryInfo = (category: string) => {
-    const categoryMap: Record<string, { label: string; icon: React.ComponentType<any> }> = {
+    const categoryMap: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
       'navigation': { label: 'Navigation', icon: Navigation },
       'create': { label: 'Actions', icon: Plus },
       'tasks': { label: 'Recent Items', icon: CheckSquare },

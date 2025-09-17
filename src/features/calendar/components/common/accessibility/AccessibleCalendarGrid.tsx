@@ -46,9 +46,9 @@ export const AccessibleCalendarGrid = ({
   dates,
   events,
   currentDate,
-  selectedDate,
-  selectedTime,
-  selectedEventId,
+  _selectedDate,
+  selectedTime: _selectedTime,
+  selectedEventId: _selectedEventId,
   onCreateEvent,
   onEditEvent,
   onDeleteEvent,
@@ -122,7 +122,7 @@ export const AccessibleCalendarGrid = ({
   }, [])
 
   // グリッドセルのARIA属性
-  const getCellAriaProps = useCallback((date: Date, time: string) => {
+  const getCellAriaProps = useCallback((date: Date, time: string, colIndex: number) => {
     const cellEvents = events.filter(event => 
       event.startDate &&
       event.startDate.toDateString() === date.toDateString() &&
@@ -154,6 +154,7 @@ export const AccessibleCalendarGrid = ({
       'aria-label': ariaLabel,
       'aria-selected': isSelected,
       'aria-describedby': cellEvents.length > 0 ? `events-${date.getTime()}-${time}` : undefined,
+      'aria-colindex': colIndex,
       'role': 'gridcell',
       'tabIndex': isSelected ? 0 : -1
     }
@@ -263,10 +264,10 @@ export const AccessibleCalendarGrid = ({
               )
 
               return (
-                <div
+                <button
                   key={`${date.toISOString()}-${slot.time}`}
-                  {...getCellAriaProps(date, slot.time)}
-                  aria-colindex={dateIndex + 2}
+                  type="button"
+                  {...getCellAriaProps(date, slot.time, dateIndex + 2)}
                   className={cn(
                     "flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 relative p-1",
                     "hover:bg-gray-50 focus:bg-blue-50 focus:outline-none",
@@ -281,8 +282,9 @@ export const AccessibleCalendarGrid = ({
                 >
                   {/* イベント表示 */}
                   {cellEvents.map(event => (
-                    <div
+                    <button
                       key={event.id}
+                      type="button"
                       {...getEventAriaProps(event)}
                       className={cn(
                         "absolute inset-x-1 text-xs rounded p-1 cursor-pointer",
@@ -292,7 +294,7 @@ export const AccessibleCalendarGrid = ({
                       style={{
                         backgroundColor: event.color || '#3b82f6',
                         color: 'white',
-                        top: event.startDate ? 
+                        top: event.startDate ?
                           `${(event.startDate.getMinutes() / 60) * 100}%` : '0%',
                         height: event.endDate && event.startDate ?
                           `${((event.endDate.getTime() - event.startDate.getTime()) / (60 * 60 * 1000)) * 100}%` : '100%'
@@ -305,12 +307,12 @@ export const AccessibleCalendarGrid = ({
                       <div className="font-medium truncate">
                         {event.title}
                       </div>
-                      
+
                       {/* スクリーンリーダー用の詳細情報 */}
                       <div className="sr-only" id={`event-details-${event.id}`}>
                         {getEventDescription(event)}
                       </div>
-                    </div>
+                    </button>
                   ))}
 
                   {/* 空のセル用の隠しテキスト */}
@@ -319,7 +321,7 @@ export const AccessibleCalendarGrid = ({
                       空き時間。Enterキーで新しいイベントを作成
                     </span>
                   )}
-                </div>
+                </button>
               )
             })}
           </div>

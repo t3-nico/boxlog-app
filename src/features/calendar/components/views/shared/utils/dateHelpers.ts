@@ -188,13 +188,13 @@ export function getDateKey(date: Date): string {
 /**
  * イベントの妥当性をチェック
  */
-export function isValidEvent(event: any): boolean {
+export function isValidEvent(event: { startDate?: Date | string; [key: string]: unknown }): boolean {
   if (!event.startDate) return false
-  
-  const eventStart = event.startDate instanceof Date 
-    ? event.startDate 
+
+  const eventStart = event.startDate instanceof Date
+    ? event.startDate
     : new Date(event.startDate)
-    
+
   return !isNaN(eventStart.getTime())
 }
 

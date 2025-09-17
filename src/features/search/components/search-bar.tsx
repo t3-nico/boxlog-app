@@ -9,13 +9,13 @@ import { Input } from '@/components/shadcn-ui/input'
 import { cn } from '@/lib/utils'
 
 import { useSearch, useSearchHistory } from '../hooks/use-search'
-import type { SearchResultType } from '../types'
+import type { SearchResult, SearchResultType } from '../types'
 
 interface SearchBarProps {
   className?: string
   placeholder?: string
   types?: SearchResultType[]
-  onResultSelect?: (result: any) => void
+  onResultSelect?: (result: SearchResult) => void
   showResults?: boolean
   autoFocus?: boolean
 }
@@ -26,7 +26,7 @@ export const SearchBar = ({
   types,
   onResultSelect,
   showResults = true,
-  autoFocus = false
+  _autoFocus = false
 }: SearchBarProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -56,7 +56,7 @@ export const SearchBar = ({
   }, [])
 
   // Handle result selection
-  const handleResultClick = (result: any) => {
+  const handleResultClick = (result: SearchResult) => {
     if (result.action) {
       result.action()
     }
@@ -95,7 +95,6 @@ export const SearchBar = ({
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           className="pl-9 pr-9"
-          autoFocus={autoFocus}
         />
         {isSearching && (
           <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
@@ -132,6 +131,7 @@ export const SearchBar = ({
                     {items.map((result) => (
                       <button
                         key={result.id}
+                        type="button"
                         onClick={() => handleResultClick(result)}
                         className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-accent"
                       >
@@ -174,7 +174,6 @@ export const CompactSearchBar = ({ className }: { className?: string }) => {
   return (
     <SearchBar
       className={cn('w-64', className)}
-      autoFocus
       showResults={true}
     />
   )

@@ -25,7 +25,7 @@ interface CommonViewProps {
   className?: string
   
   // Event handlers
-  onTaskClick?: (task: any) => void
+  onTaskClick?: (task: TaskEvent) => void
   onEventClick?: (event: CalendarEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void
   onUpdateEvent?: (event: CalendarEvent) => void

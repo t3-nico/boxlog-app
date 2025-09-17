@@ -13,11 +13,56 @@ export type ViewDateRange = {
   end: Date
 }
 
-export type Task = any // 既存との互換性のため
-export type TaskRecord = any
+export interface Task {
+  id: string
+  title: string
+  planned_start: Date
+  planned_duration: number
+  status: 'pending' | 'in_progress' | 'completed'
+  priority: 'low' | 'medium' | 'high'
+  description?: string
+  tags?: string[]
+  created_at: Date
+  updated_at: Date
+}
+export interface TaskRecord {
+  id: string
+  user_id: string
+  task_id?: string
+  title: string
+  actual_start: string
+  actual_end: string
+  actual_duration: number
+  satisfaction?: 1 | 2 | 3 | 4 | 5
+  tags?: string[]
+  memo?: string
+  interruptions?: number
+  focus_level?: 1 | 2 | 3 | 4 | 5
+  energy_level?: 1 | 2 | 3 | 4 | 5
+  created_at: string
+  updated_at: string
+}
 export type CalendarViewType = 'day' | 'week' | 'month' | '3day' | '2week'
-export type CreateTaskInput = any
-export type CreateRecordInput = any
+export interface CreateTaskInput {
+  title: string
+  planned_start: Date
+  planned_duration: number
+  status: 'pending' | 'in_progress' | 'completed'
+  priority: 'low' | 'medium' | 'high'
+  description?: string
+  tags?: string[]
+}
+export interface CreateRecordInput {
+  title: string
+  actual_start: Date
+  actual_end: Date
+  actual_duration: number
+  satisfaction?: number
+  focus_level?: number
+  energy_level?: number
+  memo?: string
+  interruptions?: number
+}
 
 /**
  * 全ビューで共通するベースプロパティ
@@ -35,7 +80,7 @@ export interface BaseViewProps {
   className?: string
   
   // Event handlers (完全に共通)
-  onTaskClick?: (task: any) => void
+  onTaskClick?: (task: Task) => void
   onEventClick?: (event: CalendarEvent) => void
   onEventContextMenu?: (event: CalendarEvent, mouseEvent: React.MouseEvent) => void
   onCreateEvent?: (date: Date, time?: string) => void

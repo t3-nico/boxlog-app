@@ -21,6 +21,24 @@ interface GitHubFile {
   type: 'file' | 'dir'
 }
 
+interface GitHubTreeItem {
+  path: string
+  mode: string
+  type: 'blob' | 'tree'
+  sha: string
+  url: string
+}
+
+interface GitHubSearchItem {
+  name: string
+  path: string
+  sha: string
+  url: string
+  git_url: string
+  html_url: string
+  type: 'file'
+}
+
 // Vercel AI SDK message type extension
 interface ExtendedMessage {
   id: string
@@ -37,7 +55,7 @@ interface CodebaseAIChatProps {
 }
 
 // BoxLog専用のAI Responseコンポーネント
-const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
+const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
   <AIResponse
     className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mb-2 [&_h1]:mt-4 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2"
     options={{
@@ -68,8 +86,8 @@ class _GitHubCodebaseClient {
 
       const data = await response.json()
       return data.tree
-        .filter((item: any) => item.type === 'blob')
-        .map((item: any) => ({
+        .filter((item: GitHubTreeItem) => item.type === 'blob')
+        .map((item: GitHubTreeItem) => ({
           name: item.path.split('/').pop(),
           path: item.path,
           content: '',
@@ -109,7 +127,7 @@ class _GitHubCodebaseClient {
 
       const data = await response.json()
       return (
-        data.items?.map((item: any) => ({
+        data.items?.map((item: GitHubSearchItem) => ({
           name: item.name,
           path: item.path,
           content: '',
@@ -123,71 +141,124 @@ class _GitHubCodebaseClient {
   }
 }
 
-const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
+// ユーザー情報を取得するヘルパー
+const useUserInfo = () => {
   const { user } = useAuthContext()
+  return {
+    userDisplayName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
+    profileIcon: user?.user_metadata?.profile_icon,
+    avatarUrl: user?.user_metadata?.avatar_url
+  }
+}
+
+// メッセージの状態表示
+const MessageStatus = ({ status }: { status?: string }) => {
+  if (!status) return null
+  
+  const statusText = {
+    sending: 'Sending...',
+    error: 'Send Error', 
+    sent: 'Sent'
+  }[status]
+  
+  return (
+    <div className="mt-1 text-xs opacity-75">
+      {statusText}
+    </div>
+  )
+}
+
+// 関連ファイル表示
+const RelatedFiles = ({ files }: { files?: string[] }) => {
+  if (!files || files.length === 0) return null
+  
+  return (
+    <div className="bg-muted mt-2 rounded p-2 text-xs">
+      <div className="text-card-foreground mb-1 font-medium">関連ファイル:</div>
+      {files.map((file, index) => (
+        <div key={`file-${file}-${index}`} className="text-muted-foreground font-mono">
+          {file}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// アシスタントメッセージコンテンツ
+const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
+  <div>
+    <CodebaseAIResponse>{message.content}</CodebaseAIResponse>
+    <RelatedFiles files={message.relatedFiles} />
+  </div>
+)
+
+// ユーザーメッセージコンテンツ
+const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
+  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+    {message.content}
+    <MessageStatus status={message.status} />
+  </div>
+)
+
+// ユーザーアバター
+const UserAvatar = () => {
+  const { userDisplayName, profileIcon, avatarUrl } = useUserInfo()
+  const initials = userDisplayName.charAt(0).toUpperCase()
+  
+  if (avatarUrl) {
+    return <Avatar src={avatarUrl} className="size-8" initials={initials} />
+  }
+  
+  if (profileIcon) {
+    return (
+      <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">
+        {profileIcon}
+      </div>
+    )
+  }
+  
+  return <Avatar src={undefined} className="size-8" initials={initials} />
+}
+
+// アシスタントアイコン
+const AssistantIcon = () => (
+  <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
+    <BotMessageSquare className="text-foreground h-4 w-4" />
+  </div>
+)
+
+// メッセージタイムスタンプ
+const MessageTimestamp = ({ createdAt }: { createdAt?: string | Date }) => {
+  if (!createdAt) return null
+  
+  return (
+    <div className="mt-1 text-xs opacity-60">
+      {new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </div>
+  )
+}
+
+const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
   const isUser = message.role === 'user'
   const isAssistant = message.role === 'assistant' || message.role === 'system'
-
-  // ユーザー情報の取得
-  const userDisplayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-  const profileIcon = user?.user_metadata?.profile_icon
-  const avatarUrl = user?.user_metadata?.avatar_url
-
-  // AIMessage componentは'user'または'assistant'のみ受け付けるため、'system'を'assistant'として扱う
   const messageFrom = message.role === 'system' ? 'assistant' : (message.role as 'user' | 'assistant')
 
   return (
     <AIMessage from={messageFrom}>
-      {isAssistant && (
-        <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
-          <BotMessageSquare className="text-foreground h-4 w-4" />
-        </div>
-      )}
+      {isAssistant && <AssistantIcon />}
 
       <AIMessageContent>
         {isAssistant ? (
-          <div>
-            <CodebaseAIResponse>{message.content}</CodebaseAIResponse>
-            {message.relatedFiles && message.relatedFiles.length > 0 && (
-              <div className="bg-muted mt-2 rounded p-2 text-xs">
-                <div className="text-card-foreground mb-1 font-medium">関連ファイル:</div>
-                {message.relatedFiles.map((file, index) => (
-                  <div key={index} className="text-muted-foreground font-mono">
-                    {file}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <AssistantMessageContent message={message} />
         ) : (
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">
-            {message.content}
-            {message.status && (
-              <div className="mt-1 text-xs opacity-75">
-                {message.status === 'sending' && 'Sending...'}
-                {message.status === 'error' && 'Send Error'}
-                {message.status === 'sent' && 'Sent'}
-              </div>
-            )}
-          </div>
+          <UserMessageContent message={message} />
         )}
-
-        {isAssistant && message.createdAt && (
-          <div className="mt-1 text-xs opacity-60">
-            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </div>
-        )}
+        {isAssistant && <MessageTimestamp createdAt={message.createdAt} />}
       </AIMessageContent>
 
       {isUser && (
         <div className="flex-shrink-0">
-          {avatarUrl ? (
-            <Avatar src={avatarUrl} className="size-8" initials={userDisplayName.charAt(0).toUpperCase()} />
-          ) : profileIcon ? (
-            <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
-          ) : (
-            <Avatar src={undefined} className="size-8" initials={userDisplayName.charAt(0).toUpperCase()} />
-          )}
+          <UserAvatar />
         </div>
       )}
     </AIMessage>

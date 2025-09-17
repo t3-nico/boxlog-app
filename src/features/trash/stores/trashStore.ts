@@ -14,7 +14,7 @@ export const useTrashStore = create<TrashState>()(
       deletedItems: [],
       loading: false,
 
-      moveToTrash: async (item: any, type: DeletedItem['type']) => {
+      moveToTrash: async (item: unknown, type: DeletedItem['type']) => {
         const now = new Date()
         const expiresAt = new Date(now.getTime() + THIRTY_DAYS_MS)
         
@@ -133,7 +133,7 @@ export const useTrashStore = create<TrashState>()(
           const data = JSON.parse(str)
           // 日付文字列を Date オブジェクトに変換
           if (data.state?.deletedItems) {
-            data.state.deletedItems = data.state.deletedItems.map((item: any) => ({
+            data.state.deletedItems = data.state.deletedItems.map((item: TrashItem) => ({
               ...item,
               deletedAt: new Date(item.deletedAt),
               expiresAt: new Date(item.expiresAt)

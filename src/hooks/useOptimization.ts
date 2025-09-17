@@ -73,7 +73,8 @@ export function useOnChange<T>(
       callback(value, prevValueRef.current)
       prevValueRef.current = value
     }
-  }, deps ? [value, ...deps] : [value])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, callback, ...(deps || [])])
 }
 
 // === レンダリング最適化 ===
@@ -90,7 +91,8 @@ export function useConditionalEffect(
     if (condition) {
       return effect()
     }
-  }, [...deps, condition])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effect, condition, ...deps])
 }
 
 /**
@@ -107,7 +109,7 @@ export function useRenderLimit(maxRenders = 100) {
       console.warn(`Component has rendered ${renderCountRef.current} times, which exceeds the limit of ${maxRenders}`)
       setIsLimited(true)
     }
-  })
+  }, [maxRenders, isLimited])
 
   return {
     renderCount: renderCountRef.current,
@@ -246,7 +248,7 @@ export function useChunkedProcessing<T, R>(
 /**
  * 高度なスロットリングフック
  */
-export function useAdvancedThrottle<T extends (...args: any[]) => any>(
+export function useAdvancedThrottle<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number,
   options: ThrottleOptions = {}
@@ -285,7 +287,7 @@ export function useAdvancedThrottle<T extends (...args: any[]) => any>(
 /**
  * キャンセル可能なデバウンスフック
  */
-export function useCancellableDebounce<T extends (...args: any[]) => any>(
+export function useCancellableDebounce<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number
 ): [T, () => void] {
@@ -365,7 +367,7 @@ export function useLazyLoad(
 /**
  * 深い等価比較
  */
-function deepEqual(a: any, b: any): boolean {
+function deepEqual(a: unknown, b: unknown): boolean {
   if (a === b) return true
   
   if (a == null || b == null) return a === b
@@ -411,7 +413,7 @@ export function useMemoryMonitor(enabled = process.env.NODE_ENV === 'development
     if (!enabled || !('memory' in performance)) return
 
     const updateMemoryInfo = () => {
-      const {memory} = (performance as any)
+      const memory = (performance as unknown as { memory: { usedJSHeapSize: number; totalJSHeapSize: number } }).memory
       if (memory) {
         const usedMB = Math.round(memory.usedJSHeapSize / 1048576)
         const totalMB = Math.round(memory.totalJSHeapSize / 1048576)

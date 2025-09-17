@@ -156,7 +156,7 @@ export function adjustTaskPositionsForOverlap(tasks: CalendarTask[]): CalendarTa
   // 簡単な重複検出とレイアウト調整
   const sortedTasks = [...tasks].sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
   
-  return sortedTasks.map((task, index) => {
+  return sortedTasks.map((task, _index) => {
     // 重複するタスクの数に応じて幅を調整
     const overlappingTasks = sortedTasks.filter(otherTask => 
       otherTask.startTime < task.endTime && otherTask.endTime > task.startTime

@@ -70,7 +70,7 @@ export function useIntegratedPerformanceOptimization() {
     memoryOptimizer.current.startMonitoring()
     
     // パフォーマンス閾値超過時の自動メモリクリーンアップ
-    performanceMonitor.current.onMetric('thresholdExceeded', (data: any) => {
+    performanceMonitor.current.onMetric('thresholdExceeded', (data: unknown) => {
       if (data.metric === 'memoryUsage' || data.severity === 'critical') {
         memoryOptimizer.current.triggerCleanup('performance')
       }

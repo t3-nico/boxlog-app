@@ -13,7 +13,7 @@ export interface NavigationItem {
   id: string
   label: string
   href: string
-  icon: React.ComponentType<any>
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   isActive?: (pathname: string) => boolean
   badge?: number | string
   tooltip?: string

@@ -31,7 +31,7 @@ export const TwoWeekContent = ({
   onEventContextMenu,
   onEmptyClick,
   onEventUpdate,
-  onTimeRangeSelect,
+  onTimeRangeSelect: _onTimeRangeSelect,
   onCreateEvent,
   className,
   dayIndex,
@@ -107,7 +107,7 @@ export const TwoWeekContent = ({
   const eventStyles = useEventStyles(dayEventPositions)
 
   // 空白クリックハンドラー
-  const handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const _handleEmptyClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!onEmptyClick) return
     
     const { timeString } = calculateTimeFromEvent(e)
@@ -115,7 +115,7 @@ export const TwoWeekContent = ({
   }, [date, onEmptyClick, calculateTimeFromEvent])
   
   // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
-  const handleEventClick = useCallback((event: CalendarEvent) => {
+  const _handleEventClick = useCallback((event: CalendarEvent) => {
     // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
     if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {
       return
@@ -208,7 +208,7 @@ export const TwoWeekContent = ({
                   }}
                   // クリックは useDragAndDrop で処理されるため削除
                   onContextMenu={(event, e) => handleEventContextMenu(event, e)}
-                  onResizeStart={(event, direction, e, position) => handlers.handleResizeStart(event.id, direction, e, {
+                  onResizeStart={(event, direction, e, _position) => handlers.handleResizeStart(event.id, direction, e, {
                     top: currentTop,
                     left: 0,
                     width: 100,

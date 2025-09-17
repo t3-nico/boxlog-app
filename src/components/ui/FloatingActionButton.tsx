@@ -45,6 +45,7 @@ export const FloatingActionButton = ({
   const defaultIcon = <Plus className={iconSizeMap[size]} />
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}

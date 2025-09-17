@@ -5,7 +5,13 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { offlineManager, type OfflineAction } from '@/features/offline/services/offline-manager'
 // import { ConflictResolutionModal } from '@/components/ConflictResolutionModal'
 // import { toast } from '@/components/shadcn-ui/use-toast'
-const toast = (options: any) => {
+interface ToastOptions {
+  title: string
+  description?: string
+  variant?: string
+}
+
+const toast = (options: ToastOptions) => {
   console.log('Toast:', options.title, options.description)
 }
 
@@ -22,11 +28,11 @@ export interface OfflineSyncState {
 export interface ConflictContext {
   actionId: string
   entity: string
-  localData: any
-  serverData: any
+  localData: unknown
+  serverData: unknown
   localTimestamp: Date
   serverTimestamp: Date
-  conflicts: any[]
+  conflicts: unknown[]
 }
 
 export function useOfflineSync() {
@@ -41,7 +47,7 @@ export function useOfflineSync() {
   })
 
   const [currentConflict, setCurrentConflict] = useState<ConflictContext | null>(null)
-  const [isConflictModalOpen, setIsConflictModalOpen] = useState(false)
+  const [_isConflictModalOpen, _setIsConflictModalOpen] = useState(false)
   const updateTimeoutRef = useRef<NodeJS.Timeout>()
 
   // 状態の更新
@@ -130,7 +136,7 @@ export function useOfflineSync() {
       debouncedUpdateState()
     }
 
-    const handleSyncError = (error: any) => {
+    const handleSyncError = (error: Error) => {
       setState(prev => ({ ...prev, syncInProgress: false }))
       toast({
         title: "同期に失敗しました",
@@ -146,7 +152,7 @@ export function useOfflineSync() {
 
     const handleConflictDetected = (conflictData: {
       action: OfflineAction
-      conflicts: any[]
+      conflicts: unknown[]
       conflictId: string
     }) => {
       setCurrentConflict({
@@ -173,7 +179,7 @@ export function useOfflineSync() {
       debouncedUpdateState()
     }
 
-    const handleSyncFailed = (data: { action: OfflineAction; error: any }) => {
+    const handleSyncFailed = (data: { action: OfflineAction; error: Error }) => {
       toast({
         title: "同期に失敗しました",
         description: `${data.action.entity}の${data.action.type}が失敗しました: ${data.error.message}`,
@@ -220,7 +226,7 @@ export function useOfflineSync() {
   const recordAction = useCallback(async (
     type: 'create' | 'update' | 'delete',
     entity: 'task' | 'record' | 'block' | 'tag',
-    data: any
+    data: unknown
   ) => {
     try {
       const actionId = await offlineManager.recordAction({ type, entity, data })
@@ -274,7 +280,7 @@ export function useOfflineSync() {
   // 競合解決
   const resolveConflict = useCallback(async (resolution: {
     choice: 'local' | 'server' | 'merge'
-    mergedData?: any
+    mergedData?: unknown
   }) => {
     if (!currentConflict) return
 
@@ -337,7 +343,7 @@ export function useOfflineSync() {
 }
 
 // 特定のエンティティのオフライン操作用カスタムフック
-export function useOfflineEntity<T extends Record<string, any>>(
+export function useOfflineEntity<T extends Record<string, unknown>>(
   entity: 'task' | 'record' | 'block' | 'tag',
   initialData: T[] = []
 ) {
@@ -385,9 +391,9 @@ export function useOfflineEntity<T extends Record<string, any>>(
         
         return updatedItem
       },
-      (item) => {
+      (_item) => {
         // ロールバック
-        setData(prev => prev.map(i => 
+        setData(prev => prev.map(i =>
           i.id === id ? originalItem : i
         ))
       }

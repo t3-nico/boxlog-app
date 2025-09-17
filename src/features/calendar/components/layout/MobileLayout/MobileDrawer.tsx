@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
+import Image from 'next/image'
+
 import { X, Calendar, Settings, Download, Upload, User, Bell, Palette } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -170,6 +172,7 @@ export const MobileDrawer = ({
         <div className="flex items-center justify-between p-4">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 -mr-2 hover:bg-accent/50 rounded-full transition-colors"
             aria-label="メニューを閉じる"
@@ -183,10 +186,13 @@ export const MobileDrawer = ({
           <div className="p-4">
             <div className="flex items-center gap-3">
               {userInfo.avatar ? (
-                <img
+                <Image
                   src={userInfo.avatar}
                   alt={userInfo.name}
-                  className="w-10 h-10 rounded-full"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                  sizes="40px"
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -220,6 +226,7 @@ export const MobileDrawer = ({
 
               return (
                 <button
+                  type="button"
                   key={item.id}
                   onClick={() => handleItemClick(item)}
                   disabled={item.disabled}

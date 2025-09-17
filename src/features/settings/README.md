@@ -119,7 +119,7 @@ import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings'
 function SettingsComponent() {
   const { saveSettings, isLoading, lastSaved } = useAutoSaveSettings()
   
-  const handleChange = (value: any) => {
+  const handleChange = (value: string | number | boolean) => {
     saveSettings({ key: value })
   }
   

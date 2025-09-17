@@ -1,5 +1,7 @@
 // Notification system types
 
+import type { CalendarEvent } from '@/features/events/types/events'
+
 export interface SystemNotification {
   id: number | string
   title: string
@@ -23,8 +25,8 @@ export interface NotificationPermissionState {
 }
 
 export interface UseNotificationsOptions {
-  events: any[] // Event type from events
-  onReminderTriggered?: (event: any, reminder: any) => void
+  events: CalendarEvent[] // Event type from events
+  onReminderTriggered?: (event: CalendarEvent, reminder: Reminder) => void
 }
 
 export interface NotificationDisplayProps {

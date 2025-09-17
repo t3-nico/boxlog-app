@@ -350,7 +350,7 @@ export const trashOperations = {
 /**
  * ゴミ箱アイテムの検証
  */
-export const validateTrashItem = (item: any): { valid: boolean; errors: string[] } => {
+export const validateTrashItem = (item: unknown): { valid: boolean; errors: string[] } => {
   const errors: string[] = []
   
   if (!item.id || typeof item.id !== 'string') {

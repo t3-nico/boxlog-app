@@ -153,6 +153,142 @@ function calculateContrastRatio(color1: string, color2: string): number {
   return (lighter + 0.05) / (darker + 0.05)
 }
 
+// ハイコントラストスタイルを削除
+function removeHighContrastStyles(): void {
+  document.documentElement.removeAttribute('data-high-contrast')
+  Object.keys(HIGH_CONTRAST_THEMES.default.colors).forEach(key => {
+    document.documentElement.style.removeProperty(`--contrast-${key}`)
+  })
+  
+  const existingStyle = document.getElementById('high-contrast-styles')
+  if (existingStyle) {
+    existingStyle.remove()
+  }
+}
+
+// 基本スタイルを生成
+function generateBaseStyles(isDark: boolean): string {
+  return `
+    [data-high-contrast="${isDark ? 'dark' : 'light'}"] {
+      background-color: ${isDark ? '#000000' : '#ffffff'} !important;
+      color: ${isDark ? '#ffffff' : '#000000'} !important;
+    }
+    
+    [data-high-contrast] .contrast-bg {
+      background-color: ${isDark ? '#000000' : '#ffffff'} !important;
+    }
+    
+    [data-high-contrast] .contrast-text {
+      color: ${isDark ? '#ffffff' : '#000000'} !important;
+    }
+    
+    [data-high-contrast] .contrast-border {
+      border-color: ${isDark ? '#ffffff' : '#000000'} !important;
+    }
+  `
+}
+
+// フォーカススタイルを生成
+function generateFocusStyles(isDark: boolean): string {
+  const focusColor = isDark ? '#ffffff' : '#000000'
+  return `
+    [data-high-contrast] .contrast-focus {
+      outline-color: ${focusColor} !important;
+      box-shadow: 0 0 0 2px ${focusColor} !important;
+    }
+    
+    [data-high-contrast] *:focus {
+      outline: 3px solid ${focusColor} !important;
+      outline-offset: 2px !important;
+    }
+  `
+}
+
+// インタラクティブ要素スタイルを生成
+function generateInteractiveStyles(isDark: boolean): string {
+  const primary = isDark ? '#ffffff' : '#000000'
+  const secondary = isDark ? '#000000' : '#ffffff'
+  const hover = isDark ? '#333333' : '#cccccc'
+  
+  return `
+    [data-high-contrast] button,
+    [data-high-contrast] [role="button"] {
+      border: 2px solid ${primary} !important;
+      background-color: ${secondary} !important;
+      color: ${primary} !important;
+    }
+    
+    [data-high-contrast] button:hover,
+    [data-high-contrast] [role="button"]:hover {
+      background-color: ${hover} !important;
+    }
+    
+    [data-high-contrast] a {
+      color: ${isDark ? '#00aaff' : '#0066cc'} !important;
+      text-decoration: underline !important;
+    }
+    
+    [data-high-contrast] input,
+    [data-high-contrast] textarea,
+    [data-high-contrast] select {
+      border: 2px solid ${primary} !important;
+      background-color: ${secondary} !important;
+      color: ${primary} !important;
+    }
+  `
+}
+
+// 選択状態スタイルを生成
+function generateSelectionStyles(isDark: boolean): string {
+  return `
+    [data-high-contrast] .contrast-selected {
+      background-color: ${isDark ? '#333333' : '#cccccc'} !important;
+    }
+    
+    [data-high-contrast] .contrast-primary {
+      color: ${isDark ? '#ffffff' : '#000000'} !important;
+    }
+    
+    [data-high-contrast] .contrast-warning {
+      color: #ff6600 !important;
+    }
+    
+    [data-high-contrast] .contrast-success {
+      color: #00aa00 !important;
+    }
+    
+    [data-high-contrast] [aria-selected="true"],
+    [data-high-contrast] .selected {
+      background-color: ${isDark ? '#333333' : '#cccccc'} !important;
+      border: 2px solid ${isDark ? '#ffffff' : '#000000'} !important;
+    }
+  `
+}
+
+// ハイコントラストテーマを適用
+function applyHighContrastTheme(themeName: string): void {
+  document.documentElement.setAttribute('data-high-contrast', themeName)
+  
+  const isDark = themeName === 'dark' || themeName === 'blackOnWhite' || themeName === 'yellowOnBlack'
+  
+  const styleContent = [
+    generateBaseStyles(isDark),
+    generateFocusStyles(isDark),
+    generateInteractiveStyles(isDark),
+    generateSelectionStyles(isDark)
+  ].join('')
+  
+  const existingStyle = document.getElementById('high-contrast-styles')
+  if (existingStyle) {
+    existingStyle.remove()
+  }
+  
+  const style = document.createElement('style')
+  style.id = 'high-contrast-styles'
+  style.textContent = styleContent
+  document.head.appendChild(style)
+}
+
 export function useHighContrast() {
   const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<string>('default')
@@ -210,113 +346,11 @@ export function useHighContrast() {
   useEffect(() => {
     const theme = HIGH_CONTRAST_THEMES[currentTheme]
     if (!theme || !isHighContrastEnabled) {
-      // ハイコントラストを無効化
-      document.documentElement.removeAttribute('data-high-contrast')
-      Object.keys(HIGH_CONTRAST_THEMES.default.colors).forEach(key => {
-        document.documentElement.style.removeProperty(`--contrast-${key}`)
-      })
+      removeHighContrastStyles()
       return
     }
 
-    // ハイコントラストテーマを適用（Tailwindクラスベース）
-    document.documentElement.setAttribute('data-high-contrast', currentTheme)
-    
-    // シンプルなCSSクラスのみ使用
-    const style = document.createElement('style')
-    style.textContent = `
-      [data-high-contrast="dark"] {
-        background-color: #000000 !important;
-        color: #ffffff !important;
-      }
-      
-      [data-high-contrast="light"] {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-      }
-      
-      [data-high-contrast] .contrast-bg {
-        background-color: ${currentTheme === 'dark' ? '#000000' : '#ffffff'} !important;
-      }
-      
-      [data-high-contrast] .contrast-text {
-        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-      
-      [data-high-contrast] .contrast-border {
-        border-color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-      
-      [data-high-contrast] .contrast-focus {
-        outline-color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-        box-shadow: 0 0 0 2px ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-      
-      [data-high-contrast] .contrast-selected {
-        background-color: ${currentTheme === 'dark' ? '#333333' : '#cccccc'} !important;
-      }
-      
-      [data-high-contrast] .contrast-primary {
-        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-      
-      [data-high-contrast] .contrast-warning {
-        color: #ff6600 !important;
-      }
-      
-      [data-high-contrast] .contrast-success {
-        color: #00aa00 !important;
-      }
-      
-      /* フォーカススタイルの強化 */
-      [data-high-contrast] *:focus {
-        outline: 3px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-        outline-offset: 2px !important;
-      }
-      
-      /* ボタンスタイルの強化 */
-      [data-high-contrast] button,
-      [data-high-contrast] [role="button"] {
-        border: 2px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-        background-color: ${currentTheme === 'dark' ? '#000000' : '#ffffff'} !important;
-        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-      
-      [data-high-contrast] button:hover,
-      [data-high-contrast] [role="button"]:hover {
-        background-color: ${currentTheme === 'dark' ? '#333333' : '#cccccc'} !important;
-      }
-      
-      /* リンクスタイルの強化 */
-      [data-high-contrast] a {
-        color: ${currentTheme === 'dark' ? '#00aaff' : '#0066cc'} !important;
-        text-decoration: underline !important;
-      }
-      
-      /* 入力フィールドの強化 */
-      [data-high-contrast] input,
-      [data-high-contrast] textarea,
-      [data-high-contrast] select {
-        border: 2px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-        background-color: ${currentTheme === 'dark' ? '#000000' : '#ffffff'} !important;
-        color: ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-      
-      /* 選択状態の強化 */
-      [data-high-contrast] [aria-selected="true"],
-      [data-high-contrast] .selected {
-        background-color: ${currentTheme === 'dark' ? '#333333' : '#cccccc'} !important;
-        border: 2px solid ${currentTheme === 'dark' ? '#ffffff' : '#000000'} !important;
-      }
-    `
-    
-    const existingStyle = document.getElementById('high-contrast-styles')
-    if (existingStyle) {
-      existingStyle.remove()
-    }
-    
-    style.id = 'high-contrast-styles'
-    document.head.appendChild(style)
-
+    applyHighContrastTheme(currentTheme)
   }, [isHighContrastEnabled, currentTheme])
 
   // ハイコントラストモードの切り替え

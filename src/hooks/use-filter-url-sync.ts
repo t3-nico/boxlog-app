@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { useBoxStore } from '@/features/box-management/stores/box-store'
+import type { TaskStatus, TaskPriority, TaskType } from '@/types/unified'
 
 export function useFilterUrlSync() {
   const router = useRouter()
@@ -30,9 +31,9 @@ export function useFilterUrlSync() {
 
     // Only update if different from current state to avoid infinite loops
     if (filters.search !== search) setSearchFilter(search)
-    if (JSON.stringify(filters.status) !== JSON.stringify(status)) setStatusFilter(status as any)
-    if (JSON.stringify(filters.priority) !== JSON.stringify(priority)) setPriorityFilter(priority as any)
-    if (JSON.stringify(filters.type) !== JSON.stringify(type)) setTypeFilter(type as any)
+    if (JSON.stringify(filters.status) !== JSON.stringify(status)) setStatusFilter(status as TaskStatus[])
+    if (JSON.stringify(filters.priority) !== JSON.stringify(priority)) setPriorityFilter(priority as TaskPriority[])
+    if (JSON.stringify(filters.type) !== JSON.stringify(type)) setTypeFilter(type as TaskType[])
     if (JSON.stringify(filters.tags) !== JSON.stringify(tags)) setTagFilter(tags)
     if (filters.smartFolder !== smartFolder) setSmartFolderFilter(smartFolder)
   }, [searchParams, filters.search, filters.status, filters.priority, filters.type, filters.tags, filters.smartFolder, setSearchFilter, setStatusFilter, setPriorityFilter, setTypeFilter, setTagFilter, setSmartFolderFilter])

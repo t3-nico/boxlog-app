@@ -17,6 +17,31 @@ interface EventContentProps {
   previewTime?: { start: Date; end: Date } | null // ドラッグ中のプレビュー時間
 }
 
+// Helper function: Parse event start date
+function parseEventStartDate(event: TimedEvent | Record<string, unknown>): Date | null {
+  if (event.start instanceof Date) return event.start
+  if (event.start) return new Date(event.start)
+  if (event.startDate instanceof Date) return event.startDate
+  if (event.startDate) return new Date(event.startDate)
+  return null
+}
+
+// Helper function: Parse event end date
+function parseEventEndDate(event: TimedEvent | Record<string, unknown>): Date | null {
+  if (event.end instanceof Date) return event.end
+  if (event.end) return new Date(event.end)
+  if (event.endDate instanceof Date) return event.endDate
+  if (event.endDate) return new Date(event.endDate)
+  return null
+}
+
+// Helper function: Calculate event duration
+function calculateEventDuration(eventStart: Date | null, eventEnd: Date | null): number {
+  const startTime = eventStart?.getTime() || new Date().getTime()
+  const endTime = eventEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
+  return Math.floor((endTime - startTime) / (1000 * 60))
+}
+
 export const EventContent = memo<EventContentProps>(function EventContent({
   event,
   isCompact = false,
@@ -24,24 +49,12 @@ export const EventContent = memo<EventContentProps>(function EventContent({
   timeFormat = '24h',
   previewTime = null
 }) {
-  // デバッグ用ログ削除
+  // イベントの開始・終了時刻をDateオブジェクトに変換
+  const eventStart = parseEventStartDate(event)
+  const eventEnd = parseEventEndDate(event)
   
-  // イベントの開始・終了時刻をDateオブジェクトに変換（startDateとendDateフィールドも考慮）
-  const eventStart = event.start instanceof Date ? event.start : 
-                     (event.start ? new Date(event.start) : 
-                     ((event as any).startDate instanceof Date ? (event as any).startDate : 
-                     ((event as any).startDate ? new Date((event as any).startDate) : null)))
-                     
-  const eventEnd = event.end instanceof Date ? event.end : 
-                   (event.end ? new Date(event.end) : 
-                   ((event as any).endDate instanceof Date ? (event as any).endDate : 
-                   ((event as any).endDate ? new Date((event as any).endDate) : null)))
-  
-  // 継続時間を計算（安全なDate処理）
-  const startTime = eventStart?.getTime() || new Date().getTime()
-  const endTime = eventEnd?.getTime() || new Date(startTime + 60 * 60 * 1000).getTime()
-  const durationMinutes = Math.floor((endTime - startTime) / (1000 * 60))
-  const isShortEvent = durationMinutes <= 30
+  // 継続時間を計算
+  const _durationMinutes = calculateEventDuration(eventStart, eventEnd)
   
   if (isCompact) {
     // コンパクト表示：タイトルのみ

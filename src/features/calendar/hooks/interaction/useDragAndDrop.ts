@@ -6,30 +6,30 @@
 
 import { useState, useRef, useCallback } from 'react'
 
-export interface DragState {
+export interface DragState<TData = unknown> {
   isDragging: boolean
-  dragData: any
+  dragData: TData | null
   dragPosition: { x: number; y: number } | null
 }
 
-export interface UseDragAndDropOptions {
-  onDragStart?: (data: any) => void
-  onDragEnd?: (data: any) => void
-  onDrop?: (data: any, target: any) => void
+export interface UseDragAndDropOptions<TData = unknown, TTarget = unknown> {
+  onDragStart?: (data: TData) => void
+  onDragEnd?: (data: TData) => void
+  onDrop?: (data: TData, target: TTarget) => void
 }
 
-export function useDragAndDrop(options: UseDragAndDropOptions = {}) {
+export function useDragAndDrop<TData = unknown, TTarget = unknown>(options: UseDragAndDropOptions<TData, TTarget> = {}) {
   const { onDragStart, onDragEnd, onDrop } = options
   
-  const [dragState, setDragState] = useState<DragState>({
+  const [dragState, setDragState] = useState<DragState<TData>>({
     isDragging: false,
     dragData: null,
     dragPosition: null
   })
   
-  const dragDataRef = useRef<any>(null)
+  const dragDataRef = useRef<TData | null>(null)
   
-  const startDrag = useCallback((data: any, position?: { x: number; y: number }) => {
+  const startDrag = useCallback((data: TData, position?: { x: number; y: number }) => {
     dragDataRef.current = data
     setDragState({
       isDragging: true,
@@ -57,7 +57,7 @@ export function useDragAndDrop(options: UseDragAndDropOptions = {}) {
     onDragEnd?.(data)
   }, [onDragEnd])
   
-  const handleDrop = useCallback((target: any) => {
+  const handleDrop = useCallback((target: TTarget) => {
     const data = dragDataRef.current
     if (data) {
       onDrop?.(data, target)

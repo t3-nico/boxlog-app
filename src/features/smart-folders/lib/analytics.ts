@@ -10,7 +10,7 @@ export interface AnalyticsEvent {
   folderName?: string
   userId: string
   timestamp: Date
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   duration?: number
   itemCount?: number
   matchCount?: number
@@ -183,7 +183,7 @@ export class SmartFolderAnalytics {
     expectedImpact: string
     implementation: string
   }[] {
-    const suggestions: any[] = []
+    const suggestions: string[] = []
     const stats = this.generateFolderUsageStats().find(s => s.folderId === folder.id)
     const ruleAnalysis = this.analyzeRuleEfficiency(folder)
     
@@ -371,7 +371,7 @@ export class SmartFolderAnalytics {
     return accessEvents.length / days
   }
 
-  private static calculateComplexity(folderId: string): number {
+  private static calculateComplexity(__folderId: string): number {
     // フォルダのルール数と演算子の複雑さに基づいて計算
     // 実際の実装では、フォルダ情報にアクセスする必要がある
     return 1 // プレースホルダー
@@ -388,19 +388,19 @@ export class SmartFolderAnalytics {
     return 'stable'
   }
 
-  private static calculateSelectivity(rule: SmartFolderRule, ruleEvents: AnalyticsEvent[]): number {
+  private static calculateSelectivity(_rule: SmartFolderRule, _ruleEvents: AnalyticsEvent[]): number {
     // ルールの選択性（結果の絞り込み効果）を計算
     // 実際の実装では、実行前後のアイテム数を比較
     return 0.5 // プレースホルダー
   }
 
-  private static calculateCostBenefit(rule: SmartFolderRule, executionTime: number, selectivity: number): number {
+  private static calculateCostBenefit(_rule: SmartFolderRule, executionTime: number, selectivity: number): number {
     // コストパフォーマンス = 選択性 / 実行時間
     return executionTime > 0 ? selectivity / (executionTime / 1000) : 0
   }
 
   private static generateRuleOptimizationSuggestions(
-    rule: SmartFolderRule, 
+    rule: SmartFolderRule,
     metrics: { executionTime: number; selectivity: number; costBenefit: number }
   ): string[] {
     const suggestions: string[] = []
@@ -420,22 +420,22 @@ export class SmartFolderAnalytics {
     return suggestions
   }
 
-  private static identifyFavoriteCategories(userEvents: AnalyticsEvent[]): string[] {
+  private static identifyFavoriteCategories(_userEvents: AnalyticsEvent[]): string[] {
     // ユーザーの好みのカテゴリを特定
     return [] // プレースホルダー
   }
 
-  private static calculateAverageRulesPerFolder(userEvents: AnalyticsEvent[]): number {
+  private static calculateAverageRulesPerFolder(_userEvents: AnalyticsEvent[]): number {
     // フォルダあたりの平均ルール数
     return 3 // プレースホルダー
   }
 
-  private static identifyPreferredOperators(userEvents: AnalyticsEvent[]): string[] {
+  private static identifyPreferredOperators(_userEvents: AnalyticsEvent[]): string[] {
     // よく使用される演算子を特定
     return ['equals', 'contains'] // プレースホルダー
   }
 
-  private static analyzeActivityPattern(userEvents: AnalyticsEvent[]): UserBehaviorAnalysis['activityPattern'] {
+  private static analyzeActivityPattern(_userEvents: AnalyticsEvent[]): UserBehaviorAnalysis['activityPattern'] {
     // アクティビティパターンの分析
     return {
       hourly: new Array(24).fill(0),
@@ -444,7 +444,7 @@ export class SmartFolderAnalytics {
     }
   }
 
-  private static analyzeFolderLifecycle(userEvents: AnalyticsEvent[]): UserBehaviorAnalysis['folderLifecycle'] {
+  private static analyzeFolderLifecycle(_userEvents: AnalyticsEvent[]): UserBehaviorAnalysis['folderLifecycle'] {
     // フォルダのライフサイクル分析
     return {
       averageLifespan: 30,

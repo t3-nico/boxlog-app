@@ -269,7 +269,7 @@ const EditTabContent = ({
   errors 
 }: {
   formData: { name: string; color: string; description: string; is_active: boolean }
-  setFormData: (data: any) => void
+  setFormData: (data: { name: string; color: string; description: string; is_active: boolean }) => void
   errors: Record<string, string>
 }) => (
   <div className="space-y-6">
@@ -388,7 +388,7 @@ const MoveTabContent = ({
 }
 
 // カスタムフック: TagEditModal状態管理
-const useTagEditModalState = (tag?: Tag, isOpen: boolean) => {
+const useTagEditModalState = (_tag?: TagWithChildren, _isOpen?: boolean) => {
   const [formData, setFormData] = useState({
     name: '',
     color: '#3B82F6',
@@ -415,7 +415,7 @@ const useTagEditModalState = (tag?: Tag, isOpen: boolean) => {
 // カスタムフック: TagEditModal初期化
 const useTagEditModalInitialization = (
   isOpen: boolean,
-  tag?: Tag,
+  tag?: TagWithChildren,
   setFormData: Function,
   setOriginalParentId: Function,
   setNewParentId: Function,
@@ -442,7 +442,7 @@ const useTagEditModalInitialization = (
 
 // カスタムフック: TagEditModal操作
 const useTagEditModalActions = (
-  formData: any,
+  formData: { name: string; color: string; description: string; is_active: boolean },
   originalParentId: string | null,
   newParentId: string | null,
   validateForm: Function,
@@ -500,7 +500,7 @@ const useTagEditModalActions = (
 }
 
 // サブコンポーネント: ヘッダー部分
-const TagEditModalHeader = ({ tag, onClose }: { tag: Tag, onClose: Function }) => (
+const TagEditModalHeader = ({ tag, onClose }: { tag: TagWithChildren, onClose: Function }) => (
   <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
     <div className="flex items-center gap-3">
       <div className="flex-shrink-0">
@@ -526,7 +526,12 @@ const TagEditModalHeader = ({ tag, onClose }: { tag: Tag, onClose: Function }) =
 )
 
 // サブコンポーネント: タブナビゲーション
-const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: any) => (
+const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: {
+  activeTab: 'edit' | 'move' | 'delete'
+  setActiveTab: (tab: 'edit' | 'move' | 'delete') => void
+  onMove?: ((newParentId: string | null) => Promise<void>) | undefined
+  onDelete?: (() => Promise<void>) | undefined
+}) => (
   <div className="flex border-b border-gray-200 dark:border-gray-700">
     <button
       onClick={() => setActiveTab('edit')}
@@ -568,7 +573,13 @@ const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: any) =>
 )
 
 // サブコンポーネント: フッター部分
-const TagEditModalFooter = ({ activeTab, isLoading, onClose, handleSave, formData }: any) => (
+const TagEditModalFooter = ({ activeTab, isLoading, onClose, handleSave, formData }: {
+  activeTab: 'edit' | 'move' | 'delete'
+  isLoading: boolean
+  onClose: () => void
+  handleSave: () => Promise<void>
+  formData: { name: string; color: string; description: string; is_active: boolean }
+}) => (
   activeTab !== 'delete' && (
     <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
       <button

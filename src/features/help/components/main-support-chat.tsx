@@ -192,7 +192,7 @@ const MainSupportChatInput = ({
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) => {
-  const [isComposing, setIsComposing] = useState(false)
+  const [_isComposing, setIsComposing] = useState(false)
 
   const getSubmitStatus = () => {
     if (isLoading) return 'streaming'
@@ -246,7 +246,7 @@ export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
   
   // Use Vercel AI SDK's useChat hook with simple configuration
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append, error, reload } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, append: _append, error, reload } = useChat({
     api: '/api/chat/codebase',
     onError: (error) => {
       console.error('Chat error:', error)

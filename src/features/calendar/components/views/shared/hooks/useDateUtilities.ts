@@ -68,7 +68,7 @@ export function useDateUtilities({
         // 3日間を生成（週末非表示の場合は平日のみで3日間確保）
         if (!showWeekends) {
           // 週末を除外して3日間の平日を取得
-          const weekdayDates: Date[] = []
+          const _weekdayDates: Date[] = []
           let checkDate = referenceDate
           
           // 中央日が週末の場合、次の平日を探す

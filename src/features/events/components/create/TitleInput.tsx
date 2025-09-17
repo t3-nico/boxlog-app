@@ -55,7 +55,7 @@ export const TitleInput = ({
     if (value && onSmartExtract) {
       const smartExtract = () => {
         // 日付パターンの検出
-        const datePatterns = [
+        const _datePatterns = [
           /明日|tomorrow/i,
           /今日|today/i,
           /来週|next week/i,
@@ -113,7 +113,7 @@ export const TitleInput = ({
     }
   }
 
-  const letterVariants = {
+  const _letterVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.8 },
     visible: { 
       opacity: 1, 

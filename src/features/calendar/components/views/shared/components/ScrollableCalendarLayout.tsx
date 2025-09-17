@@ -55,8 +55,8 @@ export const ScrollableCalendarLayout = ({
   
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout>()
-  const [isScrolling, setIsScrolling] = useState(false)
-  const [containerWidth, setContainerWidth] = useState(800)
+  const [_isScrolling, setIsScrolling] = useState(false)
+  const [_containerWidth, setContainerWidth] = useState(800)
   
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,

@@ -21,13 +21,94 @@ interface DateRangeDisplayProps {
 }
 
 /**
+ * 日付範囲のテキストを生成
+ */
+const generateRangeText = (date: Date, endDate: Date): string => {
+  const sameMonth = date.getMonth() === endDate.getMonth()
+  const sameYear = date.getFullYear() === endDate.getFullYear()
+  
+  if (sameYear && sameMonth) {
+    // 同月の場合: "1-7 January 2025"
+    return `${format(date, 'd')}-${format(endDate, 'd')} ${format(date, 'MMMM yyyy')}`
+  } else if (sameYear) {
+    // 同年異月の場合: "30 Dec - 5 Jan 2025"
+    return `${format(date, 'd MMM')} - ${format(endDate, 'd MMM yyyy')}`
+  } else {
+    // 異年の場合: "30 Dec 2024 - 5 Jan 2025"
+    return `${format(date, 'd MMM yyyy')} - ${format(endDate, 'd MMM yyyy')}`
+  }
+}
+
+/**
+ * 日付ヘッダーコンテンツを作成
+ */
+const createDateContent = (text: string, isClickable: boolean) => (
+  <div className="flex items-center gap-2">
+    <h2 className={cn(
+      heading.h2,
+      isClickable && 'cursor-pointer hover:text-primary transition-colors'
+    )}>
+      {text}
+    </h2>
+    {isClickable && (
+      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+    )}
+  </div>
+)
+
+/**
+ * 静的な日付表示コンテンツを作成
+ */
+const createStaticContent = (
+  dateContent: React.ReactNode,
+  showWeekNumber: boolean,
+  weekNumber: number,
+  weekBadgeClassName?: string,
+  className?: string
+) => (
+  <div className={cn('flex items-center gap-2', className)}>
+    {dateContent}
+    {showWeekNumber && (
+      <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
+    )}
+  </div>
+)
+
+/**
+ * クリック可能な日付表示コンテンツを作成
+ */
+const createClickableContent = (
+  dateContent: React.ReactNode,
+  selectedDate: Date,
+  onDateSelect: (date: Date) => void,
+  showWeekNumber: boolean,
+  weekNumber: number,
+  weekBadgeClassName?: string,
+  className?: string
+) => (
+  <div className={cn('flex items-center gap-2', className)}>
+    <MiniCalendarPopover
+      selectedDate={selectedDate}
+      onDateSelect={onDateSelect}
+      align="start"
+      side="bottom"
+    >
+      {dateContent}
+    </MiniCalendarPopover>
+    {showWeekNumber && (
+      <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
+    )}
+  </div>
+)
+
+/**
  * 日付範囲表示
  * 単一日付または期間を表示し、オプションで週番号も表示
  */
 export const DateRangeDisplay = ({
   date,
   endDate,
-  viewType,
+  _viewType,
   showWeekNumber = true,
   formatPattern = 'MMMM yyyy',
   className,
@@ -36,113 +117,36 @@ export const DateRangeDisplay = ({
   clickable = false
 }: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
+  const isClickable = clickable && onDateSelect
   
-  // 期間表示の場合
-  if (endDate && date.getTime() !== endDate.getTime()) {
-    const sameMonth = date.getMonth() === endDate.getMonth()
-    const sameYear = date.getFullYear() === endDate.getFullYear()
-    
-    let rangeText = ''
-    if (sameYear && sameMonth) {
-      // 同月の場合: "1-7 January 2025"
-      rangeText = `${format(date, 'd')}-${format(endDate, 'd')} ${format(date, 'MMMM yyyy')}`
-    } else if (sameYear) {
-      // 同年異月の場合: "30 Dec - 5 Jan 2025"
-      rangeText = `${format(date, 'd MMM')} - ${format(endDate, 'd MMM yyyy')}`
-    } else {
-      // 異年の場合: "30 Dec 2024 - 5 Jan 2025"
-      rangeText = `${format(date, 'd MMM yyyy')} - ${format(endDate, 'd MMM yyyy')}`
-    }
-    
-    const dateContent = (
-      <div className="flex items-center gap-2">
-        <h2 className={cn(
-          heading.h2,
-          clickable && onDateSelect && 'cursor-pointer hover:text-primary transition-colors'
-        )}>
-          {rangeText}
-        </h2>
-        {clickable && onDateSelect && (
-          <ChevronDown className="w-4 h-4 text-muted-foreground" />
-        )}
-      </div>
-    )
-
-    const content = (
-      <div className={cn('flex items-center gap-2', className)}>
-        {dateContent}
-        {showWeekNumber && (
-          <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
-        )}
-      </div>
-    )
-
-    if (clickable && onDateSelect) {
-      return (
-        <div className={cn('flex items-center gap-2', className)}>
-          <MiniCalendarPopover
-            selectedDate={date}
-            onDateSelect={onDateSelect}
-            align="start"
-            side="bottom"
-          >
-            {dateContent}
-          </MiniCalendarPopover>
-          {showWeekNumber && (
-            <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
-          )}
-        </div>
-      )
-    }
-
-    return content
-  }
+  // 表示テキストを決定
+  const displayText = endDate && date.getTime() !== endDate.getTime()
+    ? generateRangeText(date, endDate)
+    : format(date, formatPattern)
   
-  // 単一日付表示
-  const formattedDate = format(date, formatPattern)
+  // 日付コンテンツを作成
+  const dateContent = createDateContent(displayText, !!isClickable)
   
-  const singleDateContent = (
-    <div className="flex items-center gap-2">
-      <h2 className={cn(
-        heading.h2,
-        clickable && onDateSelect && 'cursor-pointer hover:text-primary transition-colors'
-      )}>
-        {formattedDate}
-      </h2>
-      {clickable && onDateSelect && (
-        <ChevronDown className="w-4 h-4 text-muted-foreground" />
-      )}
-    </div>
-  )
-
-  const content = (
-    <div className={cn('flex items-center gap-2', className)}>
-      {singleDateContent}
-      {showWeekNumber && (
-        <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
-      )}
-    </div>
-  )
-
-  if (clickable && onDateSelect) {
-    return (
-      <div className={cn('flex items-center gap-2', className)}>
-        <MiniCalendarPopover
-          selectedDate={date}
-          onDateSelect={onDateSelect}
-          align="start"
-          side="bottom"
-        >
-          {singleDateContent}
-        </MiniCalendarPopover>
-        {showWeekNumber && (
-          <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
-        )}
-      </div>
+  // クリック可能な場合とそうでない場合で分岐
+  if (isClickable) {
+    return createClickableContent(
+      dateContent,
+      date,
+      onDateSelect,
+      showWeekNumber,
+      weekNumber,
+      weekBadgeClassName,
+      className
     )
   }
-
-  return content
+  
+  return createStaticContent(
+    dateContent,
+    showWeekNumber,
+    weekNumber,
+    weekBadgeClassName,
+    className
+  )
 }
 
 /**

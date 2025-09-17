@@ -358,7 +358,7 @@ interface UndoAction {
   id: string
   type: 'create' | 'delete' | 'edit' | 'move'
   description: string
-  data: any
+  data: Record<string, unknown>
   timestamp: number
 }
 ```

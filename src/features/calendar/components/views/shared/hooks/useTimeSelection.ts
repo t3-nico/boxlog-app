@@ -118,7 +118,7 @@ export function useTimeSelection({
   }, [isSelecting, selectionStart, pixelsToTime])
 
   // マウスアップイベント
-  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+  const handleMouseUp = useCallback((_e: React.MouseEvent) => {
     if (!isSelecting || !selection) return
 
     setIsSelecting(false)

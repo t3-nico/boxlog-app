@@ -23,7 +23,7 @@ export function useWeekView({
   startDate,
   events = [],
   weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
-  onEventUpdate
+  _onEventUpdate
 }: UseWeekViewOptions): UseWeekViewReturn {
   
   // Phase 3統合フック: 週の7日間の日付生成

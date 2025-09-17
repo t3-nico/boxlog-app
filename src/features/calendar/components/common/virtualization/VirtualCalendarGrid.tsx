@@ -57,7 +57,7 @@ export const VirtualCalendarGrid = ({
   // 仮想化されたアイテムの計算
   const virtualItems = useMemo(() => {
     const items: VirtualizedItem[] = []
-    const totalHours = endHour - startHour
+    const _totalHours = endHour - startHour
 
     for (let hour = startHour; hour < endHour; hour++) {
       const index = hour - startHour
@@ -88,7 +88,7 @@ export const VirtualCalendarGrid = ({
       if (!event.startDate) return false
 
       const eventHour = event.startDate.getHours()
-      const eventMinutes = event.startDate.getMinutes()
+      const _eventMinutes = event.startDate.getMinutes()
       const eventEndHour = event.endDate ? event.endDate.getHours() : eventHour + 1
 
       // イベントが表示範囲と重複するかチェック
@@ -270,7 +270,7 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
 
       {/* 各日付の列 */}
       <div className="flex h-full ml-16">
-        {dates.map((date, dateIndex) => (
+        {dates.map((date, _dateIndex) => (
           <VirtualDayColumn
             key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
             date={date}
@@ -310,8 +310,17 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Time slot for ${format(date, 'MMM d')} at ${hour}:00`}
       className="flex-1 border-r border-gray-200 relative hover:bg-gray-50/50 cursor-pointer"
       onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      }}
       style={{
         contain: 'layout style' // ブラウザ最適化
       }}
@@ -363,9 +372,18 @@ const VirtualEventCard = React.memo(function VirtualEventCard({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Event: ${event.title}`}
       className="rounded-md text-white text-xs p-1 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
       style={style}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
     >
       <div className="font-medium truncate">{event.title}</div>
       {(style.height as number) > 30 && event.startDate && (

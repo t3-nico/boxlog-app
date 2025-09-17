@@ -32,9 +32,9 @@ const generateTimeOptions = () => {
 export const DateSelector = ({ 
   value, 
   endValue, 
-  onChange, 
+  onChange,
   onEndChange,
-  onTabNext 
+  _onTabNext 
 }: DateSelectorProps) => {
   
   // Duration (minutes)
@@ -68,7 +68,7 @@ export const DateSelector = ({
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
     const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
+    const _lastDay = new Date(year, month + 1, 0)
     const startDate = new Date(firstDay)
     startDate.setDate(startDate.getDate() - firstDay.getDay()) // Start week on Sunday
     
@@ -100,7 +100,7 @@ export const DateSelector = ({
   }
 
   // Date change handler
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = new Date(e.target.value)
     newDate.setHours(value.getHours(), value.getMinutes())
     onChange(newDate)
@@ -112,7 +112,7 @@ export const DateSelector = ({
   }
 
   // Start time change handler
-  const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':').map(Number)
     const newDate = new Date(value)
     newDate.setHours(hours, minutes)
@@ -120,7 +120,7 @@ export const DateSelector = ({
   }
 
   // End time change handler
-  const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':').map(Number)
     const newEndDate = new Date(endValue)
     newEndDate.setHours(hours, minutes)

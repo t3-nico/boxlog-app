@@ -25,15 +25,15 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   hourHeight = HOUR_HEIGHT,
   showHalfHourLines = true,
   showQuarterHourLines = false,
-  showCurrentTime = true,
+  _showCurrentTime = true,
   className = '',
   children,
   onTimeClick,
   onTimeRangeSelect,
   scrollToHour = SCROLL_TO_HOUR,
-  displayDates = []
+  _displayDates = []
 }) {
-  const { containerRef, dimensions, scrollToTime, updateDimensions } = useViewDimensions({
+  const { containerRef, dimensions, _scrollToTime, _updateDimensions } = useViewDimensions({
     hourHeight,
     timeColumnWidth: TIME_COLUMN_WIDTH
   })
@@ -49,8 +49,8 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
     onTimeRangeSelect: onTimeRangeSelect ? (selection) => {
       // TimeSelectionをDate形式に変換してコールバックを呼ぶ
       const today = new Date()
-      const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.startHour, selection.startMinute)
-      const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.endHour, selection.endMinute)
+      const _startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.startHour, selection.startMinute)
+      const _endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.endHour, selection.endMinute)
       
       // 時間範囲の文字列を作成
       const startTimeStr = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`

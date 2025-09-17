@@ -25,28 +25,28 @@ import type { ThreeDayViewProps } from './ThreeDayView.types'
  * ThreeDayView - 3-day view component
  */
 export const ThreeDayView = ({
-  dateRange,
+  dateRange: _dateRange,
   tasks: _tasks,
   events,
   currentDate,
-  centerDate,
+  _centerDate,
   showWeekends = true,
   className,
-  onTaskClick,
+  _onTaskClick,
   onEventClick,
   onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
-  onDeleteEvent,
-  onRestoreEvent,
+  _onDeleteEvent,
+  _onRestoreEvent,
   onEmptyClick,
-  onTaskDrag,
-  onCreateTask,
-  onCreateRecord,
-  onViewChange,
-  onNavigatePrev,
-  onNavigateNext,
-  onNavigateToday
+  _onTaskDrag,
+  _onCreateTask,
+  _onCreateRecord,
+  _onViewChange,
+  _onNavigatePrev,
+  _onNavigateNext,
+  _onNavigateToday
 }: ThreeDayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
@@ -82,7 +82,7 @@ export const ThreeDayView = ({
 
   // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
-    const positions: any[] = []
+    const positions: unknown[] = []
     
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
     displayDates.forEach((displayDate, _dayIndex) => {
@@ -135,7 +135,7 @@ export const ThreeDayView = ({
   const headerComponent = (
     <div className="bg-background h-16 flex">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
-      {displayDates.map((date, index) => (
+      {displayDates.map((date, _index) => (
         <div
           key={date.toISOString()}
           className="flex-1 flex items-center justify-center px-1"

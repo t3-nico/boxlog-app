@@ -15,46 +15,68 @@ export function useEventFilters(initialFilters?: Partial<EventFilters>) {
     ...initialFilters
   })
 
+  // 日付範囲フィルターチェック
+  const passesDateRangeFilter = (event: Event): boolean => {
+    if (filters.startDate && event.startDate && event.startDate < filters.startDate) {
+      return false
+    }
+    if (filters.endDate && event.endDate && event.endDate > filters.endDate) {
+      return false
+    }
+    return true
+  }
+
+  // タイプフィルターチェック
+  const passesTypeFilter = (event: Event): boolean => {
+    if (filters.types && filters.types.length > 0) {
+      return filters.types.includes(event.type)
+    }
+    return true
+  }
+
+  // ステータスフィルターチェック
+  const passesStatusFilter = (event: Event): boolean => {
+    if (filters.statuses && filters.statuses.length > 0) {
+      return filters.statuses.includes(event.status)
+    }
+    return true
+  }
+
+  // タグフィルターチェック
+  const passesTagFilter = (event: Event): boolean => {
+    if (filters.tagIds && filters.tagIds.length > 0) {
+      const eventTagIds = event.tags?.map(tag => tag.id) || []
+      return filters.tagIds.some(tagId => eventTagIds.includes(tagId))
+    }
+    return true
+  }
+
+  // 検索クエリフィルターチェック
+  const passesSearchFilter = (event: Event): boolean => {
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase()
+      const titleMatch = event.title.toLowerCase().includes(query)
+      const descriptionMatch = event.description?.toLowerCase().includes(query)
+      return titleMatch || descriptionMatch
+    }
+    return true
+  }
+
+  // 全フィルターチェック
+  const passesAllFilters = (event: Event): boolean => {
+    return (
+      passesDateRangeFilter(event) &&
+      passesTypeFilter(event) &&
+      passesStatusFilter(event) &&
+      passesTagFilter(event) &&
+      passesSearchFilter(event)
+    )
+  }
+
   // フィルター適用関数
   const applyFilters = useMemo(() => {
     return (events: Event[]): Event[] => {
-      return events.filter(event => {
-        // 日付範囲フィルター
-        if (filters.startDate && event.startDate) {
-          if (event.startDate < filters.startDate) return false
-        }
-        if (filters.endDate && event.endDate) {
-          if (event.endDate > filters.endDate) return false
-        }
-
-        // タイプフィルター
-        if (filters.types && filters.types.length > 0) {
-          if (!filters.types.includes(event.type)) return false
-        }
-
-        // ステータスフィルター
-        if (filters.statuses && filters.statuses.length > 0) {
-          if (!filters.statuses.includes(event.status)) return false
-        }
-
-        // タグフィルター
-        if (filters.tagIds && filters.tagIds.length > 0) {
-          const eventTagIds = event.tags?.map(tag => tag.id) || []
-          if (!filters.tagIds.some(tagId => eventTagIds.includes(tagId))) {
-            return false
-          }
-        }
-
-        // 検索クエリフィルター
-        if (filters.searchQuery) {
-          const query = filters.searchQuery.toLowerCase()
-          const titleMatch = event.title.toLowerCase().includes(query)
-          const descriptionMatch = event.description?.toLowerCase().includes(query)
-          if (!titleMatch && !descriptionMatch) return false
-        }
-
-        return true
-      })
+      return events.filter(passesAllFilters)
     }
   }, [filters])
 

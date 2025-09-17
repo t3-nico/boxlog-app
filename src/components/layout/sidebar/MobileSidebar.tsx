@@ -108,8 +108,8 @@ export const MobileSidebar = () => {
         role="dialog"
         style={{
           // 閉じるボタンのスタイルを完全に無効化
-          ['--close-button-display' as any]: 'none',
-        }}
+          '--close-button-display': 'none',
+        } as React.CSSProperties}
       >
         <div className="flex h-full flex-1 flex-col">
           {/* Top Section: Account & Actions */}

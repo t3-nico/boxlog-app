@@ -104,7 +104,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   lastFetched: null,
 
   // アイテム追加
-  addItem: async (itemData) => {
+  addItem: async (itemData: Omit<TrashItem, 'deletedAt'>) => {
     const newItem: TrashItem = {
       ...itemData,
       deletedAt: new Date(),
@@ -121,7 +121,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 複数アイテム追加
-  addItems: async (itemsData) => {
+  addItems: async (itemsData: Omit<TrashItem, 'deletedAt'>[]) => {
     const now = new Date()
     const newItems: TrashItem[] = itemsData.map((itemData) => ({
       ...itemData,
@@ -139,7 +139,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // アイテム削除（内部使用）
-  removeItem: (id) => {
+  removeItem: (id: string) => {
     set((state) => {
       const updatedItems = state.items.filter((item) => item.id !== id)
       saveToLocalStorage(updatedItems)
@@ -151,7 +151,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 複数アイテム削除（内部使用）
-  removeItems: (ids) => {
+  removeItems: (ids: string[]) => {
     set((state) => {
       const updatedItems = state.items.filter((item) => !ids.includes(item.id))
       const updatedSelectedIds = new Set(
@@ -166,7 +166,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // アイテム復元
-  restoreItem: async (id) => {
+  restoreItem: async (id: string) => {
     const { items } = get()
     const item = items.find((item) => item.id === id)
 
@@ -186,7 +186,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 複数アイテム復元
-  restoreItems: async (ids) => {
+  restoreItems: async (ids: string[]) => {
     const { items } = get()
     const itemsToRestore = items.filter((item) => ids.includes(item.id))
 
@@ -230,7 +230,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 完全削除（単一）
-  permanentlyDelete: async (id) => {
+  permanentlyDelete: async (id: string) => {
     const { items } = get()
     const item = items.find((item) => item.id === id)
 
@@ -245,7 +245,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 完全削除（複数）
-  permanentlyDeleteItems: async (ids) => {
+  permanentlyDeleteItems: async (ids: string[]) => {
     const { items } = get()
     const itemsToDelete = items.filter((item) => ids.includes(item.id))
 
@@ -299,19 +299,19 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 選択操作
-  selectItem: (id) => {
+  selectItem: (id: string) => {
     set((state) => ({
       selectedIds: new Set([...Array.from(state.selectedIds), id]),
     }))
   },
 
-  selectItems: (ids) => {
+  selectItems: (ids: string[]) => {
     set((state) => ({
       selectedIds: new Set([...Array.from(state.selectedIds), ...ids]),
     }))
   },
 
-  deselectItem: (id) => {
+  deselectItem: (id: string) => {
     set((state) => {
       const newSelected = new Set(state.selectedIds)
       newSelected.delete(id)
@@ -319,7 +319,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     })
   },
 
-  deselectItems: (ids) => {
+  deselectItems: (ids: string[]) => {
     set((state) => {
       const newSelected = new Set(Array.from(state.selectedIds).filter((selectedId) => !ids.includes(selectedId)))
       return { selectedIds: newSelected }
@@ -337,7 +337,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // フィルター・ソート
-  setFilters: (newFilters) => {
+  setFilters: (newFilters: Partial<TrashFilters>) => {
     set((state) => ({
       filters: { ...state.filters, ...newFilters },
     }))
@@ -347,7 +347,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     set({ filters: defaultFilters })
   },
 
-  setSort: (newSort) => {
+  setSort: (newSort: Partial<TrashSort>) => {
     set((state) => ({
       sort: { ...state.sort, ...newSort },
     }))
@@ -375,7 +375,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
   // フィルター適用後のアイテム取得（シンプル版）
   getFilteredItems: () => {
-    const { items, filters, sort } = get()
+    const { items, filters, sort: _sort } = get()
     let filtered = [...items]
 
     // 検索フィルター
@@ -398,7 +398,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // 期限切れアイテム取得
-  getExpiredItems: (days = TRASH_RETENTION_DAYS) => {
+  getExpiredItems: (days: number = TRASH_RETENTION_DAYS) => {
     const { items } = get()
     const cutoffDate = new Date()
     cutoffDate.setDate(cutoffDate.getDate() - days)
@@ -407,7 +407,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   // タイプ別アイテム取得
-  getItemsByType: (type) => {
+  getItemsByType: (type: TrashItemType) => {
     const { items } = get()
     return items.filter((item) => item.type === type)
   },

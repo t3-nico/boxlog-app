@@ -9,13 +9,13 @@ import type { CalendarEvent } from '@/features/events'
 interface WorkerMessage {
   id: string
   type: 'PROCESS_EVENTS' | 'CALCULATE_OVERLAPS' | 'GENERATE_RECURRING' | 'SEARCH_EVENTS' | 'OPTIMIZE_LAYOUT'
-  payload: any
+  payload: unknown
 }
 
 interface WorkerResponse {
   id: string
   type: string
-  result?: any
+  result?: unknown
   error?: string
   performance?: {
     duration: number
@@ -57,7 +57,7 @@ self.onmessage = function(e: MessageEvent<WorkerMessage>) {
   const startTime = performance.now()
 
   try {
-    let result: any
+    let result: unknown
 
     switch (type) {
       case 'PROCESS_EVENTS':
@@ -115,7 +115,7 @@ self.onmessage = function(e: MessageEvent<WorkerMessage>) {
 /**
  * イベントの前処理（正規化、ソート、重複除去など）
  */
-function processEvents(events: CalendarEvent[], options: any = {}) {
+function processEvents(events: CalendarEvent[], options: Record<string, unknown> = {}) {
   // 大量データを効率的に処理
   const batchSize = 1000
   const processedEvents: CalendarEvent[] = []
@@ -410,7 +410,7 @@ function getMemoryUsage(): number {
   // Web Worker環境では正確なメモリ使用量の取得が困難
   // 概算値を返す
   if ('memory' in performance) {
-    return (performance as any).memory.usedJSHeapSize
+    return (performance as unknown as { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize
   }
   return 0
 }

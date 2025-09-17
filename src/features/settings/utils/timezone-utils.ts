@@ -25,7 +25,7 @@ export function getTimeZones() {
 }
 
 // 時間表示のフォーマット
-export function formatTimeWithSettings(date: Date, timeFormat: '12h' | '24h', timezone?: string): string {
+export function formatTimeWithSettings(date: Date, timeFormat: '12h' | '24h', _timezone?: string): string {
   const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
 
   // 基本的なフォーマット（タイムゾーン変換は後で実装）
@@ -52,7 +52,7 @@ export function formatInTimeZone(date: Date, timezone: string, formatString: str
 }
 
 // タスクの時間をタイムゾーンに変換（簡易版）
-export function convertTaskToTimezone<T extends Record<string, unknown>>(task: T, timezone: string): T {
+export function convertTaskToTimezone<T extends Record<string, unknown>>(task: T, _timezone: string): T {
   // 簡易実装：現在はそのまま返す
   // 後でdate-fns-tzを導入して本格実装
   return task

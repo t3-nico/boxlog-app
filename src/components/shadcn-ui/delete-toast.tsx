@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { CheckCircle, RotateCcw, X } from 'lucide-react'
 
@@ -14,7 +14,7 @@ interface DeletedEvent {
   color?: string
   location?: string
   description?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface DeleteToastProps {
@@ -54,14 +54,14 @@ export const DeleteToast = ({
     } else {
       setIsVisible(false)
     }
-  }, [deletedEvent, autoHideDelay])
+  }, [deletedEvent, autoHideDelay, handleClose])
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setIsVisible(false)
     setTimeout(() => {
       onDismiss()
     }, 300) // アニメーション完了後にクリア
-  }
+  }, [onDismiss])
 
   const handleUndo = () => {
     if (deletedEvent) {
@@ -126,6 +126,7 @@ export const DeleteToast = ({
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* 元に戻すボタン */}
             <button
+              type="button"
               onClick={handleUndo}
               className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-300 hover:text-blue-200 hover:bg-blue-900/20 rounded-md transition-colors"
             >
@@ -135,6 +136,7 @@ export const DeleteToast = ({
 
             {/* 閉じるボタン */}
             <button
+              type="button"
               onClick={handleClose}
               className="p-1 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-md transition-colors"
               title="閉じる"

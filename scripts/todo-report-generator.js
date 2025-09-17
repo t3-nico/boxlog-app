@@ -55,56 +55,62 @@ function generateTodoStats() {
   }
 }
 
-/**
- * 詳細なMarkdownレポートの生成
- */
-function generateDetailedReport(todos, stats) {
+// レポートヘッダーの生成
+function generateReportHeader() {
   const now = new Date()
   const dateStr = now.toISOString().split('T')[0]
   const timeStr = now.toTimeString().split(' ')[0]
-
-  let report = `# 📋 BoxLog TODO/FIXME Report
+  
+  return `# 📋 BoxLog TODO/FIXME Report
   
 *Generated on ${dateStr} at ${timeStr}*
 
 ## 📊 Executive Summary
 
 `
+}
 
-  // エグゼクティブサマリー
-  report += `- **Total Items:** ${stats.total || 0}\n`
-  report += `- **Structured:** ${stats.structured || 0} (${((stats.structured / stats.total) * 100).toFixed(1)}%)\n`
-  report += `- **Legacy:** ${stats.legacy || 0} (${((stats.legacy / stats.total) * 100).toFixed(1)}%)\n`
+// エグゼクティブサマリーの生成
+function generateExecutiveSummary(stats) {
+  let summary = ''
+  
+  summary += `- **Total Items:** ${stats.total || 0}\n`
+  summary += `- **Structured:** ${stats.structured || 0} (${((stats.structured / stats.total) * 100).toFixed(1)}%)\n`
+  summary += `- **Legacy:** ${stats.legacy || 0} (${((stats.legacy / stats.total) * 100).toFixed(1)}%)\n`
 
   if (stats.overdue > 0) {
-    report += `- **⚠️ Overdue:** ${stats.overdue}\n`
+    summary += `- **⚠️ Overdue:** ${stats.overdue}\n`
   }
   if (stats.expiringSoon > 0) {
-    report += `- **🕐 Expiring Soon:** ${stats.expiringSoon}\n`
+    summary += `- **🕐 Expiring Soon:** ${stats.expiringSoon}\n`
   }
 
   // 健康スコア
   const healthScore = calculateHealthScore(stats)
   const healthEmoji = healthScore >= 80 ? '🟢' : healthScore >= 60 ? '🟡' : '🔴'
-  report += `- **Health Score:** ${healthEmoji} ${healthScore}/100\n\n`
+  summary += `- **Health Score:** ${healthEmoji} ${healthScore}/100\n\n`
+  
+  return summary
+}
 
-  // 詳細統計
-  report += `## 📈 Detailed Statistics
+// 詳細統計の生成
+function generateDetailedStatistics(stats) {
+  let section = `## 📈 Detailed Statistics
 
 ### By Type
 `
 
   Object.entries(stats.byType || {}).forEach(([type, count]) => {
     const percentage = ((count / stats.total) * 100).toFixed(1)
-    report += `- **${type}:** ${count} (${percentage}%)\n`
+    section += `- **${type}:** ${count} (${percentage}%)\n`
   })
 
   if (Object.keys(stats.byPriority || {}).length > 0) {
-    report += `\n### By Priority\n`
+    section += `\n### By Priority\n`
     Object.entries(stats.byPriority).forEach(([priority, count]) => {
       const percentage = ((count / stats.total) * 100).toFixed(1)
       const urgency = ['P0', 'CRITICAL'].includes(priority) ? '🔴' : ['P1', 'HIGH'].includes(priority) ? '🟡' : '🟢'
-      report += `- ${urgency} **${priority}:** ${count} (${percentage}%)\n`
+      section += `- ${urgency} **${priority}:** ${count} (${percentage}%)\n`
     })
   }
 
@@ -114,14 +120,18 @@ function generateDetailedReport(todos, stats) {
     .slice(0, 10)
 
   if (topFiles.length > 0) {
-    report += `\n### Top 10 Files by TODO Count\n`
+    section += `\n### Top 10 Files by TODO Count\n`
     topFiles.forEach(([file, count], index) => {
-      report += `${index + 1}. **${file}:** ${count}\n`
+      section += `${index + 1}. **${file}:** ${count}\n`
     })
   }
+  
+  return section
+}
 
-  // 緊急度分析
-  report += `\n## 🚨 Urgency Analysis
+// 緊急度分析の生成
+function generateUrgencyAnalysis(todos) {
+  let section = `\n## 🚨 Urgency Analysis
 
 `
 
@@ -131,14 +141,14 @@ function generateDetailedReport(todos, stats) {
   )
 
   if (urgentTodos.length > 0) {
-    report += `### 🔴 Critical/Urgent Items (${urgentTodos.length})
+    section += `### 🔴 Critical/Urgent Items (${urgentTodos.length})
 
 `
     urgentTodos.forEach((todo) => {
       const file = path.relative(process.cwd(), todo.filePath)
       const urgencyReason = ['P0', 'CRITICAL'].includes(todo.priority) ? 'High Priority' : 'Near Deadline'
 
-      report += `#### ${todo.type}: ${todo.description}
+      section += `#### ${todo.type}: ${todo.description}
 - **File:** \`${file}:${todo.lineNumber}\`
 - **Reason:** ${urgencyReason}
 - **Issue:** ${todo.issueId || 'Not linked'}
@@ -148,53 +158,63 @@ function generateDetailedReport(todos, stats) {
 `
     })
   } else {
-    report += `✅ No critical or urgent items found.
+    section += `✅ No critical or urgent items found.
 
 `
   }
+  
+  return section
+}
 
-  // 技術的負債分析
+// 技術的負債分析の生成
+function generateTechnicalDebtAnalysis(todos) {
   const technicalDebtTodos = todos.filter((todo) => ['FIXME', 'HACK', 'BUG'].includes(todo.type))
+  
+  if (technicalDebtTodos.length === 0) {
+    return ''
+  }
 
-  if (technicalDebtTodos.length > 0) {
-    report += `## 🔧 Technical Debt Analysis
+  let section = `## 🔧 Technical Debt Analysis
 
 **Technical Debt Items:** ${technicalDebtTodos.length}
 
 ### By Category
 `
 
-    const debtByType = {}
-    technicalDebtTodos.forEach((todo) => {
-      debtByType[todo.type] = (debtByType[todo.type] || 0) + 1
-    })
+  const debtByType = {}
+  technicalDebtTodos.forEach((todo) => {
+    debtByType[todo.type] = (debtByType[todo.type] || 0) + 1
+  })
 
-    Object.entries(debtByType).forEach(([type, count]) => {
-      report += `- **${type}:** ${count}\n`
-    })
+  Object.entries(debtByType).forEach(([type, count]) => {
+    section += `- **${type}:** ${count}\n`
+  })
 
-    report += `\n### Recommendations
+  section += `\n### Recommendations
 `
 
-    if (debtByType.BUG > 0) {
-      report += `- 🐛 **${debtByType.BUG} bugs** should be prioritized for fixing\n`
-    }
-    if (debtByType.HACK > 0) {
-      report += `- ⚡ **${debtByType.HACK} hacks** need proper implementation\n`
-    }
-    if (debtByType.FIXME > 0) {
-      report += `- 🔨 **${debtByType.FIXME} fixes** are pending\n`
-    }
+  if (debtByType.BUG > 0) {
+    section += `- 🐛 **${debtByType.BUG} bugs** should be prioritized for fixing\n`
   }
+  if (debtByType.HACK > 0) {
+    section += `- ⚡ **${debtByType.HACK} hacks** need proper implementation\n`
+  }
+  if (debtByType.FIXME > 0) {
+    section += `- 🔨 **${debtByType.FIXME} fixes** are pending\n`
+  }
+  
+  return section
+}
 
-  // 改善提案
-  report += `\n## 💡 Recommendations
+// 改善提案セクションの生成
+function generateRecommendationsSection(stats, todos) {
+  let section = `\n## 💡 Recommendations
 
 `
 
   const recommendations = generateRecommendations(stats, todos)
   recommendations.forEach((rec) => {
-    report += `### ${rec.title}
+    section += `### ${rec.title}
 ${rec.description}
 
 **Action Items:**
@@ -202,9 +222,13 @@ ${rec.actions.map((action) => `- ${action}`).join('\n')}
 
 `
   })
+  
+  return section
+}
 
-  // 詳細一覧
-  report += `## 📝 Complete TODO List
+// 詳細TODO一覧の生成
+function generateCompleteList(todos) {
+  let section = `## 📝 Complete TODO List
 
 `
 
@@ -217,7 +241,7 @@ ${rec.actions.map((action) => `- ${action}`).join('\n')}
   })
 
   Object.entries(todosByFile).forEach(([file, fileTodos]) => {
-    report += `### 📄 ${file}
+    section += `### 📄 ${file}
 
 `
 
@@ -232,24 +256,28 @@ ${rec.actions.map((action) => `- ${action}`).join('\n')}
           : ''
         const statusBadge = getStatusBadge(todo)
 
-        report += `#### Line ${todo.lineNumber}: ${todo.type} ${priorityBadge} ${statusBadge}
+        section += `#### Line ${todo.lineNumber}: ${todo.type} ${priorityBadge} ${statusBadge}
 
 ${todo.description}
 
 `
 
         if (todo.issueId || todo.assignee || todo.date) {
-          report += `**Details:**\n`
-          if (todo.issueId) report += `- Issue: ${issueBadge}\n`
-          if (todo.assignee) report += `- Assignee: @${todo.assignee}\n`
-          if (todo.date) report += `- Deadline: ${todo.date}\n`
-          report += `\n`
+          section += `**Details:**\n`
+          if (todo.issueId) section += `- Issue: ${issueBadge}\n`
+          if (todo.assignee) section += `- Assignee: @${todo.assignee}\n`
+          if (todo.date) section += `- Deadline: ${todo.date}\n`
+          section += `\n`
         }
       })
   })
+  
+  return section
+}
 
-  // フッター
-  report += `---
+// レポートフッターの生成
+function generateReportFooter() {
+  return `---
 
 *This report was automatically generated by BoxLog TODO Management System.*
 *For questions or issues, please contact the development team.*
@@ -261,8 +289,24 @@ ${todo.description}
 - ⚠️ Overdue
 - 🕐 Expiring Soon
 `
+}
 
-  return report
+/**
+ * 詳細なMarkdownレポートの生成
+ */
+function generateDetailedReport(todos, stats) {
+  const sections = [
+    generateReportHeader(),
+    generateExecutiveSummary(stats),
+    generateDetailedStatistics(stats),
+    generateUrgencyAnalysis(todos),
+    generateTechnicalDebtAnalysis(todos),
+    generateRecommendationsSection(stats, todos),
+    generateCompleteList(todos),
+    generateReportFooter()
+  ]
+  
+  return sections.join('')
 }
 
 /**

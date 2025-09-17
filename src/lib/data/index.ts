@@ -5,18 +5,20 @@ export interface Country {
   code: string
   name: string
   flag: string
+  regions: string[]
+  flagUrl: string
 }
 
 // Temporary mock data
 export function getCountries(): Country[] {
   return [
-    { code: 'US', name: 'United States', flag: '🇺🇸' },
-    { code: 'JP', name: 'Japan', flag: '🇯🇵' },
-    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧' },
-    { code: 'DE', name: 'Germany', flag: '🇩🇪' },
-    { code: 'FR', name: 'France', flag: '🇫🇷' },
-    { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-    { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+    { code: 'US', name: 'United States', flag: '🇺🇸', regions: ['California', 'New York', 'Texas'], flagUrl: '/flags/us.png' },
+    { code: 'JP', name: 'Japan', flag: '🇯🇵', regions: ['Tokyo', 'Osaka', 'Kyoto'], flagUrl: '/flags/jp.png' },
+    { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', regions: ['England', 'Scotland', 'Wales'], flagUrl: '/flags/gb.png' },
+    { code: 'DE', name: 'Germany', flag: '🇩🇪', regions: ['Bavaria', 'Berlin', 'Hamburg'], flagUrl: '/flags/de.png' },
+    { code: 'FR', name: 'France', flag: '🇫🇷', regions: ['Paris', 'Lyon', 'Marseille'], flagUrl: '/flags/fr.png' },
+    { code: 'CA', name: 'Canada', flag: '🇨🇦', regions: ['Ontario', 'Quebec', 'British Columbia'], flagUrl: '/flags/ca.png' },
+    { code: 'AU', name: 'Australia', flag: '🇦🇺', regions: ['New South Wales', 'Victoria', 'Queensland'], flagUrl: '/flags/au.png' },
   ]
 }
 

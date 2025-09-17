@@ -200,7 +200,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
   }, [options.clickOutsideDeactivates, deactivate])
 
   // フォーカスが外部に移動した場合の処理
-  const handleFocusOut = useCallback((event: FocusEvent) => {
+  const handleFocusOut = useCallback((_event: FocusEvent) => {
     if (!isActive.current || !containerRef.current) return
 
     // フォーカスが完全に外部に移動したかを確認

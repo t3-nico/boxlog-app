@@ -80,7 +80,7 @@ export function splitCrossWeekEvents(
 function createEventSegments(
   event: CalendarEvent,
   showWeekends: boolean,
-  weekStart: Date
+  _weekStart: Date
 ): EventSegment[] {
   const segments: EventSegment[] = []
   

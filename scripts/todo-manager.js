@@ -442,6 +442,50 @@ ${colors.bold}BoxLog TODO/FIXME Manager${colors.reset}
   process.exit(0);
 }
 
+// ⚙️ コマンドライン引数設定
+const argConfig = {
+  '--help': { aliases: ['-h'], action: 'help' },
+  '--format': { aliases: ['-f'], action: 'setValue', key: 'format' },
+  '--sort': { aliases: ['-s'], action: 'setValue', key: 'sortBy' },
+  '--output': { aliases: ['-o'], action: 'setValue', key: 'outputFile' },
+  '--type': { aliases: ['-t'], action: 'setValue', key: 'filterType' },
+  '--priority': { aliases: ['-p'], action: 'setValue', key: 'filterPriority' },
+  '--legacy': { aliases: [], action: 'setFlag', key: 'showLegacyOnly' },
+  '--overdue': { aliases: [], action: 'setFlag', key: 'showOverdueOnly' },
+  '--no-stats': { aliases: [], action: 'setFlag', key: 'includeStats', value: false }
+};
+
+// 引数とその設定を取得するヘルパー関数
+function getArgConfig(arg) {
+  // 直接マッチ
+  if (argConfig[arg]) return { key: arg, config: argConfig[arg] };
+  
+  // エイリアスマッチ
+  for (const [key, config] of Object.entries(argConfig)) {
+    if (config.aliases.includes(arg)) {
+      return { key, config };
+    }
+  }
+  
+  return null;
+}
+
+// 値設定アクションを処理
+function handleSetValueAction(options, config, args, i) {
+  const nextValue = args[i + 1];
+  if (nextValue !== undefined) {
+    options[config.key] = nextValue;
+    return i + 1; // インデックスを進める
+  }
+  return i;
+}
+
+// フラグ設定アクションを処理
+function handleSetFlagAction(options, config) {
+  const value = config.value !== undefined ? config.value : true;
+  options[config.key] = value;
+}
+
 // ⚙️ コマンドライン引数解析
 function parseCommandLineArgs(args) {
   const options = {
@@ -458,49 +502,18 @@ function parseCommandLineArgs(args) {
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-
-    switch (arg) {
-      case '--help':
-      case '-h':
-        showHelp();
-        break;
-
-      case '--format':
-      case '-f':
-        options.format = args[++i];
-        break;
-
-      case '--sort':
-      case '-s':
-        options.sortBy = args[++i];
-        break;
-
-      case '--output':
-      case '-o':
-        options.outputFile = args[++i];
-        break;
-
-      case '--type':
-      case '-t':
-        options.filterType = args[++i];
-        break;
-
-      case '--priority':
-      case '-p':
-        options.filterPriority = args[++i];
-        break;
-
-      case '--legacy':
-        options.showLegacyOnly = true;
-        break;
-
-      case '--overdue':
-        options.showOverdueOnly = true;
-        break;
-
-      case '--no-stats':
-        options.includeStats = false;
-        break;
+    const argMatch = getArgConfig(arg);
+    
+    if (!argMatch) continue;
+    
+    const { config } = argMatch;
+    
+    if (config.action === 'help') {
+      showHelp();
+    } else if (config.action === 'setValue') {
+      i = handleSetValueAction(options, config, args, i);
+    } else if (config.action === 'setFlag') {
+      handleSetFlagAction(options, config);
     }
   }
 

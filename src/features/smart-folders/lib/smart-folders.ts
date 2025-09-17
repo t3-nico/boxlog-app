@@ -14,12 +14,12 @@ export class SmartFolderRuleEngine {
    * 指定されたアイテムがルールにマッチするかを評価
    */
   static evaluateRules(
-    rules: SmartFolderRule[], 
-    item: any, 
-    context: RuleEvaluationContext = { 
-      item, 
-      now: new Date(), 
-      userTimeZone: 'UTC' 
+    rules: SmartFolderRule[],
+    item: Record<string, unknown>,
+    context: RuleEvaluationContext = {
+      item: item as Record<string, unknown>,
+      now: new Date(),
+      userTimeZone: 'UTC'
     }
   ): boolean {
     if (rules.length === 0) return true
@@ -51,8 +51,8 @@ export class SmartFolderRuleEngine {
    * 個別ルールの評価
    */
   private static evaluateRule(
-    rule: SmartFolderRule, 
-    item: any, 
+    rule: SmartFolderRule,
+    item: Record<string, unknown>,
     context: RuleEvaluationContext
   ): boolean {
     const fieldValue = this.getFieldValue(item, rule.field)
@@ -102,37 +102,35 @@ export class SmartFolderRuleEngine {
   }
 
   /**
+   * フィールドマッピング設定
+   */
+  private static readonly FIELD_MAPPING: Record<SmartFolderRuleField, (item: Record<string, unknown>) => unknown> = {
+    tag: (item) => item.tags || item.tag || [],
+    created_date: (item) => item.createdAt || item.created_at,
+    updated_date: (item) => item.updatedAt || item.updated_at,
+    status: (item) => item.status,
+    priority: (item) => item.priority,
+    is_favorite: (item) => item.isFavorite || item.is_favorite || item.favorite,
+    due_date: (item) => item.dueDate || item.due_date,
+    title: (item) => item.title || item.name,
+    description: (item) => item.description || item.content
+  }
+
+  /**
    * アイテムからフィールド値を取得
    */
-  private static getFieldValue(item: any, field: SmartFolderRuleField): any {
-    switch (field) {
-      case 'tag':
-        return item.tags || item.tag || []
-      case 'created_date':
-        return item.createdAt || item.created_at
-      case 'updated_date':
-        return item.updatedAt || item.updated_at
-      case 'status':
-        return item.status
-      case 'priority':
-        return item.priority
-      case 'is_favorite':
-        return item.isFavorite || item.is_favorite || item.favorite
-      case 'due_date':
-        return item.dueDate || item.due_date
-      case 'title':
-        return item.title || item.name
-      case 'description':
-        return item.description || item.content
-      default:
-        return item[field]
+  private static getFieldValue(item: Record<string, unknown>, field: SmartFolderRuleField): unknown {
+    const fieldMapper = this.FIELD_MAPPING[field]
+    if (fieldMapper) {
+      return fieldMapper(item)
     }
+    return item[field]
   }
 
   /**
    * 文字列の包含チェック
    */
-  private static stringContains(fieldValue: any, ruleValue: any): boolean {
+  private static stringContains(fieldValue: unknown, ruleValue: unknown): boolean {
     if (typeof fieldValue === 'string' && typeof ruleValue === 'string') {
       return fieldValue.toLowerCase().includes(ruleValue.toLowerCase())
     }
@@ -149,7 +147,7 @@ export class SmartFolderRuleEngine {
   /**
    * 文字列の開始チェック
    */
-  private static stringStartsWith(fieldValue: any, ruleValue: any): boolean {
+  private static stringStartsWith(fieldValue: unknown, ruleValue: unknown): boolean {
     if (typeof fieldValue === 'string' && typeof ruleValue === 'string') {
       return fieldValue.toLowerCase().startsWith(ruleValue.toLowerCase())
     }
@@ -159,7 +157,7 @@ export class SmartFolderRuleEngine {
   /**
    * 文字列の終了チェック
    */
-  private static stringEndsWith(fieldValue: any, ruleValue: any): boolean {
+  private static stringEndsWith(fieldValue: unknown, ruleValue: unknown): boolean {
     if (typeof fieldValue === 'string' && typeof ruleValue === 'string') {
       return fieldValue.toLowerCase().endsWith(ruleValue.toLowerCase())
     }
@@ -169,7 +167,7 @@ export class SmartFolderRuleEngine {
   /**
    * 値の比較（数値・日付対応）
    */
-  private static compareValues(fieldValue: any, ruleValue: any, context: RuleEvaluationContext): number {
+  private static compareValues(fieldValue: unknown, ruleValue: unknown, context: RuleEvaluationContext): number {
     // 日付の比較
     if (fieldValue instanceof Date || typeof fieldValue === 'string') {
       const fieldDate = new Date(fieldValue)
@@ -201,7 +199,7 @@ export class SmartFolderRuleEngine {
   /**
    * 空値チェック
    */
-  private static isEmpty(value: any): boolean {
+  private static isEmpty(value: unknown): boolean {
     if (value === null || value === undefined) return true
     if (typeof value === 'string') return value.trim() === ''
     if (Array.isArray(value)) return value.length === 0
@@ -215,7 +213,7 @@ export class SmartFolderFilter {
   /**
    * アイテムリストをスマートフォルダでフィルタリング
    */
-  static filterItems<T = any>(
+  static filterItems<T extends Record<string, unknown> = Record<string, unknown>>(
     items: T[], 
     folder: SmartFolder,
     context?: Partial<RuleEvaluationContext>
@@ -240,7 +238,7 @@ export class SmartFolderFilter {
   /**
    * 複数のスマートフォルダでアイテムをグループ化
    */
-  static groupItemsByFolders<T = any>(
+  static groupItemsByFolders<T extends Record<string, unknown> = Record<string, unknown>>(
     items: T[], 
     folders: SmartFolder[],
     context?: Partial<RuleEvaluationContext>
@@ -342,7 +340,7 @@ export class RuleBuilder {
     return this
   }
 
-  value(value: any): RuleBuilder {
+  value(value: unknown): RuleBuilder {
     this.currentRule.value = value
     return this
   }

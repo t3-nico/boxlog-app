@@ -7,8 +7,8 @@ import type { CalendarEvent } from '@/features/events'
 interface WorkerTask {
   id: string
   type: string
-  payload: any
-  resolve: (result: any) => void
+  payload: unknown
+  resolve: (result: unknown) => void
   reject: (error: Error) => void
   priority: number
   timestamp: number
@@ -71,7 +71,7 @@ export class WorkerManager {
    * ワーカーメッセージの処理
    */
   private handleWorkerMessage(e: MessageEvent): void {
-    const { id, type, result, error, performance } = e.data
+    const { id, type: _type, result, error, performance } = e.data
     const task = this.activeTasks.get(id)
     
     if (!task) return
@@ -112,8 +112,8 @@ export class WorkerManager {
    * タスクの実行
    */
   async executeTask<T>(
-    type: string, 
-    payload: any, 
+    type: string,
+    payload: unknown,
     priority: number = 5
   ): Promise<T> {
     return new Promise((resolve, reject) => {
@@ -175,14 +175,14 @@ export class WorkerManager {
   /**
    * 大量イベントの前処理
    */
-  async processEvents(events: CalendarEvent[], options?: any): Promise<any> {
+  async processEvents(events: CalendarEvent[], options?: Record<string, unknown>): Promise<{ events: CalendarEvent[]; totalProcessed: number; uniqueCount: number; duplicatesRemoved: number }> {
     return this.executeTask('PROCESS_EVENTS', { events, options }, 8)
   }
 
   /**
    * イベント重複の計算
    */
-  async calculateOverlaps(events: CalendarEvent[], dateRange: { start: Date, end: Date }): Promise<any> {
+  async calculateOverlaps(events: CalendarEvent[], dateRange: { start: Date; end: Date }): Promise<Array<{ eventId: string; overlaps: string[] }>> {
     return this.executeTask('CALCULATE_OVERLAPS', { events, dateRange }, 6)
   }
 
@@ -190,9 +190,9 @@ export class WorkerManager {
    * 繰り返しイベントの生成
    */
   async generateRecurringEvents(
-    event: CalendarEvent, 
-    pattern: any, 
-    dateRange: { start: Date, end: Date }
+    event: CalendarEvent,
+    pattern: Record<string, unknown>,
+    dateRange: { start: Date; end: Date }
   ): Promise<CalendarEvent[]> {
     return this.executeTask('GENERATE_RECURRING', { event, pattern, dateRange }, 7)
   }
@@ -200,21 +200,21 @@ export class WorkerManager {
   /**
    * イベント検索
    */
-  async searchEvents(events: CalendarEvent[], query: string, options?: any): Promise<CalendarEvent[]> {
+  async searchEvents(events: CalendarEvent[], query: string, options?: Record<string, unknown>): Promise<CalendarEvent[]> {
     return this.executeTask('SEARCH_EVENTS', { events, query, options }, 5)
   }
 
   /**
    * レイアウト最適化
    */
-  async optimizeLayout(events: CalendarEvent[], containerWidth: number): Promise<any> {
+  async optimizeLayout(events: CalendarEvent[], containerWidth: number): Promise<{ layouts: Array<{ id: string; x: number; y: number; width: number; height: number }> }> {
     return this.executeTask('OPTIMIZE_LAYOUT', { events, containerWidth }, 4)
   }
 
   /**
    * バッチ処理（複数タスクの並列実行）
    */
-  async executeBatch(tasks: Array<{ type: string, payload: any, priority?: number }>): Promise<any[]> {
+  async executeBatch(tasks: Array<{ type: string; payload: unknown; priority?: number }>): Promise<unknown[]> {
     const promises = tasks.map(task => 
       this.executeTask(task.type, task.payload, task.priority || 5)
     )
@@ -267,7 +267,7 @@ export class WorkerManager {
    */
   cleanup(): void {
     // 全タスクのキャンセル
-    for (const [id, task] of this.activeTasks) {
+    for (const [_id, task] of this.activeTasks) {
       task.reject(new Error('Worker manager cleanup'))
     }
     this.activeTasks.clear()
@@ -293,7 +293,7 @@ export class WorkerManager {
   /**
    * フォールバック: メインスレッドでの処理
    */
-  private async fallbackExecution<T>(type: string, payload: any): Promise<T> {
+  private async fallbackExecution<T>(type: string, payload: Record<string, unknown>): Promise<T> {
     // Web Worker が利用できない場合のフォールバック
     console.warn('Falling back to main thread processing for:', type)
     
@@ -313,7 +313,7 @@ export class WorkerManager {
   /**
    * メインスレッドでのイベント処理（フォールバック）
    */
-  private processEventsMainThread(events: CalendarEvent[], options: any = {}) {
+  private processEventsMainThread(events: CalendarEvent[], _options: Record<string, unknown> = {}) {
     // 基本的な処理のみ実装
     const processed = events
       .filter(event => event.startDate && event.title)
@@ -330,7 +330,7 @@ export class WorkerManager {
   /**
    * メインスレッドでの検索（フォールバック）
    */
-  private searchEventsMainThread(events: CalendarEvent[], query: string, options: any = {}) {
+  private searchEventsMainThread(events: CalendarEvent[], query: string, _options: Record<string, unknown> = {}) {
     const normalizedQuery = query.toLowerCase()
     
     return events.filter(event =>

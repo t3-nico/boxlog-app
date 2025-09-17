@@ -167,7 +167,7 @@ export function getTimeSlotBgClass(hour: number): string {
 /**
  * グリッド線のスタイルクラスを取得
  */
-export function getGridLineClass(minutes: number, interval: number): string {
+export function getGridLineClass(minutes: number, _interval: number): string {
   if (minutes === 0) {
     // 正時
     return 'border-t border-gray-300 dark:border-gray-600'

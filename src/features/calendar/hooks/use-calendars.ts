@@ -34,10 +34,10 @@ export function useCalendar(calendarId: string) {
 }
 
 export function useCreateCalendar(userId: string) {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (input: CreateCalendarInput) => 
+    mutationFn: (_input: CreateCalendarInput) => 
       Promise.resolve({} as Calendar), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendars', userId] })
@@ -46,12 +46,12 @@ export function useCreateCalendar(userId: string) {
 }
 
 export function useUpdateCalendar() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ calendarId, input }: { calendarId: string; input: UpdateCalendarInput }) =>
+    mutationFn: ({ calendarId: _calendarId, input: _input }: { calendarId: string; input: UpdateCalendarInput }) =>
       Promise.resolve({} as Calendar), // Temporary stub
-    onSuccess: (calendar) => {
+    onSuccess: (_calendar) => {
       // queryClient.invalidateQueries({ queryKey: ['calendars', calendar.userId] })
       // queryClient.invalidateQueries({ queryKey: ['calendar', calendar.id] })
     }
@@ -59,11 +59,11 @@ export function useUpdateCalendar() {
 }
 
 export function useDeleteCalendar() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (calendarId: string) => Promise.resolve(), // Temporary stub
-    onSuccess: (_, calendarId) => {
+    mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
+    onSuccess: (_, _calendarId) => {
       queryClient.invalidateQueries({ queryKey: ['calendars'] })
       queryClient.removeQueries({ queryKey: ['calendar', calendarId] })
     }
@@ -71,10 +71,10 @@ export function useDeleteCalendar() {
 }
 
 export function useSetDefaultCalendar() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (calendarId: string) => Promise.resolve(), // Temporary stub
+    mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendars'] })
     }
@@ -94,43 +94,43 @@ export function useCalendarShares(calendarId: string) {
 }
 
 export function useShareCalendar() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (input: CalendarShareInput) =>
+    mutationFn: (_input: CalendarShareInput) =>
       Promise.resolve({} as CalendarShare), // Temporary stub
-    onSuccess: (share) => {
+    onSuccess: (_share) => {
       // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
     }
   })
 }
 
 export function useUpdateCalendarShare() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ shareId, permission }: { shareId: string; permission: 'view' | 'edit' | 'admin' }) =>
+    mutationFn: ({ shareId: _shareId, permission: _permission }: { shareId: string; permission: 'view' | 'edit' | 'admin' }) =>
       Promise.resolve({} as CalendarShare), // Temporary stub
-    onSuccess: (share) => {
+    onSuccess: (_share) => {
       // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
     }
   })
 }
 
 export function useRevokeCalendarShare() {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (shareId: string) => Promise.resolve(), // Temporary stub
+    mutationFn: (_shareId: string) => Promise.resolve(), // Temporary stub
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-shares'] })
+      // _queryClient.invalidateQueries({ queryKey: ['calendar-shares'] })
     }
   })
 }
 
 export function useCreatePublicShareLink() {
   return useMutation({
-    mutationFn: ({ calendarId, permission, expiresInDays }: {
+    mutationFn: ({ calendarId: _calendarId, permission: _permission, expiresInDays: _expiresInDays }: {
       calendarId: string
       permission: 'view' | 'edit'
       expiresInDays?: number
@@ -152,10 +152,10 @@ export function useCalendarViewState(userId: string) {
 }
 
 export function useUpdateViewState(userId: string) {
-  const queryClient = useQueryClient()
+  const _queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: (updates: Partial<CalendarViewState>) =>
+    mutationFn: (_updates: Partial<CalendarViewState>) =>
       Promise.resolve({} as CalendarViewState), // Temporary stub
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['calendar-view-state', userId] })
