@@ -1,8 +1,13 @@
+import type { Event, SmartFolder, Tag, Task } from './unified'
+
+// 削除されたアイテムのデータ型
+export type DeletedItemData = Task | Event | Tag | SmartFolder
+
 export interface DeletedItem {
   id: string
   originalId: string
   type: 'task' | 'event' | 'tag' | 'smart-folder'
-  data: any // 元のオブジェクト
+  data: DeletedItemData
   deletedAt: Date
   deletedBy: string
   expiresAt: Date // deletedAt + 30日
@@ -19,9 +24,9 @@ export interface TrashStats {
 export interface TrashState {
   deletedItems: DeletedItem[]
   loading: boolean
-  
+
   // アクション
-  moveToTrash: (_item: any, _type: DeletedItem['type']) => Promise<void>
+  moveToTrash: (_item: DeletedItemData, _type: DeletedItem['type']) => Promise<void>
   restoreItem: (_deletedItemId: string) => Promise<void>
   permanentDelete: (_deletedItemId: string) => Promise<void>
   emptyTrash: () => Promise<void>

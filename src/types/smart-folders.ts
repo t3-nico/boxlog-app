@@ -1,7 +1,7 @@
 // Smart Folders システムの型定義
 
 // ルールのフィールド種別
-export type SmartFolderRuleField = 
+export type SmartFolderRuleField =
   | 'tag'
   | 'created_date'
   | 'updated_date'
@@ -13,19 +13,19 @@ export type SmartFolderRuleField =
   | 'description'
 
 // ルールの演算子
-export type SmartFolderRuleOperator = 
-  | 'contains'        // 含む
-  | 'not_contains'    // 含まない
-  | 'equals'          // 等しい
-  | 'not_equals'      // 等しくない
-  | 'greater_than'    // より大きい
-  | 'less_than'       // より小さい
-  | 'greater_equal'   // 以上
-  | 'less_equal'      // 以下
-  | 'starts_with'     // で始まる
-  | 'ends_with'       // で終わる
-  | 'is_empty'        // 空である
-  | 'is_not_empty'    // 空でない
+export type SmartFolderRuleOperator =
+  | 'contains' // 含む
+  | 'not_contains' // 含まない
+  | 'equals' // 等しい
+  | 'not_equals' // 等しくない
+  | 'greater_than' // より大きい
+  | 'less_than' // より小さい
+  | 'greater_equal' // 以上
+  | 'less_equal' // 以下
+  | 'starts_with' // で始まる
+  | 'ends_with' // で終わる
+  | 'is_empty' // 空である
+  | 'is_not_empty' // 空でない
 
 // ルールのロジック演算子
 export type SmartFolderRuleLogic = 'AND' | 'OR'
@@ -71,7 +71,7 @@ export interface SmartFolder {
   isSystem: boolean
   createdAt: Date
   updatedAt: Date
-  
+
   // 計算されるプロパティ
   taskCount?: number
 }
@@ -105,7 +105,7 @@ export interface RuleBuilder {
 }
 
 // フィルタリング結果
-export interface SmartFolderFilterResult<T = any> {
+export interface SmartFolderFilterResult<T = unknown> {
   items: T[]
   totalCount: number
   folderId: string
@@ -123,7 +123,7 @@ export interface PresetRule {
 
 // ルール評価用のコンテキスト
 export interface RuleEvaluationContext {
-  item: any
+  item: unknown
   now: Date
   userTimeZone: string
 }
@@ -157,7 +157,7 @@ export const convertSmartFolderRowToSmartFolder = (row: SmartFolderRow): SmartFo
   color: row.color,
   isSystem: row.is_system,
   createdAt: new Date(row.created_at),
-  updatedAt: new Date(row.updated_at)
+  updatedAt: new Date(row.updated_at),
 })
 
 export const convertSmartFolderToSmartFolderRow = (folder: Partial<SmartFolder>): Partial<SmartFolderRow> => ({
@@ -172,5 +172,5 @@ export const convertSmartFolderToSmartFolderRow = (folder: Partial<SmartFolder>)
   color: folder.color,
   is_system: folder.isSystem,
   created_at: folder.createdAt?.toISOString(),
-  updated_at: folder.updatedAt?.toISOString()
+  updated_at: folder.updatedAt?.toISOString(),
 })

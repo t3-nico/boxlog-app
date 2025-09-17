@@ -38,7 +38,7 @@ export interface TaskEntity extends BaseTask {
 export interface Task extends Omit<BaseTask, 'user_id' | 'smart_folder_id'> {
   userId: string
   smartFolderId?: string
-  tagObjects?: any[] // Type fix tracked in Issue #84
+  tagObjects?: Tag[]
 }
 
 // === API関連 ===
@@ -92,10 +92,16 @@ export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
 // === 再エクスポート（統一のため） ===
 
 // tags.tsから最新の定義を再エクスポート
-export type { Tag, TagWithChildren, CreateTagInput, UpdateTagInput, TagLevel } from './tags'
+export type { CreateTagInput, Tag, TagLevel, TagWithChildren, UpdateTagInput } from './tags'
 
-// smart-folders.tsから最新の定義を再エクスポート  
-export type { SmartFolder, SmartFolderRule, CreateSmartFolderInput } from './smart-folders'
+// smart-folders.tsから最新の定義を再エクスポート
+export type { CreateSmartFolderInput, SmartFolder, SmartFolderRule } from './smart-folders'
 
 // events型定義を直接インポート（循環依存を避けるため）
-export type { Event, EventEntity, CalendarEvent, CreateEventRequest, UpdateEventRequest } from '@/features/events/types/events'
+export type {
+  CalendarEvent,
+  CreateEventRequest,
+  Event,
+  EventEntity,
+  UpdateEventRequest,
+} from '@/features/events/types/events'
