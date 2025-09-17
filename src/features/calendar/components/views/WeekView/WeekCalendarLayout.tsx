@@ -50,7 +50,7 @@ const CurrentTimeLine = ({ day }: { day: Date }) => {
 
 export const WeekCalendarLayout = ({
   dates,
-  tasks,
+  tasks: _tasks,
   events = [],
   dateRange,
   onEventClick,

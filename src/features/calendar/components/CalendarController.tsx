@@ -94,7 +94,7 @@ export const CalendarController = ({
   const [_isEventModalOpen, _setIsEventModalOpen] = useState(false)
   const [_eventDefaultDate, _setEventDefaultDate] = useState<Date | undefined>(undefined)
   const [_eventDefaultTime, _setEventDefaultTime] = useState<string | undefined>(undefined)
-  const [eventDefaultEndTime, setEventDefaultEndTime] = useState<string | undefined>(undefined)
+  const [_eventDefaultEndTime, _setEventDefaultEndTime] = useState<string | undefined>(undefined)
   
   // コンテキストメニュー状態
   const [contextMenuEvent, setContextMenuEvent] = useState<any>(null)
@@ -104,33 +104,33 @@ export const CalendarController = ({
   const { handleDeleteEvent, handleEditEvent, handleDuplicateEvent, handleViewDetails } = useEventContextActions()
   
   // AddPopup hook（編集時のみ使用）
-  const { isOpen: isAddPopupOpen, openPopup, closePopup, openEventPopup } = useAddPopup()
+  const { isOpen: _isAddPopupOpen, openPopup: _openPopup, closePopup: _closePopup, openEventPopup: _openEventPopup } = useAddPopup()
 
-  const { createRecordFromTask, fetchRecords } = useRecordsStore()
-  const { planRecordMode, timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
+  const { createRecordFromTask: _createRecordFromTask, fetchRecords: _fetchRecords } = useRecordsStore()
+  const { planRecordMode: _planRecordMode, timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
   
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
   const taskStore = useTaskStore()
-  const { 
-    tasks, 
-    createTask, 
-    updateTask, 
-    deleteTask, 
-    updateTaskStatus,
-    getTasksForDateRange 
+  const {
+    tasks: _tasks,
+    createTask: _createTask,
+    updateTask: _updateTask,
+    deleteTask: _deleteTask,
+    updateTaskStatus: _updateTaskStatus,
+    getTasksForDateRange
   } = taskStore
   
   const eventStore = useEventStore()
   const {
     events,
-    loading: eventsLoading,
-    error: eventsError,
-    fetchEvents,
-    createEvent,
-    updateEvent,
-    deleteEvent,
-    getEventsByDateRange
+    loading: _eventsLoading,
+    error: _eventsError,
+    fetchEvents: _fetchEvents,
+    createEvent: _createEvent,
+    updateEvent: _updateEvent,
+    deleteEvent: _deleteEvent,
+    getEventsByDateRange: _getEventsByDateRange
   } = eventStore
 
   // デバッグ: イベントストアの状態を確認
@@ -145,18 +145,18 @@ export const CalendarController = ({
     }))
   })
   
-  const createModal = useCreateModalStore()
-  const { openCreateInspector, openEditInspector } = useCreateEventInspector()
+  const _createModal = useCreateModalStore()
+  const { openCreateInspector, openEditInspector: _openEditInspector } = useCreateEventInspector()
   const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
 
   // 通知機能の統合
   const {
     permission: notificationPermission,
     hasRequested: hasRequestedNotification,
-    visibleNotifications,
+    visibleNotifications: _visibleNotifications,
     requestPermission: requestNotificationPermission,
-    dismissNotification,
-    clearAllNotifications
+    dismissNotification: _dismissNotification,
+    clearAllNotifications: _clearAllNotifications
   } = useNotifications({
     events,
     onReminderTriggered: (event, reminder) => {

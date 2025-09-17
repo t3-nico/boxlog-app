@@ -30,7 +30,7 @@ const MINUTES_PER_PIXEL = 60 / HOUR_HEIGHT
 
 export const CalendarDropZone = ({
   date,
-  dayIndex,
+  dayIndex: _dayIndex,
   onEventUpdate,
   snapInterval = 15,
   showDropIndicator = true,

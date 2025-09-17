@@ -23,7 +23,7 @@ const TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
 
 export const DayView = ({
   dateRange,
-  tasks,
+  tasks: _tasks,
   events,
   currentDate,
   showWeekends = true,

@@ -26,7 +26,7 @@ import type { ThreeDayViewProps } from './ThreeDayView.types'
  */
 export const ThreeDayView = ({
   dateRange,
-  tasks,
+  tasks: _tasks,
   events,
   currentDate,
   centerDate,

@@ -42,7 +42,7 @@ import type { TwoWeekViewProps } from './TwoWeekView.types'
  */
 export const TwoWeekView = ({
   dateRange,
-  tasks,
+  tasks: _tasks,
   events,
   currentDate,
   startDate,
