@@ -82,10 +82,11 @@ export const QuickTagCreateModal = ({
         {/* Content */}
         <div className="p-4 space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            <label htmlFor="tag-name-input" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
               Tag Name
             </label>
             <input
+              id="tag-name-input"
               type="text"
               value={tagName}
               onChange={(e) => setTagName(e.target.value)}
@@ -103,10 +104,10 @@ export const QuickTagCreateModal = ({
           </div>
           
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            <div className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300" id="color-selection-label">
               Color
-            </label>
-            <div className="flex gap-2 flex-wrap">
+            </div>
+            <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="color-selection-label">
               {presetColors.map(color => (
                 <button
                   key={color}

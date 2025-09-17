@@ -1,19 +1,19 @@
 'use client'
 
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2, Check, FileText, Bell, MoreHorizontal, Repeat, Trash2 } from 'lucide-react'
 
-import { text, primary, semantic } from '@/config/theme/colors'
-
+import { text, primary, semantic, colors } from '@/config/theme/colors'
 import { rounded } from '@/config/theme/rounded'
 import { body, heading } from '@/config/theme/typography'
 
 import { DateSelector } from '../create/DateSelector'
 import { TagInput } from '../create/TagInput'
-
 import { TitleInput } from '../create/TitleInput'
+
+import { useEssentialEditForm } from './hooks/useEssentialEditForm'
 
 interface Tag {
   id: string
@@ -47,143 +47,65 @@ interface EssentialEditViewProps {
   }
 }
 
-export const EssentialEditView = ({ 
-  isOpen, 
-  onClose, 
-  onSave, 
+export const EssentialEditView = ({
+  isOpen,
+  onClose,
+  onSave,
   onDelete,
-  initialData 
+  initialData
 }: EssentialEditViewProps) => {
-  // スケジュールモード（プログレッシブ開示の核心）
-  type ScheduleMode = 'later' | 'specify' | 'today' | 'tomorrow'
-  
-  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>(() => {
-    // 初期データから適切なモードを判定（編集モード専用）
-    if (initialData.date) {
-      // 時刻情報がある場合は時間指定モード
-      const hasTime = initialData.date.getHours() !== 0 || initialData.date.getMinutes() !== 0
-      if (hasTime) return 'specify'
-      
-      // 時刻情報がない場合は日付をチェック
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-      const tomorrow = new Date(today)
-      tomorrow.setDate(tomorrow.getDate() + 1)
-      
-      const eventDate = new Date(initialData.date)
-      eventDate.setHours(0, 0, 0, 0)
-      
-      if (eventDate.getTime() === today.getTime()) return 'today'
-      if (eventDate.getTime() === tomorrow.getTime()) return 'tomorrow'
-      return 'specify' // その他の日付
-    }
-    
-    return 'later' // 日付なしの場合
+
+  // カスタムフックで状態管理とロジックを抽出
+  const {
+    scheduleMode,
+    title,
+    date,
+    endDate,
+    tags,
+    estimatedDuration,
+    taskPriority,
+    isSubmitting,
+    error,
+    showSuccess,
+    showMemo,
+    memo,
+    reminder,
+    priority,
+    isValid,
+    setTitle,
+    setDate,
+    setEndDate,
+    setTags,
+    setEstimatedDuration,
+    setTaskPriority,
+    setShowMemo,
+    setMemo,
+    setReminder,
+    setPriority,
+    handleScheduleModeChange,
+    handleSave,
+    handleSmartExtract
+  } = useEssentialEditForm({
+    initialData,
+    isOpen,
+    onSave,
+    onClose
   })
-  
-  // 値の検証とフォールバック
-  const safeInitialDate = initialData.date instanceof Date ? initialData.date : new Date()
-  const safeInitialEndDate = initialData.endDate instanceof Date ? initialData.endDate : new Date(safeInitialDate.getTime() + 60 * 60 * 1000)
-  
-  // メインフィールドの状態
-  const [title, setTitle] = useState(initialData.title)
-  const [date, setDate] = useState(safeInitialDate)
-  const [endDate, setEndDate] = useState(safeInitialEndDate)
-  const [tags, setTags] = useState<Tag[]>(initialData.tags)
-  
-  // 追加オプション状態
-  const [showMemo, setShowMemo] = useState(!!initialData.description)
-  const [memo, setMemo] = useState(initialData.description || '')
-
-  // 前回のinitialDataを保存するRef
-  const prevInitialDataRef = useRef<typeof initialData | null>(null)
-  
-  // モーダルが開かれた時、またはinitialDataが実際に変更された時のみ更新
-  useEffect(() => {
-    if (isOpen && initialData) {
-      // 前回と同じ値かチェック
-      const prev = prevInitialDataRef.current
-      const hasChanged = !prev || 
-        prev.title !== initialData.title ||
-        prev.date?.getTime() !== initialData.date?.getTime() ||
-        prev.endDate?.getTime() !== initialData.endDate?.getTime() ||
-        prev.description !== initialData.description
-      
-      if (hasChanged) {
-        setTitle(initialData.title)
-        setDate(initialData.date instanceof Date ? initialData.date : new Date())
-        setEndDate(initialData.endDate instanceof Date ? initialData.endDate : new Date(Date.now() + 60 * 60 * 1000))
-        setTags(initialData.tags)
-        setMemo(initialData.description || '')
-        setShowMemo(!!initialData.description)
-        
-        // 現在の値を保存
-        prevInitialDataRef.current = initialData
-      }
-    }
-  }, [isOpen, initialData])
-  
-  // UI状態
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showSuccess, setShowSuccess] = useState(false)
-  
-  const [reminder, setReminder] = useState<number | null>(null)
-  const [priority, setPriority] = useState<'low' | 'necessary' | 'high'>('necessary')
-  
-  // 入力データの検証
-  const isValid = title.trim().length > 0
-
-  // 保存処理
-  const handleSave = useCallback(async () => {
-    if (!isValid) return
-
-    setIsSubmitting(true)
-    setError(null)
-
-    try {
-      await onSave({ 
-        title, 
-        date, 
-        endDate, 
-        tags,
-        description: memo || undefined
-      })
-      
-      // 成功アニメーション
-      setShowSuccess(true)
-      setTimeout(() => {
-        onClose()
-        setShowSuccess(false)
-      }, 1500)
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [isValid, onSave, title, date, endDate, tags, memo, onClose])
 
   // 削除処理
-  const handleDelete = useCallback(async () => {
-    if (!onDelete) return
-    
-    setIsDeleting(true)
-    setError(null)
-
-    try {
-      await onDelete()
-      onClose()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete')
-    } finally {
-      setIsDeleting(false)
+  const handleDelete = async () => {
+    if (onDelete) {
+      try {
+        await onDelete()
+        onClose()
+      } catch (err) {
+        console.error('Failed to delete:', err)
+      }
     }
-  }, [onDelete, onClose])
+  }
 
-  // キーボードショートカット
-  useEffect(() => {
+  // キーボードショートカット（ESC対応）
+  React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
 
@@ -200,11 +122,6 @@ export const EssentialEditView = ({
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, isValid, onClose, handleSave])
-
-  // スマート抽出のハンドリング（編集時は無効化）
-  const handleSmartExtract = () => {
-    // 編集時はスマート抽出を使用しない
-  }
 
   if (!isOpen) return null
 

@@ -2,20 +2,18 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 import { format } from 'date-fns'
 
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
-import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
-import type { CreateEventRequest, Event, UpdateEventRequest } from '@/features/events'
-import { useCreateModalStore, useEventStore } from '@/features/events'
+import type { UpdateEventRequest } from '@/features/events'
+import { useEventStore } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
 import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
-import { useAddPopup } from '@/hooks/useAddPopup'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
@@ -41,7 +39,6 @@ interface CalendarViewExtendedProps extends CalendarViewProps {
 
 export const CalendarController = ({ className, initialViewType = 'day', initialDate }: CalendarViewExtendedProps) => {
   const router = useRouter()
-  const _pathname = usePathname()
   const calendarNavigation = useCalendarNavigation()
 
   // Context が利用可能な場合はそれを使用、そうでない場合は useCalendarLayout を使用
@@ -73,8 +70,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const navigateRelative = contextAvailable ? calendarNavigation.navigateRelative : layoutHook.navigateRelative
   const changeView = contextAvailable ? calendarNavigation.changeView : layoutHook.changeView
   const navigateToDate = contextAvailable ? calendarNavigation.navigateToDate : layoutHook.navigateToDate
-  const { sidebarOpen: _sidebarOpen } = layoutHook
-  const { toggleSidebar: _toggleSidebar } = layoutHook
 
   // デバッグ用ログ
   React.useEffect(() => {
@@ -86,12 +81,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
   }, [contextAvailable, viewType, currentDate, initialDate])
 
-  const [_selectedTask, _setSelectedTask] = useState<any>(null)
-  const [_isReviewModalOpen, _setIsReviewModalOpen] = useState(false)
-  const [_isEventModalOpen, _setIsEventModalOpen] = useState(false)
-  const [_eventDefaultDate, _setEventDefaultDate] = useState<Date | undefined>(undefined)
-  const [_eventDefaultTime, _setEventDefaultTime] = useState<string | undefined>(undefined)
-  const [_eventDefaultEndTime, _setEventDefaultEndTime] = useState<string | undefined>(undefined)
 
   // コンテキストメニュー状態
   const [contextMenuEvent, setContextMenuEvent] = useState<any>(null)
@@ -100,40 +89,16 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   // イベントコンテキストアクション
   const { handleDeleteEvent, handleEditEvent, handleDuplicateEvent, handleViewDetails } = useEventContextActions()
 
-  // AddPopup hook（編集時のみ使用）
-  const {
-    isOpen: _isAddPopupOpen,
-    openPopup: _openPopup,
-    closePopup: _closePopup,
-    openEventPopup: _openEventPopup,
-  } = useAddPopup()
 
-  const { createRecordFromTask: _createRecordFromTask, fetchRecords: _fetchRecords } = useRecordsStore()
-  const { planRecordMode: _planRecordMode, timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
+  const { timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
 
   // キーボードショートカット（Cmd/Ctrl + W）
   useWeekendToggleShortcut()
   const taskStore = useTaskStore()
-  const {
-    tasks: _tasks,
-    createTask: _createTask,
-    updateTask: _updateTask,
-    deleteTask: _deleteTask,
-    updateTaskStatus: _updateTaskStatus,
-    getTasksForDateRange,
-  } = taskStore
+  const { getTasksForDateRange } = taskStore
 
   const eventStore = useEventStore()
-  const {
-    events,
-    loading: _eventsLoading,
-    error: _eventsError,
-    fetchEvents: _fetchEvents,
-    createEvent: _createEvent,
-    updateEvent: _updateEvent,
-    deleteEvent: _deleteEvent,
-    getEventsByDateRange: _getEventsByDateRange,
-  } = eventStore
+  const { events } = eventStore
 
   // デバッグ: イベントストアの状態を確認
   console.log('🔍 EventStore状態確認:', {
@@ -147,21 +112,17 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })),
   })
 
-  const _createModal = useCreateModalStore()
-  const { openCreateInspector, openEditInspector: _openEditInspector } = useCreateEventInspector()
+  const { openCreateInspector } = useCreateEventInspector()
   const { setSelectedEvent, setActiveContent, setInspectorOpen } = useInspectorStore()
 
   // 通知機能の統合
   const {
     permission: notificationPermission,
     hasRequested: hasRequestedNotification,
-    visibleNotifications: _visibleNotifications,
     requestPermission: requestNotificationPermission,
-    dismissNotification: _dismissNotification,
-    clearAllNotifications: _clearAllNotifications,
   } = useNotifications({
     events,
-    onReminderTriggered: (_event, _reminder) => {
+    onReminderTriggered: () => {
       // Reminder triggered for event
     },
   })
@@ -360,78 +321,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     return calendarEvents
   }, [events, viewDateRange.start, viewDateRange.end, viewType])
 
-  // レコード取得（一時的にモックデータを使用）
-  const _records = useMemo(
-    () => [
-      {
-        id: 'r1',
-        user_id: 'user1',
-        title: '実績タスク1',
-        actual_start: new Date(Date.now() - 1800000).toISOString(),
-        actual_end: new Date().toISOString(),
-        actual_duration: 30,
-        satisfaction: 4 as 1 | 2 | 3 | 4 | 5,
-        focus_level: 3 as 1 | 2 | 3 | 4 | 5,
-        energy_level: 4 as 1 | 2 | 3 | 4 | 5,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },
-    ],
-    []
-  )
 
   // タスククリックハンドラー
-  const handleTaskClick = useCallback((task: any) => {
-    // CalendarTaskをTaskストア形式に変換
-    const storeTask = {
-      id: task.id,
-      title: task.title,
-      planned_start: task.startTime || new Date(task.planned_start || ''),
-      planned_duration:
-        task.planned_duration ||
-        Math.round((new Date(task.endTime || '').getTime() - new Date(task.startTime || '').getTime()) / (1000 * 60)),
-      status: task.status || 'pending',
-      priority: task.priority || 'medium',
-      description: task.description,
-      tags: task.tags,
-      created_at: task.created_at || new Date(),
-      updated_at: task.updated_at || new Date(),
-    }
-    setSelectedTask(storeTask)
-    setIsReviewModalOpen(true)
+  const handleTaskClick = useCallback(() => {
+    // Task click functionality removed - not used in current implementation
   }, [])
 
-  // タスクレビューモーダルのハンドラー
-  const _handleTaskSave = useCallback(
-    (task: any) => {
-      // カレンダータスクからストアタスクへ変換
-      const storeTask = {
-        ...task,
-        planned_start: typeof task.planned_start === 'string' ? new Date(task.planned_start) : task.planned_start,
-        created_at: task.created_at || new Date(),
-        updated_at: new Date(),
-      }
-      taskStore.updateTask(task.id, storeTask)
-      setIsReviewModalOpen(false)
-    },
-    [taskStore]
-  )
-
-  const _handleTaskDelete = useCallback(
-    (taskId: string) => {
-      taskStore.deleteTask(taskId)
-      setIsReviewModalOpen(false)
-    },
-    [taskStore]
-  )
-
-  const _handleStatusChange = useCallback(
-    (taskId: string, status: 'pending' | 'in_progress' | 'completed') => {
-      taskStore.updateTaskStatus(taskId, status)
-      setIsReviewModalOpen(false)
-    },
-    [taskStore]
-  )
 
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
@@ -518,42 +413,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [openCreateInspector, viewType]
   )
 
-  const _handleEventSave = useCallback(
-    async (eventData: CreateEventRequest | UpdateEventRequest) => {
-      try {
-        let savedEvent: Event
-
-        if ('id' in eventData) {
-          // 更新の場合
-          savedEvent = await eventStore.updateEvent(eventData as UpdateEventRequest)
-          console.log('✅ Event updated:', savedEvent.title)
-        } else {
-          // 新規作成の場合
-          savedEvent = await eventStore.createEvent(eventData as CreateEventRequest)
-          console.log('✅ Event created:', savedEvent.title)
-
-          // 作成されたイベントの日付にカレンダーを移動
-          if (savedEvent.startDate) {
-            navigateToDate(savedEvent.startDate)
-          }
-        }
-
-        setIsEventModalOpen(false)
-        setSelectedEvent(null)
-        setEventDefaultDate(undefined)
-        setEventDefaultTime(undefined)
-        setEventDefaultEndTime(undefined)
-
-        // イベントリストを強制更新
-        setTimeout(() => {
-          window.dispatchEvent(new CustomEvent('calendar-refresh'))
-        }, 100)
-      } catch (error) {
-        console.error('Failed to save event:', error)
-      }
-    },
-    [eventStore, navigateToDate]
-  )
 
   const handleEventDelete = useCallback(
     async (eventId: string) => {
@@ -563,9 +422,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         if (eventToDelete) {
           await eventStore.softDeleteEvent(eventId)
         }
-
-        setIsEventModalOpen(false)
-        setSelectedEvent(null)
       } catch (error) {
         console.error('Failed to delete event:', error)
       }
@@ -585,56 +441,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [eventStore]
   )
 
-  const _handleRestore = useCallback(
-    async (eventIds: string[]) => {
-      try {
-        if (eventIds.length === 1) {
-          await eventStore.restoreEvent(eventIds[0])
-        } else {
-          await eventStore.batchRestore(eventIds)
-        }
-        console.log('✅ Events restored:', eventIds.length, 'events')
-      } catch (error) {
-        console.error('Failed to restore events:', error)
-      }
-    },
-    [eventStore]
-  )
-
-  const _handleDeletePermanently = useCallback(
-    async (eventIds: string[]) => {
-      try {
-        if (eventIds.length === 1) {
-          await eventStore.hardDeleteEvent(eventIds[0])
-        } else {
-          await eventStore.batchHardDelete(eventIds)
-        }
-        console.log('✅ Events permanently deleted:', eventIds.length, 'events')
-      } catch (error) {
-        console.error('Failed to permanently delete events:', error)
-      }
-    },
-    [eventStore]
-  )
-
-  // 削除済みイベントを取得
-  const _trashedEvents = useMemo(() => {
-    return events
-      .filter((event) => event.isDeleted && event.deletedAt)
-      .map((event) => ({
-        ...event,
-        startDate: event.startDate || new Date(),
-        endDate: event.endDate || new Date(),
-        displayStartDate: event.startDate || new Date(),
-        displayEndDate: event.endDate || new Date(),
-        duration:
-          event.endDate && event.startDate ? (event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60) : 60,
-        isMultiDay:
-          event.startDate && event.endDate ? event.startDate.toDateString() !== event.endDate.toDateString() : false,
-        isRecurring: event.isRecurring || false,
-        type: event.type || ('event' as any),
-      }))
-  }, [events])
 
   // 30日経過した予定を自動削除
   useEffect(() => {

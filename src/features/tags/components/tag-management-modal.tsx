@@ -143,10 +143,11 @@ export const TagManagementModal = ({
             
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
+                <label htmlFor="new-tag-name" className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
                   Name
                 </label>
                 <input
+                  id="new-tag-name"
                   type="text"
                   value={newTagName}
                   onChange={(e) => setNewTagName(e.target.value)}
@@ -161,10 +162,11 @@ export const TagManagementModal = ({
               </div>
               
               <div>
-                <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
+                <label htmlFor="new-tag-parent" className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
                   Parent Tag (Optional)
                 </label>
                 <select
+                  id="new-tag-parent"
                   value={newTagParentId || ''}
                   onChange={(e) => setNewTagParentId(e.target.value || null)}
                   className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -179,10 +181,10 @@ export const TagManagementModal = ({
               </div>
               
               <div>
-                <label className="block text-xs font-medium mb-2 text-gray-600 dark:text-gray-400">
+                <div className="block text-xs font-medium mb-2 text-gray-600 dark:text-gray-400" id="new-tag-color-label">
                   Color
-                </label>
-                <div className="flex gap-2 flex-wrap">
+                </div>
+                <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="new-tag-color-label">
                   {presetColors.map(color => (
                     <button
                       key={color}

@@ -1,18 +1,18 @@
 'use client'
 
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2, Check, FileText, Bell, MoreHorizontal, Repeat, Trash2 } from 'lucide-react'
 
-import { text, primary, semantic } from '@/config/theme/colors'
-
+import { text, primary, semantic, colors } from '@/config/theme/colors'
 import { rounded } from '@/config/theme/rounded'
 import { body, heading } from '@/config/theme/typography'
 
 import { DateSelector } from './DateSelector'
+import { useEssentialForm } from './hooks/useEssentialForm'
+import { useEssentialSingleView } from './hooks/useEssentialSingleView'
 import { TagInput } from './TagInput'
-
 import { TitleInput } from './TitleInput'
 
 interface Tag {
@@ -48,240 +48,199 @@ interface EssentialSingleViewProps {
   }
 }
 
-export const EssentialSingleView = ({ 
-  isOpen, 
-  onClose, 
-  onSave, 
+// 時刻を15分単位で切り上げ
+const roundToNext15Minutes = (date: Date = new Date()): Date => {
+  const result = new Date(date);
+  const minutes = result.getMinutes();
+
+  let roundedMinutes;
+  if (minutes === 0) {
+    roundedMinutes = 0;
+  } else if (minutes <= 15) {
+    roundedMinutes = 15;
+  } else if (minutes <= 30) {
+    roundedMinutes = 30;
+  } else if (minutes <= 45) {
+    roundedMinutes = 45;
+  } else {
+    roundedMinutes = 60;
+  }
+
+  if (roundedMinutes === 60) {
+    result.setHours(result.getHours() + 1);
+    result.setMinutes(0, 0, 0);
+  } else {
+    result.setMinutes(roundedMinutes, 0, 0);
+  }
+
+  return result;
+};
+
+// 初期スケジュールモード決定
+const getInitialScheduleMode = (initialData?: { date?: Date }): 'defer' | 'schedule' => {
+  // 初期データがある場合（編集モード）は適切なモードを選択
+  if (initialData?.date) {
+    return 'schedule';
+  }
+
+  // 新規作成の場合はlocalStorageから前回の選択を復元
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('boxlog-create-mode');
+    if (saved && ['defer', 'schedule'].includes(saved)) {
+      return saved as 'defer' | 'schedule';
+    }
+  }
+
+  return 'defer'; // デフォルトは「後で決める」
+};
+
+// 初期開始日時取得
+const getInitialDate = (initialData?: { date?: Date }, scheduleMode?: string): Date => {
+  if (initialData?.date) return initialData.date;
+
+  // scheduleMode が 'specify' の場合のみ時刻を設定
+  if (scheduleMode === 'specify') {
+    return roundToNext15Minutes();
+  }
+
+  return new Date(); // フォールバック
+};
+
+// 初期終了日時取得
+const getInitialEndDate = (initialData?: { date?: Date, endDate?: Date }): Date => {
+  // endDateが直接指定されている場合はそれを使用
+  if (initialData?.endDate) {
+    return initialData.endDate;
+  }
+
+  const startTime = initialData?.date || roundToNext15Minutes();
+  const defaultEnd = new Date(startTime);
+
+  // estimatedDurationがある場合は使用、なければ1時間
+  const duration = initialData?.estimatedDuration || 60;
+  defaultEnd.setMinutes(defaultEnd.getMinutes() + duration);
+
+  return defaultEnd;
+};
+
+// 初期データ変更チェック
+const hasInitialDataChanged = (
+  prev: typeof initialData,
+  current: typeof initialData
+): boolean => {
+  if (!prev || !current) return !!current;
+
+  return (
+    prev.title !== current.title ||
+    prev.date?.getTime() !== current.date?.getTime() ||
+    prev.endDate?.getTime() !== current.endDate?.getTime()
+  );
+};
+
+// 初期データに基づく状態更新
+const updateStateFromInitialData = (
+  data: typeof initialData,
+  setters: {
+    setTitle: (title: string) => void;
+    setDate: (date: Date) => void;
+    setEndDate: (date: Date) => void;
+    setTags: (tags: Tag[]) => void;
+    setMemo: (memo: string) => void;
+    setShowMemo: (show: boolean) => void;
+    setEstimatedDuration: (duration: number) => void;
+    setTaskPriority: (priority: 'low' | 'medium' | 'high') => void;
+  }
+) => {
+  if (!data) return;
+
+  if (data.title !== undefined) {
+    setters.setTitle(data.title);
+  }
+  if (data.date) {
+    setters.setDate(data.date);
+  }
+  if (data.endDate) {
+    setters.setEndDate(data.endDate);
+  } else if (data.date) {
+    // endDateが指定されていない場合は開始時刻の1時間後
+    const newEndDate = new Date(data.date);
+    newEndDate.setTime(newEndDate.getTime() + 60 * 60 * 1000);
+    setters.setEndDate(newEndDate);
+  }
+  if (data.tags) {
+    setters.setTags(data.tags);
+  }
+  if (data.description) {
+    setters.setMemo(data.description);
+    setters.setShowMemo(true);
+  }
+  if (data.estimatedDuration) {
+    setters.setEstimatedDuration(data.estimatedDuration);
+  }
+  if (data.priority) {
+    setters.setTaskPriority(data.priority);
+  }
+};
+
+export const EssentialSingleView = ({
+  isOpen,
+  onClose,
+  onSave,
   onDelete,
   isEditMode = false,
-  initialData 
+  initialData
 }: EssentialSingleViewProps) => {
-  
-  // 2択式シンプルモード（最速入力と詳細予定のみ）
-  type ScheduleMode = 'defer' | 'schedule' // 後で決める | 今すぐ予定する
-  
-  const [scheduleMode, setScheduleMode] = useState<ScheduleMode>(() => {
-    // 初期データがある場合（編集モード）は適切なモードを選択
-    if (initialData?.date) {
-      // 時刻情報があるか、日付情報があれば予定モード
-      return 'schedule'
-    }
-    
-    // 新規作成の場合はlocalStorageから前回の選択を復元
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('boxlog-create-mode')
-      if (saved && ['defer', 'schedule'].includes(saved)) {
-        return saved as ScheduleMode
-      }
-    }
-    
-    return 'defer' // デフォルトは「後で決める」
-  })
 
-  // メインフィールドの状態
-  const [title, setTitle] = useState(initialData?.title || '')
-  const [date, setDate] = useState(() => {
-    if (initialData?.date) return initialData.date
-    // scheduleMode が 'specify' の場合のみ時刻を設定
-    if (scheduleMode === 'specify') {
-      // 現在時刻から15分単位で切り上げ
-      const now = new Date()
-      const minutes = now.getMinutes()
-      let roundedMinutes
-      
-      if (minutes === 0) {
-        roundedMinutes = 0
-      } else if (minutes <= 15) {
-        roundedMinutes = 15
-      } else if (minutes <= 30) {
-        roundedMinutes = 30
-      } else if (minutes <= 45) {
-        roundedMinutes = 45
-      } else {
-        roundedMinutes = 60
-      }
-      
-      if (roundedMinutes === 60) {
-        now.setHours(now.getHours() + 1)
-        now.setMinutes(0, 0, 0)
-      } else {
-        now.setMinutes(roundedMinutes, 0, 0)
-      }
-      return now
-    }
-    return new Date() // フォールバック
-  })
-  const [endDate, setEndDate] = useState(() => {
-    // endDateが直接指定されている場合はそれを使用
-    if (initialData?.endDate) {
-      return initialData.endDate
-    }
-    
-    let startTime
-    if (initialData?.date) {
-      startTime = new Date(initialData.date)
-    } else {
-      // 現在時刻から15分単位で切り上げ
-      const now = new Date()
-      const minutes = now.getMinutes()
-      let roundedMinutes
-      
-      if (minutes === 0) {
-        roundedMinutes = 0
-      } else if (minutes <= 15) {
-        roundedMinutes = 15
-      } else if (minutes <= 30) {
-        roundedMinutes = 30
-      } else if (minutes <= 45) {
-        roundedMinutes = 45
-      } else {
-        roundedMinutes = 60
-      }
-      
-      if (roundedMinutes === 60) {
-        now.setHours(now.getHours() + 1)
-        now.setMinutes(0, 0, 0)
-      } else {
-        now.setMinutes(roundedMinutes, 0, 0)
-      }
-      startTime = now
-    }
-    const defaultEnd = new Date(startTime)
-    defaultEnd.setTime(defaultEnd.getTime() + 60 * 60 * 1000) // 1時間後
-    return defaultEnd
-  })
-  const [tags, setTags] = useState<Tag[]>(initialData?.tags || [])
-  
-  // 新しいフィールド（プログレッシブ開示用）
-  const [estimatedDuration, setEstimatedDuration] = useState<number>(initialData?.estimatedDuration || 30) // デフォルト30分
-  const [taskPriority, setTaskPriority] = useState<'low' | 'medium' | 'high'>(initialData?.priority || 'medium')
+  // カスタムフックによる状態管理
+  const [formState, formActions] = useEssentialForm(initialData, isOpen)
 
-  // 前回のinitialDataを保存するRef
-  const prevInitialDataRef = useRef<typeof initialData | null>(null)
-  
-  // モーダルが開かれた時、またはinitialDataが実際に変更された時のみ更新
-  useEffect(() => {
-    if (isOpen && initialData) {
-      // 前回と同じ値かチェック（深い比較ではなく、キー値の比較）
-      const prev = prevInitialDataRef.current
-      const hasChanged = !prev || 
-        prev.title !== initialData.title ||
-        prev.date?.getTime() !== initialData.date?.getTime() ||
-        prev.endDate?.getTime() !== initialData.endDate?.getTime()
-      
-      if (hasChanged) {
-        
-        if (initialData.title !== undefined) {
-          setTitle(initialData.title)
-        }
-        if (initialData.date) {
-          setDate(initialData.date)
-        }
-        if (initialData.endDate) {
-          setEndDate(initialData.endDate)
-        } else if (initialData.date) {
-          // endDateが指定されていない場合は開始時刻の1時間後
-          const newEndDate = new Date(initialData.date)
-          newEndDate.setTime(newEndDate.getTime() + 60 * 60 * 1000)
-          setEndDate(newEndDate)
-        }
-        if (initialData.tags) {
-          setTags(initialData.tags)
-        }
-        if (initialData.description) {
-          setMemo(initialData.description)
-          setShowMemo(true)
-        }
-        if (initialData.estimatedDuration) {
-          setEstimatedDuration(initialData.estimatedDuration)
-        }
-        if (initialData.priority) {
-          setTaskPriority(initialData.priority)
-        }
-        
-        // 編集モードでのスケジュールモード更新（2択式）
-        if (initialData.date) {
-          setScheduleMode('schedule') // 日付があれば予定モード
-        } else {
-          setScheduleMode('defer') // 日付がなければ後で決めるモード
-        }
-        
-        // 現在の値を保存
-        prevInitialDataRef.current = initialData
-      }
-    }
-  }, [isOpen, initialData])
-  
-  // UI状態
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [fastInputMode, setFastInputMode] = useState(false) // 高速入力モード
-  
-  // 追加オプション状態
-  const [showMemo, setShowMemo] = useState(false)
-  const [memo, setMemo] = useState('')
-  const [reminder, setReminder] = useState<number | null>(null)
-  const [priority, setPriority] = useState<'low' | 'necessary' | 'high'>('necessary')
-  
-  // 2択モードの変更ハンドラー（シンプル化）
-  const handleScheduleModeChange = (newMode: ScheduleMode) => {
-    setScheduleMode(newMode)
-    // 新規作成の場合のみlocalStorageに保存（編集時は保存しない）
-    if (!initialData && typeof window !== 'undefined') {
-      localStorage.setItem('boxlog-create-mode', newMode)
-    }
-    
-    // モード変更時の日付設定
-    if (newMode === 'schedule') {
-      // 今すぐ予定するモード: 現在時刻から15分単位で切り上げ
-      const now = new Date()
-      const minutes = now.getMinutes()
-      let roundedMinutes
-      
-      if (minutes === 0) {
-        roundedMinutes = 0
-      } else if (minutes <= 15) {
-        roundedMinutes = 15
-      } else if (minutes <= 30) {
-        roundedMinutes = 30
-      } else if (minutes <= 45) {
-        roundedMinutes = 45
-      } else {
-        roundedMinutes = 60
-      }
-      
-      if (roundedMinutes === 60) {
-        now.setHours(now.getHours() + 1)
-        now.setMinutes(0, 0, 0)
-      } else {
-        now.setMinutes(roundedMinutes, 0, 0)
-      }
-      setDate(now)
-      
-      const defaultEnd = new Date(now)
-      defaultEnd.setTime(defaultEnd.getTime() + 60 * 60 * 1000) // 1時間後
-      setEndDate(defaultEnd)
-    }
-    // 'defer'モードの場合は何もしない（時刻情報は保存時にnullになる）
-  }
-  
+  // 分割代入で使いやすくする
+  const {
+    scheduleMode, title, date, endDate, tags, estimatedDuration, taskPriority,
+    memo, showMemo, reminder, priority, fastInputMode, isSubmitting, error, showSuccess
+  } = formState
+
+  const {
+    setScheduleMode, setTitle, setDate, setEndDate, setTags, setEstimatedDuration,
+    setTaskPriority, setMemo, setShowMemo, setReminder, setPriority, setFastInputMode,
+    setIsSubmitting, setError, setShowSuccess, resetForm
+  } = formActions
+
   // 入力データの検証
   const isValid = title.trim().length > 0
+
+  // ビジネスロジック処理をカスタムフックに委譲
+  const { handleSave, handleCancel } = useEssentialSingleView({
+    isOpen,
+    isValid,
+    isEditMode,
+    scheduleMode,
+    title,
+    date,
+    endDate,
+    tags,
+    memo,
+    estimatedDuration,
+    taskPriority,
+    fastInputMode,
+    onSave,
+    onClose,
+    formActions
+  })
 
   // プログレス計算
   const getProgress = () => {
     let progress = 0
-    if (title.trim().length > 0) progress += 33.33  // タイトル入力済み
-    if (date) progress += 33.33  // 日付設定済み
-    if (tags.length > 0) progress += 33.34  // タグ選択済み
+    if (title.trim().length > 0) progress += 33.33
+    if (date) progress += 33.33
+    if (tags.length > 0) progress += 33.34
     return Math.min(progress, 100)
   }
 
   // タグの色生成
   const generateTagColor = (name: string): string => {
     const colors = [
-      '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
+      '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
       '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1'
     ]
     const hash = name.split('').reduce((a, b) => {
@@ -290,149 +249,6 @@ export const EssentialSingleView = ({
     }, 0)
     return colors[Math.abs(hash) % colors.length]
   }
-
-  // モーダルキャンセル時の処理（ドラッグ選択をクリア）
-  const handleCancel = () => {
-    // カスタムイベントを発行してドラッグ選択状態をクリア
-    window.dispatchEvent(new CustomEvent('calendar-drag-cancel'))
-    onClose()
-  }
-
-  // 保存処理
-  const handleSave = useCallback(async () => {
-    if (!isValid) return
-
-    setIsSubmitting(true)
-    setError(null)
-
-    try {
-      // 2択モードに応じてデータを整形
-      const saveData: any = {
-        title,
-        tags,
-        description: memo || undefined
-      }
-      
-      if (scheduleMode === 'schedule') {
-        // 今すぐ予定するモード
-        saveData.date = date
-        saveData.endDate = endDate
-        saveData.status = 'scheduled'
-      } else {
-        // 後で決めるモード
-        saveData.date = null
-        saveData.endDate = null
-        saveData.estimatedDuration = estimatedDuration
-        saveData.priority = taskPriority
-        saveData.status = 'backlog'
-      }
-      
-      await onSave(saveData)
-      
-      // 高速入力モードの判定（後で決める + Cmd+Enter）
-      const isQuickInput = scheduleMode === 'defer' && !isEditMode
-      
-      if (isQuickInput && fastInputMode) {
-        // 高速入力モード: モーダルを閉じずにフォームをリセット
-        setTitle('')
-        setTags([])
-        setMemo('')
-        setShowMemo(false)
-        setEstimatedDuration(30)
-        setTaskPriority('medium')
-        
-        // タイトルフィールドにフォーカスを戻す
-        setTimeout(() => {
-          const titleInput = document.querySelector('input[placeholder*="イベント"], input[placeholder*="title"]') as HTMLInputElement
-          if (titleInput) {
-            titleInput.focus()
-          }
-        }, 100)
-      } else {
-        // 通常モード: 成功アニメーションしてモーダルを閉じる
-        setShowSuccess(true)
-        setTimeout(() => {
-          onClose()
-          setShowSuccess(false)
-          // リセット
-          setTitle('')
-          setDate(new Date())
-          setTags([])
-          setFastInputMode(false)
-        }, 1500)
-      }
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [isValid, onSave, title, date, endDate, tags, onClose, scheduleMode, estimatedDuration, taskPriority, memo])
-
-  // キーボードショートカット（2択式対応）
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return
-
-      if (e.key === 'Escape') {
-        handleCancel()
-        return
-      }
-
-      // Cmd+Enter で高速入力モードを有効化
-      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-        if (isValid) {
-          e.preventDefault()
-          if (scheduleMode === 'defer' && !isEditMode) {
-            setFastInputMode(true)
-          }
-          handleSave()
-        }
-        return
-      }
-      
-      // Enter で通常保存（後で決めるモードのみ）
-      if (e.key === 'Enter' && scheduleMode === 'defer') {
-        if (isValid) {
-          e.preventDefault()
-          handleSave()
-        }
-        return
-      }
-
-      // 数字キーでモード切り替え
-      if (e.key === '1') {
-        e.preventDefault()
-        handleScheduleModeChange('defer')
-        return
-      }
-      
-      if (e.key === '2') {
-        e.preventDefault()
-        handleScheduleModeChange('schedule')
-        return
-      }
-
-      // Tabキーでモード切り替え（タイトル入力時以外）
-      if (e.key === 'Tab' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-        e.preventDefault()
-        const newMode = scheduleMode === 'defer' ? 'schedule' : 'defer'
-        handleScheduleModeChange(newMode)
-        return
-      }
-
-      // Spaceキーでモード切り替え（入力フィールド以外）
-      if (e.key === ' ' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
-        e.preventDefault()
-        const newMode = scheduleMode === 'defer' ? 'schedule' : 'defer'
-        handleScheduleModeChange(newMode)
-        return
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isOpen, isValid, handleCancel, handleSave, scheduleMode, handleScheduleModeChange])
 
   // スマート抽出のハンドリング
   const handleSmartExtract = (extracted: {
@@ -627,7 +443,7 @@ export const EssentialSingleView = ({
                         name="scheduleMode"
                         value="defer"
                         checked={scheduleMode === 'defer'}
-                        onChange={(e) => handleScheduleModeChange(e.target.value as ScheduleMode)}
+                        onChange={(e) => setScheduleMode(e.target.value as ScheduleMode)}
                         className="sr-only"
                       />
                       <div className={`
@@ -663,7 +479,7 @@ export const EssentialSingleView = ({
                         name="scheduleMode"
                         value="schedule"
                         checked={scheduleMode === 'schedule'}
-                        onChange={(e) => handleScheduleModeChange(e.target.value as ScheduleMode)}
+                        onChange={(e) => setScheduleMode(e.target.value as ScheduleMode)}
                         className="sr-only"
                       />
                       <div className={`
