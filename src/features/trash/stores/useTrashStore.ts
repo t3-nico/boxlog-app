@@ -1,16 +1,16 @@
 import { create } from 'zustand'
 
-import { 
-  TrashStore, 
-  TrashItem, 
-  TrashFilters, 
-  TrashSort, 
-  TrashStats, 
-  RestoreResult, 
-  DeleteResult, 
-  TrashItemType,
+import {
+  DeleteResult,
+  RestoreResult,
   TRASH_RETENTION_DAYS,
-  isTrashItem
+  TrashFilters,
+  TrashItem,
+  TrashItemType,
+  TrashSort,
+  TrashStats,
+  TrashStore,
+  isTrashItem,
 } from '../types/trash'
 
 // LocalStorage キー
@@ -19,19 +19,31 @@ const STORAGE_KEY = 'boxlog-trash'
 // ブラウザ環境判定
 const isBrowser = typeof window !== 'undefined'
 
+// LocalStorage用の型定義（Date型が文字列になっている）
+interface TrashItemForStorage {
+  id: string
+  originalId: string
+  type: TrashItemType
+  data: unknown
+  deletedAt: string // Date型が文字列になっている
+  deletedBy: string
+  title: string
+  description?: string
+}
+
 /**
  * LocalStorage への保存
  */
 const saveToLocalStorage = (items: TrashItem[]) => {
   if (!isBrowser) return
-  
+
   try {
-    const serializedItems = items.map(item => ({
+    const serializedItems = items.map((item) => ({
       ...item,
       deletedAt: item.deletedAt.toISOString(),
-      selectedIds: undefined // Setは保存しない
+      selectedIds: undefined, // Setは保存しない
     }))
-    
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(serializedItems))
   } catch (error) {
     console.error('💾 Failed to save trash to localStorage:', error)
@@ -43,16 +55,16 @@ const saveToLocalStorage = (items: TrashItem[]) => {
  */
 const loadFromLocalStorage = (): TrashItem[] => {
   if (!isBrowser) return []
-  
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (!stored) return []
-    
+
     const parsed = JSON.parse(stored)
     return parsed
-      .map((item: any) => ({
+      .map((item: TrashItemForStorage) => ({
         ...item,
-        deletedAt: new Date(item.deletedAt)
+        deletedAt: new Date(item.deletedAt),
       }))
       .filter(isTrashItem)
   } catch (error) {
@@ -67,7 +79,7 @@ const loadFromLocalStorage = (): TrashItem[] => {
 const defaultFilters: TrashFilters = {
   types: [],
   searchQuery: '',
-  dateRange: { from: null, to: null }
+  dateRange: { from: null, to: null },
 }
 
 /**
@@ -75,7 +87,7 @@ const defaultFilters: TrashFilters = {
  */
 const defaultSort: TrashSort = {
   by: 'deletedAt',
-  order: 'desc'
+  order: 'desc',
 }
 
 /**
@@ -95,15 +107,15 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   addItem: async (itemData) => {
     const newItem: TrashItem = {
       ...itemData,
-      deletedAt: new Date()
+      deletedAt: new Date(),
     }
 
-    set(state => {
+    set((state) => {
       const updatedItems = [newItem, ...state.items]
       saveToLocalStorage(updatedItems)
       return {
         items: updatedItems,
-        error: null
+        error: null,
       }
     })
   },
@@ -111,42 +123,44 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // 複数アイテム追加
   addItems: async (itemsData) => {
     const now = new Date()
-    const newItems: TrashItem[] = itemsData.map(itemData => ({
+    const newItems: TrashItem[] = itemsData.map((itemData) => ({
       ...itemData,
-      deletedAt: now
+      deletedAt: now,
     }))
 
-    set(state => {
+    set((state) => {
       const updatedItems = [...newItems, ...state.items]
       saveToLocalStorage(updatedItems)
       return {
         items: updatedItems,
-        error: null
+        error: null,
       }
     })
   },
 
   // アイテム削除（内部使用）
   removeItem: (id) => {
-    set(state => {
-      const updatedItems = state.items.filter(item => item.id !== id)
+    set((state) => {
+      const updatedItems = state.items.filter((item) => item.id !== id)
       saveToLocalStorage(updatedItems)
       return {
         items: updatedItems,
-        selectedIds: new Set(Array.from(state.selectedIds).filter(selectedId => selectedId !== id))
+        selectedIds: new Set(Array.from(state.selectedIds).filter((selectedId) => selectedId !== id)),
       }
     })
   },
 
   // 複数アイテム削除（内部使用）
   removeItems: (ids) => {
-    set(state => {
-      const updatedItems = state.items.filter(item => !ids.includes(item.id))
-      const updatedSelectedIds = new Set(Array.from(state.selectedIds).filter(selectedId => !ids.includes(selectedId)))
+    set((state) => {
+      const updatedItems = state.items.filter((item) => !ids.includes(item.id))
+      const updatedSelectedIds = new Set(
+        Array.from(state.selectedIds).filter((selectedId) => !ids.includes(selectedId))
+      )
       saveToLocalStorage(updatedItems)
       return {
         items: updatedItems,
-        selectedIds: updatedSelectedIds
+        selectedIds: updatedSelectedIds,
       }
     })
   },
@@ -154,8 +168,8 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // アイテム復元
   restoreItem: async (id) => {
     const { items } = get()
-    const item = items.find(item => item.id === id)
-    
+    const item = items.find((item) => item.id === id)
+
     if (!item) {
       throw new Error(`アイテム ID:${id} が見つかりません`)
     }
@@ -174,19 +188,19 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // 複数アイテム復元
   restoreItems: async (ids) => {
     const { items } = get()
-    const itemsToRestore = items.filter(item => ids.includes(item.id))
-    
+    const itemsToRestore = items.filter((item) => ids.includes(item.id))
+
     if (itemsToRestore.length === 0) {
       return
     }
 
     set({ loading: true })
-    
+
     const result: RestoreResult = {
       success: 0,
       failed: 0,
       errors: [],
-      restoredIds: []
+      restoredIds: [],
     }
 
     for (const item of itemsToRestore) {
@@ -207,9 +221,9 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
       get().removeItems(result.restoredIds)
     }
 
-    set({ 
+    set({
       loading: false,
-      error: result.failed > 0 ? `${result.failed}件の復元に失敗しました` : null
+      error: result.failed > 0 ? `${result.failed}件の復元に失敗しました` : null,
     })
 
     return result
@@ -218,8 +232,8 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // 完全削除（単一）
   permanentlyDelete: async (id) => {
     const { items } = get()
-    const item = items.find(item => item.id === id)
-    
+    const item = items.find((item) => item.id === id)
+
     if (!item) return
 
     if (!confirm(`「${item.title}」を完全に削除しますか？この操作は元に戻せません。`)) {
@@ -233,8 +247,8 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // 完全削除（複数）
   permanentlyDeleteItems: async (ids) => {
     const { items } = get()
-    const itemsToDelete = items.filter(item => ids.includes(item.id))
-    
+    const itemsToDelete = items.filter((item) => ids.includes(item.id))
+
     if (itemsToDelete.length === 0) return
 
     if (!confirm(`${itemsToDelete.length}件のアイテムを完全に削除しますか？この操作は元に戻せません。`)) {
@@ -246,7 +260,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
     const result: DeleteResult = {
       deletedCount: itemsToDelete.length,
-      errors: []
+      errors: [],
     }
 
     return result
@@ -255,7 +269,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // ゴミ箱を空にする
   emptyTrash: async () => {
     const { items } = get()
-    
+
     if (items.length === 0) return
 
     if (!confirm(`ゴミ箱内の${items.length}件のアイテムをすべて削除しますか？この操作は元に戻せません。`)) {
@@ -265,9 +279,9 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     set({
       items: [],
       selectedIds: new Set(),
-      error: null
+      error: null,
     })
-    
+
     saveToLocalStorage([])
     console.log('🗑️ Trash emptied:', items.length, 'items deleted')
   },
@@ -275,30 +289,30 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // 期限切れアイテムの削除
   clearExpiredItems: async () => {
     const expiredItems = get().getExpiredItems()
-    
+
     if (expiredItems.length === 0) return
 
-    const expiredIds = expiredItems.map(item => item.id)
+    const expiredIds = expiredItems.map((item) => item.id)
     get().removeItems(expiredIds)
-    
+
     console.log('🗑️ Expired items cleared:', expiredItems.length, 'items')
   },
 
   // 選択操作
   selectItem: (id) => {
-    set(state => ({
-      selectedIds: new Set([...Array.from(state.selectedIds), id])
+    set((state) => ({
+      selectedIds: new Set([...Array.from(state.selectedIds), id]),
     }))
   },
 
   selectItems: (ids) => {
-    set(state => ({
-      selectedIds: new Set([...Array.from(state.selectedIds), ...ids])
+    set((state) => ({
+      selectedIds: new Set([...Array.from(state.selectedIds), ...ids]),
     }))
   },
 
   deselectItem: (id) => {
-    set(state => {
+    set((state) => {
       const newSelected = new Set(state.selectedIds)
       newSelected.delete(id)
       return { selectedIds: newSelected }
@@ -306,15 +320,15 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   deselectItems: (ids) => {
-    set(state => {
-      const newSelected = new Set(Array.from(state.selectedIds).filter(selectedId => !ids.includes(selectedId)))
+    set((state) => {
+      const newSelected = new Set(Array.from(state.selectedIds).filter((selectedId) => !ids.includes(selectedId)))
       return { selectedIds: newSelected }
     })
   },
 
   selectAll: () => {
     const filteredItems = get().getFilteredItems()
-    const allIds = filteredItems.map(item => item.id)
+    const allIds = filteredItems.map((item) => item.id)
     set({ selectedIds: new Set(allIds) })
   },
 
@@ -324,8 +338,8 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
   // フィルター・ソート
   setFilters: (newFilters) => {
-    set(state => ({
-      filters: { ...state.filters, ...newFilters }
+    set((state) => ({
+      filters: { ...state.filters, ...newFilters },
     }))
   },
 
@@ -334,27 +348,27 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   },
 
   setSort: (newSort) => {
-    set(state => ({
-      sort: { ...state.sort, ...newSort }
+    set((state) => ({
+      sort: { ...state.sort, ...newSort },
     }))
   },
 
   // データ取得
   fetchItems: async () => {
     set({ loading: true })
-    
+
     try {
       const items = loadFromLocalStorage()
-      set({ 
+      set({
         items,
         loading: false,
         error: null,
-        lastFetched: new Date()
+        lastFetched: new Date(),
       })
     } catch (error) {
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch items'
+        error: error instanceof Error ? error.message : 'Failed to fetch items',
       })
     }
   },
@@ -367,10 +381,11 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     // 検索フィルター
     if (filters.searchQuery.trim()) {
       const query = filters.searchQuery.toLowerCase()
-      filtered = filtered.filter(item => 
-        item.title.toLowerCase().includes(query) ||
-        item.description?.toLowerCase().includes(query) ||
-        item.metadata?.tags?.some(tag => tag.toLowerCase().includes(query))
+      filtered = filtered.filter(
+        (item) =>
+          item.title.toLowerCase().includes(query) ||
+          item.description?.toLowerCase().includes(query) ||
+          item.metadata?.tags?.some((tag) => tag.toLowerCase().includes(query))
       )
     }
 
@@ -388,13 +403,13 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     const cutoffDate = new Date()
     cutoffDate.setDate(cutoffDate.getDate() - days)
 
-    return items.filter(item => item.deletedAt < cutoffDate)
+    return items.filter((item) => item.deletedAt < cutoffDate)
   },
 
   // タイプ別アイテム取得
   getItemsByType: (type) => {
     const { items } = get()
-    return items.filter(item => item.type === type)
+    return items.filter((item) => item.type === type)
   },
 
   // 統計情報取得
@@ -410,20 +425,20 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
       totalItems: items.length,
       itemsByType: {} as Record<TrashItemType, number>,
       expiredItems: get().getExpiredItems().length,
-      deletedToday: items.filter(item => item.deletedAt >= today).length,
-      deletedThisWeek: items.filter(item => item.deletedAt >= thisWeekStart).length,
-      deletedThisMonth: items.filter(item => item.deletedAt >= thisMonthStart).length,
-      estimatedSize: items.reduce((total, item) => total + (item.metadata?.fileSize || 0), 0)
+      deletedToday: items.filter((item) => item.deletedAt >= today).length,
+      deletedThisWeek: items.filter((item) => item.deletedAt >= thisWeekStart).length,
+      deletedThisMonth: items.filter((item) => item.deletedAt >= thisMonthStart).length,
+      estimatedSize: items.reduce((total, item) => total + (item.metadata?.fileSize || 0), 0),
     }
 
     // タイプ別カウント初期化
     const types: TrashItemType[] = ['event', 'task', 'document', 'note', 'tag', 'folder', 'record', 'template']
-    types.forEach(type => {
+    types.forEach((type) => {
       stats.itemsByType[type] = 0
     })
 
     // タイプ別カウント
-    items.forEach(item => {
+    items.forEach((item) => {
       stats.itemsByType[item.type] = (stats.itemsByType[item.type] || 0) + 1
     })
 
@@ -433,7 +448,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
   // エラークリア
   clearError: () => {
     set({ error: null })
-  }
+  },
 }))
 
 /**
@@ -448,7 +463,7 @@ async function restoreItemByType(item: TrashItem): Promise<void> {
       await eventStore.restoreEvent(item.originalData)
       break
     }
-    
+
     case 'task': {
       // Dynamically import to avoid circular dependencies
       const { useTaskStore } = await import('@/features/tasks/stores/useTaskStore')
@@ -456,7 +471,7 @@ async function restoreItemByType(item: TrashItem): Promise<void> {
       await taskStore.createTask(item.originalData)
       break
     }
-    
+
     // 他のタイプも同様に実装
     case 'document':
     case 'note':
@@ -464,10 +479,9 @@ async function restoreItemByType(item: TrashItem): Promise<void> {
     case 'folder':
     case 'record':
     case 'template':
-
       console.warn(`Restore not implemented for type: ${item.type}`)
       break
-      
+
     default:
       throw new Error(`Unknown item type: ${item.type}`)
   }
@@ -478,7 +492,7 @@ if (isBrowser) {
   // 1日1回のクリーンアップ
   const lastCleanup = localStorage.getItem('trash-last-cleanup')
   const today = new Date().toDateString()
-  
+
   if (lastCleanup !== today) {
     setTimeout(() => {
       const store = useTrashStore.getState()
