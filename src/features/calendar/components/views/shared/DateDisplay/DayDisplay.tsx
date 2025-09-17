@@ -49,6 +49,12 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
     <div
       className={headerClasses}
       onClick={handleClick}
+      onKeyDown={onClick ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      } : undefined}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       aria-label={onClick ? `${dateDisplay}を選択` : undefined}

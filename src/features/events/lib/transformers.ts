@@ -98,21 +98,35 @@ export function transformCreateRequestToEntity(request: CreateEventRequest): Omi
 export function transformUpdateRequestToEntity(request: UpdateEventRequest): Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> {
   const result: Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> = {}
 
-  if (request.title !== undefined) result.title = request.title
-  if (request.description !== undefined) result.description = request.description || null
-  if (request.startDate !== undefined) result.start_date = request.startDate?.toISOString() || null
-  if (request.endDate !== undefined) result.end_date = request.endDate?.toISOString() || null
-  if (request.type !== undefined) result.type = request.type
-  if (request.status !== undefined) result.status = request.status
-  if (request.priority !== undefined) result.priority = request.priority || null
-  if (request.color !== undefined) result.color = request.color
-  if (request.isRecurring !== undefined) result.is_recurring = request.isRecurring || false
-  if (request.recurrenceRule !== undefined) result.recurrence_rule = request.recurrenceRule || null
-  if (request.parentEventId !== undefined) result.parent_event_id = request.parentEventId || null
-  if (request.items !== undefined) result.items = request.items || null
-  if (request.location !== undefined) result.location = request.location || null
-  if (request.url !== undefined) result.url = request.url || null
-  if (request.reminders !== undefined) result.reminders = request.reminders || null
+  // フィールドマッピング定義
+  const fieldMappings: Array<{
+    requestField: keyof UpdateEventRequest
+    entityField: keyof Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>
+    transform?: (value: any) => any
+  }> = [
+    { requestField: 'title', entityField: 'title' },
+    { requestField: 'description', entityField: 'description', transform: (v) => v || null },
+    { requestField: 'startDate', entityField: 'start_date', transform: (v) => v?.toISOString() || null },
+    { requestField: 'endDate', entityField: 'end_date', transform: (v) => v?.toISOString() || null },
+    { requestField: 'type', entityField: 'type' },
+    { requestField: 'status', entityField: 'status' },
+    { requestField: 'priority', entityField: 'priority', transform: (v) => v || null },
+    { requestField: 'color', entityField: 'color' },
+    { requestField: 'isRecurring', entityField: 'is_recurring', transform: (v) => v || false },
+    { requestField: 'recurrenceRule', entityField: 'recurrence_rule', transform: (v) => v || null },
+    { requestField: 'parentEventId', entityField: 'parent_event_id', transform: (v) => v || null },
+    { requestField: 'items', entityField: 'items', transform: (v) => v || null },
+    { requestField: 'location', entityField: 'location', transform: (v) => v || null },
+    { requestField: 'url', entityField: 'url', transform: (v) => v || null },
+    { requestField: 'reminders', entityField: 'reminders', transform: (v) => v || null }
+  ]
+
+  // マッピングに従って変換
+  fieldMappings.forEach(({ requestField, entityField, transform }) => {
+    if (request[requestField] !== undefined) {
+      result[entityField] = transform ? transform(request[requestField]) : request[requestField]
+    }
+  })
 
   return result
 }

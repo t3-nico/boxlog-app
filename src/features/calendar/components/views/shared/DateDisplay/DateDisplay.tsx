@@ -55,6 +55,15 @@ export const DateDisplay = ({
       )}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
+      onKeyDown={onClick ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleClick()
+        }
+      } : undefined}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? `Select ${format(date, dateFormat)}` : undefined}
     >
       {monthYear && (
         <div className="text-xs text-muted-foreground mb-1">
