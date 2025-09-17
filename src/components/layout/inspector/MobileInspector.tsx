@@ -4,22 +4,21 @@ import React from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { X, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
+import { BotMessageSquare, Calendar, ListTodo, X } from 'lucide-react'
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-import { colors, rounded, animations } from '@/config/theme'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn-ui/tabs'
+import { animations, colors, icons, rounded } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
-
-
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
+const { sm } = icons.size
 
 export const MobileInspector = () => {
-  const pathname = usePathname()
+  const _pathname = usePathname()
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
   const { toggleInspector } = useInspectorStore()
 
@@ -37,17 +36,23 @@ export const MobileInspector = () => {
   return (
     <>
       {/* Background Overlay */}
-      <div 
-        className={cn(
-          'fixed inset-0 z-[9998]',
-          'bg-black bg-opacity-50',
-          animations.appear.fadeIn
-        )}
+      <div
+        className={cn('fixed inset-0 z-[9998]', 'bg-black bg-opacity-50', animations.appear.fadeIn)}
         onClick={() => toggleInspector()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleInspector()
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        aria-label="Close inspector"
       />
-      
+
       {/* Mobile Inspector Content */}
-      <div 
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+      <div
         className={cn(
           'fixed inset-0 z-[9999]',
           'flex flex-col',
@@ -62,16 +67,19 @@ export const MobileInspector = () => {
         role="dialog"
       >
         {/* Mobile Inspector Header with Close Button */}
-        <div className={cn(
-          'flex items-center justify-start p-4',
-          'border-b',
-          colors.border.default,
-          colors.background.surface
-        )}>
+        <div
+          className={cn(
+            'flex items-center justify-start p-4',
+            'border-b',
+            colors.border.default,
+            colors.background.surface
+          )}
+        >
           <button
+            type="button"
             onClick={() => toggleInspector()}
             className={cn(
-              'w-10 h-10 flex items-center justify-center',
+              'flex h-10 w-10 items-center justify-center',
               rounded.component.button.sm,
               animations.transition.fast,
               colors.hover.subtle,
@@ -84,32 +92,32 @@ export const MobileInspector = () => {
         </div>
 
         {/* Inspector Tabs */}
-        <Tabs defaultValue="overview" className="flex-1 flex flex-col min-h-0">
-          <div className={cn("px-4 pb-2 border-b flex-shrink-0", colors.border.default)}>
+        <Tabs defaultValue="overview" className="flex min-h-0 flex-1 flex-col">
+          <div className={cn('flex-shrink-0 border-b px-4 pb-2', colors.border.default)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="h-4 w-4" />
                 概要
               </TabsTrigger>
               <TabsTrigger value="ai" className="flex items-center gap-1">
-                <BotMessageSquare className="w-4 h-4" />
+                <BotMessageSquare className="h-4 w-4" />
                 AI
               </TabsTrigger>
               <TabsTrigger value="tasks" className="flex items-center gap-1">
-                <ListTodo className="w-4 h-4" />
+                <ListTodo className="h-4 w-4" />
                 タスク
               </TabsTrigger>
             </TabsList>
           </div>
-          
-          <div className="flex-1 min-h-0 overflow-hidden">
-            <TabsContent value="overview" className="p-0 m-0 h-full overflow-y-auto">
+
+          <div className="min-h-0 flex-1 overflow-hidden">
+            <TabsContent value="overview" className="m-0 h-full overflow-y-auto p-0">
               <InspectorContent />
             </TabsContent>
-            <TabsContent value="ai" className="p-0 m-0 h-full overflow-y-auto">
+            <TabsContent value="ai" className="m-0 h-full overflow-y-auto p-0">
               <InspectorAIChat />
             </TabsContent>
-            <TabsContent value="tasks" className="p-0 m-0 h-full overflow-y-auto">
+            <TabsContent value="tasks" className="m-0 h-full overflow-y-auto p-0">
               <UnscheduledTasksList />
             </TabsContent>
           </div>

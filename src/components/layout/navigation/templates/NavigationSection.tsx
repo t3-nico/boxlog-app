@@ -25,7 +25,7 @@ export const NavigationSection = ({
   contentClassName,
   collapsible = false,
   defaultCollapsed = false,
-  icon: Icon
+  icon: Icon,
 }: NavigationSectionProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
 
@@ -39,10 +39,11 @@ export const NavigationSection = ({
     <div className={cn('space-y-2', className)}>
       {/* Section Header */}
       {title && (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
           className={cn(
             'flex items-center',
-            collapsible && 'cursor-pointer hover:opacity-70 transition-opacity',
+            collapsible && 'cursor-pointer transition-opacity hover:opacity-70',
             titleClassName
           )}
           onClick={handleToggle}
@@ -56,32 +57,18 @@ export const NavigationSection = ({
                 e.preventDefault()
                 handleToggle()
               }
-            }
+            },
           })}
         >
-          {Icon && (
-            <Icon className={cn(
-              'w-4 h-4 mr-2 flex-shrink-0',
-              text.muted
-            )} />
-          )}
-          
-          <h3 className={cn(
-            'flex-1',
-            heading.h4,
-            text.muted,
-typography.body.xs, 'font-semibold uppercase tracking-wider'
-          )}>
+          {Icon && <Icon className={cn('mr-2 h-4 w-4 flex-shrink-0', text.muted)} />}
+
+          <h3 className={cn('flex-1', text.muted, typography.body.xs, 'font-semibold uppercase tracking-wider')}>
             {title}
           </h3>
 
           {collapsible && (
             <svg
-              className={cn(
-                'w-4 h-4 transition-transform',
-                text.muted,
-                isCollapsed ? 'rotate-0' : 'rotate-90'
-              )}
+              className={cn('h-4 w-4 transition-transform', text.muted, isCollapsed ? 'rotate-0' : 'rotate-90')}
               fill="none"
               strokeWidth="2"
               viewBox="0 0 24 24"
@@ -94,14 +81,7 @@ typography.body.xs, 'font-semibold uppercase tracking-wider'
       )}
 
       {/* Section Content */}
-      {(!collapsible || !isCollapsed) && (
-        <div className={cn(
-          'space-y-1',
-          contentClassName
-        )}>
-          {children}
-        </div>
-      )}
+      {(!collapsible || !isCollapsed) && <div className={cn('space-y-1', contentClassName)}>{children}</div>}
     </div>
   )
 }
