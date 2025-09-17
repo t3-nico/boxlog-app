@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { memo, useState, useEffect } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 
 import { calendarColors } from '@/features/calendar/theme'
 
@@ -12,8 +12,6 @@ import { cn } from '@/lib/utils'
 
 import { MIN_EVENT_HEIGHT, Z_INDEX } from '../../constants/grid.constants'
 import type { EventBlockProps, TimedEvent } from '../../types/event.types'
-
-
 
 import { EventContent } from './EventContent'
 
@@ -32,21 +30,21 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   _isResizing = false,
   className = '',
   style = {},
-  previewTime = null
+  previewTime = null,
 }) {
   const [isHovered, setIsHovered] = useState(false)
-  
+
   // すべてのイベントは時間指定イベント
-  
+
   // カレンダーテーマのscheduledカラーを使用
   const scheduledColors = calendarColors.event.scheduled
-  
+
   // positionが未定義の場合のデフォルト値
   const safePosition = position || {
     top: 0,
     left: 0,
     width: 100,
-    height: MIN_EVENT_HEIGHT
+    height: MIN_EVENT_HEIGHT,
   }
 
   // 動的スタイルを計算
@@ -58,60 +56,61 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     height: `${Math.max(safePosition.height, MIN_EVENT_HEIGHT)}px`,
     zIndex: isHovered || isSelected || isDragging ? Z_INDEX.DRAGGING : Z_INDEX.EVENTS,
     cursor: isDragging ? 'grabbing' : 'pointer',
-    ...style
+    ...style,
   }
-  
+
   // イベントハンドラー
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     onClick?.(event)
   }
-  
+
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
     onDoubleClick?.(event)
   }
-  
+
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     onContextMenu?.(event, e)
   }
-  
+
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) { // 左クリックのみ
+    if (e.button === 0) {
+      // 左クリックのみ
       onDragStart?.(event)
     }
   }
-  
+
   const handleMouseUp = () => {
     if (isDragging) {
       onDragEnd?.(event)
     }
   }
-  
+
   // Escキーでドラッグをキャンセル
   useEffect(() => {
     if (!isDragging) return
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         // ドラッグ状態をリセット（親コンポーネントに委ねる）
         onDragEnd?.(event)
       }
     }
-    
+
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isDragging, onDragEnd, event])
-  
+
   // 状態に応じたスタイルを決定
   const _eventState = isDragging ? 'dragging' : isSelected ? 'selected' : isHovered ? 'hovered' : 'default'
-  
+
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const eventClasses = cn(
     // 基本スタイル
-    'rounded-md shadow-sm px-2 py-1 overflow-hidden',
+    'overflow-hidden rounded-md px-2 py-1 shadow-sm',
     'focus:outline-none focus:ring-2 focus:ring-offset-1',
     // colors.tsのscheduledカラーを参照（ドラッグ中はactive）
     isDragging ? scheduledColors.active : scheduledColors.background,
@@ -123,7 +122,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
     safePosition.height < 30 ? 'px-1 py-0.5 text-xs' : 'px-2 py-1 text-sm',
     className
   )
-  
+
   return (
     <div
       className={eventClasses}
@@ -149,19 +148,28 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       aria-pressed={isSelected}
     >
       <EventContent
-        event={{
-          ...event,
-          start: event.startDate || new Date(),
-          end: event.endDate || new Date()
-        } as TimedEvent}
+        event={
+          {
+            ...event,
+            start: event.startDate || new Date(),
+            end: event.endDate || new Date(),
+          } as TimedEvent
+        }
         isCompact={safePosition.height < 40}
         showTime={safePosition.height >= 30}
         previewTime={previewTime}
       />
-      
+
       {/* 下部リサイズハンドル */}
       <div
-        className="absolute bottom-0 left-0 right-0 cursor-ns-resize"
+        className="absolute bottom-0 left-0 right-0 cursor-ns-resize focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+        role="slider"
+        tabIndex={0}
+        aria-label="Resize event duration"
+        aria-orientation="vertical"
+        aria-valuenow={safePosition.height}
+        aria-valuemin={20}
+        aria-valuemax={480}
         onMouseDown={(e) => {
           e.stopPropagation()
           e.preventDefault()
@@ -169,12 +177,18 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
             top: safePosition.top,
             left: safePosition.left,
             width: safePosition.width,
-            height: safePosition.height
+            height: safePosition.height,
           })
         }}
-        style={{ 
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            // キーボードでのリサイズ操作の代替手段
+          }
+        }}
+        style={{
           height: '8px',
-          zIndex: 10
+          zIndex: 10,
         }}
         title="ドラッグして終了時間を調整"
       />

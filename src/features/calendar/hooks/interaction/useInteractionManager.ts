@@ -4,24 +4,24 @@
 
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // インタラクション状態の管理
 export interface InteractionState {
   // クリック・選択状態
   selectedEventId: string | null
   isCreating: boolean
-  
+
   // ドラッグ状態
   isDragging: boolean
   dragStartTime: string | null
   dragEndTime: string | null
   dragDate: Date | null
-  
+
   // ホバー状態
   hoveredEventId: string | null
   hoveredTimeSlot: { date: Date; time: string } | null
-  
+
   // 作成中のイベント
   creatingEvent: {
     date: Date
@@ -46,7 +46,7 @@ const defaultState: InteractionState = {
   dragDate: null,
   hoveredEventId: null,
   hoveredTimeSlot: null,
-  creatingEvent: null
+  creatingEvent: null,
 }
 
 export function useInteractionManager(options: UseInteractionManagerOptions = {}) {
@@ -56,42 +56,42 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
 
   // イベント選択
   const selectEvent = useCallback((eventId: string | null) => {
-    setState(prev => ({ ...prev, selectedEventId: eventId }))
+    setState((prev) => ({ ...prev, selectedEventId: eventId }))
   }, [])
 
   // ホバー操作
   const setHoveredEvent = useCallback((eventId: string | null) => {
-    setState(prev => ({ ...prev, hoveredEventId: eventId }))
+    setState((prev) => ({ ...prev, hoveredEventId: eventId }))
   }, [])
 
   const setHoveredTimeSlot = useCallback((date: Date | null, time: string | null) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      hoveredTimeSlot: date && time ? { date, time } : null
+      hoveredTimeSlot: date && time ? { date, time } : null,
     }))
   }, [])
 
   // ドラッグ操作
   const startDrag = useCallback((date: Date, time: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isDragging: true,
       dragDate: date,
       dragStartTime: time,
       dragEndTime: time,
-      isCreating: false
+      isCreating: false,
     }))
   }, [])
 
   const updateDrag = useCallback((date: Date, time: string) => {
-    setState(prev => {
+    setState((prev) => {
       if (!prev.isDragging || !prev.dragDate) return prev
-      
+
       // 同じ日付の場合のみドラッグを継続
       if (date.toDateString() === prev.dragDate.toDateString()) {
         return {
           ...prev,
-          dragEndTime: time
+          dragEndTime: time,
         }
       }
       return prev
@@ -99,7 +99,7 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
   }, [])
 
   const endDrag = useCallback(() => {
-    setState(prev => {
+    setState((prev) => {
       if (!prev.isDragging || !prev.dragDate || !prev.dragStartTime || !prev.dragEndTime) {
         return { ...prev, isDragging: false, dragStartTime: null, dragEndTime: null, dragDate: null }
       }
@@ -107,15 +107,16 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
       // 開始時刻と終了時刻を正規化
       const startTime = prev.dragStartTime
       const endTime = prev.dragEndTime
-      
+
       const startMinutes = timeToMinutes(startTime)
       const endMinutes = timeToMinutes(endTime)
-      
+
       // 時間範囲が有効な場合のみイベント作成状態に移行
-      if (Math.abs(endMinutes - startMinutes) >= 15) { // 最小15分
+      if (Math.abs(endMinutes - startMinutes) >= 15) {
+        // 最小15分
         const finalStartTime = startMinutes <= endMinutes ? startTime : endTime
         const finalEndTime = startMinutes <= endMinutes ? endTime : startTime
-        
+
         return {
           ...prev,
           isDragging: false,
@@ -127,60 +128,60 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
             date: prev.dragDate,
             startTime: finalStartTime,
             endTime: finalEndTime,
-            isVisible: true
-          }
+            isVisible: true,
+          },
         }
       }
-      
+
       return {
         ...prev,
         isDragging: false,
         dragStartTime: null,
         dragEndTime: null,
-        dragDate: null
+        dragDate: null,
       }
     })
   }, [])
 
   const cancelDrag = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isDragging: false,
       dragStartTime: null,
       dragEndTime: null,
-      dragDate: null
+      dragDate: null,
     }))
   }, [])
 
   // イベント作成
   const startCreating = useCallback((date: Date, startTime: string, endTime?: string) => {
     const finalEndTime = endTime || addMinutesToTime(startTime, 30) // デフォルト30分
-    
-    setState(prev => ({
+
+    setState((prev) => ({
       ...prev,
       isCreating: true,
       creatingEvent: {
         date,
         startTime,
         endTime: finalEndTime,
-        isVisible: true
-      }
+        isVisible: true,
+      },
     }))
   }, [])
 
   const finishCreating = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isCreating: false,
-      creatingEvent: null
+      creatingEvent: null,
     }))
   }, [])
 
   const cancelCreating = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       isCreating: false,
-      creatingEvent: null
+      creatingEvent: null,
     }))
   }, [])
 
@@ -217,9 +218,10 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
 
   // クリーンアップ
   useEffect(() => {
+    const currentTimeout = timeoutRef.current
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+      if (currentTimeout) {
+        clearTimeout(currentTimeout)
       }
     }
   }, [])
@@ -237,8 +239,8 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
       startCreating,
       finishCreating,
       cancelCreating,
-      resetState
-    }
+      resetState,
+    },
   }
 }
 

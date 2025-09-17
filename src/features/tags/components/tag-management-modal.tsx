@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { X, Edit2, Trash2, Check, Plus } from 'lucide-react'
+import { Check, Edit2, Plus, Trash2, X } from 'lucide-react'
 
 // Tag interface
 interface Tag {
@@ -28,7 +28,7 @@ export const TagManagementModal = ({
   tags,
   onCreateTag,
   onUpdateTag,
-  onDeleteTag
+  onDeleteTag,
 }: TagManagementModalProps) => {
   const [newTagName, setNewTagName] = useState('')
   const [newTagColor, setNewTagColor] = useState('#3b82f6')
@@ -41,7 +41,7 @@ export const TagManagementModal = ({
   const presetColors = [
     '#ef4444', // red
     '#f59e0b', // yellow
-    '#10b981', // green  
+    '#10b981', // green
     '#3b82f6', // blue
     '#8b5cf6', // purple
     '#ec4899', // pink
@@ -50,11 +50,11 @@ export const TagManagementModal = ({
   ]
 
   const handleCreateTag = () => {
-    if (newTagName.trim() && !tags.some(t => t.name === newTagName.trim())) {
+    if (newTagName.trim() && !tags.some((t) => t.name === newTagName.trim())) {
       onCreateTag({
         name: newTagName.trim(),
         color: newTagColor,
-        parentId: newTagParentId
+        parentId: newTagParentId,
       })
       setNewTagName('')
       setNewTagColor('#3b82f6')
@@ -74,7 +74,7 @@ export const TagManagementModal = ({
       onUpdateTag(editingTag, {
         name: editName.trim(),
         color: editColor,
-        parentId: editParentId
+        parentId: editParentId,
       })
       setEditingTag(null)
       setEditName('')
@@ -93,11 +93,11 @@ export const TagManagementModal = ({
   // 親タグとして選択可能なタグを取得（循環参照を防ぐ）
   const getAvailableParentTags = (excludeId?: string) => {
     if (!excludeId) return tags
-    
+
     // 自分自身と自分の子孫は親として選択できない
     const descendants = new Set<string>()
     const findDescendants = (parentId: string) => {
-      tags.forEach(tag => {
+      tags.forEach((tag) => {
         if (tag.parentId === parentId) {
           descendants.add(tag.id)
           findDescendants(tag.id)
@@ -105,8 +105,8 @@ export const TagManagementModal = ({
       })
     }
     findDescendants(excludeId)
-    
-    return tags.filter(tag => tag.id !== excludeId && !descendants.has(tag.id))
+
+    return tags.filter((tag) => tag.id !== excludeId && !descendants.has(tag.id))
   }
 
   if (!isOpen) return null
@@ -114,10 +114,10 @@ export const TagManagementModal = ({
   return (
     <>
       {/* Overlay */}
-      <div 
+      <div
         role="button"
         tabIndex={0}
-        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        className="fixed inset-0 z-50 bg-black bg-opacity-50"
         onClick={onClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
@@ -126,32 +126,32 @@ export const TagManagementModal = ({
         }}
         aria-label="モーダルを閉じる"
       />
-      
+
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 w-96 max-h-[80vh] overflow-hidden">
+      <div className="fixed left-1/2 top-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Tag Management
-          </h2>
+        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tag Management</h2>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(80vh-120px)]">
+        <div className="max-h-[calc(80vh-120px)] overflow-y-auto">
           {/* Create New Tag */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-medium mb-3 text-gray-700 dark:text-gray-300">
-              Create New Tag
-            </h3>
-            
+          <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+            <h3 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">Create New Tag</h3>
+
             <div className="space-y-3">
               <div>
-                <label htmlFor="new-tag-name" className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
+                <label
+                  htmlFor="new-tag-name"
+                  className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                >
                   Name
                 </label>
                 <input
@@ -160,7 +160,7 @@ export const TagManagementModal = ({
                   value={newTagName}
                   onChange={(e) => setNewTagName(e.target.value)}
                   placeholder="Enter tag name..."
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       handleCreateTag()
@@ -168,37 +168,44 @@ export const TagManagementModal = ({
                   }}
                 />
               </div>
-              
+
               <div>
-                <label htmlFor="new-tag-parent" className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">
+                <label
+                  htmlFor="new-tag-parent"
+                  className="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                >
                   Parent Tag (Optional)
                 </label>
                 <select
                   id="new-tag-parent"
                   value={newTagParentId || ''}
                   onChange={(e) => setNewTagParentId(e.target.value || null)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="">None (Root Level)</option>
-                  {getAvailableParentTags().map(tag => (
+                  {getAvailableParentTags().map((tag) => (
                     <option key={tag.id} value={tag.id}>
                       {tag.name}
                     </option>
                   ))}
                 </select>
               </div>
-              
+
               <div>
-                <div className="block text-xs font-medium mb-2 text-gray-600 dark:text-gray-400" id="new-tag-color-label">
+                <div
+                  className="mb-2 block text-xs font-medium text-gray-600 dark:text-gray-400"
+                  id="new-tag-color-label"
+                >
                   Color
                 </div>
-                <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="new-tag-color-label">
-                  {presetColors.map(color => (
+                <div className="flex flex-wrap gap-2" role="group" aria-labelledby="new-tag-color-label">
+                  {presetColors.map((color) => (
                     <button
+                      type="button"
                       key={color}
                       onClick={() => setNewTagColor(color)}
-                      className={`w-8 h-8 rounded-lg transition-all hover:scale-110 ${
-                        newTagColor === color ? 'ring-2 ring-offset-2 ring-gray-400' : ''
+                      className={`h-8 w-8 rounded-lg transition-all hover:scale-110 ${
+                        newTagColor === color ? 'ring-2 ring-gray-400 ring-offset-2' : ''
                       }`}
                       style={{ backgroundColor: color }}
                       title={color}
@@ -206,13 +213,14 @@ export const TagManagementModal = ({
                   ))}
                 </div>
               </div>
-              
+
               <button
+                type="button"
                 onClick={handleCreateTag}
                 disabled={!newTagName.trim()}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="h-4 w-4" />
                 Create Tag
               </button>
             </div>
@@ -220,21 +228,19 @@ export const TagManagementModal = ({
 
           {/* Existing Tags */}
           <div className="p-4">
-            <h3 className="text-sm font-medium mb-3 text-gray-700 dark:text-gray-300">
-              Existing Tags ({tags.length})
-            </h3>
-            
+            <h3 className="mb-3 text-sm font-medium text-gray-700 dark:text-gray-300">Existing Tags ({tags.length})</h3>
+
             {tags.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <div className="py-8 text-center text-gray-500 dark:text-gray-400">
                 <div className="text-sm">No tags created yet</div>
-                <div className="text-xs mt-1">Create your first tag above</div>
+                <div className="mt-1 text-xs">Create your first tag above</div>
               </div>
             ) : (
-              <div className="space-y-2 max-h-64 overflow-y-auto">
-                {tags.map(tag => (
+              <div className="max-h-64 space-y-2 overflow-y-auto">
+                {tags.map((tag) => (
                   <div
                     key={tag.id}
-                    className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
+                    className="flex items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-gray-700"
                   >
                     {editingTag === tag.id ? (
                       <>
@@ -244,7 +250,7 @@ export const TagManagementModal = ({
                             type="text"
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
-                            className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
                                 handleSaveEdit()
@@ -254,26 +260,27 @@ export const TagManagementModal = ({
                             }}
                             autoFocus
                           />
-                          
+
                           <select
                             value={editParentId || ''}
                             onChange={(e) => setEditParentId(e.target.value || null)}
-                            className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           >
                             <option value="">None (Root Level)</option>
-                            {getAvailableParentTags(editingTag!).map(parentTag => (
+                            {getAvailableParentTags(editingTag!).map((parentTag) => (
                               <option key={parentTag.id} value={parentTag.id}>
                                 {parentTag.name}
                               </option>
                             ))}
                           </select>
-                          
+
                           <div className="flex gap-2">
-                            {presetColors.map(color => (
+                            {presetColors.map((color) => (
                               <button
+                                type="button"
                                 key={color}
                                 onClick={() => setEditColor(color)}
-                                className={`w-6 h-6 rounded transition-all ${
+                                className={`h-6 w-6 rounded transition-all ${
                                   editColor === color ? 'ring-2 ring-blue-500' : ''
                                 }`}
                                 style={{ backgroundColor: color }}
@@ -283,54 +290,53 @@ export const TagManagementModal = ({
                         </div>
                         <div className="flex gap-1">
                           <button
+                            type="button"
                             onClick={handleSaveEdit}
-                            className="p-1 text-green-600 hover:bg-green-100 dark:hover:bg-green-900 rounded transition-colors"
+                            className="rounded p-1 text-green-600 transition-colors hover:bg-green-100 dark:hover:bg-green-900"
                           >
-                            <Check className="w-4 h-4" />
+                            <Check className="h-4 w-4" />
                           </button>
                           <button
+                            type="button"
                             onClick={handleCancelEdit}
-                            className="p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                            className="rounded p-1 text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-600"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="h-4 w-4" />
                           </button>
                         </div>
                       </>
                     ) : (
                       <>
                         {/* Display Mode */}
-                        <div
-                          className="w-4 h-4 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: tag.color }}
-                        />
+                        <div className="h-4 w-4 flex-shrink-0 rounded-full" style={{ backgroundColor: tag.color }} />
                         <div className="flex-1">
-                          <span className="text-sm text-gray-900 dark:text-white">
-                            {tag.name}
-                          </span>
+                          <span className="text-sm text-gray-900 dark:text-white">{tag.name}</span>
                           {tag.parentId && (
                             <div className="text-xs text-gray-500 dark:text-gray-400">
-                              Parent: {tags.find(t => t.id === tag.parentId)?.name || 'Unknown'}
+                              Parent: {tags.find((t) => t.id === tag.parentId)?.name || 'Unknown'}
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                           <button
+                            type="button"
                             onClick={() => handleEditTag(tag)}
-                            className="p-1 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900 rounded transition-colors"
+                            className="rounded p-1 text-blue-600 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900"
                             title="Edit tag"
                           >
-                            <Edit2 className="w-3 h-3" />
+                            <Edit2 className="h-3 w-3" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
                               if (confirm(`Delete tag "${tag.name}"? This will remove it from all events.`)) {
                                 onDeleteTag(tag.id)
                               }
                             }}
-                            className="p-1 text-red-600 hover:bg-red-100 dark:hover:bg-red-900 rounded transition-colors"
+                            className="rounded p-1 text-red-600 transition-colors hover:bg-red-100 dark:hover:bg-red-900"
                             title="Delete tag"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="h-3 w-3" />
                           </button>
                         </div>
                       </>
@@ -343,10 +349,11 @@ export const TagManagementModal = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-end gap-2 border-t border-gray-200 p-4 dark:border-gray-700">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Done
           </button>

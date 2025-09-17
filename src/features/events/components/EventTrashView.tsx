@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 
 import { useEventTrash } from '../hooks/useEventTrash'
 
@@ -9,7 +9,7 @@ interface EventTrashViewProps {
 export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterDays, setFilterDays] = useState<number | null>(null)
-  
+
   const {
     trashedEvents,
     stats,
@@ -20,7 +20,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
     hasOldEvents,
     selectedCount,
     isAllSelected,
-    
+
     // 操作
     handleSelectEvent,
     handleSelectAll,
@@ -30,27 +30,27 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
     handleBatchRestore,
     handleBatchPermanentDelete,
     handleClearTrash,
-    
+
     // ユーティリティ
     searchEvents,
     filterByDeletionDate,
     getDaysUntilAutoDelete,
-    formatDeletedDate
+    formatDeletedDate,
   } = useEventTrash()
 
   const filteredEvents = useMemo(() => {
     let events = trashedEvents
-    
+
     // 検索フィルタリング
     if (searchQuery.trim()) {
       events = searchEvents(searchQuery)
     }
-    
+
     // 日付フィルタリング
     if (filterDays !== null) {
       events = filterByDeletionDate(filterDays)
     }
-    
+
     return events
   }, [trashedEvents, searchQuery, filterDays, searchEvents, filterByDeletionDate])
 
@@ -60,31 +60,32 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="text-6xl">🗑️</div>
           <h3 className="text-xl font-semibold">ゴミ箱は空です</h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            削除されたイベントはありません
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">削除されたイベントはありません</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`${className} p-8 flex flex-col space-y-6`}>
+    <div className={`${className} flex flex-col space-y-6 p-8`}>
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">ゴミ箱</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            削除済み: {stats.totalDeleted}件 
-            {hasOldEvents && <span className="text-orange-600 dark:text-orange-400"> (30日以上経過: {stats.oldDeleted}件)</span>}
+            削除済み: {stats.totalDeleted}件
+            {hasOldEvents && (
+              <span className="text-orange-600 dark:text-orange-400"> (30日以上経過: {stats.oldDeleted}件)</span>
+            )}
           </p>
         </div>
-        
+
         {hasOldEvents && (
           <button
+            type="button"
             onClick={handleClearTrash}
             disabled={isLoading}
-            className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+            className="rounded-lg bg-orange-600 px-4 py-2 text-sm text-white hover:bg-orange-700 disabled:opacity-50"
           >
             古い削除済みを自動削除
           </button>
@@ -99,13 +100,13 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
             placeholder="イベントを検索..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 min-w-64 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-lg"
+            className="min-w-64 flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-800"
           />
-          
+
           <select
             value={filterDays || ''}
             onChange={(e) => setFilterDays(e.target.value ? Number(e.target.value) : null)}
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-3 py-2 rounded-lg"
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-800"
           >
             <option value="">全期間</option>
             <option value="1">今日</option>
@@ -113,49 +114,45 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
             <option value="30">1ヶ月以内</option>
           </select>
         </div>
-        
+
         {/* バッチ操作 */}
         {filteredEvents.length > 0 && (
-          <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 p-4 rounded-xl">
+          <div className="flex items-center justify-between rounded-xl bg-gray-50 p-4 dark:bg-gray-800">
             <div className="flex items-center space-x-4">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={isAllSelected}
-                  onChange={handleSelectAll}
-                  className="w-4 h-4"
-                />
-                <span className="text-sm">
-                  {selectedCount > 0 ? `${selectedCount}件選択中` : '全て選択'}
-                </span>
+              <label className="flex cursor-pointer items-center space-x-2">
+                <input type="checkbox" checked={isAllSelected} onChange={handleSelectAll} className="h-4 w-4" />
+                <span className="text-sm">{selectedCount > 0 ? `${selectedCount}件選択中` : '全て選択'}</span>
               </label>
-              
+
               {hasSelection && (
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   ({selectedCount}件/{filteredEvents.length}件)
                 </span>
               )}
             </div>
-            
+
             {hasSelection && (
               <div className="flex space-x-2">
                 <button
+                  type="button"
                   onClick={handleBatchRestore}
                   disabled={isLoading}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
+                  className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                   一括復元
                 </button>
                 <button
+                  type="button"
                   onClick={handleBatchPermanentDelete}
                   disabled={isLoading}
-                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm disabled:opacity-50"
+                  className="rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
                 >
                   完全削除
                 </button>
                 <button
+                  type="button"
                   onClick={clearSelection}
-                  className="bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-lg text-sm"
+                  className="rounded-lg bg-gray-200 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
                 >
                   選択解除
                 </button>
@@ -172,10 +169,9 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
             <div className="flex flex-col space-y-4">
               <div className="text-4xl">🔍</div>
               <p className="text-gray-600 dark:text-gray-400">
-                {searchQuery.trim() || filterDays !== null 
-                  ? '条件に一致するイベントがありません' 
-                  : 'イベントがありません'
-                }
+                {searchQuery.trim() || filterDays !== null
+                  ? '条件に一致するイベントがありません'
+                  : 'イベントがありません'}
               </p>
             </div>
           </div>
@@ -184,15 +180,15 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
             const isSelected = selectedEventIds.includes(event.id)
             const daysUntilDelete = getDaysUntilAutoDelete(event)
             const deletedDateStr = event.deletedAt ? formatDeletedDate(event.deletedAt) : ''
-            
+
             return (
               <div
                 key={event.id}
-                className={`bg-white dark:bg-gray-800 border-2 rounded-xl p-4 flex flex-col space-y-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-750 ${isSelected ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700'}`}
+                className={`dark:hover:bg-gray-750 flex flex-col space-y-2 rounded-xl border-2 bg-white p-4 transition-colors hover:bg-gray-50 dark:bg-gray-800 ${isSelected ? 'border-blue-500' : 'border-gray-200 dark:border-gray-700'}`}
               >
                 {/* イベント基本情報 */}
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3 flex-1">
+                  <div className="flex flex-1 items-center space-x-3">
                     <label htmlFor={`select-event-${event.id}`} className="cursor-pointer">
                       <span className="sr-only">Select event: {event.title}</span>
                       <input
@@ -200,34 +196,32 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleSelectEvent(event.id)}
-                        className="w-4 h-4"
+                        className="h-4 w-4"
                       />
                     </label>
-                    
-                    <div className="flex flex-col flex-1">
-                      <h3 className="text-lg font-medium truncate">
-                        {event.title}
-                      </h3>
+
+                    <div className="flex flex-1 flex-col">
+                      <h3 className="truncate text-lg font-medium">{event.title}</h3>
                       {event.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                          {event.description}
-                        </p>
+                        <p className="line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <button
+                      type="button"
                       onClick={() => handleRestoreEvent(event.id)}
                       disabled={isLoading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm whitespace-nowrap disabled:opacity-50"
+                      className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
                     >
                       復元
                     </button>
                     <button
+                      type="button"
                       onClick={() => handlePermanentDelete(event.id)}
                       disabled={isLoading}
-                      className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-sm whitespace-nowrap disabled:opacity-50"
+                      className="whitespace-nowrap rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
                     >
                       完全削除
                     </button>
@@ -238,18 +232,14 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                 <div className="flex items-center justify-between">
                   <div className="flex space-x-4 text-sm text-gray-600 dark:text-gray-400">
                     <span>削除日: {deletedDateStr}</span>
-                    {event.startDate && (
-                      <span>元の日時: {event.startDate.toLocaleDateString()}</span>
-                    )}
+                    {event.startDate && <span>元の日時: {event.startDate.toLocaleDateString()}</span>}
                     {event.type && (
-                      <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">
-                        {event.type}
-                      </span>
+                      <span className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">{event.type}</span>
                     )}
                   </div>
-                  
+
                   {daysUntilDelete !== null && daysUntilDelete <= 7 && (
-                    <span className="text-orange-600 dark:text-orange-400 text-sm">
+                    <span className="text-sm text-orange-600 dark:text-orange-400">
                       {daysUntilDelete === 0 ? '今日自動削除' : `${daysUntilDelete}日後に自動削除`}
                     </span>
                   )}
@@ -262,9 +252,9 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
 
       {/* ローディング状態 */}
       {isLoading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl p-6 flex flex-col space-y-4 items-center">
-            <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="flex flex-col items-center space-y-4 rounded-xl border border-gray-300 bg-white p-6 dark:border-gray-600 dark:bg-gray-800">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
             <p>処理中...</p>
           </div>
         </div>

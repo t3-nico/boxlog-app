@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 
 import { useRouter } from 'next/navigation'
 
+import { border, colors } from '@/config/theme'
+
 import { useAuthContext } from '../contexts/AuthContext'
 
 interface ProtectedRouteProps {
@@ -22,10 +24,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">読み込み中...</p>
+          <div className={`h-12 w-12 animate-spin rounded-full border-b-2 ${border.universal} mx-auto`}></div>
+          <p className={`mt-4 ${colors.text.muted}`}>読み込み中...</p>
         </div>
       </div>
     )
@@ -38,4 +40,4 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   return <>{children}</>
 }
 
-export default ProtectedRoute 
+export default ProtectedRoute

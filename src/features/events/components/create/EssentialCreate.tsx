@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { X, Check, Loader2 } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Check, Loader2, X } from 'lucide-react'
 
-import { text, primary, semantic } from '@/config/theme/colors'
+import { primary, semantic, text } from '@/config/theme/colors'
 
 import { rounded } from '@/config/theme/rounded'
 import { body, heading } from '@/config/theme/typography'
@@ -25,12 +25,7 @@ interface Tag {
 interface EssentialCreateProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: {
-    title: string
-    date: Date
-    endDate: Date
-    tags: Tag[]
-  }) => Promise<void>
+  onSave: (data: { title: string; date: Date; endDate: Date; tags: Tag[] }) => Promise<void>
   initialData?: {
     title?: string
     date?: Date
@@ -53,11 +48,11 @@ const useEssentialCreateForm = (initialData?: { title?: string; date?: Date; tag
   const isValid = title.trim().length > 0
 
   const handleTabNext = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 2))
+    setCurrentStep((prev) => Math.min(prev + 1, 2))
   }
 
   const handleTabPrev = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0))
+    setCurrentStep((prev) => Math.max(prev - 1, 0))
   }
 
   const resetForm = () => {
@@ -69,50 +64,63 @@ const useEssentialCreateForm = (initialData?: { title?: string; date?: Date; tag
 
   return {
     currentStep,
-    title, setTitle,
-    date, setDate,
-    endDate, setEndDate,
-    tags, setTags,
+    title,
+    setTitle,
+    date,
+    setDate,
+    endDate,
+    setEndDate,
+    tags,
+    setTags,
     isValid,
     handleTabNext,
     handleTabPrev,
-    resetForm
+    resetForm,
   }
 }
 
 // カスタムフック: スマート抽出機能
-const useSmartExtraction = (tags: Tag[], setTitle: (title: string) => void, setDate: (date: Date) => void, setTags: (tags: Tag[]) => void) => {
+const useSmartExtraction = (
+  tags: Tag[],
+  setTitle: (title: string) => void,
+  setDate: (date: Date) => void,
+  setTags: (tags: Tag[]) => void
+) => {
   const generateTagColor = (name: string): string => {
     const colors = [
-      '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
-      '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1'
+      '#3b82f6',
+      '#10b981',
+      '#f59e0b',
+      '#8b5cf6',
+      '#ef4444',
+      '#06b6d4',
+      '#f97316',
+      '#ec4899',
+      '#14b8a6',
+      '#6366f1',
     ]
     const hash = name.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0)
+      a = (a << 5) - a + b.charCodeAt(0)
       return a & a
     }, 0)
     return colors[Math.abs(hash) % colors.length]
   }
 
-  const handleSmartExtract = (extracted: {
-    title: string
-    date?: Date
-    tags: string[]
-  }) => {
+  const handleSmartExtract = (extracted: { title: string; date?: Date; tags: string[] }) => {
     setTitle(extracted.title)
     if (extracted.date) {
       setDate(extracted.date)
     }
     // 抽出されたタグを既存タグに追加
     const newTags = extracted.tags
-      .filter(tagName => !tags.some(tag => tag.name === tagName))
-      .map(tagName => ({
+      .filter((tagName) => !tags.some((tag) => tag.name === tagName))
+      .map((tagName) => ({
         id: Date.now().toString() + Math.random(),
         name: tagName,
-        color: generateTagColor(tagName)
+        color: generateTagColor(tagName),
       }))
     if (newTags.length > 0) {
-      setTags(prev => [...prev, ...newTags])
+      setTags((prev) => [...prev, ...newTags])
     }
   }
 
@@ -133,7 +141,7 @@ const useSaveHandler = (isValid: boolean, onSave: Function, onClose: Function, r
 
     try {
       await onSave(formData)
-      
+
       // 成功アニメーション
       setShowSuccess(true)
       setTimeout(() => {
@@ -141,7 +149,6 @@ const useSaveHandler = (isValid: boolean, onSave: Function, onClose: Function, r
         setShowSuccess(false)
         resetForm()
       }, 1500)
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : '保存に失敗しました')
     } finally {
@@ -153,7 +160,7 @@ const useSaveHandler = (isValid: boolean, onSave: Function, onClose: Function, r
     isSubmitting,
     error,
     showSuccess,
-    handleSave
+    handleSave,
   }
 }
 
@@ -186,54 +193,56 @@ const useKeyboardShortcuts = (isOpen: boolean, isValid: boolean, onClose: Functi
   }, [isOpen, isValid, handleSave, onClose])
 }
 
-export const EssentialCreate = ({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  initialData 
-}: EssentialCreateProps) => {
+export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: EssentialCreateProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  
+
   // カスタムフックでロジックを分離
   const formState = useEssentialCreateForm(initialData)
-  const { handleSmartExtract } = useSmartExtraction(formState.tags, formState.setTitle, formState.setDate, formState.setTags)
+  const { handleSmartExtract } = useSmartExtraction(
+    formState.tags,
+    formState.setTitle,
+    formState.setDate,
+    formState.setTags
+  )
   const saveHandler = useSaveHandler(formState.isValid, onSave, onClose, formState.resetForm)
-  
-  useKeyboardShortcuts(isOpen, formState.isValid, onClose, () => saveHandler.handleSave({
-    title: formState.title,
-    date: formState.date,
-    endDate: formState.endDate,
-    tags: formState.tags
-  }))
+
+  useKeyboardShortcuts(isOpen, formState.isValid, onClose, () =>
+    saveHandler.handleSave({
+      title: formState.title,
+      date: formState.date,
+      endDate: formState.endDate,
+      tags: formState.tags,
+    })
+  )
 
   // アニメーション設定
   const containerVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 50 },
-    visible: { 
-      opacity: 1, 
-      scale: 1, 
+    visible: {
+      opacity: 1,
+      scale: 1,
       y: 0,
       transition: {
-        type: "spring",
+        type: 'spring',
         damping: 20,
         stiffness: 300,
-        duration: 0.4
-      }
+        duration: 0.4,
+      },
     },
-    exit: { 
-      opacity: 0, 
-      scale: 0.95, 
+    exit: {
+      opacity: 0,
+      scale: 0.95,
       y: 20,
-      transition: { duration: 0.2 }
-    }
+      transition: { duration: 0.2 },
+    },
   }
 
   const successVariants = {
     hidden: { scale: 0 },
-    visible: { 
+    visible: {
       scale: [0, 1.2, 1],
-      transition: { duration: 0.6, ease: "easeOut" }
-    }
+      transition: { duration: 0.6, ease: 'easeOut' },
+    },
   }
 
   if (!isOpen) return null
@@ -258,18 +267,14 @@ export const EssentialCreate = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className={`
-              relative w-full max-w-2xl mx-4
-              ${colors.background.base} ${rounded.modal}
-              shadow-2xl
-            `}
+            className={`relative mx-4 w-full max-w-2xl ${colors.background.base} ${rounded.modal} shadow-2xl`}
             style={{
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)'
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
             }}
           >
             {/* ヘッダー */}
             <div className="flex items-center justify-between p-8 pb-4">
-              <motion.h1 
+              <motion.h1
                 className={`${heading.h2} ${text.primary}`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -278,11 +283,9 @@ export const EssentialCreate = ({
                 Create Event
               </motion.h1>
               <button
+                type="button"
                 onClick={onClose}
-                className={`
-                  p-2 rounded-lg transition-colors duration-200
-                  hover:${colors.background.surface} ${text.secondary}
-                `}
+                className={`rounded-lg p-2 transition-colors duration-200 hover:${colors.background.surface} ${text.secondary} `}
               >
                 <X size={24} />
               </button>
@@ -294,34 +297,23 @@ export const EssentialCreate = ({
                 {['Title', 'Date', 'Tags'].map((step, index) => (
                   <div key={step} className="flex items-center gap-2">
                     <motion.div
-                      className={`
-                        w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                        transition-all duration-300
-                        ${index <= currentStep 
-                          ? `${primary.DEFAULT} text-white` 
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
+                        index <= currentStep
+                          ? `${primary.DEFAULT} text-white`
                           : `${colors.background.surface} ${text.muted}`
-                        }
-                      `}
+                      } `}
                       animate={index === currentStep ? { scale: [1, 1.1, 1] } : {}}
                       transition={{ duration: 0.3 }}
                     >
-                      {index < currentStep ? (
-                        <Check size={16} />
-                      ) : (
-                        index + 1
-                      )}
+                      {index < currentStep ? <Check size={16} /> : index + 1}
                     </motion.div>
-                    <span className={`
-                      text-sm font-medium
-                      ${index <= currentStep ? text.primary : text.muted}
-                    `}>
+                    <span className={`text-sm font-medium ${index <= currentStep ? text.primary : text.muted} `}>
                       {step}
                     </span>
                     {index < 2 && (
-                      <div className={`
-                        w-8 h-0.5 mx-2
-                        ${index < currentStep ? primary.DEFAULT : colors.background.surface}
-                      `} />
+                      <div
+                        className={`mx-2 h-0.5 w-8 ${index < currentStep ? primary.DEFAULT : colors.background.surface} `}
+                      />
                     )}
                   </div>
                 ))}
@@ -349,15 +341,14 @@ export const EssentialCreate = ({
                     />
                     <div className="flex justify-end">
                       <button
+                        type="button"
                         onClick={handleTabNext}
                         disabled={!title.trim()}
-                        className={`
-                          px-6 py-3 rounded-lg font-medium transition-all duration-200
-                          ${title.trim() 
-                            ? `${primary.DEFAULT} text-white hover:opacity-90` 
+                        className={`rounded-lg px-6 py-3 font-medium transition-all duration-200 ${
+                          title.trim()
+                            ? `${primary.DEFAULT} text-white hover:opacity-90`
                             : `${colors.background.surface} ${text.muted} cursor-not-allowed`
-                          }
-                        `}
+                        } `}
                       >
                         Next: Date →
                       </button>
@@ -383,22 +374,16 @@ export const EssentialCreate = ({
                     />
                     <div className="flex justify-between">
                       <button
+                        type="button"
                         onClick={handleTabPrev}
-                        className={`
-                          px-6 py-3 rounded-lg font-medium
-                          ${colors.background.surface} ${text.secondary}
-                          hover:${colors.background.elevated} transition-all duration-200
-                        `}
+                        className={`rounded-lg px-6 py-3 font-medium ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-all duration-200`}
                       >
                         ← Back
                       </button>
                       <button
+                        type="button"
                         onClick={handleTabNext}
-                        className={`
-                          px-6 py-3 rounded-lg font-medium
-                          ${primary.DEFAULT} text-white hover:opacity-90
-                          transition-all duration-200
-                        `}
+                        className={`rounded-lg px-6 py-3 font-medium ${primary.DEFAULT} text-white transition-all duration-200 hover:opacity-90`}
                       >
                         Next: Tags →
                       </button>
@@ -415,33 +400,24 @@ export const EssentialCreate = ({
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                   >
-                    <TagInput
-                      selectedTags={tags}
-                      onChange={setTags}
-                      contextualSuggestions={title.split(' ')}
-                    />
+                    <TagInput selectedTags={tags} onChange={setTags} contextualSuggestions={title.split(' ')} />
                     <div className="flex justify-between">
                       <button
+                        type="button"
                         onClick={handleTabPrev}
-                        className={`
-                          px-6 py-3 rounded-lg font-medium
-                          ${colors.background.surface} ${text.secondary}
-                          hover:${colors.background.elevated} transition-all duration-200
-                        `}
+                        className={`rounded-lg px-6 py-3 font-medium ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-all duration-200`}
                       >
                         ← Back
                       </button>
                       <button
+                        type="button"
                         onClick={handleSave}
                         disabled={!isValid || isSubmitting}
-                        className={`
-                          px-8 py-3 rounded-lg font-medium flex items-center gap-2
-                          transition-all duration-200
-                          ${isValid && !isSubmitting
-                            ? `${primary.DEFAULT} text-white hover:opacity-90 transform hover:scale-105`
+                        className={`flex items-center gap-2 rounded-lg px-8 py-3 font-medium transition-all duration-200 ${
+                          isValid && !isSubmitting
+                            ? `${primary.DEFAULT} transform text-white hover:scale-105 hover:opacity-90`
                             : `${colors.background.surface} ${text.muted} cursor-not-allowed`
-                          }
-                        `}
+                        } `}
                       >
                         {isSubmitting ? (
                           <>
@@ -465,11 +441,7 @@ export const EssentialCreate = ({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`
-                    mx-8 mb-8 p-4 rounded-lg
-                    ${semantic.error.background} ${semantic.error.text}
-                    flex items-center gap-3
-                  `}
+                  className={`mx-8 mb-8 rounded-lg p-4 ${semantic.error.background} ${semantic.error.text} flex items-center gap-3`}
                 >
                   <div className="flex-shrink-0">⚠️</div>
                   <div>
@@ -487,11 +459,11 @@ export const EssentialCreate = ({
                   variants={successVariants}
                   initial="hidden"
                   animate="visible"
-                  className="absolute inset-0 flex items-center justify-center bg-white/95 dark:bg-gray-900/95 rounded-2xl"
+                  className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/95 dark:bg-gray-900/95"
                 >
                   <div className="text-center">
                     <motion.div
-                      className="w-20 h-20 mx-auto mb-4 bg-green-500 rounded-full flex items-center justify-center"
+                      className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-500"
                       animate={{ rotateY: [0, 360] }}
                       transition={{ duration: 0.8, delay: 0.2 }}
                     >
@@ -519,9 +491,14 @@ export const EssentialCreate = ({
             </AnimatePresence>
 
             {/* キーボードヒント */}
-            <div className={`px-8 pb-6 ${body.small} ${text.muted} text-center space-x-4`}>
-              <span><kbd className="px-1 bg-neutral-100 dark:bg-neutral-800 rounded">Esc</kbd> to close</span>
-              <span><kbd className="px-1 bg-neutral-100 dark:bg-neutral-800 rounded">⌘</kbd> + <kbd className="px-1 bg-neutral-100 dark:bg-neutral-800 rounded">Enter</kbd> to save</span>
+            <div className={`px-8 pb-6 ${body.small} ${text.muted} space-x-4 text-center`}>
+              <span>
+                <kbd className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">Esc</kbd> to close
+              </span>
+              <span>
+                <kbd className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">⌘</kbd> +{' '}
+                <kbd className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">Enter</kbd> to save
+              </span>
             </div>
           </motion.div>
         </div>

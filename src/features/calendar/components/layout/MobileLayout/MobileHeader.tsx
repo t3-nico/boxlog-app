@@ -3,7 +3,7 @@
 import { useState } from 'react'
 
 import { format, getWeek } from 'date-fns'
-import { Menu, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -29,7 +29,7 @@ const viewLabels = {
   'week-no-weekend': '平日',
   week: '週',
   '2week': '2週',
-  schedule: 'リスト'
+  schedule: 'リスト',
 } as const
 
 /**
@@ -45,11 +45,11 @@ export const MobileHeader = ({
   title,
   showBackButton = false,
   onBack,
-  className
+  className,
 }: MobileHeaderProps) => {
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
-  
+
   // 日付の表示形式をモバイル用に短縮
   const getDateDisplay = () => {
     switch (viewType) {
@@ -64,18 +64,20 @@ export const MobileHeader = ({
   }
 
   return (
-    <header className={cn(
-      'relative h-14 bg-background',
-      'flex items-center justify-between px-4',
-      'sticky top-0 z-40',
-      className
-    )}>
+    <header
+      className={cn(
+        'bg-background relative h-14',
+        'flex items-center justify-between px-4',
+        'sticky top-0 z-40',
+        className
+      )}
+    >
       {/* 左側: メニューボタンまたは戻るボタン */}
       <div className="flex items-center">
         {showBackButton ? (
           <button
             onClick={onBack}
-            className="p-2 -ml-2 hover:bg-accent/50 rounded-full transition-colors"
+            className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
             aria-label="戻る"
           >
             <ChevronLeft className="h-6 w-6" />
@@ -83,7 +85,7 @@ export const MobileHeader = ({
         ) : (
           <button
             onClick={onMenuToggle}
-            className="p-2 -ml-2 hover:bg-accent/50 rounded-full transition-colors"
+            className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
             aria-label="メニューを開く"
           >
             <Menu className="h-5 w-5" />
@@ -92,19 +94,17 @@ export const MobileHeader = ({
       </div>
 
       {/* 中央: 日付とビュー表示 */}
-      <div className="flex-1 flex flex-col items-center min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col items-center">
         {title ? (
-          <h1 className="text-lg font-semibold truncate">{title}</h1>
+          <h1 className="truncate text-lg font-semibold">{title}</h1>
         ) : (
           <>
             {/* 日付表示 */}
-            <div className="text-lg font-semibold">
-              {getDateDisplay()}
-            </div>
+            <div className="text-lg font-semibold">{getDateDisplay()}</div>
             {/* ビュー表示 */}
             <button
               onClick={() => setIsViewMenuOpen(true)}
-              className="text-xs text-muted-foreground px-2 py-0.5 rounded hover:bg-accent/50 transition-colors"
+              className="text-muted-foreground hover:bg-accent/50 rounded px-2 py-0.5 text-xs transition-colors"
             >
               {viewLabels[viewType] || viewType}表示
             </button>
@@ -116,14 +116,14 @@ export const MobileHeader = ({
       <div className="flex items-center gap-1">
         <button
           onClick={() => onNavigate('prev')}
-          className="p-2 hover:bg-accent/50 rounded-full transition-colors"
+          className="hover:bg-accent/50 rounded-full p-2 transition-colors"
           aria-label="前の期間"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button
           onClick={() => onNavigate('next')}
-          className="p-2 hover:bg-accent/50 rounded-full transition-colors"
+          className="hover:bg-accent/50 rounded-full p-2 transition-colors"
           aria-label="次の期間"
         >
           <ChevronRight className="h-5 w-5" />
@@ -134,13 +134,21 @@ export const MobileHeader = ({
       {isViewMenuOpen && onViewChange && (
         <>
           {/* オーバーレイ */}
-          <div 
-            className="fixed inset-0 bg-black/20 z-50"
+          <div
+            className="fixed inset-0 z-50 bg-black/20"
             onClick={() => setIsViewMenuOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setIsViewMenuOpen(false)
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="メニューを閉じる"
           />
-          
+
           {/* メニュー */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg z-50">
+          <div className="bg-background border-border absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 rounded-lg border shadow-lg">
             <div className="py-2">
               {Object.entries(viewLabels).map(([value, label]) => (
                 <button
@@ -150,7 +158,7 @@ export const MobileHeader = ({
                     setIsViewMenuOpen(false)
                   }}
                   className={cn(
-                    'w-full text-left px-4 py-3 text-sm hover:bg-accent/50 transition-colors',
+                    'hover:bg-accent/50 w-full px-4 py-3 text-left text-sm transition-colors',
                     viewType === value && 'bg-accent text-accent-foreground font-medium'
                   )}
                 >

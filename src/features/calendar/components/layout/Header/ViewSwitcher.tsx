@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-import { ChevronDown, Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 
 import { secondary, selection, text } from '@/config/theme/colors'
 import { radius } from '@/config/theme/rounded'
@@ -35,10 +35,10 @@ export const ViewSwitcher = ({
   onChange,
   className,
   buttonClassName,
-  dropdownClassName
+  dropdownClassName,
 }: ViewSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false)
-  const currentOption = options.find(opt => opt.value === currentView)
+  const currentOption = options.find((opt) => opt.value === currentView)
   const { showWeekends, updateSettings } = useCalendarSettingsStore()
 
   const handleSelect = (value: string) => {
@@ -48,17 +48,17 @@ export const ViewSwitcher = ({
 
   const handleWeekendToggle = (e: React.MouseEvent) => {
     e.stopPropagation()
-    
+
     // アニメーション付きで切り替え
     const newValue = !showWeekends
-    
+
     // 即座に視覚的なフィードバックを提供
     const checkIcon = e.currentTarget.querySelector('[data-check-icon]')
     if (checkIcon) {
       checkIcon.classList.add('scale-110')
       setTimeout(() => checkIcon.classList.remove('scale-110'), 150)
     }
-    
+
     // 設定を更新（これによりカレンダーが再レンダリングされる）
     updateSettings({ showWeekends: newValue })
   }
@@ -70,20 +70,21 @@ export const ViewSwitcher = ({
       if (event.ctrlKey || event.altKey || event.metaKey) {
         return
       }
-      
+
       // 入力フィールドにフォーカスがある場合は無視
-      const {activeElement} = document
-      if (activeElement && (
-        activeElement.tagName === 'INPUT' || 
-        activeElement.tagName === 'TEXTAREA' ||
-        activeElement.getAttribute('contenteditable') === 'true'
-      )) {
+      const { activeElement } = document
+      if (
+        activeElement &&
+        (activeElement.tagName === 'INPUT' ||
+          activeElement.tagName === 'TEXTAREA' ||
+          activeElement.getAttribute('contenteditable') === 'true')
+      ) {
         return
       }
 
       const key = event.key.toUpperCase()
-      const option = options.find(opt => opt.shortcut?.toUpperCase() === key)
-      
+      const option = options.find((opt) => opt.shortcut?.toUpperCase() === key)
+
       if (option && option.value !== currentView) {
         event.preventDefault()
         onChange(option.value)
@@ -109,26 +110,36 @@ export const ViewSwitcher = ({
       >
         {currentOption?.icon}
         <span>{currentOption?.label || 'Day'}</span>
-        <ChevronDown className="w-4 h-4" />
+        <ChevronDown className="h-4 w-4" />
       </button>
 
       {isOpen && (
         <>
           {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-40" 
+          <div
+            className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setIsOpen(false)
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="ドロップダウンを閉じる"
           />
-          
+
           {/* Dropdown */}
-          <div className={cn(
-            'absolute right-0 top-full mt-1',
-            'min-w-[160px]',
-            colors.background.base,
-            radius.md,
-            'shadow-lg z-50',
-            dropdownClassName
-          )}>
+          <div
+            className={cn(
+              'absolute right-0 top-full mt-1',
+              'min-w-[160px]',
+              colors.background.base,
+              radius.md,
+              'z-50 shadow-lg',
+              dropdownClassName
+            )}
+          >
             <div>
               {/* ビューオプション */}
               <div className="py-1">
@@ -137,11 +148,11 @@ export const ViewSwitcher = ({
                     key={option.value}
                     onClick={() => handleSelect(option.value)}
                     className={cn(
-                      'w-full text-left px-4 py-2 text-sm',
+                      'w-full px-4 py-2 text-left text-sm',
                       'transition-colors',
                       'flex items-center justify-between gap-2',
-                      currentView === option.value 
-                        ? `${selection.active} ${selection.text} font-medium` 
+                      currentView === option.value
+                        ? `${selection.active} ${selection.text} font-medium`
                         : `${text.muted} ${secondary.hover}`
                     )}
                   >
@@ -150,17 +161,15 @@ export const ViewSwitcher = ({
                       <span>{option.label}</span>
                     </div>
                     {option.shortcut && (
-                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
-                        {option.shortcut}
-                      </span>
+                      <span className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">{option.shortcut}</span>
                     )}
                   </button>
                 ))}
               </div>
-              
+
               {/* ボーダー */}
               <div className="border-t border-neutral-900/10 dark:border-neutral-100/10" />
-              
+
               {/* 週末表示オプション（すべてのビューに反映） */}
               <div className="py-1">
                 <button
@@ -169,7 +178,7 @@ export const ViewSwitcher = ({
                     'w-full px-4 py-2 text-sm',
                     'flex items-center gap-2',
                     'transition-colors',
-                    'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded',
+                    'rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
                     text.secondary,
                     secondary.hover
                   )}
@@ -178,24 +187,20 @@ export const ViewSwitcher = ({
                   aria-label={`週末表示を${showWeekends ? '無効' : '有効'}にする`}
                   aria-describedby="weekend-toggle-description"
                 >
-                  <div className={cn(
-                    'w-4 h-4 border border-neutral-300 dark:border-neutral-600 rounded flex items-center justify-center transition-all duration-200',
-                    showWeekends && 'bg-primary border-primary'
-                  )}>
+                  <div
+                    className={cn(
+                      'flex h-4 w-4 items-center justify-center rounded border border-neutral-300 transition-all duration-200 dark:border-neutral-600',
+                      showWeekends && 'bg-primary border-primary'
+                    )}
+                  >
                     {showWeekends && (
-                      <Check 
-                        className="w-3 h-3 text-white transition-transform duration-150" 
-                        data-check-icon
-                      />
+                      <Check className="h-3 w-3 text-white transition-transform duration-150" data-check-icon />
                     )}
                   </div>
                   <span>週末表示</span>
                 </button>
                 {/* アクセシビリティ用の説明（スクリーンリーダー向け） */}
-                <div 
-                  id="weekend-toggle-description" 
-                  className="sr-only"
-                >
+                <div id="weekend-toggle-description" className="sr-only">
                   キーボードショートカット: Cmd+W または Ctrl+W で切り替え可能
                 </div>
               </div>

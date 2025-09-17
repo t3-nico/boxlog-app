@@ -3,8 +3,7 @@
  * パフォーマンス監視、エラーハンドリング、デバッグ機能を統合
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react'
-
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // === 型定義 ===
 
@@ -38,66 +37,69 @@ export function useDevTools(componentName?: string, config: DevToolsConfig = {})
     enableErrorBoundary = true,
     enableMemoryMonitoring = process.env.NODE_ENV === 'development',
     enableRenderTracking = process.env.NODE_ENV === 'development',
-    logLevel = process.env.NODE_ENV === 'development' ? 'info' : 'error'
+    logLevel = process.env.NODE_ENV === 'development' ? 'info' : 'error',
   } = config
 
   // パフォーマンス監視
   const performanceMetrics = usePerformanceMonitor(componentName, enablePerformanceMonitoring)
-  
+
   // エラーハンドリング
   const errorHandler = useErrorHandler(componentName, enableErrorBoundary)
-  
+
   // メモリ監視
   const memoryStats = useMemoryMonitor(enableMemoryMonitoring)
-  
+
   // レンダー追跡
   const renderStats = useRenderTracker(componentName, enableRenderTracking)
 
   // ログ出力
-  const log = useCallback((level: string, message: string, data?: unknown) => {
-    const levels = ['none', 'error', 'warn', 'info', 'debug']
-    const currentLevelIndex = levels.indexOf(logLevel)
-    const messageLevelIndex = levels.indexOf(level)
+  const log = useCallback(
+    (level: string, message: string, data?: unknown) => {
+      const levels = ['none', 'error', 'warn', 'info', 'debug']
+      const currentLevelIndex = levels.indexOf(logLevel)
+      const messageLevelIndex = levels.indexOf(level)
 
-    if (messageLevelIndex <= currentLevelIndex && messageLevelIndex > 0) {
-      const prefixText = componentName ? `[${componentName}]` : '[DevTools]'
-      const logMessage = `${prefixText} ${message}`
+      if (messageLevelIndex <= currentLevelIndex && messageLevelIndex > 0) {
+        const prefixText = componentName ? `[${componentName}]` : '[DevTools]'
+        const logMessage = `${prefixText} ${message}`
 
-      // TypeScript安全なコンソールメソッド呼び出し
-      switch (level) {
-        case 'error':
-          console.error(logMessage, data || '')
-          break
-        case 'warn':
-          console.warn(logMessage, data || '')
-          break
-        case 'info':
-          console.info(logMessage, data || '')
-          break
-        case 'debug':
-          console.debug(logMessage, data || '')
-          break
-        default:
-          console.log(logMessage, data || '')
+        // TypeScript安全なコンソールメソッド呼び出し
+        switch (level) {
+          case 'error':
+            console.error(logMessage, data || '')
+            break
+          case 'warn':
+            console.warn(logMessage, data || '')
+            break
+          case 'info':
+            console.info(logMessage, data || '')
+            break
+          case 'debug':
+            console.debug(logMessage, data || '')
+            break
+          default:
+            console.log(logMessage, data || '')
+        }
       }
-    }
-  }, [componentName, logLevel])
+    },
+    [componentName, logLevel]
+  )
 
   return {
     // パフォーマンス
     performanceMetrics,
-    
+
     // エラーハンドリング
     reportError: errorHandler.reportError,
     clearErrors: errorHandler.clearErrors,
     errors: errorHandler.errors,
-    
+
     // メモリ
     memoryStats,
-    
+
     // レンダー
     renderStats,
-    
+
     // ユーティリティ
     log,
     isDevMode: process.env.NODE_ENV === 'development',
@@ -114,9 +116,9 @@ function usePerformanceMonitor(componentName?: string, enabled = true) {
     renderCount: 0,
     renderTime: 0,
     memoryUsage: 0,
-    lastRender: 0
+    lastRender: 0,
   })
-  
+
   const renderStartRef = useRef<number>(0)
   const renderCountRef = useRef(0)
 
@@ -129,18 +131,19 @@ function usePerformanceMonitor(componentName?: string, enabled = true) {
     const renderEnd = performance.now()
     const renderTime = renderEnd - renderStartRef.current
 
-    setMetrics(prev => ({
+    setMetrics((prev) => ({
       ...prev,
       renderCount: renderCountRef.current,
       renderTime,
-      lastRender: renderEnd
+      lastRender: renderEnd,
     }))
 
     // パフォーマンス警告
-    if (renderTime > 16) { // 60fps threshold
+    if (renderTime > 16) {
+      // 60fps threshold
       console.warn(`[${componentName || 'Component'}] Slow render: ${renderTime.toFixed(2)}ms`)
     }
-  })
+  }, [enabled, componentName])
 
   return metrics
 }
@@ -151,31 +154,34 @@ function usePerformanceMonitor(componentName?: string, enabled = true) {
 function useErrorHandler(componentName?: string, enabled = true) {
   const [errors, setErrors] = useState<ErrorInfo[]>([])
 
-  const reportError = useCallback((error: Error, errorInfo?: unknown) => {
-    if (!enabled) return
+  const reportError = useCallback(
+    (error: Error, errorInfo?: unknown) => {
+      if (!enabled) return
 
-    const errorData: ErrorInfo = {
-      error,
-      errorInfo,
-      timestamp: Date.now(),
-      component: componentName
-    }
+      const errorData: ErrorInfo = {
+        error,
+        errorInfo,
+        timestamp: Date.now(),
+        component: componentName,
+      }
 
-    setErrors(prev => [...prev, errorData])
+      setErrors((prev) => [...prev, errorData])
 
-    // エラーをコンソールに出力
-    console.error(`[${componentName || 'Component'}] Error:`, error, errorInfo)
+      // エラーをコンソールに出力
+      console.error(`[${componentName || 'Component'}] Error:`, error, errorInfo)
 
-    // 開発環境では詳細情報も出力
-    if (process.env.NODE_ENV === 'development') {
-      console.group('Error Details')
-      console.error('Error:', error)
-      console.error('Error Info:', errorInfo)
-      console.error('Component:', componentName)
-      console.error('Timestamp:', new Date(errorData.timestamp))
-      console.groupEnd()
-    }
-  }, [componentName, enabled])
+      // 開発環境では詳細情報も出力
+      if (process.env.NODE_ENV === 'development') {
+        console.group('Error Details')
+        console.error('Error:', error)
+        console.error('Error Info:', errorInfo)
+        console.error('Component:', componentName)
+        console.error('Timestamp:', new Date(errorData.timestamp))
+        console.groupEnd()
+      }
+    },
+    [componentName, enabled]
+  )
 
   const clearErrors = useCallback(() => {
     setErrors([])
@@ -218,7 +224,7 @@ function useMemoryMonitor(enabled = true) {
     used: 0,
     total: 0,
     percentage: 0,
-    timestamp: 0
+    timestamp: 0,
   })
 
   useEffect(() => {
@@ -232,7 +238,7 @@ function useMemoryMonitor(enabled = true) {
         used: memory.usedJSHeapSize,
         total: memory.totalJSHeapSize,
         percentage: (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       }
 
       setMemoryStats(stats)
@@ -258,11 +264,13 @@ function useMemoryMonitor(enabled = true) {
 function useRenderTracker(componentName?: string, enabled = true) {
   const renderCountRef = useRef(0)
   const _propsRef = useRef<Record<string, unknown>>({})
-  const [renderHistory, setRenderHistory] = useState<Array<{
-    count: number
-    timestamp: number
-    propsChanged: string[]
-  }>>([])
+  const [renderHistory, setRenderHistory] = useState<
+    Array<{
+      count: number
+      timestamp: number
+      propsChanged: string[]
+    }>
+  >([])
 
   useEffect(() => {
     if (!enabled) return
@@ -277,24 +285,24 @@ function useRenderTracker(componentName?: string, enabled = true) {
       propsChanged = []
     }
 
-    setRenderHistory(prev => [
+    setRenderHistory((prev) => [
       ...prev.slice(-9), // 最新10件を保持
       {
         count: renderCountRef.current,
         timestamp,
-        propsChanged
-      }
+        propsChanged,
+      },
     ])
 
     // 過度なレンダーを警告
     if (renderCountRef.current > 50) {
       console.warn(`[${componentName || 'Component'}] Many re-renders detected: ${renderCountRef.current}`)
     }
-  })
+  }, [enabled, componentName])
 
   return {
     renderCount: renderCountRef.current,
-    renderHistory
+    renderHistory,
   }
 }
 
@@ -318,7 +326,7 @@ export function useProfiler(name: string, enabled = process.env.NODE_ENV === 'de
     if ('mark' in performance && 'measure' in performance) {
       performance.mark(`${name}-end`)
       performance.measure(name, `${name}-start`, `${name}-end`)
-      
+
       const entries = performance.getEntriesByName(name)
       const latest = entries[entries.length - 1]
       if (latest) {

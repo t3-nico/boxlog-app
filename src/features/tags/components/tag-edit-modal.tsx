@@ -1,22 +1,14 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { 
-  Dialog, 
-  DialogPanel, 
-  DialogTitle,
-  Field,
-  Input,
-  Label,
-  Textarea
-} from '@headlessui/react'
-import { 
-  X as XMarkIcon, 
-  Tag as TagIcon,
+import { Dialog, DialogPanel, DialogTitle, Field, Input, Label, Textarea } from '@headlessui/react'
+import {
+  AlertTriangle as ExclamationTriangleIcon,
   Pencil as PencilIcon,
+  Tag as TagIcon,
   Trash2 as TrashIcon,
-  AlertTriangle as ExclamationTriangleIcon
+  X as XMarkIcon,
 } from 'lucide-react'
 
 import type { TagWithChildren, UpdateTagInput } from '@/types/tags'
@@ -44,38 +36,33 @@ const DEFAULT_COLORS = [
   '#6B7280', // Gray
 ]
 
-const ColorPicker = ({ 
-  value, 
-  onChange 
-}: { 
-  value: string; 
-  onChange: (color: string) => void 
-}) => {
+const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: string) => void }) => {
   const [customColor, setCustomColor] = useState(value)
-  
+
   useEffect(() => {
     setCustomColor(value)
   }, [value])
-  
+
   return (
     <div className="space-y-3">
       {/* プリセットカラー */}
       <div className="grid grid-cols-5 gap-2">
         {DEFAULT_COLORS.map((color) => (
           <button
+            type="button"
             key={color}
             onClick={() => onChange(color)}
-            className={`w-8 h-8 rounded-full border-2 transition-all ${
-              value === color 
-                ? 'border-gray-900 dark:border-white scale-110' 
-                : 'border-gray-300 dark:border-gray-600 hover:scale-105'
+            className={`h-8 w-8 rounded-full border-2 transition-all ${
+              value === color
+                ? 'scale-110 border-gray-900 dark:border-white'
+                : 'border-gray-300 hover:scale-105 dark:border-gray-600'
             }`}
             style={{ backgroundColor: color }}
             title={color}
           />
         ))}
       </div>
-      
+
       {/* カスタムカラー */}
       <div className="flex items-center gap-2">
         <input
@@ -85,11 +72,9 @@ const ColorPicker = ({
             setCustomColor(e.target.value)
             onChange(e.target.value)
           }}
-          className="w-8 h-8 rounded border border-gray-300 dark:border-gray-600"
+          className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          カスタムカラー: {customColor}
-        </span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">カスタムカラー: {customColor}</span>
       </div>
     </div>
   )
@@ -100,7 +85,7 @@ const ParentTagSelector = ({
   onChange,
   allTags,
   currentTag,
-  maxLevel = 2
+  maxLevel = 2,
 }: {
   value: string | null
   onChange: (parentId: string | null) => void
@@ -112,51 +97,52 @@ const ParentTagSelector = ({
   const getDescendantIds = (tag: TagWithChildren): Set<string> => {
     const ids = new Set([tag.id])
     if (tag.children) {
-      tag.children.forEach(child => {
-        getDescendantIds(child).forEach(id => ids.add(id))
+      tag.children.forEach((child) => {
+        getDescendantIds(child).forEach((id) => ids.add(id))
       })
     }
     return ids
   }
-  
+
   const excludedIds = getDescendantIds(currentTag)
-  
+
   const renderTagOption = (tag: TagWithChildren, level = 0): JSX.Element[] => {
     const options: JSX.Element[] = []
     const indent = '　'.repeat(level) // 全角スペースでインデント
-    
+
     // 自分自身と子孫を除外
     if (excludedIds.has(tag.id)) {
       return options
     }
-    
+
     // 親になれるのは最大レベル未満のタグのみ
     if (level < maxLevel) {
       options.push(
         <option key={tag.id} value={tag.id}>
-          {indent}{tag.name} ({tag.path})
+          {indent}
+          {tag.name} ({tag.path})
         </option>
       )
     }
-    
+
     // 子タグも再帰的に追加
     if (tag.children) {
-      tag.children.forEach(child => {
+      tag.children.forEach((child) => {
         options.push(...renderTagOption(child, level + 1))
       })
     }
-    
+
     return options
   }
-  
+
   return (
     <select
       value={value || ''}
       onChange={(e) => onChange(e.target.value || null)}
-      className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
       <option value="">-- ルートレベル（親なし）--</option>
-      {allTags.flatMap(tag => renderTagOption(tag))}
+      {allTags.flatMap((tag) => renderTagOption(tag))}
     </select>
   )
 }
@@ -164,7 +150,7 @@ const ParentTagSelector = ({
 const DeleteConfirmation = ({
   tag,
   onConfirm,
-  onCancel
+  onCancel,
 }: {
   tag: TagWithChildren
   onConfirm: () => void
@@ -172,39 +158,38 @@ const DeleteConfirmation = ({
 }) => {
   const hasChildren = tag.children && tag.children.length > 0
   const childCount = tag.children?.length || 0
-  
+
   return (
-    <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+    <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
       <div className="flex items-start gap-3">
-        <ExclamationTriangleIcon className="w-6 h-6 text-red-600 dark:text-red-400 flex-shrink-0 mt-1" />
+        <ExclamationTriangleIcon className="mt-1 h-6 w-6 flex-shrink-0 text-red-600 dark:text-red-400" />
         <div className="flex-1">
-          <h4 className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
-            タグを削除しますか？
-          </h4>
-          <p className="text-sm text-red-700 dark:text-red-400 mb-3">
+          <h4 className="mb-2 text-sm font-medium text-red-800 dark:text-red-300">タグを削除しますか？</h4>
+          <p className="mb-3 text-sm text-red-700 dark:text-red-400">
             「{tag.name}」を削除します。この操作は取り消せません。
           </p>
-          
+
           {hasChildren && (
-            <div className="mb-3 p-2 bg-red-100 dark:bg-red-900/30 rounded border border-red-200 dark:border-red-700">
+            <div className="mb-3 rounded border border-red-200 bg-red-100 p-2 dark:border-red-700 dark:bg-red-900/30">
               <p className="text-sm text-red-800 dark:text-red-300">
-                ⚠️ このタグには {childCount} 個の子タグがあります。
-                削除するには先に子タグを削除または移動してください。
+                ⚠️ このタグには {childCount} 個の子タグがあります。 削除するには先に子タグを削除または移動してください。
               </p>
             </div>
           )}
-          
+
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={onConfirm}
               disabled={hasChildren}
-              className="px-3 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="rounded border border-transparent bg-red-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               削除する
             </button>
             <button
+              type="button"
               onClick={onCancel}
-              className="px-3 py-2 text-sm font-medium text-red-700 dark:text-red-400 bg-transparent border border-red-300 dark:border-red-600 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="rounded border border-red-300 bg-transparent px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20"
             >
               キャンセル
             </button>
@@ -223,10 +208,10 @@ const useFormValidation = (
   currentTagId?: string
 ) => {
   const [errors, setErrors] = useState<Record<string, string>>({})
-  
+
   const validateForm = useCallback(() => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'タグ名は必須です'
     } else if (formData.name.length > 50) {
@@ -236,37 +221,34 @@ const useFormValidation = (
     } else if (formData.name.startsWith('#')) {
       newErrors.name = 'タグ名は#で始めることはできません'
     }
-    
+
     if (formData.description && formData.description.length > 200) {
       newErrors.description = '説明は200文字以内で入力してください'
     }
-    
+
     // 同名チェック（同一親内、自分以外）
-    const siblings = originalParentId 
-      ? allTags.find(t => t.id === originalParentId)?.children || []
-      : allTags
-    
-    const duplicate = siblings.find(sibling => 
-      sibling.id !== currentTagId &&
-      sibling.name.toLowerCase() === formData.name.trim().toLowerCase()
+    const siblings = originalParentId ? allTags.find((t) => t.id === originalParentId)?.children || [] : allTags
+
+    const duplicate = siblings.find(
+      (sibling) => sibling.id !== currentTagId && sibling.name.toLowerCase() === formData.name.trim().toLowerCase()
     )
-    
+
     if (duplicate) {
       newErrors.name = '同じ親階層に同名のタグが既に存在します'
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }, [formData, allTags, originalParentId, currentTagId])
-  
+
   return { errors, setErrors, validateForm }
 }
 
 // 編集タブコンテンツ
-const EditTabContent = ({ 
-  formData, 
-  setFormData, 
-  errors 
+const EditTabContent = ({
+  formData,
+  setFormData,
+  errors,
 }: {
   formData: { name: string; color: string; description: string; is_active: boolean }
   setFormData: (data: { name: string; color: string; description: string; is_active: boolean }) => void
@@ -275,52 +257,35 @@ const EditTabContent = ({
   <div className="space-y-6">
     {/* タグ名 */}
     <Field>
-      <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        タグ名 *
-      </Label>
+      <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">タグ名 *</Label>
       <Input
         type="text"
         value={formData.name}
         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         required
       />
-      {errors.name && (
-        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-          {errors.name}
-        </p>
-      )}
+      {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
     </Field>
-    
+
     {/* カラー選択 */}
     <Field>
-      <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        カラー
-      </Label>
-      <ColorPicker
-        value={formData.color}
-        onChange={(color) => setFormData({ ...formData, color })}
-      />
+      <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
+      <ColorPicker value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
     </Field>
-    
+
     {/* 説明 */}
     <Field>
-      <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-        説明（任意）
-      </Label>
+      <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">説明（任意）</Label>
       <Textarea
         value={formData.description}
         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
         rows={3}
-        className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
       />
-      {errors.description && (
-        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-          {errors.description}
-        </p>
-      )}
+      {errors.description && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>}
     </Field>
-    
+
     {/* アクティブ状態 */}
     <Field>
       <div className="flex items-center gap-2">
@@ -329,15 +294,13 @@ const EditTabContent = ({
           id="is_active"
           checked={formData.is_active}
           onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-          className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
         />
         <Label htmlFor="is_active" className="text-sm text-gray-700 dark:text-gray-300">
           アクティブ
         </Label>
       </div>
-      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-        非アクティブにするとタグの使用が制限されます
-      </p>
+      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">非アクティブにするとタグの使用が制限されます</p>
     </Field>
   </div>
 )
@@ -348,7 +311,7 @@ const MoveTabContent = ({
   setNewParentId,
   allTags,
   tag,
-  originalParentId
+  originalParentId,
 }: {
   newParentId: string | null
   setNewParentId: (id: string | null) => void
@@ -357,17 +320,15 @@ const MoveTabContent = ({
   originalParentId: string | null
 }) => {
   const hasParentChanged = newParentId !== originalParentId
-  const selectedParentTag = newParentId 
-    ? allTags.find(t => t.id === newParentId) || 
-      allTags.flatMap(t => t.children || []).find(t => t.id === newParentId)
+  const selectedParentTag = newParentId
+    ? allTags.find((t) => t.id === newParentId) ||
+      allTags.flatMap((t) => t.children || []).find((t) => t.id === newParentId)
     : null
-    
+
   return (
     <div className="space-y-6">
       <Field>
-        <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          新しい親タグ
-        </Label>
+        <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">新しい親タグ</Label>
         <ParentTagSelector
           value={newParentId}
           onChange={setNewParentId}
@@ -376,7 +337,7 @@ const MoveTabContent = ({
           maxLevel={2}
         />
         {hasParentChanged && (
-          <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/20">
             <p className="text-sm text-blue-800 dark:text-blue-300">
               移動先: {selectedParentTag ? selectedParentTag.name : 'ルートレベル'}
             </p>
@@ -393,9 +354,9 @@ const useTagEditModalState = (_tag?: TagWithChildren, _isOpen?: boolean) => {
     name: '',
     color: '#3B82F6',
     description: '',
-    is_active: true
+    is_active: true,
   })
-  
+
   const [originalParentId, setOriginalParentId] = useState<string | null>(null)
   const [newParentId, setNewParentId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -403,12 +364,18 @@ const useTagEditModalState = (_tag?: TagWithChildren, _isOpen?: boolean) => {
   const [activeTab, setActiveTab] = useState<'edit' | 'move' | 'delete'>('edit')
 
   return {
-    formData, setFormData,
-    originalParentId, setOriginalParentId,
-    newParentId, setNewParentId,
-    isLoading, setIsLoading,
-    showDeleteConfirm, setShowDeleteConfirm,
-    activeTab, setActiveTab
+    formData,
+    setFormData,
+    originalParentId,
+    setOriginalParentId,
+    newParentId,
+    setNewParentId,
+    isLoading,
+    setIsLoading,
+    showDeleteConfirm,
+    setShowDeleteConfirm,
+    activeTab,
+    setActiveTab,
   }
 }
 
@@ -429,7 +396,7 @@ const useTagEditModalInitialization = (
         name: tag.name,
         color: tag.color,
         description: tag.description || '',
-        is_active: tag.is_active
+        is_active: tag.is_active,
       })
       setOriginalParentId(tag.parent_id)
       setNewParentId(tag.parent_id)
@@ -455,23 +422,23 @@ const useTagEditModalActions = (
 ) => {
   const handleSave = async () => {
     if (!validateForm()) return
-    
+
     setIsLoading(true)
     try {
       const updateData: UpdateTagInput = {
         name: formData.name.trim(),
         color: formData.color,
         description: formData.description.trim() || undefined,
-        is_active: formData.is_active
+        is_active: formData.is_active,
       }
-      
+
       await onSave(updateData)
-      
+
       // 親が変更された場合は移動も実行
       if (onMove && newParentId !== originalParentId) {
         await onMove(newParentId)
       }
-      
+
       onClose()
     } catch (error) {
       console.error('Tag update failed:', error)
@@ -480,10 +447,10 @@ const useTagEditModalActions = (
       setIsLoading(false)
     }
   }
-  
+
   const handleDelete = async () => {
     if (!onDelete) return
-    
+
     setIsLoading(true)
     try {
       await onDelete()
@@ -500,33 +467,35 @@ const useTagEditModalActions = (
 }
 
 // サブコンポーネント: ヘッダー部分
-const TagEditModalHeader = ({ tag, onClose }: { tag: TagWithChildren, onClose: Function }) => (
-  <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+const TagEditModalHeader = ({ tag, onClose }: { tag: TagWithChildren; onClose: Function }) => (
+  <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
     <div className="flex items-center gap-3">
       <div className="flex-shrink-0">
-        <TagIcon className="w-6 h-6" style={{ color: tag.color }} />
+        <TagIcon className="h-6 w-6" style={{ color: tag.color }} />
       </div>
       <div>
-        <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-          タグを編集
-        </DialogTitle>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          {tag.path}
-        </p>
+        <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">タグを編集</DialogTitle>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{tag.path}</p>
       </div>
     </div>
-    
+
     <button
+      type="button"
       onClick={() => onClose()}
-      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+      className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
     >
-      <XMarkIcon className="w-5 h-5" />
+      <XMarkIcon className="h-5 w-5" />
     </button>
   </div>
 )
 
 // サブコンポーネント: タブナビゲーション
-const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: {
+const TagEditModalTabs = ({
+  activeTab,
+  setActiveTab,
+  onMove,
+  onDelete,
+}: {
   activeTab: 'edit' | 'move' | 'delete'
   setActiveTab: (tab: 'edit' | 'move' | 'delete') => void
   onMove?: ((newParentId: string | null) => Promise<void>) | undefined
@@ -534,23 +503,25 @@ const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: {
 }) => (
   <div className="flex border-b border-gray-200 dark:border-gray-700">
     <button
+      type="button"
       onClick={() => setActiveTab('edit')}
-      className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+      className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
         activeTab === 'edit'
           ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+          : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
       }`}
     >
-      <PencilIcon className="w-4 h-4 inline mr-2" />
+      <PencilIcon className="mr-2 inline h-4 w-4" />
       基本設定
     </button>
     {onMove && (
       <button
+        type="button"
         onClick={() => setActiveTab('move')}
-        className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+        className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
           activeTab === 'move'
             ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
         }`}
       >
         移動
@@ -558,14 +529,15 @@ const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: {
     )}
     {onDelete && (
       <button
+        type="button"
         onClick={() => setActiveTab('delete')}
-        className={`flex-1 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+        className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
           activeTab === 'delete'
             ? 'border-red-500 text-red-600 dark:text-red-400'
-            : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
         }`}
       >
-        <TrashIcon className="w-4 h-4 inline mr-2" />
+        <TrashIcon className="mr-2 inline h-4 w-4" />
         削除
       </button>
     )}
@@ -573,61 +545,60 @@ const TagEditModalTabs = ({ activeTab, setActiveTab, onMove, onDelete }: {
 )
 
 // サブコンポーネント: フッター部分
-const TagEditModalFooter = ({ activeTab, isLoading, onClose, handleSave, formData }: {
+const TagEditModalFooter = ({
+  activeTab,
+  isLoading,
+  onClose,
+  handleSave,
+  formData,
+}: {
   activeTab: 'edit' | 'move' | 'delete'
   isLoading: boolean
   onClose: () => void
   handleSave: () => Promise<void>
   formData: { name: string; color: string; description: string; is_active: boolean }
-}) => (
+}) =>
   activeTab !== 'delete' && (
-    <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700">
+    <div className="flex items-center justify-end gap-3 border-t border-gray-200 p-6 dark:border-gray-700">
       <button
+        type="button"
         onClick={onClose}
         disabled={isLoading}
-        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
       >
         キャンセル
       </button>
       <button
+        type="button"
         onClick={handleSave}
         disabled={isLoading || !formData.name.trim()}
-        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="inline-flex items-center gap-2 rounded-lg border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? (
           <>
-            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
             保存中...
           </>
         ) : (
           <>
-            <PencilIcon className="w-4 h-4" />
+            <PencilIcon className="h-4 w-4" />
             保存
           </>
         )}
       </button>
     </div>
   )
-)
 
-export const TagEditModal = ({
-  isOpen,
-  onClose,
-  onSave,
-  onDelete,
-  onMove,
-  tag,
-  allTags = []
-}: TagEditModalProps) => {
+export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, allTags = [] }: TagEditModalProps) => {
   const state = useTagEditModalState(tag, isOpen)
-  
+
   const { errors, setErrors, validateForm } = useFormValidation(
     state.formData,
     allTags,
     state.originalParentId,
     tag?.id
   )
-  
+
   useTagEditModalInitialization(
     isOpen,
     tag,
@@ -638,7 +609,7 @@ export const TagEditModal = ({
     state.setShowDeleteConfirm,
     state.setActiveTab
   )
-  
+
   const { handleSave, handleDelete } = useTagEditModalActions(
     state.formData,
     state.originalParentId,
@@ -651,33 +622,29 @@ export const TagEditModal = ({
     onDelete,
     onClose
   )
-  
+
   if (!tag) return null
-  
+
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-      
+
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-        <DialogPanel className="max-w-lg w-full bg-white dark:bg-gray-900 rounded-xl shadow-xl">
+        <DialogPanel className="w-full max-w-lg rounded-xl bg-white shadow-xl dark:bg-gray-900">
           <TagEditModalHeader tag={tag} onClose={onClose} />
-          
-          <TagEditModalTabs 
+
+          <TagEditModalTabs
             activeTab={state.activeTab}
             setActiveTab={state.setActiveTab}
             onMove={onMove}
             onDelete={onDelete}
           />
-          
+
           <div className="p-6">
             {state.activeTab === 'edit' && (
-              <EditTabContent 
-                formData={state.formData}
-                setFormData={state.setFormData}
-                errors={errors}
-              />
+              <EditTabContent formData={state.formData} setFormData={state.setFormData} errors={errors} />
             )}
-            
+
             {state.activeTab === 'move' && onMove && (
               <MoveTabContent
                 newParentId={state.newParentId}
@@ -687,25 +654,19 @@ export const TagEditModal = ({
                 originalParentId={state.originalParentId}
               />
             )}
-            
+
             {state.activeTab === 'delete' && onDelete && (
-              <DeleteConfirmation
-                tag={tag}
-                onConfirm={handleDelete}
-                onCancel={() => state.setActiveTab('edit')}
-              />
+              <DeleteConfirmation tag={tag} onConfirm={handleDelete} onCancel={() => state.setActiveTab('edit')} />
             )}
-            
+
             {errors.submit && (
-              <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <p className="text-sm text-red-600 dark:text-red-400">
-                  {errors.submit}
-                </p>
+              <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
+                <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
               </div>
             )}
           </div>
-          
-          <TagEditModalFooter 
+
+          <TagEditModalFooter
             activeTab={state.activeTab}
             isLoading={state.isLoading}
             onClose={onClose}

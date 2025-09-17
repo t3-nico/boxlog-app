@@ -81,14 +81,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
   }, [contextAvailable, viewType, currentDate, initialDate])
 
-
   // コンテキストメニュー状態
   const [contextMenuEvent, setContextMenuEvent] = useState<CalendarEvent | null>(null)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
 
   // イベントコンテキストアクション
   const { handleDeleteEvent, handleEditEvent, handleDuplicateEvent, handleViewDetails } = useEventContextActions()
-
 
   const { timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
 
@@ -321,12 +319,10 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     return calendarEvents
   }, [events, viewDateRange.start, viewDateRange.end, viewType])
 
-
   // タスククリックハンドラー
   const handleTaskClick = useCallback(() => {
     // Task click functionality removed - not used in current implementation
   }, [])
-
 
   // イベント関連のハンドラー
   const handleEventClick = useCallback(
@@ -413,7 +409,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [openCreateInspector, viewType, currentDate]
   )
 
-
   const handleEventDelete = useCallback(
     async (eventId: string) => {
       try {
@@ -440,7 +435,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     },
     [eventStore]
   )
-
 
   // 30日経過した予定を自動削除
   useEffect(() => {
@@ -521,12 +515,12 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const skipWeekendsForDay = (startDate: Date, direction: 'prev' | 'next') => {
     const multiplier = direction === 'next' ? 1 : -1
     const newDate = new Date(startDate)
-    
+
     do {
       newDate.setDate(newDate.getDate() + multiplier)
       console.log('📅 Checking date:', newDate.toDateString(), 'dayOfWeek:', newDate.getDay())
     } while (newDate.getDay() === 0 || newDate.getDay() === 6)
-    
+
     return newDate
   }
 
@@ -558,11 +552,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     while (newDate.getDay() === 0 || newDate.getDay() === 6) {
       newDate.setDate(newDate.getDate() + (multiplier > 0 ? 1 : -1))
     }
-    
+
     return newDate
   }
 
-  const handleTodayWithWeekendSkip = () => {
+  const handleTodayWithWeekendSkip = useCallback(() => {
     const today = new Date()
     const todayDayOfWeek = today.getDay()
 
@@ -578,31 +572,34 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       navigateToDate(adjustedToday)
       return true
     }
-    
+
     return false
-  }
+  }, [navigateToDate])
 
-  const handleWeekendSkipNavigation = (direction: 'prev' | 'next') => {
-    let newDate: Date
-    
-    if (viewType === 'day') {
-      newDate = skipWeekendsForDay(currentDate, direction)
-    } else if (viewType === '3day') {
-      newDate = skipWeekendsFor3Day(currentDate, direction)
-    } else {
-      return false
-    }
+  const handleWeekendSkipNavigation = useCallback(
+    (direction: 'prev' | 'next') => {
+      let newDate: Date
 
-    console.log('📅 Weekend skip navigation:', {
-      viewType,
-      from: currentDate.toDateString(),
-      to: newDate.toDateString(),
-      direction,
-    })
+      if (viewType === 'day') {
+        newDate = skipWeekendsForDay(currentDate, direction)
+      } else if (viewType === '3day') {
+        newDate = skipWeekendsFor3Day(currentDate, direction)
+      } else {
+        return false
+      }
 
-    navigateToDate(newDate)
-    return true
-  }
+      console.log('📅 Weekend skip navigation:', {
+        viewType,
+        from: currentDate.toDateString(),
+        to: newDate.toDateString(),
+        direction,
+      })
+
+      navigateToDate(newDate)
+      return true
+    },
+    [viewType, currentDate, navigateToDate]
+  )
 
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback(
@@ -620,7 +617,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
       // 特別な処理が必要かチェック
       const needsWeekendSkip = (viewType === 'day' || viewType === '3day') && !showWeekends
-      
+
       if (!needsWeekendSkip) {
         navigateRelative(direction)
         return

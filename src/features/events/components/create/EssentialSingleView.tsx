@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 interface Tag {
   id: string
   name: string
@@ -41,9 +39,8 @@ export const EssentialSingleView = ({
   onSave,
   _onDelete,
   isEditMode = false,
-  _initialData
+  _initialData,
 }: EssentialSingleViewProps) => {
-
   if (!isOpen) return null
 
   const handleSave = async () => {
@@ -51,7 +48,7 @@ export const EssentialSingleView = ({
       await onSave({
         title: 'Default Title',
         tags: [],
-        status: 'backlog'
+        status: 'backlog',
       })
       onClose()
     } catch (error) {
@@ -61,41 +58,53 @@ export const EssentialSingleView = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        role="button"
+        tabIndex={0}
+        aria-label="Close modal"
+        onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onClose()
+          }
+        }}
+      />
 
-      <div className="relative w-full max-w-2xl mx-4 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-semibold">
-            {isEditMode ? 'Edit Event' : 'Create Event'}
-          </h1>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-          >
+      <div className="relative mx-4 w-full max-w-2xl rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-800">
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold">{isEditMode ? 'Edit Event' : 'Create Event'}</h1>
+          <button type="button" onClick={onClose} className="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-700">
             ✕
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">Title</label>
+            <label htmlFor="event-title" className="mb-2 block text-sm font-medium">
+              Title
+            </label>
             <input
+              id="event-title"
               type="text"
               placeholder="Event title"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex justify-end gap-3 border-t pt-4">
             <button
+              type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200"
             >
               Cancel
             </button>
             <button
+              type="button"
               onClick={handleSave}
-              className="px-6 py-2 rounded-lg font-semibold text-sm bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
               {isEditMode ? 'Update' : 'Create'}
             </button>

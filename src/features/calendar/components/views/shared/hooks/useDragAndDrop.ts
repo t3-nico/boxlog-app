@@ -266,109 +266,134 @@ export function useDragAndDrop({
   )
 
   // ヘルパー関数: 位置スナッピング処理
-  const calculateSnappedPosition = useCallback((dragData: Pick<DragState, 'originalPosition' | 'originalDateIndex'> & { originalTop: number }, deltaY: number, targetDateIndex: number) => {
-    const newTop = dragData.originalTop + deltaY
-    const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
+  const calculateSnappedPosition = useCallback(
+    (
+      dragData: Pick<DragState, 'originalPosition' | 'originalDateIndex'> & { originalTop: number },
+      deltaY: number,
+      targetDateIndex: number
+    ) => {
+      const newTop = dragData.originalTop + deltaY
+      const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
 
-    let snappedLeft = undefined
-    if (viewMode !== 'day' && displayDates) {
-      const columnWidthPercent = 100 / displayDates.length
-      snappedLeft = targetDateIndex * columnWidthPercent + 1
+      let snappedLeft = undefined
+      if (viewMode !== 'day' && displayDates) {
+        const columnWidthPercent = 100 / displayDates.length
+        snappedLeft = targetDateIndex * columnWidthPercent + 1
 
-      if (targetDateIndex !== dragData.originalDateIndex) {
-        console.log('🔧 日付間移動 - 水平移動実行:', {
-          originalDateIndex: dragData.originalDateIndex,
-          targetDateIndex,
-          columnWidthPercent,
-          snappedLeft,
-        })
+        if (targetDateIndex !== dragData.originalDateIndex) {
+          console.log('🔧 日付間移動 - 水平移動実行:', {
+            originalDateIndex: dragData.originalDateIndex,
+            targetDateIndex,
+            columnWidthPercent,
+            snappedLeft,
+          })
+        }
       }
-    }
 
-    return { snappedTop, snappedLeft, hour, minute }
-  }, [snapToQuarterHour, viewMode, displayDates])
+      return { snappedTop, snappedLeft, hour, minute }
+    },
+    [snapToQuarterHour, viewMode, displayDates]
+  )
 
   // ヘルパー関数: ドラッグ要素の位置更新
-  const updateDragElementPosition = useCallback((dragData: Pick<DragState, 'dragElement' | 'originalPosition'> & { initialRect: DOMRect }, deltaX: number, deltaY: number) => {
-    if (!dragData.dragElement || !dragData.initialRect) return
+  const updateDragElementPosition = useCallback(
+    (
+      dragData: Pick<DragState, 'dragElement' | 'originalPosition'> & { initialRect: DOMRect },
+      deltaX: number,
+      deltaY: number
+    ) => {
+      if (!dragData.dragElement || !dragData.initialRect) return
 
-    let newLeft = dragData.initialRect.left + deltaX
-    let newTop = dragData.initialRect.top + deltaY
+      let newLeft = dragData.initialRect.left + deltaX
+      let newTop = dragData.initialRect.top + deltaY
 
-    if (calendarContainer) {
-      const containerRect = calendarContainer.getBoundingClientRect()
-      const elementWidth = dragData.dragElement.offsetWidth
-      const elementHeight = dragData.dragElement.offsetHeight
+      if (calendarContainer) {
+        const containerRect = calendarContainer.getBoundingClientRect()
+        const elementWidth = dragData.dragElement.offsetWidth
+        const elementHeight = dragData.dragElement.offsetHeight
 
-      newLeft = Math.max(containerRect.left, Math.min(containerRect.right - elementWidth, newLeft))
-      newTop = Math.max(containerRect.top, Math.min(containerRect.bottom - elementHeight, newTop))
-    }
+        newLeft = Math.max(containerRect.left, Math.min(containerRect.right - elementWidth, newLeft))
+        newTop = Math.max(containerRect.top, Math.min(containerRect.bottom - elementHeight, newTop))
+      }
 
-    dragData.dragElement.style.left = `${newLeft}px`
-    dragData.dragElement.style.top = `${newTop}px`
+      dragData.dragElement.style.left = `${newLeft}px`
+      dragData.dragElement.style.top = `${newTop}px`
 
-    console.log('🎯 ドラッグ要素移動:', {
-      deltaX,
-      deltaY,
-      newLeft,
-      newTop,
-      originalLeft: dragData.initialRect.left,
-      originalTop: dragData.initialRect.top,
-    })
-  }, [calendarContainer])
+      console.log('🎯 ドラッグ要素移動:', {
+        deltaX,
+        deltaY,
+        newLeft,
+        newTop,
+        originalLeft: dragData.initialRect.left,
+        originalTop: dragData.initialRect.top,
+      })
+    },
+    []
+  )
 
   // ヘルパー関数: プレビュー時間計算
-  const calculatePreviewTime = useCallback((dragData: Pick<DragState, 'draggedEventId' | 'originalDateIndex'> & { eventDuration?: number }, hour: number, minute: number, targetDateIndex: number) => {
-    const event = events.find((e) => e.id === dragData.eventId)
-    let durationMs = 60 * 60 * 1000
+  const calculatePreviewTime = useCallback(
+    (
+      dragData: Pick<DragState, 'draggedEventId' | 'originalDateIndex'> & { eventDuration?: number },
+      hour: number,
+      minute: number,
+      targetDateIndex: number
+    ) => {
+      const event = events.find((e) => e.id === dragData.eventId)
+      let durationMs = 60 * 60 * 1000
 
-    if (event?.startDate && event?.endDate) {
-      durationMs = event.endDate.getTime() - event.startDate.getTime()
-    } else if (dragData.eventDuration) {
-      durationMs = (dragData.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
-    }
-
-    let targetDate = date
-    if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
-      targetDate = displayDates[targetDateIndex]
-
-      if (targetDateIndex !== dragData.originalDateIndex) {
-        console.log('🎯 プレビュー日付計算（非連続対応）:', {
-          targetDateIndex,
-          originalDateIndex: dragData.originalDateIndex,
-          targetDate: targetDate.toDateString(),
-          originalDate: displayDates[dragData.originalDateIndex]?.toDateString?.(),
-        })
+      if (event?.startDate && event?.endDate) {
+        durationMs = event.endDate.getTime() - event.startDate.getTime()
+      } else if (dragData.eventDuration) {
+        durationMs = (dragData.eventDuration / HOUR_HEIGHT) * 60 * 60 * 1000
       }
-    }
 
-    if (!targetDate || isNaN(targetDate.getTime())) {
-      targetDate = date
-    }
+      let targetDate = date
+      if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
+        targetDate = displayDates[targetDateIndex]
 
-    const previewStartTime = new Date(targetDate)
-    previewStartTime.setHours(hour, minute, 0, 0)
-    const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
+        if (targetDateIndex !== dragData.originalDateIndex) {
+          console.log('🎯 プレビュー日付計算（非連続対応）:', {
+            targetDateIndex,
+            originalDateIndex: dragData.originalDateIndex,
+            targetDate: targetDate.toDateString(),
+            originalDate: displayDates[dragData.originalDateIndex]?.toDateString?.(),
+          })
+        }
+      }
 
-    return { previewStartTime, previewEndTime }
-  }, [events, date, viewMode, displayDates])
+      if (!targetDate || isNaN(targetDate.getTime())) {
+        targetDate = date
+      }
+
+      const previewStartTime = new Date(targetDate)
+      previewStartTime.setHours(hour, minute, 0, 0)
+      const previewEndTime = new Date(previewStartTime.getTime() + durationMs)
+
+      return { previewStartTime, previewEndTime }
+    },
+    [events, date, viewMode, displayDates]
+  )
 
   // ヘルパー関数: 時間表示更新
-  const updateTimeDisplay = useCallback((dragData: Pick<DragState, 'dragElement'>, previewStartTime: Date, previewEndTime: Date) => {
-    if (!dragData.dragElement) return
+  const updateTimeDisplay = useCallback(
+    (dragData: Pick<DragState, 'dragElement'>, previewStartTime: Date, previewEndTime: Date) => {
+      if (!dragData.dragElement) return
 
-    const timeElement = dragData.dragElement.querySelector('.event-time')
-    if (timeElement) {
-      const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h')
-      timeElement.textContent = formattedTimeRange
+      const timeElement = dragData.dragElement.querySelector('.event-time')
+      if (timeElement) {
+        const formattedTimeRange = formatTimeRange(previewStartTime, previewEndTime, '24h')
+        timeElement.textContent = formattedTimeRange
 
-      console.log('🕐 ドラッグ要素時間更新:', {
-        formattedTimeRange,
-        start: previewStartTime.toLocaleTimeString(),
-        end: previewEndTime.toLocaleTimeString(),
-      })
-    }
-  }, [])
+        console.log('🕐 ドラッグ要素時間更新:', {
+          formattedTimeRange,
+          start: previewStartTime.toLocaleTimeString(),
+          end: previewEndTime.toLocaleTimeString(),
+        })
+      }
+    },
+    []
+  )
 
   // ドラッグ処理のメイン関数（複雑度削減版）
   const handleDragging = useCallback(
@@ -381,11 +406,11 @@ export function useDragAndDrop({
       targetDateIndex: number
     ) => {
       const { snappedTop, snappedLeft, hour, minute } = calculateSnappedPosition(dragData, deltaY, targetDateIndex)
-      
+
       updateDragElementPosition(dragData, deltaX, deltaY)
-      
+
       const { previewStartTime, previewEndTime } = calculatePreviewTime(dragData, hour, minute, targetDateIndex)
-      
+
       updateTimeDisplay(dragData, previewStartTime, previewEndTime)
 
       setDragState((prev) => ({
@@ -599,7 +624,7 @@ export function useDragAndDrop({
       console.error('Failed to resize event:', error)
       calendarToast.error('予定のリサイズに失敗しました')
     }
-  }, [events, onEventUpdate, dragState.snappedPosition])
+  }, [events, onEventUpdate, dragState.snappedPosition, calendarToast])
 
   // リサイズ完了処理
   const handleResizeComplete = useCallback(() => {
@@ -789,7 +814,7 @@ export function useDragAndDrop({
         calendarToast.error('予定の移動に失敗しました')
       }
     },
-    [onEventUpdate, calculateEventDuration, handleEventUpdateToast]
+    [onEventUpdate, calculateEventDuration, handleEventUpdateToast, calendarToast]
   )
 
   // ドラッグ完了後の状態リセット
