@@ -162,11 +162,11 @@ export const EssentialInspectorView = ({
         
         {/* 2択式スケジュール選択セクション */}
         <div className="space-y-3">
-          <div>
-            <label className={`block text-sm font-medium ${text.primary} mb-2`}>
+          <fieldset>
+            <legend className={`block text-sm font-medium ${text.primary} mb-2`}>
               いつ実行しますか？
-            </label>
-            
+            </legend>
+
             {/* ラジオボタン選択グループ */}
             <div className="space-y-2">
               {/* 後で決める選択肢 */}
@@ -241,7 +241,8 @@ export const EssentialInspectorView = ({
                 </div>
               </label>
             </div>
-          </div>
+          </fieldset>
+        </div>
           
           {/* プログレッシブ開示: 今すぐ予定するモードのみ日時フィールドを表示 */}
           <AnimatePresence>

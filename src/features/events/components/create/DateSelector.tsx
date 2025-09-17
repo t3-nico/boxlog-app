@@ -195,10 +195,11 @@ export const DateSelector = ({
       <div className="flex gap-3 items-end">
         {/* Date selector */}
         <div className="w-36 relative" ref={dateRef}>
-          <label className={`${body.small} ${text.muted} block mb-2`}>
+          <label htmlFor="date-selector-button" className={`${body.small} ${text.muted} block mb-2`}>
             Date
           </label>
           <button
+            id="date-selector-button"
             onClick={() => setShowDatePicker(!showDatePicker)}
             className={`
               w-full pl-3 pr-3 py-3 ${colors.background.surface} ${border.universal} 
@@ -317,10 +318,11 @@ export const DateSelector = ({
 
         {/* Start time */}
         <div className="w-24 relative" ref={startTimeRef}>
-          <label className={`${body.small} ${text.muted} block mb-2`}>
+          <label htmlFor="start-time-selector-button" className={`${body.small} ${text.muted} block mb-2`}>
             Start
           </label>
           <button
+            id="start-time-selector-button"
             onClick={() => setShowStartTimePicker(!showStartTimePicker)}
             className={`
               w-full pl-3 pr-3 py-3 ${colors.background.surface} ${border.universal} 
@@ -367,10 +369,11 @@ export const DateSelector = ({
 
         {/* End time */}
         <div className="w-24 relative" ref={endTimeRef}>
-          <label className={`${body.small} ${text.muted} block mb-2`}>
+          <label htmlFor="end-time-selector-button" className={`${body.small} ${text.muted} block mb-2`}>
             End
           </label>
           <button
+            id="end-time-selector-button"
             onClick={() => setShowEndTimePicker(!showEndTimePicker)}
             className={`
               w-full pl-3 pr-3 py-3 ${colors.background.surface} ${border.universal} 

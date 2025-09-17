@@ -193,8 +193,10 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                 {/* イベント基本情報 */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3 flex-1">
-                    <label className="cursor-pointer">
+                    <label htmlFor={`select-event-${event.id}`} className="cursor-pointer">
+                      <span className="sr-only">Select event: {event.title}</span>
                       <input
+                        id={`select-event-${event.id}`}
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => handleSelectEvent(event.id)}

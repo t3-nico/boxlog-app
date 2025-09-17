@@ -421,11 +421,11 @@ export const EssentialSingleView = ({
               
               {/* 2択式スケジュール選択セクション */}
               <div className="space-y-4">
-                <div>
-                  <label className={`block text-sm font-medium ${text.primary} mb-3`}>
+                <fieldset>
+                  <legend className={`block text-sm font-medium ${text.primary} mb-3`}>
                     いつ実行しますか？
-                  </label>
-                  
+                  </legend>
+
                   {/* ラジオボタン選択グループ */}
                   <div className="flex gap-4">
                     {/* 後で決める選択肢 */}
@@ -500,7 +500,8 @@ export const EssentialSingleView = ({
                       </div>
                     </label>
                   </div>
-                </div>
+                </fieldset>
+              </div>
                 
                 {/* プログレッシブ開示: 今すぐ予定するモードのみ日時フィールドを表示 */}
                 <AnimatePresence>
