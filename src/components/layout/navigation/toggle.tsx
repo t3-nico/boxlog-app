@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { usePathname } from 'next/navigation'
 
 import { PanelRight } from 'lucide-react'
@@ -23,11 +21,12 @@ export const NavigationToggle = () => {
   return (
     <div className="absolute bottom-4 left-4 z-20">
       <button
+        type="button"
         onClick={() => setSecondaryNavCollapsed(false)}
-        className={`p-2 rounded-md transition-colors ${colors.background.surface} border ${border.alpha} shadow-sm ${secondary.hover}`}
+        className={`rounded-md p-2 transition-colors ${colors.background.surface} border ${border.alpha} shadow-sm ${secondary.hover}`}
         title="Open sidebar"
       >
-        <PanelRight className={`w-4 h-4 ${text.muted}`} />
+        <PanelRight className={`h-4 w-4 ${text.muted}`} />
       </button>
     </div>
   )

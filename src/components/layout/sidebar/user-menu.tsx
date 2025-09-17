@@ -2,19 +2,19 @@
 
 /**
  * UserMenu コンポーネント
- * 
+ *
  * ユーザーアカウント情報の表示とメニュー機能を提供
- * 
+ *
  * ## 主要機能
  * - アバター表示（URL/アイコン/イニシャル対応）
  * - ドロップダウンメニュー（設定、サポート、ログアウト等）
  * - children props対応で外部からトリガー要素をカスタマイズ可能
- * 
+ *
  * ## v4.0での変更点
  * - Headless UI → shadcn/ui DropdownMenu に移行（プロジェクトルール準拠）
  * - Radix UI ベースによるアクセシビリティ自動改善
  * - side="top" align="start" で真上・左寄せ配置
- * 
+ *
  * @param {React.ReactNode} children - カスタムトリガー要素（未指定時はデフォルトボタン）
  */
 
@@ -40,7 +40,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/shadcn-ui/dropdown-menu'
-import { rounded, animations, icons, colors } from '@/config/theme'
+import { animations, colors, icons, rounded } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { cn } from '@/lib/utils'
 
@@ -74,40 +74,42 @@ export const UserMenu = ({ children }: UserMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {children ? children : (
-          <button className={cn(
-            'flex items-center justify-center group',
-            colors.hover.subtle,
-            rounded.component.button.lg,
-            animations.transition.fast
-          )}>
+        {children ? (
+          children
+        ) : (
+          <button
+            type="button"
+            className={cn(
+              'group flex items-center justify-center',
+              colors.hover.subtle,
+              rounded.component.button.lg,
+              animations.transition.fast
+            )}
+          >
             <div className="relative">
               {user?.user_metadata?.avatar_url ? (
-                <Avatar 
-                  src={user.user_metadata.avatar_url} 
+                <Avatar
+                  src={user.user_metadata.avatar_url}
+                  className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                />
+              ) : user?.user_metadata?.profile_icon ? (
+                <div
                   className={cn(
-                    lg, 'border',
+                    lg,
+                    'bg-accent flex items-center justify-center border text-sm',
                     colors.border.default,
                     rounded.component.avatar.md
                   )}
-                />
-              ) : user?.user_metadata?.profile_icon ? (
-                <div className={cn(
-                  lg, 'text-sm flex items-center justify-center bg-accent border',
-                  colors.border.default,
-                  rounded.component.avatar.md
-                )}>
+                >
                   {user.user_metadata.profile_icon}
                 </div>
               ) : (
-                <Avatar 
+                <Avatar
                   src={undefined}
-                  className={cn(
-                    lg, 'border',
-                    colors.border.default,
-                    rounded.component.avatar.md
-                  )}
-                  initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                  className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                  initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
+                    .charAt(0)
+                    .toUpperCase()}
                 />
               )}
             </div>
@@ -115,13 +117,9 @@ export const UserMenu = ({ children }: UserMenuProps) => {
         )}
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent 
-        className={cn(
-          "w-64 z-[9999]",
-          colors.background.surface,
-          colors.border.default
-        )}
-        side="top" 
+      <DropdownMenuContent
+        className={cn('z-[9999] w-64', colors.background.surface, colors.border.default)}
+        side="top"
         align="start"
       >
         {/* User Info */}
@@ -130,18 +128,13 @@ export const UserMenu = ({ children }: UserMenuProps) => {
             <p className="text-sm font-medium leading-none">
               {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
             </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user?.email}
-            </p>
+            <p className="text-muted-foreground text-xs leading-none">{user?.email}</p>
           </div>
         </DropdownMenuLabel>
-        
+
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem 
-          onClick={handleSettingsClick}
-          className={cn('focus:bg-transparent', colors.hover.subtle)}
-        >
+        <DropdownMenuItem onClick={handleSettingsClick} className={cn('focus:bg-transparent', colors.hover.subtle)}>
           <Cog8ToothIcon className={cn(md, 'mr-2')} />
           Settings
         </DropdownMenuItem>
@@ -170,10 +163,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
           Share feedback
         </DropdownMenuItem>
 
-        <DropdownMenuItem 
-          onClick={handleHelpClick}
-          className={cn('focus:bg-transparent', colors.hover.subtle)}
-        >
+        <DropdownMenuItem onClick={handleHelpClick} className={cn('focus:bg-transparent', colors.hover.subtle)}>
           <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
           Help
         </DropdownMenuItem>
@@ -191,12 +181,9 @@ export const UserMenu = ({ children }: UserMenuProps) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem 
+        <DropdownMenuItem
           onClick={handleSignOut}
-          className={cn(
-            'focus:bg-transparent focus:text-accent-foreground',
-            colors.semantic.warning.hover
-          )}
+          className={cn('focus:text-accent-foreground focus:bg-transparent', colors.semantic.warning.hover)}
         >
           <ArrowRightStartOnRectangleIcon className={cn(md, 'mr-2')} />
           Logout

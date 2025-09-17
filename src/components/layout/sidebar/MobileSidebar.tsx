@@ -9,7 +9,7 @@ import { Bell, Plus, Search } from 'lucide-react'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Sheet, SheetContent } from '@/components/shadcn-ui/sheet'
 import { primaryNavigation } from '@/config/navigation/config'
-import { colors, spacing, typography, animations, icons, layout } from '@/config/theme'
+import { animations, colors, icons, layout, rounded, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
@@ -18,7 +18,6 @@ import { SidebarItem } from './sidebar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
-
 
 const { xs } = layout.heights.header
 const { sm, lg } = icons.size
@@ -44,7 +43,7 @@ export const MobileSidebar = () => {
       }
     `
     document.head.appendChild(style)
-    
+
     return () => {
       document.head.removeChild(style)
     }
@@ -88,8 +87,8 @@ export const MobileSidebar = () => {
   return (
     <Sheet open={isSidebarOpen} onOpenChange={toggleSidebar}>
       {/* Content - Sidebarの内容 */}
-      <SheetContent 
-        side="left" 
+      <SheetContent
+        side="left"
         className={cn(
           'w-4/5 p-0', // 画面の80%幅、パディングなし
           animations.appear.slideLeft, // テーマのslideLeftアニメーション
@@ -109,63 +108,68 @@ export const MobileSidebar = () => {
         role="dialog"
         style={{
           // 閉じるボタンのスタイルを完全に無効化
-          ['--close-button-display' as any]: 'none'
+          ['--close-button-display' as any]: 'none',
         }}
       >
-        <div className="flex-1 flex flex-col h-full">
+        <div className="flex h-full flex-1 flex-col">
           {/* Top Section: Account & Actions */}
-          <div className={cn(
-            'flex items-center justify-end', // 右側にボタン配置（左側の閉じるボタンなし）
-            spacing.margin.top.sm,
-            xs, // 32px height
-            spacing.padding.horizontal.sm // 8px horizontal padding
-          )}>
+          <div
+            className={cn(
+              'flex items-center justify-end', // 右側にボタン配置（左側の閉じるボタンなし）
+              spacing.margin.top.sm,
+              xs, // 32px height
+              spacing.padding.horizontal.sm // 8px horizontal padding
+            )}
+          >
             {/* Right: Action Buttons */}
             <div className="flex items-center gap-1">
               {/* Search Button */}
               <button
+                type="button"
                 className={cn(
-                  'w-8 h-8 flex items-center justify-center hover:bg-accent',
-                  componentRadius.button.sm,
+                  'hover:bg-accent flex h-8 w-8 items-center justify-center',
+                  rounded.component.button.sm,
                   animations.transition.fast,
                   'flex-shrink-0'
                 )}
               >
                 <Search className={sm} />
               </button>
-              
+
               {/* Notification Button */}
               <button
+                type="button"
                 onClick={openNotifications}
                 className={cn(
-                  'w-8 h-8 flex items-center justify-center hover:bg-accent relative',
-                  componentRadius.button.sm,
+                  'hover:bg-accent relative flex h-8 w-8 items-center justify-center',
+                  rounded.component.button.sm,
                   animations.transition.fast,
                   'flex-shrink-0'
                 )}
               >
                 <Bell className={sm} />
                 {notificationCount > 0 && (
-                  <span className={cn(
-                    'absolute -top-1 -right-1 w-4 h-4',
-                    'bg-red-500 text-white text-xs',
-                    'flex items-center justify-center',
-                    componentRadius.badge.pill
-                  )}>
+                  <span
+                    className={cn(
+                      'absolute -right-1 -top-1 h-4 w-4',
+                      'bg-red-500 text-xs text-white',
+                      'flex items-center justify-center',
+                      rounded.component.badge.pill
+                    )}
+                  >
                     {notificationCount}
                   </span>
                 )}
               </button>
-              
             </div>
           </div>
 
           {/* All Navigation Items */}
-          <nav 
+          <nav
             className={cn(
-              'flex flex-col space-y-0 flex-1',
-              px2, // 8px horizontal padding
-              py2 // 8px vertical padding
+              'flex flex-1 flex-col space-y-0',
+              spacing.padding.horizontal.xs, // 8px horizontal padding
+              spacing.padding.vertical.xs // 8px vertical padding
             )}
             aria-label="メインナビゲーション"
             role="navigation"
@@ -173,124 +177,115 @@ export const MobileSidebar = () => {
             {primaryNavigation.map((section) => (
               <React.Fragment key={section.id}>
                 {section.label && (
-                  <div className={cn(
-                    'px-2 py-2 mt-4 first:mt-0',
-                    typography.body.small,
-                    'font-medium uppercase tracking-wider',
-                    text.muted
-                  )}>
+                  <div
+                    className={cn(
+                      'mt-4 px-2 py-2 first:mt-0',
+                      typography.body.small,
+                      'font-medium uppercase tracking-wider',
+                      colors.text.muted
+                    )}
+                  >
                     {section.label}
                   </div>
                 )}
-                {section.items.length > 0 ? (
-                  section.items.map((item) => (
-                    <SidebarItem
-                      key={item.id}
-                      item={item}
-                      pathname={pathname}
-                      onItemClick={() => toggleSidebar()} // ページクリック時にSidebarを閉じる
-                    />
-                  ))
-                ) : (
-                  section.id === 'smart-folders' && (
-                    <div className={cn(px2, py2)}>
-                      <button className={cn(
-                        'w-full flex items-center',
-                        'gap-1',
-                        'hover:bg-accent',
-                        componentRadius.button.sm,
-                        animations.transition.fast,
-                        'p-2',
-                        text.muted,
-                        typography.body.small
-                      )}>
-                        <Plus className={sm} />
-                        <span>Add smart folder</span>
-                      </button>
-                    </div>
-                  )
-                )}
+                {section.items.length > 0
+                  ? section.items.map((item) => (
+                      <SidebarItem
+                        key={item.id}
+                        item={item}
+                        pathname={pathname}
+                        onItemClick={() => toggleSidebar()} // ページクリック時にSidebarを閉じる
+                      />
+                    ))
+                  : section.id === 'smart-folders' && (
+                      <div className={cn(spacing.padding.horizontal.xs, spacing.padding.vertical.xs)}>
+                        <button
+                          type="button"
+                          className={cn(
+                            'flex w-full items-center',
+                            'gap-1',
+                            'hover:bg-accent',
+                            rounded.component.button.sm,
+                            animations.transition.fast,
+                            'p-2',
+                            colors.text.muted,
+                            typography.body.small
+                          )}
+                        >
+                          <Plus className={sm} />
+                          <span>Add smart folder</span>
+                        </button>
+                      </div>
+                    )}
               </React.Fragment>
             ))}
           </nav>
 
           {/* Theme Toggle */}
-          <div className={cn(
-            'pb-4',
-            px2 // 8px horizontal padding
-          )}>
-            <div className={cn(
-              'flex items-center justify-start'
-            )}>
+          <div
+            className={cn(
+              'pb-4',
+              spacing.padding.horizontal.xs // 8px horizontal padding
+            )}
+          >
+            <div className={cn('flex items-center justify-start')}>
               <ThemeToggle />
             </div>
           </div>
 
           {/* Bottom Section: User Account */}
-          <div className={cn(
-            'mb-2', // 8px bottom margin
-            px2 // 8px horizontal padding
-          )}>
+          <div
+            className={cn(
+              'mb-2', // 8px bottom margin
+              spacing.padding.horizontal.xs // 8px horizontal padding
+            )}
+          >
             {/* User Account Info */}
             <UserMenu>
-              <div className={cn(
-                "flex items-center cursor-pointer hover:bg-accent w-full",
-                'gap-2', // 8px gap
-                componentRadius.button.md,
-                animations.transition.fast,
-                'p-2', // 全方向8px
-                'border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
-              )}>
+              <div
+                className={cn(
+                  'hover:bg-accent flex w-full cursor-pointer items-center',
+                  'gap-2', // 8px gap
+                  rounded.component.button.md,
+                  animations.transition.fast,
+                  'p-2', // 全方向8px
+                  'border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
+                )}
+              >
                 {/* Avatar Icon Only */}
                 <div className="flex-shrink-0">
                   {user?.user_metadata?.avatar_url ? (
-                    <Avatar 
-                      src={user.user_metadata.avatar_url} 
-                      className={cn(
-                        lg, 'border',
-                        border.universal,
-                        componentRadius.media.avatar
-                      )}
+                    <Avatar
+                      src={user.user_metadata.avatar_url}
+                      className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
                     />
                   ) : user?.user_metadata?.profile_icon ? (
-                    <div className={cn(
-                      lg, 'text-sm flex items-center justify-center bg-accent border',
-                      border.universal,
-                      componentRadius.media.avatar
-                    )}>
+                    <div
+                      className={cn(
+                        lg,
+                        'bg-accent flex items-center justify-center border text-sm',
+                        colors.border.default,
+                        rounded.component.avatar.md
+                      )}
+                    >
                       {user.user_metadata.profile_icon}
                     </div>
                   ) : (
-                    <Avatar 
+                    <Avatar
                       src={undefined}
-                      className={cn(
-                        lg, 'border',
-                        border.universal,
-                        componentRadius.media.avatar
-                      )}
-                      initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                      className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                      initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
+                        .charAt(0)
+                        .toUpperCase()}
                     />
                   )}
                 </div>
-                
-                <div className={cn(
-                  'min-w-0 flex-1 flex flex-col justify-center'
-                )}>
-                  <div className={cn(
-                    'truncate',
-                    text.primary,
-                    typography.body.DEFAULT,
-                    'font-medium'
-                  )}>
+
+                <div className={cn('flex min-w-0 flex-1 flex-col justify-center')}>
+                  <div className={cn('truncate', colors.text.primary, typography.body.DEFAULT, 'font-medium')}>
                     tomoya
                   </div>
-                  <div className={cn(
-                    'truncate',
-                    text.muted,
-                    typography.body.small
-                  )}>
-                    Free Plan
-                  </div>
+                  <div className={cn('truncate', colors.text.muted, typography.body.small)}>Free Plan</div>
                 </div>
               </div>
             </UserMenu>

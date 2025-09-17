@@ -2,21 +2,20 @@
 
 import React from 'react'
 
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
-import { 
-  Calendar as CalendarIcon,
+import {
   SquareKanban as BoardIcon,
-  TableProperties as TableIcon,
+  Calendar as CalendarIcon,
+  Menu as MenuIcon,
   BarChart3 as StatsIcon,
-  Menu as MenuIcon
+  TableProperties as TableIcon,
 } from 'lucide-react'
 
-import { colors, animations, icons, typography, spacing } from '@/config/theme'
+import { animations, colors, icons, spacing, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from '../sidebar/stores/navigation.store'
-
 
 const { sm } = icons.size
 
@@ -34,29 +33,29 @@ const bottomNavItems: BottomNavItem[] = [
     label: 'Calendar',
     href: '/calendar',
     icon: CalendarIcon,
-    isActive: (pathname) => pathname.startsWith('/calendar')
+    isActive: (pathname) => pathname.startsWith('/calendar'),
   },
   {
     id: 'board',
     label: 'Board',
     href: '/board',
     icon: BoardIcon,
-    isActive: (pathname) => pathname.startsWith('/board')
+    isActive: (pathname) => pathname.startsWith('/board'),
   },
   {
     id: 'table',
     label: 'Table',
     href: '/table',
     icon: TableIcon,
-    isActive: (pathname) => pathname.startsWith('/table')
+    isActive: (pathname) => pathname.startsWith('/table'),
   },
   {
     id: 'stats',
     label: 'Stats',
     href: '/stats',
     icon: StatsIcon,
-    isActive: (pathname) => pathname.startsWith('/stats')
-  }
+    isActive: (pathname) => pathname.startsWith('/stats'),
+  },
 ]
 
 export const MobileBottomNavigation = () => {
@@ -73,7 +72,7 @@ export const MobileBottomNavigation = () => {
   }
 
   return (
-    <div 
+    <div
       className={cn(
         'fixed bottom-0 left-0 right-0 z-50',
         'flex items-center',
@@ -87,30 +86,25 @@ export const MobileBottomNavigation = () => {
       {bottomNavItems.map((item) => {
         const Icon = item.icon
         const isActive = item.isActive(pathname)
-        
+
         return (
           <button
             key={item.id}
+            type="button"
             onClick={() => handleNavigation(item.href)}
             className={cn(
-              'flex-1 flex flex-col items-center justify-center',
+              'flex flex-1 flex-col items-center justify-center',
               'h-full px-1 py-2',
               animations.transition.fast,
               colors.hover.subtle
             )}
           >
-            <Icon 
-              className={cn(
-                sm, 
-                'mb-1',
-                isActive ? colors.text.primary : colors.text.muted
-              )} 
-            />
-            <span 
+            <Icon className={cn(sm, 'mb-1', isActive ? colors.text.primary : colors.text.muted)} />
+            <span
               className={cn(
                 typography.body.small,
                 typography.body.xs,
-              'leading-tight',
+                'leading-tight',
                 isActive ? `${colors.text.primary} font-medium` : colors.text.muted
               )}
             >
@@ -119,21 +113,20 @@ export const MobileBottomNavigation = () => {
           </button>
         )
       })}
-      
+
       {/* Menu Button */}
       <button
+        type="button"
         onClick={handleMenuClick}
         className={cn(
-          'flex-1 flex flex-col items-center justify-center',
+          'flex flex-1 flex-col items-center justify-center',
           'h-full px-1 py-2',
           animations.transition.fast,
           colors.hover.subtle
         )}
       >
         <MenuIcon className={cn(sm, 'mb-1', colors.text.muted)} />
-        <span className={cn(typography.body.xs, 'leading-tight', colors.text.muted)}>
-          Menu
-        </span>
+        <span className={cn(typography.body.xs, 'leading-tight', colors.text.muted)}>Menu</span>
       </button>
     </div>
   )
