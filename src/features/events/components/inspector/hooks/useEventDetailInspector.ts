@@ -1,7 +1,20 @@
 'use client'
 
 import { useState } from 'react'
+
 import type { CalendarEvent } from '@/features/events'
+
+interface Tag {
+  id: string
+  name: string
+  color?: string
+}
+
+interface Reminder {
+  id: string
+  time: Date
+  type: 'notification' | 'email' | 'popup'
+}
 
 export interface EventDetailInspectorData {
   title: string
@@ -9,9 +22,9 @@ export interface EventDetailInspectorData {
   location: string
   startDate: Date
   endDate: Date | null
-  tags: any[]
+  tags: Tag[]
   isRecurring: boolean
-  reminders: any[]
+  reminders: Reminder[]
 }
 
 export interface UseEventDetailInspectorProps {
@@ -31,9 +44,8 @@ export const useEventDetailInspector = ({
   onDelete,
   onDuplicate,
   onTemplateCreate,
-  onClose
+  onClose,
 }: UseEventDetailInspectorProps) => {
-
   // UI状態管理
   const [isDetailOpen, setIsDetailOpen] = useState(true)
   const [showTimeline, setShowTimeline] = useState(true)
@@ -47,22 +59,22 @@ export const useEventDetailInspector = ({
     endDate: event?.endDate || null,
     tags: event?.tags || [],
     isRecurring: event?.isRecurring || false,
-    reminders: event?.reminders || []
+    reminders: event?.reminders || [],
   })
 
   // フォームデータ更新
-  const updateFormData = (field: keyof EventDetailInspectorData, value: any) => {
-    setFormData(prev => ({
+  const updateFormData = <K extends keyof EventDetailInspectorData>(field: K, value: EventDetailInspectorData[K]) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
   // バルクフォームデータ更新
   const updateFormDataBulk = (updates: Partial<EventDetailInspectorData>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      ...updates
+      ...updates,
     }))
   }
 
@@ -114,6 +126,6 @@ export const useEventDetailInspector = ({
     handleDelete,
     handleDuplicate,
     handleTemplateCreate,
-    onClose
+    onClose,
   }
 }

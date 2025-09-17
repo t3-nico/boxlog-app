@@ -9,20 +9,18 @@ import { Button, buttonVariants } from '@/components/shadcn-ui/button'
 import { cn } from '@/lib/utils'
 
 // External component definitions to avoid nested components
-interface CalendarRootProps {
+interface CalendarRootProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string
   rootRef?: React.Ref<HTMLDivElement>
-  [key: string]: any
 }
 
 const CalendarRoot = ({ className, rootRef, ...props }: CalendarRootProps) => {
   return <div data-slot="calendar" ref={rootRef} className={cn(className)} {...props} />
 }
 
-interface CalendarChevronProps {
+interface CalendarChevronProps extends React.SVGProps<SVGSVGElement> {
   className?: string
   orientation?: 'left' | 'right' | 'down'
-  [key: string]: any
 }
 
 const CalendarChevron = ({ className, orientation, ...props }: CalendarChevronProps) => {

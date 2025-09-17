@@ -1,13 +1,14 @@
 'use client'
 
-import React from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ChevronDown, ChevronRight, Clock, Copy, Trash2 } from 'lucide-react'
 
+import { border, colors, text } from '@/config/theme/colors'
+import { heading } from '@/config/theme/typography'
 import { cn } from '@/lib/utils'
-import { text, colors, border } from '@/config/theme/colors'
-import { heading, body } from '@/config/theme/typography'
+
+import type { EventDetailInspectorData } from '../hooks/useEventDetailInspector'
 
 interface EventDetailHeaderProps {
   formData: {
@@ -23,7 +24,7 @@ interface EventDetailHeaderProps {
   onToggleDetail: () => void
   onDuplicate?: () => void
   onDelete?: () => void
-  updateFormData: (field: string, value: any) => void
+  updateFormData: <K extends keyof EventDetailInspectorData>(field: K, value: EventDetailInspectorData[K]) => void
 }
 
 export const EventDetailHeader = ({
@@ -36,15 +37,15 @@ export const EventDetailHeader = ({
   onToggleDetail,
   onDuplicate,
   onDelete,
-  updateFormData
+  updateFormData,
 }: EventDetailHeaderProps) => {
   const hours = Math.floor(duration / 60)
   const minutes = duration % 60
 
   return (
-    <div className={cn('p-6 border-b', border.universal)}>
+    <div className={cn('border-b p-6', border.universal)}>
       {/* Header controls */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="mb-4 flex items-start justify-between">
         <button
           onClick={onToggleDetail}
           className={cn(
@@ -53,14 +54,8 @@ export const EventDetailHeader = ({
             'hover:' + colors.button.ghost.hover
           )}
         >
-          {isDetailOpen ? (
-            <ChevronDown className="w-4 h-4" />
-          ) : (
-            <ChevronRight className="w-4 h-4" />
-          )}
-          <span className={cn(heading.h6, text.primary)}>
-            {isCreateMode ? 'New Event' : 'Event Details'}
-          </span>
+          {isDetailOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          <span className={cn(heading.h6, text.primary)}>{isCreateMode ? 'New Event' : 'Event Details'}</span>
         </button>
 
         {!isCreateMode && (
@@ -69,25 +64,25 @@ export const EventDetailHeader = ({
               <button
                 onClick={onDuplicate}
                 className={cn(
-                  'p-2 rounded-lg transition-colors',
+                  'rounded-lg p-2 transition-colors',
                   colors.button.ghost.DEFAULT,
                   'hover:' + colors.button.ghost.hover
                 )}
                 title="Duplicate event"
               >
-                <Copy className="w-4 h-4" />
+                <Copy className="h-4 w-4" />
               </button>
             )}
             {onDelete && (
               <button
                 onClick={onDelete}
                 className={cn(
-                  'p-2 rounded-lg transition-colors',
+                  'rounded-lg p-2 transition-colors',
                   'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'
                 )}
                 title="Delete event"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -102,7 +97,7 @@ export const EventDetailHeader = ({
           onChange={(e) => updateFormData('title', e.target.value)}
           placeholder="Event title"
           className={cn(
-            'w-full bg-transparent border-none outline-none resize-none',
+            'w-full resize-none border-none bg-transparent outline-none',
             heading.h4,
             text.primary,
             'placeholder:' + text.muted
@@ -113,7 +108,7 @@ export const EventDetailHeader = ({
       {/* Time & Duration */}
       <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <Clock className={cn('w-4 h-4', text.muted)} />
+          <Clock className={cn('h-4 w-4', text.muted)} />
           <span className={text.primary}>
             {format(formData.startDate, 'M月d日(E) HH:mm', { locale: ja })}
             {formData.endDate && (
@@ -126,19 +121,19 @@ export const EventDetailHeader = ({
         </div>
 
         {duration > 0 && (
-          <div className={cn('text-xs px-2 py-1 rounded-full', colors.background.accent, text.muted)}>
+          <div className={cn('rounded-full px-2 py-1 text-xs', colors.background.accent, text.muted)}>
             {hours > 0 ? `${hours}時間${minutes}分` : `${minutes}分`}
           </div>
         )}
 
         {/* Status indicators */}
         {isCompleted && (
-          <div className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+          <div className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-600 dark:bg-green-900/20 dark:text-green-400">
             完了
           </div>
         )}
         {isPast && !isCompleted && (
-          <div className="text-xs px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400">
+          <div className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
             過去
           </div>
         )}
