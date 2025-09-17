@@ -20,18 +20,14 @@ export function getTimeZones() {
     { value: 'Australia/Sydney', label: 'シドニー (GMT+10)', offset: 10 },
     { value: 'Pacific/Auckland', label: 'オークランド (GMT+12)', offset: 12 },
   ]
-  
+
   return timezones.sort((a, b) => a.offset - b.offset)
 }
 
 // 時間表示のフォーマット
-export function formatTimeWithSettings(
-  date: Date,
-  timeFormat: '12h' | '24h',
-  timezone?: string
-): string {
+export function formatTimeWithSettings(date: Date, timeFormat: '12h' | '24h', timezone?: string): string {
   const formatString = timeFormat === '24h' ? 'HH:mm' : 'h:mm a'
-  
+
   // 基本的なフォーマット（タイムゾーン変換は後で実装）
   return format(date, formatString)
 }
@@ -41,7 +37,7 @@ export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
   if (timeFormat === '24h') {
     return `${hour}:00`
   }
-  
+
   if (hour === 0) return '12:00 AM'
   if (hour === 12) return '12:00 PM'
   if (hour < 12) return `${hour}:00 AM`
@@ -49,21 +45,14 @@ export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
 }
 
 // 現在時刻をタイムゾーンでフォーマット（簡易版）
-export function formatInTimeZone(
-  date: Date,
-  timezone: string,
-  formatString: string
-): string {
+export function formatInTimeZone(date: Date, timezone: string, formatString: string): string {
   // 簡易実装：基本的なフォーマットのみ
   // 後でdate-fns-tzを導入して本格実装
   return format(date, formatString)
 }
 
 // タスクの時間をタイムゾーンに変換（簡易版）
-export function convertTaskToTimezone(
-  task: any,
-  timezone: string
-): any {
+export function convertTaskToTimezone<T extends Record<string, unknown>>(task: T, timezone: string): T {
   // 簡易実装：現在はそのまま返す
   // 後でdate-fns-tzを導入して本格実装
   return task

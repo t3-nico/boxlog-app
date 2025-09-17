@@ -84,10 +84,10 @@ export class LocalStorageService {
   private readonly TAGS_KEY = 'boxlog_tags'
   private readonly VERSION_KEY = 'boxlog_version'
   private readonly CURRENT_VERSION = '1.0.0'
-  
+
   // 同時書き込み防止用ロック
   private writeLocks = new Set<string>()
-  
+
   constructor() {
     this.initializeStorage()
   }
@@ -119,7 +119,7 @@ export class LocalStorageService {
   // ロック機能
   private async acquireLock(key: string): Promise<void> {
     while (this.writeLocks.has(key)) {
-      await new Promise(resolve => setTimeout(resolve, 10))
+      await new Promise((resolve) => setTimeout(resolve, 10))
     }
     this.writeLocks.add(key)
   }
@@ -158,7 +158,7 @@ export class LocalStorageService {
     }
   }
 
-  private safeJsonStringify(data: any): string {
+  private safeJsonStringify(data: unknown): string {
     try {
       return JSON.stringify(data)
     } catch (error) {
@@ -175,7 +175,7 @@ export class LocalStorageService {
       endDate: event.endDate ? this.dateToString(event.endDate) : undefined,
       createdAt: this.dateToString(event.createdAt),
       updatedAt: this.dateToString(event.updatedAt),
-      deletedAt: event.deletedAt ? this.dateToString(event.deletedAt) : undefined
+      deletedAt: event.deletedAt ? this.dateToString(event.deletedAt) : undefined,
     }
   }
 
@@ -186,7 +186,7 @@ export class LocalStorageService {
       endDate: stored.endDate ? this.stringToDate(stored.endDate) : undefined,
       createdAt: this.stringToDate(stored.createdAt),
       updatedAt: this.stringToDate(stored.updatedAt),
-      deletedAt: stored.deletedAt ? this.stringToDate(stored.deletedAt) : undefined
+      deletedAt: stored.deletedAt ? this.stringToDate(stored.deletedAt) : undefined,
     }
   }
 
@@ -197,7 +197,7 @@ export class LocalStorageService {
       actualEnd: this.dateToString(log.actualEnd),
       createdAt: this.dateToString(log.createdAt),
       updatedAt: this.dateToString(log.updatedAt),
-      deletedAt: log.deletedAt ? this.dateToString(log.deletedAt) : undefined
+      deletedAt: log.deletedAt ? this.dateToString(log.deletedAt) : undefined,
     }
   }
 
@@ -208,31 +208,32 @@ export class LocalStorageService {
       actualEnd: this.stringToDate(stored.actualEnd),
       createdAt: this.stringToDate(stored.createdAt),
       updatedAt: this.stringToDate(stored.updatedAt),
-      deletedAt: stored.deletedAt ? this.stringToDate(stored.deletedAt) : undefined
+      deletedAt: stored.deletedAt ? this.stringToDate(stored.deletedAt) : undefined,
     }
   }
 
   // イベントのCRUD操作
   async createEvent(event: Omit<LocalEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<LocalEvent> {
     await this.acquireLock(this.EVENTS_KEY)
-    
+
     try {
       const now = new Date()
       const newEvent: LocalEvent = {
         ...event,
         id: `event_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       }
 
       const events = await this.getEvents(true)
       events.push(newEvent)
 
-      const storedEvents = events.map(e => this.eventToStored(e))
+      const storedEvents = events.map((e) => this.eventToStored(e))
       const dataStr = this.safeJsonStringify(storedEvents)
-      
+
       // ストレージサイズチェック
-      if (this.calculateStorageSize() + dataStr.length > 5 * 1024 * 1024) { // 5MB
+      if (this.calculateStorageSize() + dataStr.length > 5 * 1024 * 1024) {
+        // 5MB
         throw new StorageQuotaExceededError()
       }
 
@@ -245,11 +246,11 @@ export class LocalStorageService {
 
   async updateEvent(id: string, updates: Partial<LocalEvent>): Promise<LocalEvent | null> {
     await this.acquireLock(this.EVENTS_KEY)
-    
+
     try {
       const events = await this.getEvents(true)
-      const eventIndex = events.findIndex(e => e.id === id)
-      
+      const eventIndex = events.findIndex((e) => e.id === id)
+
       if (eventIndex === -1) {
         return null
       }
@@ -258,14 +259,14 @@ export class LocalStorageService {
         ...events[eventIndex],
         ...updates,
         id, // IDは変更不可
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }
 
       events[eventIndex] = updatedEvent
 
-      const storedEvents = events.map(e => this.eventToStored(e))
+      const storedEvents = events.map((e) => this.eventToStored(e))
       localStorage.setItem(this.EVENTS_KEY, this.safeJsonStringify(storedEvents))
-      
+
       return updatedEvent
     } finally {
       this.releaseLock(this.EVENTS_KEY)
@@ -274,11 +275,11 @@ export class LocalStorageService {
 
   async deleteEvent(id: string, soft = true): Promise<boolean> {
     await this.acquireLock(this.EVENTS_KEY)
-    
+
     try {
       const events = await this.getEvents(true)
-      const eventIndex = events.findIndex(e => e.id === id)
-      
+      const eventIndex = events.findIndex((e) => e.id === id)
+
       if (eventIndex === -1) {
         return false
       }
@@ -289,9 +290,9 @@ export class LocalStorageService {
         events.splice(eventIndex, 1)
       }
 
-      const storedEvents = events.map(e => this.eventToStored(e))
+      const storedEvents = events.map((e) => this.eventToStored(e))
       localStorage.setItem(this.EVENTS_KEY, this.safeJsonStringify(storedEvents))
-      
+
       return true
     } finally {
       this.releaseLock(this.EVENTS_KEY)
@@ -300,7 +301,7 @@ export class LocalStorageService {
 
   async getEvent(id: string): Promise<LocalEvent | null> {
     const events = await this.getEvents(true)
-    return events.find(e => e.id === id) || null
+    return events.find((e) => e.id === id) || null
   }
 
   async getEvents(includeDeleted = false): Promise<LocalEvent[]> {
@@ -308,47 +309,49 @@ export class LocalStorageService {
     if (!data) return []
 
     const storedEvents: StoredEvent[] = this.safeJsonParse(data, [])
-    const events = storedEvents.map(e => this.storedToEvent(e))
+    const events = storedEvents.map((e) => this.storedToEvent(e))
 
     if (includeDeleted) {
       return events
     }
 
-    return events.filter(e => !e.deletedAt)
+    return events.filter((e) => !e.deletedAt)
   }
 
   async getEventsByDateRange(start: Date, end: Date): Promise<LocalEvent[]> {
     const events = await this.getEvents()
-    
-    return events.filter(event => {
+
+    return events.filter((event) => {
       const eventStart = event.startDate
       const eventEnd = event.endDate || event.startDate
-      
-      return (eventStart >= start && eventStart <= end) ||
-             (eventEnd >= start && eventEnd <= end) ||
-             (eventStart <= start && eventEnd >= end)
+
+      return (
+        (eventStart >= start && eventStart <= end) ||
+        (eventEnd >= start && eventEnd <= end) ||
+        (eventStart <= start && eventEnd >= end)
+      )
     })
   }
 
   // ログのCRUD操作
   async createLog(log: Omit<LocalLog, 'id' | 'createdAt' | 'updatedAt'>): Promise<LocalLog> {
     await this.acquireLock(this.LOGS_KEY)
-    
+
     try {
       const now = new Date()
       const newLog: LocalLog = {
         ...log,
         id: `log_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       }
 
       const logs = await this.getLogs(true)
       logs.push(newLog)
 
-      const storedLogs = logs.map(l => this.logToStored(l))
+      const storedLogs = logs.map((l) => this.logToStored(l))
       const dataStr = this.safeJsonStringify(storedLogs)
-      
+
       if (this.calculateStorageSize() + dataStr.length > 5 * 1024 * 1024) {
         throw new StorageQuotaExceededError()
       }
@@ -362,11 +365,11 @@ export class LocalStorageService {
 
   async updateLog(id: string, updates: Partial<LocalLog>): Promise<LocalLog | null> {
     await this.acquireLock(this.LOGS_KEY)
-    
+
     try {
       const logs = await this.getLogs(true)
-      const logIndex = logs.findIndex(l => l.id === id)
-      
+      const logIndex = logs.findIndex((l) => l.id === id)
+
       if (logIndex === -1) {
         return null
       }
@@ -375,14 +378,14 @@ export class LocalStorageService {
         ...logs[logIndex],
         ...updates,
         id,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       }
 
       logs[logIndex] = updatedLog
 
-      const storedLogs = logs.map(l => this.logToStored(l))
+      const storedLogs = logs.map((l) => this.logToStored(l))
       localStorage.setItem(this.LOGS_KEY, this.safeJsonStringify(storedLogs))
-      
+
       return updatedLog
     } finally {
       this.releaseLock(this.LOGS_KEY)
@@ -391,11 +394,11 @@ export class LocalStorageService {
 
   async deleteLog(id: string, soft = true): Promise<boolean> {
     await this.acquireLock(this.LOGS_KEY)
-    
+
     try {
       const logs = await this.getLogs(true)
-      const logIndex = logs.findIndex(l => l.id === id)
-      
+      const logIndex = logs.findIndex((l) => l.id === id)
+
       if (logIndex === -1) {
         return false
       }
@@ -406,9 +409,9 @@ export class LocalStorageService {
         logs.splice(logIndex, 1)
       }
 
-      const storedLogs = logs.map(l => this.logToStored(l))
+      const storedLogs = logs.map((l) => this.logToStored(l))
       localStorage.setItem(this.LOGS_KEY, this.safeJsonStringify(storedLogs))
-      
+
       return true
     } finally {
       this.releaseLock(this.LOGS_KEY)
@@ -417,7 +420,7 @@ export class LocalStorageService {
 
   async getLog(id: string): Promise<LocalLog | null> {
     const logs = await this.getLogs(true)
-    return logs.find(l => l.id === id) || null
+    return logs.find((l) => l.id === id) || null
   }
 
   async getLogs(includeDeleted = false): Promise<LocalLog[]> {
@@ -425,43 +428,42 @@ export class LocalStorageService {
     if (!data) return []
 
     const storedLogs: StoredLog[] = this.safeJsonParse(data, [])
-    const logs = storedLogs.map(l => this.storedToLog(l))
+    const logs = storedLogs.map((l) => this.storedToLog(l))
 
     if (includeDeleted) {
       return logs
     }
 
-    return logs.filter(l => !l.deletedAt)
+    return logs.filter((l) => !l.deletedAt)
   }
 
   async getLogsByDateRange(start: Date, end: Date): Promise<LocalLog[]> {
     const logs = await this.getLogs()
-    
-    return logs.filter(log => {
+
+    return logs.filter((log) => {
       const logStart = log.actualStart
       const logEnd = log.actualEnd
-      
-      return (logStart >= start && logStart <= end) ||
-             (logEnd >= start && logEnd <= end) ||
-             (logStart <= start && logEnd >= end)
+
+      return (
+        (logStart >= start && logStart <= end) ||
+        (logEnd >= start && logEnd <= end) ||
+        (logStart <= start && logEnd >= end)
+      )
     })
   }
 
   // ユーティリティメソッド
-  async exportData(): Promise<{ events: LocalEvent[], logs: LocalLog[] }> {
-    const [events, logs] = await Promise.all([
-      this.getEvents(true),
-      this.getLogs(true)
-    ])
+  async exportData(): Promise<{ events: LocalEvent[]; logs: LocalLog[] }> {
+    const [events, logs] = await Promise.all([this.getEvents(true), this.getLogs(true)])
 
     return { events, logs }
   }
 
-  async importData(data: { events?: LocalEvent[], logs?: LocalLog[] }): Promise<void> {
+  async importData(data: { events?: LocalEvent[]; logs?: LocalLog[] }): Promise<void> {
     if (data.events) {
       await this.acquireLock(this.EVENTS_KEY)
       try {
-        const storedEvents = data.events.map(e => this.eventToStored(e))
+        const storedEvents = data.events.map((e) => this.eventToStored(e))
         localStorage.setItem(this.EVENTS_KEY, this.safeJsonStringify(storedEvents))
       } finally {
         this.releaseLock(this.EVENTS_KEY)
@@ -471,7 +473,7 @@ export class LocalStorageService {
     if (data.logs) {
       await this.acquireLock(this.LOGS_KEY)
       try {
-        const storedLogs = data.logs.map(l => this.logToStored(l))
+        const storedLogs = data.logs.map((l) => this.logToStored(l))
         localStorage.setItem(this.LOGS_KEY, this.safeJsonStringify(storedLogs))
       } finally {
         this.releaseLock(this.LOGS_KEY)
@@ -481,7 +483,7 @@ export class LocalStorageService {
 
   async clearAll(): Promise<void> {
     const keys = [this.EVENTS_KEY, this.LOGS_KEY, this.TAGS_KEY]
-    
+
     for (const key of keys) {
       await this.acquireLock(key)
       try {
@@ -503,21 +505,18 @@ export class LocalStorageService {
     logsCount: number
     version: string
   }> {
-    const [events, logs] = await Promise.all([
-      this.getEvents(true),
-      this.getLogs(true)
-    ])
+    const [events, logs] = await Promise.all([this.getEvents(true), this.getLogs(true)])
 
     return {
       totalSize: this.calculateStorageSize(),
       eventsCount: events.length,
       logsCount: logs.length,
-      version: localStorage.getItem(this.VERSION_KEY) || 'unknown'
+      version: localStorage.getItem(this.VERSION_KEY) || 'unknown',
     }
   }
 
   // データ整合性チェック
-  async validateData(): Promise<{ isValid: boolean, errors: string[] }> {
+  async validateData(): Promise<{ isValid: boolean; errors: string[] }> {
     const errors: string[] = []
 
     try {
@@ -543,14 +542,13 @@ export class LocalStorageService {
           errors.push(`ログ ${log.id} の終了時刻が開始時刻より前です`)
         }
       }
-
     } catch (error) {
       errors.push(`データ検証中にエラーが発生しました: ${error}`)
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 }

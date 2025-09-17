@@ -2,13 +2,23 @@
  * パフォーマンス最適化ユーティリティ
  */
 
+// Web Vitals 用の型定義
+interface LayoutShift extends PerformanceEntry {
+  hadRecentInput: boolean
+  value: number
+}
+
+interface PerformanceEventTiming extends PerformanceEntry {
+  processingStart: number
+}
+
 // 遅延実行ユーティリティ
-export const debounce = <T extends (..._args: any[]) => any>(
+export const debounce = <T extends (..._args: never[]) => unknown>(
   func: T,
   wait: number
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout | null = null
-  
+
   return (..._args: Parameters<T>) => {
     if (timeout) clearTimeout(timeout)
     timeout = setTimeout(() => func(..._args), wait)
@@ -16,17 +26,17 @@ export const debounce = <T extends (..._args: any[]) => any>(
 }
 
 // スロットリングユーティリティ
-export const throttle = <T extends (..._args: any[]) => any>(
+export const throttle = <T extends (..._args: never[]) => unknown>(
   func: T,
   limit: number
 ): ((...args: Parameters<T>) => void) => {
   let inThrottle: boolean
-  
+
   return (..._args: Parameters<T>) => {
     if (!inThrottle) {
       func(..._args)
       inThrottle = true
-      setTimeout(() => inThrottle = false, limit)
+      setTimeout(() => (inThrottle = false), limit)
     }
   }
 }
@@ -40,7 +50,7 @@ export const createLazyLoader = (
     root: null,
     rootMargin: '100px',
     threshold: 0.1,
-    ...options
+    ...options,
   }
 
   return new IntersectionObserver(callback, defaultOptions)
@@ -55,9 +65,9 @@ export const createCleanupManager = () => {
       cleanupFunctions.push(cleanup)
     },
     cleanup: () => {
-      cleanupFunctions.forEach(fn => fn())
+      cleanupFunctions.forEach((fn) => fn())
       cleanupFunctions.length = 0
-    }
+    },
   }
 }
 
@@ -70,10 +80,7 @@ export const calculateVirtualScrollItems = (
   overscan: number = 5
 ) => {
   const visibleStart = Math.floor(scrollTop / itemHeight)
-  const visibleEnd = Math.min(
-    visibleStart + Math.ceil(containerHeight / itemHeight),
-    totalItems - 1
-  )
+  const visibleEnd = Math.min(visibleStart + Math.ceil(containerHeight / itemHeight), totalItems - 1)
 
   const start = Math.max(0, visibleStart - overscan)
   const end = Math.min(totalItems - 1, visibleEnd + overscan)
@@ -83,16 +90,13 @@ export const calculateVirtualScrollItems = (
     end,
     visibleStart,
     visibleEnd,
-    offsetY: start * itemHeight
+    offsetY: start * itemHeight,
   }
 }
 
 // 重いタスクを分割して実行
-export const scheduleWork = (
-  tasks: (() => void)[],
-  frameTimeLimit: number = 5
-): Promise<void> => {
-  return new Promise(resolve => {
+export const scheduleWork = (tasks: (() => void)[], frameTimeLimit: number = 5): Promise<void> => {
+  return new Promise((resolve) => {
     let taskIndex = 0
 
     const runTasks = () => {
@@ -122,8 +126,8 @@ export const measureWebVitals = () => {
   let _cls = 0
   new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
-      if (!(entry as any).hadRecentInput) {
-        _cls += (entry as any).value
+      if (!(entry as LayoutShift).hadRecentInput) {
+        _cls += (entry as LayoutShift).value
       }
     }
   }).observe({ type: 'layout-shift', buffered: true })
@@ -138,7 +142,7 @@ export const measureWebVitals = () => {
   // FID (First Input Delay)
   new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
-      console.log('FID:', (entry as any).processingStart - entry.startTime)
+      console.log('FID:', (entry as PerformanceEventTiming).processingStart - entry.startTime)
     }
   }).observe({ type: 'first-input', buffered: true })
 }

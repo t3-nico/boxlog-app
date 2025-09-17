@@ -4,8 +4,8 @@
 import { colors } from '@/config/theme'
 
 import { calendarAnimations } from './animations'
-import { calendarColors } from './colors'
 import type { CalendarColors } from './colors'
+import { calendarColors } from './colors'
 import { calendarStyles } from './styles'
 
 // イベントの色クラスを取得
@@ -28,45 +28,37 @@ export const getStatusColor = (
 
 // 共通テーマから必要な色クラスを取得するヘルパー
 
-export const getCommonColor = (
-  category: keyof typeof colors,
-  type: string
-): string => {
+export const getCommonColor = (category: keyof typeof colors, type: string): string => {
   const colorCategory = colors[category]
   if (typeof colorCategory === 'object' && type in colorCategory) {
-    return (colorCategory as any)[type]
+    return (colorCategory as Record<string, string>)[type] || ''
   }
   return ''
 }
 
 // スタイルクラスを取得
-export const getCalendarStyle = (
-  category: keyof typeof calendarStyles,
-  property?: string
-): any => {
+export const getCalendarStyle = (category: keyof typeof calendarStyles, property?: string): unknown => {
   const styles = calendarStyles[category]
-  
+
   if (!property) return styles
-  
+
   // ネストされたプロパティの場合 (例: 'fontSize.title')
   const keys = property.split('.')
-  let result: any = styles
-  
+  let result: unknown = styles
+
   for (const key of keys) {
     if (result && typeof result === 'object' && key in result) {
-      result = result[key]
+      result = (result as Record<string, unknown>)[key]
     } else {
       return undefined
     }
   }
-  
+
   return result
 }
 
 // アニメーションクラスを取得
-export const getCalendarAnimation = (
-  type: keyof typeof calendarAnimations
-): string => {
+export const getCalendarAnimation = (type: keyof typeof calendarAnimations): string => {
   return calendarAnimations[type]
 }
 
@@ -80,7 +72,7 @@ export const getEventClassName = (
   } = {}
 ): string => {
   const { isDragging, isGhost, isSelected, isConflict } = options
-  
+
   // 基本クラス（すべてscheduledカラー使用、ボーダーなし）
   const classes = [
     // 背景色 - scheduledカラー
@@ -97,18 +89,14 @@ export const getEventClassName = (
     // ホバー効果 - scheduledカラー
     getEventColor('scheduled', 'hover'),
     // カーソル
-    'cursor-pointer select-none'
+    'cursor-pointer select-none',
   ]
-  
+
   // 状態による追加クラス（scheduledカラーは維持）
   if (isDragging) {
-    classes.push(
-      calendarAnimations.dragScale,
-      calendarStyles.event.shadow.dragging,
-      'z-50'
-    )
+    classes.push(calendarAnimations.dragScale, calendarStyles.event.shadow.dragging, 'z-50')
   }
-  
+
   if (isGhost) {
     // ゴーストのみ特別な色を使用（ボーダーなし）
     classes.length = 0 // 基本クラスをクリア
@@ -122,42 +110,32 @@ export const getEventClassName = (
       calendarAnimations.ghostAppear
     )
   }
-  
+
   if (isSelected) {
     // 選択時は背景のみ変更（ボーダーなし）
-    classes.push(
-      getStatusColor('selected', 'background'),
-      'ring-2 ring-blue-400'
-    )
+    classes.push(getStatusColor('selected', 'background'), 'ring-2 ring-blue-400')
   }
-  
+
   if (isConflict) {
     // 衝突時は背景のみ変更（ボーダーなし）
-    classes.push(
-      getStatusColor('conflict', 'background'),
-      calendarAnimations.pulse
-    )
+    classes.push(getStatusColor('conflict', 'background'), calendarAnimations.pulse)
   }
-  
+
   return classes.filter(Boolean).join(' ')
 }
 
 // カレンダーグリッドのクラス名を生成
 export const getCalendarGridClassName = (): string => {
-  return [
-    'relative',
-    calendarStyles.grid.gap,
-    'overflow-hidden'
-  ].join(' ')
+  return ['relative', calendarStyles.grid.gap, 'overflow-hidden'].join(' ')
 }
 
 // 時間カラムのクラス名を生成
 export const getTimeColumnClassName = (): string => {
   return [
-    colors.text.muted,  // 共通テーマの薄いテキスト色
+    colors.text.muted, // 共通テーマの薄いテキスト色
     calendarStyles.event.fontSize.time,
     'pr-2 text-right',
-    calendarStyles.grid.columnMinWidth
+    calendarStyles.grid.columnMinWidth,
   ].join(' ')
 }
 
@@ -165,24 +143,24 @@ export const getTimeColumnClassName = (): string => {
 export const getGridLineClassName = (): string => {
   return [
     'border-t',
-    colors.border.DEFAULT,  // 共通テーマのボーダー色
-    'absolute left-0 right-0'
+    colors.border.DEFAULT, // 共通テーマのボーダー色
+    'absolute left-0 right-0',
   ].join(' ')
 }
 
 // 今日ハイライトのクラス名を生成
 export const getTodayHighlightClassName = (): string => {
   return [
-    colors.selection.DEFAULT,  // 共通テーマの選択背景色
-    'absolute inset-0 pointer-events-none'
+    colors.selection.DEFAULT, // 共通テーマの選択背景色
+    'absolute inset-0 pointer-events-none',
   ].join(' ')
 }
 
 // 週末ハイライトのクラス名を生成
 export const getWeekendHighlightClassName = (): string => {
   return [
-    colors.background.surface,  // 共通テーマのサーフェス色
-    'absolute inset-0 pointer-events-none'
+    colors.background.surface, // 共通テーマのサーフェス色
+    'absolute inset-0 pointer-events-none',
   ].join(' ')
 }
 
@@ -190,23 +168,20 @@ export const getWeekendHighlightClassName = (): string => {
 export const getCurrentTimeLineClassName = (): string => {
   return [
     'border-t-2',
-    colors.semantic.error.border,  // 共通テーマのエラー色（赤）
+    colors.semantic.error.border, // 共通テーマのエラー色（赤）
     'absolute left-0 right-0 z-20',
-    'pointer-events-none'
+    'pointer-events-none',
   ].join(' ')
 }
 
 // ドロップゾーンのクラス名を生成
 export const getDropZoneClassName = (isActive: boolean = false): string => {
-  const baseClasses = [
-    'absolute inset-0',
-    'transition-all duration-150'
-  ]
-  
+  const baseClasses = ['absolute inset-0', 'transition-all duration-150']
+
   if (isActive) {
     baseClasses.push(calendarAnimations.dropZone)
   }
-  
+
   return baseClasses.join(' ')
 }
 
@@ -221,7 +196,7 @@ export const getPlaceholderClassName = (): string => {
     calendarStyles.event.padding,
     calendarStyles.event.minHeight,
     calendarAnimations.placeholderPulse,
-    'border-dashed'
+    'border-dashed',
   ].join(' ')
 }
 

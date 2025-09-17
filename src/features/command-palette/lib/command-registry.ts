@@ -16,7 +16,7 @@ class CommandRegistry {
    * Register multiple commands
    */
   registerMany(commands: Command[]): void {
-    commands.forEach(command => this.register(command))
+    commands.forEach((command) => this.register(command))
   }
 
   /**
@@ -41,11 +41,11 @@ class CommandRegistry {
    */
   getAll(categoryFilter?: string[]): Command[] {
     const allCommands = Array.from(this.commands.values())
-    
+
     if (categoryFilter && categoryFilter.length > 0) {
-      return allCommands.filter(command => categoryFilter.includes(command.category))
+      return allCommands.filter((command) => categoryFilter.includes(command.category))
     }
-    
+
     return allCommands
   }
 
@@ -53,7 +53,7 @@ class CommandRegistry {
    * Get available commands (filter by condition)
    */
   getAvailable(categoryFilter?: string[]): Command[] {
-    return this.getAll(categoryFilter).filter(command => {
+    return this.getAll(categoryFilter).filter((command) => {
       if (!command.condition) return true
       try {
         return command.condition()
@@ -74,30 +74,30 @@ class CommandRegistry {
     const searchTerm = query.toLowerCase()
     const commands = this.getAvailable(categoryFilter)
 
-    return commands.filter(command => {
-      // Search in title
-      if (command.title.toLowerCase().includes(searchTerm)) return true
-      
-      // Search in description
-      if (command.description?.toLowerCase().includes(searchTerm)) return true
-      
-      // Search in keywords
-      if (command.keywords?.some(keyword => 
-        keyword.toLowerCase().includes(searchTerm)
-      )) return true
-      
-      return false
-    }).sort((a, b) => {
-      // Prioritize exact title matches
-      const aExactTitle = a.title.toLowerCase().startsWith(searchTerm)
-      const bExactTitle = b.title.toLowerCase().startsWith(searchTerm)
-      
-      if (aExactTitle && !bExactTitle) return -1
-      if (!aExactTitle && bExactTitle) return 1
-      
-      // Fallback to alphabetical
-      return a.title.localeCompare(b.title)
-    })
+    return commands
+      .filter((command) => {
+        // Search in title
+        if (command.title.toLowerCase().includes(searchTerm)) return true
+
+        // Search in description
+        if (command.description?.toLowerCase().includes(searchTerm)) return true
+
+        // Search in keywords
+        if (command.keywords?.some((keyword) => keyword.toLowerCase().includes(searchTerm))) return true
+
+        return false
+      })
+      .sort((a, b) => {
+        // Prioritize exact title matches
+        const aExactTitle = a.title.toLowerCase().startsWith(searchTerm)
+        const bExactTitle = b.title.toLowerCase().startsWith(searchTerm)
+
+        if (aExactTitle && !bExactTitle) return -1
+        if (!aExactTitle && bExactTitle) return 1
+
+        // Fallback to alphabetical
+        return a.title.localeCompare(b.title)
+      })
   }
 
   /**
@@ -120,7 +120,7 @@ class CommandRegistry {
 export const commandRegistry = new CommandRegistry()
 
 // Default commands that are always available
-export const registerDefaultCommands = (router: any) => {
+export const registerDefaultCommands = (router: { push: (path: string) => void }) => {
   const defaultCommands: Command[] = [
     // Navigation commands
     {
