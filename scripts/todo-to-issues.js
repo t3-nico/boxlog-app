@@ -59,6 +59,24 @@ function analyzeTodoPriority(todo) {
   return 'P3-low'
 }
 
+// サイズ判定用キーワード定義
+const SIZE_KEYWORDS = {
+  'size-XS': ['remove', 'delete', 'fix typo', '削除', '修正'],
+  'size-L': ['implement', 'create', 'build', '実装', '作成', '構築'],
+  'size-S': ['improve', 'optimize', 'refactor', '改善', '最適化', 'リファクタ']
+}
+
+// テキストが特定サイズのキーワードを含むかチェック
+function containsKeywords(text, keywords) {
+  return keywords.some(keyword => text.includes(keyword))
+}
+
+// サイズを特定のキーワードリストでチェック
+function checkSizeByKeywords(text, sizeType) {
+  const keywords = SIZE_KEYWORDS[sizeType]
+  return keywords ? containsKeywords(text, keywords) : false
+}
+
 /**
  * TODOのサイズを見積もり
  */
@@ -66,37 +84,17 @@ function estimateTodoSize(todo) {
   const text = todo.text.toLowerCase()
 
   // size-XS: 簡単な修正・削除
-  if (
-    text.includes('remove') ||
-    text.includes('delete') ||
-    text.includes('fix typo') ||
-    text.includes('削除') ||
-    text.includes('修正')
-  ) {
+  if (checkSizeByKeywords(text, 'size-XS')) {
     return 'size-XS'
   }
 
   // size-L: 大規模実装
-  if (
-    text.includes('implement') ||
-    text.includes('create') ||
-    text.includes('build') ||
-    text.includes('実装') ||
-    text.includes('作成') ||
-    text.includes('構築')
-  ) {
+  if (checkSizeByKeywords(text, 'size-L')) {
     return 'size-L'
   }
 
   // size-S: 小規模修正・改善
-  if (
-    text.includes('improve') ||
-    text.includes('optimize') ||
-    text.includes('refactor') ||
-    text.includes('改善') ||
-    text.includes('最適化') ||
-    text.includes('リファクタ')
-  ) {
+  if (checkSizeByKeywords(text, 'size-S')) {
     return 'size-S'
   }
 
@@ -343,83 +341,79 @@ function linkTodoToIssue(todo, issueNumber) {
 }
 
 /**
- * すべてのTODOをIssueに変換
+ * ディレクトリをスキャンしてファイルリストを取得
  */
-async function convertAllTodosToIssues(options = {}) {
-  console.log(`${colors.bold}${colors.blue}🚀 TODO → Issues 自動変換開始${colors.reset}`)
+function scanDirectoryForFiles(allFiles, dir) {
+  if (!fs.existsSync(dir)) return
 
-  // TODO解析
-  const allFiles = []
-  const srcDir = path.join(process.cwd(), 'src')
-  const scriptsDir = path.join(process.cwd(), 'scripts')
-  const eslintDir = path.join(process.cwd(), '.eslint')
+  const items = fs.readdirSync(dir)
+  for (const item of items) {
+    const fullPath = path.join(dir, item)
+    const stat = fs.statSync(fullPath)
 
-  function scanDirectory(dir) {
-    if (!fs.existsSync(dir)) return
-
-    const items = fs.readdirSync(dir)
-    for (const item of items) {
-      const fullPath = path.join(dir, item)
-      const stat = fs.statSync(fullPath)
-
-      if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
-        scanDirectory(fullPath)
-      } else if (stat.isFile() && /\.(js|ts|tsx|jsx)$/.test(item)) {
-        allFiles.push(fullPath)
-      }
+    if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
+      scanDirectoryForFiles(allFiles, fullPath)
+    } else if (stat.isFile() && /\.(js|ts|tsx|jsx)$/.test(item)) {
+      allFiles.push(fullPath)
     }
   }
+}
 
-  scanDirectory(srcDir)
-  scanDirectory(scriptsDir)
-  scanDirectory(eslintDir)
+/**
+ * 全ディレクトリからファイルリストを収集
+ */
+function collectAllFiles() {
+  const allFiles = []
+  const directories = [
+    path.join(process.cwd(), 'src'),
+    path.join(process.cwd(), 'scripts'),
+    path.join(process.cwd(), '.eslint')
+  ]
 
-  // 全TODOを収集
-  const allTodos = []
-  for (const file of allFiles) {
-    const todos = analyzeTodosInFile(file)
-    allTodos.push(...todos)
+  for (const dir of directories) {
+    scanDirectoryForFiles(allFiles, dir)
   }
 
-  console.log(`${colors.cyan}📊 ${allTodos.length}個のTODOを発見${colors.reset}`)
+  return allFiles
+}
 
-  if (allTodos.length === 0) {
-    console.log(`${colors.yellow}ℹ️  変換対象のTODOがありません${colors.reset}`)
-    return
-  }
-
-  // 優先度別に分類
+/**
+ * TODOを優先度別に分類
+ */
+function categorizeTodosByPriority(allTodos) {
   const byPriority = {}
   for (const todo of allTodos) {
     const priority = analyzeTodoPriority(todo)
     if (!byPriority[priority]) byPriority[priority] = []
     byPriority[priority].push(todo)
   }
+  return byPriority
+}
 
-  console.log(`${colors.bold}📋 優先度別分類:${colors.reset}`)
-  for (const [priority, todos] of Object.entries(byPriority)) {
-    console.log(`  ${priority}: ${todos.length}個`)
-  }
-
-  // 確認プロンプト
+/**
+ * 確認プロンプトの表示
+ */
+function showConfirmationPrompt(allTodos, options) {
   if (!options.force) {
     console.log(
       `${colors.yellow}⚠️  ${allTodos.length}個のTODOをGitHub Issueに変換します。続行しますか？ (y/N)${colors.reset}`
     )
-    // 実際の実装では readline を使用
     console.log(`${colors.gray}--force オプションで確認をスキップできます${colors.reset}`)
     if (!options.dryRun) {
       console.log(`${colors.yellow}⏹️  ドライランモードで実行中（実際のIssue作成は行いません）${colors.reset}`)
-      return
+      return false
     }
   }
+  return true
+}
 
-  // Issues作成
+/**
+ * 優先度順でIssuesを作成
+ */
+async function createIssuesByPriority(byPriority, options) {
   const createdIssues = []
   let successCount = 0
   let errorCount = 0
-
-  // 優先度順で処理
   const priorityOrder = ['P0-urgent', 'P1-high', 'P2-medium', 'P3-low']
 
   for (const priority of priorityOrder) {
@@ -433,7 +427,7 @@ async function convertAllTodosToIssues(options = {}) {
         continue
       }
 
-      const issue = await createGitHubIssue(todo, allTodos)
+      const issue = await createGitHubIssue(todo, [])
       if (issue) {
         createdIssues.push(issue)
 
@@ -452,7 +446,13 @@ async function convertAllTodosToIssues(options = {}) {
     }
   }
 
-  // 結果サマリー
+  return { createdIssues, successCount, errorCount }
+}
+
+/**
+ * 結果サマリーとレポート生成
+ */
+function generateResultSummary(createdIssues, successCount, errorCount) {
   console.log(`\n${colors.bold}${colors.green}✅ 変換完了${colors.reset}`)
   console.log(`${colors.green}成功: ${successCount}件${colors.reset}`)
   if (errorCount > 0) {
@@ -465,6 +465,49 @@ async function convertAllTodosToIssues(options = {}) {
     generateIssuesReport(createdIssues, reportPath)
     console.log(`${colors.blue}📋 詳細レポート: ${reportPath}${colors.reset}`)
   }
+}
+
+/**
+ * すべてのTODOをIssueに変換
+ */
+async function convertAllTodosToIssues(options = {}) {
+  console.log(`${colors.bold}${colors.blue}🚀 TODO → Issues 自動変換開始${colors.reset}`)
+
+  // ファイル収集
+  const allFiles = collectAllFiles()
+
+  // 全TODOを収集
+  const allTodos = []
+  for (const file of allFiles) {
+    const todos = analyzeTodosInFile(file)
+    allTodos.push(...todos)
+  }
+
+  console.log(`${colors.cyan}📊 ${allTodos.length}個のTODOを発見${colors.reset}`)
+
+  if (allTodos.length === 0) {
+    console.log(`${colors.yellow}ℹ️  変換対象のTODOがありません${colors.reset}`)
+    return
+  }
+
+  // 優先度別に分類
+  const byPriority = categorizeTodosByPriority(allTodos)
+
+  console.log(`${colors.bold}📋 優先度別分類:${colors.reset}`)
+  for (const [priority, todos] of Object.entries(byPriority)) {
+    console.log(`  ${priority}: ${todos.length}個`)
+  }
+
+  // 確認プロンプト
+  if (!showConfirmationPrompt(allTodos, options)) {
+    return
+  }
+
+  // Issues作成
+  const { createdIssues, successCount, errorCount } = await createIssuesByPriority(byPriority, options)
+
+  // 結果サマリー
+  generateResultSummary(createdIssues, successCount, errorCount)
 }
 
 /**

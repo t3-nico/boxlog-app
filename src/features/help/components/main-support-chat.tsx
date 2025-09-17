@@ -43,7 +43,7 @@ interface ExtendedMessage {
 }
 
 // BoxLog専用のAI Responseコンポーネント
-const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: any }) => (
+const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
   <AIResponse
     className="prose prose-sm dark:prose-invert max-w-none
       [&>*:first-child]:mt-0 [&>*:last-child]:mb-0
@@ -66,55 +66,101 @@ const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: st
   </AIResponse>
 )
 
-const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
+// ユーザー情報を取得するヘルパー
+const useUserInfo = () => {
   const { user } = useAuthContext()
+  return {
+    displayName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
+    profileIcon: user?.user_metadata?.profile_icon,
+    avatarUrl: user?.user_metadata?.avatar_url
+  }
+}
+
+// アシスタントアイコンコンポーネント
+const AssistantIcon = () => (
+  <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
+    <BotMessageSquare className="w-4 h-4 text-foreground" />
+  </div>
+)
+
+// 関連ファイル表示コンポーネント
+const RelatedFiles = ({ files }: { files: string[] }) => (
+  <div className="mt-2 p-2 bg-muted rounded text-xs">
+    <div className="font-medium text-card-foreground mb-1">関連ファイル:</div>
+    {files.map((file, index) => (
+      <div key={index} className="text-muted-foreground font-mono">
+        {file}
+      </div>
+    ))}
+  </div>
+)
+
+// ユーザーメッセージ内容コンポーネント
+const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
+  <div className="text-sm leading-relaxed whitespace-pre-wrap">
+    {message.content}
+    {message.status && (
+      <div className="mt-1 text-xs opacity-75">
+        {message.status === 'sending' && 'Sending...'}
+        {message.status === 'error' && 'Send Error'}
+        {message.status === 'sent' && 'Sent'}
+      </div>
+    )}
+  </div>
+)
+
+// アシスタントメッセージ内容コンポーネント
+const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
+  <div>
+    <CodebaseAIResponse>
+      {message.content}
+    </CodebaseAIResponse>
+    {message.relatedFiles && message.relatedFiles.length > 0 && (
+      <RelatedFiles files={message.relatedFiles} />
+    )}
+  </div>
+)
+
+// ユーザーアバターコンポーネント
+const UserAvatar = ({ displayName, profileIcon, avatarUrl }: { displayName: string, profileIcon?: string, avatarUrl?: string }) => (
+  <div className="flex-shrink-0">
+    {avatarUrl ? (
+      <Avatar
+        src={avatarUrl}
+        className="size-8"
+        initials={displayName.charAt(0).toUpperCase()}
+      />
+    ) : profileIcon ? (
+      <div className="size-8 text-xl flex items-center justify-center rounded-full bg-muted">
+        {profileIcon}
+      </div>
+    ) : (
+      <Avatar
+        src={undefined}
+        className="size-8"
+        initials={displayName.charAt(0).toUpperCase()}
+      />
+    )}
+  </div>
+)
+
+const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
+  const { displayName, profileIcon, avatarUrl } = useUserInfo()
   const isUser = message.role === 'user'
   const isAssistant = message.role === 'assistant' || message.role === 'system'
-  
-  // ユーザー情報の取得
-  const userDisplayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-  const profileIcon = user?.user_metadata?.profile_icon
-  const avatarUrl = user?.user_metadata?.avatar_url
   
   // AIMessage componentは'user'または'assistant'のみ受け付けるため、'system'を'assistant'として扱う
   const messageFrom = message.role === 'system' ? 'assistant' : message.role as 'user' | 'assistant'
   
   return (
     <AIMessage from={messageFrom}>
-      {isAssistant && (
-        <div className="size-8 inline-grid shrink-0 align-middle rounded-full outline -outline-offset-1 outline-black/10 dark:outline-white/10 bg-muted flex items-center justify-center">
-          <BotMessageSquare className="w-4 h-4 text-foreground" />
-        </div>
-      )}
+      {isAssistant && <AssistantIcon />}
       
       <AIMessageContent>
         {isAssistant ? (
-          <div>
-            <CodebaseAIResponse>
-              {message.content}
-            </CodebaseAIResponse>
-            {message.relatedFiles && message.relatedFiles.length > 0 && (
-              <div className="mt-2 p-2 bg-muted rounded text-xs">
-                <div className="font-medium text-card-foreground mb-1">関連ファイル:</div>
-                {message.relatedFiles.map((file, index) => (
-                  <div key={index} className="text-muted-foreground font-mono">
-                    {file}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <AssistantMessageContent message={message} />
         ) : (
-          <div className="text-sm leading-relaxed whitespace-pre-wrap">
-            {message.content}
-            {message.status && (
-              <div className="mt-1 text-xs opacity-75">
-                {message.status === 'sending' && 'Sending...'}
-                {message.status === 'error' && 'Send Error'}
-                {message.status === 'sent' && 'Sent'}
-              </div>
-            )}
-          </div>
+          <UserMessageContent message={message} />
         )}
         
         {isAssistant && message.createdAt && (
@@ -125,25 +171,11 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
       </AIMessageContent>
       
       {isUser && (
-        <div className="flex-shrink-0">
-          {avatarUrl ? (
-            <Avatar
-              src={avatarUrl}
-              className="size-8"
-              initials={userDisplayName.charAt(0).toUpperCase()}
-            />
-          ) : profileIcon ? (
-            <div className="size-8 text-xl flex items-center justify-center rounded-full bg-muted">
-              {profileIcon}
-            </div>
-          ) : (
-            <Avatar
-              src={undefined}
-              className="size-8"
-              initials={userDisplayName.charAt(0).toUpperCase()}
-            />
-          )}
-        </div>
+        <UserAvatar 
+          displayName={displayName}
+          profileIcon={profileIcon}
+          avatarUrl={avatarUrl}
+        />
       )}
     </AIMessage>
   )

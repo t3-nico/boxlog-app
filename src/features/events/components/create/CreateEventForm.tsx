@@ -20,7 +20,7 @@ const SectionHeader = ({
   icon: Icon, 
   title 
 }: { 
-  icon: React.ComponentType<any>, 
+  icon: React.ComponentType<{ className?: string }>, 
   title: string 
 }) => (
   <div className="flex items-center gap-2">
@@ -42,25 +42,15 @@ interface CreateEventFormProps {
   error: Error | null
 }
 
-export const CreateEventForm = ({
-  initialData,
-  context,
-  onSubmit,
-  onCancel,
-  isSubmitting,
-  error
-}: CreateEventFormProps) => {
-  // タイトル入力フィールドのref
-  const titleInputRef = useRef<HTMLInputElement>(null)
-
-  // フォームデータの状態管理
+// カスタムフック: フォーム状態管理
+function useCreateEventForm(initialData: CreateEventFormData, context: CreateEventContext) {
   const [formData, setFormData] = useState<CreateEventRequest>({
     title: initialData.title || '',
     description: initialData.description || '',
     type: initialData.type || 'task',
     status: initialData.status || 'planned',
     priority: initialData.priority || 'necessary',
-    color: initialData.color || '#3b82f6', // primary blue
+    color: initialData.color || '#3b82f6',
     startDate: initialData.startDate || context.date || new Date(),
     isRecurring: initialData.isRecurring || false,
     recurrenceRule: initialData.recurrenceRule,
@@ -71,12 +61,13 @@ export const CreateEventForm = ({
     tagIds: initialData.tagIds || []
   })
 
-
-  // フォームのバリデーション
   const isValid = formData.title.trim().length > 0
 
+  return { formData, setFormData, isValid }
+}
 
-  // 日付を文字列に変換するヘルパー関数
+// カスタムフック: フォーマッティング
+function useFormFormatters() {
   const formatDateForInput = (date: Date | undefined) => {
     if (!date) return ''
     const year = date.getFullYear()
@@ -92,34 +83,29 @@ export const CreateEventForm = ({
     return `${hours}:${minutes}`
   }
 
-  // フォーム送信ハンドラー
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!isValid) return
-    onSubmit(formData)
-  }
+  return { formatDateForInput, formatTimeForInput }
+}
 
-  // コンポーネント表示時にタイトルフィールドにオートフォーカス
+// カスタムフック: フォーカス管理
+function useFormFocus(titleInputRef: React.RefObject<HTMLInputElement>) {
   useEffect(() => {
     const focusTitle = () => {
       if (titleInputRef.current) {
         titleInputRef.current.focus()
-        // 既存のテキストがある場合は末尾にカーソルを移動
         const {length} = titleInputRef.current.value
         titleInputRef.current.setSelectionRange(length, length)
       }
     }
 
-    // 即座に実行
     focusTitle()
-    
-    // 少し遅延してもう一度実行（確実にフォーカス）
     const timeoutId = setTimeout(focusTitle, 100)
     
     return () => clearTimeout(timeoutId)
-  }, [])
+  }, [titleInputRef])
+}
 
-  // Ctrl+Enter での送信
+// カスタムフック: キーボードショートカット
+function useFormKeyboardShortcuts(formData: CreateEventRequest, isValid: boolean, onSubmit: (data: CreateEventRequest) => void) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && isValid) {
@@ -130,6 +116,29 @@ export const CreateEventForm = ({
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [formData, isValid, onSubmit])
+}
+
+export const CreateEventForm = ({
+  initialData,
+  context,
+  onSubmit,
+  _onCancel,
+  _isSubmitting,
+  error
+}: CreateEventFormProps) => {
+  const titleInputRef = useRef<HTMLInputElement>(null)
+  
+  const { formData, setFormData, isValid } = useCreateEventForm(initialData, context)
+  const { formatDateForInput, formatTimeForInput } = useFormFormatters()
+  
+  useFormFocus(titleInputRef)
+  useFormKeyboardShortcuts(formData, isValid, onSubmit)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isValid) return
+    onSubmit(formData)
+  }
 
 
 

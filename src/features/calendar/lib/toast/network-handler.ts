@@ -13,39 +13,57 @@ export interface NetworkErrorInfo {
   statusCode?: number
 }
 
-// エラー分類関数
-export const classifyNetworkError = (error: any): NetworkErrorInfo => {
-  // オフライン状態のチェック
+// HTTPステータスコードマッピング
+const STATUS_CODE_MAPPING: Record<number, { type: NetworkErrorType; message: string }> = {
+  401: { type: 'unauthorized', message: '認証が必要です' },
+  403: { type: 'forbidden', message: 'アクセスが拒否されました' },
+  404: { type: 'not_found', message: 'リソースが見つかりません' },
+  409: { type: 'conflict', message: 'データに競合が発生しました' },
+  500: { type: 'server_error', message: 'サーバーエラーが発生しました' },
+  502: { type: 'server_error', message: 'サーバーエラーが発生しました' },
+  503: { type: 'server_error', message: 'サーバーエラーが発生しました' },
+  504: { type: 'server_error', message: 'サーバーエラーが発生しました' }
+}
+
+// ヘルパー関数: オフライン状態チェック
+const checkOfflineStatus = (): NetworkErrorInfo | null => {
   if (!navigator.onLine) {
     return { type: 'offline', message: 'インターネット接続がありません' }
   }
+  return null
+}
 
-  // タイムアウトエラー
+// ヘルパー関数: タイムアウトエラーチェック
+const checkTimeoutError = (error: Error & { code?: string; message?: string }): NetworkErrorInfo | null => {
   if (error.code === 'TIMEOUT' || error.message?.includes('timeout')) {
     return { type: 'timeout', message: 'リクエストがタイムアウトしました' }
   }
+  return null
+}
+
+// ヘルパー関数: HTTPステータスコード処理
+const handleStatusCode = (status: number, errorMessage?: string): NetworkErrorInfo => {
+  const statusMapping = STATUS_CODE_MAPPING[status]
+  if (statusMapping) {
+    return { type: statusMapping.type, statusCode: status, message: statusMapping.message }
+  }
+  return { type: 'unknown', statusCode: status, message: errorMessage || '予期しないエラーが発生しました' }
+}
+
+// エラー分類関数（複雑度削減版）
+export const classifyNetworkError = (error: Error & { code?: string; response?: { status: number }; statusCode?: number; message?: string }): NetworkErrorInfo => {
+  // オフライン状態のチェック
+  const offlineResult = checkOfflineStatus()
+  if (offlineResult) return offlineResult
+
+  // タイムアウトエラーチェック
+  const timeoutResult = checkTimeoutError(error)
+  if (timeoutResult) return timeoutResult
 
   // HTTPステータスコードによる分類
-  if (error.response?.status || error.statusCode) {
-    const status = error.response?.status || error.statusCode
-    
-    switch (status) {
-      case 401:
-        return { type: 'unauthorized', statusCode: status, message: '認証が必要です' }
-      case 403:
-        return { type: 'forbidden', statusCode: status, message: 'アクセスが拒否されました' }
-      case 404:
-        return { type: 'not_found', statusCode: status, message: 'リソースが見つかりません' }
-      case 409:
-        return { type: 'conflict', statusCode: status, message: 'データに競合が発生しました' }
-      case 500:
-      case 502:
-      case 503:
-      case 504:
-        return { type: 'server_error', statusCode: status, message: 'サーバーエラーが発生しました' }
-      default:
-        return { type: 'unknown', statusCode: status, message: error.message || '予期しないエラーが発生しました' }
-    }
+  const status = error.response?.status || error.statusCode
+  if (status) {
+    return handleStatusCode(status, error.message)
   }
 
   // その他のエラー
@@ -60,7 +78,7 @@ export const classifyNetworkError = (error: any): NetworkErrorInfo => {
 export const useNetworkErrorHandler = () => {
   const toast = useCalendarToast()
   
-  const handleNetworkError = useCallback((error: any, retryFn?: () => void | Promise<void>) => {
+  const handleNetworkError = useCallback((error: Error & { code?: string; response?: { status: number }; statusCode?: number }, retryFn?: () => void | Promise<void>) => {
     const errorInfo = classifyNetworkError(error)
 
     switch (errorInfo.type) {

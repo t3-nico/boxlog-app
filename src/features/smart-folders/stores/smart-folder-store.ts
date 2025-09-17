@@ -31,7 +31,7 @@ const generateId = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36)
 }
 
-const generateConditionId = (): string => {
+const _generateConditionId = (): string => {
   return `cond_${Math.random().toString(36).substring(2)}`
 }
 
@@ -241,50 +241,65 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
   )
 )
 
+// Helper function to get task field value
+function getTaskFieldValue(task: Task, field: string): string | number | boolean | Date | string[] | null | undefined {
+  switch (field) {
+    case 'status':
+      return task.status
+    case 'priority':
+      return task.priority
+    case 'type':
+      return task.type
+    case 'tags':
+      return task.tags || []
+    default:
+      return null
+  }
+}
+
+// Helper function to evaluate 'is' operator
+function evaluateIsOperator(taskValue: unknown, value: unknown, field: string): boolean {
+  if (field === 'tags' && Array.isArray(taskValue)) {
+    return Array.isArray(value) ? value.some((v) => taskValue.includes(v)) : taskValue.includes(value as string)
+  }
+  return taskValue === value
+}
+
+// Helper function to evaluate 'is_not' operator
+function evaluateIsNotOperator(taskValue: unknown, value: unknown, field: string): boolean {
+  if (field === 'tags' && Array.isArray(taskValue)) {
+    return Array.isArray(value) ? !value.some((v) => taskValue.includes(v)) : !taskValue.includes(value as string)
+  }
+  return taskValue !== value
+}
+
+// Helper function to evaluate 'contains' operator
+function evaluateContainsOperator(taskValue: unknown, value: unknown): boolean {
+  if (typeof taskValue === 'string') {
+    return taskValue.toLowerCase().includes((value as string).toLowerCase())
+  }
+  if (Array.isArray(taskValue)) {
+    return Array.isArray(value) ? value.some((v) => taskValue.includes(v)) : taskValue.includes(value as string)
+  }
+  return false
+}
+
 // Helper function to evaluate a single condition
 function evaluateCondition(task: Task, condition: FolderCondition): boolean {
   const { field, operator, value } = condition
 
-  let taskValue: string | number | boolean | Date | string[] | null | undefined
-  switch (field) {
-    case 'status':
-      taskValue = task.status
-      break
-    case 'priority':
-      taskValue = task.priority
-      break
-    case 'type':
-      taskValue = task.type
-      break
-    case 'tags':
-      taskValue = task.tags || []
-      break
-    default:
-      return false
+  const taskValue = getTaskFieldValue(task, field)
+  if (taskValue === null) {
+    return false
   }
 
   switch (operator) {
     case 'is':
-      if (field === 'tags' && Array.isArray(taskValue)) {
-        return Array.isArray(value) ? value.some((v) => taskValue.includes(v)) : taskValue.includes(value as string)
-      }
-      return taskValue === value
-
+      return evaluateIsOperator(taskValue, value, field)
     case 'is_not':
-      if (field === 'tags' && Array.isArray(taskValue)) {
-        return Array.isArray(value) ? !value.some((v) => taskValue.includes(v)) : !taskValue.includes(value as string)
-      }
-      return taskValue !== value
-
+      return evaluateIsNotOperator(taskValue, value, field)
     case 'contains':
-      if (typeof taskValue === 'string') {
-        return taskValue.toLowerCase().includes((value as string).toLowerCase())
-      }
-      if (Array.isArray(taskValue)) {
-        return Array.isArray(value) ? value.some((v) => taskValue.includes(v)) : taskValue.includes(value as string)
-      }
-      return false
-
+      return evaluateContainsOperator(taskValue, value)
     default:
       return false
   }

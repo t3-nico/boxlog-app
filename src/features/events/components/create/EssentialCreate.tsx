@@ -38,12 +38,8 @@ interface EssentialCreateProps {
   }
 }
 
-export const EssentialCreate = ({ 
-  isOpen, 
-  onClose, 
-  onSave, 
-  initialData 
-}: EssentialCreateProps) => {
+// カスタムフック: フォーム状態管理
+const useEssentialCreateForm = (initialData?: { title?: string; date?: Date; tags?: Tag[] }) => {
   const [currentStep, setCurrentStep] = useState(0)
   const [title, setTitle] = useState(initialData?.title || '')
   const [date, setDate] = useState(initialData?.date || new Date())
@@ -53,16 +49,116 @@ export const EssentialCreate = ({
     return defaultEnd
   })
   const [tags, setTags] = useState<Tag[]>(initialData?.tags || [])
+
+  const isValid = title.trim().length > 0
+
+  const handleTabNext = () => {
+    setCurrentStep(prev => Math.min(prev + 1, 2))
+  }
+
+  const handleTabPrev = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 0))
+  }
+
+  const resetForm = () => {
+    setTitle('')
+    setDate(new Date())
+    setTags([])
+    setCurrentStep(0)
+  }
+
+  return {
+    currentStep,
+    title, setTitle,
+    date, setDate,
+    endDate, setEndDate,
+    tags, setTags,
+    isValid,
+    handleTabNext,
+    handleTabPrev,
+    resetForm
+  }
+}
+
+// カスタムフック: スマート抽出機能
+const useSmartExtraction = (tags: Tag[], setTitle: (title: string) => void, setDate: (date: Date) => void, setTags: (tags: Tag[]) => void) => {
+  const generateTagColor = (name: string): string => {
+    const colors = [
+      '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
+      '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1'
+    ]
+    const hash = name.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0)
+      return a & a
+    }, 0)
+    return colors[Math.abs(hash) % colors.length]
+  }
+
+  const handleSmartExtract = (extracted: {
+    title: string
+    date?: Date
+    tags: string[]
+  }) => {
+    setTitle(extracted.title)
+    if (extracted.date) {
+      setDate(extracted.date)
+    }
+    // 抽出されたタグを既存タグに追加
+    const newTags = extracted.tags
+      .filter(tagName => !tags.some(tag => tag.name === tagName))
+      .map(tagName => ({
+        id: Date.now().toString() + Math.random(),
+        name: tagName,
+        color: generateTagColor(tagName)
+      }))
+    if (newTags.length > 0) {
+      setTags(prev => [...prev, ...newTags])
+    }
+  }
+
+  return { handleSmartExtract }
+}
+
+// カスタムフック: 保存処理
+const useSaveHandler = (isValid: boolean, onSave: Function, onClose: Function, resetForm: Function) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showSuccess, setShowSuccess] = useState(false)
-  
-  const containerRef = useRef<HTMLDivElement>(null)
 
-  // 入力データの検証
-  const isValid = title.trim().length > 0
+  const handleSave = async (formData: { title: string; date: Date; endDate: Date; tags: Tag[] }) => {
+    if (!isValid) return
 
-  // キーボードショートカットのハンドリング
+    setIsSubmitting(true)
+    setError(null)
+
+    try {
+      await onSave(formData)
+      
+      // 成功アニメーション
+      setShowSuccess(true)
+      setTimeout(() => {
+        onClose()
+        setShowSuccess(false)
+        resetForm()
+      }, 1500)
+      
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '保存に失敗しました')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return {
+    isSubmitting,
+    error,
+    showSuccess,
+    handleSave
+  }
+}
+
+// カスタムフック: キーボードショートカット
+const useKeyboardShortcuts = (isOpen: boolean, isValid: boolean, onClose: Function, handleSave: Function) => {
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
@@ -87,81 +183,28 @@ export const EssentialCreate = ({
 
     window.addEventListener('keydown', handleGlobalKeyDown)
     return () => window.removeEventListener('keydown', handleGlobalKeyDown)
-  }, [isOpen, isValid, title, date, tags])
+  }, [isOpen, isValid, handleSave, onClose])
+}
 
-  // スマート抽出のハンドリング
-  const handleSmartExtract = (extracted: {
-    title: string
-    date?: Date
-    tags: string[]
-  }) => {
-    setTitle(extracted.title)
-    if (extracted.date) {
-      setDate(extracted.date)
-    }
-    // 抽出されたタグを既存タグに追加
-    const newTags = extracted.tags
-      .filter(tagName => !tags.some(tag => tag.name === tagName))
-      .map(tagName => ({
-        id: Date.now().toString() + Math.random(),
-        name: tagName,
-        color: generateTagColor(tagName)
-      }))
-    if (newTags.length > 0) {
-      setTags(prev => [...prev, ...newTags])
-    }
-  }
-
-  // タグの色生成
-  const generateTagColor = (name: string): string => {
-    const colors = [
-      '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', 
-      '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1'
-    ]
-    const hash = name.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0)
-      return a & a
-    }, 0)
-    return colors[Math.abs(hash) % colors.length]
-  }
-
-  // 保存処理
-  const handleSave = async () => {
-    if (!isValid) return
-
-    setIsSubmitting(true)
-    setError(null)
-
-    try {
-      await onSave({ title, date, endDate, tags })
-      
-      // 成功アニメーション
-      setShowSuccess(true)
-      setTimeout(() => {
-        onClose()
-        setShowSuccess(false)
-        // リセット
-        setTitle('')
-        setDate(new Date())
-        setTags([])
-        setCurrentStep(0)
-      }, 1500)
-      
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '保存に失敗しました')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  // Tab navigation
-  const handleTabNext = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 2))
-  }
-
-  const handleTabPrev = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0))
-  }
+export const EssentialCreate = ({ 
+  isOpen, 
+  onClose, 
+  onSave, 
+  initialData 
+}: EssentialCreateProps) => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  // カスタムフックでロジックを分離
+  const formState = useEssentialCreateForm(initialData)
+  const { handleSmartExtract } = useSmartExtraction(formState.tags, formState.setTitle, formState.setDate, formState.setTags)
+  const saveHandler = useSaveHandler(formState.isValid, onSave, onClose, formState.resetForm)
+  
+  useKeyboardShortcuts(isOpen, formState.isValid, onClose, () => saveHandler.handleSave({
+    title: formState.title,
+    date: formState.date,
+    endDate: formState.endDate,
+    tags: formState.tags
+  }))
 
   // アニメーション設定
   const containerVariants = {

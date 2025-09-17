@@ -4,13 +4,67 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useEventStore } from '../stores/useEventStore'
 
-import type { EventFilters } from '../types/events'
+import type { EventFilters, Event } from '../types/events'
+
+// 日付範囲フィルターのチェック
+const checkDateRange = (event: Event, filters: EventFilters): boolean => {
+  if (filters.startDate && event.startDate && event.startDate < filters.startDate) {
+    return false
+  }
+  if (filters.endDate && event.endDate && event.endDate > filters.endDate) {
+    return false
+  }
+  return true
+}
+
+// タイプとステータスフィルターのチェック
+const checkTypeAndStatus = (event: Event, filters: EventFilters): boolean => {
+  if (filters.types && filters.types.length > 0 && !filters.types.includes(event.type)) {
+    return false
+  }
+  if (filters.statuses && filters.statuses.length > 0 && !filters.statuses.includes(event.status)) {
+    return false
+  }
+  return true
+}
+
+// タグフィルターのチェック
+const checkTags = (event: Event, filters: EventFilters): boolean => {
+  if (filters.tagIds && filters.tagIds.length > 0) {
+    const eventTagIds = event.tags?.map(tag => tag.id) || []
+    if (!filters.tagIds.some(tagId => eventTagIds.includes(tagId))) {
+      return false
+    }
+  }
+  return true
+}
+
+// 検索クエリフィルターのチェック
+const checkSearchQuery = (event: Event, filters: EventFilters): boolean => {
+  if (filters.searchQuery) {
+    const query = filters.searchQuery.toLowerCase()
+    const titleMatch = event.title.toLowerCase().includes(query)
+    const descriptionMatch = event.description?.toLowerCase().includes(query)
+    if (!titleMatch && !descriptionMatch) {
+      return false
+    }
+  }
+  return true
+}
+
+// 共通イベントフィルター関数
+const createEventFilter = (filters: EventFilters) => (event: Event): boolean => {
+  return checkDateRange(event, filters) &&
+         checkTypeAndStatus(event, filters) &&
+         checkTags(event, filters) &&
+         checkSearchQuery(event, filters)
+}
 
 /**
  * イベントデータ取得の最適化されたhook
  */
 export function useEvents(filters?: EventFilters) {
-  const { events, loading, error, fetchEvents } = useEventStore()
+  const { events, loading: _loading, error: _error, fetchEvents } = useEventStore()
 
   return useQuery({
     queryKey: ['events', filters],
@@ -20,45 +74,7 @@ export function useEvents(filters?: EventFilters) {
       // フィルターが指定されている場合は適用
       if (!filters) return data
       
-      return data.filter(event => {
-        // 日付範囲フィルター
-        if (filters.startDate && event.startDate && event.startDate < filters.startDate) {
-          return false
-        }
-        if (filters.endDate && event.endDate && event.endDate > filters.endDate) {
-          return false
-        }
-
-        // タイプフィルター
-        if (filters.types && filters.types.length > 0 && !filters.types.includes(event.type)) {
-          return false
-        }
-
-        // ステータスフィルター
-        if (filters.statuses && filters.statuses.length > 0 && !filters.statuses.includes(event.status)) {
-          return false
-        }
-
-        // タグフィルター
-        if (filters.tagIds && filters.tagIds.length > 0) {
-          const eventTagIds = event.tags?.map(tag => tag.id) || []
-          if (!filters.tagIds.some(tagId => eventTagIds.includes(tagId))) {
-            return false
-          }
-        }
-
-        // 検索クエリフィルター
-        if (filters.searchQuery) {
-          const query = filters.searchQuery.toLowerCase()
-          const titleMatch = event.title.toLowerCase().includes(query)
-          const descriptionMatch = event.description?.toLowerCase().includes(query)
-          if (!titleMatch && !descriptionMatch) {
-            return false
-          }
-        }
-
-        return true
-      })
+      return data.filter(createEventFilter(filters))
     }
   })
 }
@@ -120,7 +136,7 @@ export function useUpdateEvent() {
   const { updateEvent } = useEventStore()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string, data: any }) => updateEvent(id, data),
+    mutationFn: ({ id, data }: { id: string, data: unknown }) => updateEvent(id, data),
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['events'] })
       queryClient.invalidateQueries({ queryKey: ['event', id] })

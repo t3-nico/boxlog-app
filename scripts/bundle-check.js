@@ -87,6 +87,64 @@ function displaySizeCheck(name, current, limit, _isError = false) {
 }
 
 /**
+ * 初期読み込みJSファイルの処理
+ */
+function processInitialJSFiles(buildManifest, stats) {
+  const initialFiles = buildManifest.pages['/'] || []
+  for (const file of initialFiles) {
+    if (file.endsWith('.js')) {
+      const filePath = path.join('.next', 'static', file)
+      if (fs.existsSync(filePath)) {
+        const { size } = fs.statSync(filePath)
+        stats.initialJS += size
+        stats.totalJS += size
+      }
+    }
+  }
+  return initialFiles
+}
+
+/**
+ * 全チャンクファイルの処理
+ */
+function processChunkFiles(buildManifest, initialFiles, stats) {
+  for (const [page, files] of Object.entries(buildManifest.pages)) {
+    for (const file of files) {
+      if (file.endsWith('.js') && !initialFiles.includes(file)) {
+        const filePath = path.join('.next', 'static', file)
+        if (fs.existsSync(filePath)) {
+          const { size } = fs.statSync(filePath)
+          stats.totalJS += size
+          stats.chunks.push({ file, size, page })
+        }
+      }
+    }
+  }
+}
+
+/**
+ * CSSファイルの処理
+ */
+function processCSSFiles(stats) {
+  const staticDir = path.join('.next', 'static', 'css')
+  if (fs.existsSync(staticDir)) {
+    const cssFiles = fs.readdirSync(staticDir).filter((f) => f.endsWith('.css'))
+    for (const file of cssFiles) {
+      const filePath = path.join(staticDir, file)
+      const { size } = fs.statSync(filePath)
+      stats.totalCSS += size
+
+      // app.css や globals.css を初期読み込みとして扱う
+      if (file.includes('app') || file.includes('global')) {
+        stats.initialCSS += size
+      }
+
+      stats.cssFiles.push({ file, size })
+    }
+  }
+}
+
+/**
  * Next.jsビルド統計の解析
  */
 function analyzeBuildStats() {
@@ -107,50 +165,14 @@ function analyzeBuildStats() {
       const buildManifest = JSON.parse(fs.readFileSync(buildManifestPath, 'utf8'))
 
       // 初期読み込みJSファイル
-      const initialFiles = buildManifest.pages['/'] || []
-      for (const file of initialFiles) {
-        if (file.endsWith('.js')) {
-          const filePath = path.join('.next', 'static', file)
-          if (fs.existsSync(filePath)) {
-            const { size } = fs.statSync(filePath)
-            stats.initialJS += size
-            stats.totalJS += size
-          }
-        }
-      }
+      const initialFiles = processInitialJSFiles(buildManifest, stats)
 
       // 全チャンクファイル
-      for (const [page, files] of Object.entries(buildManifest.pages)) {
-        for (const file of files) {
-          if (file.endsWith('.js') && !initialFiles.includes(file)) {
-            const filePath = path.join('.next', 'static', file)
-            if (fs.existsSync(filePath)) {
-              const { size } = fs.statSync(filePath)
-              stats.totalJS += size
-              stats.chunks.push({ file, size, page })
-            }
-          }
-        }
-      }
+      processChunkFiles(buildManifest, initialFiles, stats)
     }
 
     // CSS ファイルの解析
-    const staticDir = path.join('.next', 'static', 'css')
-    if (fs.existsSync(staticDir)) {
-      const cssFiles = fs.readdirSync(staticDir).filter((f) => f.endsWith('.css'))
-      for (const file of cssFiles) {
-        const filePath = path.join(staticDir, file)
-        const { size } = fs.statSync(filePath)
-        stats.totalCSS += size
-
-        // app.css や globals.css を初期読み込みとして扱う
-        if (file.includes('app') || file.includes('global')) {
-          stats.initialCSS += size
-        }
-
-        stats.cssFiles.push({ file, size })
-      }
-    }
+    processCSSFiles(stats)
   } catch (error) {
     console.warn(`${colors.yellow}⚠️ ビルド統計の読み込みに失敗しました: ${error.message}${colors.reset}`)
   }
