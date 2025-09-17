@@ -272,20 +272,18 @@ export const SmartFolderList = ({
 
       if (!over || active.id === over.id) return
 
-      {
-        const oldIndex = userFolders.findIndex((folder) => folder.id === active.id)
-        const newIndex = userFolders.findIndex((folder) => folder.id === over.id)
+      const oldIndex = userFolders.findIndex((folder) => folder.id === active.id)
+      const newIndex = userFolders.findIndex((folder) => folder.id === over.id)
 
-        const reorderedFolders = arrayMove(userFolders, oldIndex, newIndex)
+      const reorderedFolders = arrayMove(userFolders, oldIndex, newIndex)
 
-        // 新しい順序を計算
-        const folderOrders = reorderedFolders.map((folder, index) => ({
-          id: folder.id,
-          orderIndex: index,
-        }))
+      // 新しい順序を計算
+      const folderOrders = reorderedFolders.map((folder, index) => ({
+        id: folder.id,
+        orderIndex: index,
+      }))
 
-        reorderMutation.mutate(folderOrders)
-      }
+      reorderMutation.mutate(folderOrders)
     },
     [userFolders, reorderMutation]
   )
