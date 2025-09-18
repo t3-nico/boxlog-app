@@ -42,8 +42,16 @@ const nextConfig = {
   swcMinify: true,
   compiler: {
     // mainブランチの本番ビルドでのみconsole.logを削除、devブランチでは残す
-    removeConsole: process.env.NODE_ENV === 'production' && 
+    removeConsole: process.env.NODE_ENV === 'production' &&
                    (process.env.VERCEL_GIT_COMMIT_REF === 'main' || process.env.VERCEL_GIT_COMMIT_REF === undefined),
+  },
+  // Tree shaking最適化のためのWebpack設定
+  webpack: (config, { isServer }) => {
+    // Tree shaking の最適化
+    config.optimization.usedExports = true;
+    config.optimization.sideEffects = false;
+
+    return config;
   },
 }
 

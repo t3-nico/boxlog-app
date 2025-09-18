@@ -1,9 +1,19 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { redirect } from 'next/navigation'
 
-import { CalendarController } from '@/features/calendar'
+import { CalendarSkeleton } from '@/features/calendar/components/CalendarSkeleton'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
+
+// Calendar機能を動的インポート（Bundle size最適化）
+const CalendarController = dynamic(
+  () => import('@/features/calendar').then((mod) => ({ default: mod.CalendarController })),
+  {
+    loading: () => <CalendarSkeleton />,
+    ssr: false,
+  }
+)
 
 interface CalendarViewPageProps {
   params: {

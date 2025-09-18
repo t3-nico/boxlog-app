@@ -1,8 +1,17 @@
 'use client'
 
-import React from 'react'
+import dynamic from 'next/dynamic'
 
-import { MainSupportChat } from '@/features/help/components/main-support-chat'
+import { HelpSkeleton } from '@/features/help/components/HelpSkeleton'
+
+// Help機能を動的インポート（Bundle size最適化）
+const MainSupportChat = dynamic(
+  () => import('@/features/help/components/main-support-chat').then((mod) => ({ default: mod.MainSupportChat })),
+  {
+    loading: () => <HelpSkeleton />,
+    ssr: false,
+  }
+)
 
 const HelpPage = () => {
   // BoxLogサポートアシスタントをメインエリアで表示

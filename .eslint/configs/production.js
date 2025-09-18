@@ -5,6 +5,8 @@
  */
 
 module.exports = {
+  extends: ['./bundle-optimization.js'],
+
   rules: {
     // 本番ではコンソールログ禁止
     'no-console': 'error',

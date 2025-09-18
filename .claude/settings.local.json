@@ -51,7 +51,9 @@
       "Bash(npm run todo:health:*)",
       "Bash(npm run debt:analyze:*)",
       "Bash(npm run bundle:check:*)",
-      "Bash(npm run todo:to-issues:*)"
+      "Bash(npm run todo:to-issues:*)",
+      "Bash(chmod:*)",
+      "Bash(npm run bundle:monitor:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
