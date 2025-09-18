@@ -1,17 +1,8 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { 
-  X, 
-  ArrowUpCircle, 
-  Sparkles, 
-  MoreVertical, 
-  Trash2, 
-  Copy,
-  Minimize2,
-  Maximize2
-} from 'lucide-react'
+import { ArrowUpCircle, Copy, Maximize2, Minimize2, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
 import { useAIPanel } from '@/contexts/ai-panel-context'
@@ -24,14 +15,12 @@ interface BottomUpChatModalProps {
 
 const MessageBubble = ({ message }: { message: ChatMessage }) => {
   const isUser = message.sender === 'user'
-  
+
   if (isUser) {
     return (
       <div className="mb-4 flex justify-end">
-        <div className="bg-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] break-words">
-          <div className="text-sm leading-relaxed whitespace-pre-wrap">
-            {message.content}
-          </div>
+        <div className="max-w-[80%] break-words rounded-2xl rounded-tr-sm bg-purple-600 px-4 py-2 text-white">
+          <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
           {message.status && (
             <div className="mt-1 text-xs text-purple-100 opacity-75">
               {message.status === 'sending' && 'Sending...'}
@@ -42,20 +31,18 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
       </div>
     )
   }
-  
+
   return (
-    <div className="mb-4 flex justify-start items-start gap-3">
+    <div className="mb-4 flex items-start justify-start gap-3">
       {/* AI Avatar */}
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white flex-shrink-0">
-        <Sparkles className="w-4 h-4" />
+      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600 text-white">
+        <Sparkles className="h-4 w-4" />
       </div>
-      
+
       {/* AI Message Bubble */}
-      <div className="bg-background text-foreground rounded-2xl rounded-tl-sm px-4 py-2 max-w-[80%] break-words border border-border">
-        <div className="text-sm leading-relaxed whitespace-pre-wrap">
-          {message.content}
-        </div>
-        <div className="mt-1 text-xs text-muted-foreground">
+      <div className="bg-background text-foreground border-border max-w-[80%] break-words rounded-2xl rounded-tl-sm border px-4 py-2">
+        <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+        <div className="text-muted-foreground mt-1 text-xs">
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
@@ -86,25 +73,25 @@ const ChatInput = () => {
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'
-      const {scrollHeight} = textareaRef.current
-      textareaRef.current.style.height = `${Math.min(scrollHeight, 120)  }px`
+      const { scrollHeight } = textareaRef.current
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 120)}px`
     }
   }, [state.inputValue])
 
   return (
-    <div className="flex-shrink-0 p-4 border-t border-border bg-background">
+    <div className="border-border bg-background flex-shrink-0 border-t p-4">
       {/* Typing indicator */}
       {state.isTyping && (
-        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground">
+        <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
-            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-purple-400"></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-purple-400" style={{ animationDelay: '0.2s' }}></div>
+            <div className="h-2 w-2 animate-pulse rounded-full bg-purple-400" style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span>AI is thinking...</span>
         </div>
       )}
-      
+
       <div className="relative">
         <form onSubmit={handleSubmit} className="relative">
           <textarea
@@ -115,15 +102,15 @@ const ChatInput = () => {
             onCompositionStart={() => setIsComposing(true)}
             onCompositionEnd={() => setIsComposing(false)}
             placeholder="Ask AI anything..."
-            className="w-full resize-none rounded-xl border border-border bg-card px-4 py-3 pr-12 text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 max-h-32 min-h-[44px] placeholder-muted-foreground"
+            className="border-border bg-card placeholder-muted-foreground max-h-32 min-h-[44px] w-full resize-none rounded-xl border px-4 py-3 pr-12 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
             disabled={state.isTyping}
             rows={1}
           />
-          
+
           <button
             type="submit"
             disabled={!state.inputValue.trim() || state.isTyping}
-            className="absolute right-2 bottom-2 p-2 text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 disabled:cursor-not-allowed transition-colors focus:outline-none"
+            className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute bottom-2 right-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
           >
             <ArrowUpCircle className="h-6 w-6" />
           </button>
@@ -135,12 +122,7 @@ const ChatInput = () => {
 
 export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) => {
   const { state, clearMessages } = useChatContext()
-  const { 
-    panelHeight, 
-    isMinimized, 
-    setPanelHeight, 
-    setIsMinimized 
-  } = useAIPanel()
+  const { panelHeight, isMinimized, setPanelHeight, setIsMinimized } = useAIPanel()
   const [showMenu, setShowMenu] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -200,9 +182,9 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
   return (
     <>
       {/* Panel positioned within main area */}
-      <div 
+      <div
         ref={panelRef}
-        className="absolute bottom-0 left-0 right-0 bg-background border-t border-border z-50 transition-all duration-300 ease-out flex flex-col shadow-lg"
+        className="bg-background border-border absolute bottom-0 left-0 right-0 z-50 flex flex-col border-t shadow-lg transition-all duration-300 ease-out"
         style={{
           transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
           height: isMinimized ? '40px' : `${panelHeight}px`,
@@ -211,7 +193,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
         {/* Resize Handle - Hidden when minimized */}
         {!isMinimized && (
           <div
-            className="w-full h-2 bg-border/20 hover:bg-primary/20 cursor-ns-resize transition-colors flex items-center justify-center group"
+            className="bg-border/20 hover:bg-primary/20 group flex h-2 w-full cursor-ns-resize items-center justify-center transition-colors"
             onMouseDown={handleResizeStart}
             role="button"
             aria-label="Resize chat modal"
@@ -223,108 +205,83 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
               }
             }}
           >
-            <div className="w-12 h-1 bg-border group-hover:bg-primary/40 rounded-full transition-colors" />
+            <div className="bg-border group-hover:bg-primary/40 h-1 w-12 rounded-full transition-colors" />
           </div>
         )}
-        
+
         {/* Header or Minimized Bar */}
         {isMinimized ? (
-          <div className="flex-1 flex items-center justify-between px-4 py-2">
+          <div className="flex flex-1 items-center justify-between px-4 py-2">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-white" />
+              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600">
+                <Sparkles className="h-3 w-3 text-white" />
               </div>
-              <span className="text-sm font-medium text-foreground">AI Assistant</span>
+              <span className="text-foreground text-sm font-medium">AI Assistant</span>
             </div>
             <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMinimized(false)}
-                className="p-1 h-6 w-6"
-              >
+              <Button variant="ghost" size="sm" onClick={() => setIsMinimized(false)} className="h-6 w-6 p-1">
                 <Maximize2 className="h-3 w-3" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClose}
-                className="p-1 h-6 w-6"
-              >
+              <Button variant="ghost" size="sm" onClick={onClose} className="h-6 w-6 p-1">
                 <X className="h-3 w-3" />
               </Button>
             </div>
           </div>
         ) : (
-          <div className="flex-shrink-0 p-4 border-b border-border bg-background">
+          <div className="border-border bg-background flex-shrink-0 border-b p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600">
+                  <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground">AI Assistant</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Ask me anything about your tasks and productivity
-                  </p>
+                  <h3 className="text-foreground text-lg font-semibold">AI Assistant</h3>
+                  <p className="text-muted-foreground text-sm">Ask me anything about your tasks and productivity</p>
                 </div>
               </div>
-            
+
               <div className="flex items-center gap-1">
                 {/* Menu */}
                 <div className="relative">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowMenu(!showMenu)}
-                    className="p-2"
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => setShowMenu(!showMenu)} className="p-2">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
-                  
+
                   {showMenu && (
-                    <div className="absolute right-0 bottom-full mb-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] py-1">
+                    <div className="bg-card border-border absolute bottom-full right-0 z-50 mb-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                       <button
+                        type="button"
                         onClick={() => {
                           clearMessages()
                           setShowMenu(false)
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
+                        className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="h-4 w-4" />
                         Clear conversation
                       </button>
                       <button
+                        type="button"
                         onClick={() => {
                           // Export functionality
                           setShowMenu(false)
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-card-foreground hover:bg-accent/50 transition-colors"
+                        className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                       >
-                        <Copy className="w-4 h-4" />
+                        <Copy className="h-4 w-4" />
                         Export conversation
                       </button>
                     </div>
                   )}
                 </div>
-                
+
                 {/* Minimize/Maximize */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMinimized(!isMinimized)}
-                  className="p-2"
-                >
+                <Button variant="ghost" size="sm" onClick={() => setIsMinimized(!isMinimized)} className="p-2">
                   <Minimize2 className="h-4 w-4" />
                 </Button>
-                
+
                 {/* Close Button */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onClose}
-                  className="p-2"
-                >
+                <Button variant="ghost" size="sm" onClick={onClose} className="p-2">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -338,13 +295,11 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4">
               {state.messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-8 h-8 text-white" />
+                <div className="flex h-full flex-col items-center justify-center text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600">
+                    <Sparkles className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Hi! I&apos;m your AI assistant
-                  </h3>
+                  <h3 className="text-foreground mb-2 text-lg font-semibold">Hi! I&apos;m your AI assistant</h3>
                   <p className="text-muted-foreground max-w-md">
                     I can help you with productivity insights, task management, and answer questions about BoxLog.
                   </p>
@@ -358,7 +313,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                 </>
               )}
             </div>
-            
+
             {/* Chat Input */}
             <ChatInput />
           </>

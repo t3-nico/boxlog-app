@@ -20,7 +20,7 @@ interface DateNavigatorProps {
 const arrowSizes = {
   sm: 'h-4 w-4',
   md: 'h-5 w-5',
-  lg: 'h-6 w-6'
+  lg: 'h-6 w-6',
 }
 
 /**
@@ -34,13 +34,14 @@ export const DateNavigator = ({
   showArrows = true,
   className,
   buttonClassName,
-  arrowSize = 'md'
+  arrowSize = 'md',
 }: DateNavigatorProps) => {
   return (
     <div className={cn('flex items-center gap-2', className)}>
       {/* 今日ボタン */}
       {showTodayButton && (
         <button
+          type="button"
           onClick={() => onNavigate('today')}
           className={cn(
             'px-4 py-2 text-sm font-medium',
@@ -56,31 +57,23 @@ export const DateNavigator = ({
           <span>{todayLabel}</span>
         </button>
       )}
-      
+
       {/* 前後ナビゲーション */}
       {showArrows && (
         <div className="flex items-center gap-1">
           <button
+            type="button"
             onClick={() => onNavigate('prev')}
-            className={cn(
-              'p-1.5 rounded-full transition-colors',
-              secondary.hover,
-              text.muted,
-              'hover:text-foreground'
-            )}
+            className={cn('rounded-full p-1.5 transition-colors', secondary.hover, text.muted, 'hover:text-foreground')}
             title="Previous period"
             aria-label="Previous"
           >
             <ChevronLeft className={arrowSizes[arrowSize]} />
           </button>
           <button
+            type="button"
             onClick={() => onNavigate('next')}
-            className={cn(
-              'p-1.5 rounded-full transition-colors',
-              secondary.hover,
-              text.muted,
-              'hover:text-foreground'
-            )}
+            className={cn('rounded-full p-1.5 transition-colors', secondary.hover, text.muted, 'hover:text-foreground')}
             title="Next period"
             aria-label="Next"
           >
@@ -98,7 +91,7 @@ export const DateNavigator = ({
 export const CompactDateNavigator = ({
   onNavigate,
   className,
-  arrowSize = 'sm'
+  arrowSize = 'sm',
 }: Pick<DateNavigatorProps, 'onNavigate' | 'className' | 'arrowSize'>) => {
   return (
     <DateNavigator
