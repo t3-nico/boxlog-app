@@ -12,6 +12,17 @@ module.exports = {
     'no-console': 'error',
     'no-debugger': 'error',
 
+    // 本番環境では厳格なコード品質制限
+    'max-lines': [
+      'error',
+      {
+        max: 400,
+        skipBlankLines: true,
+        skipComments: true,
+      },
+    ],
+    'max-nested-callbacks': ['error', { max: 3 }],
+
     // 未使用変数は本番環境ではエラーレベル（コードクリーンアップ強制）
     'unused-imports/no-unused-vars': 'error',
 

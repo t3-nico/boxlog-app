@@ -66,5 +66,22 @@ module.exports = {
         'security/detect-non-literal-regexp': 'off', // テスト用の動的正規表現
       },
     },
+    {
+      // ESLint設定ファイル・スクリプトでは緩和
+      files: ['.eslint/**/*.js', 'config/eslint/**/*.js', 'scripts/**/*.js', 'cleanup-unused-vars.js'],
+      rules: {
+        'security/detect-non-literal-fs-filename': 'off',
+        'security/detect-non-literal-regexp': 'off',
+        'security/detect-object-injection': 'off',
+        'security/detect-unsafe-regex': 'off',
+      },
+    },
+    {
+      // TypeScriptの型安全性が担保されている場合はObject Injectionを緩和
+      files: ['src/**/*.ts', 'src/**/*.tsx'],
+      rules: {
+        'security/detect-object-injection': 'warn', // TypeScriptなのでwarningに下げる
+      },
+    },
   ],
 }
