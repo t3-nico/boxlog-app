@@ -140,6 +140,7 @@ const SortableSmartFolderItem = ({
 
           {!folder.isSystem && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation()
                 onContextMenu(e, folder)
@@ -331,6 +332,7 @@ export const SmartFolderList = ({
       {/* セクションヘッダー */}
       <div className="flex w-full items-center justify-between">
         <button
+          type="button"
           onClick={() => setIsExpanded(!isExpanded)}
           className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-zinc-500 transition-colors hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:bg-white/5"
         >
@@ -344,6 +346,7 @@ export const SmartFolderList = ({
           </span>
         </button>
         <button
+          type="button"
           onClick={() => setShowCreateDialog(true)}
           className="section-header-button rounded p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
         >

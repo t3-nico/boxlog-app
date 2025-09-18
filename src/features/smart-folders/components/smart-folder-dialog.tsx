@@ -1,27 +1,14 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { 
-  Dialog, 
-  DialogPanel, 
-  DialogTitle, 
-  Field,
-  Input,
-  Label,
-  Textarea
-} from '@headlessui/react'
-import { 
-  X as XMarkIcon, 
-  Plus as PlusIcon,
-  Eye as EyeIcon,
-  Folder as FolderIcon
-} from 'lucide-react'
+import { Dialog, DialogPanel, DialogTitle, Field, Input, Label, Textarea } from '@headlessui/react'
+import { Eye as EyeIcon, Folder as FolderIcon, Plus as PlusIcon, X as XMarkIcon } from 'lucide-react'
 
 import { z } from 'zod'
 
 import { createSmartFolderSchema, updateSmartFolderSchema } from '@/features/smart-folders/validations/smart-folders'
-import { SmartFolder, SmartFolderRule, CreateSmartFolderInput, UpdateSmartFolderInput } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolder, SmartFolderRule, UpdateSmartFolderInput } from '@/types/smart-folders'
 
 import { RuleEditor } from './rule-editor'
 import { RulePreview } from './rule-preview'
@@ -34,21 +21,15 @@ interface SmartFolderDialogProps {
   previewItems?: unknown[]
 }
 
-export const SmartFolderDialog = ({
-  isOpen,
-  onClose,
-  onSave,
-  folder,
-  previewItems = []
-}: SmartFolderDialogProps) => {
+export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItems = [] }: SmartFolderDialogProps) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     rules: [] as SmartFolderRule[],
     icon: '📁',
-    color: '#3B82F6'
+    color: '#3B82F6',
   })
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
@@ -61,7 +42,7 @@ export const SmartFolderDialog = ({
         description: folder.description || '',
         rules: folder.rules,
         icon: folder.icon || '📁',
-        color: folder.color
+        color: folder.color,
       })
     } else {
       setFormData({
@@ -69,7 +50,7 @@ export const SmartFolderDialog = ({
         description: '',
         rules: [],
         icon: '📁',
-        color: '#3B82F6'
+        color: '#3B82F6',
       })
     }
     setErrors({})
@@ -99,9 +80,9 @@ export const SmartFolderDialog = ({
   // フォーム送信
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
+
     setIsLoading(true)
     try {
       await onSave(formData)
@@ -116,31 +97,27 @@ export const SmartFolderDialog = ({
 
   // ルールの更新
   const handleRulesChange = useCallback((newRules: SmartFolderRule[]) => {
-    setFormData(prev => ({ ...prev, rules: newRules }))
+    setFormData((prev) => ({ ...prev, rules: newRules }))
   }, [])
 
   // フィールドの更新
   const updateField = useCallback((field: string, value: unknown) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }, [])
 
   return (
-    <Dialog 
-      open={isOpen} 
-      onClose={onClose}
-      className="relative z-50"
-    >
+    <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       {/* オーバーレイ */}
       <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-      
+
       {/* ダイアログコンテナ */}
       <div className="fixed inset-0 flex items-center justify-center p-4">
-        <DialogPanel className="w-full max-w-4xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl overflow-hidden flex flex-col">
+        <DialogPanel className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-900">
           {/* ヘッダー */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900">
-                <FolderIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
+                <FolderIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -151,97 +128,85 @@ export const SmartFolderDialog = ({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => setShowPreview(!showPreview)}
-                className="flex items-center gap-2 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
-                <EyeIcon className="w-4 h-4" />
+                <EyeIcon className="h-4 w-4" />
                 {showPreview ? 'Hide Preview' : 'Show Preview'}
               </button>
-              
+
               <button
+                type="button"
                 onClick={onClose}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                className="rounded-md p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
               >
-                <XMarkIcon className="w-5 h-5" />
+                <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
           </div>
 
           {/* メインコンテンツ */}
           <div className="flex-1 overflow-hidden">
-            <div className={`h-full flex ${showPreview ? 'divide-x divide-gray-200 dark:divide-gray-700' : ''}`}>
+            <div className={`flex h-full ${showPreview ? 'divide-x divide-gray-200 dark:divide-gray-700' : ''}`}>
               {/* フォームエリア */}
               <div className={`${showPreview ? 'w-2/3' : 'w-full'} overflow-y-auto`}>
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6 p-6">
                   {/* 基本情報 */}
                   <div className="space-y-4">
-                    <h3 className="text-md font-medium text-gray-900 dark:text-white">
-                      Basic Information
-                    </h3>
-                    
+                    <h3 className="text-md font-medium text-gray-900 dark:text-white">Basic Information</h3>
+
                     <Field>
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Folder Name *
-                      </Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Folder Name *</Label>
                       <Input
                         value={formData.name}
                         onChange={(e) => updateField('name', e.target.value)}
                         placeholder="Enter folder name..."
-                        className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                       />
-                      {errors.name && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                          {errors.name}
-                        </p>
-                      )}
+                      {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
                     </Field>
 
                     <Field>
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Description
-                      </Label>
+                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description</Label>
                       <Textarea
                         value={formData.description}
                         onChange={(e) => updateField('description', e.target.value)}
                         placeholder="Optional description..."
                         rows={2}
-                        className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                        className="mt-1 block w-full resize-none rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                       />
                     </Field>
 
                     {/* アイコンと色の選択 */}
                     <div className="grid grid-cols-2 gap-4">
                       <Field>
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Icon
-                        </Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Icon</Label>
                         <Input
                           value={formData.icon}
                           onChange={(e) => updateField('icon', e.target.value)}
                           placeholder="📁"
-                          className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                          className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         />
                       </Field>
 
                       <Field>
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Color
-                        </Label>
+                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Color</Label>
                         <div className="mt-1 flex items-center gap-2">
                           <input
                             type="color"
                             value={formData.color}
                             onChange={(e) => updateField('color', e.target.value)}
-                            className="w-8 h-8 rounded border border-gray-300 dark:border-gray-600"
+                            className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
                           />
                           <Input
                             value={formData.color}
                             onChange={(e) => updateField('color', e.target.value)}
                             placeholder="#3B82F6"
-                            className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="flex-1 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           />
                         </div>
                       </Field>
@@ -251,26 +216,19 @@ export const SmartFolderDialog = ({
                   {/* ルールエディター */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-md font-medium text-gray-900 dark:text-white">
-                        Filter Rules
-                      </h3>
+                      <h3 className="text-md font-medium text-gray-900 dark:text-white">Filter Rules</h3>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {formData.rules.length} rule{formData.rules.length !== 1 ? 's' : ''}
                       </span>
                     </div>
-                    
-                    <RuleEditor
-                      rules={formData.rules}
-                      onChange={handleRulesChange}
-                    />
+
+                    <RuleEditor rules={formData.rules} onChange={handleRulesChange} />
                   </div>
 
                   {/* エラー表示 */}
                   {errors.submit && (
-                    <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-                      <p className="text-sm text-red-600 dark:text-red-400">
-                        {errors.submit}
-                      </p>
+                    <div className="rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
+                      <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
                     </div>
                   )}
                 </form>
@@ -279,39 +237,37 @@ export const SmartFolderDialog = ({
               {/* プレビューエリア */}
               {showPreview && (
                 <div className="w-1/3 bg-gray-50 dark:bg-gray-800/50">
-                  <RulePreview
-                    rules={formData.rules}
-                    items={previewItems}
-                  />
+                  <RulePreview rules={formData.rules} items={previewItems} />
                 </div>
               )}
             </div>
           </div>
 
           {/* フッター */}
-          <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800/50">
             <button
+              type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               Cancel
             </button>
-            
+
             <button
               type="submit"
               onClick={handleSubmit}
               disabled={isLoading || !formData.name.trim()}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isLoading ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <PlusIcon className="w-4 h-4" />
+                  <PlusIcon className="h-4 w-4" />
                   {folder ? 'Update Folder' : 'Create Folder'}
                 </>
               )}

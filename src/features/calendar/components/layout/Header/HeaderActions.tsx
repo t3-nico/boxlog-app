@@ -1,6 +1,6 @@
 'use client'
 
-import { Settings, Download, Upload, MoreHorizontal } from 'lucide-react'
+import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -23,10 +23,10 @@ export const HeaderActions = ({
   onImport,
   onMore,
   className,
-  compact = false
+  compact = false,
 }: HeaderActionsProps) => {
   const buttonClass = cn(
-    'p-2 rounded-md transition-colors',
+    'rounded-md p-2 transition-colors',
     'hover:bg-accent/50 text-muted-foreground hover:text-foreground',
     compact ? 'p-1.5' : 'p-2'
   )
@@ -37,48 +37,28 @@ export const HeaderActions = ({
     <div className={cn('flex items-center gap-1', className)}>
       {/* 設定 */}
       {onSettings && (
-        <button
-          onClick={onSettings}
-          className={buttonClass}
-          title="Settings"
-          aria-label="Settings"
-        >
+        <button type="button" onClick={onSettings} className={buttonClass} title="Settings" aria-label="Settings">
           <Settings className={iconSize} />
         </button>
       )}
 
       {/* エクスポート */}
       {onExport && (
-        <button
-          onClick={onExport}
-          className={buttonClass}
-          title="Export"
-          aria-label="Export"
-        >
+        <button type="button" onClick={onExport} className={buttonClass} title="Export" aria-label="Export">
           <Download className={iconSize} />
         </button>
       )}
 
       {/* インポート */}
       {onImport && (
-        <button
-          onClick={onImport}
-          className={buttonClass}
-          title="Import"
-          aria-label="Import"
-        >
+        <button type="button" onClick={onImport} className={buttonClass} title="Import" aria-label="Import">
           <Upload className={iconSize} />
         </button>
       )}
 
       {/* その他 */}
       {onMore && (
-        <button
-          onClick={onMore}
-          className={buttonClass}
-          title="More"
-          aria-label="More options"
-        >
+        <button type="button" onClick={onMore} className={buttonClass} title="More" aria-label="More options">
           <MoreHorizontal className={iconSize} />
         </button>
       )}

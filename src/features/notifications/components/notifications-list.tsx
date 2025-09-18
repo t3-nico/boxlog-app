@@ -20,7 +20,7 @@ const defaultNotifications: SystemNotification[] = [
     content: '2025年7月12日（土）2:00-4:00にシステムメンテナンスを実施いたします。',
     date: '2025-07-08',
     isRead: false,
-    type: 'system'
+    type: 'system',
   },
   {
     id: 2,
@@ -28,7 +28,7 @@ const defaultNotifications: SystemNotification[] = [
     content: '新しいタグ機能が追加されました。より効率的な情報整理が可能になります。',
     date: '2025-07-05',
     isRead: true,
-    type: 'feature'
+    type: 'feature',
   },
   {
     id: 3,
@@ -36,24 +36,20 @@ const defaultNotifications: SystemNotification[] = [
     content: '利用規約を更新いたしました。変更内容をご確認ください。',
     date: '2025-07-01',
     isRead: true,
-    type: 'important'
-  }
+    type: 'important',
+  },
 ]
 
 interface NotificationsListProps {
   notifications?: SystemNotification[]
 }
 
-export const NotificationsList: React.FC<NotificationsListProps> = ({ 
-  notifications = defaultNotifications 
-}) => {
+export const NotificationsList: React.FC<NotificationsListProps> = ({ notifications = defaultNotifications }) => {
   const [notificationList, setNotificationList] = useState(notifications)
 
   const markAsRead = (id: number) => {
-    setNotificationList(prev => 
-      prev.map(notification => 
-        notification.id === id ? { ...notification, isRead: true } : notification
-      )
+    setNotificationList((prev) =>
+      prev.map((notification) => (notification.id === id ? { ...notification, isRead: true } : notification))
     )
   }
 
@@ -86,7 +82,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-3 mb-2">
+        <div className="mb-2 flex items-center gap-3">
           <BellRing className="h-6 w-6 text-blue-600" />
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">お知らせ</h2>
         </div>
@@ -97,36 +93,35 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
         {notificationList.map((notification) => (
           <div
             key={notification.id}
-            className={`bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 p-6 ${
+            className={`rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900 ${
               !notification.isRead ? 'border-l-4 border-l-blue-500' : ''
             }`}
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="mb-2 flex items-center gap-3">
                   <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(
+                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getTypeColor(
                       notification.type
                     )}`}
                   >
                     {getTypeLabel(notification.type)}
                   </span>
                   {!notification.isRead && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                       未読
                     </span>
                   )}
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {notification.title}
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300 mb-3">{notification.content}</p>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">{notification.title}</h3>
+                <p className="mb-3 text-gray-700 dark:text-gray-300">{notification.content}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">{notification.date}</p>
               </div>
               {!notification.isRead && (
                 <button
+                  type="button"
                   onClick={() => markAsRead(notification.id)}
-                  className="ml-4 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                  className="ml-4 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 >
                   既読にする
                 </button>
@@ -137,7 +132,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({
       </div>
 
       {notificationList.length === 0 && (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <BellRing className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">お知らせはありません</h3>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">

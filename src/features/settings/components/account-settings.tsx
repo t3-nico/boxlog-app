@@ -312,7 +312,7 @@ const AccountSettings = () => {
       <SettingsCard title="2要素認証" description="アカウントに追加のセキュリティ層を追加" isSaving={security.isSaving}>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className={`font-medium ${typography.body.base}`}>2FAを有効にする</h3>
+            <div className={`font-medium ${typography.body.base}`}>2FAを有効にする</div>
             <p className={`text-sm ${colors.text.secondary} mt-1`}>
               {security.values.twoFactorEnabled
                 ? '2要素認証が有効になっています'
@@ -352,7 +352,7 @@ const AccountSettings = () => {
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
                 <div className="bg-destructive h-2 w-2 animate-pulse rounded-full"></div>
-                <h3 className="text-destructive font-medium">アカウント削除</h3>
+                <div className="text-destructive font-medium">アカウント削除</div>
               </div>
               <p className="text-destructive text-sm leading-relaxed">
                 ⚠️ <strong>この操作は取り消すことができません。</strong>

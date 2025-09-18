@@ -147,31 +147,27 @@ const useUserInfo = () => {
   return {
     userDisplayName: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
     profileIcon: user?.user_metadata?.profile_icon,
-    avatarUrl: user?.user_metadata?.avatar_url
+    avatarUrl: user?.user_metadata?.avatar_url,
   }
 }
 
 // メッセージの状態表示
 const MessageStatus = ({ status }: { status?: string }) => {
   if (!status) return null
-  
+
   const statusText = {
     sending: 'Sending...',
-    error: 'Send Error', 
-    sent: 'Sent'
+    error: 'Send Error',
+    sent: 'Sent',
   }[status]
-  
-  return (
-    <div className="mt-1 text-xs opacity-75">
-      {statusText}
-    </div>
-  )
+
+  return <div className="mt-1 text-xs opacity-75">{statusText}</div>
 }
 
 // 関連ファイル表示
 const RelatedFiles = ({ files }: { files?: string[] }) => {
   if (!files || files.length === 0) return null
-  
+
   return (
     <div className="bg-muted mt-2 rounded p-2 text-xs">
       <div className="text-card-foreground mb-1 font-medium">関連ファイル:</div>
@@ -204,19 +200,15 @@ const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
 const UserAvatar = () => {
   const { userDisplayName, profileIcon, avatarUrl } = useUserInfo()
   const initials = userDisplayName.charAt(0).toUpperCase()
-  
+
   if (avatarUrl) {
     return <Avatar src={avatarUrl} className="size-8" initials={initials} />
   }
-  
+
   if (profileIcon) {
-    return (
-      <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">
-        {profileIcon}
-      </div>
-    )
+    return <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
   }
-  
+
   return <Avatar src={undefined} className="size-8" initials={initials} />
 }
 
@@ -230,7 +222,7 @@ const AssistantIcon = () => (
 // メッセージタイムスタンプ
 const MessageTimestamp = ({ createdAt }: { createdAt?: string | Date }) => {
   if (!createdAt) return null
-  
+
   return (
     <div className="mt-1 text-xs opacity-60">
       {new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -248,11 +240,7 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
       {isAssistant && <AssistantIcon />}
 
       <AIMessageContent>
-        {isAssistant ? (
-          <AssistantMessageContent message={message} />
-        ) : (
-          <UserMessageContent message={message} />
-        )}
+        {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
         {isAssistant && <MessageTimestamp createdAt={message.createdAt} />}
       </AIMessageContent>
 
@@ -410,6 +398,7 @@ What would you like to know about BoxLog?`,
             {/* Menu */}
             <div className="relative">
               <button
+                type="button"
                 onClick={() => setShowMenu(!showMenu)}
                 className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-1 transition-colors"
                 aria-label="Menu options"
@@ -420,6 +409,7 @@ What would you like to know about BoxLog?`,
               {showMenu && (
                 <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
+                    type="button"
                     onClick={clearMessages}
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
@@ -427,6 +417,7 @@ What would you like to know about BoxLog?`,
                     Clear chat
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       const exportMessages = messages.map((msg) => ({
                         role: msg.role,
@@ -447,6 +438,7 @@ What would you like to know about BoxLog?`,
 
             {/* Close Button */}
             <button
+              type="button"
               onClick={onClose}
               className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-1 transition-colors"
               aria-label="Close codebase AI chat"
@@ -477,6 +469,7 @@ What would you like to know about BoxLog?`,
                 Unable to connect to BoxLog support. Please check your connection and try again.
               </p>
               <button
+                type="button"
                 onClick={() => reload()}
                 className="mt-2 text-xs text-red-800 underline hover:text-red-900 dark:text-red-200 dark:hover:text-red-100"
               >

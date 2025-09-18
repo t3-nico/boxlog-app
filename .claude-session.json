@@ -1,0 +1,8 @@
+{
+  "issueNumber": "184",
+  "issueUrl": "https://github.com/t3-nico/boxlog-app/issues/184",
+  "title": "見出し構造アクセシビリティ改善: 階層構造とセマンティック修正",
+  "startTime": "2025-09-17T23:56:48.060Z",
+  "currentBranch": "dev",
+  "startCommit": "723d4e5 - feat: キーボードアクセシビリティ完全対応 - WCAG準拠達成 #174"
+}

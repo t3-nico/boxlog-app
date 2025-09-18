@@ -38,12 +38,11 @@
       "Bash(node scripts/simple-issue-manager.js:*)",
       "Bash(sort:*)",
       "Bash(npx eslint:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"
   },
-  "claudeMd": [
-    "docs/ai-chatbot/system-overview.md"
-  ]
+  "claudeMd": ["docs/ai-chatbot/system-overview.md"]
 }

@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { X, Plus } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 
 // Tag interface
 interface Tag {
@@ -17,18 +17,14 @@ interface QuickTagCreateModalProps {
   onCreateTag: (tag: Omit<Tag, 'id'>) => void
 }
 
-export const QuickTagCreateModal = ({
-  isOpen,
-  onClose,
-  onCreateTag
-}: QuickTagCreateModalProps) => {
+export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCreateModalProps) => {
   const [tagName, setTagName] = useState('')
   const [selectedColor, setSelectedColor] = useState('#3b82f6')
 
   const presetColors = [
     '#ef4444', // red
     '#f59e0b', // yellow
-    '#10b981', // green  
+    '#10b981', // green
     '#3b82f6', // blue
     '#8b5cf6', // purple
     '#ec4899', // pink
@@ -40,7 +36,7 @@ export const QuickTagCreateModal = ({
     if (tagName.trim()) {
       onCreateTag({
         name: tagName.trim(),
-        color: selectedColor
+        color: selectedColor,
       })
       setTagName('')
       setSelectedColor('#3b82f6')
@@ -59,10 +55,10 @@ export const QuickTagCreateModal = ({
   return (
     <>
       {/* Overlay */}
-      <div 
+      <div
         role="button"
         tabIndex={0}
-        className="fixed inset-0 bg-black bg-opacity-50 z-50"
+        className="fixed inset-0 z-50 bg-black bg-opacity-50"
         onClick={handleClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
@@ -71,26 +67,25 @@ export const QuickTagCreateModal = ({
         }}
         aria-label="モーダルを閉じる"
       />
-      
+
       {/* Modal */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 w-80">
+      <div className="fixed left-1/2 top-1/2 z-50 w-80 -translate-x-1/2 -translate-y-1/2 transform rounded-lg bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Create New Tag
-          </h2>
+        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create New Tag</h2>
           <button
+            type="button"
             onClick={handleClose}
-            className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="rounded-lg p-1 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+            <X className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4">
+        <div className="space-y-4 p-4">
           <div>
-            <label htmlFor="tag-name-input" className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+            <label htmlFor="tag-name-input" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
               Tag Name
             </label>
             <input
@@ -99,7 +94,7 @@ export const QuickTagCreateModal = ({
               value={tagName}
               onChange={(e) => setTagName(e.target.value)}
               placeholder="Enter tag name..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleCreateTag()
@@ -110,18 +105,19 @@ export const QuickTagCreateModal = ({
               autoFocus
             />
           </div>
-          
+
           <div>
-            <div className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300" id="color-selection-label">
+            <div className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300" id="color-selection-label">
               Color
             </div>
-            <div className="flex gap-2 flex-wrap" role="group" aria-labelledby="color-selection-label">
-              {presetColors.map(color => (
+            <div className="flex flex-wrap gap-2" role="group" aria-labelledby="color-selection-label">
+              {presetColors.map((color) => (
                 <button
                   key={color}
+                  type="button"
                   onClick={() => setSelectedColor(color)}
-                  className={`w-10 h-10 rounded-lg transition-all hover:scale-105 ${
-                    selectedColor === color ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+                  className={`h-10 w-10 rounded-lg transition-all hover:scale-105 ${
+                    selectedColor === color ? 'ring-2 ring-blue-500 ring-offset-2' : ''
                   }`}
                   style={{ backgroundColor: color }}
                   title={color}
@@ -131,36 +127,31 @@ export const QuickTagCreateModal = ({
           </div>
 
           {/* Preview */}
-          <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div className="text-xs font-medium mb-2 text-gray-600 dark:text-gray-400">
-              Preview:
-            </div>
+          <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+            <div className="mb-2 text-xs font-medium text-gray-600 dark:text-gray-400">Preview:</div>
             <div className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: selectedColor }}
-              />
-              <span className="text-sm text-gray-900 dark:text-white">
-                {tagName || 'Tag name'}
-              </span>
+              <div className="h-3 w-3 rounded-full" style={{ backgroundColor: selectedColor }} />
+              <span className="text-sm text-gray-900 dark:text-white">{tagName || 'Tag name'}</span>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-end gap-2 border-t border-gray-200 p-4 dark:border-gray-700">
           <button
+            type="button"
             onClick={handleClose}
-            className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="rounded-lg px-4 py-2 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleCreateTag}
             disabled={!tagName.trim()}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 dark:disabled:bg-gray-600 text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+            className="flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300 dark:disabled:bg-gray-600"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             Create Tag
           </button>
         </div>

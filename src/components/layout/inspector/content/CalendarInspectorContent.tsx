@@ -4,7 +4,7 @@ import { Calendar, Clock, MapPin, Tag, Users } from 'lucide-react'
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { typography } from '@/config/theme'
-import { border, text } from '@/config/theme/colors'
+import { border, colors, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export const CalendarInspectorContent = () => {
@@ -13,7 +13,7 @@ export const CalendarInspectorContent = () => {
       <div className="space-y-6 p-4">
         {/* イベント詳細セクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>イベント詳細</h3>
+          <h2 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>イベント詳細</h2>
 
           <div className="space-y-3">
             {/* イベント名 */}

@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { X, Bell, BellOff, Settings, Check, Clock, Calendar } from 'lucide-react'
+import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react'
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { componentRadius, animations, spacing, icon, typography } from '@/config/theme'
+import { animations, componentRadius, icon, spacing, typography } from '@/config/theme'
 import { border, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
@@ -19,7 +19,7 @@ interface NotificationModalProps {
 
 export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all')
-  
+
   // Mock data - 実際のデータは useNotifications から取得
   const mockNotifications = [
     {
@@ -28,7 +28,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       message: '15分後に開始します',
       timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5分前
       read: false,
-      type: 'reminder'
+      type: 'reminder',
     },
     {
       id: '2',
@@ -36,7 +36,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       message: 'プロジェクトレポートが完了しました',
       timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30分前
       read: true,
-      type: 'task'
+      type: 'task',
     },
     {
       id: '3',
@@ -44,13 +44,11 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       message: '明日の予定が追加されました',
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2時間前
       read: false,
-      type: 'event'
-    }
+      type: 'event',
+    },
   ]
 
-  const filteredNotifications = activeTab === 'unread' 
-    ? mockNotifications.filter(n => !n.read)
-    : mockNotifications
+  const filteredNotifications = activeTab === 'unread' ? mockNotifications.filter((n) => !n.read) : mockNotifications
 
   if (!isOpen) return null
 
@@ -68,48 +66,49 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       aria-label="モーダル背景 - クリックして閉じる"
     >
       {/* Backdrop */}
-      <div 
+      <div
         role="button"
         tabIndex={0}
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm" 
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
         onClick={onClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()
         }}
         aria-label="モーダルを閉じる"
       />
-      
+
       {/* Modal */}
       <div
         role="dialog"
         aria-modal="true"
         className={cn(
-          'relative w-full max-w-md mx-4',
+          'relative mx-4 w-full max-w-md',
           colors.background.surface,
           border.subtle,
-          'ring-1 shadow-lg',
+          'shadow-lg ring-1',
           componentRadius.modal.container,
           animations.transition.fast
         )}
       >
         {/* Header */}
-        <div className={cn(
-          'flex items-center justify-between',
-          'border-b',
-          border.subtle,
-          spacing.space[4] // p-4
-        )}>
+        <div
+          className={cn(
+            'flex items-center justify-between',
+            'border-b',
+            border.subtle,
+            spacing.space[4] // p-4
+          )}
+        >
           <div className="flex items-center gap-2">
             <Bell className={cn(icon.size.md, text.primary)} />
-            <h2 className={cn(typography.heading.h5, text.primary)}>
-              通知
-            </h2>
+            <h1 className={cn(typography.heading.h2, text.primary)}>通知</h1>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
+              type="button"
               className={cn(
-                'w-8 h-8 flex items-center justify-center',
+                'flex h-8 w-8 items-center justify-center',
                 colors.background.hover,
                 componentRadius.button.sm,
                 animations.transition.fast
@@ -117,11 +116,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             >
               <Settings className={cn(icon.size.sm, text.muted)} />
             </button>
-            
+
             <button
+              type="button"
               onClick={onClose}
               className={cn(
-                'w-8 h-8 flex items-center justify-center',
+                'flex h-8 w-8 items-center justify-center',
                 colors.background.hover,
                 componentRadius.button.sm,
                 animations.transition.fast
@@ -133,43 +133,40 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         </div>
 
         {/* Tabs */}
-        <div className={cn(
-          'flex border-b',
-          border.subtle
-        )}>
+        <div className={cn('flex border-b', border.subtle)}>
           <button
+            type="button"
             onClick={() => setActiveTab('all')}
             className={cn(
               'flex-1 py-2 text-center',
               typography.body.sm,
-              activeTab === 'all' 
-                ? cn(text.primary, 'border-b-2 border-blue-500')
-                : text.muted,
+              activeTab === 'all' ? cn(text.primary, 'border-b-2 border-blue-500') : text.muted,
               animations.transition.fast
             )}
           >
             すべて
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('unread')}
             className={cn(
-              'flex-1 py-2 text-center relative',
+              'relative flex-1 py-2 text-center',
               typography.body.sm,
-              activeTab === 'unread'
-                ? cn(text.primary, 'border-b-2 border-blue-500')
-                : text.muted,
+              activeTab === 'unread' ? cn(text.primary, 'border-b-2 border-blue-500') : text.muted,
               animations.transition.fast
             )}
           >
             未読
-            {mockNotifications.filter(n => !n.read).length > 0 && (
-              <span className={cn(
-                'absolute -top-1 -right-1 w-5 h-5',
-                'bg-red-500 text-white text-xs',
-                'flex items-center justify-center',
-                componentRadius.badge.pill
-              )}>
-                {mockNotifications.filter(n => !n.read).length}
+            {mockNotifications.filter((n) => !n.read).length > 0 && (
+              <span
+                className={cn(
+                  'absolute -right-1 -top-1 h-5 w-5',
+                  'bg-red-500 text-xs text-white',
+                  'flex items-center justify-center',
+                  componentRadius.badge.pill
+                )}
+              >
+                {mockNotifications.filter((n) => !n.read).length}
               </span>
             )}
           </button>
@@ -178,22 +175,19 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         {/* Notification List */}
         <ScrollArea className="h-96">
           {filteredNotifications.length === 0 ? (
-            <div className={cn(
-              'flex flex-col items-center justify-center py-16',
-              text.muted
-            )}>
+            <div className={cn('flex flex-col items-center justify-center py-16', text.muted)}>
               <BellOff className={cn(icon.size.lg, 'mb-3')} />
               <p className={typography.body.sm}>
                 {activeTab === 'unread' ? '未読の通知はありません' : '通知はありません'}
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-border">
+            <div className="divide-border divide-y">
               {filteredNotifications.map((notification) => (
                 <div
                   key={notification.id}
                   className={cn(
-                    'px-4 py-3 flex gap-3',
+                    'flex gap-3 px-4 py-3',
                     !notification.read && 'bg-blue-50/5',
                     'hover:bg-accent/50',
                     animations.transition.fast,
@@ -201,50 +195,32 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   )}
                 >
                   {/* Icon */}
-                  <div className={cn(
-                    'w-10 h-10 flex items-center justify-center',
-                    'rounded-full',
-                    notification.type === 'reminder' && 'bg-orange-100 text-orange-600',
-                    notification.type === 'task' && 'bg-green-100 text-green-600',
-                    notification.type === 'event' && 'bg-blue-100 text-blue-600'
-                  )}>
+                  <div
+                    className={cn(
+                      'flex h-10 w-10 items-center justify-center',
+                      'rounded-full',
+                      notification.type === 'reminder' && 'bg-orange-100 text-orange-600',
+                      notification.type === 'task' && 'bg-green-100 text-green-600',
+                      notification.type === 'event' && 'bg-blue-100 text-blue-600'
+                    )}
+                  >
                     {notification.type === 'reminder' && <Clock className={icon.size.sm} />}
                     {notification.type === 'task' && <Check className={icon.size.sm} />}
                     {notification.type === 'event' && <Calendar className={icon.size.sm} />}
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
-                        <p className={cn(
-                          typography.body.sm,
-                          'font-medium',
-                          text.primary
-                        )}>
-                          {notification.title}
-                        </p>
-                        <p className={cn(
-                          typography.body.xs,
-                          text.muted,
-                          'mt-0.5'
-                        )}>
-                          {notification.message}
-                        </p>
+                        <p className={cn(typography.body.sm, 'font-medium', text.primary)}>{notification.title}</p>
+                        <p className={cn(typography.body.xs, text.muted, 'mt-0.5')}>{notification.message}</p>
                       </div>
                       {!notification.read && (
-                        <div className={cn(
-                          'w-2 h-2 rounded-full',
-                          'bg-blue-500',
-                          'flex-shrink-0 mt-2'
-                        )} />
+                        <div className={cn('h-2 w-2 rounded-full', 'bg-blue-500', 'mt-2 flex-shrink-0')} />
                       )}
                     </div>
-                    <p className={cn(
-                      typography.body.xs,
-                      text.muted,
-                      'mt-1'
-                    )}>
+                    <p className={cn(typography.body.xs, text.muted, 'mt-1')}>
                       {/* 一時的に簡単な時間表示 */}
                       {new Date(notification.timestamp).toLocaleTimeString('ja-JP')}
                     </p>
@@ -257,18 +233,18 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
 
         {/* Footer */}
         {filteredNotifications.length > 0 && (
-          <div className={cn(
-            'border-t px-4 py-3',
-            border.subtle
-          )}>
-            <button className={cn(
-              'w-full py-2',
-              typography.body.sm,
-              text.primary,
-              colors.background.hover,
-              componentRadius.button.md,
-              animations.transition.fast
-            )}>
+          <div className={cn('border-t px-4 py-3', border.subtle)}>
+            <button
+              type="button"
+              className={cn(
+                'w-full py-2',
+                typography.body.sm,
+                text.primary,
+                colors.background.hover,
+                componentRadius.button.md,
+                animations.transition.fast
+              )}
+            >
               すべて既読にする
             </button>
           </div>

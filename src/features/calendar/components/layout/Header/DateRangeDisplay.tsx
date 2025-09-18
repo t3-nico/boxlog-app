@@ -3,7 +3,7 @@
 import { format, getWeek } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 
-import { secondary, border } from '@/config/theme/colors'
+import { border, secondary } from '@/config/theme/colors'
 import { heading } from '@/config/theme/typography'
 import { MiniCalendarPopover } from '@/features/calendar/components/common'
 import { cn } from '@/lib/utils'
@@ -26,7 +26,7 @@ interface DateRangeDisplayProps {
 const generateRangeText = (date: Date, endDate: Date): string => {
   const sameMonth = date.getMonth() === endDate.getMonth()
   const sameYear = date.getFullYear() === endDate.getFullYear()
-  
+
   if (sameYear && sameMonth) {
     // 同月の場合: "1-7 January 2025"
     return `${format(date, 'd')}-${format(endDate, 'd')} ${format(date, 'MMMM yyyy')}`
@@ -44,15 +44,8 @@ const generateRangeText = (date: Date, endDate: Date): string => {
  */
 const createDateContent = (text: string, isClickable: boolean) => (
   <div className="flex items-center gap-2">
-    <h2 className={cn(
-      heading.h2,
-      isClickable && 'cursor-pointer hover:text-primary transition-colors'
-    )}>
-      {text}
-    </h2>
-    {isClickable && (
-      <ChevronDown className="w-4 h-4 text-muted-foreground" />
-    )}
+    <h2 className={cn(heading.h2, isClickable && 'hover:text-primary cursor-pointer transition-colors')}>{text}</h2>
+    {isClickable && <ChevronDown className="text-muted-foreground h-4 w-4" />}
   </div>
 )
 
@@ -68,9 +61,7 @@ const createStaticContent = (
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
     {dateContent}
-    {showWeekNumber && (
-      <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
-    )}
+    {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
   </div>
 )
 
@@ -87,17 +78,10 @@ const createClickableContent = (
   className?: string
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
-    <MiniCalendarPopover
-      selectedDate={selectedDate}
-      onDateSelect={onDateSelect}
-      align="start"
-      side="bottom"
-    >
+    <MiniCalendarPopover selectedDate={selectedDate} onDateSelect={onDateSelect} align="start" side="bottom">
       {dateContent}
     </MiniCalendarPopover>
-    {showWeekNumber && (
-      <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />
-    )}
+    {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
   </div>
 )
 
@@ -114,19 +98,18 @@ export const DateRangeDisplay = ({
   className,
   weekBadgeClassName,
   onDateSelect,
-  clickable = false
+  clickable = false,
 }: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
   const isClickable = clickable && onDateSelect
-  
+
   // 表示テキストを決定
-  const displayText = endDate && date.getTime() !== endDate.getTime()
-    ? generateRangeText(date, endDate)
-    : format(date, formatPattern)
-  
+  const displayText =
+    endDate && date.getTime() !== endDate.getTime() ? generateRangeText(date, endDate) : format(date, formatPattern)
+
   // 日付コンテンツを作成
   const dateContent = createDateContent(displayText, !!isClickable)
-  
+
   // クリック可能な場合とそうでない場合で分岐
   if (isClickable) {
     return createClickableContent(
@@ -139,37 +122,28 @@ export const DateRangeDisplay = ({
       className
     )
   }
-  
-  return createStaticContent(
-    dateContent,
-    showWeekNumber,
-    weekNumber,
-    weekBadgeClassName,
-    className
-  )
+
+  return createStaticContent(dateContent, showWeekNumber, weekNumber, weekBadgeClassName, className)
 }
 
 /**
  * 週番号バッジ
  */
-const WeekBadge = ({ 
-  weekNumber, 
-  className 
-}: { 
-  weekNumber: number
-  className?: string 
-}) => {
+const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: string }) => {
   return (
-    <h6 className={cn(
-      'inline-flex items-center px-2 py-1',
-      'rounded-xs border',
-      heading.h6,
-      border.universal,
-      secondary.text,
-      className
-    )}>
+    <span
+      className={cn(
+        'inline-flex items-center px-2 py-1',
+        'rounded-xs border',
+        heading.h6, // スタイルは維持
+        border.universal,
+        secondary.text,
+        className
+      )}
+      aria-label={`第${weekNumber}週`}
+    >
       week{weekNumber}
-    </h6>
+    </span>
   )
 }
 
@@ -179,18 +153,12 @@ const WeekBadge = ({
 export const CompactDateDisplay = ({
   date,
   showWeekNumber = false,
-  className
+  className,
 }: Pick<DateRangeDisplayProps, 'date' | 'showWeekNumber' | 'className'>) => {
   return (
     <div className={cn('flex items-center gap-1', className)}>
-      <span className="text-base font-medium">
-        {format(date, 'MMM d')}
-      </span>
-      {showWeekNumber && (
-        <span className="text-xs text-muted-foreground">
-          W{getWeek(date, { weekStartsOn: 1 })}
-        </span>
-      )}
+      <span className="text-base font-medium">{format(date, 'MMM d')}</span>
+      {showWeekNumber && <span className="text-muted-foreground text-xs">W{getWeek(date, { weekStartsOn: 1 })}</span>}
     </div>
   )
 }

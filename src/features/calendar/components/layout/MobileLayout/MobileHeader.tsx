@@ -76,6 +76,7 @@ export const MobileHeader = ({
       <div className="flex items-center">
         {showBackButton ? (
           <button
+            type="button"
             onClick={onBack}
             className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
             aria-label="戻る"
@@ -84,6 +85,7 @@ export const MobileHeader = ({
           </button>
         ) : (
           <button
+            type="button"
             onClick={onMenuToggle}
             className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
             aria-label="メニューを開く"
@@ -103,6 +105,7 @@ export const MobileHeader = ({
             <div className="text-lg font-semibold">{getDateDisplay()}</div>
             {/* ビュー表示 */}
             <button
+              type="button"
               onClick={() => setIsViewMenuOpen(true)}
               className="text-muted-foreground hover:bg-accent/50 rounded px-2 py-0.5 text-xs transition-colors"
             >
@@ -115,6 +118,7 @@ export const MobileHeader = ({
       {/* 右側: ナビゲーション */}
       <div className="flex items-center gap-1">
         <button
+          type="button"
           onClick={() => onNavigate('prev')}
           className="hover:bg-accent/50 rounded-full p-2 transition-colors"
           aria-label="前の期間"
@@ -122,6 +126,7 @@ export const MobileHeader = ({
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button
+          type="button"
           onClick={() => onNavigate('next')}
           className="hover:bg-accent/50 rounded-full p-2 transition-colors"
           aria-label="次の期間"
@@ -152,6 +157,7 @@ export const MobileHeader = ({
             <div className="py-2">
               {Object.entries(viewLabels).map(([value, label]) => (
                 <button
+                  type="button"
                   key={value}
                   onClick={() => {
                     onViewChange(value as CalendarViewType)
