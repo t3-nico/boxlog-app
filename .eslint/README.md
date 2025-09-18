@@ -210,7 +210,7 @@ eslint --print-config src/app/page.tsx -c .eslint/index.js
 | debugger                | warn 警告    | error 禁止 | ✅ 実装済み | Amazon          |
 | TODO/FIXMEコメント禁止  | error 禁止   | error 禁止 | ✅ 実装済み | GitHub方式      |
 | **⚡ パフォーマンス**   |              |            |             |                 |
-| Bundle size             | なし         | なし       | ❌ 未実装   | Twitter         |
+| Bundle size             | warn 警告    | error 制限 | ✅ 実装済み | Twitter         |
 | useMemo/useCallback     | warn 推奨    | warn 推奨  | ✅ 実装済み | Meta            |
 | 画像最適化              | off スキップ | error 必須 | ✅ 実装済み | Netflix         |
 | Array index key         | warn 警告    | warn 警告  | ✅ 実装済み | React Team      |

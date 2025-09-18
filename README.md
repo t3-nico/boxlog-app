@@ -23,6 +23,7 @@ npm run dev
 ### 🔐 セキュリティ
 
 BoxLogでは機密情報管理に **1Password Developer Security** を使用しています：
+
 - APIキー、データベース接続情報などは1Passwordで安全に管理
 - 開発時は自動的に1Password経由で秘密情報を取得
 - セットアップ手順: [`docs/1PASSWORD_SETUP.md`](./docs/1PASSWORD_SETUP.md)
@@ -30,6 +31,7 @@ BoxLogでは機密情報管理に **1Password Developer Security** を使用し�
 ### 🤖 Cursor AI統合
 
 **Cursor AI + 1Password** で最高の開発体験を実現：
+
 - **AI安全性**: 秘密情報をAIが学習しない設計
 - **スマート補完**: 1Password形式のコードスニペット自動生成
 - **ワンクリック操作**: キーボードショートカットで瞬時に実行
@@ -59,12 +61,15 @@ src/
 ## 📚 ドキュメント
 
 ### メインドキュメント
+
 詳細な技術情報は **Compass サブモジュール** で一元管理されています：
+
 - **開発者向け詳細指示**: [`compass/ai-context/app/CLAUDE.md`](./compass/ai-context/app/CLAUDE.md)
 - **技術ドキュメント**: [`compass/knowledge/app-docs/`](./compass/knowledge/app-docs/)
 - **アーキテクチャ設計**: [`compass/architecture/`](./compass/architecture/)
 
 ### プロジェクト固有ドキュメント
+
 - [プロジェクト概要](./docs/README.md)
 - [開発ガイド](./docs/development/)
 - [データベース設計](./docs/database/)
@@ -96,6 +101,47 @@ npm test
 # 型チェック
 npm run typecheck
 ```
+
+## ⚡ パフォーマンス最適化
+
+BoxLogは高速読み込みを実現するBundle size最適化と監視システムを導入しています：
+
+### 📊 Bundle Size現状
+
+- **メインチャンク**: 5.8MB (最適化対象)
+- **コアライブラリ**: 764KB
+- **CSSバンドル**: 155KB
+- **初期読み込み**: 最小化済み
+
+### 🛠️ 最適化戦略
+
+- **Code Splitting**: 機能ごとの遅延読み込み実装
+- **Tree Shaking**: 未使用コードの自動除去
+- **Bundle Monitoring**: 継続的なサイズ監視
+- **Performance Budget**: チャンクごとの制限設定
+
+### 📋 Bundle監視コマンド
+
+```bash
+# Bundle sizeの分析
+npm run bundle:analyze
+
+# Bundle予算チェック
+npm run bundle:check
+
+# リアルタイム監視
+npm run bundle:monitor
+
+# 包括的チェック
+npm run bundle:full-check
+```
+
+### ⚠️ 開発者向けガイドライン
+
+- **大容量コンポーネント**: 必ずdynamic importを使用
+- **新規ライブラリ追加**: Bundle impact を事前チェック
+- **Bundle予算**: 新機能追加時は予算内に収める
+- **継続監視**: CI/CDパイプラインでの自動チェック
 
 ## 📋 開発時の重要な指針
 
