@@ -47,6 +47,7 @@ export const EventDetailHeader = ({
       {/* Header controls */}
       <div className="mb-4 flex items-start justify-between">
         <button
+          type="button"
           onClick={onToggleDetail}
           className={cn(
             'flex items-center gap-2 transition-colors',
@@ -62,6 +63,7 @@ export const EventDetailHeader = ({
           <div className="flex items-center gap-2">
             {onDuplicate && (
               <button
+                type="button"
                 onClick={onDuplicate}
                 className={cn(
                   'rounded-lg p-2 transition-colors',
@@ -75,6 +77,7 @@ export const EventDetailHeader = ({
             )}
             {onDelete && (
               <button
+                type="button"
                 onClick={onDelete}
                 className={cn(
                   'rounded-lg p-2 transition-colors',

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Bell, BellRing, Settings as SettingsIcon } from 'lucide-react'
 
 import { Switch } from '@/components/shadcn-ui/switch'
-import { colors, rounded, spacing, typography } from '@/config/theme'
+import { colors, rounded, semantic, spacing, typography } from '@/config/theme'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
@@ -136,8 +136,8 @@ const NotificationSettings = () => {
           </SettingsCard>
 
           {/* ヒント情報 */}
-          <div className={`${rounded.component.card.lg} bg-blue-50 ${spacing.card} dark:bg-blue-900/30`}>
-            <p className={`${typography.body.sm} text-blue-800 dark:text-blue-200`}>
+          <div className={`${rounded.component.card.lg} ${semantic.info.light} ${spacing.card}`}>
+            <p className={`${typography.body.sm} ${semantic.info.text}`}>
               💡 ヒント: ブラウザ通知を有効にするには、ブラウザの設定で通知を許可してください。
             </p>
           </div>

@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { text, semantic } from '@/config/theme/colors'
+import { semantic, text } from '@/config/theme/colors'
 import { body } from '@/config/theme/typography'
 
 interface TitleInputProps {
@@ -15,17 +15,11 @@ interface TitleInputProps {
   autoFocus?: boolean
 }
 
-export const TitleInput = ({ 
-  value, 
-  onChange, 
-  onSmartExtract,
-  onTabNext,
-  autoFocus = false 
-}: TitleInputProps) => {
+export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFocus = false }: TitleInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isFocused, setIsFocused] = useState(false)
   const [animatedValue, setAnimatedValue] = useState('')
-  
+
   // Auto focus
   useEffect(() => {
     if (autoFocus && inputRef.current) {
@@ -43,12 +37,12 @@ export const TitleInput = ({
     if (value.length > animatedValue.length) {
       // When characters are added, animate one by one
       const newChar = value[value.length - 1]
-      setAnimatedValue(prev => prev + newChar)
+      setAnimatedValue((prev) => prev + newChar)
     } else {
       // When deleted, update immediately
       setAnimatedValue(value)
     }
-  }, [value])
+  }, [value, animatedValue.length])
 
   // Smart input analysis
   useEffect(() => {
@@ -62,14 +56,14 @@ export const TitleInput = ({
           /(\d{1,2})時/,
           /(\d{1,2})\/(\d{1,2})/,
         ]
-        
+
         // タグパターンの検出
         const tagMatches = value.match(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g) || []
-        const tags = tagMatches.map(tag => tag.slice(1)) // #を除去
-        
+        const tags = tagMatches.map((tag) => tag.slice(1)) // #を除去
+
         // Remove tags from title
         const cleanTitle = value.replace(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g, '').trim()
-        
+
         // 日付の推測
         let suggestedDate: Date | undefined
         if (value.includes('明日') || value.includes('tomorrow')) {
@@ -79,16 +73,16 @@ export const TitleInput = ({
           suggestedDate = new Date()
           suggestedDate.setDate(suggestedDate.getDate() + 7)
         }
-        
+
         if (cleanTitle || suggestedDate || tags.length > 0) {
           onSmartExtract({
             title: cleanTitle || value,
             date: suggestedDate,
-            tags
+            tags,
           })
         }
       }
-      
+
       // デバウンス（300ms）
       const timeoutId = setTimeout(smartExtract, 300)
       return () => clearTimeout(timeoutId)
@@ -115,12 +109,12 @@ export const TitleInput = ({
 
   const _letterVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.8 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
+    visible: {
+      opacity: 1,
+      y: 0,
       scale: 1,
-      transition: { duration: 0.15, ease: "easeOut" }
-    }
+      transition: { duration: 0.15, ease: 'easeOut' },
+    },
   }
 
   return (
@@ -136,28 +130,13 @@ export const TitleInput = ({
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
           placeholder="What needs to be done?"
-          className={`
-            w-full
-            text-3xl md:text-4xl lg:text-5xl
-            font-semibold
-            leading-tight
-            bg-transparent
-            border-none
-            outline-none
-            resize-none
-            placeholder:text-neutral-400 
-            dark:placeholder:text-neutral-500
-            ${text.primary}
-            transition-all duration-300
-            pl-3
-            ${isFocused ? 'transform scale-105' : 'transform scale-100'}
-          `}
-          style={{ 
+          className={`w-full resize-none border-none bg-transparent text-3xl font-semibold leading-tight outline-none placeholder:text-neutral-400 md:text-4xl lg:text-5xl dark:placeholder:text-neutral-500 ${text.primary} pl-3 transition-all duration-300 ${isFocused ? 'scale-105 transform' : 'scale-100 transform'} `}
+          style={{
             caretColor: '#3b82f6',
-            textRendering: 'optimizeLegibility'
+            textRendering: 'optimizeLegibility',
           }}
         />
-        
+
         {/* Custom placeholder animation */}
         <AnimatePresence>
           {!value && !isFocused && (
@@ -166,9 +145,9 @@ export const TitleInput = ({
               animate={{ opacity: 0.4 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute inset-0 pointer-events-none"
+              className="pointer-events-none absolute inset-0"
             >
-              <span className="text-3xl md:text-4xl lg:text-5xl font-semibold text-neutral-400 dark:text-neutral-500 leading-tight">
+              <span className="text-3xl font-semibold leading-tight text-neutral-400 md:text-4xl lg:text-5xl dark:text-neutral-500">
                 What needs to be done?
               </span>
             </motion.div>
@@ -181,16 +160,16 @@ export const TitleInput = ({
         {isFocused && (
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ 
-              scaleX: Math.min(value.length / 20, 1), 
-              opacity: 1 
+            animate={{
+              scaleX: Math.min(value.length / 20, 1),
+              opacity: 1,
             }}
             exit={{ scaleX: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
-            style={{ 
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="absolute -bottom-1 left-0 h-0.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+            style={{
               transformOrigin: 'left',
-              width: '100%'
+              width: '100%',
             }}
           />
         )}
@@ -219,12 +198,12 @@ export const TitleInput = ({
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className="absolute -top-2 -right-2 w-3 h-3 bg-green-500 rounded-full"
+            className="absolute -right-2 -top-2 h-3 w-3 rounded-full bg-green-500"
           >
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="w-full h-full bg-green-500 rounded-full"
+              className="h-full w-full rounded-full bg-green-500"
             />
           </motion.div>
         )}

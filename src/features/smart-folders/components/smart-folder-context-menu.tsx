@@ -3,12 +3,12 @@
 import { useEffect, useRef } from 'react'
 
 import {
-  Pencil as PencilIcon,
-  Trash2 as TrashIcon,
   Copy as DocumentDuplicateIcon,
   Eye as EyeIcon,
   EyeOff as EyeSlashIcon,
-  Star as StarIcon
+  Pencil as PencilIcon,
+  Star as StarIcon,
+  Trash2 as TrashIcon,
 } from 'lucide-react'
 
 import { SmartFolder } from '@/types/smart-folders'
@@ -32,7 +32,7 @@ export const SmartFolderContextMenu = ({
   onDelete,
   onDuplicate,
   onToggleActive,
-  onClose
+  onClose,
 }: SmartFolderContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -62,7 +62,7 @@ export const SmartFolderContextMenu = ({
   // メニュー位置の調整
   const adjustedPosition = {
     x: Math.min(x, window.innerWidth - 200), // メニュー幅を考慮
-    y: Math.min(y, window.innerHeight - 300) // メニュー高さを考慮
+    y: Math.min(y, window.innerHeight - 300), // メニュー高さを考慮
   }
 
   const menuItems = [
@@ -70,57 +70,50 @@ export const SmartFolderContextMenu = ({
       icon: PencilIcon,
       label: 'Edit',
       action: () => onEdit(folder),
-      disabled: false
+      disabled: false,
     },
     {
       icon: DocumentDuplicateIcon,
       label: 'Duplicate',
       action: () => onDuplicate(folder),
-      disabled: false
+      disabled: false,
     },
     {
       icon: folder.isActive ? EyeSlashIcon : EyeIcon,
       label: folder.isActive ? 'Disable' : 'Enable',
       action: () => onToggleActive(folder),
-      disabled: false
+      disabled: false,
     },
     {
-      type: 'divider' as const
+      type: 'divider' as const,
     },
     {
       icon: TrashIcon,
       label: 'Delete',
       action: () => onDelete(folder),
       disabled: folder.isSystem,
-      danger: true
-    }
+      danger: true,
+    },
   ]
 
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg py-1 min-w-48"
+      className="fixed z-50 min-w-48 rounded-md border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
       style={{ left: adjustedPosition.x, top: adjustedPosition.y }}
     >
       {/* フォルダ情報ヘッダー */}
-      <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="border-b border-gray-200 px-3 py-2 dark:border-gray-700">
         <div className="flex items-center gap-2">
           {folder.icon ? (
             <span className="text-sm">{folder.icon}</span>
           ) : (
-            <div 
-              className="w-4 h-4 rounded"
-              style={{ backgroundColor: folder.color }}
-            />
+            <div className="h-4 w-4 rounded" style={{ backgroundColor: folder.color }} />
           )}
-          <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
-            {folder.name}
-          </span>
-          {folder.isSystem && (
-            <StarIcon className="w-4 h-4 text-yellow-500" />
-          )}
+          <span className="truncate text-sm font-medium text-gray-900 dark:text-white">{folder.name}</span>
+          {folder.isSystem && <StarIcon className="h-4 w-4 text-yellow-500" />}
         </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           {folder.taskCount || 0} items • {folder.isActive ? 'Active' : 'Inactive'}
         </div>
       </div>
@@ -129,27 +122,29 @@ export const SmartFolderContextMenu = ({
       {menuItems.map((item, index) => {
         if (item.type === 'divider') {
           return (
-            <div 
-              key={index}
-              className="border-t border-gray-200 dark:border-gray-700 my-1"
+            <div
+              // eslint-disable-next-line react/no-array-index-key
+              key={`divider-${index}`}
+              className="my-1 border-t border-gray-200 dark:border-gray-700"
             />
           )
         }
 
         return (
           <button
-            key={index}
+            type="button"
+            key={item.label}
             onClick={item.action}
             disabled={item.disabled}
-            className={`w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors ${
+            className={`flex w-full items-center gap-3 px-3 py-2 text-sm transition-colors ${
               item.disabled
-                ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                ? 'cursor-not-allowed text-gray-400 dark:text-gray-600'
                 : item.danger
-                  ? 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
+                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
             }`}
           >
-            <item.icon className="w-4 h-4" />
+            <item.icon className="h-4 w-4" />
             {item.label}
           </button>
         )
@@ -157,9 +152,9 @@ export const SmartFolderContextMenu = ({
 
       {/* フォルダが無効な場合の警告 */}
       {!folder.isActive && (
-        <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
           <div className="flex items-center gap-2 text-xs text-yellow-600 dark:text-yellow-400">
-            <EyeSlashIcon className="w-4 h-4" />
+            <EyeSlashIcon className="h-4 w-4" />
             This folder is currently disabled
           </div>
         </div>
@@ -167,9 +162,9 @@ export const SmartFolderContextMenu = ({
 
       {/* システムフォルダの説明 */}
       {folder.isSystem && (
-        <div className="px-3 py-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
           <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
-            <StarIcon className="w-4 h-4" />
+            <StarIcon className="h-4 w-4" />
             System folder (cannot be deleted)
           </div>
         </div>

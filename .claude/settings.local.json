@@ -39,7 +39,19 @@
       "Bash(sort:*)",
       "Bash(npx eslint:*)",
       "Bash(awk:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(gh issue create:*)",
+      "Bash(bundlesize\",\n    \"bundle:report\": \"npm run analyze)",
+      "Bash(open .next/analyze/client.html\",\n    \"perf:audit\": \"lighthouse http://localhost:3000 --output json --output html\",\n    \"deps:check\": \"npm-check-updates)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue comment:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(npm run todo:check:*)",
+      "Bash(npm run bundle:analyze:*)",
+      "Bash(npm run todo:health:*)",
+      "Bash(npm run debt:analyze:*)",
+      "Bash(npm run bundle:check:*)",
+      "Bash(npm run todo:to-issues:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

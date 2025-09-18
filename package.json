@@ -2,6 +2,12 @@
   "name": "boxlog-app",
   "version": "0.1.0",
   "private": true,
+  "sideEffects": [
+    "*.css",
+    "*.scss",
+    "*.sass",
+    "src/app/globals.css"
+  ],
   "scripts": {
     "dev": "op run --env-file=.env.local -- next dev",
     "build": "op run --env-file=.env.local -- next build",

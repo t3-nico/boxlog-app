@@ -362,10 +362,10 @@ const AIIntroduction = () => {
       {/* Quick Actions */}
       <div className="space-y-3">
         <div className="text-foreground mb-3 text-sm font-medium">Quick actions</div>
-        {quickPrompts.map((prompt, index) => (
+        {quickPrompts.map((prompt, _index) => (
           <button
             type="button"
-            key={index}
+            key={`prompt-${prompt.text.slice(0, 20)}`}
             onClick={() => sendMessage(prompt.text)}
             className="hover:bg-accent/50 flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors"
           >
@@ -486,14 +486,14 @@ const HelpContent = () => {
       </div>
 
       <div className="space-y-6">
-        {helpSections.map((section, sectionIndex) => (
-          <div key={sectionIndex}>
+        {helpSections.map((section, _sectionIndex) => (
+          <div key={`section-${section.title}`}>
             <h4 className="text-foreground mb-3 font-medium">{section.title}</h4>
             <div className="space-y-2">
-              {section.items.map((item, itemIndex) => (
+              {section.items.map((item, _itemIndex) => (
                 <button
                   type="button"
-                  key={itemIndex}
+                  key={`${section.title}-${item.title}`}
                   className="hover:bg-accent/50 group flex w-full items-center justify-between rounded-lg p-3 text-left transition-colors"
                 >
                   <div>

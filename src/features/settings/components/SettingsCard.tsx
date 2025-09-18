@@ -4,7 +4,7 @@ import React from 'react'
 
 import { Loader2 } from 'lucide-react'
 
-import { colors, rounded, spacing, typography } from '@/config/theme'
+import { colors, rounded, semantic, spacing, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 interface SettingsCardProps {
@@ -31,7 +31,7 @@ export const SettingsCard = ({
       className={cn(
         `${colors.background.surface} ${rounded.lg} border ${colors.border.alpha}`,
         'transition-all duration-200',
-        isSaving && 'border-blue-300 dark:border-blue-700',
+        isSaving && semantic.info.border,
         className
       )}
     >

@@ -2,12 +2,12 @@
 
 import { useMemo } from 'react'
 
-import { 
-  CheckCircle as CheckCircleIcon, 
-  XCircle as XCircleIcon,
+import {
+  BarChart3 as ChartBarIcon,
+  CheckCircle as CheckCircleIcon,
   AlertTriangle as ExclamationTriangleIcon,
   Filter as FunnelIcon,
-  BarChart3 as ChartBarIcon
+  XCircle as XCircleIcon,
 } from 'lucide-react'
 
 import { AdvancedRuleEngine } from '@/features/smart-folders/lib/rule-engine'
@@ -33,19 +33,17 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
         totalItems: items.length,
         matchingItems: items.length,
         matchPercentage: 100,
-        matchingItemsList: items
+        matchingItemsList: items,
       }
     }
 
-    const matchingItems = items.filter(item => 
-      AdvancedRuleEngine.evaluateRuleSet(item, rules)
-    )
+    const matchingItems = items.filter((item) => AdvancedRuleEngine.evaluateRuleSet(item, rules))
 
     return {
       totalItems: items.length,
       matchingItems: matchingItems.length,
       matchPercentage: items.length > 0 ? Math.round((matchingItems.length / items.length) * 100) : 0,
-      matchingItemsList: matchingItems.slice(0, 10) // 最大10件表示
+      matchingItemsList: matchingItems.slice(0, 10), // 最大10件表示
     }
   }, [rules, items])
 
@@ -60,7 +58,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       is_favorite: 'Favorite',
       created_date: 'Created Date',
       updated_date: 'Updated Date',
-      due_date: 'Due Date'
+      due_date: 'Due Date',
     }
 
     const operatorLabels: Record<string, string> = {
@@ -75,7 +73,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       greater_equal: 'is greater than or equal to',
       less_equal: 'is less than or equal to',
       is_empty: 'is empty',
-      is_not_empty: 'is not empty'
+      is_not_empty: 'is not empty',
     }
 
     const field = fieldLabels[rule.field] || rule.field
@@ -96,7 +94,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
         icon: ExclamationTriangleIcon,
         text: 'No Rules',
         description: 'All items will be included',
-        color: 'text-yellow-500'
+        color: 'text-yellow-500',
       }
     }
 
@@ -105,7 +103,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
         icon: XCircleIcon,
         text: 'No Matches',
         description: 'Consider adjusting your rules',
-        color: 'text-red-500'
+        color: 'text-red-500',
       }
     }
 
@@ -113,44 +111,36 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       icon: CheckCircleIcon,
       text: 'Rules Active',
       description: `${previewStats.matchingItems} item${previewStats.matchingItems !== 1 ? 's' : ''} match`,
-      color: 'text-green-500'
+      color: 'text-green-500',
     }
   }
 
   const statusInfo = getStatusInfo()
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex h-full flex-col">
       {/* ヘッダー */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-2">
-          <FunnelIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" data-slot="icon" />
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-            Preview
-          </h3>
+      <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+        <div className="mb-2 flex items-center gap-2">
+          <FunnelIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" data-slot="icon" />
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white">Preview</h3>
         </div>
-        
+
         {/* ステータス */}
         <div className="flex items-center gap-2">
-          <statusInfo.icon className={`w-4 h-4 ${statusInfo.color}`} />
-          <span className={`text-sm font-medium ${statusInfo.color}`}>
-            {statusInfo.text}
-          </span>
+          <statusInfo.icon className={`h-4 w-4 ${statusInfo.color}`} />
+          <span className={`text-sm font-medium ${statusInfo.color}`}>{statusInfo.text}</span>
         </div>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          {statusInfo.description}
-        </p>
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{statusInfo.description}</p>
       </div>
 
       {/* 統計情報 */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-2 mb-3">
-          <ChartBarIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" data-slot="icon" />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Statistics
-          </span>
+      <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+        <div className="mb-3 flex items-center gap-2">
+          <ChartBarIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" data-slot="icon" />
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Statistics</span>
         </div>
-        
+
         <div className="space-y-3">
           {/* マッチ数 */}
           <div className="flex items-center justify-between">
@@ -159,7 +149,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
               {previewStats.matchingItems} / {previewStats.totalItems}
             </span>
           </div>
-          
+
           {/* パーセンテージバー */}
           <div className="space-y-1">
             <div className="flex items-center justify-between">
@@ -168,9 +158,9 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
                 {previewStats.matchPercentage}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            <div className="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className="h-2 rounded-full bg-blue-600 transition-all duration-300"
                 style={{ width: `${previewStats.matchPercentage}%` }}
               />
             </div>
@@ -180,25 +170,29 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
 
       {/* ルール一覧 */}
       {rules.length > 0 && (
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-3">
-            Active Rules ({rules.length})
-          </h4>
+        <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+          <h4 className="mb-3 text-xs font-medium text-gray-700 dark:text-gray-300">Active Rules ({rules.length})</h4>
           <div className="space-y-2">
             {rules.map((rule, index) => (
-              <div key={index} className="text-xs">
+              <div
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className="text-xs"
+              >
                 {index > 0 && (
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      rule.logic === 'AND' 
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                        : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-                    }`}>
+                  <div className="mb-1 flex items-center gap-2">
+                    <span
+                      className={`rounded px-2 py-1 text-xs font-medium ${
+                        rule.logic === 'AND'
+                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                          : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
+                      }`}
+                    >
                       {rule.logic}
                     </span>
                   </div>
                 )}
-                <div className="text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded p-2">
+                <div className="rounded bg-gray-100 p-2 text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                   {generateRuleDescription(rule)}
                 </div>
               </div>
@@ -210,57 +204,46 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       {/* マッチするアイテムのプレビュー */}
       <div className="flex-1 overflow-hidden">
         <div className="p-4">
-          <h4 className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-3">
+          <h4 className="mb-3 text-xs font-medium text-gray-700 dark:text-gray-300">
             Sample Results ({Math.min(previewStats.matchingItems, 10)})
           </h4>
-          
+
           {previewStats.matchingItemsList.length > 0 ? (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="max-h-64 space-y-2 overflow-y-auto">
               {previewStats.matchingItemsList.map((item, index) => (
-                <div 
-                  key={item.id || index}
-                  className="p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs"
-                >
-                  <div className="font-medium text-gray-900 dark:text-white truncate">
+                <div key={item.id || index} className="rounded bg-gray-100 p-2 text-xs dark:bg-gray-800">
+                  <div className="truncate font-medium text-gray-900 dark:text-white">
                     {item.title || item.name || `Item ${index + 1}`}
                   </div>
-                  {item.status && (
-                    <div className="text-gray-500 dark:text-gray-400 mt-1">
-                      Status: {item.status}
-                    </div>
-                  )}
+                  {item.status && <div className="mt-1 text-gray-500 dark:text-gray-400">Status: {item.status}</div>}
                   {item.tags && item.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {item.tags.slice(0, 3).map((tag: string, tagIndex: number) => (
-                        <span 
-                          key={tagIndex}
-                          className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-xs"
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {item.tags.slice(0, 3).map((tag: string, _tagIndex: number) => (
+                        <span
+                          key={`tag-${tag}`}
+                          className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                         >
                           {tag}
                         </span>
                       ))}
                       {item.tags.length > 3 && (
-                        <span className="text-gray-500 dark:text-gray-400 text-xs">
-                          +{item.tags.length - 3} more
-                        </span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">+{item.tags.length - 3} more</span>
                       )}
                     </div>
                   )}
                 </div>
               ))}
-              
+
               {previewStats.matchingItems > 10 && (
-                <div className="text-center text-xs text-gray-500 dark:text-gray-400 py-2">
+                <div className="py-2 text-center text-xs text-gray-500 dark:text-gray-400">
                   ... and {previewStats.matchingItems - 10} more items
                 </div>
               )}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <XCircleIcon className="w-8 h-8 text-gray-400 mx-auto mb-2" data-slot="icon" />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                No items match your current rules
-              </p>
+            <div className="py-8 text-center">
+              <XCircleIcon className="mx-auto mb-2 h-8 w-8 text-gray-400" data-slot="icon" />
+              <p className="text-xs text-gray-500 dark:text-gray-400">No items match your current rules</p>
             </div>
           )}
         </div>

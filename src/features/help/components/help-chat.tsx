@@ -208,9 +208,9 @@ const WelcomeMessage = () => {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {quickPrompts.map((prompt, index) => (
+          {quickPrompts.map((prompt, _index) => (
             <button
-              key={index}
+              key={`prompt-${prompt.text.slice(0, 20)}`}
               type="button"
               onClick={() => sendMessage(prompt.text)}
               className="border-border hover:bg-accent/50 group flex items-center gap-4 rounded-xl border p-4 text-left transition-colors"

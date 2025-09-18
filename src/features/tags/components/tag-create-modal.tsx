@@ -47,6 +47,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
       <div className="grid grid-cols-5 gap-2">
         {DEFAULT_COLORS.map((color, index) => (
           <button
+            type="button"
             key={color}
             onClick={() => onChange(TAG_PRESET_COLORS[index])}
             className={`h-8 w-8 rounded-full border-2 transition-all ${
@@ -256,6 +257,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
             </div>
 
             <button
+              type="button"
               onClick={onClose}
               className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
             >

@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { Switch } from '@/components/shadcn-ui/switch'
-import { colors, rounded, spacing, typography } from '@/config/theme'
+import { colors, rounded, semantic, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
@@ -113,7 +113,7 @@ const AccountSettings = () => {
       })
       setUploadedAvatar(user.user_metadata?.avatar_url || null)
     }
-  }, [user])
+  }, [user, profile])
 
   const handlePasswordSave = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -234,12 +234,7 @@ const AccountSettings = () => {
                 {isUploading ? 'アップロード中...' : '📷 画像をアップロード'}
               </Button>
               {uploadedAvatar && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleAvatarRemove}
-                  className="text-destructive hover:text-destructive"
-                >
+                <Button type="button" variant="ghost" onClick={handleAvatarRemove} className={semantic.error.text}>
                   削除
                 </Button>
               )}
@@ -299,7 +294,7 @@ const AccountSettings = () => {
             placeholder="新しいパスワード（確認）"
             required
           />
-          {passwordError && <p className="text-destructive text-sm">{passwordError}</p>}
+          {passwordError && <p className={`${semantic.error.text} text-sm`}>{passwordError}</p>}
           <div className="flex justify-end">
             <Button type="submit" disabled={isPasswordLoading}>
               {isPasswordLoading ? 'パスワード更新中...' : 'パスワードを更新'}
@@ -327,15 +322,13 @@ const AccountSettings = () => {
 
         {security.values.twoFactorEnabled && (
           <div
-            className={`mt-4 ${spacing.card} border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20 ${rounded.component.card.lg}`}
+            className={`mt-4 ${spacing.card} ${semantic.success.border} ${semantic.success.light} ${rounded.component.card.lg}`}
           >
             <div className="mb-2 flex items-center gap-2">
               <div className={`h-2 w-2 bg-green-500 ${rounded.component.avatar.full}`}></div>
-              <span className={`${typography.body.sm} font-medium text-green-700 dark:text-green-400`}>
-                2要素認証が有効
-              </span>
+              <span className={`${typography.body.sm} font-medium ${semantic.success.text}`}>2要素認証が有効</span>
             </div>
-            <p className={`${typography.body.xs} text-green-600 dark:text-green-400`}>
+            <p className={`${typography.body.xs} ${semantic.success.text}`}>
               アカウントが追加のセキュリティ層で保護されています。
             </p>
           </div>
@@ -344,22 +337,22 @@ const AccountSettings = () => {
 
       {/* Danger Zone */}
       <SettingsCard
-        title={<span className="text-destructive">危険な操作</span>}
+        title={<span className={semantic.error.text}>危険な操作</span>}
         description="取り消すことのできない破壊的なアクション"
       >
-        <div className="border-destructive/20 bg-destructive/5 rounded-lg border">
+        <div className={`${semantic.error.border} ${semantic.error.light} rounded-lg border`}>
           <div className="flex items-start justify-between p-6">
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
-                <div className="bg-destructive h-2 w-2 animate-pulse rounded-full"></div>
-                <div className="text-destructive font-medium">アカウント削除</div>
+                <div className={`${semantic.error.DEFAULT} h-2 w-2 animate-pulse rounded-full`}></div>
+                <div className={`${semantic.error.text} font-medium`}>アカウント削除</div>
               </div>
-              <p className="text-destructive text-sm leading-relaxed">
+              <p className={`${semantic.error.text} text-sm leading-relaxed`}>
                 ⚠️ <strong>この操作は取り消すことができません。</strong>
                 <br />
                 アカウントとすべての関連データが完全に削除されます。
               </p>
-              <ul className="text-destructive ml-4 space-y-1 text-xs">
+              <ul className={`${semantic.error.text} ml-4 space-y-1 text-xs`}>
                 <li>• すべてのタスクとプロジェクトが削除されます</li>
                 <li>• プロフィールと設定が削除されます</li>
                 <li>• この操作は即座に実行され、取り消すことができません</li>
