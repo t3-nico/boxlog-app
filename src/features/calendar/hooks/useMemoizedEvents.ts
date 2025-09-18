@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useEffect } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
 
@@ -68,10 +68,10 @@ const computationCache = new LRUCache<string, unknown>(200)
 function fastHash(input: string): string {
   let hash = 0
   if (input.length === 0) return hash.toString()
-  
+
   for (let i = 0; i < input.length; i++) {
     const char = input.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
+    hash = (hash << 5) - hash + char
     hash = hash & hash // 32bit整数に変換
   }
   return hash.toString()
@@ -79,7 +79,7 @@ function fastHash(input: string): string {
 
 // イベント配列のハッシュ生成
 function generateEventHash(events: CalendarEvent[]): string {
-  const eventKeys = events.map(e => `${e.id}-${e.startDate?.getTime()}-${e.endDate?.getTime()}`)
+  const eventKeys = events.map((e) => `${e.id}-${e.startDate?.getTime()}-${e.endDate?.getTime()}`)
   return fastHash(eventKeys.join('|'))
 }
 
@@ -95,7 +95,7 @@ function generateMemoKey(
     events: generateEventHash(events),
     dateRange: `${startDate.getTime()}-${endDate.getTime()}`,
     filters: JSON.stringify(filters),
-    viewType
+    viewType,
   }
   return fastHash(JSON.stringify(key))
 }
@@ -126,9 +126,9 @@ export function useMemoizedEvents(
     computationStartTime.current = performance.now()
 
     // 日付範囲でのフィルタリング
-    const filteredEvents = events.filter(event => {
+    const filteredEvents = events.filter((event) => {
       if (!event.startDate) return false
-      
+
       const eventDate = event.startDate
       return eventDate >= startDate && eventDate <= endDate
     })
@@ -172,14 +172,15 @@ export function useMemoizedEvents(
       eventsByDate,
       eventsByHour,
       totalDuration,
-      overlappingEvents
+      overlappingEvents,
     }
 
     // キャッシュに保存
     eventCache.set(memoKey, result)
 
     const computationTime = performance.now() - computationStartTime.current
-    if (computationTime > 16) { // 1フレーム以上かかった場合は警告
+    if (computationTime > 16) {
+      // 1フレーム以上かかった場合は警告
       console.warn(`Heavy computation detected: ${computationTime}ms for ${events.length} events`)
     }
 
@@ -204,10 +205,10 @@ function applyFilters(events: CalendarEvent[], filters: Record<string, unknown>)
     return events
   }
 
-  return events.filter(event => {
+  return events.filter((event) => {
     // タグフィルター
     if (filters.tags && filters.tags.length > 0) {
-      if (!event.tags || !event.tags.some(tag => filters.tags.includes(tag))) {
+      if (!event.tags || !event.tags.some((tag) => filters.tags.includes(tag))) {
         return false
       }
     }
@@ -263,10 +264,7 @@ function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
       }
 
       // 重複チェック
-      if (
-        event1.startDate < event2.endDate &&
-        event2.startDate < event1.endDate
-      ) {
+      if (event1.startDate < event2.endDate && event2.startDate < event1.endDate) {
         overlappingGroup.push(event2)
         processedIds.add(event2.id)
       }
@@ -281,11 +279,7 @@ function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
 }
 
 // 計算結果のメモ化用フック
-export function useMemoizedComputation<T>(
-  computeFunction: () => T,
-  dependencies: unknown[],
-  cacheKey?: string
-): T {
+export function useMemoizedComputation<T>(computeFunction: () => T, dependencies: unknown[], cacheKey?: string): T {
   const key = cacheKey || fastHash(JSON.stringify(dependencies))
 
   return useMemo(() => {
@@ -297,6 +291,7 @@ export function useMemoizedComputation<T>(
     const result = computeFunction()
     computationCache.set(key, result)
     return result
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, computeFunction, ...dependencies])
 }
 
@@ -307,7 +302,7 @@ export function useAsyncMemoizedComputation<T>(
   cacheKey?: string
 ): { data: T | null; loading: boolean; error: Error | null } {
   const key = cacheKey || fastHash(JSON.stringify(dependencies))
-  
+
   return useMemo(() => {
     // 同期的な初期値を返し、非同期で更新
     const cached = computationCache.get(key)
@@ -321,18 +316,18 @@ export function useAsyncMemoizedComputation<T>(
     let error: Error | null = null
 
     computeFunction()
-      .then(result => {
+      .then((result) => {
         data = result
         loading = false
         computationCache.set(key, result)
       })
-      .catch(err => {
+      .catch((err) => {
         error = err
         loading = false
       })
 
     return { data, loading, error }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, computeFunction, ...dependencies])
 }
 
@@ -344,31 +339,31 @@ export function useMemoizedCalendarData(
 ) {
   const { startDate, endDate } = useMemo(() => {
     const date = new Date(viewDate)
-    
+
     switch (viewType) {
       case 'day':
         return {
           startDate: new Date(date.setHours(0, 0, 0, 0)),
-          endDate: new Date(date.setHours(23, 59, 59, 999))
+          endDate: new Date(date.setHours(23, 59, 59, 999)),
         }
-      
+
       case 'week':
         const weekStart = new Date(date)
         weekStart.setDate(date.getDate() - date.getDay()) // 日曜日開始
         weekStart.setHours(0, 0, 0, 0)
-        
+
         const weekEnd = new Date(weekStart)
         weekEnd.setDate(weekStart.getDate() + 6)
         weekEnd.setHours(23, 59, 59, 999)
-        
+
         return { startDate: weekStart, endDate: weekEnd }
-      
+
       case 'month':
         const monthStart = new Date(date.getFullYear(), date.getMonth(), 1)
         const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999)
-        
+
         return { startDate: monthStart, endDate: monthEnd }
-      
+
       default:
         return { startDate: date, endDate: date }
     }
@@ -388,6 +383,6 @@ export const CacheManager = {
   getCacheStats: () => ({
     eventCacheSize: eventCache.size(),
     computationCacheSize: computationCache.size(),
-    totalCacheSize: eventCache.size() + computationCache.size()
-  })
+    totalCacheSize: eventCache.size() + computationCache.size(),
+  }),
 }

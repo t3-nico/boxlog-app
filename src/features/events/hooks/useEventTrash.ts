@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { useAddPopup } from '@/hooks/useAddPopup'
 
@@ -13,50 +13,32 @@ export interface UseEventTrashOptions {
 
 export const useEventTrash = (options: UseEventTrashOptions = {}) => {
   const { autoRefresh: _autoRefresh = true, sortByDeletedDate = true } = options
-  
+
   const [selectedEventIds, setSelectedEventIds] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const addPopup = useAddPopup()
-  
+
   // Store actions
-  const {
-    events,
-    restoreEvent,
-    hardDeleteEvent,
-    batchRestore,
-    batchHardDelete,
-    clearTrash,
-    getTrashedEvents
-  } = useEventStore()
+  const { events, restoreEvent, hardDeleteEvent, batchRestore, batchHardDelete, clearTrash, getTrashedEvents } =
+    useEventStore()
 
   // 削除済みイベントを取得
   const trashedEvents = useMemo(() => {
     const deleted = getTrashedEvents()
-    return sortByDeletedDate 
-      ? eventDeletionUtils.sortDeletedEventsByDate(deleted)
-      : deleted
-  }, [events, getTrashedEvents, sortByDeletedDate])
+    return sortByDeletedDate ? eventDeletionUtils.sortDeletedEventsByDate(deleted) : deleted
+  }, [getTrashedEvents, sortByDeletedDate])
 
   // 統計情報
-  const stats = useMemo(() => 
-    eventDeletionUtils.getDeletedEventsStats(events), 
-    [trashedEvents]
-  )
+  const stats = useMemo(() => eventDeletionUtils.getDeletedEventsStats(events), [events])
 
   // 選択関連
   const handleSelectEvent = useCallback((eventId: string) => {
-    setSelectedEventIds(prev => 
-      prev.includes(eventId)
-        ? prev.filter(id => id !== eventId)
-        : [...prev, eventId]
-    )
+    setSelectedEventIds((prev) => (prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]))
   }, [])
 
   const handleSelectAll = useCallback(() => {
-    const allIds = trashedEvents.map(event => event.id)
-    setSelectedEventIds(prev => 
-      prev.length === allIds.length ? [] : allIds
-    )
+    const allIds = trashedEvents.map((event) => event.id)
+    setSelectedEventIds((prev) => (prev.length === allIds.length ? [] : allIds))
   }, [trashedEvents])
 
   const clearSelection = useCallback(() => {
@@ -64,89 +46,93 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
   }, [])
 
   // 単一イベント復元
-  const handleRestoreEvent = useCallback(async (eventId: string) => {
-    const event = trashedEvents.find(e => e.id === eventId)
-    if (!event) return
+  const handleRestoreEvent = useCallback(
+    async (eventId: string) => {
+      const event = trashedEvents.find((e) => e.id === eventId)
+      if (!event) return
 
-    const validation = eventDeletionUtils.validateRestore(event)
-    if (!validation.canRestore) {
-      addPopup({
-        title: '復元エラー',
-        content: validation.reason || '復元できませんでした',
-        type: 'error'
-      })
-      return
-    }
+      const validation = eventDeletionUtils.validateRestore(event)
+      if (!validation.canRestore) {
+        addPopup({
+          title: '復元エラー',
+          content: validation.reason || '復元できませんでした',
+          type: 'error',
+        })
+        return
+      }
 
-    setIsLoading(true)
-    try {
-      await restoreEvent(eventId)
-      addPopup({
-        title: '復元完了',
-        content: `「${event.title}」を復元しました`,
-        type: 'success'
-      })
-      clearSelection()
-    } catch (error) {
-      addPopup({
-        title: '復元エラー',
-        content: error instanceof Error ? error.message : '復元に失敗しました',
-        type: 'error'
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }, [trashedEvents, restoreEvent, addPopup, clearSelection])
+      setIsLoading(true)
+      try {
+        await restoreEvent(eventId)
+        addPopup({
+          title: '復元完了',
+          content: `「${event.title}」を復元しました`,
+          type: 'success',
+        })
+        clearSelection()
+      } catch (error) {
+        addPopup({
+          title: '復元エラー',
+          content: error instanceof Error ? error.message : '復元に失敗しました',
+          type: 'error',
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [trashedEvents, restoreEvent, addPopup, clearSelection]
+  )
 
   // 単一イベント完全削除
-  const handlePermanentDelete = useCallback(async (eventId: string) => {
-    const event = trashedEvents.find(e => e.id === eventId)
-    if (!event) return
+  const handlePermanentDelete = useCallback(
+    async (eventId: string) => {
+      const event = trashedEvents.find((e) => e.id === eventId)
+      if (!event) return
 
-    const validation = eventDeletionUtils.validatePermanentDeletion(event)
-    if (!validation.canPermanentlyDelete) {
-      addPopup({
-        title: '削除エラー',
-        content: validation.reason || '削除できませんでした',
-        type: 'error'
-      })
-      return
-    }
+      const validation = eventDeletionUtils.validatePermanentDeletion(event)
+      if (!validation.canPermanentlyDelete) {
+        addPopup({
+          title: '削除エラー',
+          content: validation.reason || '削除できませんでした',
+          type: 'error',
+        })
+        return
+      }
 
-    setIsLoading(true)
-    try {
-      await hardDeleteEvent(eventId)
-      addPopup({
-        title: '削除完了',
-        content: `「${event.title}」を完全に削除しました`,
-        type: 'success'
-      })
-      clearSelection()
-    } catch (error) {
-      addPopup({
-        title: '削除エラー',
-        content: error instanceof Error ? error.message : '削除に失敗しました',
-        type: 'error'
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }, [trashedEvents, hardDeleteEvent, addPopup, clearSelection])
+      setIsLoading(true)
+      try {
+        await hardDeleteEvent(eventId)
+        addPopup({
+          title: '削除完了',
+          content: `「${event.title}」を完全に削除しました`,
+          type: 'success',
+        })
+        clearSelection()
+      } catch (error) {
+        addPopup({
+          title: '削除エラー',
+          content: error instanceof Error ? error.message : '削除に失敗しました',
+          type: 'error',
+        })
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [trashedEvents, hardDeleteEvent, addPopup, clearSelection]
+  )
 
   // バッチ復元
   const handleBatchRestore = useCallback(async () => {
     if (selectedEventIds.length === 0) return
 
-    const eventsToRestore = trashedEvents.filter(e => selectedEventIds.includes(e.id))
-    const invalidEvents = eventsToRestore.filter(
-      event => !eventDeletionUtils.validateRestore(event).canRestore
-    )
+    const eventsToRestore = trashedEvents.filter((e) => selectedEventIds.includes(e.id))
+    const invalidEvents = eventsToRestore.filter((event) => !eventDeletionUtils.validateRestore(event).canRestore)
 
     if (invalidEvents.length > 0) {
       addPopup({
         title: '復元エラー',
         content: `${invalidEvents.length}個のイベントが復元できませんでした`,
-        type: 'error'
+        type: 'error',
       })
       return
     }
@@ -157,14 +143,14 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
       addPopup({
         title: '一括復元完了',
         content: `${selectedEventIds.length}個のイベントを復元しました`,
-        type: 'success'
+        type: 'success',
       })
       clearSelection()
     } catch (error) {
       addPopup({
         title: '一括復元エラー',
         content: error instanceof Error ? error.message : '一括復元に失敗しました',
-        type: 'error'
+        type: 'error',
       })
     } finally {
       setIsLoading(false)
@@ -175,16 +161,16 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
   const handleBatchPermanentDelete = useCallback(async () => {
     if (selectedEventIds.length === 0) return
 
-    const eventsToDelete = trashedEvents.filter(e => selectedEventIds.includes(e.id))
+    const eventsToDelete = trashedEvents.filter((e) => selectedEventIds.includes(e.id))
     const invalidEvents = eventsToDelete.filter(
-      event => !eventDeletionUtils.validatePermanentDeletion(event).canPermanentlyDelete
+      (event) => !eventDeletionUtils.validatePermanentDeletion(event).canPermanentlyDelete
     )
 
     if (invalidEvents.length > 0) {
       addPopup({
         title: '削除エラー',
         content: `${invalidEvents.length}個のイベントが削除できませんでした`,
-        type: 'error'
+        type: 'error',
       })
       return
     }
@@ -195,14 +181,14 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
       addPopup({
         title: '一括削除完了',
         content: `${selectedEventIds.length}個のイベントを完全に削除しました`,
-        type: 'success'
+        type: 'success',
       })
       clearSelection()
     } catch (error) {
       addPopup({
         title: '一括削除エラー',
         content: error instanceof Error ? error.message : '一括削除に失敗しました',
-        type: 'error'
+        type: 'error',
       })
     } finally {
       setIsLoading(false)
@@ -212,12 +198,12 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
   // ゴミ箱クリア（30日以上経過分を自動削除）
   const handleClearTrash = useCallback(async () => {
     const oldEvents = eventDeletionUtils.filterOldDeletedEvents(trashedEvents)
-    
+
     if (oldEvents.length === 0) {
       addPopup({
         title: '情報',
         content: '30日以上経過した削除済みイベントがありません',
-        type: 'info'
+        type: 'info',
       })
       return
     }
@@ -228,14 +214,14 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
       addPopup({
         title: 'ゴミ箱クリア完了',
         content: `${oldEvents.length}個の古いイベントを自動削除しました`,
-        type: 'success'
+        type: 'success',
       })
       clearSelection()
     } catch (error) {
       addPopup({
         title: 'クリアエラー',
         content: error instanceof Error ? error.message : 'ゴミ箱のクリアに失敗しました',
-        type: 'error'
+        type: 'error',
       })
     } finally {
       setIsLoading(false)
@@ -243,26 +229,31 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
   }, [trashedEvents, clearTrash, addPopup, clearSelection])
 
   // イベント検索・フィルタリング
-  const searchEvents = useCallback((query: string): Event[] => {
-    if (!query.trim()) return trashedEvents
+  const searchEvents = useCallback(
+    (query: string): Event[] => {
+      if (!query.trim()) return trashedEvents
 
-    const lowerQuery = query.toLowerCase()
-    return trashedEvents.filter(event => 
-      event.title.toLowerCase().includes(lowerQuery) ||
-      event.description?.toLowerCase().includes(lowerQuery) ||
-      event.location?.toLowerCase().includes(lowerQuery)
-    )
-  }, [trashedEvents])
+      const lowerQuery = query.toLowerCase()
+      return trashedEvents.filter(
+        (event) =>
+          event.title.toLowerCase().includes(lowerQuery) ||
+          event.description?.toLowerCase().includes(lowerQuery) ||
+          event.location?.toLowerCase().includes(lowerQuery)
+      )
+    },
+    [trashedEvents]
+  )
 
   // 削除日でフィルタリング
-  const filterByDeletionDate = useCallback((days: number): Event[] => {
-    const cutoffDate = new Date()
-    cutoffDate.setDate(cutoffDate.getDate() - days)
+  const filterByDeletionDate = useCallback(
+    (days: number): Event[] => {
+      const cutoffDate = new Date()
+      cutoffDate.setDate(cutoffDate.getDate() - days)
 
-    return trashedEvents.filter(event => 
-      event.deletedAt && event.deletedAt >= cutoffDate
-    )
-  }, [trashedEvents])
+      return trashedEvents.filter((event) => event.deletedAt && event.deletedAt >= cutoffDate)
+    },
+    [trashedEvents]
+  )
 
   return {
     // データ
@@ -296,6 +287,6 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
     // 状態チェック
     isEmpty: trashedEvents.length === 0,
     hasSelection: selectedEventIds.length > 0,
-    hasOldEvents: stats.oldDeleted > 0
+    hasOldEvents: stats.oldDeleted > 0,
   }
 }

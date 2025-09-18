@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 type ScheduleMode = 'defer' | 'schedule'
 
@@ -17,7 +17,7 @@ export const useKeyboardShortcuts = ({
   isEditMode,
   handleSave,
   handleScheduleModeChange,
-  setFastInputMode
+  setFastInputMode,
 }: UseKeyboardShortcutsProps) => {
   // 入力フィールドかどうかをチェック
   const isInputField = () => {
@@ -26,62 +26,71 @@ export const useKeyboardShortcuts = ({
   }
 
   // モードを切り替えるヘルパー
-  const toggleScheduleMode = () => {
+  const toggleScheduleMode = useCallback(() => {
     const newMode = scheduleMode === 'defer' ? 'schedule' : 'defer'
     handleScheduleModeChange(newMode)
-  }
+  }, [scheduleMode, handleScheduleModeChange])
 
   // Enterキー処理
-  const handleEnterKey = (e: KeyboardEvent) => {
-    const isCmdEnter = (e.metaKey || e.ctrlKey) && e.key === 'Enter'
-    const isSimpleEnter = e.key === 'Enter' && scheduleMode === 'defer'
-    
-    if (isCmdEnter || isSimpleEnter) {
-      if (isValid) {
-        e.preventDefault()
-        
-        // Cmd+Enterの高速入力モード有効化
-        if (isCmdEnter && scheduleMode === 'defer' && !isEditMode) {
-          setFastInputMode(true)
+  const handleEnterKey = useCallback(
+    (e: KeyboardEvent) => {
+      const isCmdEnter = (e.metaKey || e.ctrlKey) && e.key === 'Enter'
+      const isSimpleEnter = e.key === 'Enter' && scheduleMode === 'defer'
+
+      if (isCmdEnter || isSimpleEnter) {
+        if (isValid) {
+          e.preventDefault()
+
+          // Cmd+Enterの高速入力モード有効化
+          if (isCmdEnter && scheduleMode === 'defer' && !isEditMode) {
+            setFastInputMode(true)
+          }
+
+          handleSave()
         }
-        
-        handleSave()
+        return true
       }
-      return true
-    }
-    
-    return false
-  }
+
+      return false
+    },
+    [scheduleMode, isValid, isEditMode, setFastInputMode, handleSave]
+  )
 
   // 数字キー処理
-  const handleNumberKey = (e: KeyboardEvent) => {
-    if (e.key === '1') {
-      e.preventDefault()
-      handleScheduleModeChange('defer')
-      return true
-    }
-    
-    if (e.key === '2') {
-      e.preventDefault()
-      handleScheduleModeChange('schedule')
-      return true
-    }
-    
-    return false
-  }
+  const handleNumberKey = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === '1') {
+        e.preventDefault()
+        handleScheduleModeChange('defer')
+        return true
+      }
+
+      if (e.key === '2') {
+        e.preventDefault()
+        handleScheduleModeChange('schedule')
+        return true
+      }
+
+      return false
+    },
+    [handleScheduleModeChange]
+  )
 
   // モード切り替えキー処理
-  const handleToggleKey = (e: KeyboardEvent) => {
-    const isToggleKey = (e.key === 'Tab' || e.key === ' ') && !isInputField()
-    
-    if (isToggleKey) {
-      e.preventDefault()
-      toggleScheduleMode()
-      return true
-    }
-    
-    return false
-  }
+  const handleToggleKey = useCallback(
+    (e: KeyboardEvent) => {
+      const isToggleKey = (e.key === 'Tab' || e.key === ' ') && !isInputField()
+
+      if (isToggleKey) {
+        e.preventDefault()
+        toggleScheduleMode()
+        return true
+      }
+
+      return false
+    },
+    [toggleScheduleMode]
+  )
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -93,5 +102,15 @@ export const useKeyboardShortcuts = ({
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [isValid, handleSave, scheduleMode, handleScheduleModeChange, isEditMode, setFastInputMode])
+  }, [
+    isValid,
+    handleSave,
+    scheduleMode,
+    handleScheduleModeChange,
+    isEditMode,
+    setFastInputMode,
+    handleEnterKey,
+    handleNumberKey,
+    handleToggleKey,
+  ])
 }
