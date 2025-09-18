@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import type { HTMLAttributes } from 'react';
-import { memo } from 'react';
+import type { HTMLAttributes } from 'react'
+import { memo } from 'react'
 
-import ReactMarkdown, { type Options } from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import ReactMarkdown, { type Options } from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import {
   type BundledLanguage,
@@ -22,13 +22,13 @@ import {
   CodeBlockSelectItem,
   CodeBlockSelectTrigger,
   CodeBlockSelectValue,
-} from '@/components/kibo-ui/code-block';
-import { cn } from '@/lib/utils';
+} from '@/components/kibo-ui/code-block'
+import { cn } from '@/lib/utils'
 
 export type AIResponseProps = HTMLAttributes<HTMLDivElement> & {
-  options?: Options;
-  children: Options['children'];
-};
+  options?: Options
+  children: Options['children']
+}
 
 const components: Options['components'] = {
   ol: ({ node: _node, children, className, ...props }) => (
@@ -53,8 +53,8 @@ const components: Options['components'] = {
   ),
   a: ({ node: _node, children, className, ...props }) => (
     <a
-      className={cn('font-medium text-primary underline', className)}
-      rel="noreferrer"
+      className={cn('text-primary font-medium underline', className)}
+      rel="noopener noreferrer"
       target="_blank"
       {...props}
     >
@@ -62,59 +62,47 @@ const components: Options['components'] = {
     </a>
   ),
   h1: ({ node: _node, children, className, ...props }) => (
-    <h1
-      className={cn('mt-6 mb-2 font-semibold text-3xl', className)}
-      {...props}
-    >
+    <h1 className={cn('mb-2 mt-6 text-3xl font-semibold', className)} {...props}>
       {children}
     </h1>
   ),
   h2: ({ node: _node, children, className, ...props }) => (
-    <h2
-      className={cn('mt-6 mb-2 font-semibold text-2xl', className)}
-      {...props}
-    >
+    <h2 className={cn('mb-2 mt-6 text-2xl font-semibold', className)} {...props}>
       {children}
     </h2>
   ),
   h3: ({ node: _node, children, className, ...props }) => (
-    <h3 className={cn('mt-6 mb-2 font-semibold text-xl', className)} {...props}>
+    <h3 className={cn('mb-2 mt-6 text-xl font-semibold', className)} {...props}>
       {children}
     </h3>
   ),
   h4: ({ node: _node, children, className, ...props }) => (
-    <h4 className={cn('mt-6 mb-2 font-semibold text-lg', className)} {...props}>
+    <h4 className={cn('mb-2 mt-6 text-lg font-semibold', className)} {...props}>
       {children}
     </h4>
   ),
   h5: ({ node: _node, children, className, ...props }) => (
-    <h5
-      className={cn('mt-6 mb-2 font-semibold text-base', className)}
-      {...props}
-    >
+    <h5 className={cn('mb-2 mt-6 text-base font-semibold', className)} {...props}>
       {children}
     </h5>
   ),
   h6: ({ node: _node, children, className, ...props }) => (
-    <h6 className={cn('mt-6 mb-2 font-semibold text-sm', className)} {...props}>
+    <h6 className={cn('mb-2 mt-6 text-sm font-semibold', className)} {...props}>
       {children}
     </h6>
   ),
   pre: ({ node: _node, className, children }) => {
-    let language = 'javascript';
+    let language = 'javascript'
 
     if (typeof node?.properties?.className === 'string') {
-      language = node.properties.className.replace('language-', '');
+      language = node.properties.className.replace('language-', '')
     }
 
     const childrenIsCode =
-      typeof children === 'object' &&
-      children !== null &&
-      'type' in children &&
-      children.type === 'code';
+      typeof children === 'object' && children !== null && 'type' in children && children.type === 'code'
 
     if (!childrenIsCode) {
-      return <pre>{children}</pre>;
+      return <pre>{children}</pre>
     }
 
     const data: CodeBlockProps['data'] = [
@@ -123,14 +111,10 @@ const components: Options['components'] = {
         filename: 'index.js',
         code: (children.props as { children: string }).children,
       },
-    ];
+    ]
 
     return (
-      <CodeBlock
-        className={cn('my-4 h-auto', className)}
-        data={data}
-        defaultValue={data[0].language}
-      >
+      <CodeBlock className={cn('my-4 h-auto', className)} data={data} defaultValue={data[0].language}>
         <CodeBlockHeader>
           <CodeBlockFiles>
             {(item) => (
@@ -159,36 +143,24 @@ const components: Options['components'] = {
         <CodeBlockBody>
           {(item) => (
             <CodeBlockItem key={item.language} value={item.language}>
-              <CodeBlockContent language={item.language as BundledLanguage}>
-                {item.code}
-              </CodeBlockContent>
+              <CodeBlockContent language={item.language as BundledLanguage}>{item.code}</CodeBlockContent>
             </CodeBlockItem>
           )}
         </CodeBlockBody>
       </CodeBlock>
-    );
+    )
   },
-};
+}
 
 export const AIResponse = memo(
   function AIResponse({ className, options, children, ...props }: AIResponseProps) {
     return (
-      <div
-        className={cn(
-        'size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
-        className
-      )}
-      {...props}
-    >
-        <ReactMarkdown
-          components={components}
-          remarkPlugins={[remarkGfm]}
-          {...options}
-        >
+      <div className={cn('size-full [&>*:first-child]:mt-0 [&>*:last-child]:mb-0', className)} {...props}>
+        <ReactMarkdown components={components} remarkPlugins={[remarkGfm]} {...options}>
           {children}
         </ReactMarkdown>
       </div>
     )
   },
   (prevProps, nextProps) => prevProps.children === nextProps.children
-);
+)

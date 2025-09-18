@@ -5,7 +5,7 @@
  */
 
 module.exports = {
-  extends: ['./bundle-optimization.js'],
+  extends: ['./bundle-optimization.js', './security.js'],
 
   rules: {
     // 本番ではコンソールログ禁止

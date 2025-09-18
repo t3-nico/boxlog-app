@@ -29,7 +29,15 @@ module.exports = {
     'jsx-a11y/no-autofocus': 'warn',
     'jsx-a11y/heading-has-content': 'warn',
     'jsx-a11y/anchor-has-content': 'warn',
-    'react/jsx-no-target-blank': 'warn',
+    // 外部リンクセキュリティ（Google基準 - 開発環境でも警告）
+    'react/jsx-no-target-blank': [
+      'warn',
+      {
+        allowReferrer: false,
+        enforceDynamicLinks: 'always',
+        warnOnSpreadAttributes: true,
+      },
+    ],
     'react/button-has-type': 'warn',
 
     // テーマルールは開発環境では警告レベル（段階的導入）

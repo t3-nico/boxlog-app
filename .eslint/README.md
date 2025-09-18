@@ -195,36 +195,36 @@ eslint --print-config src/app/page.tsx -c .eslint/index.js
 
 ### 🎯 **現状の設定**
 
-| カテゴリ                | dev環境      | main環境   | 実装状況    | 参考企業・根拠  |
-| ----------------------- | ------------ | ---------- | ----------- | --------------- |
-| **🎨 デザインシステム** |              |            |             |                 |
-| Theme使用強制           | error 必須   | error 必須 | ✅ 実装済み | Airbnb, Uber    |
-| 直接Tailwindクラス      | error 禁止   | error 禁止 | ✅ 実装済み | Google Material |
-| **♿ アクセシビリティ** |              |            |             |                 |
-| alt属性                 | error 必須   | error 必須 | ✅ 実装済み | Microsoft, W3C  |
-| ARIAラベル              | error 必須   | error 必須 | ✅ 実装済み | Apple           |
-| キーボード操作          | warn 警告    | warn 警告  | ✅ 実装済み | Google          |
-| 見出し構造              | warn 警告    | warn 警告  | ✅ 実装済み | W3C             |
-| **🔧 開発効率**         |              |            |             |                 |
-| console.log             | off 許可     | error 禁止 | ✅ 実装済み | Netflix         |
-| debugger                | warn 警告    | error 禁止 | ✅ 実装済み | Amazon          |
-| TODO/FIXMEコメント禁止  | error 禁止   | error 禁止 | ✅ 実装済み | GitHub方式      |
-| **⚡ パフォーマンス**   |              |            |             |                 |
-| Bundle size             | warn 警告    | error 制限 | ✅ 実装済み | Twitter         |
-| useMemo/useCallback     | warn 推奨    | warn 推奨  | ✅ 実装済み | Meta            |
-| 画像最適化              | off スキップ | error 必須 | ✅ 実装済み | Netflix         |
-| Array index key         | warn 警告    | warn 警告  | ✅ 実装済み | React Team      |
-| **🔒 セキュリティ**     |              |            |             |                 |
-| eval使用                | なし         | なし       | ❌ 未実装   | すべて          |
-| dangerouslySetHTML      | なし         | なし       | ❌ 未実装   | Meta            |
-| 外部リンク              | warn 警告    | warn 警告  | 🟡 部分実装 | Google          |
-| **📏 コード品質**       |              |            |             |                 |
-| 未使用変数              | warn 警告    | error 禁止 | ✅ 実装済み | Airbnb          |
-| any型                   | warn 警告    | error 禁止 | ✅ 実装済み | Microsoft       |
-| 複雑度                  | warn 警告    | error 禁止 | ✅ 実装済み | Google          |
-| **🧪 テスト**           |              |            |             |                 |
-| テストカバレッジ        | なし         | なし       | ❌ 未実装   | Google          |
-| E2Eテスト               | なし         | なし       | ❌ 未実装   | Amazon          |
+| カテゴリ                | dev環境      | main環境      | 実装状況    | 参考企業・根拠  |
+| ----------------------- | ------------ | ------------- | ----------- | --------------- |
+| **🎨 デザインシステム** |              |               |             |                 |
+| Theme使用強制           | error 必須   | error 必須    | ✅ 実装済み | Airbnb, Uber    |
+| 直接Tailwindクラス      | error 禁止   | error 禁止    | ✅ 実装済み | Google Material |
+| **♿ アクセシビリティ** |              |               |             |                 |
+| alt属性                 | error 必須   | error 必須    | ✅ 実装済み | Microsoft, W3C  |
+| ARIAラベル              | error 必須   | error 必須    | ✅ 実装済み | Apple           |
+| キーボード操作          | warn 警告    | warn 警告     | ✅ 実装済み | Google          |
+| 見出し構造              | warn 警告    | warn 警告     | ✅ 実装済み | W3C             |
+| **🔧 開発効率**         |              |               |             |                 |
+| console.log             | off 許可     | error 禁止    | ✅ 実装済み | Netflix         |
+| debugger                | warn 警告    | error 禁止    | ✅ 実装済み | Amazon          |
+| TODO/FIXMEコメント禁止  | error 禁止   | error 禁止    | ✅ 実装済み | GitHub方式      |
+| **⚡ パフォーマンス**   |              |               |             |                 |
+| Bundle size             | warn 警告    | error 制限    | ✅ 実装済み | Twitter         |
+| useMemo/useCallback     | warn 推奨    | warn 推奨     | ✅ 実装済み | Meta            |
+| 画像最適化              | off スキップ | error 必須    | ✅ 実装済み | Netflix         |
+| Array index key         | warn 警告    | warn 警告     | ✅ 実装済み | React Team      |
+| **🔒 セキュリティ**     |              |               |             |                 |
+| eval使用                | error 禁止   | error 禁止    | ✅ 実装済み | すべて          |
+| dangerouslySetHTML      | warn 警告    | error 禁止    | ✅ 実装済み | Meta            |
+| 外部リンク              | warn 警告    | error rel必須 | ✅ 実装済み | Google          |
+| **📏 コード品質**       |              |               |             |                 |
+| 未使用変数              | warn 警告    | error 禁止    | ✅ 実装済み | Airbnb          |
+| any型                   | warn 警告    | error 禁止    | ✅ 実装済み | Microsoft       |
+| 複雑度                  | warn 警告    | error 禁止    | ✅ 実装済み | Google          |
+| **🧪 テスト**           |              |               |             |                 |
+| テストカバレッジ        | なし         | なし          | ❌ 未実装   | Google          |
+| E2Eテスト               | なし         | なし          | ❌ 未実装   | Amazon          |
 
 ### 🌟 **理想の設定**（ビッグテック企業実践ベース）
 

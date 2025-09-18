@@ -89,6 +89,7 @@ import { type BundledLanguage, type CodeOptionsMultipleThemes, codeToHtml } from
 
 import { Button } from '@/components/shadcn-ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
+import { sanitizeCodeBlock } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 
 export type { BundledLanguage } from 'shiki'
@@ -358,7 +359,7 @@ export const CodeBlockFilename = ({
 
   return (
     <div className="bg-secondary text-muted-foreground flex items-center gap-2 px-4 py-2 text-xs" {...props}>
-      {Icon && <Icon className="h-4 w-4 shrink-0" />}
+      {Icon ? <Icon className="h-4 w-4 shrink-0" /> : null}
       <span className="flex-1 truncate">{children}</span>
     </div>
   )
@@ -539,8 +540,8 @@ export const CodeBlockContent = ({
 
   return (
     <div
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: "Kinda how Shiki works"
-      dangerouslySetInnerHTML={{ __html: html }}
+      // XSS防止: ShikiのHTMLアウトプットをサニタイズ
+      dangerouslySetInnerHTML={{ __html: sanitizeCodeBlock(html) }}
       {...props}
     />
   )

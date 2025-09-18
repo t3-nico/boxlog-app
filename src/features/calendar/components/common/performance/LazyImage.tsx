@@ -1,9 +1,10 @@
 'use client'
 
-import React, { useState, useRef, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import Image from 'next/image'
 
+import { sanitizeBasicHTML } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 
 interface LazyImageProps {
@@ -49,7 +50,7 @@ function getImageObserver(rootMargin: string = '50px', threshold: number = 0.1):
       },
       {
         rootMargin,
-        threshold
+        threshold,
       }
     )
   }
@@ -68,15 +69,15 @@ export const LazyImage = ({
   onLoad,
   onError,
   rootMargin = '50px',
-  threshold = 0.1
+  threshold = 0.1,
 }: LazyImageProps) => {
   const [state, setState] = useState<ImageState>({
     isLoaded: false,
     isIntersecting: priority, // 優先度が高い場合は即座に読み込み
     hasError: false,
-    isLoading: false
+    isLoading: false,
   })
-  
+
   const imgRef = useRef<HTMLImageElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -88,11 +89,11 @@ export const LazyImage = ({
     if (!element) return
 
     const observer = getImageObserver(rootMargin, threshold)
-    
+
     const callback = () => {
-      setState(prev => ({ ...prev, isIntersecting: true }))
+      setState((prev) => ({ ...prev, isIntersecting: true }))
     }
-    
+
     observerCallbacks.set(element, callback)
     observer.observe(element)
 
@@ -108,7 +109,7 @@ export const LazyImage = ({
       return
     }
 
-    setState(prev => ({ ...prev, isLoading: true }))
+    setState((prev) => ({ ...prev, isLoading: true }))
   }, [state.isIntersecting, state.isLoading])
 
   // プレースホルダーのスタイル
@@ -119,7 +120,7 @@ export const LazyImage = ({
       backgroundColor: '#f3f4f6',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     }
 
     // BlurHash サポート（将来的な拡張）
@@ -149,34 +150,35 @@ export const LazyImage = ({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        "relative overflow-hidden",
-        className
-      )}
+      className={cn('relative overflow-hidden', className)}
       style={{
         width: width || '100%',
-        height: height || 'auto'
+        height: height || 'auto',
       }}
     >
       {/* プレースホルダー */}
-      {(!state.isLoaded || state.hasError) && (
+      {!state.isLoaded || state.hasError ? (
         <div
           className={cn(
-            "absolute inset-0 transition-opacity duration-300",
-            state.isLoaded ? "opacity-0" : "opacity-100"
+            'absolute inset-0 transition-opacity duration-300',
+            state.isLoaded ? 'opacity-0' : 'opacity-100'
           )}
           style={placeholderStyle}
         >
           {state.hasError ? (
-            <div className="text-gray-400 text-center">
-              <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+            <div className="text-center text-gray-400">
+              <svg className="mx-auto mb-2 h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"
+                />
               </svg>
               <span className="text-xs">読み込みエラー</span>
             </div>
           ) : state.isLoading ? (
             <div className="text-gray-400">
-              <div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-gray-600 rounded-full mx-auto mb-2"></div>
+              <div className="mx-auto mb-2 h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600"></div>
               <span className="text-xs">読み込み中...</span>
             </div>
           ) : placeholder ? (
@@ -189,45 +191,46 @@ export const LazyImage = ({
             />
           ) : (
             <div className="text-gray-400">
-              <svg className="w-8 h-8 mx-auto mb-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              <svg className="mx-auto mb-2 h-8 w-8" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fillRule="evenodd"
+                  d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
           )}
         </div>
-      )}
+      ) : null}
 
       {/* 実際の画像 */}
-      {state.isIntersecting && !state.hasError && (
+      {state.isIntersecting && !state.hasError ? (
         <Image
           ref={imgRef}
           src={src}
           alt={alt}
           fill
-          className={cn(
-            "object-cover transition-opacity duration-300",
-            state.isLoaded ? "opacity-100" : "opacity-0"
-          )}
+          className={cn('object-cover transition-opacity duration-300', state.isLoaded ? 'opacity-100' : 'opacity-0')}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           priority={priority}
           onLoad={() => {
-            setState(prev => ({
+            setState((prev) => ({
               ...prev,
               isLoaded: true,
-              isLoading: false
+              isLoading: false,
             }))
             onLoad?.()
           }}
           onError={() => {
-            setState(prev => ({
+            setState((prev) => ({
               ...prev,
               hasError: true,
-              isLoading: false
+              isLoading: false,
             }))
             onError?.()
           }}
         />
-      )}
+      ) : null}
     </div>
   )
 }
@@ -260,7 +263,7 @@ async function loadIcon(name: string): Promise<string> {
       // 動的インポートでアイコンを読み込み（例: lucide-react）
       const iconModule = await import(`lucide-react`)
       const IconComponent = iconModule[name as keyof typeof iconModule]
-      
+
       if (IconComponent) {
         // SVGストリングに変換（実際の実装はアイコンライブラリに依存）
         const svgString = `<svg><!-- ${name} icon --></svg>`
@@ -275,7 +278,7 @@ async function loadIcon(name: string): Promise<string> {
   })
 
   iconPromises.set(name, promise)
-  
+
   try {
     const result = await promise
     iconPromises.delete(name)
@@ -286,12 +289,7 @@ async function loadIcon(name: string): Promise<string> {
   }
 }
 
-export const LazyIcon = ({ 
-  name, 
-  size = 24, 
-  className, 
-  priority = false 
-}: LazyIconProps) => {
+export const LazyIcon = ({ name, size = 24, className, priority = false }: LazyIconProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
   const [hasError, setHasError] = useState(false)
   const [isIntersecting, setIsIntersecting] = useState(priority)
@@ -305,11 +303,11 @@ export const LazyIcon = ({
     if (!element) return
 
     const observer = getImageObserver('50px', 0.1)
-    
+
     const callback = () => {
       setIsIntersecting(true)
     }
-    
+
     observerCallbacks.set(element, callback)
     observer.observe(element)
 
@@ -331,27 +329,18 @@ export const LazyIcon = ({
   return (
     <div
       ref={containerRef}
-      className={cn(
-        "inline-flex items-center justify-center",
-        className
-      )}
+      className={cn('inline-flex items-center justify-center', className)}
       style={{ width: size, height: size }}
     >
       {hasError ? (
-        <div 
-          className="bg-gray-200 rounded"
-          style={{ width: size, height: size }}
-        />
+        <div className="rounded bg-gray-200" style={{ width: size, height: size }} />
       ) : !isLoaded ? (
-        <div 
-          className="bg-gray-100 animate-pulse rounded"
-          style={{ width: size, height: size }}
-        />
+        <div className="animate-pulse rounded bg-gray-100" style={{ width: size, height: size }} />
       ) : (
-        <div 
-          className="w-full h-full"
-          dangerouslySetInnerHTML={{ 
-            __html: iconCache.get(name) || '' 
+        <div
+          className="h-full w-full"
+          dangerouslySetInnerHTML={{
+            __html: sanitizeBasicHTML(iconCache.get(name) || ''),
           }}
         />
       )}
@@ -365,28 +354,28 @@ export function useImagePerformance() {
     totalImages: 0,
     loadedImages: 0,
     errorImages: 0,
-    averageLoadTime: 0
+    averageLoadTime: 0,
   })
 
   const trackImageLoad = (loadTime: number) => {
-    setMetrics(prev => ({
+    setMetrics((prev) => ({
       ...prev,
       loadedImages: prev.loadedImages + 1,
-      averageLoadTime: (prev.averageLoadTime * (prev.loadedImages - 1) + loadTime) / prev.loadedImages
+      averageLoadTime: (prev.averageLoadTime * (prev.loadedImages - 1) + loadTime) / prev.loadedImages,
     }))
   }
 
   const trackImageError = () => {
-    setMetrics(prev => ({
+    setMetrics((prev) => ({
       ...prev,
-      errorImages: prev.errorImages + 1
+      errorImages: prev.errorImages + 1,
     }))
   }
 
   return {
     metrics,
     trackImageLoad,
-    trackImageError
+    trackImageError,
   }
 }
 

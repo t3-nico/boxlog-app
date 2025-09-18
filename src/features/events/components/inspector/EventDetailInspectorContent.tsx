@@ -25,6 +25,7 @@ import { typography } from '@/config/theme'
 import { border, text } from '@/config/theme/colors'
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
+import { sanitizeRichText } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 
 import { useEventDetailInspector } from './hooks/useEventDetailInspector'
@@ -419,7 +420,7 @@ export const EventDetailInspectorContent = ({
             ) : formData.description ? (
               <div
                 className={cn(typography.body.DEFAULT, text.primary, 'max-w-full break-words')}
-                dangerouslySetInnerHTML={{ __html: formData.description }}
+                dangerouslySetInnerHTML={{ __html: sanitizeRichText(formData.description || '') }}
               />
             ) : (
               <p className={cn(typography.body.DEFAULT, text.muted)}>メモがありません</p>
@@ -443,7 +444,7 @@ export const EventDetailInspectorContent = ({
             {showTimeline ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
 
-          {showTimeline && !isCreateMode && (
+          {showTimeline && !isCreateMode ? (
             <div className="max-w-full space-y-3 pt-3">
               <div className="relative max-w-full">
                 <div className="space-y-2">
@@ -473,12 +474,12 @@ export const EventDetailInspectorContent = ({
                             <div className={cn(typography.body.small, 'min-w-0 flex-1 break-words leading-relaxed')}>
                               {getEventDescription(event)}
                             </div>
-                            {event.automatic && (
+                            {event.automatic ? (
                               <RefreshCw
                                 className={cn('mt-0.5 h-3 w-3 flex-shrink-0', text.muted)}
                                 title="システムによる自動更新"
                               />
-                            )}
+                            ) : null}
                           </div>
                         </div>
                       </div>
@@ -487,13 +488,13 @@ export const EventDetailInspectorContent = ({
                 </div>
               </div>
             </div>
-          )}
+          ) : null}
 
-          {showTimeline && isCreateMode && (
+          {showTimeline && isCreateMode ? (
             <div className="pt-3 text-center">
               <span className={cn(typography.body.small, text.muted)}>作成後にアクティビティが表示されます</span>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* アクションセクション */}
