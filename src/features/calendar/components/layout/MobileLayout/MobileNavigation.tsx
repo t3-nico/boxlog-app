@@ -1,6 +1,6 @@
 'use client'
 
-import { Calendar, Plus, User, Settings } from 'lucide-react'
+import { Calendar, Plus, Settings, User } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -26,18 +26,18 @@ const defaultItems: MobileNavItem[] = [
   {
     id: 'calendar',
     label: 'カレンダー',
-    icon: <Calendar className="h-5 w-5" />
+    icon: <Calendar className="h-5 w-5" />,
   },
   {
     id: 'profile',
     label: 'プロフィール',
-    icon: <User className="h-5 w-5" />
+    icon: <User className="h-5 w-5" />,
   },
   {
     id: 'settings',
     label: '設定',
-    icon: <Settings className="h-5 w-5" />
-  }
+    icon: <Settings className="h-5 w-5" />,
+  },
 ]
 
 /**
@@ -50,7 +50,7 @@ export const MobileNavigation = ({
   onItemClick,
   showAddButton = true,
   onAddClick,
-  className
+  className,
 }: MobileNavigationProps) => {
   const handleItemClick = (item: MobileNavItem) => {
     if (item.disabled) return
@@ -59,23 +59,26 @@ export const MobileNavigation = ({
   }
 
   return (
-    <nav className={cn(
-      'fixed bottom-0 left-0 right-0 z-50',
-      'bg-background/95 backdrop-blur-sm border-t border-border',
-      'safe-area-inset-bottom', // iOS SafeArea対応
-      className
-    )}>
-      <div className="relative flex items-center justify-around px-2 py-2 pb-safe">
+    <nav
+      className={cn(
+        'fixed bottom-0 left-0 right-0 z-50',
+        'bg-background/95 border-border border-t backdrop-blur-sm',
+        'safe-area-inset-bottom', // iOS SafeArea対応
+        className
+      )}
+    >
+      <div className="pb-safe relative flex items-center justify-around px-2 py-2">
         {items.map((item, _index) => (
           <button
+            type="button"
             key={item.id}
             onClick={() => handleItemClick(item)}
             disabled={item.disabled}
             className={cn(
               'relative flex flex-col items-center justify-center',
-              'min-w-[64px] h-12 px-2 py-1 rounded-lg',
+              'h-12 min-w-[64px] rounded-lg px-2 py-1',
               'transition-colors duration-200',
-              'disabled:opacity-50 disabled:cursor-not-allowed',
+              'disabled:cursor-not-allowed disabled:opacity-50',
               activeItem === item.id
                 ? 'text-primary bg-primary/10'
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
@@ -86,20 +89,18 @@ export const MobileNavigation = ({
               {item.icon}
               {/* バッジ */}
               {item.badge && item.badge > 0 && (
-                <div className="absolute -top-1 -right-1 min-w-[16px] h-4 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center px-1">
+                <div className="bg-destructive text-destructive-foreground absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-xs">
                   {item.badge > 99 ? '99+' : item.badge}
                 </div>
               )}
             </div>
-            
+
             {/* ラベル */}
-            <span className="text-xs mt-0.5 leading-none">
-              {item.label}
-            </span>
+            <span className="mt-0.5 text-xs leading-none">{item.label}</span>
 
             {/* アクティブインジケーター */}
             {activeItem === item.id && (
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full" />
+              <div className="bg-primary absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full" />
             )}
           </button>
         ))}
@@ -107,14 +108,15 @@ export const MobileNavigation = ({
         {/* フローティングアクションボタン */}
         {showAddButton && (
           <button
+            type="button"
             onClick={onAddClick}
             className={cn(
-              'absolute left-1/2 -translate-x-1/2 -top-6',
-              'w-14 h-14 bg-primary text-primary-foreground',
+              'absolute -top-6 left-1/2 -translate-x-1/2',
+              'bg-primary text-primary-foreground h-14 w-14',
               'rounded-full shadow-lg hover:shadow-xl',
               'flex items-center justify-center',
               'transition-all duration-200 hover:scale-105',
-              'border-4 border-background'
+              'border-background border-4'
             )}
             aria-label="新しいイベントを作成"
           >

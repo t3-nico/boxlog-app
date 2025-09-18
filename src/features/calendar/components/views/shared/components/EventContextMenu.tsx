@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-import { Edit2, Trash2, Copy } from 'lucide-react'
+import { Copy, Edit2, Trash2 } from 'lucide-react'
 
-import { colors, spacing, typography, rounded, elevation } from '@/config/theme'
+import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import type { CalendarEvent } from '@/features/events/types/events'
 
 interface EventContextMenuProps {
@@ -24,7 +24,7 @@ export const EventContextMenu = ({
   onEdit,
   onDelete,
   onDuplicate,
-  _onViewDetails
+  _onViewDetails,
 }: EventContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null)
   const [adjustedPosition, setAdjustedPosition] = useState(position)
@@ -37,8 +37,8 @@ export const EventContextMenu = ({
       const viewportWidth = window.innerWidth
       const viewportHeight = window.innerHeight
 
-      let {x} = position
-      let {y} = position
+      let { x } = position
+      let { y } = position
 
       // 右端を超える場合は左に表示
       if (x + rect.width > viewportWidth - 10) {
@@ -87,60 +87,49 @@ export const EventContextMenu = ({
       icon: Edit2,
       label: '編集',
       action: () => onEdit?.(event),
-      available: !!onEdit
+      available: !!onEdit,
     },
     {
       icon: Copy,
       label: '複製',
       action: () => onDuplicate?.(event),
-      available: !!onDuplicate
+      available: !!onDuplicate,
     },
     {
       icon: Trash2,
       label: '削除',
       action: () => onDelete?.(event),
       available: !!onDelete,
-      dangerous: true
-    }
-  ].filter(item => item.available)
+      dangerous: true,
+    },
+  ].filter((item) => item.available)
 
   return (
     <div
       ref={menuRef}
-      className={`
-        fixed z-50 min-w-[180px] 
-        ${colors.background.base} 
-        ${rounded.md} 
-        ${elevation.md}
-        border ${colors.border.alpha}
-        ${spacing.cardVariants.compact}
-        ${typography.body.small}
-      `}
+      className={`fixed z-50 min-w-[180px] ${colors.background.base} ${rounded.md} ${elevation.md} border ${colors.border.alpha} ${spacing.cardVariants.compact} ${typography.body.small} `}
       style={{
         left: adjustedPosition.x,
-        top: adjustedPosition.y
+        top: adjustedPosition.y,
       }}
     >
       {/* メニューアイテム */}
       <div className="space-y-1">
-        {menuItems.map((item, index) => {
+        {menuItems.map((item, _index) => {
           const IconComponent = item.icon
-          
+
           return (
             <button
-              key={index}
+              type="button"
+              key={item.label}
               onClick={() => handleAction(item.action)}
-              className={`
-                w-full flex items-center gap-3 px-3 py-2 text-left
-                ${rounded.sm}
-                transition-colors
-                ${item.dangerous 
-                  ? `hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400`
+              className={`flex w-full items-center gap-3 px-3 py-2 text-left ${rounded.sm} transition-colors ${
+                item.dangerous
+                  ? `text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20`
                   : `${colors.secondary.hover} ${colors.text.primary}`
-                }
-              `}
+              } `}
             >
-              <IconComponent className="w-4 h-4 flex-shrink-0" />
+              <IconComponent className="h-4 w-4 flex-shrink-0" />
               <span>{item.label}</span>
             </button>
           )

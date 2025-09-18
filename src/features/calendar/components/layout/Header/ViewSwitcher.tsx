@@ -98,6 +98,7 @@ export const ViewSwitcher = ({
   return (
     <div className={cn('relative', className)}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           'flex items-center gap-2 px-4 py-2 text-sm font-medium',
@@ -145,6 +146,7 @@ export const ViewSwitcher = ({
               <div className="py-1">
                 {options.map((option) => (
                   <button
+                    type="button"
                     key={option.value}
                     onClick={() => handleSelect(option.value)}
                     className={cn(
@@ -173,6 +175,7 @@ export const ViewSwitcher = ({
               {/* 週末表示オプション（すべてのビューに反映） */}
               <div className="py-1">
                 <button
+                  type="button"
                   onClick={handleWeekendToggle}
                   className={cn(
                     'w-full px-4 py-2 text-sm',

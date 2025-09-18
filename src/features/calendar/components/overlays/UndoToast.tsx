@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
-import { X, Undo2, RotateCcw } from 'lucide-react'
+import { RotateCcw, Undo2, X } from 'lucide-react'
 
 import type { CalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
@@ -11,7 +11,13 @@ interface UndoAction {
   id: string
   type: 'create' | 'delete' | 'edit' | 'move'
   description: string
-  data: CalendarEvent | { eventId: string; oldPosition?: { startTime: Date; endTime: Date }; newPosition?: { startTime: Date; endTime: Date } }
+  data:
+    | CalendarEvent
+    | {
+        eventId: string
+        oldPosition?: { startTime: Date; endTime: Date }
+        newPosition?: { startTime: Date; endTime: Date }
+      }
   timestamp: number
 }
 
@@ -22,12 +28,7 @@ interface UndoToastProps {
   autoHideDelay?: number
 }
 
-export const UndoToast = ({ 
-  action, 
-  onUndo, 
-  onDismiss, 
-  autoHideDelay = 5000 
-}: UndoToastProps) => {
+export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: UndoToastProps) => {
   const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 
@@ -35,23 +36,23 @@ export const UndoToast = ({
     if (action) {
       setIsVisible(true)
       setProgress(100)
-      
+
       // プログレスバーのアニメーション
       const startTime = Date.now()
       const updateProgress = () => {
         const elapsed = Date.now() - startTime
         const remaining = Math.max(0, autoHideDelay - elapsed)
         const newProgress = (remaining / autoHideDelay) * 100
-        
+
         setProgress(newProgress)
-        
+
         if (remaining > 0) {
           requestAnimationFrame(updateProgress)
         } else {
           handleDismiss()
         }
       }
-      
+
       requestAnimationFrame(updateProgress)
     } else {
       setIsVisible(false)
@@ -96,79 +97,72 @@ export const UndoToast = ({
   return (
     <div
       className={cn(
-        "fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50",
-        "transition-all duration-200 ease-out",
-        isVisible 
-          ? "translate-y-0 opacity-100 scale-100" 
-          : "translate-y-2 opacity-0 scale-95"
+        'fixed bottom-4 left-1/2 z-50 -translate-x-1/2 transform',
+        'transition-all duration-200 ease-out',
+        isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-95 opacity-0'
       )}
     >
-      <div className="bg-gray-900 text-white rounded-lg shadow-2xl border border-gray-700 overflow-hidden min-w-[320px]">
+      <div className="min-w-[320px] overflow-hidden rounded-lg border border-gray-700 bg-gray-900 text-white shadow-2xl">
         {/* プログレスバー */}
-        <div 
-          className="h-1 bg-primary transition-all duration-100 ease-linear"
-          style={{ width: `${progress}%` }}
-        />
-        
-        <div className="p-4 flex items-center gap-3">
+        <div className="bg-primary h-1 transition-all duration-100 ease-linear" style={{ width: `${progress}%` }} />
+
+        <div className="flex items-center gap-3 p-4">
           {/* アイコン */}
           <div className="flex-shrink-0">
             {action.type === 'create' && (
-              <div className="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                <span className="text-green-400 text-sm">+</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-500/20">
+                <span className="text-sm text-green-400">+</span>
               </div>
             )}
             {action.type === 'delete' && (
-              <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
-                <X className="w-4 h-4 text-red-400" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20">
+                <X className="h-4 w-4 text-red-400" />
               </div>
             )}
             {action.type === 'edit' && (
-              <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                <span className="text-blue-400 text-sm">✏️</span>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500/20">
+                <span className="text-sm text-blue-400">✏️</span>
               </div>
             )}
             {action.type === 'move' && (
-              <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
-                <RotateCcw className="w-4 h-4 text-purple-400" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500/20">
+                <RotateCcw className="h-4 w-4 text-purple-400" />
               </div>
             )}
           </div>
-          
+
           {/* メッセージ */}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white">
-              {action.description}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              Press Ctrl+Z to undo
-            </p>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-white">{action.description}</p>
+            <p className="mt-1 text-xs text-gray-400">Press Ctrl+Z to undo</p>
           </div>
-          
+
           {/* アクション */}
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handleUndo}
               className={cn(
-                "inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium",
-                "bg-primary text-primary-foreground rounded-md",
-                "hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50",
-                "transition-colors duration-150"
+                'inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium',
+                'bg-primary text-primary-foreground rounded-md',
+                'hover:bg-primary/90 focus:ring-primary/50 focus:outline-none focus:ring-2',
+                'transition-colors duration-150'
               )}
             >
-              <Undo2 className="w-3 h-3" />
+              <Undo2 className="h-3 w-3" />
               Undo
             </button>
-            
+
             <button
+              type="button"
               onClick={handleDismiss}
               className={cn(
-                "p-1.5 text-gray-400 hover:text-white rounded-md",
-                "hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500",
-                "transition-colors duration-150"
+                'rounded-md p-1.5 text-gray-400 hover:text-white',
+                'hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500',
+                'transition-colors duration-150'
               )}
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
@@ -186,15 +180,15 @@ export function useUndoManager() {
     const newAction: UndoAction = {
       ...action,
       id: `undo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
-    
-    setUndoStack(prev => {
+
+    setUndoStack((prev) => {
       // 最大10個のアクションを保持
       const newStack = [newAction, ...prev].slice(0, 10)
       return newStack
     })
-    
+
     setCurrentAction(newAction)
   }, [])
 
@@ -215,7 +209,7 @@ export function useUndoManager() {
     addAction,
     performUndo,
     dismissCurrent,
-    undoStack
+    undoStack,
   }
 }
 
@@ -224,24 +218,27 @@ export const createUndoActions = {
   eventCreated: (event: CalendarEvent): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'create',
     description: `Created "${event.title}"`,
-    data: { event }
+    data: { event },
   }),
-  
+
   eventDeleted: (event: CalendarEvent): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'delete',
     description: `Deleted "${event.title}"`,
-    data: { event }
+    data: { event },
   }),
-  
-  eventMoved: (event: CalendarEvent, oldData: { startDate: Date, endDate?: Date }): Omit<UndoAction, 'id' | 'timestamp'> => ({
+
+  eventMoved: (
+    event: CalendarEvent,
+    oldData: { startDate: Date; endDate?: Date }
+  ): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'move',
     description: `Moved "${event.title}"`,
-    data: { event, oldData }
+    data: { event, oldData },
   }),
-  
+
   eventEdited: (event: CalendarEvent, oldData: Partial<CalendarEvent>): Omit<UndoAction, 'id' | 'timestamp'> => ({
     type: 'edit',
     description: `Edited "${event.title}"`,
-    data: { event, oldData }
-  })
+    data: { event, oldData },
+  }),
 }
