@@ -171,8 +171,8 @@ const RelatedFiles = ({ files }: { files?: string[] }) => {
   return (
     <div className="bg-muted mt-2 rounded p-2 text-xs">
       <div className="text-card-foreground mb-1 font-medium">関連ファイル:</div>
-      {files.map((file, index) => (
-        <div key={`file-${file}-${index}`} className="text-muted-foreground font-mono">
+      {files.map((file, _index) => (
+        <div key={file} className="text-muted-foreground font-mono">
           {file}
         </div>
       ))}

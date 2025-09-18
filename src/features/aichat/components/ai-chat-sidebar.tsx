@@ -30,10 +30,10 @@ interface SpeechRecognition {
 declare global {
   interface Window {
     SpeechRecognition: {
-      new(): SpeechRecognition
+      new (): SpeechRecognition
     }
     webkitSpeechRecognition: {
-      new(): SpeechRecognition
+      new (): SpeechRecognition
     }
   }
 }
@@ -116,8 +116,8 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           // 複数の分岐レスポンスがある場合
           <AIBranch onBranchChange={(index) => console.log('Branch changed to:', index)}>
             <AIBranchMessages>
-              {(message.content as string[]).map((content, index) => (
-                <BoxLogAIResponse key={`content-${message.id}-${index}`}>{content}</BoxLogAIResponse>
+              {(message.content as string[]).map((content, _index) => (
+                <BoxLogAIResponse key={`${message.id}-${content.slice(0, 30)}`}>{content}</BoxLogAIResponse>
               ))}
             </AIBranchMessages>
             <AIBranchSelector from="assistant">
