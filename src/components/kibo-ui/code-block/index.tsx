@@ -454,8 +454,9 @@ const CodeBlockFallback = ({ children, ...props }: CodeBlockFallbackProps) => (
         {children
           ?.toString()
           .split('\n')
-          .map((line, i) => (
-            <span className="line" key={`line-${i}-${line.slice(0, 20)}`}>
+          .map((line, lineNumber) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <span className="line" key={lineNumber}>
               {line}
             </span>
           ))}

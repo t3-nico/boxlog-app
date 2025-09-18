@@ -243,7 +243,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
 
                 {/* Calendar dates */}
                 <div className="grid grid-cols-7 gap-1">
-                  {calendarDays.map((day, index) => {
+                  {calendarDays.map((day, _index) => {
                     const isCurrentMonth = day.getMonth() === calendarDate.getMonth()
                     const isSelected = day.toDateString() === value.toDateString()
                     const isToday = day.toDateString() === new Date().toDateString()
@@ -251,7 +251,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                     return (
                       <button
                         type="button"
-                        key={index}
+                        key={day.toISOString().split('T')[0]}
                         onClick={() => handleDateSelect(day)}
                         className={`rounded p-2 text-center transition-colors duration-150 ${
                           isSelected

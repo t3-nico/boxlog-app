@@ -1,8 +1,8 @@
 'use client'
 
-import React, { ReactNode, createContext, useContext, useState, useEffect, useRef } from 'react'
+import React, { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react'
 
-import { motion, AnimatePresence, useReducedMotion, LayoutGroup, useMotionValue, useSpring } from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
 
@@ -17,7 +17,7 @@ const GPU_OPTIMIZED_STYLES = {
   willChange: 'transform, opacity' as const,
   backfaceVisibility: 'hidden' as const,
   perspective: 1000,
-  transformStyle: 'preserve-3d' as const
+  transformStyle: 'preserve-3d' as const,
 }
 
 // アニメーション設定
@@ -26,26 +26,26 @@ const ANIMATION_CONFIG = {
   viewTransition: {
     duration: 0.4,
     ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number],
-    staggerChildren: 0.05
+    staggerChildren: 0.05,
   },
-  
+
   // スライド遷移
   slideTransition: {
     duration: 0.3,
-    ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number]
+    ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
   },
-  
+
   // イベント展開
   eventExpansion: {
     duration: 0.25,
-    ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number]
+    ease: [0.4, 0.0, 0.2, 1] as [number, number, number, number],
   },
-  
+
   // 高速アニメーション（reducedMotion時）
   reduced: {
     duration: 0.1,
-    ease: 'linear' as const
-  }
+    ease: 'linear' as const,
+  },
 } as const
 
 // 高度なビュー切り替えのプロパティ
@@ -74,15 +74,15 @@ interface EventCollapseProps {
 }
 
 // 高度なビュー切り替えアニメーション
-export const AdvancedViewTransition = ({ 
-  currentView, 
-  children, 
+export const AdvancedViewTransition = ({
+  currentView,
+  children,
   className,
-  onTransitionComplete 
+  onTransitionComplete,
 }: AdvancedViewTransitionProps) => {
   const prefersReducedMotion = useReducedMotion()
   const [previousView, setPreviousView] = useState<CalendarView>(currentView)
-  
+
   // ビューが変更された時の処理
   useEffect(() => {
     if (currentView !== previousView) {
@@ -91,9 +91,7 @@ export const AdvancedViewTransition = ({
   }, [currentView, previousView])
 
   // アニメーション設定の選択
-  const animationConfig = prefersReducedMotion 
-    ? ANIMATION_CONFIG.reduced 
-    : ANIMATION_CONFIG.viewTransition
+  const animationConfig = prefersReducedMotion ? ANIMATION_CONFIG.reduced : ANIMATION_CONFIG.viewTransition
 
   // ビュー固有のアニメーション設定
   const getViewAnimation = (view: CalendarView) => {
@@ -101,7 +99,7 @@ export const AdvancedViewTransition = ({
       initial: { opacity: 0, scale: 0.95 },
       animate: { opacity: 1, scale: 1 },
       exit: { opacity: 0, scale: 1.05 },
-      transition: animationConfig
+      transition: animationConfig,
     }
 
     switch (view) {
@@ -110,7 +108,7 @@ export const AdvancedViewTransition = ({
         return {
           ...baseAnimation,
           initial: { ...baseAnimation.initial, y: 20 },
-          exit: { ...baseAnimation.exit, y: -20 }
+          exit: { ...baseAnimation.exit, y: -20 },
         }
       case 'week':
       case 'week-no-weekend':
@@ -118,20 +116,20 @@ export const AdvancedViewTransition = ({
         return {
           ...baseAnimation,
           initial: { ...baseAnimation.initial, x: -20 },
-          exit: { ...baseAnimation.exit, x: 20 }
+          exit: { ...baseAnimation.exit, x: 20 },
         }
       case 'month':
         return {
           ...baseAnimation,
           initial: { ...baseAnimation.initial, scale: 0.9 },
-          exit: { ...baseAnimation.exit, scale: 1.1 }
+          exit: { ...baseAnimation.exit, scale: 1.1 },
         }
       case '2week':
       case 'schedule':
         return {
           ...baseAnimation,
           initial: { ...baseAnimation.initial, y: -20 },
-          exit: { ...baseAnimation.exit, y: 20 }
+          exit: { ...baseAnimation.exit, y: 20 },
         }
       default:
         return baseAnimation
@@ -156,12 +154,12 @@ export const AdvancedViewTransition = ({
 }
 
 // 高度なスライド遷移コンポーネント
-export const AdvancedSlideTransition = ({ 
-  direction, 
-  children, 
+export const AdvancedSlideTransition = ({
+  direction,
+  children,
   className,
   duration = ANIMATION_CONFIG.slideTransition.duration,
-  onComplete 
+  onComplete,
 }: AdvancedSlideTransitionProps) => {
   const prefersReducedMotion = useReducedMotion()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -169,43 +167,39 @@ export const AdvancedSlideTransition = ({
   // スライド方向の設定
   const getSlideVariants = (dir: SlideDirection) => {
     const distance = 100 // %単位
-    
+
     const variants = {
       left: {
         initial: { x: `${distance}%`, opacity: 0.8 },
         animate: { x: 0, opacity: 1 },
-        exit: { x: `-${distance}%`, opacity: 0.8 }
+        exit: { x: `-${distance}%`, opacity: 0.8 },
       },
       right: {
         initial: { x: `-${distance}%`, opacity: 0.8 },
         animate: { x: 0, opacity: 1 },
-        exit: { x: `${distance}%`, opacity: 0.8 }
+        exit: { x: `${distance}%`, opacity: 0.8 },
       },
       up: {
         initial: { y: `${distance}%`, opacity: 0.8 },
         animate: { y: 0, opacity: 1 },
-        exit: { y: `-${distance}%`, opacity: 0.8 }
+        exit: { y: `-${distance}%`, opacity: 0.8 },
       },
       down: {
         initial: { y: `-${distance}%`, opacity: 0.8 },
         animate: { y: 0, opacity: 1 },
-        exit: { y: `${distance}%`, opacity: 0.8 }
-      }
+        exit: { y: `${distance}%`, opacity: 0.8 },
+      },
     }
 
     return variants[dir]
   }
 
-  const animationConfig = prefersReducedMotion 
-    ? ANIMATION_CONFIG.reduced 
+  const animationConfig = prefersReducedMotion
+    ? ANIMATION_CONFIG.reduced
     : { ...ANIMATION_CONFIG.slideTransition, duration }
 
   return (
-    <motion.div
-      ref={containerRef}
-      className={cn('relative overflow-hidden', className)}
-      style={GPU_OPTIMIZED_STYLES}
-    >
+    <motion.div ref={containerRef} className={cn('relative overflow-hidden', className)} style={GPU_OPTIMIZED_STYLES}>
       <AnimatePresence mode="wait" onExitComplete={onComplete}>
         <motion.div
           key={direction}
@@ -224,12 +218,7 @@ export const AdvancedSlideTransition = ({
 }
 
 // イベント展開/折りたたみコンポーネント
-export const EventCollapse = ({ 
-  isExpanded, 
-  children, 
-  maxHeight = 300,
-  className 
-}: EventCollapseProps) => {
+export const EventCollapse = ({ isExpanded, children, maxHeight = 300, className }: EventCollapseProps) => {
   const prefersReducedMotion = useReducedMotion()
   const contentRef = useRef<HTMLDivElement>(null)
   const [contentHeight, setContentHeight] = useState<number>(0)
@@ -242,9 +231,7 @@ export const EventCollapse = ({
     }
   }, [children, maxHeight])
 
-  const animationConfig = prefersReducedMotion 
-    ? ANIMATION_CONFIG.reduced 
-    : ANIMATION_CONFIG.eventExpansion
+  const animationConfig = prefersReducedMotion ? ANIMATION_CONFIG.reduced : ANIMATION_CONFIG.eventExpansion
 
   return (
     <motion.div
@@ -252,7 +239,7 @@ export const EventCollapse = ({
       initial={false}
       animate={{
         height: isExpanded ? contentHeight : 0,
-        opacity: isExpanded ? 1 : 0
+        opacity: isExpanded ? 1 : 0,
       }}
       transition={animationConfig}
       style={GPU_OPTIMIZED_STYLES}
@@ -273,10 +260,7 @@ interface ViewTransitionProps {
 
 export const ViewTransition = ({ children, viewType, className = '' }: ViewTransitionProps) => {
   return (
-    <AdvancedViewTransition 
-      currentView={viewType as CalendarView} 
-      className={className}
-    >
+    <AdvancedViewTransition currentView={viewType as CalendarView} className={className}>
       {children}
     </AdvancedViewTransition>
   )
@@ -292,7 +276,7 @@ export const TaskDragAnimation = ({ isDragging, children }: TaskDragAnimationPro
   return (
     <div
       className={`transition-all duration-150 ${
-        isDragging ? 'scale-105 shadow-lg opacity-80' : 'scale-100 shadow-sm opacity-100'
+        isDragging ? 'scale-105 opacity-80 shadow-lg' : 'scale-100 opacity-100 shadow-sm'
       }`}
     >
       {children}
@@ -309,13 +293,11 @@ interface HoverEffectProps {
 
 export const HoverEffect = ({ children, isHovered, disabled = false }: HoverEffectProps) => {
   if (disabled) return <>{children}</>
-  
+
   return (
     <div
       className={`transition-all duration-150 ${
-        isHovered 
-          ? 'scale-102 shadow-md brightness-110' 
-          : 'scale-100 shadow-sm brightness-100'
+        isHovered ? 'scale-102 shadow-md brightness-110' : 'scale-100 shadow-sm brightness-100'
       }`}
     >
       {children}
@@ -331,16 +313,11 @@ interface FadeTransitionProps {
   className?: string
 }
 
-export const FadeTransition = ({ 
-  show, 
-  children, 
-  duration = 200,
-  className = '' 
-}: FadeTransitionProps) => {
+export const FadeTransition = ({ show, children, duration = 200, className = '' }: FadeTransitionProps) => {
   return (
     <div
       className={`transition-opacity duration-${duration} ${
-        show ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        show ? 'opacity-100' : 'pointer-events-none opacity-0'
       } ${className}`}
     >
       {children}
@@ -362,24 +339,29 @@ export const SlideTransition = ({
   direction = 'up',
   children,
   duration = 200,
-  className = ''
+  className = '',
 }: SlideTransitionProps) => {
   const getTransform = () => {
     if (show) return 'translate-0'
-    
+
     switch (direction) {
-      case 'up': return 'translate-y-2'
-      case 'down': return '-translate-y-2'
-      case 'left': return 'translate-x-2'
-      case 'right': return '-translate-x-2'
-      default: return 'translate-y-2'
+      case 'up':
+        return 'translate-y-2'
+      case 'down':
+        return '-translate-y-2'
+      case 'left':
+        return 'translate-x-2'
+      case 'right':
+        return '-translate-x-2'
+      default:
+        return 'translate-y-2'
     }
   }
-  
+
   return (
     <div
       className={`transition-all duration-${duration} ${
-        show ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        show ? 'opacity-100' : 'pointer-events-none opacity-0'
       } ${getTransform()} ${className}`}
     >
       {children}
@@ -397,9 +379,7 @@ export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnima
   return (
     <div
       className={`${
-        isNew 
-          ? 'animate-pulse shadow-lg ring-2 ring-blue-400 ring-opacity-50' 
-          : ''
+        isNew ? 'animate-pulse shadow-lg ring-2 ring-blue-400 ring-opacity-50' : ''
       } transition-all duration-300`}
     >
       {children}
@@ -414,37 +394,23 @@ interface CalendarViewAnimationProps {
   previousViewType?: 'day' | 'split-day' | '3day' | 'week' | 'week-no-weekend' | '2week' | 'schedule' | 'month'
 }
 
-export const CalendarViewAnimation = ({ 
-  children, 
-  viewType, 
-  previousViewType 
-}: CalendarViewAnimationProps) => {
+export const CalendarViewAnimation = ({ children, viewType, previousViewType }: CalendarViewAnimationProps) => {
   const getAnimationClass = () => {
     if (!previousViewType) return ''
-    
+
     // ズーム系の切り替え
-    if (
-      (previousViewType === 'month' && viewType === 'week') ||
-      (previousViewType === 'week' && viewType === 'day')
-    ) {
+    if ((previousViewType === 'month' && viewType === 'week') || (previousViewType === 'week' && viewType === 'day')) {
       return 'calendar-zoom-in'
     }
-    
-    if (
-      (previousViewType === 'day' && viewType === 'week') ||
-      (previousViewType === 'week' && viewType === 'month')
-    ) {
+
+    if ((previousViewType === 'day' && viewType === 'week') || (previousViewType === 'week' && viewType === 'month')) {
       return 'calendar-zoom-out'
     }
-    
+
     return 'calendar-slide-in'
   }
-  
-  return (
-    <div className={`${getAnimationClass()} h-full`}>
-      {children}
-    </div>
-  )
+
+  return <div className={`${getAnimationClass()} h-full`}>{children}</div>
 }
 
 // 読み込み時のスケルトンアニメーション
@@ -455,22 +421,17 @@ interface SkeletonAnimationProps {
   className?: string
 }
 
-export const SkeletonAnimation = ({ 
-  show, 
-  count = 3, 
-  height = 'h-8',
-  className = '' 
-}: SkeletonAnimationProps) => {
+export const SkeletonAnimation = ({ show, count = 3, height = 'h-8', className = '' }: SkeletonAnimationProps) => {
   if (!show) return null
-  
+
   return (
     <div className={`space-y-2 ${className}`}>
       {Array.from({ length: count }, (_, index) => (
         <div
           key={`skeleton-${Date.now()}-${index}`}
-          className={`${height} bg-gray-200 dark:bg-gray-700 rounded animate-pulse`}
+          className={`${height} animate-pulse rounded bg-gray-200 dark:bg-gray-700`}
           style={{
-            animationDelay: `${index * 0.1}s`
+            animationDelay: `${index * 0.1}s`,
           }}
         />
       ))}
@@ -487,17 +448,17 @@ interface TaskHoverTooltipProps {
 
 export const TaskHoverTooltip = ({ show, children, position }: TaskHoverTooltipProps) => {
   if (!show) return null
-  
+
   return (
     <div
-      className="fixed z-50 pointer-events-none transition-all duration-150"
+      className="pointer-events-none fixed z-50 transition-all duration-150"
       style={{
         left: position?.x || 0,
         top: position?.y || 0,
-        transform: 'translate(-50%, -100%)'
+        transform: 'translate(-50%, -100%)',
       }}
     >
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-3 max-w-xs">
+      <div className="max-w-xs rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
         {children}
       </div>
     </div>
@@ -512,11 +473,7 @@ interface AnimationWrapperProps {
 }
 
 export const AnimationWrapper = ({ children, disabled = false, className = '' }: AnimationWrapperProps) => {
-  return (
-    <div className={`${disabled ? '' : 'transition-all duration-150'} ${className}`}>
-      {children}
-    </div>
-  )
+  return <div className={`${disabled ? '' : 'transition-all duration-150'} ${className}`}>{children}</div>
 }
 
 // アニメーション設定のコンテキスト
@@ -529,7 +486,7 @@ interface AnimationContextType {
 const AnimationContext = createContext<AnimationContextType>({
   enabled: true,
   reducedMotion: false,
-  duration: 'normal'
+  duration: 'normal',
 })
 
 export function useAnimation() {
@@ -546,14 +503,10 @@ export const AnimationProvider = ({ children, config = {} }: AnimationProviderPr
     enabled: true,
     reducedMotion: false,
     duration: 'normal',
-    ...config
+    ...config,
   }
-  
-  return (
-    <AnimationContext.Provider value={defaultConfig}>
-      {children}
-    </AnimationContext.Provider>
-  )
+
+  return <AnimationContext.Provider value={defaultConfig}>{children}</AnimationContext.Provider>
 }
 
 // ステガード（段階的）アニメーション
@@ -563,22 +516,18 @@ interface StaggeredAnimationProps {
   className?: string
 }
 
-export const StaggeredAnimation = ({ 
-  children, 
-  staggerDelay = 0.05,
-  className 
-}: StaggeredAnimationProps) => {
+export const StaggeredAnimation = ({ children, staggerDelay = 0.05, className }: StaggeredAnimationProps) => {
   const prefersReducedMotion = useReducedMotion()
-  
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: prefersReducedMotion ? 0 : staggerDelay,
-        delayChildren: 0.1
-      }
-    }
+        delayChildren: 0.1,
+      },
+    },
   }
 
   const itemVariants = {
@@ -588,9 +537,9 @@ export const StaggeredAnimation = ({
       opacity: 1,
       transition: {
         duration: prefersReducedMotion ? 0.1 : 0.3,
-        ease: [0.4, 0.0, 0.2, 1]
-      }
-    }
+        ease: [0.4, 0.0, 0.2, 1],
+      },
+    },
   }
 
   return (
@@ -603,7 +552,8 @@ export const StaggeredAnimation = ({
     >
       {children.map((child, index) => (
         <motion.div
-          key={`stagger-${Date.now()}-${index}`}
+          // eslint-disable-next-line react/no-array-index-key
+          key={index}
           variants={itemVariants}
           style={GPU_OPTIMIZED_STYLES}
         >
@@ -626,11 +576,11 @@ interface SpringAnimationProps {
   className?: string
 }
 
-export const SpringAnimation = ({ 
-  children, 
-  isActive, 
+export const SpringAnimation = ({
+  children,
+  isActive,
   springConfig = { stiffness: 300, damping: 30, mass: 1 },
-  className 
+  className,
 }: SpringAnimationProps) => {
   const scaleValue = useMotionValue(1)
   const springScale = useSpring(scaleValue, springConfig)
@@ -644,7 +594,7 @@ export const SpringAnimation = ({
       className={className}
       style={{
         scale: springScale,
-        ...GPU_OPTIMIZED_STYLES
+        ...GPU_OPTIMIZED_STYLES,
       }}
     >
       {children}
@@ -685,7 +635,7 @@ export const Parallax = ({ children, offset, className }: ParallaxProps) => {
       className={className}
       style={{
         y: springY,
-        ...GPU_OPTIMIZED_STYLES
+        ...GPU_OPTIMIZED_STYLES,
       }}
     >
       {children}
@@ -700,13 +650,9 @@ interface PerformanceIndicatorProps {
   className?: string
 }
 
-export const PerformanceIndicator = ({ 
-  isLoading, 
-  progress = 0, 
-  className 
-}: PerformanceIndicatorProps) => {
+export const PerformanceIndicator = ({ isLoading, progress = 0, className }: PerformanceIndicatorProps) => {
   const prefersReducedMotion = useReducedMotion()
-  
+
   return (
     <AnimatePresence>
       {isLoading && (
@@ -720,24 +666,24 @@ export const PerformanceIndicator = ({
         >
           {/* プログレスバー */}
           <motion.div
-            className="h-1 bg-primary"
+            className="bg-primary h-1"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{
               duration: prefersReducedMotion ? 0.1 : 0.3,
-              ease: 'easeOut'
+              ease: 'easeOut',
             }}
             style={GPU_OPTIMIZED_STYLES}
           />
-          
+
           {/* スピナー */}
           <motion.div
-            className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full"
+            className="border-primary h-4 w-4 rounded-full border-2 border-t-transparent"
             animate={{ rotate: prefersReducedMotion ? 0 : 360 }}
             transition={{
               duration: 1,
               repeat: prefersReducedMotion ? 0 : Infinity,
-              ease: 'linear'
+              ease: 'linear',
             }}
             style={GPU_OPTIMIZED_STYLES}
           />
@@ -770,7 +716,7 @@ export function useViewTransition() {
     direction,
     isTransitioning,
     changeView,
-    handleTransitionComplete
+    handleTransitionComplete,
   }
 }
 
@@ -786,19 +732,19 @@ export function useAnimationPerformance() {
     const measureFPS = () => {
       frameCount.current++
       const now = performance.now()
-      
+
       if (now - lastTime.current >= 1000) {
         const currentFPS = Math.round((frameCount.current * 1000) / (now - lastTime.current))
         setFps(currentFPS)
         frameCount.current = 0
         lastTime.current = now
       }
-      
+
       animationId = requestAnimationFrame(measureFPS)
     }
 
     animationId = requestAnimationFrame(measureFPS)
-    
+
     return () => {
       if (animationId) {
         cancelAnimationFrame(animationId)
@@ -818,7 +764,7 @@ interface TouchAnimationProps {
 
 export const TouchAnimation = ({ children, onTap, className }: TouchAnimationProps) => {
   const prefersReducedMotion = useReducedMotion()
-  
+
   return (
     <motion.div
       className={className}
@@ -844,7 +790,7 @@ export const OptimizedListAnimation = ({
   children,
   itemHeight,
   visibleItems,
-  className
+  className,
 }: OptimizedListAnimationProps) => {
   const prefersReducedMotion = useReducedMotion()
   const [scrollY, setScrollY] = useState(0)
@@ -867,11 +813,7 @@ export const OptimizedListAnimation = ({
   const visibleChildren = children.slice(startIndex, endIndex)
 
   return (
-    <div
-      ref={containerRef}
-      className={cn('overflow-auto', className)}
-      style={{ height: visibleItems * itemHeight }}
-    >
+    <div ref={containerRef} className={cn('overflow-auto', className)} style={{ height: visibleItems * itemHeight }}>
       <div style={{ height: children.length * itemHeight, position: 'relative' }}>
         <AnimatePresence mode="popLayout">
           {visibleChildren.map((child, index) => (
@@ -886,7 +828,7 @@ export const OptimizedListAnimation = ({
                 top: (startIndex + index) * itemHeight,
                 width: '100%',
                 height: itemHeight,
-                ...GPU_OPTIMIZED_STYLES
+                ...GPU_OPTIMIZED_STYLES,
               }}
             >
               {child}
