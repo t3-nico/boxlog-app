@@ -127,7 +127,6 @@ const TagTreeNode = ({
               onBlur={handleSaveEdit}
               onKeyDown={handleKeyDown}
               className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700"
-              autoFocus
             />
           ) : (
             <button

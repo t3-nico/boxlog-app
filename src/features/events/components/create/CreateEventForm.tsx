@@ -1,28 +1,22 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Tag } from 'lucide-react'
 
 import { Input } from '@/components/shadcn-ui/input'
 import { Label } from '@/components/shadcn-ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Textarea } from '@/components/shadcn-ui/textarea'
-import { text, semantic, border } from '@/config/theme/colors'
+import { border, semantic, text } from '@/config/theme/colors'
 import { icon } from '@/config/theme/icons'
 import { body } from '@/config/theme/typography'
 
-import type { CreateEventRequest, EventType, EventStatus, EventPriority } from '../../types/events'
+import type { CreateEventRequest, EventPriority, EventStatus, EventType } from '../../types/events'
 
 // シンプルな見出しコンポーネント
-const SectionHeader = ({ 
-  icon: Icon, 
-  title 
-}: { 
-  icon: React.ComponentType<{ className?: string }>, 
-  title: string 
-}) => (
+const SectionHeader = ({ icon: Icon, title }: { icon: React.ComponentType<{ className?: string }>; title: string }) => (
   <div className="flex items-center gap-2">
     <Icon className={`${icon.size.md} ${text.secondary}`} />
     <h3 className={`${body.large} font-semibold`}>{title}</h3>
@@ -58,7 +52,7 @@ function useCreateEventForm(initialData: CreateEventFormData, context: CreateEve
     url: initialData.url || '',
     reminders: initialData.reminders || [],
     items: initialData.items || [],
-    tagIds: initialData.tagIds || []
+    tagIds: initialData.tagIds || [],
   })
 
   const isValid = formData.title.trim().length > 0
@@ -92,20 +86,24 @@ function useFormFocus(titleInputRef: React.RefObject<HTMLInputElement>) {
     const focusTitle = () => {
       if (titleInputRef.current) {
         titleInputRef.current.focus()
-        const {length} = titleInputRef.current.value
+        const { length } = titleInputRef.current.value
         titleInputRef.current.setSelectionRange(length, length)
       }
     }
 
     focusTitle()
     const timeoutId = setTimeout(focusTitle, 100)
-    
+
     return () => clearTimeout(timeoutId)
   }, [titleInputRef])
 }
 
 // カスタムフック: キーボードショートカット
-function useFormKeyboardShortcuts(formData: CreateEventRequest, isValid: boolean, onSubmit: (data: CreateEventRequest) => void) {
+function useFormKeyboardShortcuts(
+  formData: CreateEventRequest,
+  isValid: boolean,
+  onSubmit: (data: CreateEventRequest) => void
+) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && isValid) {
@@ -124,13 +122,13 @@ export const CreateEventForm = ({
   onSubmit,
   _onCancel,
   _isSubmitting,
-  error
+  error,
 }: CreateEventFormProps) => {
   const titleInputRef = useRef<HTMLInputElement>(null)
-  
+
   const { formData, setFormData, isValid } = useCreateEventForm(initialData, context)
   const { formatDateForInput, formatTimeForInput } = useFormFormatters()
-  
+
   useFormFocus(titleInputRef)
   useFormKeyboardShortcuts(formData, isValid, onSubmit)
 
@@ -139,8 +137,6 @@ export const CreateEventForm = ({
     if (!isValid) return
     onSubmit(formData)
   }
-
-
 
   return (
     <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">
@@ -151,21 +147,22 @@ export const CreateEventForm = ({
           <Input
             ref={titleInputRef}
             id="title"
-            autoFocus
             placeholder="What needs to be done?"
             value={formData.title}
-            onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-            className={`text-3xl md:text-4xl font-medium ${border.universal} py-6 px-6 placeholder:text-neutral-400 dark:placeholder:text-neutral-500 text-neutral-900 dark:text-neutral-50`}
+            onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+            className={`text-3xl font-medium md:text-4xl ${border.universal} px-6 py-6 text-neutral-900 placeholder:text-neutral-400 dark:text-neutral-50 dark:placeholder:text-neutral-500`}
           />
         </div>
 
         {/* 日付・時間 - 重要項目 */}
         <div className="space-y-3">
           <Label className={`${body.small} font-medium`}>Date & Time</Label>
-          
+
           {/* 日付 */}
           <div>
-            <Label htmlFor="event-date" className={`${body.small} ${text.muted}`}>Date</Label>
+            <Label htmlFor="event-date" className={`${body.small} ${text.muted}`}>
+              Date
+            </Label>
             <Input
               type="date"
               id="event-date"
@@ -176,16 +173,18 @@ export const CreateEventForm = ({
                 if (formData.startDate) {
                   date.setHours(formData.startDate.getHours(), formData.startDate.getMinutes())
                 }
-                setFormData(prev => ({ ...prev, startDate: date }))
+                setFormData((prev) => ({ ...prev, startDate: date }))
               }}
               className={border.universal}
             />
           </div>
-          
+
           {/* 開始・終了時間 */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="start-time" className={`${body.small} ${text.muted}`}>Start Time</Label>
+              <Label htmlFor="start-time" className={`${body.small} ${text.muted}`}>
+                Start Time
+              </Label>
               <Input
                 type="time"
                 id="start-time"
@@ -194,13 +193,15 @@ export const CreateEventForm = ({
                   const [hours, minutes] = e.target.value.split(':').map(Number)
                   const date = new Date(formData.startDate || new Date())
                   date.setHours(hours, minutes)
-                  setFormData(prev => ({ ...prev, startDate: date }))
+                  setFormData((prev) => ({ ...prev, startDate: date }))
                 }}
                 className={border.universal}
               />
             </div>
             <div>
-              <Label htmlFor="end-time" className={`${body.small} ${text.muted}`}>End Time</Label>
+              <Label htmlFor="end-time" className={`${body.small} ${text.muted}`}>
+                End Time
+              </Label>
               <Input
                 type="time"
                 id="end-time"
@@ -209,7 +210,7 @@ export const CreateEventForm = ({
                   const [hours, minutes] = e.target.value.split(':').map(Number)
                   const date = new Date(formData.startDate || new Date())
                   date.setHours(hours, minutes)
-                  setFormData(prev => ({ ...prev, endDate: date }))
+                  setFormData((prev) => ({ ...prev, endDate: date }))
                 }}
                 className={border.universal}
               />
@@ -218,26 +219,28 @@ export const CreateEventForm = ({
 
           {/* リピート設定 */}
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-2">
               <input
                 type="checkbox"
                 checked={formData.isRecurring}
-                onChange={(e) => setFormData(prev => ({ ...prev, isRecurring: e.target.checked }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, isRecurring: e.target.checked }))}
                 className={`rounded ${border.universal}`}
               />
               <span className={`${body.small} font-medium`}>Repeat</span>
             </label>
-            
+
             {formData.isRecurring && (
               <Select
                 value={formData.recurrenceRule?.frequency || 'daily'}
-                onValueChange={(value) => setFormData(prev => ({ 
-                  ...prev, 
-                  recurrenceRule: { 
-                    ...prev.recurrenceRule,
-                    frequency: value as 'daily' | 'weekly' | 'monthly' | 'yearly'
-                  }
-                }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    recurrenceRule: {
+                      ...prev.recurrenceRule,
+                      frequency: value as 'daily' | 'weekly' | 'monthly' | 'yearly',
+                    },
+                  }))
+                }
               >
                 <SelectTrigger className={`w-28 ${border.universal}`}>
                   <SelectValue />
@@ -255,22 +258,22 @@ export const CreateEventForm = ({
 
         {/* タグ - 重要項目 */}
         <div>
-          <Label htmlFor="tags" className={`${body.small} font-medium`}>Tags</Label>
-          <Input
-            id="tags"
-            placeholder="Add tags..."
-            className={border.universal}
-          />
+          <Label htmlFor="tags" className={`${body.small} font-medium`}>
+            Tags
+          </Label>
+          <Input id="tags" placeholder="Add tags..." className={border.universal} />
         </div>
 
         {/* 説明 */}
         <div>
-          <Label htmlFor="description" className={`${body.small} font-medium`}>Description</Label>
+          <Label htmlFor="description" className={`${body.small} font-medium`}>
+            Description
+          </Label>
           <Textarea
             id="description"
             placeholder="Add description..."
             value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
             rows={3}
             className={`resize-none ${border.universal}`}
           />
@@ -279,18 +282,17 @@ export const CreateEventForm = ({
 
       {/* 詳細設定セクション */}
       <div className="space-y-4">
-        <SectionHeader
-          icon={Tag}
-          title="Details & Classification"
-        />
-        
+        <SectionHeader icon={Tag} title="Details & Classification" />
+
         <div className="space-y-4">
           {/* タイプ選択 */}
           <div>
-            <Label htmlFor="full-type" className={`${body.small} font-medium`}>Type</Label>
+            <Label htmlFor="full-type" className={`${body.small} font-medium`}>
+              Type
+            </Label>
             <Select
               value={formData.type}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, type: value as EventType }))}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EventType }))}
             >
               <SelectTrigger id="full-type" className={border.universal}>
                 <SelectValue />
@@ -305,10 +307,12 @@ export const CreateEventForm = ({
 
           {/* 優先度 */}
           <div>
-            <Label htmlFor="priority" className={`${body.small} font-medium`}>Priority</Label>
+            <Label htmlFor="priority" className={`${body.small} font-medium`}>
+              Priority
+            </Label>
             <Select
               value={formData.priority}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value as EventPriority }))}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value as EventPriority }))}
             >
               <SelectTrigger id="priority" className={border.universal}>
                 <SelectValue />
@@ -325,10 +329,12 @@ export const CreateEventForm = ({
 
           {/* ステータス */}
           <div>
-            <Label htmlFor="status" className={`${body.small} font-medium`}>Status</Label>
+            <Label htmlFor="status" className={`${body.small} font-medium`}>
+              Status
+            </Label>
             <Select
               value={formData.status}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as EventStatus }))}
+              onValueChange={(value) => setFormData((prev) => ({ ...prev, status: value as EventStatus }))}
             >
               <SelectTrigger id="status" className={border.universal}>
                 <SelectValue />
@@ -342,11 +348,8 @@ export const CreateEventForm = ({
               </SelectContent>
             </Select>
           </div>
-
         </div>
       </div>
-
-
 
       <AnimatePresence>
         {error && (
@@ -355,12 +358,16 @@ export const CreateEventForm = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`p-4 rounded-lg ${semantic.error.background} ${semantic.error.text}`}
+            className={`rounded-lg p-4 ${semantic.error.background} ${semantic.error.text}`}
           >
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               </div>
               <div>

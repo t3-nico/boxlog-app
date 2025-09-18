@@ -337,7 +337,6 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                       onChange={setTitle}
                       onSmartExtract={handleSmartExtract}
                       onTabNext={handleTabNext}
-                      autoFocus={true}
                     />
                     <div className="flex justify-end">
                       <button

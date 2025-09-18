@@ -258,7 +258,6 @@ export const TagManagementModal = ({
                                 handleCancelEdit()
                               }
                             }}
-                            autoFocus
                           />
 
                           <select

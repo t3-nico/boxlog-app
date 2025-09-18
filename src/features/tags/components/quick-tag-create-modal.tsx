@@ -102,7 +102,6 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
                   handleClose()
                 }
               }}
-              autoFocus
             />
           </div>
 
