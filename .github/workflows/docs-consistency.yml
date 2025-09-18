@@ -1,0 +1,150 @@
+name: 📄 Documentation Consistency Check
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'scripts/docs-code-consistency.js'
+      - 'package.json'
+      - '.eslint/**'
+  push:
+    branches: [main, dev]
+    paths:
+      - 'docs/**'
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  docs-consistency-check:
+    name: 🔍 Documentation Consistency Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔧 Setup ESLint plugins
+        run: npm run postinstall
+
+      - name: 📄 Run documentation consistency check
+        id: docs-check
+        run: |
+          npm run docs:check > docs-consistency-output.txt 2>&1
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: 📊 Upload consistency check results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-consistency-results
+          path: docs-consistency-output.txt
+
+      - name: 💬 Comment PR with consistency results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const docsOutput = fs.readFileSync('docs-consistency-output.txt', 'utf8');
+
+            // 結果の解析
+            const successMatch = docsOutput.match(/成功: (\d+)\/(\d+)/);
+            const warningMatch = docsOutput.match(/警告: (\d+)\/(\d+)/);
+            const errorMatch = docsOutput.match(/エラー: (\d+)\/(\d+)/);
+            const scoreMatch = docsOutput.match(/整合性スコア: ([\d.]+)%/);
+
+            const success = successMatch ? parseInt(successMatch[1]) : 0;
+            const total = successMatch ? parseInt(successMatch[2]) : 0;
+            const warnings = warningMatch ? parseInt(warningMatch[1]) : 0;
+            const errors = errorMatch ? parseInt(errorMatch[1]) : 0;
+            const score = scoreMatch ? parseFloat(scoreMatch[1]) : 0;
+
+            let status = '✅ **良好**';
+            let priority = '';
+
+            if (errors > 0) {
+              status = '🚨 **修正必要**';
+              priority = '**Priority: High**';
+            } else if (warnings > 5) {
+              status = '⚠️ **改善推奨**';
+              priority = '**Priority: Medium**';
+            }
+
+            const comment = `## 📄 Documentation Consistency Check Results
+
+            ${status} - 整合性スコア: **${score.toFixed(1)}%** ${priority}
+
+            ### 📊 詳細結果
+            - ✅ **成功**: ${success}/${total} 項目
+            - ⚠️ **警告**: ${warnings}/${total} 項目  
+            - ❌ **エラー**: ${errors}/${total} 項目
+
+            ### 🔍 主要チェック項目
+            - ESLint設定とドキュメントの整合性
+            - Theme Systemとドキュメントの整合性
+            - package.jsonとドキュメントの整合性
+            - Markdownリンク切れチェック
+            - TODO/NOTEの一貫性
+
+            ${errors > 0 ? '### 🚨 修正が必要な問題\nエラー項目の修正をお願いします。' : ''}
+            ${warnings > 3 ? '### ⚠️ 改善提案\nドキュメント更新を検討してください。' : ''}
+
+            <details>
+            <summary>📋 詳細ログを表示</summary>
+
+            \`\`\`
+            ${docsOutput}
+            \`\`\`
+
+            </details>
+
+            ---
+            🔗 [Full Analysis Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existingComment = comments.find(comment => 
+              comment.body.includes('📄 Documentation Consistency Check Results')
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+      - name: ❌ Fail if critical documentation issues found
+        if: steps.docs-check.outputs.exit_code != '0'
+        run: |
+          echo "📄 Documentation consistency check failed!"
+          echo "Please review the consistency report above."
+          exit 1
