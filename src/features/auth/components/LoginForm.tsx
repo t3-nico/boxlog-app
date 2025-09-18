@@ -120,9 +120,9 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
         <p className={`${typography.body.base} ${colors.text.muted} sm:${typography.body.sm}`}>
           <a
             href="/auth/password"
-            className="data-hover:decoration-zinc-950 dark:data-hover:decoration-white text-zinc-950 underline decoration-zinc-950/50 dark:text-white dark:decoration-white/50"
+            className={`${colors.text.primary} decoration-current/50 underline hover:decoration-current`}
           >
-            <strong className="font-medium text-zinc-950 dark:text-white">Forgot your password?</strong>
+            <strong className={`font-medium ${colors.text.primary}`}>Forgot your password?</strong>
           </a>
         </p>
       </div>
@@ -133,9 +133,9 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
         Don&apos;t have an account?{' '}
         <a
           href="/auth/signup"
-          className="data-hover:decoration-zinc-950 dark:data-hover:decoration-white text-zinc-950 underline decoration-zinc-950/50 dark:text-white dark:decoration-white/50"
+          className={`${colors.text.primary} decoration-current/50 underline hover:decoration-current`}
         >
-          <strong className="font-medium text-zinc-950 dark:text-white">Sign up</strong>
+          <strong className={`font-medium ${colors.text.primary}`}>Sign up</strong>
         </a>
       </p>
     </form>

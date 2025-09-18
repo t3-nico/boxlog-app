@@ -4,12 +4,12 @@ import React from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { PanelLeftClose, Bell, Plus, Search } from 'lucide-react'
+import { Bell, PanelLeftClose, Plus, Search } from 'lucide-react'
 
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { primaryNavigation } from '@/config/navigation/config'
-import { colors, rounded, animations, spacing, icons, typography, layout, ghost, gridGap } from '@/config/theme'
+import { animations, colors, ghost, gridGap, icons, layout, rounded, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
@@ -18,8 +18,6 @@ import { SidebarItem } from './sidebar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
-
-
 
 const { xs: _xs } = layout.heights.header
 const { sm: _sm, lg: _lg } = icons.size
@@ -37,13 +35,13 @@ export const DesktopSidebar = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault()
-    
+
     const startX = e.clientX
     const startWidth = useNavigationStore.getState().primaryNavWidth
 
     const handleMouseMove = (e: MouseEvent) => {
       const newWidth = startWidth + (e.clientX - startX)
-      
+
       // 幅制限を直接ここで実装
       const constrainedWidth = Math.max(200, Math.min(480, newWidth))
       setPrimaryNavWidth(constrainedWidth)
@@ -62,11 +60,11 @@ export const DesktopSidebar = () => {
   if (!isSidebarOpen) {
     return null
   }
-  
+
   return (
-    <div 
+    <div
       className={cn(
-        'flex relative border-r',
+        'relative flex border-r',
         'z-50',
         colors.background.surface,
         colors.text.primary,
@@ -75,20 +73,22 @@ export const DesktopSidebar = () => {
       style={{ width: `${primaryNavWidth}px` }}
     >
       {/* Sidebar Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex flex-1 flex-col">
         {/* Top Section: Account & Actions */}
-        <div className={cn(
-          'flex items-center justify-between mt-2 px-2',
-          headerHeight // 32px height
-        )}>
+        <div
+          className={cn(
+            'mt-2 flex items-center justify-between px-2',
+            headerHeight // 32px height
+          )}
+        >
           {/* Left: Close Panel Button */}
-          <div className="flex items-center mr-4">
+          <div className="mr-4 flex items-center">
             <button
               type="button"
               onClick={() => toggleSidebar()}
               className={cn(
                 layout.heights.button.sm,
-                'w-8 flex items-center justify-center',
+                'flex w-8 items-center justify-center',
                 ghost.hover,
                 rounded.component.button.sm,
                 animations.transition.fast,
@@ -98,7 +98,7 @@ export const DesktopSidebar = () => {
               <PanelLeftClose className={iconSm} />
             </button>
           </div>
-          
+
           {/* Right: Action Buttons */}
           <div className={cn('flex items-center', gridGap.tight)}>
             {/* Search Button */}
@@ -106,7 +106,7 @@ export const DesktopSidebar = () => {
               type="button"
               className={cn(
                 layout.heights.button.sm,
-                'w-8 flex items-center justify-center',
+                'flex w-8 items-center justify-center',
                 ghost.hover,
                 rounded.component.button.sm,
                 animations.transition.fast,
@@ -115,14 +115,14 @@ export const DesktopSidebar = () => {
             >
               <Search className={iconSm} />
             </button>
-            
+
             {/* Notification Button */}
             <button
               type="button"
               onClick={openNotifications}
               className={cn(
                 layout.heights.button.sm,
-                'flex items-center justify-center relative',
+                'relative flex items-center justify-center',
                 ghost.hover,
                 rounded.component.button.sm,
                 animations.transition.fast,
@@ -131,31 +131,35 @@ export const DesktopSidebar = () => {
             >
               <Bell className={iconSm} />
               {notificationCount > 0 && (
-                <span className={cn(
-                  'absolute -top-1 -right-1',
-                  spacing.size.badge.sm,
-                  colors.semantic.error.bg,
-                  colors.text.onError,
-                  typography.body.xs,
-                  'w-8 flex items-center justify-center',
-                  rounded.component.badge.pill
-                )}>
+                <span
+                  className={cn(
+                    'absolute -right-1 -top-1',
+                    spacing.size.badge.sm,
+                    colors.semantic.error.bg,
+                    colors.text.onError,
+                    typography.body.xs,
+                    'flex w-8 items-center justify-center',
+                    rounded.component.badge.pill
+                  )}
+                >
                   {notificationCount}
                 </span>
               )}
             </button>
-            
+
             {/* Create Button - PC only, rightmost position */}
             <button
               type="button"
-              onClick={() => openCreateInspector({
-                context: {
-                  source: 'sidebar'
-                }
-              })}
+              onClick={() =>
+                openCreateInspector({
+                  context: {
+                    source: 'sidebar',
+                  },
+                })
+              }
               className={cn(
                 layout.heights.button.sm,
-                'w-8 flex items-center justify-center',
+                'flex w-8 items-center justify-center',
                 colors.primary.DEFAULT,
                 colors.primary.hover,
                 colors.text.onPrimary,
@@ -171,140 +175,126 @@ export const DesktopSidebar = () => {
         </div>
 
         {/* All Navigation Items */}
-        <div className={cn(
-          'flex flex-col space-y-0 flex-1',
-          spacing.padding.horizontal.sm, // 8px horizontal padding
-          spacing.padding.vertical.sm // 8px vertical padding
-        )}>
+        <div
+          className={cn(
+            'flex flex-1 flex-col space-y-0',
+            'px-2 py-2' // 8px horizontal and vertical padding
+          )}
+        >
           {primaryNavigation.map((section) => (
             <React.Fragment key={section.id}>
               {section.label && (
-                <div className={cn(
-                  spacing.padding.sm,
-                  spacing.margin.top.md, 'first:mt-0',
-                  typography.body.small,
-                  'font-medium uppercase tracking-wider',
-                  colors.text.muted
-                )}>
+                <div
+                  className={cn(
+                    spacing.padding.sm,
+                    'mt-4 first:mt-0', // 16px top margin
+                    typography.body.small,
+                    'font-medium uppercase tracking-wider',
+                    colors.text.muted
+                  )}
+                >
                   {section.label}
                 </div>
               )}
-              {section.items.length > 0 ? (
-                section.items.map((item) => (
-                  <SidebarItem
-                    key={item.id}
-                    item={item}
-                    pathname={pathname}
-                  />
-                ))
-              ) : (
-                section.id === 'smart-folders' && (
-                  <div className={cn(spacing.padding.sm)}>
-                    <button type="button" className={cn(
-                      'w-full flex items-center',
-                      gridGap.tight,
-                      ghost.hover,
-                      rounded.component.button.sm,
-                      animations.transition.fast,
-                      spacing.padding.sm,
-                      colors.text.muted,
-                      typography.body.small
-                    )}>
-                      <Plus className={iconSm} />
-                      <span>Add smart folder</span>
-                    </button>
-                  </div>
-                )
-              )}
+              {section.items.length > 0
+                ? section.items.map((item) => <SidebarItem key={item.id} item={item} pathname={pathname} />)
+                : section.id === 'smart-folders' && (
+                    <div className={cn(spacing.padding.sm)}>
+                      <button
+                        type="button"
+                        className={cn(
+                          'flex w-full items-center',
+                          gridGap.tight,
+                          ghost.hover,
+                          rounded.component.button.sm,
+                          animations.transition.fast,
+                          spacing.padding.sm,
+                          colors.text.muted,
+                          typography.body.small
+                        )}
+                      >
+                        <Plus className={iconSm} />
+                        <span>Add smart folder</span>
+                      </button>
+                    </div>
+                  )}
             </React.Fragment>
           ))}
         </div>
 
         {/* Theme Toggle */}
-        <div className={cn(
-          spacing.padding.bottom.md,
-          spacing.padding.horizontal.sm // 8px horizontal padding
-        )}>
-          <div className={cn(
-            'flex items-center justify-start'
-          )}>
+        <div
+          className={cn(
+            'px-2 pb-4' // 16px bottom padding, 8px horizontal padding
+          )}
+        >
+          <div className={cn('flex items-center justify-start')}>
             <ThemeToggle />
           </div>
         </div>
 
         {/* Bottom Section: User Account */}
-        <div className={cn(
-          spacing.margin.bottom.sm, // 8px bottom margin
-          spacing.padding.horizontal.sm // 8px horizontal padding
-        )}>
+        <div
+          className={cn(
+            'mb-2 px-2' // 8px bottom margin, 8px horizontal padding
+          )}
+        >
           {/* User Account Info */}
           <UserMenu>
-            <div className={cn(
-              "flex items-center cursor-pointer w-full",
-              ghost.hover,
-              gridGap.default, // 8px gap
-              rounded.component.button.md,
-              animations.transition.fast,
-              spacing.padding.sm, // 全方向8px
-              'border border-transparent'
-            )}>
+            <div
+              className={cn(
+                'flex w-full cursor-pointer items-center',
+                ghost.hover,
+                gridGap.default, // 8px gap
+                rounded.component.button.md,
+                animations.transition.fast,
+                spacing.padding.sm, // 全方向8px
+                'border border-transparent'
+              )}
+            >
               {/* Avatar Icon Only */}
               <div className="flex-shrink-0">
                 {user?.user_metadata?.avatar_url ? (
-                  <Avatar 
-                    src={user.user_metadata.avatar_url} 
-                    className={cn(
-                      iconLg, 'border',
-                      colors.border.default,
-                      rounded.component.avatar.md
-                    )}
+                  <Avatar
+                    src={user.user_metadata.avatar_url}
+                    className={cn(iconLg, 'border', colors.border.default, rounded.component.media.avatar)}
                   />
                 ) : user?.user_metadata?.profile_icon ? (
-                  <div className={cn(
-                    iconLg, typography.body.sm, 'flex items-center justify-center',
-                    colors.background.accent, 'border',
-                    colors.border.default,
-                    rounded.component.avatar.md
-                  )}>
+                  <div
+                    className={cn(
+                      iconLg,
+                      typography.body.sm,
+                      'flex items-center justify-center',
+                      colors.background.accent,
+                      'border',
+                      colors.border.default,
+                      rounded.component.media.avatar
+                    )}
+                  >
                     {user.user_metadata.profile_icon}
                   </div>
                 ) : (
-                  <Avatar 
+                  <Avatar
                     src={undefined}
-                    className={cn(
-                      iconLg, 'border',
-                      colors.border.default,
-                      rounded.component.avatar.md
-                    )}
-                    initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                    className={cn(iconLg, 'border', colors.border.default, rounded.component.media.avatar)}
+                    initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
+                      .charAt(0)
+                      .toUpperCase()}
                   />
                 )}
               </div>
-              
-              <div className={cn(
-                'min-w-0 flex-1 flex flex-col justify-center'
-              )}>
-                <div className={cn(
-                  'truncate',
-                  colors.text.primary,
-                  typography.body.DEFAULT,
-                  'font-medium'
-                )}>
+
+              <div className={cn('flex min-w-0 flex-1 flex-col justify-center')}>
+                <div className={cn('truncate', colors.text.primary, typography.body.DEFAULT, 'font-medium')}>
                   tomoya
                 </div>
-                <div className={cn(
-                  'truncate',
-                  colors.text.muted,
-                  typography.body.small
-                )}>
-                  Free Plan
-                </div>
+                <div className={cn('truncate', colors.text.muted, typography.body.small)}>Free Plan</div>
               </div>
             </div>
           </UserMenu>
         </div>
       </div>
-      
+
       {/* Border Hover & Resize Area */}
       <div
         onMouseDown={handleMouseDown}
@@ -313,19 +303,19 @@ export const DesktopSidebar = () => {
             e.preventDefault()
           }
         }}
-        className={cn(
-          'absolute -right-1 top-0 w-3 h-full cursor-ew-resize group'
-        )}
+        className={cn('group absolute -right-1 top-0 h-full w-3 cursor-ew-resize')}
         role="button"
         tabIndex={0}
         aria-label="サイドバーの幅を調整"
       >
         {/* Visual Color Change - 1px width */}
-        <div className={cn(
-          'absolute right-1 top-0 w-px h-full transition-colors',
-          colors.primary.DEFAULT,
-          colors.primary.hover
-        )} />
+        <div
+          className={cn(
+            'absolute right-1 top-0 h-full w-px transition-colors',
+            colors.primary.DEFAULT,
+            colors.primary.hover
+          )}
+        />
       </div>
     </div>
   )

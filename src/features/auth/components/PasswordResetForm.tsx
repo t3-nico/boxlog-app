@@ -73,7 +73,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
             required
           />
         </div>
-        {error && <div className="text-destructive text-center text-sm">{error}</div>}
+        {error && <div className={`${colors.text.error} text-center text-sm`}>{error}</div>}
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Sending reset email...' : 'Send reset email'}
         </Button>
