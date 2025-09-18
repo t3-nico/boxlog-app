@@ -9,6 +9,7 @@ BoxLogアプリケーションは1Password Developer Securityを使用してい�
 ### 1. ビルド設定
 
 `vercel.json`で以下を設定：
+
 ```json
 {
   "buildCommand": "yarn build:fallback",
@@ -23,12 +24,14 @@ BoxLogアプリケーションは1Password Developer Securityを使用してい�
 Vercelダッシュボードで以下の環境変数を設定してください：
 
 #### Supabase設定
+
 - `NEXT_PUBLIC_SUPABASE_URL`: SupabaseプロジェクトURL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase匿名キー
 - `SUPABASE_SERVICE_ROLE_KEY`: Supabaseサービスロールキー
 - `SUPABASE_JWT_SECRET`: SupabaseのJWTシークレット
 
 #### PostgreSQL設定
+
 - `POSTGRES_URL`: PostgreSQL接続URL
 - `POSTGRES_USER`: PostgreSQLユーザー名
 - `POSTGRES_HOST`: PostgreSQLホスト名
@@ -38,6 +41,7 @@ Vercelダッシュボードで以下の環境変数を設定してください�
 - `POSTGRES_URL_NON_POOLING`: 非プーリング接続URL
 
 #### その他設定
+
 - `SKIP_AUTH_IN_DEV`: `false` (プロダクションでは必ずfalse)
 
 ### 3. Git Submodule対応
@@ -63,12 +67,15 @@ Vercelでサブモジュールを使用する場合：
 ## トラブルシューティング
 
 ### ビルドエラー: "op: command not found"
+
 → `vercel.json`の`buildCommand`を`yarn build:fallback`に設定
 
 ### 環境変数エラー
+
 → Vercelダッシュボードで環境変数が正しく設定されているか確認
 
 ### Submoduleエラー
+
 → "Include git submodules"を有効化するか、ビルドコマンドでsubmodule初期化を追加
 
 ## ローカルテスト
@@ -82,3 +89,7 @@ yarn build:fallback
 # フォールバックモードで起動
 yarn start:fallback
 ```
+
+---
+
+**最終更新**: 2025-09-18

@@ -23,7 +23,7 @@ BoxLogプロジェクトのCI/CDパイプライン（GitHub Actions）で1Passwo
 # Service Account 情報:
 Name: BoxLog CI/CD
 Description: BoxLog GitHub Actions用のサービスアカウント
-Permissions: 
+Permissions:
   - BoxLog Development Vault: Read access
 ```
 
@@ -63,56 +63,56 @@ jobs:
   test:
     name: 🧪 Test & Build
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v4
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-    - name: 📦 Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    - name: 🔐 Load secrets from 1Password
-      uses: 1password/load-secrets-action@v2
-      with:
-        export-env: true
-      env:
-        OP_SERVICE_ACCOUNT_TOKEN: \${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-        NEXT_PUBLIC_SUPABASE_URL: "op://BoxLog Development/BoxLog Supabase/url"
-        NEXT_PUBLIC_SUPABASE_ANON_KEY: "op://BoxLog Development/BoxLog Supabase/anon_key"
-        SUPABASE_SERVICE_ROLE_KEY: "op://BoxLog Development/BoxLog Supabase/service_role_key"
-        POSTGRES_URL: "op://BoxLog Development/BoxLog PostgreSQL/url"
+      - name: 🔐 Load secrets from 1Password
+        uses: 1password/load-secrets-action@v2
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: \${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          NEXT_PUBLIC_SUPABASE_URL: 'op://BoxLog Development/BoxLog Supabase/url'
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: 'op://BoxLog Development/BoxLog Supabase/anon_key'
+          SUPABASE_SERVICE_ROLE_KEY: 'op://BoxLog Development/BoxLog Supabase/service_role_key'
+          POSTGRES_URL: 'op://BoxLog Development/BoxLog PostgreSQL/url'
 
-    - name: 📦 Install dependencies
-      run: npm ci
+      - name: 📦 Install dependencies
+        run: npm ci
 
-    - name: 🔍 Run linting
-      run: npm run lint
+      - name: 🔍 Run linting
+        run: npm run lint
 
-    - name: 🧪 Run type check
-      run: npm run typecheck
+      - name: 🧪 Run type check
+        run: npm run typecheck
 
-    - name: 🧪 Run tests
-      run: npm run test
-      env:
-        CI: true
+      - name: 🧪 Run tests
+        run: npm run test
+        env:
+          CI: true
 
-    - name: 🏗️ Build application
-      run: npm run build:fallback
-      env:
-        NODE_ENV: production
+      - name: 🏗️ Build application
+        run: npm run build:fallback
+        env:
+          NODE_ENV: production
 ```
 
 ### 4. セキュリティスキャンの追加
 
 ```yaml
-  security-scan:
-    name: 🔍 Security Scan  
-    runs-on: ubuntu-latest
-    
-    steps:
+security-scan:
+  name: 🔍 Security Scan
+  runs-on: ubuntu-latest
+
+  steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
 
@@ -199,3 +199,7 @@ jobs:
 **作成日**: 2025-08-05  
 **更新日**: 2025-08-05  
 **バージョン**: 1.0
+
+---
+
+**最終更新**: 2025-09-18

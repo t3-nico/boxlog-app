@@ -53,7 +53,9 @@
       "Bash(npm run bundle:check:*)",
       "Bash(npm run todo:to-issues:*)",
       "Bash(chmod:*)",
-      "Bash(npm run bundle:monitor:*)"
+      "Bash(npm run bundle:monitor:*)",
+      "Bash(npm run docs:check:*)",
+      "Bash(npm run docs:auto-fix:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -293,5 +293,5 @@ npx eslint src/components/ui/ | grep "restricted-syntax"
 
 ---
 
-**最終更新**: 2025年9月18日  
+**最終更新**: 2025-09-18  
 **ステータス**: Phase 2完了、新規コンポーネントでの厳格enforcement実装済み

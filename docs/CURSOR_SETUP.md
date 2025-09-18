@@ -31,6 +31,7 @@ cursor /path/to/boxlog-app
 #### 1.2 拡張機能の確認
 
 Cursorが自動的に推奨拡張機能を提案します：
+
 - ✅ **1Password for VS Code** - 自動でインストール推奨
 - ✅ **Tailwind CSS IntelliSense** - スタイリング支援
 - ✅ **Prettier** - コード整形
@@ -71,13 +72,13 @@ npm run dev
 
 Cursorで以下のスニペットが利用可能：
 
-| プレフィックス | 説明 | 生成されるコード |
-|---------------|------|------------------|
-| `op-ref` | 1Password参照形式 | `"op://BoxLog Development/Item/field"` |
-| `op-env` | 環境変数定義 | `VAR="op://vault/item/field"` |
-| `op-run` | CLI実行コマンド | `op run --env-file=.env.local -- command` |
-| `react-op-env` | React環境変数 | 安全な環境変数取得コード |
-| `node-op-config` | Node.js設定 | バリデーション付き設定オブジェクト |
+| プレフィックス   | 説明              | 生成されるコード                          |
+| ---------------- | ----------------- | ----------------------------------------- |
+| `op-ref`         | 1Password参照形式 | `"op://BoxLog Development/Item/field"`    |
+| `op-env`         | 環境変数定義      | `VAR="op://vault/item/field"`             |
+| `op-run`         | CLI実行コマンド   | `op run --env-file=.env.local -- command` |
+| `react-op-env`   | React環境変数     | 安全な環境変数取得コード                  |
+| `node-op-config` | Node.js設定       | バリデーション付き設定オブジェクト        |
 
 ### 使用例
 
@@ -92,12 +93,12 @@ if (!supabaseUrl) {
 
 ## ⌨️ キーボードショートカット
 
-| ショートカット | 機能 |
-|---------------|------|
+| ショートカット            | 機能                        |
+| ------------------------- | --------------------------- |
 | `Ctrl+Shift+P` → `Ctrl+1` | 🤖 1Password ヘルスチェック |
-| `Ctrl+Shift+P` → `Ctrl+S` | 🔍 セキュリティ監査 |
-| `Ctrl+Shift+P` → `Ctrl+D` | 🔐 開発サーバー起動 |
-| `Ctrl+Shift+P` → `Ctrl+V` | 📦 Vault情報表示 |
+| `Ctrl+Shift+P` → `Ctrl+S` | 🔍 セキュリティ監査         |
+| `Ctrl+Shift+P` → `Ctrl+D` | 🔐 開発サーバー起動         |
+| `Ctrl+Shift+P` → `Ctrl+V` | 📦 Vault情報表示            |
 
 ## 🤖 Cursor AI との連携最適化
 
@@ -108,13 +109,9 @@ if (!supabaseUrl) {
   "// Cursor AIがコードベースをインデックスしない": true,
   "cursor.privacy.enableCodebaseIndexing": false,
   "cursor.privacy.enableTelemetry": false,
-  
+
   "// 1Password関連ファイルをAIコンテキストに追加": true,
-  "cursor.ai.contextFiles": [
-    "docs/1PASSWORD_SETUP.md",
-    "docs/CI_CD_SETUP.md", 
-    ".env.example"
-  ]
+  "cursor.ai.contextFiles": ["docs/1PASSWORD_SETUP.md", "docs/CI_CD_SETUP.md", ".env.example"]
 }
 ```
 
@@ -276,3 +273,7 @@ export OP_SESSION_my="session-token"
 **バージョン**: 1.0 - Cursor AI統合版
 
 **🎉 これでCursor AI + 1Password の最強開発環境が完成です！**
+
+---
+
+**最終更新**: 2025-09-18

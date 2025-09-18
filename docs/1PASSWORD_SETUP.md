@@ -16,11 +16,13 @@ BoxLogアプリでは、機密情報の管理に1Password Developer Securityを�
 ### 1. 1Password CLIのインストール
 
 #### macOS (Homebrew)
+
 ```bash
 brew install --cask 1password/tap/1password-cli
 ```
 
 #### その他のプラットフォーム
+
 [1Password CLI公式ダウンロード](https://developer.1password.com/docs/cli/get-started/#install)からインストール
 
 ### 2. 1Passwordへのサインイン
@@ -43,6 +45,7 @@ op vault create "BoxLog Development"
 ### 4. 秘密情報の登録
 
 #### Supabase設定の登録
+
 ```bash
 op item create \
   --category="API Credential" \
@@ -54,6 +57,7 @@ op item create \
 ```
 
 #### PostgreSQL設定の登録
+
 ```bash
 op item create \
   --category="Database" \
@@ -145,6 +149,7 @@ op item edit "BoxLog Supabase" \
 ### よくある問題
 
 #### 1. "op: command not found"
+
 ```bash
 # CLIが正しくインストールされているか確認
 which op
@@ -155,6 +160,7 @@ echo $PATH
 ```
 
 #### 2. "authentication required"
+
 ```bash
 # 再度サインイン
 op signin
@@ -164,6 +170,7 @@ op account list
 ```
 
 #### 3. "item not found"
+
 ```bash
 # アイテムが正しいVaultに存在するか確認
 op item list --vault="BoxLog Development"
@@ -173,6 +180,7 @@ op vault list
 ```
 
 #### 4. 環境変数が読み込まれない
+
 ```bash
 # .env.localの内容を確認
 cat .env.local
@@ -204,6 +212,7 @@ op run --env-file=.env.local -- printenv | grep SUPABASE
 ### VS Code統合
 
 BoxLogプロジェクトはVS Code統合設定済み：
+
 - **拡張機能**: 1Password for VS Code (自動推奨)
 - **タスク統合**: Ctrl/Cmd+Shift+P → "Tasks: Run Task" → "🔐 Dev Server"
 - **環境変数**: VS Code統合ターミナルで自動設定
@@ -231,6 +240,7 @@ BoxLogプロジェクトはVS Code統合設定済み：
 ### GitHub Actions
 
 CI/CDパイプラインでの1Password使用方法：
+
 - **セットアップガイド**: [`docs/CI_CD_SETUP.md`](./CI_CD_SETUP.md)
 - **Service Account**: 限定権限でのCI/CD専用アカウント
 - **自動デプロイ**: 本番環境への安全なデプロイ
@@ -284,3 +294,7 @@ op run --env-file=.env.local -- npm run build
 **作成日**: 2025-08-05  
 **更新日**: 2025-08-05  
 **バージョン**: 2.0 - フル機能統合版
+
+---
+
+**最終更新**: 2025-09-18
