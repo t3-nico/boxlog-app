@@ -11,7 +11,6 @@ module.exports = {
     'import/prefer-default-export': 'off', // Named exportを推奨
 
     // Tree shaking最適化
-    'import/no-namespace-import': 'warn', // * as importの使用を制限
     'import/no-internal-modules': 'off', // 内部モジュールアクセスは許可（Next.js等で必要）
 
     // Code splitting推奨パターン
