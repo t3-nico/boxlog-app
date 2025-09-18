@@ -1,332 +1,297 @@
-# 🎯 ESLint Theme Enforcement システム
+# ESLint Theme Enforcement System
 
-BoxLogプロジェクトでは、**config/themeの使用を強制する高度なESLintシステム**を実装しています。
+BoxLogにおけるデザインシステムの一貫性を保つため、ESLintレベルでtheme systemの使用を強制するシステムです。
 
-## 📋 システム概要
+## 🎯 目的
 
-### 🎯 目的
-1. **直接的な色指定を完全防止**（`bg-red-500`など）
-2. **config/themeインポートの強制**
-3. **新規ファイルでのtheme使用を必須化**
-4. **既存ファイルの段階的移行サポート**
+1. **デザイン一貫性の確保**: すべてのUIコンポーネントで統一されたデザインシステムを使用
+2. **メンテナンス性向上**: テーマ変更が一箇所での修正で全体に反映
+3. **ダークモード自動対応**: theme systemによる自動的なダークモード切り替え
+4. **開発体験向上**: 明確なルールと自動チェックによる迷いのない開発
 
-### 🛠️ 実装内容
+## 🏗️ システム構成
 
-#### 1. カスタムESLintルール
-- `boxlog-theme/enforce-theme-usage` - 包括的なtheme強制
-- `boxlog-theme/no-direct-tailwind` - 直接Tailwindクラス検出
+### 基本設定ファイル
 
-#### 2. ファイル種別による動的ルール
-```typescript
-新規ファイル（3日以内） → ERROR レベル（厳格）
-既存ファイル → WARN レベル（段階的移行）
+```
+.eslint/
+├── configs/
+│   ├── theme-simple.js     # 基本的なtheme enforcement
+│   └── theme-strict.js     # 新規コンポーネント用厳格ルール
+├── rules/
+│   └── theme/
+│       └── enforce-theme-usage.js  # カスタムルール（将来拡張用）
+└── index.js                # メイン設定（統合済み）
 ```
 
-#### 3. 除外対象の自動判定
-```typescript
-除外ファイル = [
-  'tailwind.config.ts',
-  'globals.css', 
-  'storybook',
-  '.test.', '.spec.', '__tests__',
-  'src/config/theme',
-  'src/components/shadcn-ui'
-]
-```
+### 設定レベル
 
-## 🚀 使用方法
+1. **theme-simple.js**: 既存コード用の段階的移行
+   - 警告レベル（`warn`）で通知
+   - 大部分のファイルを除外設定
+2. **theme-strict.js**: 新規コンポーネント用厳格チェック
+   - エラーレベル（`error`）で強制
+   - 直接的なTailwindクラス完全禁止
 
-### NPMスクリプト
+## ✅ 正しい実装例
 
-```bash
-# 標準チェック（新規=ERROR, 既存=WARN）
-npm run lint:theme:eslint
-
-# 厳格チェック（全てERROR）
-npm run lint:theme:strict  
-
-# 移行モード（全てWARN）
-npm run lint:theme:migrate
-
-# 通常のlint
-npm run lint
-```
-
-### VS Code統合
-
-`.vscode/settings.json` により：
-- **リアルタイム検出**（入力中にエラー表示）
-- **自動修正**（保存時にfixAll実行）
-- **カスタムスニペット**（theme import補完）
-
-## 🔍 検出パターン
-
-### ✅ 正しい実装
+### 基本的なコンポーネント
 
 ```tsx
-// ✅ OK: theme import
-import { colors } from '@/config/theme';
+import React from 'react'
+import { colors, typography, spacing, rounded } from '@/config/theme'
 
-export function Button() {
+export const MyComponent = () => {
   return (
-    <button className={colors.primary.DEFAULT}>
-      ボタン
-    </button>
-  );
+    <div className={` ${colors.background.surface} ${spacing.component.lg} ${rounded.component.card.md} `}>
+      <h2 className={`${typography.heading.h2} ${colors.text.primary}`}>タイトル</h2>
+      <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>本文テキスト</p>
+      <button
+        className={` ${colors.primary.DEFAULT} hover:${colors.primary.hover} ${spacing.button.md} ${rounded.component.button.md} `}
+      >
+        アクションボタン
+      </button>
+    </div>
+  )
 }
-
-// ✅ OK: 許可されたクラス
-<div className="flex items-center w-full h-screen p-4">
-  レイアウト
-</div>
 ```
 
-### ❌ 検出される違反
+### インタラクティブ要素
 
 ```tsx
-// ❌ NG: 直接色指定
-<button className="bg-red-500">
+// ホバー・フォーカス状態もtheme system使用
+<button
+  className={` ${colors.semantic.success.DEFAULT} hover:${colors.semantic.success.hover} focus:${colors.semantic.success.focus} ${spacing.button.lg} `}
+>
+  成功アクション
+</button>
+```
 
-// ❌ NG: テンプレートリテラル内
-<div className={`text-blue-600 font-bold`}>
+## ❌ 禁止される実装例
 
-// ❌ NG: ダークモード個別指定
+### 直接的なTailwindクラス使用
+
+```tsx
+// ❌ 禁止 - 直接的な色指定
+<div className="bg-blue-500 text-white">
+
+// ❌ 禁止 - 直接的なサイズ指定
+<p className="text-2xl font-bold">
+
+// ❌ 禁止 - 直接的な余白指定
+<button className="px-4 py-2 m-4">
+
+// ❌ 禁止 - ダークモードの個別指定
 <div className="bg-white dark:bg-gray-900">
-
-// ❌ NG: ホバー個別指定
-<button className="hover:bg-orange-500">
-
-// ❌ NG: themeインポートなし
-// Missing import: colors, typography, spacing
 ```
 
-### 📊 許可パターン
+## 🔧 開発ワークフロー
 
-```typescript
-allowedPatterns = [
-  '^(absolute|relative|fixed|sticky)$',      // 位置
-  '^(flex|grid|block|inline|hidden)$',       // レイアウト
-  '^(w-|h-|p-|m-|gap-|space-)',            // サイズ・余白
-  '^(rounded|border)$',                      // 形状
-  '^(text-(xs|sm|base|lg|xl|2xl|3xl))$',    // テキストサイズ
-  '^(font-(normal|medium|semibold|bold))$',  // フォント重み
-  '^(overflow-|z-|opacity-|cursor-)',       // その他
-  '^(transition|duration|ease)',            // アニメーション
-  '^(transform|rotate|scale)'               // 変形
-]
+### 新規コンポーネント作成時
+
+1. **theme importから開始**
+
+   ```tsx
+   import { colors, typography, spacing } from '@/config/theme'
+   ```
+
+2. **theme値を使用してスタイリング**
+
+   ```tsx
+   className={colors.primary.DEFAULT}
+   ```
+
+3. **ESLintチェック実行**
+   ```bash
+   npm run lint
+   ```
+
+### 既存コンポーネント修正時
+
+1. **段階的移行**
+   - 警告レベルで通知されるため、徐々に修正
+   - 優先度の高いコンポーネントから実施
+
+2. **theme system確認**
+   ```bash
+   # theme値が利用可能か確認
+   ls src/config/theme/
+   ```
+
+## 🚨 違反時のエラーメッセージ
+
+### 基本的な違反
+
+```
+warning  🎨 直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。
+代わりに @/config/theme の colors を使用してください。
 ```
 
-## 🎯 エラーメッセージとアクション
+### 厳格モード違反
 
-### 直接色指定エラー
 ```
-[ERROR] Direct color class "bg-red-500" detected. 
-Use colors.semantic.error.DEFAULT instead.
+error  ❌ 直接的な色指定は禁止です。
+@/config/theme/colors を使用してください。
+例: colors.primary.DEFAULT, colors.semantic.error.DEFAULT
 ```
 
-**修正方法:**
+## 📊 チェック対象
+
+### 検出されるパターン
+
+- `bg-{color}-{number}`: 背景色の直接指定
+- `text-{color}-{number}`: テキスト色の直接指定
+- `border-{color}-{number}`: ボーダー色の直接指定
+- `hover:bg-{color}-{number}`: ホバー状態の直接指定
+- `dark:bg-{color}-{number}`: ダークモードの直接指定
+- `p-{number}`, `m-{number}`: 余白の直接指定
+- `text-{size}`: フォントサイズの直接指定
+- `rounded-{size}`: 角丸の直接指定
+
+### 除外されるパターン
+
+- 基本レイアウトクラス（`flex`, `grid`, `block`など）
+- 位置指定（`absolute`, `relative`など）
+- サイズ指定（`w-*`, `h-*`）
+- 構造的なクラス（`space-*`, `gap-*`）
+
+## 🎨 利用可能なTheme値
+
+### 色系統
+
+- `colors.primary.*`: メインカラー
+- `colors.secondary.*`: サブカラー
+- `colors.semantic.*`: セマンティックカラー（成功、警告、エラー）
+- `colors.text.*`: テキストカラー
+- `colors.background.*`: 背景色
+- `colors.border.*`: ボーダーカラー
+
+### タイポグラフィ
+
+- `typography.heading.*`: 見出し用フォント
+- `typography.body.*`: 本文用フォント
+- `typography.special.*`: 特別な用途のフォント
+
+### スペーシング
+
+- `spacing.component.*`: コンポーネント内余白
+- `spacing.button.*`: ボタン専用余白
+- `spacing.stack.*`: 垂直方向の間隔
+- `spacing.page.*`: ページレベルの余白
+
+### その他
+
+- `rounded.component.*`: コンポーネント別角丸
+- `layout.*`: レイアウト設定
+- `animations.*`: アニメーション設定
+
+## 🔄 移行戦略
+
+### Phase 1: 基本有効化 ✅
+
+- theme-simple.jsの統合
+- 既存ファイルは警告レベル
+- 大部分を除外設定で段階的移行
+
+### Phase 2: 新規コンポーネント厳格化 ✅
+
+- theme-strict.jsの追加
+- 新規作成ファイルでの厳格チェック
+- テスト用コンポーネントでの動作確認
+
+### Phase 3: 重要コンポーネント移行
+
+- 共通UIコンポーネントから順次移行
+- theme-simple.jsの除外リストから段階的削除
+- 各featureモジュール単位での移行
+
+### Phase 4: 完全移行
+
+- 全ファイルでtheme system使用
+- カスタムルールの有効化
+- 100% theme compliance達成
+
+## 💡 ベストプラクティス
+
+### 1. インポートの統一
+
 ```tsx
-// Before
-<button className="bg-red-500">
+// ✅ 推奨 - 必要な分野のみインポート
+import { colors, typography } from '@/config/theme'
 
-// After  
-<button className={colors.semantic.error.DEFAULT}>
+// ❌ 非推奨 - 全体インポート
+import * as theme from '@/config/theme'
 ```
 
-### themeインポート不足エラー
-```
-[ERROR] Missing theme import. 
-Add: import { colors, typography } from '@/config/theme'
-```
+### 2. className構成
 
-**修正方法:**
 ```tsx
-// ファイル先頭に追加
-import { colors, typography, spacing } from '@/config/theme';
+// ✅ 推奨 - template literalで構成
+const buttonClasses = `
+  ${colors.primary.DEFAULT}
+  hover:${colors.primary.hover}
+  ${spacing.button.md}
+  ${rounded.component.button.md}
+`
+
+// ✅ 推奨 - 配列join構成
+const cardClasses = [colors.background.surface, spacing.component.lg, rounded.component.card.md].join(' ')
 ```
 
-### ダークモード個別指定エラー
-```
-[WARN] Individual dark mode class "dark:bg-gray-900". 
-Use theme for automatic dark mode.
-```
+### 3. 条件付きスタイリング
 
-**修正方法:**
 ```tsx
-// Before
-<div className="bg-white dark:bg-gray-900">
-
-// After
-<div className={colors.background.surface}>  // 自動ダークモード対応
+// ✅ 推奨 - theme値での条件分岐
+<div className={`
+  ${colors.background.surface}
+  ${isError ? colors.semantic.error.background : colors.background.base}
+`}>
 ```
 
-## 🔧 設定カスタマイズ
+## 🛠️ トラブルシューティング
 
-### `.eslintrc.json` 設定
+### よくあるエラーと解決方法
 
-```json
-{
-  "rules": {
-    "boxlog-theme/enforce-theme-usage": ["error", {
-      "excludeFiles": ["custom-exclude-pattern"],
-      "allowedPatterns": ["^custom-pattern$"],
-      "newFileErrorLevel": "error",
-      "existingFileErrorLevel": "warn"
-    }]
-  }
-}
-```
+**Q: theme値が見つからない**
 
-### ファイル別ルール調整
-
-```json
-{
-  "overrides": [
-    {
-      "files": ["src/legacy/**/*.tsx"],
-      "rules": {
-        "boxlog-theme/enforce-theme-usage": ["warn", {
-          "existingFileErrorLevel": "warn"
-        }]
-      }
-    }
-  ]
-}
-```
-
-## 📈 新規ファイル vs 既存ファイルの判定
-
-### 判定ロジック
-```typescript
-function isNewFile(filepath: string): boolean {
-  const stats = fs.statSync(filepath);
-  const fileAge = Date.now() - stats.birthtime.getTime();
-  const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
-  
-  return fileAge < threeDaysInMs;  // 3日以内 = 新規
-}
-```
-
-### 動的ルール適用
-```typescript
-新規ファイル → "boxlog-theme/enforce-theme-usage": "error"
-既存ファイル → "boxlog-theme/enforce-theme-usage": "warn"
-```
-
-## 🎨 VS Code統合機能
-
-### リアルタイム検出
-```typescript
-// 入力中にリアルタイムで表示
-className="bg-red-500"  // 🔴 ESLint Error
-         ^^^^^^^^^^
-         Use colors.semantic.error.DEFAULT
-```
-
-### 自動補完強化
-```typescript
-// type: "col" → suggest: colors.xxx
-import { colors } from '@/config/theme';  // 自動import
-
-// IntelliSense強化
-colors.|  // → primary, secondary, semantic, etc.
-```
-
-### 保存時自動修正
-```json
-{
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"  // 保存時修正
-  }
-}
-```
-
-## 🧪 テストケース実行
-
-### テストファイルでの検証
 ```bash
-# test-samples/theme-test.tsx で検証
-npm run lint:theme:eslint test-samples/theme-test.tsx
-
-# 期待される結果:
-# ✅ theme使用 → エラーなし
-# ❌ 直接色指定 → 7 problems (7 errors, 0 warnings)
+# theme定義を確認
+ls -la src/config/theme/
+cat src/config/theme/colors.ts
 ```
 
-### CI/CD統合
-```yaml
-# GitHub Actions
-- name: Theme Enforcement Check
-  run: npm run lint:theme:eslint
-  # 違反があるとビルド失敗
-```
+**Q: ESLintエラーが大量に表示される**
 
-## 🔄 段階的移行戦略
-
-### Phase 1: 警告モード（現在）
 ```bash
-npm run lint:theme:migrate  # 全て警告レベル
+# 段階的に修正 - 1ファイルずつ
+npx eslint src/components/MyComponent.tsx --fix
 ```
 
-### Phase 2: 新規ファイル厳格化
-```bash 
-npm run lint:theme:eslint  # 新規=ERROR, 既存=WARN
-```
+**Q: 既存のライブラリコンポーネントでエラー**
 
-### Phase 3: 完全移行
-```bash
-npm run lint:theme:strict  # 全てERRORレベル
-```
+- `theme-simple.js`の除外リストに追加
+- または`/* eslint-disable no-restricted-syntax */`でファイル単位で無効化
 
-## 📊 統計とメトリクス
-
-### 移行進捗の確認
-```bash
-# 違反数カウント
-npm run lint:theme:eslint --format=json | jq '.length'
-
-# ファイル別違反数
-npm run lint:theme:eslint --format=stylish
-```
+## 📈 効果測定
 
 ### 成功指標
-- ✅ 新規ファイル: 0 violations
-- 🔄 既存ファイル: 段階的削減
-- 📈 theme使用率: 100%達成
 
-## 🤝 開発者ガイド
+- Theme violation件数: 目標 0件
+- 新規コンポーネントの100% theme compliance
+- ダークモード切り替えでのUI破綻: 0件
+- デザインシステム変更時の影響範囲: `/src/config/theme`のみ
 
-### 新機能開発時
-1. **theme importから開始**
-   ```tsx
-   import { colors, typography, spacing } from '@/config/theme';
-   ```
+### 監視コマンド
 
-2. **VSCodeでリアルタイム確認**
-   - 赤線 = 修正必要
-   - 緑線 = OK
+```bash
+# theme violation チェック
+npm run lint | grep "theme\|Tailwind"
 
-3. **保存前にlint実行**
-   ```bash
-   npm run lint:theme:eslint src/components/NewComponent.tsx
-   ```
-
-### 既存ファイル修正時
-1. **段階的アプローチ**
-   - 一度に全修正せず、触った部分のみ
-   - theme importを追加
-   - 直接色指定を順次置換
-
-2. **優先順位**
-   - 🔴 ERROR → 最優先
-   - 🟡 WARN → 計画的修正
-
-## 🔗 関連ドキュメント
-
-- [CLAUDE.md](../CLAUDE.md) - 基本開発指針
-- [THEME_ENFORCEMENT.md](./THEME_ENFORCEMENT.md) - 包括的なtheme強制システム
-- [src/config/theme/](../src/config/theme/) - Theme定義リファレンス
+# 特定ディレクトリのtheme compliance
+npx eslint src/components/ui/ | grep "restricted-syntax"
+```
 
 ---
 
-**🎯 最終目標: 100% config/theme経由でのスタイリング実現**
+**最終更新**: 2025年9月18日  
+**ステータス**: Phase 2完了、新規コンポーネントでの厳格enforcement実装済み

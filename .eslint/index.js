@@ -10,6 +10,8 @@ module.exports = {
   extends: [
     './configs/base.js',
     './configs/bundle-optimization.js',
+    './configs/theme-simple.js', // Theme enforcement basic rules
+    './configs/theme-strict.js', // Strict theme enforcement for new components
     isDev ? './configs/development.js' : './configs/production.js',
   ],
 
