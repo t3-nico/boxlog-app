@@ -56,7 +56,7 @@ export type SpacingCategory = keyof typeof spacing
  * スペーシングサイズ
  * @description 各カテゴリで使用可能なサイズ
  */
-export type SpacingSize<T extends SpacingCategory> = keyof typeof spacing[T]
+export type SpacingSize<T extends SpacingCategory> = keyof typeof spacing[T as keyof typeof spacing]
 
 /**
  * レイアウトタイプ

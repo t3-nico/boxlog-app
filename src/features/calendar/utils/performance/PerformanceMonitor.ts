@@ -343,7 +343,7 @@ export class PerformanceMonitor {
       }
     }
     
-    this.metrics.calendarMetrics[key] = value
+    this.metrics.calendarMetrics[key as keyof typeof calendarMetrics as keyof typeof calendarMetrics] = value
     this.addToHistory()
   }
 
@@ -363,7 +363,7 @@ export class PerformanceMonitor {
    */
   private checkThresholds(key: string, value: number): void {
     const thresholdKey = key as keyof PerformanceThreshold
-    const threshold = this.thresholds[thresholdKey]
+    const threshold = this.thresholds[thresholdKey as keyof typeof thresholds]
     
     if (threshold && value > threshold) {
       this.triggerCallback('thresholdExceeded', {

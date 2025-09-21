@@ -120,7 +120,7 @@ export class SmartFolderRuleEngine {
    * アイテムからフィールド値を取得
    */
   private static getFieldValue(item: Record<string, unknown>, field: SmartFolderRuleField): unknown {
-    const fieldMapper = this.FIELD_MAPPING[field]
+    const fieldMapper = this.FIELD_MAPPING[field as keyof typeof FIELD_MAPPING]
     if (fieldMapper) {
       return fieldMapper(item)
     }

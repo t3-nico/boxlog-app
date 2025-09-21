@@ -13,8 +13,8 @@ export const getEventColor = (
   status: keyof CalendarColors['event'],
   property: 'background' | 'text' | 'hover' = 'background'
 ): string => {
-  const colors = calendarColors.event[status]
-  return colors?.[property] || calendarColors.event.scheduled[property]
+  const colors = calendarColors.event[status as keyof typeof event]
+  return colors?.[property] || calendarColors.event.scheduled[property as keyof typeof scheduled as keyof typeof scheduled]
 }
 
 // UI状態の色クラスを取得
@@ -22,14 +22,14 @@ export const getStatusColor = (
   state: keyof CalendarColors['states'],
   property: 'background' | 'text' = 'background'
 ): string => {
-  const colors = calendarColors.states[state]
+  const colors = calendarColors.states[state as keyof typeof states]
   return colors?.[property] || ''
 }
 
 // 共通テーマから必要な色クラスを取得するヘルパー
 
 export const getCommonColor = (category: keyof typeof colors, type: string): string => {
-  const colorCategory = colors[category]
+  const colorCategory = colors[category as keyof typeof colors]
   if (typeof colorCategory === 'object' && type in colorCategory) {
     return (colorCategory as Record<string, string>)[type] || ''
   }

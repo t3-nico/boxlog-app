@@ -201,10 +201,10 @@ export const trashOperations = {
   groupByDeletedFrom: (items: TrashItem[]): Record<string, TrashItem[]> => {
     return items.reduce((groups, item) => {
       const key = item.deletedFrom || 'その他'
-      if (!groups[key]) {
-        groups[key] = []
+      if (!groups[key as keyof typeof groups]) {
+        groups[key as keyof typeof groups] = []
       }
-      groups[key].push(item)
+      groups[key as keyof typeof groups].push(item)
       return groups
     }, {} as Record<string, TrashItem[]>)
   },

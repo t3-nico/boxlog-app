@@ -109,7 +109,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
       a = (a << 5) - a + b.charCodeAt(0)
       return a & a
     }, 0)
-    return colors[Math.abs(hash) % colors.length]
+    return colors[Math.abs(hash) % colors.length as keyof typeof colors]
   }
 
   // Add tag

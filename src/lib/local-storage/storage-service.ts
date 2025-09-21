@@ -142,7 +142,7 @@ export class LocalStorageService {
     let total = 0
     for (const key in localStorage) {
       if (localStorage.hasOwnProperty(key)) {
-        total += localStorage[key].length + key.length
+        total += localStorage[key as keyof typeof localStorage].length + key.length
       }
     }
     return total
@@ -256,7 +256,7 @@ export class LocalStorageService {
       }
 
       const updatedEvent: LocalEvent = {
-        ...events[eventIndex],
+        ...events[eventIndex as keyof typeof events],
         ...updates,
         id, // IDは変更不可
         updatedAt: new Date(),
@@ -375,7 +375,7 @@ export class LocalStorageService {
       }
 
       const updatedLog: LocalLog = {
-        ...logs[logIndex],
+        ...logs[logIndex as keyof typeof logs],
         ...updates,
         id,
         updatedAt: new Date(),

@@ -393,7 +393,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
   
   for (const key of keysA) {
     if (!keysB.includes(key)) return false
-    if (!deepEqual(a[key], b[key])) return false
+    if (!deepEqual(a[key as keyof typeof a], b[key as keyof typeof b])) return false
   }
   
   return true

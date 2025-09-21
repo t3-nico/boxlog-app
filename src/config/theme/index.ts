@@ -258,9 +258,9 @@ export const theme = {
  */
 export function getThemeValue<T extends keyof typeof theme>(
   category: T,
-  key: keyof typeof theme[T]
-): typeof theme[T][keyof typeof theme[T]] {
-  return theme[category][key]
+  key: keyof typeof theme[T as keyof typeof theme]
+): typeof theme[T as keyof typeof theme][keyof typeof theme[T as keyof typeof theme]] {
+  return theme[category as keyof typeof theme][key]
 }
 
 /**
@@ -275,7 +275,7 @@ export function getSpacingClass(
   category: keyof typeof spacing,
   size?: string
 ): string {
-  const spacingCategory = spacing[category]
+  const spacingCategory = spacing[category as keyof typeof spacing]
   
   if (typeof spacingCategory === 'string') {
     return spacingCategory
@@ -301,7 +301,7 @@ export function getSpacingClass(
  * ```
  */
 export function getTypographyClass(variant: keyof typeof typography): string {
-  return typography[variant]
+  return typography[variant as keyof typeof typography]
 }
 
 /**
@@ -317,7 +317,7 @@ export function getColorClass(
   type: string,
   variant?: string
 ): string {
-  const colorCategory = colors[category]
+  const colorCategory = colors[category as keyof typeof colors]
   
   if (typeof colorCategory === 'object') {
     const colorType = colorCategory[type as keyof typeof colorCategory]

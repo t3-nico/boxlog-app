@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 import { Clock, GraduationCap, Lightbulb, Moon, Sun } from 'lucide-react'
 

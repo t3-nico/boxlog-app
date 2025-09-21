@@ -99,7 +99,7 @@ function performUpdate<TData, TVariables extends Record<string, unknown> & { id:
   const itemIndex = data.findIndex((item: BaseRecord) => item.id === itemId)
   if (itemIndex !== -1) {
     data[itemIndex] = {
-      ...data[itemIndex],
+      ...data[itemIndex as keyof typeof data],
       ...variables,
       updated_at: new Date().toISOString(),
     }
@@ -132,7 +132,7 @@ function performUpsert<TData, TVariables extends Record<string, unknown> & { id:
   if (itemIndex !== -1) {
     // 更新
     data[itemIndex] = {
-      ...data[itemIndex],
+      ...data[itemIndex as keyof typeof data],
       ...variables,
       updated_at: new Date().toISOString(),
     }

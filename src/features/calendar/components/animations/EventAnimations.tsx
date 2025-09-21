@@ -320,7 +320,7 @@ export const StatusAnimation = ({ type, children, duration = 2000 }: StatusAnima
     <>
       {isVisible === true && (
         <div
-          className={`fixed top-4 right-4 p-3 rounded-lg text-white shadow-lg z-50 transition-all duration-200 ease-out animate-in fade-in slide-in-from-top-5 scale-in-95 ${colors[type]}`}
+          className={`fixed top-4 right-4 p-3 rounded-lg text-white shadow-lg z-50 transition-all duration-200 ease-out animate-in fade-in slide-in-from-top-5 scale-in-95 ${colors[type as keyof typeof colors]}`}
         >
           {children}
         </div>

@@ -104,7 +104,7 @@ export class MemoryOptimizer {
     // トレンド判定
     let trend: MemoryStats['trend'] = 'stable'
     if (this.memoryHistory.length > 0) {
-      const previous = this.memoryHistory[this.memoryHistory.length - 1]
+      const previous = this.memoryHistory[this.memoryHistory.length - 1 as keyof typeof memoryHistory]
       const change = (used - previous.used) / previous.used
       
       if (change > 0.05) trend = 'increasing'

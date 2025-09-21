@@ -346,7 +346,7 @@ export class AdvancedRuleEngine {
 
     for (const key of possibleKeys) {
       if (key in item) {
-        return item[key]
+        return item[key as keyof typeof item]
       }
     }
 

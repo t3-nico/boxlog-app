@@ -339,28 +339,28 @@ export const radiusUtils = {
    * 階層に応じた角丸を取得
    */
   getHierarchyRadius: (level: 1 | 2 | 3): string => {
-    return boxlogRadius.hierarchy[`level${level}` as keyof typeof boxlogRadius.hierarchy]
+    return boxlogRadius.hierarchy[`level${level}` as keyof typeof boxlogRadius.hierarchy as keyof typeof hierarchy]
   },
   
   /**
    * サイズに応じた角丸を取得
    */
   getSizeRadius: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'): string => {
-    return boxlogRadius.sizeRelation[size]
+    return boxlogRadius.sizeRelation[size as keyof typeof sizeRelation]
   },
   
   /**
    * 機能に応じた角丸を取得
    */
   getFunctionalRadius: (purpose: keyof typeof boxlogRadius.functional): string => {
-    return boxlogRadius.functional[purpose]
+    return boxlogRadius.functional[purpose as keyof typeof functional]
   },
   
   /**
    * グループ内の位置に応じた角丸を取得
    */
   getGroupRadius: (position: 'first' | 'middle' | 'last' | 'single'): string => {
-    return specialRadius.group[position]
+    return specialRadius.group[position as keyof typeof group]
   },
 } as const
 

@@ -455,7 +455,7 @@ export class PerformanceMonitor {
     const result: Record<string, {count: number, averageTime: number, minTime: number, maxTime: number}> = {}
     
     for (const [name, metric] of Array.from(this.metrics.entries())) {
-      result[name] = {
+      result[name as keyof typeof result] = {
         count: metric.count,
         averageTime: metric.totalTime / metric.count,
         minTime: metric.minTime,

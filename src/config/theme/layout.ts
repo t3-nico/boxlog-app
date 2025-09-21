@@ -145,7 +145,7 @@ export const layoutHelpers = {
     return columns[type][variant as keyof typeof columns[typeof type]]
   },
   getContainerClass: (size: keyof typeof layout.container) => {
-    return layout.container[size]
+    return layout.container[size as keyof typeof container]
   },
 } as const
 

@@ -159,7 +159,7 @@ export class WorkerManager {
     this.activeTasks.set(task.id, task)
 
     // 最も負荷の少ないワーカーを選択（簡易実装）
-    const worker = this.workers[this.activeTasks.size % this.workers.length]
+    const worker = this.workers[this.activeTasks.size % this.workers.length as keyof typeof workers]
     
     worker.postMessage({
       id: task.id,

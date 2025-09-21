@@ -453,7 +453,7 @@ export class AccessibilityTestRunner {
       return
     }
 
-    const latestResult = this.results[this.results.length - 1]
+    const latestResult = this.results[this.results.length - 1 as keyof typeof results]
     
     console.group('📋 Accessibility Audit Report')
     console.log(`Score: ${latestResult.score}/100`)
@@ -474,7 +474,7 @@ export class AccessibilityTestRunner {
   }
 
   getLatestResults(): AccessibilityAuditResult | null {
-    return this.results.length > 0 ? this.results[this.results.length - 1] : null
+    return this.results.length > 0 ? this.results[this.results.length - 1 as keyof typeof results] : null
   }
 
   clearResults(): void {
