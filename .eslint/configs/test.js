@@ -16,7 +16,19 @@ module.exports = {
         '**/__tests__/**/*.{js,jsx,ts,tsx}',
       ],
       env: {
-        'vitest-globals/env': true,
+        es6: true,
+        node: true,
+      },
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        test: 'readonly',
+        vi: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
       },
       plugins: ['vitest'],
       rules: {
