@@ -32,6 +32,10 @@ module.exports = {
     // 複雑度チェック（本番環境：エラーレベル - リーダブルコード必須）
     complexity: ['error', 10],
 
+    // パフォーマンス強化（本番環境）
+    'react/no-array-index-key': 'error', // React最適化：indexをkeyに使用禁止
+    'react-hooks/exhaustive-deps': 'error', // useMemo/useCallback依存配列の厳格チェック
+
     // テーマルールは本番環境では厳格に適用
     'no-restricted-syntax': [
       'error',
