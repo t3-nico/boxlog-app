@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Clock, GraduationCap, Lightbulb, Moon, Sun } from 'lucide-react'
 
@@ -438,6 +438,64 @@ const ChronoTypePage = () => {
 
   const currentProfile = chronoTypeProfiles.find((p) => p.id === chronoSettings.values.type)
 
+  // useCallback handlers for jsx-no-bind optimization
+  const handleCloseDiagnosis = useCallback(() => {
+    setShowDiagnosis(false)
+  }, [])
+
+  // Handler functions for diagnosis (reserved for future use)
+  const resetDiagnosis = useCallback(() => {
+    setShowDiagnosis(false)
+    setCurrentQuestion(0)
+    setAnswers({})
+    setDiagnosisResult(null)
+  }, [])
+
+  const startDiagnosis = useCallback(() => {
+    setShowDiagnosis(true)
+    setCurrentQuestion(0)
+    setAnswers({})
+    setDiagnosisResult(null)
+
+    // ページトップにスムーズスクロール
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
+    }, 100)
+  }, [])
+
+  // Handler for answer selection using data attributes
+  const handleAnswerClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const questionId = event.currentTarget.dataset.questionId
+      const optionValue = Number(event.currentTarget.dataset.optionValue)
+      if (questionId && !isNaN(optionValue)) {
+        handleAnswerSelect(questionId, optionValue)
+      }
+    },
+    [handleAnswerSelect]
+  )
+
+  // Handler for chronotype profile selection using data attributes
+  const handleProfileSelect = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const profileId = event.currentTarget.dataset.profileId
+      if (profileId) {
+        chronoSettings.updateValue('type', profileId as ChronotypeType)
+      }
+    },
+    [chronoSettings]
+  )
+
+  const handleEnabledToggle = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      chronoSettings.updateValue('enabled', e.target.checked)
+    },
+    [chronoSettings]
+  )
+
   const getTypeIcon = (type: ChronoTypeSchedule['type']) => {
     const IconComponent = typeIcons[type]
     return <IconComponent className="h-4 w-4" data-slot="icon" />
@@ -473,28 +531,6 @@ const ChronoTypePage = () => {
 
     setDiagnosisResult(resultType)
     chronoSettings.updateValue('type', resultType as ChronotypeType)
-  }
-
-  const startDiagnosis = () => {
-    setShowDiagnosis(true)
-    setCurrentQuestion(0)
-    setAnswers({})
-    setDiagnosisResult(null)
-
-    // ページトップにスムーズスクロール
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
-      })
-    }, 100)
-  }
-
-  const resetDiagnosis = () => {
-    setShowDiagnosis(false)
-    setCurrentQuestion(0)
-    setAnswers({})
-    setDiagnosisResult(null)
   }
 
   const progress = ((currentQuestion + 1) / diagnosisQuestions.length) * 100
@@ -552,7 +588,7 @@ const ChronoTypePage = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setShowDiagnosis(false)}
+                    onClick={handleCloseDiagnosis}
                     className={`px-4 py-2 ${typography.body.sm} font-medium ${colors.primary.text} ${colors.primary.DEFAULT} ${colors.primary.hover} ${rounded.component.button.md} transition-colors`}
                   >
                     設定に進む
@@ -586,7 +622,9 @@ const ChronoTypePage = () => {
                       <button
                         type="button"
                         key={option.value}
-                        onClick={() => handleAnswerSelect(diagnosisQuestions[currentQuestion].id, option.value)}
+                        onClick={handleAnswerClick}
+                        data-question-id={diagnosisQuestions[currentQuestion].id}
+                        data-option-value={option.value}
                         className={`w-full border p-4 text-left ${colors.border.DEFAULT} ${rounded.component.card.base} transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:hover:border-neutral-600 dark:hover:bg-neutral-800`}
                       >
                         {option.text}
@@ -626,9 +664,8 @@ const ChronoTypePage = () => {
                 <button
                   type="button"
                   key={profile.id}
-                  onClick={() => {
-                    chronoSettings.updateValue('type', profile.id as ChronotypeType)
-                  }}
+                  onClick={handleProfileSelect}
+                  data-profile-id={profile.id}
                   className={`rounded-lg border-2 p-4 text-left transition-all ${
                     chronoSettings.values.type === profile.id
                       ? `${colors.border.info} ${colors.semantic.info.light}`
@@ -703,7 +740,7 @@ const ChronoTypePage = () => {
               <input
                 type="checkbox"
                 checked={chronoSettings.values.enabled}
-                onChange={(e) => chronoSettings.updateValue('enabled', e.target.checked)}
+                onChange={handleEnabledToggle}
                 className="peer sr-only"
                 aria-label="Show chronotype in calendar"
               />

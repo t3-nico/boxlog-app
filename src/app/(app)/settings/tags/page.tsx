@@ -76,7 +76,7 @@ const TagsSettingsPage = () => {
           parent_id: data.parent_id || null,
           user_id: 'current-user',
           color: data.color || '#3B82F6',
-          level: createParentTag ? (createParentTag.level + 1) : 0,
+          level: createParentTag ? createParentTag.level + 1 : 0,
           path: createParentTag ? `${createParentTag.path}/${data.name}` : `#${data.name}`,
           description: data.description || null,
           icon: null,
@@ -190,6 +190,23 @@ const TagsSettingsPage = () => {
     [renameTagMutation, updateTagOptimistically]
   )
 
+  // jsx-no-bind optimization handlers
+  const handleReload = useCallback(() => {
+    window.location.reload()
+  }, [])
+
+  const handleCreateTagClick = useCallback(() => {
+    handleCreateTag()
+  }, [handleCreateTag])
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }, [])
+
+  const handleToggleInactive = useCallback(() => {
+    setShowInactive(!showInactive)
+  }, [showInactive])
+
   // モーダルを閉じる
   const handleCloseModals = useCallback(() => {
     setShowCreateModal(false)
@@ -208,7 +225,7 @@ const TagsSettingsPage = () => {
           </div>
           <button
             type="button"
-            onClick={() => window.location.reload()}
+            onClick={handleReload}
             className={`${spacing.padding.md} ${colors.primary.DEFAULT} ${colors.text.white} ${colors.rounded.lg} ${colors.hover.primary} ${colors.transition.colors}`}
           >
             再読み込み
@@ -225,7 +242,7 @@ const TagsSettingsPage = () => {
       actions={
         <button
           type="button"
-          onClick={() => handleCreateTag()}
+          onClick={handleCreateTagClick}
           className={`inline-flex items-center gap-2 ${spacing.padding.md} ${colors.primary.DEFAULT} ${colors.hover.primary} ${colors.text.white} ${colors.rounded.lg} ${colors.transition.colors}`}
         >
           <Tag className="h-4 w-4" data-slot="icon" />
@@ -245,7 +262,7 @@ const TagsSettingsPage = () => {
               type="text"
               placeholder="タグを検索..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
               className={`w-full py-2 pl-10 pr-4 ${colors.border.default} ${colors.rounded.lg} ${colors.background.surface} ${colors.text.primary} ${colors.focus.primary}`}
             />
           </div>
@@ -253,7 +270,7 @@ const TagsSettingsPage = () => {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setShowInactive(!showInactive)}
+              onClick={handleToggleInactive}
               className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 ${typography.body.small} font-medium transition-colors ${
                 showInactive
                   ? `${colors.primary.light} ${colors.primary.text}`

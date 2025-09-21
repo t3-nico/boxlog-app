@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
-import { Field, Label , Heading , Text } from '@/components/custom'
+import { Field, Heading, Label, Text } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { colors, spacing, typography } from '@/config/theme'
@@ -40,47 +40,56 @@ const ResetPassword = () => {
     setConfirmPassword(e.target.value)
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      setLoading(true)
+      setError(null)
 
-    // 時間定数比較でタイミング攻撃を防ぐ
-    if (password.length !== confirmPassword.length || password !== confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long')
-      setLoading(false)
-      return
-    }
-
-    try {
-      const { error } = await updatePassword(password)
-      
-      if (error) {
-        setError(error.message)
-      } else {
-        setSuccess(true)
-        // Redirect to main page after 3 seconds
-        setTimeout(() => {
-          router.push('/calendar')
-        }, 3000)
+      // 時間定数比較でタイミング攻撃を防ぐ
+      if (password.length !== confirmPassword.length || password !== confirmPassword) {
+        setError('Passwords do not match')
+        setLoading(false)
+        return
       }
-    } catch (err) {
-      setError('An error occurred while updating the password')
-    } finally {
-      setLoading(false)
-    }
-  }
+
+      if (password.length < 6) {
+        setError('Password must be at least 6 characters long')
+        setLoading(false)
+        return
+      }
+
+      try {
+        const { error } = await updatePassword(password)
+
+        if (error) {
+          setError(error.message)
+        } else {
+          setSuccess(true)
+          // Redirect to main page after 3 seconds
+          setTimeout(() => {
+            router.push('/calendar')
+          }, 3000)
+        }
+      } catch (err) {
+        setError('An error occurred while updating the password')
+      } finally {
+        setLoading(false)
+      }
+    },
+    [password, confirmPassword, token, router]
+  )
+
+  const handleBackToLogin = useCallback(() => {
+    router.push('/auth')
+  }, [router])
 
   if (success) {
     return (
       <div className={`${spacing.stack.md} text-center`}>
-        <Heading level={2} className={colors.semantic.success.text}>Password Updated</Heading>
+        <Heading level={2} className={colors.semantic.success.text}>
+          Password Updated
+        </Heading>
         <Text>Your password has been updated.</Text>
       </div>
     )
@@ -92,14 +101,7 @@ const ResetPassword = () => {
       <Heading>Set a new password</Heading>
       <Field>
         <Label>New Password</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={handlePasswordChange}
-          required
-          minLength={6}
-        />
+        <Input id="password" type="password" value={password} onChange={handlePasswordChange} required minLength={6} />
       </Field>
       <Field>
         <Label>Confirm Password</Label>
@@ -116,7 +118,11 @@ const ResetPassword = () => {
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>
-      <button type="button" onClick={() => router.push('/auth')} className={`${colors.primary.text} ${colors.hover.primary} ${typography.body.sm}`}>
+      <button
+        type="button"
+        onClick={handleBackToLogin}
+        className={`${colors.primary.text} ${colors.hover.primary} ${typography.body.sm}`}
+      >
         Back to login
       </button>
     </form>

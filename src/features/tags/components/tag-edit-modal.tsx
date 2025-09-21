@@ -43,6 +43,25 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
     setCustomColor(value)
   }, [value])
 
+  // jsx-no-bind optimization handler using data attributes
+  const handleColorClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const color = event.currentTarget.dataset.color
+      if (color) {
+        onChange(color)
+      }
+    },
+    [onChange]
+  )
+
+  const handleCustomColorChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCustomColor(e.target.value)
+      onChange(e.target.value)
+    },
+    [onChange, setCustomColor]
+  )
+
   return (
     <div className="space-y-3">
       {/* プリセットカラー */}
@@ -51,7 +70,8 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
           <button
             type="button"
             key={color}
-            onClick={() => onChange(color)}
+            onClick={handleColorClick}
+            data-color={color}
             className={`h-8 w-8 rounded-full border-2 transition-all ${
               value === color
                 ? 'scale-110 border-gray-900 dark:border-white'
@@ -68,10 +88,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
         <input
           type="color"
           value={customColor}
-          onChange={(e) => {
-            setCustomColor(e.target.value)
-            onChange(e.target.value)
-          }}
+          onChange={handleCustomColorChange}
           className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
         <span className="text-sm text-gray-500 dark:text-gray-400">カスタムカラー: {customColor}</span>
@@ -93,6 +110,13 @@ const ParentTagSelector = ({
   currentTag: TagWithChildren
   maxLevel?: number
 }) => {
+  const handleSelectChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      onChange(e.target.value || null)
+    },
+    [onChange]
+  )
+
   // 現在のタグとその子孫を除外するヘルパー
   const getDescendantIds = (tag: TagWithChildren): Set<string> => {
     const ids = new Set([tag.id])
@@ -138,7 +162,7 @@ const ParentTagSelector = ({
   return (
     <select
       value={value || ''}
-      onChange={(e) => onChange(e.target.value || null)}
+      onChange={handleSelectChange}
       className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
       <option value="">-- ルートレベル（親なし）--</option>
@@ -253,57 +277,89 @@ const EditTabContent = ({
   formData: { name: string; color: string; description: string; is_active: boolean }
   setFormData: (data: { name: string; color: string; description: string; is_active: boolean }) => void
   errors: Record<string, string>
-}) => (
-  <div className="space-y-6">
-    {/* タグ名 */}
-    <Field>
-      <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">タグ名 *</Label>
-      <Input
-        type="text"
-        value={formData.name}
-        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-        required
-      />
-      {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
-    </Field>
+}) => {
+  const handleNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, name: e.target.value })
+    },
+    [formData, setFormData]
+  )
 
-    {/* カラー選択 */}
-    <Field>
-      <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
-      <ColorPicker value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
-    </Field>
+  const handleColorChange = useCallback(
+    (color: string) => {
+      setFormData({ ...formData, color })
+    },
+    [formData, setFormData]
+  )
 
-    {/* 説明 */}
-    <Field>
-      <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">説明（任意）</Label>
-      <Textarea
-        value={formData.description}
-        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-        rows={3}
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-      />
-      {errors.description && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>}
-    </Field>
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setFormData({ ...formData, description: e.target.value })
+    },
+    [formData, setFormData]
+  )
 
-    {/* アクティブ状態 */}
-    <Field>
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="is_active"
-          checked={formData.is_active}
-          onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
+  const handleActiveChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData({ ...formData, is_active: e.target.checked })
+    },
+    [formData, setFormData]
+  )
+
+  return (
+    <div className="space-y-6">
+      {/* タグ名 */}
+      <Field>
+        <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">タグ名 *</Label>
+        <Input
+          type="text"
+          value={formData.name}
+          onChange={handleNameChange}
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          required
         />
-        <Label htmlFor="is_active" className="text-sm text-gray-700 dark:text-gray-300">
-          アクティブ
-        </Label>
-      </div>
-      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">非アクティブにするとタグの使用が制限されます</p>
-    </Field>
-  </div>
-)
+        {errors.name ? <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p> : null}
+      </Field>
+
+      {/* カラー選択 */}
+      <Field>
+        <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
+        <ColorPicker value={formData.color} onChange={handleColorChange} />
+      </Field>
+
+      {/* 説明 */}
+      <Field>
+        <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">説明（任意）</Label>
+        <Textarea
+          value={formData.description}
+          onChange={handleDescriptionChange}
+          rows={3}
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+        />
+        {errors.description ? (
+          <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>
+        ) : null}
+      </Field>
+
+      {/* アクティブ状態 */}
+      <Field>
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="is_active"
+            checked={formData.is_active}
+            onChange={handleActiveChange}
+            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600"
+          />
+          <Label htmlFor="is_active" className="text-sm text-gray-700 dark:text-gray-300">
+            アクティブ
+          </Label>
+        </div>
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">非アクティブにするとタグの使用が制限されます</p>
+      </Field>
+    </div>
+  )
+}
 
 // 移動タブコンテンツ
 const MoveTabContent = ({
@@ -467,27 +523,33 @@ const useTagEditModalActions = (
 }
 
 // サブコンポーネント: ヘッダー部分
-const TagEditModalHeader = ({ tag, onClose }: { tag: TagWithChildren; onClose: Function }) => (
-  <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
-    <div className="flex items-center gap-3">
-      <div className="flex-shrink-0">
-        <TagIcon className="h-6 w-6" style={{ color: tag.color }} />
-      </div>
-      <div>
-        <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">タグを編集</DialogTitle>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{tag.path}</p>
-      </div>
-    </div>
+const TagEditModalHeader = ({ tag, onClose }: { tag: TagWithChildren; onClose: Function }) => {
+  const handleClose = useCallback(() => {
+    onClose()
+  }, [onClose])
 
-    <button
-      type="button"
-      onClick={() => onClose()}
-      className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-    >
-      <XMarkIcon className="h-5 w-5" />
-    </button>
-  </div>
-)
+  return (
+    <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
+      <div className="flex items-center gap-3">
+        <div className="flex-shrink-0">
+          <TagIcon className="h-6 w-6" style={{ color: tag.color }} />
+        </div>
+        <div>
+          <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">タグを編集</DialogTitle>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{tag.path}</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        onClick={handleClose}
+        className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+      >
+        <XMarkIcon className="h-5 w-5" />
+      </button>
+    </div>
+  )
+}
 
 // サブコンポーネント: タブナビゲーション
 const TagEditModalTabs = ({
@@ -500,49 +562,55 @@ const TagEditModalTabs = ({
   setActiveTab: (tab: 'edit' | 'move' | 'delete') => void
   onMove?: ((newParentId: string | null) => Promise<void>) | undefined
   onDelete?: (() => Promise<void>) | undefined
-}) => (
-  <div className="flex border-b border-gray-200 dark:border-gray-700">
-    <button
-      type="button"
-      onClick={() => setActiveTab('edit')}
-      className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
-        activeTab === 'edit'
-          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-          : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-      }`}
-    >
-      <PencilIcon className="mr-2 inline h-4 w-4" />
-      基本設定
-    </button>
-    {onMove != null && (
+}) => {
+  const handleEditTab = useCallback(() => setActiveTab('edit'), [setActiveTab])
+  const handleMoveTab = useCallback(() => setActiveTab('move'), [setActiveTab])
+  const handleDeleteTab = useCallback(() => setActiveTab('delete'), [setActiveTab])
+
+  return (
+    <div className="flex border-b border-gray-200 dark:border-gray-700">
       <button
         type="button"
-        onClick={() => setActiveTab('move')}
+        onClick={handleEditTab}
         className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
-          activeTab === 'move'
+          activeTab === 'edit'
             ? 'border-blue-500 text-blue-600 dark:text-blue-400'
             : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
         }`}
       >
-        移動
+        <PencilIcon className="mr-2 inline h-4 w-4" />
+        基本設定
       </button>
-    )}
-    {onDelete != null && (
-      <button
-        type="button"
-        onClick={() => setActiveTab('delete')}
-        className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
-          activeTab === 'delete'
-            ? 'border-red-500 text-red-600 dark:text-red-400'
-            : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-        }`}
-      >
-        <TrashIcon className="mr-2 inline h-4 w-4" />
-        削除
-      </button>
-    )}
-  </div>
-)
+      {onMove != null && (
+        <button
+          type="button"
+          onClick={handleMoveTab}
+          className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === 'move'
+              ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+        >
+          移動
+        </button>
+      )}
+      {onDelete != null && (
+        <button
+          type="button"
+          onClick={handleDeleteTab}
+          className={`flex-1 border-b-2 px-4 py-3 text-sm font-medium transition-colors ${
+            activeTab === 'delete'
+              ? 'border-red-500 text-red-600 dark:text-red-400'
+              : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+          }`}
+        >
+          <TrashIcon className="mr-2 inline h-4 w-4" />
+          削除
+        </button>
+      )}
+    </div>
+  )
+}
 
 // サブコンポーネント: フッター部分
 const TagEditModalFooter = ({
@@ -623,6 +691,10 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
     onClose
   )
 
+  const handleCancelDelete = useCallback(() => {
+    state.setActiveTab('edit')
+  }, [state.setActiveTab])
+
   if (!tag) return null
 
   return (
@@ -645,7 +717,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
               <EditTabContent formData={state.formData} setFormData={state.setFormData} errors={errors} />
             )}
 
-            {state.activeTab === 'move' && onMove && (
+            {state.activeTab === 'move' && onMove ? (
               <MoveTabContent
                 newParentId={state.newParentId}
                 setNewParentId={state.setNewParentId}
@@ -653,11 +725,11 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
                 tag={tag}
                 originalParentId={state.originalParentId}
               />
-            )}
+            ) : null}
 
-            {state.activeTab === 'delete' && onDelete && (
-              <DeleteConfirmation tag={tag} onConfirm={handleDelete} onCancel={() => state.setActiveTab('edit')} />
-            )}
+            {state.activeTab === 'delete' && onDelete ? (
+              <DeleteConfirmation tag={tag} onConfirm={handleDelete} onCancel={handleCancelDelete} />
+            ) : null}
 
             {errors.submit != null && (
               <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
