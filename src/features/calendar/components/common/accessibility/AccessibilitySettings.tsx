@@ -84,7 +84,7 @@ const HighContrastSection = ({
     </h3>
 
     {/* システム設定の表示 */}
-    {isSystemHighContrast && (
+    {isSystemHighContrast === true && (
       <div className={cn(
         "mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md",
         getContrastClassName("bg-blue-50 border-blue-200", "contrast-selected contrast-border")
@@ -193,7 +193,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
           />
 
           {/* テーマ選択 */}
-          {isHighContrastEnabled && (
+          {isHighContrastEnabled === true && (
             <div className="space-y-3">
               <h4 className={cn(
                 "text-md font-medium text-gray-800",
@@ -233,7 +233,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
                           getContrastClassName("text-gray-900", "contrast-text")
                         )}>
                           {theme.name}
-                          {theme.wcagAAA && (
+                          {theme.wcagAAA != null && (
                             <span className={cn(
                               "ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800",
                               getContrastClassName("bg-green-100 text-green-800", "contrast-success")
@@ -269,7 +269,7 @@ export const AccessibilitySettings = ({ isOpen, onClose, className }: Accessibil
             )}
 
           {/* コントラスト比の検証結果 */}
-          {isHighContrastEnabled && (
+          {isHighContrastEnabled === true && (
             <section>
               <h3 className={cn(
                 "text-lg font-semibold text-gray-900 mb-4",

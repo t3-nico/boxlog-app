@@ -353,7 +353,7 @@ export const ScrollableCalendarLayout = ({
             style={{ height: `${24 * HOUR_HEIGHT}px` }}
           >
             {/* 時間軸列 */}
-            {showTimeColumn && (
+            {showTimeColumn != null && (
               <div 
                 className="shrink-0 bg-muted/5 sticky left-0 z-10"
                 style={{ width: timeColumnWidth }}

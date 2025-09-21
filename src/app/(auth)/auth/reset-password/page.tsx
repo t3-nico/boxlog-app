@@ -45,7 +45,8 @@ const ResetPassword = () => {
     setLoading(true)
     setError(null)
 
-    if (password !== confirmPassword) {
+    // 時間定数比較でタイミング攻撃を防ぐ
+    if (password.length !== confirmPassword.length || password !== confirmPassword) {
       setError('Passwords do not match')
       setLoading(false)
       return
@@ -111,7 +112,7 @@ const ResetPassword = () => {
           minLength={6}
         />
       </Field>
-      {error && <Text className={colors.semantic.error.text}>{error}</Text>}
+      {error != null && <Text className={colors.semantic.error.text}>{error}</Text>}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>

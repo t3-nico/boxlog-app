@@ -660,7 +660,7 @@ const ChronoTypePage = () => {
         )}
 
         {/* 選択されたプロファイルのスケジュール表示 */}
-        {currentProfile && (
+        {currentProfile != null && (
           <div
             className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} p-6`}
           >

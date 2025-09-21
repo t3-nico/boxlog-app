@@ -77,7 +77,7 @@ export const NavigationItem = ({
       )}
     >
       {/* Icon */}
-      {Icon && (
+      {Icon != null && (
         <Icon
           className={cn(
             'flex-shrink-0',
@@ -91,7 +91,7 @@ export const NavigationItem = ({
       <span className={cn('flex-1 truncate', variant === 'default' ? 'font-medium' : 'font-normal')}>{label}</span>
 
       {/* Badge */}
-      {badge && (
+      {badge != null && (
         <span
           className={cn(
             'ml-auto rounded-full px-2 py-0.5',

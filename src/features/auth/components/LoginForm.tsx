@@ -105,7 +105,7 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
         <Label htmlFor="password">Password</Label>
         <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       </div>
-      {error && (
+      {error != null && (
         <p
           className={`${colors.text.error} font-bold ${typography.body.lg} ${typography.body.base} sm:${typography.body.sm}`}
         >

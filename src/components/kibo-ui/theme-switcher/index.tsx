@@ -80,7 +80,7 @@ export const ThemeSwitcher = ({
             onClick={() => handleThemeClick(key as 'light' | 'dark' | 'system')}
             type="button"
           >
-            {isActive && (
+            {isActive === true && (
               <motion.div
                 className="absolute inset-0 rounded-full bg-secondary"
                 layoutId="activeTheme"

@@ -183,7 +183,7 @@ export const DesktopSidebar = () => {
         >
           {primaryNavigation.map((section) => (
             <React.Fragment key={section.id}>
-              {section.label && (
+              {section.label != null && (
                 <div
                   className={cn(
                     spacing.padding.sm,

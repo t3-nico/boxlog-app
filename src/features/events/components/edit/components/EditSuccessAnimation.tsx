@@ -16,7 +16,7 @@ interface EditSuccessAnimationProps {
 export const EditSuccessAnimation = ({ showSuccess, title }: EditSuccessAnimationProps) => {
   return (
     <AnimatePresence>
-      {showSuccess && (
+      {showSuccess != null && (
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}

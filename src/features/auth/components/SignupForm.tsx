@@ -137,7 +137,7 @@ export const SignupForm = ({
             minLength={6}
           />
         </div>
-        {error && (
+        {error != null && (
           <div className="text-sm text-destructive text-center">
             {error}
           </div>

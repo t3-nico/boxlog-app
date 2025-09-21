@@ -115,12 +115,12 @@ export const GlobalSearchModal = ({ isOpen, onClose }: GlobalSearchModalProps) =
             {selectedResult ? (
               <div className="mt-4">
                 <h3 className="font-semibold">{selectedResult.title}</h3>
-                {selectedResult.description && (
+                {selectedResult.description != null && (
                   <p className="mt-2 text-sm text-muted-foreground">
                     {selectedResult.description}
                   </p>
                 )}
-                {selectedResult.metadata && (
+                {selectedResult.metadata != null && (
                   <div className="mt-4 space-y-2">
                     {Object.entries(selectedResult.metadata).map(([key, value]) => (
                       <div key={key} className="text-sm">

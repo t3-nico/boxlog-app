@@ -226,7 +226,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                   </div>
 
                   {/* エラー表示 */}
-                  {errors.submit && (
+                  {errors.submit != null && (
                     <div className="rounded-md border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
                       <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
                     </div>
@@ -235,7 +235,7 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
               </div>
 
               {/* プレビューエリア */}
-              {showPreview && (
+              {showPreview != null && (
                 <div className="w-1/3 bg-gray-50 dark:bg-gray-800/50">
                   <RulePreview rules={formData.rules} items={previewItems} />
                 </div>

@@ -655,7 +655,7 @@ export const PerformanceIndicator = ({ isLoading, progress = 0, className }: Per
 
   return (
     <AnimatePresence>
-      {isLoading && (
+      {isLoading === true && (
         <motion.div
           className={cn('relative', className)}
           initial={{ opacity: 0, scale: 0.8 }}

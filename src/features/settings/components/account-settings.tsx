@@ -233,7 +233,7 @@ const AccountSettings = () => {
               <Button type="button" variant="outline" disabled={isUploading}>
                 {isUploading ? 'アップロード中...' : '📷 画像をアップロード'}
               </Button>
-              {uploadedAvatar && (
+              {uploadedAvatar != null && (
                 <Button type="button" variant="ghost" onClick={handleAvatarRemove} className={semantic.error.text}>
                   削除
                 </Button>
@@ -320,7 +320,7 @@ const AccountSettings = () => {
           />
         </div>
 
-        {security.values.twoFactorEnabled && (
+        {security.values.twoFactorEnabled != null && (
           <div
             className={`mt-4 ${spacing.card} ${semantic.success.border} ${semantic.success.light} ${rounded.component.card.lg}`}
           >

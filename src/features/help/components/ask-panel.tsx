@@ -183,7 +183,7 @@ const ChatInput = () => {
   return (
     <div className="flex-shrink-0 p-4">
       {/* Typing indicator */}
-      {state.isTyping && (
+      {state.isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="bg-muted-foreground/60 h-2 w-2 animate-pulse rounded-full"></div>
@@ -290,7 +290,7 @@ const AskPanelHeader = ({
                   <MoreVertical className="h-4 w-4" />
                 </button>
 
-                {showMenu && (
+                {showMenu != null && (
                   <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                     <button
                       type="button"
@@ -427,7 +427,7 @@ const _PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help'
               <div className="flex-1">
                 <div className="mb-1 flex items-center gap-2">
                   <h4 className="text-foreground font-medium">{item.title}</h4>
-                  {item.badge && (
+                  {item.badge != null && (
                     <span
                       className={`px-2 py-1 ${typography.body.xs} bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 ${rounded.component.badge.full}`}
                     >

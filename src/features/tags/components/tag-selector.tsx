@@ -108,7 +108,7 @@ export const TagSelector = ({
                   }`}
                 >
                   <TagBadge tag={tag} showIcon={true} showPath={tag.level > 1} />
-                  {tag.description && (
+                  {tag.description != null && (
                     <span className="text-xs text-gray-500 truncate">
                       {tag.description}
                     </span>
@@ -124,7 +124,7 @@ export const TagSelector = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {maxTags && (
+      {maxTags != null && (
         <div className="text-xs text-gray-500">
           {selectedTagIds.length} / {maxTags} tags selected
         </div>

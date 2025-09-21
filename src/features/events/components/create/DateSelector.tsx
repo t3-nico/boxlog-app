@@ -204,7 +204,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
 
           {/* Mini calendar popup */}
           <AnimatePresence>
-            {showDatePicker && (
+            {showDatePicker != null && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -312,7 +312,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
 
           {/* Time picker dropdown */}
           <AnimatePresence>
-            {showStartTimePicker && (
+            {showStartTimePicker != null && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -351,7 +351,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
 
           {/* Time picker dropdown */}
           <AnimatePresence>
-            {showEndTimePicker && (
+            {showEndTimePicker != null && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}

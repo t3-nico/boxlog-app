@@ -229,7 +229,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                 </span>
               </div>
 
-              {item.description && (
+              {item.description != null && (
                 <p className="${typography.body.small} ${colors.text.muted} mt-1 truncate">
                   {trashOperations.truncateDescription(item.description)}
                 </p>

@@ -236,7 +236,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
 
         {/* Week headers */}
         <div className={cn('mb-2 grid grid-cols-7 gap-0.5', showWeekNumbers && 'grid-cols-8')}>
-          {showWeekNumbers && (
+          {showWeekNumbers != null && (
             <div className="text-muted-foreground flex h-6 items-center justify-center text-xs">W</div>
           )}
           {weekDays.map((day) => (

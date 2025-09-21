@@ -106,7 +106,7 @@ export const MobileNavigation = ({
         ))}
 
         {/* フローティングアクションボタン */}
-        {showAddButton && (
+        {showAddButton != null && (
           <button
             type="button"
             onClick={onAddClick}

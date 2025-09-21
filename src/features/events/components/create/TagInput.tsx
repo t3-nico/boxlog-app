@@ -349,7 +349,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                     #
                   </span>
                   <span className={`${body.DEFAULT} ${text.primary}`}>{suggestion.name}</span>
-                  {suggestion.frequency && (
+                  {suggestion.frequency != null && (
                     <span className={`ml-auto ${body.small} ${text.muted}`}>{suggestion.frequency}回</span>
                   )}
                 </button>

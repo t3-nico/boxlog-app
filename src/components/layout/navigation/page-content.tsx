@@ -40,7 +40,7 @@ export const PageContent = ({ pathname }: PageContentProps) => {
       {/* Page-specific sections */}
       <div className="space-y-6">
 
-        {isBoardPage && (
+        {isBoardPage === true && (
           <BoardSidebarSections
             collapsed={false}
             onSelectTag={handleSelectTag}
@@ -48,7 +48,7 @@ export const PageContent = ({ pathname }: PageContentProps) => {
           />
         )}
 
-        {isTablePage && (
+        {isTablePage === true && (
           <TableSidebarSections
             collapsed={false}
             onSelectTag={handleSelectTag}
@@ -56,7 +56,7 @@ export const PageContent = ({ pathname }: PageContentProps) => {
           />
         )}
 
-        {isStatsPage && (
+        {isStatsPage === true && (
           <StatsSidebarSections
             collapsed={false}
             onSelectTag={handleSelectTag}
@@ -64,11 +64,11 @@ export const PageContent = ({ pathname }: PageContentProps) => {
           />
         )}
 
-        {isAIChatPage && (
+        {isAIChatPage === true && (
           <AIChatSidebarSections collapsed={false} />
         )}
 
-        {isHelpPage && (
+        {isHelpPage === true && (
           <HelpSidebarSections collapsed={false} />
         )}
       </div>

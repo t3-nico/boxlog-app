@@ -310,7 +310,7 @@ export const TagManagementModal = ({
                         <div className="h-4 w-4 flex-shrink-0 rounded-full" style={{ backgroundColor: tag.color }} />
                         <div className="flex-1">
                           <span className="text-sm text-gray-900 dark:text-white">{tag.name}</span>
-                          {tag.parentId && (
+                          {tag.parentId != null && (
                             <div className="text-xs text-gray-500 dark:text-gray-400">
                               Parent: {tags.find((t) => t.id === tag.parentId)?.name || 'Unknown'}
                             </div>

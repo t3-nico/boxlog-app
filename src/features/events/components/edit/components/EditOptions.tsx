@@ -92,7 +92,7 @@ export const EditOptions = ({
 
       {/* メモ入力欄 */}
       <AnimatePresence>
-        {showMemo && (
+        {showMemo != null && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}

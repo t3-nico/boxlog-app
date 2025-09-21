@@ -355,7 +355,7 @@ export const SmartFolderList = ({
       </div>
 
       {/* フォルダリスト */}
-      {isExpanded && (
+      {isExpanded === true && (
         <div className="space-y-2">
           {/* システムフォルダ */}
           {systemFolders.map((folder) => (
@@ -393,7 +393,7 @@ export const SmartFolderList = ({
       )}
 
       {/* コンテキストメニュー */}
-      {contextMenu && (
+      {contextMenu != null && (
         <SmartFolderContextMenu
           x={contextMenu.x}
           y={contextMenu.y}

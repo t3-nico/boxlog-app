@@ -113,7 +113,7 @@ export const CurrentTimeLine = memo<CurrentTimeLineProps>(function CurrentTimeLi
       }}
     >
       {/* 時間列のドット */}
-      {showDot && (
+      {showDot != null && (
         <div
           className="absolute bg-red-500 rounded-full border-2 border-white dark:border-gray-900"
           style={{
@@ -178,7 +178,7 @@ export const CurrentTimeLineForColumn = memo<{
       }}
     >
       {/* ドット（列の左端） */}
-      {showDot && (
+      {showDot != null && (
         <div
           className="absolute bg-red-500 rounded-full border-2 border-white dark:border-gray-900"
           style={{

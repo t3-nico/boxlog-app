@@ -102,7 +102,7 @@ export const LoadingOverlay = ({
   return (
     <div className={cn('relative', className)}>
       {children}
-      {isLoading && (
+      {isLoading === true && (
         <div
           className={`absolute inset-0 ${colors.background.base}/80 z-50 flex items-center justify-center backdrop-blur-sm`}
         >

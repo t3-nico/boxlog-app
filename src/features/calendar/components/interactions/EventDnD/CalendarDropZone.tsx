@@ -177,7 +177,7 @@ export const CalendarDropZone = ({
             }}
           >
             {/* 時刻ラベル */}
-            {hoveredTime && (
+            {hoveredTime != null && (
               <div className="absolute -left-12 -top-2 bg-primary text-primary-foreground text-xs font-medium px-2 py-1 rounded">
                 {hoveredTime}
               </div>
@@ -185,7 +185,7 @@ export const CalendarDropZone = ({
           </div>
           
           {/* ドロッププレビューアウトライン */}
-          {item && (
+          {item != null && (
             <div
               className="absolute left-0 right-0 border-2 border-primary/30 rounded-md pointer-events-none z-40"
               style={{

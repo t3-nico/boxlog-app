@@ -100,7 +100,7 @@ export const AnimatedEventItem = ({
 
   return (
     <div>
-      {isVisible && (
+      {isVisible === true && (
         <div
           key={event.id}
           className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 shadow-[0_8px_24px_rgba(59,130,246,0.3)] border-2' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)] z-50' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
@@ -318,7 +318,7 @@ export const StatusAnimation = ({ type, children, duration = 2000 }: StatusAnima
 
   return (
     <>
-      {isVisible && (
+      {isVisible === true && (
         <div
           className={`fixed top-4 right-4 p-3 rounded-lg text-white shadow-lg z-50 transition-all duration-200 ease-out animate-in fade-in slide-in-from-top-5 scale-in-95 ${colors[type]}`}
         >

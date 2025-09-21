@@ -38,7 +38,7 @@ export const NavigationSection = ({
   return (
     <div className={cn('space-y-2', className)}>
       {/* Section Header */}
-      {title && (
+      {title != null && (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
           className={cn(
@@ -66,7 +66,7 @@ export const NavigationSection = ({
             {title}
           </h3>
 
-          {collapsible && (
+          {collapsible != null && (
             <svg
               className={cn('h-4 w-4 transition-transform', text.muted, isCollapsed ? 'rotate-0' : 'rotate-90')}
               fill="none"

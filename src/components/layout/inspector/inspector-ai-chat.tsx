@@ -31,7 +31,7 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
           <div className={cn(typography.body.sm, 'leading-relaxed whitespace-pre-wrap')}>
             {message.content}
           </div>
-          {message.status && (
+          {message.status != null && (
             <div className={cn(
               spacing.margin.xs,
               typography.body.xs,
@@ -125,7 +125,7 @@ const ChatInput = () => {
       colors.background.base
     )}>
       {/* Typing indicator */}
-      {state.isTyping && (
+      {state.isTyping === true && (
         <div className={`flex items-center gap-2 ${spacing.margin.sm} ${typography.body.sm} ${colors.text.muted}`}>
           <div className="flex gap-1">
             <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`}></div>
@@ -219,7 +219,7 @@ export const InspectorAIChat = () => {
               <MoreVertical className="h-3 w-3" />
             </Button>
             
-            {showMenu && (
+            {showMenu != null && (
               <div className={`absolute right-0 top-full ${spacing.margin.xs} ${colors.background.card} ${colors.border.default} ${rounded.component.card.lg} shadow-lg z-50 min-w-[140px] ${spacing.padding.xs}`}>
                 <button
                   type="button"

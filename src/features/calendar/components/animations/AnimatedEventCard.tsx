@@ -220,7 +220,7 @@ export const AnimatedEventCard = ({
             </div>
             
             {/* 場所（高さが十分な場合のみ） */}
-            {event.location && (style.height as number) > 70 && (
+            {event.location != null && (style.height as number) > 70 && (
               <div className="text-xs opacity-80 leading-tight mt-1 line-clamp-1">
                 📍 {event.location}
               </div>
@@ -230,7 +230,7 @@ export const AnimatedEventCard = ({
       )}
       
       {/* 選択時のインジケーター */}
-      {isSelected && (
+      {isSelected === true && (
         <div className="absolute inset-0 rounded-md border-2 border-primary/80 pointer-events-none" />
       )}
       

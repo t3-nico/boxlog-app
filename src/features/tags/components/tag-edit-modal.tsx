@@ -169,7 +169,7 @@ const DeleteConfirmation = ({
             「{tag.name}」を削除します。この操作は取り消せません。
           </p>
 
-          {hasChildren && (
+          {hasChildren === true && (
             <div className="mb-3 rounded border border-red-200 bg-red-100 p-2 dark:border-red-700 dark:bg-red-900/30">
               <p className="text-sm text-red-800 dark:text-red-300">
                 ⚠️ このタグには {childCount} 個の子タグがあります。 削除するには先に子タグを削除または移動してください。
@@ -336,7 +336,7 @@ const MoveTabContent = ({
           currentTag={tag}
           maxLevel={2}
         />
-        {hasParentChanged && (
+        {hasParentChanged === true && (
           <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/20">
             <p className="text-sm text-blue-800 dark:text-blue-300">
               移動先: {selectedParentTag ? selectedParentTag.name : 'ルートレベル'}
@@ -514,7 +514,7 @@ const TagEditModalTabs = ({
       <PencilIcon className="mr-2 inline h-4 w-4" />
       基本設定
     </button>
-    {onMove && (
+    {onMove != null && (
       <button
         type="button"
         onClick={() => setActiveTab('move')}
@@ -527,7 +527,7 @@ const TagEditModalTabs = ({
         移動
       </button>
     )}
-    {onDelete && (
+    {onDelete != null && (
       <button
         type="button"
         onClick={() => setActiveTab('delete')}
@@ -659,7 +659,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
               <DeleteConfirmation tag={tag} onConfirm={handleDelete} onCancel={() => state.setActiveTab('edit')} />
             )}
 
-            {errors.submit && (
+            {errors.submit != null && (
               <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
                 <p className="text-sm text-red-600 dark:text-red-400">{errors.submit}</p>
               </div>

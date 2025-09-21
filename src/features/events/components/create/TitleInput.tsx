@@ -157,7 +157,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
 
       {/* Progress bar (shown when input starts) */}
       <AnimatePresence>
-        {isFocused && (
+        {isFocused === true && (
           <motion.div
             initial={{ scaleX: 0, opacity: 0 }}
             animate={{

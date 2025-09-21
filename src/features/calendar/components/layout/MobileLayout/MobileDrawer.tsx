@@ -182,7 +182,7 @@ export const MobileDrawer = ({
         </div>
 
         {/* ユーザー情報 */}
-        {userInfo && (
+        {userInfo != null && (
           <div className="p-4">
             <div className="flex items-center gap-3">
               {userInfo.avatar ? (
@@ -201,7 +201,7 @@ export const MobileDrawer = ({
               )}
               <div className="min-w-0 flex-1">
                 <div className="font-medium truncate">{userInfo.name}</div>
-                {userInfo.email && (
+                {userInfo.email != null && (
                   <div className="text-sm text-muted-foreground truncate">
                     {userInfo.email}
                   </div>

@@ -110,7 +110,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
 
             {/* エラー詳細（開発環境のみ） */}
-            {this.props.showDetails && process.env.NODE_ENV === 'development' && this.state.error && (
+            {this.props.showDetails === true && process.env.NODE_ENV === 'development' && this.state.error && (
               <div className={`${spacing.margin.lg} ${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}>
                 <h3 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>
                   エラー詳細 (開発環境のみ)
@@ -122,7 +122,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <p className={spacing.margin.sm}>
                     <strong>エラー:</strong> {this.state.error.message}
                   </p>
-                  {this.state.error.stack && (
+                  {this.state.error.stack != null && (
                     <details className="mt-2">
                       <summary className={`cursor-pointer ${colors.primary.DEFAULT}`}>
                         スタックトレース
@@ -236,7 +236,7 @@ export const ErrorDisplay = ({
       <p className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md`}>
         {message}
       </p>
-      {action && (
+      {action != null && (
         <Button onClick={action.onClick} variant="outline">
           {action.label}
         </Button>

@@ -427,7 +427,7 @@ export type PatternType = keyof typeof patterns
  * <div className={`h-4 w-full rounded ${loading.skeleton}`} />
  * 
  * // モーダル
- * {isOpen && (
+ * {isOpen === true && (
  *   <div className={patterns.modal}>
  *     モーダルコンテンツ
  *   </div>

@@ -126,7 +126,7 @@ export const EventGrid = ({
         disabled={dragState.isDragging || dragState.isResizing}
       >
         {/* 時間グリッド */}
-        {showTimeGrid && (
+        {showTimeGrid != null && (
           <div className="absolute inset-0" style={{ height: 24 * HOUR_HEIGHT }}>
             {timeGrid}
           </div>

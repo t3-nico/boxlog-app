@@ -124,7 +124,7 @@ export const TagFilter = ({
       )}
 
       {/* ドロップダウンメニュー */}
-      {isOpen && (
+      {isOpen === true && (
         <>
           {/* オーバーレイ */}
           <div
@@ -143,7 +143,7 @@ export const TagFilter = ({
             {/* ヘッダー */}
             <div className="flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-700">
               <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">Filter by Tags</h3>
-              {hasTagFilters && (
+              {hasTagFilters === true && (
                 <button
                   type="button"
                   onClick={clearTags}
@@ -181,7 +181,7 @@ export const TagFilter = ({
             </div>
 
             {/* フッター */}
-            {hasTagFilters && (
+            {hasTagFilters === true && (
               <div className="border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
                 <p className="text-xs text-gray-600 dark:text-gray-400">
                   {selectedTagIds.length} tag{selectedTagIds.length !== 1 ? 's' : ''} selected

@@ -105,7 +105,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 
   return (
     <AIMessage from={message.sender}>
-      {isAssistant && (
+      {isAssistant === true && (
         <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
           <Sparkles className="text-foreground h-4 w-4" />
         </div>
@@ -133,7 +133,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           // ユーザーメッセージの場合
           <div className="whitespace-pre-wrap text-sm leading-relaxed">
             {message.content as string}
-            {message.status && (
+            {message.status != null && (
               <div className="mt-1 text-xs opacity-75">
                 {message.status === 'sending' && 'Sending...'}
                 {message.status === 'error' && 'Send Error'}
@@ -143,14 +143,14 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           </div>
         )}
 
-        {isAssistant && (
+        {isAssistant === true && (
           <div className="mt-1 text-xs opacity-60">
             {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         )}
       </AIMessageContent>
 
-      {isUser && (
+      {isUser === true && (
         <AIMessageAvatar
           src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z'/%3e%3c/svg%3e"
           name="You"
@@ -215,7 +215,7 @@ const ChatInput = () => {
   return (
     <div className="bg-background flex-shrink-0 p-4">
       {/* Typing indicator */}
-      {state.isTyping && (
+      {state.isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="bg-muted-foreground/60 h-2 w-2 animate-pulse rounded-full"></div>
@@ -320,7 +320,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                 <MoreVertical className="h-4 w-4" />
               </button>
 
-              {showMenu && (
+              {showMenu != null && (
                 <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"

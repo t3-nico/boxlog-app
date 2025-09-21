@@ -176,7 +176,7 @@ export const MobileSidebar = () => {
           >
             {primaryNavigation.map((section) => (
               <React.Fragment key={section.id}>
-                {section.label && (
+                {section.label != null && (
                   <div
                     className={cn(
                       'mt-4 px-2 py-2 first:mt-0',

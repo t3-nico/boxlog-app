@@ -260,7 +260,7 @@ export const TiptapEditor = ({
       </div>
       
       {/* プレースホルダー */}
-      {editor.isEmpty && (
+      {editor.isEmpty === true && (
         <div className={cn(
           'absolute top-[60px] left-3 pointer-events-none',
           text.muted,

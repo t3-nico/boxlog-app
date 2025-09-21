@@ -21,7 +21,7 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
       <div className="mb-4 flex justify-end">
         <div className="max-w-[80%] break-words rounded-2xl rounded-tr-sm bg-purple-600 px-4 py-2 text-white">
           <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
-          {message.status && (
+          {message.status != null && (
             <div className="mt-1 text-xs text-purple-100 opacity-75">
               {message.status === 'sending' && 'Sending...'}
               {message.status === 'error' && 'Error sending message'}
@@ -81,7 +81,7 @@ const ChatInput = () => {
   return (
     <div className="border-border bg-background flex-shrink-0 border-t p-4">
       {/* Typing indicator */}
-      {state.isTyping && (
+      {state.isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="h-2 w-2 animate-pulse rounded-full bg-purple-400"></div>
@@ -247,7 +247,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                     <MoreVertical className="h-4 w-4" />
                   </Button>
 
-                  {showMenu && (
+                  {showMenu != null && (
                     <div className="bg-card border-border absolute bottom-full right-0 z-50 mb-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                       <button
                         type="button"

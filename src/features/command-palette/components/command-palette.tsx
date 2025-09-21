@@ -270,7 +270,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
                   <IconComponent className="w-5 h-5" />
                   <div className="flex-1">
                     <div className="text-sm font-medium">{result.title}</div>
-                    {result.description && (
+                    {result.description != null && (
                       <div className="text-xs text-muted-foreground mt-1">{result.description}</div>
                     )}
                   </div>

@@ -24,7 +24,7 @@ export const SettingField = ({
         {label}
         {required && <span className={`${colors.semantic.error.text} ml-1`}>*</span>}
       </Label>
-      {description && (
+      {description != null && (
         <p className={`${typography.body.small} ${colors.text.muted}`}>
           {description}
         </p>

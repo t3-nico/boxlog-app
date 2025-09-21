@@ -26,13 +26,13 @@ export const SettingsLayout = ({
             <h2 className={typography.heading.h2}>
               {title}
             </h2>
-            {description && (
+            {description != null && (
               <p className={`${spacing.component.stack.xs} ${typography.body.small} ${colors.text.muted}`}>
                 {description}
               </p>
             )}
           </div>
-          {actions && (
+          {actions != null && (
             <div className={`flex items-center ${spacing.inlineGap.sm}`}>
               {actions}
             </div>

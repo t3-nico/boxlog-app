@@ -83,7 +83,7 @@ export const CalendarHeader = ({
           />
           
           {/* アクションボタン */}
-          {showActions && (
+          {showActions != null && (
             <HeaderActions
               onSettings={onSettings}
               onExport={onExport}

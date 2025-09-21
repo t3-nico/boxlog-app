@@ -45,7 +45,7 @@ export const SettingsCard = ({
 
             <div className="ml-4 flex flex-shrink-0 items-center gap-3">
               {/* 保存中インジケーター（控えめ） */}
-              {isSaving && (
+              {isSaving === true && (
                 <div className={`flex items-center gap-2 ${typography.body.small} ${colors.primary.text}`}>
                   <Loader2 className="h-3 w-3 animate-spin" />
                   <span>保存中...</span>

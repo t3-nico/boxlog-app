@@ -61,7 +61,7 @@ export const EventDetailHeader = ({
 
         {!isCreateMode && (
           <div className="flex items-center gap-2">
-            {onDuplicate && (
+            {onDuplicate != null && (
               <button
                 type="button"
                 onClick={onDuplicate}
@@ -75,7 +75,7 @@ export const EventDetailHeader = ({
                 <Copy className="h-4 w-4" />
               </button>
             )}
-            {onDelete && (
+            {onDelete != null && (
               <button
                 type="button"
                 onClick={onDelete}
@@ -114,7 +114,7 @@ export const EventDetailHeader = ({
           <Clock className={cn('h-4 w-4', text.muted)} />
           <span className={text.primary}>
             {format(formData.startDate, 'M月d日(E) HH:mm', { locale: ja })}
-            {formData.endDate && (
+            {formData.endDate != null && (
               <>
                 <span className={text.muted}> - </span>
                 {format(formData.endDate, 'HH:mm', { locale: ja })}
@@ -130,7 +130,7 @@ export const EventDetailHeader = ({
         )}
 
         {/* Status indicators */}
-        {isCompleted && (
+        {isCompleted === true && (
           <div className="rounded-full bg-green-100 px-2 py-1 text-xs text-green-600 dark:bg-green-900/20 dark:text-green-400">
             完了
           </div>

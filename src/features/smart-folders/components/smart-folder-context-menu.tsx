@@ -161,7 +161,7 @@ export const SmartFolderContextMenu = ({
       )}
 
       {/* システムフォルダの説明 */}
-      {folder.isSystem && (
+      {folder.isSystem === true && (
         <div className="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
           <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
             <StarIcon className="h-4 w-4" />

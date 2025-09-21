@@ -61,7 +61,7 @@ export const NavigationTemplate = ({
           {sections.map((section, index) => (
             <div key={section.id} className={cn(section.className, index !== sections.length - 1 && 'mb-4')}>
               {/* Section Title */}
-              {section.title && (
+              {section.title != null && (
                 <div className="mb-2">
                   <h3 className={cn(typography.body.base, 'text-muted-foreground font-medium')}>{section.title}</h3>
                 </div>

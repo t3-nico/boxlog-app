@@ -74,13 +74,13 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
           <h1 className="text-2xl font-bold">ゴミ箱</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             削除済み: {stats.totalDeleted}件
-            {hasOldEvents && (
+            {hasOldEvents === true && (
               <span className="text-orange-600 dark:text-orange-400"> (30日以上経過: {stats.oldDeleted}件)</span>
             )}
           </p>
         </div>
 
-        {hasOldEvents && (
+        {hasOldEvents === true && (
           <button
             type="button"
             onClick={handleClearTrash}
@@ -124,14 +124,14 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                 <span className="text-sm">{selectedCount > 0 ? `${selectedCount}件選択中` : '全て選択'}</span>
               </label>
 
-              {hasSelection && (
+              {hasSelection === true && (
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   ({selectedCount}件/{filteredEvents.length}件)
                 </span>
               )}
             </div>
 
-            {hasSelection && (
+            {hasSelection === true && (
               <div className="flex space-x-2">
                 <button
                   type="button"
@@ -202,7 +202,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
 
                     <div className="flex flex-1 flex-col">
                       <h3 className="truncate text-lg font-medium">{event.title}</h3>
-                      {event.description && (
+                      {event.description != null && (
                         <p className="line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{event.description}</p>
                       )}
                     </div>
@@ -233,7 +233,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                   <div className="flex space-x-4 text-sm text-gray-600 dark:text-gray-400">
                     <span>削除日: {deletedDateStr}</span>
                     {event.startDate && <span>元の日時: {event.startDate.toLocaleDateString()}</span>}
-                    {event.type && (
+                    {event.type != null && (
                       <span className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">{event.type}</span>
                     )}
                   </div>
@@ -251,7 +251,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
       </div>
 
       {/* ローディング状態 */}
-      {isLoading && (
+      {isLoading === true && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="flex flex-col items-center space-y-4 rounded-xl border border-gray-300 bg-white p-6 dark:border-gray-600 dark:bg-gray-800">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>

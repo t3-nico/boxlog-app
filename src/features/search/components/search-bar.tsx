@@ -96,7 +96,7 @@ export const SearchBar = ({
           onKeyDown={handleKeyDown}
           className="pl-9 pr-9"
         />
-        {isSearching && (
+        {isSearching === true && (
           <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         )}
         {!isSearching && query && (
@@ -136,7 +136,7 @@ export const SearchBar = ({
                         className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-accent"
                       >
                         <span className="font-medium">{result.title}</span>
-                        {result.description && (
+                        {result.description != null && (
                           <span className="text-sm text-muted-foreground">
                             {result.description}
                           </span>

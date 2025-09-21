@@ -99,7 +99,7 @@ const TagItem = ({
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {/* 展開/折りたたみアイコンまたはスペーサー */}
           <div className="flex h-4 w-4 flex-shrink-0 items-center justify-center">
-            {hasChildren && (
+            {hasChildren === true && (
               <button
                 type="button"
                 onClick={handleToggleExpanded}
@@ -167,7 +167,7 @@ const TagItem = ({
             </button>
 
             {/* コンテキストメニュー */}
-            {showMenu && (
+            {showMenu != null && (
               <div
                 className={`absolute right-0 top-full mt-1 ${colors.background.surface} ${colors.border.DEFAULT} z-50 min-w-[140px] rounded-lg py-1 shadow-lg`}
               >
@@ -320,7 +320,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
       </div>
 
       {/* タグリスト */}
-      {isExpanded && (
+      {isExpanded === true && (
         <div className="space-y-2">
           {displayTags().length > 0 ? (
             <>

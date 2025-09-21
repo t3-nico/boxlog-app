@@ -119,7 +119,7 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
         </div>
 
         {/* エラー表示 */}
-        {error && (
+        {error != null && (
           <div className="${colors.semantic.error.light} ${colors.semantic.error.border} ${rounded.lg} ${spacing.cardVariants.default}">
             <div className="flex items-start">
               <div className="flex-shrink-0">

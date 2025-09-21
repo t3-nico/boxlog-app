@@ -78,7 +78,7 @@ export const EventContent = memo<EventContentProps>(function EventContent({
       </div>
       
       {/* 時間表示（日付） */}
-      {showTime && (
+      {showTime != null && (
         <div className="event-time text-xs leading-tight mb-1 opacity-75">
           {previewTime ? (
             formatTimeRange(previewTime.start, previewTime.end, timeFormat)

@@ -141,7 +141,7 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
           </Button>
         </div>
 
-        {showAddDocument && (
+        {showAddDocument != null && (
           <div className="mb-4 p-3 bg-accent/30 rounded-lg space-y-2">
             <input
               type="text"

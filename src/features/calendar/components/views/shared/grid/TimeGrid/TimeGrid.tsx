@@ -177,7 +177,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
           hourHeight={hourHeight}
         />
         
-        {showHalfHourLines && (
+        {showHalfHourLines != null && (
           <HalfHourLines
             startHour={startHour}
             endHour={endHour}
@@ -185,7 +185,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
           />
         )}
         
-        {showQuarterHourLines && (
+        {showQuarterHourLines != null && (
           <QuarterHourLines
             startHour={startHour}
             endHour={endHour}
@@ -203,7 +203,7 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
         ) */}
         
         {/* ドラッグ選択範囲の表示 */}
-        {selectionStyle && (
+        {selectionStyle != null && (
           <div style={selectionStyle} className="drag-selection">
             <div className="absolute inset-0 flex items-center justify-center text-white text-sm font-medium">
               新しいイベント

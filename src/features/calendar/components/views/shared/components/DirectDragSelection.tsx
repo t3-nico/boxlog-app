@@ -249,7 +249,7 @@ export const DirectDragSelection = ({
       {children}
       
       {/* 選択範囲の表示 */}
-      {selectionStyle && (
+      {selectionStyle != null && (
         <div 
           style={selectionStyle}
           className={selectionClassName}

@@ -146,7 +146,7 @@ const TagTreeNode = ({
         {/* アクションボタン */}
         <div className="flex flex-shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           {/* 子タグ追加ボタン */}
-          {canHaveChildren && (
+          {canHaveChildren === true && (
             <button
               type="button"
               onClick={() => onCreateTag(tag.id)}
@@ -168,7 +168,7 @@ const TagTreeNode = ({
             </button>
 
             {/* コンテキストメニュー */}
-            {showMenu && (
+            {showMenu != null && (
               <div className="absolute right-0 top-full z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
                 <button
                   type="button"

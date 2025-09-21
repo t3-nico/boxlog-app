@@ -114,7 +114,7 @@ export const ViewSwitcher = ({
         <ChevronDown className="h-4 w-4" />
       </button>
 
-      {isOpen && (
+      {isOpen === true && (
         <>
           {/* Backdrop */}
           <div
@@ -162,7 +162,7 @@ export const ViewSwitcher = ({
                       {option.icon}
                       <span>{option.label}</span>
                     </div>
-                    {option.shortcut && (
+                    {option.shortcut != null && (
                       <span className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">{option.shortcut}</span>
                     )}
                   </button>
@@ -196,7 +196,7 @@ export const ViewSwitcher = ({
                       showWeekends && 'bg-primary border-primary'
                     )}
                   >
-                    {showWeekends && (
+                    {showWeekends != null && (
                       <Check className="h-3 w-3 text-white transition-transform duration-150" data-check-icon />
                     )}
                   </div>

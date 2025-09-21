@@ -22,12 +22,12 @@ export const SettingsSection = ({
     <div className={cn(spacing.stackGap.lg, className)}>
       {(title || description) && (
         <div>
-          {title && (
+          {title != null && (
             <h2 className={`${typography.heading.h4} ${colors.text.primary}`}>
               {title}
             </h2>
           )}
-          {description && (
+          {description != null && (
             <p className={`mt-1 ${typography.body.small} ${colors.text.muted}`}>
               {description}
             </p>

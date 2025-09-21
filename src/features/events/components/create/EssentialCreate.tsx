@@ -249,7 +249,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isOpen === true && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* オーバーレイ */}
           <motion.div
@@ -435,7 +435,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
 
             {/* エラー表示 */}
             <AnimatePresence>
-              {error && (
+              {error != null && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -453,7 +453,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
 
             {/* 成功アニメーション */}
             <AnimatePresence>
-              {showSuccess && (
+              {showSuccess != null && (
                 <motion.div
                   variants={successVariants}
                   initial="hidden"

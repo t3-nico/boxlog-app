@@ -70,7 +70,7 @@ const RelatedFiles = ({ files }: { files: string[] }) => (
 const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
   <div className="whitespace-pre-wrap text-sm leading-relaxed">
     {message.content}
-    {message.status && (
+    {message.status != null && (
       <div className="mt-1 text-xs opacity-75">
         {message.status === 'sending' && 'Sending...'}
         {message.status === 'error' && 'Send Error'}
@@ -157,7 +157,7 @@ const MainSupportChatInput = ({
 
   return (
     <div className="bg-background flex-shrink-0 p-6">
-      {isLoading && (
+      {isLoading === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400"></div>
@@ -260,7 +260,7 @@ What would you like to know about BoxLog?`,
 
           <div className="flex items-center gap-1">
             {/* Status indicator */}
-            {isLoading && (
+            {isLoading === true && (
               <div className="p-2 text-blue-500">
                 <RefreshCw className="h-4 w-4 animate-spin" />
               </div>
@@ -276,7 +276,7 @@ What would you like to know about BoxLog?`,
                 <MoreVertical className="h-4 w-4" />
               </button>
 
-              {showMenu && (
+              {showMenu != null && (
                 <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
@@ -313,7 +313,7 @@ What would you like to know about BoxLog?`,
       <AIConversation>
         <AIConversationContent className="px-6 py-6">
           {/* Error display */}
-          {error && (
+          {error != null && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
               <div className="flex items-center gap-2 text-red-800 dark:text-red-200">
                 <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">

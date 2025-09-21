@@ -151,7 +151,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           {errors.password && <p className="text-destructive mt-1 text-sm">{errors.password.message}</p>}
         </div>
 
-        {error && (
+        {error != null && (
           <div className="bg-destructive/10 rounded-md p-4">
             <p className="text-destructive text-sm">{error}</p>
           </div>

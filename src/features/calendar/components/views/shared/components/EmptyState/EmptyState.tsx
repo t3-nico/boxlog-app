@@ -65,21 +65,21 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
       </h3>
       
       {/* 説明 */}
-      {description && (
+      {description != null && (
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md">
           {description}
         </p>
       )}
       
       {/* アクションボタン */}
-      {actions && (
+      {actions != null && (
         <div className="mb-6">
           {actions}
         </div>
       )}
       
       {/* ヒント */}
-      {hint && (
+      {hint != null && (
         <div className="mt-8 text-xs text-muted-foreground max-w-sm">
           <p>{hint}</p>
         </div>

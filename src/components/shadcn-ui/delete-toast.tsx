@@ -102,14 +102,14 @@ export const DeleteToast = ({
             
             {/* 削除された予定の情報 */}
             <div className="flex items-center gap-2 text-xs text-gray-300">
-              {deletedEvent.color && (
+              {deletedEvent.color != null && (
                 <div
                   className="w-3 h-3 rounded-sm flex-shrink-0"
                   style={{ backgroundColor: deletedEvent.color }}
                 />
               )}
               <span className="truncate">{deletedEvent.title}</span>
-              {deletedEvent.startDate && (
+              {deletedEvent.startDate != null && (
                 <span className="text-gray-400">
                   {deletedEvent.startDate.toLocaleString('ja-JP', {
                     month: 'short',

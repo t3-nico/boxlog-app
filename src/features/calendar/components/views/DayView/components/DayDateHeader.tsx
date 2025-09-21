@@ -47,7 +47,7 @@ export const DayDateHeader = ({
         </div>
         
         {/* 今日のインジケーター */}
-        {today && (
+        {today != null && (
           <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full dark:bg-blue-900/20 dark:text-blue-400">
             今日
           </span>
@@ -55,7 +55,7 @@ export const DayDateHeader = ({
       </div>
       
       {/* タイムゾーン表示 */}
-      {timezone && (
+      {timezone != null && (
         <div className="text-sm text-muted-foreground">
           {timezone}
         </div>

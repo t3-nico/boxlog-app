@@ -50,7 +50,7 @@ export const SidebarItem = ({ item, pathname, onItemClick }: SidebarItemProps) =
       <span className={cn('font-medium', typography.heading.h5)}>{item.label}</span>
 
       {/* Badge */}
-      {item.badge && (
+      {item.badge != null && (
         <div
           className={cn(
             'ml-auto h-5 w-5',

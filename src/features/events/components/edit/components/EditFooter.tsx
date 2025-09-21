@@ -26,7 +26,7 @@ export const EditFooter = ({
     <div className="flex justify-between items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800">
       {/* 削除ボタン（左端） */}
       <div>
-        {onDelete && (
+        {onDelete != null && (
           <button
             type="button"
             onClick={onDelete}

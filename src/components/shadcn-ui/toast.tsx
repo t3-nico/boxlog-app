@@ -123,7 +123,7 @@ const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{toast.title}</p>
-        {toast.description && (
+        {toast.description != null && (
           <p className="mt-1 text-sm opacity-90">{toast.description}</p>
         )}
       </div>

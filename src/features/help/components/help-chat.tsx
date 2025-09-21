@@ -18,7 +18,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
       <div className="mb-6 flex justify-end">
         <div className="max-w-[85%] break-words rounded-2xl rounded-tr-sm bg-blue-600 px-4 py-3 text-white">
           <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
-          {message.status && (
+          {message.status != null && (
             <div className="mt-1 text-xs text-blue-100 opacity-75">
               {message.status === 'sending' && 'Sending...'}
               {message.status === 'error' && 'Error sending message'}
@@ -78,7 +78,7 @@ const ChatInput = () => {
   return (
     <div className="border-border bg-background flex-shrink-0 border-t p-6">
       {/* Typing indicator */}
-      {state.isTyping && (
+      {state.isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="bg-muted-foreground/60 h-2 w-2 animate-pulse rounded-full"></div>
@@ -149,7 +149,7 @@ const ChatHeader = () => {
             <MoreVertical className="h-4 w-4" />
           </button>
 
-          {showMenu && (
+          {showMenu != null && (
             <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
               <button
                 type="button"
