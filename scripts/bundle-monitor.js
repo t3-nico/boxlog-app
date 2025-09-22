@@ -9,9 +9,9 @@ const fs = require('fs')
 const path = require('path')
 
 // Bundle予算設定を読み込み
-const BUDGET_FILE = path.join(process.cwd(), 'budget.json')
-const BUILD_MANIFEST = path.join(process.cwd(), '.next/build-manifest.json')
-const NEXT_MANIFEST = path.join(process.cwd(), '.next/static/chunks/_buildManifest.js')
+const BUDGET_FILE = path.join(process.cwd(), 'config/budget.json')
+const _BUILD_MANIFEST = path.join(process.cwd(), '.next/build-manifest.json')
+const _NEXT_MANIFEST = path.join(process.cwd(), '.next/static/chunks/_buildManifest.js')
 
 const colors = {
   red: '\x1b[31m',
@@ -37,12 +37,12 @@ function formatBytes(bytes) {
 function loadBudget() {
   try {
     if (!fs.existsSync(BUDGET_FILE)) {
-      log('❌ budget.json not found. Run "npm run bundle:check" first.', 'red')
+      log('❌ config/budget.json not found. Run "npm run bundle:check" first.', 'red')
       process.exit(1)
     }
     return JSON.parse(fs.readFileSync(BUDGET_FILE, 'utf8'))
   } catch (error) {
-    log(`❌ Error loading budget.json: ${error.message}`, 'red')
+    log(`❌ Error loading config/budget.json: ${error.message}`, 'red')
     process.exit(1)
   }
 }

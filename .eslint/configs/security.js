@@ -68,7 +68,7 @@ module.exports = {
     },
     {
       // ESLint設定ファイル・スクリプトでは緩和
-      files: ['.eslint/**/*.js', 'config/eslint/**/*.js', 'scripts/**/*.js', 'cleanup-unused-vars.js'],
+      files: ['.eslint/**/*.js', 'config/eslint/**/*.js', 'scripts/**/*.js'],
       rules: {
         'security/detect-non-literal-fs-filename': 'off',
         'security/detect-non-literal-regexp': 'off',
