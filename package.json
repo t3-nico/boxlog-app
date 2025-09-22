@@ -2,7 +2,6 @@
   "name": "boxlog-app",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "sideEffects": [
     "*.css",
     "*.scss",
@@ -43,7 +42,7 @@
     "debt:analyze": "npm run lint:all && npm run debt:report",
     "eslint:setup": "node .eslint/scripts/setup.js",
     "setup:eslint-plugins": "node .eslint/scripts/setup.js",
-    "postinstall": "npm run eslint:setup",
+    "postinstall": "echo 'ESLint setup temporarily disabled for deployment'",
     "dev:fallback": "next dev",
     "build:fallback": "next build",
     "start:fallback": "next start",
