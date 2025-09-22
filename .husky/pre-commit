@@ -3,5 +3,8 @@
 
 echo "🔍 Running pre-commit checks..."
 
+# ファイルサイズチェック（Phase 1b: BigTech標準）
+node scripts/check-file-sizes.js
+
 # Lint-staged実行（変更されたファイルのみ）
 npx lint-staged
