@@ -1,33 +1,25 @@
-'use client';
+'use client'
 
-import type { ComponentProps } from 'react';
+import type { ComponentProps } from 'react'
+import { useCallback } from 'react'
 
-import { Button } from '@/components/shadcn-ui/button';
-import { ScrollArea, ScrollBar } from '@/components/shadcn-ui/scroll-area';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/shadcn-ui/button'
+import { ScrollArea, ScrollBar } from '@/components/shadcn-ui/scroll-area'
+import { cn } from '@/lib/utils'
 
-export type AISuggestionsProps = ComponentProps<typeof ScrollArea>;
+export type AISuggestionsProps = ComponentProps<typeof ScrollArea>
 
-export const AISuggestions = ({
-  className,
-  children,
-  ...props
-}: AISuggestionsProps) => (
+export const AISuggestions = ({ className, children, ...props }: AISuggestionsProps) => (
   <ScrollArea className="w-full overflow-x-auto whitespace-nowrap" {...props}>
-    <div className={cn('flex w-max flex-nowrap items-center gap-2', className)}>
-      {children}
-    </div>
+    <div className={cn('flex w-max flex-nowrap items-center gap-2', className)}>{children}</div>
     <ScrollBar className="hidden" orientation="horizontal" />
   </ScrollArea>
-);
+)
 
-export type AISuggestionProps = Omit<
-  ComponentProps<typeof Button>,
-  'onClick'
-> & {
-  suggestion: string;
-  onClick?: (suggestion: string) => void;
-};
+export type AISuggestionProps = Omit<ComponentProps<typeof Button>, 'onClick'> & {
+  suggestion: string
+  onClick?: (suggestion: string) => void
+}
 
 export const AISuggestion = ({
   suggestion,
@@ -38,9 +30,9 @@ export const AISuggestion = ({
   children,
   ...props
 }: AISuggestionProps) => {
-  const handleClick = () => {
-    onClick?.(suggestion);
-  };
+  const handleClick = useCallback(() => {
+    onClick?.(suggestion)
+  }, [onClick, suggestion])
 
   return (
     <Button
@@ -53,5 +45,5 @@ export const AISuggestion = ({
     >
       {children || suggestion}
     </Button>
-  );
-};
+  )
+}

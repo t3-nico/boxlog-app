@@ -5,7 +5,7 @@
  * Issue #213 対応
  */
 
-const { execSync } = require('child_process')
+const { execSync: _execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
@@ -51,7 +51,7 @@ class JsxLeakedRenderFixer {
     log.title('JSX Leaked Render パターンの修正')
 
     const tsxFiles = this.getAllTsxFiles()
-    
+
     tsxFiles.forEach((filePath) => {
       const content = fs.readFileSync(filePath, 'utf8')
       let updatedContent = content
@@ -62,11 +62,22 @@ class JsxLeakedRenderFixer {
       const objectPattern = /\{([a-zA-Z_][a-zA-Z0-9_.]*)\s*&&\s*\(/g
       updatedContent = updatedContent.replace(objectPattern, (match, variable) => {
         // 数値っぽい変数名は除外（別パターンで処理）
-        if (variable.includes('count') || variable.includes('length') || variable.includes('size') || variable.includes('total')) {
+        if (
+          variable.includes('count') ||
+          variable.includes('length') ||
+          variable.includes('size') ||
+          variable.includes('total')
+        ) {
           return match
         }
         // boolean系変数は === true で修正
-        if (variable.includes('is') || variable.includes('has') || variable.includes('can') || variable.includes('should') || variable.includes('loading')) {
+        if (
+          variable.includes('is') ||
+          variable.includes('has') ||
+          variable.includes('can') ||
+          variable.includes('should') ||
+          variable.includes('loading')
+        ) {
           hasChanges = true
           return `{${variable} === true && (`
         }
@@ -90,7 +101,8 @@ class JsxLeakedRenderFixer {
       })
 
       // 修正パターン4: boolean系変数は === true に
-      const booleanPattern = /\{(is[A-Z][a-zA-Z]*|has[A-Z][a-zA-Z]*|can[A-Z][a-zA-Z]*|should[A-Z][a-zA-Z]*|loading|visible|open|active|enabled|disabled)\s*&&\s*\(/g
+      const booleanPattern =
+        /\{(is[A-Z][a-zA-Z]*|has[A-Z][a-zA-Z]*|can[A-Z][a-zA-Z]*|should[A-Z][a-zA-Z]*|loading|visible|open|active|enabled|disabled)\s*&&\s*\(/g
       updatedContent = updatedContent.replace(booleanPattern, (match, variable) => {
         hasChanges = true
         return `{${variable} === true && (`

@@ -1,7 +1,7 @@
 'use client'
 
 import type { ComponentProps } from 'react'
-import { createContext, memo, useContext, useEffect, useState } from 'react'
+import { createContext, memo, useCallback, useContext, useEffect, useState } from 'react'
 
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
 
@@ -87,9 +87,12 @@ export const AIReasoning = memo(
       }
     }, [isStreaming, isOpen, defaultOpen, setIsOpen, hasAutoClosedRef])
 
-    const handleOpenChange = (open: boolean) => {
-      setIsOpen(open)
-    }
+    const handleOpenChange = useCallback(
+      (open: boolean) => {
+        setIsOpen(open)
+      },
+      [setIsOpen]
+    )
 
     return (
       <AIReasoningContext.Provider value={{ isStreaming, isOpen, setIsOpen, duration }}>

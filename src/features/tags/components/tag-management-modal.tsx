@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Check, Edit2, Plus, Trash2, X } from 'lucide-react'
 
@@ -89,6 +89,43 @@ export const TagManagementModal = ({
     setEditColor('')
     setEditParentId(null)
   }
+
+  // useCallback handlers for jsx-no-bind optimization
+  const handleNewTagColorSelect = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    const color = event.currentTarget.dataset.color
+    if (color) {
+      setNewTagColor(color)
+    }
+  }, [])
+
+  const handleEditColorSelect = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    const color = event.currentTarget.dataset.color
+    if (color) {
+      setEditColor(color)
+    }
+  }, [])
+
+  const handleEditClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const tagId = event.currentTarget.dataset.tagId
+      const tag = tags.find((t) => t.id === tagId)
+      if (tag) {
+        handleEditTag(tag)
+      }
+    },
+    [tags, handleEditTag]
+  )
+
+  const handleDeleteClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const tagId = event.currentTarget.dataset.tagId
+      const tagName = event.currentTarget.dataset.tagName
+      if (tagId && tagName && confirm(`Delete tag "${tagName}"? This will remove it from all events.`)) {
+        onDeleteTag(tagId)
+      }
+    },
+    [onDeleteTag]
+  )
 
   // 親タグとして選択可能なタグを取得（循環参照を防ぐ）
   const getAvailableParentTags = (excludeId?: string) => {
@@ -203,7 +240,8 @@ export const TagManagementModal = ({
                     <button
                       type="button"
                       key={color}
-                      onClick={() => setNewTagColor(color)}
+                      onClick={handleNewTagColorSelect}
+                      data-color={color}
                       className={`h-8 w-8 rounded-lg transition-all hover:scale-110 ${
                         newTagColor === color ? 'ring-2 ring-gray-400 ring-offset-2' : ''
                       }`}
@@ -278,7 +316,8 @@ export const TagManagementModal = ({
                               <button
                                 type="button"
                                 key={color}
-                                onClick={() => setEditColor(color)}
+                                onClick={handleEditColorSelect}
+                                data-color={color}
                                 className={`h-6 w-6 rounded transition-all ${
                                   editColor === color ? 'ring-2 ring-blue-500' : ''
                                 }`}
@@ -319,7 +358,8 @@ export const TagManagementModal = ({
                         <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                           <button
                             type="button"
-                            onClick={() => handleEditTag(tag)}
+                            onClick={handleEditClick}
+                            data-tag-id={tag.id}
                             className="rounded p-1 text-blue-600 transition-colors hover:bg-blue-100 dark:hover:bg-blue-900"
                             title="Edit tag"
                           >
@@ -327,11 +367,9 @@ export const TagManagementModal = ({
                           </button>
                           <button
                             type="button"
-                            onClick={() => {
-                              if (confirm(`Delete tag "${tag.name}"? This will remove it from all events.`)) {
-                                onDeleteTag(tag.id)
-                              }
-                            }}
+                            onClick={handleDeleteClick}
+                            data-tag-id={tag.id}
+                            data-tag-name={tag.name}
                             className="rounded p-1 text-red-600 transition-colors hover:bg-red-100 dark:hover:bg-red-900"
                             title="Delete tag"
                           >

@@ -74,6 +74,10 @@ const TagItem = ({
     setShowMenu(false)
   }, [onSelectTag, tag.id])
 
+  // jsx-no-bind optimization handlers
+  const handleMouseEnter = useCallback(() => setIsHovered(true), [])
+  const handleMouseLeave = useCallback(() => setIsHovered(false), [])
+
   return (
     <div className="space-y-2">
       {/* タグアイテム */}
@@ -87,8 +91,8 @@ const TagItem = ({
             handleSelectTag()
           }
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onContextMenu={(e) => {
           e.preventDefault()
           setShowMenu(!showMenu)
@@ -144,7 +148,7 @@ const TagItem = ({
                 {tag.name}
               </span>
               {/* アクティブドット */}
-              {isActive && <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>}
+              {isActive ? <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div> : null}
             </div>
           )}
         </div>
@@ -291,6 +295,23 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
     [editingTag, updateTag]
   )
 
+  // jsx-no-bind optimization handlers
+  const handleToggleExpansion = useCallback(() => {
+    setIsExpanded(!isExpanded)
+  }, [isExpanded])
+
+  const handleCreateNewTag = useCallback(() => {
+    console.log('Create new tag')
+  }, [])
+
+  const handleCreateNewTagCollapsed = useCallback(() => {
+    console.log('Create new tag')
+  }, [])
+
+  const handleCloseEditDialog = useCallback(() => {
+    setEditingTag(null)
+  }, [])
+
   if (collapsed) {
     return null
   }
@@ -301,7 +322,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
       <div className="flex w-full items-center justify-between">
         <button
           type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={handleToggleExpansion}
           className={`section-header-toggle mb-2 flex items-center px-2 text-xs/6 font-medium ${colors.text.muted} ${colors.ghost.hover} rounded transition-colors`}
         >
           <span className="peer">Tags</span>
@@ -312,7 +333,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
 
         <button
           type="button"
-          onClick={() => console.log('Create new tag')}
+          onClick={handleCreateNewTag}
           className={`section-header-button p-1 ${colors.ghost.hover} rounded transition-colors`}
         >
           <PlusIcon className={`h-4 w-4 ${colors.text.muted}`} />
@@ -346,7 +367,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
               <p className={`text-xs ${colors.text.muted} mb-2`}>タグがありません</p>
               <button
                 type="button"
-                onClick={() => console.log('Create new tag')}
+                onClick={handleCreateNewTagCollapsed}
                 className={`inline-flex items-center gap-1 px-2 py-1 text-xs ${colors.semantic.info.text} ${colors.selection.hover} rounded transition-colors`}
               >
                 <PlusIcon className="h-4 w-4" />
@@ -358,7 +379,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
       )}
 
       {/* タグ編集ダイアログ */}
-      <TagEditDialog tag={editingTag} open={!!editingTag} onClose={() => setEditingTag(null)} onSave={handleSaveTag} />
+      <TagEditDialog tag={editingTag} open={!!editingTag} onClose={handleCloseEditDialog} onSave={handleSaveTag} />
     </div>
   )
 }

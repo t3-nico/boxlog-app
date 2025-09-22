@@ -1,0 +1,8 @@
+{
+  "issueNumber": "222",
+  "issueUrl": "https://github.com/t3-nico/boxlog-app/issues/222",
+  "title": "開発体験向上: docs:check等ドキュメント管理コマンドの調査と活用整備 #207対応",
+  "startTime": "2025-09-22T05:34:46.880Z",
+  "currentBranch": "dev",
+  "startCommit": "5c439f7 - feat: Root directory cleanup - move scripts and config files #221"
+}

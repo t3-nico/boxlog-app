@@ -30,6 +30,10 @@ export type AIResponseProps = HTMLAttributes<HTMLDivElement> & {
   children: Options['children']
 }
 
+// jsx-no-bind optimization: Extract handlers as named functions
+const handleCopySuccess = () => console.log('Copied code to clipboard')
+const handleCopyError = () => console.error('Failed to copy code to clipboard')
+
 const components: Options['components'] = {
   ol: ({ node: _node, children, className, ...props }) => (
     <ol className={cn('ml-4 list-outside list-decimal', className)} {...props}>
@@ -135,10 +139,7 @@ const components: Options['components'] = {
               )}
             </CodeBlockSelectContent>
           </CodeBlockSelect>
-          <CodeBlockCopyButton
-            onCopy={() => console.log('Copied code to clipboard')}
-            onError={() => console.error('Failed to copy code to clipboard')}
-          />
+          <CodeBlockCopyButton onCopy={handleCopySuccess} onError={handleCopyError} />
         </CodeBlockHeader>
         <CodeBlockBody>
           {(item) => (

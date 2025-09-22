@@ -1,17 +1,21 @@
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 import { ChevronLeft } from 'lucide-react'
 import type { Metadata } from 'next'
 
-
-import { Heading, Subheading , Link } from '@/components/custom'
+import { Heading, Link, Subheading } from '@/components/custom'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn-ui/table'
-import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
-import { Stat } from '@/features/stats'
+import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { getEvent, getEventReviews } from '@/lib/data'
+
+const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: mod.Stat })), {
+  ssr: false,
+  loading: () => <div className="h-24 animate-pulse rounded bg-gray-200" />,
+})
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const event = await getEvent(params.id)
@@ -32,17 +36,22 @@ const EventPage = async ({ params }: { params: { id: string } }) => {
   return (
     <>
       <div className="max-lg:hidden">
-        <Link href="/box" className={`inline-flex items-center ${spacing.component.gap.sm} ${typography.body.sm} ${colors.text.secondary}`}>
+        <Link
+          href="/box"
+          className={`inline-flex items-center ${spacing.component.gap.sm} ${typography.body.sm} ${colors.text.secondary}`}
+        >
           <ChevronLeft className={`size-4 ${colors.icon.secondary}`} data-slot="icon" />
           Box
         </Link>
       </div>
-      <div className={`${spacing.component.stack.md} flex flex-wrap items-end justify-between ${spacing.component.gap.md}`}>
+      <div
+        className={`${spacing.component.stack.md} flex flex-wrap items-end justify-between ${spacing.component.gap.md}`}
+      >
         <div className={`flex flex-wrap items-center ${spacing.component.gap.lg}`}>
           <div className="w-32 shrink-0">
-            <Image 
-              className={`aspect-3/2 ${rounded.component.card.md} ${elevation.card.sm}`} 
-              src={event.imgUrl} 
+            <Image
+              className={`aspect-3/2 ${rounded.component.card.md} ${elevation.card.sm}`}
+              src={event.imgUrl}
               alt={`${event.name} event image`}
               width={128}
               height={85}

@@ -1,28 +1,10 @@
 'use client'
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
-// import { User, Session, AuthResponse, AuthError } from '@supabase/supabase-js' // Disabled for localStorage-only mode
-// import { createClient } from '@/lib/supabase/client' // Disabled for localStorage-only mode
 
-// Temporary types for localStorage-only mode
-interface User {
-  id: string
-  email?: string
-}
+import { AuthError, AuthResponse, Session, User } from '@supabase/supabase-js'
 
-interface Session {
-  user: User
-  access_token: string
-}
-
-interface AuthResponse {
-  data: { user: User | null; session: Session | null }
-  error: AuthError | null
-}
-
-interface AuthError {
-  message: string
-}
+import { useAuth } from '@/lib/supabase'
 
 interface UserMetadata {
   [key: string]: string | number | boolean | null
@@ -45,86 +27,58 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+  const auth = useAuth()
   const [error, setError] = useState<string | null>(null)
 
+  // Supabaseフックから状態を取得
+  const { user, session, loading } = auth
+
   useEffect(() => {
-    // ローカル専用モード: 自動的に仮のユーザーでログイン
-    const initializeLocalAuth = () => {
-      try {
-        const savedUser = localStorage.getItem('boxlog-user')
-        if (savedUser) {
-          const userData = JSON.parse(savedUser)
-          setUser(userData)
-          setSession({
-            user: userData,
-            access_token: 'local-token',
-          })
-        } else {
-          // デフォルトユーザーを作成
-          const defaultUser: User = {
-            id: `local-user-${Date.now()}`,
-            email: 'user@localhost',
-          }
-          localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
-          setUser(defaultUser)
-          setSession({
-            user: defaultUser,
-            access_token: 'local-token',
-          })
-        }
-      } catch (err) {
-        console.error('Failed to initialize local auth:', err)
-        setError('Failed to initialize authentication')
-      } finally {
-        setLoading(false)
-      }
+    // Supabaseのエラーをローカル状態に同期
+    if (auth.error) {
+      setError(auth.error.message)
     }
+  }, [auth.error])
 
-    initializeLocalAuth()
-  }, [])
-
-  const signUp = async (_email: string, _password: string, _metadata?: UserMetadata): Promise<AuthResponse> => {
-    // ローカル専用モード: サインアップ無効
+  const signUp = async (email: string, password: string, _metadata?: UserMetadata): Promise<AuthResponse> => {
+    const result = await auth.signUp(email, password)
     return {
-      data: { user: null, session: null },
-      error: { message: 'Sign up disabled in local mode' },
+      data: { user: result.data?.user || null, session: result.data?.session || null },
+      error: result.error,
     }
   }
 
-  const signIn = async (_email: string, _password: string): Promise<AuthResponse> => {
-    // ローカル専用モード: 常にログイン済み
+  const signIn = async (email: string, password: string): Promise<AuthResponse> => {
+    const result = await auth.signInWithEmail(email, password)
     return {
-      data: { user, session },
-      error: null,
+      data: { user: result.data?.user || null, session: result.data?.session || null },
+      error: result.error,
     }
   }
 
   const signInWithOAuth = async (_provider: 'google' | 'apple'): Promise<AuthResponse> => {
-    // ローカル専用モード: OAuth無効
+    // OAuth実装は今後追加予定
     return {
       data: { user: null, session: null },
-      error: { message: 'OAuth disabled in local mode' },
+      error: { message: 'OAuth not implemented yet' } as AuthError,
     }
   }
 
   const signOut = async () => {
-    // ローカル専用モード: ログアウト無効
-    return { error: null }
+    const result = await auth.signOut()
+    return { error: result.error }
   }
 
-  const resetPassword = async (_email: string) => {
-    // ローカル専用モード: パスワードリセット無効
-    return { error: { message: 'Password reset disabled in local mode' } }
+  const resetPassword = async (email: string) => {
+    const result = await auth.resetPassword(email)
+    return { error: result.error }
   }
 
-  const updatePassword = async (_password: string): Promise<AuthResponse> => {
-    // ローカル専用モード: パスワード更新無効
+  const updatePassword = async (password: string): Promise<AuthResponse> => {
+    const result = await auth.updatePassword(password)
     return {
-      data: { user: null, session: null },
-      error: { message: 'Password update disabled in local mode' },
+      data: { user: result.data?.user || null, session: null },
+      error: result.error,
     }
   }
 

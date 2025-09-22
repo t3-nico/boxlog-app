@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { usePathname } from 'next/navigation'
 
@@ -111,12 +111,12 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
             ) : (
               <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
             )}
-            {message.status && !isEditing && (
+            {message.status && !isEditing ? (
               <div className={`mt-1 ${typography.body.xs} text-blue-100 opacity-75`}>
                 {message.status === 'sending' && '送信中...'}
                 {message.status === 'error' && '送信エラー'}
               </div>
-            )}
+            ) : null}
           </div>
           {!isEditing && (
             <button
@@ -171,6 +171,15 @@ const ChatInput = () => {
     }
   }
 
+  // jsx-no-bind optimization handlers
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false)
+  }, [])
+
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
@@ -207,8 +216,8 @@ const ChatInput = () => {
             value={state.inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
             placeholder="Ask Claude..."
             className={`w-full resize-none ${rounded.component.modal.lg} border ${border.universal} ${colors.background.card} ${spacing.card} pr-12 ${typography.body.sm} max-h-32 min-h-[44px] focus:border-purple-500 focus:ring-2 focus:ring-purple-500 ${colors.text.placeholder} scrollbar-hide`}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
@@ -259,6 +268,21 @@ const AskPanelHeader = ({
 
   const activeTabData = tabs.find((tab) => tab.id === activeTab)!
 
+  // jsx-no-bind optimization handlers
+  const handleMenuToggle = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  const handleClearMessages = useCallback(() => {
+    clearMessages()
+    setShowMenu(false)
+  }, [clearMessages])
+
+  const handleExportConversation = useCallback(() => {
+    navigator.clipboard.writeText(JSON.stringify({}))
+    setShowMenu(false)
+  }, [])
+
   return (
     <div className="border-border flex-shrink-0 border-b">
       {/* Header with collapse button and active tab info */}
@@ -284,7 +308,7 @@ const AskPanelHeader = ({
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setShowMenu(!showMenu)}
+                  onClick={handleMenuToggle}
                   className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-2 transition-colors"
                 >
                   <MoreVertical className="h-4 w-4" />
@@ -294,10 +318,7 @@ const AskPanelHeader = ({
                   <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                     <button
                       type="button"
-                      onClick={() => {
-                        clearMessages()
-                        setShowMenu(false)
-                      }}
+                      onClick={handleClearMessages}
                       className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -305,10 +326,7 @@ const AskPanelHeader = ({
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(JSON.stringify({}))
-                        setShowMenu(false)
-                      }}
+                      onClick={handleExportConversation}
                       className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                     >
                       <Copy className="h-4 w-4" />
@@ -345,6 +363,17 @@ const AIIntroduction = () => {
     { emoji: '💡', text: 'Suggest productivity improvements', description: 'Enhance your workflow' },
   ]
 
+  // jsx-no-bind optimization handler using data attributes
+  const handlePromptClick = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const promptText = event.currentTarget.dataset.promptText
+      if (promptText) {
+        sendMessage(promptText)
+      }
+    },
+    [sendMessage]
+  )
+
   return (
     <div className="p-6">
       {/* AI Introduction */}
@@ -366,7 +395,8 @@ const AIIntroduction = () => {
           <button
             type="button"
             key={`prompt-${prompt.text.slice(0, 20)}`}
-            onClick={() => sendMessage(prompt.text)}
+            onClick={handlePromptClick}
+            data-prompt-text={prompt.text}
             className="hover:bg-accent/50 flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors"
           >
             <span className="text-xl">{prompt.emoji}</span>
@@ -578,18 +608,32 @@ export const AskPanel = () => {
     }
   }, [collapsed, state.unreadCount, markAsRead])
 
-  // Handle tab selection from menu
-  const handleTabSelect = (tab: 'ai' | 'help') => {
+  // jsx-no-bind optimization handlers
+  const handleTabSelect = useCallback((tab: 'ai' | 'help') => {
     setActiveTab(tab)
     setShowTabSelection(false)
-  }
+  }, [])
 
-  // Handle direct tab selection from collapsed state
-  const handleDirectTabSelect = (tab: 'ai' | 'help') => {
-    setActiveTab(tab)
-    setShowTabSelection(false)
-    toggleCollapsed() // Expand the panel
-  }
+  const handleDirectTabSelect = useCallback(
+    (tab: 'ai' | 'help') => {
+      setActiveTab(tab)
+      setShowTabSelection(false)
+      toggleCollapsed() // Expand the panel
+    },
+    [toggleCollapsed]
+  )
+
+  const handleDirectAISelect = useCallback(() => {
+    handleDirectTabSelect('ai')
+  }, [handleDirectTabSelect])
+
+  const handleDirectHelpSelect = useCallback(() => {
+    handleDirectTabSelect('help')
+  }, [handleDirectTabSelect])
+
+  const handleBackToMenu = useCallback(() => {
+    setShowTabSelection(true)
+  }, [])
 
   // Collapsed state - icon only with sidebar-like design
   if (collapsed) {
@@ -602,7 +646,7 @@ export const AskPanel = () => {
         <div className="flex flex-col items-center space-y-2 px-4 pt-4">
           <button
             type="button"
-            onClick={() => handleDirectTabSelect('ai')}
+            onClick={handleDirectAISelect}
             className="hover:bg-accent/50 group relative rounded-lg p-3 transition-colors"
             title="AI Assistant"
           >
@@ -620,7 +664,7 @@ export const AskPanel = () => {
 
           <button
             type="button"
-            onClick={() => handleDirectTabSelect('help')}
+            onClick={handleDirectHelpSelect}
             className="hover:bg-accent/50 group rounded-lg p-3 transition-colors"
             title="Help & Support"
           >
@@ -646,7 +690,7 @@ export const AskPanel = () => {
         <AskPanelHeader
           activeTab={activeTab as 'ai' | 'help'}
           onTabChange={setActiveTab}
-          onBackToMenu={() => setShowTabSelection(true)}
+          onBackToMenu={handleBackToMenu}
         />
       )}
 

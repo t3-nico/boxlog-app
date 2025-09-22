@@ -59,7 +59,21 @@ export const mockSupabaseClient = {
   rpc: vi.fn(),
 }
 
+// useAuth フックのモック
+export const mockUseAuth = () => ({
+  user: null,
+  session: null,
+  loading: false,
+  error: null,
+  signInWithEmail: vi.fn().mockResolvedValue({ data: null, error: null }),
+  signUp: vi.fn().mockResolvedValue({ data: null, error: null }),
+  signOut: vi.fn().mockResolvedValue({ error: null }),
+  resetPassword: vi.fn().mockResolvedValue({ data: null, error: null }),
+  updatePassword: vi.fn().mockResolvedValue({ data: null, error: null }),
+})
+
 // モックの適用
 vi.mock('@/lib/supabase', () => ({
   supabase: mockSupabaseClient,
+  useAuth: mockUseAuth,
 }))

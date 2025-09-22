@@ -2,13 +2,12 @@
 
 import { useCallback, useState } from 'react'
 
+import dynamic from 'next/dynamic'
+
 import { Filter, Search, Tag } from 'lucide-react'
 
 import { colors, spacing, typography } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
-import { TagCreateModal } from '@/features/tags/components/tag-create-modal'
-import { TagEditModal } from '@/features/tags/components/tag-edit-modal'
-import { TagTreeView } from '@/features/tags/components/tag-tree-view'
 import {
   useCreateTag,
   useDeleteTag,
@@ -19,6 +18,30 @@ import {
   useUpdateTag,
 } from '@/features/tags/hooks/use-tags'
 import type { CreateTagInput, TagWithChildren, UpdateTagInput } from '@/types/tags'
+
+const TagCreateModal = dynamic(
+  () => import('@/features/tags/components/tag-create-modal').then((mod) => ({ default: mod.TagCreateModal })),
+  {
+    ssr: false,
+    loading: () => <div className="h-96 animate-pulse rounded bg-gray-200" />,
+  }
+)
+
+const TagEditModal = dynamic(
+  () => import('@/features/tags/components/tag-edit-modal').then((mod) => ({ default: mod.TagEditModal })),
+  {
+    ssr: false,
+    loading: () => <div className="h-96 animate-pulse rounded bg-gray-200" />,
+  }
+)
+
+const TagTreeView = dynamic(
+  () => import('@/features/tags/components/tag-tree-view').then((mod) => ({ default: mod.TagTreeView })),
+  {
+    ssr: false,
+    loading: () => <div className="h-64 animate-pulse rounded bg-gray-200" />,
+  }
+)
 
 const TagsSettingsPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false)

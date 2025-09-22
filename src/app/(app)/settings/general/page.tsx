@@ -1,3 +1,5 @@
+import dynamic from 'next/dynamic'
+
 import type { Metadata } from 'next'
 
 import { Subheading } from '@/components/custom'
@@ -11,7 +13,10 @@ import { Textarea } from '@/components/shadcn-ui/textarea'
 import { colors, layout, typography } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
 
-import { Address } from '../address'
+const Address = dynamic(() => import('../address').then((mod) => ({ default: mod.Address })), {
+  ssr: false,
+  loading: () => <div className="h-20 animate-pulse rounded bg-gray-200" />,
+})
 
 export const metadata: Metadata = {
   title: 'Settings',

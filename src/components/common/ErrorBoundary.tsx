@@ -7,12 +7,11 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
+import { AlertTriangle, Home, RefreshCw } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { colors, typography, spacing, rounded, elevation } from '@/config/theme'
+import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { handleClientError } from '@/lib/errors'
-
 
 // === 型定義 ===
 
@@ -38,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
     super(props)
     this.state = {
       hasError: false,
-      errorId: ''
+      errorId: '',
     }
   }
 
@@ -46,7 +45,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return {
       hasError: true,
       error,
-      errorId: Math.random().toString(36).substr(2, 9)
+      errorId: Math.random().toString(36).substr(2, 9),
     }
   }
 
@@ -78,7 +77,7 @@ export class ErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: undefined,
       errorInfo: undefined,
-      errorId: ''
+      errorId: '',
     })
   }
 
@@ -95,13 +94,15 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトのエラー表示
       return (
-        <div className={`min-h-screen flex items-center justify-center ${spacing.padding.md} ${this.props.className || ''}`}>
-          <div className={`max-w-lg w-full ${colors.background.surface} ${rounded.component.card.base} ${elevation.lg} ${spacing.padding.lg}`}>
+        <div
+          className={`flex min-h-screen items-center justify-center ${spacing.padding.md} ${this.props.className || ''}`}
+        >
+          <div
+            className={`w-full max-w-lg ${colors.background.surface} ${rounded.component.card.base} ${elevation.lg} ${spacing.padding.lg}`}
+          >
             <div className={`flex items-center ${spacing.margin.md}`}>
               <AlertTriangle className={`h-8 w-8 ${colors.semantic.error.text} mr-3`} />
-              <h1 className={`${typography.heading.h2} ${colors.text.primary}`}>
-                予期しないエラーが発生しました
-              </h1>
+              <h1 className={`${typography.heading.h2} ${colors.text.primary}`}>予期しないエラーが発生しました</h1>
             </div>
 
             <p className={`${colors.text.secondary} ${spacing.margin.lg}`}>
@@ -110,8 +111,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </p>
 
             {/* エラー詳細（開発環境のみ） */}
-            {this.props.showDetails === true && process.env.NODE_ENV === 'development' && this.state.error && (
-              <div className={`${spacing.margin.lg} ${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}>
+            {!!(this.props.showDetails === true && process.env.NODE_ENV === 'development' && this.state.error) && (
+              <div
+                className={`${spacing.margin.lg} ${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}
+              >
                 <h3 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>
                   エラー詳細 (開発環境のみ)
                 </h3>
@@ -124,10 +127,10 @@ export class ErrorBoundary extends Component<Props, State> {
                   </p>
                   {this.state.error.stack != null && (
                     <details className="mt-2">
-                      <summary className={`cursor-pointer ${colors.primary.DEFAULT}`}>
-                        スタックトレース
-                      </summary>
-                      <pre className={`mt-2 ${typography.special.code} overflow-auto max-h-40 ${colors.background.base} ${spacing.padding.sm} ${rounded.component.input.text}`}>
+                      <summary className={`cursor-pointer ${colors.primary.DEFAULT}`}>スタックトレース</summary>
+                      <pre
+                        className={`mt-2 ${typography.special.code} max-h-40 overflow-auto ${colors.background.base} ${spacing.padding.sm} ${rounded.component.input.text}`}
+                      >
                         {this.state.error.stack}
                       </pre>
                     </details>
@@ -138,21 +141,13 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {/* アクションボタン */}
             <div className={`flex flex-col sm:flex-row ${spacing.stack.sm}`}>
-              <Button
-                onClick={this.handleRetry}
-                className="flex items-center justify-center"
-                variant="default"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
+              <Button onClick={this.handleRetry} className="flex items-center justify-center" variant="default">
+                <RefreshCw className="mr-2 h-4 w-4" />
                 再試行
               </Button>
-              
-              <Button
-                onClick={this.handleGoHome}
-                variant="outline"
-                className="flex items-center justify-center"
-              >
-                <Home className="h-4 w-4 mr-2" />
+
+              <Button onClick={this.handleGoHome} variant="outline" className="flex items-center justify-center">
+                <Home className="mr-2 h-4 w-4" />
                 ホームに戻る
               </Button>
             </div>
@@ -180,7 +175,7 @@ export function withErrorBoundary<P extends object>(
   }
 
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
-  
+
   return WrappedComponent
 }
 
@@ -190,7 +185,7 @@ export function useErrorHandler() {
   return {
     captureError: (error: Error, context?: string) => {
       console.error(`[${context || 'App'}] Error captured:`, error)
-      
+
       // Sentry などの外部サービスにエラーを送信する場合
       // if (typeof window !== 'undefined' && window.Sentry) {
       //   window.Sentry.captureException(error, {
@@ -198,14 +193,14 @@ export function useErrorHandler() {
       //   })
       // }
     },
-    
+
     createErrorInfo: (error: Error, context?: string) => ({
       error: handleClientError(error),
       context,
       timestamp: new Date().toISOString(),
       userAgent: typeof window !== 'undefined' ? window.navigator.userAgent : 'unknown',
       url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-    })
+    }),
   }
 }
 
@@ -221,21 +216,17 @@ interface ErrorDisplayProps {
   className?: string
 }
 
-export const ErrorDisplay = ({ 
+export const ErrorDisplay = ({
   title = 'エラーが発生しました',
   message = '問題が発生しました。再試行してください。',
   action,
-  className = ''
+  className = '',
 }: ErrorDisplayProps) => {
   return (
     <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
       <AlertTriangle className={`h-12 w-12 ${colors.semantic.error.text} ${spacing.margin.md}`} />
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>
-        {title}
-      </h3>
-      <p className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md`}>
-        {message}
-      </p>
+      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>{title}</h3>
+      <p className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md`}>{message}</p>
       {action != null && (
         <Button onClick={action.onClick} variant="outline">
           {action.label}

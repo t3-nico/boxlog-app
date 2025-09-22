@@ -83,14 +83,14 @@ class DocsConsistencyChecker {
     // 設定ファイルの存在確認
     const configFiles = ['configs/theme-simple.js', 'configs/theme-strict.js', 'configs/bundle-optimization.js']
 
-    let allConfigsExist = true
+    let _allConfigsExist = true
     for (const configFile of configFiles) {
       const configPath = path.join(eslintConfigPath, configFile)
       if (fs.existsSync(configPath)) {
         log.success(`設定ファイル存在: ${configFile}`)
       } else {
         log.error(`設定ファイル不足: ${configFile}`)
-        allConfigsExist = false
+        _allConfigsExist = false
       }
     }
 

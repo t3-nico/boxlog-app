@@ -55,7 +55,8 @@
       "Bash(chmod:*)",
       "Bash(npm run bundle:monitor:*)",
       "Bash(npm run docs:check:*)",
-      "Bash(npm run docs:auto-fix:*)"
+      "Bash(npm run docs:auto-fix:*)",
+      "Bash(npm run docs:fix-and-check:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

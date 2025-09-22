@@ -6,7 +6,7 @@
  * 技術的負債を包括的に分析し、視覚的なレポートを生成
  */
 
-const { execSync } = require('child_process')
+const { execSync: _execSync } = require('child_process')
 const fs = require('fs')
 
 const path = require('path')
@@ -335,7 +335,7 @@ async function generateIntegratedReport() {
 /**
  * TODO健康スコア計算
  */
-function calculateTodoHealthScore(todoStats) {
+function _calculateTodoHealthScore(todoStats) {
   if (!todoStats.total) return 100
 
   let score = 100
