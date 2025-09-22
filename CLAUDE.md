@@ -19,23 +19,24 @@
 
 ## 🚀 開発コマンド
 
-**重要**: すべての開発コマンドは1Password Developer Security経由で実行されます。
+**重要**: 1Password Developer Security完全自動化システムを採用しています。
 
 ```bash
-# 開発サーバー起動（1Password経由）
-npm run dev
+# === 推奨: スマート自動化コマンド ===
+npm run smart:dev           # 開発サーバー（自動認証・同期）
+npm run smart:build         # ビルド（自動認証・同期）
+npm run smart:test          # テスト（自動認証・同期）
 
-# プロダクションビルド（1Password経由）
-npm run build
+# === 従来コマンド（手動op run） ===
+npm run dev                 # op run --env-file=.env.local -- next dev
+npm run build               # op run --env-file=.env.local -- next build
+npm run test                # op run --env-file=.env.local -- vitest
 
-# リンティング実行
-npm run lint
-
-# テスト実行（1Password経由）
-npm test
-
-# 型チェック（1Password経由）
-npm run typecheck
+# === 1Password管理コマンド ===
+npm run 1password:auth      # 認証状態確認・自動認証
+npm run 1password:sync      # 環境変数同期
+npm run 1password:audit     # セキュリティ監査
+npm run 1password:compliance # コンプライアンスレポート
 ```
 
 詳細は [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md) を参照してください。

@@ -1,11 +1,44 @@
-# 1Password Developer Security セットアップガイド
+# 🔐 1Password Developer Security 完全自動化ガイド
 
-## 概要
+## 🎯 概要
 
-BoxLogアプリでは、機密情報の管理に1Password Developer Securityを使用します。
-これにより、環境変数やAPIキーなどの秘密情報を安全に管理できます。
+BoxLogアプリでは、**1Password Developer Security完全自動化システム**を採用しています。
+手動のop runコマンドから脱却し、透明で安全な開発体験を提供します。
 
-## 前提条件
+## 🚀 新機能（自動化システム）
+
+### ✨ 完全自動化の特徴
+
+- **🤖 透明な認証**: 手動のop runが不要
+- **🔄 自動同期**: 環境変数の自動更新
+- **📊 監査ログ**: 使用状況の自動記録
+- **🛡️ セキュリティ監視**: CI/CDでの継続的監査
+- **🔧 フォールバック**: 1Password未使用時の自動切り替え
+
+## 🚀 クイックスタート（自動化モード）
+
+### 推奨ワークフロー
+
+```bash
+# 1. 自動認証・環境同期
+npm run smart:dev           # 開発サーバー（自動化）
+npm run smart:build         # ビルド（自動化）
+npm run smart:test          # テスト（自動化）
+
+# 2. 1Password管理
+npm run 1password:auth      # 認証状態確認
+npm run 1password:sync      # 環境変数同期
+npm run 1password:audit     # セキュリティ監査
+```
+
+### 💡 自動化のメリット
+
+- **ゼロ設定**: 初回認証後は自動で動作
+- **透明性**: 開発者は1Passwordを意識せずに開発可能
+- **安全性**: 自動監査とコンプライアンスチェック
+- **チーム対応**: 統一された設定と監査
+
+## 📋 前提条件
 
 - 1Passwordアカウント（個人またはチーム）
 - macOS/Linux/Windows環境

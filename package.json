@@ -64,7 +64,18 @@
     "lint:a11y": "eslint . -c .eslint/index.js --ext .tsx,.ts | grep -E '(jsx-a11y|accessibility)'",
     "lint:a11y:fix": "eslint . -c .eslint/index.js --ext .tsx,.ts --fix | grep -E '(jsx-a11y|accessibility)'",
     "a11y:check": "npm run lint:a11y && npm run test:a11y",
-    "a11y:full": "npm run lint:a11y:fix && npm run test:a11y:coverage"
+    "a11y:full": "npm run lint:a11y:fix && npm run test:a11y:coverage",
+    "1password:auth": "node scripts/1password-automation.js auth",
+    "1password:sync": "node scripts/1password-automation.js sync",
+    "1password:rotate": "node scripts/1password-automation.js rotate",
+    "1password:audit": "node scripts/1password-automation.js audit",
+    "1password:cleanup": "node scripts/1password-automation.js cleanup",
+    "1password:compliance": "node scripts/1password-automation.js compliance",
+    "smart:dev": "node scripts/smart-run.js dev",
+    "smart:build": "node scripts/smart-run.js build",
+    "smart:start": "node scripts/smart-run.js start",
+    "smart:test": "node scripts/smart-run.js test",
+    "smart:report": "node scripts/smart-run.js report"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
