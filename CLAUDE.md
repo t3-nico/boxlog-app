@@ -94,6 +94,20 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 1. **開発ドキュメント**: `docs/` ディレクトリで管理
 2. **コンポーネント**: インラインコメントとJSDoc
 3. **変更追跡**: コミットメッセージで修正内容を明記
+4. **品質管理**: ドキュメント・コード整合性の自動チェック
+
+#### 📚 ドキュメント品質管理コマンド
+
+```bash
+# 日常開発時
+npm run docs:check        # 整合性チェック
+npm run docs:fix-and-check # 自動修正→チェック（推奨）
+
+# コミット前必須
+npm run lint && npm run docs:check
+```
+
+詳細は [`docs/development/DOCS_WORKFLOW_GUIDE.md`](docs/development/DOCS_WORKFLOW_GUIDE.md) を参照してください。
 
 ## 📋 Issue管理ルール（絶対遵守）
 

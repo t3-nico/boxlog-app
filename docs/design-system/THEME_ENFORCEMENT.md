@@ -352,9 +352,9 @@ VIOLATION_PATTERNS.push(NEW_PATTERN)
 
 **📖 関連ドキュメント**
 
-- [CLAUDE.md](../CLAUDE.md) - 基本開発指針
-- [src/config/theme/](../src/config/theme/) - Theme定義
-- [package.json](../package.json) - NPMスクリプト
+- [CLAUDE.md](../../CLAUDE.md) - 基本開発指針
+- [src/config/theme/](../../src/config/theme/) - Theme定義
+- [package.json](../../package.json) - NPMスクリプト
 
 ---
 

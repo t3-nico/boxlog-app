@@ -39,13 +39,13 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - [プログレッシブ開示](./features/PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md) - UI段階表示
 - [設定レイアウト](./features/SETTINGS_LAYOUT_IMPLEMENTATION.md) - 設定画面最適化
 
-### 🛠️ [開発履歴・作業記録](./development/)
+### 🛠️ [開発履歴・作業記録](./features/)
 
 **開発作業・変更履歴・改善提案**
 
-- [コードクリーンアップ](./development/CLEANUP_BATCHES.md) - 未使用変数削除戦略
-- [レイアウト変更履歴](./development/LAYOUT_CHANGES.md) - UI構造変更記録
-- [Claude Code改善提案](./development/claude-code-improvement-proposals.md) - 開発体験向上
+- [コードクリーンアップ](./features/CLEANUP_BATCHES.md) - 未使用変数削除戦略
+- [レイアウト変更履歴](./features/LAYOUT_CHANGES.md) - UI構造変更記録
+- [Claude Code改善提案](./features/claude-code-improvement-proposals.md) - 開発体験向上
 
 ### 📊 [レポート・データ](./reports/)
 
@@ -107,7 +107,7 @@ docs/reports/                # 現状分析
 | **UI実装**   | [`design-system/`](./design-system/) | 🔴 必須 |
 | **品質管理** | [`performance/`](./performance/)     | 🟡 重要 |
 | **機能開発** | [`features/`](./features/)           | 🟡 重要 |
-| **履歴参考** | [`development/`](./development/)     | 🟢 参考 |
+| **履歴参考** | [`development/`](./features/)        | 🟢 参考 |
 
 ### コロケーション原則
 
