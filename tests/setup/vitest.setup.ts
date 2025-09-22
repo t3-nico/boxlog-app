@@ -4,6 +4,7 @@ import { vi } from 'vitest'
 // 分割されたモックファイルをインポート
 import '../mocks/next-router'
 import '../mocks/supabase'
+import './accessibility.setup'
 
 // グローバルな環境変数のモック
 Object.defineProperty(window, 'matchMedia', {

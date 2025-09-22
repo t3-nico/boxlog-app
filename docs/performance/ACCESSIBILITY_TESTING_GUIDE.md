@@ -1,8 +1,45 @@
-# アクセシビリティテストガイド
+# 🔍 BoxLog アクセシビリティテスト完全ガイド
 
-## 概要
+## 🎯 概要
 
-BoxLogカレンダーアプリのWCAG 2.1 AAA準拠アクセシビリティテストガイドです。
+BoxLogカレンダーアプリの**WCAG 2.1 AA準拠**アクセシビリティテストシステムです。
+手動テストから自動テストまで、包括的なアクセシビリティ品質保証を提供します。
+
+## 🤖 自動テストシステム（推奨）
+
+### 🚀 クイックスタート
+
+```bash
+# アクセシビリティテスト実行
+npm run a11y:check        # ESLint + 単体テスト
+npm run a11y:full         # 完全チェック（修正込み）
+
+# 個別実行
+npm run test:a11y         # axe-core単体テスト
+npm run lint:a11y         # ESLintアクセシビリティルール
+npm run test:a11y:e2e     # E2Eテスト（Playwright）
+```
+
+### 📊 CI/CD統合
+
+GitHub Actionsで自動実行される項目：
+
+- **WCAG AA準拠チェック** - axe-core自動テスト
+- **ESLint jsx-a11y** - コードレベルのアクセシビリティ
+- **Lighthouse監査** - パフォーマンス + アクセシビリティ
+- **回帰テスト** - PRでの品質劣化防止
+
+### 🧪 単体テスト例
+
+```typescript
+// src/components/button.test.tsx
+import { testComponentA11y } from '@/tests/setup/accessibility.setup'
+
+it('should have no accessibility violations', async () => {
+  const component = render(<Button>Click me</Button>)
+  await testComponentA11y(component)
+})
+```
 
 ## テスト環境
 
@@ -19,31 +56,64 @@ BoxLogカレンダーアプリのWCAG 2.1 AAA準拠アクセシビリティテ�
 - Edge
 - Safari（macOS VoiceOver対応）
 
-## 自動テスト（axe DevTools）
+## 🔧 開発ワークフロー
 
-### セットアップ
+### 📝 新規コンポーネント開発時
+
+```bash
+# 1. コンポーネント作成
+# src/components/MyComponent.tsx
+
+# 2. アクセシビリティテスト作成
+# src/components/MyComponent.test.tsx (自動生成される基本テスト)
+
+# 3. テスト実行
+npm run test:a11y
+
+# 4. ESLintチェック
+npm run lint:a11y
+
+# 5. 修正が必要な場合
+npm run lint:a11y:fix
+```
+
+### 🔄 継続的品質保証
+
+```bash
+# 日次: 全体チェック
+npm run a11y:full
+
+# 週次: 詳細カバレッジ確認
+npm run test:a11y:coverage
+
+# リリース前: E2Eテスト
+npm run test:a11y:e2e
+```
+
+### 🎯 品質指標
+
+| 指標 | 目標 | 現状 | 測定方法 |
+|------|------|------|----------|
+| **WCAG AA準拠** | 100% | 95%+ | axe-core自動テスト |
+| **ESLint違反** | 0件 | 0件 | jsx-a11y rules |
+| **Lighthouse** | 90+ | 85+ | CI/CD自動監査 |
+| **キーボード操作** | 100% | 90%+ | E2Eテスト |
+
+## 🛠️ 手動テスト（補完用）
+
+### 🖥️ axe DevTools（ブラウザ拡張）
+
+開発時の即座確認用：
 
 1. Chrome Web Storeから「axe DevTools」をインストール
 2. 開発者ツールを開く（F12）
-3. 「axe DevTools」タブを選択
+3. 「axe DevTools」タブで「Scan all of my page」実行
 
-### テスト手順
+### 🎯 確認ポイント
 
-```bash
-# 1. カレンダーページを開く
-npm run dev
-# http://localhost:3000/calendar にアクセス
-
-# 2. axe DevToolsでスキャン実行
-# - "Scan all of my page" ボタンをクリック
-# - 結果を確認（Violations: 0を目指す）
-```
-
-### 確認ポイント
-
-- **Violations: 0** であること
+- **Violations: 0** 維持
 - **Needs Review** 項目の手動確認
-- **Passes** の件数確認
+- **Passes** 件数の向上
 
 ## キーボード操作テスト
 

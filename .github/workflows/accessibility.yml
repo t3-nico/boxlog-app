@@ -1,0 +1,263 @@
+name: 🔍 Accessibility Testing
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  # 手動実行を許可
+  workflow_dispatch:
+
+jobs:
+  accessibility-tests:
+    name: 🎯 WCAG AA Compliance Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run accessibility unit tests
+        run: npm run test:a11y
+        env:
+          CI: true
+
+      - name: 📊 Generate accessibility test report
+        run: npm run test:a11y:coverage
+        continue-on-error: true
+
+      - name: 📋 ESLint accessibility check
+        run: npm run lint:a11y
+
+      - name: 🏗️ Build application for e2e testing
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🚀 Start application
+        run: npm run start &
+        env:
+          NODE_ENV: production
+          PORT: 3000
+
+      - name: ⏳ Wait for application startup
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: 🔍 Run axe-core automated testing
+        run: npm run test:a11y:e2e
+
+      - name: 📊 Upload accessibility test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: accessibility-test-results
+          path: |
+            coverage/
+            a11y-results/
+            accessibility-report.json
+          retention-days: 30
+
+      - name: 💬 Comment accessibility results on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = './accessibility-report.json';
+
+            if (fs.existsSync(path)) {
+              const report = JSON.parse(fs.readFileSync(path, 'utf8'));
+              const violations = report.violations || [];
+              const passes = report.passes || [];
+
+              const summary = `## 🔍 Accessibility Test Results
+
+              **WCAG AA Compliance Status:** ${violations.length === 0 ? '✅ PASSED' : '❌ FAILED'}
+
+              ### 📊 Test Summary
+              - **Violations:** ${violations.length}
+              - **Passed Rules:** ${passes.length}
+              - **Test Coverage:** ${((passes.length / (passes.length + violations.length)) * 100).toFixed(1)}%
+
+              ${violations.length > 0 ? `
+              ### 🚨 Accessibility Violations
+              ${violations.map(v => `
+              **${v.id}** (${v.impact})
+              - **Issue:** ${v.description}
+              - **Help:** ${v.helpUrl}
+              - **Elements:** ${v.nodes.length} element(s) affected
+              `).join('\n')}
+
+              ### 🔧 Recommended Actions
+              1. Review the violations above
+              2. Run \`npm run test:a11y\` locally to debug
+              3. Use axe DevTools browser extension for detailed analysis
+              4. Refer to WCAG guidelines: https://www.w3.org/WAI/WCAG21/quickref/
+              ` : `
+              ### ✨ All accessibility tests passed!
+              Your code maintains WCAG AA compliance standards.
+              `}
+
+              ---
+              📖 **Documentation:** [Accessibility Testing Guide](./docs/performance/ACCESSIBILITY_TESTING_GUIDE.md)
+              `;
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: summary
+              });
+            }
+
+  lighthouse-accessibility:
+    name: 🏮 Lighthouse Accessibility Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🏗️ Build application
+        run: npm run build
+
+      - name: 🚀 Start application
+        run: npm run start &
+        env:
+          PORT: 3000
+
+      - name: ⏳ Wait for application startup
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: 🏮 Run Lighthouse accessibility audit
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          urls: |
+            http://localhost:3000
+            http://localhost:3000/calendar
+            http://localhost:3000/settings
+          configPath: ./.lighthouserc.js
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: 📊 Parse Lighthouse results
+        run: |
+          # Extract accessibility score from Lighthouse results
+          SCORE=$(cat lhci_reports/manifest.json | jq -r '.[0].summary.accessibility')
+          echo "Accessibility Score: $SCORE"
+
+          # Fail if score is below threshold (90)
+          if (( $(echo "$SCORE < 0.9" | bc -l) )); then
+            echo "❌ Accessibility score ($SCORE) is below threshold (0.9)"
+            exit 1
+          else
+            echo "✅ Accessibility score ($SCORE) meets requirements"
+          fi
+
+  accessibility-regression:
+    name: 🔄 Accessibility Regression Testing
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 20
+
+    steps:
+      - name: 📥 Checkout PR branch
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔧 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run accessibility tests (PR branch)
+        run: npm run test:a11y:regression
+        continue-on-error: true
+
+      - name: 📥 Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base-branch
+
+      - name: 🔧 Install dependencies (base branch)
+        run: |
+          cd base-branch
+          npm ci
+
+      - name: 🧪 Run accessibility tests (base branch)
+        run: |
+          cd base-branch
+          npm run test:a11y:regression
+        continue-on-error: true
+
+      - name: 🔍 Compare accessibility results
+        run: |
+          # Compare accessibility test results between branches
+          node scripts/compare-a11y-results.js \
+            --pr-results ./a11y-results \
+            --base-results ./base-branch/a11y-results \
+            --output ./a11y-comparison.json
+
+      - name: 💬 Post regression analysis
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            if (fs.existsSync('./a11y-comparison.json')) {
+              const comparison = JSON.parse(fs.readFileSync('./a11y-comparison.json', 'utf8'));
+
+              const body = `## 🔄 Accessibility Regression Analysis
+
+              **Status:** ${comparison.hasRegression ? '⚠️ REGRESSION DETECTED' : '✅ NO REGRESSION'}
+
+              ### 📊 Comparison Summary
+              - **New Violations:** ${comparison.newViolations}
+              - **Fixed Violations:** ${comparison.fixedViolations}
+              - **Net Change:** ${comparison.newViolations - comparison.fixedViolations}
+
+              ${comparison.hasRegression ? `
+              ### 🚨 New Accessibility Issues
+              ${comparison.newIssues.map(issue => `
+              - **${issue.rule}**: ${issue.description}
+                - File: \`${issue.file}\`
+                - Line: ${issue.line}
+              `).join('\n')}
+              ` : ''}
+
+              ### 📈 Accessibility Trend
+              - **Previous Score:** ${comparison.baseScore}%
+              - **Current Score:** ${comparison.prScore}%
+              - **Change:** ${comparison.prScore - comparison.baseScore > 0 ? '+' : ''}${(comparison.prScore - comparison.baseScore).toFixed(1)}%
+              `;
+
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }

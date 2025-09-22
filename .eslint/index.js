@@ -11,6 +11,7 @@ module.exports = {
     './configs/base.js',
     './configs/bundle-optimization.js',
     './configs/security.js', // Security rules (OWASP compliant)
+    './configs/accessibility.js', // WCAG AA accessibility compliance
     './configs/test.js', // Test quality and coverage rules
     './configs/theme-simple.js', // Theme enforcement basic rules
     './configs/theme-strict.js', // Strict theme enforcement for new components

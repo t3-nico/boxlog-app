@@ -78,6 +78,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 6. **複雑度管理でリーダブルコードを維持（関数の複雑度15以下推奨、10以下必須）**
 7. **すべてのスタイリングは `/src/config/theme` を必ず使用** - [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md) 参照
 8. **テストはコロケーション方式でfeatureごとに配置**
+9. **アクセシビリティ（WCAG AA準拠）を必ず確認** - [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) 参照
 
 ## 📋 開発時の指針
 
@@ -104,7 +105,7 @@ npm run docs:check        # 整合性チェック
 npm run docs:fix-and-check # 自動修正→チェック（推奨）
 
 # コミット前必須
-npm run lint && npm run docs:check
+npm run lint && npm run docs:check && npm run a11y:check
 ```
 
 詳細は [`docs/development/DOCS_WORKFLOW_GUIDE.md`](docs/development/DOCS_WORKFLOW_GUIDE.md) を参照してください。
