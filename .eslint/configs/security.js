@@ -11,6 +11,9 @@ module.exports = {
     'no-implied-eval': 'error',
     'security/detect-eval-with-expression': 'error',
 
+    // Function()コンストラクタ使用禁止（動的コード実行防止）
+    'no-new-func': 'error',
+
     // dangerouslySetInnerHTML使用制限
     'react/no-danger': 'warn', // 使用時は警告を表示
     'react/no-danger-with-children': 'error', // childrenとの併用は禁止
