@@ -9,5 +9,8 @@ node scripts/check-file-sizes.js
 # バンドルサイズ監視（Phase 1c: BigTech標準）
 node scripts/bundle-size-guard.js
 
+# ライセンス検証（Phase 2a: BigTech標準）
+node scripts/license-checker.js
+
 # Lint-staged実行（変更されたファイルのみ）
 npx lint-staged
