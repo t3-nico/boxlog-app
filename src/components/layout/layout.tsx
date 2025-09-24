@@ -97,8 +97,8 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
             <div className="hidden w-full items-center md:flex">
               {/* Left side buttons */}
               <div className="flex items-center gap-2">
-                {!isSidebarOpen && <SidebarToggle />}
-                {!isCalendarPage && <SecondaryNavToggle />}
+                {!isSidebarOpen ? <SidebarToggle /> : null}
+                {!isCalendarPage ? <SecondaryNavToggle /> : null}
               </div>
 
               {/* Center: Page Title */}
@@ -133,7 +133,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
           {/* Navigation + Main Content */}
           <div className="flex flex-1 overflow-hidden">
             {/* Secondary Navigation (240px) - Collapsible - Hidden on Calendar pages */}
-            {!isSecondaryNavCollapsed && !isCalendarPage && <SecondaryNavigation />}
+            {!isSecondaryNavCollapsed && !isCalendarPage ? <SecondaryNavigation /> : null}
 
             {/* Main Content Area */}
             <div className={`relative z-10 flex flex-1 ${colors.background.base}`}>
@@ -161,7 +161,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
       />
 
       {/* Mobile Bottom Navigation */}
-      {isMobile && <MobileBottomNavigation />}
+      {isMobile ? <MobileBottomNavigation /> : null}
     </div>
   )
 

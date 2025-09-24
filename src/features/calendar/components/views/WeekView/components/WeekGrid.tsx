@@ -6,12 +6,7 @@ import { isToday } from 'date-fns'
 
 import { cn } from '@/lib/utils'
 
-import { 
-  DateDisplay, 
-  CalendarLayoutWithHeader,
-  HourLines,
-  getDateKey
-} from '../../shared'
+import { CalendarLayoutWithHeader, DateDisplay, HourLines, getDateKey } from '../../shared'
 import { useResponsiveHourHeight } from '../../shared/hooks/useResponsiveHourHeight'
 import { useWeekEvents } from '../hooks/useWeekEvents'
 
@@ -21,7 +16,7 @@ import { WeekContent } from './WeekContent'
 
 /**
  * WeekGrid - 週表示のメイングリッドコンポーネント
- * 
+ *
  * @description
  * 7日分のグリッド管理:
  * - 各列の幅を均等分割（100% / 7）
@@ -40,39 +35,34 @@ export const WeekGrid = ({
   onEventUpdate,
   onTimeRangeSelect,
   timezone,
-  className
+  className,
 }: WeekGridProps) => {
   // レスポンシブな時間高さ（ThreeDayViewと同じパターン）
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
-    desktop: 72
+    desktop: 72,
   })
-  
+
   // イベント位置計算
   const { eventPositions } = useWeekEvents({
     weekDates,
-    events
+    events,
   })
-  
+
   // CurrentTimeLine表示のための日付配列（weekDatesをそのまま使用）
   const currentTimeDisplayDates = React.useMemo(() => {
     console.log('🔧 WeekGrid: displayDatesを設定', {
-      weekDates: weekDates.map(d => d.toDateString())
+      weekDates: weekDates.map((d) => d.toDateString()),
     })
     return weekDates
   }, [weekDates])
-  
-  
-  
+
   const headerComponent = (
-    <div className="bg-background h-16 flex">
+    <div className="bg-background flex h-16">
       {/* 7日分の日付ヘッダー */}
       {weekDates.map((date, _index) => (
-        <div
-          key={date.toISOString()}
-          className="flex-1 flex items-center justify-center px-1"
-        >
+        <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
           <DateDisplay
             date={date}
             className="text-center"
@@ -83,13 +73,13 @@ export const WeekGrid = ({
             isToday={isToday(date)}
             isSelected={false}
           />
-          
+
           {/* イベント数インジケーター */}
-          {eventsByDate[getDateKey(date)]?.length > 0 && (
-            <div className="text-center mt-1">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full" />
+          {eventsByDate[getDateKey(date)]?.length > 0 ? (
+            <div className="mt-1 text-center">
+              <span className="bg-primary inline-block h-2 w-2 rounded-full" />
             </div>
-          )}
+          ) : null}
         </div>
       ))}
     </div>
@@ -111,33 +101,29 @@ export const WeekGrid = ({
       className={cn('bg-background', className)}
     >
       {/* 7日分のグリッド */}
-      <div className="flex h-full relative overflow-visible">
+      <div className="relative flex h-full overflow-visible">
         {/* 共通のグリッド線（ThreeDayViewと同じパターン） */}
-        <div className="absolute inset-0 pointer-events-none">
-          <HourLines 
-            startHour={0}
-            endHour={24}
-            hourHeight={HOUR_HEIGHT}
-          />
+        <div className="pointer-events-none absolute inset-0">
+          <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
         </div>
-        
+
         {weekDates.map((date, dayIndex) => {
           const dateKey = getDateKey(date)
           const dayEvents = eventsByDate[dateKey] || []
-          
+
           console.log('🔧 WeekGrid日付処理:', {
             date: date.toDateString(),
             dayOfWeek: date.getDay(), // 0=日曜, 1=月曜, 2=火曜, 3=水曜...
             dayIndex,
             dateKey,
-            dayEventsCount: dayEvents.length
+            dayEventsCount: dayEvents.length,
           })
-          
+
           return (
             <div
               key={date.toISOString()}
               className={cn(
-                'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative overflow-visible'
+                'relative flex-1 overflow-visible border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20'
               )}
               style={{ width: `${100 / 7}%` }}
             >
@@ -154,9 +140,9 @@ export const WeekGrid = ({
                   console.log('🔧 WeekGrid: 直接渡し:', {
                     selectionDate: selection.date.toDateString(),
                     startHour: selection.startHour,
-                    startMinute: selection.startMinute
+                    startMinute: selection.startMinute,
                   })
-                  
+
                   onTimeRangeSelect?.(selection)
                 }}
                 className="h-full"

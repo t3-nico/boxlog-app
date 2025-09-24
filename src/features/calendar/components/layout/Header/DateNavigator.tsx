@@ -39,7 +39,7 @@ export const DateNavigator = ({
   return (
     <div className={cn('flex items-center gap-2', className)}>
       {/* 今日ボタン */}
-      {showTodayButton != null && (
+      {showTodayButton != null ? (
         <button
           type="button"
           onClick={() => onNavigate('today')}
@@ -56,10 +56,10 @@ export const DateNavigator = ({
         >
           <span>{todayLabel}</span>
         </button>
-      )}
+      ) : null}
 
       {/* 前後ナビゲーション */}
-      {showArrows != null && (
+      {showArrows != null ? (
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -80,7 +80,7 @@ export const DateNavigator = ({
             <ChevronRight className={arrowSizes[arrowSize]} />
           </button>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

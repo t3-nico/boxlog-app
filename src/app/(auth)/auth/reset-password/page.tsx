@@ -77,7 +77,7 @@ const ResetPassword = () => {
         setLoading(false)
       }
     },
-    [password, confirmPassword, token, router]
+    [password, confirmPassword, updatePassword, router]
   )
 
   const handleBackToLogin = useCallback(() => {
@@ -100,11 +100,11 @@ const ResetPassword = () => {
       <Logo className={`h-6 ${colors.text.primary} forced-colors:text-[CanvasText]`} />
       <Heading>Set a new password</Heading>
       <Field>
-        <Label>New Password</Label>
+        <Label htmlFor="password">New Password</Label>
         <Input id="password" type="password" value={password} onChange={handlePasswordChange} required minLength={6} />
       </Field>
       <Field>
-        <Label>Confirm Password</Label>
+        <Label htmlFor="confirmPassword">Confirm Password</Label>
         <Input
           id="confirmPassword"
           type="password"
@@ -114,7 +114,7 @@ const ResetPassword = () => {
           minLength={6}
         />
       </Field>
-      {error != null && <Text className={colors.semantic.error.text}>{error}</Text>}
+      {error != null ? <Text className={colors.semantic.error.text}>{error}</Text> : null}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>

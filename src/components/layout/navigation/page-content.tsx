@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 
 import { AIChatSidebarSections } from '@/features/aichat/components/sidebar'
 import { BoardSidebarSections } from '@/features/board/components/sidebar'
@@ -30,47 +30,30 @@ export const PageContent = ({ pathname }: PageContentProps) => {
   const handleSelectTag = useCallback(() => {}, [])
 
   return (
-    <div className="flex-1 flex flex-col min-h-0">
+    <div className="flex min-h-0 flex-1 flex-col">
       {/* Createボタン（特定ページのみ表示） */}
-      {showCreateButton && <CreateButton />}
-      
+      {showCreateButton ? <CreateButton /> : null}
+
       {/* Common sections for non-calendar pages */}
-      {!isCalendarPage && <CommonSidebarSections collapsed={false} />}
+      {!isCalendarPage ? <CommonSidebarSections collapsed={false} /> : null}
 
       {/* Page-specific sections */}
       <div className="space-y-6">
-
         {isBoardPage === true && (
-          <BoardSidebarSections
-            collapsed={false}
-            onSelectTag={handleSelectTag}
-            selectedTagIds={[]}
-          />
+          <BoardSidebarSections collapsed={false} onSelectTag={handleSelectTag} selectedTagIds={[]} />
         )}
 
         {isTablePage === true && (
-          <TableSidebarSections
-            collapsed={false}
-            onSelectTag={handleSelectTag}
-            selectedTagIds={[]}
-          />
+          <TableSidebarSections collapsed={false} onSelectTag={handleSelectTag} selectedTagIds={[]} />
         )}
 
         {isStatsPage === true && (
-          <StatsSidebarSections
-            collapsed={false}
-            onSelectTag={handleSelectTag}
-            selectedTagIds={[]}
-          />
+          <StatsSidebarSections collapsed={false} onSelectTag={handleSelectTag} selectedTagIds={[]} />
         )}
 
-        {isAIChatPage === true && (
-          <AIChatSidebarSections collapsed={false} />
-        )}
+        {isAIChatPage === true && <AIChatSidebarSections collapsed={false} />}
 
-        {isHelpPage === true && (
-          <HelpSidebarSections collapsed={false} />
-        )}
+        {isHelpPage === true && <HelpSidebarSections collapsed={false} />}
       </div>
     </div>
   )

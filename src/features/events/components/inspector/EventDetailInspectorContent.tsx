@@ -467,7 +467,7 @@ export const EventDetailInspectorContent = ({
                           >
                             {getEventIcon(event)}
                           </div>
-                          {!isLast && <div className={cn('mt-1 h-6 w-px border-l', border.universal)} />}
+                          {!isLast ? <div className={cn('mt-1 h-6 w-px border-l', border.universal)} /> : null}
                         </div>
                         <div className="min-w-0 flex-1 pb-1">
                           <div className="flex max-w-full items-start justify-between gap-2">

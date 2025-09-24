@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Bell, BellRing, Settings as SettingsIcon } from 'lucide-react'
 
@@ -42,13 +42,58 @@ const NotificationSettings = () => {
     debounceMs: 800,
   })
 
+  // Tab navigation handlers
+  const handleListTabClick = useCallback(() => {
+    setActiveTab('list')
+  }, [])
+
+  const handleSettingsTabClick = useCallback(() => {
+    setActiveTab('settings')
+  }, [])
+
+  // Notification settings handlers
+  const handleEmailNotificationsChange = useCallback(
+    (checked: boolean) => {
+      notifications.updateValue('emailNotifications', checked)
+    },
+    [notifications]
+  )
+
+  const handlePushNotificationsChange = useCallback(
+    (checked: boolean) => {
+      notifications.updateValue('pushNotifications', checked)
+    },
+    [notifications]
+  )
+
+  const handleBrowserNotificationsChange = useCallback(
+    (checked: boolean) => {
+      notifications.updateValue('browserNotifications', checked)
+    },
+    [notifications]
+  )
+
+  const handleWeeklyDigestChange = useCallback(
+    (checked: boolean) => {
+      notifications.updateValue('weeklyDigest', checked)
+    },
+    [notifications]
+  )
+
+  const handleSystemNotificationsChange = useCallback(
+    (checked: boolean) => {
+      notifications.updateValue('systemNotifications', checked)
+    },
+    [notifications]
+  )
+
   return (
     <div className={spacing.stackGap.lg}>
       {/* タブナビゲーション */}
       <div className="flex items-center gap-4">
         <button
           type="button"
-          onClick={() => setActiveTab('list')}
+          onClick={handleListTabClick}
           className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'list'
               ? `${colors.primary.light} ${colors.primary.text}`
@@ -60,7 +105,7 @@ const NotificationSettings = () => {
         </button>
         <button
           type="button"
-          onClick={() => setActiveTab('settings')}
+          onClick={handleSettingsTabClick}
           className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'settings'
               ? `${colors.primary.light} ${colors.primary.text}`
@@ -73,9 +118,9 @@ const NotificationSettings = () => {
       </div>
 
       {/* コンテンツエリア */}
-      {activeTab === 'list' && <NotificationsList />}
+      {activeTab === 'list' ? <NotificationsList /> : null}
 
-      {activeTab === 'settings' && (
+      {activeTab === 'settings' ? (
         <div className={spacing.stackGap.lg}>
           {/* メール・プッシュ通知 */}
           <SettingsCard
@@ -92,21 +137,21 @@ const NotificationSettings = () => {
               <SettingField label="メール通知" description="重要なお知らせをメールで受信">
                 <Switch
                   checked={notifications.values.emailNotifications}
-                  onCheckedChange={(checked) => notifications.updateValue('emailNotifications', checked)}
+                  onCheckedChange={handleEmailNotificationsChange}
                 />
               </SettingField>
 
               <SettingField label="プッシュ通知" description="モバイルデバイスへのプッシュ通知">
                 <Switch
                   checked={notifications.values.pushNotifications}
-                  onCheckedChange={(checked) => notifications.updateValue('pushNotifications', checked)}
+                  onCheckedChange={handlePushNotificationsChange}
                 />
               </SettingField>
 
               <SettingField label="ブラウザ通知" description="ブラウザでの通知表示">
                 <Switch
                   checked={notifications.values.browserNotifications}
-                  onCheckedChange={(checked) => notifications.updateValue('browserNotifications', checked)}
+                  onCheckedChange={handleBrowserNotificationsChange}
                 />
               </SettingField>
             </div>
@@ -120,16 +165,13 @@ const NotificationSettings = () => {
           >
             <div className={spacing.stackGap.md}>
               <SettingField label="週次ダイジェスト" description="週単位のアクティビティサマリーをメールで配信">
-                <Switch
-                  checked={notifications.values.weeklyDigest}
-                  onCheckedChange={(checked) => notifications.updateValue('weeklyDigest', checked)}
-                />
+                <Switch checked={notifications.values.weeklyDigest} onCheckedChange={handleWeeklyDigestChange} />
               </SettingField>
 
               <SettingField label="システム通知" description="メンテナンス・アップデート情報を受信">
                 <Switch
                   checked={notifications.values.systemNotifications}
-                  onCheckedChange={(checked) => notifications.updateValue('systemNotifications', checked)}
+                  onCheckedChange={handleSystemNotificationsChange}
                 />
               </SettingField>
             </div>
@@ -142,7 +184,7 @@ const NotificationSettings = () => {
             </p>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

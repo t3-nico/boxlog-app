@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import { format } from 'date-fns'
 
@@ -30,7 +30,7 @@ export const AnimatedEventCard = ({
   onDoubleClick,
   onContextMenu,
   children,
-  className
+  className,
 }: AnimatedEventCardProps) => {
   const [isVisible, setIsVisible] = useState(!isNew)
   const [isHovered, setIsHovered] = useState(false)
@@ -63,69 +63,55 @@ export const AnimatedEventCard = ({
   // 選択時のアニメーション
   const getAnimationClasses = () => {
     const baseClasses = [
-      "transition-all duration-200 ease-out",
-      "transform-gpu" // GPUアクセラレーション
+      'transition-all duration-200 ease-out',
+      'transform-gpu', // GPUアクセラレーション
     ]
 
     if (isNew) {
-      baseClasses.push(
-        isVisible 
-          ? "animate-in fade-in-0 zoom-in-95 duration-200" 
-          : "opacity-0 scale-95"
-      )
+      baseClasses.push(isVisible ? 'animate-in fade-in-0 zoom-in-95 duration-200' : 'opacity-0 scale-95')
     }
 
     if (isDeleting) {
-      baseClasses.push("animate-out fade-out-0 zoom-out-95 duration-150")
+      baseClasses.push('animate-out fade-out-0 zoom-out-95 duration-150')
     }
 
     if (isSelected) {
-      baseClasses.push(
-        "shadow-lg shadow-primary/25",
-        "scale-105",
-        "ring-2 ring-primary/50",
-        "z-30"
-      )
+      baseClasses.push('shadow-lg shadow-primary/25', 'scale-105', 'ring-2 ring-primary/50', 'z-30')
     }
 
     if (isHovered && !isSelected) {
-      baseClasses.push(
-        "brightness-110",
-        "shadow-md",
-        "scale-[1.02]",
-        "z-25"
-      )
+      baseClasses.push('brightness-110', 'shadow-md', 'scale-[1.02]', 'z-25')
     }
 
-    return baseClasses.join(" ")
+    return baseClasses.join(' ')
   }
 
   // イベントの色調整
   const getEventColor = () => {
     if (!event.color) return '#3b82f6'
-    
+
     // ホバー時は明度を上げる
     if (isHovered && !isSelected) {
       // 色を10%明るくする
-      const {color} = event
+      const { color } = event
       if (color.startsWith('#')) {
         const r = parseInt(color.slice(1, 3), 16)
         const g = parseInt(color.slice(3, 5), 16)
         const b = parseInt(color.slice(5, 7), 16)
-        
+
         const brighten = (value: number) => Math.min(255, Math.round(value * 1.1))
-        
+
         return `rgb(${brighten(r)}, ${brighten(g)}, ${brighten(b)})`
       }
     }
-    
+
     return event.color
   }
 
   // クリック処理（100ms以下の反応速度）
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    
+
     // 即座にビジュアルフィードバック
     if (cardRef.current) {
       cardRef.current.style.transform = 'scale(0.98)'
@@ -135,7 +121,7 @@ export const AnimatedEventCard = ({
         }
       }, 100)
     }
-    
+
     onClick?.()
   }
 
@@ -180,16 +166,16 @@ export const AnimatedEventCard = ({
       data-event-block
       data-event-id={event.id}
       className={cn(
-        "absolute rounded-md cursor-pointer overflow-hidden",
-        "focus:outline-none focus:ring-2 focus:ring-primary/50",
-        "will-change-transform", // パフォーマンス最適化
+        'absolute cursor-pointer overflow-hidden rounded-md',
+        'focus:ring-primary/50 focus:outline-none focus:ring-2',
+        'will-change-transform', // パフォーマンス最適化
         getAnimationClasses(),
         className
       )}
       style={{
         ...style,
         backgroundColor: getEventColor(),
-        containIntrinsicSize: 'layout' // パフォーマンス最適化
+        containIntrinsicSize: 'layout', // パフォーマンス最適化
       }}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
@@ -202,42 +188,38 @@ export const AnimatedEventCard = ({
       aria-label={`Event: ${event.title}`}
     >
       {children || (
-        <div className="p-2 h-full overflow-hidden text-white">
-          <div className="flex flex-col h-full">
-            <div className="flex-1 min-h-0">
+        <div className="h-full overflow-hidden p-2 text-white">
+          <div className="flex h-full flex-col">
+            <div className="min-h-0 flex-1">
               {/* タイトル */}
-              <div className="text-sm font-medium leading-tight line-clamp-2 mb-1">
-                {event.title}
-              </div>
-              
+              <div className="mb-1 line-clamp-2 text-sm font-medium leading-tight">{event.title}</div>
+
               {/* 時間（高さが十分な場合のみ） */}
-              {(style.height as number) > 40 && event.startDate && (
-                <div className="text-xs opacity-90 leading-tight">
+              {(style.height as number) > 40 && event.startDate ? (
+                <div className="text-xs leading-tight opacity-90">
                   {format(event.startDate, 'HH:mm')}
-                  {event.endDate && ` - ${format(event.endDate, 'HH:mm')}`}
+                  {event.endDate ? ` - ${format(event.endDate, 'HH:mm')}` : null}
                 </div>
-              )}
+              ) : null}
             </div>
-            
+
             {/* 場所（高さが十分な場合のみ） */}
-            {event.location != null && (style.height as number) > 70 && (
-              <div className="text-xs opacity-80 leading-tight mt-1 line-clamp-1">
-                📍 {event.location}
-              </div>
-            )}
+            {event.location != null && (style.height as number) > 70 ? (
+              <div className="mt-1 line-clamp-1 text-xs leading-tight opacity-80">📍 {event.location}</div>
+            ) : null}
           </div>
         </div>
       )}
-      
+
       {/* 選択時のインジケーター */}
-      {isSelected === true && (
-        <div className="absolute inset-0 rounded-md border-2 border-primary/80 pointer-events-none" />
-      )}
-      
+      {isSelected === true ? (
+        <div className="border-primary/80 pointer-events-none absolute inset-0 rounded-md border-2" />
+      ) : null}
+
       {/* ホバー時のオーバーレイ */}
-      {isHovered && !isSelected && (
-        <div className="absolute inset-0 bg-white/10 rounded-md pointer-events-none" />
-      )}
+      {isHovered && !isSelected ? (
+        <div className="pointer-events-none absolute inset-0 rounded-md bg-white/10" />
+      ) : null}
     </div>
   )
 }

@@ -36,32 +36,32 @@ export const HeaderActions = ({
   return (
     <div className={cn('flex items-center gap-1', className)}>
       {/* 設定 */}
-      {onSettings != null && (
+      {onSettings != null ? (
         <button type="button" onClick={onSettings} className={buttonClass} title="Settings" aria-label="Settings">
           <Settings className={iconSize} />
         </button>
-      )}
+      ) : null}
 
       {/* エクスポート */}
-      {onExport != null && (
+      {onExport != null ? (
         <button type="button" onClick={onExport} className={buttonClass} title="Export" aria-label="Export">
           <Download className={iconSize} />
         </button>
-      )}
+      ) : null}
 
       {/* インポート */}
-      {onImport != null && (
+      {onImport != null ? (
         <button type="button" onClick={onImport} className={buttonClass} title="Import" aria-label="Import">
           <Upload className={iconSize} />
         </button>
-      )}
+      ) : null}
 
       {/* その他 */}
-      {onMore != null && (
+      {onMore != null ? (
         <button type="button" onClick={onMore} className={buttonClass} title="More" aria-label="More options">
           <MoreHorizontal className={iconSize} />
         </button>
-      )}
+      ) : null}
     </div>
   )
 }
