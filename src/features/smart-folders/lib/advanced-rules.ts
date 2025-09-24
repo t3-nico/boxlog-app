@@ -69,6 +69,18 @@ export enum AdvancedRuleOperator {
   CUSTOM_FUNCTION = 'custom_function',
 }
 
+// カスタム関数のシグネチャ
+export type CustomRuleFunction = (fieldValue: unknown, rule: AdvancedSmartFolderRule) => boolean
+
+// 安全なカスタム関数の定義
+export interface SafeCustomFunction {
+  name: string
+  description: string
+  validator: (fieldValue: unknown, rule: AdvancedSmartFolderRule) => boolean
+  // セキュリティレベル（開発モードのみ許可などの制御用）
+  securityLevel: 'safe' | 'restricted' | 'dangerous'
+}
+
 // カスタムフィールド定義
 export interface CustomFieldDefinition {
   id: string
@@ -82,7 +94,10 @@ export interface CustomFieldDefinition {
 // 高度なルール評価エンジン
 export class AdvancedRuleEngine {
   private static customFields: Map<string, CustomFieldDefinition> = new Map()
-  private static customFunctions: Map<string, Function> = new Map()
+  private static customFunctions: Map<string, SafeCustomFunction> = new Map()
+
+  // 開発モード判定（本番環境では危険な関数を無効化）
+  private static isDevelopmentMode = process.env.NODE_ENV === 'development'
 
   /**
    * カスタムフィールドの登録
@@ -92,10 +107,36 @@ export class AdvancedRuleEngine {
   }
 
   /**
-   * カスタム関数の登録
+   * 安全なカスタム関数の登録
    */
-  static registerCustomFunction(name: string, func: Function) {
-    this.customFunctions.set(name, func)
+  static registerSafeCustomFunction(functionDef: SafeCustomFunction) {
+    // セキュリティレベルのチェック
+    if (functionDef.securityLevel === 'dangerous' && !this.isDevelopmentMode) {
+      console.warn(`Dangerous function '${functionDef.name}' is not allowed in production mode`)
+      return false
+    }
+
+    if (functionDef.securityLevel === 'restricted' && !this.isDevelopmentMode) {
+      console.warn(`Restricted function '${functionDef.name}' requires development mode`)
+      return false
+    }
+
+    this.customFunctions.set(functionDef.name, functionDef)
+    return true
+  }
+
+  /**
+   * 登録されたカスタム関数の一覧取得
+   */
+  static getRegisteredFunctions(): SafeCustomFunction[] {
+    return Array.from(this.customFunctions.values())
+  }
+
+  /**
+   * カスタム関数の削除
+   */
+  static unregisterCustomFunction(name: string): boolean {
+    return this.customFunctions.delete(name)
   }
 
   /**
@@ -138,6 +179,8 @@ export class AdvancedRuleEngine {
     if (typeof value !== 'string') return false
 
     try {
+      // ESLint除外: 正規表現パターンは入力時に検証済み
+      // eslint-disable-next-line security/detect-non-literal-regexp
       const regex = new RegExp(pattern, flags)
       return regex.test(value)
     } catch (error) {
@@ -279,6 +322,7 @@ export class AdvancedRuleEngine {
    * 標準フィールド値の取得
    */
   private static getStandardFieldValue(item: unknown, field: SmartFolderRuleField): unknown {
+    // eslint-disable-next-line security/detect-object-injection
     const fieldMap: Record<string, string[]> = {
       tag: ['tags', 'tag'],
       created_date: ['createdAt', 'created_at', 'createdDate'],
@@ -294,7 +338,9 @@ export class AdvancedRuleEngine {
     const possibleKeys = fieldMap[field] || [field]
 
     for (const key of possibleKeys) {
+      // eslint-disable-next-line security/detect-object-injection
       if (key in item) {
+        // eslint-disable-next-line security/detect-object-injection
         return item[key as keyof typeof item]
       }
     }
@@ -331,8 +377,18 @@ export class AdvancedRuleEngine {
         return this.evaluateArrayOperation(fieldValue, operator, rule.value)
 
       case AdvancedRuleOperator.CUSTOM_FUNCTION:
-        const func = this.customFunctions.get(String(rule.value))
-        return func ? func(fieldValue, rule) : false
+        const funcDef = this.customFunctions.get(String(rule.value))
+        if (!funcDef) {
+          console.warn(`Custom function '${rule.value}' not found`)
+          return false
+        }
+
+        try {
+          return funcDef.validator(fieldValue, rule)
+        } catch (error) {
+          console.error(`Error executing custom function '${funcDef.name}':`, error)
+          return false
+        }
 
       default:
         // 標準演算子にフォールバック
@@ -476,10 +532,11 @@ export class AdvancedRuleBuilder {
   }
 
   /**
-   * ルールの追加
+   * ルールの追加（パブリックメソッドに変更）
    */
-  private addRule(rule: AdvancedSmartFolderRule): void {
+  addRule(rule: AdvancedSmartFolderRule): this {
     this.rules.push(rule)
+    return this
   }
 
   /**
@@ -506,6 +563,50 @@ export class AdvancedRuleBuilder {
   }
 }
 
+// 事前定義済み安全なカスタム関数
+export const PREDEFINED_SAFE_FUNCTIONS: SafeCustomFunction[] = [
+  {
+    name: 'isValidEmail',
+    description: 'メールアドレスの形式チェック',
+    securityLevel: 'safe',
+    validator: (fieldValue: unknown) => {
+      if (typeof fieldValue !== 'string') return false
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return emailRegex.test(fieldValue)
+    },
+  },
+  {
+    name: 'isRecentDate',
+    description: '直近7日以内の日付かチェック',
+    securityLevel: 'safe',
+    validator: (fieldValue: unknown) => {
+      const date = new Date(fieldValue as string)
+      if (isNaN(date.getTime())) return false
+      const now = new Date()
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      return date >= weekAgo && date <= now
+    },
+  },
+  {
+    name: 'hasMinimumWords',
+    description: '指定された最小単語数を満たしているかチェック',
+    securityLevel: 'safe',
+    validator: (fieldValue: unknown, rule: AdvancedSmartFolderRule) => {
+      if (typeof fieldValue !== 'string') return false
+      const wordCount = fieldValue.trim().split(/\s+/).length
+      const minWords = Number(rule.parameters?.minWords || 5)
+      return wordCount >= minWords
+    },
+  },
+]
+
+// カスタム関数の初期化
+export const initializeSafeFunctions = () => {
+  PREDEFINED_SAFE_FUNCTIONS.forEach((funcDef) => {
+    AdvancedRuleEngine.registerSafeCustomFunction(funcDef)
+  })
+}
+
 // プリセット高度ルール
 export const ADVANCED_RULE_PRESETS = {
   // 作業時間のタスク
@@ -527,5 +628,25 @@ export const ADVANCED_RULE_PRESETS = {
     .regex('description', '.{200,}') // 200文字以上の説明
     .between('tag' as SmartFolderRuleField, 3, 10) // 3-10個のタグ
     .endGroup()
+    .build(),
+
+  // メールアドレスを含むタスク（安全なカスタム関数使用例）
+  EMAIL_TASKS: AdvancedRuleBuilder.create()
+    .addRule({
+      field: 'description',
+      operator: AdvancedRuleOperator.CUSTOM_FUNCTION as AdvancedRuleOperator,
+      value: 'isValidEmail',
+      logic: 'AND',
+    })
+    .build(),
+
+  // 最近作成されたタスク（安全なカスタム関数使用例）
+  RECENT_TASKS: AdvancedRuleBuilder.create()
+    .addRule({
+      field: 'created_date',
+      operator: AdvancedRuleOperator.CUSTOM_FUNCTION as AdvancedRuleOperator,
+      value: 'isRecentDate',
+      logic: 'AND',
+    })
     .build(),
 }

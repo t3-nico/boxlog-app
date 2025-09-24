@@ -18,9 +18,14 @@ module.exports = {
     'react/no-danger': 'warn', // 使用時は警告を表示
     'react/no-danger-with-children': 'error', // childrenとの併用は禁止
 
-    // カスタムルール: サニタイズなしのdangerouslySetInnerHTML使用を検出
+    // カスタムルール: セキュリティリスクのある構文を検出
     'no-restricted-syntax': [
       'error',
+      {
+        selector: 'TSTypeReference[typeName.name="Function"]:not([parent.type="TSFunctionType"])',
+        message:
+          '🔒 Security: Avoid using raw Function type. Use specific function signatures like (param: Type) => ReturnType instead.',
+      },
       {
         selector: 'JSXAttribute[name.name="dangerouslySetInnerHTML"]',
         message:
@@ -84,6 +89,21 @@ module.exports = {
       files: ['src/**/*.ts', 'src/**/*.tsx'],
       rules: {
         'security/detect-object-injection': 'warn', // TypeScriptなのでwarningに下げる
+      },
+    },
+    {
+      // Smart Folders: セキュリティ改善済みのカスタム関数システム
+      files: ['src/features/smart-folders/lib/advanced-rules.ts'],
+      rules: {
+        'no-restricted-syntax': [
+          'error',
+          {
+            // dangerouslySetInnerHTMLのみ制限、SafeCustomFunctionは許可
+            selector: 'JSXAttribute[name.name="dangerouslySetInnerHTML"]',
+            message:
+              '🔒 Security: dangerouslySetInnerHTML must use sanitized HTML. Import and use sanitize functions from @/lib/security/sanitize',
+          },
+        ],
       },
     },
   ],

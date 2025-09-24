@@ -3,8 +3,7 @@
  * @description デザインシステムで使用する型とインターfaces
  */
 
-import { transition, hover, loading, appear, feedback, patterns as animationPatterns } from './animations'
-import { animations } from './animations'
+import { patterns as animationPatterns, animations, appear, feedback, hover, loading, transition } from './animations'
 import { borders } from './borders'
 import { colors } from './colors'
 import { elevation, borders as elevationBorders, patterns as elevationPatterns } from './elevation'
@@ -12,7 +11,7 @@ import { icons } from './icons'
 import { layout } from './layout'
 import { rounded } from './rounded'
 import { spacing } from './spacing'
-import { link, linkStates, linkPatterns } from './typography'
+import { link, linkPatterns, linkStates } from './typography'
 
 // 循環依存を避けるため、個別ファイルから直接import
 import { typography } from './typography'
@@ -56,7 +55,7 @@ export type SpacingCategory = keyof typeof spacing
  * スペーシングサイズ
  * @description 各カテゴリで使用可能なサイズ
  */
-export type SpacingSize<T extends SpacingCategory> = keyof typeof spacing[T as keyof typeof spacing]
+export type SpacingSize<T extends SpacingCategory> = keyof (typeof spacing)[T]
 
 /**
  * レイアウトタイプ
@@ -321,7 +320,6 @@ export interface ContainerProps {
   as?: keyof JSX.IntrinsicElements
 }
 
-
 /**
  * Cardコンポーネントのprops（8pxグリッド対応）
  */
@@ -516,9 +514,7 @@ export interface DesignToken {
  */
 export type NestedKeys<T> = T extends object
   ? {
-      [K in keyof T]: T[K] extends object
-        ? `${K & string}.${NestedKeys<T[K]>}`
-        : K & string
+      [K in keyof T]: T[K] extends object ? `${K & string}.${NestedKeys<T[K]>}` : K & string
     }[keyof T]
   : never
 
