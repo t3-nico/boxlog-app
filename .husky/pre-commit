@@ -15,5 +15,8 @@ node scripts/license-checker.js
 # API変更検出（Phase 2b: BigTech標準）
 node scripts/api-change-detector.js
 
+# パフォーマンス回帰テスト（Phase 2c: BigTech標準）
+node scripts/performance-regression-test.js
+
 # Lint-staged実行（変更されたファイルのみ）
 npx lint-staged

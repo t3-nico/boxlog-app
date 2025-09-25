@@ -44,7 +44,7 @@ const CONFIG = {
     maxBuildTime: 120000, // 2 minutes
     maxTypecheckTime: 30000, // 30 seconds
     maxLintTime: 15000, // 15 seconds
-    maxBundleSize: 1024 * 1024, // 1MB
+    maxBundleSize: 50 * 1024 * 1024, // 50MB (development build includes source maps)
   },
 }
 
