@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { createTranslation, getDictionary, locales } from '@/lib/i18n'
+import { getDirection } from '@/lib/i18n/rtl'
 import type { Locale } from '@/types/i18n'
 
 interface LocaleLayoutProps {
@@ -36,12 +37,15 @@ export async function generateStaticParams() {
 export default async function LocaleLayout({ children, params: { locale } }: LocaleLayoutProps) {
   // 不正な言語の場合、デフォルト言語にフォールバック
   const validLocale = locales.includes(locale) ? locale : 'en'
+  const direction = getDirection(validLocale)
 
   return (
-    <html lang={validLocale}>
+    <html lang={validLocale} dir={direction}>
       <body>
         {/* 言語情報をクライアントコンポーネントに提供 */}
-        <div data-locale={validLocale}>{children}</div>
+        <div data-locale={validLocale} data-direction={direction}>
+          {children}
+        </div>
       </body>
     </html>
   )

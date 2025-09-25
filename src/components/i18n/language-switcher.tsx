@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { useParams, useRouter } from 'next/navigation'
 
@@ -33,24 +33,52 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
 
   const currentLanguage = languages.find((lang) => lang.code === currentLocale) || languages[0]
 
-  const switchLanguage = (locale: Locale): void => {
-    // 言語をクッキーに保存
-    setLocaleCookie(locale)
+  const switchLanguage = useCallback(
+    (locale: Locale): void => {
+      // 言語をクッキーに保存
+      setLocaleCookie(locale)
 
-    // 現在のパスを新しい言語でナビゲート
-    const currentPath = window.location.pathname
-    const newPath = currentPath.replace(/^\/[a-z]{2}(\/|$)/, `/${locale}$1`)
+      // 現在のパスを新しい言語でナビゲート
+      const currentPath = window.location.pathname
+      const newPath = currentPath.replace(/^\/[a-z]{2}(\/|$)/, `/${locale}$1`)
 
-    router.push(newPath)
+      router.push(newPath)
+      setIsOpen(false)
+    },
+    [router]
+  )
+
+  // jsx-no-bind optimization: Toggle dropdown
+  const handleToggleDropdown = useCallback(() => {
+    setIsOpen(!isOpen)
+  }, [isOpen])
+
+  // jsx-no-bind optimization: Close dropdown
+  const handleCloseDropdown = useCallback(() => {
     setIsOpen(false)
-  }
+  }, [])
+
+  // jsx-no-bind optimization: Escape key handler
+  const handleEscapeKey = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsOpen(false)
+    }
+  }, [])
+
+  // jsx-no-bind optimization: Language switch handler creator
+  const createLanguageSwitchHandler = useCallback(
+    (locale: Locale) => {
+      return () => switchLanguage(locale)
+    },
+    [switchLanguage]
+  )
 
   return (
     <div className="relative">
       {/* トリガーボタン */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleDropdown}
         className={`flex items-center gap-2 rounded-md px-3 py-2 transition-colors duration-200 ${colors.surface.secondary} ${colors.text.primary} hover:${colors.surface.tertiary} focus:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 ${spacing.padding.sm} ${rounded.component.button.sm} `}
         aria-label={dictionary?.language?.switch || 'Switch Language'}
         aria-expanded={isOpen}
@@ -68,8 +96,8 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
           {/* オーバーレイ（外側クリックで閉じる） */}
           <div
             className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-            onKeyDown={(e) => e.key === 'Escape' && setIsOpen(false)}
+            onClick={handleCloseDropdown}
+            onKeyDown={handleEscapeKey}
             role="button"
             tabIndex={-1}
             aria-hidden="true"
@@ -85,7 +113,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
               <button
                 key={language.code}
                 type="button"
-                onClick={() => switchLanguage(language.code)}
+                onClick={createLanguageSwitchHandler(language.code)}
                 className={`flex w-full items-center gap-3 px-4 py-2 text-left transition-colors duration-150 ${
                   language.code === currentLocale
                     ? `${colors.primary.DEFAULT} text-white`

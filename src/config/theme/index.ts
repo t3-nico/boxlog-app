@@ -10,6 +10,22 @@
 // タイポグラフィシステム
 export { body, heading, special, typography, patterns as typographyPatterns } from './typography'
 
+// フォントシステム（国際対応）
+export {
+  applyLocaleFont,
+  fontFamilies,
+  fontSystem,
+  fontWeights,
+  generateFontCSSVariables,
+  getFontFamily,
+  getFontFamilyString,
+  getFontPrefetchUrls,
+  getFontPreloadUrls,
+  getFullFontConfig,
+  getRecommendedWeight,
+  getSupportedFontLocales,
+} from './fonts'
+
 // スペーシングシステム
 export { space, spacing, spacingGuide, patterns as spacingPatterns } from './spacing'
 

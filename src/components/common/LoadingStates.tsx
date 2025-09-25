@@ -5,7 +5,7 @@
 
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
@@ -60,7 +60,11 @@ export const LoadingSpinner = ({
 
   return (
     <Loader2
-      className={cn(`animate-spin ${colors.text.muted}`, Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '', className)}
+      className={cn(
+        `animate-spin ${colors.text.muted}`,
+        Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
+        className
+      )}
       aria-label={ariaLabel}
       role="status"
     />
@@ -83,7 +87,11 @@ export const RefreshSpinner = ({
 
   return (
     <RefreshCw
-      className={cn(`animate-spin ${colors.semantic.info.text}`, Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '', className)}
+      className={cn(
+        `animate-spin ${colors.semantic.info.text}`,
+        Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
+        className
+      )}
       aria-label={ariaLabel}
       role="status"
     />
@@ -108,7 +116,9 @@ export const LoadingOverlay = ({
         >
           <div className={`flex flex-col items-center ${spacing.stack.sm}`}>
             <LoadingSpinner size={spinnerSize} />
-            {message ? <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>{message}</p> : null}
+            {message ? (
+              <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>{message}</p>
+            ) : null}
           </div>
         </div>
       )}
@@ -162,7 +172,14 @@ export const LoadingButton = ({
   return (
     <button
       type="button"
-      className={cn(baseClasses, Object.prototype.hasOwnProperty.call(variantClasses, variant) ? variantClasses[variant as keyof typeof variantClasses] : '', sizeClasses, className)}
+      className={cn(
+        baseClasses,
+        Object.prototype.hasOwnProperty.call(variantClasses, variant)
+          ? variantClasses[variant as keyof typeof variantClasses]
+          : '',
+        sizeClasses,
+        className
+      )}
       disabled={isLoading || disabled}
       onClick={onClick}
     >
@@ -265,6 +282,9 @@ export const DataLoading = ({
   emptyComponent,
   className = '',
 }: DataLoadingProps) => {
+  const handleReload = useCallback(() => {
+    window.location.reload()
+  }, [])
   if (isLoading) {
     return (
       <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
@@ -279,11 +299,7 @@ export const DataLoading = ({
         {errorComponent || (
           <div className="text-center">
             <p className={`${colors.semantic.error.text} ${spacing.margin.sm}`}>データの読み込みに失敗しました</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className={`${colors.semantic.info.text} hover:underline`}
-            >
+            <button type="button" onClick={handleReload} className={`${colors.semantic.info.text} hover:underline`}>
               再試行
             </button>
           </div>

@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "allow": ["Bash(npm run perf:check:force:*)"],
+    "allow": ["Bash(npm run test:*)"],
     "deny": [],
     "defaultMode": "ask",
     "ask": []

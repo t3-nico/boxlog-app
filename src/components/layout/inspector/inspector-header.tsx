@@ -1,38 +1,27 @@
 'use client'
 
-import React from 'react'
+import { useCallback } from 'react'
 
 import { PanelRightClose } from 'lucide-react'
 
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
-} from '@/components/shadcn-ui/tooltip'
-import { rounded, animations, colors, typography, spacing } from '@/config/theme'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
+import { animations, colors, rounded, spacing, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { useInspectorStore } from './stores/inspector.store'
 
-
 export const InspectorHeader = () => {
   const { toggleInspector } = useInspectorStore()
-  
+
+  const handleToggleInspector = useCallback(() => {
+    toggleInspector()
+  }, [toggleInspector])
+
   return (
     <TooltipProvider>
-      <div className={cn(
-        'flex items-center justify-between',
-        spacing.padding.lg,
-        colors.border.bottom
-      )}>
+      <div className={cn('flex items-center justify-between', spacing.padding.lg, colors.border.bottom)}>
         {/* Inspector Title */}
-        <div className={cn(
-          'flex items-center gap-2',
-          colors.text.primary,
-          typography.body.sm,
-          'font-medium'
-        )}>
+        <div className={cn('flex items-center gap-2', colors.text.primary, typography.body.sm, 'font-medium')}>
           <span>詳細情報</span>
         </div>
 
@@ -41,10 +30,10 @@ export const InspectorHeader = () => {
           <TooltipTrigger asChild>
             <button
               type="button"
-              onClick={() => toggleInspector()}
-              className={`w-8 h-8 flex items-center justify-center ${rounded.component.button.md} ${colors.hover.subtle} ${animations.transition.fast} flex-shrink-0`}
+              onClick={handleToggleInspector}
+              className={`flex h-8 w-8 items-center justify-center ${rounded.component.button.md} ${colors.hover.subtle} ${animations.transition.fast} flex-shrink-0`}
             >
-              <PanelRightClose className="w-4 h-4" />
+              <PanelRightClose className="h-4 w-4" />
             </button>
           </TooltipTrigger>
           <TooltipContent side="left">

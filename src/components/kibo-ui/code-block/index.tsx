@@ -2,7 +2,7 @@
 
 import type { ComponentProps, HTMLAttributes, ReactElement, ReactNode } from 'react'
 
-import { cloneElement, createContext, useContext, useEffect, useState } from 'react'
+import { cloneElement, createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 import {
   type IconType,
@@ -429,7 +429,7 @@ export const CodeBlockCopyButton = ({
   const { data, value } = useContext(CodeBlockContext)
   const code = data.find((item) => item.language === value)?.code
 
-  const copyToClipboard = () => {
+  const copyToClipboard = useCallback(() => {
     if (typeof window === 'undefined' || !navigator.clipboard.writeText || !code) {
       return
     }
@@ -440,7 +440,7 @@ export const CodeBlockCopyButton = ({
 
       setTimeout(() => setIsCopied(false), timeout)
     }, onError)
-  }
+  }, [code, onCopy, onError, timeout])
 
   if (asChild) {
     return cloneElement(children as ReactElement, {

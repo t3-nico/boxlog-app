@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { typography } from '@/config/theme'
 import { text } from '@/config/theme/colors'
@@ -29,11 +29,23 @@ export const NavigationSection = ({
 }: NavigationSectionProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
 
-  const handleToggle = () => {
+  // jsx-no-bind optimization: Toggle handler
+  const handleToggle = useCallback(() => {
     if (collapsible) {
       setIsCollapsed(!isCollapsed)
     }
-  }
+  }, [collapsible, isCollapsed])
+
+  // jsx-no-bind optimization: Key down handler
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleToggle()
+      }
+    },
+    [handleToggle]
+  )
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -52,12 +64,7 @@ export const NavigationSection = ({
             tabIndex: 0,
             'aria-expanded': !isCollapsed,
             'aria-label': `${isCollapsed ? 'Expand' : 'Collapse'} ${title} section`,
-            onKeyDown: (e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                handleToggle()
-              }
-            },
+            onKeyDown: handleKeyDown,
           })}
         >
           {Icon ? <Icon className={cn('mr-2 h-4 w-4 flex-shrink-0', text.muted)} /> : null}

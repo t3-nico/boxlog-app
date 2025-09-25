@@ -1,0 +1,335 @@
+name: 🚀 BoxLog Deploy Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deploy environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # =====================================
+  # 📋 変更検出ジョブ
+  # =====================================
+  detect-changes:
+    name: 🔍 変更検出
+    runs-on: ubuntu-latest
+    outputs:
+      deploy-needed: ${{ steps.changes.outputs.deploy-needed }}
+      source-changed: ${{ steps.changes.outputs.source-changed }}
+      config-changed: ${{ steps.changes.outputs.config-changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 変更ファイルの検出
+        id: changes
+        run: |
+          # 変更ファイルの取得
+          if git diff --quiet HEAD~1 HEAD; then
+            echo "No changes detected"
+            echo "deploy-needed=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          changed_files=$(git diff --name-only HEAD~1 HEAD)
+          echo "Changed files: $changed_files"
+
+          # ソースコード変更の検出
+          if echo "$changed_files" | grep -E "(src/|pages/|components/|lib/|public/)" > /dev/null; then
+            echo "source-changed=true" >> $GITHUB_OUTPUT
+            echo "deploy-needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "source-changed=false" >> $GITHUB_OUTPUT
+          fi
+
+          # 設定ファイル変更の検出
+          if echo "$changed_files" | grep -E "(package.json|next.config|tailwind.config|tsconfig)" > /dev/null; then
+            echo "config-changed=true" >> $GITHUB_OUTPUT
+            echo "deploy-needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "config-changed=false" >> $GITHUB_OUTPUT
+          fi
+
+          # ドキュメントのみの場合はデプロイ不要
+          if echo "$changed_files" | grep -v -E "(\.md$|docs/|\.txt$)" > /dev/null; then
+            echo "deploy-needed=true" >> $GITHUB_OUTPUT
+          else
+            echo "deploy-needed=false" >> $GITHUB_OUTPUT
+          fi
+
+  # =====================================
+  # 🧪 品質チェックジョブ
+  # =====================================
+  quality-check:
+    name: 🧪 品質チェック
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deploy-needed == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 🔍 Lint check
+        run: npm run lint
+
+      - name: 🏗️ Type check
+        run: npm run typecheck
+
+      - name: 🎯 Environment validation
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=dummy_url" > .env.local
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy_key" >> .env.local
+          echo "NEXT_PUBLIC_APP_URL=http://localhost:3000" >> .env.local
+          npm run env:check
+
+      - name: 🧪 Build test
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'dummy_url' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy_key' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
+
+  # =====================================
+  # 🏗️ ビルドジョブ
+  # =====================================
+  build:
+    name: 🏗️ ビルド
+    runs-on: ubuntu-latest
+    needs: [detect-changes, quality-check]
+    if: needs.detect-changes.outputs.deploy-needed == 'true'
+    outputs:
+      build-artifact: ${{ steps.build.outputs.artifact-name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 📋 Pre-deploy hook
+        run: |
+          export BUILD_START_TIME=$(date +%s)
+          echo "BUILD_START_TIME=$BUILD_START_TIME" >> $GITHUB_ENV
+          ./scripts/deploy-hooks.sh pre-deploy
+
+      - name: 🏗️ Build application
+        id: build
+        run: |
+          npm run build
+          echo "artifact-name=build-$(date +%s)" >> $GITHUB_OUTPUT
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          ANALYZE: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+
+      - name: 📦 Bundle size check
+        if: github.ref == 'refs/heads/main'
+        run: npm run bundle:check || true
+
+      - name: 💾 Cache build
+        uses: actions/cache/save@v3
+        with:
+          path: |
+            .next
+            dist
+          key: build-cache-${{ github.sha }}
+
+  # =====================================
+  # 🚀 Staging デプロイ
+  # =====================================
+  deploy-staging:
+    name: 🚀 Staging デプロイ
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build]
+    if: |
+      needs.detect-changes.outputs.deploy-needed == 'true' &&
+      (github.ref == 'refs/heads/dev' || github.event.inputs.environment == 'staging')
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 🚀 Deploy to Vercel (Staging)
+        id: deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--env NODE_ENV=staging'
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: 📋 Post-deploy hook
+        run: |
+          export BUILD_START_TIME=${{ env.BUILD_START_TIME }}
+          export VERCEL_URL=${{ steps.deploy.outputs.preview-url }}
+          ./scripts/deploy-hooks.sh post-deploy
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 💬 コメント更新 (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Staging Deploy Complete!**
+
+              **🔗 Preview URL:** ${{ steps.deploy.outputs.preview-url }}
+              **🏷️ Environment:** staging
+              **⏰ Deploy Time:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+              **📝 Commit:** ${GITHUB_SHA.substring(0, 8)}
+
+              ✅ すべての品質チェックに合格しました！`
+            })
+
+  # =====================================
+  # 🏭 Production デプロイ
+  # =====================================
+  deploy-production:
+    name: 🏭 Production デプロイ
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build]
+    if: |
+      needs.detect-changes.outputs.deploy-needed == 'true' &&
+      (github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production')
+    environment:
+      name: production
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 🚀 Deploy to Vercel (Production)
+        id: deploy
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          scope: ${{ secrets.VERCEL_ORG_ID }}
+
+      - name: 📋 Post-deploy hook
+        run: |
+          export BUILD_START_TIME=${{ env.BUILD_START_TIME }}
+          export VERCEL_URL=${{ steps.deploy.outputs.preview-url }}
+          ./scripts/deploy-hooks.sh post-deploy
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 🏷️ Create Release Tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION" || echo "Tag already exists"
+
+      - name: 📊 Deploy statistics
+        run: |
+          if [[ -f scripts/deploy-tracker.js ]]; then
+            node scripts/deploy-tracker.js stats
+          fi
+
+  # =====================================
+  # 🚨 失敗処理ジョブ
+  # =====================================
+  handle-failure:
+    name: 🚨 失敗処理
+    runs-on: ubuntu-latest
+    needs: [quality-check, build, deploy-staging, deploy-production]
+    if: always() && contains(needs.*.result, 'failure')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 🚨 Record deployment failure
+        run: |
+          ./scripts/deploy-hooks.sh failure "GitHub Actions workflow failed"
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: 💬 失敗通知コメント (PR)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚨 **Deploy Failed**
+
+              デプロイ処理中にエラーが発生しました。
+
+              **📝 Commit:** ${GITHUB_SHA.substring(0, 8)}
+              **⏰ Time:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+              **🔗 Workflow:** [View Details](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})
+
+              ❌ ログを確認して問題を修正してください。`
+            })

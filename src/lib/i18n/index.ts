@@ -4,6 +4,9 @@
 
 import type { Locale } from '@/types/i18n'
 
+import type { PluralTranslation } from './pluralization'
+import { formatICUPlural, pluralizeWithVariables } from './pluralization'
+
 // サポートする言語
 export const locales: Locale[] = ['en', 'ja']
 export const defaultLocale: Locale = 'en'
@@ -75,10 +78,68 @@ export const getLocaleCookie = (): Locale | null => {
   return cookieLocale && locales.includes(cookieLocale) ? cookieLocale : null
 }
 
-// 翻訳関数生成
-export const createTranslation = (dictionary: Dictionary) => {
+// 拡張翻訳関数の型定義
+export interface TranslationFunction {
+  (key: string, variables?: Record<string, string | number>): string
+  plural: (key: string, count: number, variables?: Record<string, string | number>) => string
+  icu: (message: string, count: number, variables?: Record<string, string | number>) => string
+}
+
+// 翻訳関数生成（複数形処理対応）
+export const createTranslation = (dictionary: Dictionary, locale: Locale = defaultLocale): TranslationFunction => {
+  const baseTranslation = (key: string, variables?: Record<string, string | number>): string => {
+    const translation = getNestedValue(dictionary, key)
+
+    // ICU Message Format形式の検出と処理
+    if (translation.includes('{') && translation.includes('plural')) {
+      const count = (variables?.count as number) || 0
+      return formatICUPlural(locale, count, translation, variables)
+    }
+
+    return interpolate(translation, variables)
+  }
+
+  // 複数形処理関数
+  const pluralTranslation = (key: string, count: number, variables?: Record<string, string | number>): string => {
+    const translation = getNestedValue(dictionary, key)
+
+    // オブジェクト形式の複数形翻訳をチェック
+    if (typeof translation === 'object') {
+      try {
+        const pluralTranslations = JSON.parse(JSON.stringify(translation)) as PluralTranslation
+        return pluralizeWithVariables(locale, count, pluralTranslations, variables)
+      } catch {
+        // JSONパースに失敗した場合は通常の翻訳として処理
+      }
+    }
+
+    // 文字列の場合は通常の変数補間
+    return interpolate(translation, { count, ...variables })
+  }
+
+  // ICU形式直接処理関数
+  const icuTranslation = (message: string, count: number, variables?: Record<string, string | number>): string => {
+    return formatICUPlural(locale, count, message, variables)
+  }
+
+  // 関数にメソッドを追加
+  const translationFunction = baseTranslation as TranslationFunction
+  translationFunction.plural = pluralTranslation
+  translationFunction.icu = icuTranslation
+
+  return translationFunction
+}
+
+// レガシー互換性のためのシンプル翻訳関数
+export const createSimpleTranslation = (dictionary: Dictionary) => {
   return (key: string, variables?: Record<string, string | number>): string => {
     const translation = getNestedValue(dictionary, key)
     return interpolate(translation, variables)
   }
 }
+
+// 複数形対応の型定義をエクスポート
+export type { PluralTranslation }
+
+// 複数形処理のヘルパー関数をエクスポート
+export { formatICUPlural, pluralizeWithVariables, selectPluralTranslation } from './pluralization'

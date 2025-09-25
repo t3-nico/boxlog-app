@@ -25,9 +25,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# Environment variables
 .env
+.env.local
+.env.development
+.env.staging
+.env.production.local
+!.env.example
+!.env.production
 
 # vercel
 .vercel
@@ -120,4 +125,8 @@ dist
 
 # Temporary folders
 tmp/
-temp/ 
+temp/
+
+# Deployment history and backups (keep template)
+# deploy-history.json (template kept in repo)
+.deploy-backups/ 

@@ -115,40 +115,45 @@ const AccountSettings = () => {
     }
   }, [user, profile])
 
-  const handlePasswordSave = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (newPassword !== confirmPassword) {
-      setPasswordError('パスワードが一致しません')
-      return
-    }
-    if (newPassword.length < 6) {
-      setPasswordError('パスワードは6文字以上で入力してください')
-      return
-    }
+  // jsx-no-bind optimization: Password save handler
+  const handlePasswordSave = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
+      if (newPassword !== confirmPassword) {
+        setPasswordError('パスワードが一致しません')
+        return
+      }
+      if (newPassword.length < 6) {
+        setPasswordError('パスワードは6文字以上で入力してください')
+        return
+      }
 
-    setPasswordError(null)
-    setIsPasswordLoading(true)
+      setPasswordError(null)
+      setIsPasswordLoading(true)
 
-    try {
-      // パスワード更新ロジック（実際の実装は後で）
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log('Updating password')
+      try {
+        // パスワード更新ロジック（実際の実装は後で）
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        console.log('Updating password')
 
-      // 成功時はフォームをリセット
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
+        // 成功時はフォームをリセット
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
 
-      alert('パスワードを更新しました')
-    } catch (err) {
-      console.error('Password update error:', err)
-      setPasswordError('予期しないエラーが発生しました')
-    } finally {
-      setIsPasswordLoading(false)
-    }
-  }
+        alert('パスワードを更新しました')
+      } catch (err) {
+        console.error('Password update error:', err)
+        setPasswordError('予期しないエラーが発生しました')
+      } finally {
+        setIsPasswordLoading(false)
+      }
+    },
+    [newPassword, confirmPassword]
+  )
 
-  const handleDeleteAccount = async () => {
+  // jsx-no-bind optimization: Delete account handler
+  const handleDeleteAccount = useCallback(async () => {
     const confirmed = window.confirm(
       'この操作は取り消すことができません。すべてのデータが完全に削除されます。本当にアカウントを削除しますか？'
     )
@@ -168,26 +173,36 @@ const AccountSettings = () => {
     } finally {
       setIsDeleting(false)
     }
-  }
+  }, [])
 
-  const handleAvatarRemove = () => {
+  // jsx-no-bind optimization: Avatar remove handler
+  const handleAvatarRemove = useCallback(() => {
     setUploadedAvatar(null)
     profile.updateValue('uploadedAvatar', null)
-  }
+  }, [profile])
 
   // Profile form handlers
-  const handleDisplayNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    profile.updateValue('displayName', e.target.value)
-  }, [profile])
+  const handleDisplayNameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      profile.updateValue('displayName', e.target.value)
+    },
+    [profile]
+  )
 
-  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    profile.updateValue('email', e.target.value)
-  }, [profile])
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      profile.updateValue('email', e.target.value)
+    },
+    [profile]
+  )
 
   // Dynamic icon select handler
-  const createIconSelectHandler = useCallback((icon: string) => {
-    return () => profile.updateValue('selectedIcon', icon)
-  }, [profile])
+  const createIconSelectHandler = useCallback(
+    (icon: string) => {
+      return () => profile.updateValue('selectedIcon', icon)
+    },
+    [profile]
+  )
 
   // Password form handlers
   const handleCurrentPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,9 +218,12 @@ const AccountSettings = () => {
   }, [])
 
   // Security settings handler
-  const handleTwoFactorChange = useCallback((checked: boolean) => {
-    security.updateValue('twoFactorEnabled', checked)
-  }, [security])
+  const handleTwoFactorChange = useCallback(
+    (checked: boolean) => {
+      security.updateValue('twoFactorEnabled', checked)
+    },
+    [security]
+  )
 
   return (
     <div className={spacing.stackGap.lg}>
@@ -346,10 +364,7 @@ const AccountSettings = () => {
                 : 'サインイン時に認証コードを要求します'}
             </p>
           </div>
-          <Switch
-            checked={security.values.twoFactorEnabled}
-            onCheckedChange={handleTwoFactorChange}
-          />
+          <Switch checked={security.values.twoFactorEnabled} onCheckedChange={handleTwoFactorChange} />
         </div>
 
         {security.values.twoFactorEnabled != null && (

@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { usePathname } from 'next/navigation'
 
@@ -23,11 +23,28 @@ export const MobileInspector = () => {
   const { toggleInspector } = useInspectorStore()
 
   // キーボードナビゲーション強化
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape' && isInspectorOpen) {
-      toggleInspector()
-    }
-  }
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape' && isInspectorOpen) {
+        toggleInspector()
+      }
+    },
+    [isInspectorOpen, toggleInspector]
+  )
+
+  const handleToggleInspector = useCallback(() => {
+    toggleInspector()
+  }, [toggleInspector])
+
+  const handleOverlayKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        toggleInspector()
+      }
+    },
+    [toggleInspector]
+  )
 
   if (!isInspectorOpen) {
     return null
@@ -38,13 +55,8 @@ export const MobileInspector = () => {
       {/* Background Overlay */}
       <div
         className={cn('fixed inset-0 z-[9998]', 'bg-black bg-opacity-50', animations.appear.fadeIn)}
-        onClick={() => toggleInspector()}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            toggleInspector()
-          }
-        }}
+        onClick={handleToggleInspector}
+        onKeyDown={handleOverlayKeyDown}
         role="button"
         tabIndex={0}
         aria-label="Close inspector"
@@ -77,7 +89,7 @@ export const MobileInspector = () => {
         >
           <button
             type="button"
-            onClick={() => toggleInspector()}
+            onClick={handleToggleInspector}
             className={cn(
               'flex h-10 w-10 items-center justify-center',
               rounded.component.button.sm,

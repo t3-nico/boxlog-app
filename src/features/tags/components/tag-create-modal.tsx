@@ -48,6 +48,14 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
     [onChange]
   )
 
+  // jsx-no-bind optimization: Create preset color click handler
+  const createPresetColorClickHandler = useCallback(
+    (index: number) => {
+      return () => handlePresetColorClick(index)
+    },
+    [handlePresetColorClick]
+  )
+
   const handleCustomColorChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setCustomColor(e.target.value)
@@ -64,7 +72,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
           <button
             type="button"
             key={color}
-            onClick={() => handlePresetColorClick(index)}
+            onClick={createPresetColorClickHandler(index)}
             className={`h-8 w-8 rounded-full border-2 transition-all ${
               value === TAG_PRESET_COLORS[index]
                 ? 'scale-110 border-gray-900 dark:border-white'
@@ -101,6 +109,13 @@ const ParentTagSelector = ({
   allTags: TagWithChildren[]
   maxLevel?: number
 }) => {
+  // jsx-no-bind optimization: Select change handler
+  const handleSelectChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      onChange(e.target.value || null)
+    },
+    [onChange]
+  )
   const renderTagOption = (tag: TagWithChildren, level = 0): JSX.Element[] => {
     const options: JSX.Element[] = []
     const indent = '　'.repeat(level) // 全角スペースでインデント
@@ -128,7 +143,7 @@ const ParentTagSelector = ({
   return (
     <select
       value={value || ''}
-      onChange={(e) => onChange(e.target.value || null)}
+      onChange={handleSelectChange}
       className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
       <option value="">-- ルートレベル（親なし）--</option>

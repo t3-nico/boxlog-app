@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -35,7 +35,8 @@ export const NavigationItem = ({
 }: NavigationItemProps) => {
   const router = useRouter()
 
-  const handleClick = () => {
+  // jsx-no-bind optimization: Navigation item click handler
+  const handleClick = useCallback(() => {
     if (disabled) return
 
     if (onClick) {
@@ -43,7 +44,7 @@ export const NavigationItem = ({
     } else if (href) {
       router.push(href)
     }
-  }
+  }, [disabled, onClick, href, router])
 
   const variantStyles = {
     default: 'px-3 py-2 gap-3',
@@ -66,7 +67,9 @@ export const NavigationItem = ({
         'flex w-full items-center text-left transition-all',
         componentRadius.button.md,
         animations.transition.fast,
-        Object.prototype.hasOwnProperty.call(variantStyles, variant) ? variantStyles[variant as keyof typeof variantStyles] : variantStyles.default,
+        Object.prototype.hasOwnProperty.call(variantStyles, variant)
+          ? variantStyles[variant as keyof typeof variantStyles]
+          : variantStyles.default,
         (variant === 'compact' || variant === 'minimal') && typography.body.base,
         isActive
           ? `${selection.text} ${selection.DEFAULT}`
@@ -81,7 +84,9 @@ export const NavigationItem = ({
         <Icon
           className={cn(
             'flex-shrink-0',
-            Object.prototype.hasOwnProperty.call(iconSizes, variant) ? iconSizes[variant as keyof typeof iconSizes] : iconSizes.default,
+            Object.prototype.hasOwnProperty.call(iconSizes, variant)
+              ? iconSizes[variant as keyof typeof iconSizes]
+              : iconSizes.default,
             isActive ? selection.text.replace('text-', '') : text.muted.replace('text-', '')
           )}
         />

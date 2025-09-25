@@ -88,6 +88,33 @@ const TagTreeNode = ({
     [handleSaveEdit, handleCancelEdit]
   )
 
+  // jsx-no-bind optimization: Edit name change handler
+  const handleEditNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditName(e.target.value)
+  }, [])
+
+  // jsx-no-bind optimization: Create child tag handler
+  const handleCreateChildTag = useCallback(() => {
+    onCreateTag(tag.id)
+  }, [onCreateTag, tag.id])
+
+  // jsx-no-bind optimization: Toggle menu handler
+  const handleToggleMenu = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  // jsx-no-bind optimization: Edit tag handler
+  const handleEditTag = useCallback(() => {
+    onEditTag(tag)
+    setShowMenu(false)
+  }, [onEditTag, tag])
+
+  // jsx-no-bind optimization: Delete tag handler
+  const handleDeleteTag = useCallback(() => {
+    onDeleteTag(tag)
+    setShowMenu(false)
+  }, [onDeleteTag, tag])
+
   const indentClass = `ml-${level * 4}`
 
   return (
@@ -123,7 +150,7 @@ const TagTreeNode = ({
             <input
               type="text"
               value={editName}
-              onChange={(e) => setEditName(e.target.value)}
+              onChange={handleEditNameChange}
               onBlur={handleSaveEdit}
               onKeyDown={handleKeyDown}
               className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700"
@@ -149,7 +176,7 @@ const TagTreeNode = ({
           {canHaveChildren === true && (
             <button
               type="button"
-              onClick={() => onCreateTag(tag.id)}
+              onClick={handleCreateChildTag}
               className="rounded p-1 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
               title="子タグを追加"
             >
@@ -161,7 +188,7 @@ const TagTreeNode = ({
           <div className="relative">
             <button
               type="button"
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={handleToggleMenu}
               className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
             >
               <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
@@ -172,10 +199,7 @@ const TagTreeNode = ({
               <div className="absolute right-0 top-full z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
                 <button
                   type="button"
-                  onClick={() => {
-                    onEditTag(tag)
-                    setShowMenu(false)
-                  }}
+                  onClick={handleEditTag}
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   <PencilIcon className="h-4 w-4" data-slot="icon" />
@@ -191,10 +215,7 @@ const TagTreeNode = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    onDeleteTag(tag)
-                    setShowMenu(false)
-                  }}
+                  onClick={handleDeleteTag}
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
                 >
                   <TrashIcon className="h-4 w-4" data-slot="icon" />
@@ -207,7 +228,8 @@ const TagTreeNode = ({
       </div>
 
       {/* 子タグ */}
-      {hasChildren && isExpanded ? <div className="space-y-1">
+      {hasChildren && isExpanded ? (
+        <div className="space-y-1">
           {tag.children.map((child) => (
             <TagTreeNode
               key={child.id}
@@ -221,7 +243,8 @@ const TagTreeNode = ({
               onRenameTag={onRenameTag}
             />
           ))}
-        </div> : null}
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -252,6 +275,11 @@ export const TagTreeView = ({
     [localExpandedNodes, onToggleExpanded]
   )
 
+  // jsx-no-bind optimization: Create root tag handler
+  const handleCreateRootTag = useCallback(() => {
+    onCreateTag()
+  }, [onCreateTag])
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -267,7 +295,7 @@ export const TagTreeView = ({
         <p className="mb-4 text-gray-500 dark:text-gray-400">タグがまだありません</p>
         <button
           type="button"
-          onClick={() => onCreateTag()}
+          onClick={handleCreateRootTag}
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           <PlusIcon className="h-4 w-4" />
@@ -284,7 +312,7 @@ export const TagTreeView = ({
         <h3 className="text-sm font-medium text-gray-900 dark:text-white">タグ一覧 ({tags.length})</h3>
         <button
           type="button"
-          onClick={() => onCreateTag()}
+          onClick={handleCreateRootTag}
           className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
         >
           <PlusIcon className="h-4 w-4" />

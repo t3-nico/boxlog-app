@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
 import { useEventTrash } from '../hooks/useEventTrash'
 
@@ -54,6 +54,40 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
     return events
   }, [trashedEvents, searchQuery, filterDays, searchEvents, filterByDeletionDate])
 
+  // jsx-no-bind optimization: Search input handler
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value)
+  }, [])
+
+  // jsx-no-bind optimization: Filter select handler
+  const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterDays(e.target.value ? Number(e.target.value) : null)
+  }, [])
+
+  // jsx-no-bind optimization: Event selection handler creator
+  const createSelectEventHandler = useCallback(
+    (eventId: string) => {
+      return () => handleSelectEvent(eventId)
+    },
+    [handleSelectEvent]
+  )
+
+  // jsx-no-bind optimization: Event restore handler creator
+  const createRestoreEventHandler = useCallback(
+    (eventId: string) => {
+      return () => handleRestoreEvent(eventId)
+    },
+    [handleRestoreEvent]
+  )
+
+  // jsx-no-bind optimization: Event permanent delete handler creator
+  const createPermanentDeleteHandler = useCallback(
+    (eventId: string) => {
+      return () => handlePermanentDelete(eventId)
+    },
+    [handlePermanentDelete]
+  )
+
   if (isEmpty) {
     return (
       <div className={`${className} flex items-center justify-center p-8`}>
@@ -99,13 +133,13 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
             type="text"
             placeholder="イベントを検索..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="min-w-64 flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-800"
           />
 
           <select
             value={filterDays || ''}
-            onChange={(e) => setFilterDays(e.target.value ? Number(e.target.value) : null)}
+            onChange={handleFilterChange}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 dark:border-gray-600 dark:bg-gray-800"
           >
             <option value="">全期間</option>
@@ -195,7 +229,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                         id={`select-event-${event.id}`}
                         type="checkbox"
                         checked={isSelected}
-                        onChange={() => handleSelectEvent(event.id)}
+                        onChange={createSelectEventHandler(event.id)}
                         className="h-4 w-4"
                       />
                     </label>
@@ -211,7 +245,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                   <div className="flex space-x-2">
                     <button
                       type="button"
-                      onClick={() => handleRestoreEvent(event.id)}
+                      onClick={createRestoreEventHandler(event.id)}
                       disabled={isLoading}
                       className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
                     >
@@ -219,7 +253,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                     </button>
                     <button
                       type="button"
-                      onClick={() => handlePermanentDelete(event.id)}
+                      onClick={createPermanentDeleteHandler(event.id)}
                       disabled={isLoading}
                       className="whitespace-nowrap rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
                     >

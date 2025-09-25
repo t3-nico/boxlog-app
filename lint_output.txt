@@ -1,0 +1,927 @@
+
+> boxlog-app@0.1.0 lint
+> eslint . -c .eslint/index.js
+
+
+/Users/takayasutomoya/Desktop/boxlog-app/scripts/comprehensive-quality-gate.js
+  596:1  warning  Function 'extractSystemSummary' has a complexity of 22. Maximum allowed is 15  complexity
+  667:1  warning  File has too many lines (630). Maximum allowed is 500                          max-lines
+
+/Users/takayasutomoya/Desktop/boxlog-app/scripts/tech-debt-report.js
+  676:1  warning  File has too many lines (654). Maximum allowed is 500  max-lines
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/app/(app)/settings/chronotype/page.tsx
+  507:9    warning  The 'handleAnswerSelect' function makes the dependencies of useCallback Hook (at line 478) change on every render. Move it inside the useCallback callback. Alternatively, wrap the definition of 'handleAnswerSelect' in its own useCallback() Hook  react-hooks/exhaustive-deps
+  622:110  warning  Generic Object Injection Sink                                                                                                                                                                                                                         security/detect-object-injection
+  628:110  warning  Generic Object Injection Sink                                                                                                                                                                                                                         security/detect-object-injection
+  635:114  warning  Generic Object Injection Sink                                                                                                                                                                                                                         security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/app/layout.tsx
+  25:5  error  <html> elements must have the lang prop  jsx-a11y/html-has-lang
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/custom/text.tsx
+  19:5  error  Anchors must have content and the content must be accessible by a screen reader  jsx-a11y/anchor-has-content
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/i18n/language-switcher.tsx
+  26:30  warning  Unexpected any. Specify a different type                                           @typescript-eslint/no-explicit-any
+  31:9   warning  'params' is assigned a value but never used. Allowed unused vars must match /^_/u  unused-imports/no-unused-vars
+  51:7   warning  Missing an explicit type attribute for button                                      react/button-has-type
+  52:9   warning  JSX props should not use arrow functions                                           react/jsx-no-bind
+  68:47  warning  JSX props should not use arrow functions                                           react/jsx-no-bind
+  77:15  warning  Missing an explicit type attribute for button                                      react/button-has-type
+  79:17  warning  JSX props should not use arrow functions                                           react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/kibo-ui/ai/response.tsx
+  59:5  warning  Using target="_blank" without rel="noreferrer" (which implies rel="noopener") is a security risk in older browsers: see https://mathiasbynens.github.io/rel-noopener/#recommendations  react/jsx-no-target-blank
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/kibo-ui/ai/source.tsx
+  40:3  warning  Using target="_blank" without rel="noreferrer" (which implies rel="noopener") is a security risk in older browsers: see https://mathiasbynens.github.io/rel-noopener/#recommendations  react/jsx-no-target-blank
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/kibo-ui/code-block/index.tsx
+  555:7  warning  Dangerous property 'dangerouslySetInnerHTML' found  react/no-danger
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/kibo-ui/code-block/server.tsx
+  58:7  warning  Dangerous property 'dangerouslySetInnerHTML' found  react/no-danger
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/kibo-ui/color-picker/index.tsx
+  356:53  warning  Generic Object Injection Sink  security/detect-object-injection
+  405:27  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/kibo-ui/kanban/index.tsx
+  235:11  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/layout.tsx
+  31:36  warning  Maximum number of dependencies (10) exceeded  import/max-dependencies
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/navigation/toggle.tsx
+  3:1  error  There should be at least one empty line between import groups  import/order
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/sidebar/DesktopSidebar.tsx
+   20:26  warning  Maximum number of dependencies (10) exceeded  import/max-dependencies
+  309:9   warning  JSX props should not use arrow functions      react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/sidebar/MobileSidebar.tsx
+   20:26  warning  Maximum number of dependencies (10) exceeded  import/max-dependencies
+  102:9   warning  JSX props should not use arrow functions      react/jsx-no-bind
+  103:9   warning  JSX props should not use arrow functions      react/jsx-no-bind
+  104:9   warning  JSX props should not use arrow functions      react/jsx-no-bind
+  105:9   warning  JSX props should not use arrow functions      react/jsx-no-bind
+  197:25  warning  JSX props should not use arrow functions      react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/sidebar/resize-handle.tsx
+  39:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  40:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/sidebar/sidebar-item.tsx
+  38:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/layout/sidebar/user-menu.tsx
+  146:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  157:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  173:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/shadcn-ui/delete-toast.tsx
+  130:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/shadcn-ui/rich-text-editor.tsx
+  122:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  134:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  146:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/shadcn-ui/tags.tsx
+  113:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  172:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  228:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  271:18  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/shadcn-ui/theme-toggle.tsx
+   50:29  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   54:29  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   58:29  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   79:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  106:41  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/shadcn-ui/toast.tsx
+  134:9  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/shadcn-ui/view-switcher.tsx
+  30:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/theme-test/BadExample.tsx
+   8:20  warning  🎨 直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。        no-restricted-syntax
+  10:20  warning  🎨 直接的なTailwindテキストカラークラス (text-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。  no-restricted-syntax
+  11:7   warning  Missing an explicit type attribute for button                                          react/button-has-type
+  11:25  warning  🎨 直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。代わりに @/config/theme の colors を使用してください。        no-restricted-syntax
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/theme-test/GoodExample.tsx
+  17:7  warning  Missing an explicit type attribute for button  react/button-has-type
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/ui/editor/editor.tsx
+  30:20  warning  Maximum number of dependencies (10) exceeded  import/max-dependencies
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/ui/rich-text-editor/simple-rich-editor.tsx
+  138:11  warning  JSX props should not use arrow functions                                                                                                                                                                                                                                                                                                                                  react/jsx-no-bind
+  148:11  warning  JSX props should not use arrow functions                                                                                                                                                                                                                                                                                                                                  react/jsx-no-bind
+  158:11  warning  JSX props should not use arrow functions                                                                                                                                                                                                                                                                                                                                  react/jsx-no-bind
+  172:11  warning  JSX props should not use arrow functions                                                                                                                                                                                                                                                                                                                                  react/jsx-no-bind
+  182:11  warning  JSX props should not use arrow functions                                                                                                                                                                                                                                                                                                                                  react/jsx-no-bind
+  210:11  error    Anchors must have content and the content must be accessible by a screen reader                                                                                                                                                                                                                                                                                           jsx-a11y/anchor-has-content
+  210:11  error    The href attribute is required for an anchor to be keyboard accessible. Provide a valid, navigable address as the href value. If you cannot provide an href, but still need the element to resemble a link, use a button and change it with appropriate styles. Learn more: https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/HEAD/docs/rules/anchor-is-valid.md  jsx-a11y/anchor-is-valid
+  221:9   warning  Dangerous property 'dangerouslySetInnerHTML' found                                                                                                                                                                                                                                                                                                                        react/no-danger
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/components/ui/rich-text-editor/tiptap-editor.tsx
+   23:20  warning  Maximum number of dependencies (10) exceeded  import/max-dependencies
+  125:17  warning  JSX props should not use arrow functions      react/jsx-no-bind
+  147:17  warning  JSX props should not use arrow functions      react/jsx-no-bind
+  169:17  warning  JSX props should not use arrow functions      react/jsx-no-bind
+  195:17  warning  JSX props should not use arrow functions      react/jsx-no-bind
+  217:17  warning  JSX props should not use arrow functions      react/jsx-no-bind
+  239:17  warning  JSX props should not use arrow functions      react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/app/features.ts
+  16:73  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/theme/elevation.ts
+  189:67  warning  Generic Object Injection Sink  security/detect-object-injection
+  237:10  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/theme/index.ts
+  265:23  warning  Generic Object Injection Sink  security/detect-object-injection
+  266:59  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/theme/layout.ts
+  145:12  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/theme/rounded.ts
+  333:18  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/theme/spacing.ts
+  182:64  warning  Generic Object Injection Sink  security/detect-object-injection
+  189:65  warning  Generic Object Injection Sink  security/detect-object-injection
+  196:72  warning  Generic Object Injection Sink  security/detect-object-injection
+  203:63  warning  Generic Object Injection Sink  security/detect-object-injection
+  210:65  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/config/theme/typography.ts
+  481:10  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/contexts/theme-context.tsx
+  201:10  warning  Generic Object Injection Sink  security/detect-object-injection
+  201:10  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/aichat/components/ai-chat-panel.tsx
+   75:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  133:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  134:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  141:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/aichat/components/ai-chat-sidebar.tsx
+  117:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  235:16  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  238:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  239:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  240:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  262:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  316:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  327:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  338:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/aichat/components/codebase-ai-chat.tsx
+  158:22  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  292:11  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  293:11  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  402:17  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  413:21  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  421:21  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  473:17  warning  JSX props should not use arrow functions    react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/aichat/components/index.tsx
+  21:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  32:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/aichat/components/sidebar/index.tsx
+  137:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  150:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  155:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  167:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  177:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  185:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  193:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  224:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  240:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/auth/components/AuthForm.tsx
+   77:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  104:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/auth/components/LoginForm.tsx
+   76:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   87:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   91:49  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   95:49  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  102:54  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  106:63  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/auth/components/LoginFormDisabled.tsx
+  153:62  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  168:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  182:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  199:60  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  212:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  227:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  239:70  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  260:70  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/auth/components/PasswordResetForm.tsx
+  57:60  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  72:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/auth/components/SignupForm.tsx
+   39:5   error    Potential timing attack, left side: true  security/detect-possible-timing-attacks
+   95:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  112:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  123:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  135:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  158:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  185:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/CalendarController.tsx
+   33:26  warning  Maximum number of dependencies (20) exceeded           import/max-dependencies
+  653:1   warning  File has too many lines (767). Maximum allowed is 500  max-lines
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/CalendarSkeleton.tsx
+  27:25  warning  Do not use Array index in keys  react/no-array-index-key
+  45:27  warning  Do not use Array index in keys  react/no-array-index-key
+  58:27  warning  Do not use Array index in keys  react/no-array-index-key
+  66:29  warning  Do not use Array index in keys  react/no-array-index-key
+  74:32  warning  Do not use Array index in keys  react/no-array-index-key
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/animations/AnimatedEventCard.tsx
+  180:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  181:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  182:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  183:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  184:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  185:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/animations/EventAnimations.tsx
+  196:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  197:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  198:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  206:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  223:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  230:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/animations/ViewTransition.tsx
+  194:12  warning  Generic Object Injection Sink                          security/detect-object-injection
+  610:1   warning  File has too many lines (695). Maximum allowed is 500  max-lines
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/calendar-specific/layout/event-layout.ts
+  143:29  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  151:11  warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/common/MiniCalendar.tsx
+  277:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/common/MiniCalendarPopover.tsx
+  45:26  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  56:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/common/accessibility/AccessibilitySettings.tsx
+  191:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  223:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/common/accessibility/AccessibleCalendarGrid.tsx
+  278:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  302:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/common/performance/LazyImage.tsx
+  216:11  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  224:11  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  342:11  warning  Dangerous property 'dangerouslySetInnerHTML' found  react/no-danger
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/common/virtualization/VirtualCalendarGrid.tsx
+  318:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  333:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  381:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/current-schedule-card.tsx
+  226:9  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  227:9  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  261:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  262:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/dialogs/WeekendDropConfirmDialog.tsx
+  45:27  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/interactions/EventDnD/DraggableEvent.tsx
+  229:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/interactions/EventDnD/EventResizeHandle.tsx
+  213:5  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/layout/Header/DateNavigator.tsx
+  45:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  66:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  71:37  warning  Generic Object Injection Sink             security/detect-object-injection
+  75:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  80:38  warning  Generic Object Injection Sink             security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/layout/Header/ViewSwitcher.tsx
+  115:6   warning  React Hook useCallback has a missing dependency: 'handleSelect'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  194:19  warning  JSX props should not use arrow functions                                                                           react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/layout/MobileLayout/MobileDrawer.tsx
+  231:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/layout/MobileLayout/MobileHeader.tsx
+  109:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  112:16  warning  Generic Object Injection Sink             security/detect-object-injection
+  122:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  130:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  143:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  144:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  161:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/layout/MobileLayout/MobileNavigation.tsx
+  66:6  warning  React Hook useCallback has a missing dependency: 'handleItemClick'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/overlays/TrashView.tsx
+  37:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  44:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/DayView/components/DayContent.tsx
+  135:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  146:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  164:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  165:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/ThreeDayView/ThreeDayView.tsx
+  176:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  221:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/ThreeDayView/components/ThreeDayContent.tsx
+  124:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  154:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  170:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  187:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  188:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/TwoWeekView/TwoWeekView.tsx
+  168:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  189:31  warning  Generic Object Injection Sink             security/detect-object-injection
+  211:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/TwoWeekView/components/TwoWeekContent.tsx
+  158:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  201:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  217:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  234:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  235:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/WeekView/WeekCalendarLayout.tsx
+  227:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  228:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  284:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  289:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  302:27  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/WeekView/WeekView.tsx
+  120:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/WeekView/components/WeekContent.tsx
+  152:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  189:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  205:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  222:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  223:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/WeekView/components/WeekGrid.tsx
+   95:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  112:29  warning  Generic Object Injection Sink             security/detect-object-injection
+  138:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/WeekView/hooks/useWeekEvents.ts
+   36:70  warning  Generic Object Injection Sink  security/detect-object-injection
+   37:9   warning  Generic Object Injection Sink  security/detect-object-injection
+   56:73  warning  Generic Object Injection Sink  security/detect-object-injection
+   57:13  warning  Generic Object Injection Sink  security/detect-object-injection
+   73:88  warning  Generic Object Injection Sink  security/detect-object-injection
+   96:63  warning  Generic Object Injection Sink  security/detect-object-injection
+  182:92  warning  Generic Object Injection Sink  security/detect-object-injection
+  191:9   warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/DateDisplay/DateDisplay.tsx
+  144:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  145:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/DateDisplay/DayDisplay.tsx
+  73:7   warning  JSX props should not use arrow functions                                                      react/jsx-no-bind
+  97:10  error    Potential leaked value that might cause unintentionally rendered values or rendering crashes  react/jsx-no-leaked-render
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/CalendarDragSelection.tsx
+  267:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/DayColumn/DayColumn.tsx
+  74:9  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  75:9  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/DirectDragSelection.tsx
+   61:24  warning  Generic Object Injection Sink             security/detect-object-injection
+  232:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/DragSelectionLayer.tsx
+  203:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/EventContextMenu.tsx
+  125:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/EventGrid/EventGrid.tsx
+  163:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  173:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  188:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  189:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  190:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/components/ScrollableCalendarLayout.tsx
+  311:9   error  Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role and support for tabbing, mouse, keyboard, and touch inputs to an interactive content element  jsx-a11y/no-static-element-interactions
+  319:11  error  `tabIndex` should only be declared on interactive elements                                                                                                                                         jsx-a11y/no-noninteractive-tabindex
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/grid/TimeGrid/TimeGrid.tsx
+  113:7  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/hooks/drag-helpers.ts
+  116:23  warning  Generic Object Injection Sink  security/detect-object-injection
+  141:45  warning  Generic Object Injection Sink  security/detect-object-injection
+  142:18  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/hooks/drag-operations/useDragCalculations.ts
+   99:47  warning  Generic Object Injection Sink  security/detect-object-injection
+  100:20  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/hooks/useDragAndDrop.ts
+  352:49  warning  Generic Object Injection Sink                          security/detect-object-injection
+  353:22  warning  Generic Object Injection Sink                          security/detect-object-injection
+  552:27  warning  Generic Object Injection Sink                          security/detect-object-injection
+  633:1   warning  File has too many lines (779). Maximum allowed is 500  max-lines
+  663:49  warning  Generic Object Injection Sink                          security/detect-object-injection
+  664:22  warning  Generic Object Injection Sink                          security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/hooks/useEventsByDate.ts
+   67:7   warning  Generic Object Injection Sink  security/detect-object-injection
+  104:19  warning  Generic Object Injection Sink  security/detect-object-injection
+  105:17  warning  Generic Object Injection Sink  security/detect-object-injection
+  122:15  warning  Generic Object Injection Sink  security/detect-object-injection
+  123:13  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/utils/eventPositioning.ts
+   82:1   warning  Function 'assignColumns' has a complexity of 19. Maximum allowed is 15  complexity
+   96:22  warning  Variable Assigned to Object Injection Sink                              security/detect-object-injection
+  124:26  warning  Variable Assigned to Object Injection Sink                              security/detect-object-injection
+  134:30  warning  Variable Assigned to Object Injection Sink                              security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/components/views/shared/utils/eventSorting.ts
+  28:5   warning  Generic Object Injection Sink        security/detect-object-injection
+  28:40  warning  Function Call Object Injection Sink  security/detect-object-injection
+  61:5   warning  Generic Object Injection Sink        security/detect-object-injection
+  61:43  warning  Function Call Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/hooks/use-calendar-data.ts
+  206:24  warning  Generic Object Injection Sink  security/detect-object-injection
+  213:9   warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/hooks/useAccessibilityKeyboard.tsx
+  120:23  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  154:24  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/hooks/useHighContrast.ts
+  340:23  warning  Generic Object Injection Sink               security/detect-object-injection
+  347:19  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  370:9   warning  Generic Object Injection Sink               security/detect-object-injection
+  384:12  warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/hooks/useMemoizedEvents.ts
+  252:20  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  261:22  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/lib/calendar-helpers.ts
+  35:7   warning  Generic Object Injection Sink  security/detect-object-injection
+  60:10  warning  Generic Object Injection Sink  security/detect-object-injection
+  77:10  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/lib/toast/debounced-toast.ts
+  153:25  warning  Function Call Object Injection Sink  security/detect-object-injection
+  156:25  warning  Function Call Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/lib/toast/network-handler.ts
+  46:25  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/lib/toast/optimistic-utils.ts
+  132:13  warning  Generic Object Injection Sink        security/detect-object-injection
+  150:13  warning  Generic Object Injection Sink        security/detect-object-injection
+  153:13  warning  Generic Object Injection Sink        security/detect-object-injection
+  155:17  warning  Generic Object Injection Sink        security/detect-object-injection
+  156:15  warning  Function Call Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/lib/toast/use-calendar-toast.ts
+  14:22  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/theme/utils.ts
+  34:73  warning  Generic Object Injection Sink  security/detect-object-injection
+  41:83  warning  Generic Object Injection Sink  security/detect-object-injection
+  51:68  warning  Generic Object Injection Sink  security/detect-object-injection
+  62:75  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/utils/performance/PerformanceMonitor.ts
+  321:6  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/calendar/workers/eventProcessor.worker.ts
+  200:19  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  206:26  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/command-palette/components/command-palette.tsx
+  220:12  warning  Generic Object Injection Sink             security/detect-object-injection
+  226:10  warning  Generic Object Injection Sink             security/detect-object-injection
+  227:7   warning  Generic Object Injection Sink             security/detect-object-injection
+  229:5   warning  Generic Object Injection Sink             security/detect-object-injection
+  267:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/EventTrashView.tsx
+  102:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  108:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  198:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  214:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  222:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/common/EventStatusChip.tsx
+   67:18  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+   87:11  warning  Generic Object Injection Sink               security/detect-object-injection
+  103:39  warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/common/EventTypeBadge.tsx
+  53:18  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  73:11  warning  Generic Object Injection Sink               security/detect-object-injection
+  89:39  warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/create/EssentialInspectorView.tsx
+   97:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  114:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/create/EssentialSingleView.tsx
+   67:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  106:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/create/TagInput.tsx
+  116:9   warning  The 'addTag' function makes the dependencies of useCallback Hook (at line 179) change on every render. To fix this, wrap the definition of 'addTag' in its own useCallback() Hook  react-hooks/exhaustive-deps
+  184:14  warning  Generic Object Injection Sink                                                                                                                                                      security/detect-object-injection
+  192:14  warning  Generic Object Injection Sink                                                                                                                                                      security/detect-object-injection
+  302:13  warning  JSX props should not use arrow functions                                                                                                                                           react/jsx-no-bind
+  383:17  warning  JSX props should not use arrow functions                                                                                                                                           react/jsx-no-bind
+  414:19  warning  JSX props should not use arrow functions                                                                                                                                           react/jsx-no-bind
+  469:25  warning  JSX props should not use arrow functions                                                                                                                                           react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/create/TitleInput.tsx
+  128:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  129:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  130:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  131:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/edit/EditEventModal.tsx
+  53:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  54:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/edit/EssentialEditView.tsx
+  165:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/edit/components/EditOptions.tsx
+  104:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/inspector/EventDetailInspectorContent.tsx
+   61:13  warning  JSX props should not use arrow functions            react/jsx-no-bind
+   82:15  warning  JSX props should not use arrow functions            react/jsx-no-bind
+   96:15  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  115:15  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  416:17  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  423:17  warning  Dangerous property 'dangerouslySetInnerHTML' found  react/no-danger
+  435:13  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  513:19  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  523:19  warning  JSX props should not use arrow functions            react/jsx-no-bind
+  535:17  warning  JSX props should not use arrow functions            react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/components/inspector/components/EventDetailHeader.tsx
+  3:1  error  There should be at least one empty line between import groups  import/order
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/lib/transformers.ts
+  126:9   warning  Generic Object Injection Sink        security/detect-object-injection
+  127:7   warning  Generic Object Injection Sink        security/detect-object-injection
+  127:51  warning  Function Call Object Injection Sink  security/detect-object-injection
+  127:76  warning  Generic Object Injection Sink        security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/events/stores/useEventStore.ts
+  548:9   warning  Generic Object Injection Sink               security/detect-object-injection
+  563:22  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  571:22  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  588:9   warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/help/components/ask-panel.tsx
+    3:34  error    'useMemo' is defined but never used                                                                                                                                                            unused-imports/no-unused-imports
+   88:29  error    React Hook "useCallback" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  449:15  warning  JSX props should not use arrow functions                                                                                                                                                       react/jsx-no-bind
+  553:1   warning  File has too many lines (742). Maximum allowed is 500                                                                                                                                          max-lines
+  720:19  warning  JSX props should not use arrow functions                                                                                                                                                       react/jsx-no-bind
+  739:19  warning  JSX props should not use arrow functions                                                                                                                                                       react/jsx-no-bind
+  820:31  warning  JSX props should not use arrow functions                                                                                                                                                       react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/help/components/help-chat.tsx
+   99:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  103:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  104:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  105:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  106:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  146:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  156:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  167:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  215:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/help/components/main-support-chat.tsx
+  173:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  174:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  271:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  281:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  289:21  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  331:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/notifications/components/NotificationModal.tsx
+   60:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+   63:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+   74:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  139:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  151:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/notifications/components/notification-display.tsx
+  64:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/notifications/components/notifications-list.tsx
+  123:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/search/components/global-search-modal.tsx
+  60:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  80:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/search/components/search-bar.tsx
+   91:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   95:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   96:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  132:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  162:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/search/lib/search-engine.ts
+  39:11  warning  Generic Object Injection Sink  security/detect-object-injection
+  39:33  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/settings/components/account-settings.tsx
+  269:55  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  307:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  395:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/settings/components/calendar-settings.tsx
+    3:1   error    There should be at least one empty line between import groups  import/order
+  322:11  warning  JSX props should not use arrow functions                       react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/settings/components/examples/AccountSettingsAutoSave.tsx
+   88:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  100:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  108:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  124:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  153:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  166:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  179:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/settings/utils/timezone.ts
+  190:12  warning  Generic Object Injection Sink  security/detect-object-injection
+  439:12  warning  Generic Object Injection Sink  security/detect-object-injection
+  459:10  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/components/rule-editor.tsx
+  171:7   warning  Generic Object Injection Sink             security/detect-object-injection
+  206:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  227:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  238:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  268:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  281:27  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  304:27  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  325:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/components/smart-folder-dialog.tsx
+  135:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  157:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  167:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  179:25  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  193:27  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  206:29  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  211:29  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  263:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/lib/advanced-rules.ts
+  301:14  warning  Generic Object Injection Sink        security/detect-object-injection
+  301:59  warning  Function Call Object Injection Sink  security/detect-object-injection
+  338:26  warning  Generic Object Injection Sink        security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/lib/optimization.ts
+  52:23  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/lib/performance.ts
+  112:15  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/lib/rule-engine.ts
+  345:26  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/lib/smart-folders.ts
+   31:20  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  127:12  warning  Generic Object Injection Sink               security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/lib/templates.ts
+  519:14  warning  Generic Object Injection Sink  security/detect-object-injection
+  519:52  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/smart-folders/stores/smart-folder-store.ts
+  175:29  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/quick-tag-create-modal.tsx
+   62:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+   63:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+   78:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   95:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   98:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  117:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  142:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  149:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-badge.tsx
+  24:82  warning  Generic Object Injection Sink             security/detect-object-injection
+  37:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-create-modal.tsx
+   46:16  warning  Function Call Object Injection Sink       security/detect-object-injection
+   67:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   69:25  warning  Generic Object Injection Sink             security/detect-object-injection
+   74:20  warning  Generic Object Injection Sink             security/detect-object-injection
+  131:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-edit-dialog.tsx
+   62:25  warning  JSX props should not use arrow functions    react/jsx-no-bind
+   64:15  warning  JSX props should not use arrow functions    react/jsx-no-bind
+   76:15  warning  JSX props should not use arrow functions    react/jsx-no-bind
+   97:19  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  122:39  warning  Variable Assigned to Object Injection Sink  security/detect-object-injection
+  140:27  warning  JSX props should not use arrow functions    react/jsx-no-bind
+  159:53  warning  JSX props should not use arrow functions    react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-edit-modal.tsx
+  313:9  error    A form label must be associated with a control                                                              jsx-a11y/label-has-associated-control
+  326:9  error    A form label must be associated with a control                                                              jsx-a11y/label-has-associated-control
+  332:9  error    A form label must be associated with a control                                                              jsx-a11y/label-has-associated-control
+  387:9  error    A form label must be associated with a control                                                              jsx-a11y/label-has-associated-control
+  576:1  warning  File has too many lines (661). Maximum allowed is 500                                                       max-lines
+  696:6  warning  React Hook useCallback has a missing dependency: 'state'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-filter.tsx
+   36:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   81:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  108:17  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  130:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  131:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  145:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  167:23  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  207:7   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  242:86  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-selector.tsx
+   68:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+   96:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  105:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tag-tree-view.tsx
+  126:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  152:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  164:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  175:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  194:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  270:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  287:11  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/components/tags-list.tsx
+   88:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+   96:9   warning  JSX props should not use arrow functions  react/jsx-no-bind
+  161:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  180:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  192:19  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/tags/hooks/use-item-tags.ts
+  264:15  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/trash/components/TrashConfirmDialog.tsx
+  46:13  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/trash/components/TrashTable.tsx
+  83:7   warning  Generic Object Injection Sink  security/detect-object-injection
+  83:28  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/trash/components/TrashView.tsx
+   54:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+  183:15  warning  JSX props should not use arrow functions  react/jsx-no-bind
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/features/trash/utils/trash-operations.ts
+  125:61  warning  Generic Object Injection Sink  security/detect-object-injection
+  225:9   warning  Generic Object Injection Sink  security/detect-object-injection
+  246:9   warning  Generic Object Injection Sink  security/detect-object-injection
+  248:11  warning  Generic Object Injection Sink  security/detect-object-injection
+  249:9   warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/hooks/useApiQuery.ts
+  101:5   warning  Generic Object Injection Sink        security/detect-object-injection
+  107:48  warning  Function Call Object Injection Sink  security/detect-object-injection
+  107:67  warning  Generic Object Injection Sink        security/detect-object-injection
+  134:5   warning  Generic Object Injection Sink        security/detect-object-injection
+  150:37  warning  Generic Object Injection Sink        security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/hooks/useOptimization.ts
+  159:15  warning  Generic Object Injection Sink                                       security/detect-object-injection
+  226:40  warning  Function Call Object Injection Sink                                 security/detect-object-injection
+  370:1   warning  Function 'deepEqual' has a complexity of 17. Maximum allowed is 15  complexity
+  384:37  warning  Generic Object Injection Sink                                       security/detect-object-injection
+  384:70  warning  Generic Object Injection Sink                                       security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/i18n/__tests__/i18n.test.ts
+   16:1   error    There should be at least one empty line between import groups        import/order
+   16:1   error    `../error-messages` import should occur before import of `../index`  import/order
+   17:1   error    `@/types/i18n` type import should occur before import of `../index`  import/order
+  195:54  warning  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+  218:21  warning  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+  219:21  warning  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+  253:36  warning  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+  272:26  warning  Unexpected any. Specify a different type                             @typescript-eslint/no-explicit-any
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/i18n/error-messages.ts
+  496:12  warning  Generic Object Injection Sink  security/detect-object-injection
+  506:19  warning  Generic Object Injection Sink  security/detect-object-injection
+  506:19  warning  Generic Object Injection Sink  security/detect-object-injection
+  506:52  warning  Generic Object Injection Sink  security/detect-object-injection
+  531:20  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/i18n/index.ts
+  26:10  warning  Function Call Object Injection Sink  security/detect-object-injection
+  36:17  warning  Generic Object Injection Sink        security/detect-object-injection
+  50:12  warning  Generic Object Injection Sink        security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/local-storage/storage-service.ts
+  261:76  warning  Generic Object Injection Sink  security/detect-object-injection
+  274:9   warning  Generic Object Injection Sink  security/detect-object-injection
+  299:11  warning  Generic Object Injection Sink  security/detect-object-injection
+  389:68  warning  Generic Object Injection Sink  security/detect-object-injection
+  402:9   warning  Generic Object Injection Sink  security/detect-object-injection
+  427:11  warning  Generic Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/performance.ts
+  107:11  warning  Function Call Object Injection Sink  security/detect-object-injection
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/supabase/hooks.ts
+  183:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:18  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  233:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/lib/supabase/utils.ts
+   46:40  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  113:17  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/middleware.ts
+  32:62  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/test/e2e/i18n-language-switching.test.ts
+   15:19  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   16:21  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   17:25  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   18:20  warning  Unexpected any. Specify a different type                                                       @typescript-eslint/no-explicit-any
+   41:31  warning  Generic Object Injection Sink                                                                  security/detect-object-injection
+   43:11  warning  Generic Object Injection Sink                                                                  security/detect-object-injection
+   46:18  warning  Generic Object Injection Sink                                                                  security/detect-object-injection
+  111:13  warning  'currentLocale' is assigned a value but never used. Allowed unused vars must match /^_/u       unused-imports/no-unused-vars
+  260:13  warning  'newSessionWindow' is assigned a value but never used. Allowed unused vars must match /^_/u    unused-imports/no-unused-vars
+  261:13  warning  'newSessionDocument' is assigned a value but never used. Allowed unused vars must match /^_/u  unused-imports/no-unused-vars
+  378:11  warning  'mockWindow' is assigned a value but never used. Allowed unused vars must match /^_/u          unused-imports/no-unused-vars
+  414:10  warning  'simulateUserInteraction' is defined but never used. Allowed unused vars must match /^_/u      unused-imports/no-unused-vars
+  423:10  warning  'waitForTranslation' is defined but never used. Allowed unused vars must match /^_/u           unused-imports/no-unused-vars
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/test/example.test.tsx
+  14:10  warning  Missing an explicit type attribute for button  react/button-has-type
+
+/Users/takayasutomoya/Desktop/boxlog-app/src/types/i18n.ts
+  125:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:53  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  133:48  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:27  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 575 problems (20 errors, 555 warnings)
+  8 errors and 0 warnings potentially fixable with the `--fix` option.
+

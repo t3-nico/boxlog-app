@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { usePathname, useSearchParams } from 'next/navigation'
 
@@ -72,6 +72,21 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
+  // jsx-no-bind optimization: Search button handler
+  const handleSearchButtonClick = useCallback(() => {
+    console.log('Search button clicked')
+    openGlobalSearch()
+  }, [openGlobalSearch])
+
+  // jsx-no-bind optimization: Create event handler
+  const handleCreateEventClick = useCallback(() => {
+    openCreateInspector({
+      context: {
+        source: 'fab',
+      },
+    })
+  }, [openCreateInspector])
+
   const { sm } = icons.size
   const _effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
   const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams)
@@ -110,10 +125,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    console.log('Search button clicked')
-                    openGlobalSearch()
-                  }}
+                  onClick={handleSearchButtonClick}
                   className={cn(
                     'flex h-8 w-8 items-center justify-center',
                     background.subtle,
@@ -148,17 +160,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
       </div>
 
       {/* Floating Action Button */}
-      <FloatingActionButton
-        onClick={() =>
-          openCreateInspector({
-            context: {
-              source: 'fab',
-            },
-          })
-        }
-        size="sm"
-        aria-label="新しいイベントを作成"
-      />
+      <FloatingActionButton onClick={handleCreateEventClick} size="sm" aria-label="新しいイベントを作成" />
 
       {/* Mobile Bottom Navigation */}
       {isMobile ? <MobileBottomNavigation /> : null}

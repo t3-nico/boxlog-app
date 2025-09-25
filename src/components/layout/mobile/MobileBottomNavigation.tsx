@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { usePathname, useRouter } from 'next/navigation'
 
@@ -63,13 +63,23 @@ export const MobileBottomNavigation = () => {
   const pathname = usePathname()
   const { toggleSidebar } = useNavigationStore()
 
-  const handleNavigation = (href: string) => {
-    router.push(href)
-  }
+  const handleNavigation = useCallback(
+    (href: string) => {
+      router.push(href)
+    },
+    [router]
+  )
 
-  const handleMenuClick = () => {
+  const handleMenuClick = useCallback(() => {
     toggleSidebar()
-  }
+  }, [toggleSidebar])
+
+  const createNavigationHandler = useCallback(
+    (href: string) => {
+      return () => handleNavigation(href)
+    },
+    [handleNavigation]
+  )
 
   return (
     <div
@@ -91,7 +101,7 @@ export const MobileBottomNavigation = () => {
           <button
             key={item.id}
             type="button"
-            onClick={() => handleNavigation(item.href)}
+            onClick={createNavigationHandler(item.href)}
             className={cn(
               'flex flex-1 flex-col items-center justify-center',
               'h-full px-1 py-2',

@@ -90,11 +90,6 @@
       {
         "name": "diff-match-patch@1.0.5",
         "repository": "https://github.com/JackuB/diff-match-patch"
-      },
-      {
-        "name": "typescript@5.8.3",
-        "repository": "https://github.com/microsoft/TypeScript",
-        "publisher": "Microsoft Corp."
       }
     ],
     "MIT": [
@@ -823,10 +818,6 @@
         "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
       },
       {
-        "name": "@types/hoist-non-react-statics@3.3.7",
-        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
-      },
-      {
         "name": "@types/linkify-it@5.0.0",
         "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
       },
@@ -977,11 +968,6 @@
         "publisher": "Roman Shtylman"
       },
       {
-        "name": "core-js@3.45.1",
-        "repository": "https://github.com/zloirock/core-js",
-        "publisher": "Denis Pushkarev"
-      },
-      {
         "name": "crelt@1.0.6",
         "repository": "https://github.com/marijnh/crelt",
         "publisher": "Marijn Haverbeke"
@@ -1094,11 +1080,6 @@
         "publisher": "Titus Wormer"
       },
       {
-        "name": "html-parse-stringify@3.0.1",
-        "repository": "https://github.com/henrikjoreteg/html-parse-stringify",
-        "publisher": "Henrik Joreteg"
-      },
-      {
         "name": "html-url-attributes@3.0.1",
         "repository": "https://github.com/rehypejs/rehype-minify/tree/main/packages/html-url-attributes",
         "publisher": "Titus Wormer"
@@ -1107,15 +1088,6 @@
         "name": "html-void-elements@3.0.0",
         "repository": "https://github.com/wooorm/html-void-elements",
         "publisher": "Titus Wormer"
-      },
-      {
-        "name": "i18next-fs-backend@2.6.0",
-        "repository": "https://github.com/i18next/i18next-fs-backend"
-      },
-      {
-        "name": "i18next@25.5.2",
-        "repository": "https://github.com/i18next/i18next",
-        "publisher": "Jan Mühlemann"
       },
       {
         "name": "inline-style-parser@0.2.4",
@@ -1466,11 +1438,6 @@
         "publisher": "Andrey Sitnik"
       },
       {
-        "name": "next-i18next@15.4.2",
-        "repository": "https://github.com/i18next/next-i18next",
-        "publisher": "i18next"
-      },
-      {
         "name": "next@14.2.3",
         "repository": "https://github.com/vercel/next.js"
       },
@@ -1621,11 +1588,6 @@
         "name": "react-hook-form@7.61.0",
         "repository": "https://github.com/react-hook-form/react-hook-form",
         "publisher": "Beier"
-      },
-      {
-        "name": "react-i18next@15.7.3",
-        "repository": "https://github.com/i18next/react-i18next",
-        "publisher": "Jan Mühlemann"
       },
       {
         "name": "react-is@16.13.1",
@@ -1862,11 +1824,6 @@
         "publisher": "Titus Wormer"
       },
       {
-        "name": "void-elements@3.1.0",
-        "repository": "https://github.com/pugjs/void-elements",
-        "publisher": "hemanth.hm"
-      },
-      {
         "name": "w3c-keyname@2.2.8",
         "repository": "https://github.com/marijnh/w3c-keyname",
         "publisher": "Marijn Haverbeke"
@@ -2011,5 +1968,5 @@
       }
     ]
   },
-  "timestamp": "2025-09-25T06:09:30.898Z"
+  "timestamp": "2025-09-25T22:57:19.430Z"
 }

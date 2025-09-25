@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { usePathname } from 'next/navigation'
 
@@ -33,28 +33,45 @@ export const DesktopSidebar = () => {
   const { user } = useAuthContext()
   const { openCreateInspector } = useCreateEventInspector()
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
+  // jsx-no-bind optimization: Sidebar toggle handler
+  const handleToggleSidebar = useCallback(() => {
+    toggleSidebar()
+  }, [toggleSidebar])
 
-    const startX = e.clientX
-    const startWidth = useNavigationStore.getState().primaryNavWidth
+  // jsx-no-bind optimization: Create event handler
+  const handleCreateEvent = useCallback(() => {
+    openCreateInspector({
+      context: {
+        source: 'sidebar',
+      },
+    })
+  }, [openCreateInspector])
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const newWidth = startWidth + (e.clientX - startX)
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
 
-      // 幅制限を直接ここで実装
-      const constrainedWidth = Math.max(200, Math.min(480, newWidth))
-      setPrimaryNavWidth(constrainedWidth)
-    }
+      const startX = e.clientX
+      const startWidth = useNavigationStore.getState().primaryNavWidth
 
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
+      const handleMouseMove = (e: MouseEvent) => {
+        const newWidth = startWidth + (e.clientX - startX)
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-  }
+        // 幅制限を直接ここで実装
+        const constrainedWidth = Math.max(200, Math.min(480, newWidth))
+        setPrimaryNavWidth(constrainedWidth)
+      }
+
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+      }
+
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+    },
+    [setPrimaryNavWidth]
+  )
 
   // デスクトップでサイドバーが閉じている場合は何も表示しない
   if (!isSidebarOpen) {
@@ -85,7 +102,7 @@ export const DesktopSidebar = () => {
           <div className="mr-4 flex items-center">
             <button
               type="button"
-              onClick={() => toggleSidebar()}
+              onClick={handleToggleSidebar}
               className={cn(
                 layout.heights.button.sm,
                 'flex w-8 items-center justify-center',
@@ -150,13 +167,7 @@ export const DesktopSidebar = () => {
             {/* Create Button - PC only, rightmost position */}
             <button
               type="button"
-              onClick={() =>
-                openCreateInspector({
-                  context: {
-                    source: 'sidebar',
-                  },
-                })
-              }
+              onClick={handleCreateEvent}
               className={cn(
                 layout.heights.button.sm,
                 'flex w-8 items-center justify-center',

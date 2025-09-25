@@ -42,6 +42,16 @@ npm run 1password:auth      # 認証状態確認・自動認証
 npm run 1password:sync      # 環境変数同期
 npm run 1password:audit     # セキュリティ監査
 npm run 1password:compliance # コンプライアンスレポート
+
+# === デプロイ履歴管理コマンド ===
+npm run deploy:init         # デプロイ履歴ファイルの初期化
+npm run deploy:record       # デプロイの記録
+npm run deploy:stats        # デプロイ統計情報の表示
+npm run deploy:list         # デプロイ履歴の一覧表示
+npm run deploy:export       # 履歴データのエクスポート（JSON/CSV）
+npm run deploy:pre          # デプロイ前チェック（品質・環境・依存関係）
+npm run deploy:post         # デプロイ後処理（記録・通知・ヘルスチェック）
+npm run deploy:full         # 完全デプロイフロー（前処理→ビルド→記録→後処理）
 ```
 
 詳細は [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md) を参照してください。
@@ -157,6 +167,198 @@ Conventional Commits準拠チェック（feat, fix, docs等 + 72文字制限）
 詳細は [`docs/ESLINT_SETUP_COMPLETE.md`](docs/ESLINT_SETUP_COMPLETE.md) を参照してください。
 
 ## 📝 Conventional Commitsシステム（完全自動化）
+
+BoxLogでは標準的なConventional Commits規則を採用し、完全自動化されたコミットメッセージ管理システムを構築しています。
+
+## 🔧 環境変数テンプレート管理システム（新メンバーオンボーディング効率化）
+
+BoxLogでは新メンバーのオンボーディングを効率化する環境変数テンプレート管理システムを構築しています。
+
+### 🚀 新メンバークイックスタート
+
+```bash
+# 1. リポジトリクローン後
+git clone <repository-url>
+cd boxlog-app
+
+# 2. 環境変数セットアップ（1コマンド）
+npm run env:setup
+
+# 3. 環境変数を編集（必要に応じて）
+# .env ファイルを開いて適切な値を設定
+
+# 4. 環境変数検証
+npm run env:check
+
+# 5. 開発開始
+npm install && npm run dev
+```
+
+### 🛠️ 環境変数管理コマンド
+
+| コマンド               | 用途             | 説明                         |
+| ---------------------- | ---------------- | ---------------------------- |
+| `npm run env:setup`    | 初期セットアップ | .env.exampleから.envを作成   |
+| `npm run env:check`    | 検証・デバッグ   | 必須環境変数の確認           |
+| `npm run env:validate` | 検証（別名）     | env:checkと同じ              |
+| `npm run env:info`     | 詳細情報表示     | 統計・トラブルシューティング |
+
+### 📋 環境変数ファイル構成
+
+```
+.env.example      ← テンプレート（Gitに含まれる）
+.env              ← ローカル開発用（Gitで無視）
+.env.local        ← ローカル開発用（Gitで無視・優先度高）
+.env.production   ← 本番テンプレート（Gitに含まれる）
+```
+
+### 🔐 1Password統合サポート
+
+- **推奨方式**: 1Password Developer Security使用
+- **代替方式**: 手動設定（コメントアウト形式で提供）
+- **セキュリティ**: 機密情報の安全な管理
+
+### ✅ 導入効果
+
+- **セットアップ時間短縮**: 30分 → 5分
+- **設定ミス削減**: テンプレート＋検証で安全
+- **オンボーディング体験向上**: 明確な手順とサポート
+- **開発環境統一**: 全メンバーが同じ設定で開始
+
+## 🗄️ データベースマイグレーション管理システム（タイムスタンプベース）
+
+BoxLogでは競合のないタイムスタンプベースのマイグレーション管理システムを採用しています。
+
+### 🏗️ タイムスタンプ命名規則
+
+```bash
+# ❌ 従来の連番方式（競合リスク）
+001_create_users.sql
+002_add_email.sql
+003_create_posts.sql
+
+# ✅ タイムスタンプベース（競合なし）
+20240228_143022_create_users.sql
+20240228_151535_add_email_to_users.sql
+20240301_092145_create_posts.sql
+```
+
+### 🛠️ マイグレーション管理コマンド
+
+| コマンド                                 | 用途     | 説明                                 |
+| ---------------------------------------- | -------- | ------------------------------------ |
+| `npm run migration:create "description"` | 新規作成 | タイムスタンプ付きファイルを自動生成 |
+| `npm run migration:list`                 | 一覧表示 | 既存マイグレーション全リスト         |
+| `npm run migration:status`               | 状況確認 | 統計・コマンドヘルプ表示             |
+
+### 🚀 マイグレーション作成フロー
+
+```bash
+# 1. マイグレーション作成
+npm run migration:create "add_user_preferences_table"
+# → 20240325_143022_add_user_preferences_table.sql が生成
+
+# 2. SQLファイル編集
+# 生成されたファイルを開いてSQL文を記述
+
+# 3. migrations.ts自動更新
+# MIGRATION_HISTORYに自動追加される
+
+# 4. 状況確認
+npm run migration:status
+```
+
+### 🔧 高機能生成システム
+
+- **自動タイムスタンプ**: YYYYMMDD_HHMMSS形式で一意性保証
+- **テンプレート生成**: CREATE/ALTER/INDEXの記述例付きSQL
+- **ロールバック情報**: 元に戻すためのSQL例も含める
+- **自動履歴管理**: migrations.tsの MIGRATION_HISTORY 配列を自動更新
+
+### ✅ チーム開発での利点
+
+- **100%競合回避**: タイムスタンプで一意性保証
+- **マージ安全**: ブランチマージ時の混乱なし
+- **履歴追跡**: 作成日時・順序が明確
+- **自動管理**: 手動番号割り当ての廃止
+
+## 🚨 統一エラーコード体系（ログ分析効率化システム）
+
+BoxLogでは分野別・系統別の統一エラーコード体系を採用し、効率的なログ分析・監視を実現しています。
+
+### 🏗️ エラーコード体系（番号別分類）
+
+```typescript
+// 1000番台: 認証・セキュリティ系
+AUTH_INVALID_TOKEN: 1001
+AUTH_EXPIRED: 1002
+AUTH_NO_PERMISSION: 1003
+
+// 2000番台: API・ネットワーク系
+API_RATE_LIMIT: 2001
+API_INVALID_PARAM: 2002
+API_TIMEOUT: 2004
+
+// 3000番台: データ・データベース系
+DATA_NOT_FOUND: 3001
+DATA_DUPLICATE: 3002
+DATA_VALIDATION_ERROR: 3003
+
+// 4000番台: UI・フロントエンド系
+// 5000番台: システム・インフラ系
+// 6000番台: ビジネスロジック系
+// 7000番台: 外部サービス連携系
+```
+
+### 🛠️ エラー管理・分析コマンド
+
+| コマンド                | 用途             | 説明                                 |
+| ----------------------- | ---------------- | ------------------------------------ |
+| `npm run error:analyze` | ログ分析         | エラー統計・トレンド・推奨アクション |
+| `npm run error:monitor` | リアルタイム監視 | 30秒間隔での監視ダッシュボード       |
+| `npm run error:report`  | レポート生成     | 詳細分析レポートの生成               |
+
+### 🎯 統一エラーハンドリング
+
+```typescript
+import { AppError, ERROR_CODES } from '@/lib/errors'
+
+// 基本的な使用
+throw new AppError('認証エラー', ERROR_CODES.AUTH_INVALID_TOKEN, {
+  context: { userId, requestId },
+  userMessage: '再度ログインしてください',
+})
+
+// Try-Catch での使用
+try {
+  await apiCall()
+} catch (error) {
+  const appError = handleApiError(error)
+  console.log(`エラーコード: ${appError.code}`) // 即座に問題分類
+}
+```
+
+### 🔍 ログ分析の効率化
+
+**エラーコード別の即座特定**:
+
+- エラーコード1001急増 → 認証系問題と即判断
+- 2000番台急増 → API系統の調査に集中
+- 3000番台急増 → データベース関連の問題
+
+**統計・トレンド分析**:
+
+- カテゴリ別エラー分布
+- 時間別発生パターン
+- 重要度別分布
+- 自動アラート・推奨アクション
+
+### ✅ 開発・運用での利点
+
+- **即座の問題特定**: エラーコードで直接原因箇所を特定
+- **系統別監視**: カテゴリ単位での効率的な監視
+- **統一ハンドリング**: 全エラーが同じ形式で処理
+- **自動分析**: ログ分析・レポート生成の自動化
 
 BoxLogでは標準的なConventional Commits規則を採用し、完全自動化されたコミットメッセージ管理システムを構築しています。
 

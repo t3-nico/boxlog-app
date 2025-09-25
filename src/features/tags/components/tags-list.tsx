@@ -78,6 +78,50 @@ const TagItem = ({
   const handleMouseEnter = useCallback(() => setIsHovered(true), [])
   const handleMouseLeave = useCallback(() => setIsHovered(false), [])
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleSelectTag()
+      }
+    },
+    [handleSelectTag]
+  )
+
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      setShowMenu(!showMenu)
+    },
+    [showMenu]
+  )
+
+  const handleMenuButtonClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      setShowMenu(!showMenu)
+    },
+    [showMenu]
+  )
+
+  const handleEditTag = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onEditTag(tag)
+      setShowMenu(false)
+    },
+    [onEditTag, tag]
+  )
+
+  const handleDeleteTag = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onDeleteTag(tag)
+      setShowMenu(false)
+    },
+    [onDeleteTag, tag]
+  )
+
   return (
     <div className="space-y-2">
       {/* タグアイテム */}
@@ -85,18 +129,10 @@ const TagItem = ({
         className={`flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 ${colors.ghost.hover} transition-colors duration-150`}
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleSelectTag()
-          }
-        }}
+        onKeyDown={handleKeyDown}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onContextMenu={(e) => {
-          e.preventDefault()
-          setShowMenu(!showMenu)
-        }}
+        onContextMenu={handleContextMenu}
         role="button"
         tabIndex={0}
       >
@@ -158,10 +194,7 @@ const TagItem = ({
           <div className="relative">
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                setShowMenu(!showMenu)
-              }}
+              onClick={handleMenuButtonClick}
               className={`tag-menu-button rounded p-2 transition-all ${
                 isHovered || showMenu ? 'opacity-100' : 'opacity-0'
               }`}
@@ -177,11 +210,7 @@ const TagItem = ({
               >
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onEditTag(tag)
-                    setShowMenu(false)
-                  }}
+                  onClick={handleEditTag}
                   className={`flex w-full items-center gap-2 px-3 py-2 text-sm ${colors.text.secondary} ${colors.ghost.hover} transition-colors`}
                 >
                   <PencilIcon className="h-4 w-4" />
@@ -189,11 +218,7 @@ const TagItem = ({
                 </button>
                 <button
                   type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    onDeleteTag(tag)
-                    setShowMenu(false)
-                  }}
+                  onClick={handleDeleteTag}
                   className={`flex w-full items-center gap-2 px-3 py-2 text-sm ${colors.semantic.error.text} ${colors.semantic.error.hover} transition-colors`}
                 >
                   <TrashIcon className="h-4 w-4" />
