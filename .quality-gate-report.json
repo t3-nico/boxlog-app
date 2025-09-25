@@ -1,0 +1,104 @@
+{
+  "timestamp": "2025-09-25T05:44:48.037Z",
+  "duration": "3742ms",
+  "gateConfig": "Development Quality Gate",
+  "overall": {
+    "passed": true,
+    "status": "PASS",
+    "summary": {
+      "total": 5,
+      "passed": 4,
+      "failed": 1,
+      "warnings": 0,
+      "violations": 1
+    }
+  },
+  "systems": [
+    {
+      "name": "License Verification",
+      "success": true,
+      "duration": "3741ms",
+      "priority": 2,
+      "summary": {
+        "packages": 0,
+        "violations": 0,
+        "prohibited": 0
+      }
+    },
+    {
+      "name": "API Change Detection",
+      "success": true,
+      "duration": "3696ms",
+      "priority": 3,
+      "summary": {
+        "routesMonitored": 0,
+        "changes": 0,
+        "breakingChanges": 0
+      }
+    },
+    {
+      "name": "Performance Regression",
+      "success": true,
+      "duration": "3642ms",
+      "priority": 4,
+      "summary": {
+        "metrics": 0,
+        "regressions": 0,
+        "improvements": 0
+      }
+    },
+    {
+      "name": "Secret Detection",
+      "success": true,
+      "duration": "3558ms",
+      "priority": 10,
+      "summary": {
+        "filesScanned": 14,
+        "secretsFound": 0
+      }
+    },
+    {
+      "name": "TypeScript Strict Mode",
+      "success": false,
+      "duration": "3507ms",
+      "priority": 5,
+      "summary": {}
+    }
+  ],
+  "violations": [
+    {
+      "system": "TypeScript Strict Mode",
+      "type": "system_failure",
+      "message": "TypeScript Strict Mode failed: Unknown error",
+      "severity": "critical",
+      "priority": 5
+    }
+  ],
+  "warnings": [],
+  "recommendations": [
+    {
+      "priority": 1,
+      "type": "immediate_action",
+      "title": "🚨 緊急対応必要",
+      "description": "Critical レベルの問題を即座に修正",
+      "actions": [
+        {
+          "system": "TypeScript Strict Mode",
+          "action": "TypeScript Strict Mode failed: Unknown error"
+        }
+      ]
+    },
+    {
+      "priority": 1,
+      "type": "system_recovery",
+      "title": "🔧 システム復旧",
+      "description": "失敗したシステムの調査・修復",
+      "actions": [
+        {
+          "system": "TypeScript Strict Mode",
+          "action": "システムログの確認と問題解決"
+        }
+      ]
+    }
+  ]
+}
