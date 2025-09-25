@@ -1,26 +1,12 @@
 #!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-# Conventional Commits形式チェック
+# commitlintを使用したConventional Commits形式チェック
+npx --no-install commitlint --edit $1
+
+# 追加の日本語チェック（既存要件の維持）
 commit_msg=$(cat $1)
 commit_header=$(echo "$commit_msg" | head -n 1)
-
-# 基本的なConventional Commits形式をチェック
-if ! echo "$commit_header" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z0-9_-]+\))?!?:'; then
-    echo "❌ コミットメッセージはConventional Commits形式で記述してください"
-    echo "現在のheader: $commit_header"
-    echo ""
-    echo "✅ 正しい形式:"
-    echo "feat: 新しい機能を追加"
-    echo "fix: ログインボタンの不具合を修正"
-    echo "docs: READMEファイルを更新"
-    echo "style: コードフォーマットを修正"
-    echo "refactor: コードをリファクタリング"
-    echo "test: テストを追加"
-    echo "chore: 設定ファイルを更新"
-    exit 1
-fi
-
-# 日本語必須チェック
 subject=$(echo "$commit_header" | sed 's/^[a-z]*\(\([a-zA-Z0-9_-]*\)\)\?!*: //')
 
 # 日本語文字（ひらがな、カタカナ、漢字）が含まれているかチェック
