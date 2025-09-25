@@ -186,14 +186,14 @@ export function getElevation(type: 'permanent' | 'temporary', level: keyof typeo
   if (type === 'permanent') {
     return patterns.card
   }
-  return elevation[level]
+  return Object.prototype.hasOwnProperty.call(elevation, level) ? elevation[level] : elevation.none
 }
 
 /**
  * 状態に応じた境界線を取得
  */
 export function getBorderForState(state: 'default' | 'hover' | 'active' | 'focus' | 'error' | 'success'): string {
-  return borders[state]
+  return Object.prototype.hasOwnProperty.call(borders, state) ? borders[state as keyof typeof borders] : borders.default
 }
 
 /**

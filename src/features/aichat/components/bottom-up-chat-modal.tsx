@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ArrowUpCircle, Copy, Maximize2, Minimize2, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
@@ -55,19 +55,31 @@ const ChatInput = () => {
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (state.inputValue.trim() && !state.isTyping) {
       await sendMessage(state.inputValue)
     }
-  }
+  }, [state.inputValue, state.isTyping, sendMessage])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
       e.preventDefault()
       handleSubmit(e)
     }
-  }
+  }, [isComposing, handleSubmit])
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }, [setInputValue])
+
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false)
+  }, [])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -97,10 +109,10 @@ const ChatInput = () => {
           <textarea
             ref={textareaRef}
             value={state.inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
             placeholder="Ask AI anything..."
             className="border-border bg-card placeholder-muted-foreground max-h-32 min-h-[44px] w-full resize-none rounded-xl border px-4 py-3 pr-12 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
             disabled={state.isTyping}
@@ -136,12 +148,42 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
   }, [state.messages])
 
   // Handle resize functionality
-  const handleResizeStart = (e: React.MouseEvent) => {
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     setIsResizing(true)
     resizeStartY.current = e.clientY
     resizeStartHeight.current = panelHeight
-  }
+  }, [panelHeight])
+
+  const handleResizeKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      // リサイズモードの開始をキーボードでも可能にする
+    }
+  }, [])
+
+  // Button handlers
+  const handleUnminimize = useCallback(() => {
+    setIsMinimized(false)
+  }, [setIsMinimized])
+
+  const handleMenuToggle = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  const handleClearMessages = useCallback(() => {
+    clearMessages()
+    setShowMenu(false)
+  }, [clearMessages])
+
+  const handleExportConversation = useCallback(() => {
+    // Export functionality
+    setShowMenu(false)
+  }, [])
+
+  const handleMinimizeToggle = useCallback(() => {
+    setIsMinimized(!isMinimized)
+  }, [isMinimized, setIsMinimized])
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -198,12 +240,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
             role="button"
             aria-label="Resize chat modal"
             tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                // リサイズモードの開始をキーボードでも可能にする
-              }
-            }}
+            onKeyDown={handleResizeKeyDown}
           >
             <div className="bg-border group-hover:bg-primary/40 h-1 w-12 rounded-full transition-colors" />
           </div>
@@ -219,7 +256,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
               <span className="text-foreground text-sm font-medium">AI Assistant</span>
             </div>
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="sm" onClick={() => setIsMinimized(false)} className="h-6 w-6 p-1">
+              <Button variant="ghost" size="sm" onClick={handleUnminimize} className="h-6 w-6 p-1">
                 <Maximize2 className="h-3 w-3" />
               </Button>
               <Button variant="ghost" size="sm" onClick={onClose} className="h-6 w-6 p-1">
@@ -243,7 +280,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
               <div className="flex items-center gap-1">
                 {/* Menu */}
                 <div className="relative">
-                  <Button variant="ghost" size="sm" onClick={() => setShowMenu(!showMenu)} className="p-2">
+                  <Button variant="ghost" size="sm" onClick={handleMenuToggle} className="p-2">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
 
@@ -251,10 +288,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                     <div className="bg-card border-border absolute bottom-full right-0 z-50 mb-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                       <button
                         type="button"
-                        onClick={() => {
-                          clearMessages()
-                          setShowMenu(false)
-                        }}
+                        onClick={handleClearMessages}
                         className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -262,10 +296,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          // Export functionality
-                          setShowMenu(false)
-                        }}
+                        onClick={handleExportConversation}
                         className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                       >
                         <Copy className="h-4 w-4" />
@@ -276,7 +307,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                 </div>
 
                 {/* Minimize/Maximize */}
-                <Button variant="ghost" size="sm" onClick={() => setIsMinimized(!isMinimized)} className="p-2">
+                <Button variant="ghost" size="sm" onClick={handleMinimizeToggle} className="p-2">
                   <Minimize2 className="h-4 w-4" />
                 </Button>
 

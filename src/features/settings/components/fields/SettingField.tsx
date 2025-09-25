@@ -22,7 +22,7 @@ export const SettingField = ({
     <div className={spacing.stackGap.sm}>
       <Label className={`${typography.body.small} font-medium ${colors.text.primary}`}>
         {label}
-        {required && <span className={`${colors.semantic.error.text} ml-1`}>*</span>}
+        {required ? <span className={`${colors.semantic.error.text} ml-1`}>*</span> : null}
       </Label>
       {description != null && (
         <p className={`${typography.body.small} ${colors.text.muted}`}>

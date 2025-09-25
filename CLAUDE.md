@@ -25,12 +25,17 @@
 # === 推奨: スマート自動化コマンド ===
 npm run smart:dev           # 開発サーバー（自動認証・同期）
 npm run smart:build         # ビルド（自動認証・同期）
-npm run smart:test          # テスト（自動認証・同期）
+npm run smart:report        # レポート生成（自動認証・同期）
 
 # === 従来コマンド（手動op run） ===
 npm run dev                 # op run --env-file=.env.local -- next dev
 npm run build               # op run --env-file=.env.local -- next build
-npm run test                # op run --env-file=.env.local -- vitest
+npm run typecheck           # op run --env-file=.env.local -- tsc --noEmit
+
+# === コード品質管理コマンド ===
+npm run lint                # ESLint全品質チェック
+npm run lint:fix            # 自動修正可能な問題を修正
+npm run lint:a11y           # アクセシビリティ専用チェック
 
 # === 1Password管理コマンド ===
 npm run 1password:auth      # 認証状態確認・自動認証
@@ -78,7 +83,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 5. **未使用変数・未使用インポートの禁止（コードクリーンアップ徹底）**
 6. **複雑度管理でリーダブルコードを維持（関数の複雑度15以下推奨、10以下必須）**
 7. **すべてのスタイリングは `/src/config/theme` を必ず使用** - [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md) 参照
-8. **テストはコロケーション方式でfeatureごとに配置**
+8. **テスト環境**: 現在はテストファイル整理済み（将来的にE2Eテスト導入予定）**
 9. **アクセシビリティ（WCAG AA準拠）を必ず確認** - [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) 参照
 
 ## 📋 開発時の指針
@@ -110,6 +115,46 @@ npm run lint && npm run docs:check && npm run a11y:check
 ```
 
 詳細は [`docs/development/DOCS_WORKFLOW_GUIDE.md`](docs/development/DOCS_WORKFLOW_GUIDE.md) を参照してください。
+
+## 🛡️ ESLint企業級品質管理システム
+
+BoxLogでは2025年9月に大幅なESLint強化を実施し、企業レベルの品質管理を実現しています。
+
+### 8分野の包括的強化
+
+| 分野 | 実装内容 | 効果 |
+|------|----------|------|
+| **🔒 セキュリティ** | XSS防止、秘密情報ハードコーディング検出 | セキュリティ脆弱性の未然防止 |
+| **♿ アクセシビリティ** | WCAG AA準拠の自動チェック | ユニバーサルデザイン保証 |
+| **⚡ パフォーマンス** | Bundle最適化、メモリリーク防止 | アプリケーション高速化 |
+| **📦 Import管理** | 重複防止、順序統一、未使用削除 | コードベースの整理・最適化 |
+| **🔧 TypeScript厳格化** | 型安全性強化、非null制御 | 実行時エラーの削減 |
+| **🪝 コミットフック** | ESLint→prettier→tsc→監査 | 自動品質ゲート |
+| **📝 コミットメッセージ** | Conventional Commits検証 | 変更履歴の標準化 |
+| **🌿 ブランチ名** | プレフィックス強制 | Git運用の統一 |
+
+### 自動化された品質ゲート
+
+```bash
+# コミット時（自動実行 - .husky/pre-commit）
+1. ESLint全ルール適用 → 2. Prettier自動整形 → 3. TypeScript型チェック → 4. セキュリティ監査
+
+# プッシュ時（自動実行 - .husky/pre-push）
+ブランチ名検証: feature/, fix/, chore/, docs/, style/, refactor/, test/, build/
+
+# コミットメッセージ時（自動実行 - .husky/commit-msg）
+Conventional Commits準拠チェック（feat, fix, docs等 + 72文字制限）
+```
+
+### 成果・統計
+
+- **実装Issue数**: 8件（#228〜#235, #246, #249〜#250）
+- **設定ファイル**: 15個以上のESLint設定ファイルを最適化
+- **検出ルール**: 100以上の品質ルールを追加・強化
+- **自動修正**: lint:fixで70%以上の問題を自動解決
+- **テストファイル整理**: 旧テストファイル・設定の完全除去
+
+詳細は [`docs/ESLINT_SETUP_COMPLETE.md`](docs/ESLINT_SETUP_COMPLETE.md) を参照してください。
 
 ## 📋 Issue管理ルール（絶対遵守）
 
@@ -380,8 +425,61 @@ const responsiveChecklist = {
 }
 ```
 
+## 🎯 Claude Code セッション管理ルール
+
+**重要**: 効率的な開発ワークフローのため、以下のセッション管理ルールを必ず遵守してください。
+
+### 📋 基本原則
+
+#### セッション境界の定義
+- **機能単位**: 1つのfeature/fix/*ブランチ = 1セッション
+- **時間制限**: 最大2時間 または 集中力低下時点
+- **Issue単位**: 1つのGitHub Issue = 複数セッション可（工程分割）
+
+#### セッション遷移ルール
+- **タスク切り替え**: 必ず `/clear` → 新セッション開始
+- **工程切り替え**: 探索→設計→実装→検証 で `/clear`
+- **緊急対応**: 現セッションを中断・記録後に `/clear`
+
+#### コンテキスト管理
+- **60%使用率**: アラート → `/compact` 検討
+- **80%到達**: 必須 `/compact` または セッション分割
+- **重要な決定・発見**: CLAUDE.md に即座記録
+
+### 🏗️ 開発工程別セッション
+
+1. **🔍 調査セッション**: Issue分析・技術検証・仕様確認
+2. **📋 設計セッション**: アーキテクチャ・API設計・UI設計
+3. **⚡ 実装セッション**: コーディング・テスト実装
+4. **🧪 検証セッション**: 動作確認・品質チェック・ドキュメント
+
+### 📝 情報管理ルール
+
+#### セッション開始時
+- Issue番号 + 目標を明記
+- 前回セッションの続きの場合は経緯を確認
+
+#### セッション終了時
+- 成果・残課題・次アクションを CLAUDE.md に記録
+- 複雑な決定は理由・代替案・影響範囲を文書化
+- 発見した問題は即座に GitHub Issue に起票
+
+### 📊 品質指標
+
+#### 効率性指標
+- セッション目標達成率: 80%以上
+- 時間予測精度: ±30%以内
+- `/clear` 適切使用: タスク切り替え時100%
+
+#### ナレッジ蓄積指標
+- CLAUDE.md 更新頻度: セッション終了時100%
+- 決定事項記録率: 重要判断100%
+- Issue起票率: 問題発見時100%
+
+詳細は [`docs/development/CLAUDE_SESSION_MANAGEMENT.md`](docs/development/CLAUDE_SESSION_MANAGEMENT.md) を参照してください。
+
 ---
 
 **📖 このドキュメントについて**: BoxLog App メインリポジトリ開発指針
-**最終更新**: 2025-09-22
-**バージョン**: v4.0 - docs/参照スリム版 (1484行→370行、75%削減)
+**最終更新**: 2025-09-25
+**バージョン**: v4.1 - セッション管理ルール追加

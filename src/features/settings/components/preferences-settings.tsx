@@ -1,5 +1,7 @@
 'use client'
 
+import { useCallback } from 'react'
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
 import { spacing } from '@/config/theme'
@@ -38,6 +40,31 @@ const PreferencesSettings = () => {
     debounceMs: 1000
   })
 
+  // Handler functions
+  const handleLanguageChange = useCallback((value: string) => {
+    preferences.updateValue('language', value as 'ja' | 'en')
+  }, [preferences])
+
+  const handleThemeChange = useCallback((value: string) => {
+    preferences.updateValue('theme', value as 'system' | 'light' | 'dark')
+  }, [preferences])
+
+  const handleAnimationsChange = useCallback((checked: boolean) => {
+    preferences.updateValue('animations', checked)
+  }, [preferences])
+
+  const handleSoundsChange = useCallback((checked: boolean) => {
+    preferences.updateValue('sounds', checked)
+  }, [preferences])
+
+  const handleAutoBackupChange = useCallback((checked: boolean) => {
+    preferences.updateValue('autoBackup', checked)
+  }, [preferences])
+
+  const handleDeveloperModeChange = useCallback((checked: boolean) => {
+    preferences.updateValue('developerMode', checked)
+  }, [preferences])
+
   return (
     <div className={spacing.stackGap.lg}>
       {/* 言語とテーマ */}
@@ -50,7 +77,7 @@ const PreferencesSettings = () => {
           <SettingField label="言語" description="アプリケーションで使用する言語">
             <Select
               value={preferences.values.language}
-              onValueChange={(value) => preferences.updateValue('language', value as 'ja' | 'en')}
+              onValueChange={handleLanguageChange}
             >
               <SelectTrigger>
                 <SelectValue placeholder="言語を選択" />
@@ -65,7 +92,7 @@ const PreferencesSettings = () => {
           <SettingField label="テーマ" description="アプリケーションの外観テーマ">
             <Select
               value={preferences.values.theme}
-              onValueChange={(value) => preferences.updateValue('theme', value as 'system' | 'light' | 'dark')}
+              onValueChange={handleThemeChange}
             >
               <SelectTrigger>
                 <SelectValue placeholder="テーマを選択" />
@@ -90,14 +117,14 @@ const PreferencesSettings = () => {
           <SettingField label="アニメーション" description="画面遷移やボタンのアニメーション効果を有効にする">
             <Switch
               checked={preferences.values.animations}
-              onCheckedChange={(checked) => preferences.updateValue('animations', checked)}
+              onCheckedChange={handleAnimationsChange}
             />
           </SettingField>
 
           <SettingField label="サウンド効果" description="通知音やクリック音を再生する">
             <Switch
               checked={preferences.values.sounds}
-              onCheckedChange={(checked) => preferences.updateValue('sounds', checked)}
+              onCheckedChange={handleSoundsChange}
             />
           </SettingField>
         </div>
@@ -113,14 +140,14 @@ const PreferencesSettings = () => {
           <SettingField label="自動バックアップ" description="データを定期的に自動でバックアップする">
             <Switch
               checked={preferences.values.autoBackup}
-              onCheckedChange={(checked) => preferences.updateValue('autoBackup', checked)}
+              onCheckedChange={handleAutoBackupChange}
             />
           </SettingField>
 
           <SettingField label="開発者モード" description="高度な機能とデバッグ情報を表示する">
             <Switch
               checked={preferences.values.developerMode}
-              onCheckedChange={(checked) => preferences.updateValue('developerMode', checked)}
+              onCheckedChange={handleDeveloperModeChange}
             />
           </SettingField>
         </div>

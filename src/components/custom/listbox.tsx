@@ -43,7 +43,7 @@ export const Listbox = <T,>({
         <Headless.ListboxSelectedOption
           as="span"
           options={options}
-          placeholder={placeholder && <span className={`block truncate ${colors.text.muted}`}>{placeholder}</span>}
+          placeholder={placeholder ? <span className={`block truncate ${colors.text.muted}`}>{placeholder}</span> : null}
           className={clsx([
             // Basic layout
             'relative block w-full appearance-none rounded-lg py-[calc(--spacing(2.5)-1px)] sm:py-[calc(--spacing(1.5)-1px)]',

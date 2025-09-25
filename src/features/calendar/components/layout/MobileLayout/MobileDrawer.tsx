@@ -247,11 +247,9 @@ export const MobileDrawer = ({
                   </span>
 
                   {/* バッジ */}
-                  {item.badge && item.badge > 0 && (
-                    <div className="min-w-[20px] h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center px-1.5">
+                  {item.badge && item.badge > 0 ? <div className="min-w-[20px] h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center px-1.5">
                       {item.badge > 99 ? '99+' : item.badge}
-                    </div>
-                  )}
+                    </div> : null}
                 </button>
               )
             })}

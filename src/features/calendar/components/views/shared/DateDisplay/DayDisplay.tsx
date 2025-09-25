@@ -67,20 +67,40 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   // 日付の表示形式
   const dateDisplay = formatDate(date, format)
   
-  return (
-    <div
+  return onClick ? (
+    <button
       className={headerClasses}
       onClick={handleClick}
-      onKeyDown={onClick ? (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          handleClick()
-        }
-      } : undefined}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      aria-label={onClick ? `${dateDisplay}を選択` : undefined}
+      aria-label={`${dateDisplay}を選択`}
+      type="button"
     >
+      <div className="flex flex-col items-center min-w-0">
+        {/* 曜日 */}
+        {variant === 'full' && (
+          <div className={`${typography.caption} ${colors.text.muted} font-medium uppercase tracking-wide`}>
+            {formatDate(date, 'E')}
+          </div>
+        )}
+
+        {/* 日付 */}
+        <div
+          className={cn(
+            dateClasses,
+            highlight?.backgroundColor && highlight.backgroundColor,
+            highlight?.color && highlight.color
+          )}
+        >
+          {formatDate(date, variant === 'compact' ? 'd' : 'dd')}
+        </div>
+
+        {/* ハイライトドット */}
+        {highlight?.showDot && (
+          <div className={`w-1 h-1 rounded-full mt-1 ${highlight.dotColor || colors.primary.DEFAULT}`} />
+        )}
+      </div>
+    </button>
+  ) : (
+    <div className={headerClasses}>
       <div className="flex flex-col items-center min-w-0">
         {/* 曜日 */}
         <div className={`text-xs ${getTextClasses(isToday)}`}>

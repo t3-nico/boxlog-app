@@ -271,9 +271,9 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
           Live
         </div>
         <div className="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-400 tabular-nums">
-          <span>{currentEvent.startDate && formatTime(new Date(currentEvent.startDate))}</span>
+          <span>{currentEvent.startDate ? formatTime(new Date(currentEvent.startDate)) : null}</span>
           <ArrowRight className="w-4 h-4 mx-1 text-gray-400 dark:text-gray-500" />
-          <span>{currentEvent.endDate && formatTime(new Date(currentEvent.endDate))}</span>
+          <span>{currentEvent.endDate ? formatTime(new Date(currentEvent.endDate)) : null}</span>
         </div>
       </div>
       

@@ -102,7 +102,7 @@ const MonthYearDisplay = ({ monthYear }: { monthYear?: string }) => {
 // 日付メイン表示コンポーネント
 const DateMainDisplay = ({ dayName, dateString, today }: { dayName?: string; dateString: string; today: boolean }) => (
   <div className="flex flex-col items-center">
-    {dayName && <div className="text-muted-foreground text-xs font-medium">{dayName}</div>}
+    {dayName ? <div className="text-muted-foreground text-xs font-medium">{dayName}</div> : null}
 
     <div
       className={cn(

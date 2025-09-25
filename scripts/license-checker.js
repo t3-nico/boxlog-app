@@ -267,9 +267,13 @@ function displayResults(categorized) {
 function main() {
   console.log('📜 Checking license compliance...')
 
-  // Skip if no dependency changes
-  if (!hasPackageJsonChanges()) {
+  // Check for force flag
+  const forceCheck = process.argv.includes('--force')
+
+  // Skip if no dependency changes (unless forced)
+  if (!forceCheck && !hasPackageJsonChanges()) {
     console.log('⏭️  No dependency changes detected, skipping license check')
+    console.log('💡 Use --force flag to run license check anyway')
     return
   }
 

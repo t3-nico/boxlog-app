@@ -38,17 +38,15 @@ const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps)
         />
         <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
         <span className="flex-1 truncate">{tag.name}</span>
-        {tag.path && level > 0 && <span className="truncate text-xs text-gray-500 dark:text-gray-400">{tag.path}</span>}
+        {tag.path && level > 0 ? <span className="truncate text-xs text-gray-500 dark:text-gray-400">{tag.path}</span> : null}
       </label>
 
       {/* 子タグ */}
-      {tag.children && tag.children.length > 0 && (
-        <div>
+      {tag.children && tag.children.length > 0 ? <div>
           {tag.children.map((child) => (
             <TagFilterItem key={child.id} tag={child} level={level + 1} isSelected={isSelected} onToggle={onToggle} />
           ))}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }
@@ -88,12 +86,10 @@ export const TagFilter = ({
         }`}
       >
         <FunnelIcon className="h-4 w-4" />
-        {showTitle && <span className={compact ? 'hidden sm:inline' : ''}>Tags</span>}
-        {showSelectedCount && selectedTagIds.length > 0 && (
-          <span className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+        {showTitle ? <span className={compact ? 'hidden sm:inline' : ''}>Tags</span> : null}
+        {showSelectedCount && selectedTagIds.length > 0 ? <span className="rounded bg-gray-200 px-2 py-1 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300">
             {selectedTagIds.length}
-          </span>
-        )}
+          </span> : null}
         <ChevronDownIcon className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 

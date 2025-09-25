@@ -7,8 +7,8 @@
 
 const { execSync, spawn } = require('child_process')
 const fs = require('fs')
-const path = require('path')
 const os = require('os')
+const path = require('path')
 
 class OnePasswordAutomation {
   constructor() {
@@ -79,7 +79,7 @@ class OnePasswordAutomation {
 
       const envContent = fs.readFileSync(this.envFile, 'utf8')
       const envLines = envContent.split('\n')
-      let updatedLines = []
+      const updatedLines = []
       let secretsUpdated = 0
 
       for (const line of envLines) {

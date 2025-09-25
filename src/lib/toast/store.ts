@@ -32,7 +32,7 @@ export const useToastStore = create<ToastStore>((set, get) => ({
       type,
       title,
       description: options.description,
-      duration: options.duration ?? DEFAULT_DURATION[type],
+      duration: options.duration ?? (Object.prototype.hasOwnProperty.call(DEFAULT_DURATION, type) ? DEFAULT_DURATION[type as keyof typeof DEFAULT_DURATION] : 3000),
       closeable: options.closeable ?? type !== 'loading',
       action: options.action,
       createdAt: Date.now(),

@@ -31,7 +31,9 @@ export function getViewDisplayName(viewType: CalendarViewType): string {
     'month': 'Month'
   }
   
-  return displayNames[viewType] || viewType
+  return Object.prototype.hasOwnProperty.call(displayNames, viewType)
+    ? displayNames[viewType]
+    : viewType
 }
 
 /**

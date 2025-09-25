@@ -28,7 +28,7 @@ export const ToastContainer = () => {
     <div
       className={cn(
         'fixed z-50 flex flex-col gap-2 pointer-events-none',
-        positionClasses[position]
+Object.prototype.hasOwnProperty.call(positionClasses, position) ? positionClasses[position as keyof typeof positionClasses] : ''
       )}
       aria-live="polite"
       aria-atomic="true"

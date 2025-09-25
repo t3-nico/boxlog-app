@@ -37,11 +37,11 @@ export const RefundReview = ({ amount, ...props }: { amount: string } & React.Co
           <div className="space-y-4">
           <FieldGroup>
             <Field>
-              <Label>Amount</Label>
-              <Input name="amount" defaultValue={amount} placeholder="$0.00" />
+              <Label htmlFor="amount">Amount</Label>
+              <Input id="amount" name="amount" defaultValue={amount} placeholder="$0.00" />
             </Field>
             <Field>
-              <Label>Reason</Label>
+              <Label htmlFor="reason">Reason</Label>
               <Select name="reason" defaultValue="">
                 <SelectTrigger>
                   <SelectValue placeholder="Select a reason..." />

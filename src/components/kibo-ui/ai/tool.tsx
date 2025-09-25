@@ -42,8 +42,8 @@ const getStatusBadge = (status: AIToolStatus) => {
 
   return (
     <Badge className="rounded-full text-xs" variant="secondary">
-      {icons[status]}
-      {labels[status]}
+      {Object.prototype.hasOwnProperty.call(icons, status) ? icons[status as keyof typeof icons] : null}
+      {Object.prototype.hasOwnProperty.call(labels, status) ? labels[status as keyof typeof labels] : ''}
     </Badge>
   )
 }

@@ -232,7 +232,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                 <div className="flex items-center justify-between">
                   <div className="flex space-x-4 text-sm text-gray-600 dark:text-gray-400">
                     <span>削除日: {deletedDateStr}</span>
-                    {event.startDate && <span>元の日時: {event.startDate.toLocaleDateString()}</span>}
+                    {event.startDate ? <span>元の日時: {event.startDate.toLocaleDateString()}</span> : null}
                     {event.type != null && (
                       <span className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">{event.type}</span>
                     )}

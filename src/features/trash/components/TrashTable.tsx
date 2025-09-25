@@ -239,25 +239,20 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
               <div className="${typography.body.small} ${colors.text.muted} mt-2 flex items-center space-x-4">
                 <span>削除: {trashOperations.formatDeletedDate(item.deletedAt)}</span>
 
-                {item.deletedFrom && <span>元の場所: {trashOperations.formatDeletedFrom(item.deletedFrom)}</span>}
+                {item.deletedFrom ? <span>元の場所: {trashOperations.formatDeletedFrom(item.deletedFrom)}</span> : null}
 
-                {item.metadata?.fileSize && (
-                  <span>サイズ: {trashOperations.formatFileSize(item.metadata.fileSize)}</span>
-                )}
+                {item.metadata?.fileSize ? <span>サイズ: {trashOperations.formatFileSize(item.metadata.fileSize)}</span> : null}
 
                 {/* 自動削除警告 */}
-                {(isExpired || isExpiringSoon) && (
-                  <span
+                {(isExpired || isExpiringSoon) ? <span
                     className={`font-medium ${isExpired ? colors.semantic.error.text : colors.semantic.warning.text}`}
                   >
                     {isExpired ? '期限切れ' : `${daysUntilDelete}日後に自動削除`}
-                  </span>
-                )}
+                  </span> : null}
               </div>
 
               {/* タグ */}
-              {item.metadata?.tags && item.metadata.tags.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1">
+              {item.metadata?.tags && item.metadata.tags.length > 0 ? <div className="mt-2 flex flex-wrap gap-1">
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
                     <span
                       key={tag}
@@ -273,8 +268,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                       +{trashOperations.formatTags(item.metadata.tags).hidden}
                     </span>
                   )}
-                </div>
-              )}
+                </div> : null}
             </div>
           </div>
 

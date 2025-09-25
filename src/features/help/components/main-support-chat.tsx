@@ -84,7 +84,7 @@ const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
 const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
   <div>
     <CodebaseAIResponse>{message.content}</CodebaseAIResponse>
-    {message.relatedFiles && message.relatedFiles.length > 0 && <RelatedFiles files={message.relatedFiles} />}
+    {message.relatedFiles && message.relatedFiles.length > 0 ? <RelatedFiles files={message.relatedFiles} /> : null}
   </div>
 )
 
@@ -119,19 +119,17 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
 
   return (
     <AIMessage from={messageFrom}>
-      {isAssistant && <AssistantIcon />}
+      {isAssistant ? <AssistantIcon /> : null}
 
       <AIMessageContent>
         {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
 
-        {isAssistant && message.createdAt && (
-          <div className="mt-1 text-xs opacity-60">
+        {isAssistant && message.createdAt ? <div className="mt-1 text-xs opacity-60">
             {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </div>
-        )}
+          </div> : null}
       </AIMessageContent>
 
-      {isUser && <UserAvatar displayName={displayName} profileIcon={profileIcon} avatarUrl={avatarUrl} />}
+      {isUser ? <UserAvatar displayName={displayName} profileIcon={profileIcon} avatarUrl={avatarUrl} /> : null}
     </AIMessage>
   )
 }

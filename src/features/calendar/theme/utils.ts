@@ -14,7 +14,7 @@ export const getEventColor = (
   property: 'background' | 'text' | 'hover' = 'background'
 ): string => {
   const colors = calendarColors.event[status as keyof typeof event]
-  return colors?.[property] || calendarColors.event.scheduled[property as keyof typeof scheduled as keyof typeof scheduled]
+  return (colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null) || calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]
 }
 
 // UI状態の色クラスを取得
@@ -23,7 +23,7 @@ export const getStatusColor = (
   property: 'background' | 'text' = 'background'
 ): string => {
   const colors = calendarColors.states[state as keyof typeof states]
-  return colors?.[property] || ''
+  return (colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null) || ''
 }
 
 // 共通テーマから必要な色クラスを取得するヘルパー
@@ -31,14 +31,14 @@ export const getStatusColor = (
 export const getCommonColor = (category: keyof typeof colors, type: string): string => {
   const colorCategory = colors[category as keyof typeof colors]
   if (typeof colorCategory === 'object' && type in colorCategory) {
-    return (colorCategory as Record<string, string>)[type] || ''
+    return (Object.prototype.hasOwnProperty.call(colorCategory, type) ? (colorCategory as Record<string, string>)[type] : null) || ''
   }
   return ''
 }
 
 // スタイルクラスを取得
 export const getCalendarStyle = (category: keyof typeof calendarStyles, property?: string): unknown => {
-  const styles = calendarStyles[category]
+  const styles = Object.prototype.hasOwnProperty.call(calendarStyles, category) ? calendarStyles[category] : null
 
   if (!property) return styles
 
@@ -48,7 +48,7 @@ export const getCalendarStyle = (category: keyof typeof calendarStyles, property
 
   for (const key of keys) {
     if (result && typeof result === 'object' && key in result) {
-      result = (result as Record<string, unknown>)[key]
+      result = Object.prototype.hasOwnProperty.call(result, key) ? (result as Record<string, unknown>)[key] : undefined
     } else {
       return undefined
     }
@@ -59,7 +59,7 @@ export const getCalendarStyle = (category: keyof typeof calendarStyles, property
 
 // アニメーションクラスを取得
 export const getCalendarAnimation = (type: keyof typeof calendarAnimations): string => {
-  return calendarAnimations[type]
+  return Object.prototype.hasOwnProperty.call(calendarAnimations, type) ? calendarAnimations[type] : ''
 }
 
 // 完全なイベントクラス名を生成（すべてscheduledカラーベース）

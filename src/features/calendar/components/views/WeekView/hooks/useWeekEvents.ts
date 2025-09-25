@@ -33,7 +33,9 @@ export function useWeekEvents({
     // 各日付のキーを初期化
     weekDates.forEach(date => {
       const dateKey = getDateKey(date)
-      grouped[dateKey] = []
+      if (Object.prototype.hasOwnProperty.call(grouped, dateKey) || !grouped[dateKey]) {
+        grouped[dateKey] = []
+      }
     })
     
     // イベントを適切な日付に配置
@@ -51,7 +53,7 @@ export function useWeekEvents({
       weekDates.forEach(date => {
         if (isSameDay(eventStart, date)) {
           const dateKey = getDateKey(date)
-          if (grouped[dateKey]) {
+          if (Object.prototype.hasOwnProperty.call(grouped, dateKey) && grouped[dateKey]) {
             grouped[dateKey].push(event)
           }
         }
@@ -68,7 +70,7 @@ export function useWeekEvents({
     
     weekDates.forEach((date, dayIndex) => {
       const dateKey = getDateKey(date)
-      const dayEvents = eventsByDate[dateKey] || []
+      const dayEvents = (Object.prototype.hasOwnProperty.call(eventsByDate, dateKey) ? eventsByDate[dateKey] : null) || []
       
       // その日のイベントの重なりを検出
       const eventColumns = calculateEventColumns(dayEvents)
@@ -91,7 +93,7 @@ export function useWeekEvents({
         }
         
         // 重なりがある場合の列計算
-        const columnInfo = eventColumns[eventIndex]
+        const columnInfo = eventIndex < eventColumns.length ? eventColumns[eventIndex] : { column: 0, totalColumns: 1 }
         const columnWidth = DAY_COLUMN_WIDTH / columnInfo.totalColumns
         const left = dayIndex * DAY_COLUMN_WIDTH + (columnInfo.column * columnWidth)
         const width = columnWidth * 0.95 // 少し余白を作る
@@ -177,7 +179,7 @@ function calculateEventColumns(events: CalendarEvent[]): Array<{ column: number;
     
     // 利用可能な列を探す
     let columnIndex = 0
-    while (columnIndex < occupiedColumns.length && occupiedColumns[columnIndex].end > start) {
+    while (columnIndex < occupiedColumns.length && columnIndex < occupiedColumns.length && occupiedColumns[columnIndex]?.end > start) {
       columnIndex++
     }
     
@@ -185,7 +187,9 @@ function calculateEventColumns(events: CalendarEvent[]): Array<{ column: number;
     if (columnIndex >= occupiedColumns.length) {
       occupiedColumns.push({ end })
     } else {
-      occupiedColumns[columnIndex].end = end
+      if (columnIndex < occupiedColumns.length) {
+        occupiedColumns[columnIndex].end = end
+      }
     }
     
     columns.push({

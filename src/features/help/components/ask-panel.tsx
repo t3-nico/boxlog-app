@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { usePathname } from 'next/navigation'
 
@@ -39,24 +39,24 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
   const [editContent, setEditContent] = useState(message.content)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     setIsEditing(true)
     setEditContent(message.content)
-  }
+  }, [message.content])
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     if (editContent.trim() !== message.content) {
       editMessage(message.id, editContent.trim())
     }
     setIsEditing(false)
-  }
+  }, [editContent, editMessage, message.content, message.id])
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     setEditContent(message.content)
     setIsEditing(false)
-  }
+  }, [message.content])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       handleSave()
@@ -64,7 +64,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
       e.preventDefault()
       handleCancel()
     }
-  }
+  }, [handleSave, handleCancel])
 
   useEffect(() => {
     if (isEditing && textareaRef.current) {
@@ -85,7 +85,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
                 <textarea
                   ref={textareaRef}
                   value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
+                  onChange={useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => setEditContent(e.target.value), [])}
                   onKeyDown={handleKeyDown}
                   className={`w-full bg-transparent ${colors.text.white} resize-none border-none placeholder-blue-200 outline-none ${typography.body.sm} leading-relaxed`}
                   rows={1}
@@ -157,19 +157,19 @@ const ChatInput = () => {
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (state.inputValue.trim() && !state.isTyping) {
       await sendMessage(state.inputValue)
     }
-  }
+  }, [state.inputValue, state.isTyping, sendMessage])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
       e.preventDefault()
       handleSubmit(e)
     }
-  }
+  }, [isComposing, handleSubmit])
 
   // jsx-no-bind optimization handlers
   const handleCompositionStart = useCallback(() => {
@@ -214,7 +214,7 @@ const ChatInput = () => {
           <textarea
             ref={textareaRef}
             value={state.inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => setInputValue(e.target.value), [setInputValue])}
             onKeyDown={handleKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}

@@ -339,7 +339,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
               index && 'rounded-l-none',
               className
             )}
-            key={['r', 'g', 'b'][index]}
+            key={index < 3 ? ['r', 'g', 'b'][index] || `key-${index}` : `key-${index}`}
             readOnly
             type="text"
             value={value}

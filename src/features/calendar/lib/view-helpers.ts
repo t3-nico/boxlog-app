@@ -17,7 +17,9 @@ export function getTaskColorClass(status: string): string {
     stopped: 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/50 dark:text-gray-200 dark:border-gray-700',
     pending: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/50 dark:text-purple-200 dark:border-purple-700'
   }
-  return colors[status as keyof typeof colors] || colors.scheduled
+  return Object.prototype.hasOwnProperty.call(colors, status)
+    ? colors[status as keyof typeof colors]
+    : colors.scheduled
 }
 
 /**
@@ -29,7 +31,9 @@ export function getPriorityColorClass(priority: string): string {
     medium: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/50 dark:text-yellow-200 dark:border-yellow-700',
     low: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-200 dark:border-green-700'
   }
-  return colors[priority as keyof typeof colors] || colors.medium
+  return Object.prototype.hasOwnProperty.call(colors, priority)
+    ? colors[priority as keyof typeof colors]
+    : colors.medium
 }
 
 /**

@@ -274,12 +274,10 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
                       <div className="text-xs text-muted-foreground mt-1">{result.description}</div>
                     )}
                   </div>
-                  {result.metadata?.tags && result.metadata.tags.length > 0 && (
-                    <div className="flex items-center gap-2">
+                  {result.metadata?.tags && result.metadata.tags.length > 0 ? <div className="flex items-center gap-2">
                       <span className="w-2 h-2 bg-muted-foreground rounded-full"></span>
                       <span className="text-xs text-muted-foreground">{result.metadata.tags.length}</span>
-                    </div>
-                  )}
+                    </div> : null}
                 </CommandItem>
               ))}
             </CommandGroup>

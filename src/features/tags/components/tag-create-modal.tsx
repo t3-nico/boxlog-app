@@ -144,7 +144,7 @@ const TagPreview = ({
         <span className="text-sm font-medium text-gray-900 dark:text-white">{name || '（タグ名）'}</span>
         <span className="text-xs text-gray-500 dark:text-gray-400">{path}</span>
       </div>
-      {parentTag && <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</div>}
+      {parentTag ? <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</div> : null}
     </div>
   )
 }
@@ -252,7 +252,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
                   新しいタグを作成
                 </DialogTitle>
-                {parentTag && <p className="text-sm text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</p>}
+                {parentTag ? <p className="text-sm text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</p> : null}
               </div>
             </div>
 
@@ -269,8 +269,9 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
           <form onSubmit={handleSubmit} className="space-y-6 p-6">
             {/* タグ名 */}
             <Field>
-              <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">タグ名 *</Label>
+              <Label htmlFor="tag-name" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">タグ名 *</Label>
               <Input
+                id="tag-name"
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -278,13 +279,14 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                 required
               />
-              {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
+              {errors.name ? <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p> : null}
             </Field>
 
             {/* 親タグ選択 */}
             <Field>
-              <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">親タグ</Label>
+              <Label htmlFor="parent-tag-selector" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">親タグ</Label>
               <ParentTagSelector
+                id="parent-tag-selector"
                 value={formData.parent_id}
                 onChange={(parentId) => setFormData({ ...formData, parent_id: parentId })}
                 allTags={allTags}
@@ -295,8 +297,8 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
 
             {/* カラー選択 */}
             <Field>
-              <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
-              <ColorPicker value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
+              <Label htmlFor="tag-color" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
+              <ColorPicker id="tag-color" value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
             </Field>
 
             {/* 説明 */}

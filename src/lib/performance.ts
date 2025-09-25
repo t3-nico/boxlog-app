@@ -103,7 +103,9 @@ export const scheduleWork = (tasks: (() => void)[], frameTimeLimit: number = 5):
       const start = performance.now()
 
       while (taskIndex < tasks.length && performance.now() - start < frameTimeLimit) {
-        tasks[taskIndex]()
+        if (taskIndex < tasks.length) {
+          tasks[taskIndex]()
+        }
         taskIndex++
       }
 

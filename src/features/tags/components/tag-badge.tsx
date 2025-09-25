@@ -29,7 +29,7 @@ export const TagBadge = ({ tag, size = 'sm', showIcon = true, showPath = false, 
       }}
       onClick={onClick}
     >
-      {showIcon && tag.icon && <span className="text-xs">{tag.icon}</span>}
+      {showIcon && tag.icon ? <span className="text-xs">{tag.icon}</span> : null}
       <span>{showPath ? tag.path : tag.name}</span>
       {onRemove != null && (
         <button

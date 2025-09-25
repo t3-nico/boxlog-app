@@ -16,6 +16,7 @@ module.exports = {
     'jsx-a11y/aria-proptypes': 'error',
     'jsx-a11y/aria-unsupported-elements': 'error',
     'jsx-a11y/aria-role': ['error', { ignoreNonDOM: false }],
+    'jsx-a11y/role-supports-aria-props': 'error',  // roleに適切なaria属性のみ使用可能
 
     // 有効なARIA属性値
     'jsx-a11y/aria-activedescendant-has-tabindex': 'error',

@@ -1,0 +1,1972 @@
+{
+  "licenses": {
+    "Apache-2.0": [
+      {
+        "name": "@ai-sdk/openai@1.3.23",
+        "repository": "https://github.com/vercel/ai"
+      },
+      {
+        "name": "@ai-sdk/provider-utils@2.2.8",
+        "repository": "https://github.com/vercel/ai"
+      },
+      {
+        "name": "@ai-sdk/provider@1.1.3",
+        "repository": "https://github.com/vercel/ai"
+      },
+      {
+        "name": "@ai-sdk/react@1.2.12",
+        "repository": "https://github.com/vercel/ai"
+      },
+      {
+        "name": "@ai-sdk/ui-utils@1.2.11",
+        "repository": "https://github.com/vercel/ai"
+      },
+      {
+        "name": "@hello-pangea/dnd@18.0.1",
+        "repository": "https://github.com/hello-pangea/dnd",
+        "publisher": "Alex Reardon"
+      },
+      {
+        "name": "@opentelemetry/api@1.9.0",
+        "repository": "https://github.com/open-telemetry/opentelemetry-js",
+        "publisher": "OpenTelemetry Authors"
+      },
+      {
+        "name": "@react-aria/focus@3.21.0",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@react-aria/interactions@3.25.4",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@react-aria/ssr@3.9.10",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@react-aria/utils@3.30.0",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@react-stately/flags@3.1.2",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@react-stately/utils@3.10.8",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@react-types/shared@3.31.0",
+        "repository": "https://github.com/adobe/react-spectrum"
+      },
+      {
+        "name": "@swc/counter@0.1.3",
+        "repository": "https://github.com/swc-project/pkgs",
+        "publisher": "강동윤"
+      },
+      {
+        "name": "@swc/helpers@0.5.17",
+        "repository": "https://github.com/swc-project/swc",
+        "publisher": "강동윤"
+      },
+      {
+        "name": "@swc/helpers@0.5.5",
+        "repository": "https://github.com/swc-project/swc",
+        "publisher": "강동윤"
+      },
+      {
+        "name": "@vercel/speed-insights@1.2.0",
+        "repository": "https://github.com/vercel/speed-insights"
+      },
+      {
+        "name": "ai@4.3.19",
+        "repository": "https://github.com/vercel/ai"
+      },
+      {
+        "name": "class-variance-authority@0.7.1",
+        "repository": "https://github.com/joe-bell/cva",
+        "publisher": "Joe Bell"
+      },
+      {
+        "name": "diff-match-patch@1.0.5",
+        "repository": "https://github.com/JackuB/diff-match-patch"
+      }
+    ],
+    "MIT": [
+      {
+        "name": "@babel/runtime@7.27.6",
+        "repository": "https://github.com/babel/babel",
+        "publisher": "The Babel Team"
+      },
+      {
+        "name": "@date-fns/tz@1.2.0",
+        "repository": "https://github.com/date-fns/tz",
+        "publisher": "Sasha Koss"
+      },
+      {
+        "name": "@dnd-kit/accessibility@3.1.1",
+        "repository": "https://github.com/clauderic/dnd-kit",
+        "publisher": "Claudéric Demers"
+      },
+      {
+        "name": "@dnd-kit/core@6.3.1",
+        "repository": "https://github.com/clauderic/dnd-kit",
+        "publisher": "Claudéric Demers"
+      },
+      {
+        "name": "@dnd-kit/sortable@10.0.0",
+        "repository": "https://github.com/clauderic/dnd-kit",
+        "publisher": "Claudéric Demers"
+      },
+      {
+        "name": "@dnd-kit/utilities@3.2.2",
+        "repository": "https://github.com/clauderic/dnd-kit",
+        "publisher": "Claudéric Demers"
+      },
+      {
+        "name": "@floating-ui/core@1.7.3",
+        "repository": "https://github.com/floating-ui/floating-ui",
+        "publisher": "atomiks"
+      },
+      {
+        "name": "@floating-ui/dom@1.7.4",
+        "repository": "https://github.com/floating-ui/floating-ui",
+        "publisher": "atomiks"
+      },
+      {
+        "name": "@floating-ui/react-dom@2.1.6",
+        "repository": "https://github.com/floating-ui/floating-ui",
+        "publisher": "atomiks"
+      },
+      {
+        "name": "@floating-ui/react@0.26.28",
+        "repository": "https://github.com/floating-ui/floating-ui",
+        "publisher": "atomiks"
+      },
+      {
+        "name": "@floating-ui/react@0.27.16",
+        "repository": "https://github.com/floating-ui/floating-ui",
+        "publisher": "atomiks"
+      },
+      {
+        "name": "@floating-ui/utils@0.2.10",
+        "repository": "https://github.com/floating-ui/floating-ui",
+        "publisher": "atomiks"
+      },
+      {
+        "name": "@headlessui/react@2.2.5",
+        "repository": "https://github.com/tailwindlabs/headlessui"
+      },
+      {
+        "name": "@hookform/resolvers@5.1.1",
+        "repository": "https://github.com/react-hook-form/resolvers",
+        "publisher": "bluebill1049"
+      },
+      {
+        "name": "@icons-pack/react-simple-icons@13.6.0",
+        "repository": "https://github.com/icons-pack/react-simple-icons",
+        "publisher": "Jorge Luis Calleja"
+      },
+      {
+        "name": "@lexical/clipboard@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/code@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/devtools-core@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/dragon@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/hashtag@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/history@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/html@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/link@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/list@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/mark@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/markdown@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/offset@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/overflow@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/plain-text@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/react@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/rich-text@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/selection@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/table@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/text@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/utils@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@lexical/yjs@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "@next/env@14.2.3",
+        "repository": "https://github.com/vercel/next.js",
+        "publisher": "Next.js Team"
+      },
+      {
+        "name": "@next/swc-darwin-arm64@14.2.3",
+        "repository": "https://github.com/vercel/next.js"
+      },
+      {
+        "name": "@radix-ui/number@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/primitive@1.1.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/primitive@1.1.3",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-accessible-icon@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-accordion@1.2.11",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-alert-dialog@1.1.14",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-arrow@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-aspect-ratio@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-avatar@1.1.10",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-checkbox@1.3.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-collapsible@1.1.11",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-collection@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-compose-refs@1.1.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-context-menu@2.2.15",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-context@1.1.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-dialog@1.1.14",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-direction@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-dismissable-layer@1.1.10",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-dismissable-layer@1.1.11",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-dropdown-menu@2.1.15",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-focus-guards@1.1.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-focus-guards@1.1.3",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-focus-scope@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-form@0.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-hover-card@1.1.14",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-id@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-label@2.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-menu@2.1.15",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-menubar@1.1.15",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-navigation-menu@1.2.13",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-one-time-password-field@0.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-password-toggle-field@0.1.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-popover@1.1.14",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-popover@1.1.15",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-popper@1.2.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-popper@1.2.8",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-portal@1.1.9",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-presence@1.1.4",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-presence@1.1.5",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-primitive@2.1.3",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-progress@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-radio-group@1.3.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-roving-focus@1.1.10",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-roving-focus@1.1.11",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-scroll-area@1.2.9",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-select@2.2.5",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-separator@1.1.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-slider@1.3.5",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-slot@1.2.3",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-switch@1.2.5",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-tabs@1.1.12",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-tabs@1.1.13",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-toast@1.2.14",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-toggle-group@1.1.10",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-toggle@1.1.9",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-toolbar@1.1.10",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-tooltip@1.2.7",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-tooltip@1.2.8",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-callback-ref@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-controllable-state@1.2.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-effect-event@0.0.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-escape-keydown@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-is-hydrated@0.1.0",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-layout-effect@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-previous@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-rect@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-use-size@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/react-visually-hidden@1.2.3",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@radix-ui/rect@1.1.1",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "@react-dnd/asap@5.0.2",
+        "repository": "https://github.com/react-dnd/react-dnd"
+      },
+      {
+        "name": "@react-dnd/invariant@4.0.2",
+        "repository": "https://github.com/react-dnd/react-dnd",
+        "publisher": "Andres Suarez"
+      },
+      {
+        "name": "@react-dnd/shallowequal@4.0.2",
+        "repository": "https://github.com/react-dnd/react-dnd",
+        "publisher": "Alberto Leal"
+      },
+      {
+        "name": "@remirror/core-constants@3.0.0",
+        "repository": "https://github.com/remirror/remirror"
+      },
+      {
+        "name": "@shikijs/core@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Pine Wu"
+      },
+      {
+        "name": "@shikijs/engine-javascript@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Anthony Fu"
+      },
+      {
+        "name": "@shikijs/engine-oniguruma@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Anthony Fu"
+      },
+      {
+        "name": "@shikijs/langs@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Anthony Fu"
+      },
+      {
+        "name": "@shikijs/themes@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Anthony Fu"
+      },
+      {
+        "name": "@shikijs/transformers@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Anthony Fu"
+      },
+      {
+        "name": "@shikijs/types@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Anthony Fu"
+      },
+      {
+        "name": "@shikijs/vscode-textmate@10.0.2",
+        "repository": "https://github.com/shikijs/vscode-textmate",
+        "publisher": "Microsoft Corporation"
+      },
+      {
+        "name": "@standard-schema/utils@0.3.0",
+        "repository": "https://github.com/standard-schema/standard-schema",
+        "publisher": "Fabian Hiller"
+      },
+      {
+        "name": "@supabase/auth-js@2.71.1",
+        "repository": "https://github.com/supabase/auth-js",
+        "publisher": "Supabase"
+      },
+      {
+        "name": "@supabase/functions-js@2.4.5",
+        "repository": "https://github.com/supabase/functions-js",
+        "publisher": "Supabase"
+      },
+      {
+        "name": "@supabase/node-fetch@2.6.15",
+        "repository": "https://github.com/supabase/node-fetch",
+        "publisher": "David Frank"
+      },
+      {
+        "name": "@supabase/postgrest-js@1.19.4",
+        "repository": "https://github.com/supabase/postgrest-js",
+        "publisher": "Supabase"
+      },
+      {
+        "name": "@supabase/realtime-js@2.11.15",
+        "repository": "https://github.com/supabase/realtime-js",
+        "publisher": "Supabase"
+      },
+      {
+        "name": "@supabase/ssr@0.6.1",
+        "repository": "https://github.com/supabase/ssr",
+        "publisher": "Supabase, Inc."
+      },
+      {
+        "name": "@supabase/storage-js@2.7.1",
+        "repository": "https://github.com/supabase/storage-js",
+        "publisher": "Supabase"
+      },
+      {
+        "name": "@supabase/supabase-js@2.52.1",
+        "repository": "https://github.com/supabase/supabase-js",
+        "publisher": "Supabase"
+      },
+      {
+        "name": "@tanstack/query-core@5.83.0",
+        "repository": "https://github.com/TanStack/query",
+        "publisher": "tannerlinsley"
+      },
+      {
+        "name": "@tanstack/react-query@5.83.0",
+        "repository": "https://github.com/TanStack/query",
+        "publisher": "tannerlinsley"
+      },
+      {
+        "name": "@tanstack/react-table@8.21.3",
+        "repository": "https://github.com/TanStack/table",
+        "publisher": "Tanner Linsley"
+      },
+      {
+        "name": "@tanstack/react-virtual@3.13.12",
+        "repository": "https://github.com/TanStack/virtual",
+        "publisher": "Tanner Linsley"
+      },
+      {
+        "name": "@tanstack/table-core@8.21.3",
+        "repository": "https://github.com/TanStack/table",
+        "publisher": "Tanner Linsley"
+      },
+      {
+        "name": "@tanstack/virtual-core@3.13.12",
+        "repository": "https://github.com/TanStack/virtual",
+        "publisher": "Tanner Linsley"
+      },
+      {
+        "name": "@tiptap/core@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-blockquote@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-bold@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-bubble-menu@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-bullet-list@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-code-block@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-code@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-document@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-dropcursor@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-floating-menu@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-gapcursor@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-hard-break@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-heading@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-horizontal-rule@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-italic@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-link@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-list-item@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-list-keymap@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-list@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-ordered-list@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-paragraph@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-placeholder@3.0.7",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-strike@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-task-item@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-task-list@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-text@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extension-underline@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/extensions@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/pm@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/react@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@tiptap/starter-kit@3.4.2",
+        "repository": "https://github.com/ueberdosis/tiptap"
+      },
+      {
+        "name": "@types/debug@4.1.12",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/diff-match-patch@1.0.36",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/dompurify@3.0.5",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/estree-jsx@1.0.5",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/estree@1.0.8",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/hast@3.0.4",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/linkify-it@5.0.0",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/markdown-it@14.1.2",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/mdast@4.0.4",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/mdurl@2.0.0",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/ms@2.1.0",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/node@20.19.9",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/phoenix@1.6.6",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/prop-types@15.7.15",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/react-dom@18.3.7",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/react-window@1.8.8",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/react@18.3.23",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/trusted-types@2.0.7",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/unist@2.0.11",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/unist@3.0.3",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/use-sync-external-store@0.0.6",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "@types/ws@8.18.1",
+        "repository": "https://github.com/DefinitelyTyped/DefinitelyTyped"
+      },
+      {
+        "name": "aria-hidden@1.2.6",
+        "repository": "https://github.com/theKashey/aria-hidden",
+        "publisher": "Anton Korzunov"
+      },
+      {
+        "name": "bail@2.0.2",
+        "repository": "https://github.com/wooorm/bail",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "busboy@1.6.0",
+        "repository": "https://github.com/mscdex/busboy",
+        "publisher": "Brian White"
+      },
+      {
+        "name": "ccount@2.0.1",
+        "repository": "https://github.com/wooorm/ccount",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "chalk@5.4.1",
+        "repository": "https://github.com/chalk/chalk"
+      },
+      {
+        "name": "character-entities-html4@2.1.0",
+        "repository": "https://github.com/wooorm/character-entities-html4",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "character-entities-legacy@3.0.0",
+        "repository": "https://github.com/wooorm/character-entities-legacy",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "character-entities@2.0.2",
+        "repository": "https://github.com/wooorm/character-entities",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "character-reference-invalid@2.0.1",
+        "repository": "https://github.com/wooorm/character-reference-invalid",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "client-only@0.0.1"
+      },
+      {
+        "name": "clsx@2.1.1",
+        "repository": "https://github.com/lukeed/clsx",
+        "publisher": "Luke Edwards"
+      },
+      {
+        "name": "cmdk@1.1.1",
+        "repository": "https://github.com/pacocoursey/cmdk",
+        "publisher": "Paco"
+      },
+      {
+        "name": "color-convert@3.1.0",
+        "repository": "https://github.com/Qix-/color-convert",
+        "publisher": "Josh Junon"
+      },
+      {
+        "name": "color-name@2.0.0",
+        "repository": "https://github.com/colorjs/color-name",
+        "publisher": "DY"
+      },
+      {
+        "name": "color-string@2.0.1",
+        "repository": "https://github.com/Qix-/color-string",
+        "publisher": "Heather Arthur"
+      },
+      {
+        "name": "color@5.0.0",
+        "repository": "https://github.com/Qix-/color"
+      },
+      {
+        "name": "comma-separated-tokens@2.0.3",
+        "repository": "https://github.com/wooorm/comma-separated-tokens",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "cookie@1.0.2",
+        "repository": "https://github.com/jshttp/cookie",
+        "publisher": "Roman Shtylman"
+      },
+      {
+        "name": "crelt@1.0.6",
+        "repository": "https://github.com/marijnh/crelt",
+        "publisher": "Marijn Haverbeke"
+      },
+      {
+        "name": "css-box-model@1.2.1",
+        "repository": "https://github.com/alexreardon/css-box-model",
+        "publisher": "Alex Reardon"
+      },
+      {
+        "name": "csstype@3.1.3",
+        "repository": "https://github.com/frenic/csstype",
+        "publisher": "Fredrik Nicol"
+      },
+      {
+        "name": "date-fns-jalali@4.1.0-0",
+        "repository": "https://github.com/date-fns-jalali/date-fns-jalali"
+      },
+      {
+        "name": "date-fns-tz@3.2.0",
+        "repository": "https://github.com/marnusw/date-fns-tz",
+        "publisher": "Marnus Weststrate"
+      },
+      {
+        "name": "date-fns@4.1.0",
+        "repository": "https://github.com/date-fns/date-fns"
+      },
+      {
+        "name": "debug@4.4.1",
+        "repository": "https://github.com/debug-js/debug",
+        "publisher": "Josh Junon"
+      },
+      {
+        "name": "decode-named-character-reference@1.2.0",
+        "repository": "https://github.com/wooorm/decode-named-character-reference",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "dequal@2.0.3",
+        "repository": "https://github.com/lukeed/dequal",
+        "publisher": "Luke Edwards"
+      },
+      {
+        "name": "detect-node-es@1.1.0",
+        "repository": "https://github.com/thekashey/detect-node",
+        "publisher": "Ilya Kantor"
+      },
+      {
+        "name": "devlop@1.1.0",
+        "repository": "https://github.com/wooorm/devlop",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "dnd-core@16.0.1",
+        "repository": "https://github.com/react-dnd/react-dnd"
+      },
+      {
+        "name": "escape-string-regexp@4.0.0",
+        "repository": "https://github.com/sindresorhus/escape-string-regexp",
+        "publisher": "Sindre Sorhus"
+      },
+      {
+        "name": "escape-string-regexp@5.0.0",
+        "repository": "https://github.com/sindresorhus/escape-string-regexp",
+        "publisher": "Sindre Sorhus"
+      },
+      {
+        "name": "estree-util-is-identifier-name@3.0.0",
+        "repository": "https://github.com/syntax-tree/estree-util-is-identifier-name",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "extend@3.0.2",
+        "repository": "https://github.com/justmoon/node-extend",
+        "publisher": "Stefan Thomas"
+      },
+      {
+        "name": "fast-deep-equal@3.1.3",
+        "repository": "https://github.com/epoberezkin/fast-deep-equal",
+        "publisher": "Evgeny Poberezkin"
+      },
+      {
+        "name": "framer-motion@11.18.2",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "framer-motion@12.23.7",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "get-nonce@1.0.1",
+        "repository": "https://github.com/theKashey/get-nonce",
+        "publisher": "Anton Korzunov"
+      },
+      {
+        "name": "hast-util-to-html@9.0.5",
+        "repository": "https://github.com/syntax-tree/hast-util-to-html",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "hast-util-to-jsx-runtime@2.3.6",
+        "repository": "https://github.com/syntax-tree/hast-util-to-jsx-runtime",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "hast-util-whitespace@3.0.0",
+        "repository": "https://github.com/syntax-tree/hast-util-whitespace",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "html-url-attributes@3.0.1",
+        "repository": "https://github.com/rehypejs/rehype-minify/tree/main/packages/html-url-attributes",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "html-void-elements@3.0.0",
+        "repository": "https://github.com/wooorm/html-void-elements",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "inline-style-parser@0.2.4",
+        "repository": "https://github.com/remarkablemark/inline-style-parser"
+      },
+      {
+        "name": "is-alphabetical@2.0.1",
+        "repository": "https://github.com/wooorm/is-alphabetical",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "is-alphanumerical@2.0.1",
+        "repository": "https://github.com/wooorm/is-alphanumerical",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "is-decimal@2.0.1",
+        "repository": "https://github.com/wooorm/is-decimal",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "is-hexadecimal@2.0.1",
+        "repository": "https://github.com/wooorm/is-hexadecimal",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "is-plain-obj@4.1.0",
+        "repository": "https://github.com/sindresorhus/is-plain-obj",
+        "publisher": "Sindre Sorhus"
+      },
+      {
+        "name": "isomorphic.js@0.2.5",
+        "repository": "https://github.com/dmonad/isomorphic.js",
+        "publisher": "Kevin Jahns"
+      },
+      {
+        "name": "isows@1.0.7",
+        "repository": "https://github.com/wevm/isows"
+      },
+      {
+        "name": "jotai@2.12.5",
+        "repository": "https://github.com/pmndrs/jotai",
+        "publisher": "Daishi Kato"
+      },
+      {
+        "name": "js-tokens@4.0.0",
+        "repository": "https://github.com/lydell/js-tokens",
+        "publisher": "Simon Lydell"
+      },
+      {
+        "name": "jsondiffpatch@0.6.0",
+        "repository": "https://github.com/benjamine/jsondiffpatch",
+        "publisher": "Benjamin Eidelman"
+      },
+      {
+        "name": "lexical@0.35.0",
+        "repository": "https://github.com/facebook/lexical"
+      },
+      {
+        "name": "lib0@0.2.114",
+        "repository": "https://github.com/dmonad/lib0",
+        "publisher": "Kevin Jahns"
+      },
+      {
+        "name": "linkify-it@5.0.0",
+        "repository": "https://github.com/markdown-it/linkify-it"
+      },
+      {
+        "name": "linkifyjs@4.3.2",
+        "repository": "https://github.com/nfrasser/linkifyjs",
+        "publisher": "Nick Frasser"
+      },
+      {
+        "name": "longest-streak@3.1.0",
+        "repository": "https://github.com/wooorm/longest-streak",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "loose-envify@1.4.0",
+        "repository": "https://github.com/zertosh/loose-envify",
+        "publisher": "Andres Suarez"
+      },
+      {
+        "name": "markdown-it@14.1.0",
+        "repository": "https://github.com/markdown-it/markdown-it"
+      },
+      {
+        "name": "markdown-table@3.0.4",
+        "repository": "https://github.com/wooorm/markdown-table",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-find-and-replace@3.0.2",
+        "repository": "https://github.com/syntax-tree/mdast-util-find-and-replace",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-from-markdown@2.0.2",
+        "repository": "https://github.com/syntax-tree/mdast-util-from-markdown",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-gfm-autolink-literal@2.0.1",
+        "repository": "https://github.com/syntax-tree/mdast-util-gfm-autolink-literal",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-gfm-footnote@2.1.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-gfm-footnote",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-gfm-strikethrough@2.0.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-gfm-strikethrough",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-gfm-table@2.0.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-gfm-table",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-gfm-task-list-item@2.0.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-gfm-task-list-item",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-gfm@3.1.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-gfm",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-mdx-expression@2.0.1",
+        "repository": "https://github.com/syntax-tree/mdast-util-mdx-expression",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-mdx-jsx@3.2.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-mdx-jsx",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-mdxjs-esm@2.0.1",
+        "repository": "https://github.com/syntax-tree/mdast-util-mdxjs-esm",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-phrasing@4.1.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-phrasing",
+        "publisher": "Victor Felder"
+      },
+      {
+        "name": "mdast-util-to-hast@13.2.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-to-hast",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-to-markdown@2.1.2",
+        "repository": "https://github.com/syntax-tree/mdast-util-to-markdown",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdast-util-to-string@4.0.0",
+        "repository": "https://github.com/syntax-tree/mdast-util-to-string",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "mdurl@2.0.0",
+        "repository": "https://github.com/markdown-it/mdurl"
+      },
+      {
+        "name": "memoize-one@5.2.1",
+        "repository": "https://github.com/alexreardon/memoize-one",
+        "publisher": "Alex Reardon"
+      },
+      {
+        "name": "micromark-core-commonmark@2.0.3",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-core-commonmark",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm-autolink-literal@2.1.0",
+        "repository": "https://github.com/micromark/micromark-extension-gfm-autolink-literal",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm-footnote@2.1.0",
+        "repository": "https://github.com/micromark/micromark-extension-gfm-footnote",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm-strikethrough@2.1.0",
+        "repository": "https://github.com/micromark/micromark-extension-gfm-strikethrough",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm-table@2.1.1",
+        "repository": "https://github.com/micromark/micromark-extension-gfm-table",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm-tagfilter@2.0.0",
+        "repository": "https://github.com/micromark/micromark-extension-gfm-tagfilter",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm-task-list-item@2.1.0",
+        "repository": "https://github.com/micromark/micromark-extension-gfm-task-list-item",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-extension-gfm@3.0.0",
+        "repository": "https://github.com/micromark/micromark-extension-gfm",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-factory-destination@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-destination",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-factory-label@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-label",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-factory-space@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-space",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-factory-title@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-title",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-factory-whitespace@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-factory-whitespace",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-character@2.1.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-character",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-chunked@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-chunked",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-classify-character@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-classify-character",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-combine-extensions@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-combine-extensions",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-decode-numeric-character-reference@2.0.2",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-decode-numeric-character-reference",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-decode-string@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-decode-string",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-encode@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-encode",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-html-tag-name@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-html-tag-name",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-normalize-identifier@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-normalize-identifier",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-resolve-all@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-resolve-all",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-sanitize-uri@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-sanitize-uri",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-subtokenize@2.1.0",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-subtokenize",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-symbol@2.0.1",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-symbol",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark-util-types@2.0.2",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark-util-types",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "micromark@4.0.2",
+        "repository": "https://github.com/micromark/micromark/tree/main/packages/micromark",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "motion-dom@11.18.1",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "motion-dom@12.23.7",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "motion-utils@11.18.1",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "motion-utils@12.23.6",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "motion@12.23.7",
+        "repository": "https://github.com/motiondivision/motion",
+        "publisher": "Matt Perry"
+      },
+      {
+        "name": "ms@2.1.3",
+        "repository": "https://github.com/vercel/ms"
+      },
+      {
+        "name": "nanoid@3.3.11",
+        "repository": "https://github.com/ai/nanoid",
+        "publisher": "Andrey Sitnik"
+      },
+      {
+        "name": "next@14.2.3",
+        "repository": "https://github.com/vercel/next.js"
+      },
+      {
+        "name": "oniguruma-parser@0.12.1",
+        "repository": "https://github.com/slevithan/oniguruma-parser",
+        "publisher": "Steven Levithan"
+      },
+      {
+        "name": "oniguruma-to-es@4.3.3",
+        "repository": "https://github.com/slevithan/oniguruma-to-es",
+        "publisher": "Steven Levithan"
+      },
+      {
+        "name": "orderedmap@2.1.1",
+        "repository": "https://github.com/marijnh/orderedmap",
+        "publisher": "Marijn Haverbeke"
+      },
+      {
+        "name": "parse-entities@4.0.2",
+        "repository": "https://github.com/wooorm/parse-entities",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "postcss@8.4.31",
+        "repository": "https://github.com/postcss/postcss",
+        "publisher": "Andrey Sitnik"
+      },
+      {
+        "name": "prismjs@1.30.0",
+        "repository": "https://github.com/PrismJS/prism",
+        "publisher": "Lea Verou"
+      },
+      {
+        "name": "property-information@7.1.0",
+        "repository": "https://github.com/wooorm/property-information",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "prosemirror-changeset@2.3.1",
+        "repository": "https://github.com/prosemirror/prosemirror-changeset"
+      },
+      {
+        "name": "prosemirror-collab@1.3.1",
+        "repository": "https://github.com/prosemirror/prosemirror-collab"
+      },
+      {
+        "name": "prosemirror-commands@1.7.1",
+        "repository": "https://github.com/prosemirror/prosemirror-commands"
+      },
+      {
+        "name": "prosemirror-dropcursor@1.8.2",
+        "repository": "https://github.com/prosemirror/prosemirror-dropcursor"
+      },
+      {
+        "name": "prosemirror-gapcursor@1.3.2",
+        "repository": "https://github.com/prosemirror/prosemirror-gapcursor"
+      },
+      {
+        "name": "prosemirror-history@1.4.1",
+        "repository": "https://github.com/prosemirror/prosemirror-history"
+      },
+      {
+        "name": "prosemirror-inputrules@1.5.0",
+        "repository": "https://github.com/prosemirror/prosemirror-inputrules"
+      },
+      {
+        "name": "prosemirror-keymap@1.2.3",
+        "repository": "https://github.com/prosemirror/prosemirror-keymap"
+      },
+      {
+        "name": "prosemirror-markdown@1.13.2",
+        "repository": "https://github.com/prosemirror/prosemirror-markdown"
+      },
+      {
+        "name": "prosemirror-menu@1.2.5",
+        "repository": "https://github.com/prosemirror/prosemirror-menu"
+      },
+      {
+        "name": "prosemirror-model@1.25.2",
+        "repository": "https://github.com/prosemirror/prosemirror-model"
+      },
+      {
+        "name": "prosemirror-schema-basic@1.2.4",
+        "repository": "https://github.com/prosemirror/prosemirror-schema-basic"
+      },
+      {
+        "name": "prosemirror-schema-list@1.5.1",
+        "repository": "https://github.com/prosemirror/prosemirror-schema-list"
+      },
+      {
+        "name": "prosemirror-state@1.4.3",
+        "repository": "https://github.com/prosemirror/prosemirror-state"
+      },
+      {
+        "name": "prosemirror-tables@1.7.1",
+        "repository": "https://github.com/prosemirror/prosemirror-tables"
+      },
+      {
+        "name": "prosemirror-trailing-node@3.0.0",
+        "repository": "https://github.com/remirror/remirror"
+      },
+      {
+        "name": "prosemirror-transform@1.10.4",
+        "repository": "https://github.com/prosemirror/prosemirror-transform"
+      },
+      {
+        "name": "prosemirror-view@1.40.1",
+        "repository": "https://github.com/prosemirror/prosemirror-view"
+      },
+      {
+        "name": "punycode.js@2.3.1",
+        "repository": "https://github.com/mathiasbynens/punycode.js",
+        "publisher": "Mathias Bynens"
+      },
+      {
+        "name": "radix-ui@1.4.2",
+        "repository": "https://github.com/radix-ui/primitives"
+      },
+      {
+        "name": "raf-schd@4.0.3",
+        "repository": "https://github.com/alexreardon/raf-schd",
+        "publisher": "Alex Reardon"
+      },
+      {
+        "name": "react-day-picker@9.8.0",
+        "repository": "https://github.com/gpbl/react-day-picker",
+        "publisher": "Giampaolo Bellavite"
+      },
+      {
+        "name": "react-dnd-html5-backend@16.0.1",
+        "repository": "https://github.com/react-dnd/react-dnd"
+      },
+      {
+        "name": "react-dnd@16.0.1",
+        "repository": "https://github.com/react-dnd/react-dnd"
+      },
+      {
+        "name": "react-dom@18.3.1",
+        "repository": "https://github.com/facebook/react"
+      },
+      {
+        "name": "react-error-boundary@3.1.4",
+        "repository": "https://github.com/bvaughn/react-error-boundary",
+        "publisher": "Brian Vaughn"
+      },
+      {
+        "name": "react-hook-form@7.61.0",
+        "repository": "https://github.com/react-hook-form/react-hook-form",
+        "publisher": "Beier"
+      },
+      {
+        "name": "react-is@16.13.1",
+        "repository": "https://github.com/facebook/react"
+      },
+      {
+        "name": "react-markdown@10.1.0",
+        "repository": "https://github.com/remarkjs/react-markdown",
+        "publisher": "Espen Hovlandsdal"
+      },
+      {
+        "name": "react-redux@9.2.0",
+        "repository": "https://github.com/reduxjs/react-redux",
+        "publisher": "Dan Abramov"
+      },
+      {
+        "name": "react-remove-scroll-bar@2.3.8",
+        "repository": "https://github.com/theKashey/react-remove-scroll-bar",
+        "publisher": "Anton Korzunov"
+      },
+      {
+        "name": "react-remove-scroll@2.7.1",
+        "repository": "https://github.com/theKashey/react-remove-scroll",
+        "publisher": "Anton Korzunov"
+      },
+      {
+        "name": "react-style-singleton@2.2.3",
+        "repository": "https://github.com/theKashey/react-style-singleton",
+        "publisher": "Anton Korzunov"
+      },
+      {
+        "name": "react-window@1.8.11",
+        "repository": "https://github.com/bvaughn/react-window",
+        "publisher": "Brian Vaughn"
+      },
+      {
+        "name": "react@18.3.1",
+        "repository": "https://github.com/facebook/react"
+      },
+      {
+        "name": "redux@4.2.1",
+        "repository": "https://github.com/reduxjs/redux"
+      },
+      {
+        "name": "redux@5.0.1",
+        "repository": "https://github.com/reduxjs/redux"
+      },
+      {
+        "name": "regex-recursion@6.0.2",
+        "repository": "https://github.com/slevithan/regex-recursion",
+        "publisher": "Steven Levithan"
+      },
+      {
+        "name": "regex-utilities@2.3.0",
+        "repository": "https://github.com/slevithan/regex-utilities",
+        "publisher": "Steven Levithan"
+      },
+      {
+        "name": "regex@6.0.1",
+        "repository": "https://github.com/slevithan/regex",
+        "publisher": "Steven Levithan"
+      },
+      {
+        "name": "remark-gfm@4.0.1",
+        "repository": "https://github.com/remarkjs/remark-gfm",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "remark-parse@11.0.0",
+        "repository": "https://github.com/remarkjs/remark/tree/main/packages/remark-parse",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "remark-rehype@11.1.2",
+        "repository": "https://github.com/remarkjs/remark-rehype",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "remark-stringify@11.0.0",
+        "repository": "https://github.com/remarkjs/remark/tree/main/packages/remark-stringify",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "rope-sequence@1.3.4",
+        "repository": "https://github.com/marijnh/rope-sequence",
+        "publisher": "Marijn Haverbeke"
+      },
+      {
+        "name": "scheduler@0.23.2",
+        "repository": "https://github.com/facebook/react"
+      },
+      {
+        "name": "shiki@3.8.1",
+        "repository": "https://github.com/shikijs/shiki",
+        "publisher": "Pine Wu"
+      },
+      {
+        "name": "space-separated-tokens@2.0.2",
+        "repository": "https://github.com/wooorm/space-separated-tokens",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "streamsearch@1.1.0",
+        "repository": "https://github.com/mscdex/streamsearch",
+        "publisher": "Brian White"
+      },
+      {
+        "name": "stringify-entities@4.0.4",
+        "repository": "https://github.com/wooorm/stringify-entities",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "style-to-js@1.1.17",
+        "repository": "https://github.com/remarkablemark/style-to-js",
+        "publisher": "Mark"
+      },
+      {
+        "name": "style-to-object@1.0.9",
+        "repository": "https://github.com/remarkablemark/style-to-object",
+        "publisher": "Mark"
+      },
+      {
+        "name": "styled-jsx@5.1.1",
+        "repository": "https://github.com/vercel/styled-jsx"
+      },
+      {
+        "name": "swr@2.3.4",
+        "repository": "https://github.com/vercel/swr"
+      },
+      {
+        "name": "tabbable@6.2.0",
+        "repository": "https://github.com/focus-trap/tabbable",
+        "publisher": "David Clark"
+      },
+      {
+        "name": "tailwind-merge@3.3.1",
+        "repository": "https://github.com/dcastil/tailwind-merge",
+        "publisher": "Dany Castillo"
+      },
+      {
+        "name": "throttleit@2.1.0",
+        "repository": "https://github.com/sindresorhus/throttleit"
+      },
+      {
+        "name": "tiny-invariant@1.3.3",
+        "repository": "https://github.com/alexreardon/tiny-invariant",
+        "publisher": "Alex Reardon"
+      },
+      {
+        "name": "tr46@0.0.3",
+        "repository": "https://github.com/Sebmaster/tr46.js",
+        "publisher": "Sebastian Mayr"
+      },
+      {
+        "name": "trim-lines@3.0.1",
+        "repository": "https://github.com/wooorm/trim-lines",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "trough@2.2.0",
+        "repository": "https://github.com/wooorm/trough",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "tunnel-rat@0.1.2",
+        "repository": "https://github.com/pmndrs/tunnel-rat",
+        "publisher": "Paul Henschel"
+      },
+      {
+        "name": "uc.micro@2.1.0",
+        "repository": "https://github.com/markdown-it/uc.micro"
+      },
+      {
+        "name": "undici-types@6.21.0",
+        "repository": "https://github.com/nodejs/undici"
+      },
+      {
+        "name": "unified@11.0.5",
+        "repository": "https://github.com/unifiedjs/unified",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "unist-util-is@6.0.0",
+        "repository": "https://github.com/syntax-tree/unist-util-is",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "unist-util-position@5.0.0",
+        "repository": "https://github.com/syntax-tree/unist-util-position",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "unist-util-stringify-position@4.0.0",
+        "repository": "https://github.com/syntax-tree/unist-util-stringify-position",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "unist-util-visit-parents@6.0.1",
+        "repository": "https://github.com/syntax-tree/unist-util-visit-parents",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "unist-util-visit@5.0.0",
+        "repository": "https://github.com/syntax-tree/unist-util-visit",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "use-callback-ref@1.3.3",
+        "repository": "https://github.com/theKashey/use-callback-ref",
+        "publisher": "theKashey"
+      },
+      {
+        "name": "use-sidecar@1.1.3",
+        "repository": "https://github.com/theKashey/use-sidecar",
+        "publisher": "theKashey"
+      },
+      {
+        "name": "use-stick-to-bottom@1.1.1",
+        "repository": "https://github.com/stackblitz/use-stick-to-bottom",
+        "publisher": "Sam Denty"
+      },
+      {
+        "name": "use-sync-external-store@1.5.0",
+        "repository": "https://github.com/facebook/react"
+      },
+      {
+        "name": "vfile-message@4.0.2",
+        "repository": "https://github.com/vfile/vfile-message",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "vfile@6.0.3",
+        "repository": "https://github.com/vfile/vfile",
+        "publisher": "Titus Wormer"
+      },
+      {
+        "name": "w3c-keyname@2.2.8",
+        "repository": "https://github.com/marijnh/w3c-keyname",
+        "publisher": "Marijn Haverbeke"
+      },
+      {
+        "name": "whatwg-url@5.0.0",
+        "repository": "https://github.com/jsdom/whatwg-url",
+        "publisher": "Sebastian Mayr"
+      },
+      {
+        "name": "ws@8.18.3",
+        "repository": "https://github.com/websockets/ws",
+        "publisher": "Einar Otto Stangvik"
+      },
+      {
+        "name": "yjs@13.6.27",
+        "repository": "https://github.com/yjs/yjs",
+        "publisher": "Kevin Jahns"
+      },
+      {
+        "name": "zod@3.25.76",
+        "repository": "https://github.com/colinhacks/zod",
+        "publisher": "Colin McDonnell"
+      },
+      {
+        "name": "zustand@4.5.7",
+        "repository": "https://github.com/pmndrs/zustand",
+        "publisher": "Paul Henschel"
+      },
+      {
+        "name": "zustand@5.0.6",
+        "repository": "https://github.com/pmndrs/zustand",
+        "publisher": "Paul Henschel"
+      },
+      {
+        "name": "zwitch@2.0.4",
+        "repository": "https://github.com/wooorm/zwitch",
+        "publisher": "Titus Wormer"
+      }
+    ],
+    "ISC": [
+      {
+        "name": "@ungap/structured-clone@1.3.0",
+        "repository": "https://github.com/ungap/structured-clone",
+        "publisher": "Andrea Giammarchi"
+      },
+      {
+        "name": "graceful-fs@4.2.11",
+        "repository": "https://github.com/isaacs/node-graceful-fs"
+      },
+      {
+        "name": "lucide-react@0.539.0",
+        "repository": "https://github.com/lucide-icons/lucide",
+        "publisher": "Eric Fennis"
+      },
+      {
+        "name": "picocolors@1.1.1",
+        "repository": "https://github.com/alexeyraspopov/picocolors",
+        "publisher": "Alexey Raspopov"
+      },
+      {
+        "name": "zod-to-json-schema@3.24.6",
+        "repository": "https://github.com/StefanTerdell/zod-to-json-schema",
+        "publisher": "Stefan Terdell"
+      }
+    ],
+    "MPL-2.0": [
+      {
+        "name": "@vercel/analytics@1.5.0",
+        "repository": "https://github.com/vercel/analytics"
+      }
+    ],
+    "Python-2.0": [
+      {
+        "name": "argparse@2.0.1",
+        "repository": "https://github.com/nodeca/argparse"
+      }
+    ],
+    "UNLICENSED": [
+      {
+        "name": "boxlog-app@0.1.0"
+      }
+    ],
+    "CC-BY-4.0": [
+      {
+        "name": "caniuse-lite@1.0.30001743",
+        "repository": "https://github.com/browserslist/caniuse-lite",
+        "publisher": "Ben Briggs"
+      }
+    ],
+    "(MPL-2.0 OR Apache-2.0)": [
+      {
+        "name": "dompurify@3.2.7",
+        "repository": "https://github.com/cure53/DOMPurify",
+        "publisher": "Dr.-Ing. Mario Heiderich, Cure53"
+      }
+    ],
+    "BSD-2-Clause": [
+      {
+        "name": "dotenv@17.2.0",
+        "repository": "https://github.com/motdotla/dotenv"
+      },
+      {
+        "name": "entities@4.5.0",
+        "repository": "https://github.com/fb55/entities",
+        "publisher": "Felix Boehm"
+      },
+      {
+        "name": "webidl-conversions@3.0.1",
+        "repository": "https://github.com/jsdom/webidl-conversions",
+        "publisher": "Domenic Denicola"
+      }
+    ],
+    "BSD-3-Clause": [
+      {
+        "name": "hoist-non-react-statics@3.3.2",
+        "repository": "https://github.com/mridgway/hoist-non-react-statics",
+        "publisher": "Michael Ridgway"
+      },
+      {
+        "name": "secure-json-parse@2.7.0",
+        "repository": "https://github.com/fastify/secure-json-parse"
+      },
+      {
+        "name": "source-map-js@1.2.1",
+        "repository": "https://github.com/7rulnik/source-map-js",
+        "publisher": "Valentin 7rulnik Semirulnik"
+      }
+    ],
+    "(AFL-2.1 OR BSD-3-Clause)": [
+      {
+        "name": "json-schema@0.4.0",
+        "repository": "https://github.com/kriszyp/json-schema",
+        "publisher": "Kris Zyp"
+      }
+    ],
+    "0BSD": [
+      {
+        "name": "tslib@2.8.1",
+        "repository": "https://github.com/Microsoft/tslib",
+        "publisher": "Microsoft Corp."
+      }
+    ]
+  },
+  "timestamp": "2025-09-24T23:36:28.499Z"
+}

@@ -99,21 +99,18 @@ export const SearchBar = ({
         {isSearching === true && (
           <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         )}
-        {!isSearching && query && (
-          <Button
+        {!isSearching && query ? <Button
             variant="ghost"
             size="sm"
             onClick={clearSearch}
             className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0"
           >
             <X className="h-3 w-3" />
-          </Button>
-        )}
+          </Button> : null}
       </div>
 
       {/* Search Results Dropdown */}
-      {showResults && isOpen && (query || results.length > 0) && (
-        <div className="absolute top-full z-50 mt-2 w-full rounded-lg border bg-popover p-2 shadow-lg">
+      {showResults && isOpen && (query || results.length > 0) ? <div className="absolute top-full z-50 mt-2 w-full rounded-lg border bg-popover p-2 shadow-lg">
           {results.length === 0 && !isSearching ? (
             <div className="px-3 py-2 text-sm text-muted-foreground">
               {query ? 'No results found' : 'Start typing to search...'}
@@ -148,8 +145,7 @@ export const SearchBar = ({
               })}
             </div>
           )}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

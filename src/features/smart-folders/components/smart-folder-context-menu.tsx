@@ -111,7 +111,7 @@ export const SmartFolderContextMenu = ({
             <div className="h-4 w-4 rounded" style={{ backgroundColor: folder.color }} />
           )}
           <span className="truncate text-sm font-medium text-gray-900 dark:text-white">{folder.name}</span>
-          {folder.isSystem && <StarIcon className="h-4 w-4 text-yellow-500" />}
+          {folder.isSystem ? <StarIcon className="h-4 w-4 text-yellow-500" /> : null}
         </div>
         <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           {folder.taskCount || 0} items • {folder.isActive ? 'Active' : 'Inactive'}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import { Hash, Tag, TrendingUp, X } from 'lucide-react'
@@ -164,9 +164,19 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
   }
 
   // Remove tag
-  const removeTag = (tagId: string) => {
+  const removeTag = useCallback((tagId: string) => {
     onChange(selectedTags.filter((tag) => tag.id !== tagId))
-  }
+  }, [onChange, selectedTags])
+
+  // Input change handler
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value)
+  }, [])
+
+  // Dynamic click handlers
+  const createSuggestionClickHandler = useCallback((suggestionName: string) => {
+    return () => addTag(suggestionName)
+  }, [addTag])
 
   // キーボード操作のヘルパー関数群
   const handleTabKey = () => {
@@ -288,7 +298,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
             ref={inputRef}
             type="text"
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder="Enter tag and press Enter to add..."
             className={`w-full py-3 pl-3 pr-20 ${colors.background.surface} ${border.universal} ${rounded.component.button.md} ${body.DEFAULT} transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${selectedTags.length >= 5 ? 'cursor-not-allowed opacity-50' : ''} ${inputValue.trim() ? 'ring-1 ring-blue-200 dark:ring-blue-800' : ''} `}
@@ -327,8 +337,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
 
         {/* サジェスト */}
         <AnimatePresence>
-          {showSuggestions && suggestions.length > 0 && (
-            <motion.div
+          {showSuggestions && suggestions.length > 0 ? <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
@@ -338,7 +347,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                 <button
                   type="button"
                   key={suggestion.id}
-                  onClick={() => addTag(suggestion.name)}
+                  onClick={createSuggestionClickHandler(suggestion.name)}
                   className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150 ${
                     index === focusedSuggestionIndex
                       ? `${colors.background.elevated}`
@@ -354,8 +363,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                   )}
                 </button>
               ))}
-            </motion.div>
-          )}
+            </motion.div> : null}
         </AnimatePresence>
       </div>
 

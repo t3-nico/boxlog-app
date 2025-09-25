@@ -60,7 +60,7 @@ export const SidebarItem = ({
   const content = (
     <>
       {children}
-      {indicator && current && <div className={`ml-auto h-4 w-1 ${primary.DEFAULT} rounded-full`} />}
+      {indicator && current ? <div className={`ml-auto h-4 w-1 ${primary.DEFAULT} rounded-full`} /> : null}
     </>
   )
 

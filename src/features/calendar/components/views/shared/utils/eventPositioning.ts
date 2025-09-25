@@ -94,8 +94,11 @@ function assignColumns(events: TimedEvent[]): Map<TimedEvent, EventColumn> {
     
     for (let i = 0; i < Math.min(columns.length, MAX_EVENT_COLUMNS); i++) {
       const column = columns[i]
+      if (!column || column.length === 0) continue
+
       const lastInColumn = column[column.length - 1]
-      
+      if (!lastInColumn) continue
+
       // この列の最後のイベントと重複しない場合、この列に配置
       if (!eventsOverlap(lastInColumn, event)) {
         column.push(event)
@@ -110,17 +113,29 @@ function assignColumns(events: TimedEvent[]): Map<TimedEvent, EventColumn> {
     } else if (!placed) {
       // 最大列数を超える場合、最も早く終わるイベントの列に配置
       let earliestEndCol = 0
-      let earliestEnd = columns[0][columns[0].length - 1].end
-      
-      for (let i = 1; i < columns.length; i++) {
-        const lastEvent = columns[i][columns[i].length - 1]
-        if (lastEvent.end < earliestEnd) {
-          earliestEnd = lastEvent.end
-          earliestEndCol = i
+      const firstColumn = columns[0]
+      if (!firstColumn || firstColumn.length === 0) {
+        columns.push([event])
+      } else {
+        const firstLastEvent = firstColumn[firstColumn.length - 1]
+        let earliestEnd = firstLastEvent ? firstLastEvent.end : new Date()
+
+        for (let i = 1; i < columns.length; i++) {
+          const column = columns[i]
+          if (!column || column.length === 0) continue
+
+          const lastEvent = column[column.length - 1]
+          if (lastEvent && lastEvent.end < earliestEnd) {
+            earliestEnd = lastEvent.end
+            earliestEndCol = i
+          }
+        }
+
+        const targetColumn = columns[earliestEndCol]
+        if (targetColumn) {
+          targetColumn.push(event)
         }
       }
-      
-      columns[earliestEndCol].push(event)
     }
   }
   

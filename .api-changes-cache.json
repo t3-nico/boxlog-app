@@ -1,0 +1,410 @@
+{
+  "signatures": {
+    "src/app/api/auth/route.ts": {
+      "file": "src/app/api/auth/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [
+        {
+          "type": "query",
+          "name": "action"
+        },
+        {
+          "type": "body",
+          "name": "action"
+        },
+        {
+          "type": "body",
+          "name": "email"
+        },
+        {
+          "type": "body",
+          "name": "password"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "session"
+          ]
+        },
+        {
+          "keys": [
+            "user"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "user",
+            "session"
+          ]
+        },
+        {
+          "keys": [
+            "user",
+            "session"
+          ]
+        },
+        {
+          "keys": [
+            "success"
+          ]
+        },
+        {
+          "keys": [
+            "success"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "e4f3a8cc"
+    },
+    "src/app/api/profiles/route.ts": {
+      "file": "src/app/api/profiles/route.ts",
+      "httpMethods": [
+        "DELETE",
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "parameters": [
+        {
+          "type": "query",
+          "name": "user_id"
+        },
+        {
+          "type": "query",
+          "name": "user_id"
+        },
+        {
+          "type": "body",
+          "name": "id"
+        },
+        {
+          "type": "body",
+          "name": "email"
+        },
+        {
+          "type": "body",
+          "name": "name"
+        },
+        {
+          "type": "body",
+          "name": "avatar_url"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "profile"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "profile"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "profile"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        }
+      ],
+      "validationRules": [
+        {
+          "type": "required",
+          "field": "userId"
+        },
+        {
+          "type": "required",
+          "field": "id"
+        },
+        {
+          "type": "required",
+          "field": "email"
+        },
+        {
+          "type": "required",
+          "field": "id"
+        },
+        {
+          "type": "required",
+          "field": "userId"
+        }
+      ],
+      "contentHash": "00bc1136"
+    },
+    "src/app/api/tasks/route.ts": {
+      "file": "src/app/api/tasks/route.ts",
+      "httpMethods": [
+        "DELETE",
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "parameters": [
+        {
+          "type": "query",
+          "name": "user_id"
+        },
+        {
+          "type": "query",
+          "name": "status"
+        },
+        {
+          "type": "query",
+          "name": "limit"
+        },
+        {
+          "type": "query",
+          "name": "offset"
+        },
+        {
+          "type": "query",
+          "name": "id"
+        },
+        {
+          "type": "body",
+          "name": "user_id"
+        },
+        {
+          "type": "body",
+          "name": "title"
+        },
+        {
+          "type": "body",
+          "name": "planned_start"
+        },
+        {
+          "type": "body",
+          "name": "planned_duration"
+        },
+        {
+          "type": "body",
+          "name": "status"
+        },
+        {
+          "type": "body",
+          "name": "tags"
+        },
+        {
+          "type": "body",
+          "name": "memo"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "tasks"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "task"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "task"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        }
+      ],
+      "validationRules": [
+        {
+          "type": "required",
+          "field": "userId"
+        },
+        {
+          "type": "required",
+          "field": "user_id"
+        },
+        {
+          "type": "required",
+          "field": "title"
+        },
+        {
+          "type": "required",
+          "field": "data"
+        },
+        {
+          "type": "required",
+          "field": "id"
+        }
+      ],
+      "contentHash": "05f4555f"
+    }
+  },
+  "timestamp": "2025-09-24T23:46:57.439Z"
+}

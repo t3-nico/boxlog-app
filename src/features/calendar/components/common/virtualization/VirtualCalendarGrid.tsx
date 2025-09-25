@@ -386,11 +386,9 @@ const VirtualEventCard = React.memo(function VirtualEventCard({
       }}
     >
       <div className="font-medium truncate">{event.title}</div>
-      {(style.height as number) > 30 && event.startDate && (
-        <div className="opacity-90">
+      {(style.height as number) > 30 && event.startDate ? <div className="opacity-90">
           {format(event.startDate, 'HH:mm')}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 })

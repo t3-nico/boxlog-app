@@ -42,7 +42,7 @@ export const FloatingActionButton = ({
   'aria-label': ariaLabel = 'アクションを実行',
 }: FloatingActionButtonProps) => {
   // レスポンシブ対応のデフォルトアイコン
-  const defaultIcon = <Plus className={iconSizeMap[size]} />
+  const defaultIcon = <Plus className={Object.prototype.hasOwnProperty.call(iconSizeMap, size) ? iconSizeMap[size as keyof typeof iconSizeMap] : iconSizeMap.md} />
   return (
     <button
       type="button"
@@ -58,7 +58,7 @@ export const FloatingActionButton = ({
         // タブレット（768px〜1024px）: やや右寄り
         'md:bottom-6 md:right-6',
         'flex items-center justify-center',
-        sizeMap[size],
+        Object.prototype.hasOwnProperty.call(sizeMap, size) ? sizeMap[size as keyof typeof sizeMap] : sizeMap.md,
         componentRadius.button.lg,
         'shadow-lg',
 

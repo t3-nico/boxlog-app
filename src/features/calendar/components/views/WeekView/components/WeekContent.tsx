@@ -247,8 +247,7 @@ export const WeekContent = ({
           dragState.targetDateIndex !== undefined &&
           dragState.targetDateIndex === dayIndex &&
           !events.find((e) => e.id === dragState.draggedEventId) &&
-          displayDates &&
-          (() => {
+          displayDates ? (() => {
             // 週の全イベントからドラッグ中のイベントを探す
             // displayDates配列を使って全日付のイベントを探索
             const _draggedEvent: CalendarEvent | null = null
@@ -268,7 +267,7 @@ export const WeekContent = ({
 
             // Implementation tracked in Issue #89
             return null
-          })()}
+          })() : null}
       </div>
     </div>
   )

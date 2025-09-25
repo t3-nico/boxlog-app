@@ -134,7 +134,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
             className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1"
             placeholder="you@example.com"
           />
-          {errors.email && <p className="text-destructive mt-1 text-sm">{errors.email.message}</p>}
+          {errors.email ? <p className="text-destructive mt-1 text-sm">{errors.email.message}</p> : null}
         </div>
 
         <div>
@@ -148,7 +148,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
             className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1"
             placeholder="••••••••"
           />
-          {errors.password && <p className="text-destructive mt-1 text-sm">{errors.password.message}</p>}
+          {errors.password ? <p className="text-destructive mt-1 text-sm">{errors.password.message}</p> : null}
         </div>
 
         {error != null && (

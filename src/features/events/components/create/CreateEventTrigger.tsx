@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { Plus, ChevronDown } from 'lucide-react'
 
@@ -28,15 +28,15 @@ export const CreateEventTrigger = ({
   source = 'sidebar'
 }: CreateEventTriggerProps) => {
   const { openModal } = useCreateModalStore()
-  
-  const handleClick = () => {
+
+  const handleClick = useCallback(() => {
     openModal({
       initialData,
       context: {
         source
       }
     })
-  }
+  }, [openModal, initialData, source])
   
   // サイドバー用ボタン
   if (variant === 'sidebar') {

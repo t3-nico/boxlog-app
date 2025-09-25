@@ -179,35 +179,35 @@ export type GridCols = 1 | 2 | 3 | 4 | 6 | 12
  * Stackのギャップクラスを取得
  */
 export function getStackGap(gap: SpacingSize8px): string {
-  return stackGap[gap]
+  return Object.prototype.hasOwnProperty.call(stackGap, gap) ? stackGap[gap] : stackGap['4']
 }
 
 /**
  * Inlineのギャップクラスを取得
  */
 export function getInlineGap(gap: SpacingSize8px): string {
-  return inlineGap[gap]
+  return Object.prototype.hasOwnProperty.call(inlineGap, gap) ? inlineGap[gap] : inlineGap['4']
 }
 
 /**
  * カードバリアントのクラスを取得
  */
 export function getCardVariant(variant: CardVariant): string {
-  return cardVariants[variant]
+  return Object.prototype.hasOwnProperty.call(cardVariants, variant) ? cardVariants[variant] : cardVariants.default
 }
 
 /**
  * グリッドのギャップクラスを取得
  */
 export function getGridGap(gap: GridGap): string {
-  return gridGap[gap]
+  return Object.prototype.hasOwnProperty.call(gridGap, gap) ? gridGap[gap] : gridGap['4']
 }
 
 /**
  * グリッドのカラムクラスを取得
  */
 export function getGridCols(cols: GridCols): string {
-  return gridCols[cols]
+  return Object.prototype.hasOwnProperty.call(gridCols, cols) ? gridCols[cols] : gridCols['12']
 }
 
 /**
@@ -242,7 +242,7 @@ export function pxToTailwindSpacing(px: number): string {
     64: 'p-16', // ✅ 64px基準
   }
   
-  return mapping[px] || `p-[${px}px]`
+  return (Object.prototype.hasOwnProperty.call(mapping, px) ? mapping[px as keyof typeof mapping] : null) || `p-[${px}px]`
 }
 
 /**

@@ -100,7 +100,7 @@ export const EventStatusChip = ({
         color: config.color
       } : undefined}
     >
-      {showIcon && <Icon className={`${iconSize[size]} shrink-0`} />}
+      {showIcon ? <Icon className={`${iconSize[size]} shrink-0`} /> : null}
       <span className="truncate">{config.label}</span>
     </Badge>
   )

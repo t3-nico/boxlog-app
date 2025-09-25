@@ -45,7 +45,7 @@ const generateRangeText = (date: Date, endDate: Date): string => {
 const createDateContent = (text: string, isClickable: boolean) => (
   <div className="flex items-center gap-2">
     <h2 className={cn(heading.h2, isClickable && 'hover:text-primary cursor-pointer transition-colors')}>{text}</h2>
-    {isClickable && <ChevronDown className="text-muted-foreground h-4 w-4" />}
+    {isClickable ? <ChevronDown className="text-muted-foreground h-4 w-4" /> : null}
   </div>
 )
 
@@ -61,7 +61,7 @@ const createStaticContent = (
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
     {dateContent}
-    {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
+    {showWeekNumber ? <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} /> : null}
   </div>
 )
 
@@ -81,7 +81,7 @@ const createClickableContent = (
     <MiniCalendarPopover selectedDate={selectedDate} onDateSelect={onDateSelect} align="start" side="bottom">
       {dateContent}
     </MiniCalendarPopover>
-    {showWeekNumber && <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} />}
+    {showWeekNumber ? <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} /> : null}
   </div>
 )
 
@@ -158,7 +158,7 @@ export const CompactDateDisplay = ({
   return (
     <div className={cn('flex items-center gap-1', className)}>
       <span className="text-base font-medium">{format(date, 'MMM d')}</span>
-      {showWeekNumber && <span className="text-muted-foreground text-xs">W{getWeek(date, { weekStartsOn: 1 })}</span>}
+      {showWeekNumber ? <span className="text-muted-foreground text-xs">W{getWeek(date, { weekStartsOn: 1 })}</span> : null}
     </div>
   )
 }

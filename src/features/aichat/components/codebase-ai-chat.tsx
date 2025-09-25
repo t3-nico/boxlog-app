@@ -237,11 +237,11 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
 
   return (
     <AIMessage from={messageFrom}>
-      {isAssistant && <AssistantIcon />}
+      {isAssistant ? <AssistantIcon /> : null}
 
       <AIMessageContent>
         {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
-        {isAssistant && <MessageTimestamp createdAt={message.createdAt} />}
+        {isAssistant ? <MessageTimestamp createdAt={message.createdAt} /> : null}
       </AIMessageContent>
 
       {isUser === true && (

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { Calendar, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
@@ -94,7 +94,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
   }
 
   // Date change handler
-  const _handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = new Date(e.target.value)
     newDate.setHours(value.getHours(), value.getMinutes())
     onChange(newDate)
@@ -103,43 +103,43 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
     const newEndDate = new Date(e.target.value)
     newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
     onEndChange(newEndDate)
-  }
+  }, [value, endValue, onChange, onEndChange])
 
   // Start time change handler
-  const _handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleStartTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':').map(Number)
     const newDate = new Date(value)
     newDate.setHours(hours, minutes)
     onChange(newDate)
-  }
+  }, [value, onChange])
 
   // End time change handler
-  const _handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handleEndTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':').map(Number)
     const newEndDate = new Date(endValue)
     newEndDate.setHours(hours, minutes)
     onEndChange(newEndDate)
-  }
+  }, [endValue, onEndChange])
 
   // Time selection handler
-  const handleStartTimeSelect = (timeString: string) => {
+  const handleStartTimeSelect = useCallback((timeString: string) => {
     const [hours, minutes] = timeString.split(':').map(Number)
     const newDate = new Date(value)
     newDate.setHours(hours, minutes)
     onChange(newDate)
     setShowStartTimePicker(false)
-  }
+  }, [value, onChange])
 
-  const handleEndTimeSelect = (timeString: string) => {
+  const handleEndTimeSelect = useCallback((timeString: string) => {
     const [hours, minutes] = timeString.split(':').map(Number)
     const newEndDate = new Date(endValue)
     newEndDate.setHours(hours, minutes)
     onEndChange(newEndDate)
     setShowEndTimePicker(false)
-  }
+  }, [endValue, onEndChange])
 
   // Date selection handler
-  const handleDateSelect = (selectedDate: Date) => {
+  const handleDateSelect = useCallback((selectedDate: Date) => {
     const newDate = new Date(selectedDate)
     newDate.setHours(value.getHours(), value.getMinutes())
     onChange(newDate)
@@ -150,20 +150,58 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
     onEndChange(newEndDate)
 
     setShowDatePicker(false)
-  }
+  }, [value, endValue, onChange, onEndChange])
 
   // Calendar month navigation
-  const handlePrevMonth = () => {
+  const handlePrevMonth = useCallback(() => {
     const newDate = new Date(calendarDate)
     newDate.setMonth(newDate.getMonth() - 1)
     setCalendarDate(newDate)
-  }
+  }, [calendarDate])
 
-  const handleNextMonth = () => {
+  const handleNextMonth = useCallback(() => {
     const newDate = new Date(calendarDate)
     newDate.setMonth(newDate.getMonth() + 1)
     setCalendarDate(newDate)
-  }
+  }, [calendarDate])
+
+  // Toggle handlers
+  const toggleDatePicker = useCallback(() => {
+    setShowDatePicker(!showDatePicker)
+  }, [showDatePicker])
+
+  const toggleStartTimePicker = useCallback(() => {
+    setShowStartTimePicker(!showStartTimePicker)
+  }, [showStartTimePicker])
+
+  const toggleEndTimePicker = useCallback(() => {
+    setShowEndTimePicker(!showEndTimePicker)
+  }, [showEndTimePicker])
+
+  // Quick select handlers
+  const selectToday = useCallback(() => {
+    handleDateSelect(new Date())
+  }, [handleDateSelect])
+
+  const selectTomorrow = useCallback(() => {
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    handleDateSelect(tomorrow)
+  }, [handleDateSelect])
+
+  // Dynamic date select handler
+  const createDateSelectHandler = useCallback((day: Date) => {
+    return () => handleDateSelect(day)
+  }, [handleDateSelect])
+
+  // Dynamic time select handlers
+  const createStartTimeSelectHandler = useCallback((timeString: string) => {
+    return () => handleStartTimeSelect(timeString)
+  }, [handleStartTimeSelect])
+
+  const createEndTimeSelectHandler = useCallback((timeString: string) => {
+    return () => handleEndTimeSelect(timeString)
+  }, [handleEndTimeSelect])
 
   // Close on outside click
   useEffect(() => {
@@ -195,7 +233,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
           <button
             type="button"
             id="date-selector-button"
-            onClick={() => setShowDatePicker(!showDatePicker)}
+            onClick={toggleDatePicker}
             className={`w-full py-3 pl-3 pr-3 ${colors.background.surface} ${border.universal} ${rounded.component.input.md} ${body.DEFAULT} text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:${colors.background.elevated} flex items-center justify-between transition-colors duration-200`}
           >
             <span>{formatDateForDisplay(value)}</span>
@@ -252,7 +290,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                       <button
                         type="button"
                         key={day.toISOString().split('T')[0]}
-                        onClick={() => handleDateSelect(day)}
+                        onClick={createDateSelectHandler(day)}
                         className={`rounded p-2 text-center transition-colors duration-150 ${
                           isSelected
                             ? 'bg-blue-500 text-white'
@@ -273,18 +311,14 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                 <div className="mt-4 flex gap-2 border-t border-neutral-200 pt-3 dark:border-neutral-800">
                   <button
                     type="button"
-                    onClick={() => handleDateSelect(new Date())}
+                    onClick={selectToday}
                     className={`rounded px-3 py-1.5 ${body.small} ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-colors duration-150`}
                   >
                     Today
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      const tomorrow = new Date()
-                      tomorrow.setDate(tomorrow.getDate() + 1)
-                      handleDateSelect(tomorrow)
-                    }}
+                    onClick={selectTomorrow}
                     className={`rounded px-3 py-1.5 ${body.small} ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-colors duration-150`}
                   >
                     Tomorrow
@@ -303,7 +337,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
           <button
             type="button"
             id="start-time-selector-button"
-            onClick={() => setShowStartTimePicker(!showStartTimePicker)}
+            onClick={toggleStartTimePicker}
             className={`w-full py-3 pl-3 pr-3 ${colors.background.surface} ${border.universal} ${rounded.component.input.md} ${body.DEFAULT} text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:${colors.background.elevated} flex items-center justify-between transition-colors duration-200`}
           >
             <span>{formatTimeForInput(value)}</span>
@@ -323,7 +357,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                   <button
                     type="button"
                     key={option.value}
-                    onClick={() => handleStartTimeSelect(option.value)}
+                    onClick={createStartTimeSelectHandler(option.value)}
                     className={`w-full px-3 py-2 text-left text-sm hover:${colors.background.surface} transition-colors duration-150 ${formatTimeForInput(value) === option.value ? `${colors.background.elevated}` : ''} `}
                   >
                     {option.display}
@@ -342,7 +376,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
           <button
             type="button"
             id="end-time-selector-button"
-            onClick={() => setShowEndTimePicker(!showEndTimePicker)}
+            onClick={toggleEndTimePicker}
             className={`w-full py-3 pl-3 pr-3 ${colors.background.surface} ${border.universal} ${rounded.component.input.md} ${body.DEFAULT} text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:${colors.background.elevated} flex items-center justify-between transition-colors duration-200`}
           >
             <span>{formatTimeForInput(endValue)}</span>
@@ -362,7 +396,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                   <button
                     type="button"
                     key={option.value}
-                    onClick={() => handleEndTimeSelect(option.value)}
+                    onClick={createEndTimeSelectHandler(option.value)}
                     className={`w-full px-3 py-2 text-left text-sm hover:${colors.background.surface} transition-colors duration-150 ${formatTimeForInput(endValue) === option.value ? `${colors.background.elevated}` : ''} `}
                   >
                     {option.display}

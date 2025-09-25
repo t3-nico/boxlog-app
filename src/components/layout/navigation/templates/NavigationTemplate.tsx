@@ -52,9 +52,9 @@ export const NavigationTemplate = ({
         className
       )}
     >
-      <div className={cn('flex h-full flex-col', spacingClasses[spacing])}>
+      <div className={cn('flex h-full flex-col', Object.prototype.hasOwnProperty.call(spacingClasses, spacing) ? spacingClasses[spacing as keyof typeof spacingClasses] : spacingClasses.normal)}>
         {/* Header Section */}
-        {showHeader && headerContent && <div className="flex-shrink-0">{headerContent}</div>}
+        {showHeader && headerContent ? <div className="flex-shrink-0">{headerContent}</div> : null}
 
         {/* Main Content Sections */}
         <div className="flex-1 overflow-y-auto">
@@ -68,7 +68,7 @@ export const NavigationTemplate = ({
               )}
 
               {/* Section Items */}
-              <div className={cn(sectionSpacing[spacing])}>
+              <div className={cn(Object.prototype.hasOwnProperty.call(sectionSpacing, spacing) ? sectionSpacing[spacing as keyof typeof sectionSpacing] : sectionSpacing.normal)}>
                 {section.items.map((item, itemIndex) => (
                   <div key={item.key || `item-${itemIndex}`}>{item}</div>
                 ))}
@@ -78,7 +78,7 @@ export const NavigationTemplate = ({
         </div>
 
         {/* Footer Section */}
-        {footerContent && <div className="mt-auto flex-shrink-0">{footerContent}</div>}
+        {footerContent ? <div className="mt-auto flex-shrink-0">{footerContent}</div> : null}
       </div>
     </div>
   )

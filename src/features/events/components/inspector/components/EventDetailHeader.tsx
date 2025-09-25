@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback } from 'react'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ChevronDown, ChevronRight, Clock, Copy, Trash2 } from 'lucide-react'
@@ -41,6 +42,13 @@ export const EventDetailHeader = ({
 }: EventDetailHeaderProps) => {
   const hours = Math.floor(duration / 60)
   const minutes = duration % 60
+
+  const handleTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateFormData('title', e.target.value)
+    },
+    [updateFormData]
+  )
 
   return (
     <div className={cn('border-b p-6', border.universal)}>
@@ -97,7 +105,7 @@ export const EventDetailHeader = ({
         <input
           type="text"
           value={formData.title}
-          onChange={(e) => updateFormData('title', e.target.value)}
+          onChange={handleTitleChange}
           placeholder="Event title"
           className={cn(
             'w-full resize-none border-none bg-transparent outline-none',
@@ -135,11 +143,9 @@ export const EventDetailHeader = ({
             完了
           </div>
         )}
-        {isPast && !isCompleted && (
-          <div className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+        {isPast && !isCompleted ? <div className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
             過去
-          </div>
-        )}
+          </div> : null}
       </div>
     </div>
   )

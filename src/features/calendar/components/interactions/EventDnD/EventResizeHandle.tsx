@@ -319,12 +319,10 @@ const ResizeTooltip = ({
       }}
     >
       {displayTime}
-      {resizeState.isInvalid && (
-        <div className="mt-1 text-xs opacity-90">
+      {resizeState.isInvalid ? <div className="mt-1 text-xs opacity-90">
           {type === 'start' ? 'Too close to end time' : 'Too close to start time'}
-        </div>
-      )}
-      {isShiftPressed && <div className="mt-1 text-xs opacity-75">5min intervals</div>}
+        </div> : null}
+      {isShiftPressed ? <div className="mt-1 text-xs opacity-75">5min intervals</div> : null}
     </div>
   )
 }

@@ -95,15 +95,14 @@ export const EventContent = memo<EventContentProps>(function EventContent({
       {/* 時間の長さを視覚化するストレッチ領域 */}
       <div className="flex-1 min-h-0 flex items-end justify-between">
         {/* タグ表示 */}
-        {event.tags && event.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 w-full">
+        {event.tags && event.tags.length > 0 ? <div className="flex flex-wrap gap-1 w-full">
             {event.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag.id}
                 className="inline-flex items-center px-1.5 py-0.5 text-xs rounded-sm bg-white/30 text-white leading-tight flex-shrink-0"
                 style={{ backgroundColor: `${tag.color}40` }}
               >
-                {tag.icon && <span className="mr-0.5">{tag.icon}</span>}
+                {tag.icon ? <span className="mr-0.5">{tag.icon}</span> : null}
                 {tag.name}
               </span>
             ))}
@@ -112,8 +111,7 @@ export const EventContent = memo<EventContentProps>(function EventContent({
                 +{event.tags.length - 3}
               </span>
             )}
-          </div>
-        )}
+          </div> : null}
         
         {/* 時間の長さを示す視覚的インジケーター */}
         <div className="absolute right-1 top-1/2 transform -translate-y-1/2 opacity-30">

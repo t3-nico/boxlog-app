@@ -1,0 +1,120 @@
+{
+  "apiVersion": "1.0.0",
+  "endpoint": "/api/tasks",
+  "methods": {
+    "GET": {
+      "parameters": {
+        "required": ["user_id"],
+        "optional": ["status", "limit", "offset"]
+      },
+      "response": {
+        "200": {
+          "type": "object",
+          "properties": {
+            "tasks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "string", "format": "uuid"},
+                  "user_id": {"type": "string", "format": "uuid"},
+                  "title": {"type": "string"},
+                  "status": {"type": "string", "enum": ["backlog", "in_progress", "completed"]},
+                  "tags": {"type": "array", "items": {"type": "string"}},
+                  "memo": {"type": "string", "nullable": true},
+                  "planned_start": {"type": "string", "format": "datetime", "nullable": true},
+                  "planned_duration": {"type": "number", "nullable": true},
+                  "actual_start": {"type": "string", "format": "datetime", "nullable": true},
+                  "actual_end": {"type": "string", "format": "datetime", "nullable": true},
+                  "satisfaction": {"type": "number", "minimum": 1, "maximum": 5, "nullable": true},
+                  "created_at": {"type": "string", "format": "datetime"},
+                  "updated_at": {"type": "string", "format": "datetime"}
+                }
+              }
+            }
+          }
+        },
+        "400": {"error": "string"},
+        "500": {"error": "string"}
+      }
+    },
+    "POST": {
+      "requestBody": {
+        "required": ["user_id", "title"],
+        "properties": {
+          "user_id": {"type": "string", "format": "uuid"},
+          "title": {"type": "string", "minLength": 1},
+          "planned_start": {"type": "string", "format": "datetime", "optional": true},
+          "planned_duration": {"type": "number", "optional": true},
+          "status": {"type": "string", "enum": ["backlog", "in_progress", "completed"], "default": "backlog"},
+          "tags": {"type": "array", "items": {"type": "string"}, "default": []},
+          "memo": {"type": "string", "optional": true}
+        }
+      },
+      "response": {
+        "201": {
+          "type": "object",
+          "properties": {
+            "task": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string", "format": "uuid"},
+                "user_id": {"type": "string", "format": "uuid"},
+                "title": {"type": "string"},
+                "status": {"type": "string"},
+                "tags": {"type": "array"},
+                "memo": {"type": "string", "nullable": true},
+                "created_at": {"type": "string", "format": "datetime"},
+                "updated_at": {"type": "string", "format": "datetime"}
+              }
+            }
+          }
+        },
+        "400": {"error": "string"},
+        "500": {"error": "string"}
+      }
+    },
+    "PUT": {
+      "requestBody": {
+        "required": ["id"],
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "title": {"type": "string", "minLength": 1, "optional": true},
+          "planned_start": {"type": "string", "format": "datetime", "optional": true},
+          "planned_duration": {"type": "number", "optional": true},
+          "actual_start": {"type": "string", "format": "datetime", "optional": true},
+          "actual_end": {"type": "string", "format": "datetime", "optional": true},
+          "satisfaction": {"type": "number", "minimum": 1, "maximum": 5, "optional": true},
+          "status": {"type": "string", "enum": ["backlog", "in_progress", "completed"], "optional": true},
+          "tags": {"type": "array", "items": {"type": "string"}, "optional": true},
+          "memo": {"type": "string", "optional": true}
+        }
+      },
+      "response": {
+        "200": {
+          "type": "object",
+          "properties": {
+            "task": {"$ref": "#/methods/POST/response/201/properties/task"}
+          }
+        },
+        "400": {"error": "string"},
+        "500": {"error": "string"}
+      }
+    },
+    "DELETE": {
+      "parameters": {
+        "required": ["id"]
+      },
+      "response": {
+        "200": {
+          "type": "object",
+          "properties": {
+            "success": {"type": "boolean", "value": true}
+          }
+        },
+        "400": {"error": "string"},
+        "500": {"error": "string"}
+      }
+    }
+  }
+}

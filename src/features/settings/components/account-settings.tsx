@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import Image from 'next/image'
 
@@ -175,6 +175,38 @@ const AccountSettings = () => {
     profile.updateValue('uploadedAvatar', null)
   }
 
+  // Profile form handlers
+  const handleDisplayNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    profile.updateValue('displayName', e.target.value)
+  }, [profile])
+
+  const handleEmailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    profile.updateValue('email', e.target.value)
+  }, [profile])
+
+  // Dynamic icon select handler
+  const createIconSelectHandler = useCallback((icon: string) => {
+    return () => profile.updateValue('selectedIcon', icon)
+  }, [profile])
+
+  // Password form handlers
+  const handleCurrentPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentPassword(e.target.value)
+  }, [])
+
+  const handleNewPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPassword(e.target.value)
+  }, [])
+
+  const handleConfirmPasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmPassword(e.target.value)
+  }, [])
+
+  // Security settings handler
+  const handleTwoFactorChange = useCallback((checked: boolean) => {
+    security.updateValue('twoFactorEnabled', checked)
+  }, [security])
+
   return (
     <div className={spacing.stackGap.lg}>
       {/* Profile Section */}
@@ -183,7 +215,7 @@ const AccountSettings = () => {
           <SettingField label="表示名" description="他のユーザーに表示される名前" required>
             <Input
               value={profile.values.displayName}
-              onChange={(e) => profile.updateValue('displayName', e.target.value)}
+              onChange={handleDisplayNameChange}
               placeholder="表示名を入力"
               required
             />
@@ -193,7 +225,7 @@ const AccountSettings = () => {
             <Input
               type="email"
               value={profile.values.email}
-              onChange={(e) => profile.updateValue('email', e.target.value)}
+              onChange={handleEmailChange}
               placeholder="メールアドレスを入力"
               required
             />
@@ -253,7 +285,7 @@ const AccountSettings = () => {
                   <button
                     key={icon}
                     type="button"
-                    onClick={() => profile.updateValue('selectedIcon', icon)}
+                    onClick={createIconSelectHandler(icon)}
                     className={`flex h-10 w-10 items-center justify-center rounded-lg border text-2xl transition-all duration-200 hover:scale-110 ${
                       profile.values.selectedIcon === icon
                         ? `${colors.primary.DEFAULT} text-white ring-2 ring-blue-300`
@@ -276,25 +308,25 @@ const AccountSettings = () => {
           <Input
             type="password"
             value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
+            onChange={handleCurrentPasswordChange}
             placeholder="現在のパスワード"
             required
           />
           <Input
             type="password"
             value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            onChange={handleNewPasswordChange}
             placeholder="新しいパスワード"
             required
           />
           <Input
             type="password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={handleConfirmPasswordChange}
             placeholder="新しいパスワード（確認）"
             required
           />
-          {passwordError && <p className={`${semantic.error.text} text-sm`}>{passwordError}</p>}
+          {passwordError ? <p className={`${semantic.error.text} text-sm`}>{passwordError}</p> : null}
           <div className="flex justify-end">
             <Button type="submit" disabled={isPasswordLoading}>
               {isPasswordLoading ? 'パスワード更新中...' : 'パスワードを更新'}
@@ -316,7 +348,7 @@ const AccountSettings = () => {
           </div>
           <Switch
             checked={security.values.twoFactorEnabled}
-            onCheckedChange={(checked) => security.updateValue('twoFactorEnabled', checked)}
+            onCheckedChange={handleTwoFactorChange}
           />
         </div>
 

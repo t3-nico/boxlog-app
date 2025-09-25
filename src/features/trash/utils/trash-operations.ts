@@ -83,7 +83,7 @@ export const trashOperations = {
    * アイテムタイプの設定を取得
    */
   getTypeConfig: (type: TrashItemType) => {
-    return TRASH_ITEM_CONFIG[type] || {
+    return (Object.prototype.hasOwnProperty.call(TRASH_ITEM_CONFIG, type) ? TRASH_ITEM_CONFIG[type as keyof typeof TRASH_ITEM_CONFIG] : null) || {
       icon: '❓',
       color: '#6B7280',
       label: 'Unknown'
@@ -122,7 +122,7 @@ export const trashOperations = {
       unitIndex++
     }
     
-    return `${size.toFixed(1)} ${units[unitIndex]}`
+    return `${size.toFixed(1)} ${unitIndex < units.length ? units[unitIndex] || 'B' : 'B'}`
   },
 
   /**
@@ -139,7 +139,7 @@ export const trashOperations = {
       '/settings': '設定'
     }
     
-    return pathMap[deletedFrom] || deletedFrom
+    return (Object.prototype.hasOwnProperty.call(pathMap, deletedFrom) ? pathMap[deletedFrom as keyof typeof pathMap] : null) || deletedFrom
   },
 
   /**
@@ -221,7 +221,9 @@ export const trashOperations = {
       'tag', 'folder', 'record', 'template'
     ]
     types.forEach(type => {
-      groups[type] = []
+      if (Object.prototype.hasOwnProperty.call(groups, type)) {
+        groups[type] = []
+      }
     })
     
     // アイテムを分類
@@ -240,10 +242,12 @@ export const trashOperations = {
   groupByDeletedDate: (items: TrashItem[]): Record<string, TrashItem[]> => {
     return items.reduce((groups, item) => {
       const dateKey = item.deletedAt.toDateString()
-      if (!groups[dateKey]) {
+      if (!Object.prototype.hasOwnProperty.call(groups, dateKey)) {
         groups[dateKey] = []
       }
-      groups[dateKey].push(item)
+      if (groups[dateKey]) {
+        groups[dateKey].push(item)
+      }
       return groups
     }, {} as Record<string, TrashItem[]>)
   },

@@ -171,7 +171,7 @@ export const LoginForm = ({ className, ...props }: React.ComponentProps<'form'>)
               required
             />
           </div>
-          {error && <div className="text-destructive text-center text-sm">{error}</div>}
+          {error ? <div className="text-destructive text-center text-sm">{error}</div> : null}
           <Button type="submit" className="w-full" disabled={loading || mfaCode.length !== 6}>
             {loading ? 'Verifying...' : 'Verify'}
           </Button>
@@ -228,7 +228,7 @@ export const LoginForm = ({ className, ...props }: React.ComponentProps<'form'>)
             required
           />
         </div>
-        {error && <div className="text-destructive text-center text-sm">{error}</div>}
+        {error ? <div className="text-destructive text-center text-sm">{error}</div> : null}
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
         </Button>

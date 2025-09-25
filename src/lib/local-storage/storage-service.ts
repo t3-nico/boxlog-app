@@ -141,8 +141,11 @@ export class LocalStorageService {
   private calculateStorageSize(): number {
     let total = 0
     for (const key in localStorage) {
-      if (localStorage.hasOwnProperty(key)) {
-        total += localStorage[key as keyof typeof localStorage].length + key.length
+      if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
+        const value = localStorage.getItem(key)
+        if (value !== null) {
+          total += value.length + key.length
+        }
       }
     }
     return total
@@ -255,14 +258,21 @@ export class LocalStorageService {
         return null
       }
 
+      const currentEvent = eventIndex >= 0 && eventIndex < events.length ? events[eventIndex] : null
+      if (!currentEvent) {
+        return null
+      }
+
       const updatedEvent: LocalEvent = {
-        ...events[eventIndex as keyof typeof events],
+        ...currentEvent,
         ...updates,
         id, // IDは変更不可
         updatedAt: new Date(),
       }
 
-      events[eventIndex] = updatedEvent
+      if (eventIndex >= 0 && eventIndex < events.length) {
+        events[eventIndex] = updatedEvent
+      }
 
       const storedEvents = events.map((e) => this.eventToStored(e))
       localStorage.setItem(this.EVENTS_KEY, this.safeJsonStringify(storedEvents))
@@ -285,7 +295,9 @@ export class LocalStorageService {
       }
 
       if (soft) {
-        events[eventIndex].deletedAt = new Date()
+        if (eventIndex >= 0 && eventIndex < events.length) {
+          events[eventIndex].deletedAt = new Date()
+        }
       } else {
         events.splice(eventIndex, 1)
       }
@@ -374,14 +386,21 @@ export class LocalStorageService {
         return null
       }
 
+      const currentLog = logIndex >= 0 && logIndex < logs.length ? logs[logIndex] : null
+      if (!currentLog) {
+        return null
+      }
+
       const updatedLog: LocalLog = {
-        ...logs[logIndex as keyof typeof logs],
+        ...currentLog,
         ...updates,
         id,
         updatedAt: new Date(),
       }
 
-      logs[logIndex] = updatedLog
+      if (logIndex >= 0 && logIndex < logs.length) {
+        logs[logIndex] = updatedLog
+      }
 
       const storedLogs = logs.map((l) => this.logToStored(l))
       localStorage.setItem(this.LOGS_KEY, this.safeJsonStringify(storedLogs))
@@ -404,7 +423,9 @@ export class LocalStorageService {
       }
 
       if (soft) {
-        logs[logIndex].deletedAt = new Date()
+        if (logIndex >= 0 && logIndex < logs.length) {
+          logs[logIndex].deletedAt = new Date()
+        }
       } else {
         logs.splice(logIndex, 1)
       }

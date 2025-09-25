@@ -91,43 +91,67 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// バリデーション関数
+function validateUpdateData(data: { id?: string; title?: string; status?: string }) {
+  if (!data.id || !isValidUUID(data.id)) {
+    return { error: 'Valid task ID is required', status: 400 }
+  }
+
+  if (data.title !== undefined && (typeof data.title !== 'string' || data.title.trim().length === 0)) {
+    return { error: 'Invalid title', status: 400 }
+  }
+
+  if (data.status !== undefined && !isValidTaskStatus(data.status)) {
+    return { error: 'Invalid status', status: 400 }
+  }
+
+  return null
+}
+
+// 更新データ構築関数
+function buildUpdateData(data: {
+  title?: string
+  planned_start?: string
+  planned_duration?: number
+  actual_start?: string
+  actual_end?: string
+  satisfaction?: number
+  tags?: string[]
+  memo?: string
+  status?: string
+}) {
+  const updateData: Record<string, any> = {}
+
+  if (data.title !== undefined) updateData.title = data.title.trim()
+  if (data.planned_start !== undefined) updateData.planned_start = data.planned_start
+  if (data.planned_duration !== undefined) updateData.planned_duration = data.planned_duration
+  if (data.actual_start !== undefined) updateData.actual_start = data.actual_start
+  if (data.actual_end !== undefined) updateData.actual_end = data.actual_end
+  if (data.satisfaction !== undefined) updateData.satisfaction = data.satisfaction
+  if (data.tags !== undefined) updateData.tags = Array.isArray(data.tags) ? data.tags : []
+  if (data.memo !== undefined) updateData.memo = data.memo
+  if (data.status !== undefined) updateData.status = data.status
+
+  updateData.updated_at = new Date().toISOString()
+  return updateData
+}
+
 // タスクの更新 (PUT)
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, title, planned_start, planned_duration, actual_start, actual_end, satisfaction, status, tags, memo } =
-      body
+    const { id, title, planned_start, planned_duration, actual_start, actual_end, satisfaction, status, tags, memo } = body
 
-    if (!id || !isValidUUID(id)) {
-      return NextResponse.json({ error: 'Valid task ID is required' }, { status: 400 })
+    // バリデーション
+    const validationError = validateUpdateData({ id, title, status })
+    if (validationError) {
+      return NextResponse.json({ error: validationError.error }, { status: validationError.status })
     }
 
-    const updateData: any = {}
+    // 更新データ構築
+    const updateData = buildUpdateData({ title, planned_start, planned_duration, actual_start, actual_end, satisfaction, tags, memo, status })
 
-    if (title !== undefined) {
-      if (typeof title !== 'string' || title.trim().length === 0) {
-        return NextResponse.json({ error: 'Invalid title' }, { status: 400 })
-      }
-      updateData.title = title.trim()
-    }
-
-    if (planned_start !== undefined) updateData.planned_start = planned_start
-    if (planned_duration !== undefined) updateData.planned_duration = planned_duration
-    if (actual_start !== undefined) updateData.actual_start = actual_start
-    if (actual_end !== undefined) updateData.actual_end = actual_end
-    if (satisfaction !== undefined) updateData.satisfaction = satisfaction
-    if (tags !== undefined) updateData.tags = Array.isArray(tags) ? tags : []
-    if (memo !== undefined) updateData.memo = memo
-
-    if (status !== undefined) {
-      if (!isValidTaskStatus(status)) {
-        return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
-      }
-      updateData.status = status
-    }
-
-    updateData.updated_at = new Date().toISOString()
-
+    // データベース更新
     const { data, error } = await supabase.from('tasks').update(updateData).eq('id', id).select().single()
 
     if (error) {

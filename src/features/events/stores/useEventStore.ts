@@ -544,7 +544,7 @@ export const eventSelectors = {
     activeEvents.forEach(event => {
       if (!event.startDate) return
       const dateKey = formatDate(event.startDate)
-      if (!eventsByDate[dateKey]) {
+      if (!Object.prototype.hasOwnProperty.call(eventsByDate, dateKey)) {
         eventsByDate[dateKey] = []
       }
       
@@ -560,16 +560,22 @@ export const eventSelectors = {
         isRecurring: event.isRecurring || false,
       }
       
-      eventsByDate[dateKey].push(calendarEvent)
+      const events = eventsByDate[dateKey]
+      if (events) {
+        events.push(calendarEvent)
+      }
     })
     
     // 日付内でソート
     Object.keys(eventsByDate).forEach(dateKey => {
-      eventsByDate[dateKey].sort((a, b) => {
-        const aTime = a.startDate?.getTime() || 0
-        const bTime = b.startDate?.getTime() || 0
-        return aTime - bTime
-      })
+      const events = eventsByDate[dateKey]
+      if (events) {
+        events.sort((a, b) => {
+          const aTime = a.startDate?.getTime() || 0
+          const bTime = b.startDate?.getTime() || 0
+          return aTime - bTime
+        })
+      }
     })
     
     return eventsByDate
@@ -578,7 +584,9 @@ export const eventSelectors = {
   getTodayEvents: (state: EventStore) => {
     const today = formatDate(new Date())
     const eventsByDate = eventSelectors.getEventsByDate(state)
-    return eventsByDate[today] || []
+    return Object.prototype.hasOwnProperty.call(eventsByDate, today)
+      ? eventsByDate[today]
+      : []
   },
   
   getUpcomingEvents: (state: EventStore, days = 7) => {

@@ -12,5 +12,8 @@ node scripts/bundle-size-guard.js
 # ライセンス検証（Phase 2a: BigTech標準）
 node scripts/license-checker.js
 
+# API変更検出（Phase 2b: BigTech標準）
+node scripts/api-change-detector.js
+
 # Lint-staged実行（変更されたファイルのみ）
 npx lint-staged

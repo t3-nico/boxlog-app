@@ -1,5 +1,7 @@
 'use client'
 
+import { useCallback } from 'react'
+
 import { Calendar, Plus, Settings, User } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -58,6 +60,11 @@ export const MobileNavigation = ({
     onItemClick?.(item.id)
   }
 
+  // Dynamic click handler
+  const createItemClickHandler = useCallback((item: MobileNavItem) => {
+    return () => handleItemClick(item)
+  }, [])
+
   return (
     <nav
       className={cn(
@@ -72,7 +79,7 @@ export const MobileNavigation = ({
           <button
             type="button"
             key={item.id}
-            onClick={() => handleItemClick(item)}
+            onClick={createItemClickHandler(item)}
             disabled={item.disabled}
             className={cn(
               'relative flex flex-col items-center justify-center',
@@ -88,11 +95,9 @@ export const MobileNavigation = ({
             <div className="relative">
               {item.icon}
               {/* バッジ */}
-              {item.badge && item.badge > 0 && (
-                <div className="bg-destructive text-destructive-foreground absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-xs">
+              {item.badge && item.badge > 0 ? <div className="bg-destructive text-destructive-foreground absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-xs">
                   {item.badge > 99 ? '99+' : item.badge}
-                </div>
-              )}
+                </div> : null}
             </div>
 
             {/* ラベル */}

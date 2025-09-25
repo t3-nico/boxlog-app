@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { Tag } from 'lucide-react'
@@ -132,11 +132,77 @@ export const CreateEventForm = ({
   useFormFocus(titleInputRef)
   useFormKeyboardShortcuts(formData, isValid, onSubmit)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     if (!isValid) return
     onSubmit(formData)
-  }
+  }, [isValid, onSubmit, formData])
+
+  // Form field handlers
+  const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, title: e.target.value }))
+  }, [setFormData])
+
+  const handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = new Date(e.target.value)
+    // 既存の時間を保持
+    if (formData.startDate) {
+      date.setHours(formData.startDate.getHours(), formData.startDate.getMinutes())
+    }
+    setFormData((prev) => ({ ...prev, startDate: date }))
+  }, [formData.startDate, setFormData])
+
+  const handleTypeChange = useCallback((value: EventType) => {
+    setFormData((prev) => ({ ...prev, type: value }))
+  }, [setFormData])
+
+  const handleStatusChange = useCallback((value: EventStatus) => {
+    setFormData((prev) => ({ ...prev, status: value }))
+  }, [setFormData])
+
+  const handlePriorityChange = useCallback((value: EventPriority) => {
+    setFormData((prev) => ({ ...prev, priority: value }))
+  }, [setFormData])
+
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData((prev) => ({ ...prev, description: e.target.value }))
+  }, [setFormData])
+
+  const _handleLocationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, location: e.target.value }))
+  }, [setFormData])
+
+  const _handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, url: e.target.value }))
+  }, [setFormData])
+
+  const handleStartTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(':').map(Number)
+    const date = new Date(formData.startDate || new Date())
+    date.setHours(hours, minutes)
+    setFormData((prev) => ({ ...prev, startDate: date }))
+  }, [formData.startDate, setFormData])
+
+  const handleEndTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(':').map(Number)
+    const date = new Date(formData.startDate || new Date())
+    date.setHours(hours, minutes)
+    setFormData((prev) => ({ ...prev, endDate: date }))
+  }, [formData.startDate, setFormData])
+
+  const handleRecurringChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, isRecurring: e.target.checked }))
+  }, [setFormData])
+
+  const handleRecurrenceFrequencyChange = useCallback((value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      recurrenceRule: {
+        ...prev.recurrenceRule,
+        frequency: value,
+      },
+    }))
+  }, [setFormData])
 
   return (
     <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">
@@ -149,14 +215,15 @@ export const CreateEventForm = ({
             id="title"
             placeholder="What needs to be done?"
             value={formData.title}
-            onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
+            onChange={handleTitleChange}
             className={`text-3xl font-medium md:text-4xl ${border.universal} px-6 py-6 text-neutral-900 placeholder:text-neutral-400 dark:text-neutral-50 dark:placeholder:text-neutral-500`}
           />
         </div>
 
         {/* 日付・時間 - 重要項目 */}
         <div className="space-y-3">
-          <Label className={`${body.small} font-medium`}>Date & Time</Label>
+          <fieldset>
+            <legend className={`${body.small} font-medium`}>Date & Time</legend>
 
           {/* 日付 */}
           <div>
@@ -167,14 +234,7 @@ export const CreateEventForm = ({
               type="date"
               id="event-date"
               value={formatDateForInput(formData.startDate)}
-              onChange={(e) => {
-                const date = new Date(e.target.value)
-                // 既存の時間を保持
-                if (formData.startDate) {
-                  date.setHours(formData.startDate.getHours(), formData.startDate.getMinutes())
-                }
-                setFormData((prev) => ({ ...prev, startDate: date }))
-              }}
+              onChange={handleDateChange}
               className={border.universal}
             />
           </div>
@@ -189,12 +249,7 @@ export const CreateEventForm = ({
                 type="time"
                 id="start-time"
                 value={formatTimeForInput(formData.startDate)}
-                onChange={(e) => {
-                  const [hours, minutes] = e.target.value.split(':').map(Number)
-                  const date = new Date(formData.startDate || new Date())
-                  date.setHours(hours, minutes)
-                  setFormData((prev) => ({ ...prev, startDate: date }))
-                }}
+                onChange={handleStartTimeChange}
                 className={border.universal}
               />
             </div>
@@ -206,12 +261,7 @@ export const CreateEventForm = ({
                 type="time"
                 id="end-time"
                 value={formatTimeForInput(formData.endDate)}
-                onChange={(e) => {
-                  const [hours, minutes] = e.target.value.split(':').map(Number)
-                  const date = new Date(formData.startDate || new Date())
-                  date.setHours(hours, minutes)
-                  setFormData((prev) => ({ ...prev, endDate: date }))
-                }}
+                onChange={handleEndTimeChange}
                 className={border.universal}
               />
             </div>
@@ -223,7 +273,7 @@ export const CreateEventForm = ({
               <input
                 type="checkbox"
                 checked={formData.isRecurring}
-                onChange={(e) => setFormData((prev) => ({ ...prev, isRecurring: e.target.checked }))}
+                onChange={handleRecurringChange}
                 className={`rounded ${border.universal}`}
               />
               <span className={`${body.small} font-medium`}>Repeat</span>
@@ -232,15 +282,7 @@ export const CreateEventForm = ({
             {formData.isRecurring === true && (
               <Select
                 value={formData.recurrenceRule?.frequency || 'daily'}
-                onValueChange={(value) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    recurrenceRule: {
-                      ...prev.recurrenceRule,
-                      frequency: value as 'daily' | 'weekly' | 'monthly' | 'yearly',
-                    },
-                  }))
-                }
+                onValueChange={handleRecurrenceFrequencyChange}
               >
                 <SelectTrigger className={`w-28 ${border.universal}`}>
                   <SelectValue />
@@ -254,6 +296,7 @@ export const CreateEventForm = ({
               </Select>
             )}
           </div>
+          </fieldset>
         </div>
 
         {/* タグ - 重要項目 */}
@@ -273,7 +316,7 @@ export const CreateEventForm = ({
             id="description"
             placeholder="Add description..."
             value={formData.description}
-            onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
+            onChange={handleDescriptionChange}
             rows={3}
             className={`resize-none ${border.universal}`}
           />
@@ -292,7 +335,7 @@ export const CreateEventForm = ({
             </Label>
             <Select
               value={formData.type}
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, type: value as EventType }))}
+              onValueChange={handleTypeChange}
             >
               <SelectTrigger id="full-type" className={border.universal}>
                 <SelectValue />
@@ -312,7 +355,7 @@ export const CreateEventForm = ({
             </Label>
             <Select
               value={formData.priority}
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, priority: value as EventPriority }))}
+              onValueChange={handlePriorityChange}
             >
               <SelectTrigger id="priority" className={border.universal}>
                 <SelectValue />
@@ -334,7 +377,7 @@ export const CreateEventForm = ({
             </Label>
             <Select
               value={formData.status}
-              onValueChange={(value) => setFormData((prev) => ({ ...prev, status: value as EventStatus }))}
+              onValueChange={handleStatusChange}
             >
               <SelectTrigger id="status" className={border.universal}>
                 <SelectValue />

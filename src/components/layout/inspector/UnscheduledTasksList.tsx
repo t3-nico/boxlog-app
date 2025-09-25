@@ -95,8 +95,7 @@ export const UnscheduledTasksList = () => {
                   <h4 className={cn(typography.body.DEFAULT, 'font-medium', text.primary)}>
                     {task.title}
                   </h4>
-                  {task.tags && task.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
+                  {task.tags && task.tags.length > 0 ? <div className="flex flex-wrap gap-1">
                       {task.tags.map((tag) => (
                         <span
                           key={tag}
@@ -109,8 +108,7 @@ export const UnscheduledTasksList = () => {
                           {tag}
                         </span>
                       ))}
-                    </div>
-                  )}
+                    </div> : null}
                 </div>
               </div>
             </div>

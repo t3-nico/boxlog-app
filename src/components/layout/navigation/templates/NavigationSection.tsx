@@ -60,7 +60,7 @@ export const NavigationSection = ({
             },
           })}
         >
-          {Icon && <Icon className={cn('mr-2 h-4 w-4 flex-shrink-0', text.muted)} />}
+          {Icon ? <Icon className={cn('mr-2 h-4 w-4 flex-shrink-0', text.muted)} /> : null}
 
           <h3 className={cn('flex-1', text.muted, typography.body.xs, 'font-semibold uppercase tracking-wider')}>
             {title}

@@ -497,7 +497,10 @@ const ChronoTypePage = () => {
   )
 
   const getTypeIcon = (type: ChronoTypeSchedule['type']) => {
-    const IconComponent = typeIcons[type]
+    if (!Object.prototype.hasOwnProperty.call(typeIcons, type)) {
+      return null
+    }
+    const IconComponent = typeIcons[type as keyof typeof typeIcons]
     return <IconComponent className="h-4 w-4" data-slot="icon" />
   }
 
@@ -615,21 +618,30 @@ const ChronoTypePage = () => {
 
                 <div className="mb-6">
                   <h3 className={`${typography.heading.h3} ${colors.text.primary} mb-4`}>
-                    {diagnosisQuestions[currentQuestion]?.question}
+                    {(() => {
+                      const question = currentQuestion >= 0 && currentQuestion < diagnosisQuestions.length ? diagnosisQuestions[currentQuestion] : null
+                      return question?.question || ''
+                    })()}
                   </h3>
                   <div className="space-y-3">
-                    {diagnosisQuestions[currentQuestion]?.options.map((option) => (
+                    {(() => {
+                      const question = currentQuestion >= 0 && currentQuestion < diagnosisQuestions.length ? diagnosisQuestions[currentQuestion] : null
+                      return (question?.options || []).map((option) => (
                       <button
                         type="button"
                         key={option.value}
                         onClick={handleAnswerClick}
-                        data-question-id={diagnosisQuestions[currentQuestion].id}
+                        data-question-id={(() => {
+                          const question = currentQuestion >= 0 && currentQuestion < diagnosisQuestions.length ? diagnosisQuestions[currentQuestion] : null
+                          return question?.id || ''
+                        })()}
                         data-option-value={option.value}
                         className={`w-full border p-4 text-left ${colors.border.DEFAULT} ${rounded.component.card.base} transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:hover:border-neutral-600 dark:hover:bg-neutral-800`}
                       >
                         {option.text}
                       </button>
-                    ))}
+                    ))
+                    })()}
                   </div>
                 </div>
 

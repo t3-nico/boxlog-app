@@ -291,14 +291,12 @@ export const ScrollableCalendarLayout = ({
       {/* ヘッダーエリア（非スクロール） */}
       <div className="shrink-0 flex">
         {/* UTC/タイムゾーン表示エリア（ヘッダー左端） */}
-        {showTimeColumn && showTimezone && (
-          <div 
+        {showTimeColumn && showTimezone ? <div 
             className="shrink-0 bg-muted/5 flex items-end justify-center pb-1"
             style={{ width: timeColumnWidth }}
           >
             <TimezoneOffset timezone={timezone} className="text-xs" />
-          </div>
-        )}
+          </div> : null}
         
         {/* 各ビューが独自のヘッダーを配置するエリア */}
         <div className="flex-1">
@@ -319,7 +317,7 @@ export const ScrollableCalendarLayout = ({
           onClick={handleGridClick}
           onKeyDown={handleKeyDown}
           tabIndex={enableKeyboardNavigation ? 0 : -1}
-          role={enableKeyboardNavigation ? "button" : undefined}
+          role={enableKeyboardNavigation ? "grid" : undefined}
           aria-label={enableKeyboardNavigation ? `${viewMode} view calendar` : undefined}
         >
           <style jsx>{`
@@ -374,8 +372,7 @@ export const ScrollableCalendarLayout = ({
               {children}
               
               {/* 現在時刻線 - 今日の列のみに表示 */}
-              {shouldShowCurrentTimeLine && todayColumnPosition && (
-                <>
+              {shouldShowCurrentTimeLine && todayColumnPosition ? <>
                   {/* 横線 - 今日の列のみ */}
                   <div
                     className={cn("absolute h-[2px] z-40 pointer-events-none shadow-sm bg-blue-600 dark:bg-blue-500")}
@@ -394,8 +391,7 @@ export const ScrollableCalendarLayout = ({
                       left: todayColumnPosition.left === 0 ? '-4px' : todayColumnPosition.left
                     }}
                   />
-                </>
-              )}
+                </> : null}
             </div>
           </div>
         </div>

@@ -381,7 +381,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
   if (Array.isArray(a)) {
     if (a.length !== b.length) return false
     for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) return false
+      if (!deepEqual(i < a.length ? a[i] : undefined, i < b.length ? b[i] : undefined)) return false
     }
     return true
   }

@@ -60,7 +60,7 @@ export const LoadingSpinner = ({
 
   return (
     <Loader2
-      className={cn(`animate-spin ${colors.text.muted}`, sizeClasses[size], className)}
+      className={cn(`animate-spin ${colors.text.muted}`, Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '', className)}
       aria-label={ariaLabel}
       role="status"
     />
@@ -83,7 +83,7 @@ export const RefreshSpinner = ({
 
   return (
     <RefreshCw
-      className={cn(`animate-spin ${colors.semantic.info.text}`, sizeClasses[size], className)}
+      className={cn(`animate-spin ${colors.semantic.info.text}`, Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '', className)}
       aria-label={ariaLabel}
       role="status"
     />
@@ -108,7 +108,7 @@ export const LoadingOverlay = ({
         >
           <div className={`flex flex-col items-center ${spacing.stack.sm}`}>
             <LoadingSpinner size={spinnerSize} />
-            {message && <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>{message}</p>}
+            {message ? <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>{message}</p> : null}
           </div>
         </div>
       )}
@@ -162,11 +162,11 @@ export const LoadingButton = ({
   return (
     <button
       type="button"
-      className={cn(baseClasses, variantClasses[variant], sizeClasses, className)}
+      className={cn(baseClasses, Object.prototype.hasOwnProperty.call(variantClasses, variant) ? variantClasses[variant as keyof typeof variantClasses] : '', sizeClasses, className)}
       disabled={isLoading || disabled}
       onClick={onClick}
     >
-      {isLoading && <LoadingSpinner size="sm" className="mr-2" />}
+      {isLoading ? <LoadingSpinner size="sm" className="mr-2" /> : null}
       {isLoading && loadingText ? loadingText : children}
     </button>
   )
@@ -223,10 +223,10 @@ export const SkeletonCard = ({ showAvatar = false, showImage = false, className 
         className
       )}
     >
-      {showImage && <Skeleton className={`h-40 w-full ${spacing.margin.md}`} />}
+      {showImage ? <Skeleton className={`h-40 w-full ${spacing.margin.md}`} /> : null}
 
       <div className={`flex items-start ${spacing.stack.sm}`}>
-        {showAvatar && <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" />}
+        {showAvatar ? <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" /> : null}
 
         <div className={`flex-1 ${spacing.stack.sm}`}>
           <Skeleton className="h-4 w-3/4" />

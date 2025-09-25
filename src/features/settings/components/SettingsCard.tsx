@@ -35,12 +35,11 @@ export const SettingsCard = ({
         className
       )}
     >
-      {(title || description || actions || isSaving) && (
-        <div className={`${spacing.cardVariants.default} border-b ${colors.border.alpha}`}>
+      {(title || description || actions || isSaving) ? <div className={`${spacing.cardVariants.default} border-b ${colors.border.alpha}`}>
           <div className="flex items-start justify-between">
             <div>
-              {title && <h3 className={`${typography.body.DEFAULT} font-medium ${colors.text.primary}`}>{title}</h3>}
-              {description && <p className={`mt-1 ${typography.body.small} ${colors.text.muted}`}>{description}</p>}
+              {title ? <h3 className={`${typography.body.DEFAULT} font-medium ${colors.text.primary}`}>{title}</h3> : null}
+              {description ? <p className={`mt-1 ${typography.body.small} ${colors.text.muted}`}>{description}</p> : null}
             </div>
 
             <div className="ml-4 flex flex-shrink-0 items-center gap-3">
@@ -52,11 +51,10 @@ export const SettingsCard = ({
                 </div>
               )}
 
-              {actions && <div>{actions}</div>}
+              {actions ? <div>{actions}</div> : null}
             </div>
           </div>
-        </div>
-      )}
+        </div> : null}
       <div className={cn(noPadding ? '' : spacing.cardVariants.default, typography.body.small)}>{children}</div>
     </div>
   )

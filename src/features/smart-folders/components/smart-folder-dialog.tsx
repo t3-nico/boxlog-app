@@ -160,19 +160,21 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                     <h3 className="text-md font-medium text-gray-900 dark:text-white">Basic Information</h3>
 
                     <Field>
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Folder Name *</Label>
+                      <Label htmlFor="folder-name" className="text-sm font-medium text-gray-700 dark:text-gray-300">Folder Name *</Label>
                       <Input
+                        id="folder-name"
                         value={formData.name}
                         onChange={(e) => updateField('name', e.target.value)}
                         placeholder="Enter folder name..."
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                       />
-                      {errors.name && <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p>}
+                      {errors.name ? <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p> : null}
                     </Field>
 
                     <Field>
-                      <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Description</Label>
+                      <Label htmlFor="folder-description" className="text-sm font-medium text-gray-700 dark:text-gray-300">Description</Label>
                       <Textarea
+                        id="folder-description"
                         value={formData.description}
                         onChange={(e) => updateField('description', e.target.value)}
                         placeholder="Optional description..."
@@ -184,8 +186,9 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                     {/* アイコンと色の選択 */}
                     <div className="grid grid-cols-2 gap-4">
                       <Field>
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Icon</Label>
+                        <Label htmlFor="folder-icon" className="text-sm font-medium text-gray-700 dark:text-gray-300">Icon</Label>
                         <Input
+                          id="folder-icon"
                           value={formData.icon}
                           onChange={(e) => updateField('icon', e.target.value)}
                           placeholder="📁"
@@ -194,9 +197,10 @@ export const SmartFolderDialog = ({ isOpen, onClose, onSave, folder, previewItem
                       </Field>
 
                       <Field>
-                        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Color</Label>
+                        <Label htmlFor="folder-color" className="text-sm font-medium text-gray-700 dark:text-gray-300">Color</Label>
                         <div className="mt-1 flex items-center gap-2">
                           <input
+                            id="folder-color"
                             type="color"
                             value={formData.color}
                             onChange={(e) => updateField('color', e.target.value)}

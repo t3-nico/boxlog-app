@@ -107,6 +107,8 @@ export const TagsTrigger = ({ className, placeholder = 'Select tags...' }: TagsT
       variant="outline"
       role="combobox"
       aria-expanded={open}
+      aria-controls="tags-listbox"
+      aria-label="Select tags"
       className={cn('h-auto min-h-10 min-w-48 items-start justify-between', className)}
       onClick={() => setOpen(!open)}
     >
@@ -221,8 +223,7 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
   return (
     <CommandList>
       {children}
-      {onCreateTag && searchValue.trim() && !hasExactMatch && (
-        <CommandGroup>
+      {onCreateTag && searchValue.trim() && !hasExactMatch ? <CommandGroup>
           <CommandItem
             onSelect={() => {
               onCreateTag(searchValue.trim())
@@ -234,8 +235,7 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
               <span>Create &quot;{searchValue.trim()}&quot;</span>
             </div>
           </CommandItem>
-        </CommandGroup>
-      )}
+        </CommandGroup> : null}
     </CommandList>
   )
 }
@@ -299,9 +299,9 @@ export const SimpleTags = ({ value, onValueChange, options, placeholder, classNa
             <TagsGroup>
               {options.map((option) => (
                 <TagsItem key={option.id} value={option.id}>
-                  {option.color && <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} />}
+                  {option.color ? <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} /> : null}
                   <span>{option.name}</span>
-                  {option.count && <span className="text-muted-foreground ml-auto text-xs">({option.count})</span>}
+                  {option.count ? <span className="text-muted-foreground ml-auto text-xs">({option.count})</span> : null}
                 </TagsItem>
               ))}
             </TagsGroup>

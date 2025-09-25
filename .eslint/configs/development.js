@@ -23,12 +23,14 @@ module.exports = {
     // 複雑度チェック（開発環境：警告レベル - リーダブルコード促進）
     complexity: ['warn', 15],
 
-    // 人間中心設計ルールは開発環境では警告レベル（段階的導入）
-    'jsx-a11y/alt-text': 'warn',
-    'jsx-a11y/click-events-have-key-events': 'warn',
-    'jsx-a11y/no-autofocus': 'warn',
-    'jsx-a11y/heading-has-content': 'warn',
-    'jsx-a11y/anchor-has-content': 'warn',
+    // 人間中心設計ルールは本番error必須（アクセシビリティ強化）
+    'jsx-a11y/alt-text': 'error',
+    'jsx-a11y/click-events-have-key-events': 'error',
+    'jsx-a11y/no-autofocus': 'warn',  // autofocusは状況により必要な場合があるためwarn維持
+    'jsx-a11y/heading-has-content': 'error',
+    'jsx-a11y/anchor-has-content': 'error',
+    'jsx-a11y/interactive-supports-focus': 'error',  // インタラクティブ要素はフォーカス可能必須
+    'jsx-a11y/label-has-associated-control': 'error',  // フォーム要素のラベル必須
     // 外部リンクセキュリティ（Google基準 - 開発環境でも警告）
     'react/jsx-no-target-blank': [
       'warn',

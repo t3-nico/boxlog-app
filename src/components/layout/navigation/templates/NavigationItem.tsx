@@ -66,7 +66,7 @@ export const NavigationItem = ({
         'flex w-full items-center text-left transition-all',
         componentRadius.button.md,
         animations.transition.fast,
-        variantStyles[variant],
+        Object.prototype.hasOwnProperty.call(variantStyles, variant) ? variantStyles[variant as keyof typeof variantStyles] : variantStyles.default,
         (variant === 'compact' || variant === 'minimal') && typography.body.base,
         isActive
           ? `${selection.text} ${selection.DEFAULT}`
@@ -81,7 +81,7 @@ export const NavigationItem = ({
         <Icon
           className={cn(
             'flex-shrink-0',
-            iconSizes[variant],
+            Object.prototype.hasOwnProperty.call(iconSizes, variant) ? iconSizes[variant as keyof typeof iconSizes] : iconSizes.default,
             isActive ? selection.text.replace('text-', '') : text.muted.replace('text-', '')
           )}
         />
@@ -106,7 +106,7 @@ export const NavigationItem = ({
       )}
 
       {/* Children (for custom content) */}
-      {children && <div className="ml-auto flex-shrink-0">{children}</div>}
+      {children ? <div className="ml-auto flex-shrink-0">{children}</div> : null}
     </button>
   )
 }

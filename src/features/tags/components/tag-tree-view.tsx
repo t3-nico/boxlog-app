@@ -207,8 +207,7 @@ const TagTreeNode = ({
       </div>
 
       {/* 子タグ */}
-      {hasChildren && isExpanded && (
-        <div className="space-y-1">
+      {hasChildren && isExpanded ? <div className="space-y-1">
           {tag.children.map((child) => (
             <TagTreeNode
               key={child.id}
@@ -222,8 +221,7 @@ const TagTreeNode = ({
               onRenameTag={onRenameTag}
             />
           ))}
-        </div>
-      )}
+        </div> : null}
     </div>
   )
 }

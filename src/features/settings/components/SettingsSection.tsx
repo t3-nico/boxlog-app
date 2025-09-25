@@ -20,8 +20,7 @@ export const SettingsSection = ({
 }: SettingsSectionProps) => {
   return (
     <div className={cn(spacing.stackGap.lg, className)}>
-      {(title || description) && (
-        <div>
+      {(title || description) ? <div>
           {title != null && (
             <h2 className={`${typography.heading.h4} ${colors.text.primary}`}>
               {title}
@@ -32,8 +31,7 @@ export const SettingsSection = ({
               {description}
             </p>
           )}
-        </div>
-      )}
+        </div> : null}
       <div>
         {children}
       </div>

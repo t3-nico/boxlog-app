@@ -136,8 +136,7 @@ export const MobileHeader = ({
       </div>
 
       {/* ビュー切り替えメニュー */}
-      {isViewMenuOpen && onViewChange && (
-        <>
+      {isViewMenuOpen && onViewChange ? <>
           {/* オーバーレイ */}
           <div
             className="fixed inset-0 z-50 bg-black/20"
@@ -173,8 +172,7 @@ export const MobileHeader = ({
               ))}
             </div>
           </div>
-        </>
-      )}
+        </> : null}
     </header>
   )
 }

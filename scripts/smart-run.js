@@ -5,9 +5,10 @@
  * 1Password認証を自動化し、透明な開発体験を提供
  */
 
-const OnePasswordAutomation = require('./1password-automation')
 const { execSync } = require('child_process')
 const fs = require('fs')
+
+const OnePasswordAutomation = require('./1password-automation')
 
 class SmartRunner {
   constructor() {

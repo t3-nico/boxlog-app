@@ -167,8 +167,7 @@ export const CalendarDropZone = ({
       {children}
       
       {/* ドロップ位置インジケーター */}
-      {showDropIndicator && isOver && canDrop && dropPosition !== null && (
-        <>
+      {showDropIndicator && isOver && canDrop && dropPosition !== null ? <>
           <div
             className="absolute left-0 right-0 h-[2px] bg-primary z-50 pointer-events-none"
             style={{ 
@@ -195,8 +194,7 @@ export const CalendarDropZone = ({
               }}
             />
           )}
-        </>
-      )}
+        </> : null}
     </div>
   )
 }

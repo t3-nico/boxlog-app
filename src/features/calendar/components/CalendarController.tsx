@@ -655,6 +655,11 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [changeView, updateSettings]
   )
 
+  // Navigation callback handlers
+  const handleNavigatePrev = useCallback(() => handleNavigate('prev'), [handleNavigate])
+  const handleNavigateNext = useCallback(() => handleNavigate('next'), [handleNavigate])
+  const handleNavigateToday = useCallback(() => handleNavigate('today'), [handleNavigate])
+
   // キーボードショートカット
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -725,9 +730,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onEmptyClick: handleEmptyClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
       onViewChange: handleViewChange,
-      onNavigatePrev: () => handleNavigate('prev'),
-      onNavigateNext: () => handleNavigate('next'),
-      onNavigateToday: () => handleNavigate('today'),
+      onNavigatePrev: handleNavigatePrev,
+      onNavigateNext: handleNavigateNext,
+      onNavigateToday: handleNavigateToday,
     }
 
     switch (viewType) {
@@ -939,7 +944,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         selectedDate={currentDate}
         onDateSelect={handleDateSelect}
         onCreateEvent={handleCreateEvent}
-        onGoToToday={() => handleNavigate('today')}
+        onGoToToday={handleNavigateToday}
         // Display options
         showMiniCalendar={true}
         showCalendarList={false} // まだカレンダーリストはないので無効
@@ -951,8 +956,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       </CalendarLayout>
 
       {/* イベントコンテキストメニュー */}
-      {contextMenuEvent && contextMenuPosition && (
-        <EventContextMenu
+      {contextMenuEvent && contextMenuPosition ? <EventContextMenu
           event={contextMenuEvent}
           position={contextMenuPosition}
           onClose={handleCloseContextMenu}
@@ -960,8 +964,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           onDelete={handleDeleteEvent}
           onDuplicate={handleDuplicateEvent}
           onViewDetails={handleViewDetails}
-        />
-      )}
+        /> : null}
     </DnDProvider>
   )
 }

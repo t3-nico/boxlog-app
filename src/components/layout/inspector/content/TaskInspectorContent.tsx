@@ -102,7 +102,7 @@ export const TaskInspectorContent = () => {
                       subtask.completed ? 'border-green-600 bg-green-600' : 'border-gray-300 dark:border-gray-600'
                     )}
                   >
-                    {subtask.completed && <CheckSquare className="h-3 w-3 text-white" />}
+                    {subtask.completed ? <CheckSquare className="h-3 w-3 text-white" /> : null}
                   </div>
                   <p
                     className={cn(
