@@ -49,7 +49,7 @@ export const TagManagementModal = ({
     '#f97316', // orange
   ]
 
-  const handleCreateTag = () => {
+  const handleCreateTag = useCallback(() => {
     if (newTagName.trim() && !tags.some((t) => t.name === newTagName.trim())) {
       onCreateTag({
         name: newTagName.trim(),
@@ -60,16 +60,16 @@ export const TagManagementModal = ({
       setNewTagColor('#3b82f6')
       setNewTagParentId(null)
     }
-  }
+  }, [newTagName, newTagColor, newTagParentId, tags, onCreateTag])
 
-  const handleEditTag = (tag: Tag) => {
+  const handleEditTag = useCallback((tag: Tag) => {
     setEditingTag(tag.id)
     setEditName(tag.name)
     setEditColor(tag.color)
     setEditParentId(tag.parentId || null)
-  }
+  }, [])
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = useCallback(() => {
     if (editingTag && editName.trim()) {
       onUpdateTag(editingTag, {
         name: editName.trim(),
@@ -81,16 +81,61 @@ export const TagManagementModal = ({
       setEditColor('')
       setEditParentId(null)
     }
-  }
+  }, [editingTag, editName, editColor, editParentId, onUpdateTag])
 
-  const handleCancelEdit = () => {
+  const handleCancelEdit = useCallback(() => {
     setEditingTag(null)
     setEditName('')
     setEditColor('')
     setEditParentId(null)
-  }
+  }, [])
 
   // useCallback handlers for jsx-no-bind optimization
+  const handleNewTagNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewTagName(e.target.value)
+  }, [])
+
+  const handleNewTagNameKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleCreateTag()
+      }
+    },
+    [handleCreateTag]
+  )
+
+  const handleNewTagParentChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setNewTagParentId(e.target.value || null)
+  }, [])
+
+  const handleEditNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditName(e.target.value)
+  }, [])
+
+  const handleEditNameKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleSaveEdit()
+      } else if (e.key === 'Escape') {
+        handleCancelEdit()
+      }
+    },
+    [handleSaveEdit, handleCancelEdit]
+  )
+
+  const handleEditParentChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEditParentId(e.target.value || null)
+  }, [])
+
+  const handleOverlayKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    },
+    [onClose]
+  )
+
   const handleNewTagColorSelect = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     const color = event.currentTarget.dataset.color
     if (color) {
@@ -156,11 +201,7 @@ export const TagManagementModal = ({
         tabIndex={0}
         className="fixed inset-0 z-50 bg-black bg-opacity-50"
         onClick={onClose}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') {
-            onClose()
-          }
-        }}
+        onKeyDown={handleOverlayKeyDown}
         aria-label="モーダルを閉じる"
       />
 
@@ -195,14 +236,10 @@ export const TagManagementModal = ({
                   id="new-tag-name"
                   type="text"
                   value={newTagName}
-                  onChange={(e) => setNewTagName(e.target.value)}
+                  onChange={handleNewTagNameChange}
                   placeholder="Enter tag name..."
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleCreateTag()
-                    }
-                  }}
+                  onKeyDown={handleNewTagNameKeyDown}
                 />
               </div>
 
@@ -216,7 +253,7 @@ export const TagManagementModal = ({
                 <select
                   id="new-tag-parent"
                   value={newTagParentId || ''}
-                  onChange={(e) => setNewTagParentId(e.target.value || null)}
+                  onChange={handleNewTagParentChange}
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="">None (Root Level)</option>
@@ -287,20 +324,14 @@ export const TagManagementModal = ({
                           <input
                             type="text"
                             value={editName}
-                            onChange={(e) => setEditName(e.target.value)}
+                            onChange={handleEditNameChange}
                             className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                handleSaveEdit()
-                              } else if (e.key === 'Escape') {
-                                handleCancelEdit()
-                              }
-                            }}
+                            onKeyDown={handleEditNameKeyDown}
                           />
 
                           <select
                             value={editParentId || ''}
-                            onChange={(e) => setEditParentId(e.target.value || null)}
+                            onChange={handleEditParentChange}
                             className="w-full rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           >
                             <option value="">None (Root Level)</option>

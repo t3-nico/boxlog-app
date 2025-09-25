@@ -41,6 +41,21 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
     setCustomColor(value)
   }, [value])
 
+  const handlePresetColorClick = useCallback(
+    (index: number) => {
+      onChange(TAG_PRESET_COLORS[index])
+    },
+    [onChange]
+  )
+
+  const handleCustomColorChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setCustomColor(e.target.value)
+      onChange(e.target.value)
+    },
+    [onChange]
+  )
+
   return (
     <div className="space-y-3">
       {/* プリセットカラー */}
@@ -49,7 +64,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
           <button
             type="button"
             key={color}
-            onClick={() => onChange(TAG_PRESET_COLORS[index])}
+            onClick={() => handlePresetColorClick(index)}
             className={`h-8 w-8 rounded-full border-2 transition-all ${
               value === TAG_PRESET_COLORS[index]
                 ? 'scale-110 border-gray-900 dark:border-white'
@@ -66,10 +81,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
         <input
           type="color"
           value={customColor}
-          onChange={(e) => {
-            setCustomColor(e.target.value)
-            onChange(e.target.value)
-          }}
+          onChange={handleCustomColorChange}
           className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
         <span className="text-sm text-gray-500 dark:text-gray-400">カスタムカラー: {customColor}</span>
@@ -204,32 +216,52 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
     return Object.keys(newErrors).length === 0
   }, [formData, allTags])
 
+  // フォームフィールド変更ハンドラー
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, name: e.target.value }))
+  }, [])
+
+  const handleParentIdChange = useCallback((parentId: string | null) => {
+    setFormData((prev) => ({ ...prev, parent_id: parentId }))
+  }, [])
+
+  const handleColorChange = useCallback((color: string) => {
+    setFormData((prev) => ({ ...prev, color }))
+  }, [])
+
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData((prev) => ({ ...prev, description: e.target.value }))
+  }, [])
+
   // フォーム送信
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
 
-    if (!validateForm()) return
+      if (!validateForm()) return
 
-    setIsLoading(true)
-    try {
-      const selectedParentTag = allTags.find((tag) => tag.id === formData.parent_id)
-      const level: TagLevel = selectedParentTag ? ((selectedParentTag.level + 1) as TagLevel) : 0
+      setIsLoading(true)
+      try {
+        const selectedParentTag = allTags.find((tag) => tag.id === formData.parent_id)
+        const level: TagLevel = selectedParentTag ? ((selectedParentTag.level + 1) as TagLevel) : 0
 
-      await onSave({
-        name: formData.name.trim(),
-        parent_id: formData.parent_id,
-        color: formData.color,
-        description: formData.description.trim() || null,
-        level,
-      })
-      onClose()
-    } catch (error) {
-      console.error('Tag creation failed:', error)
-      setErrors({ submit: 'タグの作成に失敗しました' })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+        await onSave({
+          name: formData.name.trim(),
+          parent_id: formData.parent_id,
+          color: formData.color,
+          description: formData.description.trim() || null,
+          level,
+        })
+        onClose()
+      } catch (error) {
+        console.error('Tag creation failed:', error)
+        setErrors({ submit: 'タグの作成に失敗しました' })
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [formData, validateForm, onSave, onClose, allTags]
+  )
 
   const selectedParentTag = formData.parent_id
     ? allTags.find((t) => t.id === formData.parent_id) ||
@@ -252,7 +284,9 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
                   新しいタグを作成
                 </DialogTitle>
-                {parentTag ? <p className="text-sm text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</p> : null}
+                {parentTag ? (
+                  <p className="text-sm text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</p>
+                ) : null}
               </div>
             </div>
 
@@ -269,12 +303,14 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
           <form onSubmit={handleSubmit} className="space-y-6 p-6">
             {/* タグ名 */}
             <Field>
-              <Label htmlFor="tag-name" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">タグ名 *</Label>
+              <Label htmlFor="tag-name" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                タグ名 *
+              </Label>
               <Input
                 id="tag-name"
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={handleNameChange}
                 placeholder="例: 仕事、プロジェクトA"
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                 required
@@ -284,11 +320,16 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
 
             {/* 親タグ選択 */}
             <Field>
-              <Label htmlFor="parent-tag-selector" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">親タグ</Label>
+              <Label
+                htmlFor="parent-tag-selector"
+                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                親タグ
+              </Label>
               <ParentTagSelector
                 id="parent-tag-selector"
                 value={formData.parent_id}
-                onChange={(parentId) => setFormData({ ...formData, parent_id: parentId })}
+                onChange={handleParentIdChange}
                 allTags={allTags}
                 maxLevel={2}
               />
@@ -297,16 +338,24 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
 
             {/* カラー選択 */}
             <Field>
-              <Label htmlFor="tag-color" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
-              <ColorPicker id="tag-color" value={formData.color} onChange={(color) => setFormData({ ...formData, color })} />
+              <Label htmlFor="tag-color" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                カラー
+              </Label>
+              <ColorPicker id="tag-color" value={formData.color} onChange={handleColorChange} />
             </Field>
 
             {/* 説明 */}
             <Field>
-              <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">説明（任意）</Label>
+              <Label
+                htmlFor="tag-description"
+                className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                説明（任意）
+              </Label>
               <Textarea
+                id="tag-description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={handleDescriptionChange}
                 placeholder="このタグの用途や説明を入力..."
                 rows={3}
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"

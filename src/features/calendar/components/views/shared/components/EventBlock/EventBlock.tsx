@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { calendarColors } from '@/features/calendar/theme'
 
@@ -40,12 +40,16 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   const scheduledColors = calendarColors.event.scheduled
 
   // positionが未定義の場合のデフォルト値
-  const safePosition = position || {
-    top: 0,
-    left: 0,
-    width: 100,
-    height: MIN_EVENT_HEIGHT,
-  }
+  const safePosition = useMemo(
+    () =>
+      position || {
+        top: 0,
+        left: 0,
+        width: 100,
+        height: MIN_EVENT_HEIGHT,
+      },
+    [position]
+  )
 
   // 動的スタイルを計算
   const dynamicStyle: React.CSSProperties = {
@@ -60,34 +64,89 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   }
 
   // イベントハンドラー
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onClick?.(event)
-  }
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onClick?.(event)
+    },
+    [onClick, event]
+  )
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onDoubleClick?.(event)
-  }
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onDoubleClick?.(event)
+    },
+    [onDoubleClick, event]
+  )
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    onContextMenu?.(event, e)
-  }
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      onContextMenu?.(event, e)
+    },
+    [onContextMenu, event]
+  )
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) {
-      // 左クリックのみ
-      onDragStart?.(event)
-    }
-  }
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.button === 0) {
+        // 左クリックのみ
+        onDragStart?.(event)
+      }
+    },
+    [onDragStart, event]
+  )
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (isDragging) {
       onDragEnd?.(event)
     }
-  }
+  }, [isDragging, onDragEnd, event])
+
+  // ホバー状態制御
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true)
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false)
+  }, [])
+
+  // キーボードイベントハンドラー
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        // キーボードイベントの場合はeventオブジェクトを直接渡す
+        onClick?.(event)
+      }
+    },
+    [onClick, event]
+  )
+
+  // リサイズハンドラー
+  const handleResizeMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      e.preventDefault()
+      onResizeStart?.(event, 'bottom', e, {
+        top: safePosition.top,
+        left: safePosition.left,
+        width: safePosition.width,
+        height: safePosition.height,
+      })
+    },
+    [onResizeStart, event, safePosition]
+  )
+
+  const handleResizeKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      // キーボードでのリサイズ操作の代替手段
+    }
+  }, [])
 
   // Escキーでドラッグをキャンセル
   useEffect(() => {
@@ -132,15 +191,9 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
       onContextMenu={handleContextMenu}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          // キーボードイベントの場合はeventオブジェクトを直接渡す
-          onClick?.(event)
-        }
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onKeyDown={handleKeyDown}
       draggable={false} // HTML5 draggableは使わない
       role="button"
       tabIndex={0}
@@ -170,22 +223,8 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
         aria-valuenow={safePosition.height}
         aria-valuemin={20}
         aria-valuemax={480}
-        onMouseDown={(e) => {
-          e.stopPropagation()
-          e.preventDefault()
-          onResizeStart?.(event, 'bottom', e, {
-            top: safePosition.top,
-            left: safePosition.left,
-            width: safePosition.width,
-            height: safePosition.height,
-          })
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            // キーボードでのリサイズ操作の代替手段
-          }
-        }}
+        onMouseDown={handleResizeMouseDown}
+        onKeyDown={handleResizeKeyDown}
         style={{
           height: '8px',
           zIndex: 10,

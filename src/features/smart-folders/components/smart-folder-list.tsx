@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import {
   closestCenter,
@@ -76,6 +76,32 @@ const SortableSmartFolderItem = ({
     opacity: isDragging ? 0.5 : 1,
   }
 
+  // イベントハンドラー
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      onContextMenu(e, folder)
+    },
+    [onContextMenu, folder]
+  )
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onClick()
+      }
+    },
+    [onClick]
+  )
+
+  const handleMenuButtonClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      onContextMenu(e, folder)
+    },
+    [onContextMenu, folder]
+  )
+
   return (
     <div
       ref={setNodeRef}
@@ -91,13 +117,8 @@ const SortableSmartFolderItem = ({
         }
       )}
       onClick={onClick}
-      onContextMenu={(e) => onContextMenu(e, folder)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onClick()
-        }
-      }}
+      onContextMenu={handleContextMenu}
+      onKeyDown={handleKeyDown}
       aria-label={`スマートフォルダー: ${folder.name}`}
     >
       <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -141,10 +162,7 @@ const SortableSmartFolderItem = ({
           {!folder.isSystem && (
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation()
-                onContextMenu(e, folder)
-              }}
+              onClick={handleMenuButtonClick}
               className="rounded p-2 opacity-0 transition-all hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-700"
             >
               <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
@@ -323,6 +341,54 @@ export const SmartFolderList = ({
     [editingFolder, updateMutation]
   )
 
+  // SortableSmartFolderItem用のハンドラー
+  const handleItemClick = useCallback(
+    (folderId: string) => {
+      handleSelectFolder(folderId)
+    },
+    [handleSelectFolder]
+  )
+
+  // セクションヘッダー用ハンドラー
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded(!isExpanded)
+  }, [isExpanded])
+
+  const openCreateDialog = useCallback(() => {
+    setShowCreateDialog(true)
+  }, [])
+
+  // ダイアログ用ハンドラー
+  const closeCreateDialog = useCallback(() => {
+    setShowCreateDialog(false)
+  }, [])
+
+  const closeEditDialog = useCallback(() => {
+    setShowEditDialog(false)
+    setEditingFolder(undefined)
+  }, [])
+
+  const closeContextMenu = useCallback(() => {
+    setContextMenu(null)
+  }, [])
+
+  const emptyHandler = useCallback(() => {}, [])
+
+  // フォルダー別のクリックハンドラーをメモ化
+  const systemFolderHandlers = useMemo(() => {
+    return systemFolders.map((folder) => ({
+      id: folder.id,
+      onClick: () => handleItemClick(folder.id),
+    }))
+  }, [systemFolders, handleItemClick])
+
+  const userFolderHandlers = useMemo(() => {
+    return userFolders.map((folder) => ({
+      id: folder.id,
+      onClick: () => handleItemClick(folder.id),
+    }))
+  }, [userFolders, handleItemClick])
+
   if (collapsed) {
     return null
   }
@@ -333,7 +399,7 @@ export const SmartFolderList = ({
       <div className="flex w-full items-center justify-between">
         <button
           type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={toggleExpanded}
           className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-zinc-500 transition-colors hover:bg-zinc-950/5 dark:text-zinc-400 dark:hover:bg-white/5"
         >
           <span className="peer">Smart Folders</span>
@@ -347,7 +413,7 @@ export const SmartFolderList = ({
         </button>
         <button
           type="button"
-          onClick={() => setShowCreateDialog(true)}
+          onClick={openCreateDialog}
           className="section-header-button rounded p-2 transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
         >
           <PlusIcon className="h-4 w-4 text-gray-400" data-slot="icon" />
@@ -358,16 +424,19 @@ export const SmartFolderList = ({
       {isExpanded === true && (
         <div className="space-y-2">
           {/* システムフォルダ */}
-          {systemFolders.map((folder) => (
-            <SortableSmartFolderItem
-              key={folder.id}
-              folder={folder}
-              isSelected={selectedFolderId === folder.id}
-              isCollapsed={collapsed}
-              onClick={() => handleSelectFolder(folder.id)}
-              onContextMenu={handleContextMenu}
-            />
-          ))}
+          {systemFolders.map((folder) => {
+            const handler = systemFolderHandlers.find((h) => h.id === folder.id)
+            return (
+              <SortableSmartFolderItem
+                key={folder.id}
+                folder={folder}
+                isSelected={selectedFolderId === folder.id}
+                isCollapsed={collapsed}
+                onClick={handler?.onClick || emptyHandler}
+                onContextMenu={handleContextMenu}
+              />
+            )
+          })}
 
           {/* 区切り線 */}
           {systemFolders.length > 0 && userFolders.length > 0 && (
@@ -377,16 +446,19 @@ export const SmartFolderList = ({
           {/* ユーザーフォルダ（ドラッグ可能） */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={userFolders.map((f) => f.id)} strategy={verticalListSortingStrategy}>
-              {userFolders.map((folder) => (
-                <SortableSmartFolderItem
-                  key={folder.id}
-                  folder={folder}
-                  isSelected={selectedFolderId === folder.id}
-                  isCollapsed={collapsed}
-                  onClick={() => handleSelectFolder(folder.id)}
-                  onContextMenu={handleContextMenu}
-                />
-              ))}
+              {userFolders.map((folder) => {
+                const handler = userFolderHandlers.find((h) => h.id === folder.id)
+                return (
+                  <SortableSmartFolderItem
+                    key={folder.id}
+                    folder={folder}
+                    isSelected={selectedFolderId === folder.id}
+                    isCollapsed={collapsed}
+                    onClick={handler?.onClick || emptyHandler}
+                    onContextMenu={handleContextMenu}
+                  />
+                )
+              })}
             </SortableContext>
           </DndContext>
         </div>
@@ -402,14 +474,14 @@ export const SmartFolderList = ({
           onDelete={handleDelete}
           onDuplicate={handleDuplicate}
           onToggleActive={handleToggleActive}
-          onClose={() => setContextMenu(null)}
+          onClose={closeContextMenu}
         />
       )}
 
       {/* 作成ダイアログ */}
       <SmartFolderDialog
         isOpen={showCreateDialog}
-        onClose={() => setShowCreateDialog(false)}
+        onClose={closeCreateDialog}
         onSave={handleCreateFolder}
         previewItems={previewItems}
       />
@@ -417,10 +489,7 @@ export const SmartFolderList = ({
       {/* 編集ダイアログ */}
       <SmartFolderDialog
         isOpen={showEditDialog}
-        onClose={() => {
-          setShowEditDialog(false)
-          setEditingFolder(undefined)
-        }}
+        onClose={closeEditDialog}
         onSave={handleUpdateFolder}
         folder={editingFolder}
         previewItems={previewItems}

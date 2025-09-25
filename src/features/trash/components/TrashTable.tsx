@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { colors, icons, rounded, spacing, typography } from '@/config/theme'
 
@@ -27,26 +27,36 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
   const isAllSelected = items.length > 0 && items.every((item) => selectedIds.has(item.id))
   const isSomeSelected = items.some((item) => selectedIds.has(item.id))
 
-  const handleHeaderCheckboxChange = () => {
+  const handleHeaderCheckboxChange = useCallback(() => {
     if (isAllSelected) {
       deselectAll()
     } else {
       selectAll()
     }
-  }
+  }, [isAllSelected, deselectAll, selectAll])
 
-  const handleItemCheckboxChange = (itemId: string) => {
-    if (selectedIds.has(itemId)) {
-      deselectItem(itemId)
-    } else {
-      selectItem(itemId)
-    }
-  }
+  const handleItemCheckboxChange = useCallback(
+    (itemId: string) => {
+      if (selectedIds.has(itemId)) {
+        deselectItem(itemId)
+      } else {
+        selectItem(itemId)
+      }
+    },
+    [selectedIds, deselectItem, selectItem]
+  )
 
-  const handleSort = (newSortBy: typeof sort.by) => {
-    const newOrder = sort.by === newSortBy && sort.order === 'asc' ? 'desc' : 'asc'
-    setSort({ by: newSortBy, order: newOrder })
-  }
+  const handleSort = useCallback(
+    (newSortBy: typeof sort.by) => {
+      const newOrder = sort.by === newSortBy && sort.order === 'asc' ? 'desc' : 'asc'
+      setSort({ by: newSortBy, order: newOrder })
+    },
+    [sort, setSort]
+  )
+
+  const handleSortByDeletedAt = useCallback(() => handleSort('deletedAt'), [handleSort])
+  const handleSortByTitle = useCallback(() => handleSort('title'), [handleSort])
+  const handleSortByType = useCallback(() => handleSort('type'), [handleSort])
 
   const getSortIcon = (column: typeof sort.by) => {
     if (sort.by !== column) {
@@ -118,7 +128,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             <span className={colors.text.muted}>並び順:</span>
             <button
               type="button"
-              onClick={() => handleSort('deletedAt')}
+              onClick={handleSortByDeletedAt}
               className={`flex items-center ${spacing.inlineGap.xs} px-2 py-1 ${colors.text.muted} ${colors.ghost.hover} ${rounded.sm}`}
             >
               <span>削除日</span>
@@ -126,7 +136,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             </button>
             <button
               type="button"
-              onClick={() => handleSort('title')}
+              onClick={handleSortByTitle}
               className={`flex items-center ${spacing.inlineGap.xs} px-2 py-1 ${colors.text.muted} ${colors.ghost.hover} ${rounded.sm}`}
             >
               <span>タイトル</span>
@@ -134,7 +144,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             </button>
             <button
               type="button"
-              onClick={() => handleSort('type')}
+              onClick={handleSortByType}
               className={`flex items-center ${spacing.inlineGap.xs} px-2 py-1 ${colors.text.muted} ${colors.ghost.hover} ${rounded.sm}`}
             >
               <span>タイプ</span>
@@ -157,13 +167,13 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
 
             {/* その日のアイテム */}
             {dayItems.map((item) => (
-              <TrashItemRow
+              <MemoizedTrashItemRow
                 key={item.id}
                 item={item}
                 isSelected={selectedIds.has(item.id)}
-                onToggleSelect={() => handleItemCheckboxChange(item.id)}
-                onRestore={() => restoreItem(item.id)}
-                onPermanentDelete={() => permanentlyDelete(item.id)}
+                onToggleSelect={handleItemCheckboxChange}
+                onRestore={restoreItem}
+                onPermanentDelete={permanentlyDelete}
               />
             ))}
           </div>
@@ -188,6 +198,9 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
   onRestore,
   onPermanentDelete,
 }) => {
+  const handleToggleSelect = useCallback(() => onToggleSelect(item.id), [onToggleSelect, item.id])
+  const handleRestore = useCallback(() => onRestore(item.id), [onRestore, item.id])
+  const handlePermanentDelete = useCallback(() => onPermanentDelete(item.id), [onPermanentDelete, item.id])
   const typeConfig = trashOperations.getTypeConfig(item.type)
   const daysUntilDelete = trashOperations.getDaysUntilAutoDelete(item)
   const isExpiringSoon = trashOperations.isExpiringSoon(item)
@@ -204,7 +217,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={onToggleSelect}
+          onChange={handleToggleSelect}
           className={`${icons.size.sm} ${colors.primary.text} ${colors.background.elevated} border border-neutral-200 dark:border-neutral-800 ${rounded.sm} ${colors.state.focus.ring}`}
         />
       </div>
@@ -241,18 +254,23 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
 
                 {item.deletedFrom ? <span>元の場所: {trashOperations.formatDeletedFrom(item.deletedFrom)}</span> : null}
 
-                {item.metadata?.fileSize ? <span>サイズ: {trashOperations.formatFileSize(item.metadata.fileSize)}</span> : null}
+                {item.metadata?.fileSize ? (
+                  <span>サイズ: {trashOperations.formatFileSize(item.metadata.fileSize)}</span>
+                ) : null}
 
                 {/* 自動削除警告 */}
-                {(isExpired || isExpiringSoon) ? <span
+                {isExpired || isExpiringSoon ? (
+                  <span
                     className={`font-medium ${isExpired ? colors.semantic.error.text : colors.semantic.warning.text}`}
                   >
                     {isExpired ? '期限切れ' : `${daysUntilDelete}日後に自動削除`}
-                  </span> : null}
+                  </span>
+                ) : null}
               </div>
 
               {/* タグ */}
-              {item.metadata?.tags && item.metadata.tags.length > 0 ? <div className="mt-2 flex flex-wrap gap-1">
+              {item.metadata?.tags && item.metadata.tags.length > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-1">
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
                     <span
                       key={tag}
@@ -268,7 +286,8 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                       +{trashOperations.formatTags(item.metadata.tags).hidden}
                     </span>
                   )}
-                </div> : null}
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -276,7 +295,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
           <div className="ml-4 flex items-center space-x-2">
             <button
               type="button"
-              onClick={onRestore}
+              onClick={handleRestore}
               className={`px-3 py-1 ${typography.body.small} ${colors.semantic.info.text} hover:${colors.semantic.info.light} ${rounded.sm} transition-colors`}
               title="復元"
             >
@@ -284,7 +303,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
             </button>
             <button
               type="button"
-              onClick={onPermanentDelete}
+              onClick={handlePermanentDelete}
               className={`px-3 py-1 ${typography.body.small} ${colors.semantic.error.text} hover:${colors.semantic.error.light} ${rounded.sm} transition-colors`}
               title="完全削除"
             >
@@ -320,3 +339,6 @@ function formatDateHeader(date: Date): string {
     })
   }
 }
+
+// パフォーマンス最適化のためのメモ化
+const MemoizedTrashItemRow = React.memo(TrashItemRow)

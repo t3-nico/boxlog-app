@@ -120,7 +120,7 @@ function buildUpdateData(data: {
   memo?: string
   status?: string
 }) {
-  const updateData: Record<string, any> = {}
+  const updateData: Record<string, string | number | Date | null | boolean> = {}
 
   if (data.title !== undefined) updateData.title = data.title.trim()
   if (data.planned_start !== undefined) updateData.planned_start = data.planned_start
@@ -140,7 +140,8 @@ function buildUpdateData(data: {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json()
-    const { id, title, planned_start, planned_duration, actual_start, actual_end, satisfaction, status, tags, memo } = body
+    const { id, title, planned_start, planned_duration, actual_start, actual_end, satisfaction, status, tags, memo } =
+      body
 
     // バリデーション
     const validationError = validateUpdateData({ id, title, status })
@@ -149,7 +150,17 @@ export async function PUT(request: NextRequest) {
     }
 
     // 更新データ構築
-    const updateData = buildUpdateData({ title, planned_start, planned_duration, actual_start, actual_end, satisfaction, tags, memo, status })
+    const updateData = buildUpdateData({
+      title,
+      planned_start,
+      planned_duration,
+      actual_start,
+      actual_end,
+      satisfaction,
+      tags,
+      memo,
+      status,
+    })
 
     // データベース更新
     const { data, error } = await supabase.from('tasks').update(updateData).eq('id', id).select().single()

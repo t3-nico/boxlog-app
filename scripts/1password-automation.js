@@ -38,7 +38,7 @@ class OnePasswordAutomation {
         const result = execSync('op signin --raw', {
           stdio: 'pipe',
           input: process.env.OP_SESSION_TOKEN || '',
-          encoding: 'utf8'
+          encoding: 'utf8',
         })
 
         if (result.trim()) {
@@ -88,7 +88,7 @@ class OnePasswordAutomation {
           try {
             const secretValue = execSync(`op read "${line.split('=')[1]}"`, {
               stdio: 'pipe',
-              encoding: 'utf8'
+              encoding: 'utf8',
             }).trim()
 
             const varName = line.split('=')[0]
@@ -131,11 +131,7 @@ class OnePasswordAutomation {
 
     this.log('🔄 Starting secrets rotation...')
 
-    const defaultSecrets = [
-      'OPENAI_API_KEY',
-      'SUPABASE_ANON_KEY',
-      'DATABASE_URL'
-    ]
+    const defaultSecrets = ['OPENAI_API_KEY', 'SUPABASE_ANON_KEY', 'DATABASE_URL']
 
     const secretsToRotate = secretNames.length > 0 ? secretNames : defaultSecrets
     const rotationResults = []
@@ -145,7 +141,7 @@ class OnePasswordAutomation {
         // 現在のsecret取得
         const currentSecret = execSync(`op item get "${secretName}" --vault="${this.vaultName}" --format=json`, {
           stdio: 'pipe',
-          encoding: 'utf8'
+          encoding: 'utf8',
         })
 
         const secretData = JSON.parse(currentSecret)
@@ -160,7 +156,7 @@ class OnePasswordAutomation {
           rotationResults.push({
             name: secretName,
             status: 'rotated',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           })
 
           this.log(`✅ Rotated secret: ${secretName}`)
@@ -171,7 +167,7 @@ class OnePasswordAutomation {
           name: secretName,
           status: 'failed',
           error: error.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         })
       }
     }
@@ -182,13 +178,15 @@ class OnePasswordAutomation {
       results: rotationResults,
       summary: {
         total: secretsToRotate.length,
-        successful: rotationResults.filter(r => r.status === 'rotated').length,
-        failed: rotationResults.filter(r => r.status === 'failed').length
-      }
+        successful: rotationResults.filter((r) => r.status === 'rotated').length,
+        failed: rotationResults.filter((r) => r.status === 'failed').length,
+      },
     }
 
     this.saveRotationReport(rotationReport)
-    this.log(`🔄 Secrets rotation complete: ${rotationReport.summary.successful}/${rotationReport.summary.total} successful`)
+    this.log(
+      `🔄 Secrets rotation complete: ${rotationReport.summary.successful}/${rotationReport.summary.total} successful`
+    )
 
     return rotationReport
   }
@@ -225,7 +223,7 @@ class OnePasswordAutomation {
         const result = execSync(fullCommand, {
           stdio: options.silent ? 'pipe' : 'inherit',
           encoding: 'utf8',
-          cwd: options.cwd || process.cwd()
+          cwd: options.cwd || process.cwd(),
         })
 
         this.log(`✅ Command completed successfully`)
@@ -244,7 +242,7 @@ class OnePasswordAutomation {
     return new Promise((resolve, reject) => {
       const child = spawn('sh', ['-c', command], {
         stdio: 'inherit',
-        env: process.env
+        env: process.env,
       })
 
       child.on('exit', (code) => {
@@ -281,7 +279,7 @@ class OnePasswordAutomation {
       user: os.userInfo().username,
       hostname: os.hostname(),
       secrets: this.getSecretsInventory(),
-      accessLog: this.getRecentAccess()
+      accessLog: this.getRecentAccess(),
     }
 
     const auditFile = `secrets-audit-${new Date().toISOString().split('T')[0]}.json`
@@ -300,13 +298,11 @@ class OnePasswordAutomation {
     const envSecrets = this.getSecretsFromEnv()
     const codebaseSecrets = this.getSecretsFromCodebase()
 
-    const unusedSecrets = envSecrets.filter(secret =>
-      !codebaseSecrets.includes(secret)
-    )
+    const unusedSecrets = envSecrets.filter((secret) => !codebaseSecrets.includes(secret))
 
     if (unusedSecrets.length > 0) {
       this.log(`⚠️  Found ${unusedSecrets.length} potentially unused secrets:`)
-      unusedSecrets.forEach(secret => {
+      unusedSecrets.forEach((secret) => {
         console.log(`  - ${secret}`)
       })
 
@@ -334,10 +330,10 @@ class OnePasswordAutomation {
         access_control: this.checkAccessControl(),
         rotation: this.checkRotationPolicy(),
         audit_trail: this.checkAuditTrail(),
-        backup: this.checkBackupStatus()
+        backup: this.checkBackupStatus(),
       },
       score: 0,
-      recommendations: []
+      recommendations: [],
     }
 
     // スコア計算
@@ -390,7 +386,7 @@ NODE_ENV=development
     this.log(`✅ Created ${this.envFile} template`)
   }
 
-  async generateNewSecret(secretName, currentData) {
+  async generateNewSecret(secretName, _currentData) {
     // Service-specific secret generation logic
     switch (secretName) {
       case 'NEXTAUTH_SECRET':
@@ -410,13 +406,13 @@ NODE_ENV=development
     const content = fs.readFileSync(this.envFile, 'utf8')
     const opRefs = content.match(/op:\/\/[^\s]+/g) || []
 
-    return opRefs.map(ref => {
+    return opRefs.map((ref) => {
       const parts = ref.split('/')
       return {
         reference: ref,
         vault: parts[2],
         item: parts[3],
-        field: parts[4] || 'password'
+        field: parts[4] || 'password',
       }
     })
   }
@@ -425,22 +421,26 @@ NODE_ENV=development
     if (!fs.existsSync(this.envFile)) return []
 
     const content = fs.readFileSync(this.envFile, 'utf8')
-    return content.split('\n')
-      .filter(line => line.includes('='))
-      .map(line => line.split('=')[0])
-      .filter(name => name && !name.startsWith('#'))
+    return content
+      .split('\n')
+      .filter((line) => line.includes('='))
+      .map((line) => line.split('=')[0])
+      .filter((name) => name && !name.startsWith('#'))
   }
 
   getSecretsFromCodebase() {
     // コードベースから環境変数使用を検索
     try {
-      const result = execSync('grep -r "process\\.env\\." src/ --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"', {
-        encoding: 'utf8',
-        stdio: 'pipe'
-      })
+      const result = execSync(
+        'grep -r "process\\.env\\." src/ --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"',
+        {
+          encoding: 'utf8',
+          stdio: 'pipe',
+        }
+      )
 
       const matches = result.match(/process\.env\.([A-Z_]+)/g) || []
-      return [...new Set(matches.map(match => match.replace('process.env.', '')))]
+      return [...new Set(matches.map((match) => match.replace('process.env.', '')))]
     } catch (error) {
       return []
     }
@@ -461,7 +461,7 @@ NODE_ENV=development
     try {
       const vaultInfo = execSync(`op vault get "${this.vaultName}" --format=json`, {
         stdio: 'pipe',
-        encoding: 'utf8'
+        encoding: 'utf8',
       })
       const vault = JSON.parse(vaultInfo)
       return vault.permissions && vault.permissions.length > 0
@@ -491,12 +491,13 @@ NODE_ENV=development
     if (!fs.existsSync(this.logFile)) return []
 
     try {
-      const logs = fs.readFileSync(this.logFile, 'utf8')
+      const logs = fs
+        .readFileSync(this.logFile, 'utf8')
         .split('\n')
-        .filter(line => line.trim())
+        .filter((line) => line.trim())
         .slice(-10) // 最新10件
 
-      return logs.map(log => {
+      return logs.map((log) => {
         try {
           return JSON.parse(log)
         } catch {
@@ -520,8 +521,7 @@ NODE_ENV=development
       timestamp,
       message,
       details,
-      level: message.includes('❌') ? 'error' :
-             message.includes('⚠️') ? 'warn' : 'info'
+      level: message.includes('❌') ? 'error' : message.includes('⚠️') ? 'warn' : 'info',
     }
 
     console.log(`[${timestamp}] ${message} ${details}`)

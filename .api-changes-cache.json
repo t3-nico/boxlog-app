@@ -2,10 +2,7 @@
   "signatures": {
     "src/app/api/auth/route.ts": {
       "file": "src/app/api/auth/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [
         {
           "type": "query",
@@ -26,56 +23,34 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "session"
-          ]
+          "keys": ["session"]
         },
         {
-          "keys": [
-            "user"
-          ]
+          "keys": ["user"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "user",
-            "session"
-          ]
+          "keys": ["user", "session"]
         },
         {
-          "keys": [
-            "user",
-            "session"
-          ]
+          "keys": ["user", "session"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [],
@@ -83,12 +58,7 @@
     },
     "src/app/api/profiles/route.ts": {
       "file": "src/app/api/profiles/route.ts",
-      "httpMethods": [
-        "DELETE",
-        "GET",
-        "POST",
-        "PUT"
-      ],
+      "httpMethods": ["DELETE", "GET", "POST", "PUT"],
       "parameters": [
         {
           "type": "query",
@@ -117,94 +87,58 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "profile"
-          ]
+          "keys": ["profile"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "profile"
-          ]
+          "keys": ["profile"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "profile"
-          ]
+          "keys": ["profile"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [
@@ -233,12 +167,7 @@
     },
     "src/app/api/tasks/route.ts": {
       "file": "src/app/api/tasks/route.ts",
-      "httpMethods": [
-        "DELETE",
-        "GET",
-        "POST",
-        "PUT"
-      ],
+      "httpMethods": ["DELETE", "GET", "POST", "PUT"],
       "parameters": [
         {
           "type": "query",
@@ -291,94 +220,58 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "tasks"
-          ]
+          "keys": ["tasks"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "task"
-          ]
+          "keys": ["task"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "task"
-          ]
+          "keys": ["task"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [
@@ -403,8 +296,8 @@
           "field": "id"
         }
       ],
-      "contentHash": "05f4555f"
+      "contentHash": "2dbd1136"
     }
   },
-  "timestamp": "2025-09-24T23:46:57.439Z"
+  "timestamp": "2025-09-25T00:32:55.423Z"
 }

@@ -7,10 +7,10 @@
  * before they reach production
  */
 
+const { execSync } = require('child_process')
+const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
-const crypto = require('crypto')
-const { execSync } = require('child_process')
 
 // Configuration
 const CONFIG = {
@@ -28,7 +28,7 @@ const CONFIG = {
     /\.json\(\)/g,
     /request\.url/g,
     /searchParams/g,
-  ]
+  ],
 }
 
 const colors = {
@@ -88,7 +88,7 @@ function generateApiSignature(filePath) {
       parameters,
       responseStructure,
       validationRules,
-      contentHash: crypto.createHash('sha256').update(content).digest('hex').slice(0, 8)
+      contentHash: crypto.createHash('sha256').update(content).digest('hex').slice(0, 8),
     }
 
     return signature
@@ -132,10 +132,10 @@ function extractParameters(content) {
   if (match) {
     const bodyParams = match[1]
       .split(',')
-      .map(param => param.trim().split(/[=\s]/)[0])
-      .filter(param => param.length > 0)
+      .map((param) => param.trim().split(/[=\s]/)[0])
+      .filter((param) => param.length > 0)
 
-    bodyParams.forEach(param => {
+    bodyParams.forEach((param) => {
       parameters.push({ type: 'body', name: param })
     })
   }
@@ -156,8 +156,8 @@ function extractResponseStructure(content) {
   while ((match = responseRegex.exec(content)) !== null) {
     const responseKeys = match[1]
       .split(',')
-      .map(key => key.trim().split(':')[0].trim())
-      .filter(key => key.length > 0)
+      .map((key) => key.trim().split(':')[0].trim())
+      .filter((key) => key.length > 0)
 
     responses.push({ keys: responseKeys })
   }
@@ -231,7 +231,7 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
   const changes = {
     breaking: [],
     additions: [],
-    modifications: []
+    modifications: [],
   }
 
   // Check for removed or modified APIs
@@ -242,29 +242,29 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
       changes.breaking.push({
         type: 'REMOVED_API',
         file: filePath,
-        description: 'API endpoint removed'
+        description: 'API endpoint removed',
       })
       return
     }
 
     // Check HTTP methods
-    const removedMethods = oldSig.httpMethods.filter(method => !newSig.httpMethods.includes(method))
-    removedMethods.forEach(method => {
+    const removedMethods = oldSig.httpMethods.filter((method) => !newSig.httpMethods.includes(method))
+    removedMethods.forEach((method) => {
       changes.breaking.push({
         type: 'REMOVED_METHOD',
         file: filePath,
         description: `HTTP ${method} method removed`,
-        detail: method
+        detail: method,
       })
     })
 
     // Check required parameters
-    const oldRequired = oldSig.parameters.filter(p => p.type === 'query' || p.type === 'body')
-    const newRequired = newSig.parameters.filter(p => p.type === 'query' || p.type === 'body')
+    const oldRequired = oldSig.parameters.filter((p) => p.type === 'query' || p.type === 'body')
+    const newRequired = newSig.parameters.filter((p) => p.type === 'query' || p.type === 'body')
 
-    oldRequired.forEach(oldParam => {
-      const stillExists = newRequired.some(newParam =>
-        newParam.name === oldParam.name && newParam.type === oldParam.type
+    oldRequired.forEach((oldParam) => {
+      const stillExists = newRequired.some(
+        (newParam) => newParam.name === oldParam.name && newParam.type === oldParam.type
       )
 
       if (!stillExists) {
@@ -272,7 +272,7 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
           type: 'REMOVED_PARAMETER',
           file: filePath,
           description: `Required parameter '${oldParam.name}' (${oldParam.type}) removed`,
-          detail: oldParam
+          detail: oldParam,
         })
       }
     })
@@ -282,13 +282,13 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
       oldSig.responseStructure.forEach((oldResp, index) => {
         const newResp = newSig.responseStructure[index]
         if (newResp) {
-          const removedKeys = oldResp.keys.filter(key => !newResp.keys.includes(key))
-          removedKeys.forEach(key => {
+          const removedKeys = oldResp.keys.filter((key) => !newResp.keys.includes(key))
+          removedKeys.forEach((key) => {
             changes.breaking.push({
               type: 'REMOVED_RESPONSE_KEY',
               file: filePath,
               description: `Response key '${key}' removed`,
-              detail: key
+              detail: key,
             })
           })
         }
@@ -296,9 +296,9 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
     }
 
     // Check validation changes
-    oldSig.validationRules.forEach(oldRule => {
-      const stillExists = newSig.validationRules.some(newRule =>
-        newRule.type === oldRule.type && newRule.field === oldRule.field
+    oldSig.validationRules.forEach((oldRule) => {
+      const stillExists = newSig.validationRules.some(
+        (newRule) => newRule.type === oldRule.type && newRule.field === oldRule.field
       )
 
       if (!stillExists && oldRule.type === 'required') {
@@ -306,7 +306,7 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
           type: 'RELAXED_VALIDATION',
           file: filePath,
           description: `Required validation for '${oldRule.field}' removed`,
-          detail: oldRule
+          detail: oldRule,
         })
       }
     })
@@ -317,7 +317,7 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
         type: 'CONTENT_MODIFIED',
         file: filePath,
         description: 'API implementation modified',
-        detail: { oldHash: oldSig.contentHash, newHash: newSig.contentHash }
+        detail: { oldHash: oldSig.contentHash, newHash: newSig.contentHash },
       })
     }
   })
@@ -329,7 +329,7 @@ function detectBreakingChanges(oldSignatures, newSignatures) {
         type: 'NEW_API',
         file: filePath,
         description: 'New API endpoint added',
-        methods: newSig.httpMethods
+        methods: newSig.httpMethods,
       })
     }
   })
@@ -373,7 +373,7 @@ function displayResults(changes) {
 
   if (additionCount > 0) {
     console.log(`\n${colors.green}➕ New APIs Added:${colors.reset}`)
-    changes.additions.forEach(change => {
+    changes.additions.forEach((change) => {
       console.log(`   📁 ${change.file}`)
       console.log(`   🔧 Methods: ${change.methods.join(', ')}`)
     })
@@ -381,7 +381,7 @@ function displayResults(changes) {
 
   if (modificationCount > 0) {
     console.log(`\n${colors.blue}📝 API Modifications:${colors.reset}`)
-    changes.modifications.slice(0, 5).forEach(change => {
+    changes.modifications.slice(0, 5).forEach((change) => {
       console.log(`   📁 ${path.basename(change.file)} - ${change.description}`)
     })
     if (modificationCount > 5) {
@@ -400,12 +400,9 @@ function hasApiChanges() {
     const changedFiles = execSync('git diff --cached --name-only', { encoding: 'utf8' })
       .trim()
       .split('\n')
-      .filter(file => file.length > 0)
+      .filter((file) => file.length > 0)
 
-    return changedFiles.some(file =>
-      file.includes('/api/') &&
-      (file.endsWith('.ts') || file.endsWith('.js'))
-    )
+    return changedFiles.some((file) => file.includes('/api/') && (file.endsWith('.ts') || file.endsWith('.js')))
   } catch (error) {
     // If we can't determine, assume API changes might exist
     return true
@@ -440,7 +437,7 @@ function main() {
 
   // Generate current signatures
   const currentSignatures = {}
-  routes.forEach(route => {
+  routes.forEach((route) => {
     const signature = generateApiSignature(route)
     if (signature) {
       currentSignatures[route] = signature
@@ -476,5 +473,5 @@ if (require.main === module) {
 module.exports = {
   generateApiSignature,
   detectBreakingChanges,
-  getApiRoutes
+  getApiRoutes,
 }

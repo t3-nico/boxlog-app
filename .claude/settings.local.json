@@ -1,13 +1,9 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(npm run license:check:force:*)"
-    ],
+    "allow": ["Bash(npm run perf:check:force:*)"],
     "deny": [],
     "defaultMode": "ask",
     "ask": []
   },
-  "claudeMd": [
-    "docs/ai-chatbot/system-overview.md"
-  ]
+  "claudeMd": ["docs/ai-chatbot/system-overview.md"]
 }

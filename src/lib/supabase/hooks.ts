@@ -112,9 +112,18 @@ export function useAuth() {
 /**
  * プロフィール情報を管理するフック
  */
+interface Profile {
+  id: string
+  username?: string | null
+  full_name?: string | null
+  avatar_url?: string | null
+  updated_at?: string | null
+  [key: string]: unknown
+}
+
 export function useProfile() {
   const { user } = useAuth()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -135,7 +144,7 @@ export function useProfile() {
   }, [user])
 
   const updateProfile = useCallback(
-    async (updates: any) => {
+    async (updates: Partial<Profile>) => {
       if (!user) return
 
       try {

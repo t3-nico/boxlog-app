@@ -261,8 +261,9 @@ export const theme = {
  * const primaryColor = getThemeValue('colors', 'brand')
  * ```
  */
-export function getThemeValue<T extends keyof typeof theme>(category: T, key: string): any {
-  return (theme[category] as any)[key]
+export function getThemeValue<T extends keyof typeof theme>(category: T, key: string): string | undefined {
+  const categoryObj = theme[category] as Record<string, string>
+  return categoryObj && typeof categoryObj === 'object' ? categoryObj[key] : undefined
 }
 
 /**
