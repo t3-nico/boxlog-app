@@ -189,6 +189,62 @@ export const WeekCalendarLayout = ({
     return { top, height }
   }, [])
 
+  // jsx-no-bind optimization: Empty slot click handler creator
+  const createEmptySlotClickHandler = useCallback(
+    (day: Date) => {
+      return (e: React.MouseEvent | unknown) => handleEmptySlotClick(e, day)
+    },
+    [handleEmptySlotClick]
+  )
+
+  // jsx-no-bind optimization: Empty slot keyboard handler creator
+  const createEmptySlotKeyDownHandler = useCallback(
+    (day: Date) => {
+      return (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleEmptySlotClick(e as unknown, day)
+        }
+      }
+    },
+    [handleEmptySlotClick]
+  )
+
+  // jsx-no-bind optimization: Event click handler creator
+  const createEventClickHandler = useCallback(
+    (event: CalendarEvent) => {
+      return (e: React.MouseEvent) => {
+        e.stopPropagation()
+        setSelectedEventId(event.id)
+        onEventClick?.(event)
+      }
+    },
+    [setSelectedEventId, onEventClick]
+  )
+
+  // jsx-no-bind optimization: Event keyboard handler creator
+  const createEventKeyDownHandler = useCallback(
+    (event: CalendarEvent) => {
+      return (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          e.stopPropagation()
+          setSelectedEventId(event.id)
+          onEventClick?.(event)
+        }
+      }
+    },
+    [setSelectedEventId, onEventClick]
+  )
+
+  // jsx-no-bind optimization: Delete event handler creator
+  const createDeleteEventHandler = useCallback(
+    (eventId: string) => {
+      return (e: React.MouseEvent) => handleDeleteEvent(eventId, e)
+    },
+    [handleDeleteEvent]
+  )
+
   return (
     <div ref={containerRef} className="flex-1 overflow-hidden">
       <div className="full-day-scroll flex h-full overflow-y-auto">
@@ -224,13 +280,8 @@ export const WeekCalendarLayout = ({
                 <div
                   role="button"
                   tabIndex={0}
-                  onClick={(e) => handleEmptySlotClick(e, day)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      handleEmptySlotClick(e as unknown, day)
-                    }
-                  }}
+                  onClick={createEmptySlotClickHandler(day)}
+                  onKeyDown={createEmptySlotKeyDownHandler(day)}
                   className="absolute inset-0 z-10 cursor-cell"
                   aria-label={`${format(day, 'yyyy年M月d日')}の予定を追加`}
                 >
@@ -281,25 +332,14 @@ export const WeekCalendarLayout = ({
                           height: `${height}px`,
                           backgroundColor: eventColor,
                         }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setSelectedEventId(event.id)
-                          onEventClick?.(event)
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault()
-                            e.stopPropagation()
-                            setSelectedEventId(event.id)
-                            onEventClick?.(event)
-                          }
-                        }}
+                        onClick={createEventClickHandler(event)}
+                        onKeyDown={createEventKeyDownHandler(event)}
                         aria-label={`イベント: ${event.title}${event.startDate ? ` (${format(event.startDate, 'HH:mm')}開始)` : ''}`}
                       >
                         {/* ホバー時の削除ボタン */}
                         <button
                           type="button"
-                          onClick={(e) => handleDeleteEvent(event.id, e)}
+                          onClick={createDeleteEventHandler(event.id)}
                           className="absolute right-1 top-1 z-30 rounded bg-white/90 p-0.5 opacity-0 shadow-lg transition-all duration-200 hover:bg-white group-hover:opacity-100 dark:bg-gray-800/90 dark:hover:bg-gray-700"
                           title="予定を削除"
                         >

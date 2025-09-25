@@ -56,6 +56,19 @@
       "validationRules": [],
       "contentHash": "e4f3a8cc"
     },
+    "src/app/api/health/route.ts": {
+      "file": "src/app/api/health/route.ts",
+      "httpMethods": ["GET"],
+      "parameters": [],
+      "responseStructure": [],
+      "validationRules": [
+        {
+          "type": "required",
+          "field": "hasDbUrl"
+        }
+      ],
+      "contentHash": "5de31f32"
+    },
     "src/app/api/profiles/route.ts": {
       "file": "src/app/api/profiles/route.ts",
       "httpMethods": ["DELETE", "GET", "POST", "PUT"],
@@ -296,8 +309,8 @@
           "field": "id"
         }
       ],
-      "contentHash": "2dbd1136"
+      "contentHash": "fbeac8c1"
     }
   },
-  "timestamp": "2025-09-25T00:32:55.423Z"
+  "timestamp": "2025-09-25T23:16:06.361Z"
 }
