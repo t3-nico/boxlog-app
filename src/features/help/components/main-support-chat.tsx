@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 
 import { useChat } from 'ai/react'
 
@@ -12,6 +12,7 @@ import { AIMessage, AIMessageContent } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { useAuthContext } from '@/features/auth'
+import { useCurrentLocale, useTranslation } from '@/lib/i18n/hooks'
 
 // Vercel AI SDK message type extension
 interface ExtendedMessage {
@@ -72,9 +73,9 @@ const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
     {message.content}
     {message.status != null && (
       <div className="mt-1 text-xs opacity-75">
-        {message.status === 'sending' && 'Sending...'}
-        {message.status === 'error' && 'Send Error'}
-        {message.status === 'sent' && 'Sent'}
+        {message.status === 'sending' && t('help.messageStatus.sending')}
+        {message.status === 'error' && t('help.messageStatus.error')}
+        {message.status === 'sent' && t('help.messageStatus.sent')}
       </div>
     )}
   </div>
@@ -124,9 +125,11 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
       <AIMessageContent>
         {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
 
-        {isAssistant && message.createdAt ? <div className="mt-1 text-xs opacity-60">
+        {isAssistant && message.createdAt ? (
+          <div className="mt-1 text-xs opacity-60">
             {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </div> : null}
+          </div>
+        ) : null}
       </AIMessageContent>
 
       {isUser ? <UserAvatar displayName={displayName} profileIcon={profileIcon} avatarUrl={avatarUrl} /> : null}
@@ -162,7 +165,7 @@ const MainSupportChatInput = ({
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.2s' }}></div>
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.4s' }}></div>
           </div>
-          <span>Checking support info...</span>
+          <span>{t('help.status.checking')}</span>
         </div>
       )}
 
@@ -170,9 +173,9 @@ const MainSupportChatInput = ({
         <AIInputTextarea
           value={input}
           onChange={handleInputChange}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => setIsComposing(false)}
-          placeholder="Ask about BoxLog features and usage..."
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
+          placeholder={t('help.placeholder')}
           disabled={isLoading}
           minHeight={40}
           maxHeight={120}
@@ -181,7 +184,7 @@ const MainSupportChatInput = ({
           <AIInputTools>
             <div className="text-muted-foreground flex items-center gap-1 px-2 text-xs">
               <BotMessageSquare className="h-4 w-4" />
-              <span>BoxLog Usage Support</span>
+              <span>{t('help.subtitle')}</span>
             </div>
           </AIInputTools>
 
@@ -194,6 +197,41 @@ const MainSupportChatInput = ({
 
 export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
+  const [isComposing, setIsComposing] = useState(false)
+  const locale = useCurrentLocale()
+  const t = useTranslation()
+
+  // jsx-no-bind optimization: Event handlers
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false)
+  }, [])
+
+  const handleMenuToggle = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  const handleClearMessages = useCallback(() => {
+    setMessages([])
+    setShowMenu(false)
+  }, [setMessages])
+
+  const handleExportMessages = useCallback(() => {
+    const exportMessages = messages.map((msg) => ({
+      role: msg.role,
+      content: msg.content,
+      timestamp: msg.createdAt,
+    }))
+    navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
+    setShowMenu(false)
+  }, [messages])
+
+  const handleReload = useCallback(() => {
+    reload()
+  }, [reload])
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const {
@@ -218,28 +256,20 @@ export const MainSupportChat = () => {
       {
         id: '1',
         role: 'assistant',
-        content: `Hello! I'm the **BoxLog** application support assistant.
+        content: `${t('help.welcome.greeting')}
 
-I can help you with:
+${t('help.welcome.capabilities')}
 
-• 📅 **Calendar Features** - How to use calendar views
-• 📋 **Task Management** - Creating and organizing tasks
-• 🏷️ **Tag System** - Categorizing and filtering
-• 📊 **Progress Tracking** - Monitoring productivity
-• 🔄 **Smart Folders** - Automated organization
-• 🛠️ **Troubleshooting** - Solving common issues
+${t('help.welcome.features')
+  .map((feature: string) => `• ${feature}`)
+  .join('\n')}
 
-**Note**: I only provide support for BoxLog application usage.
+${t('help.welcome.note')}
 
-What would you like to know about BoxLog?`,
+${t('help.welcome.question')}`,
       },
     ],
   })
-
-  const clearMessages = () => {
-    setMessages([])
-    setShowMenu(false)
-  }
 
   return (
     <div className="bg-background flex h-full flex-col">
@@ -251,8 +281,8 @@ What would you like to know about BoxLog?`,
               <BotMessageSquare className="text-foreground h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-foreground text-lg font-semibold">BoxLog Support</h3>
-              <p className="text-muted-foreground text-sm">Your AI assistant for BoxLog usage</p>
+              <h3 className="text-foreground text-lg font-semibold">{t('help.title')}</h3>
+              <p className="text-muted-foreground text-sm">{t('help.subtitle')}</p>
             </div>
           </div>
 
@@ -268,7 +298,7 @@ What would you like to know about BoxLog?`,
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={handleMenuToggle}
                 className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-2 transition-colors"
               >
                 <MoreVertical className="h-4 w-4" />
@@ -278,27 +308,19 @@ What would you like to know about BoxLog?`,
                 <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
-                    onClick={clearMessages}
+                    onClick={handleClearMessages}
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
-                    Clear conversation
+                    {t('help.actions.clearConversation')}
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      const exportMessages = messages.map((msg) => ({
-                        role: msg.role,
-                        content: msg.content,
-                        timestamp: msg.createdAt,
-                      }))
-                      navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
-                      setShowMenu(false)
-                    }}
+                    onClick={handleExportMessages}
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />
-                    Export conversation
+                    {t('help.actions.exportConversation')}
                   </button>
                 </div>
               )}
@@ -321,33 +343,35 @@ What would you like to know about BoxLog?`,
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-sm font-medium">Connection Error</span>
+                <span className="text-sm font-medium">{t('help.status.error')}</span>
               </div>
-              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
-                Unable to connect to BoxLog support. Please check your connection and try again.
-              </p>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">{t('help.status.errorMessage')}</p>
               <button
                 type="button"
-                onClick={() => reload()}
+                onClick={handleReload}
                 className="mt-2 text-xs text-red-800 underline hover:text-red-900 dark:text-red-200 dark:hover:text-red-100"
               >
-                Retry last message
+                {t('help.status.retryMessage')}
               </button>
             </div>
           )}
 
           {messages.length === 0 ? (
             <AIMessage from="assistant">
-              <div className="bg-muted flex inline-grid size-8 shrink-0 items-center justify-center rounded-full align-middle outline -outline-offset-1 outline-black/10 dark:outline-white/10">
-                <BotMessageSquare className="text-foreground h-4 w-4" />
-              </div>
+              <AssistantIcon />
               <AIMessageContent>
                 <CodebaseAIResponse>
-                  Hello! I&apos;m the **BoxLog** application support assistant. I can help you with: • 📅 **Calendar
-                  Features** - How to use calendar views • 📋 **Task Management** - Creating and organizing tasks • 🏷️
-                  **Tag System** - Categorizing and filtering • 📊 **Progress Tracking** - Monitoring productivity • 🔄
-                  **Smart Folders** - Automated organization • 🛠️ **Troubleshooting** - Solving common issues **Note**:
-                  I only provide support for BoxLog application usage. What would you like to know about BoxLog?
+                  {t('help.welcome.greeting')}
+
+                  {t('help.welcome.capabilities')}
+
+                  {t('help.welcome.features')
+                    .map((feature: string) => `• ${feature}`)
+                    .join('\n')}
+
+                  {t('help.welcome.note')}
+
+                  {t('help.welcome.question')}
                 </CodebaseAIResponse>
               </AIMessageContent>
             </AIMessage>

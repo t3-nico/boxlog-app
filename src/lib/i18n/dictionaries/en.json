@@ -44,6 +44,157 @@
     "english": "English",
     "japanese": "Japanese"
   },
+  "help": {
+    "title": "BoxLog Support",
+    "subtitle": "Your AI assistant for BoxLog usage",
+    "placeholder": "Ask about BoxLog features and usage...",
+    "status": {
+      "checking": "Checking support info...",
+      "thinking": "BoxLog AI is thinking...",
+      "error": "Connection Error",
+      "errorMessage": "Unable to connect to BoxLog support. Please check your connection and try again.",
+      "retryMessage": "Retry last message"
+    },
+    "actions": {
+      "clearConversation": "Clear conversation",
+      "exportConversation": "Export conversation",
+      "sendMessage": "Send message"
+    },
+    "welcome": {
+      "greeting": "Hello! I'm the **BoxLog** application support assistant.",
+      "capabilities": "I can help you with:",
+      "features": [
+        "📅 **Calendar Features** - How to use calendar views",
+        "📋 **Task Management** - Creating and organizing tasks",
+        "🏷️ **Tag System** - Categorizing and filtering",
+        "📊 **Progress Tracking** - Monitoring productivity",
+        "🔄 **Smart Folders** - Automated organization",
+        "🛠️ **Troubleshooting** - Solving common issues"
+      ],
+      "note": "**Note**: I only provide support for BoxLog application usage.",
+      "question": "What would you like to know about BoxLog?"
+    },
+    "messageStatus": {
+      "sending": "Sending...",
+      "sent": "Sent",
+      "error": "Send Error"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread"
+    },
+    "empty": {
+      "all": "No notifications",
+      "unread": "No unread notifications"
+    },
+    "actions": {
+      "markAllAsRead": "Mark all as read",
+      "settings": "Notification settings",
+      "close": "Close"
+    },
+    "types": {
+      "system": "System",
+      "feature": "Feature",
+      "important": "Important",
+      "general": "General",
+      "reminder": "Reminder",
+      "task": "Task",
+      "event": "Event"
+    },
+    "messages": {
+      "meetingReminder": "Meeting reminder",
+      "meetingStartsIn": "Starts in 15 minutes",
+      "taskCompleted": "Task completed",
+      "taskCompletedMessage": "Project report has been completed",
+      "eventNotification": "Event notification",
+      "eventAddedMessage": "Tomorrow's schedule has been added",
+      "browserNotificationUnsupported": "This browser does not support notifications",
+      "browserNotificationPermissionFailed": "Failed to get notification permission",
+      "browserNotificationFailed": "Failed to display browser notification"
+    },
+    "aria": {
+      "modalBackdrop": "Modal background - click to close",
+      "closeModal": "Close modal"
+    },
+    "settings": {
+      "tabs": {
+        "list": "Notification List",
+        "settings": "Notification Settings"
+      },
+      "deliverySettings": {
+        "title": "Notification Delivery Settings",
+        "description": "Email, push, and browser notification settings",
+        "email": {
+          "label": "Email Notifications",
+          "description": "Receive important notifications via email"
+        },
+        "push": {
+          "label": "Push Notifications",
+          "description": "Push notifications to mobile devices"
+        },
+        "browser": {
+          "label": "Browser Notifications",
+          "description": "Display notifications in browser"
+        }
+      },
+      "contentSettings": {
+        "title": "Content Notifications",
+        "description": "Regular information delivery and system notifications",
+        "weeklyDigest": {
+          "label": "Weekly Digest",
+          "description": "Email delivery of weekly activity summary"
+        },
+        "system": {
+          "label": "System Notifications",
+          "description": "Receive maintenance and update information"
+        }
+      },
+      "tip": "💡 Tip: To enable browser notifications, please allow notifications in your browser settings.",
+      "saveSuccess": "Notification settings saved"
+    },
+    "list": {
+      "title": "Notifications",
+      "description": "Check the latest announcements and updates.",
+      "empty": {
+        "title": "No notifications",
+        "description": "New notifications will appear here when posted."
+      },
+      "actions": {
+        "markAsRead": "Mark as read"
+      },
+      "badges": {
+        "unread": "Unread"
+      },
+      "sampleNotifications": {
+        "maintenance": {
+          "title": "System Maintenance Notice",
+          "content": "System maintenance will be conducted on July 12, 2025 (Sat) from 2:00-4:00."
+        },
+        "newFeature": {
+          "title": "New Feature Announcement",
+          "content": "A new tagging feature has been added. More efficient information organization is now possible."
+        },
+        "termsUpdate": {
+          "title": "Terms of Service Update",
+          "content": "We have updated our Terms of Service. Please review the changes."
+        }
+      }
+    }
+  },
+  "common": {
+    "dates": {
+      "format": "MM/DD/YYYY"
+    }
+  },
+  "settings": {
+    "general": {
+      "title": "General Settings",
+      "description": "Basic application settings"
+    }
+  },
   "auth": {
     "login": {
       "title": "Sign In",

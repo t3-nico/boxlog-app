@@ -44,6 +44,157 @@
     "english": "英語",
     "japanese": "日本語"
   },
+  "help": {
+    "title": "BoxLogサポート",
+    "subtitle": "BoxLog利用のためのAIアシスタント",
+    "placeholder": "BoxLogの機能や使い方について質問してください...",
+    "status": {
+      "checking": "サポート情報を確認中...",
+      "thinking": "BoxLog AIが考えています...",
+      "error": "接続エラー",
+      "errorMessage": "BoxLogサポートに接続できませんでした。接続を確認して再試行してください。",
+      "retryMessage": "最後のメッセージを再試行"
+    },
+    "actions": {
+      "clearConversation": "会話をクリア",
+      "exportConversation": "会話をエクスポート",
+      "sendMessage": "メッセージを送信"
+    },
+    "welcome": {
+      "greeting": "こんにちは！私は**BoxLog**アプリケーションのサポートアシスタントです。",
+      "capabilities": "以下のことでお手伝いできます：",
+      "features": [
+        "📅 **カレンダー機能** - カレンダービューの使い方",
+        "📋 **タスク管理** - タスクの作成と整理",
+        "🏷️ **タグシステム** - カテゴリ分けとフィルタリング",
+        "📊 **進捗追跡** - 生産性の監視",
+        "🔄 **スマートフォルダ** - 自動整理機能",
+        "🛠️ **トラブルシューティング** - 一般的な問題の解決"
+      ],
+      "note": "**注意**: BoxLogアプリケーションの使用方法に関するサポートのみ提供しています。",
+      "question": "BoxLogについて何か知りたいことはありますか？"
+    },
+    "messageStatus": {
+      "sending": "送信中...",
+      "sent": "送信済み",
+      "error": "送信エラー"
+    }
+  },
+  "notifications": {
+    "title": "通知",
+    "tabs": {
+      "all": "すべて",
+      "unread": "未読"
+    },
+    "empty": {
+      "all": "通知はありません",
+      "unread": "未読の通知はありません"
+    },
+    "actions": {
+      "markAllAsRead": "すべて既読にする",
+      "settings": "通知設定",
+      "close": "閉じる"
+    },
+    "types": {
+      "system": "システム",
+      "feature": "新機能",
+      "important": "重要",
+      "general": "お知らせ",
+      "reminder": "リマインダー",
+      "task": "タスク",
+      "event": "イベント"
+    },
+    "messages": {
+      "meetingReminder": "ミーティングリマインダー",
+      "meetingStartsIn": "15分後に開始します",
+      "taskCompleted": "タスク完了",
+      "taskCompletedMessage": "プロジェクトレポートが完了しました",
+      "eventNotification": "イベント通知",
+      "eventAddedMessage": "明日の予定が追加されました",
+      "browserNotificationUnsupported": "このブラウザは通知をサポートしていません",
+      "browserNotificationPermissionFailed": "通知許可の取得に失敗しました",
+      "browserNotificationFailed": "ブラウザ通知の表示に失敗しました"
+    },
+    "aria": {
+      "modalBackdrop": "モーダル背景 - クリックして閉じる",
+      "closeModal": "モーダルを閉じる"
+    },
+    "settings": {
+      "tabs": {
+        "list": "お知らせ一覧",
+        "settings": "通知設定"
+      },
+      "deliverySettings": {
+        "title": "通知配信設定",
+        "description": "メール、プッシュ、ブラウザ通知の設定",
+        "email": {
+          "label": "メール通知",
+          "description": "重要なお知らせをメールで受信"
+        },
+        "push": {
+          "label": "プッシュ通知",
+          "description": "モバイルデバイスへのプッシュ通知"
+        },
+        "browser": {
+          "label": "ブラウザ通知",
+          "description": "ブラウザでの通知表示"
+        }
+      },
+      "contentSettings": {
+        "title": "コンテンツ通知",
+        "description": "定期的な情報配信とシステム通知",
+        "weeklyDigest": {
+          "label": "週次ダイジェスト",
+          "description": "週単位のアクティビティサマリーをメールで配信"
+        },
+        "system": {
+          "label": "システム通知",
+          "description": "メンテナンス・アップデート情報を受信"
+        }
+      },
+      "tip": "💡 ヒント: ブラウザ通知を有効にするには、ブラウザの設定で通知を許可してください。",
+      "saveSuccess": "通知設定を保存しました"
+    },
+    "list": {
+      "title": "お知らせ",
+      "description": "最新のお知らせや更新情報をご確認いただけます。",
+      "empty": {
+        "title": "お知らせはありません",
+        "description": "新しいお知らせが投稿されるとここに表示されます。"
+      },
+      "actions": {
+        "markAsRead": "既読にする"
+      },
+      "badges": {
+        "unread": "未読"
+      },
+      "sampleNotifications": {
+        "maintenance": {
+          "title": "システムメンテナンスのお知らせ",
+          "content": "2025年7月12日（土）2:00-4:00にシステムメンテナンスを実施いたします。"
+        },
+        "newFeature": {
+          "title": "新機能のご案内",
+          "content": "新しいタグ機能が追加されました。より効率的な情報整理が可能になります。"
+        },
+        "termsUpdate": {
+          "title": "利用規約の更新",
+          "content": "利用規約を更新いたしました。変更内容をご確認ください。"
+        }
+      }
+    }
+  },
+  "common": {
+    "dates": {
+      "format": "YYYY/MM/DD"
+    }
+  },
+  "settings": {
+    "general": {
+      "title": "一般設定",
+      "description": "基本的なアプリケーション設定"
+    }
+  },
   "auth": {
     "login": {
       "title": "サインイン",

@@ -4,6 +4,10 @@ import { useState } from 'react'
 
 import { BellRing } from 'lucide-react'
 
+import { useTranslation } from '@/lib/i18n/hooks'
+
+import { useNotificationTypeLabel } from '../utils/notification-helpers'
+
 interface SystemNotification {
   id: number
   title: string
@@ -13,27 +17,27 @@ interface SystemNotification {
   type: 'system' | 'feature' | 'important'
 }
 
-const defaultNotifications: SystemNotification[] = [
+const getDefaultNotifications = (t: (key: string) => string): SystemNotification[] => [
   {
     id: 1,
-    title: 'システムメンテナンスのお知らせ',
-    content: '2025年7月12日（土）2:00-4:00にシステムメンテナンスを実施いたします。',
+    title: t('notifications.list.sampleNotifications.maintenance.title'),
+    content: t('notifications.list.sampleNotifications.maintenance.content'),
     date: '2025-07-08',
     isRead: false,
     type: 'system',
   },
   {
     id: 2,
-    title: '新機能のご案内',
-    content: '新しいタグ機能が追加されました。より効率的な情報整理が可能になります。',
+    title: t('notifications.list.sampleNotifications.newFeature.title'),
+    content: t('notifications.list.sampleNotifications.newFeature.content'),
     date: '2025-07-05',
     isRead: true,
     type: 'feature',
   },
   {
     id: 3,
-    title: '利用規約の更新',
-    content: '利用規約を更新いたしました。変更内容をご確認ください。',
+    title: t('notifications.list.sampleNotifications.termsUpdate.title'),
+    content: t('notifications.list.sampleNotifications.termsUpdate.content'),
     date: '2025-07-01',
     isRead: true,
     type: 'important',
@@ -44,8 +48,11 @@ interface NotificationsListProps {
   notifications?: SystemNotification[]
 }
 
-export const NotificationsList: React.FC<NotificationsListProps> = ({ notifications = defaultNotifications }) => {
-  const [notificationList, setNotificationList] = useState(notifications)
+export const NotificationsList: React.FC<NotificationsListProps> = ({ notifications }) => {
+  const t = useTranslation()
+  const getTypeLabel = useNotificationTypeLabel()
+  const defaultNotifications = getDefaultNotifications(t)
+  const [notificationList, setNotificationList] = useState(notifications || defaultNotifications)
 
   const markAsRead = (id: number) => {
     setNotificationList((prev) =>
@@ -66,27 +73,14 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({ notificati
     }
   }
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
-      case 'system':
-        return 'システム'
-      case 'feature':
-        return '新機能'
-      case 'important':
-        return '重要'
-      default:
-        return 'お知らせ'
-    }
-  }
-
   return (
     <div className="space-y-6">
       <div>
         <div className="mb-2 flex items-center gap-3">
           <BellRing className="h-6 w-6 text-blue-600" />
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">お知らせ</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{t('notifications.list.title')}</h2>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-300">最新のお知らせや更新情報をご確認いただけます。</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{t('notifications.list.description')}</p>
       </div>
 
       <div className="space-y-4">
@@ -109,7 +103,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({ notificati
                   </span>
                   {!notification.isRead && (
                     <span className="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                      未読
+                      {t('notifications.list.badges.unread')}
                     </span>
                   )}
                 </div>
@@ -123,7 +117,7 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({ notificati
                   onClick={() => markAsRead(notification.id)}
                   className="ml-4 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                 >
-                  既読にする
+                  {t('notifications.list.actions.markAsRead')}
                 </button>
               )}
             </div>
@@ -134,10 +128,10 @@ export const NotificationsList: React.FC<NotificationsListProps> = ({ notificati
       {notificationList.length === 0 && (
         <div className="py-12 text-center">
           <BellRing className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">お知らせはありません</h3>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            新しいお知らせが投稿されるとここに表示されます。
-          </p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+            {t('notifications.list.empty.title')}
+          </h3>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{t('notifications.list.empty.description')}</p>
         </div>
       )}
     </div>

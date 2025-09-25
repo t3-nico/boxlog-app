@@ -6,7 +6,8 @@ import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
 import { animations, componentRadius, icon, spacing, typography } from '@/config/theme'
-import { border, text } from '@/config/theme/colors'
+import { border, colors, text } from '@/config/theme/colors'
+import { useCurrentLocale, useTranslation } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 // import { formatDistanceToNow } from 'date-fns'
@@ -19,29 +20,31 @@ interface NotificationModalProps {
 
 export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all')
+  const t = useTranslation()
+  const locale = useCurrentLocale()
 
   // Mock data - 実際のデータは useNotifications から取得
   const mockNotifications = [
     {
       id: '1',
-      title: 'ミーティングリマインダー',
-      message: '15分後に開始します',
+      title: t('notifications.messages.meetingReminder'),
+      message: t('notifications.messages.meetingStartsIn'),
       timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5分前
       read: false,
       type: 'reminder',
     },
     {
       id: '2',
-      title: 'タスク完了',
-      message: 'プロジェクトレポートが完了しました',
+      title: t('notifications.messages.taskCompleted'),
+      message: t('notifications.messages.taskCompletedMessage'),
       timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30分前
       read: true,
       type: 'task',
     },
     {
       id: '3',
-      title: 'イベント通知',
-      message: '明日の予定が追加されました',
+      title: t('notifications.messages.eventNotification'),
+      message: t('notifications.messages.eventAddedMessage'),
       timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2時間前
       read: false,
       type: 'event',
@@ -63,7 +66,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
       onKeyDown={(e) => {
         if (e.key === 'Escape') onClose()
       }}
-      aria-label="モーダル背景 - クリックして閉じる"
+      aria-label={t('notifications.aria.modalBackdrop')}
     >
       {/* Backdrop */}
       <div
@@ -74,7 +77,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()
         }}
-        aria-label="モーダルを閉じる"
+        aria-label={t('notifications.aria.closeModal')}
       />
 
       {/* Modal */}
@@ -101,7 +104,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         >
           <div className="flex items-center gap-2">
             <Bell className={cn(icon.size.md, text.primary)} />
-            <h1 className={cn(typography.heading.h2, text.primary)}>通知</h1>
+            <h1 className={cn(typography.heading.h2, text.primary)}>{t('notifications.title')}</h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -144,7 +147,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               animations.transition.fast
             )}
           >
-            すべて
+            {t('notifications.tabs.all')}
           </button>
           <button
             type="button"
@@ -156,7 +159,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
               animations.transition.fast
             )}
           >
-            未読
+            {t('notifications.tabs.unread')}
             {mockNotifications.filter((n) => !n.read).length > 0 && (
               <span
                 className={cn(
@@ -178,7 +181,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             <div className={cn('flex flex-col items-center justify-center py-16', text.muted)}>
               <BellOff className={cn(icon.size.lg, 'mb-3')} />
               <p className={typography.body.sm}>
-                {activeTab === 'unread' ? '未読の通知はありません' : '通知はありません'}
+                {activeTab === 'unread' ? t('notifications.empty.unread') : t('notifications.empty.all')}
               </p>
             </div>
           ) : (
@@ -221,8 +224,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                       )}
                     </div>
                     <p className={cn(typography.body.xs, text.muted, 'mt-1')}>
-                      {/* 一時的に簡単な時間表示 */}
-                      {new Date(notification.timestamp).toLocaleTimeString('ja-JP')}
+                      {new Date(notification.timestamp).toLocaleTimeString(locale === 'ja' ? 'ja-JP' : 'en-US')}
                     </p>
                   </div>
                 </div>
@@ -245,7 +247,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                 animations.transition.fast
               )}
             >
-              すべて既読にする
+              {t('notifications.actions.markAllAsRead')}
             </button>
           </div>
         )}

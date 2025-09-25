@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { animations, background, colors, ghost, icons, rounded } from '@/config/theme'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { ChatProvider } from '@/contexts/chat-context'
@@ -93,6 +94,14 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 
   const content = (
     <div className="flex h-screen flex-col">
+      {/* アクセシビリティ: スキップリンク */}
+      <a
+        href="#main-content"
+        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
+      >
+        Skip to main content
+      </a>
+
       {/* メインレイアウト - 3カラム構成 */}
       <div className="flex flex-1 overflow-hidden">
         {/* L1: Primary Sidebar - モバイル: 常に表示（画面外可能）、デスクトップ: 条件付き表示 */}
@@ -121,8 +130,9 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
                 <PageTitle />
               </div>
 
-              {/* Right side: Search & Inspector Toggle */}
+              {/* Right side: Language Switcher, Search & Inspector Toggle */}
               <div className="flex items-center gap-2">
+                <LanguageSwitcher variant="compact" />
                 <button
                   type="button"
                   onClick={handleSearchButtonClick}
@@ -150,7 +160,9 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
             {/* Main Content Area */}
             <div className={`relative z-10 flex flex-1 ${colors.background.base}`}>
               {/* Main Content with AI Panel */}
-              <div className="relative flex-1 overflow-hidden">{children}</div>
+              <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
+                {children}
+              </main>
             </div>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { colors, rounded, semantic, spacing, typography } from '@/config/theme'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useTranslation } from '@/lib/i18n/hooks'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -23,6 +24,7 @@ interface NotificationAutoSaveSettings {
 
 const NotificationSettings = () => {
   const [activeTab, setActiveTab] = useState<'list' | 'settings'>('list')
+  const t = useTranslation()
 
   // 通知設定の自動保存
   const notifications = useAutoSaveSettings<NotificationAutoSaveSettings>({
@@ -38,7 +40,7 @@ const NotificationSettings = () => {
       await new Promise((resolve) => setTimeout(resolve, 500))
       console.log('Saving notification settings:', values)
     },
-    successMessage: '通知設定を保存しました',
+    successMessage: t('notifications.settings.saveSuccess'),
     debounceMs: 800,
   })
 
@@ -101,7 +103,7 @@ const NotificationSettings = () => {
           }`}
         >
           <BellRing className="h-4 w-4" />
-          お知らせ一覧
+          {t('notifications.settings.tabs.list')}
         </button>
         <button
           type="button"
@@ -113,7 +115,7 @@ const NotificationSettings = () => {
           }`}
         >
           <SettingsIcon className="h-4 w-4" />
-          通知設定
+          {t('notifications.settings.tabs.settings')}
         </button>
       </div>
 
@@ -127,28 +129,37 @@ const NotificationSettings = () => {
             title={
               <div className="flex items-center gap-2">
                 <Bell className="h-5 w-5" />
-                <span>通知配信設定</span>
+                <span>{t('notifications.settings.deliverySettings.title')}</span>
               </div>
             }
-            description="メール、プッシュ、ブラウザ通知の設定"
+            description={t('notifications.settings.deliverySettings.description')}
             isSaving={notifications.isSaving}
           >
             <div className={spacing.stackGap.md}>
-              <SettingField label="メール通知" description="重要なお知らせをメールで受信">
+              <SettingField
+                label={t('notifications.settings.deliverySettings.email.label')}
+                description={t('notifications.settings.deliverySettings.email.description')}
+              >
                 <Switch
                   checked={notifications.values.emailNotifications}
                   onCheckedChange={handleEmailNotificationsChange}
                 />
               </SettingField>
 
-              <SettingField label="プッシュ通知" description="モバイルデバイスへのプッシュ通知">
+              <SettingField
+                label={t('notifications.settings.deliverySettings.push.label')}
+                description={t('notifications.settings.deliverySettings.push.description')}
+              >
                 <Switch
                   checked={notifications.values.pushNotifications}
                   onCheckedChange={handlePushNotificationsChange}
                 />
               </SettingField>
 
-              <SettingField label="ブラウザ通知" description="ブラウザでの通知表示">
+              <SettingField
+                label={t('notifications.settings.deliverySettings.browser.label')}
+                description={t('notifications.settings.deliverySettings.browser.description')}
+              >
                 <Switch
                   checked={notifications.values.browserNotifications}
                   onCheckedChange={handleBrowserNotificationsChange}
@@ -159,16 +170,22 @@ const NotificationSettings = () => {
 
           {/* コンテンツ通知 */}
           <SettingsCard
-            title="コンテンツ通知"
-            description="定期的な情報配信とシステム通知"
+            title={t('notifications.settings.contentSettings.title')}
+            description={t('notifications.settings.contentSettings.description')}
             isSaving={notifications.isSaving}
           >
             <div className={spacing.stackGap.md}>
-              <SettingField label="週次ダイジェスト" description="週単位のアクティビティサマリーをメールで配信">
+              <SettingField
+                label={t('notifications.settings.contentSettings.weeklyDigest.label')}
+                description={t('notifications.settings.contentSettings.weeklyDigest.description')}
+              >
                 <Switch checked={notifications.values.weeklyDigest} onCheckedChange={handleWeeklyDigestChange} />
               </SettingField>
 
-              <SettingField label="システム通知" description="メンテナンス・アップデート情報を受信">
+              <SettingField
+                label={t('notifications.settings.contentSettings.system.label')}
+                description={t('notifications.settings.contentSettings.system.description')}
+              >
                 <Switch
                   checked={notifications.values.systemNotifications}
                   onCheckedChange={handleSystemNotificationsChange}
@@ -179,9 +196,7 @@ const NotificationSettings = () => {
 
           {/* ヒント情報 */}
           <div className={`${rounded.component.card.lg} ${semantic.info.light} ${spacing.card}`}>
-            <p className={`${typography.body.sm} ${semantic.info.text}`}>
-              💡 ヒント: ブラウザ通知を有効にするには、ブラウザの設定で通知を許可してください。
-            </p>
+            <p className={`${typography.body.sm} ${semantic.info.text}`}>{t('notifications.settings.tip')}</p>
           </div>
         </div>
       ) : null}

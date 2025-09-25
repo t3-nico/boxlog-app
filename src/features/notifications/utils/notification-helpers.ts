@@ -1,3 +1,4 @@
+import { useTranslation } from '@/lib/i18n/hooks'
 
 export const getNotificationTypeColor = (type: string) => {
   switch (type) {
@@ -12,33 +13,46 @@ export const getNotificationTypeColor = (type: string) => {
   }
 }
 
-export const getNotificationTypeLabel = (type: string) => {
-  switch (type) {
-    case 'system':
-      return 'システム'
-    case 'feature':
-      return '新機能'
-    case 'important':
-      return '重要'
-    default:
-      return 'お知らせ'
+export const useNotificationTypeLabel = () => {
+  const t = useTranslation()
+
+  return (type: string) => {
+    switch (type) {
+      case 'system':
+        return t('notifications.types.system')
+      case 'feature':
+        return t('notifications.types.feature')
+      case 'important':
+        return t('notifications.types.important')
+      case 'reminder':
+        return t('notifications.types.reminder')
+      case 'task':
+        return t('notifications.types.task')
+      case 'event':
+        return t('notifications.types.event')
+      default:
+        return t('notifications.types.general')
+    }
   }
 }
 
-export const formatNotificationDate = (date: string | Date) => {
+export const formatNotificationDate = (date: string | Date, locale: string = 'ja-JP') => {
   if (typeof date === 'string') {
-    return new Date(date).toLocaleDateString('ja-JP')
+    return new Date(date).toLocaleDateString(locale)
   }
-  return date.toLocaleDateString('ja-JP')
+  return date.toLocaleDateString(locale)
 }
 
 export const checkBrowserNotificationSupport = (): boolean => {
   return typeof window !== 'undefined' && 'Notification' in window
 }
 
-export const requestNotificationPermission = async (): Promise<NotificationPermission> => {
+export const requestNotificationPermission = async (t?: (key: string) => string): Promise<NotificationPermission> => {
   if (!checkBrowserNotificationSupport()) {
-    console.warn('このブラウザは通知をサポートしていません')
+    const message = t
+      ? t('notifications.messages.browserNotificationUnsupported')
+      : 'このブラウザは通知をサポートしていません'
+    console.warn(message)
     return 'denied'
   }
 
@@ -46,12 +60,13 @@ export const requestNotificationPermission = async (): Promise<NotificationPermi
     const result = await Notification.requestPermission()
     return result
   } catch (error) {
-    console.error('通知許可の取得に失敗しました:', error)
+    const message = t ? t('notifications.messages.browserNotificationPermissionFailed') : '通知許可の取得に失敗しました'
+    console.error(message, error)
     return 'denied'
   }
 }
 
-export const showBrowserNotification = (title: string, options?: NotificationOptions) => {
+export const showBrowserNotification = (title: string, options?: NotificationOptions, t?: (key: string) => string) => {
   if (!checkBrowserNotificationSupport() || Notification.permission !== 'granted') {
     return null
   }
@@ -61,7 +76,7 @@ export const showBrowserNotification = (title: string, options?: NotificationOpt
       icon: '/favicon.ico',
       badge: '/favicon.ico',
       requireInteraction: true,
-      ...options
+      ...options,
     })
 
     // デフォルト10秒後に自動で閉じる
@@ -71,7 +86,8 @@ export const showBrowserNotification = (title: string, options?: NotificationOpt
 
     return notification
   } catch (error) {
-    console.error('ブラウザ通知の表示に失敗しました:', error)
+    const message = t ? t('notifications.messages.browserNotificationFailed') : 'ブラウザ通知の表示に失敗しました'
+    console.error(message, error)
     return null
   }
 }
