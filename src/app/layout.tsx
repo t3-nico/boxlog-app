@@ -1,7 +1,6 @@
 // app/layout.tsx（最終版）
 import '@/styles/globals.css'
 
-
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
@@ -22,10 +21,7 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <html
-      lang="ja"
-      suppressHydrationWarning  // darkクラスは削除（Providersが管理）
-    >
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />

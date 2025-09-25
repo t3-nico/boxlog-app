@@ -141,10 +141,5 @@ export interface I18nContextType {
   t: TFunction
 }
 
-// next-i18next用の型拡張
-declare module 'next-i18next' {
-  interface CustomTypeOptions {
-    defaultNS: 'common'
-    resources: TranslationResources
-  }
-}
+// App Router i18n実装では、next-i18nextは使用しない
+// 代わりに独自のi18nシステムを使用
