@@ -52,6 +52,13 @@ npm run deploy:export       # 履歴データのエクスポート（JSON/CSV）
 npm run deploy:pre          # デプロイ前チェック（品質・環境・依存関係）
 npm run deploy:post         # デプロイ後処理（記録・通知・ヘルスチェック）
 npm run deploy:full         # 完全デプロイフロー（前処理→ビルド→記録→後処理）
+
+# === アナリティクス・メトリクス管理コマンド ===
+npm run analytics:validate  # イベント名の検証・命名規則チェック
+npm run analytics:report    # 詳細レポート生成（JSON出力）
+npm run analytics:unused    # 未使用イベントの一覧表示
+npm run analytics:stats     # 基本統計情報（使用率・カテゴリ別）
+npm run analytics:check     # 完全検証（validateと同じ）
 ```
 
 詳細は [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md) を参照してください。

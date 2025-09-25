@@ -120,7 +120,12 @@
     "deploy:pre": "./scripts/deploy-hooks.sh pre-deploy",
     "deploy:post": "./scripts/deploy-hooks.sh post-deploy",
     "deploy:health": "curl -f ${VERCEL_URL:-${NEXT_PUBLIC_APP_URL:-http://localhost:3000}}/api/health || echo 'Health endpoint not available'",
-    "deploy:full": "npm run deploy:pre && npm run build && npm run deploy:record && npm run deploy:post"
+    "deploy:full": "npm run deploy:pre && npm run build && npm run deploy:record && npm run deploy:post",
+    "analytics:validate": "node scripts/analytics-validator.js validate",
+    "analytics:report": "node scripts/analytics-validator.js report --json",
+    "analytics:unused": "node scripts/analytics-validator.js unused",
+    "analytics:stats": "node scripts/analytics-validator.js stats",
+    "analytics:check": "npm run analytics:validate"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
