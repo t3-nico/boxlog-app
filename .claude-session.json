@@ -1,8 +1,0 @@
-{
-  "issueNumber": "295",
-  "issueUrl": "https://github.com/t3-nico/boxlog-app/issues/295",
-  "title": "🚀 Issue #270 Phase3: 7件警告ファイル最適化（5個対象）\n\n## 🎯 Phase3目標\n7件jsx-no-bind警告を持つファイルの完全最適化:\n1. ✅ tiptap-editor.tsx（完了）\n2. ✅ codebase-ai-chat.tsx（完了）  \n3. 🔥 MobileHeader.tsx（進行中）\n4. TagInput.tsx\n5. EventDetailInspectorContent.tsx\n6. AccountSettingsAutoSave.tsx\n7. tag-edit-dialog.tsx\n8. tag-tree-view.tsx\n\n## 📊 Phase3期待成果\n- **対象**: 5個のファイル（35-42件警告見込み）\n- **目標**: jsx-no-bind 100%削減\n- **技法**: useCallback最適化、コンポーネント分離",
-  "startTime": "2025-09-25T05:48:53.880Z",
-  "currentBranch": "dev",
-  "startCommit": "0cb8a84 - feat: Phase 2完了 - 企業レベル品質管理システム実装 #240 #241 #242"
-}

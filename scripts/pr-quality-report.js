@@ -15,7 +15,6 @@
 
 const { execSync } = require('child_process')
 const fs = require('fs')
-const path = require('path')
 
 class PRQualityReporter {
   constructor(options = {}) {
@@ -23,7 +22,7 @@ class PRQualityReporter {
       format: options.format || 'console', // console, json, markdown
       outputFile: options.outputFile,
       verbose: options.verbose || false,
-      ...options
+      ...options,
     }
 
     this.report = {
@@ -31,15 +30,15 @@ class PRQualityReporter {
       pr: {
         branch: this.getCurrentBranch(),
         commit: this.getCurrentCommit(),
-        author: this.getCommitAuthor()
+        author: this.getCommitAuthor(),
       },
       quality: {},
       summary: {
         passed: 0,
         failed: 0,
         warnings: 0,
-        score: 0
-      }
+        score: 0,
+      },
     }
   }
 
@@ -102,7 +101,7 @@ class PRQualityReporter {
       this.report.quality.typescript = {
         status: 'PASS',
         errors: 0,
-        message: 'TypeScript型エラーなし'
+        message: 'TypeScript型エラーなし',
       }
       this.report.summary.passed++
       console.log('✅ TypeScript: PASS\n')
@@ -114,7 +113,7 @@ class PRQualityReporter {
         status: 'FAIL',
         errors: errorCount,
         message: `TypeScript型エラー: ${errorCount}件`,
-        details: this.options.verbose ? errorOutput : undefined
+        details: this.options.verbose ? errorOutput : undefined,
       }
       this.report.summary.failed++
       console.log(`❌ TypeScript: FAIL (${errorCount}件のエラー)\n`)
@@ -124,26 +123,26 @@ class PRQualityReporter {
   async runESLintCheck() {
     console.log('🔍 ESLint品質チェック...')
     try {
-      const output = execSync('npm run lint', { encoding: 'utf8' })
+      const _output = execSync('npm run lint', { encoding: 'utf8' })
       this.report.quality.eslint = {
         status: 'PASS',
         warnings: 0,
         errors: 0,
-        message: 'ESLint品質チェック通過'
+        message: 'ESLint品質チェック通過',
       }
       this.report.summary.passed++
       console.log('✅ ESLint: PASS\n')
     } catch (error) {
-      const errorOutput = error.stdout?.toString() || ''
-      const warningCount = (errorOutput.match(/warning/g) || []).length
-      const errorCount = (errorOutput.match(/error/g) || []).length
+      const _errorOutput = error.stdout?.toString() || ''
+      const warningCount = (_errorOutput.match(/warning/g) || []).length
+      const errorCount = (_errorOutput.match(/error/g) || []).length
 
       this.report.quality.eslint = {
         status: errorCount > 0 ? 'FAIL' : 'WARN',
         warnings: warningCount,
         errors: errorCount,
         message: `ESLint: ${errorCount}件のエラー, ${warningCount}件の警告`,
-        details: this.options.verbose ? errorOutput : undefined
+        details: this.options.verbose ? errorOutput : undefined,
       }
 
       if (errorCount > 0) {
@@ -165,7 +164,7 @@ class PRQualityReporter {
       this.report.quality.tests = {
         status: 'PASS',
         ...testResults,
-        message: `全テスト通過: ${testResults.passed}件`
+        message: `全テスト通過: ${testResults.passed}件`,
       }
       this.report.summary.passed++
       console.log(`✅ テスト: PASS (${testResults.passed}件通過)\n`)
@@ -177,7 +176,7 @@ class PRQualityReporter {
         status: 'FAIL',
         ...testResults,
         message: `テスト失敗: ${testResults.failed}件`,
-        details: this.options.verbose ? errorOutput : undefined
+        details: this.options.verbose ? errorOutput : undefined,
       }
       this.report.summary.failed++
       console.log(`❌ テスト: FAIL (${testResults.failed}件失敗)\n`)
@@ -193,7 +192,7 @@ class PRQualityReporter {
     return {
       total: totalMatch ? parseInt(totalMatch[1]) : 0,
       passed: passedMatch ? parseInt(passedMatch[1]) : 0,
-      failed: failedMatch ? parseInt(failedMatch[1]) : 0
+      failed: failedMatch ? parseInt(failedMatch[1]) : 0,
     }
   }
 
@@ -203,7 +202,7 @@ class PRQualityReporter {
       execSync('npm run bundle:check', { stdio: 'pipe' })
       this.report.quality.bundle = {
         status: 'PASS',
-        message: 'Bundle サイズ基準内'
+        message: 'Bundle サイズ基準内',
       }
       this.report.summary.passed++
       console.log('✅ Bundle: PASS\n')
@@ -211,7 +210,7 @@ class PRQualityReporter {
       this.report.quality.bundle = {
         status: 'FAIL',
         message: 'Bundle サイズ基準超過',
-        details: this.options.verbose ? error.message : undefined
+        details: this.options.verbose ? error.message : undefined,
       }
       this.report.summary.failed++
       console.log('❌ Bundle: FAIL\n')
@@ -224,7 +223,7 @@ class PRQualityReporter {
       execSync('npm run a11y:check', { stdio: 'pipe' })
       this.report.quality.accessibility = {
         status: 'PASS',
-        message: 'アクセシビリティチェック通過'
+        message: 'アクセシビリティチェック通過',
       }
       this.report.summary.passed++
       console.log('✅ アクセシビリティ: PASS\n')
@@ -232,7 +231,7 @@ class PRQualityReporter {
       this.report.quality.accessibility = {
         status: 'FAIL',
         message: 'アクセシビリティ違反あり',
-        details: this.options.verbose ? error.message : undefined
+        details: this.options.verbose ? error.message : undefined,
       }
       this.report.summary.failed++
       console.log('❌ アクセシビリティ: FAIL\n')
@@ -245,7 +244,7 @@ class PRQualityReporter {
       execSync('npm run secrets:check', { stdio: 'pipe' })
       this.report.quality.security = {
         status: 'PASS',
-        message: 'セキュリティチェック通過'
+        message: 'セキュリティチェック通過',
       }
       this.report.summary.passed++
       console.log('✅ セキュリティ: PASS\n')
@@ -253,7 +252,7 @@ class PRQualityReporter {
       this.report.quality.security = {
         status: 'FAIL',
         message: 'セキュリティ問題検出',
-        details: this.options.verbose ? error.message : undefined
+        details: this.options.verbose ? error.message : undefined,
       }
       this.report.summary.failed++
       console.log('❌ セキュリティ: FAIL\n')
@@ -266,7 +265,7 @@ class PRQualityReporter {
       execSync('npm run docs:check', { stdio: 'pipe' })
       this.report.quality.documentation = {
         status: 'PASS',
-        message: 'ドキュメント整合性OK'
+        message: 'ドキュメント整合性OK',
       }
       this.report.summary.passed++
       console.log('✅ ドキュメント: PASS\n')
@@ -274,7 +273,7 @@ class PRQualityReporter {
       this.report.quality.documentation = {
         status: 'WARN',
         message: 'ドキュメント整合性に問題',
-        details: this.options.verbose ? error.message : undefined
+        details: this.options.verbose ? error.message : undefined,
       }
       this.report.summary.warnings++
       console.log('⚠️ ドキュメント: 警告\n')
@@ -289,8 +288,8 @@ class PRQualityReporter {
     }
 
     // スコア計算：PASS=100点、WARN=50点、FAIL=0点
-    const totalScore = (this.report.summary.passed * 100) + (this.report.summary.warnings * 50)
-    this.report.summary.score = Math.round(totalScore / (total * 100) * 100)
+    const totalScore = this.report.summary.passed * 100 + this.report.summary.warnings * 50
+    this.report.summary.score = Math.round((totalScore / (total * 100)) * 100)
   }
 
   generateReport() {
@@ -438,7 +437,7 @@ if (require.main === module) {
   })
 
   const reporter = new PRQualityReporter(options)
-  reporter.run().catch(error => {
+  reporter.run().catch((error) => {
     console.error('Fatal error:', error)
     process.exit(1)
   })

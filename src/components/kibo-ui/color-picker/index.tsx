@@ -139,6 +139,15 @@ export const ColorPickerSelection = memo(({ className, ...props }: ColorPickerSe
     [isDragging, setSaturation, setLightness]
   )
 
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      e.preventDefault()
+      setIsDragging(true)
+      handlePointerMove(e.nativeEvent)
+    },
+    [handlePointerMove]
+  )
+
   useEffect(() => {
     const handlePointerUp = () => setIsDragging(false)
 
@@ -156,11 +165,7 @@ export const ColorPickerSelection = memo(({ className, ...props }: ColorPickerSe
   return (
     <div
       className={cn('relative size-full cursor-crosshair rounded', className)}
-      onPointerDown={(e) => {
-        e.preventDefault()
-        setIsDragging(true)
-        handlePointerMove(e.nativeEvent)
-      }}
+      onPointerDown={handlePointerDown}
       ref={containerRef}
       style={{
         background: backgroundGradient,
@@ -186,11 +191,18 @@ export type ColorPickerHueProps = ComponentProps<typeof Slider.Root>
 export const ColorPickerHue = ({ className, ...props }: ColorPickerHueProps) => {
   const { hue, setHue } = useColorPicker()
 
+  const handleHueChange = useCallback(
+    ([newHue]: number[]) => {
+      setHue(newHue)
+    },
+    [setHue]
+  )
+
   return (
     <Slider.Root
       className={cn('relative flex h-4 w-full touch-none', className)}
       max={360}
-      onValueChange={([hue]) => setHue(hue)}
+      onValueChange={handleHueChange}
       step={1}
       value={[hue]}
       {...props}
@@ -208,11 +220,18 @@ export type ColorPickerAlphaProps = ComponentProps<typeof Slider.Root>
 export const ColorPickerAlpha = ({ className, ...props }: ColorPickerAlphaProps) => {
   const { alpha, setAlpha } = useColorPicker()
 
+  const handleAlphaChange = useCallback(
+    ([newAlpha]: number[]) => {
+      setAlpha(newAlpha)
+    },
+    [setAlpha]
+  )
+
   return (
     <Slider.Root
       className={cn('relative flex h-4 w-full touch-none', className)}
       max={100}
-      onValueChange={([alpha]) => setAlpha(alpha)}
+      onValueChange={handleAlphaChange}
       step={1}
       value={[alpha]}
       {...props}
@@ -237,7 +256,7 @@ export type ColorPickerEyeDropperProps = ComponentProps<typeof Button>
 export const ColorPickerEyeDropper = ({ className, ...props }: ColorPickerEyeDropperProps) => {
   const { setHue, setSaturation, setLightness, setAlpha } = useColorPicker()
 
-  const handleEyeDropper = async () => {
+  const handleEyeDropper = useCallback(async () => {
     try {
       // @ts-expect-error - EyeDropper API is experimental
       const eyeDropper = new EyeDropper()
@@ -252,7 +271,7 @@ export const ColorPickerEyeDropper = ({ className, ...props }: ColorPickerEyeDro
     } catch (error) {
       console.error('EyeDropper failed:', error)
     }
-  }
+  }, [setHue, setSaturation, setLightness, setAlpha])
 
   return (
     <Button
@@ -332,19 +351,23 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
 
     return (
       <div className={cn('flex items-center -space-x-px rounded-md shadow-sm', className)} {...props}>
-        {rgb.map((value, index) => (
-          <Input
-            className={cn(
-              'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
-              index && 'rounded-l-none',
-              className
-            )}
-            key={index < 3 ? ['r', 'g', 'b'][index] || `key-${index}` : `key-${index}`}
-            readOnly
-            type="text"
-            value={value}
-          />
-        ))}
+        {rgb.map((value, index) => {
+          const keyNames = ['r', 'g', 'b'] as const
+          const keyName = index < keyNames.length ? keyNames[index] : `key-${index}`
+          return (
+            <Input
+              className={cn(
+                'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
+                index && 'rounded-l-none',
+                className
+              )}
+              key={keyName}
+              readOnly
+              type="text"
+              value={value}
+            />
+          )
+        })}
         <PercentageInput value={alpha} />
       </div>
     )
@@ -377,19 +400,23 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
 
     return (
       <div className={cn('flex items-center -space-x-px rounded-md shadow-sm', className)} {...props}>
-        {hsl.map((value, index) => (
-          <Input
-            className={cn(
-              'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
-              index && 'rounded-l-none',
-              className
-            )}
-            key={['h', 's', 'l'][index]}
-            readOnly
-            type="text"
-            value={value}
-          />
-        ))}
+        {hsl.map((value, index) => {
+          const keyNames = ['h', 's', 'l'] as const
+          const keyName = keyNames[index] || `hsl-${index}`
+          return (
+            <Input
+              className={cn(
+                'bg-secondary h-8 rounded-r-none px-2 text-xs shadow-none',
+                index && 'rounded-l-none',
+                className
+              )}
+              key={keyName}
+              readOnly
+              type="text"
+              value={value}
+            />
+          )
+        })}
         <PercentageInput value={alpha} />
       </div>
     )

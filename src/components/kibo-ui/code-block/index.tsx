@@ -348,8 +348,19 @@ export const CodeBlockFilename = ({
 }: CodeBlockFilenameProps) => {
   const { value: activeValue } = useContext(CodeBlockContext)
   const defaultIcon = Object.entries(filenameIconMap).find(([pattern]) => {
-    const regex = new RegExp(`^${pattern.replace(/\\/g, '\\\\').replace(/\./g, '\\.').replace(/\*/g, '.*')}$`)
-    return regex.test(children as string)
+    // Use simple string matching instead of regex for security
+    const filename = children as string
+    if (pattern.includes('*')) {
+      // Handle wildcard patterns
+      const parts = pattern.split('*')
+      return parts.every((part, index) => {
+        if (index === 0) return filename.startsWith(part)
+        if (index === parts.length - 1) return filename.endsWith(part)
+        return filename.includes(part)
+      })
+    }
+    // Exact match for non-wildcard patterns
+    return filename === pattern
   })?.[1]
   const Icon = icon ?? defaultIcon
 

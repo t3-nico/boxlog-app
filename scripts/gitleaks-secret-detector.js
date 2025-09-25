@@ -18,10 +18,9 @@
  * @since Phase 3a: GitLeaks統合実装
  */
 
-const { execSync } = require('child_process');
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
+const { execSync } = require('child_process')
+const fs = require('fs')
+const path = require('path')
 
 // ===========================================
 // 設定: BigTech標準の機密情報検出パターン
@@ -35,19 +34,19 @@ const CONFIG = {
       pattern: /AKIA[0-9A-Z]{16}/gi,
       description: 'AWS Access Key ID',
       severity: 'critical',
-      category: 'aws'
+      category: 'aws',
     },
     awsSecretAccessKey: {
       pattern: /[A-Za-z0-9/+=]{40}/gi,
       description: 'AWS Secret Access Key',
       severity: 'critical',
-      category: 'aws'
+      category: 'aws',
     },
     awsSessionToken: {
       pattern: /AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT\+FvwqnKwRcOIfrRh3c0nJwKdq[A-Za-z0-9/+=]+/gi,
       description: 'AWS Session Token',
       severity: 'high',
-      category: 'aws'
+      category: 'aws',
     },
 
     // Google Cloud Platform
@@ -55,13 +54,13 @@ const CONFIG = {
       pattern: /AIza[0-9A-Za-z\\-_]{35}/gi,
       description: 'Google API Key',
       severity: 'critical',
-      category: 'gcp'
+      category: 'gcp',
     },
     gcpServiceAccount: {
       pattern: /"type": "service_account"/gi,
       description: 'Google Service Account JSON',
       severity: 'critical',
-      category: 'gcp'
+      category: 'gcp',
     },
 
     // GitHub
@@ -69,13 +68,13 @@ const CONFIG = {
       pattern: /(ghp_[a-zA-Z0-9]{36}|github_pat_[a-zA-Z0-9]{22}_[a-zA-Z0-9]{59})/gi,
       description: 'GitHub Personal Access Token',
       severity: 'critical',
-      category: 'github'
+      category: 'github',
     },
     githubOAuthToken: {
       pattern: /gho_[a-zA-Z0-9]{36}/gi,
       description: 'GitHub OAuth Token',
       severity: 'critical',
-      category: 'github'
+      category: 'github',
     },
 
     // JWT Tokens
@@ -83,7 +82,7 @@ const CONFIG = {
       pattern: /eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*/gi,
       description: 'JWT Token',
       severity: 'high',
-      category: 'jwt'
+      category: 'jwt',
     },
 
     // Database Connections
@@ -91,13 +90,13 @@ const CONFIG = {
       pattern: /mongodb(\+srv)?:\/\/[^\s]+/gi,
       description: 'MongoDB Connection String',
       severity: 'critical',
-      category: 'database'
+      category: 'database',
     },
     postgresUri: {
       pattern: /postgres(ql)?:\/\/[^\s]+/gi,
       description: 'PostgreSQL Connection String',
       severity: 'critical',
-      category: 'database'
+      category: 'database',
     },
 
     // API Keys (Generic)
@@ -105,7 +104,7 @@ const CONFIG = {
       pattern: /['"](sk-[a-zA-Z0-9]{32,}|pk_[a-zA-Z0-9]{24,})['"]/gi,
       description: 'Generic API Key',
       severity: 'high',
-      category: 'api'
+      category: 'api',
     },
 
     // Stripe
@@ -113,7 +112,7 @@ const CONFIG = {
       pattern: /(sk_live_[a-zA-Z0-9]{24,}|pk_live_[a-zA-Z0-9]{24,})/gi,
       description: 'Stripe API Key',
       severity: 'critical',
-      category: 'payment'
+      category: 'payment',
     },
 
     // Supabase (BoxLog専用)
@@ -121,13 +120,13 @@ const CONFIG = {
       pattern: /eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+/gi,
       description: 'Supabase Anonymous Key',
       severity: 'medium',
-      category: 'supabase'
+      category: 'supabase',
     },
     supabaseServiceRole: {
       pattern: /eyJhbGciOiJIUzI1NiIsImtpZCI6[a-zA-Z0-9_-]+/gi,
       description: 'Supabase Service Role Key',
       severity: 'critical',
-      category: 'supabase'
+      category: 'supabase',
     },
 
     // Private Keys
@@ -135,13 +134,13 @@ const CONFIG = {
       pattern: /-----BEGIN [DR]SA PRIVATE KEY-----/gi,
       description: 'RSA Private Key',
       severity: 'critical',
-      category: 'crypto'
+      category: 'crypto',
     },
     opensshPrivateKey: {
       pattern: /-----BEGIN OPENSSH PRIVATE KEY-----/gi,
       description: 'OpenSSH Private Key',
       severity: 'critical',
-      category: 'crypto'
+      category: 'crypto',
     },
 
     // Passwords in URLs/Config
@@ -149,7 +148,7 @@ const CONFIG = {
       pattern: /:\/\/[^:\/\s]*:[^@\/\s]*@[^\/\s]*/gi,
       description: 'Password in URL',
       severity: 'high',
-      category: 'password'
+      category: 'password',
     },
 
     // Docker/Container Secrets
@@ -157,7 +156,7 @@ const CONFIG = {
       pattern: /DOCKER_[A-Z_]*=.+/gi,
       description: 'Docker Secret',
       severity: 'medium',
-      category: 'container'
+      category: 'container',
     },
 
     // High Entropy Strings (Generic Secret Detection)
@@ -165,8 +164,8 @@ const CONFIG = {
       pattern: /['"'][A-Za-z0-9+/=]{32,}['"']/gi,
       description: 'High Entropy String (Potential Secret)',
       severity: 'low',
-      category: 'generic'
-    }
+      category: 'generic',
+    },
   },
 
   // 除外パターン
@@ -182,35 +181,53 @@ const CONFIG = {
     // パターン定義（自身のスクリプト除外）
     patternDefinitions: /pattern:\s*\/.*\/gi?/gi,
     // 正規表現リテラル
-    regexLiterals: /\/[^\/\n]+\/[gimuy]*/gi
+    regexLiterals: /\/[^\/\n]+\/[gimuy]*/gi,
   },
 
   // 対象ファイル
   includedFiles: [
-    '**/*.js', '**/*.ts', '**/*.tsx', '**/*.jsx',
-    '**/*.json', '**/*.env*', '**/*.yaml', '**/*.yml',
-    '**/*.md', '**/*.txt', '**/*.config.js',
-    '**/*.sh', '**/*.py', '**/*.go', '**/*.sql'
+    '**/*.js',
+    '**/*.ts',
+    '**/*.tsx',
+    '**/*.jsx',
+    '**/*.json',
+    '**/*.env*',
+    '**/*.yaml',
+    '**/*.yml',
+    '**/*.md',
+    '**/*.txt',
+    '**/*.config.js',
+    '**/*.sh',
+    '**/*.py',
+    '**/*.go',
+    '**/*.sql',
   ],
 
   // 除外ファイル
   excludedFiles: [
     'node_modules/**',
-    'dist/**', 'build/**', '.next/**',
-    '**/*.min.js', '**/*.bundle.js',
-    '.git/**', 'yarn.lock', 'package-lock.json',
-    '.license-cache.json', '.api-changes-cache.json',
-    '**/*.test.js', '**/*.test.ts',
-    'docs/**/*.md'  // ドキュメント内のサンプルコード除外
+    'dist/**',
+    'build/**',
+    '.next/**',
+    '**/*.min.js',
+    '**/*.bundle.js',
+    '.git/**',
+    'yarn.lock',
+    'package-lock.json',
+    '.license-cache.json',
+    '.api-changes-cache.json',
+    '**/*.test.js',
+    '**/*.test.ts',
+    'docs/**/*.md', // ドキュメント内のサンプルコード除外
   ],
 
   // 閾値設定
   thresholds: {
     maxFileSize: 1024 * 1024, // 1MB以上のファイルはスキップ
-    maxMatches: 50,            // 1ファイル50件以上の検出はスキップ（誤検出対策）
-    minEntropyScore: 4.5       // エントロピースコア閾値
-  }
-};
+    maxMatches: 50, // 1ファイル50件以上の検出はスキップ（誤検出対策）
+    minEntropyScore: 4.5, // エントロピースコア閾値
+  },
+}
 
 // ===========================================
 // ユーティリティ関数
@@ -220,22 +237,22 @@ const CONFIG = {
  * エントロピー計算（文字列の複雑さを測定）
  */
 function calculateEntropy(str) {
-  if (!str || str.length === 0) return 0;
+  if (!str || str.length === 0) return 0
 
-  const freq = {};
-  str.split('').forEach(char => {
-    freq[char] = (freq[char] || 0) + 1;
-  });
+  const freq = {}
+  str.split('').forEach((char) => {
+    freq[char] = (freq[char] || 0) + 1
+  })
 
-  let entropy = 0;
-  const length = str.length;
+  let entropy = 0
+  const length = str.length
 
-  Object.values(freq).forEach(count => {
-    const probability = count / length;
-    entropy -= probability * Math.log2(probability);
-  });
+  Object.values(freq).forEach((count) => {
+    const probability = count / length
+    entropy -= probability * Math.log2(probability)
+  })
 
-  return entropy;
+  return entropy
 }
 
 /**
@@ -244,47 +261,46 @@ function calculateEntropy(str) {
 function getChangedFiles() {
   try {
     // Staged files
-    let stagedFiles = [];
+    let stagedFiles = []
     try {
       const stagedOutput = execSync('git diff --cached --name-only --diff-filter=ACM', {
         encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore']
-      }).trim();
-      stagedFiles = stagedOutput ? stagedOutput.split('\n') : [];
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+      stagedFiles = stagedOutput ? stagedOutput.split('\n') : []
     } catch (error) {
       // Staged filesがない場合は空配列
     }
 
     // Modified files (not staged)
-    let modifiedFiles = [];
+    let modifiedFiles = []
     try {
       const modifiedOutput = execSync('git diff --name-only --diff-filter=ACM', {
         encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore']
-      }).trim();
-      modifiedFiles = modifiedOutput ? modifiedOutput.split('\n') : [];
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+      modifiedFiles = modifiedOutput ? modifiedOutput.split('\n') : []
     } catch (error) {
       // Modified filesがない場合は空配列
     }
 
     // Untracked files
-    let untrackedFiles = [];
+    let untrackedFiles = []
     try {
       const untrackedOutput = execSync('git ls-files --others --exclude-standard', {
         encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'ignore']
-      }).trim();
-      untrackedFiles = untrackedOutput ? untrackedOutput.split('\n') : [];
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim()
+      untrackedFiles = untrackedOutput ? untrackedOutput.split('\n') : []
     } catch (error) {
       // Untracked filesがない場合は空配列
     }
 
-    const allFiles = [...new Set([...stagedFiles, ...modifiedFiles, ...untrackedFiles])];
-    return allFiles.filter(file => file && fs.existsSync(file));
-
+    const allFiles = [...new Set([...stagedFiles, ...modifiedFiles, ...untrackedFiles])]
+    return allFiles.filter((file) => file && fs.existsSync(file))
   } catch (error) {
-    console.log('⚠️  Git情報の取得に失敗。全ファイルをスキャンします。');
-    return null; // 全ファイルスキャンフラグ
+    console.log('⚠️  Git情報の取得に失敗。全ファイルをスキャンします。')
+    return null // 全ファイルスキャンフラグ
   }
 }
 
@@ -292,70 +308,70 @@ function getChangedFiles() {
  * ファイルマッチング判定
  */
 function shouldScanFile(filePath) {
-  const relativePath = path.relative(process.cwd(), filePath);
+  const relativePath = path.relative(process.cwd(), filePath)
 
   // 除外ファイルチェック
   for (const excludePattern of CONFIG.excludedFiles) {
-    const regex = new RegExp(excludePattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'));
+    const regex = new RegExp(excludePattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'))
     if (regex.test(relativePath)) {
-      return false;
+      return false
     }
   }
 
   // 包含ファイルチェック
   for (const includePattern of CONFIG.includedFiles) {
-    const regex = new RegExp(includePattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'));
+    const regex = new RegExp(includePattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*'))
     if (regex.test(relativePath)) {
-      return true;
+      return true
     }
   }
 
-  return false;
+  return false
 }
 
 /**
  * ファイル内容解析
  */
 function scanFileContent(filePath, content) {
-  const results = [];
-  const relativePath = path.relative(process.cwd(), filePath);
-  const lines = content.split('\n');
+  const results = []
+  const relativePath = path.relative(process.cwd(), filePath)
+  const lines = content.split('\n')
 
   // 除外パターンで前処理（コメントなど）
-  let processedContent = content;
-  Object.values(CONFIG.exclusions).forEach(exclusionPattern => {
-    processedContent = processedContent.replace(exclusionPattern, ' ');
-  });
+  let processedContent = content
+  Object.values(CONFIG.exclusions).forEach((exclusionPattern) => {
+    processedContent = processedContent.replace(exclusionPattern, ' ')
+  })
 
   // 各パターンでスキャン
   Object.entries(CONFIG.secretPatterns).forEach(([patternName, config]) => {
-    const matches = [...processedContent.matchAll(config.pattern)];
+    const matches = [...processedContent.matchAll(config.pattern)]
 
-    matches.forEach(match => {
-      const matchedText = match[0];
-      const matchIndex = match.index;
+    matches.forEach((match) => {
+      const matchedText = match[0]
+      const matchIndex = match.index
 
       // エントロピーチェック（高エントロピー文字列の場合）
       if (config.category === 'generic') {
-        const entropy = calculateEntropy(matchedText);
+        const entropy = calculateEntropy(matchedText)
         if (entropy < CONFIG.thresholds.minEntropyScore) {
-          return; // 低エントロピーは除外
+          return // 低エントロピーは除外
         }
       }
 
       // 行番号計算
-      const beforeMatch = content.substring(0, matchIndex);
-      const lineNumber = beforeMatch.split('\n').length;
-      const lineContent = lines[lineNumber - 1] || '';
+      const beforeMatch = content.substring(0, matchIndex)
+      const lineNumber = beforeMatch.split('\n').length
+      const lineContent = lines[lineNumber - 1] || ''
 
       // 1Password参照形式は除外
       if (CONFIG.exclusions.onePasswordRef.test(matchedText)) {
-        return;
+        return
       }
 
       // テスト・例用は除外
       if (CONFIG.exclusions.exampleSecrets.test(lineContent.toLowerCase())) {
-        return;
+        return
       }
 
       results.push({
@@ -370,40 +386,40 @@ function scanFileContent(filePath, content) {
         lineContent: lineContent.trim(),
         context: {
           before: lines[lineNumber - 2] || '',
-          after: lines[lineNumber] || ''
-        }
-      });
-    });
-  });
+          after: lines[lineNumber] || '',
+        },
+      })
+    })
+  })
 
-  return results;
+  return results
 }
 
 /**
  * 全ファイル収集（再帰）
  */
 function getAllFiles(dir = process.cwd()) {
-  const files = [];
+  const files = []
 
   function traverse(currentDir) {
-    if (!fs.existsSync(currentDir)) return;
+    if (!fs.existsSync(currentDir)) return
 
-    const items = fs.readdirSync(currentDir);
+    const items = fs.readdirSync(currentDir)
 
-    items.forEach(item => {
-      const itemPath = path.join(currentDir, item);
-      const stat = fs.statSync(itemPath);
+    items.forEach((item) => {
+      const itemPath = path.join(currentDir, item)
+      const stat = fs.statSync(itemPath)
 
       if (stat.isDirectory()) {
-        traverse(itemPath);
+        traverse(itemPath)
       } else if (stat.isFile() && shouldScanFile(itemPath)) {
-        files.push(itemPath);
+        files.push(itemPath)
       }
-    });
+    })
   }
 
-  traverse(dir);
-  return files;
+  traverse(dir)
+  return files
 }
 
 // ===========================================
@@ -411,117 +427,120 @@ function getAllFiles(dir = process.cwd()) {
 // ===========================================
 
 async function runSecretDetection() {
-  const startTime = Date.now();
-  console.log('🔍 GitLeaks風Secret検出システム起動...');
+  const startTime = Date.now()
+  console.log('🔍 GitLeaks風Secret検出システム起動...')
 
   // ファイル収集
-  let filesToScan = [];
-  const changedFiles = getChangedFiles();
+  let filesToScan = []
+  const changedFiles = getChangedFiles()
 
   if (changedFiles && changedFiles.length > 0) {
-    console.log(`📂 変更ファイル検出: ${changedFiles.length}件`);
-    filesToScan = changedFiles.filter(shouldScanFile);
+    console.log(`📂 変更ファイル検出: ${changedFiles.length}件`)
+    filesToScan = changedFiles.filter(shouldScanFile)
   } else {
-    console.log('📂 全ファイルスキャンモード');
-    filesToScan = getAllFiles();
+    console.log('📂 全ファイルスキャンモード')
+    filesToScan = getAllFiles()
   }
 
   if (filesToScan.length === 0) {
-    console.log('✅ スキャン対象ファイルがありません');
-    return { success: true, results: [], stats: { filesScanned: 0, secretsFound: 0 } };
+    console.log('✅ スキャン対象ファイルがありません')
+    return { success: true, results: [], stats: { filesScanned: 0, secretsFound: 0 } }
   }
 
-  console.log(`🔍 ${filesToScan.length}件のファイルをスキャン中...`);
+  console.log(`🔍 ${filesToScan.length}件のファイルをスキャン中...`)
 
-  const allResults = [];
-  let filesScanned = 0;
-  const errors = [];
+  const allResults = []
+  let filesScanned = 0
+  const errors = []
 
   // ファイルごとにスキャン
   for (const filePath of filesToScan) {
     try {
-      const stat = fs.statSync(filePath);
+      const stat = fs.statSync(filePath)
 
       // ファイルサイズチェック
       if (stat.size > CONFIG.thresholds.maxFileSize) {
-        console.log(`⚠️  ${path.relative(process.cwd(), filePath)}: ファイルサイズが大きすぎます (${(stat.size / 1024 / 1024).toFixed(1)}MB)`);
-        continue;
+        console.log(
+          `⚠️  ${path.relative(process.cwd(), filePath)}: ファイルサイズが大きすぎます (${(stat.size / 1024 / 1024).toFixed(1)}MB)`
+        )
+        continue
       }
 
-      const content = fs.readFileSync(filePath, 'utf8');
-      const results = scanFileContent(filePath, content);
+      const content = fs.readFileSync(filePath, 'utf8')
+      const results = scanFileContent(filePath, content)
 
       // 検出結果が多すぎる場合はスキップ（誤検出対策）
       if (results.length > CONFIG.thresholds.maxMatches) {
-        console.log(`⚠️  ${path.relative(process.cwd(), filePath)}: 検出結果が多すぎます (${results.length}件) - 誤検出の可能性`);
-        continue;
+        console.log(
+          `⚠️  ${path.relative(process.cwd(), filePath)}: 検出結果が多すぎます (${results.length}件) - 誤検出の可能性`
+        )
+        continue
       }
 
-      allResults.push(...results);
-      filesScanned++;
+      allResults.push(...results)
+      filesScanned++
 
       if (results.length > 0) {
-        console.log(`🚨 ${path.relative(process.cwd(), filePath)}: ${results.length}件の秘密情報を検出`);
+        console.log(`🚨 ${path.relative(process.cwd(), filePath)}: ${results.length}件の秘密情報を検出`)
       }
-
     } catch (error) {
-      errors.push({ file: filePath, error: error.message });
+      errors.push({ file: filePath, error: error.message })
     }
   }
 
   // 結果サマリー
-  const duration = Date.now() - startTime;
+  const duration = Date.now() - startTime
   const stats = {
     duration: `${duration}ms`,
     filesScanned,
     secretsFound: allResults.length,
-    errorCount: errors.length
-  };
+    errorCount: errors.length,
+  }
 
-  console.log('\n📊 スキャン結果:');
-  console.log(`   📂 スキャンファイル: ${stats.filesScanned}件`);
-  console.log(`   🚨 検出された秘密情報: ${stats.secretsFound}件`);
-  console.log(`   ⏱️  実行時間: ${stats.duration}`);
+  console.log('\n📊 スキャン結果:')
+  console.log(`   📂 スキャンファイル: ${stats.filesScanned}件`)
+  console.log(`   🚨 検出された秘密情報: ${stats.secretsFound}件`)
+  console.log(`   ⏱️  実行時間: ${stats.duration}`)
 
   // 詳細結果表示
   if (allResults.length > 0) {
-    console.log('\n🚨 検出された秘密情報:');
+    console.log('\n🚨 検出された秘密情報:')
 
     // 重要度別グループ化
-    const groupedResults = {};
-    allResults.forEach(result => {
+    const groupedResults = {}
+    allResults.forEach((result) => {
       if (!groupedResults[result.severity]) {
-        groupedResults[result.severity] = [];
+        groupedResults[result.severity] = []
       }
-      groupedResults[result.severity].push(result);
-    });
+      groupedResults[result.severity].push(result)
+    })
 
     // 重要度順で表示
-    ['critical', 'high', 'medium', 'low'].forEach(severity => {
+    ;['critical', 'high', 'medium', 'low'].forEach((severity) => {
       if (groupedResults[severity]) {
-        console.log(`\n${getSeverityIcon(severity)} ${severity.toUpperCase()} (${groupedResults[severity].length}件):`);
+        console.log(`\n${getSeverityIcon(severity)} ${severity.toUpperCase()} (${groupedResults[severity].length}件):`)
 
         groupedResults[severity].forEach((result, index) => {
-          console.log(`   ${index + 1}. ${result.file}:${result.line}`);
-          console.log(`      📋 ${result.description} (${result.category})`);
-          console.log(`      🔍 "${result.match}"`);
-          console.log(`      📄 ${result.lineContent}`);
-          console.log('');
-        });
+          console.log(`   ${index + 1}. ${result.file}:${result.line}`)
+          console.log(`      📋 ${result.description} (${result.category})`)
+          console.log(`      🔍 "${result.match}"`)
+          console.log(`      📄 ${result.lineContent}`)
+          console.log('')
+        })
       }
-    });
+    })
 
-    console.log('\n💡 対応方法:');
-    console.log('   1. 🔐 1Password参照形式への変換: "op://vault/item/field"');
-    console.log('   2. 🌍 環境変数への移動: process.env.SECRET_NAME');
-    console.log('   3. 🗑️  不要な秘密情報の削除');
-    console.log('   4. 📝 .gitignore への追加');
+    console.log('\n💡 対応方法:')
+    console.log('   1. 🔐 1Password参照形式への変換: "op://vault/item/field"')
+    console.log('   2. 🌍 環境変数への移動: process.env.SECRET_NAME')
+    console.log('   3. 🗑️  不要な秘密情報の削除')
+    console.log('   4. 📝 .gitignore への追加')
 
-    return { success: false, results: allResults, stats, errors };
+    return { success: false, results: allResults, stats, errors }
   }
 
-  console.log('\n✅ 秘密情報は検出されませんでした');
-  return { success: true, results: [], stats, errors };
+  console.log('\n✅ 秘密情報は検出されませんでした')
+  return { success: true, results: [], stats, errors }
 }
 
 /**
@@ -529,12 +548,12 @@ async function runSecretDetection() {
  */
 function getSeverityIcon(severity) {
   const icons = {
-    'critical': '🔴',
-    'high': '🟡',
-    'medium': '🟠',
-    'low': '🟢'
-  };
-  return icons[severity] || '⚪';
+    critical: '🔴',
+    high: '🟡',
+    medium: '🟠',
+    low: '🟢',
+  }
+  return icons[severity] || '⚪'
 }
 
 // ===========================================
@@ -542,28 +561,27 @@ function getSeverityIcon(severity) {
 // ===========================================
 
 if (require.main === module) {
-  const forceRun = process.argv.includes('--force');
-  const verboseMode = process.argv.includes('--verbose');
+  const verboseMode = process.argv.includes('--verbose')
 
   runSecretDetection()
-    .then(result => {
+    .then((result) => {
       if (verboseMode) {
-        console.log('\n📊 詳細統計:', JSON.stringify(result.stats, null, 2));
+        console.log('\n📊 詳細統計:', JSON.stringify(result.stats, null, 2))
       }
 
       if (result.errors && result.errors.length > 0) {
-        console.log('\n⚠️  エラー:');
-        result.errors.forEach(error => {
-          console.log(`   ${error.file}: ${error.error}`);
-        });
+        console.log('\n⚠️  エラー:')
+        result.errors.forEach((error) => {
+          console.log(`   ${error.file}: ${error.error}`)
+        })
       }
 
-      process.exit(result.success ? 0 : 1);
+      process.exit(result.success ? 0 : 1)
     })
-    .catch(error => {
-      console.error('❌ GitLeaks Secret Detection failed:', error);
-      process.exit(1);
-    });
+    .catch((error) => {
+      console.error('❌ GitLeaks Secret Detection failed:', error)
+      process.exit(1)
+    })
 }
 
-module.exports = { runSecretDetection, CONFIG };
+module.exports = { runSecretDetection, CONFIG }

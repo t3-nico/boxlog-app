@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "BoxLog",
+    "description": "タスク管理アプリケーション",
+    "version": "v1.0.0"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "tasks": "タスク",
+    "calendar": "カレンダー",
+    "settings": "設定",
+    "profile": "プロフィール"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "update": "更新",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並べ替え"
+  },
+  "status": {
+    "loading": "読み込み中...",
+    "success": "成功",
+    "error": "エラー",
+    "warning": "警告",
+    "info": "情報"
+  },
+  "time": {
+    "today": "今日",
+    "yesterday": "昨日",
+    "tomorrow": "明日",
+    "thisWeek": "今週",
+    "nextWeek": "来週",
+    "thisMonth": "今月",
+    "nextMonth": "来月"
+  },
+  "language": {
+    "current": "現在の言語",
+    "switch": "言語を変更",
+    "english": "英語",
+    "japanese": "日本語"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "BoxLog",
+    "description": "Task management application",
+    "version": "v1.0.0"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "calendar": "Calendar",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort"
+  },
+  "status": {
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "time": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "thisWeek": "This Week",
+    "nextWeek": "Next Week",
+    "thisMonth": "This Month",
+    "nextMonth": "Next Month"
+  },
+  "language": {
+    "current": "Current Language",
+    "switch": "Switch Language",
+    "english": "English",
+    "japanese": "Japanese"
+  }
+}

@@ -1,5 +1,7 @@
 'use client'
 
+import { useCallback } from 'react'
+
 import { Menu, PanelLeftOpen } from 'lucide-react'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
@@ -16,13 +18,17 @@ export const SidebarToggle = () => {
   const { toggleSidebar } = useNavigationStore()
   const isMobile = useMediaQuery('(max-width: 768px)')
 
+  const handleToggleSidebar = useCallback(() => {
+    toggleSidebar()
+  }, [toggleSidebar])
+
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <button
             type="button"
-            onClick={() => toggleSidebar()}
+            onClick={handleToggleSidebar}
             className={cn(
               'flex h-8 w-8 flex-shrink-0 items-center justify-center',
               componentRadius.button.sm,

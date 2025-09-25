@@ -1,5 +1,7 @@
 'use client'
 
+import { useCallback } from 'react'
+
 import { PanelRightOpen } from 'lucide-react'
 
 import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
@@ -14,6 +16,10 @@ const { sm } = icon.size
 export const InspectorToggle = () => {
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
   const { toggleInspector } = useInspectorStore()
+
+  const handleToggleInspector = useCallback(() => {
+    toggleInspector()
+  }, [toggleInspector])
 
   // Inspectorが開いている場合は何も表示しない
   if (isInspectorOpen) {
@@ -32,7 +38,7 @@ export const InspectorToggle = () => {
           <TooltipTrigger asChild>
             <button
               type="button"
-              onClick={() => toggleInspector()}
+              onClick={handleToggleInspector}
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
                 componentRadius.button.sm,

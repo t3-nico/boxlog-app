@@ -1,19 +1,18 @@
 'use client'
 
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { PanelRightClose, Calendar, ListTodo, BotMessageSquare } from 'lucide-react'
+import { BotMessageSquare, Calendar, ListTodo, PanelRightClose } from 'lucide-react'
 
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-import { colors, rounded, animations, layout, primary } from '@/config/theme'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn-ui/tabs'
+import { animations, colors, layout, primary, rounded } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
-
 
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
@@ -26,36 +25,49 @@ export const DesktopInspector = () => {
   const setInspectorWidthConstrained = useInspectorStore((state) => state.setInspectorWidthConstrained)
   const { toggleInspector } = useInspectorStore()
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.preventDefault()
-    
-    const startX = e.clientX
-    const startWidth = useInspectorStore.getState().inspectorWidth
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const newWidth = startWidth - (e.clientX - startX) // 右から左なので符号反転
-      
-      // 制約付き幅設定メソッドを使用
-      setInspectorWidthConstrained(newWidth)
+      const startX = e.clientX
+      const startWidth = useInspectorStore.getState().inspectorWidth
+
+      const handleMouseMove = (e: MouseEvent) => {
+        const newWidth = startWidth - (e.clientX - startX) // 右から左なので符号反転
+
+        // 制約付き幅設定メソッドを使用
+        setInspectorWidthConstrained(newWidth)
+      }
+
+      const handleMouseUp = () => {
+        document.removeEventListener('mousemove', handleMouseMove)
+        document.removeEventListener('mouseup', handleMouseUp)
+      }
+
+      document.addEventListener('mousemove', handleMouseMove)
+      document.addEventListener('mouseup', handleMouseUp)
+    },
+    [setInspectorWidthConstrained]
+  )
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
     }
+  }, [])
 
-    const handleMouseUp = () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
+  const handleToggleInspector = useCallback(() => {
+    toggleInspector()
+  }, [toggleInspector])
 
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-  }
-  
   if (!isInspectorOpen) {
     return null
   }
-  
+
   return (
-    <div 
+    <div
       className={cn(
-        'flex relative z-[9999] border-l',
+        'relative z-[9999] flex border-l',
         colors.background.surface,
         colors.text.primary,
         colors.border.default
@@ -65,38 +77,36 @@ export const DesktopInspector = () => {
       {/* Resize Handle - 左側 */}
       <div
         onMouseDown={handleMouseDown}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-          }
-        }}
-        className={cn(
-          'absolute -left-1 top-0 w-3 h-full cursor-ew-resize group'
-        )}
+        onKeyDown={handleKeyDown}
+        className={cn('group absolute -left-1 top-0 h-full w-3 cursor-ew-resize')}
         role="button"
         tabIndex={0}
         aria-label="インスペクターの幅を調整"
       >
         {/* Visual Color Change - 1px width */}
-        <div className={cn(
-          'absolute left-1 top-0 w-px h-full transition-colors',
-          `bg-transparent ${primary.hover.replace('hover:', 'group-hover:')}`
-        )} />
+        <div
+          className={cn(
+            'absolute left-1 top-0 h-full w-px transition-colors',
+            `bg-transparent ${primary.hover.replace('hover:', 'group-hover:')}`
+          )}
+        />
       </div>
 
       {/* Inspector Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex flex-1 flex-col">
         {/* Inspector Header with Close Button */}
-        <div className={cn(
-          'flex items-center justify-end px-2 mt-2',
-          xs, // 32px height
-          colors.background.surface
-        )}>
+        <div
+          className={cn(
+            'mt-2 flex items-center justify-end px-2',
+            xs, // 32px height
+            colors.background.surface
+          )}
+        >
           <button
             type="button"
-            onClick={() => toggleInspector()}
+            onClick={handleToggleInspector}
             className={cn(
-              'w-8 h-8 flex items-center justify-center',
+              'flex h-8 w-8 items-center justify-center',
               rounded.component.button.sm,
               animations.transition.fast,
               colors.ghost.text,
@@ -104,37 +114,37 @@ export const DesktopInspector = () => {
               'flex-shrink-0'
             )}
           >
-            <PanelRightClose className="w-5 h-5" />
+            <PanelRightClose className="h-5 w-5" />
           </button>
         </div>
 
         {/* Inspector Tabs */}
-        <Tabs defaultValue="overview" className="flex-1 flex flex-col">
-          <div className={cn("px-2 pb-2 border-b", colors.border.default)}>
+        <Tabs defaultValue="overview" className="flex flex-1 flex-col">
+          <div className={cn('border-b px-2 pb-2', colors.border.default)}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="h-4 w-4" />
                 概要
               </TabsTrigger>
               <TabsTrigger value="ai" className="flex items-center gap-1">
-                <BotMessageSquare className="w-4 h-4" />
+                <BotMessageSquare className="h-4 w-4" />
                 AI
               </TabsTrigger>
               <TabsTrigger value="tasks" className="flex items-center gap-1">
-                <ListTodo className="w-4 h-4" />
+                <ListTodo className="h-4 w-4" />
                 タスク
               </TabsTrigger>
             </TabsList>
           </div>
-          
+
           <div className="flex-1 overflow-auto">
-            <TabsContent value="overview" className="p-0 m-0">
+            <TabsContent value="overview" className="m-0 p-0">
               <InspectorContent />
             </TabsContent>
-            <TabsContent value="ai" className="p-0 m-0 h-full">
+            <TabsContent value="ai" className="m-0 h-full p-0">
               <InspectorAIChat />
             </TabsContent>
-            <TabsContent value="tasks" className="p-0 m-0 h-full">
+            <TabsContent value="tasks" className="m-0 h-full p-0">
               <UnscheduledTasksList />
             </TabsContent>
           </div>
