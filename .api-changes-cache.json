@@ -2,10 +2,7 @@
   "signatures": {
     "src/app/api/auth/route.ts": {
       "file": "src/app/api/auth/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [
         {
           "type": "query",
@@ -26,56 +23,34 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "session"
-          ]
+          "keys": ["session"]
         },
         {
-          "keys": [
-            "user"
-          ]
+          "keys": ["user"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "user",
-            "session"
-          ]
+          "keys": ["user", "session"]
         },
         {
-          "keys": [
-            "user",
-            "session"
-          ]
+          "keys": ["user", "session"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [],
@@ -83,10 +58,7 @@
     },
     "src/app/api/config/route.ts": {
       "file": "src/app/api/config/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [
         {
           "type": "body",
@@ -99,32 +71,16 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "...response",
-            "errors",
-            "warnings"
-          ]
+          "keys": ["...response", "errors", "warnings"]
         },
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         },
         {
-          "keys": [
-            "...validationResponse",
-            "errors",
-            "warnings"
-          ]
+          "keys": ["...validationResponse", "errors", "warnings"]
         },
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         }
       ],
       "validationRules": [],
@@ -132,9 +88,7 @@
     },
     "src/app/api/health/route.ts": {
       "file": "src/app/api/health/route.ts",
-      "httpMethods": [
-        "GET"
-      ],
+      "httpMethods": ["GET"],
       "parameters": [],
       "responseStructure": [],
       "validationRules": [
@@ -147,10 +101,7 @@
     },
     "src/app/api/i18n/crowdin/sync/route.ts": {
       "file": "src/app/api/i18n/crowdin/sync/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [
         {
           "type": "body",
@@ -163,100 +114,52 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error",
-            "download",
-            "or progress.'"
-          ]
+          "keys": ["error", "download", "or progress.'"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success",
-            "message"
-          ]
+          "keys": ["success", "message"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success",
-            "message"
-          ]
+          "keys": ["success", "message"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success",
-            "message",
-            "data",
-            "progress",
-            "lastUpdated"
-          ]
+          "keys": ["success", "message", "data", "progress", "lastUpdated"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success",
-            "message",
-            "data",
-            "languages",
-            "progress",
-            "status"
-          ]
+          "keys": ["success", "message", "data", "languages", "progress", "status"]
         },
         {
-          "keys": [
-            "success",
-            "message",
-            "error",
-            "connected"
-          ]
+          "keys": ["success", "message", "error", "connected"]
         }
       ],
       "validationRules": [],
-      "contentHash": "d8203ff8"
+      "contentHash": "881f25ee"
     },
     "src/app/api/i18n/crowdin/webhook/route.ts": {
       "file": "src/app/api/i18n/crowdin/webhook/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success",
-            "message",
-            "eventType",
-            "timestamp"
-          ]
+          "keys": ["success", "message", "eventType", "timestamp"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
           "keys": [
@@ -281,13 +184,11 @@
           "field": "signature"
         }
       ],
-      "contentHash": "c60ba315"
+      "contentHash": "2e9e9e63"
     },
     "src/app/api/i18n/health/route.ts": {
       "file": "src/app/api/i18n/health/route.ts",
-      "httpMethods": [
-        "GET"
-      ],
+      "httpMethods": ["GET"],
       "parameters": [
         {
           "type": "query",
@@ -306,9 +207,7 @@
           ]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [],
@@ -316,10 +215,7 @@
     },
     "src/app/api/i18n/quality/route.ts": {
       "file": "src/app/api/i18n/quality/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [
         {
           "type": "query",
@@ -336,86 +232,35 @@
         {
           "type": "body",
           "name": "action"
-        },
-        {
-          "type": "body",
-          "name": "translationKey"
-        },
-        {
-          "type": "body",
-          "name": "language"
-        },
-        {
-          "type": "body",
-          "name": "originalText"
-        },
-        {
-          "type": "body",
-          "name": "translatedText"
-        },
-        {
-          "type": "body",
-          "name": "reviewer"
-        },
-        {
-          "type": "body",
-          "name": "comments"
         }
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "message",
-            "translationKey",
-            "language"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "status",
-            "timestamp",
-            "version"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
-        },
-        {
-          "keys": [
-            "error"
-          ]
+          "keys": ["status", "message", "timestamp", "version"]
         }
       ],
       "validationRules": [
@@ -436,14 +281,11 @@
           "field": "translationKey"
         }
       ],
-      "contentHash": "1cc62bb1"
+      "contentHash": "9d7c4efa"
     },
     "src/app/api/i18n/report/route.ts": {
       "file": "src/app/api/i18n/report/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [
         {
           "type": "query",
@@ -472,29 +314,19 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [],
@@ -502,46 +334,23 @@
     },
     "src/app/api/logs/route.ts": {
       "file": "src/app/api/logs/route.ts",
-      "httpMethods": [
-        "DELETE",
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["DELETE", "GET", "POST"],
       "parameters": [],
       "responseStructure": [
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         },
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         },
         {
-          "keys": [
-            "error",
-            "message"
-          ]
+          "keys": ["error", "message"]
         },
         {
-          "keys": [
-            "success",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["success", "message", "timestamp"]
         },
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         }
       ],
       "validationRules": [],
@@ -549,12 +358,7 @@
     },
     "src/app/api/profiles/route.ts": {
       "file": "src/app/api/profiles/route.ts",
-      "httpMethods": [
-        "DELETE",
-        "GET",
-        "POST",
-        "PUT"
-      ],
+      "httpMethods": ["DELETE", "GET", "POST", "PUT"],
       "parameters": [
         {
           "type": "query",
@@ -583,94 +387,58 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "profile"
-          ]
+          "keys": ["profile"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "profile"
-          ]
+          "keys": ["profile"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "profile"
-          ]
+          "keys": ["profile"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [
@@ -699,12 +467,7 @@
     },
     "src/app/api/tasks/route.ts": {
       "file": "src/app/api/tasks/route.ts",
-      "httpMethods": [
-        "DELETE",
-        "GET",
-        "POST",
-        "PUT"
-      ],
+      "httpMethods": ["DELETE", "GET", "POST", "PUT"],
       "parameters": [
         {
           "type": "query",
@@ -757,94 +520,58 @@
       ],
       "responseStructure": [
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "tasks"
-          ]
+          "keys": ["tasks"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "task"
-          ]
+          "keys": ["task"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "task"
-          ]
+          "keys": ["task"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         },
         {
-          "keys": [
-            "success"
-          ]
+          "keys": ["success"]
         },
         {
-          "keys": [
-            "error"
-          ]
+          "keys": ["error"]
         }
       ],
       "validationRules": [
@@ -873,18 +600,11 @@
     },
     "src/app/api/v1/health/route.ts": {
       "file": "src/app/api/v1/health/route.ts",
-      "httpMethods": [
-        "GET"
-      ],
+      "httpMethods": ["GET"],
       "parameters": [],
       "responseStructure": [
         {
-          "keys": [
-            "status",
-            "message",
-            "error",
-            "timestamp"
-          ]
+          "keys": ["status", "message", "error", "timestamp"]
         }
       ],
       "validationRules": [],
@@ -892,17 +612,11 @@
     },
     "src/app/api/v1/system/route.ts": {
       "file": "src/app/api/v1/system/route.ts",
-      "httpMethods": [
-        "GET"
-      ],
+      "httpMethods": ["GET"],
       "parameters": [],
       "responseStructure": [
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         }
       ],
       "validationRules": [],
@@ -910,30 +624,19 @@
     },
     "src/app/api/version-test/route.ts": {
       "file": "src/app/api/version-test/route.ts",
-      "httpMethods": [
-        "GET",
-        "POST"
-      ],
+      "httpMethods": ["GET", "POST"],
       "parameters": [],
       "responseStructure": [
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         },
         {
-          "keys": [
-            "error",
-            "message",
-            "timestamp"
-          ]
+          "keys": ["error", "message", "timestamp"]
         }
       ],
       "validationRules": [],
       "contentHash": "37d97146"
     }
   },
-  "timestamp": "2025-09-26T03:49:56.832Z"
+  "timestamp": "2025-09-26T03:54:51.697Z"
 }
