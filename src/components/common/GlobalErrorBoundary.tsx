@@ -10,6 +10,13 @@ import { Component, ErrorInfo, ReactNode } from 'react'
 import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
+import {
+  createErrorToast,
+  getErrorPattern,
+  getRecommendedActions,
+  getUserFriendlyMessage,
+  isAutoRecoverable,
+} from '@/config/error-patterns'
 import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { ERROR_CODES, ErrorCode, getErrorCategory, getErrorSeverity } from '@/constants/errorCodes'
 
@@ -43,46 +50,37 @@ interface ErrorAnalysis {
   suggestedActions: string[]
 }
 
-// === エラー分析ユーティリティ ===
+// === エラー分析ユーティリティ（error-patterns.ts統合版） ===
 
 function analyzeError(error: Error): ErrorAnalysis {
   let code = ERROR_CODES.UI_COMPONENT_ERROR
   let recoverable = true
   let autoRetryable = false
-  const suggestedActions: string[] = []
 
-  // エラーメッセージから自動分類
-  if (error.message.includes('Network') || error.message.includes('fetch')) {
-    code = ERROR_CODES.SYSTEM_NETWORK_ERROR
-    autoRetryable = true
-    suggestedActions.push('ネットワーク接続を確認してください')
-  } else if (error.message.includes('ChunkLoadError') || error.message.includes('Loading chunk')) {
-    code = ERROR_CODES.UI_PERFORMANCE_ERROR
-    autoRetryable = true
-    suggestedActions.push('ページを再読み込みします')
-  } else if (error.message.includes('404') || error.message.includes('Not Found')) {
-    code = ERROR_CODES.DATA_NOT_FOUND
-    recoverable = false
-    suggestedActions.push('ホームページから再度アクセスしてください')
-  } else if (error.message.includes('500') || error.message.includes('Internal Server')) {
-    code = ERROR_CODES.API_SERVER_ERROR
-    autoRetryable = true
-    suggestedActions.push('サーバーの問題です。しばらく待ってから再試行してください')
-  } else if (error.message.includes('timeout') || error.message.includes('Timeout')) {
-    code = ERROR_CODES.API_TIMEOUT
-    autoRetryable = true
-    suggestedActions.push('接続がタイムアウトしました。再試行します')
+  // 1. error-patterns.tsの推定機能を使用してエラーコードを特定
+  const estimatedCode = estimateErrorCodeFromMessage(error.message)
+  if (estimatedCode) {
+    code = estimatedCode
   }
 
-  // React固有のエラー
+  // 2. error-patterns.tsから詳細な情報を取得
+  const pattern = getErrorPattern(code)
+  if (pattern) {
+    recoverable = pattern.autoRecoverable || true
+    autoRetryable = pattern.autoRecoverable
+  }
+
+  // 3. React固有のエラーの追加判定
   if (error.name === 'ChunkLoadError') {
     code = ERROR_CODES.UI_PERFORMANCE_ERROR
     autoRetryable = true
-    suggestedActions.push('新しいバージョンが利用可能です。ページを更新します')
   }
 
   const category = getErrorCategory(code)
   const severity = getErrorSeverity(code)
+
+  // 4. 推奨アクションを error-patterns.ts から取得
+  const suggestedActions = getRecommendedActions(code)
 
   return {
     code,
@@ -90,8 +88,68 @@ function analyzeError(error: Error): ErrorAnalysis {
     severity,
     recoverable,
     autoRetryable,
-    suggestedActions: suggestedActions.length > 0 ? suggestedActions : ['問題を解決するため、自動的に再試行します'],
+    suggestedActions,
   }
+}
+
+/**
+ * エラーメッセージからエラーコードを推定（error-patterns.tsの推定ロジックを使用）
+ */
+function estimateErrorCodeFromMessage(message: string): ErrorCode | null {
+  const lowerMessage = message.toLowerCase()
+
+  // 認証関連
+  if (lowerMessage.includes('auth') || lowerMessage.includes('unauthorized') || lowerMessage.includes('401')) {
+    if (lowerMessage.includes('expired') || lowerMessage.includes('timeout')) {
+      return ERROR_CODES.AUTH_EXPIRED
+    }
+    if (lowerMessage.includes('invalid') || lowerMessage.includes('token')) {
+      return ERROR_CODES.AUTH_INVALID_TOKEN
+    }
+    if (lowerMessage.includes('forbidden') || lowerMessage.includes('403')) {
+      return ERROR_CODES.AUTH_NO_PERMISSION
+    }
+    return ERROR_CODES.AUTH_INVALID_TOKEN
+  }
+
+  // ネットワーク関連
+  if (lowerMessage.includes('network') || lowerMessage.includes('fetch')) {
+    return ERROR_CODES.SYSTEM_NETWORK_ERROR
+  }
+
+  // API関連
+  if (lowerMessage.includes('429') || lowerMessage.includes('rate limit')) {
+    return ERROR_CODES.API_RATE_LIMIT
+  }
+  if (lowerMessage.includes('timeout')) {
+    return ERROR_CODES.API_TIMEOUT
+  }
+  if (lowerMessage.includes('500') || lowerMessage.includes('server error')) {
+    return ERROR_CODES.API_SERVER_ERROR
+  }
+
+  // データ関連
+  if (lowerMessage.includes('not found') || lowerMessage.includes('404')) {
+    return ERROR_CODES.DATA_NOT_FOUND
+  }
+  if (lowerMessage.includes('duplicate') || lowerMessage.includes('already exists')) {
+    return ERROR_CODES.DATA_DUPLICATE
+  }
+  if (lowerMessage.includes('validation') || lowerMessage.includes('invalid')) {
+    return ERROR_CODES.DATA_VALIDATION_ERROR
+  }
+
+  // UI関連
+  if (lowerMessage.includes('component') || lowerMessage.includes('render')) {
+    return ERROR_CODES.UI_COMPONENT_ERROR
+  }
+
+  // ChunkLoadError など React固有
+  if (lowerMessage.includes('chunklloaderror') || lowerMessage.includes('loading chunk')) {
+    return ERROR_CODES.UI_PERFORMANCE_ERROR
+  }
+
+  return null
 }
 
 // === 自動復旧機能付きグローバルエラーバウンダリー ===
@@ -131,13 +189,23 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     const { retryCount } = this.state
     const { maxRetries = 3, onError } = this.props
 
-    // エラー分析
+    // エラー分析（error-patterns.ts統合版）
     const analysis = analyzeError(error)
 
-    // エラーログ出力（構造化）
-    console.group('🚨 GlobalErrorBoundary - エラー詳細')
+    // ユーザーフレンドリーなトースト通知を表示
+    if (typeof window !== 'undefined') {
+      const toastInfo = createErrorToast(analysis.code)
+      // NOTE: 実際のトースト表示は toast ライブラリに依存
+      console.log('🍞 トースト通知:', toastInfo)
+    }
+
+    // エラーログ出力（構造化・拡張版）
+    console.group('🚨 GlobalErrorBoundary - エラー詳細（error-patterns.ts統合）')
     console.error('Error:', error)
     console.error('Error Analysis:', analysis)
+    console.error('User Friendly Message:', getUserFriendlyMessage(analysis.code))
+    console.error('Recommended Actions:', getRecommendedActions(analysis.code))
+    console.error('Auto Recoverable:', isAutoRecoverable(analysis.code))
     console.error('Component Stack:', errorInfo.componentStack)
     console.error('Error ID:', this.state.errorId)
     console.error('Retry Count:', retryCount)
@@ -146,8 +214,9 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     // プロップスのエラーハンドラーを呼び出し
     onError?.(error, errorInfo, retryCount)
 
-    // 自動復旧のロジック
-    if (analysis.autoRetryable && retryCount < maxRetries && this.state.autoRetryEnabled) {
+    // 自動復旧のロジック（error-patterns.tsの判定を使用）
+    const autoRecoverable = isAutoRecoverable(analysis.code)
+    if (autoRecoverable && retryCount < maxRetries && this.state.autoRetryEnabled) {
       this.scheduleAutoRetry(analysis)
     }
   }
@@ -270,30 +339,44 @@ export class GlobalErrorBoundary extends Component<Props, State> {
               </div>
             ) : null}
 
-            {/* エラー分析・推奨アクション */}
+            {/* エラー分析・推奨アクション（error-patterns.ts統合版） */}
             <div className={`${spacing.margin.lg}`}>
               <h3 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>
                 発生した問題と対処法
               </h3>
               <div className={`${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}>
-                <div className="space-y-2">
-                  <p className={`${typography.body.base} ${colors.text.primary}`}>
-                    <span className="font-semibold">問題:</span> {analysis.category} 系統の{analysis.severity}
-                    レベルエラー
-                  </p>
-                  <p className={`${typography.body.base} ${colors.text.secondary}`}>
-                    <span className="font-semibold">自動復旧:</span>{' '}
-                    {analysis.autoRetryable ? '✅ 可能（自動で修復します）' : '❌ 手動対応が必要'}
-                  </p>
+                <div className="space-y-3">
+                  {/* ユーザーフレンドリーメッセージ */}
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">{getErrorPattern(analysis.code)?.emoji || '⚠️'}</span>
+                    <div>
+                      <p className={`${typography.body.large} ${colors.text.primary} font-semibold`}>
+                        {getUserFriendlyMessage(analysis.code)}
+                      </p>
+                      <p className={`${typography.body.base} ${colors.text.secondary}`}>
+                        {getErrorPattern(analysis.code)?.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 技術詳細（簡略版） */}
+                  <div className={`${spacing.padding.sm} ${colors.background.base} ${rounded.component.input.text}`}>
+                    <p className={`${typography.body.small} ${colors.text.secondary}`}>
+                      <span className="font-semibold">分類:</span> {analysis.category} 系統 •
+                      <span className="font-semibold">重要度:</span> {analysis.severity} •
+                      <span className="font-semibold">自動復旧:</span>{' '}
+                      {analysis.autoRetryable ? '✅ 可能' : '❌ 手動対応必要'}
+                    </p>
+                  </div>
                 </div>
 
-                {/* 推奨アクション */}
+                {/* 推奨アクション（error-patterns.tsから取得） */}
                 <div className="mt-4">
                   <p className={`${typography.body.semibold} ${colors.text.primary} mb-2`}>推奨アクション:</p>
-                  <ul className="space-y-1">
-                    {analysis.suggestedActions.map((action) => (
+                  <ul className="space-y-2">
+                    {analysis.suggestedActions.map((action, index) => (
                       <li key={action} className={`${typography.body.small} ${colors.text.secondary} flex items-start`}>
-                        <span className={`${colors.primary.DEFAULT} mr-2`}>•</span>
+                        <span className={`${colors.primary.DEFAULT} mr-2 font-semibold`}>{index + 1}.</span>
                         {action}
                       </li>
                     ))}

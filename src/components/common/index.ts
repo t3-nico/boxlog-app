@@ -31,5 +31,24 @@ export {
 // Auto-retry hooks
 export { useApiRetry, default as useAutoRetry, useDataFetchRetry, useUserActionRetry } from '../../hooks/useAutoRetry'
 
+// Unified error handling system
+export {
+  UnifiedErrorHandler,
+  getGlobalErrorStats,
+  handleAsyncError,
+  handleGlobalError,
+  useUnifiedErrorHandler,
+} from '../../lib/unified-error-handler'
+
+// Error patterns system
+export {
+  createErrorToast,
+  getDetailedErrorInfo,
+  getErrorPattern,
+  getRecommendedActions,
+  getUserFriendlyMessage,
+  isAutoRecoverable,
+} from '../../config/error-patterns'
+
 // Providers
 export { Providers } from './providers'
