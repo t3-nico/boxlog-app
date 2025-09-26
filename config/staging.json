@@ -1,0 +1,32 @@
+{
+  "app": {
+    "environment": "staging",
+    "baseUrl": "https://staging.boxlog.app",
+    "debug": false
+  },
+  "database": {
+    "ssl": true,
+    "maxConnections": 20
+  },
+  "features": {
+    "debugMode": false,
+    "aiFeatures": true,
+    "realtime": true
+  },
+  "server": {
+    "https": true,
+    "corsOrigins": ["https://staging.boxlog.app"],
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxRequests": 80
+    },
+    "session": {
+      "secure": true
+    }
+  },
+  "logging": {
+    "level": "info",
+    "console": true,
+    "file": true
+  }
+}

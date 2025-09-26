@@ -1,0 +1,70 @@
+{
+  "app": {
+    "name": "BoxLog",
+    "version": "1.0.0",
+    "timezone": "Asia/Tokyo",
+    "locale": "ja-JP"
+  },
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "name": "boxlog",
+    "maxConnections": 10,
+    "connectionTimeout": 30000,
+    "queryTimeout": 60000
+  },
+  "auth": {
+    "jwtExpiresIn": "7d",
+    "refreshTokenExpiresIn": "30d",
+    "passwordMinLength": 8,
+    "passwordResetExpiry": 60,
+    "maxLoginAttempts": 5,
+    "lockoutDuration": 30
+  },
+  "features": {
+    "dashboard": true,
+    "darkMode": true,
+    "aiFeatures": false,
+    "calendar": true,
+    "taskManagement": true,
+    "fileUpload": true,
+    "notifications": true,
+    "realtime": false,
+    "analytics": true,
+    "debugMode": false
+  },
+  "email": {
+    "port": 587,
+    "secure": false,
+    "fromName": "BoxLog",
+    "rateLimit": 100
+  },
+  "server": {
+    "port": 3000,
+    "host": "localhost",
+    "https": false,
+    "corsOrigins": ["*"],
+    "bodyLimit": "10mb",
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxRequests": 100
+    },
+    "session": {
+      "maxAge": 86400000,
+      "httpOnly": true,
+      "secure": false
+    }
+  },
+  "logging": {
+    "level": "info",
+    "console": true,
+    "file": false,
+    "filePath": "./logs/boxlog.log",
+    "rotation": {
+      "maxSize": "10m",
+      "maxFiles": 5
+    },
+    "json": false,
+    "timestamp": true
+  }
+}

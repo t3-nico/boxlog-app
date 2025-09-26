@@ -1,0 +1,38 @@
+{
+  "app": {
+    "environment": "production",
+    "baseUrl": "https://boxlog.app",
+    "debug": false
+  },
+  "database": {
+    "ssl": true,
+    "maxConnections": 50,
+    "connectionTimeout": 10000
+  },
+  "features": {
+    "debugMode": false,
+    "aiFeatures": false
+  },
+  "email": {
+    "secure": true,
+    "rateLimit": 50
+  },
+  "server": {
+    "https": true,
+    "corsOrigins": ["https://boxlog.app", "https://www.boxlog.app"],
+    "rateLimit": {
+      "windowMs": 60000,
+      "maxRequests": 60
+    },
+    "session": {
+      "secure": true,
+      "maxAge": 3600000
+    }
+  },
+  "logging": {
+    "level": "warn",
+    "console": false,
+    "file": true,
+    "json": true
+  }
+}
