@@ -16,6 +16,7 @@
 - **デザインシステム**: [`docs/DESIGN_SYSTEM_README.md`](docs/DESIGN_SYSTEM_README.md) - UI統一
 - **テーマ強制**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md) - スタイル管理
 - **Bundle監視**: [`docs/BUNDLE_MONITORING.md`](docs/BUNDLE_MONITORING.md) - パフォーマンス
+- **🛡️ エラーバウンダリー**: [`docs/ERROR_BOUNDARY_SYSTEM.md`](docs/ERROR_BOUNDARY_SYSTEM.md) - 自動復旧システム
 
 ## 🚀 開発コマンド
 
@@ -220,6 +221,7 @@ BoxLogでは破壊的変更の自動検知・影響分析・マイグレーシ�
 ### 🎯 システム概要
 
 **破壊的変更の完全追跡**：
+
 - Git diff解析による自動検知
 - 影響範囲の詳細分析
 - マイグレーション計画の自動生成
@@ -228,31 +230,34 @@ BoxLogでは破壊的変更の自動検知・影響分析・マイグレーシ�
 
 ### 📊 検知カテゴリ（6分野）
 
-| カテゴリ                   | 重要度   | 検知対象                               | 影響グループ             |
-| -------------------------- | -------- | -------------------------------------- | ------------------------ |
-| **🔌 API Changes**         | Critical | エンドポイント削除・変更               | API利用者・外部システム  |
-| **🗄️ Database Changes**   | Critical | スキーマ削除・テーブル変更             | 開発者・運用・管理者     |
-| **🔐 Authentication**      | Critical | 認証システム変更                       | 全ユーザー・開発者       |
-| **📦 Dependencies**        | High     | 依存関係削除・メジャーアップデート     | 開発者                   |
-| **⚙️ Configuration**      | High     | 設定ファイル構造変更・環境変数削除     | 開発者・DevOps           |
-| **🎨 Interface**           | Medium   | TypeScript型定義・コンポーネントProps | 開発者                   |
+| カテゴリ                | 重要度   | 検知対象                              | 影響グループ            |
+| ----------------------- | -------- | ------------------------------------- | ----------------------- |
+| **🔌 API Changes**      | Critical | エンドポイント削除・変更              | API利用者・外部システム |
+| **🗄️ Database Changes** | Critical | スキーマ削除・テーブル変更            | 開発者・運用・管理者    |
+| **🔐 Authentication**   | Critical | 認証システム変更                      | 全ユーザー・開発者      |
+| **📦 Dependencies**     | High     | 依存関係削除・メジャーアップデート    | 開発者                  |
+| **⚙️ Configuration**    | High     | 設定ファイル構造変更・環境変数削除    | 開発者・DevOps          |
+| **🎨 Interface**        | Medium   | TypeScript型定義・コンポーネントProps | 開発者                  |
 
 ### 🔬 高度な影響分析機能
 
 ```typescript
 // 3次元影響分析マトリクス
 interface ImpactAnalysis {
-  technical: {    // 技術的影響（40%）
-    score: number        // 1-10スコア
-    areas: string[]      // 影響領域
+  technical: {
+    // 技術的影響（40%）
+    score: number // 1-10スコア
+    areas: string[] // 影響領域
     mitigation: string[] // 軽減策
   }
-  business: {     // ビジネス影響（30%）
+  business: {
+    // ビジネス影響（30%）
     score: number
     areas: string[]
     mitigation: string[]
   }
-  operational: {  // 運用影響（30%）
+  operational: {
+    // 運用影響（30%）
     score: number
     areas: string[]
     mitigation: string[]
@@ -263,12 +268,14 @@ interface ImpactAnalysis {
 ### 📅 自動マイグレーション計画生成
 
 **4フェーズ構造**：
+
 1. **準備フェーズ** - バックアップ・影響確認・ロールバック準備
 2. **実行フェーズ** - カテゴリ別マイグレーション実行
 3. **検証フェーズ** - ヘルスチェック・テスト・パフォーマンス確認
 4. **安定化フェーズ** - 監視強化・ドキュメント公開
 
 **工数自動見積もり**：
+
 - 影響スコアベースの自動計算
 - リスクレベル別の調整係数
 - 依存関係を考慮したタイムライン生成
@@ -276,14 +283,14 @@ interface ImpactAnalysis {
 ### 🔔 チーム通知システム
 
 **Slack統合**：
+
 ```javascript
 // 自動通知内容
-- 変更サマリー・リスクレベル
-- 影響システム・担当チーム
-- 推奨アクション・マイグレーション期間
+;-変更サマリー・リスクレベル - 影響システム・担当チーム - 推奨アクション・マイグレーション期間
 ```
 
 **GitHub Issue自動作成**：
+
 - 詳細分析結果を含むIssue作成
 - 適切なラベル付け（breaking-change, critical等）
 - マイグレーション計画のチェックリスト
@@ -291,11 +298,13 @@ interface ImpactAnalysis {
 ### 📈 レポート生成システム
 
 **3形式対応**：
+
 - **JSON** - 機械読み取り可能形式
 - **Markdown** - 人間読み取り・GitHub連携
 - **HTML** - ビジュアルレポート・共有用
 
 **ビジュアライゼーション**：
+
 - リスク分布チャート
 - マイグレーションタイムライン（ガントチャート）
 - 影響ヒートマップ
@@ -319,12 +328,14 @@ npm run breaking:report ./reports/impact-analysis-latest.json
 ### 🎯 CI/CD統合
 
 **Pre-commit Hook**：
+
 ```bash
 # .husky/pre-commit に組み込み
 npm run breaking:check && echo "✅ No breaking changes" || exit 1
 ```
 
 **GitHub Actions統合**：
+
 - プルリクエスト時の自動検知
 - マイグレーション計画のコメント追加
 - 重要度に応じた承認フロー
