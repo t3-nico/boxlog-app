@@ -17,6 +17,7 @@
 - **テーマ強制**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md) - スタイル管理
 - **Bundle監視**: [`docs/BUNDLE_MONITORING.md`](docs/BUNDLE_MONITORING.md) - パフォーマンス
 - **🛡️ エラーバウンダリー**: [`docs/ERROR_BOUNDARY_SYSTEM.md`](docs/ERROR_BOUNDARY_SYSTEM.md) - 自動復旧システム
+- **🏗️ ビジネスルール辞書**: [`docs/BUSINESS_RULES_GUIDE.md`](docs/BUSINESS_RULES_GUIDE.md) - 技術的失敗防止システム
 
 ## 🚀 開発コマンド
 
@@ -96,6 +97,12 @@ npm run breaking:report       # 詳細レポートの再生成（既存データ
 npm run breaking:notify       # チーム通知の送信（Slack/Discord/GitHub Issue）
 npm run breaking:plan         # マイグレーション計画書の生成
 npm run breaking:full         # 完全フロー（検知→分析→記録）
+
+# === ビジネスルール辞書システム管理コマンド（v2.0.0追加） ===
+npm run generate:business-rules       # バリデーション・型・スキーマ自動生成
+npm run business-rules:test           # 基盤・統合テスト実行
+npm run business-rules:generate-and-test # コード生成・テスト統合実行
+npm run business-rules:full           # 完全ビジネスルール管理フロー
 ```
 
 詳細は [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md) を参照してください。
@@ -139,6 +146,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 7. **すべてのスタイリングは `/src/config/theme` を必ず使用** - [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md) 参照
 8. **テスト環境**: 現在はテストファイル整理済み（将来的にE2Eテスト導入予定）\*\*
 9. **アクセシビリティ（WCAG AA準拠）を必ず確認** - [`docs/performance/ACCESSIBILITY_TESTING_GUIDE.md`](docs/performance/ACCESSIBILITY_TESTING_GUIDE.md) 参照
+10. **🏗️ ビジネスルール辞書システム必須使用** - バリデーション・権限・ワークフロー実装時は `BusinessRuleRegistry` を使用 - [`docs/BUSINESS_RULES_GUIDE.md`](docs/BUSINESS_RULES_GUIDE.md) 参照
 
 ## 📋 開発時の指針
 
@@ -149,6 +157,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - **型安全**: TypeScript を厳密に使用
 - **コードクリーンアップ**: 未使用変数・インポートの除去を徹底
 - **リーダブルコード**: 関数の複雑度を低く保ち、理解しやすいコードを実装
+- **🏗️ ビジネスルール**: バリデーション・権限・ワークフローは `BusinessRuleRegistry` を必ず使用
 
 ### ドキュメント更新
 

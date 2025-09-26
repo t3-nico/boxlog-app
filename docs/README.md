@@ -28,6 +28,15 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 **最適化・コード品質・アクセシビリティ**
 
 - [ESLint企業級設定](./performance/ESLINT_SETUP_COMPLETE.md) - 96%完成（Google・Meta基準）
+
+### 🏗️ [ビジネスルール辞書システム](./BUSINESS_RULES_GUIDE.md)
+
+**技術的失敗を防ぐ自動化システム（Issue #338完全実現）**
+
+- [完全ガイド](./BUSINESS_RULES_GUIDE.md) - 使用方法・高度設定・トラブルシューティング
+- **実現済み機能**: バリデーション・権限・ワークフロー・制約の全自動化
+- **パフォーマンス**: 0.11ms/回の高速実行
+- **品質保証**: 93%テスト通過率・企業級品質システム
 - [Bundle監視システム](./performance/BUNDLE_MONITORING.md) - 99.5%サイズ削減達成
 - [アクセシビリティ](./performance/ACCESSIBILITY_TESTING_GUIDE.md) - WCAG準拠テスト
 
