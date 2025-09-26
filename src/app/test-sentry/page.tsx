@@ -59,7 +59,38 @@ export default function SentryTestPage() {
     addTestResult('✅ パンくずリストを追加しました')
   }
 
-  // AppErrorテスト
+  // テスト1: 通常のエラー
+  const handleNormalErrorTest = () => {
+    try {
+      throw new Error('テスト: 意図的なエラー')
+    } catch (error) {
+      SentryErrorHandler.captureError(error)
+      addTestResult('✅ 通常のエラーをSentryに送信しました')
+    }
+  }
+
+  // テスト2: 非同期エラー（Promise拒否）
+  const handleAsyncErrorTest = async () => {
+    try {
+      await Promise.reject('テスト: Promise拒否')
+    } catch (error) {
+      SentryErrorHandler.captureError(error)
+      addTestResult('✅ 非同期エラー（Promise拒否）をSentryに送信しました')
+    }
+  }
+
+  // テスト3: ネットワークエラー（APIエラー）
+  const handleNetworkErrorTest = async () => {
+    try {
+      await fetch('/api/non-existent-endpoint')
+    } catch (error) {
+      SentryErrorHandler.captureError(error)
+      addTestResult('✅ ネットワークエラーをSentryに送信しました')
+    }
+    addTestResult('⚠️ 存在しないAPIエンドポイントを呼び出しました（ネットワークエラー）')
+  }
+
+  // AppErrorテスト（既存機能）
   const handleAppErrorTest = () => {
     try {
       throw new AppError('テスト用AppError', 'TEST_APP_ERROR', 500, {
@@ -75,7 +106,7 @@ export default function SentryTestPage() {
     }
   }
 
-  // ValidationErrorテスト
+  // ValidationErrorテスト（既存機能）
   const handleValidationErrorTest = () => {
     try {
       throw new ValidationError('テスト用バリデーションエラー', {
