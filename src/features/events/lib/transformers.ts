@@ -123,8 +123,11 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
 
   // マッピングに従って変換
   fieldMappings.forEach(({ requestField, entityField, transform }) => {
-    if (request[requestField] !== undefined) {
-      result[entityField] = transform ? transform(request[requestField]) : request[requestField]
+    if (requestField in request && request[requestField] !== undefined) {
+      const value = request[requestField]
+      if (entityField in result || !result[entityField]) {
+        result[entityField] = transform ? transform(value) : value
+      }
     }
   })
 

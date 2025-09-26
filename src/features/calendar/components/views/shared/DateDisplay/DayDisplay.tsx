@@ -94,9 +94,7 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
         </div>
 
         {/* ハイライトドット */}
-        {highlight?.showDot && (
-          <div className={`w-1 h-1 rounded-full mt-1 ${highlight.dotColor || colors.primary.DEFAULT}`} />
-        )}
+        {highlight?.showDot ? <div className={`w-1 h-1 rounded-full mt-1 ${highlight.dotColor || colors.primary.DEFAULT}`} /> : null}
       </div>
     </button>
   ) : (

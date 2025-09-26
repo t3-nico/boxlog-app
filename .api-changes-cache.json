@@ -2,7 +2,10 @@
   "signatures": {
     "src/app/api/auth/route.ts": {
       "file": "src/app/api/auth/route.ts",
-      "httpMethods": ["GET", "POST"],
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
       "parameters": [
         {
           "type": "query",
@@ -23,42 +26,115 @@
       ],
       "responseStructure": [
         {
-          "keys": ["session"]
+          "keys": [
+            "session"
+          ]
         },
         {
-          "keys": ["user"]
+          "keys": [
+            "user"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["user", "session"]
+          "keys": [
+            "user",
+            "session"
+          ]
         },
         {
-          "keys": ["user", "session"]
+          "keys": [
+            "user",
+            "session"
+          ]
         },
         {
-          "keys": ["success"]
+          "keys": [
+            "success"
+          ]
         },
         {
-          "keys": ["success"]
+          "keys": [
+            "success"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         }
       ],
       "validationRules": [],
       "contentHash": "e4f3a8cc"
     },
+    "src/app/api/config/route.ts": {
+      "file": "src/app/api/config/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [
+        {
+          "type": "body",
+          "name": "strict"
+        },
+        {
+          "type": "body",
+          "name": "clearCache"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "...response",
+            "errors",
+            "warnings"
+          ]
+        },
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        },
+        {
+          "keys": [
+            "...validationResponse",
+            "errors",
+            "warnings"
+          ]
+        },
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "41eb14d0"
+    },
     "src/app/api/health/route.ts": {
       "file": "src/app/api/health/route.ts",
-      "httpMethods": ["GET"],
+      "httpMethods": [
+        "GET"
+      ],
       "parameters": [],
       "responseStructure": [],
       "validationRules": [
@@ -67,11 +143,418 @@
           "field": "hasDbUrl"
         }
       ],
-      "contentHash": "5de31f32"
+      "contentHash": "4f2b1a19"
+    },
+    "src/app/api/i18n/crowdin/sync/route.ts": {
+      "file": "src/app/api/i18n/crowdin/sync/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [
+        {
+          "type": "body",
+          "name": "action"
+        },
+        {
+          "type": "body",
+          "name": "language"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "error",
+            "download",
+            "or progress.'"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message",
+            "data",
+            "progress",
+            "lastUpdated"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message",
+            "data",
+            "languages",
+            "progress",
+            "status"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message",
+            "error",
+            "connected"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "d8203ff8"
+    },
+    "src/app/api/i18n/crowdin/webhook/route.ts": {
+      "file": "src/app/api/i18n/crowdin/webhook/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [],
+      "responseStructure": [
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message",
+            "eventType",
+            "timestamp"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "message",
+            "supportedEvents",
+            "'file.approved'",
+            "'project.built'",
+            "'proofreading.finished'",
+            "]",
+            "configuration",
+            "endpoint"
+          ]
+        }
+      ],
+      "validationRules": [
+        {
+          "type": "required",
+          "field": "verifyWebhookSignature"
+        },
+        {
+          "type": "required",
+          "field": "signature"
+        }
+      ],
+      "contentHash": "c60ba315"
+    },
+    "src/app/api/i18n/health/route.ts": {
+      "file": "src/app/api/i18n/health/route.ts",
+      "httpMethods": [
+        "GET"
+      ],
+      "parameters": [
+        {
+          "type": "query",
+          "name": "language"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "language",
+            "totalKeys",
+            "missingKeys",
+            "missingKeysList",
+            "20)",
+            "// 最初の20個のみ\n        warnings"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "6a91a3b0"
+    },
+    "src/app/api/i18n/quality/route.ts": {
+      "file": "src/app/api/i18n/quality/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [
+        {
+          "type": "query",
+          "name": "action"
+        },
+        {
+          "type": "query",
+          "name": "translationKey"
+        },
+        {
+          "type": "query",
+          "name": "language"
+        },
+        {
+          "type": "body",
+          "name": "action"
+        },
+        {
+          "type": "body",
+          "name": "translationKey"
+        },
+        {
+          "type": "body",
+          "name": "language"
+        },
+        {
+          "type": "body",
+          "name": "originalText"
+        },
+        {
+          "type": "body",
+          "name": "translatedText"
+        },
+        {
+          "type": "body",
+          "name": "reviewer"
+        },
+        {
+          "type": "body",
+          "name": "comments"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "message",
+            "translationKey",
+            "language"
+          ]
+        },
+        {
+          "keys": [
+            "status",
+            "timestamp",
+            "version"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        }
+      ],
+      "validationRules": [
+        {
+          "type": "required",
+          "field": "translationKey"
+        },
+        {
+          "type": "required",
+          "field": "translationKey"
+        },
+        {
+          "type": "required",
+          "field": "translationKey"
+        },
+        {
+          "type": "required",
+          "field": "translationKey"
+        }
+      ],
+      "contentHash": "1cc62bb1"
+    },
+    "src/app/api/i18n/report/route.ts": {
+      "file": "src/app/api/i18n/report/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [
+        {
+          "type": "query",
+          "name": "format"
+        },
+        {
+          "type": "query",
+          "name": "language"
+        },
+        {
+          "type": "body",
+          "name": "action"
+        },
+        {
+          "type": "body",
+          "name": "language"
+        },
+        {
+          "type": "body",
+          "name": "key"
+        },
+        {
+          "type": "body",
+          "name": "reviewData"
+        }
+      ],
+      "responseStructure": [
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "success"
+          ]
+        },
+        {
+          "keys": [
+            "success"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        },
+        {
+          "keys": [
+            "error"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "71d281ae"
+    },
+    "src/app/api/logs/route.ts": {
+      "file": "src/app/api/logs/route.ts",
+      "httpMethods": [
+        "DELETE",
+        "GET",
+        "POST"
+      ],
+      "parameters": [],
+      "responseStructure": [
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        },
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        },
+        {
+          "keys": [
+            "error",
+            "message"
+          ]
+        },
+        {
+          "keys": [
+            "success",
+            "message",
+            "timestamp"
+          ]
+        },
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "f850f9a1"
     },
     "src/app/api/profiles/route.ts": {
       "file": "src/app/api/profiles/route.ts",
-      "httpMethods": ["DELETE", "GET", "POST", "PUT"],
+      "httpMethods": [
+        "DELETE",
+        "GET",
+        "POST",
+        "PUT"
+      ],
       "parameters": [
         {
           "type": "query",
@@ -100,58 +583,94 @@
       ],
       "responseStructure": [
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["profile"]
+          "keys": [
+            "profile"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["profile"]
+          "keys": [
+            "profile"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["profile"]
+          "keys": [
+            "profile"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["success"]
+          "keys": [
+            "success"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         }
       ],
       "validationRules": [
@@ -180,7 +699,12 @@
     },
     "src/app/api/tasks/route.ts": {
       "file": "src/app/api/tasks/route.ts",
-      "httpMethods": ["DELETE", "GET", "POST", "PUT"],
+      "httpMethods": [
+        "DELETE",
+        "GET",
+        "POST",
+        "PUT"
+      ],
       "parameters": [
         {
           "type": "query",
@@ -233,58 +757,94 @@
       ],
       "responseStructure": [
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["tasks"]
+          "keys": [
+            "tasks"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["task"]
+          "keys": [
+            "task"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["task"]
+          "keys": [
+            "task"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         },
         {
-          "keys": ["success"]
+          "keys": [
+            "success"
+          ]
         },
         {
-          "keys": ["error"]
+          "keys": [
+            "error"
+          ]
         }
       ],
       "validationRules": [
@@ -310,7 +870,70 @@
         }
       ],
       "contentHash": "fbeac8c1"
+    },
+    "src/app/api/v1/health/route.ts": {
+      "file": "src/app/api/v1/health/route.ts",
+      "httpMethods": [
+        "GET"
+      ],
+      "parameters": [],
+      "responseStructure": [
+        {
+          "keys": [
+            "status",
+            "message",
+            "error",
+            "timestamp"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "f4d471f9"
+    },
+    "src/app/api/v1/system/route.ts": {
+      "file": "src/app/api/v1/system/route.ts",
+      "httpMethods": [
+        "GET"
+      ],
+      "parameters": [],
+      "responseStructure": [
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "5db01888"
+    },
+    "src/app/api/version-test/route.ts": {
+      "file": "src/app/api/version-test/route.ts",
+      "httpMethods": [
+        "GET",
+        "POST"
+      ],
+      "parameters": [],
+      "responseStructure": [
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        },
+        {
+          "keys": [
+            "error",
+            "message",
+            "timestamp"
+          ]
+        }
+      ],
+      "validationRules": [],
+      "contentHash": "37d97146"
     }
   },
-  "timestamp": "2025-09-25T23:16:06.361Z"
+  "timestamp": "2025-09-26T03:49:56.832Z"
 }

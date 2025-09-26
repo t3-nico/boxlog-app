@@ -1,0 +1,433 @@
+{
+  "timestamp": "2025-09-26T03:11:12.375Z",
+  "summary": {
+    "totalChanges": 2,
+    "criticalCount": 0,
+    "highRiskCount": 0,
+    "estimatedEffort": 20,
+    "affectedSystems": {},
+    "affectedTeams": {}
+  },
+  "details": [
+    {
+      "change": {
+        "filePath": "src/features/notifications/components/NotificationModal.tsx",
+        "changeType": "M",
+        "pattern": "Component Interface Change",
+        "severity": "medium",
+        "category": "interface_change",
+        "confidence": 0.6,
+        "description": "UIコンポーネントインターフェースが変更されました",
+        "affectedGroups": [
+          "developers"
+        ],
+        "diff": "diff --git a/src/features/notifications/components/NotificationModal.tsx b/src/features/notifications/components/NotificationModal.tsx\nindex 2a94b3f..b72db49 100644\n--- a/src/features/notifications/components/NotificationModal.tsx\n+++ b/src/features/notifications/components/NotificationModal.tsx\n@@ -6,7 +6,8 @@ import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react\n \n import { ScrollArea } from '@/components/shadcn-ui/scroll-area'\n import { animations, componentRadius, ",
+        "isBreaking": true,
+        "detectedAt": "2025-09-26T03:11:12.317Z"
+      },
+      "impact": {
+        "technical": {
+          "score": 5
+        },
+        "business": {
+          "score": 5
+        },
+        "operational": {
+          "score": 5
+        }
+      },
+      "totalImpactScore": 5,
+      "riskLevel": "MEDIUM",
+      "estimatedHours": 10,
+      "migrationSteps": [
+        {
+          "phase": "PREPARATION",
+          "order": 1,
+          "title": "事前準備",
+          "tasks": [
+            "バックアップの取得",
+            "影響範囲の最終確認",
+            "ロールバック手順の準備",
+            "チーム通知の送信"
+          ],
+          "estimatedMinutes": 30
+        },
+        {
+          "phase": "VALIDATION",
+          "order": 3,
+          "title": "動作検証",
+          "tasks": [
+            "ヘルスチェック実行",
+            "エンドツーエンドテスト",
+            "パフォーマンステスト",
+            "ユーザー受け入れテスト"
+          ],
+          "estimatedMinutes": 45,
+          "commands": [
+            "npm run health:check",
+            "npm run test:e2e",
+            "npm run test:performance"
+          ]
+        },
+        {
+          "phase": "COMPLETION",
+          "order": 4,
+          "title": "完了処理",
+          "tasks": [
+            "旧バージョンの無効化",
+            "ドキュメントの公開",
+            "チーム通知",
+            "モニタリング開始"
+          ],
+          "estimatedMinutes": 15
+        }
+      ]
+    },
+    {
+      "change": {
+        "filePath": "src/features/notifications/components/notifications-list.tsx",
+        "changeType": "M",
+        "pattern": "Component Interface Change",
+        "severity": "medium",
+        "category": "interface_change",
+        "confidence": 0.6,
+        "description": "UIコンポーネントインターフェースが変更されました",
+        "affectedGroups": [
+          "developers"
+        ],
+        "diff": "diff --git a/src/features/notifications/components/notifications-list.tsx b/src/features/notifications/components/notifications-list.tsx\nindex c3ab766..74d8516 100644\n--- a/src/features/notifications/components/notifications-list.tsx\n+++ b/src/features/notifications/components/notifications-list.tsx\n@@ -4,6 +4,10 @@ import { useState } from 'react'\n \n import { BellRing } from 'lucide-react'\n \n+import { useTranslation } from '@/lib/i18n/hooks'\n+\n+import { useNotificationTypeLabel } from '../utils",
+        "isBreaking": true,
+        "detectedAt": "2025-09-26T03:11:12.330Z"
+      },
+      "impact": {
+        "technical": {
+          "score": 5
+        },
+        "business": {
+          "score": 5
+        },
+        "operational": {
+          "score": 5
+        }
+      },
+      "totalImpactScore": 5,
+      "riskLevel": "MEDIUM",
+      "estimatedHours": 10,
+      "migrationSteps": [
+        {
+          "phase": "PREPARATION",
+          "order": 1,
+          "title": "事前準備",
+          "tasks": [
+            "バックアップの取得",
+            "影響範囲の最終確認",
+            "ロールバック手順の準備",
+            "チーム通知の送信"
+          ],
+          "estimatedMinutes": 30
+        },
+        {
+          "phase": "VALIDATION",
+          "order": 3,
+          "title": "動作検証",
+          "tasks": [
+            "ヘルスチェック実行",
+            "エンドツーエンドテスト",
+            "パフォーマンステスト",
+            "ユーザー受け入れテスト"
+          ],
+          "estimatedMinutes": 45,
+          "commands": [
+            "npm run health:check",
+            "npm run test:e2e",
+            "npm run test:performance"
+          ]
+        },
+        {
+          "phase": "COMPLETION",
+          "order": 4,
+          "title": "完了処理",
+          "tasks": [
+            "旧バージョンの無効化",
+            "ドキュメントの公開",
+            "チーム通知",
+            "モニタリング開始"
+          ],
+          "estimatedMinutes": 15
+        }
+      ]
+    }
+  ],
+  "riskMatrix": {
+    "CRITICAL": [],
+    "HIGH": [],
+    "MEDIUM": [
+      {
+        "pattern": "Component Interface Change",
+        "file": "src/features/notifications/components/NotificationModal.tsx",
+        "impactScore": 5,
+        "estimatedHours": 10
+      },
+      {
+        "pattern": "Component Interface Change",
+        "file": "src/features/notifications/components/notifications-list.tsx",
+        "impactScore": 5,
+        "estimatedHours": 10
+      }
+    ],
+    "LOW": []
+  },
+  "recommendations": [],
+  "migrationPlan": {
+    "totalEstimatedHours": 20,
+    "phases": [
+      {
+        "name": "準備フェーズ",
+        "duration": 4,
+        "tasks": [
+          {
+            "phase": "PREPARATION",
+            "order": 1,
+            "title": "事前準備",
+            "tasks": [
+              "バックアップの取得",
+              "影響範囲の最終確認",
+              "ロールバック手順の準備",
+              "チーム通知の送信"
+            ],
+            "estimatedMinutes": 30
+          },
+          {
+            "phase": "PREPARATION",
+            "order": 1,
+            "title": "事前準備",
+            "tasks": [
+              "バックアップの取得",
+              "影響範囲の最終確認",
+              "ロールバック手順の準備",
+              "チーム通知の送信"
+            ],
+            "estimatedMinutes": 30
+          }
+        ]
+      },
+      {
+        "name": "実行フェーズ",
+        "duration": 20,
+        "tasks": [
+          {
+            "phase": "COMPLETION",
+            "order": 4,
+            "title": "完了処理",
+            "tasks": [
+              "旧バージョンの無効化",
+              "ドキュメントの公開",
+              "チーム通知",
+              "モニタリング開始"
+            ],
+            "estimatedMinutes": 15
+          },
+          {
+            "phase": "COMPLETION",
+            "order": 4,
+            "title": "完了処理",
+            "tasks": [
+              "旧バージョンの無効化",
+              "ドキュメントの公開",
+              "チーム通知",
+              "モニタリング開始"
+            ],
+            "estimatedMinutes": 15
+          }
+        ]
+      },
+      {
+        "name": "検証フェーズ",
+        "duration": 4,
+        "tasks": [
+          {
+            "phase": "VALIDATION",
+            "order": 3,
+            "title": "動作検証",
+            "tasks": [
+              "ヘルスチェック実行",
+              "エンドツーエンドテスト",
+              "パフォーマンステスト",
+              "ユーザー受け入れテスト"
+            ],
+            "estimatedMinutes": 45,
+            "commands": [
+              "npm run health:check",
+              "npm run test:e2e",
+              "npm run test:performance"
+            ]
+          },
+          {
+            "phase": "VALIDATION",
+            "order": 3,
+            "title": "動作検証",
+            "tasks": [
+              "ヘルスチェック実行",
+              "エンドツーエンドテスト",
+              "パフォーマンステスト",
+              "ユーザー受け入れテスト"
+            ],
+            "estimatedMinutes": 45,
+            "commands": [
+              "npm run health:check",
+              "npm run test:e2e",
+              "npm run test:performance"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "安定化フェーズ",
+        "duration": 8,
+        "tasks": []
+      }
+    ],
+    "timeline": [
+      {
+        "phase": "準備フェーズ",
+        "startHour": 0,
+        "endHour": 4,
+        "criticalPath": false
+      },
+      {
+        "phase": "実行フェーズ",
+        "startHour": 4,
+        "endHour": 24,
+        "criticalPath": true
+      },
+      {
+        "phase": "検証フェーズ",
+        "startHour": 24,
+        "endHour": 28,
+        "criticalPath": false
+      },
+      {
+        "phase": "安定化フェーズ",
+        "startHour": 28,
+        "endHour": 36,
+        "criticalPath": false
+      }
+    ],
+    "dependencies": [
+      {
+        "from": "準備フェーズ",
+        "to": "実行フェーズ",
+        "type": "BLOCKING"
+      },
+      {
+        "from": "実行フェーズ",
+        "to": "検証フェーズ",
+        "type": "BLOCKING"
+      },
+      {
+        "from": "検証フェーズ",
+        "to": "安定化フェーズ",
+        "type": "SOFT"
+      }
+    ],
+    "rollbackPlan": [
+      {
+        "trigger": "重大なエラー発生",
+        "actions": [
+          "サービスの即時停止",
+          "バックアップからのリストア",
+          "旧バージョンへの切り戻し",
+          "インシデント報告"
+        ],
+        "estimatedTime": 30
+      },
+      {
+        "trigger": "パフォーマンス劣化",
+        "actions": [
+          "トラフィックの段階的切り戻し",
+          "パフォーマンス分析",
+          "最適化または切り戻し判断"
+        ],
+        "estimatedTime": 60
+      }
+    ]
+  },
+  "metadata": {
+    "generated": "2025-09-26T03:11:12.376Z",
+    "analyzer_version": "1.0.0",
+    "environment": "development"
+  },
+  "visualizations": {
+    "riskChart": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "CRITICAL",
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ],
+        "values": [
+          0,
+          0,
+          2,
+          0
+        ]
+      },
+      "config": {
+        "title": "Risk Distribution",
+        "colors": [
+          "#dc2626",
+          "#f59e0b",
+          "#eab308",
+          "#22c55e"
+        ]
+      }
+    },
+    "timelineGantt": {
+      "type": "gantt",
+      "data": [
+        {
+          "id": 1,
+          "name": "準備フェーズ",
+          "start": 0,
+          "duration": 4,
+          "critical": false
+        },
+        {
+          "id": 2,
+          "name": "実行フェーズ",
+          "start": 4,
+          "duration": 20,
+          "critical": true
+        },
+        {
+          "id": 3,
+          "name": "検証フェーズ",
+          "start": 24,
+          "duration": 4,
+          "critical": false
+        },
+        {
+          "id": 4,
+          "name": "安定化フェーズ",
+          "start": 28,
+          "duration": 8,
+          "critical": false
+        }
+      ]
+    },
+    "impactHeatmap": {
+      "interface_change": {
+        "technical": 10,
+        "business": 10,
+        "operational": 10
+      }
+    }
+  },
+  "exportFormats": {
+    "markdown": "./reports/impact-analysis-1758856272375.md",
+    "json": "./reports/impact-analysis-1758856272375.json",
+    "html": "./reports/impact-analysis-1758856272375.html"
+  }
+}

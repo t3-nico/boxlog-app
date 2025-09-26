@@ -353,7 +353,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
       <div className={cn('flex items-center -space-x-px rounded-md shadow-sm', className)} {...props}>
         {rgb.map((value, index) => {
           const keyNames = ['r', 'g', 'b'] as const
-          const keyName = index < keyNames.length ? keyNames[index] : `key-${index}`
+          const keyName = index >= 0 && index < keyNames.length ? keyNames[index as keyof typeof keyNames] : `key-${index}`
           return (
             <Input
               className={cn(
@@ -402,7 +402,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
       <div className={cn('flex items-center -space-x-px rounded-md shadow-sm', className)} {...props}>
         {hsl.map((value, index) => {
           const keyNames = ['h', 's', 'l'] as const
-          const keyName = keyNames[index] || `hsl-${index}`
+          const keyName = index >= 0 && index < keyNames.length ? keyNames[index as keyof typeof keyNames] : `hsl-${index}`
           return (
             <Input
               className={cn(

@@ -61,10 +61,6 @@ function parseEventsFile() {
     // 各カテゴリとイベントを解析
     const categories = {}
 
-    // より正確な正規表現パターンを使用
-    const categoryRegex = /(\w+): \{([\s\S]*?)\},?\s*\/\/ =====/g
-    let categoryMatch
-
     // カテゴリ毎に分割処理
     const eventSections = match[1].split(/\/\/ ={20,}/)
 

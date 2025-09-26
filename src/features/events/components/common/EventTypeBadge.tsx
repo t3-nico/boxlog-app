@@ -50,7 +50,7 @@ export const EventTypeBadge = ({
   showIcon = true,
   className = ''
 }: EventTypeBadgeProps) => {
-  const config = typeConfig[type]
+  const config = (type in typeConfig) ? typeConfig[type as keyof typeof typeConfig] : typeConfig.general
   const Icon = config.icon
 
   const sizeClasses = {

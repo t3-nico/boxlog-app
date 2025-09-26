@@ -186,14 +186,15 @@ export function getElevation(type: 'permanent' | 'temporary', level: keyof typeo
   if (type === 'permanent') {
     return patterns.card
   }
-  return Object.prototype.hasOwnProperty.call(elevation, level) ? elevation[level] : elevation.none
+  return (level as keyof typeof elevation) in elevation ? elevation[level as keyof typeof elevation] : elevation.none
 }
 
 /**
  * 状態に応じた境界線を取得
  */
 export function getBorderForState(state: 'default' | 'hover' | 'active' | 'focus' | 'error' | 'success'): string {
-  return Object.prototype.hasOwnProperty.call(borders, state) ? borders[state as keyof typeof borders] : borders.default
+  const typedBorders = borders as Record<string, string> & { default: string }
+  return (state as keyof typeof borders) in borders ? borders[state as keyof typeof borders] : borders.DEFAULT
 }
 
 /**
@@ -209,7 +210,7 @@ export function getCardClasses(state: {
   if (state.isSuccess) return patterns.cardSuccess
   if (state.isActive) return patterns.cardActive
   if (state.isHover) return patterns.cardHover
-  return patterns.card
+  return patterns.card.default
 }
 
 /**
@@ -234,7 +235,7 @@ export function getInputClasses(state: {
 export function getTemporaryUIElevation(
   component: 'dropdown' | 'modal' | 'tooltip' | 'contextMenu' | 'popover' | 'dialog'
 ): string {
-  return patterns[component]
+  return (component as keyof typeof patterns) in patterns ? patterns[component as keyof typeof patterns] : patterns.dropdown
 }
 
 // ============================================

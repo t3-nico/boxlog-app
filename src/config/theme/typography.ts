@@ -478,7 +478,7 @@ export function getDefaultTag(variant: TypographyVariant): keyof JSX.IntrinsicEl
     'sidebar.badge': 'span',
   }
   
-  return tagMap[variant] || 'p'
+  return variant in tagMap ? tagMap[variant] : 'p'
 }
 
 // ============================================

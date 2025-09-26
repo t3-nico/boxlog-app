@@ -232,7 +232,10 @@ export const KanbanProvider = <
         const overIndex = newData.findIndex((item) => item.id === over.id)
 
         if (activeIndex >= 0 && activeIndex < newData.length) {
-          newData[activeIndex].column = overColumn
+          const item = newData[activeIndex]
+          if (item && typeof item === 'object' && 'column' in item) {
+            item.column = overColumn
+          }
         }
         newData = arrayMove(newData, activeIndex, overIndex)
 

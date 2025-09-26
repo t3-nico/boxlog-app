@@ -168,6 +168,22 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
     onChange(selectedTags.filter((tag) => tag.id !== tagId))
   }, [onChange, selectedTags])
 
+  // jsx-no-bind optimization: Tag add handler creator
+  const createTagAddHandler = useCallback(
+    (tagName: string) => {
+      return () => addTag(tagName)
+    },
+    [addTag]
+  )
+
+  // jsx-no-bind optimization: Tag remove handler creator
+  const createTagRemoveHandler = useCallback(
+    (tagId: string) => {
+      return () => removeTag(tagId)
+    },
+    [removeTag]
+  )
+
   // Input change handler
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value)
@@ -231,8 +247,8 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
     }
   }
 
-  // キーボード操作（リファクタリング済み）
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  // jsx-no-bind optimization: キーボード操作（リファクタリング済み）
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     switch (e.key) {
       case 'Tab':
         e.preventDefault()
@@ -271,7 +287,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
         handleSpaceKey()
         break
     }
-  }
+  }, [showSuggestions, focusedSuggestionIndex, handleTabKey, handleEnterKey, handleArrowDown, handleArrowUp, handleEscapeKey, handleBackspaceKey, handleSpaceKey])
 
   // Input value changes and filtering
   useEffect(() => {
@@ -380,7 +396,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
             .map((tag) => (
               <motion.button
                 key={tag.id}
-                onClick={() => addTag(tag.name)}
+                onClick={createTagAddHandler(tag.name)}
                 className={` ${getTagSize(tag.frequency)} rounded-full border font-medium transition-all duration-200 hover:scale-105 hover:shadow-md`}
                 style={{
                   backgroundColor: `${tag.color}15`,
@@ -411,7 +427,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
               .map((tag) => (
                 <motion.button
                   key={tag.id}
-                  onClick={() => addTag(tag.name)}
+                  onClick={createTagAddHandler(tag.name)}
                   className={`rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-200 hover:scale-105 hover:shadow-sm`}
                   style={{
                     backgroundColor: `${tag.color}10`,
@@ -466,7 +482,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                       <span className={text.primary}>{tag.name}</span>
                       <button
                         type="button"
-                        onClick={() => removeTag(tag.id)}
+                        onClick={createTagRemoveHandler(tag.id)}
                         className={`ml-1 rounded-full p-0.5 transition-colors hover:bg-red-100 dark:hover:bg-red-900/20 ${text.muted} hover:text-red-500`}
                       >
                         <X size={14} />

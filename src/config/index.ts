@@ -15,3 +15,8 @@ export * from './ui/theme'
 export * from './ui/views'
 export * from './ui/sidebarConfig'
 export * from './ui/tagIcons'
+
+// Configuration Schema & Loader System
+export * from './schema'
+export * from './loader'
+export { default as configLoader } from './loader'

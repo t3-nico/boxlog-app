@@ -11,7 +11,7 @@ describe('Utility Functions', () => {
 
 // シンプルなReactコンポーネントのテスト例
 function TestButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
-  return <button onClick={onClick}>{children}</button>
+  return <button type="button" onClick={onClick}>{children}</button>
 }
 
 describe('TestButton Component', () => {

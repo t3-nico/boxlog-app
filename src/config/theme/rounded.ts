@@ -332,14 +332,16 @@ export const radiusUtils = {
   ): string => {
     const comp = componentRadius[component]
     if (typeof comp === 'string') return comp
-    return comp[variant as keyof typeof comp] || comp['default' as keyof typeof comp] || radius.md
+    const typedComp = comp as Record<string, string> & { default?: string }
+    return (variant in typedComp ? typedComp[variant] : typedComp.default) || radius.md
   },
   
   /**
    * 階層に応じた角丸を取得
    */
   getHierarchyRadius: (level: 1 | 2 | 3): string => {
-    return boxlogRadius.hierarchy[`level${level}` as keyof typeof boxlogRadius.hierarchy as keyof typeof hierarchy]
+    const hierarchyKey = `level${level}` as keyof typeof boxlogRadius.hierarchy
+    return hierarchyKey in boxlogRadius.hierarchy ? boxlogRadius.hierarchy[hierarchyKey] : radius.md
   },
   
   /**
@@ -353,14 +355,16 @@ export const radiusUtils = {
    * 機能に応じた角丸を取得
    */
   getFunctionalRadius: (purpose: keyof typeof boxlogRadius.functional): string => {
-    return boxlogRadius.functional[purpose as keyof typeof functional]
+    const functional = boxlogRadius.functional
+    return purpose in functional ? functional[purpose] : radius.md
   },
   
   /**
    * グループ内の位置に応じた角丸を取得
    */
   getGroupRadius: (position: 'first' | 'middle' | 'last' | 'single'): string => {
-    return specialRadius.group[position as keyof typeof group]
+    const group = specialRadius.group
+    return position in group ? group[position as keyof typeof group] : radius.md
   },
 } as const
 

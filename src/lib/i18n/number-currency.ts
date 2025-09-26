@@ -79,7 +79,7 @@ const defaultCurrencies: Record<string, string> = {
 const getDefaultCurrency = (locale: Locale): string => {
   // 完全一致を試す
   if (locale in defaultCurrencies) {
-    return defaultCurrencies[locale]
+    return defaultCurrencies[locale as keyof typeof defaultCurrencies]
   }
 
   // 言語コードでの一致を試す

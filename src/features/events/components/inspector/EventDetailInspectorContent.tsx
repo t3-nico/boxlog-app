@@ -58,7 +58,7 @@ const EventScheduleSection = React.memo(
           <input
             type="text"
             value={formData.title}
-            onChange={(e) => handleTitleChange(e.target.value)}
+            onChange={handleTitleInputChange}
             placeholder={isCreateMode ? 'タイトルを入力...' : ''}
             className={cn(
               'w-full flex-1 bg-transparent outline-none',
@@ -79,7 +79,7 @@ const EventScheduleSection = React.memo(
             <Input
               type="date"
               value={format(formData.startDate, 'yyyy-MM-dd')}
-              onChange={(e) => handleDateChange(e.target.value)}
+              onChange={handleDateInputChange}
               className={cn(
                 typography.body.DEFAULT,
                 'w-auto rounded-md px-3 py-2',
@@ -93,12 +93,7 @@ const EventScheduleSection = React.memo(
             <Input
               type="time"
               value={format(formData.startDate, 'HH:mm')}
-              onChange={(e) => {
-                const [hours, minutes] = e.target.value.split(':')
-                const newDate = new Date(formData.startDate)
-                newDate.setHours(parseInt(hours), parseInt(minutes))
-                updateFormData('startDate', newDate)
-              }}
+              onChange={handleTimeInputChange}
               className={cn(
                 typography.body.DEFAULT,
                 'w-fit rounded-md px-3 py-2 text-center',
@@ -112,16 +107,7 @@ const EventScheduleSection = React.memo(
             <Input
               type="time"
               value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
-              onChange={(e) => {
-                if (e.target.value) {
-                  const [hours, minutes] = e.target.value.split(':')
-                  const newDate = new Date(formData.startDate)
-                  newDate.setHours(parseInt(hours), parseInt(minutes))
-                  updateFormData('endDate', newDate)
-                } else {
-                  updateFormData('endDate', null)
-                }
-              }}
+              onChange={handleEndTimeInputChange}
               className={cn(
                 typography.body.DEFAULT,
                 'w-fit rounded-md px-3 py-2 text-center',
@@ -268,19 +254,20 @@ const useFormHandlers = (
   formData: Partial<CalendarEvent>,
   updateFormData: (field: keyof CalendarEvent, value: unknown) => void
 ) => {
-  const handleTitleChange = (value: string) => {
+  // jsx-no-bind optimization: Form field handlers
+  const handleTitleChange = useCallback((value: string) => {
     updateFormData('title', value)
-  }
+  }, [updateFormData])
 
-  const handleDescriptionChange = (value: string) => {
+  const handleDescriptionChange = useCallback((value: string) => {
     updateFormData('description', value)
-  }
+  }, [updateFormData])
 
-  const handleLocationChange = (value: string) => {
+  const handleLocationChange = useCallback((value: string) => {
     updateFormData('location', value)
-  }
+  }, [updateFormData])
 
-  const handleDateChange = (value: string) => {
+  const handleDateChange = useCallback((value: string) => {
     if (value) {
       const newDate = new Date(value)
       if (!isNaN(newDate.getTime())) {
@@ -297,7 +284,7 @@ const useFormHandlers = (
         }
       }
     }
-  }
+  }, [updateFormData, formData.startDate, formData.endDate])
 
   return {
     handleTitleChange,
@@ -348,6 +335,59 @@ export const EventDetailInspectorContent = ({
   const timelineEvents = useTimelineData()
   useAutoSave(formData, onSave, event, isEditable)
   const { handleTitleChange, handleDescriptionChange, handleDateChange } = useFormHandlers(formData, updateFormData)
+
+  // jsx-no-bind optimization: Event handlers
+  const handleTitleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleTitleChange(e.target.value)
+  }, [handleTitleChange])
+
+  const handleDateInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleDateChange(e.target.value)
+  }, [handleDateChange])
+
+  const handleTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(':')
+    const newDate = new Date(formData.startDate)
+    newDate.setHours(parseInt(hours), parseInt(minutes))
+    updateFormData('startDate', newDate)
+  }, [formData.startDate, updateFormData])
+
+  const handleDescriptionEditorChange = useCallback((value: string) => {
+    handleDescriptionChange(value)
+  }, [handleDescriptionChange])
+
+  const handleTimelineToggle = useCallback(() => {
+    setShowTimeline(!showTimeline)
+  }, [showTimeline, setShowTimeline])
+
+  const handleDuplicateClick = useCallback(() => {
+    if (event) {
+      onDuplicate?.(event)
+    }
+  }, [event, onDuplicate])
+
+  const handleTemplateCreateClick = useCallback(() => {
+    if (event) {
+      onTemplateCreate?.(event)
+    }
+  }, [event, onTemplateCreate])
+
+  const handleDeleteClick = useCallback(() => {
+    if (event) {
+      onDelete?.(event.id)
+    }
+  }, [event, onDelete])
+
+  const handleEndTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      const [hours, minutes] = e.target.value.split(':')
+      const newDate = new Date(formData.startDate)
+      newDate.setHours(parseInt(hours), parseInt(minutes))
+      updateFormData('endDate', newDate)
+    } else {
+      updateFormData('endDate', null)
+    }
+  }, [formData.startDate, updateFormData])
 
   // 時間情報の計算
   const _duration =
@@ -413,7 +453,7 @@ export const EventDetailInspectorContent = ({
             {isEditable ? (
               <TiptapEditor
                 value={formData.description}
-                onChange={(value) => handleDescriptionChange(value)}
+                onChange={handleDescriptionEditorChange}
                 placeholder="メモを入力..."
                 className="min-h-[120px] w-full"
               />
@@ -432,7 +472,7 @@ export const EventDetailInspectorContent = ({
         <div className={cn('space-y-3 border-b p-4', border.universal)}>
           <button
             type="button"
-            onClick={() => setShowTimeline(!showTimeline)}
+            onClick={handleTimelineToggle}
             className={cn(
               'flex w-full cursor-pointer items-center justify-between border-none bg-transparent p-0 outline-none',
               typography.heading.h6,
@@ -510,7 +550,7 @@ export const EventDetailInspectorContent = ({
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => event && onDuplicate?.(event)}
+                  onClick={handleDuplicateClick}
                   disabled={!event}
                   className="flex-1"
                 >
@@ -520,7 +560,7 @@ export const EventDetailInspectorContent = ({
                 <Button
                   variant="secondary"
                   size="sm"
-                  onClick={() => event && onTemplateCreate?.(event)}
+                  onClick={handleTemplateCreateClick}
                   disabled={!event}
                   className="flex-1"
                 >
@@ -532,7 +572,7 @@ export const EventDetailInspectorContent = ({
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => event && onDelete?.(event.id)}
+                onClick={handleDeleteClick}
                 disabled={!event}
                 className="w-full"
               >

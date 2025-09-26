@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { format, getWeek } from 'date-fns'
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
@@ -49,6 +49,41 @@ export const MobileHeader = ({
 }: MobileHeaderProps) => {
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
+
+  // jsx-no-bind optimization: Navigation handlers
+  const handleViewMenuOpen = useCallback(() => {
+    setIsViewMenuOpen(true)
+  }, [])
+
+  const handleNavigatePrev = useCallback(() => {
+    onNavigate('prev')
+  }, [onNavigate])
+
+  const handleNavigateNext = useCallback(() => {
+    onNavigate('next')
+  }, [onNavigate])
+
+  const handleNavigateToday = useCallback(() => {
+    onNavigate('today')
+  }, [onNavigate])
+
+  const handleViewMenuClose = useCallback(() => {
+    setIsViewMenuOpen(false)
+  }, [])
+
+  const handleViewMenuKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsViewMenuOpen(false)
+    }
+  }, [])
+
+  // jsx-no-bind optimization: View change handler creator
+  const createViewChangeHandler = useCallback((value: CalendarViewType) => {
+    return () => {
+      onViewChange?.(value)
+      setIsViewMenuOpen(false)
+    }
+  }, [onViewChange])
 
   // 日付の表示形式をモバイル用に短縮
   const getDateDisplay = () => {
@@ -106,7 +141,7 @@ export const MobileHeader = ({
             {/* ビュー表示 */}
             <button
               type="button"
-              onClick={() => setIsViewMenuOpen(true)}
+              onClick={handleViewMenuOpen}
               className="text-muted-foreground hover:bg-accent/50 rounded px-2 py-0.5 text-xs transition-colors"
             >
               {viewLabels[viewType] || viewType}表示
@@ -119,7 +154,7 @@ export const MobileHeader = ({
       <div className="flex items-center gap-1">
         <button
           type="button"
-          onClick={() => onNavigate('prev')}
+          onClick={handleNavigatePrev}
           className="hover:bg-accent/50 rounded-full p-2 transition-colors"
           aria-label="前の期間"
         >
@@ -127,7 +162,7 @@ export const MobileHeader = ({
         </button>
         <button
           type="button"
-          onClick={() => onNavigate('next')}
+          onClick={handleNavigateNext}
           className="hover:bg-accent/50 rounded-full p-2 transition-colors"
           aria-label="次の期間"
         >
@@ -140,12 +175,8 @@ export const MobileHeader = ({
           {/* オーバーレイ */}
           <div
             className="fixed inset-0 z-50 bg-black/20"
-            onClick={() => setIsViewMenuOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setIsViewMenuOpen(false)
-              }
-            }}
+            onClick={handleViewMenuClose}
+            onKeyDown={handleViewMenuKeyDown}
             role="button"
             tabIndex={0}
             aria-label="メニューを閉じる"
@@ -158,10 +189,7 @@ export const MobileHeader = ({
                 <button
                   type="button"
                   key={value}
-                  onClick={() => {
-                    onViewChange(value as CalendarViewType)
-                    setIsViewMenuOpen(false)
-                  }}
+                  onClick={createViewChangeHandler(value as CalendarViewType)}
                   className={cn(
                     'hover:bg-accent/50 w-full px-4 py-3 text-left text-sm transition-colors',
                     viewType === value && 'bg-accent text-accent-foreground font-medium'

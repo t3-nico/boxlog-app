@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -210,12 +210,37 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     ) : null
   }
 
-  if (!currentEvent) {
-    const handleNoEventClick = () => {
-      const today = new Date()
-      const dateParam = today.toISOString().split('T')[0]
-      router.push(`/calendar/day?date=${dateParam}`)
+  // jsx-no-bind optimization: No event click handler
+  const handleNoEventClick = useCallback(() => {
+    const today = new Date()
+    const dateParam = today.toISOString().split('T')[0]
+    router.push(`/calendar/day?date=${dateParam}`)
+  }, [router])
+
+  // jsx-no-bind optimization: No event keyboard handler
+  const handleNoEventKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleNoEventClick()
     }
+  }, [handleNoEventClick])
+
+  // jsx-no-bind optimization: Calendar navigation click handler
+  const handleClick = useCallback(() => {
+    const today = new Date()
+    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
+    router.push(`/calendar/day?date=${dateParam}`)
+  }, [router])
+
+  // jsx-no-bind optimization: Calendar navigation keyboard handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick()
+    }
+  }, [handleClick])
+
+  if (!currentEvent) {
     
     return (
       <div
@@ -224,12 +249,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
         aria-label="Navigate to calendar view"
         className="p-4 bg-secondary rounded-lg border border-secondary cursor-pointer hover:bg-secondary/80 transition-colors"
         onClick={handleNoEventClick}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleNoEventClick()
-          }
-        }}
+        onKeyDown={handleNoEventKeyDown}
       >
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
           <Calendar className="w-4 h-4" />
@@ -240,13 +260,6 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   }
 
   const borderColor = getChronotypeColor()
-  
-  // 今日のカレンダーday viewに移動する関数
-  const handleClick = () => {
-    const today = new Date()
-    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
-    router.push(`/calendar/day?date=${dateParam}`)
-  }
   
   return (
     <div
@@ -259,12 +272,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
         gap: '8px'
       }}
       onClick={handleClick}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          handleClick()
-        }
-      }}
+      onKeyDown={handleKeyDown}
     >
       <div className="flex items-center" style={{ gap: '4px' }}>
         <div className="border border-gray-300 dark:border-gray-600 px-2 py-1 rounded text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">

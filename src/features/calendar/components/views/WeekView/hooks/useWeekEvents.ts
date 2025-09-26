@@ -33,7 +33,7 @@ export function useWeekEvents({
     // 各日付のキーを初期化
     weekDates.forEach(date => {
       const dateKey = getDateKey(date)
-      if (Object.prototype.hasOwnProperty.call(grouped, dateKey) || !grouped[dateKey]) {
+      if (!(dateKey in grouped)) {
         grouped[dateKey] = []
       }
     })

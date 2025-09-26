@@ -279,7 +279,7 @@ export const theme = {
  */
 export function getThemeValue<T extends keyof typeof theme>(category: T, key: string): string | undefined {
   const categoryObj = theme[category] as Record<string, string>
-  return categoryObj && typeof categoryObj === 'object' ? categoryObj[key] : undefined
+  return categoryObj && typeof categoryObj === 'object' && key in categoryObj ? categoryObj[key] : undefined
 }
 
 /**
@@ -298,7 +298,8 @@ export function getSpacingClass(category: keyof typeof spacing, size?: string): 
   }
 
   if (typeof spacingCategory === 'object' && size) {
-    return spacingCategory[size as keyof typeof spacingCategory] || spacingCategory.default
+    const typedSpacingCategory = spacingCategory as Record<string, string> & { default: string }
+    return (size in typedSpacingCategory ? typedSpacingCategory[size] : typedSpacingCategory.default) || typedSpacingCategory.default
   }
 
   if (typeof spacingCategory === 'object') {
@@ -317,7 +318,7 @@ export function getSpacingClass(category: keyof typeof spacing, size?: string): 
  * ```
  */
 export function getTypographyClass(variant: keyof typeof typography): string {
-  return typography[variant as keyof typeof typography]
+  return typography[variant]
 }
 
 /**
@@ -329,17 +330,19 @@ export function getTypographyClass(variant: keyof typeof typography): string {
  * ```
  */
 export function getColorClass(category: keyof typeof colors, type: string, variant?: string): string {
-  const colorCategory = colors[category as keyof typeof colors]
+  const colorCategory = colors[category]
 
   if (typeof colorCategory === 'object') {
-    const colorType = colorCategory[type as keyof typeof colorCategory]
+    const typedColorCategory = colorCategory as Record<string, string | Record<string, string>>
+    const colorType = type in typedColorCategory ? typedColorCategory[type] : undefined
 
     if (typeof colorType === 'string') {
       return colorType
     }
 
     if (typeof colorType === 'object' && variant) {
-      return colorType[variant as keyof typeof colorType] || ''
+      const typedColorType = colorType as Record<string, string>
+      return variant in typedColorType ? typedColorType[variant] : ''
     }
   }
 

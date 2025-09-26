@@ -142,10 +142,12 @@ export const {singleColumn} = layoutPatterns
  */
 export const layoutHelpers = {
   getColumnClass: (type: 'sidebar' | 'main' | 'inspector', variant = 'default') => {
-    return columns[type][variant as keyof typeof columns[typeof type]]
+    const columnType = columns[type]
+    const typedColumnType = columnType as Record<string, string> & { default?: string }
+    return variant in typedColumnType ? typedColumnType[variant] : typedColumnType.default || ''
   },
   getContainerClass: (size: keyof typeof layout.container) => {
-    return layout.container[size as keyof typeof container]
+    return layout.container[size]
   },
 } as const
 

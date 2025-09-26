@@ -13,5 +13,5 @@ export const FEATURE_FLAGS = {
 export type FeatureFlag = keyof typeof FEATURE_FLAGS
 
 export function isFeatureEnabled(feature: FeatureFlag): boolean {
-  return Object.prototype.hasOwnProperty.call(FEATURE_FLAGS, feature) ? FEATURE_FLAGS[feature] : false
+  return (feature as keyof typeof FEATURE_FLAGS) in FEATURE_FLAGS ? FEATURE_FLAGS[feature] : false
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 // Speech Recognition API types
 interface SpeechRecognitionEvent {
@@ -114,7 +114,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
       <AIMessageContent>
         {isAssistant && hasBranches ? (
           // 複数の分岐レスポンスがある場合
-          <AIBranch onBranchChange={(index) => console.log('Branch changed to:', index)}>
+          <AIBranch onBranchChange={createBranchChangeHandler(0)}>
             <AIBranchMessages>
               {(message.content as string[]).map((content, _index) => (
                 <BoxLogAIResponse key={`${message.id}-${content.slice(0, 30)}`}>{content}</BoxLogAIResponse>
@@ -235,9 +235,9 @@ const ChatInput = () => {
       <AIInput onSubmit={handleSubmit}>
         <AIInputTextarea
           value={state.inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => setIsComposing(false)}
+          onChange={handleInputChange}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
           placeholder="Ask Claude..."
           disabled={state.isTyping}
           minHeight={40}
@@ -277,6 +277,33 @@ const ChatInput = () => {
 
 export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) => {
   const { state, clearMessages } = useChatContext()
+
+  // jsx-no-bind optimization: Event handlers
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }, [])
+
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false)
+  }, [])
+
+  const handleMenuToggle = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  const handleClearMessages = useCallback(() => {
+    clearMessages()
+    setShowMenu(false)
+  }, [clearMessages])
+
+  const handleExportMessages = useCallback(() => {
+    navigator.clipboard.writeText(JSON.stringify(state.messages))
+    setShowMenu(false)
+  }, [state.messages])
   const [showMenu, setShowMenu] = useState(false)
 
   if (!isOpen) return null
@@ -313,7 +340,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
             <div className="relative">
               <button
                 type="button"
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={handleMenuToggle}
                 className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-1 transition-colors"
                 aria-label="Menu options"
               >
@@ -324,10 +351,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                 <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
-                    onClick={() => {
-                      clearMessages()
-                      setShowMenu(false)
-                    }}
+                    onClick={handleClearMessages}
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -335,10 +359,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(JSON.stringify(state.messages))
-                      setShowMenu(false)
-                    }}
+                    onClick={handleExportMessages}
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />

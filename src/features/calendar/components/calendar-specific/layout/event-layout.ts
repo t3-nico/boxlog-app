@@ -140,7 +140,8 @@ export function detectOverlappingEvents(events: CalendarEvent[]): EventGroup[] {
       let merged = false
       
       for (let i = 0; i < mergedGroups.length; i++) {
-        const mergedGroup = mergedGroups[i]
+        const mergedGroup = (i < mergedGroups.length && i in mergedGroups) ? mergedGroups[i] : null
+        if (!mergedGroup) continue
         // グループ同士が重なるかチェック
         const hasOverlap = group.some(event1 =>
           mergedGroup.some(event2 => eventsOverlap(event1, event2))

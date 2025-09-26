@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { ChevronDown as ChevronDownIcon, Filter as FunnelIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
@@ -24,6 +24,11 @@ interface TagFilterItemProps {
 const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps) => {
   const paddingLeft = level * 16 + 8
 
+  // jsx-no-bind optimization: Toggle handler
+  const handleToggle = useCallback(() => {
+    onToggle(tag.id)
+  }, [onToggle, tag.id])
+
   return (
     <div>
       <label
@@ -33,7 +38,7 @@ const TagFilterItem = ({ tag, level, isSelected, onToggle }: TagFilterItemProps)
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={() => onToggle(tag.id)}
+          onChange={handleToggle}
           className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         />
         <TagIcon className="h-4 w-4 flex-shrink-0" style={{ color: tag.color }} />
@@ -67,6 +72,26 @@ export const TagFilter = ({
   const clearTags = () => setSelectedTagIds([])
   const hasTagFilters = selectedTagIds.length > 0
 
+  // jsx-no-bind optimization: Event handlers
+  const handleToggleOpen = useCallback(() => {
+    setIsOpen(!isOpen)
+  }, [isOpen])
+
+  const handleCloseModal = useCallback(() => {
+    setIsOpen(false)
+  }, [])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') setIsOpen(false)
+  }, [])
+
+  const createRemoveTagHandler = useCallback((tagId: string) => {
+    return (e: React.MouseEvent) => {
+      e.stopPropagation()
+      toggleTag(tagId)
+    }
+  }, [toggleTag])
+
   // 選択されたタグ
   const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
 
@@ -78,7 +103,7 @@ export const TagFilter = ({
       {/* フィルターボタン */}
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleOpen}
         className={`flex items-center gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors dark:border-gray-600 ${
           hasTagFilters
             ? 'border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-600 dark:bg-blue-900/20 dark:text-blue-300'
@@ -105,10 +130,7 @@ export const TagFilter = ({
               {tag.name}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  toggleTag(tag.id)
-                }}
+                onClick={createRemoveTagHandler(tag.id)}
                 className="ml-1 text-blue-500 hover:text-blue-700 dark:hover:text-blue-200"
                 aria-label={`Remove ${tag.name} filter`}
               >
@@ -127,10 +149,8 @@ export const TagFilter = ({
             role="button"
             tabIndex={0}
             className="fixed inset-0 z-40"
-            onClick={() => setIsOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') setIsOpen(false)
-            }}
+            onClick={handleCloseModal}
+            onKeyDown={handleKeyDown}
             aria-label="フィルターメニューを閉じる"
           />
 
@@ -201,10 +221,15 @@ interface TagChipProps {
 }
 
 export const TagChip = ({ tag, isSelected, onToggle }: TagChipProps) => {
+  // jsx-no-bind optimization: Toggle handler
+  const handleToggle = useCallback(() => {
+    onToggle(tag.id)
+  }, [onToggle, tag.id])
+
   return (
     <button
       type="button"
-      onClick={() => onToggle(tag.id)}
+      onClick={handleToggle}
       className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors ${
         isSelected
           ? 'border border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300'

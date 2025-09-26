@@ -1,9 +1,13 @@
 {
   "permissions": {
-    "allow": ["Bash(npm run test:*)"],
+    "allow": [
+      "Bash(git reset:*)"
+    ],
     "deny": [],
     "defaultMode": "ask",
     "ask": []
   },
-  "claudeMd": ["docs/ai-chatbot/system-overview.md"]
+  "claudeMd": [
+    "docs/ai-chatbot/system-overview.md"
+  ]
 }

@@ -18,7 +18,8 @@ export async function generateMetadata({ params: { locale } }: { params: { local
   // 代替言語URLの生成
   const alternateLanguages: Record<string, string> = {}
   locales.forEach((lang) => {
-    alternateLanguages[lang] = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`
+    const url = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`
+    alternateLanguages[lang as keyof typeof alternateLanguages] = url
   })
 
   return {

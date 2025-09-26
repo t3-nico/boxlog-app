@@ -349,7 +349,7 @@ export function useDragAndDrop({
       }
 
       let targetDate = date
-      if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
+      if (viewMode !== 'day' && displayDates && targetDateIndex in displayDates && displayDates[targetDateIndex]) {
         targetDate = displayDates[targetDateIndex]
 
         if (targetDateIndex !== dragData.originalDateIndex) {

@@ -108,7 +108,7 @@ describe('言語切り替えE2Eテスト', () => {
   describe('言語切り替えUI操作', () => {
     it('言語切り替えボタンをクリックして言語を変更できる', async () => {
       // LanguageSwitcherコンポーネントのテスト
-      const currentLocale = 'en'
+      const _currentLocale = 'en'
       const dictionary = {
         language: {
           switch: 'Switch Language',
@@ -257,8 +257,8 @@ describe('言語切り替えE2Eテスト', () => {
       mockCookies['NEXT_LOCALE'] = 'ja'
 
       // 新しいセッション（新しいタブ・ウィンドウ）をシミュレート
-      const newSessionWindow = { ...mockWindow }
-      const newSessionDocument = { ...mockDocument }
+      const _newSessionWindow = { ...mockWindow }
+      const _newSessionDocument = { ...mockDocument }
 
       // Cookieは共有されるため、言語設定が継続される
       const { getLocaleCookie } = require('@/lib/i18n')
@@ -300,7 +300,7 @@ describe('言語切り替えE2Eテスト', () => {
         { code: 'en', name: 'English', flag: '🇺🇸' },
         { code: 'ja', name: '日本語', flag: '🇯🇵' },
       ]
-      const currentLocale = 'en'
+      const _currentLocale = 'en'
 
       languages.forEach((language) => {
         const expectedAttributes = {
@@ -375,7 +375,7 @@ describe('言語切り替えE2Eテスト', () => {
 describe('言語切り替え統合シナリオ', () => {
   it('完全なユーザージャーニー: 初回訪問から言語切り替えまで', async () => {
     // 1. 初回訪問（英語ブラウザ）
-    const mockWindow = {
+    const _mockWindow = {
       navigator: { language: 'en-US' },
       location: { pathname: '/' },
     }
@@ -411,7 +411,7 @@ describe('言語切り替え統合シナリオ', () => {
 })
 
 // テストヘルパー関数
-function simulateUserInteraction(action: string, target?: string) {
+function _simulateUserInteraction(action: string, target?: string) {
   // 実際のE2Eテストでは、Playwright等を使用してユーザー操作をシミュレート
   return {
     action,
@@ -420,7 +420,7 @@ function simulateUserInteraction(action: string, target?: string) {
   }
 }
 
-function waitForTranslation(locale: string, timeout = 1000) {
+function _waitForTranslation(locale: string, timeout = 1000) {
   // 実際のE2Eテストでは、翻訳の読み込み完了を待機
   return new Promise((resolve) => {
     setTimeout(() => resolve(locale), timeout)

@@ -93,7 +93,7 @@ const defaultConfig = localeConfigs['en-US']
 const getLocaleConfig = (locale: Locale): LocaleConfig => {
   // 完全一致を試す
   if (locale in localeConfigs) {
-    return localeConfigs[locale]
+    return localeConfigs[locale as keyof typeof localeConfigs]
   }
 
   // 言語コードでの一致を試す

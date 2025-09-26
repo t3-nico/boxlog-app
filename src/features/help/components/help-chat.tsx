@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ArrowUpCircle, Copy, MoreVertical, Sparkles, Trash2 } from 'lucide-react'
 
@@ -52,19 +52,32 @@ const ChatInput = () => {
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // jsx-no-bind optimization: Event handlers
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }, [setInputValue])
+
+  const handleCompositionStart = useCallback(() => {
+    setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    setIsComposing(false)
+  }, [])
+
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     if (state.inputValue.trim() && !state.isTyping) {
       await sendMessage(state.inputValue)
     }
-  }
+  }, [state.inputValue, state.isTyping, sendMessage])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
       e.preventDefault()
       handleSubmit(e)
     }
-  }
+  }, [isComposing, handleSubmit])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -100,10 +113,10 @@ const ChatInput = () => {
           <textarea
             ref={textareaRef}
             value={state.inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            onCompositionStart={() => setIsComposing(true)}
-            onCompositionEnd={() => setIsComposing(false)}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
             placeholder="Ask Claude anything about BoxLog..."
             className="border-border bg-card placeholder-muted-foreground max-h-32 min-h-[44px] w-full resize-none rounded-xl border px-4 py-3 pr-12 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
             disabled={state.isTyping}
@@ -127,6 +140,21 @@ const ChatHeader = () => {
   const { clearMessages } = useChatContext()
   const [showMenu, setShowMenu] = useState(false)
 
+  // jsx-no-bind optimization: Menu handlers
+  const handleMenuToggle = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  const handleClearMessages = useCallback(() => {
+    clearMessages()
+    setShowMenu(false)
+  }, [clearMessages])
+
+  const handleExportConversation = useCallback(() => {
+    // Export functionality could be implemented here
+    setShowMenu(false)
+  }, [])
+
   return (
     <div className="border-border bg-background flex-shrink-0 border-b p-6">
       <div className="flex items-center justify-between">
@@ -143,7 +171,7 @@ const ChatHeader = () => {
         <div className="relative">
           <button
             type="button"
-            onClick={() => setShowMenu(!showMenu)}
+            onClick={handleMenuToggle}
             className="text-muted-foreground hover:text-foreground hover:bg-accent/50 rounded p-2 transition-colors"
           >
             <MoreVertical className="h-4 w-4" />
@@ -153,10 +181,7 @@ const ChatHeader = () => {
             <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
               <button
                 type="button"
-                onClick={() => {
-                  clearMessages()
-                  setShowMenu(false)
-                }}
+                onClick={handleClearMessages}
                 className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
               >
                 <Trash2 className="h-4 w-4" />
@@ -164,10 +189,7 @@ const ChatHeader = () => {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  // Export functionality could be implemented here
-                  setShowMenu(false)
-                }}
+                onClick={handleExportConversation}
                 className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
               >
                 <Copy className="h-4 w-4" />
@@ -183,6 +205,11 @@ const ChatHeader = () => {
 
 const WelcomeMessage = () => {
   const { sendMessage } = useChatContext()
+
+  // jsx-no-bind optimization: Quick prompt handler creator
+  const createSendMessageHandler = useCallback((text: string) => {
+    return () => sendMessage(text)
+  }, [sendMessage])
 
   const quickPrompts = [
     { emoji: '🚀', text: 'How do I get started with BoxLog?', description: 'Basic setup and first steps' },
@@ -212,7 +239,7 @@ const WelcomeMessage = () => {
             <button
               key={`prompt-${prompt.text.slice(0, 20)}`}
               type="button"
-              onClick={() => sendMessage(prompt.text)}
+              onClick={createSendMessageHandler(prompt.text)}
               className="border-border hover:bg-accent/50 group flex items-center gap-4 rounded-xl border p-4 text-left transition-colors"
             >
               <span className="text-2xl">{prompt.emoji}</span>

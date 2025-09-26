@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Plus, X } from 'lucide-react'
 
@@ -20,6 +20,29 @@ interface QuickTagCreateModalProps {
 export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCreateModalProps) => {
   const [tagName, setTagName] = useState('')
   const [selectedColor, setSelectedColor] = useState('#3b82f6')
+
+  // jsx-no-bind optimization: Event handlers
+  const handleTagNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setTagName(e.target.value)
+  }, [])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleCreateTag()
+    } else if (e.key === 'Escape') {
+      handleClose()
+    }
+  }, [])
+
+  const handleOverlayKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      handleClose()
+    }
+  }, [])
+
+  const createColorHandler = useCallback((color: string) => {
+    return () => setSelectedColor(color)
+  }, [])
 
   const presetColors = [
     '#ef4444', // red
@@ -60,11 +83,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
         tabIndex={0}
         className="fixed inset-0 z-50 bg-black bg-opacity-50"
         onClick={handleClose}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') {
-            handleClose()
-          }
-        }}
+        onKeyDown={handleOverlayKeyDown}
         aria-label="モーダルを閉じる"
       />
 
@@ -92,16 +111,10 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
               id="tag-name-input"
               type="text"
               value={tagName}
-              onChange={(e) => setTagName(e.target.value)}
+              onChange={handleTagNameChange}
               placeholder="Enter tag name..."
               className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-transparent focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleCreateTag()
-                } else if (e.key === 'Escape') {
-                  handleClose()
-                }
-              }}
+              onKeyDown={handleKeyDown}
             />
           </div>
 
@@ -114,7 +127,7 @@ export const QuickTagCreateModal = ({ isOpen, onClose, onCreateTag }: QuickTagCr
                 <button
                   key={color}
                   type="button"
-                  onClick={() => setSelectedColor(color)}
+                  onClick={createColorHandler(color)}
                   className={`h-10 w-10 rounded-lg transition-all hover:scale-105 ${
                     selectedColor === color ? 'ring-2 ring-blue-500 ring-offset-2' : ''
                   }`}

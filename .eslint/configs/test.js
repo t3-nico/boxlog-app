@@ -30,15 +30,15 @@ module.exports = {
         beforeAll: 'readonly',
         afterAll: 'readonly',
       },
-      plugins: ['vitest'],
+      // plugins: ['vitest'], // Plugin not installed yet
       rules: {
-        // Vitestテストルール
-        'vitest/expect-expect': 'error',
-        'vitest/no-disabled-tests': 'warn',
-        'vitest/no-focused-tests': 'error',
-        'vitest/prefer-to-be': 'error',
-        'vitest/prefer-to-have-length': 'error',
-        'vitest/prefer-strict-equal': 'error',
+        // Vitestテストルール (Plugin not installed yet)
+        // 'vitest/expect-expect': 'error',
+        // 'vitest/no-disabled-tests': 'warn',
+        // 'vitest/no-focused-tests': 'error',
+        // 'vitest/prefer-to-be': 'error',
+        // 'vitest/prefer-to-have-length': 'error',
+        // 'vitest/prefer-strict-equal': 'error',
 
         // テストファイルでは一部ルールを緩和
         'react/jsx-no-bind': 'off', // テストでのイベントハンドラー

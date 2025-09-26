@@ -26,7 +26,7 @@ export const getDictionary = async (locale: Locale): Promise<Dictionary> => {
   if (!locales.includes(locale)) {
     locale = defaultLocale
   }
-  return dictionaries[locale]()
+  return (locale in dictionaries) ? dictionaries[locale as keyof typeof dictionaries]() : dictionaries[defaultLocale]()
 }
 
 // ネストしたオブジェクトから値を取得

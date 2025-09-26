@@ -191,7 +191,7 @@ export const AdvancedSlideTransition = ({
       },
     }
 
-    return variants[dir]
+    return (dir in variants) ? variants[dir as keyof typeof variants] : variants.left
   }
 
   const animationConfig = prefersReducedMotion

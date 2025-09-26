@@ -64,7 +64,7 @@ export const EventStatusChip = ({
   showIcon = true,
   className = ''
 }: EventStatusChipProps) => {
-  const config = statusConfig[status]
+  const config = (status in statusConfig) ? statusConfig[status as keyof typeof statusConfig] : statusConfig.draft
   const Icon = config.icon
 
   const sizeClasses = {

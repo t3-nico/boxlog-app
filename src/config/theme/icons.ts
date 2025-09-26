@@ -366,7 +366,8 @@ export const iconUtils = {
     size: 'small' | 'large' = 'small'
   ): string => {
     const statusKey = size === 'large' ? `${status}Large` : status
-    return iconPatterns.status[statusKey as keyof typeof iconPatterns.status as keyof typeof status]
+    const statusPatterns = iconPatterns.status as Record<string, string>
+    return statusKey in statusPatterns ? statusPatterns[statusKey] : statusPatterns.info
   },
   
   /**
@@ -377,7 +378,10 @@ export const iconUtils = {
     animation: keyof typeof icon.animation,
     color: keyof typeof icon.color = 'default'
   ): string => {
-    return `${icon.size[size as keyof typeof size]} ${icon.color[color as keyof typeof color]} ${icon.animation[animation as keyof typeof animation]}`
+    const sizeClass = size in icon.size ? icon.size[size] : icon.size.md
+    const colorClass = color in icon.color ? icon.color[color] : icon.color.default
+    const animationClass = animation in icon.animation ? icon.animation[animation] : ''
+    return `${sizeClass} ${colorClass} ${animationClass}`
   },
   
   /**
@@ -387,7 +391,8 @@ export const iconUtils = {
     position: 'left' | 'right' = 'left',
     interactive: boolean = false
   ): string => {
-    const positionClass = iconPatterns.input[position as keyof typeof input]
+    const inputPatterns = iconPatterns.input as Record<string, string> & { size: string; sizeInteractive: string }
+    const positionClass = position in inputPatterns ? inputPatterns[position] : inputPatterns.left || ''
     const sizeClass = interactive 
       ? iconPatterns.input.sizeInteractive 
       : iconPatterns.input.size

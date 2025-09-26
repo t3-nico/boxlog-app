@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -18,6 +18,21 @@ interface TitleInputProps {
 export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFocus = false }: TitleInputProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [isFocused, setIsFocused] = useState(false)
+
+  // jsx-no-bind optimization: Input change handler
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value)
+  }, [onChange])
+
+  // jsx-no-bind optimization: Focus handler
+  const handleFocus = useCallback(() => {
+    setIsFocused(true)
+  }, [])
+
+  // jsx-no-bind optimization: Blur handler
+  const handleBlur = useCallback(() => {
+    setIsFocused(false)
+  }, [])
   const [animatedValue, setAnimatedValue] = useState('')
 
   // Auto focus
@@ -89,7 +104,8 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
     }
   }, [value, onSmartExtract])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  // jsx-no-bind optimization: Keyboard handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     // Enterキーで次のタブに移動
     if (e.key === 'Enter' && value.trim() && onTabNext) {
       e.preventDefault()
@@ -105,7 +121,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
       }
       // 空の場合は親に処理を委譲（モーダルが閉じる）
     }
-  }
+  }, [value, onTabNext, onChange])
 
   const _letterVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.8 },
@@ -125,9 +141,9 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
           ref={inputRef}
           type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder="What needs to be done?"
           className={`w-full resize-none border-none bg-transparent text-3xl font-semibold leading-tight outline-none placeholder:text-neutral-400 md:text-4xl lg:text-5xl dark:placeholder:text-neutral-500 ${text.primary} pl-3 transition-all duration-300 ${isFocused ? 'scale-105 transform' : 'scale-100 transform'} `}

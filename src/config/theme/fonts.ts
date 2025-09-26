@@ -86,11 +86,11 @@ const localeToFontMapping: Record<string, keyof typeof fontFamilies> = {
  * 指定されたロケールに適したフォントファミリーを取得
  */
 export const getFontFamily = (locale: Locale, type: 'sans' | 'mono' = 'sans'): string[] => {
-  const fontKey = localeToFontMapping[locale] || 'default'
-  const fontFamily = fontFamilies[fontKey]
+  const fontKey = (locale as keyof typeof localeToFontMapping) in localeToFontMapping ? localeToFontMapping[locale as keyof typeof localeToFontMapping] : 'default'
+  const fontFamily = (fontKey as keyof typeof fontFamilies) in fontFamilies ? fontFamilies[fontKey as keyof typeof fontFamilies] : fontFamilies.default
 
   // 無効なフォントタイプの場合はデフォルトのsansを返す
-  if (!fontFamily || !fontFamily[type]) {
+  if (!fontFamily || !((type as keyof typeof fontFamily) in fontFamily)) {
     return fontFamilies.default.sans
   }
 
@@ -155,7 +155,7 @@ export const getFontClasses = (
     bold: string
   }
 } => {
-  const fontKey = localeToFontMapping[locale] || 'default'
+  const fontKey = locale in localeToFontMapping ? localeToFontMapping[locale] : 'default'
 
   return {
     sans: `font-${fontKey}-sans`,
@@ -204,7 +204,7 @@ export const getFontPreloadUrls = (locale: Locale): string[] => {
   urls.push('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap')
 
   // 言語別フォント
-  const fontKey = localeToFontMapping[locale]
+  const fontKey = locale in localeToFontMapping ? localeToFontMapping[locale] : undefined
   if (fontKey) {
     switch (fontKey) {
       case 'japanese':
