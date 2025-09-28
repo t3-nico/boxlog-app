@@ -31,6 +31,8 @@ const nextConfig = {
   // 実験的機能
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    // Next.js 14 instrumentation.ts サポート
+    instrumentationHook: true,
     turbo: {
       rules: {
         '*.svg': {
