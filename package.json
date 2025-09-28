@@ -147,6 +147,11 @@
     "api:version:full": "node scripts/api-version-manager.js full-test",
     "config:validate": "node scripts/config-manager.js validate",
     "config:compare": "node scripts/config-manager.js compare",
+    "error-patterns:test": "vitest run src/test/error-patterns-integration.test.ts",
+    "error-patterns:health": "node -e \"const { getHealthStatus } = require('./dist/lib/error-handler'); console.log(JSON.stringify(getHealthStatus(), null, 2))\"",
+    "error-patterns:stats": "node -e \"const { getErrorStats } = require('./dist/lib/error-handler'); console.log(JSON.stringify(getErrorStats(), null, 2))\"",
+    "error-patterns:validate": "npm run typecheck && npm run error-patterns:test",
+    "error-patterns:full": "npm run error-patterns:validate && npm run error-patterns:health && npm run error-patterns:stats",
     "config:docs": "node scripts/config-manager.js docs",
     "config:stats": "node scripts/config-manager.js stats",
     "config:check": "node scripts/config-manager.js",
@@ -193,7 +198,12 @@
     "sentry:test": "node scripts/sentry-connection-test.js",
     "sentry:check": "npm run sentry:test",
     "vercel:env": "node scripts/vercel-env-check.js",
-    "vercel:check": "npm run vercel:env"
+    "vercel:check": "npm run vercel:env",
+    "seed:test": "npm run typecheck && tsx seeds/scripts/seed.ts test",
+    "seed:dev": "npm run typecheck && tsx seeds/scripts/seed.ts development",
+    "seed:staging": "npm run typecheck && tsx seeds/scripts/seed.ts staging",
+    "seed:minimal": "npm run typecheck && tsx seeds/scripts/seed.ts minimal",
+    "seed:quick": "npm run typecheck && tsx seeds/scripts/quick-seed.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
@@ -319,6 +329,7 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "supabase": "^2.30.4",
     "tailwindcss": "^4.1.7",
+    "tsx": "^4.20.6",
     "tw-animate-css": "^1.3.6",
     "typescript": "^5",
     "vitest": "^3.2.4"
