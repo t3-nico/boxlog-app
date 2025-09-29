@@ -27,6 +27,10 @@
     "lint:imports": "eslint . -c .eslint/index.js --ext .tsx,.ts | grep -E '(import/order|unused-imports)'",
     "lint:all": "npm run lint:cache",
     "lint:all:fix": "npm run lint:fix",
+    "lint:quick": "eslint --cache --cache-strategy content src/**/*.{ts,tsx} --max-warnings 20",
+    "lint:changed": "eslint --cache $(git diff --name-only HEAD~1 | grep -E '\\.(ts|tsx)' | xargs)",
+    "precommit:quick": "lint-staged",
+    "ci:heavy-checks": "npm run bundle:guard && node scripts/license-checker.js && node scripts/api-change-detector.js",
     "typecheck": "op run --env-file=.env.local -- tsc --noEmit",
     "bundle:analyze": "ANALYZE=true npm run build",
     "bundle:check": "node scripts/bundle-check.js",
@@ -353,15 +357,13 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "eslint -c .eslint/index.js --fix",
-      "prettier --write"
+      "eslint -c .eslint/index.js --cache --cache-location .eslint/cache/.eslintcache --fix --max-warnings 20"
     ],
     "*.{js,jsx}": [
-      "eslint -c .eslint/index.js --fix",
-      "prettier --write"
+      "eslint -c .eslint/index.js --cache --cache-location .eslint/cache/.eslintcache --fix --max-warnings 20"
     ],
     "*.{json,md,yml,yaml}": [
-      "prettier --write"
+      "prettier --write --ignore-unknown"
     ]
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"

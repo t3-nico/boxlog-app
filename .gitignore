@@ -76,11 +76,14 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
-# ESLint
+# ESLint Cache
 .eslint/cache/
 .eslint/reports/*.html
 .eslint/reports/*.json
 .eslintcache
+
+# Performance logs
+performance-*.log
 
 # Technical Debt Reports (too large for git)
 reports/tech-debt.json

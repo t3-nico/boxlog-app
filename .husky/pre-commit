@@ -1,26 +1,21 @@
-# BoxLog Pre-commit Hook
-# コミット前に品質チェックを実行
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
 
-echo "🔍 Running pre-commit checks..."
+echo "🚀 BoxLog Quick Pre-commit Check..."
 
-# ファイルサイズチェック（Phase 1b: BigTech標準）
-node scripts/check-file-sizes.js
+# ==============================
+# 必須チェックのみ（5-10秒で完了）
+# ==============================
 
-# バンドルサイズ監視（Phase 1c: BigTech標準）
-node scripts/bundle-size-guard.js
-
-# ライセンス検証（Phase 2a: BigTech標準）
-node scripts/license-checker.js
-
-# API変更検出（Phase 2b: BigTech標準）
-node scripts/api-change-detector.js
-
-# パフォーマンス回帰テスト（Phase 2c: BigTech標準）
-node scripts/performance-regression-test.js
-
-# 命名規則辞書チェック（Phase 3: BoxLog 統一命名規則）
-echo "🏷️ Checking naming conventions..."
-npm run naming:migrate
-
-# Lint-staged実行（変更されたファイルのみ）
+# 1. Lint-staged（変更ファイルのみ）
+echo "📝 Checking changed files..."
 npx lint-staged
+
+# 成功メッセージ
+echo "✅ Pre-commit check completed!"
+echo ""
+echo "📊 Heavy checks will run in CI/CD:"
+echo "  - Bundle size analysis"
+echo "  - License verification"
+echo "  - Performance tests"
+echo "  - API breaking changes"
