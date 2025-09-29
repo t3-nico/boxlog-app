@@ -9,7 +9,7 @@ console.log('🚀 Vercel環境変数チェック開始\n')
 
 // 環境の判定
 const isVercel = process.env.VERCEL === '1'
-const isProduction = process.env.NODE_ENV === 'production'
+const _isProduction = process.env.NODE_ENV === 'production'
 const vercelUrl = process.env.VERCEL_URL
 const vercelEnv = process.env.VERCEL_ENV // production, preview, development
 
