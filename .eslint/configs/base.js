@@ -145,6 +145,7 @@ module.exports = {
     'public/',
     '.turbo/',
     'coverage/',
+    'scripts/',  // Node.js純正スクリプトディレクトリ除外
   ],
 
   settings: {
