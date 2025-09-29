@@ -33,14 +33,17 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
     // Next.js 14 instrumentation.ts サポート
     instrumentationHook: true,
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
+    // Client reference manifest 生成を安定化
+    clientRouterFilter: true,
+    // Turbo設定は一時的に無効化してビルド安定性を優先
+    // turbo: {
+    //   rules: {
+    //     '*.svg': {
+    //       loaders: ['@svgr/webpack'],
+    //       as: '*.js',
+    //     },
+    //   },
+    // },
   },
   // ビルド最適化
   swcMinify: true,

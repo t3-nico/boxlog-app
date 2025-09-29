@@ -11,8 +11,7 @@ const tracker = new TranslationTracker()
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const language = searchParams.get('language')
+    const language = request.nextUrl.searchParams.get('language')
 
     if (language) {
       // 特定言語のヘルスチェック

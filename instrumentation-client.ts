@@ -35,10 +35,7 @@ Sentry.init({
       blockAllMedia: true,
     }),
     // Core Web Vitalsの自動測定（Next.js専用）
-    Sentry.browserTracingIntegration({
-      // 自動ページナビゲーション追跡を有効化
-      routingInstrumentation: Sentry.nextjsRouterInstrumentation(),
-    }),
+    Sentry.browserTracingIntegration(),
   ],
 
   // パフォーマンス監視の設定
