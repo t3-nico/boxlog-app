@@ -1,259 +1,222 @@
 /**
- * Sentry統合エラーハンドリングシステム
- * 既存のエラー体系とSentryを連携させる
+ * Sentry連携システム
+ * エラーパターン辞書との統合による自動分類・構造化レポーティング
  */
 
 import * as Sentry from '@sentry/nextjs'
 
-import { AppError } from './errors'
+import {
+  AppError,
+  type ErrorCategory,
+  type SeverityLevel
+} from '@/config/error-patterns'
 
-// エラーレベルの定義
-export enum ErrorSeverity {
-  FATAL = 'fatal',
-  ERROR = 'error',
-  WARNING = 'warning',
-  INFO = 'info',
-  DEBUG = 'debug',
-}
-
-// エラーカテゴリ（BoxLogの統一エラーコード体系と連携）
-export enum ErrorCategory {
-  AUTH = 'authentication', // 1000番台
-  API = 'api', // 2000番台
-  DATA = 'database', // 3000番台
-  UI = 'frontend', // 4000番台
-  SYSTEM = 'infrastructure', // 5000番台
-  BUSINESS = 'business_logic', // 6000番台
-  EXTERNAL = 'external_service', // 7000番台
-}
-
-// エラーコード → カテゴリ・重要度マッピング
-const ERROR_MAPPING: Record<string, { category: ErrorCategory; severity: ErrorSeverity; priority: number }> = {
-  // 1000番台: 認証・セキュリティ系
-  AUTH_INVALID_TOKEN: { category: ErrorCategory.AUTH, severity: ErrorSeverity.ERROR, priority: 1 },
-  AUTH_EXPIRED: { category: ErrorCategory.AUTH, severity: ErrorSeverity.WARNING, priority: 2 },
-  AUTH_NO_PERMISSION: { category: ErrorCategory.AUTH, severity: ErrorSeverity.ERROR, priority: 1 },
-  UNAUTHORIZED: { category: ErrorCategory.AUTH, severity: ErrorSeverity.ERROR, priority: 1 },
-  FORBIDDEN: { category: ErrorCategory.AUTH, severity: ErrorSeverity.ERROR, priority: 1 },
-
-  // 2000番台: API・ネットワーク系
-  API_RATE_LIMIT: { category: ErrorCategory.API, severity: ErrorSeverity.WARNING, priority: 2 },
-  API_INVALID_PARAM: { category: ErrorCategory.API, severity: ErrorSeverity.ERROR, priority: 2 },
-  API_TIMEOUT: { category: ErrorCategory.API, severity: ErrorSeverity.WARNING, priority: 3 },
-
-  // 3000番台: データ・データベース系
-  DATA_NOT_FOUND: { category: ErrorCategory.DATA, severity: ErrorSeverity.INFO, priority: 4 },
-  DATA_DUPLICATE: { category: ErrorCategory.DATA, severity: ErrorSeverity.WARNING, priority: 3 },
-  DATA_VALIDATION_ERROR: { category: ErrorCategory.DATA, severity: ErrorSeverity.ERROR, priority: 2 },
-  NOT_FOUND: { category: ErrorCategory.DATA, severity: ErrorSeverity.INFO, priority: 4 },
-  VALIDATION_ERROR: { category: ErrorCategory.DATA, severity: ErrorSeverity.WARNING, priority: 3 },
-  SUPABASE_ERROR: { category: ErrorCategory.DATA, severity: ErrorSeverity.ERROR, priority: 2 },
-
-  // デフォルト
-  UNKNOWN_ERROR: { category: ErrorCategory.SYSTEM, severity: ErrorSeverity.FATAL, priority: 1 },
+/**
+ * Sentry設定オプション
+ */
+export interface SentryIntegrationOptions {
+  dsn?: string
+  environment?: string
+  release?: string
+  sampleRate?: number
+  tracesSampleRate?: number
+  enableAutoSessionTracking?: boolean
+  enableUserContext?: boolean
+  enablePerformanceMonitoring?: boolean
+  beforeSend?: (event: Sentry.Event) => Sentry.Event | null
 }
 
 /**
- * エラー自動分類・優先度付けシステム
+ * カテゴリ別Sentryタグ設定
  */
-export class SentryErrorHandler {
-  /**
-   * AppErrorをSentryに送信（自動分類・優先度付き）
-   */
-  static captureAppError(error: AppError, context?: Record<string, unknown>): void {
-    const mapping = ERROR_MAPPING[error.code] || ERROR_MAPPING['UNKNOWN_ERROR']
+const CATEGORY_TAGS: Record<ErrorCategory, Record<string, string>> = {
+  AUTH: {
+    domain: 'authentication',
+    priority: 'high',
+    team: 'security',
+    alerting: 'immediate'
+  },
+  VALIDATION: {
+    domain: 'user-input',
+    priority: 'medium',
+    team: 'frontend',
+    alerting: 'batch'
+  },
+  DB: {
+    domain: 'database',
+    priority: 'critical',
+    team: 'backend',
+    alerting: 'immediate'
+  },
+  BIZ: {
+    domain: 'business-logic',
+    priority: 'medium',
+    team: 'product',
+    alerting: 'daily'
+  },
+  EXTERNAL: {
+    domain: 'third-party',
+    priority: 'medium',
+    team: 'integration',
+    alerting: 'hourly'
+  },
+  SYSTEM: {
+    domain: 'infrastructure',
+    priority: 'critical',
+    team: 'devops',
+    alerting: 'immediate'
+  },
+  RATE: {
+    domain: 'rate-limiting',
+    priority: 'low',
+    team: 'backend',
+    alerting: 'daily'
+  }
+}
+
+/**
+ * Sentry統合クラス
+ */
+export class SentryIntegration {
+  private initialized = false
+  private options: SentryIntegrationOptions
+
+  constructor(options: SentryIntegrationOptions = {}) {
+    this.options = {
+      environment: process.env.NODE_ENV || 'development',
+      sampleRate: 1.0,
+      tracesSampleRate: 0.1,
+      enableAutoSessionTracking: true,
+      enableUserContext: true,
+      enablePerformanceMonitoring: true,
+      ...options
+    }
+  }
+
+  initialize(): void {
+    if (this.initialized) {
+      return
+    }
+
+    Sentry.init({
+      dsn: this.options.dsn || process.env.SENTRY_DSN,
+      environment: this.options.environment,
+      release: this.options.release || process.env.NEXT_PUBLIC_APP_VERSION,
+      sampleRate: this.options.sampleRate,
+      tracesSampleRate: this.options.tracesSampleRate,
+      autoSessionTracking: this.options.enableAutoSessionTracking,
+
+      beforeSend: (event, hint) => {
+        const filteredEvent = this.filterEvent(event, hint)
+        if (this.options.beforeSend && filteredEvent) {
+          return this.options.beforeSend(filteredEvent)
+        }
+        return filteredEvent
+      }
+    })
+
+    this.initialized = true
+    console.log('Sentry integration initialized')
+  }
+
+  reportError(error: AppError): void {
+    if (!this.initialized) {
+      this.initialize()
+    }
 
     Sentry.withScope((scope) => {
-      // カテゴリ・優先度設定
-      scope.setTag('error_category', mapping.category)
-      scope.setTag('error_code', error.code)
-      scope.setTag('priority', mapping.priority)
-      scope.setLevel(mapping.severity as Sentry.SeverityLevel)
+      scope.setTag('errorCode', error.code)
+      scope.setTag('errorCategory', error.category)
+      scope.setTag('severity', error.severity)
 
-      // 追加コンテキスト
-      if (context) {
-        scope.setContext('error_context', context)
+      const categoryTags = CATEGORY_TAGS[error.category]
+      Object.entries(categoryTags).forEach(([key, value]) => {
+        scope.setTag(key, value)
+      })
+
+      scope.setFingerprint(this.generateFingerprint(error))
+      scope.setLevel(this.mapSeverityToSentryLevel(error.severity))
+
+      scope.setContext('errorPattern', {
+        code: error.code,
+        category: error.category,
+        severity: error.severity,
+        userMessage: error.userMessage
+      })
+
+      if (error.metadata) {
+        scope.setContext('errorMetadata', error.metadata)
       }
 
-      if (error.details) {
-        scope.setContext('error_details', error.details as Record<string, unknown>)
+      if (this.options.enableUserContext && error.metadata.userId) {
+        scope.setUser({
+          id: error.metadata.userId,
+          ip_address: error.metadata.ip,
+          userAgent: error.metadata.userAgent
+        })
       }
-
-      // フィンガープリント設定（同種エラーのグルーピング用）
-      scope.setFingerprint([error.code, mapping.category])
 
       Sentry.captureException(error)
     })
   }
 
-  /**
-   * 汎用エラーをSentryに送信（自動判定）
-   */
-  static captureError(error: unknown, context?: Record<string, unknown>): void {
-    if (error instanceof AppError) {
-      this.captureAppError(error, context)
-      return
-    }
+  private filterEvent(event: Sentry.Event, hint?: Sentry.EventHint): Sentry.Event | null {
+    if (this.options.environment === 'development') {
+      const ignoredMessages = [
+        'Non-Error promise rejection captured',
+        'Network Error',
+        'ChunkLoadError'
+      ]
 
-    // Error インスタンスの場合
-    if (error instanceof Error) {
-      Sentry.withScope((scope) => {
-        scope.setTag('error_category', ErrorCategory.SYSTEM)
-        scope.setTag('error_code', 'UNKNOWN_ERROR')
-        scope.setTag('priority', 1)
-        scope.setLevel(ErrorSeverity.ERROR as Sentry.SeverityLevel)
-
-        if (context) {
-          scope.setContext('error_context', context)
-        }
-
-        scope.setFingerprint(['UNKNOWN_ERROR', ErrorCategory.SYSTEM])
-        Sentry.captureException(error)
-      })
-      return
-    }
-
-    // 文字列やその他の値の場合
-    Sentry.withScope((scope) => {
-      scope.setTag('error_category', ErrorCategory.SYSTEM)
-      scope.setTag('error_code', 'UNKNOWN_ERROR')
-      scope.setTag('priority', 1)
-      scope.setLevel(ErrorSeverity.ERROR as Sentry.SeverityLevel)
-
-      if (context) {
-        scope.setContext('error_context', context)
+      if (ignoredMessages.some(msg => event.message?.includes(msg))) {
+        return null
       }
+    }
 
-      scope.setFingerprint(['UNKNOWN_ERROR', ErrorCategory.SYSTEM])
-      Sentry.captureMessage(`Unknown error: ${JSON.stringify(error)}`, ErrorSeverity.ERROR as Sentry.SeverityLevel)
-    })
+    return event
   }
 
-  /**
-   * ユーザーセッション記録用の情報設定
-   */
-  static setUserContext(user: { id: string; email?: string; username?: string; [key: string]: unknown }): void {
-    Sentry.setUser({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      ...user,
-    })
+  private generateFingerprint(error: AppError): string[] {
+    return [
+      'boxlog-app',
+      error.category,
+      error.code.toString()
+    ]
   }
 
-  /**
-   * 操作コンテキストの記録（どの画面・操作でエラーが発生したか）
-   */
-  static setOperationContext(operation: {
-    page: string
-    action: string
-    feature: string
-    [key: string]: unknown
-  }): void {
-    Sentry.setTag('page', operation.page)
-    Sentry.setTag('action', operation.action)
-    Sentry.setTag('feature', operation.feature)
-
-    Sentry.setContext('operation', operation)
+  private mapSeverityToSentryLevel(severity: SeverityLevel): Sentry.SeverityLevel {
+    switch (severity) {
+      case 'critical':
+        return 'fatal'
+      case 'high':
+        return 'error'
+      case 'medium':
+        return 'warning'
+      case 'low':
+        return 'info'
+      default:
+        return 'error'
+    }
   }
 
-  /**
-   * パフォーマンス監視用のスパン開始（新しいAPI）
-   */
-  static startSpan<T>(name: string, operation: string = 'navigation', fn: () => T): T {
-    return Sentry.startSpan(
-      {
-        name,
-        op: operation,
-      },
-      fn
-    )
-  }
-
-  /**
-   * パンくずリスト記録（ユーザーの行動フロー）
-   */
-  static addBreadcrumb(message: string, category: string = 'ui', level: Sentry.SeverityLevel = 'info'): void {
-    Sentry.addBreadcrumb({
-      message,
-      category,
-      level,
-    })
+  isHealthy(): boolean {
+    return this.initialized && !!Sentry.getCurrentHub().getClient()
   }
 }
 
-/**
- * React Error Boundary用のSentryエラーハンドラー
- */
-export function handleReactError(error: Error, errorInfo?: { componentStack?: string }): void {
-  Sentry.withScope((scope) => {
-    scope.setTag('error_category', ErrorCategory.UI)
-    scope.setTag('error_code', 'REACT_ERROR')
-    scope.setTag('priority', 2)
-    scope.setLevel(ErrorSeverity.ERROR as Sentry.SeverityLevel)
+export const sentryIntegration = new SentryIntegration()
 
-    if (errorInfo?.componentStack) {
-      scope.setContext('react_error_info', {
-        componentStack: errorInfo.componentStack,
-      })
-    }
-
-    scope.setFingerprint(['REACT_ERROR', ErrorCategory.UI])
-    Sentry.captureException(error)
-  })
+export function initializeSentry(options?: SentryIntegrationOptions): void {
+  if (options) {
+    sentryIntegration.constructor(options)
+  }
+  sentryIntegration.initialize()
 }
 
-/**
- * Next.js API Route用のSentryエラーハンドラー
- */
-export function handleApiError(
-  error: unknown,
-  req?: { method?: string; url?: string; headers?: Record<string, string> }
-): void {
-  Sentry.withScope((scope) => {
-    scope.setTag('error_category', ErrorCategory.API)
-    scope.setLevel(ErrorSeverity.ERROR as Sentry.SeverityLevel)
-
-    if (req) {
-      scope.setContext('request_info', {
-        method: req.method,
-        url: req.url,
-        userAgent: req.headers?.['user-agent'],
-        referer: req.headers?.['referer'],
-      })
-    }
-
-    if (error instanceof AppError) {
-      SentryErrorHandler.captureAppError(error)
-    } else {
-      SentryErrorHandler.captureError(error)
-    }
-  })
+export function reportToSentry(error: AppError): void {
+  sentryIntegration.reportError(error)
 }
 
-/**
- * 便利な関数：エラーをキャッチしてSentryに送信
- */
-export function withSentryErrorHandling<T extends (...args: unknown[]) => unknown>(
-  fn: T,
-  context?: Record<string, unknown>
-): T {
-  return ((...args: unknown[]) => {
-    try {
-      const result = fn(...args)
-
-      // Promise の場合は catch も追加
-      if (result && typeof result === 'object' && 'catch' in result) {
-        ;(result as Promise<unknown>).catch((error: unknown) => {
-          SentryErrorHandler.captureError(error, context)
-          throw error
-        })
-      }
-
-      return result
-    } catch (error) {
-      SentryErrorHandler.captureError(error, context)
-      throw error
-    }
-  }) as T
+if (typeof window !== 'undefined') {
+  sentryIntegration.initialize()
 }

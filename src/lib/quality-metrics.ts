@@ -243,7 +243,7 @@ export class QualityMetricsCollector {
         cwd: this.rootPath
       })
 
-      const coveragePath = path.join(this.rootPath, 'coverage/coverage-summary.json')
+      const coveragePath = path.resolve(this.rootPath, 'coverage/coverage-summary.json')
       if (fs.existsSync(coveragePath)) {
         const coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'))
         this.metrics.testing.coverage = {
@@ -275,7 +275,7 @@ export class QualityMetricsCollector {
       this.metrics.performance.buildTime = Date.now() - buildStart
 
       // .next/static の分析
-      const staticPath = path.join(this.rootPath, '.next/static')
+      const staticPath = path.resolve(this.rootPath, '.next/static')
       if (fs.existsSync(staticPath)) {
         const bundleInfo = this.analyzeBundleFiles(staticPath)
         this.metrics.performance.bundleSize = bundleInfo
@@ -432,7 +432,7 @@ export class QualityMetricsCollector {
     const walkDir = (dir: string) => {
       const files = fs.readdirSync(dir)
       files.forEach(file => {
-        const filePath = path.join(dir, file)
+        const filePath = path.resolve(dir, file)
         const stat = fs.statSync(filePath)
 
         if (stat.isDirectory()) {

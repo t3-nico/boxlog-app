@@ -11,6 +11,7 @@ export * from './box'
 export * from './sidebar'
 export * from './chronotype'
 export * from './trash'
+export * from './task'
 // export * from './events' // Already exported from unified
 
 // Local storage stub types (replacing Supabase types)

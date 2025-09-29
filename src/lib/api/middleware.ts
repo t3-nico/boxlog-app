@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import type { ApiRequest } from './versioning'
 import { withApiVersioning } from './versioning'
+import { safeJsonStringify } from './json-utils'
 
 /**
  * 📊 API レスポンス統計
@@ -293,7 +294,7 @@ export class ApiMiddleware {
       userAgent: request.headers.get('user-agent'),
     }
 
-    console.log('[API Request]', JSON.stringify(logData, null, 2))
+    console.log('[API Request]', safeJsonStringify(logData, 2))
   }
 
   /**
@@ -309,7 +310,7 @@ export class ApiMiddleware {
       timestamp: new Date().toISOString(),
     }
 
-    console.log('[API Response]', JSON.stringify(logData, null, 2))
+    console.log('[API Response]', safeJsonStringify(logData, 2))
   }
 
   /**

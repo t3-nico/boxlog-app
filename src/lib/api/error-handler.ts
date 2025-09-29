@@ -8,6 +8,7 @@ import { z } from 'zod'
 
 import { createAppError, ERROR_CODES, type AppError } from '@/config/error-patterns'
 import { trackError } from '@/lib/analytics/vercel-analytics'
+import { safeJsonStringify } from './json-utils'
 
 /**
  * APIエラーレスポンス型
@@ -394,11 +395,11 @@ export function useErrorHandler() {
   const handleError = (error: unknown, context?: { operation?: string }) => {
     const errorResponse = APIErrorHandler.handleError(error, context)
 
-    // エラーログの出力
-    console.error('API Error:', {
+    // エラーログの出力（安全なJSON処理）
+    console.error('API Error:', safeJsonStringify({
       ...errorResponse.error,
       context,
-    })
+    }, 2))
 
     return errorResponse
   }

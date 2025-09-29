@@ -1,0 +1,83 @@
+name: Project Slack Notifications
+
+on:
+  project_v2_item:
+    types: [created, edited, deleted, moved, converted, restored, archived, reordered]
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Project Info
+        uses: actions/github-script@v7
+        id: project-info
+        with:
+          script: |
+            const { context } = require('@actions/github');
+            const action = context.payload.action;
+            const projectItem = context.payload.projects_v2_item;
+
+            let emoji = '📊';
+            let actionText = action;
+
+            switch(action) {
+              case 'created': emoji = '➕'; actionText = 'アイテム追加'; break;
+              case 'edited': emoji = '✏️'; actionText = 'アイテム編集'; break;
+              case 'deleted': emoji = '🗑️'; actionText = 'アイテム削除'; break;
+              case 'moved': emoji = '🔄'; actionText = 'ステータス変更'; break;
+              case 'converted': emoji = '🔄'; actionText = '変換'; break;
+              case 'restored': emoji = '♻️'; actionText = '復元'; break;
+              case 'archived': emoji = '📦'; actionText = 'アーカイブ'; break;
+              case 'reordered': emoji = '🔃'; actionText = '並び替え'; break;
+            }
+
+            const message = `${emoji} BoxLog Development Hub: ${actionText}`;
+
+            return {
+              message,
+              action,
+              repo: context.repo.repo,
+              projectUrl: "https://github.com/users/t3-nico/projects/4"
+            };
+
+      - name: Send Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              "text": "BoxLog Development Hub Update",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ fromJson(steps.project-info.outputs.result).message }}"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Repository: `${{ fromJson(steps.project-info.outputs.result).repo }}`"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "プロジェクトを見る"
+                      },
+                      "url": "${{ fromJson(steps.project-info.outputs.result).projectUrl }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

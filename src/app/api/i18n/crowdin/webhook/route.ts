@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+
+import { NextRequest, NextResponse } from 'next/server'
 
 import { CrowdinIntegration, createBoxLogCrowdinConfig } from '@/lib/i18n/crowdin-integration'
 

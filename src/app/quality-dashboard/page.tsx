@@ -43,7 +43,7 @@ interface QualityMetrics {
 
 const QualityDashboard: React.FC = () => {
   const [currentMetrics, setCurrentMetrics] = useState<QualityMetrics | null>(null)
-  const [historicalData, setHistoricalData] = useState<QualityMetrics[]>([])
+  const [_historicalData, setHistoricalData] = useState<QualityMetrics[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -229,8 +229,8 @@ const QualityDashboard: React.FC = () => {
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className={`${typography.body.base} ${colors.text.muted}`}>行カバレッジ</span>
-              <span className={`${typography.body.base} ${currentMetrics.testing.coverage.lines >= 80 ? colors.success.DEFAULT : colors.warning.DEFAULT} font-semibold`}>
-                {currentMetrics.testing.coverage.lines}%
+              <span className={`${typography.body.base} ${(currentMetrics.testing.coverage?.lines ?? 0) >= 80 ? colors.success.DEFAULT : colors.warning.DEFAULT} font-semibold`}>
+                {currentMetrics.testing.coverage?.lines ?? 0}%
               </span>
             </div>
             <div className="flex justify-between">
@@ -284,9 +284,9 @@ const QualityDashboard: React.FC = () => {
               💡 改善提案
             </h3>
             <div className="space-y-4">
-              {currentMetrics.recommendations.map((recommendation, index) => (
+              {currentMetrics.recommendations.map((recommendation) => (
                 <div
-                  key={index}
+                  key={`${recommendation.type}-${recommendation.category}-${recommendation.message.slice(0, 20)}`}
                   className={`${colors.background.muted} ${rounded.component.card.md} ${spacing.component.padding.md} border-l-4`}
                   style={{ borderLeftColor: recommendation.type === 'critical' ? '#ef4444' : recommendation.type === 'high' ? '#f97316' : '#eab308' }}
                 >
@@ -331,19 +331,22 @@ const QualityDashboard: React.FC = () => {
       {/* アクションボタン */}
       <div className={`${spacing.section.margin} flex gap-4`}>
         <button
-          onClick={() => window.location.reload()}
+          type="button"
+          onClick={() => { window.location.reload() }}
           className={`${colors.primary.DEFAULT} ${colors.background.white} ${spacing.component.padding.md} ${rounded.component.button.md} ${typography.button.base} hover:opacity-80 transition-opacity`}
         >
           📊 レポート更新
         </button>
         <button
-          onClick={() => window.open('/reports/quality/', '_blank')}
+          type="button"
+          onClick={() => { window.open('/reports/quality/', '_blank') }}
           className={`${colors.secondary.DEFAULT} ${colors.background.white} ${spacing.component.padding.md} ${rounded.component.button.md} ${typography.button.base} hover:opacity-80 transition-opacity`}
         >
           📁 詳細レポート
         </button>
         <button
-          onClick={() => window.open('https://github.com/t3-nico/boxlog-app/issues?q=label%3Aquality-improvement', '_blank')}
+          type="button"
+          onClick={() => { window.open('https://github.com/t3-nico/boxlog-app/issues?q=label%3Aquality-improvement', '_blank') }}
           className={`${colors.accent.DEFAULT} ${colors.background.white} ${spacing.component.padding.md} ${rounded.component.button.md} ${typography.button.base} hover:opacity-80 transition-opacity`}
         >
           🎯 改善Issue

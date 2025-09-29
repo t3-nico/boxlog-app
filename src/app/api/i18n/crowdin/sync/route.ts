@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs/promises'
 import path from 'path'
+
+import { NextRequest, NextResponse } from 'next/server'
 
 import { getDictionary } from '@/lib/i18n'
 import { CrowdinIntegration, createBoxLogCrowdinConfig } from '@/lib/i18n/crowdin-integration'
