@@ -28,22 +28,13 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  // 実験的機能
+  // 実験的機能 - Vercelビルド安定性を最優先
   experimental: {
+    // Vercelビルドエラー対策：最小限の実験的機能のみ有効
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    // Next.js 14 instrumentation.ts サポート
-    instrumentationHook: true,
-    // Client reference manifest 生成を安定化
-    clientRouterFilter: true,
-    // Turbo設定は一時的に無効化してビルド安定性を優先
-    // turbo: {
-    //   rules: {
-    //     '*.svg': {
-    //       loaders: ['@svgr/webpack'],
-    //       as: '*.js',
-    //     },
-    //   },
-    // },
+    // instrumentation一時無効化
+    // instrumentationHook: true,
+    // 追加設定は一時無効化してビルド安定性を優先
   },
   // ビルド最適化
   swcMinify: true,
