@@ -183,3 +183,20 @@ export const useRTLAnimation = () => {
     },
   }
 }
+
+// 翻訳フック（基本実装）
+export const useTranslation = () => {
+  const locale = useCurrentLocale()
+
+  // 基本的な翻訳機能（実装されている翻訳システムに合わせて調整）
+  const t = (key: string, defaultValue?: string): string => {
+    // 今のところデフォルト値を返す（本格的なi18nは将来実装）
+    return defaultValue || key
+  }
+
+  return {
+    t,
+    locale,
+    ready: true, // 翻訳リソースの読み込み状態
+  }
+}

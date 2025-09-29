@@ -200,7 +200,7 @@ export class SentryIntegration {
   }
 
   isHealthy(): boolean {
-    return this.initialized && !!Sentry.getCurrentHub().getClient()
+    return this.initialized && !!Sentry.getClient()
   }
 }
 
@@ -215,6 +215,30 @@ export function initializeSentry(options?: SentryIntegrationOptions): void {
 
 export function reportToSentry(error: AppError): void {
   sentryIntegration.reportError(error)
+}
+
+// エラーハンドラーエクスポート
+export class SentryErrorHandler {
+  static handleError(error: Error | AppError, context?: Record<string, any>): void {
+    if (error instanceof AppError) {
+      sentryIntegration.reportError(error)
+    } else {
+      const appError = new AppError(
+        error.message,
+        'SYSTEM_ERROR_500',
+        { originalError: error, ...context }
+      )
+      sentryIntegration.reportError(appError)
+    }
+  }
+}
+
+export function handleReactError(error: Error, errorInfo?: any): void {
+  SentryErrorHandler.handleError(error, { errorInfo, type: 'react' })
+}
+
+export function handleApiError(error: Error, context?: Record<string, any>): void {
+  SentryErrorHandler.handleError(error, { ...context, type: 'api' })
 }
 
 if (typeof window !== 'undefined') {

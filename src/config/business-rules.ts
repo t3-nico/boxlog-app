@@ -402,3 +402,56 @@ export function createValidationRule(
     message: validator(data) ? undefined : errorMessage,
   }))
 }
+
+/**
+ * ビジネスルール辞書（互換性用）
+ */
+export const businessRulesDictionary = {
+  // タスク関連のバリデーション
+  task: {
+    title: {
+      required: createValidationRule(
+        'task_title_required',
+        'タスクタイトル必須',
+        ['task_create', 'task_update'],
+        (data) => !!data.title && data.title.trim().length > 0,
+        'タスクのタイトルは必須です'
+      ),
+      maxLength: createValidationRule(
+        'task_title_max_length',
+        'タスクタイトル長さ制限',
+        ['task_create', 'task_update'],
+        (data) => !data.title || data.title.length <= 100,
+        'タスクのタイトルは100文字以内で入力してください'
+      ),
+    },
+    description: {
+      maxLength: createValidationRule(
+        'task_description_max_length',
+        'タスク説明長さ制限',
+        ['task_create', 'task_update'],
+        (data) => !data.description || data.description.length <= 2000,
+        'タスクの説明は2000文字以内で入力してください'
+      ),
+    },
+  },
+  // ユーザー関連のバリデーション
+  user: {
+    email: {
+      required: createValidationRule(
+        'user_email_required',
+        'ユーザーメール必須',
+        ['user_create', 'user_update'],
+        (data) => !!data.email,
+        'メールアドレスは必須です'
+      ),
+      format: createValidationRule(
+        'user_email_format',
+        'ユーザーメール形式',
+        ['user_create', 'user_update'],
+        (data) => !data.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email),
+        '有効なメールアドレスを入力してください'
+      ),
+    },
+  },
+}
