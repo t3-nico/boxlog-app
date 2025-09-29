@@ -15,6 +15,8 @@ module.exports = {
     './configs/test.js', // Test quality and coverage enforcement
     './configs/theme-simple.js', // Theme enforcement basic rules
     './configs/theme-strict.js', // Strict theme enforcement for new components
+    './configs/business-rules.js', // ビジネスルール辞書システム - 技術的失敗防止
+    './configs/naming-conventions.js', // 命名規則辞書システム - 統一命名規則強制
     isDev ? './configs/development.js' : './configs/production.js',
   ],
 

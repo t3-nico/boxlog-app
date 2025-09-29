@@ -18,5 +18,9 @@ node scripts/api-change-detector.js
 # パフォーマンス回帰テスト（Phase 2c: BigTech標準）
 node scripts/performance-regression-test.js
 
+# 命名規則辞書チェック（Phase 3: BoxLog 統一命名規則）
+echo "🏷️ Checking naming conventions..."
+npm run naming:migrate
+
 # Lint-staged実行（変更されたファイルのみ）
 npx lint-staged

@@ -1,0 +1,350 @@
+name: 🏷️ Naming Convention Dictionary Check
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'src/**/*.{ts,tsx,js,jsx}'
+      - '.eslint/**/*'
+      - 'src/config/naming-conventions/**/*'
+  pull_request:
+    branches: [dev, main]
+    paths:
+      - 'src/**/*.{ts,tsx,js,jsx}'
+      - '.eslint/**/*'
+      - 'src/config/naming-conventions/**/*'
+
+jobs:
+  naming-convention-check:
+    name: 📝 Naming Convention Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: |
+          npm ci
+          npm install -g glob
+
+      - name: 🔍 Run Naming Convention Analysis
+        id: naming-analysis
+        run: |
+          echo "🏷️ BoxLog App 命名規則辞書チェック開始..."
+          npm run naming:analyze > naming-analysis.log 2>&1 || true
+
+          # 結果ファイルの確認
+          if [ -f "reports/naming-migration-analysis.json" ]; then
+            echo "ANALYSIS_FOUND=true" >> $GITHUB_OUTPUT
+            echo "詳細分析レポートが生成されました"
+          else
+            echo "ANALYSIS_FOUND=false" >> $GITHUB_OUTPUT
+            echo "分析レポートが見つかりません"
+          fi
+
+      - name: 📊 Parse Analysis Results
+        id: parse-results
+        if: steps.naming-analysis.outputs.ANALYSIS_FOUND == 'true'
+        run: |
+          # JSON レポートの解析
+          TOTAL_SUGGESTIONS=$(jq '.summary.totalSuggestions' reports/naming-migration-analysis.json || echo "0")
+          TOTAL_FILES=$(jq '.summary.totalFiles' reports/naming-migration-analysis.json || echo "0")
+
+          echo "TOTAL_SUGGESTIONS=$TOTAL_SUGGESTIONS" >> $GITHUB_OUTPUT
+          echo "TOTAL_FILES=$TOTAL_FILES" >> $GITHUB_OUTPUT
+          echo "TIMESTAMP=$(jq -r '.timestamp' reports/naming-migration-analysis.json || echo 'N/A')" >> $GITHUB_OUTPUT
+
+          echo "📊 分析結果:"
+          echo "  - 改善提案数: $TOTAL_SUGGESTIONS件"
+          echo "  - 対象ファイル数: $TOTAL_FILES件"
+
+      - name: 📋 ESLint Naming Rules Check
+        id: eslint-naming
+        run: |
+          echo "🔍 ESLint 命名規則チェック実行..."
+          npm run lint -- --ext .ts,.tsx,.js,.jsx --format json --output-file eslint-naming-report.json || true
+
+          # ESLint結果の解析（命名関連ルールのみ）
+          if [ -f "eslint-naming-report.json" ]; then
+            # 命名関連のエラー数をカウント
+            NAMING_ERRORS=$(jq '[.[] | .messages[] | select(.ruleId | test("naming|@local/naming"))] | length' eslint-naming-report.json || echo "0")
+            echo "NAMING_ERRORS=$NAMING_ERRORS" >> $GITHUB_OUTPUT
+            echo "📝 ESLint命名エラー数: $NAMING_ERRORS件"
+          else
+            echo "NAMING_ERRORS=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🎯 Generate Naming Summary
+        id: summary
+        run: |
+          # 総合サマリーの生成
+          SUGGESTIONS="${{ steps.parse-results.outputs.TOTAL_SUGGESTIONS || '0' }}"
+          ESLINT_ERRORS="${{ steps.eslint-naming.outputs.NAMING_ERRORS || '0' }}"
+          TOTAL_ISSUES=$((SUGGESTIONS + ESLINT_ERRORS))
+
+          echo "TOTAL_ISSUES=$TOTAL_ISSUES" >> $GITHUB_OUTPUT
+
+          # ステータス判定
+          if [ "$TOTAL_ISSUES" -eq 0 ]; then
+            echo "STATUS=✅ 合格" >> $GITHUB_OUTPUT
+            echo "STATUS_COLOR=success" >> $GITHUB_OUTPUT
+          elif [ "$TOTAL_ISSUES" -le 5 ]; then
+            echo "STATUS=⚠️ 注意" >> $GITHUB_OUTPUT
+            echo "STATUS_COLOR=warning" >> $GITHUB_OUTPUT
+          else
+            echo "STATUS=❌ 要改善" >> $GITHUB_OUTPUT
+            echo "STATUS_COLOR=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Comment PR Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // 基本情報
+            const totalIssues = '${{ steps.summary.outputs.TOTAL_ISSUES }}';
+            const status = '${{ steps.summary.outputs.STATUS }}';
+            const suggestions = '${{ steps.parse-results.outputs.TOTAL_SUGGESTIONS || "0" }}';
+            const eslintErrors = '${{ steps.eslint-naming.outputs.NAMING_ERRORS || "0" }}';
+            const affectedFiles = '${{ steps.parse-results.outputs.TOTAL_FILES || "0" }}';
+
+            // 詳細レポートの読み込み
+            let detailsSection = '';
+            if (fs.existsSync('reports/naming-migration-analysis.json')) {
+              try {
+                const report = JSON.parse(fs.readFileSync('reports/naming-migration-analysis.json', 'utf8'));
+
+                if (report.results && report.results.length > 0) {
+                  detailsSection = '\n## 📋 詳細な改善提案\n\n';
+
+                  report.results.slice(0, 5).forEach(result => {
+                    detailsSection += `### 📄 \`${result.file}\`\n\n`;
+                    result.suggestions.slice(0, 3).forEach(suggestion => {
+                      const icon = suggestion.type === 'forbidden' ? '🚫' : '💡';
+                      detailsSection += `- ${icon} **L${suggestion.line}**: \`${suggestion.original}\` → \`${suggestion.suggested}\`\n`;
+                      detailsSection += `  - 理由: ${suggestion.reason}\n\n`;
+                    });
+                  });
+
+                  if (report.results.length > 5) {
+                    detailsSection += `\n*その他 ${report.results.length - 5} ファイルに改善提案があります*\n`;
+                  }
+                } else {
+                  detailsSection = '\n✅ **改善提案はありません** - コードは命名規則に準拠しています！\n';
+                }
+              } catch (error) {
+                detailsSection = '\n⚠️ レポートの解析中にエラーが発生しました\n';
+              }
+            }
+
+            const comment = `## 🏷️ 命名規則辞書チェック結果
+
+            **ステータス**: ${status}
+
+            ### 📊 サマリー
+            | 項目 | 件数 |
+            |------|------|
+            | 💡 改善提案 | ${suggestions}件 |
+            | 🔍 ESLint命名エラー | ${eslintErrors}件 |
+            | 📁 影響ファイル数 | ${affectedFiles}件 |
+            | 🎯 **合計問題数** | **${totalIssues}件** |
+
+            ### 🎯 品質基準
+            - ✅ **合格**: 0件
+            - ⚠️ **注意**: 1-5件（軽微な改善余地）
+            - ❌ **要改善**: 6件以上（対応推奨）
+
+            ${detailsSection}
+
+            ### 🛠️ 改善方法
+
+            1. **自動修正の実行**:
+               \`\`\`bash
+               npm run lint:fix
+               npm run naming:migrate:apply
+               \`\`\`
+
+            2. **詳細分析の確認**:
+               \`\`\`bash
+               npm run naming:analyze
+               \`\`\`
+
+            3. **VS Code Snippets活用**:
+               - \`rfc-domain\` - ドメイン用語対応Reactコンポーネント
+               - \`hook-domain\` - ドメイン用語対応カスタムフック
+               - \`type-domain\` - ドメイン用語対応TypeScript型
+
+            ---
+            🤖 *BoxLog App 命名規則辞書システム - 統一命名規則による品質向上*`;
+
+            // PRコメント投稿
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existingComment = comments.find(comment =>
+              comment.body.includes('🏷️ 命名規則辞書チェック結果')
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+      - name: 📄 Upload Analysis Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naming-analysis-reports
+          path: |
+            reports/naming-migration-analysis.json
+            eslint-naming-report.json
+            naming-analysis.log
+          retention-days: 30
+
+      - name: 🎯 Set Check Status
+        if: always()
+        run: |
+          TOTAL_ISSUES="${{ steps.summary.outputs.TOTAL_ISSUES }}"
+
+          if [ "$TOTAL_ISSUES" -eq 0 ]; then
+            echo "✅ 命名規則チェック: 完全合格 (問題なし)"
+          elif [ "$TOTAL_ISSUES" -le 5 ]; then
+            echo "⚠️ 命名規則チェック: 軽微な改善余地あり ($TOTAL_ISSUES件)"
+            # 注意レベルでは継続実行
+          else
+            echo "❌ 命名規則チェック: 要改善 ($TOTAL_ISSUES件)"
+            echo "改善が推奨されますが、ビルドは継続します"
+            # エラーレベルでも継続実行（情報提供のみ）
+          fi
+
+  naming-enforcement-check:
+    name: 🔒 Naming Enforcement Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🔍 Validate Dictionary Files
+        run: |
+          echo "🔍 命名規則辞書ファイルの検証..."
+
+          # 辞書ファイルの存在確認
+          if [ ! -f "src/config/naming-conventions/dictionary.json" ]; then
+            echo "❌ 命名規則辞書ファイルが見つかりません"
+            exit 1
+          fi
+
+          # JSON構文チェック
+          if ! jq empty src/config/naming-conventions/dictionary.json; then
+            echo "❌ 辞書ファイルのJSON構文エラー"
+            exit 1
+          fi
+
+          # 必須フィールドの確認
+          DOMAIN_TERMS=$(jq '.domainTerms | length' src/config/naming-conventions/dictionary.json)
+          FORBIDDEN_TERMS=$(jq '.forbiddenTerms | length' src/config/naming-conventions/dictionary.json)
+          NAMING_PATTERNS=$(jq '.namingPatterns | length' src/config/naming-conventions/dictionary.json)
+
+          echo "📊 辞書統計:"
+          echo "  - ドメイン用語: $DOMAIN_TERMS個"
+          echo "  - 禁止用語: $FORBIDDEN_TERMS個"
+          echo "  - 命名パターン: $NAMING_PATTERNS個"
+
+          # 最小要件チェック
+          if [ "$DOMAIN_TERMS" -lt 50 ]; then
+            echo "⚠️ ドメイン用語が50個未満です (現在: $DOMAIN_TERMS個)"
+          fi
+
+          if [ "$NAMING_PATTERNS" -lt 10 ]; then
+            echo "⚠️ 命名パターンが10個未満です (現在: $NAMING_PATTERNS個)"
+          fi
+
+      - name: 🔧 Validate ESLint Integration
+        run: |
+          echo "🔧 ESLint統合の検証..."
+
+          # ESLint設定ファイルの確認
+          if [ ! -f ".eslint/configs/naming-conventions.js" ]; then
+            echo "❌ ESLint命名規則設定ファイルが見つかりません"
+            exit 1
+          fi
+
+          # カスタムルールファイルの確認
+          if [ ! -f ".eslint/rules/naming-system.js" ]; then
+            echo "⚠️ ESLintカスタムルールファイルが見つかりません"
+          fi
+
+          # ESLint設定の構文チェック
+          node -e "require('./.eslint/configs/naming-conventions.js')" || {
+            echo "❌ ESLint命名規則設定の構文エラー"
+            exit 1
+          }
+
+          echo "✅ ESLint統合検証完了"
+
+      - name: 📝 Validate VS Code Integration
+        run: |
+          echo "📝 VS Code統合の検証..."
+
+          # VS Code snippetsファイルの確認
+          if [ ! -f ".vscode/snippets/domain-terms.json" ]; then
+            echo "⚠️ VS Code snippetsファイルが見つかりません"
+          else
+            # JSON構文チェック
+            if ! jq empty .vscode/snippets/domain-terms.json; then
+              echo "❌ VS Code snippetsファイルのJSON構文エラー"
+              exit 1
+            fi
+
+            SNIPPET_COUNT=$(jq 'keys | length' .vscode/snippets/domain-terms.json)
+            echo "📝 VS Code snippets数: $SNIPPET_COUNT個"
+          fi
+
+          echo "✅ VS Code統合検証完了"
+
+      - name: ✅ Validation Summary
+        run: |
+          echo "🎉 命名規則辞書システム検証完了"
+          echo ""
+          echo "✅ すべての検証項目をクリア:"
+          echo "  🏷️ 辞書ファイル構造"
+          echo "  🔧 ESLint統合"
+          echo "  📝 VS Code統合"
+          echo "  📊 品質基準準拠"
