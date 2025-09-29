@@ -1,7 +1,7 @@
-// Temporary box store implementation
-// Implementation tracked in Issue #89
+// Box store implementation using StoreFactory pattern
+// Implementation tracked in Issue #89 - Now using unified state management
 
-import { create } from 'zustand'
+import { StoreFactory } from '@/lib/store-factory'
 
 interface BoxFilters {
   search: string
@@ -13,7 +13,6 @@ interface BoxFilters {
 }
 
 interface BoxStore {
-  filters: BoxFilters
   setSearchFilter: (search: string) => void
   setStatusFilter: (status: string[]) => void
   setPriorityFilter: (priority: string[]) => void
@@ -22,7 +21,8 @@ interface BoxStore {
   setSmartFolderFilter: (smartFolder: string) => void
 }
 
-export const useBoxStore = create<BoxStore>((set) => ({
+// 初期状態の定義
+const initialBoxState = {
   filters: {
     search: '',
     status: [],
@@ -30,29 +30,38 @@ export const useBoxStore = create<BoxStore>((set) => ({
     type: [],
     tags: [],
     smartFolder: ''
-  },
-  setSearchFilter: (search) =>
-    set((state) => ({
-      filters: { ...state.filters, search }
-    })),
-  setStatusFilter: (status) =>
-    set((state) => ({
-      filters: { ...state.filters, status }
-    })),
-  setPriorityFilter: (priority) =>
-    set((state) => ({
-      filters: { ...state.filters, priority }
-    })),
-  setTypeFilter: (type) =>
-    set((state) => ({
-      filters: { ...state.filters, type }
-    })),
-  setTagFilter: (tags) =>
-    set((state) => ({
-      filters: { ...state.filters, tags }
-    })),
-  setSmartFolderFilter: (smartFolder) =>
-    set((state) => ({
-      filters: { ...state.filters, smartFolder }
-    }))
-}))
+  } as BoxFilters
+}
+
+export const useBoxStore = StoreFactory.create<typeof initialBoxState & BoxStore>({
+  type: 'base',
+  name: 'box-store',
+  initialState: initialBoxState,
+  devtools: true,
+  actions: (set, _get) => ({
+    setSearchFilter: (search: string) =>
+      set((state) => ({
+        filters: { ...state.filters, search }
+      })),
+    setStatusFilter: (status: string[]) =>
+      set((state) => ({
+        filters: { ...state.filters, status }
+      })),
+    setPriorityFilter: (priority: string[]) =>
+      set((state) => ({
+        filters: { ...state.filters, priority }
+      })),
+    setTypeFilter: (type: string[]) =>
+      set((state) => ({
+        filters: { ...state.filters, type }
+      })),
+    setTagFilter: (tags: string[]) =>
+      set((state) => ({
+        filters: { ...state.filters, tags }
+      })),
+    setSmartFolderFilter: (smartFolder: string) =>
+      set((state) => ({
+        filters: { ...state.filters, smartFolder }
+      }))
+  }),
+})

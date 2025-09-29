@@ -1,5 +1,4 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { StoreFactory } from '@/lib/store-factory'
 
 export interface AskPanelState {
   // UI状態
@@ -53,50 +52,51 @@ const initialState: AskPanelState = {
   }
 }
 
-export const useAskPanelStore = create<AskPanelStore>()(
-  persist(
-    (set, _get) => ({
-      ...initialState,
-
-      // 基本操作
-      open: () => set({ isOpen: true }),
-      
-      close: () => set({ isOpen: false }),
-      
-      toggle: () => set((state) => ({ 
-        isOpen: !state.isOpen,
-        // 開くときは展開状態にする
-        collapsed: state.isOpen ? state.collapsed : false
-      })),
-
-      // 折りたたみ操作
-      collapse: () => set({ collapsed: true }),
-      
-      expand: () => set({ collapsed: false }),
-      
-      toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
-
-      // 設定操作
-      setWidth: (width: number) => 
-        set({ width: Math.max(256, Math.min(640, width)) }), // 最小256px（サイドメニューと同じ）、最大640px
-      
-      updatePreferences: (preferences: Partial<AskPanelState['preferences']>) =>
-        set((state) => ({
-          preferences: { ...state.preferences, ...preferences }
-        })),
+export const useAskPanelStore = StoreFactory.createPersisted({
+  type: 'persisted',
+  name: 'ask-panel-store',
+  initialState,
+  persist: {
+    name: 'ask-panel-store',
+    storage: 'localStorage',
+    partialize: (state: AskPanelState & AskPanelActions) => ({
+      isOpen: state.isOpen,
+      collapsed: state.collapsed,
+      width: state.width,
+      collapsedWidth: state.collapsedWidth,
+      preferences: state.preferences,
     }),
-    {
-      name: 'ask-panel-store',
-      partialize: (state) => ({
-        isOpen: state.isOpen,
-        collapsed: state.collapsed,
-        width: state.width,
-        collapsedWidth: state.collapsedWidth,
-        preferences: state.preferences,
-      }),
-    }
-  )
-)
+  },
+  devtools: true,
+  actions: (set, _get) => ({
+    // 基本操作
+    open: () => set({ isOpen: true }),
+
+    close: () => set({ isOpen: false }),
+
+    toggle: () => set((state) => ({
+      isOpen: !state.isOpen,
+      // 開くときは展開状態にする
+      collapsed: state.isOpen ? state.collapsed : false
+    })),
+
+    // 折りたたみ操作
+    collapse: () => set({ collapsed: true }),
+
+    expand: () => set({ collapsed: false }),
+
+    toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
+
+    // 設定操作
+    setWidth: (width: number) =>
+      set({ width: Math.max(256, Math.min(640, width)) }), // 最小256px（サイドメニューと同じ）、最大640px
+
+    updatePreferences: (preferences: Partial<AskPanelState['preferences']>) =>
+      set((state) => ({
+        preferences: { ...state.preferences, ...preferences }
+      })),
+  }),
+})
 
 // セレクター関数（パフォーマンス最適化用）
 export const askPanelSelectors = {

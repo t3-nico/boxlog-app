@@ -1,62 +1,23 @@
 /**
  * ESLint Production Configuration
  *
- * 本番環境用の設定（厳格な設定）
+ * 本番環境用の設定（統一ルールベース）
  */
 
+const { unifiedRules } = require('./rule-levels');
+
 module.exports = {
-  extends: ['./bundle-optimization.js', './security.js'],
+  env: {
+    browser: true,
+    node: true,
+  },
 
   rules: {
-    // 本番ではコンソールログ禁止
+    // 本番環境では厳格に
     'no-console': 'error',
     'no-debugger': 'error',
 
-    // 本番環境では厳格なコード品質制限
-    'max-lines': [
-      'error',
-      {
-        max: 400,
-        skipBlankLines: true,
-        skipComments: true,
-      },
-    ],
-    'max-nested-callbacks': ['error', { max: 3 }],
-
-    // 未使用変数は本番環境ではエラーレベル（コードクリーンアップ強制）
-    'unused-imports/no-unused-vars': 'error',
-
-    // TypeScript any型チェック（本番環境：エラーレベル）
-    '@typescript-eslint/no-explicit-any': 'error',
-
-    // 複雑度チェック（本番環境：エラーレベル - リーダブルコード必須）
-    complexity: ['error', 10],
-
-    // パフォーマンス強化（本番環境）
-    'react/no-array-index-key': 'error', // React最適化：indexをkeyに使用禁止
-    'react-hooks/exhaustive-deps': 'error', // useMemo/useCallback依存配列の厳格チェック
-
-    // テーマルールは本番環境では厳格に適用
-    'no-restricted-syntax': [
-      'error',
-      {
-        selector:
-          'Literal[value=/bg-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
-        message:
-          '🎨 本番環境では直接的なTailwindカラークラス (bg-*-*) の使用は禁止です。@/config/theme の colors を使用してください。',
-      },
-      {
-        selector:
-          'Literal[value=/text-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
-        message:
-          '🎨 本番環境では直接的なTailwindテキストカラークラス (text-*-*) の使用は禁止です。@/config/theme の colors を使用してください。',
-      },
-      {
-        selector:
-          'Literal[value=/border-(red|green|blue|yellow|purple|pink|indigo|gray|slate|zinc|stone|orange|amber|lime|emerald|teal|cyan|sky|violet|fuchsia|rose)-(\\d00|50)/]',
-        message:
-          '🎨 本番環境では直接的なTailwindボーダーカラークラス (border-*-*) の使用は禁止です。@/config/theme の colors を使用してください。',
-      },
-    ],
+    // Progressive rulesも新規ファイルではerror
+    // (overridesで処理されるため、ここでは設定しない)
   },
 }
