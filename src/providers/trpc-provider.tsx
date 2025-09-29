@@ -102,6 +102,7 @@ export function TRPCProvider({ children }: TRPCProviderProps) {
  */
 export function useTRPCContext() {
   const context = trpc.useContext()
+  const queryClient = context.client.queryClient
 
   return {
     /**
@@ -122,14 +123,14 @@ export function useTRPCContext() {
     /**
      * クエリキャッシュから特定のデータを取得
      */
-    getQueryData: <T>(queryKey: any[]): T | undefined => {
+    getQueryData: function <T>(queryKey: any[]): T | undefined {
       return queryClient.getQueryData(queryKey)
     },
 
     /**
      * クエリキャッシュに直接データを設定
      */
-    setQueryData: <T>(queryKey: any[], data: T) => {
+    setQueryData: function <T>(queryKey: any[], data: T): void {
       queryClient.setQueryData(queryKey, data)
     },
   }

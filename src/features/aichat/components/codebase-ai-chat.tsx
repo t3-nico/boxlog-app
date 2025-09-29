@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 
-import { useChat } from 'ai/react'
+import { useChat } from 'ai'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2, X } from 'lucide-react'
 
