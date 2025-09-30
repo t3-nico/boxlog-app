@@ -8,7 +8,7 @@
 2. **スタイリング**: `/src/config/theme` のみ使用（直接指定禁止）
 3. **Issue管理**: すべての作業をIssue化（例外なし）
 4. **TypeScript厳格**: `any` 型禁止
-5. **標準機能優先**: Next.js/React/TypeScriptの標準機能を使用
+5. **Next.js公式準拠**: Next.js 14公式のベストプラクティスに従う（詳細は後述）
 
 ## 📚 詳細ドキュメント参照先
 
@@ -44,4 +44,29 @@ npm run docs:check          # ドキュメント整合性チェック
 **全コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 
 ---
-**📖 最終更新**: 2025-09-30 | **バージョン**: v7.0 - 公式準拠アプローチ
+
+## 🎯 Next.js 14 公式ベストプラクティス（必須遵守）
+
+### ✅ 実装済み項目
+1. **App Router**: 99%移行完了（Pages RouterはtRPC APIのみ共存）
+2. **next/image**: 画像は必ず`next/image`使用（`<img>`タグ禁止）
+3. **next/font**: フォントは`next/font/google`で最適化
+4. **Metadata API**: SEO対策は`generateMetadata()`使用
+5. **セキュリティヘッダー**: OWASP推奨ヘッダー設定済み
+6. **動的sitemap.xml**: `src/app/sitemap.ts`で自動生成
+7. **Middleware**: 認証・i18n・レート制限実装済み
+8. **エラーハンドリング**: `GlobalErrorBoundary`統合済み
+
+### 🚫 使用禁止
+- ❌ `<img>` タグ → ✅ `<Image>` コンポーネント
+- ❌ 外部CDNフォント → ✅ `next/font`
+- ❌ `pages/` ディレクトリ → ✅ `app/` ディレクトリ（新規作成時）
+- ❌ `getServerSideProps` → ✅ Server Components
+- ❌ カスタムsplitChunks → ✅ Next.js自動最適化
+
+### 📖 参考
+- Next.js公式ドキュメント: https://nextjs.org/docs
+- App Router移行ガイド: https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration
+
+---
+**📖 最終更新**: 2025-09-30 | **バージョン**: v8.0 - Next.js 14完全準拠
