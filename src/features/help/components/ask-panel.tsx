@@ -23,8 +23,8 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { border, colors, rounded, spacing, typography } from '@/config/theme'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { cn } from '@/lib/utils'
 
 import { askPanelSelectors, useAskPanelStore } from '../stores/useAskPanelStore'
 
@@ -82,7 +82,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
       <div className="group mb-6 flex justify-end">
         <div className="relative">
           <div
-            className={`${colors.primary.DEFAULT} ${colors.text.white} ${rounded.component.modal.lg} rounded-tr-sm ${spacing.modal} max-w-[85%] break-words`}
+            className={cn('bg-blue-600 text-white rounded-lg rounded-tr-sm p-4 max-w-[85%] break-words')}
           >
             {isEditing ? (
               <div className="relative">
@@ -91,22 +91,22 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
                   value={editContent}
                   onChange={handleEditContentChange}
                   onKeyDown={handleKeyDown}
-                  className={`w-full bg-transparent ${colors.text.white} resize-none border-none placeholder-blue-200 outline-none ${typography.body.sm} leading-relaxed`}
+                  className={cn('w-full bg-transparent text-white resize-none border-none placeholder-blue-200 outline-none text-sm leading-relaxed')}
                   rows={1}
                   style={{ minHeight: '1.5rem' }}
                 />
-                <div className={`mt-2 flex items-center gap-2 border-t border-blue-500 pt-2`}>
+                <div className="mt-2 flex items-center gap-2 border-t border-blue-500 pt-2">
                   <button
                     type="button"
                     onClick={handleSave}
-                    className={`p-1 hover:bg-blue-500 ${rounded.component.button.sm} transition-colors`}
+                    className="p-1 hover:bg-blue-500 rounded-sm transition-colors"
                   >
                     <Check className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className={`p-1 hover:bg-blue-500 ${rounded.component.button.sm} transition-colors`}
+                    className="p-1 hover:bg-blue-500 rounded-sm transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -116,7 +116,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
               <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
             )}
             {message.status && !isEditing ? (
-              <div className={`mt-1 ${typography.body.xs} text-blue-100 opacity-75`}>
+              <div className="mt-1 text-xs text-blue-100 opacity-75">
                 {message.status === 'sending' && '送信中...'}
                 {message.status === 'error' && '送信エラー'}
               </div>
@@ -140,7 +140,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
     <div className="mb-6 flex items-start justify-start gap-3">
       {/* AI Avatar */}
       <div
-        className={`h-8 w-8 ${rounded.component.avatar.full} flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 ${colors.text.white} ${typography.body.sm} flex-shrink-0 font-medium`}
+        className="h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm flex-shrink-0 font-medium"
       >
         <Sparkles className="h-4 w-4" />
       </div>
@@ -223,7 +223,7 @@ const ChatInput = () => {
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder="Ask Claude..."
-            className={`w-full resize-none ${rounded.component.modal.lg} border ${border.universal} ${colors.background.card} ${spacing.card} pr-12 ${typography.body.sm} max-h-32 min-h-[44px] focus:border-purple-500 focus:ring-2 focus:ring-purple-500 ${colors.text.placeholder} scrollbar-hide`}
+            className={cn('w-full resize-none rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-800 p-3 pr-12 text-sm max-h-32 min-h-[44px] focus:border-purple-500 focus:ring-2 focus:ring-purple-500 placeholder:text-neutral-600 dark:placeholder:text-neutral-400 scrollbar-hide')}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             disabled={state.isTyping}
             rows={1}
@@ -294,9 +294,9 @@ const AskPanelHeader = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
-              className={`h-8 w-8 rounded-full bg-gradient-to-br ${activeTabData.color} flex items-center justify-center`}
+              className={cn('h-8 w-8 rounded-full bg-gradient-to-br flex items-center justify-center', activeTabData.color)}
             >
-              <activeTabData.icon className={`h-4 w-4 ${colors.text.white}`} />
+              <activeTabData.icon className="h-4 w-4 text-white" />
             </div>
             <div>
               <h3 className="text-foreground font-semibold">{activeTabData.label}</h3>
@@ -383,7 +383,7 @@ const AIIntroduction = () => {
       {/* AI Introduction */}
       <div className="mb-6 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600">
-          <Sparkles className={`h-8 w-8 ${colors.text.white}`} />
+          <Sparkles className="h-8 w-8 text-white" />
         </div>
         <h3 className="text-foreground mb-2 text-lg font-semibold">Ask Claude</h3>
         <p className="text-muted-foreground text-sm leading-relaxed">
@@ -451,19 +451,19 @@ const _PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help'
               type="button"
               key={item.id}
               onClick={() => onSelectTab(item.id)}
-              className={`flex w-full items-center gap-4 ${spacing.card} ${rounded.component.card.lg} border ${border.universal} ${colors.hover.background.subtle} group text-left transition-colors`}
+              className={cn('flex w-full items-center gap-4 p-3 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 group text-left transition-colors')}
             >
               <div
-                className={`h-12 w-12 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center transition-transform group-hover:scale-105`}
+                className={cn('h-12 w-12 rounded-lg bg-gradient-to-br flex items-center justify-center transition-transform group-hover:scale-105', item.color)}
               >
-                <ItemIcon className={`h-6 w-6 ${colors.text.white}`} />
+                <ItemIcon className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
                 <div className="mb-1 flex items-center gap-2">
                   <h4 className="text-foreground font-medium">{item.title}</h4>
                   {item.badge != null && (
                     <span
-                      className={`px-2 py-1 ${typography.body.xs} bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 ${rounded.component.badge.full}`}
+                      className="px-2 py-1 text-xs bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 rounded-full"
                     >
                       {item.badge}
                     </span>
@@ -513,7 +513,7 @@ const HelpContent = () => {
     <div className="p-6">
       <div className="mb-6 text-center">
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-green-600 to-emerald-600">
-          <Book className={`h-8 w-8 ${colors.text.white}`} />
+          <Book className="h-8 w-8 text-white" />
         </div>
         <h3 className="text-foreground mb-2 text-lg font-semibold">Help & Support</h3>
         <p className="text-muted-foreground text-sm">Find answers and learn how to make the most of BoxLog</p>
@@ -552,7 +552,7 @@ const HelpContent = () => {
         </p>
         <button
           type="button"
-          className={`${typography.body.sm} font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300`}
+          className="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
         >
           Contact Support →
         </button>
@@ -655,11 +655,11 @@ export const AskPanel = () => {
             title="AI Assistant"
           >
             <Sparkles
-              className={`size-6 text-purple-600 transition-transform group-hover:scale-110 dark:text-purple-400`}
+              className="size-6 text-purple-600 transition-transform group-hover:scale-110 dark:text-purple-400"
             />
             {state.unreadCount > 0 && (
-              <div className="bg-background absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full">
-                <span className={`${typography.body.xs} ${colors.text.white} font-bold`}>
+              <div className="bg-neutral-100 dark:bg-neutral-900 absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full">
+                <span className="text-xs text-white font-bold">
                   {Math.min(state.unreadCount, 9)}
                 </span>
               </div>
@@ -730,8 +730,8 @@ export const AskPanel = () => {
                     <div className="text-muted-foreground text-xs">Ask Claude for help</div>
                   </div>
                   {state.unreadCount > 0 && (
-                    <div className="bg-background flex h-5 w-5 items-center justify-center rounded-full">
-                      <span className={`${typography.body.xs} ${colors.text.white} font-bold`}>
+                    <div className="bg-neutral-100 dark:bg-neutral-900 flex h-5 w-5 items-center justify-center rounded-full">
+                      <span className="text-xs text-white font-bold">
                         {Math.min(state.unreadCount, 9)}
                       </span>
                     </div>
@@ -760,7 +760,7 @@ export const AskPanel = () => {
                 <div className="px-4 py-6">
                   <div className="flex items-start justify-start gap-3">
                     <div
-                      className={`h-8 w-8 ${rounded.component.avatar.full} flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 ${colors.text.white} ${typography.body.sm} flex-shrink-0 font-medium`}
+                      className="h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm flex-shrink-0 font-medium"
                     >
                       <Sparkles className="h-4 w-4" />
                     </div>
@@ -825,9 +825,9 @@ export const AskPanelToggleButton = () => {
       <Sparkles className={`h-4 w-4 text-purple-600 dark:text-purple-400`} />
       <span className="text-sm font-medium">Ask Claude</span>
       {!isOpen || collapsed ? (
-        <ChevronLeft className={`h-4 w-4 ${colors.text.muted}`} />
+        <ChevronLeft className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
       ) : (
-        <ChevronRight className={`h-4 w-4 ${colors.text.muted}`} />
+        <ChevronRight className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
       )}
     </Button>
   )
