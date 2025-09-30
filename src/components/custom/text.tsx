@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 
-import { colors, typography, spacing, rounded } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 import { Link } from './link'
 
@@ -9,7 +9,7 @@ export const Text = ({ className, ...props }: React.ComponentPropsWithoutRef<'p'
     <p
       data-slot="text"
       {...props}
-      className={clsx(className, `${typography.body.large} ${colors.text.secondary} sm:${typography.body.small}`)}
+      className={cn(className, 'text-base text-neutral-800 dark:text-neutral-200 sm:text-sm')}
     />
   )
 }
@@ -18,25 +18,25 @@ export const TextLink = ({ className, ...props }: React.ComponentPropsWithoutRef
   return (
     <Link
       {...props}
-      className={clsx(
+      className={cn(
         className,
-        `${colors.text.primary} underline decoration-current/50 data-hover:decoration-current`
+        'text-neutral-900 dark:text-neutral-100 underline decoration-current/50 data-hover:decoration-current'
       )}
     />
   )
 }
 
 export const Strong = ({ className, ...props }: React.ComponentPropsWithoutRef<'strong'>) => {
-  return <strong {...props} className={clsx(className, `font-medium ${colors.text.primary}`)} />
+  return <strong {...props} className={cn(className, 'font-medium text-neutral-900 dark:text-neutral-100')} />
 }
 
 export const Code = ({ className, ...props }: React.ComponentPropsWithoutRef<'code'>) => {
   return (
     <code
       {...props}
-      className={clsx(
+      className={cn(
         className,
-        `${rounded.component.input.checkbox} border ${colors.border.DEFAULT} ${colors.background.subtle} ${spacing.padding.xs} ${typography.body.small} font-medium ${colors.text.primary} sm:text-[0.8125rem]`
+        'rounded-sm border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 px-1 text-sm font-medium text-neutral-900 dark:text-neutral-100 sm:text-[0.8125rem]'
       )}
     />
   )

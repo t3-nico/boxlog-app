@@ -5,7 +5,7 @@ import { Fragment } from 'react'
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 
-import { colors } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 export const Listbox = <T,>({
   className,
@@ -43,7 +43,7 @@ export const Listbox = <T,>({
         <Headless.ListboxSelectedOption
           as="span"
           options={options}
-          placeholder={placeholder ? <span className={`block truncate ${colors.text.muted}`}>{placeholder}</span> : null}
+          placeholder={placeholder ? <span className="block truncate text-neutral-600 dark:text-neutral-400">{placeholder}</span> : null}
           className={clsx([
             // Basic layout
             'relative block w-full appearance-none rounded-lg py-[calc(--spacing(2.5)-1px)] sm:py-[calc(--spacing(1.5)-1px)]',
@@ -52,7 +52,7 @@ export const Listbox = <T,>({
             // Horizontal padding
             'pl-[calc(--spacing(3.5)-1px)] pr-[calc(--spacing(7)-1px)] sm:pl-[calc(--spacing(3)-1px)]',
             // Typography
-            `text-left text-base/6 ${colors.text.primary} placeholder:${colors.text.secondary} sm:text-sm/6 forced-colors:text-[CanvasText]`,
+            'text-left text-base/6 text-neutral-900 dark:text-neutral-100 placeholder:text-neutral-800 placeholder:dark:text-neutral-200 sm:text-sm/6 forced-colors:text-[CanvasText]',
             // Border
             'group-data-active:border-zinc-950/20 group-data-hover:border-zinc-950/20 dark:group-data-active:border-white/20 dark:group-data-hover:border-white/20 border border-zinc-950/10 dark:border-white/10',
             // Background color
@@ -114,7 +114,7 @@ export const ListboxOption = <T,>({
     'flex min-w-0 items-center',
     // Icons
     '*:data-[slot=icon]:size-5 *:data-[slot=icon]:shrink-0 sm:*:data-[slot=icon]:size-4',
-    `*:data-[slot=icon]:${colors.text.secondary} group-data-focus/option:*:data-[slot=icon]:${colors.text.primaryOnDark}`,
+    '*:data-[slot=icon]:text-neutral-800 *:data-[slot=icon]:dark:text-neutral-200 group-data-focus/option:*:data-[slot=icon]:text-white',
     'forced-colors:group-data-focus/option:*:data-[slot=icon]:text-[Canvas] forced-colors:*:data-[slot=icon]:text-[CanvasText]',
     // Avatars
     '*:data-[slot=avatar]:-mx-1 *:data-[slot=avatar]:size-6 sm:*:data-[slot=avatar]:size-5'
@@ -166,9 +166,9 @@ export const ListboxDescription = ({ className, children, ...props }: React.Comp
   return (
     <span
       {...props}
-      className={clsx(
+      className={cn(
         className,
-        `flex flex-1 overflow-hidden ${colors.text.secondary} group-data-focus/option:${colors.text.primaryOnDark} before:w-2 before:min-w-0 before:shrink`
+        'flex flex-1 overflow-hidden text-neutral-800 dark:text-neutral-200 group-data-focus/option:text-white before:w-2 before:min-w-0 before:shrink'
       )}
     >
       <span className="flex-1 truncate">{children}</span>

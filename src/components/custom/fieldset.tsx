@@ -3,7 +3,7 @@ import type React from 'react'
 import * as Headless from '@headlessui/react'
 import clsx from 'clsx'
 
-import { colors, typography, spacing } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 export const Fieldset = ({
   className,
@@ -25,16 +25,16 @@ export const Legend = ({
     <Headless.Legend
       data-slot="legend"
       {...props}
-      className={clsx(
+      className={cn(
         className,
-        `${typography.body.large} ${typography.body.semibold} ${colors.text.primary} data-disabled:opacity-50 sm:${typography.body.small}`
+        'text-base font-semibold text-neutral-900 dark:text-neutral-100 data-disabled:opacity-50 sm:text-sm'
       )}
     />
   )
 }
 
 export const FieldGroup = ({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) => {
-  return <div data-slot="control" {...props} className={clsx(className, spacing.stack.xl)} />
+  return <div data-slot="control" {...props} className={cn(className, 'flex flex-col gap-8')} />
 }
 
 export const Field = ({ className, ...props }: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) => {
@@ -59,9 +59,9 @@ export const Label = ({ className, ...props }: { className?: string } & Omit<Hea
     <Headless.Label
       data-slot="label"
       {...props}
-      className={clsx(
+      className={cn(
         className,
-        `${typography.body.large} ${colors.text.primary} select-none data-disabled:opacity-50 sm:${typography.body.small}`
+        'text-base text-neutral-900 dark:text-neutral-100 select-none data-disabled:opacity-50 sm:text-sm'
       )}
     />
   )
@@ -75,7 +75,7 @@ export const Description = ({
     <Headless.Description
       data-slot="description"
       {...props}
-      className={clsx(className, `${typography.body.large} ${colors.text.secondary} data-disabled:opacity-50 sm:${typography.body.small}`)}
+      className={cn(className, 'text-base text-neutral-800 dark:text-neutral-200 data-disabled:opacity-50 sm:text-sm')}
     />
   )
 }
@@ -88,7 +88,7 @@ export const ErrorMessage = ({
     <Headless.Description
       data-slot="error"
       {...props}
-      className={clsx(className, `${typography.body.large} ${colors.semantic.error.text} data-disabled:opacity-50 sm:${typography.body.small}`)}
+      className={cn(className, 'text-base text-red-600 dark:text-red-400 data-disabled:opacity-50 sm:text-sm')}
     />
   )
 }

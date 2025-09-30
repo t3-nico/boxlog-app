@@ -6,7 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 
 import { ChevronDownIcon, GlobeIcon } from 'lucide-react'
 
-import { animations, colors, rounded, spacing, typography } from '@/config/theme'
+import { cn } from '@/lib/utils'
 import { setLocaleCookie } from '@/lib/i18n'
 import type { Locale } from '@/types/i18n'
 
@@ -79,7 +79,12 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
       <button
         type="button"
         onClick={handleToggleDropdown}
-        className={`flex items-center gap-2 rounded-md px-3 py-2 transition-colors duration-200 ${colors.surface.secondary} ${colors.text.primary} hover:${colors.surface.tertiary} focus:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2 ${spacing.padding.sm} ${rounded.component.button.sm} `}
+        className={cn(
+          'flex items-center gap-2 rounded-md px-3 py-2 transition-colors duration-200',
+          'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100',
+          'hover:bg-neutral-300 hover:dark:bg-neutral-600',
+          'focus:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
+        )}
         aria-label={dictionary?.language?.switch || 'Switch Language'}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
@@ -105,7 +110,11 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
 
           {/* メニュー */}
           <div
-            className={`absolute right-0 mt-2 w-48 py-2 ${colors.background.elevated} ${colors.border.primary} z-20 rounded-md border shadow-lg ${rounded.component.menu} ${animations.transitions.smooth} `}
+            className={cn(
+              'absolute right-0 mt-2 w-48 py-2 z-20 rounded-md border shadow-lg',
+              'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700',
+              'transition-all duration-200'
+            )}
             role="listbox"
             aria-label={dictionary?.language?.current || 'Current Language'}
           >
@@ -114,16 +123,18 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
                 key={language.code}
                 type="button"
                 onClick={createLanguageSwitchHandler(language.code)}
-                className={`flex w-full items-center gap-3 px-4 py-2 text-left transition-colors duration-150 ${
+                className={cn(
+                  'flex w-full items-center gap-3 px-4 py-2 text-left transition-colors duration-150',
+                  'focus:outline-none',
                   language.code === currentLocale
-                    ? `${colors.primary.DEFAULT} text-white`
-                    : `${colors.text.primary} hover:${colors.surface.secondary}`
-                } focus:outline-none focus:${colors.surface.secondary} `}
+                    ? 'bg-blue-500 text-white'
+                    : 'text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 hover:dark:bg-neutral-700 focus:bg-neutral-200 focus:dark:bg-neutral-700'
+                )}
                 role="option"
                 aria-selected={language.code === currentLocale}
               >
                 <span className="text-lg">{language.flag}</span>
-                <span className={typography.body.base}>{language.name}</span>
+                <span className="text-base">{language.name}</span>
                 {language.code === currentLocale && <span className="ml-auto text-sm opacity-75">✓</span>}
               </button>
             ))}

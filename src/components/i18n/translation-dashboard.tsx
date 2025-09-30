@@ -38,8 +38,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-
-import { colors } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 // 型定義（translation-tracker.tsから）
 interface TranslationProgress {
@@ -149,10 +148,10 @@ export default function TranslationDashboard() {
 
   if (loading) {
     return (
-      <div className={`flex items-center justify-center min-h-screen ${colors.background.base}`}>
+      <div className="flex items-center justify-center min-h-screen bg-neutral-100 dark:bg-neutral-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className={colors.text.secondary}>翻訳データを読み込み中...</p>
+          <p className="text-neutral-800 dark:text-neutral-200">翻訳データを読み込み中...</p>
         </div>
       </div>
     )
@@ -160,7 +159,7 @@ export default function TranslationDashboard() {
 
   if (!report) {
     return (
-      <div className={`min-h-screen ${colors.background.base} p-6`}>
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 p-6">
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>データ読み込みエラー</AlertTitle>
@@ -173,15 +172,15 @@ export default function TranslationDashboard() {
   }
 
   return (
-    <div className={`min-h-screen ${colors.background.base} p-6`}>
+    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* ヘッダー */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className={`text-3xl font-bold ${colors.text.primary}`}>
+            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
               翻訳進捗ダッシュボード
             </h1>
-            <p className={colors.text.secondary}>
+            <p className="text-neutral-800 dark:text-neutral-200">
               BoxLogアプリケーションの多言語化進捗状況
             </p>
           </div>

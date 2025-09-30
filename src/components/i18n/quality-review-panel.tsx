@@ -36,8 +36,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 
-
-import { colors } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 // 型定義（quality-assurance.tsから）
 interface QualityMetrics {
@@ -289,10 +288,10 @@ export default function QualityReviewPanel({
 
   if (loading && !assessment) {
     return (
-      <div className={`${colors.background.base} p-6 rounded-lg border`}>
+      <div className="bg-neutral-100 dark:bg-neutral-900 p-6 rounded-lg border border-neutral-200 dark:border-neutral-800">
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
-          <span className={colors.text.secondary}>品質評価を実行中...</span>
+          <span className="text-neutral-800 dark:text-neutral-200">品質評価を実行中...</span>
         </div>
       </div>
     )
@@ -315,10 +314,10 @@ export default function QualityReviewPanel({
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className={`text-2xl font-bold ${colors.text.primary}`}>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             翻訳品質レビュー
           </h2>
-          <p className={colors.text.secondary}>
+          <p className="text-neutral-800 dark:text-neutral-200">
             {language.toUpperCase()} • {translationKey}
           </p>
         </div>
@@ -342,7 +341,7 @@ export default function QualityReviewPanel({
             <CardTitle className="text-sm font-medium">原文 (English)</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className={colors.text.primary}>{originalText}</p>
+            <p className="text-neutral-900 dark:text-neutral-100">{originalText}</p>
           </CardContent>
         </Card>
         <Card>
@@ -350,7 +349,7 @@ export default function QualityReviewPanel({
             <CardTitle className="text-sm font-medium">翻訳文 (Japanese)</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className={colors.text.primary}>{translatedText}</p>
+            <p className="text-neutral-900 dark:text-neutral-100">{translatedText}</p>
           </CardContent>
         </Card>
       </div>
@@ -405,12 +404,12 @@ export default function QualityReviewPanel({
                     {assessment.recommendations.map((recommendation, index) => (
                       <li key={index} className="flex items-start gap-2">
                         <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
-                        <span className={colors.text.secondary}>{recommendation}</span>
+                        <span className="text-neutral-800 dark:text-neutral-200">{recommendation}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className={colors.text.secondary}>特に改善が必要な項目はありません。</p>
+                  <p className="text-neutral-800 dark:text-neutral-200">特に改善が必要な項目はありません。</p>
                 )}
               </CardContent>
             </Card>
@@ -444,7 +443,7 @@ export default function QualityReviewPanel({
                         </div>
                       </div>
 
-                      <p className={`${colors.text.primary} mb-2`}>
+                      <p className="text-neutral-900 dark:text-neutral-100 mb-2">
                         {issue.description}
                       </p>
 
@@ -558,7 +557,7 @@ export default function QualityReviewPanel({
                           <span className="font-medium">{comment.reviewer}</span>
                           <Badge variant="outline">{comment.type}</Badge>
                         </div>
-                        <p className={`${colors.text.secondary} mb-2`}>
+                        <p className="text-neutral-800 dark:text-neutral-200 mb-2">
                           {comment.content}
                         </p>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -594,19 +593,19 @@ export default function QualityReviewPanel({
 
                     <div>
                       <Label className="text-sm font-medium">レビューアー</Label>
-                      <p className={colors.text.primary}>{workflow.reviewer || '未割当'}</p>
+                      <p className="text-neutral-900 dark:text-neutral-100">{workflow.reviewer || '未割当'}</p>
                     </div>
 
                     <div>
                       <Label className="text-sm font-medium">割当日</Label>
-                      <p className={colors.text.secondary}>
+                      <p className="text-neutral-800 dark:text-neutral-200">
                         {workflow.assignedDate?.toLocaleDateString() || '-'}
                       </p>
                     </div>
 
                     <div>
                       <Label className="text-sm font-medium">レビュー日</Label>
-                      <p className={colors.text.secondary}>
+                      <p className="text-neutral-800 dark:text-neutral-200">
                         {workflow.reviewedDate?.toLocaleDateString() || '-'}
                       </p>
                     </div>
@@ -631,7 +630,7 @@ export default function QualityReviewPanel({
                     </div> : null}
                 </div>
               ) : (
-                <p className={colors.text.secondary}>
+                <p className="text-neutral-800 dark:text-neutral-200">
                   ワークフローが開始されていません
                 </p>
               )}

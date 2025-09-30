@@ -6,7 +6,6 @@ import { CheckCircleIcon, ChevronDownIcon, CircleIcon, ClockIcon, WrenchIcon, XC
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo-ui/collapsible'
 import { Badge } from '@/components/shadcn-ui/badge'
-import { colors } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 export type AIToolStatus = 'pending' | 'running' | 'completed' | 'error'
@@ -36,8 +35,8 @@ const getStatusBadge = (status: AIToolStatus) => {
   const icons = {
     pending: <CircleIcon className="size-4" />,
     running: <ClockIcon className="size-4 animate-pulse" />,
-    completed: <CheckCircleIcon className={`size-4 ${colors.semantic.success.DEFAULT}`} />,
-    error: <XCircleIcon className={`size-4 ${colors.semantic.error.DEFAULT}`} />,
+    completed: <CheckCircleIcon className="size-4 text-green-600 dark:text-green-400" />,
+    error: <XCircleIcon className="size-4 text-red-600 dark:text-red-400" />,
   } as const
 
   return (
