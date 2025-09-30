@@ -80,9 +80,6 @@ jspm_packages/
 .npm
 
 # ESLint Cache
-.eslint/cache/
-.eslint/reports/*.html
-.eslint/reports/*.json
 .eslintcache
 
 # Performance logs
@@ -131,8 +128,4 @@ dist
 
 # Temporary folders
 tmp/
-temp/
-
-# Deployment history and backups (keep template)
-# deploy-history.json (template kept in repo)
-.deploy-backups/ 
+temp/ 

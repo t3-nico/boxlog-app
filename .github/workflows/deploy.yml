@@ -281,11 +281,6 @@ jobs:
           git tag -a "v$VERSION" -m "Release v$VERSION"
           git push origin "v$VERSION" || echo "Tag already exists"
 
-      - name: 📊 Deploy statistics
-        run: |
-          if [[ -f scripts/deploy-tracker.js ]]; then
-            node scripts/deploy-tracker.js stats
-          fi
 
   # =====================================
   # 🚨 失敗処理ジョブ

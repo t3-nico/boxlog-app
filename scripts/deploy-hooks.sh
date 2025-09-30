@@ -131,17 +131,6 @@ post_deploy_hook() {
         deploy_notes="Vercel deployment, URL: ${VERCEL_URL:-unknown}"
     fi
 
-    # デプロイ記録の実行
-    if command -v node >/dev/null 2>&1 && [[ -f scripts/deploy-tracker.js ]]; then
-        node scripts/deploy-tracker.js record "$environment" \
-            --build-time="$build_duration" \
-            --notes="$deploy_notes" || {
-            log_warning "Failed to record deploy history"
-        }
-    else
-        log_warning "Deploy tracker not available"
-    fi
-
     # ヘルスチェック（本番環境の場合）
     if [[ "$environment" == "production" ]]; then
         log_step "Running health check..."
@@ -181,13 +170,6 @@ post_deploy_hook() {
             "$SLACK_WEBHOOK_URL" || log_warning "Slack notification failed"
     fi
 
-    # 統計情報の表示
-    if command -v node >/dev/null 2>&1 && [[ -f scripts/deploy-tracker.js ]]; then
-        echo ""
-        log_step "Deploy statistics:"
-        node scripts/deploy-tracker.js stats
-    fi
-
     log_success "Post-deploy hook completed"
     log_success "🎉 Deploy to $environment completed successfully!"
 }
@@ -204,13 +186,6 @@ rollback_hook() {
     fi
 
     log_step "Rollback hook started: $from_version → $to_version ($environment)"
-
-    # ロールバック記録
-    if command -v node >/dev/null 2>&1 && [[ -f scripts/deploy-tracker.js ]]; then
-        node scripts/deploy-tracker.js rollback "$from_version" "$to_version" "$environment" || {
-            log_warning "Failed to record rollback"
-        }
-    fi
 
     # Slack通知（設定されている場合）
     if [[ -n "$SLACK_WEBHOOK_URL" ]]; then
@@ -240,15 +215,6 @@ deploy_failure_hook() {
 
     log_error "Deploy failure hook triggered for $environment"
     log_error "Error: $error_message"
-
-    # 失敗記録
-    if command -v node >/dev/null 2>&1 && [[ -f scripts/deploy-tracker.js ]]; then
-        node scripts/deploy-tracker.js record "$environment" \
-            --status="failed" \
-            --notes="Deploy failed: $error_message" || {
-            log_warning "Failed to record deploy failure"
-        }
-    fi
 
     # Slack通知（設定されている場合）
     if [[ -n "$SLACK_WEBHOOK_URL" ]]; then
