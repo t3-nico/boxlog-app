@@ -12,6 +12,41 @@ const nextConfig = {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
   },
+  // セキュリティヘッダー設定
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          // クリックジャッキング対策
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          // MIME type スニッフィング防止
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          // XSS保護（レガシーブラウザ用）
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          // Referrer情報制御
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          // 権限ポリシー（不要な機能の無効化）
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), interest-cohort=()',
+          },
+        ],
+      },
+    ]
+  },
   typescript: {
     // ⚠️ Dangerously allow production builds to successfully complete even if
     // your project has type errors.
