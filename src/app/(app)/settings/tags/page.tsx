@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 
 import { Filter, Search, Tag } from 'lucide-react'
 
-import { colors, spacing, typography } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
 import {
   useCreateTag,

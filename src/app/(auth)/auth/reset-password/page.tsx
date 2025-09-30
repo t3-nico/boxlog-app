@@ -8,7 +8,6 @@ import { Logo } from '@/app/logo'
 import { Field, Heading, Label, Text } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
-import { colors, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 
 const ResetPassword = () => {
@@ -86,8 +85,8 @@ const ResetPassword = () => {
 
   if (success) {
     return (
-      <div className={`${spacing.stack.md} text-center`}>
-        <Heading level={2} className={colors.semantic.success.text}>
+      <div className="flex flex-col gap-4 text-center">
+        <Heading level={2} className="text-green-600 dark:text-green-500">
           Password Updated
         </Heading>
         <Text>Your password has been updated.</Text>
@@ -96,8 +95,8 @@ const ResetPassword = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`grid w-full max-w-sm grid-cols-1 ${spacing.gap.xl}`}>
-      <Logo className={`h-6 ${colors.text.primary} forced-colors:text-[CanvasText]`} />
+    <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
+      <Logo className="h-6 text-neutral-900 dark:text-neutral-100 forced-colors:text-[CanvasText]" />
       <Heading>Set a new password</Heading>
       <Field>
         <Label htmlFor="password">New Password</Label>
@@ -114,14 +113,14 @@ const ResetPassword = () => {
           minLength={6}
         />
       </Field>
-      {error != null ? <Text className={colors.semantic.error.text}>{error}</Text> : null}
+      {error != null ? <Text className="text-red-600 dark:text-red-500">{error}</Text> : null}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>
       <button
         type="button"
         onClick={handleBackToLogin}
-        className={`${colors.primary.text} ${colors.hover.primary} ${typography.body.sm}`}
+        className="text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 text-sm"
       >
         Back to login
       </button>

@@ -10,7 +10,6 @@ import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Separator } from '@/components/shadcn-ui/separator'
-import { colors, typography } from '@/config/theme'
 import { getReview } from '@/lib/data'
 
 import { RefundReview } from './refund'
@@ -33,8 +32,8 @@ const ReviewPage = async ({ params }: { params: { id: string } }) => {
   return (
     <>
       <div className="max-lg:hidden">
-        <Link href="/review" className={`inline-flex items-center gap-2 ${typography.body.sm} ${colors.text.tertiary}`}>
-          <ChevronLeft className={`size-4 ${colors.text.muted}`} data-slot="icon" />
+        <Link href="/review" className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+          <ChevronLeft className="size-4 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
           Reviews
         </Link>
       </div>
@@ -45,12 +44,12 @@ const ReviewPage = async ({ params }: { params: { id: string } }) => {
         </div>
         <div className="isolate mt-3 flex flex-wrap justify-between gap-x-6 gap-y-4">
           <div className="flex flex-wrap gap-x-10 gap-y-4 py-2">
-            <span className={`flex items-center gap-3 ${typography.body.base} sm:${typography.body.sm} ${colors.text.primary}`}>
-              <Banknote className={`size-4 shrink-0 ${colors.text.muted}`} />
+            <span className="flex items-center gap-3 text-base sm:text-sm text-neutral-900 dark:text-neutral-100">
+              <Banknote className="size-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
               <span>US{review.amount.usd}</span>
             </span>
-            <span className={`flex items-center gap-3 ${typography.body.base} sm:${typography.body.sm} ${colors.text.primary}`}>
-              <CreditCard className={`size-4 shrink-0 ${colors.text.muted}`} />
+            <span className="flex items-center gap-3 text-base sm:text-sm text-neutral-900 dark:text-neutral-100">
+              <CreditCard className="size-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
               <span className="inline-flex gap-3">
                 {review.payment.card.type}{' '}
                 <span>
@@ -58,8 +57,8 @@ const ReviewPage = async ({ params }: { params: { id: string } }) => {
                 </span>
               </span>
             </span>
-            <span className={`flex items-center gap-3 ${typography.body.base} sm:${typography.body.sm} ${colors.text.primary}`}>
-              <Calendar className={`size-4 shrink-0 ${colors.text.muted}`} data-slot="icon" />
+            <span className="flex items-center gap-3 text-base sm:text-sm text-neutral-900 dark:text-neutral-100">
+              <Calendar className="size-4 shrink-0 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
               <span>{review.date}</span>
             </span>
           </div>

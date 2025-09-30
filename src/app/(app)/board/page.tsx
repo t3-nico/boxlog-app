@@ -1,59 +1,54 @@
-import { colors, spacing, typography } from '@/config/theme'
-import { patterns } from '@/config/theme/elevation'
-import { layoutPatterns } from '@/config/theme/layout'
-import { componentRadius } from '@/config/theme/rounded'
-
 const BoardPage = () => {
   return (
-    <div className={spacing.page.default}>
-      <div className={layoutPatterns.singleColumn}>
-        <div className={spacing.section.default}>
-          <h1 className={typography.heading.h1}>Board View</h1>
-          <p className={`${spacing.margin.sm} ${colors.text.secondary}`}>Kanban style task management</p>
+    <div className="p-6">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold tracking-tight">Board View</h1>
+          <p className="mt-2 text-neutral-800 dark:text-neutral-200">Kanban style task management</p>
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Todo Column */}
           <div
-            className={`${colors.background.elevated} ${componentRadius.card.base} ${patterns.card.default} ${spacing.padding.md}`}
+            className="bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-sm p-4"
           >
-            <h2 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>Todo</h2>
-            <div className={spacing.stack.sm}>
+            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">Todo</h2>
+            <div className="flex flex-col gap-2">
               <div
-                className={`${colors.background.subtle} ${spacing.padding.sm} ${componentRadius.card.nested} border-l-4 ${colors.border.info}`}
+                className="bg-neutral-200 dark:bg-neutral-700 p-2 rounded border-l-4 border-blue-500 dark:border-blue-600"
               >
-                <h3 className={typography.body.semibold}>Sample Task 1</h3>
-                <p className={`${typography.body.sm} ${colors.text.secondary}`}>Task description</p>
+                <h3 className="font-semibold">Sample Task 1</h3>
+                <p className="text-sm text-neutral-800 dark:text-neutral-200">Task description</p>
               </div>
             </div>
           </div>
 
           {/* In Progress Column */}
           <div
-            className={`${colors.background.elevated} ${componentRadius.card.base} ${patterns.card.default} ${spacing.padding.md}`}
+            className="bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-sm p-4"
           >
-            <h2 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>In Progress</h2>
-            <div className={spacing.stack.sm}>
+            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">In Progress</h2>
+            <div className="flex flex-col gap-2">
               <div
-                className={`${colors.background.subtle} ${spacing.padding.sm} ${componentRadius.card.nested} border-l-4 ${colors.border.warning}`}
+                className="bg-neutral-200 dark:bg-neutral-700 p-2 rounded border-l-4 border-yellow-500 dark:border-yellow-600"
               >
-                <h3 className={typography.body.semibold}>Sample Task 2</h3>
-                <p className={`${typography.body.sm} ${colors.text.secondary}`}>Task in progress</p>
+                <h3 className="font-semibold">Sample Task 2</h3>
+                <p className="text-sm text-neutral-800 dark:text-neutral-200">Task in progress</p>
               </div>
             </div>
           </div>
 
           {/* Done Column */}
           <div
-            className={`${colors.background.elevated} ${componentRadius.card.base} ${patterns.card.default} ${spacing.padding.md}`}
+            className="bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-sm p-4"
           >
-            <h2 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>Done</h2>
-            <div className={spacing.stack.sm}>
+            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">Done</h2>
+            <div className="flex flex-col gap-2">
               <div
-                className={`${colors.background.subtle} ${spacing.padding.sm} ${componentRadius.card.nested} border-l-4 ${colors.border.success}`}
+                className="bg-neutral-200 dark:bg-neutral-700 p-2 rounded border-l-4 border-green-500 dark:border-green-600"
               >
-                <h3 className={typography.body.semibold}>Sample Task 3</h3>
-                <p className={`${typography.body.sm} ${colors.text.secondary}`}>Completed task</p>
+                <h3 className="font-semibold">Sample Task 3</h3>
+                <p className="text-sm text-neutral-800 dark:text-neutral-200">Completed task</p>
               </div>
             </div>
           </div>

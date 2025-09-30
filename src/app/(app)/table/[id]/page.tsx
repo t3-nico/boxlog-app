@@ -9,7 +9,6 @@ import { Heading, Link, Subheading } from '@/components/custom'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn-ui/table'
-import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { getEvent, getEventReviews } from '@/lib/data'
 
 const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: mod.Stat })), {
@@ -38,19 +37,19 @@ const EventPage = async ({ params }: { params: { id: string } }) => {
       <div className="max-lg:hidden">
         <Link
           href="/box"
-          className={`inline-flex items-center ${spacing.component.gap.sm} ${typography.body.sm} ${colors.text.secondary}`}
+          className="inline-flex items-center gap-2 text-sm text-neutral-800 dark:text-neutral-200"
         >
-          <ChevronLeft className={`size-4 ${colors.icon.secondary}`} data-slot="icon" />
+          <ChevronLeft className="size-4 text-neutral-800 dark:text-neutral-200" data-slot="icon" />
           Box
         </Link>
       </div>
       <div
-        className={`${spacing.component.stack.md} flex flex-wrap items-end justify-between ${spacing.component.gap.md}`}
+        className="mt-4 flex flex-wrap items-end justify-between gap-4"
       >
-        <div className={`flex flex-wrap items-center ${spacing.component.gap.lg}`}>
+        <div className="flex flex-wrap items-center gap-6">
           <div className="w-32 shrink-0">
             <Image
-              className={`aspect-3/2 ${rounded.component.card.md} ${elevation.card.sm}`}
+              className="aspect-3/2 rounded-md shadow-sm"
               src={event.imgUrl}
               alt={`${event.name} event image`}
               width={128}
@@ -59,21 +58,21 @@ const EventPage = async ({ params }: { params: { id: string } }) => {
             />
           </div>
           <div>
-            <div className={`flex flex-wrap items-center ${spacing.component.gap.md} gap-y-2`}>
+            <div className="flex flex-wrap items-center gap-4 gap-y-2">
               <Heading>{event.name}</Heading>
               <Badge color={event.status === 'On Sale' ? 'lime' : 'zinc'}>{event.status}</Badge>
             </div>
-            <div className={`${spacing.component.stack.xs} ${typography.body.sm} ${colors.text.secondary}`}>
+            <div className="mt-1 text-sm text-neutral-800 dark:text-neutral-200">
               {event.date} at {event.time} <span aria-hidden="true">·</span> {event.location}
             </div>
           </div>
         </div>
-        <div className={`flex ${spacing.component.gap.md}`}>
+        <div className="flex gap-4">
           <Button variant="outline">Edit</Button>
           <Button>View</Button>
         </div>
       </div>
-      <div className={`${spacing.component.stack.xl} grid ${spacing.component.gap.xl} sm:grid-cols-3`}>
+      <div className="mt-8 grid gap-8 sm:grid-cols-3">
         <Stat title="Total revenue" value={event.totalRevenue} change={event.totalRevenueChange} />
         <Stat
           title="Tickets sold"
@@ -82,8 +81,8 @@ const EventPage = async ({ params }: { params: { id: string } }) => {
         />
         <Stat title="Pageviews" value={event.pageViews} change={event.pageViewsChange} />
       </div>
-      <Subheading className={spacing.component.stack.xxl}>Recent reviews</Subheading>
-      <Table className={`${spacing.component.stack.md} [--gutter:--spacing(6)] lg:[--gutter:--spacing(10)]`}>
+      <Subheading className="mt-16">Recent reviews</Subheading>
+      <Table className="mt-4 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
         <TableHead>
           <TableRow>
             <TableHeader>Review number</TableHeader>
@@ -96,7 +95,7 @@ const EventPage = async ({ params }: { params: { id: string } }) => {
           {reviews.map((review) => (
             <TableRow key={review.id} href={review.url} title={`Review #${review.id}`}>
               <TableCell>{review.id}</TableCell>
-              <TableCell className={colors.text.secondary}>{review.date}</TableCell>
+              <TableCell className="text-neutral-800 dark:text-neutral-200">{review.date}</TableCell>
               <TableCell>{review.customer.name}</TableCell>
               <TableCell className="text-right">US{review.amount.usd}</TableCell>
             </TableRow>

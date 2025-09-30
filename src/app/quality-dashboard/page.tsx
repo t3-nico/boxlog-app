@@ -6,7 +6,6 @@
  */
 
 import React, { useEffect, useState } from 'react'
-import { colors, typography, spacing, rounded } from '@/config/theme'
 
 interface QualityMetrics {
   timestamp: string

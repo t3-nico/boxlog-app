@@ -5,7 +5,6 @@ import { useCallback, useState } from 'react'
 
 import { Clock, GraduationCap, Lightbulb, Moon, Sun } from 'lucide-react'
 
-import { colors, rounded, spacing, typography } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'

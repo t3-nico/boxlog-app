@@ -10,7 +10,6 @@ import { Label } from '@/components/shadcn-ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Separator } from '@/components/shadcn-ui/separator'
 import { Textarea } from '@/components/shadcn-ui/textarea'
-import { colors, layout, typography } from '@/config/theme'
 import { SettingsLayout } from '@/features/settings/components'
 
 const Address = dynamic(() => import('../address').then((mod) => ({ default: mod.Address })), {
@@ -25,13 +24,13 @@ export const metadata: Metadata = {
 const SettingsPage = () => {
   return (
     <SettingsLayout title="一般設定" description="組織の基本情報と設定を管理します">
-      <form method="post" className={layout.container.large}>
+      <form method="post" className="max-w-4xl">
         <Separator className="my-8" />
 
         <section className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Subheading>Organization Name</Subheading>
-            <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>
+            <p className="text-base text-neutral-800 dark:text-neutral-200">
               This will be displayed on your public profile.
             </p>
           </div>
@@ -45,7 +44,7 @@ const SettingsPage = () => {
         <section className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Subheading>Organization Bio</Subheading>
-            <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>
+            <p className="text-base text-neutral-800 dark:text-neutral-200">
               This will be displayed on your public profile. Maximum 240 characters.
             </p>
           </div>
@@ -59,7 +58,7 @@ const SettingsPage = () => {
         <section className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Subheading>Organization Email</Subheading>
-            <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>
+            <p className="text-base text-neutral-800 dark:text-neutral-200">
               This is how customers can contact you for support.
             </p>
           </div>
@@ -77,7 +76,7 @@ const SettingsPage = () => {
         <section className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Subheading>Address</Subheading>
-            <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>
+            <p className="text-base text-neutral-800 dark:text-neutral-200">
               This is where your organization is registered.
             </p>
           </div>
@@ -89,7 +88,7 @@ const SettingsPage = () => {
         <section className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Subheading>Currency</Subheading>
-            <p className={`${typography.body.DEFAULT} ${colors.text.secondary}`}>
+            <p className="text-base text-neutral-800 dark:text-neutral-200">
               The currency that your organization will be collecting.
             </p>
           </div>
