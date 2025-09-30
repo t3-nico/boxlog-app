@@ -163,80 +163,6 @@ NODE_ENV=development
     console.log('📝 Please update with your development values')
   }
 
-  /**
-   * 統計情報の収集
-   */
-  collectStats() {
-    const stats = {
-      timestamp: new Date().toISOString(),
-      mode: this.fallbackMode ? 'fallback' : '1password',
-      environment: process.env.NODE_ENV || 'development',
-      user: require('os').userInfo().username
-    }
-
-    // 統計ログ保存
-    const statsLog = JSON.stringify(stats) + '\n'
-    fs.appendFileSync('.boxlog-stats.log', statsLog)
-
-    return stats
-  }
-}
-
-// 使用状況分析
-class UsageAnalytics {
-  static generateReport() {
-    if (!fs.existsSync('.boxlog-stats.log')) {
-      console.log('ℹ️  No usage data available')
-      return
-    }
-
-    const logs = fs.readFileSync('.boxlog-stats.log', 'utf8')
-      .split('\n')
-      .filter(line => line.trim())
-      .map(line => {
-        try {
-          return JSON.parse(line)
-        } catch {
-          return null
-        }
-      })
-      .filter(Boolean)
-
-    const report = {
-      totalRuns: logs.length,
-      onePasswordRuns: logs.filter(log => log.mode === '1password').length,
-      fallbackRuns: logs.filter(log => log.mode === 'fallback').length,
-      environments: {},
-      users: {},
-      recentActivity: logs.slice(-10)
-    }
-
-    // 環境別集計
-    logs.forEach(log => {
-      report.environments[log.environment] = (report.environments[log.environment] || 0) + 1
-      report.users[log.user] = (report.users[log.user] || 0) + 1
-    })
-
-    // 成功率計算
-    report.onePasswordSuccessRate = Math.round((report.onePasswordRuns / report.totalRuns) * 100)
-
-    console.log('\n📊 BoxLog Smart Runner Usage Report')
-    console.log('=====================================')
-    console.log(`Total Runs: ${report.totalRuns}`)
-    console.log(`1Password Mode: ${report.onePasswordRuns} (${report.onePasswordSuccessRate}%)`)
-    console.log(`Fallback Mode: ${report.fallbackRuns} (${100 - report.onePasswordSuccessRate}%)`)
-    console.log('\nEnvironments:')
-    Object.entries(report.environments).forEach(([env, count]) => {
-      console.log(`  ${env}: ${count} runs`)
-    })
-
-    // レポートファイル保存
-    const reportFile = `smart-runner-report-${new Date().toISOString().split('T')[0]}.json`
-    fs.writeFileSync(reportFile, JSON.stringify(report, null, 2))
-    console.log(`\n📁 Detailed report saved: ${reportFile}`)
-
-    return report
-  }
 }
 
 // CLI実行
@@ -246,41 +172,32 @@ if (require.main === module) {
   const args = process.argv.slice(3)
 
   switch (command) {
-    case 'report':
-      UsageAnalytics.generateReport()
-      break
-
     case undefined:
       console.log(`
 BoxLog Smart Runner
 
 Usage:
   node scripts/smart-run.js <npm-script> [args]
-  node scripts/smart-run.js report
 
 Examples:
   node scripts/smart-run.js dev
   node scripts/smart-run.js build
   node scripts/smart-run.js test
-  node scripts/smart-run.js report
 
 Features:
   - Automatic 1Password authentication
   - Transparent fallback to standard mode
   - Environment variable synchronization
-  - Usage analytics and reporting
 `)
       break
 
     default:
       runner.smartRun(command, args)
         .then(() => {
-          runner.collectStats()
           process.exit(0)
         })
         .catch((error) => {
           console.error(`❌ Smart run failed: ${error.message}`)
-          runner.collectStats()
           process.exit(1)
         })
   }
