@@ -12,41 +12,10 @@
     "dev": "op run --env-file=.env.local -- next dev",
     "build": "op run --env-file=.env.local -- next build",
     "start": "op run --env-file=.env.local -- next start",
-    "lint": "npm run lint:parallel",
-    "lint:fix": "npm run lint:parallel:fix",
-    "lint:serial": "eslint . -c .eslint/index.js --ext .tsx,.ts,.jsx,.js",
-    "lint:serial:fix": "eslint . -c .eslint/index.js --ext .tsx,.ts,.jsx,.js --fix",
-    "lint:cache": "eslint . -c .eslint/index.js --cache --cache-location .eslint/cache/.eslintcache",
-    "lint:report": "eslint . -c .eslint/index.js -f html -o .eslint/reports/lint-report.html",
-    "lint:dev": "NODE_ENV=development eslint . -c .eslint/index.js",
-    "lint:prod": "NODE_ENV=production eslint . -c .eslint/index.js",
-    "lint:theme": "eslint . -c .eslint/index.js --ext .tsx,.ts --env-info | grep 'boxlog-theme'",
-    "lint:theme:strict": "NODE_ENV=production eslint . -c .eslint/index.js --ext .tsx,.ts | grep 'boxlog-theme'",
-    "lint:theme:migrate": "NODE_ENV=development eslint . -c .eslint/index.js --ext .tsx,.ts | grep 'boxlog-theme'",
-    "lint:compliance": "eslint . -c .eslint/index.js --ext .tsx,.ts | grep 'boxlog-compliance'",
-    "lint:compliance:strict": "NODE_ENV=production eslint . -c .eslint/index.js --ext .tsx,.ts | grep 'boxlog-compliance'",
-    "lint:performance": "eslint . -c .eslint/index.js --ext .tsx,.ts | grep -E '(complexity|max-lines|max-nested)'",
-    "lint:imports": "eslint . -c .eslint/index.js --ext .tsx,.ts | grep -E '(import/order|unused-imports)'",
-    "lint:all": "npm run lint:cache",
-    "lint:all:fix": "npm run lint:fix",
-    "lint:quick": "eslint --cache --cache-strategy content src/**/*.{ts,tsx} --max-warnings 20",
-    "lint:changed": "eslint --cache $(git diff --name-only HEAD~1 | grep -E '\\.(ts|tsx)' | xargs)",
-    "lint:parallel": "node scripts/eslint-parallel.js",
-    "lint:parallel:fix": "node scripts/eslint-parallel.js --fix",
-    "lint:parallel:fast": "ESLINT_WORKERS=8 node scripts/eslint-parallel.js",
-    "lint:parallel:2": "ESLINT_WORKERS=2 node scripts/eslint-parallel.js",
-    "lint:parallel:4": "ESLINT_WORKERS=4 node scripts/eslint-parallel.js",
-    "lint:parallel:max": "node scripts/eslint-parallel.js",
-    "lint:benchmark": "npm run lint:benchmark:serial && npm run lint:benchmark:parallel",
-    "lint:benchmark:serial": "time npm run lint:serial",
-    "lint:benchmark:parallel": "time npm run lint:parallel",
-    "lint:status": "node scripts/file-status-checker.js",
-    "lint:status:details": "node scripts/file-status-checker.js src/**/*.{ts,tsx}",
-    "lint:analyze": "npm run lint:status",
-    "lint:distribution": "node -e \"console.log(require('./.eslint/configs/rule-levels.js').getProjectFileDistribution())\"",
-    "lint:integration-test": "node -e \"const { getAdvancedFileStatus, getProjectFileDistribution } = require('./.eslint/configs/rule-levels.js'); console.log('📊 統合機能テスト'); console.log('ファイル分布:', getProjectFileDistribution()); console.log('page.tsx ステータス:', getAdvancedFileStatus('src/app/page.tsx'));\"",
-    "precommit:quick": "lint-staged",
-    "ci:heavy-checks": "npm run bundle:guard && node scripts/license-checker.js && node scripts/api-change-detector.js",
+
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+
     "typecheck": "op run --env-file=.env.local -- tsc --noEmit",
     "bundle:analyze": "ANALYZE=true npm run build",
     "bundle:check": "node scripts/bundle-check.js",
@@ -374,14 +343,8 @@
     "vitest": "^3.2.4"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint -c .eslint/index.js --cache --cache-location .eslint/cache/.eslintcache --fix --max-warnings 20"
-    ],
-    "*.{js,jsx}": [
-      "eslint -c .eslint/index.js --cache --cache-location .eslint/cache/.eslintcache --fix --max-warnings 20"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write --ignore-unknown"
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --cache --fix"
     ]
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"

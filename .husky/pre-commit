@@ -1,21 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🚀 BoxLog Quick Pre-commit Check..."
-
-# ==============================
-# 必須チェックのみ（5-10秒で完了）
-# ==============================
-
-# 1. Lint-staged（変更ファイルのみ）
-echo "📝 Checking changed files..."
 npx lint-staged
-
-# 成功メッセージ
-echo "✅ Pre-commit check completed!"
-echo ""
-echo "📊 Heavy checks will run in CI/CD:"
-echo "  - Bundle size analysis"
-echo "  - License verification"
-echo "  - Performance tests"
-echo "  - API breaking changes"
