@@ -3,6 +3,13 @@
 /* Tailwind v4 ダークモード設定 */
 @variant dark (.dark &);
 
+/* next/font 最適化フォント適用 */
+body {
+  font-family: var(--font-inter), sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  font-variation-settings: 'opsz' 32;
+}
+
 /* ブラウザUIのダークモード対応 */
 html {
   color-scheme: light;

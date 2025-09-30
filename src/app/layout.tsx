@@ -6,11 +6,19 @@ import type { ErrorInfo } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
 
 import { Providers } from '@/components/common'
 import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary'
 import { colors } from '@/config/theme'
 import { ToastContainer } from '@/lib/toast'
+
+// next/font による最適化されたフォント読み込み
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 // グローバルエラーハンドラー
 const handleGlobalError = (error: Error, errorInfo: ErrorInfo, retryCount: number) => {
@@ -36,11 +44,7 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://rsms.me/" />
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-      </head>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className={colors.background.base}>
         <GlobalErrorBoundary maxRetries={3} retryDelay={1000} onError={handleGlobalError}>
           <Providers>
