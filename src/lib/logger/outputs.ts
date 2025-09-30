@@ -134,7 +134,6 @@ export class FileOutput implements LogOutput {
    */
   private performDirectoryCreation(validatedDir: string): void {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     fs.mkdirSync(validatedDir, { recursive: true })
   }
 
@@ -143,7 +142,6 @@ export class FileOutput implements LogOutput {
    */
   private performDirectoryCheck(validatedDir: string): boolean {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     return fs.existsSync(validatedDir)
   }
 
@@ -152,7 +150,6 @@ export class FileOutput implements LogOutput {
    */
   private performStreamCreation(validatedPath: string): fs.WriteStream {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     return fs.createWriteStream(validatedPath, { flags: 'a' })
   }
 
@@ -321,7 +318,6 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performStatOperation(validatedPath: string): number {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     return fs.statSync(validatedPath).size
   }
 
@@ -330,7 +326,6 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performExistsCheck(validatedPath: string): boolean {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     return fs.existsSync(validatedPath)
   }
 
@@ -339,7 +334,6 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performFileDelete(validatedPath: string): void {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     fs.unlinkSync(validatedPath)
   }
 
@@ -348,7 +342,6 @@ export class RotatingFileOutput extends FileOutput {
    */
   private performFileRename(validatedOldPath: string, validatedNewPath: string): void {
     // Note: This is a legitimate file system operation on validated log paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     fs.renameSync(validatedOldPath, validatedNewPath)
   }
 

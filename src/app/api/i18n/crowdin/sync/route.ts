@@ -74,7 +74,6 @@ async function handleDownload(crowdin: CrowdinIntegration, language: string) {
     // ローカルの翻訳ファイルを更新
     const translationPath = path.join(process.cwd(), 'src', 'dictionaries', `${language}.json`)
     // Note: This is a legitimate file operation for translation files
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     await fs.writeFile(translationPath, JSON.stringify(translations, null, 2))
 
     return NextResponse.json({

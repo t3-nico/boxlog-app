@@ -221,7 +221,6 @@ export class UnifiedErrorHandler {
     console.log('🍞 トースト表示:', toastInfo)
 
     // react-hot-toast, sonner, react-toastify などとの統合例:
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // if ((window as any).toast) {
     //   (window as any).toast.error(`${toastInfo.emoji} ${toastInfo.message}`, {
     //     duration: toastInfo.duration,
@@ -233,11 +232,9 @@ export class UnifiedErrorHandler {
    * Sentry 送信
    */
   private sendToSentry(info: UnifiedErrorInfo): void {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Sentry = (window as any).Sentry
     if (!Sentry) return
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Sentry.withScope((scope: any) => {
       scope.setTag('error_code', info.errorCode)
       scope.setTag('auto_recoverable', info.autoRecoverable)

@@ -180,7 +180,6 @@ export class AdvancedRuleEngine {
 
     try {
       // ESLint除外: 正規表現パターンは入力時に検証済み
-      // eslint-disable-next-line security/detect-non-literal-regexp
       const regex = new RegExp(pattern, flags)
       return regex.test(value)
     } catch (error) {
@@ -322,7 +321,6 @@ export class AdvancedRuleEngine {
    * 標準フィールド値の取得
    */
   private static getStandardFieldValue(item: unknown, field: SmartFolderRuleField): unknown {
-    // eslint-disable-next-line security/detect-object-injection
     const fieldMap: Record<string, string[]> = {
       tag: ['tags', 'tag'],
       created_date: ['createdAt', 'created_at', 'createdDate'],
@@ -338,9 +336,7 @@ export class AdvancedRuleEngine {
     const possibleKeys = fieldMap[field] || [field]
 
     for (const key of possibleKeys) {
-      // eslint-disable-next-line security/detect-object-injection
       if (key in item) {
-        // eslint-disable-next-line security/detect-object-injection
         return item[key as keyof typeof item]
       }
     }

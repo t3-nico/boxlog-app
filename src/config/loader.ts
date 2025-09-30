@@ -223,7 +223,6 @@ export class ConfigLoader {
    */
   private performFileSystemCheck(validatedPath: string): boolean {
     // Note: This is a legitimate file system operation on validated config paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     return fs.existsSync(validatedPath)
   }
 
@@ -232,7 +231,6 @@ export class ConfigLoader {
    */
   private performFileSystemRead(validatedPath: string): string {
     // Note: This is a legitimate file system operation on validated config paths
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
     return fs.readFileSync(validatedPath, 'utf8')
   }
 
