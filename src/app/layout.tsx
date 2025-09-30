@@ -10,7 +10,7 @@ import { Inter } from 'next/font/google'
 
 import { Providers } from '@/components/common'
 import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary'
-import { colors } from '@/config/theme'
+import { cn } from '@/lib/utils'
 import { ToastContainer } from '@/lib/toast'
 
 // next/font による最適化されたフォント読み込み
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className={colors.background.base}>
+      <body className={cn('bg-neutral-100 dark:bg-neutral-900')}>
         <GlobalErrorBoundary maxRetries={3} retryDelay={1000} onError={handleGlobalError}>
           <Providers>
             {children}
