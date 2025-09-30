@@ -75,13 +75,24 @@ export async function middleware(request: NextRequest) {
   })
 
   try {
-    // 一時的にmiddleware認証を無効化してビルドを通す
+    // TODO: Supabase認証統合
+    // 現在は認証チェックを無効化（開発中）
+    // 実装時は以下を使用:
+    // const { data: { session } } = await createServerClient().auth.getSession()
+    // const user = session?.user ?? null
     const user = null
+
+    // 環境変数で認証をスキップ（開発環境用）
+    const skipAuth = process.env.SKIP_AUTH_IN_DEV === 'true' && process.env.NODE_ENV === 'development'
+
+    if (skipAuth) {
+      return response
+    }
 
     // 現在の言語を取得
     const currentLocale = locales.find((locale) => pathname.startsWith(`/${locale}`)) || defaultLocale
 
-    // 言語プレフィックスを除いたパスを取得（セキュリティ対応: 固定パターン使用）
+    // 言語プレフィックスを除いたパスを取得
     const localePrefix = `/${currentLocale}`
     const pathWithoutLocale = pathname.startsWith(localePrefix) ? pathname.slice(localePrefix.length) || '/' : pathname
 
@@ -107,13 +118,13 @@ export async function middleware(request: NextRequest) {
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      console.log('Redirecting to login:', request.nextUrl.pathname)
+      console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
       return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url))
     }
 
     // 認証済みでauth系のパスにアクセスした場合
     if (user && isAuthPath) {
-      console.log('Redirecting to dashboard:', request.nextUrl.pathname)
+      console.log('[Middleware] Redirecting to dashboard:', request.nextUrl.pathname)
       return NextResponse.redirect(new URL(`/${currentLocale}/dashboard`, request.url))
     }
 
