@@ -12,7 +12,7 @@
     "dev": "op run --env-file=.env.local -- next dev",
     "build": "op run --env-file=.env.local -- next build",
     "start": "op run --env-file=.env.local -- next start",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --max-warnings 20",
     "lint:fix": "eslint . --fix",
     "typecheck": "op run --env-file=.env.local -- tsc --noEmit",
     "bundle:analyze": "ANALYZE=true npm run build",

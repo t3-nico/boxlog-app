@@ -24,10 +24,40 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   const [currentTime, setCurrentTime] = useState(new Date())
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null)
   const router = useRouter()
-  
+
   // ストアから実際のイベントデータを取得
   const _eventStore = useEventStore()
   const { chronotype } = useCalendarSettingsStore()
+
+  // jsx-no-bind optimization: No event click handler
+  const handleNoEventClick = useCallback(() => {
+    const today = new Date()
+    const dateParam = today.toISOString().split('T')[0]
+    router.push(`/calendar/day?date=${dateParam}`)
+  }, [router])
+
+  // jsx-no-bind optimization: No event keyboard handler
+  const handleNoEventKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleNoEventClick()
+    }
+  }, [handleNoEventClick])
+
+  // jsx-no-bind optimization: Calendar navigation click handler
+  const handleClick = useCallback(() => {
+    const today = new Date()
+    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
+    router.push(`/calendar/day?date=${dateParam}`)
+  }, [router])
+
+  // jsx-no-bind optimization: Calendar navigation keyboard handler
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick()
+    }
+  }, [handleClick])
 
   // 今日のイベントを独立してフェッチ
   const [todayEvents, _setTodayEvents] = useState<Event[]>([])
@@ -198,7 +228,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     const borderColor = getChronotypeColor()
     return currentEvent ? (
       <div className="flex justify-center mb-4">
-        <div 
+        <div
           className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center"
           style={{
             border: `2px solid ${borderColor}`
@@ -209,36 +239,6 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       </div>
     ) : null
   }
-
-  // jsx-no-bind optimization: No event click handler
-  const handleNoEventClick = useCallback(() => {
-    const today = new Date()
-    const dateParam = today.toISOString().split('T')[0]
-    router.push(`/calendar/day?date=${dateParam}`)
-  }, [router])
-
-  // jsx-no-bind optimization: No event keyboard handler
-  const handleNoEventKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleNoEventClick()
-    }
-  }, [handleNoEventClick])
-
-  // jsx-no-bind optimization: Calendar navigation click handler
-  const handleClick = useCallback(() => {
-    const today = new Date()
-    const dateParam = today.toISOString().split('T')[0] // YYYY-MM-DD形式
-    router.push(`/calendar/day?date=${dateParam}`)
-  }, [router])
-
-  // jsx-no-bind optimization: Calendar navigation keyboard handler
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleClick()
-    }
-  }, [handleClick])
 
   if (!currentEvent) {
     

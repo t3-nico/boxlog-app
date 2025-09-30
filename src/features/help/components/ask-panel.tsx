@@ -39,6 +39,10 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
   const [editContent, setEditContent] = useState(message.content)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  const handleEditContentChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditContent(e.target.value)
+  }, [])
+
   const handleEdit = useCallback(() => {
     setIsEditing(true)
     setEditContent(message.content)
@@ -85,7 +89,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
                 <textarea
                   ref={textareaRef}
                   value={editContent}
-                  onChange={useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => setEditContent(e.target.value), [])}
+                  onChange={handleEditContentChange}
                   onKeyDown={handleKeyDown}
                   className={`w-full bg-transparent ${colors.text.white} resize-none border-none placeholder-blue-200 outline-none ${typography.body.sm} leading-relaxed`}
                   rows={1}
