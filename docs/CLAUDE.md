@@ -21,13 +21,21 @@ docs/
 ├── development/                 # 開発ガイドライン
 │   ├── COMMANDS.md
 │   ├── ISSUE_MANAGEMENT.md
-│   └── CLAUDE_SESSION_MANAGEMENT.md
-├── systems/                     # システム詳細
+│   └── SESSION_MANAGEMENT.md
+├── systems/                     # システム詳細・仕様
 │   ├── ESLINT_SETUP_COMPLETE.md
 │   ├── THEME_ENFORCEMENT.md
+│   ├── API_CHANGE_DETECTION.md
 │   └── ...
-└── performance/                 # パフォーマンス関連
-    └── ACCESSIBILITY_TESTING_GUIDE.md
+├── design-system/               # デザインシステム
+│   └── ...
+├── performance/                 # パフォーマンス関連
+│   └── ACCESSIBILITY_TESTING_GUIDE.md
+└── archive/                     # アーカイブ
+    └── completed/               # 完了した実装レポート
+        ├── LAYOUT_CHANGES_2025-09.md
+        ├── COMPONENT_CHANGES_2025-09.md
+        └── ICONS_AND_SPACING_CHANGES_2025-09.md
 ```
 
 ---
@@ -62,7 +70,7 @@ docs/
 ## ✅ テストケース
 ```
 
-### 3. 完了レポート（XXX_COMPLETE.md）
+### 3. 完了レポート（XXX_COMPLETE.md / XXX_CHANGES.md）
 **目的**: 実装完了した機能の記録
 
 **構成**:
@@ -75,6 +83,8 @@ docs/
 ## 🔗 関連Issue・PR
 ```
 
+**重要**: 完了レポートは実装完了後、`docs/archive/completed/`に移動してください。
+
 ---
 
 ## 📝 ドキュメント作成ルール
@@ -82,15 +92,21 @@ docs/
 ### ファイル命名規則
 ```bash
 # ✅ 推奨命名
-FEATURE_NAME_GUIDE.md        # ガイド
-SYSTEM_NAME_SETUP.md         # セットアップ
-COMPONENT_NAME_SPEC.md       # 仕様
-TASK_NAME_COMPLETE.md        # 完了レポート
+FEATURE_NAME_GUIDE.md        # ガイド（docs/systems/）
+SYSTEM_NAME_SETUP.md         # セットアップ（docs/systems/）
+COMPONENT_NAME_SPEC.md       # 仕様（docs/systems/）
+TASK_NAME_COMPLETE.md        # 完了レポート（完了後 → docs/archive/completed/）
+FEATURE_CHANGES.md           # 変更レポート（完了後 → docs/archive/completed/）
+
+# 📋 特殊な変更履歴（プロジェクトルート）
+CHANGELOG.md                 # git履歴（自動生成）
+BREAKING_CHANGES.md          # 破壊的変更（自動生成）
 
 # ❌ 避ける命名
 guide.md                     # 不明確
 document-v1.md               # バージョン管理はGit使用
 temp_doc.md                  # 一時ファイルはコミット禁止
+*_CHANGES.md in docs/        # 完了後は必ずarchiveに移動
 ```
 
 ### マークダウン記法
