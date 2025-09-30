@@ -85,9 +85,8 @@ jspm_packages/
 # Performance logs
 performance-*.log
 
-# Technical Debt Reports (too large for git)
-reports/tech-debt.json
-reports/tech-debt.html
+# Auto-generated reports
+/reports/
 
 # Test files (moved to .eslint/tests/)
 test-*
