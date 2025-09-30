@@ -3,12 +3,13 @@
 ## 🗣️ 基本設定
 **コミュニケーション言語**: 日本語
 
-## 🚨 絶対遵守ルール（5項目）
+## 🚨 絶対遵守ルール（6項目）
 1. **コミット前**: `npm run lint` 必須実行（3.6秒で完了）
 2. **スタイリング**: `/src/config/theme` のみ使用（直接指定禁止）
 3. **Issue管理**: すべての作業をIssue化（例外なし）
 4. **TypeScript厳格**: `any` 型禁止
 5. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
+6. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等、詳細は[`src/CLAUDE.md`](src/CLAUDE.md)参照）
 
 ## 📚 詳細ドキュメント参照先
 
@@ -20,7 +21,7 @@
 - **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md) 🆕
 - **AI品質基準（公式準拠版）**: [`.claude/code-standards.md`](.claude/code-standards.md) 🆕
 - **デザインシステム**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md)
-- **レスポンシブデザイン**: [`src/CLAUDE.md`](src/CLAUDE.md)
+- **コーディング規約・ファイル配置**: [`src/CLAUDE.md`](src/CLAUDE.md) ← コロケーション原則の詳細
 
 ### 開発ワークフロー
 - **コミット規約**: [`docs/development/COMMIT_RULES.md`](docs/development/COMMIT_RULES.md)
@@ -69,4 +70,4 @@ npm run docs:check          # ドキュメント整合性チェック
 - App Router移行ガイド: https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration
 
 ---
-**📖 最終更新**: 2025-09-30 | **バージョン**: v8.0 - Next.js 14完全準拠
+**📖 最終更新**: 2025-10-01 | **バージョン**: v8.1 - コロケーション原則追加
