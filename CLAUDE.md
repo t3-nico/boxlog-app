@@ -33,6 +33,7 @@
 - **1Password設定**: [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md)
 - **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
 - **ビジネスルール辞書**: [`docs/BUSINESS_RULES_GUIDE.md`](docs/BUSINESS_RULES_GUIDE.md)
+- **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
 
 ## 🚀 基本コマンド（頻出5個）
 ```bash

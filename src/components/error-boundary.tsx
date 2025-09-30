@@ -8,7 +8,7 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
 
 import { colors, spacing, typography } from '@/config/theme'
-import { handleReactError, SentryErrorHandler } from '@/lib/sentry-integration'
+import { handleReactError, SentryErrorHandler } from '@/lib/sentry'
 
 interface Props {
   children: ReactNode

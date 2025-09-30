@@ -254,7 +254,7 @@ NODE_ENV=production
 
 ### Sentry設定
 ```typescript
-import { initializeSentry } from '@/lib/sentry-integration'
+import { initializeSentry } from '@/lib/sentry'
 
 initializeSentry({
   dsn: process.env.SENTRY_DSN,

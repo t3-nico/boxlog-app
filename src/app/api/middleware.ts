@@ -12,7 +12,7 @@ import {
   ERROR_CODES
 } from '@/config/error-patterns'
 import { globalErrorHandler } from '@/lib/error-handler'
-import { reportToSentry } from '@/lib/sentry-integration'
+import { reportToSentry } from '@/lib/sentry'
 
 /**
  * API レスポンスの型定義

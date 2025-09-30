@@ -21,7 +21,7 @@ import {
   type ErrorHandlingOptions,
   type NotificationConfig
 } from '@/lib/error-handler'
-import { reportToSentry } from '@/lib/sentry-integration'
+import { reportToSentry } from '@/lib/sentry'
 
 /**
  * エラーハンドラーHookの設定

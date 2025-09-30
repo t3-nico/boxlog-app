@@ -15,7 +15,7 @@ import {
   getUserMessage
 } from '@/config/error-patterns'
 import { globalErrorHandler } from '@/lib/error-handler'
-import { sentryIntegration } from '@/lib/sentry-integration'
+import { sentryIntegration } from '@/lib/sentry'
 
 // モック設定
 vi.mock('@sentry/nextjs', () => ({
