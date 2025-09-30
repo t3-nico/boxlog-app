@@ -8,7 +8,7 @@
 2. **スタイリング**: `/src/config/theme` のみ使用（直接指定禁止）
 3. **Issue管理**: すべての作業をIssue化（例外なし）
 4. **TypeScript厳格**: `any` 型禁止
-5. **公式準拠**: Next.js/React/TypeScript公式ドキュメントのベストプラクティスに従う
+5. **標準機能優先**: Next.js/React/TypeScriptの標準機能を使用
 
 ## 📚 詳細ドキュメント参照先
 
