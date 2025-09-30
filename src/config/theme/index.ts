@@ -1,6 +1,16 @@
 /**
  * BoxLog デザインシステム - 統一エクスポート
  * @description すべてのデザインシステムコンポーネントとトークンを一箇所からエクスポート
+ *
+ * @deprecated このテーマシステムは非推奨です。
+ * 新規コンポーネントは @/config/design-tokens を使用し、cn() ユーティリティで Tailwind クラスを直接使用してください。
+ *
+ * 移行ガイド:
+ * - 旧: import { colors } from '@/config/theme'
+ * - 新: import { designTokens } from '@/config/design-tokens'
+ * - 新: import { cn } from '@/lib/utils'
+ *
+ * 詳細: Issue #376 - Tailwind公式準拠デザインシステム移行
  */
 
 // ============================================
