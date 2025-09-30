@@ -3,13 +3,12 @@
 ## 🗣️ 基本設定
 **コミュニケーション言語**: 日本語
 
-## 🚨 絶対遵守ルール（6項目）
-1. **コミット前**: `npm run lint` 必須実行（2.5秒で完了）
+## 🚨 絶対遵守ルール（5項目）
+1. **コミット前**: `npm run lint` 必須実行（3.6秒で完了）
 2. **スタイリング**: `/src/config/theme` のみ使用（直接指定禁止）
 3. **Issue管理**: すべての作業をIssue化（例外なし）
 4. **TypeScript厳格**: `any` 型禁止
-5. **ビジネスルール**: `BusinessRuleRegistry` 必須使用
-6. **コード生成**: VSCodeスニペット（`bl*`）またはAI用ガイド（`.claude/code-standards.md`）参照必須
+5. **公式準拠**: Next.js/React/TypeScript公式ドキュメントのベストプラクティスに従う
 
 ## 📚 詳細ドキュメント参照先
 
@@ -18,9 +17,8 @@
 - **技術スタック詳細**: [`docs/TECH_STACK.md`](docs/TECH_STACK.md)
 
 ### 開発ガイドライン
-- **ESLintハイブリッド**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md) 🆕
-- **AI品質基準**: [`.claude/code-standards.md`](.claude/code-standards.md) 🆕
-- **VSCodeスニペット**: [`.vscode/boxlog.code-snippets`](.vscode/boxlog.code-snippets) 🆕
+- **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md) 🆕
+- **AI品質基準（公式準拠版）**: [`.claude/code-standards.md`](.claude/code-standards.md) 🆕
 - **デザインシステム**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md)
 - **レスポンシブデザイン**: [`src/CLAUDE.md`](src/CLAUDE.md)
 
@@ -32,7 +30,6 @@
 ### システム管理
 - **1Password設定**: [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md)
 - **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
-- **ビジネスルール辞書**: [`docs/BUSINESS_RULES_GUIDE.md`](docs/BUSINESS_RULES_GUIDE.md)
 - **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
 
 ## 🚀 基本コマンド（頻出5個）
@@ -47,4 +44,4 @@ npm run docs:check          # ドキュメント整合性チェック
 **全コマンド**: [`docs/development/COMMANDS.md`](docs/development/COMMANDS.md)
 
 ---
-**📖 最終更新**: 2025-09-30 | **バージョン**: v6.0 - ハイブリッドアプローチ
+**📖 最終更新**: 2025-09-30 | **バージョン**: v7.0 - 公式準拠アプローチ

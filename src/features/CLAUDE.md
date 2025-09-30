@@ -131,22 +131,25 @@ export type { Task, TaskFilters } from './types'
 
 ## 🚨 必須ルール
 
-### 1. ビジネスルール実装
+### 1. バリデーション実装
 ```tsx
-// ✅ 必須：BusinessRuleRegistry使用
-import { BusinessRuleRegistry } from '@/lib/business-rules'
+// ✅ Zodスキーマ使用
+import { z } from 'zod'
+
+const taskSchema = z.object({
+  title: z.string().min(1).max(100),
+  status: z.enum(['todo', 'in_progress', 'done']),
+})
 
 const createTask = async (taskData: Omit<Task, 'id'>) => {
-  // ビジネスルール検証
-  const rules = BusinessRuleRegistry.getValidator('task')
-  const validation = rules.validate(taskData)
-
-  if (!validation.isValid) {
-    throw new Error(validation.errors.join(', '))
+  // バリデーション
+  const result = taskSchema.safeParse(taskData)
+  if (!result.success) {
+    throw new Error(result.error.message)
   }
 
   // タスク作成
-  await api.createTask(taskData)
+  await api.createTask(result.data)
 }
 ```
 
@@ -235,7 +238,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth'
 
 // ✅ 許可：上位の共通処理
 import { api } from '@/lib/api'
-import { BusinessRuleRegistry } from '@/lib/business-rules'
+import { z } from 'zod'
 ```
 
 ### 禁止される依存

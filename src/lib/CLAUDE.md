@@ -7,37 +7,35 @@ BoxLog共通ライブラリ・ユーティリティ実装ガイドライン。
 ```
 lib/
 ├── api/                # API クライアント
-├── business-rules/     # ビジネスルール辞書（必須使用）
 ├── errors/             # 統一エラーコードシステム
 ├── supabase/           # Supabase クライアント
 ├── utils/              # 汎用ユーティリティ
-└── validators/         # バリデーション関数
+└── validators/         # バリデーション関数（Zod）
 ```
 
 ---
 
 ## 🎯 各モジュール説明
 
-### business-rules/ - ビジネスルール辞書（必須）
-**バリデーション・権限・ワークフローの中央管理**。
+### validators/ - バリデーション（Zod使用）
+**Zodスキーマによる型安全なバリデーション**。
 
 ```tsx
-import { BusinessRuleRegistry } from '@/lib/business-rules'
+import { z } from 'zod'
 
-// バリデーション
-const rules = BusinessRuleRegistry.getValidator('task')
-const isValid = rules.validate(taskData)
+// バリデーションスキーマ定義
+const taskSchema = z.object({
+  title: z.string().min(1).max(100),
+  status: z.enum(['todo', 'in_progress', 'done']),
+  dueDate: z.date().optional(),
+})
 
-// 権限チェック
-const permissions = BusinessRuleRegistry.getPermissions('task', userRole)
-const canEdit = permissions.canEdit
-
-// ワークフローステータス
-const workflow = BusinessRuleRegistry.getWorkflow('task')
-const nextStatuses = workflow.getAvailableTransitions(currentStatus)
+// バリデーション実行
+const result = taskSchema.safeParse(taskData)
+if (!result.success) {
+  console.error(result.error)
+}
 ```
-
-**詳細**: [`business-rules/CLAUDE.md`](./business-rules/CLAUDE.md)
 
 ### errors/ - 統一エラーコードシステム
 **分野別・系統別の統一エラーコード**。

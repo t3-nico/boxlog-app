@@ -49,13 +49,20 @@ export const MyComponent: FC<Props> = ({ title, onClose }) => {
 }
 ```
 
-### 4. ビジネスルール実装
+### 4. バリデーション実装
 ```tsx
-// ✅ 必須：BusinessRuleRegistry使用
-import { BusinessRuleRegistry } from '@/lib/business-rules'
+// ✅ Zodスキーマ使用
+import { z } from 'zod'
 
-const rules = BusinessRuleRegistry.getValidator('task')
-const isValid = rules.validate(taskData)
+const taskSchema = z.object({
+  title: z.string().min(1).max(100),
+  status: z.enum(['todo', 'in_progress', 'done']),
+})
+
+const result = taskSchema.safeParse(taskData)
+if (!result.success) {
+  console.error(result.error)
+}
 ```
 
 ### 5. インポート順序（ESLint自動整形）
