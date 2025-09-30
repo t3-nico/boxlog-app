@@ -1,18 +1,10 @@
-'use client'
+import { redirect } from 'next/navigation'
 
-import { useEffect } from 'react'
-
-import { useRouter } from 'next/navigation'
-
-const SettingsIndexPage = () => {
-  const router = useRouter()
-
-  useEffect(() => {
-    router.push('/settings/account')
-  }, [router])
-
-  return null
+/**
+ * 設定トップページ
+ * Next.js公式: Server Componentでredirect()使用
+ */
+export default function SettingsIndexPage() {
+  redirect('/settings/account')
 }
-
-export default SettingsIndexPage
 
