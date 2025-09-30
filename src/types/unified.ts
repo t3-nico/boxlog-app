@@ -3,6 +3,8 @@
  * 重複する型定義をここで統一し、他のファイルから参照する
  */
 
+import type { Tag } from './tags'
+
 // === 基本的な型定義 ===
 
 export type TaskStatus = 'backlog' | 'scheduled' | 'completed' | 'rescheduled' | 'stopped' | 'delegated'

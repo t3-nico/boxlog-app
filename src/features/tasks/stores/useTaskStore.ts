@@ -1,38 +1,34 @@
 import { StoreFactory } from '@/lib/store-factory'
+import type { Task as BaseTask, TaskStatus, TaskPriority } from '@/types'
 
-interface Task {
-  id: string
-  title: string
+/**
+ * LocalStorage用Taskインターフェース
+ * BaseTaskをDate型で扱うように拡張
+ */
+interface Task extends Omit<BaseTask, 'planned_start' | 'created_at' | 'updated_at'> {
   planned_start: Date
-  planned_duration: number
-  status: 'pending' | 'in_progress' | 'completed'
-  priority: 'low' | 'medium' | 'high'
-  description?: string
-  tags?: string[]
   created_at: Date
   updated_at: Date
 }
 
-// LocalStorage用の型定義（Date型が文字列になっている）
-interface TaskForStorage {
-  id: string
-  title: string
+/**
+ * LocalStorage保存用（Date → string変換後）
+ */
+interface TaskForStorage extends Omit<Task, 'planned_start' | 'created_at' | 'updated_at'> {
   planned_start: string
-  planned_duration: number
-  status: 'pending' | 'in_progress' | 'completed'
-  priority: 'low' | 'medium' | 'high'
-  description?: string
-  tags?: string[]
   created_at: string
   updated_at: string
 }
 
+/**
+ * タスク作成入力
+ */
 interface CreateTaskInput {
   title: string
   planned_start: Date
   planned_duration: number
-  status: 'pending' | 'in_progress' | 'completed'
-  priority: 'low' | 'medium' | 'high'
+  status: TaskStatus
+  priority: TaskPriority
   description?: string
   tags?: string[]
 }

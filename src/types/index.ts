@@ -1,26 +1,74 @@
-// import { Database } from './supabase' // Disabled for localStorage-only mode
+/**
+ * BoxLog 統一型定義
+ *
+ * TypeScript公式ベストプラクティス準拠:
+ * - any型禁止
+ * - interface優先（拡張可能性）
+ * - type使用可（Union Types）
+ *
+ * 参考: .claude/code-standards.md
+ */
 
-// Export unified types first (highest priority)
-export * from './unified'
+// ============================================
+// 1. 基本型定義（Union Types）
+// ============================================
 
-// Re-export other type modules (excluding types already in unified)
-export * from './common'
-export * from './box'
-// export * from './tags' // Already exported from unified
-// export * from './smart-folders' // Already exported from unified  
-export * from './sidebar'
-export * from './chronotype'
-export * from './trash'
-export * from './task'
-// export * from './events' // Already exported from unified
+/**
+ * タスクステータス（TypeScript公式: Union Type使用）
+ */
+export type TaskStatus =
+  | 'backlog'      // バックログ
+  | 'scheduled'    // スケジュール済み
+  | 'in_progress'  // 進行中
+  | 'completed'    // 完了
+  | 'stopped'      // 停止
 
-// Local storage stub types (replacing Supabase types)
+/**
+ * タスク優先度（TypeScript公式: Union Type使用）
+ */
+export type TaskPriority =
+  | 'low'
+  | 'medium'
+  | 'high'
+  | 'urgent'
+
+// ============================================
+// 2. メインエンティティ（interface優先）
+// ============================================
+
+/**
+ * タスク（BoxLog統一型）
+ * TypeScript公式: interface優先（拡張可能性）
+ */
+export interface Task {
+  id: string
+  title: string
+  description?: string
+  status: TaskStatus
+  priority: TaskPriority
+  planned_start: string  // ISO 8601
+  planned_duration: number  // 分単位
+  tags?: string[]
+  created_at: string  // ISO 8601
+  updated_at: string  // ISO 8601
+  user_id: string
+}
+
+/**
+ * ユーザープロフィール
+ */
 export interface Profile {
   id: string
   email?: string
   name?: string
+  avatar_url?: string
+  created_at?: string
+  updated_at?: string
 }
 
+/**
+ * ユーザー設定値
+ */
 export interface UserValues {
   id: string
   user_id: string
@@ -28,32 +76,34 @@ export interface UserValues {
   value: string
 }
 
-export interface SmartFilter {
-  id: string
-  name: string
-  criteria: Record<string, unknown>
-}
+// ============================================
+// 3. データ操作型（TypeScript公式: Utility Types活用）
+// ============================================
 
-export interface TaskInsert {
-  title: string
-  status?: string
-  planned_start?: string
-}
+/**
+ * タスク作成入力
+ * TypeScript公式: Omitユーティリティ型活用
+ */
+export type TaskInsert = Omit<Task, 'id' | 'created_at' | 'updated_at'>
 
-export interface TaskUpdate {
-  title?: string
-  status?: string
-  planned_start?: string
-}
+/**
+ * タスク更新入力
+ * TypeScript公式: Partialユーティリティ型活用
+ */
+export type TaskUpdate = Partial<Omit<Task, 'id' | 'user_id' | 'created_at'>>
 
-export interface ProfileUpdate {
-  name?: string
-  email?: string
-}
+/**
+ * プロフィール更新入力
+ */
+export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>
 
-// Task type is now imported from unified.ts
-// export type TaskStatus is now imported from unified.ts
+// ============================================
+// 4. レガシー互換型（段階的移行用）
+// ============================================
 
+/**
+ * @deprecated 旧CreateTaskData - TaskInsertを使用してください
+ */
 export interface CreateTaskData {
   title: string
   plannedStart?: Date
@@ -62,3 +112,30 @@ export interface CreateTaskData {
   memo?: string
   status?: string
 }
+
+/**
+ * @deprecated 旧SmartFilter - 将来削除予定
+ */
+export interface SmartFilter {
+  id: string
+  name: string
+  criteria: Record<string, unknown>
+}
+
+// ============================================
+// 5. 他モジュールからの再エクスポート
+// ============================================
+
+// 共通型
+export * from './common'
+export * from './sidebar'
+export * from './chronotype'
+export * from './trash'
+export * from './tags'
+export * from './smart-folders'
+
+// 統一型（unified.tsから移行済みのためコメントアウト）
+// export * from './unified'
+
+// タスク型（task.tsから移行済みのためコメントアウト予定）
+// export * from './task'
