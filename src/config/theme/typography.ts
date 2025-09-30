@@ -541,6 +541,32 @@ export function getDefaultTag(variant: TypographyVariant): keyof JSX.IntrinsicEl
  */
 
 // ============================================
+// テキスト配置
+// ============================================
+
+export const align = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+  justify: 'text-justify',
+} as const
+
+// ============================================
+// フォントウェイト
+// ============================================
+
+export const weight = {
+  thin: 'font-thin',
+  light: 'font-light',
+  normal: 'font-normal',
+  medium: 'font-medium',
+  semibold: 'font-semibold',
+  bold: 'font-bold',
+  extrabold: 'font-extrabold',
+  black: 'font-black',
+} as const
+
+// ============================================
 // 統合オブジェクト
 // ============================================
 
@@ -553,4 +579,6 @@ export const typography = {
   linkStates,
   linkPatterns,
   patterns,
+  align,
+  weight,
 } as const
