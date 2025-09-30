@@ -12,10 +12,8 @@
     "dev": "op run --env-file=.env.local -- next dev",
     "build": "op run --env-file=.env.local -- next build",
     "start": "op run --env-file=.env.local -- next start",
-
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
-
     "typecheck": "op run --env-file=.env.local -- tsc --noEmit",
     "bundle:analyze": "ANALYZE=true npm run build",
     "bundle:check": "node scripts/bundle-check.js",
@@ -302,6 +300,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/eslintrc": "^3.3.1",
     "@next/bundle-analyzer": "^15.5.3",
     "@playwright/test": "^1.48.0",
     "@tailwindcss/postcss": "^4.1.7",

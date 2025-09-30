@@ -1,78 +1,53 @@
-// BoxLog ESLint - ハイブリッドアプローチ設定
-// 予防（80%スニペット） + 検出（15%このファイル） + レビュー（5%AI）
+// BoxLog ESLint - 公式準拠設定
+// Next.js公式推奨設定を使用（学習コスト0、メンテ0）
+
+import { FlatCompat } from '@eslint/eslintrc'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+})
 
 export default [
+  // Ignore patterns
   {
     ignores: [
       '**/node_modules/**',
       '**/.next/**',
       '**/dist/**',
       '**/build/**',
-      '**/.backup/**',
       '**/coverage/**',
-      '**/config/eslint/**',
     ],
   },
+
+  // Next.js公式推奨設定（React, TypeScript, アクセシビリティ含む）
+  ...compat.config({
+    extends: ['next/core-web-vitals'],
+    rules: {
+      // TypeScriptルール無効化（inline disableを使用）
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  }),
+
+  // テスト用グローバル変数
   {
-    files: ['**/*.{js,jsx,ts,tsx}'],
+    files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
     languageOptions: {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      parser: await import('@typescript-eslint/parser'),
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-      },
       globals: {
-        React: 'readonly',
         vi: 'readonly',
         describe: 'readonly',
         it: 'readonly',
         expect: 'readonly',
         test: 'readonly',
-        // Node.js globals
-        process: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        global: 'readonly',
-        Buffer: 'readonly',
-        setInterval: 'readonly',
-        setTimeout: 'readonly',
-        clearInterval: 'readonly',
-        clearTimeout: 'readonly',
-        // Browser/Web API globals
-        window: 'readonly',
-        document: 'readonly',
-        console: 'readonly',
-        navigator: 'readonly',
-        fetch: 'readonly',
-        URL: 'readonly',
-        URLSearchParams: 'readonly',
-        FormData: 'readonly',
-        Headers: 'readonly',
-        Request: 'readonly',
-        Response: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
       },
     },
-    plugins: {
-      'react-hooks': await import('eslint-plugin-react-hooks'),
-    },
-    rules: {
-      // 🚨 致命的エラー防止（7ルール）
-      // React Hooks - 実行時エラー防止
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      // JavaScript基本 - バグ防止（TypeScriptが型チェックするためno-undefはwarnに）
-      'no-undef': 'warn', // TypeScriptプロジェクトではwarn推奨
-      'no-unreachable': 'error',
-      'no-dupe-keys': 'error',
-      'no-constant-condition': 'warn',
-      'no-empty': 'warn',
-    },
-    settings: {
-      react: { version: 'detect' },
-    },
   },
-];
+]

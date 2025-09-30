@@ -1,4 +1,7 @@
-// This file configures the initialization of Sentry for edge features (middleware, edge routes, and so on).
+/**
+ * Sentry統合設定 - サーバー・Edge共通
+ * Next.js 14+ 対応
+ */
 import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({

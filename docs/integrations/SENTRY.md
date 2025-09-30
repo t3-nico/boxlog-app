@@ -157,17 +157,14 @@ boxlog-app/
 ├── src/lib/sentry/              # Sentry実装
 │   ├── index.ts                 # エクスポート
 │   ├── integration.ts           # エラーパターン統合
-│   ├── performance.ts           # パフォーマンス監視
-│   └── config.ts                # 共通設定
-├── config/                      # Sentry設定
-│   ├── .sentryclirc             # Sentry CLI設定
-│   ├── sentry.server.config.ts  # サーバー側設定
-│   └── sentry.edge.config.ts    # Edge設定
+│   └── performance.ts           # パフォーマンス監視
 ├── scripts/sentry/              # ヘルパースクリプト
 │   ├── connection-test.js       # 接続テスト
 │   └── dsn-guide.js             # DSN設定ガイド
-├── instrumentation.ts           # Next.js instrumentation
-└── instrumentation-client.ts    # クライアント側instrumentation
+├── .sentryclirc                 # Sentry CLI設定（ルート必須）
+├── sentry.config.ts             # サーバー・Edge共通設定（ルート必須）
+├── instrumentation.ts           # Next.js instrumentation（ルート必須）
+└── instrumentation-client.ts    # クライアント側instrumentation（ルート必須）
 ```
 
 ### データフロー

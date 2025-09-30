@@ -87,7 +87,7 @@ if (typeof window !== 'undefined') {
   Sentry.setTag('page_load_time', Date.now().toString())
 
   // パフォーマンス監視の初期化
-  import('./src/lib/sentry-performance').then(({ initPerformanceMonitoring }) => {
+  import('./src/lib/sentry').then(({ initPerformanceMonitoring }) => {
     initPerformanceMonitoring()
   })
 }
