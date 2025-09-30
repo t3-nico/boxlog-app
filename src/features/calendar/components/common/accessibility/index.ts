@@ -10,14 +10,7 @@ export {
 
 export { useHighContrast } from '../../../hooks/useHighContrast'
 
-export { 
-  useFocusTrap, 
-  FocusTrap 
+export {
+  useFocusTrap,
+  FocusTrap
 } from '../../../hooks/useFocusTrap'
-
-// アクセシビリティテストユーティリティ
-export { 
-  runAccessibilityAudit,
-  validateWCAG,
-  AccessibilityTestRunner
-} from './AccessibilityTestUtils'

@@ -28,13 +28,8 @@ import {
   type CreateTaskInput,
   type UpdateTaskInput,
 } from '@/schemas/api/tasks'
-import { createTaskValidationSchema } from '@/lib/business-rules-zod'
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
 import { trackTaskCreated, trackTaskCompleted, trackError } from '@/lib/analytics/vercel-analytics'
-
-// ビジネスルール適用済みスキーマ
-const validatedCreateTaskSchema = createTaskValidationSchema(createTaskInputSchema)
-const validatedUpdateTaskSchema = createTaskValidationSchema(updateTaskInputSchema)
 
 /**
  * タスクルーター
@@ -44,7 +39,7 @@ export const tasksRouter = createTRPCRouter({
    * タスク作成
    */
   create: protectedProcedure
-    .input(validatedCreateTaskSchema)
+    .input(createTaskInputSchema)
     .output(taskOutputSchema)
     .mutation(async ({ input, ctx }) => {
       try {
@@ -103,7 +98,7 @@ export const tasksRouter = createTRPCRouter({
    * タスク更新
    */
   update: protectedProcedure
-    .input(validatedUpdateTaskSchema)
+    .input(updateTaskInputSchema)
     .output(taskOutputSchema)
     .mutation(async ({ input, ctx }) => {
       try {
