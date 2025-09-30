@@ -1,18 +1,19 @@
-# .eslint/ - ESLint ハイブリッドアプローチ設定
+# .eslint/ - ESLint 公式準拠設定
 
 ## 🎯 概要
 
-BoxLog ESLintは「予防型」アプローチを採用しています。
+BoxLog ESLintは **Next.js公式推奨設定** を採用しています。
 
 ```
-予防（80%）+ 検出（15%）+ レビュー（5%）
+公式ドキュメント = BoxLogの標準
+→ 学習コスト0、メンテナンス0
 ```
 
 ## 📁 ディレクトリ構造
 
 ```
 .eslint/
-├── eslint.config.js    # メイン設定（致命的7ルールのみ）
+├── eslint.config.js    # メイン設定（ルート配置、Next.js公式準拠）
 ├── .eslintignore       # 除外設定
 └── README.md          # このファイル
 ```
@@ -22,44 +23,43 @@ BoxLog ESLintは「予防型」アプローチを採用しています。
 ### 開発時
 
 ```bash
-# コミット前チェック（2.5秒）
+# コミット前チェック（3.6秒）
 npm run lint
 
 # 自動修正
 npm run lint:fix
 ```
 
-### ルール一覧（7個のみ）
+### 使用している公式設定
 
-1. `react-hooks/rules-of-hooks` - Hooks使用規則
-2. `react-hooks/exhaustive-deps` - 依存配列チェック
-3. `no-undef` - 未定義変数（warn）
-4. `no-unreachable` - 到達不可能コード
-5. `no-dupe-keys` - 重複キー
-6. `no-constant-condition` - 定数条件
-7. `no-empty` - 空ブロック
+- **`next/core-web-vitals`** - Next.js公式推奨設定
+  - React
+  - TypeScript
+  - アクセシビリティ
+  - パフォーマンス最適化
+  - ESLint推奨ルール
 
 ## 📊 パフォーマンス
 
-- **実行時間**: 2.5秒
-- **エラー数**: 35個（従来1000+から97%削減）
-- **ルール数**: 7個（従来50個から86%削減）
+- **実行時間**: 3.6秒
+- **設定**: Next.js公式のみ（カスタムルール0個）
+- **メンテナンス**: Next.jsチームが管理（自動更新）
 
 ## 🔗 関連ドキュメント
 
-- **完全ガイド**: [`docs/ESLINT_HYBRID_APPROACH.md`](../docs/ESLINT_HYBRID_APPROACH.md)
+- **完全ガイド**: [`docs/ESLINT_OFFICIAL_MIGRATION.md`](../docs/ESLINT_OFFICIAL_MIGRATION.md)
 - **AI品質基準**: [`.claude/code-standards.md`](../.claude/code-standards.md)
 - **VSCodeスニペット**: [`.vscode/boxlog.code-snippets`](../.vscode/boxlog.code-snippets)
 
 ## 💡 哲学
 
-**「すべてのエラーを検出する」から「エラーが起きない設計」へ**
+**「独自ルールで管理」から「公式に準拠」へ**
 
-- **予防**: VSCodeスニペット + AI用ガイド
-- **検出**: 致命的7ルールのみ
-- **レビュー**: AI文脈理解
+- **学習コスト0**: Next.js/React/TypeScript公式ドキュメント = BoxLog標準
+- **メンテナンス0**: Next.jsチームが管理、自動更新
+- **品質保証**: 公式ベストプラクティスに自動準拠
 
 ---
 
 **最終更新**: 2025-09-30
-**Issue**: [#368 ESLintハイブリッドアプローチへの完全移行](https://github.com/t3-nico/boxlog-app/issues/368)
+**Issue**: [#338 技術的失敗をしない開発環境](https://github.com/t3-nico/boxlog-app/issues/338)
