@@ -9,7 +9,6 @@ import React, { useCallback } from 'react'
 
 import { Loader2, RefreshCw } from 'lucide-react'
 
-import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 // === 型定義 ===
@@ -61,7 +60,7 @@ export const LoadingSpinner = ({
   return (
     <Loader2
       className={cn(
-        `animate-spin ${colors.text.muted}`,
+        'animate-spin text-neutral-600 dark:text-neutral-400',
         Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
         className
       )}
@@ -88,7 +87,7 @@ export const RefreshSpinner = ({
   return (
     <RefreshCw
       className={cn(
-        `animate-spin ${colors.semantic.info.text}`,
+        'animate-spin text-blue-600 dark:text-blue-400',
         Object.prototype.hasOwnProperty.call(sizeClasses, size) ? sizeClasses[size as keyof typeof sizeClasses] : '',
         className
       )}
@@ -111,14 +110,10 @@ export const LoadingOverlay = ({
     <div className={cn('relative', className)}>
       {children}
       {isLoading === true && (
-        <div
-          className={`absolute inset-0 ${colors.background.base}/80 z-50 flex items-center justify-center backdrop-blur-sm`}
-        >
-          <div className={`flex flex-col items-center ${spacing.stack.sm}`}>
+        <div className="absolute inset-0 bg-neutral-100/80 dark:bg-neutral-900/80 z-50 flex items-center justify-center backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-2">
             <LoadingSpinner size={spinnerSize} />
-            {message ? (
-              <p className={`${typography.body.small} ${colors.text.secondary} font-medium`}>{message}</p>
-            ) : null}
+            {message ? <p className="text-sm text-neutral-800 dark:text-neutral-200 font-medium">{message}</p> : null}
           </div>
         </div>
       )}
@@ -136,13 +131,13 @@ export const LoadingCard = ({
   return (
     <div
       className={cn(
-        `flex flex-col items-center justify-center ${spacing.padding.xl} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
+        'flex flex-col items-center justify-center p-8 bg-white dark:bg-neutral-800 rounded-md shadow-sm',
         className
       )}
     >
-      <LoadingSpinner size="lg" className={spacing.margin.md} />
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>{title}</h3>
-      <p className={`${colors.text.secondary} max-w-sm text-center`}>{message}</p>
+      <LoadingSpinner size="lg" className="mb-4" />
+      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">{title}</h3>
+      <p className="text-neutral-800 dark:text-neutral-200 max-w-sm text-center">{message}</p>
     </div>
   )
 }
@@ -196,9 +191,7 @@ export interface SkeletonProps {
 }
 
 export const Skeleton = ({ className = '' }: SkeletonProps) => {
-  return (
-    <div className={cn(`animate-pulse ${rounded.component.input.text} ${colors.background.elevated}`, className)} />
-  )
+  return <div className={cn('animate-pulse rounded-md bg-neutral-200 dark:bg-neutral-700', className)} />
 }
 
 // === スケルトンテキスト ===
@@ -210,7 +203,7 @@ export interface SkeletonTextProps {
 
 export const SkeletonText = ({ lines = 3, className = '' }: SkeletonTextProps) => {
   return (
-    <div className={cn(`${spacing.stack.sm}`, className)}>
+    <div className={cn('flex flex-col gap-2', className)}>
       {Array.from({ length: lines }, (_, i) => (
         <Skeleton
           key={i}
@@ -234,18 +227,13 @@ export interface SkeletonCardProps {
 
 export const SkeletonCard = ({ showAvatar = false, showImage = false, className = '' }: SkeletonCardProps) => {
   return (
-    <div
-      className={cn(
-        `${spacing.padding.md} ${colors.background.surface} ${rounded.component.card.base} ${elevation.sm}`,
-        className
-      )}
-    >
-      {showImage ? <Skeleton className={`h-40 w-full ${spacing.margin.md}`} /> : null}
+    <div className={cn('p-4 bg-white dark:bg-neutral-800 rounded-md shadow-sm', className)}>
+      {showImage ? <Skeleton className="h-40 w-full mb-4" /> : null}
 
-      <div className={`flex items-start ${spacing.stack.sm}`}>
+      <div className="flex items-start gap-2">
         {showAvatar ? <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" /> : null}
 
-        <div className={`flex-1 ${spacing.stack.sm}`}>
+        <div className="flex-1 flex flex-col gap-2">
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
           <div className="space-y-1">
@@ -287,7 +275,7 @@ export const DataLoading = ({
   }, [])
   if (isLoading) {
     return (
-      <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
+      <div className={cn('flex items-center justify-center p-8', className)}>
         {loadingComponent || <LoadingSpinner size="lg" />}
       </div>
     )
@@ -295,11 +283,11 @@ export const DataLoading = ({
 
   if (isError) {
     return (
-      <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
+      <div className={cn('flex items-center justify-center p-8', className)}>
         {errorComponent || (
           <div className="text-center">
-            <p className={`${colors.semantic.error.text} ${spacing.margin.sm}`}>データの読み込みに失敗しました</p>
-            <button type="button" onClick={handleReload} className={`${colors.semantic.info.text} hover:underline`}>
+            <p className="text-red-600 dark:text-red-400 mb-2">データの読み込みに失敗しました</p>
+            <button type="button" onClick={handleReload} className="text-blue-600 dark:text-blue-400 hover:underline">
               再試行
             </button>
           </div>
@@ -310,8 +298,8 @@ export const DataLoading = ({
 
   if (isEmpty) {
     return (
-      <div className={cn(`flex items-center justify-center ${spacing.padding.xl}`, className)}>
-        {emptyComponent || <p className={colors.text.muted}>データがありません</p>}
+      <div className={cn('flex items-center justify-center p-8', className)}>
+        {emptyComponent || <p className="text-neutral-600 dark:text-neutral-400">データがありません</p>}
       </div>
     )
   }
@@ -331,9 +319,9 @@ export const PresetLoadings = {
 
   // テーブルローディング
   Table: ({ rows = 5 }: { rows?: number }) => (
-    <div className={spacing.stack.sm}>
+    <div className="flex flex-col gap-2">
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className={`flex items-center ${spacing.stack.md} ${spacing.padding.sm}`}>
+        <div key={i} className="flex items-center gap-4 p-2">
           <Skeleton className="h-4 w-4" />
           <Skeleton className="h-4 flex-1" />
           <Skeleton className="h-4 w-20" />
@@ -345,7 +333,7 @@ export const PresetLoadings = {
 
   // リストローディング
   List: ({ items = 3 }: { items?: number }) => (
-    <div className={spacing.stack.md}>
+    <div className="flex flex-col gap-4">
       {Array.from({ length: items }, (_, i) => (
         <SkeletonCard key={i} showAvatar />
       ))}
@@ -354,16 +342,16 @@ export const PresetLoadings = {
 
   // フォームローディング
   Form: () => (
-    <div className={spacing.stack.lg}>
-      <div className={spacing.stack.sm}>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-10 w-full" />
       </div>
-      <div className={spacing.stack.sm}>
+      <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-10 w-full" />
       </div>
-      <div className={spacing.stack.sm}>
+      <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-28" />
         <Skeleton className="h-20 w-full" />
       </div>

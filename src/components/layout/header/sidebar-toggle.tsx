@@ -5,14 +5,10 @@ import { useCallback } from 'react'
 import { Menu, PanelLeftOpen } from 'lucide-react'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
-import { animations, componentRadius, icon } from '@/config/theme'
-import { secondary } from '@/config/theme/colors'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from '../sidebar/stores/navigation.store'
-
-const { sm } = icon.size
 
 export const SidebarToggle = () => {
   const { toggleSidebar } = useNavigationStore()
@@ -31,13 +27,13 @@ export const SidebarToggle = () => {
             onClick={handleToggleSidebar}
             className={cn(
               'flex h-8 w-8 flex-shrink-0 items-center justify-center',
-              componentRadius.button.sm,
-              secondary.hover,
-              animations.transition.fast
+              'rounded-sm',
+              'hover:bg-neutral-200 dark:hover:bg-neutral-700',
+              'transition-all duration-200'
             )}
           >
             {/* モバイル：ハンバーガーメニュー、デスクトップ：パネルアイコン */}
-            {isMobile ? <Menu className={sm} /> : <PanelLeftOpen className={sm} />}
+            {isMobile ? <Menu className="h-5 w-5" /> : <PanelLeftOpen className="h-5 w-5" />}
           </button>
         </TooltipTrigger>
         <TooltipContent side="right">

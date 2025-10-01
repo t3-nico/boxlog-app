@@ -17,8 +17,8 @@ import {
   getUserFriendlyMessage,
   isAutoRecoverable,
 } from '@/config/error-patterns'
-import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import { ERROR_CODES, ErrorCode, getErrorCategory, getErrorSeverity } from '@/constants/errorCodes'
+import { cn } from '@/lib/utils'
 
 // === 型定義 ===
 
@@ -304,20 +304,23 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
       return (
         <div
-          className={`flex min-h-screen items-center justify-center ${spacing.padding.md} ${this.props.className || ''}`}
+          className={cn(
+            'flex min-h-screen items-center justify-center p-4',
+            this.props.className
+          )}
         >
-          <div
-            className={`w-full max-w-2xl ${colors.background.surface} ${rounded.component.card.base} ${elevation.lg} ${spacing.padding.lg}`}
-          >
+          <div className="w-full max-w-2xl bg-white dark:bg-neutral-800 rounded-md shadow-lg p-6">
             {/* エラーヘッダー */}
-            <div className={`flex items-center ${spacing.margin.md}`}>
+            <div className="flex items-center mb-4">
               <div className="flex items-center space-x-3">
-                <div className={`p-3 ${colors.semantic.error.bg} ${rounded.component.button.md}`}>
-                  <AlertTriangle className={`h-8 w-8 ${colors.semantic.error.text}`} />
+                <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-md">
+                  <AlertTriangle className="h-8 w-8 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <h1 className={`${typography.heading.h2} ${colors.text.primary}`}>システムエラーが発生しました</h1>
-                  <p className={`${typography.body.small} ${colors.text.secondary}`}>
+                  <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+                    システムエラーが発生しました
+                  </h1>
+                  <p className="text-sm text-neutral-800 dark:text-neutral-200">
                     エラーID: {this.state.errorId} • 重要度: {analysis.severity}
                   </p>
                 </div>
@@ -326,13 +329,11 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
             {/* 自動復旧状況 */}
             {this.state.isRetrying ? (
-              <div
-                className={`${spacing.margin.md} ${spacing.padding.md} ${colors.primary.bg} ${rounded.component.input.text} flex items-center space-x-3`}
-              >
-                <RefreshCw className={`h-5 w-5 ${colors.primary.DEFAULT} animate-spin`} />
+              <div className="mb-4 p-4 bg-blue-100 dark:bg-blue-900/30 rounded-md flex items-center space-x-3">
+                <RefreshCw className="h-5 w-5 text-blue-600 dark:text-blue-400 animate-spin" />
                 <div>
-                  <p className={`${typography.body.semibold} ${colors.primary.DEFAULT}`}>自動復旧中...</p>
-                  <p className={`${typography.body.small} ${colors.primary.text}`}>
+                  <p className="font-semibold text-blue-600 dark:text-blue-400">自動復旧中...</p>
+                  <p className="text-sm text-blue-800 dark:text-blue-300">
                     しばらくお待ちください（試行回数: {this.state.retryCount + 1}/{maxRetries}）
                   </p>
                 </div>
@@ -340,28 +341,26 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             ) : null}
 
             {/* エラー分析・推奨アクション（error-patterns.ts統合版） */}
-            <div className={`${spacing.margin.lg}`}>
-              <h3 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>
-                発生した問題と対処法
-              </h3>
-              <div className={`${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}>
+            <div className="mb-6">
+              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">発生した問題と対処法</h3>
+              <div className="p-4 bg-neutral-200 dark:bg-neutral-700 rounded-md">
                 <div className="space-y-3">
                   {/* ユーザーフレンドリーメッセージ */}
                   <div className="flex items-start space-x-3">
                     <span className="text-2xl">{getErrorPattern(analysis.code)?.emoji || '⚠️'}</span>
                     <div>
-                      <p className={`${typography.body.large} ${colors.text.primary} font-semibold`}>
+                      <p className="text-base text-neutral-900 dark:text-neutral-100 font-semibold">
                         {getUserFriendlyMessage(analysis.code)}
                       </p>
-                      <p className={`${typography.body.base} ${colors.text.secondary}`}>
+                      <p className="text-sm text-neutral-800 dark:text-neutral-200">
                         {getErrorPattern(analysis.code)?.description}
                       </p>
                     </div>
                   </div>
 
                   {/* 技術詳細（簡略版） */}
-                  <div className={`${spacing.padding.sm} ${colors.background.base} ${rounded.component.input.text}`}>
-                    <p className={`${typography.body.small} ${colors.text.secondary}`}>
+                  <div className="p-2 bg-neutral-100 dark:bg-neutral-900 rounded-md">
+                    <p className="text-sm text-neutral-800 dark:text-neutral-200">
                       <span className="font-semibold">分類:</span> {analysis.category} 系統 •
                       <span className="font-semibold">重要度:</span> {analysis.severity} •
                       <span className="font-semibold">自動復旧:</span>{' '}
@@ -372,11 +371,11 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
                 {/* 推奨アクション（error-patterns.tsから取得） */}
                 <div className="mt-4">
-                  <p className={`${typography.body.semibold} ${colors.text.primary} mb-2`}>推奨アクション:</p>
+                  <p className="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">推奨アクション:</p>
                   <ul className="space-y-2">
                     {analysis.suggestedActions.map((action, index) => (
-                      <li key={action} className={`${typography.body.small} ${colors.text.secondary} flex items-start`}>
-                        <span className={`${colors.primary.DEFAULT} mr-2 font-semibold`}>{index + 1}.</span>
+                      <li key={action} className="text-sm text-neutral-800 dark:text-neutral-200 flex items-start">
+                        <span className="text-blue-600 dark:text-blue-400 mr-2 font-semibold">{index + 1}.</span>
                         {action}
                       </li>
                     ))}
@@ -386,10 +385,10 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             </div>
 
             {/* 自動復旧設定 */}
-            <div className={`${spacing.margin.lg} flex items-center justify-between`}>
+            <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <Shield className={`h-5 w-5 ${colors.primary.DEFAULT}`} />
-                <span className={`${typography.body.base} ${colors.text.primary}`}>自動復旧システム</span>
+                <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <span className="text-sm text-neutral-900 dark:text-neutral-100">自動復旧システム</span>
               </div>
               <Button
                 onClick={this.toggleAutoRetry}
@@ -401,7 +400,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             </div>
 
             {/* アクションボタン */}
-            <div className={`${spacing.margin.lg} flex flex-col gap-3 sm:flex-row`}>
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row">
               {canRetry && !this.state.isRetrying ? (
                 <Button onClick={this.handleManualRetry} className="flex items-center justify-center" variant="default">
                   <Zap className="mr-2 h-4 w-4" />
@@ -422,15 +421,11 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
             {/* 技術詳細（開発環境のみ） */}
             {process.env.NODE_ENV === 'development' && (
-              <details className={`${spacing.margin.lg}`}>
-                <summary
-                  className={`cursor-pointer ${typography.body.semibold} ${colors.text.secondary} hover:text-primary`}
-                >
+              <details className="mb-6">
+                <summary className="cursor-pointer font-semibold text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400">
                   技術詳細（開発者向け）
                 </summary>
-                <div
-                  className={`mt-3 ${spacing.padding.md} ${colors.background.elevated} ${rounded.component.input.text}`}
-                >
+                <div className="mt-3 p-4 bg-neutral-200 dark:bg-neutral-700 rounded-md">
                   <div className="space-y-2 text-sm">
                     <p>
                       <strong>エラー:</strong> {this.state.error.message}
@@ -446,10 +441,8 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                     </p>
                     {this.state.error.stack ? (
                       <details className="mt-2">
-                        <summary className="text-primary cursor-pointer">スタックトレース</summary>
-                        <pre
-                          className={`mt-2 text-xs ${colors.background.elevated} max-h-40 overflow-auto rounded p-2`}
-                        >
+                        <summary className="text-blue-600 dark:text-blue-400 cursor-pointer">スタックトレース</summary>
+                        <pre className="mt-2 text-xs bg-neutral-200 dark:bg-neutral-700 max-h-40 overflow-auto rounded p-2">
                           {this.state.error.stack}
                         </pre>
                       </details>

@@ -6,12 +6,7 @@ import { PanelRightOpen } from 'lucide-react'
 
 import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
-import { animations, componentRadius, icon, layout } from '@/config/theme'
-import { ghost, secondary } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
-
-const { compact } = layout.heights.header
-const { sm } = icon.size
 
 export const InspectorToggle = () => {
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
@@ -28,12 +23,7 @@ export const InspectorToggle = () => {
 
   return (
     <TooltipProvider>
-      <div
-        className={cn(
-          'flex items-center justify-end',
-          compact // 40px height
-        )}
-      >
+      <div className="flex items-center justify-end h-10">
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button
@@ -41,15 +31,15 @@ export const InspectorToggle = () => {
               onClick={handleToggleInspector}
               className={cn(
                 'flex h-8 w-8 items-center justify-center',
-                componentRadius.button.sm,
-                animations.transition.fast,
-                ghost.text,
-                secondary.hover,
-                ghost.active,
+                'rounded-sm',
+                'transition-all duration-200',
+                'text-neutral-700 dark:text-neutral-300',
+                'hover:bg-neutral-200 dark:hover:bg-neutral-700',
+                'active:text-neutral-900 dark:active:text-neutral-100',
                 'flex-shrink-0'
               )}
             >
-              <PanelRightOpen className={sm} />
+              <PanelRightOpen className="h-5 w-5" />
             </button>
           </TooltipTrigger>
           <TooltipContent>

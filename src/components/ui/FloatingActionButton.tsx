@@ -4,11 +4,7 @@ import React from 'react'
 
 import { Plus } from 'lucide-react'
 
-import { componentRadius, icon } from '@/config/theme'
-import { primary, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
-
-const { lg: _lg } = icon.size
 
 interface FloatingActionButtonProps {
   onClick?: () => void
@@ -59,16 +55,22 @@ export const FloatingActionButton = ({
         'md:bottom-6 md:right-6',
         'flex items-center justify-center',
         Object.prototype.hasOwnProperty.call(sizeMap, size) ? sizeMap[size as keyof typeof sizeMap] : sizeMap.md,
-        componentRadius.button.lg,
+        'rounded-2xl',
         'shadow-lg',
 
         // バリアント
-        variant === 'primary' && [primary.DEFAULT, primary.hover, primary.text, 'focus:outline-none'],
+        variant === 'primary' && [
+          'bg-blue-600 dark:bg-blue-500',
+          'hover:bg-blue-700 dark:hover:bg-blue-600',
+          'text-white',
+          'focus:outline-none',
+        ],
         variant === 'secondary' && [
-          colors.background.surface,
-          text.primary,
-          'border-border border',
-          'hover:bg-accent focus:ring-accent/20 focus:ring-4',
+          'bg-white dark:bg-neutral-800',
+          'text-neutral-900 dark:text-neutral-100',
+          'border-neutral-200 dark:border-neutral-700 border',
+          'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+          'focus:ring-blue-500/20 focus:ring-4',
         ],
 
         // 無効状態

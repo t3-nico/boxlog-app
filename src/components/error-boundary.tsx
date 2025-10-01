@@ -7,8 +7,8 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 
-import { colors, spacing, typography } from '@/config/theme'
 import { handleReactError, SentryErrorHandler } from '@/lib/sentry'
+import { cn } from '@/lib/utils'
 
 interface Props {
   children: ReactNode
@@ -58,13 +58,13 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // デフォルトエラーUI
       return (
-        <div
-          className={`${colors.background.error} ${spacing.component.padding.lg} ${colors.border.error} rounded-lg border`}
-        >
+        <div className="bg-red-50 dark:bg-red-900/20 p-6 border-red-300 dark:border-red-700 rounded-lg border">
           <div className="text-center">
-            <div className={`${colors.text.error} mb-4 text-6xl`}>⚠️</div>
-            <h2 className={`${typography.heading.h3} ${colors.text.error} mb-2`}>予期しないエラーが発生しました</h2>
-            <p className={`${colors.text.secondary} mb-4`}>
+            <div className="text-red-600 dark:text-red-400 mb-4 text-6xl">⚠️</div>
+            <h2 className="text-3xl font-bold tracking-tight text-red-600 dark:text-red-400 mb-2">
+              予期しないエラーが発生しました
+            </h2>
+            <p className="text-neutral-800 dark:text-neutral-200 mb-4">
               申し訳ございません。アプリケーションでエラーが発生しました。
               <br />
               自動的にエラー報告を送信いたします。
@@ -72,13 +72,13 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="flex justify-center gap-2">
               <button
                 onClick={() => this.setState({ hasError: false })}
-                className={`${colors.primary.DEFAULT} rounded px-4 py-2 text-white transition-opacity hover:opacity-80`}
+                className="bg-blue-600 dark:bg-blue-500 rounded px-4 py-2 text-white transition-opacity hover:opacity-80"
               >
                 再試行
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className={`${colors.secondary.DEFAULT} rounded px-4 py-2 text-white transition-opacity hover:opacity-80`}
+                className="bg-neutral-600 dark:bg-neutral-500 rounded px-4 py-2 text-white transition-opacity hover:opacity-80"
               >
                 ページをリロード
               </button>
@@ -108,10 +108,14 @@ export function DetailedErrorBoundary({ children, componentName }: { children: R
       }}
       fallback={
         process.env.NODE_ENV === 'development' ? (
-          <div className={`${colors.background.warning} ${spacing.component.padding.lg} rounded-lg border`}>
-            <h3 className={`${typography.heading.h4} ${colors.text.warning} mb-2`}>開発環境 - コンポーネントエラー</h3>
-            <p className={`${colors.text.secondary} mb-2`}>コンポーネント: {componentName || '不明'}</p>
-            <p className={`${colors.text.secondary} text-sm`}>詳細はブラウザのコンソールを確認してください。</p>
+          <div className="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-lg border border-yellow-300 dark:border-yellow-700">
+            <h3 className="text-2xl font-bold tracking-tight text-yellow-700 dark:text-yellow-400 mb-2">
+              開発環境 - コンポーネントエラー
+            </h3>
+            <p className="text-neutral-800 dark:text-neutral-200 mb-2">コンポーネント: {componentName || '不明'}</p>
+            <p className="text-neutral-800 dark:text-neutral-200 text-sm">
+              詳細はブラウザのコンソールを確認してください。
+            </p>
           </div>
         ) : undefined
       }
@@ -146,11 +150,11 @@ export function FeatureErrorBoundary({
       }}
       fallback={
         fallback || (
-          <div className={`${colors.background.muted} ${spacing.component.padding.md} rounded border`}>
-            <p className={`${colors.text.secondary} text-center`}>{featureName}機能でエラーが発生しました</p>
+          <div className="bg-neutral-200 dark:bg-neutral-700 p-4 rounded border border-neutral-300 dark:border-neutral-600">
+            <p className="text-neutral-800 dark:text-neutral-200 text-center">{featureName}機能でエラーが発生しました</p>
             <button
               onClick={() => window.location.reload()}
-              className={`${colors.primary.DEFAULT} mx-auto mt-2 block rounded px-3 py-1 text-sm text-white`}
+              className="bg-blue-600 dark:bg-blue-500 mx-auto mt-2 block rounded px-3 py-1 text-sm text-white hover:opacity-80 transition-opacity"
             >
               リロード
             </button>

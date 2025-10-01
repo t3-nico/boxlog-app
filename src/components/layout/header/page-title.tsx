@@ -4,7 +4,6 @@ import React from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { typography, colors } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 function getPageTitle(pathname: string): string {
@@ -51,12 +50,14 @@ export const PageTitle = () => {
   const title = getPageTitle(pathname)
   
   return (
-    <h1 className={cn(
-      typography.heading.h5, // コンパクトヘッダー用サイズ
-      'md:text-base text-sm',
-      colors.text.primary,
-      'font-semibold truncate text-center md:text-left'
-    )}>
+    <h1
+      className={cn(
+        'text-base font-semibold tracking-tight',
+        'md:text-base text-sm',
+        'text-neutral-900 dark:text-neutral-100',
+        'truncate text-center md:text-left'
+      )}
+    >
       {title}
     </h1>
   )

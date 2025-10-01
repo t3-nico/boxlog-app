@@ -2,10 +2,7 @@
 
 import React from 'react'
 
-import { colors, layout, spacing } from '@/config/theme'
 import { cn } from '@/lib/utils'
-
-const { xs: headerHeight } = layout.heights.header
 
 interface HeaderProps {
   className?: string
@@ -16,13 +13,13 @@ export const Header = ({ className, children }: HeaderProps) => {
   return (
     <div
       className={cn(
-        headerHeight, // 32px height
+        'h-8', // 32px height
         'w-full',
-        layout.flexbox.start,
-        spacing.padding.responsive.x,
+        'flex items-center justify-start',
+        'px-4',
         'md:mt-2',
-        colors.background.base,
-        colors.border.default,
+        'bg-neutral-100 dark:bg-neutral-900',
+        'border-neutral-200 dark:border-neutral-800',
         'shrink-0', // フレックス時に縮まないようにする
         className
       )}

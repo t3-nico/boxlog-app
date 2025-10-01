@@ -12,12 +12,9 @@ import {
   TableProperties as TableIcon,
 } from 'lucide-react'
 
-import { animations, colors, icons, spacing, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from '../sidebar/stores/navigation.store'
-
-const { sm } = icons.size
 
 interface BottomNavItem {
   id: string
@@ -86,9 +83,9 @@ export const MobileBottomNavigation = () => {
       className={cn(
         'fixed bottom-0 left-0 right-0 z-50',
         'flex items-center',
-        spacing.height.navigation, // 64px height
-        colors.background.surface,
-        colors.border.default,
+        'h-16', // 64px height
+        'bg-white dark:bg-neutral-800',
+        'border-neutral-200 dark:border-neutral-800',
         'border-t'
       )}
     >
@@ -105,17 +102,23 @@ export const MobileBottomNavigation = () => {
             className={cn(
               'flex flex-1 flex-col items-center justify-center',
               'h-full px-1 py-2',
-              animations.transition.fast,
-              colors.hover.subtle
+              'transition-all duration-200',
+              'hover:bg-neutral-100 dark:hover:bg-neutral-700'
             )}
           >
-            <Icon className={cn(sm, 'mb-1', isActive ? colors.text.primary : colors.text.muted)} />
+            <Icon
+              className={cn(
+                'h-5 w-5 mb-1',
+                isActive ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-600 dark:text-neutral-400'
+              )}
+            />
             <span
               className={cn(
-                typography.body.small,
-                typography.body.xs,
+                'text-xs',
                 'leading-tight',
-                isActive ? `${colors.text.primary} font-medium` : colors.text.muted
+                isActive
+                  ? 'text-neutral-900 dark:text-neutral-100 font-medium'
+                  : 'text-neutral-600 dark:text-neutral-400'
               )}
             >
               {item.label}
@@ -131,12 +134,12 @@ export const MobileBottomNavigation = () => {
         className={cn(
           'flex flex-1 flex-col items-center justify-center',
           'h-full px-1 py-2',
-          animations.transition.fast,
-          colors.hover.subtle
+          'transition-all duration-200',
+          'hover:bg-neutral-100 dark:hover:bg-neutral-700'
         )}
       >
-        <MenuIcon className={cn(sm, 'mb-1', colors.text.muted)} />
-        <span className={cn(typography.body.xs, 'leading-tight', colors.text.muted)}>Menu</span>
+        <MenuIcon className="h-5 w-5 mb-1 text-neutral-600 dark:text-neutral-400" />
+        <span className="text-xs leading-tight text-neutral-600 dark:text-neutral-400">Menu</span>
       </button>
     </div>
   )

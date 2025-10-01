@@ -10,7 +10,7 @@ import React, { ReactNode } from 'react'
 import { AlertTriangle, Database, Globe, Home, Loader2, RefreshCw, Settings, Shield, Wifi, WifiOff } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { colors, rounded, spacing, typography } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 // === 基本フォールバックProps ===
 
@@ -29,18 +29,18 @@ export const NetworkErrorFallback = ({ error: _error, resetErrorBoundary, classN
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
-      <div className={`p-4 ${colors.semantic.error.bg} ${rounded.component.card.base} ${spacing.margin.md}`}>
-        <WifiOff className={`h-12 w-12 ${colors.semantic.error.text}`} />
+    <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
+      <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-md mb-4">
+        <WifiOff className="h-12 w-12 text-red-600 dark:text-red-400" />
       </div>
 
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>
+      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">
         インターネット接続エラー
       </h3>
 
-      <div className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md space-y-2`}>
-        <p className={typography.body.base}>インターネット接続に問題があります。</p>
-        <div className={`${typography.body.small} ${colors.background.elevated} ${spacing.padding.sm} rounded`}>
+      <div className="text-neutral-800 dark:text-neutral-200 mb-6 max-w-md space-y-2">
+        <p className="text-sm">インターネット接続に問題があります。</p>
+        <div className="text-sm bg-neutral-200 dark:bg-neutral-700 p-2 rounded">
           <p>✅ Wi-Fi または モバイルデータ接続を確認</p>
           <p>✅ しばらく待ってから再試行</p>
           <p>✅ 他のサイトが開けるか確認</p>
@@ -70,16 +70,18 @@ export const DatabaseErrorFallback = ({ error: _error, resetErrorBoundary, class
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
-      <div className={`p-4 ${colors.semantic.warning.bg} ${rounded.component.card.base} ${spacing.margin.md}`}>
-        <Database className={`h-12 w-12 ${colors.semantic.warning.text}`} />
+    <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
+      <div className="p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-md mb-4">
+        <Database className="h-12 w-12 text-yellow-600 dark:text-yellow-400" />
       </div>
 
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>データの読み込みエラー</h3>
+      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">
+        データの読み込みエラー
+      </h3>
 
-      <div className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md space-y-2`}>
-        <p className={typography.body.base}>データの取得に失敗しました。</p>
-        <div className={`${typography.body.small} ${colors.background.elevated} ${spacing.padding.sm} rounded`}>
+      <div className="text-neutral-800 dark:text-neutral-200 mb-6 max-w-md space-y-2">
+        <p className="text-sm">データの取得に失敗しました。</p>
+        <div className="text-sm bg-neutral-200 dark:bg-neutral-700 p-2 rounded">
           <p>🔧 システム側で自動修復中</p>
           <p>⏰ 通常30秒以内に復旧します</p>
           <p>🔄 自動で再試行しています</p>
@@ -109,16 +111,18 @@ export const APIErrorFallback = ({ error: _error, resetErrorBoundary, className 
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
-      <div className={`p-4 ${colors.semantic.warning.bg} ${rounded.component.card.base} ${spacing.margin.md}`}>
-        <Globe className={`h-12 w-12 ${colors.semantic.warning.text}`} />
+    <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
+      <div className="p-4 bg-yellow-100 dark:bg-yellow-900/30 rounded-md mb-4">
+        <Globe className="h-12 w-12 text-yellow-600 dark:text-yellow-400" />
       </div>
 
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>サーバーとの通信エラー</h3>
+      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">
+        サーバーとの通信エラー
+      </h3>
 
-      <div className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md space-y-2`}>
-        <p className={typography.body.base}>サーバーとの通信に問題が発生しています。</p>
-        <div className={`${typography.body.small} ${colors.background.elevated} ${spacing.padding.sm} rounded`}>
+      <div className="text-neutral-800 dark:text-neutral-200 mb-6 max-w-md space-y-2">
+        <p className="text-sm">サーバーとの通信に問題が発生しています。</p>
+        <div className="text-sm bg-neutral-200 dark:bg-neutral-700 p-2 rounded">
           <p>⚡ 自動的に復旧を試行中</p>
           <p>📡 サーバー状況を確認中</p>
           <p>🔄 数秒後に自動再試行</p>
@@ -152,16 +156,16 @@ export const AuthErrorFallback = ({
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
-      <div className={`p-4 ${colors.semantic.error.bg} ${rounded.component.card.base} ${spacing.margin.md}`}>
-        <Shield className={`h-12 w-12 ${colors.semantic.error.text}`} />
+    <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
+      <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-md mb-4">
+        <Shield className="h-12 w-12 text-red-600 dark:text-red-400" />
       </div>
 
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>認証が必要です</h3>
+      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">認証が必要です</h3>
 
-      <div className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md space-y-2`}>
-        <p className={typography.body.base}>この機能を使用するにはログインが必要です。</p>
-        <div className={`${typography.body.small} ${colors.background.elevated} ${spacing.padding.sm} rounded`}>
+      <div className="text-neutral-800 dark:text-neutral-200 mb-6 max-w-md space-y-2">
+        <p className="text-sm">この機能を使用するにはログインが必要です。</p>
+        <div className="text-sm bg-neutral-200 dark:bg-neutral-700 p-2 rounded">
           <p>🔐 安全なログインページに移動</p>
           <p>✨ ログイン後、元の画面に戻ります</p>
           <p>🛡️ セキュリティ保護のための処理</p>
@@ -191,16 +195,14 @@ export const UIErrorFallback = ({ error: _error, resetErrorBoundary, className =
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.lg} text-center ${className}`}>
-      <div className={`p-3 ${colors.semantic.warning.bg} ${rounded.component.card.base} ${spacing.margin.sm}`}>
-        <Settings className={`h-8 w-8 ${colors.semantic.warning.text}`} />
+    <div className={cn('flex flex-col items-center justify-center p-6 text-center', className)}>
+      <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-md mb-2">
+        <Settings className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
       </div>
 
-      <h4 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.xs}`}>
-        画面要素の読み込みエラー
-      </h4>
+      <h4 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-1">画面要素の読み込みエラー</h4>
 
-      <p className={`${typography.body.small} ${colors.text.secondary} ${spacing.margin.sm} max-w-sm`}>
+      <p className="text-sm text-neutral-800 dark:text-neutral-200 mb-2 max-w-sm">
         この部分の表示に問題があります。自動で修復を試行します。
       </p>
 
@@ -216,9 +218,9 @@ export const UIErrorFallback = ({ error: _error, resetErrorBoundary, className =
 
 export const LoadingFallback = ({ className = '' }: { className?: string }) => {
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.lg} text-center ${className}`}>
-      <Loader2 className={`h-8 w-8 ${colors.primary.DEFAULT} animate-spin ${spacing.margin.sm}`} />
-      <p className={`${typography.body.base} ${colors.text.secondary}`}>読み込み中...</p>
+    <div className={cn('flex flex-col items-center justify-center p-6 text-center', className)}>
+      <Loader2 className="h-8 w-8 text-blue-600 dark:text-blue-400 animate-spin mb-2" />
+      <p className="text-sm text-neutral-800 dark:text-neutral-200">読み込み中...</p>
     </div>
   )
 }
@@ -232,16 +234,16 @@ export const GenericErrorFallback = ({ error, resetErrorBoundary, className = ''
   }
 
   return (
-    <div className={`flex flex-col items-center justify-center ${spacing.padding.xl} text-center ${className}`}>
-      <div className={`p-4 ${colors.semantic.error.bg} ${rounded.component.card.base} ${spacing.margin.md}`}>
-        <AlertTriangle className={`h-12 w-12 ${colors.semantic.error.text}`} />
+    <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
+      <div className="p-4 bg-red-100 dark:bg-red-900/30 rounded-md mb-4">
+        <AlertTriangle className="h-12 w-12 text-red-600 dark:text-red-400" />
       </div>
 
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.sm}`}>予期しないエラー</h3>
+      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">予期しないエラー</h3>
 
-      <div className={`${colors.text.secondary} ${spacing.margin.lg} max-w-md space-y-2`}>
-        <p className={typography.body.base}>申し訳ございません。予期しない問題が発生しました。</p>
-        <div className={`${typography.body.small} ${colors.background.elevated} ${spacing.padding.sm} rounded`}>
+      <div className="text-neutral-800 dark:text-neutral-200 mb-6 max-w-md space-y-2">
+        <p className="text-sm">申し訳ございません。予期しない問題が発生しました。</p>
+        <div className="text-sm bg-neutral-200 dark:bg-neutral-700 p-2 rounded">
           <p>🔧 自動修復を試行中</p>
           <p>📝 エラー情報を記録済み</p>
           <p>⚡ 通常は数秒で復旧します</p>
@@ -260,9 +262,9 @@ export const GenericErrorFallback = ({ error, resetErrorBoundary, className = ''
       </div>
 
       {process.env.NODE_ENV === 'development' && error ? (
-        <details className={`mt-4 ${typography.body.small}`}>
-          <summary className={`cursor-pointer ${colors.text.secondary}`}>開発者向け詳細</summary>
-          <pre className={`mt-2 text-left ${colors.background.elevated} max-h-32 overflow-auto rounded p-2 text-xs`}>
+        <details className="mt-4 text-sm">
+          <summary className="cursor-pointer text-neutral-800 dark:text-neutral-200">開発者向け詳細</summary>
+          <pre className="mt-2 text-left bg-neutral-200 dark:bg-neutral-700 max-h-32 overflow-auto rounded p-2 text-xs">
             {error.message}
             {'\n'}
             {error.stack}

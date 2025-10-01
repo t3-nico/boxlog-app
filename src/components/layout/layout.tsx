@@ -8,7 +8,6 @@ import { Search } from 'lucide-react'
 
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
-import { animations, background, colors, ghost, icons, rounded } from '@/config/theme'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { ChatProvider } from '@/contexts/chat-context'
 import { ThemeProvider } from '@/contexts/theme-context'
@@ -88,7 +87,6 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
     })
   }, [openCreateInspector])
 
-  const { sm } = icons.size
   const _effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
   const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams)
 
@@ -138,14 +136,14 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
                   onClick={handleSearchButtonClick}
                   className={cn(
                     'flex h-8 w-8 items-center justify-center',
-                    background.subtle,
-                    ghost.hover,
-                    rounded.component.button.sm,
-                    animations.transition.fast,
+                    'bg-neutral-200/50 dark:bg-neutral-800/50',
+                    'hover:bg-neutral-300 dark:hover:bg-neutral-700',
+                    'rounded-sm',
+                    'transition-all duration-200',
                     'flex-shrink-0'
                   )}
                 >
-                  <Search className={sm} />
+                  <Search className="h-5 w-5" />
                 </button>
                 <InspectorToggle />
               </div>
@@ -158,7 +156,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
             {!isSecondaryNavCollapsed && !isCalendarPage ? <SecondaryNavigation /> : null}
 
             {/* Main Content Area */}
-            <div className={`relative z-10 flex flex-1 ${colors.background.base}`}>
+            <div className="relative z-10 flex flex-1 bg-neutral-100 dark:bg-neutral-900">
               {/* Main Content with AI Panel */}
               <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
                 {children}

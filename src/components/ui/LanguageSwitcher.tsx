@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import { Check, ChevronDown, Globe } from 'lucide-react'
 
-import { colors, componentRadius, typography } from '@/config/theme'
 import { getAccessibilityLabels } from '@/lib/accessibility'
 import { locales, setLocaleCookie } from '@/lib/i18n'
 import { useCurrentLocale } from '@/lib/i18n/hooks'
@@ -98,7 +97,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
           onKeyDown={(e) => e.key === 'Escape' && setIsOpen(false)}
           className={cn(
             'flex items-center gap-2 rounded-lg p-2 transition-colors',
-            colors.background.hover,
+            'hover:bg-neutral-200 dark:hover:bg-neutral-700',
             'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
           )}
           aria-label={a11yLabels.languageSwitch}
@@ -108,7 +107,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
           <Globe className="h-4 w-4" />
           {variant === 'full' && (
             <>
-              <span className={typography.body.sm}>{currentOption.nativeName}</span>
+              <span className="text-sm">{currentOption.nativeName}</span>
               <ChevronDown className="h-3 w-3" />
             </>
           )}
@@ -131,9 +130,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
               aria-label={a11yLabels.languageSwitch}
               className={cn(
                 'absolute right-0 top-full z-20 mt-2 min-w-48 overflow-hidden',
-                colors.background.surface,
-                'border-border rounded-lg border shadow-lg',
-                componentRadius.dropdown
+                'bg-white dark:bg-neutral-800',
+                'border-neutral-200 dark:border-neutral-700 rounded-lg border shadow-lg'
               )}
             >
               {languageOptions.map((option) => (
@@ -146,8 +144,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                   onKeyDown={(e) => handleKeyDown(e, option.code)}
                   className={cn(
                     'flex w-full items-center justify-between px-4 py-3 text-left transition-colors',
-                    'hover:bg-accent focus:bg-accent focus:outline-none',
-                    option.code === currentLocale && colors.primary.light
+                    'hover:bg-neutral-100 dark:hover:bg-neutral-700 focus:bg-neutral-100 dark:focus:bg-neutral-700 focus:outline-none',
+                    option.code === currentLocale && 'bg-blue-50 dark:bg-blue-900/30'
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -155,10 +153,8 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                       {option.flag}
                     </span>
                     <div>
-                      <div className={cn(typography.body.sm, 'font-medium')}>{option.nativeName}</div>
-                      {option.nativeName !== option.name && (
-                        <div className={cn(typography.body.xs, 'text-muted-foreground')}>{option.name}</div>
-                      )}
+                      <div className="text-sm font-medium">{option.nativeName}</div>
+                      {option.nativeName !== option.name && <div className="text-xs text-neutral-600 dark:text-neutral-400">{option.name}</div>}
                     </div>
                   </div>
                   {option.code === currentLocale && <Check className="text-primary h-4 w-4" aria-hidden="true" />}
