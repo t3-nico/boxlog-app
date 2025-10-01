@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import { isSameDay, isValid } from 'date-fns'
 
-import type { CalendarEvent } from '../../types/event.types'
+import type { CalendarEvent } from '../types/event.types'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 import { useEventLayoutCalculator } from './useEventLayoutCalculator'

@@ -12,7 +12,7 @@ import { AIMessage, AIMessageContent } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { useAuthContext } from '@/features/auth'
-import { useCurrentLocale, useTranslation } from '@/lib/i18n/hooks'
+import { useTranslation } from '@/lib/i18n/hooks'
 
 // Vercel AI SDK message type extension
 interface ExtendedMessage {
@@ -68,18 +68,21 @@ const RelatedFiles = ({ files }: { files: string[] }) => (
 )
 
 // ユーザーメッセージ内容コンポーネント
-const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
-  <div className="whitespace-pre-wrap text-sm leading-relaxed">
-    {message.content}
-    {message.status != null && (
-      <div className="mt-1 text-xs opacity-75">
-        {message.status === 'sending' && t('help.messageStatus.sending')}
-        {message.status === 'error' && t('help.messageStatus.error')}
-        {message.status === 'sent' && t('help.messageStatus.sent')}
-      </div>
-    )}
-  </div>
-)
+const UserMessageContent = ({ message }: { message: ExtendedMessage }) => {
+  const t = useTranslation()
+  return (
+    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+      {message.content}
+      {message.status != null && (
+        <div className="mt-1 text-xs opacity-75">
+          {message.status === 'sending' && t('help.messageStatus.sending')}
+          {message.status === 'error' && t('help.messageStatus.error')}
+          {message.status === 'sent' && t('help.messageStatus.sent')}
+        </div>
+      )}
+    </div>
+  )
+}
 
 // アシスタントメッセージ内容コンポーネント
 const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
@@ -101,11 +104,11 @@ const UserAvatar = ({
 }) => (
   <div className="flex-shrink-0">
     {avatarUrl ? (
-      <Avatar src={avatarUrl} className="size-8" initials={displayName.charAt(0).toUpperCase()} />
+      <Avatar className="size-8" initials={displayName.charAt(0).toUpperCase()} />
     ) : profileIcon ? (
       <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
     ) : (
-      <Avatar src={undefined} className="size-8" initials={displayName.charAt(0).toUpperCase()} />
+      <Avatar className="size-8" initials={displayName.charAt(0).toUpperCase()} />
     )}
   </div>
 )
@@ -148,7 +151,16 @@ const MainSupportChatInput = ({
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) => {
+  const t = useTranslation()
   const [_isComposing, _setIsComposing] = useState(false)
+
+  const handleCompositionStart = useCallback(() => {
+    _setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    _setIsComposing(false)
+  }, [])
 
   const getSubmitStatus = () => {
     if (isLoading) return 'streaming'
@@ -197,40 +209,7 @@ const MainSupportChatInput = ({
 
 export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
-  const _locale = useCurrentLocale()
   const t = useTranslation()
-
-  // jsx-no-bind optimization: Event handlers
-  const handleCompositionStart = useCallback(() => {
-    _setIsComposing(true)
-  }, [])
-
-  const handleCompositionEnd = useCallback(() => {
-    _setIsComposing(false)
-  }, [])
-
-  const handleMenuToggle = useCallback(() => {
-    setShowMenu(!showMenu)
-  }, [showMenu])
-
-  const handleClearMessages = useCallback(() => {
-    setMessages([])
-    setShowMenu(false)
-  }, [setMessages])
-
-  const handleExportMessages = useCallback(() => {
-    const exportMessages = messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-      timestamp: msg.createdAt,
-    }))
-    navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
-    setShowMenu(false)
-  }, [messages])
-
-  const handleReload = useCallback(() => {
-    reload()
-  }, [reload])
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const {
@@ -269,6 +248,30 @@ ${t('help.welcome.question')}`,
       },
     ],
   })
+
+  // Event handlers using useChat values
+  const handleMenuToggle = useCallback(() => {
+    setShowMenu(!showMenu)
+  }, [showMenu])
+
+  const handleClearMessages = useCallback(() => {
+    setMessages([])
+    setShowMenu(false)
+  }, [setMessages])
+
+  const handleExportMessages = useCallback(() => {
+    const exportMessages = messages.map((msg) => ({
+      role: msg.role,
+      content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
+      timestamp: (msg as ExtendedMessage).createdAt,
+    }))
+    navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
+    setShowMenu(false)
+  }, [messages])
+
+  const handleReload = useCallback(() => {
+    reload()
+  }, [reload])
 
   return (
     <div className="bg-background flex h-full flex-col">

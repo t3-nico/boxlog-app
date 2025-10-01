@@ -87,7 +87,8 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     console.error('Error:', error)
     console.error('Error Analysis:', analysis)
     console.error('User Friendly Message:', getUserFriendlyMessage(analysis.code))
-    console.error('Recommended Actions:', getRecommendedActions(analysis.code))
+    // TODO: Implement getRecommendedActions function
+    // console.error('Recommended Actions:', getRecommendedActions(analysis.code))
     console.error('Auto Recoverable:', isAutoRecoverable(analysis.code))
     console.error('Component Stack:', errorInfo.componentStack)
     console.error('Error ID:', this.state.errorId)
@@ -230,14 +231,15 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                 <div className="space-y-3">
                   {/* ユーザーフレンドリーメッセージ */}
                   <div className="flex items-start space-x-3">
-                    <span className="text-2xl">{getErrorPattern(analysis.code)?.emoji || '⚠️'}</span>
+                    <span className="text-2xl">⚠️</span>
                     <div>
                       <p className="text-base text-neutral-900 dark:text-neutral-100 font-semibold">
                         {getUserFriendlyMessage(analysis.code)}
                       </p>
-                      <p className="text-sm text-neutral-800 dark:text-neutral-200">
+                      {/* TODO: Implement getErrorPattern function */}
+                      {/* <p className="text-sm text-neutral-800 dark:text-neutral-200">
                         {getErrorPattern(analysis.code)?.description}
-                      </p>
+                      </p> */}
                     </div>
                   </div>
 

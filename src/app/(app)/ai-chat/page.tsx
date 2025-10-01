@@ -4,6 +4,7 @@ import React from 'react'
 
 import dynamic from 'next/dynamic'
 
+import { FeatureErrorBoundary } from '@/components/error-boundary'
 import { AiChatSkeleton } from '@/features/aichat/components/AiChatSkeleton'
 
 // AI Chat機能を動的インポート（Bundle size最適化）

@@ -22,4 +22,5 @@ export * from './loader'
 export { default as configLoader } from './loader'
 
 // Business Rules System
-export * from './business-rules'
+// Note: business-rules module not found - commented out
+// export * from './business-rules'

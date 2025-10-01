@@ -18,25 +18,26 @@ import {
   Eye,
   Edit
 } from 'lucide-react'
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from 'recharts'
+// Note: recharts is not installed - commenting out chart imports
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell
+// } from 'recharts'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription, AlertTitle } from '@/components/shadcn-ui/alert'
+import { Badge } from '@/components/shadcn-ui/badge'
+import { Button } from '@/components/shadcn-ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
+import { Progress } from '@/components/shadcn-ui/progress'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn-ui/tabs'
 
 // 型定義（translation-tracker.tsから）
 interface TranslationProgress {
@@ -299,7 +300,11 @@ export default function TranslationDashboard() {
                   <CardDescription>各言語の翻訳完了状況</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
+                  {/* TODO: Install recharts package to enable charts */}
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    <p>Chart visualization (recharts package required)</p>
+                  </div>
+                  {/* <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={report.languageProgress}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="language" />
@@ -307,7 +312,7 @@ export default function TranslationDashboard() {
                       <Tooltip formatter={(value) => `${value}%`} />
                       <Bar dataKey="completionRate" fill="#8884d8" />
                     </BarChart>
-                  </ResponsiveContainer>
+                  </ResponsiveContainer> */}
                 </CardContent>
               </Card>
 
@@ -318,7 +323,11 @@ export default function TranslationDashboard() {
                   <CardDescription>全言語のキーステータス合計</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
+                  {/* TODO: Install recharts package to enable charts */}
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    <p>Pie chart visualization (recharts package required)</p>
+                  </div>
+                  {/* <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
                         data={[
@@ -348,7 +357,7 @@ export default function TranslationDashboard() {
                       </Pie>
                       <Tooltip />
                     </PieChart>
-                  </ResponsiveContainer>
+                  </ResponsiveContainer> */}
                 </CardContent>
               </Card>
             </div>
