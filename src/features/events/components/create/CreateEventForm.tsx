@@ -9,7 +9,6 @@ import { Input } from '@/components/shadcn-ui/input'
 import { Label } from '@/components/shadcn-ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Textarea } from '@/components/shadcn-ui/textarea'
-import { cn } from '@/lib/utils'
 
 import type { CreateEventRequest, EventPriority, EventStatus, EventType } from '../../types/events'
 

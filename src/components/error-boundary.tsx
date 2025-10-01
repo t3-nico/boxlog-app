@@ -8,7 +8,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react'
 
 import { handleReactError, SentryErrorHandler } from '@/lib/sentry'
-import { cn } from '@/lib/utils'
 
 interface Props {
   children: ReactNode

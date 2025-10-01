@@ -14,6 +14,8 @@ interface CalendarEvent {
   title: string
   startTime: Date
   endTime: Date
+  startDate?: Date
+  endDate?: Date
   [key: string]: unknown
 }
 
@@ -88,6 +90,7 @@ export function useDragAndDrop({
     previewTime: null,
     recentlyDragged: false,
     recentlyResized: false,
+    dragElement: null,
     ghostElement: null,
   })
 

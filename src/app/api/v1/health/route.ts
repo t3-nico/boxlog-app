@@ -30,7 +30,7 @@ interface HealthCheckResponse {
 /**
  * 📊 GET /api/v1/health - Health Check API
  */
-export async function GET(request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
   try {
     const healthResponse: HealthCheckResponse = {
       status: 'ok',

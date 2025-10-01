@@ -36,8 +36,6 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 
-import { cn } from '@/lib/utils'
-
 // 型定義（quality-assurance.tsから）
 interface QualityMetrics {
   accuracy: number

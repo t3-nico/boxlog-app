@@ -481,7 +481,7 @@ function isValidToken(_token: string): boolean {
   return _token.length > 10
 }
 
-function extractUserIdFromToken(token: string): string {
+function extractUserIdFromToken(_token: string): string {
   // JWT トークンからユーザー ID を抽出
   // ここでは簡略化
   return 'user_123'
@@ -497,7 +497,7 @@ function getClientId(req: NextRequest): string {
 /**
  * 使用例を示すサンプルハンドラー
  */
-export const sampleApiHandler = withAuth(async (req, context) => {
+export const sampleApiHandler = withAuth(async (_req, context) => {
   // 認証済みユーザーのみアクセス可能なAPI
   return {
     message: 'Hello authenticated user!',

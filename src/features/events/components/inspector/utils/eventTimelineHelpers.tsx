@@ -3,8 +3,6 @@ import React from 'react'
 import { Activity, Bell, Clock, FileText, Edit3, ArrowRight } from 'lucide-react'
 import { Tag as TagIcon } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
-
 // Timeline event types
 interface BaseTimelineEvent {
   type: string

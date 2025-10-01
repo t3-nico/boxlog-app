@@ -52,7 +52,7 @@ interface SystemInfoResponse {
 /**
  * 📊 GET /api/v1/system - System Information API
  */
-export async function GET(request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
+export async function GET(_request: NextRequest, apiRequest?: ApiRequest): Promise<NextResponse> {
   try {
     // API統計情報の取得
     const apiStats = getApiStats()

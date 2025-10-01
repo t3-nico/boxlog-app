@@ -38,8 +38,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { cn } from '@/lib/utils'
-
 // 型定義（translation-tracker.tsから）
 interface TranslationProgress {
   language: string

@@ -1,7 +1,5 @@
 'use client'
 
-import { cn } from '@/lib/utils'
-
 export const HelpSkeleton = () => {
   return (
     <div className="flex h-full flex-col">
