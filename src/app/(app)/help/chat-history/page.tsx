@@ -16,7 +16,6 @@ import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
 import { Input } from '@/components/shadcn-ui/input'
-import { cn } from '@/lib/utils'
 
 const ChatHistoryPage = () => {
   // Mock data - In actual implementation, fetch from appropriate data source
