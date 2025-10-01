@@ -14,8 +14,17 @@ import { getReview } from '@/lib/data'
 
 import { RefundReview } from './refund'
 
+interface Review {
+  id: string
+  amount: { usd: string }
+  payment: { card: { type: string; number: string } }
+  date: string
+  customer: { name: string; email: string; avatar: string }
+  event: { type: string; description: string }
+}
+
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const review = await getReview(params.id)
+  const review = (await getReview(params.id)) as Review | null
 
   return {
     title: review && `Review #${review.id}`,
@@ -23,7 +32,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 const ReviewPage = async ({ params }: { params: { id: string } }) => {
-  const review = await getReview(params.id)
+  const review = (await getReview(params.id)) as Review | null
 
   if (!review) {
     notFound()
