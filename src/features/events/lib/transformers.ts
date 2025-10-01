@@ -10,35 +10,39 @@ import type {
  * Database Entity → Client Event への変換
  */
 export function transformEventEntityToEvent(entity: EventEntity): Event {
-  return {
+  const result: Event = {
     id: entity.id,
     title: entity.title,
-    description: entity.description,
-    startDate: entity.planned_start ? new Date(entity.planned_start) : undefined,
-    endDate: entity.planned_end ? new Date(entity.planned_end) : undefined,
     type: 'event',
     status: entity.status,
-    priority: entity.priority,
     color: entity.color,
     isRecurring: entity.is_recurring ?? false,
-    recurrenceRule: entity.recurrence_rule,
-    parentEventId: entity.parent_event_id,
-    items: entity.items,
-    location: entity.location,
-    url: entity.url,
-    reminders: entity.reminders,
-    tags: entity.event_tags?.map(et => ({
+    createdAt: new Date(entity.created_at),
+    updatedAt: new Date(entity.updated_at),
+    isDeleted: false,
+  }
+
+  if (entity.description !== undefined) result.description = entity.description
+  if (entity.planned_start) result.startDate = new Date(entity.planned_start)
+  if (entity.planned_end) result.endDate = new Date(entity.planned_end)
+  if (entity.priority !== undefined) result.priority = entity.priority
+  if (entity.recurrence_rule !== undefined) result.recurrenceRule = entity.recurrence_rule
+  if (entity.parent_event_id !== undefined) result.parentEventId = entity.parent_event_id
+  if (entity.items !== undefined) result.items = entity.items
+  if (entity.location !== undefined) result.location = entity.location
+  if (entity.url !== undefined) result.url = entity.url
+  if (entity.reminders !== undefined) result.reminders = entity.reminders
+  if (entity.event_tags) {
+    result.tags = entity.event_tags.map(et => ({
       id: et.tags.id,
       name: et.tags.name,
       color: et.tags.color,
       ...(et.tags.icon !== undefined && { icon: et.tags.icon }),
       ...(et.tags.parent_id !== undefined && { parent_id: et.tags.parent_id })
-    })),
-    createdAt: new Date(entity.created_at),
-    updatedAt: new Date(entity.updated_at),
-    deletedAt: undefined,
-    isDeleted: false
+    }))
   }
+
+  return result
 }
 
 /**
@@ -68,24 +72,27 @@ export function transformEventToEventEntity(event: Event): Partial<Omit<EventEnt
 /**
  * CreateEventRequest → Database Insert用データへの変換
  */
-export function transformCreateRequestToEntity(request: CreateEventRequest): Omit<EventEntity, 'id' | 'created_at' | 'updated_at'> {
-  return {
+export function transformCreateRequestToEntity(request: CreateEventRequest): Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> {
+  const result: Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> = {
     user_id: '', // user_id is required in EventEntity
     title: request.title,
-    description: request.description,
-    planned_start: request.startDate?.toISOString(),
-    planned_end: request.endDate?.toISOString(),
-    status: request.status,
-    priority: request.priority,
+    status: request.status ?? 'inbox',
     color: request.color ?? '',
-    is_recurring: request.isRecurring,
-    recurrence_rule: request.recurrenceRule,
-    parent_event_id: request.parentEventId,
-    items: request.items,
-    location: request.location,
-    url: request.url,
-    reminders: request.reminders,
   }
+
+  if (request.description !== undefined) result.description = request.description
+  if (request.startDate) result.planned_start = request.startDate.toISOString()
+  if (request.endDate) result.planned_end = request.endDate.toISOString()
+  if (request.priority !== undefined) result.priority = request.priority
+  if (request.isRecurring !== undefined) result.is_recurring = request.isRecurring
+  if (request.recurrenceRule !== undefined) result.recurrence_rule = request.recurrenceRule
+  if (request.parentEventId !== undefined) result.parent_event_id = request.parentEventId
+  if (request.items !== undefined) result.items = request.items
+  if (request.location !== undefined) result.location = request.location
+  if (request.url !== undefined) result.url = request.url
+  if (request.reminders !== undefined) result.reminders = request.reminders
+
+  return result
 }
 
 /**
