@@ -33,7 +33,11 @@ interface CreateTaskInput {
   tags?: string[]
 }
 
-interface TaskStore {
+interface TaskStoreState {
+  tasks: Task[]
+}
+
+interface TaskStore extends TaskStoreState {
   // CRUD operations
   createTask: (input: CreateTaskInput) => Task
   updateTask: (id: string, updates: Partial<Task>) => void
@@ -127,7 +131,7 @@ export const useTaskStore = StoreFactory.createPersisted({
         updated_at: now,
       }
 
-      set((state) => ({
+      set((state: TaskStoreState) => ({
         tasks: [...state.tasks, newTask],
       }))
 
@@ -135,37 +139,37 @@ export const useTaskStore = StoreFactory.createPersisted({
     },
 
     updateTask: (id: string, updates: Partial<Task>) => {
-      set((state) => ({
-        tasks: state.tasks.map((task) => (
+      set((state: TaskStoreState) => ({
+        tasks: state.tasks.map((task: Task) => (
           task.id === id ? { ...task, ...updates, updated_at: new Date() } : task
         )),
       }))
     },
 
     deleteTask: (id: string) => {
-      set((state) => ({
-        tasks: state.tasks.filter((task) => task.id !== id),
+      set((state: TaskStoreState) => ({
+        tasks: state.tasks.filter((task: Task) => task.id !== id),
       }))
     },
 
     getTask: (id: string) => {
-      return get().tasks.find((task) => task.id === id)
+      return get().tasks.find((task: Task) => task.id === id)
     },
 
     getTasksForDate: (date: Date) => {
       return get()
-        .tasks.filter((task) => isSameDay(task.planned_start, date))
-        .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
+        .tasks.filter((task: Task) => isSameDay(task.planned_start, date))
+        .sort((a: Task, b: Task) => a.planned_start.getTime() - b.planned_start.getTime())
     },
 
     getTasksForDateRange: (start: Date, end: Date) => {
       return get()
-        .tasks.filter((task) => isDateInRange(task.planned_start, start, end))
-        .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
+        .tasks.filter((task: Task) => isDateInRange(task.planned_start, start, end))
+        .sort((a: Task, b: Task) => a.planned_start.getTime() - b.planned_start.getTime())
     },
 
     getTasksByStatus: (status: Task['status']) => {
-      return get().tasks.filter((task) => task.status === status)
+      return get().tasks.filter((task: Task) => task.status === status)
     },
 
     updateTaskStatus: (id: string, status: Task['status']) => {
@@ -188,13 +192,13 @@ export const useTaskStore = StoreFactory.createPersisted({
       const dayTasks = get().getTasksForDate(date)
       if (dayTasks.length === 0) return 0
 
-      const completedTasks = dayTasks.filter((task) => task.status === 'completed')
+      const completedTasks = dayTasks.filter((task: Task) => task.status === 'completed')
       return Math.round((completedTasks.length / dayTasks.length) * 100)
     },
 
     getTotalPlannedTime: (date: Date) => {
       const dayTasks = get().getTasksForDate(date)
-      return dayTasks.reduce((total, task) => total + task.planned_duration, 0)
+      return dayTasks.reduce((total: number, task: Task) => total + task.planned_duration, 0)
     },
   }),
 })
