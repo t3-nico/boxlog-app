@@ -1,22 +1,25 @@
 /* eslint-disable max-lines */
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 import { Clock, GraduationCap, Lightbulb, Moon, Sun } from 'lucide-react'
-
-import { colors, rounded, spacing, typography } from '@/config/theme'
 
 import { SettingsLayout } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { type ChronotypeType } from '@/types/chronotype'
 
-import { chronoTypeProfiles, typeIconComponents } from './chronotype.constants'
 import type { ChronotypeAutoSaveSettings, ChronoTypeSchedule } from './chronotype.types'
-import { DiagnosisSection } from './components/DiagnosisSection'
-import { ScheduleDisplay } from './components/ScheduleDisplay'
-import { useDiagnosis } from './hooks/useDiagnosis'
+
+interface ChronoTypeProfile {
+  id: ChronotypeType
+  name: string
+  description: string
+  peakHours: string
+  lowHours: string
+  schedules: ChronoTypeSchedule[]
+}
 
 const chronoTypeProfiles: ChronoTypeProfile[] = [
   {
@@ -292,11 +295,11 @@ const chronoTypeProfiles: ChronoTypeProfile[] = [
 ]
 
 const typeColors = {
-  focus: `${colors.semantic.success.DEFAULT} ${colors.semantic.success.text}`,
-  creative: `${colors.semantic.info.DEFAULT} ${colors.semantic.info.text}`,
-  rest: `${colors.semantic.warning.DEFAULT} ${colors.semantic.warning.text}`,
-  admin: `${colors.background.surface} ${colors.text.secondary}`,
-  sleep: `${colors.background.elevated} ${colors.text.muted}`,
+  focus: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  creative: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  rest: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  admin: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
+  sleep: 'bg-neutral-200 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-500',
 }
 
 const typeIcons = {
@@ -304,7 +307,7 @@ const typeIcons = {
   creative: Lightbulb,
   rest: Moon,
   admin: Clock,
-  sleep: () => <span className={typography.body.DEFAULT}>💤</span>,
+  sleep: () => <span className="text-base">💤</span>,
 }
 
 interface DiagnosisQuestion {
@@ -446,6 +449,38 @@ const ChronoTypePage = () => {
     }, 100)
   }, [])
 
+  const calculateResult = useCallback((finalAnswers: Record<string, number>) => {
+    const typeScores = { lion: 0, bear: 0, wolf: 0, dolphin: 0 }
+
+    diagnosisQuestions.forEach((question) => {
+      const answer = finalAnswers[question.id]
+      if (answer) {
+        const selectedOption = question.options.find((opt) => opt.value === answer)
+        if (selectedOption) {
+          typeScores[selectedOption.type]++
+        }
+      }
+    })
+
+    // 最高スコアのタイプを決定
+    const maxScore = Math.max(...Object.values(typeScores))
+    const resultType = Object.entries(typeScores).find(([_, score]) => score === maxScore)?.[0] || 'bear'
+
+    setDiagnosisResult(resultType)
+    chronoSettings.updateValue('type', resultType as ChronotypeType)
+  }, [chronoSettings])
+
+  const handleAnswerSelect = useCallback((questionId: string, value: number) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: value }))
+
+    if (currentQuestion < diagnosisQuestions.length - 1) {
+      setTimeout(() => setCurrentQuestion((prev) => prev + 1), 300)
+    } else {
+      // 診断完了 - 結果を計算
+      setTimeout(() => calculateResult({ ...answers, [questionId]: value }), 300)
+    }
+  }, [currentQuestion, answers, calculateResult])
+
   // Handler for answer selection using data attributes
   const handleAnswerClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -484,38 +519,6 @@ const ChronoTypePage = () => {
     return <IconComponent className="h-4 w-4" data-slot="icon" />
   }
 
-  const handleAnswerSelect = (questionId: string, value: number) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }))
-
-    if (currentQuestion < diagnosisQuestions.length - 1) {
-      setTimeout(() => setCurrentQuestion((prev) => prev + 1), 300)
-    } else {
-      // 診断完了 - 結果を計算
-      setTimeout(() => calculateResult({ ...answers, [questionId]: value }), 300)
-    }
-  }
-
-  const calculateResult = (finalAnswers: Record<string, number>) => {
-    const typeScores = { lion: 0, bear: 0, wolf: 0, dolphin: 0 }
-
-    diagnosisQuestions.forEach((question) => {
-      const answer = finalAnswers[question.id]
-      if (answer) {
-        const selectedOption = question.options.find((opt) => opt.value === answer)
-        if (selectedOption) {
-          typeScores[selectedOption.type]++
-        }
-      }
-    })
-
-    // 最高スコアのタイプを決定
-    const maxScore = Math.max(...Object.values(typeScores))
-    const resultType = Object.entries(typeScores).find(([_, score]) => score === maxScore)?.[0] || 'bear'
-
-    setDiagnosisResult(resultType)
-    chronoSettings.updateValue('type', resultType as ChronotypeType)
-  }
-
   const progress = ((currentQuestion + 1) / diagnosisQuestions.length) * 100
 
   return (
@@ -523,40 +526,40 @@ const ChronoTypePage = () => {
       title="Chronotype Settings"
       description="あなたの体内時計に合わせて最適な作業スケジュールを設定します"
     >
-      <div className={spacing.stackGap.lg}>
+      <div className="space-y-6">
         {/* 診断セクション */}
         {showDiagnosis ? (
           <div
             id="diagnosis-section"
-            className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} p-6`}
+            className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800"
           >
             {diagnosisResult ? (
               /* 診断結果表示 */
               <div className="text-center">
-                <h2 className={`${typography.heading.h2} ${colors.text.primary} mb-4`}>🎉 診断完了！</h2>
+                <h2 className="mb-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">🎉 診断完了！</h2>
                 <div className="mb-6">
-                  <p className={`${typography.body.sm} ${colors.text.secondary} mb-4`}>あなたのクロノタイプは...</p>
+                  <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-400">あなたのクロノタイプは...</p>
                   <div
-                    className={`inline-block p-6 ${colors.semantic.info.light} ${rounded.component.card.base} border ${colors.semantic.info.border}`}
+                    className="inline-block rounded-lg border border-blue-200 bg-blue-50 p-6 dark:border-blue-800 dark:bg-blue-950"
                   >
                     <div className="mb-2 flex items-center gap-3">
                       {diagnosisResult === 'lion' && (
-                        <Sun className={`h-8 w-8 ${colors.semantic.warning.text}`} data-slot="icon" />
+                        <Sun className="h-8 w-8 text-yellow-600 dark:text-yellow-400" data-slot="icon" />
                       )}
                       {diagnosisResult === 'bear' && (
-                        <Clock className={`h-8 w-8 ${colors.semantic.info.text}`} data-slot="icon" />
+                        <Clock className="h-8 w-8 text-blue-600 dark:text-blue-400" data-slot="icon" />
                       )}
                       {diagnosisResult === 'wolf' && (
-                        <Moon className={`h-8 w-8 ${colors.primary.text}`} data-slot="icon" />
+                        <Moon className="h-8 w-8 text-purple-600 dark:text-purple-400" data-slot="icon" />
                       )}
                       {diagnosisResult === 'dolphin' && (
-                        <GraduationCap className={`h-8 w-8 ${colors.secondary.text}`} data-slot="icon" />
+                        <GraduationCap className="h-8 w-8 text-teal-600 dark:text-teal-400" data-slot="icon" />
                       )}
-                      <h3 className={`${typography.heading.h3} font-bold ${colors.text.primary}`}>
+                      <h3 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                         {chronoTypeProfiles.find((p) => p.id === diagnosisResult)?.name}
                       </h3>
                     </div>
-                    <p className={colors.text.secondary}>
+                    <p className="text-neutral-600 dark:text-neutral-400">
                       {chronoTypeProfiles.find((p) => p.id === diagnosisResult)?.description}
                     </p>
                   </div>
@@ -565,14 +568,14 @@ const ChronoTypePage = () => {
                   <button
                     type="button"
                     onClick={resetDiagnosis}
-                    className={`px-4 py-2 ${typography.body.sm} font-medium ${colors.text.secondary} ${colors.background.card} border ${colors.border.DEFAULT} ${rounded.component.button.md} transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-700`}
+                    className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
                   >
                     もう一度診断
                   </button>
                   <button
                     type="button"
                     onClick={handleCloseDiagnosis}
-                    className={`px-4 py-2 ${typography.body.sm} font-medium ${colors.primary.text} ${colors.primary.DEFAULT} ${colors.primary.hover} ${rounded.component.button.md} transition-colors`}
+                    className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                   >
                     設定に進む
                   </button>
@@ -583,21 +586,21 @@ const ChronoTypePage = () => {
               <div>
                 <div className="mb-6">
                   <div className="mb-2 flex items-center justify-between">
-                    <h2 className={`${typography.heading.h2} ${colors.text.primary}`}>クロノタイプ診断</h2>
-                    <span className={`${typography.body.sm} ${colors.text.muted}`}>
+                    <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">クロノタイプ診断</h2>
+                    <span className="text-sm text-neutral-500 dark:text-neutral-500">
                       {currentQuestion + 1} / {diagnosisQuestions.length}
                     </span>
                   </div>
-                  <div className={`w-full ${colors.background.elevated} ${rounded.component.button.pill} h-2`}>
+                  <div className="h-2 w-full rounded-full bg-neutral-100 dark:bg-neutral-700">
                     <div
-                      className={`${colors.primary.DEFAULT} h-2 ${rounded.component.button.pill} transition-all duration-300`}
+                      className="h-2 rounded-full bg-blue-600 transition-all duration-300 dark:bg-blue-500"
                       style={{ width: `${progress}%` }}
                     ></div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h3 className={`${typography.heading.h3} ${colors.text.primary} mb-4`}>
+                  <h3 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                     {(() => {
                       const question = currentQuestion >= 0 && currentQuestion < diagnosisQuestions.length ? diagnosisQuestions[currentQuestion] : null
                       return question?.question || ''
@@ -616,7 +619,7 @@ const ChronoTypePage = () => {
                           return question?.id || ''
                         })()}
                         data-option-value={option.value}
-                        className={`w-full border p-4 text-left ${colors.border.DEFAULT} ${rounded.component.card.base} transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:hover:border-neutral-600 dark:hover:bg-neutral-800`}
+                        className="w-full rounded-lg border border-neutral-300 p-4 text-left transition-all hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-600 dark:hover:border-neutral-600 dark:hover:bg-neutral-800"
                       >
                         {option.text}
                       </button>
@@ -628,7 +631,7 @@ const ChronoTypePage = () => {
                 <button
                   type="button"
                   onClick={resetDiagnosis}
-                  className={`${typography.body.sm} ${colors.text.muted} hover:text-neutral-900 dark:hover:text-neutral-100`}
+                  className="text-sm text-neutral-500 hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-neutral-100"
                 >
                   診断をキャンセル
                 </button>
@@ -638,14 +641,14 @@ const ChronoTypePage = () => {
         ) : (
           /* クロノタイププロファイル選択 */
           <div
-            className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} p-6`}
+            className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800"
           >
             <div className="mb-4 flex items-center justify-between">
-              <h2 className={`${typography.heading.h2} ${colors.text.primary}`}>クロノタイプを選択</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">クロノタイプを選択</h2>
               <button
                 type="button"
                 onClick={startDiagnosis}
-                className={`px-3 py-1.5 ${typography.body.sm} font-medium ${colors.primary.text} ${colors.primary.DEFAULT} ${colors.primary.hover} rounded-lg transition-colors`}
+                className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
                 🔍 診断で決める
               </button>
@@ -660,25 +663,25 @@ const ChronoTypePage = () => {
                   data-profile-id={profile.id}
                   className={`rounded-lg border-2 p-4 text-left transition-all ${
                     chronoSettings.values.type === profile.id
-                      ? `${colors.border.info} ${colors.semantic.info.light}`
-                      : `${colors.border.DEFAULT} hover:${colors.border.strong}`
+                      ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-950'
+                      : 'border-neutral-300 hover:border-neutral-400 dark:border-neutral-600 dark:hover:border-neutral-500'
                   }`}
                 >
                   <div className="mb-2 flex items-center gap-2">
                     {profile.id === 'lion' && (
-                      <Sun className={`h-5 w-5 ${colors.semantic.warning.text}`} data-slot="icon" />
+                      <Sun className="h-5 w-5 text-yellow-600 dark:text-yellow-400" data-slot="icon" />
                     )}
                     {profile.id === 'bear' && (
-                      <Clock className={`h-5 w-5 ${colors.semantic.info.text}`} data-slot="icon" />
+                      <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" data-slot="icon" />
                     )}
-                    {profile.id === 'wolf' && <Moon className={`h-5 w-5 ${colors.primary.text}`} data-slot="icon" />}
+                    {profile.id === 'wolf' && <Moon className="h-5 w-5 text-purple-600 dark:text-purple-400" data-slot="icon" />}
                     {profile.id === 'dolphin' && (
-                      <GraduationCap className={`h-5 w-5 ${colors.secondary.text}`} data-slot="icon" />
+                      <GraduationCap className="h-5 w-5 text-teal-600 dark:text-teal-400" data-slot="icon" />
                     )}
-                    <h3 className={`${typography.body.semibold} ${colors.text.primary}`}>{profile.name}</h3>
+                    <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">{profile.name}</h3>
                   </div>
-                  <p className={`${typography.body.small} ${colors.text.secondary} mb-2`}>{profile.description}</p>
-                  <div className={typography.special.caption}>
+                  <p className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">{profile.description}</p>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-500">
                     <div>ピーク: {profile.peakHours}</div>
                     <div>低調: {profile.lowHours}</div>
                   </div>
@@ -691,9 +694,9 @@ const ChronoTypePage = () => {
         {/* 選択されたプロファイルのスケジュール表示 */}
         {currentProfile != null && (
           <div
-            className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} p-6`}
+            className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800"
           >
-            <h2 className={`${typography.heading.h4} ${colors.text.primary} mb-4`}>
+            <h2 className="mb-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">
               {currentProfile.name} のスケジュール
             </h2>
 
@@ -720,11 +723,11 @@ const ChronoTypePage = () => {
         )}
 
         {/* カレンダー表示設定 */}
-        <div className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} p-6`}>
+        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className={`${typography.heading.h4} ${colors.text.primary}`}>Show in Calendar</h2>
-              <p className={`${typography.body.small} ${colors.text.secondary}`}>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">Show in Calendar</h2>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
                 Display chronotype indicators in calendar views
               </p>
             </div>
@@ -745,12 +748,12 @@ const ChronoTypePage = () => {
 
         {/* クロノタイプ説明セクション */}
         <div
-          className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} mt-8 p-6`}
+          className="mt-8 rounded-lg border border-neutral-300 bg-white p-6 dark:border-neutral-600 dark:bg-neutral-800"
         >
-          <h2 className={`${typography.heading.h2} ${colors.text.primary} mb-4`}>クロノタイプとは？</h2>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">クロノタイプとは？</h2>
 
           <div className="prose prose-sm max-w-none">
-            <div className={`space-y-4 ${colors.text.secondary}`}>
+            <div className="space-y-4 text-neutral-600 dark:text-neutral-400">
               <p>
                 <strong>クロノタイプ（Chronotype）</strong>
                 は、個人の体内時計（概日リズム）によって決まる活動パターンのことです。
@@ -758,16 +761,16 @@ const ChronoTypePage = () => {
                 を向上させることができます。
               </p>
 
-              <h3 className={`${typography.heading.h5} ${colors.text.primary} mb-6`}>📊 4つのクロノタイプ</h3>
+              <h3 className="mb-6 text-lg font-bold text-neutral-900 dark:text-neutral-100">📊 4つのクロノタイプ</h3>
 
               <div className="my-6 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div
-                  className={`${colors.semantic.warning.light} p-4 ${rounded.component.card.base} border ${colors.border.DEFAULT}`}
+                  className="rounded-lg border border-neutral-300 bg-yellow-50 p-4 dark:border-neutral-600 dark:bg-yellow-950"
                 >
-                  <h4 className={`${typography.body.semibold} ${colors.semantic.warning.text} mb-2`}>
+                  <h4 className="mb-2 font-semibold text-yellow-600 dark:text-yellow-400">
                     🦁 Lion (ライオン型・超朝型)
                   </h4>
-                  <ul className={`${typography.body.small} ${colors.semantic.warning.text} space-y-1`}>
+                  <ul className="space-y-1 text-sm text-yellow-600 dark:text-yellow-400">
                     <li>• 人口の約 15%</li>
                     <li>• 早朝（5-7時）起床、7-11時がピーク</li>
                     <li>• 夜は21時頃には疲れる</li>
@@ -776,12 +779,12 @@ const ChronoTypePage = () => {
                 </div>
 
                 <div
-                  className={`${colors.semantic.info.light} p-4 ${rounded.component.card.base} border ${colors.border.DEFAULT}`}
+                  className="rounded-lg border border-neutral-300 bg-blue-50 p-4 dark:border-neutral-600 dark:bg-blue-950"
                 >
-                  <h4 className={`${typography.body.semibold} ${colors.semantic.info.text} mb-2`}>
+                  <h4 className="mb-2 font-semibold text-blue-600 dark:text-blue-400">
                     🐻 Bear (クマ型・標準型)
                   </h4>
-                  <ul className={`${typography.body.small} ${colors.semantic.info.text} space-y-1`}>
+                  <ul className="space-y-1 text-sm text-blue-600 dark:text-blue-400">
                     <li>• 人口の約 55%</li>
                     <li>• 7-8時起床、9-12時と14-17時がピーク</li>
                     <li>• 太陽のサイクルに同調</li>
@@ -790,12 +793,12 @@ const ChronoTypePage = () => {
                 </div>
 
                 <div
-                  className={`${colors.background.elevated} p-4 ${rounded.component.card.base} border ${colors.border.DEFAULT}`}
+                  className="rounded-lg border border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-600 dark:bg-neutral-700"
                 >
-                  <h4 className={`${typography.body.semibold} ${colors.text.primary} mb-2`}>
+                  <h4 className="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
                     🐺 Wolf (オオカミ型・夜型)
                   </h4>
-                  <ul className={`${typography.body.small} ${colors.text.secondary} space-y-1`}>
+                  <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
                     <li>• 人口の約 20%</li>
                     <li>• 17-22時がピーク、深夜も活動的</li>
                     <li>• 朝は調子が上がりにくい</li>
@@ -804,12 +807,12 @@ const ChronoTypePage = () => {
                 </div>
 
                 <div
-                  className={`${colors.semantic.success.light} p-4 ${rounded.component.card.base} border ${colors.border.DEFAULT}`}
+                  className="rounded-lg border border-neutral-300 bg-green-50 p-4 dark:border-neutral-600 dark:bg-green-950"
                 >
-                  <h4 className={`${typography.body.semibold} ${colors.semantic.success.text} mb-2`}>
+                  <h4 className="mb-2 font-semibold text-green-600 dark:text-green-400">
                     🐬 Dolphin (イルカ型・不規則型)
                   </h4>
-                  <ul className={`${typography.body.small} ${colors.semantic.success.text} space-y-1`}>
+                  <ul className="space-y-1 text-sm text-green-600 dark:text-green-400">
                     <li>• 人口の約 10%</li>
                     <li>• 複数の短いピーク時間</li>
                     <li>• 睡眠が浅く、中途覚醒が多い</li>
@@ -818,63 +821,63 @@ const ChronoTypePage = () => {
                 </div>
               </div>
 
-              <h3 className={`${typography.heading.h5} ${colors.text.primary} mb-6`}>
+              <h3 className="mb-6 text-lg font-bold text-neutral-900 dark:text-neutral-100">
                 🎯 クロノタイプを活用するメリット
               </h3>
 
-              <ul className={`ml-4 list-inside list-disc space-y-2 ${colors.text.secondary}`}>
+              <ul className="ml-4 list-inside list-disc space-y-2 text-neutral-600 dark:text-neutral-400">
                 <li>
-                  <strong className={colors.text.primary}>生産性の向上</strong>：自分のピーク時間に重要なタスクを配置
+                  <strong className="text-neutral-900 dark:text-neutral-100">生産性の向上</strong>：自分のピーク時間に重要なタスクを配置
                 </li>
                 <li>
-                  <strong className={colors.text.primary}>ストレス軽減</strong>
+                  <strong className="text-neutral-900 dark:text-neutral-100">ストレス軽減</strong>
                   ：体内時計に逆らわない働き方でストレス減少
                 </li>
                 <li>
-                  <strong className={colors.text.primary}>創造性の発揮</strong>：クリエイティブな時間帯を意識的に活用
+                  <strong className="text-neutral-900 dark:text-neutral-100">創造性の発揮</strong>：クリエイティブな時間帯を意識的に活用
                 </li>
                 <li>
-                  <strong className={colors.text.primary}>健康の維持</strong>
+                  <strong className="text-neutral-900 dark:text-neutral-100">健康の維持</strong>
                   ：自然なリズムに合わせた生活で心身の健康をサポート
                 </li>
                 <li>
-                  <strong className={colors.text.primary}>チームワークの改善</strong>
+                  <strong className="text-neutral-900 dark:text-neutral-100">チームワークの改善</strong>
                   ：メンバーのクロノタイプを理解した協働
                 </li>
               </ul>
 
-              <h3 className={`${typography.heading.h5} ${colors.text.primary} mb-6`}>📝 作業タイプの分類</h3>
+              <h3 className="mb-6 text-lg font-bold text-neutral-900 dark:text-neutral-100">📝 作業タイプの分類</h3>
 
               <div className="my-4 grid grid-cols-2 gap-3 md:grid-cols-5">
                 <div
-                  className={`flex items-center gap-2 p-2 ${colors.semantic.success.light} ${rounded.component.button.sm}`}
+                  className="flex items-center gap-2 rounded-sm bg-green-50 p-2 dark:bg-green-950"
                 >
-                  <GraduationCap className={`h-4 w-4 ${colors.semantic.success.text}`} data-slot="icon" />
-                  <span className={`${typography.body.small} font-semibold ${colors.semantic.success.text}`}>
+                  <GraduationCap className="h-4 w-4 text-green-600 dark:text-green-400" data-slot="icon" />
+                  <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                     Focus
                   </span>
                 </div>
                 <div
-                  className={`flex items-center gap-2 p-2 ${colors.background.elevated} ${rounded.component.button.sm}`}
+                  className="flex items-center gap-2 rounded-sm bg-neutral-100 p-2 dark:bg-neutral-700"
                 >
-                  <Lightbulb className={`h-4 w-4 ${colors.text.primary}`} data-slot="icon" />
-                  <span className={`${typography.body.small} font-semibold ${colors.text.primary}`}>Creative</span>
+                  <Lightbulb className="h-4 w-4 text-neutral-900 dark:text-neutral-100" data-slot="icon" />
+                  <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">Creative</span>
                 </div>
                 <div
-                  className={`flex items-center gap-2 p-2 ${colors.semantic.info.light} ${rounded.component.button.sm}`}
+                  className="flex items-center gap-2 rounded-sm bg-blue-50 p-2 dark:bg-blue-950"
                 >
-                  <Moon className={`h-4 w-4 ${colors.semantic.info.text}`} data-slot="icon" />
-                  <span className={`${typography.body.small} font-semibold ${colors.semantic.info.text}`}>Rest</span>
+                  <Moon className="h-4 w-4 text-blue-600 dark:text-blue-400" data-slot="icon" />
+                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">Rest</span>
                 </div>
-                <div className="bg-muted flex items-center gap-2 rounded p-2">
-                  <Clock className={`h-4 w-4 ${colors.text.secondary}`} data-slot="icon" />
-                  <span className={`${typography.body.small} font-semibold ${colors.text.secondary}`}>Admin</span>
+                <div className="flex items-center gap-2 rounded bg-neutral-100 p-2 dark:bg-neutral-700">
+                  <Clock className="h-4 w-4 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
+                  <span className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">Admin</span>
                 </div>
                 <div
-                  className={`flex items-center gap-2 bg-blue-50 p-2 dark:bg-blue-900/20 ${rounded.component.button.sm}`}
+                  className="flex items-center gap-2 rounded-sm bg-blue-50 p-2 dark:bg-blue-900/20"
                 >
                   <span className="text-sm">💤</span>
-                  <span className={`${typography.body.small} font-medium text-blue-600 dark:text-blue-400`}>Sleep</span>
+                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">Sleep</span>
                 </div>
               </div>
 
@@ -890,8 +893,8 @@ const ChronoTypePage = () => {
                 <strong>Sleep</strong>：睡眠時間、休息を推奨する時間帯
               </p>
 
-              <div className="bg-muted mt-6 rounded-lg p-4">
-                <p className={`${typography.body.small} ${colors.text.secondary}`}>
+              <div className="mt-6 rounded-lg bg-neutral-100 p-4 dark:bg-neutral-700">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
                   💡 <strong>ヒント</strong>：クロノタイプは遺伝的要因が大きく、完全に変えることは困難です。
                   重要なのは自分のタイプを受け入れ、それに合わせて作業スケジュールを最適化することです。
                 </p>
@@ -899,13 +902,13 @@ const ChronoTypePage = () => {
 
               {/* 診断ボタン */}
               <div className="mt-6 border-t border-neutral-200 pt-6 text-center dark:border-neutral-700">
-                <p className={`${typography.body.small} ${colors.text.secondary} mb-4`}>
+                <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-400">
                   自分のクロノタイプが分からない方は、診断をお試しください
                 </p>
                 <button
                   type="button"
                   onClick={startDiagnosis}
-                  className={`inline-flex items-center gap-2 px-6 py-3 ${typography.body.sm} font-medium text-white ${colors.primary.DEFAULT} ${colors.primary.hover} rounded-lg shadow-sm transition-colors`}
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                 >
                   🔍 クロノタイプ診断を開始
                 </button>

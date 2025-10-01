@@ -2,7 +2,7 @@
 
 import { memo } from 'react'
 
-import { colors, rounded, typography } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 import type { ChronoTypeSchedule } from '../chronotype.types'
 
@@ -20,10 +20,8 @@ export const ScheduleDisplay = memo(({
   getTypeIcon,
 }: ScheduleDisplayProps) => {
   return (
-    <div
-      className={`${colors.background.card} ${rounded.component.card.base} border ${colors.border.DEFAULT} p-6`}
-    >
-      <h2 className={`${typography.heading.h4} ${colors.text.primary} mb-4`}>
+    <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+      <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
         {profileName} のスケジュール
       </h2>
 
@@ -31,7 +29,7 @@ export const ScheduleDisplay = memo(({
         {schedules.map((schedule) => (
           <div
             key={schedule.id}
-            className={`flex items-center justify-between rounded-lg p-3 ${typeColors[schedule.type]}`}
+            className={cn('flex items-center justify-between rounded-lg p-3', typeColors[schedule.type])}
           >
             <div className="flex items-center gap-3">
               {getTypeIcon(schedule.type)}
