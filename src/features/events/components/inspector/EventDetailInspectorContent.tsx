@@ -36,16 +36,16 @@ const EventScheduleSection = React.memo(
     formData,
     isEditable,
     isCreateMode,
-    handleTitleChange,
-    handleDateChange,
-    updateFormData,
+    _handleTitleChange,
+    _handleDateChange,
+    _updateFormData,
   }: {
     formData: Partial<CalendarEvent>
     isEditable: boolean
     isCreateMode: boolean
-    handleTitleChange: (value: string) => void
-    handleDateChange: (value: string) => void
-    updateFormData: (field: keyof CalendarEvent, value: unknown) => void
+    _handleTitleChange: (value: string) => void
+    _handleDateChange: (value: string) => void
+    _updateFormData: (field: keyof CalendarEvent, value: unknown) => void
   }) => (
     <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
       <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>予定</h3>
@@ -301,18 +301,10 @@ export const EventDetailInspectorContent = ({
 }: EventDetailInspectorContentProps) => {
   // カスタムフックで状態管理とロジックを抽出
   const {
-    _isDetailOpen,
     showTimeline,
     formData,
-    _isValid,
-    _setIsDetailOpen,
     setShowTimeline,
     updateFormData,
-    _updateFormDataBulk,
-    _handleSave,
-    _handleDelete,
-    _handleDuplicate,
-    _handleTemplateCreate,
   } = useEventDetailInspector({
     event,
     mode,
@@ -413,9 +405,9 @@ export const EventDetailInspectorContent = ({
           formData={formData}
           isEditable={isEditable}
           isCreateMode={isCreateMode}
-          handleTitleChange={handleTitleChange}
-          handleDateChange={() => {}}
-          updateFormData={updateFormData}
+          _handleTitleChange={handleTitleChange}
+          _handleDateChange={() => {}}
+          _updateFormData={updateFormData}
         />
 
         <ActionButtonsSection isEditable={isEditable} />

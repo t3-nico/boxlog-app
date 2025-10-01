@@ -117,8 +117,8 @@ export const CreateEventForm = ({
   initialData,
   context,
   onSubmit,
-  _onCancel,
-  _isSubmitting,
+  _onCancel: _,
+  _isSubmitting: __,
   error,
 }: CreateEventFormProps) => {
   const titleInputRef = useRef<HTMLInputElement>(null)
@@ -163,14 +163,6 @@ export const CreateEventForm = ({
 
   const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, description: e.target.value }))
-  }, [setFormData])
-
-  const _handleLocationChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, location: e.target.value }))
-  }, [setFormData])
-
-  const _handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, url: e.target.value }))
   }, [setFormData])
 
   const handleStartTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
