@@ -427,7 +427,6 @@ const ChronoTypePage = () => {
     onSave: async (values) => {
       // クロノタイプ設定API呼び出しシミュレーション
       await new Promise((resolve) => setTimeout(resolve, 600))
-      console.log('Saving chronotype settings:', values)
       // 実際のstore更新
       updateSettings({ chronotype: values })
     },

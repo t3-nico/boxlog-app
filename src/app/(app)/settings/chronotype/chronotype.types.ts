@@ -26,15 +26,6 @@ export interface ChronoTypeProfile {
   schedules: ChronoTypeSchedule[]
 }
 
-export interface DiagnosisQuestion {
-  id: number
-  question: string
-  answers: {
-    text: string
-    score: { lion: number; bear: number; wolf: number; dolphin: number }
-  }[]
-}
-
 export const typeColors = {
   lion: 'bg-orange-500',
   bear: 'bg-green-500',
