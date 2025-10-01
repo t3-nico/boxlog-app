@@ -166,6 +166,7 @@ export const typography = {
   body: {
     DEFAULT: 'text-base',
     base: 'text-base',
+    lg: 'text-lg',
     sm: 'text-sm',
     small: 'text-sm',
     xs: 'text-xs',
@@ -201,6 +202,9 @@ export const spacing = {
   lg: '2rem',     // 32px - var(--spacing-lg)
   xl: '3rem',     // 48px - var(--spacing-xl)
   '2xl': '4rem',  // 64px - var(--spacing-2xl)
+  page: { DEFAULT: '1rem', md: '1.5rem', lg: '2rem' },
+  section: { DEFAULT: '1.5rem', md: '2rem', lg: '3rem' },
+  component: { DEFAULT: '0.5rem', md: '1rem', lg: '1.5rem' },
 } as const
 
 /**
@@ -221,7 +225,7 @@ export const rounded = {
       md: 'rounded-md',
       lg: 'rounded-lg',
     },
-    card: 'rounded-lg',
+    card: { DEFAULT: 'rounded-lg', lg: 'rounded-lg' },
     input: 'rounded-md',
     media: {
       avatar: 'rounded-full',
