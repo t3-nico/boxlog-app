@@ -183,14 +183,8 @@ export interface TaskSort {
     | 'title'
     | 'status'
     | 'priority'
-    | 'type'
-    | 'createdAt'
-    | 'updatedAt'
-    | 'dueDate'
-    | 'startDate'
-    | 'completedAt'
-    | 'estimatedHours'
-    | 'actualHours'
+    | 'created_at'
+    | 'updated_at'
   >
   direction: 'asc' | 'desc'
 }
