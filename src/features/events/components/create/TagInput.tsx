@@ -5,9 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import { Hash, Tag, TrendingUp, X } from 'lucide-react'
 
-import { border, colors, semantic, text } from '@/config/theme/colors'
-import { rounded } from '@/config/theme/rounded'
-import { body } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 import { useSmartTagSuggestions } from '../../hooks/useSmartTagSuggestions'
 import { useTagInput } from '../../hooks/useTagInput'
@@ -206,7 +204,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
     <div className="space-y-4">
       {/* New tag input */}
       <div className="relative">
-        <div className={`${body.small} ${text.muted} mb-2`}>Add tags to categorize your event</div>
+        <div className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">Add tags to categorize your event</div>
         <div className="relative">
           <input
             ref={inputRef}
@@ -215,7 +213,13 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             placeholder="Enter tag and press Enter to add..."
-            className={`w-full py-3 pl-3 pr-20 ${colors.background.surface} ${border.universal} ${rounded.component.button.md} ${body.DEFAULT} transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 ${selectedTags.length >= 5 ? 'cursor-not-allowed opacity-50' : ''} ${inputValue.trim() ? 'ring-1 ring-blue-200 dark:ring-blue-800' : ''} `}
+            className={cn(
+              "w-full py-3 pl-3 pr-20 bg-neutral-50 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700",
+              "rounded-md text-base transition-all duration-200",
+              "focus:outline-none focus:ring-2 focus:ring-blue-500",
+              selectedTags.length >= 5 && "cursor-not-allowed opacity-50",
+              inputValue.trim() && "ring-1 ring-blue-200 dark:ring-blue-800"
+            )}
             disabled={selectedTags.length >= 5}
           />
 
@@ -228,10 +232,8 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2"
               >
-                <div className={`${body.small} ${text.muted}`}>Enter</div>
-                <div
-                  className={`px-2 py-1 ${colors.background.elevated} ${text.secondary} rounded border border-neutral-300 text-xs font-medium dark:border-neutral-600`}
-                >
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">Enter</div>
+                <div className="px-2 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded border border-neutral-300 text-xs font-medium dark:border-neutral-600">
                   ⏎
                 </div>
               </motion.div>
@@ -243,7 +245,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className={`absolute -bottom-6 left-0 ${body.small} ${semantic.warning.text} `}
+            className="absolute -bottom-6 left-0 text-sm text-amber-600 dark:text-amber-400"
           >
             最大5個までです
           </motion.div>
@@ -255,25 +257,28 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className={`absolute left-0 right-0 top-full z-50 mt-2 ${colors.background.base} ${border.universal} ${rounded.component.button.lg} max-h-60 overflow-y-auto shadow-lg`}
+              className="absolute left-0 right-0 top-full z-50 mt-2 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg max-h-60 overflow-y-auto shadow-lg"
             >
               {suggestions.map((suggestion, index) => (
                 <button
                   type="button"
                   key={suggestion.id}
                   onClick={createSuggestionClickHandler(suggestion.name)}
-                  className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150 ${
+                  className={cn(
+                    "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150",
                     index === focusedSuggestionIndex
-                      ? `${colors.background.elevated}`
-                      : `hover:${colors.background.surface}`
-                  } ${index === 0 ? 'rounded-t-lg' : ''} ${index === suggestions.length - 1 ? 'rounded-b-lg' : ''} `}
+                      ? "bg-neutral-100 dark:bg-neutral-800"
+                      : "hover:bg-neutral-50 dark:hover:bg-neutral-900",
+                    index === 0 && "rounded-t-lg",
+                    index === suggestions.length - 1 && "rounded-b-lg"
+                  )}
                 >
                   <span className="text-lg" style={{ color: suggestion.color }}>
                     #
                   </span>
-                  <span className={`${body.DEFAULT} ${text.primary}`}>{suggestion.name}</span>
+                  <span className="text-base text-neutral-900 dark:text-neutral-50">{suggestion.name}</span>
                   {suggestion.frequency != null && (
-                    <span className={`ml-auto ${body.small} ${text.muted}`}>{suggestion.frequency}回</span>
+                    <span className="ml-auto text-sm text-neutral-600 dark:text-neutral-400">{suggestion.frequency}回</span>
                   )}
                 </button>
               ))}
@@ -283,9 +288,9 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
 
       {/* Popular tags */}
       <div className="ml-4">
-        <div className={`mb-3 flex items-center gap-2 ${text.secondary}`}>
+        <div className="mb-3 flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
           <TrendingUp size={16} />
-          <span className={`${body.small} font-medium`}>Popular</span>
+          <span className="text-sm font-medium">Popular</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {trendingTags
@@ -315,9 +320,9 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
       {/* Recent tags */}
       {recentTags.length > 0 && (
         <div className="ml-4">
-          <div className={`mb-3 flex items-center gap-2 ${text.secondary}`}>
+          <div className="mb-3 flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
             <Hash size={16} />
-            <span className={`${body.small} font-medium`}>最近</span>
+            <span className="text-sm font-medium">最近</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {recentTags
@@ -352,9 +357,9 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
             exit={{ opacity: 0, y: -20 }}
             className="ml-4"
           >
-            <div className={`mb-3 flex items-center gap-2 ${text.secondary}`}>
-              <span className={`${body.small} font-medium`}>選択済み</span>
-              <span className={`${body.small} ${text.muted}`}>({selectedTags.length}/5)</span>
+            <div className="mb-3 flex items-center gap-2 text-neutral-600 dark:text-neutral-400">
+              <span className="text-sm font-medium">選択済み</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">({selectedTags.length}/5)</span>
             </div>
             <Reorder.Group axis="x" values={selectedTags} onReorder={onChange} className="flex flex-wrap gap-2">
               <AnimatePresence>
@@ -371,17 +376,17 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                         damping: 30,
                         mass: 1,
                       }}
-                      className={`flex cursor-move items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${colors.background.elevated} ${border.universal} `}
+                      className="flex cursor-move items-center gap-2 rounded-full px-3 py-2 text-sm font-medium bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700"
                       style={{ borderColor: tag.color }}
                       whileHover={{ scale: 1.05 }}
                       whileDrag={{ scale: 1.1 }}
                     >
                       <span style={{ color: tag.color }}>#</span>
-                      <span className={text.primary}>{tag.name}</span>
+                      <span className="text-neutral-900 dark:text-neutral-50">{tag.name}</span>
                       <button
                         type="button"
                         onClick={createTagRemoveHandler(tag.id)}
-                        className={`ml-1 rounded-full p-0.5 transition-colors hover:bg-red-100 dark:hover:bg-red-900/20 ${text.muted} hover:text-red-500`}
+                        className="ml-1 rounded-full p-0.5 transition-colors hover:bg-red-100 dark:hover:bg-red-900/20 text-neutral-600 dark:text-neutral-400 hover:text-red-500"
                       >
                         <X size={14} />
                       </button>

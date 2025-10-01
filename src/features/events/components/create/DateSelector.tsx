@@ -5,9 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Calendar, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
 
-import { border, text } from '@/config/theme/colors'
-import { rounded } from '@/config/theme/rounded'
-import { body } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 interface DateSelectorProps {
   value: Date
@@ -227,17 +225,17 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
       <div className="flex items-end gap-3">
         {/* Date selector */}
         <div className="relative w-36" ref={dateRef}>
-          <label htmlFor="date-selector-button" className={`${body.small} ${text.muted} mb-2 block`}>
+          <label htmlFor="date-selector-button" className="text-sm text-muted-foreground mb-2 block">
             Date
           </label>
           <button
             type="button"
             id="date-selector-button"
             onClick={toggleDatePicker}
-            className={`w-full py-3 pl-3 pr-3 ${colors.background.surface} ${border.universal} ${rounded.component.input.md} ${body.DEFAULT} text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:${colors.background.elevated} flex items-center justify-between transition-colors duration-200`}
+            className="w-full py-3 pl-3 pr-3 bg-background border border-border rounded-md text-base text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-muted/50 flex items-center justify-between transition-colors duration-200"
           >
             <span>{formatDateForDisplay(value)}</span>
-            <Calendar size={14} className={text.muted} />
+            <Calendar size={14} className="text-muted-foreground" />
           </button>
 
           {/* Mini calendar popup */}
@@ -247,24 +245,24 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className={`absolute left-0 top-full z-50 mt-1 w-64 ${colors.background.base} ${border.universal} ${rounded.component.button.lg} p-4 shadow-lg`}
+                className="absolute left-0 top-full z-50 mt-1 w-64 bg-background border border-border rounded-lg p-4 shadow-lg"
               >
                 {/* Calendar header */}
                 <div className="mb-4 flex items-center justify-between">
                   <button
                     type="button"
                     onClick={handlePrevMonth}
-                    className={`rounded p-1 hover:${colors.background.surface} transition-colors`}
+                    className="rounded p-1 hover:bg-muted/50 transition-colors"
                   >
                     <ChevronLeft size={16} />
                   </button>
-                  <h3 className={`${body.DEFAULT} font-semibold ${text.primary}`}>
+                  <h3 className="text-base font-semibold text-foreground">
                     {calendarDate.getFullYear()}/{(calendarDate.getMonth() + 1).toString().padStart(2, '0')}
                   </h3>
                   <button
                     type="button"
                     onClick={handleNextMonth}
-                    className={`rounded p-1 hover:${colors.background.surface} transition-colors`}
+                    className="rounded p-1 hover:bg-muted/50 transition-colors"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -273,7 +271,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                 {/* Day headers */}
                 <div className="mb-2 grid grid-cols-7 gap-1">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                    <div key={day} className={`p-2 text-center ${body.small} ${text.muted}`}>
+                    <div key={day} className="p-2 text-center text-sm text-muted-foreground">
                       {day}
                     </div>
                   ))}
@@ -291,15 +289,13 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                         type="button"
                         key={day.toISOString().split('T')[0]}
                         onClick={createDateSelectHandler(day)}
-                        className={`rounded p-2 text-center transition-colors duration-150 ${
-                          isSelected
-                            ? 'bg-blue-500 text-white'
-                            : isToday
-                              ? `${colors.background.elevated} ${text.primary} font-semibold`
-                              : isCurrentMonth
-                                ? `hover:${colors.background.surface} ${text.primary}`
-                                : `${text.muted} hover:${colors.background.surface}`
-                        } ${body.small} `}
+                        className={cn(
+                          "rounded p-2 text-center transition-colors duration-150 text-sm",
+                          isSelected && "bg-blue-500 text-white",
+                          !isSelected && isToday && "bg-muted text-foreground font-semibold",
+                          !isSelected && !isToday && isCurrentMonth && "hover:bg-muted/50 text-foreground",
+                          !isSelected && !isToday && !isCurrentMonth && "text-muted-foreground hover:bg-muted/50"
+                        )}
                       >
                         {day.getDate()}
                       </button>
@@ -312,14 +308,14 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                   <button
                     type="button"
                     onClick={selectToday}
-                    className={`rounded px-3 py-1.5 ${body.small} ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-colors duration-150`}
+                    className="rounded px-3 py-1.5 text-sm bg-muted text-muted-foreground hover:bg-muted/80 transition-colors duration-150"
                   >
                     Today
                   </button>
                   <button
                     type="button"
                     onClick={selectTomorrow}
-                    className={`rounded px-3 py-1.5 ${body.small} ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-colors duration-150`}
+                    className="rounded px-3 py-1.5 text-sm bg-muted text-muted-foreground hover:bg-muted/80 transition-colors duration-150"
                   >
                     Tomorrow
                   </button>
@@ -331,17 +327,17 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
 
         {/* Start time */}
         <div className="relative w-24" ref={startTimeRef}>
-          <label htmlFor="start-time-selector-button" className={`${body.small} ${text.muted} mb-2 block`}>
+          <label htmlFor="start-time-selector-button" className="text-sm text-muted-foreground mb-2 block">
             Start
           </label>
           <button
             type="button"
             id="start-time-selector-button"
             onClick={toggleStartTimePicker}
-            className={`w-full py-3 pl-3 pr-3 ${colors.background.surface} ${border.universal} ${rounded.component.input.md} ${body.DEFAULT} text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:${colors.background.elevated} flex items-center justify-between transition-colors duration-200`}
+            className="w-full py-3 pl-3 pr-3 bg-background border border-border rounded-md text-base text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-muted/50 flex items-center justify-between transition-colors duration-200"
           >
             <span>{formatTimeForInput(value)}</span>
-            <Clock size={14} className={text.muted} />
+            <Clock size={14} className="text-muted-foreground" />
           </button>
 
           {/* Time picker dropdown */}
@@ -351,14 +347,17 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className={`absolute left-0 top-full z-50 mt-1 w-32 ${colors.background.base} ${border.universal} ${rounded.component.button.lg} max-h-48 overflow-y-auto shadow-lg`}
+                className="absolute left-0 top-full z-50 mt-1 w-32 bg-background border border-border rounded-lg max-h-48 overflow-y-auto shadow-lg"
               >
                 {timeOptions.map((option) => (
                   <button
                     type="button"
                     key={option.value}
                     onClick={createStartTimeSelectHandler(option.value)}
-                    className={`w-full px-3 py-2 text-left text-sm hover:${colors.background.surface} transition-colors duration-150 ${formatTimeForInput(value) === option.value ? `${colors.background.elevated}` : ''} `}
+                    className={cn(
+                      "w-full px-3 py-2 text-left text-sm hover:bg-muted/50 transition-colors duration-150",
+                      formatTimeForInput(value) === option.value && "bg-muted"
+                    )}
                   >
                     {option.display}
                   </button>
@@ -370,17 +369,17 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
 
         {/* End time */}
         <div className="relative w-24" ref={endTimeRef}>
-          <label htmlFor="end-time-selector-button" className={`${body.small} ${text.muted} mb-2 block`}>
+          <label htmlFor="end-time-selector-button" className="text-sm text-muted-foreground mb-2 block">
             End
           </label>
           <button
             type="button"
             id="end-time-selector-button"
             onClick={toggleEndTimePicker}
-            className={`w-full py-3 pl-3 pr-3 ${colors.background.surface} ${border.universal} ${rounded.component.input.md} ${body.DEFAULT} text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:${colors.background.elevated} flex items-center justify-between transition-colors duration-200`}
+            className="w-full py-3 pl-3 pr-3 bg-background border border-border rounded-md text-base text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-muted/50 flex items-center justify-between transition-colors duration-200"
           >
             <span>{formatTimeForInput(endValue)}</span>
-            <Clock size={14} className={text.muted} />
+            <Clock size={14} className="text-muted-foreground" />
           </button>
 
           {/* Time picker dropdown */}
@@ -390,14 +389,17 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className={`absolute left-0 top-full z-50 mt-1 w-32 ${colors.background.base} ${border.universal} ${rounded.component.button.lg} max-h-48 overflow-y-auto shadow-lg`}
+                className="absolute left-0 top-full z-50 mt-1 w-32 bg-background border border-border rounded-lg max-h-48 overflow-y-auto shadow-lg"
               >
                 {timeOptions.map((option) => (
                   <button
                     type="button"
                     key={option.value}
                     onClick={createEndTimeSelectHandler(option.value)}
-                    className={`w-full px-3 py-2 text-left text-sm hover:${colors.background.surface} transition-colors duration-150 ${formatTimeForInput(endValue) === option.value ? `${colors.background.elevated}` : ''} `}
+                    className={cn(
+                      "w-full px-3 py-2 text-left text-sm hover:bg-muted/50 transition-colors duration-150",
+                      formatTimeForInput(endValue) === option.value && "bg-muted"
+                    )}
                   >
                     {option.display}
                   </button>
@@ -414,7 +416,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
             animate={{ opacity: 1, scale: 1 }}
             className="mb-3 mt-auto flex items-center gap-1.5"
           >
-            <div className={`${body.small} ${text.muted} flex items-center gap-1.5`}>
+            <div className="text-sm text-muted-foreground flex items-center gap-1.5">
               <Clock size={12} />
               <span>{formatDuration(duration)}</span>
             </div>

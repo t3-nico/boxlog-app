@@ -16,7 +16,6 @@ import {
 } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { secondary, selection } from '@/config/theme/colors'
 import { calendarColors } from '@/features/calendar/theme/colors'
 import { cn } from '@/lib/utils'
 
@@ -125,7 +124,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           'focus:outline-none',
 
           // Hover state (only for non-today dates)
-          !isToday && selection.hover,
+          !isToday && 'hover:bg-blue-50 dark:hover:bg-blue-900/20',
 
           // Current month vs other months
           isCurrentMonth ? 'text-foreground' : 'text-muted-foreground/50',
@@ -137,7 +136,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           isSelected && !isToday && [selectedState.background],
 
           // Today indicator (always maintains this style regardless of selected/hover state)
-          isToday && [`!${secondary.today}`, secondary.text, 'font-semibold'],
+          isToday && ['!bg-neutral-100 dark:!bg-neutral-800', 'text-neutral-700 dark:text-neutral-300', 'font-semibold'],
 
           // Highlighted dates (events, etc.)
           isHighlighted &&
@@ -210,8 +209,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             onClick={handlePrevMonth}
             className={cn(
               'rounded-full p-1.5 transition-colors',
-              secondary.hover,
-              'text-muted-foreground hover:text-foreground'
+              'hover:bg-neutral-300 dark:hover:bg-neutral-600',
+              'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50'
             )}
             aria-label="Previous Month"
           >
@@ -225,8 +224,8 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             onClick={handleNextMonth}
             className={cn(
               'rounded-full p-1.5 transition-colors',
-              secondary.hover,
-              'text-muted-foreground hover:text-foreground'
+              'hover:bg-neutral-300 dark:hover:bg-neutral-600',
+              'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50'
             )}
             aria-label="Next Month"
           >

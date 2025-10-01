@@ -9,17 +9,15 @@ import { Input } from '@/components/shadcn-ui/input'
 import { Label } from '@/components/shadcn-ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Textarea } from '@/components/shadcn-ui/textarea'
-import { border, semantic, text } from '@/config/theme/colors'
-import { icon } from '@/config/theme/icons'
-import { body } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 import type { CreateEventRequest, EventPriority, EventStatus, EventType } from '../../types/events'
 
 // シンプルな見出しコンポーネント
 const SectionHeader = ({ icon: Icon, title }: { icon: React.ComponentType<{ className?: string }>; title: string }) => (
   <div className="flex items-center gap-2">
-    <Icon className={`${icon.size.md} ${text.secondary}`} />
-    <h3 className={`${body.large} font-semibold`}>{title}</h3>
+    <Icon className="h-5 w-5 text-muted-foreground" />
+    <h3 className="text-lg font-semibold">{title}</h3>
   </div>
 )
 
@@ -216,18 +214,18 @@ export const CreateEventForm = ({
             placeholder="What needs to be done?"
             value={formData.title}
             onChange={handleTitleChange}
-            className={`text-3xl font-medium md:text-4xl ${border.universal} px-6 py-6 text-neutral-900 placeholder:text-neutral-400 dark:text-neutral-50 dark:placeholder:text-neutral-500`}
+            className="text-3xl font-medium md:text-4xl border-border px-6 py-6 text-neutral-900 placeholder:text-neutral-400 dark:text-neutral-50 dark:placeholder:text-neutral-500"
           />
         </div>
 
         {/* 日付・時間 - 重要項目 */}
         <div className="space-y-3">
           <fieldset>
-            <legend className={`${body.small} font-medium`}>Date & Time</legend>
+            <legend className="text-sm font-medium">Date & Time</legend>
 
           {/* 日付 */}
           <div>
-            <Label htmlFor="event-date" className={`${body.small} ${text.muted}`}>
+            <Label htmlFor="event-date" className="text-sm text-muted-foreground">
               Date
             </Label>
             <Input
@@ -235,14 +233,14 @@ export const CreateEventForm = ({
               id="event-date"
               value={formatDateForInput(formData.startDate)}
               onChange={handleDateChange}
-              className={border.universal}
+              className="border-border"
             />
           </div>
 
           {/* 開始・終了時間 */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="start-time" className={`${body.small} ${text.muted}`}>
+              <Label htmlFor="start-time" className="text-sm text-muted-foreground">
                 Start Time
               </Label>
               <Input
@@ -250,11 +248,11 @@ export const CreateEventForm = ({
                 id="start-time"
                 value={formatTimeForInput(formData.startDate)}
                 onChange={handleStartTimeChange}
-                className={border.universal}
+                className="border-border"
               />
             </div>
             <div>
-              <Label htmlFor="end-time" className={`${body.small} ${text.muted}`}>
+              <Label htmlFor="end-time" className="text-sm text-muted-foreground">
                 End Time
               </Label>
               <Input
@@ -262,7 +260,7 @@ export const CreateEventForm = ({
                 id="end-time"
                 value={formatTimeForInput(formData.endDate)}
                 onChange={handleEndTimeChange}
-                className={border.universal}
+                className="border-border"
               />
             </div>
           </div>
@@ -274,9 +272,9 @@ export const CreateEventForm = ({
                 type="checkbox"
                 checked={formData.isRecurring}
                 onChange={handleRecurringChange}
-                className={`rounded ${border.universal}`}
+                className="rounded border-border"
               />
-              <span className={`${body.small} font-medium`}>Repeat</span>
+              <span className="text-sm font-medium">Repeat</span>
             </label>
 
             {formData.isRecurring === true && (
@@ -284,7 +282,7 @@ export const CreateEventForm = ({
                 value={formData.recurrenceRule?.frequency || 'daily'}
                 onValueChange={handleRecurrenceFrequencyChange}
               >
-                <SelectTrigger className={`w-28 ${border.universal}`}>
+                <SelectTrigger className="w-28 border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -301,15 +299,15 @@ export const CreateEventForm = ({
 
         {/* タグ - 重要項目 */}
         <div>
-          <Label htmlFor="tags" className={`${body.small} font-medium`}>
+          <Label htmlFor="tags" className="text-sm font-medium">
             Tags
           </Label>
-          <Input id="tags" placeholder="Add tags..." className={border.universal} />
+          <Input id="tags" placeholder="Add tags..." className="border-border" />
         </div>
 
         {/* 説明 */}
         <div>
-          <Label htmlFor="description" className={`${body.small} font-medium`}>
+          <Label htmlFor="description" className="text-sm font-medium">
             Description
           </Label>
           <Textarea
@@ -318,7 +316,7 @@ export const CreateEventForm = ({
             value={formData.description}
             onChange={handleDescriptionChange}
             rows={3}
-            className={`resize-none ${border.universal}`}
+            className="resize-none border-border"
           />
         </div>
       </div>
@@ -330,14 +328,14 @@ export const CreateEventForm = ({
         <div className="space-y-4">
           {/* タイプ選択 */}
           <div>
-            <Label htmlFor="full-type" className={`${body.small} font-medium`}>
+            <Label htmlFor="full-type" className="text-sm font-medium">
               Type
             </Label>
             <Select
               value={formData.type}
               onValueChange={handleTypeChange}
             >
-              <SelectTrigger id="full-type" className={border.universal}>
+              <SelectTrigger id="full-type" className="border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -350,14 +348,14 @@ export const CreateEventForm = ({
 
           {/* 優先度 */}
           <div>
-            <Label htmlFor="priority" className={`${body.small} font-medium`}>
+            <Label htmlFor="priority" className="text-sm font-medium">
               Priority
             </Label>
             <Select
               value={formData.priority}
               onValueChange={handlePriorityChange}
             >
-              <SelectTrigger id="priority" className={border.universal}>
+              <SelectTrigger id="priority" className="border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -372,14 +370,14 @@ export const CreateEventForm = ({
 
           {/* ステータス */}
           <div>
-            <Label htmlFor="status" className={`${body.small} font-medium`}>
+            <Label htmlFor="status" className="text-sm font-medium">
               Status
             </Label>
             <Select
               value={formData.status}
               onValueChange={handleStatusChange}
             >
-              <SelectTrigger id="status" className={border.universal}>
+              <SelectTrigger id="status" className="border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -401,7 +399,7 @@ export const CreateEventForm = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`rounded-lg p-4 ${semantic.error.background} ${semantic.error.text}`}
+            className="rounded-lg p-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400"
           >
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">
@@ -414,8 +412,8 @@ export const CreateEventForm = ({
                 </svg>
               </div>
               <div>
-                <h4 className={`${body.small} font-medium`}>エラーが発生しました</h4>
-                <p className={`mt-1 ${body.small} opacity-90`}>{error.message}</p>
+                <h4 className="text-sm font-medium">エラーが発生しました</h4>
+                <p className="mt-1 text-sm opacity-90">{error.message}</p>
               </div>
             </div>
           </motion.div>

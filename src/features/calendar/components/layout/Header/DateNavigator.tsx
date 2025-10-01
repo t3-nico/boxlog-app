@@ -2,7 +2,6 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { secondary, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export type NavigationDirection = 'prev' | 'next' | 'today'
@@ -46,9 +45,9 @@ export const DateNavigator = ({
           className={cn(
             'px-4 py-2 text-sm font-medium',
             'rounded-md transition-colors',
-            secondary.DEFAULT,
-            secondary.text,
-            secondary.hover,
+            'bg-neutral-200 dark:bg-neutral-700',
+            'text-neutral-700 dark:text-neutral-300',
+            'hover:bg-neutral-300 dark:hover:bg-neutral-600',
             'flex items-center gap-2',
             buttonClassName
           )}
@@ -64,7 +63,7 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('prev')}
-            className={cn('rounded-full p-1.5 transition-colors', secondary.hover, text.muted, 'hover:text-foreground')}
+            className={cn('rounded-full p-1.5 transition-colors', 'hover:bg-neutral-300 dark:hover:bg-neutral-600', 'text-neutral-600 dark:text-neutral-400', 'hover:text-neutral-900 dark:hover:text-neutral-50')}
             title="Previous period"
             aria-label="Previous"
           >
@@ -73,7 +72,7 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('next')}
-            className={cn('rounded-full p-1.5 transition-colors', secondary.hover, text.muted, 'hover:text-foreground')}
+            className={cn('rounded-full p-1.5 transition-colors', 'hover:bg-neutral-300 dark:hover:bg-neutral-600', 'text-neutral-600 dark:text-neutral-400', 'hover:text-neutral-900 dark:hover:text-neutral-50')}
             title="Next period"
             aria-label="Next"
           >

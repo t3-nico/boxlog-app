@@ -6,8 +6,6 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { ChevronDown, ChevronRight, Clock, Copy, Trash2 } from 'lucide-react'
 
-import { border, colors, text } from '@/config/theme/colors'
-import { heading } from '@/config/theme/typography'
 import { cn } from '@/lib/utils'
 
 import type { EventDetailInspectorData } from '../hooks/useEventDetailInspector'
@@ -52,20 +50,16 @@ export const EventDetailHeader = ({
   )
 
   return (
-    <div className={cn('border-b p-6', border.universal)}>
+    <div className="border-b border-neutral-300 p-6 dark:border-neutral-700">
       {/* Header controls */}
       <div className="mb-4 flex items-start justify-between">
         <button
           type="button"
           onClick={onToggleDetail}
-          className={cn(
-            'flex items-center gap-2 transition-colors',
-            colors.button.ghost.DEFAULT,
-            'hover:' + colors.button.ghost.hover
-          )}
+          className="flex items-center gap-2 text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50"
         >
           {isDetailOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-          <span className={cn(heading.h6, text.primary)}>{isCreateMode ? 'New Event' : 'Event Details'}</span>
+          <span className="text-base font-medium text-neutral-900 dark:text-neutral-50">{isCreateMode ? 'New Event' : 'Event Details'}</span>
         </button>
 
         {!isCreateMode && (
@@ -74,11 +68,7 @@ export const EventDetailHeader = ({
               <button
                 type="button"
                 onClick={onDuplicate}
-                className={cn(
-                  'rounded-lg p-2 transition-colors',
-                  colors.button.ghost.DEFAULT,
-                  'hover:' + colors.button.ghost.hover
-                )}
+                className="rounded-lg p-2 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
                 title="Duplicate event"
               >
                 <Copy className="h-4 w-4" />
@@ -108,24 +98,19 @@ export const EventDetailHeader = ({
           value={formData.title}
           onChange={handleTitleChange}
           placeholder="Event title"
-          className={cn(
-            'w-full resize-none border-none bg-transparent outline-none',
-            heading.h4,
-            text.primary,
-            'placeholder:' + text.muted
-          )}
+          className="w-full resize-none border-none bg-transparent text-lg font-semibold text-neutral-900 outline-none placeholder:text-neutral-600 dark:text-neutral-50 dark:placeholder:text-neutral-400"
         />
       </div>
 
       {/* Time & Duration */}
       <div className="flex items-center gap-4 text-sm">
         <div className="flex items-center gap-2">
-          <Clock className={cn('h-4 w-4', text.muted)} />
-          <span className={text.primary}>
+          <Clock className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          <span className="text-neutral-900 dark:text-neutral-50">
             {format(formData.startDate, 'M月d日(E) HH:mm', { locale: ja })}
             {formData.endDate != null && (
               <>
-                <span className={text.muted}> - </span>
+                <span className="text-neutral-600 dark:text-neutral-400"> - </span>
                 {format(formData.endDate, 'HH:mm', { locale: ja })}
               </>
             )}
@@ -133,7 +118,7 @@ export const EventDetailHeader = ({
         </div>
 
         {duration > 0 && (
-          <div className={cn('rounded-full px-2 py-1 text-xs', colors.background.accent, text.muted)}>
+          <div className="rounded-full bg-neutral-100 px-2 py-1 text-xs text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
             {hours > 0 ? `${hours}時間${minutes}分` : `${minutes}分`}
           </div>
         )}

@@ -4,8 +4,6 @@ import * as React from "react"
 
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
-import { selection } from "@/config/theme/colors"
-import { heading } from "@/config/theme/typography"
 import { cn } from "@/lib/utils"
 
 const Tabs = TabsPrimitive.Root
@@ -34,10 +32,10 @@ const TabsTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-4 py-2 font-medium transition-all",
-      heading.h6,
+      "text-base",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       "disabled:pointer-events-none disabled:opacity-50",
-      selection.hover,
+      "hover:bg-blue-50 dark:hover:bg-blue-900/20",
       "data-[state=active]:bg-blue-50 data-[state=active]:dark:bg-blue-950/50",
       "data-[state=active]:text-blue-700 data-[state=active]:dark:text-blue-300",
       "data-[state=active]:font-medium",

@@ -5,8 +5,7 @@ import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check } from 'lucide-react'
 
-import { text } from '@/config/theme/colors'
-import { body, heading } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 interface EditSuccessAnimationProps {
   showSuccess: boolean
@@ -32,7 +31,7 @@ export const EditSuccessAnimation = ({ showSuccess, title }: EditSuccessAnimatio
               <Check size={24} className="text-white" />
             </motion.div>
             <motion.h2
-              className={`${heading.h4} ${text.primary} mb-2`}
+              className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-50 mb-2')}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -40,7 +39,7 @@ export const EditSuccessAnimation = ({ showSuccess, title }: EditSuccessAnimatio
               Updated!
             </motion.h2>
             <motion.p
-              className={`${body.DEFAULT} ${text.secondary}`}
+              className={cn('text-base text-neutral-600 dark:text-neutral-400')}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}

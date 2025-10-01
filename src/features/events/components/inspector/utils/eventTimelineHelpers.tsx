@@ -3,7 +3,6 @@ import React from 'react'
 import { Activity, Bell, Clock, FileText, Edit3, ArrowRight } from 'lucide-react'
 import { Tag as TagIcon } from 'lucide-react'
 
-import { text, colors } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 // Timeline event types
@@ -71,7 +70,7 @@ export const getEventIcon = (event: TimelineEvent) => {
  * 作成イベントの説明文を生成
  */
 export const renderCreatedEventDescription = () => {
-  return <span className={text.primary}>作成</span>
+  return <span className="text-neutral-900 dark:text-neutral-50">作成</span>
 }
 
 /**
@@ -80,10 +79,10 @@ export const renderCreatedEventDescription = () => {
 export const renderStatusEventDescription = (event: StatusEvent) => {
   return (
     <span className="flex items-center gap-1.5 flex-wrap">
-      <span className={text.muted}>ステータス:</span>
-      <span className={text.muted}>{event.oldValue}</span>
-      <ArrowRight className={cn('w-3 h-3', text.muted)} />
-      <span className={cn(text.primary, 'font-medium')}>{event.newValue}</span>
+      <span className="text-neutral-600 dark:text-neutral-400">ステータス:</span>
+      <span className="text-neutral-600 dark:text-neutral-400">{event.oldValue}</span>
+      <ArrowRight className="h-3 w-3 text-neutral-600 dark:text-neutral-400" />
+      <span className="font-medium text-neutral-900 dark:text-neutral-50">{event.newValue}</span>
     </span>
   )
 }
@@ -92,7 +91,7 @@ export const renderStatusEventDescription = (event: StatusEvent) => {
  * リマインダーイベントの説明文を生成
  */
 export const renderReminderEventDescription = (event: ReminderEvent) => {
-  return <span className={text.primary}>{event.value}</span>
+  return <span className="text-neutral-900 dark:text-neutral-50">{event.value}</span>
 }
 
 /**
@@ -101,10 +100,10 @@ export const renderReminderEventDescription = (event: ReminderEvent) => {
 export const renderTimeEventDescription = (event: TimeEvent) => {
   return (
     <span className="flex items-center gap-1.5 flex-wrap">
-      <span className={text.muted}>時間変更:</span>
-      <span className={cn(text.muted, 'font-mono text-xs')}>{event.oldValue}</span>
-      <ArrowRight className={cn('w-3 h-3', text.muted)} />
-      <span className={cn(text.primary, 'font-mono text-xs font-medium')}>{event.newValue}</span>
+      <span className="text-neutral-600 dark:text-neutral-400">時間変更:</span>
+      <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">{event.oldValue}</span>
+      <ArrowRight className="h-3 w-3 text-neutral-600 dark:text-neutral-400" />
+      <span className="font-mono text-xs font-medium text-neutral-900 dark:text-neutral-50">{event.newValue}</span>
     </span>
   )
 }
@@ -115,12 +114,8 @@ export const renderTimeEventDescription = (event: TimeEvent) => {
 export const renderTagAddedEventDescription = (event: TagEvent) => {
   return (
     <span className="flex items-center gap-1.5">
-      <span className={text.muted}>タグ追加:</span>
-      <span className={cn(
-        'px-2 py-0.5 text-xs rounded-full border',
-        colors.background.accent,
-        text.primary
-      )}>
+      <span className="text-neutral-600 dark:text-neutral-400">タグ追加:</span>
+      <span className="rounded-full border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs text-neutral-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-50">
         {event.newValue}
       </span>
     </span>
@@ -133,11 +128,8 @@ export const renderTagAddedEventDescription = (event: TagEvent) => {
 export const renderTagRemovedEventDescription = (event: TagEvent) => {
   return (
     <span className="flex items-center gap-1.5">
-      <span className={text.muted}>タグ削除:</span>
-      <span className={cn(
-        'px-2 py-0.5 text-xs rounded-full border border-dashed',
-        'bg-transparent text-neutral-500 dark:text-neutral-400'
-      )}>
+      <span className="text-neutral-600 dark:text-neutral-400">タグ削除:</span>
+      <span className="rounded-full border border-dashed border-neutral-300 bg-transparent px-2 py-0.5 text-xs text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
         {event.oldValue}
       </span>
     </span>
@@ -150,8 +142,8 @@ export const renderTagRemovedEventDescription = (event: TagEvent) => {
 export const renderMemoEventDescription = (event: MemoEvent) => {
   return (
     <span className="flex items-center gap-1.5">
-      <span className={text.muted}>メモ{event.action === 'added' ? '追加' : '更新'}:</span>
-      <span className={cn(text.primary, 'text-xs')}>
+      <span className="text-neutral-600 dark:text-neutral-400">メモ{event.action === 'added' ? '追加' : '更新'}:</span>
+      <span className="text-xs text-neutral-900 dark:text-neutral-50">
         {event.newValue.length > 20 ? `${event.newValue.slice(0, 20)}...` : event.newValue}
       </span>
     </span>

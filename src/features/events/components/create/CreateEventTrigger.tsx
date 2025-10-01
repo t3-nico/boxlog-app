@@ -5,11 +5,7 @@ import React, { useCallback } from 'react'
 import { Plus, ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-
-import { primary } from '@/config/theme/colors'
-import { elevation } from '@/config/theme/elevation'
-import { icon } from '@/config/theme/icons'
-import { rounded } from '@/config/theme/rounded'
+import { cn } from '@/lib/utils'
 
 import { useCreateModalStore } from '../../stores/useCreateModalStore'
 import type { CreateEventRequest } from '../../types/events'
@@ -43,18 +39,11 @@ export const CreateEventTrigger = ({
     return (
       <Button
         onClick={handleClick}
-        className={`
-          h-12 w-full
-          ${primary.DEFAULT} ${primary.hover} ${primary.active}
-          ${primary.text} font-medium
-          px-4
-          ${rounded.component.button.md}
-          shadow-sm hover:shadow-md
-          transition-all duration-200
-          flex items-center justify-between
-          group
-          ${className}
-        `}
+        className={cn(
+          "h-12 w-full bg-primary hover:bg-primary/90 active:bg-primary/80 text-primary-foreground font-medium px-4 rounded-md",
+          "shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group",
+          className
+        )}
         title="Create new event"
       >
         <div className="flex items-center gap-3">
@@ -74,29 +63,25 @@ export const CreateEventTrigger = ({
       <Button
         onClick={handleClick}
         size="icon"
-        className={`
-          fixed bottom-6 right-6 z-50
-          w-14 h-14
-          ${primary.DEFAULT} ${primary.hover}
-          ${rounded.radius.full}
-          ${elevation.lg}
-          ${className}
-        `}
+        className={cn(
+          "fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary hover:bg-primary/90 rounded-full shadow-lg",
+          className
+        )}
         title="Create new event (⌘N)"
       >
-        <Plus className={`${icon.size.lg}`} />
+        <Plus className="h-6 w-6" />
       </Button>
     )
   }
-  
+
   // インライン用ボタン
   return (
     <Button
       onClick={handleClick}
       variant="outline"
-      className={`${className}`}
+      className={cn(className)}
     >
-      <Plus className={`${icon.size.sm} mr-2`} />
+      <Plus className="h-4 w-4 mr-2" />
       Create Event
     </Button>
   )

@@ -5,14 +5,10 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Loader2, X } from 'lucide-react'
 
-import { primary, semantic, text } from '@/config/theme/colors'
-
-import { rounded } from '@/config/theme/rounded'
-import { body, heading } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 import { DateSelector } from './DateSelector'
 import { TagInput } from './TagInput'
-
 import { TitleInput } from './TitleInput'
 
 interface Tag {
@@ -267,7 +263,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
             initial="hidden"
             animate="visible"
             exit="exit"
-            className={`relative mx-4 w-full max-w-2xl ${colors.background.base} ${rounded.modal} shadow-2xl`}
+            className={cn('relative mx-4 w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl')}
             style={{
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
             }}
@@ -275,7 +271,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
             {/* ヘッダー */}
             <div className="flex items-center justify-between p-8 pb-4">
               <motion.h1
-                className={`${heading.h2} ${text.primary}`}
+                className={cn('text-2xl font-semibold text-neutral-900 dark:text-neutral-50')}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
@@ -285,7 +281,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
               <button
                 type="button"
                 onClick={onClose}
-                className={`rounded-lg p-2 transition-colors duration-200 hover:${colors.background.surface} ${text.secondary} `}
+                className={cn('rounded-lg p-2 transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400')}
               >
                 <X size={24} />
               </button>
@@ -297,22 +293,23 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                 {['Title', 'Date', 'Tags'].map((step, index) => (
                   <div key={step} className="flex items-center gap-2">
                     <motion.div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
-                        index <= currentStep
-                          ? `${primary.DEFAULT} text-white`
-                          : `${colors.background.surface} ${text.muted}`
-                      } `}
-                      animate={index === currentStep ? { scale: [1, 1.1, 1] } : {}}
+                      className={cn(
+                        'flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300',
+                        index <= formState.currentStep
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500'
+                      )}
+                      animate={index === formState.currentStep ? { scale: [1, 1.1, 1] } : {}}
                       transition={{ duration: 0.3 }}
                     >
-                      {index < currentStep ? <Check size={16} /> : index + 1}
+                      {index < formState.currentStep ? <Check size={16} /> : index + 1}
                     </motion.div>
-                    <span className={`text-sm font-medium ${index <= currentStep ? text.primary : text.muted} `}>
+                    <span className={cn('text-sm font-medium', index <= formState.currentStep ? 'text-neutral-900 dark:text-neutral-50' : 'text-neutral-400 dark:text-neutral-500')}>
                       {step}
                     </span>
                     {index < 2 && (
                       <div
-                        className={`mx-2 h-0.5 w-8 ${index < currentStep ? primary.DEFAULT : colors.background.surface} `}
+                        className={cn('mx-2 h-0.5 w-8', index < formState.currentStep ? 'bg-blue-500' : 'bg-neutral-100 dark:bg-neutral-800')}
                       />
                     )}
                   </div>
@@ -323,7 +320,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
             {/* メインコンテンツ */}
             <div className="px-8 pb-8">
               <AnimatePresence mode="wait">
-                {currentStep === 0 && (
+                {formState.currentStep === 0 && (
                   <motion.div
                     key="title"
                     initial={{ opacity: 0, x: 50 }}
@@ -333,21 +330,22 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                     className="space-y-6"
                   >
                     <TitleInput
-                      value={title}
-                      onChange={setTitle}
+                      value={formState.title}
+                      onChange={formState.setTitle}
                       onSmartExtract={handleSmartExtract}
-                      onTabNext={handleTabNext}
+                      onTabNext={formState.handleTabNext}
                     />
                     <div className="flex justify-end">
                       <button
                         type="button"
-                        onClick={handleTabNext}
-                        disabled={!title.trim()}
-                        className={`rounded-lg px-6 py-3 font-medium transition-all duration-200 ${
-                          title.trim()
-                            ? `${primary.DEFAULT} text-white hover:opacity-90`
-                            : `${colors.background.surface} ${text.muted} cursor-not-allowed`
-                        } `}
+                        onClick={formState.handleTabNext}
+                        disabled={!formState.title.trim()}
+                        className={cn(
+                          'rounded-lg px-6 py-3 font-medium transition-all duration-200',
+                          formState.title.trim()
+                            ? 'bg-blue-500 text-white hover:opacity-90'
+                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+                        )}
                       >
                         Next: Date →
                       </button>
@@ -355,7 +353,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                   </motion.div>
                 )}
 
-                {currentStep === 1 && (
+                {formState.currentStep === 1 && (
                   <motion.div
                     key="date"
                     initial={{ opacity: 0, x: 50 }}
@@ -365,24 +363,24 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                     className="space-y-6"
                   >
                     <DateSelector
-                      value={date}
-                      endValue={endDate}
-                      onChange={setDate}
-                      onEndChange={setEndDate}
-                      onTabNext={handleTabNext}
+                      value={formState.date}
+                      endValue={formState.endDate}
+                      onChange={formState.setDate}
+                      onEndChange={formState.setEndDate}
+                      onTabNext={formState.handleTabNext}
                     />
                     <div className="flex justify-between">
                       <button
                         type="button"
-                        onClick={handleTabPrev}
-                        className={`rounded-lg px-6 py-3 font-medium ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-all duration-200`}
+                        onClick={formState.handleTabPrev}
+                        className={cn('rounded-lg px-6 py-3 font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200')}
                       >
                         ← Back
                       </button>
                       <button
                         type="button"
-                        onClick={handleTabNext}
-                        className={`rounded-lg px-6 py-3 font-medium ${primary.DEFAULT} text-white transition-all duration-200 hover:opacity-90`}
+                        onClick={formState.handleTabNext}
+                        className={cn('rounded-lg px-6 py-3 font-medium bg-blue-500 text-white transition-all duration-200 hover:opacity-90')}
                       >
                         Next: Tags →
                       </button>
@@ -390,7 +388,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                   </motion.div>
                 )}
 
-                {currentStep === 2 && (
+                {formState.currentStep === 2 && (
                   <motion.div
                     key="tags"
                     initial={{ opacity: 0, x: 50 }}
@@ -399,26 +397,34 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                   >
-                    <TagInput selectedTags={tags} onChange={setTags} contextualSuggestions={title.split(' ')} />
+                    <TagInput selectedTags={formState.tags} onChange={formState.setTags} contextualSuggestions={formState.title.split(' ')} />
                     <div className="flex justify-between">
                       <button
                         type="button"
-                        onClick={handleTabPrev}
-                        className={`rounded-lg px-6 py-3 font-medium ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated} transition-all duration-200`}
+                        onClick={formState.handleTabPrev}
+                        className={cn('rounded-lg px-6 py-3 font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200')}
                       >
                         ← Back
                       </button>
                       <button
                         type="button"
-                        onClick={handleSave}
-                        disabled={!isValid || isSubmitting}
-                        className={`flex items-center gap-2 rounded-lg px-8 py-3 font-medium transition-all duration-200 ${
-                          isValid && !isSubmitting
-                            ? `${primary.DEFAULT} transform text-white hover:scale-105 hover:opacity-90`
-                            : `${colors.background.surface} ${text.muted} cursor-not-allowed`
-                        } `}
+                        onClick={() =>
+                          saveHandler.handleSave({
+                            title: formState.title,
+                            date: formState.date,
+                            endDate: formState.endDate,
+                            tags: formState.tags,
+                          })
+                        }
+                        disabled={!formState.isValid || saveHandler.isSubmitting}
+                        className={cn(
+                          'flex items-center gap-2 rounded-lg px-8 py-3 font-medium transition-all duration-200',
+                          formState.isValid && !saveHandler.isSubmitting
+                            ? 'bg-blue-500 transform text-white hover:scale-105 hover:opacity-90'
+                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+                        )}
                       >
-                        {isSubmitting ? (
+                        {saveHandler.isSubmitting ? (
                           <>
                             <Loader2 size={16} className="animate-spin" />
                             Creating...
@@ -435,17 +441,17 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
 
             {/* エラー表示 */}
             <AnimatePresence>
-              {error != null && (
+              {saveHandler.error != null && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`mx-8 mb-8 rounded-lg p-4 ${semantic.error.background} ${semantic.error.text} flex items-center gap-3`}
+                  className={cn('mx-8 mb-8 rounded-lg p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center gap-3')}
                 >
                   <div className="flex-shrink-0">⚠️</div>
                   <div>
-                    <div className={`${body.small} font-medium`}>エラーが発生しました</div>
-                    <div className={`${body.small} opacity-90`}>{error}</div>
+                    <div className="text-sm font-medium">エラーが発生しました</div>
+                    <div className="text-sm opacity-90">{saveHandler.error}</div>
                   </div>
                 </motion.div>
               )}
@@ -453,7 +459,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
 
             {/* 成功アニメーション */}
             <AnimatePresence>
-              {showSuccess != null && (
+              {saveHandler.showSuccess != null && (
                 <motion.div
                   variants={successVariants}
                   initial="hidden"
@@ -469,7 +475,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                       <Check size={32} className="text-white" />
                     </motion.div>
                     <motion.h2
-                      className={`${heading.h3} ${text.primary} mb-2`}
+                      className={cn('text-xl font-semibold text-neutral-900 dark:text-neutral-50 mb-2')}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4 }}
@@ -477,12 +483,12 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                       イベントが作成されました！
                     </motion.h2>
                     <motion.p
-                      className={`${body.DEFAULT} ${text.secondary}`}
+                      className={cn('text-base text-neutral-600 dark:text-neutral-400')}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6 }}
                     >
-                      {title}
+                      {formState.title}
                     </motion.p>
                   </div>
                 </motion.div>
@@ -490,7 +496,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
             </AnimatePresence>
 
             {/* キーボードヒント */}
-            <div className={`px-8 pb-6 ${body.small} ${text.muted} space-x-4 text-center`}>
+            <div className={cn('px-8 pb-6 text-sm text-neutral-600 dark:text-neutral-400 space-x-4 text-center')}>
               <span>
                 <kbd className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">Esc</kbd> to close
               </span>

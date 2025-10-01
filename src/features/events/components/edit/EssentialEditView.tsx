@@ -4,9 +4,7 @@ import React from 'react'
 
 import { motion, AnimatePresence } from 'framer-motion'
 
-import { semantic, colors } from '@/config/theme/colors'
-import { rounded } from '@/config/theme/rounded'
-import { body } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 import { DateSelector } from '../create/DateSelector'
 import { TagInput } from '../create/TagInput'
@@ -108,11 +106,11 @@ export const EssentialEditView = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className={`
-              relative w-full max-w-2xl mx-4
-              ${colors.background.base} ${rounded.modal}
-              shadow-2xl
-            `}
+            className={cn(
+              'relative w-full max-w-2xl mx-4',
+              'bg-white dark:bg-neutral-900 rounded-2xl',
+              'shadow-2xl'
+            )}
             style={{
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)'
             }}
@@ -173,16 +171,16 @@ export const EssentialEditView = ({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className={`
-                      p-4 rounded-lg
-                      ${semantic.error.background} ${semantic.error.text}
-                      flex items-center gap-3
-                    `}
+                    className={cn(
+                      'p-4 rounded-lg',
+                      'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400',
+                      'flex items-center gap-3'
+                    )}
                   >
                     <div className="flex-shrink-0">⚠️</div>
                     <div>
-                      <div className={`${body.small} font-medium`}>An error occurred</div>
-                      <div className={`${body.small} opacity-90`}>{error}</div>
+                      <div className="text-sm font-medium">An error occurred</div>
+                      <div className="text-sm opacity-90">{error}</div>
                     </div>
                   </motion.div>
                 )}

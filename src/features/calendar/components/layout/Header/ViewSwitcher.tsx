@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { Check, ChevronDown } from 'lucide-react'
 
-import { secondary, selection, text } from '@/config/theme/colors'
-import { radius } from '@/config/theme/rounded'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
@@ -122,9 +120,9 @@ export const ViewSwitcher = ({
         className={cn(
           'flex items-center gap-2 px-4 py-2 text-sm font-medium',
           'rounded-md transition-colors',
-          secondary.DEFAULT,
-          secondary.text,
-          secondary.hover,
+          'bg-neutral-200 dark:bg-neutral-700',
+          'text-neutral-700 dark:text-neutral-300',
+          'hover:bg-neutral-300 dark:hover:bg-neutral-600',
           buttonClassName
         )}
       >
@@ -150,8 +148,8 @@ export const ViewSwitcher = ({
             className={cn(
               'absolute right-0 top-full mt-1',
               'min-w-[160px]',
-              colors.background.base,
-              radius.md,
+              'bg-white dark:bg-neutral-900',
+              'rounded-md',
               'z-50 shadow-lg',
               dropdownClassName
             )}
@@ -169,8 +167,8 @@ export const ViewSwitcher = ({
                       'transition-colors',
                       'flex items-center justify-between gap-2',
                       currentView === option.value
-                        ? `${selection.active} ${selection.text} font-medium`
-                        : `${text.muted} ${secondary.hover}`
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-600'
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -197,8 +195,8 @@ export const ViewSwitcher = ({
                     'flex items-center gap-2',
                     'transition-colors',
                     'rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
-                    text.secondary,
-                    secondary.hover
+                    'text-neutral-600 dark:text-neutral-400',
+                    'hover:bg-neutral-300 dark:hover:bg-neutral-600'
                   )}
                   role="checkbox"
                   aria-checked={showWeekends}

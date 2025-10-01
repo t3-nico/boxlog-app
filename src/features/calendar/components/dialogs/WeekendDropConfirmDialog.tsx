@@ -7,15 +7,14 @@ import { ja } from 'date-fns/locale'
 import { Calendar, AlertTriangle } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogDescription,
-  DialogFooter 
+  DialogFooter
 } from '@/components/shadcn-ui/dialog'
-import { primary, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 interface WeekendDropConfirmDialogProps {
@@ -67,21 +66,21 @@ export const WeekendDropConfirmDialog = ({
           {/* イベント情報 */}
           <div className={cn(
             'p-4 rounded-lg border',
-            colors.background.surface,
-            'border-border'
+            'bg-neutral-100 dark:bg-neutral-800',
+            'border-neutral-200 dark:border-neutral-700'
           )}>
             <div className="flex items-start gap-3">
               <Calendar className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <h3 className={cn('font-medium', text.primary)}>
+                <h3 className={cn('font-medium', 'text-neutral-900 dark:text-neutral-50')}>
                   {eventTitle}
                 </h3>
                 <div className="space-y-1 mt-2">
-                  <p className={cn('text-sm', text.secondary)}>
+                  <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
                     <span className="font-medium">移動元:</span> {' '}
                     {format(originalDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
-                  <p className={cn('text-sm', text.secondary)}>
+                  <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
                     <span className="font-medium">移動先:</span> {' '}
                     {format(suggestedDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
@@ -91,7 +90,7 @@ export const WeekendDropConfirmDialog = ({
           </div>
 
           {/* 説明テキスト */}
-          <div className={cn('text-sm', text.secondary)}>
+          <div className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
             <p>
               週末表示がOFFのため、このイベントを次の平日（月曜日）に自動的に移動します。
             </p>
@@ -109,13 +108,12 @@ export const WeekendDropConfirmDialog = ({
           >
             キャンセル
           </Button>
-          <Button 
+          <Button
             onClick={onConfirm}
             className={cn(
               'flex-1 sm:flex-none',
-              primary.DEFAULT,
-              primary.text,
-              primary.hover
+              'bg-blue-500 hover:bg-blue-600',
+              'text-white'
             )}
           >
             月曜日に移動

@@ -2,7 +2,6 @@
 
 import { AlertTriangle, CheckCircle, Info, Loader2, X, XCircle } from 'lucide-react'
 
-import { border, colors, semantic, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 import type { Toast as ToastType } from './types'
@@ -17,34 +16,34 @@ const icons = {
 
 const styles = {
   success: {
-    background: semantic.success.light,
-    border: `border-l-4 ${semantic.success.border}`,
-    text: semantic.success.text,
-    icon: semantic.success.text,
+    background: 'bg-green-50 dark:bg-green-900/20',
+    border: 'border-l-4 border-green-500 dark:border-green-600',
+    text: 'text-green-700 dark:text-green-300',
+    icon: 'text-green-700 dark:text-green-300',
   },
   error: {
-    background: semantic.error.light,
-    border: `border-l-4 ${semantic.error.border}`,
-    text: semantic.error.text,
-    icon: semantic.error.text,
+    background: 'bg-red-50 dark:bg-red-900/20',
+    border: 'border-l-4 border-red-500 dark:border-red-600',
+    text: 'text-red-700 dark:text-red-300',
+    icon: 'text-red-700 dark:text-red-300',
   },
   warning: {
-    background: semantic.warning.light,
-    border: `border-l-4 ${semantic.warning.border}`,
-    text: semantic.warning.text,
-    icon: semantic.warning.text,
+    background: 'bg-amber-50 dark:bg-amber-900/20',
+    border: 'border-l-4 border-amber-500 dark:border-amber-600',
+    text: 'text-amber-700 dark:text-amber-300',
+    icon: 'text-amber-700 dark:text-amber-300',
   },
   info: {
-    background: semantic.info.light,
-    border: `border-l-4 ${semantic.info.border}`,
-    text: semantic.info.text,
-    icon: semantic.info.text,
+    background: 'bg-blue-50 dark:bg-blue-900/20',
+    border: 'border-l-4 border-blue-500 dark:border-blue-600',
+    text: 'text-blue-700 dark:text-blue-300',
+    icon: 'text-blue-700 dark:text-blue-300',
   },
   loading: {
-    background: colors.background.surface,
-    border: `border-l-4 ${border.DEFAULT}`,
-    text: text.primary,
-    icon: text.muted,
+    background: 'bg-neutral-100 dark:bg-neutral-800',
+    border: 'border-l-4 border-neutral-300 dark:border-neutral-700',
+    text: 'text-neutral-900 dark:text-neutral-50',
+    icon: 'text-neutral-600 dark:text-neutral-400',
   },
 }
 

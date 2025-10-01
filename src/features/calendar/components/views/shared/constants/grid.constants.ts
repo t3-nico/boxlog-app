@@ -2,8 +2,6 @@
  * グリッドシステムの定数定義
  */
 
-import { border, background, primary } from '@/config/theme/colors'
-
 // グリッドレイアウト
 export const HOUR_HEIGHT = 72 // 1時間の高さ(px)
 export const HALF_HOUR_HEIGHT = HOUR_HEIGHT / 2 // 30分の高さ(px)
@@ -18,12 +16,12 @@ export const EVENT_VERTICAL_PADDING = 2 // イベントの上下パディング(
 export const TIME_COLUMN_WIDTH = 60 // 時間列の幅(px)
 export const TIME_LABEL_HEIGHT = HOUR_HEIGHT // 時間ラベルの高さ(px)
 
-// グリッド線のスタイル（theme/colors.tsから統一）
-export const HOUR_LINE_COLOR = border.alpha
+// グリッド線のスタイル（Tailwind準拠）
+export const HOUR_LINE_COLOR = 'border-neutral-900/10 dark:border-neutral-100/10'
 export const HALF_HOUR_LINE_COLOR = 'border-neutral-900/10 dark:border-neutral-100/10' // より薄い線用
 
 // 現在時刻線
-export const CURRENT_TIME_LINE_COLOR = primary.DEFAULT
+export const CURRENT_TIME_LINE_COLOR = 'bg-blue-500'
 export const CURRENT_TIME_DOT_SIZE = 8 // 現在時刻のドットサイズ(px)
 
 // イベント配置
@@ -37,9 +35,9 @@ export const TRANSITION_DURATION = 150 // トランジション時間(ms)
 export const SCROLL_TO_HOUR = 8 // 初期表示時にスクロールする時間（8時）
 export const SCROLL_BEHAVIOR = 'smooth' as const
 
-// カラー（theme/colors.tsから統一）
-export const GRID_BACKGROUND = background.base
-export const GRID_BORDER = border.alpha
+// カラー（Tailwind準拠）
+export const GRID_BACKGROUND = 'bg-white dark:bg-neutral-900'
+export const GRID_BORDER = 'border-neutral-900/10 dark:border-neutral-100/10'
 
 // Z-index層
 export const Z_INDEX = {

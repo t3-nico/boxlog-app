@@ -5,7 +5,7 @@ import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FileText, Bell, MoreHorizontal, Repeat } from 'lucide-react'
 
-import { text, primary, colors } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 interface EditOptionsProps {
   title: string
@@ -40,13 +40,12 @@ export const EditOptions = ({
           <button
             type="button"
             onClick={onToggleMemo}
-            className={`
-              p-3 rounded-lg transition-all duration-200 flex items-center gap-2
-              ${showMemo || memo
-                ? `${primary.DEFAULT} text-white`
-                : `${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}`
-              }
-            `}
+            className={cn(
+              'p-3 rounded-lg transition-all duration-200 flex items-center gap-2',
+              showMemo || memo
+                ? 'bg-blue-500 text-white'
+                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+            )}
             title="Add memo"
           >
             <FileText size={18} />
@@ -55,10 +54,10 @@ export const EditOptions = ({
           {/* リマインダー設定 */}
           <button
             type="button"
-            className={`
-              p-3 rounded-lg transition-all duration-200
-              ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
-            `}
+            className={cn(
+              'p-3 rounded-lg transition-all duration-200',
+              'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+            )}
             title="Set reminder"
           >
             <Bell size={18} />
@@ -67,10 +66,10 @@ export const EditOptions = ({
           {/* リピート設定 */}
           <button
             type="button"
-            className={`
-              p-3 rounded-lg transition-all duration-200
-              ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
-            `}
+            className={cn(
+              'p-3 rounded-lg transition-all duration-200',
+              'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+            )}
             title="Set repeat"
           >
             <Repeat size={18} />
@@ -80,10 +79,10 @@ export const EditOptions = ({
         {/* その他すべて */}
         <button
           type="button"
-          className={`
-            p-3 rounded-lg transition-all duration-200
-            ${colors.background.surface} ${text.secondary} hover:${colors.background.elevated}
-          `}
+          className={cn(
+            'p-3 rounded-lg transition-all duration-200',
+            'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+          )}
           title="More options"
         >
           <MoreHorizontal size={18} />
@@ -103,11 +102,11 @@ export const EditOptions = ({
               value={memo}
               onChange={(e) => onMemoChange(e.target.value)}
               placeholder="Enter memo or comments..."
-              className={`
-                w-full p-3 ${colors.background.surface} ${text.primary}
-                border border-neutral-200 dark:border-neutral-700
-                rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500
-              `}
+              className={cn(
+                'w-full p-3 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50',
+                'border border-neutral-200 dark:border-neutral-700',
+                'rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500'
+              )}
               rows={3}
             />
           </motion.div>

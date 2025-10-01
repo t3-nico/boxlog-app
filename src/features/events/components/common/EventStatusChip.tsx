@@ -5,9 +5,7 @@ import React from 'react'
 import { Inbox, Calendar, Play, CheckCircle, X } from 'lucide-react'
 
 import { Badge } from '@/components/shadcn-ui/badge'
-import { semantic, text } from '@/config/theme/colors'
-import { icon } from '@/config/theme/icons'
-import { body } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 import type { EventStatus } from '../../types/events'
 
@@ -23,37 +21,37 @@ const statusConfig = {
   inbox: {
     label: 'Inbox',
     icon: Inbox,
-    color: '#6b7280', // gray-500 equivalent
-    textColor: text.muted,
-    bgColor: '#f3f4f6' // gray-100 equivalent
+    color: '#6b7280',
+    textColor: 'text-neutral-600 dark:text-neutral-400',
+    bgColor: '#f3f4f6'
   },
   planned: {
     label: 'Planned',
     icon: Calendar,
-    color: semantic.info.DEFAULT,
-    textColor: semantic.info.text,
-    bgColor: semantic.info.bg
+    color: '#3b82f6',
+    textColor: 'text-blue-600 dark:text-blue-400',
+    bgColor: '#dbeafe'
   },
   in_progress: {
     label: 'In Progress',
     icon: Play,
-    color: semantic.warning.DEFAULT,
-    textColor: semantic.warning.text,
-    bgColor: semantic.warning.bg
+    color: '#f59e0b',
+    textColor: 'text-amber-600 dark:text-amber-400',
+    bgColor: '#fef3c7'
   },
   completed: {
     label: 'Completed',
     icon: CheckCircle,
-    color: semantic.success.DEFAULT,
-    textColor: semantic.success.text,
-    bgColor: semantic.success.bg
+    color: '#10b981',
+    textColor: 'text-green-600 dark:text-green-400',
+    bgColor: '#d1fae5'
   },
   cancelled: {
     label: 'Cancelled',
     icon: X,
-    color: semantic.error.DEFAULT,
-    textColor: semantic.error.text,
-    bgColor: semantic.error.bg
+    color: '#ef4444',
+    textColor: 'text-red-600 dark:text-red-400',
+    bgColor: '#fee2e2'
   }
 } as const
 
@@ -64,32 +62,32 @@ export const EventStatusChip = ({
   showIcon = true,
   className = ''
 }: EventStatusChipProps) => {
-  const config = (status in statusConfig) ? statusConfig[status as keyof typeof statusConfig] : statusConfig.draft
+  const config = (status in statusConfig) ? statusConfig[status as keyof typeof statusConfig] : statusConfig.inbox
   const Icon = config.icon
 
   const sizeClasses = {
-    sm: `px-2 py-1 ${body.small}`,
-    md: `px-3 py-1.5 ${body.medium}`, 
-    lg: `px-4 py-2 ${body.large}`
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1.5 text-sm',
+    lg: 'px-4 py-2 text-base'
   }
 
   const iconSize = {
-    sm: icon.size.xs,
-    md: icon.size.sm,
-    lg: icon.size.md
+    sm: 'h-3 w-3',
+    md: 'h-4 w-4',
+    lg: 'h-5 w-5'
   }
 
   return (
     <Badge
       variant={variant === 'default' ? 'secondary' : variant}
-      className={`
-        inline-flex items-center gap-1.5 font-medium capitalize
-        ${sizeClasses[size]}
-        ${variant === 'default' ? `${config.bgColor} ${config.textColor}` : ''}
-        ${variant === 'outline' ? `border-current ${config.textColor}` : ''}
-        ${variant === 'ghost' ? `${config.textColor}` : ''}
-        ${className}
-      `}
+      className={cn(
+        "inline-flex items-center gap-1.5 font-medium capitalize",
+        sizeClasses[size],
+        variant === 'default' && config.textColor,
+        variant === 'outline' && `border-current ${config.textColor}`,
+        variant === 'ghost' && config.textColor,
+        className
+      )}
       style={variant === 'default' ? { 
         backgroundColor: config.color,
         color: 'white'
@@ -100,7 +98,7 @@ export const EventStatusChip = ({
         color: config.color
       } : undefined}
     >
-      {showIcon ? <Icon className={`${iconSize[size]} shrink-0`} /> : null}
+      {showIcon ? <Icon className={cn(iconSize[size], "shrink-0")} /> : null}
       <span className="truncate">{config.label}</span>
     </Badge>
   )

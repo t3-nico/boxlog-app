@@ -3,8 +3,6 @@
 import { format, getWeek } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 
-import { border, secondary } from '@/config/theme/colors'
-import { heading } from '@/config/theme/typography'
 import { MiniCalendarPopover } from '@/features/calendar/components/common'
 import { cn } from '@/lib/utils'
 
@@ -134,10 +132,10 @@ const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: 
     <span
       className={cn(
         'inline-flex items-center px-2 py-1',
-        'rounded-xs border',
-        heading.h6, // スタイルは維持
-        border.universal,
-        secondary.text,
+        'rounded-sm border',
+        'text-base font-medium',
+        'border border-neutral-300 dark:border-neutral-700',
+        'text-neutral-700 dark:text-neutral-300',
         className
       )}
       aria-label={`第${weekNumber}週`}

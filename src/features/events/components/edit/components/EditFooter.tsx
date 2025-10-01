@@ -5,7 +5,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Loader2, Trash2 } from 'lucide-react'
 
-import { text, primary, semantic, colors } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 interface EditFooterProps {
   isValid: boolean
@@ -30,12 +30,12 @@ export const EditFooter = ({
           <button
             type="button"
             onClick={onDelete}
-            className={`
-              px-6 py-3 rounded-lg font-medium flex items-center gap-2
-              transition-all duration-200
-              ${semantic.error.surface} ${semantic.error.text} hover:opacity-90
-              border border-red-200 dark:border-red-800
-            `}
+            className={cn(
+              'px-6 py-3 rounded-lg font-medium flex items-center gap-2',
+              'transition-all duration-200',
+              'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:opacity-90',
+              'border border-red-200 dark:border-red-800'
+            )}
           >
             {isSubmitting ? (
               <>
@@ -57,26 +57,25 @@ export const EditFooter = ({
         <button
           type="button"
           onClick={onClose}
-          className={`
-            px-6 py-3 rounded-lg font-medium
-            ${colors.background.surface} ${text.secondary}
-            hover:${colors.background.elevated} transition-all duration-200
-            border border-neutral-200 dark:border-neutral-700
-          `}
+          className={cn(
+            'px-6 py-3 rounded-lg font-medium',
+            'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400',
+            'hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200',
+            'border border-neutral-200 dark:border-neutral-700'
+          )}
         >
           Cancel
         </button>
         <motion.button
           onClick={onSave}
           disabled={!isValid || isSubmitting}
-          className={`
-            px-8 py-3 rounded-lg font-semibold flex items-center gap-2
-            transition-all duration-200
-            ${isValid && !isSubmitting
-              ? `${primary.DEFAULT} text-white hover:opacity-90 shadow-lg hover:shadow-xl`
-              : `${colors.background.surface} ${text.muted} cursor-not-allowed`
-            }
-          `}
+          className={cn(
+            'px-8 py-3 rounded-lg font-semibold flex items-center gap-2',
+            'transition-all duration-200',
+            isValid && !isSubmitting
+              ? 'bg-blue-500 text-white hover:bg-blue-600 hover:opacity-90 shadow-lg hover:shadow-xl'
+              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+          )}
           whileHover={isValid && !isSubmitting ? { scale: 1.02 } : {}}
           whileTap={isValid && !isSubmitting ? { scale: 0.98 } : {}}
         >

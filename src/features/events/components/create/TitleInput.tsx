@@ -4,8 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { semantic, text } from '@/config/theme/colors'
-import { body } from '@/config/theme/typography'
+import { cn } from '@/lib/utils'
 
 interface TitleInputProps {
   value: string
@@ -146,7 +145,13 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder="What needs to be done?"
-          className={`w-full resize-none border-none bg-transparent text-3xl font-semibold leading-tight outline-none placeholder:text-neutral-400 md:text-4xl lg:text-5xl dark:placeholder:text-neutral-500 ${text.primary} pl-3 transition-all duration-300 ${isFocused ? 'scale-105 transform' : 'scale-100 transform'} `}
+          className={cn(
+            "w-full resize-none border-none bg-transparent text-3xl font-semibold leading-tight outline-none",
+            "placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
+            "text-neutral-900 dark:text-neutral-50 pl-3 transition-all duration-300",
+            "md:text-4xl lg:text-5xl",
+            isFocused ? "scale-105 transform" : "scale-100 transform"
+          )}
           style={{
             caretColor: '#3b82f6',
             textRendering: 'optimizeLegibility',
@@ -198,9 +203,12 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className={`absolute -bottom-8 right-0 ${body.small} ${
-              value.length > 100 ? semantic.warning.text : text.muted
-            }`}
+            className={cn(
+              "absolute -bottom-8 right-0 text-sm",
+              value.length > 100
+                ? "text-amber-600 dark:text-amber-400"
+                : "text-neutral-600 dark:text-neutral-400"
+            )}
           >
             {value.length}/100
           </motion.div>

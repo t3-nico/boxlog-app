@@ -4,7 +4,6 @@ import React from 'react'
 
 import { format, isToday, isWeekend } from 'date-fns'
 
-import { secondary, selection } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 import type { DateDisplayProps } from './DateDisplay.types'
@@ -56,7 +55,7 @@ const generateDateClassName = (
 
   // 選択状態（当日以外）
   if (isSelected && !today) {
-    classes.push(`${selection.active} ${selection.text}`)
+    classes.push('bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300')
   }
 
   // 週末（当日以外）
@@ -107,7 +106,7 @@ const DateMainDisplay = ({ dayName, dateString, today }: { dayName?: string; dat
     <div
       className={cn(
         'flex h-8 w-8 items-center justify-center rounded-full text-lg font-medium',
-        today && `${secondary.today} ${secondary.text} font-semibold`
+        today && 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold'
       )}
     >
       {dateString}

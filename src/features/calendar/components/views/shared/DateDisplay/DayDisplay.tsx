@@ -6,7 +6,7 @@
 
 import React, { memo } from 'react'
 
-import { selection } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 import type { DayDisplayProps } from '../types/view.types'
 import { formatDate } from '../utils/dateHelpers'
@@ -30,7 +30,7 @@ const generateHeaderClasses = (
   const statusClasses = isToday
     ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold'
     : isSelected
-      ? `${selection.active} ${selection.text}`
+      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
       : isWeekend
         ? 'text-gray-500 dark:text-gray-400'
         : 'text-gray-900 dark:text-gray-100'
@@ -66,7 +66,7 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
 
   // 日付の表示形式
   const dateDisplay = formatDate(date, format)
-  
+
   return onClick ? (
     <button
       className={headerClasses}
@@ -76,25 +76,21 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
     >
       <div className="flex flex-col items-center min-w-0">
         {/* 曜日 */}
-        {variant === 'full' && (
-          <div className={`${typography.caption} ${colors.text.muted} font-medium uppercase tracking-wide`}>
-            {formatDate(date, 'E')}
-          </div>
-        )}
-
-        {/* 日付 */}
-        <div
-          className={cn(
-            dateClasses,
-            highlight?.backgroundColor && highlight.backgroundColor,
-            highlight?.color && highlight.color
-          )}
-        >
-          {formatDate(date, variant === 'compact' ? 'd' : 'dd')}
+        <div className={cn('text-xs', getTextClasses(isToday))}>
+          {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
         </div>
 
-        {/* ハイライトドット */}
-        {highlight?.showDot ? <div className={`w-1 h-1 rounded-full mt-1 ${highlight.dotColor || colors.primary.DEFAULT}`} /> : null}
+        {/* 日付 */}
+        <div className={cn('text-lg font-semibold', getTextClasses(isToday, true))}>
+          {date.getDate()}
+        </div>
+
+        {/* 月（異なる月の場合のみ表示） */}
+        {format === 'long' && (
+          <div className={cn('text-xs', getTextClasses(isToday))}>
+            {date.toLocaleDateString('ja-JP', { month: 'short' })}
+          </div>
+        )}
       </div>
     </button>
   ) : (
