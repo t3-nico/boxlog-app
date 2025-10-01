@@ -138,8 +138,6 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
     this.setState({
       hasError: false,
-      error: undefined,
-      errorInfo: undefined,
       errorId: '',
       isRetrying: false,
     })
