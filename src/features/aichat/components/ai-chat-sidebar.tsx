@@ -114,7 +114,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
       <AIMessageContent>
         {isAssistant && hasBranches ? (
           // 複数の分岐レスポンスがある場合
-          <AIBranch onBranchChange={createBranchChangeHandler(0)}>
+          <AIBranch onBranchChange={() => {}}>
             <AIBranchMessages>
               {(message.content as string[]).map((content, _index) => (
                 <BoxLogAIResponse key={`${message.id}-${content.slice(0, 30)}`}>{content}</BoxLogAIResponse>
@@ -165,6 +165,18 @@ const ChatInput = () => {
   const [_isComposing, _setIsComposing] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [selectedModel, setSelectedModel] = useState('claude-3-sonnet')
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputValue(e.target.value)
+  }, [setInputValue])
+
+  const handleCompositionStart = useCallback(() => {
+    _setIsComposing(true)
+  }, [])
+
+  const handleCompositionEnd = useCallback(() => {
+    _setIsComposing(false)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -314,6 +314,7 @@ const CodebaseChatInput = ({
 export const CodebaseAIChat = ({ isOpen, onClose }: CodebaseAIChatProps) => {
   const [showMenu, setShowMenu] = useState(false)
   const [_isInitialized, _setIsInitialized] = useState(false)
+  const [isComposing, setIsComposing] = useState(false)
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const {

@@ -36,16 +36,18 @@ const EventScheduleSection = React.memo(
     formData,
     isEditable,
     isCreateMode,
-    _handleTitleChange,
-    _handleDateChange,
-    _updateFormData,
+    handleTitleInputChange,
+    handleDateInputChange,
+    handleTimeInputChange,
+    handleEndTimeInputChange,
   }: {
     formData: Partial<CalendarEvent>
     isEditable: boolean
     isCreateMode: boolean
-    _handleTitleChange: (value: string) => void
-    _handleDateChange: (value: string) => void
-    _updateFormData: (field: keyof CalendarEvent, value: unknown) => void
+    handleTitleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    handleDateInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    handleTimeInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    handleEndTimeInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   }) => (
     <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
       <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>予定</h3>
@@ -79,7 +81,7 @@ const EventScheduleSection = React.memo(
           <div className="flex flex-wrap items-center gap-2">
             <Input
               type="date"
-              value={format(formData.startDate, 'yyyy-MM-dd')}
+              value={format(formData.startDate ?? new Date(), 'yyyy-MM-dd')}
               onChange={handleDateInputChange}
               className={cn(
                 'text-base',
@@ -89,11 +91,11 @@ const EventScheduleSection = React.memo(
                 'bg-white dark:bg-neutral-800',
                 'text-neutral-900 dark:text-neutral-100'
               )}
-              style={{ width: `${format(formData.startDate, 'yyyy-MM-dd').length + 2}ch` }}
+              style={{ width: `${format(formData.startDate ?? new Date(), 'yyyy-MM-dd').length + 2}ch` }}
             />
             <Input
               type="time"
-              value={format(formData.startDate, 'HH:mm')}
+              value={format(formData.startDate ?? new Date(), 'HH:mm')}
               onChange={handleTimeInputChange}
               className={cn(
                 'text-base',
@@ -121,7 +123,7 @@ const EventScheduleSection = React.memo(
           </div>
         ) : (
           <div className={cn('text-base', 'break-words font-medium text-neutral-900 dark:text-neutral-100')}>
-            {format(formData.startDate, 'yyyy年M月d日（E）', { locale: ja })} {format(formData.startDate, 'HH:mm')} →{' '}
+            {format(formData.startDate ?? new Date(), 'yyyy年M月d日（E）', { locale: ja })} {format(formData.startDate ?? new Date(), 'HH:mm')} →{' '}
             {formData.endDate ? format(formData.endDate, 'HH:mm') : '未設定'}
           </div>
         )}
@@ -334,7 +336,7 @@ export const EventDetailInspectorContent = ({
       const newDate = new Date(e.target.value)
       if (!isNaN(newDate.getTime())) {
         // 既存の時間を保持
-        const currentTime = formData.startDate
+        const currentTime = formData.startDate ?? new Date()
         newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
         updateFormData('startDate', newDate)
 
@@ -350,10 +352,17 @@ export const EventDetailInspectorContent = ({
 
   const handleTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':')
-    const newDate = new Date(formData.startDate)
+    const newDate = new Date(formData.startDate ?? new Date())
     newDate.setHours(parseInt(hours), parseInt(minutes))
     updateFormData('startDate', newDate)
   }, [formData.startDate, updateFormData])
+
+  const handleEndTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(':')
+    const newDate = new Date(formData.endDate ?? formData.startDate ?? new Date())
+    newDate.setHours(parseInt(hours), parseInt(minutes))
+    updateFormData('endDate', newDate)
+  }, [formData.endDate, formData.startDate, updateFormData])
 
   const handleDescriptionEditorChange = useCallback((value: string) => {
     handleDescriptionChange(value)
@@ -405,9 +414,10 @@ export const EventDetailInspectorContent = ({
           formData={formData}
           isEditable={isEditable}
           isCreateMode={isCreateMode}
-          _handleTitleChange={handleTitleChange}
-          _handleDateChange={() => {}}
-          _updateFormData={updateFormData}
+          handleTitleInputChange={handleTitleInputChange}
+          handleDateInputChange={handleDateInputChange}
+          handleTimeInputChange={handleTimeInputChange}
+          handleEndTimeInputChange={handleEndTimeInputChange}
         />
 
         <ActionButtonsSection isEditable={isEditable} />
