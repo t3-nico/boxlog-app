@@ -136,6 +136,8 @@ export const colors = {
     base: 'bg-white dark:bg-gray-950',
     accent: 'bg-gray-100 dark:bg-gray-800',
     hover: 'hover:bg-gray-100 dark:hover:bg-gray-800',
+    card: 'bg-white dark:bg-gray-900',
+    muted: 'bg-gray-50 dark:bg-gray-800',
   },
   border: {
     base: 'border-gray-200 dark:border-gray-700',
@@ -176,7 +178,7 @@ export const typography = {
     sm: 'text-xs font-medium',
     lg: 'text-base font-medium',
   },
-  caption: 'text-xs text-gray-500 dark:text-gray-400',
+  caption: { DEFAULT: 'text-xs text-gray-500 dark:text-gray-400', base: 'text-xs' },
   page: {
     title: 'text-3xl font-bold tracking-tight',
     description: 'text-base text-gray-600 dark:text-gray-400',
@@ -202,9 +204,9 @@ export const spacing = {
   lg: '2rem',     // 32px - var(--spacing-lg)
   xl: '3rem',     // 48px - var(--spacing-xl)
   '2xl': '4rem',  // 64px - var(--spacing-2xl)
-  page: { DEFAULT: '1rem', md: '1.5rem', lg: '2rem' },
-  section: { DEFAULT: '1.5rem', md: '2rem', lg: '3rem' },
-  component: { DEFAULT: '0.5rem', md: '1rem', lg: '1.5rem' },
+  page: { DEFAULT: '1rem', md: '1.5rem', lg: '2rem', padding: '1rem' },
+  section: { DEFAULT: '1.5rem', md: '2rem', lg: '3rem', margin: '1.5rem', paddingBottom: '1rem' },
+  component: { DEFAULT: '0.5rem', md: '1rem', lg: '1.5rem', padding: '1rem' },
 } as const
 
 /**
@@ -225,7 +227,7 @@ export const rounded = {
       md: 'rounded-md',
       lg: 'rounded-lg',
     },
-    card: { DEFAULT: 'rounded-lg', lg: 'rounded-lg' },
+    card: { DEFAULT: 'rounded-lg', lg: 'rounded-lg', md: 'rounded-md' },
     input: 'rounded-md',
     media: {
       avatar: 'rounded-full',
