@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, Reorder } from 'framer-motion'
 import { Hash, Tag, TrendingUp, X } from 'lucide-react'
 
-import { border, semantic, text } from '@/config/theme/colors'
+import { border, colors, semantic, text } from '@/config/theme/colors'
 import { rounded } from '@/config/theme/rounded'
 import { body } from '@/config/theme/typography'
 import { useTagStore } from '@/features/tags/stores/tag-store'
