@@ -11,13 +11,26 @@ import { Button } from '@/components/shadcn-ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn-ui/table'
 import { getEvent, getEventReviews } from '@/lib/data'
 
+interface Event {
+  name?: string
+  imgUrl?: string
+  status?: string
+  date?: string
+  time?: string
+  location?: string
+  totalRevenue?: string
+  totalRevenueChange?: string
+  ticketsSold?: number
+  [key: string]: unknown
+}
+
 const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: mod.Stat })), {
   ssr: false,
   loading: () => <div className="h-24 animate-pulse rounded bg-gray-200" />,
 })
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const event = await getEvent(params.id)
+  const event = (await getEvent(params.id)) as Event | null
 
   return {
     title: event?.name,
@@ -25,7 +38,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 const EventPage = async ({ params }: { params: { id: string } }) => {
-  const event = await getEvent(params.id)
+  const event = (await getEvent(params.id)) as Event | null
   const reviews = await getEventReviews(params.id)
 
   if (!event) {

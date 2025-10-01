@@ -16,11 +16,11 @@ import { RefundReview } from './refund'
 
 interface Review {
   id: string
-  amount: { usd: string }
-  payment: { card: { type: string; number: string } }
+  amount: { usd: string; cad?: string; fee?: string; net?: string }
+  payment: { card: { type: string; number: string; expiry?: string }; transactionId?: string }
   date: string
-  customer: { name: string; email: string; avatar: string }
-  event: { type: string; description: string }
+  customer: { name: string; email: string; avatar: string; address?: string; country?: string; countryFlagUrl?: string }
+  event: { type: string; description: string; url?: string; thumbUrl?: string; name?: string }
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
