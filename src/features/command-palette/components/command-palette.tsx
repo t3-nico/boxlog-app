@@ -167,8 +167,8 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   
   // Handle URL sync - restore query from URL when opening
   useEffect(() => {
-    if (isOpen && searchParams.has('q')) {
-      const urlQuery = searchParams.get('q') || ''
+    if (isOpen && (searchParams || new URLSearchParams()).has('q')) {
+      const urlQuery = (searchParams || new URLSearchParams()).get('q') || ''
       setQuery(urlQuery)
     }
   }, [isOpen, searchParams])

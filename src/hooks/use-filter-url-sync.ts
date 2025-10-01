@@ -22,12 +22,12 @@ export function useFilterUrlSync() {
 
   // Sync URL params to store on mount and param changes
   useEffect(() => {
-    const search = searchParams.get('search') || ''
-    const status = searchParams.get('status')?.split(',').filter(Boolean) || []
-    const priority = searchParams.get('priority')?.split(',').filter(Boolean) || []
-    const type = searchParams.get('type')?.split(',').filter(Boolean) || []
-    const tags = searchParams.get('tags')?.split(',').filter(Boolean) || []
-    const smartFolder = searchParams.get('folder') || ''
+    const search = (searchParams || new URLSearchParams()).get('search') || ''
+    const status = (searchParams || new URLSearchParams()).get('status')?.split(',').filter(Boolean) || []
+    const priority = (searchParams || new URLSearchParams()).get('priority')?.split(',').filter(Boolean) || []
+    const type = (searchParams || new URLSearchParams()).get('type')?.split(',').filter(Boolean) || []
+    const tags = (searchParams || new URLSearchParams()).get('tags')?.split(',').filter(Boolean) || []
+    const smartFolder = (searchParams || new URLSearchParams()).get('folder') || ''
 
     // Only update if different from current state to avoid infinite loops
     if (filters.search !== search) setSearchFilter(search)

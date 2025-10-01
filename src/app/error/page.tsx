@@ -12,8 +12,8 @@ import { cn } from '@/lib/utils'
 const ErrorPage = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
-  const message = searchParams.get('message')
+  const error = (searchParams || new URLSearchParams()).get('error')
+  const message = (searchParams || new URLSearchParams()).get('message')
 
   const getErrorMessage = () => {
     if (message) {

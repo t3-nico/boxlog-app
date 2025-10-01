@@ -127,6 +127,7 @@ export const colors = {
     dark: '#16a34a',     // green-600
   },
   text: {
+    base: 'text-gray-900 dark:text-gray-100',
     primary: 'text-gray-900 dark:text-gray-100',
     secondary: 'text-gray-600 dark:text-gray-400',
     muted: 'text-gray-500 dark:text-gray-400',
@@ -137,6 +138,7 @@ export const colors = {
     hover: 'hover:bg-gray-100 dark:hover:bg-gray-800',
   },
   border: {
+    base: 'border-gray-200 dark:border-gray-700',
     default: 'border-gray-200 dark:border-gray-700',
     hover: 'hover:border-gray-300 dark:hover:border-gray-600',
   },
@@ -163,6 +165,7 @@ export const typography = {
   },
   body: {
     DEFAULT: 'text-base',
+    base: 'text-base',
     sm: 'text-sm',
     small: 'text-sm',
     xs: 'text-xs',

@@ -404,7 +404,7 @@ export function useHighContrast() {
 
   // 現在のテーマのコントラスト比を検証
   const validateCurrentTheme = useCallback(() => {
-    const theme = getCurrentTheme()
+    const theme = getCurrentTheme() || HIGH_CONTRAST_THEMES.default
     const results = {
       background_foreground: checkContrast(theme.colors.foreground, theme.colors.background),
       primary_background: checkContrast(theme.colors.primary, theme.colors.background),
@@ -448,7 +448,7 @@ export function useHighContrast() {
     getContrastClassName,
     
     // 便利なプロパティ
-    colors: getCurrentTheme().colors,
-    isWcagAAA: getCurrentTheme().wcagAAA
+    colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).colors,
+    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).wcagAAA
   }
 }
