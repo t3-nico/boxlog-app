@@ -3,6 +3,7 @@
 import React from 'react'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn-ui/dialog'
+import { ErrorBoundary } from '@/components/error-boundary'
 
 import { useCreateModalStore } from '../../stores/useCreateModalStore'
 import type { Event } from '../../types/events'
@@ -33,26 +34,44 @@ export const EditEventModal = ({
         <DialogHeader>
           <DialogTitle>Edit Event</DialogTitle>
         </DialogHeader>
-        
-        <CreateEventForm
-          initialData={{
-            title: event.title,
-            description: event.description,
-            startDate: event.startDate,
-            endDate: event.endDate,
-            type: event.type,
-            status: event.status,
-            priority: event.priority,
-            tags: event.tags?.map(tag => tag.id) || []
-          }}
-          context={{
-            source: 'edit',
-            mode: 'edit',
-            eventId: event.id
-          }}
-          onSubmit={handleSubmit}
-          onCancel={() => onOpenChange(false)}
-        />
+
+        <ErrorBoundary
+          fallback={
+            <div className="p-6 text-center">
+              <div className="text-red-600 dark:text-red-400 mb-4">
+                <p className="font-semibold mb-2">イベント編集フォームでエラーが発生しました</p>
+                <p className="text-sm">モーダルを閉じてもう一度お試しください。</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onOpenChange(false)}
+                className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+              >
+                閉じる
+              </button>
+            </div>
+          }
+        >
+          <CreateEventForm
+            initialData={{
+              title: event.title,
+              description: event.description,
+              startDate: event.startDate,
+              endDate: event.endDate,
+              type: event.type,
+              status: event.status,
+              priority: event.priority,
+              tags: event.tags?.map(tag => tag.id) || []
+            }}
+            context={{
+              source: 'edit',
+              mode: 'edit',
+              eventId: event.id
+            }}
+            onSubmit={handleSubmit}
+            onCancel={() => onOpenChange(false)}
+          />
+        </ErrorBoundary>
       </DialogContent>
     </Dialog>
   )

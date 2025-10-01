@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { redirect } from 'next/navigation'
 
+import { FeatureErrorBoundary } from '@/components/error-boundary'
 import { CalendarSkeleton } from '@/features/calendar/components/CalendarSkeleton'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 
@@ -49,7 +50,34 @@ const CalendarViewPage = ({ params, searchParams }: CalendarViewPageProps) => {
     }
   }
 
-  return <CalendarController initialViewType={view} initialDate={initialDate} />
+  return (
+    <FeatureErrorBoundary
+      featureName="calendar"
+      fallback={
+        <div className="flex h-screen items-center justify-center">
+          <div className="bg-red-50 dark:bg-red-900/20 p-6 border-red-300 dark:border-red-700 rounded-lg border max-w-md">
+            <div className="text-center">
+              <div className="text-red-600 dark:text-red-400 mb-4 text-6xl">📅</div>
+              <h2 className="text-2xl font-bold tracking-tight text-red-600 dark:text-red-400 mb-2">
+                カレンダーの読み込みに失敗しました
+              </h2>
+              <p className="text-neutral-800 dark:text-neutral-200 mb-4 text-sm">
+                カレンダーを表示できませんでした。ページをリロードしてください。
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-blue-600 dark:bg-blue-500 rounded px-4 py-2 text-white transition-opacity hover:opacity-80"
+              >
+                ページをリロード
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <CalendarController initialViewType={view} initialDate={initialDate} />
+    </FeatureErrorBoundary>
+  )
 }
 
 export default CalendarViewPage

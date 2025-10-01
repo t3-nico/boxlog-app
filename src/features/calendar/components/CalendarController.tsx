@@ -18,8 +18,12 @@ import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
+import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
+import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
+import { useEventOperations } from '../hooks/useEventOperations'
 import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useEventContextActions } from '../hooks/useEventContextActions'
+import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
 import { DnDProvider } from '../providers/DnDProvider'
@@ -104,12 +108,15 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     })
   }, [contextAvailable, viewType, currentDate, initialDate])
 
-  // コンテキストメニュー状態
-  const [contextMenuEvent, setContextMenuEvent] = useState<CalendarEvent | null>(null)
-  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | null>(null)
+  // コンテキストメニュー管理（フック化）
+  const { contextMenuEvent, contextMenuPosition, handleEventContextMenu, handleCloseContextMenu } =
+    useCalendarContextMenu()
 
   // イベントコンテキストアクション
   const { handleDeleteEvent, handleEditEvent, handleDuplicateEvent, handleViewDetails } = useEventContextActions()
+
+  // イベント操作（CRUD）をフック化
+  const { handleEventDelete: deleteEvent, handleEventRestore, handleUpdateEvent } = useEventOperations()
 
   const { timezone, showWeekends, updateSettings } = useCalendarSettingsStore()
 
@@ -358,17 +365,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [setSelectedEvent, setActiveContent, setInspectorOpen]
   )
 
-  // イベントの右クリックハンドラー
-  const handleEventContextMenu = useCallback((event: CalendarEvent, mouseEvent: React.MouseEvent) => {
-    setContextMenuEvent(event)
-    setContextMenuPosition({ x: mouseEvent.clientX, y: mouseEvent.clientY })
-  }, [])
-
-  // コンテキストメニューを閉じる
-  const handleCloseContextMenu = useCallback(() => {
-    setContextMenuEvent(null)
-    setContextMenuPosition(null)
-  }, [])
 
   const handleCreateEvent = useCallback(
     (date?: Date, time?: string) => {
@@ -432,197 +428,14 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [openCreateInspector, viewType, currentDate]
   )
 
-  const handleEventDelete = useCallback(
-    async (eventId: string) => {
-      try {
-        // 論理削除（ソフトデリート）を使用
-        const eventToDelete = eventStore.events.find((e) => e.id === eventId)
-        if (eventToDelete) {
-          await eventStore.softDeleteEvent(eventId)
-        }
-      } catch (error) {
-        logger.error('Failed to delete event:', error)
-      }
-    },
-    [eventStore]
-  )
 
-  const handleEventRestore = useCallback(
-    async (event: CalendarEvent) => {
-      try {
-        await eventStore.restoreEvent(event.id)
-        logger.log('✅ Event restored:', event.id, event.title)
-      } catch (error) {
-        logger.error('Failed to restore event:', error)
-      }
-    },
-    [eventStore]
-  )
-
-  // 30日経過した予定を自動削除
-  useEffect(() => {
-    const checkAndCleanup = async () => {
-      try {
-        await eventStore.clearTrash()
-        logger.log('✅ Old trash cleaned up automatically')
-      } catch (error) {
-        logger.error('❌ Failed to clean up old trash:', error)
-      }
-    }
-
-    // 1日1回チェック
-    const interval = setInterval(checkAndCleanup, 24 * 60 * 60 * 1000)
-    checkAndCleanup() // 初回実行
-
-    return () => clearInterval(interval)
-  }, [eventStore])
-
-  // イベント更新ハンドラー（ドラッグ&ドロップ用）
-  // 新規作成後の一時的なクリック無効化
-  const [_recentlyCreated, _setRecentlyCreated] = useState(false)
-
-  const handleUpdateEvent = useCallback(
-    async (eventIdOrEvent: string | CalendarEvent, updates?: { startTime: Date; endTime: Date }) => {
-      try {
-        // ドラッグ&ドロップからの呼び出し（eventId + updates形式）
-        if (typeof eventIdOrEvent === 'string' && updates) {
-          const eventId = eventIdOrEvent
-          const event = events.find((e) => e.id === eventId)
-          if (!event) {
-            logger.error('❌ Event not found for update:', eventId)
-            return
-          }
-
-          logger.log('🔧 イベント更新:', {
-            eventId,
-            oldStartDate: event.startDate?.toISOString?.(),
-            newStartTime: updates.startTime.toISOString(),
-            newEndTime: updates.endTime.toISOString(),
-          })
-
-          const updateRequest: UpdateEventRequest = {
-            id: eventId,
-            title: event.title,
-            startDate: updates.startTime,
-            endDate: updates.endTime,
-            location: event.location,
-            description: event.description,
-            color: event.color,
-          }
-
-          await eventStore.updateEvent(updateRequest)
-        }
-        // 従来の呼び出し（CalendarEventオブジェクト形式）
-        else if (typeof eventIdOrEvent === 'object') {
-          const updatedEvent = eventIdOrEvent
-          const updateRequest: UpdateEventRequest = {
-            id: updatedEvent.id,
-            title: updatedEvent.title,
-            startDate: updatedEvent.startDate,
-            endDate: updatedEvent.endDate,
-            location: updatedEvent.location,
-            description: updatedEvent.description,
-            color: updatedEvent.color,
-          }
-
-          await eventStore.updateEvent(updateRequest)
-        }
-      } catch (error) {
-        logger.error('❌ Failed to update event:', error)
-      }
-    },
-    [eventStore, events]
-  )
-
-  // 土日をスキップする日付計算ユーティリティ
-  const skipWeekendsForDay = (startDate: Date, direction: 'prev' | 'next') => {
-    const multiplier = direction === 'next' ? 1 : -1
-    const newDate = new Date(startDate)
-
-    do {
-      newDate.setDate(newDate.getDate() + multiplier)
-      logger.log('📅 Checking date:', newDate.toDateString(), 'dayOfWeek:', newDate.getDay())
-    } while (newDate.getDay() === 0 || newDate.getDay() === 6)
-
-    return newDate
-  }
-
-  const skipWeekendsFor3Day = (startDate: Date, direction: 'prev' | 'next') => {
-    const multiplier = direction === 'next' ? 1 : -1
-    const newDate = new Date(startDate)
-    let daysToMove = 0
-    const targetDays = 3
-
-    while (daysToMove < targetDays) {
-      newDate.setDate(newDate.getDate() + multiplier)
-      const dayOfWeek = newDate.getDay()
-
-      if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-        daysToMove++
-      }
-
-      logger.log(
-        '📅 3DayView checking date:',
-        newDate.toDateString(),
-        'dayOfWeek:',
-        dayOfWeek,
-        'daysToMove:',
-        daysToMove
-      )
-    }
-
-    // 最終的に平日でない場合は調整
-    while (newDate.getDay() === 0 || newDate.getDay() === 6) {
-      newDate.setDate(newDate.getDate() + (multiplier > 0 ? 1 : -1))
-    }
-
-    return newDate
-  }
-
-  const handleTodayWithWeekendSkip = useCallback(() => {
-    const today = new Date()
-    const todayDayOfWeek = today.getDay()
-
-    if (todayDayOfWeek === 0 || todayDayOfWeek === 6) {
-      const adjustedToday = new Date(today)
-      if (todayDayOfWeek === 6) {
-        adjustedToday.setDate(adjustedToday.getDate() + 2) // 月曜日
-      } else if (todayDayOfWeek === 0) {
-        adjustedToday.setDate(adjustedToday.getDate() + 1) // 月曜日
-      }
-
-      logger.log('📅 Today is weekend, adjusting to Monday:', adjustedToday.toDateString())
-      navigateToDate(adjustedToday)
-      return true
-    }
-
-    return false
-  }, [navigateToDate])
-
-  const handleWeekendSkipNavigation = useCallback(
-    (direction: 'prev' | 'next') => {
-      let newDate: Date
-
-      if (viewType === 'day') {
-        newDate = skipWeekendsForDay(currentDate, direction)
-      } else if (viewType === '3day') {
-        newDate = skipWeekendsFor3Day(currentDate, direction)
-      } else {
-        return false
-      }
-
-      logger.log('📅 Weekend skip navigation:', {
-        viewType,
-        from: currentDate.toDateString(),
-        to: newDate.toDateString(),
-        direction,
-      })
-
-      navigateToDate(newDate)
-      return true
-    },
-    [viewType, currentDate, navigateToDate]
-  )
+  // 週末スキップナビゲーション（フック化）
+  const { handleTodayWithWeekendSkip, handleWeekendSkipNavigation, adjustWeekendDate } = useWeekendNavigation({
+    viewType,
+    currentDate,
+    showWeekends,
+    navigateToDate,
+  })
 
   // Navigation handlers using useCalendarLayout
   const handleNavigate = useCallback(
@@ -683,56 +496,17 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const handleNavigateNext = useCallback(() => handleNavigate('next'), [handleNavigate])
   const handleNavigateToday = useCallback(() => handleNavigate('today'), [handleNavigate])
 
-  // キーボードショートカット
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey) {
-        switch (e.key) {
-          case 'ArrowLeft':
-            e.preventDefault()
-            handleNavigate('prev')
-            break
-          case 'ArrowRight':
-            e.preventDefault()
-            handleNavigate('next')
-            break
-          case 't':
-            e.preventDefault()
-            handleNavigate('today')
-            break
-          case '1':
-            e.preventDefault()
-            handleViewChange('day')
-            break
-          case '2':
-            e.preventDefault()
-            handleViewChange('split-day')
-            break
-          case '3':
-            e.preventDefault()
-            handleViewChange('3day')
-            break
-          case '7':
-            e.preventDefault()
-            handleViewChange('week')
-            break
-          case '5':
-            e.preventDefault()
-            // 週末なし表示: showWeekendsをOFFにしてweekビューを使用
-            updateSettings({ showWeekends: false })
-            handleViewChange('week')
-            break
-          case '14':
-            e.preventDefault()
-            handleViewChange('2week')
-            break
-        }
-      }
-    }
+  // キーボードショートカット（フック化）
+  const handleToggleWeekends = useCallback(() => {
+    updateSettings({ showWeekends: !showWeekends })
+  }, [updateSettings, showWeekends])
 
-    window.addEventListener('keydown', handleKeyPress)
-    return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [viewType, handleNavigate, handleViewChange, updateSettings])
+  useCalendarKeyboard({
+    viewType,
+    onNavigate: handleNavigate,
+    onViewChange: handleViewChange,
+    onToggleWeekends: handleToggleWeekends,
+  })
 
   // ビューコンポーネントのレンダリング
   const renderView = () => {
@@ -748,7 +522,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onEventContextMenu: handleEventContextMenu,
       onCreateEvent: handleCreateEvent,
       onUpdateEvent: handleUpdateEvent,
-      onDeleteEvent: handleEventDelete,
+      onDeleteEvent: deleteEvent,
       onRestoreEvent: handleEventRestore,
       onEmptyClick: handleEmptyClick,
       onTimeRangeSelect: handleDateTimeRangeSelect,
@@ -788,38 +562,13 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     )
   }
 
-  // 日付選択ハンドラー
+  // 日付選択ハンドラー（週末調整フック使用）
   const handleDateSelect = useCallback(
     (date: Date) => {
-      // 週末表示がOFFで、かつ選択された日付が週末の場合
-      if (!showWeekends) {
-        const dayOfWeek = date.getDay()
-        if (dayOfWeek === 0 || dayOfWeek === 6) {
-          // 日曜日または土曜日
-          const adjustedDate = new Date(date)
-
-          // 土曜日の場合は翌月曜日に、日曜日の場合も翌月曜日に調整
-          if (dayOfWeek === 6) {
-            // 土曜日
-            adjustedDate.setDate(adjustedDate.getDate() + 2) // 月曜日
-          } else if (dayOfWeek === 0) {
-            // 日曜日
-            adjustedDate.setDate(adjustedDate.getDate() + 1) // 月曜日
-          }
-
-          logger.log('📅 Weekend date selected, adjusting:', {
-            original: date.toDateString(),
-            adjusted: adjustedDate.toDateString(),
-          })
-
-          navigateToDate(adjustedDate)
-          return
-        }
-      }
-
-      navigateToDate(date)
+      const adjustedDate = adjustWeekendDate(date)
+      navigateToDate(adjustedDate)
     },
-    [navigateToDate, showWeekends]
+    [navigateToDate, adjustWeekendDate]
   )
 
   // タスク作成ハンドラー
@@ -864,47 +613,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       handleCreateEvent(date, time)
     },
     [handleCreateEvent]
-  )
-
-  // ドラッグ選択ハンドラー
-  const _handleTimeRangeSelect = useCallback(
-    (selection: { startHour: number; startMinute: number; endHour: number; endMinute: number }) => {
-      logger.log('🎯 Time range selected (DayView):', selection)
-
-      // 現在の日付に時間を設定
-      const today = currentDate
-      const startTime = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        selection.startHour,
-        selection.startMinute
-      )
-      const endTime = new Date(
-        today.getFullYear(),
-        today.getMonth(),
-        today.getDate(),
-        selection.endHour,
-        selection.endMinute
-      )
-
-      // CreateEventInspectorを開く
-      openCreateInspector({
-        initialData: {
-          startDate: startTime,
-          endDate: endTime,
-          type: 'event',
-          status: 'planned',
-          priority: 'necessary',
-        },
-        context: {
-          source: 'calendar',
-          date: today,
-          viewType,
-        },
-      })
-    },
-    [currentDate, openCreateInspector, viewType]
   )
 
   // 統一された時間範囲選択ハンドラー（全ビュー共通）
@@ -954,10 +662,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [openCreateInspector, viewType]
   )
 
-  // 表示される日付の配列を計算
-  const _displayDates = useMemo(() => {
-    return viewDateRange.days
-  }, [viewDateRange.days])
 
   return (
     <DnDProvider>

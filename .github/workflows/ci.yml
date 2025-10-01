@@ -29,8 +29,22 @@ jobs:
       - name: Run type checking
         run: npm run typecheck || echo "TypeScript errors found but continuing CI"
 
-      - name: Run tests
-        run: npm run test -- --run
+      - name: Run tests with coverage
+        run: npm run test -- --run --coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+      - name: Coverage Summary
+        run: |
+          echo "## Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          cat coverage/text-summary.txt >> $GITHUB_STEP_SUMMARY || echo "Coverage report not found"
 
       - name: Build project
         run: npm run build
