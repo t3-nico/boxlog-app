@@ -18,7 +18,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -34,7 +34,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-20T10:00:00'),
           endDate: new Date('2024-06-20T11:00:00'),
@@ -50,7 +50,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-3',
           title: 'イベント3',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-25T10:00:00'),
           endDate: new Date('2024-06-25T11:00:00'),
@@ -72,8 +72,8 @@ describe('useMemoizedEvents', () => {
       )
 
       expect(result.current.processedEvents).toHaveLength(2)
-      expect(result.current.processedEvents[0].id).toBe('event-1')
-      expect(result.current.processedEvents[1].id).toBe('event-2')
+      expect(result.current.processedEvents[0]!.id).toBe('event-1')
+      expect(result.current.processedEvents[1]!.id).toBe('event-2')
     })
 
     it('startDateがundefinedのイベントは除外される', () => {
@@ -82,7 +82,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -98,9 +98,8 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
-          startDate: undefined,
           endDate: new Date('2024-06-20T11:00:00'),
           displayStartDate: new Date('2024-06-20T11:00:00'),
           displayEndDate: new Date('2024-06-20T11:00:00'),
@@ -109,7 +108,7 @@ describe('useMemoizedEvents', () => {
           isRecurring: false,
           createdAt: new Date(),
           updatedAt: new Date(),
-        },
+        } as CalendarEvent,
       ]
 
       const startDate = new Date('2024-06-14')
@@ -120,7 +119,7 @@ describe('useMemoizedEvents', () => {
       )
 
       expect(result.current.processedEvents).toHaveLength(1)
-      expect(result.current.processedEvents[0].id).toBe('event-1')
+      expect(result.current.processedEvents[0]!.id).toBe('event-1')
     })
   })
 
@@ -131,7 +130,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -147,7 +146,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T14:00:00'),
           endDate: new Date('2024-06-15T15:00:00'),
@@ -163,7 +162,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-3',
           title: 'イベント3',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-16T10:00:00'),
           endDate: new Date('2024-06-16T11:00:00'),
@@ -195,7 +194,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -211,7 +210,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:30:00'),
           endDate: new Date('2024-06-15T11:30:00'),
@@ -227,7 +226,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-3',
           title: 'イベント3',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T14:00:00'),
           endDate: new Date('2024-06-15T15:00:00'),
@@ -261,7 +260,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'), // 1時間
@@ -277,7 +276,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T14:00:00'),
           endDate: new Date('2024-06-15T15:30:00'), // 1.5時間
@@ -310,7 +309,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -326,7 +325,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:30:00'),
           endDate: new Date('2024-06-15T11:30:00'), // 重複
@@ -342,7 +341,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-3',
           title: 'イベント3',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T12:00:00'),
           endDate: new Date('2024-06-15T13:00:00'), // 重複なし
@@ -365,8 +364,8 @@ describe('useMemoizedEvents', () => {
 
       expect(result.current.overlappingEvents).toHaveLength(1)
       expect(result.current.overlappingEvents[0]).toHaveLength(2)
-      expect(result.current.overlappingEvents[0][0].id).toBe('event-1')
-      expect(result.current.overlappingEvents[0][1].id).toBe('event-2')
+      expect(result.current.overlappingEvents[0]![0]!.id).toBe('event-1')
+      expect(result.current.overlappingEvents[0]![1]!.id).toBe('event-2')
     })
   })
 
@@ -377,7 +376,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -386,7 +385,10 @@ describe('useMemoizedEvents', () => {
           duration: 60,
           isMultiDay: false,
           isRecurring: false,
-          tags: ['tag1', 'tag2'],
+          tags: [
+            { id: 'tag1', name: 'Tag 1', color: '#ff0000' },
+            { id: 'tag2', name: 'Tag 2', color: '#00ff00' }
+          ],
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -394,7 +396,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'イベント2',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T14:00:00'),
           endDate: new Date('2024-06-15T15:00:00'),
@@ -403,7 +405,9 @@ describe('useMemoizedEvents', () => {
           duration: 60,
           isMultiDay: false,
           isRecurring: false,
-          tags: ['tag3'],
+          tags: [
+            { id: 'tag3', name: 'Tag 3', color: '#0000ff' }
+          ],
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -418,7 +422,7 @@ describe('useMemoizedEvents', () => {
       )
 
       expect(result.current.processedEvents).toHaveLength(1)
-      expect(result.current.processedEvents[0].id).toBe('event-1')
+      expect(result.current.processedEvents[0]!.id).toBe('event-1')
     })
 
     it('検索クエリでフィルタリングできる', () => {
@@ -427,7 +431,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'ミーティング',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -443,7 +447,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-2',
           title: 'ランチ',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T14:00:00'),
           endDate: new Date('2024-06-15T15:00:00'),
@@ -466,7 +470,7 @@ describe('useMemoizedEvents', () => {
       )
 
       expect(result.current.processedEvents).toHaveLength(1)
-      expect(result.current.processedEvents[0].id).toBe('event-1')
+      expect(result.current.processedEvents[0]!.id).toBe('event-1')
     })
   })
 
@@ -477,7 +481,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
@@ -515,7 +519,7 @@ describe('useMemoizedEvents', () => {
           id: 'event-1',
           title: 'イベント1',
           type: 'event',
-          status: 'confirmed',
+          status: 'planned',
           color: '#3b82f6',
           startDate: new Date('2024-06-15T10:00:00'),
           endDate: new Date('2024-06-15T11:00:00'),
