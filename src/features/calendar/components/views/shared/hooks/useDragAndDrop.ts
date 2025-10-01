@@ -310,8 +310,14 @@ export function useDragAndDrop({
       let newLeft = dragData.initialRect.left + deltaX
       let newTop = dragData.initialRect.top + deltaY
 
-      if (calendarContainer) {
-        const containerRect = calendarContainer.getBoundingClientRect()
+      // Get calendar container for boundary constraints
+      const _calendarContainer =
+        (document.querySelector('[data-calendar-main]') as HTMLElement) ||
+        (document.querySelector('.calendar-main') as HTMLElement) ||
+        (document.querySelector('main') as HTMLElement)
+
+      if (_calendarContainer) {
+        const containerRect = _calendarContainer.getBoundingClientRect()
         const elementWidth = dragData.dragElement.offsetWidth
         const elementHeight = dragData.dragElement.offsetHeight
 

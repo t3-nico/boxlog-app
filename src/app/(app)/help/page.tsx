@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 
+import { FeatureErrorBoundary } from '@/components/error-boundary'
 import { HelpSkeleton } from '@/features/help/components/HelpSkeleton'
 
 // Help機能を動的インポート（Bundle size最適化）
@@ -16,9 +17,14 @@ const MainSupportChat = dynamic(
 const HelpPage = () => {
   // BoxLogサポートアシスタントをメインエリアで表示
   return (
-    <div className="h-full">
-      <MainSupportChat />
-    </div>
+    <FeatureErrorBoundary
+      featureName="help"
+      fallbackMessage="ヘルプの読み込み中にエラーが発生しました"
+    >
+      <div className="h-full">
+        <MainSupportChat />
+      </div>
+    </FeatureErrorBoundary>
   )
 }
 

@@ -63,9 +63,9 @@ export function useDeleteCalendar() {
 
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
-    onSuccess: (_, _calendarId) => {
+    onSuccess: (_, deletedCalendarId) => {
       queryClient.invalidateQueries({ queryKey: ['calendars'] })
-      queryClient.removeQueries({ queryKey: ['calendar', calendarId] })
+      queryClient.removeQueries({ queryKey: ['calendar', deletedCalendarId] })
     }
   })
 }

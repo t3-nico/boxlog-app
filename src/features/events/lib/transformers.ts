@@ -13,57 +13,55 @@ export function transformEventEntityToEvent(entity: EventEntity): Event {
   return {
     id: entity.id,
     title: entity.title,
-    description: entity.description || undefined,
-    startDate: entity.start_date ? new Date(entity.start_date) : undefined,
-    endDate: entity.end_date ? new Date(entity.end_date) : undefined,
-    type: entity.type,
+    description: entity.description,
+    startDate: entity.planned_start ? new Date(entity.planned_start) : undefined,
+    endDate: entity.planned_end ? new Date(entity.planned_end) : undefined,
+    type: 'event',
     status: entity.status,
-    priority: entity.priority || undefined,
+    priority: entity.priority,
     color: entity.color,
-    isRecurring: entity.is_recurring || false,
-    recurrenceRule: entity.recurrence_rule || undefined,
-    parentEventId: entity.parent_event_id || undefined,
-    items: entity.items || undefined,
-    location: entity.location || undefined,
-    url: entity.url || undefined,
-    reminders: entity.reminders || undefined,
+    isRecurring: entity.is_recurring ?? false,
+    recurrenceRule: entity.recurrence_rule,
+    parentEventId: entity.parent_event_id,
+    items: entity.items,
+    location: entity.location,
+    url: entity.url,
+    reminders: entity.reminders,
     tags: entity.event_tags?.map(et => ({
       id: et.tags.id,
       name: et.tags.name,
       color: et.tags.color,
-      icon: et.tags.icon,
-      parent_id: et.tags.parent_id
-    })) || undefined,
+      ...(et.tags.icon !== undefined && { icon: et.tags.icon }),
+      ...(et.tags.parent_id !== undefined && { parent_id: et.tags.parent_id })
+    })),
     createdAt: new Date(entity.created_at),
     updatedAt: new Date(entity.updated_at),
-    deletedAt: entity.deleted_at ? new Date(entity.deleted_at) : undefined,
-    isDeleted: entity.is_deleted || false
+    deletedAt: undefined,
+    isDeleted: false
   }
 }
 
 /**
  * Client Event → Database Entity への変換
  */
-export function transformEventToEventEntity(event: Event): Omit<EventEntity, 'created_at' | 'updated_at'> {
+export function transformEventToEventEntity(event: Event): Partial<Omit<EventEntity, 'created_at' | 'updated_at'>> {
   return {
     id: event.id,
+    user_id: '', // user_id is required in EventEntity, but not in Event
     title: event.title,
-    description: event.description || null,
-    start_date: event.startDate?.toISOString() || null,
-    end_date: event.endDate?.toISOString() || null,
-    type: event.type,
+    ...(event.description !== undefined && { description: event.description }),
+    ...(event.startDate !== undefined && { planned_start: event.startDate.toISOString() }),
+    ...(event.endDate !== undefined && { planned_end: event.endDate.toISOString() }),
     status: event.status,
-    priority: event.priority || null,
+    ...(event.priority !== undefined && { priority: event.priority }),
     color: event.color,
-    is_recurring: event.isRecurring || false,
-    recurrence_rule: event.recurrenceRule || null,
-    parent_event_id: event.parentEventId || null,
-    items: event.items || null,
-    location: event.location || null,
-    url: event.url || null,
-    reminders: event.reminders || null,
-    deleted_at: event.deletedAt?.toISOString() || null,
-    is_deleted: event.isDeleted || false
+    ...(event.isRecurring !== undefined && { is_recurring: event.isRecurring }),
+    ...(event.recurrenceRule !== undefined && { recurrence_rule: event.recurrenceRule }),
+    ...(event.parentEventId !== undefined && { parent_event_id: event.parentEventId }),
+    ...(event.items !== undefined && { items: event.items }),
+    ...(event.location !== undefined && { location: event.location }),
+    ...(event.url !== undefined && { url: event.url }),
+    ...(event.reminders !== undefined && { reminders: event.reminders }),
   }
 }
 
@@ -72,23 +70,21 @@ export function transformEventToEventEntity(event: Event): Omit<EventEntity, 'cr
  */
 export function transformCreateRequestToEntity(request: CreateEventRequest): Omit<EventEntity, 'id' | 'created_at' | 'updated_at'> {
   return {
+    user_id: '', // user_id is required in EventEntity
     title: request.title,
-    description: request.description || null,
-    start_date: request.startDate?.toISOString() || null,
-    end_date: request.endDate?.toISOString() || null,
-    type: request.type,
+    description: request.description,
+    planned_start: request.startDate?.toISOString(),
+    planned_end: request.endDate?.toISOString(),
     status: request.status,
-    priority: request.priority || null,
-    color: request.color,
-    is_recurring: request.isRecurring || false,
-    recurrence_rule: request.recurrenceRule || null,
-    parent_event_id: request.parentEventId || null,
-    items: request.items || null,
-    location: request.location || null,
-    url: request.url || null,
-    reminders: request.reminders || null,
-    deleted_at: null,
-    is_deleted: false
+    priority: request.priority,
+    color: request.color ?? '',
+    is_recurring: request.isRecurring,
+    recurrence_rule: request.recurrenceRule,
+    parent_event_id: request.parentEventId,
+    items: request.items,
+    location: request.location,
+    url: request.url,
+    reminders: request.reminders,
   }
 }
 
@@ -105,20 +101,19 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
     transform?: (value: unknown) => unknown
   }> = [
     { requestField: 'title', entityField: 'title' },
-    { requestField: 'description', entityField: 'description', transform: (v) => v || null },
-    { requestField: 'startDate', entityField: 'start_date', transform: (v) => v?.toISOString() || null },
-    { requestField: 'endDate', entityField: 'end_date', transform: (v) => v?.toISOString() || null },
-    { requestField: 'type', entityField: 'type' },
+    { requestField: 'description', entityField: 'description' },
+    { requestField: 'startDate', entityField: 'planned_start', transform: (v) => (v as Date | undefined)?.toISOString() },
+    { requestField: 'endDate', entityField: 'planned_end', transform: (v) => (v as Date | undefined)?.toISOString() },
     { requestField: 'status', entityField: 'status' },
-    { requestField: 'priority', entityField: 'priority', transform: (v) => v || null },
+    { requestField: 'priority', entityField: 'priority' },
     { requestField: 'color', entityField: 'color' },
-    { requestField: 'isRecurring', entityField: 'is_recurring', transform: (v) => v || false },
-    { requestField: 'recurrenceRule', entityField: 'recurrence_rule', transform: (v) => v || null },
-    { requestField: 'parentEventId', entityField: 'parent_event_id', transform: (v) => v || null },
-    { requestField: 'items', entityField: 'items', transform: (v) => v || null },
-    { requestField: 'location', entityField: 'location', transform: (v) => v || null },
-    { requestField: 'url', entityField: 'url', transform: (v) => v || null },
-    { requestField: 'reminders', entityField: 'reminders', transform: (v) => v || null }
+    { requestField: 'isRecurring', entityField: 'is_recurring' },
+    { requestField: 'recurrenceRule', entityField: 'recurrence_rule' },
+    { requestField: 'parentEventId', entityField: 'parent_event_id' },
+    { requestField: 'items', entityField: 'items' },
+    { requestField: 'location', entityField: 'location' },
+    { requestField: 'url', entityField: 'url' },
+    { requestField: 'reminders', entityField: 'reminders' }
   ]
 
   // マッピングに従って変換
@@ -126,7 +121,7 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
     if (requestField in request && request[requestField] !== undefined) {
       const value = request[requestField]
       if (entityField in result || !result[entityField]) {
-        result[entityField] = transform ? transform(value) : value
+        (result as Record<string, unknown>)[entityField] = transform ? transform(value) : value
       }
     }
   })

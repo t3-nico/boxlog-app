@@ -177,6 +177,10 @@ const ResizeHandleBody = ({
   handleRef,
   handleMouseDown,
   handleTouchStart,
+  currentTime,
+  maxTime,
+  onTimeChange,
+  timeToMinutes,
 }: {
   type: 'start' | 'end'
   className?: string
@@ -184,6 +188,10 @@ const ResizeHandleBody = ({
   handleRef: React.RefObject<HTMLDivElement>
   handleMouseDown: (e: React.MouseEvent) => void
   handleTouchStart: (e: React.TouchEvent) => void
+  currentTime: string
+  maxTime: string
+  onTimeChange: (time: string) => void
+  timeToMinutes: (time: string) => number
 }) => (
   <div
     ref={handleRef}
@@ -443,6 +451,10 @@ export const EventResizeHandle = ({
         handleRef={handleRef}
         handleMouseDown={handleMouseDown}
         handleTouchStart={handleTouchStart}
+        currentTime={currentTime}
+        maxTime={maxTime}
+        onTimeChange={onTimeChange}
+        timeToMinutes={timeToMinutes}
       />
 
       <ResizeTooltip resizeState={resizeState} displayTime={displayTime} type={type} isShiftPressed={isShiftPressed} />

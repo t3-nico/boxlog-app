@@ -343,7 +343,7 @@ export class PerformanceMonitor {
       }
     }
     
-    this.metrics.calendarMetrics[key as keyof typeof calendarMetrics as keyof typeof calendarMetrics] = value
+    this.metrics.calendarMetrics[key as keyof typeof this.metrics.calendarMetrics] = value
     this.addToHistory()
   }
 

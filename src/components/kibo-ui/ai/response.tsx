@@ -98,9 +98,10 @@ const components: Options['components'] = {
   pre: ({ node: _node, className, children }) => {
     let language = 'javascript'
 
-    if (typeof node?.properties?.className === 'string') {
-      language = node.properties.className.replace('language-', '')
-    }
+    // TODO: Fix node type definition
+    // if (typeof _node?.properties?.className === 'string') {
+    //   language = _node.properties.className.replace('language-', '')
+    // }
 
     const childrenIsCode =
       typeof children === 'object' && children !== null && 'type' in children && children.type === 'code'

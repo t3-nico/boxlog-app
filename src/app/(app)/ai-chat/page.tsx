@@ -19,12 +19,17 @@ const AIChatPage = () => {
   }, [])
 
   return (
-    <div className="flex h-full">
-      {/* Main chat area */}
-      <div className="flex-1">
-        <AiChatSidebar isOpen={true} onClose={handleClose} isMainView={true} />
+    <FeatureErrorBoundary
+      featureName="ai-chat"
+      fallbackMessage="AI Chatの読み込み中にエラーが発生しました"
+    >
+      <div className="flex h-full">
+        {/* Main chat area */}
+        <div className="flex-1">
+          <AiChatSidebar isOpen={true} onClose={handleClose} isMainView={true} />
+        </div>
       </div>
-    </div>
+    </FeatureErrorBoundary>
   )
 }
 
