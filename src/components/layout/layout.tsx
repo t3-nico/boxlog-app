@@ -87,7 +87,6 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
     })
   }, [openCreateInspector])
 
-  const _effectivePanelHeight = isAIPanelOpen && !isMinimized ? panelHeight : 0
   const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams)
 
   const content = (

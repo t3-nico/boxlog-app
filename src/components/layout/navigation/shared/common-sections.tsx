@@ -12,8 +12,6 @@ interface CommonSidebarSectionsProps {
 }
 
 export const CommonSidebarSections = ({ collapsed }: CommonSidebarSectionsProps) => {
-  const pathname = usePathname()
-  const _isCalendarPage = (pathname || "/").startsWith('/calendar')
   const calendarNavigation = useCalendarNavigation()
   const { events } = useEventStore()
 

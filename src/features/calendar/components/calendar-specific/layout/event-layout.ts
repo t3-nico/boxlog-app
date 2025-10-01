@@ -259,7 +259,6 @@ export function calculateEventColumns(group: EventGroup): ColumnAssignment[] {
     const totalColumns = maxColumns
     
     // 幅と位置を計算（マージンを考慮）
-    const _baseWidth = 100 / totalColumns
     
     // 2列制限での幅と位置計算
     let width: number

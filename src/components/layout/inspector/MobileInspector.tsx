@@ -15,7 +15,6 @@ import { useInspectorStore } from './stores/inspector.store'
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 export const MobileInspector = () => {
-  const _pathname = usePathname()
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
   const { toggleInspector } = useInspectorStore()
 

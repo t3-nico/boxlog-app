@@ -164,7 +164,6 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   }, [isDragging, onDragEnd, event])
 
   // 状態に応じたスタイルを決定
-  const _eventState = isDragging ? 'dragging' : isSelected ? 'selected' : isHovered ? 'hovered' : 'default'
 
   // CSSクラスを組み立て（colors.tsのscheduledを参照）
   const eventClasses = cn(

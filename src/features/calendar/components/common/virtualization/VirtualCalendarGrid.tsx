@@ -57,7 +57,6 @@ export const VirtualCalendarGrid = ({
   // 仮想化されたアイテムの計算
   const virtualItems = useMemo(() => {
     const items: VirtualizedItem[] = []
-    const _totalHours = endHour - startHour
 
     for (let hour = startHour; hour < endHour; hour++) {
       const index = hour - startHour
@@ -88,7 +87,6 @@ export const VirtualCalendarGrid = ({
       if (!event.startDate) return false
 
       const eventHour = event.startDate.getHours()
-      const _eventMinutes = event.startDate.getMinutes()
       const eventEndHour = event.endDate ? event.endDate.getHours() : eventHour + 1
 
       // イベントが表示範囲と重複するかチェック

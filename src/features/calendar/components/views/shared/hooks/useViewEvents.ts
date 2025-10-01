@@ -9,7 +9,6 @@ import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { useEventLayoutCalculator } from './useEventLayoutCalculator'
 
 const EVENT_PADDING = 2 // イベント間のパディング
-const _MAX_COLUMNS = 6 // 最大同時イベント列数を拡張
 const MIN_EVENT_HEIGHT = 20 // 最小イベント高さ
 
 interface UseViewEventsOptions {

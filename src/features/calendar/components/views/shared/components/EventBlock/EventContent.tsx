@@ -54,7 +54,6 @@ export const EventContent = memo<EventContentProps>(function EventContent({
   const eventEnd = parseEventEndDate(event)
   
   // 継続時間を計算
-  const _durationMinutes = calculateEventDuration(eventStart, eventEnd)
   
   if (isCompact) {
     // コンパクト表示：タイトルのみ

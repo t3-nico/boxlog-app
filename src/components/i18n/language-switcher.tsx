@@ -36,7 +36,6 @@ interface LanguageDictionary {
 export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcherProps) {
   const typedDictionary = dictionary as LanguageDictionary
   const router = useRouter()
-  const _params = useParams()
   const [isOpen, setIsOpen] = useState(false)
 
   const currentLanguage = languages.find((lang) => lang.code === currentLocale) ?? languages[0] ?? { code: 'en' as Locale, name: 'English', flag: '🇺🇸' }

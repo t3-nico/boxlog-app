@@ -49,8 +49,6 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
     onTimeRangeSelect: onTimeRangeSelect ? (selection) => {
       // TimeSelectionをDate形式に変換してコールバックを呼ぶ
       const today = new Date()
-      const _startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.startHour, selection.startMinute)
-      const _endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate(), selection.endHour, selection.endMinute)
       
       // 時間範囲の文字列を作成
       const startTimeStr = `${String(selection.startHour).padStart(2, '0')}:${String(selection.startMinute).padStart(2, '0')}`

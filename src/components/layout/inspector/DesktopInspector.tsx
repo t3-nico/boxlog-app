@@ -16,7 +16,6 @@ import { useInspectorStore } from './stores/inspector.store'
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 export const DesktopInspector = () => {
-  const _pathname = usePathname()
   const inspectorWidth = useInspectorStore((state) => state.inspectorWidth)
   const isInspectorOpen = useInspectorStore((state) => state.isInspectorOpen)
   const setInspectorWidthConstrained = useInspectorStore((state) => state.setInspectorWidthConstrained)
