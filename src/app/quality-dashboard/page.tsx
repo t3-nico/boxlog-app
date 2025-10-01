@@ -7,6 +7,8 @@
 
 import React, { useEffect, useState } from 'react'
 
+import { colors, typography, spacing, rounded } from '@/config/ui/theme'
+
 interface QualityMetrics {
   timestamp: string
   score: number

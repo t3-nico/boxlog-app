@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import { Check, ChevronDown, Globe } from 'lucide-react'
 
+import { colors, typography } from '@/config/ui/theme'
 import { getAccessibilityLabels } from '@/lib/accessibility'
 import { locales, setLocaleCookie } from '@/lib/i18n'
 import { useCurrentLocale } from '@/lib/i18n/hooks'

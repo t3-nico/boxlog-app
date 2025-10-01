@@ -6,6 +6,8 @@
 
 import React, { memo } from 'react'
 
+import { colors } from '@/config/ui/theme'
+
 import { TIME_COLUMN_WIDTH } from '../../constants/grid.constants'
 import { useTimeGrid } from '../../hooks/useTimeGrid'
 

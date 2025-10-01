@@ -9,6 +9,7 @@ import { Bell, PanelLeftClose, Plus, Search } from 'lucide-react'
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { primaryNavigation } from '@/config/navigation/config'
+import { colors, typography, spacing, rounded } from '@/config/ui/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
@@ -248,11 +249,11 @@ export const DesktopSidebar = () => {
             <div
               className={cn(
                 'flex w-full cursor-pointer items-center',
-                ghost.hover,
-                gridGap.default, // 8px gap
-                rounded.component.button.md,
-                animations.transition.fast,
-                spacing.padding.sm, // 全方向8px
+                'hover:bg-gray-100 dark:hover:bg-gray-800',
+                'gap-2', // 8px gap
+                'rounded-md',
+                'transition-colors duration-150',
+                'p-2', // 全方向8px
                 'border border-transparent'
               )}
             >
@@ -261,18 +262,17 @@ export const DesktopSidebar = () => {
                 {user?.user_metadata?.avatar_url ? (
                   <Avatar
                     src={user.user_metadata.avatar_url}
-                    className={cn(iconLg, 'border', colors.border.default, rounded.component.media.avatar)}
+                    className={cn('w-8 h-8', 'border border-gray-200 dark:border-gray-700', 'rounded-full')}
                   />
                 ) : user?.user_metadata?.profile_icon ? (
                   <div
                     className={cn(
-                      iconLg,
-                      typography.body.sm,
+                      'w-8 h-8',
+                      'text-sm',
                       'flex items-center justify-center',
-                      colors.background.accent,
-                      'border',
-                      colors.border.default,
-                      rounded.component.media.avatar
+                      'bg-green-500/10',
+                      'border border-gray-200 dark:border-gray-700',
+                      'rounded-full'
                     )}
                   >
                     {user.user_metadata.profile_icon}
@@ -280,7 +280,7 @@ export const DesktopSidebar = () => {
                 ) : (
                   <Avatar
                     src={undefined}
-                    className={cn(iconLg, 'border', colors.border.default, rounded.component.media.avatar)}
+                    className={cn('w-8 h-8', 'border border-gray-200 dark:border-gray-700', 'rounded-full')}
                     initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                       .charAt(0)
                       .toUpperCase()}
@@ -289,10 +289,10 @@ export const DesktopSidebar = () => {
               </div>
 
               <div className={cn('flex min-w-0 flex-1 flex-col justify-center')}>
-                <div className={cn('truncate', colors.text.primary, typography.body.DEFAULT, 'font-medium')}>
+                <div className={cn('truncate', 'text-gray-900 dark:text-gray-100', 'text-base', 'font-medium')}>
                   tomoya
                 </div>
-                <div className={cn('truncate', colors.text.muted, typography.body.small)}>Free Plan</div>
+                <div className={cn('truncate', 'text-gray-500 dark:text-gray-400', 'text-sm')}>Free Plan</div>
               </div>
             </div>
           </UserMenu>
@@ -316,8 +316,8 @@ export const DesktopSidebar = () => {
         <div
           className={cn(
             'absolute right-1 top-0 h-full w-px transition-colors',
-            colors.primary.DEFAULT,
-            colors.primary.hover
+            'bg-blue-500',
+            'hover:bg-blue-600'
           )}
         />
       </div>

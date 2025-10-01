@@ -20,6 +20,7 @@ import {
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
+import { typography } from '@/config/ui/theme'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
