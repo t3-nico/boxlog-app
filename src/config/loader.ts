@@ -389,22 +389,22 @@ export class ConfigLoader {
     const warnings: string[] = []
 
     // 本番環境でのデバッグモード警告
-    if (this.environment === 'production' && config.app?.debug === true) {
+    if (this.environment === 'production' && (config.app as any)?.debug === true) {
       warnings.push('Debug mode is enabled in production environment')
     }
 
     // SSL無効化警告
-    if (this.environment !== 'development' && config.database?.ssl === false) {
+    if (this.environment !== 'development' && (config.database as any)?.ssl === false) {
       warnings.push('Database SSL is disabled in non-development environment')
     }
 
     // 機能フラグ警告
-    if (config.features?.debugMode === true && this.environment === 'production') {
+    if ((config.features as any)?.debugMode === true && this.environment === 'production') {
       warnings.push('Debug mode feature flag is enabled in production')
     }
 
     // セッションセキュリティ警告
-    if (config.server?.session?.secure === false && this.environment === 'production') {
+    if ((config.server as any)?.session?.secure === false && this.environment === 'production') {
       warnings.push('Session secure flag is disabled in production')
     }
 

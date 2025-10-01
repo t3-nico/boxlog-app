@@ -26,7 +26,15 @@ interface LanguageSwitcherProps {
   dictionary: Record<string, unknown>
 }
 
+interface LanguageDictionary {
+  language?: {
+    switch?: string
+    current?: string
+  }
+}
+
 export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcherProps) {
+  const typedDictionary = dictionary as LanguageDictionary
   const router = useRouter()
   const _params = useParams()
   const [isOpen, setIsOpen] = useState(false)
@@ -85,7 +93,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
           'hover:bg-neutral-300 hover:dark:bg-neutral-600',
           'focus:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
         )}
-        aria-label={dictionary?.language?.switch || 'Switch Language'}
+        aria-label={typedDictionary?.language?.switch || 'Switch Language'}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
@@ -116,7 +124,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
               'transition-all duration-200'
             )}
             role="listbox"
-            aria-label={dictionary?.language?.current || 'Current Language'}
+            aria-label={typedDictionary?.language?.current || 'Current Language'}
           >
             {languages.map((language) => (
               <button

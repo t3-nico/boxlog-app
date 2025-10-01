@@ -231,6 +231,14 @@ export class SentryErrorHandler {
       sentryIntegration.reportError(appError)
     }
   }
+
+  static setOperationContext(context: Record<string, any>): void {
+    Sentry.setContext('operation', context)
+  }
+
+  static addBreadcrumb(breadcrumb: { message: string; category?: string; level?: Sentry.SeverityLevel; data?: Record<string, any> }): void {
+    Sentry.addBreadcrumb(breadcrumb)
+  }
 }
 
 export function handleReactError(error: Error, errorInfo?: any): void {

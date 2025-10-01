@@ -7,14 +7,15 @@ import { format, isToday } from 'date-fns'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
-import { 
-  DateDisplay, 
+import {
+  DateDisplay,
   CalendarLayoutWithHeader,
   HourLines,
   useEventStyles
 } from '../shared'
-
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
+
+import type { EventPosition } from '../DayView/DayView.types'
 
 import { ThreeDayContent } from './components'
 import { useThreeDayView } from './hooks/useThreeDayView'
@@ -29,24 +30,24 @@ export const ThreeDayView = ({
   tasks: _tasks,
   events,
   currentDate,
-  _centerDate,
+  centerDate: _centerDate,
   showWeekends = true,
   className,
-  _onTaskClick,
+  onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
   onCreateEvent,
   onUpdateEvent,
-  _onDeleteEvent,
-  _onRestoreEvent,
+  onDeleteEvent: _onDeleteEvent,
+  onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
-  _onTaskDrag,
-  _onCreateTask,
-  _onCreateRecord,
-  _onViewChange,
-  _onNavigatePrev,
-  _onNavigateNext,
-  _onNavigateToday
+  onTaskDrag: _onTaskDrag,
+  onCreateTask: _onCreateTask,
+  onCreateRecord: _onCreateRecord,
+  onViewChange: _onViewChange,
+  onNavigatePrev: _onNavigatePrev,
+  onNavigateNext: _onNavigateNext,
+  onNavigateToday: _onNavigateToday
 }: ThreeDayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
@@ -82,7 +83,7 @@ export const ThreeDayView = ({
 
   // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
-    const positions: unknown[] = []
+    const positions: EventPosition[] = []
     
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
     displayDates.forEach((displayDate, _dayIndex) => {

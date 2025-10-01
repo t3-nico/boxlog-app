@@ -139,6 +139,7 @@ export const colors = {
     card: 'bg-white dark:bg-gray-900',
     muted: 'bg-gray-50 dark:bg-gray-800',
     white: 'bg-white',
+    surface: 'bg-gray-50 dark:bg-gray-900',
   },
   border: {
     base: 'border-gray-200 dark:border-gray-700',
