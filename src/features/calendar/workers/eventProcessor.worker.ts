@@ -6,10 +6,44 @@
 import type { CalendarEvent } from '@/features/events'
 
 // ワーカーメッセージの型定義
+interface ProcessEventsPayload {
+  events: CalendarEvent[]
+  options?: Record<string, unknown>
+}
+
+interface CalculateOverlapsPayload {
+  events: CalendarEvent[]
+  dateRange: { start: Date; end: Date }
+}
+
+interface GenerateRecurringPayload {
+  event: CalendarEvent
+  pattern: RecurrencePattern
+  dateRange: { start: Date; end: Date }
+}
+
+interface SearchEventsPayload {
+  events: CalendarEvent[]
+  query: string
+  options?: Record<string, unknown>
+}
+
+interface OptimizeLayoutPayload {
+  events: CalendarEvent[]
+  containerWidth: number
+}
+
+type WorkerMessagePayload =
+  | ProcessEventsPayload
+  | CalculateOverlapsPayload
+  | GenerateRecurringPayload
+  | SearchEventsPayload
+  | OptimizeLayoutPayload
+
 interface WorkerMessage {
   id: string
   type: 'PROCESS_EVENTS' | 'CALCULATE_OVERLAPS' | 'GENERATE_RECURRING' | 'SEARCH_EVENTS' | 'OPTIMIZE_LAYOUT'
-  payload: unknown
+  payload: WorkerMessagePayload
 }
 
 interface WorkerResponse {
@@ -60,25 +94,35 @@ self.onmessage = function(e: MessageEvent<WorkerMessage>) {
     let result: unknown
 
     switch (type) {
-      case 'PROCESS_EVENTS':
-        result = processEvents(payload.events, payload.options)
+      case 'PROCESS_EVENTS': {
+        const p = payload as ProcessEventsPayload
+        result = processEvents(p.events, p.options)
         break
-      
-      case 'CALCULATE_OVERLAPS':
-        result = calculateEventOverlaps(payload.events, payload.dateRange)
+      }
+
+      case 'CALCULATE_OVERLAPS': {
+        const p = payload as CalculateOverlapsPayload
+        result = calculateEventOverlaps(p.events, p.dateRange)
         break
-      
-      case 'GENERATE_RECURRING':
-        result = generateRecurringEvents(payload.event, payload.pattern, payload.dateRange)
+      }
+
+      case 'GENERATE_RECURRING': {
+        const p = payload as GenerateRecurringPayload
+        result = generateRecurringEvents(p.event, p.pattern, p.dateRange)
         break
-      
-      case 'SEARCH_EVENTS':
-        result = searchEvents(payload.events, payload.query, payload.options)
+      }
+
+      case 'SEARCH_EVENTS': {
+        const p = payload as SearchEventsPayload
+        result = searchEvents(p.events, p.query, p.options)
         break
-      
-      case 'OPTIMIZE_LAYOUT':
-        result = optimizeEventLayout(payload.events, payload.containerWidth)
+      }
+
+      case 'OPTIMIZE_LAYOUT': {
+        const p = payload as OptimizeLayoutPayload
+        result = optimizeEventLayout(p.events, p.containerWidth)
         break
+      }
       
       default:
         throw new Error(`Unknown message type: ${type}`)
@@ -157,14 +201,21 @@ function processEvents(events: CalendarEvent[], options: Record<string, unknown>
  * イベントの正規化
  */
 function normalizeEvent(event: CalendarEvent): CalendarEvent {
-  return {
+  const normalized: CalendarEvent = {
     ...event,
     title: event.title.trim(),
-    startDate: event.startDate ? new Date(event.startDate) : undefined,
-    endDate: event.endDate ? new Date(event.endDate) : undefined,
     color: event.color || '#3b82f6',
     tags: event.tags || []
   }
+
+  if (event.startDate) {
+    normalized.startDate = new Date(event.startDate)
+  }
+  if (event.endDate) {
+    normalized.endDate = new Date(event.endDate)
+  }
+
+  return normalized
 }
 
 /**
@@ -198,13 +249,13 @@ function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Dat
 
   for (let i = 0; i < relevantEvents.length; i++) {
     const event = relevantEvents[i]
-    if (!event.startDate || !event.endDate) continue
+    if (!event || !event.startDate || !event.endDate) continue
 
     const overlaps: OverlapResult['overlaps'] = []
 
     for (let j = i + 1; j < relevantEvents.length; j++) {
       const otherEvent = relevantEvents[j]
-      if (!otherEvent.startDate || !otherEvent.endDate) continue
+      if (!otherEvent || !otherEvent.startDate || !otherEvent.endDate) continue
 
       const overlap = calculateTimeOverlap(
         event.startDate, event.endDate,
@@ -276,7 +327,7 @@ function generateRecurringEvents(
         id: `${baseEvent.id}_${count}`,
         startDate: new Date(currentDate),
         endDate: new Date(currentDate.getTime() + eventDuration),
-        recurrenceId: baseEvent.id
+        parentEventId: baseEvent.id
       }
       events.push(newEvent)
     }
@@ -416,11 +467,11 @@ function getMemoryUsage(): number {
 }
 
 // エラーハンドリング
-self.onerror = function(error) {
+self.onerror = function(message, _source, _lineno, _colno, error) {
   self.postMessage({
     id: 'error',
     type: 'ERROR',
-    error: error.message
+    error: error?.message || String(message)
   })
 }
 
