@@ -114,6 +114,31 @@ export const colors = {
     DEFAULT: '#3b82f6',  // var(--color-primary-500)
     light: '#60a5fa',    // var(--color-primary-400)
     dark: '#2563eb',     // var(--color-primary-600)
+    hover: '#2563eb',    // var(--color-primary-600)
+  },
+  secondary: {
+    DEFAULT: '#6b7280',  // gray-500
+    light: '#9ca3af',    // gray-400
+    dark: '#4b5563',     // gray-600
+  },
+  accent: {
+    DEFAULT: '#22c55e',  // green-500
+    light: '#4ade80',    // green-400
+    dark: '#16a34a',     // green-600
+  },
+  text: {
+    primary: 'text-gray-900 dark:text-gray-100',
+    secondary: 'text-gray-600 dark:text-gray-400',
+    muted: 'text-gray-500 dark:text-gray-400',
+  },
+  background: {
+    base: 'bg-white dark:bg-gray-950',
+    accent: 'bg-gray-100 dark:bg-gray-800',
+    hover: 'hover:bg-gray-100 dark:hover:bg-gray-800',
+  },
+  border: {
+    default: 'border-gray-200 dark:border-gray-700',
+    hover: 'hover:border-gray-300 dark:hover:border-gray-600',
   },
 } as const
 
@@ -130,6 +155,37 @@ export const typography = {
   '2xl': '1.5rem',  // 24px - text-2xl
   '3xl': '1.875rem',// 30px - text-3xl
   '4xl': '2.25rem', // 36px - text-4xl
+  heading: {
+    h1: 'text-4xl font-bold',
+    h2: 'text-3xl font-bold',
+    h3: 'text-2xl font-semibold',
+    h4: 'text-xl font-semibold',
+  },
+  body: {
+    DEFAULT: 'text-base',
+    sm: 'text-sm',
+    small: 'text-sm',
+    xs: 'text-xs',
+  },
+  button: {
+    DEFAULT: 'text-sm font-medium',
+    sm: 'text-xs font-medium',
+    lg: 'text-base font-medium',
+  },
+  caption: 'text-xs text-gray-500 dark:text-gray-400',
+  page: {
+    title: 'text-3xl font-bold tracking-tight',
+    description: 'text-base text-gray-600 dark:text-gray-400',
+  },
+  section: {
+    title: 'text-2xl font-semibold',
+    subtitle: 'text-lg font-medium',
+  },
+  component: {
+    label: 'text-sm font-medium',
+    input: 'text-base',
+    help: 'text-xs text-gray-500',
+  },
 } as const
 
 /**
@@ -156,4 +212,17 @@ export const rounded = {
   xl: '0.75rem',   // 12px - var(--radius-xl)
   '2xl': '1rem',   // 16px - var(--radius-2xl)
   full: '9999px',  // var(--radius-full)
+  component: {
+    button: {
+      sm: 'rounded-sm',
+      md: 'rounded-md',
+      lg: 'rounded-lg',
+    },
+    card: 'rounded-lg',
+    input: 'rounded-md',
+    media: {
+      avatar: 'rounded-full',
+      image: 'rounded-lg',
+    },
+  },
 } as const
