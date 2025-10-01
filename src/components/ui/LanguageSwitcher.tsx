@@ -47,7 +47,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
   const router = useRouter()
 
   const a11yLabels = getAccessibilityLabels(currentLocale)
-  const currentOption = languageOptions.find((option) => option.code === currentLocale) || languageOptions[0]
+  const currentOption = languageOptions.find((option) => option.code === currentLocale) ?? languageOptions[0] ?? { code: 'en' as Locale, name: 'English', nativeName: 'English', flag: '🇺🇸' }
 
   const handleLanguageChange = useCallback(
     (newLocale: Locale) => {

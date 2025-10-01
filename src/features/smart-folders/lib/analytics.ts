@@ -269,8 +269,10 @@ export class SmartFolderAnalytics {
     if (inefficientRules.length > 0 && newRules.length > 2) {
       // 最も非効率なルールを1つだけ除去（安全のため）
       const worstRule = inefficientRules.sort((a, b) => a.costBenefit - b.costBenefit)[0]
-      newRules = newRules.filter(r => !(r.field === worstRule.field && r.operator === worstRule.operator))
-      changes.push(`Removed inefficient rule: ${worstRule.field} ${worstRule.operator}`)
+      if (worstRule) {
+        newRules = newRules.filter(r => !(r.field === worstRule.field && r.operator === worstRule.operator))
+        changes.push(`Removed inefficient rule: ${worstRule.field} ${worstRule.operator}`)
+      }
     }
     
     return {

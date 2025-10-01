@@ -186,7 +186,9 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
           }
 
           // Set logic for next iteration
-          currentLogic = condition.logic || 'and'
+          if (condition) {
+            currentLogic = condition.logic || 'and'
+          }
         }
 
         return result

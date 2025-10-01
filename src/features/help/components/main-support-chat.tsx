@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react'
 
-import { useChat } from '@ai-sdk/react'
+import { useChat, type UIMessage } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2 } from 'lucide-react'
 
@@ -10,18 +10,21 @@ import { AIConversation, AIConversationContent, AIConversationScrollButton } fro
 import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/kibo-ui/ai/input'
 import { AIMessage, AIMessageContent } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
-import { Avatar } from '@/components/shadcn-ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/shadcn-ui/avatar'
 import { useAuthContext } from '@/features/auth'
 import { useTranslation } from '@/lib/i18n/hooks'
 
 // Vercel AI SDK message type extension
-interface ExtendedMessage {
-  id: string
-  role: 'user' | 'assistant' | 'system'
-  content: string
+interface ExtendedMessage extends UIMessage {
   createdAt?: Date
   relatedFiles?: string[]
   status?: 'sending' | 'sent' | 'error'
+}
+
+// Helper function to extract text content from UIMessage parts
+const getMessageContent = (message: UIMessage): string => {
+  const textParts = message.parts.filter((part): part is { type: 'text'; text: string } => part.type === 'text')
+  return textParts.map((part) => part.text).join(' ')
 }
 
 // BoxLog専用のAI Responseコンポーネント
@@ -69,15 +72,15 @@ const RelatedFiles = ({ files }: { files: string[] }) => (
 
 // ユーザーメッセージ内容コンポーネント
 const UserMessageContent = ({ message }: { message: ExtendedMessage }) => {
-  const t = useTranslation()
+  const { t } = useTranslation()
   return (
     <div className="whitespace-pre-wrap text-sm leading-relaxed">
-      {message.content}
+      {getMessageContent(message)}
       {message.status != null && (
         <div className="mt-1 text-xs opacity-75">
-          {message.status === 'sending' && t('help.messageStatus.sending')}
-          {message.status === 'error' && t('help.messageStatus.error')}
-          {message.status === 'sent' && t('help.messageStatus.sent')}
+          {message.status === 'sending' && t('help.messageStatus.sending', 'Sending...')}
+          {message.status === 'error' && t('help.messageStatus.error', 'Error')}
+          {message.status === 'sent' && t('help.messageStatus.sent', 'Sent')}
         </div>
       )}
     </div>
@@ -87,7 +90,7 @@ const UserMessageContent = ({ message }: { message: ExtendedMessage }) => {
 // アシスタントメッセージ内容コンポーネント
 const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
   <div>
-    <CodebaseAIResponse>{message.content}</CodebaseAIResponse>
+    <CodebaseAIResponse>{getMessageContent(message)}</CodebaseAIResponse>
     {message.relatedFiles && message.relatedFiles.length > 0 ? <RelatedFiles files={message.relatedFiles} /> : null}
   </div>
 )
@@ -104,11 +107,15 @@ const UserAvatar = ({
 }) => (
   <div className="flex-shrink-0">
     {avatarUrl ? (
-      <Avatar className="size-8" initials={displayName.charAt(0).toUpperCase()} />
+      <Avatar className="size-8">
+        <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
+      </Avatar>
     ) : profileIcon ? (
       <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
     ) : (
-      <Avatar className="size-8" initials={displayName.charAt(0).toUpperCase()} />
+      <Avatar className="size-8">
+        <AvatarFallback>{displayName.charAt(0).toUpperCase()}</AvatarFallback>
+      </Avatar>
     )}
   </div>
 )
@@ -151,7 +158,7 @@ const MainSupportChatInput = ({
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) => {
-  const t = useTranslation()
+  const { t } = useTranslation()
   const [_isComposing, _setIsComposing] = useState(false)
 
   const handleCompositionStart = useCallback(() => {
@@ -177,7 +184,7 @@ const MainSupportChatInput = ({
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.2s' }}></div>
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.4s' }}></div>
           </div>
-          <span>{t('help.status.checking')}</span>
+          <span>{t('help.status.checking', 'Checking...')}</span>
         </div>
       )}
 
@@ -187,7 +194,7 @@ const MainSupportChatInput = ({
           onChange={handleInputChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
-          placeholder={t('help.placeholder')}
+          placeholder={t('help.placeholder', 'Ask me anything...')}
           disabled={isLoading}
           minHeight={40}
           maxHeight={120}
@@ -196,7 +203,7 @@ const MainSupportChatInput = ({
           <AIInputTools>
             <div className="text-muted-foreground flex items-center gap-1 px-2 text-xs">
               <BotMessageSquare className="h-4 w-4" />
-              <span>{t('help.subtitle')}</span>
+              <span>{t('help.subtitle', 'AI Assistant')}</span>
             </div>
           </AIInputTools>
 
@@ -209,32 +216,37 @@ const MainSupportChatInput = ({
 
 export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
-  const t = useTranslation()
+  const { t } = useTranslation()
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const chatHelpers = useChat({
-    api: '/api/chat/codebase',
+    streamProtocol: 'text',
     onError: (error) => {
       console.error('Chat error:', error)
     },
     onFinish: (message) => {
       console.log('Message finished:', message)
     },
-    initialMessages: [
+    messages: [
       {
         id: '1',
         role: 'assistant',
-        content: `${t('help.welcome.greeting')}
+        parts: [
+          {
+            type: 'text' as const,
+            text: `${t('help.welcome.greeting', 'Welcome')}
 
-${t('help.welcome.capabilities')}
+${t('help.welcome.capabilities', 'I can help you with:')}
 
-${t('help.welcome.features')
+${(Array.isArray(t('help.welcome.features', [])) ? t('help.welcome.features', []) : [])
   .map((feature: string) => `• ${feature}`)
   .join('\n')}
 
-${t('help.welcome.note')}
+${t('help.welcome.note', 'Note: AI responses may not always be accurate.')}
 
-${t('help.welcome.question')}`,
+${t('help.welcome.question', 'How can I help you today?')}`,
+          },
+        ],
       },
     ],
   })

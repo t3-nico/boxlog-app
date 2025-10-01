@@ -50,6 +50,7 @@ export class IncrementalUpdateManager {
         }
 
         const batch = batches[processed]
+        if (!batch) return
 
         // 非同期でバッチを処理
         setTimeout(() => {

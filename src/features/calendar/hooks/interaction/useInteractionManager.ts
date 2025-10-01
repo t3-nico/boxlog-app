@@ -246,7 +246,7 @@ export function useInteractionManager(options: UseInteractionManagerOptions = {}
 
 // ユーティリティ関数
 function timeToMinutes(timeString: string): number {
-  const [hours, minutes] = timeString.split(':').map(Number)
+  const [hours = 0, minutes = 0] = timeString.split(':').map(Number)
   return hours * 60 + minutes
 }
 

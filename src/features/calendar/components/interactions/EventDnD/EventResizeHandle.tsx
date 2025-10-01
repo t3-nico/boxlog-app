@@ -28,7 +28,7 @@ interface ResizeState {
 // ヘルパー: 時刻バリデーション
 const useTimeValidation = (type: 'start' | 'end', otherTime: string | undefined, minDuration: number) => {
   const timeToMinutes = useCallback((time: string): number => {
-    const [hours, minutes] = time.split(':').map(Number)
+    const [hours = 0, minutes = 0] = time.split(':').map(Number)
     return hours * 60 + minutes
   }, [])
 
@@ -221,7 +221,7 @@ const ResizeHandleBody = ({
     onKeyDown={(e) => {
       e.preventDefault()
 
-      const [hours, minutes] = currentTime.split(':').map(Number)
+      const [hours = 0, minutes = 0] = currentTime.split(':').map(Number)
       let newHours = hours
       let newMinutes = minutes
 

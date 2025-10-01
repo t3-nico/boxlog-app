@@ -152,6 +152,8 @@ export function useAccessibilityKeyboard(
       }
 
       const newEvent = currentDateEvents[newIndex]
+      if (!newEvent) return prev
+
       const timeString = newEvent.startDate?.toLocaleTimeString('ja-JP', {
         hour: '2-digit',
         minute: '2-digit'

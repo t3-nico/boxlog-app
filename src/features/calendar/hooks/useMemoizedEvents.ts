@@ -250,7 +250,7 @@ function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
 
   for (let i = 0; i < events.length; i++) {
     const event1 = events[i]
-    if (processedIds.has(event1.id) || !event1.startDate || !event1.endDate) {
+    if (!event1 || processedIds.has(event1.id) || !event1.startDate || !event1.endDate) {
       continue
     }
 
@@ -259,7 +259,7 @@ function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
 
     for (let j = i + 1; j < events.length; j++) {
       const event2 = events[j]
-      if (processedIds.has(event2.id) || !event2.startDate || !event2.endDate) {
+      if (!event2 || processedIds.has(event2.id) || !event2.startDate || !event2.endDate) {
         continue
       }
 

@@ -2,7 +2,7 @@
  * 時刻文字列を分に変換（"09:30" → 570）
  */
 export function timeToMinutes(time: string): number {
-  const [hours, minutes] = time.split(':').map(Number)
+  const [hours = 0, minutes = 0] = time.split(':').map(Number)
   return hours * 60 + minutes
 }
 

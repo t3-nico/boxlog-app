@@ -58,7 +58,8 @@ export const DirectDragSelection = ({
     const relativeX = clientX - rect.left
     const columnWidth = rect.width / weekDates.length
     const dateIndex = Math.floor(relativeX / columnWidth)
-    const targetDate = weekDates[dateIndex] || weekDates[0]
+    const targetDate = weekDates[dateIndex] ?? weekDates[0]
+    if (!targetDate) return null
     
     // Y座標から時刻を計算
     const relativeY = clientY - rect.top + container.scrollTop
@@ -110,7 +111,7 @@ export const DirectDragSelection = ({
 
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!selectionStart) return
-      
+
       // ドラッグ判定
       const deltaX = Math.abs(e.clientX - selectionStart.x)
       const deltaY = Math.abs(e.clientY - selectionStart.y)
@@ -119,7 +120,7 @@ export const DirectDragSelection = ({
       }
 
       const result = calculateDateTimeFromMouse(e.clientX, e.clientY)
-      if (!result) return
+      if (!result || !result.date) return
 
       // 同じ日付内でのみドラッグを許可
       if (result.date.getTime() !== selectionStart.date.getTime()) {

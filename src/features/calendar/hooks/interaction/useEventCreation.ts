@@ -86,7 +86,7 @@ export function useEventCreation(options: UseEventCreationOptions = {}) {
 
 // ユーティリティ関数
 function addMinutesToTime(timeString: string, minutesToAdd: number): string {
-  const [hours, minutes] = timeString.split(':').map(Number)
+  const [hours = 0, minutes = 0] = timeString.split(':').map(Number)
   const totalMinutes = (hours * 60 + minutes + minutesToAdd)
   const newHours = Math.floor(totalMinutes / 60) % 24
   const newMinutes = totalMinutes % 60

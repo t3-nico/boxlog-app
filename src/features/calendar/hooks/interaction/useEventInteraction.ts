@@ -77,7 +77,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
 
   // 時刻からY座標を計算
   const getYFromTime = useCallback((time: string): number => {
-    const [hours, minutes] = time.split(':').map(Number)
+    const [hours = 0, minutes = 0] = time.split(':').map(Number)
     const totalMinutes = hours * 60 + minutes
     return (totalMinutes / 60) * hourHeight
   }, [hourHeight])
@@ -94,7 +94,7 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
   // シングルクリック処理
   const handleSingleClick = useCallback((time: string) => {
     // 30分のイベントを作成
-    const [hours, minutes] = time.split(':').map(Number)
+    const [hours = 0, minutes = 0] = time.split(':').map(Number)
     let endHours = hours
     let endMinutes = minutes + 30
     

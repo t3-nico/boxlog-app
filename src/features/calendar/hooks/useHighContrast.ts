@@ -137,11 +137,11 @@ function calculateContrastRatio(color1: string, color2: string): number {
     const g = (rgb >> 8) & 255
     const b = rgb & 255
     
-    const [rs, gs, bs] = [r, g, b].map(c => {
+    const [rs = 0, gs = 0, bs = 0] = [r, g, b].map(c => {
       c = c / 255
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
     })
-    
+
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs
   }
   
@@ -156,9 +156,12 @@ function calculateContrastRatio(color1: string, color2: string): number {
 // ハイコントラストスタイルを削除
 function removeHighContrastStyles(): void {
   document.documentElement.removeAttribute('data-high-contrast')
-  Object.keys(HIGH_CONTRAST_THEMES.default.colors).forEach(key => {
-    document.documentElement.style.removeProperty(`--contrast-${key}`)
-  })
+  const defaultTheme = HIGH_CONTRAST_THEMES.default
+  if (defaultTheme) {
+    Object.keys(defaultTheme.colors).forEach(key => {
+      document.documentElement.style.removeProperty(`--contrast-${key}`)
+    })
+  }
   
   const existingStyle = document.getElementById('high-contrast-styles')
   if (existingStyle) {
@@ -404,7 +407,9 @@ export function useHighContrast() {
 
   // 現在のテーマのコントラスト比を検証
   const validateCurrentTheme = useCallback(() => {
-    const theme = getCurrentTheme() || HIGH_CONTRAST_THEMES.default
+    const theme = getCurrentTheme() ?? HIGH_CONTRAST_THEMES.default
+    if (!theme) return { compliant: false, results: {} }
+
     const results = {
       background_foreground: checkContrast(theme.colors.foreground, theme.colors.background),
       primary_background: checkContrast(theme.colors.primary, theme.colors.background),

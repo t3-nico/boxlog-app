@@ -39,7 +39,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
   const _params = useParams()
   const [isOpen, setIsOpen] = useState(false)
 
-  const currentLanguage = languages.find((lang) => lang.code === currentLocale) || languages[0]
+  const currentLanguage = languages.find((lang) => lang.code === currentLocale) ?? languages[0] ?? { code: 'en' as Locale, name: 'English', flag: '🇺🇸' }
 
   const switchLanguage = useCallback(
     (locale: Locale): void => {

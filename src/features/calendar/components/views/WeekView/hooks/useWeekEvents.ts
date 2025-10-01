@@ -93,7 +93,7 @@ export function useWeekEvents({
         }
         
         // 重なりがある場合の列計算
-        const columnInfo = eventIndex < eventColumns.length ? eventColumns[eventIndex] : { column: 0, totalColumns: 1 }
+        const columnInfo = eventColumns[eventIndex] ?? { column: 0, totalColumns: 1 }
         const columnWidth = DAY_COLUMN_WIDTH / columnInfo.totalColumns
         const left = dayIndex * DAY_COLUMN_WIDTH + (columnInfo.column * columnWidth)
         const width = columnWidth * 0.95 // 少し余白を作る

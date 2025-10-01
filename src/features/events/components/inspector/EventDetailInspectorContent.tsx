@@ -272,7 +272,9 @@ const useFormHandlers = (
       if (!isNaN(newDate.getTime())) {
         // 既存の時間を保持
         const currentTime = formData.startDate
-        newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
+        if (currentTime) {
+          newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
+        }
         updateFormData('startDate', newDate)
 
         // 終了日がある場合も同じ日付に変更

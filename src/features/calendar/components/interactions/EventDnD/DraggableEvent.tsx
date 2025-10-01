@@ -172,16 +172,18 @@ export const DraggableEvent = ({
   // タッチイベントのサポート
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0]
+    if (!touch) return
     setIsClicking(true)
     setDragStartPos({ x: touch.clientX, y: touch.clientY })
   }, [])
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isClicking || !dragStartPos) return
-    
+
     const touch = e.touches[0]
+    if (!touch) return
     const distance = Math.sqrt(
-      Math.pow(touch.clientX - dragStartPos.x, 2) + 
+      Math.pow(touch.clientX - dragStartPos.x, 2) +
       Math.pow(touch.clientY - dragStartPos.y, 2)
     )
     

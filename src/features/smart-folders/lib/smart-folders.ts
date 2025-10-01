@@ -41,7 +41,9 @@ export class SmartFolderRuleEngine {
         }
       }
 
-      currentLogic = rule.logic
+      if (rule) {
+        currentLogic = rule.logic
+      }
     }
 
     return result
