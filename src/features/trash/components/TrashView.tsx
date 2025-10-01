@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 
-import { colors, icons, rounded, typography } from '@/config/theme'
-
 import { useTrashStore } from '../stores/useTrashStore'
 
 import { TrashActions } from './TrashActions'
@@ -33,17 +31,17 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
   }, [error, clearError])
 
   return (
-    <div className={`min-h-screen ${colors.background.base} ${className}`}>
-      <div className="${spacing.stackGap.lg} mx-auto max-w-7xl p-6">
+    <div className={`min-h-screen bg-neutral-100 dark:bg-neutral-900 ${className}`}>
+      <div className="mx-auto max-w-7xl space-y-6 p-6">
         {/* ヘッダー */}
-        <div className="${colors.background.surface} ${rounded.lg} ${spacing.cardVariants.comfortable} border border-neutral-200 dark:border-neutral-800">
+        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="${typography.heading.h2} ${colors.text.primary} flex items-center">
+              <h1 className="flex items-center text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
                 <span className="mr-3 text-3xl">🗑️</span>
                 ゴミ箱
               </h1>
-              <p className="${colors.text.muted} mt-2">
+              <p className="mt-2 text-neutral-600 dark:text-neutral-400">
                 削除されたアイテムを管理します。アイテムは30日後に自動削除されます。
               </p>
             </div>
@@ -53,12 +51,12 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
               type="button"
               onClick={() => fetchItems()}
               disabled={loading}
-              className={`${icons.patterns.button.withTextLeft} px-4 py-2 ${typography.body.small} ${colors.button.outline} ${colors.state.disabled.opacity}`}
+              className="flex items-center gap-2 rounded-md border border-neutral-300 px-4 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-100 disabled:opacity-50 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-700"
             >
               {loading ? (
                 <>
                   <svg
-                    className={`${icons.animation.spin} ${icons.size.sm} ${colors.text.muted}`}
+                    className="h-4 w-4 animate-spin text-neutral-600 dark:text-neutral-400"
                     fill="none"
                     viewBox="0 0 24 24"
                   >
@@ -80,7 +78,7 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
                 </>
               ) : (
                 <>
-                  <svg className={icons.size.sm} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -95,36 +93,36 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
           </div>
 
           {/* 統計情報 */}
-          <div className="${spacing.gridGap.default} mt-6 grid grid-cols-2 md:grid-cols-4">
-            <div className="${colors.background.elevated} ${spacing.cardVariants.default} ${rounded.md}">
-              <div className="${typography.heading.h3} ${colors.text.primary}">{stats.totalItems}</div>
-              <div className="${typography.body.small} ${colors.text.muted}">総アイテム数</div>
+          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div className="rounded-md bg-neutral-50 p-4 dark:bg-neutral-700">
+              <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{stats.totalItems}</div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">総アイテム数</div>
             </div>
 
-            <div className="${colors.semantic.info.light} ${spacing.cardVariants.default} ${rounded.md}">
-              <div className="${typography.heading.h3} ${colors.semantic.info.text}">{stats.deletedToday}</div>
-              <div className="${typography.body.small} ${colors.semantic.info.text}">今日削除</div>
+            <div className="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.deletedToday}</div>
+              <div className="text-sm text-blue-700 dark:text-blue-400">今日削除</div>
             </div>
 
-            <div className="${colors.semantic.warning.light} ${spacing.cardVariants.default} ${rounded.md}">
-              <div className="${typography.heading.h3} ${colors.semantic.warning.text}">{stats.expiredItems}</div>
-              <div className="${typography.body.small} ${colors.semantic.warning.text}">期限切れ</div>
+            <div className="rounded-md bg-yellow-50 p-4 dark:bg-yellow-900/20">
+              <div className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{stats.expiredItems}</div>
+              <div className="text-sm text-yellow-700 dark:text-yellow-400">期限切れ</div>
             </div>
 
-            <div className="${colors.semantic.success.light} ${spacing.cardVariants.default} ${rounded.md}">
-              <div className="${typography.heading.h3} ${colors.semantic.success.text}">{stats.deletedThisWeek}</div>
-              <div className="${typography.body.small} ${colors.semantic.success.text}">今週削除</div>
+            <div className="rounded-md bg-green-50 p-4 dark:bg-green-900/20">
+              <div className="text-2xl font-bold text-green-700 dark:text-green-400">{stats.deletedThisWeek}</div>
+              <div className="text-sm text-green-700 dark:text-green-400">今週削除</div>
             </div>
           </div>
         </div>
 
         {/* エラー表示 */}
         {error != null && (
-          <div className="${colors.semantic.error.light} ${colors.semantic.error.border} ${rounded.lg} ${spacing.cardVariants.default}">
+          <div className="rounded-lg border border-red-300 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
             <div className="flex items-start">
               <div className="flex-shrink-0">
                 <svg
-                  className={`${icons.size.md} ${colors.semantic.error.text}`}
+                  className="h-5 w-5 text-red-600 dark:text-red-400"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -138,18 +136,18 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="${typography.body.small} ${colors.semantic.error.text} font-medium">
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
                   エラーが発生しました
                 </h3>
-                <p className="${typography.body.small} ${colors.semantic.error.text} mt-1">{error}</p>
+                <p className="mt-1 text-sm text-red-700 dark:text-red-400">{error}</p>
               </div>
               <div className="ml-auto pl-3">
                 <button
                   type="button"
                   onClick={clearError}
-                  className={`${colors.semantic.error.text} hover:brightness-75`}
+                  className="text-red-600 hover:brightness-75 dark:text-red-400"
                 >
-                  <svg className={icons.size.md} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -159,11 +157,11 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
         )}
 
         {/* 検索バー（シンプル版） */}
-        <div className="${colors.background.surface} ${rounded.lg} ${spacing.cardVariants.default} border border-neutral-200 dark:border-neutral-800">
+        <div className="rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-800">
           <div className="relative">
-            <div className={icons.patterns.input.left}>
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <svg
-                className={`${icons.size.sm} ${colors.text.muted}`}
+                className="h-4 w-4 text-neutral-600 dark:text-neutral-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -181,7 +179,7 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
               placeholder="アイテムを検索..."
               value={filters.searchQuery}
               onChange={(e) => setFilters({ searchQuery: e.target.value })}
-              className={`block w-full ${icons.patterns.input.fieldWithLeftIcon} border py-2 pl-10 pr-3 ${colors.border.alpha} ${rounded.md} ${colors.background.surface} ${typography.body.small} focus:ring-2 focus:ring-blue-500`}
+              className="block w-full rounded-md border border-neutral-300 bg-white py-2 pl-10 pr-3 text-sm text-neutral-900 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             />
           </div>
         </div>
@@ -194,18 +192,18 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
 
         {/* 空の状態での説明 */}
         {stats.totalItems === 0 && !loading && (
-          <div className="${colors.background.surface} ${rounded.lg} border border-neutral-200 p-8 text-center dark:border-neutral-800">
+          <div className="rounded-lg border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-800">
             <div className="mb-4 text-6xl">🌟</div>
-            <h3 className="${typography.heading.h4} ${colors.text.primary} mb-2">ゴミ箱は空です</h3>
-            <p className="${colors.text.muted} mb-6">
+            <h3 className="mb-2 text-xl font-bold text-neutral-900 dark:text-neutral-100">ゴミ箱は空です</h3>
+            <p className="mb-6 text-neutral-600 dark:text-neutral-400">
               削除されたアイテムはここに表示されます。
               <br />
               現在、削除されたアイテムはありません。
             </p>
 
-            <div className="${colors.background.elevated} ${rounded.md} ${spacing.cardVariants.default} text-left">
-              <h4 className="${colors.text.primary} mb-2 font-medium">ℹ️ ゴミ箱について</h4>
-              <ul className="${typography.body.small} ${colors.text.muted} space-y-1">
+            <div className="rounded-md bg-neutral-50 p-4 text-left dark:bg-neutral-700">
+              <h4 className="mb-2 font-medium text-neutral-900 dark:text-neutral-100">ℹ️ ゴミ箱について</h4>
+              <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
                 <li>• カレンダーのイベント、タスク、ドキュメントなどを削除すると、ここに移動します</li>
                 <li>• アイテムは30日間保持され、その後自動的に完全削除されます</li>
                 <li>• 誤って削除したアイテムは復元することができます</li>
@@ -216,8 +214,8 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
         )}
 
         {/* フッター情報 */}
-        <div className="${colors.background.elevated} ${rounded.lg} ${spacing.cardVariants.default}">
-          <div className="${typography.body.small} ${colors.text.muted} text-center">
+        <div className="rounded-lg bg-neutral-50 p-4 dark:bg-neutral-700">
+          <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
             <p>アイテムは削除から30日後に自動的に完全削除されます。 必要なアイテムは期限内に復元してください。</p>
           </div>
         </div>

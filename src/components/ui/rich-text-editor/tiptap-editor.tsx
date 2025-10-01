@@ -12,14 +12,12 @@ import StarterKit from '@tiptap/starter-kit'
 import { Bold, Italic, Underline, List, ListOrdered, CheckSquare } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { 
-  Tooltip, 
-  TooltipContent, 
-  TooltipProvider, 
-  TooltipTrigger 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
 } from '@/components/shadcn-ui/tooltip'
-import { typography } from '@/config/theme'
-import { text, border, selection } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 
@@ -65,8 +63,8 @@ export const TiptapEditor = ({
         class: cn(
           'w-full min-h-[120px] pl-3 pr-3 py-3 outline-none',
           'focus:ring-2 focus:ring-ring focus:ring-offset-2',
-          typography.body.DEFAULT,
-          text.primary,
+          'text-base',
+          'text-neutral-900 dark:text-neutral-100',
           'ProseMirror'
         ),
         style: 'word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;'
@@ -105,15 +103,15 @@ export const TiptapEditor = ({
     <TooltipProvider>
       <div className={cn(
         'w-full border rounded-lg overflow-hidden relative max-w-full',
-        colors.background.base,
-        border.universal,
+        'bg-neutral-100 dark:bg-neutral-900',
+        'border-neutral-200 dark:border-neutral-700',
         className
       )}>
         {/* ツールバー */}
         <div className={cn(
           'flex items-center gap-0 pl-2 pr-2 py-2 border-b overflow-x-auto',
-          colors.background.surface,
-          border.universal
+          'bg-white dark:bg-neutral-800',
+          'border-neutral-200 dark:border-neutral-700'
         )}>
           {/* テキスト装飾 */}
           <Tooltip>
@@ -125,9 +123,9 @@ export const TiptapEditor = ({
                 onClick={toggleBold}
                 className={cn(
                   'h-8 !px-2 p-0 flex-shrink-0',
-                  editor.isActive('bold') && selection.DEFAULT,
-                  editor.isActive('bold') && selection.text,
-                  selection.hover,
+                  editor.isActive('bold') && 'bg-blue-50 dark:bg-blue-900/30',
+                  editor.isActive('bold') && 'text-blue-700 dark:text-blue-300',
+                  'hover:bg-blue-50 dark:hover:bg-blue-900/30',
                   'hover:text-blue-700 dark:hover:text-blue-300'
                 )}
               >
@@ -147,9 +145,9 @@ export const TiptapEditor = ({
                 onClick={toggleItalic}
                 className={cn(
                   'h-8 !px-2 p-0 flex-shrink-0',
-                  editor.isActive('italic') && selection.DEFAULT,
-                  editor.isActive('italic') && selection.text,
-                  selection.hover,
+                  editor.isActive('italic') && 'bg-blue-50 dark:bg-blue-900/30',
+                  editor.isActive('italic') && 'text-blue-700 dark:text-blue-300',
+                  'hover:bg-blue-50 dark:hover:bg-blue-900/30',
                   'hover:text-blue-700 dark:hover:text-blue-300'
                 )}
               >
@@ -169,9 +167,9 @@ export const TiptapEditor = ({
                 onClick={toggleUnderline}
                 className={cn(
                   'h-8 !px-2 p-0 flex-shrink-0',
-                  editor.isActive('underline') && selection.DEFAULT,
-                  editor.isActive('underline') && selection.text,
-                  selection.hover,
+                  editor.isActive('underline') && 'bg-blue-50 dark:bg-blue-900/30',
+                  editor.isActive('underline') && 'text-blue-700 dark:text-blue-300',
+                  'hover:bg-blue-50 dark:hover:bg-blue-900/30',
                   'hover:text-blue-700 dark:hover:text-blue-300'
                 )}
               >
@@ -182,9 +180,9 @@ export const TiptapEditor = ({
               <p>下線</p>
             </TooltipContent>
           </Tooltip>
-        
-        <div className={cn('w-px h-6 mx-1 flex-shrink-0', border.universal)} />
-        
+
+        <div className={cn('w-px h-6 mx-1 flex-shrink-0 border-neutral-200 dark:border-neutral-700')} />
+
         {/* リスト */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -195,9 +193,9 @@ export const TiptapEditor = ({
                 onClick={toggleBulletList}
                 className={cn(
                   'h-8 !px-2 p-0 flex-shrink-0',
-                  editor.isActive('bulletList') && selection.DEFAULT,
-                  editor.isActive('bulletList') && selection.text,
-                  selection.hover,
+                  editor.isActive('bulletList') && 'bg-blue-50 dark:bg-blue-900/30',
+                  editor.isActive('bulletList') && 'text-blue-700 dark:text-blue-300',
+                  'hover:bg-blue-50 dark:hover:bg-blue-900/30',
                   'hover:text-blue-700 dark:hover:text-blue-300'
                 )}
               >
@@ -217,9 +215,9 @@ export const TiptapEditor = ({
                 onClick={toggleOrderedList}
                 className={cn(
                   'h-8 !px-2 p-0 flex-shrink-0',
-                  editor.isActive('orderedList') && selection.DEFAULT,
-                  editor.isActive('orderedList') && selection.text,
-                  selection.hover,
+                  editor.isActive('orderedList') && 'bg-blue-50 dark:bg-blue-900/30',
+                  editor.isActive('orderedList') && 'text-blue-700 dark:text-blue-300',
+                  'hover:bg-blue-50 dark:hover:bg-blue-900/30',
                   'hover:text-blue-700 dark:hover:text-blue-300'
                 )}
               >
@@ -239,9 +237,9 @@ export const TiptapEditor = ({
                 onClick={toggleTaskList}
                 className={cn(
                   'h-8 !px-2 p-0 flex-shrink-0',
-                  editor.isActive('taskList') && selection.DEFAULT,
-                  editor.isActive('taskList') && selection.text,
-                  selection.hover,
+                  editor.isActive('taskList') && 'bg-blue-50 dark:bg-blue-900/30',
+                  editor.isActive('taskList') && 'text-blue-700 dark:text-blue-300',
+                  'hover:bg-blue-50 dark:hover:bg-blue-900/30',
                   'hover:text-blue-700 dark:hover:text-blue-300'
                 )}
               >
@@ -258,13 +256,13 @@ export const TiptapEditor = ({
       <div className="tiptap-editor-content">
         <EditorContent editor={editor} />
       </div>
-      
+
       {/* プレースホルダー */}
       {editor.isEmpty === true && (
         <div className={cn(
           'absolute top-[60px] left-3 pointer-events-none',
-          text.muted,
-          typography.body.DEFAULT
+          'text-neutral-600 dark:text-neutral-400',
+          'text-base'
         )}>
           {placeholder}
         </div>

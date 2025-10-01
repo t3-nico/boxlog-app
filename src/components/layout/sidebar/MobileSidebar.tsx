@@ -9,7 +9,6 @@ import { Bell, Plus, Search } from 'lucide-react'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Sheet, SheetContent } from '@/components/shadcn-ui/sheet'
 import { primaryNavigation } from '@/config/navigation/config'
-import { animations, colors, icons, layout, rounded, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
@@ -18,9 +17,6 @@ import { SidebarItem } from './sidebar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
-
-const { xs } = layout.heights.header
-const { sm, lg } = icons.size
 
 export const MobileSidebar = () => {
   const pathname = usePathname()
@@ -91,10 +87,10 @@ export const MobileSidebar = () => {
         side="left"
         className={cn(
           'w-4/5 p-0', // 画面の80%幅、パディングなし
-          animations.appear.slideLeft, // テーマのslideLeftアニメーション
-          colors.background.surface,
-          colors.text.primary,
-          colors.border.default,
+          'animate-slide-in-from-left', // テーマのslideLeftアニメーション
+          'bg-white dark:bg-neutral-800',
+          'text-neutral-900 dark:text-neutral-100',
+          'border-neutral-200 dark:border-neutral-700',
           '[&_*[class*="sheet-close"]]:!hidden', // 閉じるボタンを完全非表示
           '[&_.lucide-x]:!hidden', // Xアイコンを完全非表示
           '[&_svg[class*="lucide-x"]]:!hidden' // SVG Xアイコンを完全非表示
@@ -116,9 +112,9 @@ export const MobileSidebar = () => {
           <div
             className={cn(
               'flex items-center justify-end', // 右側にボタン配置（左側の閉じるボタンなし）
-              spacing.margin.top.sm,
-              xs, // 32px height
-              spacing.padding.horizontal.sm // 8px horizontal padding
+              'mt-2',
+              'h-8', // 32px height
+              'px-2' // 8px horizontal padding
             )}
           >
             {/* Right: Action Buttons */}
@@ -127,13 +123,13 @@ export const MobileSidebar = () => {
               <button
                 type="button"
                 className={cn(
-                  'hover:bg-accent flex h-8 w-8 items-center justify-center',
-                  rounded.component.button.sm,
-                  animations.transition.fast,
+                  'hover:bg-neutral-100 dark:hover:bg-neutral-700 flex h-8 w-8 items-center justify-center',
+                  'rounded-md',
+                  'transition-colors duration-150',
                   'flex-shrink-0'
                 )}
               >
-                <Search className={sm} />
+                <Search className="h-4 w-4" />
               </button>
 
               {/* Notification Button */}
@@ -141,20 +137,20 @@ export const MobileSidebar = () => {
                 type="button"
                 onClick={openNotifications}
                 className={cn(
-                  'hover:bg-accent relative flex h-8 w-8 items-center justify-center',
-                  rounded.component.button.sm,
-                  animations.transition.fast,
+                  'hover:bg-neutral-100 dark:hover:bg-neutral-700 relative flex h-8 w-8 items-center justify-center',
+                  'rounded-md',
+                  'transition-colors duration-150',
                   'flex-shrink-0'
                 )}
               >
-                <Bell className={sm} />
+                <Bell className="h-4 w-4" />
                 {notificationCount > 0 && (
                   <span
                     className={cn(
                       'absolute -right-1 -top-1 h-4 w-4',
                       'bg-red-500 text-xs text-white',
                       'flex items-center justify-center',
-                      rounded.component.badge.pill
+                      'rounded-full'
                     )}
                   >
                     {notificationCount}
@@ -168,8 +164,8 @@ export const MobileSidebar = () => {
           <nav
             className={cn(
               'flex flex-1 flex-col space-y-0',
-              spacing.padding.horizontal.xs, // 8px horizontal padding
-              spacing.padding.vertical.xs // 8px vertical padding
+              'px-2', // 8px horizontal padding
+              'py-2' // 8px vertical padding
             )}
             aria-label="メインナビゲーション"
             role="navigation"
@@ -180,9 +176,9 @@ export const MobileSidebar = () => {
                   <div
                     className={cn(
                       'mt-4 px-2 py-2 first:mt-0',
-                      typography.body.small,
+                      'text-sm',
                       'font-medium uppercase tracking-wider',
-                      colors.text.muted
+                      'text-neutral-600 dark:text-neutral-400'
                     )}
                   >
                     {section.label}
@@ -198,21 +194,21 @@ export const MobileSidebar = () => {
                       />
                     ))
                   : section.id === 'smart-folders' && (
-                      <div className={cn(spacing.padding.horizontal.xs, spacing.padding.vertical.xs)}>
+                      <div className={cn('px-2', 'py-2')}>
                         <button
                           type="button"
                           className={cn(
                             'flex w-full items-center',
                             'gap-1',
-                            'hover:bg-accent',
-                            rounded.component.button.sm,
-                            animations.transition.fast,
+                            'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                            'rounded-md',
+                            'transition-colors duration-150',
                             'p-2',
-                            colors.text.muted,
-                            typography.body.small
+                            'text-neutral-600 dark:text-neutral-400',
+                            'text-sm'
                           )}
                         >
-                          <Plus className={sm} />
+                          <Plus className="h-4 w-4" />
                           <span>Add smart folder</span>
                         </button>
                       </div>
@@ -225,7 +221,7 @@ export const MobileSidebar = () => {
           <div
             className={cn(
               'pb-4',
-              spacing.padding.horizontal.xs // 8px horizontal padding
+              'px-2' // 8px horizontal padding
             )}
           >
             <div className={cn('flex items-center justify-start')}>
@@ -237,17 +233,17 @@ export const MobileSidebar = () => {
           <div
             className={cn(
               'mb-2', // 8px bottom margin
-              spacing.padding.horizontal.xs // 8px horizontal padding
+              'px-2' // 8px horizontal padding
             )}
           >
             {/* User Account Info */}
             <UserMenu>
               <div
                 className={cn(
-                  'hover:bg-accent flex w-full cursor-pointer items-center',
+                  'hover:bg-neutral-100 dark:hover:bg-neutral-700 flex w-full cursor-pointer items-center',
                   'gap-2', // 8px gap
-                  rounded.component.button.md,
-                  animations.transition.fast,
+                  'rounded-lg',
+                  'transition-colors duration-150',
                   'p-2', // 全方向8px
                   'border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
                 )}
@@ -257,15 +253,15 @@ export const MobileSidebar = () => {
                   {user?.user_metadata?.avatar_url ? (
                     <Avatar
                       src={user.user_metadata.avatar_url}
-                      className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                      className={cn('h-8 w-8', 'border border-neutral-200 dark:border-neutral-700', 'rounded-lg')}
                     />
                   ) : user?.user_metadata?.profile_icon ? (
                     <div
                       className={cn(
-                        lg,
-                        'bg-accent flex items-center justify-center border text-sm',
-                        colors.border.default,
-                        rounded.component.avatar.md
+                        'h-8 w-8',
+                        'bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center border text-sm',
+                        'border-neutral-200 dark:border-neutral-700',
+                        'rounded-lg'
                       )}
                     >
                       {user.user_metadata.profile_icon}
@@ -273,7 +269,7 @@ export const MobileSidebar = () => {
                   ) : (
                     <Avatar
                       src={undefined}
-                      className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                      className={cn('h-8 w-8', 'border border-neutral-200 dark:border-neutral-700', 'rounded-lg')}
                       initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                         .charAt(0)
                         .toUpperCase()}
@@ -282,10 +278,10 @@ export const MobileSidebar = () => {
                 </div>
 
                 <div className={cn('flex min-w-0 flex-1 flex-col justify-center')}>
-                  <div className={cn('truncate', colors.text.primary, typography.body.DEFAULT, 'font-medium')}>
+                  <div className={cn('truncate text-neutral-900 dark:text-neutral-100', 'text-base', 'font-medium')}>
                     tomoya
                   </div>
-                  <div className={cn('truncate', colors.text.muted, typography.body.small)}>Free Plan</div>
+                  <div className={cn('truncate text-neutral-600 dark:text-neutral-400', 'text-sm')}>Free Plan</div>
                 </div>
               </div>
             </UserMenu>

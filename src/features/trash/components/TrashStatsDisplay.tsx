@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { colors, typography } from '@/config/theme'
-
 import type { TrashItem } from '../types/trash'
 
 interface TrashStatsDisplayProps {
@@ -21,17 +19,17 @@ export const TrashStatsDisplay: React.FC<TrashStatsDisplayProps> = ({
 }) => {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <div className={`${typography.body.small} ${colors.text.muted} flex items-center space-x-4`}>
+      <div className="flex items-center space-x-4 text-sm text-neutral-600 dark:text-neutral-400">
         <span>
-          総数: <span className={`${colors.text.primary} font-medium`}>{stats.totalItems}件</span>
+          総数: <span className="font-medium text-neutral-900 dark:text-neutral-100">{stats.totalItems}件</span>
         </span>
         {selectedCount > 0 && (
           <span>
-            選択: <span className={`${colors.semantic.info.text} font-medium`}>{selectedCount}件</span>
+            選択: <span className="font-medium text-blue-700 dark:text-blue-400">{selectedCount}件</span>
           </span>
         )}
         {expiredItems.length > 0 && (
-          <span className={colors.semantic.warning.text}>
+          <span className="text-yellow-700 dark:text-yellow-400">
             期限切れ: <span className="font-medium">{expiredItems.length}件</span>
           </span>
         )}
@@ -42,7 +40,7 @@ export const TrashStatsDisplay: React.FC<TrashStatsDisplayProps> = ({
         <button
           type="button"
           onClick={onDeselectAll}
-          className={`${typography.body.small} ${colors.text.muted} ${colors.ghost.hover}`}
+          className="text-sm text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
         >
           選択解除
         </button>

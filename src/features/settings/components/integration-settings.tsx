@@ -1,6 +1,8 @@
 'use client'
 
-const IntegrationSettings = () => {
+import { memo } from 'react'
+
+const IntegrationSettings = memo(() => {
   return (
     <div className="space-y-6">
       <div>
@@ -16,6 +18,8 @@ const IntegrationSettings = () => {
       </div>
     </div>
   )
-}
+})
+
+IntegrationSettings.displayName = 'IntegrationSettings'
 
 export default IntegrationSettings

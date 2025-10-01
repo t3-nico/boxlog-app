@@ -19,7 +19,6 @@ import {
   useDataFetchRetry,
 } from '@/components/common'
 import { Button } from '@/components/shadcn-ui/button'
-import { colors, spacing, typography } from '@/config/theme'
 
 // === エラー生成コンポーネント ===
 
@@ -53,8 +52,8 @@ const ErrorGenerator = () => {
   }
 
   return (
-    <div className={`${spacing.padding.lg} ${colors.background.surface} rounded-lg border`}>
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.md}`}>
+    <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+      <h3 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
         エラー生成テスト（開発・デバッグ用）
       </h3>
 
@@ -90,7 +89,7 @@ const ErrorGenerator = () => {
       </div>
 
       {errorType ? (
-        <p className={`${typography.body.small} ${colors.text.secondary} ${spacing.margin.sm}`}>
+        <p className="mt-2 text-sm text-neutral-700 dark:text-neutral-300">
           {errorType}エラーを生成しました...
         </p>
       ) : null}
@@ -135,8 +134,8 @@ const RetryHookDemo = () => {
   )
 
   return (
-    <div className={`${spacing.padding.lg} ${colors.background.surface} rounded-lg border`}>
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.md}`}>
+    <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+      <h3 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
         自動リトライフック使用例
       </h3>
 
@@ -144,8 +143,8 @@ const RetryHookDemo = () => {
         {/* API リトライ */}
         <div className="flex items-center justify-between">
           <div>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary}`}>API リトライ</h4>
-            <p className={`${typography.body.small} ${colors.text.secondary}`}>
+            <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">API リトライ</h4>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               ステータス: {apiRetry.isLoading ? '実行中' : apiRetry.error ? 'エラー' : '待機中'}
               {apiRetry.isRetrying ? ` (${apiRetry.retryCount}/${3}回目)` : null}
             </p>
@@ -158,8 +157,8 @@ const RetryHookDemo = () => {
         {/* データフェッチリトライ */}
         <div className="flex items-center justify-between">
           <div>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary}`}>データフェッチ</h4>
-            <p className={`${typography.body.small} ${colors.text.secondary}`}>
+            <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">データフェッチ</h4>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               ステータス: {dataRetry.isLoading ? '読み込み中' : dataRetry.error ? 'エラー' : '待機中'}
               {dataRetry.isRetrying ? ` (自動復旧中...)` : null}
             </p>
@@ -172,8 +171,8 @@ const RetryHookDemo = () => {
         {/* カスタムリトライ */}
         <div className="flex items-center justify-between">
           <div>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary}`}>カスタムリトライ</h4>
-            <p className={`${typography.body.small} ${colors.text.secondary}`}>
+            <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">カスタムリトライ</h4>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">
               進捗: {Math.round(customRetry.progress * 100)}%{customRetry.isRetrying ? ' (自動再試行中)' : null}
             </p>
           </div>
@@ -190,25 +189,25 @@ const RetryHookDemo = () => {
 
 const SmartBoundaryDemo = () => {
   return (
-    <div className={`${spacing.padding.lg} ${colors.background.surface} rounded-lg border`}>
-      <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.md}`}>
+    <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+      <h3 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-neutral-100">
         スマートエラーバウンダリー（自動判定）
       </h3>
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* ネットワークエラー例 */}
         <SmartErrorBoundary>
-          <div className={`${colors.background.elevated} ${spacing.padding.md} rounded`}>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary}`}>ネットワークコンポーネント</h4>
+          <div className="rounded bg-neutral-50 p-4 dark:bg-neutral-700">
+            <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">ネットワークコンポーネント</h4>
             <ErrorGenerator />
           </div>
         </SmartErrorBoundary>
 
         {/* データベースエラー例 */}
         <SmartErrorBoundary fallbackComponent={DatabaseErrorFallback}>
-          <div className={`${colors.background.elevated} ${spacing.padding.md} rounded`}>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary}`}>データベースコンポーネント</h4>
-            <p className={`${typography.body.small} ${colors.text.secondary}`}>カスタムフォールバックを指定した例</p>
+          <div className="rounded bg-neutral-50 p-4 dark:bg-neutral-700">
+            <h4 className="font-semibold text-neutral-900 dark:text-neutral-100">データベースコンポーネント</h4>
+            <p className="text-sm text-neutral-700 dark:text-neutral-300">カスタムフォールバックを指定した例</p>
           </div>
         </SmartErrorBoundary>
       </div>
@@ -222,10 +221,10 @@ const ErrorBoundaryDemo = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className={`${typography.heading.h2} ${colors.text.primary} ${spacing.margin.md}`}>
+        <h2 className="mb-4 text-3xl font-bold text-neutral-900 dark:text-neutral-100">
           エラーバウンダリー自動復旧システム
         </h2>
-        <p className={`${typography.body.base} ${colors.text.secondary} mx-auto max-w-2xl`}>
+        <p className="mx-auto max-w-2xl text-base text-neutral-700 dark:text-neutral-300">
           技術知識に関係なく、エラーから自動復旧するシステムのデモンストレーション。
           以下のコンポーネントでエラーを発生させて、自動復旧の様子を確認してください。
         </p>
@@ -240,8 +239,8 @@ const ErrorBoundaryDemo = () => {
 
       {/* 個別フォールバック例 */}
       <div className="grid gap-6 md:grid-cols-2">
-        <div className={`${colors.background.surface} ${spacing.padding.lg} rounded-lg border`}>
-          <h3 className={`${typography.heading.h4} ${colors.text.primary} ${spacing.margin.md}`}>
+        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+          <h3 className="mb-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">
             ネットワークエラーフォールバック
           </h3>
           <NetworkErrorFallback
@@ -250,8 +249,8 @@ const ErrorBoundaryDemo = () => {
           />
         </div>
 
-        <div className={`${colors.background.surface} ${spacing.padding.lg} rounded-lg border`}>
-          <h3 className={`${typography.heading.h4} ${colors.text.primary} ${spacing.margin.md}`}>
+        <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+          <h3 className="mb-4 text-xl font-bold text-neutral-900 dark:text-neutral-100">
             認証エラーフォールバック
           </h3>
           <AuthErrorFallback
@@ -262,13 +261,13 @@ const ErrorBoundaryDemo = () => {
       </div>
 
       {/* システム説明 */}
-      <div className={`${colors.background.surface} ${spacing.padding.lg} rounded-lg border`}>
-        <h3 className={`${typography.heading.h3} ${colors.text.primary} ${spacing.margin.md}`}>💡 システム特徴</h3>
+      <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-800">
+        <h3 className="mb-4 text-2xl font-bold text-neutral-900 dark:text-neutral-100">💡 システム特徴</h3>
 
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>🤖 自動化機能</h4>
-            <ul className={`${typography.body.small} ${colors.text.secondary} space-y-1`}>
+            <h4 className="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">🤖 自動化機能</h4>
+            <ul className="space-y-1 text-sm text-neutral-700 dark:text-neutral-300">
               <li>• エラーの自動分類・分析</li>
               <li>• 復旧可能性の自動判定</li>
               <li>• 指数バックオフによる自動リトライ</li>
@@ -277,10 +276,10 @@ const ErrorBoundaryDemo = () => {
           </div>
 
           <div>
-            <h4 className={`${typography.body.semibold} ${colors.text.primary} ${spacing.margin.sm}`}>
+            <h4 className="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
               👤 ユーザー体験
             </h4>
-            <ul className={`${typography.body.small} ${colors.text.secondary} space-y-1`}>
+            <ul className="space-y-1 text-sm text-neutral-700 dark:text-neutral-300">
               <li>• 技術知識不要の分かりやすい説明</li>
               <li>• 明確な対処法の提示</li>
               <li>• ワンクリック修復機能</li>

@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { colors, rounded, spacing, typography } from '@/config/theme'
-
 import type { ConfirmDialog } from '../hooks/useTrashActions'
 
 interface TrashConfirmDialogProps {
@@ -18,13 +16,13 @@ export const TrashConfirmDialog: React.FC<TrashConfirmDialogProps> = ({
   if (!dialog) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className={`${colors.background.surface} ${rounded.lg} ${spacing.cardVariants.default} max-w-md w-full mx-4`}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="mx-4 w-full max-w-md rounded-lg bg-white p-4 dark:bg-neutral-800">
         <div className="mb-4">
-          <h3 className={`${typography.heading.h6} ${colors.text.primary} mb-2`}>
+          <h3 className="mb-2 text-base font-semibold text-neutral-900 dark:text-neutral-100">
             確認
           </h3>
-          <p className={`${typography.body.default} ${colors.text.muted}`}>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {dialog.message}
           </p>
         </div>
@@ -33,11 +31,7 @@ export const TrashConfirmDialog: React.FC<TrashConfirmDialogProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className={`
-              ${colors.ghost.DEFAULT} ${colors.ghost.hover}
-              ${spacing.button.variants.default} ${typography.body.small}
-              font-medium transition-colors duration-200
-            `}
+            className="rounded-md px-4 py-2 text-sm font-medium text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
           >
             キャンセル
           </button>
@@ -47,12 +41,11 @@ export const TrashConfirmDialog: React.FC<TrashConfirmDialogProps> = ({
               dialog.onConfirm()
               onClose()
             }}
-            className={`
-              ${dialog.action === 'restore' ? colors.primary.surface : colors.semantic.error.surface}
-              ${dialog.action === 'restore' ? colors.primary.text : colors.semantic.error.text}
-              ${spacing.button.variants.default} ${typography.body.small}
-              font-medium transition-colors duration-200
-            `}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+              dialog.action === 'restore'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
           >
             {dialog.action === 'restore' ? '復元' : '削除'}
           </button>

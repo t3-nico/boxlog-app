@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { colors, icons, spacing, typography } from '@/config/theme'
-
 import type { TrashItem } from '../types/trash'
 
 interface TrashActionButtonsProps {
@@ -34,9 +32,9 @@ export const TrashActionButtons: React.FC<TrashActionButtonsProps> = ({
         type="button"
         onClick={onRestore}
         disabled={selectedCount === 0 || loading}
-        className={` ${colors.primary.surface} ${colors.primary.text} disabled:${colors.muted.surface} disabled:${colors.muted.text} ${spacing.button.variants.default} ${typography.body.small} font-medium transition-colors duration-200`}
+        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 disabled:bg-neutral-300 disabled:text-neutral-500 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
       >
-        <span className={`${icons.size.sm} mr-2`}>↩️</span>
+        <span className="mr-2">↩️</span>
         復元 ({selectedCount})
       </button>
 
@@ -45,9 +43,9 @@ export const TrashActionButtons: React.FC<TrashActionButtonsProps> = ({
         type="button"
         onClick={onPermanentDelete}
         disabled={selectedCount === 0 || loading}
-        className={` ${colors.semantic.error.surface} ${colors.semantic.error.text} disabled:${colors.muted.surface} disabled:${colors.muted.text} ${spacing.button.variants.default} ${typography.body.small} font-medium transition-colors duration-200`}
+        className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700 disabled:bg-neutral-300 disabled:text-neutral-500 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
       >
-        <span className={`${icons.size.sm} mr-2`}>🗑️</span>
+        <span className="mr-2">🗑️</span>
         完全削除 ({selectedCount})
       </button>
 
@@ -56,9 +54,9 @@ export const TrashActionButtons: React.FC<TrashActionButtonsProps> = ({
         type="button"
         onClick={onEmptyTrash}
         disabled={stats.totalItems === 0 || loading}
-        className={` ${colors.semantic.warning.surface} ${colors.semantic.warning.text} disabled:${colors.muted.surface} disabled:${colors.muted.text} ${spacing.button.variants.default} ${typography.body.small} font-medium transition-colors duration-200`}
+        className="rounded-md bg-yellow-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-yellow-700 disabled:bg-neutral-300 disabled:text-neutral-500 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
       >
-        <span className={`${icons.size.sm} mr-2`}>🧹</span>
+        <span className="mr-2">🧹</span>
         ゴミ箱を空にする
       </button>
 
@@ -68,9 +66,9 @@ export const TrashActionButtons: React.FC<TrashActionButtonsProps> = ({
           type="button"
           onClick={onClearExpired}
           disabled={loading}
-          className={` ${colors.semantic.info.surface} ${colors.semantic.info.text} disabled:${colors.muted.surface} disabled:${colors.muted.text} ${spacing.button.variants.default} ${typography.body.small} font-medium transition-colors duration-200`}
+          className="rounded-md bg-blue-100 px-4 py-2 text-sm font-medium text-blue-800 transition-colors duration-200 hover:bg-blue-200 disabled:bg-neutral-300 disabled:text-neutral-500 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 dark:disabled:bg-neutral-600 dark:disabled:text-neutral-400"
         >
-          <span className={`${icons.size.sm} mr-2`}>⏰</span>
+          <span className="mr-2">⏰</span>
           期限切れ削除 ({expiredItems.length})
         </button>
       )}

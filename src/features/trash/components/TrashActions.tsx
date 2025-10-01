@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { colors, rounded, spacing } from '@/config/theme'
-
 import { useTrashActions } from '../hooks/useTrashActions'
 
 import { TrashActionButtons } from './TrashActionButtons'
@@ -31,7 +29,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
   return (
     <>
       <div
-        className={`${colors.background.surface} border border-neutral-200 dark:border-neutral-800 ${rounded.lg} ${spacing.cardVariants.default} ${className}`}
+        className={`rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
       >
         {/* 統計情報 */}
         <TrashStatsDisplay

@@ -122,7 +122,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
   const { events } = eventStore
 
   // デバッグ: イベントストアの状態を確認
-  console.log('🔍 EventStore状態確認:', {
+  logger.log('🔍 EventStore状態確認:', {
     eventsCount: events.length,
     events: events.slice(0, 3).map((e) => ({
       id: e.id,
@@ -441,7 +441,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           await eventStore.softDeleteEvent(eventId)
         }
       } catch (error) {
-        console.error('Failed to delete event:', error)
+        logger.error('Failed to delete event:', error)
       }
     },
     [eventStore]
@@ -453,7 +453,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         await eventStore.restoreEvent(event.id)
         logger.log('✅ Event restored:', event.id, event.title)
       } catch (error) {
-        console.error('Failed to restore event:', error)
+        logger.error('Failed to restore event:', error)
       }
     },
     [eventStore]
@@ -466,7 +466,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         await eventStore.clearTrash()
         logger.log('✅ Old trash cleaned up automatically')
       } catch (error) {
-        console.error('❌ Failed to clean up old trash:', error)
+        logger.error('❌ Failed to clean up old trash:', error)
       }
     }
 
@@ -489,7 +489,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           const eventId = eventIdOrEvent
           const event = events.find((e) => e.id === eventId)
           if (!event) {
-            console.error('❌ Event not found for update:', eventId)
+            logger.error('❌ Event not found for update:', eventId)
             return
           }
 
@@ -528,7 +528,7 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           await eventStore.updateEvent(updateRequest)
         }
       } catch (error) {
-        console.error('❌ Failed to update event:', error)
+        logger.error('❌ Failed to update event:', error)
       }
     },
     [eventStore, events]

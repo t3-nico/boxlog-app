@@ -1,7 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
 
-import { colors, icons, rounded, spacing, typography } from '@/config/theme'
-
 import { useTrashStore } from '../stores/useTrashStore'
 import { TrashItem } from '../types/trash'
 import { trashOperations } from '../utils/trash-operations'
@@ -60,12 +58,12 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
 
   const getSortIcon = (column: typeof sort.by) => {
     if (sort.by !== column) {
-      return <span className={colors.text.muted}>↕</span>
+      return <span className="text-neutral-600 dark:text-neutral-400">↕</span>
     }
     return sort.order === 'asc' ? (
-      <span className={colors.primary.text}>↑</span>
+      <span className="text-blue-600 dark:text-blue-400">↑</span>
     ) : (
-      <span className={colors.primary.text}>↓</span>
+      <span className="text-blue-600 dark:text-blue-400">↓</span>
     )
   }
 
@@ -89,21 +87,21 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
   if (items.length === 0) {
     return (
       <div
-        className={`${colors.background.surface} border border-neutral-200 dark:border-neutral-800 ${rounded.lg} p-8 text-center ${className}`}
+        className={`rounded-lg border border-neutral-200 bg-white p-8 text-center dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
       >
         <div className="mb-4 text-6xl">🗑️</div>
-        <h3 className="${typography.heading.h4} ${colors.text.primary} ${spacing.stack.xs}">ゴミ箱は空です</h3>
-        <p className={colors.text.muted}>削除されたアイテムはここに表示されます</p>
+        <h3 className="mb-2 text-xl font-bold text-neutral-900 dark:text-neutral-100">ゴミ箱は空です</h3>
+        <p className="text-neutral-600 dark:text-neutral-400">削除されたアイテムはここに表示されます</p>
       </div>
     )
   }
 
   return (
     <div
-      className={`${colors.background.surface} border border-neutral-200 dark:border-neutral-800 ${rounded.lg} overflow-hidden ${className}`}
+      className={`overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-800 ${className}`}
     >
       {/* テーブルヘッダー */}
-      <div className="${colors.background.elevated} ${colors.border.alpha} border-b px-4 py-3">
+      <div className="border-b border-neutral-200 bg-neutral-50 px-4 py-3 dark:border-neutral-700 dark:bg-neutral-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <label className="flex items-center">
@@ -114,22 +112,22 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
                   if (input) input.indeterminate = isSomeSelected && !isAllSelected
                 }}
                 onChange={handleHeaderCheckboxChange}
-                className={`${icons.size.sm} ${colors.primary.text} ${colors.background.elevated} border border-neutral-200 dark:border-neutral-800 ${rounded.sm} ${colors.state.focus.ring}`}
+                className="h-4 w-4 rounded-sm border-neutral-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700"
               />
-              <span className={`ml-2 ${typography.body.small} font-medium ${colors.text.secondary}`}>
+              <span className="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 {isAllSelected ? 'すべて選択解除' : 'すべて選択'}
               </span>
             </label>
-            <span className={`${typography.body.small} ${colors.text.muted}`}>{items.length}件のアイテム</span>
+            <span className="text-sm text-neutral-600 dark:text-neutral-400">{items.length}件のアイテム</span>
           </div>
 
           {/* ソートボタン */}
           <div className="flex items-center space-x-2 text-sm">
-            <span className={colors.text.muted}>並び順:</span>
+            <span className="text-neutral-600 dark:text-neutral-400">並び順:</span>
             <button
               type="button"
               onClick={handleSortByDeletedAt}
-              className={`flex items-center ${spacing.inlineGap.xs} px-2 py-1 ${colors.text.muted} ${colors.ghost.hover} ${rounded.sm}`}
+              className="flex items-center gap-1 rounded-sm px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600"
             >
               <span>削除日</span>
               {getSortIcon('deletedAt')}
@@ -137,7 +135,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             <button
               type="button"
               onClick={handleSortByTitle}
-              className={`flex items-center ${spacing.inlineGap.xs} px-2 py-1 ${colors.text.muted} ${colors.ghost.hover} ${rounded.sm}`}
+              className="flex items-center gap-1 rounded-sm px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600"
             >
               <span>タイトル</span>
               {getSortIcon('title')}
@@ -145,7 +143,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             <button
               type="button"
               onClick={handleSortByType}
-              className={`flex items-center ${spacing.inlineGap.xs} px-2 py-1 ${colors.text.muted} ${colors.ghost.hover} ${rounded.sm}`}
+              className="flex items-center gap-1 rounded-sm px-2 py-1 text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-600"
             >
               <span>タイプ</span>
               {getSortIcon('type')}
@@ -159,8 +157,8 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
         {Object.entries(groupedItems).map(([dateString, dayItems]) => (
           <div key={dateString}>
             {/* 日付ヘッダー */}
-            <div className="${colors.background.elevated} ${colors.border.alpha} sticky top-0 border-b px-4 py-2">
-              <h4 className="${typography.body.small} ${colors.text.secondary} font-medium">
+            <div className="sticky top-0 border-b border-neutral-200 bg-neutral-50 px-4 py-2 dark:border-neutral-700 dark:bg-neutral-700">
+              <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 {formatDateHeader(new Date(dateString))} ({dayItems.length}件)
               </h4>
             </div>
@@ -208,8 +206,8 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
 
   return (
     <div
-      className={`flex items-center border-b px-4 py-3 ${colors.border.alpha} ${colors.ghost.hover} transition-colors ${
-        isSelected ? colors.selection.DEFAULT : ''
+      className={`flex items-center border-b border-neutral-200 px-4 py-3 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-700 ${
+        isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
       }`}
     >
       {/* 選択チェックボックス */}
@@ -218,7 +216,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
           type="checkbox"
           checked={isSelected}
           onChange={handleToggleSelect}
-          className={`${icons.size.sm} ${colors.primary.text} ${colors.background.elevated} border border-neutral-200 dark:border-neutral-800 ${rounded.sm} ${colors.state.focus.ring}`}
+          className="h-4 w-4 rounded-sm border-neutral-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700"
         />
       </div>
 
@@ -234,22 +232,22 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
             {/* タイトル・説明 */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center space-x-2">
-                <h4 className="${typography.body.small} ${colors.text.primary} truncate font-medium">
+                <h4 className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
                   {trashOperations.truncateTitle(item.title)}
                 </h4>
-                <span className="${typography.body.small} ${colors.background.elevated} ${colors.text.muted} ${rounded.sm} flex-shrink-0 px-2 py-1">
+                <span className="flex-shrink-0 rounded-sm bg-neutral-50 px-2 py-1 text-sm text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
                   {typeConfig.label}
                 </span>
               </div>
 
               {item.description != null && (
-                <p className="${typography.body.small} ${colors.text.muted} mt-1 truncate">
+                <p className="mt-1 truncate text-sm text-neutral-600 dark:text-neutral-400">
                   {trashOperations.truncateDescription(item.description)}
                 </p>
               )}
 
               {/* メタデータ */}
-              <div className="${typography.body.small} ${colors.text.muted} mt-2 flex items-center space-x-4">
+              <div className="mt-2 flex items-center space-x-4 text-sm text-neutral-600 dark:text-neutral-400">
                 <span>削除: {trashOperations.formatDeletedDate(item.deletedAt)}</span>
 
                 {item.deletedFrom ? <span>元の場所: {trashOperations.formatDeletedFrom(item.deletedFrom)}</span> : null}
@@ -261,7 +259,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                 {/* 自動削除警告 */}
                 {isExpired || isExpiringSoon ? (
                   <span
-                    className={`font-medium ${isExpired ? colors.semantic.error.text : colors.semantic.warning.text}`}
+                    className={`font-medium ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
                   >
                     {isExpired ? '期限切れ' : `${daysUntilDelete}日後に自動削除`}
                   </span>
@@ -274,14 +272,14 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                   {trashOperations.formatTags(item.metadata.tags).visible.map((tag) => (
                     <span
                       key={tag}
-                      className={`inline-block px-2 py-1 ${typography.body.small} ${colors.semantic.info.light} ${colors.semantic.info.text} ${rounded.sm}`}
+                      className="inline-block rounded-sm bg-blue-50 px-2 py-1 text-sm text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
                     >
                       #{tag}
                     </span>
                   ))}
                   {trashOperations.formatTags(item.metadata.tags).hidden > 0 && (
                     <span
-                      className={`inline-block px-2 py-1 ${typography.body.small} ${colors.background.elevated} ${colors.text.muted} ${rounded.sm}`}
+                      className="inline-block rounded-sm bg-neutral-50 px-2 py-1 text-sm text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400"
                     >
                       +{trashOperations.formatTags(item.metadata.tags).hidden}
                     </span>
@@ -296,7 +294,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
             <button
               type="button"
               onClick={handleRestore}
-              className={`px-3 py-1 ${typography.body.small} ${colors.semantic.info.text} hover:${colors.semantic.info.light} ${rounded.sm} transition-colors`}
+              className="rounded-sm px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
               title="復元"
             >
               復元
@@ -304,7 +302,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
             <button
               type="button"
               onClick={handlePermanentDelete}
-              className={`px-3 py-1 ${typography.body.small} ${colors.semantic.error.text} hover:${colors.semantic.error.light} ${rounded.sm} transition-colors`}
+              className="rounded-sm px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
               title="完全削除"
             >
               削除

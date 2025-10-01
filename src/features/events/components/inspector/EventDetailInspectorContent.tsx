@@ -21,8 +21,6 @@ import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
 
-import { typography } from '@/config/theme'
-import { border, text } from '@/config/theme/colors'
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
 import { sanitizeRichText } from '@/lib/security/sanitize'
@@ -48,8 +46,8 @@ const EventScheduleSection = React.memo(
     handleDateChange: (value: string) => void
     updateFormData: (field: keyof CalendarEvent, value: unknown) => void
   }) => (
-    <div className={cn('max-w-full space-y-3 border-b p-4', border.universal)}>
-      <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>予定</h3>
+    <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
+      <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>予定</h3>
 
       {/* タイトル with Priority */}
       <div className="flex items-start gap-3">
@@ -62,13 +60,15 @@ const EventScheduleSection = React.memo(
             placeholder={isCreateMode ? 'タイトルを入力...' : ''}
             className={cn(
               'w-full flex-1 bg-transparent outline-none',
-              typography.heading.h3,
-              text.primary,
+              'text-2xl font-bold',
+              'text-neutral-900 dark:text-neutral-100',
               'placeholder:text-neutral-600 dark:placeholder:text-neutral-400'
             )}
           />
         ) : (
-          <h3 className={cn(typography.heading.h3, 'flex-1 break-words', text.primary)}>{formData.title}</h3>
+          <h3 className={cn('text-2xl font-bold', 'flex-1 break-words text-neutral-900 dark:text-neutral-100')}>
+            {formData.title}
+          </h3>
         )}
       </div>
 
@@ -81,12 +81,12 @@ const EventScheduleSection = React.memo(
               value={format(formData.startDate, 'yyyy-MM-dd')}
               onChange={handleDateInputChange}
               className={cn(
-                typography.body.DEFAULT,
+                'text-base',
                 'w-auto rounded-md px-3 py-2',
                 '[&::-webkit-calendar-picker-indicator]:hidden',
-                border.universal,
+                'border-neutral-200 dark:border-neutral-700',
                 'bg-white dark:bg-neutral-800',
-                text.primary
+                'text-neutral-900 dark:text-neutral-100'
               )}
               style={{ width: `${format(formData.startDate, 'yyyy-MM-dd').length + 2}ch` }}
             />
@@ -95,31 +95,31 @@ const EventScheduleSection = React.memo(
               value={format(formData.startDate, 'HH:mm')}
               onChange={handleTimeInputChange}
               className={cn(
-                typography.body.DEFAULT,
+                'text-base',
                 'w-fit rounded-md px-3 py-2 text-center',
                 '[&::-webkit-calendar-picker-indicator]:hidden',
-                border.universal,
+                'border-neutral-200 dark:border-neutral-700',
                 'bg-white dark:bg-neutral-800',
-                text.primary
+                'text-neutral-900 dark:text-neutral-100'
               )}
             />
-            <span className={cn(typography.body.DEFAULT, text.muted, 'flex-shrink-0')}>→</span>
+            <span className={cn('text-base text-neutral-600 dark:text-neutral-400', 'flex-shrink-0')}>→</span>
             <Input
               type="time"
               value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
               onChange={handleEndTimeInputChange}
               className={cn(
-                typography.body.DEFAULT,
+                'text-base',
                 'w-fit rounded-md px-3 py-2 text-center',
                 '[&::-webkit-calendar-picker-indicator]:hidden',
-                border.universal,
+                'border-neutral-200 dark:border-neutral-700',
                 'bg-white dark:bg-neutral-800',
-                text.primary
+                'text-neutral-900 dark:text-neutral-100'
               )}
             />
           </div>
         ) : (
-          <div className={cn(typography.body.base, 'break-words font-medium', text.primary)}>
+          <div className={cn('text-base', 'break-words font-medium text-neutral-900 dark:text-neutral-100')}>
             {format(formData.startDate, 'yyyy年M月d日（E）', { locale: ja })} {format(formData.startDate, 'HH:mm')} →{' '}
             {formData.endDate ? format(formData.endDate, 'HH:mm') : '未設定'}
           </div>
@@ -133,7 +133,7 @@ EventScheduleSection.displayName = 'EventScheduleSection'
 
 // 外部に移動されたコンポーネント: アクションボタングループ
 const ActionButtonsSection = React.memo(({ isEditable }: { isEditable: boolean }) => (
-  <div className={cn('flex items-center gap-2 border-b p-4', border.universal)}>
+  <div className={cn('flex items-center gap-2 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
     <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
       <BellRing className="h-4 w-4" />
       通知
@@ -410,8 +410,8 @@ export const EventDetailInspectorContent = ({
         <ActionButtonsSection isEditable={isEditable} />
 
         {/* タグ */}
-        <div className={cn('max-w-full space-y-3 border-b p-4', border.universal)}>
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>タグ</h3>
+        <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
+          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>タグ</h3>
 
           <div className="flex max-w-full flex-wrap gap-2">
             {formData.tags && formData.tags.length > 0 ? (
@@ -420,11 +420,11 @@ export const EventDetailInspectorContent = ({
                   key={tag.id}
                   className={cn(
                     'flex-shrink-0 rounded-full border px-3 py-1',
-                    typography.body.xs,
-                    colors.background.surface,
-                    border.subtle,
-                    text.muted,
-                    'hover:bg-accent cursor-pointer transition-colors'
+                    'text-xs',
+                    'bg-white dark:bg-neutral-800',
+                    'border-neutral-200 dark:border-neutral-700',
+                    'text-neutral-600 dark:text-neutral-400',
+                    'hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition-colors'
                   )}
                   style={{ backgroundColor: `${tag.color}20`, borderColor: tag.color }}
                 >
@@ -433,12 +433,7 @@ export const EventDetailInspectorContent = ({
                 </span>
               ))
             ) : (
-              <Button
-                variant="secondary"
-                size="sm"
-                className={cn(typography.body.xs, 'max-w-full')}
-                disabled={!isEditable}
-              >
+              <Button variant="secondary" size="sm" className={cn('text-xs', 'max-w-full')} disabled={!isEditable}>
                 <Plus className="mr-1 h-3 w-3" />
                 タグを追加
               </Button>
@@ -447,8 +442,8 @@ export const EventDetailInspectorContent = ({
         </div>
 
         {/* メモ */}
-        <div className={cn('space-y-3 border-b p-4', border.universal)}>
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>メモ</h3>
+        <div className={cn('space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
+          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>メモ</h3>
           <div className="w-full">
             {isEditable ? (
               <TiptapEditor
@@ -459,25 +454,27 @@ export const EventDetailInspectorContent = ({
               />
             ) : formData.description ? (
               <div
-                className={cn(typography.body.DEFAULT, text.primary, 'max-w-full break-words')}
+                className={cn(
+                  'text-base text-neutral-900 dark:text-neutral-100',
+                  'max-w-full break-words'
+                )}
                 dangerouslySetInnerHTML={{ __html: sanitizeRichText(formData.description || '') }}
               />
             ) : (
-              <p className={cn(typography.body.DEFAULT, text.muted)}>メモがありません</p>
+              <p className={cn('text-base text-neutral-600 dark:text-neutral-400')}>メモがありません</p>
             )}
           </div>
         </div>
 
         {/* アクティビティ（タイムライン） */}
-        <div className={cn('space-y-3 border-b p-4', border.universal)}>
+        <div className={cn('space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
           <button
             type="button"
             onClick={handleTimelineToggle}
             className={cn(
               'flex w-full cursor-pointer items-center justify-between border-none bg-transparent p-0 outline-none',
-              typography.heading.h6,
-              'font-semibold',
-              text.primary
+              'text-base font-semibold',
+              'text-neutral-900 dark:text-neutral-100'
             )}
           >
             アクティビティ
@@ -494,29 +491,39 @@ export const EventDetailInspectorContent = ({
                     return (
                       <div key={event.id} className="relative flex max-w-full gap-3">
                         <div className="w-12 flex-shrink-0 text-right">
-                          <span className={cn(typography.body.small, text.muted)}>{event.relativeTime}</span>
+                          <span className={cn('text-sm text-neutral-600 dark:text-neutral-400')}>
+                            {event.relativeTime}
+                          </span>
                         </div>
                         <div className="relative z-10 flex flex-shrink-0 flex-col items-center">
                           <div
                             className={cn(
                               'flex h-5 w-5 items-center justify-center rounded-lg border',
-                              colors.background.surface,
-                              border.strong,
-                              text.muted
+                              'bg-white dark:bg-neutral-800',
+                              'border-neutral-300 dark:border-neutral-600',
+                              'text-neutral-600 dark:text-neutral-400'
                             )}
                           >
                             {getEventIcon(event)}
                           </div>
-                          {!isLast ? <div className={cn('mt-1 h-6 w-px border-l', border.universal)} /> : null}
+                          {!isLast ? (
+                            <div
+                              className={cn(
+                                'mt-1 h-6 w-px border-l border-neutral-200 dark:border-neutral-700'
+                              )}
+                            />
+                          ) : null}
                         </div>
                         <div className="min-w-0 flex-1 pb-1">
                           <div className="flex max-w-full items-start justify-between gap-2">
-                            <div className={cn(typography.body.small, 'min-w-0 flex-1 break-words leading-relaxed')}>
+                            <div className={cn('text-sm', 'min-w-0 flex-1 break-words leading-relaxed')}>
                               {getEventDescription(event)}
                             </div>
                             {event.automatic ? (
                               <RefreshCw
-                                className={cn('mt-0.5 h-3 w-3 flex-shrink-0', text.muted)}
+                                className={cn(
+                                  'mt-0.5 h-3 w-3 flex-shrink-0 text-neutral-600 dark:text-neutral-400'
+                                )}
                                 title="システムによる自動更新"
                               />
                             ) : null}
@@ -532,7 +539,9 @@ export const EventDetailInspectorContent = ({
 
           {showTimeline && isCreateMode ? (
             <div className="pt-3 text-center">
-              <span className={cn(typography.body.small, text.muted)}>作成後にアクティビティが表示されます</span>
+              <span className={cn('text-sm text-neutral-600 dark:text-neutral-400')}>
+                作成後にアクティビティが表示されます
+              </span>
             </div>
           ) : null}
         </div>

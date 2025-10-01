@@ -5,8 +5,6 @@ import React, { useCallback } from 'react'
 import { Bold, CheckSquare, Italic, Link, List, ListOrdered, Underline } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { typography } from '@/config/theme'
-import { border, text } from '@/config/theme/colors'
 import { sanitizeRichText } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 
@@ -117,8 +115,8 @@ export const SimpleRichEditor = ({
     <div
       className={cn(
         'relative w-full overflow-hidden rounded-lg border',
-        colors.background.base,
-        border.universal,
+        'bg-neutral-100 dark:bg-neutral-900',
+        'border-neutral-200 dark:border-neutral-700',
         className
       )}
     >
@@ -126,8 +124,8 @@ export const SimpleRichEditor = ({
       <div
         className={cn(
           'flex items-center gap-1 overflow-x-auto border-b p-2',
-          colors.background.surface,
-          border.universal
+          'bg-white dark:bg-neutral-800',
+          'border-neutral-200 dark:border-neutral-700'
         )}
       >
         {/* テキスト装飾 */}
@@ -162,7 +160,7 @@ export const SimpleRichEditor = ({
           <Underline className="h-4 w-4" />
         </Button>
 
-        <div className={cn('mx-1 h-6 w-px flex-shrink-0', border.universal)} />
+        <div className={cn('mx-1 h-6 w-px flex-shrink-0 border-neutral-200 dark:border-neutral-700')} />
 
         {/* リスト */}
         <Button
@@ -196,7 +194,7 @@ export const SimpleRichEditor = ({
           <CheckSquare className="h-4 w-4" />
         </Button>
 
-        <div className={cn('mx-1 h-6 w-px flex-shrink-0', border.universal)} />
+        <div className={cn('mx-1 h-6 w-px flex-shrink-0 border-neutral-200 dark:border-neutral-700')} />
 
         {/* リンク */}
         <Button
@@ -225,8 +223,8 @@ export const SimpleRichEditor = ({
         className={cn(
           'min-h-[120px] w-full resize-none p-3 outline-none',
           'focus:ring-ring focus:ring-2 focus:ring-offset-2',
-          typography.body.DEFAULT,
-          text.primary,
+          'text-base',
+          'text-neutral-900 dark:text-neutral-100',
           'prose prose-sm max-w-none',
           '[&_b]:font-bold [&_strong]:font-bold',
           '[&_em]:italic [&_i]:italic',
@@ -247,7 +245,7 @@ export const SimpleRichEditor = ({
 
       {/* プレースホルダー */}
       {isEmpty(value) && (
-        <div className={cn('pointer-events-none absolute left-3 top-[52px]', text.muted, typography.body.DEFAULT)}>
+        <div className={cn('pointer-events-none absolute left-3 top-[52px] text-neutral-600 dark:text-neutral-400', 'text-base')}>
           {placeholder}
         </div>
       )}

@@ -1,6 +1,8 @@
 'use client'
 
-const PlanBillingSettings = () => {
+import { memo } from 'react'
+
+const PlanBillingSettings = memo(() => {
   return (
     <div className="space-y-6">
       <div>
@@ -16,6 +18,8 @@ const PlanBillingSettings = () => {
       </div>
     </div>
   )
-}
+})
+
+PlanBillingSettings.displayName = 'PlanBillingSettings'
 
 export default PlanBillingSettings

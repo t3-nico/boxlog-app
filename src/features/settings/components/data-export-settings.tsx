@@ -1,6 +1,8 @@
 'use client'
 
-const DataExportSettings = () => {
+import { memo } from 'react'
+
+const DataExportSettings = memo(() => {
   return (
     <div className="space-y-6">
       <div>
@@ -16,6 +18,8 @@ const DataExportSettings = () => {
       </div>
     </div>
   )
-}
+})
+
+DataExportSettings.displayName = 'DataExportSettings'
 
 export default DataExportSettings

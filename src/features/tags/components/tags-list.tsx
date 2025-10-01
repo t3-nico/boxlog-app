@@ -12,7 +12,6 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import { colors } from '@/config/theme'
 import { tagIconMapping, TagIconName } from '@/config/ui/tagIcons'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { useActiveState } from '@/hooks/useActiveState'
@@ -126,7 +125,7 @@ const TagItem = ({
     <div className="space-y-2">
       {/* タグアイテム */}
       <div
-        className={`flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 ${colors.ghost.hover} transition-colors duration-150`}
+        className="flex cursor-pointer items-center justify-between rounded-lg px-2 py-2 transition-colors duration-150 hover:bg-neutral-100 dark:hover:bg-neutral-700"
         style={{ paddingLeft: `${paddingLeft}px` }}
         onClick={handleSelectTag}
         onKeyDown={handleKeyDown}
@@ -147,9 +146,9 @@ const TagItem = ({
                 style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
               >
                 {isExpanded ? (
-                  <ChevronDownIcon className={`h-4 w-4 ${colors.text.muted}`} />
+                  <ChevronDownIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
                 ) : (
-                  <ChevronRightIcon className={`h-4 w-4 ${colors.text.muted}`} />
+                  <ChevronRightIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
                 )}
               </button>
             )}
@@ -180,7 +179,7 @@ const TagItem = ({
           {/* タグ名 */}
           {!isCollapsed && (
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <span className={`truncate text-sm font-medium ${colors.text.primary}`} title={tag.name}>
+              <span className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100" title={tag.name}>
                 {tag.name}
               </span>
               {/* アクティブドット */}
@@ -200,18 +199,18 @@ const TagItem = ({
               }`}
               style={{ '--tag-color': tag.color || 'DEFAULT_TAG_COLOR' } as React.CSSProperties}
             >
-              <EllipsisHorizontalIcon className={`h-4 w-4 ${colors.text.muted}`} />
+              <EllipsisHorizontalIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </button>
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
               <div
-                className={`absolute right-0 top-full mt-1 ${colors.background.surface} ${colors.border.DEFAULT} z-50 min-w-[140px] rounded-lg py-1 shadow-lg`}
+                className="absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border border-neutral-200 bg-white py-1 shadow-lg dark:border-neutral-700 dark:bg-neutral-800"
               >
                 <button
                   type="button"
                   onClick={handleEditTag}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-sm ${colors.text.secondary} ${colors.ghost.hover} transition-colors`}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-700"
                 >
                   <PencilIcon className="h-4 w-4" />
                   編集
@@ -219,7 +218,7 @@ const TagItem = ({
                 <button
                   type="button"
                   onClick={handleDeleteTag}
-                  className={`flex w-full items-center gap-2 px-3 py-2 text-sm ${colors.semantic.error.text} ${colors.semantic.error.hover} transition-colors`}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
                 >
                   <TrashIcon className="h-4 w-4" />
                   削除
@@ -348,7 +347,7 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
         <button
           type="button"
           onClick={handleToggleExpansion}
-          className={`section-header-toggle mb-2 flex items-center px-2 text-xs/6 font-medium ${colors.text.muted} ${colors.ghost.hover} rounded transition-colors`}
+          className="section-header-toggle mb-2 flex items-center rounded px-2 text-xs/6 font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-700"
         >
           <span className="peer">Tags</span>
           <span className="ml-1 opacity-0 transition-opacity peer-hover:opacity-100">
@@ -359,9 +358,9 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
         <button
           type="button"
           onClick={handleCreateNewTag}
-          className={`section-header-button p-1 ${colors.ghost.hover} rounded transition-colors`}
+          className="section-header-button rounded p-1 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-700"
         >
-          <PlusIcon className={`h-4 w-4 ${colors.text.muted}`} />
+          <PlusIcon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
         </button>
       </div>
 
@@ -388,12 +387,12 @@ export const TagsList = ({ collapsed = false, onSelectTag = () => {}, selectedTa
             </>
           ) : (
             <div className="py-4 text-center">
-              <TagIcon className={`h-6 w-6 ${colors.text.muted} mx-auto mb-2`} />
-              <p className={`text-xs ${colors.text.muted} mb-2`}>タグがありません</p>
+              <TagIcon className="mx-auto mb-2 h-6 w-6 text-neutral-600 dark:text-neutral-400" />
+              <p className="mb-2 text-xs text-neutral-600 dark:text-neutral-400">タグがありません</p>
               <button
                 type="button"
                 onClick={handleCreateNewTagCollapsed}
-                className={`inline-flex items-center gap-1 px-2 py-1 text-xs ${colors.semantic.info.text} ${colors.selection.hover} rounded transition-colors`}
+                className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-blue-700 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
               >
                 <PlusIcon className="h-4 w-4" />
                 作成

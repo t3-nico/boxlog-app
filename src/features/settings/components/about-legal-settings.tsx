@@ -1,6 +1,8 @@
 'use client'
 
-const AboutLegalSettings = () => {
+import { memo } from 'react'
+
+const AboutLegalSettings = memo(() => {
   return (
     <div className="space-y-6">
       <div>
@@ -16,6 +18,8 @@ const AboutLegalSettings = () => {
       </div>
     </div>
   )
-}
+})
+
+AboutLegalSettings.displayName = 'AboutLegalSettings'
 
 export default AboutLegalSettings

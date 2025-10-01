@@ -30,10 +30,9 @@ const PreferencesSettings = () => {
       autoBackup: true,
       developerMode: false,
     },
-    onSave: async (values) => {
+    onSave: async (_values) => {
       // 環境設定API呼び出しシミュレーション
       await new Promise(resolve => setTimeout(resolve, 600))
-      console.log('Saving preferences:', values)
     },
     successMessage: '環境設定を保存しました',
     debounceMs: 1000
