@@ -1,40 +1,22 @@
 /* eslint-disable max-lines */
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
 import { Clock, GraduationCap, Lightbulb, Moon, Sun } from 'lucide-react'
+
+import { colors, rounded, spacing, typography } from '@/config/theme'
 
 import { SettingsLayout } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { type ChronotypeType } from '@/types/chronotype'
 
-interface ChronotypeAutoSaveSettings {
-  type: ChronotypeType
-  enabled: boolean
-  displayMode: 'border' | 'background' | 'both'
-  opacity: number
-}
-
-interface ChronoTypeSchedule {
-  id: string
-  type: 'focus' | 'creative' | 'rest' | 'admin' | 'sleep'
-  label: string
-  startTime: string
-  endTime: string
-  description: string
-  icon: string
-}
-
-interface ChronoTypeProfile {
-  id: string
-  name: string
-  description: string
-  peakHours: string
-  lowHours: string
-  schedules: ChronoTypeSchedule[]
-}
+import { chronoTypeProfiles, typeIconComponents } from './chronotype.constants'
+import type { ChronotypeAutoSaveSettings, ChronoTypeSchedule } from './chronotype.types'
+import { DiagnosisSection } from './components/DiagnosisSection'
+import { ScheduleDisplay } from './components/ScheduleDisplay'
+import { useDiagnosis } from './hooks/useDiagnosis'
 
 const chronoTypeProfiles: ChronoTypeProfile[] = [
   {
