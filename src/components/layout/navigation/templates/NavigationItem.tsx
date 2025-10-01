@@ -4,8 +4,6 @@ import React, { useCallback } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { animations, componentRadius, icons, typography } from '@/config/theme'
-import { selection, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export interface NavigationItemProps {
@@ -53,9 +51,9 @@ export const NavigationItem = ({
   }
 
   const iconSizes = {
-    default: icons.size.md,
-    compact: icons.size.sm,
-    minimal: icons.size.sm,
+    default: 'h-5 w-5',
+    compact: 'h-4 w-4',
+    minimal: 'h-4 w-4',
   }
 
   return (
@@ -65,15 +63,15 @@ export const NavigationItem = ({
       disabled={disabled}
       className={cn(
         'flex w-full items-center text-left transition-all',
-        componentRadius.button.md,
-        animations.transition.fast,
+        'rounded-md',
+        'transition-fast',
         Object.prototype.hasOwnProperty.call(variantStyles, variant)
           ? variantStyles[variant as keyof typeof variantStyles]
           : variantStyles.default,
-        (variant === 'compact' || variant === 'minimal') && typography.body.base,
+        (variant === 'compact' || variant === 'minimal') && 'text-base',
         isActive
-          ? `${selection.text} ${selection.DEFAULT}`
-          : `${text.primary} hover:${selection.hover.replace('hover:', '')}`,
+          ? 'text-primary bg-primary/10'
+          : 'text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 dark:hover:bg-neutral-700',
         disabled && 'cursor-not-allowed opacity-50',
         !disabled && 'hover:shadow-sm',
         className
@@ -87,7 +85,7 @@ export const NavigationItem = ({
             Object.prototype.hasOwnProperty.call(iconSizes, variant)
               ? iconSizes[variant as keyof typeof iconSizes]
               : iconSizes.default,
-            isActive ? selection.text.replace('text-', '') : text.muted.replace('text-', '')
+            isActive ? 'text-primary' : 'text-neutral-600 dark:text-neutral-400'
           )}
         />
       )}
@@ -100,10 +98,9 @@ export const NavigationItem = ({
         <span
           className={cn(
             'ml-auto rounded-full px-2 py-0.5',
-            typography.body.xs,
+            'text-xs',
             'bg-accent text-accent-foreground',
-            'font-medium',
-            componentRadius.badge.pill
+            'font-medium'
           )}
         >
           {badge}

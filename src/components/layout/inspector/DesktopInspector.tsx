@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation'
 import { BotMessageSquare, Calendar, ListTodo, PanelRightClose } from 'lucide-react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn-ui/tabs'
-import { animations, colors, layout, primary, rounded } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { InspectorAIChat } from './inspector-ai-chat'
@@ -15,8 +14,6 @@ import { InspectorContent } from './inspector-content'
 import { useInspectorStore } from './stores/inspector.store'
 
 import { UnscheduledTasksList } from './UnscheduledTasksList'
-
-const { xs } = layout.heights.header
 
 export const DesktopInspector = () => {
   const _pathname = usePathname()
@@ -68,9 +65,9 @@ export const DesktopInspector = () => {
     <div
       className={cn(
         'relative z-[9999] flex border-l',
-        colors.background.surface,
-        colors.text.primary,
-        colors.border.default
+        'bg-white dark:bg-neutral-800',
+        'text-neutral-900 dark:text-neutral-100',
+        'border-neutral-200 dark:border-neutral-800'
       )}
       style={{ width: `${inspectorWidth}px` }}
     >
@@ -87,7 +84,7 @@ export const DesktopInspector = () => {
         <div
           className={cn(
             'absolute left-1 top-0 h-full w-px transition-colors',
-            `bg-transparent ${primary.hover.replace('hover:', 'group-hover:')}`
+            'bg-transparent group-hover:bg-primary'
           )}
         />
       </div>
@@ -98,8 +95,8 @@ export const DesktopInspector = () => {
         <div
           className={cn(
             'mt-2 flex items-center justify-end px-2',
-            xs, // 32px height
-            colors.background.surface
+            'h-8', // 32px height
+            'bg-white dark:bg-neutral-800'
           )}
         >
           <button
@@ -107,10 +104,10 @@ export const DesktopInspector = () => {
             onClick={handleToggleInspector}
             className={cn(
               'flex h-8 w-8 items-center justify-center',
-              rounded.component.button.sm,
-              animations.transition.fast,
-              colors.ghost.text,
-              colors.hover.ghost,
+              'rounded-sm',
+              'transition-fast',
+              'text-neutral-600 dark:text-neutral-400',
+              'hover:bg-neutral-100 dark:hover:bg-neutral-700',
               'flex-shrink-0'
             )}
           >
@@ -120,7 +117,7 @@ export const DesktopInspector = () => {
 
         {/* Inspector Tabs */}
         <Tabs defaultValue="overview" className="flex flex-1 flex-col">
-          <div className={cn('border-b px-2 pb-2', colors.border.default)}>
+          <div className={cn('border-b border-neutral-200 dark:border-neutral-800 px-2 pb-2')}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />

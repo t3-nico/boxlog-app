@@ -26,7 +26,6 @@ import { Bold, CheckSquare, Heading2, Italic, List, ListOrdered, Quote, Redo, Un
 
 import { Button } from '@/components/shadcn-ui/button'
 import { Separator } from '@/components/shadcn-ui/separator'
-import { border, colors, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 const ToolbarPlugin = () => {
@@ -112,8 +111,8 @@ const ToolbarPlugin = () => {
     <div
       className={cn(
         'flex items-center gap-1 overflow-x-auto border-b p-2',
-        colors.background.surface,
-        border.universal
+        'bg-white dark:bg-neutral-800',
+        'border-neutral-200 dark:border-neutral-800'
       )}
     >
       <div className="flex flex-shrink-0 items-center gap-1">
@@ -235,8 +234,8 @@ export const Editor = ({ value, onChange, placeholder = '入力してくださ�
     <div
       className={cn(
         'w-full max-w-full overflow-hidden rounded-lg border',
-        colors.background.base,
-        border.universal,
+        'bg-neutral-100 dark:bg-neutral-900',
+        'border-neutral-200 dark:border-neutral-800',
         className
       )}
     >
@@ -246,11 +245,11 @@ export const Editor = ({ value, onChange, placeholder = '入力してくださ�
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className={cn('min-h-[100px] w-full max-w-full resize-none p-3 outline-none', text.primary)}
+                className={cn('min-h-[100px] w-full max-w-full resize-none p-3 outline-none text-neutral-900 dark:text-neutral-100')}
               />
             }
             placeholder={
-              <div className={cn('pointer-events-none absolute left-3 top-3', text.muted)}>{placeholder}</div>
+              <div className={cn('pointer-events-none absolute left-3 top-3 text-neutral-600 dark:text-neutral-400')}>{placeholder}</div>
             }
             ErrorBoundary={LexicalErrorBoundary}
           />

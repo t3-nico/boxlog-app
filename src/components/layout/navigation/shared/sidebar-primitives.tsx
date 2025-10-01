@@ -4,8 +4,6 @@ import React from 'react'
 
 import Link from 'next/link'
 
-import { typography } from '@/config/theme'
-import { primary, selection, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 // Sidebar Section
@@ -26,7 +24,7 @@ interface SidebarHeadingProps {
 
 export const SidebarHeading = ({ className, children }: SidebarHeadingProps) => {
   return (
-    <h3 className={cn('mb-2 px-2 font-semibold uppercase tracking-wider', typography.body.xs, text.muted, className)}>
+    <h3 className={cn('mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400', className)}>
       {children}
     </h3>
   )
@@ -52,15 +50,17 @@ export const SidebarItem = ({
 }: SidebarItemProps) => {
   const baseClasses = cn(
     'group flex items-center gap-3 rounded-lg px-2 py-2 font-medium transition-colors',
-    typography.body.base,
-    current ? `${selection.active} ${selection.text}` : `${text.muted} ${selection.hover}`,
+    'text-base',
+    current
+      ? 'bg-primary/10 text-primary'
+      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700',
     className
   )
 
   const content = (
     <>
       {children}
-      {indicator && current ? <div className={`ml-auto h-4 w-1 ${primary.DEFAULT} rounded-full`} /> : null}
+      {indicator && current ? <div className="ml-auto h-4 w-1 rounded-full bg-primary" /> : null}
     </>
   )
 

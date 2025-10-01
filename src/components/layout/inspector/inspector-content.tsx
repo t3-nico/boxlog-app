@@ -1,18 +1,32 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import React, { useCallback, Suspense } from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { colors } from '@/config/theme'
 import type { CalendarEvent } from '@/features/events'
-import { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
 import { cn } from '@/lib/utils'
 
 import { CalendarInspectorContent } from './content/CalendarInspectorContent'
 import { DefaultInspectorContent } from './content/DefaultInspectorContent'
 import { TaskInspectorContent } from './content/TaskInspectorContent'
 import { useInspectorStore } from './stores/inspector.store'
+
+// 遅延ロード: EventDetailInspectorContentは重いコンポーネント（588行）のため、使用時のみロード
+const EventDetailInspectorContent = React.lazy(() =>
+  import('@/features/events/components/inspector/EventDetailInspectorContent').then((module) => ({
+    default: module.EventDetailInspectorContent,
+  }))
+)
+
+// ローディングフォールバック
+const InspectorSkeleton = () => (
+  <div className="h-full w-full animate-pulse space-y-4 p-4">
+    <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded" />
+    <div className="h-32 bg-neutral-200 dark:bg-neutral-800 rounded" />
+    <div className="h-24 bg-neutral-200 dark:bg-neutral-800 rounded" />
+  </div>
+)
 
 export const InspectorContent = () => {
   const pathname = usePathname()
@@ -59,24 +73,28 @@ export const InspectorContent = () => {
           return <TaskInspectorContent />
         case 'event':
           return selectedEvent ? (
-            <EventDetailInspectorContent 
-              event={selectedEvent}
-              mode="view"
-              onSave={handleEventSave}
-              onDelete={handleEventDelete}
-              onDuplicate={handleEventDuplicate}
-              onTemplateCreate={handleTemplateCreate}
-              onClose={handleClose}
-            />
+            <Suspense fallback={<InspectorSkeleton />}>
+              <EventDetailInspectorContent
+                event={selectedEvent}
+                mode="view"
+                onSave={handleEventSave}
+                onDelete={handleEventDelete}
+                onDuplicate={handleEventDuplicate}
+                onTemplateCreate={handleTemplateCreate}
+                onClose={handleClose}
+              />
+            </Suspense>
           ) : <CalendarInspectorContent />
         case 'create-event':
           return (
-            <EventDetailInspectorContent 
-              event={null}
-              mode="create"
-              onSave={handleEventSave}
-              onClose={handleClose}
-            />
+            <Suspense fallback={<InspectorSkeleton />}>
+              <EventDetailInspectorContent
+                event={null}
+                mode="create"
+                onSave={handleEventSave}
+                onClose={handleClose}
+              />
+            </Suspense>
           )
         default:
           return <DefaultInspectorContent />
@@ -98,7 +116,7 @@ export const InspectorContent = () => {
   return (
     <div className={cn(
       'flex-1 overflow-auto',
-      colors.background.surface
+      'bg-white dark:bg-neutral-800'
     )}>
       {getContentComponent()}
     </div>

@@ -3,8 +3,6 @@
 import { CheckSquare, Clock, Flag, MessageSquare, Paperclip, User } from 'lucide-react'
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { colors, typography } from '@/config/theme'
-import { border, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export const TaskInspectorContent = () => {
@@ -13,16 +11,16 @@ export const TaskInspectorContent = () => {
       <div className="space-y-6 p-4">
         {/* タスク詳細セクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>タスク詳細</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>タスク詳細</h3>
 
           <div className="space-y-3">
             {/* タスク名 */}
-            <div className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}>
+            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
               <div className="flex items-start gap-3">
                 <CheckSquare className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <div className="flex-1">
-                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>新機能のUI設計</p>
-                  <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
+                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>新機能のUI設計</p>
+                  <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>
                     ユーザー体験を向上させる新しいインターface設計
                   </p>
                 </div>
@@ -30,45 +28,45 @@ export const TaskInspectorContent = () => {
             </div>
 
             {/* 期限と進捗 */}
-            <div className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}>
+            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
               <div className="mb-3 flex items-center gap-3">
                 <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                 <div>
-                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>期限: 2024年9月15日</p>
-                  <p className={cn(typography.body.xs, text.muted)}>残り8日</p>
+                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>期限: 2024年9月15日</p>
+                  <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>残り8日</p>
                 </div>
               </div>
 
               {/* 進捗バー */}
               <div className="space-y-2">
-                <div className={cn('flex justify-between', typography.body.xs)}>
-                  <span className={text.muted}>進捗</span>
-                  <span className={text.primary}>75%</span>
+                <div className={cn('flex justify-between text-xs')}>
+                  <span className="text-neutral-600 dark:text-neutral-400">進捗</span>
+                  <span className="text-neutral-900 dark:text-neutral-100">75%</span>
                 </div>
-                <div className={`w-full ${colors.background.subtle} h-2 rounded-full`}>
-                  <div className={`${colors.primary.DEFAULT} h-2 rounded-full`} style={{ width: '75%' }}></div>
+                <div className="w-full bg-neutral-200 dark:bg-neutral-700 h-2 rounded-full">
+                  <div className="bg-primary h-2 rounded-full" style={{ width: '75%' }}></div>
                 </div>
               </div>
             </div>
 
             {/* 優先度 */}
-            <div className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}>
+            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
               <div className="flex items-center gap-3">
                 <Flag className="h-4 w-4 text-red-600 dark:text-red-400" />
                 <div>
-                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>優先度: 高</p>
-                  <p className={cn(typography.body.xs, text.muted)}>今週中に完了必須</p>
+                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>優先度: 高</p>
+                  <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>今週中に完了必須</p>
                 </div>
               </div>
             </div>
 
             {/* 担当者 */}
-            <div className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}>
+            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
               <div className="flex items-center gap-3">
                 <User className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 <div>
-                  <p className={cn(typography.body.base, 'font-medium', text.primary)}>担当者: 田中太郎</p>
-                  <p className={cn(typography.body.xs, text.muted)}>UI/UXデザイナー</p>
+                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>担当者: 田中太郎</p>
+                  <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>UI/UXデザイナー</p>
                 </div>
               </div>
             </div>
@@ -77,7 +75,7 @@ export const TaskInspectorContent = () => {
 
         {/* サブタスクセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>サブタスク</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>サブタスク</h3>
 
           <div className="space-y-2">
             {[
@@ -89,9 +87,8 @@ export const TaskInspectorContent = () => {
               <div
                 key={subtask.title}
                 className={cn(
-                  'rounded-lg border p-3',
-                  colors.background.surface,
-                  border.subtle,
+                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
               >
@@ -106,8 +103,10 @@ export const TaskInspectorContent = () => {
                   </div>
                   <p
                     className={cn(
-                      typography.body.base,
-                      subtask.completed ? cn('line-through', text.muted) : text.primary
+                      'text-base',
+                      subtask.completed
+                        ? cn('line-through text-neutral-600 dark:text-neutral-400')
+                        : 'text-neutral-900 dark:text-neutral-100'
                     )}
                   >
                     {subtask.title}
@@ -120,7 +119,7 @@ export const TaskInspectorContent = () => {
 
         {/* コメントセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>コメント</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>コメント</h3>
 
           <div className="space-y-3">
             {[
@@ -137,16 +136,16 @@ export const TaskInspectorContent = () => {
             ].map((comment, _index) => (
               <div
                 key={`${comment.author}-${comment.time}`}
-                className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}
+                className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}
               >
                 <div className="flex items-start gap-3">
                   <MessageSquare className="mt-0.5 h-4 w-4 text-gray-600 dark:text-gray-400" />
                   <div className="flex-1">
                     <div className="mb-1 flex items-center gap-2">
-                      <span className={cn(typography.body.xs, 'font-medium', text.primary)}>{comment.author}</span>
-                      <span className={cn(typography.body.xs, text.muted)}>{comment.time}</span>
+                      <span className={cn('text-xs font-medium text-neutral-900 dark:text-neutral-100')}>{comment.author}</span>
+                      <span className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>{comment.time}</span>
                     </div>
-                    <p className={cn(typography.body.base, text.primary)}>{comment.content}</p>
+                    <p className={cn('text-base text-neutral-900 dark:text-neutral-100')}>{comment.content}</p>
                   </div>
                 </div>
               </div>
@@ -156,7 +155,7 @@ export const TaskInspectorContent = () => {
 
         {/* 添付ファイルセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>添付ファイル</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>添付ファイル</h3>
 
           <div className="space-y-2">
             {[
@@ -166,17 +165,16 @@ export const TaskInspectorContent = () => {
               <div
                 key={file.name}
                 className={cn(
-                  'rounded-lg border p-3',
-                  colors.background.surface,
-                  border.subtle,
+                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
               >
                 <div className="flex items-center gap-3">
                   <Paperclip className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                   <div className="flex-1">
-                    <p className={cn(typography.body.base, 'font-medium', text.primary)}>{file.name}</p>
-                    <p className={cn(typography.body.xs, text.muted)}>{file.size}</p>
+                    <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>{file.name}</p>
+                    <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>{file.size}</p>
                   </div>
                 </div>
               </div>

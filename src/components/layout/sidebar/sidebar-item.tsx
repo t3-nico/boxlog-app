@@ -3,7 +3,6 @@
 import { useRouter } from 'next/navigation'
 
 import { NavigationItem, isNavItemActive } from '@/config/navigation/config'
-import { animations, colors, icons, rounded, typography } from '@/config/theme'
 import { useGlobalSearch } from '@/features/search'
 import { cn } from '@/lib/utils'
 
@@ -38,16 +37,16 @@ export const SidebarItem = ({ item, pathname, onItemClick }: SidebarItemProps) =
       onClick={handleClick}
       className={cn(
         'flex w-full items-center gap-3 p-2 text-left',
-        rounded.component.button.md,
-        animations.transition.fast,
+        'rounded-md',
+        'transition-colors duration-150',
         'group relative',
         isActive
-          ? `${colors.text.onPrimary} ${colors.primary.DEFAULT}`
-          : `bg-transparent ${colors.text.muted} ${colors.hover.subtle}`
+          ? 'text-white dark:text-white bg-primary hover:bg-primary/90'
+          : 'bg-transparent text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
       )}
     >
-      <Icon className={icons.size.md} />
-      <span className={cn('font-medium', typography.heading.h5)}>{item.label}</span>
+      <Icon className="h-4 w-4" />
+      <span className={cn('font-medium', 'text-base')}>{item.label}</span>
 
       {/* Badge */}
       {item.badge != null && (
@@ -56,7 +55,7 @@ export const SidebarItem = ({ item, pathname, onItemClick }: SidebarItemProps) =
             'ml-auto h-5 w-5',
             'bg-destructive text-destructive-foreground text-xs font-medium',
             'flex items-center justify-center',
-            rounded.component.badge.pill
+            'rounded-full'
           )}
         >
           {item.badge}

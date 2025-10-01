@@ -9,7 +9,6 @@ import { Bell, PanelLeftClose, Plus, Search } from 'lucide-react'
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { primaryNavigation } from '@/config/navigation/config'
-import { animations, colors, ghost, gridGap, icons, layout, rounded, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
@@ -18,12 +17,6 @@ import { SidebarItem } from './sidebar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
-
-const { xs: _xs } = layout.heights.header
-const { sm: _sm, lg: _lg } = icons.size
-// テーマから統一的に取得
-const { xs: headerHeight } = layout.heights.header
-const { sm: iconSm, lg: iconLg } = icons.size
 
 export const DesktopSidebar = () => {
   const pathname = usePathname()
@@ -83,9 +76,9 @@ export const DesktopSidebar = () => {
       className={cn(
         'relative flex border-r',
         'z-50',
-        colors.background.surface,
-        colors.text.primary,
-        colors.border.default
+        'bg-white dark:bg-neutral-800',
+        'text-neutral-900 dark:text-neutral-100',
+        'border-neutral-200 dark:border-neutral-800'
       )}
       style={{ width: `${primaryNavWidth}px` }}
     >
@@ -95,7 +88,7 @@ export const DesktopSidebar = () => {
         <div
           className={cn(
             'mt-2 flex items-center justify-between px-2',
-            headerHeight // 32px height
+            'h-8' // 32px height
           )}
         >
           {/* Left: Close Panel Button */}
@@ -104,33 +97,33 @@ export const DesktopSidebar = () => {
               type="button"
               onClick={handleToggleSidebar}
               className={cn(
-                layout.heights.button.sm,
+                'h-8',
                 'flex w-8 items-center justify-center',
-                ghost.hover,
-                rounded.component.button.sm,
-                animations.transition.fast,
+                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'rounded-sm',
+                'transition-colors duration-150',
                 'flex-shrink-0'
               )}
             >
-              <PanelLeftClose className={iconSm} />
+              <PanelLeftClose className="h-5 w-5" />
             </button>
           </div>
 
           {/* Right: Action Buttons */}
-          <div className={cn('flex items-center', gridGap.tight)}>
+          <div className={cn('flex items-center', 'gap-1')}>
             {/* Search Button */}
             <button
               type="button"
               className={cn(
-                layout.heights.button.sm,
+                'h-8',
                 'flex w-8 items-center justify-center',
-                ghost.hover,
-                rounded.component.button.sm,
-                animations.transition.fast,
+                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'rounded-sm',
+                'transition-colors duration-150',
                 'flex-shrink-0'
               )}
             >
-              <Search className={iconSm} />
+              <Search className="h-5 w-5" />
             </button>
 
             {/* Notification Button */}
@@ -138,25 +131,25 @@ export const DesktopSidebar = () => {
               type="button"
               onClick={openNotifications}
               className={cn(
-                layout.heights.button.sm,
+                'h-8',
                 'relative flex items-center justify-center',
-                ghost.hover,
-                rounded.component.button.sm,
-                animations.transition.fast,
+                'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                'rounded-sm',
+                'transition-colors duration-150',
                 'flex-shrink-0'
               )}
             >
-              <Bell className={iconSm} />
+              <Bell className="h-5 w-5" />
               {notificationCount > 0 && (
                 <span
                   className={cn(
                     'absolute -right-1 -top-1',
-                    spacing.size.badge.sm,
-                    colors.semantic.error.bg,
-                    colors.text.onError,
-                    typography.body.xs,
+                    'h-4 w-4',
+                    'bg-red-500',
+                    'text-white',
+                    'text-xs',
                     'flex w-8 items-center justify-center',
-                    rounded.component.badge.pill
+                    'rounded-full'
                   )}
                 >
                   {notificationCount}
@@ -169,18 +162,18 @@ export const DesktopSidebar = () => {
               type="button"
               onClick={handleCreateEvent}
               className={cn(
-                layout.heights.button.sm,
+                'h-8',
                 'flex w-8 items-center justify-center',
-                colors.primary.DEFAULT,
-                colors.primary.hover,
-                colors.text.onPrimary,
-                rounded.component.button.sm,
-                animations.transition.fast,
+                'bg-primary',
+                'hover:bg-primary/90',
+                'text-white',
+                'rounded-sm',
+                'transition-colors duration-150',
                 'flex-shrink-0'
               )}
               aria-label="新しいイベントを作成"
             >
-              <Plus className={iconSm} />
+              <Plus className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -197,11 +190,11 @@ export const DesktopSidebar = () => {
               {section.label != null && (
                 <div
                   className={cn(
-                    spacing.padding.sm,
+                    'p-2',
                     'mt-4 first:mt-0', // 16px top margin
-                    typography.body.small,
+                    'text-sm',
                     'font-medium uppercase tracking-wider',
-                    colors.text.muted
+                    'text-neutral-600 dark:text-neutral-400'
                   )}
                 >
                   {section.label}
@@ -210,21 +203,21 @@ export const DesktopSidebar = () => {
               {section.items.length > 0
                 ? section.items.map((item) => <SidebarItem key={item.id} item={item} pathname={pathname} />)
                 : section.id === 'smart-folders' && (
-                    <div className={cn(spacing.padding.sm)}>
+                    <div className={cn('p-2')}>
                       <button
                         type="button"
                         className={cn(
                           'flex w-full items-center',
-                          gridGap.tight,
-                          ghost.hover,
-                          rounded.component.button.sm,
-                          animations.transition.fast,
-                          spacing.padding.sm,
-                          colors.text.muted,
-                          typography.body.small
+                          'gap-1',
+                          'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                          'rounded-sm',
+                          'transition-colors duration-150',
+                          'p-2',
+                          'text-neutral-600 dark:text-neutral-400',
+                          'text-sm'
                         )}
                       >
-                        <Plus className={iconSm} />
+                        <Plus className="h-5 w-5" />
                         <span>Add smart folder</span>
                       </button>
                     </div>

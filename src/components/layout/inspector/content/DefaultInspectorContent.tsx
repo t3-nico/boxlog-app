@@ -3,8 +3,6 @@
 import { BarChart3, FileText, HelpCircle, Info, Settings, Zap } from 'lucide-react'
 
 import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
-import { typography } from '@/config/theme'
-import { border, text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export const DefaultInspectorContent = () => {
@@ -13,14 +11,14 @@ export const DefaultInspectorContent = () => {
       <div className="space-y-6 p-4">
         {/* ページ情報セクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>ページ情報</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>ページ情報</h3>
 
-          <div className={cn('rounded-lg border p-4', colors.background.surface, border.subtle)}>
+          <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-4 bg-white dark:bg-neutral-800')}>
             <div className="flex items-start gap-3">
               <Info className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className={cn(typography.body.base, 'font-medium', text.primary)}>BoxLog Dashboard</p>
-                <p className={cn(typography.body.xs, 'mt-1', text.muted)}>
+                <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>BoxLog Dashboard</p>
+                <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>
                   右側のInspectorパネルでは、選択したアイテムの詳細情報や関連する操作を確認できます。
                 </p>
               </div>
@@ -30,7 +28,7 @@ export const DefaultInspectorContent = () => {
 
         {/* クイックアクションセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>クイックアクション</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>クイックアクション</h3>
 
           <div className="space-y-2">
             {[
@@ -62,17 +60,16 @@ export const DefaultInspectorContent = () => {
               <div
                 key={action.title}
                 className={cn(
-                  'rounded-lg border p-3',
-                  colors.background.surface,
-                  border.subtle,
+                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
               >
                 <div className="flex items-center gap-3">
                   <action.icon className={cn('h-4 w-4', action.color)} />
                   <div className="flex-1">
-                    <p className={cn(typography.body.base, 'font-medium', text.primary)}>{action.title}</p>
-                    <p className={cn(typography.body.xs, text.muted)}>{action.description}</p>
+                    <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>{action.title}</p>
+                    <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>{action.description}</p>
                   </div>
                 </div>
               </div>
@@ -82,7 +79,7 @@ export const DefaultInspectorContent = () => {
 
         {/* 最近のアクティビティセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>最近のアクティビティ</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>最近のアクティビティ</h3>
 
           <div className="space-y-2">
             {[
@@ -107,7 +104,7 @@ export const DefaultInspectorContent = () => {
             ].map((activity, _index) => (
               <div
                 key={`${activity.action}-${activity.item}-${activity.time}`}
-                className={cn('rounded-lg border p-3', colors.background.surface, border.subtle)}
+                className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}
               >
                 <div className="flex items-start gap-3">
                   <div
@@ -121,11 +118,11 @@ export const DefaultInspectorContent = () => {
                     )}
                   />
                   <div className="flex-1">
-                    <p className={cn(typography.body.base, text.primary)}>
-                      <span className={text.muted}>{activity.action}</span>{' '}
+                    <p className={cn('text-base text-neutral-900 dark:text-neutral-100')}>
+                      <span className="text-neutral-600 dark:text-neutral-400">{activity.action}</span>{' '}
                       <span className="font-medium">{activity.item}</span>
                     </p>
-                    <p className={cn(typography.body.xs, 'mt-1', text.muted)}>{activity.time}</p>
+                    <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>{activity.time}</p>
                   </div>
                 </div>
               </div>
@@ -135,7 +132,7 @@ export const DefaultInspectorContent = () => {
 
         {/* ヒントセクション */}
         <div className="space-y-3">
-          <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>ヒント</h3>
+          <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>ヒント</h3>
 
           <div
             className={cn(
@@ -147,10 +144,10 @@ export const DefaultInspectorContent = () => {
             <div className="flex items-start gap-3">
               <FileText className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className={cn(typography.body.base, 'font-medium text-blue-900 dark:text-blue-100')}>
+                <p className={cn('text-base font-medium text-blue-900 dark:text-blue-100')}>
                   Inspectorの活用法
                 </p>
-                <p className={cn(typography.body.xs, 'mt-1 text-blue-700 dark:text-blue-300')}>
+                <p className={cn('text-xs mt-1 text-blue-700 dark:text-blue-300')}>
                   カレンダーのイベントやタスクを選択すると、ここに詳細情報が表示されます。効率的な作業のために活用してください。
                 </p>
               </div>

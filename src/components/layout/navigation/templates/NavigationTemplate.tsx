@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { typography } from '@/config/theme'
-import { border } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export interface NavigationSection {
@@ -46,9 +44,8 @@ export const NavigationTemplate = ({
     <div
       className={cn(
         'relative z-50 w-64 sm:w-full md:w-56 lg:w-64',
-        colors.background.base,
-        'border-r',
-        border.universal,
+        'bg-neutral-100 dark:bg-neutral-900',
+        'border-r border-neutral-200 dark:border-neutral-800',
         className
       )}
     >
@@ -63,7 +60,7 @@ export const NavigationTemplate = ({
               {/* Section Title */}
               {section.title != null && (
                 <div className="mb-2">
-                  <h3 className={cn(typography.body.base, 'text-muted-foreground font-medium')}>{section.title}</h3>
+                  <h3 className={cn('text-base font-medium text-muted-foreground')}>{section.title}</h3>
                 </div>
               )}
 

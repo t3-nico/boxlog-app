@@ -40,11 +40,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/shadcn-ui/dropdown-menu'
-import { animations, colors, icons, rounded } from '@/config/theme'
 import { useAuthContext } from '@/features/auth'
 import { cn } from '@/lib/utils'
-
-const { md, lg } = icons.size
 
 interface UserMenuProps {
   children?: React.ReactNode
@@ -81,24 +78,24 @@ export const UserMenu = ({ children }: UserMenuProps) => {
             type="button"
             className={cn(
               'group flex items-center justify-center',
-              colors.hover.subtle,
-              rounded.component.button.lg,
-              animations.transition.fast
+              'hover:bg-neutral-100 dark:hover:bg-neutral-800',
+              'rounded-lg',
+              'transition-colors duration-150'
             )}
           >
             <div className="relative">
               {user?.user_metadata?.avatar_url ? (
                 <Avatar
                   src={user.user_metadata.avatar_url}
-                  className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                  className={cn('h-8 w-8', 'border', 'border-neutral-200 dark:border-neutral-800', 'rounded-md')}
                 />
               ) : user?.user_metadata?.profile_icon ? (
                 <div
                   className={cn(
-                    lg,
+                    'h-8 w-8',
                     'bg-accent flex items-center justify-center border text-sm',
-                    colors.border.default,
-                    rounded.component.avatar.md
+                    'border-neutral-200 dark:border-neutral-800',
+                    'rounded-md'
                   )}
                 >
                   {user.user_metadata.profile_icon}
@@ -106,7 +103,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
               ) : (
                 <Avatar
                   src={undefined}
-                  className={cn(lg, 'border', colors.border.default, rounded.component.avatar.md)}
+                  className={cn('h-8 w-8', 'border', 'border-neutral-200 dark:border-neutral-800', 'rounded-md')}
                   initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                     .charAt(0)
                     .toUpperCase()}
@@ -118,7 +115,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className={cn('z-[9999] w-64', colors.background.surface, colors.border.default)}
+        className={cn('z-[9999] w-64', 'bg-white dark:bg-neutral-800', 'border-neutral-200 dark:border-neutral-800')}
         side="top"
         align="start"
       >
@@ -134,48 +131,48 @@ export const UserMenu = ({ children }: UserMenuProps) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={handleSettingsClick} className={cn('focus:bg-transparent', colors.hover.subtle)}>
-          <Cog8ToothIcon className={cn(md, 'mr-2')} />
+        <DropdownMenuItem onClick={handleSettingsClick} className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}>
+          <Cog8ToothIcon className={cn('h-4 w-4', 'mr-2')} />
           Settings
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          className={cn('focus:bg-transparent', colors.hover.subtle)}
+          className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}
           onClick={() => {
             // TODO: Implement privacy policy navigation
             console.log('Privacy policy clicked')
           }}
         >
-          <ShieldCheckIcon className={cn(md, 'mr-2')} />
+          <ShieldCheckIcon className={cn('h-4 w-4', 'mr-2')} />
           Privacy policy
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className={cn('focus:bg-transparent', colors.hover.subtle)}
+          className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}
           onClick={() => {
             // TODO: Implement feedback navigation
             console.log('Share feedback clicked')
           }}
         >
-          <LightBulbIcon className={cn(md, 'mr-2')} />
+          <LightBulbIcon className={cn('h-4 w-4', 'mr-2')} />
           Share feedback
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={handleHelpClick} className={cn('focus:bg-transparent', colors.hover.subtle)}>
-          <QuestionMarkCircleIcon className={cn(md, 'mr-2')} />
+        <DropdownMenuItem onClick={handleHelpClick} className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}>
+          <QuestionMarkCircleIcon className={cn('h-4 w-4', 'mr-2')} />
           Help
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className={cn('focus:bg-transparent', colors.hover.subtle)}
+          className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}
           onClick={() => {
             // TODO: Implement changelog navigation
             console.log('Changelog clicked')
           }}
         >
-          <SparklesIcon className={cn(md, 'mr-2')} />
+          <SparklesIcon className={cn('h-4 w-4', 'mr-2')} />
           Changelog
         </DropdownMenuItem>
 
@@ -183,9 +180,9 @@ export const UserMenu = ({ children }: UserMenuProps) => {
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className={cn('focus:text-accent-foreground focus:bg-transparent', colors.semantic.warning.hover)}
+          className={cn('focus:text-accent-foreground focus:bg-transparent', 'hover:bg-orange-50 dark:hover:bg-orange-950')}
         >
-          <ArrowRightStartOnRectangleIcon className={cn(md, 'mr-2')} />
+          <ArrowRightStartOnRectangleIcon className={cn('h-4 w-4', 'mr-2')} />
           Logout
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -11,7 +11,6 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { colors, typography, spacing, rounded, animations } from '@/config/theme'
 import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
 import { cn } from '@/lib/utils'
 
@@ -21,23 +20,16 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
   
   if (isUser) {
     return (
-      <div className={cn(spacing.margin.md, 'flex justify-end')}>
+      <div className={cn('my-4 flex justify-end')}>
         <div className={cn(
-          colors.primary.DEFAULT,
-          colors.text.onPrimary,
-          'rounded-2xl rounded-tr-sm max-w-[80%] break-words',
-          spacing.padding.md
+          'bg-primary text-primary-foreground',
+          'rounded-2xl rounded-tr-sm max-w-[80%] break-words p-4'
         )}>
-          <div className={cn(typography.body.sm, 'leading-relaxed whitespace-pre-wrap')}>
+          <div className={cn('text-sm leading-relaxed whitespace-pre-wrap')}>
             {message.content}
           </div>
           {message.status != null && (
-            <div className={cn(
-              spacing.margin.xs,
-              typography.body.xs,
-              colors.text.onPrimary,
-              'opacity-75'
-            )}>
+            <div className={cn('mt-1 text-xs opacity-75')}>
               {message.status === 'sending' && 'Sending...'}
               {message.status === 'error' && 'Error sending message'}
             </div>
@@ -48,33 +40,28 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
   }
   
   return (
-    <div className={cn(spacing.margin.md, 'flex justify-start items-start gap-3')}>
+    <div className={cn('my-4 flex justify-start items-start gap-3')}>
       {/* AI Avatar */}
       <div className={cn(
         'w-8 h-8 flex items-center justify-center flex-shrink-0',
-        rounded.full,
-        colors.gradient.primaryTertiary,
-        colors.text.onPrimary
+        'rounded-full',
+        'bg-gradient-to-br from-primary to-tertiary',
+        'text-primary-foreground'
       )}>
         <Sparkles className="w-4 h-4" />
       </div>
-      
+
       {/* AI Message Bubble */}
       <div className={cn(
         'rounded-2xl rounded-tl-sm max-w-[80%] break-words',
-        colors.background.card,
-        colors.text.primary,
-        colors.border.default,
-        spacing.padding.md
+        'bg-card text-card-foreground',
+        'border border-border',
+        'p-4'
       )}>
-        <div className={cn(typography.body.sm, 'leading-relaxed whitespace-pre-wrap')}>
+        <div className={cn('text-sm leading-relaxed whitespace-pre-wrap')}>
           {message.content}
         </div>
-        <div className={cn(
-          spacing.margin.xs,
-          typography.body.small,
-          colors.text.muted
-        )}>
+        <div className={cn('mt-1 text-sm text-muted-foreground')}>
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
       </div>
@@ -119,23 +106,22 @@ const ChatInput = () => {
 
   return (
     <div className={cn(
-      'flex-shrink-0',
-      spacing.padding.md,
-      colors.border.top,
-      colors.background.base
+      'flex-shrink-0 p-4',
+      'border-t border-neutral-200 dark:border-neutral-800',
+      'bg-neutral-100 dark:bg-neutral-900'
     )}>
       {/* Typing indicator */}
       {state.isTyping === true && (
-        <div className={`flex items-center gap-2 ${spacing.margin.sm} ${typography.body.sm} ${colors.text.muted}`}>
+        <div className="flex items-center gap-2 mb-2 text-sm text-neutral-600 dark:text-neutral-400">
           <div className="flex gap-1">
-            <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`}></div>
-            <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`} style={{ animationDelay: '0.2s' }}></div>
-            <div className={`w-2 h-2 ${colors.primary.light} ${rounded.full} animate-pulse`} style={{ animationDelay: '0.4s' }}></div>
+            <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
           <span>AI is thinking...</span>
         </div>
       )}
-      
+
       <div className="relative">
         <form onSubmit={handleSubmit} className="relative">
           <textarea
@@ -146,15 +132,15 @@ const ChatInput = () => {
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder="Ask AI anything..."
-            className={`w-full resize-none ${rounded.component.input.lg} ${colors.border.default} ${colors.background.card} ${spacing.padding.md} pr-12 ${typography.body.sm} ${colors.focus.ring} max-h-32 min-h-[44px] ${colors.placeholder.muted}`}
+            className="w-full resize-none rounded-lg border border-neutral-200 dark:border-neutral-800 bg-card p-4 pr-12 text-sm focus:ring-2 focus:ring-primary max-h-32 min-h-[44px] placeholder:text-muted-foreground"
             disabled={state.isTyping}
             rows={1}
           />
-          
+
           <button
             type="submit"
             disabled={!state.inputValue.trim() || state.isTyping}
-            className={`absolute right-2 bottom-2 ${spacing.padding.xs} ${colors.text.muted} ${colors.hover.text} disabled:${colors.text.disabled} disabled:cursor-not-allowed ${animations.transition.fast} focus:outline-none`}
+            className="absolute right-2 bottom-2 p-1 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 disabled:text-neutral-400 dark:disabled:text-neutral-600 disabled:cursor-not-allowed transition-fast focus:outline-none"
           >
             <ArrowUpCircle className="h-6 w-6" />
           </button>
@@ -194,20 +180,20 @@ export const InspectorAIChat = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <div className={`flex-shrink-0 ${spacing.padding.md} ${colors.border.bottom} ${colors.background.base}`}>
+      <div className="flex-shrink-0 p-4 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 ${rounded.full} ${colors.gradient.primaryTertiary} flex items-center justify-center`}>
-              <Sparkles className={`w-4 h-4 ${colors.text.onPrimary}`} />
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
             <div>
-              <h3 className={`${typography.body.sm} ${typography.weight.semibold} ${colors.text.primary}`}>AI Assistant</h3>
-              <p className={`${typography.body.small} ${colors.text.muted}`}>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">AI Assistant</h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
                 Ask me anything about your tasks
               </p>
             </div>
           </div>
-        
+
           {/* Menu */}
           <div className="relative">
             <Button
@@ -218,13 +204,13 @@ export const InspectorAIChat = () => {
             >
               <MoreVertical className="h-3 w-3" />
             </Button>
-            
+
             {showMenu != null && (
-              <div className={`absolute right-0 top-full ${spacing.margin.xs} ${colors.background.card} ${colors.border.default} ${rounded.component.card.lg} shadow-lg z-50 min-w-[140px] ${spacing.padding.xs}`}>
+              <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[140px] p-1">
                 <button
                   type="button"
                   onClick={handleClearMessages}
-                  className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
+                  className="w-full flex items-center gap-2 p-2 text-sm text-card-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-fast"
                 >
                   <Trash2 className="w-4 h-4" />
                   Clear conversation
@@ -232,7 +218,7 @@ export const InspectorAIChat = () => {
                 <button
                   type="button"
                   onClick={handleExportMessages}
-                  className={`w-full flex items-center gap-2 ${spacing.padding.sm} ${typography.body.sm} text-card-foreground ${colors.hover.subtle} ${animations.transition.fast}`}
+                  className="w-full flex items-center gap-2 p-2 text-sm text-card-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-fast"
                 >
                   <Copy className="w-4 h-4" />
                   Export conversation
@@ -244,16 +230,16 @@ export const InspectorAIChat = () => {
       </div>
 
       {/* Messages Area */}
-      <div className={`flex-1 overflow-y-auto ${spacing.padding.md}`}>
+      <div className="flex-1 overflow-y-auto p-4">
         {state.messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className={`w-16 h-16 ${rounded.full} ${colors.gradient.primaryTertiary} flex items-center justify-center mx-auto ${spacing.margin.md}`}>
-              <Sparkles className={`w-8 h-8 ${colors.text.onPrimary}`} />
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center mx-auto my-4">
+              <Sparkles className="w-8 h-8 text-primary-foreground" />
             </div>
-            <h3 className={`${typography.heading.h3} ${typography.weight.semibold} ${colors.text.primary} ${spacing.margin.xs}`}>
+            <h3 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mt-1">
               Hi! I&apos;m your AI assistant
             </h3>
-            <p className={`${colors.text.muted} max-w-md ${typography.body.sm}`}>
+            <p className="text-neutral-600 dark:text-neutral-400 max-w-md text-sm">
               I can help you with productivity insights, task management, and answer questions about BoxLog.
             </p>
           </div>
@@ -266,7 +252,7 @@ export const InspectorAIChat = () => {
           </>
         )}
       </div>
-      
+
       {/* Chat Input */}
       <ChatInput />
     </div>

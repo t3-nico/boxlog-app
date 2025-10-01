@@ -2,8 +2,6 @@
 
 import React, { useCallback } from 'react'
 
-import { typography } from '@/config/theme'
-import { text } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 export interface NavigationSectionProps {
@@ -67,15 +65,15 @@ export const NavigationSection = ({
             onKeyDown: handleKeyDown,
           })}
         >
-          {Icon ? <Icon className={cn('mr-2 h-4 w-4 flex-shrink-0', text.muted)} /> : null}
+          {Icon ? <Icon className={cn('mr-2 h-4 w-4 flex-shrink-0 text-neutral-600 dark:text-neutral-400')} /> : null}
 
-          <h3 className={cn('flex-1', text.muted, typography.body.xs, 'font-semibold uppercase tracking-wider')}>
+          <h3 className={cn('flex-1 text-xs font-semibold uppercase tracking-wider text-neutral-600 dark:text-neutral-400')}>
             {title}
           </h3>
 
           {collapsible != null && (
             <svg
-              className={cn('h-4 w-4 transition-transform', text.muted, isCollapsed ? 'rotate-0' : 'rotate-90')}
+              className={cn('h-4 w-4 transition-transform text-neutral-600 dark:text-neutral-400', isCollapsed ? 'rotate-0' : 'rotate-90')}
               fill="none"
               strokeWidth="2"
               viewBox="0 0 24 24"

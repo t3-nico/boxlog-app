@@ -6,8 +6,7 @@ import { usePathname } from 'next/navigation'
 
 import { PanelRight } from 'lucide-react'
 
-import { colors } from '@/config/theme'
-import { border, secondary, text } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from '../sidebar/stores/navigation.store'
 
@@ -31,10 +30,14 @@ export const NavigationToggle = () => {
       <button
         type="button"
         onClick={handleToggleNavigation}
-        className={`rounded-md p-2 transition-colors ${colors.background.surface} border ${border.alpha} shadow-sm ${secondary.hover}`}
+        className={cn(
+          'rounded-md p-2 transition-colors',
+          'bg-white dark:bg-neutral-800 border border-neutral-200/50 dark:border-neutral-700/50',
+          'shadow-sm hover:bg-neutral-100 dark:hover:bg-neutral-700'
+        )}
         title="Open sidebar"
       >
-        <PanelRight className={`h-4 w-4 ${text.muted}`} />
+        <PanelRight className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
       </button>
     </div>
   )

@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { animations, primary } from '@/config/theme'
-import { border } from '@/config/theme/colors'
 import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from './stores/navigation.store'
@@ -44,11 +42,11 @@ export const ResizeHandle = () => {
       }}
       className={cn(
         'w-1 h-full cursor-ew-resize flex-shrink-0',
-        border.universal,
-        primary.hover,
-        animations.transition.fast
+        'border-neutral-200 dark:border-neutral-800',
+        'hover:bg-primary',
+        'transition-fast'
       )}
-      style={{ 
+      style={{
         minWidth: '4px'
       }}
       role="button"

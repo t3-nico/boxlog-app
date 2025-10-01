@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 
-import { border } from '@/config/theme/colors'
+import { cn } from '@/lib/utils'
 import { SettingsNavigation } from '@/features/settings/components/settings-navigation'
 
 import { BottomContent } from './bottom-content'
@@ -16,7 +16,11 @@ export const Navigation = () => {
 
   return (
     <div
-      className={`relative z-50 w-64 sm:w-full md:w-56 lg:w-64 ${colors.background.base} border-r ${border.universal}`}
+      className={cn(
+        'relative z-50 w-64 sm:w-full md:w-56 lg:w-64',
+        'bg-neutral-100 dark:bg-neutral-900',
+        'border-r border-neutral-200 dark:border-neutral-800'
+      )}
     >
       <div className="flex h-full flex-col p-4">
         {!isSettings ? (
