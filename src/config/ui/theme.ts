@@ -176,6 +176,7 @@ export const typography = {
   },
   button: {
     DEFAULT: 'text-sm font-medium',
+    base: 'text-base',
     sm: 'text-xs font-medium',
     lg: 'text-base font-medium',
   },
@@ -229,6 +230,7 @@ export const rounded = {
       lg: 'rounded-lg',
     },
     card: { DEFAULT: 'rounded-lg', lg: 'rounded-lg', md: 'rounded-md' },
+    badge: { DEFAULT: 'rounded-full', md: 'rounded-md' },
     input: 'rounded-md',
     media: {
       avatar: 'rounded-full',
