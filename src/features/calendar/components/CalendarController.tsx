@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState, Suspense } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -26,11 +26,33 @@ import { DnDProvider } from '../providers/DnDProvider'
 import type { CalendarEvent, CalendarViewProps, CalendarViewType } from '../types/calendar.types'
 
 import { CalendarLayout } from './layout/CalendarLayout'
-import { DayView } from './views/DayView'
 import { EventContextMenu } from './views/shared/components'
-import { ThreeDayView } from './views/ThreeDayView'
-import { TwoWeekView } from './views/TwoWeekView'
-import { WeekView } from './views/WeekView'
+
+// 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード
+const DayView = React.lazy(() =>
+  import('./views/DayView').then((module) => ({ default: module.DayView }))
+)
+const WeekView = React.lazy(() =>
+  import('./views/WeekView').then((module) => ({ default: module.WeekView }))
+)
+const ThreeDayView = React.lazy(() =>
+  import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
+)
+const TwoWeekView = React.lazy(() =>
+  import('./views/TwoWeekView').then((module) => ({ default: module.TwoWeekView }))
+)
+
+// ローディングフォールバック
+const CalendarViewSkeleton = () => (
+  <div className="h-full w-full animate-pulse">
+    <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded mb-4" />
+    <div className="grid grid-cols-7 gap-2">
+      {Array.from({ length: 21 }).map((_, i) => (
+        <div key={i} className="h-24 bg-neutral-200 dark:bg-neutral-800 rounded" />
+      ))}
+    </div>
+  </div>
+)
 
 interface CalendarViewExtendedProps extends CalendarViewProps {
   initialViewType?: CalendarViewType
@@ -735,28 +757,34 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       onNavigateToday: handleNavigateToday,
     }
 
-    switch (viewType) {
-      case 'day':
-        return <DayView {...commonProps} showWeekends={showWeekends} />
-      case 'split-day':
-        // Split-day view is currently not available, fallback to day view
-        return <DayView {...commonProps} />
-      case '3day':
-        // 3DayViewに週末表示設定を渡す
-        return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
-      case 'week':
-        return <WeekView {...commonProps} showWeekends={showWeekends} />
-      case 'week-no-weekend':
-        // 後方互換性のため残す（設定より優先）
-        return <WeekView {...commonProps} showWeekends={false} />
-      case '2week':
-        return <TwoWeekView {...commonProps} showWeekends={showWeekends} />
-      case 'month':
-        // MonthViewはまだ実装されていないため、TwoWeekViewを使用
-        return <TwoWeekView {...commonProps} />
-      default:
-        return <DayView {...commonProps} />
-    }
+    return (
+      <Suspense fallback={<CalendarViewSkeleton />}>
+        {(() => {
+          switch (viewType) {
+            case 'day':
+              return <DayView {...commonProps} showWeekends={showWeekends} />
+            case 'split-day':
+              // Split-day view is currently not available, fallback to day view
+              return <DayView {...commonProps} />
+            case '3day':
+              // 3DayViewに週末表示設定を渡す
+              return <ThreeDayView {...commonProps} showWeekends={showWeekends} />
+            case 'week':
+              return <WeekView {...commonProps} showWeekends={showWeekends} />
+            case 'week-no-weekend':
+              // 後方互換性のため残す（設定より優先）
+              return <WeekView {...commonProps} showWeekends={false} />
+            case '2week':
+              return <TwoWeekView {...commonProps} showWeekends={showWeekends} />
+            case 'month':
+              // MonthViewはまだ実装されていないため、TwoWeekViewを使用
+              return <TwoWeekView {...commonProps} />
+            default:
+              return <DayView {...commonProps} />
+          }
+        })()}
+      </Suspense>
+    )
   }
 
   // 日付選択ハンドラー
