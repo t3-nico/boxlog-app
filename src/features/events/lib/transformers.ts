@@ -244,9 +244,9 @@ export function isEventInProgress(event: Event): boolean {
   if (event.endDate) {
     return now >= event.startDate && now <= event.endDate
   } else {
-    // 終了日がない場合は、開始日が今日で未完了なら進行中とみなす
+    // 終了日がない場合は、開始日が今日なら進行中とみなす
     const today = now.toDateString()
     const eventDate = event.startDate.toDateString()
-    return today === eventDate && event.status !== 'completed'
+    return today === eventDate
   }
 }
