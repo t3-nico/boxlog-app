@@ -26,8 +26,8 @@ export async function runQuickSeed(): Promise<void> {
 
     // 基本タスク作成
     const tasks = [
-      TaskFactory.createTodo({ assigneeId: user.id }),
-      TaskFactory.createInProgress({ assigneeId: admin.id }),
+      TaskFactory.createTodo({ assigneeId: user.id } as Parameters<typeof TaskFactory.createTodo>[0]),
+      TaskFactory.createInProgress({ assigneeId: admin.id } as Parameters<typeof TaskFactory.createInProgress>[0]),
       TaskFactory.createCompleted()
     ]
 
@@ -37,7 +37,7 @@ export async function runQuickSeed(): Promise<void> {
     })
 
     // 基本プロジェクト作成
-    const project = ProjectFactory.createActive({ ownerId: admin.id })
+    const project = ProjectFactory.createActive({ ownerId: admin.id } as Parameters<typeof ProjectFactory.createActive>[0])
 
     console.log('📁 プロジェクト作成完了:')
     console.log(`  - ${project.name} [${project.status}]`)
