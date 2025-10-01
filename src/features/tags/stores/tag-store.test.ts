@@ -21,10 +21,10 @@ describe('useTagStore', () => {
       expect(result).toBe(true)
       const tags = useTagStore.getState().tags
       expect(tags).toHaveLength(1)
-      expect(tags[0].name).toBe('仕事')
-      expect(tags[0].level).toBe(1)
-      expect(tags[0].path).toBe('仕事')
-      expect(tags[0].parent_id).toBeNull()
+      expect(tags[0]!.name).toBe('仕事')
+      expect(tags[0]!.level).toBe(1)
+      expect(tags[0]!.path).toBe('仕事')
+      expect(tags[0]!.parent_id).toBeNull()
     })
 
     it('子タグを追加できる', async () => {
@@ -35,7 +35,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const parentId = useTagStore.getState().tags[0].id
+      const parentId = useTagStore.getState().tags[0]!.id
 
       // 子タグを追加
       const result = await useTagStore.getState().addTag({
@@ -48,9 +48,9 @@ describe('useTagStore', () => {
       expect(result).toBe(true)
       const tags = useTagStore.getState().tags
       expect(tags).toHaveLength(2)
-      expect(tags[1].name).toBe('プロジェクトA')
-      expect(tags[1].parent_id).toBe(parentId)
-      expect(tags[1].path).toBe('仕事/プロジェクトA')
+      expect(tags[1]!.name).toBe('プロジェクトA')
+      expect(tags[1]!.parent_id).toBe(parentId)
+      expect(tags[1]!.path).toBe('仕事/プロジェクトA')
     })
 
     it('レベル2を超えるタグは追加できない', async () => {
@@ -71,7 +71,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const level1Id = useTagStore.getState().tags[0].id
+      const level1Id = useTagStore.getState().tags[0]!.id
 
       // レベル2タグを追加
       await useTagStore.getState().addTag({
@@ -81,7 +81,7 @@ describe('useTagStore', () => {
         parent_id: level1Id,
       })
 
-      const level2Id = useTagStore.getState().tags[1].id
+      const level2Id = useTagStore.getState().tags[1]!.id
 
       // レベル3タグを追加しようとする
       const result = await useTagStore.getState().addTag({
@@ -103,7 +103,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const tagId = useTagStore.getState().tags[0].id
+      const tagId = useTagStore.getState().tags[0]!.id
 
       const result = await useTagStore.getState().updateTag(tagId, {
         name: '仕事（更新）',
@@ -112,8 +112,8 @@ describe('useTagStore', () => {
 
       expect(result).toBe(true)
       const tags = useTagStore.getState().tags
-      expect(tags[0].name).toBe('仕事（更新）')
-      expect(tags[0].color).toBe('#22c55e')
+      expect(tags[0]!.name).toBe('仕事（更新）')
+      expect(tags[0]!.color).toBe('#22c55e')
     })
 
     it('存在しないタグは更新できない', async () => {
@@ -135,7 +135,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const tagId = useTagStore.getState().tags[0].id
+      const tagId = useTagStore.getState().tags[0]!.id
 
       const result = await useTagStore.getState().deleteTag(tagId)
 
@@ -159,7 +159,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const tagId = useTagStore.getState().tags[0].id
+      const tagId = useTagStore.getState().tags[0]!.id
       const tag = useTagStore.getState().getTagById(tagId)
 
       expect(tag).toBeDefined()
@@ -200,7 +200,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const tagId = useTagStore.getState().tags[0].id
+      const tagId = useTagStore.getState().tags[0]!.id
       const tags = useTagStore.getState().getTagsByIds([tagId, 'non-existent'])
 
       expect(tags).toHaveLength(1)
@@ -215,7 +215,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const parentId = useTagStore.getState().tags[0].id
+      const parentId = useTagStore.getState().tags[0]!.id
 
       await useTagStore.getState().addTag({
         name: 'プロジェクトA',
@@ -239,7 +239,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const parentId = useTagStore.getState().tags[0].id
+      const parentId = useTagStore.getState().tags[0]!.id
 
       await useTagStore.getState().addTag({
         name: 'プロジェクトA',
@@ -277,7 +277,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const parentId = useTagStore.getState().tags[0].id
+      const parentId = useTagStore.getState().tags[0]!.id
 
       await useTagStore.getState().addTag({
         name: 'プロジェクトA',
@@ -302,7 +302,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const tagId = useTagStore.getState().tags[0].id
+      const tagId = useTagStore.getState().tags[0]!.id
 
       const tasks: Task[] = [
         {
@@ -379,7 +379,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const parentId = useTagStore.getState().tags[0].id
+      const parentId = useTagStore.getState().tags[0]!.id
 
       await useTagStore.getState().addTag({
         name: 'プロジェクトA',
@@ -388,7 +388,7 @@ describe('useTagStore', () => {
         parent_id: parentId,
       })
 
-      const childId = useTagStore.getState().tags[1].id
+      const childId = useTagStore.getState().tags[1]!.id
       const path = useTagStore.getState().getTagPath(childId)
 
       expect(path).toBe('仕事/プロジェクトA')
@@ -403,7 +403,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const tagId = useTagStore.getState().tags[0].id
+      const tagId = useTagStore.getState().tags[0]!.id
       const canAdd = useTagStore.getState().canAddChild(tagId)
 
       expect(canAdd).toBe(true)
@@ -416,7 +416,7 @@ describe('useTagStore', () => {
         level: 1,
       })
 
-      const parentId = useTagStore.getState().tags[0].id
+      const parentId = useTagStore.getState().tags[0]!.id
 
       await useTagStore.getState().addTag({
         name: 'プロジェクトA',
@@ -425,7 +425,7 @@ describe('useTagStore', () => {
         parent_id: parentId,
       })
 
-      const level2Id = useTagStore.getState().tags[1].id
+      const level2Id = useTagStore.getState().tags[1]!.id
       const canAdd = useTagStore.getState().canAddChild(level2Id)
 
       expect(canAdd).toBe(true) // level < 3 なので true（実装上の注意点）
