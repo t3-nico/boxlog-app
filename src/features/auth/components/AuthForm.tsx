@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { border, colors, rounded, spacing, typography } from '@/config/theme'
+import { cn } from '@/lib/utils'
 
 const authSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -76,7 +76,13 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           type="button"
           onClick={() => handleSocialLogin('google')}
           disabled={isLoading}
-          className={`flex w-full items-center justify-center gap-3 ${rounded.component.button.md} border ${border.universal} ${colors.background.base} ${spacing.button.md} ${typography.body.sm} font-medium ${colors.text.secondary} shadow-sm ${colors.hover.background.subtle} focus:outline-none focus:ring-2 ${colors.focus.ring} focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
+          className={cn(
+            "flex w-full items-center justify-center gap-3 rounded-md border border-neutral-200 dark:border-neutral-800",
+            "bg-white dark:bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400",
+            "shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-800",
+            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+            "disabled:cursor-not-allowed disabled:opacity-50"
+          )}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path
@@ -103,7 +109,13 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           type="button"
           onClick={() => handleSocialLogin('apple')}
           disabled={isLoading}
-          className={`flex w-full items-center justify-center gap-3 ${rounded.component.button.md} border ${border.universal} ${colors.background.dark} ${spacing.button.md} ${typography.body.sm} font-medium ${colors.text.white} shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50`}
+          className={cn(
+            "flex w-full items-center justify-center gap-3 rounded-md border border-neutral-800",
+            "bg-neutral-950 px-4 py-2 text-sm font-medium text-white",
+            "shadow-sm hover:bg-gray-900",
+            "focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2",
+            "disabled:cursor-not-allowed disabled:opacity-50"
+          )}
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
@@ -114,17 +126,17 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className={`w-full border-t ${border.universal}`} />
+          <div className="w-full border-t border-neutral-200 dark:border-neutral-800" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className={`${colors.background.base} px-2 ${colors.text.muted}`}>Or continue with email</span>
+          <span className="bg-white dark:bg-neutral-900 px-2 text-neutral-600 dark:text-neutral-400">Or continue with email</span>
         </div>
       </div>
 
       {/* Email Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label htmlFor="email" className={`block ${typography.body.sm} font-medium ${colors.text.secondary}`}>
+          <label htmlFor="email" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
             Email address
           </label>
           <input
@@ -138,7 +150,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         </div>
 
         <div>
-          <label htmlFor="password" className={`block ${typography.body.sm} font-medium ${colors.text.secondary}`}>
+          <label htmlFor="password" className="block text-sm font-medium text-neutral-600 dark:text-neutral-400">
             Password
           </label>
           <input

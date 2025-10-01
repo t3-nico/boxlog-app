@@ -7,8 +7,8 @@ import Image from 'next/image'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { Switch } from '@/components/shadcn-ui/switch'
-import { colors, rounded, semantic, spacing, typography } from '@/config/theme'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
+import { cn } from '@/lib/utils'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
@@ -226,10 +226,10 @@ const AccountSettings = () => {
   )
 
   return (
-    <div className={spacing.stackGap.lg}>
+    <div className="space-y-6">
       {/* Profile Section */}
       <SettingsCard title="プロフィール" description="基本情報とプロフィール画像の設定" isSaving={profile.isSaving}>
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="表示名" description="他のユーザーに表示される名前" required>
             <Input
               value={profile.values.displayName}
@@ -265,14 +265,14 @@ const AccountSettings = () => {
                 />
               ) : (
                 <div
-                  className={`flex h-16 w-16 items-center justify-center rounded-full text-4xl ${colors.background.muted} border-2`}
+                  className="flex h-16 w-16 items-center justify-center rounded-full text-4xl bg-neutral-100 dark:bg-neutral-800 border-2"
                   style={{ borderColor: 'var(--border)' }}
                 >
                   {profile.values.selectedIcon}
                 </div>
               )}
               <div className="flex-1">
-                <div className={`text-sm ${colors.text.secondary}`}>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">
                   {uploadedAvatar ? 'カスタム画像を使用' : '絵文字アイコンを使用'}
                 </div>
               </div>
@@ -284,7 +284,7 @@ const AccountSettings = () => {
                 {isUploading ? 'アップロード中...' : '📷 画像をアップロード'}
               </Button>
               {uploadedAvatar != null && (
-                <Button type="button" variant="ghost" onClick={handleAvatarRemove} className={semantic.error.text}>
+                <Button type="button" variant="ghost" onClick={handleAvatarRemove} className="text-red-600 dark:text-red-400">
                   削除
                 </Button>
               )}
@@ -296,19 +296,20 @@ const AccountSettings = () => {
             <SettingField label="プロフィールアイコン (絵文字)" description="プロフィール画像の代わりに使用する絵文字">
               <div className="mb-4 flex items-center gap-4">
                 <div className="text-4xl">{profile.values.selectedIcon}</div>
-                <div className={`text-sm ${colors.text.secondary}`}>現在のアイコン</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">現在のアイコン</div>
               </div>
-              <div className={`grid grid-cols-10 gap-2 rounded-lg border p-4 ${colors.background.muted}/50`}>
+              <div className="grid grid-cols-10 gap-2 rounded-lg border p-4 bg-neutral-50 dark:bg-neutral-900">
                 {availableIcons.map((icon) => (
                   <button
                     key={icon}
                     type="button"
                     onClick={createIconSelectHandler(icon)}
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg border text-2xl transition-all duration-200 hover:scale-110 ${
+                    className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-lg border text-2xl transition-all duration-200 hover:scale-110",
                       profile.values.selectedIcon === icon
-                        ? `${colors.primary.DEFAULT} text-white ring-2 ring-blue-300`
-                        : `${colors.background.DEFAULT} hover:${colors.background.muted}`
-                    } `}
+                        ? "bg-blue-500 text-white ring-2 ring-blue-300 dark:ring-blue-700"
+                        : "bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                    )}
                     style={{ borderColor: 'var(--border)' }}
                   >
                     {icon}
@@ -322,7 +323,7 @@ const AccountSettings = () => {
 
       {/* Password Section */}
       <SettingsCard title="パスワード" description="アカウントのパスワードを変更">
-        <form onSubmit={handlePasswordSave} className={spacing.stackGap.sm}>
+        <form onSubmit={handlePasswordSave} className="space-y-2">
           <Input
             type="password"
             value={currentPassword}
@@ -344,7 +345,7 @@ const AccountSettings = () => {
             placeholder="新しいパスワード（確認）"
             required
           />
-          {passwordError ? <p className={`${semantic.error.text} text-sm`}>{passwordError}</p> : null}
+          {passwordError ? <p className="text-red-600 dark:text-red-400 text-sm">{passwordError}</p> : null}
           <div className="flex justify-end">
             <Button type="submit" disabled={isPasswordLoading}>
               {isPasswordLoading ? 'パスワード更新中...' : 'パスワードを更新'}
@@ -357,8 +358,8 @@ const AccountSettings = () => {
       <SettingsCard title="2要素認証" description="アカウントに追加のセキュリティ層を追加" isSaving={security.isSaving}>
         <div className="flex items-center justify-between">
           <div>
-            <div className={`font-medium ${typography.body.base}`}>2FAを有効にする</div>
-            <p className={`text-sm ${colors.text.secondary} mt-1`}>
+            <div className="font-medium text-base">2FAを有効にする</div>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
               {security.values.twoFactorEnabled
                 ? '2要素認証が有効になっています'
                 : 'サインイン時に認証コードを要求します'}
@@ -368,14 +369,12 @@ const AccountSettings = () => {
         </div>
 
         {security.values.twoFactorEnabled != null && (
-          <div
-            className={`mt-4 ${spacing.card} ${semantic.success.border} ${semantic.success.light} ${rounded.component.card.lg}`}
-          >
+          <div className="mt-4 p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950 rounded-lg">
             <div className="mb-2 flex items-center gap-2">
-              <div className={`h-2 w-2 bg-green-500 ${rounded.component.avatar.full}`}></div>
-              <span className={`${typography.body.sm} font-medium ${semantic.success.text}`}>2要素認証が有効</span>
+              <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+              <span className="text-sm font-medium text-green-700 dark:text-green-300">2要素認証が有効</span>
             </div>
-            <p className={`${typography.body.xs} ${semantic.success.text}`}>
+            <p className="text-xs text-green-700 dark:text-green-300">
               アカウントが追加のセキュリティ層で保護されています。
             </p>
           </div>
@@ -384,22 +383,22 @@ const AccountSettings = () => {
 
       {/* Danger Zone */}
       <SettingsCard
-        title={<span className={semantic.error.text}>危険な操作</span>}
+        title={<span className="text-red-600 dark:text-red-400">危険な操作</span>}
         description="取り消すことのできない破壊的なアクション"
       >
-        <div className={`${semantic.error.border} ${semantic.error.light} rounded-lg border`}>
+        <div className="border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 rounded-lg">
           <div className="flex items-start justify-between p-6">
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
-                <div className={`${semantic.error.DEFAULT} h-2 w-2 animate-pulse rounded-full`}></div>
-                <div className={`${semantic.error.text} font-medium`}>アカウント削除</div>
+                <div className="bg-red-500 h-2 w-2 animate-pulse rounded-full"></div>
+                <div className="text-red-700 dark:text-red-300 font-medium">アカウント削除</div>
               </div>
-              <p className={`${semantic.error.text} text-sm leading-relaxed`}>
+              <p className="text-red-700 dark:text-red-300 text-sm leading-relaxed">
                 ⚠️ <strong>この操作は取り消すことができません。</strong>
                 <br />
                 アカウントとすべての関連データが完全に削除されます。
               </p>
-              <ul className={`${semantic.error.text} ml-4 space-y-1 text-xs`}>
+              <ul className="text-red-700 dark:text-red-300 ml-4 space-y-1 text-xs">
                 <li>• すべてのタスクとプロジェクトが削除されます</li>
                 <li>• プロフィールと設定が削除されます</li>
                 <li>• この操作は即座に実行され、取り消すことができません</li>

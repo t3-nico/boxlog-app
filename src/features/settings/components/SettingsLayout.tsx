@@ -2,8 +2,6 @@
 
 import React from 'react'
 
-import { colors, typography, spacing, layout } from '@/config/theme'
-
 interface SettingsLayoutProps {
   children: React.ReactNode
   title: string
@@ -18,22 +16,22 @@ export const SettingsLayout = ({
   actions
 }: SettingsLayoutProps) => {
   return (
-    <div className={`flex-1 flex flex-col h-full ${colors.background.surface}`}>
+    <div className="flex-1 flex flex-col h-full bg-white dark:bg-neutral-900">
       {/* ヘッダー部分 */}
-      <div className={`${spacing.page.md} pb-4 flex-shrink-0`}>
+      <div className="p-6 pb-4 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className={typography.heading.h2}>
+            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
               {title}
             </h2>
             {description != null && (
-              <p className={`${spacing.component.stack.xs} ${typography.body.small} ${colors.text.muted}`}>
+              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
                 {description}
               </p>
             )}
           </div>
           {actions != null && (
-            <div className={`flex items-center ${spacing.inlineGap.sm}`}>
+            <div className="flex items-center gap-2">
               {actions}
             </div>
           )}
@@ -41,8 +39,8 @@ export const SettingsLayout = ({
       </div>
 
       {/* メインコンテンツ */}
-      <div 
-        className={`flex-1 overflow-auto ${layout.columns.main.padding.md} pt-0`}
+      <div
+        className="flex-1 overflow-auto px-6 pt-0"
       >
         <style jsx>{`
           div::-webkit-scrollbar {
@@ -70,7 +68,7 @@ export const SettingsLayout = ({
             }
           }
         `}</style>
-        <div className={layout.container.maxWidth.xl}>
+        <div className="max-w-7xl mx-auto w-full">
           {children}
         </div>
       </div>

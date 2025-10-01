@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { Label } from '@/components/shadcn-ui/label'
-import { colors, typography } from '@/config/theme'
 import { cn } from '@/lib/utils'
 
 import { useAuthContext } from '../contexts/AuthContext'
@@ -41,7 +40,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
     return (
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className={`${typography.heading.h1} font-bold ${colors.text.success}`}>Email Sent</h1>
+          <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">Email Sent</h1>
           <p className="text-muted-foreground text-balance text-sm">A password reset link was sent to {email}.</p>
         </div>
         <div className="text-center text-sm">
@@ -73,7 +72,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
             required
           />
         </div>
-        {error ? <div className={`${colors.text.error} text-center text-sm`}>{error}</div> : null}
+        {error ? <div className="text-red-600 dark:text-red-400 text-center text-sm">{error}</div> : null}
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Sending reset email...' : 'Send reset email'}
         </Button>

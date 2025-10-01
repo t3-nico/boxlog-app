@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Copy, Edit2, Trash2 } from 'lucide-react'
 
-import { colors, elevation, rounded, spacing, typography } from '@/config/theme'
 import type { CalendarEvent } from '@/features/events/types/events'
+import { cn } from '@/lib/utils'
 
 interface EventContextMenuProps {
   event: CalendarEvent
@@ -107,7 +107,7 @@ export const EventContextMenu = ({
   return (
     <div
       ref={menuRef}
-      className={`fixed z-50 min-w-[180px] ${colors.background.base} ${rounded.md} ${elevation.md} border ${colors.border.alpha} ${spacing.cardVariants.compact} ${typography.body.small} `}
+      className="fixed z-50 min-w-[180px] bg-white dark:bg-neutral-900 rounded-md shadow-md border border-neutral-200 dark:border-neutral-800 p-2 text-sm"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
@@ -123,11 +123,12 @@ export const EventContextMenu = ({
               type="button"
               key={item.label}
               onClick={() => handleAction(item.action)}
-              className={`flex w-full items-center gap-3 px-3 py-2 text-left ${rounded.sm} transition-colors ${
+              className={cn(
+                "flex w-full items-center gap-3 px-3 py-2 text-left rounded-sm transition-colors",
                 item.dangerous
-                  ? `text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20`
-                  : `${colors.secondary.hover} ${colors.text.primary}`
-              } `}
+                  ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                  : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+              )}
             >
               <IconComponent className="h-4 w-4 flex-shrink-0" />
               <span>{item.label}</span>

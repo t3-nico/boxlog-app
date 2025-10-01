@@ -10,7 +10,6 @@ import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Input } from '@/components/shadcn-ui/input'
 import { Label } from '@/components/shadcn-ui/label'
-import { colors, typography } from '@/config/theme'
 
 import { useAuthContext } from '../contexts/AuthContext'
 
@@ -106,9 +105,7 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
         <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       </div>
       {error != null && (
-        <p
-          className={`${colors.text.error} font-bold ${typography.body.lg} ${typography.body.base} sm:${typography.body.sm}`}
-        >
+        <p className="text-red-600 dark:text-red-400 font-bold text-lg sm:text-base">
           {error}
         </p>
       )}
@@ -117,25 +114,25 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
           <Checkbox id="remember" name="remember" />
           <Label htmlFor="remember">Remember me</Label>
         </div>
-        <p className={`${typography.body.base} ${colors.text.muted} sm:${typography.body.sm}`}>
+        <p className="text-base sm:text-sm text-neutral-600 dark:text-neutral-400">
           <a
             href="/auth/password"
-            className={`${colors.text.primary} decoration-current/50 underline hover:decoration-current`}
+            className="text-neutral-900 dark:text-neutral-100 decoration-current/50 underline hover:decoration-current"
           >
-            <strong className={`font-medium ${colors.text.primary}`}>Forgot your password?</strong>
+            <strong className="font-medium text-neutral-900 dark:text-neutral-100">Forgot your password?</strong>
           </a>
         </p>
       </div>
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Logging in...' : 'Login'}
       </Button>
-      <p className={`text-center ${typography.body.base} ${colors.text.muted} sm:${typography.body.sm}`}>
+      <p className="text-center text-base sm:text-sm text-neutral-600 dark:text-neutral-400">
         Don&apos;t have an account?{' '}
         <a
           href="/auth/signup"
-          className={`${colors.text.primary} decoration-current/50 underline hover:decoration-current`}
+          className="text-neutral-900 dark:text-neutral-100 decoration-current/50 underline hover:decoration-current"
         >
-          <strong className={`font-medium ${colors.text.primary}`}>Sign up</strong>
+          <strong className="font-medium text-neutral-900 dark:text-neutral-100">Sign up</strong>
         </a>
       </p>
     </form>

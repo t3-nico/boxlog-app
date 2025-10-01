@@ -4,7 +4,6 @@ import { useCallback } from 'react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
-import { spacing } from '@/config/theme'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
@@ -66,14 +65,14 @@ const PreferencesSettings = () => {
   }, [preferences])
 
   return (
-    <div className={spacing.stackGap.lg}>
+    <div className="space-y-6">
       {/* 言語とテーマ */}
       <SettingsCard
         title="言語とテーマ"
         description="アプリケーションの表示言語と外観の設定"
         isSaving={preferences.isSaving}
       >
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="言語" description="アプリケーションで使用する言語">
             <Select
               value={preferences.values.language}
@@ -113,7 +112,7 @@ const PreferencesSettings = () => {
         description="アニメーションやサウンドの設定"
         isSaving={preferences.isSaving}
       >
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="アニメーション" description="画面遷移やボタンのアニメーション効果を有効にする">
             <Switch
               checked={preferences.values.animations}
@@ -136,7 +135,7 @@ const PreferencesSettings = () => {
         description="データのバックアップと開発者向け機能"
         isSaving={preferences.isSaving}
       >
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="自動バックアップ" description="データを定期的に自動でバックアップする">
             <Switch
               checked={preferences.values.autoBackup}

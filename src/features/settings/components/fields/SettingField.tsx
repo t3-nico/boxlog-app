@@ -3,7 +3,6 @@
 import React from 'react'
 
 import { Label } from '@/components/shadcn-ui/label'
-import { colors, typography, spacing } from '@/config/theme'
 
 interface SettingFieldProps {
   label: string
@@ -12,20 +11,20 @@ interface SettingFieldProps {
   required?: boolean
 }
 
-export const SettingField = ({ 
-  label, 
-  description, 
+export const SettingField = ({
+  label,
+  description,
   children,
-  required 
+  required
 }: SettingFieldProps) => {
   return (
-    <div className={spacing.stackGap.sm}>
-      <Label className={`${typography.body.small} font-medium ${colors.text.primary}`}>
+    <div className="space-y-2">
+      <Label className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
         {label}
-        {required ? <span className={`${colors.semantic.error.text} ml-1`}>*</span> : null}
+        {required ? <span className="text-red-600 dark:text-red-400 ml-1">*</span> : null}
       </Label>
       {description != null && (
-        <p className={`${typography.body.small} ${colors.text.muted}`}>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400">
           {description}
         </p>
       )}

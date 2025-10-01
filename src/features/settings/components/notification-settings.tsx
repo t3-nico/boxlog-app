@@ -5,8 +5,8 @@ import { useCallback, useState } from 'react'
 import { Bell, BellRing, Settings as SettingsIcon } from 'lucide-react'
 
 import { Switch } from '@/components/shadcn-ui/switch'
-import { colors, rounded, semantic, spacing, typography } from '@/config/theme'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
+import { cn } from '@/lib/utils'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useTranslation } from '@/lib/i18n/hooks'
@@ -90,17 +90,18 @@ const NotificationSettings = () => {
   )
 
   return (
-    <div className={spacing.stackGap.lg}>
+    <div className="space-y-6">
       {/* タブナビゲーション */}
       <div className="flex items-center gap-4">
         <button
           type="button"
           onClick={handleListTabClick}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
             activeTab === 'list'
-              ? `${colors.primary.light} ${colors.primary.text}`
-              : `${colors.text.secondary} hover:${colors.text.primary}`
-          }`}
+              ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
+              : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
+          )}
         >
           <BellRing className="h-4 w-4" />
           {t('notifications.settings.tabs.list')}
@@ -108,11 +109,12 @@ const NotificationSettings = () => {
         <button
           type="button"
           onClick={handleSettingsTabClick}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+          className={cn(
+            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
             activeTab === 'settings'
-              ? `${colors.primary.light} ${colors.primary.text}`
-              : `${colors.text.secondary} hover:${colors.text.primary}`
-          }`}
+              ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
+              : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
+          )}
         >
           <SettingsIcon className="h-4 w-4" />
           {t('notifications.settings.tabs.settings')}
@@ -123,7 +125,7 @@ const NotificationSettings = () => {
       {activeTab === 'list' ? <NotificationsList /> : null}
 
       {activeTab === 'settings' ? (
-        <div className={spacing.stackGap.lg}>
+        <div className="space-y-6">
           {/* メール・プッシュ通知 */}
           <SettingsCard
             title={
@@ -135,7 +137,7 @@ const NotificationSettings = () => {
             description={t('notifications.settings.deliverySettings.description')}
             isSaving={notifications.isSaving}
           >
-            <div className={spacing.stackGap.md}>
+            <div className="space-y-4">
               <SettingField
                 label={t('notifications.settings.deliverySettings.email.label')}
                 description={t('notifications.settings.deliverySettings.email.description')}
@@ -174,7 +176,7 @@ const NotificationSettings = () => {
             description={t('notifications.settings.contentSettings.description')}
             isSaving={notifications.isSaving}
           >
-            <div className={spacing.stackGap.md}>
+            <div className="space-y-4">
               <SettingField
                 label={t('notifications.settings.contentSettings.weeklyDigest.label')}
                 description={t('notifications.settings.contentSettings.weeklyDigest.description')}
@@ -195,8 +197,8 @@ const NotificationSettings = () => {
           </SettingsCard>
 
           {/* ヒント情報 */}
-          <div className={`${rounded.component.card.lg} ${semantic.info.light} ${spacing.card}`}>
-            <p className={`${typography.body.sm} ${semantic.info.text}`}>{t('notifications.settings.tip')}</p>
+          <div className="rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-4">
+            <p className="text-sm text-blue-700 dark:text-blue-300">{t('notifications.settings.tip')}</p>
           </div>
         </div>
       ) : null}

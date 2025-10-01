@@ -7,7 +7,6 @@ import { format } from 'date-fns'
 import { Button } from '@/components/shadcn-ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
-import { colors, spacing } from '@/config/theme'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
@@ -150,10 +149,10 @@ const CalendarSettings = () => {
   )
 
   return (
-    <div className={spacing.stackGap.lg}>
+    <div className="space-y-6">
       {/* Time & Timezone Section */}
       <SettingsCard title="時間とタイムゾーン" description="日付と時間の表示方法を設定" isSaving={autoSave.isSaving}>
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="タイムゾーン" description="カレンダー表示に使用するタイムゾーン">
             <Select value={autoSave.values.timezone} onValueChange={handleTimezoneChange}>
               <SelectTrigger>
@@ -181,11 +180,11 @@ const CalendarSettings = () => {
           </SettingField>
 
           {/* プレビュー表示 */}
-          <div className={`p-4 ${colors.background.muted} rounded-lg`}>
-            <p className={`text-sm ${colors.text.secondary} mb-2`}>プレビュー:</p>
-            <div className={spacing.stackGap.xs}>
+          <div className="p-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">プレビュー:</p>
+            <div className="space-y-1">
               <p className="font-medium">現在時刻: {formatTimeWithSettings(new Date(), autoSave.values.timeFormat)}</p>
-              <p className={`text-sm ${colors.text.secondary}`}>完全表記: {format(new Date(), 'yyyy/MM/dd HH:mm')}</p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">完全表記: {format(new Date(), 'yyyy/MM/dd HH:mm')}</p>
             </div>
           </div>
         </div>
@@ -197,7 +196,7 @@ const CalendarSettings = () => {
         description="週の表示方法とカレンダーのカスタマイズ"
         isSaving={autoSave.isSaving}
       >
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="週の開始曜日" description="カレンダーの週の開始日を選択">
             <Select value={String(autoSave.values.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
               <SelectTrigger>
@@ -227,7 +226,7 @@ const CalendarSettings = () => {
         description="新しいタスクとイベントのデフォルト動作"
         isSaving={autoSave.isSaving}
       >
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="デフォルトタスク時間" description="新しいタスク作成時のデフォルト時間">
             <Select value={String(autoSave.values.defaultDuration)} onValueChange={handleDefaultDurationChange}>
               <SelectTrigger>
@@ -264,7 +263,7 @@ const CalendarSettings = () => {
 
       {/* Business Hours Section */}
       <SettingsCard title="営業時間" description="作業時間をカレンダーに定義" isSaving={autoSave.isSaving}>
-        <div className={spacing.stackGap.md}>
+        <div className="space-y-4">
           <SettingField label="営業開始時間" description="営業時間の開始時間">
             <Select value={String(autoSave.values.businessHours.start)} onValueChange={handleBusinessHoursStartChange}>
               <SelectTrigger>
@@ -296,8 +295,8 @@ const CalendarSettings = () => {
           </SettingField>
 
           {/* 営業時間プレビュー */}
-          <div className={`p-4 ${colors.background.muted} rounded-lg`}>
-            <p className={`text-sm ${colors.text.secondary} mb-2`}>営業時間:</p>
+          <div className="p-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">営業時間:</p>
             <p className="font-medium">
               {formatHour(autoSave.values.businessHours.start, autoSave.values.timeFormat)} -{' '}
               {formatHour(autoSave.values.businessHours.end, autoSave.values.timeFormat)}

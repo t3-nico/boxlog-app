@@ -1,8 +1,6 @@
 // features/calendar/theme/utils.ts
 // テーマ関連のユーティリティ関数（Tailwindクラスベース）
 
-import { colors } from '@/config/theme'
-
 import { calendarAnimations } from './animations'
 import type { CalendarColors } from './colors'
 import { calendarColors } from './colors'
@@ -26,15 +24,12 @@ export const getStatusColor = (
   return (colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null) || ''
 }
 
-// 共通テーマから必要な色クラスを取得するヘルパー
-
-export const getCommonColor = (category: keyof typeof colors, type: string): string => {
-  const colorCategory = colors[category as keyof typeof colors]
-  if (typeof colorCategory === 'object' && type in colorCategory) {
-    return (Object.prototype.hasOwnProperty.call(colorCategory, type) ? (colorCategory as Record<string, string>)[type] : null) || ''
-  }
-  return ''
-}
+// 共通Tailwindクラスを取得するヘルパー
+export const getTextMuted = (): string => 'text-neutral-600 dark:text-neutral-400'
+export const getBorderDefault = (): string => 'border-neutral-200 dark:border-neutral-800'
+export const getSelectionBg = (): string => 'bg-blue-50 dark:bg-blue-950'
+export const getSurfaceBg = (): string => 'bg-neutral-50 dark:bg-neutral-900'
+export const getErrorBorder = (): string => 'border-red-500 dark:border-red-400'
 
 // スタイルクラスを取得
 export const getCalendarStyle = (category: keyof typeof calendarStyles, property?: string): unknown => {
@@ -132,7 +127,7 @@ export const getCalendarGridClassName = (): string => {
 // 時間カラムのクラス名を生成
 export const getTimeColumnClassName = (): string => {
   return [
-    colors.text.muted, // 共通テーマの薄いテキスト色
+    getTextMuted(),
     calendarStyles.event.fontSize.time,
     'pr-2 text-right',
     calendarStyles.grid.columnMinWidth,
@@ -143,7 +138,7 @@ export const getTimeColumnClassName = (): string => {
 export const getGridLineClassName = (): string => {
   return [
     'border-t',
-    colors.border.DEFAULT, // 共通テーマのボーダー色
+    getBorderDefault(),
     'absolute left-0 right-0',
   ].join(' ')
 }
@@ -151,7 +146,7 @@ export const getGridLineClassName = (): string => {
 // 今日ハイライトのクラス名を生成
 export const getTodayHighlightClassName = (): string => {
   return [
-    colors.selection.DEFAULT, // 共通テーマの選択背景色
+    getSelectionBg(),
     'absolute inset-0 pointer-events-none',
   ].join(' ')
 }
@@ -159,7 +154,7 @@ export const getTodayHighlightClassName = (): string => {
 // 週末ハイライトのクラス名を生成
 export const getWeekendHighlightClassName = (): string => {
   return [
-    colors.background.surface, // 共通テーマのサーフェス色
+    getSurfaceBg(),
     'absolute inset-0 pointer-events-none',
   ].join(' ')
 }
@@ -168,7 +163,7 @@ export const getWeekendHighlightClassName = (): string => {
 export const getCurrentTimeLineClassName = (): string => {
   return [
     'border-t-2',
-    colors.semantic.error.border, // 共通テーマのエラー色（赤）
+    getErrorBorder(),
     'absolute left-0 right-0 z-20',
     'pointer-events-none',
   ].join(' ')
