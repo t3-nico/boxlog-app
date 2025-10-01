@@ -124,8 +124,9 @@ export function useFocusTrap(options: FocusTrapOptions) {
     // 自動フォーカス
     if (options.autoFocus) {
       const focusableElements = getFocusableElements(containerRef.current)
-      if (focusableElements.length > 0) {
-        focusableElements[0].element.focus()
+      const firstElement = focusableElements[0]
+      if (firstElement) {
+        firstElement.element.focus()
       }
     }
 
@@ -162,8 +163,12 @@ export function useFocusTrap(options: FocusTrapOptions) {
       return
     }
 
-    const firstElement = focusableElements[0].element
-    const lastElement = focusableElements[focusableElements.length - 1].element
+    const firstFocusable = focusableElements[0]
+    const lastFocusable = focusableElements[focusableElements.length - 1]
+    if (!firstFocusable || !lastFocusable) return
+
+    const firstElement = firstFocusable.element
+    const lastElement = lastFocusable.element
     const currentElement = document.activeElement as HTMLElement
 
     if (event.shiftKey) {
@@ -210,8 +215,9 @@ export function useFocusTrap(options: FocusTrapOptions) {
       if (!activeElement || !containerRef.current?.contains(activeElement)) {
         // フォーカスを最初の要素に戻す
         const focusableElements = getFocusableElements(containerRef.current!)
-        if (focusableElements.length > 0) {
-          focusableElements[0].element.focus()
+        const firstElement = focusableElements[0]
+        if (firstElement) {
+          firstElement.element.focus()
         }
       }
     }, 0)
@@ -260,8 +266,9 @@ export function useFocusTrap(options: FocusTrapOptions) {
     if (!containerRef.current) return false
 
     const focusableElements = getFocusableElements(containerRef.current)
-    if (focusableElements.length > 0) {
-      focusableElements[0].element.focus()
+    const firstElement = focusableElements[0]
+    if (firstElement) {
+      firstElement.element.focus()
       return true
     }
     return false
@@ -271,8 +278,9 @@ export function useFocusTrap(options: FocusTrapOptions) {
     if (!containerRef.current) return false
 
     const focusableElements = getFocusableElements(containerRef.current)
-    if (focusableElements.length > 0) {
-      focusableElements[focusableElements.length - 1].element.focus()
+    const lastElement = focusableElements[focusableElements.length - 1]
+    if (lastElement) {
+      lastElement.element.focus()
       return true
     }
     return false
@@ -287,11 +295,17 @@ export function useFocusTrap(options: FocusTrapOptions) {
     )
 
     if (currentIndex >= 0 && currentIndex < focusableElements.length - 1) {
-      focusableElements[currentIndex + 1].element.focus()
-      return true
-    } else if (focusableElements.length > 0) {
-      focusableElements[0].element.focus()
-      return true
+      const nextElement = focusableElements[currentIndex + 1]
+      if (nextElement) {
+        nextElement.element.focus()
+        return true
+      }
+    } else {
+      const firstElement = focusableElements[0]
+      if (firstElement) {
+        firstElement.element.focus()
+        return true
+      }
     }
     return false
   }, [])
@@ -305,11 +319,17 @@ export function useFocusTrap(options: FocusTrapOptions) {
     )
 
     if (currentIndex > 0) {
-      focusableElements[currentIndex - 1].element.focus()
-      return true
-    } else if (focusableElements.length > 0) {
-      focusableElements[focusableElements.length - 1].element.focus()
-      return true
+      const prevElement = focusableElements[currentIndex - 1]
+      if (prevElement) {
+        prevElement.element.focus()
+        return true
+      }
+    } else {
+      const lastElement = focusableElements[focusableElements.length - 1]
+      if (lastElement) {
+        lastElement.element.focus()
+        return true
+      }
     }
     return false
   }, [])
