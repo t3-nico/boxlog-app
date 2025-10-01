@@ -13,11 +13,11 @@ export const CreateButton = () => {
   
   // パスに応じてsourceを決定
   let source: 'calendar' | 'table' | 'kanban' | 'sidebar' = 'sidebar'
-  if (pathname.startsWith('/calendar')) {
+  if ((pathname || "/").startsWith('/calendar')) {
     source = 'calendar'
-  } else if (pathname.startsWith('/table')) {
+  } else if ((pathname || "/").startsWith('/table')) {
     source = 'table'
-  } else if (pathname.startsWith('/board')) {
+  } else if ((pathname || "/").startsWith('/board')) {
     source = 'kanban'
   }
 

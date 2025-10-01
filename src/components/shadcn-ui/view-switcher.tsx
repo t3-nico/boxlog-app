@@ -20,7 +20,7 @@ export const ViewSwitcher = () => {
   return (
     <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
       {views.map((view) => {
-        const isActive = pathname === view.path || pathname.startsWith(view.path)
+        const isActive = (pathname || "/") === view.path || (pathname || "/").startsWith(view.path)
         const Icon = view.icon
         
         return (

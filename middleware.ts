@@ -24,7 +24,10 @@ function getLocaleFromRequest(request: NextRequest): Locale {
   if (acceptLanguage) {
     const preferredLocale = acceptLanguage
       .split(',')
-      .map((lang) => lang.split(';')[0].split('-')[0].trim())
+      .map((lang) => {
+        const parts = lang.split(';')[0]?.split('-')
+        return parts?.[0]?.trim() || ''
+      })
       .find((lang) => locales.includes(lang as Locale)) as Locale
 
     if (preferredLocale) {

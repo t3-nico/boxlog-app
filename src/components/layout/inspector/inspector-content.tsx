@@ -102,11 +102,11 @@ export const InspectorContent = () => {
     }
     
     // パスに基づいた自動判定
-    if (pathname.startsWith('/calendar')) {
+    if ((pathname || "/").startsWith('/calendar')) {
       return <CalendarInspectorContent />
     }
     
-    if (pathname.startsWith('/tasks')) {
+    if ((pathname || "/").startsWith('/tasks')) {
       return <TaskInspectorContent />
     }
     

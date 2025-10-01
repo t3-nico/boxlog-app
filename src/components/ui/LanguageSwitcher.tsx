@@ -55,7 +55,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
       setLocaleCookie(newLocale)
 
       // 現在のパスから言語プレフィックスを取得
-      const segments = pathname.split('/')
+      const segments = (pathname || '/').split('/')
       const currentLocaleFromPath = locales.find((locale) => segments[1] === locale)
 
       let newPathname: string

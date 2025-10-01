@@ -13,7 +13,7 @@ import { useNavigationStore } from '../sidebar/stores/navigation.store'
 export const NavigationToggle = () => {
   const pathname = usePathname()
   const { isSecondaryNavCollapsed, setSecondaryNavCollapsed } = useNavigationStore()
-  const isSettings = pathname.startsWith('/settings')
+  const isSettings = (pathname || "/").startsWith('/settings')
 
   // jsx-no-bind optimization: Toggle navigation handler
   const handleToggleNavigation = useCallback(() => {

@@ -11,8 +11,8 @@ export { NavigationToggle as SecondaryNavToggle } from './toggle'
 
 export const Navigation = () => {
   const pathname = usePathname()
-  const isSettings = pathname.startsWith('/settings')
-  const isCalendar = pathname.startsWith('/calendar')
+  const isSettings = (pathname || "/").startsWith('/settings')
+  const isCalendar = (pathname || "/").startsWith('/calendar')
 
   return (
     <div

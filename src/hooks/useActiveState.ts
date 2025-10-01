@@ -8,8 +8,8 @@ export const useActiveState = () => {
   const pathname = usePathname()
   const _searchParams = useSearchParams()
   const { filters } = useBoxStore()
-  
-  const currentView = pathname.split('/')[1] || 'calendar'
+
+  const currentView = (pathname || '/').split('/')[1] || 'calendar'
   const selectedTag = filters.tags?.[0] || null
   const selectedSmartFolder = filters.smartFolder || null
   

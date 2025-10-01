@@ -35,7 +35,7 @@ export const SettingsNavigation = () => {
         <SidebarHeading>General</SidebarHeading>
         <SidebarItem
           href="/settings/account"
-          current={pathname.startsWith('/settings/account')}
+          current={(pathname || "/").startsWith('/settings/account')}
           indicator={false}
         >
           <UserIcon data-slot="icon" />
@@ -43,7 +43,7 @@ export const SettingsNavigation = () => {
         </SidebarItem>
         <SidebarItem
           href="/settings/preferences"
-          current={pathname.startsWith('/settings/preferences')}
+          current={(pathname || "/").startsWith('/settings/preferences')}
           indicator={false}
         >
           <AdjustmentsVerticalIcon data-slot="icon" />
@@ -51,7 +51,7 @@ export const SettingsNavigation = () => {
         </SidebarItem>
         <SidebarItem
           href="/settings/notifications"
-          current={pathname.startsWith('/settings/notifications')}
+          current={(pathname || "/").startsWith('/settings/notifications')}
           indicator={false}
         >
           <BellIcon data-slot="icon" />
@@ -59,7 +59,7 @@ export const SettingsNavigation = () => {
         </SidebarItem>
         <SidebarItem
           href="/settings/calendar"
-          current={pathname.startsWith('/settings/calendar')}
+          current={(pathname || "/").startsWith('/settings/calendar')}
           indicator={false}
         >
           <CalendarIcon data-slot="icon" />
@@ -71,7 +71,7 @@ export const SettingsNavigation = () => {
         <SidebarHeading>Customization</SidebarHeading>
         <SidebarItem
           href="/settings/tags"
-          current={pathname.startsWith('/settings/tags')}
+          current={(pathname || "/").startsWith('/settings/tags')}
           indicator={false}
         >
           <TagIcon data-slot="icon" />
@@ -79,7 +79,7 @@ export const SettingsNavigation = () => {
         </SidebarItem>
         <SidebarItem
           href="/settings/templates"
-          current={pathname.startsWith('/settings/templates')}
+          current={(pathname || "/").startsWith('/settings/templates')}
           indicator={false}
         >
           <ClipboardDocumentListIcon data-slot="icon" />
@@ -91,7 +91,7 @@ export const SettingsNavigation = () => {
         <SidebarHeading>Integration</SidebarHeading>
         <SidebarItem
           href="/settings/integration"
-          current={pathname.startsWith('/settings/integration')}
+          current={(pathname || "/").startsWith('/settings/integration')}
           indicator={false}
         >
           <LinkIcon data-slot="icon" />
@@ -103,7 +103,7 @@ export const SettingsNavigation = () => {
         <SidebarHeading>Data</SidebarHeading>
         <SidebarItem
           href="/settings/plan-billing"
-          current={pathname.startsWith('/settings/plan-billing')}
+          current={(pathname || "/").startsWith('/settings/plan-billing')}
           indicator={false}
         >
           <CreditCardIcon data-slot="icon" />
@@ -111,7 +111,7 @@ export const SettingsNavigation = () => {
         </SidebarItem>
         <SidebarItem
           href="/settings/data-export"
-          current={pathname.startsWith('/settings/data-export')}
+          current={(pathname || "/").startsWith('/settings/data-export')}
           indicator={false}
         >
           <ArrowDownTrayIcon data-slot="icon" />
@@ -119,7 +119,7 @@ export const SettingsNavigation = () => {
         </SidebarItem>
         <SidebarItem
           href="/settings/trash"
-          current={pathname.startsWith('/settings/trash')}
+          current={(pathname || "/").startsWith('/settings/trash')}
           indicator={false}
         >
           <TrashIcon data-slot="icon" />
@@ -131,7 +131,7 @@ export const SettingsNavigation = () => {
         <SidebarHeading>Personal</SidebarHeading>
         <SidebarItem
           href="/settings/chronotype"
-          current={pathname.startsWith('/settings/chronotype')}
+          current={(pathname || "/").startsWith('/settings/chronotype')}
           indicator={false}
         >
           <ClockIcon data-slot="icon" />
@@ -143,7 +143,7 @@ export const SettingsNavigation = () => {
         <SidebarHeading>About</SidebarHeading>
         <SidebarItem
           href="/settings/legal"
-          current={pathname.startsWith('/settings/legal')}
+          current={(pathname || "/").startsWith('/settings/legal')}
           indicator={false}
         >
           <InformationCircleIcon data-slot="icon" />

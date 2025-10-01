@@ -179,16 +179,19 @@ function calculateEventColumns(events: CalendarEvent[]): Array<{ column: number;
     
     // 利用可能な列を探す
     let columnIndex = 0
-    while (columnIndex < occupiedColumns.length && columnIndex < occupiedColumns.length && occupiedColumns[columnIndex]?.end > start) {
+    while (columnIndex < occupiedColumns.length) {
+      const col = occupiedColumns[columnIndex]
+      if (!col || col.end <= start) break
       columnIndex++
     }
-    
+
     // 列を占有
     if (columnIndex >= occupiedColumns.length) {
       occupiedColumns.push({ end })
     } else {
-      if (columnIndex < occupiedColumns.length) {
-        occupiedColumns[columnIndex].end = end
+      const col = occupiedColumns[columnIndex]
+      if (col) {
+        col.end = end
       }
     }
     
