@@ -138,6 +138,7 @@ export const colors = {
     hover: 'hover:bg-gray-100 dark:hover:bg-gray-800',
     card: 'bg-white dark:bg-gray-900',
     muted: 'bg-gray-50 dark:bg-gray-800',
+    white: 'bg-white',
   },
   border: {
     base: 'border-gray-200 dark:border-gray-700',
@@ -206,7 +207,7 @@ export const spacing = {
   '2xl': '4rem',  // 64px - var(--spacing-2xl)
   page: { DEFAULT: '1rem', md: '1.5rem', lg: '2rem', padding: '1rem' },
   section: { DEFAULT: '1.5rem', md: '2rem', lg: '3rem', margin: '1.5rem', paddingBottom: '1rem' },
-  component: { DEFAULT: '0.5rem', md: '1rem', lg: '1.5rem', padding: '1rem' },
+  component: { DEFAULT: '0.5rem', md: '1rem', lg: '1.5rem', padding: { DEFAULT: '1rem', md: '1rem', lg: '1.5rem' } },
 } as const
 
 /**
