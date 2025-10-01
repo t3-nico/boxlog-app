@@ -68,10 +68,10 @@ export const ColorPicker = ({ value, defaultValue = '#000000', onChange, classNa
     if (value) {
       const color = Color.rgb(value).rgb().object()
 
-      setHue(color.r)
-      setSaturation(color.g)
-      setLightness(color.b)
-      setAlpha(color.a)
+      setHue(color.r ?? 0)
+      setSaturation(color.g ?? 0)
+      setLightness(color.b ?? 0)
+      setAlpha(color.a ?? 1)
     }
   }, [value])
 
@@ -193,7 +193,7 @@ export const ColorPickerHue = ({ className, ...props }: ColorPickerHueProps) => 
 
   const handleHueChange = useCallback(
     ([newHue]: number[]) => {
-      setHue(newHue)
+      setHue(newHue ?? 0)
     },
     [setHue]
   )
@@ -222,7 +222,7 @@ export const ColorPickerAlpha = ({ className, ...props }: ColorPickerAlphaProps)
 
   const handleAlphaChange = useCallback(
     ([newAlpha]: number[]) => {
-      setAlpha(newAlpha)
+      setAlpha(newAlpha ?? 100)
     },
     [setAlpha]
   )
@@ -264,9 +264,9 @@ export const ColorPickerEyeDropper = ({ className, ...props }: ColorPickerEyeDro
       const color = Color(result.sRGBHex)
       const [h, s, l] = color.hsl().array()
 
-      setHue(h)
-      setSaturation(s)
-      setLightness(l)
+      setHue(h ?? 0)
+      setSaturation(s ?? 0)
+      setLightness(l ?? 50)
       setAlpha(100)
     } catch (error) {
       console.error('EyeDropper failed:', error)
@@ -361,7 +361,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
                 index && 'rounded-l-none',
                 className
               )}
-              key={keyName}
+              key={String(keyName)}
               readOnly
               type="text"
               value={value}
@@ -410,7 +410,7 @@ export const ColorPickerFormat = ({ className, ...props }: ColorPickerFormatProp
                 index && 'rounded-l-none',
                 className
               )}
-              key={keyName}
+              key={String(keyName)}
               readOnly
               type="text"
               value={value}

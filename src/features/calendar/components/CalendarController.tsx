@@ -383,21 +383,21 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
         if (time) {
           if (time.includes('-')) {
             const [start, end] = time.split('-')
-            const [startHour, startMin] = start.split(':').map(Number)
-            const [endHour, endMin] = end.split(':').map(Number)
+            const [startHour, startMin] = start?.split(':').map(Number) ?? [9, 0]
+            const [endHour, endMin] = end?.split(':').map(Number) ?? [10, 0]
 
             startTime = new Date(date)
-            startTime.setHours(startHour, startMin, 0, 0)
+            startTime.setHours(startHour ?? 9, startMin ?? 0, 0, 0)
 
             endTime = new Date(date)
-            endTime.setHours(endHour, endMin, 0, 0)
+            endTime.setHours(endHour ?? 10, endMin ?? 0, 0, 0)
           } else {
             const [hour, min] = time.split(':').map(Number)
             startTime = new Date(date)
-            startTime.setHours(hour, min, 0, 0)
+            startTime.setHours(hour ?? 9, min ?? 0, 0, 0)
 
             endTime = new Date(date)
-            endTime.setHours(hour + 1, min, 0, 0) // デフォルト1時間
+            endTime.setHours((hour ?? 9) + 1, min ?? 0, 0, 0) // デフォルト1時間
           }
         } else {
           startTime = new Date(date)
@@ -409,20 +409,22 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       }
 
       // CreateEventInspectorを新規作成モードで開く
-      openCreateInspector({
-        initialData: {
-          startDate: startTime,
-          endDate: endTime,
-          type: 'event',
-          status: 'planned',
-          priority: 'necessary',
-        },
-        context: {
-          source: 'calendar',
-          date,
-          viewType,
-        },
-      })
+      if (startTime && endTime && date) {
+        openCreateInspector({
+          initialData: {
+            startDate: startTime,
+            endDate: endTime,
+            type: 'event',
+            status: 'planned',
+            priority: 'necessary',
+          },
+          context: {
+            source: 'calendar',
+            date,
+            viewType,
+          },
+        })
+      }
     },
     [openCreateInspector, viewType, currentDate]
   )
