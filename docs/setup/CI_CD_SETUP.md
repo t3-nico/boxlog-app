@@ -1,8 +1,24 @@
 # CI/CD パイプライン 1Password連携セットアップ
 
+> **⚠️ 重要**: このドキュメントは**参考情報**です。
+> **現在のCI/CDパイプラインは1Passwordを使用せず、GitHub Secretsを直接使用しています。**
+> 将来的に1Password統合を検討する際の参考としてご利用ください。
+
+## 📋 現在の環境変数管理方法
+
+| 環境 | 管理方法 | 参照先 |
+|------|---------|--------|
+| **CI/CD (GitHub Actions)** | GitHub Secrets | [.github/workflows/main.yml](.github/workflows/main.yml) |
+| **本番環境 (Vercel)** | Vercel Dashboard | [vercel.com](https://vercel.com) |
+| **ローカル開発** | 1Password CLI (推奨) | [.env.example](.env.example) |
+
+---
+
 ## 概要
 
 BoxLogプロジェクトのCI/CDパイプライン（GitHub Actions）で1Password Service Accountを使用して、安全に秘密情報を管理する手順を説明します。
+
+**注意**: この方法は現在実装されていません。導入を検討する際の参考資料としてご利用ください。
 
 ## 前提条件
 
