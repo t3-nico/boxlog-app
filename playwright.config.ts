@@ -16,7 +16,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   // 並列ワーカー数
-  workers: process.env.CI ? 1 : undefined,
+  ...(process.env.CI ? { workers: 1 } : {}),
 
   // レポーター設定
   reporter: [

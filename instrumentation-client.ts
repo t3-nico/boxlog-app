@@ -8,7 +8,7 @@
 import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || undefined,
 
   // パフォーマンス監視設定
   tracesSampleRate: 1,
