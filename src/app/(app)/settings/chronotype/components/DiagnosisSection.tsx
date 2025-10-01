@@ -4,8 +4,6 @@ import { memo } from 'react'
 
 import { Clock, GraduationCap, Moon, Sun } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
-
 import { chronoTypeProfiles } from '../chronotype.constants'
 import type { DiagnosisQuestion } from '../chronotype.diagnosis'
 

@@ -1,5 +1,3 @@
-import clsx from 'clsx'
-
 import { cn } from '@/lib/utils'
 
 export const DescriptionList = ({ className, ...props }: React.ComponentPropsWithoutRef<'dl'>) => {
