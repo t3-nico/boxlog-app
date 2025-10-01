@@ -2,8 +2,7 @@
 
 import React, { useMemo } from 'react'
 
-
-import useCalendarToast from '@/features/calendar/lib/toast'
+import type { CalendarEvent } from '@/features/events'
 import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
@@ -11,86 +10,76 @@ import { cn } from '@/lib/utils'
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
 import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
 
-import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
-
 import { DayContent } from './components/DayContent'
 import type { DayViewProps } from './DayView.types'
 import { useDayView } from './hooks/useDayView'
 
-
-
-const _TIME_COLUMN_WIDTH = 64 // 時間列の幅（px）
-
 export const DayView = ({
-  _dateRange,
+  dateRange: _dateRange,
   tasks: _tasks,
-  _events,
+  events: _events,
   currentDate,
-  _showWeekends = true,
+  showWeekends: _showWeekends = true,
   className,
-  _onTaskClick,
+  onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
-  _onCreateEvent,
+  onCreateEvent: _onCreateEvent,
   onUpdateEvent,
-  _onDeleteEvent,
-  _onRestoreEvent,
+  onDeleteEvent: _onDeleteEvent,
+  onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
   onTimeRangeSelect,
-  _onTaskDrag,
-  _onCreateTask,
-  _onCreateRecord,
-  _onViewChange,
-  _onNavigatePrev,
-  _onNavigateNext,
+  onTaskDrag: _onTaskDrag,
+  onCreateTask: _onCreateTask,
+  onCreateRecord: _onCreateRecord,
+  onViewChange: _onViewChange,
+  onNavigatePrev: _onNavigatePrev,
+  onNavigateNext: _onNavigateNext,
   onNavigateToday
 }: DayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
-  const { updateEventTime } = useEventStore()
-  const _toast = useCalendarToast()
-  
+  const { updateEvent } = useEventStore()
+
   // イベントストアから最新のデータを取得
   const storeEvents = useEventStore(eventSelectors.getEvents)
-  
-  // レスポンシブな時間高さ
-  const _HOUR_HEIGHT = useResponsiveHourHeight({
-    mobile: 48,
-    tablet: 60,
-    desktop: 72
-  })
-  
+
   // 表示する日付
   const displayDates = useMemo(() => {
     const date = new Date(currentDate)
     date.setHours(0, 0, 0, 0)
     return [date]
   }, [currentDate])
-  
+
   // 最初の日付を使用（Day表示なので1日のみ）
   const date = displayDates[0]
-  
+  if (!date) {
+    throw new Error('Display date is undefined')
+  }
+
   // ドラッグイベント用のハンドラー
-  const handleEventTimeUpdate = React.useCallback(async (eventId: string, updates: { startTime: Date; endTime: Date }) => {
-    try {
-      await updateEventTime(eventId, updates.startTime, updates.endTime)
-      // ドラッグ&ドロップ後は詳細モーダルを開かない
-      // Toast通知はuseDragAndDropで処理される
-      console.log('Event time updated via drag & drop:', eventId, updates)
-    } catch (error) {
-      console.error('Failed to update event time:', error)
-    }
-  }, [updateEventTime])
+  const handleEventTimeUpdate = React.useCallback((event: CalendarEvent) => {
+    if (!event.startDate || !event.endDate) return
+
+    void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
+      .then(() => {
+        console.log('Event time updated via drag & drop:', event.id)
+      })
+      .catch((error) => {
+        console.error('Failed to update event time:', error)
+      })
+  }, [updateEvent])
 
   // DayView専用ロジック（ストアから最新のイベントデータを使用）
   const {
     dayEvents,
     eventStyles,
     isToday,
-    _timeSlots
+    timeSlots: _timeSlots
   } = useDayView({
     date,
-    events: storeEvents, // ストアから取得した最新データを使用
-    onEventUpdate: onUpdateEvent
+    events: storeEvents as CalendarEvent[], // ストアから取得した最新データを使用
+    ...(onUpdateEvent && { onEventUpdate: onUpdateEvent })
   })
 
   // 空き時間クリックハンドラー
@@ -130,11 +119,10 @@ export const DayView = ({
           <CalendarLayoutWithHeader
             header={headerComponent}
             timezone={timezone}
-            scrollToHour={isToday ? undefined : 8}
+            {...(isToday && { scrollToHour: 8 })}
             displayDates={displayDates}
             viewMode="day"
             onTimeClick={handleEmptySlotClick}
-            enableKeyboardNavigation={true}
             className="h-full"
           >
             {/* 日のコンテンツ */}
@@ -142,11 +130,11 @@ export const DayView = ({
               date={date}
               events={dayEvents}
               eventStyles={eventStyles}
-              onEventClick={onEventClick}
-              onEventContextMenu={onEventContextMenu}
-              onEmptyClick={onEmptyClick}
-              onEventUpdate={handleEventTimeUpdate}
-              onTimeRangeSelect={onTimeRangeSelect}
+              {...(onEventClick && { onEventClick })}
+              {...(onEventContextMenu && { onEventContextMenu })}
+              {...(onEmptyClick && { onEmptyClick })}
+              {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
+              {...(onTimeRangeSelect && { onTimeRangeSelect })}
               className="absolute inset-y-0 left-0 right-0"
             />
           </CalendarLayoutWithHeader>

@@ -9,6 +9,10 @@ export interface TimedEvent {
   color?: string
   start: Date
   end: Date
+  // Aliases for backward compatibility
+  startDate?: Date
+  endDate?: Date
+  isMultiDay?: boolean
   isReadOnly?: boolean
   tags?: Array<{
     id: string

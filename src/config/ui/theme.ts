@@ -230,7 +230,7 @@ export const rounded = {
       lg: 'rounded-lg',
     },
     card: { DEFAULT: 'rounded-lg', lg: 'rounded-lg', md: 'rounded-md' },
-    badge: { DEFAULT: 'rounded-full', md: 'rounded-md' },
+    badge: { DEFAULT: 'rounded-full', sm: 'rounded-sm', md: 'rounded-md' },
     input: 'rounded-md',
     media: {
       avatar: 'rounded-full',

@@ -69,6 +69,7 @@ export const timer = (label: string) => logger.timer(label)
 export const setContext = (context: Record<string, unknown>) => logger.setContext(context)
 export const clearContext = () => logger.clearContext()
 export const getStats = () => logger.getStats()
+export const resetStats = () => logger.resetStats()
 export const flush = () => logger.flush()
 
 /**
@@ -276,6 +277,7 @@ const loggerSystem = {
   setContext,
   clearContext,
   getStats,
+  resetStats,
   flush,
   configureLogger,
   withRequestContext,

@@ -212,17 +212,7 @@ export const MainSupportChat = () => {
   const t = useTranslation()
 
   // Use Vercel AI SDK's useChat hook with simple configuration
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    isLoading,
-    setMessages,
-    append: _append,
-    error,
-    reload,
-  } = useChat({
+  const chatHelpers = useChat({
     api: '/api/chat/codebase',
     onError: (error) => {
       console.error('Chat error:', error)
@@ -248,6 +238,26 @@ ${t('help.welcome.question')}`,
       },
     ],
   })
+
+  // Extract properties from chat helpers
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    isLoading,
+    setMessages,
+    append: _append,
+    error,
+    reload,
+  } = chatHelpers as typeof chatHelpers & {
+    input: string
+    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
+    isLoading: boolean
+    append: (message: { role: 'user' | 'assistant'; content: string }) => Promise<void>
+    reload: () => void
+  }
 
   // Event handlers using useChat values
   const handleMenuToggle = useCallback(() => {

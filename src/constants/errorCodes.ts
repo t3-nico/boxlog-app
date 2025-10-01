@@ -38,6 +38,16 @@ export const AUTH_ERRORS = {
   AUTH_CSRF_ERROR: 1009,
   /** 権限昇格エラー */
   AUTH_PRIVILEGE_ESCALATION: 1010,
+
+  // Aliases for middleware compatibility
+  /** 無効なトークン（AUTH_INVALID_TOKENのエイリアス） */
+  INVALID_TOKEN: 1001,
+  /** 期限切れトークン（AUTH_EXPIREDのエイリアス） */
+  EXPIRED_TOKEN: 1002,
+  /** 権限なし（AUTH_NO_PERMISSIONのエイリアス） */
+  NO_PERMISSION: 1003,
+  /** スコープ不足 */
+  INSUFFICIENT_SCOPE: 1011,
 } as const
 
 // ==============================================
@@ -64,6 +74,12 @@ export const API_ERRORS = {
   API_CORS_ERROR: 2009,
   /** ペイロードサイズ超過 */
   API_PAYLOAD_TOO_LARGE: 2010,
+
+  // Aliases for middleware compatibility
+  /** レート制限超過（API_RATE_LIMITのエイリアス） */
+  RATE_LIMIT_EXCEEDED: 2001,
+  /** 無効なフォーマット（API_INVALID_PARAMのエイリアス） */
+  INVALID_FORMAT: 2002,
 } as const
 
 // ==============================================
@@ -90,6 +106,10 @@ export const DATA_ERRORS = {
   DATA_BACKUP_ERROR: 3009,
   /** データ同期エラー */
   DATA_SYNC_ERROR: 3010,
+
+  // Aliases for middleware compatibility
+  /** データが見つからない（DATA_NOT_FOUNDのエイリアス） */
+  NOT_FOUND: 3001,
 } as const
 
 // ==============================================
@@ -142,6 +162,16 @@ export const SYSTEM_ERRORS = {
   SYSTEM_LOG_ERROR: 5009,
   /** 環境変数エラー */
   SYSTEM_ENV_ERROR: 5010,
+  /** 内部サーバーエラー */
+  SYSTEM_INTERNAL_ERROR: 5011,
+  /** 予期しないエラー */
+  SYSTEM_UNEXPECTED_ERROR: 5012,
+
+  // Aliases for middleware compatibility
+  /** 内部サーバーエラー（SYSTEM_INTERNAL_ERRORのエイリアス） */
+  INTERNAL_SERVER_ERROR: 5011,
+  /** 予期しないエラー（SYSTEM_UNEXPECTED_ERRORのエイリアス） */
+  UNEXPECTED_ERROR: 5012,
 } as const
 
 // ==============================================

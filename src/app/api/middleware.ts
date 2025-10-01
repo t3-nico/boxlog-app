@@ -180,7 +180,7 @@ async function handleApiError(
       code: appError.code,
       category: appError.category,
       message: appError.message,
-      userMessage: appError.userMessage.description,
+      userMessage: appError.userMessage || appError.message,
       timestamp: new Date().toISOString(),
       requestId: context.requestId
     },

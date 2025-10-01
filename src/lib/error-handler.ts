@@ -352,18 +352,8 @@ export class ErrorHandler {
       persistent: error.severity === 'critical'
     }
 
-    // アクションボタンの設定
-    if (error.userMessage.action) {
-      config.actionButton = {
-        text: error.userMessage.action,
-        action: () => {
-          // 具体的なアクションは実装側で定義
-          console.log('User action triggered:', error.userMessage.action)
-        }
-      }
-    }
-
-    const message = `${error.userMessage.title}: ${error.userMessage.description}`
+    // ユーザーメッセージを取得（AppErrorのuserMessageはstring型なので直接使用）
+    const message = error.userMessage || error.message
 
     // 登録された通知ハンドラーを実行
     this.notificationHandlers.forEach(handler => {
