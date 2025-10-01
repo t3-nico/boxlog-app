@@ -272,13 +272,13 @@ export class WorkerManager {
     }
     this.activeTasks.clear()
     this.taskQueue.length = 0
-    
+
     // ワーカーの終了
     for (const worker of this.workers) {
       worker.terminate()
     }
     this.workers.length = 0
-    
+
     // 統計のリセット
     this.workerStats = {
       totalTasks: 0,
@@ -288,26 +288,6 @@ export class WorkerManager {
       errorCount: 0
     }
     this.processingTimes.length = 0
-  }
-
-  /**
-   * フォールバック: メインスレッドでの処理
-   */
-  private async fallbackExecution<T>(type: string, payload: Record<string, unknown>): Promise<T> {
-    // Web Worker が利用できない場合のフォールバック
-    console.warn('Falling back to main thread processing for:', type)
-    
-    // 簡易的な実装（実際の処理はより複雑になる）
-    switch (type) {
-      case 'PROCESS_EVENTS':
-        return this.processEventsMainThread(payload.events, payload.options) as T
-      
-      case 'SEARCH_EVENTS':
-        return this.searchEventsMainThread(payload.events, payload.query, payload.options) as T
-      
-      default:
-        throw new Error(`Fallback not implemented for: ${type}`)
-    }
   }
 
   /**

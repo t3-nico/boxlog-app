@@ -313,7 +313,7 @@ export function useDragAndDropRefactored({
   // リサイズ開始処理
   const handleResizeStart = useCallback((
     eventId: string,
-    direction: 'top' | 'bottom',
+    _direction: 'top' | 'bottom',
     e: React.MouseEvent,
     originalPosition: { top: number; left: number; width: number; height: number }
   ) => {

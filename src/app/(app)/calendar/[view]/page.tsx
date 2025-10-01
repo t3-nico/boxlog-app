@@ -75,7 +75,7 @@ const CalendarViewPage = ({ params, searchParams }: CalendarViewPageProps) => {
         </div>
       }
     >
-      <CalendarController initialViewType={view} initialDate={initialDate} />
+      <CalendarController initialViewType={view} initialDate={initialDate ?? null} />
     </FeatureErrorBoundary>
   )
 }

@@ -266,7 +266,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                 </div>
               ),
               // Days of the week
-              ...weekDays.map((date, _dayIndex) => {
+              ...weekDays.map((date) => {
                 const states = _getDateStates(date)
 
                 return (

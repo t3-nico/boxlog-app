@@ -21,7 +21,7 @@ export function minutesToTime(minutes: number): string {
 export function getTimeFromPosition(
   y: number,
   containerRect: DOMRect,
-  gridInterval: number
+  _gridInterval: number
 ): Date {
   const minutesPerPixel = (24 * 60) / containerRect.height
   const totalMinutes = y * minutesPerPixel
@@ -167,7 +167,7 @@ export function getTimeSlotBgClass(hour: number): string {
 /**
  * グリッド線のスタイルクラスを取得
  */
-export function getGridLineClass(minutes: number, _interval: number): string {
+export function getGridLineClass(minutes: number, __interval: number): string {
   if (minutes === 0) {
     // 正時
     return 'border-t border-gray-300 dark:border-gray-600'

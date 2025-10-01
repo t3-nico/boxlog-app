@@ -148,7 +148,7 @@ const MainSupportChatInput = ({
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) => {
-  const [_isComposing, setIsComposing] = useState(false)
+  const [_isComposing, _setIsComposing] = useState(false)
 
   const getSubmitStatus = () => {
     if (isLoading) return 'streaming'
@@ -197,17 +197,16 @@ const MainSupportChatInput = ({
 
 export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
-  const [isComposing, setIsComposing] = useState(false)
-  const locale = useCurrentLocale()
+  const _locale = useCurrentLocale()
   const t = useTranslation()
 
   // jsx-no-bind optimization: Event handlers
   const handleCompositionStart = useCallback(() => {
-    setIsComposing(true)
+    _setIsComposing(true)
   }, [])
 
   const handleCompositionEnd = useCallback(() => {
-    setIsComposing(false)
+    _setIsComposing(false)
   }, [])
 
   const handleMenuToggle = useCallback(() => {

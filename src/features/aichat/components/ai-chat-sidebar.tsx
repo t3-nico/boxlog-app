@@ -278,19 +278,6 @@ const ChatInput = () => {
 export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) => {
   const { state, clearMessages } = useChatContext()
 
-  // jsx-no-bind optimization: Event handlers
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value)
-  }, [])
-
-  const handleCompositionStart = useCallback(() => {
-    setIsComposing(true)
-  }, [])
-
-  const handleCompositionEnd = useCallback(() => {
-    setIsComposing(false)
-  }, [])
-
   const handleMenuToggle = useCallback(() => {
     setShowMenu(!showMenu)
   }, [showMenu])

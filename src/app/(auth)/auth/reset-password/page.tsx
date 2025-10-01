@@ -21,8 +21,8 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(false)
 
   // Get access tokens from URL parameters
-  const accessToken = searchParams.get('access_token')
-  const refreshToken = searchParams.get('refresh_token')
+  const accessToken = searchParams?.get('access_token') ?? null
+  const refreshToken = searchParams?.get('refresh_token') ?? null
 
   useEffect(() => {
     // Redirect to auth page if tokens are missing

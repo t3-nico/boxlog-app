@@ -63,10 +63,6 @@ export const MobileHeader = ({
     onNavigate('next')
   }, [onNavigate])
 
-  const handleNavigateToday = useCallback(() => {
-    onNavigate('today')
-  }, [onNavigate])
-
   const handleViewMenuClose = useCallback(() => {
     setIsViewMenuOpen(false)
   }, [])

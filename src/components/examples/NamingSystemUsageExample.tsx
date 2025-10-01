@@ -229,7 +229,7 @@ export function NavigationExample() {
  * 🎨 スタイリング使用例
  */
 export function StylingExample() {
-  const { pageClassName, getComponentClass, currentScreen } = useNaming('styling-example')
+  const { pageClassName, getComponentClass } = useNaming('styling-example')
 
   return (
     <div className={pageClassName}>

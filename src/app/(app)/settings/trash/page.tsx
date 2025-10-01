@@ -6,8 +6,7 @@ import { TrashView } from '@/features/trash/components/TrashView'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 
 const TrashPage = () => {
-  const { emptyTrash, getFilteredItems, getStats } = useTrashStore()
-  const _items = getFilteredItems()
+  const { emptyTrash, getStats } = useTrashStore()
   const stats = getStats()
 
   return (

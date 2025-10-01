@@ -14,6 +14,24 @@ import { processApiRequest } from '@/lib/api/middleware'
 import type { ApiRequest } from '@/lib/api/versioning'
 
 /**
+ * Configuration structure type
+ */
+interface ConfigStructure {
+  app?: Record<string, unknown>
+  database?: { password?: string; host?: string; name?: string }
+  auth?: { jwtSecret?: string }
+  features?: Record<string, boolean>
+  email?: { password?: string; host?: string; from?: string }
+  apis?: {
+    openai?: { apiKey?: string }
+    vercel?: { token?: string }
+    onePassword?: { connectToken?: string }
+  }
+  server?: { session?: { secret?: string } }
+  logging?: Record<string, unknown>
+}
+
+/**
  * 🔧 Configuration Info レスポンス型定義
  */
 interface ConfigInfoResponse {
@@ -46,7 +64,7 @@ interface ConfigInfoResponse {
 /**
  * 📊 セクション情報の構築
  */
-function buildSectionInfo(config: Record<string, unknown>): Record<string, unknown> {
+function buildSectionInfo(config: ConfigStructure): Record<string, { loaded: boolean; keys: number; hasSecrets?: boolean }> {
   return {
     app: {
       loaded: !!config.app,
@@ -91,8 +109,8 @@ function buildSectionInfo(config: Record<string, unknown>): Record<string, unkno
 /**
  * 🚀 機能フラグ情報の構築
  */
-function buildFeatureFlags(config: Record<string, unknown>): { enabled: string[]; disabled: string[] } {
-  const features = { enabled: [], disabled: [] }
+function buildFeatureFlags(config: ConfigStructure): { enabled: string[]; disabled: string[] } {
+  const features: { enabled: string[]; disabled: string[] } = { enabled: [], disabled: [] }
 
   if (config.features) {
     Object.entries(config.features).forEach(([key, value]) => {
@@ -110,7 +128,7 @@ function buildFeatureFlags(config: Record<string, unknown>): { enabled: string[]
 /**
  * 🏥 API健康チェック情報の構築
  */
-function buildApiHealthStatus(config: Record<string, unknown>): string {
+function buildApiHealthStatus(config: ConfigStructure): 'configured' | 'missing' | 'partial' {
   let configuredCount = 0
   let totalCount = 0
 
@@ -135,7 +153,12 @@ function buildApiHealthStatus(config: Record<string, unknown>): string {
 /**
  * 🏥 ヘルスチェック情報の構築
  */
-function buildHealthInfo(config: Record<string, unknown>): Record<string, string> {
+function buildHealthInfo(config: ConfigStructure): {
+  database: 'configured' | 'missing' | 'invalid'
+  auth: 'configured' | 'missing' | 'invalid'
+  email: 'configured' | 'missing' | 'invalid'
+  apis: 'configured' | 'missing' | 'partial'
+} {
   return {
     database: config.database?.host && config.database?.name ? 'configured' : 'missing',
     auth: config.auth?.jwtSecret ? 'configured' : 'missing',
@@ -181,7 +204,7 @@ export async function GET(_request: NextRequest, _apiRequest?: ApiRequest): Prom
 
     // 設定が成功した場合の詳細情報
     if (configResult.success && configResult.data) {
-      const config = configResult.data
+      const config = configResult.data as ConfigStructure
 
       response.sections = buildSectionInfo(config)
       response.features = buildFeatureFlags(config)

@@ -12,16 +12,28 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { getEvent, getEventReviews } from '@/lib/data'
 
 interface Event {
-  name?: string
-  imgUrl?: string
-  status?: string
-  date?: string
-  time?: string
-  location?: string
-  totalRevenue?: string
-  totalRevenueChange?: string
-  ticketsSold?: number
+  name: string
+  imgUrl: string
+  status: string
+  date: string
+  time: string
+  location: string
+  totalRevenue: string
+  totalRevenueChange: string
+  ticketsSold: number
+  ticketsAvailable: string
+  ticketsSoldChange: string
+  pageViews: string
+  pageViewsChange: string
   [key: string]: unknown
+}
+
+interface Review {
+  id: string
+  url: string
+  date: string
+  customer: { name: string }
+  amount: { usd: string }
 }
 
 const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: mod.Stat })), {
@@ -33,13 +45,13 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   const event = (await getEvent(params.id)) as Event | null
 
   return {
-    title: event?.name,
+    title: event ? event.name : undefined,
   }
 }
 
 const EventPage = async ({ params }: { params: { id: string } }) => {
   const event = (await getEvent(params.id)) as Event | null
-  const reviews = await getEventReviews(params.id)
+  const reviews = (await getEventReviews(params.id)) as Review[]
 
   if (!event) {
     notFound()

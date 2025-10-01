@@ -234,17 +234,6 @@ export class ConfigLoader {
     return fs.readFileSync(validatedPath, 'utf8')
   }
 
-  /**
-   * 🔐 セキュア ファイルシステム操作
-   */
-  private safeFileSystemOperation<T>(operation: () => T): T | null {
-    try {
-      return operation()
-    } catch (error) {
-      console.warn('File system operation failed:', error)
-      return null
-    }
-  }
 
   /**
    * 🌍 環境変数の適用

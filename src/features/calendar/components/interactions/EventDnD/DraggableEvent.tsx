@@ -116,10 +116,10 @@ export const DraggableEvent = ({
         height
       }
     },
-    end: (item, monitor) => {
+    end: (_item, monitor) => {
       setIsDragReady(false)
       setDragStartPos(null)
-      
+
       const didDrop = monitor.didDrop()
       if (!didDrop && ref.current) {
         // ドロップ失敗時は元の位置に戻るアニメーション

@@ -7,52 +7,56 @@
 
 import * as Sentry from '@sentry/nextjs'
 
-Sentry.init({
-  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || undefined,
+const sentryDsn = process.env.NEXT_PUBLIC_SENTRY_DSN
 
-  // パフォーマンス監視設定
-  tracesSampleRate: 1,
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
 
-  // デバッグ設定
-  debug: false,
+    // パフォーマンス監視設定
+    tracesSampleRate: 1,
 
-  // Session Replay設定
-  replaysOnErrorSampleRate: 1.0,
-  replaysSessionSampleRate: 0.1,
+    // デバッグ設定
+    debug: false,
 
-  // 自動ユーザー・セッション情報の設定
-  initialScope: {
-    tags: {
-      component: 'frontend',
-      instrumentation: 'next14',
+    // Session Replay設定
+    replaysOnErrorSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+
+    // 自動ユーザー・セッション情報の設定
+    initialScope: {
+      tags: {
+        component: 'frontend',
+        instrumentation: 'next14',
+      },
     },
-  },
 
-  // 統合機能の設定
-  integrations: [
-    Sentry.replayIntegration({
-      maskAllText: true,
-      blockAllMedia: true,
-    }),
-    // Core Web Vitalsの自動測定（Next.js専用）
-    Sentry.browserTracingIntegration(),
-  ],
+    // 統合機能の設定
+    integrations: [
+      Sentry.replayIntegration({
+        maskAllText: true,
+        blockAllMedia: true,
+      }),
+      // Core Web Vitalsの自動測定（Next.js専用）
+      Sentry.browserTracingIntegration(),
+    ],
 
-  // パフォーマンス監視の設定
-  beforeSend(event) {
-    // コンソールエラーも記録
-    if (event.exception) {
-      console.error('Sentry captured error:', event.exception)
-    }
-    return event
-  },
+    // パフォーマンス監視の設定
+    beforeSend(event) {
+      // コンソールエラーも記録
+      if (event.exception) {
+        console.error('Sentry captured error:', event.exception)
+      }
+      return event
+    },
 
-  // 環境別設定
-  environment: process.env.NODE_ENV,
+    // 環境別設定
+    environment: process.env.NODE_ENV,
 
-  // リリース管理
-  release: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
-})
+    // リリース管理
+    release: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0',
+  })
+}
 
 // 未処理のPromiseリジェクションを捕捉
 if (typeof window !== 'undefined') {

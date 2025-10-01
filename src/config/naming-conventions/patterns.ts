@@ -224,8 +224,8 @@ export class NamingConventionManager {
 
   private loadDictionary(): void {
     // ドメイン用語の読み込み
-    Object.entries(namingDictionary.domainTerms).forEach(([key, term]) => {
-      this.domainTerms.set(key, term as DomainTerm)
+    Object.entries(namingDictionary.domainTerms).forEach(([_key, term]) => {
+      this.domainTerms.set(_key, term as DomainTerm)
       // エイリアスも登録
       term.aliases.forEach(alias => {
         this.domainTerms.set(alias, term as DomainTerm)
@@ -356,7 +356,7 @@ export class NamingConventionManager {
     const suggestions: string[] = []
 
     // 完全一致の検索
-    for (const [key, term] of this.domainTerms) {
+    for (const [_key, term] of this.domainTerms) {
       if (term.japanese === japanese) {
         suggestions.push(term.english)
       }
@@ -364,7 +364,7 @@ export class NamingConventionManager {
 
     // 部分一致の検索
     if (suggestions.length === 0) {
-      for (const [key, term] of this.domainTerms) {
+      for (const [_key, term] of this.domainTerms) {
         if (term.japanese.includes(japanese) || japanese.includes(term.japanese)) {
           suggestions.push(term.english)
         }

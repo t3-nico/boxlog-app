@@ -94,6 +94,9 @@ describe('useCalendarColors', () => {
 
     act(() => {
       result.current.addCustomColor('#ff0000')
+    })
+
+    act(() => {
       result.current.addCustomColor('#ff0000')
     })
 

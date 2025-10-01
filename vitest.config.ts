@@ -10,11 +10,11 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'dist', '.next'],
+    exclude: ['node_modules', 'dist', '.next', 'cypress', 'compass'],
     css: true,
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'src/test/',
@@ -25,13 +25,16 @@ export default defineConfig({
         '**/*.spec.{ts,tsx}',
         'dist/',
         '.next/',
+        'cypress/',
+        'compass/',
       ],
+      // カバレッジ目標: 60%（React公式ベストプラクティス準拠）
       thresholds: {
         global: {
-          branches: 50,
-          functions: 50,
-          lines: 50,
-          statements: 50,
+          branches: 60,
+          functions: 60,
+          lines: 60,
+          statements: 60,
         },
       },
     },

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import { ChevronLeft, ChevronRight, Clock, GraduationCap, HelpCircle, Lightbulb, Moon, PanelRight, Sparkles, Sun } from 'lucide-react'
+import { ChevronLeft, ChevronRight, HelpCircle, PanelRight, Sparkles } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
 import { useChatContext } from '@/contexts/chat-context'

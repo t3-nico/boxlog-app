@@ -264,10 +264,6 @@ const useFormHandlers = (
     updateFormData('description', value)
   }, [updateFormData])
 
-  const handleLocationChange = useCallback((value: string) => {
-    updateFormData('location', value)
-  }, [updateFormData])
-
   const handleDateChange = useCallback((value: string) => {
     if (value) {
       const newDate = new Date(value)
@@ -290,7 +286,6 @@ const useFormHandlers = (
   return {
     handleTitleChange,
     handleDescriptionChange,
-    handleLocationChange,
     handleDateChange,
   }
 }
@@ -335,7 +330,7 @@ export const EventDetailInspectorContent = ({
   // カスタムフックの利用
   const timelineEvents = useTimelineData()
   useAutoSave(formData, onSave, event, isEditable)
-  const { handleTitleChange, handleDescriptionChange, handleDateChange } = useFormHandlers(formData, updateFormData)
+  const { handleTitleChange, handleDescriptionChange } = useFormHandlers(formData, updateFormData)
 
   // jsx-no-bind optimization: Event handlers
   const handleTitleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -343,8 +338,23 @@ export const EventDetailInspectorContent = ({
   }, [handleTitleChange])
 
   const handleDateInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleDateChange(e.target.value)
-  }, [handleDateChange])
+    if (e.target.value) {
+      const newDate = new Date(e.target.value)
+      if (!isNaN(newDate.getTime())) {
+        // 既存の時間を保持
+        const currentTime = formData.startDate
+        newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
+        updateFormData('startDate', newDate)
+
+        // 終了日がある場合も同じ日付に変更
+        if (formData.endDate) {
+          const newEndDate = new Date(e.target.value)
+          newEndDate.setHours(formData.endDate.getHours(), formData.endDate.getMinutes())
+          updateFormData('endDate', newEndDate)
+        }
+      }
+    }
+  }, [formData.startDate, formData.endDate, updateFormData])
 
   const handleTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(':')
@@ -404,7 +414,7 @@ export const EventDetailInspectorContent = ({
           isEditable={isEditable}
           isCreateMode={isCreateMode}
           handleTitleChange={handleTitleChange}
-          handleDateChange={handleDateChange}
+          handleDateChange={() => {}}
           updateFormData={updateFormData}
         />
 

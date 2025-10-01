@@ -10,7 +10,13 @@ import { getCountries, type Country } from '@/lib/data'
 
 export const Address = () => {
   const countries = getCountries()
-  const [country, setCountry] = useState<Country>(countries[0])
+  const [country, setCountry] = useState<Country>(() => {
+    const firstCountry = countries[0]
+    if (!firstCountry) {
+      throw new Error('No countries available')
+    }
+    return firstCountry
+  })
 
   const handleCountryChange = useCallback((newCountry: Country) => {
     setCountry(newCountry)
