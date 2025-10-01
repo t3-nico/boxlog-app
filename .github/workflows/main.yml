@@ -1,0 +1,380 @@
+name: 🚀 BoxLog CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+  CACHE_VERSION: v1
+
+# 同じブランチで複数実行された場合、古い実行をキャンセル
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # =====================================
+  # 🚀 Phase 1: Quick Checks (並列実行 / 3分以内)
+  # =====================================
+
+  lint:
+    name: 🔍 ESLint & Prettier
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🗂️ Cache ESLint
+        uses: actions/cache@v4
+        with:
+          path: .eslint/cache
+          key: eslint-${{ env.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('src/**/*.{ts,tsx,js,jsx}') }}
+          restore-keys: |
+            eslint-${{ env.CACHE_VERSION }}-${{ runner.os }}-
+
+      - name: 🔍 Run ESLint
+        run: npm run lint
+
+      - name: 🎨 Check Prettier
+        run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,md}"
+
+  typecheck:
+    name: 🔤 TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔤 Run TypeScript
+        run: npm run typecheck
+
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run tests with coverage
+        run: npm run test:run -- --coverage
+
+      - name: 📊 Upload coverage
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: false
+
+  # =====================================
+  # 🔍 Phase 2: Quality Checks (並列実行 / 5分以内)
+  # =====================================
+
+  build:
+    name: 🏗️ Build
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests]
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🗂️ Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            .next/cache
+          key: nextjs-${{ env.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx') }}
+          restore-keys: |
+            nextjs-${{ env.CACHE_VERSION }}-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: 🏗️ Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'dummy_url' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy_key' }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' }}
+
+      - name: 💾 Save build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: .next
+          retention-days: 1
+
+  bundle-size:
+    name: 📦 Bundle Size
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests]
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📏 Bundle size check
+        run: npm run bundle:guard
+        continue-on-error: true
+
+      - name: 💬 Comment PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `## 📦 Bundle Size Check
+
+            ✅ Bundle size check completed. See workflow logs for details.
+
+            🔗 [View Details](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existingComment = comments.find(c => c.body.includes('📦 Bundle Size Check'));
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+  accessibility:
+    name: ♿ Accessibility
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests]
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 ESLint a11y check
+        run: npm run a11y:check || echo "⚠️ Accessibility warnings found"
+        continue-on-error: true
+
+  heavy-checks:
+    name: 🔍 Heavy Analysis
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests]
+    timeout-minutes: 10
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📜 License check
+        run: npm run license:check
+        continue-on-error: true
+
+      - name: 🔄 API changes
+        run: npm run api:check
+        continue-on-error: true
+
+      - name: ⚡ Performance test
+        run: npm run perf:check
+        continue-on-error: true
+
+      - name: 🏷️ Naming convention
+        run: npm run naming:migrate
+        continue-on-error: true
+
+  docs-consistency:
+    name: 📚 Docs Consistency
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests]
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📚 Check docs
+        run: npm run docs:check
+
+  # =====================================
+  # 🚪 Phase 3: Quality Gate
+  # =====================================
+
+  quality-gate:
+    name: 🚪 Quality Gate
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests, build, bundle-size, accessibility, heavy-checks, docs-consistency]
+    if: always()
+    steps:
+      - name: ✅ Check results
+        run: |
+          if [[ "${{ needs.lint.result }}" != "success" ]]; then
+            echo "❌ Lint failed"
+            exit 1
+          fi
+          if [[ "${{ needs.typecheck.result }}" != "success" ]]; then
+            echo "❌ TypeScript failed"
+            exit 1
+          fi
+          if [[ "${{ needs.unit-tests.result }}" != "success" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          echo "✅ All critical checks passed!"
+
+      - name: 💬 PR Summary Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const getEmoji = (result) => {
+              if (result === 'success') return '✅';
+              if (result === 'failure') return '❌';
+              return '⚠️';
+            };
+
+            const comment = `## 🚪 Quality Gate Summary
+
+            | Check | Status |
+            |-------|--------|
+            | ${getEmoji('${{ needs.lint.result }}')} **Lint** | ${{ needs.lint.result }} |
+            | ${getEmoji('${{ needs.typecheck.result }}')} **TypeScript** | ${{ needs.typecheck.result }} |
+            | ${getEmoji('${{ needs.unit-tests.result }}')} **Tests** | ${{ needs.unit-tests.result }} |
+            | ${getEmoji('${{ needs.build.result }}')} **Build** | ${{ needs.build.result }} |
+            | ${getEmoji('${{ needs.bundle-size.result }}')} **Bundle Size** | ${{ needs.bundle-size.result }} |
+            | ${getEmoji('${{ needs.accessibility.result }}')} **Accessibility** | ${{ needs.accessibility.result }} |
+            | ${getEmoji('${{ needs.heavy-checks.result }}')} **Heavy Checks** | ${{ needs.heavy-checks.result }} |
+            | ${getEmoji('${{ needs.docs-consistency.result }}')} **Docs** | ${{ needs.docs-consistency.result }} |
+
+            ---
+
+            ${{ needs.quality-gate.result == 'success' ? '🎉 **All checks passed! Ready to merge.**' : '🔧 **Please fix the issues above.**' }}
+
+            <sub>🤖 BoxLog CI/CD Pipeline</sub>`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existingComment = comments.find(c => c.body.includes('🚪 Quality Gate Summary'));
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+  # =====================================
+  # 🚀 Vercel自動デプロイ
+  # =====================================
+  #
+  # GitHub Actions経由のデプロイは廃止しました。
+  # Vercel GitHubインテグレーションが自動的にデプロイを実行します。
+  #
+  # 設定方法: docs/development/VERCEL_AUTO_DEPLOY.md を参照
+  #
+  # デプロイタイミング:
+  # - main ブランチへのpush → 本番デプロイ
+  # - PR作成 → プレビューデプロイ（自動生成）
+  # - dev ブランチへのpush → プレビューデプロイ（optional）

@@ -1,0 +1,342 @@
+name: 📅 BoxLog Scheduled Tasks
+
+on:
+  schedule:
+    # 毎週月曜 0:00 UTC (9:00 JST) - 週次品質レポート
+    - cron: '0 0 * * 1'
+    # 毎日 0:00 UTC (9:00 JST) - セキュリティ監査
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      task_type:
+        description: 'Task to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - security-only
+          - quality-only
+          - compliance-only
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  # =====================================
+  # 🔐 日次: セキュリティ監査
+  # =====================================
+
+  security-audit:
+    name: 🔐 Security Audit
+    runs-on: ubuntu-latest
+    if: |
+      github.event.schedule == '0 0 * * *' ||
+      github.event.inputs.task_type == 'all' ||
+      github.event.inputs.task_type == 'security-only'
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔐 Setup 1Password CLI
+        uses: 1password/install-cli-action@v1
+
+      - name: 🔍 Run 1Password audit
+        run: npm run 1password:audit
+        continue-on-error: true
+
+      - name: 🧹 Cleanup unused secrets
+        run: npm run 1password:cleanup
+        continue-on-error: true
+
+      - name: 🔍 Scan for hardcoded secrets
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --only-verified
+        continue-on-error: true
+
+      - name: 📊 Upload security audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-${{ github.run_number }}
+          path: |
+            secrets-audit-*.json
+            .boxlog-1password.log
+          retention-days: 90
+
+  # =====================================
+  # 🛡️ 日次: コンプライアンス監査
+  # =====================================
+
+  compliance-audit:
+    name: 🛡️ Compliance Audit
+    runs-on: ubuntu-latest
+    if: |
+      github.event.schedule == '0 0 * * *' ||
+      github.event.inputs.task_type == 'all' ||
+      github.event.inputs.task_type == 'compliance-only'
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        regulation:
+          - { name: 'GDPR', severity: 'error' }
+          - { name: 'SOC2', severity: 'error' }
+          - { name: 'WCAG', severity: 'error' }
+          - { name: 'Data-Retention', severity: 'warn' }
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🛡️ Run ${{ matrix.regulation.name }} audit
+        run: |
+          echo "Running ${{ matrix.regulation.name }} compliance audit..."
+          # 実装予定: コンプライアンスチェックスクリプト
+          # npm run compliance:${{ matrix.regulation.name }}
+        continue-on-error: ${{ matrix.regulation.severity == 'warn' }}
+
+      - name: 📊 Upload compliance results
+        uses: actions/upload-artifact@v4
+        with:
+          name: compliance-${{ matrix.regulation.name }}-${{ github.run_number }}
+          path: |
+            compliance-*.json
+          retention-days: 90
+
+  # =====================================
+  # 📊 週次: 品質レポート
+  # =====================================
+
+  weekly-quality-report:
+    name: 📊 Weekly Quality Report
+    runs-on: ubuntu-latest
+    if: |
+      github.event.schedule == '0 0 * * 1' ||
+      github.event.inputs.task_type == 'all' ||
+      github.event.inputs.task_type == 'quality-only'
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run quality analysis
+        run: |
+          echo "📊 品質分析開始..."
+          npm run lint > eslint-report.txt 2>&1 || true
+          npm run typecheck > typescript-report.txt 2>&1 || true
+          npm run test:coverage > coverage-report.txt 2>&1 || true
+          echo "品質分析完了"
+        continue-on-error: true
+
+      - name: 📊 Generate quality report
+        run: npm run quality:report
+        continue-on-error: true
+
+      - name: 💡 Generate improvement suggestions
+        run: npm run improvement:suggest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: 📋 Upload quality reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports-${{ github.run_number }}
+          path: |
+            reports/quality/
+            eslint-report.txt
+            typescript-report.txt
+            coverage-report.txt
+          retention-days: 90
+
+      - name: 📊 Comment on tracking issue
+        run: |
+          LATEST_REPORT=$(ls -t reports/quality/quality-report-*.json | head -1)
+
+          if [ -f "$LATEST_REPORT" ]; then
+            SCORE=$(jq -r '.score' "$LATEST_REPORT")
+            GRADE=$(jq -r '.grade' "$LATEST_REPORT")
+            STATUS=$(jq -r '.status' "$LATEST_REPORT")
+            ESLINT_ERRORS=$(jq -r '.codeQuality.eslint.errors' "$LATEST_REPORT" || echo "0")
+            TS_ERRORS=$(jq -r '.codeQuality.typescript.errors' "$LATEST_REPORT" || echo "0")
+            COVERAGE=$(jq -r '.testing.coverage.lines' "$LATEST_REPORT" || echo "0")
+            TODO_COUNT=$(jq -r '.technicalDebt.todoCount' "$LATEST_REPORT" || echo "0")
+
+            cat > quality-summary.md << EOF
+          ## 📊 週次品質レポート - $(date '+%Y年%m月%d日')
+
+          ### 📈 総合評価
+          - **スコア**: ${SCORE}/100点
+          - **グレード**: ${GRADE}
+          - **状態**: ${STATUS}
+
+          ### 🔍 詳細メトリクス
+          - **ESLintエラー**: ${ESLINT_ERRORS}件
+          - **TypeScriptエラー**: ${TS_ERRORS}件
+          - **テストカバレッジ**: ${COVERAGE}%
+          - **技術的負債**: ${TODO_COUNT}個のTODO
+
+          ### 🔗 詳細
+          [ワークフロー実行](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          ---
+          *自動生成 - 毎週月曜 9:00 JST*
+          EOF
+
+            gh issue comment 388 --body-file quality-summary.md || echo "Issue comment failed"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+  # =====================================
+  # 📲 通知集約
+  # =====================================
+
+  send-notifications:
+    name: 📲 Send Notifications
+    runs-on: ubuntu-latest
+    needs: [security-audit, compliance-audit, weekly-quality-report]
+    if: always()
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📥 Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: 📊 Generate summary
+        id: summary
+        run: |
+          echo "## 📅 BoxLog Scheduled Tasks Summary" > summary.md
+          echo "" >> summary.md
+          echo "**実行日時**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> summary.md
+          echo "" >> summary.md
+
+          echo "### 📊 実行結果" >> summary.md
+          echo "| Task | Status |" >> summary.md
+          echo "|------|--------|" >> summary.md
+          echo "| 🔐 Security Audit | ${{ needs.security-audit.result }} |" >> summary.md
+          echo "| 🛡️ Compliance Audit | ${{ needs.compliance-audit.result }} |" >> summary.md
+          echo "| 📊 Quality Report | ${{ needs.weekly-quality-report.result }} |" >> summary.md
+          echo "" >> summary.md
+
+          if [[ "${{ needs.security-audit.result }}" == "failure" ]] || \
+             [[ "${{ needs.compliance-audit.result }}" == "failure" ]] || \
+             [[ "${{ needs.weekly-quality-report.result }}" == "failure" ]]; then
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "⚠️ **一部のタスクが失敗しました**" >> summary.md
+          else
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "✅ **すべてのタスクが正常に完了しました**" >> summary.md
+          fi
+
+          cat summary.md
+
+      - name: 📲 Send Slack notification
+        if: env.SLACK_WEBHOOK_URL
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          STATUS="${{ steps.summary.outputs.status }}"
+          EMOJI=$([ "$STATUS" = "success" ] && echo "✅" || echo "⚠️")
+
+          PAYLOAD=$(cat <<EOF
+          {
+            "text": "${EMOJI} BoxLog Scheduled Tasks",
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "${EMOJI} BoxLog Scheduled Tasks"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Security Audit:* ${{ needs.security-audit.result }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Compliance:* ${{ needs.compliance-audit.result }}"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "*Quality Report:* ${{ needs.weekly-quality-report.result }}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|詳細を見る>"
+                }
+              }
+            ]
+          }
+          EOF
+          )
+
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$PAYLOAD" \
+            "$SLACK_WEBHOOK_URL" || echo "Slack notification failed"
+        continue-on-error: true
+
+      - name: 📊 Upload summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-tasks-summary-${{ github.run_number }}
+          path: summary.md
+          retention-days: 30

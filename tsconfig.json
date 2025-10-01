@@ -24,8 +24,13 @@
     },
     "types": ["node"],
     "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
+    // 2025 TypeScript Best Practices - 設定完了（エラー修正は #389 で実施）
+    "noUnusedLocals": true,               // ✅ 有効化完了
+    "noUnusedParameters": true,           // ✅ 有効化完了
+    "noUncheckedIndexedAccess": true,     // ✅ 有効化完了
+    "exactOptionalPropertyTypes": true,   // ✅ 有効化完了
+    "noImplicitReturns": true,            // ✅ 有効化完了
+    "noFallthroughCasesInSwitch": true    // ✅ 有効化完了
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules", "compass/**"]
