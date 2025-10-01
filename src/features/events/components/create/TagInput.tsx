@@ -8,7 +8,9 @@ import { Hash, Tag, TrendingUp, X } from 'lucide-react'
 import { border, colors, semantic, text } from '@/config/theme/colors'
 import { rounded } from '@/config/theme/rounded'
 import { body } from '@/config/theme/typography'
-import { useTagStore } from '@/features/tags/stores/tag-store'
+
+import { useSmartTagSuggestions } from '../../hooks/useSmartTagSuggestions'
+import { useTagInput } from '../../hooks/useTagInput'
 
 interface Tag {
   id: string
@@ -30,9 +32,6 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // タグストアのフックを使用
-  const { addTag: addTagToStore, getTagById: _getTagById, getAllTags } = useTagStore()
-
   // Popular tags (in practice, would be fetched from database)
   const trendingTags: Tag[] = [
     { id: '1', name: 'Work', color: '#3b82f6', frequency: 45 },
@@ -51,122 +50,21 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
     { id: '10', name: 'Design', color: '#6366f1' },
   ]
 
-  // コンテキストベースのスマート提案
-  const getSmartSuggestions = (input: string, context: string[]): Tag[] => {
-    const suggestions: Tag[] = []
+  // スマート提案ロジック（フック化）
+  const { suggestions } = useSmartTagSuggestions({
+    inputValue,
+    selectedTags,
+    contextualSuggestions,
+    trendingTags,
+  })
 
-    // Suggestions based on input
-    const matchingTrending = trendingTags.filter((tag) => tag.name.toLowerCase().includes(input.toLowerCase()))
-    suggestions.push(...matchingTrending)
-
-    // コンテキストベースの提案
-    context.forEach((contextWord) => {
-      if (contextWord.includes('会議') && !suggestions.some((t) => t.name === '会議')) {
-        suggestions.push({ id: 'ctx-1', name: '会議', color: '#8b5cf6' })
-      }
-      if (contextWord.includes('レポート') && !suggestions.some((t) => t.name === 'レポート')) {
-        suggestions.push({ id: 'ctx-2', name: 'レポート', color: '#ef4444' })
-      }
-    })
-
-    // 時間ベースの提案
-    const hour = new Date().getHours()
-    if (hour >= 17 && !suggestions.some((t) => t.name === '残業')) {
-      suggestions.push({ id: 'time-1', name: '残業', color: '#f97316' })
-    }
-
-    // 曜日ベースの提案
-    const day = new Date().getDay()
-    if (day === 5 && !suggestions.some((t) => t.name === '週末準備')) {
-      // 金曜日
-      suggestions.push({ id: 'day-1', name: '週末準備', color: '#06b6d4' })
-    }
-
-    return suggestions.filter((tag) => !selectedTags.some((selected) => selected.name === tag.name)).slice(0, 8)
-  }
-
-  // Input-based suggestions (works with or without #)
-  const suggestions =
-    inputValue.trim().length > 0
-      ? getSmartSuggestions(inputValue.startsWith('#') ? inputValue.slice(1) : inputValue, contextualSuggestions)
-      : []
-
-  // Generate tag color
-  const generateTagColor = (name: string): string => {
-    const colors = [
-      '#3b82f6',
-      '#10b981',
-      '#f59e0b',
-      '#8b5cf6',
-      '#ef4444',
-      '#06b6d4',
-      '#f97316',
-      '#ec4899',
-      '#14b8a6',
-      '#6366f1',
-    ]
-    const hash = name.split('').reduce((a, b) => {
-      a = (a << 5) - a + b.charCodeAt(0)
-      return a & a
-    }, 0)
-    return colors[Math.abs(hash) % colors.length as keyof typeof colors]
-  }
-
-  // Add tag
-  const addTag = async (tagName: string) => {
-    if (selectedTags.length >= 5) return // 最大5個制限
-
-    if (!selectedTags.some((tag) => tag.name === tagName)) {
-      // 既存のタグを確認
-      const existingTags = getAllTags()
-      let tagToAdd = existingTags.find((t) => t.name === tagName)
-
-      // タグが存在しない場合は新規作成
-      if (!tagToAdd) {
-        const color = generateTagColor(tagName)
-
-        // タグストアに追加
-        const success = await addTagToStore({
-          name: tagName,
-          color,
-          level: 1, // デフォルトレベル
-          icon: '🏷️', // デフォルトアイコン
-        })
-
-        if (success) {
-          // 追加されたタグを取得
-          const updatedTags = getAllTags()
-          tagToAdd = updatedTags.find((t) => t.name === tagName)
-        }
-      }
-
-      if (tagToAdd) {
-        // Clear input value then add tag (immediate reflection)
-        setInputValue('')
-        setShowSuggestions(false)
-
-        // コンポーネント用のTag型に変換
-        const newTag: Tag = {
-          id: tagToAdd.id,
-          name: tagToAdd.name,
-          color: tagToAdd.color,
-        }
-
-        // Add tag with short animation delay
-        setTimeout(() => {
-          onChange([...selectedTags, newTag])
-        }, 50)
-      }
-    } else {
-      setInputValue('')
-      setShowSuggestions(false)
-    }
-  }
-
-  // Remove tag
-  const removeTag = useCallback((tagId: string) => {
-    onChange(selectedTags.filter((tag) => tag.id !== tagId))
-  }, [onChange, selectedTags])
+  // タグ入力ロジック（フック化）
+  const { addTag, removeTag } = useTagInput({
+    selectedTags,
+    onChange,
+    onInputClear: () => setInputValue(''),
+    onSuggestionsHide: () => setShowSuggestions(false),
+  })
 
   // jsx-no-bind optimization: Tag add handler creator
   const createTagAddHandler = useCallback(
