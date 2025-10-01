@@ -1,19 +1,17 @@
 /**
  * タスク関連の型定義
+ *
+ * 基本型（TaskStatus, TaskPriority, Task）は src/types/index.ts に統一
+ * ここでは詳細な拡張型のみ定義
  */
 
-/**
- * タスクの優先度
- */
-export type TaskPriority = 'low' | 'medium' | 'high'
+import type { TaskStatus, TaskPriority, Task as BaseTask } from './index'
+
+// 基本型を再エクスポート
+export type { TaskStatus, TaskPriority }
 
 /**
- * タスクのステータス
- */
-export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done' | 'blocked'
-
-/**
- * タスクの種別
+ * タスクの種別（開発管理用の詳細タイプ）
  */
 export type TaskType = 'feature' | 'bug' | 'improvement' | 'maintenance' | 'documentation'
 
@@ -68,14 +66,10 @@ export interface TaskTimeEntry {
 }
 
 /**
- * タスクのメイン定義
+ * タスク拡張型（開発管理用の詳細情報を含む）
+ * BaseTaskを拡張して詳細なプロジェクト管理機能を追加
  */
-export interface Task {
-  id: string
-  title: string
-  description?: string
-  status: TaskStatus
-  priority: TaskPriority
+export interface TaskDetailed extends BaseTask {
   type: TaskType
 
   // 関係者
@@ -83,9 +77,7 @@ export interface Task {
   assigneeId?: string
   reporterId?: string
 
-  // 時間関連
-  createdAt: string
-  updatedAt: string
+  // 時間関連（BaseTaskの基本時間フィールドに追加）
   dueDate?: string
   startDate?: string
   completedAt?: string
@@ -99,8 +91,7 @@ export interface Task {
   sprintId?: string
   epicId?: string
 
-  // 分類
-  tags?: string[]
+  // 分類（BaseTaskのtagsに追加）
   labels?: TaskLabel[]
 
   // 関連
@@ -116,7 +107,7 @@ export interface Task {
   timeEntries?: TaskTimeEntry[]
 
   // カスタムフィールド
-  customFields?: Record<string, any>
+  customFields?: Record<string, unknown>
 
   // メタデータ
   version?: number
@@ -125,13 +116,13 @@ export interface Task {
 }
 
 /**
- * タスク作成時の入力データ
+ * タスク作成時の入力データ（詳細版）
  */
-export type CreateTaskInput = Omit<
-  Task,
+export type CreateTaskDetailedInput = Omit<
+  TaskDetailed,
   | 'id'
-  | 'createdAt'
-  | 'updatedAt'
+  | 'created_at'
+  | 'updated_at'
   | 'version'
   | 'comments'
   | 'attachments'
@@ -141,10 +132,10 @@ export type CreateTaskInput = Omit<
 >
 
 /**
- * タスク更新時の入力データ
+ * タスク更新時の入力データ（詳細版）
  */
-export type UpdateTaskInput = Partial<
-  Omit<Task, 'id' | 'createdAt' | 'createdBy' | 'version'>
+export type UpdateTaskDetailedInput = Partial<
+  Omit<TaskDetailed, 'id' | 'created_at' | 'createdBy' | 'version'>
 >
 
 /**

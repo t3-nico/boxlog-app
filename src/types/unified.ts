@@ -6,42 +6,11 @@
 import type { Tag } from './tags'
 
 // === 基本的な型定義 ===
+// TaskStatus, TaskPriority, Task等の基本型は src/types/index.ts に統一
+// ここでは再エクスポートのみ
+import type { Task, TaskStatus, TaskPriority } from './index'
 
-export type TaskStatus = 'backlog' | 'scheduled' | 'completed' | 'rescheduled' | 'stopped' | 'delegated'
-
-export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
-
-export type TaskType = 'task' | 'milestone' | 'meeting' | 'reminder'
-
-// === Task関連 ===
-
-export interface BaseTask {
-  id: string
-  title: string
-  description?: string
-  status: TaskStatus
-  priority: TaskPriority
-  type: TaskType
-  created_at: string
-  updated_at: string
-  due_date?: string
-  completed_at?: string
-  user_id: string
-  tags?: string[]
-  smart_folder_id?: string
-}
-
-// Supabaseデータベース形式（snake_case）
-export interface TaskEntity extends BaseTask {
-  // データベース固有のプロパティがあれば追加
-}
-
-// クライアント表示用（camelCase）
-export interface Task extends Omit<BaseTask, 'user_id' | 'smart_folder_id'> {
-  userId: string
-  smartFolderId?: string
-  tagObjects?: Tag[]
-}
+export type { Task, TaskStatus, TaskPriority }
 
 // === API関連 ===
 
@@ -49,8 +18,8 @@ export interface CreateTaskRequest {
   title: string
   description?: string
   priority: TaskPriority
-  type: TaskType
-  due_date?: string
+  planned_start: string
+  planned_duration: number
   tags?: string[]
   smart_folder_id?: string
 }
@@ -58,7 +27,6 @@ export interface CreateTaskRequest {
 export interface UpdateTaskRequest extends Partial<CreateTaskRequest> {
   id: string
   status?: TaskStatus
-  completed_at?: string
 }
 
 // === エラーハンドリング ===
