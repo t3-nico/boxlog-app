@@ -13,6 +13,15 @@ import {
 import { AdvancedRuleEngine } from '@/features/smart-folders/lib/rule-engine'
 import { SmartFolderRule } from '@/types/smart-folders'
 
+interface PreviewItem {
+  id?: string
+  title?: string
+  name?: string
+  status?: string
+  tags?: string[]
+  [key: string]: unknown
+}
+
 interface RulePreviewProps {
   rules: SmartFolderRule[]
   items: unknown[]
@@ -22,7 +31,7 @@ interface PreviewStats {
   totalItems: number
   matchingItems: number
   matchPercentage: number
-  matchingItemsList: unknown[]
+  matchingItemsList: PreviewItem[]
 }
 
 export const RulePreview = ({ rules, items }: RulePreviewProps) => {
@@ -33,7 +42,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
         totalItems: items.length,
         matchingItems: items.length,
         matchPercentage: 100,
-        matchingItemsList: items,
+        matchingItemsList: items as PreviewItem[],
       }
     }
 
@@ -43,7 +52,7 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
       totalItems: items.length,
       matchingItems: matchingItems.length,
       matchPercentage: items.length > 0 ? Math.round((matchingItems.length / items.length) * 100) : 0,
-      matchingItemsList: matchingItems.slice(0, 10), // 最大10件表示
+      matchingItemsList: matchingItems.slice(0, 10) as PreviewItem[], // 最大10件表示
     }
   }, [rules, items])
 
