@@ -9,6 +9,7 @@ import type { TaskStatus, TaskPriority, Task as BaseTask } from './index'
 
 // 基本型を再エクスポート
 export type { TaskStatus, TaskPriority }
+export type Task = BaseTask
 
 /**
  * タスクの種別（開発管理用の詳細タイプ）

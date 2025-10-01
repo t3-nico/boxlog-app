@@ -8,8 +8,9 @@ import { Clock, GraduationCap, Lightbulb, Moon, Sun } from 'lucide-react'
 import { SettingsLayout } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import type { ChronotypeType } from '@/types/chronotype'
 import { chronoTypeProfiles } from './chronotype-profiles'
-import type { ChronotypeAutoSaveSettings } from './chronotype.types'
+import type { ChronoTypeSchedule, ChronotypeAutoSaveSettings } from './chronotype.types'
 
 
 const typeColors = {
