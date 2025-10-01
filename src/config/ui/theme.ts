@@ -78,3 +78,82 @@ export type TagPresetColor = typeof TAG_PRESET_COLORS[number]
 export type ChronotypeColor = keyof typeof CHRONOTYPE_COLORS
 export type TaskStatusColor = keyof typeof TASK_STATUS_COLORS
 export type TaskPriorityColor = keyof typeof TASK_PRIORITY_COLORS
+
+// ========================================
+// 統合テーマオブジェクト（後方互換性）
+// ========================================
+
+/**
+ * colorsオブジェクト - globals.cssのCSS変数を参照
+ * 旧コードとの互換性のために提供
+ *
+ * 注意: 実際の値はglobals.cssの@themeブロックで定義されています
+ */
+export const colors = {
+  success: {
+    DEFAULT: '#22c55e',  // var(--color-success-500)
+    light: '#4ade80',    // green-400相当
+    dark: '#16a34a',     // var(--color-success-600)
+  },
+  warning: {
+    DEFAULT: '#f97316',  // var(--color-warning-500)
+    light: '#fb923c',    // orange-400相当
+    dark: '#ea580c',     // var(--color-warning-600)
+  },
+  error: {
+    DEFAULT: '#ef4444',  // var(--color-error-500)
+    light: '#f87171',    // red-400相当
+    dark: '#dc2626',     // var(--color-error-600)
+  },
+  info: {
+    DEFAULT: '#3b82f6',  // var(--color-info-500)
+    light: '#60a5fa',    // blue-400相当
+    dark: '#2563eb',     // var(--color-info-600)
+  },
+  primary: {
+    DEFAULT: '#3b82f6',  // var(--color-primary-500)
+    light: '#60a5fa',    // var(--color-primary-400)
+    dark: '#2563eb',     // var(--color-primary-600)
+  },
+} as const
+
+/**
+ * typographyオブジェクト - フォントサイズ定義
+ * Tailwind標準のテキストサイズ
+ */
+export const typography = {
+  xs: '0.75rem',    // 12px - text-xs
+  sm: '0.875rem',   // 14px - text-sm
+  base: '1rem',     // 16px - text-base
+  lg: '1.125rem',   // 18px - text-lg
+  xl: '1.25rem',    // 20px - text-xl
+  '2xl': '1.5rem',  // 24px - text-2xl
+  '3xl': '1.875rem',// 30px - text-3xl
+  '4xl': '2.25rem', // 36px - text-4xl
+} as const
+
+/**
+ * spacingオブジェクト - globals.cssのCSS変数を参照
+ */
+export const spacing = {
+  xs: '0.5rem',   // 8px - var(--spacing-xs)
+  sm: '1rem',     // 16px - var(--spacing-sm)
+  md: '1.5rem',   // 24px - var(--spacing-md)
+  lg: '2rem',     // 32px - var(--spacing-lg)
+  xl: '3rem',     // 48px - var(--spacing-xl)
+  '2xl': '4rem',  // 64px - var(--spacing-2xl)
+} as const
+
+/**
+ * roundedオブジェクト - globals.cssのCSS変数を参照
+ */
+export const rounded = {
+  none: '0',
+  sm: '0.25rem',   // 4px - var(--radius-sm)
+  DEFAULT: '0.375rem', // 6px - var(--radius-md)
+  md: '0.375rem',  // 6px - var(--radius-md)
+  lg: '0.5rem',    // 8px - var(--radius-lg)
+  xl: '0.75rem',   // 12px - var(--radius-xl)
+  '2xl': '1rem',   // 16px - var(--radius-2xl)
+  full: '9999px',  // var(--radius-full)
+} as const
