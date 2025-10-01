@@ -71,16 +71,17 @@ const RelatedFiles = ({ files }: { files: string[] }) => (
 )
 
 // ユーザーメッセージ内容コンポーネント
-const UserMessageContent = ({ message }: { message: ExtendedMessage }) => {
+const UserMessageContent = ({ message }: { message: UIMessage }) => {
   const { t } = useTranslation()
+  const extendedMessage = message as ExtendedMessage
   return (
     <div className="whitespace-pre-wrap text-sm leading-relaxed">
       {getMessageContent(message)}
-      {message.status != null && (
+      {extendedMessage.status != null && (
         <div className="mt-1 text-xs opacity-75">
-          {message.status === 'sending' && t('help.messageStatus.sending', 'Sending...')}
-          {message.status === 'error' && t('help.messageStatus.error', 'Error')}
-          {message.status === 'sent' && t('help.messageStatus.sent', 'Sent')}
+          {extendedMessage.status === 'sending' && t('help.messageStatus.sending', 'Sending...')}
+          {extendedMessage.status === 'error' && t('help.messageStatus.error', 'Error')}
+          {extendedMessage.status === 'sent' && t('help.messageStatus.sent', 'Sent')}
         </div>
       )}
     </div>
@@ -88,12 +89,17 @@ const UserMessageContent = ({ message }: { message: ExtendedMessage }) => {
 }
 
 // アシスタントメッセージ内容コンポーネント
-const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
-  <div>
-    <CodebaseAIResponse>{getMessageContent(message)}</CodebaseAIResponse>
-    {message.relatedFiles && message.relatedFiles.length > 0 ? <RelatedFiles files={message.relatedFiles} /> : null}
-  </div>
-)
+const AssistantMessageContent = ({ message }: { message: UIMessage }) => {
+  const extendedMessage = message as ExtendedMessage
+  return (
+    <div>
+      <CodebaseAIResponse>{getMessageContent(message)}</CodebaseAIResponse>
+      {extendedMessage.relatedFiles && extendedMessage.relatedFiles.length > 0 ? (
+        <RelatedFiles files={extendedMessage.relatedFiles} />
+      ) : null}
+    </div>
+  )
+}
 
 // ユーザーアバターコンポーネント
 const UserAvatar = ({
@@ -120,7 +126,7 @@ const UserAvatar = ({
   </div>
 )
 
-const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
+const MessageBubble = ({ message }: { message: UIMessage }) => {
   const { displayName, profileIcon, avatarUrl } = useUserInfo()
   const isUser = message.role === 'user'
   const isAssistant = message.role === 'assistant' || message.role === 'system'
@@ -135,9 +141,9 @@ const MessageBubble = ({ message }: { message: ExtendedMessage }) => {
       <AIMessageContent>
         {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
 
-        {isAssistant && message.createdAt ? (
+        {isAssistant && (message as ExtendedMessage).createdAt ? (
           <div className="mt-1 text-xs opacity-60">
-            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {new Date((message as ExtendedMessage).createdAt!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         ) : null}
       </AIMessageContent>
@@ -220,7 +226,6 @@ export const MainSupportChat = () => {
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const chatHelpers = useChat({
-    streamProtocol: 'text',
     onError: (error) => {
       console.error('Chat error:', error)
     },
@@ -238,10 +243,6 @@ export const MainSupportChat = () => {
 
 ${t('help.welcome.capabilities', 'I can help you with:')}
 
-${(Array.isArray(t('help.welcome.features', [])) ? t('help.welcome.features', []) : [])
-  .map((feature: string) => `• ${feature}`)
-  .join('\n')}
-
 ${t('help.welcome.note', 'Note: AI responses may not always be accurate.')}
 
 ${t('help.welcome.question', 'How can I help you today?')}`,
@@ -252,24 +253,33 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
   })
 
   // Extract properties from chat helpers
-  const {
-    messages,
-    input,
-    handleInputChange,
-    handleSubmit,
-    isLoading,
-    setMessages,
-    append: _append,
-    error,
-    reload,
-  } = chatHelpers as typeof chatHelpers & {
-    input: string
-    handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-    handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
-    isLoading: boolean
-    append: (message: { role: 'user' | 'assistant'; content: string }) => Promise<void>
-    reload: () => void
-  }
+  const { messages, error, status, setMessages } = chatHelpers
+
+  // Create our own input handling since useChat v2 doesn't provide these helpers
+  const [input, setInput] = useState('')
+  const isLoading = status === 'streaming'
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setInput(e.target.value)
+  }, [])
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      if (!input.trim() || isLoading) return
+
+      // Send message using sendMessage from useChat
+      chatHelpers.sendMessage({
+        text: input,
+      })
+      setInput('')
+    },
+    [input, isLoading, chatHelpers]
+  )
+
+  const reload = useCallback(() => {
+    chatHelpers.regenerate()
+  }, [chatHelpers])
 
   // Event handlers using useChat values
   const handleMenuToggle = useCallback(() => {
@@ -284,7 +294,7 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
   const handleExportMessages = useCallback(() => {
     const exportMessages = messages.map((msg) => ({
       role: msg.role,
-      content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
+      content: getMessageContent(msg),
       timestamp: (msg as ExtendedMessage).createdAt,
     }))
     navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
@@ -305,8 +315,8 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
               <BotMessageSquare className="text-foreground h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-foreground text-lg font-semibold">{t('help.title')}</h3>
-              <p className="text-muted-foreground text-sm">{t('help.subtitle')}</p>
+              <h3 className="text-foreground text-lg font-semibold">{t('help.title', 'Help & Support')}</h3>
+              <p className="text-muted-foreground text-sm">{t('help.subtitle', 'AI Assistant')}</p>
             </div>
           </div>
 
@@ -336,7 +346,7 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
-                    {t('help.actions.clearConversation')}
+                    {t('help.actions.clearConversation', 'Clear Conversation')}
                   </button>
                   <button
                     type="button"
@@ -344,7 +354,7 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />
-                    {t('help.actions.exportConversation')}
+                    {t('help.actions.exportConversation', 'Export Conversation')}
                   </button>
                 </div>
               )}
@@ -367,15 +377,17 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-sm font-medium">{t('help.status.error')}</span>
+                <span className="text-sm font-medium">{t('help.status.error', 'Error')}</span>
               </div>
-              <p className="mt-1 text-sm text-red-700 dark:text-red-300">{t('help.status.errorMessage')}</p>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
+                {t('help.status.errorMessage', 'An error occurred. Please try again.')}
+              </p>
               <button
                 type="button"
                 onClick={handleReload}
                 className="mt-2 text-xs text-red-800 underline hover:text-red-900 dark:text-red-200 dark:hover:text-red-100"
               >
-                {t('help.status.retryMessage')}
+                {t('help.status.retryMessage', 'Retry')}
               </button>
             </div>
           )}
@@ -385,22 +397,18 @@ ${t('help.welcome.question', 'How can I help you today?')}`,
               <AssistantIcon />
               <AIMessageContent>
                 <CodebaseAIResponse>
-                  {t('help.welcome.greeting')}
+                  {`${t('help.welcome.greeting', 'Welcome')}
 
-                  {t('help.welcome.capabilities')}
+${t('help.welcome.capabilities', 'I can help you with:')}
 
-                  {t('help.welcome.features')
-                    .map((feature: string) => `• ${feature}`)
-                    .join('\n')}
+${t('help.welcome.note', 'Note: AI responses may not always be accurate.')}
 
-                  {t('help.welcome.note')}
-
-                  {t('help.welcome.question')}
+${t('help.welcome.question', 'How can I help you today?')}`}
                 </CodebaseAIResponse>
               </AIMessageContent>
             </AIMessage>
           ) : (
-            messages.map((message) => <MessageBubble key={message.id} message={message as ExtendedMessage} />)
+            messages.map((message) => <MessageBubble key={message.id} message={message} />)
           )}
         </AIConversationContent>
         <AIConversationScrollButton />
