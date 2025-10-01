@@ -38,28 +38,28 @@ import type { WeekViewProps } from './WeekView.types'
  */
 export const WeekView = ({
   dateRange,
-  _tasks,
+  tasks: _tasks,
   events,
-  _currentDate,
+  currentDate: _currentDate,
   showWeekends = true,
   weekStartsOn = 1, // 0: 日曜始まり, 1: 月曜始まり
   className,
-  _onTaskClick,
+  onTaskClick: _onTaskClick,
   onEventClick,
   onEventContextMenu,
-  _onCreateEvent,
+  onCreateEvent: _onCreateEvent,
   onUpdateEvent,
-  _onDeleteEvent,
-  _onRestoreEvent,
+  onDeleteEvent: _onDeleteEvent,
+  onRestoreEvent: _onRestoreEvent,
   onEmptyClick,
   onTimeRangeSelect,
-  _onTaskDrag,
-  _onCreateTask,
-  _onCreateRecord,
-  _onViewChange,
-  _onNavigatePrev,
-  _onNavigateNext,
-  _onNavigateToday
+  onTaskDrag: _onTaskDrag,
+  onCreateTask: _onCreateTask,
+  onCreateRecord: _onCreateRecord,
+  onViewChange: _onViewChange,
+  onNavigatePrev: _onNavigatePrev,
+  onNavigateNext: _onNavigateNext,
+  onNavigateToday: _onNavigateToday
 }: WeekViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   
