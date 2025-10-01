@@ -3,8 +3,6 @@
  * 重複する型定義をここで統一し、他のファイルから参照する
  */
 
-import type { Tag } from './tags'
-
 // === 基本的な型定義 ===
 // TaskStatus, TaskPriority, Task等の基本型は src/types/index.ts に統一
 // ここでは再エクスポートのみ
