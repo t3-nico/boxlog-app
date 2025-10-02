@@ -361,13 +361,6 @@ export const EventDetailInspectorContent = ({
     updateFormData('startDate', newDate)
   }, [formData.startDate, updateFormData])
 
-  const handleEndTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':')
-    const newDate = new Date(formData.endDate ?? formData.startDate ?? new Date())
-    newDate.setHours(parseInt(hours), parseInt(minutes))
-    updateFormData('endDate', newDate)
-  }, [formData.endDate, formData.startDate, updateFormData])
-
   const handleDescriptionEditorChange = useCallback((value: string) => {
     handleDescriptionChange(value)
   }, [handleDescriptionChange])
