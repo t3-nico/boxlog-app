@@ -7,43 +7,41 @@ BoxLog Appの自動化されたCI/CDシステム（一人開発最適化版）
 | ワークフロー | ファイル | トリガー | 役割 |
 |------------|---------|---------|------|
 | **CI/CD** | [`ci.yml`](ci.yml) | Push/PR (dev,main) | lint + typecheck + test + build |
-| **Security** | [`security.yml`](security.yml) | 定期実行 (毎日) | セキュリティスキャン + 依存関係監査 |
 | **Bundle Check** | [`bundle-check.yml`](bundle-check.yml) | PR作成時 | バンドルサイズ監視 |
 
 ## 🚀 CI/CD ([ci.yml](ci.yml))
 
-```yaml
-トリガー: Push/PR → dev, main
-実行内容:
-  ✅ ESLint (npm run lint)
-  ✅ TypeScript型チェック (npm run typecheck)
-  ✅ テスト実行 (npm run test)
-  ✅ ビルド検証 (npm run build)
-  🚀 Vercelデプロイ (mainブランチのみ)
-```
+**Phase 1: Quick Checks (並列実行)**
+- ✅ ESLint + Prettier
+- ✅ TypeScript型チェック
+- ✅ ユニットテスト (カバレッジ付き)
 
-## 🔒 Security ([security.yml](security.yml))
+**Phase 2: Quality Checks (並列実行)**
+- 🏗️ Next.jsビルド
+- ♿ アクセシビリティチェック
+- 🔍 Heavy Analysis (ライセンス/API/パフォーマンス)
+- 📚 ドキュメント整合性
 
-```yaml
-トリガー: 定期実行 (毎日 0:00 JST)
-実行内容:
-  🔍 依存関係脆弱性スキャン
-  🛡️ セキュリティ監査
-  📊 レポート生成
-```
+**Phase 3: Quality Gate**
+- 🚪 全チェック結果集約
+- 💬 PR Summary自動投稿
 
-## 🔧 設定
+## 📦 Bundle Check ([bundle-check.yml](bundle-check.yml))
 
-### GitHub Secrets
+- 📏 バンドルサイズ分析
+- 💬 PRコメント自動投稿
+- ⚠️ サイズ増加アラート
+
+## 🔧 GitHub Secrets
 
 ```
 VERCEL_TOKEN     # Vercelデプロイ用
 ORG_ID          # Vercel組織ID
 PROJECT_ID      # VercelプロジェクトID
-GITHUB_TOKEN    # 自動設定済み
+CODECOV_TOKEN   # Codecovカバレッジ
 ```
 
-### ローカルテスト
+## 🧪 ローカルテスト
 
 ```bash
 npm run lint      # コード品質チェック
@@ -52,11 +50,6 @@ npm run test      # テスト実行
 npm run build     # ビルド確認
 ```
 
-## 🔗 関連ドキュメント
-
-- [コミット規約](../../docs/development/COMMIT_RULES.md)
-- [コマンド一覧](../../docs/development/COMMANDS.md)
-
 ---
 
-**📖 最終更新**: 2025-10-02 - 一人開発最適化
+**📖 最終更新**: 2025-10-02 - 2ワークフロー構成に最適化
