@@ -27,7 +27,7 @@ const generateTimeOptions = () => {
   return options
 }
 
-export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNext }: DateSelectorProps) => {
+export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSelectorProps) => {
   // Duration (minutes)
   const [duration, setDuration] = useState(60)
 
@@ -59,7 +59,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange, _onTabNex
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
     const firstDay = new Date(year, month, 1)
-    const _lastDay = new Date(year, month + 1, 0)
+    const lastDay = new Date(year, month + 1, 0)
     const startDate = new Date(firstDay)
     startDate.setDate(startDate.getDate() - firstDay.getDay()) // Start week on Sunday
 

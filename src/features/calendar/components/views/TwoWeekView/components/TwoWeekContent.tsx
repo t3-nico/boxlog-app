@@ -114,7 +114,7 @@ export const TwoWeekContent = ({
   const eventStyles = useEventStyles(dayEventPositions)
 
   // 空白クリックハンドラー
-  const _handleEmptyClick = useCallback(
+  const handleEmptyClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!onEmptyClick) return
 
@@ -125,7 +125,7 @@ export const TwoWeekContent = ({
   )
 
   // イベントクリックハンドラー（ドラッグ・リサイズ後のクリックは無視）
-  const _handleEventClick = useCallback(
+  const handleEventClick = useCallback(
     (event: CalendarEvent) => {
       // ドラッグ・リサイズ操作中またはドラッグ・リサイズ直後のクリックは無視
       if (dragState.isDragging || dragState.isResizing || dragState.recentlyDragged) {

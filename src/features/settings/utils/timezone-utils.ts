@@ -45,7 +45,7 @@ export function formatHour(hour: number, timeFormat: '12h' | '24h'): string {
 }
 
 // 現在時刻をタイムゾーンでフォーマット（簡易版）
-export function formatInTimeZone(date: Date, timezone: string, formatString: string): string {
+export function formatInTimeZone(date: Date, _timezone: string, formatString: string): string {
   // 簡易実装：基本的なフォーマットのみ
   // 後でdate-fns-tzを導入して本格実装
   return format(date, formatString)

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
+import { useRouter } from 'next/navigation'
 
 import { ChevronDownIcon, GlobeIcon } from 'lucide-react'
 

@@ -50,7 +50,7 @@ export const DayContent = ({
   // グローバルドラッグカーソー管理（共通化）
   useGlobalDragCursor(dragState, handlers)
   // 空白クリックハンドラー（現在使用されていない - CalendarDragSelectionが処理）
-  const _handleEmptyClick = useCallback(
+  const handleEmptyClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!onEmptyClick) return
 
@@ -61,7 +61,7 @@ export const DayContent = ({
   )
 
   // イベントクリックハンドラー（ドラッグ・リサイズ中のクリックは無視）
-  const _handleEventClick = useCallback(
+  const handleEventClick = useCallback(
     (event: CalendarEvent) => {
       // ドラッグ・リサイズ操作中のクリックは無視
       if (dragState.isDragging || dragState.isResizing) {

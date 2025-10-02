@@ -108,7 +108,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     }, [])
 
     // 日付のクラス名を計算するヘルパー関数
-    const _getDayButtonClassNames = useCallback(
+    const getDayButtonClassNames = useCallback(
       (
         date: Date,
         isSelected: boolean,
@@ -151,7 +151,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
     )
 
     // 日付のハイライト状態を判定するヘルパー関数
-    const _getDateStates = useCallback(
+    const getDateStates = useCallback(
       (date: Date) => {
         const isSelected = selectedDate && isSameDay(date, selectedDate)
         const isToday = isSameDay(date, new Date())
@@ -267,7 +267,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
               ),
               // Days of the week
               ...weekDays.map((date) => {
-                const states = _getDateStates(date)
+                const states = getDateStates(date)
 
                 return (
                   <button
@@ -275,7 +275,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
                     type="button"
                     onClick={() => handleDateClick(date)}
                     disabled={states.isDisabled}
-                    className={_getDayButtonClassNames(
+                    className={getDayButtonClassNames(
                       date,
                       states.isSelected,
                       states.isToday,
