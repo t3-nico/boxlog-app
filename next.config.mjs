@@ -1,5 +1,5 @@
 import bundleAnalyzer from '@next/bundle-analyzer';
-import { withSentryConfig } from '@sentry/nextjs';
+// import { withSentryConfig } from '@sentry/nextjs';
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
@@ -67,8 +67,8 @@ const nextConfig = {
   experimental: {
     // Vercelビルドエラー対策：最小限の実験的機能のみ有効
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    // Sentry統合のために必須
-    instrumentationHook: true,
+    // Sentry統合のために必須（一時的に無効化してテスト）
+    // instrumentationHook: true,
   },
   // ビルド最適化
   swcMinify: true,
@@ -87,19 +87,22 @@ const nextConfig = {
   },
 }
 
-// Sentry設定オプション
-const sentryWebpackPluginOptions = {
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
+// Sentry設定オプション（一時的に無効化）
+// const sentryWebpackPluginOptions = {
+//   // For all available options, see:
+//   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  // Suppresses source map uploading logs during build
-  silent: true,
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-}
+//   // Suppresses source map uploading logs during build
+//   silent: true,
+//   org: process.env.SENTRY_ORG,
+//   project: process.env.SENTRY_PROJECT,
+// }
 
 // SentryとBundleAnalyzerを両方適用
-export default withSentryConfig(
-  withBundleAnalyzer(nextConfig),
-  sentryWebpackPluginOptions
-)
+// export default withSentryConfig(
+//   withBundleAnalyzer(nextConfig),
+//   sentryWebpackPluginOptions
+// )
+
+// Sentry無効化テスト
+export default withBundleAnalyzer(nextConfig)

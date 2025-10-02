@@ -1,8 +1,6 @@
 // app/layout.tsx（最終版）
 import '@/styles/globals.css'
 
-import type { ErrorInfo } from 'react'
-
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
@@ -20,18 +18,6 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-// グローバルエラーハンドラー
-const handleGlobalError = (error: Error, errorInfo: ErrorInfo, retryCount: number) => {
-  // エラー監視サービス（Sentry等）への送信
-  console.error('Global Error Caught:', {
-    error: error.message,
-    stack: error.stack,
-    componentStack: errorInfo.componentStack,
-    retryCount,
-    timestamp: new Date().toISOString(),
-  })
-}
-
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
@@ -46,7 +32,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className={cn('bg-neutral-100 dark:bg-neutral-900')}>
-        <GlobalErrorBoundary maxRetries={3} retryDelay={1000} onError={handleGlobalError}>
+        <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
           <Providers>
             {children}
             <ToastContainer />
