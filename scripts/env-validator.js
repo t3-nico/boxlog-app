@@ -166,10 +166,7 @@ class EnvValidator {
         const isSet = value && value !== '' && !value.includes('your_') && !value.includes('_here')
 
         if (isSet) {
-          // 1Password参照形式かどうかを確認
-          const is1PasswordRef = value.startsWith('op://')
-          const indicator = is1PasswordRef ? '🔐' : '📝'
-          console.log(`    ${colors.green}✅ ${indicator} ${varDef.name}${colors.reset}`)
+          console.log(`    ${colors.green}✅ ${varDef.name}${colors.reset}`)
         } else {
           console.log(`    ${colors.red}❌ ${varDef.name}${colors.reset}`)
           console.log(`       📖 ${varDef.description}`)
@@ -202,9 +199,7 @@ class EnvValidator {
         const isSet = value && value !== ''
 
         if (isSet) {
-          const is1PasswordRef = value.startsWith('op://')
-          const indicator = is1PasswordRef ? '🔐' : '📝'
-          console.log(`    ${colors.green}✅ ${indicator} ${varDef.name}${colors.reset}`)
+          console.log(`    ${colors.green}✅ ${varDef.name}${colors.reset}`)
         } else {
           console.log(`    ${colors.yellow}➖ ${varDef.name} (未設定)${colors.reset}`)
           console.log(`       📖 ${varDef.description}`)
@@ -226,7 +221,6 @@ class EnvValidator {
       console.log(`3. ${colors.blue}npm run env:check${colors.reset} - 再度検証`)
       console.log('')
       console.log('📖 詳細ドキュメント:')
-      console.log('  - docs/1PASSWORD_SETUP.md - 1Password連携設定')
       console.log('  - .env.example - 設定例と説明')
     } else {
       console.log(`${colors.green}✅ すべての必須環境変数が設定されています！${colors.reset}`)

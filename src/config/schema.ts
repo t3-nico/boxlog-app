@@ -118,12 +118,6 @@ export const ExternalApisSchema = z.object({
     token: z.string().optional(),
     projectId: z.string().optional(),
   }).optional(),
-  /** 1Password Connect */
-  onePassword: z.object({
-    connectHost: z.string().url().optional(),
-    connectToken: z.string().optional(),
-    vaultId: z.string().optional(),
-  }).optional(),
 })
 
 /**

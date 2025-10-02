@@ -25,7 +25,6 @@ interface ConfigStructure {
   apis?: {
     openai?: { apiKey?: string }
     vercel?: { token?: string }
-    onePassword?: { connectToken?: string }
   }
   server?: { session?: { secret?: string } }
   logging?: Record<string, unknown>
@@ -139,10 +138,6 @@ function buildApiHealthStatus(config: ConfigStructure): 'configured' | 'missing'
   if (config.apis?.vercel) {
     totalCount++
     if (config.apis.vercel.token) configuredCount++
-  }
-  if (config.apis?.onePassword) {
-    totalCount++
-    if (config.apis.onePassword.connectToken) configuredCount++
   }
 
   if (totalCount === 0) return 'missing'

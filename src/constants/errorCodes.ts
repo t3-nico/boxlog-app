@@ -214,16 +214,14 @@ export const EXTERNAL_ERRORS = {
   EXTERNAL_SERVICE_MAINTENANCE: 7004,
   /** WebHookエラー */
   EXTERNAL_WEBHOOK_ERROR: 7005,
-  /** 1Password連携エラー */
-  EXTERNAL_ONEPASSWORD_ERROR: 7006,
   /** Supabase接続エラー */
-  EXTERNAL_SUPABASE_ERROR: 7007,
+  EXTERNAL_SUPABASE_ERROR: 7006,
   /** メール送信エラー */
-  EXTERNAL_EMAIL_ERROR: 7008,
+  EXTERNAL_EMAIL_ERROR: 7007,
   /** ストレージ接続エラー */
-  EXTERNAL_STORAGE_ERROR: 7009,
+  EXTERNAL_STORAGE_ERROR: 7008,
   /** 決済サービスエラー */
-  EXTERNAL_PAYMENT_ERROR: 7010,
+  EXTERNAL_PAYMENT_ERROR: 7009,
 } as const
 
 // ==============================================

@@ -45,7 +45,9 @@ BoxLog開発環境の構築と外部サービス連携設定に関するドキ�
 ### 初回開発者向け
 
 ```bash
-docs/setup/1PASSWORD_SETUP.md
+# 1. 環境変数のセットアップ
+cp .env.example .env.local
+# .env.localに必要な値を設定
 
 # 2. 推奨: Cursor AI統合（開発効率向上）
 docs/setup/CURSOR_SETUP.md

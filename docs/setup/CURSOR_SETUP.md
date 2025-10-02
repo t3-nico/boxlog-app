@@ -62,17 +62,17 @@ Cursorで以下のスニペットが利用可能：
 
 | プレフィックス   | 説明              | 生成されるコード                          |
 | ---------------- | ----------------- | ----------------------------------------- |
-| `op-env`         | 環境変数定義      | `VAR="op://vault/item/field"`             |
-| `react-op-env`   | React環境変数     | 安全な環境変数取得コード                  |
-| `node-op-config` | Node.js設定       | バリデーション付き設定オブジェクト        |
+| `react-env`      | React環境変数     | 安全な環境変数取得コード                  |
+| `node-config`    | Node.js設定       | バリデーション付き設定オブジェクト        |
 
 ### 使用例
 
 ```typescript
-// Cursor AIで "react-op-env" と入力すると自動生成
+// Cursor AIで "react-env" と入力すると自動生成
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 
 if (!supabaseUrl) {
+  throw new Error('NEXT_PUBLIC_SUPABASE_URL is not defined')
 }
 ```
 
@@ -82,7 +82,6 @@ if (!supabaseUrl) {
 | ------------------------- | --------------------------- |
 | `Ctrl+Shift+P` → `Ctrl+S` | 🔍 セキュリティ監査         |
 | `Ctrl+Shift+P` → `Ctrl+D` | 🔐 開発サーバー起動         |
-| `Ctrl+Shift+P` → `Ctrl+V` | 📦 Vault情報表示            |
 
 ## 🤖 Cursor AI との連携最適化
 
@@ -94,7 +93,7 @@ if (!supabaseUrl) {
   "cursor.privacy.enableCodebaseIndexing": false,
   "cursor.privacy.enableTelemetry": false,
 
-  "cursor.ai.contextFiles": ["docs/1PASSWORD_SETUP.md", "docs/CI_CD_SETUP.md", ".env.example"]
+  "cursor.ai.contextFiles": ["docs/CI_CD_SETUP.md", ".env.example"]
 }
 ```
 
@@ -103,17 +102,17 @@ if (!supabaseUrl) {
 Cursor AIチャットで以下のようにやり取りできます：
 
 ```
+User: 新しいAPIキーを環境変数に追加したい
 
-🤖 「BoxLogプロジェクトでは以下のコマンドで新しいAPIキーを追加できます：
+🤖 「BoxLogプロジェクトでは以下の手順で環境変数を追加できます：
 
-op item create \
-  --category="API Credential" \
-  --title="New API Service" \
-  --vault="BoxLog Development" \
-  'api_key[password]=your-api-key-here'
+1. .env.local に追加：
+   NEW_API_KEY=your-api-key-here
 
-その後、.env.localに参照を追加：
-NEW_API_KEY="op://BoxLog Development/New API Service/api_key"
+2. .env.example にプレースホルダー追加：
+   NEW_API_KEY=your-api-key-here
+
+3. 本番環境では Vercel Dashboard で設定
 ```
 
 ## 🛠️ 開発ワークフロー

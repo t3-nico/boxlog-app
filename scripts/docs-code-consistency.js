@@ -58,7 +58,6 @@ class DocsConsistencyChecker {
     // 各チェック項目を実行
     await this.checkESLintDocumentation()
     await this.checkThemeSystemDocumentation()
-    await this.check1PasswordSetup()
     await this.checkPackageJsonConsistency()
     await this.checkBrokenLinks()
     await this.checkTodoConsistency()
@@ -166,40 +165,6 @@ class DocsConsistencyChecker {
     })
   }
 
-  // 1Password設定の整合性チェック
-  async check1PasswordSetup() {
-    log.title('1Password設定とpackage.jsonスクリプトの整合性')
-
-    const passwordDocPath = path.join(this.docsDir, '1PASSWORD_SETUP.md')
-    const packagePath = path.join(this.rootDir, 'package.json')
-
-    if (!fs.existsSync(passwordDocPath)) {
-      this.addResult('warning', '1Password', '1PASSWORD_SETUP.md が見つかりません')
-      return
-    }
-
-    const docContent = fs.readFileSync(passwordDocPath, 'utf8')
-    const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
-
-    // ドキュメントで言及されているスクリプトが存在するかチェック
-    const expectedScripts = ['dev', 'build', 'start']
-    expectedScripts.forEach((script) => {
-      const mentionedInDoc = docContent.includes(`npm run ${script}`)
-      const existsInPackage = packageJson.scripts && packageJson.scripts[script]
-
-      if (mentionedInDoc && existsInPackage) {
-        const scriptContent = packageJson.scripts[script]
-        const usesOp = scriptContent.includes('op run')
-        if (usesOp) {
-          this.addResult('success', '1Password', `${script}スクリプト: 1Password使用設定済み`)
-        } else {
-          this.addResult('warning', '1Password', `${script}スクリプト: 1Password未使用`)
-        }
-      } else if (mentionedInDoc && !existsInPackage) {
-        this.addResult('error', '1Password', `${script}スクリプト: ドキュメントで言及されているが存在しない`)
-      }
-    })
-  }
 
   // package.json記載内容とドキュメントの整合性
   async checkPackageJsonConsistency() {

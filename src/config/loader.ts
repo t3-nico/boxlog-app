@@ -67,8 +67,6 @@ const ENV_VAR_MAPPINGS = {
   // 外部API
   'apis.openai.apiKey': 'OPENAI_API_KEY',
   'apis.vercel.token': 'VERCEL_TOKEN',
-  'apis.onePassword.connectHost': 'OP_CONNECT_HOST',
-  'apis.onePassword.connectToken': 'OP_CONNECT_TOKEN',
 
   // サーバー
   'server.port': 'PORT',

@@ -110,8 +110,6 @@ GitHub Secrets
 Vercel Dashboard → Environment Variables
 ```
 
-**Note**: 1Password CLI不要。シンプル構成で十分セキュア。
-
 ---
 
 ## 🔗 関連ドキュメント

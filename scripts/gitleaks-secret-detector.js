@@ -11,7 +11,6 @@
  * 企業レベルの機密情報検出:
  * - 25種類以上の秘密情報パターン検出
  * - ファイル種別に応じた高精度検出
- * - 1Password連携との統合
  * - 誤検出を最小化するスマート検証
  *
  * @version 1.0.0
@@ -170,8 +169,6 @@ const CONFIG = {
 
   // 除外パターン
   exclusions: {
-    // 1Password参照形式は除外
-    onePasswordRef: /op:\/\/[^"'\s]+/gi,
     // 例・テスト用のダミーデータ
     exampleSecrets: /example|test|dummy|fake|sample|placeholder/gi,
     // 環境変数参照
@@ -364,11 +361,6 @@ function scanFileContent(filePath, content) {
       const lineNumber = beforeMatch.split('\n').length
       const lineContent = lines[lineNumber - 1] || ''
 
-      // 1Password参照形式は除外
-      if (CONFIG.exclusions.onePasswordRef.test(matchedText)) {
-        return
-      }
-
       // テスト・例用は除外
       if (CONFIG.exclusions.exampleSecrets.test(lineContent.toLowerCase())) {
         return
@@ -531,10 +523,9 @@ async function runSecretDetection() {
     })
 
     console.log('\n💡 対応方法:')
-    console.log('   1. 🔐 1Password参照形式への変換: "op://vault/item/field"')
-    console.log('   2. 🌍 環境変数への移動: process.env.SECRET_NAME')
-    console.log('   3. 🗑️  不要な秘密情報の削除')
-    console.log('   4. 📝 .gitignore への追加')
+    console.log('   1. 🌍 環境変数への移動: process.env.SECRET_NAME')
+    console.log('   2. 🗑️  不要な秘密情報の削除')
+    console.log('   3. 📝 .gitignore への追加')
 
     return { success: false, results: allResults, stats, errors }
   }

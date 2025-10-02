@@ -59,9 +59,6 @@ Thumbs.db
 logs/
 *.log
 
-# 1Password Security Logs
-logs/security/
-
 # Runtime data
 pids
 *.pid

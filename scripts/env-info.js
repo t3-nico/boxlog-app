@@ -49,9 +49,7 @@ class EnvInfo {
     const isSensitive = sensitiveKeys.some((sensitiveKey) => key.toUpperCase().includes(sensitiveKey))
 
     if (isSensitive) {
-      if (value.startsWith('op://')) {
-        return `🔐 ${value}`
-      } else if (value.length > 10) {
+      if (value.length > 10) {
         return `🔒 ${value.slice(0, 4)}****${value.slice(-4)}`
       } else {
         return '🔒 ****'
@@ -165,48 +163,6 @@ class EnvInfo {
     }
   }
 
-  // 1Password統合の状態を確認
-  check1PasswordIntegration() {
-    console.log(`${colors.blue}${colors.bold}🔐 1Password統合の状態${colors.reset}`)
-
-    // 1Password CLIの存在確認
-    try {
-      const { execSync } = require('child_process')
-      const version = execSync('op --version 2>/dev/null', { encoding: 'utf-8' }).trim()
-      console.log(`  ${colors.green}✅ 1Password CLI: ${version}${colors.reset}`)
-
-      // 認証状態確認
-      try {
-        execSync('op account get 2>/dev/null', { encoding: 'utf-8' })
-        console.log(`  ${colors.green}✅ 1Password認証: ログイン済み${colors.reset}`)
-      } catch {
-        console.log(`  ${colors.yellow}⚠️  1Password認証: 未ログイン${colors.reset}`)
-        console.log(`     💡 ログイン: op signin${colors.reset}`)
-      }
-    } catch {
-      console.log(`  ${colors.red}❌ 1Password CLI: 未インストール${colors.reset}`)
-      console.log(`     💡 インストール: https://developer.1password.com/docs/cli/get-started${colors.reset}`)
-    }
-
-    // 1Password参照形式の使用状況
-    const envFiles = [this.envPath, this.envLocalPath]
-    let total1PasswordRefs = 0
-
-    envFiles.forEach((filePath) => {
-      if (fs.existsSync(filePath)) {
-        const parsed = this.parseEnvFile(filePath)
-        const refs = parsed.variables.filter((v) => v.value.startsWith('op://'))
-        total1PasswordRefs += refs.length
-
-        if (refs.length > 0) {
-          const fileName = path.basename(filePath)
-          console.log(`  📄 ${fileName}: ${refs.length}個の1Password参照`)
-        }
-      }
-    })
-
-    console.log(`  📊 合計1Password参照: ${total1PasswordRefs}個`)
-  }
 
   // トラブルシューティング情報を表示
   showTroubleshooting() {
@@ -249,7 +205,6 @@ class EnvInfo {
     console.log(`${colors.blue}  📖 関連コマンド:${colors.reset}`)
     console.log(`     npm run env:setup   - 環境変数ファイルの初期化`)
     console.log(`     npm run env:check   - 環境変数の検証`)
-    console.log(`     npm run 1password:auth - 1Password認証`)
   }
 
   // メイン実行
@@ -263,9 +218,6 @@ class EnvInfo {
       console.log('')
 
       this.showEnvironmentDetails()
-      console.log('')
-
-      this.check1PasswordIntegration()
       console.log('')
 
       this.showTroubleshooting()
