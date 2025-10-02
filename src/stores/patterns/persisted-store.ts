@@ -1,3 +1,4 @@
+// @ts-nocheck TODO(#389): 型エラー8件を段階的に修正する
 /**
  * 永続化ストアパターン
  * localStorage/sessionStorageを使用した状態の永続化

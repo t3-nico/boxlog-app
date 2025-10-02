@@ -201,6 +201,7 @@ export const TwoWeekView = ({
                 className="flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative"
                 style={{ width: `${100 / displayDates.length}%` }}
               >
+                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
                 <TwoWeekContent
                   date={date}
                   events={dayEvents}

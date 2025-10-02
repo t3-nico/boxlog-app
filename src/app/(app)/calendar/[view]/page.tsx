@@ -1,24 +1,15 @@
-'use client'
-
-import dynamic from 'next/dynamic'
 import { redirect } from 'next/navigation'
 
-import { FeatureErrorBoundary } from '@/components/error-boundary'
-import { CalendarSkeleton } from '@/features/calendar/components/CalendarSkeleton'
+import { createTranslation, getDictionary } from '@/lib/i18n'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
+import type { Locale } from '@/types/i18n'
 
-// Calendar機能を動的インポート（Bundle size最適化）
-const CalendarController = dynamic(
-  () => import('@/features/calendar').then((mod) => ({ default: mod.CalendarController })),
-  {
-    loading: () => <CalendarSkeleton />,
-    ssr: false,
-  }
-)
+import CalendarViewClient from './client'
 
 interface CalendarViewPageProps {
   params: {
     view: string
+    locale?: Locale
   }
   searchParams: {
     date?: string
@@ -32,8 +23,8 @@ function isValidViewType(view: string): view is CalendarViewType {
   return validTypes.includes(view as CalendarViewType)
 }
 
-const CalendarViewPage = ({ params, searchParams }: CalendarViewPageProps) => {
-  const { view } = params
+const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps) => {
+  const { view, locale = 'ja' } = params
   const { date } = searchParams
 
   // 有効なビュータイプかチェック
@@ -50,34 +41,18 @@ const CalendarViewPage = ({ params, searchParams }: CalendarViewPageProps) => {
     }
   }
 
-  return (
-    <FeatureErrorBoundary
-      featureName="calendar"
-      fallback={
-        <div className="flex h-screen items-center justify-center">
-          <div className="bg-red-50 dark:bg-red-900/20 p-6 border-red-300 dark:border-red-700 rounded-lg border max-w-md">
-            <div className="text-center">
-              <div className="text-red-600 dark:text-red-400 mb-4 text-6xl">📅</div>
-              <h2 className="text-2xl font-bold tracking-tight text-red-600 dark:text-red-400 mb-2">
-                カレンダーの読み込みに失敗しました
-              </h2>
-              <p className="text-neutral-800 dark:text-neutral-200 mb-4 text-sm">
-                カレンダーを表示できませんでした。ページをリロードしてください。
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-blue-600 dark:bg-blue-500 rounded px-4 py-2 text-white transition-opacity hover:opacity-80"
-              >
-                ページをリロード
-              </button>
-            </div>
-          </div>
-        </div>
-      }
-    >
-      <CalendarController initialViewType={view} initialDate={initialDate ?? null} />
-    </FeatureErrorBoundary>
-  )
+  // サーバーサイドで翻訳辞書を取得
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
+  // 翻訳テキストを抽出
+  const translations = {
+    errorTitle: t('calendar.errors.loadFailed'),
+    errorMessage: t('calendar.errors.displayFailed'),
+    reloadButton: t('common.reload'),
+  }
+
+  return <CalendarViewClient view={view} initialDate={initialDate ?? null} translations={translations} />
 }
 
 export default CalendarViewPage

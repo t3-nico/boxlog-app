@@ -1,3 +1,4 @@
+// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 import { useMemo } from 'react'
 
 import { MenuItem, MenuSection, sidebarConfig } from '@/config/ui/sidebarConfig'

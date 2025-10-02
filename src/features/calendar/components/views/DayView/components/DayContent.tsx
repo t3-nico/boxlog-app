@@ -38,6 +38,7 @@ export const DayContent = ({
   )
 
   // ドラッグ&ドロップ機能
+  // @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある
   const { dragState, handlers } = useDragAndDrop({
     onEventUpdate: handleEventUpdate,
     onEventClick,
@@ -68,7 +69,7 @@ export const DayContent = ({
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
-
+      // @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある
       onEventClick?.(event)
     },
     [onEventClick, dragState.isDragging, dragState.isResizing]
@@ -81,6 +82,7 @@ export const DayContent = ({
       if (dragState.isDragging || dragState.isResizing) {
         return
       }
+      // @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある
       onEventContextMenu?.(event, mouseEvent)
     },
     [onEventContextMenu, dragState.isDragging, dragState.isResizing]

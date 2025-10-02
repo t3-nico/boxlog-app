@@ -187,12 +187,91 @@
   "common": {
     "dates": {
       "format": "YYYY/MM/DD"
+    },
+    "reload": "ページをリロード",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "close": "閉じる",
+    "confirm": "確認",
+    "loading": "読み込み中...",
+    "noData": "データがありません"
+  },
+  "calendar": {
+    "title": "カレンダー",
+    "views": {
+      "day": "日表示",
+      "splitDay": "分割日表示",
+      "3day": "3日表示",
+      "week": "週表示",
+      "weekNoWeekend": "週表示（平日のみ）",
+      "2week": "2週表示",
+      "month": "月表示"
+    },
+    "errors": {
+      "loadFailed": "カレンダーの読み込みに失敗しました",
+      "displayFailed": "カレンダーを表示できませんでした。ページをリロードしてください。"
     }
   },
   "settings": {
+    "title": "設定",
     "general": {
       "title": "一般設定",
-      "description": "基本的なアプリケーション設定"
+      "description": "組織の基本情報と設定を管理します"
+    },
+    "preferences": {
+      "title": "環境設定",
+      "description": "アプリケーションの表示や動作設定"
+    },
+    "calendar": {
+      "title": "カレンダー",
+      "description": "カレンダー表示設定とタイムゾーンの管理"
+    },
+    "integration": {
+      "title": "連携設定",
+      "description": "外部サービスとの連携設定"
+    },
+    "templates": {
+      "title": "テンプレート",
+      "description": "よく使用するフォームやタスクのテンプレートを管理します"
+    },
+    "account": {
+      "title": "アカウント",
+      "description": "アカウント設定とプロフィール情報の管理"
+    },
+    "notifications": {
+      "title": "通知",
+      "description": "通知設定とアラートの管理"
+    },
+    "chronotype": {
+      "title": "クロノタイプ設定",
+      "description": "あなたの体内時計に合わせて最適な作業スケジュールを設定します",
+      "proceed": "設定に進む",
+      "saved": "クロノタイプ設定を保存しました",
+      "benefits": {
+        "productivity": "生産性の向上：自分のピーク時間に重要なタスクを配置",
+        "routine": "メール処理、事務作業、ルーチンタスク"
+      }
+    },
+    "dataExport": {
+      "title": "データエクスポート",
+      "description": "データのエクスポートとバックアップ"
+    },
+    "planBilling": {
+      "title": "プラン・請求",
+      "description": "サブスクリプションと請求情報の管理"
+    },
+    "legal": {
+      "title": "法的情報",
+      "description": "利用規約とプライバシーポリシー"
+    },
+    "tags": {
+      "title": "タグ管理",
+      "description": "タスクやイベントのタグを管理"
+    },
+    "trash": {
+      "title": "ゴミ箱",
+      "description": "削除されたアイテムの管理"
     }
   },
   "auth": {

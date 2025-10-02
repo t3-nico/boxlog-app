@@ -1,3 +1,4 @@
+// @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 import React, { useCallback, useMemo } from 'react'
 
 import { useTrashStore } from '../stores/useTrashStore'

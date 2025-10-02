@@ -187,12 +187,91 @@
   "common": {
     "dates": {
       "format": "MM/DD/YYYY"
+    },
+    "reload": "Reload Page",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "noData": "No data available"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "views": {
+      "day": "Day View",
+      "splitDay": "Split Day View",
+      "3day": "3-Day View",
+      "week": "Week View",
+      "weekNoWeekend": "Week View (Weekdays)",
+      "2week": "2-Week View",
+      "month": "Month View"
+    },
+    "errors": {
+      "loadFailed": "Failed to load calendar",
+      "displayFailed": "Could not display the calendar. Please reload the page."
     }
   },
   "settings": {
+    "title": "Settings",
     "general": {
       "title": "General Settings",
-      "description": "Basic application settings"
+      "description": "Manage organization's basic information and settings"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Application display and behavior settings"
+    },
+    "calendar": {
+      "title": "Calendar",
+      "description": "Calendar display settings and timezone management"
+    },
+    "integration": {
+      "title": "Integrations",
+      "description": "External service integration settings"
+    },
+    "templates": {
+      "title": "Templates",
+      "description": "Manage frequently used forms and task templates"
+    },
+    "account": {
+      "title": "Account",
+      "description": "Account settings and profile information management"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Notification settings and alert management"
+    },
+    "chronotype": {
+      "title": "Chronotype Settings",
+      "description": "Set up your optimal work schedule based on your body clock",
+      "proceed": "Proceed to Settings",
+      "saved": "Chronotype settings saved",
+      "benefits": {
+        "productivity": "Improve productivity: Schedule important tasks during your peak hours",
+        "routine": "Email processing, administrative work, routine tasks"
+      }
+    },
+    "dataExport": {
+      "title": "Data Export",
+      "description": "Data export and backup"
+    },
+    "planBilling": {
+      "title": "Plan & Billing",
+      "description": "Subscription and billing information management"
+    },
+    "legal": {
+      "title": "Legal Information",
+      "description": "Terms of Service and Privacy Policy"
+    },
+    "tags": {
+      "title": "Tag Management",
+      "description": "Manage tags for tasks and events"
+    },
+    "trash": {
+      "title": "Trash",
+      "description": "Manage deleted items"
     }
   },
   "auth": {
