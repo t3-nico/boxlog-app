@@ -130,7 +130,7 @@ export function useCreateSmartFolder() {
       
       return { previousFolders }
     },
-    onError: (err, newFolder, context) => {
+    onError: (_err, _newFolder, context) => {
       // エラー時にロールバック
       if (context?.previousFolders) {
         queryClient.setQueryData(smartFolderKeys.lists(), context.previousFolders)
@@ -165,7 +165,7 @@ export function useUpdateSmartFolder() {
       
       return { previousFolders }
     },
-    onError: (err, variables, context) => {
+    onError: (_err, _variables, context) => {
       if (context?.previousFolders) {
         queryClient.setQueryData(smartFolderKeys.lists(), context.previousFolders)
       }
@@ -193,7 +193,7 @@ export function useDeleteSmartFolder() {
       
       return { previousFolders }
     },
-    onError: (err, deletedId, context) => {
+    onError: (_err, _deletedId, context) => {
       if (context?.previousFolders) {
         queryClient.setQueryData(smartFolderKeys.lists(), context.previousFolders)
       }

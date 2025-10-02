@@ -8,9 +8,7 @@ import { TRPCError } from '@trpc/server'
 
 import {
   createTRPCRouter,
-  publicProcedure,
   protectedProcedure,
-  paginationSchema,
 } from '../trpc'
 import {
   createTaskInputSchema,
@@ -19,14 +17,9 @@ import {
   searchTasksInputSchema,
   getTasksInputSchema,
   bulkUpdateTasksInputSchema,
-  bulkDeleteTasksInputSchema,
   taskOutputSchema,
   tasksListOutputSchema,
-  taskStatsOutputSchema,
-  taskHistoryOutputSchema,
   type Task,
-  type CreateTaskInput,
-  type UpdateTaskInput,
 } from '@/schemas/api/tasks'
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
 import { trackTaskCreated, trackTaskCompleted, trackError } from '@/lib/analytics/vercel-analytics'
@@ -271,9 +264,9 @@ export const tasksRouter = createTRPCRouter({
   list: protectedProcedure
     .input(getTasksInputSchema)
     .output(tasksListOutputSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input }) => {
       try {
-        const { page, limit, projectId, status, assigneeId, sortBy, sortOrder } = input
+        const { page, limit } = input
 
         // データベースクエリ（仮実装）
         const tasks: Task[] = []
@@ -333,7 +326,7 @@ export const tasksRouter = createTRPCRouter({
   search: protectedProcedure
     .input(searchTasksInputSchema)
     .output(tasksListOutputSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input }) => {
       try {
         // 検索クエリの構築と実行
         const tasks: Task[] = []
@@ -368,9 +361,9 @@ export const tasksRouter = createTRPCRouter({
       success: z.boolean(),
       message: z.string(),
     }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       try {
-        const { taskIds, updates } = input
+        const { taskIds } = input
 
         // 権限チェック・バルク更新処理
         // 実装省略
@@ -393,17 +386,17 @@ export const tasksRouter = createTRPCRouter({
  * ヘルパー関数
  */
 
-async function findTaskById(id: string): Promise<Task | null> {
+async function findTaskById(_id: string): Promise<Task | null> {
   // データベースからタスクを取得（仮実装）
   return null
 }
 
-async function isUserAdmin(userId: string): Promise<boolean> {
+async function isUserAdmin(_userId: string): Promise<boolean> {
   // ユーザーの管理者権限確認（仮実装）
   return false
 }
 
-async function hasSubtasks(taskId: string): Promise<boolean> {
+async function hasSubtasks(_taskId: string): Promise<boolean> {
   // サブタスクの存在確認（仮実装）
   return false
 }

@@ -31,7 +31,7 @@ const generateId = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36)
 }
 
-const _generateConditionId = (): string => {
+const generateConditionId = (): string => {
   return `cond_${Math.random().toString(36).substring(2)}`
 }
 
@@ -109,7 +109,7 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         const { smartFolders } = get()
 
         // const parentFolder = folder.parentId ? smartFolders.find(f => f.id === folder.parentId) : null
-        const _parentFolder = null
+        const parentFolder = null
 
         // if (folder.level > 3) {
         //   throw new Error('Maximum hierarchy level is 3')
@@ -120,9 +120,9 @@ export const useSmartFolderStore = create<SmartFolderStore>()(
         // }
 
         // Generate path - temporarily use folder name only
-        const _path = folder.name
+        const path = folder.name
 
-        const _maxOrder = smartFolders.length
+        const maxOrder = smartFolders.length
 
         const newFolder: SmartFolder = {
           ...folder,

@@ -67,7 +67,7 @@ export function useUpdateTask() {
       })
     },
     // 楽観的更新の実装
-    onMutate: async (updateData) => {
+    onMutate: async (_updateData) => {
       // 進行中のクエリをキャンセル
       await utils.tasks.list.cancel()
 

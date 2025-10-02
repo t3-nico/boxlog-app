@@ -26,7 +26,6 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   const router = useRouter()
 
   // ストアから実際のイベントデータを取得
-  const _eventStore = useEventStore()
   const { chronotype } = useCalendarSettingsStore()
 
   // jsx-no-bind optimization: No event click handler
@@ -197,22 +196,6 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     console.log('🎯 Final active event:', activeEvent?.title || 'None')
     setCurrentEvent(activeEvent || null)
   }, [currentTime, todayEvents])
-
-  // 残り時間を計算
-  const _getRemainingTime = (endDate: Date): string => {
-    const now = new Date()
-    const remaining = endDate.getTime() - now.getTime()
-    
-    if (remaining <= 0) return 'Ended'
-    
-    const minutes = Math.floor(remaining / (1000 * 60))
-    const hours = Math.floor(minutes / 60)
-    
-    if (hours > 0) {
-      return `${hours}h ${minutes % 60}m remaining`
-    }
-    return `${minutes}m remaining`
-  }
 
   // 時間をフォーマット
   const formatTime = (date: Date): string => {

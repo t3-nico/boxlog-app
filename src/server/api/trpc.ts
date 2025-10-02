@@ -34,7 +34,7 @@ export async function createTRPCContext(opts: CreateNextContextOptions): Promise
   try {
     const authHeader = req.headers.authorization
     if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.substring(7)
+      const _token = authHeader.substring(7)
       // ここで実際のトークン検証を行う
       // const decoded = await verifyJWT(token)
       // userId = decoded.userId

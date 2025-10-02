@@ -246,7 +246,6 @@ export class MemoryOptimizer {
    * メモリリークの検出
    */
   private detectMemoryLeaks(): void {
-    const _stats = this.getMemoryStats()
     
     // 継続的なメモリ増加の検出
     if (this.memoryHistory.length >= 10) {

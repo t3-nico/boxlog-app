@@ -3,7 +3,9 @@
 **リリース日**: YYYY-MM-DD
 
 ## 🎯 概要
-このリリースの主な目的と変更の概要を記載
+このリリースの主な変更点を簡潔に記載
+
+---
 
 ## 📋 変更内容
 
@@ -29,18 +31,22 @@
 ### 🔒 セキュリティ (Security)
 - セキュリティ関連の修正
 
-## 📊 統計情報
-- コミット数: XX件
-- PR数: XX件
-- Issue解決数: XX件
+---
 
 ## 🔗 関連リンク
 - [CHANGELOG](../../CHANGELOG.md)
 - [GitHub Release](https://github.com/t3-nico/boxlog-app/releases/tag/vX.Y.Z)
-- [マイルストーン](https://github.com/t3-nico/boxlog-app/milestone/X)
+- **Full Changelog**: https://github.com/t3-nico/boxlog-app/compare/vX.Y.Z-1...vX.Y.Z
 
-## 👥 貢献者
-このリリースに貢献してくれた全ての方に感謝します。
+---
 
-## 📝 注意事項
-アップグレード時の注意点や既知の問題など
+## 📝 使い方
+
+### GitHub Release作成時
+1. このテンプレートをコピー
+2. バージョン番号を置換（vX.Y.Z → v1.2.3）
+3. 変更内容を記載
+4. GitHub Releaseに投稿
+
+### ドキュメント保存
+このファイルを `docs/releases/vX.Y.Z.md` として保存

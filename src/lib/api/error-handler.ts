@@ -2,14 +2,11 @@
  * API エラーハンドリング統合システム
  * tRPC・Zod・エラーパターン辞書の統合エラー処理
  */
-
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-
-import { createAppError, ERROR_CODES, type AppError } from '@/config/error-patterns'
+import { ERROR_CODES, type AppError } from '@/config/error-patterns'
 import { trackError } from '@/lib/analytics/vercel-analytics'
 import { safeJsonStringify } from './json-utils'
-
 /**
  * APIエラーレスポンス型
  */
@@ -25,7 +22,6 @@ export interface APIErrorResponse {
     requestId?: string
   }
 }
-
 /**
  * API成功レスポンス型
  */
@@ -35,12 +31,10 @@ export interface APISuccessResponse<T = any> {
   timestamp: string
   requestId?: string
 }
-
 /**
  * 統一レスポンス型
  */
 export type APIResponse<T = any> = APISuccessResponse<T> | APIErrorResponse
-
 /**
  * Zodバリデーションエラーの日本語化
  */
@@ -67,17 +61,14 @@ export function translateZodError(error: z.ZodError): {
     parentTaskId: '親タスクID',
     tags: 'タグ',
     completed: '完了フラグ',
-
     // ページネーション
     page: 'ページ番号',
     limit: '取得件数',
-
     // 検索
     query: '検索キーワード',
     sortBy: 'ソート項目',
     sortOrder: 'ソート順序',
   }
-
   const errorTypeMap: Record<string, string> = {
     required_error: 'は必須項目です',
     invalid_type: 'の形式が正しくありません',
@@ -87,17 +78,13 @@ export function translateZodError(error: z.ZodError): {
     invalid_date: 'の日付形式が正しくありません',
     custom: '', // カスタムメッセージをそのまま使用
   }
-
   const details = error.errors.map((err) => {
     const fieldPath = err.path.join('.')
     const fieldName = fieldErrorMap[fieldPath] || fieldPath
-
     let message = err.message
-
     // Zodのデフォルトメッセージを日本語化
     if (err.code !== 'custom') {
       const baseMessage = errorTypeMap[err.code] || 'に問題があります'
-
       switch (err.code) {
         case 'too_small':
           if (err.type === 'string') {
@@ -110,7 +97,6 @@ export function translateZodError(error: z.ZodError): {
             message = `${fieldName}${baseMessage}`
           }
           break
-
         case 'too_big':
           if (err.type === 'string') {
             message = `${fieldName}は${err.maximum}文字以下で入力してください`
@@ -122,7 +108,6 @@ export function translateZodError(error: z.ZodError): {
             message = `${fieldName}${baseMessage}`
           }
           break
-
         case 'invalid_type':
           if (err.expected === 'string') {
             message = `${fieldName}は文字列で入力してください`
@@ -136,7 +121,6 @@ export function translateZodError(error: z.ZodError): {
             message = `${fieldName}${baseMessage}`
           }
           break
-
         case 'invalid_string':
           if (err.validation === 'email') {
             message = `${fieldName}は有効なメールアドレスを入力してください`
@@ -148,34 +132,28 @@ export function translateZodError(error: z.ZodError): {
             message = `${fieldName}${baseMessage}`
           }
           break
-
         case 'invalid_enum_value':
           message = `${fieldName}は有効な選択肢から選んでください`
           break
-
         default:
           message = `${fieldName}${baseMessage}`
       }
     }
-
     return {
       field: fieldPath,
       message,
       code: err.code,
     }
   })
-
   const primaryError = details[0]
   const summary = details.length === 1
     ? primaryError.message
     : `入力内容に${details.length}件の問題があります`
-
   return {
     message: summary,
     details,
   }
 }
-
 /**
  * tRPCエラーの日本語化とユーザーフレンドリー化
  */
@@ -199,9 +177,7 @@ export function translateTRPCError(error: TRPCError): {
     CLIENT_CLOSED_REQUEST: 'リクエストがキャンセルされました',
     INTERNAL_SERVER_ERROR: 'サーバーエラーが発生しました',
   }
-
   const userMessage = codeMessageMap[error.code] || 'エラーが発生しました'
-
   // Zodバリデーションエラーが含まれている場合の特別処理
   if (error.cause && typeof error.cause === 'object' && 'issues' in error.cause) {
     const zodError = error.cause as z.ZodError
@@ -212,14 +188,12 @@ export function translateTRPCError(error: TRPCError): {
       code: error.code,
     }
   }
-
   return {
     userMessage,
     technicalMessage: error.message,
     code: error.code,
   }
 }
-
 /**
  * 統一エラーハンドラー
  */
@@ -237,11 +211,9 @@ export class APIErrorHandler {
   ): APIErrorResponse {
     const timestamp = new Date().toISOString()
     const requestId = context?.requestId || crypto.randomUUID()
-
     // TRPCエラーの処理
     if (error instanceof TRPCError) {
       const translated = translateTRPCError(error)
-
       // Analytics追跡
       trackError({
         errorCode: this.mapTRPCCodeToNumber(error.code),
@@ -249,7 +221,6 @@ export class APIErrorHandler {
         severity: this.mapTRPCCodeToSeverity(error.code),
         wasRecovered: false,
       })
-
       return {
         success: false,
         error: {
@@ -261,18 +232,15 @@ export class APIErrorHandler {
         },
       }
     }
-
     // Zodバリデーションエラーの処理
     if (error instanceof z.ZodError) {
       const translated = translateZodError(error)
-
       trackError({
         errorCode: 400,
         errorCategory: 'Validation',
         severity: 'medium',
         wasRecovered: false,
       })
-
       return {
         success: false,
         error: {
@@ -285,18 +253,15 @@ export class APIErrorHandler {
         },
       }
     }
-
     // AppErrorの処理
     if (error && typeof error === 'object' && 'code' in error && 'message' in error) {
       const appError = error as AppError
-
       trackError({
         errorCode: 500,
         errorCategory: 'Application',
         severity: 'high',
         wasRecovered: false,
       })
-
       return {
         success: false,
         error: {
@@ -309,17 +274,14 @@ export class APIErrorHandler {
         },
       }
     }
-
     // 一般的なエラーの処理
     const errorMessage = error instanceof Error ? error.message : String(error)
-
     trackError({
       errorCode: 500,
       errorCategory: 'Unknown',
       severity: 'high',
       wasRecovered: false,
     })
-
     return {
       success: false,
       error: {
@@ -331,7 +293,6 @@ export class APIErrorHandler {
       },
     }
   }
-
   /**
    * 成功レスポンスを生成
    */
@@ -346,7 +307,6 @@ export class APIErrorHandler {
       requestId: requestId || crypto.randomUUID(),
     }
   }
-
   /**
    * tRPCエラーコードを数値にマッピング
    */
@@ -368,7 +328,6 @@ export class APIErrorHandler {
     }
     return mapping[code] || 500
   }
-
   /**
    * tRPCエラーコードを重要度にマッピング
    */
@@ -387,39 +346,29 @@ export class APIErrorHandler {
     }
   }
 }
-
 /**
  * React用エラーハンドリングフック
  */
 export function useErrorHandler() {
   const handleError = (error: unknown, context?: { operation?: string }) => {
     const errorResponse = APIErrorHandler.handleError(error, context)
-
     // エラーログの出力（安全なJSON処理）
     console.error('API Error:', safeJsonStringify({
       ...errorResponse.error,
       context,
     }, 2))
-
     return errorResponse
   }
-
   const handleZodError = (error: z.ZodError) => {
     const translated = translateZodError(error)
-
     console.warn('Validation Error:', translated)
-
     return translated
   }
-
   const handleTRPCError = (error: TRPCError) => {
     const translated = translateTRPCError(error)
-
     console.error('tRPC Error:', translated)
-
     return translated
   }
-
   return {
     handleError,
     handleZodError,

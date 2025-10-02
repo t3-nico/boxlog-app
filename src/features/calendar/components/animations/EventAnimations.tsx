@@ -79,25 +79,6 @@ export const AnimatedEventItem = ({
     }
   }, [isCreating])
 
-  // アニメーション状態の決定
-  const _getAnimationVariant = () => {
-    if (isDragging) return 'dragging'
-    if (isSelected) return 'selected'
-    if (isHovered) return 'hover'
-    return 'default'
-  }
-
-  const _animationVariants = {
-    default: {
-      scale: 1,
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-      zIndex: 1
-    },
-    hover: eventAnimations.hover,
-    selected: eventAnimations.selected,
-    dragging: eventAnimations.dragging
-  }
-
   return (
     <div>
       {isVisible === true && (
@@ -265,78 +246,9 @@ interface PulseEffectProps {
 }
 
 export const PulseEffect = ({ isActive, children, intensity: _intensity = 'medium' }: PulseEffectProps) => {
-  const _pulseVariants = {
-    low: { scale: [1, 1.01, 1] },
-    medium: { scale: [1, 1.02, 1] },
-    high: { scale: [1, 1.05, 1] }
-  }
-
   return (
-    <div
-      className={isActive ? 'animate-pulse' : ''}
-    >
+    <div className={isActive ? 'animate-pulse' : ''}>
       {children}
     </div>
   )
 }
-
-// スムーズなレイアウト変更
-export const SmoothLayoutGroup = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="transition-all duration-200 ease-out">
-      {children}
-    </div>
-  )
-}
-
-// ユーティリティ関数
-function timeToMinutes(timeString: string): number {
-  const [hours = 0, minutes = 0] = timeString.split(':').map(Number)
-  return hours * 60 + minutes
-}
-
-// 成功・エラーアニメーション
-interface StatusAnimationProps {
-  type: 'success' | 'error' | 'info'
-  children: React.ReactNode
-  duration?: number
-}
-
-export const StatusAnimation = ({ type, children, duration = 2000 }: StatusAnimationProps) => {
-  const [isVisible, setIsVisible] = useState(true)
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(false), duration)
-    return () => clearTimeout(timer)
-  }, [duration])
-
-  const colors = {
-    success: 'bg-green-500',
-    error: 'bg-red-500',
-    info: 'bg-blue-500'
-  }
-
-  return (
-    <>
-      {isVisible === true && (
-        <div
-          className={`fixed top-4 right-4 p-3 rounded-lg text-white shadow-lg z-50 transition-all duration-200 ease-out animate-in fade-in slide-in-from-top-5 scale-in-95 ${colors[type as keyof typeof colors]}`}
-        >
-          {children}
-        </div>
-      )}
-    </>
-  )
-}
-
-// Tailwindアニメーション設定のプリセット
-export const tailwindAnimations = {
-  // 滑らかなスケール変更
-  smoothScale: 'transition-transform duration-300 ease-out',
-  
-  // 素早いフェード
-  quickFade: 'transition-opacity duration-150 ease-in-out',
-  
-  // 弾性のあるエントリー
-  bounceIn: 'animate-in zoom-in duration-300 ease-out'
-} as const

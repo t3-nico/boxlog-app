@@ -13,7 +13,7 @@ import { createTRPCContext } from '@/server/api/trpc'
 export default createNextApiHandler({
   router: appRouter,
   createContext: createTRPCContext,
-  onError: ({ error, type, path, input, ctx, req }) => {
+  onError: ({ error, type, path, input, ctx}) => {
     // エラーログの出力
     console.error('tRPC Error:', {
       type,

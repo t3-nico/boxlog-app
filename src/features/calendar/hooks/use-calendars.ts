@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 
 // import { calendarService } from '../services/calendar-service' // Removed - using localStorage
 import type {
