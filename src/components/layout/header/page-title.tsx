@@ -47,7 +47,7 @@ function getPageTitle(pathname: string): string {
 
 export const PageTitle = () => {
   const pathname = usePathname()
-  const title = getPageTitle(pathname)
+  const title = getPageTitle(pathname ?? '/')
   
   return (
     <h1

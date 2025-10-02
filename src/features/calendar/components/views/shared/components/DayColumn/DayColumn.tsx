@@ -74,7 +74,7 @@ export const DayColumn = memo<DayColumnProps>(function DayColumn({
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
-            handleTimeClick(e as unknown)
+            handleTimeClick(e as unknown as React.MouseEvent<Element, MouseEvent>)
           }
         }}
         style={{

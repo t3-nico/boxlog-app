@@ -215,6 +215,7 @@ export function useDragAndDrop({
         originalPosition,
         snappedPosition: {
           top: originalPosition.top,
+          height: originalPosition.height,
         },
         previewTime: null,
         recentlyDragged: false,
@@ -222,6 +223,7 @@ export function useDragAndDrop({
         dragElement,
         originalDateIndex: dateIndex,
         targetDateIndex: dateIndex,
+        ghostElement: null,
       })
     },
     [createDragElement, viewMode, displayDates]
@@ -242,11 +244,13 @@ export function useDragAndDrop({
   // リサイズ処理のヘルパー関数
   const handleResizing = useCallback(
     (dragData: { [key: string]: unknown }, constrainedX: number, constrainedY: number, deltaY: number) => {
-      const newHeight = Math.max(15, dragData.eventDuration + deltaY)
+      // TODO(#389): dragDataRefの型とDragStateの型を統一する
+      const typedDragData = dragData as { eventId: string; eventDuration: number; originalTop: number }
+      const newHeight = Math.max(15, typedDragData.eventDuration + deltaY)
       const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
       const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight)
 
-      const event = events.find((e) => e.id === dragData.eventId)
+      const event = events.find((e) => e.id === typedDragData.eventId)
       let previewTime = null
 
       if (event?.startDate) {
@@ -259,7 +263,7 @@ export function useDragAndDrop({
         ...prev,
         currentPosition: { x: constrainedX, y: constrainedY },
         snappedPosition: {
-          top: dragData.originalTop,
+          top: typedDragData.originalTop,
           height: finalHeight,
         },
         previewTime,
@@ -348,7 +352,7 @@ export function useDragAndDrop({
       minute: number,
       targetDateIndex: number
     ) => {
-      const event = events.find((e) => e.id === dragData.eventId)
+      const event = events.find((e) => e.id === dragData.draggedEventId)
       let durationMs = 60 * 60 * 1000
 
       if (event?.startDate && event?.endDate) {
@@ -414,13 +418,27 @@ export function useDragAndDrop({
       deltaY: number,
       targetDateIndex: number
     ) => {
-      const { snappedTop, snappedLeft, hour, minute } = calculateSnappedPosition(dragData, deltaY, targetDateIndex)
+      // TODO(#389): dragDataRefの型とDragStateの型を統一する
+      const { snappedTop, snappedLeft, hour, minute } = calculateSnappedPosition(
+        dragData as Pick<DragState, 'originalPosition' | 'originalDateIndex'> & { originalTop: number },
+        deltaY,
+        targetDateIndex
+      )
 
-      updateDragElementPosition(dragData, deltaX, deltaY)
+      updateDragElementPosition(
+        dragData as Pick<DragState, 'dragElement' | 'originalPosition'> & { initialRect: DOMRect },
+        deltaX,
+        deltaY
+      )
 
-      const { previewStartTime, previewEndTime } = calculatePreviewTime(dragData, hour, minute, targetDateIndex)
+      const { previewStartTime, previewEndTime } = calculatePreviewTime(
+        dragData as Pick<DragState, 'draggedEventId' | 'originalDateIndex'> & { eventDuration?: number },
+        hour,
+        minute,
+        targetDateIndex
+      )
 
-      updateTimeDisplay(dragData, previewStartTime, previewEndTime)
+      updateTimeDisplay(dragData as Pick<DragState, 'dragElement'>, previewStartTime, previewEndTime)
 
       setDragState((prev) => ({
         ...prev,
@@ -494,6 +512,7 @@ export function useDragAndDrop({
       recentlyDragged: false,
       recentlyResized: false,
       dragElement: null,
+      ghostElement: null,
     })
     dragDataRef.current = null
   }, [])
@@ -534,33 +553,35 @@ export function useDragAndDrop({
 
   // 日付インデックス計算
   const calculateTargetDateIndex = useCallback(
-    (constrainedX: number, dragData: { [key: string]: unknown }, deltaX: number) => {
-      let targetDateIndex = dragData.originalDateIndex
+    (constrainedX: number, dragData: { [key: string]: unknown }, deltaX: number): number => {
+      // TODO(#389): dragDataRefの型とDragStateの型を統一する
+      const typedDragData = dragData as { originalDateIndex: number; hasMoved?: boolean; originalElement?: HTMLElement; columnWidth?: number }
+      let targetDateIndex = typedDragData.originalDateIndex
 
-      if (viewMode !== 'day' && displayDates && dragData.hasMoved) {
+      if (viewMode !== 'day' && displayDates && typedDragData.hasMoved) {
         const gridContainer =
-          (dragData.originalElement?.closest('.flex') as HTMLElement) ||
+          (typedDragData.originalElement?.closest('.flex') as HTMLElement) ||
           (document.querySelector('.flex.h-full.relative') as HTMLElement) ||
-          (dragData.originalElement?.parentElement?.parentElement as HTMLElement)
+          (typedDragData.originalElement?.parentElement?.parentElement as HTMLElement)
 
-        if (gridContainer && dragData.columnWidth > 0) {
+        if (gridContainer && typedDragData.columnWidth && typedDragData.columnWidth > 0) {
           const rect = gridContainer.getBoundingClientRect()
           const relativeX = Math.max(0, Math.min(constrainedX - rect.left, rect.width))
 
-          const columnIndex = Math.floor(relativeX / dragData.columnWidth)
+          const columnIndex = Math.floor(relativeX / typedDragData.columnWidth)
           const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
 
           targetDateIndex = newTargetIndex
 
           // デバッグログ
-          if (Math.abs(newTargetIndex - dragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
+          if (Math.abs(newTargetIndex - typedDragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
             console.log('🔧 日付間移動（非連続日付対応）:', {
-              originalIndex: dragData.originalDateIndex,
-              originalDate: displayDates[dragData.originalDateIndex]?.toDateString?.(),
+              originalIndex: typedDragData.originalDateIndex,
+              originalDate: displayDates[typedDragData.originalDateIndex]?.toDateString?.(),
               newTargetIndex,
               targetDate: displayDates[newTargetIndex]?.toDateString?.(),
               relativeX,
-              columnWidth: dragData.columnWidth,
+              columnWidth: typedDragData.columnWidth,
               columnIndex,
               isNonConsecutive: displayDates.length < 7,
             })
@@ -653,6 +674,7 @@ export function useDragAndDrop({
       recentlyDragged: actuallyResized,
       recentlyResized: actuallyResized,
       dragElement: null,
+      ghostElement: null,
     })
 
     dragDataRef.current = null
@@ -797,6 +819,13 @@ export function useDragAndDrop({
       }
 
       const { event, durationMs } = calculateEventDuration(dragDataRef.current.eventId)
+
+      // eventがundefinedの場合は早期リターン
+      if (!event) {
+        console.warn('Event not found for update')
+        return
+      }
+
       const newEndTime = new Date(newStartTime.getTime() + durationMs)
 
       // エッジケース: 終了時刻が開始時刻より前の場合は修正
@@ -811,13 +840,13 @@ export function useDragAndDrop({
           newEndTime: newEndTime.toISOString(),
         })
 
-        const promise = onEventUpdate(dragDataRef.current.eventId, {
+        const result = onEventUpdate(dragDataRef.current.eventId, {
           startTime: newStartTime,
           endTime: newEndTime,
         })
 
         // Toast通知の処理
-        await handleEventUpdateToast(promise, event, newStartTime, durationMs)
+        await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs)
       } catch (error) {
         console.error('Failed to update event time:', error)
         calendarToast.error('予定の移動に失敗しました')
@@ -840,6 +869,7 @@ export function useDragAndDrop({
       previewTime: null,
       recentlyDragged: actuallyDragged, // 実際にドラッグした場合のみクリック無効化
       recentlyResized: false, // ドラッグ終了時はリサイズフラグをクリア
+      dragElement: null,
       ghostElement: null,
     })
     dragDataRef.current = null
@@ -963,6 +993,7 @@ export function useDragAndDrop({
         previewTime: null,
         recentlyDragged: false,
         recentlyResized: false,
+        dragElement: null,
         ghostElement: null,
       })
     },

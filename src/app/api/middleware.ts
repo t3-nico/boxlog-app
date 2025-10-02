@@ -229,7 +229,7 @@ function normalizeApiError(error: unknown, context: ApiContext): AppError {
         url: context.request.url,
         method: context.request.method
       }
-    }, error)
+    }, error.message)
   }
 
   // 不明なエラー

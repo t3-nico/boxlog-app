@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (status && isValidTaskStatus(status)) {
-      query = query.eq('status', status)
+      query = query.eq('status', status as NonNullable<'backlog' | 'scheduled' | 'completed' | 'rescheduled' | 'stopped' | 'delegated'>)
     }
 
     const { data, error } = await query

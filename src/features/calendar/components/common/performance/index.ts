@@ -67,15 +67,17 @@ export function useIntegratedPerformanceOptimization() {
 
     // パフォーマンス閾値超過時の自動メモリクリーンアップ
     currentPerformanceMonitor.onMetric('thresholdExceeded', (data: unknown) => {
-      if (data.metric === 'memoryUsage' || data.severity === 'critical') {
-        currentMemoryOptimizer.triggerCleanup('performance')
+      // TODO(#389): dataの型を適切に定義する
+      const typedData = data as { metric?: string; severity?: string }
+      if (typedData.metric === 'memoryUsage' || typedData.severity === 'critical') {
+        currentMemoryOptimizer.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')
       }
     })
 
     // バッテリー低下時の最適化
     currentBatteryOptimizer.addBatteryChangeListener((batteryInfo) => {
       if (batteryInfo.level < 0.2 && !batteryInfo.charging) {
-        currentMemoryOptimizer.triggerCleanup('battery')
+        currentMemoryOptimizer.triggerCleanup('warning' as 'warning' | 'manual' | 'gc')
       }
     })
 

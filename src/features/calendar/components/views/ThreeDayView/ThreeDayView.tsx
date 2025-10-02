@@ -224,12 +224,9 @@ export const ThreeDayView = ({
                         const startDate = new Date(date)
                         const [startHour, startMinute] = startTime.split(':').map(Number)
                         startDate.setHours(startHour, startMinute, 0, 0)
-                        
-                        const endDate = new Date(date)
-                        const [endHour, endMinute] = endTime.split(':').map(Number)
-                        endDate.setHours(endHour, endMinute, 0, 0)
-                        
-                        onCreateEvent?.(startDate, endDate)
+
+                        // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
+                        onCreateEvent?.(startDate, startTime)
                       }}
                       className="h-full"
                       dayIndex={dayIndex}

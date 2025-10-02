@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
 async function handleUpload(crowdin: CrowdinIntegration, language: string) {
   try {
     // BoxLogの翻訳データを取得
-    const dictionary = await getDictionary(language)
+    const dictionary = await getDictionary(language as import('@/types/i18n').Locale)
     const jsonContent = JSON.stringify(dictionary, null, 2)
     const filePath = `${language}.json`
 

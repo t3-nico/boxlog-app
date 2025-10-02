@@ -92,7 +92,7 @@ export const MobileBottomNavigation = () => {
       {/* Navigation Items */}
       {bottomNavItems.map((item) => {
         const Icon = item.icon
-        const isActive = item.isActive(pathname)
+        const isActive = item.isActive(pathname ?? '/')
 
         return (
           <button
