@@ -217,7 +217,35 @@
     "title": "Settings",
     "general": {
       "title": "General Settings",
-      "description": "Manage organization's basic information and settings"
+      "description": "Manage organization's basic information and settings",
+      "organizationName": {
+        "label": "Organization Name",
+        "description": "This will be displayed on your public profile."
+      },
+      "organizationBio": {
+        "label": "Organization Bio",
+        "description": "This will be displayed on your public profile. Maximum 240 characters."
+      },
+      "organizationEmail": {
+        "label": "Organization Email",
+        "description": "This is how customers can contact you for support.",
+        "showOnProfile": "Show email on public profile"
+      },
+      "address": {
+        "label": "Address",
+        "description": "This is where your organization is registered."
+      },
+      "currency": {
+        "label": "Currency",
+        "description": "The currency that your organization will be collecting.",
+        "select": "Select currency",
+        "cad": "CAD - Canadian Dollar",
+        "usd": "USD - United States Dollar"
+      },
+      "actions": {
+        "reset": "Reset",
+        "save": "Save changes"
+      }
     },
     "preferences": {
       "title": "Preferences",
@@ -255,7 +283,7 @@
     },
     "dataExport": {
       "title": "Data Export",
-      "description": "Data export and backup"
+      "description": "Export your data for backup and migration purposes"
     },
     "planBilling": {
       "title": "Plan & Billing",
@@ -275,6 +303,10 @@
     }
   },
   "auth": {
+    "welcome": {
+      "title": "Welcome to BoxLog",
+      "description": "The modern task management system that helps you stay organized and productive."
+    },
     "login": {
       "title": "Sign In",
       "subtitle": "Welcome back to BoxLog",

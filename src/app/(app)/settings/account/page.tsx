@@ -1,17 +1,22 @@
-'use client'
+import { getDictionary, createTranslation } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
 
-import { SettingsLayout, AccountSettings } from '@/features/settings/components'
+import AccountSettingsClient from './client'
 
-const AccountSettingsPage = () => {
-  return (
-    <SettingsLayout
-      title="アカウント"
-      description="アカウント設定とプロフィール情報の管理"
-    >
-      <AccountSettings />
-    </SettingsLayout>
-  )
+interface PageProps {
+  params: { locale?: Locale }
 }
 
-export default AccountSettingsPage
+export default async function AccountSettingsPage({ params }: PageProps) {
+  const locale = params.locale || 'ja'
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
+  const translations = {
+    title: t('settings.account.title'),
+    description: t('settings.account.description'),
+  }
+
+  return <AccountSettingsClient translations={translations} />
+}
 

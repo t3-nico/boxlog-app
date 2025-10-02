@@ -1,17 +1,22 @@
-'use client'
+import { getDictionary, createTranslation } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
 
-import { SettingsLayout, PreferencesSettings } from '@/features/settings/components'
+import PreferencesSettingsClient from './client'
 
-const PreferencesPage = () => {
-  return (
-    <SettingsLayout
-      title="環境設定"
-      description="アプリケーションの表示や動作設定"
-    >
-      <PreferencesSettings />
-    </SettingsLayout>
-  )
+interface PageProps {
+  params: { locale?: Locale }
 }
 
-export default PreferencesPage
+export default async function PreferencesPage({ params }: PageProps) {
+  const locale = params.locale || 'ja'
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
+  const translations = {
+    title: t('settings.preferences.title'),
+    description: t('settings.preferences.description'),
+  }
+
+  return <PreferencesSettingsClient translations={translations} />
+}
 

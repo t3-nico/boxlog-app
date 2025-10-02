@@ -1,8 +1,18 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GalleryVerticalEnd } from 'lucide-react'
 
-import { LoginForm } from "@/features/auth"
+import { LoginForm } from '@/features/auth'
+import { getDictionary, createTranslation } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
 
-const LoginPage = () => {
+interface PageProps {
+  params: { locale?: Locale }
+}
+
+const LoginPage = async ({ params }: PageProps) => {
+  const locale = params.locale || 'ja'
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -26,10 +36,10 @@ const LoginPage = () => {
             <div className="text-center flex flex-col gap-4">
               <div className="text-6xl font-bold text-neutral-600 dark:text-neutral-400 opacity-60">📦</div>
               <h2 className="text-3xl font-bold text-neutral-600 dark:text-neutral-400">
-                Welcome to BoxLog
+                {t('auth.welcome.title')}
               </h2>
               <p className="text-lg text-neutral-600 dark:text-neutral-400 opacity-80 max-w-md">
-                The modern task management system that helps you stay organized and productive.
+                {t('auth.welcome.description')}
               </p>
             </div>
           </div>

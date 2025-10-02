@@ -1,17 +1,21 @@
-'use client'
+import { getDictionary, createTranslation } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
 
-import { SettingsLayout } from '@/features/settings/components'
-import TemplatesSettings from '@/features/settings/components/templates-settings'
+import TemplatesPageClient from './client'
 
-const TemplatesPage = () => {
-  return (
-    <SettingsLayout
-      title="テンプレート"
-      description="よく使用するフォームやタスクのテンプレートを管理します"
-    >
-      <TemplatesSettings />
-    </SettingsLayout>
-  )
+interface PageProps {
+  params: { locale?: Locale }
 }
 
-export default TemplatesPage
+export default async function TemplatesPage({ params }: PageProps) {
+  const locale = params.locale || 'ja'
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
+  const translations = {
+    title: t('settings.templates.title'),
+    description: t('settings.templates.description'),
+  }
+
+  return <TemplatesPageClient translations={translations} />
+}

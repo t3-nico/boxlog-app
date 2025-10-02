@@ -217,7 +217,35 @@
     "title": "設定",
     "general": {
       "title": "一般設定",
-      "description": "組織の基本情報と設定を管理します"
+      "description": "組織の基本情報と設定を管理します",
+      "organizationName": {
+        "label": "組織名",
+        "description": "公開プロフィールに表示されます"
+      },
+      "organizationBio": {
+        "label": "組織の紹介",
+        "description": "公開プロフィールに表示されます。最大240文字。"
+      },
+      "organizationEmail": {
+        "label": "組織メールアドレス",
+        "description": "顧客がサポートに連絡する際のメールアドレスです。",
+        "showOnProfile": "公開プロフィールにメールを表示"
+      },
+      "address": {
+        "label": "住所",
+        "description": "組織が登録されている場所です。"
+      },
+      "currency": {
+        "label": "通貨",
+        "description": "組織が使用する通貨です。",
+        "select": "通貨を選択",
+        "cad": "CAD - カナダドル",
+        "usd": "USD - 米ドル"
+      },
+      "actions": {
+        "reset": "リセット",
+        "save": "変更を保存"
+      }
     },
     "preferences": {
       "title": "環境設定",
@@ -255,7 +283,7 @@
     },
     "dataExport": {
       "title": "データエクスポート",
-      "description": "データのエクスポートとバックアップ"
+      "description": "あなたのデータをバックアップ・移行用にエクスポートできます"
     },
     "planBilling": {
       "title": "プラン・請求",
@@ -275,6 +303,10 @@
     }
   },
   "auth": {
+    "welcome": {
+      "title": "BoxLogへようこそ",
+      "description": "効率的なタスク管理で、生産性を向上させましょう。"
+    },
     "login": {
       "title": "サインイン",
       "subtitle": "BoxLogへようこそ",
