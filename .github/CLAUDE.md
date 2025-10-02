@@ -63,7 +63,7 @@ chore: 設定変更
 Phase 1: Quick Checks (並列)
   - ESLint + Prettier
   - TypeScript型チェック
-  - ユニットテスト
+  - ユニットテスト（カバレッジ計測のみ、必須ではない）
 
 Phase 2: Quality Checks (並列)
   - Next.jsビルド
@@ -74,6 +74,8 @@ Phase 2: Quality Checks (並列)
 Phase 3: Quality Gate
   - 全チェック結果集約
   - PR Summary自動投稿
+
+Note: カバレッジはCodecovで計測・可視化。fail_ci_if_error: false
 ```
 
 ---
