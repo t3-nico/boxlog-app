@@ -84,12 +84,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
             )}
           >
             <div className="relative">
-              {user?.user_metadata?.avatar_url ? (
-                <Avatar
-                  src={user.user_metadata.avatar_url}
-                  className={cn('h-8 w-8', 'border', 'border-neutral-200 dark:border-neutral-800', 'rounded-md')}
-                />
-              ) : user?.user_metadata?.profile_icon ? (
+              {user?.user_metadata?.profile_icon ? (
                 <div
                   className={cn(
                     'h-8 w-8',
@@ -102,11 +97,11 @@ export const UserMenu = ({ children }: UserMenuProps) => {
                 </div>
               ) : (
                 <Avatar
-                  src={undefined}
-                  className={cn('h-8 w-8', 'border', 'border-neutral-200 dark:border-neutral-800', 'rounded-md')}
+                  src={user?.user_metadata?.avatar_url}
                   initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                     .charAt(0)
                     .toUpperCase()}
+                  className={cn('h-8 w-8', 'border', 'border-neutral-200 dark:border-neutral-800', 'rounded-md')}
                 />
               )}
             </div>

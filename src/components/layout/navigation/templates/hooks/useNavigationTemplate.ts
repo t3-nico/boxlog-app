@@ -25,7 +25,7 @@ export interface NavigationTemplateConfig {
 }
 
 export function useNavigationTemplate(config: NavigationTemplateConfig) {
-  const pathname = usePathname()
+  const pathname = usePathname() || '/'
 
   const processedSections = useMemo(() => {
     return config.sections.map(section => ({

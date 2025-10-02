@@ -14,7 +14,7 @@ export function useCreateEventInspector() {
   const openCreateInspector = (options?: {
     initialData?: Partial<CreateEventRequest>
     context?: {
-      source?: 'sidebar' | 'calendar' | 'table' | 'kanban' | 'keyboard'
+      source?: 'sidebar' | 'calendar' | 'table' | 'kanban' | 'keyboard' | 'fab'
       date?: Date
       viewType?: string
     }
@@ -29,10 +29,10 @@ export function useCreateEventInspector() {
 
   // 編集モードでInspectorを開く
   const openEditInspector = (
-    eventId: string, 
-    eventData: Partial<CreateEventRequest>, 
+    eventId: string,
+    eventData: Partial<CreateEventRequest>,
     context?: {
-      source?: 'sidebar' | 'calendar' | 'table' | 'kanban' | 'keyboard'
+      source?: 'sidebar' | 'calendar' | 'table' | 'kanban' | 'keyboard' | 'fab'
       date?: Date
       viewType?: string
     }

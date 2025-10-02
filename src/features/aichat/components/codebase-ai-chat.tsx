@@ -201,15 +201,11 @@ const UserAvatar = () => {
   const { userDisplayName, profileIcon, avatarUrl } = useUserInfo()
   const initials = userDisplayName.charAt(0).toUpperCase()
 
-  if (avatarUrl) {
-    return <Avatar src={avatarUrl} className="size-8" initials={initials} />
-  }
-
   if (profileIcon) {
     return <div className="bg-muted flex size-8 items-center justify-center rounded-full text-xl">{profileIcon}</div>
   }
 
-  return <Avatar src={undefined} className="size-8" initials={initials} />
+  return <Avatar src={avatarUrl} initials={initials} className="size-8" />
 }
 
 // アシスタントアイコン
@@ -261,7 +257,7 @@ const CodebaseChatInput = ({
 }: {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (e: React.FormEvent) => void
+  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void
   isLoading: boolean
 }) => {
   const [_isComposing, _setIsComposing] = useState(false)

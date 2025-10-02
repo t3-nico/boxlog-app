@@ -40,7 +40,7 @@ export const AIMessageContent = ({
 );
 
 export type AIMessageAvatarProps = ComponentProps<typeof Avatar> & {
-  src: string;
+  src?: string;
   name?: string;
 };
 
@@ -50,10 +50,10 @@ export const AIMessageAvatar = ({
   className,
   ...props
 }: AIMessageAvatarProps) => (
-  <Avatar 
+  <Avatar
     src={src}
     initials={name?.slice(0, 2) || 'ME'}
-    className={cn('size-8', className)} 
-    {...props} 
+    className={cn('size-8', className)}
+    {...props}
   />
 );

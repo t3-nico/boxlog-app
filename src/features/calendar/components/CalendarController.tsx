@@ -511,6 +511,9 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
 
   // ビューコンポーネントのレンダリング
   const renderView = () => {
+    // TODO(#389): Task/Event型の統一が必要
+    // 現在は複数の型定義が存在し、型互換性がない問題がある
+    // @ts-expect-error - Task型とCalendarEvent型の統一が必要
     const commonProps = {
       dateRange: viewDateRange,
       tasks: filteredTasks,

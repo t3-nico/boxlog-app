@@ -88,7 +88,7 @@ const ReviewPage = async ({ params }: { params: { id: string } }) => {
           <DescriptionTerm>Event</DescriptionTerm>
           <DescriptionDetails>
             <Link href={review.event.url} className="flex items-center gap-2">
-              <Avatar src={review.event.thumbUrl} className="size-6" />
+              <Avatar src={review.event.thumbUrl} alt={review.event.name} className="size-6" />
               <span>{review.event.name}</span>
             </Link>
           </DescriptionDetails>

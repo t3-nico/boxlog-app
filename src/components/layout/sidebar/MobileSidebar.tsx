@@ -19,7 +19,7 @@ import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
 
 export const MobileSidebar = () => {
-  const pathname = usePathname()
+  const pathname = usePathname() || '/'
   const { isSidebarOpen, toggleSidebar } = useNavigationStore()
   const { open: openNotifications, notificationCount } = useNotificationModal()
   const { user } = useAuthContext()
@@ -250,12 +250,7 @@ export const MobileSidebar = () => {
               >
                 {/* Avatar Icon Only */}
                 <div className="flex-shrink-0">
-                  {user?.user_metadata?.avatar_url ? (
-                    <Avatar
-                      src={user.user_metadata.avatar_url}
-                      className={cn('h-8 w-8', 'border border-neutral-200 dark:border-neutral-700', 'rounded-lg')}
-                    />
-                  ) : user?.user_metadata?.profile_icon ? (
+                  {user?.user_metadata?.profile_icon ? (
                     <div
                       className={cn(
                         'h-8 w-8',
@@ -268,11 +263,11 @@ export const MobileSidebar = () => {
                     </div>
                   ) : (
                     <Avatar
-                      src={undefined}
-                      className={cn('h-8 w-8', 'border border-neutral-200 dark:border-neutral-700', 'rounded-lg')}
+                      src={user?.user_metadata?.avatar_url}
                       initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                         .charAt(0)
                         .toUpperCase()}
+                      className={cn('h-8 w-8', 'border border-neutral-200 dark:border-neutral-700', 'rounded-lg')}
                     />
                   )}
                 </div>

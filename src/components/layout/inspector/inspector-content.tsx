@@ -4,7 +4,8 @@ import React, { useCallback, Suspense } from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import type { CalendarEvent } from '@/features/events'
+import type { CalendarEvent as EventsCalendarEvent } from '@/features/events'
+import type { CalendarEvent as CalendarCalendarEvent } from '@/features/calendar/types/calendar.types'
 import { cn } from '@/lib/utils'
 
 import { CalendarInspectorContent } from './content/CalendarInspectorContent'
@@ -35,7 +36,7 @@ export const InspectorContent = () => {
   const { setActiveContent, setSelectedEvent } = useInspectorStore()
   
   // イベント詳細のハンドラー
-  const handleEventSave = useCallback((eventData: Partial<CalendarEvent>) => {
+  const handleEventSave = useCallback((eventData: Partial<EventsCalendarEvent>) => {
     // Event handling tracked in Issue #89
     console.log('Save event:', eventData)
   }, [])
@@ -47,12 +48,12 @@ export const InspectorContent = () => {
     setActiveContent('calendar')
   }, [setSelectedEvent, setActiveContent])
 
-  const handleEventDuplicate = useCallback((event: CalendarEvent) => {
+  const handleEventDuplicate = useCallback((event: EventsCalendarEvent) => {
     // Event handling tracked in Issue #89
     console.log('Duplicate event:', event)
   }, [])
 
-  const handleTemplateCreate = useCallback((event: CalendarEvent) => {
+  const handleTemplateCreate = useCallback((event: EventsCalendarEvent) => {
     // Template creation tracked in Issue #89
     console.log('Create template:', event)
   }, [])
@@ -75,12 +76,12 @@ export const InspectorContent = () => {
           return selectedEvent ? (
             <Suspense fallback={<InspectorSkeleton />}>
               <EventDetailInspectorContent
-                event={selectedEvent}
+                event={selectedEvent as CalendarCalendarEvent}
                 mode="view"
                 onSave={handleEventSave}
                 onDelete={handleEventDelete}
-                onDuplicate={handleEventDuplicate}
-                onTemplateCreate={handleTemplateCreate}
+                onDuplicate={handleEventDuplicate as (event: CalendarCalendarEvent) => void}
+                onTemplateCreate={handleTemplateCreate as (event: CalendarCalendarEvent) => void}
                 onClose={handleClose}
               />
             </Suspense>

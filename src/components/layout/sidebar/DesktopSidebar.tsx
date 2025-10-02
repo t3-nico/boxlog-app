@@ -20,7 +20,7 @@ import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
 
 export const DesktopSidebar = () => {
-  const pathname = usePathname()
+  const pathname = usePathname() || '/'
   const { primaryNavWidth, isSidebarOpen, toggleSidebar } = useNavigationStore()
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
   const { open: openNotifications, notificationCount } = useNotificationModal()
@@ -259,12 +259,7 @@ export const DesktopSidebar = () => {
             >
               {/* Avatar Icon Only */}
               <div className="flex-shrink-0">
-                {user?.user_metadata?.avatar_url ? (
-                  <Avatar
-                    src={user.user_metadata.avatar_url}
-                    className={cn('w-8 h-8', 'border border-gray-200 dark:border-gray-700', 'rounded-full')}
-                  />
-                ) : user?.user_metadata?.profile_icon ? (
+                {user?.user_metadata?.profile_icon ? (
                   <div
                     className={cn(
                       'w-8 h-8',
@@ -279,11 +274,11 @@ export const DesktopSidebar = () => {
                   </div>
                 ) : (
                   <Avatar
-                    src={undefined}
-                    className={cn('w-8 h-8', 'border border-gray-200 dark:border-gray-700', 'rounded-full')}
+                    src={user?.user_metadata?.avatar_url}
                     initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                       .charAt(0)
                       .toUpperCase()}
+                    className={cn('w-8 h-8', 'border border-gray-200 dark:border-gray-700', 'rounded-full')}
                   />
                 )}
               </div>

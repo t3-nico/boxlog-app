@@ -69,7 +69,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
   const { open: openGlobalSearch } = useGlobalSearch()
   const { openCreateInspector } = useCreateEventInspector()
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const pathname = usePathname()
+  const pathname = usePathname() || '/'
   const searchParams = useSearchParams()
 
   // jsx-no-bind optimization: Search button handler
@@ -87,7 +87,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
     })
   }, [openCreateInspector])
 
-  const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams)
+  const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
 
   const content = (
     <div className="flex h-screen flex-col">

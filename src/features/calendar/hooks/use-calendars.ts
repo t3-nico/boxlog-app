@@ -33,51 +33,29 @@ export function useCalendar(calendarId: string) {
   })
 }
 
-export function useCreateCalendar(userId: string) {
-
-
+export function useCreateCalendar(_userId: string) {
   return useMutation({
-    mutationFn: (_input: CreateCalendarInput) => 
+    mutationFn: (_input: CreateCalendarInput) =>
       Promise.resolve({} as Calendar), // Temporary stub
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendars', userId] })
-    }
   })
 }
 
 export function useUpdateCalendar() {
-
-
   return useMutation({
     mutationFn: ({ calendarId: _calendarId, input: _input }: { calendarId: string; input: UpdateCalendarInput }) =>
       Promise.resolve({} as Calendar), // Temporary stub
-    onSuccess: (_calendar) => {
-      // queryClient.invalidateQueries({ queryKey: ['calendars', calendar.userId] })
-      // queryClient.invalidateQueries({ queryKey: ['calendar', calendar.id] })
-    }
   })
 }
 
 export function useDeleteCalendar() {
-
-
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
-    onSuccess: (_, deletedCalendarId) => {
-      queryClient.invalidateQueries({ queryKey: ['calendars'] })
-      queryClient.removeQueries({ queryKey: ['calendar', deletedCalendarId] })
-    }
   })
 }
 
 export function useSetDefaultCalendar() {
-
-
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendars'] })
-    }
   })
 }
 
@@ -106,25 +84,15 @@ export function useShareCalendar() {
 }
 
 export function useUpdateCalendarShare() {
-
-
   return useMutation({
     mutationFn: ({ shareId: _shareId, permission: _permission }: { shareId: string; permission: 'view' | 'edit' | 'admin' }) =>
       Promise.resolve({} as CalendarShare), // Temporary stub
-    onSuccess: (_share) => {
-      // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
-    }
   })
 }
 
 export function useRevokeCalendarShare() {
-
-
   return useMutation({
     mutationFn: (_shareId: string) => Promise.resolve(), // Temporary stub
-    onSuccess: () => {
-      // _queryClient.invalidateQueries({ queryKey: ['calendar-shares'] })
-    }
   })
 }
 
@@ -151,15 +119,10 @@ export function useCalendarViewState(userId: string) {
   })
 }
 
-export function useUpdateViewState(userId: string) {
-
-  
+export function useUpdateViewState(_userId: string) {
   return useMutation({
     mutationFn: (_updates: Partial<CalendarViewState>) =>
       Promise.resolve({} as CalendarViewState), // Temporary stub
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['calendar-view-state', userId] })
-    }
   })
 }
 

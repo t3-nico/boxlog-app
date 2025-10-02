@@ -21,7 +21,11 @@ const AIChatPage = () => {
   return (
     <FeatureErrorBoundary
       featureName="ai-chat"
-      fallbackMessage="AI Chatの読み込み中にエラーが発生しました"
+      fallback={
+        <div className="bg-neutral-200 dark:bg-neutral-700 p-4 rounded border border-neutral-300 dark:border-neutral-600">
+          <p className="text-neutral-800 dark:text-neutral-200 text-center">AI Chatの読み込み中にエラーが発生しました</p>
+        </div>
+      }
     >
       <div className="flex h-full">
         {/* Main chat area */}
