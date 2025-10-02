@@ -29,16 +29,14 @@
 - **セッション管理**: [`docs/development/SESSION_MANAGEMENT.md`](docs/development/SESSION_MANAGEMENT.md)
 
 ### システム管理
-- **1Password設定**: [`docs/1PASSWORD_SETUP.md`](docs/1PASSWORD_SETUP.md)
 - **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
 - **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
 
-## 🚀 基本コマンド（頻出5個）
+## 🚀 基本コマンド（頻出4個）
 ```bash
-npm run smart:dev           # 開発サーバー起動
+npm run dev                 # 開発サーバー起動
 npm run lint                # コード品質チェック
 npm run typecheck           # 型チェック
-npm run 1password:auth      # 認証確認
 npm run docs:check          # ドキュメント整合性チェック
 ```
 
