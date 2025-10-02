@@ -91,7 +91,7 @@ const initialTaskState = {
 const taskPersistConfig = {
   name: 'task-store',
   storage: 'localStorage' as const,
-  migrate: (persistedState: any, version: number) => {
+  migrate: (persistedState: any, _version: number) => {
     if (persistedState?.tasks) {
       return {
         ...persistedState,

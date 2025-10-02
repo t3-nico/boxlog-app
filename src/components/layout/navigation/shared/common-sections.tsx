@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react'
 
-import { usePathname } from 'next/navigation'
 
 import { useCalendarNavigation } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { calculateViewDateRange } from '@/features/calendar/lib/view-helpers'

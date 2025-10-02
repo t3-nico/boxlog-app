@@ -6,7 +6,6 @@ import { useBoxStore } from '@/features/box-management/stores/box-store'
 
 export const useActiveState = () => {
   const pathname = usePathname()
-  const _searchParams = useSearchParams()
   const { filters } = useBoxStore()
 
   const currentView = (pathname || '/').split('/')[1] || 'calendar'

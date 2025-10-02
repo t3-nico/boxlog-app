@@ -66,7 +66,7 @@ export interface CalendarTask {
 export function calculateTaskPosition(
   task: CalendarTask,
   dayStart: Date,
-  gridInterval: number,
+
   column?: number,
   totalColumns?: number
 ): {
@@ -196,7 +196,7 @@ export function formatTimeForDisplay(time: string): string {
 export function calculateTimeFromPosition(
   y: number,
   containerHeight: number,
-  gridInterval: number
+
 ): Date {
   const minutesPerPixel = (24 * 60) / containerHeight
   const totalMinutes = y * minutesPerPixel
@@ -339,7 +339,7 @@ export function isDraggable(task: CalendarTask): boolean {
  * ドロップ可能かどうかを判定
  */
 export function isDroppable(
-  targetDate: Date,
+
   targetTime: Date,
   task: CalendarTask,
   existingTasks: CalendarTask[]

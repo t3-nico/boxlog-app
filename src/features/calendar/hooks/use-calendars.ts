@@ -34,7 +34,7 @@ export function useCalendar(calendarId: string) {
 }
 
 export function useCreateCalendar(userId: string) {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: (_input: CreateCalendarInput) => 
@@ -46,7 +46,7 @@ export function useCreateCalendar(userId: string) {
 }
 
 export function useUpdateCalendar() {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: ({ calendarId: _calendarId, input: _input }: { calendarId: string; input: UpdateCalendarInput }) =>
@@ -59,7 +59,7 @@ export function useUpdateCalendar() {
 }
 
 export function useDeleteCalendar() {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
@@ -71,7 +71,7 @@ export function useDeleteCalendar() {
 }
 
 export function useSetDefaultCalendar() {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: (_calendarId: string) => Promise.resolve(), // Temporary stub
@@ -94,7 +94,7 @@ export function useCalendarShares(calendarId: string) {
 }
 
 export function useShareCalendar() {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: (_input: CalendarShareInput) =>
@@ -106,7 +106,7 @@ export function useShareCalendar() {
 }
 
 export function useUpdateCalendarShare() {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: ({ shareId: _shareId, permission: _permission }: { shareId: string; permission: 'view' | 'edit' | 'admin' }) =>
@@ -118,7 +118,7 @@ export function useUpdateCalendarShare() {
 }
 
 export function useRevokeCalendarShare() {
-  const _queryClient = useQueryClient()
+
 
   return useMutation({
     mutationFn: (_shareId: string) => Promise.resolve(), // Temporary stub
@@ -152,7 +152,7 @@ export function useCalendarViewState(userId: string) {
 }
 
 export function useUpdateViewState(userId: string) {
-  const _queryClient = useQueryClient()
+
   
   return useMutation({
     mutationFn: (_updates: Partial<CalendarViewState>) =>

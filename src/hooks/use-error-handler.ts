@@ -388,7 +388,7 @@ export function useSimpleErrorHandler() {
  * API呼び出し専用エラーハンドラーHook
  */
 export function useApiErrorHandler() {
-  const { handleError, handleWithRecovery, errorState, clearError } = useErrorHandler({
+  const { handleWithRecovery, errorState, clearError } = useErrorHandler({
     enableAutoRecovery: true,
     enableNotifications: true,
     enableSentry: true

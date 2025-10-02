@@ -2,7 +2,6 @@
 
 import React, { useCallback } from 'react'
 
-import { usePathname } from 'next/navigation'
 
 import { BotMessageSquare, Calendar, ListTodo, X } from 'lucide-react'
 
