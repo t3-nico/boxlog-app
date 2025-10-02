@@ -4,14 +4,15 @@ import { useCallback } from 'react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { Switch } from '@/components/shadcn-ui/switch'
+import { LanguageSwitcher } from '@/components/i18n/language-switcher'
+import type { Locale } from '@/types/i18n'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
-interface PreferencesSettings {
-  language: 'ja' | 'en'
+interface PreferencesSettingsData {
   theme: 'system' | 'light' | 'dark'
   animations: boolean
   sounds: boolean
@@ -19,11 +20,15 @@ interface PreferencesSettings {
   developerMode: boolean
 }
 
-const PreferencesSettings = () => {
+interface PreferencesSettingsProps {
+  locale: Locale
+  dictionary: Record<string, unknown>
+}
+
+const PreferencesSettings = ({ locale, dictionary }: PreferencesSettingsProps) => {
   // 設定の自動保存
-  const preferences = useAutoSaveSettings<PreferencesSettings>({
+  const preferences = useAutoSaveSettings<PreferencesSettingsData>({
     initialValues: {
-      language: 'ja',
       theme: 'system',
       animations: true,
       sounds: false,
@@ -39,10 +44,6 @@ const PreferencesSettings = () => {
   })
 
   // Handler functions
-  const handleLanguageChange = useCallback((value: string) => {
-    preferences.updateValue('language', value as 'ja' | 'en')
-  }, [preferences])
-
   const handleThemeChange = useCallback((value: string) => {
     preferences.updateValue('theme', value as 'system' | 'light' | 'dark')
   }, [preferences])
@@ -73,18 +74,7 @@ const PreferencesSettings = () => {
       >
         <div className="space-y-4">
           <SettingField label="言語" description="アプリケーションで使用する言語">
-            <Select
-              value={preferences.values.language}
-              onValueChange={handleLanguageChange}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="言語を選択" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ja">🇯🇵 日本語</SelectItem>
-                <SelectItem value="en">🇺🇸 English</SelectItem>
-              </SelectContent>
-            </Select>
+            <LanguageSwitcher currentLocale={locale} dictionary={dictionary} />
           </SettingField>
 
           <SettingField label="テーマ" description="アプリケーションの外観テーマ">

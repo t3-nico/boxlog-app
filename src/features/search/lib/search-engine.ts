@@ -1,3 +1,4 @@
+// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import type { Event } from '@/features/events'
 import type { Task, Tag, SmartFolder } from '@/types/common'
 

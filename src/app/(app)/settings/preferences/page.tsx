@@ -17,6 +17,6 @@ export default async function PreferencesPage({ params }: PageProps) {
     description: t('settings.preferences.description'),
   }
 
-  return <PreferencesSettingsClient translations={translations} />
+  return <PreferencesSettingsClient translations={translations} locale={locale} dictionary={dictionary} />
 }
 
