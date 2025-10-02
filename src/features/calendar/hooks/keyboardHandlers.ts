@@ -24,7 +24,7 @@ export const handleArrowKeys = ({
   navigateTime,
   navigateEvents
 }: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'navigateDate' | 'navigateTime' | 'navigateEvents'>) => {
-  const { key, shiftKey } = event.nativeEvent || event
+  const { key, shiftKey } = event
 
   switch (key) {
     case 'ArrowRight':
@@ -74,7 +74,7 @@ export const handleActionKeys = ({
   deleteCurrentEvent,
   handleEscape
 }: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'navigateEvents' | 'editCurrentEvent' | 'createEvent' | 'deleteCurrentEvent' | 'handleEscape'>) => {
-  const { key, shiftKey } = event.nativeEvent || event
+  const { key, shiftKey } = event
 
   switch (key) {
     case 'Tab':
@@ -114,7 +114,7 @@ export const handleNavigationKeys = ({
   announce,
   TIME_SLOTS
 }: Pick<KeyboardHandlerProps, 'event' | 'showKeyboardHelp' | 'navigateDate' | 'setNavigationState' | 'announce' | 'TIME_SLOTS'>) => {
-  const { key } = event.nativeEvent || event
+  const { key } = event
 
   switch (key) {
     case 'F1':
@@ -152,7 +152,7 @@ export const handleEventDetailKeys = ({
   events,
   announce
 }: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'events' | 'announce'>) => {
-  const { key } = event.nativeEvent || event
+  const { key } = event
 
   if (key === ' ') { // スペースキー
     event.preventDefault()

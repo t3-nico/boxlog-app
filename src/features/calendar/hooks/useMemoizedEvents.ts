@@ -213,10 +213,12 @@ function applyFilters(events: CalendarEvent[], filters: Record<string, unknown>)
       }
     }
 
-    // カテゴリーフィルター
-    if (filters.category && event.category !== filters.category) {
-      return false
-    }
+    // カテゴリーフィルター（categoryプロパティは存在しないためコメントアウト）
+    // Note: CalendarEvent型にcategoryプロパティは存在しません
+    // 必要であればtypeやtagsでフィルタリングしてください
+    // if (filters.category && event.category !== filters.category) {
+    //   return false
+    // }
 
     // 時間範囲フィルター
     if (filters.timeRange) {

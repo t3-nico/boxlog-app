@@ -24,7 +24,6 @@ export const EventContextMenu = ({
   onEdit,
   onDelete,
   onDuplicate,
-  _onViewDetails,
 }: EventContextMenuProps) => {
   const menuRef = useRef<HTMLDivElement>(null)
   const [adjustedPosition, setAdjustedPosition] = useState(position)

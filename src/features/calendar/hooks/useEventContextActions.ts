@@ -83,8 +83,8 @@ export function useEventContextActions() {
 
   // イベントの日付データを正規化
   const normalizeEventDates = (event: CalendarEvent) => {
-    const startDate = event.startDate || (event.start_time ? new Date(event.start_time) : new Date())
-    const endDate = event.endDate || (event.end_time ? new Date(event.end_time) : new Date())
+    const startDate = event.startDate || new Date()
+    const endDate = event.endDate || new Date()
     return { startDate, endDate }
   }
 

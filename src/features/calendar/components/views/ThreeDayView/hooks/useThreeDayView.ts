@@ -22,7 +22,6 @@ import type {
 export function useThreeDayView({
   centerDate,
   events = [],
-  onEventUpdate: _onEventUpdate,
   showWeekends = true
 }: UseThreeDayViewOptions & { showWeekends?: boolean }): UseThreeDayViewReturn {
   
@@ -34,7 +33,7 @@ export function useThreeDayView({
   })
   
   // Phase 3統合フック: 現在期間判定とtodayIndex計算、相対インデックス計算
-  const { isCurrentPeriod: isCurrentDay, todayIndex, _relativeDayIndex } = useCurrentPeriod({
+  const { isCurrentPeriod: isCurrentDay, todayIndex } = useCurrentPeriod({
     dates: threeDayDates,
     periodType: 'threeday'
   })

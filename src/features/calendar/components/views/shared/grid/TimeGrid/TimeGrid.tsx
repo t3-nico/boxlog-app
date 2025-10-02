@@ -25,15 +25,13 @@ export const TimeGrid = memo<TimeGridProps>(function TimeGrid({
   hourHeight = HOUR_HEIGHT,
   showHalfHourLines = true,
   showQuarterHourLines = false,
-  _showCurrentTime = true,
   className = '',
   children,
   onTimeClick,
   onTimeRangeSelect,
   scrollToHour = SCROLL_TO_HOUR,
-  _displayDates = []
 }) {
-  const { containerRef, dimensions, _scrollToTime, _updateDimensions } = useViewDimensions({
+  const { containerRef, dimensions } = useViewDimensions({
     hourHeight,
     timeColumnWidth: TIME_COLUMN_WIDTH
   })

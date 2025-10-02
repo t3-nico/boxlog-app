@@ -41,18 +41,18 @@ export function useCalendarData({
   const calendarTasks = useMemo(() => {
     // 期間内のタスクをフィルタリング
     const filtered = tasks.filter(task => {
-      if (!task.due_date) return false
-      return isWithinInterval(new Date(task.due_date), {
+      if (!task.planned_start) return false
+      return isWithinInterval(new Date(task.planned_start), {
         start: dateRange.start,
         end: dateRange.end
       })
     })
-    
+
     // カレンダー表示用に変換
     const converted: CalendarTaskExtended[] = filtered.map(task => {
-      const startDate = task.due_date ? new Date(task.due_date) : new Date()
-      const duration = 60 // デフォルト1時間
-      
+      const startDate = task.planned_start ? new Date(task.planned_start) : new Date()
+      const duration = task.planned_duration || 60 // タスクのplanned_durationを使用、デフォルト1時間
+
       return {
         ...task,
         displayStart: startDate,
@@ -70,13 +70,13 @@ export function useCalendarData({
   // タスクの時間変更
   const moveTask = useCallback(async (taskId: string, newStart: Date) => {
     if (!onTaskUpdate) return
-    
+
     setIsLoading(true)
     setError(null)
-    
+
     try {
       await onTaskUpdate(taskId, {
-        due_date: newStart.toISOString()
+        planned_start: newStart.toISOString()
       })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to move task')
@@ -119,15 +119,13 @@ export function useCalendarData({
     try {
       const newTask: Partial<Task> = {
         title: '新しいタスク',
-        due_date: startDate.toISOString(),
-        type: 'task',
+        planned_start: startDate.toISOString(),
+        planned_duration: 60, // デフォルト60分
         status: 'backlog',
         priority: 'medium',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        userId: 'default-user' // Auth integration tracked in Issue #87
+        user_id: 'default-user' // Auth integration tracked in Issue #87
       }
-      
+
       await onTaskCreate(newTask)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create task')

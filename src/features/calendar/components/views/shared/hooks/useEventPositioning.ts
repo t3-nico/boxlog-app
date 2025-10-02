@@ -34,10 +34,9 @@ interface UseEventPositioningOptions {
  * カレンダービュー共通のイベント位置計算フック
  * 全てのビュー（Day, Week, ThreeDay等）で利用可能
  */
-export function useEventPositioning({ 
-  date, 
+export function useEventPositioning({
+  date,
   events = [], // デフォルト値を空配列に設定
-  _viewType = 'day' 
 }: UseEventPositioningOptions) {
   
   // 当日のイベントのみフィルター（Day/Week共通）

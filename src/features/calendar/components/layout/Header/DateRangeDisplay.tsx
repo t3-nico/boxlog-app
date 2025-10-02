@@ -90,7 +90,6 @@ const createClickableContent = (
 export const DateRangeDisplay = ({
   date,
   endDate,
-  _viewType,
   showWeekNumber = true,
   formatPattern = 'MMMM yyyy',
   className,

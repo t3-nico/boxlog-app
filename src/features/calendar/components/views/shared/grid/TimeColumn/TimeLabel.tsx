@@ -19,9 +19,7 @@ export const TimeLabel = memo<TimeLabelProps>(function TimeLabel({
   hour,
   label,
   position,
-  _hourHeight,
   isFirst,
-  _isLast
 }) {
   return (
     <div

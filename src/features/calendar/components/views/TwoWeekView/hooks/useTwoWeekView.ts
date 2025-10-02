@@ -23,7 +23,6 @@ export function useTwoWeekView({
   startDate,
   events = [],
   weekStartsOn = 1, // デフォルトは月曜始まり
-  _onEventUpdate
 }: UseTwoWeekViewOptions): UseTwoWeekViewReturn {
   
   // Phase 3統合フック: 2週間（14日間）の日付を生成

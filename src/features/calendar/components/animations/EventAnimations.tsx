@@ -65,7 +65,6 @@ export const AnimatedEventItem = ({
   isHovered = false,
   isDragging = false,
   isCreating = false,
-  _onAnimationComplete,
   className,
   style
 }: AnimatedEventItemProps) => {
@@ -108,7 +107,6 @@ interface CreatingEventPreviewProps {
 }
 
 export const CreatingEventPreview = ({
-  _date,
   startTime,
   endTime,
   title = 'New Event',
@@ -245,7 +243,7 @@ interface PulseEffectProps {
   intensity?: 'low' | 'medium' | 'high'
 }
 
-export const PulseEffect = ({ isActive, children, intensity: _intensity = 'medium' }: PulseEffectProps) => {
+export const PulseEffect = ({ isActive, children }: PulseEffectProps) => {
   return (
     <div className={isActive ? 'animate-pulse' : ''}>
       {children}

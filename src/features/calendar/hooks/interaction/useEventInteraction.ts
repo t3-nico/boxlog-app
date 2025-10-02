@@ -40,8 +40,6 @@ export function useEventInteraction(options: UseEventInteractionOptions) {
   const {
     date,
     onCreateEvent,
-    _onEventClick,
-    _onEventDoubleClick,
     onShowContextMenu,
     onCreateQuickEvent,
     hourHeight = 60,

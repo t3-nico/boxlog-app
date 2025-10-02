@@ -36,7 +36,7 @@ interface CalendarLayoutProps {
 export const CalendarLayout = memo<CalendarLayoutProps>(({
   children,
   className,
-  
+
   // Header
   viewType,
   currentDate,
@@ -46,9 +46,8 @@ export const CalendarLayout = memo<CalendarLayoutProps>(({
   onExport,
   onImport,
   showHeaderActions = false,
-  
+
   // Date selection for mini calendar
-  _selectedDate,
   onDateSelect
 }) => {
 
