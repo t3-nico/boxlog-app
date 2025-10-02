@@ -2,6 +2,8 @@
  * リアルタイム同期ストアパターン
  * WebSocket、SSE、Polling等を使用したリアルタイムデータ同期
  */
+import { type StoreApi, type UseBoundStore } from 'zustand'
+
 import { createBaseStore, BaseStore } from './base-store'
 /**
  * リアルタイム接続の状態

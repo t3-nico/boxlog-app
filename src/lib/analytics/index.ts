@@ -42,6 +42,9 @@ export {
 } from './hooks'
 
 // Re-export for convenience
+import { ANALYTICS_EVENTS } from './events'
+import { trackEvent, setUserConsent, setUserId, flushEvents } from './tracker'
+
 export default {
   events: ANALYTICS_EVENTS,
   track: trackEvent,

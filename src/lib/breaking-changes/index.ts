@@ -40,6 +40,15 @@ export {
 } from './manager'
 
 // Convenience re-export
+import { breakingChangeDetector, detectBreakingChanges } from './detector'
+import {
+  breakingChangeManager,
+  addBreakingChange,
+  findBreakingChanges,
+  generateVersionSummary,
+  createMigrationPlan
+} from './manager'
+
 export default {
   detector: breakingChangeDetector,
   manager: breakingChangeManager,

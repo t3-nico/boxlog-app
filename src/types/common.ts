@@ -8,10 +8,10 @@
 // 統一された型定義を再エクスポート
 export type {
   Task,
-  TaskEntity,
+  // TaskEntity, // TODO(#389): unified.tsで定義されていない
   TaskStatus,
   TaskPriority,
-  TaskType,
+  // TaskType, // TODO(#389): unified.tsで定義されていない
   CreateTaskRequest,
   UpdateTaskRequest,
   Tag,

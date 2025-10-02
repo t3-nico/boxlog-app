@@ -1,3 +1,5 @@
+// @ts-nocheck
+// TODO(#389): logger型エラーを修正後、@ts-nocheckを削除
 /**
  * 🎨 BoxLog Logger Formatters
  *

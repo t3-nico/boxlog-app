@@ -361,8 +361,8 @@ export const taskStoreHelpers = {
     const tempTask: Task = {
       ...task,
       id: `temp-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
 
     asyncStore.optimisticUpdate(tasks => [...tasks, tempTask])

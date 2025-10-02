@@ -2,6 +2,8 @@
  * 非同期ストアパターン
  * API通信やデータフェッチを扱うストアテンプレート
  */
+import { type StoreApi, type UseBoundStore } from 'zustand'
+
 import { createBaseStore, BaseStore } from './base-store'
 /**
  * 非同期ストアの状態インターフェース

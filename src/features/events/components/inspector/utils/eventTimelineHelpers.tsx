@@ -180,5 +180,5 @@ export const getEventDescription = (event: TimelineEvent) => {
     return renderMemoEventDescription(event)
   }
 
-  return <span className={text.primary}>更新</span>
+  return <span className="text-foreground">更新</span>
 }

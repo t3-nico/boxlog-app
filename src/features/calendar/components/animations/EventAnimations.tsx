@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react'
 
 
 import { CalendarEvent } from '@/features/events'
+import { timeToMinutes } from '@/features/calendar/lib/time-grid-helpers'
 
 // アニメーション設定
 export const eventAnimations = {

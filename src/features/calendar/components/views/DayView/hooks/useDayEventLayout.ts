@@ -26,20 +26,20 @@ export function useDayEventLayout({
 }: UseDayEventLayoutOptions): UseDayEventLayoutReturn {
   
   // 共通のイベント位置計算フックを使用
-  const { 
-    events: dayEvents, 
+  const {
+    events: dayEvents,
     eventPositions: positionsInfo,
-    maxConcurrentEvents 
+    maxConcurrentEvents
   } = useEventPositioning({
     date,
-    events,
+    events: events as any, // TODO(#389): CalendarEvent型の統一が必要
     viewType: 'day'
   })
 
   // DayView固有のEventPosition形式に変換
   const eventPositions = useMemo(() => {
     return positionsInfo.map(info => ({
-      event: info.event,
+      event: info.event as any, // TODO(#389): CalendarEvent型の統一が必要
       top: info.top,
       height: info.height,
       left: info.left,
@@ -48,12 +48,12 @@ export function useDayEventLayout({
       column: info.column,
       totalColumns: info.totalColumns,
       opacity: info.opacity
-    }))
+    })) as EventPosition[]
   }, [positionsInfo])
 
   return {
     eventPositions,
-    dayEvents,
+    dayEvents: dayEvents as CalendarEvent[],
     maxConcurrentEvents
   }
 }

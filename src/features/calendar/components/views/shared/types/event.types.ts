@@ -12,6 +12,17 @@ export interface TimedEvent {
   // Aliases for backward compatibility
   startDate?: Date
   endDate?: Date
+  // Extended properties to match CalendarEvent
+  displayStartDate?: Date
+  displayEndDate?: Date
+  duration?: number
+  isRecurring?: boolean
+  status?: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
+  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
+  location?: string
+  url?: string
+  createdAt?: Date
+  updatedAt?: Date
   isMultiDay?: boolean
   isReadOnly?: boolean
   tags?: Array<{
@@ -19,7 +30,15 @@ export interface TimedEvent {
     name: string
     color: string
     icon?: string
+    parent_id?: string
   }>
+  items?: Array<{
+    id: string
+    text: string
+    completed: boolean
+    duration?: number
+  }>
+  isDeleted?: boolean
 }
 
 export type CalendarEvent = TimedEvent

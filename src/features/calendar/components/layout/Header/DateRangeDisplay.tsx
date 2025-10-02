@@ -42,7 +42,7 @@ const generateRangeText = (date: Date, endDate: Date): string => {
  */
 const createDateContent = (text: string, isClickable: boolean) => (
   <div className="flex items-center gap-2">
-    <h2 className={cn(heading.h2, isClickable && 'hover:text-primary cursor-pointer transition-colors')}>{text}</h2>
+    <h2 className={cn('text-xl font-semibold', isClickable && 'hover:text-primary cursor-pointer transition-colors')}>{text}</h2>
     {isClickable ? <ChevronDown className="text-muted-foreground h-4 w-4" /> : null}
   </div>
 )

@@ -193,10 +193,10 @@ export function useEventStats() {
       }
 
       events.forEach(event => {
-        stats.byStatus[event.status as keyof typeof byStatus]++
-        stats.byType[event.type as keyof typeof byType]++
+        stats.byStatus[event.status as keyof typeof stats.byStatus]++
+        stats.byType[event.type as keyof typeof stats.byType]++
         if (event.priority) {
-          stats.byPriority[event.priority as keyof typeof byPriority]++
+          stats.byPriority[event.priority as keyof typeof stats.byPriority]++
         }
       })
 

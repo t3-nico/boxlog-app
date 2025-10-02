@@ -20,7 +20,7 @@ export const getStatusColor = (
   state: keyof CalendarColors['states'],
   property: 'background' | 'text' = 'background'
 ): string => {
-  const colors = calendarColors.states[state as keyof typeof states]
+  const colors = calendarColors.states[state]
   return (colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null) || ''
 }
 

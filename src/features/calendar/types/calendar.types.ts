@@ -82,6 +82,9 @@ export interface CalendarEvent {
   description?: string
   startDate: Date
   endDate?: Date
+  // TimedEvent互換性のため追加（TODO(#389): 型の統一が必要）
+  start?: Date
+  end?: Date
   status: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
   priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
   color: string

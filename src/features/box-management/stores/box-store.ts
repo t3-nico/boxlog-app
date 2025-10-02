@@ -40,27 +40,27 @@ export const useBoxStore = StoreFactory.create<typeof initialBoxState & BoxStore
   devtools: true,
   actions: (set, _get) => ({
     setSearchFilter: (search: string) =>
-      set((state) => ({
+      set((state: typeof initialBoxState) => ({
         filters: { ...state.filters, search }
       })),
     setStatusFilter: (status: string[]) =>
-      set((state) => ({
+      set((state: typeof initialBoxState) => ({
         filters: { ...state.filters, status }
       })),
     setPriorityFilter: (priority: string[]) =>
-      set((state) => ({
+      set((state: typeof initialBoxState) => ({
         filters: { ...state.filters, priority }
       })),
     setTypeFilter: (type: string[]) =>
-      set((state) => ({
+      set((state: typeof initialBoxState) => ({
         filters: { ...state.filters, type }
       })),
     setTagFilter: (tags: string[]) =>
-      set((state) => ({
+      set((state: typeof initialBoxState) => ({
         filters: { ...state.filters, tags }
       })),
     setSmartFolderFilter: (smartFolder: string) =>
-      set((state) => ({
+      set((state: typeof initialBoxState) => ({
         filters: { ...state.filters, smartFolder }
       }))
   }),

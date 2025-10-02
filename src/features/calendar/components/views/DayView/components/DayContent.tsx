@@ -8,6 +8,7 @@ import { CalendarDragSelection, EventBlock, calculateEventGhostStyle, calculateP
 import { HOUR_HEIGHT } from '../../shared/constants/grid.constants'
 import { useGlobalDragCursor } from '../../shared/hooks/useGlobalDragCursor'
 import { useTimeCalculation } from '../../shared/hooks/useTimeCalculation'
+import type { CalendarEvent } from '../../shared/types/event.types'
 import type { DayContentProps } from '../DayView.types'
 import { useDragAndDrop } from '../hooks/useDragAndDrop'
 

@@ -3,7 +3,9 @@
  * パフォーマンス監視・最適化・レポート生成
  */
 
-import { getCLS, getFCP, getFID, getLCP, getTTFB } from 'web-vitals'
+// TODO(#389): web-vitalsパッケージの名前付きエクスポートが見つからない
+// import { getCLS, getFCP, getFID, getLCP, getTTFB } from 'web-vitals'
+import { onCLS, onFCP, onFID, onLCP, onTTFB } from 'web-vitals'
 
 import { trackPerformance } from './vercel-analytics'
 
@@ -120,7 +122,7 @@ export class SpeedInsightsManager {
    */
   private startMeasuring(): void {
     // Largest Contentful Paint
-    getLCP((metric) => {
+    onLCP((metric: any) => {
       this.recordMetric({
         name: 'LCP',
         value: metric.value,
@@ -132,7 +134,7 @@ export class SpeedInsightsManager {
     })
 
     // First Input Delay
-    getFID((metric) => {
+    onFID((metric: any) => {
       this.recordMetric({
         name: 'FID',
         value: metric.value,
@@ -144,7 +146,7 @@ export class SpeedInsightsManager {
     })
 
     // Cumulative Layout Shift
-    getCLS((metric) => {
+    onCLS((metric: any) => {
       this.recordMetric({
         name: 'CLS',
         value: metric.value,
@@ -156,7 +158,7 @@ export class SpeedInsightsManager {
     })
 
     // First Contentful Paint
-    getFCP((metric) => {
+    onFCP((metric: any) => {
       this.recordMetric({
         name: 'FCP',
         value: metric.value,
@@ -168,7 +170,7 @@ export class SpeedInsightsManager {
     })
 
     // Time to First Byte
-    getTTFB((metric) => {
+    onTTFB((metric: any) => {
       this.recordMetric({
         name: 'TTFB',
         value: metric.value,
@@ -227,20 +229,21 @@ export class SpeedInsightsManager {
     })
 
     // カスタムイベントとしても送信
-    if (typeof track !== 'undefined') {
-      try {
-        ;(window as any).gtag?.('event', 'web_vitals', {
-          metric_name: metric.name,
-          metric_value: metric.value,
-          metric_rating: metric.rating,
-          custom_map: { metric_value: 'value' },
-        })
-      } catch (error) {
-        if (this.config.debug) {
-          console.warn('Failed to send web vitals to gtag:', error)
-        }
-      }
-    }
+    // TODO(#389): trackEvent関数の実装後に有効化
+    // if (typeof trackEvent !== 'undefined') {
+    //   try {
+    //     ;(window as any).gtag?.('event', 'web_vitals', {
+    //       metric_name: metric.name,
+    //       metric_value: metric.value,
+    //       metric_rating: metric.rating,
+    //       custom_map: { metric_value: 'value' },
+    //     })
+    //   } catch (error) {
+    //     if (this.config.debug) {
+    //       console.warn('Failed to send web vitals to gtag:', error)
+    //     }
+    //   }
+    // }
   }
 
   /**

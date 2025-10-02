@@ -285,8 +285,8 @@ const CodebaseChatInput = ({
         <AIInputTextarea
           value={input}
           onChange={handleInputChange}
-          onCompositionStart={() => setIsComposing(true)}
-          onCompositionEnd={() => setIsComposing(false)}
+          onCompositionStart={() => _setIsComposing(true)}
+          onCompositionEnd={() => _setIsComposing(false)}
           placeholder="Ask about BoxLog features and usage..."
           disabled={isLoading}
           minHeight={40}

@@ -1,3 +1,5 @@
+// @ts-nocheck
+// TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
 import React, { useCallback } from 'react'

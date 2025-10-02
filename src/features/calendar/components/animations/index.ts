@@ -25,13 +25,13 @@ export {
 } from './ViewTransition'
 
 export { AnimatedEventCard } from './AnimatedEventCard'
-export { 
-  eventAnimations, 
-  tailwindAnimations,
+export {
+  eventAnimations,
+  // tailwindAnimations, // TODO(#389): EventAnimations.tsxで定義されていない
   AnimatedEventItem,
   CreatingEventPreview,
   DeletingEvent,
   PulseEffect,
-  SmoothLayoutGroup,
-  StatusAnimation
+  // SmoothLayoutGroup, // TODO(#389): EventAnimations.tsxで定義されていない
+  // StatusAnimation // TODO(#389): EventAnimations.tsxで定義されていない
 } from './EventAnimations'

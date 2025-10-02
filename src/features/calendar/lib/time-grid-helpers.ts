@@ -21,11 +21,11 @@ export function minutesToTime(minutes: number): string {
 export function getTimeFromPosition(
   y: number,
   containerRect: DOMRect,
-  _gridInterval: number
+  gridInterval: number
 ): Date {
   const minutesPerPixel = (24 * 60) / containerRect.height
   const totalMinutes = y * minutesPerPixel
-  
+
   // グリッド間隔にスナップ
   const snappedMinutes = Math.round(totalMinutes / gridInterval) * gridInterval
   
@@ -196,11 +196,11 @@ export function formatTimeForDisplay(time: string): string {
 export function calculateTimeFromPosition(
   y: number,
   containerHeight: number,
-
+  gridInterval: number
 ): Date {
   const minutesPerPixel = (24 * 60) / containerHeight
   const totalMinutes = y * minutesPerPixel
-  
+
   // グリッド間隔にスナップ
   const snappedMinutes = Math.round(totalMinutes / gridInterval) * gridInterval
   

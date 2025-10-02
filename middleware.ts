@@ -40,7 +40,7 @@ function getLocaleFromRequest(request: NextRequest): Locale {
 
 function shouldRedirectToLocale(pathname: string): boolean {
   // 既に言語プレフィックスがある場合はリダイレクト不要
-  if (locales.some((locale) => pathname.startsWith(`/${locale}`))) {
+  if (locales.some((locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`)) {
     return false
   }
 

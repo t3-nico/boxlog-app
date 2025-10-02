@@ -5,7 +5,10 @@ import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { useBoxStore } from '@/features/box-management/stores/box-store'
-import type { TaskStatus, TaskPriority, TaskType } from '@/types/unified'
+import type { TaskStatus, TaskPriority } from '@/types/unified'
+
+// TODO(#389): TaskTypeがunified.tsに存在しないため、仮定義
+type TaskType = string
 
 export function useFilterUrlSync() {
   const router = useRouter()
