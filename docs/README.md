@@ -8,7 +8,6 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 **開発環境構築・外部サービス連携**
 
-- [1Password連携](./setup/1PASSWORD_SETUP.md) - セキュリティ設定（必須）
 - [Cursor AI統合](./setup/CURSOR_SETUP.md) - 開発ツール設定（推奨）
 - [CI/CD設定](./setup/CI_CD_SETUP.md) - 自動化パイプライン
 - [Vercelデプロイ](./setup/VERCEL_SETUP.md) - 本番環境設定
@@ -82,13 +81,10 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 ### 新規開発者向け
 
 ```bash
-# 1. 必須: セキュリティ設定
-docs/setup/1PASSWORD_SETUP.md
-
-# 2. 推奨: 開発効率化
+# 1. 推奨: 開発効率化
 docs/setup/CURSOR_SETUP.md
 
-# 3. 開発ルール理解
+# 2. 開発ルール理解
 docs/design-system/THEME_ENFORCEMENT.md
 docs/performance/ESLINT_SETUP_COMPLETE.md
 ```

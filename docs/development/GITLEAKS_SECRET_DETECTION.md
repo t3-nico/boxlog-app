@@ -10,7 +10,6 @@ Phase 3a: GitLeaks統合Secret検出システムは、GitLeaksライクな機能
 
 - **25種類以上の秘密情報パターン検出**
 - **ファイル種別に応じた高精度検出**
-- **1Password連携との統合**
 - **誤検出を最小化するスマート検証**
 - **エントロピー分析による高精度検出**
 
@@ -107,7 +106,6 @@ function calculateEntropy(str) {
 ### 除外システム
 
 #### 自動除外パターン
-- **1Password参照**: `op://vault/item/field`
 - **環境変数**: `process.env.SECRET_NAME`
 - **コメント内**: `/* */`, `//`, `#`, `<!-- -->`
 - **テスト用データ**: example, test, dummy, fake, sample
@@ -164,7 +162,6 @@ function calculateEntropy(str) {
       📄 const DATABASE_URL = "postgresql://user:pass123@localhost:5432/boxlog"
 
 💡 対応方法:
-   1. 🔐 1Password参照形式への変換: "op://vault/item/field"
    2. 🌍 環境変数への移動: process.env.SECRET_NAME
    3. 🗑️  不要な秘密情報の削除
    4. 📝 .gitignore への追加
@@ -366,7 +363,6 @@ CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024; // 5MB
 
 **セキュリティ関連:**
 - [ESLint Security Rules](../compliance/eslint-rules.md) - ESLintセキュリティルール
-- [1Password Setup](../setup/1PASSWORD_SETUP.md) - 1Password連携
 
 **品質管理:**
 - [Bundle Monitoring](../BUNDLE_MONITORING.md) - バンドルサイズ監視

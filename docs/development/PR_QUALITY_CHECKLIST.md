@@ -209,7 +209,6 @@ npm run quality:gate
 - [ESLint企業級設定](../performance/ESLINT_SETUP_COMPLETE.md)
 - [アクセシビリティテスト](../performance/ACCESSIBILITY_TESTING_GUIDE.md)
 - [Bundle監視システム](../performance/BUNDLE_MONITORING.md)
-- [1Password Developer Security](../setup/1PASSWORD_SETUP.md)
 
 ---
 

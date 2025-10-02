@@ -385,7 +385,6 @@ echo "現在の成果を記録して休憩またはセッション終了を推�
 - [CLAUDE.md](../../CLAUDE.md) - メイン開発指針
 - [Issue管理ルール](../../CLAUDE.md#issue管理ルール) - Issue運用方針
 - [ESLint設定](../ESLINT_SETUP_COMPLETE.md) - コード品質管理
-- [1Password設定](../1PASSWORD_SETUP.md) - セキュリティ管理
 
 ### セッション管理テンプレート
 

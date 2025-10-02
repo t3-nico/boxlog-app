@@ -1,14 +1,11 @@
 # BoxLog 開発コマンド一覧
 
-**重要**: 1Password Developer Security完全自動化システムを採用しています。
-
-## 🚀 基本開発コマンド（頻出5個）
+## 🚀 基本開発コマンド（頻出4個）
 
 ```bash
-npm run smart:dev           # 開発サーバー起動（推奨）
+npm run dev                 # 開発サーバー起動
 npm run lint                # コード品質チェック
 npm run typecheck           # 型チェック
-npm run 1password:auth      # 認証確認
 npm run docs:check          # ドキュメント整合性チェック
 ```
 
@@ -16,18 +13,12 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ## 📋 全コマンド一覧
 
-### === 推奨: スマート自動化コマンド ===
+### === 基本コマンド ===
 ```bash
-npm run smart:dev           # 開発サーバー（自動認証・同期）
-npm run smart:build         # ビルド（自動認証・同期）
-npm run smart:report        # レポート生成（自動認証・同期）
-```
-
-### === 従来コマンド（手動op run） ===
-```bash
-npm run dev                 # op run --env-file=.env.local -- next dev
-npm run build               # op run --env-file=.env.local -- next build
-npm run typecheck           # op run --env-file=.env.local -- tsc --noEmit
+npm run dev                 # next dev
+npm run build               # next build
+npm run start               # next start
+npm run typecheck           # tsc --noEmit
 ```
 
 ### === コード品質管理コマンド ===
@@ -35,14 +26,6 @@ npm run typecheck           # op run --env-file=.env.local -- tsc --noEmit
 npm run lint                # ESLint全品質チェック
 npm run lint:fix            # 自動修正可能な問題を修正
 npm run lint:a11y           # アクセシビリティ専用チェック
-```
-
-### === 1Password管理コマンド ===
-```bash
-npm run 1password:auth      # 認証状態確認・自動認証
-npm run 1password:sync      # 環境変数同期
-npm run 1password:audit     # セキュリティ監査
-npm run 1password:compliance # コンプライアンスレポート
 ```
 
 ### === デプロイ履歴管理コマンド ===
@@ -147,8 +130,6 @@ npm run issue:complete "完了内容とテスト結果" # 完了報告
 
 ## 🔗 関連ドキュメント
 
-- **1Password設定**: [`docs/1PASSWORD_SETUP.md`](../1PASSWORD_SETUP.md)
-- **ESLint設定**: [`docs/ESLINT_SETUP_COMPLETE.md`](../ESLINT_SETUP_COMPLETE.md)
 - **Issue管理**: [`ISSUE_MANAGEMENT.md`](./ISSUE_MANAGEMENT.md)
 - **セッション管理**: [`CLAUDE_SESSION_MANAGEMENT.md`](./CLAUDE_SESSION_MANAGEMENT.md)
 

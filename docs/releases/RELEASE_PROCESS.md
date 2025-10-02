@@ -21,7 +21,6 @@ npm --version
 # GitHub CLI
 gh --version
 
-# 1Password CLI (開発環境)
 op --version
 
 # Git

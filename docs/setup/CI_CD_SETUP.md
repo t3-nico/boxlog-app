@@ -1,8 +1,5 @@
-# CI/CD パイプライン 1Password連携セットアップ
 
 > **⚠️ 重要**: このドキュメントは**参考情報**です。
-> **現在のCI/CDパイプラインは1Passwordを使用せず、GitHub Secretsを直接使用しています。**
-> 将来的に1Password統合を検討する際の参考としてご利用ください。
 
 ## 📋 現在の環境変数管理方法
 
@@ -10,30 +7,24 @@
 |------|---------|--------|
 | **CI/CD (GitHub Actions)** | GitHub Secrets | [.github/workflows/main.yml](.github/workflows/main.yml) |
 | **本番環境 (Vercel)** | Vercel Dashboard | [vercel.com](https://vercel.com) |
-| **ローカル開発** | 1Password CLI (推奨) | [.env.example](.env.example) |
 
 ---
 
 ## 概要
 
-BoxLogプロジェクトのCI/CDパイプライン（GitHub Actions）で1Password Service Accountを使用して、安全に秘密情報を管理する手順を説明します。
 
 **注意**: この方法は現在実装されていません。導入を検討する際の参考資料としてご利用ください。
 
 ## 前提条件
 
-- 1Passwordチームアカウント（Service Account作成に必要）
 - GitHub Actions の利用権限
 - BoxLog Development Vault への アクセス権限
 
 ## セットアップ手順
 
-### 1. 1Password Service Account の作成
 
-#### 1.1 1Password Web App でService Account作成
 
 ```bash
-# 1Password Web App (my.1password.com) にアクセス
 # Settings → Developer Tools → Service Accounts → Create Service Account
 
 # Service Account 情報:
@@ -67,7 +58,6 @@ OP_SERVICE_ACCOUNT_TOKEN: ops_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 `/.github/workflows/ci.yml` ファイルを作成：
 
 ```yaml
-name: 🔐 BoxLog CI with 1Password
 
 on:
   push:
@@ -90,8 +80,6 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: 🔐 Load secrets from 1Password
-        uses: 1password/load-secrets-action@v2
         with:
           export-env: true
         env:
@@ -193,7 +181,6 @@ security-scan:
 ```bash
 # エラー: "Item not found in vault"
 # 解決策:
-1. 1Password VaultにアイテムとフィールドがQueueing for 秘密化？確認
 2. 参照パス形式が正確か確認: "op://Vault名/アイテム名/フィールド名"
 ```
 
@@ -201,13 +188,10 @@ security-scan:
 
 1. **最小権限の原則**: Service Accountには必要最小限の権限のみ付与
 2. **Token管理**: Service Account Tokenは定期的にローテーション
-3. **監査ログ**: 1Password Activity Logで定期的にアクセス状況を確認
 4. **分離**: 開発・ステージング・本番環境ごとに別々のService Account使用
 
 ## 参考リンク
 
-- [1Password Service Accounts](https://developer.1password.com/docs/service-accounts/)
-- [1Password GitHub Actions](https://developer.1password.com/docs/ci-cd/github-actions/)
 - [GitHub Actions Security](https://docs.github.com/en/actions/security-guides)
 
 ---
