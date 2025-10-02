@@ -6,6 +6,11 @@
  */
 
 export async function register() {
+  // 開発環境ではSentry初期化をスキップ（開発サーバー起動高速化）
+  if (process.env.NODE_ENV === 'development') {
+    return
+  }
+
   // サーバーサイド・エッジランタイムでのみ実行
   if (process.env.NEXT_RUNTIME === 'nodejs' || process.env.NEXT_RUNTIME === 'edge') {
     await import('./sentry.config')

@@ -67,9 +67,8 @@ const nextConfig = {
   experimental: {
     // Vercelビルドエラー対策：最小限の実験的機能のみ有効
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    // instrumentation一時無効化
-    // instrumentationHook: true,
-    // 追加設定は一時無効化してビルド安定性を優先
+    // Sentry統合のために必須
+    instrumentationHook: true,
   },
   // ビルド最適化
   swcMinify: true,
