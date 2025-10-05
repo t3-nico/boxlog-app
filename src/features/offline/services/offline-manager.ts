@@ -1,22 +1,19 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
+import { ConflictData } from '@/types/common'
+import type {
+  OfflineAction,
+  SyncResult,
+  ConflictResolution,
+  OfflineManagerStatus,
+  SyncCompletedEvent,
+  ConflictDetectedEvent,
+  ConflictResolvedEvent,
+  SyncFailedEvent
+} from '../types'
+
 // Generate a unique ID
 const generateId = (): string => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36)
-}
-import { OfflineActionData, ConflictData } from '@/types/common'
-
-export interface OfflineAction<T = unknown> extends OfflineActionData<T> {
-  syncStatus: 'pending' | 'syncing' | 'completed' | 'conflict'
-  retryCount?: number
-}
-
-// ConflictData は @/types/common から import
-
-export interface SyncResult<T = unknown> {
-  success: boolean
-  conflicts?: ConflictData<T>[]
-  serverData?: T
-  error?: string
 }
 
 export class OfflineManager {
@@ -299,10 +296,7 @@ export class OfflineManager {
   }
 
   // 競合解決
-  async resolveConflict(conflictId: string, resolution: {
-    choice: 'local' | 'server' | 'merge'
-    mergedData?: unknown
-  }) {
+  async resolveConflict(conflictId: string, resolution: ConflictResolution) {
     if (!this.db) {
       throw new Error('Database not available')
     }
@@ -490,7 +484,7 @@ export class OfflineManager {
     }
   }
 
-  getStatus() {
+  getStatus(): OfflineManagerStatus {
     return {
       isOnline: this.isOnline,
       isInitialized: this.isInitialized,
