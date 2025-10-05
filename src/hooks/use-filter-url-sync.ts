@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { useBoxStore } from '@/features/box-management/stores/box-store'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import type { TaskStatus, TaskPriority } from '@/types/unified'
 
 // TODO(#389): TaskTypeがunified.tsに存在しないため、仮定義
@@ -13,15 +13,15 @@ type TaskType = string
 export function useFilterUrlSync() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { 
-    filters, 
-    setSearchFilter, 
-    setStatusFilter, 
-    setPriorityFilter, 
-    setTypeFilter, 
-    setTagFilter, 
-    setSmartFolderFilter 
-  } = useBoxStore()
+  const {
+    filters,
+    setSearchFilter,
+    setStatusFilter,
+    setPriorityFilter,
+    setTypeFilter,
+    setTagFilter,
+    setSmartFolderFilter
+  } = useTaskStore()
 
   // Sync URL params to store on mount and param changes
   useEffect(() => {

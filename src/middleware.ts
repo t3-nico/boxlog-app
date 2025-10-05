@@ -52,7 +52,7 @@ function shouldRedirectToLocale(pathname: string): boolean {
   return true
 }
 
-export async function middleware(request: NextRequest) {
+async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const locale = getLocaleFromRequest(request)
 
@@ -150,9 +150,18 @@ export async function middleware(request: NextRequest) {
   }
 }
 
+export default middleware
+
 export const config = {
   matcher: [
-    // Next.jsの静的ファイル、画像ファイル、APIルートを除外
-    '/((?!_next/static|_next/image|api|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|js|css|json)$).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (images, etc)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|robots.txt|sitemap.xml).*)',
   ],
 }

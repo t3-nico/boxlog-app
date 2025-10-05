@@ -34,8 +34,18 @@ interface CreateTaskInput {
   tags?: string[]
 }
 
+interface TaskFilters {
+  search: string
+  status: string[]
+  priority: string[]
+  type: string[]
+  tags: string[]
+  smartFolder: string
+}
+
 interface TaskStoreState {
   tasks: Task[]
+  filters: TaskFilters
 }
 
 interface TaskStore extends TaskStoreState {
@@ -61,6 +71,14 @@ interface TaskStore extends TaskStoreState {
   // Analytics
   getCompletionRate: (date: Date) => number
   getTotalPlannedTime: (date: Date) => number
+
+  // Filter operations
+  setSearchFilter: (search: string) => void
+  setStatusFilter: (status: string[]) => void
+  setPriorityFilter: (priority: string[]) => void
+  setTypeFilter: (type: string[]) => void
+  setTagFilter: (tags: string[]) => void
+  setSmartFolderFilter: (smartFolder: string) => void
 }
 
 // ユーティリティ関数
@@ -85,7 +103,15 @@ function isDateInRange(date: Date, start: Date, end: Date): boolean {
 
 // 初期状態の定義
 const initialTaskState = {
-  tasks: [] as Task[]
+  tasks: [] as Task[],
+  filters: {
+    search: '',
+    status: [],
+    priority: [],
+    type: [],
+    tags: [],
+    smartFolder: ''
+  } as TaskFilters
 }
 
 // Date型のシリアライゼーション設定
@@ -201,5 +227,31 @@ export const useTaskStore = StoreFactory.createPersisted({
       const dayTasks = get().getTasksForDate(date)
       return dayTasks.reduce((total: number, task: Task) => total + task.planned_duration, 0)
     },
+
+    // Filter operations
+    setSearchFilter: (search: string) =>
+      set((state: TaskStoreState) => ({
+        filters: { ...state.filters, search }
+      })),
+    setStatusFilter: (status: string[]) =>
+      set((state: TaskStoreState) => ({
+        filters: { ...state.filters, status }
+      })),
+    setPriorityFilter: (priority: string[]) =>
+      set((state: TaskStoreState) => ({
+        filters: { ...state.filters, priority }
+      })),
+    setTypeFilter: (type: string[]) =>
+      set((state: TaskStoreState) => ({
+        filters: { ...state.filters, type }
+      })),
+    setTagFilter: (tags: string[]) =>
+      set((state: TaskStoreState) => ({
+        filters: { ...state.filters, tags }
+      })),
+    setSmartFolderFilter: (smartFolder: string) =>
+      set((state: TaskStoreState) => ({
+        filters: { ...state.filters, smartFolder }
+      })),
   }),
 })

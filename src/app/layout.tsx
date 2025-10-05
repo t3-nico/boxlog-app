@@ -1,4 +1,4 @@
-// app/layout.tsx（最終版）
+// app/layout.tsx - ルートレイアウト（i18n対応）
 import '@/styles/globals.css'
 
 import { Suspense } from 'react'
@@ -9,8 +9,8 @@ import { Inter } from 'next/font/google'
 
 import { Providers } from '@/components/common'
 import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary'
-import { cn } from '@/lib/utils'
 import { ToastContainer } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 
 // next/font による最適化されたフォント読み込み
 const inter = Inter({
@@ -24,10 +24,14 @@ export const metadata: Metadata = {
     template: '%s - BoxLog',
     default: 'BoxLog',
   },
-  description: 'BoxLog - Box management application',
+  description: 'BoxLog - Task management and productivity application',
 }
 
-const RootLayout = ({ children }: { children: React.ReactNode }) => {
+interface RootLayoutProps {
+  children: React.ReactNode
+}
+
+const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className={cn('bg-neutral-100 dark:bg-neutral-900')} suppressHydrationWarning>

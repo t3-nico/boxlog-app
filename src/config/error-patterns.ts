@@ -12,10 +12,12 @@
  * - 技術知識不要のエラー理解支援
  */
 
-import { ERROR_CODES, ErrorCode, ErrorLevel } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes'
+import type { ErrorCode, ErrorLevel } from '@/constants/errorCodes'
 
 // ERROR_CODESとErrorCodeを再エクスポート
-export { ERROR_CODES, ErrorCode, ErrorLevel } from '@/constants/errorCodes'
+export { ERROR_CODES } from '@/constants/errorCodes'
+export type { ErrorCode, ErrorLevel } from '@/constants/errorCodes'
 
 // ==============================================
 // エラーメッセージ統一システム

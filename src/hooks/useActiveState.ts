@@ -1,9 +1,9 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import { useBoxStore } from '@/features/box-management/stores/box-store'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 export const useActiveState = () => {
   const pathname = usePathname()
-  const { filters } = useBoxStore()
+  const { filters } = useTaskStore()
   const currentView = (pathname || '/').split('/')[1] || 'calendar'
   const selectedTag = filters.tags?.[0] || null
   const selectedSmartFolder = filters.smartFolder || null

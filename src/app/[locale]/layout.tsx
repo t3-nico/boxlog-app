@@ -94,62 +94,15 @@ export async function generateStaticParams() {
   }))
 }
 
-// 言語特化レイアウト
+// 言語特化レイアウト（HTMLタグなし - ルートレイアウトで定義済み）
 export default async function LocaleLayout({ children, params: { locale } }: LocaleLayoutProps) {
   // 不正な言語の場合、デフォルト言語にフォールバック
   const validLocale = locales.includes(locale) ? locale : defaultLocale
   const direction = getDirection(validLocale)
 
-  // hreflang用の代替言語リンク生成
-  const alternateLinks = locales.map((lang) => ({
-    hrefLang: lang,
-    href: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${lang}`,
-  }))
-
   return (
-    <html lang={validLocale} dir={direction}>
-      <head>
-        {/* hreflang代替言語リンク */}
-        {alternateLinks.map(({ hrefLang, href }) => (
-          <link key={hrefLang} rel="alternate" hrefLang={hrefLang} href={href} />
-        ))}
-        {/* x-default for international targeting */}
-        <link
-          rel="alternate"
-          hrefLang="x-default"
-          href={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/${defaultLocale}`}
-        />
-        {/* DNS prefetch for performance */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="preconnect" href="//fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body>
-        {/* 言語情報をクライアントコンポーネントに提供 */}
-        <div data-locale={validLocale} data-direction={direction}>
-          {children}
-        </div>
-        {/* 構造化データ */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'WebApplication',
-              name: 'BoxLog',
-              description: 'Comprehensive task management and productivity application',
-              url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}`,
-              applicationCategory: 'ProductivityApplication',
-              operatingSystem: 'Web Browser',
-              inLanguage: locales,
-              offers: {
-                '@type': 'Offer',
-                price: '0',
-                priceCurrency: 'USD',
-              },
-            }),
-          }}
-        />
-      </body>
-    </html>
+    <div data-locale={validLocale} data-direction={direction}>
+      {children}
+    </div>
   )
 }

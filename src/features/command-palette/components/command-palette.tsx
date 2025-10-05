@@ -45,8 +45,7 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   const searchParams = useSearchParams()
 
   // Store data - with null checks to prevent hydration errors
-  const taskStore = useTaskStore()
-  const tasks = taskStore?.tasks ?? []
+  const tasks = useTaskStore(state => state?.tasks ?? [])
   const tags = useTagStore(state => state?.tags ?? [])
   const smartFolders = useSmartFolderStore(state => state?.smartFolders ?? [])
 
