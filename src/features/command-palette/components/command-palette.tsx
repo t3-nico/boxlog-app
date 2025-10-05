@@ -43,12 +43,13 @@ interface CommandPaletteProps {
 export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  
-  // Store data
-  const { tasks } = useTaskStore()
-  const tags = useTagStore(state => state.tags)
-  const smartFolders = useSmartFolderStore(state => state.smartFolders)
-  
+
+  // Store data - with null checks to prevent hydration errors
+  const taskStore = useTaskStore()
+  const tasks = taskStore?.tasks ?? []
+  const tags = useTagStore(state => state?.tags ?? [])
+  const smartFolders = useSmartFolderStore(state => state?.smartFolders ?? [])
+
   // State
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])

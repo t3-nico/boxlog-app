@@ -1,6 +1,7 @@
 // app/layout.tsx（最終版）
 import '@/styles/globals.css'
 
+import { Suspense } from 'react'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
@@ -18,8 +19,6 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   title: {
     template: '%s - BoxLog',
@@ -28,18 +27,20 @@ export const metadata: Metadata = {
   description: 'BoxLog - Box management application',
 }
 
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
-      <body className={cn('bg-neutral-100 dark:bg-neutral-900')}>
-        <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
-          <Providers>
-            {children}
-            <ToastContainer />
-          </Providers>
-        </GlobalErrorBoundary>
-        <SpeedInsights />
-        <Analytics />
+      <body className={cn('bg-neutral-100 dark:bg-neutral-900')} suppressHydrationWarning>
+        <Suspense fallback={null}>
+          <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
+            <Providers>
+              {children}
+              <ToastContainer />
+            </Providers>
+          </GlobalErrorBoundary>
+          <SpeedInsights />
+          <Analytics />
+        </Suspense>
       </body>
     </html>
   )
