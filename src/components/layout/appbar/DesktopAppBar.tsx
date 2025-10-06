@@ -12,6 +12,7 @@ import {
   BarChart3,
   Settings,
   PanelLeftClose,
+  PanelLeft,
 } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/avatar'
@@ -39,9 +40,9 @@ const appBarItems: AppBarItemData[] = [
 export const DesktopAppBar = () => {
   const pathname = usePathname() || '/'
   const { user } = useAuthContext()
-  const { toggleSidebar } = useNavigationStore()
+  const { isSidebarOpen, toggleSidebar } = useNavigationStore()
 
-  const handleToggleAppBar = useCallback(() => {
+  const handleToggleSidebar = useCallback(() => {
     toggleSidebar()
   }, [toggleSidebar])
 
@@ -55,11 +56,11 @@ export const DesktopAppBar = () => {
       )}
       style={{ width: '64px' }}
     >
-      {/* Top: Close Button */}
+      {/* Top: Sidebar Toggle Button */}
       <div className="flex items-center justify-center pt-4 pb-2">
         <button
           type="button"
-          onClick={handleToggleAppBar}
+          onClick={handleToggleSidebar}
           className={cn(
             'flex items-center justify-center',
             'w-8 h-8',
@@ -67,8 +68,13 @@ export const DesktopAppBar = () => {
             'rounded-sm',
             'transition-colors duration-150'
           )}
+          aria-label="サイドバーを開閉"
         >
-          <PanelLeftClose className="h-5 w-5" />
+          {isSidebarOpen ? (
+            <PanelLeftClose className="h-5 w-5" />
+          ) : (
+            <PanelLeft className="h-5 w-5" />
+          )}
         </button>
       </div>
 

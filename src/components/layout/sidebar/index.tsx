@@ -2,6 +2,8 @@
 
 import React from 'react'
 
+import { useNavigationStore } from '@/components/layout/appbar/stores/navigation.store'
+
 interface SidebarProps {
   children?: React.ReactNode
 }
@@ -11,8 +13,10 @@ interface SidebarProps {
  * 各ページ・機能ごとに異なるコンテンツを表示
  */
 export const Sidebar = ({ children }: SidebarProps) => {
-  // childrenがない場合は何も表示しない
-  if (!children) {
+  const { isSidebarOpen } = useNavigationStore()
+
+  // Sidebarが閉じている、またはchildrenがない場合は何も表示しない
+  if (!isSidebarOpen || !children) {
     return null
   }
 

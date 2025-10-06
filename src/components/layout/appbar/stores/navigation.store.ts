@@ -2,12 +2,17 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface NavigationState {
-  // Primary Navigation (Sidebar) State
+  // AppBar State (L1 - always visible)
+  isAppBarOpen: boolean
+  setAppBarOpen: (open: boolean) => void
+  toggleAppBar: () => void
+
+  // Sidebar State (L2 - collapsible)
   isSidebarOpen: boolean
   setSidebarOpen: (open: boolean) => void
   toggleSidebar: () => void
-  
-  // Secondary Navigation (L2) State
+
+  // Secondary Navigation (L2) State - deprecated
   isSecondaryNavCollapsed: boolean
   setSecondaryNavCollapsed: (collapsed: boolean) => void
   toggleSecondaryNav: () => void
@@ -31,17 +36,23 @@ interface NavigationState {
 export const useNavigationStore = create<NavigationState>()(
   persist(
     (set, get) => ({
-      // Primary Navigation State
+      // AppBar State (L1)
+      isAppBarOpen: true,
+      setAppBarOpen: (open) => set({ isAppBarOpen: open }),
+      toggleAppBar: () =>
+        set((state) => ({ isAppBarOpen: !state.isAppBarOpen })),
+
+      // Sidebar State (L2)
       isSidebarOpen: true,
       setSidebarOpen: (open) => set({ isSidebarOpen: open }),
-      toggleSidebar: () => 
+      toggleSidebar: () =>
         set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
-      
-      // Secondary Navigation State
+
+      // Secondary Navigation State - deprecated
       isSecondaryNavCollapsed: false,
-      setSecondaryNavCollapsed: (collapsed) => 
+      setSecondaryNavCollapsed: (collapsed) =>
         set({ isSecondaryNavCollapsed: collapsed }),
-      toggleSecondaryNav: () => 
+      toggleSecondaryNav: () =>
         set((state) => ({ isSecondaryNavCollapsed: !state.isSecondaryNavCollapsed })),
       
       // Column Widths
@@ -66,6 +77,7 @@ export const useNavigationStore = create<NavigationState>()(
     {
       name: 'navigation-store',
       partialize: (state) => ({
+        isAppBarOpen: state.isAppBarOpen,
         isSidebarOpen: state.isSidebarOpen,
         isSecondaryNavCollapsed: state.isSecondaryNavCollapsed,
         primaryNavWidth: state.primaryNavWidth,

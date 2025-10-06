@@ -27,10 +27,9 @@ import { SidebarToggle } from './header/sidebar-toggle'
 import { Inspector } from './inspector'
 import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
-import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
 import { AppBar } from './appbar'
 import { Sidebar } from './sidebar'
-import { DefaultSidebar } from './sidebar/DefaultSidebar'
+import { CommonSidebar } from './sidebar/CommonSidebar'
 import { useNavigationStore } from './appbar/stores/navigation.store'
 
 interface DashboardLayoutProps {
@@ -67,7 +66,7 @@ const useCalendarProviderProps = (pathname: string, searchParams: URLSearchParam
 }
 
 const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
-  const { isSecondaryNavCollapsed, isSidebarOpen } = useNavigationStore()
+  const { isSidebarOpen } = useNavigationStore()
   const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanelStore()
   const { open: openGlobalSearch } = useGlobalSearch()
   const { openCreateInspector } = useCreateEventInspector()
@@ -109,7 +108,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 
         {/* L2: Sidebar (240px) - ルート可変 */}
         <Sidebar>
-          <DefaultSidebar />
+          <CommonSidebar />
         </Sidebar>
 
         {/* L3: Main Content + Inspector */}
