@@ -5,7 +5,7 @@
 
 'use client'
 
-import { Component, ErrorInfo, ReactNode } from 'react'
+import { Component, ErrorInfo } from 'react'
 
 import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 
@@ -14,34 +14,15 @@ import { createErrorToast, getUserFriendlyMessage, isAutoRecoverable } from '@/c
 import { cn } from '@/lib/utils'
 import { analyzeError, type ErrorAnalysis } from '@/lib/error-analysis'
 
-// === 型定義 ===
-
-interface Props {
-  children: ReactNode
-  maxRetries?: number
-  retryDelay?: number
-  onError?: (error: Error, errorInfo: ErrorInfo, retryCount: number) => void
-  className?: string
-}
-
-interface State {
-  hasError: boolean
-  error?: Error
-  errorInfo?: ErrorInfo
-  errorId: string
-  retryCount: number
-  isRetrying: boolean
-  autoRetryEnabled: boolean
-  lastErrorTime: number
-}
+import { GlobalErrorBoundaryProps, GlobalErrorBoundaryState } from './types'
 
 // === 自動復旧機能付きグローバルエラーバウンダリー ===
 
-export class GlobalErrorBoundary extends Component<Props, State> {
+export class GlobalErrorBoundary extends Component<GlobalErrorBoundaryProps, GlobalErrorBoundaryState> {
   private retryTimeoutId?: NodeJS.Timeout
   private autoRetryTimeoutId?: NodeJS.Timeout
 
-  constructor(props: Props) {
+  constructor(props: GlobalErrorBoundaryProps) {
     super(props)
     this.state = {
       hasError: false,
@@ -53,7 +34,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     }
   }
 
-  static getDerivedStateFromError(error: Error): Partial<State> {
+  static getDerivedStateFromError(error: Error): Partial<GlobalErrorBoundaryState> {
     return {
       hasError: true,
       error,

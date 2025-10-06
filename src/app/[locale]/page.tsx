@@ -7,7 +7,8 @@ interface PageProps {
 }
 
 // ロケール付きのホームページ
-export default function LocaleHomePage({ params: { locale } }: PageProps) {
+export default async function LocaleHomePage({ params }: PageProps) {
+  const { locale } = await params
   // カレンダーページにリダイレクト
   redirect(`/${locale}/calendar`)
 }

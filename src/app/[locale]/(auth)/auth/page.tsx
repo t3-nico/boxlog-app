@@ -6,6 +6,7 @@ interface AuthPageProps {
   params: { locale: Locale }
 }
 
-export default function AuthPage({ params: { locale } }: AuthPageProps) {
+export default async function AuthPage({ params }: AuthPageProps) {
+  const { locale } = await params
   redirect(`/${locale}/auth/login`)
 }

@@ -8,11 +8,13 @@ import { ChatProvider } from '@/contexts/chat-context'
 import { AuthProvider } from '@/features/auth'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
 
-import { PreloadResources } from './PreloadResources'
+import { PreloadResources } from '../Preload'
+
+import { ProvidersProps } from './types'
 
 // CommandPalette context moved to features/command-palette
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+export const Providers = ({ children }: ProvidersProps) => {
   const [queryClient] = useState(
     () =>
       new QueryClient({

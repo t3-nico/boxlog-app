@@ -42,17 +42,19 @@ const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: 
   loading: () => <div className="h-24 animate-pulse rounded bg-gray-200" />,
 })
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const event = (await getEvent(params.id)) as Event | null
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const event = (await getEvent(id)) as Event | null
 
   return {
     title: event ? event.name : undefined,
   }
 }
 
-const EventPage = async ({ params }: { params: { id: string } }) => {
-  const event = (await getEvent(params.id)) as Event | null
-  const reviews = (await getEventReviews(params.id)) as Review[]
+const EventPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
+  const event = (await getEvent(id)) as Event | null
+  const reviews = (await getEventReviews(id)) as Review[]
 
   if (!event) {
     notFound()

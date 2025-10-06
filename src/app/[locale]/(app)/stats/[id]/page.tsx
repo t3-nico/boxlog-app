@@ -23,16 +23,18 @@ interface Review {
   event: { type: string; description: string; url: string; thumbUrl: string; name: string }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const review = (await getReview(params.id)) as Review | null
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const review = (await getReview(id)) as Review | null
 
   return {
     title: review ? `Review #${review.id}` : undefined,
   }
 }
 
-const ReviewPage = async ({ params }: { params: { id: string } }) => {
-  const review = (await getReview(params.id)) as Review | null
+const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params
+  const review = (await getReview(id)) as Review | null
 
   if (!review) {
     notFound()

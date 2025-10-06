@@ -10,6 +10,7 @@ interface SettingsPageProps {
  * 設定トップページ
  * Next.js公式: Server Componentでredirect()使用
  */
-export default function SettingsIndexPage({ params: { locale } }: SettingsPageProps) {
+export default async function SettingsIndexPage({ params }: SettingsPageProps) {
+  const { locale } = await params
   redirect(`/${locale}/settings/account`)
 }

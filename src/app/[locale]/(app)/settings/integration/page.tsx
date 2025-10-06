@@ -9,7 +9,8 @@ interface PageProps {
 }
 
 export default async function IntegrationPage({ params }: PageProps) {
-  const locale = params.locale || 'ja'
+  const { locale: localeParam } = await params
+  const locale = localeParam || 'ja'
   const dictionary = await getDictionary(locale)
   const t = createTranslation(dictionary, locale)
 

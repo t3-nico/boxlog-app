@@ -7,8 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 
-import { Providers } from '@/components/common'
-import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary'
+import { GlobalErrorBoundary, Providers } from '@/components/common'
 import { ToastContainer } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
