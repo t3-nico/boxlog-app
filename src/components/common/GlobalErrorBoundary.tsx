@@ -79,7 +79,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     if (typeof window !== 'undefined') {
       const toastInfo = createErrorToast(analysis.code)
       // NOTE: 実際のトースト表示は toast ライブラリに依存
-      console.log('🍞 トースト通知:', toastInfo)
+      console.log('🍞 トース���通知:', toastInfo)
     }
 
     // エラーログ出力（構造化・拡張版）
@@ -187,22 +187,22 @@ export class GlobalErrorBoundary extends Component<Props, State> {
       return (
         <div
           className={cn(
-            'flex min-h-screen items-center justify-center p-4',
+            'flex min-h-screen items-center justify-center p-4 sm:p-6',
             this.props.className
           )}
         >
-          <div className="w-full max-w-2xl bg-white dark:bg-neutral-800 rounded-md shadow-lg p-6">
+          <div className="w-full max-w-4xl bg-white dark:bg-neutral-800 rounded-md shadow-lg p-4 sm:p-6">
             {/* エラーヘッダー */}
-            <div className="flex items-center mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-md">
-                  <AlertTriangle className="h-8 w-8 text-red-600 dark:text-red-400" />
+            <div className="mb-4 sm:mb-6">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <div className="flex-shrink-0 p-3 bg-red-100 dark:bg-red-900/30 rounded-md self-start">
+                  <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-red-600 dark:text-red-400" />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 break-words">
                     システムエラーが発生しました
                   </h1>
-                  <p className="text-sm text-neutral-800 dark:text-neutral-200">
+                  <p className="text-xs sm:text-sm text-neutral-800 dark:text-neutral-200 mt-1 break-all">
                     エラーID: {this.state.errorId} • 重要度: {analysis.severity}
                   </p>
                 </div>
@@ -211,11 +211,11 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
             {/* 自動復旧状況 */}
             {this.state.isRetrying ? (
-              <div className="mb-4 p-4 bg-blue-100 dark:bg-blue-900/30 rounded-md flex items-center space-x-3">
-                <RefreshCw className="h-5 w-5 text-blue-600 dark:text-blue-400 animate-spin" />
-                <div>
-                  <p className="font-semibold text-blue-600 dark:text-blue-400">自動復旧中...</p>
-                  <p className="text-sm text-blue-800 dark:text-blue-300">
+              <div className="mb-4 p-3 sm:p-4 bg-blue-100 dark:bg-blue-900/30 rounded-md flex items-start sm:items-center gap-3">
+                <RefreshCw className="h-5 w-5 text-blue-600 dark:text-blue-400 animate-spin flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-blue-600 dark:text-blue-400 text-sm sm:text-base">自動復旧中...</p>
+                  <p className="text-xs sm:text-sm text-blue-800 dark:text-blue-300 break-words">
                     しばらくお待ちください（試行回数: {this.state.retryCount + 1}/{maxRetries}）
                   </p>
                 </div>
@@ -223,15 +223,15 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             ) : null}
 
             {/* エラー分析・推奨アクション（error-patterns.ts統合版） */}
-            <div className="mb-6">
-              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">発生した問題と対処法</h3>
-              <div className="p-4 bg-neutral-200 dark:bg-neutral-700 rounded-md">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="font-semibold text-neutral-900 dark:text-neutral-100 mb-2 text-sm sm:text-base">発生した問題と対処法</h3>
+              <div className="p-3 sm:p-4 bg-neutral-200 dark:bg-neutral-700 rounded-md">
                 <div className="space-y-3">
                   {/* ユーザーフレンドリーメッセージ */}
-                  <div className="flex items-start space-x-3">
-                    <span className="text-2xl">⚠️</span>
-                    <div>
-                      <p className="text-base text-neutral-900 dark:text-neutral-100 font-semibold">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <span className="text-xl sm:text-2xl flex-shrink-0">⚠️</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm sm:text-base text-neutral-900 dark:text-neutral-100 font-semibold break-words">
                         {getUserFriendlyMessage(analysis.code)}
                       </p>
                       {/* TODO: Implement getErrorPattern function */}
@@ -242,10 +242,10 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                   </div>
 
                   {/* 技術詳細（簡略版） */}
-                  <div className="p-2 bg-neutral-100 dark:bg-neutral-900 rounded-md">
-                    <p className="text-sm text-neutral-800 dark:text-neutral-200">
-                      <span className="font-semibold">分類:</span> {analysis.category} 系統 •
-                      <span className="font-semibold">重要度:</span> {analysis.severity} •
+                  <div className="p-2 sm:p-3 bg-neutral-100 dark:bg-neutral-900 rounded-md overflow-x-auto">
+                    <p className="text-xs sm:text-sm text-neutral-800 dark:text-neutral-200 whitespace-nowrap">
+                      <span className="font-semibold">分類:</span> {analysis.category} 系統 •{' '}
+                      <span className="font-semibold">重要度:</span> {analysis.severity} •{' '}
                       <span className="font-semibold">自動復旧:</span>{' '}
                       {analysis.autoRetryable ? '✅ 可能' : '❌ 手動対応必要'}
                     </p>
@@ -253,13 +253,13 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                 </div>
 
                 {/* 推奨アクション（error-patterns.tsから取得） */}
-                <div className="mt-4">
-                  <p className="font-semibold text-neutral-900 dark:text-neutral-100 mb-2">推奨アクション:</p>
+                <div className="mt-3 sm:mt-4">
+                  <p className="font-semibold text-neutral-900 dark:text-neutral-100 mb-2 text-sm sm:text-base">推奨アクション:</p>
                   <ul className="space-y-2">
                     {analysis.suggestedActions.map((action, index) => (
-                      <li key={action} className="text-sm text-neutral-800 dark:text-neutral-200 flex items-start">
-                        <span className="text-blue-600 dark:text-blue-400 mr-2 font-semibold">{index + 1}.</span>
-                        {action}
+                      <li key={action} className="text-xs sm:text-sm text-neutral-800 dark:text-neutral-200 flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 font-semibold flex-shrink-0">{index + 1}.</span>
+                        <span className="flex-1 min-w-0 break-words">{action}</span>
                       </li>
                     ))}
                   </ul>
@@ -268,49 +268,52 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             </div>
 
             {/* 自動復旧設定 */}
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                <span className="text-sm text-neutral-900 dark:text-neutral-100">自動復旧システム</span>
+            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <span className="text-xs sm:text-sm text-neutral-900 dark:text-neutral-100">自動復旧システム</span>
               </div>
               <Button
                 onClick={this.toggleAutoRetry}
                 variant={this.state.autoRetryEnabled ? 'default' : 'outline'}
                 size="sm"
+                className="w-full sm:w-auto"
               >
                 {this.state.autoRetryEnabled ? '有効' : '無効'}
               </Button>
             </div>
 
             {/* アクションボタン */}
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+            <div className="mb-4 sm:mb-6 flex flex-col gap-2 sm:gap-3">
               {canRetry && !this.state.isRetrying ? (
-                <Button onClick={this.handleManualRetry} className="flex items-center justify-center" variant="default">
-                  <Zap className="mr-2 h-4 w-4" />
-                  手動再試行 ({maxRetries - this.state.retryCount} 回まで)
+                <Button onClick={this.handleManualRetry} className="w-full flex items-center justify-center text-sm" variant="default">
+                  <Zap className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">手動再試行 ({maxRetries - this.state.retryCount} 回まで)</span>
                 </Button>
               ) : null}
 
-              <Button onClick={this.handleReload} variant="outline" className="flex items-center justify-center">
-                <RefreshCw className="mr-2 h-4 w-4" />
-                ページ再読み込み
-              </Button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                <Button onClick={this.handleReload} variant="outline" className="w-full flex items-center justify-center text-sm">
+                  <RefreshCw className="mr-2 h-4 w-4 flex-shrink-0" />
+                  ページ再読み込み
+                </Button>
 
-              <Button onClick={this.handleGoHome} variant="outline" className="flex items-center justify-center">
-                <Home className="mr-2 h-4 w-4" />
-                ホームに戻る
-              </Button>
+                <Button onClick={this.handleGoHome} variant="outline" className="w-full flex items-center justify-center text-sm">
+                  <Home className="mr-2 h-4 w-4 flex-shrink-0" />
+                  ホームに戻る
+                </Button>
+              </div>
             </div>
 
             {/* 技術詳細（開発環境のみ） */}
             {process.env.NODE_ENV === 'development' && (
-              <details className="mb-6">
-                <summary className="cursor-pointer font-semibold text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400">
+              <details className="mb-4 sm:mb-6">
+                <summary className="cursor-pointer font-semibold text-neutral-800 dark:text-neutral-200 hover:text-blue-600 dark:hover:text-blue-400 text-xs sm:text-sm">
                   技術詳細（開発者向け）
                 </summary>
-                <div className="mt-3 p-4 bg-neutral-200 dark:bg-neutral-700 rounded-md">
-                  <div className="space-y-2 text-sm">
-                    <p>
+                <div className="mt-3 p-3 sm:p-4 bg-neutral-200 dark:bg-neutral-700 rounded-md">
+                  <div className="space-y-2 text-xs sm:text-sm overflow-x-auto">
+                    <p className="break-words">
                       <strong>エラー:</strong> {this.state.error.message}
                     </p>
                     <p>
@@ -324,8 +327,8 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                     </p>
                     {this.state.error.stack ? (
                       <details className="mt-2">
-                        <summary className="text-blue-600 dark:text-blue-400 cursor-pointer">スタックトレース</summary>
-                        <pre className="mt-2 text-xs bg-neutral-200 dark:bg-neutral-700 max-h-40 overflow-auto rounded p-2">
+                        <summary className="text-blue-600 dark:text-blue-400 cursor-pointer text-xs sm:text-sm">スタックトレース</summary>
+                        <pre className="mt-2 text-[10px] sm:text-xs bg-neutral-100 dark:bg-neutral-800 max-h-40 overflow-auto rounded p-2 break-all whitespace-pre-wrap">
                           {this.state.error.stack}
                         </pre>
                       </details>
