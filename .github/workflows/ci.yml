@@ -100,6 +100,30 @@ jobs:
           files: ./coverage/coverage-final.json
           fail_ci_if_error: false
 
+  i18n-check:
+    name: 🌍 i18n Translation Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Check translation integrity
+        run: npm run test:i18n:integrity
+
+      - name: ⚠️ Check hardcoded strings (warning)
+        run: npm run test:i18n:hardcoded
+        continue-on-error: true
+
   # =====================================
   # 🔍 Phase 2: Quality Checks (並列実行 / 5分以内)
   # =====================================
@@ -107,7 +131,7 @@ jobs:
   build:
     name: 🏗️ Build
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests]
+    needs: [lint, typecheck, unit-tests, i18n-check]
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
@@ -148,7 +172,7 @@ jobs:
   accessibility:
     name: ♿ Accessibility
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests]
+    needs: [lint, typecheck, unit-tests, i18n-check]
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
@@ -170,7 +194,7 @@ jobs:
   heavy-checks:
     name: 🔍 Heavy Analysis
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests]
+    needs: [lint, typecheck, unit-tests, i18n-check]
     timeout-minutes: 10
     steps:
       - name: 📥 Checkout
@@ -204,7 +228,7 @@ jobs:
   docs-consistency:
     name: 📚 Docs Consistency
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests]
+    needs: [lint, typecheck, unit-tests, i18n-check]
     timeout-minutes: 5
     steps:
       - name: 📥 Checkout
@@ -229,7 +253,7 @@ jobs:
   quality-gate:
     name: 🚪 Quality Gate
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests, build, accessibility, heavy-checks, docs-consistency]
+    needs: [lint, typecheck, unit-tests, i18n-check, build, accessibility, heavy-checks, docs-consistency]
     if: always()
     steps:
       - name: ✅ Check results
@@ -244,6 +268,10 @@ jobs:
           fi
           if [[ "${{ needs.unit-tests.result }}" != "success" ]]; then
             echo "❌ Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.i18n-check.result }}" != "success" ]]; then
+            echo "❌ i18n check failed"
             exit 1
           fi
           if [[ "${{ needs.build.result }}" != "success" ]]; then
@@ -270,6 +298,7 @@ jobs:
             | ${getEmoji('${{ needs.lint.result }}')} **Lint** | ${{ needs.lint.result }} |
             | ${getEmoji('${{ needs.typecheck.result }}')} **TypeScript** | ${{ needs.typecheck.result }} |
             | ${getEmoji('${{ needs.unit-tests.result }}')} **Tests** | ${{ needs.unit-tests.result }} |
+            | ${getEmoji('${{ needs.i18n-check.result }}')} **i18n Check** | ${{ needs.i18n-check.result }} |
             | ${getEmoji('${{ needs.build.result }}')} **Build** | ${{ needs.build.result }} |
             | ${getEmoji('${{ needs.accessibility.result }}')} **Accessibility** | ${{ needs.accessibility.result }} |
             | ${getEmoji('${{ needs.heavy-checks.result }}')} **Heavy Checks** | ${{ needs.heavy-checks.result }} |
