@@ -48,7 +48,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 }
 
 const ChatInput = () => {
-  const { state, sendMessage, setInputValue } = useChatStore()
+  const { inputValue, isTyping, sendMessage, setInputValue } = useChatStore()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -256,7 +256,7 @@ const WelcomeMessage = () => {
 }
 
 export const HelpChat = () => {
-  const { state } = useChatStore()
+  const { messages } = useChatStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom

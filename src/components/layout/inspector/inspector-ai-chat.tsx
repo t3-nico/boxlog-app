@@ -70,16 +70,16 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
 }
 
 const ChatInput = () => {
-  const { state, sendMessage, setInputValue } = useChatStore()
+  const { inputValue, isTyping, sendMessage, setInputValue } = useChatStore()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
-    if (state.inputValue.trim() && !state.isTyping) {
-      await sendMessage(state.inputValue)
+    if (inputValue.trim() && !isTyping) {
+      await sendMessage(inputValue)
     }
-  }, [state.inputValue, state.isTyping, sendMessage])
+  }, [inputValue, isTyping, sendMessage])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
@@ -102,7 +102,7 @@ const ChatInput = () => {
       const {scrollHeight} = textareaRef.current
       textareaRef.current.style.height = `${Math.min(scrollHeight, 120)  }px`
     }
-  }, [state.inputValue])
+  }, [inputValue])
 
   return (
     <div className={cn(
@@ -111,7 +111,7 @@ const ChatInput = () => {
       'bg-neutral-100 dark:bg-neutral-900'
     )}>
       {/* Typing indicator */}
-      {state.isTyping === true && (
+      {isTyping === true && (
         <div className="flex items-center gap-2 mb-2 text-sm text-neutral-600 dark:text-neutral-400">
           <div className="flex gap-1">
             <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse"></div>
@@ -126,20 +126,20 @@ const ChatInput = () => {
         <form onSubmit={handleSubmit} className="relative">
           <textarea
             ref={textareaRef}
-            value={state.inputValue}
+            value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder="Ask AI anything..."
             className="w-full resize-none rounded-lg border border-neutral-200 dark:border-neutral-800 bg-card p-4 pr-12 text-sm focus:ring-2 focus:ring-primary max-h-32 min-h-[44px] placeholder:text-muted-foreground"
-            disabled={state.isTyping}
+            disabled={isTyping}
             rows={1}
           />
 
           <button
             type="submit"
-            disabled={!state.inputValue.trim() || state.isTyping}
+            disabled={!inputValue.trim() || isTyping}
             className="absolute right-2 bottom-2 p-1 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 disabled:text-neutral-400 dark:disabled:text-neutral-600 disabled:cursor-not-allowed transition-fast focus:outline-none"
           >
             <ArrowUpCircle className="h-6 w-6" />
@@ -151,31 +151,31 @@ const ChatInput = () => {
 }
 
 export const InspectorAIChat = () => {
-  const { state, clearMessages } = useChatStore()
+  const { messages, clearMessages } = useChatStore()
   const [showMenu, setShowMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const toggleMenu = useCallback(() => setShowMenu(!showMenu), [showMenu])
-  
+
   const handleClearMessages = useCallback(() => {
     clearMessages()
     setShowMenu(false)
   }, [clearMessages])
 
   const handleExportMessages = useCallback(() => {
-    const exportMessages = state.messages.map(msg => ({
+    const exportMessages = messages.map((msg) => ({
       sender: msg.sender,
       content: msg.content,
       timestamp: msg.timestamp
     }))
     navigator.clipboard.writeText(JSON.stringify(exportMessages, null, 2))
     setShowMenu(false)
-  }, [state.messages])
+  }, [messages])
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [state.messages])
+  }, [messages])
 
   return (
     <div className="h-full flex flex-col">
@@ -231,7 +231,7 @@ export const InspectorAIChat = () => {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4">
-        {state.messages.length === 0 ? (
+        {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-tertiary flex items-center justify-center mx-auto my-4">
               <Sparkles className="w-8 h-8 text-primary-foreground" />
@@ -245,7 +245,7 @@ export const InspectorAIChat = () => {
           </div>
         ) : (
           <>
-            {state.messages.map((message) => (
+            {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
             ))}
             <div ref={messagesEndRef} />

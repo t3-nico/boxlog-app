@@ -7,13 +7,13 @@ import { cn } from '@/lib/utils'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
 
 const StatsPage = () => {
-  const { state } = useChatStore()
+  const { isOpen } = useChatStore()
 
   return (
     <div className="flex flex-col h-full relative">
       <div className={cn(
         'flex-1 p-6 transition-all duration-300',
-        state.isOpen && 'mr-96'
+        isOpen && 'mr-96'
       )}>
         <div className="mx-auto max-w-7xl">
           <Heading>Stats View</Heading>
