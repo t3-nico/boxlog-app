@@ -4,13 +4,29 @@ BoxLog共通UIコンポーネント実装ガイドライン。
 
 ## 🎯 コンポーネント選択優先度（絶対遵守）
 
+**新規UIコンポーネント作成時は、必ずこの順序で検討：**
+
+```
+1️⃣ shadcn/ui を確認
+   ↓ なければ
+2️⃣ HeadlessUI を確認
+   ↓ どちらもなければ
+3️⃣ kiboUI（プロジェクト独自）を確認
+   ↓ どれもなければ
+4️⃣ カスタム実装（正当な理由が必要）
+```
+
 ### 1. 🥇 shadcn/ui（第一選択）
-基本UIコンポーネント。
+
+**公式**: https://ui.shadcn.com/docs/components
+
+基本的なUIコンポーネント（Radix UIベース + Tailwind CSS）
 
 **使用対象**:
-- Button, Input, Select, Dialog
-- Card, Badge, Avatar
-- Dropdown, Popover, Tooltip
+- Button, Input, Select, Dialog, Sheet
+- Card, Badge, Avatar, Separator
+- Dropdown Menu, Popover, Tooltip
+- Table, Tabs, Accordion
 
 **インストール**:
 ```bash
@@ -18,21 +34,84 @@ npx shadcn-ui@latest add button
 npx shadcn-ui@latest add dialog
 ```
 
-### 2. 🥈 kiboUI（高度な機能）
+**例**:
+```tsx
+import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
+
+<Button variant="primary">クリック</Button>
+```
+
+### 2. 🥈 HeadlessUI（アクセシビリティ重視）
+
+**公式**: https://headlessui.com/
+
+スタイルなし・アクセシビリティ完全対応のUIコンポーネント
+
+**使用対象**:
+- Menu（ドロップダウンメニュー）
+- Field, Label, Description（フォーム）
+- Combobox（検索可能なセレクト）
+- Listbox, Radio Group, Switch
+
+**いつ使う？**:
+- shadcn/uiに該当コンポーネントがない
+- 複雑なフォームやアクセシビリティが重要
+- キーボードナビゲーションが必須
+
+**例**:
+```tsx
+import { Menu, Field, Label } from '@headlessui/react'
+
+// メニュー（アクセシビリティ自動対応）
+<Menu>
+  <Menu.Button>オプション</Menu.Button>
+  <Menu.Items>
+    <Menu.Item>
+      {({ active }) => (
+        <a className={active ? 'bg-blue-500' : ''}>設定</a>
+      )}
+    </Menu.Item>
+  </Menu.Items>
+</Menu>
+
+// フォームフィールド（ARIA属性自動付与）
+<Field>
+  <Label>ユーザー名</Label>
+  <Input />
+  <Description>公開プロフィールに表示されます</Description>
+</Field>
+```
+
+**実装例（プロジェクト内）**:
+- `src/components/app/LanguageSwitcher.tsx` - HeadlessUI Menu使用
+- `src/components/app/fieldset.tsx` - HeadlessUI Field/Label使用
+
+### 3. 🥉 kiboUI（プロジェクト独自）
+
 AI・高度なUIコンポーネント。
 
 **使用対象**:
-- AIコンポーネント
-- Kanbanボード
-- 複雑なインタラクション
+- AIコンポーネント（`kibo/ai/`）
+- Kanbanボード（`kibo/kanban/`）
+- Code Block（`kibo/code-block/`）
 
-### 3. 🥉 カスタム実装（最後の手段）
-ライブラリオプションが存在しない場合のみ。
+### 4. ⚠️ カスタム実装（最後の手段）
 
-**条件**:
-- shadcn/ui、kiboUIに該当コンポーネントがない
-- 独自のビジネスロジックが必要
-- 既存コンポーネントでは要件を満たせない
+ライブラリで実現できない場合のみ。
+
+**カスタム実装が許可されるケース**:
+- ✅ ビジネスロジック含む: `AnalyticsProvider.tsx`
+- ✅ エディター機能: `app/editor/`, `app/rich-text-editor/`
+- ✅ プロジェクト全体の一貫性: `app/heading.tsx`（タイポグラフィ統一）
+
+**カスタム実装前のチェックリスト**:
+```markdown
+□ shadcn/ui に該当コンポーネントがないか確認した
+□ HeadlessUI で実現できないか確認した
+□ kiboUI を再利用できないか確認した
+□ カスタム実装が必要な理由を説明できる
+```
 
 ---
 
@@ -199,4 +278,4 @@ describe('TaskCard', () => {
 
 ---
 
-**📖 最終更新**: 2025-09-30
+**📖 最終更新**: 2025-10-06 | **バージョン**: v2.0 - HeadlessUI追加
