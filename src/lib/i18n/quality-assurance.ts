@@ -118,7 +118,7 @@ export class TranslationQualityAssurance {
   private reviewsPath: string
   private assessmentsPath: string
 
-  constructor(basePath = 'data/i18n-reviews') {
+  constructor(basePath = 'src/lib/i18n/__reviews__') {
     this.reviewsPath = path.join(basePath, 'reviews')
     this.assessmentsPath = path.join(basePath, 'assessments')
     this.ensureDirectories()
