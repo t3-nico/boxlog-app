@@ -31,6 +31,7 @@
 ### システム管理
 - **Breaking Changes**: [`docs/BREAKING_CHANGES.md`](docs/BREAKING_CHANGES.md)
 - **Sentry統合**: [`docs/integrations/SENTRY.md`](docs/integrations/SENTRY.md)
+- **エラーハンドリング**: [`docs/architecture/ERROR_HANDLING.md`](docs/architecture/ERROR_HANDLING.md) 🆕
 
 ## 🚀 基本コマンド（頻出4個）
 ```bash
@@ -68,4 +69,4 @@ npm run docs:check          # ドキュメント整合性チェック
 - App Router移行ガイド: https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration
 
 ---
-**📖 最終更新**: 2025-10-01 | **バージョン**: v8.1 - コロケーション原則追加
+**📖 最終更新**: 2025-10-06 | **バージョン**: v8.2 - エラーハンドリング整理完了
