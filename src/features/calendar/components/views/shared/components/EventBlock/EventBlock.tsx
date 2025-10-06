@@ -8,6 +8,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { calendarColors } from '@/features/calendar/theme'
+import { useI18n } from '@/lib/i18n/hooks'
 
 import { cn } from '@/lib/utils'
 
@@ -31,6 +32,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
   style = {},
   previewTime = null,
 }) {
+  const { t } = useI18n()
   const [isHovered, setIsHovered] = useState(false)
 
   // すべてのイベントは時間指定イベント
@@ -227,7 +229,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
           height: '8px',
           zIndex: 10,
         }}
-        title="ドラッグして終了時間を調整"
+        title={t('calendar.event.adjustEndTime')}
       />
     </div>
   )

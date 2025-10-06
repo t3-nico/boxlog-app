@@ -30,7 +30,7 @@ interface SecuritySettings {
 const AccountSettings = () => {
   const { user } = useAuthContext()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
-  const [_isUploading, _setIsUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

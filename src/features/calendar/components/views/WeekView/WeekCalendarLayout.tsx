@@ -11,6 +11,7 @@ import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarEvent } from '@/features/events'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
+import { useI18n } from '@/lib/i18n/hooks'
 
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import type { Task, ViewDateRange } from '../../../types/calendar.types'
@@ -59,6 +60,7 @@ export const WeekCalendarLayout = ({
   onDeleteEvent,
   onRestoreEvent,
 }: WeekCalendarLayoutProps) => {
+  const { t } = useI18n()
   const { openEventPopup } = useAddPopup()
   const { planRecordMode } = useCalendarSettingsStore()
   const { records: _records, fetchRecords } = useRecordsStore()
@@ -342,7 +344,7 @@ export const WeekCalendarLayout = ({
                           type="button"
                           onClick={createDeleteEventHandler(event.id)}
                           className="absolute right-1 top-1 z-30 rounded bg-white/90 p-0.5 opacity-0 shadow-lg transition-all duration-200 hover:bg-white group-hover:opacity-100 dark:bg-gray-800/90 dark:hover:bg-gray-700"
-                          title="予定を削除"
+                          title={t('calendar.event.delete')}
                         >
                           <X className="h-3 w-3 text-gray-700 dark:text-gray-300" />
                         </button>

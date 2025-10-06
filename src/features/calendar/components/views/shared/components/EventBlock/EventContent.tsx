@@ -7,6 +7,8 @@
 
 import React, { memo } from 'react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 import type { TimedEvent } from '../../types/event.types'
 import { formatTimeRange } from '../../utils/dateHelpers'
 
@@ -50,6 +52,8 @@ export const EventContent = memo<EventContentProps>(function EventContent({
   timeFormat = '24h',
   previewTime = null
 }) {
+  const { t } = useI18n()
+
   // イベントの開始・終了時刻をDateオブジェクトに変換
   const eventStart = parseEventStartDate(event)
   const eventEnd = parseEventEndDate(event)
@@ -84,10 +88,10 @@ export const EventContent = memo<EventContentProps>(function EventContent({
             formatTimeRange(previewTime.start, previewTime.end, timeFormat)
           ) : (
             eventStart && eventEnd ? formatTimeRange(
-              eventStart, 
-              eventEnd, 
+              eventStart,
+              eventEnd,
               timeFormat
-            ) : '時間未設定'
+            ) : t('calendar.event.noTimeSet')
           )}
         </div>
       )}
