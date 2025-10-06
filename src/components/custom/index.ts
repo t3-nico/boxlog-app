@@ -15,11 +15,11 @@ export {
 export { Link } from './link'
 
 // List components
-export { 
-  DescriptionList, 
-  DescriptionTerm, 
-  DescriptionDetails 
-} from './description-list'
+// export {
+//   DescriptionList,
+//   DescriptionTerm,
+//   DescriptionDetails
+// } from './description-list' // ⚠️ 削除予定 (#417)
 
 // Select components
 // export { Listbox, ListboxLabel, ListboxOption } from './listbox' // ⚠️ 削除予定 (#415)
