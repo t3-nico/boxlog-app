@@ -44,7 +44,7 @@ describe('OfflineManager', () => {
     it('should record action with pending status', async () => {
       const action = {
         type: 'create' as const,
-        entity: 'tasks',
+        entity: 'task' as const,
         data: { title: 'Test Task' }
       }
 
@@ -59,7 +59,7 @@ describe('OfflineManager', () => {
 
       const action = {
         type: 'update' as const,
-        entity: 'tasks',
+        entity: 'task' as const,
         data: { id: '1', title: 'Updated Task' }
       }
 
@@ -78,13 +78,13 @@ describe('OfflineManager', () => {
     it('should return pending actions after recording', async () => {
       await manager.recordAction({
         type: 'create' as const,
-        entity: 'tasks',
+        entity: 'task' as const,
         data: { title: 'Task 1' }
       })
 
       await manager.recordAction({
         type: 'create' as const,
-        entity: 'tasks',
+        entity: 'task' as const,
         data: { title: 'Task 2' }
       })
 

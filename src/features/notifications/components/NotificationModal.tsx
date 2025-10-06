@@ -20,7 +20,7 @@ interface NotificationModalProps {
 
 export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) => {
   const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all')
-  const t = useTranslation()
+  const { t } = useTranslation()
   const locale = useCurrentLocale()
 
   // Mock data - 実際のデータは useNotifications から取得

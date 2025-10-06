@@ -122,7 +122,7 @@ async function middleware(request: NextRequest) {
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
       console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
-      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url))
+      return NextResponse.redirect(new URL(`/${currentLocale}/auth/login`, request.url))
     }
 
     // 認証済みでauth系のパスにアクセスした場合
@@ -143,7 +143,7 @@ async function middleware(request: NextRequest) {
       request.nextUrl.pathname === '/signup'
 
     if (!isStaticPath) {
-      return NextResponse.redirect(new URL(`/${defaultLocale}/login`, request.url))
+      return NextResponse.redirect(new URL(`/${defaultLocale}/auth/login`, request.url))
     }
 
     return response

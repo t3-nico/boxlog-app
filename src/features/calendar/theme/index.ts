@@ -22,10 +22,14 @@ export {
 } from './animations'
 
 // Utilities - ヘルパー関数
-export { 
-  getEventColor, 
-  getStatusColor, 
-  getCommonColor,
+export {
+  getEventColor,
+  getStatusColor,
+  getTextMuted,
+  getBorderDefault,
+  getSelectionBg,
+  getSurfaceBg,
+  getErrorBorder,
   getCalendarStyle,
   getCalendarAnimation,
   getEventClassName,

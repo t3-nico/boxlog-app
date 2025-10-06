@@ -29,7 +29,7 @@ const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps)
 
   // 有効なビュータイプかチェック
   if (!isValidViewType(view)) {
-    redirect('/calendar/day')
+    redirect(`/${locale}/calendar/day`)
   }
 
   // 日付パラメータの解析

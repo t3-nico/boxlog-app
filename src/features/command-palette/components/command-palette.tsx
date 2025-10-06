@@ -44,10 +44,35 @@ export const CommandPalette = ({ isOpen, onClose }: CommandPaletteProps) => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Store data - with null checks to prevent hydration errors
-  const tasks = useTaskStore(state => state?.tasks ?? [])
-  const tags = useTagStore(state => state?.tags ?? [])
-  const smartFolders = useSmartFolderStore(state => state?.smartFolders ?? [])
+  // Store data - with hydration-safe approach using useState
+  const [tasks, setTasks] = useState([])
+  const [tags, setTags] = useState([])
+  const [smartFolders, setSmartFolders] = useState([])
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  useEffect(() => {
+    // Only run on client side after hydration
+    if (typeof window !== 'undefined') {
+      const taskStoreState = useTaskStore.getState ? useTaskStore.getState() : useTaskStore()
+      const tagStoreState = useTagStore.getState ? useTagStore.getState() : useTagStore()
+      const folderStoreState = useSmartFolderStore.getState ? useSmartFolderStore.getState() : useSmartFolderStore()
+
+      setTasks(taskStoreState?.tasks ?? [])
+      setTags(tagStoreState?.tags ?? [])
+      setSmartFolders(folderStoreState?.smartFolders ?? [])
+      setIsHydrated(true)
+
+      const unsubTasks = useTaskStore.subscribe?.(state => setTasks(state?.tasks ?? [])) || (() => {})
+      const unsubTags = useTagStore.subscribe?.(state => setTags(state?.tags ?? [])) || (() => {})
+      const unsubFolders = useSmartFolderStore.subscribe?.(state => setSmartFolders(state?.smartFolders ?? [])) || (() => {})
+
+      return () => {
+        unsubTasks?.()
+        unsubTags?.()
+        unsubFolders?.()
+      }
+    }
+  }, [])
 
   // State
   const [query, setQuery] = useState('')
