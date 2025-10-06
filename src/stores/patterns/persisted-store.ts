@@ -4,7 +4,7 @@
  * localStorage/sessionStorageを使用した状態の永続化
  */
 
-import { StateCreator, StoreApi, UseBoundStore } from 'zustand'
+import { create, StateCreator, StoreApi, UseBoundStore } from 'zustand'
 import { persist, createJSONStorage, PersistOptions } from 'zustand/middleware'
 import { createBaseStore, BaseStore } from './base-store'
 
@@ -165,38 +165,20 @@ export function createPersistedStore<T extends Record<string, any>>(
     }
   })
 
-  // ストア作成
-  const storeCreator: StateCreator<
-    PersistedStore<T>,
-    [],
-    [],
-    PersistedStore<T>
-  > = persist(
-    (set, get) => ({
-      ...initialState,
-      ...persistedInitialState,
-      ...createPersistedActions(set, get),
-      ...(actions ? actions(set as any, get as any) : {})
-    }),
-    persistOptions
+  // Zustandのcreateを直接使用してpersist middlewareを適用
+  const store = create<PersistedStore<T>>()(
+    persist(
+      (set, get) => ({
+        ...initialState,
+        ...persistedInitialState,
+        ...createPersistedActions(set, get),
+        ...(actions ? actions(set as any, get as any) : {})
+      }),
+      persistOptions
+    )
   )
 
-  const store = createBaseStore(
-    initialState,
-    (set, get) => ({
-      ...createPersistedActions(set, get),
-      ...(actions ? actions(set as any, get as any) : {})
-    }),
-    { name: persistConfig.name, devtools: true }
-  ) as any
-
-  // 手動でpersist機能を追加
-  const persistedStore = persist(
-    storeCreator as any,
-    persistOptions
-  )
-
-  return persistedStore as UseBoundStore<StoreApi<PersistedStore<T>>>
+  return store as UseBoundStore<StoreApi<PersistedStore<T>>>
 }
 
 /**
