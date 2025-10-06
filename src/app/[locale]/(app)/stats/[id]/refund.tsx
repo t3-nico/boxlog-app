@@ -2,19 +2,19 @@
 
 import { useCallback, useState } from 'react'
 
-import { Description, Field, FieldGroup } from '@/components/ui'
-import { Button } from '@/components/shadcn-ui/button'
-import { Checkbox } from '@/components/shadcn-ui/checkbox'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'
-import { Input } from '@/components/shadcn-ui/input'
-import { Label } from '@/components/shadcn-ui/label'
+import { Description, Field, FieldGroup } from '@/components/app'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { 
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/shadcn-ui/select'
+} from '@/components/ui/select'
 
 
 export const RefundReview = ({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) => {

@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 type AIBranchContextType = {

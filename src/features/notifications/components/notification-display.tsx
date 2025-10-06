@@ -2,7 +2,7 @@ import React from 'react'
 
 import { X, Bell } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 
 interface NotificationItem {
   id: string

@@ -6,8 +6,8 @@ import { usePathname } from 'next/navigation'
 
 import { Bell, Plus, Search } from 'lucide-react'
 
-import { Avatar } from '@/components/shadcn-ui/avatar'
-import { Sheet, SheetContent } from '@/components/shadcn-ui/sheet'
+import { Avatar } from '@/components/ui/avatar'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { primaryNavigation } from '@/config/navigation/config'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'

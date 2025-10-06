@@ -2,7 +2,7 @@
 
 import { CheckSquare, Clock, Flag, MessageSquare, Paperclip, User } from 'lucide-react'
 
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 
 export const TaskInspectorContent = () => {

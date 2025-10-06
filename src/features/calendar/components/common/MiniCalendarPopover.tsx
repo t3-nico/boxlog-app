@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn-ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { MiniCalendarProps } from '@/features/calendar/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'

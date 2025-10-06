@@ -4,7 +4,7 @@ import React, { useCallback } from 'react'
 
 import { Plus, ChevronDown } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 import { useCreateModalStore } from '../../stores/useCreateModalStore'

@@ -4,7 +4,7 @@ import React, { useCallback } from 'react'
 
 import { Bold, CheckSquare, Italic, Link, List, ListOrdered, Underline } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { sanitizeRichText } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 

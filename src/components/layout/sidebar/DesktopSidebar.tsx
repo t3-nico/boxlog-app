@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { Bell, PanelLeftClose, Plus, Search } from 'lucide-react'
 
 import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
-import { Avatar } from '@/components/shadcn-ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import { primaryNavigation } from '@/config/navigation/config'
 import { colors, typography, spacing, rounded } from '@/config/ui/theme'
 import { useAuthContext } from '@/features/auth'

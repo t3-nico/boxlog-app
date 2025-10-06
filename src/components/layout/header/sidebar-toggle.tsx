@@ -4,7 +4,7 @@ import { useCallback } from 'react'
 
 import { Menu, PanelLeftOpen } from 'lucide-react'
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
 

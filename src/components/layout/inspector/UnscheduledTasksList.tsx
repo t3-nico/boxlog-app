@@ -4,8 +4,8 @@ import React, { useCallback } from 'react'
 
 import { GripVertical, Plus } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { ScrollArea } from '@/components/shadcn-ui/scroll-area'
+import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { cn } from '@/lib/utils'
 

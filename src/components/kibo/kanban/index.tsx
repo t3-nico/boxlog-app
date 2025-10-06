@@ -20,8 +20,8 @@ import { CSS } from '@dnd-kit/utilities'
 import { createPortal } from 'react-dom'
 import tunnel from 'tunnel-rat'
 
-import { Card } from '@/components/shadcn-ui/card'
-import { ScrollArea, ScrollBar } from '@/components/shadcn-ui/scroll-area'
+import { Card } from '@/components/ui/card'
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 
 const t = tunnel()

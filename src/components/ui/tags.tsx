@@ -4,8 +4,8 @@ import * as React from 'react'
 
 import { Check, ChevronDown, Plus, Tag, X } from 'lucide-react'
 
-import { Badge } from '@/components/shadcn-ui/badge'
-import { Button } from '@/components/shadcn-ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -13,7 +13,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/shadcn-ui/command'
+} from '@/components/ui/command'
 import { cn } from '@/lib/utils'
 
 export interface TagOption {

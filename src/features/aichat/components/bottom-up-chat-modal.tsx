@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ArrowUpCircle, Copy, Maximize2, Minimize2, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 

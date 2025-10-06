@@ -20,22 +20,22 @@ import {
   Calendar
 } from 'lucide-react'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/shadcn-ui/alert'
-import { Badge } from '@/components/shadcn-ui/badge'
-import { Button } from '@/components/shadcn-ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/shadcn-ui/card'
-import { Label } from '@/components/shadcn-ui/label'
-import { Progress } from '@/components/shadcn-ui/progress'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import { Progress } from '@/components/ui/progress'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/shadcn-ui/select'
-import { Separator } from '@/components/shadcn-ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn-ui/tabs'
-import { Textarea } from '@/components/shadcn-ui/textarea'
+} from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Textarea } from '@/components/ui/textarea'
 
 // 型定義（quality-assurance.tsから）
 interface QualityMetrics {

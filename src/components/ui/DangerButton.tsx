@@ -8,7 +8,7 @@ import React, { useCallback } from 'react'
 
 import { cva } from 'class-variance-authority'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const dangerButtonVariants = cva(

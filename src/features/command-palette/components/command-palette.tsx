@@ -22,7 +22,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/shadcn-ui/command'
+} from '@/components/ui/command'
 
 import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
 import { useTagStore } from '@/features/tags/stores/tag-store'

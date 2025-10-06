@@ -1,5 +1,5 @@
-import { Badge } from '@/components/shadcn-ui/badge'
-import { Separator } from '@/components/shadcn-ui/separator'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
 export const Stat = ({ title, value, change }: { title: string; value: string; change: string }) => {

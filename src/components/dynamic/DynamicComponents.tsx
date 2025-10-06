@@ -20,7 +20,7 @@ export const DynamicCalendarView = dynamic(
 
 // 重いUIコンポーネントの動的インポート
 export const DynamicRichTextEditor = dynamic(
-  () => import('@/components/shadcn-ui/rich-text-editor').then(mod => ({ default: mod.RichTextEditor })),
+  () => import('@/components/app/rich-text-editor').then(mod => ({ default: mod.RichTextEditor })),
   {
     ssr: false,
     loading: () => (

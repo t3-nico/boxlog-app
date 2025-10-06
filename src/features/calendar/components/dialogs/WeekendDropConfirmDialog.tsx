@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import { Calendar, AlertTriangle } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter
-} from '@/components/shadcn-ui/dialog'
+} from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 interface WeekendDropConfirmDialogProps {

@@ -7,7 +7,7 @@ import { useControllableState } from '@radix-ui/react-use-controllable-state'
 
 import { ChevronDownIcon } from 'lucide-react'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo-ui/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo/collapsible'
 import { cn } from '@/lib/utils'
 
 import { AIResponse } from './response'

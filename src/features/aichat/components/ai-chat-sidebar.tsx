@@ -48,8 +48,8 @@ import {
   AIBranchPage,
   AIBranchPrevious,
   AIBranchSelector,
-} from '@/components/kibo-ui/ai/branch'
-import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo-ui/ai/conversation'
+} from '@/components/kibo/ai/branch'
+import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo/ai/conversation'
 import {
   AIInput,
   AIInputButton,
@@ -62,9 +62,9 @@ import {
   AIInputTextarea,
   AIInputToolbar,
   AIInputTools,
-} from '@/components/kibo-ui/ai/input'
-import { AIMessage, AIMessageAvatar, AIMessageContent } from '@/components/kibo-ui/ai/message'
-import { AIResponse } from '@/components/kibo-ui/ai/response'
+} from '@/components/kibo/ai/input'
+import { AIMessage, AIMessageAvatar, AIMessageContent } from '@/components/kibo/ai/message'
+import { AIResponse } from '@/components/kibo/ai/response'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
 
 // BoxLog用のカスタムAI Responseコンポーネント

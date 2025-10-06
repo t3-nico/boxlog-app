@@ -22,7 +22,7 @@ import {
   CodeBlockSelectItem,
   CodeBlockSelectTrigger,
   CodeBlockSelectValue,
-} from '@/components/kibo-ui/code-block'
+} from '@/components/kibo/code-block'
 import { cn } from '@/lib/utils'
 
 export type AIResponseProps = HTMLAttributes<HTMLDivElement> & {

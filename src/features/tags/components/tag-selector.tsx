@@ -4,14 +4,14 @@ import { useState } from 'react'
 
 import { ChevronDown as ChevronDownIcon } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '@/components/shadcn-ui/dropdown-menu'
-import { Input } from '@/components/shadcn-ui/input'
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { Tag } from '@/types/unified'
 

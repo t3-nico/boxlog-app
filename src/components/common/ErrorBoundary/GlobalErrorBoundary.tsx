@@ -9,7 +9,7 @@ import { Component, ErrorInfo } from 'react'
 
 import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { createErrorToast, getUserFriendlyMessage, isAutoRecoverable } from '@/config/error-patterns'
 import { cn } from '@/lib/utils'
 import { analyzeError, type ErrorAnalysis } from '@/lib/error-analysis'

@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 import { PanelRightOpen } from 'lucide-react'
 
 import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/shadcn-ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 export const InspectorToggle = () => {

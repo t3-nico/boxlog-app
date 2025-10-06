@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertCircle, Home, RefreshCw } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 const ErrorPage = () => {

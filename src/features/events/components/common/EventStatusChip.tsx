@@ -5,7 +5,7 @@ import React from 'react'
 
 import { Inbox, Calendar, Play, CheckCircle, X } from 'lucide-react'
 
-import { Badge } from '@/components/shadcn-ui/badge'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 import type { EventStatus } from '../../types/events'

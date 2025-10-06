@@ -2,8 +2,8 @@
 
 import { useCallback } from 'react'
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
-import { Switch } from '@/components/shadcn-ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { LanguageSwitcher } from '@/components/i18n/language-switcher'
 import type { Locale } from '@/types/i18n'
 

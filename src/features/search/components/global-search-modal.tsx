@@ -7,7 +7,7 @@ import { Clock, TrendingUp } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
-} from '@/components/shadcn-ui/dialog'
+} from '@/components/ui/dialog'
 
 import { useSearchHistory } from '../hooks/use-search'
 import type { SearchResult } from '../types'

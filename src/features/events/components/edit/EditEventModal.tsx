@@ -3,7 +3,7 @@
 
 import React from 'react'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/shadcn-ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ErrorBoundary } from '@/components/error-boundary'
 
 import { useCreateModalStore } from '../../stores/useCreateModalStore'

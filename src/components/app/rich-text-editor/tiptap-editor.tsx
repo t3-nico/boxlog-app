@@ -11,13 +11,13 @@ import StarterKit from '@tiptap/starter-kit'
 
 import { Bold, Italic, Underline, List, ListOrdered, CheckSquare } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '@/components/shadcn-ui/tooltip'
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 

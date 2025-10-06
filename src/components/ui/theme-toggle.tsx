@@ -8,13 +8,13 @@ import {
   Palette as SwatchIcon,
 } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/shadcn-ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu'
 import { useTheme } from '@/contexts/theme-context'
 
 export const ThemeToggle = () => {

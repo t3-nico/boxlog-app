@@ -98,32 +98,7 @@ export type TaskUpdate = Partial<Omit<Task, 'id' | 'user_id' | 'created_at'>>
 export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>
 
 // ============================================
-// 4. レガシー互換型（段階的移行用）
-// ============================================
-
-/**
- * @deprecated 旧CreateTaskData - TaskInsertを使用してください
- */
-export interface CreateTaskData {
-  title: string
-  plannedStart?: Date
-  plannedDuration?: number
-  tags?: string[]
-  memo?: string
-  status?: string
-}
-
-/**
- * @deprecated 旧SmartFilter - 将来削除予定
- */
-export interface SmartFilter {
-  id: string
-  name: string
-  criteria: Record<string, unknown>
-}
-
-// ============================================
-// 5. 他モジュールからの再エクスポート
+// 4. 他モジュールからの再エクスポート
 // ============================================
 
 // 共通型

@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { SimpleThemeToggle } from '@/components/shadcn-ui/theme-toggle'
+import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { cn } from '@/lib/utils'
 
 export const ThemeToggle = () => {

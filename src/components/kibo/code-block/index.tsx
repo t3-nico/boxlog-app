@@ -87,8 +87,8 @@ import {
 import { CheckIcon, CopyIcon } from 'lucide-react'
 import { type BundledLanguage, type CodeOptionsMultipleThemes, codeToHtml } from 'shiki'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { sanitizeCodeBlock } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 

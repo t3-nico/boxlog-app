@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
-import { Field, Heading, Label } from '@/components/ui'
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
+import { Field, Heading, Label } from '@/components/app'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useAuthContext } from '@/features/auth'
 
 const ResetPassword = () => {

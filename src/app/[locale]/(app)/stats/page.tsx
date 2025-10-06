@@ -2,7 +2,7 @@
 
 import { BarChart3 } from 'lucide-react'
 
-import { Heading } from '@/components/ui'
+import { Heading } from '@/components/app'
 import { cn } from '@/lib/utils'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
 

@@ -5,8 +5,8 @@ import React, { useState, useRef, useEffect } from 'react'
 
 import { Search, X, Loader2 } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 
 import { useSearch, useSearchHistory } from '../hooks/use-search'

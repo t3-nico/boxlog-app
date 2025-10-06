@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 
 import { ChevronLeft, ChevronRight, HelpCircle, PanelRight, Sparkles } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
 import { cn } from '@/lib/utils'
 

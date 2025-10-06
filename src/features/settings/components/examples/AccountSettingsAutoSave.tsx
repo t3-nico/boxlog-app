@@ -3,9 +3,9 @@
 
 import React from 'react'
 
-import { Input } from '@/components/shadcn-ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
-import { Switch } from '@/components/shadcn-ui/switch'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import { SettingsLayout, SettingsCard, SettingField } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 

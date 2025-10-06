@@ -31,7 +31,7 @@ import {
   Sparkles as SparklesIcon,
 } from 'lucide-react'
 
-import { Avatar } from '@/components/shadcn-ui/avatar'
+import { Avatar } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +39,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/shadcn-ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu'
 import { useAuthContext } from '@/features/auth'
 import { cn } from '@/lib/utils'
 

@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { format, isSameDay, isToday } from 'date-fns'
 import { X } from 'lucide-react'
 
-import { DeleteToast } from '@/components/shadcn-ui/delete-toast'
+import { DeleteToast } from '@/components/ui/delete-toast'
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarEvent } from '@/features/events'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'

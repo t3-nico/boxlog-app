@@ -25,8 +25,8 @@ import { $getRoot, $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND, REDO_C
 
 import { Bold, CheckSquare, Heading2, Italic, List, ListOrdered, Quote, Redo, Underline, Undo } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Separator } from '@/components/shadcn-ui/separator'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
 
 const ToolbarPlugin = () => {

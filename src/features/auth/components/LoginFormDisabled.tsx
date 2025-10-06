@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
-import { Label } from '@/components/shadcn-ui/label'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'

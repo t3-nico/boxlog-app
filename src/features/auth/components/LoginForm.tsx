@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
-import { Heading } from '@/components/ui'
+import { Heading } from '@/components/app'
 
 // OAuth Provider Icons
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
@@ -24,10 +24,10 @@ const AppleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
   </svg>
 )
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Checkbox } from '@/components/shadcn-ui/checkbox'
-import { Input } from '@/components/shadcn-ui/input'
-import { Label } from '@/components/shadcn-ui/label'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 import { useAuthContext } from '../contexts/AuthContext'
 

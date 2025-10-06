@@ -6,10 +6,10 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Tag } from 'lucide-react'
 
-import { Input } from '@/components/shadcn-ui/input'
-import { Label } from '@/components/shadcn-ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
-import { Textarea } from '@/components/shadcn-ui/textarea'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 
 import type { CreateEventRequest, EventPriority, EventStatus, EventType } from '../../types/events'
 

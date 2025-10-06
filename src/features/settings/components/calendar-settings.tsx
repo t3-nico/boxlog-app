@@ -4,9 +4,9 @@ import { useCallback } from 'react'
 
 import { format } from 'date-fns'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
-import { Switch } from '@/components/shadcn-ui/switch'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'

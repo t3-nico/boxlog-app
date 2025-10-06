@@ -10,7 +10,7 @@ import {
   Copy
 } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 import { cn } from '@/lib/utils'
 

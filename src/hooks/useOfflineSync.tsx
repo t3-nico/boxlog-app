@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 
 import { offlineManager, type OfflineAction } from '@/features/offline/services/offline-manager'
 // import { ConflictResolutionModal } from '@/components/ConflictResolutionModal'
-// import { toast } from '@/components/shadcn-ui/use-toast'
+// import { toast } from '@/components/ui/use-toast'
 interface ToastOptions {
   title: string
   description?: string

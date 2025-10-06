@@ -17,9 +17,9 @@ import Color from 'color'
 import { PipetteIcon } from 'lucide-react'
 import { Slider } from 'radix-ui'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 
 interface ColorPickerContextValue {

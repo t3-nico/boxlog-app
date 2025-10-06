@@ -4,8 +4,8 @@ import type { ComponentProps, ReactNode } from 'react'
 
 import { CheckCircleIcon, ChevronDownIcon, CircleIcon, ClockIcon, WrenchIcon, XCircleIcon } from 'lucide-react'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo-ui/collapsible'
-import { Badge } from '@/components/shadcn-ui/badge'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo/collapsible'
+import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 
 export type AIToolStatus = 'pending' | 'running' | 'completed' | 'error'

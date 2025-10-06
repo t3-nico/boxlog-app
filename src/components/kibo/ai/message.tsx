@@ -1,6 +1,6 @@
 import type { ComponentProps, HTMLAttributes } from 'react';
 
-import { Avatar } from '@/components/shadcn-ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
 export type AIMessageProps = HTMLAttributes<HTMLDivElement> & {

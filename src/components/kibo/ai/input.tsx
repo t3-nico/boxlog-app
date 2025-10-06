@@ -5,9 +5,9 @@ import { Children, useCallback, useEffect, useRef } from 'react'
 
 import { Loader2Icon, SendIcon, SquareIcon, XIcon } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
-import { Textarea } from '@/components/shadcn-ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 
 type UseAutoResizeTextareaProps = {

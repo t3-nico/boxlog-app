@@ -9,7 +9,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 
 interface Document {
   id: string

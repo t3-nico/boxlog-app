@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcn-ui/dialog"
+} from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 
 const Command = ({

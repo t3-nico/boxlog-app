@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { Label } from '@/components/shadcn-ui/label'
+import { Label } from '@/components/ui/label'
 
 interface SettingFieldProps {
   label: string

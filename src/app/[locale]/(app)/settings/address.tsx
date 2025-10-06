@@ -4,8 +4,8 @@ import { useState } from 'react'
 
 import Image from 'next/image'
 
-import { Input } from '@/components/shadcn-ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { getCountries, type Country } from '@/lib/data'
 
 export const Address = () => {

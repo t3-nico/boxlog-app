@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { Heading } from '@/components/ui'
+import { Heading } from '@/components/app'
 
 
 

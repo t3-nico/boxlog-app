@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState } from 'react'
 
 import Image from 'next/image'
 
-import { Button } from '@/components/shadcn-ui/button'
-import { Input } from '@/components/shadcn-ui/input'
-import { Switch } from '@/components/shadcn-ui/switch'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { cn } from '@/lib/utils'
 

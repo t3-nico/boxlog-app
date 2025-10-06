@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { ArrowDownIcon } from 'lucide-react';
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
 
-import { Button } from '@/components/shadcn-ui/button';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 

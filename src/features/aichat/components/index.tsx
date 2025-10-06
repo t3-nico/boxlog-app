@@ -4,7 +4,7 @@ import React from 'react'
 
 import { Sparkles } from 'lucide-react'
 
-import { Button } from '@/components/shadcn-ui/button'
+import { Button } from '@/components/ui/button'
 import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
 
 import { BottomUpChatModal } from './bottom-up-chat-modal'

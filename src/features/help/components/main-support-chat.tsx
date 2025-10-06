@@ -6,11 +6,11 @@ import { useChat, type UIMessage } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2 } from 'lucide-react'
 
-import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo-ui/ai/conversation'
-import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/kibo-ui/ai/input'
-import { AIMessage, AIMessageContent } from '@/components/kibo-ui/ai/message'
-import { AIResponse } from '@/components/kibo-ui/ai/response'
-import { Avatar, AvatarFallback } from '@/components/shadcn-ui/avatar'
+import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo/ai/conversation'
+import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/kibo/ai/input'
+import { AIMessage, AIMessageContent } from '@/components/kibo/ai/message'
+import { AIResponse } from '@/components/kibo/ai/response'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
 import { useTranslation } from '@/lib/i18n/hooks'
 
