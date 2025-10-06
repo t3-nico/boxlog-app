@@ -87,6 +87,10 @@ performance-*.log
 # Auto-generated reports
 /reports/
 
+# Auto-generated code
+/src/types/generated/
+/src/**/generated/
+
 # Test files (moved to .eslint/tests/)
 test-*
 

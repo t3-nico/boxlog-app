@@ -29,4 +29,4 @@ export {
 } from './listbox'
 
 // Icon components
-export { GoogleIcon, AppleIcon } from './icons'
+// export { GoogleIcon, AppleIcon } from './icons' // ⚠️ 削除予定 (#414)
