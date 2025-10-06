@@ -90,6 +90,9 @@ performance-*.log
 *.csv
 license-report.csv
 
+# API change detection cache
+.api-changes-cache.json
+
 # Auto-generated code
 /src/types/generated/
 /src/**/generated/
