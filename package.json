@@ -181,12 +181,7 @@
     "sentry:test": "node scripts/sentry-connection-test.js",
     "sentry:check": "npm run sentry:test",
     "vercel:env": "node scripts/vercel-env-check.js",
-    "vercel:check": "npm run vercel:env",
-    "seed:test": "npm run typecheck && tsx seeds/scripts/seed.ts test",
-    "seed:dev": "npm run typecheck && tsx seeds/scripts/seed.ts development",
-    "seed:staging": "npm run typecheck && tsx seeds/scripts/seed.ts staging",
-    "seed:minimal": "npm run typecheck && tsx seeds/scripts/seed.ts minimal",
-    "seed:quick": "npm run typecheck && tsx seeds/scripts/quick-seed.ts"
+    "vercel:check": "npm run vercel:env"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",

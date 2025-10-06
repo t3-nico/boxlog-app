@@ -17,16 +17,17 @@ export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelecto
   const currentProfile = chronoTypeProfiles.find((p) => p.id === selectedType)
 
   const getTypeIcon = (type: string) => {
-    const IconComponent = typeIconComponents[type as keyof typeof typeIconComponents]
-    if (!IconComponent) return null
-    if (typeof IconComponent === 'function') {
-      // 関数の場合は戻り値をそのまま表示
-      const result = IconComponent()
-      if (typeof result === 'string') {
-        return <span className="text-base">{result}</span>
-      }
-      return result
+    const icon = typeIconComponents[type as keyof typeof typeIconComponents]
+    if (!icon) return null
+
+    // sleepアイコンの特別処理
+    if (type === 'sleep') {
+      const sleepIcon = icon as () => string
+      return <span className="text-base">{sleepIcon()}</span>
     }
+
+    // Lucideアイコンコンポーネント
+    const IconComponent = icon as React.ComponentType<{ className?: string; 'data-slot'?: string }>
     return <IconComponent className="h-5 w-5" data-slot="icon" />
   }
 
