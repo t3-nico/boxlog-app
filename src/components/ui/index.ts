@@ -7,5 +7,7 @@ export {
   Field,
   FieldGroup,
   Label,
-  Description
+  Description,
+  ErrorMessage,
+  Legend
 } from './fieldset'
