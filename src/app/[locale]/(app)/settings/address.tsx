@@ -1,11 +1,11 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 
 import Image from 'next/image'
 
-import { Listbox, ListboxLabel, ListboxOption } from '@/components/custom'
 import { Input } from '@/components/shadcn-ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/shadcn-ui/select'
 import { getCountries, type Country } from '@/lib/data'
 
 export const Address = () => {
@@ -17,10 +17,7 @@ export const Address = () => {
     }
     return firstCountry
   })
-
-  const handleCountryChange = useCallback((newCountry: Country) => {
-    setCountry(newCountry)
-  }, [])
+  const [region, setRegion] = useState<string>('Ontario')
 
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -32,36 +29,43 @@ export const Address = () => {
         className="col-span-2"
       />
       <Input aria-label="City" name="city" placeholder="City" defaultValue="Toronto" className="col-span-2" />
-      <Listbox aria-label="Region" name="region" placeholder="Region" defaultValue="Ontario">
-        {country.regions.map((region) => (
-          <ListboxOption key={region} value={region}>
-            <ListboxLabel>{region}</ListboxLabel>
-          </ListboxOption>
-        ))}
-      </Listbox>
+      <Select value={region} onValueChange={setRegion}>
+        <SelectTrigger aria-label="Region">
+          <SelectValue placeholder="Region" />
+        </SelectTrigger>
+        <SelectContent>
+          {country.regions.map((region) => (
+            <SelectItem key={region} value={region}>
+              {region}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <Input aria-label="Postal code" name="postal_code" placeholder="Postal Code" defaultValue="A1A 1A1" />
-      <Listbox
-        aria-label="Country"
-        name="country"
-        placeholder="Country"
-        by="code"
-        value={country}
-        onChange={handleCountryChange}
-        className="col-span-2"
-      >
-        {countries.map((country) => (
-          <ListboxOption key={country.code} value={country}>
-            <Image 
-              className="w-5 sm:w-4 object-cover" 
-              src={country.flagUrl} 
-              alt={`${country.name  } flag`}
-              width={20}
-              height={15}
-            />
-            <ListboxLabel>{country.name}</ListboxLabel>
-          </ListboxOption>
-        ))}
-      </Listbox>
+      <Select value={country.code} onValueChange={(code) => {
+        const newCountry = countries.find(c => c.code === code)
+        if (newCountry) setCountry(newCountry)
+      }}>
+        <SelectTrigger aria-label="Country" className="col-span-2">
+          <SelectValue placeholder="Country" />
+        </SelectTrigger>
+        <SelectContent>
+          {countries.map((country) => (
+            <SelectItem key={country.code} value={country.code}>
+              <div className="flex items-center gap-2">
+                <Image
+                  className="w-5 sm:w-4 object-cover"
+                  src={country.flagUrl}
+                  alt={`${country.name} flag`}
+                  width={20}
+                  height={15}
+                />
+                {country.name}
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }

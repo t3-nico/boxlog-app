@@ -22,11 +22,7 @@ export {
 } from './description-list'
 
 // Select components
-export { 
-  Listbox, 
-  ListboxLabel, 
-  ListboxOption 
-} from './listbox'
+// export { Listbox, ListboxLabel, ListboxOption } from './listbox' // ⚠️ 削除予定 (#415)
 
 // Icon components
 // export { GoogleIcon, AppleIcon } from './icons' // ⚠️ 削除予定 (#414)
