@@ -172,8 +172,8 @@ it('should apply correct theme colors', () => {
 ## 🔗 関連ドキュメント
 
 - **テスト実行方法**: [`README.md`](./README.md)
-- **ESLint設定**: [`../docs/ESLINT_SETUP_COMPLETE.md`](../docs/ESLINT_SETUP_COMPLETE.md)
-- **コーディングルール**: [`../src/CLAUDE.md`](../src/CLAUDE.md)
+- **ESLint設定**: [`../ESLINT_SETUP_COMPLETE.md`](../ESLINT_SETUP_COMPLETE.md)
+- **コーディングルール**: [`../../src/CLAUDE.md`](../../src/CLAUDE.md)
 
 ---
 

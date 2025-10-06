@@ -321,7 +321,7 @@ useEffect(() => {
 
 ## 🔗 関連ドキュメント
 
-- **テスト戦略**: [`../../tests/CLAUDE.md`](../../tests/CLAUDE.md)
+- **テスト戦略**: [`../../docs/testing/CLAUDE.md`](../../docs/testing/CLAUDE.md)
 - **機能開発**: [`../features/CLAUDE.md`](../features/CLAUDE.md)
 - **共通処理**: [`../lib/CLAUDE.md`](../lib/CLAUDE.md)
 

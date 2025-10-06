@@ -407,7 +407,7 @@ describe('cn', () => {
 - [src/server/README.md](../server/README.md) - tRPC APIサーバー
 
 ### テスト
-- [tests/CLAUDE.md](../../tests/CLAUDE.md) - テスト戦略
+- [docs/testing/CLAUDE.md](../../docs/testing/CLAUDE.md) - テスト戦略
 
 ---
 

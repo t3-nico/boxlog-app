@@ -273,7 +273,7 @@ describe('TaskCard', () => {
 
 - **テーマシステム**: [`../config/theme/CLAUDE.md`](../config/theme/CLAUDE.md)
 - **デザインシステム**: [`../../docs/THEME_ENFORCEMENT.md`](../../docs/THEME_ENFORCEMENT.md)
-- **テスト戦略**: [`../../tests/CLAUDE.md`](../../tests/CLAUDE.md)
+- **テスト戦略**: [`../../docs/testing/CLAUDE.md`](../../docs/testing/CLAUDE.md)
 - **ソース構造**: [`../README.md`](../README.md)
 
 ---

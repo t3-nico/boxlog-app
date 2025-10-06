@@ -253,7 +253,7 @@ import { SomeComponent } from '@/features/other-feature/components'
 
 - **ビジネスルール**: [`../lib/business-rules/CLAUDE.md`](../lib/business-rules/CLAUDE.md)
 - **状態管理**: [`../../docs/BUSINESS_RULES_GUIDE.md`](../../docs/BUSINESS_RULES_GUIDE.md)
-- **テスト戦略**: [`../../tests/CLAUDE.md`](../../tests/CLAUDE.md)
+- **テスト戦略**: [`../../docs/testing/CLAUDE.md`](../../docs/testing/CLAUDE.md)
 - **コンポーネント**: [`../components/CLAUDE.md`](../components/CLAUDE.md)
 
 ---
