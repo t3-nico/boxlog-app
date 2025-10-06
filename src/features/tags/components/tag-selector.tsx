@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useI18n } from '@/lib/i18n/hooks'
 import { Tag } from '@/types/unified'
 
 import { TagBadge } from './tag-badge'
@@ -32,6 +33,7 @@ export const TagSelector = ({
   maxTags,
   placeholder = 'Select tags...'
 }: TagSelectorProps) => {
+  const { t } = useI18n()
   const { getAllTags, getTagHierarchy } = useTagStore()
   const [searchQuery, setSearchQuery] = useState('')
   
@@ -117,7 +119,7 @@ export const TagSelector = ({
               ))
             ) : (
               <div className="p-2 text-sm text-gray-500 text-center">
-                {searchQuery ? 'No tags found' : 'No more tags available'}
+                {searchQuery ? t('tags.search.noTags') : t('tags.search.noMoreTags')}
               </div>
             )}
           </div>

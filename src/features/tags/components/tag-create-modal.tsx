@@ -7,6 +7,7 @@ import { Dialog, DialogPanel, DialogTitle, Field, Input, Label, Textarea } from 
 import { Plus as PlusIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
 import { TAG_PRESET_COLORS } from '@/config/ui/theme'
+import { useI18n } from '@/lib/i18n/hooks'
 import type { CreateTagInput, TagLevel, TagWithChildren } from '@/types/tags'
 
 interface TagCreateModalProps {
@@ -35,7 +36,7 @@ const DEFAULT_COLORS = TAG_PRESET_COLORS.map(
   (cssVar) => CSS_VAR_TO_HEX[cssVar as keyof typeof CSS_VAR_TO_HEX] || cssVar
 )
 
-const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: string) => void }) => {
+const ColorPicker = ({ value, onChange, t }: { value: string; onChange: (color: string) => void; t: ReturnType<typeof useI18n>['t'] }) => {
   const [customColor, setCustomColor] = useState(value)
 
   useEffect(() => {
@@ -93,7 +94,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
           onChange={handleCustomColorChange}
           className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
-        <span className="text-sm text-gray-500 dark:text-gray-400">カスタムカラー: {customColor}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">{t('tags.form.customColor')}: {customColor}</span>
       </div>
     </div>
   )
@@ -104,11 +105,13 @@ const ParentTagSelector = ({
   onChange,
   allTags,
   maxLevel = 2,
+  t,
 }: {
   value: string | null
   onChange: (parentId: string | null) => void
   allTags: TagWithChildren[]
   maxLevel?: number
+  t: ReturnType<typeof useI18n>['t']
 }) => {
   // jsx-no-bind optimization: Select change handler
   const handleSelectChange = useCallback(
@@ -147,7 +150,7 @@ const ParentTagSelector = ({
       onChange={handleSelectChange}
       className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
-      <option value="">-- ルートレベル（親なし）--</option>
+      <option value="">-- {t('tags.form.rootLevel')} --</option>
       {allTags.flatMap((tag) => renderTagOption(tag))}
     </select>
   )
@@ -157,27 +160,30 @@ const TagPreview = ({
   name,
   color,
   parentTag,
+  t,
 }: {
   name: string
   color: string
   parentTag?: TagWithChildren | null
+  t: ReturnType<typeof useI18n>['t']
 }) => {
   const path = parentTag ? `${parentTag.path}/${name}` : `#${name}`
 
   return (
     <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800">
-      <div className="mb-3 text-sm font-medium text-gray-900 dark:text-white">プレビュー</div>
+      <div className="mb-3 text-sm font-medium text-gray-900 dark:text-white">{t('tags.form.preview')}</div>
       <div className="flex items-center gap-2">
         <TagIcon className="h-5 w-5" style={{ color }} />
-        <span className="text-sm font-medium text-gray-900 dark:text-white">{name || '（タグ名）'}</span>
+        <span className="text-sm font-medium text-gray-900 dark:text-white">{name || t('tags.form.tagNamePlaceholder')}</span>
         <span className="text-xs text-gray-500 dark:text-gray-400">{path}</span>
       </div>
-      {parentTag ? <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</div> : null}
+      {parentTag ? <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">{t('tags.form.parentTagPrefix')} {parentTag.name}</div> : null}
     </div>
   )
 }
 
 export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [] }: TagCreateModalProps) => {
+  const { t } = useI18n()
   const [formData, setFormData] = useState({
     name: '',
     parent_id: parentTag?.id || null,
@@ -206,17 +212,17 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'タグ名は必須です'
+      newErrors.name = t('tags.form.nameRequired')
     } else if (formData.name.length > 50) {
-      newErrors.name = 'タグ名は50文字以内で入力してください'
+      newErrors.name = t('tags.form.nameMaxLength')
     } else if (formData.name.includes('/')) {
-      newErrors.name = 'タグ名にスラッシュ（/）は使用できません'
+      newErrors.name = t('tags.form.noSlash')
     } else if (formData.name.startsWith('#')) {
-      newErrors.name = 'タグ名は#で始めることはできません'
+      newErrors.name = t('tags.form.noHashPrefix')
     }
 
     if (formData.description && formData.description.length > 200) {
-      newErrors.description = '説明は200文字以内で入力してください'
+      newErrors.description = t('tags.form.descriptionMaxLength')
     }
 
     // 同名チェック（同一親内）
@@ -225,12 +231,12 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
     const duplicate = siblings.find((tag) => tag.name.toLowerCase() === formData.name.trim().toLowerCase())
 
     if (duplicate) {
-      newErrors.name = '同じ親階層に同名のタグが既に存在します'
+      newErrors.name = t('tags.form.duplicateName')
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
-  }, [formData, allTags])
+  }, [formData, allTags, t])
 
   // フォームフィールド変更ハンドラー
   const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -271,7 +277,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
         onClose()
       } catch (error) {
         console.error('Tag creation failed:', error)
-        setErrors({ submit: 'タグの作成に失敗しました' })
+        setErrors({ submit: t('tags.errors.createFailed') })
       } finally {
         setIsLoading(false)
       }
@@ -298,10 +304,10 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
               </div>
               <div>
                 <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-                  新しいタグを作成
+                  {t('tags.actions.createNew')}
                 </DialogTitle>
                 {parentTag ? (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">親タグ: {parentTag.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('tags.labels.parentTagNote')} {parentTag.name}</p>
                 ) : null}
               </div>
             </div>
@@ -320,14 +326,14 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
             {/* タグ名 */}
             <Field>
               <Label htmlFor="tag-name" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                タグ名 *
+                {t('tags.form.tagName')} {t('tags.labels.required')}
               </Label>
               <Input
                 id="tag-name"
                 type="text"
                 value={formData.name}
                 onChange={handleNameChange}
-                placeholder="例: 仕事、プロジェクトA"
+                placeholder={t('tags.form.examplePlaceholder')}
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                 required
               />
@@ -340,7 +346,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 htmlFor="parent-tag-selector"
                 className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                親タグ
+                {t('tags.form.parentTag')}
               </Label>
               <ParentTagSelector
                 id="parent-tag-selector"
@@ -348,16 +354,17 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 onChange={handleParentIdChange}
                 allTags={allTags}
                 maxLevel={2}
+                t={t}
               />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">最大3階層まで作成できます</p>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{t('tags.form.maxLevelNote')}</p>
             </Field>
 
             {/* カラー選択 */}
             <Field>
               <Label htmlFor="tag-color" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                カラー
+                {t('tags.form.color')}
               </Label>
-              <ColorPicker id="tag-color" value={formData.color} onChange={handleColorChange} />
+              <ColorPicker id="tag-color" value={formData.color} onChange={handleColorChange} t={t} />
             </Field>
 
             {/* 説明 */}
@@ -366,13 +373,13 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 htmlFor="tag-description"
                 className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                説明（任意）
+                {t('tags.form.description')}
               </Label>
               <Textarea
                 id="tag-description"
                 value={formData.description}
                 onChange={handleDescriptionChange}
-                placeholder="このタグの用途や説明を入力..."
+                placeholder={t('tags.form.descriptionPlaceholder')}
                 rows={3}
                 className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
               />
@@ -382,7 +389,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
             </Field>
 
             {/* プレビュー */}
-            <TagPreview name={formData.name} color={formData.color} parentTag={selectedParentTag} />
+            <TagPreview name={formData.name} color={formData.color} parentTag={selectedParentTag} t={t} />
 
             {/* エラー表示 */}
             {errors.submit != null && (
@@ -399,7 +406,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 disabled={isLoading}
                 className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
-                キャンセル
+                {t('tags.actions.cancel')}
               </button>
               <button
                 type="submit"
@@ -409,12 +416,12 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 {isLoading ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    作成中...
+                    {t('tags.actions.creating')}
                   </>
                 ) : (
                   <>
                     <PlusIcon className="h-4 w-4" />
-                    作成
+                    {t('tags.actions.create')}
                   </>
                 )}
               </button>

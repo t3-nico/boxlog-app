@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/ui/tagIcons'
+import { useI18n } from '@/lib/i18n/hooks'
 
 interface Tag {
   id: string
@@ -24,6 +25,7 @@ interface TagEditDialogProps {
 }
 
 export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps) => {
+  const { t } = useI18n()
   const [name, setName] = useState('')
   const [color, setColor] = useState('#6b7280')
   const [icon, setIcon] = useState<TagIconName>('TagIcon')
@@ -63,24 +65,24 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>タグを編集</DialogTitle>
+            <DialogTitle>{t('tags.actions.editTag')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
           <div>
             <label htmlFor="tag-name-input" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              タグ名
+              {t('tags.form.tagName')}
             </label>
             <Input
               id="tag-name-input"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="タグ名を入力"
-              required 
+              placeholder={t('tags.form.namePlaceholder')}
+              required
             />
           </div>
           <div>
             <div id="color-label" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              色
+              {t('tags.form.color')}
             </div>
 
             {/* プリセットカラー */}
@@ -107,10 +109,10 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
               ))}
             </div>
           </div>
-          
+
           <div>
             <div id="icon-label" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              アイコン
+              {t('tags.labels.icon')}
             </div>
             
             {/* 現在選択されているアイコンのプレビュー */}
@@ -157,9 +159,9 @@ export const TagEditDialog = ({ tag, open, onClose, onSave }: TagEditDialogProps
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              キャンセル
+              {t('tags.actions.cancel')}
             </Button>
-            <Button type="submit">保存</Button>
+            <Button type="submit">{t('tags.actions.save')}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

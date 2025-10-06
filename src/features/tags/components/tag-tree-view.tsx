@@ -12,6 +12,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import type { TagWithChildren } from '@/types/tags'
 
 interface TagTreeViewProps {
@@ -46,6 +47,7 @@ const TagTreeNode = ({
   onDeleteTag,
   onRenameTag,
 }: TagTreeNodeProps) => {
+  const { t } = useI18n()
   const [showMenu, setShowMenu] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editName, setEditName] = useState(tag.name)
@@ -178,7 +180,7 @@ const TagTreeNode = ({
               type="button"
               onClick={handleCreateChildTag}
               className="rounded p-1 text-gray-400 transition-colors hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-900/20 dark:hover:text-blue-400"
-              title="子タグを追加"
+              title={t('tags.actions.addChild')}
             >
               <PlusIcon className="h-4 w-4" data-slot="icon" />
             </button>
@@ -203,7 +205,7 @@ const TagTreeNode = ({
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   <PencilIcon className="h-4 w-4" data-slot="icon" />
-                  編集
+                  {t('tags.actions.edit')}
                 </button>
                 <button
                   type="button"
@@ -211,7 +213,7 @@ const TagTreeNode = ({
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   <PencilIcon className="h-4 w-4" data-slot="icon" />
-                  名前変更
+                  {t('tags.actions.rename')}
                 </button>
                 <button
                   type="button"
@@ -219,7 +221,7 @@ const TagTreeNode = ({
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
                 >
                   <TrashIcon className="h-4 w-4" data-slot="icon" />
-                  削除
+                  {t('tags.actions.delete')}
                 </button>
               </div>
             )}
@@ -259,6 +261,7 @@ export const TagTreeView = ({
   onToggleExpanded = () => {},
   isLoading = false,
 }: TagTreeViewProps) => {
+  const { t } = useI18n()
   const [localExpandedNodes, setLocalExpandedNodes] = useState<Set<string>>(expandedNodes)
 
   const handleToggleExpanded = useCallback(
@@ -292,14 +295,14 @@ export const TagTreeView = ({
     return (
       <div className="py-8 text-center">
         <TagIcon className="mx-auto mb-4 h-12 w-12 text-gray-400" data-slot="icon" />
-        <p className="mb-4 text-gray-500 dark:text-gray-400">タグがまだありません</p>
+        <p className="mb-4 text-gray-500 dark:text-gray-400">{t('tags.messages.noTagsYet')}</p>
         <button
           type="button"
           onClick={handleCreateRootTag}
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           <PlusIcon className="h-4 w-4" />
-          最初のタグを作成
+          {t('tags.actions.createFirst')}
         </button>
       </div>
     )
@@ -309,14 +312,14 @@ export const TagTreeView = ({
     <div className="space-y-1">
       {/* ヘッダー */}
       <div className="flex items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-white">タグ一覧 ({tags.length})</h3>
+        <h3 className="text-sm font-medium text-gray-900 dark:text-white">{t('tags.messages.tagList')} ({tags.length})</h3>
         <button
           type="button"
           onClick={handleCreateRootTag}
           className="inline-flex items-center gap-1 rounded px-2 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
         >
           <PlusIcon className="h-4 w-4" />
-          新規作成
+          {t('tags.messages.newTag')}
         </button>
       </div>
 

@@ -12,6 +12,7 @@ import {
   X as XMarkIcon,
 } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import type { TagWithChildren, UpdateTagInput } from '@/types/tags'
 
 interface TagEditModalProps {
@@ -37,7 +38,7 @@ const DEFAULT_COLORS = [
   '#6B7280', // Gray
 ]
 
-const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: string) => void }) => {
+const ColorPicker = ({ value, onChange, t }: { value: string; onChange: (color: string) => void; t: ReturnType<typeof useI18n>['t'] }) => {
   const [customColor, setCustomColor] = useState(value)
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const ColorPicker = ({ value, onChange }: { value: string; onChange: (color: str
           onChange={handleCustomColorChange}
           className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
-        <span className="text-sm text-gray-500 dark:text-gray-400">カスタムカラー: {customColor}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">{t('tags.form.customColor')}: {customColor}</span>
       </div>
     </div>
   )
@@ -104,12 +105,14 @@ const ParentTagSelector = ({
   allTags,
   currentTag,
   maxLevel = 2,
+  t,
 }: {
   value: string | null
   onChange: (parentId: string | null) => void
   allTags: TagWithChildren[]
   currentTag: TagWithChildren
   maxLevel?: number
+  t: ReturnType<typeof useI18n>['t']
 }) => {
   const handleSelectChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -166,7 +169,7 @@ const ParentTagSelector = ({
       onChange={handleSelectChange}
       className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
-      <option value="">-- ルートレベル（親なし）--</option>
+      <option value="">-- {t('tags.form.rootLevel')} --</option>
       {allTags.flatMap((tag) => renderTagOption(tag))}
     </select>
   )
@@ -176,10 +179,12 @@ const DeleteConfirmation = ({
   tag,
   onConfirm,
   onCancel,
+  t,
 }: {
   tag: TagWithChildren
   onConfirm: () => void
   onCancel: () => void
+  t: ReturnType<typeof useI18n>['t']
 }) => {
   const hasChildren = tag.children && tag.children.length > 0
   const childCount = tag.children?.length || 0
@@ -189,15 +194,15 @@ const DeleteConfirmation = ({
       <div className="flex items-start gap-3">
         <ExclamationTriangleIcon className="mt-1 h-6 w-6 flex-shrink-0 text-red-600 dark:text-red-400" />
         <div className="flex-1">
-          <h4 className="mb-2 text-sm font-medium text-red-800 dark:text-red-300">タグを削除しますか？</h4>
+          <h4 className="mb-2 text-sm font-medium text-red-800 dark:text-red-300">{t('tags.delete.confirmTitle')}</h4>
           <p className="mb-3 text-sm text-red-700 dark:text-red-400">
-            「{tag.name}」を削除します。この操作は取り消せません。
+            {t('tags.delete.confirmMessage', { name: tag.name })}
           </p>
 
           {hasChildren === true && (
             <div className="mb-3 rounded border border-red-200 bg-red-100 p-2 dark:border-red-700 dark:bg-red-900/30">
               <p className="text-sm text-red-800 dark:text-red-300">
-                ⚠️ このタグには {childCount} 個の子タグがあります。 削除するには先に子タグを削除または移動してください。
+                {t('tags.delete.childWarning', { count: childCount.toString() })}
               </p>
             </div>
           )}
@@ -209,14 +214,14 @@ const DeleteConfirmation = ({
               disabled={hasChildren}
               className="rounded border border-transparent bg-red-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              削除する
+              {t('tags.delete.confirmButton')}
             </button>
             <button
               type="button"
               onClick={onCancel}
               className="rounded border border-red-300 bg-transparent px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-50 dark:border-red-600 dark:text-red-400 dark:hover:bg-red-900/20"
             >
-              キャンセル
+              {t('tags.actions.cancel')}
             </button>
           </div>
         </div>
@@ -230,7 +235,8 @@ const useFormValidation = (
   formData: { name: string; description?: string },
   allTags: TagWithChildren[],
   originalParentId: string | null,
-  currentTagId?: string
+  currentTagId?: string,
+  t?: ReturnType<typeof useI18n>['t']
 ) => {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
@@ -238,17 +244,17 @@ const useFormValidation = (
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'タグ名は必須です'
+      newErrors.name = t?.('tags.form.nameRequired') ?? 'Tag name is required'
     } else if (formData.name.length > 50) {
-      newErrors.name = 'タグ名は50文字以内で入力してください'
+      newErrors.name = t?.('tags.form.nameMaxLength') ?? 'Tag name must be 50 characters or less'
     } else if (formData.name.includes('/')) {
-      newErrors.name = 'タグ名にスラッシュ（/）は使用できません'
+      newErrors.name = t?.('tags.form.noSlash') ?? 'Tag name cannot contain slash (/)'
     } else if (formData.name.startsWith('#')) {
-      newErrors.name = 'タグ名は#で始めることはできません'
+      newErrors.name = t?.('tags.form.noHashPrefix') ?? 'Tag name cannot start with #'
     }
 
     if (formData.description && formData.description.length > 200) {
-      newErrors.description = '説明は200文字以内で入力してください'
+      newErrors.description = t?.('tags.form.descriptionMaxLength') ?? 'Description must be 200 characters or less'
     }
 
     // 同名チェック（同一親内、自分以外）
@@ -259,12 +265,12 @@ const useFormValidation = (
     )
 
     if (duplicate) {
-      newErrors.name = '同じ親階層に同名のタグが既に存在します'
+      newErrors.name = t?.('tags.form.duplicateName') ?? 'A tag with the same name already exists in this parent'
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
-  }, [formData, allTags, originalParentId, currentTagId])
+  }, [formData, allTags, originalParentId, currentTagId, t])
 
   return { errors, setErrors, validateForm }
 }
@@ -274,10 +280,12 @@ const EditTabContent = ({
   formData,
   setFormData,
   errors,
+  t,
 }: {
   formData: { name: string; color: string; description: string; is_active: boolean }
   setFormData: (data: { name: string; color: string; description: string; is_active: boolean }) => void
   errors: Record<string, string>
+  t: ReturnType<typeof useI18n>['t']
 }) => {
   const handleNameChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -325,7 +333,7 @@ const EditTabContent = ({
       {/* カラー選択 */}
       <Field>
         <Label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">カラー</Label>
-        <ColorPicker value={formData.color} onChange={handleColorChange} />
+        <ColorPicker value={formData.color} onChange={handleColorChange} t={t} />
       </Field>
 
       {/* 説明 */}
@@ -369,12 +377,14 @@ const MoveTabContent = ({
   allTags,
   tag,
   originalParentId,
+  t,
 }: {
   newParentId: string | null
   setNewParentId: (id: string | null) => void
   allTags: TagWithChildren[]
   tag: TagWithChildren
   originalParentId: string | null
+  t: ReturnType<typeof useI18n>['t']
 }) => {
   const hasParentChanged = newParentId !== originalParentId
   const selectedParentTag = newParentId
@@ -392,11 +402,12 @@ const MoveTabContent = ({
           allTags={allTags}
           currentTag={tag}
           maxLevel={2}
+          t={t}
         />
         {hasParentChanged === true && (
           <div className="mt-3 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/20">
             <p className="text-sm text-blue-800 dark:text-blue-300">
-              移動先: {selectedParentTag ? selectedParentTag.name : 'ルートレベル'}
+              移動先: {selectedParentTag ? selectedParentTag.name : t('tags.form.rootLevel')}
             </p>
           </div>
         )}
@@ -475,7 +486,8 @@ const useTagEditModalActions = (
   onSave: Function,
   onMove?: Function,
   onDelete?: Function,
-  onClose: Function
+  onClose: Function,
+  t?: ReturnType<typeof useI18n>['t']
 ) => {
   const handleSave = async () => {
     if (!validateForm()) return
@@ -499,7 +511,7 @@ const useTagEditModalActions = (
       onClose()
     } catch (error) {
       console.error('Tag update failed:', error)
-      setErrors({ submit: 'タグの更新に失敗しました' })
+      setErrors({ submit: t?.('tags.errors.updateFailed') ?? 'Failed to update tag' })
     } finally {
       setIsLoading(false)
     }
@@ -514,7 +526,7 @@ const useTagEditModalActions = (
       onClose()
     } catch (error) {
       console.error('Tag deletion failed:', error)
-      setErrors({ submit: 'タグの削除に失敗しました' })
+      setErrors({ submit: t?.('tags.errors.deleteFailed') ?? 'Failed to delete tag' })
     } finally {
       setIsLoading(false)
     }
@@ -659,13 +671,15 @@ const TagEditModalFooter = ({
   )
 
 export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, allTags = [] }: TagEditModalProps) => {
+  const { t } = useI18n()
   const state = useTagEditModalState(tag, isOpen)
 
   const { errors, setErrors, validateForm } = useFormValidation(
     state.formData,
     allTags,
     state.originalParentId,
-    tag?.id
+    tag?.id,
+    t
   )
 
   useTagEditModalInitialization(
@@ -689,7 +703,8 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
     onSave,
     onMove,
     onDelete,
-    onClose
+    onClose,
+    t
   )
 
   const handleCancelDelete = useCallback(() => {
@@ -715,7 +730,7 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
 
           <div className="p-6">
             {state.activeTab === 'edit' && (
-              <EditTabContent formData={state.formData} setFormData={state.setFormData} errors={errors} />
+              <EditTabContent formData={state.formData} setFormData={state.setFormData} errors={errors} t={t} />
             )}
 
             {state.activeTab === 'move' && onMove ? (
@@ -725,11 +740,12 @@ export const TagEditModal = ({ isOpen, onClose, onSave, onDelete, onMove, tag, a
                 allTags={allTags}
                 tag={tag}
                 originalParentId={state.originalParentId}
+                t={t}
               />
             ) : null}
 
             {state.activeTab === 'delete' && onDelete ? (
-              <DeleteConfirmation tag={tag} onConfirm={handleDelete} onCancel={handleCancelDelete} />
+              <DeleteConfirmation tag={tag} onConfirm={handleDelete} onCancel={handleCancelDelete} t={t} />
             ) : null}
 
             {errors.submit != null && (

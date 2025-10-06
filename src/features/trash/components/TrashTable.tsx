@@ -1,6 +1,8 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 import React, { useCallback, useMemo } from 'react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 import { useTrashStore } from '../stores/useTrashStore'
 import { TrashItem } from '../types/trash'
 import { trashOperations } from '../utils/trash-operations'
@@ -11,6 +13,7 @@ interface TrashTableProps {
 }
 
 export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
+  const { t } = useI18n()
   const {
     selectedIds,
     selectItem,
@@ -116,7 +119,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
                 className="h-4 w-4 rounded-sm border-neutral-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-700"
               />
               <span className="ml-2 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                {isAllSelected ? 'すべて選択解除' : 'すべて選択'}
+                {isAllSelected ? t('trash.actions.deselectAll') : t('trash.actions.selectAll')}
               </span>
             </label>
             <span className="text-sm text-neutral-600 dark:text-neutral-400">{items.length}件のアイテム</span>
@@ -160,7 +163,7 @@ export const TrashTable: React.FC<TrashTableProps> = ({ items, className }) => {
             {/* 日付ヘッダー */}
             <div className="sticky top-0 border-b border-neutral-200 bg-neutral-50 px-4 py-2 dark:border-neutral-700 dark:bg-neutral-700">
               <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                {formatDateHeader(new Date(dateString))} ({dayItems.length}件)
+                {formatDateHeader(new Date(dateString), t)} ({dayItems.length}件)
               </h4>
             </div>
 
@@ -262,7 +265,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                   <span
                     className={`font-medium ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
                   >
-                    {isExpired ? '期限切れ' : `${daysUntilDelete}日後に自動削除`}
+                    {isExpired ? t('trash.status.expired') : t('trash.time.daysUntilDelete', { days: daysUntilDelete.toString() })}
                   </span>
                 ) : null}
               </div>
@@ -296,17 +299,17 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
               type="button"
               onClick={handleRestore}
               className="rounded-sm px-3 py-1 text-sm text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/30"
-              title="復元"
+              title={t('trash.actions.restore')}
             >
-              復元
+              {t('trash.actions.restore')}
             </button>
             <button
               type="button"
               onClick={handlePermanentDelete}
               className="rounded-sm px-3 py-1 text-sm text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/30"
-              title="完全削除"
+              title={t('trash.actions.permanentDelete')}
             >
-              削除
+              {t('trash.actions.delete')}
             </button>
           </div>
         </div>
@@ -318,7 +321,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
 /**
  * 日付ヘッダーをフォーマット
  */
-function formatDateHeader(date: Date): string {
+function formatDateHeader(date: Date, t: ReturnType<typeof useI18n>['t']): string {
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const yesterday = new Date(today)
@@ -327,9 +330,9 @@ function formatDateHeader(date: Date): string {
   const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
   if (targetDate.getTime() === today.getTime()) {
-    return '今日'
+    return t('time.today')
   } else if (targetDate.getTime() === yesterday.getTime()) {
-    return '昨日'
+    return t('time.yesterday')
   } else {
     return date.toLocaleDateString('ja-JP', {
       month: 'long',
