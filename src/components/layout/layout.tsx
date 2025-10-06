@@ -8,7 +8,6 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
-import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
 import { ChatProvider } from '@/contexts/chat-context'
 import { ThemeProvider } from '@/contexts/theme-context'
@@ -128,9 +127,8 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
                 <PageTitle />
               </div>
 
-              {/* Right side: Language Switcher, Search & Inspector Toggle */}
+              {/* Right side: Search & Inspector Toggle */}
               <div className="flex items-center gap-2">
-                <LanguageSwitcher variant="compact" />
                 <button
                   type="button"
                   onClick={handleSearchButtonClick}
