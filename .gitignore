@@ -47,7 +47,7 @@ next-env.d.ts
 *.swo
 
 # Claude Code
-.claude/
+.claude/settings.local.json
 .claude-session.json
 .backup/
 
