@@ -8,10 +8,8 @@
 // 統一された型定義を再エクスポート
 export type {
   Task,
-  // TaskEntity, // TODO(#389): unified.tsで定義されていない
   TaskStatus,
   TaskPriority,
-  // TaskType, // TODO(#389): unified.tsで定義されていない
   CreateTaskRequest,
   UpdateTaskRequest,
   Tag,
@@ -21,6 +19,9 @@ export type {
   ApiError,
   ApiResponse
 } from './unified'
+
+// TaskTypeはtask.tsから再エクスポート
+export type { TaskType } from './task'
 
 // 検索可能な共通インターフェース
 export interface Searchable {
@@ -85,21 +86,9 @@ export interface NotificationSettings {
   tagUpdates: boolean
 }
 
-// レガシー型定義（後方互換性のため、将来的に削除予定）
+// レガシー型定義を削除しました
 // 新しいコードでは unified.ts の ApiResponse, ApiError を使用してください
-export interface APIResponse<T = unknown> {
-  data?: T
-  error?: APIError
-  success: boolean
-  message?: string
-  timestamp: Date
-}
-
-export interface APIError {
-  code: string
-  message: string
-  details?: Record<string, unknown>
-}
+// または src/lib/api/error-handler.ts の APIResponse を使用してください
 
 // ページネーション関連の型
 export interface PaginationParams {
