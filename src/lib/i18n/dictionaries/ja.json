@@ -298,7 +298,8 @@
       "selectEventToEdit": "編集するイベントを選択してください",
       "selectEventToDelete": "削除するイベントを選択してください",
       "deselected": "イベントの選択を解除しました",
-      "operationCancelled": "操作をキャンセルしました"
+      "operationCancelled": "操作をキャンセルしました",
+      "deleteFailed": "予定の削除に失敗しました"
     },
     "actions": {
       "undo": "元に戻す",
@@ -404,7 +405,15 @@
         "lionDescription": "早朝に最も生産的。朝5-6時に起床し、午前中にピークを迎える。",
         "bearDescription": "太陽のリズムに従う。朝7時頃起床、午前中と午後早めが生産的。",
         "wolfDescription": "夜に最も創造的。朝は苦手で、午後から夜にかけて生産性が上がる。",
-        "dolphinDescription": "睡眠が浅く、不規則なリズム。短い集中時間を複数回持つ。"
+        "dolphinDescription": "睡眠が浅く、不規則なリズム。短い集中時間を複数回持つ。",
+        "lionPeakHours": "7:00-11:00",
+        "lionLowHours": "17:00-21:00, 21:00以降",
+        "bearPeakHours": "9:00-12:00, 14:00-17:00",
+        "bearLowHours": "12:00-14:00, 22:00以降",
+        "wolfPeakHours": "17:00-22:00, 22:00-02:00",
+        "wolfLowHours": "7:00-11:00",
+        "dolphinPeakHours": "8:00-10:00, 14:00-16:00",
+        "dolphinLowHours": "12:00-14:00, 22:00以降"
       },
       "schedules": {
         "morningSetup": "起床・準備の時間",

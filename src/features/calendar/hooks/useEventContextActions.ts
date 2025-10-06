@@ -8,8 +8,10 @@ import useCalendarToast from '@/features/calendar/lib/toast'
 import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 import { useEventStore } from '@/features/events/stores/useEventStore'
 import type { CalendarEvent } from '@/features/events/types/events'
+import { useI18n } from '@/lib/i18n/hooks'
 
 export function useEventContextActions() {
+  const { t } = useI18n()
   const { softDeleteEvent, updateEvent: _updateEvent, createEvent } = useEventStore()
   const { openEditModal } = useCreateModalStore()
   const { setInspectorOpen, setActiveContent } = useInspectorStore()
@@ -27,7 +29,7 @@ export function useEventContextActions() {
         // Calendar Toast用のイベントデータを作成
         const eventData = {
           id: event.id,
-          title: event.title || 'イベント',
+          title: event.title || t('calendar.event.title'),
           displayStartDate: event.displayStartDate || event.startDate || new Date(),
           displayEndDate: event.displayEndDate || event.endDate || new Date(),
           duration: event.duration || 60,
@@ -40,14 +42,14 @@ export function useEventContextActions() {
           try {
             // アンドゥ処理（復元）
             // Note: 実際の復元機能が必要な場合は restoreEvent などの実装が必要
-            calendarToast.success('予定を復元しました')
+            calendarToast.success(t('calendar.event.restore'))
           } catch (error) {
-            calendarToast.error('復元に失敗しました')
+            calendarToast.error(t('calendar.event.restoreFailed'))
           }
         })
       } catch (err) {
         console.error('Failed to delete event:', err)
-        calendarToast.error('予定の削除に失敗しました')
+        calendarToast.error(t('calendar.event.deleteFailed'))
       }
     },
     [softDeleteEvent, calendarToast]
@@ -119,7 +121,7 @@ export function useEventContextActions() {
 
     return {
       id: newEvent.id,
-      title: newEvent.title || 'イベント',
+      title: newEvent.title || t('calendar.event.title'),
       displayStartDate: newEvent.startDate || new Date(),
       displayEndDate: newEvent.endDate || new Date(),
       duration,
