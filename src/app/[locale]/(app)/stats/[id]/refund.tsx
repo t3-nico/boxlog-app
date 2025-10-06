@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react'
 
-import { Description, Field, FieldGroup } from '@/components/custom'
+import { Description, Field, FieldGroup } from '@/components/ui'
 import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/shadcn-ui/dialog'

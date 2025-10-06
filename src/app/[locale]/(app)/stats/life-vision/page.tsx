@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { Heading } from '@/components/custom'
+import { Heading } from '@/components/ui'
 
 
 export const metadata: Metadata = {

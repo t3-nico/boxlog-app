@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic'
 
 import type { Metadata } from 'next'
 
-import { Subheading } from '@/components/custom'
+import { Subheading } from '@/components/ui'
 import { Button } from '@/components/shadcn-ui/button'
 import { Checkbox } from '@/components/shadcn-ui/checkbox'
 import { Input } from '@/components/shadcn-ui/input'

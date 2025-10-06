@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
-import { Heading } from '@/components/custom'
+import { Heading } from '@/components/ui'
 
 // OAuth Provider Icons
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (

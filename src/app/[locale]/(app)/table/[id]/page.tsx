@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import { ChevronLeft } from 'lucide-react'
 import type { Metadata } from 'next'
 
-import { Heading, Subheading } from '@/components/custom'
+import { Heading, Subheading } from '@/components/ui'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn-ui/table'

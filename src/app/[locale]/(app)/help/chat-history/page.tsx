@@ -11,7 +11,7 @@ import {
   Search
 } from 'lucide-react'
 
-import { Heading } from '@/components/custom'
+import { Heading } from '@/components/ui'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn-ui/card'

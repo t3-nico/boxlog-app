@@ -6,7 +6,7 @@ import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
 import type { Metadata } from 'next'
 
 
-import { Heading, Subheading } from '@/components/custom'
+import { Heading, Subheading } from '@/components/ui'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
