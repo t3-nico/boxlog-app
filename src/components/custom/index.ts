@@ -1,6 +1,6 @@
 // Typography components
 export { Heading, Subheading } from './heading'
-export { Text } from './text'
+// export { Text } from './text' // ⚠️ 削除予定 (#413)
 
 // Form components
 export { 

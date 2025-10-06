@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
-import { Field, Heading, Label, Text } from '@/components/custom'
+import { Field, Heading, Label } from '@/components/custom'
 import { Button } from '@/components/shadcn-ui/button'
 import { Input } from '@/components/shadcn-ui/input'
 import { useAuthContext } from '@/features/auth'
@@ -89,7 +89,7 @@ const ResetPassword = () => {
         <Heading level={2} className="text-green-600 dark:text-green-500">
           Password Updated
         </Heading>
-        <Text>Your password has been updated.</Text>
+        <p className="text-base text-neutral-800 dark:text-neutral-200 sm:text-sm">Your password has been updated.</p>
       </div>
     )
   }
@@ -113,7 +113,7 @@ const ResetPassword = () => {
           minLength={6}
         />
       </Field>
-      {error != null ? <Text className="text-red-600 dark:text-red-500">{error}</Text> : null}
+      {error != null ? <p className="text-base text-red-600 dark:text-red-500 sm:text-sm">{error}</p> : null}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>
