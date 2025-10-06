@@ -24,8 +24,8 @@ function isValidViewType(view: string): view is CalendarViewType {
 }
 
 const CalendarViewPage = async ({ params, searchParams }: CalendarViewPageProps) => {
-  const { view, locale = 'ja' } = params
-  const { date } = searchParams
+  const { view, locale = 'ja' } = await params
+  const { date } = await searchParams
 
   // 有効なビュータイプかチェック
   if (!isValidViewType(view)) {
