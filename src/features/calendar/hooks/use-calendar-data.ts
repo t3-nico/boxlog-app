@@ -5,6 +5,7 @@ import { useState, useMemo, useCallback } from 'react'
 
 import { isWithinInterval, addMinutes } from 'date-fns'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { Task } from '@/types/unified'
 
 import type { ViewDateRange } from '../types/calendar.types'
@@ -28,13 +29,14 @@ interface UseCalendarDataOptions {
   onTaskDelete?: (taskId: string) => Promise<void>
 }
 
-export function useCalendarData({ 
-  dateRange, 
-  tasks, 
-  onTaskUpdate, 
-  onTaskCreate, 
-  onTaskDelete 
+export function useCalendarData({
+  dateRange,
+  tasks,
+  onTaskUpdate,
+  onTaskCreate,
+  onTaskDelete
 }: UseCalendarDataOptions) {
+  const { t } = useI18n()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
@@ -119,7 +121,7 @@ export function useCalendarData({
     
     try {
       const newTask: Partial<Task> = {
-        title: '新しいタスク',
+        title: t('calendar.event.newTask'),
         planned_start: startDate.toISOString(),
         planned_duration: 60, // デフォルト60分
         status: 'backlog',

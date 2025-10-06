@@ -296,7 +296,9 @@
       "saved": "保存しました",
       "noEventsOnThisDay": "この日にはイベントがありません",
       "selectEventToEdit": "編集するイベントを選択してください",
-      "selectEventToDelete": "削除するイベントを選択してください"
+      "selectEventToDelete": "削除するイベントを選択してください",
+      "deselected": "イベントの選択を解除しました",
+      "operationCancelled": "操作をキャンセルしました"
     },
     "actions": {
       "undo": "元に戻す",

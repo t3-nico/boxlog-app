@@ -4,8 +4,6 @@ import { useCallback } from 'react'
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { LanguageSwitcher } from '@/components/i18n/language-switcher'
-import type { Locale } from '@/types/i18n'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
@@ -20,12 +18,7 @@ interface PreferencesSettingsData {
   developerMode: boolean
 }
 
-interface PreferencesSettingsProps {
-  locale: Locale
-  dictionary: Record<string, unknown>
-}
-
-const PreferencesSettings = ({ locale, dictionary }: PreferencesSettingsProps) => {
+const PreferencesSettings = () => {
   // 設定の自動保存
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
     initialValues: {
@@ -68,15 +61,11 @@ const PreferencesSettings = ({ locale, dictionary }: PreferencesSettingsProps) =
     <div className="space-y-6">
       {/* 言語とテーマ */}
       <SettingsCard
-        title="言語とテーマ"
-        description="アプリケーションの表示言語と外観の設定"
+        title="テーマ"
+        description="アプリケーションの外観の設定"
         isSaving={preferences.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label="言語" description="アプリケーションで使用する言語">
-            <LanguageSwitcher currentLocale={locale} dictionary={dictionary} />
-          </SettingField>
-
           <SettingField label="テーマ" description="アプリケーションの外観テーマ">
             <Select
               value={preferences.values.theme}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
+import { useI18n } from '@/lib/i18n/hooks'
 
 import {
   handleArrowKeys,
@@ -48,6 +49,7 @@ export function useAccessibilityKeyboard(
   currentDate: Date,
   callbacks: KeyboardCallbacks
 ) {
+  const { t } = useI18n()
   const [navigationState, setNavigationState] = useState<NavigationState>({
     selectedDate: new Date(currentDate),
     selectedTime: '09:00',
@@ -135,7 +137,7 @@ export function useAccessibilityKeyboard(
     ).sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
     if (currentDateEvents.length === 0) {
-      announce('この日にはイベントがありません')
+      announce(t('calendar.event.noEventsOnThisDay'))
       return
     }
 
@@ -191,7 +193,7 @@ export function useAccessibilityKeyboard(
         setNavigationState(prev => ({ ...prev, isInEventEditMode: true }))
       }
     } else {
-      announce('編集するイベントを選択してください')
+      announce(t('calendar.event.selectEventToEdit'))
     }
   }, [navigationState.selectedEventId, events, announce, callbacks])
 
@@ -211,7 +213,7 @@ export function useAccessibilityKeyboard(
         }))
       }
     } else {
-      announce('削除するイベントを選択してください')
+      announce(t('calendar.event.selectEventToDelete'))
     }
   }, [navigationState.selectedEventId, events, announce, callbacks])
 
@@ -221,7 +223,7 @@ export function useAccessibilityKeyboard(
   const handleEscape = useCallback(() => {
     setNavigationState(prev => {
       if (prev.isInEventCreationMode || prev.isInEventEditMode) {
-        announce('操作をキャンセルしました')
+        announce(t('calendar.actions.undone'))
         callbacks.onEscapeAction()
         return {
           ...prev,
@@ -229,7 +231,7 @@ export function useAccessibilityKeyboard(
           isInEventEditMode: false
         }
       } else if (prev.selectedEventId) {
-        announce('イベントの選択を解除しました')
+        announce(t('calendar.event.deselected'))
         return { ...prev, selectedEventId: null }
       }
       return prev
