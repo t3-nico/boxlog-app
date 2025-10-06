@@ -273,7 +273,7 @@ const translations = {
 
 ## 参考リンク
 
-- [i18n設定ファイル](../src/lib/i18n/index.ts)
-- [翻訳辞書（日本語）](../src/lib/i18n/dictionaries/ja.json)
-- [翻訳辞書（英語）](../src/lib/i18n/dictionaries/en.json)
-- [Middleware](../middleware.ts) - 言語検出・リダイレクト
+- [i18n設定ファイル](../../src/lib/i18n/index.ts)
+- [翻訳辞書（日本語）](../../src/lib/i18n/dictionaries/ja.json)
+- [翻訳辞書（英語）](../../src/lib/i18n/dictionaries/en.json)
+- [Middleware](../../middleware.ts) - 言語検出・リダイレクト

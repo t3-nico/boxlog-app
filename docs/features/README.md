@@ -115,7 +115,7 @@ BoxLogアプリの機能実装、UI改善、システム実装に関するドキ
 ### デザイン・システム
 
 - **デザインシステム**: [`../design-system/`](../design-system/)
-- **テーマ実装**: `/src/config/theme/`
+- **テーマ実装**: `/src/config/ui/`
 - **パフォーマンス**: [`../performance/`](../performance/)
 
 ---

@@ -21,7 +21,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
+import { TiptapEditor } from '@/components/app/rich-text-editor/tiptap-editor'
 import { typography } from '@/config/ui/theme'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'

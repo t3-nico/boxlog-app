@@ -17,7 +17,7 @@ BoxLogのパフォーマンス最適化、コード品質管理、アクセシ�
 
 ### 🔧 コード品質・ESLint
 
-#### [ESLint企業級設定](./ESLINT_SETUP_COMPLETE.md)
+#### [ESLint企業級設定](../development/ESLINT_HYBRID_APPROACH.md)
 
 **96%完成システム** - Google・Meta・Airbnb・OWASP基準準拠
 
@@ -29,7 +29,6 @@ BoxLogのパフォーマンス最適化、コード品質管理、アクセシ�
 
 ### ♿ アクセシビリティ
 
-#### [アクセシビリティテスト](./ACCESSIBILITY_TESTING_GUIDE.md)
 
 **WCAG準拠テスト** - インクルーシブデザイン実現
 

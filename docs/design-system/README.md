@@ -6,14 +6,6 @@ BoxLogアプリのデザインシステム統合・一元化・テーマ管理�
 
 ### 🎯 コアシステム
 
-#### [テーマ強制システム](./THEME_ENFORCEMENT.md)
-
-**メイン実装** - 統一スタイリングの強制
-
-- `/src/config/theme` 必須使用ルール
-- Tailwindクラス直接指定禁止
-- 100% theme経由でのスタイリング実現
-
 #### [テーマ移行ガイド](./THEME_MIGRATION.md)
 
 **移行手順** - 既存コードのテーマ化
@@ -32,41 +24,12 @@ BoxLogアプリのデザインシステム統合・一元化・テーマ管理�
 - 技術的課題と解決方法
 - 実装効果の測定結果
 
-#### [コンポーネント変更](./COMPONENT_CHANGES.md)
+#### [アーカイブドキュメント](../archive/completed/)
 
-**詳細変更** - 個別コンポーネントの修正記録
+**実装完了記録** - 過去の変更履歴
 
-- コンポーネント別修正内容
-- before/after コード比較
-- 影響範囲・テスト結果
-
-### 🎨 UI要素・視覚調整
-
-#### [タイポグラフィ調整](./TYPOGRAPHY_ADJUSTMENTS.md)
-
-**文字体系** - 統一された文字スタイル
-
-- フォントファミリー・サイズ体系
-- 行間・文字間設定
-- レスポンシブ対応
-
-#### [アイコン・スペーシング](./ICONS_AND_SPACING_CHANGES.md)
-
-**視覚調整** - アイコンと余白の統一
-
-- 8pxグリッドシステム準拠
-- アイコンサイズ標準化
-- 一貫したスペーシング設計
-
-### 🔧 開発・品質管理
-
-#### [ESLintテーマ強制](./ESLINT_THEME_ENFORCEMENT.md)
-
-**自動品質管理** - テーマ使用の自動チェック
-
-- ESLintルールによる自動検出
-- コミット前品質保証
-- CI/CD統合
+- [コンポーネント変更 2025-09](../archive/completed/COMPONENT_CHANGES_2025-09.md)
+- [アイコン・スペーシング 2025-09](../archive/completed/ICONS_AND_SPACING_CHANGES_2025-09.md)
 
 ## 🎯 デザインシステム採用効果
 
@@ -104,13 +67,12 @@ import { colors, typography, spacing } from '@/config/theme'
 
 ### 参照優先順位
 
-1. **新規実装**: [THEME_ENFORCEMENT.md](./THEME_ENFORCEMENT.md)
-2. **既存修正**: [THEME_MIGRATION.md](./THEME_MIGRATION.md)
-3. **UI調整**: [TYPOGRAPHY_ADJUSTMENTS.md](./TYPOGRAPHY_ADJUSTMENTS.md) + [ICONS_AND_SPACING_CHANGES.md](./ICONS_AND_SPACING_CHANGES.md)
-4. **品質確認**: [ESLINT_THEME_ENFORCEMENT.md](./ESLINT_THEME_ENFORCEMENT.md)
+1. **既存修正**: [THEME_MIGRATION.md](./THEME_MIGRATION.md)
+2. **Tailwind v4移行**: [TAILWIND_MIGRATION_GUIDE.md](./TAILWIND_MIGRATION_GUIDE.md)
+3. **実装履歴**: [INTEGRATION_LOG.md](./INTEGRATION_LOG.md)
 
 ---
 
 **最終更新**: 2025-09-22
 **管理**: BoxLog デザインシステムチーム
-**関連**: `/src/config/theme/README.md` (実装詳細)
+**関連**: `/src/config/ui/README.md` (実装詳細)

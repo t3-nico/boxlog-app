@@ -25,12 +25,10 @@ docs/
 ├── systems/                     # システム詳細・仕様
 │   ├── ESLINT_SETUP_COMPLETE.md
 │   ├── THEME_ENFORCEMENT.md
-│   ├── API_CHANGE_DETECTION.md
 │   └── ...
 ├── design-system/               # デザインシステム
 │   └── ...
 ├── performance/                 # パフォーマンス関連
-│   └── ACCESSIBILITY_TESTING_GUIDE.md
 └── archive/                     # アーカイブ
     └── completed/               # 完了した実装レポート
         ├── LAYOUT_CHANGES_2025-09.md

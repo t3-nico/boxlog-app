@@ -8,7 +8,7 @@
 
 ## 🎯 作業概要
 
-BoxLogアプリのデザインシステム完全一元化を実施。全コンポーネントのスタイリングを`/src/config/theme`ベースに統一し、ハードコードされたTailwindクラスを排除。
+BoxLogアプリのデザインシステム完全一元化を実施。全コンポーネントのスタイリングを`/src/config/ui`ベースに統一し、ハードコードされたTailwindクラスを排除。
 
 ## 📋 主要作業項目
 
@@ -17,7 +17,7 @@ BoxLogアプリのデザインシステム完全一元化を実施。全コン�
 #### 1.1 Primary・Secondary・Selection カラーの統一
 
 ```typescript
-// /src/config/theme/colors.ts
+// /src/config/ui/colors.ts
 
 // プライマリーカラー（青 - メインボタン専用）
 export const primary = {
@@ -67,7 +67,7 @@ export const border = {
 #### 2.1 見出しサイズの最適化
 
 ```typescript
-// /src/config/theme/typography.ts
+// /src/config/ui/typography.ts
 
 export const heading = {
   // サイズを1段階縮小（大きすぎる問題を解決）
@@ -175,7 +175,7 @@ secondary.hover,          // 項目ホバー効果
 ### コンポーネント間の統一性確保
 
 1. **統一前**: 各コンポーネントで個別にTailwindクラス指定
-2. **統一後**: `/src/config/theme`からのインポートベース
+2. **統一後**: `/src/config/ui`からのインポートベース
 
 ### アクセシビリティの向上
 
@@ -192,11 +192,11 @@ secondary.hover,          // 項目ホバー効果
 
 ### カラーシステム
 
-- `/src/config/theme/colors.ts` - メインカラー定義追加・調整
+- `/src/config/ui/colors.ts` - メインカラー定義追加・調整
 
 ### タイポグラフィ
 
-- `/src/config/theme/typography.ts` - 見出しサイズ調整
+- `/src/config/ui/typography.ts` - 見出しサイズ調整
 
 ### コンポーネント修正
 
@@ -232,7 +232,7 @@ secondary.hover,          // 項目ホバー効果
 
 ### 保守性の向上
 
-- 色の変更が`/src/config/theme/colors.ts`の1箇所で完結
+- 色の変更が`/src/config/ui/colors.ts`の1箇所で完結
 - コンポーネント間でのスタイル再利用促進
 - TypeScript型安全性の向上
 

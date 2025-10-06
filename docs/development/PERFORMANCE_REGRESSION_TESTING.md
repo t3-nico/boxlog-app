@@ -296,8 +296,7 @@ npm run perf:check:force
 **📚 関連ドキュメント:**
 
 - [License Verification](./LICENSE_VERIFICATION.md)
-- [API Change Detection](./API_CHANGE_DETECTION.md)
-- [Bundle Size Monitoring](../BUNDLE_MONITORING.md)
-- [ESLint Setup](../ESLINT_SETUP_COMPLETE.md)
+- [Bundle Size Monitoring](../performance/BUNDLE_MONITORING.md)
+- [ESLint Setup](./ESLINT_HYBRID_APPROACH.md)
 
 **🔗 関連Issue:** #242 - Phase 2c: パフォーマンス回帰テスト実装

@@ -52,7 +52,6 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 **最適化・アクセシビリティ**
 
 - [Bundle監視](./performance/BUNDLE_MONITORING.md) - バンドルサイズ最適化
-- [アクセシビリティ](./performance/ACCESSIBILITY_TESTING_GUIDE.md) - WCAG準拠テスト
 
 ### 🏗️ [機能実装](./features/)
 
@@ -61,14 +60,6 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - [プログレッシブ開示](./features/PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md) - UI段階表示
 - [機能実装概要](./features/README.md) - 実装済み機能一覧
 
-### 🌱 [テストデータ管理](../seeds/)
-
-**開発・テスト環境データ管理システム（Issue #351実装完了）**
-
-- [シードシステム](../seeds/README.md) - 環境別テストデータ自動生成
-- **利用可能コマンド**: `seed:dev`, `seed:test`, `seed:staging`, `seed:minimal`, `seed:quick`
-- **対応データ**: ユーザー・タスク・プロジェクト（TypeScript型安全）
-- **実装パターン**: ファクトリーパターン・環境別設定・関係性管理
 
 ### 📊 [アーカイブ](./archive/)
 
@@ -89,8 +80,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 1. **アーキテクチャ理解**: [`architecture/`](./architecture/) - システム設計
 2. **UI実装**: [`design-system/`](./design-system/) - デザインシステム
-3. **テストデータ**: [`../seeds/`](../seeds/) - 環境別データ生成
-4. **品質管理**: [`development/`](./development/) - ESLint・テスト
+3. **品質管理**: [`development/`](./development/) - ESLint・テスト
 
 ## 🎯 技術スタック概要
 
@@ -121,7 +111,7 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 - **カレンダー**: `/src/features/calendar/__docs__/`
 - **設定**: `/src/features/settings/README.md`
-- **テーマ**: `/src/config/theme/README.md`
+- **テーマ**: `/src/config/ui/README.md`
 - **ESLint**: `/.eslint/README.md`
 - **テストデータ**: `/seeds/README.md`
 

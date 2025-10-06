@@ -77,7 +77,7 @@ className = 'transition-colors'
 #### 強化案
 
 ```typescript
-// /src/config/theme/animations.ts
+// /src/config/ui/animations.ts
 export const animations = {
   transition: {
     fast: 'transition-all duration-150 ease-in-out',
@@ -301,7 +301,7 @@ const MyComponent = () => (
 ### 内部ドキュメント
 
 - `CLAUDE.md` - プロジェクト基本方針
-- `/src/config/theme/README.md` - テーマシステム詳細
+- `/src/config/ui/README.md` - テーマシステム詳細
 - `/docs/DESIGN_SYSTEM_*.md` - この一連のドキュメント
 
 ---

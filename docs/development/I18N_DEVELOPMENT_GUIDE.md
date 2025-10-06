@@ -460,8 +460,7 @@ const t = (key: string, variables?: Record<string, any>) => {
 ### 内部ドキュメント
 
 - [翻訳キー設計ガイド](./I18N_TRANSLATION_KEYS_GUIDE.md)
-- [エラーメッセージ管理](../api/ERROR_HANDLING.md)
-- [テストガイドライン](../testing/TESTING_GUIDE.md)
+- [エラーメッセージ管理](../architecture/ERROR_HANDLING.md)
 
 ### ツール・ライブラリ
 

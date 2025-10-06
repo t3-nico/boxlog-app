@@ -203,7 +203,7 @@ npm run license:check:force
 ---
 
 **📚 関連ドキュメント:**
-- [Bundle Size Monitoring](../BUNDLE_MONITORING.md)
-- [ESLint Setup](../ESLINT_SETUP_COMPLETE.md)
+- [Bundle Size Monitoring](../performance/BUNDLE_MONITORING.md)
+- [ESLint Setup](./ESLINT_HYBRID_APPROACH.md)
 
 **🔗 関連Issue:** #240 - Phase 2a: ライセンス検証システム実装

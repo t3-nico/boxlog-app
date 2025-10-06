@@ -430,12 +430,11 @@ npm run ts:strict:verbose
 
 **Phase 2（基盤システム）:**
 - [License Verification](./LICENSE_VERIFICATION.md) - ライセンス検証システム
-- [API Change Detection](./API_CHANGE_DETECTION.md) - API変更検出システム
 - [Performance Regression Testing](./PERFORMANCE_REGRESSION_TESTING.md) - パフォーマンス回帰テスト
 
 **関連設定:**
-- [ESLint Setup](../ESLINT_SETUP_COMPLETE.md) - ESLint型チェック連携
-- [Bundle Monitoring](../BUNDLE_MONITORING.md) - バンドルサイズ監視
+- [ESLint Setup](./ESLINT_HYBRID_APPROACH.md) - ESLint型チェック連携
+- [Bundle Monitoring](../performance/BUNDLE_MONITORING.md) - バンドルサイズ監視
 
 ## 🔗 関連Issue
 

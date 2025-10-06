@@ -4,7 +4,7 @@
 
 ### 概要
 
-BoxLogのアイコン使用を`/src/config/theme/icons.ts`ベースに統一し、一貫したサイズとスタイルを確立。
+BoxLogのアイコン使用を`/src/config/ui/icons.ts`ベースに統一し、一貫したサイズとスタイルを確立。
 
 ## 📐 アイコンサイズの標準化
 
@@ -212,7 +212,7 @@ mb-4   // 16px（Sidebarセクション）
 ### 角丸システムの適用
 
 ```typescript
-// /src/config/theme/rounded.ts より
+// /src/config/ui/rounded.ts より
 export const radius = {
   xs: 'rounded-[2px]', // 2px - 極小
   sm: 'rounded', // 4px - 小

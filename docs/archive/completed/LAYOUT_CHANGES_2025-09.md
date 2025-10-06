@@ -129,7 +129,7 @@ const gap1wo = 'gap-1' // 4px gap
 - `src/components/layout/sidebar/sidebar-item.tsx` - typography統一
 - `src/components/layout/sidebar/user-menu.tsx` - typography統一
 - `src/components/layout/inspector/index.tsx` - 32px統一
-- `src/config/theme/layout.ts` - 32px高さ追加
+- `src/config/ui/layout.ts` - 32px高さ追加
 - `src/features/search/index.ts` - hooks追加
 
 ### Typography統一対象

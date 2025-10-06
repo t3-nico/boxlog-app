@@ -246,7 +246,7 @@ npm install
 **📖 関連ドキュメント**
 
 - [Performance Optimization Guide](./BUNDLE_MONITORING.md)
-- [ESLint Configuration](./ESLINT_SETUP_COMPLETE.md)
+- [ESLint Configuration](../development/ESLINT_HYBRID_APPROACH.md)
 - [CI/CD Pipeline](../setup/CI_CD_SETUP.md)
 
 ---

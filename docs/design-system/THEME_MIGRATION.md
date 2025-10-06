@@ -135,7 +135,7 @@ A: プラグインセットアップを実行: `npm run setup:eslint-plugins`
 
 ### **Q: テーマ値が見つからない**
 
-A: `src/config/theme/`の該当ファイルを確認
+A: `src/config/ui/`の該当ファイルを確認
 
 ### **Q: ダークモードが効かない**
 

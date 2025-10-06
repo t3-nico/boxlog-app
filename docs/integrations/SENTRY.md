@@ -497,9 +497,8 @@ beforeSend: (event) => {
 - [Sentry Error Monitoring](https://docs.sentry.io/product/issues/)
 
 ### BoxLog関連
-- **エラーパターン辞書**: [`/src/config/error-patterns/`](/src/config/error-patterns/)
-- **エラーハンドリングガイド**: [`/docs/ERROR_PATTERNS_GUIDE.md`](/docs/ERROR_PATTERNS_GUIDE.md)
-- **ビジネスルール**: [`/docs/BUSINESS_RULES_GUIDE.md`](/docs/BUSINESS_RULES_GUIDE.md)
+- **エラーパターンガイド**: [`../architecture/ERROR_PATTERNS_GUIDE.md`](../architecture/ERROR_PATTERNS_GUIDE.md)
+- **エラーハンドリング**: [`../architecture/ERROR_HANDLING.md`](../architecture/ERROR_HANDLING.md)
 
 ### ヘルパースクリプト
 - **接続テスト**: `node scripts/sentry/connection-test.js`

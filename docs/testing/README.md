@@ -177,7 +177,7 @@ describe('TaskList', () => {
 ## 🔗 関連ドキュメント
 
 - **テスト作成ルール**: [`CLAUDE.md`](./CLAUDE.md)
-- **ESLint設定**: [`../ESLINT_SETUP_COMPLETE.md`](../ESLINT_SETUP_COMPLETE.md)
+- **ESLint設定**: [`../development/ESLINT_HYBRID_APPROACH.md`](../development/ESLINT_HYBRID_APPROACH.md)
 - **コーディングルール**: [`../../src/CLAUDE.md`](../../src/CLAUDE.md)
 
 ---

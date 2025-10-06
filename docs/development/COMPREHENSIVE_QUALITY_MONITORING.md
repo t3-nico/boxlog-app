@@ -440,13 +440,12 @@ if (lastWeekScore > currentThreshold + 10) {
 
 **Phase 2基盤システム:**
 - [License Verification](./LICENSE_VERIFICATION.md) - ライセンス検証システム（Phase 2a）
-- [API Change Detection](./API_CHANGE_DETECTION.md) - API変更検出システム（Phase 2b）
 - [Performance Regression Testing](./PERFORMANCE_REGRESSION_TESTING.md) - パフォーマンス回帰テスト（Phase 2c）
 
 **統合管理:**
 - [Phase 2 Completion Report](./PHASE_2_COMPLETION_REPORT.md) - Phase 2総合成果報告
-- [ESLint Setup](../ESLINT_SETUP_COMPLETE.md) - コード品質基盤
-- [Bundle Monitoring](../BUNDLE_MONITORING.md) - バンドル監視システム
+- [ESLint Setup](./ESLINT_HYBRID_APPROACH.md) - コード品質基盤
+- [Bundle Monitoring](../performance/BUNDLE_MONITORING.md) - バンドル監視システム
 
 ## 🔗 関連Issue
 

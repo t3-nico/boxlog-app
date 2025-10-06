@@ -358,15 +358,14 @@ CONFIG.thresholds.maxFileSize = 5 * 1024 * 1024; // 5MB
 
 **Phase 2（前提システム）:**
 - [License Verification](./LICENSE_VERIFICATION.md) - ライセンス検証システム
-- [API Change Detection](./API_CHANGE_DETECTION.md) - API変更検出システム
 - [Performance Regression Testing](./PERFORMANCE_REGRESSION_TESTING.md) - パフォーマンス回帰テスト
 
 **セキュリティ関連:**
 - [ESLint Security Rules](../compliance/eslint-rules.md) - ESLintセキュリティルール
 
 **品質管理:**
-- [Bundle Monitoring](../BUNDLE_MONITORING.md) - バンドルサイズ監視
-- [ESLint Setup](../ESLINT_SETUP_COMPLETE.md) - ESLint設定
+- [Bundle Monitoring](../performance/BUNDLE_MONITORING.md) - バンドルサイズ監視
+- [ESLint Setup](./ESLINT_HYBRID_APPROACH.md) - ESLint設定
 
 ## 🔗 関連Issue
 

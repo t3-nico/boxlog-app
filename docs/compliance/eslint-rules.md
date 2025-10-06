@@ -497,11 +497,7 @@ const dbPassword = process.env.DB_PASSWORD
 
 ## 関連ドキュメント
 
-- [GDPR Implementation Guide](./gdpr-implementation.md)
-- [SOC 2 Controls Matrix](./soc2-controls.md)
-- [WCAG 2.1 Checklist](./wcag-checklist.md)
-- [Privacy Impact Assessment](./privacy-impact-assessment.md)
-- [Security Audit Procedures](./security-audit.md)
+- [ESLintハイブリッドアプローチ](../development/ESLINT_HYBRID_APPROACH.md)
 
 ---
 

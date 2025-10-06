@@ -276,7 +276,7 @@ npm run build
 
 ## 📚 詳細ドキュメント
 
-- [ESLint設定ガイド](./ESLINT_SETUP_COMPLETE.md)
+- [ESLint設定ガイド](./ESLINT_HYBRID_APPROACH.md)
 - [テスト戦略](./TESTING_STRATEGY.md)
 - [デプロイ管理](./DEPLOY_MANAGEMENT.md)
 

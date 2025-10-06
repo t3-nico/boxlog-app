@@ -207,7 +207,6 @@ npm run quality:gate
 
 - [包括的品質ゲートシステム](./session-templates/QUALITY_CHECKLIST.md)
 - [ESLint企業級設定](../performance/ESLINT_SETUP_COMPLETE.md)
-- [アクセシビリティテスト](../performance/ACCESSIBILITY_TESTING_GUIDE.md)
 - [Bundle監視システム](../performance/BUNDLE_MONITORING.md)
 
 ---

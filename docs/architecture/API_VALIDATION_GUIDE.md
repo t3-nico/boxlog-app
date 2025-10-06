@@ -382,8 +382,7 @@ const bulkUpdate = trpc.tasks.bulkUpdate.useMutation({
 
 ## 🔗 関連ドキュメント
 
-- [ビジネスルール辞書ガイド](./BUSINESS_RULES_GUIDE.md)
-- [エラーパターン辞書](../src/config/error-patterns.ts)
+- [エラーパターンガイド](./ERROR_PATTERNS_GUIDE.md)
 - [tRPC公式ドキュメント](https://trpc.io/)
 - [Zod公式ドキュメント](https://zod.dev/)
 

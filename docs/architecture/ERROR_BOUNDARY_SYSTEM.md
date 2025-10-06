@@ -443,8 +443,8 @@ const toastInfo = createErrorToast(ERROR_CODES.API_RATE_LIMIT)
 
 **📚 関連ドキュメント**
 
-- [`CLAUDE.md`](../CLAUDE.md) - プロジェクト全体の開発指針
-- [`docs/README.md`](README.md) - プロジェクト概要
-- [統一エラーコード体系](../src/constants/errorCodes.ts) - エラーコード詳細
+- [`CLAUDE.md`](../../CLAUDE.md) - プロジェクト全体の開発指針
+- [`docs/README.md`](../README.md) - プロジェクト概要
+- [エラーパターンガイド](./ERROR_PATTERNS_GUIDE.md) - エラーパターン詳細
 
 **🤖 Generated with [Claude Code](https://claude.ai/code)**

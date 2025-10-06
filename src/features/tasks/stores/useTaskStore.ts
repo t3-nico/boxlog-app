@@ -1,5 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
-import { StoreFactory } from '@/lib/store-factory'
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { Task as BaseTask, TaskStatus, TaskPriority } from '@/types'
 
 /**
@@ -102,8 +103,8 @@ function isDateInRange(date: Date, start: Date, end: Date): boolean {
 }
 
 // 初期状態の定義
-const initialTaskState = {
-  tasks: [] as Task[],
+const initialTaskState: TaskStoreState = {
+  tasks: [],
   filters: {
     search: '',
     status: [],
@@ -111,147 +112,155 @@ const initialTaskState = {
     type: [],
     tags: [],
     smartFolder: ''
-  } as TaskFilters
+  }
 }
 
-// Date型のシリアライゼーション設定
-const taskPersistConfig = {
-  name: 'task-store',
-  storage: 'localStorage' as const,
-  migrate: (persistedState: any, _version: number) => {
-    if (persistedState?.tasks) {
-      return {
-        ...persistedState,
-        tasks: persistedState.tasks.map((task: TaskForStorage) => ({
-          ...task,
-          planned_start: new Date(task.planned_start),
-          created_at: new Date(task.created_at),
-          updated_at: new Date(task.updated_at),
+export const useTaskStore = create<TaskStore>()(
+  persist(
+    (set, get) => ({
+      ...initialTaskState,
+
+      createTask: (input: CreateTaskInput) => {
+        const now = new Date()
+        const newTask: Task = {
+          id: generateId(),
+          ...input,
+          created_at: now,
+          updated_at: now,
+        }
+
+        set((state) => ({
+          tasks: [...state.tasks, newTask],
         }))
-      }
+
+        return newTask
+      },
+
+      updateTask: (id: string, updates: Partial<Task>) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, ...updates, updated_at: new Date() } : task
+          ),
+        }))
+      },
+
+      deleteTask: (id: string) => {
+        set((state) => ({
+          tasks: state.tasks.filter((task) => task.id !== id),
+        }))
+      },
+
+      getTask: (id: string) => {
+        return get().tasks.find((task) => task.id === id)
+      },
+
+      getTasksForDate: (date: Date) => {
+        return get()
+          .tasks.filter((task) => isSameDay(task.planned_start, date))
+          .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
+      },
+
+      getTasksForDateRange: (start: Date, end: Date) => {
+        return get()
+          .tasks.filter((task) => isDateInRange(task.planned_start, start, end))
+          .sort((a, b) => a.planned_start.getTime() - b.planned_start.getTime())
+      },
+
+      getTasksByStatus: (status: Task['status']) => {
+        return get().tasks.filter((task) => task.status === status)
+      },
+
+      updateTaskStatus: (id: string, status: Task['status']) => {
+        get().updateTask(id, { status })
+      },
+
+      completeTask: (id: string) => {
+        get().updateTask(id, { status: 'completed' })
+      },
+
+      clearAllTasks: () => {
+        set({ tasks: [] })
+      },
+
+      importTasks: (tasks: Task[]) => {
+        set({ tasks })
+      },
+
+      getCompletionRate: (date: Date) => {
+        const dayTasks = get().getTasksForDate(date)
+        if (dayTasks.length === 0) return 0
+
+        const completedTasks = dayTasks.filter((task) => task.status === 'completed')
+        return Math.round((completedTasks.length / dayTasks.length) * 100)
+      },
+
+      getTotalPlannedTime: (date: Date) => {
+        const dayTasks = get().getTasksForDate(date)
+        return dayTasks.reduce((total, task) => total + task.planned_duration, 0)
+      },
+
+      // Filter operations
+      setSearchFilter: (search: string) =>
+        set((state) => ({
+          filters: { ...state.filters, search }
+        })),
+      setStatusFilter: (status: string[]) =>
+        set((state) => ({
+          filters: { ...state.filters, status }
+        })),
+      setPriorityFilter: (priority: string[]) =>
+        set((state) => ({
+          filters: { ...state.filters, priority }
+        })),
+      setTypeFilter: (type: string[]) =>
+        set((state) => ({
+          filters: { ...state.filters, type }
+        })),
+      setTagFilter: (tags: string[]) =>
+        set((state) => ({
+          filters: { ...state.filters, tags }
+        })),
+      setSmartFolderFilter: (smartFolder: string) =>
+        set((state) => ({
+          filters: { ...state.filters, smartFolder }
+        })),
+    }),
+    {
+      name: 'task-store',
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name)
+          if (!str) return null
+          const { state } = JSON.parse(str)
+          return {
+            state: {
+              ...state,
+              tasks: state.tasks?.map((task: TaskForStorage) => ({
+                ...task,
+                planned_start: new Date(task.planned_start),
+                created_at: new Date(task.created_at),
+                updated_at: new Date(task.updated_at),
+              })) || []
+            }
+          }
+        },
+        setItem: (name, value) => {
+          const { state } = value as { state: TaskStoreState }
+          const str = JSON.stringify({
+            state: {
+              ...state,
+              tasks: state.tasks.map((task) => ({
+                ...task,
+                planned_start: task.planned_start.toISOString(),
+                created_at: task.created_at.toISOString(),
+                updated_at: task.updated_at.toISOString(),
+              }))
+            }
+          })
+          localStorage.setItem(name, str)
+        },
+        removeItem: (name) => localStorage.removeItem(name),
+      },
     }
-    return persistedState
-  },
-  partialize: (state: typeof initialTaskState & TaskStore) => ({
-    tasks: state.tasks.map((task: Task) => ({
-      ...task,
-      planned_start: task.planned_start.toISOString(),
-      created_at: task.created_at.toISOString(),
-      updated_at: task.updated_at.toISOString(),
-    }))
-  })
-}
-
-export const useTaskStore = StoreFactory.createPersisted({
-  type: 'persisted',
-  name: 'task-store',
-  initialState: initialTaskState,
-  persist: taskPersistConfig,
-  devtools: true,
-  actions: (set, get) => ({
-    createTask: (input: CreateTaskInput) => {
-      const now = new Date()
-      const newTask: Task = {
-        id: generateId(),
-        ...input,
-        created_at: now,
-        updated_at: now,
-      }
-
-      set((state: TaskStoreState) => ({
-        tasks: [...state.tasks, newTask],
-      }))
-
-      return newTask
-    },
-
-    updateTask: (id: string, updates: Partial<Task>) => {
-      set((state: TaskStoreState) => ({
-        tasks: state.tasks.map((task: Task) => (
-          task.id === id ? { ...task, ...updates, updated_at: new Date() } : task
-        )),
-      }))
-    },
-
-    deleteTask: (id: string) => {
-      set((state: TaskStoreState) => ({
-        tasks: state.tasks.filter((task: Task) => task.id !== id),
-      }))
-    },
-
-    getTask: (id: string) => {
-      return get().tasks.find((task: Task) => task.id === id)
-    },
-
-    getTasksForDate: (date: Date) => {
-      return get()
-        .tasks.filter((task: Task) => isSameDay(task.planned_start, date))
-        .sort((a: Task, b: Task) => a.planned_start.getTime() - b.planned_start.getTime())
-    },
-
-    getTasksForDateRange: (start: Date, end: Date) => {
-      return get()
-        .tasks.filter((task: Task) => isDateInRange(task.planned_start, start, end))
-        .sort((a: Task, b: Task) => a.planned_start.getTime() - b.planned_start.getTime())
-    },
-
-    getTasksByStatus: (status: Task['status']) => {
-      return get().tasks.filter((task: Task) => task.status === status)
-    },
-
-    updateTaskStatus: (id: string, status: Task['status']) => {
-      get().updateTask(id, { status })
-    },
-
-    completeTask: (id: string) => {
-      get().updateTask(id, { status: 'completed' })
-    },
-
-    clearAllTasks: () => {
-      set({ tasks: [] })
-    },
-
-    importTasks: (tasks: Task[]) => {
-      set({ tasks })
-    },
-
-    getCompletionRate: (date: Date) => {
-      const dayTasks = get().getTasksForDate(date)
-      if (dayTasks.length === 0) return 0
-
-      const completedTasks = dayTasks.filter((task: Task) => task.status === 'completed')
-      return Math.round((completedTasks.length / dayTasks.length) * 100)
-    },
-
-    getTotalPlannedTime: (date: Date) => {
-      const dayTasks = get().getTasksForDate(date)
-      return dayTasks.reduce((total: number, task: Task) => total + task.planned_duration, 0)
-    },
-
-    // Filter operations
-    setSearchFilter: (search: string) =>
-      set((state: TaskStoreState) => ({
-        filters: { ...state.filters, search }
-      })),
-    setStatusFilter: (status: string[]) =>
-      set((state: TaskStoreState) => ({
-        filters: { ...state.filters, status }
-      })),
-    setPriorityFilter: (priority: string[]) =>
-      set((state: TaskStoreState) => ({
-        filters: { ...state.filters, priority }
-      })),
-    setTypeFilter: (type: string[]) =>
-      set((state: TaskStoreState) => ({
-        filters: { ...state.filters, type }
-      })),
-    setTagFilter: (tags: string[]) =>
-      set((state: TaskStoreState) => ({
-        filters: { ...state.filters, tags }
-      })),
-    setSmartFolderFilter: (smartFolder: string) =>
-      set((state: TaskStoreState) => ({
-        filters: { ...state.filters, smartFolder }
-      })),
-  }),
-})
+  )
+)
