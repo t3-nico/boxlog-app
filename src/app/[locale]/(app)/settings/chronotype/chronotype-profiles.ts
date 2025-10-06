@@ -1,5 +1,5 @@
 import type { ChronotypeType } from '@/types/chronotype'
-import type { TFunction } from '@/lib/i18n/types'
+import type { TranslationFunction } from '@/lib/i18n'
 
 import type { ChronoTypeSchedule } from './chronotype.types'
 
@@ -12,7 +12,7 @@ export interface ChronoTypeProfile {
   schedules: ChronoTypeSchedule[]
 }
 
-export const getChronoTypeProfiles = (t: TFunction): ChronoTypeProfile[] => [
+export const getChronoTypeProfiles = (t: TranslationFunction): ChronoTypeProfile[] => [
   {
     id: 'lion',
     name: t('settings.chronotype.profiles.lion'),

@@ -14,12 +14,12 @@ import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
 
-import { SidebarItem } from './sidebar-item'
+import { AppBarItem } from './appbar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
 
-export const DesktopSidebar = () => {
+export const DesktopAppBar = () => {
   const pathname = usePathname() || '/'
   const { primaryNavWidth, isSidebarOpen, toggleSidebar } = useNavigationStore()
   const setPrimaryNavWidth = useNavigationStore((state) => state.setPrimaryNavWidth)
@@ -202,7 +202,7 @@ export const DesktopSidebar = () => {
                 </div>
               )}
               {section.items.length > 0
-                ? section.items.map((item) => <SidebarItem key={item.id} item={item} pathname={pathname} />)
+                ? section.items.map((item) => <AppBarItem key={item.id} item={item} pathname={pathname} />)
                 : section.id === 'smart-folders' && (
                     <div className={cn('p-2')}>
                       <button

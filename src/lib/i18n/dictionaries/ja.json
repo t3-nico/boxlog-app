@@ -299,7 +299,8 @@
       "selectEventToDelete": "削除するイベントを選択してください",
       "deselected": "イベントの選択を解除しました",
       "operationCancelled": "操作をキャンセルしました",
-      "deleteFailed": "予定の削除に失敗しました"
+      "deleteFailed": "予定の削除に失敗しました",
+      "moveFailed": "予定の移動に失敗しました"
     },
     "actions": {
       "undo": "元に戻す",

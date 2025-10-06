@@ -13,12 +13,12 @@ import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
 
-import { SidebarItem } from './sidebar-item'
+import { AppBarItem } from './appbar-item'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
 
-export const MobileSidebar = () => {
+export const MobileAppBar = () => {
   const pathname = usePathname() || '/'
   const { isSidebarOpen, toggleSidebar } = useNavigationStore()
   const { open: openNotifications, notificationCount } = useNotificationModal()
@@ -186,11 +186,11 @@ export const MobileSidebar = () => {
                 )}
                 {section.items.length > 0
                   ? section.items.map((item) => (
-                      <SidebarItem
+                      <AppBarItem
                         key={item.id}
                         item={item}
                         pathname={pathname}
-                        onItemClick={() => toggleSidebar()} // ページクリック時にSidebarを閉じる
+                        onItemClick={() => toggleSidebar()} // ページクリック時にAppBarを閉じる
                       />
                     ))
                   : section.id === 'smart-folders' && (

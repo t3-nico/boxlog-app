@@ -6,13 +6,13 @@ import { NavigationItem, isNavItemActive } from '@/config/navigation/config'
 import { useGlobalSearch } from '@/features/search'
 import { cn } from '@/lib/utils'
 
-interface SidebarItemProps {
+interface AppBarItemProps {
   item: NavigationItem
   pathname: string
-  onItemClick?: () => void // Sidebarを閉じるコールバック
+  onItemClick?: () => void // AppBarを閉じるコールバック
 }
 
-export const SidebarItem = ({ item, pathname, onItemClick }: SidebarItemProps) => {
+export const AppBarItem = ({ item, pathname, onItemClick }: AppBarItemProps) => {
   const router = useRouter()
   const { open: openGlobalSearch } = useGlobalSearch()
   const Icon = item.icon
@@ -25,7 +25,7 @@ export const SidebarItem = ({ item, pathname, onItemClick }: SidebarItemProps) =
       router.push(item.href)
     }
 
-    // ページクリック時にSidebarを閉じる
+    // ページクリック時にAppBarを閉じる
     if (onItemClick) {
       onItemClick()
     }

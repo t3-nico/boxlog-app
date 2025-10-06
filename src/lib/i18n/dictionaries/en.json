@@ -299,7 +299,8 @@
       "selectEventToDelete": "Select an event to delete",
       "deselected": "Event deselected",
       "operationCancelled": "Operation cancelled",
-      "deleteFailed": "Failed to delete event"
+      "deleteFailed": "Failed to delete event",
+      "moveFailed": "Failed to move event"
     },
     "actions": {
       "undo": "Undo",

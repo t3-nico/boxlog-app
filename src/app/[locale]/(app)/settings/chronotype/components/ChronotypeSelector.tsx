@@ -4,7 +4,8 @@
 
 import { Clock, GraduationCap, Moon, Sun } from 'lucide-react'
 import type { ChronotypeType } from '@/types/chronotype'
-import { chronoTypeProfiles } from '../chronotype-profiles'
+import { useI18n } from '@/lib/i18n/hooks'
+import { getChronoTypeProfiles } from '../chronotype-profiles'
 import type { ChronoTypeProfile } from '../chronotype.types'
 import { typeColors, typeIconComponents } from '../chronotype.constants'
 
@@ -14,6 +15,8 @@ interface ChronotypeSelectorProps {
 }
 
 export function ChronotypeSelector({ selectedType, onSelect }: ChronotypeSelectorProps) {
+  const { t } = useI18n()
+  const chronoTypeProfiles = getChronoTypeProfiles(t as import('@/lib/i18n').TranslationFunction)
   const currentProfile = chronoTypeProfiles.find((p) => p.id === selectedType)
 
   const getTypeIcon = (type: string) => {
