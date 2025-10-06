@@ -726,7 +726,43 @@
       "emailRequired": "Email is required",
       "passwordRequired": "Password is required",
       "passwordMismatch": "Passwords do not match",
-      "weakPassword": "Password must be at least 8 characters long"
+      "weakPassword": "Password must be at least 8 characters long",
+      "emailNotConfirmed": "Email verification required",
+      "emailAlreadyRegistered": "This email address is already registered",
+      "networkError": "Network error occurred",
+      "unexpectedError": "An unexpected error occurred",
+      "initLocalAuthFailed": "Failed to initialize local authentication",
+      "emailInvalid": "Please enter a valid email address",
+      "tooManyRequests": "Too many requests. Please wait a moment and try again"
+    },
+    "success": {
+      "loginSuccess": "Successfully logged in",
+      "resetEmailSent": "Password reset email sent",
+      "passwordUpdated": "Password successfully updated",
+      "logoutSuccess": "Successfully logged out",
+      "signupSuccess": "Account created successfully. Please check your email for verification."
+    },
+    "passwordValidation": {
+      "minLength": "Password must be at least 8 characters long",
+      "requireUppercase": "Must include uppercase letter",
+      "requireLowercase": "Must include lowercase letter",
+      "requireNumber": "Must include number",
+      "requireSpecialChar": "Must include special character"
+    },
+    "localStorage": {
+      "signupDisabled": "Sign up disabled in localStorage mode",
+      "passwordResetDisabled": "Password reset disabled in localStorage mode",
+      "passwordUpdateDisabled": "Password update disabled in localStorage mode"
+    },
+    "loginForm": {
+      "startApp": "Start App"
+    },
+    "passwordResetForm": {
+      "sendResetEmail": "Send reset email"
+    },
+    "signupForm": {
+      "enterPassword": "Enter your password",
+      "confirmPassword": "Confirm your password"
     }
   },
   "tags": {
@@ -821,6 +857,168 @@
     "errors": {
       "restoreFailed": "Failed to restore item",
       "fetchFailed": "Failed to fetch items"
+    }
+  },
+  "events": {
+    "trash": {
+      "title": "Trash",
+      "empty": {
+        "title": "Trash is empty",
+        "description": "No deleted events"
+      },
+      "stats": {
+        "deleted": "Deleted: {{count}} items",
+        "old": "Over 30 days old: {{count}} items"
+      },
+      "search": {
+        "placeholder": "Search events...",
+        "noResults": "No events match the criteria",
+        "noEvents": "No events"
+      },
+      "filter": {
+        "all": "All periods",
+        "today": "Today",
+        "week": "Within 1 week",
+        "month": "Within 1 month"
+      },
+      "actions": {
+        "clearOld": "Auto-delete old items",
+        "restore": "Restore",
+        "permanentDelete": "Permanently delete",
+        "batchRestore": "Batch restore",
+        "batchDelete": "Permanently delete",
+        "clearSelection": "Clear selection",
+        "selectAll": "Select all",
+        "selected": "{{count}} selected"
+      },
+      "metadata": {
+        "deletedDate": "Deleted: {{date}}",
+        "originalDate": "Original date: {{date}}",
+        "autoDeleteToday": "Auto-delete today",
+        "autoDeleteIn": "Auto-delete in {{days}} days"
+      },
+      "loading": {
+        "title": "Processing..."
+      },
+      "accessibility": {
+        "selectEvent": "Select event: {{title}}"
+      }
+    },
+    "create": {
+      "title": {
+        "placeholder": "What needs to be done?"
+      },
+      "charCount": "{{count}}/100"
+    },
+    "detail": {
+      "schedule": {
+        "title": "Schedule",
+        "titlePlaceholder": "Enter title...",
+        "endTimeNotSet": "Not set"
+      },
+      "actions": {
+        "notification": "Notification",
+        "repeat": "Repeat"
+      },
+      "tags": {
+        "title": "Tags",
+        "add": "Add tag"
+      },
+      "memo": {
+        "title": "Memo",
+        "placeholder": "Enter memo...",
+        "empty": "No memo"
+      },
+      "activity": {
+        "title": "Activity",
+        "createPlaceholder": "Activity will be displayed after creation",
+        "autoUpdate": "Automatic update by system"
+      },
+      "save": {
+        "autoSaving": "Auto-saving..."
+      },
+      "operations": {
+        "duplicate": "Duplicate",
+        "template": "Template",
+        "delete": "Delete"
+      }
+    }
+  },
+  "help": {
+    "messageBubble": {
+      "sendError": "Send Error"
+    },
+    "mainSupportChat": {
+      "or": "or",
+      "greeting": "How can I help you today?"
+    },
+    "askPanel": {
+      "assistant": "Your AI assistant",
+      "chatPlaceholder": "Chat with Claude for productivity insights and task management"
+    },
+    "content": {
+      "quickStartGuide": "Quick Start Guide",
+      "learnBasics": "Learn the basics of BoxLog",
+      "creatingFirstTask": "Creating Your First Task",
+      "settingUpWorkspace": "Setting Up Your Workspace",
+      "customizeEnvironment": "Customize your environment",
+      "manageTasksCalendar": "Managing tasks in calendar format",
+      "organizeTags": "Organizing with tags and automation",
+      "understandPatterns": "Understanding your work patterns",
+      "frequentProblems": "Solutions to frequent problems",
+      "optimizeExperience": "Optimize your BoxLog experience"
+    },
+    "suggestions": {
+      "analyzeProductivity": "Analyze my productivity patterns",
+      "analyzeProductivityDesc": "Get insights on your work patterns",
+      "focusToday": "What tasks should I focus on today?",
+      "focusTodayDesc": "Prioritize your day",
+      "organizeSchedule": "Help me organize my schedule",
+      "organizeScheduleDesc": "Optimize your calendar",
+      "suggestImprovements": "Suggest productivity improvements",
+      "suggestImprovementsDesc": "Enhance your workflow",
+      "showDeadlines": "Show me my upcoming deadlines"
+    },
+    "sidebar": {
+      "calendarSyncIssues": "Calendar sync issues",
+      "howToDeleteTasks": "How to delete tasks",
+      "dataExportProcedures": "Data export procedures"
+    },
+    "errors": {
+      "sendingMessage": "Error sending message"
+    }
+  },
+  "notifications": {
+    "errors": {
+      "notSupported": "This browser does not support notifications",
+      "permissionFailed": "Failed to obtain notification permission",
+      "displayFailed": "Failed to display browser notification"
+    }
+  },
+  "settings": {
+    "account": {
+      "profileUpdated": "Profile updated successfully",
+      "passwordUpdated": "Password updated successfully",
+      "deleteNotImplemented": "Account deletion feature will be implemented later",
+      "deleteFailed": "Failed to delete account",
+      "profile": "Profile",
+      "title": "Account Settings",
+      "description": "Manage your profile and account",
+      "privacyUpdated": "Privacy settings updated successfully"
+    },
+    "calendar": {
+      "settingsSaved": "Calendar settings saved successfully",
+      "timeAndTimezone": "Time and Timezone",
+      "timeAndTimezoneDesc": "Configure how dates and times are displayed",
+      "timezone": "Timezone",
+      "timezoneDesc": "Timezone used for calendar display"
+    },
+    "preferences": {
+      "settingsSaved": "Preferences saved successfully",
+      "theme": "Theme",
+      "themeDesc": "Configure application appearance",
+      "themeLabel": "Theme",
+      "themeLabelDesc": "Application appearance theme"
     }
   }
 }

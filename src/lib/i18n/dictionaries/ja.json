@@ -726,7 +726,43 @@
       "emailRequired": "メールアドレスが必要です",
       "passwordRequired": "パスワードが必要です",
       "passwordMismatch": "パスワードが一致しません",
-      "weakPassword": "パスワードは8文字以上にしてください"
+      "weakPassword": "パスワードは8文字以上にしてください",
+      "emailNotConfirmed": "メールアドレスの確認が必要です",
+      "emailAlreadyRegistered": "このメールアドレスは既に登録されています",
+      "networkError": "ネットワークエラーが発生しました",
+      "unexpectedError": "予期しないエラーが発生しました",
+      "initLocalAuthFailed": "ローカル認証の初期化に失敗しました",
+      "emailInvalid": "有効なメールアドレスを入力してください",
+      "tooManyRequests": "リクエストが多すぎます。しばらく待ってから再試行してください"
+    },
+    "success": {
+      "loginSuccess": "ログインに成功しました",
+      "resetEmailSent": "パスワードリセットメールを送信しました",
+      "passwordUpdated": "パスワードが正常に更新されました",
+      "logoutSuccess": "ログアウトしました",
+      "signupSuccess": "アカウントが正常に作成されました。確認メールをチェックしてください。"
+    },
+    "passwordValidation": {
+      "minLength": "パスワードは8文字以上で入力してください",
+      "requireUppercase": "大文字を含めてください",
+      "requireLowercase": "小文字を含めてください",
+      "requireNumber": "数字を含めてください",
+      "requireSpecialChar": "特殊文字を含めてください"
+    },
+    "localStorage": {
+      "signupDisabled": "ローカルストレージモードではサインアップが無効です",
+      "passwordResetDisabled": "ローカルストレージモードではパスワードリセットが無効です",
+      "passwordUpdateDisabled": "ローカルストレージモードではパスワード更新が無効です"
+    },
+    "loginForm": {
+      "startApp": "アプリを開始"
+    },
+    "passwordResetForm": {
+      "sendResetEmail": "リセットメールを送信"
+    },
+    "signupForm": {
+      "enterPassword": "パスワードを入力",
+      "confirmPassword": "パスワードを確認"
     }
   },
   "tags": {
@@ -821,6 +857,168 @@
     "errors": {
       "restoreFailed": "Failed to restore item",
       "fetchFailed": "Failed to fetch items"
+    }
+  },
+  "events": {
+    "trash": {
+      "title": "ゴミ箱",
+      "empty": {
+        "title": "ゴミ箱は空です",
+        "description": "削除されたイベントはありません"
+      },
+      "stats": {
+        "deleted": "削除済み: {{count}}件",
+        "old": "30日以上経過: {{count}}件"
+      },
+      "search": {
+        "placeholder": "イベントを検索...",
+        "noResults": "条件に一致するイベントがありません",
+        "noEvents": "イベントがありません"
+      },
+      "filter": {
+        "all": "全期間",
+        "today": "今日",
+        "week": "1週間以内",
+        "month": "1ヶ月以内"
+      },
+      "actions": {
+        "clearOld": "古い削除済みを自動削除",
+        "restore": "復元",
+        "permanentDelete": "完全削除",
+        "batchRestore": "一括復元",
+        "batchDelete": "完全削除",
+        "clearSelection": "選択解除",
+        "selectAll": "全て選択",
+        "selected": "{{count}}件選択中"
+      },
+      "metadata": {
+        "deletedDate": "削除日: {{date}}",
+        "originalDate": "元の日時: {{date}}",
+        "autoDeleteToday": "今日自動削除",
+        "autoDeleteIn": "{{days}}日後に自動削除"
+      },
+      "loading": {
+        "title": "処理中..."
+      },
+      "accessibility": {
+        "selectEvent": "Select event: {{title}}"
+      }
+    },
+    "create": {
+      "title": {
+        "placeholder": "What needs to be done?"
+      },
+      "charCount": "{{count}}/100"
+    },
+    "detail": {
+      "schedule": {
+        "title": "予定",
+        "titlePlaceholder": "タイトルを入力...",
+        "endTimeNotSet": "未設定"
+      },
+      "actions": {
+        "notification": "通知",
+        "repeat": "リピート"
+      },
+      "tags": {
+        "title": "タグ",
+        "add": "タグを追加"
+      },
+      "memo": {
+        "title": "メモ",
+        "placeholder": "メモを入力...",
+        "empty": "メモがありません"
+      },
+      "activity": {
+        "title": "アクティビティ",
+        "createPlaceholder": "作成後にアクティビティが表示されます",
+        "autoUpdate": "システムによる自動更新"
+      },
+      "save": {
+        "autoSaving": "自動保存中..."
+      },
+      "operations": {
+        "duplicate": "複製",
+        "template": "テンプレート",
+        "delete": "削除"
+      }
+    }
+  },
+  "help": {
+    "messageBubble": {
+      "sendError": "送信エラー"
+    },
+    "mainSupportChat": {
+      "or": "または",
+      "greeting": "今日はどのようにお手伝いしましょうか？"
+    },
+    "askPanel": {
+      "assistant": "あなたのAIアシスタント",
+      "chatPlaceholder": "Claude に生産性の洞察とタスク管理について質問する"
+    },
+    "content": {
+      "quickStartGuide": "クイックスタートガイド",
+      "learnBasics": "BoxLogの基本を学ぶ",
+      "creatingFirstTask": "最初のタスクを作成",
+      "settingUpWorkspace": "ワークスペースの設定",
+      "customizeEnvironment": "環境をカスタマイズ",
+      "manageTasksCalendar": "カレンダー形式でタスクを管理",
+      "organizeTags": "タグと自動化で整理",
+      "understandPatterns": "作業パターンを理解",
+      "frequentProblems": "よくある問題の解決策",
+      "optimizeExperience": "BoxLog体験を最適化"
+    },
+    "suggestions": {
+      "analyzeProductivity": "生産性パターンを分析",
+      "analyzeProductivityDesc": "作業パターンの洞察を得る",
+      "focusToday": "今日注目すべきタスクは？",
+      "focusTodayDesc": "1日の優先順位を決める",
+      "organizeSchedule": "スケジュールを整理",
+      "organizeScheduleDesc": "カレンダーを最適化",
+      "suggestImprovements": "生産性改善の提案",
+      "suggestImprovementsDesc": "ワークフローを強化",
+      "showDeadlines": "今後の期限を表示"
+    },
+    "sidebar": {
+      "calendarSyncIssues": "カレンダー同期の問題",
+      "howToDeleteTasks": "タスクの削除方法",
+      "dataExportProcedures": "データエクスポート手順"
+    },
+    "errors": {
+      "sendingMessage": "メッセージ送信エラー"
+    }
+  },
+  "notifications": {
+    "errors": {
+      "notSupported": "このブラウザは通知をサポートしていません",
+      "permissionFailed": "通知許可の取得に失敗しました",
+      "displayFailed": "ブラウザ通知の表示に失敗しました"
+    }
+  },
+  "settings": {
+    "account": {
+      "profileUpdated": "プロフィールを更新しました",
+      "passwordUpdated": "パスワードを更新しました",
+      "deleteNotImplemented": "アカウント削除機能は後で実装されます",
+      "deleteFailed": "アカウントの削除に失敗しました",
+      "profile": "プロフィール",
+      "title": "アカウント設定",
+      "description": "プロフィールとアカウントの管理",
+      "privacyUpdated": "プライバシー設定を更新しました"
+    },
+    "calendar": {
+      "settingsSaved": "カレンダー設定を保存しました",
+      "timeAndTimezone": "時間とタイムゾーン",
+      "timeAndTimezoneDesc": "日付と時間の表示方法を設定",
+      "timezone": "タイムゾーン",
+      "timezoneDesc": "カレンダー表示に使用するタイムゾーン"
+    },
+    "preferences": {
+      "settingsSaved": "環境設定を保存しました",
+      "theme": "テーマ",
+      "themeDesc": "アプリケーションの外観の設定",
+      "themeLabel": "テーマ",
+      "themeLabelDesc": "アプリケーションの外観テーマ"
     }
   }
 }

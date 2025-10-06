@@ -26,6 +26,7 @@ import { typography } from '@/config/ui/theme'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { sanitizeRichText } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 
@@ -50,9 +51,11 @@ const EventScheduleSection = React.memo(
     handleDateInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     handleTimeInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     handleEndTimeInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  }) => (
+  }) => {
+    const { t } = useI18n()
+    return (
     <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-      <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>予定</h3>
+      <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>{t('events.detail.schedule.title')}</h3>
 
       {/* タイトル with Priority */}
       <div className="flex items-start gap-3">
@@ -62,7 +65,7 @@ const EventScheduleSection = React.memo(
             type="text"
             value={formData.title}
             onChange={handleTitleInputChange}
-            placeholder={isCreateMode ? 'タイトルを入力...' : ''}
+            placeholder={isCreateMode ? t('events.detail.schedule.titlePlaceholder') : ''}
             className={cn(
               'w-full flex-1 bg-transparent outline-none',
               'text-2xl font-bold',
@@ -126,29 +129,31 @@ const EventScheduleSection = React.memo(
         ) : (
           <div className={cn('text-base', 'break-words font-medium text-neutral-900 dark:text-neutral-100')}>
             {format(formData.startDate ?? new Date(), 'yyyy年M月d日（E）', { locale: ja })} {format(formData.startDate ?? new Date(), 'HH:mm')} →{' '}
-            {formData.endDate ? format(formData.endDate, 'HH:mm') : '未設定'}
+            {formData.endDate ? format(formData.endDate, 'HH:mm') : t('events.detail.schedule.endTimeNotSet')}
           </div>
         )}
       </div>
     </div>
-  )
+  )}
 )
 
 EventScheduleSection.displayName = 'EventScheduleSection'
 
 // 外部に移動されたコンポーネント: アクションボタングループ
-const ActionButtonsSection = React.memo(({ isEditable }: { isEditable: boolean }) => (
+const ActionButtonsSection = React.memo(({ isEditable }: { isEditable: boolean }) => {
+  const { t } = useI18n()
+  return (
   <div className={cn('flex items-center gap-2 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
     <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
       <BellRing className="h-4 w-4" />
-      通知
+      {t('events.detail.actions.notification')}
     </Button>
     <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
       <Repeat className="h-4 w-4" />
-      リピート
+      {t('events.detail.actions.repeat')}
     </Button>
   </div>
-))
+)})
 
 ActionButtonsSection.displayName = 'ActionButtonsSection'
 
@@ -305,6 +310,8 @@ export const EventDetailInspectorContent = ({
   onTemplateCreate,
   onClose,
 }: EventDetailInspectorContentProps) => {
+  const { t } = useI18n()
+
   // カスタムフックで状態管理とロジックを抽出
   const {
     showTimeline,
@@ -421,7 +428,7 @@ export const EventDetailInspectorContent = ({
 
         {/* タグ */}
         <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>タグ</h3>
+          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>{t('events.detail.tags.title')}</h3>
 
           <div className="flex max-w-full flex-wrap gap-2">
             {formData.tags && formData.tags.length > 0 ? (
@@ -445,7 +452,7 @@ export const EventDetailInspectorContent = ({
             ) : (
               <Button variant="secondary" size="sm" className={cn('text-xs', 'max-w-full')} disabled={!isEditable}>
                 <Plus className="mr-1 h-3 w-3" />
-                タグを追加
+                {t('events.detail.tags.add')}
               </Button>
             )}
           </div>
@@ -453,13 +460,13 @@ export const EventDetailInspectorContent = ({
 
         {/* メモ */}
         <div className={cn('space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>メモ</h3>
+          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>{t('events.detail.memo.title')}</h3>
           <div className="w-full">
             {isEditable ? (
               <TiptapEditor
                 value={formData.description}
                 onChange={handleDescriptionEditorChange}
-                placeholder="メモを入力..."
+                placeholder={t('events.detail.memo.placeholder')}
                 className="min-h-[120px] w-full"
               />
             ) : formData.description ? (
@@ -471,7 +478,7 @@ export const EventDetailInspectorContent = ({
                 dangerouslySetInnerHTML={{ __html: sanitizeRichText(formData.description || '') }}
               />
             ) : (
-              <p className={cn('text-base text-neutral-600 dark:text-neutral-400')}>メモがありません</p>
+              <p className={cn('text-base text-neutral-600 dark:text-neutral-400')}>{t('events.detail.memo.empty')}</p>
             )}
           </div>
         </div>
@@ -487,7 +494,7 @@ export const EventDetailInspectorContent = ({
               'text-neutral-900 dark:text-neutral-100'
             )}
           >
-            アクティビティ
+            {t('events.detail.activity.title')}
             {showTimeline ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
 
@@ -534,7 +541,7 @@ export const EventDetailInspectorContent = ({
                                 className={cn(
                                   'mt-0.5 h-3 w-3 flex-shrink-0 text-neutral-600 dark:text-neutral-400'
                                 )}
-                                title="システムによる自動更新"
+                                title={t('events.detail.activity.autoUpdate')}
                               />
                             ) : null}
                           </div>
@@ -550,7 +557,7 @@ export const EventDetailInspectorContent = ({
           {showTimeline && isCreateMode ? (
             <div className="pt-3 text-center">
               <span className={cn('text-sm text-neutral-600 dark:text-neutral-400')}>
-                作成後にアクティビティが表示されます
+                {t('events.detail.activity.createPlaceholder')}
               </span>
             </div>
           ) : null}
@@ -561,7 +568,7 @@ export const EventDetailInspectorContent = ({
           {/* 新規作成時は保存状態のみ表示 */}
           {isCreateMode ? (
             <div className="text-center">
-              <span className={cn(typography.body.xs, 'text-muted-foreground')}>自動保存中...</span>
+              <span className={cn(typography.body.xs, 'text-muted-foreground')}>{t('events.detail.save.autoSaving')}</span>
             </div>
           ) : (
             <>
@@ -574,7 +581,7 @@ export const EventDetailInspectorContent = ({
                   className="flex-1"
                 >
                   <Copy className="mr-1 h-3 w-3" />
-                  複製
+                  {t('events.detail.operations.duplicate')}
                 </Button>
                 <Button
                   variant="secondary"
@@ -584,7 +591,7 @@ export const EventDetailInspectorContent = ({
                   className="flex-1"
                 >
                   <FileText className="mr-1 h-3 w-3" />
-                  テンプレート
+                  {t('events.detail.operations.template')}
                 </Button>
               </div>
 
@@ -596,7 +603,7 @@ export const EventDetailInspectorContent = ({
                 className="w-full"
               >
                 <Trash2 className="mr-1 h-3 w-3" />
-                削除
+                {t('events.detail.operations.delete')}
               </Button>
             </>
           )}

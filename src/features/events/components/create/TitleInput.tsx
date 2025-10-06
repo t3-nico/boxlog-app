@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface TitleInputProps {
@@ -15,6 +16,7 @@ interface TitleInputProps {
 }
 
 export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFocus = false }: TitleInputProps) => {
+  const { t } = useI18n()
   const inputRef = useRef<HTMLInputElement>(null)
   const [isFocused, setIsFocused] = useState(false)
 
@@ -144,7 +146,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          placeholder="What needs to be done?"
+          placeholder={t('events.create.title.placeholder')}
           className={cn(
             "w-full resize-none border-none bg-transparent text-3xl font-semibold leading-tight outline-none",
             "placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
@@ -169,7 +171,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
               className="pointer-events-none absolute inset-0"
             >
               <span className="text-3xl font-semibold leading-tight text-neutral-400 md:text-4xl lg:text-5xl dark:text-neutral-500">
-                What needs to be done?
+                {t('events.create.title.placeholder')}
               </span>
             </motion.div>
           )}
@@ -210,7 +212,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
                 : "text-neutral-600 dark:text-neutral-400"
             )}
           >
-            {value.length}/100
+            {t('events.create.charCount', { count: value.length })}
           </motion.div>
         )}
       </AnimatePresence>
