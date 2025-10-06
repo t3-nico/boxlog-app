@@ -78,6 +78,32 @@
       "sending": "送信中...",
       "sent": "送信済み",
       "error": "送信エラー"
+    },
+    "chatHistory": {
+      "title": "チャット履歴",
+      "description": "過去のヘルプチャットセッションを表示・管理します。",
+      "searchPlaceholder": "チャットを検索...",
+      "filters": {
+        "all": "すべて",
+        "active": "アクティブ",
+        "resolved": "解決済み"
+      },
+      "empty": {
+        "noMatch": "検索条件に一致するチャットが見つかりませんでした",
+        "noChats": "チャット履歴がありません"
+      },
+      "stats": {
+        "totalChats": "総チャット数",
+        "active": "アクティブ",
+        "resolved": "解決済み"
+      },
+      "actions": {
+        "view": "表示",
+        "delete": "削除"
+      },
+      "labels": {
+        "messages": "メッセージ"
+      }
     }
   },
   "notifications": {
@@ -302,6 +328,113 @@
       "description": "削除されたアイテムの管理"
     }
   },
+  "board": {
+    "title": "ボードビュー",
+    "description": "カンバンスタイルのタスク管理",
+    "columns": {
+      "todo": "未着手",
+      "inProgress": "進行中",
+      "done": "完了"
+    },
+    "sample": {
+      "task1": {
+        "title": "サンプルタスク 1",
+        "description": "タスクの説明"
+      },
+      "task2": {
+        "title": "サンプルタスク 2",
+        "description": "進行中のタスク"
+      },
+      "task3": {
+        "title": "サンプルタスク 3",
+        "description": "完了したタスク"
+      }
+    }
+  },
+  "table": {
+    "title": "テーブルビュー",
+    "description": "タスクをテーブル形式で表示",
+    "comingSoon": "タスクテーブルコンポーネントは近日公開予定...",
+    "willDisplay": "タスクをテーブル形式で表示します",
+    "headers": {
+      "reviewNumber": "レビュー番号",
+      "purchaseDate": "購入日",
+      "customer": "顧客",
+      "amount": "金額"
+    },
+    "actions": {
+      "view": "表示",
+      "edit": "編集"
+    },
+    "stats": {
+      "totalRevenue": "総売上",
+      "ticketsSold": "チケット販売数",
+      "pageviews": "ページビュー数"
+    },
+    "sections": {
+      "recentReviews": "最近のレビュー"
+    },
+    "details": {
+      "summary": "概要",
+      "paymentMethod": "支払い方法",
+      "customer": "顧客",
+      "event": "イベント",
+      "amount": "金額",
+      "amountAfterExchange": "為替レート適用後の金額",
+      "fee": "手数料",
+      "net": "純額",
+      "transactionId": "取引ID",
+      "cardNumber": "カード番号",
+      "cardType": "カードタイプ",
+      "cardExpiry": "有効期限",
+      "owner": "所有者",
+      "emailAddress": "メールアドレス",
+      "address": "住所",
+      "country": "国",
+      "cvc": "CVC",
+      "cvcStatus": "正常に確認されました"
+    },
+    "status": {
+      "successful": "成功"
+    },
+    "buttons": {
+      "refund": "返金",
+      "resendInvoice": "請求書を再送"
+    },
+    "backLinks": {
+      "box": "ボックス",
+      "reviews": "レビュー"
+    }
+  },
+  "aiChat": {
+    "title": "AIチャット",
+    "errors": {
+      "loadingFailed": "AI Chatの読み込み中にエラーが発生しました"
+    }
+  },
+  "stats": {
+    "title": "統計ビュー",
+    "description": "統計ビューは近日公開予定",
+    "featureInDevelopment": "この機能は開発中です。",
+    "lifeVision": "人生のビジョン",
+    "identity": "アイデンティティ",
+    "goals": "目標",
+    "value": "価値観",
+    "antivalues": "反価値観",
+    "purpose": "目的",
+    "principles": "原則",
+    "connpass": "Connpass",
+    "reflect": {
+      "today": "今日の振り返り",
+      "week": "週間の振り返り",
+      "month": "月間の振り返り",
+      "all": "全期間の振り返り"
+    },
+    "act": {
+      "try": "試してみる",
+      "next": "次のアクション"
+    }
+  },
   "auth": {
     "welcome": {
       "title": "BoxLogへようこそ",
@@ -327,7 +460,7 @@
       "confirmPassword": "パスワード確認",
       "agreeTerms": "利用規約とプライバシーポリシーに同意する",
       "signUp": "アカウント作成",
-      "signIn": "すでにアカウントをお持ちの方はこちら"
+      "signIn": "すでにアカウントをお持ちでない方はこちら"
     },
     "errors": {
       "invalidCredentials": "メールアドレスまたはパスワードが正しくありません",

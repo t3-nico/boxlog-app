@@ -2,14 +2,15 @@
 
 import React from 'react'
 
-import { 
-  MessageCircle, 
-  MessageSquare, 
-  Trash2, 
+import {
+  MessageCircle,
+  MessageSquare,
+  Trash2,
   Eye,
   Calendar,
   Search
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { Heading } from '@/components/app'
 import { Badge } from '@/components/ui/badge'
@@ -18,6 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 
 const ChatHistoryPage = () => {
+  const t = useTranslations('help.chatHistory')
+
   // Mock data - In actual implementation, fetch from appropriate data source
   const chatSessions = [
     {
@@ -107,9 +110,9 @@ const ChatHistoryPage = () => {
 
   const getStatusBadge = (status: 'active' | 'resolved') => {
     if (status === 'active') {
-      return <Badge variant="default">Active</Badge>
+      return <Badge variant="default">{t('filters.active')}</Badge>
     }
-    return <Badge variant="secondary">Resolved</Badge>
+    return <Badge variant="secondary">{t('filters.resolved')}</Badge>
   }
 
   const formatDate = (timestamp: string) => {
@@ -126,9 +129,9 @@ const ChatHistoryPage = () => {
   return (
     <div className="mx-auto max-w-6xl p-6">
       <div className="mb-8">
-        <Heading>Chat History</Heading>
+        <Heading>{t('title')}</Heading>
         <p className="mt-4 text-neutral-800 dark:text-neutral-200">
-          View and manage your past help chat sessions.
+          {t('description')}
         </p>
       </div>
 
@@ -137,7 +140,7 @@ const ChatHistoryPage = () => {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-600 dark:text-neutral-400" />
           <Input
-            placeholder="Search chats..."
+            placeholder={t('searchPlaceholder')}
             value={searchQuery}
             onChange={handleSearchChange}
             className="pl-10"
@@ -149,14 +152,14 @@ const ChatHistoryPage = () => {
             size="sm"
             onClick={handleAllFilter}
           >
-            All
+            {t('filters.all')}
           </Button>
           <Button
             variant={statusFilter === 'active' ? "default" : "outline"}
             size="sm"
             onClick={handleActiveFilter}
           >
-            Active
+            {t('filters.active')}
             <span className="ml-1 text-sm">
               ({chatSessions.filter(s => s.status === 'active').length})
             </span>
@@ -166,7 +169,7 @@ const ChatHistoryPage = () => {
             size="sm"
             onClick={handleResolvedFilter}
           >
-            Resolved
+            {t('filters.resolved')}
             <span className="ml-1 text-sm">
               ({chatSessions.filter(s => s.status === 'resolved').length})
             </span>
@@ -181,7 +184,7 @@ const ChatHistoryPage = () => {
             <CardContent className="p-8 text-center">
               <MessageCircle className="w-12 h-12 text-neutral-600 dark:text-neutral-400 mx-auto mb-4" />
               <p className="text-neutral-800 dark:text-neutral-200">
-                {searchQuery ? 'No chats found matching your search criteria' : 'No chat history available'}
+                {searchQuery ? t('empty.noMatch') : t('empty.noChats')}
               </p>
             </CardContent>
           </Card>
@@ -212,14 +215,14 @@ const ChatHistoryPage = () => {
                       </div>
                       <div className="flex items-center gap-1">
                         <MessageCircle className="w-3 h-3" />
-                        {session.messageCount} messages
+                        {session.messageCount} {t('labels.messages')}
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-2 ml-4">
                     <Button variant="outline" size="sm">
                       <Eye className="w-4 h-4 mr-1" />
-                      View
+                      {t('actions.view')}
                     </Button>
                     <Button variant="outline" size="sm" className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400">
                       <Trash2 className="w-4 h-4" />
@@ -250,7 +253,7 @@ const ChatHistoryPage = () => {
                 {chatSessions.length}
               </div>
               <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                Total Chats
+                {t('stats.totalChats')}
               </div>
             </CardContent>
           </Card>
@@ -260,7 +263,7 @@ const ChatHistoryPage = () => {
                 {chatSessions.filter(s => s.status === 'active').length}
               </div>
               <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                Active
+                {t('stats.active')}
               </div>
             </CardContent>
           </Card>
@@ -270,7 +273,7 @@ const ChatHistoryPage = () => {
                 {chatSessions.filter(s => s.status === 'resolved').length}
               </div>
               <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                Resolved
+                {t('stats.resolved')}
               </div>
             </CardContent>
           </Card>

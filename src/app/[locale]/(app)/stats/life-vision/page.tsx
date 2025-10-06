@@ -1,14 +1,11 @@
-import type { Metadata } from 'next'
+'use client'
 
 import { Heading } from '@/components/app'
-
-
-export const metadata: Metadata = {
-  title: 'Life Vision',
-}
+import { useI18n } from '@/lib/i18n/hooks'
 
 const LifeVisionPage = () => {
-  return <Heading>Life Vision</Heading>
+  const { t } = useI18n()
+  return <Heading>{t('stats.lifeVision')}</Heading>
 }
 
 export default LifeVisionPage

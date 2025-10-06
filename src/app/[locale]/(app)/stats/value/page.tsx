@@ -1,15 +1,11 @@
-import type { Metadata } from 'next'
+'use client'
 
 import { Heading } from '@/components/app'
-
-
-
-export const metadata: Metadata = {
-  title: 'Value',
-}
+import { useI18n } from '@/lib/i18n/hooks'
 
 const ValuePage = () => {
-  return <Heading>Value</Heading>
+  const { t } = useI18n()
+  return <Heading>{t('stats.value')}</Heading>
 }
 
 export default ValuePage

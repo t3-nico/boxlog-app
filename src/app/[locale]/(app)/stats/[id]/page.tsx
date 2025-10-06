@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { getReview } from '@/lib/data'
+import { createTranslation, getDictionary } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
 
 import { RefundReview } from './refund'
 
@@ -24,7 +26,7 @@ interface Review {
   event: { type: string; description: string; url: string; thumbUrl: string; name: string }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string; locale?: Locale }> }): Promise<Metadata> {
   const { id } = await params
   const review = (await getReview(id)) as Review | null
 
@@ -33,9 +35,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
+const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: Locale }> }) => {
+  const { id, locale = 'ja' } = await params
   const review = (await getReview(id)) as Review | null
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
 
   if (!review) {
     notFound()
@@ -44,15 +48,15 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <>
       <div className="max-lg:hidden">
-        <NextLink href="/review" className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <NextLink href={`/${locale}/review`} className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
           <ChevronLeft className="size-4 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
-          Reviews
+          {t('table.backLinks.reviews')}
         </NextLink>
       </div>
       <div className="mt-4 lg:mt-8">
         <div className="flex items-center gap-4">
           <Heading>Review #{review.id}</Heading>
-          <Badge color="lime">Successful</Badge>
+          <Badge color="lime">{t('table.status.successful')}</Badge>
         </div>
         <div className="isolate mt-3 flex flex-wrap justify-between gap-x-6 gap-y-4">
           <div className="flex flex-wrap gap-x-10 gap-y-4 py-2">
@@ -76,56 +80,56 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
           <div className="flex gap-4">
             <RefundReview variant="outline" amount={review.amount.usd}>
-              Refund
+              {t('table.buttons.refund')}
             </RefundReview>
-            <Button>Resend Invoice</Button>
+            <Button>{t('table.buttons.resendInvoice')}</Button>
           </div>
         </div>
       </div>
       <div className="mt-12">
-        <Subheading>Summary</Subheading>
+        <Subheading>{t('table.details.summary')}</Subheading>
         <Separator className="mt-4" />
         <dl className="grid grid-cols-1 text-base sm:grid-cols-[min(50%,theme(spacing.80))_auto] sm:text-sm">
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 first:border-none sm:py-3">Customer</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 first:border-none sm:py-3">{t('table.details.customer')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{review.customer.name}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Event</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.event')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">
             <NextLink href={review.event.url} className="flex items-center gap-2">
               <Avatar src={review.event.thumbUrl} alt={review.event.name} className="size-6" />
               <span>{review.event.name}</span>
             </NextLink>
           </dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Amount</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.amount')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">US{review.amount.usd}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Amount after exchange rate</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.amountAfterExchange')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">
             US{review.amount.usd} &rarr; CA{review.amount.cad}
           </dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Fee</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.fee')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">CA{review.amount.fee}</dd>
-          <dt className="col-start-1 border-t border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Net</dt>
+          <dt className="col-start-1 border-t border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.net')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">CA{review.amount.net}</dd>
         </dl>
       </div>
       <div className="mt-12">
-        <Subheading>Payment method</Subheading>
+        <Subheading>{t('table.details.paymentMethod')}</Subheading>
         <Separator className="mt-4" />
         <dl className="grid grid-cols-1 text-base sm:grid-cols-[min(50%,theme(spacing.80))_auto] sm:text-sm">
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 first:border-none sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Transaction ID</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 first:border-none sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.transactionId')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.payment.transactionId}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Card number</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cardNumber')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">•••• {review.payment.card.number}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Card type</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cardType')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.payment.card.type}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Card expiry</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cardExpiry')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.payment.card.expiry}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Owner</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.owner')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.customer.name}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Email address</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.emailAddress')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.customer.email}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Address</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.address')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.customer.address}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">Country</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.country')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">
             <span className="inline-flex gap-3">
               <Image
@@ -138,9 +142,9 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
               {review.customer.country}
             </span>
           </dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">CVC</dt>
+          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cvc')}</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">
-            <Badge color="lime">Passed successfully</Badge>
+            <Badge color="lime">{t('table.details.cvcStatus')}</Badge>
           </dd>
         </dl>
       </div>

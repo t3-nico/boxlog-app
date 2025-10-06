@@ -78,6 +78,32 @@
       "sending": "Sending...",
       "sent": "Sent",
       "error": "Send Error"
+    },
+    "chatHistory": {
+      "title": "Chat History",
+      "description": "View and manage your past help chat sessions.",
+      "searchPlaceholder": "Search chats...",
+      "filters": {
+        "all": "All",
+        "active": "Active",
+        "resolved": "Resolved"
+      },
+      "empty": {
+        "noMatch": "No chats found matching your search criteria",
+        "noChats": "No chat history available"
+      },
+      "stats": {
+        "totalChats": "Total Chats",
+        "active": "Active",
+        "resolved": "Resolved"
+      },
+      "actions": {
+        "view": "View",
+        "delete": "Delete"
+      },
+      "labels": {
+        "messages": "messages"
+      }
     }
   },
   "notifications": {
@@ -300,6 +326,113 @@
     "trash": {
       "title": "Trash",
       "description": "Manage deleted items"
+    }
+  },
+  "board": {
+    "title": "Board View",
+    "description": "Kanban style task management",
+    "columns": {
+      "todo": "Todo",
+      "inProgress": "In Progress",
+      "done": "Done"
+    },
+    "sample": {
+      "task1": {
+        "title": "Sample Task 1",
+        "description": "Task description"
+      },
+      "task2": {
+        "title": "Sample Task 2",
+        "description": "Task in progress"
+      },
+      "task3": {
+        "title": "Sample Task 3",
+        "description": "Completed task"
+      }
+    }
+  },
+  "table": {
+    "title": "Table View",
+    "description": "Display tasks in table format",
+    "comingSoon": "Task table component coming soon...",
+    "willDisplay": "This will display tasks in a table format",
+    "headers": {
+      "reviewNumber": "Review number",
+      "purchaseDate": "Purchase date",
+      "customer": "Customer",
+      "amount": "Amount"
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit"
+    },
+    "stats": {
+      "totalRevenue": "Total revenue",
+      "ticketsSold": "Tickets sold",
+      "pageviews": "Pageviews"
+    },
+    "sections": {
+      "recentReviews": "Recent reviews"
+    },
+    "details": {
+      "summary": "Summary",
+      "paymentMethod": "Payment method",
+      "customer": "Customer",
+      "event": "Event",
+      "amount": "Amount",
+      "amountAfterExchange": "Amount after exchange rate",
+      "fee": "Fee",
+      "net": "Net",
+      "transactionId": "Transaction ID",
+      "cardNumber": "Card number",
+      "cardType": "Card type",
+      "cardExpiry": "Card expiry",
+      "owner": "Owner",
+      "emailAddress": "Email address",
+      "address": "Address",
+      "country": "Country",
+      "cvc": "CVC",
+      "cvcStatus": "Passed successfully"
+    },
+    "status": {
+      "successful": "Successful"
+    },
+    "buttons": {
+      "refund": "Refund",
+      "resendInvoice": "Resend Invoice"
+    },
+    "backLinks": {
+      "box": "Box",
+      "reviews": "Reviews"
+    }
+  },
+  "aiChat": {
+    "title": "AI Chat",
+    "errors": {
+      "loadingFailed": "Failed to load AI Chat"
+    }
+  },
+  "stats": {
+    "title": "Stats View",
+    "description": "Statistics view coming soon",
+    "featureInDevelopment": "This feature is under development.",
+    "lifeVision": "Life Vision",
+    "identity": "Identity",
+    "goals": "Goals",
+    "value": "Value",
+    "antivalues": "AntiValues",
+    "purpose": "Purpose",
+    "principles": "Principles",
+    "connpass": "Connpass",
+    "reflect": {
+      "today": "Today",
+      "week": "Week",
+      "month": "Month",
+      "all": "All"
+    },
+    "act": {
+      "try": "Try",
+      "next": "Next"
     }
   },
   "auth": {

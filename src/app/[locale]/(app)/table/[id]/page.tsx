@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getEvent, getEventReviews } from '@/lib/data'
+import { createTranslation, getDictionary } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
 
 interface Event {
   name: string
@@ -43,7 +45,7 @@ const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: 
   loading: () => <div className="h-24 animate-pulse rounded bg-gray-200" />,
 })
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ id: string; locale?: Locale }> }): Promise<Metadata> {
   const { id } = await params
   const event = (await getEvent(id)) as Event | null
 
@@ -52,8 +54,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-const EventPage = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params
+const EventPage = async ({ params }: { params: Promise<{ id: string; locale?: Locale }> }) => {
+  const { id, locale = 'ja' } = await params
   const event = (await getEvent(id)) as Event | null
   const reviews = (await getEventReviews(id)) as Review[]
 
@@ -61,15 +63,19 @@ const EventPage = async ({ params }: { params: Promise<{ id: string }> }) => {
     notFound()
   }
 
+  // サーバーサイドで翻訳辞書を取得
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
   return (
     <>
       <div className="max-lg:hidden">
         <NextLink
-          href="/box"
+          href={`/${locale}/box`}
           className="inline-flex items-center gap-2 text-sm text-neutral-800 dark:text-neutral-200"
         >
           <ChevronLeft className="size-4 text-neutral-800 dark:text-neutral-200" data-slot="icon" />
-          Box
+          {t('table.backLinks.box')}
         </NextLink>
       </div>
       <div
@@ -97,27 +103,27 @@ const EventPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
         </div>
         <div className="flex gap-4">
-          <Button variant="outline">Edit</Button>
-          <Button>View</Button>
+          <Button variant="outline">{t('table.actions.edit')}</Button>
+          <Button>{t('table.actions.view')}</Button>
         </div>
       </div>
       <div className="mt-8 grid gap-8 sm:grid-cols-3">
-        <Stat title="Total revenue" value={event.totalRevenue} change={event.totalRevenueChange} />
+        <Stat title={t('table.stats.totalRevenue')} value={event.totalRevenue} change={event.totalRevenueChange} />
         <Stat
-          title="Tickets sold"
+          title={t('table.stats.ticketsSold')}
           value={`${event.ticketsSold}/${event.ticketsAvailable}`}
           change={event.ticketsSoldChange}
         />
-        <Stat title="Pageviews" value={event.pageViews} change={event.pageViewsChange} />
+        <Stat title={t('table.stats.pageviews')} value={event.pageViews} change={event.pageViewsChange} />
       </div>
-      <Subheading className="mt-16">Recent reviews</Subheading>
+      <Subheading className="mt-16">{t('table.sections.recentReviews')}</Subheading>
       <Table className="mt-4 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
         <TableHead>
           <TableRow>
-            <TableHeader>Review number</TableHeader>
-            <TableHeader>Purchase date</TableHeader>
-            <TableHeader>Customer</TableHeader>
-            <TableHeader className="text-right">Amount</TableHeader>
+            <TableHeader>{t('table.headers.reviewNumber')}</TableHeader>
+            <TableHeader>{t('table.headers.purchaseDate')}</TableHeader>
+            <TableHeader>{t('table.headers.customer')}</TableHeader>
+            <TableHeader className="text-right">{t('table.headers.amount')}</TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>

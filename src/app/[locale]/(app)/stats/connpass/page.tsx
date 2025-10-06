@@ -1,13 +1,11 @@
-import type { Metadata } from 'next'
+'use client'
 
 import { Heading } from '@/components/app'
-
-export const metadata: Metadata = {
-  title: 'Connpass',
-}
+import { useI18n } from '@/lib/i18n/hooks'
 
 const ConnpassPage = () => {
-  return <Heading>Connpass</Heading>
+  const { t } = useI18n()
+  return <Heading>{t('stats.connpass')}</Heading>
 }
 
 export default ConnpassPage

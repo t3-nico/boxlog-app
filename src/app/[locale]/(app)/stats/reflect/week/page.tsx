@@ -1,15 +1,11 @@
-import type { Metadata } from 'next'
+'use client'
 
 import { Heading } from '@/components/app'
-
-
-
-export const metadata: Metadata = {
-  title: 'Week',
-}
+import { useI18n } from '@/lib/i18n/hooks'
 
 const ReflectWeekPage = () => {
-  return <Heading>Week</Heading>
+  const { t } = useI18n()
+  return <Heading>{t('stats.reflect.week')}</Heading>
 }
 
 export default ReflectWeekPage

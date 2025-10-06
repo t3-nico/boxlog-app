@@ -1,14 +1,11 @@
-import type { Metadata } from 'next'
+'use client'
 
 import { Heading } from '@/components/app'
-
-
-export const metadata: Metadata = {
-  title: 'Principles',
-}
+import { useI18n } from '@/lib/i18n/hooks'
 
 const PrinciplesPage = () => {
-  return <Heading>Principles</Heading>
+  const { t } = useI18n()
+  return <Heading>{t('stats.principles')}</Heading>
 }
 
 export default PrinciplesPage
