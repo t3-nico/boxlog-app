@@ -1,5 +1,11 @@
 import { redirect } from 'next/navigation'
 
-export default function AuthPage() {
-  redirect('/auth/login')
+import type { Locale } from '@/types/i18n'
+
+interface AuthPageProps {
+  params: { locale: Locale }
+}
+
+export default function AuthPage({ params: { locale } }: AuthPageProps) {
+  redirect(`/${locale}/auth/login`)
 }
