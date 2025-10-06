@@ -25,7 +25,7 @@ export function validateConfig(config: Record<string, unknown>, strict: boolean,
         path: err.path.map(String),
         message: err.message,
         code: err.code,
-        input: err.input,
+        input: 'input' in err ? err.input : undefined,
       }))
 
       return {

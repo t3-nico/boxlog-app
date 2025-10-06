@@ -20,8 +20,8 @@ export type {
   ApiResponse
 } from './unified'
 
-// TaskTypeはtask.tsから再エクスポート
-export type { TaskType } from './task'
+// TaskTypeはtask/core.tsから再エクスポート
+export type { TaskType } from './task/core'
 
 // 検索可能な共通インターフェース
 export interface Searchable {
