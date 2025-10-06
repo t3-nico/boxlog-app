@@ -73,32 +73,30 @@ export const useDebounce = <T,>(value: T, delay: number): T => {
 ```tsx
 // hooks/useFetch.ts
 import { useState, useEffect } from 'react'
-import { AppError, ERROR_CODES } from '@/lib/errors'
 
 interface UseFetchResult<T> {
   data: T | null
   loading: boolean
-  error: AppError | null
+  error: Error | null
 }
 
 export const useFetch = <T,>(url: string): UseFetchResult<T> => {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<AppError | null>(null)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true)
         const response = await fetch(url)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
         const json = await response.json()
         setData(json)
       } catch (err) {
-        setError(new AppError(
-          'データ取得エラー',
-          ERROR_CODES.API_TIMEOUT,
-          { context: { url }, originalError: err }
-        ))
+        setError(err instanceof Error ? err : new Error('Unknown error'))
       } finally {
         setLoading(false)
       }
