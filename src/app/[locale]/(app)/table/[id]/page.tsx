@@ -1,12 +1,13 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import NextLink from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { ChevronLeft } from 'lucide-react'
 import type { Metadata } from 'next'
 
-import { Heading, Link, Subheading } from '@/components/custom'
+import { Heading, Subheading } from '@/components/custom'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn-ui/table'
@@ -63,13 +64,13 @@ const EventPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <>
       <div className="max-lg:hidden">
-        <Link
+        <NextLink
           href="/box"
           className="inline-flex items-center gap-2 text-sm text-neutral-800 dark:text-neutral-200"
         >
           <ChevronLeft className="size-4 text-neutral-800 dark:text-neutral-200" data-slot="icon" />
           Box
-        </Link>
+        </NextLink>
       </div>
       <div
         className="mt-4 flex flex-wrap items-end justify-between gap-4"

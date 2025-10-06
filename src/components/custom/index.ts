@@ -12,7 +12,7 @@ export {
 } from './fieldset'
 
 // Navigation components
-export { Link } from './link'
+// export { Link } from './link' // ⚠️ 削除予定 (#419)
 
 // List components
 // export {

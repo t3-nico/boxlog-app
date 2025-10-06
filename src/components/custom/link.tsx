@@ -1,17 +1,4 @@
-import React, { forwardRef } from 'react'
-
-import NextLink, { type LinkProps } from 'next/link'
-
-import * as Headless from '@headlessui/react'
-
-
-export const Link = forwardRef(function Link(
-  props: LinkProps & React.ComponentPropsWithoutRef<'a'>,
-  ref: React.ForwardedRef<HTMLAnchorElement>
-) {
-  return (
-    <Headless.DataInteractive>
-      <NextLink {...props} ref={ref} />
-    </Headless.DataInteractive>
-  )
-})
+// ⚠️ このファイルは削除予定です
+// Issue #419: Link コンポーネントは未使用のため削除
+// next/link を直接使用してください
+// 現在は空ファイルとして残しています

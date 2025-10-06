@@ -1,11 +1,12 @@
 import Image from 'next/image'
+import NextLink from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
 import type { Metadata } from 'next'
 
 
-import { Heading, Subheading , Link } from '@/components/custom'
+import { Heading, Subheading } from '@/components/custom'
 import { Avatar } from '@/components/shadcn-ui/avatar'
 import { Badge } from '@/components/shadcn-ui/badge'
 import { Button } from '@/components/shadcn-ui/button'
@@ -43,10 +44,10 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
   return (
     <>
       <div className="max-lg:hidden">
-        <Link href="/review" className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <NextLink href="/review" className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
           <ChevronLeft className="size-4 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
           Reviews
-        </Link>
+        </NextLink>
       </div>
       <div className="mt-4 lg:mt-8">
         <div className="flex items-center gap-4">
@@ -89,10 +90,10 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string }> }) => {
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{review.customer.name}</dd>
           <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Event</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">
-            <Link href={review.event.url} className="flex items-center gap-2">
+            <NextLink href={review.event.url} className="flex items-center gap-2">
               <Avatar src={review.event.thumbUrl} alt={review.event.name} className="size-6" />
               <span>{review.event.name}</span>
-            </Link>
+            </NextLink>
           </dd>
           <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">Amount</dt>
           <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">US{review.amount.usd}</dd>
