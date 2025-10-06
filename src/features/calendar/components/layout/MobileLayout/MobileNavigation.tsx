@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 
 import { Calendar, Plus, Settings, User } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 export type MobileNavItem = {
@@ -24,36 +25,40 @@ interface MobileNavigationProps {
   className?: string
 }
 
-const defaultItems: MobileNavItem[] = [
-  {
-    id: 'calendar',
-    label: 'カレンダー',
-    icon: <Calendar className="h-5 w-5" />,
-  },
-  {
-    id: 'profile',
-    label: 'プロフィール',
-    icon: <User className="h-5 w-5" />,
-  },
-  {
-    id: 'settings',
-    label: '設定',
-    icon: <Settings className="h-5 w-5" />,
-  },
-]
-
 /**
  * モバイル用下部ナビゲーション
  * タブバーとFABを組み合わせた設計
  */
 export const MobileNavigation = ({
-  items = defaultItems,
+  items,
   activeItem,
   onItemClick,
   showAddButton = true,
   onAddClick,
   className,
 }: MobileNavigationProps) => {
+  const { t } = useI18n()
+
+  const defaultItems: MobileNavItem[] = [
+    {
+      id: 'calendar',
+      label: t('calendar.mobile.navigation.calendar'),
+      icon: <Calendar className="h-5 w-5" />,
+    },
+    {
+      id: 'profile',
+      label: t('calendar.mobile.navigation.profile'),
+      icon: <User className="h-5 w-5" />,
+    },
+    {
+      id: 'settings',
+      label: t('calendar.mobile.navigation.settings'),
+      icon: <Settings className="h-5 w-5" />,
+    },
+  ]
+
+  const navItems = items ?? defaultItems
+
   const handleItemClick = (item: MobileNavItem) => {
     if (item.disabled) return
     item.onClick?.()
@@ -75,7 +80,7 @@ export const MobileNavigation = ({
       )}
     >
       <div className="pb-safe relative flex items-center justify-around px-2 py-2">
-        {items.map((item, _index) => (
+        {navItems.map((item, _index) => (
           <button
             type="button"
             key={item.id}
@@ -123,7 +128,7 @@ export const MobileNavigation = ({
               'transition-all duration-200 hover:scale-105',
               'border-background border-4'
             )}
-            aria-label="新しいイベントを作成"
+            aria-label={t('calendar.mobile.navigation.createEvent')}
           >
             <Plus className="h-6 w-6" />
           </button>

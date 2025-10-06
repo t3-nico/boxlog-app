@@ -43,5 +43,45 @@
     "switch": "Switch Language",
     "english": "English",
     "japanese": "Japanese"
+  },
+  "calendar": {
+    "viewSwitcher": {
+      "closeDropdown": "Close dropdown",
+      "showWeekends": "Show weekends",
+      "enableWeekends": "Enable weekend display",
+      "disableWeekends": "Disable weekend display",
+      "keyboardShortcutDescription": "Keyboard shortcut: Cmd+W or Ctrl+W to toggle"
+    },
+    "dateRange": {
+      "weekLabel": "Week {weekNumber}"
+    },
+    "headerActions": {
+      "settings": "Settings",
+      "export": "Export",
+      "import": "Import",
+      "moreOptions": "More options"
+    },
+    "weekendDropDialog": {
+      "title": "Weekend Drop Detected",
+      "description": "Weekend display is currently OFF",
+      "sourceLabel": "From:",
+      "targetLabel": "To:",
+      "explanation": "Since weekend display is OFF, this event will be automatically moved to the next weekday (Monday).",
+      "hint": "If you want to move it to a weekend, please enable \"Show weekends\" in settings and try again.",
+      "confirmButton": "Move to Monday"
+    },
+    "undoToast": {
+      "undoShortcut": "Press Ctrl+Z to undo",
+      "undoButton": "Undo"
+    },
+    "emptyState": {
+      "defaultTitle": "No events",
+      "defaultDescription": "Click to create a new event"
+    },
+    "contextMenu": {
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "delete": "Delete"
+    }
   }
 }

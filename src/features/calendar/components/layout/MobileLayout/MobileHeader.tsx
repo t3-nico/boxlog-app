@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react'
 import { format, getWeek } from 'date-fns'
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import type { CalendarViewType } from '../../../types/calendar.types'
@@ -24,15 +25,6 @@ interface MobileHeaderProps {
   className?: string
 }
 
-const viewLabels = {
-  day: '日',
-  '3day': '3日',
-  'week-no-weekend': '平日',
-  week: '週',
-  '2week': '2週',
-  schedule: 'リスト',
-} as const
-
 /**
  * モバイル用ヘッダー
  * コンパクトな表示でタッチ操作に最適化
@@ -48,8 +40,18 @@ export const MobileHeader = ({
   onBack,
   className,
 }: MobileHeaderProps) => {
+  const { t } = useI18n()
   const [isViewMenuOpen, setIsViewMenuOpen] = useState(false)
   const weekNumber = getWeek(currentDate, { weekStartsOn: 1 })
+
+  const viewLabels = {
+    day: t('calendar.mobile.header.viewLabels.day'),
+    '3day': t('calendar.mobile.header.viewLabels.3day'),
+    'week-no-weekend': t('calendar.mobile.header.viewLabels.weekNoWeekend'),
+    week: t('calendar.mobile.header.viewLabels.week'),
+    '2week': t('calendar.mobile.header.viewLabels.2week'),
+    schedule: t('calendar.mobile.header.viewLabels.schedule'),
+  } as const
 
   // jsx-no-bind optimization: Navigation handlers
   const handleViewMenuOpen = useCallback(() => {
@@ -111,7 +113,7 @@ export const MobileHeader = ({
             type="button"
             onClick={onBack}
             className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
-            aria-label="戻る"
+            aria-label={t('calendar.mobile.header.back')}
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
@@ -120,7 +122,7 @@ export const MobileHeader = ({
             type="button"
             onClick={onMenuToggle}
             className="hover:bg-accent/50 -ml-2 rounded-full p-2 transition-colors"
-            aria-label="メニューを開く"
+            aria-label={t('calendar.mobile.header.openMenu')}
           >
             <Menu className="h-5 w-5" />
           </button>
@@ -141,7 +143,7 @@ export const MobileHeader = ({
               onClick={handleViewMenuOpen}
               className="text-muted-foreground hover:bg-accent/50 rounded px-2 py-0.5 text-xs transition-colors"
             >
-              {viewLabels[viewType] || viewType}表示
+              {viewLabels[viewType] || viewType}{t('calendar.mobile.header.viewSuffix')}
             </button>
           </>
         )}
@@ -153,7 +155,7 @@ export const MobileHeader = ({
           type="button"
           onClick={handleNavigatePrev}
           className="hover:bg-accent/50 rounded-full p-2 transition-colors"
-          aria-label="前の期間"
+          aria-label={t('calendar.mobile.header.prevPeriod')}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -161,7 +163,7 @@ export const MobileHeader = ({
           type="button"
           onClick={handleNavigateNext}
           className="hover:bg-accent/50 rounded-full p-2 transition-colors"
-          aria-label="次の期間"
+          aria-label={t('calendar.mobile.header.nextPeriod')}
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -176,7 +178,7 @@ export const MobileHeader = ({
             onKeyDown={handleViewMenuKeyDown}
             role="button"
             tabIndex={0}
-            aria-label="メニューを閉じる"
+            aria-label={t('calendar.mobile.header.closeMenu')}
           />
 
           {/* メニュー */}
@@ -192,7 +194,7 @@ export const MobileHeader = ({
                     viewType === value && 'bg-accent text-accent-foreground font-medium'
                   )}
                 >
-                  {label}表示
+                  {label}{t('calendar.mobile.header.viewSuffix')}
                 </button>
               ))}
             </div>

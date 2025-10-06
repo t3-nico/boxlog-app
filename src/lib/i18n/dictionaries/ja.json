@@ -72,7 +72,7 @@
         "🛠️ **トラブルシューティング** - 一般的な問題の解決"
       ],
       "note": "**注意**: BoxLogアプリケーションの使用方法に関するサポートのみ提供しています。",
-      "question": "BoxLogについて何か知りたいことはありますか？"
+      "question": "BoxLogについて何か知り���いことはありますか？"
     },
     "messageStatus": {
       "sending": "送信中...",
@@ -221,7 +221,11 @@
     "close": "閉じる",
     "confirm": "確認",
     "loading": "読み込み中...",
-    "noData": "データがありません"
+    "noData": "データがありません",
+    "undo": "元に戻す",
+    "toast": {
+      "eventDeleted": "予定を削除しました"
+    }
   },
   "calendar": {
     "title": "カレンダー",
@@ -230,9 +234,93 @@
       "splitDay": "分割日表示",
       "3day": "3日表示",
       "week": "週表示",
+      "weekday": "平日",
       "weekNoWeekend": "週表示（平日のみ）",
       "2week": "2週表示",
-      "month": "月表示"
+      "month": "月表示",
+      "list": "リスト"
+    },
+    "mobile": {
+      "drawer": {
+        "menu": "メニュー",
+        "calendar": "カレンダー",
+        "settings": "設定",
+        "notifications": "通知",
+        "theme": "テーマ",
+        "export": "エクスポート",
+        "import": "インポート",
+        "closeMenu": "メニューを閉じる"
+      },
+      "header": {
+        "viewLabels": {
+          "day": "日",
+          "3day": "3日",
+          "weekNoWeekend": "平日",
+          "week": "週",
+          "2week": "2週",
+          "schedule": "リスト"
+        },
+        "viewSuffix": "表示",
+        "back": "戻る",
+        "openMenu": "メニューを開く",
+        "prevPeriod": "前の期間",
+        "nextPeriod": "次の期間",
+        "closeMenu": "メニューを閉じる"
+      },
+      "navigation": {
+        "calendar": "カレンダー",
+        "profile": "プロフィール",
+        "settings": "設定",
+        "createEvent": "新しいイベントを作成"
+      }
+    },
+    "event": {
+      "title": "イベント",
+      "delete": "予定を削除",
+      "edit": "編集",
+      "duplicate": "複製",
+      "restore": "予定を復元しました",
+      "restoreFailed": "復元に失敗しました",
+      "adjustEndTime": "ドラッグして終了時間を調整",
+      "noTimeSet": "時間未設定",
+      "noDescription": "説明なし",
+      "newTask": "新しいタスク",
+      "created": "予定を作成しました",
+      "updated": "予定を更新しました",
+      "deleted": "予定を削除しました",
+      "moved": "予定を移動しました",
+      "resized": "予定をリサイズしました",
+      "resizeFailed": "予定のリサイズ���失敗しました",
+      "undoMove": "移動を取り消しました",
+      "undoFailed": "取り消しに失敗しました",
+      "saved": "保存しました",
+      "noEventsOnThisDay": "この日にはイベントがありません",
+      "selectEventToEdit": "編集するイベントを選択してください",
+      "selectEventToDelete": "削除するイベントを選択してください"
+    },
+    "actions": {
+      "undo": "元に戻す",
+      "undone": "操作を取り消しました",
+      "view": "表示",
+      "goToToday": "今日へ移動"
+    },
+    "accessibility": {
+      "standardContrast": "標準コントラスト",
+      "toggleWeekend": "週末表示の切り替え"
+    },
+    "performance": {
+      "notCalculated": "未計測",
+      "memoryLeakDetected": "継続的なメモリ増加を検出",
+      "fixLayoutShift": "レイアウトシフトの原因を特定・修正"
+    },
+    "resize": {
+      "tooCloseToEnd": "終了時間に近すぎます",
+      "tooCloseToStart": "開始時間に近すぎます"
+    },
+    "network": {
+      "authRequired": "認証が必要です",
+      "accessDenied": "アクセスが拒否されました",
+      "notFound": "リソースが見つかりません"
     },
     "errors": {
       "loadFailed": "カレンダーの読み込みに失敗しました",
@@ -392,7 +480,7 @@
     }
   },
   "table": {
-    "title": "テーブルビュー",
+    "title": "��ーブルビュー",
     "description": "タスクをテーブル形式で表示",
     "comingSoon": "タスクテーブルコンポーネントは近日公開予定...",
     "willDisplay": "タスクをテーブル形式で表示します",
@@ -580,7 +668,7 @@
       "color": "カラー",
       "description": "説明（任意）",
       "descriptionPlaceholder": "このタグの用途や説明を入力...",
-      "maxLevelNote": "最大3階層まで作成できます",
+      "maxLevelNote": "最大3階層���で作成できます",
       "customColor": "カスタムカラー",
       "preview": "プレビュー",
       "tagNamePlaceholder": "（タグ名）",

@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Tag } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { SettingsLayout } from '@/features/settings/components'
 import { useTags } from '@/features/tags/hooks/use-tags'
@@ -35,6 +36,7 @@ const TagTreeView = dynamic(
 )
 
 export const TagsPageClient = () => {
+  const { t } = useI18n()
   const [searchQuery, setSearchQuery] = useState('')
   const [showInactive, setShowInactive] = useState(false)
 
@@ -83,18 +85,18 @@ export const TagsPageClient = () => {
   // エラー状態
   if (error) {
     return (
-      <SettingsLayout title="タグ管理" description="階層構造でタグを整理・管理できます">
+      <SettingsLayout title={t('settings.tags.title')} description={t('settings.tags.description')}>
         <div className="text-center">
           <div className="mb-4 text-red-600 dark:text-red-400">
             <Tag className="mx-auto mb-2 h-12 w-12" data-slot="icon" />
-            <p>タグの読み込みに失敗しました</p>
+            <p>{t('settings.tags.loadError')}</p>
           </div>
           <button
             type="button"
             onClick={handleReload}
             className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
           >
-            再読み込み
+            {t('settings.tags.reload')}
           </button>
         </div>
       </SettingsLayout>
@@ -103,7 +105,7 @@ export const TagsPageClient = () => {
 
   return (
     <ErrorBoundary>
-      <SettingsLayout title="タグ管理" description="階層構造でタグを整理・管理できます">
+      <SettingsLayout title={t('settings.tags.title')} description={t('settings.tags.description')}>
         <div className="space-y-6">
           {/* ツールバー */}
           <TagsToolbar

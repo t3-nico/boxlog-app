@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 export type ViewOption = {
@@ -35,6 +36,7 @@ export const ViewSwitcher = ({
   buttonClassName,
   dropdownClassName,
 }: ViewSwitcherProps) => {
+  const { t } = useI18n()
   const [isOpen, setIsOpen] = useState(false)
   const currentOption = options.find((opt) => opt.value === currentView)
   const { showWeekends, updateSettings } = useCalendarSettingsStore()
@@ -140,7 +142,7 @@ export const ViewSwitcher = ({
             onKeyDown={handleBackdropKeyDown}
             role="button"
             tabIndex={0}
-            aria-label="ドロップダウンを閉じる"
+            aria-label={t('calendar.viewSwitcher.closeDropdown')}
           />
 
           {/* Dropdown */}
@@ -200,7 +202,7 @@ export const ViewSwitcher = ({
                   )}
                   role="checkbox"
                   aria-checked={showWeekends}
-                  aria-label={`週末表示を${showWeekends ? '無効' : '有効'}にする`}
+                  aria-label={showWeekends ? t('calendar.viewSwitcher.disableWeekends') : t('calendar.viewSwitcher.enableWeekends')}
                   aria-describedby="weekend-toggle-description"
                 >
                   <div
@@ -213,11 +215,11 @@ export const ViewSwitcher = ({
                       <Check className="h-3 w-3 text-white transition-transform duration-150" data-check-icon />
                     )}
                   </div>
-                  <span>週末表示</span>
+                  <span>{t('calendar.viewSwitcher.showWeekends')}</span>
                 </button>
                 {/* アクセシビリティ用の説明（スクリーンリーダー向け） */}
                 <div id="weekend-toggle-description" className="sr-only">
-                  キーボードショートカット: Cmd+W または Ctrl+W で切り替え可能
+                  {t('calendar.viewSwitcher.keyboardShortcutDescription')}
                 </div>
               </div>
             </div>

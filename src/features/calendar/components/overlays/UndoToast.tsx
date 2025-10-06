@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
 import type { CalendarEvent } from '@/features/events'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface UndoAction {
@@ -30,6 +31,7 @@ interface UndoToastProps {
 }
 
 export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: UndoToastProps) => {
+  const { t } = useI18n()
   const [isVisible, setIsVisible] = useState(false)
   const [progress, setProgress] = useState(100)
 
@@ -135,7 +137,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
           {/* メッセージ */}
           <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-white">{action.description}</p>
-            <p className="mt-1 text-xs text-gray-400">Press Ctrl+Z to undo</p>
+            <p className="mt-1 text-xs text-gray-400">{t('calendar.undoToast.undoShortcut')}</p>
           </div>
 
           {/* アクション */}
@@ -151,7 +153,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               )}
             >
               <Undo2 className="h-3 w-3" />
-              Undo
+              {t('calendar.undoToast.undoButton')}
             </button>
 
             <button

@@ -4,6 +4,7 @@ import { format, getWeek } from 'date-fns'
 import { ChevronDown } from 'lucide-react'
 
 import { MiniCalendarPopover } from '@/features/calendar/components/common'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface DateRangeDisplayProps {
@@ -127,6 +128,8 @@ export const DateRangeDisplay = ({
  * 週番号バッジ
  */
 const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: string }) => {
+  const { t } = useI18n()
+
   return (
     <span
       className={cn(
@@ -137,7 +140,7 @@ const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: 
         'text-neutral-700 dark:text-neutral-300',
         className
       )}
-      aria-label={`第${weekNumber}週`}
+      aria-label={t('calendar.dateRange.weekLabel').replace('{weekNumber}', String(weekNumber))}
     >
       week{weekNumber}
     </span>

@@ -43,5 +43,45 @@
     "switch": "言語を変更",
     "english": "英語",
     "japanese": "日本語"
+  },
+  "calendar": {
+    "viewSwitcher": {
+      "closeDropdown": "ドロップダウンを閉じる",
+      "showWeekends": "週末表示",
+      "enableWeekends": "週末表示を有効にする",
+      "disableWeekends": "週末表示を無効にする",
+      "keyboardShortcutDescription": "キーボードショートカット: Cmd+W または Ctrl+W で切り替え可能"
+    },
+    "dateRange": {
+      "weekLabel": "第{weekNumber}週"
+    },
+    "headerActions": {
+      "settings": "Settings",
+      "export": "Export",
+      "import": "Import",
+      "moreOptions": "More options"
+    },
+    "weekendDropDialog": {
+      "title": "週末への移動を検出しました",
+      "description": "現在週末表示がOFFになっています",
+      "sourceLabel": "移動元:",
+      "targetLabel": "移動先:",
+      "explanation": "週末表示がOFFのため、このイベントを次の平日（月曜日）に自動的に移動します。",
+      "hint": "週末に移動したい場合は、設定で「週末表示」をONにしてからもう一度お試しください。",
+      "confirmButton": "月曜日に移動"
+    },
+    "undoToast": {
+      "undoShortcut": "Press Ctrl+Z to undo",
+      "undoButton": "Undo"
+    },
+    "emptyState": {
+      "defaultTitle": "No events",
+      "defaultDescription": "Click to create a new event"
+    },
+    "contextMenu": {
+      "edit": "編集",
+      "duplicate": "複製",
+      "delete": "削除"
+    }
   }
 }

@@ -1,18 +1,20 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { SettingsLayout } from '@/features/settings/components'
 import { TrashView } from '@/features/trash/components/TrashView'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
 
 const TrashPage = () => {
+  const { t } = useI18n()
   const { emptyTrash, getStats } = useTrashStore()
   const stats = getStats()
 
   return (
     <SettingsLayout
-      title="ゴミ箱"
-      description={`${stats.totalItems}件のアイテム。30日後に自動削除されます。`}
+      title={t('settings.trash.title')}
+      description={t('settings.trash.itemsCount', { count: stats.totalItems })}
       actions={
         stats.totalItems > 0 && (
           <button
@@ -20,7 +22,7 @@ const TrashPage = () => {
             onClick={emptyTrash}
             className="p-4 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
           >
-            ゴミ箱を空にする
+            {t('settings.trash.empty')}
           </button>
         )
       }
@@ -31,16 +33,16 @@ const TrashPage = () => {
             <div className="text-center">
               <div className="text-red-600 dark:text-red-400 mb-4 text-6xl">🗑️</div>
               <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
-                ゴミ箱の表示に失敗しました
+                {t('settings.trash.displayError')}
               </h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                ページをリロードしてください。
+                {t('settings.trash.reloadMessage')}
               </p>
               <button
                 onClick={() => window.location.reload()}
                 className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
               >
-                リロード
+                {t('settings.trash.reloadButton')}
               </button>
             </div>
           </div>

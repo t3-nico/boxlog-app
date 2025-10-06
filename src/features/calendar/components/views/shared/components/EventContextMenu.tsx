@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Copy, Edit2, Trash2 } from 'lucide-react'
 
 import type { CalendarEvent } from '@/features/events/types/events'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface EventContextMenuProps {
@@ -25,6 +26,7 @@ export const EventContextMenu = ({
   onDelete,
   onDuplicate,
 }: EventContextMenuProps) => {
+  const { t } = useI18n()
   const menuRef = useRef<HTMLDivElement>(null)
   const [adjustedPosition, setAdjustedPosition] = useState(position)
 
@@ -84,19 +86,19 @@ export const EventContextMenu = ({
   const menuItems = [
     {
       icon: Edit2,
-      label: '編集',
+      label: t('calendar.contextMenu.edit'),
       action: () => onEdit?.(event),
       available: !!onEdit,
     },
     {
       icon: Copy,
-      label: '複製',
+      label: t('calendar.contextMenu.duplicate'),
       action: () => onDuplicate?.(event),
       available: !!onDuplicate,
     },
     {
       icon: Trash2,
-      label: '削除',
+      label: t('calendar.contextMenu.delete'),
       action: () => onDelete?.(event),
       available: !!onDelete,
       dangerous: true,

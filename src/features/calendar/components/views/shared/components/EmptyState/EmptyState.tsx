@@ -6,16 +6,23 @@
 
 import React, { memo } from 'react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 import type { EmptyStateProps } from '../../types/view.types'
 
 export const EmptyState = memo<EmptyStateProps>(function EmptyState({
-  title = 'No events',
-  description = 'Click to create a new event',
+  title,
+  description,
   icon,
   actions,
   hint,
   className = ''
 }) {
+  const { t } = useI18n()
+
+  // デフォルト値を翻訳から取得
+  const displayTitle = title ?? t('calendar.emptyState.defaultTitle')
+  const displayDescription = description ?? t('calendar.emptyState.defaultDescription')
   // アイコンの処理：コンポーネント型の場合はJSX要素として展開
   const renderIcon = () => {
     if (!icon) {
@@ -58,26 +65,26 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
     <div className={`flex flex-col items-center justify-center h-full p-8 text-center ${className}`}>
       {/* アイコン */}
       {renderIcon()}
-      
+
       {/* タイトル */}
       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-        {title}
+        {displayTitle}
       </h3>
-      
+
       {/* 説明 */}
-      {description != null && (
+      {displayDescription != null && (
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-          {description}
+          {displayDescription}
         </p>
       )}
-      
+
       {/* アクションボタン */}
       {actions != null && (
         <div className="mb-6">
           {actions}
         </div>
       )}
-      
+
       {/* ヒント */}
       {hint != null && (
         <div className="mt-8 text-xs text-muted-foreground max-w-sm">

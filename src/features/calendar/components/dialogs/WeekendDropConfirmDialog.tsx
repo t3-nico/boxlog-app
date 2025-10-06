@@ -15,6 +15,7 @@ import {
   DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface WeekendDropConfirmDialogProps {
@@ -40,6 +41,8 @@ export const WeekendDropConfirmDialog = ({
   onCancel,
   onClose
 }: WeekendDropConfirmDialogProps) => {
+  const { t } = useI18n()
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[500px]">
@@ -53,10 +56,10 @@ export const WeekendDropConfirmDialog = ({
             </div>
             <div>
               <DialogTitle className="text-left">
-                週末への移動を検出しました
+                {t('calendar.weekendDropDialog.title')}
               </DialogTitle>
               <DialogDescription className="text-left mt-1">
-                現在週末表示がOFFになっています
+                {t('calendar.weekendDropDialog.description')}
               </DialogDescription>
             </div>
           </div>
@@ -77,11 +80,11 @@ export const WeekendDropConfirmDialog = ({
                 </h3>
                 <div className="space-y-1 mt-2">
                   <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
-                    <span className="font-medium">移動元:</span> {' '}
+                    <span className="font-medium">{t('calendar.weekendDropDialog.sourceLabel')}</span> {' '}
                     {format(originalDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
                   <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
-                    <span className="font-medium">移動先:</span> {' '}
+                    <span className="font-medium">{t('calendar.weekendDropDialog.targetLabel')}</span> {' '}
                     {format(suggestedDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
                 </div>
@@ -92,21 +95,21 @@ export const WeekendDropConfirmDialog = ({
           {/* 説明テキスト */}
           <div className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
             <p>
-              週末表示がOFFのため、このイベントを次の平日（月曜日）に自動的に移動します。
+              {t('calendar.weekendDropDialog.explanation')}
             </p>
             <p className="mt-2">
-              週末に移動したい場合は、設定で「週末表示」をONにしてからもう一度お試しください。
+              {t('calendar.weekendDropDialog.hint')}
             </p>
           </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={onCancel}
             className="flex-1 sm:flex-none"
           >
-            キャンセル
+            {t('actions.cancel')}
           </Button>
           <Button
             onClick={onConfirm}
@@ -116,7 +119,7 @@ export const WeekendDropConfirmDialog = ({
               'text-white'
             )}
           >
-            月曜日に移動
+            {t('calendar.weekendDropDialog.confirmButton')}
           </Button>
         </DialogFooter>
       </DialogContent>

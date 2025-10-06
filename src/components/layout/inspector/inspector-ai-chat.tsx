@@ -2,22 +2,24 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 
-import { 
-  ArrowUpCircle, 
-  Sparkles, 
-  MoreVertical, 
-  Trash2, 
+import {
+  ArrowUpCircle,
+  Sparkles,
+  MoreVertical,
+  Trash2,
   Copy
 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 
 const MessageBubble = ({ message }: { message: ChatMessage }) => {
+  const { t } = useI18n()
   const isUser = message.sender === 'user'
-  
+
   if (isUser) {
     return (
       <div className={cn('my-4 flex justify-end')}>
@@ -30,8 +32,8 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
           </div>
           {message.status != null && (
             <div className={cn('mt-1 text-xs opacity-75')}>
-              {message.status === 'sending' && 'Sending...'}
-              {message.status === 'error' && 'Error sending message'}
+              {message.status === 'sending' && t('help.messageStatus.sending')}
+              {message.status === 'error' && t('aiChat.errors.sendingMessage')}
             </div>
           )}
         </div>
@@ -70,6 +72,7 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
 }
 
 const ChatInput = () => {
+  const { t } = useI18n()
   const { inputValue, isTyping, sendMessage, setInputValue } = useChatStore()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -118,7 +121,7 @@ const ChatInput = () => {
             <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
             <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
           </div>
-          <span>AI is thinking...</span>
+          <span>{t('aiChat.status.thinkingAI')}</span>
         </div>
       )}
 
@@ -131,7 +134,7 @@ const ChatInput = () => {
             onKeyDown={handleKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
-            placeholder="Ask AI anything..."
+            placeholder={t('aiChat.input.placeholderAI')}
             className="w-full resize-none rounded-lg border border-neutral-200 dark:border-neutral-800 bg-card p-4 pr-12 text-sm focus:ring-2 focus:ring-primary max-h-32 min-h-[44px] placeholder:text-muted-foreground"
             disabled={isTyping}
             rows={1}
@@ -151,6 +154,7 @@ const ChatInput = () => {
 }
 
 export const InspectorAIChat = () => {
+  const { t } = useI18n()
   const { messages, clearMessages } = useChatStore()
   const [showMenu, setShowMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -187,9 +191,9 @@ export const InspectorAIChat = () => {
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">AI Assistant</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{t('aiChat.assistant')}</h3>
               <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                Ask me anything about your tasks
+                {t('aiChat.welcome.description')}
               </p>
             </div>
           </div>
@@ -213,7 +217,7 @@ export const InspectorAIChat = () => {
                   className="w-full flex items-center gap-2 p-2 text-sm text-card-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-fast"
                 >
                   <Trash2 className="w-4 h-4" />
-                  Clear conversation
+                  {t('aiChat.menu.clearConversation')}
                 </button>
                 <button
                   type="button"
@@ -221,7 +225,7 @@ export const InspectorAIChat = () => {
                   className="w-full flex items-center gap-2 p-2 text-sm text-card-foreground hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-fast"
                 >
                   <Copy className="w-4 h-4" />
-                  Export conversation
+                  {t('aiChat.menu.exportConversation')}
                 </button>
               </div>
             )}
@@ -237,10 +241,10 @@ export const InspectorAIChat = () => {
               <Sparkles className="w-8 h-8 text-primary-foreground" />
             </div>
             <h3 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mt-1">
-              Hi! I&apos;m your AI assistant
+              {t('aiChat.welcome.greeting4')}
             </h3>
             <p className="text-neutral-600 dark:text-neutral-400 max-w-md text-sm">
-              I can help you with productivity insights, task management, and answer questions about BoxLog.
+              {t('aiChat.welcome.description')}
             </p>
           </div>
         ) : (

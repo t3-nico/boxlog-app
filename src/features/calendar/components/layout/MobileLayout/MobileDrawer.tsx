@@ -6,6 +6,7 @@ import Image from 'next/image'
 
 import { X, Calendar, Settings, Download, Upload, User, Bell, Palette } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 export type DrawerMenuItem = {
@@ -31,46 +32,6 @@ interface MobileDrawerProps {
   className?: string
 }
 
-const defaultMenuItems: DrawerMenuItem[] = [
-  {
-    id: 'calendar',
-    label: 'カレンダー',
-    icon: <Calendar className="h-5 w-5" />
-  },
-  {
-    id: 'settings',
-    label: '設定',
-    icon: <Settings className="h-5 w-5" />
-  },
-  {
-    id: 'notifications',
-    label: '通知',
-    icon: <Bell className="h-5 w-5" />,
-    badge: 3
-  },
-  {
-    id: 'theme',
-    label: 'テーマ',
-    icon: <Palette className="h-5 w-5" />
-  },
-  {
-    id: 'divider1',
-    label: '',
-    icon: null,
-    divider: true
-  },
-  {
-    id: 'export',
-    label: 'エクスポート',
-    icon: <Download className="h-5 w-5" />
-  },
-  {
-    id: 'import',
-    label: 'インポート',
-    icon: <Upload className="h-5 w-5" />
-  }
-]
-
 /**
  * モバイル用ドロワーメニュー
  * 左側からスライドインするサイドメニュー
@@ -78,12 +39,56 @@ const defaultMenuItems: DrawerMenuItem[] = [
 export const MobileDrawer = ({
   isOpen,
   onClose,
-  title = 'メニュー',
-  items = defaultMenuItems,
+  title,
+  items,
   userInfo,
   className
 }: MobileDrawerProps) => {
+  const { t } = useI18n()
   const drawerRef = useRef<HTMLDivElement>(null)
+
+  const defaultMenuItems: DrawerMenuItem[] = [
+    {
+      id: 'calendar',
+      label: t('calendar.mobile.drawer.calendar'),
+      icon: <Calendar className="h-5 w-5" />
+    },
+    {
+      id: 'settings',
+      label: t('calendar.mobile.drawer.settings'),
+      icon: <Settings className="h-5 w-5" />
+    },
+    {
+      id: 'notifications',
+      label: t('calendar.mobile.drawer.notifications'),
+      icon: <Bell className="h-5 w-5" />,
+      badge: 3
+    },
+    {
+      id: 'theme',
+      label: t('settings.preferences.title'),
+      icon: <Palette className="h-5 w-5" />
+    },
+    {
+      id: 'divider1',
+      label: '',
+      icon: null,
+      divider: true
+    },
+    {
+      id: 'export',
+      label: t('settings.dataExport.title'),
+      icon: <Download className="h-5 w-5" />
+    },
+    {
+      id: 'import',
+      label: t('actions.create'),
+      icon: <Upload className="h-5 w-5" />
+    }
+  ]
+
+  const menuItems = items ?? defaultMenuItems
+  const menuTitle = title ?? t('navigation.settings')
 
   // ESCキーでクローズ
   useEffect(() => {
@@ -166,16 +171,16 @@ export const MobileDrawer = ({
         )}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label={menuTitle}
       >
         {/* ヘッダー */}
         <div className="flex items-center justify-between p-4">
-          <h2 className="text-lg font-semibold">{title}</h2>
+          <h2 className="text-lg font-semibold">{menuTitle}</h2>
           <button
             type="button"
             onClick={onClose}
             className="p-2 -mr-2 hover:bg-accent/50 rounded-full transition-colors"
-            aria-label="メニューを閉じる"
+            aria-label={t('calendar.mobile.drawer.closeMenu')}
           >
             <X className="h-5 w-5" />
           </button>
@@ -214,7 +219,7 @@ export const MobileDrawer = ({
         {/* メニューアイテム */}
         <div className="flex-1 overflow-y-auto">
           <div className="py-2">
-            {items.map((item) => {
+            {menuItems.map((item) => {
               if (item.divider) {
                 return (
                   <div

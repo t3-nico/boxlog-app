@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { CheckCircle, RotateCcw, X } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface DeletedEvent {
@@ -31,6 +32,7 @@ export const DeleteToast = ({
   onDismiss,
   autoHideDelay = 6000 // 6秒後に自動非表示
 }: DeleteToastProps) => {
+  const { t } = useI18n()
   const [isVisible, setIsVisible] = useState(false)
   const [timeLeft, setTimeLeft] = useState(autoHideDelay / 1000)
 
@@ -93,7 +95,7 @@ export const DeleteToast = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <p className="text-sm font-medium text-white">
-                予定を削除しました
+                {t('common.toast.eventDeleted')}
               </p>
               {/* カウントダウン表示 */}
               <span className="text-xs text-gray-400">
@@ -132,7 +134,7 @@ export const DeleteToast = ({
               className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-300 hover:text-blue-200 hover:bg-blue-900/20 rounded-md transition-colors"
             >
               <RotateCcw className="w-4 h-4" />
-              元に戻す
+              {t('common.undo')}
             </button>
 
             {/* 閉じるボタン */}
@@ -140,7 +142,7 @@ export const DeleteToast = ({
               type="button"
               onClick={handleClose}
               className="p-1 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-md transition-colors"
-              title="閉じる"
+              title={t('common.close')}
             >
               <X className="w-4 h-4" />
             </button>

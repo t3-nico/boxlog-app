@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import { useI18n } from '@/lib/i18n/hooks'
 import { SettingsLayout } from '@/features/settings/components'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import type { ChronotypeType } from '@/types/chronotype'
@@ -10,6 +11,7 @@ import { ChronotypeSelector } from './components/ChronotypeSelector'
 import { DiagnosisModal } from './components/DiagnosisModal'
 
 const ChronoTypePage = () => {
+  const { t } = useI18n()
   const { chronotype, updateSettings } = useCalendarSettingsStore()
   const [showDiagnosis, setShowDiagnosis] = useState(false)
 
@@ -32,8 +34,8 @@ const ChronoTypePage = () => {
 
   return (
     <SettingsLayout
-      title="クロノタイプ設定"
-      description="あなたの生体リズムに最適化されたスケジュールを設定します"
+      title={t('settings.chronotype.title')}
+      description={t('settings.chronotype.description')}
     >
       <div className="space-y-6">
         {/* クロノタイプ選択 */}

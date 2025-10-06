@@ -4,6 +4,8 @@
 import * as React from 'react'
 import { useCallback, useState } from 'react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 // Speech Recognition API types
 interface SpeechRecognitionEvent {
   results: {
@@ -162,6 +164,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 }
 
 const ChatInput = () => {
+  const { t } = useI18n()
   const { state, sendMessage, setInputValue } = useChatStore()
   const [_isComposing, _setIsComposing] = useState(false)
   const [isListening, setIsListening] = useState(false)
@@ -218,7 +221,7 @@ const ChatInput = () => {
         recognition.onerror = () => setIsListening(false)
         recognition.start()
       } else {
-        alert('音声認識がサポートされていません')
+        alert(t('aiChat.voiceRecognition.notSupported'))
       }
     } else {
       setIsListening(false)
@@ -241,7 +244,7 @@ const ChatInput = () => {
               style={{ animationDelay: '0.4s' }}
             ></div>
           </div>
-          <span>Claude is thinking...</span>
+          <span>{t('aiChat.status.thinking')}</span>
         </div>
       )}
 
@@ -251,7 +254,7 @@ const ChatInput = () => {
           onChange={handleInputChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
-          placeholder="Ask Claude..."
+          placeholder={t('aiChat.input.placeholderClaude')}
           disabled={state.isTyping}
           minHeight={40}
           maxHeight={120}
@@ -275,7 +278,7 @@ const ChatInput = () => {
               onClick={toggleVoiceInput}
               variant={isListening ? 'default' : 'ghost'}
               className={isListening ? 'bg-red-50 text-red-600 dark:bg-red-950' : ''}
-              title={isListening ? '音声入力を停止' : '音声入力を開始'}
+              title={isListening ? t('aiChat.voiceRecognition.stop') : t('aiChat.voiceRecognition.start')}
             >
               {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
             </AIInputButton>
@@ -289,6 +292,7 @@ const ChatInput = () => {
 }
 
 export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) => {
+  const { t } = useI18n()
   const { state, clearMessages } = useChatStore()
 
   const handleMenuToggle = useCallback(() => {
@@ -331,7 +335,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
           <div className="flex items-center gap-2">
             <Sparkles className="text-foreground h-6 w-6" />
             <div>
-              <h3 className="text-foreground text-sm font-semibold">AI Assistant</h3>
+              <h3 className="text-foreground text-sm font-semibold">{t('aiChat.assistant')}</h3>
             </div>
           </div>
 
@@ -355,7 +359,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
-                    Clear chat
+                    {t('aiChat.menu.clearChat')}
                   </button>
                   <button
                     type="button"
@@ -363,7 +367,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />
-                    Export chat
+                    {t('aiChat.menu.exportChat')}
                   </button>
                 </div>
               )}
@@ -394,19 +398,13 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                 <AIBranch>
                   <AIBranchMessages>
                     <BoxLogAIResponse>
-                      Hi! I&apos;m **Claude**, your AI assistant. I can help you with: • **Task planning and
-                      organization** • **Answering questions** • **Code assistance** • **Writing and analysis** What
-                      would you like to know?
+                      {t('aiChat.welcome.greeting1')}{'\n\n'}• {t('aiChat.welcome.capabilities1.0')}{'\n'}• {t('aiChat.welcome.capabilities1.1')}{'\n'}• {t('aiChat.welcome.capabilities1.2')}{'\n'}• {t('aiChat.welcome.capabilities1.3')}{'\n\n'}{t('aiChat.welcome.question1')}
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      Welcome to **BoxLog**! I&apos;m Claude, your AI assistant. I&apos;m here to help you: • **Organize
-                      your tasks** and projects • **Answer any questions** you might have • **Assist with coding** and
-                      technical issues • **Help with writing** and analysis How can I assist you today?
+                      {t('aiChat.welcome.greeting2')}{'\n\n'}• {t('aiChat.welcome.capabilities2.0')}{'\n'}• {t('aiChat.welcome.capabilities2.1')}{'\n'}• {t('aiChat.welcome.capabilities2.2')}{'\n'}• {t('aiChat.welcome.capabilities2.3')}{'\n\n'}{t('aiChat.welcome.question2')}
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      Hello! I&apos;m **Claude**, ready to help you with BoxLog. My capabilities include: • **Smart task
-                      management** suggestions • **Quick answers** to your questions • **Code assistance** and debugging
-                      • **Content creation** and analysis What would you like to work on?
+                      {t('aiChat.welcome.greeting3')}{'\n\n'}• {t('aiChat.welcome.capabilities3.0')}{'\n'}• {t('aiChat.welcome.capabilities3.1')}{'\n'}• {t('aiChat.welcome.capabilities3.2')}{'\n'}• {t('aiChat.welcome.capabilities3.3')}{'\n\n'}{t('aiChat.welcome.question3')}
                     </BoxLogAIResponse>
                   </AIBranchMessages>
                   <AIBranchSelector from="assistant">

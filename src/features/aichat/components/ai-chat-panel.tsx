@@ -4,6 +4,8 @@ import React, { useState } from 'react'
 
 import { X, Send, Sparkles, MoreVertical, Plus } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 interface AiChatPanelProps {
   isOpen: boolean
   onClose: () => void
@@ -17,16 +19,17 @@ interface Message {
 }
 
 export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
+  const { t } = useI18n()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       type: 'ai',
-      content: 'Hello! I\'m your AI assistant. How can I help you today?',
+      content: t('aiChat.greeting'),
       timestamp: new Date()
     }
   ])
   const [inputValue, setInputValue] = useState('')
-  
+
   if (!isOpen) return null;
 
   const handleSendMessage = () => {
@@ -47,7 +50,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: `I received your message: "${  inputValue  }". This is a simulated response.`,
+        content: t('aiChat.simulatedResponse', { message: inputValue }),
         timestamp: new Date()
       }
       setMessages(prev => [...prev, aiMessage])
@@ -67,7 +70,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-          <h2 className="text-base font-semibold text-foreground">AI Assistant</h2>
+          <h2 className="text-base font-semibold text-foreground">{t('aiChat.assistant')}</h2>
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -77,20 +80,20 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
               setMessages([{
                 id: '1',
                 type: 'ai',
-                content: 'Hello! I\'m your AI assistant. How can I help you today?',
+                content: t('aiChat.greeting'),
                 timestamp: new Date()
               }])
               setInputValue('') // 入力欄もクリア
             }}
             className="p-2 hover:bg-accent/50 rounded-md transition-colors"
-            title="新規チャット"
+            title={t('aiChat.newChat')}
           >
             <Plus className="w-4 h-4 text-muted-foreground" />
           </button>
           <button
             type="button"
             className="p-2 hover:bg-accent/50 rounded-md transition-colors"
-            title="詳細オプション"
+            title={t('aiChat.detailOptions')}
           >
             <MoreVertical className="w-4 h-4 text-muted-foreground" />
           </button>
@@ -98,7 +101,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
             type="button"
             onClick={onClose}
             className="p-2 hover:bg-accent/50 rounded-md transition-colors"
-            title="閉じる"
+            title={t('aiChat.close')}
           >
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
@@ -132,7 +135,7 @@ export const AiChatPanel = ({ isOpen, onClose }: AiChatPanelProps) => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Ask me anything..."
+            placeholder={t('aiChat.input.placeholder')}
             className="flex-1 resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder-muted-foreground focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             rows={2}
           />
