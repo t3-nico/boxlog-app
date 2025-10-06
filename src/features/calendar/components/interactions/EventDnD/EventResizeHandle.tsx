@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface EventResizeHandleProps {
@@ -306,11 +307,13 @@ const ResizeTooltip = ({
   displayTime,
   type,
   isShiftPressed,
+  t,
 }: {
   resizeState: ResizeState
   displayTime: string
   type: 'start' | 'end'
   isShiftPressed: boolean
+  t: (key: string) => string
 }) => {
   if (!resizeState.isResizing || !resizeState.currentPreviewTime) return null
 
@@ -328,7 +331,7 @@ const ResizeTooltip = ({
     >
       {displayTime}
       {resizeState.isInvalid ? <div className="mt-1 text-xs opacity-90">
-          {type === 'start' ? 'Too close to end time' : 'Too close to start time'}
+          {type === 'start' ? t('calendar.resize.tooCloseToEnd') : t('calendar.resize.tooCloseToStart')}
         </div> : null}
       {isShiftPressed ? <div className="mt-1 text-xs opacity-75">5min intervals</div> : null}
     </div>
@@ -361,6 +364,7 @@ export const EventResizeHandle = ({
   otherTime,
   className,
 }: EventResizeHandleProps) => {
+  const { t } = useI18n()
   const snapInterval = useCalendarSettingsStore((state) => state.snapInterval)
   const [resizeState, setResizeState] = useState<ResizeState>({
     isResizing: false,
@@ -457,7 +461,7 @@ export const EventResizeHandle = ({
         timeToMinutes={timeToMinutes}
       />
 
-      <ResizeTooltip resizeState={resizeState} displayTime={displayTime} type={type} isShiftPressed={isShiftPressed} />
+      <ResizeTooltip resizeState={resizeState} displayTime={displayTime} type={type} isShiftPressed={isShiftPressed} t={t} />
 
       <ResizeBorder resizeState={resizeState} />
     </>

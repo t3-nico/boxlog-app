@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 interface HighContrastColors {
   background: string
   foreground: string
@@ -293,9 +295,19 @@ function applyHighContrastTheme(themeName: string): void {
 }
 
 export function useHighContrast() {
+  const { t } = useI18n()
   const [isHighContrastEnabled, setIsHighContrastEnabled] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<string>('default')
   const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
+
+  // 翻訳されたテーマ名を取得
+  const getThemeNames = useCallback(() => ({
+    default: t('calendar.accessibility.standardContrast'),
+    blackOnWhite: '黒地に白文字（ハイコントラスト）',
+    whiteOnBlack: '白地に黒文字（ハイコントラスト）',
+    yellowOnBlack: '黒地に黄色文字（ハイコントラスト）',
+    blueOnYellow: '黄色地に青文字（ハイコントラスト）'
+  }), [t])
 
   // システムのハイコントラスト設定を監視
   useEffect(() => {

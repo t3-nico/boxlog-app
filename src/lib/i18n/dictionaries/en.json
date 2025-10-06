@@ -405,7 +405,15 @@
         "lionDescription": "Most productive in early morning. Wake up at 5-6 AM and peak during morning hours.",
         "bearDescription": "Follow the sun's rhythm. Wake up around 7 AM, productive in morning and early afternoon.",
         "wolfDescription": "Most creative at night. Morning is difficult, productivity increases from afternoon to night.",
-        "dolphinDescription": "Light sleeper with irregular rhythm. Multiple short periods of focus."
+        "dolphinDescription": "Light sleeper with irregular rhythm. Multiple short periods of focus.",
+        "lionPeakHours": "7:00-11:00",
+        "lionLowHours": "17:00-21:00, After 21:00",
+        "bearPeakHours": "9:00-12:00, 14:00-17:00",
+        "bearLowHours": "12:00-14:00, After 22:00",
+        "wolfPeakHours": "17:00-22:00",
+        "wolfLowHours": "6:00-10:00, 12:00-14:00",
+        "dolphinPeakHours": "Morning focus, Evening work",
+        "dolphinLowHours": "Midday rest"
       },
       "schedules": {
         "morningSetup": "Wake up and preparation time",

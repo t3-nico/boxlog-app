@@ -1,4 +1,5 @@
 import type { ChronotypeType } from '@/types/chronotype'
+import type { TFunction } from '@/lib/i18n/types'
 
 import type { ChronoTypeSchedule } from './chronotype.types'
 
@@ -11,13 +12,13 @@ export interface ChronoTypeProfile {
   schedules: ChronoTypeSchedule[]
 }
 
-export const chronoTypeProfiles: ChronoTypeProfile[] = [
+export const getChronoTypeProfiles = (t: TFunction): ChronoTypeProfile[] => [
   {
     id: 'lion',
-    name: 'Lion (ライオン型・超朝型)',
-    description: '早朝に最も生産的。朝5-6時に起床し、午前中にピークを迎える。',
-    peakHours: '7:00-11:00',
-    lowHours: '17:00-21:00, 21:00以降',
+    name: t('settings.chronotype.profiles.lion'),
+    description: t('settings.chronotype.profiles.lionDescription'),
+    peakHours: t('settings.chronotype.profiles.lionPeakHours'),
+    lowHours: t('settings.chronotype.profiles.lionLowHours'),
     schedules: [
       {
         id: '1',
@@ -25,7 +26,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Morning Setup',
         startTime: '05:00',
         endTime: '07:00',
-        description: '起床・準備の時間',
+        description: t('settings.chronotype.schedules.morningSetup'),
         icon: 'admin',
       },
       {
@@ -34,7 +35,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Peak Performance',
         startTime: '07:00',
         endTime: '11:00',
-        description: '最高のパフォーマンス時間',
+        description: t('settings.chronotype.schedules.peakPerformance'),
         icon: 'focus',
       },
       {
@@ -43,7 +44,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Focused Work',
         startTime: '11:00',
         endTime: '14:00',
-        description: '集中作業',
+        description: t('settings.chronotype.schedules.focusedWork'),
         icon: 'creative',
       },
       {
@@ -52,7 +53,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Regular Tasks',
         startTime: '14:00',
         endTime: '17:00',
-        description: '通常業務',
+        description: t('settings.chronotype.schedules.regularTasks'),
         icon: 'admin',
       },
       {
@@ -61,7 +62,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Low Energy',
         startTime: '17:00',
         endTime: '21:00',
-        description: '低エネルギー時間',
+        description: t('settings.chronotype.schedules.lowEnergy'),
         icon: 'rest',
       },
       {
@@ -70,17 +71,17 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Sleep Time',
         startTime: '21:00',
         endTime: '05:00',
-        description: '睡眠時間',
+        description: t('settings.chronotype.schedules.sleepTime'),
         icon: 'sleep',
       },
     ],
   },
   {
     id: 'bear',
-    name: 'Bear (クマ型・標準型)',
-    description: '太陽のリズムに従う。朝7時頃起床、午前中と午後早めが生産的。',
-    peakHours: '9:00-12:00, 14:00-17:00',
-    lowHours: '12:00-14:00, 22:00以降',
+    name: t('settings.chronotype.profiles.bear'),
+    description: t('settings.chronotype.profiles.bearDescription'),
+    peakHours: t('settings.chronotype.profiles.bearPeakHours'),
+    lowHours: t('settings.chronotype.profiles.bearLowHours'),
     schedules: [
       {
         id: '1',
@@ -88,7 +89,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Morning Prep',
         startTime: '07:00',
         endTime: '09:00',
-        description: '起床・準備',
+        description: t('settings.chronotype.schedules.morningPrep'),
         icon: 'admin',
       },
       {
@@ -97,7 +98,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Morning Peak',
         startTime: '09:00',
         endTime: '12:00',
-        description: '午前のピーク時間',
+        description: t('settings.chronotype.schedules.morningPeak'),
         icon: 'focus',
       },
       {
@@ -106,7 +107,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Lunch Break',
         startTime: '12:00',
         endTime: '14:00',
-        description: 'ランチ・休憩',
+        description: t('settings.chronotype.schedules.lunchBreak'),
         icon: 'rest',
       },
       {
@@ -115,7 +116,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Afternoon Peak',
         startTime: '14:00',
         endTime: '17:00',
-        description: '午後のピーク時間',
+        description: t('settings.chronotype.schedules.afternoonPeak'),
         icon: 'creative',
       },
       {
@@ -124,7 +125,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Evening Wind Down',
         startTime: '17:00',
         endTime: '22:00',
-        description: '夕方の時間',
+        description: t('settings.chronotype.schedules.eveningWindDown'),
         icon: 'admin',
       },
       {
@@ -133,17 +134,17 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Sleep Time',
         startTime: '22:00',
         endTime: '07:00',
-        description: '睡眠時間',
+        description: t('settings.chronotype.schedules.sleepTime'),
         icon: 'sleep',
       },
     ],
   },
   {
     id: 'wolf',
-    name: 'Wolf (オオカミ型・夜型)',
-    description: '夜に最も創造的。朝は苦手で、午後から夜にかけて生産性が上がる。',
-    peakHours: '17:00-22:00, 22:00-02:00',
-    lowHours: '7:00-11:00',
+    name: t('settings.chronotype.profiles.wolf'),
+    description: t('settings.chronotype.profiles.wolfDescription'),
+    peakHours: t('settings.chronotype.profiles.wolfPeakHours'),
+    lowHours: t('settings.chronotype.profiles.wolfLowHours'),
     schedules: [
       {
         id: '1',
@@ -151,7 +152,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Slow Morning',
         startTime: '07:00',
         endTime: '11:00',
-        description: '低調な朝の時間',
+        description: t('settings.chronotype.schedules.slowMorning'),
         icon: 'rest',
       },
       {
@@ -160,7 +161,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Gradual Start',
         startTime: '11:00',
         endTime: '14:00',
-        description: '徐々にペースアップ',
+        description: t('settings.chronotype.schedules.gradualStart'),
         icon: 'admin',
       },
       {
@@ -169,7 +170,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Afternoon Focus',
         startTime: '14:00',
         endTime: '17:00',
-        description: '午後の集中時間',
+        description: t('settings.chronotype.schedules.afternoonFocus'),
         icon: 'creative',
       },
       {
@@ -178,7 +179,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Evening Peak',
         startTime: '17:00',
         endTime: '22:00',
-        description: '夜のピーク時間',
+        description: t('settings.chronotype.schedules.eveningPeak'),
         icon: 'focus',
       },
       {
@@ -187,7 +188,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Creative Night',
         startTime: '22:00',
         endTime: '02:00',
-        description: '深夜の創造的時間',
+        description: t('settings.chronotype.schedules.creativeNight'),
         icon: 'creative',
       },
       {
@@ -196,17 +197,17 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Sleep Time',
         startTime: '02:00',
         endTime: '07:00',
-        description: '睡眠時間',
+        description: t('settings.chronotype.schedules.sleepTime'),
         icon: 'sleep',
       },
     ],
   },
   {
     id: 'dolphin',
-    name: 'Dolphin (イルカ型・不規則型)',
-    description: '睡眠が浅く、不規則なリズム。短い集中時間を複数回持つ。',
-    peakHours: '8:00-10:00, 14:00-16:00',
-    lowHours: '12:00-14:00, 22:00以降',
+    name: t('settings.chronotype.profiles.dolphin'),
+    description: t('settings.chronotype.profiles.dolphinDescription'),
+    peakHours: t('settings.chronotype.profiles.dolphinPeakHours'),
+    lowHours: t('settings.chronotype.profiles.dolphinLowHours'),
     schedules: [
       {
         id: '1',
@@ -214,7 +215,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Morning Start',
         startTime: '06:00',
         endTime: '08:00',
-        description: '早朝の起床',
+        description: t('settings.chronotype.schedules.morningStart'),
         icon: 'admin',
       },
       {
@@ -223,7 +224,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Morning Focus',
         startTime: '08:00',
         endTime: '10:00',
-        description: '朝の集中時間',
+        description: t('settings.chronotype.schedules.morningFocus'),
         icon: 'creative',
       },
       {
@@ -232,7 +233,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Regular Tasks',
         startTime: '10:00',
         endTime: '12:00',
-        description: '通常業務',
+        description: t('settings.chronotype.schedules.regularTasks'),
         icon: 'admin',
       },
       {
@@ -241,7 +242,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Midday Rest',
         startTime: '12:00',
         endTime: '14:00',
-        description: '昼間の低調時間',
+        description: t('settings.chronotype.schedules.middayRest'),
         icon: 'rest',
       },
       {
@@ -250,7 +251,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Afternoon Peak',
         startTime: '14:00',
         endTime: '16:00',
-        description: '午後のピーク',
+        description: t('settings.chronotype.schedules.afternoonPeak'),
         icon: 'focus',
       },
       {
@@ -259,7 +260,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Evening Work',
         startTime: '16:00',
         endTime: '18:00',
-        description: '夕方の作業',
+        description: t('settings.chronotype.schedules.eveningWork'),
         icon: 'creative',
       },
       {
@@ -268,7 +269,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Evening Tasks',
         startTime: '18:00',
         endTime: '22:00',
-        description: '夜の時間',
+        description: t('settings.chronotype.schedules.eveningTasks'),
         icon: 'admin',
       },
       {
@@ -277,7 +278,7 @@ export const chronoTypeProfiles: ChronoTypeProfile[] = [
         label: 'Sleep Time',
         startTime: '22:00',
         endTime: '06:00',
-        description: '睡眠時間',
+        description: t('settings.chronotype.schedules.sleepTime'),
         icon: 'sleep',
       },
     ],
