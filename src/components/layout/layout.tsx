@@ -7,7 +7,9 @@ import { usePathname, useSearchParams } from 'next/navigation'
 
 import { Search } from 'lucide-react'
 
-import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
+import { Plus } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
@@ -167,7 +169,14 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
       </div>
 
       {/* Floating Action Button */}
-      <FloatingActionButton onClick={handleCreateEventClick} size="sm" aria-label="新しいイベントを作成" />
+      <Button
+        onClick={handleCreateEventClick}
+        size="icon"
+        aria-label="新しいイベントを作成"
+        className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-2xl shadow-lg md:bottom-6 md:right-6 md:h-16 md:w-16 lg:hidden"
+      >
+        <Plus className="h-6 w-6 md:h-7 md:w-7" />
+      </Button>
 
       {/* Mobile Bottom Navigation */}
       {isMobile ? <MobileBottomNavigation /> : null}
