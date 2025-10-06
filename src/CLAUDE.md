@@ -52,7 +52,82 @@ export const MyComponent: FC<Props> = ({ title, onClose }) => {
 }
 ```
 
-### 4. バリデーション実装
+### 4. 国際化（i18n）必須対応
+
+**新規ページ作成時は必ずi18nを実装すること（ハードコード禁止）**
+
+#### 4.1 Server Component（推奨）
+```tsx
+// src/app/[locale]/(app)/new-page/page.tsx
+import { createTranslation, getDictionary } from '@/lib/i18n'
+import type { Locale } from '@/types/i18n'
+
+interface PageProps {
+  params: Promise<{ locale?: Locale }>
+}
+
+const NewPage = async ({ params }: PageProps) => {
+  const { locale = 'ja' } = await params
+  const dictionary = await getDictionary(locale)
+  const t = createTranslation(dictionary, locale)
+
+  return (
+    <div>
+      <h1>{t('newPage.title')}</h1>
+      <p>{t('newPage.description')}</p>
+    </div>
+  )
+}
+
+export default NewPage
+```
+
+#### 4.2 Client Component
+```tsx
+// src/features/new-feature/NewFeature.tsx
+'use client'
+
+import { useI18n } from '@/lib/i18n/hooks'
+
+export const NewFeature = () => {
+  const { t } = useI18n()
+
+  return (
+    <div>
+      <h2>{t('newFeature.title')}</h2>
+      <button>{t('newFeature.buttons.submit')}</button>
+    </div>
+  )
+}
+```
+
+#### 4.3 翻訳辞書の追加
+```json
+// src/lib/i18n/dictionaries/ja.json
+{
+  "newPage": {
+    "title": "新規ページ",
+    "description": "説明文"
+  }
+}
+
+// src/lib/i18n/dictionaries/en.json
+{
+  "newPage": {
+    "title": "New Page",
+    "description": "Description"
+  }
+}
+```
+
+#### 4.4 実装チェックリスト
+- [ ] すべてのUI文字列を翻訳キーに置き換え
+- [ ] ja.json と en.json 両方に翻訳を追加
+- [ ] Server Component: `getDictionary()` + `createTranslation()` を使用
+- [ ] Client Component: `useI18n()` hookを使用
+- [ ] ハードコードされた日本語・英語が残っていないか確認
+
+### 5. バリデーション実装
 ```tsx
 // ✅ Zodスキーマ使用
 import { z } from 'zod'
@@ -68,7 +143,7 @@ if (!result.success) {
 }
 ```
 
-### 5. インポート順序（ESLint自動整形）
+### 6. インポート順序（ESLint自動整形）
 ```tsx
 // 1. React/Next.js
 import { FC } from 'react'
@@ -85,11 +160,11 @@ import { useTaskStore } from '@/stores/taskStore'
 import { TaskCard } from './TaskCard'
 ```
 
-### 6. ファイル配置（コロケーション原則）
+### 7. ファイル配置（コロケーション原則）
 
 **基本方針**: 関連するファイルは必ず近くに配置し、機能単位で完結させる（Next.js公式推奨）
 
-#### 6.1 コンポーネント構造
+#### 7.1 コンポーネント構造
 ```
 src/components/
   ├── Button/
@@ -107,7 +182,7 @@ src/
   └── docs/button.md             // NG: 離れた場所
 ```
 
-#### 6.2 ページとローカルコンポーネント
+#### 7.2 ページとローカルコンポーネント
 ```
 src/app/
   ├── dashboard/
@@ -127,7 +202,7 @@ src/app/
 src/components/DashboardChart.tsx  // NG: 1ページでしか使わないのに共通化
 ```
 
-#### 6.3 型定義とスキーマ
+#### 7.3 型定義とスキーマ
 ```
 src/features/
   ├── tasks/
@@ -140,7 +215,7 @@ src/features/
 src/types/task.ts              // NG: 複数featureで使わない限り不要
 ```
 
-#### 6.4 カスタムhooks
+#### 7.4 カスタムhooks
 ```
 src/features/
   ├── calendar/
@@ -158,7 +233,7 @@ src/features/
   │   └── useSearchQuery.test.ts
 ```
 
-#### 6.5 ユーティリティ関数
+#### 7.5 ユーティリティ関数
 ```
 src/features/
   ├── tasks/
@@ -171,7 +246,7 @@ src/features/
 src/utils/taskHelpers.ts       // NG: 複数featureで使わない限り不要
 ```
 
-#### 6.6 API routes（tRPC）
+#### 7.6 API routes（tRPC）
 ```
 src/server/
   ├── routers/
@@ -183,7 +258,7 @@ src/server/
   │   │   └── README.md         # ✅ API仕様書
 ```
 
-#### 6.7 ドキュメント配置
+#### 7.7 ドキュメント配置
 ```
 // 機能単位のREADME
 src/features/auth/README.md           # ✅ 認証機能の説明
@@ -196,7 +271,7 @@ docs/
   └── api-reference.md          // NG: すべてのAPIを1ファイルに記載
 ```
 
-#### 6.8 コロケーション判断基準
+#### 7.8 コロケーション判断基準
 
 | 項目 | ローカル配置 | グローバル配置 |
 |------|------------|--------------|
@@ -316,4 +391,4 @@ const responsiveChecklist = {
 ---
 
 **📖 参照元**: [CLAUDE.md](../CLAUDE.md)
-**最終更新**: 2025-10-01 | **v2.0 - コロケーション原則追加**
+**最終更新**: 2025-10-06 | **v2.1 - i18n必須対応追加**
