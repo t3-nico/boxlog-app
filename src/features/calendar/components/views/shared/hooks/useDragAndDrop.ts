@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import { calendarColors } from '@/features/calendar/theme'
+import { useI18n } from '@/lib/i18n/hooks'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { formatTimeRange } from '../utils/dateHelpers'
@@ -79,6 +80,7 @@ export function useDragAndDrop({
   displayDates,
   viewMode = 'day',
 }: UseDragAndDropProps) {
+  const { t } = useI18n()
   const calendarToast = useCalendarToast()
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
@@ -645,7 +647,7 @@ export function useDragAndDrop({
           })
           .catch((error: unknown) => {
             console.error('Failed to resize event:', error)
-            calendarToast.error('予定のリサイズに失敗しました')
+            calendarToast.error(t('calendar.event.resizeFailed'))
           })
       } else {
         // 同期的な場合

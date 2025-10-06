@@ -1,6 +1,7 @@
 /**
  * クロノタイプ診断質問データ
  */
+import type { TranslationFunction } from '@/lib/i18n'
 
 /**
  * クロノタイプ診断質問の型定義
@@ -18,75 +19,75 @@ export interface DiagnosisQuestion {
 /**
  * クロノタイプ診断質問データ
  */
-export const diagnosisQuestions: DiagnosisQuestion[] = [
+export const getDiagnosisQuestions = (t: TranslationFunction): DiagnosisQuestion[] => [
   {
     id: '1',
-    question: '理想的な就寝時間はいつですか？',
+    question: t('settings.chronotype.diagnosis.questions.bedtime'),
     options: [
-      { value: 4, text: '20:00-21:30（超早寝）', type: 'lion' },
-      { value: 3, text: '21:30-23:00（標準的）', type: 'bear' },
-      { value: 2, text: '23:00-01:00（夜型）', type: 'wolf' },
-      { value: 1, text: '不規則・まちまち', type: 'dolphin' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.bedtime1'), type: 'lion' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.bedtime2'), type: 'bear' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.bedtime3'), type: 'wolf' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.bedtimeIrregular'), type: 'dolphin' },
     ],
   },
   {
     id: '2',
-    question: '理想的な起床時間はいつですか？',
+    question: t('settings.chronotype.diagnosis.questions.wakeup'),
     options: [
-      { value: 4, text: '5:00-6:30（超早起き）', type: 'lion' },
-      { value: 3, text: '6:30-8:00（標準的）', type: 'bear' },
-      { value: 2, text: '8:00-10:00（遅め）', type: 'wolf' },
-      { value: 1, text: '不規則・まちまち', type: 'dolphin' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.wakeup1'), type: 'lion' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.wakeup2'), type: 'bear' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.wakeup3'), type: 'wolf' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.wakeupIrregular'), type: 'dolphin' },
     ],
   },
   {
     id: '3',
-    question: '最も集中できる時間帯はいつですか？',
+    question: t('settings.chronotype.diagnosis.questions.peakFocus'),
     options: [
-      { value: 4, text: '早朝（6-9時）', type: 'lion' },
-      { value: 3, text: '午前中（9-12時）', type: 'bear' },
-      { value: 2, text: '夜間（20-24時）', type: 'wolf' },
-      { value: 1, text: '複数の短時間（8-10時、14-16時）', type: 'dolphin' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.focusEarly'), type: 'lion' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.focusMorning'), type: 'bear' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.focusNight'), type: 'wolf' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.focusMultiple'), type: 'dolphin' },
     ],
   },
   {
     id: '4',
-    question: '朝の目覚めはどうですか？',
+    question: t('settings.chronotype.diagnosis.questions.morningWake'),
     options: [
-      { value: 4, text: '非常にスッキリ、すぐ活動開始', type: 'lion' },
-      { value: 3, text: 'スッキリ目覚める', type: 'bear' },
-      { value: 2, text: 'なかなか起きられない', type: 'wolf' },
-      { value: 1, text: '浅い眠り、頻繁に目覚める', type: 'dolphin' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.wakeVeryFresh'), type: 'lion' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.wakeFresh'), type: 'bear' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.wakeHard'), type: 'wolf' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.wakeLight'), type: 'dolphin' },
     ],
   },
   {
     id: '5',
-    question: '夜の過ごし方として好ましいのは？',
+    question: t('settings.chronotype.diagnosis.questions.eveningActivity'),
     options: [
-      { value: 1, text: '19-20時頃にはリラックスモード', type: 'lion' },
-      { value: 2, text: '21-22時頃に適度にくつろぐ', type: 'bear' },
-      { value: 4, text: '深夜まで活発に活動する', type: 'wolf' },
-      { value: 3, text: '気分や体調による', type: 'dolphin' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.eveningRelax'), type: 'lion' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.eveningModerate'), type: 'bear' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.eveningActive'), type: 'wolf' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.eveningDepends'), type: 'dolphin' },
     ],
   },
   {
     id: '6',
-    question: '睡眠の質について教えてください',
+    question: t('settings.chronotype.diagnosis.questions.sleepQuality'),
     options: [
-      { value: 3, text: '規則正しく深く眠れる', type: 'lion' },
-      { value: 4, text: '安定して良く眠れる', type: 'bear' },
-      { value: 2, text: '遅寝だが深く眠れる', type: 'wolf' },
-      { value: 1, text: '浅い眠り、中途覚醒が多い', type: 'dolphin' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.sleepRegular'), type: 'lion' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.sleepStable'), type: 'bear' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.sleepLateDeep'), type: 'wolf' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.sleepLight'), type: 'dolphin' },
     ],
   },
   {
     id: '7',
-    question: '週末の自然な睡眠パターンは？',
+    question: t('settings.chronotype.diagnosis.questions.weekendPattern'),
     options: [
-      { value: 4, text: '平日とまったく同じ', type: 'lion' },
-      { value: 3, text: '平日とほぼ同じ（±1時間）', type: 'bear' },
-      { value: 2, text: '大幅にずれる（2-3時間以上）', type: 'wolf' },
-      { value: 1, text: '不規則で一定しない', type: 'dolphin' },
+      { value: 4, text: t('settings.chronotype.diagnosis.options.weekendSame'), type: 'lion' },
+      { value: 3, text: t('settings.chronotype.diagnosis.options.weekendSimilar'), type: 'bear' },
+      { value: 2, text: t('settings.chronotype.diagnosis.options.weekendDifferent'), type: 'wolf' },
+      { value: 1, text: t('settings.chronotype.diagnosis.options.weekendIrregular'), type: 'dolphin' },
     ],
   },
 ]

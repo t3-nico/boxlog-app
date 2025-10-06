@@ -302,6 +302,29 @@
       "deleteFailed": "予定の削除に失敗しました",
       "moveFailed": "予定の移動に失敗しました"
     },
+    "toast": {
+      "created": "予定を作成しました",
+      "updated": "予定を更新しました",
+      "deleted": "予定を削除しました",
+      "moved": "予定を移動しました",
+      "resized": "時間を変更しました",
+      "duplicated": "件の予定を複製しました",
+      "conflict": "時間が重複しています",
+      "conflictDescription": "既存の予定と時間が重複しています",
+      "saving": "保存中...",
+      "error": "操作に失敗しました",
+      "errorDescription": "しばらく時間を置いてから再度お試しください",
+      "syncSuccess": "カレンダーを同期しました",
+      "syncError": "同期に失敗しました",
+      "syncErrorDescription": "ネットワーク接続を確認してください",
+      "batchComplete": "を完了しました",
+      "batchDescription": "件の予定を処理",
+      "recurringAll": "繰り返し予定をすべて更新しました",
+      "recurringSingle": "この予定のみを更新しました",
+      "reminderSet": "リマインダーを設定しました",
+      "hoursBefore": "時間前",
+      "minutesBefore": "分前"
+    },
     "actions": {
       "undo": "元に戻す",
       "undone": "操作を取り消しました",
@@ -438,6 +461,47 @@
         "middayRest": "昼間の低調時間",
         "eveningWork": "夕方の作業",
         "eveningTasks": "夜の時間"
+      },
+      "diagnosis": {
+        "questions": {
+          "bedtime": "理想的な就寝時間はいつですか？",
+          "wakeup": "理想的な起床時間はいつですか？",
+          "peakFocus": "最も集中できる時間帯はいつですか？",
+          "morningWake": "朝の目覚めはどうですか？",
+          "eveningActivity": "夜の過ごし方として好ましいのは？",
+          "sleepQuality": "睡眠の質について教えてください",
+          "weekendPattern": "週末の自然な睡眠パターンは？"
+        },
+        "options": {
+          "bedtime1": "20:00-21:30（超早寝）",
+          "bedtime2": "21:30-23:00（標準的）",
+          "bedtime3": "23:00-01:00（夜型）",
+          "bedtimeIrregular": "不規則・まちまち",
+          "wakeup1": "5:00-6:30（超早起き）",
+          "wakeup2": "6:30-8:00（標準的）",
+          "wakeup3": "8:00-10:00（遅め）",
+          "wakeupIrregular": "不規則・まちまち",
+          "focusEarly": "早朝（6-9時）",
+          "focusMorning": "午前中（9-12時）",
+          "focusNight": "夜間（20-24時）",
+          "focusMultiple": "複数の短時間（8-10時、14-16時）",
+          "wakeVeryFresh": "非常にスッキリ、すぐ活動開始",
+          "wakeFresh": "スッキリ目覚める",
+          "wakeHard": "なかなか起きられない",
+          "wakeLight": "浅い眠り、頻繁に目覚める",
+          "eveningRelax": "19-20時頃にはリラックスモード",
+          "eveningModerate": "21-22時頃に適度にくつろぐ",
+          "eveningActive": "深夜まで活発に活動する",
+          "eveningDepends": "気分や体調による",
+          "sleepRegular": "規則正しく深く眠れる",
+          "sleepStable": "安定して良く眠れる",
+          "sleepLateDeep": "遅寝だが深く眠れる",
+          "sleepLight": "浅い眠り、中途覚醒が多い",
+          "weekendSame": "平日とまったく同じ",
+          "weekendSimilar": "平日とほぼ同じ（±1時間）",
+          "weekendDifferent": "大幅にずれる（2-3時間以上）",
+          "weekendIrregular": "不規則で一定しない"
+        }
       }
     },
     "dataExport": {

@@ -302,6 +302,29 @@
       "deleteFailed": "Failed to delete event",
       "moveFailed": "Failed to move event"
     },
+    "toast": {
+      "created": "Event created",
+      "updated": "Event updated",
+      "deleted": "Event deleted",
+      "moved": "Event moved",
+      "resized": "Duration changed",
+      "duplicated": "events duplicated",
+      "conflict": "Time conflict",
+      "conflictDescription": "Conflicts with existing event",
+      "saving": "Saving...",
+      "error": "Operation failed",
+      "errorDescription": "Please try again later",
+      "syncSuccess": "Calendar synced",
+      "syncError": "Sync failed",
+      "syncErrorDescription": "Please check your network connection",
+      "batchComplete": "completed",
+      "batchDescription": "events processed",
+      "recurringAll": "Updated all recurring events",
+      "recurringSingle": "Updated this event only",
+      "reminderSet": "Reminder set",
+      "hoursBefore": "hours before",
+      "minutesBefore": "minutes before"
+    },
     "actions": {
       "undo": "Undo",
       "undone": "Operation undone",
@@ -438,6 +461,47 @@
         "middayRest": "Midday low energy time",
         "eveningWork": "Evening work",
         "eveningTasks": "Evening time"
+      },
+      "diagnosis": {
+        "questions": {
+          "bedtime": "What is your ideal bedtime?",
+          "wakeup": "What is your ideal wake-up time?",
+          "peakFocus": "When are you most focused?",
+          "morningWake": "How do you wake up in the morning?",
+          "eveningActivity": "How do you prefer to spend your evenings?",
+          "sleepQuality": "How would you describe your sleep quality?",
+          "weekendPattern": "What is your natural weekend sleep pattern?"
+        },
+        "options": {
+          "bedtime1": "20:00-21:30 (Very early)",
+          "bedtime2": "21:30-23:00 (Standard)",
+          "bedtime3": "23:00-01:00 (Night owl)",
+          "bedtimeIrregular": "Irregular/Varies",
+          "wakeup1": "5:00-6:30 (Very early)",
+          "wakeup2": "6:30-8:00 (Standard)",
+          "wakeup3": "8:00-10:00 (Late)",
+          "wakeupIrregular": "Irregular/Varies",
+          "focusEarly": "Early morning (6-9am)",
+          "focusMorning": "Morning (9am-12pm)",
+          "focusNight": "Night (8pm-12am)",
+          "focusMultiple": "Multiple short periods (8-10am, 2-4pm)",
+          "wakeVeryFresh": "Very fresh, ready to start immediately",
+          "wakeFresh": "Wake up refreshed",
+          "wakeHard": "Hard to wake up",
+          "wakeLight": "Light sleep, wake frequently",
+          "eveningRelax": "Relax mode around 7-8pm",
+          "eveningModerate": "Moderately relaxed around 9-10pm",
+          "eveningActive": "Active until late night",
+          "eveningDepends": "Depends on mood/condition",
+          "sleepRegular": "Regular and deep sleep",
+          "sleepStable": "Stable and good sleep",
+          "sleepLateDeep": "Late to bed but deep sleep",
+          "sleepLight": "Light sleep with frequent awakenings",
+          "weekendSame": "Exactly same as weekdays",
+          "weekendSimilar": "Similar to weekdays (±1 hour)",
+          "weekendDifferent": "Significantly different (2-3+ hours)",
+          "weekendIrregular": "Irregular and inconsistent"
+        }
       }
     },
     "dataExport": {

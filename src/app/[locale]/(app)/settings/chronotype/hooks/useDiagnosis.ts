@@ -1,10 +1,16 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 
 import type { ChronotypeType } from '@/types/chronotype'
+import { useI18n } from '@/lib/i18n/hooks'
+import type { TranslationFunction } from '@/lib/i18n'
 
-import { diagnosisQuestions, calculateDiagnosisResult } from '../chronotype.diagnosis'
+import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
+import { calculateDiagnosisResult } from '../chronotype.diagnosis'
 
 export const useDiagnosis = (onDiagnosisComplete?: (result: ChronotypeType) => void) => {
+  const { t } = useI18n()
+  const diagnosisQuestions = useMemo(() => getDiagnosisQuestions(t as TranslationFunction), [t])
+
   const [showDiagnosis, setShowDiagnosis] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
@@ -46,7 +52,7 @@ export const useDiagnosis = (onDiagnosisComplete?: (result: ChronotypeType) => v
         // 診断完了 - 結果を計算
         const finalAnswers = { ...answers, [questionId]: value }
         setTimeout(() => {
-          const result = calculateDiagnosisResult(finalAnswers)
+          const result = calculateDiagnosisResult(finalAnswers, t as TranslationFunction)
           setDiagnosisResult(result)
           if (onDiagnosisComplete) {
             onDiagnosisComplete(result as ChronotypeType)
@@ -54,7 +60,7 @@ export const useDiagnosis = (onDiagnosisComplete?: (result: ChronotypeType) => v
         }, 300)
       }
     },
-    [currentQuestion, answers, onDiagnosisComplete]
+    [currentQuestion, answers, onDiagnosisComplete, diagnosisQuestions.length, t]
   )
 
   const handleAnswerClick = useCallback(

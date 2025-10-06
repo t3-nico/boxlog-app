@@ -28,8 +28,8 @@ import { Inspector } from './inspector'
 import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
 import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
-import { Sidebar } from './sidebar'
-import { useNavigationStore } from './sidebar/stores/navigation.store'
+import { AppBar } from './appbar'
+import { useNavigationStore } from './appbar/stores/navigation.store'
 
 interface DashboardLayoutProps {
   events?: Event[]
@@ -102,8 +102,8 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 
       {/* メインレイアウト - 3カラム構成 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* L1: Primary Sidebar - モバイル: 常に表示（画面外可能）、デスクトップ: 条件付き表示 */}
-        <Sidebar />
+        {/* L1: AppBar - モバイル: 常に表示（画面外可能）、デスクトップ: 条件付き表示 */}
+        <AppBar />
 
         {/* L2: Navigation + Main Content Area - 中央、Headerで覆われる */}
         <div className="flex flex-1 flex-col">
