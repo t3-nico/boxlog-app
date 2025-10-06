@@ -12,7 +12,7 @@ import { AlertTriangle, Home, RefreshCw, Shield, Zap } from 'lucide-react'
 import { Button } from '@/components/shadcn-ui/button'
 import { createErrorToast, getUserFriendlyMessage, isAutoRecoverable } from '@/config/error-patterns'
 import { cn } from '@/lib/utils'
-import { analyzeError, type ErrorAnalysis } from '@/lib/errors/error-analysis'
+import { analyzeError, type ErrorAnalysis } from '@/lib/error-analysis'
 
 // === 型定義 ===
 

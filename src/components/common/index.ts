@@ -1,5 +1,4 @@
 // Error handling
-export { ErrorBoundary, ErrorDisplay, useErrorHandler, withErrorBoundary } from './ErrorBoundary'
 export {
   APIErrorFallback,
   AuthErrorFallback,
@@ -31,14 +30,7 @@ export {
 // Auto-retry hooks
 export { useApiRetry, default as useAutoRetry, useDataFetchRetry, useUserActionRetry } from '../../hooks/useAutoRetry'
 
-// Unified error handling system
-export {
-  UnifiedErrorHandler,
-  getGlobalErrorStats,
-  handleAsyncError,
-  handleGlobalError,
-  useUnifiedErrorHandler,
-} from '../../lib/unified-error-handler'
+// Unified error handling system - removed (unused)
 
 // Error patterns system
 export {
