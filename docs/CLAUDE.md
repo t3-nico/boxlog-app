@@ -117,7 +117,7 @@ temp_doc.md                  # 一時ファイルはコミット禁止
 
 **太字** - 重要な用語
 `コード` - コマンド・変数名
-[リンク](./path/to/doc.md) - 相対パス使用
+[リンク](./development/COMMANDS.md) - 相対パス使用
 
 \```bash
 # コードブロック（言語指定必須）
@@ -207,7 +207,7 @@ npm run docs:stats
 
 - **ドキュメント一覧**: [`README.md`](./README.md)
 - **ワークフローガイド**: [`development/DOCS_WORKFLOW_GUIDE.md`](./development/DOCS_WORKFLOW_GUIDE.md)
-- **コミット規約**: [`development/COMMIT_RULES.md`](./development/COMMIT_RULES.md)
+- **セッション管理**: [`development/CLAUDE_SESSION_MANAGEMENT.md`](./development/CLAUDE_SESSION_MANAGEMENT.md)
 
 ---
 

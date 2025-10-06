@@ -25,12 +25,9 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 
 **UI統一・テーマ管理・視覚設計**
 
-- [テーマ強制システム](./design-system/THEME_ENFORCEMENT.md) - 統一スタイリング（メイン）
+- [デザインシステム概要](./design-system/README.md) - デザインシステム全体像
 - [テーマ移行ガイド](./design-system/THEME_MIGRATION.md) - 既存コード移行手順
 - [Tailwind移行ガイド](./design-system/TAILWIND_MIGRATION_GUIDE.md) - Tailwind CSS v4移行
-- [タイポグラフィ](./design-system/TYPOGRAPHY_ADJUSTMENTS.md) - 文字体系統一
-- [アイコン・スペーシング](./design-system/ICONS_AND_SPACING_CHANGES.md) - 8pxグリッド
-- [ESLintテーマ強制](./design-system/ESLINT_THEME_ENFORCEMENT.md) - 自動品質管理
 
 ### ⚡ [開発ガイドライン](./development/)
 
@@ -39,9 +36,8 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - [ESLintハイブリッド](./development/ESLINT_HYBRID_APPROACH.md) - 公式準拠ESLint設定
 - [品質システム](./development/QUALITY_SYSTEM_README.md) - コード品質管理
 - [PRテンプレート](./development/PR_TEMPLATE.md) - プルリクエスト作成指針
-- [コミット規約](./development/COMMIT_RULES.md) - Conventional Commits
 - [Issue管理](./development/ISSUE_MANAGEMENT.md) - Issue運用ルール
-- [セッション管理](./development/SESSION_MANAGEMENT.md) - 開発セッション記録
+- [セッション管理](./development/CLAUDE_SESSION_MANAGEMENT.md) - 開発セッション記録
 - [コマンド一覧](./development/COMMANDS.md) - 利用可能コマンド
 
 ### 🔌 [統合・外部連携](./integrations/)
@@ -58,22 +54,12 @@ BoxLog は Next.js 14 + TypeScript で構築されたタスク管理アプリケ
 - [Bundle監視](./performance/BUNDLE_MONITORING.md) - バンドルサイズ最適化
 - [アクセシビリティ](./performance/ACCESSIBILITY_TESTING_GUIDE.md) - WCAG準拠テスト
 
-### 📦 [ビジネスルール辞書システム](./BUSINESS_RULES_GUIDE.md)
-
-**技術的失敗を防ぐ自動化システム（Issue #338完全実現）**
-
-- [完全ガイド](./BUSINESS_RULES_GUIDE.md) - 使用方法・高度設定・トラブルシューティング
-- **実現済み機能**: バリデーション・権限・ワークフロー・制約の全自動化
-- **パフォーマンス**: 0.11ms/回の高速実行
-- **品質保証**: 93%テスト通過率・企業級品質システム
-
 ### 🏗️ [機能実装](./features/)
 
 **機能開発・UI改善・システム実装**
 
-- [自動保存システム](./features/AUTO_SAVE_SYSTEM.md) - データ保存最適化
 - [プログレッシブ開示](./features/PROGRESSIVE_DISCLOSURE_IMPLEMENTATION.md) - UI段階表示
-- [設定レイアウト](./features/SETTINGS_LAYOUT_IMPLEMENTATION.md) - 設定画面最適化
+- [機能実装概要](./features/README.md) - 実装済み機能一覧
 
 ### 🌱 [テストデータ管理](../seeds/)
 
