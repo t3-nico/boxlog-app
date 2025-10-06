@@ -29,6 +29,8 @@ import { useCreateEventInspector } from './inspector/hooks/useCreateEventInspect
 import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
 import { Navigation as SecondaryNavigation, SecondaryNavToggle } from './navigation'
 import { AppBar } from './appbar'
+import { Sidebar } from './sidebar'
+import { DefaultSidebar } from './sidebar/DefaultSidebar'
 import { useNavigationStore } from './appbar/stores/navigation.store'
 
 interface DashboardLayoutProps {
@@ -102,12 +104,17 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 
       {/* メインレイアウト - 3カラム構成 */}
       <div className="flex flex-1 overflow-hidden">
-        {/* L1: AppBar - モバイル: 常に表示（画面外可能）、デスクトップ: 条件付き表示 */}
+        {/* L1: AppBar (64px) - 固定ナビゲーション */}
         <AppBar />
 
-        {/* L2: Navigation + Main Content Area - 中央、Headerで覆われる */}
+        {/* L2: Sidebar (240px) - ルート可変 */}
+        <Sidebar>
+          <DefaultSidebar />
+        </Sidebar>
+
+        {/* L3: Main Content + Inspector */}
         <div className="flex flex-1 flex-col">
-          {/* Header Area - Navigation + Main Content のみ */}
+          {/* Header Area */}
           <Header>
             {/* Mobile Layout */}
             <div className="flex w-full items-center justify-center md:hidden">
@@ -117,13 +124,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 
             {/* Desktop Layout */}
             <div className="hidden w-full items-center md:flex">
-              {/* Left side buttons */}
-              <div className="flex items-center gap-2">
-                {!isSidebarOpen ? <SidebarToggle /> : null}
-                {!isCalendarPage ? <SecondaryNavToggle /> : null}
-              </div>
-
-              {/* Center: Page Title */}
+              {/* Left side: Page Title */}
               <div className="flex flex-1 justify-start">
                 <PageTitle />
               </div>
@@ -149,23 +150,19 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
             </div>
           </Header>
 
-          {/* Navigation + Main Content */}
+          {/* Main Content Area */}
           <div className="flex flex-1 overflow-hidden">
-            {/* Secondary Navigation (240px) - Collapsible - Hidden on Calendar pages */}
-            {!isSecondaryNavCollapsed && !isCalendarPage ? <SecondaryNavigation /> : null}
-
-            {/* Main Content Area */}
             <div className="relative z-10 flex flex-1 bg-neutral-100 dark:bg-neutral-900">
-              {/* Main Content with AI Panel */}
+              {/* Main Content */}
               <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
                 {children}
               </main>
             </div>
+
+            {/* Inspector - 右端 */}
+            <Inspector />
           </div>
         </div>
-
-        {/* L3: Inspector - 右端独立 */}
-        <Inspector />
       </div>
 
       {/* Floating Action Button */}

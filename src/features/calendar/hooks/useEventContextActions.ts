@@ -52,7 +52,7 @@ export function useEventContextActions() {
         calendarToast.error(t('calendar.event.deleteFailed'))
       }
     },
-    [softDeleteEvent, calendarToast]
+    [softDeleteEvent, calendarToast, t]
   )
 
   const handleEditEvent = useCallback(
@@ -187,7 +187,7 @@ export function useEventContextActions() {
         },
       })
     },
-    [calendarToast, openEditModal]
+    [calendarToast, openEditModal, t]
   )
 
   const handleDuplicateEvent = useCallback(

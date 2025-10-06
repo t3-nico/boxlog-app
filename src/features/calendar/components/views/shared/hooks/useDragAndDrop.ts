@@ -655,9 +655,9 @@ export function useDragAndDrop({
       }
     } catch (error) {
       console.error('Failed to resize event:', error)
-      calendarToast.error('予定のリサイズに失敗しました')
+      calendarToast.error(t('calendar.event.resizeFailed'))
     }
-  }, [events, onEventUpdate, dragState.snappedPosition, calendarToast])
+  }, [events, onEventUpdate, dragState.snappedPosition, calendarToast, t])
 
   // リサイズ完了処理
   const handleResizeComplete = useCallback(() => {

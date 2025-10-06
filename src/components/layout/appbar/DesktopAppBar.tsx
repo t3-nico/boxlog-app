@@ -11,6 +11,7 @@ import {
   Table,
   BarChart3,
   Settings,
+  PanelLeftClose,
 } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/avatar'
@@ -28,7 +29,6 @@ interface AppBarItemData {
 }
 
 const appBarItems: AppBarItemData[] = [
-  { id: 'home', label: 'Home', icon: Home, href: '/ja' },
   { id: 'calendar', label: 'Calendar', icon: Calendar, href: '/ja/calendar' },
   { id: 'board', label: 'Board', icon: SquareKanban, href: '/ja/board' },
   { id: 'table', label: 'Table', icon: Table, href: '/ja/table' },
@@ -39,6 +39,11 @@ const appBarItems: AppBarItemData[] = [
 export const DesktopAppBar = () => {
   const pathname = usePathname() || '/'
   const { user } = useAuthContext()
+  const { toggleSidebar } = useNavigationStore()
+
+  const handleToggleAppBar = useCallback(() => {
+    toggleSidebar()
+  }, [toggleSidebar])
 
   return (
     <div
@@ -50,8 +55,53 @@ export const DesktopAppBar = () => {
       )}
       style={{ width: '64px' }}
     >
-      {/* Top: User Avatar */}
-      <div className="flex items-center justify-center py-4">
+      {/* Top: Close Button */}
+      <div className="flex items-center justify-center pt-4 pb-2">
+        <button
+          type="button"
+          onClick={handleToggleAppBar}
+          className={cn(
+            'flex items-center justify-center',
+            'w-8 h-8',
+            'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+            'rounded-sm',
+            'transition-colors duration-150'
+          )}
+        >
+          <PanelLeftClose className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Navigation Items */}
+      <nav className="flex flex-1 flex-col items-center gap-1 py-2">
+        {appBarItems.map((item) => {
+          const Icon = item.icon
+          const isActive = pathname.startsWith(item.href)
+
+          return (
+            <a
+              key={item.id}
+              href={item.href}
+              className={cn(
+                'flex flex-col items-center justify-center',
+                'w-14 h-14',
+                'rounded-lg',
+                'transition-all duration-150',
+                'group',
+                isActive
+                  ? 'bg-primary text-white'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
+              )}
+            >
+              <Icon className="h-5 w-5 mb-1" />
+              <span className="text-[10px] font-medium leading-none">{item.label}</span>
+            </a>
+          )
+        })}
+      </nav>
+
+      {/* Bottom: User Avatar */}
+      <div className="flex items-center justify-center pb-4">
         <UserMenu>
           <button
             type="button"
@@ -86,37 +136,6 @@ export const DesktopAppBar = () => {
           </button>
         </UserMenu>
       </div>
-
-      {/* Divider */}
-      <div className="mx-2 border-t border-neutral-200 dark:border-neutral-700" />
-
-      {/* Navigation Items */}
-      <nav className="flex flex-1 flex-col items-center gap-1 py-4">
-        {appBarItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname.startsWith(item.href)
-
-          return (
-            <a
-              key={item.id}
-              href={item.href}
-              className={cn(
-                'flex flex-col items-center justify-center',
-                'w-14 h-14',
-                'rounded-lg',
-                'transition-all duration-150',
-                'group',
-                isActive
-                  ? 'bg-primary text-white'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
-              )}
-            >
-              <Icon className="h-5 w-5 mb-1" />
-              <span className="text-[10px] font-medium leading-none">{item.label}</span>
-            </a>
-          )
-        })}
-      </nav>
     </div>
   )
 }

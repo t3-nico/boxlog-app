@@ -107,7 +107,7 @@ export function useAccessibilityKeyboard(
 
       return { ...prev, selectedDate: newDate }
     })
-  }, [announce, callbacks])
+  }, [announce, callbacks, t])
 
   /**
    * 時間の移動
@@ -125,7 +125,7 @@ export function useAccessibilityKeyboard(
 
       return { ...prev, selectedTime: newTime }
     })
-  }, [announce, callbacks])
+  }, [announce, callbacks, t])
 
   /**
    * イベント間の移動
@@ -166,7 +166,7 @@ export function useAccessibilityKeyboard(
 
       return { ...prev, selectedEventId: newEvent.id }
     })
-  }, [events, navigationState.selectedDate, announce, callbacks])
+  }, [events, navigationState.selectedDate, announce, callbacks, t])
 
   /**
    * イベント作成
@@ -178,7 +178,7 @@ export function useAccessibilityKeyboard(
       
       return { ...prev, isInEventCreationMode: true }
     })
-  }, [announce, callbacks])
+  }, [announce, callbacks, t])
 
   /**
    * イベント編集
@@ -195,7 +195,7 @@ export function useAccessibilityKeyboard(
     } else {
       announce(t('calendar.event.selectEventToEdit'))
     }
-  }, [navigationState.selectedEventId, events, announce, callbacks])
+  }, [navigationState.selectedEventId, events, announce, callbacks, t])
 
   /**
    * イベント削除
@@ -215,7 +215,7 @@ export function useAccessibilityKeyboard(
     } else {
       announce(t('calendar.event.selectEventToDelete'))
     }
-  }, [navigationState.selectedEventId, events, announce, callbacks])
+  }, [navigationState.selectedEventId, events, announce, callbacks, t])
 
   /**
    * エスケープアクション
@@ -236,7 +236,7 @@ export function useAccessibilityKeyboard(
       }
       return prev
     })
-  }, [announce, callbacks])
+  }, [announce, callbacks, t])
 
   /**
    * ヘルプメッセージの表示

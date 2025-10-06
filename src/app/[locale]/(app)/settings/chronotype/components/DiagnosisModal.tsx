@@ -1,10 +1,16 @@
 /**
  * クロノタイプ診断モーダルコンポーネント
  */
+'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+
 import type { ChronotypeType } from '@/types/chronotype'
-import { diagnosisQuestions } from '../chronotype.diagnosis-questions'
+import { useI18n } from '@/lib/i18n/hooks'
+import type { TranslationFunction } from '@/lib/i18n'
+
+import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
+import { calculateDiagnosisResult } from '../chronotype.diagnosis'
 
 interface DiagnosisModalProps {
   onComplete: (result: ChronotypeType) => void
@@ -12,6 +18,9 @@ interface DiagnosisModalProps {
 }
 
 export function DiagnosisModal({ onComplete, onCancel }: DiagnosisModalProps) {
+  const { t } = useI18n()
+  const diagnosisQuestions = useMemo(() => getDiagnosisQuestions(t as TranslationFunction), [t])
+
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
 
@@ -30,26 +39,9 @@ export function DiagnosisModal({ onComplete, onCancel }: DiagnosisModalProps) {
       setCurrentQuestion((prev) => prev + 1)
     } else {
       // 診断完了 - 結果を計算
-      const result = calculateResult(newAnswers)
+      const result = calculateDiagnosisResult(newAnswers, t as TranslationFunction)
       onComplete(result)
     }
-  }
-
-  const calculateResult = (answers: Record<string, number>): ChronotypeType => {
-    const typeCounts = { lion: 0, bear: 0, wolf: 0, dolphin: 0 }
-
-    diagnosisQuestions.forEach((question) => {
-      const answer = answers[question.id]
-      if (answer) {
-        const selectedOption = question.options.find((opt) => opt.value === answer)
-        if (selectedOption) {
-          typeCounts[selectedOption.type]++
-        }
-      }
-    })
-
-    const maxType = Object.entries(typeCounts).reduce((a, b) => (a[1] > b[1] ? a : b))[0] as ChronotypeType
-    return maxType
   }
 
   const currentQ = diagnosisQuestions[currentQuestion]
@@ -70,7 +62,7 @@ export function DiagnosisModal({ onComplete, onCancel }: DiagnosisModalProps) {
             <div
               className="h-2 rounded-full bg-blue-600 transition-all duration-300 dark:bg-blue-500"
               style={{ width: `${progress}%` }}
-            ></div>
+            />
           </div>
         </div>
 

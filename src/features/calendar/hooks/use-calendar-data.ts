@@ -136,7 +136,7 @@ export function useCalendarData({
     } finally {
       setIsLoading(false)
     }
-  }, [onTaskCreate])
+  }, [onTaskCreate, t])
   
   // タスクの削除
   const deleteTask = useCallback(async (taskId: string) => {

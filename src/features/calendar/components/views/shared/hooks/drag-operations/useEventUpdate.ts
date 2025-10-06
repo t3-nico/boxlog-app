@@ -106,7 +106,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
         calendarToast.eventMoved(eventData, newStartTime)
       }
     },
-    [calendarToast, onEventUpdate, createEventData]
+    [calendarToast, onEventUpdate, createEventData, t]
   )
 
   const executeEventUpdate = useCallback(
@@ -142,7 +142,7 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
         calendarToast.error(t('calendar.event.moveFailed'))
       }
     },
-    [onEventUpdate, calculateEventDuration, handleEventUpdateToast, date, calendarToast]
+    [onEventUpdate, calculateEventDuration, handleEventUpdateToast, date, calendarToast, t]
   )
 
   const executeEventResize = useCallback(
