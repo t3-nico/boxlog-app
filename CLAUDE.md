@@ -6,6 +6,21 @@ AIは、このドキュメントの内容を最優先事項として扱い、
 ユーザーの指示がこのドキュメントと矛盾する場合は、
 必ずこのドキュメントを参照するよう促してください。
 
+### 📖 必須読み込み順序
+AIアシスタントは、作業開始前に必ず以下の順序でドキュメントを読むこと：
+
+```
+1. /CLAUDE.md（本文書）          ← 【必須】意思決定プロトコル
+   ↓
+2. /src/CLAUDE.md                ← 【必須】実装リファレンス
+   ↓
+3. 作業対象ディレクトリのCLAUDE.md（例: /src/components/CLAUDE.md）
+   ↓
+4. 関連ドキュメント（必要に応じて）
+```
+
+**原則**: ルート → src → 作業対象ディレクトリの順で読み、上位の判断基準を常に優先する
+
 ## 🎯 目的
 1. **公式ベストプラクティスの遵守**: 独自解釈を排除
 2. **一貫性の維持**: 同じ問題には常に同じ解決策
@@ -22,9 +37,22 @@ AIは以下の順序で判断すること。上位の判断基準が存在する
 
 ### レベル1：公式ドキュメント（最高優先度）
 1. **Next.js 14公式**: https://nextjs.org/docs
+   - App Router: https://nextjs.org/docs/app
+   - Server Components: https://nextjs.org/docs/app/building-your-application/rendering/server-components
+   - Data Fetching: https://nextjs.org/docs/app/building-your-application/data-fetching
 2. **React 18公式**: https://react.dev
+   - Hooks: https://react.dev/reference/react
+   - Server Components: https://react.dev/reference/rsc/server-components
 3. **TypeScript公式**: https://www.typescriptlang.org/docs/
-4. **Tailwind CSS公式**: https://tailwindcss.com/docs
+   - Handbook: https://www.typescriptlang.org/docs/handbook/intro.html
+4. **Tailwind CSS v4公式**: https://tailwindcss.com/docs
+   - Configuration: https://tailwindcss.com/docs/configuration
+5. **tRPC公式**: https://trpc.io/docs
+   - Next.js Setup: https://trpc.io/docs/client/nextjs
+6. **Zustand公式**: https://zustand-demo.pmnd.rs/
+   - GitHub: https://github.com/pmndrs/zustand
+7. **Zod公式**: https://zod.dev/
+   - Basic Usage: https://zod.dev/?id=basic-usage
 
 ### レベル2：プロジェクト固有ルール（次点優先度）
 1. `/src/config/ui/theme.ts` のデザイントークン
@@ -121,19 +149,24 @@ AIは、コードを書く前に以下を必ず実行すること：
 3. **Issue管理**: すべての作業をIssue化（例外なし）
 4. **TypeScript厳格**: `any` 型禁止
 5. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
-6. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等、詳細は[`src/CLAUDE.md`](src/CLAUDE.md)参照）
+6. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
+
+**実装の詳細**: [`src/CLAUDE.md`](src/CLAUDE.md) - コーディングリファレンス
 
 ## 📚 詳細ドキュメント参照先
 
-### コア情報
-- **プロジェクト概要**: [`docs/README.md`](docs/README.md)
-- **技術スタック詳細**: [`docs/TECH_STACK.md`](docs/TECH_STACK.md)
+### 🔧 実装リファレンス（コピペ可能なコード例）
+- **コーディング規約**: [`src/CLAUDE.md`](src/CLAUDE.md) - スタイリング、型定義、コンポーネント設計
+- **コンポーネント実装**: [`src/components/CLAUDE.md`](src/components/CLAUDE.md) - shadcn/ui、HeadlessUI
+- **機能開発**: [`src/features/CLAUDE.md`](src/features/CLAUDE.md) - モジュール構造、状態管理
+- **カスタムフック**: [`src/hooks/CLAUDE.md`](src/hooks/CLAUDE.md) - フック実装パターン
+- **共通処理**: [`src/lib/CLAUDE.md`](src/lib/CLAUDE.md) - ユーティリティ、API
 
-### 開発ガイドライン
-- **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md) 🆕
-- **AI品質基準（公式準拠版）**: [`.claude/code-standards.md`](.claude/code-standards.md) 🆕
+### 📖 プロジェクト全体
+- **プロジェクト概要**: [`docs/README.md`](docs/README.md)
+- **ESLint公式準拠**: [`docs/ESLINT_HYBRID_APPROACH.md`](docs/ESLINT_HYBRID_APPROACH.md)
+- **AI品質基準**: [`.claude/code-standards.md`](.claude/code-standards.md)
 - **デザインシステム**: [`docs/THEME_ENFORCEMENT.md`](docs/THEME_ENFORCEMENT.md)
-- **コーディング規約・ファイル配置**: [`src/CLAUDE.md`](src/CLAUDE.md) ← コロケーション原則の詳細
 
 ### 開発ワークフロー
 - **コミット規約**: [`docs/development/COMMIT_RULES.md`](docs/development/COMMIT_RULES.md)
@@ -176,9 +209,61 @@ npm run docs:check          # ドキュメント整合性チェック
 - ❌ `getServerSideProps` → ✅ Server Components
 - ❌ カスタムsplitChunks → ✅ Next.js自動最適化
 
-### 📖 参考
-- Next.js公式ドキュメント: https://nextjs.org/docs
-- App Router移行ガイド: https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration
+### 📖 公式ドキュメント（常に最新版を参照）
+- **Next.js 14**: https://nextjs.org/docs
+  - App Router移行: https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration
+  - Best Practices: https://nextjs.org/docs/app/building-your-application/optimizing
+- **React 18**: https://react.dev
+  - Thinking in React: https://react.dev/learn/thinking-in-react
+- **TypeScript**: https://www.typescriptlang.org/docs/
+- **Tailwind CSS v4**: https://tailwindcss.com/docs
+- **Supabase**: https://supabase.com/docs
+- **tRPC**: https://trpc.io/docs
+- **Zod**: https://zod.dev/
 
 ---
-**📖 最終更新**: 2025-10-06 | **バージョン**: v9.0 - AI意思決定プロトコル追加
+
+## 📋 ドキュメント階層構造
+
+```
+/CLAUDE.md（本文書）                    ← レベル0：最高優先度
+  ├── AI意思決定プロトコル
+  ├── 判断優先順位
+  ├── 絶対的禁止事項
+  └── ドキュメントマップ
+
+/src/CLAUDE.md                          ← レベル1：実装の基本
+  ├── コーディング規約
+  ├── ファイル配置ルール
+  ├── レスポンシブデザイン
+  └── インポート順序
+
+/src/{ディレクトリ}/CLAUDE.md           ← レベル2：領域特化
+  ├── /src/components/CLAUDE.md         # UIコンポーネント
+  ├── /src/features/CLAUDE.md           # 機能開発
+  ├── /src/hooks/CLAUDE.md              # カスタムフック
+  └── /src/lib/CLAUDE.md                # 共通処理
+
+/docs/                                  ← レベル3：詳細仕様
+  ├── /docs/architecture/               # アーキテクチャ
+  ├── /docs/development/                # 開発ワークフロー
+  ├── /docs/integrations/               # 外部統合
+  └── /docs/testing/                    # テスト戦略
+```
+
+### 📖 ドキュメント役割
+
+| ドキュメント | 対象 | 内容 | 読み込み |
+|------------|------|------|---------|
+| `/CLAUDE.md` | AIアシスタント | 意思決定プロトコル・判断基準・行動規範 | **必須** |
+| `/src/CLAUDE.md` | 開発者・AI | 実装リファレンス・コード例・技術詳細 | **必須** |
+| `/src/*/CLAUDE.md` | 領域担当者 | 領域特化のルール・パターン | 作業時 |
+| `/docs/` | 全員 | アーキテクチャ・統合・ワークフロー | 必要時 |
+
+**原則**:
+- CLAUDE.md = 「**なぜ・どう判断するか**」（思考プロセス）
+- src/CLAUDE.md = 「**どう書くか**」（実装方法）
+- 下位ドキュメントは上位に従う（矛盾する場合は上位が優先）
+
+---
+**📖 最終更新**: 2025-10-06 | **バージョン**: v9.1 - ドキュメント棲み分け明確化
