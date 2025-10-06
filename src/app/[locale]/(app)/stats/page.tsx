@@ -4,10 +4,10 @@ import { BarChart3 } from 'lucide-react'
 
 import { Heading } from '@/components/custom'
 import { cn } from '@/lib/utils'
-import { useChatContext } from '@/contexts/chat-context'
+import { useChatStore } from '@/features/aichat/stores/useChatStore'
 
 const StatsPage = () => {
-  const { state } = useChatContext()
+  const { state } = useChatStore()
 
   return (
     <div className="flex flex-col h-full relative">

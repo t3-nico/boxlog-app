@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { ChatProvider } from '@/contexts/chat-context'
+import { ChatProvider } from '@/features/aichat/stores/useChatStore'
 import { AuthProvider } from '@/features/auth'
 import { CommandPaletteProvider, useCommandPalette } from '@/features/command-palette/hooks/use-command-palette'
 

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { ArrowUpCircle, Copy, MoreVertical, Sparkles, Trash2 } from 'lucide-react'
 
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 
 interface MessageBubbleProps {
   message: ChatMessage
@@ -48,7 +48,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 }
 
 const ChatInput = () => {
-  const { state, sendMessage, setInputValue } = useChatContext()
+  const { state, sendMessage, setInputValue } = useChatStore()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -67,10 +67,10 @@ const ChatInput = () => {
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
-    if (state.inputValue.trim() && !state.isTyping) {
-      await sendMessage(state.inputValue)
+    if (inputValue.trim() && !isTyping) {
+      await sendMessage(inputValue)
     }
-  }, [state.inputValue, state.isTyping, sendMessage])
+  }, [inputValue, isTyping, sendMessage])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
@@ -86,12 +86,12 @@ const ChatInput = () => {
       const { scrollHeight } = textareaRef.current
       textareaRef.current.style.height = `${Math.min(scrollHeight, 200)}px`
     }
-  }, [state.inputValue])
+  }, [inputValue])
 
   return (
     <div className="border-border bg-background flex-shrink-0 border-t p-6">
       {/* Typing indicator */}
-      {state.isTyping === true && (
+      {isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="bg-muted-foreground/60 h-2 w-2 animate-pulse rounded-full"></div>
@@ -112,20 +112,20 @@ const ChatInput = () => {
         <form onSubmit={handleSubmit} className="relative">
           <textarea
             ref={textareaRef}
-            value={state.inputValue}
+            value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder="Ask Claude anything about BoxLog..."
             className="border-border bg-card placeholder-muted-foreground max-h-32 min-h-[44px] w-full resize-none rounded-xl border px-4 py-3 pr-12 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
-            disabled={state.isTyping}
+            disabled={isTyping}
             rows={1}
           />
 
           <button
             type="submit"
-            disabled={!state.inputValue.trim() || state.isTyping}
+            disabled={!inputValue.trim() || isTyping}
             className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute bottom-2 right-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
           >
             <ArrowUpCircle className="h-6 w-6" />
@@ -137,7 +137,7 @@ const ChatInput = () => {
 }
 
 const ChatHeader = () => {
-  const { clearMessages } = useChatContext()
+  const { clearMessages } = useChatStore()
   const [showMenu, setShowMenu] = useState(false)
 
   // jsx-no-bind optimization: Menu handlers
@@ -204,7 +204,7 @@ const ChatHeader = () => {
 }
 
 const WelcomeMessage = () => {
-  const { sendMessage } = useChatContext()
+  const { sendMessage } = useChatStore()
 
   // jsx-no-bind optimization: Quick prompt handler creator
   const createSendMessageHandler = useCallback((text: string) => {
@@ -256,13 +256,13 @@ const WelcomeMessage = () => {
 }
 
 export const HelpChat = () => {
-  const { state } = useChatContext()
+  const { state } = useChatStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [state.messages])
+  }, [messages])
 
   return (
     <div className="bg-background flex h-full flex-col">
@@ -270,11 +270,11 @@ export const HelpChat = () => {
 
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto">
-        {state.messages.length === 0 ? (
+        {messages.length === 0 ? (
           <WelcomeMessage />
         ) : (
           <div className="mx-auto max-w-4xl space-y-6 p-6">
-            {state.messages.map((message) => (
+            {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
             ))}
             <div ref={messagesEndRef} />

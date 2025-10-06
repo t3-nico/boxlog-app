@@ -65,7 +65,7 @@ import {
 } from '@/components/kibo-ui/ai/input'
 import { AIMessage, AIMessageAvatar, AIMessageContent } from '@/components/kibo-ui/ai/message'
 import { AIResponse } from '@/components/kibo-ui/ai/response'
-import { useChatContext } from '@/contexts/chat-context'
+import { useChatStore } from '@/features/aichat/stores/useChatStore'
 
 // BoxLog用のカスタムAI Responseコンポーネント
 const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
@@ -162,7 +162,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
 }
 
 const ChatInput = () => {
-  const { state, sendMessage, setInputValue } = useChatContext()
+  const { state, sendMessage, setInputValue } = useChatStore()
   const [_isComposing, _setIsComposing] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [selectedModel, setSelectedModel] = useState('claude-3-sonnet')
@@ -289,7 +289,7 @@ const ChatInput = () => {
 }
 
 export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSidebarProps) => {
-  const { state, clearMessages } = useChatContext()
+  const { state, clearMessages } = useChatStore()
 
   const handleMenuToggle = useCallback(() => {
     setShowMenu(!showMenu)

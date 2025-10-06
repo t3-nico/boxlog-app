@@ -8,9 +8,8 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 import { FloatingActionButton } from '@/components/ui/FloatingActionButton'
-import { AIPanelProvider, useAIPanel } from '@/contexts/ai-panel-context'
-import { ChatProvider } from '@/contexts/chat-context'
 import { ThemeProvider } from '@/contexts/theme-context'
+import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import { NotificationModalProvider } from '@/features/notifications'
@@ -65,7 +64,7 @@ const useCalendarProviderProps = (pathname: string, searchParams: URLSearchParam
 
 const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { isSecondaryNavCollapsed, isSidebarOpen } = useNavigationStore()
-  const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanel()
+  const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanelStore()
   const { open: openGlobalSearch } = useGlobalSearch()
   const { openCreateInspector } = useCreateEventInspector()
   const isMobile = useMediaQuery('(max-width: 768px)')
@@ -195,11 +194,7 @@ export const DashboardLayout = ({ events: _events, reviews: _reviews, children }
     <ThemeProvider>
       <GlobalSearchProvider>
         <NotificationModalProvider>
-          <AIPanelProvider>
-            <ChatProvider>
-              <DashboardLayoutContent>{children}</DashboardLayoutContent>
-            </ChatProvider>
-          </AIPanelProvider>
+          <DashboardLayoutContent>{children}</DashboardLayoutContent>
         </NotificationModalProvider>
       </GlobalSearchProvider>
     </ThemeProvider>

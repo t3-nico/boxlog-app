@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Check, Pencil, Sparkles, X } from 'lucide-react'
 
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 import { cn } from '@/lib/utils'
 
 interface MessageBubbleProps {
@@ -13,7 +13,7 @@ interface MessageBubbleProps {
 
 export const MessageBubble = ({ message }: MessageBubbleProps) => {
   const isUser = message.sender === 'user'
-  const { editMessage } = useChatContext()
+  const { editMessage } = useChatStore()
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState(message.content)
   const textareaRef = useRef<HTMLTextAreaElement>(null)

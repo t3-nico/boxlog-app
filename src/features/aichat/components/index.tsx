@@ -5,13 +5,12 @@ import React from 'react'
 import { Sparkles } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-
-import { useAIPanel } from '@/contexts/ai-panel-context'
+import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
 
 import { BottomUpChatModal } from './bottom-up-chat-modal'
 
 export const FloatingAIChat = () => {
-  const { isOpen, setIsOpen } = useAIPanel()
+  const { isOpen, setIsOpen } = useAIPanelStore()
 
   return (
     <>

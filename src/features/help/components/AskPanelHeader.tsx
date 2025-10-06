@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 
 import { Copy, HelpCircle, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
-import { useChatContext } from '@/contexts/chat-context'
+import { useChatStore } from '@/features/aichat/stores/useChatStore'
 import { cn } from '@/lib/utils'
 
 import { useAskPanelStore } from '../stores/useAskPanelStore'
@@ -16,7 +16,7 @@ interface AskPanelHeaderProps {
 }
 
 export const AskPanelHeader = ({ activeTab }: AskPanelHeaderProps) => {
-  const { clearMessages } = useChatContext()
+  const { clearMessages } = useChatStore()
   const { toggleCollapsed } = useAskPanelStore()
   const [showMenu, setShowMenu] = useState(false)
 

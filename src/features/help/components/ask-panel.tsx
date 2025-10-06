@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, HelpCircle, PanelRight, Sparkles } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { useChatContext } from '@/contexts/chat-context'
+import { useChatStore } from '@/features/aichat/stores/useChatStore'
 import { cn } from '@/lib/utils'
 
 import { askPanelSelectors, useAskPanelStore } from '../stores/useAskPanelStore'
@@ -21,7 +21,7 @@ import { MessageBubble } from './MessageBubble'
 
 
 const AIIntroduction = () => {
-  const { sendMessage } = useChatContext()
+  const { sendMessage } = useChatStore()
 
   const quickPrompts = [
     { emoji: '📊', text: 'Analyze my productivity patterns', description: 'Get insights on your work patterns' },
@@ -146,7 +146,7 @@ const _PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help'
 // Help画面のコンテンツ
 
 export const AskPanel = () => {
-  const { state, markAsRead, sendMessage: _sendMessage } = useChatContext()
+  const { messages, unreadCount, markAsRead, sendMessage: _sendMessage } = useChatStore()
   const _isOpen = useAskPanelStore(askPanelSelectors.getIsOpen)
   const collapsed = useAskPanelStore(askPanelSelectors.getCollapsed)
   const currentWidth = useAskPanelStore(askPanelSelectors.getCurrentWidth)
@@ -187,14 +187,14 @@ export const AskPanel = () => {
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [state.messages])
+  }, [messages])
 
   // Mark messages as read when panel is expanded
   useEffect(() => {
-    if (!collapsed && state.unreadCount > 0) {
+    if (!collapsed && unreadCount > 0) {
       markAsRead()
     }
-  }, [collapsed, state.unreadCount, markAsRead])
+  }, [collapsed, unreadCount, markAsRead])
 
   // jsx-no-bind optimization handlers
   const handleTabSelect = useCallback((tab: 'ai' | 'help') => {
@@ -241,10 +241,10 @@ export const AskPanel = () => {
             <Sparkles
               className="size-6 text-purple-600 transition-transform group-hover:scale-110 dark:text-purple-400"
             />
-            {state.unreadCount > 0 && (
+            {unreadCount > 0 && (
               <div className="bg-neutral-100 dark:bg-neutral-900 absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full">
                 <span className="text-xs text-white font-bold">
-                  {Math.min(state.unreadCount, 9)}
+                  {Math.min(unreadCount, 9)}
                 </span>
               </div>
             )}
@@ -313,10 +313,10 @@ export const AskPanel = () => {
                     <div className="text-foreground font-medium">AI Chat</div>
                     <div className="text-muted-foreground text-xs">Ask Claude for help</div>
                   </div>
-                  {state.unreadCount > 0 && (
+                  {unreadCount > 0 && (
                     <div className="bg-neutral-100 dark:bg-neutral-900 flex h-5 w-5 items-center justify-center rounded-full">
                       <span className="text-xs text-white font-bold">
-                        {Math.min(state.unreadCount, 9)}
+                        {Math.min(unreadCount, 9)}
                       </span>
                     </div>
                   )}
@@ -339,7 +339,7 @@ export const AskPanel = () => {
         ) : activeTab === 'ai' ? (
           // AI Chat content
           <>
-            {state.messages.length === 0 ? (
+            {messages.length === 0 ? (
               <>
                 <div className="px-4 py-6">
                   <div className="flex items-start justify-start gap-3">
@@ -368,7 +368,7 @@ export const AskPanel = () => {
               </>
             ) : (
               <div className="space-y-6 px-4 py-6">
-                {state.messages.map((message) => (
+                {messages.map((message) => (
                   <MessageBubble key={message.id} message={message} />
                 ))}
                 <div ref={messagesEndRef} />

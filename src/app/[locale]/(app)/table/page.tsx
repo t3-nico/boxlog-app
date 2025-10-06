@@ -1,11 +1,11 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { useChatContext } from '@/contexts/chat-context'
+import { useChatStore } from '@/features/aichat/stores/useChatStore'
 import { TaskTable } from '@/features/table'
 
 const TablePage = () => {
-  const { toggleChat: _toggleChat, state } = useChatContext()
+  const { toggleChat: _toggleChat, state } = useChatStore()
 
   return (
     <div className="flex flex-col h-full relative">

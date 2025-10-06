@@ -5,8 +5,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowUpCircle, Copy, Maximize2, Minimize2, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { useAIPanel } from '@/contexts/ai-panel-context'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
+import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 
 interface BottomUpChatModalProps {
   isOpen: boolean
@@ -51,16 +51,16 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
 }
 
 const ChatInput = () => {
-  const { state, sendMessage, setInputValue } = useChatContext()
+  const { inputValue, isTyping, sendMessage, setInputValue } = useChatStore()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
-    if (state.inputValue.trim() && !state.isTyping) {
-      await sendMessage(state.inputValue)
+    if (inputValue.trim() && !isTyping) {
+      await sendMessage(inputValue)
     }
-  }, [state.inputValue, state.isTyping, sendMessage])
+  }, [inputValue, isTyping, sendMessage])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
@@ -88,12 +88,12 @@ const ChatInput = () => {
       const { scrollHeight } = textareaRef.current
       textareaRef.current.style.height = `${Math.min(scrollHeight, 120)}px`
     }
-  }, [state.inputValue])
+  }, [inputValue])
 
   return (
     <div className="border-border bg-background flex-shrink-0 border-t p-4">
       {/* Typing indicator */}
-      {state.isTyping === true && (
+      {isTyping === true && (
         <div className="text-muted-foreground mb-3 flex items-center gap-2 text-sm">
           <div className="flex gap-1">
             <div className="h-2 w-2 animate-pulse rounded-full bg-purple-400"></div>
@@ -108,20 +108,20 @@ const ChatInput = () => {
         <form onSubmit={handleSubmit} className="relative">
           <textarea
             ref={textareaRef}
-            value={state.inputValue}
+            value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onCompositionStart={handleCompositionStart}
             onCompositionEnd={handleCompositionEnd}
             placeholder="Ask AI anything..."
             className="border-border bg-card placeholder-muted-foreground max-h-32 min-h-[44px] w-full resize-none rounded-xl border px-4 py-3 pr-12 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"
-            disabled={state.isTyping}
+            disabled={isTyping}
             rows={1}
           />
 
           <button
             type="submit"
-            disabled={!state.inputValue.trim() || state.isTyping}
+            disabled={!inputValue.trim() || isTyping}
             className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute bottom-2 right-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
           >
             <ArrowUpCircle className="h-6 w-6" />
@@ -133,8 +133,8 @@ const ChatInput = () => {
 }
 
 export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) => {
-  const { state, clearMessages } = useChatContext()
-  const { panelHeight, isMinimized, setPanelHeight, setIsMinimized } = useAIPanel()
+  const { messages, clearMessages } = useChatStore()
+  const { panelHeight, isMinimized, setPanelHeight, setIsMinimized } = useAIPanelStore()
   const [showMenu, setShowMenu] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -145,7 +145,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [state.messages])
+  }, [messages])
 
   // Handle resize functionality
   const handleResizeStart = useCallback((e: React.MouseEvent) => {
@@ -325,7 +325,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
           <>
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4">
-              {state.messages.length === 0 ? (
+              {messages.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600">
                     <Sparkles className="h-8 w-8 text-white" />
@@ -337,7 +337,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                 </div>
               ) : (
                 <>
-                  {state.messages.map((message) => (
+                  {messages.map((message) => (
                     <MessageBubble key={message.id} message={message} />
                   ))}
                   <div ref={messagesEndRef} />

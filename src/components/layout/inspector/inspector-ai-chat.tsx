@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 
 import { Button } from '@/components/shadcn-ui/button'
-import { useChatContext, type ChatMessage } from '@/contexts/chat-context'
+import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
 import { cn } from '@/lib/utils'
 
 
@@ -70,7 +70,7 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
 }
 
 const ChatInput = () => {
-  const { state, sendMessage, setInputValue } = useChatContext()
+  const { state, sendMessage, setInputValue } = useChatStore()
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -151,7 +151,7 @@ const ChatInput = () => {
 }
 
 export const InspectorAIChat = () => {
-  const { state, clearMessages } = useChatContext()
+  const { state, clearMessages } = useChatStore()
   const [showMenu, setShowMenu] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
