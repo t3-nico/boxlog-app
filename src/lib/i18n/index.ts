@@ -4,6 +4,8 @@
  */
 
 import type { Locale } from '@/types/i18n'
+import type { TranslatedString } from '@/types/i18n-branded'
+import { markAsTranslated } from '@/types/i18n-branded'
 
 import type { PluralTranslation } from './pluralization'
 import { formatICUPlural, pluralizeWithVariables } from './pluralization'
@@ -13,8 +15,8 @@ export const locales: Locale[] = ['en', 'ja']
 export const defaultLocale: Locale = 'en'
 
 // 翻訳辞書の型
-type NestedObject = { [key: string]: NestedObject | string }
-type Dictionary = Record<string, NestedObject>
+export type NestedObject = { [key: string]: NestedObject | string }
+export type Dictionary = Record<string, NestedObject>
 
 // 翻訳辞書の動的インポート
 const dictionaries: Record<Locale, () => Promise<Dictionary>> = {
@@ -81,46 +83,46 @@ export const getLocaleCookie = (): Locale | null => {
 
 // 拡張翻訳関数の型定義
 export interface TranslationFunction {
-  (key: string, variables?: Record<string, string | number>): string
-  plural: (key: string, count: number, variables?: Record<string, string | number>) => string
-  icu: (message: string, count: number, variables?: Record<string, string | number>) => string
+  (key: string, variables?: Record<string, string | number>): TranslatedString
+  plural: (key: string, count: number, variables?: Record<string, string | number>) => TranslatedString
+  icu: (message: string, count: number, variables?: Record<string, string | number>) => TranslatedString
 }
 
 // 翻訳関数生成（複数形処理対応）
 export const createTranslation = (dictionary: Dictionary, locale: Locale = defaultLocale): TranslationFunction => {
-  const baseTranslation = (key: string, variables?: Record<string, string | number>): string => {
+  const baseTranslation = (key: string, variables?: Record<string, string | number>): TranslatedString => {
     const translation = getNestedValue(dictionary, key)
 
     // ICU Message Format形式の検出と処理
     if (translation.includes('{') && translation.includes('plural')) {
       const count = (variables?.count as number) || 0
-      return formatICUPlural(locale, count, translation, variables)
+      return markAsTranslated(formatICUPlural(locale, count, translation, variables))
     }
 
-    return interpolate(translation, variables)
+    return markAsTranslated(interpolate(translation, variables))
   }
 
   // 複数形処理関数
-  const pluralTranslation = (key: string, count: number, variables?: Record<string, string | number>): string => {
+  const pluralTranslation = (key: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
     const translation = getNestedValue(dictionary, key)
 
     // オブジェクト形式の複数形翻訳をチェック
     if (typeof translation === 'object') {
       try {
         const pluralTranslations = JSON.parse(JSON.stringify(translation)) as PluralTranslation
-        return pluralizeWithVariables(locale, count, pluralTranslations, variables)
+        return markAsTranslated(pluralizeWithVariables(locale, count, pluralTranslations, variables))
       } catch {
         // JSONパースに失敗した場合は通常の翻訳として処理
       }
     }
 
     // 文字列の場合は通常の変数補間
-    return interpolate(translation, { count, ...variables })
+    return markAsTranslated(interpolate(translation, { count, ...variables }))
   }
 
   // ICU形式直接処理関数
-  const icuTranslation = (message: string, count: number, variables?: Record<string, string | number>): string => {
-    return formatICUPlural(locale, count, message, variables)
+  const icuTranslation = (message: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+    return markAsTranslated(formatICUPlural(locale, count, message, variables))
   }
 
   // 関数にメソッドを追加
@@ -133,9 +135,9 @@ export const createTranslation = (dictionary: Dictionary, locale: Locale = defau
 
 // レガシー互換性のためのシンプル翻訳関数
 export const createSimpleTranslation = (dictionary: Dictionary) => {
-  return (key: string, variables?: Record<string, string | number>): string => {
+  return (key: string, variables?: Record<string, string | number>): TranslatedString => {
     const translation = getNestedValue(dictionary, key)
-    return interpolate(translation, variables)
+    return markAsTranslated(interpolate(translation, variables))
   }
 }
 

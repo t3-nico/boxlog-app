@@ -120,12 +120,38 @@ export const NewFeature = () => {
 }
 ```
 
-#### 4.4 実装チェックリスト
+#### 4.4 型安全性による翻訳漏れ防止
+
+**TypeScript Branded Types で ハードコード文字列を型レベルで禁止**
+
+```tsx
+import type { TranslatedString } from '@/types/i18n-branded'
+
+// ✅ OK: t()の戻り値（TranslatedString型）
+const title = t('page.title')  // 型: TranslatedString
+
+// ❌ エラー: 生の文字列は型エラー
+const title: TranslatedString = 'こんにちは'
+// Type 'string' is not assignable to type 'TranslatedString'
+
+// ✅ OK: コンポーネントでTranslatedStringを要求
+interface Props {
+  title: TranslatedString  // ← ハードコード禁止
+}
+```
+
+**メリット:**
+- コード書いた瞬間にVS Codeで赤線表示
+- `npm run typecheck`でコンパイルエラー
+- 翻訳漏れを開発時に即座に検出
+
+#### 4.5 実装チェックリスト
 - [ ] すべてのUI文字列を翻訳キーに置き換え
 - [ ] ja.json と en.json 両方に翻訳を追加
 - [ ] Server Component: `getDictionary()` + `createTranslation()` を使用
 - [ ] Client Component: `useI18n()` hookを使用
 - [ ] ハードコードされた日本語・英語が残っていないか確認
+- [ ] `TranslatedString`型を活用して型安全性を確保
 
 ### 5. バリデーション実装
 ```tsx

@@ -4,10 +4,13 @@
  * i18n関連のReactフック
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import type { Locale } from '@/types/i18n'
+import type { TranslatedString } from '@/types/i18n-branded'
+import { markAsTranslated } from '@/types/i18n-branded'
 
+import { createTranslation, getDictionary, type Dictionary } from './index'
 import { getDirection, isRTL } from './rtl'
 
 // ブラウザの現在の言語を取得するフック
@@ -198,5 +201,45 @@ export const useTranslation = () => {
     t,
     locale,
     ready: true, // 翻訳リソースの読み込み状態
+  }
+}
+
+/**
+ * i18n翻訳フック（型安全版）
+ *
+ * TranslatedString型を返すことで、ハードコード文字列の使用を防ぎます。
+ *
+ * @example
+ * ```tsx
+ * 'use client'
+ * import { useI18n } from '@/lib/i18n/hooks'
+ *
+ * export function MyComponent() {
+ *   const { t } = useI18n()
+ *   return <h1>{t('page.title')}</h1>
+ * }
+ * ```
+ */
+export const useI18n = () => {
+  const locale = useCurrentLocale()
+  const [dictionary, setDictionary] = useState<Dictionary | null>(null)
+
+  useEffect(() => {
+    getDictionary(locale as 'en' | 'ja').then(setDictionary)
+  }, [locale])
+
+  const t = useMemo(() => {
+    if (!dictionary) {
+      // 辞書ロード中はキーをそのまま返す
+      return (key: string): TranslatedString => markAsTranslated(key)
+    }
+
+    return createTranslation(dictionary, locale as 'en' | 'ja')
+  }, [dictionary, locale])
+
+  return {
+    t,
+    locale,
+    ready: dictionary !== null,
   }
 }
