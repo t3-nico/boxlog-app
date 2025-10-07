@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight, HelpCircle, PanelRight, Sparkles } from 'luc
 
 import { Button } from '@/components/ui/button'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import { askPanelSelectors, useAskPanelStore } from '../stores/useAskPanelStore'
@@ -22,12 +23,13 @@ import { MessageBubble } from './MessageBubble'
 
 const AIIntroduction = () => {
   const { sendMessage } = useChatStore()
+  const { t } = useI18n()
 
   const quickPrompts = [
-    { emoji: '📊', text: 'Analyze my productivity patterns', description: 'Get insights on your work patterns' },
-    { emoji: '🎯', text: 'What tasks should I focus on today?', description: 'Prioritize your day' },
-    { emoji: '📅', text: 'Help me organize my schedule', description: 'Optimize your calendar' },
-    { emoji: '💡', text: 'Suggest productivity improvements', description: 'Enhance your workflow' },
+    { emoji: '📊', text: t('help.suggestions.analyzeProductivity'), description: t('help.suggestions.analyzeProductivityDesc') },
+    { emoji: '🎯', text: t('help.suggestions.focusToday'), description: t('help.suggestions.focusTodayDesc') },
+    { emoji: '📅', text: t('help.suggestions.organizeSchedule'), description: t('help.suggestions.organizeScheduleDesc') },
+    { emoji: '💡', text: t('help.suggestions.suggestImprovements'), description: t('help.suggestions.suggestImprovementsDesc') },
   ]
 
   // jsx-no-bind optimization handler using data attributes
@@ -80,11 +82,12 @@ const AIIntroduction = () => {
 
 // メニュー選択画面（collapsed状態から開いた時の初期画面）
 const _PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) => {
+  const { t } = useI18n()
   const menuItems = [
     {
       id: 'ai' as const,
-      title: 'AI Assistant',
-      description: 'Chat with Claude for productivity insights and task management',
+      title: t('help.askPanel.assistant'),
+      description: t('help.askPanel.chatPlaceholder'),
       icon: Sparkles,
       color: 'from-purple-600 to-blue-600',
       badge: null,

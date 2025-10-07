@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react'
 import { Copy, HelpCircle, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import { useAskPanelStore } from '../stores/useAskPanelStore'
@@ -16,6 +17,7 @@ interface AskPanelHeaderProps {
 }
 
 export const AskPanelHeader = ({ activeTab }: AskPanelHeaderProps) => {
+  const { t } = useI18n()
   const { clearMessages } = useChatStore()
   const { toggleCollapsed } = useAskPanelStore()
   const [showMenu, setShowMenu] = useState(false)
@@ -65,7 +67,7 @@ export const AskPanelHeader = ({ activeTab }: AskPanelHeaderProps) => {
             <div>
               <h3 className="text-foreground font-semibold">{activeTabData.label}</h3>
               <p className="text-muted-foreground text-xs">
-                {activeTab === 'ai' ? 'Your AI assistant' : 'Documentation & support'}
+                {activeTab === 'ai' ? t('help.askPanel.assistant') : 'Documentation & support'}
               </p>
             </div>
           </div>

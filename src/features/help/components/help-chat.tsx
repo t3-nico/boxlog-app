@@ -5,12 +5,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowUpCircle, Copy, MoreVertical, Sparkles, Trash2 } from 'lucide-react'
 
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
+import { useI18n } from '@/lib/i18n/hooks'
 
 interface MessageBubbleProps {
   message: ChatMessage
 }
 
 const MessageBubble = ({ message }: MessageBubbleProps) => {
+  const { t } = useI18n()
   const isUser = message.sender === 'user'
 
   if (isUser) {
@@ -20,8 +22,8 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
           {message.status != null && (
             <div className="mt-1 text-xs text-blue-100 opacity-75">
-              {message.status === 'sending' && 'Sending...'}
-              {message.status === 'error' && 'Error sending message'}
+              {message.status === 'sending' && t('help.messageStatus.sending')}
+              {message.status === 'error' && t('help.errors.sendingMessage')}
             </div>
           )}
         </div>
@@ -205,6 +207,7 @@ const ChatHeader = () => {
 
 const WelcomeMessage = () => {
   const { sendMessage } = useChatStore()
+  const { t } = useI18n()
 
   // jsx-no-bind optimization: Quick prompt handler creator
   const createSendMessageHandler = useCallback((text: string) => {
@@ -213,9 +216,9 @@ const WelcomeMessage = () => {
 
   const quickPrompts = [
     { emoji: '🚀', text: 'How do I get started with BoxLog?', description: 'Basic setup and first steps' },
-    { emoji: '📊', text: 'Analyze my productivity patterns', description: 'Get insights on your work habits' },
-    { emoji: '🎯', text: 'What tasks should I focus on today?', description: 'Prioritize your daily tasks' },
-    { emoji: '📅', text: 'Help me organize my schedule', description: 'Optimize your calendar and time' },
+    { emoji: '📊', text: t('help.suggestions.analyzeProductivity'), description: t('help.suggestions.analyzeProductivityDesc') },
+    { emoji: '🎯', text: t('help.suggestions.focusToday'), description: t('help.suggestions.focusTodayDesc') },
+    { emoji: '📅', text: t('help.suggestions.organizeSchedule'), description: t('help.suggestions.organizeScheduleDesc') },
   ]
 
   return (

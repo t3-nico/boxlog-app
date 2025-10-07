@@ -10,16 +10,16 @@ import {
   Calendar,
   Search
 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
 
 import { Heading } from '@/components/app'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { useI18n } from '@/lib/i18n/hooks'
 
 const ChatHistoryPage = () => {
-  const t = useTranslations('help.chatHistory')
+  const { t } = useI18n()
 
   // Mock data - In actual implementation, fetch from appropriate data source
   const chatSessions = [

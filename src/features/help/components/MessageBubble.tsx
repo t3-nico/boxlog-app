@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Check, Pencil, Sparkles, X } from 'lucide-react'
 
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 interface MessageBubbleProps {
@@ -12,6 +13,7 @@ interface MessageBubbleProps {
 }
 
 export const MessageBubble = ({ message }: MessageBubbleProps) => {
+  const { t } = useI18n()
   const isUser = message.sender === 'user'
   const { editMessage } = useChatStore()
   const [isEditing, setIsEditing] = useState(false)
@@ -97,7 +99,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             {message.status && !isEditing ? (
               <div className="mt-1 text-xs text-blue-100 opacity-75">
                 {message.status === 'sending' && '送信中...'}
-                {message.status === 'error' && '送信エラー'}
+                {message.status === 'error' && t('help.messageBubble.sendError')}
               </div>
             ) : null}
           </div>

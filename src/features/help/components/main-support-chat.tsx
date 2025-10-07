@@ -245,7 +245,7 @@ ${t('help.welcome.capabilities', 'I can help you with:')}
 
 ${t('help.welcome.note', 'Note: AI responses may not always be accurate.')}
 
-${t('help.welcome.question', 'How can I help you today?')}`,
+${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
           },
         ],
       },

@@ -19,31 +19,33 @@ import {
   SidebarLabel,
   SidebarSection,
 } from '@/components/layout/navigation/shared'
+import { useI18n } from '@/lib/i18n/hooks'
 
 interface HelpSidebarSectionsProps {
   collapsed: boolean
 }
 
 export const HelpSidebarSections = ({ collapsed }: HelpSidebarSectionsProps) => {
+  const { t } = useI18n()
   if (collapsed) return null
 
   // Mock data - In actual implementation, fetch from appropriate data source
   const recentChatSessions = [
     {
       id: '1',
-      title: 'Calendar sync issues',
+      title: t('help.sidebar.calendarSyncIssues'),
       timestamp: '2 hours ago',
       status: 'resolved'
     },
     {
-      id: '2', 
-      title: 'How to delete tasks',
+      id: '2',
+      title: t('help.sidebar.howToDeleteTasks'),
       timestamp: '1 day ago',
       status: 'active'
     },
     {
       id: '3',
-      title: 'Data export procedures',
+      title: t('help.sidebar.dataExportProcedures'),
       timestamp: '3 days ago',
       status: 'resolved'
     },

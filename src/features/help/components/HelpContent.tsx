@@ -2,29 +2,33 @@
 
 import { Book, ExternalLink, MessageSquare } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 export const HelpContent = () => {
+  const { t } = useI18n()
+
   const helpSections = [
     {
       title: 'Getting Started',
       items: [
-        { title: 'Quick Start Guide', description: 'Learn the basics of BoxLog' },
-        { title: 'Creating Your First Task', description: 'Step-by-step tutorial' },
-        { title: 'Setting Up Your Workspace', description: 'Customize your environment' },
+        { title: t('help.content.quickStartGuide'), description: t('help.content.learnBasics') },
+        { title: t('help.content.creatingFirstTask'), description: 'Step-by-step tutorial' },
+        { title: t('help.content.settingUpWorkspace'), description: t('help.content.customizeEnvironment') },
       ],
     },
     {
       title: 'Features',
       items: [
-        { title: 'Calendar View', description: 'Managing tasks in calendar format' },
-        { title: 'Tags & Smart Folders', description: 'Organizing with tags and automation' },
-        { title: 'Productivity Analytics', description: 'Understanding your work patterns' },
+        { title: 'Calendar View', description: t('help.content.manageTasksCalendar') },
+        { title: 'Tags & Smart Folders', description: t('help.content.organizeTags') },
+        { title: 'Productivity Analytics', description: t('help.content.understandPatterns') },
       ],
     },
     {
       title: 'Troubleshooting',
       items: [
-        { title: 'Common Issues', description: 'Solutions to frequent problems' },
-        { title: 'Performance Tips', description: 'Optimize your BoxLog experience' },
+        { title: 'Common Issues', description: t('help.content.frequentProblems') },
+        { title: 'Performance Tips', description: t('help.content.optimizeExperience') },
         { title: 'Data Backup', description: 'Keep your data safe' },
       ],
     },
