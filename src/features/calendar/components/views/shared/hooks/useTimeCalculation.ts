@@ -2,6 +2,8 @@ import { useCallback } from 'react'
 
 import { format } from 'date-fns'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 
 export interface TimeCalculationResult {
@@ -28,7 +30,8 @@ export function useTimeCalculation({
   maxHour = 23,
   minHour = 0
 }: UseTimeCalculationOptions = {}) {
-  
+  const { t } = useI18n()
+
   /**
    * Y座標（ピクセル）から時刻を計算
    * @param clickY クリック位置のY座標
@@ -117,10 +120,10 @@ export function useTimeCalculation({
    * @returns フォーマットされた時間範囲文字列
    */
   const formatTimeRange = useCallback((startDate: Date, endDate?: Date | null): string => {
-    if (!startDate) return 'No time set'
-    
+    if (!startDate) return t('calendar.event.noTimeSet')
+
     const start = startDate instanceof Date ? startDate : new Date(startDate)
-    if (isNaN(start.getTime())) return 'No time set'
+    if (isNaN(start.getTime())) return t('calendar.event.noTimeSet')
     
     const startTime = format(start, 'HH:mm')
     

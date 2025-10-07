@@ -289,7 +289,8 @@ export function useAccessibilityKeyboard(
       setNavigationState,
       announce,
       events,
-      TIME_SLOTS
+      TIME_SLOTS,
+      noDescriptionText: t('calendar.event.noDescription')
     }
 
     // ヘルパー関数を直接呼び出し

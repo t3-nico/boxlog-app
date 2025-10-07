@@ -15,6 +15,7 @@ export interface KeyboardHandlerProps {
   announce: (message: string, priority?: 'polite' | 'assertive') => void
   events: { id: string; title: string; startDate?: Date; endDate?: Date; description?: string }[]
   TIME_SLOTS: string[]
+  noDescriptionText: string // 翻訳文字列
 }
 
 export const handleArrowKeys = ({
@@ -150,8 +151,9 @@ export const handleEventDetailKeys = ({
   event,
   navigationState,
   events,
-  announce
-}: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'events' | 'announce'>) => {
+  announce,
+  noDescriptionText
+}: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'events' | 'announce' | 'noDescriptionText'>) => {
   const { key } = event
 
   if (key === ' ') { // スペースキー
@@ -167,7 +169,7 @@ export const handleEventDetailKeys = ({
           hour: '2-digit',
           minute: '2-digit'
         })
-        announce(`${selectedEvent.title}。${timeString}から${endTimeString}まで。${selectedEvent.description || '説明なし'}`)
+        announce(`${selectedEvent.title}。${timeString}から${endTimeString}まで。${selectedEvent.description || noDescriptionText}`)
       }
     }
   }
