@@ -4,7 +4,6 @@ import { ArrowLeft } from 'lucide-react'
 
 import { BaseLayout } from '@/components/base-layout'
 import { cn } from '@/lib/utils'
-import type { Event } from '@/types/unified'
 
 // 404ページのコンテンツコンポーネント
 const NotFoundContent = () => {
@@ -39,12 +38,8 @@ const NotFoundContent = () => {
 }
 
 const NotFound = () => {
-  // Empty arrays for events and reviews since this is a 404 page
-  const events: Event[] = []
-  const reviews: unknown[] = []
-
   return (
-    <BaseLayout events={events} reviews={reviews}>
+    <BaseLayout>
       <NotFoundContent />
     </BaseLayout>
   )

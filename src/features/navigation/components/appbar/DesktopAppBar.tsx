@@ -47,15 +47,26 @@ export const DesktopAppBar = () => {
         <button
           type="button"
           onClick={handleToggleSidebar}
-          className="flex h-8 w-8 items-center justify-center rounded-sm transition-colors duration-150 hover:bg-muted"
+          className={cn(
+            'flex h-8 w-8 items-center justify-center',
+            'rounded-sm',
+            'transition-colors duration-150',
+            'hover:bg-muted',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+          )}
           aria-label={t('appbar.toggleSidebar')}
+          aria-expanded={isSidebarOpen}
         >
           {isSidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeft className="h-5 w-5" />}
         </button>
       </div>
 
       {/* Navigation Items */}
-      <nav className="flex flex-1 flex-col items-center gap-1 py-2">
+      <nav
+        className="flex flex-1 flex-col items-center gap-1 py-2"
+        aria-label={t('appbar.mainNavigation')}
+        role="navigation"
+      >
         {appBarItems.map((item) => {
           const isActive = pathname.startsWith(item.href)
 
@@ -75,7 +86,17 @@ export const DesktopAppBar = () => {
       {/* Bottom: User Avatar */}
       <div className="flex items-center justify-center pb-4">
         <UserMenu>
-          <button type="button" className="flex items-center justify-center hover:opacity-80 transition-opacity duration-150">
+          <button
+            type="button"
+            className={cn(
+              'flex items-center justify-center',
+              'rounded-full',
+              'transition-opacity duration-150',
+              'hover:opacity-80',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+            )}
+            aria-label={t('appbar.userMenu')}
+          >
             {user?.user_metadata?.profile_icon ? (
               <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-primary/10 text-lg">
                 {user.user_metadata.profile_icon}

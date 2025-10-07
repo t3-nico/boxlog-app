@@ -23,13 +23,19 @@ export const AppBarItem: React.FC<AppBarItemProps> = ({ label, icon: Icon, href,
       href={href}
       onClick={onItemClick}
       className={cn(
-        'flex h-14 w-14 flex-col items-center justify-center rounded-lg transition-all duration-150 group',
+        'flex h-14 w-14 flex-col items-center justify-center',
+        'rounded-lg',
+        'transition-all duration-150',
+        'group',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         isActive
           ? 'bg-primary text-primary-foreground'
           : 'text-muted-foreground hover:bg-muted hover:text-foreground'
       )}
+      aria-label={label}
+      aria-current={isActive ? 'page' : undefined}
     >
-      <Icon className="mb-1 h-5 w-5" />
+      <Icon className="mb-1 h-5 w-5" aria-hidden="true" />
       <span className="text-[10px] font-medium leading-none">{label}</span>
     </Link>
   )

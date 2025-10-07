@@ -236,6 +236,8 @@
     "loading": "Loading...",
     "noData": "No data available",
     "undo": "Undo",
+    "skipToMainContent": "Skip to main content",
+    "createNewEvent": "Create new event",
     "toast": {
       "eventDeleted": "Event deleted"
     }

@@ -88,9 +88,9 @@ export const MobileAppBar = () => {
         className={cn(
           'w-4/5 p-0', // 画面の80%幅、パディングなし
           'animate-slide-in-from-left', // テーマのslideLeftアニメーション
-          'bg-white dark:bg-neutral-800',
-          'text-neutral-900 dark:text-neutral-100',
-          'border-neutral-200 dark:border-neutral-700',
+          'bg-card',
+          'text-card-foreground',
+          'border-border',
           '[&_*[class*="sheet-close"]]:!hidden', // 閉じるボタンを完全非表示
           '[&_.lucide-x]:!hidden', // Xアイコンを完全非表示
           '[&_svg[class*="lucide-x"]]:!hidden' // SVG Xアイコンを完全非表示
@@ -123,7 +123,8 @@ export const MobileAppBar = () => {
               <button
                 type="button"
                 className={cn(
-                  'hover:bg-neutral-100 dark:hover:bg-neutral-700 flex h-8 w-8 items-center justify-center',
+                  'flex h-8 w-8 items-center justify-center',
+                  'hover:bg-muted',
                   'rounded-md',
                   'transition-colors duration-150',
                   'flex-shrink-0'
@@ -137,7 +138,8 @@ export const MobileAppBar = () => {
                 type="button"
                 onClick={openNotifications}
                 className={cn(
-                  'hover:bg-neutral-100 dark:hover:bg-neutral-700 relative flex h-8 w-8 items-center justify-center',
+                  'relative flex h-8 w-8 items-center justify-center',
+                  'hover:bg-muted',
                   'rounded-md',
                   'transition-colors duration-150',
                   'flex-shrink-0'
@@ -148,7 +150,7 @@ export const MobileAppBar = () => {
                   <span
                     className={cn(
                       'absolute -right-1 -top-1 h-4 w-4',
-                      'bg-red-500 text-xs text-white',
+                      'bg-destructive text-destructive-foreground text-xs',
                       'flex items-center justify-center',
                       'rounded-full'
                     )}
@@ -178,7 +180,7 @@ export const MobileAppBar = () => {
                       'mt-4 px-2 py-2 first:mt-0',
                       'text-sm',
                       'font-medium uppercase tracking-wider',
-                      'text-neutral-600 dark:text-neutral-400'
+                      'text-muted-foreground'
                     )}
                   >
                     {section.label}
@@ -203,11 +205,11 @@ export const MobileAppBar = () => {
                           className={cn(
                             'flex w-full items-center',
                             'gap-1',
-                            'hover:bg-neutral-100 dark:hover:bg-neutral-700',
+                            'hover:bg-muted',
                             'rounded-md',
                             'transition-colors duration-150',
                             'p-2',
-                            'text-neutral-600 dark:text-neutral-400',
+                            'text-muted-foreground',
                             'text-sm'
                           )}
                         >
@@ -243,12 +245,13 @@ export const MobileAppBar = () => {
             <UserMenu>
               <div
                 className={cn(
-                  'hover:bg-neutral-100 dark:hover:bg-neutral-700 flex w-full cursor-pointer items-center',
+                  'flex w-full cursor-pointer items-center',
+                  'hover:bg-muted',
                   'gap-2', // 8px gap
                   'rounded-lg',
                   'transition-colors duration-150',
                   'p-2', // 全方向8px
-                  'border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600'
+                  'border border-transparent hover:border-border'
                 )}
               >
                 {/* Avatar Icon Only */}
@@ -257,8 +260,8 @@ export const MobileAppBar = () => {
                     <div
                       className={cn(
                         'h-8 w-8',
-                        'bg-neutral-100 dark:bg-neutral-700 flex items-center justify-center border text-sm',
-                        'border-neutral-200 dark:border-neutral-700',
+                        'bg-muted flex items-center justify-center border text-sm',
+                        'border-border',
                         'rounded-lg'
                       )}
                     >
@@ -270,16 +273,16 @@ export const MobileAppBar = () => {
                       initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                         .charAt(0)
                         .toUpperCase()}
-                      className={cn('h-8 w-8', 'border border-neutral-200 dark:border-neutral-700', 'rounded-lg')}
+                      className={cn('h-8 w-8', 'border border-border', 'rounded-lg')}
                     />
                   )}
                 </div>
 
                 <div className={cn('flex min-w-0 flex-1 flex-col justify-center')}>
-                  <div className={cn('truncate text-neutral-900 dark:text-neutral-100', 'text-base', 'font-medium')}>
+                  <div className={cn('truncate text-foreground', 'text-base', 'font-medium')}>
                     tomoya
                   </div>
-                  <div className={cn('truncate text-neutral-600 dark:text-neutral-400', 'text-sm')}>Free Plan</div>
+                  <div className={cn('truncate text-muted-foreground', 'text-sm')}>Free Plan</div>
                 </div>
               </div>
             </UserMenu>

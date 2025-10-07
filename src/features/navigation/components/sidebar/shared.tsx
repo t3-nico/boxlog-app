@@ -11,8 +11,12 @@ interface SidebarSectionProps {
   className?: string
 }
 
+/**
+ * SidebarSection - セクションコンテナ
+ * 適切なスペーシングを提供
+ */
 export const SidebarSection = ({ children, className }: SidebarSectionProps) => {
-  return <div className={cn('space-y-1 pb-4', className)}>{children}</div>
+  return <div className={cn('space-y-0.5 py-2', className)}>{children}</div>
 }
 
 interface SidebarHeadingProps {
@@ -20,9 +24,22 @@ interface SidebarHeadingProps {
   className?: string
 }
 
+/**
+ * SidebarHeading - セクション見出し
+ *
+ * セマンティックトークン:
+ * - text-muted-foreground: 控えめなテキスト色
+ */
 export const SidebarHeading = ({ children, className }: SidebarHeadingProps) => {
   return (
-    <div className={cn('px-3 text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2', className)}>
+    <div
+      className={cn(
+        'px-3 pt-4 pb-2',
+        'text-xs font-semibold uppercase tracking-wider',
+        'text-muted-foreground',
+        className
+      )}
+    >
       {children}
     </div>
   )
@@ -36,18 +53,41 @@ interface SidebarItemProps {
   className?: string
 }
 
+/**
+ * SidebarItem - ナビゲーションアイテム
+ *
+ * セマンティックトークン:
+ * - bg-accent/text-accent-foreground: アクティブ状態（current）
+ * - text-foreground: 通常テキスト
+ * - hover:bg-accent/50: ホバー状態
+ */
 export const SidebarItem = ({ href, children, current = false, indicator = false, className }: SidebarItemProps) => {
   return (
     <Link
       href={href}
+      aria-current={current ? 'page' : undefined}
       className={cn(
-        'flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+        'group relative flex items-center gap-2.5',
+        'rounded-md px-3 py-2',
+        'text-sm font-medium',
+        'transition-all duration-150',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
         current
-          ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
-          : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/50',
+          ? 'bg-accent text-accent-foreground shadow-sm'
+          : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground',
         className
       )}
     >
+      {indicator && (
+        <span
+          className={cn(
+            'absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-r-full',
+            'bg-primary',
+            current ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
+          )}
+          aria-hidden="true"
+        />
+      )}
       {children}
     </Link>
   )
@@ -58,6 +98,9 @@ interface SidebarLabelProps {
   className?: string
 }
 
+/**
+ * SidebarLabel - アイテムラベル
+ */
 export const SidebarLabel = ({ children, className }: SidebarLabelProps) => {
-  return <span className={cn('flex-1', className)}>{children}</span>
+  return <span className={cn('flex-1 truncate', className)}>{children}</span>
 }

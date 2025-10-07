@@ -81,7 +81,7 @@ const AIIntroduction = () => {
 }
 
 // メニュー選択画面（collapsed状態から開いた時の初期画面）
-const _PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) => {
+const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help') => void }) => {
   const { t } = useI18n()
   const menuItems = [
     {

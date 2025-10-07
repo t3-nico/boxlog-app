@@ -5,11 +5,13 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 
 import { SidebarHeader } from './SidebarHeader'
-import { SidebarSection } from './SidebarSection'
 
 /**
  * CommonSidebar - 全ページ共通のサイドバー
  * ページタイトルのみ表示するシンプルな構成
+ *
+ * セマンティックトークン:
+ * - text-muted-foreground: プレースホルダーテキスト
  */
 export const CommonSidebar = () => {
   const pathname = usePathname() || '/'
@@ -29,20 +31,19 @@ export const CommonSidebar = () => {
 
   const pageTitle = getPageTitle()
 
-  // デバッグ用
-  console.log('Current pathname:', pathname, 'Title:', pageTitle)
-
   return (
-    <>
+    <div className="flex h-full flex-col">
       {/* Header */}
       <SidebarHeader title={pageTitle} />
 
-      {/* 将来的にページ固有のコンテンツを追加 */}
-      <div className="flex-1 p-4">
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          {pageTitle} content will be added here
-        </p>
+      {/* Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-4">
+          <p className="text-sm text-muted-foreground">
+            {pageTitle} content will be added here
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   )
 }

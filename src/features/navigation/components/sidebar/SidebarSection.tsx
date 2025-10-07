@@ -17,6 +17,12 @@ interface SidebarSectionProps {
 /**
  * SidebarSection - Sidebar共通セクションコンポーネント
  * 折りたたみ可能なセクション
+ *
+ * セマンティックトークン:
+ * - border-border: セクション区切り
+ * - text-foreground: セクションタイトル
+ * - text-muted-foreground: アイコン
+ * - hover:bg-muted: ホバー状態
  */
 export const SidebarSection = ({
   title,
@@ -34,30 +40,37 @@ export const SidebarSection = ({
   }, [collapsible, isOpen])
 
   return (
-    <div className={cn('border-b border-neutral-200 dark:border-neutral-700 last:border-b-0', className)}>
+    <div className={cn('border-b border-border last:border-b-0', className)}>
       {/* Section Header */}
       <button
         type="button"
         onClick={handleToggle}
+        disabled={!collapsible}
+        aria-expanded={isOpen}
         className={cn(
           'flex w-full items-center justify-between',
-          'px-4 py-3',
-          'text-sm font-medium text-neutral-700 dark:text-neutral-300',
-          'hover:bg-neutral-50 dark:hover:bg-neutral-800/50',
+          'px-4 py-2.5',
+          'text-sm font-medium text-foreground',
           'transition-colors duration-150',
-          !collapsible && 'cursor-default hover:bg-transparent'
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
+          collapsible && 'hover:bg-muted cursor-pointer',
+          !collapsible && 'cursor-default'
         )}
       >
-        <span>{title}</span>
+        <span className="truncate">{title}</span>
         {collapsible && (
-          <span className="text-neutral-500 dark:text-neutral-400">
+          <span className="text-muted-foreground flex-shrink-0 ml-2" aria-hidden="true">
             {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </span>
         )}
       </button>
 
       {/* Section Content */}
-      {isOpen && <div className="px-4 py-2">{children}</div>}
+      {isOpen && (
+        <div className="px-3 py-2" role="region" aria-label={title}>
+          {children}
+        </div>
+      )}
     </div>
   )
 }
