@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useI18n } from "@/lib/i18n/hooks"
 import { cn } from "@/lib/utils"
 
 import { useAuthContext } from "../contexts/AuthContext"
@@ -15,6 +16,7 @@ export const SignupForm = ({
   className,
   ...props
 }: React.ComponentProps<"form">) => {
+  const { t } = useI18n()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -115,25 +117,25 @@ export const SignupForm = ({
         </div>
         <div className="grid gap-3">
           <Label htmlFor="password">Password</Label>
-          <Input 
-            id="password" 
+          <Input
+            id="password"
             type="password"
-            placeholder="Enter your password"
+            placeholder={t('auth.signupForm.enterPassword')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            required 
+            required
             minLength={6}
           />
         </div>
         <div className="grid gap-3">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input 
-            id="confirmPassword" 
+          <Input
+            id="confirmPassword"
             type="password"
-            placeholder="Confirm your password"
+            placeholder={t('auth.signupForm.confirmPassword')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            required 
+            required
             minLength={6}
           />
         </div>

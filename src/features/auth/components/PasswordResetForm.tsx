@@ -5,11 +5,13 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import { useAuthContext } from '../contexts/AuthContext'
 
 export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -74,7 +76,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
         </div>
         {error ? <div className="text-red-600 dark:text-red-400 text-center text-sm">{error}</div> : null}
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Sending reset email...' : 'Send reset email'}
+          {loading ? 'Sending reset email...' : t('auth.passwordResetForm.sendResetEmail')}
         </Button>
       </div>
       <div className="text-center text-sm">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -10,23 +10,29 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { cn } from '@/lib/utils'
-
-const authSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-})
-
-type AuthFormData = z.infer<typeof authSchema>
+import { useI18n } from '@/lib/i18n/hooks'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
 }
 
 export const AuthForm = ({ mode }: AuthFormProps) => {
+  const { t } = useI18n()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   // const supabase = createClient() // Disabled for localStorage mode
+
+  const authSchema = useMemo(
+    () =>
+      z.object({
+        email: z.string().email(t('auth.errors.emailInvalid')),
+        password: z.string().min(6, 'Password must be at least 6 characters'),
+      }),
+    [t]
+  )
+
+  type AuthFormData = z.infer<typeof authSchema>
 
   const {
     register,

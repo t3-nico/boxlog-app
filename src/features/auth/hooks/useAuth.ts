@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
+import { AUTH_CONFIG } from '../lib/auth-config'
+
 // Local types for localStorage mode
 interface User {
   id: string
@@ -68,7 +70,7 @@ export function useAuth() {
           user: null,
           session: null,
           loading: false,
-          error: 'Failed to initialize local auth',
+          error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR,
         })
       }
     }
@@ -76,9 +78,9 @@ export function useAuth() {
     initializeLocalAuth()
   }, [])
 
-  // ローカル専用モード用のスタブメソッド
+  // ローカル専用モード用のスタブメソッド（翻訳キーを返す）
   const signUp = async (_email: string, _password: string, _metadata?: Record<string, unknown>) => {
-    return { data: null, error: 'Sign up disabled in localStorage mode' }
+    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
   }
 
   const signIn = async (_email: string, _password: string) => {
@@ -86,7 +88,7 @@ export function useAuth() {
   }
 
   const signInWithOAuth = async (_provider: 'google' | 'apple') => {
-    return { data: null, error: 'OAuth disabled in localStorage mode' }
+    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
   }
 
   const signOut = async () => {
@@ -94,11 +96,11 @@ export function useAuth() {
   }
 
   const resetPassword = async (_email: string) => {
-    return { data: null, error: 'Password reset disabled in localStorage mode' }
+    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
   }
 
   const updatePassword = async (_password: string) => {
-    return { data: null, error: 'Password update disabled in localStorage mode' }
+    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
   }
 
   const clearError = () => {

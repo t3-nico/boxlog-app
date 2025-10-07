@@ -30,54 +30,64 @@ export const AUTH_CONFIG = {
     PASSWORD_RESET: '/auth/reset-password',
   },
   
-  // エラーメッセージ
-  ERROR_MESSAGES: {
-    INVALID_CREDENTIALS: 'メールアドレスまたはパスワードが正しくありません',
-    EMAIL_NOT_CONFIRMED: 'メールアドレスの確認が必要です',
-    USER_ALREADY_EXISTS: 'このメールアドレスは既に登録されています',
-    WEAK_PASSWORD: 'パスワードが弱すぎます',
-    TOO_MANY_REQUESTS: 'リクエストが多すぎます。しばらく待ってから再試行してください',
-    NETWORK_ERROR: 'ネットワークエラーが発生しました',
-    UNKNOWN_ERROR: '予期しないエラーが発生しました',
+  // エラーメッセージ翻訳キー（Client Componentで t() を使用して翻訳）
+  ERROR_MESSAGE_KEYS: {
+    INVALID_CREDENTIALS: 'auth.errors.invalidCredentials',
+    EMAIL_NOT_CONFIRMED: 'auth.errors.emailNotConfirmed',
+    USER_ALREADY_EXISTS: 'auth.errors.emailAlreadyRegistered',
+    WEAK_PASSWORD: 'auth.errors.weakPassword',
+    TOO_MANY_REQUESTS: 'auth.errors.tooManyRequests',
+    NETWORK_ERROR: 'auth.errors.networkError',
+    UNKNOWN_ERROR: 'auth.errors.unexpectedError',
   },
-  
-  // 成功メッセージ
-  SUCCESS_MESSAGES: {
-    SIGN_UP: 'アカウントが正常に作成されました。確認メールをチェックしてください。',
-    SIGN_IN: 'ログインに成功しました',
-    PASSWORD_RESET_SENT: 'パスワードリセットメールを送信しました',
-    PASSWORD_UPDATED: 'パスワードが正常に更新されました',
-    SIGN_OUT: 'ログアウトしました',
+
+  // 成功メッセージ翻訳キー（Client Componentで t() を使用して翻訳）
+  SUCCESS_MESSAGE_KEYS: {
+    SIGN_UP: 'auth.success.signupSuccess',
+    SIGN_IN: 'auth.success.loginSuccess',
+    PASSWORD_RESET_SENT: 'auth.success.resetEmailSent',
+    PASSWORD_UPDATED: 'auth.success.passwordUpdated',
+    SIGN_OUT: 'auth.success.logoutSuccess',
+  },
+
+  // パスワード検証メッセージ翻訳キー
+  PASSWORD_VALIDATION_KEYS: {
+    MIN_LENGTH: 'auth.passwordValidation.minLength',
+    REQUIRE_UPPERCASE: 'auth.passwordValidation.requireUppercase',
+    REQUIRE_LOWERCASE: 'auth.passwordValidation.requireLowercase',
+    REQUIRE_NUMBER: 'auth.passwordValidation.requireNumber',
+    REQUIRE_SPECIAL_CHAR: 'auth.passwordValidation.requireSpecialChar',
   },
 } as const
 
-// パスワード強度チェック関数
-export function validatePassword(password: string): { isValid: boolean; errors: string[] } {
-  const errors: string[] = []
-  
+// パスワード強度チェック関数（翻訳キーを返す）
+// Client Component側で t() を使って翻訳すること
+export function validatePassword(password: string): { isValid: boolean; errorKeys: string[] } {
+  const errorKeys: string[] = []
+
   if (password.length < AUTH_CONFIG.PASSWORD.MIN_LENGTH) {
-    errors.push(`パスワードは${AUTH_CONFIG.PASSWORD.MIN_LENGTH}文字以上で入力してください`)
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.MIN_LENGTH)
   }
-  
+
   if (AUTH_CONFIG.PASSWORD.REQUIRE_UPPERCASE && !/[A-Z]/.test(password)) {
-    errors.push('大文字を含めてください')
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_UPPERCASE)
   }
-  
+
   if (AUTH_CONFIG.PASSWORD.REQUIRE_LOWERCASE && !/[a-z]/.test(password)) {
-    errors.push('小文字を含めてください')
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_LOWERCASE)
   }
-  
+
   if (AUTH_CONFIG.PASSWORD.REQUIRE_NUMBERS && !/\d/.test(password)) {
-    errors.push('数字を含めてください')
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_NUMBER)
   }
-  
+
   if (AUTH_CONFIG.PASSWORD.REQUIRE_SPECIAL_CHARS && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('特殊文字を含めてください')
+    errorKeys.push(AUTH_CONFIG.PASSWORD_VALIDATION_KEYS.REQUIRE_SPECIAL_CHAR)
   }
-  
+
   return {
-    isValid: errors.length === 0,
-    errors,
+    isValid: errorKeys.length === 0,
+    errorKeys,
   }
 }
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
 import { Heading } from '@/components/app'
+import { useI18n } from '@/lib/i18n/hooks'
 
 // OAuth Provider Icons
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
@@ -32,6 +33,7 @@ import { Label } from '@/components/ui/label'
 import { useAuthContext } from '../contexts/AuthContext'
 
 const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -65,7 +67,7 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
       await signIn(email, password)
     } catch (err) {
       console.error('LoginForm handleSubmit catch error:', err)
-      setError('予期せぬエラーが発生しました') // 予期せぬエラーの場合のフォールバック
+      setError(t('auth.errors.unexpectedError')) // 予期せぬエラーの場合のフォールバック
     } finally {
       setLoading(false)
     }
@@ -92,7 +94,7 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
           </div>
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? '起動中...' : 'アプリを開始'}
+              {loading ? '起動中...' : t('auth.loginForm.startApp')}
             </Button>
           </form>
         </div>
