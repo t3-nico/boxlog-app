@@ -5,7 +5,7 @@ import React from 'react'
 import { Calendar, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { SidebarHeader, SidebarSection } from '@/components/layout/sidebar/components'
+import { SidebarHeader, SidebarSection } from '@/features/navigation/components/sidebar/components'
 
 /**
  * CalendarSidebar - カレンダーページ用のサイドバー

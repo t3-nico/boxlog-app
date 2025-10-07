@@ -8,7 +8,7 @@ import { PanelRight } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
 export const NavigationToggle = () => {
   const pathname = usePathname()

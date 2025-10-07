@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { cn } from '@/lib/utils'
 
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
 export const SidebarToggle = () => {
   const { toggleSidebar } = useNavigationStore()

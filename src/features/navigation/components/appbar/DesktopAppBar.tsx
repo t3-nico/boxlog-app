@@ -11,7 +11,7 @@ import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 import { UserMenu } from './user-menu'
 import { AppBarItem } from './appbar-item'
 

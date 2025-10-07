@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 
 import { AppBarItem } from './appbar-item'
 import { allNavigationSections } from './navigation-items'
-import { useNavigationStore } from '../stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { UserMenu } from './user-menu'
 

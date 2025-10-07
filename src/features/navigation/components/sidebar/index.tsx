@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { useNavigationStore } from '@/components/layout/stores/navigation.store'
+import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
 interface SidebarProps {
   children?: React.ReactNode
