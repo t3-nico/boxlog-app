@@ -5,6 +5,7 @@ import React, { useCallback } from 'react'
 import { Plus, ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import { useCreateModalStore } from '../../stores/useCreateModalStore'
@@ -23,6 +24,7 @@ export const CreateEventTrigger = ({
   initialData,
   source = 'sidebar'
 }: CreateEventTriggerProps) => {
+  const { t } = useI18n()
   const { openModal } = useCreateModalStore()
 
   const handleClick = useCallback(() => {
@@ -44,7 +46,7 @@ export const CreateEventTrigger = ({
           "shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group",
           className
         )}
-        title="Create new event"
+        title={t('calendar.event.createNewEvent')}
       >
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">

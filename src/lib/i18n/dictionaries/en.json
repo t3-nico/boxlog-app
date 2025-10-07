@@ -316,7 +316,9 @@
       "moveFailed": "Failed to move event",
       "duplicateFailed": "Failed to duplicate event",
       "restoreError": "Restore Error",
-      "restoreFailed": "Failed to restore"
+      "restoreFailed": "Failed to restore",
+      "createNewEvent": "Create new event",
+      "enterEventTitle": "Enter event title"
     },
     "accessibility": {
       "standardContrast": "Standard Contrast",

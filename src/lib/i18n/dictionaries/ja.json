@@ -316,7 +316,9 @@
       "moveFailed": "予定の移動に失敗しました",
       "duplicateFailed": "予定の複製に失敗しました",
       "restoreError": "復元エラー",
-      "restoreFailed": "復元できませんでした"
+      "restoreFailed": "復元できませんでした",
+      "createNewEvent": "新しいイベントを作成",
+      "enterEventTitle": "イベントタイトルを入力"
     },
     "accessibility": {
       "standardContrast": "標準コントラスト",

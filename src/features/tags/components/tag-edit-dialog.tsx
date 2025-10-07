@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { tagIconMapping, tagIconCategories, TagIconName } from '@/config/ui/tagIcons'
+import { tagIconMapping, tagIconCategories, TagIconName } from '../constants/icons'
 import { useI18n } from '@/lib/i18n/hooks'
 
 interface Tag {

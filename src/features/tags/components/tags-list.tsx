@@ -13,7 +13,7 @@ import {
   Trash2 as TrashIcon,
 } from 'lucide-react'
 
-import { tagIconMapping, TagIconName } from '@/config/ui/tagIcons'
+import { tagIconMapping, TagIconName } from '../constants/icons'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 import { useActiveState } from '@/hooks/useActiveState'
 import { Tag } from '@/types/tags'
