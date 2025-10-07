@@ -12,10 +12,5 @@ export { SidebarSection } from './components/sidebar/SidebarSection'
 // Mobile
 export { MobileBottomNavigation } from './components/mobile/MobileBottomNavigation'
 
-// Header
-export { PageTitle } from './components/header/page-title'
-export { SidebarToggle } from './components/header/sidebar-toggle'
-export { InspectorToggle } from './components/header/inspector-toggle'
-
 // Stores
 export { useNavigationStore } from './stores/navigation.store'

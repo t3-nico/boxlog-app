@@ -6,51 +6,58 @@
 /* BoxLog デザイントークン定義（Tailwind v4 公式準拠） */
 @theme {
   /* ============================================
-   * カラーシステム
+   * カラーシステム（OKLCH色空間 - modern-minimal）
    * ============================================ */
 
-  /* プライマリーカラー（青） */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
+  /* 基本カラー */
+  --color-background: oklch(1.0000 0 0);
+  --color-foreground: oklch(0.3211 0 0);
+  --color-card: oklch(1.0000 0 0);
+  --color-card-foreground: oklch(0.3211 0 0);
+  --color-popover: oklch(1.0000 0 0);
+  --color-popover-foreground: oklch(0.3211 0 0);
 
-  /* ニュートラルカラー（グレー系）*/
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #e5e5e5;
-  --color-neutral-300: #d4d4d4;
-  --color-neutral-400: #a3a3a3;
-  --color-neutral-500: #737373;
-  --color-neutral-600: #525252;
-  --color-neutral-700: #404040;
-  --color-neutral-800: #262626;
-  --color-neutral-900: #171717;
-  --color-neutral-950: #0a0a0a;
+  /* プライマリー */
+  --color-primary: oklch(0.6231 0.1880 259.8145);
+  --color-primary-foreground: oklch(1.0000 0 0);
 
-  /* セマンティックカラー */
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-  --color-success-700: #15803d;
+  /* セカンダリー */
+  --color-secondary: oklch(0.9670 0.0029 264.5419);
+  --color-secondary-foreground: oklch(0.4461 0.0263 256.8018);
 
-  --color-warning-500: #f97316;
-  --color-warning-600: #ea580c;
-  --color-warning-700: #c2410c;
+  /* ミュート */
+  --color-muted: oklch(0.9846 0.0017 247.8389);
+  --color-muted-foreground: oklch(0.5510 0.0234 264.3637);
 
-  --color-error-500: #ef4444;
-  --color-error-600: #dc2626;
-  --color-error-700: #b91c1c;
+  /* アクセント */
+  --color-accent: oklch(0.9514 0.0250 236.8242);
+  --color-accent-foreground: oklch(0.3791 0.1378 265.5222);
 
-  --color-info-500: #3b82f6;
-  --color-info-600: #2563eb;
-  --color-info-700: #1d4ed8;
+  /* 破壊的アクション */
+  --color-destructive: oklch(0.6368 0.2078 25.3313);
+  --color-destructive-foreground: oklch(1.0000 0 0);
+
+  /* ボーダー・入力 */
+  --color-border: oklch(0.9276 0.0058 264.5313);
+  --color-input: oklch(0.9276 0.0058 264.5313);
+  --color-ring: oklch(0.6231 0.1880 259.8145);
+
+  /* Chart カラー */
+  --color-chart-1: oklch(0.6231 0.1880 259.8145);
+  --color-chart-2: oklch(0.5461 0.2152 262.8809);
+  --color-chart-3: oklch(0.4882 0.2172 264.3763);
+  --color-chart-4: oklch(0.4244 0.1809 265.6377);
+  --color-chart-5: oklch(0.3791 0.1378 265.5222);
+
+  /* Sidebar カラー */
+  --color-sidebar: oklch(0.9846 0.0017 247.8389);
+  --color-sidebar-foreground: oklch(0.3211 0 0);
+  --color-sidebar-primary: oklch(0.6231 0.1880 259.8145);
+  --color-sidebar-primary-foreground: oklch(1.0000 0 0);
+  --color-sidebar-accent: oklch(0.9514 0.0250 236.8242);
+  --color-sidebar-accent-foreground: oklch(0.3791 0.1378 265.5222);
+  --color-sidebar-border: oklch(0.9276 0.0058 264.5313);
+  --color-sidebar-ring: oklch(0.6231 0.1880 259.8145);
 
   /* ============================================
    * スペーシング（8pxグリッド）
@@ -73,13 +80,16 @@
   --radius-full: 9999px;
 
   /* ============================================
-   * シャドウ
+   * シャドウ（modern-minimal準拠）
    * ============================================ */
-  --shadow-xs: 0 1px 0 0 rgb(0 0 0 / 0.05);
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 
   /* ============================================
    * Z-Index
@@ -91,46 +101,6 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
-
-  /* ============================================
-   * セマンティックトークン（役割ベースのカラー）
-   * shadcn/ui互換 + BoxLog独自拡張
-   * ============================================ */
-
-  /* 基本背景・テキスト */
-  --color-background: var(--color-neutral-50);      /* ページ全体の背景 */
-  --color-foreground: var(--color-neutral-900);     /* メインテキスト */
-
-  /* カード・サーフェス */
-  --color-card: #ffffff;                            /* カード背景（純白） */
-  --color-card-foreground: var(--color-neutral-900);
-
-  /* 控えめな背景（インプット、無効状態等） */
-  --color-muted: var(--color-neutral-100);
-  --color-muted-foreground: var(--color-neutral-500);
-
-  /* ボーダー */
-  --color-border: var(--color-neutral-200);
-  --color-input: var(--color-neutral-200);          /* インプットのボーダー */
-
-  /* プライマリー（アクションボタン等） */
-  --color-primary: var(--color-primary-500);        /* ブルー */
-  --color-primary-foreground: #ffffff;
-
-  /* セカンダリー（補助的なボタン等） */
-  --color-secondary: var(--color-neutral-200);
-  --color-secondary-foreground: var(--color-neutral-900);
-
-  /* アクセント */
-  --color-accent: var(--color-neutral-100);
-  --color-accent-foreground: var(--color-neutral-900);
-
-  /* 破壊的アクション（削除等） */
-  --color-destructive: var(--color-error-500);
-  --color-destructive-foreground: #ffffff;
-
-  /* リング（フォーカス時のアウトライン） */
-  --color-ring: var(--color-primary-500);
 
   /* ============================================
    * タイポグラフィトークン
@@ -181,82 +151,78 @@ html.dark {
 }
 
 /* ============================================
- * ダークモード用セマンティックトークン
+ * ダークモード用カラー（modern-minimal）
  * ============================================ */
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    /* 基本背景・テキスト */
-    --color-background: var(--color-neutral-950);
-    --color-foreground: var(--color-neutral-50);
-
-    /* カード・サーフェス */
-    --color-card: var(--color-neutral-900);
-    --color-card-foreground: var(--color-neutral-50);
-
-    /* 控えめな背景 */
-    --color-muted: var(--color-neutral-800);
-    --color-muted-foreground: var(--color-neutral-400);
-
-    /* ボーダー */
-    --color-border: var(--color-neutral-700);
-    --color-input: var(--color-neutral-700);
-
-    /* プライマリー */
-    --color-primary: var(--color-primary-500);
-    --color-primary-foreground: #ffffff;
-
-    /* セカンダリー */
-    --color-secondary: var(--color-neutral-800);
-    --color-secondary-foreground: var(--color-neutral-50);
-
-    /* アクセント */
-    --color-accent: var(--color-neutral-800);
-    --color-accent-foreground: var(--color-neutral-50);
-
-    /* 破壊的アクション */
-    --color-destructive: var(--color-error-500);
-    --color-destructive-foreground: #ffffff;
-
-    /* リング */
-    --color-ring: var(--color-primary-400);
+    --color-background: oklch(0.2046 0 0);
+    --color-foreground: oklch(0.9219 0 0);
+    --color-card: oklch(0.2686 0 0);
+    --color-card-foreground: oklch(0.9219 0 0);
+    --color-popover: oklch(0.2686 0 0);
+    --color-popover-foreground: oklch(0.9219 0 0);
+    --color-primary: oklch(0.6231 0.1880 259.8145);
+    --color-primary-foreground: oklch(1.0000 0 0);
+    --color-secondary: oklch(0.2686 0 0);
+    --color-secondary-foreground: oklch(0.9219 0 0);
+    --color-muted: oklch(0.2393 0 0);
+    --color-muted-foreground: oklch(0.7155 0 0);
+    --color-accent: oklch(0.3791 0.1378 265.5222);
+    --color-accent-foreground: oklch(0.8823 0.0571 254.1284);
+    --color-destructive: oklch(0.6368 0.2078 25.3313);
+    --color-destructive-foreground: oklch(1.0000 0 0);
+    --color-border: oklch(0.3715 0 0);
+    --color-input: oklch(0.3715 0 0);
+    --color-ring: oklch(0.6231 0.1880 259.8145);
+    --color-chart-1: oklch(0.7137 0.1434 254.6240);
+    --color-chart-2: oklch(0.6231 0.1880 259.8145);
+    --color-chart-3: oklch(0.5461 0.2152 262.8809);
+    --color-chart-4: oklch(0.4882 0.2172 264.3763);
+    --color-chart-5: oklch(0.4244 0.1809 265.6377);
+    --color-sidebar: oklch(0.2046 0 0);
+    --color-sidebar-foreground: oklch(0.9219 0 0);
+    --color-sidebar-primary: oklch(0.6231 0.1880 259.8145);
+    --color-sidebar-primary-foreground: oklch(1.0000 0 0);
+    --color-sidebar-accent: oklch(0.3791 0.1378 265.5222);
+    --color-sidebar-accent-foreground: oklch(0.8823 0.0571 254.1284);
+    --color-sidebar-border: oklch(0.3715 0 0);
+    --color-sidebar-ring: oklch(0.6231 0.1880 259.8145);
   }
 }
 
 .dark {
-  /* 基本背景・テキスト */
-  --color-background: var(--color-neutral-950);
-  --color-foreground: var(--color-neutral-50);
-
-  /* カード・サーフェス */
-  --color-card: var(--color-neutral-900);
-  --color-card-foreground: var(--color-neutral-50);
-
-  /* 控えめな背景 */
-  --color-muted: var(--color-neutral-800);
-  --color-muted-foreground: var(--color-neutral-400);
-
-  /* ボーダー */
-  --color-border: var(--color-neutral-700);
-  --color-input: var(--color-neutral-700);
-
-  /* プライマリー */
-  --color-primary: var(--color-primary-500);
-  --color-primary-foreground: #ffffff;
-
-  /* セカンダリー */
-  --color-secondary: var(--color-neutral-800);
-  --color-secondary-foreground: var(--color-neutral-50);
-
-  /* アクセント */
-  --color-accent: var(--color-neutral-800);
-  --color-accent-foreground: var(--color-neutral-50);
-
-  /* 破壊的アクション */
-  --color-destructive: var(--color-error-500);
-  --color-destructive-foreground: #ffffff;
-
-  /* リング */
-  --color-ring: var(--color-primary-400);
+  --color-background: oklch(0.2046 0 0);
+  --color-foreground: oklch(0.9219 0 0);
+  --color-card: oklch(0.2686 0 0);
+  --color-card-foreground: oklch(0.9219 0 0);
+  --color-popover: oklch(0.2686 0 0);
+  --color-popover-foreground: oklch(0.9219 0 0);
+  --color-primary: oklch(0.6231 0.1880 259.8145);
+  --color-primary-foreground: oklch(1.0000 0 0);
+  --color-secondary: oklch(0.2686 0 0);
+  --color-secondary-foreground: oklch(0.9219 0 0);
+  --color-muted: oklch(0.2393 0 0);
+  --color-muted-foreground: oklch(0.7155 0 0);
+  --color-accent: oklch(0.3791 0.1378 265.5222);
+  --color-accent-foreground: oklch(0.8823 0.0571 254.1284);
+  --color-destructive: oklch(0.6368 0.2078 25.3313);
+  --color-destructive-foreground: oklch(1.0000 0 0);
+  --color-border: oklch(0.3715 0 0);
+  --color-input: oklch(0.3715 0 0);
+  --color-ring: oklch(0.6231 0.1880 259.8145);
+  --color-chart-1: oklch(0.7137 0.1434 254.6240);
+  --color-chart-2: oklch(0.6231 0.1880 259.8145);
+  --color-chart-3: oklch(0.5461 0.2152 262.8809);
+  --color-chart-4: oklch(0.4882 0.2172 264.3763);
+  --color-chart-5: oklch(0.4244 0.1809 265.6377);
+  --color-sidebar: oklch(0.2046 0 0);
+  --color-sidebar-foreground: oklch(0.9219 0 0);
+  --color-sidebar-primary: oklch(0.6231 0.1880 259.8145);
+  --color-sidebar-primary-foreground: oklch(1.0000 0 0);
+  --color-sidebar-accent: oklch(0.3791 0.1378 265.5222);
+  --color-sidebar-accent-foreground: oklch(0.8823 0.0571 254.1284);
+  --color-sidebar-border: oklch(0.3715 0 0);
+  --color-sidebar-ring: oklch(0.6231 0.1880 259.8145);
 }
 /* ============================================
  * カスタムユーティリティクラス
