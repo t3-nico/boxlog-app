@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Copy, Edit2, Trash2 } from 'lucide-react'
 
 import type { CalendarEvent } from '@/features/events/types/events'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface EventContextMenuProps {

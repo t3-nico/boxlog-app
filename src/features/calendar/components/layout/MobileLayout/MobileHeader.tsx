@@ -6,7 +6,7 @@ import { useCallback, useState } from 'react'
 import { format, getWeek } from 'date-fns'
 import { ChevronLeft, ChevronRight, Menu } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import type { CalendarViewType } from '../../../types/calendar.types'

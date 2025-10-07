@@ -5,7 +5,7 @@ import React from 'react'
 
 import { Loader2, X } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 interface Tag {
   id: string

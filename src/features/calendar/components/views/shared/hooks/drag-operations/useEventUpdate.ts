@@ -7,7 +7,7 @@
 import { useCallback } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../../constants/grid.constants'
 

@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { getReview } from '@/lib/data'
-import { createTranslation, getDictionary } from '@/lib/i18n'
+import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 import { RefundReview } from './refund'

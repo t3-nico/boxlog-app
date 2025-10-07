@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 import React, { useCallback, useMemo } from 'react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { useTrashStore } from '../stores/useTrashStore'
 import { TrashItem } from '../types/trash'

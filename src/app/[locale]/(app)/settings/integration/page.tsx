@@ -1,5 +1,5 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
-import { getDictionary, createTranslation } from '@/lib/i18n'
+import { getDictionary, createTranslation } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 import IntegrationPageClient from './client'

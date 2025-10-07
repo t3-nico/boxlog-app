@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import useCalendarToast from '@/features/calendar/lib/toast'
 import { calendarColors } from '@/features/calendar/theme'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../constants/grid.constants'
 import { formatTimeRange } from '../utils/dateHelpers'

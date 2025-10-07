@@ -8,7 +8,7 @@ import { Calendar, SquareKanban, Table, BarChart3, Settings, PanelLeftClose, Pan
 
 import { Avatar } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'

@@ -8,7 +8,7 @@ import { Loader2Icon, SendIcon, SquareIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 type UseAutoResizeTextareaProps = {

@@ -7,7 +7,7 @@
 
 import React, { memo } from 'react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import type { TimedEvent } from '../../types/event.types'
 import { formatTimeRange } from '../../utils/dateHelpers'

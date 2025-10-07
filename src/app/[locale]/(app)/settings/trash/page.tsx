@@ -1,6 +1,6 @@
 'use client'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { SettingsLayout } from '@/features/settings/components'
 import { TrashView } from '@/features/trash/components/TrashView'

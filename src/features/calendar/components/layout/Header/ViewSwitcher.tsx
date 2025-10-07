@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export type ViewOption = {

@@ -12,7 +12,7 @@ import {
 
 import { Button } from '@/components/ui/button'
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 

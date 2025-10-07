@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { createTranslation, getDictionary } from '@/lib/i18n'
+import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { CalendarViewType } from '@/features/calendar/types/calendar.types'
 import type { Locale } from '@/types/i18n'
 

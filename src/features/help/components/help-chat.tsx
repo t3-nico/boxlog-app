@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowUpCircle, Copy, MoreVertical, Sparkles, Trash2 } from 'lucide-react'
 
 import { useChatStore, type ChatMessage } from '@/features/aichat/stores/useChatStore'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 interface MessageBubbleProps {
   message: ChatMessage

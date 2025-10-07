@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo } from 'react'
 
 import type { ChronotypeType } from '@/types/chronotype'
-import { useI18n } from '@/lib/i18n/hooks'
-import type { TranslationFunction } from '@/lib/i18n'
+import { useI18n } from '@/features/i18n/lib/hooks'
+import type { TranslationFunction } from '@/features/i18n/lib'
 
 import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
 import { calculateDiagnosisResult } from '../chronotype.diagnosis'

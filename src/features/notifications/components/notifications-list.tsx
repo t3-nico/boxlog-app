@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { BellRing } from 'lucide-react'
 
-import { useTranslation } from '@/lib/i18n/hooks'
+import { useTranslation } from '@/features/i18n/lib/hooks'
 
 import { useNotificationTypeLabel } from '../utils/notification-helpers'
 

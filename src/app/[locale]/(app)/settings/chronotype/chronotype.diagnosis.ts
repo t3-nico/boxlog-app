@@ -1,4 +1,4 @@
-import type { TranslationFunction } from '@/lib/i18n'
+import type { TranslationFunction } from '@/features/i18n/lib'
 
 import { getDiagnosisQuestions, type DiagnosisQuestion } from './chronotype.diagnosis-questions'
 

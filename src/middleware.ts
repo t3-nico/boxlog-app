@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { defaultLocale, LOCALE_COOKIE, locales } from '@/lib/i18n'
+import { defaultLocale, LOCALE_COOKIE, locales } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 // 言語検出とリダイレクト処理

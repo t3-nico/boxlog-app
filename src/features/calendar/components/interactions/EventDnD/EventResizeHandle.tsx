@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface EventResizeHandleProps {

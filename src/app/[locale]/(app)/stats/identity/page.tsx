@@ -1,7 +1,7 @@
 'use client'
 
 import { Heading } from '@/components/app'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 const IdentityPage = () => {
   const { t } = useI18n()

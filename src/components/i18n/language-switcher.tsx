@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import { ChevronDownIcon, GlobeIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { setLocaleCookie } from '@/lib/i18n'
+import { setLocaleCookie } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 interface LanguageOption {

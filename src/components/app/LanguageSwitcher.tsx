@@ -8,8 +8,8 @@ import { Menu } from '@headlessui/react'
 import { Check, ChevronDown, Globe } from 'lucide-react'
 
 import { getAccessibilityLabels } from '@/lib/accessibility'
-import { locales, setLocaleCookie } from '@/lib/i18n'
-import { useCurrentLocale } from '@/lib/i18n/hooks'
+import { locales, setLocaleCookie } from '@/features/i18n/lib'
+import { useCurrentLocale } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 import type { Locale } from '@/types/i18n'
 

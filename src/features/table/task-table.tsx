@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 export const TaskTable = () => {
   const { t } = useI18n()

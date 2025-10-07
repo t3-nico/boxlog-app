@@ -11,7 +11,7 @@ import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarEvent } from '@/features/events'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import type { Task, ViewDateRange } from '../../../types/calendar.types'

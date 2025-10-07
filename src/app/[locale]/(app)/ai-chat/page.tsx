@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 
 import { FeatureErrorBoundary } from '@/components/error-boundary'
 import { AiChatSkeleton } from '@/features/aichat/components/AiChatSkeleton'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 // AI Chat機能を動的インポート（Bundle size最適化）
 const AiChatSidebar = dynamic(() => import('@/features/aichat').then((mod) => ({ default: mod.AiChatSidebar })), {

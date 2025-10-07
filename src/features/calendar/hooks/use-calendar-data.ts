@@ -5,7 +5,7 @@ import { useState, useMemo, useCallback } from 'react'
 
 import { isWithinInterval, addMinutes } from 'date-fns'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { Task } from '@/types/unified'
 
 import type { ViewDateRange } from '../types/calendar.types'

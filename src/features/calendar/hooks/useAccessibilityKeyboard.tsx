@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import {
   handleArrowKeys,

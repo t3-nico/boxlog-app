@@ -3,7 +3,7 @@
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useToast } from '@/lib/toast'
 
 import type { CalendarEvent } from '../types/calendar.types'

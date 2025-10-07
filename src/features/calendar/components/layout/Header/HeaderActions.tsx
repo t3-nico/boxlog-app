@@ -2,7 +2,7 @@
 
 import { Download, MoreHorizontal, Settings, Upload } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface HeaderActionsProps {

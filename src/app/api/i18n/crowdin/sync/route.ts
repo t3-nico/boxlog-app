@@ -3,8 +3,8 @@ import path from 'path'
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getDictionary } from '@/lib/i18n'
-import { CrowdinIntegration, createBoxLogCrowdinConfig } from '@/lib/i18n/crowdin-integration'
+import { getDictionary } from '@/features/i18n/lib'
+import { CrowdinIntegration, createBoxLogCrowdinConfig } from '@/features/i18n/lib/crowdin-integration'
 
 /**
  * Crowdin同期API

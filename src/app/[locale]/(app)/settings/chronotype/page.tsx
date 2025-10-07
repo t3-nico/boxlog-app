@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingsLayout } from '@/features/settings/components'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import type { ChronotypeType } from '@/types/chronotype'

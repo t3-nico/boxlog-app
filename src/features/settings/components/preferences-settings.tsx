@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'

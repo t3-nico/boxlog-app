@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
-import { createTranslation, defaultLocale, getDictionary, locales } from '@/lib/i18n'
-import { getDirection } from '@/lib/i18n/rtl'
+import { createTranslation, defaultLocale, getDictionary, locales } from '@/features/i18n/lib'
+import { getDirection } from '@/features/i18n/lib/rtl'
 import type { Locale } from '@/types/i18n'
 
 interface LocaleLayoutProps {

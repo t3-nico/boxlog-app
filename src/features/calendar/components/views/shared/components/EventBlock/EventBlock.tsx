@@ -8,7 +8,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { calendarColors } from '@/features/calendar/theme'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { cn } from '@/lib/utils'
 

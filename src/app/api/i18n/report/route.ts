@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import TranslationTracker from '@/lib/i18n/translation-tracker'
+import TranslationTracker from '@/features/i18n/lib/translation-tracker'
 
 /**
  * 翻訳進捗レポートAPI

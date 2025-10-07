@@ -12,7 +12,7 @@ import { AIMessage, AIMessageContent } from '@/components/kibo/ai/message'
 import { AIResponse } from '@/components/kibo/ai/response'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
-import { useTranslation } from '@/lib/i18n/hooks'
+import { useTranslation } from '@/features/i18n/lib/hooks'
 
 // Vercel AI SDK message type extension
 interface ExtendedMessage extends UIMessage {

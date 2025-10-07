@@ -5,7 +5,7 @@ import React, { useCallback } from 'react'
 import { Plus, ChevronDown } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { useCreateModalStore } from '../../stores/useCreateModalStore'

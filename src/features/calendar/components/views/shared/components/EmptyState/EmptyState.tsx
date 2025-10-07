@@ -6,7 +6,7 @@
 
 import React, { memo } from 'react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import type { EmptyStateProps } from '../../types/view.types'
 

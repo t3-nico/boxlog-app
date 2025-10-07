@@ -4,7 +4,7 @@ import { memo } from 'react'
 
 import { Clock, GraduationCap, Moon, Sun } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { getChronoTypeProfiles } from '../chronotype-profiles'
 import type { DiagnosisQuestion } from '../chronotype.diagnosis'
 
@@ -28,7 +28,7 @@ export const DiagnosisSection = memo(({
   onCloseDiagnosis,
 }: DiagnosisSectionProps) => {
   const { t } = useI18n()
-  const chronoTypeProfiles = getChronoTypeProfiles(t as import('@/lib/i18n').TranslationFunction)
+  const chronoTypeProfiles = getChronoTypeProfiles(t as import('@/features/i18n/lib').TranslationFunction)
 
   if (diagnosisResult) {
     // 診断結果表示

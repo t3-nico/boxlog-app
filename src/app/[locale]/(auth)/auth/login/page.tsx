@@ -1,7 +1,7 @@
 import { GalleryVerticalEnd } from 'lucide-react'
 
 import { LoginForm } from '@/features/auth'
-import { getDictionary, createTranslation } from '@/lib/i18n'
+import { getDictionary, createTranslation } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 interface PageProps {

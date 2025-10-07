@@ -5,7 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 
 import { CheckCircle, RotateCcw, X } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface DeletedEvent {

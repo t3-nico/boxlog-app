@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Tag } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { SettingsLayout } from '@/features/settings/components'
 import { useTags } from '@/features/tags/hooks/use-tags'

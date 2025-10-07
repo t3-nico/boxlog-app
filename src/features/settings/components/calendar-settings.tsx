@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'

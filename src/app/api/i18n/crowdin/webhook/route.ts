@@ -2,7 +2,7 @@ import crypto from 'crypto'
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { CrowdinIntegration, createBoxLogCrowdinConfig } from '@/lib/i18n/crowdin-integration'
+import { CrowdinIntegration, createBoxLogCrowdinConfig } from '@/features/i18n/lib/crowdin-integration'
 
 /**
  * Crowdin Webhook処理API

@@ -19,7 +19,7 @@ import {
   SidebarLabel,
   SidebarSection,
 } from '@/features/navigation/components/sidebar/shared'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 interface HelpSidebarSectionsProps {
   collapsed: boolean

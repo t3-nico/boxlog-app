@@ -25,7 +25,7 @@ import { TiptapEditor } from '@/components/app/rich-text-editor/tiptap-editor'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { sanitizeRichText } from '@/lib/security/sanitize'
 import { cn } from '@/lib/utils'
 

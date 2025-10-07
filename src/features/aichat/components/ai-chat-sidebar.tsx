@@ -4,7 +4,7 @@
 import * as React from 'react'
 import { useCallback, useState } from 'react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 // Speech Recognition API types
 interface SpeechRecognitionEvent {

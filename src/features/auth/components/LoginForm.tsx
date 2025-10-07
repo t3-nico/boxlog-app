@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { Logo } from '@/app/logo'
 import { Heading } from '@/components/app'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 // OAuth Provider Icons
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (

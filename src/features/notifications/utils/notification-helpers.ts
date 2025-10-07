@@ -1,5 +1,5 @@
 // @ts-nocheck TODO(#389): 型エラー7件を段階的に修正する
-import { useTranslation } from '@/lib/i18n/hooks'
+import { useTranslation } from '@/features/i18n/lib/hooks'
 
 export const getNotificationTypeColor = (type: string) => {
   switch (type) {

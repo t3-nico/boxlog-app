@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, HelpCircle, PanelRight, Sparkles } from 'luc
 
 import { Button } from '@/components/ui/button'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { askPanelSelectors, useAskPanelStore } from '../stores/useAskPanelStore'

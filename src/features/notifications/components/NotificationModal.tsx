@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { Bell, BellOff, Calendar, Check, Clock, Settings, X } from 'lucide-react'
 
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { useCurrentLocale, useTranslation } from '@/lib/i18n/hooks'
+import { useCurrentLocale, useTranslation } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 // import { formatDistanceToNow } from 'date-fns'

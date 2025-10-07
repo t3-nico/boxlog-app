@@ -2,7 +2,7 @@
 
 import { Book, ExternalLink, MessageSquare } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 export const HelpContent = () => {
   const { t } = useI18n()

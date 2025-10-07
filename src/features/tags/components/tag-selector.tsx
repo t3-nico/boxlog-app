@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { useTagStore } from '@/features/tags/stores/tag-store'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { Tag } from '@/types/unified'
 
 import { TagBadge } from './tag-badge'

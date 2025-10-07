@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { SettingsLayout } from '@/features/settings/components'
-import { getDictionary, createTranslation } from '@/lib/i18n'
+import { getDictionary, createTranslation } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 const Address = dynamic(() => import('../address').then((mod) => ({ default: mod.Address })), {

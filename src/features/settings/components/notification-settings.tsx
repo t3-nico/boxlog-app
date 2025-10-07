@@ -11,7 +11,7 @@ import { NotificationsList } from '@/features/notifications/components/notificat
 import { cn } from '@/lib/utils'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
-import { useTranslation } from '@/lib/i18n/hooks'
+import { useTranslation } from '@/features/i18n/lib/hooks'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'

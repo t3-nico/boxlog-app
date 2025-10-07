@@ -212,7 +212,7 @@ export const useTranslation = () => {
  * @example
  * ```tsx
  * 'use client'
- * import { useI18n } from '@/lib/i18n/hooks'
+ * import { useI18n } from '@/features/i18n/lib/hooks'
  *
  * export function MyComponent() {
  *   const { t } = useI18n()

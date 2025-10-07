@@ -1,7 +1,7 @@
 /**
  * クロノタイプ診断質問データ
  */
-import type { TranslationFunction } from '@/lib/i18n'
+import type { TranslationFunction } from '@/features/i18n/lib'
 
 /**
  * クロノタイプ診断質問の型定義

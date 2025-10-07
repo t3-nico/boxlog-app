@@ -1,5 +1,5 @@
 import type { ChronotypeType } from '@/types/chronotype'
-import type { TranslationFunction } from '@/lib/i18n'
+import type { TranslationFunction } from '@/features/i18n/lib'
 
 import type { ChronoTypeSchedule } from './chronotype.types'
 

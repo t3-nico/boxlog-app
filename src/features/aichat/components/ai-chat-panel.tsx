@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 import { X, Send, Sparkles, MoreVertical, Plus } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 interface AiChatPanelProps {
   isOpen: boolean

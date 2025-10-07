@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react'
 import { Copy, HelpCircle, MoreVertical, Sparkles, Trash2, X } from 'lucide-react'
 
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 import { useAskPanelStore } from '../stores/useAskPanelStore'

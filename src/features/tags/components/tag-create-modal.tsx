@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Dialog, DialogPanel, DialogTitle, Field, Input, Label, Textarea } from '@headlessui/react'
 import { Plus as PlusIcon, Tag as TagIcon, X as XMarkIcon } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import type { CreateTagInput, TagLevel, TagWithChildren } from '@/types/tags'
 
 import { TAG_PRESET_COLORS } from '../constants/colors'

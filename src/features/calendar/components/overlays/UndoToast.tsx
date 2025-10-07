@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { RotateCcw, Undo2, X } from 'lucide-react'
 
 import type { CalendarEvent } from '@/features/events'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 interface UndoAction {

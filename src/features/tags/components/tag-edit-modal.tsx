@@ -12,7 +12,7 @@ import {
   X as XMarkIcon,
 } from 'lucide-react'
 
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import type { TagWithChildren, UpdateTagInput } from '@/types/tags'
 
 interface TagEditModalProps {

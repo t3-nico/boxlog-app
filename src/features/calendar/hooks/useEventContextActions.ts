@@ -8,7 +8,7 @@ import useCalendarToast from '@/features/calendar/lib/toast'
 import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 import { useEventStore } from '@/features/events/stores/useEventStore'
 import type { CalendarEvent } from '@/features/events/types/events'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 export function useEventContextActions() {
   const { t } = useI18n()

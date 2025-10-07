@@ -4,7 +4,7 @@ import { BarChart3 } from 'lucide-react'
 
 import { Heading } from '@/components/app'
 import { cn } from '@/lib/utils'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useChatStore } from '@/features/aichat/stores/useChatStore'
 
 const StatsPage = () => {

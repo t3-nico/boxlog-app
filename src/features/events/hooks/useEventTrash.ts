@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { useAddPopup } from '@/hooks/useAddPopup'
-import { useI18n } from '@/lib/i18n/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { useEventStore } from '../stores/useEventStore'
 import { Event } from '../types/events'
