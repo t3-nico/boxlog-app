@@ -5,6 +5,8 @@ import React from 'react'
 
 import { Loader2, X } from 'lucide-react'
 
+import { useI18n } from '@/lib/i18n/hooks'
+
 interface Tag {
   id: string
   name: string
@@ -44,6 +46,7 @@ export const EssentialInspectorView = ({
   isEditMode = false,
   initialData,
 }: EssentialInspectorViewProps) => {
+  const { t } = useI18n()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const [title, setTitle] = React.useState(initialData?.title || '')
 
@@ -96,7 +99,7 @@ export const EssentialInspectorView = ({
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Enter event title"
+            placeholder={t('calendar.event.enterEventTitle')}
             className="w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
           />
         </div>
