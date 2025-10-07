@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 import { SettingsLayout, SettingsCard, SettingField } from '@/features/settings/components'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useI18n } from '@/lib/i18n/hooks'
 
 interface ProfileSettings {
   displayName: string
@@ -23,6 +24,7 @@ interface PrivacySettings {
 }
 
 const AccountSettingsAutoSave = () => {
+  const { t } = useI18n()
   // プロフィール設定（自動保存）
   const profile = useAutoSaveSettings<ProfileSettings>({
     initialValues: {
@@ -34,7 +36,7 @@ const AccountSettingsAutoSave = () => {
     onSave: async (values) => {
       // 実際のAPIコール（例）
       await new Promise(resolve => setTimeout(resolve, 1000)) // シミュレート
-      
+
       // await fetch('/api/settings/profile', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
@@ -42,9 +44,9 @@ const AccountSettingsAutoSave = () => {
       // })
       console.log('Saving profile:', values)
     },
-    successMessage: 'プロフィールを更新しました'
+    successMessage: t('settings.account.profileUpdated')
   })
-  
+
   // プライバシー設定（自動保存）
   const privacy = useAutoSaveSettings<PrivacySettings>({
     initialValues: {
@@ -55,7 +57,7 @@ const AccountSettingsAutoSave = () => {
     onSave: async (values) => {
       // 実際のAPIコール（例）
       await new Promise(resolve => setTimeout(resolve, 800)) // シミュレート
-      
+
       // await fetch('/api/settings/privacy', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
@@ -63,36 +65,36 @@ const AccountSettingsAutoSave = () => {
       // })
       console.log('Saving privacy:', values)
     },
-    successMessage: 'プライバシー設定を更新しました'
+    successMessage: t('settings.account.privacyUpdated')
   })
-  
+
   return (
     <SettingsLayout
-      title="アカウント設定"
-      description="プロフィールとアカウントの管理"
+      title={t('settings.account.title')}
+      description={t('settings.account.description')}
     >
       <div className="space-y-6">
         {/* プロフィール設定 */}
         <SettingsCard
-          title="プロフィール"
-          description="公開される基本情報"
+          title={t('settings.account.profile')}
+          description={t('settings.account.publicInfo')}
           isSaving={profile.isSaving}
         >
           <div className="space-y-4">
-            <SettingField 
-              label="表示名"
-              description="他のユーザーに表示される名前"
+            <SettingField
+              label={t('settings.account.displayName')}
+              description={t('settings.account.displayNameDesc')}
               required
             >
               <Input
                 value={profile.values.displayName}
                 onChange={(e) => profile.updateValue('displayName', e.target.value)}
-                placeholder="山田太郎"
+                placeholder={t('settings.account.displayNamePlaceholder')}
               />
             </SettingField>
-            
-            <SettingField 
-              label="メールアドレス"
+
+            <SettingField
+              label={t('settings.account.email')}
               required
             >
               <Input
@@ -103,8 +105,8 @@ const AccountSettingsAutoSave = () => {
               />
             </SettingField>
             
-            <SettingField label="タイムゾーン">
-              <Select 
+            <SettingField label={t('settings.calendar.timezone')}>
+              <Select
                 value={profile.values.timezone}
                 onValueChange={(value) => profile.updateValue('timezone', value)}
               >
@@ -118,8 +120,8 @@ const AccountSettingsAutoSave = () => {
                 </SelectContent>
               </Select>
             </SettingField>
-            
-            <SettingField label="言語">
+
+            <SettingField label={t('settings.preferences.language')}>
               <Select 
                 value={profile.values.language}
                 onValueChange={(value) => profile.updateValue('language', value)}
@@ -139,45 +141,45 @@ const AccountSettingsAutoSave = () => {
         
         {/* プライバシー設定 */}
         <SettingsCard
-          title="プライバシー"
-          description="情報の公開範囲を設定"
+          title={t('settings.account.privacy')}
+          description={t('settings.account.privacyDesc')}
           isSaving={privacy.isSaving}
         >
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <SettingField
-                label="プロフィールを公開"
-                description="他のユーザーがあなたのプロフィールを閲覧できます"
+                label={t('settings.account.publicProfile')}
+                description={t('settings.account.publicProfileDesc')}
               />
               <Switch
                 checked={privacy.values.publicProfile}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   privacy.updateValue('publicProfile', checked)
                 }
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <SettingField
-                label="メールアドレスを表示"
-                description="プロフィールにメールアドレスを表示します"
+                label={t('settings.account.showEmail')}
+                description={t('settings.account.showEmailDesc')}
               />
               <Switch
                 checked={privacy.values.showEmail}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   privacy.updateValue('showEmail', checked)
                 }
               />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <SettingField
-                label="通知を許可"
-                description="システムからの通知を受け取ります"
+                label={t('settings.account.allowNotifications')}
+                description={t('settings.account.allowNotificationsDesc')}
               />
               <Switch
                 checked={privacy.values.allowNotifications}
-                onCheckedChange={(checked) => 
+                onCheckedChange={(checked) =>
                   privacy.updateValue('allowNotifications', checked)
                 }
               />
@@ -187,8 +189,8 @@ const AccountSettingsAutoSave = () => {
         
         {/* デバッグ情報（開発用） */}
         <SettingsCard
-          title="デバッグ情報"
-          description="現在の設定値（開発用）"
+          title={t('settings.account.debugInfo')}
+          description={t('settings.account.debugInfoDesc')}
         >
           <div className="space-y-2 text-xs font-mono">
             <div>Profile: {JSON.stringify(profile.values, null, 2)}</div>

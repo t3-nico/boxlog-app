@@ -51,7 +51,7 @@ export const checkBrowserNotificationSupport = (): boolean => {
 export const requestNotificationPermission = async (t?: (key: string) => string): Promise<NotificationPermission> => {
   if (!checkBrowserNotificationSupport()) {
     const message = t
-      ? t('notifications.messages.browserNotificationUnsupported')
+      ? t('notifications.errors.notSupported')
       : 'このブラウザは通知をサポートしていません'
     console.warn(message)
     return 'denied'
@@ -61,7 +61,7 @@ export const requestNotificationPermission = async (t?: (key: string) => string)
     const result = await Notification.requestPermission()
     return result
   } catch (error) {
-    const message = t ? t('notifications.messages.browserNotificationPermissionFailed') : '通知許可の取得に失敗しました'
+    const message = t ? t('notifications.errors.permissionFailed') : '通知許可の取得に失敗しました'
     console.error(message, error)
     return 'denied'
   }
@@ -87,7 +87,7 @@ export const showBrowserNotification = (title: string, options?: NotificationOpt
 
     return notification
   } catch (error) {
-    const message = t ? t('notifications.messages.browserNotificationFailed') : 'ブラウザ通知の表示に失敗しました'
+    const message = t ? t('notifications.errors.displayFailed') : 'ブラウザ通知の表示に失敗しました'
     console.error(message, error)
     return null
   }

@@ -60,15 +60,21 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
     }
   }, [value, animatedValue.length])
 
+  // 翻訳された日付キーワードを取得（indicator表示でも使用）
+  const todayKeyword = t('events.create.dateKeywords.today')
+  const tomorrowKeyword = t('events.create.dateKeywords.tomorrow')
+  const nextWeekKeyword = t('events.create.dateKeywords.nextWeek')
+
   // Smart input analysis
   useEffect(() => {
     if (value && onSmartExtract) {
       const smartExtract = () => {
+
         // 日付パターンの検出
         const _datePatterns = [
-          /明日|tomorrow/i,
-          /今日|today/i,
-          /来週|next week/i,
+          new RegExp(`${tomorrowKeyword}|tomorrow`, 'i'),
+          new RegExp(`${t('events.create.dateKeywords.today')}|today`, 'i'),
+          new RegExp(`${nextWeekKeyword}|next week`, 'i'),
           /(\d{1,2})時/,
           /(\d{1,2})\/(\d{1,2})/,
         ]
@@ -80,12 +86,12 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
         // Remove tags from title
         const cleanTitle = value.replace(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g, '').trim()
 
-        // 日付の推測
+        // 日付の推測（翻訳されたキーワードで検出）
         let suggestedDate: Date | undefined
-        if (value.includes('明日') || value.includes('tomorrow')) {
+        if (value.includes(tomorrowKeyword) || value.includes('tomorrow')) {
           suggestedDate = new Date()
           suggestedDate.setDate(suggestedDate.getDate() + 1)
-        } else if (value.includes('来週') || value.includes('next week')) {
+        } else if (value.includes(nextWeekKeyword) || value.includes('next week')) {
           suggestedDate = new Date()
           suggestedDate.setDate(suggestedDate.getDate() + 7)
         }
@@ -219,7 +225,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
 
       {/* スマート抽出インジケーター */}
       <AnimatePresence>
-        {(value.includes('#') || value.includes('明日') || value.includes('今日')) && (
+        {(value.includes('#') || value.includes(tomorrowKeyword) || value.includes(todayKeyword)) && (
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}

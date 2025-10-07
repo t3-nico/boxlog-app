@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
+import { useI18n } from '@/lib/i18n/hooks'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -19,6 +20,7 @@ interface PreferencesSettingsData {
 }
 
 const PreferencesSettings = () => {
+  const { t } = useI18n()
   // 設定の自動保存
   const preferences = useAutoSaveSettings<PreferencesSettingsData>({
     initialValues: {
@@ -32,7 +34,7 @@ const PreferencesSettings = () => {
       // 環境設定API呼び出しシミュレーション
       await new Promise(resolve => setTimeout(resolve, 600))
     },
-    successMessage: '環境設定を保存しました',
+    successMessage: t('settings.preferences.settingsSaved'),
     debounceMs: 1000
   })
 
@@ -61,18 +63,18 @@ const PreferencesSettings = () => {
     <div className="space-y-6">
       {/* 言語とテーマ */}
       <SettingsCard
-        title="テーマ"
-        description="アプリケーションの外観の設定"
+        title={t('settings.preferences.theme')}
+        description={t('settings.preferences.themeDesc')}
         isSaving={preferences.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label="テーマ" description="アプリケーションの外観テーマ">
+          <SettingField label={t('settings.preferences.themeLabel')} description={t('settings.preferences.themeLabelDesc')}>
             <Select
               value={preferences.values.theme}
               onValueChange={handleThemeChange}
             >
               <SelectTrigger>
-                <SelectValue placeholder="テーマを選択" />
+                <SelectValue placeholder={t('settings.preferences.selectTheme')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="system">🖥️ システム設定に従う</SelectItem>
@@ -86,19 +88,19 @@ const PreferencesSettings = () => {
 
       {/* ユーザーエクスペリエンス */}
       <SettingsCard
-        title="ユーザーエクスペリエンス"
-        description="アニメーションやサウンドの設定"
+        title={t('settings.preferences.userExperience')}
+        description={t('settings.preferences.userExperienceDesc')}
         isSaving={preferences.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label="アニメーション" description="画面遷移やボタンのアニメーション効果を有効にする">
+          <SettingField label={t('settings.preferences.animations')} description={t('settings.preferences.animationsDesc')}>
             <Switch
               checked={preferences.values.animations}
               onCheckedChange={handleAnimationsChange}
             />
           </SettingField>
 
-          <SettingField label="サウンド効果" description="通知音やクリック音を再生する">
+          <SettingField label={t('settings.preferences.soundEffects')} description={t('settings.preferences.soundEffectsDesc')}>
             <Switch
               checked={preferences.values.sounds}
               onCheckedChange={handleSoundsChange}
@@ -109,19 +111,19 @@ const PreferencesSettings = () => {
 
       {/* データとプライバシー */}
       <SettingsCard
-        title="データとプライバシー"
-        description="データのバックアップと開発者向け機能"
+        title={t('settings.preferences.dataPrivacy')}
+        description={t('settings.preferences.dataPrivacyDesc')}
         isSaving={preferences.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label="自動バックアップ" description="データを定期的に自動でバックアップする">
+          <SettingField label={t('settings.preferences.autoBackup')} description={t('settings.preferences.autoBackupDesc')}>
             <Switch
               checked={preferences.values.autoBackup}
               onCheckedChange={handleAutoBackupChange}
             />
           </SettingField>
 
-          <SettingField label="開発者モード" description="高度な機能とデバッグ情報を表示する">
+          <SettingField label={t('settings.preferences.developerMode')} description={t('settings.preferences.developerModeDesc')}>
             <Switch
               checked={preferences.values.developerMode}
               onCheckedChange={handleDeveloperModeChange}

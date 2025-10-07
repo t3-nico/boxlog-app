@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
@@ -29,6 +30,7 @@ interface SecuritySettings {
 
 const AccountSettings = () => {
   const { user } = useAuthContext()
+  const { t } = useI18n()
   const [uploadedAvatar, setUploadedAvatar] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [currentPassword, setCurrentPassword] = useState('')
@@ -85,7 +87,7 @@ const AccountSettings = () => {
       await new Promise((resolve) => setTimeout(resolve, 800))
       console.log('Saving profile:', values)
     },
-    successMessage: 'プロフィールを更新しました',
+    successMessage: t('settings.account.profileUpdated'),
     debounceMs: 1000,
   })
 
@@ -142,7 +144,7 @@ const AccountSettings = () => {
         setNewPassword('')
         setConfirmPassword('')
 
-        alert('パスワードを更新しました')
+        alert(t('settings.account.passwordUpdated'))
       } catch (err) {
         console.error('Password update error:', err)
         setPasswordError('予期しないエラーが発生しました')
@@ -167,10 +169,10 @@ const AccountSettings = () => {
       // アカウント削除ロジック（実際の実装は後で）
       await new Promise((resolve) => setTimeout(resolve, 1500))
       console.log('Deleting account')
-      alert('アカウント削除機能は後で実装されます')
+      alert(t('settings.account.deleteNotImplemented'))
     } catch (err) {
       console.error('Account deletion error:', err)
-      alert('アカウントの削除に失敗しました')
+      alert(t('settings.account.deleteFailed'))
     } finally {
       setIsDeleting(false)
     }
@@ -229,35 +231,35 @@ const AccountSettings = () => {
   return (
     <div className="space-y-6">
       {/* Profile Section */}
-      <SettingsCard title="プロフィール" description="基本情報とプロフィール画像の設定" isSaving={profile.isSaving}>
+      <SettingsCard title={t('settings.account.profile')} description={t('settings.account.profileDesc')} isSaving={profile.isSaving}>
         <div className="space-y-4">
-          <SettingField label="表示名" description="他のユーザーに表示される名前" required>
+          <SettingField label={t('settings.account.displayName')} description={t('settings.account.displayNameDesc')} required>
             <Input
               value={profile.values.displayName}
               onChange={handleDisplayNameChange}
-              placeholder="表示名を入力"
+              placeholder={t('settings.account.displayNamePlaceholder')}
               required
             />
           </SettingField>
 
-          <SettingField label="メールアドレス" description="アカウントに関連付けられたメールアドレス" required>
+          <SettingField label={t('settings.account.email')} description={t('settings.account.emailDesc')} required>
             <Input
               type="email"
               value={profile.values.email}
               onChange={handleEmailChange}
-              placeholder="メールアドレスを入力"
+              placeholder={t('settings.account.emailPlaceholder')}
               required
             />
           </SettingField>
 
           {/* Profile Picture Section */}
-          <SettingField label="プロフィール画像" description="JPG, PNG, GIF 最大2MB">
+          <SettingField label={t('settings.account.profilePicture')} description={t('settings.account.profilePictureDesc')}>
             {/* Current Avatar Display */}
             <div className="mb-4 flex items-center gap-4">
               {uploadedAvatar ? (
                 <Image
                   src={uploadedAvatar}
-                  alt="プロフィール画像"
+                  alt={t('settings.account.profilePictureAlt')}
                   width={64}
                   height={64}
                   className="rounded-full border-2 object-cover"
@@ -274,7 +276,7 @@ const AccountSettings = () => {
               )}
               <div className="flex-1">
                 <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                  {uploadedAvatar ? 'カスタム画像を使用' : '絵文字アイコンを使用'}
+                  {uploadedAvatar ? t('settings.account.usingCustomImage') : t('settings.account.usingEmojiIcon')}
                 </div>
               </div>
             </div>
@@ -282,11 +284,11 @@ const AccountSettings = () => {
             {/* Upload Button */}
             <div className="flex gap-2">
               <Button type="button" variant="outline" disabled={isUploading}>
-                {isUploading ? 'アップロード中...' : '📷 画像をアップロード'}
+                {isUploading ? t('settings.account.uploading') : t('settings.account.uploadImage')}
               </Button>
               {uploadedAvatar != null && (
                 <Button type="button" variant="ghost" onClick={handleAvatarRemove} className="text-red-600 dark:text-red-400">
-                  削除
+                  {t('settings.account.remove')}
                 </Button>
               )}
             </div>
@@ -294,10 +296,10 @@ const AccountSettings = () => {
 
           {/* アイコン選択セクション */}
           {!uploadedAvatar && (
-            <SettingField label="プロフィールアイコン (絵文字)" description="プロフィール画像の代わりに使用する絵文字">
+            <SettingField label={t('settings.account.profileIcon')} description={t('settings.account.profileIconDesc')}>
               <div className="mb-4 flex items-center gap-4">
                 <div className="text-4xl">{profile.values.selectedIcon}</div>
-                <div className="text-sm text-neutral-600 dark:text-neutral-400">現在のアイコン</div>
+                <div className="text-sm text-neutral-600 dark:text-neutral-400">{t('settings.account.currentIcon')}</div>
               </div>
               <div className="grid grid-cols-10 gap-2 rounded-lg border p-4 bg-neutral-50 dark:bg-neutral-900">
                 {availableIcons.map((icon) => (
@@ -323,47 +325,47 @@ const AccountSettings = () => {
       </SettingsCard>
 
       {/* Password Section */}
-      <SettingsCard title="パスワード" description="アカウントのパスワードを変更">
+      <SettingsCard title={t('settings.account.password')} description={t('settings.account.passwordDesc')}>
         <form onSubmit={handlePasswordSave} className="space-y-2">
           <Input
             type="password"
             value={currentPassword}
             onChange={handleCurrentPasswordChange}
-            placeholder="現在のパスワード"
+            placeholder={t('settings.account.currentPassword')}
             required
           />
           <Input
             type="password"
             value={newPassword}
             onChange={handleNewPasswordChange}
-            placeholder="新しいパスワード"
+            placeholder={t('settings.account.newPassword')}
             required
           />
           <Input
             type="password"
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
-            placeholder="新しいパスワード（確認）"
+            placeholder={t('settings.account.confirmPassword')}
             required
           />
           {passwordError ? <p className="text-red-600 dark:text-red-400 text-sm">{passwordError}</p> : null}
           <div className="flex justify-end">
             <Button type="submit" disabled={isPasswordLoading}>
-              {isPasswordLoading ? 'パスワード更新中...' : 'パスワードを更新'}
+              {isPasswordLoading ? t('settings.account.updatingPassword') : t('settings.account.updatePassword')}
             </Button>
           </div>
         </form>
       </SettingsCard>
 
       {/* Two-Factor Authentication Section */}
-      <SettingsCard title="2要素認証" description="アカウントに追加のセキュリティ層を追加" isSaving={security.isSaving}>
+      <SettingsCard title={t('settings.account.twoFactor')} description={t('settings.account.twoFactorDesc')} isSaving={security.isSaving}>
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium text-base">2FAを有効にする</div>
+            <div className="font-medium text-base">{t('settings.account.enable2FA')}</div>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
               {security.values.twoFactorEnabled
-                ? '2要素認証が有効になっています'
-                : 'サインイン時に認証コードを要求します'}
+                ? t('settings.account.twoFactorEnabled')
+                : t('settings.account.twoFactorPrompt')}
             </p>
           </div>
           <Switch checked={security.values.twoFactorEnabled} onCheckedChange={handleTwoFactorChange} />
@@ -373,10 +375,10 @@ const AccountSettings = () => {
           <div className="mt-4 p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950 rounded-lg">
             <div className="mb-2 flex items-center gap-2">
               <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-700 dark:text-green-300">2要素認証が有効</span>
+              <span className="text-sm font-medium text-green-700 dark:text-green-300">{t('settings.account.twoFactorActive')}</span>
             </div>
             <p className="text-xs text-green-700 dark:text-green-300">
-              アカウントが追加のセキュリティ層で保護されています。
+              {t('settings.account.twoFactorProtection')}
             </p>
           </div>
         )}
@@ -384,8 +386,8 @@ const AccountSettings = () => {
 
       {/* Danger Zone */}
       <SettingsCard
-        title={<span className="text-red-600 dark:text-red-400">危険な操作</span>}
-        description="取り消すことのできない破壊的なアクション"
+        title={<span className="text-red-600 dark:text-red-400">{t('settings.account.dangerZone')}</span>}
+        description={t('settings.account.dangerZoneDesc')}
       >
         <div className="border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 rounded-lg">
           <div className="flex items-start justify-between p-6">

@@ -39,6 +39,8 @@ export function useAutoSaveSettings<T>({
   initialValues,
   onSave,
   debounceMs = 1000, // 1秒後に自動保存
+  // Note: デフォルト値はフォールバック用。実際の使用時は各コンポーネントで
+  // t('settings.common.saved') と t('settings.common.saveFailed') を渡してください
   successMessage = '設定を保存しました',
   errorMessage = '保存に失敗しました',
 }: UseAutoSaveSettingsOptions<T>) {
