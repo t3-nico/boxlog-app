@@ -1,6 +1,8 @@
 // @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 import { useCallback } from 'react'
 
+import { getTranslation } from './get-translation'
+import { CALENDAR_TOAST_KEYS } from './translation-keys'
 import { useCalendarToast } from './use-calendar-toast'
 
 // ネットワークエラーの種類
@@ -16,20 +18,20 @@ export interface NetworkErrorInfo {
 
 // HTTPステータスコードマッピング
 const STATUS_CODE_MAPPING: Record<number, { type: NetworkErrorType; message: string }> = {
-  401: { type: 'unauthorized', message: '認証が必要です' },
-  403: { type: 'forbidden', message: 'アクセスが拒否されました' },
-  404: { type: 'not_found', message: 'リソースが見つかりません' },
-  409: { type: 'conflict', message: 'データに競合が発生しました' },
-  500: { type: 'server_error', message: 'サーバーエラーが発生しました' },
-  502: { type: 'server_error', message: 'サーバーエラーが発生しました' },
-  503: { type: 'server_error', message: 'サーバーエラーが発生しました' },
-  504: { type: 'server_error', message: 'サーバーエラーが発生しました' }
+  401: { type: 'unauthorized', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_UNAUTHORIZED) },
+  403: { type: 'forbidden', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_FORBIDDEN) },
+  404: { type: 'not_found', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_NOT_FOUND) },
+  409: { type: 'conflict', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_CONFLICT) },
+  500: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) },
+  502: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) },
+  503: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) },
+  504: { type: 'server_error', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_SERVER_ERROR) }
 }
 
 // ヘルパー関数: オフライン状態チェック
 const checkOfflineStatus = (): NetworkErrorInfo | null => {
   if (!navigator.onLine) {
-    return { type: 'offline', message: 'インターネット接続がありません' }
+    return { type: 'offline', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_OFFLINE) }
   }
   return null
 }
@@ -37,7 +39,7 @@ const checkOfflineStatus = (): NetworkErrorInfo | null => {
 // ヘルパー関数: タイムアウトエラーチェック
 const checkTimeoutError = (error: Error & { code?: string; message?: string }): NetworkErrorInfo | null => {
   if (error.code === 'TIMEOUT' || error.message?.includes('timeout')) {
-    return { type: 'timeout', message: 'リクエストがタイムアウトしました' }
+    return { type: 'timeout', message: getTranslation(CALENDAR_TOAST_KEYS.ERROR_TIMEOUT) }
   }
   return null
 }
@@ -48,7 +50,7 @@ const handleStatusCode = (status: number, errorMessage?: string): NetworkErrorIn
   if (statusMapping) {
     return { type: statusMapping.type, statusCode: status, message: statusMapping.message }
   }
-  return { type: 'unknown', statusCode: status, message: errorMessage || '予期しないエラーが発生しました' }
+  return { type: 'unknown', statusCode: status, message: errorMessage || getTranslation(CALENDAR_TOAST_KEYS.ERROR_UNEXPECTED) }
 }
 
 // エラー分類関数（複雑度削減版）
@@ -68,10 +70,10 @@ export const classifyNetworkError = (error: Error & { code?: string; response?: 
   }
 
   // その他のエラー
-  return { 
-    type: 'unknown', 
-    message: error.message || '予期しないエラーが発生しました',
-    code: error.code 
+  return {
+    type: 'unknown',
+    message: error.message || getTranslation(CALENDAR_TOAST_KEYS.ERROR_UNEXPECTED),
+    code: error.code
   }
 }
 
@@ -84,14 +86,14 @@ export const useNetworkErrorHandler = () => {
 
     switch (errorInfo.type) {
       case 'offline':
-        return toast.warning('オフラインです', {
-          description: 'インターネット接続を確認してください',
+        return toast.warning(getTranslation(CALENDAR_TOAST_KEYS.TOAST_OFFLINE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_OFFLINE_DESC),
           duration: 5000
         })
 
       case 'timeout':
-        return toast.error('タイムアウトしました', {
-          description: 'しばらく待ってから再試行してください',
+        return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_TIMEOUT_TITLE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_TIMEOUT_DESC),
           duration: 8000,
           ...(retryFn && {
             retryAction: retryFn
@@ -99,8 +101,8 @@ export const useNetworkErrorHandler = () => {
         })
 
       case 'unauthorized':
-        return toast.error('認証エラー', {
-          description: '再度ログインしてください',
+        return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_AUTH_ERROR_TITLE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_AUTH_ERROR_DESC),
           duration: 10000,
           viewAction: () => {
             window.location.href = '/login'
@@ -108,14 +110,14 @@ export const useNetworkErrorHandler = () => {
         })
 
       case 'forbidden':
-        return toast.error('アクセス拒否', {
-          description: 'この操作を実行する権限がありません',
+        return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_ACCESS_DENIED_TITLE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_ACCESS_DENIED_DESC),
           duration: 8000
         })
 
       case 'not_found':
-        return toast.warning('データが見つかりません', {
-          description: 'データが削除されているか移動されています',
+        return toast.warning(getTranslation(CALENDAR_TOAST_KEYS.TOAST_NOT_FOUND_TITLE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_NOT_FOUND_DESC),
           duration: 6000,
           ...(retryFn && {
             retryAction: retryFn
@@ -123,8 +125,8 @@ export const useNetworkErrorHandler = () => {
         })
 
       case 'conflict':
-        return toast.warning('データが更新されています', {
-          description: '他のユーザーがデータを変更しました。最新のデータを確認してください',
+        return toast.warning(getTranslation(CALENDAR_TOAST_KEYS.TOAST_CONFLICT_TITLE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_CONFLICT_DESC),
           duration: 8000,
           ...(retryFn && {
             retryAction: retryFn
@@ -132,8 +134,8 @@ export const useNetworkErrorHandler = () => {
         })
 
       case 'server_error':
-        return toast.error('サーバーエラー', {
-          description: 'サーバーで問題が発生しています。しばらく待ってから再試行してください',
+        return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_SERVER_ERROR_TITLE), {
+          description: getTranslation(CALENDAR_TOAST_KEYS.TOAST_SERVER_ERROR_DESC),
           duration: 10000,
           ...(retryFn && {
             retryAction: retryFn
@@ -141,8 +143,8 @@ export const useNetworkErrorHandler = () => {
         })
 
       default:
-        return toast.error('エラーが発生しました', {
-          description: errorInfo.message || '予期しないエラーです',
+        return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNKNOWN_ERROR_TITLE), {
+          description: errorInfo.message || getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNKNOWN_ERROR_DESC),
           duration: 6000,
           ...(retryFn && {
             retryAction: retryFn
@@ -152,8 +154,8 @@ export const useNetworkErrorHandler = () => {
   }, [toast])
 
   const handlePermissionError = useCallback((action: string) => {
-    return toast.error('権限がありません', {
-      description: `この操作（${action}）を実行する権限がありません`,
+    return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_PERMISSION_ERROR_TITLE), {
+      description: `${getTranslation(CALENDAR_TOAST_KEYS.TOAST_PERMISSION_ERROR_DESC)}（${action}）`,
       duration: 8000,
       viewAction: () => {
         window.location.href = '/settings/permissions'
@@ -163,7 +165,7 @@ export const useNetworkErrorHandler = () => {
 
   const handleValidationError = useCallback((errors: string[] | string) => {
     const errorList = Array.isArray(errors) ? errors : [errors]
-    return toast.error('入力エラー', {
+    return toast.error(getTranslation(CALENDAR_TOAST_KEYS.TOAST_VALIDATION_ERROR_TITLE), {
       description: errorList.join(', '),
       duration: 6000
     })

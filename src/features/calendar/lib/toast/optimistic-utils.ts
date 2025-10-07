@@ -1,8 +1,9 @@
 // @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
 import { useCallback } from 'react'
 
+import { getTranslation } from './get-translation'
 import { useNetworkErrorHandler } from './network-handler'
-
+import { CALENDAR_TOAST_KEYS } from './translation-keys'
 import { useCalendarToast } from './use-calendar-toast'
 
 // 楽観的更新の結果
@@ -43,7 +44,7 @@ export const useOptimisticUpdate = () => {
         errorMessage,
         customErrorHandling = false,
         enableRetry = true,
-        _operationDescription = '操作',
+        _operationDescription = getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION),
       } = options
 
       // 楽観的更新を実行
@@ -138,7 +139,7 @@ export const useBatchOperations = () => {
       // プログレスToastを表示（オプション）
       let progressToastId: string | undefined
       if (showProgress) {
-        progressToastId = toast.loading(`${operations.length}件の操作を実行中...`, {
+        progressToastId = toast.loading(`${operations.length}${getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION_IN_PROGRESS)}`, {
           duration: Infinity,
         })
       }
@@ -183,7 +184,7 @@ export const useBatchOperations = () => {
           if (errorMessage) {
             toast.error(errorMessage)
           } else {
-            toast.error(`${errorCount}件の操作が失敗しました`)
+            toast.error(`${errorCount}${getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION_FAILED)}`)
           }
         }
 

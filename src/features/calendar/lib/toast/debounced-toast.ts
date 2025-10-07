@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import type { CalendarAction, CalendarToastOptions } from './types'
 
+import { getTranslation } from './get-translation'
+import { CALENDAR_TOAST_KEYS } from './translation-keys'
 import { useCalendarToast } from './use-calendar-toast'
 
 // デバウンス設定
@@ -185,7 +187,9 @@ export const useDebouncedToast = () => {
       const key = `drag-${operationType}-${eventTitle}`
       const debouncedFn = createDebouncedFunction(
         () => {
-          const message = operationType === 'move' ? '予定を移動しました' : '予定をリサイズしました'
+          const message = operationType === 'move'
+            ? getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED)
+            : getTranslation(CALENDAR_TOAST_KEYS.EVENT_RESIZED)
           return toast.success(message, {
             description: eventTitle,
           })
@@ -200,7 +204,7 @@ export const useDebouncedToast = () => {
 
   // 保存操作用の特殊デバウンス（連続保存を防ぐ）
   const saveOperationToast = useCallback(
-    (message: string = '保存しました', config: DebounceConfig = { delay: 1000, leading: false, trailing: true }) => {
+    (message: string = getTranslation(CALENDAR_TOAST_KEYS.EVENT_SAVED), config: DebounceConfig = { delay: 1000, leading: false, trailing: true }) => {
       const key = 'save-operation'
       const debouncedFn = createDebouncedFunction(() => toast.success(message), config, key)
       return debouncedFn()

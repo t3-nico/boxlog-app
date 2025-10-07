@@ -3,7 +3,9 @@ import { useCallback } from 'react';
 
 import { toast } from '@/lib/toast';
 
+import { getTranslation } from './get-translation';
 import { toastTemplates } from './templates';
+import { CALENDAR_TOAST_KEYS } from './translation-keys';
 import type { CalendarAction, CalendarToastOptions, CalendarEvent } from './types';
 
 export const useCalendarToast = () => {
@@ -25,24 +27,24 @@ export const useCalendarToast = () => {
     
     if (options.undoAction) {
       actions.push({
-        label: '元に戻す',
+        label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNDO),
         onClick: () => {
           options.undoAction!();
-          toast.success('操作を取り消しました');
+          toast.success(getTranslation(CALENDAR_TOAST_KEYS.TOAST_UNDO_COMPLETED));
         }
       });
     }
-    
+
     if (options.viewAction) {
       actions.push({
-        label: '表示',
+        label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_VIEW),
         onClick: options.viewAction
       });
     }
-    
+
     if (options.retryAction) {
       actions.push({
-        label: '再試行',
+        label: getTranslation(CALENDAR_TOAST_KEYS.TOAST_RETRY),
         onClick: options.retryAction
       });
     }
@@ -107,15 +109,15 @@ export const useCalendarToast = () => {
       error?: string | ((error: Error) => string);
     }
   ) => {
-    const id = toast.loading(messages.loading || 'Processing...');
-    
+    const id = toast.loading(messages.loading || getTranslation(CALENDAR_TOAST_KEYS.TOAST_PROCESSING));
+
     try {
       const result = await promise;
       toast.dismiss(id);
       toast.success(
-        typeof messages.success === 'function' 
+        typeof messages.success === 'function'
           ? messages.success(result)
-          : messages.success || 'Success!'
+          : messages.success || getTranslation(CALENDAR_TOAST_KEYS.TOAST_SUCCESS)
       );
       return result;
     } catch (error) {
@@ -123,7 +125,7 @@ export const useCalendarToast = () => {
       toast.error(
         typeof messages.error === 'function'
           ? messages.error(error)
-          : messages.error || 'Error occurred'
+          : messages.error || getTranslation(CALENDAR_TOAST_KEYS.TOAST_ERROR_OCCURRED)
       );
       throw error;
     }
