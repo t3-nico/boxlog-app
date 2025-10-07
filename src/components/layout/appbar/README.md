@@ -1,153 +1,184 @@
-# Sidebar コンポーネント
+# AppBar コンポーネント
 
-BoxLog App のメインサイドバーコンポーネントです。
+BoxLog App の**L1: Primary Navigation** - アプリケーション全体の主要ページ切り替え
 
-## 概要
+## 📊 役割定義（Sidebar との明確な違い）
 
-ナビゲーション、ユーザーアカウント情報、テーマ切り替えなどの主要機能を提供する左側固定サイドバーです。
+### AppBar の責任（L1: Primary Navigation）
+**「どのページに行くか」の選択**
 
-## 主要機能
+- ✅ **トップレベルページ切り替え**: Calendar / Board / Table / Stats / Settings
+- ✅ **固定表示**: 常に画面左端に表示（64px幅）
+- ✅ **グローバル機能**: Sidebar開閉トグル、ユーザーメニュー
+- ✅ **アイコン+ラベル**: 縦並びのコンパクトデザイン
 
-### 🔧 リサイズ機能
-- **操作エリア**: 右端の12px幅でマウス操作
-- **視覚効果**: 1px幅でborder.universalと一致
-- **ホバー効果**: theme準拠の青色に変化
-- **制約**: 最小200px、最大480px
+### Sidebar の責任（L2: Contextual Navigation）
+**「選んだページ内で何をするか」のコンテキスト**
 
-### 👤 ユーザーアカウント表示
-- **位置**: サイドバー下部
-- **表示内容**: 
-  - アバター/プロフィールアイコン/イニシャル（lg = 24px）
-  - ユーザー名（DEFAULT typography）
-  - プランステータス（small typography）
-- **機能**: 
-  - 全体がクリック可能（8px padding）
-  - hover時境界線表示でクリック範囲明確化
-  - shadcn/ui DropdownMenuによるメニュー表示（真上配置）
+- ✅ **ページ固有コンテンツ**: 選択したページの詳細ナビゲーション・操作
+- ✅ **動的表示**: AppBarで選んだページに応じて内容が変わる
+- ✅ **トグル可能**: AppBarのボタンで開閉（240px幅）
+- ✅ **リッチコンテンツ**: フィルター、検索、ページ固有アクション等
 
-### 🎨 テーマ準拠デザイン
-- **色**: `border.universal`, `background.base`, `text.primary`
-- **アニメーション**: `animations.transition.fast`
-- **z-index**: `z-[9999]` で最上位表示
+## 🎯 具体例
 
-### 📱 レスポンシブ対応
-- **閉じるボタン**: `PanelLeftClose`アイコンでサイドバーを閉じる
-- **モバイル対応**: NavigationStoreでサイドバー状態管理
+### AppBar（L1）の操作フロー
+```
+User clicks "Calendar" in AppBar
+  → ページ全体が /calendar に遷移
+  → URL変更、メインコンテンツ全体が切り替わる
+```
 
-## ファイル構成
+### Sidebar（L2）の操作フロー
+```
+User is on Calendar page
+  → Sidebar shows: Calendar filters, date picker, view options
+User clicks "Board" in AppBar
+  → Sidebar content changes to: Board columns, status filters
+```
+
+## 🏗️ アーキテクチャ
 
 ```
-src/components/layout/sidebar/
-├── index.tsx                 # メインサイドバーコンポーネント
-├── user-menu.tsx            # ユーザーメニューポップアップ
-├── sidebar-item.tsx         # ナビゲーションアイテム
-├── theme-toggle.tsx         # テーマ切り替えボタン
-├── resize-handle.tsx        # (使用停止)
+┌─────────┬─────────────────┬─────────────────────────┐
+│ AppBar  │    Sidebar      │     Main Content        │
+│ (L1)    │    (L2)         │        (L3)             │
+├─────────┼─────────────────┼─────────────────────────┤
+│         │                 │                         │
+│ [≡]     │ Calendar        │  [Calendar Grid View]   │
+│         │ ├─ Filters      │                         │
+│ [📅]    │ ├─ Date Picker  │                         │
+│ [📋]    │ └─ View Options │                         │
+│ [📊]    │                 │                         │
+│ [⚙️]    │                 │                         │
+│         │                 │                         │
+│ [👤]    │                 │                         │
+└─────────┴─────────────────┴─────────────────────────┘
+
+L1: Where to go (AppBar)
+L2: What to do there (Sidebar)
+L3: Do it (Main Content)
+```
+
+## 📁 ファイル構成
+
+```
+src/components/layout/appbar/
+├── index.tsx                 # エクスポート
+├── DesktopAppBar.tsx        # デスクトップ版AppBar（64px幅）
+├── MobileAppBar.tsx         # モバイル版AppBar
+├── appbar-item.tsx          # ナビゲーションアイテム（アイコン+ラベル）
+├── navigation-items.ts      # ナビゲーション定義（5つの主要ページ）
+├── user-menu.tsx            # ユーザーメニュードロップダウン
+├── theme-toggle.tsx         # ダークモード切り替え（共通コンポーネント）
+├── resize-handle.tsx        # リサイズハンドル（廃止予定）
 ├── stores/
-│   └── navigation.store.ts  # ナビゲーション状態管理
+│   └── navigation.store.ts  # Layout全体の状態管理（要移動）
 └── README.md               # このファイル
 ```
 
-## 使用方法
+## 🎨 デザイン仕様
 
+### サイズ
+- **幅**: 固定 64px
+- **アイテムサイズ**: 56px × 56px（14px角のアイコン + 10pxラベル）
+- **間隔**: gap-1（4px）
+
+### スタイリング（globals.css準拠）
 ```tsx
-import { Sidebar } from '@/components/layout/sidebar'
+// 通常状態
+<div className="bg-card text-card-foreground border-border">
 
-export function Layout() {
-  return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <main className="flex-1">
-        {/* メインコンテンツ */}
-      </main>
-    </div>
-  )
-}
+// アクティブ状態
+<div className="bg-primary text-primary-foreground">
+
+// ホバー状態
+<div className="hover:bg-muted hover:text-foreground">
 ```
 
-## State Management
+### ナビゲーション項目
 
-### NavigationStore
-- `isSidebarOpen`: サイドバー開閉状態
-- `primaryNavWidth`: サイドバー幅（200-480px）
-- `toggleSidebar()`: サイドバー開閉切り替え
-- `setPrimaryNavWidth()`: 幅設定
-
-## カスタマイズ
-
-### 幅の変更
 ```typescript
-// 最小・最大幅の変更
-const { setPrimaryNavWidthConstrained } = useNavigationStore()
-setPrimaryNavWidthConstrained(300) // 制約付きで設定
+const appBarItems = [
+  { id: 'calendar', icon: Calendar, href: '/calendar' },
+  { id: 'board', icon: SquareKanban, href: '/board' },
+  { id: 'table', icon: Table, href: '/table' },
+  { id: 'stats', icon: BarChart3, href: '/stats' },
+  { id: 'settings', icon: Settings, href: '/settings' },
+]
 ```
 
-### スタイルの変更
-```tsx
-// theme/colors.ts でカラーを一元管理
-border.universal    // 通常のborder色
-semantic.info      // ホバー時の青色
-background.base    // 背景色
+## 🔧 主要機能
+
+### 1. ページナビゲーション
+- 5つの主要ページへのリンク
+- アクティブページのハイライト表示
+- i18n対応ラベル
+
+### 2. Sidebarトグル
+- Sidebar（L2）の開閉制御
+- アイコン切り替え（PanelLeft ⇄ PanelLeftClose）
+
+### 3. ユーザーメニュー
+- アバター/アイコン/イニシャル表示
+- ドロップダウンメニュー（shadcn/ui DropdownMenu）
+- プロフィール、設定、ログアウト
+
+## 📱 レスポンシブ対応
+
+### Desktop（768px以上）
+- DesktopAppBar表示（64px幅）
+- 常時表示、固定配置
+
+### Mobile（768px未満）
+- MobileAppBar または MobileBottomNavigation
+- 画面下部タブバー形式
+
+## 🔄 状態管理
+
+### useNavigationStore
+```typescript
+const {
+  isSidebarOpen,    // Sidebar開閉状態
+  toggleSidebar,    // Sidebar開閉トグル
+} = useNavigationStore()
 ```
 
-## 実装詳細
+**注意**: このstoreは`src/components/layout/appbar/stores/`にあるが、
+**Layout全体で使用されるグローバル状態**のため、
+`src/components/layout/stores/navigation.store.ts` への移動を推奨。
 
-### リサイズ機能の仕組み
-1. **操作エリア**: `w-3 -right-1` で12px幅の操作領域
-2. **視覚効果**: 内部の`w-px right-1`で1px幅の色変化
-3. **マウスイベント**: `onMouseDown`でリサイズ開始
-4. **制約**: Math.max/minで幅制限
+## 🚫 AppBarでやらないこと
 
-### ユーザーメニューの表示優先度
-1. `user.user_metadata.avatar_url` (プロフィール画像)
-2. `user.user_metadata.profile_icon` (アイコン文字)
-3. イニシャル生成 (名前またはメールの最初の文字)
+- ❌ **ページ内フィルタリング** → Sidebar（L2）の役割
+- ❌ **検索機能** → Header または Sidebarの役割
+- ❌ **作成ボタン** → Sidebarまたはページ内FAB
+- ❌ **通知表示** → Headerの役割
+- ❌ **ページタイトル** → Headerの役割
 
-### z-indexの管理
-- **Sidebar**: `z-[9999]` で最上位
-- **UserMenu**: `z-[9999]` でポップアップも最上位保証
+## 📚 関連ドキュメント
 
-## 依存関係
+- [Sidebar README](../sidebar/README.md) - L2コンテキストナビゲーション
+- [Layout README](../README.md) - 3レイヤーアーキテクチャ全体像
+- [navigation.store.ts](./stores/navigation.store.ts) - 状態管理
 
-- `@/lib/utils` - cn()ユーティリティ
-- `@/config/theme/colors` - カラーシステム
-- `@/config/theme` - アニメーション、spacing
-- `@/config/navigation/config` - ナビゲーション設定
-- `@/features/auth` - ユーザー認証情報
-- `lucide-react` - アイコン
-- `next/navigation` - ルーティング
+## 🔍 設計原則
 
-## 注意事項
+### 1. Single Responsibility
+AppBarは**「どのページに行くか」の選択のみ**に集中
 
-- **theme厳守**: 直接的な色指定は禁止、必ずtheme経由で使用
-- **アクセシビリティ**: キーボード操作、スクリーンリーダー対応
-- **パフォーマンス**: リサイズ中の過度なre-renderを防止
-- **メモリリーク**: イベントリスナーの適切なクリーンアップ
+### 2. Persistence
+常に表示され、アプリケーション全体で一貫したナビゲーション体験を提供
 
-## 更新履歴
+### 3. Simplicity
+5つの主要ページのみ。複雑な階層構造は持たない
 
-### v4.0 (2025-01-XX) - shadcn/ui移行・UX改善
-- **Headless UI → shadcn/ui**: UserMenuをDropdownMenuに変更（プロジェクトルール準拠）
-- **ユーザーアカウントUX改善**:
-  - 全体をクリック可能に（アイコン部分だけでなく）
-  - hover時の境界線でクリック範囲を視覚的に明確化
-  - アカウント部分のpadding統一（8px全方向）
-- **ナビゲーション改善**: 
-  - 項目のpadding拡大（4px→8px）でクリックしやすく
-  - space-y-1からspace-y-0に変更で密な表示
-- **メニュー配置最適化**: ポップアップを真上表示で切れない配置
+### 4. Accessibility
+- キーボードナビゲーション対応
+- aria-label適切に設定
+- アクティブ状態の明確な視覚的フィードバック
 
-### v3.0: ユーザーアカウント表示を上部に移動、リサイズ機能改善
-### v2.x: theme準拠デザインシステム導入  
-### v1.x: 基本的なサイドバー機能実装
+---
 
-## 技術的改善点
-
-### コンポーネント設計
-- **shadcn/ui第一選択**: プロジェクトルールに完全準拠
-- **型安全性**: TypeScript strict mode対応
-- **アクセシビリティ**: Radix UIベースで自動改善
-
-### パフォーマンス
-- **不要リレンダリング削減**: 適切なuseMemo/useCallback使用
-- **状態管理最適化**: Zustand永続化ストア使用
+**Last Updated**: 2025-10-07
+**Version**: v1.0 - AppBar役割明確化（L1 Primary Navigation）
