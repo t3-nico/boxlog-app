@@ -34,7 +34,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
 
   return (
     <aside
-      className="flex flex-row overflow-hidden bg-card text-card-foreground shadow-sm"
+      className="flex flex-row overflow-hidden bg-secondary text-card-foreground shadow-sm"
       style={{ width: `${sidebarWidth}px` }}
       aria-label="Sidebar navigation"
     >

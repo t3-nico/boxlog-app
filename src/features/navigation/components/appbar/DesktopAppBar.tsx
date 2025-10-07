@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 import { Calendar, SquareKanban, Table, BarChart3, Settings, PanelLeftClose, PanelLeft, LucideIcon } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/avatar'
+import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
@@ -157,7 +158,7 @@ export const DesktopAppBar = () => {
   }, [toggleSidebar])
 
   return (
-    <div className="flex w-16 flex-col border-r border-border bg-card text-card-foreground">
+    <div className="flex w-16 flex-col border-r border-border bg-secondary text-card-foreground">
       {/* Top: Sidebar Toggle Button */}
       <div className="flex items-center justify-center pt-4 pb-2">
         <button
@@ -209,8 +210,9 @@ export const DesktopAppBar = () => {
         })}
       </nav>
 
-      {/* Bottom: User Avatar */}
-      <div className="flex items-center justify-center pb-4">
+      {/* Bottom: Theme Toggle & User Avatar */}
+      <div className="flex flex-col items-center justify-center gap-2 pb-4">
+        <SimpleThemeToggle />
         <UserMenu>
           <button
             type="button"

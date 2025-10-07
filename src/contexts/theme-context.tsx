@@ -95,20 +95,20 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   const applyColorScheme = (scheme: ColorScheme, currentTheme: 'light' | 'dark') => {
     const root = window.document.documentElement
-    
+
     // Remove existing color scheme classes
     root.classList.remove('scheme-blue', 'scheme-green', 'scheme-purple', 'scheme-orange', 'scheme-red')
-    
+
     // Add new color scheme class
     root.classList.add(`scheme-${scheme}`)
-    
-    // Define color variables based on scheme and theme
-    const colors = getColorVariables(scheme, currentTheme)
-    
-    // Apply CSS variables
-    Object.entries(colors).forEach(([key, value]) => {
-      root.style.setProperty(key, value)
-    })
+
+    // NOTE: CSS変数の上書きを無効化
+    // modern-minimalテーマのOKLCH値を使用するため、
+    // RGB値での上書きは行わない
+    // const colors = getColorVariables(scheme, currentTheme)
+    // Object.entries(colors).forEach(([key, value]) => {
+    //   root.style.setProperty(key, value)
+    // })
   }
 
   return (
