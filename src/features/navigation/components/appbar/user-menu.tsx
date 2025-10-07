@@ -78,7 +78,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
             type="button"
             className={cn(
               'group flex items-center justify-center',
-              'hover:bg-neutral-100 dark:hover:bg-neutral-800',
+              'hover:bg-accent',
               'rounded-lg',
               'transition-colors duration-150'
             )}
@@ -89,7 +89,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
                   className={cn(
                     'h-8 w-8',
                     'bg-accent flex items-center justify-center border text-sm',
-                    'border-neutral-200 dark:border-neutral-800',
+                    'border-border',
                     'rounded-md'
                   )}
                 >
@@ -101,7 +101,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
                   initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
                     .charAt(0)
                     .toUpperCase()}
-                  className={cn('h-8 w-8', 'border', 'border-neutral-200 dark:border-neutral-800', 'rounded-md')}
+                  className={cn('h-8 w-8', 'border', 'border-border', 'rounded-md')}
                 />
               )}
             </div>
@@ -110,7 +110,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className={cn('z-[9999] w-64', 'bg-white dark:bg-neutral-800', 'border-neutral-200 dark:border-neutral-800')}
+        className={cn('z-[9999] w-64', 'bg-card', 'border-border')}
         side="top"
         align="start"
       >
@@ -126,7 +126,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={handleSettingsClick} className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}>
+        <DropdownMenuItem onClick={handleSettingsClick} className={cn('focus:bg-transparent', 'hover:bg-accent')}>
           <Cog8ToothIcon className={cn('h-4 w-4', 'mr-2')} />
           Settings
         </DropdownMenuItem>
@@ -134,7 +134,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}
+          className={cn('focus:bg-transparent', 'hover:bg-accent')}
           onClick={() => {
             // TODO: Implement privacy policy navigation
             console.log('Privacy policy clicked')
@@ -145,7 +145,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}
+          className={cn('focus:bg-transparent', 'hover:bg-accent')}
           onClick={() => {
             // TODO: Implement feedback navigation
             console.log('Share feedback clicked')
@@ -155,13 +155,13 @@ export const UserMenu = ({ children }: UserMenuProps) => {
           Share feedback
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={handleHelpClick} className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}>
+        <DropdownMenuItem onClick={handleHelpClick} className={cn('focus:bg-transparent', 'hover:bg-accent')}>
           <QuestionMarkCircleIcon className={cn('h-4 w-4', 'mr-2')} />
           Help
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className={cn('focus:bg-transparent', 'hover:bg-neutral-100 dark:hover:bg-neutral-700')}
+          className={cn('focus:bg-transparent', 'hover:bg-accent')}
           onClick={() => {
             // TODO: Implement changelog navigation
             console.log('Changelog clicked')
@@ -175,7 +175,7 @@ export const UserMenu = ({ children }: UserMenuProps) => {
 
         <DropdownMenuItem
           onClick={handleSignOut}
-          className={cn('focus:text-accent-foreground focus:bg-transparent', 'hover:bg-orange-50 dark:hover:bg-orange-950')}
+          className={cn('focus:text-accent-foreground focus:bg-transparent', 'hover:bg-destructive/10')}
         >
           <ArrowRightStartOnRectangleIcon className={cn('h-4 w-4', 'mr-2')} />
           Logout
