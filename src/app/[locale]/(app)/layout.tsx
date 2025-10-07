@@ -1,4 +1,4 @@
-import { DashboardLayout } from '@/components/layout/layout'
+import { BaseLayout } from '@/components/base-layout'
 import { getEvents, getReviews } from '@/lib/data'
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -6,9 +6,9 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const reviews = await getReviews()
 
   return (
-    <DashboardLayout events={events} reviews={reviews}>
+    <BaseLayout events={events} reviews={reviews}>
       {children}
-    </DashboardLayout>
+    </BaseLayout>
   )
 }
 

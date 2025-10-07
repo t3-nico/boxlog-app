@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from 'lucide-react'
 
-import { DashboardLayout } from '@/components/layout/layout'
+import { BaseLayout } from '@/components/base-layout'
 import { cn } from '@/lib/utils'
 import type { Event } from '@/types/unified'
 
@@ -44,9 +44,9 @@ const NotFound = () => {
   const reviews: unknown[] = []
 
   return (
-    <DashboardLayout events={events} reviews={reviews}>
+    <BaseLayout events={events} reviews={reviews}>
       <NotFoundContent />
-    </DashboardLayout>
+    </BaseLayout>
   )
 }
 

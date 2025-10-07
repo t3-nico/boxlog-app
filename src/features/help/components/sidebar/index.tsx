@@ -18,7 +18,7 @@ import {
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-} from '@/components/layout/navigation/shared'
+} from '@/features/navigation/components/sidebar/shared'
 import { useI18n } from '@/lib/i18n/hooks'
 
 interface HelpSidebarSectionsProps {

@@ -176,10 +176,10 @@ import { useCreateEventInspector } from '@/components/layout/inspector/hooks/use
 
 ### 共有ナビゲーションコンポーネント
 
-`@/components/layout/navigation/shared`の共有コンポーネント（`SidebarHeading`、`SidebarItem`等）は引き続き使用可能：
+`@/features/navigation/components/sidebar/shared`の共有コンポーネント（`SidebarHeading`、`SidebarItem`等）を使用：
 
 ```tsx
-import { SidebarHeading, SidebarItem } from '@/components/layout/navigation/shared'
+import { SidebarHeading, SidebarItem, SidebarLabel, SidebarSection } from '@/features/navigation/components/sidebar/shared'
 ```
 
 ---

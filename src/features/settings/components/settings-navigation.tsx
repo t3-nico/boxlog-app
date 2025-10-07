@@ -24,7 +24,7 @@ import {
   SidebarItem,
   SidebarLabel,
   SidebarSection,
-} from '@/components/layout/navigation/shared'
+} from '@/features/navigation/components/sidebar/shared'
 
 export const SettingsNavigation = () => {
   const pathname = usePathname()
