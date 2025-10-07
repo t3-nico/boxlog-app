@@ -10,17 +10,7 @@ export * from './app/features'
 export * from './database/supabase'
 export * from './database/migrations'
 
-// UI設定
-export * from './ui/theme'
-export * from './ui/views'
-export * from './ui/sidebarConfig'
-export * from './ui/tagIcons'
-
 // Configuration Schema & Loader System
 export * from './schema'
 export * from './loader'
 export { default as configLoader } from './loader'
-
-// Business Rules System
-// Note: business-rules module not found - commented out
-// export * from './business-rules'

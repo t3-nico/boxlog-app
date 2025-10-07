@@ -2,6 +2,8 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 import { create } from 'zustand'
 
+import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+
 import {
   DeleteResult,
   RestoreResult,
@@ -182,7 +184,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
       console.log('✅ Item restored:', item.title, `(${item.type})`)
     } catch (error) {
       console.error('❌ Failed to restore item:', error)
-      set({ error: error instanceof Error ? error.message : 'Failed to restore item' })
+      set({ error: error instanceof Error ? error.message : getTranslation('trash.errors.restoreFailed') })
       throw error
     }
   },
@@ -370,7 +372,7 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
     } catch (error) {
       set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch items',
+        error: error instanceof Error ? error.message : getTranslation('trash.errors.fetchFailed'),
       })
     }
   },

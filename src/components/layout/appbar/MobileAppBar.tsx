@@ -8,12 +8,12 @@ import { Bell, Plus, Search } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/avatar'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
-import { primaryNavigation } from '@/config/navigation/config'
 import { useAuthContext } from '@/features/auth'
 import { useNotificationModal } from '@/features/notifications'
 import { cn } from '@/lib/utils'
 
 import { AppBarItem } from './appbar-item'
+import { allNavigationSections } from './navigation-items'
 import { useNavigationStore } from './stores/navigation.store'
 import { ThemeToggle } from './theme-toggle'
 import { UserMenu } from './user-menu'
@@ -170,7 +170,7 @@ export const MobileAppBar = () => {
             aria-label="メインナビゲーション"
             role="navigation"
           >
-            {primaryNavigation.map((section) => (
+            {allNavigationSections.map((section) => (
               <React.Fragment key={section.id}>
                 {section.label != null && (
                   <div

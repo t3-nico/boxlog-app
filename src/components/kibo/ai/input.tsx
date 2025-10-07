@@ -8,6 +8,7 @@ import { Loader2Icon, SendIcon, SquareIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 type UseAutoResizeTextareaProps = {
@@ -76,11 +77,12 @@ export type AIInputTextareaProps = ComponentProps<typeof Textarea> & {
 export const AIInputTextarea = ({
   onChange,
   className,
-  placeholder = 'What would you like to know?',
+  placeholder,
   minHeight = 48,
   maxHeight = 164,
   ...props
 }: AIInputTextareaProps) => {
+  const { t } = useI18n()
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight,
     maxHeight,
@@ -115,7 +117,7 @@ export const AIInputTextarea = ({
       name="message"
       onChange={handleChange}
       onKeyDown={handleKeyDown}
-      placeholder={placeholder}
+      placeholder={placeholder ?? t('ai.chat.inputPlaceholder')}
       ref={textareaRef}
       {...props}
     />

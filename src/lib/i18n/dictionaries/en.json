@@ -1026,6 +1026,11 @@
       "sendingMessage": "Error sending message"
     }
   },
+  "ai": {
+    "chat": {
+      "inputPlaceholder": "What would you like to know?"
+    }
+  },
   "notifications": {
     "errors": {
       "notSupported": "This browser does not support notifications",

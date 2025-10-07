@@ -877,8 +877,8 @@
       "daysUntilDelete": "{{days}}日後に自動削除"
     },
     "errors": {
-      "restoreFailed": "Failed to restore item",
-      "fetchFailed": "Failed to fetch items"
+      "restoreFailed": "アイテムの復元に失敗しました",
+      "fetchFailed": "アイテムの取得に失敗しました"
     }
   },
   "events": {
@@ -1024,6 +1024,11 @@
     },
     "errors": {
       "sendingMessage": "メッセージ送信エラー"
+    }
+  },
+  "ai": {
+    "chat": {
+      "inputPlaceholder": "何を知りたいですか？"
     }
   },
   "notifications": {

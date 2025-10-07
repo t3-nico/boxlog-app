@@ -511,7 +511,7 @@ const useTagEditModalActions = (
       onClose()
     } catch (error) {
       console.error('Tag update failed:', error)
-      setErrors({ submit: t?.('tags.errors.updateFailed') ?? 'Failed to update tag' })
+      setErrors({ submit: t?.('tags.errors.updateFailed') ?? '' })
     } finally {
       setIsLoading(false)
     }
@@ -526,7 +526,7 @@ const useTagEditModalActions = (
       onClose()
     } catch (error) {
       console.error('Tag deletion failed:', error)
-      setErrors({ submit: t?.('tags.errors.deleteFailed') ?? 'Failed to delete tag' })
+      setErrors({ submit: t?.('tags.errors.deleteFailed') ?? '' })
     } finally {
       setIsLoading(false)
     }
