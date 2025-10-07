@@ -32,7 +32,7 @@ import { PageTitle } from '@/features/navigation/components/header/page-title'
 import { SidebarToggle } from '@/features/navigation/components/header/sidebar-toggle'
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
-interface DashboardLayoutProps {
+interface BaseLayoutProps {
   events?: Event[]
   reviews?: unknown[]
   children: React.ReactNode
@@ -65,7 +65,7 @@ const useCalendarProviderProps = (pathname: string, searchParams: URLSearchParam
   }
 }
 
-const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
+const BaseLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { isSidebarOpen } = useNavigationStore()
   const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanelStore()
   const { open: openGlobalSearch } = useGlobalSearch()
@@ -194,12 +194,12 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
   return content
 }
 
-export const DashboardLayout = ({ events: _events, reviews: _reviews, children }: DashboardLayoutProps) => {
+export const BaseLayout = ({ events: _events, reviews: _reviews, children }: BaseLayoutProps) => {
   return (
     <ThemeProvider>
       <GlobalSearchProvider>
         <NotificationModalProvider>
-          <DashboardLayoutContent>{children}</DashboardLayoutContent>
+          <BaseLayoutContent>{children}</BaseLayoutContent>
         </NotificationModalProvider>
       </GlobalSearchProvider>
     </ThemeProvider>
