@@ -125,7 +125,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
           {/* Main Content Area */}
           <div className="flex flex-1 overflow-hidden">
-            <div className="relative z-10 flex flex-1 bg-neutral-100 dark:bg-neutral-900">
+            <div className="relative z-10 flex flex-1 bg-background">
               {/* Main Content */}
               <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
                 {children}

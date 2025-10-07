@@ -18,14 +18,12 @@ interface SidebarHeaderProps {
  * セマンティックトークン:
  * - text-foreground: メインテキスト色
  * - text-muted-foreground: アイコン色
- * - border-border: 区切り線
  */
 export const SidebarHeader = ({ title, icon, action, className }: SidebarHeaderProps) => {
   return (
     <div
       className={cn(
         'flex items-center justify-between',
-        'border-b border-border',
         'px-4 py-3.5',
         className
       )}

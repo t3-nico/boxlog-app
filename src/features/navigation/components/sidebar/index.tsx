@@ -4,6 +4,8 @@ import React from 'react'
 
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
+import { ResizeHandle } from './ResizeHandle'
+
 interface SidebarProps {
   children?: React.ReactNode
 }
@@ -18,11 +20,12 @@ interface SidebarProps {
  * - border-border: 右端のボーダー
  *
  * レイアウト:
- * - 幅: 240px（固定）
+ * - 幅: 可変（200px〜480px、デフォルト240px）
  * - 高さ: 画面いっぱい
+ * - リサイズ: ResizeHandleでドラッグ可能
  */
 export const Sidebar = ({ children }: SidebarProps) => {
-  const { isSidebarOpen } = useNavigationStore()
+  const { isSidebarOpen, sidebarWidth } = useNavigationStore()
 
   // Sidebarが閉じている、またはchildrenがない場合は何も表示しない
   if (!isSidebarOpen || !children) {
@@ -31,11 +34,15 @@ export const Sidebar = ({ children }: SidebarProps) => {
 
   return (
     <aside
-      className="flex flex-col border-r border-border bg-card text-card-foreground"
-      style={{ width: '240px' }}
+      className="flex flex-row overflow-hidden bg-card text-card-foreground shadow-sm"
+      style={{ width: `${sidebarWidth}px` }}
       aria-label="Sidebar navigation"
     >
-      {children}
+      {/* Sidebar Content */}
+      <div className="flex flex-1 flex-col">{children}</div>
+
+      {/* Resize Handle */}
+      <ResizeHandle />
     </aside>
   )
 }

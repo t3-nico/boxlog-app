@@ -5,3 +5,4 @@
 
 export { SidebarHeader } from './SidebarHeader'
 export { SidebarSection } from './SidebarSection'
+export { ResizeHandle } from './ResizeHandle'
