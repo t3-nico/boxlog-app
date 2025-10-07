@@ -22,7 +22,7 @@ export const Sidebar = ({ children }: SidebarProps) => {
 
   return (
     <div
-      className="flex flex-col border-r bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 border-neutral-200 dark:border-neutral-700"
+      className="flex flex-col border-r bg-card text-card-foreground border-border"
       style={{ width: '240px' }}
     >
       {children}
