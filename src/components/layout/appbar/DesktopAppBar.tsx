@@ -4,104 +4,70 @@ import React, { useCallback } from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import {
-  Home,
-  Calendar,
-  SquareKanban,
-  Table,
-  BarChart3,
-  Settings,
-  PanelLeftClose,
-  PanelLeft,
-} from 'lucide-react'
+import { Calendar, SquareKanban, Table, BarChart3, Settings, PanelLeftClose, PanelLeft, LucideIcon } from 'lucide-react'
 
 import { Avatar } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
+import { useI18n } from '@/lib/i18n/hooks'
 import { cn } from '@/lib/utils'
 
 import { useNavigationStore } from './stores/navigation.store'
 import { UserMenu } from './user-menu'
+import { AppBarItem } from './appbar-item'
 
 interface AppBarItemData {
   id: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
+  labelKey: string
+  icon: LucideIcon
   href: string
 }
 
 const appBarItems: AppBarItemData[] = [
-  { id: 'calendar', label: 'Calendar', icon: Calendar, href: '/ja/calendar' },
-  { id: 'board', label: 'Board', icon: SquareKanban, href: '/ja/board' },
-  { id: 'table', label: 'Table', icon: Table, href: '/ja/table' },
-  { id: 'stats', label: 'Stats', icon: BarChart3, href: '/ja/stats' },
-  { id: 'settings', label: 'Settings', icon: Settings, href: '/ja/settings' },
+  { id: 'calendar', labelKey: 'appbar.navigation.calendar', icon: Calendar, href: '/ja/calendar' },
+  { id: 'board', labelKey: 'appbar.navigation.board', icon: SquareKanban, href: '/ja/board' },
+  { id: 'table', labelKey: 'appbar.navigation.table', icon: Table, href: '/ja/table' },
+  { id: 'stats', labelKey: 'appbar.navigation.stats', icon: BarChart3, href: '/ja/stats' },
+  { id: 'settings', labelKey: 'appbar.navigation.settings', icon: Settings, href: '/ja/settings' },
 ]
 
 export const DesktopAppBar = () => {
   const pathname = usePathname() || '/'
   const { user } = useAuthContext()
   const { isSidebarOpen, toggleSidebar } = useNavigationStore()
+  const { t } = useI18n()
 
   const handleToggleSidebar = useCallback(() => {
     toggleSidebar()
   }, [toggleSidebar])
 
   return (
-    <div
-      className={cn(
-        'flex flex-col border-r',
-        'bg-white dark:bg-neutral-800',
-        'text-neutral-900 dark:text-neutral-100',
-        'border-neutral-200 dark:border-neutral-700'
-      )}
-      style={{ width: '64px' }}
-    >
+    <div className="flex w-16 flex-col border-r border-border bg-card text-card-foreground">
       {/* Top: Sidebar Toggle Button */}
       <div className="flex items-center justify-center pt-4 pb-2">
         <button
           type="button"
           onClick={handleToggleSidebar}
-          className={cn(
-            'flex items-center justify-center',
-            'w-8 h-8',
-            'hover:bg-neutral-100 dark:hover:bg-neutral-700',
-            'rounded-sm',
-            'transition-colors duration-150'
-          )}
-          aria-label="サイドバーを開閉"
+          className="flex h-8 w-8 items-center justify-center rounded-sm transition-colors duration-150 hover:bg-muted"
+          aria-label={t('appbar.toggleSidebar')}
         >
-          {isSidebarOpen ? (
-            <PanelLeftClose className="h-5 w-5" />
-          ) : (
-            <PanelLeft className="h-5 w-5" />
-          )}
+          {isSidebarOpen ? <PanelLeftClose className="h-5 w-5" /> : <PanelLeft className="h-5 w-5" />}
         </button>
       </div>
 
       {/* Navigation Items */}
       <nav className="flex flex-1 flex-col items-center gap-1 py-2">
         {appBarItems.map((item) => {
-          const Icon = item.icon
           const isActive = pathname.startsWith(item.href)
 
           return (
-            <a
+            <AppBarItem
               key={item.id}
+              id={item.id}
+              label={t(item.labelKey)}
+              icon={item.icon}
               href={item.href}
-              className={cn(
-                'flex flex-col items-center justify-center',
-                'w-14 h-14',
-                'rounded-lg',
-                'transition-all duration-150',
-                'group',
-                isActive
-                  ? 'bg-primary text-white'
-                  : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-700'
-              )}
-            >
-              <Icon className="h-5 w-5 mb-1" />
-              <span className="text-[10px] font-medium leading-none">{item.label}</span>
-            </a>
+              isActive={isActive}
+            />
           )
         })}
       </nav>
@@ -109,34 +75,16 @@ export const DesktopAppBar = () => {
       {/* Bottom: User Avatar */}
       <div className="flex items-center justify-center pb-4">
         <UserMenu>
-          <button
-            type="button"
-            className={cn(
-              'flex items-center justify-center',
-              'hover:opacity-80',
-              'transition-opacity duration-150'
-            )}
-          >
+          <button type="button" className="flex items-center justify-center hover:opacity-80 transition-opacity duration-150">
             {user?.user_metadata?.profile_icon ? (
-              <div
-                className={cn(
-                  'w-10 h-10',
-                  'text-lg',
-                  'flex items-center justify-center',
-                  'bg-primary/10',
-                  'border border-neutral-200 dark:border-neutral-700',
-                  'rounded-full'
-                )}
-              >
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-primary/10 text-lg">
                 {user.user_metadata.profile_icon}
               </div>
             ) : (
               <Avatar
                 src={user?.user_metadata?.avatar_url}
-                initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U')
-                  .charAt(0)
-                  .toUpperCase()}
-                className={cn('w-10 h-10', 'border border-neutral-200 dark:border-neutral-700', 'rounded-full')}
+                initials={(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'U').charAt(0).toUpperCase()}
+                className="h-10 w-10 rounded-full border border-border"
               />
             )}
           </button>

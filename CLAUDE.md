@@ -145,7 +145,7 @@ AIは、コードを書く前に以下を必ず実行すること：
 
 ## 🚨 絶対遵守ルール（6項目）
 1. **コミット前**: `npm run lint` 必須実行（3.6秒で完了）
-2. **スタイリング**: `/src/config/ui/theme.ts` のみ使用（直接指定禁止）
+2. **スタイリング**: `globals.css` のセマンティックトークン使用（Tailwindクラス直接指定。`bg-card`, `text-foreground` 等）
 3. **Issue管理**: すべての作業をIssue化（例外なし）
 4. **TypeScript厳格**: `any` 型禁止
 5. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）

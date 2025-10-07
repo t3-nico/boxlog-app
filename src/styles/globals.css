@@ -91,6 +91,77 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+
+  /* ============================================
+   * セマンティックトークン（役割ベースのカラー）
+   * shadcn/ui互換 + BoxLog独自拡張
+   * ============================================ */
+
+  /* 基本背景・テキスト */
+  --color-background: var(--color-neutral-50);      /* ページ全体の背景 */
+  --color-foreground: var(--color-neutral-900);     /* メインテキスト */
+
+  /* カード・サーフェス */
+  --color-card: #ffffff;                            /* カード背景（純白） */
+  --color-card-foreground: var(--color-neutral-900);
+
+  /* 控えめな背景（インプット、無効状態等） */
+  --color-muted: var(--color-neutral-100);
+  --color-muted-foreground: var(--color-neutral-500);
+
+  /* ボーダー */
+  --color-border: var(--color-neutral-200);
+  --color-input: var(--color-neutral-200);          /* インプットのボーダー */
+
+  /* プライマリー（アクションボタン等） */
+  --color-primary: var(--color-primary-500);        /* ブルー */
+  --color-primary-foreground: #ffffff;
+
+  /* セカンダリー（補助的なボタン等） */
+  --color-secondary: var(--color-neutral-200);
+  --color-secondary-foreground: var(--color-neutral-900);
+
+  /* アクセント */
+  --color-accent: var(--color-neutral-100);
+  --color-accent-foreground: var(--color-neutral-900);
+
+  /* 破壊的アクション（削除等） */
+  --color-destructive: var(--color-error-500);
+  --color-destructive-foreground: #ffffff;
+
+  /* リング（フォーカス時のアウトライン） */
+  --color-ring: var(--color-primary-500);
+
+  /* ============================================
+   * タイポグラフィトークン
+   * ============================================ */
+
+  /* フォントサイズ */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
+
+  /* 見出し用 */
+  --font-size-heading-h1: 2.25rem;   /* 36px */
+  --font-size-heading-h2: 1.875rem;  /* 30px */
+  --font-size-heading-h3: 1.5rem;    /* 24px */
+  --font-size-heading-h4: 1.25rem;   /* 20px */
+
+  /* フォントウェイト */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* 行間 */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
 }
 
 /* next/font 最適化フォント適用 */
@@ -107,4 +178,133 @@ html {
 
 html.dark {
   color-scheme: dark;
+}
+
+/* ============================================
+ * ダークモード用セマンティックトークン
+ * ============================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    /* 基本背景・テキスト */
+    --color-background: var(--color-neutral-950);
+    --color-foreground: var(--color-neutral-50);
+
+    /* カード・サーフェス */
+    --color-card: var(--color-neutral-900);
+    --color-card-foreground: var(--color-neutral-50);
+
+    /* 控えめな背景 */
+    --color-muted: var(--color-neutral-800);
+    --color-muted-foreground: var(--color-neutral-400);
+
+    /* ボーダー */
+    --color-border: var(--color-neutral-700);
+    --color-input: var(--color-neutral-700);
+
+    /* プライマリー */
+    --color-primary: var(--color-primary-500);
+    --color-primary-foreground: #ffffff;
+
+    /* セカンダリー */
+    --color-secondary: var(--color-neutral-800);
+    --color-secondary-foreground: var(--color-neutral-50);
+
+    /* アクセント */
+    --color-accent: var(--color-neutral-800);
+    --color-accent-foreground: var(--color-neutral-50);
+
+    /* 破壊的アクション */
+    --color-destructive: var(--color-error-500);
+    --color-destructive-foreground: #ffffff;
+
+    /* リング */
+    --color-ring: var(--color-primary-400);
+  }
+}
+
+.dark {
+  /* 基本背景・テキスト */
+  --color-background: var(--color-neutral-950);
+  --color-foreground: var(--color-neutral-50);
+
+  /* カード・サーフェス */
+  --color-card: var(--color-neutral-900);
+  --color-card-foreground: var(--color-neutral-50);
+
+  /* 控えめな背景 */
+  --color-muted: var(--color-neutral-800);
+  --color-muted-foreground: var(--color-neutral-400);
+
+  /* ボーダー */
+  --color-border: var(--color-neutral-700);
+  --color-input: var(--color-neutral-700);
+
+  /* プライマリー */
+  --color-primary: var(--color-primary-500);
+  --color-primary-foreground: #ffffff;
+
+  /* セカンダリー */
+  --color-secondary: var(--color-neutral-800);
+  --color-secondary-foreground: var(--color-neutral-50);
+
+  /* アクセント */
+  --color-accent: var(--color-neutral-800);
+  --color-accent-foreground: var(--color-neutral-50);
+
+  /* 破壊的アクション */
+  --color-destructive: var(--color-error-500);
+  --color-destructive-foreground: #ffffff;
+
+  /* リング */
+  --color-ring: var(--color-primary-400);
+}
+/* ============================================
+ * カスタムユーティリティクラス
+ * ============================================ */
+@layer utilities {
+  /* タイポグラフィ - 見出し */
+  .text-heading-h1 {
+    font-size: var(--font-size-heading-h1);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-heading-h2 {
+    font-size: var(--font-size-heading-h2);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-heading-h3 {
+    font-size: var(--font-size-heading-h3);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-heading-h4 {
+    font-size: var(--font-size-heading-h4);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+  }
+
+  /* タイポグラフィ - 本文 */
+  .text-body-base {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-body-lg {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-body-sm {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-body-xs {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+  }
 }

@@ -6,7 +6,7 @@
 
 import React, { memo } from 'react'
 
-import { colors } from '@/config/ui/theme'
+import { cn } from '@/lib/utils'
 
 import { TIME_COLUMN_WIDTH } from '../../constants/grid.constants'
 import { useTimeGrid } from '../../hooks/useTimeGrid'
@@ -28,10 +28,10 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
     hourHeight,
     format
   })
-  
+
   return (
     <div
-      className={`sticky left-0 ${colors.background.base} border-r border-neutral-900/20 dark:border-neutral-100/20 z-10 ${className}`}
+      className={cn('sticky left-0 bg-background border-r border-neutral-900/20 dark:border-neutral-100/20 z-10', className)}
       style={{
         width: `${TIME_COLUMN_WIDTH}px`,
         height: `${gridHeight}px`

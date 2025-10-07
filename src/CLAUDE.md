@@ -8,16 +8,50 @@
 ## 🚨 コーディング基本ルール（必須遵守）
 
 ### 1. スタイリング（絶対厳守）
-```tsx
-// ❌ 禁止：直接指定
-<div className="bg-white dark:bg-gray-900">
-<div className="p-[13px]">
 
-// ✅ 必須：themeシステム使用
-import { colors, spacing } from '@/config/theme'
+**カラーは globals.css のセマンティックトークンを使用（Tailwind v4公式準拠）**
+
+```tsx
+// ❌ 禁止：カスタム値、マジックナンバー
+<div className="bg-[#ffffff] p-[13px]">
+
+// ❌ 禁止：theme.ts の colors オブジェクト（廃止済み）
+import { colors } from '@/config/theme'
 <div className={colors.background.base}>
-<div className={spacing.component.md}>
+
+// ✅ 必須：globals.css のセマンティックトークン（Tailwindクラス直接使用）
+<div className="bg-card text-card-foreground border-border">
+<div className="bg-background text-foreground">
+<button className="bg-primary text-primary-foreground">
+
+// ✅ 特殊用途：カラーパレット直接指定もOK
+<div className="bg-neutral-800 text-neutral-50">
 ```
+
+**セマンティックトークン一覧（globals.css で定義）：**
+- `bg-background` / `text-foreground` - ページ全体の背景/テキスト
+- `bg-card` / `text-card-foreground` - カード背景/テキスト
+- `bg-muted` / `text-muted-foreground` - 控えめな背景/テキスト
+- `bg-primary` / `text-primary-foreground` - プライマリーボタン等
+- `border-border` / `border-input` - ボーダー
+- `bg-destructive` / `text-destructive-foreground` - 削除ボタン等
+
+**スペーシング・タイポグラフィ・角丸は theme.ts のヘルパーを使用：**
+```tsx
+import { typography, spacing, rounded } from '@/config/ui/theme'
+
+// ✅ タイポグラフィ
+<h1 className={typography.heading.h1}>
+<p className={typography.body.base}>
+
+// ✅ スペーシング（値が必要な場合）
+<div style={{ margin: spacing.md }}>
+
+// ✅ 角丸
+<button className={rounded.component.button.md}>
+```
+
+**重要：カラー以外（typography, spacing, rounded）は `/src/config/ui/theme.ts` を参照**
 
 ### 2. TypeScript厳格型付け
 ```tsx

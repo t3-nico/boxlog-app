@@ -22,7 +22,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TiptapEditor } from '@/components/app/rich-text-editor/tiptap-editor'
-import { typography } from '@/config/ui/theme'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
@@ -143,17 +142,18 @@ EventScheduleSection.displayName = 'EventScheduleSection'
 const ActionButtonsSection = React.memo(({ isEditable }: { isEditable: boolean }) => {
   const { t } = useI18n()
   return (
-  <div className={cn('flex items-center gap-2 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-    <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
-      <BellRing className="h-4 w-4" />
-      {t('events.detail.actions.notification')}
-    </Button>
-    <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
-      <Repeat className="h-4 w-4" />
-      {t('events.detail.actions.repeat')}
-    </Button>
-  </div>
-)})
+    <div className={cn('flex items-center gap-2 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
+      <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
+        <BellRing className="h-4 w-4" />
+        {t('events.detail.actions.notification')}
+      </Button>
+      <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
+        <Repeat className="h-4 w-4" />
+        {t('events.detail.actions.repeat')}
+      </Button>
+    </div>
+  )
+})
 
 ActionButtonsSection.displayName = 'ActionButtonsSection'
 
@@ -169,6 +169,8 @@ interface EventDetailInspectorContentProps {
 
 // カスタムフック: タイムラインデータ
 const useTimelineData = () => {
+  const { t } = useI18n()
+
   const timelineEvents = [
     {
       id: 1,
@@ -186,8 +188,8 @@ const useTimelineData = () => {
       relativeTime: '15分前',
       type: 'status',
       field: 'status',
-      oldValue: '予定',
-      newValue: '進行中',
+      oldValue: t('events.detail.timeline.demoStatus.scheduled'),
+      newValue: t('events.detail.timeline.demoStatus.inProgress'),
       automatic: true,
     },
     {
@@ -206,7 +208,7 @@ const useTimelineData = () => {
       type: 'modified',
       field: 'tags',
       action: 'added',
-      value: '重要',
+      value: t('events.detail.timeline.demoTags.important'),
       automatic: false,
     },
     {
@@ -568,7 +570,7 @@ export const EventDetailInspectorContent = ({
           {/* 新規作成時は保存状態のみ表示 */}
           {isCreateMode ? (
             <div className="text-center">
-              <span className={cn(typography.body.xs, 'text-muted-foreground')}>{t('events.detail.save.autoSaving')}</span>
+              <span className="text-body-xs text-muted-foreground">{t('events.detail.save.autoSaving')}</span>
             </div>
           ) : (
             <>
