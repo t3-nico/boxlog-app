@@ -74,7 +74,7 @@ export const SidebarItem = ({ href, children, current = false, indicator = false
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
         current
           ? 'bg-accent text-accent-foreground shadow-sm'
-          : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground',
+          : 'text-foreground hover:bg-accent hover:text-accent-foreground',
         className
       )}
     >
