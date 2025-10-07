@@ -7,7 +7,7 @@ import { PanelRightClose } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
-import { useInspectorStore } from './stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
 export const InspectorHeader = () => {
   const { toggleInspector } = useInspectorStore()

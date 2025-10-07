@@ -3,7 +3,7 @@
 
 import { useCallback } from 'react'
 
-import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 import { useEventStore } from '@/features/events/stores/useEventStore'

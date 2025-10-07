@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 import { CalendarInspectorContent } from './content/CalendarInspectorContent'
 import { DefaultInspectorContent } from './content/DefaultInspectorContent'
 import { TaskInspectorContent } from './content/TaskInspectorContent'
-import { useInspectorStore } from './stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
 // 遅延ロード: EventDetailInspectorContentは重いコンポーネント（588行）のため、使用時のみロード
 const EventDetailInspectorContent = React.lazy(() =>

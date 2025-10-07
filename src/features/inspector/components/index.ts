@@ -2,13 +2,13 @@
 export { InspectorContent } from './inspector-content'
 
 // Inspector stores
-export { useInspectorStore } from './stores/inspector.store'
+export { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
 // Inspector hooks for CreateEvent integration
-export { useCreateEventInspector } from './hooks/useCreateEventInspector'
-export { useCreateEventInspectorShortcuts } from './hooks/useCreateEventInspectorShortcuts'
+export { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
+export { useCreateEventInspectorShortcuts } from '@/features/inspector/hooks/useCreateEventInspectorShortcuts'
 
-// Inspector content components  
+// Inspector content components
 export { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
 export { CalendarInspectorContent } from './content/CalendarInspectorContent'
 export { TaskInspectorContent } from './content/TaskInspectorContent'

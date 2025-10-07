@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
-import { useInspectorStore } from './stores/inspector.store'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 export const MobileInspector = () => {

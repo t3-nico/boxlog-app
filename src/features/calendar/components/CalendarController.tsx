@@ -8,8 +8,8 @@ import { useRouter } from 'next/navigation'
 
 import { format } from 'date-fns'
 
-import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
-import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
+import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { useEventStore } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
