@@ -32,7 +32,9 @@ src/
 │   └── __tests__/           # 包括的テストスイート
 ├── middleware.ts             # 言語ルーティング + RTL対応
 ├── app/[locale]/            # 動的言語ルート + dir属性
-└── components/i18n/         # 国際化コンポーネント
+├── components/i18n/         # 汎用UIコンポーネント (language-switcher)
+└── features/i18n/
+    └── components/          # 開発者ツール (quality-review-panel, translation-dashboard)
 ```
 
 ### 技術スタック
