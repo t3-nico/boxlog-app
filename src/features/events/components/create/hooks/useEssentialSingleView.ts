@@ -88,7 +88,7 @@ export const useEssentialSingleView = ({
     setTaskPriority('medium')
 
     setTimeout(() => {
-      const titleInput = document.querySelector('input[placeholder*="イベント"], input[placeholder*="title"]') as HTMLInputElement
+      const titleInput = document.querySelector('input[name="event-title"], input[type="text"]:first-of-type') as HTMLInputElement
       if (titleInput) {
         titleInput.focus()
       }

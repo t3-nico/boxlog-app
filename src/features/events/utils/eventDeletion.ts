@@ -1,3 +1,5 @@
+import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+
 import { Event } from '../types/events'
 
 export interface DeletionStats {
@@ -69,17 +71,17 @@ export const eventDeletionUtils = {
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
     if (diffDays === 0) {
-      return '今日'
+      return getTranslation('time.today')
     } else if (diffDays === 1) {
-      return '昨日'
+      return getTranslation('time.yesterday')
     } else if (diffDays < 7) {
-      return `${diffDays}日前`
+      return `${diffDays}${getTranslation('time.daysAgo')}`
     } else if (diffDays < 30) {
       const diffWeeks = Math.floor(diffDays / 7)
-      return `${diffWeeks}週間前`
+      return `${diffWeeks}${getTranslation('time.weeksAgo')}`
     } else {
       const diffMonths = Math.floor(diffDays / 30)
-      return `${diffMonths}ヶ月前`
+      return `${diffMonths}${getTranslation('time.monthsAgo')}`
     }
   },
 

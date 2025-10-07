@@ -46,7 +46,10 @@
     "thisWeek": "今週",
     "nextWeek": "来週",
     "thisMonth": "今月",
-    "nextMonth": "来月"
+    "nextMonth": "来月",
+    "daysAgo": "日前",
+    "weeksAgo": "週間前",
+    "monthsAgo": "ヶ月前"
   },
   "language": {
     "current": "現在の言語",
@@ -311,7 +314,9 @@
       "operationCancelled": "操作をキャンセルしました",
       "deleteFailed": "予定の削除に失敗しました",
       "moveFailed": "予定の移動に失敗しました",
-      "duplicateFailed": "予定の複製に失敗しました"
+      "duplicateFailed": "予定の複製に失敗しました",
+      "restoreError": "復元エラー",
+      "restoreFailed": "復元できませんでした"
     },
     "accessibility": {
       "standardContrast": "標準コントラスト",

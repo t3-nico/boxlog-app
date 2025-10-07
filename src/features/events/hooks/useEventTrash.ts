@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { useAddPopup } from '@/hooks/useAddPopup'
+import { useI18n } from '@/lib/i18n/hooks'
 
 import { useEventStore } from '../stores/useEventStore'
 import { Event } from '../types/events'
@@ -15,6 +16,7 @@ export interface UseEventTrashOptions {
 
 export const useEventTrash = (options: UseEventTrashOptions = {}) => {
   const { autoRefresh: _autoRefresh = true, sortByDeletedDate = true } = options
+  const { t } = useI18n()
 
   const [selectedEventIds, setSelectedEventIds] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -56,8 +58,8 @@ export const useEventTrash = (options: UseEventTrashOptions = {}) => {
       const validation = eventDeletionUtils.validateRestore(event)
       if (!validation.canRestore) {
         addPopup({
-          title: '復元エラー',
-          content: validation.reason || '復元できませんでした',
+          title: t('calendar.event.restoreError'),
+          content: validation.reason || t('calendar.event.restoreFailed'),
           type: 'error',
         })
         return
