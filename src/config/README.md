@@ -8,25 +8,19 @@ BoxLogアプリケーションの設定を一元管理するディレクトリ�
 src/config/
 ├── index.ts                  # 統合エクスポート（すべての設定をここから）
 ├── schema.ts                 # Zod設定スキーマ定義
-├── loader.ts                 # 設定ファイル読み込みシステム
 ├── app/                      # アプリケーション設定
 │   ├── constants.ts          # 定数(APP_CONFIG, LIMITS, TIMEOUTS)
 │   └── features.ts           # 機能フラグ管理
-├── ui/                       # UI/デザイン設定（⚠️最重要）
-│   ├── theme.ts              # テーマカラー・タイポグラフィ・間隔
-│   ├── views.ts              # ビュー別設定
-│   ├── sidebarConfig.ts      # サイドバー設定
-│   └── tagIcons.ts           # タグアイコン設定
-├── navigation/               # ナビゲーション設定
-│   └── config.ts             # ルーティング・メニュー構造
 ├── database/                 # データベース設定
 │   ├── supabase.ts           # Supabase接続設定
 │   └── migrations.ts         # マイグレーション管理
-└── error-patterns/           # エラーハンドリング辞書
-    ├── index.ts              # ErrorPatternDictionary
-    ├── categories.ts         # エラー分類・重要度
-    ├── messages.ts           # ユーザー向けメッセージ
-    └── recovery-strategies.ts# リトライ・フォールバック戦略
+├── error-patterns/           # エラーハンドリング辞書
+│   ├── index.ts              # ErrorPatternDictionary
+│   ├── categories.ts         # エラー分類・重要度
+│   ├── messages.ts           # ユーザー向けメッセージ
+│   └── recovery-strategies.ts# リトライ・フォールバック戦略
+├── loader/                   # 設定ファイル読み込みシステム
+└── naming-conventions/       # 命名規則パターン
 ```
 
 ## 🚀 基本的な使い方
@@ -40,9 +34,6 @@ src/config/
 import {
   APP_CONFIG,           // アプリケーション定数
   FEATURE_FLAGS,        // 機能フラグ
-  colors,               // テーマカラー
-  typography,           // タイポグラフィ
-  primaryNavigation,    // ナビゲーション
   createAppError        // エラー作成
 } from '@/config'
 
@@ -72,43 +63,22 @@ if (isFeatureEnabled('enableAIChat')) {
 }
 ```
 
-#### 3. テーマシステム（最重要）
+#### 3. スタイリング
 
-```typescript
-import { BRAND_COLORS, colors, typography } from '@/config'
+**⚠️ 重要**: 色・スタイルの直接指定は禁止です。必ず `/src/styles/globals.css` のセマンティックトークンを使用してください。
 
-export function MyComponent() {
-  return (
-    <div
-      className={colors.background.card}
-      style={{ borderColor: BRAND_COLORS.primary }}
-    >
-      <h2 className={typography.heading.h2}>Title</h2>
-      <p className={colors.text.secondary}>Description</p>
-    </div>
-  )
-}
+```tsx
+// ✅ 推奨：セマンティックトークン使用
+<div className="bg-card text-foreground border-border">
+  <h2 className="text-heading-h2">Title</h2>
+  <p className="text-muted-foreground">Description</p>
+</div>
+
+// ❌ 禁止：直接指定
+<div className="bg-blue-500 text-gray-900">
 ```
 
-**⚠️ 重要**: 色・スタイルの直接指定は禁止です。必ず `ui/theme.ts` の定数を使用してください。
-
-#### 4. ナビゲーション
-
-```typescript
-import { primaryNavigation, getPageTitle } from '@/config'
-
-// メニュー構造の取得
-primaryNavigation.forEach(section => {
-  section.items.forEach(item => {
-    console.log(item.label, item.href)
-  })
-})
-
-// ページタイトル取得
-const title = getPageTitle('/calendar') // 'Calendar'
-```
-
-#### 5. エラーハンドリング
+#### 4. エラーハンドリング
 
 ```typescript
 import { createAppError, executeWithAutoRecovery } from '@/config'
@@ -135,15 +105,16 @@ if (!result.success) {
 
 各サブディレクトリの詳細は、それぞれのREADME.mdを参照してください：
 
-- [ui/README.md](ui/README.md) - テーマシステム（**最重要**）
 - [error-patterns/README.md](error-patterns/README.md) - エラーハンドリング
-- [navigation/README.md](navigation/README.md) - ナビゲーション設定
+- [/src/styles/globals.css](../styles/globals.css) - デザイントークン（**最重要**）
+- [/src/components/layout/appbar/navigation-items.ts](../components/layout/appbar/navigation-items.ts) - ナビゲーション項目（コロケーション）
 
 ## 🚨 絶対遵守ルール
 
-1. **スタイリング**: 直接指定禁止 → `ui/theme.ts` のみ使用
+1. **スタイリング**: 直接指定禁止 → `/src/styles/globals.css` のセマンティックトークンのみ使用
 2. **TypeScript厳格**: `any` 型禁止
 3. **設定変更**: 必ず型安全性を確認（Zodスキーマ）
+4. **ナビゲーション**: `/config/navigation`は削除済み → コンポーネント近接配置
 
 ## 🔗 関連ドキュメント
 

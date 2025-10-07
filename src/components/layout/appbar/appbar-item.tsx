@@ -8,18 +8,20 @@ import { LucideIcon } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
-interface AppBarItemProps {
+export interface AppBarItemProps {
   id: string
   label: string
   icon: LucideIcon
   href: string
   isActive: boolean
+  onItemClick?: () => void
 }
 
-export const AppBarItem: React.FC<AppBarItemProps> = ({ label, icon: Icon, href, isActive }) => {
+export const AppBarItem: React.FC<AppBarItemProps> = ({ label, icon: Icon, href, isActive, onItemClick }) => {
   return (
     <Link
       href={href}
+      onClick={onItemClick}
       className={cn(
         'flex h-14 w-14 flex-col items-center justify-center rounded-lg transition-all duration-150 group',
         isActive

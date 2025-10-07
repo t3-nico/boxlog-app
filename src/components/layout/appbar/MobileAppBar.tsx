@@ -188,8 +188,11 @@ export const MobileAppBar = () => {
                   ? section.items.map((item) => (
                       <AppBarItem
                         key={item.id}
-                        item={item}
-                        pathname={pathname}
+                        id={item.id}
+                        label={item.label}
+                        icon={item.icon}
+                        href={item.href}
+                        isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
                         onItemClick={() => toggleSidebar()} // ページクリック時にAppBarを閉じる
                       />
                     ))
