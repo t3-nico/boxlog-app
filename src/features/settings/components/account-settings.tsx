@@ -268,14 +268,13 @@ const AccountSettings = () => {
                 />
               ) : (
                 <div
-                  className="flex h-16 w-16 items-center justify-center rounded-full text-4xl bg-neutral-100 dark:bg-neutral-800 border-2"
-                  style={{ borderColor: 'var(--border)' }}
+                  className="flex h-16 w-16 items-center justify-center rounded-full text-4xl bg-muted border-2 border-border"
                 >
                   {profile.values.selectedIcon}
                 </div>
               )}
               <div className="flex-1">
-                <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                <div className="text-sm text-muted-foreground">
                   {uploadedAvatar ? t('settings.account.usingCustomImage') : t('settings.account.usingEmojiIcon')}
                 </div>
               </div>
@@ -287,7 +286,7 @@ const AccountSettings = () => {
                 {isUploading ? t('settings.account.uploading') : t('settings.account.uploadImage')}
               </Button>
               {uploadedAvatar != null && (
-                <Button type="button" variant="ghost" onClick={handleAvatarRemove} className="text-red-600 dark:text-red-400">
+                <Button type="button" variant="ghost" onClick={handleAvatarRemove} className="text-destructive">
                   {t('settings.account.remove')}
                 </Button>
               )}
@@ -299,9 +298,9 @@ const AccountSettings = () => {
             <SettingField label={t('settings.account.profileIcon')} description={t('settings.account.profileIconDesc')}>
               <div className="mb-4 flex items-center gap-4">
                 <div className="text-4xl">{profile.values.selectedIcon}</div>
-                <div className="text-sm text-neutral-600 dark:text-neutral-400">{t('settings.account.currentIcon')}</div>
+                <div className="text-sm text-muted-foreground">{t('settings.account.currentIcon')}</div>
               </div>
-              <div className="grid grid-cols-10 gap-2 rounded-lg border p-4 bg-neutral-50 dark:bg-neutral-900">
+              <div className="grid grid-cols-10 gap-2 rounded-lg border border-border p-4 bg-muted">
                 {availableIcons.map((icon) => (
                   <button
                     key={icon}
@@ -348,7 +347,7 @@ const AccountSettings = () => {
             placeholder={t('settings.account.confirmPassword')}
             required
           />
-          {passwordError ? <p className="text-red-600 dark:text-red-400 text-sm">{passwordError}</p> : null}
+          {passwordError ? <p className="text-destructive text-sm">{passwordError}</p> : null}
           <div className="flex justify-end">
             <Button type="submit" disabled={isPasswordLoading}>
               {isPasswordLoading ? t('settings.account.updatingPassword') : t('settings.account.updatePassword')}
@@ -372,12 +371,12 @@ const AccountSettings = () => {
         </div>
 
         {security.values.twoFactorEnabled != null && (
-          <div className="mt-4 p-4 border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950 rounded-lg">
+          <div className="mt-4 p-4 border border-border bg-accent rounded-lg">
             <div className="mb-2 flex items-center gap-2">
-              <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium text-green-700 dark:text-green-300">{t('settings.account.twoFactorActive')}</span>
+              <div className="h-2 w-2 bg-primary rounded-full"></div>
+              <span className="text-sm font-medium text-accent-foreground">{t('settings.account.twoFactorActive')}</span>
             </div>
-            <p className="text-xs text-green-700 dark:text-green-300">
+            <p className="text-xs text-accent-foreground">
               {t('settings.account.twoFactorProtection')}
             </p>
           </div>
@@ -386,22 +385,22 @@ const AccountSettings = () => {
 
       {/* Danger Zone */}
       <SettingsCard
-        title={<span className="text-red-600 dark:text-red-400">{t('settings.account.dangerZone')}</span>}
+        title={<span className="text-destructive">{t('settings.account.dangerZone')}</span>}
         description={t('settings.account.dangerZoneDesc')}
       >
-        <div className="border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950 rounded-lg">
+        <div className="border border-destructive/30 bg-destructive/5 rounded-lg">
           <div className="flex items-start justify-between p-6">
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">
-                <div className="bg-red-500 h-2 w-2 animate-pulse rounded-full"></div>
-                <div className="text-red-700 dark:text-red-300 font-medium">アカウント削除</div>
+                <div className="bg-destructive h-2 w-2 animate-pulse rounded-full"></div>
+                <div className="text-destructive font-medium">アカウント削除</div>
               </div>
-              <p className="text-red-700 dark:text-red-300 text-sm leading-relaxed">
+              <p className="text-destructive text-sm leading-relaxed">
                 ⚠️ <strong>この操作は取り消すことができません。</strong>
                 <br />
                 アカウントとすべての関連データが完全に削除されます。
               </p>
-              <ul className="text-red-700 dark:text-red-300 ml-4 space-y-1 text-xs">
+              <ul className="text-destructive ml-4 space-y-1 text-xs">
                 <li>• すべてのタスクとプロジェクトが削除されます</li>
                 <li>• プロフィールと設定が削除されます</li>
                 <li>• この操作は即座に実行され、取り消すことができません</li>
