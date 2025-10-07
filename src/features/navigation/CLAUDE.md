@@ -7,7 +7,6 @@ BoxLogアプリケーション全体のナビゲーションシステムを管�
 - **AppBar**: アプリケーション全体の固定ナビゲーション（L1）
 - **Sidebar**: ルートに応じて可変する動的サイドバー（L2）
 - **MobileBottomNavigation**: モバイル専用ボトムナビゲーション
-- **Header**: ページタイトル・検索・Inspector切り替えUI
 - **状態管理**: ナビゲーション開閉状態の管理
 
 ## 📁 ディレクトリ構造
@@ -28,15 +27,11 @@ features/navigation/
 │   │   ├── CommonSidebar.tsx      # 共通Sidebar実装
 │   │   ├── SidebarHeader.tsx      # Sidebarヘッダー
 │   │   ├── SidebarSection.tsx     # Sidebarセクション
+│   │   ├── sidebar-toggle.tsx     # Sidebar開閉ボタン
 │   │   ├── components.tsx         # Sidebar共通部品
 │   │   └── README.md              # Sidebar仕様
-│   ├── mobile/
-│   │   └── MobileBottomNavigation.tsx  # モバイルボトムナビ
-│   └── header/
-│       ├── page-title.tsx         # ページタイトル表示
-│       ├── sidebar-toggle.tsx     # Sidebar開閉ボタン
-│       ├── inspector-toggle.tsx   # Inspector開閉ボタン
-│       └── index.tsx              # Header re-export
+│   └── mobile/
+│       └── MobileBottomNavigation.tsx  # モバイルボトムナビ
 ├── stores/
 │   └── navigation.store.ts        # ナビゲーション状態管理（Zustand）
 ├── types.ts                        # 型定義
@@ -166,12 +161,21 @@ export const CalendarSidebar = () => {
 
 ### Inspector関連は別モジュール
 
-Inspector機能は`@/components/layout/inspector`に配置されており、このモジュールには含まれません：
+Inspector機能は`@/features/inspector`に配置されており、このモジュールには含まれません：
 
 ```tsx
 // ✅ 正しい
-import { useInspectorStore } from '@/components/layout/inspector/stores/inspector.store'
-import { useCreateEventInspector } from '@/components/layout/inspector/hooks/useCreateEventInspector'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
+import { InspectorToggle } from '@/features/inspector/components/inspector-toggle'
+```
+
+### ページタイトルは共通コンポーネント
+
+ページタイトル表示は純粋なUIコンポーネントとして`@/components/common`に配置：
+
+```tsx
+// ✅ 正しい
+import { PageTitle } from '@/components/common/page-title'
 ```
 
 ### 共有ナビゲーションコンポーネント

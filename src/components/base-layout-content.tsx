@@ -4,8 +4,6 @@ import React, { useCallback } from 'react'
 
 import { usePathname, useSearchParams } from 'next/navigation'
 
-import { Search } from 'lucide-react'
-
 import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -20,12 +18,9 @@ import { cn } from '@/lib/utils'
 import { Inspector } from '@/features/inspector'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 import { AppBar } from '@/features/navigation/components/appbar'
+import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { Sidebar } from '@/features/navigation/components/sidebar'
 import { CommonSidebar } from '@/features/navigation/components/sidebar/CommonSidebar'
-import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
-import { Header } from '@/features/navigation/components/header'
-import { InspectorToggle } from '@/features/navigation/components/header/inspector-toggle'
-import { PageTitle } from '@/features/navigation/components/header/page-title'
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
 interface BaseLayoutContentProps {
@@ -40,19 +35,10 @@ interface BaseLayoutContentProps {
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
   const { t } = useI18n()
-  const { isSidebarOpen } = useNavigationStore()
-  const { isOpen: isAIPanelOpen, panelHeight, isMinimized } = useAIPanelStore()
-  const { open: openGlobalSearch } = useGlobalSearch()
   const { openCreateInspector } = useCreateEventInspector()
   const isMobile = useMediaQuery('(max-width: 768px)')
   const pathname = usePathname() || '/'
   const searchParams = useSearchParams()
-
-  // jsx-no-bind optimization: Search button handler
-  const handleSearchButtonClick = useCallback(() => {
-    console.log('Search button clicked')
-    openGlobalSearch()
-  }, [openGlobalSearch])
 
   // jsx-no-bind optimization: Create event handler
   const handleCreateEventClick = useCallback(() => {
@@ -87,42 +73,6 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
         {/* L3: Main Content + Inspector */}
         <div className="flex flex-1 flex-col">
-          {/* Header Area */}
-          <Header>
-            {/* Mobile Layout */}
-            <div className="flex w-full items-center justify-center md:hidden">
-              {/* Center: Page Title */}
-              <PageTitle />
-            </div>
-
-            {/* Desktop Layout */}
-            <div className="hidden w-full items-center md:flex">
-              {/* Left side: Page Title */}
-              <div className="flex flex-1 justify-start">
-                <PageTitle />
-              </div>
-
-              {/* Right side: Search & Inspector Toggle */}
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleSearchButtonClick}
-                  className={cn(
-                    'flex h-8 w-8 items-center justify-center',
-                    'bg-neutral-200/50 dark:bg-neutral-800/50',
-                    'hover:bg-neutral-300 dark:hover:bg-neutral-700',
-                    'rounded-sm',
-                    'transition-all duration-200',
-                    'flex-shrink-0'
-                  )}
-                >
-                  <Search className="h-5 w-5" />
-                </button>
-                <InspectorToggle />
-              </div>
-            </div>
-          </Header>
-
           {/* Main Content Area */}
           <div className="flex flex-1 overflow-hidden">
             <div className="relative z-10 flex flex-1 bg-background">
