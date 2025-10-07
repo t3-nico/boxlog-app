@@ -30,7 +30,7 @@ import { MobileBottomNavigation } from './mobile/MobileBottomNavigation'
 import { AppBar } from './appbar'
 import { Sidebar } from './sidebar'
 import { CommonSidebar } from './sidebar/CommonSidebar'
-import { useNavigationStore } from './appbar/stores/navigation.store'
+import { useNavigationStore } from './stores/navigation.store'
 
 interface DashboardLayoutProps {
   events?: Event[]

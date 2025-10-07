@@ -14,8 +14,8 @@ import { cn } from '@/lib/utils'
 
 import { AppBarItem } from './appbar-item'
 import { allNavigationSections } from './navigation-items'
-import { useNavigationStore } from './stores/navigation.store'
-import { ThemeToggle } from './theme-toggle'
+import { useNavigationStore } from '../stores/navigation.store'
+import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
 import { UserMenu } from './user-menu'
 
 export const MobileAppBar = () => {
@@ -228,7 +228,7 @@ export const MobileAppBar = () => {
             )}
           >
             <div className={cn('flex items-center justify-start')}>
-              <ThemeToggle />
+              <SimpleThemeToggle />
             </div>
           </div>
 
