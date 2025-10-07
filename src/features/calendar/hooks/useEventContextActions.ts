@@ -207,7 +207,7 @@ export function useEventContextActions() {
         showDuplicationSuccess(newEvent)
       } catch (err) {
         console.error('❌ Failed to duplicate event:', err)
-        calendarToast.error('予定の複製に失敗しました')
+        calendarToast.error(t('calendar.event.duplicateFailed'))
       }
     },
     [createEvent, calendarToast, showDuplicationSuccess]

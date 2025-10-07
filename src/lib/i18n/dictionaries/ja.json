@@ -11,6 +11,16 @@
     "settings": "設定",
     "profile": "プロフィール"
   },
+  "appbar": {
+    "navigation": {
+      "calendar": "カレンダー",
+      "board": "ボード",
+      "table": "テーブル",
+      "stats": "統計",
+      "settings": "設定"
+    },
+    "toggleSidebar": "サイドバーを開閉"
+  },
   "actions": {
     "save": "保存",
     "cancel": "キャンセル",
@@ -300,7 +310,12 @@
       "deselected": "イベントの選択を解除しました",
       "operationCancelled": "操作をキャンセルしました",
       "deleteFailed": "予定の削除に失敗しました",
-      "moveFailed": "予定の移動に失敗しました"
+      "moveFailed": "予定の移動に失敗しました",
+      "duplicateFailed": "予定の複製に失敗しました"
+    },
+    "accessibility": {
+      "standardContrast": "標準コントラスト",
+      "toggleWeekend": "週末表示の切り替え"
     },
     "toast": {
       "created": "予定を作成しました",
@@ -908,7 +923,12 @@
       "title": {
         "placeholder": "What needs to be done?"
       },
-      "charCount": "{{count}}/100"
+      "charCount": "{{count}}/100",
+      "dateKeywords": {
+        "today": "今日",
+        "tomorrow": "明日",
+        "nextWeek": "来週"
+      }
     },
     "detail": {
       "schedule": {
@@ -941,6 +961,17 @@
         "duplicate": "複製",
         "template": "テンプレート",
         "delete": "削除"
+      },
+      "timeline": {
+        "demoStatus": {
+          "scheduled": "予定",
+          "inProgress": "進行中",
+          "completed": "完了"
+        },
+        "demoTags": {
+          "important": "重要",
+          "urgent": "緊急"
+        }
       }
     }
   },
@@ -1002,6 +1033,51 @@
       "deleteNotImplemented": "アカウント削除機能は後で実装されます",
       "deleteFailed": "アカウントの削除に失敗しました",
       "profile": "プロフィール",
+      "profileDesc": "基本情報とプロフィール画像の設定",
+      "displayName": "表示名",
+      "displayNameDesc": "他のユーザーに表示される名前",
+      "displayNamePlaceholder": "表示名を入力",
+      "email": "メールアドレス",
+      "emailDesc": "アカウントに関連付けられたメールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "profilePicture": "プロフィール画像",
+      "profilePictureDesc": "JPG, PNG, GIF 最大2MB",
+      "profilePictureAlt": "プロフィール画像",
+      "usingCustomImage": "カスタム画像を使用",
+      "usingEmojiIcon": "絵文字アイコンを使用",
+      "uploading": "アップロード中...",
+      "uploadImage": "📷 画像をアップロード",
+      "remove": "削除",
+      "profileIcon": "プロフィールアイコン (絵文字)",
+      "profileIconDesc": "プロフィール画像の代わりに使用する絵文字",
+      "currentIcon": "現在のアイコン",
+      "password": "パスワード",
+      "passwordDesc": "アカウントのパスワードを変更",
+      "currentPassword": "現在のパスワード",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "新しいパスワード（確認）",
+      "updatingPassword": "パスワード更新中...",
+      "updatePassword": "パスワードを更新",
+      "twoFactor": "2要素認証",
+      "twoFactorDesc": "アカウントに追加のセキュリティ層を追加",
+      "enable2FA": "2FAを有効にする",
+      "twoFactorEnabled": "2要素認証が有効になっています",
+      "twoFactorPrompt": "サインイン時に認証コードを要求します",
+      "twoFactorActive": "2要素認証が有効",
+      "twoFactorProtection": "アカウントが追加のセキュリティ層で保護されています。",
+      "dangerZone": "危険な操作",
+      "dangerZoneDesc": "取り消すことのできない破壊的なアクション",
+      "privacy": "プライバシー",
+      "privacyDesc": "情報の公開範囲を設定",
+      "publicProfile": "プロフィールを公開",
+      "publicProfileDesc": "他のユーザーがあなたのプロフィールを閲覧できます",
+      "showEmail": "メールアドレスを表示",
+      "showEmailDesc": "プロフィールにメールアドレスを表示します",
+      "allowNotifications": "通知を許可",
+      "allowNotificationsDesc": "システムからの通知を受け取ります",
+      "debugInfo": "デバッグ情報",
+      "debugInfoDesc": "現在の設定値（開発用）",
+      "publicInfo": "公開される基本情報",
       "title": "アカウント設定",
       "description": "プロフィールとアカウントの管理",
       "privacyUpdated": "プライバシー設定を更新しました"
@@ -1011,14 +1087,82 @@
       "timeAndTimezone": "時間とタイムゾーン",
       "timeAndTimezoneDesc": "日付と時間の表示方法を設定",
       "timezone": "タイムゾーン",
-      "timezoneDesc": "カレンダー表示に使用するタイムゾーン"
+      "timezoneDesc": "カレンダー表示に使用するタイムゾーン",
+      "selectTimezone": "タイムゾーンを選択",
+      "timeFormat": "時間表示形式",
+      "timeFormatDesc": "12時間表記または24時間表記を選択",
+      "selectTimeFormat": "時間表示形式を選択",
+      "timeFormat24h": "24時間表記 (13:00)",
+      "timeFormat12h": "12時間表記 (1:00 PM)",
+      "preview": "プレビュー:",
+      "currentTime": "現在時刻: {{time}}",
+      "fullFormat": "完全表記: {{time}}",
+      "weekAndCalendar": "週とカレンダー表示",
+      "weekAndCalendarDesc": "週の表示方法とカレンダーのカスタマイズ",
+      "weekStartsOn": "週の開始曜日",
+      "weekStartsOnDesc": "カレンダーの週の開始日を選択",
+      "selectStartDay": "開始日を選択",
+      "sunday": "日曜日",
+      "monday": "月曜日",
+      "saturday": "土曜日",
+      "showWeekNumbers": "週番号を表示",
+      "showWeekNumbersDesc": "カレンダービューで週番号を表示",
+      "showDeclinedEvents": "辞退したイベントを表示",
+      "showDeclinedEventsDesc": "辞退したイベントもカレンダーに表示",
+      "defaultTaskSettings": "デフォルトタスク設定",
+      "defaultTaskSettingsDesc": "新しいタスクとイベントのデフォルト動作",
+      "defaultDuration": "デフォルトタスク時間",
+      "defaultDurationDesc": "新しいタスク作成時のデフォルト時間",
+      "selectDuration": "時間を選択",
+      "duration15min": "15分",
+      "duration30min": "30分",
+      "duration1hour": "1時間",
+      "duration1hour30min": "1時間30分",
+      "duration2hours": "2時間",
+      "snapInterval": "ドラッグ&ドロップのスナップ間隔",
+      "snapIntervalDesc": "カレンダーでイベントをドラッグする際のグリッド間隔",
+      "selectInterval": "間隔を選択",
+      "interval5min": "5分",
+      "interval10min": "10分",
+      "interval15min": "15分",
+      "interval30min": "30分",
+      "businessHours": "営業時間",
+      "businessHoursDesc": "作業時間をカレンダーに定義",
+      "businessHoursStart": "営業開始時間",
+      "businessHoursStartDesc": "営業時間の開始時間",
+      "businessHoursEnd": "営業終了時間",
+      "businessHoursEndDesc": "営業時間の終了時間",
+      "selectStartTime": "開始時間",
+      "selectEndTime": "終了時間",
+      "businessHoursPreview": "営業時間:",
+      "resetSettings": "設定のリセット",
+      "resetSettingsDesc": "すべてのカレンダー設定をデフォルト値に戻す",
+      "resetToDefault": "デフォルトに戻す"
     },
     "preferences": {
       "settingsSaved": "環境設定を保存しました",
       "theme": "テーマ",
       "themeDesc": "アプリケーションの外観の設定",
       "themeLabel": "テーマ",
-      "themeLabelDesc": "アプリケーションの外観テーマ"
+      "themeLabelDesc": "アプリケーションの外観テーマ",
+      "selectTheme": "テーマを選択",
+      "userExperience": "ユーザーエクスペリエンス",
+      "userExperienceDesc": "アニメーションやサウンドの設定",
+      "animations": "アニメーション",
+      "animationsDesc": "画面遷移やボタンのアニメーション効果を有効にする",
+      "soundEffects": "サウンド効果",
+      "soundEffectsDesc": "通知音やクリック音を再生する",
+      "dataPrivacy": "データとプライバシー",
+      "dataPrivacyDesc": "データのバックアップと開発者向け機能",
+      "autoBackup": "自動バックアップ",
+      "autoBackupDesc": "データを定期的に自動でバックアップする",
+      "developerMode": "開発者モード",
+      "developerModeDesc": "高度な機能とデバッグ情報を表示する",
+      "language": "言語"
+    },
+    "common": {
+      "saved": "設定を保存しました",
+      "saveFailed": "保存に失敗しました"
     }
   }
 }

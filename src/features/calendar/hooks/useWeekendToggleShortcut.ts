@@ -112,12 +112,18 @@ function showToggleFeedback(newState: boolean) {
   }, 2000)
 }
 
+import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+
+const CALENDAR_ACCESSIBILITY_KEYS = {
+  TOGGLE_WEEKEND: 'calendar.accessibility.toggleWeekend',
+} as const
+
 /**
  * ショートカットキーのヘルプ情報
  */
 export const WEEKEND_TOGGLE_SHORTCUT_HELP = {
   key: 'Cmd/Ctrl + W',
-  description: '週末表示の切り替え',
+  description: getTranslation(CALENDAR_ACCESSIBILITY_KEYS.TOGGLE_WEEKEND),
   mac: '⌘W',
   windows: 'Ctrl+W'
 } as const

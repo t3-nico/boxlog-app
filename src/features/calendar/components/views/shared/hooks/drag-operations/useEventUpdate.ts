@@ -170,14 +170,14 @@ export function useEventUpdate({ onEventUpdate, events, date }: UseEventUpdatePr
             })
             .catch((error: unknown) => {
               console.error('Failed to resize event:', error)
-              calendarToast.error('予定のリサイズに失敗しました')
+              calendarToast.error(t('calendar.event.resizeFailed'))
             })
         } else {
           calendarToast.eventUpdated(eventData)
         }
       } catch (error) {
         console.error('Failed to resize event:', error)
-        calendarToast.error('予定のリサイズに失敗しました')
+        calendarToast.error(t('calendar.event.resizeFailed'))
       }
     },
     [onEventUpdate, events, calendarToast, createEventData]

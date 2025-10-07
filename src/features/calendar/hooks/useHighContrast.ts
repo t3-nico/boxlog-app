@@ -25,10 +25,18 @@ interface ContrastTheme {
   wcagAAA: boolean
 }
 
+import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
+import { CALENDAR_TOAST_KEYS } from '@/features/calendar/lib/toast/translation-keys'
+
+// 翻訳キーを追加
+const CALENDAR_ACCESSIBILITY_KEYS = {
+  STANDARD_CONTRAST: 'calendar.accessibility.standardContrast',
+} as const
+
 // WCAG AAA準拠のハイコントラストカラーテーマ
 const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
   default: {
-    name: '標準コントラスト',
+    name: getTranslation(CALENDAR_ACCESSIBILITY_KEYS.STANDARD_CONTRAST),
     wcagAAA: false,
     colors: {
       background: '#ffffff',

@@ -624,7 +624,7 @@ export function useDragAndDrop({
     // Calendar Toast用のイベントデータを準備
     const eventData = {
       id: event.id,
-      title: event.title || 'イベント',
+      title: event.title || t('calendar.event.title'),
       displayStartDate: event.startDate,
       displayEndDate: newEndTime,
       duration: Math.round(newDurationMs / (1000 * 60)), // 分単位
@@ -774,7 +774,7 @@ export function useDragAndDrop({
 
       const eventData = {
         id: event.id,
-        title: event.title || 'イベント',
+        title: event.title || t('calendar.event.title'),
         displayStartDate: newStartTime,
         displayEndDate: new Date(newStartTime.getTime() + durationMs),
         duration: Math.round(durationMs / (1000 * 60)), // 分単位
@@ -795,16 +795,16 @@ export function useDragAndDrop({
                     startTime: previousStartTime,
                     endTime: originalEndTime,
                   })
-                  calendarToast.success('移動を取り消しました')
+                  calendarToast.success(t('calendar.event.undoMove'))
                 } catch (error) {
-                  calendarToast.error('取り消しに失敗しました')
+                  calendarToast.error(t('calendar.event.undoFailed'))
                 }
               },
             })
           })
           .catch((error: unknown) => {
             console.error('Failed to update event time:', error)
-            calendarToast.error('予定の移動に失敗しました')
+            calendarToast.error(t('calendar.event.moveFailed'))
           })
       } else {
         // 同期的な場合（Promiseが返されない場合）
@@ -852,7 +852,7 @@ export function useDragAndDrop({
         await handleEventUpdateToast(Promise.resolve(result), event, newStartTime, durationMs)
       } catch (error) {
         console.error('Failed to update event time:', error)
-        calendarToast.error('予定の移動に失敗しました')
+        calendarToast.error(t('calendar.event.moveFailed'))
       }
     },
     [onEventUpdate, calculateEventDuration, handleEventUpdateToast, calendarToast]

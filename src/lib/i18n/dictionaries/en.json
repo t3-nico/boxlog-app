@@ -11,6 +11,16 @@
     "settings": "Settings",
     "profile": "Profile"
   },
+  "appbar": {
+    "navigation": {
+      "calendar": "Calendar",
+      "board": "Board",
+      "table": "Table",
+      "stats": "Stats",
+      "settings": "Settings"
+    },
+    "toggleSidebar": "Toggle Sidebar"
+  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
@@ -300,7 +310,12 @@
       "deselected": "Event deselected",
       "operationCancelled": "Operation cancelled",
       "deleteFailed": "Failed to delete event",
-      "moveFailed": "Failed to move event"
+      "moveFailed": "Failed to move event",
+      "duplicateFailed": "Failed to duplicate event"
+    },
+    "accessibility": {
+      "standardContrast": "Standard Contrast",
+      "toggleWeekend": "Toggle weekend display"
     },
     "toast": {
       "created": "Event created",
@@ -908,7 +923,12 @@
       "title": {
         "placeholder": "What needs to be done?"
       },
-      "charCount": "{{count}}/100"
+      "charCount": "{{count}}/100",
+      "dateKeywords": {
+        "today": "today",
+        "tomorrow": "tomorrow",
+        "nextWeek": "next week"
+      }
     },
     "detail": {
       "schedule": {
@@ -941,6 +961,17 @@
         "duplicate": "Duplicate",
         "template": "Template",
         "delete": "Delete"
+      },
+      "timeline": {
+        "demoStatus": {
+          "scheduled": "Scheduled",
+          "inProgress": "In Progress",
+          "completed": "Completed"
+        },
+        "demoTags": {
+          "important": "Important",
+          "urgent": "Urgent"
+        }
       }
     }
   },
@@ -1002,6 +1033,51 @@
       "deleteNotImplemented": "Account deletion feature will be implemented later",
       "deleteFailed": "Failed to delete account",
       "profile": "Profile",
+      "profileDesc": "Basic information and profile image settings",
+      "displayName": "Display Name",
+      "displayNameDesc": "Name shown to other users",
+      "displayNamePlaceholder": "Enter display name",
+      "email": "Email Address",
+      "emailDesc": "Email address associated with your account",
+      "emailPlaceholder": "Enter email address",
+      "profilePicture": "Profile Picture",
+      "profilePictureDesc": "JPG, PNG, GIF max 2MB",
+      "profilePictureAlt": "Profile Picture",
+      "usingCustomImage": "Using custom image",
+      "usingEmojiIcon": "Using emoji icon",
+      "uploading": "Uploading...",
+      "uploadImage": "📷 Upload Image",
+      "remove": "Remove",
+      "profileIcon": "Profile Icon (Emoji)",
+      "profileIconDesc": "Emoji to use instead of profile picture",
+      "currentIcon": "Current icon",
+      "password": "Password",
+      "passwordDesc": "Change your account password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "updatingPassword": "Updating password...",
+      "updatePassword": "Update Password",
+      "twoFactor": "Two-Factor Authentication",
+      "twoFactorDesc": "Add an extra layer of security to your account",
+      "enable2FA": "Enable 2FA",
+      "twoFactorEnabled": "Two-factor authentication is enabled",
+      "twoFactorPrompt": "Require authentication code when signing in",
+      "twoFactorActive": "Two-factor authentication active",
+      "twoFactorProtection": "Your account is protected with an additional security layer.",
+      "dangerZone": "Danger Zone",
+      "dangerZoneDesc": "Irreversible and destructive actions",
+      "privacy": "Privacy",
+      "privacyDesc": "Configure information visibility",
+      "publicProfile": "Public Profile",
+      "publicProfileDesc": "Allow other users to view your profile",
+      "showEmail": "Show Email Address",
+      "showEmailDesc": "Display email address on your profile",
+      "allowNotifications": "Allow Notifications",
+      "allowNotificationsDesc": "Receive notifications from the system",
+      "debugInfo": "Debug Information",
+      "debugInfoDesc": "Current settings values (for development)",
+      "publicInfo": "Public basic information",
       "title": "Account Settings",
       "description": "Manage your profile and account",
       "privacyUpdated": "Privacy settings updated successfully"
@@ -1011,14 +1087,82 @@
       "timeAndTimezone": "Time and Timezone",
       "timeAndTimezoneDesc": "Configure how dates and times are displayed",
       "timezone": "Timezone",
-      "timezoneDesc": "Timezone used for calendar display"
+      "timezoneDesc": "Timezone used for calendar display",
+      "selectTimezone": "Select timezone",
+      "timeFormat": "Time format",
+      "timeFormatDesc": "Select 12-hour or 24-hour time format",
+      "selectTimeFormat": "Select time format",
+      "timeFormat24h": "24-hour format (13:00)",
+      "timeFormat12h": "12-hour format (1:00 PM)",
+      "preview": "Preview:",
+      "currentTime": "Current time: {{time}}",
+      "fullFormat": "Full format: {{time}}",
+      "weekAndCalendar": "Week & Calendar Display",
+      "weekAndCalendarDesc": "Configure how weeks and calendar are displayed",
+      "weekStartsOn": "Week starts on",
+      "weekStartsOnDesc": "Select the first day of the week for calendar",
+      "selectStartDay": "Select start day",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "saturday": "Saturday",
+      "showWeekNumbers": "Show week numbers",
+      "showWeekNumbersDesc": "Display week numbers in calendar view",
+      "showDeclinedEvents": "Show declined events",
+      "showDeclinedEventsDesc": "Display declined events in calendar",
+      "defaultTaskSettings": "Default Task Settings",
+      "defaultTaskSettingsDesc": "Default behavior for new tasks and events",
+      "defaultDuration": "Default task duration",
+      "defaultDurationDesc": "Default duration when creating new tasks",
+      "selectDuration": "Select duration",
+      "duration15min": "15 minutes",
+      "duration30min": "30 minutes",
+      "duration1hour": "1 hour",
+      "duration1hour30min": "1 hour 30 minutes",
+      "duration2hours": "2 hours",
+      "snapInterval": "Drag & drop snap interval",
+      "snapIntervalDesc": "Grid interval when dragging events in calendar",
+      "selectInterval": "Select interval",
+      "interval5min": "5 minutes",
+      "interval10min": "10 minutes",
+      "interval15min": "15 minutes",
+      "interval30min": "30 minutes",
+      "businessHours": "Business Hours",
+      "businessHoursDesc": "Define working hours in calendar",
+      "businessHoursStart": "Business hours start",
+      "businessHoursStartDesc": "Start time of business hours",
+      "businessHoursEnd": "Business hours end",
+      "businessHoursEndDesc": "End time of business hours",
+      "selectStartTime": "Start time",
+      "selectEndTime": "End time",
+      "businessHoursPreview": "Business hours:",
+      "resetSettings": "Reset Settings",
+      "resetSettingsDesc": "Reset all calendar settings to default values",
+      "resetToDefault": "Reset to Default"
     },
     "preferences": {
       "settingsSaved": "Preferences saved successfully",
       "theme": "Theme",
       "themeDesc": "Configure application appearance",
       "themeLabel": "Theme",
-      "themeLabelDesc": "Application appearance theme"
+      "themeLabelDesc": "Application appearance theme",
+      "selectTheme": "Select theme",
+      "userExperience": "User Experience",
+      "userExperienceDesc": "Animation and sound settings",
+      "animations": "Animations",
+      "animationsDesc": "Enable animation effects for transitions and buttons",
+      "soundEffects": "Sound Effects",
+      "soundEffectsDesc": "Play notification and click sounds",
+      "dataPrivacy": "Data & Privacy",
+      "dataPrivacyDesc": "Data backup and developer features",
+      "autoBackup": "Auto Backup",
+      "autoBackupDesc": "Automatically backup data periodically",
+      "developerMode": "Developer Mode",
+      "developerModeDesc": "Show advanced features and debug information",
+      "language": "Language"
+    },
+    "common": {
+      "saved": "Settings saved successfully",
+      "saveFailed": "Failed to save settings"
     }
   }
 }
