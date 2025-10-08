@@ -42,10 +42,10 @@ jobs:
 
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
 
       - name: 🔍 ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
+        uses: zaproxy/action-baseline@906a3c93ffde4864839d31a93daadcbd2737b4da  # v0.12.0
         with:
           target: ${{ env.TARGET_URL }}
           rules_file_name: '.zap/rules.tsv'
@@ -53,7 +53,7 @@ jobs:
           fail_action: false  # Phase 1では失敗させない
 
       - name: 📊 Upload ZAP Report (HTML)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
         if: always()
         with:
           name: zap-baseline-report-html
@@ -61,7 +61,7 @@ jobs:
           retention-days: 30
 
       - name: 📊 Upload ZAP Report (JSON)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
         if: always()
         with:
           name: zap-baseline-report-json
@@ -70,7 +70,7 @@ jobs:
 
       - name: 💬 Create GitHub Issue for High/Critical Alerts
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
         with:
           script: |
             const fs = require('fs');
@@ -140,10 +140,10 @@ jobs:
 
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
 
       - name: 🔍 ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.10.0
+        uses: zaproxy/action-full-scan@d479641f7e99facb91d7738171b3448e3f3c7bba  # v0.10.0
         with:
           target: ${{ env.TARGET_URL }}
           rules_file_name: '.zap/rules.tsv'
@@ -151,7 +151,7 @@ jobs:
           fail_action: false
 
       - name: 📊 Upload Full Scan Report (HTML)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
         if: always()
         with:
           name: zap-full-report-html
@@ -159,7 +159,7 @@ jobs:
           retention-days: 90
 
       - name: 📊 Upload Full Scan Report (JSON)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
         if: always()
         with:
           name: zap-full-report-json
@@ -177,7 +177,7 @@ jobs:
 
     steps:
       - name: 📥 Download Reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
         with:
           name: zap-baseline-report-json
         continue-on-error: true

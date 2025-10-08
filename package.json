@@ -51,7 +51,7 @@
     "generate:types": "npm run generate:business-rules -- --resources user,task,project,comment --output ./src/types/generated",
     "generate:schemas": "npm run generate:business-rules -- --resources user,task,project,comment --tests",
     "generate:all": "npm run generate:business-rules -- --resources user,task,project,comment --tests --strict",
-    "docs:check": "node scripts/docs-code-consistency.js",
+    "docs:check": "node scripts/docs-code-consistency.cjs",
     "docs:audit": "npm run docs:check",
     "docs:auto-fix": "node scripts/docs-auto-fix.js",
     "docs:fix-and-check": "npm run docs:auto-fix && npm run docs:check",
