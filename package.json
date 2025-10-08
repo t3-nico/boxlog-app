@@ -304,7 +304,7 @@
     "npm-check-updates": "^19.0.0",
     "postcss": "^8",
     "prettier": "^3.3.2",
-    "prettier-plugin-organize-imports": "^4.0.0",
+    "prettier-plugin-organize-imports": "^4.3.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "size-limit": "^11.2.0",
     "supabase": "^2.30.4",
