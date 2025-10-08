@@ -29,6 +29,7 @@ jobs:
   e2e-tests:
     name: 🧪 E2E - ${{ matrix.project }}
     runs-on: ubuntu-latest
+    environment: development  # Environment Secrets保護
     timeout-minutes: 15
 
     strategy:

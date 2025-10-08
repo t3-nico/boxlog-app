@@ -139,6 +139,7 @@ jobs:
   build:
     name: 🏗️ Build
     runs-on: ubuntu-latest
+    environment: development  # Environment Secrets保護
     needs: [lint, typecheck, unit-tests]
     timeout-minutes: 10
     steps:
@@ -225,6 +226,7 @@ jobs:
   performance:
     name: ⚡ Performance (Lighthouse CI)
     runs-on: ubuntu-latest
+    environment: development  # Environment Secrets保護
     needs: [build]
     timeout-minutes: 15
     steps:
