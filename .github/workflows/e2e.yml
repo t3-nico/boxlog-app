@@ -57,7 +57,7 @@ jobs:
         run: npm ci
 
       - name: 🎭 Install Playwright Browsers
-        run: npx playwright install --with-deps ${{ matrix.project == 'Mobile Chrome' && 'chromium' || matrix.project == 'Mobile Safari' && 'webkit' || matrix.project == 'iPad' && 'webkit' || matrix.project }}
+        run: npx playwright install --with-deps ${{ (matrix.project == 'Mobile Chrome' && 'chromium') || (matrix.project == 'Mobile Safari' && 'webkit') || (matrix.project == 'iPad' && 'webkit') || matrix.project }}
 
       - name: 🌐 Run E2E tests - ${{ matrix.project }}
         run: npm run test:e2e -- --project="${{ matrix.project }}"
