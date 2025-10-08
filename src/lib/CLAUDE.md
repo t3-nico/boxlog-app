@@ -211,25 +211,39 @@ const { data, error } = await supabase.from('tasks').insert(taskData)
 const { user } = await supabase.auth.getUser()
 ```
 
-### toast/ - トースト通知
+### toast - トースト通知（Sonner）
 
-**ユーザー通知システム**。
+**shadcn/ui公式推奨のSonnerによるトースト通知システム**。
 
 ```tsx
-import { toast } from '@/lib/toast'
+import { toast } from 'sonner'
 
-// 成功通知
+// 基本的な使い方
 toast.success('タスクを作成しました')
-
-// エラー通知
 toast.error('タスクの作成に失敗しました')
+toast.warning('注意してください')
+toast.info('お知らせ')
+toast.loading('処理中...')
 
-// カスタム通知
-toast.custom('処理中...', {
+// オプション付き
+toast.success('保存しました', {
+  description: '変更内容が保存されました',
   duration: 3000,
-  icon: '⏳',
+  action: {
+    label: '元に戻す',
+    onClick: () => console.log('Undo'),
+  },
+})
+
+// Promise対応
+toast.promise(saveTask(), {
+  loading: '保存中...',
+  success: '保存完了',
+  error: '保存失敗',
 })
 ```
+
+**参考**: https://ui.shadcn.com/docs/components/sonner
 
 ### trpc/ - tRPCクライアント
 

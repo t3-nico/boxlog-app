@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { useToast } from '@/lib/toast'
+import { toast } from 'sonner'
 
 interface UseAutoSaveSettingsOptions<T> {
   initialValues: T
@@ -46,7 +46,6 @@ export function useAutoSaveSettings<T>({
 }: UseAutoSaveSettingsOptions<T>) {
   const [values, setValues] = useState<T>(initialValues)
   const [isSaving, setIsSaving] = useState(false)
-  const { success, error: _error } = useToast()
   const lastSavedValues = useRef<T>(initialValues)
 
   // デバウンスされた保存関数
@@ -64,12 +63,14 @@ export function useAutoSaveSettings<T>({
         lastSavedValues.current = newValues
 
         // 成功トースト
-        success(successMessage)
+        toast.success(successMessage)
       } catch (error) {
         console.error('Failed to save settings:', error)
 
         // エラートースト
-        error(errorMessage, error instanceof Error ? error.message : undefined)
+        toast.error(errorMessage, {
+          description: error instanceof Error ? error.message : undefined,
+        })
       } finally {
         setIsSaving(false)
       }
