@@ -2,6 +2,8 @@
 
 BoxLogアプリケーションにおけるSentryの統合・設定・運用の完全ガイド。
 
+**📘 アラート設定の詳細手順**: [`SENTRY_ALERT_SETUP.md`](./SENTRY_ALERT_SETUP.md)
+
 ## 📋 目次
 
 - [概要](#概要)
