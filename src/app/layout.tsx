@@ -8,8 +8,8 @@ import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 
 import { GlobalErrorBoundary, Providers } from '@/components/common'
+import { Toaster } from '@/components/ui/sonner'
 import { WebVitalsReporter } from '@/components/WebVitalsReporter'
-import { ToastContainer } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
 // next/font による最適化されたフォント読み込み
@@ -39,7 +39,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
             <Providers>
               {children}
-              <ToastContainer />
+              <Toaster />
             </Providers>
           </GlobalErrorBoundary>
           <WebVitalsReporter />

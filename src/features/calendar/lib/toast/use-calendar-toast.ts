@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 import { useCallback } from 'react'
 
-import { toast } from '@/lib/toast'
+import { toast } from 'sonner'
 
 import { getTranslation } from './get-translation'
 import { toastTemplates } from './templates'
