@@ -94,25 +94,28 @@ jobs:
             }
 
             // 新規Issue作成
+            const reportBody = [
+              '# 🛡️ Weekly Security Report',
+              '',
+              summaryLines.join('\n'),
+              '',
+              recommendations,
+              '',
+              '---',
+              '',
+              `**Full Report**: [Download Artifact](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              '',
+              `**Next Report**: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}`,
+              '',
+              '<sub>🤖 Automated weekly security report</sub>'
+            ].join('\n');
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `🛡️ Weekly Security Report - ${thisWeek}`,
               labels: ['security', 'weekly-report', 'documentation'],
-              body: `# 🛡️ Weekly Security Report
-
-${summaryLines.join('\n')}
-
-${recommendations}
-
----
-
-**Full Report**: [Download Artifact](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-
-**Next Report**: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-
-<sub>🤖 Automated weekly security report</sub>
-              `
+              body: reportBody
             });
 
       - name: 💬 Notify on Critical Issues
