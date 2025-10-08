@@ -39,28 +39,52 @@ export const HeaderActions = ({
     <div className={cn('flex items-center gap-1', className)}>
       {/* 設定 */}
       {onSettings != null ? (
-        <button type="button" onClick={onSettings} className={buttonClass} title={t('calendar.headerActions.settings')} aria-label={t('calendar.headerActions.settings')}>
+        <button
+          type="button"
+          onClick={onSettings}
+          className={buttonClass}
+          title={t('calendar.headerActions.settings')}
+          aria-label={t('calendar.headerActions.settings')}
+        >
           <Settings className={iconSize} />
         </button>
       ) : null}
 
       {/* エクスポート */}
       {onExport != null ? (
-        <button type="button" onClick={onExport} className={buttonClass} title={t('calendar.headerActions.export')} aria-label={t('calendar.headerActions.export')}>
+        <button
+          type="button"
+          onClick={onExport}
+          className={buttonClass}
+          title={t('calendar.headerActions.export')}
+          aria-label={t('calendar.headerActions.export')}
+        >
           <Download className={iconSize} />
         </button>
       ) : null}
 
       {/* インポート */}
       {onImport != null ? (
-        <button type="button" onClick={onImport} className={buttonClass} title={t('calendar.headerActions.import')} aria-label={t('calendar.headerActions.import')}>
+        <button
+          type="button"
+          onClick={onImport}
+          className={buttonClass}
+          title={t('calendar.headerActions.import')}
+          aria-label={t('calendar.headerActions.import')}
+        >
           <Upload className={iconSize} />
         </button>
       ) : null}
 
       {/* その他 */}
       {onMore != null ? (
-        <button type="button" onClick={onMore} className={buttonClass} title={t('calendar.headerActions.moreOptions')} aria-label={t('calendar.headerActions.moreOptions')}>
+        <button
+          type="button"
+          onClick={onMore}
+          className={buttonClass}
+          title={t('calendar.headerActions.moreOptions')}
+          aria-label={t('calendar.headerActions.moreOptions')}
+        >
           <MoreHorizontal className={iconSize} />
         </button>
       ) : null}

@@ -46,12 +46,12 @@ const initialState: AskPanelState = {
     autoOpen: false,
     showInHeader: false, // ヘッダーボタンは非表示
     defaultPrompts: [
-      "Analyze my productivity patterns",
-      "What tasks should I focus on today?",
-      "Help me organize my schedule",
-      "Show me my upcoming deadlines"
-    ]
-  }
+      'Analyze my productivity patterns',
+      'What tasks should I focus on today?',
+      'Help me organize my schedule',
+      'Show me my upcoming deadlines',
+    ],
+  },
 }
 
 export const useAskPanelStore = create<AskPanelStore>()(
@@ -64,11 +64,12 @@ export const useAskPanelStore = create<AskPanelStore>()(
 
       close: () => set({ isOpen: false }),
 
-      toggle: () => set((state) => ({
-        isOpen: !state.isOpen,
-        // 開くときは展開状態にする
-        collapsed: state.isOpen ? state.collapsed : false
-      })),
+      toggle: () =>
+        set((state) => ({
+          isOpen: !state.isOpen,
+          // 開くときは展開状態にする
+          collapsed: state.isOpen ? state.collapsed : false,
+        })),
 
       // 折りたたみ操作
       collapse: () => set({ collapsed: true }),
@@ -78,12 +79,11 @@ export const useAskPanelStore = create<AskPanelStore>()(
       toggleCollapsed: () => set((state) => ({ collapsed: !state.collapsed })),
 
       // 設定操作
-      setWidth: (width: number) =>
-        set({ width: Math.max(256, Math.min(640, width)) }), // 最小256px（サイドメニューと同じ）、最大640px
+      setWidth: (width: number) => set({ width: Math.max(256, Math.min(640, width)) }), // 最小256px（サイドメニューと同じ）、最大640px
 
       updatePreferences: (preferences: Partial<AskPanelState['preferences']>) =>
         set((state) => ({
-          preferences: { ...state.preferences, ...preferences }
+          preferences: { ...state.preferences, ...preferences },
         })),
     }),
     {
@@ -99,7 +99,7 @@ export const askPanelSelectors = {
   getCollapsed: (state: AskPanelStore) => state.collapsed,
   getWidth: (state: AskPanelStore) => state.width,
   getCollapsedWidth: (state: AskPanelStore) => state.collapsedWidth,
-  getCurrentWidth: (state: AskPanelStore) => state.collapsed ? state.collapsedWidth : state.width,
+  getCurrentWidth: (state: AskPanelStore) => (state.collapsed ? state.collapsedWidth : state.width),
 
   // 設定
   getPreferences: (state: AskPanelStore) => state.preferences,

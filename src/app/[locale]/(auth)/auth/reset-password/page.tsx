@@ -89,7 +89,7 @@ const ResetPassword = () => {
         <Heading level={2} className="text-green-600 dark:text-green-500">
           Password Updated
         </Heading>
-        <p className="text-base text-neutral-800 dark:text-neutral-200 sm:text-sm">Your password has been updated.</p>
+        <p className="text-base text-neutral-800 sm:text-sm dark:text-neutral-200">Your password has been updated.</p>
       </div>
     )
   }
@@ -113,14 +113,14 @@ const ResetPassword = () => {
           minLength={6}
         />
       </Field>
-      {error != null ? <p className="text-base text-red-600 dark:text-red-500 sm:text-sm">{error}</p> : null}
+      {error != null ? <p className="text-base text-red-600 sm:text-sm dark:text-red-500">{error}</p> : null}
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Updating...' : 'Update Password'}
       </Button>
       <button
         type="button"
         onClick={handleBackToLogin}
-        className="text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 text-sm"
+        className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400"
       >
         Back to login
       </button>

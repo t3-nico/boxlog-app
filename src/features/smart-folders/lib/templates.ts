@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 // スマートフォルダテンプレートシステム
 
-import { SmartFolderRule, CreateSmartFolderInput } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolderRule } from '@/types/smart-folders'
 
 // テンプレートカテゴリ
 export enum TemplateCategory {
@@ -9,7 +9,7 @@ export enum TemplateCategory {
   TIME_MANAGEMENT = 'time_management',
   PROJECT_MANAGEMENT = 'project_management',
   PERSONAL = 'personal',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 // テンプレート定義
@@ -45,20 +45,20 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'priority',
         operator: 'greater_equal',
         value: 'high',
-        logic: 'AND'
+        logic: 'AND',
       },
       {
         field: 'due_date',
         operator: 'less_equal',
         value: '3days',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'today-focus',
-    name: 'Today\'s Focus',
+    name: "Today's Focus",
     description: 'Tasks due today or marked for today',
     category: TemplateCategory.TIME_MANAGEMENT,
     icon: '🎯',
@@ -70,17 +70,17 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'due_date',
         operator: 'equals',
         value: new Date().toISOString().split('T')[0],
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'tag',
         operator: 'contains',
         value: 'today',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'overdue-tasks',
     name: 'Overdue Tasks',
@@ -95,17 +95,17 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'due_date',
         operator: 'less_than',
         value: new Date().toISOString(),
-        logic: 'AND'
+        logic: 'AND',
       },
       {
         field: 'status',
         operator: 'not_equals',
         value: 'completed',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'quick-wins',
     name: 'Quick Wins',
@@ -120,23 +120,23 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'tag',
         operator: 'contains',
         value: 'quick',
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'description',
         operator: 'contains',
         value: '15min',
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'title',
         operator: 'contains',
         value: 'quick',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'waiting-for',
     name: 'Waiting For',
@@ -151,23 +151,23 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'status',
         operator: 'equals',
         value: 'waiting',
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'tag',
         operator: 'contains',
         value: 'waiting',
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'tag',
         operator: 'contains',
         value: 'blocked',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'this-week',
     name: 'This Week',
@@ -182,17 +182,17 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'due_date',
         operator: 'greater_equal',
         value: new Date().toISOString(),
-        logic: 'AND'
+        logic: 'AND',
       },
       {
         field: 'due_date',
         operator: 'less_equal',
         value: '7days',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'favorites',
     name: 'Favorites',
@@ -207,11 +207,11 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'is_favorite',
         operator: 'equals',
         value: true,
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'recent-activity',
     name: 'Recent Activity',
@@ -226,11 +226,11 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'updated_date',
         operator: 'greater_than',
         value: '3days',
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'no-due-date',
     name: 'No Due Date',
@@ -245,11 +245,11 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'due_date',
         operator: 'is_empty',
         value: null,
-        logic: 'AND'
-      }
-    ]
+        logic: 'AND',
+      },
+    ],
   },
-  
+
   {
     id: 'work-tasks',
     name: 'Work Tasks',
@@ -264,22 +264,22 @@ export const BUILT_IN_TEMPLATES: SmartFolderTemplate[] = [
         field: 'tag',
         operator: 'contains',
         value: 'work',
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'tag',
         operator: 'contains',
         value: 'business',
-        logic: 'OR'
+        logic: 'OR',
       },
       {
         field: 'tag',
         operator: 'contains',
         value: 'office',
-        logic: 'AND'
-      }
-    ]
-  }
+        logic: 'AND',
+      },
+    ],
+  },
 ]
 
 // テンプレートマネージャー
@@ -294,13 +294,13 @@ export class TemplateManager {
     if (this.initialized) return
 
     // ビルトインテンプレートを読み込み
-    BUILT_IN_TEMPLATES.forEach(template => {
+    BUILT_IN_TEMPLATES.forEach((template) => {
       this.templates.set(template.id, template)
     })
 
     // ローカルストレージからカスタムテンプレートを読み込み
     this.loadCustomTemplates()
-    
+
     this.initialized = true
   }
 
@@ -316,7 +316,7 @@ export class TemplateManager {
    * カテゴリ別テンプレート取得
    */
   static getTemplatesByCategory(category: TemplateCategory): SmartFolderTemplate[] {
-    return this.getAllTemplates().filter(t => t.category === category)
+    return this.getAllTemplates().filter((t) => t.category === category)
   }
 
   /**
@@ -333,20 +333,18 @@ export class TemplateManager {
    */
   static searchTemplates(query: string): SmartFolderTemplate[] {
     const searchTerm = query.toLowerCase()
-    return this.getAllTemplates().filter(template =>
-      template.name.toLowerCase().includes(searchTerm) ||
-      template.description.toLowerCase().includes(searchTerm) ||
-      template.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+    return this.getAllTemplates().filter(
+      (template) =>
+        template.name.toLowerCase().includes(searchTerm) ||
+        template.description.toLowerCase().includes(searchTerm) ||
+        template.tags.some((tag) => tag.toLowerCase().includes(searchTerm))
     )
   }
 
   /**
    * テンプレートから スマートフォルダ作成
    */
-  static createFolderFromTemplate(
-    templateId: string, 
-    customName?: string
-  ): CreateSmartFolderInput | null {
+  static createFolderFromTemplate(templateId: string, customName?: string): CreateSmartFolderInput | null {
     const template = this.templates.get(templateId)
     if (!template) return null
 
@@ -358,7 +356,7 @@ export class TemplateManager {
       description: template.description,
       rules: template.rules,
       icon: template.icon,
-      color: template.color
+      color: template.color,
     }
   }
 
@@ -374,12 +372,12 @@ export class TemplateManager {
       category: template.category || TemplateCategory.CUSTOM,
       usageCount: 0,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
 
     this.templates.set(id, customTemplate)
     this.saveCustomTemplates()
-    
+
     return id
   }
 
@@ -407,7 +405,7 @@ export class TemplateManager {
       ...updates,
       id: templateId, // IDは変更不可
       isBuiltIn: false, // カスタムテンプレートのまま
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
 
     this.templates.set(templateId, updatedTemplate)
@@ -427,7 +425,7 @@ export class TemplateManager {
       id: undefined, // エクスポート時はIDを除外
       usageCount: undefined,
       createdAt: undefined,
-      updatedAt: undefined
+      updatedAt: undefined,
     }
 
     return JSON.stringify(exportData, null, 2)
@@ -439,7 +437,7 @@ export class TemplateManager {
   static importTemplate(templateJson: string): string | null {
     try {
       const templateData = JSON.parse(templateJson)
-      
+
       // 基本検証
       if (!templateData.name || !templateData.rules || !Array.isArray(templateData.rules)) {
         throw new Error('Invalid template format')
@@ -469,9 +467,8 @@ export class TemplateManager {
    * カスタムテンプレートの保存
    */
   private static saveCustomTemplates() {
-    const customTemplates = Array.from(this.templates.values())
-      .filter(t => !t.isBuiltIn)
-    
+    const customTemplates = Array.from(this.templates.values()).filter((t) => !t.isBuiltIn)
+
     try {
       localStorage.setItem('smart-folder-custom-templates', JSON.stringify(customTemplates))
     } catch (error) {
@@ -487,7 +484,7 @@ export class TemplateManager {
       const stored = localStorage.getItem('smart-folder-custom-templates')
       if (stored) {
         const customTemplates: SmartFolderTemplate[] = JSON.parse(stored)
-        customTemplates.forEach(template => {
+        customTemplates.forEach((template) => {
           this.templates.set(template.id, template)
         })
       }
@@ -503,9 +500,9 @@ export class TemplateApplicator {
    * ルールのパラメータ化（動的値の設定）
    */
   static parameterizeRules(rules: SmartFolderRule[], parameters: Record<string, unknown>): SmartFolderRule[] {
-    return rules.map(rule => ({
+    return rules.map((rule) => ({
       ...rule,
-      value: this.replaceParameters(rule.value, parameters)
+      value: this.replaceParameters(rule.value, parameters),
     }))
   }
 
@@ -526,20 +523,20 @@ export class TemplateApplicator {
    */
   static updateRelativeDates(rules: SmartFolderRule[]): SmartFolderRule[] {
     const now = new Date()
-    
-    return rules.map(rule => {
+
+    return rules.map((rule) => {
       if (rule.field.includes('date') && typeof rule.value === 'string') {
         // 今日の日付に置換
         if (rule.value === 'today') {
           return { ...rule, value: now.toISOString().split('T')[0] }
         }
-        
+
         // 相対日付はそのまま（エンジンで処理される）
         if (/^\d+\w+$/.test(rule.value)) {
           return rule
         }
       }
-      
+
       return rule
     })
   }
@@ -561,14 +558,16 @@ export class TemplateAnalytics {
    */
   static getUsageStats(): TemplateUsageStats[] {
     const templates = TemplateManager.getAllTemplates()
-    
-    return templates.map(template => ({
-      templateId: template.id,
-      templateName: template.name,
-      usageCount: template.usageCount || 0,
-      lastUsed: template.updatedAt || template.createdAt || new Date(),
-      category: template.category
-    })).sort((a, b) => b.usageCount - a.usageCount)
+
+    return templates
+      .map((template) => ({
+        templateId: template.id,
+        templateName: template.name,
+        usageCount: template.usageCount || 0,
+        lastUsed: template.updatedAt || template.createdAt || new Date(),
+        category: template.category,
+      }))
+      .sort((a, b) => b.usageCount - a.usageCount)
   }
 
   /**

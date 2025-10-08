@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 import { DesktopInspector } from './DesktopInspector'

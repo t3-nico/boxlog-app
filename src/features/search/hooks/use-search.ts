@@ -1,5 +1,5 @@
 // @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { useEventStore } from '@/features/events'
 import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
@@ -8,7 +8,7 @@ import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { useDebounce } from '@/hooks/use-debounce'
 
 import { SearchEngine } from '../lib/search-engine'
-import type { SearchResult, SearchOptions, SearchResultType } from '../types'
+import type { SearchOptions, SearchResult, SearchResultType } from '../types'
 
 interface UseSearchOptions {
   types?: SearchResultType[]
@@ -18,12 +18,7 @@ interface UseSearchOptions {
 }
 
 export function useSearch(options: UseSearchOptions = {}) {
-  const { 
-    types = ['task', 'tag', 'smart-folder', 'event'],
-    limit = 20,
-    debounceMs = 300,
-    autoSearch = true
-  } = options
+  const { types = ['task', 'tag', 'smart-folder', 'event'], limit = 20, debounceMs = 300, autoSearch = true } = options
 
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -33,44 +28,47 @@ export function useSearch(options: UseSearchOptions = {}) {
   const debouncedQuery = useDebounce(query, debounceMs)
 
   // Get data from stores
-  const tasks = useTaskStore(state => state.tasks)
-  const tags = useTagStore(state => state.tags)
-  const smartFolders = useSmartFolderStore(state => state.folders)
-  const events = useEventStore(state => state.events)
+  const tasks = useTaskStore((state) => state.tasks)
+  const tags = useTagStore((state) => state.tags)
+  const smartFolders = useSmartFolderStore((state) => state.folders)
+  const events = useEventStore((state) => state.events)
 
   // Search function
-  const search = useCallback(async (searchQuery: string) => {
-    if (!searchQuery.trim() && !autoSearch) {
-      setResults([])
-      return
-    }
-
-    setIsSearching(true)
-    setError(null)
-
-    try {
-      const searchOptions: SearchOptions = {
-        query: searchQuery,
-        types,
-        limit
+  const search = useCallback(
+    async (searchQuery: string) => {
+      if (!searchQuery.trim() && !autoSearch) {
+        setResults([])
+        return
       }
 
-      const searchResults = await SearchEngine.search(searchOptions, {
-        tasks,
-        tags,
-        smartFolders,
-        events
-      })
+      setIsSearching(true)
+      setError(null)
 
-      setResults(searchResults)
-    } catch (err) {
-      console.error('Search error:', err)
-      setError(err instanceof Error ? err.message : 'Search failed')
-      setResults([])
-    } finally {
-      setIsSearching(false)
-    }
-  }, [tasks, tags, smartFolders, events, types, limit, autoSearch])
+      try {
+        const searchOptions: SearchOptions = {
+          query: searchQuery,
+          types,
+          limit,
+        }
+
+        const searchResults = await SearchEngine.search(searchOptions, {
+          tasks,
+          tags,
+          smartFolders,
+          events,
+        })
+
+        setResults(searchResults)
+      } catch (err) {
+        console.error('Search error:', err)
+        setError(err instanceof Error ? err.message : 'Search failed')
+        setResults([])
+      } finally {
+        setIsSearching(false)
+      }
+    },
+    [tasks, tags, smartFolders, events, types, limit, autoSearch]
+  )
 
   // Auto search on query change
   useEffect(() => {
@@ -92,9 +90,12 @@ export function useSearch(options: UseSearchOptions = {}) {
   }, [])
 
   // Filter results by type
-  const getResultsByType = useCallback((type: SearchResultType) => {
-    return results.filter(result => result.type === type)
-  }, [results])
+  const getResultsByType = useCallback(
+    (type: SearchResultType) => {
+      return results.filter((result) => result.type === type)
+    },
+    [results]
+  )
 
   // Group results by type
   const groupedResults = useMemo(() => {
@@ -104,10 +105,10 @@ export function useSearch(options: UseSearchOptions = {}) {
       'smart-folder': [],
       event: [],
       note: [],
-      file: []
+      file: [],
     }
 
-    results.forEach(result => {
+    results.forEach((result) => {
       if (result.type in groups) {
         groups[result.type].push(result)
       }
@@ -122,19 +123,19 @@ export function useSearch(options: UseSearchOptions = {}) {
     results,
     isSearching,
     error,
-    
+
     // Actions
     setQuery,
     search: triggerSearch,
     clearSearch,
-    
+
     // Utilities
     getResultsByType,
     groupedResults,
-    
+
     // Computed
     hasResults: results.length > 0,
-    resultCount: results.length
+    resultCount: results.length,
   }
 }
 
@@ -157,8 +158,8 @@ export function useSearchHistory() {
   const addToHistory = useCallback((query: string) => {
     if (!query.trim()) return
 
-    setHistory(prev => {
-      const newHistory = [query, ...prev.filter(q => q !== query)].slice(0, 10)
+    setHistory((prev) => {
+      const newHistory = [query, ...prev.filter((q) => q !== query)].slice(0, 10)
       localStorage.setItem('search-history', JSON.stringify(newHistory))
       return newHistory
     })
@@ -172,7 +173,7 @@ export function useSearchHistory() {
   return {
     history,
     addToHistory,
-    clearHistory
+    clearHistory,
   }
 }
 
@@ -188,17 +189,10 @@ export function useSearchSuggestions(query: string) {
     }
 
     // Filter history for matches
-    const matchingHistory = history.filter(h => 
-      h.toLowerCase().includes(query.toLowerCase())
-    )
+    const matchingHistory = history.filter((h) => h.toLowerCase().includes(query.toLowerCase()))
 
     // Add common search patterns
-    const patterns = [
-      `${query} today`,
-      `${query} this week`,
-      `${query} high priority`,
-      `${query} completed`
-    ]
+    const patterns = [`${query} today`, `${query} this week`, `${query} high priority`, `${query} completed`]
 
     setSuggestions([...matchingHistory, ...patterns].slice(0, 5))
   }, [query, history])

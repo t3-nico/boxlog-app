@@ -3,7 +3,7 @@ export const COMMAND_PALETTE_CONFIG = {
   // Performance settings
   maxResults: 10,
   debounceMs: 300,
-  
+
   // Keyboard shortcuts
   shortcuts: {
     open: ['cmd+k', 'ctrl+k'],
@@ -12,59 +12,59 @@ export const COMMAND_PALETTE_CONFIG = {
     selectPrev: ['arrowup'],
     execute: ['enter'],
   },
-  
+
   // Search categories
   categories: [
-    { 
-      id: 'navigation', 
-      label: 'Navigation', 
+    {
+      id: 'navigation',
+      label: 'Navigation',
       icon: 'compass',
-      priority: 1 
+      priority: 1,
     },
-    { 
-      id: 'create', 
-      label: 'Create', 
+    {
+      id: 'create',
+      label: 'Create',
       icon: 'plus',
-      priority: 2 
+      priority: 2,
     },
-    { 
-      id: 'tasks', 
-      label: 'Tasks', 
+    {
+      id: 'tasks',
+      label: 'Tasks',
       icon: 'check-square',
-      priority: 3 
+      priority: 3,
     },
-    { 
-      id: 'tags', 
-      label: 'Tags', 
+    {
+      id: 'tags',
+      label: 'Tags',
       icon: 'tag',
-      priority: 4 
+      priority: 4,
     },
-    { 
-      id: 'actions', 
-      label: 'Actions', 
+    {
+      id: 'actions',
+      label: 'Actions',
       icon: 'zap',
-      priority: 5 
+      priority: 5,
     },
-    { 
-      id: 'ai', 
-      label: 'AI Assistant', 
+    {
+      id: 'ai',
+      label: 'AI Assistant',
       icon: 'sparkles',
-      priority: 6 
+      priority: 6,
     },
-    { 
-      id: 'compass', 
-      label: 'Compass Docs', 
+    {
+      id: 'compass',
+      label: 'Compass Docs',
       icon: 'book-open',
-      priority: 7 
+      priority: 7,
     },
   ],
-  
+
   // Animation settings
   animations: {
     overlayDuration: 200,
     contentDuration: 150,
     stagger: 50,
-  }
+  },
 } as const
 
 // Command interface

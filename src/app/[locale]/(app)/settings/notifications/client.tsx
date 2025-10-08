@@ -1,6 +1,6 @@
 'use client'
 
-import { SettingsLayout, NotificationSettings } from '@/features/settings/components'
+import { NotificationSettings, SettingsLayout } from '@/features/settings/components'
 
 interface Props {
   translations: {

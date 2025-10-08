@@ -3,12 +3,12 @@
 import React, { useMemo } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
-import { useEventStore, eventSelectors } from '@/features/events/stores/useEventStore'
+import { eventSelectors, useEventStore } from '@/features/events/stores/useEventStore'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { DateDisplay, CalendarLayoutWithHeader } from '../shared'
+import { CalendarLayoutWithHeader, DateDisplay } from '../shared'
 
 import { DayContent } from './components/DayContent'
 import type { DayViewProps } from './DayView.types'
@@ -36,7 +36,7 @@ export const DayView = ({
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
-  onNavigateToday
+  onNavigateToday,
 }: DayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
   const { updateEvent } = useEventStore()
@@ -58,44 +58,53 @@ export const DayView = ({
   }
 
   // ドラッグイベント用のハンドラー
-  const handleEventTimeUpdate = React.useCallback((event: CalendarEvent) => {
-    if (!event.startDate || !event.endDate) return
+  const handleEventTimeUpdate = React.useCallback(
+    (event: CalendarEvent) => {
+      if (!event.startDate || !event.endDate) return
 
-    void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
-      .then(() => {
-        console.log('Event time updated via drag & drop:', event.id)
-      })
-      .catch((error) => {
-        console.error('Failed to update event time:', error)
-      })
-  }, [updateEvent])
+      void updateEvent({ ...event, startDate: event.startDate, endDate: event.endDate })
+        .then(() => {
+          console.log('Event time updated via drag & drop:', event.id)
+        })
+        .catch((error) => {
+          console.error('Failed to update event time:', error)
+        })
+    },
+    [updateEvent]
+  )
 
   // DayView専用ロジック（ストアから最新のイベントデータを使用）
   const {
     dayEvents,
     eventStyles,
     isToday,
-    timeSlots: _timeSlots
+    timeSlots: _timeSlots,
   } = useDayView({
     date,
     events: storeEvents as CalendarEvent[], // ストアから取得した最新データを使用
-    ...(onUpdateEvent && { onEventUpdate: onUpdateEvent })
+    ...(onUpdateEvent && { onEventUpdate: onUpdateEvent }),
   })
 
   // 空き時間クリックハンドラー
-  const handleEmptySlotClick = React.useCallback((hour: number, minute: number) => {
-    const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
-    onEmptyClick?.(date, timeString)
-  }, [onEmptyClick, date])
+  const handleEmptySlotClick = React.useCallback(
+    (hour: number, minute: number) => {
+      const timeString = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`
+      onEmptyClick?.(date, timeString)
+    },
+    [onEmptyClick, date]
+  )
 
   // 日付ヘッダーのクリックハンドラー（DayViewでは日付変更のみ）
-  const handleDateHeaderClick = React.useCallback((_clickedDate: Date) => {
-    // DayViewで日付ヘッダーをクリックした場合、その日付に移動
-    onNavigateToday?.()
-  }, [onNavigateToday])
+  const handleDateHeaderClick = React.useCallback(
+    (_clickedDate: Date) => {
+      // DayViewで日付ヘッダーをクリックした場合、その日付に移動
+      onNavigateToday?.()
+    },
+    [onNavigateToday]
+  )
 
   const headerComponent = (
-    <div className="bg-background h-16 flex items-center justify-center px-2">
+    <div className="bg-background flex h-16 items-center justify-center px-2">
       <DateDisplay
         date={date}
         className="text-center"
@@ -112,10 +121,9 @@ export const DayView = ({
 
   return (
     <CalendarViewAnimation viewType="day">
-      <div className={cn('flex flex-col h-full bg-background overflow-x-hidden', className)}>
-        
+      <div className={cn('bg-background flex h-full flex-col overflow-x-hidden', className)}>
         {/* メインコンテンツエリア */}
-        <div className="flex-1 min-h-0">
+        <div className="min-h-0 flex-1">
           <CalendarLayoutWithHeader
             header={headerComponent}
             timezone={timezone}
@@ -135,7 +143,7 @@ export const DayView = ({
               {...(onEmptyClick && { onEmptyClick })}
               {...(handleEventTimeUpdate && { onEventUpdate: handleEventTimeUpdate })}
               {...(onTimeRangeSelect && { onTimeRangeSelect })}
-              className="absolute inset-y-0 left-0 right-0"
+              className="absolute inset-y-0 right-0 left-0"
             />
           </CalendarLayoutWithHeader>
         </div>

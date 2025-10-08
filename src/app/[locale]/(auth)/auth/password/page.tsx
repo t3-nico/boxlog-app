@@ -1,6 +1,6 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GalleryVerticalEnd } from 'lucide-react'
 
-import { PasswordResetForm } from "@/features/auth"
+import { PasswordResetForm } from '@/features/auth'
 
 const PasswordResetPage = () => {
   return (
@@ -23,12 +23,10 @@ const PasswordResetPage = () => {
       <div className="bg-muted relative hidden lg:block">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-600/20 to-red-600/20">
           <div className="flex h-full items-center justify-center p-8">
-            <div className="text-center space-y-4">
-              <div className="text-6xl font-bold text-muted-foreground/60">🔐</div>
-              <h2 className="text-3xl font-bold text-muted-foreground">
-                Secure password recovery
-              </h2>
-              <p className="text-lg text-muted-foreground/80 max-w-md">
+            <div className="space-y-4 text-center">
+              <div className="text-muted-foreground/60 text-6xl font-bold">🔐</div>
+              <h2 className="text-muted-foreground text-3xl font-bold">Secure password recovery</h2>
+              <p className="text-muted-foreground/80 max-w-md text-lg">
                 We&apos;ll help you reset your password quickly and securely so you can get back to being productive.
               </p>
             </div>

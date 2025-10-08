@@ -59,7 +59,9 @@ export const EventDetailHeader = ({
           className="flex items-center gap-2 text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50"
         >
           {isDetailOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-          <span className="text-base font-medium text-neutral-900 dark:text-neutral-50">{isCreateMode ? 'New Event' : 'Event Details'}</span>
+          <span className="text-base font-medium text-neutral-900 dark:text-neutral-50">
+            {isCreateMode ? 'New Event' : 'Event Details'}
+          </span>
         </button>
 
         {!isCreateMode && (
@@ -129,9 +131,11 @@ export const EventDetailHeader = ({
             完了
           </div>
         )}
-        {isPast && !isCompleted ? <div className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
+        {isPast && !isCompleted ? (
+          <div className="rounded-full bg-orange-100 px-2 py-1 text-xs text-orange-600 dark:bg-orange-900/20 dark:text-orange-400">
             過去
-          </div> : null}
+          </div>
+        ) : null}
       </div>
     </div>
   )

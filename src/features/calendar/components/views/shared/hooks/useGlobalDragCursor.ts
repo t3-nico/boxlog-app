@@ -1,18 +1,15 @@
 import { useEffect } from 'react'
 
-import type { DragState, DragHandlers } from './useDragAndDrop'
+import type { DragHandlers, DragState } from './useDragAndDrop'
 
 /**
  * グローバルドラッグカーソル管理フック
  * 全カレンダービューでドラッグ・リサイズ時のカーソル統一
- * 
+ *
  * @param dragState ドラッグ状態
  * @param handlers マウスイベントハンドラー
  */
-export function useGlobalDragCursor(
-  dragState: DragState,
-  handlers: DragHandlers
-) {
+export function useGlobalDragCursor(dragState: DragState, handlers: DragHandlers) {
   useEffect(() => {
     if (dragState.isDragging || dragState.isResizing) {
       // グローバルマウスイベントリスナーを追加
@@ -66,10 +63,5 @@ export function useGlobalDragCursor(
       }
     }
     return undefined
-  }, [
-    dragState.isDragging, 
-    dragState.isResizing, 
-    handlers.handleMouseMove, 
-    handlers.handleMouseUp
-  ])
+  }, [dragState.isDragging, dragState.isResizing, handlers.handleMouseMove, handlers.handleMouseUp])
 }

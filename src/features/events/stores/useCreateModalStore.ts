@@ -19,17 +19,14 @@ interface CreateModalStore {
   context: ModalContext
   isEditMode: boolean
   editingEventId: string | null
-  
+
   // アクション
-  openModal: (options?: {
-    initialData?: Partial<CreateEventRequest>
-    context?: Partial<ModalContext>
-  }) => void
-  
+  openModal: (options?: { initialData?: Partial<CreateEventRequest>; context?: Partial<ModalContext> }) => void
+
   openEditModal: (eventId: string, eventData: Partial<CreateEventRequest>, context?: Partial<ModalContext>) => void
-  
+
   closeModal: () => void
-  
+
   setInitialData: (data: Partial<CreateEventRequest>) => void
 }
 
@@ -38,31 +35,28 @@ export const useCreateModalStore = create<CreateModalStore>((set) => ({
   isOpen: false,
   initialData: {},
   context: {
-    source: 'sidebar'
+    source: 'sidebar',
   },
   isEditMode: false,
   editingEventId: null,
-  
+
   // アクション
   openModal: (options = {}) => {
-    const {
-      initialData = {},
-      context = {}
-    } = options
-    
+    const { initialData = {}, context = {} } = options
+
     set({
       isOpen: true,
       initialData,
       context: {
         source: context.source || 'sidebar',
         date: context.date,
-        viewType: context.viewType
+        viewType: context.viewType,
       },
       isEditMode: false,
-      editingEventId: null
+      editingEventId: null,
     })
   },
-  
+
   openEditModal: (eventId, eventData, context = {}) => {
     set({
       isOpen: true,
@@ -70,43 +64,43 @@ export const useCreateModalStore = create<CreateModalStore>((set) => ({
       context: {
         source: context.source || 'calendar',
         date: context.date,
-        viewType: context.viewType
+        viewType: context.viewType,
       },
       isEditMode: true,
-      editingEventId: eventId
+      editingEventId: eventId,
     })
   },
-  
+
   closeModal: () => {
     set({
       isOpen: false,
       initialData: {},
       context: {
-        source: 'sidebar'
+        source: 'sidebar',
       },
       isEditMode: false,
-      editingEventId: null
+      editingEventId: null,
     })
   },
-  
+
   setInitialData: (data) => {
     set({ initialData: data })
-  }
+  },
 }))
 
 // キーボードショートカット用フック
 export const useCreateModalKeyboardShortcuts = () => {
   const { openModal } = useCreateModalStore()
-  
+
   const handleKeyDown = (event: KeyboardEvent) => {
     // Cmd/Ctrl + N でモーダルを開く
     if ((event.metaKey || event.ctrlKey) && event.key === 'n') {
       event.preventDefault()
       openModal({
-        context: { source: 'keyboard' }
+        context: { source: 'keyboard' },
       })
     }
   }
-  
+
   return { handleKeyDown }
 }

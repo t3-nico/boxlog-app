@@ -5,8 +5,8 @@ export { WeekView } from './WeekView'
 export type * from './WeekView.types'
 
 // フック
-export { useWeekView } from './hooks/useWeekView'
 export { useWeekEvents } from './hooks/useWeekEvents'
+export { useWeekView } from './hooks/useWeekView'
 
 // サブコンポーネント
 export { WeekGrid } from './components/WeekGrid'

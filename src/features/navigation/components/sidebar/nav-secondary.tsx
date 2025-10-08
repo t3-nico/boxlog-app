@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import { type LucideIcon } from "lucide-react"
+import { type LucideIcon } from 'lucide-react'
+import * as React from 'react'
 
-import { cn } from "@/lib/utils"
-import { SimpleThemeToggle } from "@/components/ui/theme-toggle"
+import { SimpleThemeToggle } from '@/components/ui/theme-toggle'
+import { cn } from '@/lib/utils'
 
 export function NavSecondary({
   items,
@@ -16,9 +16,9 @@ export function NavSecondary({
     url: string
     icon: LucideIcon
   }[]
-} & React.ComponentPropsWithoutRef<"div">) {
+} & React.ComponentPropsWithoutRef<'div'>) {
   return (
-    <div className={cn("flex flex-col gap-2", className)} {...props}>
+    <div className={cn('flex flex-col gap-2', className)} {...props}>
       <div className="flex items-center justify-between rounded-md px-2 py-2">
         <span className="text-sm font-medium">Theme</span>
         <SimpleThemeToggle />
@@ -27,7 +27,7 @@ export function NavSecondary({
         <a
           key={item.title}
           href={item.url}
-          className="flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-accent"
+          className="hover:bg-accent flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors"
         >
           <item.icon className="h-4 w-4" />
           <span>{item.title}</span>

@@ -97,23 +97,26 @@ export const BaseLayout = ({ children }: BaseLayoutProps) => {
 基本的なUIコンポーネント（Radix UIベース + Tailwind CSS）
 
 **使用対象**:
+
 - Button, Input, Select, Dialog, Sheet
 - Card, Badge, Avatar, Separator
 - Dropdown Menu, Popover, Tooltip
 - Table, Tabs, Accordion
 
 **インストール**:
+
 ```bash
 npx shadcn-ui@latest add button
 npx shadcn-ui@latest add dialog
 ```
 
 **例**:
+
 ```tsx
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 
-<Button variant="primary">クリック</Button>
+;<Button variant="primary">クリック</Button>
 ```
 
 ### 2. 🥈 HeadlessUI（アクセシビリティ重視）
@@ -123,17 +126,20 @@ import { Dialog } from '@/components/ui/dialog'
 スタイルなし・アクセシビリティ完全対応のUIコンポーネント
 
 **使用対象**:
+
 - Menu（ドロップダウンメニュー）
 - Field, Label, Description（フォーム）
 - Combobox（検索可能なセレクト）
 - Listbox, Radio Group, Switch
 
 **いつ使う？**:
+
 - shadcn/uiに該当コンポーネントがない
 - 複雑なフォームやアクセシビリティが重要
 - キーボードナビゲーションが必須
 
 **例**:
+
 ```tsx
 import { Menu, Field, Label } from '@headlessui/react'
 
@@ -158,6 +164,7 @@ import { Menu, Field, Label } from '@headlessui/react'
 ```
 
 **実装例（プロジェクト内）**:
+
 - `src/components/app/LanguageSwitcher.tsx` - HeadlessUI Menu使用
 - `src/components/app/fieldset.tsx` - HeadlessUI Field/Label使用
 
@@ -166,6 +173,7 @@ import { Menu, Field, Label } from '@headlessui/react'
 AI・高度なUIコンポーネント。
 
 **使用対象**:
+
 - AIコンポーネント（`kibo/ai/`）
 - Kanbanボード（`kibo/kanban/`）
 - Code Block（`kibo/code-block/`）
@@ -175,11 +183,13 @@ AI・高度なUIコンポーネント。
 ライブラリで実現できない場合のみ。
 
 **カスタム実装が許可されるケース**:
+
 - ✅ エディター機能: `app/editor/`, `app/rich-text-editor/`
 - ✅ プロジェクト全体の一貫性: `app/heading.tsx`（タイポグラフィ統一）
 - ✅ 共通UIユーティリティ: `common/EmptyState.tsx`, `common/LoadingSpinner.tsx`
 
 **カスタム実装前のチェックリスト**:
+
 ```markdown
 □ shadcn/ui に該当コンポーネントがないか確認した
 □ HeadlessUI で実現できないか確認した
@@ -206,6 +216,7 @@ AI・高度なUIコンポーネント。
 ```
 
 **セマンティックトークン一覧（globals.css で定義）：**
+
 - `bg-background` / `text-foreground` - ページ全体の背景/テキスト
 - `bg-card` / `text-card-foreground` - カード背景/テキスト
 - `bg-muted` / `text-muted-foreground` - 控えめな背景/テキスト
@@ -214,6 +225,7 @@ AI・高度なUIコンポーネント。
 - `bg-destructive` / `text-destructive-foreground` - 削除ボタン等
 
 ### 禁止事項
+
 - ❌ カスタム色の直接指定（`#FFFFFF`等）
 - ❌ `dark:` プレフィックスの直接使用（セマンティックトークンが自動対応）
 - ❌ マジックナンバー（`p-[13px]`等）
@@ -223,6 +235,7 @@ AI・高度なUIコンポーネント。
 ## 📋 コンポーネント実装パターン
 
 ### 基本構造
+
 ```tsx
 import { FC } from 'react'
 
@@ -232,19 +245,11 @@ interface TaskCardProps {
   onStatusChange: (status: string) => void
 }
 
-export const TaskCard: FC<TaskCardProps> = ({
-  title,
-  status,
-  onStatusChange
-}) => {
+export const TaskCard: FC<TaskCardProps> = ({ title, status, onStatusChange }) => {
   return (
     <div className="bg-card text-card-foreground border-border rounded-lg p-4">
       <h3 className="text-lg font-semibold">{title}</h3>
-      <select
-        value={status}
-        onChange={(e) => onStatusChange(e.target.value)}
-        className="border-input rounded-md"
-      >
+      <select value={status} onChange={(e) => onStatusChange(e.target.value)} className="border-input rounded-md">
         <option value="todo">未着手</option>
         <option value="in-progress">進行中</option>
         <option value="done">完了</option>
@@ -255,6 +260,7 @@ export const TaskCard: FC<TaskCardProps> = ({
 ```
 
 ### Propsインターフェース
+
 ```tsx
 // ✅ 明確な型定義
 interface ButtonProps {
@@ -267,17 +273,20 @@ interface ButtonProps {
 
 // ❌ any型禁止
 interface BadButtonProps {
-  props: any  // 禁止
+  props: any // 禁止
 }
 ```
 
 ### コンポーネント分離
+
 ```tsx
 // ✅ Presentational/Container分離
 // TaskList.tsx（Presentational - components/内）
 export const TaskList: FC<TaskListProps> = ({ tasks, onTaskClick }) => (
   <div>
-    {tasks.map(task => <TaskCard key={task.id} {...task} onClick={onTaskClick} />)}
+    {tasks.map((task) => (
+      <TaskCard key={task.id} {...task} onClick={onTaskClick} />
+    ))}
   </div>
 )
 
@@ -293,6 +302,7 @@ export const TaskListContainer: FC = () => {
 ## 🎨 レスポンシブデザイン
 
 ### ブレークポイント使用
+
 ```tsx
 // ✅ 段階的調整
 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -301,14 +311,19 @@ export const TaskListContainer: FC = () => {
 ```
 
 ### デバイス別UI
+
 ```tsx
-{/* デスクトップ：フル機能 */}
-<div className="hidden lg:block">
+{
+  /* デスクトップ：フル機能 */
+}
+;<div className="hidden lg:block">
   <FullFeatureComponent />
 </div>
 
-{/* モバイル：簡易版 */}
-<div className="block lg:hidden">
+{
+  /* モバイル：簡易版 */
+}
+;<div className="block lg:hidden">
   <SimplifiedComponent />
 </div>
 ```
@@ -318,6 +333,7 @@ export const TaskListContainer: FC = () => {
 ## 🧪 コンポーネントテスト
 
 ### コロケーション方式
+
 ```
 components/
 ├── TaskCard.tsx
@@ -325,6 +341,7 @@ components/
 ```
 
 ### テスト例
+
 ```tsx
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'

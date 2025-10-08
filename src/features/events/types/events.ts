@@ -205,8 +205,8 @@ export interface EventActions {
   fetchEvents: (filters?: EventFilters) => Promise<void>
   createEvent: (event: CreateEventRequest) => Promise<Event>
   updateEvent: (event: UpdateEventRequest) => Promise<Event>
-  deleteEvent: (eventId: string) => Promise<void>  // 後方互換性のため残す（softDeleteEventを呼ぶ）
-  
+  deleteEvent: (eventId: string) => Promise<void> // 後方互換性のため残す（softDeleteEventを呼ぶ）
+
   // Trash management operations
   softDeleteEvent: (eventId: string) => Promise<void>
   restoreEvent: (eventId: string) => Promise<void>
@@ -214,14 +214,14 @@ export interface EventActions {
   batchSoftDelete: (eventIds: string[]) => Promise<void>
   batchRestore: (eventIds: string[]) => Promise<void>
   batchHardDelete: (eventIds: string[]) => Promise<void>
-  clearTrash: () => Promise<void>  // 30日以上経過したイベントを自動削除
+  clearTrash: () => Promise<void> // 30日以上経過したイベントを自動削除
   getTrashedEvents: () => Event[]
-  
+
   // Event selection and filtering
   selectEvent: (eventId: string | null) => void
   setFilters: (filters: Partial<EventFilters>) => void
   clearFilters: () => void
-  
+
   // Utility actions
   getEventsByDateRange: (startDate: Date, endDate: Date) => Event[]
   getEventsGroupedByType: () => EventsGroupedByType

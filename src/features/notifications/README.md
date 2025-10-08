@@ -38,6 +38,7 @@ src/features/notifications/
 重要な通知をモーダル形式で表示。
 
 **特徴:**
+
 - 緊急度に応じたスタイリング
 - アクション付き通知対応
 - 自動消去機能
@@ -47,6 +48,7 @@ src/features/notifications/
 通知の表示とアニメーション管理。
 
 **特徴:**
+
 - スライドイン・アウトアニメーション
 - 通知タイプ別スタイリング
 - タップ・クリックでの消去
@@ -56,6 +58,7 @@ src/features/notifications/
 通知履歴の一覧表示。
 
 **特徴:**
+
 - 時系列での表示
 - 既読・未読状態管理
 - フィルタリング機能
@@ -64,11 +67,11 @@ src/features/notifications/
 
 ```typescript
 enum NotificationType {
-  INFO = 'info',           // 情報通知
-  SUCCESS = 'success',     // 成功通知
-  WARNING = 'warning',     // 警告通知
-  ERROR = 'error',         // エラー通知
-  REMINDER = 'reminder'    // リマインダー
+  INFO = 'info', // 情報通知
+  SUCCESS = 'success', // 成功通知
+  WARNING = 'warning', // 警告通知
+  ERROR = 'error', // エラー通知
+  REMINDER = 'reminder', // リマインダー
 }
 ```
 
@@ -80,11 +83,11 @@ enum NotificationType {
 
 ```typescript
 const {
-  notifications,        // 現在の通知一覧
-  addNotification,     // 通知追加
-  removeNotification,  // 通知削除
+  notifications, // 現在の通知一覧
+  addNotification, // 通知追加
+  removeNotification, // 通知削除
   clearAllNotifications, // 全通知クリア
-  markAsRead          // 既読マーク
+  markAsRead, // 既読マーク
 } = useNotifications()
 ```
 
@@ -94,10 +97,10 @@ const {
 
 ```typescript
 const {
-  isOpen,           // モーダル開閉状態
-  notification,     // 表示中の通知
-  showModal,        // モーダル表示
-  hideModal        // モーダル非表示
+  isOpen, // モーダル開閉状態
+  notification, // 表示中の通知
+  showModal, // モーダル表示
+  hideModal, // モーダル非表示
 } = useNotificationModal()
 ```
 
@@ -108,6 +111,7 @@ const {
 通知関連のユーティリティ関数群。
 
 **主な機能:**
+
 - 通知フォーマット
 - アイコン生成
 - 優先度判定
@@ -121,7 +125,7 @@ const notification = createNotification({
   type: 'success',
   title: '保存完了',
   message: 'データが正常に保存されました',
-  duration: 3000
+  duration: 3000,
 })
 ```
 

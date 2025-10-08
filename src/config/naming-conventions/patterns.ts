@@ -63,7 +63,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[A-Z][a-zA-Z0-9]*$/,
     examples: ['TaskCard', 'UserProfile', 'ProjectDashboard'],
     description: 'PascalCase でコンポーネント名を定義',
-    autoFix: (input: string) => toPascalCase(input)
+    autoFix: (input: string) => toPascalCase(input),
   },
 
   // カスタムフック
@@ -71,7 +71,7 @@ export const NAMING_PATTERNS = {
     pattern: /^use[A-Z][a-zA-Z0-9]*$/,
     examples: ['useTask', 'useAuthentication', 'useProjectData'],
     description: 'use プレフィックス + PascalCase',
-    autoFix: (input: string) => `use${toPascalCase(input.replace(/^use/, ''))}`
+    autoFix: (input: string) => `use${toPascalCase(input.replace(/^use/, ''))}`,
   },
 
   // TypeScript 型・インターフェース
@@ -79,7 +79,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[A-Z][a-zA-Z0-9]*$/,
     examples: ['TaskData', 'UserRole', 'ProjectStatus'],
     description: 'PascalCase で型名を定義',
-    autoFix: (input: string) => toPascalCase(input)
+    autoFix: (input: string) => toPascalCase(input),
   },
 
   // 定数
@@ -87,7 +87,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[A-Z][A-Z0-9_]*$/,
     examples: ['TASK_STATUS', 'USER_ROLES', 'API_ENDPOINTS'],
     description: 'SCREAMING_SNAKE_CASE で定数を定義',
-    autoFix: (input: string) => toScreamingSnakeCase(input)
+    autoFix: (input: string) => toScreamingSnakeCase(input),
   },
 
   // 変数・関数
@@ -95,7 +95,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[a-z][a-zA-Z0-9]*$/,
     examples: ['taskList', 'currentUser', 'isLoading'],
     description: 'camelCase で変数・関数名を定義',
-    autoFix: (input: string) => toCamelCase(input)
+    autoFix: (input: string) => toCamelCase(input),
   },
 
   // ファイル名
@@ -103,7 +103,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[a-z][a-z0-9-]*\.(ts|tsx|js|jsx)$/,
     examples: ['task-card.tsx', 'user-profile.ts', 'project-api.ts'],
     description: 'kebab-case でファイル名を定義',
-    autoFix: (input: string) => toKebabCase(input)
+    autoFix: (input: string) => toKebabCase(input),
   },
 
   // ディレクトリ名
@@ -111,7 +111,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[a-z][a-z0-9-]*$/,
     examples: ['task-management', 'user-auth', 'project-dashboard'],
     description: 'kebab-case でディレクトリ名を定義',
-    autoFix: (input: string) => toKebabCase(input)
+    autoFix: (input: string) => toKebabCase(input),
   },
 
   // CSS クラス名
@@ -119,7 +119,7 @@ export const NAMING_PATTERNS = {
     pattern: /^[a-z][a-z0-9-]*$/,
     examples: ['task-card', 'user-profile', 'loading-spinner'],
     description: 'kebab-case で CSS クラス名を定義',
-    autoFix: (input: string) => toKebabCase(input)
+    autoFix: (input: string) => toKebabCase(input),
   },
 
   // イベントハンドラー
@@ -127,7 +127,7 @@ export const NAMING_PATTERNS = {
     pattern: /^handle[A-Z][a-zA-Z0-9]*$/,
     examples: ['handleTaskCreate', 'handleUserLogin', 'handleFormSubmit'],
     description: 'handle プレフィックス + PascalCase',
-    autoFix: (input: string) => `handle${toPascalCase(input.replace(/^handle/, ''))}`
+    autoFix: (input: string) => `handle${toPascalCase(input.replace(/^handle/, ''))}`,
   },
 
   // 真偽値変数
@@ -137,12 +137,12 @@ export const NAMING_PATTERNS = {
     description: 'is/has/can/should プレフィックス + PascalCase',
     autoFix: (input: string) => {
       const prefixes = ['is', 'has', 'can', 'should', 'will', 'does']
-      const hasPrefix = prefixes.some(prefix => input.toLowerCase().startsWith(prefix))
+      const hasPrefix = prefixes.some((prefix) => input.toLowerCase().startsWith(prefix))
       if (hasPrefix) {
         return toCamelCase(input)
       }
       return `is${toPascalCase(input)}`
-    }
+    },
   },
 
   // API エンドポイント
@@ -150,7 +150,7 @@ export const NAMING_PATTERNS = {
     pattern: /^\/[a-z][a-z0-9-]*(\/:?[a-z][a-z0-9-]*)*$/,
     examples: ['/tasks', '/users/:id', '/projects/:projectId/tasks'],
     description: 'kebab-case で API パスを定義',
-    autoFix: (input: string) => input.toLowerCase().replace(/[_\s]/g, '-')
+    autoFix: (input: string) => input.toLowerCase().replace(/[_\s]/g, '-'),
   },
 
   // 環境変数
@@ -158,8 +158,8 @@ export const NAMING_PATTERNS = {
     pattern: /^[A-Z][A-Z0-9_]*$/,
     examples: ['DATABASE_URL', 'API_KEY', 'NODE_ENV'],
     description: 'SCREAMING_SNAKE_CASE で環境変数を定義',
-    autoFix: (input: string) => toScreamingSnakeCase(input)
-  }
+    autoFix: (input: string) => toScreamingSnakeCase(input),
+  },
 } as const
 
 // ==============================
@@ -170,7 +170,7 @@ export function toCamelCase(str: string): string {
   return str
     .replace(/[^a-zA-Z0-9]/g, ' ')
     .split(' ')
-    .filter(word => word.length > 0)
+    .filter((word) => word.length > 0)
     .map((word, index) => {
       if (index === 0) {
         return word.toLowerCase()
@@ -184,8 +184,8 @@ export function toPascalCase(str: string): string {
   return str
     .replace(/[^a-zA-Z0-9]/g, ' ')
     .split(' ')
-    .filter(word => word.length > 0)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .filter((word) => word.length > 0)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('')
 }
 
@@ -228,13 +228,13 @@ export class NamingConventionManager {
     Object.entries(namingDictionary.domainTerms).forEach(([_key, term]) => {
       this.domainTerms.set(_key, term as DomainTerm)
       // エイリアスも登録
-      term.aliases.forEach(alias => {
+      term.aliases.forEach((alias) => {
         this.domainTerms.set(alias, term as DomainTerm)
       })
     })
 
     // 禁止用語の読み込み
-    namingDictionary.forbiddenTerms.forEach(item => {
+    namingDictionary.forbiddenTerms.forEach((item) => {
       this.forbiddenTerms.add(item.term.toLowerCase())
     })
   }
@@ -280,7 +280,7 @@ export class NamingConventionManager {
       isValid: true,
       suggestions: [],
       errors: [],
-      warnings: []
+      warnings: [],
     }
 
     const pattern = this.patterns[type]
@@ -300,7 +300,7 @@ export class NamingConventionManager {
     for (const forbiddenTerm of this.forbiddenTerms) {
       if (lowerName.includes(forbiddenTerm)) {
         result.isValid = false
-        const forbiddenData = namingDictionary.forbiddenTerms.find(f => f.term === forbiddenTerm)
+        const forbiddenData = namingDictionary.forbiddenTerms.find((f) => f.term === forbiddenTerm)
         result.errors.push(`禁止用語 "${forbiddenTerm}" が含まれています: ${forbiddenData?.reason}`)
         if (forbiddenData?.alternatives) {
           result.suggestions.push(...forbiddenData.alternatives)
@@ -310,7 +310,7 @@ export class NamingConventionManager {
 
     // ドメイン用語の推奨事項
     const words = this.extractWords(name)
-    words.forEach(word => {
+    words.forEach((word) => {
       const domainTerm = this.getDomainTerm(word)
       if (domainTerm) {
         const recommended = this.getRecommendedNaming(word, type)
@@ -335,8 +335,8 @@ export class NamingConventionManager {
       .replace(/([a-z])([A-Z])/g, '$1 $2')
       .replace(/[^a-zA-Z]/g, ' ')
       .split(' ')
-      .filter(word => word.length > 0)
-      .map(word => word.toLowerCase())
+      .filter((word) => word.length > 0)
+      .map((word) => word.toLowerCase())
   }
 
   /**
@@ -431,7 +431,7 @@ export class NamingConventionManager {
           if (!validation.isValid) {
             results.push({
               ...validation,
-              errors: validation.errors.map(error => `${filePath}: ${error}`)
+              errors: validation.errors.map((error) => `${filePath}: ${error}`),
             })
           }
         }
@@ -460,7 +460,7 @@ export class NamingConventionManager {
       totalDomainTerms: this.domainTerms.size,
       categoryCounts: categories,
       forbiddenTermsCount: this.forbiddenTerms.size,
-      patternsCount: Object.keys(this.patterns).length
+      patternsCount: Object.keys(this.patterns).length,
     }
   }
 }

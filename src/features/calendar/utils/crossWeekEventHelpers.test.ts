@@ -4,11 +4,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { CalendarEvent } from '@/features/events/types/events'
 
-import {
-  detectFridayToMondayEvents,
-  filterWeekendEvents,
-  splitCrossWeekEvents,
-} from './crossWeekEventHelpers'
+import { detectFridayToMondayEvents, filterWeekendEvents, splitCrossWeekEvents } from './crossWeekEventHelpers'
 
 describe('crossWeekEventHelpers', () => {
   describe('splitCrossWeekEvents', () => {

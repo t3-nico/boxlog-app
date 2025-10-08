@@ -9,7 +9,11 @@ import { ConfigSchema, ConfigValidationError, ConfigValidationResult } from '../
 /**
  * ✅ 設定の検証
  */
-export function validateConfig(config: Record<string, unknown>, strict: boolean, environment: string): ConfigValidationResult {
+export function validateConfig(
+  config: Record<string, unknown>,
+  strict: boolean,
+  environment: string
+): ConfigValidationResult {
   try {
     const validatedConfig = ConfigSchema.parse(config)
 

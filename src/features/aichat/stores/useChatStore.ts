@@ -75,9 +75,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     try {
       // メッセージ送信状態を更新
       set((state) => ({
-        messages: state.messages.map((msg) =>
-          msg.id === userMessage.id ? { ...msg, status: 'sent' as const } : msg
-        ),
+        messages: state.messages.map((msg) => (msg.id === userMessage.id ? { ...msg, status: 'sent' as const } : msg)),
       }))
 
       // API implementation tracked in Issue #87
@@ -100,9 +98,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       console.error('Failed to send message:', error)
 
       set((state) => ({
-        messages: state.messages.map((msg) =>
-          msg.id === userMessage.id ? { ...msg, status: 'error' as const } : msg
-        ),
+        messages: state.messages.map((msg) => (msg.id === userMessage.id ? { ...msg, status: 'error' as const } : msg)),
         isTyping: false,
       }))
     }
@@ -129,9 +125,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   // メッセージ編集
   editMessage: (id: string, newContent: string) => {
     set((state) => ({
-      messages: state.messages.map((msg) =>
-        msg.id === id ? { ...msg, content: newContent.trim() } : msg
-      ),
+      messages: state.messages.map((msg) => (msg.id === id ? { ...msg, content: newContent.trim() } : msg)),
     }))
   },
 }))

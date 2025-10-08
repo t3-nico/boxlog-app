@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 export interface DragState {
   isDragging: boolean
@@ -29,7 +29,7 @@ const defaultState: DragState = {
   isDragging: false,
   dragStartTime: null,
   dragEndTime: null,
-  dragDate: null
+  dragDate: null,
 }
 
 export function useDragInteraction(options: UseDragInteractionOptions = {}) {
@@ -41,19 +41,19 @@ export function useDragInteraction(options: UseDragInteractionOptions = {}) {
       isDragging: true,
       dragDate: date,
       dragStartTime: time,
-      dragEndTime: time
+      dragEndTime: time,
     })
   }, [])
 
   const updateDrag = useCallback((date: Date, time: string) => {
-    setState(prev => {
+    setState((prev) => {
       if (!prev.isDragging || !prev.dragDate) return prev
 
       // 同じ日付の場合のみドラッグを継続
       if (date.toDateString() === prev.dragDate.toDateString()) {
         return {
           ...prev,
-          dragEndTime: time
+          dragEndTime: time,
         }
       }
       return prev
@@ -61,7 +61,7 @@ export function useDragInteraction(options: UseDragInteractionOptions = {}) {
   }, [])
 
   const endDrag = useCallback(() => {
-    setState(prev => {
+    setState((prev) => {
       if (!prev.isDragging || !prev.dragDate || !prev.dragStartTime || !prev.dragEndTime) {
         return defaultState
       }
@@ -78,7 +78,7 @@ export function useDragInteraction(options: UseDragInteractionOptions = {}) {
         date: prev.dragDate,
         startTime: finalStartTime,
         endTime: finalEndTime,
-        isValid: isValidDuration
+        isValid: isValidDuration,
       }
 
       // ドラッグ完了コールバック
@@ -100,8 +100,8 @@ export function useDragInteraction(options: UseDragInteractionOptions = {}) {
       startDrag,
       updateDrag,
       endDrag,
-      cancelDrag
-    }
+      cancelDrag,
+    },
   }
 }
 

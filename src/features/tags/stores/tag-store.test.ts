@@ -118,11 +118,9 @@ describe('useTagStore', () => {
     })
 
     it('存在しないタグは更新できない', async () => {
-      const result = await useTagStore
-        .getState()
-        .updateTag('non-existent-id', {
-          name: '更新',
-        })
+      const result = await useTagStore.getState().updateTag('non-existent-id', {
+        name: '更新',
+      })
 
       expect(result).toBe(false)
     })

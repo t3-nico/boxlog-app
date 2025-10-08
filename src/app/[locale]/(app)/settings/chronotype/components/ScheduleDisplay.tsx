@@ -13,12 +13,7 @@ interface ScheduleDisplayProps {
   getTypeIcon: (type: ChronoTypeSchedule['type']) => React.ReactNode
 }
 
-export const ScheduleDisplay = memo(({
-  profileName,
-  schedules,
-  typeColors,
-  getTypeIcon,
-}: ScheduleDisplayProps) => {
+export const ScheduleDisplay = memo(({ profileName, schedules, typeColors, getTypeIcon }: ScheduleDisplayProps) => {
   return (
     <div className="rounded-lg border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
       <h2 className="mb-4 text-xl font-semibold text-neutral-900 dark:text-neutral-100">

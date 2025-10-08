@@ -9,9 +9,9 @@ import { X } from 'lucide-react'
 import { DeleteToast } from '@/components/ui/delete-toast'
 import { useRecordsStore } from '@/features/calendar/stores/useRecordsStore'
 import type { CalendarEvent } from '@/features/events'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useAddPopup } from '@/hooks/useAddPopup'
-import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { HOUR_HEIGHT } from '../../../constants/calendar-constants'
 import type { Task, ViewDateRange } from '../../../types/calendar.types'
@@ -39,12 +39,12 @@ const CurrentTimeLine = ({ day }: { day: Date }) => {
 
   return (
     <div
-      className="pointer-events-none absolute left-0 right-0 z-30 h-0.5 bg-red-500"
+      className="pointer-events-none absolute right-0 left-0 z-30 h-0.5 bg-red-500"
       style={{
         top: `${currentHours * HOUR_HEIGHT}px`,
       }}
     >
-      <div className="absolute -left-1 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
+      <div className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rounded-full bg-red-500" />
     </div>
   )
 }
@@ -290,7 +290,7 @@ export const WeekCalendarLayout = ({
                 >
                   {/* 分割線（bothモード時のみ） */}
                   {planRecordMode === 'both' ? (
-                    <div className="bg-border absolute bottom-0 left-1/2 top-0 z-20 w-px -translate-x-0.5"></div>
+                    <div className="bg-border absolute top-0 bottom-0 left-1/2 z-20 w-px -translate-x-0.5"></div>
                   ) : null}
 
                   {/* 時間グリッド背景 */}
@@ -343,7 +343,7 @@ export const WeekCalendarLayout = ({
                         <button
                           type="button"
                           onClick={createDeleteEventHandler(event.id)}
-                          className="absolute right-1 top-1 z-30 rounded bg-white/90 p-0.5 opacity-0 shadow-lg transition-all duration-200 hover:bg-white group-hover:opacity-100 dark:bg-gray-800/90 dark:hover:bg-gray-700"
+                          className="absolute top-1 right-1 z-30 rounded bg-white/90 p-0.5 opacity-0 shadow-lg transition-all duration-200 group-hover:opacity-100 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-700"
                           title={t('calendar.event.delete')}
                         >
                           <X className="h-3 w-3 text-gray-700 dark:text-gray-300" />
@@ -352,7 +352,7 @@ export const WeekCalendarLayout = ({
                         <div className="h-full overflow-hidden p-1 text-white sm:p-1.5">
                           <div className="flex h-full flex-col">
                             <div className="min-h-0 flex-1">
-                              <div className="mb-0.5 line-clamp-2 text-xs font-medium leading-tight">{event.title}</div>
+                              <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{event.title}</div>
                               {height > 30 ? (
                                 <div className="text-xs leading-tight opacity-90">
                                   {format(event.startDate, 'HH:mm')}

@@ -1,7 +1,7 @@
-import { isSameDay, addMinutes, differenceInMinutes } from 'date-fns'
+import { addMinutes, differenceInMinutes, isSameDay } from 'date-fns'
 import { create } from 'zustand'
 
-import type { TaskRecord, Task, RecordAdjustments, RecordStats } from '@/features/calendar/types/calendar.types'
+import type { RecordAdjustments, RecordStats, Task, TaskRecord } from '@/features/calendar/types/calendar.types'
 
 // ヘルパー関数: 計画時間の計算
 const calculatePlannedTimes = (task: Task) => {
@@ -14,45 +14,51 @@ const calculatePlannedTimes = (task: Task) => {
 
 // ヘルパー関数: レベル値の検証
 const validateLevel = (level: number | undefined): 1 | 2 | 3 | 4 | 5 | undefined => {
-  return level && level >= 1 && level <= 5 ? level as 1 | 2 | 3 | 4 | 5 : undefined
+  return level && level >= 1 && level <= 5 ? (level as 1 | 2 | 3 | 4 | 5) : undefined
 }
 
 // ヘルパー関数: タスクレコードの構築
-const buildTaskRecord = (task: Task, adjustments: RecordAdjustments | undefined, plannedStart: Date, plannedEnd: Date): Partial<TaskRecord> => {
+const buildTaskRecord = (
+  task: Task,
+  adjustments: RecordAdjustments | undefined,
+  plannedStart: Date,
+  plannedEnd: Date
+): Partial<TaskRecord> => {
   return {
     task_id: task.id,
     title: task.title,
     actual_start: (adjustments?.actualStart || plannedStart).toISOString(),
     actual_end: (adjustments?.actualEnd || plannedEnd).toISOString(),
-    actual_duration: adjustments?.actualEnd && adjustments?.actualStart
-      ? differenceInMinutes(adjustments.actualEnd, adjustments.actualStart)
-      : task.planned_duration || 60,
+    actual_duration:
+      adjustments?.actualEnd && adjustments?.actualStart
+        ? differenceInMinutes(adjustments.actualEnd, adjustments.actualStart)
+        : task.planned_duration || 60,
     tags: task.tags,
     memo: task.memo,
     satisfaction: validateLevel(adjustments?.satisfaction),
     focus_level: validateLevel(adjustments?.focusLevel),
     energy_level: validateLevel(adjustments?.energyLevel),
-    interruptions: adjustments?.interruptions || 0
+    interruptions: adjustments?.interruptions || 0,
   }
 }
 
 interface RecordsStore {
   records: TaskRecord[]
   isLoading: boolean
-  
+
   // CRUD操作
-  fetchRecords: (dateRange: { start: Date, end: Date }) => Promise<void>
+  fetchRecords: (dateRange: { start: Date; end: Date }) => Promise<void>
   createRecord: (record: Partial<TaskRecord>) => Promise<TaskRecord>
   updateRecord: (id: string, updates: Partial<TaskRecord>) => Promise<void>
   deleteRecord: (id: string) => Promise<void>
-  
+
   // 予定から記録を作成
   createRecordFromTask: (task: Task, adjustments?: RecordAdjustments) => Promise<TaskRecord>
-  
+
   // 分析用
   getRecordsByDate: (date: Date) => TaskRecord[]
-  getRecordStats: (dateRange: { start: Date, end: Date }) => RecordStats
-  
+  getRecordStats: (dateRange: { start: Date; end: Date }) => RecordStats
+
   // ローカル状態管理（Supabase実装前の仮実装）
   addLocalRecord: (record: TaskRecord) => void
   updateLocalRecord: (id: string, updates: Partial<TaskRecord>) => void
@@ -62,22 +68,21 @@ interface RecordsStore {
 export const useRecordsStore = create<RecordsStore>((set, get) => ({
   records: [],
   isLoading: false,
-  
+
   fetchRecords: async (dateRange) => {
     set({ isLoading: true })
     try {
-
       // const { data } = await supabase
       //   .from('task_records')
       //   .select('*')
       //   .gte('actual_start', dateRange.start.toISOString())
       //   .lte('actual_start', dateRange.end.toISOString())
-      
+
       // 仮実装：ローカルストレージから読み込み
       const stored = localStorage.getItem('boxlog-records')
       if (stored) {
         const allRecords = JSON.parse(stored) as TaskRecord[]
-        const filteredRecords = allRecords.filter(record => {
+        const filteredRecords = allRecords.filter((record) => {
           const recordDate = new Date(record.actual_start)
           return recordDate >= dateRange.start && recordDate <= dateRange.end
         })
@@ -89,7 +94,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
       set({ isLoading: false })
     }
   },
-  
+
   createRecord: async (record) => {
     const newRecord: TaskRecord = {
       id: crypto.randomUUID(),
@@ -100,7 +105,7 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
       actual_duration: record.actual_duration || 60,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
-      ...record
+      ...record,
     }
 
     // const { data } = await supabase
@@ -108,103 +113,96 @@ export const useRecordsStore = create<RecordsStore>((set, get) => ({
     //   .insert(newRecord)
     //   .select()
     //   .single()
-    
+
     // 仮実装：ローカルストレージに保存
     get().addLocalRecord(newRecord)
-    
+
     return newRecord
   },
-  
-  updateRecord: async (id, updates) => {
 
+  updateRecord: async (id, updates) => {
     // await supabase
     //   .from('task_records')
     //   .update({ ...updates, updated_at: new Date().toISOString() })
     //   .eq('id', id)
-    
+
     // 仮実装：ローカル更新
     get().updateLocalRecord(id, updates)
   },
-  
-  deleteRecord: async (id) => {
 
+  deleteRecord: async (id) => {
     // await supabase
     //   .from('task_records')
     //   .delete()
     //   .eq('id', id)
-    
+
     // 仮実装：ローカル削除
     get().removeLocalRecord(id)
   },
-  
+
   createRecordFromTask: async (task, adjustments) => {
     const { plannedStart, plannedEnd } = calculatePlannedTimes(task)
     const record = buildTaskRecord(task, adjustments, plannedStart, plannedEnd)
     const created = await get().createRecord(record)
     return created
   },
-  
+
   getRecordsByDate: (date) => {
-    return get().records.filter(record => 
-      isSameDay(new Date(record.actual_start), date)
-    )
+    return get().records.filter((record) => isSameDay(new Date(record.actual_start), date))
   },
-  
+
   getRecordStats: (dateRange) => {
     const { records } = get()
-    const rangeRecords = records.filter(record => {
+    const rangeRecords = records.filter((record) => {
       const recordDate = new Date(record.actual_start)
       return recordDate >= dateRange.start && recordDate <= dateRange.end
     })
-    
-    const actualMinutes = rangeRecords.reduce((sum, record) => 
-      sum + record.actual_duration, 0
-    )
-    
-    const satisfactionRecords = rangeRecords.filter(r => r.satisfaction)
-    const avgSatisfaction = satisfactionRecords.length > 0
-      ? satisfactionRecords.reduce((sum, r) => sum + (r.satisfaction || 0), 0) / satisfactionRecords.length
-      : 0
-    
+
+    const actualMinutes = rangeRecords.reduce((sum, record) => sum + record.actual_duration, 0)
+
+    const satisfactionRecords = rangeRecords.filter((r) => r.satisfaction)
+    const avgSatisfaction =
+      satisfactionRecords.length > 0
+        ? satisfactionRecords.reduce((sum, r) => sum + (r.satisfaction || 0), 0) / satisfactionRecords.length
+        : 0
+
     return {
       plannedHours: 0, // Calculation tracked in Issue #87
       actualHours: actualMinutes / 60,
       completionRate: 0, // Calculation tracked in Issue #87
       avgSatisfaction,
-      unplannedTasks: rangeRecords.filter(r => !r.task_id).length
+      unplannedTasks: rangeRecords.filter((r) => !r.task_id).length,
     }
   },
-  
+
   // ローカル状態管理用のヘルパー
   addLocalRecord: (record) => {
-    set(state => ({
-      records: [...state.records, record]
+    set((state) => ({
+      records: [...state.records, record],
     }))
-    
+
     // ローカルストレージに保存
     const allRecords = [...get().records]
     localStorage.setItem('boxlog-records', JSON.stringify(allRecords))
   },
-  
+
   updateLocalRecord: (id, updates) => {
-    set(state => ({
-      records: state.records.map(record =>
-        record.id === id 
-          ? { ...record, ...updates, updated_at: new Date().toISOString() }
-          : record
-      )
+    set((state) => ({
+      records: state.records.map((record) =>
+        record.id === id ? { ...record, ...updates, updated_at: new Date().toISOString() } : record
+      ),
     }))
-    
+
     // ローカルストレージに保存
     localStorage.setItem('boxlog-records', JSON.stringify(get().records))
   },
-  
+
   removeLocalRecord: (id) => {
-    set(state => ({
-      records: state.records.filter(record => record.id !== id)
+    set((state) => ({
+      records: state.records.filter((record) => record.id !== id),
     }))
-    
+
     // ローカルストレージに保存
     localStorage.setItem('boxlog-records', JSON.stringify(get().records))
-  }
+  },
 }))

@@ -51,10 +51,7 @@ export function unwrapTranslated(str: TranslatedString): string {
 /**
  * 複数のTranslatedStringを結合
  */
-export function joinTranslated(
-  strings: TranslatedString[],
-  separator: string = ''
-): TranslatedString {
+export function joinTranslated(strings: TranslatedString[], separator: string = ''): TranslatedString {
   return markAsTranslated(strings.map(unwrapTranslated).join(separator))
 }
 

@@ -3,12 +3,12 @@
 
 import { useCallback } from 'react'
 
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import useCalendarToast from '@/features/calendar/lib/toast'
 import { useCreateModalStore } from '@/features/events/stores/useCreateModalStore'
 import { useEventStore } from '@/features/events/stores/useEventStore'
 import type { CalendarEvent } from '@/features/events/types/events'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
 export function useEventContextActions() {
   const { t } = useI18n()

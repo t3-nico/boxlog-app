@@ -23,11 +23,11 @@ export function sortEventsByTime(events: CalendarEvent[]): CalendarEvent[] {
  */
 export function sortEventsByDateKeys(eventsByDate: Record<string, CalendarEvent[]>): Record<string, CalendarEvent[]> {
   const sorted = { ...eventsByDate }
-  
-  Object.keys(sorted).forEach(dateKey => {
+
+  Object.keys(sorted).forEach((dateKey) => {
     sorted[dateKey] = sortEventsByTime(sorted[dateKey])
   })
-  
+
   return sorted
 }
 
@@ -40,10 +40,10 @@ export function sortEventsForAgenda(events: CalendarEvent[]): CalendarEvent[] {
     // 終日イベントを最初に
     const aIsAllDay = !a.startDate || (a.startDate.getHours() === 0 && a.startDate.getMinutes() === 0)
     const bIsAllDay = !b.startDate || (b.startDate.getHours() === 0 && b.startDate.getMinutes() === 0)
-    
+
     if (aIsAllDay && !bIsAllDay) return -1
     if (!aIsAllDay && bIsAllDay) return 1
-    
+
     // 両方とも終日または両方とも時間指定の場合、時刻順でソート
     const aTime = a.startDate ? a.startDate.getTime() : 0
     const bTime = b.startDate ? b.startDate.getTime() : 0
@@ -54,12 +54,14 @@ export function sortEventsForAgenda(events: CalendarEvent[]): CalendarEvent[] {
 /**
  * 日付キーごとのイベントをAgenda用ソート
  */
-export function sortAgendaEventsByDateKeys(eventsByDate: Record<string, CalendarEvent[]>): Record<string, CalendarEvent[]> {
+export function sortAgendaEventsByDateKeys(
+  eventsByDate: Record<string, CalendarEvent[]>
+): Record<string, CalendarEvent[]> {
   const sorted = { ...eventsByDate }
-  
-  Object.keys(sorted).forEach(dateKey => {
+
+  Object.keys(sorted).forEach((dateKey) => {
     sorted[dateKey] = sortEventsForAgenda(sorted[dateKey])
   })
-  
+
   return sorted
 }

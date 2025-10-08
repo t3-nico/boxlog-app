@@ -357,12 +357,7 @@ describe('dateHelpers', () => {
   describe('getTodayIndex', () => {
     it('今日の日付のインデックスを返す', () => {
       const today = new Date()
-      const dates = [
-        addDays(today, -2),
-        addDays(today, -1),
-        today,
-        addDays(today, 1),
-      ]
+      const dates = [addDays(today, -2), addDays(today, -1), today, addDays(today, 1)]
       const index = getTodayIndex(dates)
       expect(index).toBe(2)
     })

@@ -1,6 +1,6 @@
 /**
  * 危険な操作（削除、破壊的変更など）専用のボタンコンポーネント
- * 
+ *
  * 一貫した見た目とアクセシビリティ機能を提供
  */
 
@@ -17,12 +17,12 @@ const dangerButtonVariants = cva(
     variants: {
       intent: {
         delete: 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-500/20',
-        warning: 'bg-orange-600 hover:bg-orange-700 focus-visible:ring-orange-500/20'
-      }
+        warning: 'bg-orange-600 hover:bg-orange-700 focus-visible:ring-orange-500/20',
+      },
     },
     defaultVariants: {
-      intent: 'delete'
-    }
+      intent: 'delete',
+    },
   }
 )
 
@@ -32,27 +32,27 @@ interface DangerButtonProps extends React.ComponentProps<typeof Button> {
   confirmText?: string
 }
 
-export const DangerButton = ({ 
-  children, 
-  loading = false, 
+export const DangerButton = ({
+  children,
+  loading = false,
   confirmText,
   className,
   onClick,
-  ...props 
+  ...props
 }: DangerButtonProps) => {
-  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    if (confirmText && !window.confirm(confirmText)) {
-      return
-    }
-    onClick?.(e)
-  }, [confirmText, onClick])
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (confirmText && !window.confirm(confirmText)) {
+        return
+      }
+      onClick?.(e)
+    },
+    [confirmText, onClick]
+  )
 
   return (
     <Button
-      className={cn(
-        dangerButtonVariants({ intent: 'delete' }),
-        className
-      )}
+      className={cn(dangerButtonVariants({ intent: 'delete' }), className)}
       onClick={handleClick}
       disabled={loading || props.disabled}
       aria-describedby={confirmText ? 'danger-action-warning' : undefined}
@@ -60,7 +60,7 @@ export const DangerButton = ({
     >
       {loading ? (
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
           処理中...
         </div>
       ) : (

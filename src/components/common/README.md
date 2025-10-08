@@ -16,6 +16,7 @@ src/components/common/
 ## 🧩 コンポーネント一覧
 
 ### ErrorBoundary
+
 グローバルエラーバウンダリーと自動復旧システム
 
 - `GlobalErrorBoundary` - アプリ全体のエラーキャッチ・復旧
@@ -23,6 +24,7 @@ src/components/common/
 - 自動リトライ機能
 
 ### Loading
+
 統一されたローディング状態コンポーネント
 
 - `LoadingSpinner` - 基本的なスピナー
@@ -32,12 +34,14 @@ src/components/common/
 - `Skeleton` - スケルトンUI
 
 ### Preload
+
 重要なリソースをプリロードしてナビゲーションを高速化
 
 - `PreloadResources` - ルート・フォントのプリフェッチ
 - `initializeCacheStrategy` - Service Worker初期化
 
 ### Providers
+
 アプリケーション全体のContext Providers
 
 - `Providers` - QueryClient, Auth, Chat, CommandPalette等を統合
@@ -46,15 +50,17 @@ src/components/common/
 ## 📖 使用例
 
 ### エラーバウンダリー
+
 ```tsx
 import { GlobalErrorBoundary } from '@/components/common'
 
-<GlobalErrorBoundary maxRetries={3}>
+;<GlobalErrorBoundary maxRetries={3}>
   <YourApp />
 </GlobalErrorBoundary>
 ```
 
 ### ローディング
+
 ```tsx
 import { LoadingSpinner, LoadingOverlay } from '@/components/common'
 
@@ -66,10 +72,11 @@ import { LoadingSpinner, LoadingOverlay } from '@/components/common'
 ```
 
 ### Providers
+
 ```tsx
 import { Providers } from '@/components/common'
 
-<Providers>
+;<Providers>
   <App />
 </Providers>
 ```
@@ -77,6 +84,7 @@ import { Providers } from '@/components/common'
 ## 🔧 開発ガイドライン
 
 ### コロケーション原則（CLAUDE.md準拠）
+
 各コンポーネントディレクトリには以下を配置：
 
 - `*.tsx` - コンポーネント本体
@@ -87,12 +95,14 @@ import { Providers } from '@/components/common'
 - `CLAUDE.md` - AI向け開発指針（必要に応じて）
 
 ### テスト
+
 ```bash
 npm run test:run    # テスト実行
 npm run test:coverage  # カバレッジ確認
 ```
 
 ### 型チェック
+
 ```bash
 npm run typecheck   # TypeScript型チェック
 ```

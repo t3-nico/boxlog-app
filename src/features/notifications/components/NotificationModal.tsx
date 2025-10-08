@@ -103,7 +103,9 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         >
           <div className="flex items-center gap-2">
             <Bell className={cn('h-5 w-5', 'text-neutral-900 dark:text-neutral-100')} />
-            <h1 className={cn('text-3xl font-bold tracking-tight', 'text-neutral-900 dark:text-neutral-100')}>{t('notifications.title')}</h1>
+            <h1 className={cn('text-3xl font-bold tracking-tight', 'text-neutral-900 dark:text-neutral-100')}>
+              {t('notifications.title')}
+            </h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -141,7 +143,9 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             onClick={() => setActiveTab('all')}
             className={cn(
               'flex-1 py-2 text-center text-sm',
-              activeTab === 'all' ? cn('text-neutral-900 dark:text-neutral-100', 'border-b-2 border-blue-500') : 'text-neutral-600 dark:text-neutral-400',
+              activeTab === 'all'
+                ? cn('text-neutral-900 dark:text-neutral-100', 'border-b-2 border-blue-500')
+                : 'text-neutral-600 dark:text-neutral-400',
               'transition-all duration-200'
             )}
           >
@@ -152,7 +156,9 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             onClick={() => setActiveTab('unread')}
             className={cn(
               'relative flex-1 py-2 text-center text-sm',
-              activeTab === 'unread' ? cn('text-neutral-900 dark:text-neutral-100', 'border-b-2 border-blue-500') : 'text-neutral-600 dark:text-neutral-400',
+              activeTab === 'unread'
+                ? cn('text-neutral-900 dark:text-neutral-100', 'border-b-2 border-blue-500')
+                : 'text-neutral-600 dark:text-neutral-400',
               'transition-all duration-200'
             )}
           >
@@ -160,7 +166,7 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
             {mockNotifications.filter((n) => !n.read).length > 0 && (
               <span
                 className={cn(
-                  'absolute -right-1 -top-1 h-5 w-5',
+                  'absolute -top-1 -right-1 h-5 w-5',
                   'bg-red-500 text-xs text-white',
                   'flex items-center justify-center',
                   'rounded-full'
@@ -175,7 +181,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
         {/* Notification List */}
         <ScrollArea className="h-96">
           {filteredNotifications.length === 0 ? (
-            <div className={cn('flex flex-col items-center justify-center py-16', 'text-neutral-600 dark:text-neutral-400')}>
+            <div
+              className={cn(
+                'flex flex-col items-center justify-center py-16',
+                'text-neutral-600 dark:text-neutral-400'
+              )}
+            >
               <BellOff className={cn('h-6 w-6', 'mb-3')} />
               <p className="text-sm">
                 {activeTab === 'unread' ? t('notifications.empty.unread') : t('notifications.empty.all')}
@@ -213,8 +224,12 @@ export const NotificationModal = ({ isOpen, onClose }: NotificationModalProps) =
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
-                        <p className={cn('text-sm font-medium', 'text-neutral-900 dark:text-neutral-100')}>{notification.title}</p>
-                        <p className={cn('text-xs', 'text-neutral-600 dark:text-neutral-400', 'mt-0.5')}>{notification.message}</p>
+                        <p className={cn('text-sm font-medium', 'text-neutral-900 dark:text-neutral-100')}>
+                          {notification.title}
+                        </p>
+                        <p className={cn('text-xs', 'text-neutral-600 dark:text-neutral-400', 'mt-0.5')}>
+                          {notification.message}
+                        </p>
                       </div>
                       {!notification.read && (
                         <div className={cn('h-2 w-2 rounded-full', 'bg-blue-500', 'mt-2 flex-shrink-0')} />

@@ -28,7 +28,7 @@ export const Providers = ({ children }: ProvidersProps) => {
               if (error && 'status' in error && error.status === 404) return false
               return failureCount < 3
             },
-            retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+            retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
           },
           mutations: {
             retry: 1,

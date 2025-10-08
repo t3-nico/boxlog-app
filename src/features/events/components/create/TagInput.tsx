@@ -86,9 +86,12 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
   }, [])
 
   // Dynamic click handlers
-  const createSuggestionClickHandler = useCallback((suggestionName: string) => {
-    return () => addTag(suggestionName)
-  }, [addTag])
+  const createSuggestionClickHandler = useCallback(
+    (suggestionName: string) => {
+      return () => addTag(suggestionName)
+    },
+    [addTag]
+  )
 
   // キーボード操作のヘルパー関数群
   const handleTabKey = () => {
@@ -144,46 +147,58 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
   }
 
   // jsx-no-bind optimization: キーボード操作（リファクタリング済み）
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    switch (e.key) {
-      case 'Tab':
-        e.preventDefault()
-        handleTabKey()
-        return
-
-      case 'Enter':
-        e.preventDefault()
-        handleEnterKey()
-        return
-
-      case 'ArrowDown':
-        if (showSuggestions) {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      switch (e.key) {
+        case 'Tab':
           e.preventDefault()
-          handleArrowDown()
-        }
-        break
+          handleTabKey()
+          return
 
-      case 'ArrowUp':
-        if (showSuggestions) {
+        case 'Enter':
           e.preventDefault()
-          handleArrowUp()
-        }
-        break
+          handleEnterKey()
+          return
 
-      case 'Escape':
-        handleEscapeKey()
-        break
+        case 'ArrowDown':
+          if (showSuggestions) {
+            e.preventDefault()
+            handleArrowDown()
+          }
+          break
 
-      case 'Backspace':
-        handleBackspaceKey()
-        break
+        case 'ArrowUp':
+          if (showSuggestions) {
+            e.preventDefault()
+            handleArrowUp()
+          }
+          break
 
-      case ' ':
-        e.preventDefault()
-        handleSpaceKey()
-        break
-    }
-  }, [showSuggestions, handleTabKey, handleEnterKey, handleArrowDown, handleArrowUp, handleEscapeKey, handleBackspaceKey, handleSpaceKey])
+        case 'Escape':
+          handleEscapeKey()
+          break
+
+        case 'Backspace':
+          handleBackspaceKey()
+          break
+
+        case ' ':
+          e.preventDefault()
+          handleSpaceKey()
+          break
+      }
+    },
+    [
+      showSuggestions,
+      handleTabKey,
+      handleEnterKey,
+      handleArrowDown,
+      handleArrowUp,
+      handleEscapeKey,
+      handleBackspaceKey,
+      handleSpaceKey,
+    ]
+  )
 
   // Input value changes and filtering
   useEffect(() => {
@@ -214,11 +229,11 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
             onKeyDown={handleKeyDown}
             placeholder="Enter tag and press Enter to add..."
             className={cn(
-              "w-full py-3 pl-3 pr-20 bg-neutral-50 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700",
-              "rounded-md text-base transition-all duration-200",
-              "focus:outline-none focus:ring-2 focus:ring-blue-500",
-              selectedTags.length >= 5 && "cursor-not-allowed opacity-50",
-              inputValue.trim() && "ring-1 ring-blue-200 dark:ring-blue-800"
+              'w-full border border-neutral-300 bg-neutral-50 py-3 pr-20 pl-3 dark:border-neutral-700 dark:bg-neutral-900',
+              'rounded-md text-base transition-all duration-200',
+              'focus:ring-2 focus:ring-blue-500 focus:outline-none',
+              selectedTags.length >= 5 && 'cursor-not-allowed opacity-50',
+              inputValue.trim() && 'ring-1 ring-blue-200 dark:ring-blue-800'
             )}
             disabled={selectedTags.length >= 5}
           />
@@ -230,10 +245,10 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2"
+                className="absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-2"
               >
                 <div className="text-sm text-neutral-600 dark:text-neutral-400">Enter</div>
-                <div className="px-2 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded border border-neutral-300 text-xs font-medium dark:border-neutral-600">
+                <div className="rounded border border-neutral-300 bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-600 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">
                   ⏎
                 </div>
               </motion.div>
@@ -253,11 +268,12 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
 
         {/* サジェスト */}
         <AnimatePresence>
-          {showSuggestions && suggestions.length > 0 ? <motion.div
+          {showSuggestions && suggestions.length > 0 ? (
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="absolute left-0 right-0 top-full z-50 mt-2 bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 rounded-lg max-h-60 overflow-y-auto shadow-lg"
+              className="absolute top-full right-0 left-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-lg border border-neutral-300 bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-900"
             >
               {suggestions.map((suggestion, index) => (
                 <button
@@ -265,12 +281,12 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                   key={suggestion.id}
                   onClick={createSuggestionClickHandler(suggestion.name)}
                   className={cn(
-                    "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150",
+                    'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors duration-150',
                     index === focusedSuggestionIndex
-                      ? "bg-neutral-100 dark:bg-neutral-800"
-                      : "hover:bg-neutral-50 dark:hover:bg-neutral-900",
-                    index === 0 && "rounded-t-lg",
-                    index === suggestions.length - 1 && "rounded-b-lg"
+                      ? 'bg-neutral-100 dark:bg-neutral-800'
+                      : 'hover:bg-neutral-50 dark:hover:bg-neutral-900',
+                    index === 0 && 'rounded-t-lg',
+                    index === suggestions.length - 1 && 'rounded-b-lg'
                   )}
                 >
                   <span className="text-lg" style={{ color: suggestion.color }}>
@@ -278,11 +294,14 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                   </span>
                   <span className="text-base text-neutral-900 dark:text-neutral-50">{suggestion.name}</span>
                   {suggestion.frequency != null && (
-                    <span className="ml-auto text-sm text-neutral-600 dark:text-neutral-400">{suggestion.frequency}回</span>
+                    <span className="ml-auto text-sm text-neutral-600 dark:text-neutral-400">
+                      {suggestion.frequency}回
+                    </span>
                   )}
                 </button>
               ))}
-            </motion.div> : null}
+            </motion.div>
+          ) : null}
         </AnimatePresence>
       </div>
 
@@ -376,7 +395,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                         damping: 30,
                         mass: 1,
                       }}
-                      className="flex cursor-move items-center gap-2 rounded-full px-3 py-2 text-sm font-medium bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700"
+                      className="flex cursor-move items-center gap-2 rounded-full border border-neutral-300 bg-neutral-100 px-3 py-2 text-sm font-medium dark:border-neutral-700 dark:bg-neutral-800"
                       style={{ borderColor: tag.color }}
                       whileHover={{ scale: 1.05 }}
                       whileDrag={{ scale: 1.1 }}
@@ -386,7 +405,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
                       <button
                         type="button"
                         onClick={createTagRemoveHandler(tag.id)}
-                        className="ml-1 rounded-full p-0.5 transition-colors hover:bg-red-100 dark:hover:bg-red-900/20 text-neutral-600 dark:text-neutral-400 hover:text-red-500"
+                        className="ml-1 rounded-full p-0.5 text-neutral-600 transition-colors hover:bg-red-100 hover:text-red-500 dark:text-neutral-400 dark:hover:bg-red-900/20"
                       >
                         <X size={14} />
                       </button>

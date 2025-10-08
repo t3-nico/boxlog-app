@@ -37,7 +37,15 @@ const DEFAULT_COLORS = TAG_PRESET_COLORS.map(
   (cssVar) => CSS_VAR_TO_HEX[cssVar as keyof typeof CSS_VAR_TO_HEX] || cssVar
 )
 
-const ColorPicker = ({ value, onChange, t }: { value: string; onChange: (color: string) => void; t: ReturnType<typeof useI18n>['t'] }) => {
+const ColorPicker = ({
+  value,
+  onChange,
+  t,
+}: {
+  value: string
+  onChange: (color: string) => void
+  t: ReturnType<typeof useI18n>['t']
+}) => {
   const [customColor, setCustomColor] = useState(value)
 
   useEffect(() => {
@@ -95,7 +103,9 @@ const ColorPicker = ({ value, onChange, t }: { value: string; onChange: (color: 
           onChange={handleCustomColorChange}
           className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
-        <span className="text-sm text-gray-500 dark:text-gray-400">{t('tags.form.customColor')}: {customColor}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          {t('tags.form.customColor')}: {customColor}
+        </span>
       </div>
     </div>
   )
@@ -149,7 +159,7 @@ const ParentTagSelector = ({
     <select
       value={value || ''}
       onChange={handleSelectChange}
-      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
       <option value="">-- {t('tags.form.rootLevel')} --</option>
       {allTags.flatMap((tag) => renderTagOption(tag))}
@@ -175,10 +185,16 @@ const TagPreview = ({
       <div className="mb-3 text-sm font-medium text-gray-900 dark:text-white">{t('tags.form.preview')}</div>
       <div className="flex items-center gap-2">
         <TagIcon className="h-5 w-5" style={{ color }} />
-        <span className="text-sm font-medium text-gray-900 dark:text-white">{name || t('tags.form.tagNamePlaceholder')}</span>
+        <span className="text-sm font-medium text-gray-900 dark:text-white">
+          {name || t('tags.form.tagNamePlaceholder')}
+        </span>
         <span className="text-xs text-gray-500 dark:text-gray-400">{path}</span>
       </div>
-      {parentTag ? <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">{t('tags.form.parentTagPrefix')} {parentTag.name}</div> : null}
+      {parentTag ? (
+        <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          {t('tags.form.parentTagPrefix')} {parentTag.name}
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -308,7 +324,9 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                   {t('tags.actions.createNew')}
                 </DialogTitle>
                 {parentTag ? (
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t('tags.labels.parentTagNote')} {parentTag.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {t('tags.labels.parentTagNote')} {parentTag.name}
+                  </p>
                 ) : null}
               </div>
             </div>
@@ -335,7 +353,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 value={formData.name}
                 onChange={handleNameChange}
                 placeholder={t('tags.form.examplePlaceholder')}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                 required
               />
               {errors.name ? <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p> : null}
@@ -382,7 +400,7 @@ export const TagCreateModal = ({ isOpen, onClose, onSave, parentTag, allTags = [
                 onChange={handleDescriptionChange}
                 placeholder={t('tags.form.descriptionPlaceholder')}
                 rows={3}
-                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
               />
               {errors.description != null && (
                 <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>

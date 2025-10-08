@@ -1,12 +1,12 @@
 // @ts-nocheck
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
-import { describe, expect, it, vi, beforeEach } from 'vitest'
-import { renderHook, act, waitFor } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Task } from '@/types/unified'
 
-import { useCalendarData, detectTimeConflicts, constrainTaskDuration } from './use-calendar-data'
 import type { ViewDateRange } from '../types/calendar.types'
+import { constrainTaskDuration, detectTimeConflicts, useCalendarData } from './use-calendar-data'
 
 describe('useCalendarData', () => {
   const mockTask: Task = {

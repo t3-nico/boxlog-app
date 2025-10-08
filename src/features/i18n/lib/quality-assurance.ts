@@ -9,12 +9,12 @@ import path from 'path'
 
 // 翻訳品質の評価基準
 export interface QualityMetrics {
-  accuracy: number        // 正確性 (0-100)
-  fluency: number        // 流暢性 (0-100)
-  consistency: number    // 一貫性 (0-100)
-  completeness: number   // 完全性 (0-100)
+  accuracy: number // 正確性 (0-100)
+  fluency: number // 流暢性 (0-100)
+  consistency: number // 一貫性 (0-100)
+  completeness: number // 完全性 (0-100)
   culturalAdaptation: number // 文化的適応 (0-100)
-  technicalAccuracy: number  // 技術的正確性 (0-100)
+  technicalAccuracy: number // 技術的正確性 (0-100)
 }
 
 // 品質評価結果
@@ -128,7 +128,7 @@ export class TranslationQualityAssurance {
    * 必要なディレクトリの作成
    */
   private ensureDirectories(): void {
-    [this.reviewsPath, this.assessmentsPath].forEach(dir => {
+    ;[this.reviewsPath, this.assessmentsPath].forEach((dir) => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true })
       }
@@ -145,19 +145,9 @@ export class TranslationQualityAssurance {
     translatedText: string,
     context?: any
   ): Promise<QualityAssessment> {
-    const metrics = await this.calculateQualityMetrics(
-      originalText,
-      translatedText,
-      language,
-      context
-    )
+    const metrics = await this.calculateQualityMetrics(originalText, translatedText, language, context)
 
-    const issues = this.identifyQualityIssues(
-      originalText,
-      translatedText,
-      language,
-      metrics
-    )
+    const issues = this.identifyQualityIssues(originalText, translatedText, language, metrics)
 
     const overallScore = this.calculateOverallScore(metrics)
     const qualityLevel = this.determineQualityLevel(overallScore)
@@ -173,7 +163,7 @@ export class TranslationQualityAssurance {
       qualityLevel,
       issues,
       reviewDate: new Date(),
-      recommendations
+      recommendations,
     }
 
     await this.saveAssessment(assessment)
@@ -203,7 +193,7 @@ export class TranslationQualityAssurance {
       consistency,
       completeness,
       culturalAdaptation,
-      technicalAccuracy
+      technicalAccuracy,
     }
   }
 
@@ -262,8 +252,8 @@ export class TranslationQualityAssurance {
 
       // 語尾の統一性
       const sentences = translatedText.split(/[。！？]/)
-      const politeEndings = sentences.filter(s => /です$|ます$|でした$|ました$/.test(s.trim()))
-      const casualEndings = sentences.filter(s => /だ$|である$|する$/.test(s.trim()))
+      const politeEndings = sentences.filter((s) => /です$|ます$|でした$|ました$/.test(s.trim()))
+      const casualEndings = sentences.filter((s) => /だ$|である$|する$/.test(s.trim()))
 
       if (politeEndings.length > 0 && casualEndings.length > 0) {
         score -= 15
@@ -356,7 +346,7 @@ export class TranslationQualityAssurance {
       const directTranslationPatterns = [
         /私たち\s*は/, // 不要な主語
         /することができます$/, // 冗長な可能表現
-        /を持っています$/ // 英語的な所有表現
+        /を持っています$/, // 英語的な所有表現
       ]
 
       for (const pattern of directTranslationPatterns) {
@@ -383,11 +373,11 @@ export class TranslationQualityAssurance {
 
     // 技術用語の翻訳チェック
     const technicalTerms = {
-      'API': 'API', // そのまま
-      'database': 'データベース',
-      'authentication': '認証',
-      'dashboard': 'ダッシュボード',
-      'settings': '設定'
+      API: 'API', // そのまま
+      database: 'データベース',
+      authentication: '認証',
+      dashboard: 'ダッシュボード',
+      settings: '設定',
     }
 
     for (const [original, expected] of Object.entries(technicalTerms)) {
@@ -418,7 +408,7 @@ export class TranslationQualityAssurance {
         type: 'accuracy',
         severity: metrics.accuracy < 50 ? 'critical' : 'major',
         description: '翻訳の正確性に問題があります',
-        suggestion: '原文の意味を正確に翻訳してください'
+        suggestion: '原文の意味を正確に翻訳してください',
       })
     }
 
@@ -427,7 +417,7 @@ export class TranslationQualityAssurance {
         type: 'fluency',
         severity: metrics.fluency < 50 ? 'critical' : 'major',
         description: '翻訳の流暢性に改善の余地があります',
-        suggestion: 'より自然な表現に調整してください'
+        suggestion: 'より自然な表現に調整してください',
       })
     }
 
@@ -436,7 +426,7 @@ export class TranslationQualityAssurance {
         type: 'consistency',
         severity: 'major',
         description: '用語や文体の一貫性に問題があります',
-        suggestion: '既存の翻訳と用語・文体を統一してください'
+        suggestion: '既存の翻訳と用語・文体を統一してください',
       })
     }
 
@@ -445,7 +435,7 @@ export class TranslationQualityAssurance {
         type: 'completeness',
         severity: 'critical',
         description: '翻訳が不完全です',
-        suggestion: 'すべての要素を適切に翻訳してください'
+        suggestion: 'すべての要素を適切に翻訳してください',
       })
     }
 
@@ -454,7 +444,7 @@ export class TranslationQualityAssurance {
         type: 'cultural',
         severity: 'minor',
         description: '文化的適応が不十分です',
-        suggestion: 'ターゲット言語の文化的コンテキストに適応させてください'
+        suggestion: 'ターゲット言語の文化的コンテキストに適応させてください',
       })
     }
 
@@ -463,7 +453,7 @@ export class TranslationQualityAssurance {
         type: 'technical',
         severity: 'major',
         description: '技術用語の翻訳が不正確です',
-        suggestion: '確立された技術用語を使用してください'
+        suggestion: '確立された技術用語を使用してください',
       })
     }
 
@@ -476,21 +466,21 @@ export class TranslationQualityAssurance {
   private calculateOverallScore(metrics: QualityMetrics): number {
     // 重み付きスコア計算
     const weights = {
-      accuracy: 0.25,        // 正確性: 25%
-      completeness: 0.20,    // 完全性: 20%
-      fluency: 0.20,         // 流暢性: 20%
-      consistency: 0.15,     // 一貫性: 15%
+      accuracy: 0.25, // 正確性: 25%
+      completeness: 0.2, // 完全性: 20%
+      fluency: 0.2, // 流暢性: 20%
+      consistency: 0.15, // 一貫性: 15%
       technicalAccuracy: 0.15, // 技術的正確性: 15%
-      culturalAdaptation: 0.05  // 文化的適応: 5%
+      culturalAdaptation: 0.05, // 文化的適応: 5%
     }
 
     return Math.round(
       metrics.accuracy * weights.accuracy +
-      metrics.completeness * weights.completeness +
-      metrics.fluency * weights.fluency +
-      metrics.consistency * weights.consistency +
-      metrics.technicalAccuracy * weights.technicalAccuracy +
-      metrics.culturalAdaptation * weights.culturalAdaptation
+        metrics.completeness * weights.completeness +
+        metrics.fluency * weights.fluency +
+        metrics.consistency * weights.consistency +
+        metrics.technicalAccuracy * weights.technicalAccuracy +
+        metrics.culturalAdaptation * weights.culturalAdaptation
     )
   }
 
@@ -537,11 +527,7 @@ export class TranslationQualityAssurance {
   /**
    * レビューワークフローの開始
    */
-  async startReviewWorkflow(
-    translationKey: string,
-    language: string,
-    reviewer?: string
-  ): Promise<ReviewWorkflow> {
+  async startReviewWorkflow(translationKey: string, language: string, reviewer?: string): Promise<ReviewWorkflow> {
     const workflow: ReviewWorkflow = {
       translationKey,
       language,
@@ -549,12 +535,14 @@ export class TranslationQualityAssurance {
       reviewer,
       assignedDate: reviewer ? new Date() : undefined,
       comments: [],
-      history: [{
-        timestamp: new Date(),
-        action: reviewer ? 'assigned' : 'assigned',
-        user: reviewer || 'system',
-        details: reviewer ? `Assigned to ${reviewer}` : 'Pending assignment'
-      }]
+      history: [
+        {
+          timestamp: new Date(),
+          action: reviewer ? 'assigned' : 'assigned',
+          user: reviewer || 'system',
+          details: reviewer ? `Assigned to ${reviewer}` : 'Pending assignment',
+        },
+      ],
     }
 
     await this.saveReviewWorkflow(workflow)
@@ -578,21 +566,25 @@ export class TranslationQualityAssurance {
       reviewer,
       timestamp: new Date(),
       type: assessment.qualityLevel === 'poor' ? 'correction' : 'suggestion',
-      content: comments
+      content: comments,
     }
 
     workflow.comments.push(newComment)
     workflow.assessment = assessment
     workflow.reviewer = reviewer
     workflow.reviewedDate = new Date()
-    workflow.status = assessment.qualityLevel === 'poor' ? 'rejected' :
-                      assessment.qualityLevel === 'needs_improvement' ? 'needs_revision' : 'approved'
+    workflow.status =
+      assessment.qualityLevel === 'poor'
+        ? 'rejected'
+        : assessment.qualityLevel === 'needs_improvement'
+          ? 'needs_revision'
+          : 'approved'
 
     workflow.history.push({
       timestamp: new Date(),
       action: 'reviewed',
       user: reviewer,
-      details: `Quality score: ${assessment.overallScore}`
+      details: `Quality score: ${assessment.overallScore}`,
     })
 
     await this.saveReviewWorkflow(workflow)
@@ -602,25 +594,21 @@ export class TranslationQualityAssurance {
   /**
    * 品質レポートの生成
    */
-  async generateQualityReport(
-    startDate: Date,
-    endDate: Date,
-    language?: string
-  ): Promise<QualityReport> {
+  async generateQualityReport(startDate: Date, endDate: Date, language?: string): Promise<QualityReport> {
     const assessments = await this.loadAssessments(startDate, endDate, language)
 
     // 基本統計の計算
     const totalTranslations = assessments.length
-    const reviewedTranslations = assessments.filter(a => a.reviewer).length
+    const reviewedTranslations = assessments.filter((a) => a.reviewer).length
     const averageScore = assessments.reduce((sum, a) => sum + a.overallScore, 0) / totalTranslations || 0
 
     // 品質分布
     const qualityDistribution = {
-      excellent: assessments.filter(a => a.qualityLevel === 'excellent').length,
-      good: assessments.filter(a => a.qualityLevel === 'good').length,
-      acceptable: assessments.filter(a => a.qualityLevel === 'acceptable').length,
-      needs_improvement: assessments.filter(a => a.qualityLevel === 'needs_improvement').length,
-      poor: assessments.filter(a => a.qualityLevel === 'poor').length
+      excellent: assessments.filter((a) => a.qualityLevel === 'excellent').length,
+      good: assessments.filter((a) => a.qualityLevel === 'good').length,
+      acceptable: assessments.filter((a) => a.qualityLevel === 'acceptable').length,
+      needs_improvement: assessments.filter((a) => a.qualityLevel === 'needs_improvement').length,
+      poor: assessments.filter((a) => a.qualityLevel === 'poor').length,
     }
 
     // 言語別分析
@@ -629,22 +617,28 @@ export class TranslationQualityAssurance {
 
     for (const [lang, langAssessments] of Object.entries(languageGroups)) {
       const langAvgScore = langAssessments.reduce((sum, a) => sum + a.overallScore, 0) / langAssessments.length
-      const allIssues = langAssessments.flatMap(a => a.issues)
+      const allIssues = langAssessments.flatMap((a) => a.issues)
       const issueTypes = this.groupBy(allIssues, 'type')
 
       languageBreakdown[lang] = {
         averageScore: langAvgScore,
-        totalReviewed: langAssessments.filter(a => a.reviewer).length,
-        commonIssues: Object.entries(issueTypes).map(([type, issues]) => ({
-          type,
-          count: issues.length
-        })).sort((a, b) => b.count - a.count).slice(0, 5)
+        totalReviewed: langAssessments.filter((a) => a.reviewer).length,
+        commonIssues: Object.entries(issueTypes)
+          .map(([type, issues]) => ({
+            type,
+            count: issues.length,
+          }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 5),
       }
     }
 
     // レビューアーパフォーマンス
     const reviewerPerformance: QualityReport['reviewerPerformance'] = {}
-    const reviewerGroups = this.groupBy(assessments.filter(a => a.reviewer), 'reviewer')
+    const reviewerGroups = this.groupBy(
+      assessments.filter((a) => a.reviewer),
+      'reviewer'
+    )
 
     for (const [reviewer, reviewerAssessments] of Object.entries(reviewerGroups)) {
       const avgScore = reviewerAssessments.reduce((sum, a) => sum + a.overallScore, 0) / reviewerAssessments.length
@@ -653,7 +647,7 @@ export class TranslationQualityAssurance {
       reviewerPerformance[reviewer] = {
         reviewCount: reviewerAssessments.length,
         averageScore: avgScore,
-        efficiency: reviewerAssessments.length / daysDiff
+        efficiency: reviewerAssessments.length / daysDiff,
       }
     }
 
@@ -663,14 +657,14 @@ export class TranslationQualityAssurance {
         totalTranslations,
         reviewedTranslations,
         averageScore,
-        qualityDistribution
+        qualityDistribution,
       },
       languageBreakdown,
       reviewerPerformance,
       trends: {
         scoreOverTime: [], // 実装時に詳細化
-        issueFrequency: []
-      }
+        issueFrequency: [],
+      },
     }
   }
 
@@ -680,13 +674,13 @@ export class TranslationQualityAssurance {
     // 用語集（実際の実装では外部ファイルから読み込み）
     const glossaries = {
       ja: {
-        'dashboard': 'ダッシュボード',
-        'settings': '設定',
-        'profile': 'プロフィール',
-        'authentication': '認証',
-        'task': 'タスク',
-        'calendar': 'カレンダー'
-      }
+        dashboard: 'ダッシュボード',
+        settings: '設定',
+        profile: 'プロフィール',
+        authentication: '認証',
+        task: 'タスク',
+        calendar: 'カレンダー',
+      },
     }
 
     return glossaries[language as keyof typeof glossaries] || {}
@@ -700,12 +694,15 @@ export class TranslationQualityAssurance {
   }
 
   private groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {
-    return array.reduce((groups, item) => {
-      const group = String(item[key])
-      groups[group] = groups[group] || []
-      groups[group].push(item)
-      return groups
-    }, {} as Record<string, T[]>)
+    return array.reduce(
+      (groups, item) => {
+        const group = String(item[key])
+        groups[group] = groups[group] || []
+        groups[group].push(item)
+        return groups
+      },
+      {} as Record<string, T[]>
+    )
   }
 
   // データ永続化メソッド
@@ -735,11 +732,7 @@ export class TranslationQualityAssurance {
     return await this.startReviewWorkflow(translationKey, language)
   }
 
-  private async loadAssessments(
-    startDate: Date,
-    endDate: Date,
-    language?: string
-  ): Promise<QualityAssessment[]> {
+  private async loadAssessments(startDate: Date, endDate: Date, language?: string): Promise<QualityAssessment[]> {
     const assessments: QualityAssessment[] = []
 
     if (!fs.existsSync(this.assessmentsPath)) {

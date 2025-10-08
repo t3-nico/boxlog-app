@@ -7,14 +7,10 @@ const DataExportSettings = memo(() => {
     <div className="space-y-6">
       <div>
         <h2 className="text-lg font-medium">データエクスポート</h2>
-        <p className="text-sm text-muted-foreground">
-          データのバックアップやエクスポートを行います
-        </p>
+        <p className="text-muted-foreground text-sm">データのバックアップやエクスポートを行います</p>
       </div>
       <div className="rounded-lg border p-4">
-        <p className="text-sm text-muted-foreground">
-          現在、この機能は開発中です
-        </p>
+        <p className="text-muted-foreground text-sm">現在、この機能は開発中です</p>
       </div>
     </div>
   )

@@ -2,15 +2,15 @@
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
 'use client'
 
-import React, { useCallback, useEffect, useMemo, Suspense } from 'react'
+import React, { Suspense, useCallback, useEffect, useMemo } from 'react'
 
 import { useRouter } from 'next/navigation'
 
 import { format } from 'date-fns'
 
+import { useEventStore } from '@/features/events'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
-import { useEventStore } from '@/features/events'
 import { useNotifications } from '@/features/notifications/hooks/useNotifications'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { getCurrentTimezone } from '@/features/settings/utils/timezone'
@@ -19,11 +19,11 @@ import { logger } from '@/lib/logger'
 
 import { useCalendarNavigation } from '../contexts/CalendarNavigationContext'
 
+import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useCalendarContextMenu } from '../hooks/useCalendarContextMenu'
 import { useCalendarKeyboard } from '../hooks/useCalendarKeyboard'
-import { useEventOperations } from '../hooks/useEventOperations'
-import { useCalendarLayout } from '../hooks/ui/useCalendarLayout'
 import { useEventContextActions } from '../hooks/useEventContextActions'
+import { useEventOperations } from '../hooks/useEventOperations'
 import { useWeekendNavigation } from '../hooks/useWeekendNavigation'
 import { useWeekendToggleShortcut } from '../hooks/useWeekendToggleShortcut'
 import { calculateViewDateRange } from '../lib/view-helpers'
@@ -35,26 +35,20 @@ import { CalendarLayout } from './layout/CalendarLayout'
 import { EventContextMenu } from './views/shared/components'
 
 // 遅延ロード: カレンダービューコンポーネントは大きいため、使用時のみロード
-const DayView = React.lazy(() =>
-  import('./views/DayView').then((module) => ({ default: module.DayView }))
-)
-const WeekView = React.lazy(() =>
-  import('./views/WeekView').then((module) => ({ default: module.WeekView }))
-)
+const DayView = React.lazy(() => import('./views/DayView').then((module) => ({ default: module.DayView })))
+const WeekView = React.lazy(() => import('./views/WeekView').then((module) => ({ default: module.WeekView })))
 const ThreeDayView = React.lazy(() =>
   import('./views/ThreeDayView').then((module) => ({ default: module.ThreeDayView }))
 )
-const TwoWeekView = React.lazy(() =>
-  import('./views/TwoWeekView').then((module) => ({ default: module.TwoWeekView }))
-)
+const TwoWeekView = React.lazy(() => import('./views/TwoWeekView').then((module) => ({ default: module.TwoWeekView })))
 
 // ローディングフォールバック
 const CalendarViewSkeleton = () => (
   <div className="h-full w-full animate-pulse">
-    <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded mb-4" />
+    <div className="mb-4 h-12 rounded bg-neutral-200 dark:bg-neutral-800" />
     <div className="grid grid-cols-7 gap-2">
       {Array.from({ length: 21 }).map((_, i) => (
-        <div key={i} className="h-24 bg-neutral-200 dark:bg-neutral-800 rounded" />
+        <div key={i} className="h-24 rounded bg-neutral-200 dark:bg-neutral-800" />
       ))}
     </div>
   </div>
@@ -366,7 +360,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [setSelectedEvent, setActiveContent, setInspectorOpen]
   )
 
-
   const handleCreateEvent = useCallback(
     (date?: Date, time?: string) => {
       logger.log('➕ Create event requested:', {
@@ -430,7 +423,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     },
     [openCreateInspector, viewType, currentDate]
   )
-
 
   // 週末スキップナビゲーション（フック化）
   const { handleTodayWithWeekendSkip, handleWeekendSkipNavigation, adjustWeekendDate } = useWeekendNavigation({
@@ -668,7 +660,6 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
     [openCreateInspector, viewType]
   )
 
-
   return (
     <DnDProvider>
       <CalendarLayout
@@ -695,7 +686,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
       </CalendarLayout>
 
       {/* イベントコンテキストメニュー */}
-      {contextMenuEvent && contextMenuPosition ? <EventContextMenu
+      {contextMenuEvent && contextMenuPosition ? (
+        <EventContextMenu
           event={contextMenuEvent}
           position={contextMenuPosition}
           onClose={handleCloseContextMenu}
@@ -703,7 +695,8 @@ export const CalendarController = ({ className, initialViewType = 'day', initial
           onDelete={handleDeleteEvent}
           onDuplicate={handleDuplicateEvent}
           onViewDetails={handleViewDetails}
-        /> : null}
+        />
+      ) : null}
     </DnDProvider>
   )
 }

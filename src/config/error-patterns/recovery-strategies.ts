@@ -10,12 +10,12 @@ import { ErrorCategory, ErrorCode, getErrorCategory } from './categories'
  * リトライ戦略の設定
  */
 export interface RetryStrategy {
-  enabled: boolean                    // リトライを有効にするか
-  maxAttempts: number                // 最大試行回数
-  baseDelay: number                  // 基本待機時間（ミリ秒）
-  maxDelay: number                   // 最大待機時間（ミリ秒）
-  backoffMultiplier: number          // 指数バックオフの乗数
-  jitter: boolean                    // ジッタ（ランダム要素）を追加するか
+  enabled: boolean // リトライを有効にするか
+  maxAttempts: number // 最大試行回数
+  baseDelay: number // 基本待機時間（ミリ秒）
+  maxDelay: number // 最大待機時間（ミリ秒）
+  backoffMultiplier: number // 指数バックオフの乗数
+  jitter: boolean // ジッタ（ランダム要素）を追加するか
   retryCondition?: (error: Error) => boolean // リトライ条件
 }
 
@@ -23,20 +23,20 @@ export interface RetryStrategy {
  * サーキットブレーカーの設定
  */
 export interface CircuitBreakerConfig {
-  enabled: boolean                   // サーキットブレーカーを有効にするか
-  failureThreshold: number          // 失敗閾値（この回数失敗でOPEN）
-  recoveryTimeout: number           // 復旧タイムアウト（ミリ秒）
-  successThreshold: number          // 成功閾値（この回数成功でCLOSED）
-  monitoringPeriod: number          // 監視期間（ミリ秒）
+  enabled: boolean // サーキットブレーカーを有効にするか
+  failureThreshold: number // 失敗閾値（この回数失敗でOPEN）
+  recoveryTimeout: number // 復旧タイムアウト（ミリ秒）
+  successThreshold: number // 成功閾値（この回数成功でCLOSED）
+  monitoringPeriod: number // 監視期間（ミリ秒）
 }
 
 /**
  * フォールバック戦略
  */
 export interface FallbackStrategy {
-  enabled: boolean                   // フォールバックを有効にするか
-  handler: () => Promise<unknown>        // フォールバック処理関数
-  timeout?: number                   // フォールバックのタイムアウト
+  enabled: boolean // フォールバックを有効にするか
+  handler: () => Promise<unknown> // フォールバック処理関数
+  timeout?: number // フォールバックのタイムアウト
 }
 
 /**
@@ -46,8 +46,8 @@ export interface RecoveryStrategy {
   retry: RetryStrategy
   circuitBreaker: CircuitBreakerConfig
   fallback?: FallbackStrategy
-  autoRecovery: boolean             // 自動復旧を試行するか
-  userNotification: boolean         // ユーザーに通知するか
+  autoRecovery: boolean // 自動復旧を試行するか
+  userNotification: boolean // ユーザーに通知するか
   logLevel: 'debug' | 'info' | 'warn' | 'error' // ログレベル
 }
 
@@ -56,23 +56,23 @@ export interface RecoveryStrategy {
  */
 const AUTH_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: false,                   // 認証エラーは基本的にリトライしない
+    enabled: false, // 認証エラーは基本的にリトライしない
     maxAttempts: 1,
     baseDelay: 1000,
     maxDelay: 5000,
     backoffMultiplier: 2,
-    jitter: false
+    jitter: false,
   },
   circuitBreaker: {
-    enabled: false,                   // 認証では使用しない
+    enabled: false, // 認証では使用しない
     failureThreshold: 5,
     recoveryTimeout: 30000,
     successThreshold: 3,
-    monitoringPeriod: 60000
+    monitoringPeriod: 60000,
   },
-  autoRecovery: false,               // 手動対応が必要
-  userNotification: true,            // ユーザーに明確に通知
-  logLevel: 'warn'
+  autoRecovery: false, // 手動対応が必要
+  userNotification: true, // ユーザーに明確に通知
+  logLevel: 'warn',
 }
 
 /**
@@ -80,23 +80,23 @@ const AUTH_RECOVERY_STRATEGY: RecoveryStrategy = {
  */
 const VALIDATION_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: false,                   // バリデーションエラーはリトライ不要
+    enabled: false, // バリデーションエラーはリトライ不要
     maxAttempts: 1,
     baseDelay: 0,
     maxDelay: 0,
     backoffMultiplier: 1,
-    jitter: false
+    jitter: false,
   },
   circuitBreaker: {
-    enabled: false,                   // バリデーションでは使用しない
+    enabled: false, // バリデーションでは使用しない
     failureThreshold: 10,
     recoveryTimeout: 10000,
     successThreshold: 2,
-    monitoringPeriod: 30000
+    monitoringPeriod: 30000,
   },
-  autoRecovery: false,               // ユーザー入力修正が必要
-  userNotification: true,            // 入力エラーを明確に通知
-  logLevel: 'info'
+  autoRecovery: false, // ユーザー入力修正が必要
+  userNotification: true, // 入力エラーを明確に通知
+  logLevel: 'info',
 }
 
 /**
@@ -104,29 +104,29 @@ const VALIDATION_RECOVERY_STRATEGY: RecoveryStrategy = {
  */
 const DB_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: true,                    // DBエラーは積極的にリトライ
+    enabled: true, // DBエラーは積極的にリトライ
     maxAttempts: 3,
     baseDelay: 1000,
     maxDelay: 10000,
     backoffMultiplier: 2,
-    jitter: true,                     // DB負荷分散のためジッタ有効
+    jitter: true, // DB負荷分散のためジッタ有効
     retryCondition: (error) => {
       // 接続エラーやタイムアウトのみリトライ
-      return error.message.includes('connection') ||
-             error.message.includes('timeout') ||
-             error.message.includes('deadlock')
-    }
+      return (
+        error.message.includes('connection') || error.message.includes('timeout') || error.message.includes('deadlock')
+      )
+    },
   },
   circuitBreaker: {
-    enabled: true,                    // DB負荷軽減のため有効
+    enabled: true, // DB負荷軽減のため有効
     failureThreshold: 5,
     recoveryTimeout: 30000,
     successThreshold: 3,
-    monitoringPeriod: 60000
+    monitoringPeriod: 60000,
   },
-  autoRecovery: true,                // 自動復旧を試行
-  userNotification: true,            // 問題を透明性を持って通知
-  logLevel: 'error'
+  autoRecovery: true, // 自動復旧を試行
+  userNotification: true, // 問題を透明性を持って通知
+  logLevel: 'error',
 }
 
 /**
@@ -134,23 +134,23 @@ const DB_RECOVERY_STRATEGY: RecoveryStrategy = {
  */
 const BIZ_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: false,                   // ビジネスルール違反はリトライ不要
+    enabled: false, // ビジネスルール違反はリトライ不要
     maxAttempts: 1,
     baseDelay: 500,
     maxDelay: 2000,
     backoffMultiplier: 1.5,
-    jitter: false
+    jitter: false,
   },
   circuitBreaker: {
-    enabled: false,                   // ビジネスロジックでは使用しない
+    enabled: false, // ビジネスロジックでは使用しない
     failureThreshold: 10,
     recoveryTimeout: 15000,
     successThreshold: 2,
-    monitoringPeriod: 45000
+    monitoringPeriod: 45000,
   },
-  autoRecovery: false,               // ユーザー操作が必要
-  userNotification: true,            // ビジネスルール説明を通知
-  logLevel: 'info'
+  autoRecovery: false, // ユーザー操作が必要
+  userNotification: true, // ビジネスルール説明を通知
+  logLevel: 'info',
 }
 
 /**
@@ -158,25 +158,27 @@ const BIZ_RECOVERY_STRATEGY: RecoveryStrategy = {
  */
 const EXTERNAL_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: true,                    // 外部サービスエラーは積極的にリトライ
+    enabled: true, // 外部サービスエラーは積極的にリトライ
     maxAttempts: 4,
     baseDelay: 2000,
     maxDelay: 30000,
     backoffMultiplier: 2.5,
-    jitter: true,                     // ネットワーク負荷分散
+    jitter: true, // ネットワーク負荷分散
     retryCondition: (error) => {
       // タイムアウトや一時的なエラーのみリトライ
-      return !error.message.includes('authentication') &&
-             !error.message.includes('authorization') &&
-             !error.message.includes('forbidden')
-    }
+      return (
+        !error.message.includes('authentication') &&
+        !error.message.includes('authorization') &&
+        !error.message.includes('forbidden')
+      )
+    },
   },
   circuitBreaker: {
-    enabled: true,                    // 外部サービス保護のため有効
-    failureThreshold: 3,              // 外部サービスは敏感に反応
-    recoveryTimeout: 60000,           // 長めの復旧時間
+    enabled: true, // 外部サービス保護のため有効
+    failureThreshold: 3, // 外部サービスは敏感に反応
+    recoveryTimeout: 60000, // 長めの復旧時間
     successThreshold: 2,
-    monitoringPeriod: 120000
+    monitoringPeriod: 120000,
   },
   fallback: {
     enabled: true,
@@ -184,11 +186,11 @@ const EXTERNAL_RECOVERY_STRATEGY: RecoveryStrategy = {
       // キャッシュされたデータや代替サービスを使用
       return null
     },
-    timeout: 5000
+    timeout: 5000,
   },
-  autoRecovery: true,                // フォールバック含む自動復旧
-  userNotification: true,            // 外部サービス問題を通知
-  logLevel: 'warn'
+  autoRecovery: true, // フォールバック含む自動復旧
+  userNotification: true, // 外部サービス問題を通知
+  logLevel: 'warn',
 }
 
 /**
@@ -196,7 +198,7 @@ const EXTERNAL_RECOVERY_STRATEGY: RecoveryStrategy = {
  */
 const SYSTEM_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: true,                    // システムエラーは慎重にリトライ
+    enabled: true, // システムエラーは慎重にリトライ
     maxAttempts: 2,
     baseDelay: 3000,
     maxDelay: 15000,
@@ -204,21 +206,23 @@ const SYSTEM_RECOVERY_STRATEGY: RecoveryStrategy = {
     jitter: true,
     retryCondition: (error) => {
       // 一時的なシステムエラーのみリトライ
-      return error.message.includes('temporary') ||
-             error.message.includes('unavailable') ||
-             error.message.includes('timeout')
-    }
+      return (
+        error.message.includes('temporary') ||
+        error.message.includes('unavailable') ||
+        error.message.includes('timeout')
+      )
+    },
   },
   circuitBreaker: {
-    enabled: true,                    // システム保護のため有効
-    failureThreshold: 2,              // 低い閾値でシステム保護
-    recoveryTimeout: 120000,          // 長い復旧時間
-    successThreshold: 5,              // 慎重な復旧判定
-    monitoringPeriod: 300000
+    enabled: true, // システム保護のため有効
+    failureThreshold: 2, // 低い閾値でシステム保護
+    recoveryTimeout: 120000, // 長い復旧時間
+    successThreshold: 5, // 慎重な復旧判定
+    monitoringPeriod: 300000,
   },
-  autoRecovery: true,                // 自動復旧を試行
-  userNotification: true,            // システム問題を通知
-  logLevel: 'error'
+  autoRecovery: true, // 自動復旧を試行
+  userNotification: true, // システム問題を通知
+  logLevel: 'error',
 }
 
 /**
@@ -226,24 +230,24 @@ const SYSTEM_RECOVERY_STRATEGY: RecoveryStrategy = {
  */
 const RATE_RECOVERY_STRATEGY: RecoveryStrategy = {
   retry: {
-    enabled: true,                    // レート制限は時間経過でリトライ
+    enabled: true, // レート制限は時間経過でリトライ
     maxAttempts: 5,
-    baseDelay: 5000,                  // 長めの初期待機時間
+    baseDelay: 5000, // 長めの初期待機時間
     maxDelay: 60000,
     backoffMultiplier: 2,
-    jitter: true,                     // 負荷分散のためジッタ有効
-    retryCondition: () => true        // レート制限は全てリトライ可能
+    jitter: true, // 負荷分散のためジッタ有効
+    retryCondition: () => true, // レート制限は全てリトライ可能
   },
   circuitBreaker: {
-    enabled: true,                    // API保護のため有効
+    enabled: true, // API保護のため有効
     failureThreshold: 3,
-    recoveryTimeout: 300000,          // 5分の長い復旧時間
+    recoveryTimeout: 300000, // 5分の長い復旧時間
     successThreshold: 2,
-    monitoringPeriod: 600000
+    monitoringPeriod: 600000,
   },
-  autoRecovery: true,                // 自動的に待機してリトライ
-  userNotification: false,           // ユーザーには透明に処理
-  logLevel: 'debug'
+  autoRecovery: true, // 自動的に待機してリトライ
+  userNotification: false, // ユーザーには透明に処理
+  logLevel: 'debug',
 }
 
 /**
@@ -256,7 +260,7 @@ export const RECOVERY_STRATEGIES: Record<ErrorCategory, RecoveryStrategy> = {
   BIZ: BIZ_RECOVERY_STRATEGY,
   EXTERNAL: EXTERNAL_RECOVERY_STRATEGY,
   SYSTEM: SYSTEM_RECOVERY_STRATEGY,
-  RATE: RATE_RECOVERY_STRATEGY
+  RATE: RATE_RECOVERY_STRATEGY,
 }
 
 /**
@@ -329,7 +333,7 @@ export async function executeWithRetry<T>(
       console.log(`Retry attempt ${attempt}/${strategy.maxAttempts} for error code ${errorCode}, waiting ${delay}ms`)
 
       // 待機
-      await new Promise(resolve => setTimeout(resolve, delay))
+      await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
 
@@ -408,7 +412,7 @@ export class CircuitBreaker {
       failureCount: this.failureCount,
       successCount: this.successCount,
       lastFailureTime: this.lastFailureTime,
-      nextAttemptTime: this.nextAttemptTime
+      nextAttemptTime: this.nextAttemptTime,
     }
   }
 }
@@ -416,10 +420,7 @@ export class CircuitBreaker {
 /**
  * フォールバック実行関数
  */
-export async function executeWithFallback<T>(
-  primary: () => Promise<T>,
-  fallback: FallbackStrategy
-): Promise<T> {
+export async function executeWithFallback<T>(primary: () => Promise<T>, fallback: FallbackStrategy): Promise<T> {
   if (!fallback.enabled) {
     return await primary()
   }
@@ -432,9 +433,7 @@ export async function executeWithFallback<T>(
     if (fallback.timeout) {
       return await Promise.race([
         fallback.handler(),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Fallback timeout')), fallback.timeout)
-        )
+        new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Fallback timeout')), fallback.timeout)),
       ])
     }
 

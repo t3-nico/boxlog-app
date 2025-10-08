@@ -53,9 +53,8 @@ export const useEssentialSingleView = ({
   fastInputMode,
   onSave,
   onClose,
-  formActions
+  formActions,
 }: UseEssentialSingleViewProps) => {
-
   const {
     setTitle,
     setTags,
@@ -68,7 +67,7 @@ export const useEssentialSingleView = ({
     setFastInputMode,
     setIsSubmitting,
     setError,
-    resetForm
+    resetForm,
   } = formActions
 
   // モーダルキャンセル時の処理
@@ -88,7 +87,9 @@ export const useEssentialSingleView = ({
     setTaskPriority('medium')
 
     setTimeout(() => {
-      const titleInput = document.querySelector('input[name="event-title"], input[type="text"]:first-of-type') as HTMLInputElement
+      const titleInput = document.querySelector(
+        'input[name="event-title"], input[type="text"]:first-of-type'
+      ) as HTMLInputElement
       if (titleInput) {
         titleInput.focus()
       }
@@ -113,7 +114,7 @@ export const useEssentialSingleView = ({
     const saveData: Record<string, unknown> = {
       title,
       tags,
-      description: memo || undefined
+      description: memo || undefined,
     }
 
     if (scheduleMode === 'schedule') {
@@ -149,7 +150,6 @@ export const useEssentialSingleView = ({
       } else {
         handleNormalModeSuccess()
       }
-
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save')
     } finally {
@@ -165,7 +165,7 @@ export const useEssentialSingleView = ({
     isEditMode,
     fastInputMode,
     handleQuickInputReset,
-    handleNormalModeSuccess
+    handleNormalModeSuccess,
   ])
 
   // キーボードショートカット
@@ -206,6 +206,6 @@ export const useEssentialSingleView = ({
 
   return {
     handleSave,
-    handleCancel
+    handleCancel,
   }
 }

@@ -12,7 +12,7 @@ export function useWeekendToggleShortcut() {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Cmd (Mac) または Ctrl (Windows/Linux) + W
       const isToggleShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'w'
-      
+
       if (!isToggleShortcut) return
 
       // デフォルトのブラウザ動作（ウィンドウを閉じる）を防ぐ
@@ -20,13 +20,13 @@ export function useWeekendToggleShortcut() {
       event.stopPropagation()
 
       // 入力フィールドにフォーカスがある場合は無視
-      const {activeElement} = document
-      const isInputField = activeElement && (
-        activeElement.tagName === 'INPUT' ||
-        activeElement.tagName === 'TEXTAREA' ||
-        activeElement.getAttribute('contenteditable') === 'true' ||
-        activeElement.getAttribute('role') === 'textbox'
-      )
+      const { activeElement } = document
+      const isInputField =
+        activeElement &&
+        (activeElement.tagName === 'INPUT' ||
+          activeElement.tagName === 'TEXTAREA' ||
+          activeElement.getAttribute('contenteditable') === 'true' ||
+          activeElement.getAttribute('role') === 'textbox')
 
       if (isInputField) return
 
@@ -36,13 +36,13 @@ export function useWeekendToggleShortcut() {
 
       // 週末表示を切り替え
       updateSettings({ showWeekends: !showWeekends })
-      
+
       // 成功フィードバック（短時間のトースト風通知）
       showToggleFeedback(!showWeekends)
     }
 
     document.addEventListener('keydown', handleKeyDown)
-    
+
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
@@ -50,7 +50,7 @@ export function useWeekendToggleShortcut() {
 
   return {
     showWeekends,
-    toggleWeekends: () => updateSettings({ showWeekends: !showWeekends })
+    toggleWeekends: () => updateSettings({ showWeekends: !showWeekends }),
   }
 }
 
@@ -76,7 +76,9 @@ function showToggleFeedback(newState: boolean) {
     flex items-center gap-3
     transform transition-all duration-300 ease-out
     translate-x-full opacity-0
-  `.replace(/\s+/g, ' ').trim()
+  `
+    .replace(/\s+/g, ' ')
+    .trim()
 
   // 内容を設定
   notification.innerHTML = `
@@ -102,7 +104,7 @@ function showToggleFeedback(newState: boolean) {
   // 2秒後にフェードアウト
   setTimeout(() => {
     notification.classList.add('translate-x-full', 'opacity-0')
-    
+
     // アニメーション完了後に削除
     setTimeout(() => {
       if (notification.parentNode) {
@@ -125,5 +127,5 @@ export const WEEKEND_TOGGLE_SHORTCUT_HELP = {
   key: 'Cmd/Ctrl + W',
   description: getTranslation(CALENDAR_ACCESSIBILITY_KEYS.TOGGLE_WEEKEND),
   mac: '⌘W',
-  windows: 'Ctrl+W'
+  windows: 'Ctrl+W',
 } as const

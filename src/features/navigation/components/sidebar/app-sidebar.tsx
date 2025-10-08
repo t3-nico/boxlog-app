@@ -1,59 +1,50 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import {
-  Calendar,
-  SquareKanban,
-  Table as TableIcon,
-  BarChart3,
-  Settings,
-  HelpCircle,
-  Search,
-} from "lucide-react"
+import { BarChart3, Calendar, HelpCircle, Search, Settings, SquareKanban, Table as TableIcon } from 'lucide-react'
 
-import { useAuthContext } from "@/features/auth"
+import { useAuthContext } from '@/features/auth'
 
-import { NavMain } from "./nav-main"
-import { NavSecondary } from "./nav-secondary"
-import { NavUser } from "./nav-user"
+import { NavMain } from './nav-main'
+import { NavSecondary } from './nav-secondary'
+import { NavUser } from './nav-user'
 
 const data = {
   navMain: [
     {
-      title: "Calendar",
-      url: "/ja/calendar",
+      title: 'Calendar',
+      url: '/ja/calendar',
       icon: Calendar,
     },
     {
-      title: "Board",
-      url: "/ja/board",
+      title: 'Board',
+      url: '/ja/board',
       icon: SquareKanban,
     },
     {
-      title: "Table",
-      url: "/ja/table",
+      title: 'Table',
+      url: '/ja/table',
       icon: TableIcon,
     },
     {
-      title: "Stats",
-      url: "/ja/stats",
+      title: 'Stats',
+      url: '/ja/stats',
       icon: BarChart3,
     },
   ],
   navSecondary: [
     {
-      title: "Settings",
-      url: "/ja/settings",
+      title: 'Settings',
+      url: '/ja/settings',
       icon: Settings,
     },
     {
-      title: "Get Help",
-      url: "#",
+      title: 'Get Help',
+      url: '#',
       icon: HelpCircle,
     },
     {
-      title: "Search",
-      url: "#",
+      title: 'Search',
+      url: '#',
       icon: Search,
     },
   ],
@@ -69,7 +60,7 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-secondary px-4 py-2">
+    <aside className="bg-secondary flex h-full w-64 flex-col px-4 py-2">
       {/* Header - User Menu */}
       <div className="mb-4">
         <NavUser user={userData} />

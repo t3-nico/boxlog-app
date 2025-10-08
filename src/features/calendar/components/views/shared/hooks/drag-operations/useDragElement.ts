@@ -24,7 +24,7 @@ export function useDragElement() {
 
     // scheduledのactiveカラーを適用
     const activeColorClasses = calendarColors.event.scheduled.active?.split(' ') || []
-    activeColorClasses.forEach(cls => {
+    activeColorClasses.forEach((cls) => {
       if (cls) dragElement.classList.add(cls)
     })
 
@@ -53,11 +53,7 @@ export function useDragElement() {
     return { dragElement, initialRect: rect }
   }, [])
 
-  const updateDragElementPosition = useCallback((
-    newLeft: number,
-    newTop: number,
-    containerRect?: DOMRect
-  ) => {
+  const updateDragElementPosition = useCallback((newLeft: number, newTop: number, containerRect?: DOMRect) => {
     if (!dragElementRef.current) return
 
     let finalLeft = newLeft
@@ -68,25 +64,15 @@ export function useDragElement() {
       const elementWidth = dragElementRef.current.offsetWidth
       const elementHeight = dragElementRef.current.offsetHeight
 
-      finalLeft = Math.max(
-        containerRect.left,
-        Math.min(containerRect.right - elementWidth, newLeft)
-      )
-      finalTop = Math.max(
-        containerRect.top,
-        Math.min(containerRect.bottom - elementHeight, newTop)
-      )
+      finalLeft = Math.max(containerRect.left, Math.min(containerRect.right - elementWidth, newLeft))
+      finalTop = Math.max(containerRect.top, Math.min(containerRect.bottom - elementHeight, newTop))
     }
 
     dragElementRef.current.style.left = `${finalLeft}px`
     dragElementRef.current.style.top = `${finalTop}px`
   }, [])
 
-  const updateDragElementTime = useCallback((
-    startTime: Date,
-    endTime: Date,
-    timeFormat: '12h' | '24h' = '24h'
-  ) => {
+  const updateDragElementTime = useCallback((startTime: Date, endTime: Date, timeFormat: '12h' | '24h' = '24h') => {
     if (!dragElementRef.current) return
 
     const timeElement = dragElementRef.current.querySelector('.event-time')

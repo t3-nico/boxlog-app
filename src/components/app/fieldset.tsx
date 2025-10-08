@@ -27,7 +27,7 @@ export const Legend = ({
       {...props}
       className={cn(
         className,
-        'text-base font-semibold text-neutral-900 dark:text-neutral-100 data-disabled:opacity-50 sm:text-sm'
+        'text-base font-semibold text-neutral-900 data-disabled:opacity-50 sm:text-sm dark:text-neutral-100'
       )}
     />
   )
@@ -37,7 +37,10 @@ export const FieldGroup = ({ className, ...props }: React.ComponentPropsWithoutR
   return <div data-slot="control" {...props} className={cn(className, 'flex flex-col gap-8')} />
 }
 
-export const Field = ({ className, ...props }: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) => {
+export const Field = ({
+  className,
+  ...props
+}: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) => {
   return (
     <Headless.Field
       {...props}
@@ -54,14 +57,17 @@ export const Field = ({ className, ...props }: { className?: string } & Omit<Hea
   )
 }
 
-export const Label = ({ className, ...props }: { className?: string } & Omit<Headless.LabelProps, 'as' | 'className'>) => {
+export const Label = ({
+  className,
+  ...props
+}: { className?: string } & Omit<Headless.LabelProps, 'as' | 'className'>) => {
   return (
     <Headless.Label
       data-slot="label"
       {...props}
       className={cn(
         className,
-        'text-base text-neutral-900 dark:text-neutral-100 select-none data-disabled:opacity-50 sm:text-sm'
+        'text-base text-neutral-900 select-none data-disabled:opacity-50 sm:text-sm dark:text-neutral-100'
       )}
     />
   )
@@ -75,7 +81,7 @@ export const Description = ({
     <Headless.Description
       data-slot="description"
       {...props}
-      className={cn(className, 'text-base text-neutral-800 dark:text-neutral-200 data-disabled:opacity-50 sm:text-sm')}
+      className={cn(className, 'text-base text-neutral-800 data-disabled:opacity-50 sm:text-sm dark:text-neutral-200')}
     />
   )
 }
@@ -88,7 +94,7 @@ export const ErrorMessage = ({
     <Headless.Description
       data-slot="error"
       {...props}
-      className={cn(className, 'text-base text-red-600 dark:text-red-400 data-disabled:opacity-50 sm:text-sm')}
+      className={cn(className, 'text-base text-red-600 data-disabled:opacity-50 sm:text-sm dark:text-red-400')}
     />
   )
 }

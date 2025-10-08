@@ -42,11 +42,11 @@ export function endOfDay(date: Date): Date {
 export function formatDate(date: Date, format: 'short' | 'long' | 'numeric' = 'short'): string {
   const weekdays = ['日', '月', '火', '水', '木', '金', '土']
   const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-  
+
   const day = date.getDate()
   const weekday = weekdays[date.getDay()]
   const month = months[date.getMonth()]
-  
+
   switch (format) {
     case 'numeric':
       return `${day}`
@@ -65,7 +65,7 @@ export function formatDate(date: Date, format: 'short' | 'long' | 'numeric' = 's
 export function formatTime(date: Date, format: '12h' | '24h' = '24h'): string {
   const hours = date.getHours()
   const minutes = date.getMinutes()
-  
+
   if (format === '24h') {
     return `${hours}:${minutes.toString().padStart(2, '0')}`
   } else {
@@ -104,12 +104,12 @@ export function getDaysDifference(date1: Date, date2: Date): number {
 export function generateDateRange(startDate: Date, endDate: Date): Date[] {
   const dates: Date[] = []
   const current = new Date(startDate)
-  
+
   while (current <= endDate) {
     dates.push(new Date(current))
     current.setDate(current.getDate() + 1)
   }
-  
+
   return dates
 }
 
@@ -191,9 +191,7 @@ export function getDateKey(date: Date): string {
 export function isValidEvent(event: { startDate?: Date | string; [key: string]: unknown }): boolean {
   if (!event.startDate) return false
 
-  const eventStart = event.startDate instanceof Date
-    ? event.startDate
-    : new Date(event.startDate)
+  const eventStart = event.startDate instanceof Date ? event.startDate : new Date(event.startDate)
 
   return !isNaN(eventStart.getTime())
 }
@@ -203,7 +201,7 @@ export function isValidEvent(event: { startDate?: Date | string; [key: string]: 
  */
 export function normalizeEventDate(eventDate: Date | string): Date | null {
   if (!eventDate) return null
-  
+
   const date = eventDate instanceof Date ? eventDate : new Date(eventDate)
   return isNaN(date.getTime()) ? null : date
 }
@@ -213,5 +211,5 @@ export function normalizeEventDate(eventDate: Date | string): Date | null {
  */
 export function getTodayIndex(dates: Date[]): number {
   const today = new Date()
-  return dates.findIndex(date => isSameDay(date, today))
+  return dates.findIndex((date) => isSameDay(date, today))
 }

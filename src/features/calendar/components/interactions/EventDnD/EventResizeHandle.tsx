@@ -3,8 +3,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { HOUR_HEIGHT } from '@/features/calendar/constants/calendar-constants'
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
 interface EventResizeHandleProps {
@@ -197,9 +197,9 @@ const ResizeHandleBody = ({
   <div
     ref={handleRef}
     className={cn(
-      'group absolute left-0 right-0 z-30',
+      'group absolute right-0 left-0 z-30',
       'transition-colors duration-200 hover:bg-white/20',
-      'focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500',
+      'focus:ring-2 focus:ring-blue-500 focus:outline-none focus:ring-inset',
       resizeState.isResizing && 'bg-white/30',
       type === 'start' ? 'top-0 cursor-ns-resize' : 'bottom-0 cursor-ns-resize',
       className
@@ -290,7 +290,7 @@ const ResizeHandleBody = ({
     {/* ドット（中央） */}
     <div
       className={cn(
-        'absolute left-1/2 top-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-200',
+        'absolute top-1/2 left-1/2 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-200',
         resizeState.isResizing
           ? resizeState.isInvalid
             ? 'bg-red-400'
@@ -330,9 +330,11 @@ const ResizeTooltip = ({
       }}
     >
       {displayTime}
-      {resizeState.isInvalid ? <div className="mt-1 text-xs opacity-90">
+      {resizeState.isInvalid ? (
+        <div className="mt-1 text-xs opacity-90">
           {type === 'start' ? t('calendar.resize.tooCloseToEnd') : t('calendar.resize.tooCloseToStart')}
-        </div> : null}
+        </div>
+      ) : null}
       {isShiftPressed ? <div className="mt-1 text-xs opacity-75">5min intervals</div> : null}
     </div>
   )
@@ -461,7 +463,13 @@ export const EventResizeHandle = ({
         timeToMinutes={timeToMinutes}
       />
 
-      <ResizeTooltip resizeState={resizeState} displayTime={displayTime} type={type} isShiftPressed={isShiftPressed} t={t} />
+      <ResizeTooltip
+        resizeState={resizeState}
+        displayTime={displayTime}
+        type={type}
+        isShiftPressed={isShiftPressed}
+        t={t}
+      />
 
       <ResizeBorder resizeState={resizeState} />
     </>

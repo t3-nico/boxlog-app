@@ -105,15 +105,11 @@ describe('time-grid-helpers', () => {
 
   describe('getGridLineClass', () => {
     it('正時の場合は実線を返す', () => {
-      expect(getGridLineClass(0, 15)).toBe(
-        'border-t border-gray-300 dark:border-gray-600'
-      )
+      expect(getGridLineClass(0, 15)).toBe('border-t border-gray-300 dark:border-gray-600')
     })
 
     it('間隔線の場合は破線を返す', () => {
-      expect(getGridLineClass(15, 15)).toBe(
-        'border-t border-dashed border-gray-200 dark:border-gray-700'
-      )
+      expect(getGridLineClass(15, 15)).toBe('border-t border-dashed border-gray-200 dark:border-gray-700')
     })
   })
 
@@ -149,8 +145,7 @@ describe('time-grid-helpers', () => {
 
       const result = constrainTaskDuration(start, end, 15)
 
-      const duration =
-        (result.endTime.getTime() - result.startTime.getTime()) / 60000
+      const duration = (result.endTime.getTime() - result.startTime.getTime()) / 60000
       expect(duration).toBe(15)
     })
 
@@ -160,8 +155,7 @@ describe('time-grid-helpers', () => {
 
       const result = constrainTaskDuration(start, end, 15, 480) // 最大8時間
 
-      const duration =
-        (result.endTime.getTime() - result.startTime.getTime()) / 60000
+      const duration = (result.endTime.getTime() - result.startTime.getTime()) / 60000
       expect(duration).toBe(480)
     })
   })
@@ -262,9 +256,7 @@ describe('time-grid-helpers', () => {
 
       const existingTasks: CalendarTask[] = []
 
-      expect(isDroppable(targetDate, targetTime, task, existingTasks)).toBe(
-        true
-      )
+      expect(isDroppable(targetDate, targetTime, task, existingTasks)).toBe(true)
     })
 
     it('重複がある場合はドロップ不可', () => {
@@ -287,9 +279,7 @@ describe('time-grid-helpers', () => {
         },
       ]
 
-      expect(isDroppable(targetDate, targetTime, task, existingTasks)).toBe(
-        false
-      )
+      expect(isDroppable(targetDate, targetTime, task, existingTasks)).toBe(false)
     })
   })
 

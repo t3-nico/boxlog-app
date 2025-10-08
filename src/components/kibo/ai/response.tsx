@@ -66,32 +66,32 @@ const components: Options['components'] = {
     </a>
   ),
   h1: ({ node: _node, children, className, ...props }) => (
-    <h1 className={cn('mb-2 mt-6 text-3xl font-semibold', className)} {...props}>
+    <h1 className={cn('mt-6 mb-2 text-3xl font-semibold', className)} {...props}>
       {children}
     </h1>
   ),
   h2: ({ node: _node, children, className, ...props }) => (
-    <h2 className={cn('mb-2 mt-6 text-2xl font-semibold', className)} {...props}>
+    <h2 className={cn('mt-6 mb-2 text-2xl font-semibold', className)} {...props}>
       {children}
     </h2>
   ),
   h3: ({ node: _node, children, className, ...props }) => (
-    <h3 className={cn('mb-2 mt-6 text-xl font-semibold', className)} {...props}>
+    <h3 className={cn('mt-6 mb-2 text-xl font-semibold', className)} {...props}>
       {children}
     </h3>
   ),
   h4: ({ node: _node, children, className, ...props }) => (
-    <h4 className={cn('mb-2 mt-6 text-lg font-semibold', className)} {...props}>
+    <h4 className={cn('mt-6 mb-2 text-lg font-semibold', className)} {...props}>
       {children}
     </h4>
   ),
   h5: ({ node: _node, children, className, ...props }) => (
-    <h5 className={cn('mb-2 mt-6 text-base font-semibold', className)} {...props}>
+    <h5 className={cn('mt-6 mb-2 text-base font-semibold', className)} {...props}>
       {children}
     </h5>
   ),
   h6: ({ node: _node, children, className, ...props }) => (
-    <h6 className={cn('mb-2 mt-6 text-sm font-semibold', className)} {...props}>
+    <h6 className={cn('mt-6 mb-2 text-sm font-semibold', className)} {...props}>
       {children}
     </h6>
   ),

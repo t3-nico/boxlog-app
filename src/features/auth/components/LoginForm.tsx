@@ -11,17 +11,35 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 // OAuth Provider Icons
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
   <svg viewBox="0 0 48 48" aria-hidden="true" className="h-5 w-5" {...props}>
-    <path fill="#EA4335" d="M24 9.5c3.6 0 6.8 1.2 9.3 3.6l7-7C35.9 2.5 30.1 0 24 0 15.5 0 8 5.9 3.5 14.5l7.4 5.9C12 15.9 17.5 9.5 24 9.5Z" />
-    <path fill="#4285F4" d="M47.3 24.9c0-1.8-.2-3.6-.5-5.3H24v10h13.1c-.6 3-2.2 5.6-4.8 7.3l7.7 6C44.6 39.8 47.3 33.7 47.3 24.9Z" />
-    <path fill="#FBBC05" d="M9.9 28.9a15 15 0 0 1-.5-4.9c0-1.7.3-3.4.8-5l-7.8-6.5A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.3-5.9Z" />
-    <path fill="#34A853" d="M24 48c6.6 0 12.2-2.2 16.3-6l-7.7-6c-2.1 1.4-4.9 2.3-8.6 2.3-6.6 0-12.1-4.4-14.1-10.4L2 32.8C5.4 41.5 12.9 48 24 48Z" />
+    <path
+      fill="#EA4335"
+      d="M24 9.5c3.6 0 6.8 1.2 9.3 3.6l7-7C35.9 2.5 30.1 0 24 0 15.5 0 8 5.9 3.5 14.5l7.4 5.9C12 15.9 17.5 9.5 24 9.5Z"
+    />
+    <path
+      fill="#4285F4"
+      d="M47.3 24.9c0-1.8-.2-3.6-.5-5.3H24v10h13.1c-.6 3-2.2 5.6-4.8 7.3l7.7 6C44.6 39.8 47.3 33.7 47.3 24.9Z"
+    />
+    <path
+      fill="#FBBC05"
+      d="M9.9 28.9a15 15 0 0 1-.5-4.9c0-1.7.3-3.4.8-5l-7.8-6.5A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.3-5.9Z"
+    />
+    <path
+      fill="#34A853"
+      d="M24 48c6.6 0 12.2-2.2 16.3-6l-7.7-6c-2.1 1.4-4.9 2.3-8.6 2.3-6.6 0-12.1-4.4-14.1-10.4L2 32.8C5.4 41.5 12.9 48 24 48Z"
+    />
   </svg>
 )
 
 const AppleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" {...props}>
-    <path d="M16.5 1.5c-1.3 0-2.8.9-3.6 2-.8 1-1.4 2.5-1.1 3.9 1.5 0 3-.9 3.8-2 0.8-1 1.5-2.6 1.5-3.9Z" fill="currentColor" />
-    <path d="M19 14.2c-.1-3 2.3-4.4 2.4-4.5-1.4-2-3.5-2.3-4.2-2.4-1.8-.2-3.4 1-4.3 1-1 0-2.6-1-4.2-.9-2.1 0-4.2 1.2-5.3 3-2.2 3.7-.6 9 1.7 12 1 1.4 2.1 3 3.7 2.9 1.5 0 2.1-1 4.1-1 2 0 2.5 1 4.2 1 1.7 0 2.7-1.5 3.6-2.8 1.1-1.7 1.5-3.3 1.5-3.4-0.1 0-3.3-1.2-3.4-4.9Z" fill="currentColor" />
+    <path
+      d="M16.5 1.5c-1.3 0-2.8.9-3.6 2-.8 1-1.4 2.5-1.1 3.9 1.5 0 3-.9 3.8-2 0.8-1 1.5-2.6 1.5-3.9Z"
+      fill="currentColor"
+    />
+    <path
+      d="M19 14.2c-.1-3 2.3-4.4 2.4-4.5-1.4-2-3.5-2.3-4.2-2.4-1.8-.2-3.4 1-4.3 1-1 0-2.6-1-4.2-.9-2.1 0-4.2 1.2-5.3 3-2.2 3.7-.6 9 1.7 12 1 1.4 2.1 3 3.7 2.9 1.5 0 2.1-1 4.1-1 2 0 2.5 1 4.2 1 1.7 0 2.7-1.5 3.6-2.8 1.1-1.7 1.5-3.3 1.5-3.4-0.1 0-3.3-1.2-3.4-4.9Z"
+      fill="currentColor"
+    />
   </svg>
 )
 
@@ -124,20 +142,16 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
         <Label htmlFor="password">Password</Label>
         <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       </div>
-      {error != null && (
-        <p className="text-red-600 dark:text-red-400 font-bold text-lg sm:text-base">
-          {error}
-        </p>
-      )}
+      {error != null && <p className="text-lg font-bold text-red-600 sm:text-base dark:text-red-400">{error}</p>}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Checkbox id="remember" name="remember" />
           <Label htmlFor="remember">Remember me</Label>
         </div>
-        <p className="text-base sm:text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-base text-neutral-600 sm:text-sm dark:text-neutral-400">
           <a
             href="/auth/password"
-            className="text-neutral-900 dark:text-neutral-100 decoration-current/50 underline hover:decoration-current"
+            className="text-neutral-900 underline decoration-current/50 hover:decoration-current dark:text-neutral-100"
           >
             <strong className="font-medium text-neutral-900 dark:text-neutral-100">Forgot your password?</strong>
           </a>
@@ -146,11 +160,11 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
       <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Logging in...' : 'Login'}
       </Button>
-      <p className="text-center text-base sm:text-sm text-neutral-600 dark:text-neutral-400">
+      <p className="text-center text-base text-neutral-600 sm:text-sm dark:text-neutral-400">
         Don&apos;t have an account?{' '}
         <a
           href="/auth/signup"
-          className="text-neutral-900 dark:text-neutral-100 decoration-current/50 underline hover:decoration-current"
+          className="text-neutral-900 underline decoration-current/50 hover:decoration-current dark:text-neutral-100"
         >
           <strong className="font-medium text-neutral-900 dark:text-neutral-100">Sign up</strong>
         </a>

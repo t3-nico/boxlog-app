@@ -1,9 +1,9 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
-import { describe, expect, it, beforeEach, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { Event, CreateEventRequest, UpdateEventRequest } from '../types/events'
+import type { CreateEventRequest, UpdateEventRequest } from '../types/events'
 
-import { useEventStore, eventSelectors } from './useEventStore'
+import { eventSelectors, useEventStore } from './useEventStore'
 
 // LocalStorageのモック
 const mockLocalStorage = (() => {

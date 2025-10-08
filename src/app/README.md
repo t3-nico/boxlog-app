@@ -27,14 +27,14 @@ src/app/
 
 ### アプリケーションページ（[locale]/(app)/）
 
-| パス | 機能 |
-|---|---|
+| パス        | 機能                     |
+| ----------- | ------------------------ |
 | `/settings` | 設定画面（14サブページ） |
-| `/calendar` | カレンダービュー |
-| `/board` | カンバンボード |
-| `/table` | テーブルビュー |
-| `/stats` | 統計・分析 |
-| `/ai-chat` | AIチャット |
+| `/calendar` | カレンダービュー         |
+| `/board`    | カンバンボード           |
+| `/table`    | テーブルビュー           |
+| `/stats`    | 統計・分析               |
+| `/ai-chat`  | AIチャット               |
 
 ### 設定ページ一覧
 
@@ -70,13 +70,13 @@ src/app/
 
 ### App Router規約
 
-| ファイル | 用途 |
-|---|---|
-| `layout.tsx` | レイアウトコンポーネント |
-| `page.tsx` | ページコンポーネント |
-| `loading.tsx` | ローディングUI |
-| `error.tsx` | エラーUI |
-| `not-found.tsx` | 404ページ |
+| ファイル        | 用途                     |
+| --------------- | ------------------------ |
+| `layout.tsx`    | レイアウトコンポーネント |
+| `page.tsx`      | ページコンポーネント     |
+| `loading.tsx`   | ローディングUI           |
+| `error.tsx`     | エラーUI                 |
+| `not-found.tsx` | 404ページ                |
 
 ### Server Components vs Client Components
 

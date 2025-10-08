@@ -6,40 +6,41 @@
  */
 
 import {
-  errorPatternDictionary,
   AppError,
   createAppError,
+  ERROR_CODES,
+  errorPatternDictionary,
   executeWithAutoRecovery,
+  getErrorCategory,
   type ErrorCode,
   type ErrorHandlingResult,
   type ErrorMetadata,
-  ERROR_CODES,
-  getErrorCategory
 } from '@/config/error-patterns'
 
 /**
  * エラーハンドリングオプション
  */
 export interface ErrorHandlingOptions {
-  showUserNotification?: boolean     // ユーザー通知を表示するか
-  logLevel?: 'debug' | 'info' | 'warn' | 'error'  // ログレベル
-  context?: Record<string, unknown>      // 追加コンテキスト
-  userId?: string                    // ユーザーID
-  sessionId?: string                 // セッションID
-  requestId?: string                 // リクエストID
-  source?: string                    // エラー発生源
-  retryEnabled?: boolean             // リトライを有効にするか
-  fallbackEnabled?: boolean          // フォールバックを有効にするか
+  showUserNotification?: boolean // ユーザー通知を表示するか
+  logLevel?: 'debug' | 'info' | 'warn' | 'error' // ログレベル
+  context?: Record<string, unknown> // 追加コンテキスト
+  userId?: string // ユーザーID
+  sessionId?: string // セッションID
+  requestId?: string // リクエストID
+  source?: string // エラー発生源
+  retryEnabled?: boolean // リトライを有効にするか
+  fallbackEnabled?: boolean // フォールバックを有効にするか
 }
 
 /**
  * ユーザー通知の設定
  */
 export interface NotificationConfig {
-  type: 'toast' | 'modal' | 'banner' | 'console'  // 通知タイプ
-  duration?: number                  // 表示時間（ミリ秒）
-  persistent?: boolean               // 永続表示するか
-  actionButton?: {                   // アクションボタン
+  type: 'toast' | 'modal' | 'banner' | 'console' // 通知タイプ
+  duration?: number // 表示時間（ミリ秒）
+  persistent?: boolean // 永続表示するか
+  actionButton?: {
+    // アクションボタン
     text: string
     action: () => void
   }
@@ -55,31 +56,21 @@ export class ErrorHandler {
   /**
    * 通知ハンドラーを登録
    */
-  registerNotificationHandler(
-    type: string,
-    handler: (message: string, config: NotificationConfig) => void
-  ): void {
+  registerNotificationHandler(type: string, handler: (message: string, config: NotificationConfig) => void): void {
     this.notificationHandlers.set(type, handler)
   }
 
   /**
    * ログハンドラーを登録
    */
-  registerLogHandler(
-    type: string,
-    handler: (level: string, message: string, error?: AppError) => void
-  ): void {
+  registerLogHandler(type: string, handler: (level: string, message: string, error?: AppError) => void): void {
     this.logHandlers.set(type, handler)
   }
 
   /**
    * エラーを処理する（メイン関数）
    */
-  async handleError(
-    error: Error | AppError,
-    errorCode?: ErrorCode,
-    options: ErrorHandlingOptions = {}
-  ): Promise<void> {
+  async handleError(error: Error | AppError, errorCode?: ErrorCode, options: ErrorHandlingOptions = {}): Promise<void> {
     const appError = this.normalizeError(error, errorCode, options)
 
     // ログ出力
@@ -114,7 +105,6 @@ export class ErrorHandler {
       }
 
       return result
-
     } catch (error) {
       // 復旧失敗時の処理
       const appError = this.normalizeError(error, errorCode, options)
@@ -125,7 +115,7 @@ export class ErrorHandler {
         error: appError,
         retryCount: 0,
         recoveryApplied: false,
-        fallbackUsed: false
+        fallbackUsed: false,
       }
     }
   }
@@ -133,10 +123,7 @@ export class ErrorHandler {
   /**
    * APIエラーを処理
    */
-  async handleApiError(
-    response: Response,
-    options: ErrorHandlingOptions = {}
-  ): Promise<AppError> {
+  async handleApiError(response: Response, options: ErrorHandlingOptions = {}): Promise<AppError> {
     let errorCode: ErrorCode
 
     // HTTPステータスコードからエラーコードを推定
@@ -177,9 +164,9 @@ export class ErrorHandler {
         url: response.url,
         status: response.status,
         statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries())
+        headers: Object.fromEntries(response.headers.entries()),
       },
-      ...options
+      ...options,
     }
 
     const appError = createAppError(errorMessage, errorCode, metadata)
@@ -200,13 +187,13 @@ export class ErrorHandler {
     const metadata: Partial<ErrorMetadata> = {
       source: 'validation',
       context: { fieldErrors },
-      ...options
+      ...options,
     }
 
     const appError = createAppError(errorMessage, errorCode, metadata)
     await this.handleError(appError, undefined, {
       ...options,
-      showUserNotification: true
+      showUserNotification: true,
     })
 
     return appError
@@ -215,11 +202,7 @@ export class ErrorHandler {
   /**
    * データベースエラーを処理
    */
-  async handleDatabaseError(
-    error: Error,
-    operation: string,
-    _options: ErrorHandlingOptions = {}
-  ): Promise<AppError> {
+  async handleDatabaseError(error: Error, operation: string, _options: ErrorHandlingOptions = {}): Promise<AppError> {
     let errorCode: ErrorCode
 
     // エラーメッセージからコードを推定
@@ -242,9 +225,9 @@ export class ErrorHandler {
       context: {
         operation,
         originalError: error.message,
-        stack: error.stack
+        stack: error.stack,
       },
-      ...options
+      ...options,
     }
 
     const appError = createAppError(error.message, errorCode, metadata, error)
@@ -277,9 +260,9 @@ export class ErrorHandler {
       source: `external:${serviceName}`,
       context: {
         serviceName,
-        originalError: error.message
+        originalError: error.message,
       },
-      ...options
+      ...options,
     }
 
     const appError = createAppError(error.message, errorCode, metadata, error)
@@ -291,11 +274,7 @@ export class ErrorHandler {
   /**
    * エラーを正規化（AppErrorに変換）
    */
-  private normalizeError(
-    error: Error | AppError,
-    errorCode?: ErrorCode,
-    options: ErrorHandlingOptions = {}
-  ): AppError {
+  private normalizeError(error: Error | AppError, errorCode?: ErrorCode, options: ErrorHandlingOptions = {}): AppError {
     if (error instanceof AppError) {
       return error
     }
@@ -306,7 +285,7 @@ export class ErrorHandler {
       context: options.context,
       userId: options.userId,
       sessionId: options.sessionId,
-      requestId: options.requestId
+      requestId: options.requestId,
     }
 
     return createAppError(error.message, finalErrorCode, metadata, error)
@@ -319,7 +298,7 @@ export class ErrorHandler {
     const message = `[${error.category}:${error.code}] ${error.message}`
 
     // 登録されたログハンドラーを実行
-    this.logHandlers.forEach(handler => {
+    this.logHandlers.forEach((handler) => {
       try {
         handler(level, message, error)
       } catch (handlerError) {
@@ -351,14 +330,14 @@ export class ErrorHandler {
     const config: NotificationConfig = {
       type: 'toast',
       duration: error.severity === 'critical' ? 0 : 5000,
-      persistent: error.severity === 'critical'
+      persistent: error.severity === 'critical',
     }
 
     // ユーザーメッセージを取得（AppErrorのuserMessageはstring型なので直接使用）
     const message = error.userMessage || error.message
 
     // 登録された通知ハンドラーを実行
-    this.notificationHandlers.forEach(handler => {
+    this.notificationHandlers.forEach((handler) => {
       try {
         handler(message, config)
       } catch (handlerError) {
@@ -370,11 +349,7 @@ export class ErrorHandler {
   /**
    * 復旧成功をログ出力
    */
-  private logRecoverySuccess(
-    errorCode: ErrorCode,
-    result: ErrorHandlingResult,
-    options: ErrorHandlingOptions
-  ): void {
+  private logRecoverySuccess(errorCode: ErrorCode, result: ErrorHandlingResult, options: ErrorHandlingOptions): void {
     const category = getErrorCategory(errorCode)
     const message = `Recovery successful for ${category}:${errorCode}`
 
@@ -382,7 +357,7 @@ export class ErrorHandler {
       retryCount: result.retryCount,
       recoveryApplied: result.recoveryApplied,
       fallbackUsed: result.fallbackUsed,
-      executionTime: result.executionTime
+      executionTime: result.executionTime,
     }
 
     console.info(message, details)
@@ -419,7 +394,7 @@ export class ErrorHandler {
     return {
       errors: errorPatternDictionary.getErrorStats(),
       categories: errorPatternDictionary.getCategoryStats(),
-      circuitBreakers: errorPatternDictionary.getCircuitBreakerStatus()
+      circuitBreakers: errorPatternDictionary.getCircuitBreakerStatus(),
     }
   }
 }
@@ -458,10 +433,7 @@ export async function handleWithRecovery<T>(
 /**
  * APIエラー処理
  */
-export async function handleApiError(
-  response: Response,
-  options?: ErrorHandlingOptions
-): Promise<AppError> {
+export async function handleApiError(response: Response, options?: ErrorHandlingOptions): Promise<AppError> {
   return globalErrorHandler.handleApiError(response, options)
 }
 

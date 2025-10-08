@@ -139,9 +139,12 @@ export const useBatchOperations = () => {
       // プログレスToastを表示（オプション）
       let progressToastId: string | undefined
       if (showProgress) {
-        progressToastId = toast.loading(`${operations.length}${getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION_IN_PROGRESS)}`, {
-          duration: Infinity,
-        })
+        progressToastId = toast.loading(
+          `${operations.length}${getTranslation(CALENDAR_TOAST_KEYS.TOAST_OPERATION_IN_PROGRESS)}`,
+          {
+            duration: Infinity,
+          }
+        )
       }
 
       try {

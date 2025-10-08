@@ -1,23 +1,23 @@
 /**
  * 共通型定義
- * 
+ *
  * アプリケーション全体で使用される基本的な型定義
  * 重複する型定義は unified.ts に移行しています
  */
 
 // 統一された型定義を再エクスポート
 export type {
-  Task,
-  TaskStatus,
-  TaskPriority,
+  ApiError,
+  ApiResponse,
   CreateTaskRequest,
-  UpdateTaskRequest,
-  Tag,
-  TagWithChildren,
   SmartFolder,
   SmartFolderRule,
-  ApiError,
-  ApiResponse
+  Tag,
+  TagWithChildren,
+  Task,
+  TaskPriority,
+  TaskStatus,
+  UpdateTaskRequest,
 } from './unified'
 
 // TaskTypeはtask/core.tsから再エクスポート

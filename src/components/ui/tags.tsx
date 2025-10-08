@@ -6,14 +6,7 @@ import { Check, ChevronDown, Plus, Tag, X } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { cn } from '@/lib/utils'
 
 export interface TagOption {
@@ -132,7 +125,7 @@ export const TagsTrigger = ({ className, placeholder = 'Select tags...' }: TagsT
           ))
         )}
       </div>
-      <ChevronDown className="ml-2 mt-1 h-4 w-4 shrink-0 opacity-50" />
+      <ChevronDown className="mt-1 ml-2 h-4 w-4 shrink-0 opacity-50" />
     </Button>
   )
 }
@@ -195,7 +188,7 @@ export const TagsContent = ({ children, className }: TagsContentProps) => {
   return (
     <div
       className={cn(
-        'bg-popover text-popover-foreground absolute left-0 top-full z-50 mt-1 max-h-60 min-w-48 overflow-hidden rounded-md border shadow-md',
+        'bg-popover text-popover-foreground absolute top-full left-0 z-50 mt-1 max-h-60 min-w-48 overflow-hidden rounded-md border shadow-md',
         className
       )}
     >
@@ -223,7 +216,8 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
   return (
     <CommandList>
       {children}
-      {onCreateTag && searchValue.trim() && !hasExactMatch ? <CommandGroup>
+      {onCreateTag && searchValue.trim() && !hasExactMatch ? (
+        <CommandGroup>
           <CommandItem
             onSelect={() => {
               onCreateTag(searchValue.trim())
@@ -235,7 +229,8 @@ export const TagsList = ({ children }: { children: React.ReactNode }) => {
               <span>Create &quot;{searchValue.trim()}&quot;</span>
             </div>
           </CommandItem>
-        </CommandGroup> : null}
+        </CommandGroup>
+      ) : null}
     </CommandList>
   )
 }
@@ -299,9 +294,13 @@ export const SimpleTags = ({ value, onValueChange, options, placeholder, classNa
             <TagsGroup>
               {options.map((option) => (
                 <TagsItem key={option.id} value={option.id}>
-                  {option.color ? <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} /> : null}
+                  {option.color ? (
+                    <div className="h-3 w-3 rounded-full" style={{ backgroundColor: option.color }} />
+                  ) : null}
                   <span>{option.name}</span>
-                  {option.count ? <span className="text-muted-foreground ml-auto text-xs">({option.count})</span> : null}
+                  {option.count ? (
+                    <span className="text-muted-foreground ml-auto text-xs">({option.count})</span>
+                  ) : null}
                 </TagsItem>
               ))}
             </TagsGroup>

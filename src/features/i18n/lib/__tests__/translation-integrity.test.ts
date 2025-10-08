@@ -129,9 +129,7 @@ describe('翻訳辞書の整合性チェック', () => {
           const enPlaceholders = extractPlaceholders(enValue)
 
           if (JSON.stringify(jaPlaceholders) !== JSON.stringify(enPlaceholders)) {
-            mismatchedPlaceholders.push(
-              `${fullKey}: ja=${jaPlaceholders.join(',')} vs en=${enPlaceholders.join(',')}`
-            )
+            mismatchedPlaceholders.push(`${fullKey}: ja=${jaPlaceholders.join(',')} vs en=${enPlaceholders.join(',')}`)
           }
         } else if (
           jaValue &&
@@ -141,11 +139,7 @@ describe('翻訳辞書の整合性チェック', () => {
           !Array.isArray(jaValue) &&
           !Array.isArray(enValue)
         ) {
-          comparePlaceholders(
-            jaValue as Record<string, unknown>,
-            enValue as Record<string, unknown>,
-            fullKey
-          )
+          comparePlaceholders(jaValue as Record<string, unknown>, enValue as Record<string, unknown>, fullKey)
         }
       }
     }

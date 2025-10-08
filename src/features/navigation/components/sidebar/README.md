@@ -5,6 +5,7 @@ BoxLog App の**L2: Contextual Navigation** - ページ固有のコンテキス�
 ## 📊 役割定義（AppBar との明確な違い）
 
 ### Sidebar の責任（L2: Contextual Navigation）
+
 **「選んだページ内で何をするか」のコンテキスト**
 
 - ✅ **ページ固有コンテンツ**: 現在のページの詳細ナビゲーション・操作
@@ -13,6 +14,7 @@ BoxLog App の**L2: Contextual Navigation** - ページ固有のコンテキス�
 - ✅ **リッチコンテンツ**: フィルター、検索、ページ固有アクション等
 
 ### AppBar の責任（L1: Primary Navigation）
+
 **「どのページに行くか」の選択**
 
 - ✅ **トップレベルページ切り替え**: Calendar / Board / Table / Stats / Settings
@@ -22,6 +24,7 @@ BoxLog App の**L2: Contextual Navigation** - ページ固有のコンテキス�
 ## 🎯 具体例
 
 ### Calendar ページのSidebar
+
 ```
 ┌─────────────────┐
 │ Calendar        │ ← ページタイトル
@@ -34,6 +37,7 @@ BoxLog App の**L2: Contextual Navigation** - ページ固有のコンテキス�
 ```
 
 ### Settings ページのSidebar
+
 ```
 ┌─────────────────┐
 │ Settings        │ ← ページタイトル
@@ -87,11 +91,13 @@ src/components/layout/sidebar/
 ## 🎨 デザイン仕様
 
 ### サイズ
+
 - **幅**: 固定 240px
 - **表示**: isSidebarOpen が true の時のみ
 - **アニメーション**: なし（即座に表示/非表示）
 
 ### スタイリング（globals.css準拠）
+
 ```tsx
 <div className="bg-card text-card-foreground border-border">
 ```
@@ -99,6 +105,7 @@ src/components/layout/sidebar/
 ## 🔧 主要機能
 
 ### 1. 動的コンテンツ表示
+
 現在のページに応じて、異なるコンテンツを表示
 
 ```tsx
@@ -110,6 +117,7 @@ src/components/layout/sidebar/
 ```
 
 ### 2. トグル機能
+
 AppBarのボタンで開閉
 
 ```typescript
@@ -118,14 +126,16 @@ const { isSidebarOpen } = useNavigationStore()
 ```
 
 ### 3. ページタイトル表示
+
 CommonSidebarがデフォルトでページ名を表示
 
 ## 🔄 状態管理
 
 ### useNavigationStore
+
 ```typescript
 const {
-  isSidebarOpen,    // Sidebar開閉状態
+  isSidebarOpen, // Sidebar開閉状態
 } = useNavigationStore()
 ```
 
@@ -144,15 +154,19 @@ const {
 ## 🔍 設計原則
 
 ### 1. Context Awareness
+
 常に現在のページのコンテキストを意識し、適切なコンテンツを表示
 
 ### 2. Flexibility
+
 ページごとに異なるレイアウト・機能を柔軟に提供
 
 ### 3. Collapsibility
+
 ユーザーが集中したい時は非表示にできる
 
 ### 4. Rich Content
+
 フィルター、検索、日付選択など、リッチなUI要素を配置可能
 
 ---

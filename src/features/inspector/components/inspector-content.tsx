@@ -1,17 +1,17 @@
 'use client'
 
-import React, { useCallback, Suspense } from 'react'
+import React, { Suspense, useCallback } from 'react'
 
 import { usePathname } from 'next/navigation'
 
-import type { CalendarEvent as EventsCalendarEvent } from '@/features/events'
 import type { CalendarEvent as CalendarCalendarEvent } from '@/features/calendar/types/calendar.types'
+import type { CalendarEvent as EventsCalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
 
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { CalendarInspectorContent } from './content/CalendarInspectorContent'
 import { DefaultInspectorContent } from './content/DefaultInspectorContent'
 import { TaskInspectorContent } from './content/TaskInspectorContent'
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
 // 遅延ロード: EventDetailInspectorContentは重いコンポーネント（588行）のため、使用時のみロード
 const EventDetailInspectorContent = React.lazy(() =>
@@ -23,9 +23,9 @@ const EventDetailInspectorContent = React.lazy(() =>
 // ローディングフォールバック
 const InspectorSkeleton = () => (
   <div className="h-full w-full animate-pulse space-y-4 p-4">
-    <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded" />
-    <div className="h-32 bg-neutral-200 dark:bg-neutral-800 rounded" />
-    <div className="h-24 bg-neutral-200 dark:bg-neutral-800 rounded" />
+    <div className="h-8 rounded bg-neutral-200 dark:bg-neutral-800" />
+    <div className="h-32 rounded bg-neutral-200 dark:bg-neutral-800" />
+    <div className="h-24 rounded bg-neutral-200 dark:bg-neutral-800" />
   </div>
 )
 
@@ -34,19 +34,22 @@ export const InspectorContent = () => {
   const activeContent = useInspectorStore((state) => state.activeContent)
   const selectedEvent = useInspectorStore((state) => state.selectedEvent)
   const { setActiveContent, setSelectedEvent } = useInspectorStore()
-  
+
   // イベント詳細のハンドラー
   const handleEventSave = useCallback((eventData: Partial<EventsCalendarEvent>) => {
     // Event handling tracked in Issue #89
     console.log('Save event:', eventData)
   }, [])
 
-  const handleEventDelete = useCallback((eventId: string) => {
-    // Event handling tracked in Issue #89
-    console.log('Delete event:', eventId)
-    setSelectedEvent(null)
-    setActiveContent('calendar')
-  }, [setSelectedEvent, setActiveContent])
+  const handleEventDelete = useCallback(
+    (eventId: string) => {
+      // Event handling tracked in Issue #89
+      console.log('Delete event:', eventId)
+      setSelectedEvent(null)
+      setActiveContent('calendar')
+    },
+    [setSelectedEvent, setActiveContent]
+  )
 
   const handleEventDuplicate = useCallback((event: EventsCalendarEvent) => {
     // Event handling tracked in Issue #89
@@ -85,41 +88,31 @@ export const InspectorContent = () => {
                 onClose={handleClose}
               />
             </Suspense>
-          ) : <CalendarInspectorContent />
+          ) : (
+            <CalendarInspectorContent />
+          )
         case 'create-event':
           return (
             <Suspense fallback={<InspectorSkeleton />}>
-              <EventDetailInspectorContent
-                event={null}
-                mode="create"
-                onSave={handleEventSave}
-                onClose={handleClose}
-              />
+              <EventDetailInspectorContent event={null} mode="create" onSave={handleEventSave} onClose={handleClose} />
             </Suspense>
           )
         default:
           return <DefaultInspectorContent />
       }
     }
-    
+
     // パスに基づいた自動判定
-    if ((pathname || "/").startsWith('/calendar')) {
+    if ((pathname || '/').startsWith('/calendar')) {
       return <CalendarInspectorContent />
     }
-    
-    if ((pathname || "/").startsWith('/tasks')) {
+
+    if ((pathname || '/').startsWith('/tasks')) {
       return <TaskInspectorContent />
     }
-    
+
     return <DefaultInspectorContent />
   }
-  
-  return (
-    <div className={cn(
-      'flex-1 overflow-auto',
-      'bg-white dark:bg-neutral-800'
-    )}>
-      {getContentComponent()}
-    </div>
-  )
+
+  return <div className={cn('flex-1 overflow-auto', 'bg-white dark:bg-neutral-800')}>{getContentComponent()}</div>
 }

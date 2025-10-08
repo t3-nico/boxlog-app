@@ -128,7 +128,7 @@ const SortableSmartFolderItem = ({
           <div
             {...attributes}
             {...listeners}
-            className="cursor-move text-gray-400 opacity-0 transition-opacity hover:text-gray-600 group-hover:opacity-100 dark:hover:text-gray-300"
+            className="cursor-move text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-600 dark:hover:text-gray-300"
           >
             <Bars3Icon className="h-4 w-4" data-slot="icon" />
           </div>
@@ -164,7 +164,7 @@ const SortableSmartFolderItem = ({
             <button
               type="button"
               onClick={handleMenuButtonClick}
-              className="rounded p-2 opacity-0 transition-all hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-700"
+              className="rounded p-2 opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               <EllipsisHorizontalIcon className="h-4 w-4" data-slot="icon" />
             </button>

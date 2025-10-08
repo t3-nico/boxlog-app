@@ -8,14 +8,10 @@ const DataExportPage = () => {
   const { t } = useI18n()
 
   return (
-    <SettingsLayout
-      title={t('settings.dataExport.title')}
-      description={t('settings.dataExport.description')}
-    >
+    <SettingsLayout title={t('settings.dataExport.title')} description={t('settings.dataExport.description')}>
       <DataExportSettings />
     </SettingsLayout>
   )
 }
 
 export default DataExportPage
-

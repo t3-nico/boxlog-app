@@ -7,9 +7,9 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Menu } from '@headlessui/react'
 import { Check, ChevronDown, Globe } from 'lucide-react'
 
-import { getAccessibilityLabels } from '@/lib/accessibility'
 import { locales, setLocaleCookie } from '@/features/i18n/lib'
 import { useCurrentLocale } from '@/features/i18n/lib/hooks'
+import { getAccessibilityLabels } from '@/lib/accessibility'
 import { cn } from '@/lib/utils'
 import type { Locale } from '@/types/i18n'
 
@@ -75,7 +75,7 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
         className={cn(
           'flex items-center gap-2 rounded-lg p-2 transition-colors',
           'hover:bg-neutral-200 dark:hover:bg-neutral-700',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+          'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={a11yLabels.languageSwitch}
       >
@@ -90,9 +90,9 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
 
       <Menu.Items
         className={cn(
-          'absolute right-0 top-full z-20 mt-2 min-w-48 overflow-hidden',
+          'absolute top-full right-0 z-20 mt-2 min-w-48 overflow-hidden',
           'bg-white dark:bg-neutral-800',
-          'border-neutral-200 dark:border-neutral-700 rounded-lg border shadow-lg',
+          'rounded-lg border border-neutral-200 shadow-lg dark:border-neutral-700',
           'focus:outline-none'
         )}
       >
@@ -116,14 +116,10 @@ export const LanguageSwitcher = ({ variant = 'compact', className }: LanguageSwi
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {option.nativeName}
                     </span>
-                    <span className="text-xs text-neutral-600 dark:text-neutral-400">
-                      {option.name}
-                    </span>
+                    <span className="text-xs text-neutral-600 dark:text-neutral-400">{option.name}</span>
                   </div>
                 </div>
-                {option.code === currentLocale && (
-                  <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                )}
+                {option.code === currentLocale && <Check className="h-4 w-4 text-blue-600 dark:text-blue-400" />}
               </button>
             )}
           </Menu.Item>

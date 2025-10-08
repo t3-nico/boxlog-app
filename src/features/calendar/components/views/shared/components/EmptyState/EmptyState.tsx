@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
@@ -16,7 +16,7 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
   icon,
   actions,
   hint,
-  className = ''
+  className = '',
 }) {
   const { t } = useI18n()
 
@@ -28,14 +28,8 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
     if (!icon) {
       // デフォルトアイコン
       return (
-        <div className="w-16 h-16 mx-auto mb-4 text-gray-300 dark:text-gray-600">
-          <svg
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-            className="w-full h-full"
-          >
+        <div className="mx-auto mb-4 h-16 w-16 text-gray-300 dark:text-gray-600">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" className="h-full w-full">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -46,48 +40,40 @@ export const EmptyState = memo<EmptyStateProps>(function EmptyState({
         </div>
       )
     }
-    
+
     // アイコンがコンポーネント型の場合
     if (typeof icon === 'function') {
       const IconComponent = icon
       return (
-        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-          <IconComponent className="w-8 h-8 text-muted-foreground" />
+        <div className="bg-muted mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+          <IconComponent className="text-muted-foreground h-8 w-8" />
         </div>
       )
     }
-    
+
     // ReactNodeの場合はそのまま表示
     return icon
   }
-  
+
   return (
-    <div className={`flex flex-col items-center justify-center h-full p-8 text-center ${className}`}>
+    <div className={`flex h-full flex-col items-center justify-center p-8 text-center ${className}`}>
       {/* アイコン */}
       {renderIcon()}
 
       {/* タイトル */}
-      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-        {displayTitle}
-      </h3>
+      <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">{displayTitle}</h3>
 
       {/* 説明 */}
       {displayDescription != null && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 max-w-md">
-          {displayDescription}
-        </p>
+        <p className="mb-6 max-w-md text-sm text-gray-500 dark:text-gray-400">{displayDescription}</p>
       )}
 
       {/* アクションボタン */}
-      {actions != null && (
-        <div className="mb-6">
-          {actions}
-        </div>
-      )}
+      {actions != null && <div className="mb-6">{actions}</div>}
 
       {/* ヒント */}
       {hint != null && (
-        <div className="mt-8 text-xs text-muted-foreground max-w-sm">
+        <div className="text-muted-foreground mt-8 max-w-sm text-xs">
           <p>{hint}</p>
         </div>
       )}

@@ -5,18 +5,16 @@ import React, { Suspense } from 'react'
 import { useAskPanelStore } from '../stores/useAskPanelStore'
 
 // 遅延ロード: AskPanelは重いコンポーネント（834行）のため、使用時のみロード
-const AskPanel = React.lazy(() =>
-  import('./ask-panel').then((module) => ({ default: module.AskPanel }))
-)
+const AskPanel = React.lazy(() => import('./ask-panel').then((module) => ({ default: module.AskPanel })))
 
 // ローディングフォールバック
 const AskPanelSkeleton = () => (
-  <div className="h-full w-full max-w-6xl mx-auto animate-pulse">
-    <div className="h-full flex justify-center">
+  <div className="mx-auto h-full w-full max-w-6xl animate-pulse">
+    <div className="flex h-full justify-center">
       <div className="w-full max-w-4xl space-y-4 p-4">
-        <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded" />
-        <div className="h-64 bg-neutral-200 dark:bg-neutral-800 rounded" />
-        <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded" />
+        <div className="h-12 rounded bg-neutral-200 dark:bg-neutral-800" />
+        <div className="h-64 rounded bg-neutral-200 dark:bg-neutral-800" />
+        <div className="h-12 rounded bg-neutral-200 dark:bg-neutral-800" />
       </div>
     </div>
   </div>
@@ -32,8 +30,8 @@ export const HelpAskPanel = () => {
   }, [open, expand])
 
   return (
-    <div className="h-full w-full max-w-6xl mx-auto">
-      <div className="h-full flex justify-center">
+    <div className="mx-auto h-full w-full max-w-6xl">
+      <div className="flex h-full justify-center">
         <div className="w-full max-w-4xl">
           <Suspense fallback={<AskPanelSkeleton />}>
             <AskPanel />

@@ -4,16 +4,16 @@ import React from 'react'
 
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
-import { Calendar, AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Calendar } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter
 } from '@/components/ui/dialog'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
@@ -39,7 +39,7 @@ export const WeekendDropConfirmDialog = ({
   suggestedDate,
   onConfirm,
   onCancel,
-  onClose
+  onClose,
 }: WeekendDropConfirmDialogProps) => {
   const { t } = useI18n()
 
@@ -48,17 +48,17 @@ export const WeekendDropConfirmDialog = ({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
-            <div className={cn(
-              'flex items-center justify-center w-10 h-10 rounded-full',
-              'bg-orange-100 dark:bg-orange-900/20'
-            )}>
-              <AlertTriangle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <div
+              className={cn(
+                'flex h-10 w-10 items-center justify-center rounded-full',
+                'bg-orange-100 dark:bg-orange-900/20'
+              )}
+            >
+              <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             </div>
             <div>
-              <DialogTitle className="text-left">
-                {t('calendar.weekendDropDialog.title')}
-              </DialogTitle>
-              <DialogDescription className="text-left mt-1">
+              <DialogTitle className="text-left">{t('calendar.weekendDropDialog.title')}</DialogTitle>
+              <DialogDescription className="mt-1 text-left">
                 {t('calendar.weekendDropDialog.description')}
               </DialogDescription>
             </div>
@@ -67,24 +67,24 @@ export const WeekendDropConfirmDialog = ({
 
         <div className="space-y-4">
           {/* イベント情報 */}
-          <div className={cn(
-            'p-4 rounded-lg border',
-            'bg-neutral-100 dark:bg-neutral-800',
-            'border-neutral-200 dark:border-neutral-700'
-          )}>
+          <div
+            className={cn(
+              'rounded-lg border p-4',
+              'bg-neutral-100 dark:bg-neutral-800',
+              'border-neutral-200 dark:border-neutral-700'
+            )}
+          >
             <div className="flex items-start gap-3">
-              <Calendar className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <h3 className={cn('font-medium', 'text-neutral-900 dark:text-neutral-50')}>
-                  {eventTitle}
-                </h3>
-                <div className="space-y-1 mt-2">
+              <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-500" />
+              <div className="min-w-0 flex-1">
+                <h3 className={cn('font-medium', 'text-neutral-900 dark:text-neutral-50')}>{eventTitle}</h3>
+                <div className="mt-2 space-y-1">
                   <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
-                    <span className="font-medium">{t('calendar.weekendDropDialog.sourceLabel')}</span> {' '}
+                    <span className="font-medium">{t('calendar.weekendDropDialog.sourceLabel')}</span>{' '}
                     {format(originalDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
                   <p className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
-                    <span className="font-medium">{t('calendar.weekendDropDialog.targetLabel')}</span> {' '}
+                    <span className="font-medium">{t('calendar.weekendDropDialog.targetLabel')}</span>{' '}
                     {format(suggestedDate, 'M月d日(E) HH:mm', { locale: ja })}
                   </p>
                 </div>
@@ -94,30 +94,18 @@ export const WeekendDropConfirmDialog = ({
 
           {/* 説明テキスト */}
           <div className={cn('text-sm', 'text-neutral-600 dark:text-neutral-400')}>
-            <p>
-              {t('calendar.weekendDropDialog.explanation')}
-            </p>
-            <p className="mt-2">
-              {t('calendar.weekendDropDialog.hint')}
-            </p>
+            <p>{t('calendar.weekendDropDialog.explanation')}</p>
+            <p className="mt-2">{t('calendar.weekendDropDialog.hint')}</p>
           </div>
         </div>
 
         <DialogFooter className="gap-2 sm:gap-2">
-          <Button
-            variant="outline"
-            onClick={onCancel}
-            className="flex-1 sm:flex-none"
-          >
+          <Button variant="outline" onClick={onCancel} className="flex-1 sm:flex-none">
             {t('actions.cancel')}
           </Button>
           <Button
             onClick={onConfirm}
-            className={cn(
-              'flex-1 sm:flex-none',
-              'bg-blue-500 hover:bg-blue-600',
-              'text-white'
-            )}
+            className={cn('flex-1 sm:flex-none', 'bg-blue-500 hover:bg-blue-600', 'text-white')}
           >
             {t('calendar.weekendDropDialog.confirmButton')}
           </Button>
@@ -140,19 +128,22 @@ export function useWeekendDropConfirm() {
     onCancel: () => void
   } | null>(null)
 
-  const showDialog = React.useCallback((data: {
-    eventTitle: string
-    originalDate: Date
-    suggestedDate: Date
-    onConfirm: () => void
-    onCancel?: () => void
-  }) => {
-    setDialogData({
-      ...data,
-      onCancel: data.onCancel || (() => setIsOpen(false))
-    })
-    setIsOpen(true)
-  }, [])
+  const showDialog = React.useCallback(
+    (data: {
+      eventTitle: string
+      originalDate: Date
+      suggestedDate: Date
+      onConfirm: () => void
+      onCancel?: () => void
+    }) => {
+      setDialogData({
+        ...data,
+        onCancel: data.onCancel || (() => setIsOpen(false)),
+      })
+      setIsOpen(true)
+    },
+    []
+  )
 
   const closeDialog = React.useCallback(() => {
     setIsOpen(false)
@@ -187,6 +178,6 @@ export function useWeekendDropConfirm() {
 
   return {
     showDialog,
-    DialogComponent
+    DialogComponent,
   }
 }

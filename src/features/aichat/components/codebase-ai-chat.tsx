@@ -58,7 +58,7 @@ interface CodebaseAIChatProps {
 // BoxLog専用のAI Responseコンポーネント
 const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
   <AIResponse
-    className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mb-2 [&_h1]:mt-4 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2"
+    className="prose prose-sm dark:prose-invert max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
     options={{
       disallowedElements: ['script', 'iframe'],
       remarkPlugins: [],
@@ -191,7 +191,7 @@ const AssistantMessageContent = ({ message }: { message: ExtendedMessage }) => (
 
 // ユーザーメッセージコンテンツ
 const UserMessageContent = ({ message }: { message: ExtendedMessage }) => (
-  <div className="whitespace-pre-wrap text-sm leading-relaxed">
+  <div className="text-sm leading-relaxed whitespace-pre-wrap">
     {message.content}
     <MessageStatus status={message.status} />
   </div>
@@ -415,7 +415,7 @@ What would you like to know about BoxLog?`,
               </button>
 
               {showMenu != null && (
-                <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+                <div className="bg-card border-border absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
                     onClick={clearMessages}

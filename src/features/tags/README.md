@@ -44,6 +44,7 @@ src/features/tags/
 タグを視覚的に表示するバッジコンポーネント。
 
 **特徴:**
+
 - カスタム色対応
 - サイズバリエーション
 - クリック可能オプション
@@ -53,6 +54,7 @@ src/features/tags/
 複数タグの選択・管理を行うセレクターコンポーネント。
 
 **特徴:**
+
 - 検索機能付き
 - 新規タグ作成対応
 - 階層タグ表示
@@ -62,6 +64,7 @@ src/features/tags/
 階層構造を持つタグをツリー形式で表示。
 
 **特徴:**
+
 - 展開・折りたたみ機能
 - ドラッグ&ドロップ並び替え
 - 階層レベル表示
@@ -88,8 +91,8 @@ interface Tag {
 import { background, text, border, typography } from '@/config/theme'
 
 // タグバッジの色適用例
-<span
-  className={cn('px-3 py-1 rounded-full border', typography.body.xs)}
+;<span
+  className={cn('rounded-full border px-3 py-1', typography.body.xs)}
   style={{ backgroundColor: `${tag.color}20`, borderColor: tag.color }}
 >
   {tag.name}
@@ -103,6 +106,7 @@ import { background, text, border, typography } from '@/config/theme'
 メインのタグ状態管理store。
 
 **主な機能:**
+
 - タグCRUD操作
 - 階層関係管理
 - 色管理

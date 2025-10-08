@@ -22,7 +22,7 @@ export function useCreateEventInspector() {
   }) => {
     // useCreateModalStoreに状態を保存（CreateEventInspectorContentで使用）
     openModal(options)
-    
+
     // Inspectorを開いてcreate-eventコンテンツを表示
     setActiveContent('create-event')
     setInspectorOpen(true)
@@ -40,7 +40,7 @@ export function useCreateEventInspector() {
   ) => {
     // useCreateModalStoreに状態を保存（CreateEventInspectorContentで使用）
     openEditModal(eventId, eventData, context)
-    
+
     // Inspectorを開いてcreate-eventコンテンツを表示
     setActiveContent('create-event')
     setInspectorOpen(true)
@@ -55,6 +55,6 @@ export function useCreateEventInspector() {
   return {
     openCreateInspector,
     openEditInspector,
-    closeCreateInspector
+    closeCreateInspector,
   }
 }

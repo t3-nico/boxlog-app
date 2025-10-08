@@ -9,24 +9,24 @@ interface CalendarSettings {
   // タイムゾーン設定
   timezone: string // 例: 'Asia/Tokyo', 'America/New_York'
   showUTCOffset: boolean // UTC表示のON/OFF
-  
+
   // 時間表示形式
   timeFormat: '24h' | '12h'
-  
+
   // その他の設定
   weekStartsOn: 0 | 1 | 6 // 日曜、月曜、土曜
   defaultDuration: number // デフォルトのタスク時間（分）
   snapInterval: 5 | 10 | 15 | 30 // ドラッグ&ドロップのスナップ間隔（分）
   businessHours: {
     start: number // 営業開始時間（0-23）
-    end: number   // 営業終了時間（0-23）
+    end: number // 営業終了時間（0-23）
   }
-  
+
   // 表示設定
   showWeekNumbers: boolean
   showDeclinedEvents: boolean
   showWeekends: boolean
-  
+
   // クロノタイプ設定
   chronotype: {
     enabled: boolean
@@ -35,7 +35,7 @@ interface CalendarSettings {
     displayMode: 'border' | 'background' | 'both'
     opacity: number // 0-100
   }
-  
+
   // Plan/Record表示設定
   planRecordMode: 'plan' | 'record' | 'both'
 }
@@ -54,7 +54,7 @@ const defaultSettings: CalendarSettings = {
   snapInterval: 15, // デフォルトは15分間隔
   businessHours: {
     start: 9,
-    end: 18
+    end: 18,
   },
   showWeekNumbers: false,
   showDeclinedEvents: false,
@@ -63,9 +63,9 @@ const defaultSettings: CalendarSettings = {
     enabled: true,
     type: 'bear',
     displayMode: 'border',
-    opacity: 90
+    opacity: 90,
   },
-  planRecordMode: 'both'
+  planRecordMode: 'both',
 }
 
 export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
@@ -80,20 +80,21 @@ export const useCalendarSettingsStore = create<CalendarSettingsStore>()(
             set({ ...currentState, timezone: newTimezone })
           }
         })
-        
+
         // クリーンアップ関数は保存されない（Zustandの制約）
         // 必要に応じて手動でクリーンアップ
       }
-      
+
       return {
         ...defaultSettings,
-        
-        updateSettings: (newSettings) => set((state) => ({
-          ...state,
-          ...newSettings
-        })),
-        
-        resetSettings: () => set(defaultSettings)
+
+        updateSettings: (newSettings) =>
+          set((state) => ({
+            ...state,
+            ...newSettings,
+          })),
+
+        resetSettings: () => set(defaultSettings),
       }
     },
     {

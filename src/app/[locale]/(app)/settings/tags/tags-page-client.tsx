@@ -1,11 +1,11 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import dynamic from 'next/dynamic'
 import { Tag } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { useCallback, useState } from 'react'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { ErrorBoundary } from '@/components/error-boundary'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingsLayout } from '@/features/settings/components'
 import { useTags } from '@/features/tags/hooks/use-tags'
 import { TagsToolbar } from './components/TagsToolbar'
@@ -136,12 +136,7 @@ export const TagsPageClient = () => {
             parentTag={createParentTag}
           />
 
-          <TagEditModal
-            isOpen={showEditModal}
-            tag={selectedTag}
-            onClose={handleCloseModals}
-            onSave={handleSaveTag}
-          />
+          <TagEditModal isOpen={showEditModal} tag={selectedTag} onClose={handleCloseModals} onSave={handleSaveTag} />
         </div>
       </SettingsLayout>
     </ErrorBoundary>

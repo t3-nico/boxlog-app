@@ -3,13 +3,12 @@
 import { useCallback } from 'react'
 
 import Placeholder from '@tiptap/extension-placeholder'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Bold, Italic, List, ListOrdered, Quote, Heading1, Heading2, Heading3 } from 'lucide-react'
+import { Bold, Heading1, Heading2, Heading3, Italic, List, ListOrdered, Quote } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-
 
 interface RichTextEditorProps {
   content: string
@@ -19,12 +18,12 @@ interface RichTextEditorProps {
   minimal?: boolean
 }
 
-export const RichTextEditor = ({ 
-  content, 
-  onChange, 
-  placeholder = "Add description...", 
+export const RichTextEditor = ({
+  content,
+  onChange,
+  placeholder = 'Add description...',
   className,
-  minimal = false 
+  minimal = false,
 }: RichTextEditorProps) => {
   const editor = useEditor({
     extensions: [
@@ -100,30 +99,30 @@ export const RichTextEditor = ({
     }
   }, [editor])
 
-  const toggleHeading = useCallback((level: 1 | 2 | 3) => {
-    if (editor) {
-      editor.chain().focus().toggleHeading({ level }).run()
-    }
-  }, [editor])
+  const toggleHeading = useCallback(
+    (level: 1 | 2 | 3) => {
+      if (editor) {
+        editor.chain().focus().toggleHeading({ level }).run()
+      }
+    },
+    [editor]
+  )
 
   if (!editor) {
     return null
   }
 
   return (
-    <div className={cn("border rounded-md", className)}>
+    <div className={cn('rounded-md border', className)}>
       {!minimal && (
-        <div className="border-b px-2 py-1 flex items-center gap-1">
+        <div className="flex items-center gap-1 border-b px-2 py-1">
           {/* Headings */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(1)}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('heading', { level: 1 }) && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 1 }) && 'bg-muted')}
           >
             <Heading1 className="h-4 w-4" />
           </Button>
@@ -132,10 +131,7 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(2)}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('heading', { level: 2 }) && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 2 }) && 'bg-muted')}
           >
             <Heading2 className="h-4 w-4" />
           </Button>
@@ -144,27 +140,21 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={() => toggleHeading(3)}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('heading', { level: 3 }) && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('heading', { level: 3 }) && 'bg-muted')}
           >
             <Heading3 className="h-4 w-4" />
           </Button>
-          
+
           {/* Separator */}
-          <div className="w-px h-6 bg-border mx-1" />
-          
+          <div className="bg-border mx-1 h-6 w-px" />
+
           {/* Text formatting */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={toggleBold}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('bold') && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('bold') && 'bg-muted')}
           >
             <Bold className="h-4 w-4" />
           </Button>
@@ -173,27 +163,21 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleItalic}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('italic') && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('italic') && 'bg-muted')}
           >
             <Italic className="h-4 w-4" />
           </Button>
-          
+
           {/* Separator */}
-          <div className="w-px h-6 bg-border mx-1" />
-          
+          <div className="bg-border mx-1 h-6 w-px" />
+
           {/* Lists */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={toggleBulletList}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('bulletList') && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('bulletList') && 'bg-muted')}
           >
             <List className="h-4 w-4" />
           </Button>
@@ -202,38 +186,32 @@ export const RichTextEditor = ({
             variant="ghost"
             size="sm"
             onClick={toggleOrderedList}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('orderedList') && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('orderedList') && 'bg-muted')}
           >
             <ListOrdered className="h-4 w-4" />
           </Button>
-          
+
           {/* Separator */}
-          <div className="w-px h-6 bg-border mx-1" />
-          
+          <div className="bg-border mx-1 h-6 w-px" />
+
           {/* Quote */}
           <Button
             type="button"
             variant="ghost"
             size="sm"
             onClick={toggleBlockquote}
-            className={cn(
-              "h-8 w-8 p-0",
-              editor.isActive('blockquote') && "bg-muted"
-            )}
+            className={cn('h-8 w-8 p-0', editor.isActive('blockquote') && 'bg-muted')}
           >
             <Quote className="h-4 w-4" />
           </Button>
         </div>
       )}
-      <EditorContent 
-        editor={editor} 
+      <EditorContent
+        editor={editor}
         className="min-h-[80px] resize-y overflow-auto"
-        style={{ 
+        style={{
           minHeight: '80px',
-          maxHeight: '400px'
+          maxHeight: '400px',
         }}
       />
     </div>

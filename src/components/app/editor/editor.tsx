@@ -246,11 +246,15 @@ export const Editor = ({ value, onChange, placeholder = '入力してくださ�
           <RichTextPlugin
             contentEditable={
               <ContentEditable
-                className={cn('min-h-[100px] w-full max-w-full resize-none p-3 outline-none text-neutral-900 dark:text-neutral-100')}
+                className={cn(
+                  'min-h-[100px] w-full max-w-full resize-none p-3 text-neutral-900 outline-none dark:text-neutral-100'
+                )}
               />
             }
             placeholder={
-              <div className={cn('pointer-events-none absolute left-3 top-3 text-neutral-600 dark:text-neutral-400')}>{placeholder}</div>
+              <div className={cn('pointer-events-none absolute top-3 left-3 text-neutral-600 dark:text-neutral-400')}>
+                {placeholder}
+              </div>
             }
             ErrorBoundary={LexicalErrorBoundary}
           />

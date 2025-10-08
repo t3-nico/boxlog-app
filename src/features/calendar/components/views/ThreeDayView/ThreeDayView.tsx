@@ -1,19 +1,14 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { format, isToday } from 'date-fns'
 
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
-import {
-  DateDisplay,
-  CalendarLayoutWithHeader,
-  HourLines,
-  useEventStyles
-} from '../shared'
+import { CalendarLayoutWithHeader, DateDisplay, HourLines, useEventStyles } from '../shared'
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
 import type { EventPosition } from '../DayView/DayView.types'
@@ -21,7 +16,6 @@ import type { EventPosition } from '../DayView/DayView.types'
 import { ThreeDayContent } from './components'
 import { useThreeDayView } from './hooks/useThreeDayView'
 import type { ThreeDayViewProps } from './ThreeDayView.types'
-
 
 /**
  * ThreeDayView - 3-day view component
@@ -48,35 +42,31 @@ export const ThreeDayView = ({
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
-  onNavigateToday: _onNavigateToday
+  onNavigateToday: _onNavigateToday,
 }: ThreeDayViewProps) => {
   const { timezone } = useCalendarSettingsStore()
-  
+
   // レスポンシブな時間高さ
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
-    desktop: 72
+    desktop: 72,
   })
-  
+
   // ThreeDayViewではcurrentDateを中心とした3日間を表示
   const displayCenterDate = useMemo(() => {
     const date = new Date(currentDate)
     date.setHours(0, 0, 0, 0)
     return date
   }, [currentDate])
-  
+
   // ThreeDayView specific logic
-  const {
-    threeDayDates,
-    eventsByDate,
-    isCurrentDay
-  } = useThreeDayView({
+  const { threeDayDates, eventsByDate, isCurrentDay } = useThreeDayView({
     centerDate: displayCenterDate,
     events,
-    showWeekends
+    showWeekends,
   })
-  
+
   // 統一された日付配列を使用（週末表示設定も考慮済み）
   const displayDates = useMemo(() => {
     return threeDayDates
@@ -85,32 +75,32 @@ export const ThreeDayView = ({
   // イベント位置計算（統一された日付配列ベース）
   const eventPositions = useMemo(() => {
     const positions: EventPosition[] = []
-    
+
     // displayDates（統一フィルタリング済み）を基準にイベントを配置
     displayDates.forEach((displayDate, _dayIndex) => {
       const dateKey = format(displayDate, 'yyyy-MM-dd')
-      
+
       // 元のevents配列から直接フィルタリング（週末設定に依存しない）
-      const dayEvents = events.filter(event => {
+      const dayEvents = events.filter((event) => {
         const eventDate = event.startDate || new Date()
         return format(eventDate, 'yyyy-MM-dd') === dateKey
       })
-      
-      dayEvents.forEach(event => {
+
+      dayEvents.forEach((event) => {
         const startDate = event.startDate || new Date()
         const startHour = startDate.getHours()
         const startMinute = startDate.getMinutes()
         const top = (startHour + startMinute / 60) * HOUR_HEIGHT
-        
+
         // 高さ計算
         let height = HOUR_HEIGHT // デフォルト1時間
         if (event.endDate) {
           const endHour = event.endDate.getHours()
           const endMinute = event.endDate.getMinutes()
-          const duration = (endHour + endMinute / 60) - (startHour + startMinute / 60)
+          const duration = endHour + endMinute / 60 - (startHour + startMinute / 60)
           height = Math.max(20, duration * HOUR_HEIGHT) // 最小20px
         }
-        
+
         positions.push({
           event,
           top,
@@ -118,14 +108,14 @@ export const ThreeDayView = ({
           left: 1, // 各カラム内での位置（%）
           width: 98, // カラム幅の98%を使用
           zIndex: 20,
-          opacity: 1.0
+          opacity: 1.0,
         })
       })
     })
-    
+
     return positions
   }, [events, displayDates, HOUR_HEIGHT])
-  
+
   // 共通フック使用してスタイル計算
   const eventStyles = useEventStyles(eventPositions)
 
@@ -135,13 +125,10 @@ export const ThreeDayView = ({
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
-    <div className="bg-background h-16 flex">
+    <div className="bg-background flex h-16">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
       {displayDates.map((date, _index) => (
-        <div
-          key={date.toISOString()}
-          className="flex-1 flex items-center justify-center px-1"
-        >
+        <div key={date.toISOString()} className="flex flex-1 items-center justify-center px-1">
           <DateDisplay
             date={date}
             className="text-center"
@@ -152,11 +139,11 @@ export const ThreeDayView = ({
             isToday={isToday(date)}
             isSelected={false}
           />
-          
+
           {/* イベント数インジケーター */}
           {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
-            <div className="text-center mt-1">
-              <span className="inline-block w-2 h-2 bg-primary rounded-full" />
+            <div className="mt-1 text-center">
+              <span className="bg-primary inline-block h-2 w-2 rounded-full" />
             </div>
           )}
         </div>
@@ -165,10 +152,9 @@ export const ThreeDayView = ({
   )
 
   return (
-    <div className={cn('flex flex-col h-full bg-background', className)}>
-      
+    <div className={cn('bg-background flex h-full flex-col', className)}>
       {/* メインコンテンツエリア */}
-      <div className="flex-1 min-h-0">
+      <div className="min-h-0 flex-1">
         <CalendarLayoutWithHeader
           header={headerComponent}
           timezone={timezone}
@@ -186,29 +172,25 @@ export const ThreeDayView = ({
           {/* DayViewと同じ構造：CalendarLayoutWithHeaderの子要素として直接配置 */}
           <div className="relative h-full">
             {/* 共通の時間グリッド線 */}
-            <div className="absolute inset-0 pointer-events-none">
-              <HourLines 
-                startHour={0}
-                endHour={24}
-                hourHeight={HOUR_HEIGHT}
-              />
+            <div className="pointer-events-none absolute inset-0">
+              <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
             </div>
-            
+
             {/* displayDatesに基づくカラム（週末フィルタリング対応） */}
-            <div className="flex h-full relative">
+            <div className="relative flex h-full">
               {displayDates.map((date, dayIndex) => {
                 const dateKey = format(date, 'yyyy-MM-dd')
                 // 統一フィルタリング済みの日付に対応するイベントを取得
-                const dayEvents = events.filter(event => {
+                const dayEvents = events.filter((event) => {
                   const eventDate = event.startDate || new Date()
                   return format(eventDate, 'yyyy-MM-dd') === dateKey
                 })
-                
+
                 return (
                   <div
                     key={date.toISOString()}
                     className={cn(
-                      'flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative'
+                      'relative flex-1 border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20'
                     )}
                     style={{ width: `${100 / displayDates.length}%` }}
                   >

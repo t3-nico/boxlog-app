@@ -76,7 +76,7 @@ export const UnscheduledTasksList = () => {
     <ScrollArea className="h-full">
       <div className="space-y-0">
         {/* ヘッダー */}
-        <div className={cn('border-b border-neutral-200 dark:border-neutral-800 p-4')}>
+        <div className={cn('border-b border-neutral-200 p-4 dark:border-neutral-800')}>
           <div className="flex items-center justify-between">
             <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>未予定タスク</h3>
             <Button variant="ghost" size="sm">
@@ -109,10 +109,7 @@ export const UnscheduledTasksList = () => {
                       {task.tags.map((tag) => (
                         <span
                           key={tag}
-                          className={cn(
-                            'rounded-full px-2 py-1 text-sm',
-                            'bg-accent text-accent-foreground'
-                          )}
+                          className={cn('rounded-full px-2 py-1 text-sm', 'bg-accent text-accent-foreground')}
                         >
                           {tag}
                         </span>

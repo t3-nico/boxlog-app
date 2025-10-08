@@ -4,16 +4,16 @@
 
 // 型定義
 export type {
+  DeleteResult,
+  RestoreResult,
+  TrashActions as TrashActionsType,
+  TrashFilters as TrashFiltersType,
   TrashItem,
   TrashItemType,
-  TrashFilters as TrashFiltersType,
   TrashSort,
   TrashState,
-  TrashActions as TrashActionsType,
-  TrashStore,
   TrashStats,
-  RestoreResult,
-  DeleteResult
+  TrashStore,
 } from './types/trash'
 
 export {
@@ -21,7 +21,7 @@ export {
   TRASH_RETENTION_DAYS,
   TRASH_WARNING_DAYS,
   isTrashItem,
-  isValidTrashItemType
+  isValidTrashItemType,
 } from './types/trash'
 
 // ストア
@@ -31,9 +31,9 @@ export { useTrashStore } from './stores/useTrashStore'
 export { trashOperations, validateTrashItem } from './utils/trash-operations'
 
 // コンポーネント
-export { TrashView } from './components/TrashView'
-export { TrashTable } from './components/TrashTable'
 export { TrashActions } from './components/TrashActions'
+export { TrashTable } from './components/TrashTable'
+export { TrashView } from './components/TrashView'
 
 /**
  * 統一ゴミ箱ヘルパー関数

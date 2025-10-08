@@ -15,12 +15,16 @@ export const TaskInspectorContent = () => {
 
           <div className="space-y-3">
             {/* タスク名 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-start gap-3">
                 <CheckSquare className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <div className="flex-1">
                   <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>新機能のUI設計</p>
-                  <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>
+                  <p className={cn('mt-1 text-xs text-neutral-600 dark:text-neutral-400')}>
                     ユーザー体験を向上させる新しいインターface設計
                   </p>
                 </div>
@@ -28,11 +32,17 @@ export const TaskInspectorContent = () => {
             </div>
 
             {/* 期限と進捗 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="mb-3 flex items-center gap-3">
                 <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                 <div>
-                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>期限: 2024年9月15日</p>
+                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>
+                    期限: 2024年9月15日
+                  </p>
                   <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>残り8日</p>
                 </div>
               </div>
@@ -43,14 +53,18 @@ export const TaskInspectorContent = () => {
                   <span className="text-neutral-600 dark:text-neutral-400">進捗</span>
                   <span className="text-neutral-900 dark:text-neutral-100">75%</span>
                 </div>
-                <div className="w-full bg-neutral-200 dark:bg-neutral-700 h-2 rounded-full">
+                <div className="h-2 w-full rounded-full bg-neutral-200 dark:bg-neutral-700">
                   <div className="bg-primary h-2 rounded-full" style={{ width: '75%' }}></div>
                 </div>
               </div>
             </div>
 
             {/* 優先度 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-center gap-3">
                 <Flag className="h-4 w-4 text-red-600 dark:text-red-400" />
                 <div>
@@ -61,7 +75,11 @@ export const TaskInspectorContent = () => {
             </div>
 
             {/* 担当者 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-center gap-3">
                 <User className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 <div>
@@ -87,7 +105,7 @@ export const TaskInspectorContent = () => {
               <div
                 key={subtask.title}
                 className={cn(
-                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'rounded-lg border border-neutral-300 p-3 dark:border-neutral-700',
                   'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
@@ -105,7 +123,7 @@ export const TaskInspectorContent = () => {
                     className={cn(
                       'text-base',
                       subtask.completed
-                        ? cn('line-through text-neutral-600 dark:text-neutral-400')
+                        ? cn('text-neutral-600 line-through dark:text-neutral-400')
                         : 'text-neutral-900 dark:text-neutral-100'
                     )}
                   >
@@ -136,13 +154,17 @@ export const TaskInspectorContent = () => {
             ].map((comment, _index) => (
               <div
                 key={`${comment.author}-${comment.time}`}
-                className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}
+                className={cn(
+                  'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+                )}
               >
                 <div className="flex items-start gap-3">
                   <MessageSquare className="mt-0.5 h-4 w-4 text-gray-600 dark:text-gray-400" />
                   <div className="flex-1">
                     <div className="mb-1 flex items-center gap-2">
-                      <span className={cn('text-xs font-medium text-neutral-900 dark:text-neutral-100')}>{comment.author}</span>
+                      <span className={cn('text-xs font-medium text-neutral-900 dark:text-neutral-100')}>
+                        {comment.author}
+                      </span>
                       <span className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>{comment.time}</span>
                     </div>
                     <p className={cn('text-base text-neutral-900 dark:text-neutral-100')}>{comment.content}</p>
@@ -165,7 +187,7 @@ export const TaskInspectorContent = () => {
               <div
                 key={file.name}
                 className={cn(
-                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'rounded-lg border border-neutral-300 p-3 dark:border-neutral-700',
                   'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}

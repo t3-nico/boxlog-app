@@ -59,11 +59,13 @@ BoxLogは3カラムレイアウトを採用：
 ```
 
 **L1 (AppBar)**: 固定ナビゲーション（常に同じ）
+
 - アプリ全体で共通のナビゲーション
 - デスクトップ: 64px幅の縦型
 - モバイル: 56px高さの横型（下部固定）
 
 **L2 (Sidebar)**: 動的ナビゲーション（ルートで変化）
+
 - ページ・機能ごとに異なるコンテンツ
 - 幅: 240px
 - `isSidebarOpen`で開閉制御
@@ -72,8 +74,8 @@ BoxLogは3カラムレイアウトを採用：
 
 ```tsx
 // lg breakpoint (1024px) で切り替え
-lg:block    // デスクトップ: AppBar表示
-lg:hidden   // モバイル: MobileBottomNavigation表示
+lg: block // デスクトップ: AppBar表示
+lg: hidden // モバイル: MobileBottomNavigation表示
 ```
 
 ## 🚨 必須ルール
@@ -81,6 +83,7 @@ lg:hidden   // モバイル: MobileBottomNavigation表示
 ### 1. 状態管理
 
 **`useNavigationStore`を使用**:
+
 ```tsx
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
@@ -90,6 +93,7 @@ const { isSidebarOpen, toggleSidebar } = useNavigationStore()
 ### 2. スタイリング
 
 **globals.cssのセマンティックトークンを使用**:
+
 ```tsx
 // ✅ 正しい
 <div className="bg-card text-card-foreground border-border">
@@ -120,11 +124,7 @@ import { useNavigationStore } from '@/features/navigation/stores/navigation.stor
 export const SidebarToggle = () => {
   const { toggleSidebar } = useNavigationStore()
 
-  return (
-    <button onClick={toggleSidebar}>
-      Toggle Sidebar
-    </button>
-  )
+  return <button onClick={toggleSidebar}>Toggle Sidebar</button>
 }
 ```
 
@@ -138,15 +138,13 @@ export const CalendarSidebar = () => {
   return (
     <>
       <SidebarHeader title="カレンダー" />
-      <SidebarSection>
-        {/* カスタムコンテンツ */}
-      </SidebarSection>
+      <SidebarSection>{/* カスタムコンテンツ */}</SidebarSection>
     </>
   )
 }
 
 // layout.tsx で使用
-<Sidebar>
+;<Sidebar>
   <CalendarSidebar />
 </Sidebar>
 ```
@@ -183,7 +181,12 @@ import { PageTitle } from '@/components/common/page-title'
 `@/features/navigation/components/sidebar/shared`の共有コンポーネント（`SidebarHeading`、`SidebarItem`等）を使用：
 
 ```tsx
-import { SidebarHeading, SidebarItem, SidebarLabel, SidebarSection } from '@/features/navigation/components/sidebar/shared'
+import {
+  SidebarHeading,
+  SidebarItem,
+  SidebarLabel,
+  SidebarSection,
+} from '@/features/navigation/components/sidebar/shared'
 ```
 
 ---

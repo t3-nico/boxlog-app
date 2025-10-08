@@ -2,15 +2,14 @@
 
 import React, { useCallback } from 'react'
 
-
 import { BotMessageSquare, Calendar, ListTodo, PanelRightClose } from 'lucide-react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
@@ -73,17 +72,14 @@ export const DesktopInspector = () => {
       <div
         onMouseDown={handleMouseDown}
         onKeyDown={handleKeyDown}
-        className={cn('group absolute -left-1 top-0 h-full w-3 cursor-ew-resize')}
+        className={cn('group absolute top-0 -left-1 h-full w-3 cursor-ew-resize')}
         role="button"
         tabIndex={0}
         aria-label="インスペクターの幅を調整"
       >
         {/* Visual Color Change - 1px width */}
         <div
-          className={cn(
-            'absolute left-1 top-0 h-full w-px transition-colors',
-            'bg-transparent group-hover:bg-primary'
-          )}
+          className={cn('absolute top-0 left-1 h-full w-px transition-colors', 'group-hover:bg-primary bg-transparent')}
         />
       </div>
 
@@ -115,7 +111,7 @@ export const DesktopInspector = () => {
 
         {/* Inspector Tabs */}
         <Tabs defaultValue="overview" className="flex flex-1 flex-col">
-          <div className={cn('border-b border-neutral-200 dark:border-neutral-800 px-2 pb-2')}>
+          <div className={cn('border-b border-neutral-200 px-2 pb-2 dark:border-neutral-800')}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />

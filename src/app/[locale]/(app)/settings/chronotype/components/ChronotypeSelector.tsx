@@ -2,11 +2,10 @@
  * クロノタイプ選択・スケジュール表示コンポーネント
  */
 
-import { Clock, GraduationCap, Moon, Sun } from 'lucide-react'
-import type { ChronotypeType } from '@/types/chronotype'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import type { ChronotypeType } from '@/types/chronotype'
+import { Clock, GraduationCap, Moon, Sun } from 'lucide-react'
 import { getChronoTypeProfiles } from '../chronotype-profiles'
-import type { ChronoTypeProfile } from '../chronotype.types'
 import { typeColors, typeIconComponents } from '../chronotype.constants'
 
 interface ChronotypeSelectorProps {

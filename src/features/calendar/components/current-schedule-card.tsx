@@ -1,20 +1,14 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-import { Calendar, ArrowRight } from 'lucide-react'
+import { ArrowRight, Calendar } from 'lucide-react'
 
-import { useEventStore } from '@/features/events'
 import type { Event } from '@/features/events'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
-import { 
-  CHRONOTYPE_PRESETS, 
-  getProductivityZoneForHour, 
-  PRODUCTIVITY_COLORS 
-} from '@/types/chronotype'
-
+import { CHRONOTYPE_PRESETS, getProductivityZoneForHour, PRODUCTIVITY_COLORS } from '@/types/chronotype'
 
 interface CurrentScheduleCardProps {
   collapsed?: boolean
@@ -36,12 +30,15 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   }, [router])
 
   // jsx-no-bind optimization: No event keyboard handler
-  const handleNoEventKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleNoEventClick()
-    }
-  }, [handleNoEventClick])
+  const handleNoEventKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleNoEventClick()
+      }
+    },
+    [handleNoEventClick]
+  )
 
   // jsx-no-bind optimization: Calendar navigation click handler
   const handleClick = useCallback(() => {
@@ -51,47 +48,50 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   }, [router])
 
   // jsx-no-bind optimization: Calendar navigation keyboard handler
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      handleClick()
-    }
-  }, [handleClick])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        handleClick()
+      }
+    },
+    [handleClick]
+  )
 
   // 今日のイベントを独立してフェッチ
   const [todayEvents, _setTodayEvents] = useState<Event[]>([])
-  
+
   useEffect(() => {
     console.log('🔍 [DISABLED] Would fetch today events - disabled for debugging')
-    
+
     // const fetchTodayEvents = async () => {
     //   try {
     //     const today = new Date()
     //     const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
     //     const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1)
-        
+
     //     console.log('🔍 Fetching today events:', {
     //       todayStart: todayStart.toISOString(),
     //       todayEnd: todayEnd.toISOString()
     //     })
-        
+
     //     const params = new URLSearchParams()
     //     params.append('start_date', todayStart.toISOString().split('T')[0])
     //     params.append('end_date', todayEnd.toISOString().split('T')[0])
-        
+
     //     const apiUrl = `/api/events?${params}`
     //     console.log('🌐 Calling API:', apiUrl)
-        
+
     //     const response = await fetch(apiUrl)
     //     console.log('🌐 API response status:', response.status)
-        
+
     //     if (response.ok) {
     //       const data = await response.json()
     //       console.log('📦 Raw API response:', data)
-          
+
     //       const events = data.data?.events || data.events || data.data || data || []
     //       console.log('📥 Extracted events:', events.length, events)
-          
+
     //       // EventEntity を Event に変換
     //       const convertedEvents = events.map((entity: EventEntity) => {
     //         return {
@@ -108,7 +108,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     //           tags: entity.event_tags?.map((et: EventTagEntity) => et.tags).filter(Boolean) || []
     //         }
     //       }).filter((event: Event) => event.startDate) // startDateがあるもののみ
-          
+
     //       setTodayEvents(convertedEvents)
     //     } else {
     //       console.error('❌ API request failed:', response.status, response.statusText)
@@ -119,7 +119,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     //     console.error('❌ Failed to fetch today events:', error)
     //   }
     // }
-    
+
     // fetchTodayEvents()
   }, [])
 
@@ -146,7 +146,7 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
       const profile = CHRONOTYPE_PRESETS[chronotype.type]
       const currentHour = currentTime.getHours()
       const zone = getProductivityZoneForHour(profile, currentHour)
-      
+
       if (!zone || !PRODUCTIVITY_COLORS[zone.color as keyof typeof PRODUCTIVITY_COLORS]) {
         return 'rgb(59 130 246)' // フォールバック
       }
@@ -162,47 +162,47 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   // 現在進行中のイベントを取得
   useEffect(() => {
     const now = new Date()
-    
+
     console.log('🔍 CurrentScheduleCard debug:', {
       todayEventsCount: todayEvents.length,
-      currentTime: now.toISOString()
+      currentTime: now.toISOString(),
     })
-    
+
     if (todayEvents.length === 0) {
       setCurrentEvent(null)
       return
     }
-    
+
     // 現在時刻にアクティブなイベントを検索
-    const activeEvent = todayEvents.find(event => {
+    const activeEvent = todayEvents.find((event) => {
       if (!event.startDate || !event.endDate) return false
-      
+
       const startTime = new Date(event.startDate)
       const endTime = new Date(event.endDate)
-      
+
       const isActive = now >= startTime && now <= endTime
-      
+
       console.log('🕐 Checking event:', {
         title: event.title,
         startTime: startTime.toISOString(),
         endTime: endTime.toISOString(),
         currentTime: now.toISOString(),
-        isActive
+        isActive,
       })
-      
+
       return isActive
     })
-    
+
     console.log('🎯 Final active event:', activeEvent?.title || 'None')
     setCurrentEvent(activeEvent || null)
   }, [currentTime, todayEvents])
 
   // 時間をフォーマット
   const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: false 
+      hour12: false,
     })
   }
 
@@ -210,32 +210,31 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
     // 閉じている時はアイコンのみ表示
     const borderColor = getChronotypeColor()
     return currentEvent ? (
-      <div className="flex justify-center mb-4">
+      <div className="mb-4 flex justify-center">
         <div
-          className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center"
+          className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900"
           style={{
-            border: `2px solid ${borderColor}`
+            border: `2px solid ${borderColor}`,
           }}
         >
-          <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
         </div>
       </div>
     ) : null
   }
 
   if (!currentEvent) {
-    
     return (
       <div
         role="button"
         tabIndex={0}
         aria-label="Navigate to calendar view"
-        className="p-4 bg-secondary rounded-lg border border-secondary cursor-pointer hover:bg-secondary/80 transition-colors"
+        className="bg-secondary border-secondary hover:bg-secondary/80 cursor-pointer rounded-lg border p-4 transition-colors"
         onClick={handleNoEventClick}
         onKeyDown={handleNoEventKeyDown}
       >
         <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-          <Calendar className="w-4 h-4" />
+          <Calendar className="h-4 w-4" />
           <span className="text-xs">No current events</span>
         </div>
       </div>
@@ -243,34 +242,32 @@ export const CurrentScheduleCard = ({ collapsed = false }: CurrentScheduleCardPr
   }
 
   const borderColor = getChronotypeColor()
-  
+
   return (
     <div
       role="button"
       tabIndex={0}
       aria-label={`Current event: ${currentEvent.title}`}
-      className="p-4 bg-secondary rounded-lg cursor-pointer hover:bg-secondary/80 transition-colors flex flex-col"
+      className="bg-secondary hover:bg-secondary/80 flex cursor-pointer flex-col rounded-lg p-4 transition-colors"
       style={{
         border: `2px solid ${borderColor}`,
-        gap: '8px'
+        gap: '8px',
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
       <div className="flex items-center" style={{ gap: '4px' }}>
-        <div className="border border-gray-300 dark:border-gray-600 px-2 py-1 rounded text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+        <div className="rounded border border-gray-300 px-2 py-1 text-xs font-medium tracking-wide text-gray-600 uppercase dark:border-gray-600 dark:text-gray-400">
           Live
         </div>
-        <div className="flex items-center text-sm font-semibold text-gray-600 dark:text-gray-400 tabular-nums">
+        <div className="flex items-center text-sm font-semibold text-gray-600 tabular-nums dark:text-gray-400">
           <span>{currentEvent.startDate ? formatTime(new Date(currentEvent.startDate)) : null}</span>
-          <ArrowRight className="w-4 h-4 mx-1 text-gray-400 dark:text-gray-500" />
+          <ArrowRight className="mx-1 h-4 w-4 text-gray-400 dark:text-gray-500" />
           <span>{currentEvent.endDate ? formatTime(new Date(currentEvent.endDate)) : null}</span>
         </div>
       </div>
-      
-      <h3 className="font-semibold text-gray-900 dark:text-white text-sm leading-tight">
-        {currentEvent.title}
-      </h3>
+
+      <h3 className="text-sm leading-tight font-semibold text-gray-900 dark:text-white">{currentEvent.title}</h3>
     </div>
   )
 }

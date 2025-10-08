@@ -28,9 +28,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
 
           <div className="my-6 grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="rounded-lg border border-neutral-300 bg-yellow-50 p-4 dark:border-neutral-600 dark:bg-yellow-950">
-              <h4 className="mb-2 font-semibold text-yellow-600 dark:text-yellow-400">
-                🦁 Lion (ライオン型・超朝型)
-              </h4>
+              <h4 className="mb-2 font-semibold text-yellow-600 dark:text-yellow-400">🦁 Lion (ライオン型・超朝型)</h4>
               <ul className="space-y-1 text-sm text-yellow-600 dark:text-yellow-400">
                 <li>• 人口の約 15%</li>
                 <li>• 早朝（5-7時）起床、7-11時がピーク</li>
@@ -50,9 +48,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
             </div>
 
             <div className="rounded-lg border border-neutral-300 bg-neutral-100 p-4 dark:border-neutral-600 dark:bg-neutral-700">
-              <h4 className="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">
-                🐺 Wolf (オオカミ型・夜型)
-              </h4>
+              <h4 className="mb-2 font-semibold text-neutral-900 dark:text-neutral-100">🐺 Wolf (オオカミ型・夜型)</h4>
               <ul className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
                 <li>• 人口の約 20%</li>
                 <li>• 17-22時がピーク、深夜も活動的</li>
@@ -62,9 +58,7 @@ export function ChronotypeInfoSection({ onStartDiagnosis }: ChronotypeInfoSectio
             </div>
 
             <div className="rounded-lg border border-neutral-300 bg-green-50 p-4 dark:border-neutral-600 dark:bg-green-950">
-              <h4 className="mb-2 font-semibold text-green-600 dark:text-green-400">
-                🐬 Dolphin (イルカ型・不規則型)
-              </h4>
+              <h4 className="mb-2 font-semibold text-green-600 dark:text-green-400">🐬 Dolphin (イルカ型・不規則型)</h4>
               <ul className="space-y-1 text-sm text-green-600 dark:text-green-400">
                 <li>• 人口の約 10%</li>
                 <li>• 複数の短いピーク時間</li>

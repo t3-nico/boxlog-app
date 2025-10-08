@@ -142,7 +142,7 @@ export class TranslationPlatformEvaluator {
       this.createWeblatePlatform(),
       this.createPhrasePlatform(),
       this.createTransifexPlatform(),
-      this.createLingoHubPlatform()
+      this.createLingoHubPlatform(),
     ]
   }
 
@@ -159,20 +159,8 @@ export class TranslationPlatformEvaluator {
         monthlyPrice: 0, // Free tier available
         pricePerTranslator: 15, // Pro plan: $15/user/month
         keyLimits: 60000, // Free tier limit
-        includedFeatures: [
-          '無制限プロジェクト',
-          'GitHub統合',
-          '翻訳メモリ',
-          '機械翻訳',
-          'Webhook',
-          'API',
-          'CLI'
-        ],
-        limitations: [
-          'Free tier: 最大60,000キー',
-          'Free tier: 最大2言語ターゲット',
-          'Pro tier以上で高度な機能'
-        ]
+        includedFeatures: ['無制限プロジェクト', 'GitHub統合', '翻訳メモリ', '機械翻訳', 'Webhook', 'API', 'CLI'],
+        limitations: ['Free tier: 最大60,000キー', 'Free tier: 最大2言語ターゲット', 'Pro tier以上で高度な機能'],
       },
       features: {
         translationMemory: true,
@@ -194,7 +182,7 @@ export class TranslationPlatformEvaluator {
         rtlLanguages: true,
         pluralFormHandling: true,
         contextualTranslation: true,
-        screenTranslation: true
+        screenTranslation: true,
       },
       integrations: {
         github: true,
@@ -204,7 +192,7 @@ export class TranslationPlatformEvaluator {
         json: true,
         cli: true,
         vscode: true,
-        figma: true
+        figma: true,
       },
       pros: [
         '豊富な統合オプション（GitHub、CI/CD）',
@@ -213,13 +201,13 @@ export class TranslationPlatformEvaluator {
         '包括的なAPI・Webhook',
         '大規模プロジェクト対応',
         'アクティブなコミュニティ',
-        '無料プランで基本機能利用可能'
+        '無料プランで基本機能利用可能',
       ],
       cons: [
         '無料プランの言語・キー制限',
         '高度な機能は有料プランのみ',
         'UI複雑さ（初心者には学習コスト）',
-        'カスタマイゼーション制限'
+        'カスタマイゼーション制限',
       ],
       score: {
         overall: 90,
@@ -229,10 +217,10 @@ export class TranslationPlatformEvaluator {
           usability: 80,
           integration: 95,
           support: 90,
-          scalability: 95
-        }
+          scalability: 95,
+        },
       },
-      recommendation: 'excellent'
+      recommendation: 'excellent',
     }
   }
 
@@ -249,19 +237,8 @@ export class TranslationPlatformEvaluator {
         monthlyPrice: 0, // Free tier available
         pricePerTranslator: 25, // Growth plan
         keyLimits: 1000, // Free tier limit
-        includedFeatures: [
-          '翻訳メモリ',
-          'GitHub統合',
-          '機械翻訳',
-          'API',
-          'CLI',
-          'Webhook'
-        ],
-        limitations: [
-          'Free tier: 1,000キーまで',
-          'Free tier: 1プロジェクトのみ',
-          '高度な機能は有料プランのみ'
-        ]
+        includedFeatures: ['翻訳メモリ', 'GitHub統合', '機械翻訳', 'API', 'CLI', 'Webhook'],
+        limitations: ['Free tier: 1,000キーまで', 'Free tier: 1プロジェクトのみ', '高度な機能は有料プランのみ'],
       },
       features: {
         translationMemory: true,
@@ -283,7 +260,7 @@ export class TranslationPlatformEvaluator {
         rtlLanguages: true,
         pluralFormHandling: true,
         contextualTranslation: true,
-        screenTranslation: true
+        screenTranslation: true,
       },
       integrations: {
         github: true,
@@ -293,7 +270,7 @@ export class TranslationPlatformEvaluator {
         json: true,
         cli: true,
         vscode: true,
-        figma: true
+        figma: true,
       },
       pros: [
         '直感的で美しいUI/UX',
@@ -302,13 +279,13 @@ export class TranslationPlatformEvaluator {
         'TypeScript完全サポート',
         'リアルタイム共同編集',
         '優れたモバイルアプリ',
-        '高品質なドキュメント'
+        '高品質なドキュメント',
       ],
       cons: [
         '無料プランの制限が厳しい（1,000キー）',
         'Crowdinに比べて機能が少ない',
         '料金が高め',
-        'コミュニティが小さい'
+        'コミュニティが小さい',
       ],
       score: {
         overall: 85,
@@ -318,10 +295,10 @@ export class TranslationPlatformEvaluator {
           usability: 95,
           integration: 90,
           support: 85,
-          scalability: 80
-        }
+          scalability: 80,
+        },
       },
-      recommendation: 'good'
+      recommendation: 'good',
     }
   }
 
@@ -338,19 +315,8 @@ export class TranslationPlatformEvaluator {
         monthlyPrice: 0, // Self-hosted is free
         pricePerTranslator: 19, // Hosted plan
         keyLimits: 10000, // Free hosted tier
-        includedFeatures: [
-          'セルフホスト無制限',
-          'Git統合',
-          '翻訳メモリ',
-          'API',
-          'Webhook',
-          '品質チェック'
-        ],
-        limitations: [
-          'セルフホストには技術知識が必要',
-          'ホスト版は機能制限あり',
-          'UI/UXが他社より劣る'
-        ]
+        includedFeatures: ['セルフホスト無制限', 'Git統合', '翻訳メモリ', 'API', 'Webhook', '品質チェック'],
+        limitations: ['セルフホストには技術知識が必要', 'ホスト版は機能制限あり', 'UI/UXが他社より劣る'],
       },
       features: {
         translationMemory: true,
@@ -372,7 +338,7 @@ export class TranslationPlatformEvaluator {
         rtlLanguages: true,
         pluralFormHandling: true,
         contextualTranslation: true,
-        screenTranslation: false
+        screenTranslation: false,
       },
       integrations: {
         github: true,
@@ -382,7 +348,7 @@ export class TranslationPlatformEvaluator {
         json: true,
         cli: true,
         vscode: false,
-        figma: false
+        figma: false,
       },
       pros: [
         'オープンソースで完全に無料',
@@ -390,14 +356,14 @@ export class TranslationPlatformEvaluator {
         'Git統合が優秀',
         '高度なカスタマイゼーション',
         'プライバシー重視',
-        '豊富なファイル形式サポート'
+        '豊富なファイル形式サポート',
       ],
       cons: [
         'セルフホストには技術的スキルが必要',
         'UI/UXが他社プラットフォームより劣る',
         'Next.js/React直接統合なし',
         '商用サポートが限定的',
-        'モダンな開発者ツールが少ない'
+        'モダンな開発者ツールが少ない',
       ],
       score: {
         overall: 70,
@@ -407,10 +373,10 @@ export class TranslationPlatformEvaluator {
           usability: 50,
           integration: 60,
           support: 60,
-          scalability: 80
-        }
+          scalability: 80,
+        },
       },
-      recommendation: 'acceptable'
+      recommendation: 'acceptable',
     }
   }
 
@@ -427,19 +393,8 @@ export class TranslationPlatformEvaluator {
         monthlyPrice: 99, // Starter plan
         pricePerTranslator: 28,
         keyLimits: 0, // No key limits
-        includedFeatures: [
-          'エンタープライズ機能',
-          'GitHub統合',
-          'API',
-          '翻訳メモリ',
-          '品質保証',
-          '24/7サポート'
-        ],
-        limitations: [
-          '無料プランなし',
-          '最低料金が高い',
-          '小規模チームには過剰'
-        ]
+        includedFeatures: ['エンタープライズ機能', 'GitHub統合', 'API', '翻訳メモリ', '品質保証', '24/7サポート'],
+        limitations: ['無料プランなし', '最低料金が高い', '小規模チームには過剰'],
       },
       features: {
         translationMemory: true,
@@ -461,7 +416,7 @@ export class TranslationPlatformEvaluator {
         rtlLanguages: true,
         pluralFormHandling: true,
         contextualTranslation: true,
-        screenTranslation: true
+        screenTranslation: true,
       },
       integrations: {
         github: true,
@@ -471,7 +426,7 @@ export class TranslationPlatformEvaluator {
         json: true,
         cli: true,
         vscode: true,
-        figma: true
+        figma: true,
       },
       pros: [
         'エンタープライズレベルの機能',
@@ -479,14 +434,9 @@ export class TranslationPlatformEvaluator {
         '24/7専用サポート',
         '高度な分析・レポート機能',
         'カスタムワークフロー',
-        'SSO・権限管理'
+        'SSO・権限管理',
       ],
-      cons: [
-        '料金が非常に高い',
-        '無料プランなし',
-        '小規模プロジェクトには過剰',
-        '学習コストが高い'
-      ],
+      cons: ['料金が非常に高い', '無料プランなし', '小規模プロジェクトには過剰', '学習コストが高い'],
       score: {
         overall: 80,
         breakdown: {
@@ -495,10 +445,10 @@ export class TranslationPlatformEvaluator {
           usability: 75,
           integration: 90,
           support: 95,
-          scalability: 95
-        }
+          scalability: 95,
+        },
       },
-      recommendation: 'acceptable'
+      recommendation: 'acceptable',
     }
   }
 
@@ -515,17 +465,8 @@ export class TranslationPlatformEvaluator {
         monthlyPrice: 0,
         pricePerTranslator: 20,
         keyLimits: 1000, // Free tier
-        includedFeatures: [
-          'GitHub統合',
-          'API',
-          '翻訳メモリ',
-          '基本的なワークフロー'
-        ],
-        limitations: [
-          'Free tier: 1,000文字列まで',
-          'Free tier: 2言語まで',
-          '古いUI/UX'
-        ]
+        includedFeatures: ['GitHub統合', 'API', '翻訳メモリ', '基本的なワークフロー'],
+        limitations: ['Free tier: 1,000文字列まで', 'Free tier: 2言語まで', '古いUI/UX'],
       },
       features: {
         translationMemory: true,
@@ -547,7 +488,7 @@ export class TranslationPlatformEvaluator {
         rtlLanguages: true,
         pluralFormHandling: true,
         contextualTranslation: false,
-        screenTranslation: false
+        screenTranslation: false,
       },
       integrations: {
         github: true,
@@ -557,21 +498,16 @@ export class TranslationPlatformEvaluator {
         json: true,
         cli: true,
         vscode: false,
-        figma: false
+        figma: false,
       },
       pros: [
         '長い運営実績と安定性',
         'オープンソースプロジェクトの多くが利用',
         '基本機能は充実',
         'GitHub統合',
-        'コミュニティ翻訳サポート'
+        'コミュニティ翻訳サポート',
       ],
-      cons: [
-        'UI/UXが古い',
-        'モダンな開発環境との統合が弱い',
-        '新機能追加が遅い',
-        '自動化機能が限定的'
-      ],
+      cons: ['UI/UXが古い', 'モダンな開発環境との統合が弱い', '新機能追加が遅い', '自動化機能が限定的'],
       score: {
         overall: 65,
         breakdown: {
@@ -580,10 +516,10 @@ export class TranslationPlatformEvaluator {
           usability: 50,
           integration: 60,
           support: 70,
-          scalability: 60
-        }
+          scalability: 60,
+        },
       },
-      recommendation: 'acceptable'
+      recommendation: 'acceptable',
     }
   }
 
@@ -600,17 +536,8 @@ export class TranslationPlatformEvaluator {
         monthlyPrice: 0,
         pricePerTranslator: 56, // Professional plan
         keyLimits: 1000,
-        includedFeatures: [
-          'GitHub統合',
-          '翻訳メモリ',
-          'API',
-          'GDPR準拠'
-        ],
-        limitations: [
-          'Free tier: 1,000キーまで',
-          'Free tier: 基本機能のみ',
-          '料金が高め'
-        ]
+        includedFeatures: ['GitHub統合', '翻訳メモリ', 'API', 'GDPR準拠'],
+        limitations: ['Free tier: 1,000キーまで', 'Free tier: 基本機能のみ', '料金が高め'],
       },
       features: {
         translationMemory: true,
@@ -632,7 +559,7 @@ export class TranslationPlatformEvaluator {
         rtlLanguages: true,
         pluralFormHandling: true,
         contextualTranslation: true,
-        screenTranslation: false
+        screenTranslation: false,
       },
       integrations: {
         github: true,
@@ -642,20 +569,15 @@ export class TranslationPlatformEvaluator {
         json: true,
         cli: false,
         vscode: false,
-        figma: false
+        figma: false,
       },
-      pros: [
-        'GDPR完全準拠',
-        'ヨーロッパのデータセンター',
-        '高いセキュリティ基準',
-        '基本的な翻訳機能は良好'
-      ],
+      pros: ['GDPR完全準拠', 'ヨーロッパのデータセンター', '高いセキュリティ基準', '基本的な翻訳機能は良好'],
       cons: [
         '料金が高い',
         '機能が限定的',
         'モダンな統合オプションが少ない',
         'コミュニティが小さい',
-        'ドキュメントの質が低い'
+        'ドキュメントの質が低い',
       ],
       score: {
         overall: 60,
@@ -665,10 +587,10 @@ export class TranslationPlatformEvaluator {
           usability: 60,
           integration: 50,
           support: 60,
-          scalability: 60
-        }
+          scalability: 60,
+        },
       },
-      recommendation: 'not_recommended'
+      recommendation: 'not_recommended',
     }
   }
 
@@ -704,7 +626,7 @@ export class TranslationPlatformEvaluator {
     const budgetWeight = 20
     let budgetScore = 0
     if (platform.pricing.monthlyPrice <= this.requirements.budgetLimit) {
-      budgetScore = Math.max(0, 100 - (platform.pricing.monthlyPrice / this.requirements.budgetLimit * 100))
+      budgetScore = Math.max(0, 100 - (platform.pricing.monthlyPrice / this.requirements.budgetLimit) * 100)
     }
     score += (budgetScore / 100) * budgetWeight
     totalWeight += budgetWeight
@@ -732,10 +654,12 @@ export class TranslationPlatformEvaluator {
    * 全プラットフォームの評価実行
    */
   evaluateAll(): Array<TranslationPlatform & { compatibilityScore: number }> {
-    return this.platforms.map(platform => ({
-      ...platform,
-      compatibilityScore: this.evaluateCompatibility(platform)
-    })).sort((a, b) => b.compatibilityScore - a.compatibilityScore)
+    return this.platforms
+      .map((platform) => ({
+        ...platform,
+        compatibilityScore: this.evaluateCompatibility(platform),
+      }))
+      .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
   }
 
   /**
@@ -756,7 +680,7 @@ export class TranslationPlatformEvaluator {
       `主な強み: ${primary.pros.slice(0, 3).join('、')}`,
       `予算適合性: ${primary.pricing.monthlyPrice <= this.requirements.budgetLimit ? '✅' : '❌'}`,
       `技術統合: GitHub ${primary.integrations.github ? '✅' : '❌'}, TypeScript ${primary.integrations.typescript ? '✅' : '❌'}`,
-      `代替案として${alternative.name}も検討価値あり（適合性 ${alternative.compatibilityScore}%）`
+      `代替案として${alternative.name}も検討価値あり（適合性 ${alternative.compatibilityScore}%）`,
     ]
 
     const implementationPlan = [
@@ -765,14 +689,14 @@ export class TranslationPlatformEvaluator {
       '3. GitHub Actions統合・自動化設定',
       '4. 品質管理ワークフローの構築',
       '5. チーム向けガイドライン作成',
-      '6. 本格運用開始・効果測定'
+      '6. 本格運用開始・効果測定',
     ]
 
     return {
       primary,
       alternative,
       reasoning,
-      implementationPlan
+      implementationPlan,
     }
   }
 
@@ -807,12 +731,12 @@ export class TranslationPlatformEvaluator {
     report += `**第一推奨**: ${recommendation.primary.name}\n`
     report += `**代替案**: ${recommendation.alternative.name}\n\n`
     report += '**決定理由**:\n'
-    recommendation.reasoning.forEach(reason => {
+    recommendation.reasoning.forEach((reason) => {
       report += `- ${reason}\n`
     })
 
     report += '\n**実装計画**:\n'
-    recommendation.implementationPlan.forEach(step => {
+    recommendation.implementationPlan.forEach((step) => {
       report += `${step}\n`
     })
 
@@ -851,7 +775,7 @@ export const boxLogRequirements: BoxLogRequirements = {
   // 品質要件
   translationMemory: true,
   contextSupport: true,
-  qualityMetrics: true
+  qualityMetrics: true,
 }
 
 export default TranslationPlatformEvaluator

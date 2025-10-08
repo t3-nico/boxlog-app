@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import { useEventCreation } from './useEventCreation'
 
 describe('useEventCreation', () => {
@@ -93,9 +93,7 @@ describe('useEventCreation', () => {
   })
 
   it('should use custom default duration', () => {
-    const { result } = renderHook(() =>
-      useEventCreation({ defaultDurationMinutes: 60 })
-    )
+    const { result } = renderHook(() => useEventCreation({ defaultDurationMinutes: 60 }))
     const testDate = new Date('2025-10-01')
 
     act(() => {

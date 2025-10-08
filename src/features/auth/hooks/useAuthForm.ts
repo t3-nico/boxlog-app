@@ -1,6 +1,6 @@
 /**
  * 認証フォーム用の共通カスタムフック
- * 
+ *
  * email、password、loading、errorの状態管理を共通化
  */
 
@@ -45,7 +45,7 @@ export function useAuthForm(options: UseAuthFormOptions = {}) {
       setError('メールアドレスを入力してください')
       return false
     }
-    
+
     if (!validateEmail(email)) {
       setError('有効なメールアドレスを入力してください')
       return false
@@ -67,24 +67,24 @@ export function useAuthForm(options: UseAuthFormOptions = {}) {
   return {
     // State values
     email,
-    password, 
+    password,
     loading,
     error,
-    
+
     // Setters
     setEmail,
     setPassword,
     setLoading,
     setError: setErrorMessage,
-    
+
     // Utilities
     resetForm,
     clearError,
     validateForm,
     validateEmail,
     validatePassword,
-    
+
     // Computed values
-    isValid: email.trim() !== '' && password.trim() !== '' && validateEmail(email) && validatePassword(password)
+    isValid: email.trim() !== '' && password.trim() !== '' && validateEmail(email) && validatePassword(password),
   }
 }

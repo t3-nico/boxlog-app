@@ -29,7 +29,7 @@ export const getDictionary = async (locale: Locale): Promise<Dictionary> => {
   if (!locales.includes(locale)) {
     locale = defaultLocale
   }
-  return (locale in dictionaries) ? dictionaries[locale as keyof typeof dictionaries]() : dictionaries[defaultLocale]()
+  return locale in dictionaries ? dictionaries[locale as keyof typeof dictionaries]() : dictionaries[defaultLocale]()
 }
 
 // ネストしたオブジェクトから値を取得
@@ -103,7 +103,11 @@ export const createTranslation = (dictionary: Dictionary, locale: Locale = defau
   }
 
   // 複数形処理関数
-  const pluralTranslation = (key: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+  const pluralTranslation = (
+    key: string,
+    count: number,
+    variables?: Record<string, string | number>
+  ): TranslatedString => {
     const translation = getNestedValue(dictionary, key)
 
     // オブジェクト形式の複数形翻訳をチェック
@@ -121,7 +125,11 @@ export const createTranslation = (dictionary: Dictionary, locale: Locale = defau
   }
 
   // ICU形式直接処理関数
-  const icuTranslation = (message: string, count: number, variables?: Record<string, string | number>): TranslatedString => {
+  const icuTranslation = (
+    message: string,
+    count: number,
+    variables?: Record<string, string | number>
+  ): TranslatedString => {
     return markAsTranslated(formatICUPlural(locale, count, message, variables))
   }
 

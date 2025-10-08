@@ -1,10 +1,4 @@
-import type { 
-  Event, 
-  EventEntity, 
-  CreateEventRequest, 
-  UpdateEventRequest, 
-  CalendarEvent 
-} from '../types/events'
+import type { CalendarEvent, CreateEventRequest, Event, EventEntity, UpdateEventRequest } from '../types/events'
 
 /**
  * Database Entity → Client Event への変換
@@ -33,12 +27,12 @@ export function transformEventEntityToEvent(entity: EventEntity): Event {
   if (entity.url !== undefined) result.url = entity.url
   if (entity.reminders !== undefined) result.reminders = entity.reminders
   if (entity.event_tags) {
-    result.tags = entity.event_tags.map(et => ({
+    result.tags = entity.event_tags.map((et) => ({
       id: et.tags.id,
       name: et.tags.name,
       color: et.tags.color,
       ...(et.tags.icon !== undefined && { icon: et.tags.icon }),
-      ...(et.tags.parent_id !== undefined && { parent_id: et.tags.parent_id })
+      ...(et.tags.parent_id !== undefined && { parent_id: et.tags.parent_id }),
     }))
   }
 
@@ -72,7 +66,9 @@ export function transformEventToEventEntity(event: Event): Partial<Omit<EventEnt
 /**
  * CreateEventRequest → Database Insert用データへの変換
  */
-export function transformCreateRequestToEntity(request: CreateEventRequest): Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> {
+export function transformCreateRequestToEntity(
+  request: CreateEventRequest
+): Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> {
   const result: Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> = {
     user_id: '', // user_id is required in EventEntity
     title: request.title,
@@ -98,7 +94,9 @@ export function transformCreateRequestToEntity(request: CreateEventRequest): Par
 /**
  * UpdateEventRequest → Database Update用データへの変換
  */
-export function transformUpdateRequestToEntity(request: UpdateEventRequest): Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> {
+export function transformUpdateRequestToEntity(
+  request: UpdateEventRequest
+): Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> {
   const result: Partial<Omit<EventEntity, 'id' | 'created_at' | 'updated_at'>> = {}
 
   // フィールドマッピング定義
@@ -109,7 +107,11 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
   }> = [
     { requestField: 'title', entityField: 'title' },
     { requestField: 'description', entityField: 'description' },
-    { requestField: 'startDate', entityField: 'planned_start', transform: (v) => (v as Date | undefined)?.toISOString() },
+    {
+      requestField: 'startDate',
+      entityField: 'planned_start',
+      transform: (v) => (v as Date | undefined)?.toISOString(),
+    },
     { requestField: 'endDate', entityField: 'planned_end', transform: (v) => (v as Date | undefined)?.toISOString() },
     { requestField: 'status', entityField: 'status' },
     { requestField: 'priority', entityField: 'priority' },
@@ -120,7 +122,7 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
     { requestField: 'items', entityField: 'items' },
     { requestField: 'location', entityField: 'location' },
     { requestField: 'url', entityField: 'url' },
-    { requestField: 'reminders', entityField: 'reminders' }
+    { requestField: 'reminders', entityField: 'reminders' },
   ]
 
   // マッピングに従って変換
@@ -128,7 +130,7 @@ export function transformUpdateRequestToEntity(request: UpdateEventRequest): Par
     if (requestField in request && request[requestField] !== undefined) {
       const value = request[requestField]
       if (entityField in result || !result[entityField]) {
-        (result as Record<string, unknown>)[entityField] = transform ? transform(value) : value
+        ;(result as Record<string, unknown>)[entityField] = transform ? transform(value) : value
       }
     }
   })
@@ -144,13 +146,13 @@ export function transformEventToCalendarEvent(event: Event): CalendarEvent {
     ...event,
     displayStartDate: event.startDate || new Date(),
     displayEndDate: event.endDate || new Date(),
-    duration: event.startDate && event.endDate 
-      ? Math.floor((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60)) 
-      : 0,
-    isMultiDay: event.startDate && event.endDate 
-      ? event.endDate.toDateString() !== event.startDate.toDateString()
-      : false,
-    isRecurring: event.isRecurring || false
+    duration:
+      event.startDate && event.endDate
+        ? Math.floor((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
+        : 0,
+    isMultiDay:
+      event.startDate && event.endDate ? event.endDate.toDateString() !== event.startDate.toDateString() : false,
+    isRecurring: event.isRecurring || false,
   }
 
   return baseCalendarEvent
@@ -175,7 +177,7 @@ export function transformEventsToCalendarEvents(events: Event[]): CalendarEvent[
  */
 export function normalizeDateString(dateString: string | null): Date | undefined {
   if (!dateString) return undefined
-  
+
   try {
     return new Date(dateString)
   } catch {
@@ -188,23 +190,23 @@ export function normalizeDateString(dateString: string | null): Date | undefined
  */
 export function formatEventTime(startDate: Date | undefined, endDate: Date | undefined, isAllDay?: boolean): string {
   if (isAllDay) return 'All day'
-  
+
   if (!startDate) return ''
-  
-  const startTime = startDate.toLocaleTimeString('en-US', { 
-    hour: 'numeric', 
-    minute: '2-digit', 
-    hour12: true 
+
+  const startTime = startDate.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
   })
-  
+
   if (!endDate) return startTime
-  
-  const endTime = endDate.toLocaleTimeString('en-US', { 
-    hour: 'numeric', 
-    minute: '2-digit', 
-    hour12: true 
+
+  const endTime = endDate.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
   })
-  
+
   return `${startTime} - ${endTime}`
 }
 
@@ -213,21 +215,21 @@ export function formatEventTime(startDate: Date | undefined, endDate: Date | und
  */
 export function formatEventDate(startDate: Date | undefined, endDate: Date | undefined): string {
   if (!startDate) return ''
-  
-  const startDateStr = startDate.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric' 
+
+  const startDateStr = startDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
   })
-  
+
   if (!endDate || startDate.toDateString() === endDate.toDateString()) {
     return startDateStr
   }
-  
-  const endDateStr = endDate.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric' 
+
+  const endDateStr = endDate.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
   })
-  
+
   return `${startDateStr} - ${endDateStr}`
 }
 
@@ -244,10 +246,10 @@ export function calculateEventDuration(startDate: Date | undefined, endDate: Dat
  */
 export function isEventInProgress(event: Event): boolean {
   const now = new Date()
-  
+
   if (!event.startDate) return false
   if (event.status === 'completed' || event.status === 'cancelled') return false
-  
+
   if (event.endDate) {
     return now >= event.startDate && now <= event.endDate
   } else {

@@ -4,8 +4,8 @@
  * クライアント側API呼び出しの型安全性確保
  */
 
-import { createTRPCReact } from '@trpc/react-query'
 import { createTRPCProxyClient, httpBatchLink, loggerLink } from '@trpc/client'
+import { createTRPCReact } from '@trpc/react-query'
 import superjson from 'superjson'
 
 import type { AppRouter } from '@/server/api/root'
@@ -23,8 +23,7 @@ export const vanillaTrpc = createTRPCProxyClient<AppRouter>({
   links: [
     loggerLink({
       enabled: (opts) =>
-        process.env.NODE_ENV === 'development' ||
-        (opts.direction === 'down' && opts.result instanceof Error),
+        process.env.NODE_ENV === 'development' || (opts.direction === 'down' && opts.result instanceof Error),
     }),
     httpBatchLink({
       url: '/api/trpc',
@@ -53,8 +52,7 @@ export function createTRPCClientConfig() {
     links: [
       loggerLink({
         enabled: (opts) =>
-          process.env.NODE_ENV === 'development' ||
-          (opts.direction === 'down' && opts.result instanceof Error),
+          process.env.NODE_ENV === 'development' || (opts.direction === 'down' && opts.result instanceof Error),
       }),
       httpBatchLink({
         url: `${getBaseUrl()}/api/trpc`,

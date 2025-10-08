@@ -7,6 +7,7 @@
 ## 📁 ファイル一覧
 
 ### `errorCodes.ts`
+
 **エラーコード体系（1000〜7000番台）**
 
 ```typescript
@@ -19,6 +20,7 @@ throw new AppError('認証失敗', ERROR_CODES.AUTH_INVALID_TOKEN)
 詳細: [`docs/architecture/ERROR_HANDLING.md`](../../docs/architecture/ERROR_HANDLING.md)
 
 ### `naming.ts`
+
 **画面・機能の統一命名規則**
 
 ```typescript
@@ -44,7 +46,9 @@ trackEvent(ANALYTICS_EVENTS.page_view(SCREENS.DASHBOARD))
 // ✅ 複数機能で横断的に使用
 export const MAX_FILE_SIZE = 5 * 1024 * 1024
 export const SUPPORTED_LOCALES = ['ja', 'en'] as const
-export const ERROR_CODES = { /* ... */ }
+export const ERROR_CODES = {
+  /* ... */
+}
 ```
 
 ### ❌ `src/constants/` に配置すべきでない定数

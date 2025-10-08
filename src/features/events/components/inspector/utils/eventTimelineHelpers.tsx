@@ -1,8 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
-import React from 'react'
 
-import { Activity, Bell, Clock, FileText, Edit3, ArrowRight } from 'lucide-react'
-import { Tag as TagIcon } from 'lucide-react'
+import { Activity, ArrowRight, Bell, Clock, Edit3, FileText, Tag as TagIcon } from 'lucide-react'
 
 // Timeline event types
 interface BaseTimelineEvent {
@@ -54,15 +52,15 @@ export type TimelineEvent = CreatedEvent | StatusEvent | ReminderEvent | TimeEve
  * イベントタイプに基づいてアイコンを取得
  */
 export const getEventIcon = (event: TimelineEvent) => {
-  if (event.type === 'created') return <Edit3 className="w-3 h-3" />
-  if (event.type === 'status') return <Activity className="w-3 h-3" />
-  if (event.type === 'reminder') return <Bell className="w-3 h-3" />
+  if (event.type === 'created') return <Edit3 className="h-3 w-3" />
+  if (event.type === 'status') return <Activity className="h-3 w-3" />
+  if (event.type === 'reminder') return <Bell className="h-3 w-3" />
 
-  if (event.field === 'time') return <Clock className="w-3 h-3" />
-  if (event.field === 'tags') return <TagIcon className="w-3 h-3" />
-  if (event.field === 'memo') return <FileText className="w-3 h-3" />
+  if (event.field === 'time') return <Clock className="h-3 w-3" />
+  if (event.field === 'tags') return <TagIcon className="h-3 w-3" />
+  if (event.field === 'memo') return <FileText className="h-3 w-3" />
 
-  return <Edit3 className="w-3 h-3" />
+  return <Edit3 className="h-3 w-3" />
 }
 
 /**
@@ -77,7 +75,7 @@ export const renderCreatedEventDescription = () => {
  */
 export const renderStatusEventDescription = (event: StatusEvent) => {
   return (
-    <span className="flex items-center gap-1.5 flex-wrap">
+    <span className="flex flex-wrap items-center gap-1.5">
       <span className="text-neutral-600 dark:text-neutral-400">ステータス:</span>
       <span className="text-neutral-600 dark:text-neutral-400">{event.oldValue}</span>
       <ArrowRight className="h-3 w-3 text-neutral-600 dark:text-neutral-400" />
@@ -98,7 +96,7 @@ export const renderReminderEventDescription = (event: ReminderEvent) => {
  */
 export const renderTimeEventDescription = (event: TimeEvent) => {
   return (
-    <span className="flex items-center gap-1.5 flex-wrap">
+    <span className="flex flex-wrap items-center gap-1.5">
       <span className="text-neutral-600 dark:text-neutral-400">時間変更:</span>
       <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">{event.oldValue}</span>
       <ArrowRight className="h-3 w-3 text-neutral-600 dark:text-neutral-400" />

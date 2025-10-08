@@ -15,29 +15,45 @@ export const CalendarInspectorContent = () => {
 
           <div className="space-y-3">
             {/* イベント名 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-start gap-3">
                 <Calendar className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
                 <div className="flex-1">
                   <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>週次ミーティング</p>
-                  <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>チーム全体での進捗共有とタスク確認</p>
+                  <p className={cn('mt-1 text-xs text-neutral-600 dark:text-neutral-400')}>
+                    チーム全体での進捗共有とタスク確認
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* 時間情報 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-center gap-3">
                 <Clock className="h-4 w-4 text-green-600 dark:text-green-400" />
                 <div>
-                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>2024年9月7日（土）</p>
+                  <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>
+                    2024年9月7日（土）
+                  </p>
                   <p className={cn('text-xs text-neutral-600 dark:text-neutral-400')}>14:00 - 15:30 (1時間30分)</p>
                 </div>
               </div>
             </div>
 
             {/* 場所 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-center gap-3">
                 <MapPin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                 <div>
@@ -48,7 +64,11 @@ export const CalendarInspectorContent = () => {
             </div>
 
             {/* 参加者 */}
-            <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}>
+            <div
+              className={cn(
+                'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+              )}
+            >
               <div className="flex items-start gap-3">
                 <Users className="mt-0.5 h-4 w-4 text-purple-600 dark:text-purple-400" />
                 <div className="flex-1">
@@ -86,7 +106,7 @@ export const CalendarInspectorContent = () => {
               <div
                 key={task.title}
                 className={cn(
-                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'rounded-lg border border-neutral-300 p-3 dark:border-neutral-700',
                   'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
@@ -120,7 +140,7 @@ export const CalendarInspectorContent = () => {
               <span
                 key={tag}
                 className={cn(
-                  'rounded-full border border-neutral-300 dark:border-neutral-700 px-3 py-1 text-xs',
+                  'rounded-full border border-neutral-300 px-3 py-1 text-xs dark:border-neutral-700',
                   'bg-white dark:bg-neutral-800',
                   'text-neutral-600 dark:text-neutral-400',
                   'hover:bg-accent cursor-pointer transition-colors'

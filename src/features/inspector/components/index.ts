@@ -11,5 +11,5 @@ export { useCreateEventInspectorShortcuts } from '@/features/inspector/hooks/use
 // Inspector content components
 export { EventDetailInspectorContent } from '@/features/events/components/inspector/EventDetailInspectorContent'
 export { CalendarInspectorContent } from './content/CalendarInspectorContent'
-export { TaskInspectorContent } from './content/TaskInspectorContent'
 export { DefaultInspectorContent } from './content/DefaultInspectorContent'
+export { TaskInspectorContent } from './content/TaskInspectorContent'

@@ -18,69 +18,58 @@ export const dateSchema = z.date({
   invalid_type_error: '有効な日付を指定してください',
 })
 
-export const futureDateSchema = dateSchema.refine(
-  (date) => date > new Date(),
-  '未来の日付を指定してください'
-)
+export const futureDateSchema = dateSchema.refine((date) => date > new Date(), '未来の日付を指定してください')
 
 /**
  * 文字列関連
  */
-export const requiredStringSchema = z.string({
-  required_error: 'この項目は必須です',
-  invalid_type_error: '文字列で入力してください',
-}).min(1, 'この項目は必須です')
+export const requiredStringSchema = z
+  .string({
+    required_error: 'この項目は必須です',
+    invalid_type_error: '文字列で入力してください',
+  })
+  .min(1, 'この項目は必須です')
 
 export const trimmedStringSchema = z.string().transform((val) => val.trim())
 
-export const nonEmptyStringSchema = z.string()
+export const nonEmptyStringSchema = z
+  .string()
   .min(1, 'この項目は必須です')
   .transform((val) => val.trim())
 
 /**
  * タイトル・名前用（1-200文字）
  */
-export const titleSchema = z.string()
+export const titleSchema = z
+  .string()
   .min(1, 'タイトルは必須です')
   .max(200, 'タイトルは200文字以内で入力してください')
   .transform((val) => val.trim())
-  .refine(
-    (val) => !val.match(/^\s+$/) && !val.includes('\n'),
-    'タイトルに改行や空白のみは使用できません'
-  )
+  .refine((val) => !val.match(/^\s+$/) && !val.includes('\n'), 'タイトルに改行や空白のみは使用できません')
 
 /**
  * 説明文用（最大2000文字）
  */
-export const descriptionSchema = z.string()
-  .max(2000, '説明は2000文字以内で入力してください')
-  .optional()
+export const descriptionSchema = z.string().max(2000, '説明は2000文字以内で入力してください').optional()
 
 /**
  * メールアドレス
  */
-export const emailSchema = z.string()
+export const emailSchema = z
+  .string()
   .email('有効なメールアドレスを入力してください')
   .max(320, 'メールアドレスが長すぎます')
 
 /**
  * パスワード
  */
-export const passwordSchema = z.string()
+export const passwordSchema = z
+  .string()
   .min(8, 'パスワードは8文字以上で入力してください')
   .max(128, 'パスワードは128文字以内で入力してください')
-  .refine(
-    (password) => /[a-z]/.test(password),
-    '小文字を含める必要があります'
-  )
-  .refine(
-    (password) => /[A-Z]/.test(password),
-    '大文字を含める必要があります'
-  )
-  .refine(
-    (password) => /\d/.test(password),
-    '数字を含める必要があります'
-  )
+  .refine((password) => /[a-z]/.test(password), '小文字を含める必要があります')
+  .refine((password) => /[A-Z]/.test(password), '大文字を含める必要があります')
+  .refine((password) => /\d/.test(password), '数字を含める必要があります')
 
 /**
  * 優先度
@@ -101,7 +90,8 @@ export const statusSchema = z.enum(['todo', 'in_progress', 'done', 'archived'], 
 /**
  * 色
  */
-export const colorSchema = z.string()
+export const colorSchema = z
+  .string()
   .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, '有効な色コード（#RRGGBB）を指定してください')
 
 /**
@@ -120,7 +110,12 @@ export const tagSchema = z.object({
  */
 export const paginationInputSchema = z.object({
   page: z.number().int().min(1, 'ページ番号は1以上を指定してください').default(1),
-  limit: z.number().int().min(1, '取得件数は1以上を指定してください').max(100, '取得件数は100以下を指定してください').default(20),
+  limit: z
+    .number()
+    .int()
+    .min(1, '取得件数は1以上を指定してください')
+    .max(100, '取得件数は100以下を指定してください')
+    .default(20),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 })
@@ -158,10 +153,14 @@ export const apiErrorSchema = z.object({
   error: z.object({
     code: z.number(),
     message: z.string(),
-    details: z.array(z.object({
-      field: z.string(),
-      message: z.string(),
-    })).optional(),
+    details: z
+      .array(
+        z.object({
+          field: z.string(),
+          message: z.string(),
+        })
+      )
+      .optional(),
   }),
 })
 

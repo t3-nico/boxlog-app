@@ -7,68 +7,64 @@ import {
   type ErrorCategory,
   type ErrorCode,
   type SeverityLevel,
+  CATEGORY_RETRYABLE,
+  CATEGORY_SEVERITY,
   ERROR_CATEGORIES,
   ERROR_CODES,
   getErrorCategory,
-  CATEGORY_SEVERITY,
-  CATEGORY_RETRYABLE
 } from './categories'
 
-import {
-  type UserMessage,
-  getUserMessage,
-  SEVERITY_STYLES
-} from './messages'
+import { type UserMessage, getUserMessage, SEVERITY_STYLES } from './messages'
 
 import {
-  type RecoveryStrategy,
-  type RetryStrategy,
   type CircuitBreakerConfig,
   type FallbackStrategy,
-  getRecoveryStrategy,
-  executeWithRetry,
+  type RecoveryStrategy,
+  type RetryStrategy,
   CircuitBreaker,
-  executeWithFallback
+  executeWithFallback,
+  executeWithRetry,
+  getRecoveryStrategy,
 } from './recovery-strategies'
 
 /**
  * エラーパターン辞書の完全な定義
  */
 export interface ErrorPattern {
-  code: ErrorCode                    // エラーコード
-  category: ErrorCategory            // カテゴリ
-  severity: SeverityLevel           // 重要度
-  message: UserMessage              // ユーザー向けメッセージ
-  recovery: RecoveryStrategy        // 復旧戦略
-  metadata: ErrorMetadata           // メタデータ
+  code: ErrorCode // エラーコード
+  category: ErrorCategory // カテゴリ
+  severity: SeverityLevel // 重要度
+  message: UserMessage // ユーザー向けメッセージ
+  recovery: RecoveryStrategy // 復旧戦略
+  metadata: ErrorMetadata // メタデータ
 }
 
 /**
  * エラーメタデータ
  */
 export interface ErrorMetadata {
-  source: string                    // エラー発生源（API、DB、外部サービス等）
-  timestamp: Date                   // 発生日時
-  context?: Record<string, any>     // コンテキスト情報
-  userId?: string                   // ユーザーID（該当する場合）
-  sessionId?: string                // セッションID
-  requestId?: string                // リクエストID
-  userAgent?: string                // ユーザーエージェント
-  ip?: string                       // IPアドレス
-  version?: string                  // アプリケーションバージョン
+  source: string // エラー発生源（API、DB、外部サービス等）
+  timestamp: Date // 発生日時
+  context?: Record<string, any> // コンテキスト情報
+  userId?: string // ユーザーID（該当する場合）
+  sessionId?: string // セッションID
+  requestId?: string // リクエストID
+  userAgent?: string // ユーザーエージェント
+  ip?: string // IPアドレス
+  version?: string // アプリケーションバージョン
 }
 
 /**
  * 処理結果の型定義
  */
 export interface ErrorHandlingResult<T = any> {
-  success: boolean                  // 処理成功フラグ
-  data?: T                         // 成功時のデータ
-  error?: AppError                 // エラー情報
-  retryCount?: number              // リトライ回数
-  recoveryApplied?: boolean        // 復旧処理が適用されたか
-  fallbackUsed?: boolean           // フォールバックが使用されたか
-  executionTime?: number           // 実行時間（ミリ秒）
+  success: boolean // 処理成功フラグ
+  data?: T // 成功時のデータ
+  error?: AppError // エラー情報
+  retryCount?: number // リトライ回数
+  recoveryApplied?: boolean // 復旧処理が適用されたか
+  fallbackUsed?: boolean // フォールバックが使用されたか
+  executionTime?: number // 実行時間（ミリ秒）
 }
 
 /**
@@ -82,12 +78,7 @@ export class AppError extends Error {
   public readonly metadata: ErrorMetadata
   public readonly pattern: ErrorPattern
 
-  constructor(
-    message: string,
-    code: ErrorCode,
-    metadata: Partial<ErrorMetadata> = {},
-    cause?: Error
-  ) {
+  constructor(message: string, code: ErrorCode, metadata: Partial<ErrorMetadata> = {}, cause?: Error) {
     super(message)
     this.name = 'AppError'
     this.code = code
@@ -97,7 +88,7 @@ export class AppError extends Error {
     this.metadata = {
       source: 'unknown',
       timestamp: new Date(),
-      ...metadata
+      ...metadata,
     }
     this.pattern = this.buildPattern()
 
@@ -120,7 +111,7 @@ export class AppError extends Error {
       severity: this.severity,
       message: this.userMessage,
       recovery: getRecoveryStrategy(this.code),
-      metadata: this.metadata
+      metadata: this.metadata,
     }
   }
 
@@ -136,7 +127,7 @@ export class AppError extends Error {
       severity: this.severity,
       userMessage: this.userMessage,
       metadata: this.metadata,
-      stack: this.stack
+      stack: this.stack,
     }
   }
 
@@ -148,16 +139,21 @@ export class AppError extends Error {
       tags: {
         errorCode: this.code,
         errorCategory: this.category,
-        severity: this.severity
+        severity: this.severity,
       },
       extra: {
         userMessage: this.userMessage,
         metadata: this.metadata,
-        pattern: this.pattern
+        pattern: this.pattern,
       },
-      level: this.severity === 'critical' ? 'error' :
-              this.severity === 'high' ? 'warning' :
-              this.severity === 'medium' ? 'info' : 'debug'
+      level:
+        this.severity === 'critical'
+          ? 'error'
+          : this.severity === 'high'
+            ? 'warning'
+            : this.severity === 'medium'
+              ? 'info'
+              : 'debug',
     }
   }
 
@@ -200,20 +196,15 @@ export class ErrorPatternDictionary {
       recovery,
       metadata: {
         source: 'dictionary',
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     }
   }
 
   /**
    * AppErrorを作成
    */
-  createError(
-    message: string,
-    code: ErrorCode,
-    metadata?: Partial<ErrorMetadata>,
-    cause?: Error
-  ): AppError {
+  createError(message: string, code: ErrorCode, metadata?: Partial<ErrorMetadata>, cause?: Error): AppError {
     // 統計情報更新
     this.updateStats(code)
 
@@ -248,11 +239,7 @@ export class ErrorPatternDictionary {
       // リトライ戦略での実行
       let result: T
       if (pattern.recovery.retry.enabled) {
-        result = await executeWithRetry(
-          () => circuitBreaker.execute(operation),
-          pattern.recovery.retry,
-          errorCode
-        )
+        result = await executeWithRetry(() => circuitBreaker.execute(operation), pattern.recovery.retry, errorCode)
         recoveryApplied = true
         retryCount = pattern.recovery.retry.maxAttempts
       } else {
@@ -265,17 +252,13 @@ export class ErrorPatternDictionary {
         retryCount,
         recoveryApplied,
         fallbackUsed,
-        executionTime: Date.now() - startTime
+        executionTime: Date.now() - startTime,
       }
-
     } catch (error) {
       // フォールバック実行
       if (pattern.recovery.fallback?.enabled) {
         try {
-          const fallbackResult = await executeWithFallback(
-            operation,
-            pattern.recovery.fallback
-          )
+          const fallbackResult = await executeWithFallback(operation, pattern.recovery.fallback)
           fallbackUsed = true
 
           return {
@@ -284,7 +267,7 @@ export class ErrorPatternDictionary {
             retryCount,
             recoveryApplied,
             fallbackUsed,
-            executionTime: Date.now() - startTime
+            executionTime: Date.now() - startTime,
           }
         } catch (fallbackError) {
           // フォールバックも失敗
@@ -292,9 +275,7 @@ export class ErrorPatternDictionary {
       }
 
       // AppErrorとして返す
-      const appError = error instanceof AppError
-        ? error
-        : this.wrapError(error as Error, errorCode, { context })
+      const appError = error instanceof AppError ? error : this.wrapError(error as Error, errorCode, { context })
 
       return {
         success: false,
@@ -302,7 +283,7 @@ export class ErrorPatternDictionary {
         retryCount,
         recoveryApplied,
         fallbackUsed,
-        executionTime: Date.now() - startTime
+        executionTime: Date.now() - startTime,
       }
     }
   }
@@ -349,7 +330,7 @@ export class ErrorPatternDictionary {
     const categoryStats: Record<ErrorCategory, number> = {} as any
 
     // 初期化
-    Object.values(ERROR_CATEGORIES).forEach(category => {
+    Object.values(ERROR_CATEGORIES).forEach((category) => {
       categoryStats[category] = 0
     })
 
@@ -394,7 +375,7 @@ export class ErrorPatternDictionary {
       totalErrors,
       categoryBreakdown: categoryStats,
       circuitBreakers: this.getCircuitBreakerStatus(),
-      criticalErrors
+      criticalErrors,
     }
   }
 }
@@ -408,32 +389,29 @@ export const errorPatternDictionary = new ErrorPatternDictionary()
  * 便利な関数のエクスポート
  */
 export {
-  // 型定義
-  type ErrorCategory,
-  type ErrorCode,
-  type SeverityLevel,
-  type UserMessage,
-  type RetryStrategy,
-  type CircuitBreakerConfig,
-  type FallbackStrategy,
-  type RecoveryStrategy,
-
+  CATEGORY_RETRYABLE,
+  CATEGORY_SEVERITY,
+  // クラス
+  CircuitBreaker,
   // 定数
   ERROR_CATEGORIES,
   ERROR_CODES,
-  CATEGORY_SEVERITY,
-  CATEGORY_RETRYABLE,
-  SEVERITY_STYLES,
-
+  executeWithFallback,
+  executeWithRetry,
   // 関数
   getErrorCategory,
-  getUserMessage,
   getRecoveryStrategy,
-  executeWithRetry,
-  executeWithFallback,
-
-  // クラス
-  CircuitBreaker
+  getUserMessage,
+  SEVERITY_STYLES,
+  type CircuitBreakerConfig,
+  // 型定義
+  type ErrorCategory,
+  type ErrorCode,
+  type FallbackStrategy,
+  type RecoveryStrategy,
+  type RetryStrategy,
+  type SeverityLevel,
+  type UserMessage,
 }
 
 /**
@@ -448,11 +426,7 @@ export function createAppError(
   return errorPatternDictionary.createError(message, code, metadata, cause)
 }
 
-export function wrapError(
-  error: Error,
-  code: ErrorCode,
-  metadata?: Partial<ErrorMetadata>
-): AppError {
+export function wrapError(error: Error, code: ErrorCode, metadata?: Partial<ErrorMetadata>): AppError {
   return errorPatternDictionary.wrapError(error, code, metadata)
 }
 

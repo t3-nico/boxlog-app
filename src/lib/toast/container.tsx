@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useCallback } from 'react'
-
+import { useCallback } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -19,26 +18,28 @@ const positionClasses = {
 
 export const ToastContainer = () => {
   const { toasts, position, removeToast } = useToastStore()
-  
-  const createRemoveHandler = useCallback((toastId: string) => {
-    return () => removeToast(toastId)
-  }, [removeToast])
-  
+
+  const createRemoveHandler = useCallback(
+    (toastId: string) => {
+      return () => removeToast(toastId)
+    },
+    [removeToast]
+  )
+
   return (
     <div
       className={cn(
-        'fixed z-50 flex flex-col gap-2 pointer-events-none',
-Object.prototype.hasOwnProperty.call(positionClasses, position) ? positionClasses[position as keyof typeof positionClasses] : ''
+        'pointer-events-none fixed z-50 flex flex-col gap-2',
+        Object.prototype.hasOwnProperty.call(positionClasses, position)
+          ? positionClasses[position as keyof typeof positionClasses]
+          : ''
       )}
       aria-live="polite"
       aria-atomic="true"
     >
       {toasts.map((toast) => (
         <div key={toast.id} className="pointer-events-auto">
-          <Toast
-            toast={toast}
-            onRemove={createRemoveHandler(toast.id)}
-          />
+          <Toast toast={toast} onRemove={createRemoveHandler(toast.id)} />
         </div>
       ))}
     </div>

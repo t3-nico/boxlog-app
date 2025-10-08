@@ -1,6 +1,6 @@
 // Search Feature Types
 
-import type { Task, Tag, SmartFolder } from '@/types/common'
+import type { SmartFolder, Tag, Task } from '@/types/common'
 
 // Search result types
 export type SearchResultType = 'task' | 'tag' | 'smart-folder' | 'event' | 'note' | 'file'
@@ -72,4 +72,4 @@ export interface SearchHistoryItem {
 }
 
 // Export data source types from common
-export type { Task, Tag, SmartFolder }
+export type { SmartFolder, Tag, Task }

@@ -1,15 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 import { ConflictData } from '@/types/common'
-import type {
-  OfflineAction,
-  SyncResult,
-  ConflictResolution,
-  OfflineManagerStatus,
-  SyncCompletedEvent,
-  ConflictDetectedEvent,
-  ConflictResolvedEvent,
-  SyncFailedEvent
-} from '../types'
+import type { ConflictResolution, OfflineAction, OfflineManagerStatus, SyncResult } from '../types'
 
 // Generate a unique ID
 const generateId = (): string => {
@@ -42,12 +33,12 @@ export class OfflineManager {
   private async initIndexedDB(): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('BoxLogOffline', 1)
-      
+
       request.onerror = () => reject(request.error)
-      
+
       request.onupgradeneeded = (event) => {
         const db = (event.target as IDBOpenDBRequest).result
-        
+
         // オフラインアクションストア
         if (!db.objectStoreNames.contains('actions')) {
           const actionStore = db.createObjectStore('actions', { keyPath: 'id' })
@@ -55,20 +46,20 @@ export class OfflineManager {
           actionStore.createIndex('syncStatus', 'syncStatus')
           actionStore.createIndex('entity', 'entity')
         }
-        
+
         // ローカルキャッシュストア
         if (!db.objectStoreNames.contains('cache')) {
           const cacheStore = db.createObjectStore('cache', { keyPath: 'key' })
           cacheStore.createIndex('expiry', 'expiry')
         }
-        
+
         // 競合解決履歴ストア
         if (!db.objectStoreNames.contains('conflicts')) {
           const conflictStore = db.createObjectStore('conflicts', { keyPath: 'id' })
           conflictStore.createIndex('resolvedAt', 'resolvedAt')
         }
       }
-      
+
       request.onsuccess = (event) => {
         this.db = (event.target as IDBOpenDBRequest).result
         resolve()
@@ -82,7 +73,7 @@ export class OfflineManager {
       this.emit('online')
       this.processPendingActions()
     })
-    
+
     window.addEventListener('offline', () => {
       this.isOnline = false
       this.emit('offline')
@@ -122,7 +113,7 @@ export class OfflineManager {
   private emit(event: string, data?: unknown) {
     const listeners = this.eventListeners.get(event)
     if (listeners) {
-      listeners.forEach(callback => callback(data))
+      listeners.forEach((callback) => callback(data))
     }
   }
 
@@ -137,7 +128,7 @@ export class OfflineManager {
       id: generateId(),
       timestamp: new Date(),
       syncStatus: 'pending',
-      retryCount: 0
+      retryCount: 0,
     }
 
     try {
@@ -189,8 +180,8 @@ export class OfflineManager {
       let conflicts = 0
 
       // 順序を保って処理
-      for (const action of pendingActions.sort((a, b) => 
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+      for (const action of pendingActions.sort(
+        (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
       )) {
         try {
           const result = await this.syncAction(action)
@@ -227,17 +218,17 @@ export class OfflineManager {
     try {
       const response = await fetch('/api/sync', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'X-Client-Timestamp': action.timestamp.toISOString()
+          'X-Client-Timestamp': action.timestamp.toISOString(),
         },
         body: JSON.stringify({
           action: action.type,
           entity: action.entity,
           data: action.data,
           clientTimestamp: action.timestamp,
-          actionId: action.id
-        })
+          actionId: action.id,
+        }),
       })
 
       if (!response.ok) {
@@ -246,7 +237,7 @@ export class OfflineManager {
           return {
             success: false,
             conflicts: error.conflicts,
-            serverData: error.serverData
+            serverData: error.serverData,
           }
         }
         throw new Error(error.message || 'Sync failed')
@@ -280,7 +271,7 @@ export class OfflineManager {
       conflicts,
       createdAt: new Date(),
       resolvedAt: null,
-      resolution: null
+      resolution: null,
     }
 
     const transaction = this.db!.transaction(['conflicts'], 'readwrite')
@@ -291,7 +282,7 @@ export class OfflineManager {
     this.emit('conflictDetected', {
       action,
       conflicts,
-      conflictId: conflictRecord.id
+      conflictId: conflictRecord.id,
     })
   }
 
@@ -338,11 +329,11 @@ export class OfflineManager {
         // 競合解決完了をマーク
         await this.markConflictResolved(conflictId, resolution)
         await this.updateActionStatus(action.id, 'completed')
-        
+
         this.emit('conflictResolved', {
           conflictId,
           resolution,
-          finalData
+          finalData,
         })
       }
 
@@ -363,8 +354,8 @@ export class OfflineManager {
           entity,
           data,
           actionId,
-          force: true
-        })
+          force: true,
+        }),
       })
 
       if (!response.ok) {
@@ -386,7 +377,7 @@ export class OfflineManager {
     const transaction = this.db.transaction(['actions'], 'readwrite')
     const store = transaction.objectStore('actions')
     const action = await this.promisifyRequest(store.get(actionId))
-    
+
     if (action) {
       action.syncStatus = status
       await this.promisifyRequest(store.put(action))
@@ -398,13 +389,15 @@ export class OfflineManager {
 
     const transaction = this.db.transaction(['cache'], 'readwrite')
     const store = transaction.objectStore('cache')
-    
-    await this.promisifyRequest(store.put({
-      key: `${entity}_${data.id}`,
-      data,
-      updatedAt: new Date(),
-      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24時間
-    }))
+
+    await this.promisifyRequest(
+      store.put({
+        key: `${entity}_${data.id}`,
+        data,
+        updatedAt: new Date(),
+        expiry: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24時間
+      })
+    )
   }
 
   private async markConflictResolved(conflictId: string, resolution: unknown) {
@@ -413,7 +406,7 @@ export class OfflineManager {
     const transaction = this.db.transaction(['conflicts'], 'readwrite')
     const store = transaction.objectStore('conflicts')
     const conflict = await this.promisifyRequest(store.get(conflictId))
-    
+
     if (conflict) {
       conflict.resolvedAt = new Date()
       conflict.resolution = resolution
@@ -439,9 +432,12 @@ export class OfflineManager {
     // ページアンロード時の処理
     if (this.syncQueue.length > 0) {
       // 緊急時の同期処理
-      navigator.sendBeacon('/api/sync/batch', JSON.stringify({
-        actions: this.syncQueue.filter(a => a.syncStatus === 'pending')
-      }))
+      navigator.sendBeacon(
+        '/api/sync/batch',
+        JSON.stringify({
+          actions: this.syncQueue.filter((a) => a.syncStatus === 'pending'),
+        })
+      )
     }
   }
 
@@ -478,7 +474,7 @@ export class OfflineManager {
     const store = transaction.objectStore('actions')
     const index = store.index('syncStatus')
     const completedActions = await this.promisifyRequest(index.getAll('completed'))
-    
+
     for (const action of completedActions) {
       await this.promisifyRequest(store.delete(action.id))
     }
@@ -489,7 +485,7 @@ export class OfflineManager {
       isOnline: this.isOnline,
       isInitialized: this.isInitialized,
       syncInProgress: this.syncInProgress,
-      queueSize: this.syncQueue.length
+      queueSize: this.syncQueue.length,
     }
   }
 }

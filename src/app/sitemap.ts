@@ -140,12 +140,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  return [
-    ...staticPages,
-    ...appPages,
-    ...settingsPages,
-    ...statsPages,
-    ...apiPages,
-    ...helpPages,
-  ]
+  return [...staticPages, ...appPages, ...settingsPages, ...statsPages, ...apiPages, ...helpPages]
 }

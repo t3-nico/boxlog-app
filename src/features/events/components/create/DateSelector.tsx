@@ -92,63 +92,81 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
   }
 
   // Date change handler
-  const _handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = new Date(e.target.value)
-    newDate.setHours(value.getHours(), value.getMinutes())
-    onChange(newDate)
+  const _handleDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newDate = new Date(e.target.value)
+      newDate.setHours(value.getHours(), value.getMinutes())
+      onChange(newDate)
 
-    // Adjust end time to same date
-    const newEndDate = new Date(e.target.value)
-    newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
-    onEndChange(newEndDate)
-  }, [value, endValue, onChange, onEndChange])
+      // Adjust end time to same date
+      const newEndDate = new Date(e.target.value)
+      newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
+      onEndChange(newEndDate)
+    },
+    [value, endValue, onChange, onEndChange]
+  )
 
   // Start time change handler
-  const _handleStartTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':').map(Number)
-    const newDate = new Date(value)
-    newDate.setHours(hours, minutes)
-    onChange(newDate)
-  }, [value, onChange])
+  const _handleStartTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const [hours, minutes] = e.target.value.split(':').map(Number)
+      const newDate = new Date(value)
+      newDate.setHours(hours, minutes)
+      onChange(newDate)
+    },
+    [value, onChange]
+  )
 
   // End time change handler
-  const _handleEndTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':').map(Number)
-    const newEndDate = new Date(endValue)
-    newEndDate.setHours(hours, minutes)
-    onEndChange(newEndDate)
-  }, [endValue, onEndChange])
+  const _handleEndTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const [hours, minutes] = e.target.value.split(':').map(Number)
+      const newEndDate = new Date(endValue)
+      newEndDate.setHours(hours, minutes)
+      onEndChange(newEndDate)
+    },
+    [endValue, onEndChange]
+  )
 
   // Time selection handler
-  const handleStartTimeSelect = useCallback((timeString: string) => {
-    const [hours, minutes] = timeString.split(':').map(Number)
-    const newDate = new Date(value)
-    newDate.setHours(hours, minutes)
-    onChange(newDate)
-    setShowStartTimePicker(false)
-  }, [value, onChange])
+  const handleStartTimeSelect = useCallback(
+    (timeString: string) => {
+      const [hours, minutes] = timeString.split(':').map(Number)
+      const newDate = new Date(value)
+      newDate.setHours(hours, minutes)
+      onChange(newDate)
+      setShowStartTimePicker(false)
+    },
+    [value, onChange]
+  )
 
-  const handleEndTimeSelect = useCallback((timeString: string) => {
-    const [hours, minutes] = timeString.split(':').map(Number)
-    const newEndDate = new Date(endValue)
-    newEndDate.setHours(hours, minutes)
-    onEndChange(newEndDate)
-    setShowEndTimePicker(false)
-  }, [endValue, onEndChange])
+  const handleEndTimeSelect = useCallback(
+    (timeString: string) => {
+      const [hours, minutes] = timeString.split(':').map(Number)
+      const newEndDate = new Date(endValue)
+      newEndDate.setHours(hours, minutes)
+      onEndChange(newEndDate)
+      setShowEndTimePicker(false)
+    },
+    [endValue, onEndChange]
+  )
 
   // Date selection handler
-  const handleDateSelect = useCallback((selectedDate: Date) => {
-    const newDate = new Date(selectedDate)
-    newDate.setHours(value.getHours(), value.getMinutes())
-    onChange(newDate)
+  const handleDateSelect = useCallback(
+    (selectedDate: Date) => {
+      const newDate = new Date(selectedDate)
+      newDate.setHours(value.getHours(), value.getMinutes())
+      onChange(newDate)
 
-    // Adjust end time to same date
-    const newEndDate = new Date(selectedDate)
-    newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
-    onEndChange(newEndDate)
+      // Adjust end time to same date
+      const newEndDate = new Date(selectedDate)
+      newEndDate.setHours(endValue.getHours(), endValue.getMinutes())
+      onEndChange(newEndDate)
 
-    setShowDatePicker(false)
-  }, [value, endValue, onChange, onEndChange])
+      setShowDatePicker(false)
+    },
+    [value, endValue, onChange, onEndChange]
+  )
 
   // Calendar month navigation
   const handlePrevMonth = useCallback(() => {
@@ -188,18 +206,27 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
   }, [handleDateSelect])
 
   // Dynamic date select handler
-  const createDateSelectHandler = useCallback((day: Date) => {
-    return () => handleDateSelect(day)
-  }, [handleDateSelect])
+  const createDateSelectHandler = useCallback(
+    (day: Date) => {
+      return () => handleDateSelect(day)
+    },
+    [handleDateSelect]
+  )
 
   // Dynamic time select handlers
-  const createStartTimeSelectHandler = useCallback((timeString: string) => {
-    return () => handleStartTimeSelect(timeString)
-  }, [handleStartTimeSelect])
+  const createStartTimeSelectHandler = useCallback(
+    (timeString: string) => {
+      return () => handleStartTimeSelect(timeString)
+    },
+    [handleStartTimeSelect]
+  )
 
-  const createEndTimeSelectHandler = useCallback((timeString: string) => {
-    return () => handleEndTimeSelect(timeString)
-  }, [handleEndTimeSelect])
+  const createEndTimeSelectHandler = useCallback(
+    (timeString: string) => {
+      return () => handleEndTimeSelect(timeString)
+    },
+    [handleEndTimeSelect]
+  )
 
   // Close on outside click
   useEffect(() => {
@@ -225,14 +252,14 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
       <div className="flex items-end gap-3">
         {/* Date selector */}
         <div className="relative w-36" ref={dateRef}>
-          <label htmlFor="date-selector-button" className="text-sm text-muted-foreground mb-2 block">
+          <label htmlFor="date-selector-button" className="text-muted-foreground mb-2 block text-sm">
             Date
           </label>
           <button
             type="button"
             id="date-selector-button"
             onClick={toggleDatePicker}
-            className="w-full py-3 pl-3 pr-3 bg-background border border-border rounded-md text-base text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-muted/50 flex items-center justify-between transition-colors duration-200"
+            className="bg-background border-border hover:bg-muted/50 flex w-full items-center justify-between rounded-md border py-3 pr-3 pl-3 text-left text-base transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <span>{formatDateForDisplay(value)}</span>
             <Calendar size={14} className="text-muted-foreground" />
@@ -245,24 +272,24 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute left-0 top-full z-50 mt-1 w-64 bg-background border border-border rounded-lg p-4 shadow-lg"
+                className="bg-background border-border absolute top-full left-0 z-50 mt-1 w-64 rounded-lg border p-4 shadow-lg"
               >
                 {/* Calendar header */}
                 <div className="mb-4 flex items-center justify-between">
                   <button
                     type="button"
                     onClick={handlePrevMonth}
-                    className="rounded p-1 hover:bg-muted/50 transition-colors"
+                    className="hover:bg-muted/50 rounded p-1 transition-colors"
                   >
                     <ChevronLeft size={16} />
                   </button>
-                  <h3 className="text-base font-semibold text-foreground">
+                  <h3 className="text-foreground text-base font-semibold">
                     {calendarDate.getFullYear()}/{(calendarDate.getMonth() + 1).toString().padStart(2, '0')}
                   </h3>
                   <button
                     type="button"
                     onClick={handleNextMonth}
-                    className="rounded p-1 hover:bg-muted/50 transition-colors"
+                    className="hover:bg-muted/50 rounded p-1 transition-colors"
                   >
                     <ChevronRight size={16} />
                   </button>
@@ -271,7 +298,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                 {/* Day headers */}
                 <div className="mb-2 grid grid-cols-7 gap-1">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                    <div key={day} className="p-2 text-center text-sm text-muted-foreground">
+                    <div key={day} className="text-muted-foreground p-2 text-center text-sm">
                       {day}
                     </div>
                   ))}
@@ -290,11 +317,11 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                         key={day.toISOString().split('T')[0]}
                         onClick={createDateSelectHandler(day)}
                         className={cn(
-                          "rounded p-2 text-center transition-colors duration-150 text-sm",
-                          isSelected && "bg-blue-500 text-white",
-                          !isSelected && isToday && "bg-muted text-foreground font-semibold",
-                          !isSelected && !isToday && isCurrentMonth && "hover:bg-muted/50 text-foreground",
-                          !isSelected && !isToday && !isCurrentMonth && "text-muted-foreground hover:bg-muted/50"
+                          'rounded p-2 text-center text-sm transition-colors duration-150',
+                          isSelected && 'bg-blue-500 text-white',
+                          !isSelected && isToday && 'bg-muted text-foreground font-semibold',
+                          !isSelected && !isToday && isCurrentMonth && 'hover:bg-muted/50 text-foreground',
+                          !isSelected && !isToday && !isCurrentMonth && 'text-muted-foreground hover:bg-muted/50'
                         )}
                       >
                         {day.getDate()}
@@ -308,14 +335,14 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                   <button
                     type="button"
                     onClick={selectToday}
-                    className="rounded px-3 py-1.5 text-sm bg-muted text-muted-foreground hover:bg-muted/80 transition-colors duration-150"
+                    className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-3 py-1.5 text-sm transition-colors duration-150"
                   >
                     Today
                   </button>
                   <button
                     type="button"
                     onClick={selectTomorrow}
-                    className="rounded px-3 py-1.5 text-sm bg-muted text-muted-foreground hover:bg-muted/80 transition-colors duration-150"
+                    className="bg-muted text-muted-foreground hover:bg-muted/80 rounded px-3 py-1.5 text-sm transition-colors duration-150"
                   >
                     Tomorrow
                   </button>
@@ -327,14 +354,14 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
 
         {/* Start time */}
         <div className="relative w-24" ref={startTimeRef}>
-          <label htmlFor="start-time-selector-button" className="text-sm text-muted-foreground mb-2 block">
+          <label htmlFor="start-time-selector-button" className="text-muted-foreground mb-2 block text-sm">
             Start
           </label>
           <button
             type="button"
             id="start-time-selector-button"
             onClick={toggleStartTimePicker}
-            className="w-full py-3 pl-3 pr-3 bg-background border border-border rounded-md text-base text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-muted/50 flex items-center justify-between transition-colors duration-200"
+            className="bg-background border-border hover:bg-muted/50 flex w-full items-center justify-between rounded-md border py-3 pr-3 pl-3 text-left text-base transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <span>{formatTimeForInput(value)}</span>
             <Clock size={14} className="text-muted-foreground" />
@@ -347,7 +374,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute left-0 top-full z-50 mt-1 w-32 bg-background border border-border rounded-lg max-h-48 overflow-y-auto shadow-lg"
+                className="bg-background border-border absolute top-full left-0 z-50 mt-1 max-h-48 w-32 overflow-y-auto rounded-lg border shadow-lg"
               >
                 {timeOptions.map((option) => (
                   <button
@@ -355,8 +382,8 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                     key={option.value}
                     onClick={createStartTimeSelectHandler(option.value)}
                     className={cn(
-                      "w-full px-3 py-2 text-left text-sm hover:bg-muted/50 transition-colors duration-150",
-                      formatTimeForInput(value) === option.value && "bg-muted"
+                      'hover:bg-muted/50 w-full px-3 py-2 text-left text-sm transition-colors duration-150',
+                      formatTimeForInput(value) === option.value && 'bg-muted'
                     )}
                   >
                     {option.display}
@@ -369,14 +396,14 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
 
         {/* End time */}
         <div className="relative w-24" ref={endTimeRef}>
-          <label htmlFor="end-time-selector-button" className="text-sm text-muted-foreground mb-2 block">
+          <label htmlFor="end-time-selector-button" className="text-muted-foreground mb-2 block text-sm">
             End
           </label>
           <button
             type="button"
             id="end-time-selector-button"
             onClick={toggleEndTimePicker}
-            className="w-full py-3 pl-3 pr-3 bg-background border border-border rounded-md text-base text-left focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-muted/50 flex items-center justify-between transition-colors duration-200"
+            className="bg-background border-border hover:bg-muted/50 flex w-full items-center justify-between rounded-md border py-3 pr-3 pl-3 text-left text-base transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:outline-none"
           >
             <span>{formatTimeForInput(endValue)}</span>
             <Clock size={14} className="text-muted-foreground" />
@@ -389,7 +416,7 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="absolute left-0 top-full z-50 mt-1 w-32 bg-background border border-border rounded-lg max-h-48 overflow-y-auto shadow-lg"
+                className="bg-background border-border absolute top-full left-0 z-50 mt-1 max-h-48 w-32 overflow-y-auto rounded-lg border shadow-lg"
               >
                 {timeOptions.map((option) => (
                   <button
@@ -397,8 +424,8 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
                     key={option.value}
                     onClick={createEndTimeSelectHandler(option.value)}
                     className={cn(
-                      "w-full px-3 py-2 text-left text-sm hover:bg-muted/50 transition-colors duration-150",
-                      formatTimeForInput(endValue) === option.value && "bg-muted"
+                      'hover:bg-muted/50 w-full px-3 py-2 text-left text-sm transition-colors duration-150',
+                      formatTimeForInput(endValue) === option.value && 'bg-muted'
                     )}
                   >
                     {option.display}
@@ -414,9 +441,9 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mb-3 mt-auto flex items-center gap-1.5"
+            className="mt-auto mb-3 flex items-center gap-1.5"
           >
-            <div className="text-sm text-muted-foreground flex items-center gap-1.5">
+            <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
               <Clock size={12} />
               <span>{formatDuration(duration)}</span>
             </div>

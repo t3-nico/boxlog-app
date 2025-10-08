@@ -13,10 +13,7 @@ interface WeekendToggleTransitionProps {
 /**
  * 週末表示切り替え時のスムーズなトランジション効果を提供
  */
-export const WeekendToggleTransition = ({
-  children,
-  className
-}: WeekendToggleTransitionProps) => {
+export const WeekendToggleTransition = ({ children, className }: WeekendToggleTransitionProps) => {
   const { showWeekends } = useCalendarSettingsStore()
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [previousShowWeekends, setPreviousShowWeekends] = useState(showWeekends)
@@ -25,25 +22,21 @@ export const WeekendToggleTransition = ({
     if (showWeekends !== previousShowWeekends) {
       setIsTransitioning(true)
       setPreviousShowWeekends(showWeekends)
-      
+
       // 300msのトランジション時間
       const timer = setTimeout(() => {
         setIsTransitioning(false)
       }, 300)
-      
+
       return () => clearTimeout(timer)
     }
   }, [showWeekends, previousShowWeekends])
 
   return (
-    <div 
-      className={cn(
-        'transition-all duration-300 ease-in-out',
-        isTransitioning && 'opacity-95',
-        className
-      )}
+    <div
+      className={cn('transition-all duration-300 ease-in-out', isTransitioning && 'opacity-95', className)}
       style={{
-        transform: isTransitioning ? 'scale(0.98)' : 'scale(1)'
+        transform: isTransitioning ? 'scale(0.98)' : 'scale(1)',
       }}
     >
       {children}
@@ -57,7 +50,7 @@ export const WeekendToggleTransition = ({
 export const WeekendColumnTransition = ({
   children,
   isWeekendColumn = false,
-  className
+  className,
 }: {
   children: React.ReactNode
   isWeekendColumn?: boolean
@@ -88,8 +81,8 @@ export const WeekendColumnTransition = ({
     <div
       className={cn(
         'transition-all duration-300 ease-in-out',
-        isWeekendColumn && !showWeekends && 'opacity-0 scale-95 pointer-events-none',
-        isWeekendColumn && showWeekends && 'opacity-100 scale-100',
+        isWeekendColumn && !showWeekends && 'pointer-events-none scale-95 opacity-0',
+        isWeekendColumn && showWeekends && 'scale-100 opacity-100',
         className
       )}
     >
@@ -104,7 +97,7 @@ export const WeekendColumnTransition = ({
 export const GridLayoutTransition = ({
   children,
   totalColumns,
-  className
+  className,
 }: {
   children: React.ReactNode
   totalColumns: number
@@ -117,24 +110,20 @@ export const GridLayoutTransition = ({
     if (totalColumns !== previousColumns) {
       setIsAdjusting(true)
       setPreviousColumns(totalColumns)
-      
+
       const timer = setTimeout(() => {
         setIsAdjusting(false)
       }, 300)
-      
+
       return () => clearTimeout(timer)
     }
   }, [totalColumns, previousColumns])
 
   return (
     <div
-      className={cn(
-        'transition-all duration-300 ease-in-out',
-        isAdjusting && 'opacity-90',
-        className
-      )}
+      className={cn('transition-all duration-300 ease-in-out', isAdjusting && 'opacity-90', className)}
       style={{
-        gridTemplateColumns: `repeat(${totalColumns}, minmax(0, 1fr))`
+        gridTemplateColumns: `repeat(${totalColumns}, minmax(0, 1fr))`,
       }}
     >
       {children}

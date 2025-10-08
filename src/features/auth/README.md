@@ -36,16 +36,18 @@ src/features/auth/
 ### 1. 認証フロー
 
 #### ローカルストレージモード（現在）
+
 ```typescript
 // デフォルトユーザー自動作成
 const defaultUser = {
   id: `local-user-${Date.now()}`,
-  email: 'user@localhost'
+  email: 'user@localhost',
 }
 localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
 ```
 
 #### 将来のSupabase統合（予定）
+
 - メール/パスワード認証
 - OAuth認証（Google, Apple）
 - セッション管理
@@ -54,6 +56,7 @@ localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
 ### 2. ルート保護
 
 #### AuthGuard コンポーネント
+
 ```tsx
 import { AuthGuard } from '@/features/auth'
 
@@ -67,6 +70,7 @@ export default function ProtectedPage() {
 ```
 
 **機能:**
+
 - 認証状態チェック
 - 未認証時の自動リダイレクト
 - ローディング状態表示
@@ -75,6 +79,7 @@ export default function ProtectedPage() {
 ### 3. 認証Context
 
 #### AuthProvider
+
 ```tsx
 import { AuthProvider } from '@/features/auth'
 
@@ -88,21 +93,22 @@ function App() {
 ```
 
 #### useAuthContext フック
+
 ```tsx
 import { useAuthContext } from '@/features/auth'
 
 function Component() {
   const {
-    user,           // 現在のユーザー
-    session,        // セッション情報
-    loading,        // ローディング状態
-    error,          // エラーメッセージ
-    signIn,         // ログイン
-    signUp,         // サインアップ
-    signOut,        // ログアウト
-    resetPassword,  // パスワードリセット
+    user, // 現在のユーザー
+    session, // セッション情報
+    loading, // ローディング状態
+    error, // エラーメッセージ
+    signIn, // ログイン
+    signUp, // サインアップ
+    signOut, // ログアウト
+    resetPassword, // パスワードリセット
     updatePassword, // パスワード更新
-    clearError      // エラークリア
+    clearError, // エラークリア
   } = useAuthContext()
 
   // ...
@@ -112,6 +118,7 @@ function Component() {
 ## 🔒 セキュリティ設定
 
 ### パスワードポリシー
+
 [auth-config.ts](./lib/auth-config.ts:4-10) で定義：
 
 ```typescript
@@ -125,6 +132,7 @@ PASSWORD: {
 ```
 
 ### セッション設定
+
 ```typescript
 SESSION: {
   TIMEOUT: 3600,              // 1時間（秒）
@@ -133,6 +141,7 @@ SESSION: {
 ```
 
 ### レート制限
+
 ```typescript
 RATE_LIMIT: {
   SIGN_UP: 5,           // サインアップ: 1時間に5回
@@ -144,6 +153,7 @@ RATE_LIMIT: {
 ## 🛠️ バリデーション関数
 
 ### パスワード検証
+
 ```typescript
 import { validatePassword } from '@/features/auth'
 
@@ -155,14 +165,16 @@ const result = validatePassword('MyPass123')
 ```
 
 ### メールアドレス検証
+
 ```typescript
 import { validateEmail } from '@/features/auth'
 
 validateEmail('user@example.com') // true
-validateEmail('invalid-email')     // false
+validateEmail('invalid-email') // false
 ```
 
 ### セッション有効期限チェック
+
 ```typescript
 import { isSessionExpiringSoon } from '@/features/auth'
 
@@ -173,6 +185,7 @@ isSessionExpiringSoon(expiresAt) // true (5分以内)
 ## 📦 エクスポート
 
 ### コンポーネント
+
 ```typescript
 export { AuthForm } from './components/AuthForm'
 export { AuthGuard } from './components/AuthGuard'
@@ -184,12 +197,14 @@ export { SignupForm } from './components/SignupForm'
 ```
 
 ### Context & Hooks
+
 ```typescript
 export { AuthProvider, useAuthContext } from './contexts/AuthContext'
 export { useAuth } from './hooks/useAuth'
 ```
 
 ### 設定
+
 ```typescript
 export { AUTH_CONFIG as authConfig } from './lib/auth-config'
 ```
@@ -197,6 +212,7 @@ export { AUTH_CONFIG as authConfig } from './lib/auth-config'
 ## 🚨 エラーハンドリング
 
 ### エラーメッセージ
+
 [auth-config.ts](./lib/auth-config.ts:34-42) で日本語エラーメッセージを定義：
 
 ```typescript
@@ -212,6 +228,7 @@ ERROR_MESSAGES: {
 ```
 
 ### エラー処理例
+
 ```tsx
 const { error, clearError } = useAuthContext()
 
@@ -226,6 +243,7 @@ useEffect(() => {
 ## 🧪 テスト
 
 ### useAuth フック
+
 [useAuth.test.ts](./hooks/useAuth.test.ts) でテストを実装：
 
 ```bash
@@ -235,6 +253,7 @@ npm run test -- src/features/auth
 ## 🔄 開発モード
 
 ### 認証スキップ
+
 開発時に認証をスキップ可能：
 
 ```bash
@@ -247,22 +266,26 @@ SKIP_AUTH_IN_DEV=true
 ## 📚 関連ドキュメント
 
 ### プロジェクト内
+
 - [セキュリティヘッダー設定](/docs/setup/SECURITY_HEADERS.md)
 - [API検証ガイド](/docs/API_VALIDATION_GUIDE.md)
 - [エラーパターンガイド](/docs/ERROR_PATTERNS_GUIDE.md)
 
 ### 外部
+
 - [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
 - [OWASP Authentication Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html)
 
 ## 🚧 既知の制限事項
 
 ### ローカルストレージモード
+
 - 実際の認証は行われない（スタブ実装）
 - セキュリティ機能は模擬的
 - OAuth未実装
 
 ### 型エラー
+
 - [AuthContext.tsx](./contexts/AuthContext.tsx:1) に3件の型エラー（Issue #389で対応予定）
 
 ## 🔮 今後の改善
@@ -290,6 +313,7 @@ SKIP_AUTH_IN_DEV=true
 ## 📞 サポート
 
 問題や質問がある場合：
+
 - Issue作成: GitHub Issues
 - ラベル: `feature:auth`, `P0-urgent`
 - 関連Issue: [#389](https://github.com/t3-nico/boxlog-app/issues/389)（型エラー）

@@ -7,16 +7,16 @@
  */
 
 import {
-  SCREENS,
-  FEATURES,
   ANALYTICS_EVENTS,
-  ROUTES,
   CSS_CLASSES,
-  type ScreenName,
-  type FeatureName,
-  type ScreenValue,
-  type FeatureValue,
+  FEATURES,
+  ROUTES,
+  SCREENS,
   type AnalyticsEvent,
+  type FeatureName,
+  type FeatureValue,
+  type ScreenName,
+  type ScreenValue,
 } from '@/constants/naming'
 
 // ==============================================
@@ -26,10 +26,7 @@ import {
 /**
  * ページビューイベント生成
  */
-export function createPageViewEvent(
-  screen: ScreenName,
-  properties?: Record<string, any>
-): AnalyticsEvent {
+export function createPageViewEvent(screen: ScreenName, properties?: Record<string, any>): AnalyticsEvent {
   return {
     name: ANALYTICS_EVENTS.page_view(screen),
     screen: SCREENS[screen],
@@ -196,10 +193,7 @@ export function navigateToScreen(screen: ScreenName): string {
 /**
  * パラメータ付きルート生成
  */
-export function getParameterizedRoute(
-  screen: ScreenName,
-  parameter: string
-): string {
+export function getParameterizedRoute(screen: ScreenName, parameter: string): string {
   switch (screen) {
     case 'calendar_view':
       return ROUTES.calendarView(parameter)
@@ -226,11 +220,7 @@ export function getPageClassName(screen: ScreenName): string {
 /**
  * コンポーネントレベルCSSクラス生成
  */
-export function getComponentClassName(
-  componentName: string,
-  element?: string,
-  modifier?: string
-): string {
+export function getComponentClassName(componentName: string, element?: string, modifier?: string): string {
   let className = CSS_CLASSES.component(componentName)
 
   if (element) {
@@ -298,18 +288,14 @@ export function getFeatureValue(feature: FeatureName): FeatureValue {
  * 画面値から画面名への変換
  */
 export function getScreenName(value: ScreenValue): ScreenName | undefined {
-  return (Object.keys(SCREENS) as ScreenName[]).find(
-    (key) => SCREENS[key] === value
-  )
+  return (Object.keys(SCREENS) as ScreenName[]).find((key) => SCREENS[key] === value)
 }
 
 /**
  * 機能値から機能名への変換
  */
 export function getFeatureName(value: FeatureValue): FeatureName | undefined {
-  return (Object.keys(FEATURES) as FeatureName[]).find(
-    (key) => FEATURES[key] === value
-  )
+  return (Object.keys(FEATURES) as FeatureName[]).find((key) => FEATURES[key] === value)
 }
 
 /**

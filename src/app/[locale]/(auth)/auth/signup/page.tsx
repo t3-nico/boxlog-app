@@ -1,6 +1,6 @@
-import { GalleryVerticalEnd } from "lucide-react"
+import { GalleryVerticalEnd } from 'lucide-react'
 
-import { SignupForm } from "@/features/auth"
+import { SignupForm } from '@/features/auth'
 
 const SignupPage = () => {
   return (
@@ -23,12 +23,10 @@ const SignupPage = () => {
       <div className="bg-muted relative hidden lg:block">
         <div className="absolute inset-0 bg-gradient-to-br from-green-600/20 via-blue-600/20 to-purple-600/20">
           <div className="flex h-full items-center justify-center p-8">
-            <div className="text-center space-y-4">
-              <div className="text-6xl font-bold text-muted-foreground/60">🚀</div>
-              <h2 className="text-3xl font-bold text-muted-foreground">
-                Start your productivity journey
-              </h2>
-              <p className="text-lg text-muted-foreground/80 max-w-md">
+            <div className="space-y-4 text-center">
+              <div className="text-muted-foreground/60 text-6xl font-bold">🚀</div>
+              <h2 className="text-muted-foreground text-3xl font-bold">Start your productivity journey</h2>
+              <p className="text-muted-foreground/80 max-w-md text-lg">
                 Join thousands of users who trust BoxLog to organize their tasks and achieve their goals.
               </p>
             </div>

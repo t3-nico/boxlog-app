@@ -4,8 +4,8 @@ import { useCallback } from 'react'
 
 import { PanelRightOpen } from 'lucide-react'
 
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { cn } from '@/lib/utils'
 
 export const InspectorToggle = () => {
@@ -23,7 +23,7 @@ export const InspectorToggle = () => {
 
   return (
     <TooltipProvider>
-      <div className="flex items-center justify-end h-10">
+      <div className="flex h-10 items-center justify-end">
         <Tooltip delayDuration={300}>
           <TooltipTrigger asChild>
             <button

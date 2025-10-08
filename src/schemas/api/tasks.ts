@@ -5,17 +5,17 @@
 
 import { z } from 'zod'
 import {
-  idSchema,
-  titleSchema,
-  descriptionSchema,
-  prioritySchema,
-  statusSchema,
   dateSchema,
+  descriptionSchema,
   futureDateSchema,
+  idSchema,
   metadataSchema,
   paginationInputSchema,
   paginationOutputSchema,
+  prioritySchema,
   searchInputSchema,
+  statusSchema,
+  titleSchema,
 } from './common'
 
 /**
@@ -27,7 +27,8 @@ export const taskBaseSchema = z.object({
   priority: prioritySchema,
   status: statusSchema,
   dueDate: futureDateSchema.optional(),
-  estimatedHours: z.number()
+  estimatedHours: z
+    .number()
     .min(0.1, '見積時間は0.1時間以上を指定してください')
     .max(1000, '見積時間は1000時間以下を指定してください')
     .optional(),
@@ -56,9 +57,7 @@ export const createTaskInputSchema = taskBaseSchema
   .omit({ status: true }) // 作成時はステータスを自動設定
   .extend({
     // 作成時の追加バリデーション
-    dueDate: z.date()
-      .min(new Date(), '期限は現在時刻以降を指定してください')
-      .optional(),
+    dueDate: z.date().min(new Date(), '期限は現在時刻以降を指定してください').optional(),
   })
   .refine(
     (data) => {
@@ -169,10 +168,14 @@ export const taskHistorySchema = z.object({
   id: idSchema,
   taskId: idSchema,
   action: z.enum(['created', 'updated', 'completed', 'deleted', 'assigned', 'commented']),
-  changes: z.record(z.object({
-    from: z.any(),
-    to: z.any(),
-  })).optional(),
+  changes: z
+    .record(
+      z.object({
+        from: z.any(),
+        to: z.any(),
+      })
+    )
+    .optional(),
   comment: z.string().max(1000).optional(),
   userId: idSchema,
   createdAt: dateSchema,
@@ -200,7 +203,10 @@ export const taskHistoryOutputSchema = z.object({
  * バルク操作スキーマ
  */
 export const bulkUpdateTasksInputSchema = z.object({
-  taskIds: z.array(idSchema).min(1, '更新するタスクを選択してください').max(100, '一度に更新できるタスクは100件までです'),
+  taskIds: z
+    .array(idSchema)
+    .min(1, '更新するタスクを選択してください')
+    .max(100, '一度に更新できるタスクは100件までです'),
   updates: taskBaseSchema
     .partial()
     .extend({
@@ -223,7 +229,10 @@ export const bulkUpdateTasksInputSchema = z.object({
 })
 
 export const bulkDeleteTasksInputSchema = z.object({
-  taskIds: z.array(idSchema).min(1, '削除するタスクを選択してください').max(100, '一度に削除できるタスクは100件までです'),
+  taskIds: z
+    .array(idSchema)
+    .min(1, '削除するタスクを選択してください')
+    .max(100, '一度に削除できるタスクは100件までです'),
   force: z.boolean().default(false),
 })
 
@@ -240,10 +249,12 @@ export const exportTasksInputSchema = z.object({
   projectId: idSchema.optional(),
   status: z.array(statusSchema).optional(),
   format: z.enum(['json', 'csv', 'xlsx']).default('json'),
-  dateRange: z.object({
-    from: dateSchema,
-    to: dateSchema,
-  }).optional(),
+  dateRange: z
+    .object({
+      from: dateSchema,
+      to: dateSchema,
+    })
+    .optional(),
 })
 
 /**

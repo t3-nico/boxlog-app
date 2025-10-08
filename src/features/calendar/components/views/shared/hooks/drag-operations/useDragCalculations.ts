@@ -22,13 +22,10 @@ export function useDragCalculations() {
   }, [])
 
   // 新しい時刻を計算
-  const calculateNewTime = useCallback((
-    newTop: number,
-    targetDate: Date
-  ) => {
+  const calculateNewTime = useCallback((newTop: number, targetDate: Date) => {
     const hourDecimal = newTop / HOUR_HEIGHT
     const hour = Math.floor(Math.max(0, Math.min(23, hourDecimal)))
-    const minute = Math.round(Math.max(0, (hourDecimal - hour) * 60 / 15)) * 15
+    const minute = Math.round(Math.max(0, ((hourDecimal - hour) * 60) / 15)) * 15
 
     const newStartTime = new Date(targetDate)
     newStartTime.setHours(hour, minute, 0, 0)
@@ -39,9 +36,9 @@ export function useDragCalculations() {
   // 境界制限された座標を取得
   const getConstrainedPosition = useCallback((clientX: number, clientY: number) => {
     const calendarContainer =
-      document.querySelector('[data-calendar-main]') as HTMLElement ||
-      document.querySelector('.calendar-main') as HTMLElement ||
-      document.querySelector('main') as HTMLElement
+      (document.querySelector('[data-calendar-main]') as HTMLElement) ||
+      (document.querySelector('.calendar-main') as HTMLElement) ||
+      (document.querySelector('main') as HTMLElement)
 
     let constrainedX = clientX
     let constrainedY = clientY
@@ -56,98 +53,95 @@ export function useDragCalculations() {
   }, [])
 
   // 日付インデックスを計算
-  const calculateTargetDateIndex = useCallback((
-    constrainedX: number,
-    originalDateIndex: number,
-    hasMoved: boolean,
-    columnWidth: number,
-    displayDates: Date[],
-    originalElement?: HTMLElement,
-    viewMode = 'day'
-  ) => {
-    let targetDateIndex = originalDateIndex
+  const calculateTargetDateIndex = useCallback(
+    (
+      constrainedX: number,
+      originalDateIndex: number,
+      hasMoved: boolean,
+      columnWidth: number,
+      displayDates: Date[],
+      originalElement?: HTMLElement,
+      viewMode = 'day'
+    ) => {
+      let targetDateIndex = originalDateIndex
 
-    if (viewMode !== 'day' && displayDates && hasMoved) {
-      const gridContainer =
-        (originalElement?.closest('.flex')) as HTMLElement ||
-        (document.querySelector('.flex.h-full.relative') as HTMLElement) ||
-        (originalElement?.parentElement?.parentElement as HTMLElement)
+      if (viewMode !== 'day' && displayDates && hasMoved) {
+        const gridContainer =
+          (originalElement?.closest('.flex') as HTMLElement) ||
+          (document.querySelector('.flex.h-full.relative') as HTMLElement) ||
+          (originalElement?.parentElement?.parentElement as HTMLElement)
 
-      if (gridContainer && columnWidth > 0) {
-        const rect = gridContainer.getBoundingClientRect()
-        const relativeX = Math.max(0, Math.min(constrainedX - rect.left, rect.width))
+        if (gridContainer && columnWidth > 0) {
+          const rect = gridContainer.getBoundingClientRect()
+          const relativeX = Math.max(0, Math.min(constrainedX - rect.left, rect.width))
 
-        const columnIndex = Math.floor(relativeX / columnWidth)
-        const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
+          const columnIndex = Math.floor(relativeX / columnWidth)
+          const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
 
-        targetDateIndex = newTargetIndex
+          targetDateIndex = newTargetIndex
+        }
       }
-    }
 
-    return targetDateIndex
-  }, [])
+      return targetDateIndex
+    },
+    []
+  )
 
   // ターゲット日付を計算
-  const calculateTargetDate = useCallback((
-    targetDateIndex: number,
-    date: Date,
-    displayDates?: Date[],
-    viewMode = 'day'
-  ) => {
-    let targetDate = date
+  const calculateTargetDate = useCallback(
+    (targetDateIndex: number, date: Date, displayDates?: Date[], viewMode = 'day') => {
+      let targetDate = date
 
-    if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
-      targetDate = displayDates[targetDateIndex]
-    }
+      if (viewMode !== 'day' && displayDates && displayDates[targetDateIndex]) {
+        targetDate = displayDates[targetDateIndex]
+      }
 
-    if (!targetDate || isNaN(targetDate.getTime())) {
-      targetDate = date
-    }
+      if (!targetDate || isNaN(targetDate.getTime())) {
+        targetDate = date
+      }
 
-    return targetDate
-  }, [])
+      return targetDate
+    },
+    []
+  )
 
   // ドラッグの動きを計算
-  const calculateDragMovement = useCallback((
-    originalTop: number,
-    deltaY: number,
-    targetDateIndex: number,
-    displayDates?: Date[],
-    viewMode = 'day'
-  ) => {
-    const newTop = originalTop + deltaY
-    const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
+  const calculateDragMovement = useCallback(
+    (originalTop: number, deltaY: number, targetDateIndex: number, displayDates?: Date[], viewMode = 'day') => {
+      const newTop = originalTop + deltaY
+      const { snappedTop, hour, minute } = snapToQuarterHour(newTop)
 
-    let snappedLeft: number | undefined
+      let snappedLeft: number | undefined
 
-    if (viewMode !== 'day' && displayDates) {
-      const columnWidthPercent = 100 / displayDates.length
-      snappedLeft = targetDateIndex * columnWidthPercent + 1
-    }
+      if (viewMode !== 'day' && displayDates) {
+        const columnWidthPercent = 100 / displayDates.length
+        snappedLeft = targetDateIndex * columnWidthPercent + 1
+      }
 
-    return {
-      snappedTop,
-      snappedLeft,
-      hour,
-      minute,
-    }
-  }, [snapToQuarterHour])
+      return {
+        snappedTop,
+        snappedLeft,
+        hour,
+        minute,
+      }
+    },
+    [snapToQuarterHour]
+  )
 
   // リサイズの動きを計算
-  const calculateResizeMovement = useCallback((
-    originalTop: number,
-    eventDuration: number,
-    deltaY: number
-  ) => {
-    const newHeight = Math.max(15, eventDuration + deltaY)
-    const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
-    const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight)
+  const calculateResizeMovement = useCallback(
+    (originalTop: number, eventDuration: number, deltaY: number) => {
+      const newHeight = Math.max(15, eventDuration + deltaY)
+      const { snappedTop: snappedHeight } = snapToQuarterHour(newHeight)
+      const finalHeight = Math.max(HOUR_HEIGHT / 4, snappedHeight)
 
-    return {
-      finalHeight,
-      originalTop,
-    }
-  }, [snapToQuarterHour])
+      return {
+        finalHeight,
+        originalTop,
+      }
+    },
+    [snapToQuarterHour]
+  )
 
   return {
     snapToQuarterHour,

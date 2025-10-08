@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { cn } from '@/lib/utils'
 
 import { DateDisplay } from './DateDisplay'
@@ -16,13 +14,10 @@ export const DateDisplayRow = ({
   dayNameFormat = 'short',
   dateFormat = 'd',
   onDateClick,
-  onDateDoubleClick
+  onDateDoubleClick,
 }: DateDisplayRowProps) => {
   return (
-    <div className={cn(
-      'flex bg-background',
-      className
-    )}>
+    <div className={cn('bg-background flex', className)}>
       {dates.map((date, index) => (
         <DateDisplay
           key={date.toISOString()}
@@ -32,10 +27,7 @@ export const DateDisplayRow = ({
             // 最後の日付以外は右ボーダーを表示
             index < dates.length - 1 && 'border-r border-neutral-900/20 dark:border-neutral-100/20'
           )}
-          isSelected={selectedDate ? 
-            date.toDateString() === selectedDate.toDateString() : 
-            false
-          }
+          isSelected={selectedDate ? date.toDateString() === selectedDate.toDateString() : false}
           showDayName={showDayNames}
           showMonthYear={showMonthYear}
           dayNameFormat={dayNameFormat}

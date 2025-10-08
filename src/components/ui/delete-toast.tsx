@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { CheckCircle, RotateCcw, X } from 'lucide-react'
 
@@ -30,7 +30,7 @@ export const DeleteToast = ({
   deletedEvent,
   onUndo,
   onDismiss,
-  autoHideDelay = 6000 // 6秒後に自動非表示
+  autoHideDelay = 6000, // 6秒後に自動非表示
 }: DeleteToastProps) => {
   const { t } = useI18n()
   const [isVisible, setIsVisible] = useState(false)
@@ -40,10 +40,10 @@ export const DeleteToast = ({
     if (deletedEvent) {
       setIsVisible(true)
       setTimeLeft(autoHideDelay / 1000)
-      
+
       // カウントダウンタイマー
       const countdown = setInterval(() => {
-        setTimeLeft(prev => {
+        setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(countdown)
             handleClose()
@@ -78,38 +78,29 @@ export const DeleteToast = ({
   return (
     <div
       className={cn(
-        "fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ease-in-out",
-        isVisible
-          ? "translate-y-0 opacity-100 scale-100"
-          : "translate-y-4 opacity-0 scale-95"
+        'fixed bottom-6 left-1/2 z-50 -translate-x-1/2 transform transition-all duration-300 ease-in-out',
+        isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-4 scale-95 opacity-0'
       )}
     >
-      <div className="bg-gray-800 dark:bg-gray-900 text-white rounded-lg shadow-lg border border-gray-700 p-4 min-w-[320px] max-w-[450px]">
+      <div className="max-w-[450px] min-w-[320px] rounded-lg border border-gray-700 bg-gray-800 p-4 text-white shadow-lg dark:bg-gray-900">
         <div className="flex items-start gap-3">
           {/* 成功アイコン */}
-          <div className="flex-shrink-0 mt-0.5">
-            <CheckCircle className="w-5 h-5 text-green-400" />
+          <div className="mt-0.5 flex-shrink-0">
+            <CheckCircle className="h-5 w-5 text-green-400" />
           </div>
 
           {/* メッセージ部分 */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm font-medium text-white">
-                {t('common.toast.eventDeleted')}
-              </p>
+          <div className="min-w-0 flex-1">
+            <div className="mb-1 flex items-center gap-2">
+              <p className="text-sm font-medium text-white">{t('common.toast.eventDeleted')}</p>
               {/* カウントダウン表示 */}
-              <span className="text-xs text-gray-400">
-                ({timeLeft}s)
-              </span>
+              <span className="text-xs text-gray-400">({timeLeft}s)</span>
             </div>
-            
+
             {/* 削除された予定の情報 */}
             <div className="flex items-center gap-2 text-xs text-gray-300">
               {deletedEvent.color != null && (
-                <div
-                  className="w-3 h-3 rounded-sm flex-shrink-0"
-                  style={{ backgroundColor: deletedEvent.color }}
-                />
+                <div className="h-3 w-3 flex-shrink-0 rounded-sm" style={{ backgroundColor: deletedEvent.color }} />
               )}
               <span className="truncate">{deletedEvent.title}</span>
               {deletedEvent.startDate != null && (
@@ -118,7 +109,7 @@ export const DeleteToast = ({
                     month: 'short',
                     day: 'numeric',
                     hour: '2-digit',
-                    minute: '2-digit'
+                    minute: '2-digit',
                   })}
                 </span>
               )}
@@ -126,14 +117,14 @@ export const DeleteToast = ({
           </div>
 
           {/* アクションボタン */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center gap-2">
             {/* 元に戻すボタン */}
             <button
               type="button"
               onClick={handleUndo}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-300 hover:text-blue-200 hover:bg-blue-900/20 rounded-md transition-colors"
+              className="flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-blue-300 transition-colors hover:bg-blue-900/20 hover:text-blue-200"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="h-4 w-4" />
               {t('common.undo')}
             </button>
 
@@ -141,20 +132,20 @@ export const DeleteToast = ({
             <button
               type="button"
               onClick={handleClose}
-              className="p-1 text-gray-400 hover:text-gray-300 hover:bg-gray-700 rounded-md transition-colors"
+              className="rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-700 hover:text-gray-300"
               title={t('common.close')}
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {/* プログレスバー */}
-        <div className="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
+        <div className="mt-3 h-1 overflow-hidden rounded-full bg-gray-700">
           <div
-            className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-linear"
+            className="h-full rounded-full bg-blue-500 transition-all duration-1000 ease-linear"
             style={{
-              width: `${(timeLeft / (autoHideDelay / 1000)) * 100}%`
+              width: `${(timeLeft / (autoHideDelay / 1000)) * 100}%`,
             }}
           />
         </div>

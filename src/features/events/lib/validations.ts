@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-
 // 基本バリデーションスキーマ
 export const EventValidationSchema = z.object({
   id: z.string().optional(),
@@ -16,21 +15,33 @@ export const EventValidationSchema = z.object({
   location: z.string().optional(),
   url: z.string().url().optional().or(z.literal('')),
   tagIds: z.array(z.string()).optional().default([]),
-  reminders: z.array(z.object({
-    minutes: z.number().min(0),
-    type: z.enum(['email', 'notification']).default('notification')
-  })).optional().default([]),
-  recurrence: z.object({
-    frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']),
-    interval: z.number().min(1).default(1),
-    endDate: z.date().optional(),
-    count: z.number().min(1).optional()
-  }).optional(),
-  items: z.array(z.object({
-    id: z.string(),
-    text: z.string(),
-    completed: z.boolean().default(false)
-  })).optional().default([])
+  reminders: z
+    .array(
+      z.object({
+        minutes: z.number().min(0),
+        type: z.enum(['email', 'notification']).default('notification'),
+      })
+    )
+    .optional()
+    .default([]),
+  recurrence: z
+    .object({
+      frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']),
+      interval: z.number().min(1).default(1),
+      endDate: z.date().optional(),
+      count: z.number().min(1).optional(),
+    })
+    .optional(),
+  items: z
+    .array(
+      z.object({
+        id: z.string(),
+        text: z.string(),
+        completed: z.boolean().default(false),
+      })
+    )
+    .optional()
+    .default([]),
 })
 
 // 作成用バリデーション（idを除外してからrefineを適用）
@@ -43,8 +54,8 @@ export const CreateEventSchema = EventValidationSchema.omit({ id: true }).refine
     return true
   },
   {
-    message: "End date must be after start date",
-    path: ["endDate"]
+    message: 'End date must be after start date',
+    path: ['endDate'],
   }
 )
 
@@ -58,8 +69,8 @@ export const UpdateEventSchema = EventValidationSchema.partial().refine(
     return true
   },
   {
-    message: "End date must be after start date",
-    path: ["endDate"]
+    message: 'End date must be after start date',
+    path: ['endDate'],
   }
 )
 
@@ -73,32 +84,34 @@ const EventValidationSchemaWithRefine = EventValidationSchema.refine(
     return true
   },
   {
-    message: "End date must be after start date",
-    path: ["endDate"]
+    message: 'End date must be after start date',
+    path: ['endDate'],
   }
 )
 
 // 検索・フィルター用バリデーション
-export const EventFiltersSchema = z.object({
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  types: z.array(z.enum(['event', 'task', 'reminder'] as const)).optional(),
-  statuses: z.array(z.enum(['inbox', 'planned', 'in_progress', 'completed', 'cancelled'] as const)).optional(),
-  tagIds: z.array(z.string()).optional(),
-  searchQuery: z.string().optional()
-}).refine(
-  (data) => {
-    // 終了日は開始日より後である必要がある
-    if (data.startDate && data.endDate) {
-      return data.endDate >= data.startDate
+export const EventFiltersSchema = z
+  .object({
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
+    types: z.array(z.enum(['event', 'task', 'reminder'] as const)).optional(),
+    statuses: z.array(z.enum(['inbox', 'planned', 'in_progress', 'completed', 'cancelled'] as const)).optional(),
+    tagIds: z.array(z.string()).optional(),
+    searchQuery: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // 終了日は開始日より後である必要がある
+      if (data.startDate && data.endDate) {
+        return data.endDate >= data.startDate
+      }
+      return true
+    },
+    {
+      message: 'End date must be after start date',
+      path: ['endDate'],
     }
-    return true
-  },
-  {
-    message: "End date must be after start date",
-    path: ["endDate"]
-  }
-)
+  )
 
 // バリデーション結果の型
 export type EventValidationResult = z.infer<typeof EventValidationSchemaWithRefine>
@@ -143,13 +156,13 @@ export function safeValidateEventFilters(data: unknown) {
 // カスタムバリデーション関数
 export function validateDateRange(startDate: Date | undefined, endDate: Date | undefined): string | null {
   if (!startDate || !endDate) return null
-  if (endDate < startDate) return "End date must be after start date"
+  if (endDate < startDate) return 'End date must be after start date'
   return null
 }
 
 export function validateTitle(title: string): string | null {
-  if (!title.trim()) return "Title is required"
-  if (title.length > 200) return "Title must be less than 200 characters"
+  if (!title.trim()) return 'Title is required'
+  if (title.length > 200) return 'Title must be less than 200 characters'
   return null
 }
 
@@ -159,7 +172,7 @@ export function validateUrl(url: string): string | null {
     new URL(url)
     return null
   } catch {
-    return "Invalid URL format"
+    return 'Invalid URL format'
   }
 }
 
@@ -167,5 +180,5 @@ export function validateUrl(url: string): string | null {
 export const fieldValidators = {
   title: validateTitle,
   dateRange: validateDateRange,
-  url: validateUrl
+  url: validateUrl,
 } as const

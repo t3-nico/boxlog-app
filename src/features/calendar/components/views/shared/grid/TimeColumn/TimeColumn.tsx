@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -20,21 +20,24 @@ export const TimeColumn = memo<TimeColumnProps>(function TimeColumn({
   endHour = 24,
   hourHeight = 72,
   format = '24h',
-  className = ''
+  className = '',
 }) {
   const { hours, gridHeight } = useTimeGrid({
     startHour,
     endHour,
     hourHeight,
-    format
+    format,
   })
 
   return (
     <div
-      className={cn('sticky left-0 bg-background border-r border-neutral-900/20 dark:border-neutral-100/20 z-10', className)}
+      className={cn(
+        'bg-background sticky left-0 z-10 border-r border-neutral-900/20 dark:border-neutral-100/20',
+        className
+      )}
       style={{
         width: `${TIME_COLUMN_WIDTH}px`,
-        height: `${gridHeight}px`
+        height: `${gridHeight}px`,
       }}
     >
       {hours.map((hour, index) => (

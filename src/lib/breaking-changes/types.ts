@@ -9,14 +9,14 @@
  * 🎯 破壊的変更の種類
  */
 export type BreakingChangeType =
-  | 'api_change'           // API変更（エンドポイント・レスポンス）
-  | 'config_change'        // 設定ファイル変更
-  | 'database_change'      // データベーススキーマ変更
-  | 'dependency_change'    // 依存関係変更
-  | 'interface_change'     // UI/UX変更
-  | 'auth_change'          // 認証方式変更
-  | 'behavior_change'      // 動作仕様変更
-  | 'removal'              // 機能削除
+  | 'api_change' // API変更（エンドポイント・レスポンス）
+  | 'config_change' // 設定ファイル変更
+  | 'database_change' // データベーススキーマ変更
+  | 'dependency_change' // 依存関係変更
+  | 'interface_change' // UI/UX変更
+  | 'auth_change' // 認証方式変更
+  | 'behavior_change' // 動作仕様変更
+  | 'removal' // 機能削除
 
 /**
  * 📊 影響度レベル
@@ -27,12 +27,12 @@ export type ImpactLevel = 'low' | 'medium' | 'high' | 'critical'
  * 👥 影響対象グループ
  */
 export type AffectedGroup =
-  | 'end_users'            // エンドユーザー
-  | 'developers'           // 開発者
-  | 'api_consumers'        // API利用者
-  | 'devops'               // DevOps・運用担当
-  | 'administrators'       // システム管理者
-  | 'external_systems'     // 外部システム連携
+  | 'end_users' // エンドユーザー
+  | 'developers' // 開発者
+  | 'api_consumers' // API利用者
+  | 'devops' // DevOps・運用担当
+  | 'administrators' // システム管理者
+  | 'external_systems' // 外部システム連携
 
 /**
  * 🚨 破壊的変更エントリ
@@ -242,11 +242,14 @@ export interface ChangeImpactAnalysis {
     /** 総合影響度 */
     overallImpact: ImpactLevel
     /** グループ別影響詳細 */
-    groupImpacts: Record<AffectedGroup, {
-      impact: ImpactLevel
-      details: string[]
-      mitigation?: string[]
-    }>
+    groupImpacts: Record<
+      AffectedGroup,
+      {
+        impact: ImpactLevel
+        details: string[]
+        mitigation?: string[]
+      }
+    >
   }
   /** リスク評価 */
   risks: {

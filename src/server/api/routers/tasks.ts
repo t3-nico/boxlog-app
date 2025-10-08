@@ -4,26 +4,23 @@
  * 型安全なタスクCRUD操作とビジネスルール適用
  */
 
-import { z } from 'zod'
 import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
 
+import { createAppError, ERROR_CODES } from '@/config/error-patterns'
+import { trackError, trackTaskCompleted, trackTaskCreated } from '@/lib/analytics/vercel-analytics'
 import {
-  createTRPCRouter,
-  protectedProcedure,
-} from '../trpc'
-import {
-  createTaskInputSchema,
-  updateTaskInputSchema,
-  deleteTaskInputSchema,
-  searchTasksInputSchema,
-  getTasksInputSchema,
   bulkUpdateTasksInputSchema,
+  createTaskInputSchema,
+  deleteTaskInputSchema,
+  getTasksInputSchema,
+  searchTasksInputSchema,
   taskOutputSchema,
   tasksListOutputSchema,
+  updateTaskInputSchema,
   type Task,
 } from '@/schemas/api/tasks'
-import { createAppError, ERROR_CODES } from '@/config/error-patterns'
-import { trackTaskCreated, trackTaskCompleted, trackError } from '@/lib/analytics/vercel-analytics'
+import { createTRPCRouter, protectedProcedure } from '../trpc'
 
 /**
  * タスクルーター
@@ -113,7 +110,7 @@ export const tasksRouter = createTRPCRouter({
         }
 
         // 権限チェック
-        if (existingTask.createdBy !== ctx.userId && !await isUserAdmin(ctx.userId)) {
+        if (existingTask.createdBy !== ctx.userId && !(await isUserAdmin(ctx.userId))) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: '他のユーザーのタスクは編集できません',
@@ -203,7 +200,7 @@ export const tasksRouter = createTRPCRouter({
         }
 
         // 権限チェック
-        if (task.createdBy !== ctx.userId && !await isUserAdmin(ctx.userId)) {
+        if (task.createdBy !== ctx.userId && !(await isUserAdmin(ctx.userId))) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: '他のユーザーのタスクは削除できません',
@@ -216,7 +213,7 @@ export const tasksRouter = createTRPCRouter({
         }
 
         // サブタスクがある場合の確認
-        if (!force && await hasSubtasks(id)) {
+        if (!force && (await hasSubtasks(id))) {
           throw new TRPCError({
             code: 'PRECONDITION_FAILED',
             message: 'サブタスクがあるため削除できません。強制削除するか、先にサブタスクを削除してください。',
@@ -277,16 +274,16 @@ export const tasksRouter = createTRPCRouter({
         // 統計情報の計算
         const stats = {
           total: tasks.length,
-          completed: tasks.filter(t => t.completed).length,
-          inProgress: tasks.filter(t => t.status === 'in_progress').length,
-          todo: tasks.filter(t => t.status === 'todo').length,
-          overdue: tasks.filter(t => t.dueDate && t.dueDate < new Date() && !t.completed).length,
+          completed: tasks.filter((t) => t.completed).length,
+          inProgress: tasks.filter((t) => t.status === 'in_progress').length,
+          todo: tasks.filter((t) => t.status === 'todo').length,
+          overdue: tasks.filter((t) => t.dueDate && t.dueDate < new Date() && !t.completed).length,
           byPriority: {
-            high: tasks.filter(t => t.priority === 'high').length,
-            medium: tasks.filter(t => t.priority === 'medium').length,
-            low: tasks.filter(t => t.priority === 'low').length,
+            high: tasks.filter((t) => t.priority === 'high').length,
+            medium: tasks.filter((t) => t.priority === 'medium').length,
+            low: tasks.filter((t) => t.priority === 'low').length,
           },
-          completionRate: tasks.length > 0 ? (tasks.filter(t => t.completed).length / tasks.length) * 100 : 0,
+          completionRate: tasks.length > 0 ? (tasks.filter((t) => t.completed).length / tasks.length) * 100 : 0,
         }
 
         return {
@@ -357,11 +354,13 @@ export const tasksRouter = createTRPCRouter({
    */
   bulkUpdate: protectedProcedure
     .input(bulkUpdateTasksInputSchema)
-    .output(z.object({
-      updatedCount: z.number(),
-      success: z.boolean(),
-      message: z.string(),
-    }))
+    .output(
+      z.object({
+        updatedCount: z.number(),
+        success: z.boolean(),
+        message: z.string(),
+      })
+    )
     .mutation(async ({ input }) => {
       try {
         const { taskIds } = input

@@ -4,8 +4,8 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { Check, ChevronDown } from 'lucide-react'
 
-import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
 
 export type ViewOption = {
@@ -148,7 +148,7 @@ export const ViewSwitcher = ({
           {/* Dropdown */}
           <div
             className={cn(
-              'absolute right-0 top-full mt-1',
+              'absolute top-full right-0 mt-1',
               'min-w-[160px]',
               'bg-white dark:bg-neutral-900',
               'rounded-md',
@@ -169,8 +169,8 @@ export const ViewSwitcher = ({
                       'transition-colors',
                       'flex items-center justify-between gap-2',
                       currentView === option.value
-                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-medium'
-                        : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-300 dark:hover:bg-neutral-600'
+                        ? 'bg-blue-100 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                        : 'text-neutral-600 hover:bg-neutral-300 dark:text-neutral-400 dark:hover:bg-neutral-600'
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -196,13 +196,17 @@ export const ViewSwitcher = ({
                     'w-full px-4 py-2 text-sm',
                     'flex items-center gap-2',
                     'transition-colors',
-                    'rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1',
+                    'rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none',
                     'text-neutral-600 dark:text-neutral-400',
                     'hover:bg-neutral-300 dark:hover:bg-neutral-600'
                   )}
                   role="checkbox"
                   aria-checked={showWeekends}
-                  aria-label={showWeekends ? t('calendar.viewSwitcher.disableWeekends') : t('calendar.viewSwitcher.enableWeekends')}
+                  aria-label={
+                    showWeekends
+                      ? t('calendar.viewSwitcher.disableWeekends')
+                      : t('calendar.viewSwitcher.enableWeekends')
+                  }
                   aria-describedby="weekend-toggle-description"
                 >
                   <div

@@ -114,7 +114,10 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
           <p className="text-sm text-gray-600 dark:text-gray-400">
             {t('events.trash.stats.deleted', { count: stats.totalDeleted })}
             {hasOldEvents === true && (
-              <span className="text-orange-600 dark:text-orange-400"> ({t('events.trash.stats.old', { count: stats.oldDeleted })})</span>
+              <span className="text-orange-600 dark:text-orange-400">
+                {' '}
+                ({t('events.trash.stats.old', { count: stats.oldDeleted })})
+              </span>
             )}
           </p>
         </div>
@@ -160,7 +163,11 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
             <div className="flex items-center space-x-4">
               <label className="flex cursor-pointer items-center space-x-2">
                 <input type="checkbox" checked={isAllSelected} onChange={handleSelectAll} className="h-4 w-4" />
-                <span className="text-sm">{selectedCount > 0 ? t('events.trash.actions.selected', { count: selectedCount }) : t('events.trash.actions.selectAll')}</span>
+                <span className="text-sm">
+                  {selectedCount > 0
+                    ? t('events.trash.actions.selected', { count: selectedCount })
+                    : t('events.trash.actions.selectAll')}
+                </span>
               </label>
 
               {hasSelection === true && (
@@ -252,7 +259,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                       type="button"
                       onClick={createRestoreEventHandler(event.id)}
                       disabled={isLoading}
-                      className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+                      className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm whitespace-nowrap text-white hover:bg-blue-700 disabled:opacity-50"
                     >
                       {t('events.trash.actions.restore')}
                     </button>
@@ -260,7 +267,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                       type="button"
                       onClick={createPermanentDeleteHandler(event.id)}
                       disabled={isLoading}
-                      className="whitespace-nowrap rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700 disabled:opacity-50"
+                      className="rounded-lg bg-red-600 px-3 py-1.5 text-sm whitespace-nowrap text-white hover:bg-red-700 disabled:opacity-50"
                     >
                       {t('events.trash.actions.permanentDelete')}
                     </button>
@@ -271,7 +278,11 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
                 <div className="flex items-center justify-between">
                   <div className="flex space-x-4 text-sm text-gray-600 dark:text-gray-400">
                     <span>{t('events.trash.metadata.deletedDate', { date: deletedDateStr })}</span>
-                    {event.startDate ? <span>{t('events.trash.metadata.originalDate', { date: event.startDate.toLocaleDateString() })}</span> : null}
+                    {event.startDate ? (
+                      <span>
+                        {t('events.trash.metadata.originalDate', { date: event.startDate.toLocaleDateString() })}
+                      </span>
+                    ) : null}
                     {event.type != null && (
                       <span className="rounded bg-gray-100 px-2 py-1 text-xs dark:bg-gray-700">{event.type}</span>
                     )}
@@ -279,7 +290,9 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
 
                   {daysUntilDelete !== null && daysUntilDelete <= 7 && (
                     <span className="text-sm text-orange-600 dark:text-orange-400">
-                      {daysUntilDelete === 0 ? t('events.trash.metadata.autoDeleteToday') : t('events.trash.metadata.autoDeleteIn', { days: daysUntilDelete })}
+                      {daysUntilDelete === 0
+                        ? t('events.trash.metadata.autoDeleteToday')
+                        : t('events.trash.metadata.autoDeleteIn', { days: daysUntilDelete })}
                     </span>
                   )}
                 </div>
@@ -291,7 +304,7 @@ export const EventTrashView: React.FC<EventTrashViewProps> = ({ className }) => 
 
       {/* ローディング状態 */}
       {isLoading === true && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="flex flex-col items-center space-y-4 rounded-xl border border-gray-300 bg-white p-6 dark:border-gray-600 dark:bg-gray-800">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
             <p>{t('events.trash.loading.title')}</p>

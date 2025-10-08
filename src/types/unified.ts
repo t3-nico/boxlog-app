@@ -6,9 +6,9 @@
 // === 基本的な型定義 ===
 // TaskStatus, TaskPriority, Task等の基本型は src/types/index.ts に統一
 // ここでは再エクスポートのみ
-import type { Task, TaskStatus, TaskPriority } from './index'
+import type { Task, TaskPriority, TaskStatus } from './index'
 
-export type { Task, TaskStatus, TaskPriority }
+export type { Task, TaskPriority, TaskStatus }
 
 // === API関連 ===
 

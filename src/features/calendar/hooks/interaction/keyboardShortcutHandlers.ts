@@ -64,7 +64,7 @@ export const handleSelectedEventActions = ({
   event,
   selectedEvent,
   debounceAction,
-  callbacks
+  callbacks,
 }: KeyboardEventContext): boolean => {
   if (!selectedEvent) return false
 
@@ -106,11 +106,7 @@ export const handleSelectedEventActions = ({
 /**
  * グローバルショートカットの処理
  */
-export const handleGlobalShortcuts = ({
-  event,
-  debounceAction,
-  callbacks
-}: KeyboardEventContext): boolean => {
+export const handleGlobalShortcuts = ({ event, debounceAction, callbacks }: KeyboardEventContext): boolean => {
   const { key, ctrlKey, metaKey, shiftKey } = event
   const isModKey = ctrlKey || metaKey
 
@@ -147,11 +143,7 @@ export const handleGlobalShortcuts = ({
 /**
  * 単一キーショートカットの処理
  */
-export const handleSingleKeyShortcuts = ({
-  event,
-  debounceAction,
-  callbacks
-}: KeyboardEventContext): boolean => {
+export const handleSingleKeyShortcuts = ({ event, debounceAction, callbacks }: KeyboardEventContext): boolean => {
   const { key, ctrlKey, metaKey } = event
   const isModKey = ctrlKey || metaKey
 

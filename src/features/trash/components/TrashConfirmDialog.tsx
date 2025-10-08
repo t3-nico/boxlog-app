@@ -11,23 +11,18 @@ interface TrashConfirmDialogProps {
   onClose: () => void
 }
 
-export const TrashConfirmDialog: React.FC<TrashConfirmDialogProps> = ({
-  dialog,
-  onClose
-}) => {
+export const TrashConfirmDialog: React.FC<TrashConfirmDialogProps> = ({ dialog, onClose }) => {
   const { t } = useI18n()
   if (!dialog) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="mx-4 w-full max-w-md rounded-lg bg-white p-4 dark:bg-neutral-800">
         <div className="mb-4">
           <h3 className="mb-2 text-base font-semibold text-neutral-900 dark:text-neutral-100">
             {t('trash.actions.confirm')}
           </h3>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            {dialog.message}
-          </p>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">{dialog.message}</p>
         </div>
 
         <div className="flex justify-end space-x-2">

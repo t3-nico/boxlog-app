@@ -5,6 +5,7 @@ BoxLogカスタムReact Hooks実装ガイドライン。
 ## 📁 現在のフック一覧（10個）
 
 ### 保持されている共通フック
+
 ```
 src/hooks/
 ├── use-debounce.ts              # デバウンス処理（2箇所で使用）
@@ -19,6 +20,7 @@ src/hooks/
 ```
 
 **削除済み（使用箇所0または重複）**:
+
 - ❌ useToggle, use-analytics, use-error-handler, use-filter-url-sync
 - ❌ use-keyboard-shortcuts, useApiQuery, useDevTools, useOptimization
 - ❌ useSidebarMenu, api/use-tasks.ts, useDebounce.ts（重複）
@@ -28,6 +30,7 @@ src/hooks/
 ## 🎯 カスタムフック基本ルール
 
 ### 命名規則
+
 ```tsx
 // ✅ 正しい命名（use始まり）
 useTaskFilter
@@ -35,21 +38,22 @@ useAuth
 useLocalStorage
 
 // ❌ 間違った命名
-taskFilter  // useなし
-TaskFilter  // 大文字始まり
+taskFilter // useなし
+TaskFilter // 大文字始まり
 ```
 
 ### ファイル配置（コロケーション原則）
+
 ```tsx
 // ❌ 避ける：安易な共通化
-src/hooks/useTaskFilter.ts  // 1機能でしか使わない
+src / hooks / useTaskFilter.ts // 1機能でしか使わない
 
 // ✅ 推奨：機能専用フック
-src/features/tasks/hooks/useTaskFilter.ts
+src / features / tasks / hooks / useTaskFilter.ts
 
 // ✅ 許可：複数機能で使用（3箇所以上）
-src/hooks/useDebounce.ts
-src/hooks/useMediaQuery.ts
+src / hooks / useDebounce.ts
+src / hooks / useMediaQuery.ts
 ```
 
 **判断基準**: 3箇所以上で使われたらsrc/hooks/へ移動を検討
@@ -59,6 +63,7 @@ src/hooks/useMediaQuery.ts
 ## 📋 カスタムフック種別
 
 ### 1. ステート管理フック
+
 ```tsx
 // hooks/useToggle.ts
 import { useState, useCallback } from 'react'
@@ -67,7 +72,7 @@ export const useToggle = (initialValue = false) => {
   const [value, setValue] = useState(initialValue)
 
   const toggle = useCallback(() => {
-    setValue(prev => !prev)
+    setValue((prev) => !prev)
   }, [])
 
   const setTrue = useCallback(() => setValue(true), [])
@@ -78,6 +83,7 @@ export const useToggle = (initialValue = false) => {
 ```
 
 ### 2. 副作用管理フック
+
 ```tsx
 // hooks/useDebounce.ts
 import { useState, useEffect } from 'react'
@@ -98,6 +104,7 @@ export const useDebounce = <T,>(value: T, delay: number): T => {
 ```
 
 ### 3. データフェッチフック
+
 ```tsx
 // hooks/useFetch.ts
 import { useState, useEffect } from 'react'
@@ -138,6 +145,7 @@ export const useFetch = <T,>(url: string): UseFetchResult<T> => {
 ```
 
 ### 4. フォーム管理フック
+
 ```tsx
 // hooks/useForm.ts
 import { useState, ChangeEvent, FormEvent } from 'react'
@@ -148,18 +156,14 @@ interface UseFormOptions<T> {
   validate?: (values: T) => Partial<Record<keyof T, string>>
 }
 
-export const useForm = <T extends Record<string, any>>({
-  initialValues,
-  onSubmit,
-  validate
-}: UseFormOptions<T>) => {
+export const useForm = <T extends Record<string, any>>({ initialValues, onSubmit, validate }: UseFormOptions<T>) => {
   const [values, setValues] = useState<T>(initialValues)
   const [errors, setErrors] = useState<Partial<Record<keyof T, string>>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setValues(prev => ({ ...prev, [name]: value }))
+    setValues((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -188,6 +192,7 @@ export const useForm = <T extends Record<string, any>>({
 ## 🔧 高度なパターン
 
 ### Compound Component Pattern
+
 ```tsx
 // hooks/useDisclosure.ts
 import { useState, useCallback } from 'react'
@@ -197,7 +202,7 @@ export const useDisclosure = (initialOpen = false) => {
 
   const open = useCallback(() => setIsOpen(true), [])
   const close = useCallback(() => setIsOpen(false), [])
-  const toggle = useCallback(() => setIsOpen(prev => !prev), [])
+  const toggle = useCallback(() => setIsOpen((prev) => !prev), [])
 
   return { isOpen, open, close, toggle }
 }
@@ -216,6 +221,7 @@ const Modal = () => {
 ```
 
 ### Custom Context Hook
+
 ```tsx
 // hooks/useTheme.ts
 import { useContext } from 'react'
@@ -237,6 +243,7 @@ export const useTheme = () => {
 ## 🧪 テスト
 
 ### カスタムフックのテスト
+
 ```tsx
 // hooks/useToggle.test.ts
 import { describe, it, expect } from 'vitest'
@@ -276,6 +283,7 @@ describe('useToggle', () => {
 ## 📋 ベストプラクティス
 
 ### 1. 依存配列の適切な管理
+
 ```tsx
 // ✅ 推奨：必要な依存のみ
 useEffect(() => {
@@ -285,10 +293,11 @@ useEffect(() => {
 // ❌ 避ける：不要な依存
 useEffect(() => {
   fetchData(userId)
-}, [userId, fetchData])  // fetchDataは不要
+}, [userId, fetchData]) // fetchDataは不要
 ```
 
 ### 2. メモ化の活用
+
 ```tsx
 import { useMemo, useCallback } from 'react'
 
@@ -306,6 +315,7 @@ export const useExpensiveCalculation = (data: number[]) => {
 ```
 
 ### 3. クリーンアップ関数
+
 ```tsx
 useEffect(() => {
   const subscription = eventEmitter.subscribe(handleEvent)

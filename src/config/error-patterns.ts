@@ -12,8 +12,8 @@
  * - 技術知識不要のエラー理解支援
  */
 
-import { ERROR_CODES } from '@/constants/errorCodes'
 import type { ErrorCode, ErrorLevel } from '@/constants/errorCodes'
+import { ERROR_CODES } from '@/constants/errorCodes'
 
 // ERROR_CODESとErrorCodeを再エクスポート
 export { ERROR_CODES } from '@/constants/errorCodes'
@@ -535,85 +535,80 @@ export function getDetailedErrorInfo(errorCode: ErrorCode): {
 // ==============================================
 
 export interface AppErrorMetadata {
-  [key: string]: any;
-  userId?: string;
-  requestId?: string;
-  timestamp?: Date;
-  userAgent?: string;
-  ip?: string;
+  [key: string]: any
+  userId?: string
+  requestId?: string
+  timestamp?: Date
+  userAgent?: string
+  ip?: string
 }
 
-export type ErrorCategory = 'AUTH' | 'VALIDATION' | 'DB' | 'BIZ' | 'EXTERNAL' | 'SYSTEM' | 'RATE';
-export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low';
+export type ErrorCategory = 'AUTH' | 'VALIDATION' | 'DB' | 'BIZ' | 'EXTERNAL' | 'SYSTEM' | 'RATE'
+export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low'
 
 export class AppError extends Error {
-  public readonly code: ErrorCode;
-  public readonly category: ErrorCategory;
-  public readonly severity: SeverityLevel;
-  public readonly userMessage: string;
-  public readonly metadata: AppErrorMetadata;
+  public readonly code: ErrorCode
+  public readonly category: ErrorCategory
+  public readonly severity: SeverityLevel
+  public readonly userMessage: string
+  public readonly metadata: AppErrorMetadata
 
-  constructor(
-    message: string,
-    code: ErrorCode | string,
-    metadata: AppErrorMetadata = {},
-    userMessage?: string
-  ) {
-    super(message);
-    this.name = 'AppError';
+  constructor(message: string, code: ErrorCode | string, metadata: AppErrorMetadata = {}, userMessage?: string) {
+    super(message)
+    this.name = 'AppError'
 
     // 文字列コードを数値に変換
-    this.code = typeof code === 'string' ? this.parseCodeFromString(code) : code;
-    this.category = this.getCategoryFromCode(this.code);
-    this.severity = this.getSeverityFromCode(this.code);
-    this.userMessage = userMessage || this.getUserMessageFromCode(this.code);
+    this.code = typeof code === 'string' ? this.parseCodeFromString(code) : code
+    this.category = this.getCategoryFromCode(this.code)
+    this.severity = this.getSeverityFromCode(this.code)
+    this.userMessage = userMessage || this.getUserMessageFromCode(this.code)
     this.metadata = {
       ...metadata,
       timestamp: metadata.timestamp || new Date(),
-    };
+    }
 
     // スタックトレースを適切に設定
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, AppError);
+      Error.captureStackTrace(this, AppError)
     }
   }
 
   private parseCodeFromString(codeString: string): ErrorCode {
     // 文字列からエラーコードを抽出 (例: "AUTH_INVALID_TOKEN" -> 1001)
     const codeMap: Record<string, ErrorCode> = {
-      'AUTH_INVALID_TOKEN': ERROR_CODES.AUTH_INVALID_TOKEN,
-      'AUTH_EXPIRED': ERROR_CODES.AUTH_EXPIRED,
-      'AUTH_NO_PERMISSION': ERROR_CODES.AUTH_NO_PERMISSION,
-      'SYSTEM_ERROR_500': ERROR_CODES.API_SERVER_ERROR,
-      'DATA_NOT_FOUND': ERROR_CODES.DATA_NOT_FOUND,
-      'VALIDATION_ERROR': ERROR_CODES.DATA_VALIDATION_ERROR,
-    };
+      AUTH_INVALID_TOKEN: ERROR_CODES.AUTH_INVALID_TOKEN,
+      AUTH_EXPIRED: ERROR_CODES.AUTH_EXPIRED,
+      AUTH_NO_PERMISSION: ERROR_CODES.AUTH_NO_PERMISSION,
+      SYSTEM_ERROR_500: ERROR_CODES.API_SERVER_ERROR,
+      DATA_NOT_FOUND: ERROR_CODES.DATA_NOT_FOUND,
+      VALIDATION_ERROR: ERROR_CODES.DATA_VALIDATION_ERROR,
+    }
 
-    return codeMap[codeString] || ERROR_CODES.API_SERVER_ERROR;
+    return codeMap[codeString] || ERROR_CODES.API_SERVER_ERROR
   }
 
   private getCategoryFromCode(code: ErrorCode): ErrorCategory {
-    if (code >= 1000 && code < 2000) return 'AUTH';
-    if (code >= 2000 && code < 3000) return 'EXTERNAL';
-    if (code >= 3000 && code < 4000) return 'DB';
-    if (code >= 4000 && code < 5000) return 'VALIDATION';
-    if (code >= 5000 && code < 6000) return 'SYSTEM';
-    if (code >= 6000 && code < 7000) return 'BIZ';
-    if (code >= 7000 && code < 8000) return 'RATE';
-    return 'SYSTEM';
+    if (code >= 1000 && code < 2000) return 'AUTH'
+    if (code >= 2000 && code < 3000) return 'EXTERNAL'
+    if (code >= 3000 && code < 4000) return 'DB'
+    if (code >= 4000 && code < 5000) return 'VALIDATION'
+    if (code >= 5000 && code < 6000) return 'SYSTEM'
+    if (code >= 6000 && code < 7000) return 'BIZ'
+    if (code >= 7000 && code < 8000) return 'RATE'
+    return 'SYSTEM'
   }
 
   private getSeverityFromCode(code: ErrorCode): SeverityLevel {
-    const pattern = getErrorPattern(code);
-    if (pattern?.urgency === 'critical') return 'critical';
-    if (pattern?.urgency === 'error') return 'high';
-    if (pattern?.urgency === 'warning') return 'medium';
-    return 'low';
+    const pattern = getErrorPattern(code)
+    if (pattern?.urgency === 'critical') return 'critical'
+    if (pattern?.urgency === 'error') return 'high'
+    if (pattern?.urgency === 'warning') return 'medium'
+    return 'low'
   }
 
   private getUserMessageFromCode(code: ErrorCode): string {
-    const pattern = getErrorPattern(code);
-    return pattern?.userFriendly || 'エラーが発生しました';
+    const pattern = getErrorPattern(code)
+    return pattern?.userFriendly || 'エラーが発生しました'
   }
 
   toJSON() {
@@ -626,7 +621,7 @@ export class AppError extends Error {
       userMessage: this.userMessage,
       metadata: this.metadata,
       stack: this.stack,
-    };
+    }
   }
 }
 
@@ -639,7 +634,7 @@ export function createAppError(
   metadata?: AppErrorMetadata,
   userMessage?: string
 ): AppError {
-  return new AppError(message, code, metadata, userMessage);
+  return new AppError(message, code, metadata, userMessage)
 }
 
 // ==============================================

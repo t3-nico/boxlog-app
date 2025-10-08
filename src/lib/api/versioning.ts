@@ -278,11 +278,7 @@ export class ApiVersionManager {
   /**
    * 🚨 エラーレスポンスの生成
    */
-  createErrorResponse(
-    apiRequest: ApiRequest,
-    errors: string[],
-    warnings: string[] = []
-  ): NextResponse {
+  createErrorResponse(apiRequest: ApiRequest, errors: string[], warnings: string[] = []): NextResponse {
     const response = NextResponse.json(
       {
         error: 'API_VERSION_ERROR',

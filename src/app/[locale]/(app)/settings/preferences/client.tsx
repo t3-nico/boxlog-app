@@ -1,6 +1,6 @@
 'use client'
 
-import { SettingsLayout, PreferencesSettings } from '@/features/settings/components'
+import { PreferencesSettings, SettingsLayout } from '@/features/settings/components'
 
 interface Props {
   translations: {

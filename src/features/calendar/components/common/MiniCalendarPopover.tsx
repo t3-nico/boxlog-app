@@ -3,8 +3,8 @@
 import React, { useState } from 'react'
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import type { MiniCalendarProps } from '@/features/calendar/components/common/MiniCalendar'
+import { MiniCalendar } from '@/features/calendar/components/common/MiniCalendar'
 import { cn } from '@/lib/utils'
 
 interface MiniCalendarPopoverProps extends Omit<MiniCalendarProps, 'className'> {
@@ -42,11 +42,14 @@ export const MiniCalendarPopover = ({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild className={cn('hover:bg-neutral-300 dark:hover:bg-neutral-600', 'transition-colors', className)}>
+      <PopoverTrigger
+        asChild
+        className={cn('hover:bg-neutral-300 dark:hover:bg-neutral-600', 'transition-colors', className)}
+      >
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className={cn('w-auto p-4 border-none bg-neutral-100 dark:bg-neutral-800', popoverClassName)}
+        className={cn('w-auto border-none bg-neutral-100 p-4 dark:bg-neutral-800', popoverClassName)}
         align={align}
         side={side}
       >

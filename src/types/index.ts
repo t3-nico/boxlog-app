@@ -17,20 +17,16 @@
  * タスクステータス（TypeScript公式: Union Type使用）
  */
 export type TaskStatus =
-  | 'backlog'      // バックログ
-  | 'scheduled'    // スケジュール済み
-  | 'in_progress'  // 進行中
-  | 'completed'    // 完了
-  | 'stopped'      // 停止
+  | 'backlog' // バックログ
+  | 'scheduled' // スケジュール済み
+  | 'in_progress' // 進行中
+  | 'completed' // 完了
+  | 'stopped' // 停止
 
 /**
  * タスク優先度（TypeScript公式: Union Type使用）
  */
-export type TaskPriority =
-  | 'low'
-  | 'medium'
-  | 'high'
-  | 'urgent'
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 
 // ============================================
 // 2. メインエンティティ（interface優先）
@@ -46,11 +42,11 @@ export interface Task {
   description?: string
   status: TaskStatus
   priority: TaskPriority
-  planned_start: string  // ISO 8601
-  planned_duration: number  // 分単位
+  planned_start: string // ISO 8601
+  planned_duration: number // 分単位
   tags?: string[]
-  created_at: string  // ISO 8601
-  updated_at: string  // ISO 8601
+  created_at: string // ISO 8601
+  updated_at: string // ISO 8601
   user_id: string
 }
 
@@ -102,12 +98,12 @@ export type ProfileUpdate = Partial<Omit<Profile, 'id' | 'created_at'>>
 // ============================================
 
 // 共通型
+export * from './chronotype'
 export * from './common'
 export * from './sidebar'
-export * from './chronotype'
-export * from './trash'
-export * from './tags'
 export * from './smart-folders'
+export * from './tags'
+export * from './trash'
 
 // 統一型（unified.tsから移行済みのためコメントアウト）
 // export * from './unified'

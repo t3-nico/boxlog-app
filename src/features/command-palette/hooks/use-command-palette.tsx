@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, createContext, useContext, ReactNode } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 
 import { CommandPalette } from '../components/command-palette'
 
@@ -42,7 +42,7 @@ export const CommandPaletteProvider = ({ children }: { children: ReactNode }) =>
   const contextValue = {
     open,
     close,
-    isOpen
+    isOpen,
   }
 
   return (

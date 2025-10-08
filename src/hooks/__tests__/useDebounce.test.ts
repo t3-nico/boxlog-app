@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useDebounce } from '../use-debounce'
 
@@ -18,12 +18,9 @@ describe('useDebounce', () => {
   })
 
   it('指定した遅延時間後に値が更新される', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'initial', delay: 500 },
-      }
-    )
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'initial', delay: 500 },
+    })
 
     expect(result.current).toBe('initial')
 
@@ -40,12 +37,9 @@ describe('useDebounce', () => {
   })
 
   it('遅延時間前に値が変更された場合、タイマーがリセットされる', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'initial', delay: 500 },
-      }
-    )
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'initial', delay: 500 },
+    })
 
     // 値を変更
     rerender({ value: 'first', delay: 500 })
@@ -76,12 +70,9 @@ describe('useDebounce', () => {
   })
 
   it('数値型の値もデバウンスできる', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 0, delay: 300 },
-      }
-    )
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 0, delay: 300 },
+    })
 
     expect(result.current).toBe(0)
 
@@ -98,12 +89,9 @@ describe('useDebounce', () => {
     const initialObj = { name: 'John', age: 30 }
     const updatedObj = { name: 'Jane', age: 25 }
 
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: initialObj, delay: 300 },
-      }
-    )
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: initialObj, delay: 300 },
+    })
 
     expect(result.current).toEqual(initialObj)
 
@@ -117,12 +105,9 @@ describe('useDebounce', () => {
   })
 
   it('遅延時間を動的に変更できる', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'initial', delay: 500 },
-      }
-    )
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'initial', delay: 500 },
+    })
 
     rerender({ value: 'updated', delay: 1000 }) // 遅延時間を1000msに変更
 
@@ -140,12 +125,9 @@ describe('useDebounce', () => {
   })
 
   it('複数回の連続した値変更をデバウンスする', () => {
-    const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'value1', delay: 300 },
-      }
-    )
+    const { result, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'value1', delay: 300 },
+    })
 
     rerender({ value: 'value2', delay: 300 })
     act(() => vi.advanceTimersByTime(100))
@@ -166,12 +148,9 @@ describe('useDebounce', () => {
   it('アンマウント時にタイマーがクリアされる', () => {
     const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
 
-    const { unmount, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
-      {
-        initialProps: { value: 'initial', delay: 500 },
-      }
-    )
+    const { unmount, rerender } = renderHook(({ value, delay }) => useDebounce(value, delay), {
+      initialProps: { value: 'initial', delay: 500 },
+    })
 
     rerender({ value: 'updated', delay: 500 })
 

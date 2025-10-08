@@ -2,9 +2,9 @@
  * API ミドルウェア ユーティリティ関数
  */
 
-import { NextRequest, NextResponse } from 'next/server'
 import type { ErrorCode } from '@/config/error-patterns'
 import { ERROR_CODES } from '@/config/error-patterns'
+import { NextRequest, NextResponse } from 'next/server'
 import type { ApiContext } from './types'
 
 /**
@@ -77,18 +77,14 @@ export function getHttpStatusCode(errorCode: ErrorCode): number {
 /**
  * JSON レスポンスを作成
  */
-export function createJsonResponse(
-  data: unknown,
-  status: number,
-  baseResponse?: NextResponse
-): NextResponse {
+export function createJsonResponse(data: unknown, status: number, baseResponse?: NextResponse): NextResponse {
   const response = baseResponse || new NextResponse()
 
   response.headers.set('Content-Type', 'application/json')
 
   return NextResponse.json(data, {
     status,
-    headers: response.headers
+    headers: response.headers,
   })
 }
 
@@ -100,7 +96,7 @@ export function logRequest(req: NextRequest, context: ApiContext): void {
     requestId: context.requestId,
     userId: context.userId,
     userAgent: req.headers.get('user-agent'),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   })
 }
 
@@ -122,7 +118,7 @@ export function recordMetrics(
     executionTime,
     errorCode,
     requestId: context.requestId,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   }
 
   console.log('[METRICS]', metrics)
@@ -134,7 +130,5 @@ export function recordMetrics(
  */
 export function getClientId(req: NextRequest): string {
   // IP アドレスまたはユーザー ID をクライアント識別子として使用
-  return req.headers.get('x-forwarded-for') ||
-         req.headers.get('x-real-ip') ||
-         'unknown'
+  return req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown'
 }

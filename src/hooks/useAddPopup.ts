@@ -26,8 +26,8 @@ export function useAddPopup() {
           initialData: context?.initialData || {},
           context: {
             source: context?.source || 'sidebar',
-            date: context?.date
-          }
+            date: context?.date,
+          },
         })
       }
       // 'log' は一旦無視（必要に応じて後で対応）
@@ -37,10 +37,10 @@ export function useAddPopup() {
         initialData: context?.editingEvent || context?.initialData || {},
         context: {
           source: context?.source || 'sidebar',
-          date: context?.dueDate || context?.date
-        }
+          date: context?.dueDate || context?.date,
+        },
       })
     },
-    closePopup: closeModal
+    closePopup: closeModal,
   }
 }

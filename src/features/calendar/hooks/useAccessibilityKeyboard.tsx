@@ -1,16 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
-import {
-  handleArrowKeys,
-  handleActionKeys,
-  handleNavigationKeys,
-  handleEventDetailKeys
-} from './keyboardHandlers'
+import { handleActionKeys, handleArrowKeys, handleEventDetailKeys, handleNavigationKeys } from './keyboardHandlers'
 
 export interface NavigationState {
   selectedDate: Date
@@ -44,11 +39,7 @@ const TIME_SLOTS = Array.from({ length: 96 }, (_, i) => {
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
 })
 
-export function useAccessibilityKeyboard(
-  events: CalendarEvent[],
-  currentDate: Date,
-  callbacks: KeyboardCallbacks
-) {
+export function useAccessibilityKeyboard(events: CalendarEvent[], currentDate: Date, callbacks: KeyboardCallbacks) {
   const { t } = useI18n()
   const [navigationState, setNavigationState] = useState<NavigationState>({
     selectedDate: new Date(currentDate),
@@ -56,7 +47,7 @@ export function useAccessibilityKeyboard(
     selectedEventId: null,
     focusedElement: null,
     isInEventCreationMode: false,
-    isInEventEditMode: false
+    isInEventEditMode: false,
   })
 
   const [announcements, setAnnouncements] = useState<AccessibilityAnnouncement[]>([])
@@ -69,110 +60,119 @@ export function useAccessibilityKeyboard(
     const announcement: AccessibilityAnnouncement = {
       message,
       priority,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     }
 
-    setAnnouncements(prev => [...prev.slice(-9), announcement]) // 最新10件のみ保持
+    setAnnouncements((prev) => [...prev.slice(-9), announcement]) // 最新10件のみ保持
 
     // 自動クリーンアップ
     if (announcementTimeoutRef.current) {
       clearTimeout(announcementTimeoutRef.current)
     }
-    
+
     announcementTimeoutRef.current = setTimeout(() => {
-      setAnnouncements(prev => prev.filter(a => a.timestamp !== announcement.timestamp))
+      setAnnouncements((prev) => prev.filter((a) => a.timestamp !== announcement.timestamp))
     }, 5000)
   }, [])
 
   /**
    * 日付の移動
    */
-  const navigateDate = useCallback((direction: 'next' | 'previous', unit: 'day' | 'week') => {
-    setNavigationState(prev => {
-      const newDate = new Date(prev.selectedDate)
-      const multiplier = direction === 'next' ? 1 : -1
-      const amount = unit === 'day' ? 1 : 7
+  const navigateDate = useCallback(
+    (direction: 'next' | 'previous', unit: 'day' | 'week') => {
+      setNavigationState((prev) => {
+        const newDate = new Date(prev.selectedDate)
+        const multiplier = direction === 'next' ? 1 : -1
+        const amount = unit === 'day' ? 1 : 7
 
-      newDate.setDate(newDate.getDate() + (amount * multiplier))
+        newDate.setDate(newDate.getDate() + amount * multiplier)
 
-      const dateString = newDate.toLocaleDateString('ja-JP', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        weekday: 'long'
+        const dateString = newDate.toLocaleDateString('ja-JP', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          weekday: 'long',
+        })
+
+        announce(`${dateString}に移動しました`)
+        callbacks.onNavigateDate(newDate)
+
+        return { ...prev, selectedDate: newDate }
       })
-      
-      announce(`${dateString}に移動しました`)
-      callbacks.onNavigateDate(newDate)
-
-      return { ...prev, selectedDate: newDate }
-    })
-  }, [announce, callbacks])
+    },
+    [announce, callbacks]
+  )
 
   /**
    * 時間の移動
    */
-  const navigateTime = useCallback((direction: 'next' | 'previous') => {
-    setNavigationState(prev => {
-      const currentIndex = TIME_SLOTS.indexOf(prev.selectedTime)
-      const newIndex = direction === 'next' 
-        ? Math.min(currentIndex + 1, TIME_SLOTS.length - 1)
-        : Math.max(currentIndex - 1, 0)
-      
-      const newTime = TIME_SLOTS[newIndex]
-      announce(`${newTime}に移動しました`)
-      callbacks.onNavigateTime(newTime)
+  const navigateTime = useCallback(
+    (direction: 'next' | 'previous') => {
+      setNavigationState((prev) => {
+        const currentIndex = TIME_SLOTS.indexOf(prev.selectedTime)
+        const newIndex =
+          direction === 'next' ? Math.min(currentIndex + 1, TIME_SLOTS.length - 1) : Math.max(currentIndex - 1, 0)
 
-      return { ...prev, selectedTime: newTime }
-    })
-  }, [announce, callbacks])
+        const newTime = TIME_SLOTS[newIndex]
+        announce(`${newTime}に移動しました`)
+        callbacks.onNavigateTime(newTime)
+
+        return { ...prev, selectedTime: newTime }
+      })
+    },
+    [announce, callbacks]
+  )
 
   /**
    * イベント間の移動
    */
-  const navigateEvents = useCallback((direction: 'next' | 'previous') => {
-    const currentDateEvents = events.filter(event => 
-      event.startDate && 
-      event.startDate.toDateString() === navigationState.selectedDate.toDateString()
-    ).sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
+  const navigateEvents = useCallback(
+    (direction: 'next' | 'previous') => {
+      const currentDateEvents = events
+        .filter(
+          (event) => event.startDate && event.startDate.toDateString() === navigationState.selectedDate.toDateString()
+        )
+        .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
-    if (currentDateEvents.length === 0) {
-      announce(t('calendar.event.noEventsOnThisDay'))
-      return
-    }
-
-    setNavigationState(prev => {
-      const currentIndex = prev.selectedEventId 
-        ? currentDateEvents.findIndex(e => e.id === prev.selectedEventId)
-        : -1
-
-      let newIndex: number
-      if (direction === 'next') {
-        newIndex = currentIndex < currentDateEvents.length - 1 ? currentIndex + 1 : 0
-      } else {
-        newIndex = currentIndex > 0 ? currentIndex - 1 : currentDateEvents.length - 1
+      if (currentDateEvents.length === 0) {
+        announce(t('calendar.event.noEventsOnThisDay'))
+        return
       }
 
-      const newEvent = currentDateEvents[newIndex]
-      if (!newEvent) return prev
+      setNavigationState((prev) => {
+        const currentIndex = prev.selectedEventId
+          ? currentDateEvents.findIndex((e) => e.id === prev.selectedEventId)
+          : -1
 
-      const timeString = newEvent.startDate?.toLocaleTimeString('ja-JP', {
-        hour: '2-digit',
-        minute: '2-digit'
+        let newIndex: number
+        if (direction === 'next') {
+          newIndex = currentIndex < currentDateEvents.length - 1 ? currentIndex + 1 : 0
+        } else {
+          newIndex = currentIndex > 0 ? currentIndex - 1 : currentDateEvents.length - 1
+        }
+
+        const newEvent = currentDateEvents[newIndex]
+        if (!newEvent) return prev
+
+        const timeString = newEvent.startDate?.toLocaleTimeString('ja-JP', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+
+        announce(`${timeString} ${newEvent.title}`)
+        callbacks.onSelectEvent(newEvent.id)
+
+        return { ...prev, selectedEventId: newEvent.id }
       })
-
-      announce(`${timeString} ${newEvent.title}`)
-      callbacks.onSelectEvent(newEvent.id)
-
-      return { ...prev, selectedEventId: newEvent.id }
-    })
-  }, [events, navigationState.selectedDate, announce, callbacks, t])
+    },
+    [events, navigationState.selectedDate, announce, callbacks, t]
+  )
 
   /**
    * イベント作成
    */
   const createEvent = useCallback(() => {
-    setNavigationState(prev => {
+    setNavigationState((prev) => {
       announce(`${prev.selectedTime}に新しいイベントを作成します`)
       callbacks.onCreateEvent(prev.selectedDate, prev.selectedTime)
 
@@ -185,12 +185,12 @@ export function useAccessibilityKeyboard(
    */
   const editCurrentEvent = useCallback(() => {
     if (navigationState.selectedEventId) {
-      const event = events.find(e => e.id === navigationState.selectedEventId)
+      const event = events.find((e) => e.id === navigationState.selectedEventId)
       if (event) {
         announce(`${event.title}を編集します`)
         callbacks.onEditEvent(navigationState.selectedEventId)
-        
-        setNavigationState(prev => ({ ...prev, isInEventEditMode: true }))
+
+        setNavigationState((prev) => ({ ...prev, isInEventEditMode: true }))
       }
     } else {
       announce(t('calendar.event.selectEventToEdit'))
@@ -202,14 +202,14 @@ export function useAccessibilityKeyboard(
    */
   const deleteCurrentEvent = useCallback(() => {
     if (navigationState.selectedEventId) {
-      const event = events.find(e => e.id === navigationState.selectedEventId)
+      const event = events.find((e) => e.id === navigationState.selectedEventId)
       if (event) {
         announce(`${event.title}を削除します`)
         callbacks.onDeleteEvent(navigationState.selectedEventId)
-        
-        setNavigationState(prev => ({ 
-          ...prev, 
-          selectedEventId: null 
+
+        setNavigationState((prev) => ({
+          ...prev,
+          selectedEventId: null,
         }))
       }
     } else {
@@ -221,14 +221,14 @@ export function useAccessibilityKeyboard(
    * エスケープアクション
    */
   const handleEscape = useCallback(() => {
-    setNavigationState(prev => {
+    setNavigationState((prev) => {
       if (prev.isInEventCreationMode || prev.isInEventEditMode) {
         announce(t('calendar.actions.undone'))
         callbacks.onEscapeAction()
         return {
           ...prev,
           isInEventCreationMode: false,
-          isInEventEditMode: false
+          isInEventEditMode: false,
         }
       } else if (prev.selectedEventId) {
         announce(t('calendar.event.deselected'))
@@ -250,67 +250,70 @@ export function useAccessibilityKeyboard(
       'Escape: 操作キャンセル',
       'F1: このヘルプを表示',
       'Home/End: 時間の最初・最後に移動',
-      'PageUp/PageDown: 週単位で移動'
+      'PageUp/PageDown: 週単位で移動',
     ].join('。')
-    
+
     announce(helpMessage, 'assertive')
   }, [announce])
 
   /**
    * キーボードイベントハンドラー
    */
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    // モーダルやフォームが開いている場合は処理しない
-    if (
-      navigationState.isInEventCreationMode ||
-      navigationState.isInEventEditMode ||
-      event.target !== document.body
-    ) {
-      return
-    }
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      // モーダルやフォームが開いている場合は処理しない
+      if (
+        navigationState.isInEventCreationMode ||
+        navigationState.isInEventEditMode ||
+        event.target !== document.body
+      ) {
+        return
+      }
 
-    const { ctrlKey, altKey } = event
+      const { ctrlKey, altKey } = event
 
-    // 修飾キーの組み合わせチェック
-    if (ctrlKey || altKey) return
+      // 修飾キーの組み合わせチェック
+      if (ctrlKey || altKey) return
 
-    // キーボードハンドラーを分割して呼び出し
-    const handlerProps = {
-      event,
+      // キーボードハンドラーを分割して呼び出し
+      const handlerProps = {
+        event,
+        navigationState,
+        navigateDate,
+        navigateTime,
+        navigateEvents,
+        editCurrentEvent,
+        createEvent,
+        deleteCurrentEvent,
+        handleEscape,
+        showKeyboardHelp,
+        setNavigationState,
+        announce,
+        events,
+        TIME_SLOTS,
+        noDescriptionText: t('calendar.event.noDescription'),
+      }
+
+      // ヘルパー関数を直接呼び出し
+      handleArrowKeys(handlerProps)
+      handleActionKeys(handlerProps)
+      handleNavigationKeys(handlerProps)
+      handleEventDetailKeys(handlerProps)
+    },
+    [
       navigationState,
       navigateDate,
       navigateTime,
       navigateEvents,
-      editCurrentEvent,
       createEvent,
+      editCurrentEvent,
       deleteCurrentEvent,
       handleEscape,
       showKeyboardHelp,
-      setNavigationState,
-      announce,
       events,
-      TIME_SLOTS,
-      noDescriptionText: t('calendar.event.noDescription')
-    }
-
-    // ヘルパー関数を直接呼び出し
-    handleArrowKeys(handlerProps)
-    handleActionKeys(handlerProps)
-    handleNavigationKeys(handlerProps)
-    handleEventDetailKeys(handlerProps)
-  }, [
-    navigationState,
-    navigateDate,
-    navigateTime,
-    navigateEvents,
-    createEvent,
-    editCurrentEvent,
-    deleteCurrentEvent,
-    handleEscape,
-    showKeyboardHelp,
-    events,
-    announce
-  ])
+      announce,
+    ]
+  )
 
   /**
    * キーボードイベントの登録
@@ -340,11 +343,11 @@ export function useAccessibilityKeyboard(
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-      weekday: 'long'
+      weekday: 'long',
     })
 
     if (selectedEventId) {
-      const event = events.find(e => e.id === selectedEventId)
+      const event = events.find((e) => e.id === selectedEventId)
       if (event) {
         return `${dateString}、${event.title}が選択されています`
       }
@@ -358,28 +361,28 @@ export function useAccessibilityKeyboard(
     announcements,
     focusCalendar,
     getDetailedStatus,
-    
+
     // 手動ナビゲーション用
     navigateToDate: (date: Date) => {
-      setNavigationState(prev => ({ ...prev, selectedDate: date }))
+      setNavigationState((prev) => ({ ...prev, selectedDate: date }))
       const dateString = date.toLocaleDateString('ja-JP', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-        weekday: 'long'
+        weekday: 'long',
       })
       announce(`${dateString}に移動しました`)
     },
-    
+
     navigateToTime: (time: string) => {
-      setNavigationState(prev => ({ ...prev, selectedTime: time }))
+      setNavigationState((prev) => ({ ...prev, selectedTime: time }))
       announce(`${time}に移動しました`)
     },
-    
+
     selectEvent: (eventId: string | null) => {
-      setNavigationState(prev => ({ ...prev, selectedEventId: eventId }))
+      setNavigationState((prev) => ({ ...prev, selectedEventId: eventId }))
       if (eventId) {
-        const event = events.find(e => e.id === eventId)
+        const event = events.find((e) => e.id === eventId)
         if (event) {
           announce(`${event.title}を選択しました`)
         }
@@ -388,15 +391,15 @@ export function useAccessibilityKeyboard(
 
     // モード制御
     setEventCreationMode: (isActive: boolean) => {
-      setNavigationState(prev => ({ ...prev, isInEventCreationMode: isActive }))
+      setNavigationState((prev) => ({ ...prev, isInEventCreationMode: isActive }))
     },
-    
+
     setEventEditMode: (isActive: boolean) => {
-      setNavigationState(prev => ({ ...prev, isInEventEditMode: isActive }))
+      setNavigationState((prev) => ({ ...prev, isInEventEditMode: isActive }))
     },
 
     // アナウンス機能
-    announce
+    announce,
   }
 }
 
@@ -405,30 +408,20 @@ export const AccessibilityLiveRegion = ({ announcements }: { announcements: Acce
   return (
     <>
       {/* polite な更新用 */}
-      <div
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-        role="status"
-      >
+      <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
         {announcements
-          .filter(a => a.priority === 'polite')
+          .filter((a) => a.priority === 'polite')
           .slice(-1)
-          .map(a => a.message)
+          .map((a) => a.message)
           .join('')}
       </div>
 
       {/* 緊急な更新用 */}
-      <div
-        aria-live="assertive"
-        aria-atomic="true"
-        className="sr-only"
-        role="alert"
-      >
+      <div aria-live="assertive" aria-atomic="true" className="sr-only" role="alert">
         {announcements
-          .filter(a => a.priority === 'assertive')
+          .filter((a) => a.priority === 'assertive')
           .slice(-1)
-          .map(a => a.message)
+          .map((a) => a.message)
           .join('')}
       </div>
     </>

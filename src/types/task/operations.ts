@@ -4,7 +4,7 @@
  * フィルター、ソート、クエリ、統計情報などの操作型
  */
 
-import type { Task, TaskStatus, TaskPriority } from '../index'
+import type { Task, TaskPriority, TaskStatus } from '../index'
 import type { TaskType } from './core'
 
 /**
@@ -46,14 +46,7 @@ export interface TaskFilters {
  * タスクソートの条件
  */
 export interface TaskSort {
-  field: keyof Pick<
-    Task,
-    | 'title'
-    | 'status'
-    | 'priority'
-    | 'created_at'
-    | 'updated_at'
-  >
+  field: keyof Pick<Task, 'title' | 'status' | 'priority' | 'created_at' | 'updated_at'>
   direction: 'asc' | 'desc'
 }
 
@@ -65,15 +58,7 @@ export interface TaskQuery {
   sort?: TaskSort[]
   page?: number
   limit?: number
-  include?: Array<
-    | 'comments'
-    | 'attachments'
-    | 'timeEntries'
-    | 'labels'
-    | 'subtasks'
-    | 'parentTask'
-    | 'relatedTasks'
-  >
+  include?: Array<'comments' | 'attachments' | 'timeEntries' | 'labels' | 'subtasks' | 'parentTask' | 'relatedTasks'>
 }
 
 /**

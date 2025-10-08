@@ -5,8 +5,4 @@ export { useCalendarLayout } from './useCalendarLayout'
 // export { useTimeGrid } from './useTimeGrid'
 
 // Types
-export type { 
-  LayoutMode, 
-  SidebarWidth, 
-  Breakpoint 
-} from './useCalendarLayout'
+export type { Breakpoint, LayoutMode, SidebarWidth } from './useCalendarLayout'

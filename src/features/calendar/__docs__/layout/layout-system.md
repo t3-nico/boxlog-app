@@ -72,15 +72,15 @@ graph TB
     A --> C[CalendarHeader]
     A --> D[Sidebar]
     A --> E[Main Content]
-    
+
     B --> F[State Management]
     F --> G[Local Storage]
     F --> H[URL Params]
-    
+
     C --> I[Date Navigation]
     C --> J[View Switching]
     C --> K[Header Actions]
-    
+
     D --> L[Mini Calendar]
     D --> M[Quick Actions]
     D --> N[Filters]
@@ -92,7 +92,7 @@ graph TB
 CalendarLayout (最上位)
 ├── CalendarHeader
 │   ├── DateNavigator
-│   ├── DateRangeDisplay  
+│   ├── DateRangeDisplay
 │   ├── ViewSwitcher
 │   └── HeaderActions
 ├── Sidebar (条件付き表示)
@@ -126,35 +126,35 @@ CalendarLayout (最上位)
 interface CalendarLayoutProps {
   children: React.ReactNode
   className?: string
-  
+
   // Header props
   viewType: CalendarViewType
   currentDate: Date
   onNavigate: (direction: 'prev' | 'next' | 'today') => void
   onViewChange: (view: CalendarViewType) => void
-  
+
   // Header actions
   onSettings?: () => void
   onExport?: () => void
   onImport?: () => void
   showHeaderActions?: boolean
-  
+
   // Sidebar props
   showSidebar?: boolean
   sidebarCollapsed?: boolean
   onSidebarCollapsedChange?: (collapsed: boolean) => void
-  
+
   // Calendar integration
   selectedDate?: Date
   onDateSelect?: (date: Date) => void
   calendars?: Calendar[]
   tags?: TagItem[]
-  
+
   // Event handlers
   onCreateEvent?: () => void
   onCreateTask?: () => void
   onCreateLog?: () => void
-  
+
   // Display options
   showMiniCalendar?: boolean
   showCalendarList?: boolean
@@ -188,12 +188,14 @@ interface CalendarLayoutProps {
 **役割**: カレンダーの上部ナビゲーション・コントロール
 
 ##### 主要機能
+
 - 日付ナビゲーション
 - ビュー切り替え
 - アクションボタン
 - モバイルメニュー対応
 
 ##### Props
+
 ```typescript
 interface CalendarHeaderProps {
   viewType: CalendarViewType
@@ -213,6 +215,7 @@ interface CalendarHeaderProps {
 **役割**: 日付の前後移動・今日への移動
 
 ##### 機能
+
 - Previous/Next ボタン
 - Today ボタン
 - キーボードショートカット対応
@@ -223,6 +226,7 @@ interface CalendarHeaderProps {
 **役割**: 現在選択中の日付範囲の表示
 
 ##### 機能
+
 - ビュータイプ別の表示形式
 - 週番号表示（オプション）
 - 国際化対応
@@ -232,8 +236,9 @@ interface CalendarHeaderProps {
 **役割**: カレンダービューの切り替え
 
 ##### サポートビュー
+
 - `day`: 日表示
-- `3day`: 3日表示  
+- `3day`: 3日表示
 - `week`: 週表示
 - `week-no-weekend`: 平日のみ表示
 - `2week`: 2週間表示
@@ -253,11 +258,13 @@ interface CalendarHeaderProps {
 **役割**: サイドバーの全体管理
 
 ##### 📋 主要機能
+
 - **折りたたみ機能**: デスクトップ・タブレットでの表示切り替え
 - **セクション管理**: 展開・折りたたみ状態の管理
 - **レスポンシブ**: モバイルでは非表示、デスクトップでは折りたたみ対応
 
 ##### 🎛️ 表示モード
+
 1. **Full (通常表示)**: 幅320px、全機能表示
 2. **Collapsed (折りたたみ)**: 幅48px、アイコンのみ
 3. **Hidden (非表示)**: モバイルでは完全非表示
@@ -267,6 +274,7 @@ interface CalendarHeaderProps {
 **役割**: 月表示の小さなカレンダー
 
 ##### 機能
+
 - 日付選択
 - 今日のハイライト
 - イベント有無の表示
@@ -277,6 +285,7 @@ interface CalendarHeaderProps {
 **役割**: よく使用するアクションの素早いアクセス
 
 ##### アクション例
+
 - イベント作成
 - タスク作成
 - 今日に移動
@@ -288,6 +297,7 @@ interface CalendarHeaderProps {
 **役割**: 複数カレンダーの管理
 
 ##### 機能
+
 - カレンダー表示/非表示切り替え
 - カラーバーでの識別
 - カレンダー編集・削除
@@ -298,6 +308,7 @@ interface CalendarHeaderProps {
 **役割**: タグベースのフィルタリング
 
 ##### 機能
+
 - タグ選択でフィルタリング
 - 選択タグのカウント表示
 - 全選択解除
@@ -312,6 +323,7 @@ interface CalendarHeaderProps {
 **役割**: モバイル用のドロワーナビゲーション
 
 ##### 機能
+
 - スワイプでの開閉
 - オーバーレイ表示
 - タッチフレンドリーな操作
@@ -321,6 +333,7 @@ interface CalendarHeaderProps {
 **役割**: モバイル専用ヘッダー
 
 ##### 最適化ポイント
+
 - タッチターゲットサイズの最適化
 - 重要な機能のみ表示
 - ハンバーガーメニュー統合
@@ -338,17 +351,10 @@ import { CalendarLayout } from '@/features/calendar/components/layout'
 import { useCalendarLayout } from '@/features/calendar/hooks/ui'
 
 export function MyCalendarPage() {
-  const {
-    viewType,
-    currentDate,
-    navigateRelative,
-    changeView,
-    sidebarOpen,
-    toggleSidebar
-  } = useCalendarLayout({
+  const { viewType, currentDate, navigateRelative, changeView, sidebarOpen, toggleSidebar } = useCalendarLayout({
     initialViewType: 'week',
     initialDate: new Date(),
-    persistSidebarState: true
+    persistSidebarState: true,
   })
 
   return (
@@ -378,7 +384,7 @@ export function MyCalendarPage() {
     openEventModal()
   }}
   onCreateTask={() => {
-    // タスク作成ロジック  
+    // タスク作成ロジック
     openTaskModal()
   }}
   onDateSelect={(date) => {
@@ -427,12 +433,8 @@ export function CustomSidebarSection({ isExpanded, onToggle }) {
       <button onClick={() => onToggle('custom-section')}>
         <span>カスタムセクション</span>
       </button>
-      
-      {isExpanded && (
-        <div className="p-4">
-          {/* カスタムコンテンツ */}
-        </div>
-      )}
+
+      {isExpanded && <div className="p-4">{/* カスタムコンテンツ */}</div>}
     </div>
   )
 }
@@ -445,12 +447,9 @@ export function CustomSidebarSection({ isExpanded, onToggle }) {
 import { CustomSidebarSection } from './CustomSidebarSection'
 
 // Sidebarコンポーネント内
-{showCustomSection && (
-  <CustomSidebarSection
-    isExpanded={isExpanded('custom-section')}
-    onToggle={toggleSection}
-  />
-)}
+{
+  showCustomSection && <CustomSidebarSection isExpanded={isExpanded('custom-section')} onToggle={toggleSection} />
+}
 ```
 
 ### 🎯 新しいビューの追加
@@ -459,16 +458,8 @@ import { CustomSidebarSection } from './CustomSidebarSection'
 
 ```tsx
 // MyCustomView.tsx
-export function MyCustomView({ 
-  dateRange, 
-  events, 
-  onEventClick 
-}) {
-  return (
-    <div className="custom-view">
-      {/* ビューのコンテンツ */}
-    </div>
-  )
+export function MyCustomView({ dateRange, events, onEventClick }) {
+  return <div className="custom-view">{/* ビューのコンテンツ */}</div>
 }
 ```
 
@@ -486,10 +477,10 @@ export function MyCustomView({
 // カスタムフック
 export function useEnhancedCalendarLayout(options) {
   const baseHook = useCalendarLayout(options)
-  
+
   // 追加機能
   const [customState, setCustomState] = useState()
-  
+
   return {
     ...baseHook,
     customState,
@@ -497,7 +488,7 @@ export function useEnhancedCalendarLayout(options) {
     // カスタムメソッド
     customAction: () => {
       // カスタムロジック
-    }
+    },
   }
 }
 ```
@@ -512,20 +503,19 @@ export function useEnhancedCalendarLayout(options) {
 
 ```tsx
 // コンポーネントのメモ化
-export const CalendarHeader = memo(({ 
-  viewType, 
-  currentDate, 
-  onNavigate 
-}) => {
+export const CalendarHeader = memo(({ viewType, currentDate, onNavigate }) => {
   // レンダリング最適化
 })
 
 // 値のメモ化
-const memoizedProps = useMemo(() => ({
-  viewType,
-  currentDate,
-  events: filteredEvents
-}), [viewType, currentDate, filteredEvents])
+const memoizedProps = useMemo(
+  () => ({
+    viewType,
+    currentDate,
+    events: filteredEvents,
+  }),
+  [viewType, currentDate, filteredEvents]
+)
 ```
 
 #### 2. 仮想化の実装
@@ -536,11 +526,7 @@ import { FixedSizeList as List } from 'react-window'
 
 export function VirtualizedEventList({ events }) {
   return (
-    <List
-      height={400}
-      itemCount={events.length}
-      itemSize={60}
-    >
+    <List height={400} itemCount={events.length} itemSize={60}>
       {EventItem}
     </List>
   )
@@ -554,11 +540,13 @@ export function VirtualizedEventList({ events }) {
 const HeavyComponent = lazy(() => import('./HeavyComponent'))
 
 // 条件付き読み込み
-{showHeavyFeature && (
-  <Suspense fallback={<Loading />}>
-    <HeavyComponent />
-  </Suspense>
-)}
+{
+  showHeavyFeature && (
+    <Suspense fallback={<Loading />}>
+      <HeavyComponent />
+    </Suspense>
+  )
+}
 ```
 
 ---
@@ -590,7 +578,7 @@ useEffect(() => {
       }
     }
   }
-  
+
   window.addEventListener('keydown', handleKeyPress)
   return () => window.removeEventListener('keydown', handleKeyPress)
 }, [navigateRelative])
@@ -599,14 +587,8 @@ useEffect(() => {
 #### 2. ARIA属性の適切な使用
 
 ```tsx
-<nav 
-  role="navigation" 
-  aria-label="カレンダーナビゲーション"
->
-  <button
-    aria-label="前の期間に移動"
-    onClick={() => onNavigate('prev')}
-  >
+<nav role="navigation" aria-label="カレンダーナビゲーション">
+  <button aria-label="前の期間に移動" onClick={() => onNavigate('prev')}>
     <ChevronLeft aria-hidden="true" />
   </button>
 </nav>
@@ -616,15 +598,9 @@ useEffect(() => {
 
 ```tsx
 // ライブリージョンでの状態通知
-<div
-  role="status"
-  aria-live="polite"
-  className="sr-only"
->
-  {announcements.map(announcement => (
-    <div key={announcement.id}>
-      {announcement.message}
-    </div>
+<div role="status" aria-live="polite" className="sr-only">
+  {announcements.map((announcement) => (
+    <div key={announcement.id}>{announcement.message}</div>
   ))}
 </div>
 ```
@@ -640,6 +616,7 @@ useEffect(() => {
 **症状**: サイドバーが全く表示されない
 
 **原因と解決方法**:
+
 ```tsx
 // ❌ 間違い
 <CalendarLayout showSidebar={false}>
@@ -653,11 +630,12 @@ useEffect(() => {
 **症状**: ページリロード時に設定が失われる
 
 **原因と解決方法**:
+
 ```tsx
 // useCalendarLayoutでpersistSidebarStateを有効に
 const layoutState = useCalendarLayout({
   persistSidebarState: true, // ← これが重要
-  sidebarStorageKey: 'my-app-sidebar' // カスタムキー
+  sidebarStorageKey: 'my-app-sidebar', // カスタムキー
 })
 ```
 
@@ -666,6 +644,7 @@ const layoutState = useCalendarLayout({
 **症状**: モバイル端末でサイドバーの開閉ができない
 
 **原因**: ブレークポイントの設定を確認
+
 ```tsx
 // CSSでブレークポイントを確認
 @media (max-width: 768px) {
@@ -680,11 +659,15 @@ const layoutState = useCalendarLayout({
 **症状**: スクロールやビュー切り替えが重い
 
 **解決方法**:
+
 ```tsx
 // 1. イベントハンドラーのメモ化
-const handleViewChange = useCallback((view) => {
-  changeView(view)
-}, [changeView])
+const handleViewChange = useCallback(
+  (view) => {
+    changeView(view)
+  },
+  [changeView]
+)
 
 // 2. 不要な再レンダリングの防止
 const MemoizedComponent = memo(Component)
@@ -697,12 +680,10 @@ const MemoizedComponent = memo(Component)
 **症状**: 型エラーが発生する
 
 **解決方法**:
+
 ```tsx
 // 型定義のインポート
-import type { 
-  CalendarViewType, 
-  CalendarLayoutProps 
-} from '@/features/calendar/types'
+import type { CalendarViewType, CalendarLayoutProps } from '@/features/calendar/types'
 
 // 適切な型注釈
 const viewType: CalendarViewType = 'week'
@@ -726,11 +707,12 @@ const viewType: CalendarViewType = 'week'
    - ScrollableCalendarLayoutによる自動配置
 
 3. **レスポンシブHOUR_HEIGHT対応**
+
    ```typescript
    const HOUR_HEIGHT = useResponsiveHourHeight({
-     mobile: 48,   // モバイル: 48px
-     tablet: 60,   // タブレット: 60px  
-     desktop: 72   // デスクトップ: 72px
+     mobile: 48, // モバイル: 48px
+     tablet: 60, // タブレット: 60px
+     desktop: 72, // デスクトップ: 72px
    })
    ```
 
@@ -744,12 +726,12 @@ const viewType: CalendarViewType = 'week'
 ```typescript
 interface ScrollableCalendarLayoutProps {
   children: React.ReactNode
-  header?: React.ReactNode        // 統合ヘッダー
+  header?: React.ReactNode // 統合ヘッダー
   timezone?: string
   scrollToHour?: number
   showTimeColumn?: boolean
   showCurrentTime?: boolean
-  showTimezone?: boolean          // UTC表示制御
+  showTimezone?: boolean // UTC表示制御
   timeColumnWidth?: number
   onTimeClick?: (hour: number, minute: number) => void
   displayDates?: Date[]
@@ -788,13 +770,13 @@ ScrollableCalendarLayout
 
 ### 📱 ビュー別の適用状況
 
-| ビュー | 適用状況 | 特記事項 |
-|--------|----------|----------|
-| DayView | ✅ 適用済み | 統一レイアウトに移行 |
-| ThreeDayView | ✅ 適用済み | - |
-| WeekView | ✅ 適用済み | - |
-| TwoWeekView | ✅ 適用済み | 画面幅対応・縦線削除 |
-| AgendaView | ❌ 対象外 | リストベースのため |
+| ビュー       | 適用状況    | 特記事項             |
+| ------------ | ----------- | -------------------- |
+| DayView      | ✅ 適用済み | 統一レイアウトに移行 |
+| ThreeDayView | ✅ 適用済み | -                    |
+| WeekView     | ✅ 適用済み | -                    |
+| TwoWeekView  | ✅ 適用済み | 画面幅対応・縦線削除 |
+| AgendaView   | ❌ 対象外   | リストベースのため   |
 
 ---
 

@@ -29,6 +29,7 @@ import { colors } from '@/config/theme'
 ```
 
 **セマンティックトークン一覧（globals.css で定義）：**
+
 - `bg-background` / `text-foreground` - ページ全体の背景/テキスト
 - `bg-card` / `text-card-foreground` - カード背景/テキスト
 - `bg-muted` / `text-muted-foreground` - 控えめな背景/テキスト
@@ -37,6 +38,7 @@ import { colors } from '@/config/theme'
 - `bg-destructive` / `text-destructive-foreground` - 削除ボタン等
 
 **スペーシング・タイポグラフィ・角丸は theme.ts のヘルパーを使用：**
+
 ```tsx
 import { typography, spacing, rounded } from '@/config/ui/theme'
 
@@ -54,6 +56,7 @@ import { typography, spacing, rounded } from '@/config/ui/theme'
 **重要：カラー以外（typography, spacing, rounded）は `/src/config/ui/theme.ts` を参照**
 
 ### 2. TypeScript厳格型付け
+
 ```tsx
 // ❌ 禁止：any型
 const handleClick = (data: any) => {}
@@ -67,6 +70,7 @@ const handleClick = (data: HandleClickData) => {}
 ```
 
 ### 3. コンポーネント設計
+
 ```tsx
 // ✅ 推奨構造
 import { FC } from 'react'
@@ -91,6 +95,7 @@ export const MyComponent: FC<Props> = ({ title, onClose }) => {
 **新規ページ作成時は必ずi18nを実装すること（ハードコード禁止）**
 
 #### 4.1 Server Component（推奨）
+
 ```tsx
 // src/app/[locale]/(app)/new-page/page.tsx
 import { createTranslation, getDictionary } from '@/lib/i18n'
@@ -117,6 +122,7 @@ export default NewPage
 ```
 
 #### 4.2 Client Component
+
 ```tsx
 // src/features/new-feature/NewFeature.tsx
 'use client'
@@ -136,6 +142,7 @@ export const NewFeature = () => {
 ```
 
 #### 4.3 翻訳辞書の追加
+
 ```json
 // src/lib/i18n/dictionaries/ja.json
 {
@@ -162,7 +169,7 @@ export const NewFeature = () => {
 import type { TranslatedString } from '@/types/i18n-branded'
 
 // ✅ OK: t()の戻り値（TranslatedString型）
-const title = t('page.title')  // 型: TranslatedString
+const title = t('page.title') // 型: TranslatedString
 
 // ❌ エラー: 生の文字列は型エラー
 const title: TranslatedString = 'こんにちは'
@@ -170,16 +177,18 @@ const title: TranslatedString = 'こんにちは'
 
 // ✅ OK: コンポーネントでTranslatedStringを要求
 interface Props {
-  title: TranslatedString  // ← ハードコード禁止
+  title: TranslatedString // ← ハードコード禁止
 }
 ```
 
 **メリット:**
+
 - コード書いた瞬間にVS Codeで赤線表示
 - `npm run typecheck`でコンパイルエラー
 - 翻訳漏れを開発時に即座に検出
 
 #### 4.5 実装チェックリスト
+
 - [ ] すべてのUI文字列を翻訳キーに置き換え
 - [ ] ja.json と en.json 両方に翻訳を追加
 - [ ] Server Component: `getDictionary()` + `createTranslation()` を使用
@@ -188,6 +197,7 @@ interface Props {
 - [ ] `TranslatedString`型を活用して型安全性を確保
 
 ### 5. バリデーション実装
+
 ```tsx
 // ✅ Zodスキーマ使用
 import { z } from 'zod'
@@ -204,6 +214,7 @@ if (!result.success) {
 ```
 
 ### 6. インポート順序（ESLint自動整形）
+
 ```tsx
 // 1. React/Next.js
 import { FC } from 'react'
@@ -225,6 +236,7 @@ import { TaskCard } from './TaskCard'
 **基本方針**: 関連するファイルは必ず近くに配置し、機能単位で完結させる（Next.js公式推奨）
 
 #### 7.1 コンポーネント構造
+
 ```
 src/components/
   ├── Button/
@@ -243,6 +255,7 @@ src/
 ```
 
 #### 7.2 ページとローカルコンポーネント
+
 ```
 src/app/
   ├── dashboard/
@@ -263,6 +276,7 @@ src/components/DashboardChart.tsx  // NG: 1ページでしか使わないのに�
 ```
 
 #### 7.3 型定義とスキーマ
+
 ```
 src/features/
   ├── tasks/
@@ -276,6 +290,7 @@ src/types/task.ts              // NG: 複数featureで使わない限り不要
 ```
 
 #### 7.4 カスタムhooks
+
 ```
 src/features/
   ├── calendar/
@@ -294,6 +309,7 @@ src/features/
 ```
 
 #### 7.5 ユーティリティ関数
+
 ```
 src/features/
   ├── tasks/
@@ -307,6 +323,7 @@ src/utils/taskHelpers.ts       // NG: 複数featureで使わない限り不要
 ```
 
 #### 7.6 API routes（tRPC）
+
 ```
 src/server/
   ├── routers/
@@ -319,6 +336,7 @@ src/server/
 ```
 
 #### 7.7 ドキュメント配置
+
 ```
 // 機能単位のREADME
 src/features/auth/README.md           # ✅ 認証機能の説明
@@ -333,13 +351,13 @@ docs/
 
 #### 7.8 コロケーション判断基準
 
-| 項目 | ローカル配置 | グローバル配置 |
-|------|------------|--------------|
-| **コンポーネント** | 1つのfeature/ページでのみ使用 | 3箇所以上で再利用 |
-| **型定義** | 1つのfeatureでのみ使用 | 複数featureで共有 |
-| **hooks** | 1つのfeatureでのみ使用 | 複数featureで再利用 |
-| **utils** | feature固有のロジック | 汎用的なヘルパー関数 |
-| **定数** | feature固有の値 | アプリ全体の設定値 |
+| 項目               | ローカル配置                  | グローバル配置       |
+| ------------------ | ----------------------------- | -------------------- |
+| **コンポーネント** | 1つのfeature/ページでのみ使用 | 3箇所以上で再利用    |
+| **型定義**         | 1つのfeatureでのみ使用        | 複数featureで共有    |
+| **hooks**          | 1つのfeatureでのみ使用        | 複数featureで再利用  |
+| **utils**          | feature固有のロジック         | 汎用的なヘルパー関数 |
+| **定数**           | feature固有の値               | アプリ全体の設定値   |
 
 **原則**: 迷ったらローカル配置 → 3箇所以上で使われたらグローバル化検討
 

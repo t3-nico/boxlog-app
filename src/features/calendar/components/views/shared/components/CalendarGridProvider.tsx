@@ -17,22 +17,19 @@ interface CalendarGridProviderProps {
   }
 }
 
-export const CalendarGridProvider = ({ 
-  children, 
-  hourHeightConfig = {}
-}: CalendarGridProviderProps) => {
+export const CalendarGridProvider = ({ children, hourHeightConfig = {} }: CalendarGridProviderProps) => {
   const hourHeight = useResponsiveHourHeight(hourHeightConfig)
-  
+
   useEffect(() => {
     // CSS変数をルート要素に設定
     const root = document.documentElement
-    
+
     root.style.setProperty('--calendar-hour-height', `${hourHeight}px`)
     root.style.setProperty('--calendar-half-hour-height', `${hourHeight / 2}px`)
     root.style.setProperty('--calendar-quarter-hour-height', `${hourHeight / 4}px`)
     root.style.setProperty('--calendar-minute-height', `${hourHeight / 60}px`)
     root.style.setProperty('--calendar-grid-height', `${hourHeight * 24}px`)
-    
+
     return () => {
       // クリーンアップ
       root.style.removeProperty('--calendar-hour-height')
@@ -42,7 +39,7 @@ export const CalendarGridProvider = ({
       root.style.removeProperty('--calendar-grid-height')
     }
   }, [hourHeight])
-  
+
   return <>{children}</>
 }
 
@@ -51,7 +48,7 @@ export const CalendarGridProvider = ({
  */
 export function useCalendarGridVars() {
   const hourHeight = useResponsiveHourHeight()
-  
+
   return {
     hourHeight,
     halfHourHeight: hourHeight / 2,
@@ -64,7 +61,7 @@ export function useCalendarGridVars() {
       halfHourHeight: 'var(--calendar-half-hour-height, 36px)',
       quarterHourHeight: 'var(--calendar-quarter-hour-height, 18px)',
       minuteHeight: 'var(--calendar-minute-height, 1.2px)',
-      gridHeight: 'var(--calendar-grid-height, 1728px)'
-    }
+      gridHeight: 'var(--calendar-grid-height, 1728px)',
+    },
   }
 }

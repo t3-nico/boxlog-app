@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 
 import Image from 'next/image'
 
-import { X, Calendar, Settings, Download, Upload, User, Bell, Palette } from 'lucide-react'
+import { Bell, Calendar, Download, Palette, Settings, Upload, User, X } from 'lucide-react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
@@ -36,14 +36,7 @@ interface MobileDrawerProps {
  * モバイル用ドロワーメニュー
  * 左側からスライドインするサイドメニュー
  */
-export const MobileDrawer = ({
-  isOpen,
-  onClose,
-  title,
-  items,
-  userInfo,
-  className
-}: MobileDrawerProps) => {
+export const MobileDrawer = ({ isOpen, onClose, title, items, userInfo, className }: MobileDrawerProps) => {
   const { t } = useI18n()
   const drawerRef = useRef<HTMLDivElement>(null)
 
@@ -51,40 +44,40 @@ export const MobileDrawer = ({
     {
       id: 'calendar',
       label: t('calendar.mobile.drawer.calendar'),
-      icon: <Calendar className="h-5 w-5" />
+      icon: <Calendar className="h-5 w-5" />,
     },
     {
       id: 'settings',
       label: t('calendar.mobile.drawer.settings'),
-      icon: <Settings className="h-5 w-5" />
+      icon: <Settings className="h-5 w-5" />,
     },
     {
       id: 'notifications',
       label: t('calendar.mobile.drawer.notifications'),
       icon: <Bell className="h-5 w-5" />,
-      badge: 3
+      badge: 3,
     },
     {
       id: 'theme',
       label: t('settings.preferences.title'),
-      icon: <Palette className="h-5 w-5" />
+      icon: <Palette className="h-5 w-5" />,
     },
     {
       id: 'divider1',
       label: '',
       icon: null,
-      divider: true
+      divider: true,
     },
     {
       id: 'export',
       label: t('settings.dataExport.title'),
-      icon: <Download className="h-5 w-5" />
+      icon: <Download className="h-5 w-5" />,
     },
     {
       id: 'import',
       label: t('actions.create'),
-      icon: <Upload className="h-5 w-5" />
-    }
+      icon: <Upload className="h-5 w-5" />,
+    },
   ]
 
   const menuItems = items ?? defaultMenuItems
@@ -153,18 +146,14 @@ export const MobileDrawer = ({
   return (
     <>
       {/* オーバーレイ */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50 transition-opacity"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className="fixed inset-0 z-50 bg-black/50 transition-opacity" onClick={onClose} aria-hidden="true" />
 
       {/* ドロワー */}
       <div
         ref={drawerRef}
         className={cn(
           'fixed top-0 left-0 h-full w-80 max-w-[85vw]',
-          'bg-background border-r border-border shadow-xl z-50',
+          'bg-background border-border z-50 border-r shadow-xl',
           'transform transition-transform duration-300 ease-out',
           isOpen ? 'translate-x-0' : '-translate-x-full',
           className
@@ -179,7 +168,7 @@ export const MobileDrawer = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 -mr-2 hover:bg-accent/50 rounded-full transition-colors"
+            className="hover:bg-accent/50 -mr-2 rounded-full p-2 transition-colors"
             aria-label={t('calendar.mobile.drawer.closeMenu')}
           >
             <X className="h-5 w-5" />
@@ -200,16 +189,14 @@ export const MobileDrawer = ({
                   sizes="40px"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <User className="h-5 w-5 text-primary" />
+                <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">
+                  <User className="text-primary h-5 w-5" />
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <div className="font-medium truncate">{userInfo.name}</div>
+                <div className="truncate font-medium">{userInfo.name}</div>
                 {userInfo.email != null && (
-                  <div className="text-sm text-muted-foreground truncate">
-                    {userInfo.email}
-                  </div>
+                  <div className="text-muted-foreground truncate text-sm">{userInfo.email}</div>
                 )}
               </div>
             </div>
@@ -221,12 +208,7 @@ export const MobileDrawer = ({
           <div className="py-2">
             {menuItems.map((item) => {
               if (item.divider) {
-                return (
-                  <div
-                    key={item.id}
-                    className="my-2 border-t border-border"
-                  />
-                )
+                return <div key={item.id} className="border-border my-2 border-t" />
               }
 
               return (
@@ -236,25 +218,23 @@ export const MobileDrawer = ({
                   onClick={() => handleItemClick(item)}
                   disabled={item.disabled}
                   className={cn(
-                    'w-full flex items-center gap-3 px-4 py-3 text-left',
+                    'flex w-full items-center gap-3 px-4 py-3 text-left',
                     'hover:bg-accent/50 transition-colors',
-                    'disabled:opacity-50 disabled:cursor-not-allowed'
+                    'disabled:cursor-not-allowed disabled:opacity-50'
                   )}
                 >
                   {/* アイコン */}
-                  <div className="flex-shrink-0">
-                    {item.icon}
-                  </div>
+                  <div className="flex-shrink-0">{item.icon}</div>
 
                   {/* ラベル */}
-                  <span className="flex-1 text-sm font-medium">
-                    {item.label}
-                  </span>
+                  <span className="flex-1 text-sm font-medium">{item.label}</span>
 
                   {/* バッジ */}
-                  {item.badge && item.badge > 0 ? <div className="min-w-[20px] h-5 bg-primary text-primary-foreground text-xs rounded-full flex items-center justify-center px-1.5">
+                  {item.badge && item.badge > 0 ? (
+                    <div className="bg-primary text-primary-foreground flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs">
                       {item.badge > 99 ? '99+' : item.badge}
-                    </div> : null}
+                    </div>
+                  ) : null}
                 </button>
               )
             })}

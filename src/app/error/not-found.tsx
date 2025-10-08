@@ -9,20 +9,17 @@ import { cn } from '@/lib/utils'
 const NotFoundContent = () => {
   return (
     <div
-      className={cn(
-        'flex flex-1 items-center justify-center p-6 min-h-screen py-12',
-        'bg-white dark:bg-neutral-800'
-      )}
+      className={cn('flex min-h-screen flex-1 items-center justify-center p-6 py-12', 'bg-white dark:bg-neutral-800')}
     >
-      <div className="w-full max-w-md text-center flex flex-col gap-6">
+      <div className="flex w-full max-w-md flex-col gap-6 text-center">
         {/* Large 404 Typography - Dominant, muted color */}
         <div>
-          <h1 className="select-none text-9xl font-bold text-neutral-600 dark:text-neutral-400 leading-none">404</h1>
+          <h1 className="text-9xl leading-none font-bold text-neutral-600 select-none dark:text-neutral-400">404</h1>
         </div>
 
         {/* Brief explanation */}
         <div>
-          <p className="text-neutral-800 dark:text-neutral-200 text-base leading-normal">
+          <p className="text-base leading-normal text-neutral-800 dark:text-neutral-200">
             The page you&apos;re looking for doesn&apos;t exist
           </p>
         </div>

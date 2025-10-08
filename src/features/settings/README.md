@@ -58,6 +58,7 @@ src/features/settings/
 設定ページの全体レイアウトを管理。
 
 **特徴:**
+
 - 左側ナビゲーション + 右側設定パネル
 - レスポンシブ対応
 - 統一されたスタイリング
@@ -67,6 +68,7 @@ src/features/settings/
 個別の設定項目を表示するカードコンポーネント。
 
 **特徴:**
+
 - タイトル・説明・設定内容の構造化表示
 - 統一されたカードデザイン
 - 自動保存対応
@@ -76,6 +78,7 @@ src/features/settings/
 アカウント関連設定のメインコンポーネント。
 
 **主な機能:**
+
 - プロフィール情報編集
 - パスワード変更
 - 認証設定
@@ -84,27 +87,32 @@ src/features/settings/
 ## 設定カテゴリ
 
 ### 1. アカウント設定 (`account-settings.tsx`)
+
 - プロフィール情報
 - セキュリティ設定
 - 認証方法
 
 ### 2. カレンダー設定 (`calendar-settings.tsx`)
+
 - タイムゾーン設定
 - 週の開始日
 - 時間表示形式
 - デフォルト期間
 
 ### 3. 通知設定 (`notification-settings.tsx`)
+
 - 通知の有効化
 - 通知タイミング
 - 通知方法
 
 ### 4. 統合設定 (`integration-settings.tsx`)
+
 - 外部カレンダー連携
 - API連携
 - サードパーティ連携
 
 ### 5. データエクスポート (`data-export-settings.tsx`)
+
 - データバックアップ
 - エクスポート形式選択
 - 定期バックアップ設定
@@ -118,11 +126,11 @@ import { useAutoSaveSettings } from '../hooks/useAutoSaveSettings'
 
 function SettingsComponent() {
   const { saveSettings, isLoading, lastSaved } = useAutoSaveSettings()
-  
+
   const handleChange = (value: string | number | boolean) => {
     saveSettings({ key: value })
   }
-  
+
   return (
     <div>
       <input onChange={(e) => handleChange(e.target.value)} />
@@ -141,18 +149,9 @@ function SettingsComponent() {
 import { background, text, border, typography, spacing } from '@/config/theme'
 
 // 設定カードの例
-<div className={cn(
-  'p-6 rounded-lg border',
-  background.surface,
-  border.subtle,
-  spacing.component.lg
-)}>
-  <h3 className={cn(typography.heading.h6, text.primary)}>
-    設定タイトル
-  </h3>
-  <p className={cn(typography.body.small, text.muted)}>
-    設定の説明
-  </p>
+;<div className={cn('rounded-lg border p-6', background.surface, border.subtle, spacing.component.lg)}>
+  <h3 className={cn(typography.heading.h6, text.primary)}>設定タイトル</h3>
+  <p className={cn(typography.body.small, text.muted)}>設定の説明</p>
 </div>
 ```
 
@@ -180,6 +179,7 @@ interface CalendarSettingsStore {
 タイムゾーン関連のユーティリティ関数群。
 
 **主な機能:**
+
 - タイムゾーン一覧取得
 - タイムゾーン変換
 - ローカルタイムゾーン検出
@@ -193,15 +193,15 @@ interface CalendarSettingsStore {
 // 設定値の検証
 const validateSettings = (settings: SettingsData) => {
   const errors: string[] = []
-  
+
   if (!settings.timezone) {
     errors.push('タイムゾーンは必須です')
   }
-  
+
   if (settings.defaultDuration < 15) {
     errors.push('デフォルト期間は15分以上である必要があります')
   }
-  
+
   return errors
 }
 ```

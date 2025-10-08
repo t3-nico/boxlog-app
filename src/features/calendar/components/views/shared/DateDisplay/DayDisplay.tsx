@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -21,11 +21,12 @@ const generateHeaderClasses = (
 ): string => {
   const baseClasses = 'flex items-center justify-center py-2 px-1 text-center transition-colors rounded-lg'
 
-  const hoverClasses = onClick && !isToday
-    ? 'cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20'
-    : onClick && isToday
-      ? 'cursor-pointer'
-      : ''
+  const hoverClasses =
+    onClick && !isToday
+      ? 'cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20'
+      : onClick && isToday
+        ? 'cursor-pointer'
+        : ''
 
   const statusClasses = isToday
     ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 font-semibold'
@@ -41,9 +42,7 @@ const generateHeaderClasses = (
 // ヘルパー関数: テキストクラスを生成
 const getTextClasses = (isToday: boolean, isBase: boolean = false): string => {
   if (isToday) {
-    return isBase
-      ? 'text-neutral-900 dark:text-neutral-100'
-      : 'text-neutral-900 dark:text-neutral-100 opacity-75'
+    return isBase ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-900 dark:text-neutral-100 opacity-75'
   }
   return 'text-gray-500 dark:text-gray-400'
 }
@@ -55,7 +54,7 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   isSelected = false,
   format = 'short',
   onClick,
-  className = ''
+  className = '',
 }) {
   const handleClick = () => {
     onClick?.(date)
@@ -68,22 +67,15 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
   const dateDisplay = formatDate(date, format)
 
   return onClick ? (
-    <button
-      className={headerClasses}
-      onClick={handleClick}
-      aria-label={`${dateDisplay}を選択`}
-      type="button"
-    >
-      <div className="flex flex-col items-center min-w-0">
+    <button className={headerClasses} onClick={handleClick} aria-label={`${dateDisplay}を選択`} type="button">
+      <div className="flex min-w-0 flex-col items-center">
         {/* 曜日 */}
         <div className={cn('text-xs', getTextClasses(isToday))}>
           {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
         </div>
 
         {/* 日付 */}
-        <div className={cn('text-lg font-semibold', getTextClasses(isToday, true))}>
-          {date.getDate()}
-        </div>
+        <div className={cn('text-lg font-semibold', getTextClasses(isToday, true))}>{date.getDate()}</div>
 
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (
@@ -95,16 +87,14 @@ export const DayDisplay = memo<DayDisplayProps>(function DayDisplay({
     </button>
   ) : (
     <div className={headerClasses}>
-      <div className="flex flex-col items-center min-w-0">
+      <div className="flex min-w-0 flex-col items-center">
         {/* 曜日 */}
         <div className={`text-xs ${getTextClasses(isToday)}`}>
           {date.toLocaleDateString('ja-JP', { weekday: 'short' })}
         </div>
 
         {/* 日付 */}
-        <div className={`text-lg font-semibold ${getTextClasses(isToday, true)}`}>
-          {date.getDate()}
-        </div>
+        <div className={`text-lg font-semibold ${getTextClasses(isToday, true)}`}>{date.getDate()}</div>
 
         {/* 月（異なる月の場合のみ表示） */}
         {format === 'long' && (

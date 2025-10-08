@@ -18,7 +18,7 @@ export function eventToTimedEvent(event: Event): TimedEvent {
     color: event.color,
     start: event.startDate || new Date(),
     end: event.endDate || new Date(),
-    isReadOnly: event.status === 'completed' || event.status === 'cancelled'
+    isReadOnly: event.status === 'completed' || event.status === 'cancelled',
   }
 }
 
@@ -27,7 +27,7 @@ export function eventToTimedEvent(event: Event): TimedEvent {
  */
 export function eventsToTimedEvents(events: Event[]): TimedEvent[] {
   return events
-    .filter(event => !event.isDeleted) // 削除済みイベントを除外
+    .filter((event) => !event.isDeleted) // 削除済みイベントを除外
     .map(eventToTimedEvent)
 }
 
@@ -41,7 +41,7 @@ export function timedEventToEventUpdate(timedEvent: TimedEvent): Partial<Event> 
     description: timedEvent.description,
     startDate: timedEvent.start,
     endDate: timedEvent.end,
-    color: timedEvent.color
+    color: timedEvent.color,
   }
 }
 
@@ -64,7 +64,7 @@ export function safeEventToTimedEvent(event: Partial<Event>): TimedEvent | null 
     color: event.color || '#3b82f6',
     start: event.startDate || now,
     end: event.endDate || defaultEnd,
-    isReadOnly: event.status === 'completed' || event.status === 'cancelled'
+    isReadOnly: event.status === 'completed' || event.status === 'cancelled',
   }
 }
 
@@ -72,7 +72,5 @@ export function safeEventToTimedEvent(event: Partial<Event>): TimedEvent | null 
  * イベントリストの安全な変換（nullを除外）
  */
 export function safeEventsToTimedEvents(events: (Event | Partial<Event>)[]): TimedEvent[] {
-  return events
-    .map(safeEventToTimedEvent)
-    .filter((event): event is TimedEvent => event !== null)
+  return events.map(safeEventToTimedEvent).filter((event): event is TimedEvent => event !== null)
 }

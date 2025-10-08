@@ -19,30 +19,36 @@ src/app/api/middleware/
 ## 🎯 各ファイルの役割
 
 ### types.ts（型定義）
+
 ```typescript
 import type {
-  ApiResponse,      // API統一レスポンス型
-  ApiContext,       // リクエストコンテキスト
-  ApiHandler,       // ハンドラー関数型
+  ApiResponse, // API統一レスポンス型
+  ApiContext, // リクエストコンテキスト
+  ApiHandler, // ハンドラー関数型
   MiddlewareConfig, // ミドルウェア設定
 } from './middleware/types'
 ```
 
 ### error-handler.ts（エラーハンドリング）
+
 ```typescript
 import { withErrorHandling } from './middleware/error-handler'
 
-const handler = withErrorHandling(async (req, context) => {
-  // エラーは自動的にキャッチ・正規化されます
-  return { data: 'success' }
-}, {
-  enableErrorReporting: true,  // Sentryレポート有効化
-  enableMetrics: true,          // メトリクス収集
-  requestTimeout: 30000,        // 30秒タイムアウト
-})
+const handler = withErrorHandling(
+  async (req, context) => {
+    // エラーは自動的にキャッチ・正規化されます
+    return { data: 'success' }
+  },
+  {
+    enableErrorReporting: true, // Sentryレポート有効化
+    enableMetrics: true, // メトリクス収集
+    requestTimeout: 30000, // 30秒タイムアウト
+  }
+)
 ```
 
 ### auth.ts（認証）
+
 ```typescript
 import { withAuth } from './middleware/auth'
 
@@ -53,6 +59,7 @@ const protectedHandler = withAuth(async (req, context) => {
 ```
 
 ### rate-limit.ts（レート制限）
+
 ```typescript
 import { withRateLimit } from './middleware/rate-limit'
 
@@ -62,14 +69,15 @@ const limitedHandler = withRateLimit(
   },
   {
     rateLimit: {
-      windowMs: 60000,      // 1分間
-      maxRequests: 100      // 最大100リクエスト
-    }
+      windowMs: 60000, // 1分間
+      maxRequests: 100, // 最大100リクエスト
+    },
   }
 )
 ```
 
 ### cors.ts（CORS・タイムアウト）
+
 ```typescript
 import { setCorsHeaders, createTimeoutPromise } from './middleware/cors'
 
@@ -81,6 +89,7 @@ const timeoutPromise = createTimeoutPromise(5000) // 5秒
 ```
 
 ### utils.ts（ユーティリティ）
+
 ```typescript
 import {
   generateRequestId,
@@ -104,7 +113,7 @@ import { withErrorHandling } from '@/app/api/middleware'
 export const GET = withErrorHandling(async (req, context) => {
   return {
     message: 'Hello World',
-    requestId: context.requestId
+    requestId: context.requestId,
   }
 })
 ```
@@ -114,18 +123,21 @@ export const GET = withErrorHandling(async (req, context) => {
 ```typescript
 import { withAuth } from '@/app/api/middleware'
 
-export const POST = withAuth(async (req, context) => {
-  // Bearerトークンが検証済み
-  const userId = context.userId
+export const POST = withAuth(
+  async (req, context) => {
+    // Bearerトークンが検証済み
+    const userId = context.userId
 
-  const body = await req.json()
-  // ... 処理
+    const body = await req.json()
+    // ... 処理
 
-  return { success: true, userId }
-}, {
-  enableErrorReporting: true,
-  enableMetrics: true,
-})
+    return { success: true, userId }
+  },
+  {
+    enableErrorReporting: true,
+    enableMetrics: true,
+  }
+)
 ```
 
 ### レート制限付きAPI
@@ -141,7 +153,7 @@ export const GET = withRateLimit(
   {
     rateLimit: {
       windowMs: 60000,
-      maxRequests: 100
+      maxRequests: 100,
     },
     enableMetrics: true,
   }
@@ -154,14 +166,17 @@ export const GET = withRateLimit(
 import { withAuth, withRateLimit } from '@/app/api/middleware'
 
 // 認証 + レート制限
-const handler = withAuth(async (req, context) => {
-  return { userId: context.userId, data: 'protected' }
-}, {
-  enableErrorReporting: true,
-})
+const handler = withAuth(
+  async (req, context) => {
+    return { userId: context.userId, data: 'protected' }
+  },
+  {
+    enableErrorReporting: true,
+  }
+)
 
 export const POST = withRateLimit(handler, {
-  rateLimit: { windowMs: 60000, maxRequests: 10 }
+  rateLimit: { windowMs: 60000, maxRequests: 10 },
 })
 ```
 
@@ -184,6 +199,7 @@ export const GET = withErrorHandling(
 ## 🔄 レスポンス形式
 
 ### 成功レスポンス
+
 ```json
 {
   "success": true,
@@ -199,6 +215,7 @@ export const GET = withErrorHandling(
 ```
 
 ### エラーレスポンス
+
 ```json
 {
   "success": false,
@@ -220,14 +237,14 @@ export const GET = withErrorHandling(
 
 ## 🚨 エラーコードとHTTPステータス
 
-| ErrorCode範囲 | HTTPステータス | 説明 |
-|---|---|---|
-| 1000-1999 | 401/403 | 認証・認可エラー |
-| 2000-2999 | 400 | バリデーションエラー |
-| 3000-3999 | 404 | Not Found |
-| 5000-6999 | 503 | システム・外部サービスエラー |
-| 7000-7999 | 429 | レート制限 |
-| その他 | 500 | 内部サーバーエラー |
+| ErrorCode範囲 | HTTPステータス | 説明                         |
+| ------------- | -------------- | ---------------------------- |
+| 1000-1999     | 401/403        | 認証・認可エラー             |
+| 2000-2999     | 400            | バリデーションエラー         |
+| 3000-3999     | 404            | Not Found                    |
+| 5000-6999     | 503            | システム・外部サービスエラー |
+| 7000-7999     | 429            | レート制限                   |
+| その他        | 500            | 内部サーバーエラー           |
 
 ## 🔗 関連ファイル
 

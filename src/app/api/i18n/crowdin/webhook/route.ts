@@ -15,10 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Webhook署名検証（セキュリティ）
     if (!verifyWebhookSignature(body, signature)) {
-      return NextResponse.json(
-        { error: 'Invalid webhook signature' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Invalid webhook signature' }, { status: 401 })
     }
 
     const event = JSON.parse(body)
@@ -38,10 +35,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Crowdin webhook error:', error)
-    return NextResponse.json(
-      { error: 'Webhook処理エラーが発生しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Webhook処理エラーが発生しました' }, { status: 500 })
   }
 }
 
@@ -59,10 +53,7 @@ function verifyWebhookSignature(payload: string, signature: string | null): bool
     .update(payload)
     .digest('hex')
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(`sha256=${expectedSignature}`)
-  )
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(`sha256=${expectedSignature}`))
 }
 
 /**
@@ -163,12 +154,7 @@ async function handleProofreadingFinished(event: Record<string, unknown>) {
 export async function GET() {
   return NextResponse.json({
     message: 'Crowdin Webhook endpoint is active',
-    supportedEvents: [
-      'translation.updated',
-      'file.approved',
-      'project.built',
-      'proofreading.finished',
-    ],
+    supportedEvents: ['translation.updated', 'file.approved', 'project.built', 'proofreading.finished'],
     configuration: {
       signatureVerification: !!process.env.CROWDIN_WEBHOOK_SECRET,
       endpoint: '/api/i18n/crowdin/webhook',

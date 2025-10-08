@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
+import type { Task as BaseTask, TaskPriority, TaskStatus } from '@/types'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { Task as BaseTask, TaskStatus, TaskPriority } from '@/types'
 
 /**
  * LocalStorage用Taskインターフェース
@@ -111,8 +111,8 @@ const initialTaskState: TaskStoreState = {
     priority: [],
     type: [],
     tags: [],
-    smartFolder: ''
-  }
+    smartFolder: '',
+  },
 }
 
 export const useTaskStore = create<TaskStore>()(
@@ -138,9 +138,7 @@ export const useTaskStore = create<TaskStore>()(
 
       updateTask: (id: string, updates: Partial<Task>) => {
         set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id ? { ...task, ...updates, updated_at: new Date() } : task
-          ),
+          tasks: state.tasks.map((task) => (task.id === id ? { ...task, ...updates, updated_at: new Date() } : task)),
         }))
       },
 
@@ -202,27 +200,27 @@ export const useTaskStore = create<TaskStore>()(
       // Filter operations
       setSearchFilter: (search: string) =>
         set((state) => ({
-          filters: { ...state.filters, search }
+          filters: { ...state.filters, search },
         })),
       setStatusFilter: (status: string[]) =>
         set((state) => ({
-          filters: { ...state.filters, status }
+          filters: { ...state.filters, status },
         })),
       setPriorityFilter: (priority: string[]) =>
         set((state) => ({
-          filters: { ...state.filters, priority }
+          filters: { ...state.filters, priority },
         })),
       setTypeFilter: (type: string[]) =>
         set((state) => ({
-          filters: { ...state.filters, type }
+          filters: { ...state.filters, type },
         })),
       setTagFilter: (tags: string[]) =>
         set((state) => ({
-          filters: { ...state.filters, tags }
+          filters: { ...state.filters, tags },
         })),
       setSmartFolderFilter: (smartFolder: string) =>
         set((state) => ({
-          filters: { ...state.filters, smartFolder }
+          filters: { ...state.filters, smartFolder },
         })),
     }),
     {
@@ -235,13 +233,14 @@ export const useTaskStore = create<TaskStore>()(
           return {
             state: {
               ...state,
-              tasks: state.tasks?.map((task: TaskForStorage) => ({
-                ...task,
-                planned_start: new Date(task.planned_start),
-                created_at: new Date(task.created_at),
-                updated_at: new Date(task.updated_at),
-              })) || []
-            }
+              tasks:
+                state.tasks?.map((task: TaskForStorage) => ({
+                  ...task,
+                  planned_start: new Date(task.planned_start),
+                  created_at: new Date(task.created_at),
+                  updated_at: new Date(task.updated_at),
+                })) || [],
+            },
           }
         },
         setItem: (name, value) => {
@@ -254,8 +253,8 @@ export const useTaskStore = create<TaskStore>()(
                 planned_start: task.planned_start.toISOString(),
                 created_at: task.created_at.toISOString(),
                 updated_at: task.updated_at.toISOString(),
-              }))
-            }
+              })),
+            },
           })
           localStorage.setItem(name, str)
         },

@@ -116,31 +116,31 @@ export class QualityMetricsCollector {
       codeQuality: {
         eslint: { errors: 0, warnings: 0, details: [] },
         typescript: { errors: 0, details: [] },
-        prettier: { unformatted: 0 }
+        prettier: { unformatted: 0 },
       },
       testing: {
         coverage: { lines: 0, branches: 0, functions: 0, statements: 0 },
         testCount: 0,
-        passRate: 0
+        passRate: 0,
       },
       performance: {
         bundleSize: { main: 0, total: 0, breakdown: [] },
         buildTime: 0,
-        coreWebVitals: { lcp: 0, fid: 0, cls: 0 }
+        coreWebVitals: { lcp: 0, fid: 0, cls: 0 },
       },
       technicalDebt: {
         todoCount: 0,
         deprecatedUsage: 0,
         complexityScore: 0,
         duplicateCode: 0,
-        details: []
+        details: [],
       },
       errors: {
         last7Days: 0,
         topErrors: [],
-        errorRate: 0
+        errorRate: 0,
       },
-      recommendations: []
+      recommendations: [],
     }
   }
 
@@ -175,14 +175,14 @@ export class QualityMetricsCollector {
       const result = execSync('npx eslint . --format json', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'ignore'],
-        cwd: this.rootPath
+        cwd: this.rootPath,
       })
 
       const data: ESLintResult[] = JSON.parse(result)
       let totalErrors = 0
       let totalWarnings = 0
 
-      data.forEach(file => {
+      data.forEach((file) => {
         totalErrors += file.errorCount
         totalWarnings += file.warningCount
       })
@@ -190,7 +190,7 @@ export class QualityMetricsCollector {
       this.metrics.codeQuality.eslint = {
         errors: totalErrors,
         warnings: totalWarnings,
-        details: data.filter(f => f.errorCount > 0 || f.warningCount > 0)
+        details: data.filter((f) => f.errorCount > 0 || f.warningCount > 0),
       }
 
       console.log(`  ESLint: ${totalErrors}エラー, ${totalWarnings}警告`)
@@ -209,13 +209,13 @@ export class QualityMetricsCollector {
       const result = execSync('npx tsc --noEmit --pretty false 2>&1', {
         encoding: 'utf8',
         stdio: ['pipe', 'pipe', 'pipe'],
-        cwd: this.rootPath
+        cwd: this.rootPath,
       })
 
       const errors = this.parseTypeScriptErrors(result)
       this.metrics.codeQuality.typescript = {
         errors: errors.length,
-        details: errors
+        details: errors,
       }
 
       console.log(`  TypeScript: ${errors.length}エラー`)
@@ -225,7 +225,7 @@ export class QualityMetricsCollector {
       const errors = this.parseTypeScriptErrors(output)
       this.metrics.codeQuality.typescript = {
         errors: errors.length,
-        details: errors
+        details: errors,
       }
       console.log(`  TypeScript: ${errors.length}エラー`)
     }
@@ -241,7 +241,7 @@ export class QualityMetricsCollector {
       // カバレッジレポートの生成
       execSync('npm run test:coverage', {
         stdio: 'ignore',
-        cwd: this.rootPath
+        cwd: this.rootPath,
       })
 
       const coveragePath = path.resolve(this.rootPath, 'coverage/coverage-summary.json')
@@ -251,7 +251,7 @@ export class QualityMetricsCollector {
           lines: coverage.total.lines.pct || 0,
           branches: coverage.total.branches.pct || 0,
           functions: coverage.total.functions.pct || 0,
-          statements: coverage.total.statements.pct || 0
+          statements: coverage.total.statements.pct || 0,
         }
         console.log(`  カバレッジ: ${coverage.total.lines.pct}%`)
       }
@@ -271,7 +271,7 @@ export class QualityMetricsCollector {
       const buildStart = Date.now()
       execSync('npm run build', {
         stdio: 'ignore',
-        cwd: this.rootPath
+        cwd: this.rootPath,
       })
       this.metrics.performance.buildTime = Date.now() - buildStart
 
@@ -299,11 +299,11 @@ export class QualityMetricsCollector {
       // TODO/FIXME カウント
       const todoResult = execSync('grep -rn "TODO\\|FIXME" src/ || true', {
         encoding: 'utf8',
-        cwd: this.rootPath
+        cwd: this.rootPath,
       })
 
       const todoLines = todoResult.split('\n').filter(Boolean)
-      todoLines.forEach(line => {
+      todoLines.forEach((line) => {
         const match = line.match(/^([^:]+):(\d+):(.*)$/)
         if (match) {
           details.push({
@@ -311,7 +311,7 @@ export class QualityMetricsCollector {
             file: match[1],
             line: parseInt(match[2]),
             message: match[3].trim(),
-            severity: line.includes('FIXME') ? 'high' : 'medium'
+            severity: line.includes('FIXME') ? 'high' : 'medium',
           })
         }
       })
@@ -321,7 +321,7 @@ export class QualityMetricsCollector {
         deprecatedUsage: 0, // 実装予定
         complexityScore: 0, // 実装予定
         duplicateCode: 0, // 実装予定
-        details
+        details,
       }
 
       console.log(`  TODO/FIXME: ${todoLines.length}個`)
@@ -344,7 +344,7 @@ export class QualityMetricsCollector {
         message: `ESLintエラーが${this.metrics.codeQuality.eslint.errors}件あります`,
         action: 'npm run lint:fix を実行してエラーを修正してください',
         effort: 'medium',
-        impact: 'high'
+        impact: 'high',
       })
     }
 
@@ -356,7 +356,7 @@ export class QualityMetricsCollector {
         message: `TypeScriptエラーが${this.metrics.codeQuality.typescript.errors}件あります`,
         action: '型定義を修正してください',
         effort: 'high',
-        impact: 'high'
+        impact: 'high',
       })
     }
 
@@ -368,7 +368,7 @@ export class QualityMetricsCollector {
         message: `テストカバレッジが${this.metrics.testing.coverage.lines}%です（目標: 80%）`,
         action: 'テストケースを追加してください',
         effort: 'medium',
-        impact: 'medium'
+        impact: 'medium',
       })
     }
 
@@ -380,7 +380,7 @@ export class QualityMetricsCollector {
         message: `バンドルサイズが${(this.metrics.performance.bundleSize.total / 1024 / 1024).toFixed(1)}MBです`,
         action: 'コード分割や遅延読み込みを検討してください',
         effort: 'high',
-        impact: 'high'
+        impact: 'high',
       })
     }
 
@@ -392,7 +392,7 @@ export class QualityMetricsCollector {
         message: `TODOコメントが${this.metrics.technicalDebt.todoCount}個あります`,
         action: 'GitHub Issueに移行してタスク管理を改善してください',
         effort: 'low',
-        impact: 'low'
+        impact: 'low',
       })
     }
 
@@ -406,7 +406,7 @@ export class QualityMetricsCollector {
     const errors: TypeScriptError[] = []
     const lines = output.split('\n')
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
       const match = line.match(/^(.+)\((\d+),(\d+)\): error TS(\d+): (.+)$/)
       if (match) {
         errors.push({
@@ -414,7 +414,7 @@ export class QualityMetricsCollector {
           line: parseInt(match[2]),
           column: parseInt(match[3]),
           code: parseInt(match[4]),
-          message: match[5]
+          message: match[5],
         })
       }
     })
@@ -432,7 +432,7 @@ export class QualityMetricsCollector {
 
     const walkDir = (dir: string) => {
       const files = fs.readdirSync(dir)
-      files.forEach(file => {
+      files.forEach((file) => {
         const filePath = path.resolve(dir, file)
         const stat = fs.statSync(filePath)
 
@@ -449,7 +449,7 @@ export class QualityMetricsCollector {
           breakdown.push({
             name: file,
             size,
-            gzipSize: size * 0.3 // 概算
+            gzipSize: size * 0.3, // 概算
           })
         }
       })

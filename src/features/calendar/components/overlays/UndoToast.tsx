@@ -148,7 +148,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               className={cn(
                 'inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium',
                 'bg-primary text-primary-foreground rounded-md',
-                'hover:bg-primary/90 focus:ring-primary/50 focus:outline-none focus:ring-2',
+                'hover:bg-primary/90 focus:ring-primary/50 focus:ring-2 focus:outline-none',
                 'transition-colors duration-150'
               )}
             >
@@ -161,7 +161,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               onClick={handleDismiss}
               className={cn(
                 'rounded-md p-1.5 text-gray-400 hover:text-white',
-                'hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500',
+                'hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:outline-none',
                 'transition-colors duration-150'
               )}
             >

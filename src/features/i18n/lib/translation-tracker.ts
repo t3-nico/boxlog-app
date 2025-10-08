@@ -71,9 +71,10 @@ export class TranslationTracker {
   private getSupportedLanguages(): string[] {
     try {
       const dictPath = path.resolve(this.dictionariesPath)
-      return fs.readdirSync(dictPath)
-        .filter(file => file.endsWith('.json'))
-        .map(file => path.basename(file, '.json'))
+      return fs
+        .readdirSync(dictPath)
+        .filter((file) => file.endsWith('.json'))
+        .map((file) => path.basename(file, '.json'))
     } catch {
       return ['en', 'ja'] // フォールバック
     }
@@ -95,11 +96,7 @@ export class TranslationTracker {
   /**
    * ネストされたオブジェクトからフラットなキーリストを生成
    */
-  private flattenKeys(
-    obj: Record<string, any>,
-    prefix = '',
-    result: TranslationKey[] = []
-  ): TranslationKey[] {
+  private flattenKeys(obj: Record<string, any>, prefix = '', result: TranslationKey[] = []): TranslationKey[] {
     for (const [key, value] of Object.entries(obj)) {
       const fullKey = prefix ? `${prefix}.${key}` : key
       const keyPath = fullKey.split('.')
@@ -110,7 +107,7 @@ export class TranslationTracker {
           path: keyPath,
           value,
           status: 'complete',
-          reviewStatus: 'pending'
+          reviewStatus: 'pending',
         })
       } else if (typeof value === 'object' && value !== null) {
         this.flattenKeys(value, fullKey, result)
@@ -143,12 +140,9 @@ export class TranslationTracker {
   /**
    * ベース言語との比較
    */
-  private compareWithBaseLanguage(
-    targetKeys: TranslationKey[],
-    baseKeys: TranslationKey[]
-  ): TranslationKey[] {
-    const baseKeyMap = new Map(baseKeys.map(k => [k.key, k]))
-    const targetKeyMap = new Map(targetKeys.map(k => [k.key, k]))
+  private compareWithBaseLanguage(targetKeys: TranslationKey[], baseKeys: TranslationKey[]): TranslationKey[] {
+    const baseKeyMap = new Map(baseKeys.map((k) => [k.key, k]))
+    const targetKeyMap = new Map(targetKeys.map((k) => [k.key, k]))
 
     // 完全なキーリストを作成
     const allKeys: TranslationKey[] = []
@@ -160,7 +154,7 @@ export class TranslationTracker {
         // 翻訳済み
         allKeys.push({
           ...targetKey,
-          status: 'complete'
+          status: 'complete',
         })
       } else {
         // 欠落している翻訳
@@ -169,7 +163,7 @@ export class TranslationTracker {
           path: baseKey.path,
           value: '', // 翻訳なし
           status: 'missing',
-          reviewStatus: 'needs_review'
+          reviewStatus: 'needs_review',
         })
       }
     }
@@ -180,7 +174,7 @@ export class TranslationTracker {
         allKeys.push({
           ...targetKey,
           status: 'outdated',
-          reviewStatus: 'needs_review'
+          reviewStatus: 'needs_review',
         })
       }
     }
@@ -195,13 +189,11 @@ export class TranslationTracker {
     const keys = await this.analyzeLanguageKeys(language)
 
     const totalKeys = keys.length
-    const completedKeys = keys.filter(k => k.status === 'complete').length
-    const partialKeys = keys.filter(k => k.status === 'partial').length
-    const missingKeys = keys.filter(k => k.status === 'missing').length
-    const reviewedKeys = keys.filter(k => k.reviewStatus === 'approved').length
-    const pendingReviewKeys = keys.filter(k =>
-      ['pending', 'needs_review'].includes(k.reviewStatus)
-    ).length
+    const completedKeys = keys.filter((k) => k.status === 'complete').length
+    const partialKeys = keys.filter((k) => k.status === 'partial').length
+    const missingKeys = keys.filter((k) => k.status === 'missing').length
+    const reviewedKeys = keys.filter((k) => k.reviewStatus === 'approved').length
+    const pendingReviewKeys = keys.filter((k) => ['pending', 'needs_review'].includes(k.reviewStatus)).length
 
     return {
       language,
@@ -213,7 +205,7 @@ export class TranslationTracker {
       pendingReviewKeys,
       completionRate: totalKeys > 0 ? (completedKeys / totalKeys) * 100 : 0,
       reviewRate: totalKeys > 0 ? (reviewedKeys / totalKeys) * 100 : 0,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     }
   }
 
@@ -233,36 +225,34 @@ export class TranslationTracker {
       const keys = await this.analyzeLanguageKeys(language)
 
       // 欠落している翻訳
-      missingTranslations[language] = keys.filter(k => k.status === 'missing')
+      missingTranslations[language] = keys.filter((k) => k.status === 'missing')
 
       // レビュー待ちの翻訳
-      reviewQueue[language] = keys.filter(k =>
-        ['pending', 'needs_review'].includes(k.reviewStatus)
-      )
+      reviewQueue[language] = keys.filter((k) => ['pending', 'needs_review'].includes(k.reviewStatus))
 
       // 最近の変更（実際の実装では Git履歴やタイムスタンプを使用）
-      recentChanges[language] = keys.filter(k =>
-        k.lastModified &&
-        (Date.now() - k.lastModified.getTime()) < 7 * 24 * 60 * 60 * 1000 // 7日以内
+      recentChanges[language] = keys.filter(
+        (k) => k.lastModified && Date.now() - k.lastModified.getTime() < 7 * 24 * 60 * 60 * 1000 // 7日以内
       )
     }
 
     // 全体統計の計算
     const totalKeys = languageProgresses.reduce((sum, p) => Math.max(sum, p.totalKeys), 0)
-    const globalCompletionRate = languageProgresses.length > 0
-      ? languageProgresses.reduce((sum, p) => sum + p.completionRate, 0) / languageProgresses.length
-      : 0
+    const globalCompletionRate =
+      languageProgresses.length > 0
+        ? languageProgresses.reduce((sum, p) => sum + p.completionRate, 0) / languageProgresses.length
+        : 0
 
     return {
       overview: {
         supportedLanguages: this.supportedLanguages,
         totalKeys,
-        globalCompletionRate
+        globalCompletionRate,
       },
       languageProgress: languageProgresses,
       missingTranslations,
       recentChanges,
-      reviewQueue
+      reviewQueue,
     }
   }
 
@@ -294,9 +284,7 @@ export class TranslationTracker {
    */
   async getMissingTranslationsList(language: string): Promise<string[]> {
     const keys = await this.analyzeLanguageKeys(language)
-    return keys
-      .filter(k => k.status === 'missing')
-      .map(k => k.key)
+    return keys.filter((k) => k.status === 'missing').map((k) => k.key)
   }
 
   /**
@@ -327,14 +315,12 @@ export class TranslationTracker {
       }
 
       if (progress.pendingReviewKeys > 10) {
-        warnings.push(
-          `${progress.language}: ${progress.pendingReviewKeys}個のキーがレビュー待ちです`
-        )
+        warnings.push(`${progress.language}: ${progress.pendingReviewKeys}個のキーがレビュー待ちです`)
       }
     }
 
     // 推奨事項
-    if (report.languageProgress.some(p => p.completionRate < 90)) {
+    if (report.languageProgress.some((p) => p.completionRate < 90)) {
       recommendations.push('自動翻訳ツール（DeepL API等）の活用を検討してください')
       recommendations.push('翻訳管理システム（Crowdin、Lokalise等）の導入を検討してください')
     }

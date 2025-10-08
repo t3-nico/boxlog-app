@@ -16,7 +16,7 @@ import type { CreateEventRequest, EventPriority, EventStatus, EventType } from '
 // シンプルな見出しコンポーネント
 const SectionHeader = ({ icon: Icon, title }: { icon: React.ComponentType<{ className?: string }>; title: string }) => (
   <div className="flex items-center gap-2">
-    <Icon className="h-5 w-5 text-muted-foreground" />
+    <Icon className="text-muted-foreground h-5 w-5" />
     <h3 className="text-lg font-semibold">{title}</h3>
   </div>
 )
@@ -130,69 +130,102 @@ export const CreateEventForm = ({
   useFormFocus(titleInputRef)
   useFormKeyboardShortcuts(formData, isValid, onSubmit)
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault()
-    if (!isValid) return
-    onSubmit(formData)
-  }, [isValid, onSubmit, formData])
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault()
+      if (!isValid) return
+      onSubmit(formData)
+    },
+    [isValid, onSubmit, formData]
+  )
 
   // Form field handlers
-  const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, title: e.target.value }))
-  }, [setFormData])
+  const handleTitleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, title: e.target.value }))
+    },
+    [setFormData]
+  )
 
-  const handleDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(e.target.value)
-    // 既存の時間を保持
-    if (formData.startDate) {
-      date.setHours(formData.startDate.getHours(), formData.startDate.getMinutes())
-    }
-    setFormData((prev) => ({ ...prev, startDate: date }))
-  }, [formData.startDate, setFormData])
+  const handleDateChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const date = new Date(e.target.value)
+      // 既存の時間を保持
+      if (formData.startDate) {
+        date.setHours(formData.startDate.getHours(), formData.startDate.getMinutes())
+      }
+      setFormData((prev) => ({ ...prev, startDate: date }))
+    },
+    [formData.startDate, setFormData]
+  )
 
-  const handleTypeChange = useCallback((value: EventType) => {
-    setFormData((prev) => ({ ...prev, type: value }))
-  }, [setFormData])
+  const handleTypeChange = useCallback(
+    (value: EventType) => {
+      setFormData((prev) => ({ ...prev, type: value }))
+    },
+    [setFormData]
+  )
 
-  const handleStatusChange = useCallback((value: EventStatus) => {
-    setFormData((prev) => ({ ...prev, status: value }))
-  }, [setFormData])
+  const handleStatusChange = useCallback(
+    (value: EventStatus) => {
+      setFormData((prev) => ({ ...prev, status: value }))
+    },
+    [setFormData]
+  )
 
-  const handlePriorityChange = useCallback((value: EventPriority) => {
-    setFormData((prev) => ({ ...prev, priority: value }))
-  }, [setFormData])
+  const handlePriorityChange = useCallback(
+    (value: EventPriority) => {
+      setFormData((prev) => ({ ...prev, priority: value }))
+    },
+    [setFormData]
+  )
 
-  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setFormData((prev) => ({ ...prev, description: e.target.value }))
-  }, [setFormData])
+  const handleDescriptionChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setFormData((prev) => ({ ...prev, description: e.target.value }))
+    },
+    [setFormData]
+  )
 
-  const handleStartTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':').map(Number)
-    const date = new Date(formData.startDate || new Date())
-    date.setHours(hours, minutes)
-    setFormData((prev) => ({ ...prev, startDate: date }))
-  }, [formData.startDate, setFormData])
+  const handleStartTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const [hours, minutes] = e.target.value.split(':').map(Number)
+      const date = new Date(formData.startDate || new Date())
+      date.setHours(hours, minutes)
+      setFormData((prev) => ({ ...prev, startDate: date }))
+    },
+    [formData.startDate, setFormData]
+  )
 
-  const handleEndTimeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':').map(Number)
-    const date = new Date(formData.startDate || new Date())
-    date.setHours(hours, minutes)
-    setFormData((prev) => ({ ...prev, endDate: date }))
-  }, [formData.startDate, setFormData])
+  const handleEndTimeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const [hours, minutes] = e.target.value.split(':').map(Number)
+      const date = new Date(formData.startDate || new Date())
+      date.setHours(hours, minutes)
+      setFormData((prev) => ({ ...prev, endDate: date }))
+    },
+    [formData.startDate, setFormData]
+  )
 
-  const handleRecurringChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, isRecurring: e.target.checked }))
-  }, [setFormData])
+  const handleRecurringChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setFormData((prev) => ({ ...prev, isRecurring: e.target.checked }))
+    },
+    [setFormData]
+  )
 
-  const handleRecurrenceFrequencyChange = useCallback((value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      recurrenceRule: {
-        ...prev.recurrenceRule,
-        frequency: value,
-      },
-    }))
-  }, [setFormData])
+  const handleRecurrenceFrequencyChange = useCallback(
+    (value: string) => {
+      setFormData((prev) => ({
+        ...prev,
+        recurrenceRule: {
+          ...prev.recurrenceRule,
+          frequency: value,
+        },
+      }))
+    },
+    [setFormData]
+  )
 
   return (
     <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">
@@ -206,7 +239,7 @@ export const CreateEventForm = ({
             placeholder="What needs to be done?"
             value={formData.title}
             onChange={handleTitleChange}
-            className="text-3xl font-medium md:text-4xl border-border px-6 py-6 text-neutral-900 placeholder:text-neutral-400 dark:text-neutral-50 dark:placeholder:text-neutral-500"
+            className="border-border px-6 py-6 text-3xl font-medium text-neutral-900 placeholder:text-neutral-400 md:text-4xl dark:text-neutral-50 dark:placeholder:text-neutral-500"
           />
         </div>
 
@@ -215,77 +248,77 @@ export const CreateEventForm = ({
           <fieldset>
             <legend className="text-sm font-medium">Date & Time</legend>
 
-          {/* 日付 */}
-          <div>
-            <Label htmlFor="event-date" className="text-sm text-muted-foreground">
-              Date
-            </Label>
-            <Input
-              type="date"
-              id="event-date"
-              value={formatDateForInput(formData.startDate)}
-              onChange={handleDateChange}
-              className="border-border"
-            />
-          </div>
-
-          {/* 開始・終了時間 */}
-          <div className="grid grid-cols-2 gap-3">
+            {/* 日付 */}
             <div>
-              <Label htmlFor="start-time" className="text-sm text-muted-foreground">
-                Start Time
+              <Label htmlFor="event-date" className="text-muted-foreground text-sm">
+                Date
               </Label>
               <Input
-                type="time"
-                id="start-time"
-                value={formatTimeForInput(formData.startDate)}
-                onChange={handleStartTimeChange}
+                type="date"
+                id="event-date"
+                value={formatDateForInput(formData.startDate)}
+                onChange={handleDateChange}
                 className="border-border"
               />
             </div>
-            <div>
-              <Label htmlFor="end-time" className="text-sm text-muted-foreground">
-                End Time
-              </Label>
-              <Input
-                type="time"
-                id="end-time"
-                value={formatTimeForInput(formData.endDate)}
-                onChange={handleEndTimeChange}
-                className="border-border"
-              />
+
+            {/* 開始・終了時間 */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="start-time" className="text-muted-foreground text-sm">
+                  Start Time
+                </Label>
+                <Input
+                  type="time"
+                  id="start-time"
+                  value={formatTimeForInput(formData.startDate)}
+                  onChange={handleStartTimeChange}
+                  className="border-border"
+                />
+              </div>
+              <div>
+                <Label htmlFor="end-time" className="text-muted-foreground text-sm">
+                  End Time
+                </Label>
+                <Input
+                  type="time"
+                  id="end-time"
+                  value={formatTimeForInput(formData.endDate)}
+                  onChange={handleEndTimeChange}
+                  className="border-border"
+                />
+              </div>
             </div>
-          </div>
 
-          {/* リピート設定 */}
-          <div className="flex items-center gap-3">
-            <label className="flex cursor-pointer items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.isRecurring}
-                onChange={handleRecurringChange}
-                className="rounded border-border"
-              />
-              <span className="text-sm font-medium">Repeat</span>
-            </label>
+            {/* リピート設定 */}
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.isRecurring}
+                  onChange={handleRecurringChange}
+                  className="border-border rounded"
+                />
+                <span className="text-sm font-medium">Repeat</span>
+              </label>
 
-            {formData.isRecurring === true && (
-              <Select
-                value={formData.recurrenceRule?.frequency || 'daily'}
-                onValueChange={handleRecurrenceFrequencyChange}
-              >
-                <SelectTrigger className="w-28 border-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          </div>
+              {formData.isRecurring === true && (
+                <Select
+                  value={formData.recurrenceRule?.frequency || 'daily'}
+                  onValueChange={handleRecurrenceFrequencyChange}
+                >
+                  <SelectTrigger className="border-border w-28">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">Daily</SelectItem>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="yearly">Yearly</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
           </fieldset>
         </div>
 
@@ -308,7 +341,7 @@ export const CreateEventForm = ({
             value={formData.description}
             onChange={handleDescriptionChange}
             rows={3}
-            className="resize-none border-border"
+            className="border-border resize-none"
           />
         </div>
       </div>
@@ -323,10 +356,7 @@ export const CreateEventForm = ({
             <Label htmlFor="full-type" className="text-sm font-medium">
               Type
             </Label>
-            <Select
-              value={formData.type}
-              onValueChange={handleTypeChange}
-            >
+            <Select value={formData.type} onValueChange={handleTypeChange}>
               <SelectTrigger id="full-type" className="border-border">
                 <SelectValue />
               </SelectTrigger>
@@ -343,10 +373,7 @@ export const CreateEventForm = ({
             <Label htmlFor="priority" className="text-sm font-medium">
               Priority
             </Label>
-            <Select
-              value={formData.priority}
-              onValueChange={handlePriorityChange}
-            >
+            <Select value={formData.priority} onValueChange={handlePriorityChange}>
               <SelectTrigger id="priority" className="border-border">
                 <SelectValue />
               </SelectTrigger>
@@ -365,10 +392,7 @@ export const CreateEventForm = ({
             <Label htmlFor="status" className="text-sm font-medium">
               Status
             </Label>
-            <Select
-              value={formData.status}
-              onValueChange={handleStatusChange}
-            >
+            <Select value={formData.status} onValueChange={handleStatusChange}>
               <SelectTrigger id="status" className="border-border">
                 <SelectValue />
               </SelectTrigger>
@@ -391,7 +415,7 @@ export const CreateEventForm = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="rounded-lg p-4 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400"
+            className="rounded-lg bg-red-50 p-4 text-red-600 dark:bg-red-950/20 dark:text-red-400"
           >
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0">

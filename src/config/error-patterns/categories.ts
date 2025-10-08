@@ -10,10 +10,10 @@ export const ERROR_CATEGORIES = {
   BIZ: 'BIZ',
   EXTERNAL: 'EXTERNAL',
   SYSTEM: 'SYSTEM',
-  RATE: 'RATE'
+  RATE: 'RATE',
 } as const
 
-export type ErrorCategory = typeof ERROR_CATEGORIES[keyof typeof ERROR_CATEGORIES]
+export type ErrorCategory = (typeof ERROR_CATEGORIES)[keyof typeof ERROR_CATEGORIES]
 
 /**
  * エラーコード体系（カテゴリ別範囲）
@@ -25,7 +25,7 @@ export const ERROR_CODE_RANGES = {
   BIZ: { start: 4000, end: 4999 },
   EXTERNAL: { start: 5000, end: 5999 },
   SYSTEM: { start: 6000, end: 6999 },
-  RATE: { start: 7000, end: 7999 }
+  RATE: { start: 7000, end: 7999 },
 } as const
 
 /**
@@ -41,7 +41,7 @@ export const AUTH_ERROR_CODES = {
   INVALID_2FA: 1007,
   ACCOUNT_SUSPENDED: 1008,
   INVALID_API_KEY: 1009,
-  INSUFFICIENT_SCOPE: 1010
+  INSUFFICIENT_SCOPE: 1010,
 } as const
 
 /**
@@ -59,7 +59,7 @@ export const VALIDATION_ERROR_CODES = {
   FILE_TOO_LARGE: 2009,
   INVALID_FILE_TYPE: 2010,
   DUPLICATE_VALUE: 2011,
-  INVALID_ENUM: 2012
+  INVALID_ENUM: 2012,
 } as const
 
 /**
@@ -75,7 +75,7 @@ export const DB_ERROR_CODES = {
   TRANSACTION_FAILED: 3007,
   DEADLOCK: 3008,
   CONNECTION_POOL_EXHAUSTED: 3009,
-  MIGRATION_FAILED: 3010
+  MIGRATION_FAILED: 3010,
 } as const
 
 /**
@@ -91,7 +91,7 @@ export const BIZ_ERROR_CODES = {
   INVALID_STATE_TRANSITION: 4007,
   DEPENDENCY_NOT_MET: 4008,
   RESOURCE_CONFLICT: 4009,
-  OPERATION_NOT_ALLOWED: 4010
+  OPERATION_NOT_ALLOWED: 4010,
 } as const
 
 /**
@@ -107,7 +107,7 @@ export const EXTERNAL_ERROR_CODES = {
   EMAIL_SEND_FAILED: 5007,
   SMS_SEND_FAILED: 5008,
   FILE_UPLOAD_FAILED: 5009,
-  THIRD_PARTY_ERROR: 5010
+  THIRD_PARTY_ERROR: 5010,
 } as const
 
 /**
@@ -123,7 +123,7 @@ export const SYSTEM_ERROR_CODES = {
   DEPENDENCY_UNAVAILABLE: 6007,
   HEALTH_CHECK_FAILED: 6008,
   RESOURCE_EXHAUSTED: 6009,
-  UNEXPECTED_ERROR: 6010
+  UNEXPECTED_ERROR: 6010,
 } as const
 
 /**
@@ -139,7 +139,7 @@ export const RATE_ERROR_CODES = {
   CONCURRENT_LIMIT_EXCEEDED: 7007,
   IP_RATE_LIMITED: 7008,
   USER_RATE_LIMITED: 7009,
-  API_RATE_LIMITED: 7010
+  API_RATE_LIMITED: 7010,
 } as const
 
 /**
@@ -152,10 +152,10 @@ export const ERROR_CODES = {
   ...BIZ_ERROR_CODES,
   ...EXTERNAL_ERROR_CODES,
   ...SYSTEM_ERROR_CODES,
-  ...RATE_ERROR_CODES
+  ...RATE_ERROR_CODES,
 } as const
 
-export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES]
+export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES]
 
 /**
  * エラーコードからカテゴリを判定する関数
@@ -182,7 +182,7 @@ export const CATEGORY_SEVERITY = {
   [ERROR_CATEGORIES.BIZ]: 'medium',
   [ERROR_CATEGORIES.EXTERNAL]: 'medium',
   [ERROR_CATEGORIES.SYSTEM]: 'critical',
-  [ERROR_CATEGORIES.RATE]: 'low'
+  [ERROR_CATEGORIES.RATE]: 'low',
 } as const
 
 export type SeverityLevel = 'low' | 'medium' | 'high' | 'critical'
@@ -197,5 +197,5 @@ export const CATEGORY_RETRYABLE = {
   [ERROR_CATEGORIES.BIZ]: false,
   [ERROR_CATEGORIES.EXTERNAL]: true,
   [ERROR_CATEGORIES.SYSTEM]: true,
-  [ERROR_CATEGORIES.RATE]: true
+  [ERROR_CATEGORIES.RATE]: true,
 } as const

@@ -12,8 +12,8 @@ export * from './config/command-palette'
 
 // Lib
 export * from './lib/command-registry'
-export * from './lib/search-engine'
 export * from './lib/compass-commands'
+export * from './lib/search-engine'
 
 // Types
 export * from './types'

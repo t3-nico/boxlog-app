@@ -5,7 +5,7 @@
  */
 
 import type { Task as BaseTask } from '../index'
-import type { TaskType, TaskLabel, TaskComment, TaskAttachment, TaskTimeEntry } from './core'
+import type { TaskAttachment, TaskComment, TaskLabel, TaskTimeEntry, TaskType } from './core'
 
 /**
  * タスク拡張型（開発管理用の詳細情報を含む）
@@ -76,9 +76,7 @@ export type CreateTaskDetailedInput = Omit<
 /**
  * タスク更新時の入力データ（詳細版）
  */
-export type UpdateTaskDetailedInput = Partial<
-  Omit<TaskDetailed, 'id' | 'created_at' | 'createdBy' | 'version'>
->
+export type UpdateTaskDetailedInput = Partial<Omit<TaskDetailed, 'id' | 'created_at' | 'createdBy' | 'version'>>
 
 /**
  * タスクボードのカラム設定

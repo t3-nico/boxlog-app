@@ -41,58 +41,34 @@ const BoardPageClient = ({ translations }: BoardPageClientProps) => {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {/* Todo Column */}
-          <div
-            className="bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-sm p-4"
-          >
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-              {columns.todo}
-            </h2>
+          <div className="rounded-md bg-neutral-100 p-4 shadow-sm dark:bg-neutral-800">
+            <h2 className="mb-2 text-2xl font-semibold text-neutral-900 dark:text-neutral-100">{columns.todo}</h2>
             <div className="flex flex-col gap-2">
-              <div
-                className="bg-neutral-200 dark:bg-neutral-700 p-2 rounded border-l-4 border-blue-500 dark:border-blue-600"
-              >
+              <div className="rounded border-l-4 border-blue-500 bg-neutral-200 p-2 dark:border-blue-600 dark:bg-neutral-700">
                 <h3 className="font-semibold">{sample.task1.title}</h3>
-                <p className="text-sm text-neutral-800 dark:text-neutral-200">
-                  {sample.task1.description}
-                </p>
+                <p className="text-sm text-neutral-800 dark:text-neutral-200">{sample.task1.description}</p>
               </div>
             </div>
           </div>
 
           {/* In Progress Column */}
-          <div
-            className="bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-sm p-4"
-          >
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-              {columns.inProgress}
-            </h2>
+          <div className="rounded-md bg-neutral-100 p-4 shadow-sm dark:bg-neutral-800">
+            <h2 className="mb-2 text-2xl font-semibold text-neutral-900 dark:text-neutral-100">{columns.inProgress}</h2>
             <div className="flex flex-col gap-2">
-              <div
-                className="bg-neutral-200 dark:bg-neutral-700 p-2 rounded border-l-4 border-yellow-500 dark:border-yellow-600"
-              >
+              <div className="rounded border-l-4 border-yellow-500 bg-neutral-200 p-2 dark:border-yellow-600 dark:bg-neutral-700">
                 <h3 className="font-semibold">{sample.task2.title}</h3>
-                <p className="text-sm text-neutral-800 dark:text-neutral-200">
-                  {sample.task2.description}
-                </p>
+                <p className="text-sm text-neutral-800 dark:text-neutral-200">{sample.task2.description}</p>
               </div>
             </div>
           </div>
 
           {/* Done Column */}
-          <div
-            className="bg-neutral-100 dark:bg-neutral-800 rounded-md shadow-sm p-4"
-          >
-            <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-              {columns.done}
-            </h2>
+          <div className="rounded-md bg-neutral-100 p-4 shadow-sm dark:bg-neutral-800">
+            <h2 className="mb-2 text-2xl font-semibold text-neutral-900 dark:text-neutral-100">{columns.done}</h2>
             <div className="flex flex-col gap-2">
-              <div
-                className="bg-neutral-200 dark:bg-neutral-700 p-2 rounded border-l-4 border-green-500 dark:border-green-600"
-              >
+              <div className="rounded border-l-4 border-green-500 bg-neutral-200 p-2 dark:border-green-600 dark:bg-neutral-700">
                 <h3 className="font-semibold">{sample.task3.title}</h3>
-                <p className="text-sm text-neutral-800 dark:text-neutral-200">
-                  {sample.task3.description}
-                </p>
+                <p className="text-sm text-neutral-800 dark:text-neutral-200">{sample.task3.description}</p>
               </div>
             </div>
           </div>

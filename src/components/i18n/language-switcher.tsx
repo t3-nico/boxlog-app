@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation'
 
 import { ChevronDownIcon, GlobeIcon } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
 import { setLocaleCookie } from '@/features/i18n/lib'
+import { cn } from '@/lib/utils'
 import type { Locale } from '@/types/i18n'
 
 interface LanguageOption {
@@ -38,7 +38,8 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
 
-  const currentLanguage = languages.find((lang) => lang.code === currentLocale) ?? languages[0] ?? { code: 'en' as Locale, name: 'English', flag: '🇺🇸' }
+  const currentLanguage = languages.find((lang) => lang.code === currentLocale) ??
+    languages[0] ?? { code: 'en' as Locale, name: 'English', flag: '🇺🇸' }
 
   const switchLanguage = useCallback(
     (locale: Locale): void => {
@@ -88,9 +89,9 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
         onClick={handleToggleDropdown}
         className={cn(
           'flex items-center gap-2 rounded-md px-3 py-2 transition-colors duration-200',
-          'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-neutral-100',
+          'bg-neutral-200 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-100',
           'hover:bg-neutral-300 hover:dark:bg-neutral-600',
-          'focus:ring-primary-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
+          'focus:ring-primary-500 focus:ring-2 focus:ring-offset-2 focus:outline-none'
         )}
         aria-label={typedDictionary?.language?.switch || 'Switch Language'}
         aria-expanded={isOpen}
@@ -118,8 +119,8 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
           {/* メニュー */}
           <div
             className={cn(
-              'absolute right-0 mt-2 w-48 py-2 z-20 rounded-md border shadow-lg',
-              'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700',
+              'absolute right-0 z-20 mt-2 w-48 rounded-md border py-2 shadow-lg',
+              'border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800',
               'transition-all duration-200'
             )}
             role="listbox"
@@ -135,7 +136,7 @@ export function LanguageSwitcher({ currentLocale, dictionary }: LanguageSwitcher
                   'focus:outline-none',
                   language.code === currentLocale
                     ? 'bg-blue-500 text-white'
-                    : 'text-neutral-900 dark:text-neutral-100 hover:bg-neutral-200 hover:dark:bg-neutral-700 focus:bg-neutral-200 focus:dark:bg-neutral-700'
+                    : 'text-neutral-900 hover:bg-neutral-200 focus:bg-neutral-200 dark:text-neutral-100 hover:dark:bg-neutral-700 focus:dark:bg-neutral-700'
                 )}
                 role="option"
                 aria-selected={language.code === currentLocale}

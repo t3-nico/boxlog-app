@@ -72,7 +72,7 @@ import { useChatStore } from '@/features/aichat/stores/useChatStore'
 // BoxLog用のカスタムAI Responseコンポーネント
 const BoxLogAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
   <AIResponse
-    className="prose prose-sm dark:prose-invert [&_pre]:bg-muted [&_code]:bg-muted max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0 [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:px-1 [&_code]:py-1 [&_h1]:mb-2 [&_h1]:mt-4 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mb-2 [&_h2]:mt-3 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mb-1 [&_h3]:mt-3 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_ul]:my-2"
+    className="prose prose-sm dark:prose-invert [&_pre]:bg-muted [&_code]:bg-muted max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:px-1 [&_code]:py-1 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
     options={{
       disallowedElements: ['script', 'iframe'],
       remarkPlugins: [],
@@ -134,7 +134,7 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
           <BoxLogAIResponse>{Array.isArray(message.content) ? message.content[0] : message.content}</BoxLogAIResponse>
         ) : (
           // ユーザーメッセージの場合
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">
             {message.content as string}
             {message.status != null && (
               <div className="mt-1 text-xs opacity-75">
@@ -170,9 +170,12 @@ const ChatInput = () => {
   const [isListening, setIsListening] = useState(false)
   const [selectedModel, setSelectedModel] = useState('claude-3-sonnet')
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value)
-  }, [setInputValue])
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setInputValue(e.target.value)
+    },
+    [setInputValue]
+  )
 
   const handleCompositionStart = useCallback(() => {
     _setIsComposing(true)
@@ -352,7 +355,7 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
               </button>
 
               {showMenu != null && (
-                <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+                <div className="bg-card border-border absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                   <button
                     type="button"
                     onClick={handleClearMessages}
@@ -398,13 +401,31 @@ export const AIChatSidebar = ({ isOpen, onClose, isMainView = false }: AIChatSid
                 <AIBranch>
                   <AIBranchMessages>
                     <BoxLogAIResponse>
-                      {t('aiChat.welcome.greeting1')}{'\n\n'}• {t('aiChat.welcome.capabilities1.0')}{'\n'}• {t('aiChat.welcome.capabilities1.1')}{'\n'}• {t('aiChat.welcome.capabilities1.2')}{'\n'}• {t('aiChat.welcome.capabilities1.3')}{'\n\n'}{t('aiChat.welcome.question1')}
+                      {t('aiChat.welcome.greeting1')}
+                      {'\n\n'}• {t('aiChat.welcome.capabilities1.0')}
+                      {'\n'}• {t('aiChat.welcome.capabilities1.1')}
+                      {'\n'}• {t('aiChat.welcome.capabilities1.2')}
+                      {'\n'}• {t('aiChat.welcome.capabilities1.3')}
+                      {'\n\n'}
+                      {t('aiChat.welcome.question1')}
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      {t('aiChat.welcome.greeting2')}{'\n\n'}• {t('aiChat.welcome.capabilities2.0')}{'\n'}• {t('aiChat.welcome.capabilities2.1')}{'\n'}• {t('aiChat.welcome.capabilities2.2')}{'\n'}• {t('aiChat.welcome.capabilities2.3')}{'\n\n'}{t('aiChat.welcome.question2')}
+                      {t('aiChat.welcome.greeting2')}
+                      {'\n\n'}• {t('aiChat.welcome.capabilities2.0')}
+                      {'\n'}• {t('aiChat.welcome.capabilities2.1')}
+                      {'\n'}• {t('aiChat.welcome.capabilities2.2')}
+                      {'\n'}• {t('aiChat.welcome.capabilities2.3')}
+                      {'\n\n'}
+                      {t('aiChat.welcome.question2')}
                     </BoxLogAIResponse>
                     <BoxLogAIResponse>
-                      {t('aiChat.welcome.greeting3')}{'\n\n'}• {t('aiChat.welcome.capabilities3.0')}{'\n'}• {t('aiChat.welcome.capabilities3.1')}{'\n'}• {t('aiChat.welcome.capabilities3.2')}{'\n'}• {t('aiChat.welcome.capabilities3.3')}{'\n\n'}{t('aiChat.welcome.question3')}
+                      {t('aiChat.welcome.greeting3')}
+                      {'\n\n'}• {t('aiChat.welcome.capabilities3.0')}
+                      {'\n'}• {t('aiChat.welcome.capabilities3.1')}
+                      {'\n'}• {t('aiChat.welcome.capabilities3.2')}
+                      {'\n'}• {t('aiChat.welcome.capabilities3.3')}
+                      {'\n\n'}
+                      {t('aiChat.welcome.question3')}
                     </BoxLogAIResponse>
                   </AIBranchMessages>
                   <AIBranchSelector from="assistant">

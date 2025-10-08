@@ -4,19 +4,19 @@ import { create } from 'zustand'
 import { useTagStore } from '@/features/tags/stores/tag-store'
 
 import {
+  CalendarEvent,
+  ChecklistItem,
+  CreateEventRequest,
   Event,
   EventFilters,
-  EventStore,
-  CreateEventRequest,
-  UpdateEventRequest,
-  EventsByDate,
-  CalendarEvent,
-  EventType,
-  EventStatus,
   EventPriority,
+  EventsByDate,
+  EventStatus,
+  EventStore,
+  EventType,
   RecurrencePattern,
-  ChecklistItem,
-  Reminder
+  Reminder,
+  UpdateEventRequest,
 } from '../types/events'
 
 // ローカルストレージのキー
@@ -28,9 +28,9 @@ const isBrowser = typeof window !== 'undefined'
 // シンプルで確実なlocalStorage操作
 const saveToLocalStorage = (events: Event[]) => {
   if (!isBrowser) return
-  
+
   try {
-    const eventsToSave = events.map(event => ({
+    const eventsToSave = events.map((event) => ({
       ...event,
       startDate: event.startDate?.toISOString(),
       endDate: event.endDate?.toISOString(),
@@ -38,9 +38,9 @@ const saveToLocalStorage = (events: Event[]) => {
       updatedAt: event.updatedAt?.toISOString(),
       deletedAt: event.deletedAt?.toISOString(),
     }))
-    
+
     localStorage.setItem(STORAGE_KEY, JSON.stringify(eventsToSave))
-    
+
     // 直ちに確認
     const _saved = localStorage.getItem(STORAGE_KEY)
   } catch (error) {
@@ -116,18 +116,18 @@ const formatDate = (date: Date): string => {
 // 既存イベントからテストタグを削除する関数
 const cleanExistingEvents = (): Event[] => {
   const events = loadFromLocalStorage()
-  
+
   // 既存イベントからテストタグ（会議、作業）を削除
-  const cleanedEvents = events.map(event => ({
+  const cleanedEvents = events.map((event) => ({
     ...event,
-    tags: [] // すべてのタグをクリア
+    tags: [], // すべてのタグをクリア
   }))
-  
+
   // クリーンなイベントを保存
   if (cleanedEvents.length > 0) {
     saveToLocalStorage(cleanedEvents)
   }
-  
+
   return cleanedEvents
 }
 
@@ -143,21 +143,21 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   // イベント取得（必要に応じてフィルタリング）
   fetchEvents: async (_filters?: EventFilters) => {
     set({ loading: true })
-    
+
     try {
       // ローカルストレージから読み込み
       const events = loadFromLocalStorage()
-      
-      set({ 
-        events, 
+
+      set({
+        events,
         loading: false,
-        error: null 
+        error: null,
       })
     } catch (error) {
       console.error('❌ Fetch events failed:', error)
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch events'
+        error: error instanceof Error ? error.message : 'Failed to fetch events',
       })
     }
   },
@@ -165,7 +165,7 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   // イベント作成
   createEvent: async (eventData: CreateEventRequest) => {
     set({ loading: true, error: null })
-    
+
     try {
       const newEvent: Event = {
         id: `local-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -182,32 +182,32 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         location: eventData.location,
         url: eventData.url,
         reminders: eventData.reminders || [],
-        tags: eventData.tagIds ? useTagStore.getState().getTagsByIds(eventData.tagIds) : [],  // tagIdsからタグ情報を取得
+        tags: eventData.tagIds ? useTagStore.getState().getTagsByIds(eventData.tagIds) : [], // tagIdsからタグ情報を取得
         createdAt: new Date(),
         updatedAt: new Date(),
-        type: eventData.type || 'event',  // typeフィールドを正しく設定
+        type: eventData.type || 'event', // typeフィールドを正しく設定
         isDeleted: false,
-        deletedAt: null
+        deletedAt: null,
       }
-      
+
       const currentEvents = get().events
       const newEvents = [...currentEvents, newEvent]
-      
+
       // ストアを更新
-      set({ 
-        events: newEvents, 
-        loading: false 
+      set({
+        events: newEvents,
+        loading: false,
       })
-      
+
       // ローカルストレージに保存
       saveToLocalStorage(newEvents)
-      
+
       return newEvent
     } catch (error) {
       console.error('❌ Create event failed:', error)
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to create event'
+        error: error instanceof Error ? error.message : 'Failed to create event',
       })
       throw error
     }
@@ -216,10 +216,10 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   // イベント更新
   updateEvent: async (eventData: UpdateEventRequest) => {
     set({ loading: true, error: null })
-    
+
     try {
       const currentEvents = get().events
-      const updatedEvents = currentEvents.map(event => {
+      const updatedEvents = currentEvents.map((event) => {
         if (event.id === eventData.id) {
           const updatedEvent = { ...event, ...eventData, updatedAt: new Date() }
           // tagIdsが提供されている場合は、タグ情報を解決
@@ -230,22 +230,22 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         }
         return event
       })
-      
-      set({ 
-        events: updatedEvents, 
-        loading: false 
+
+      set({
+        events: updatedEvents,
+        loading: false,
       })
-      
+
       saveToLocalStorage(updatedEvents)
-      
-      const updatedEvent = updatedEvents.find(e => e.id === eventData.id)
-      
+
+      const updatedEvent = updatedEvents.find((e) => e.id === eventData.id)
+
       return updatedEvent!
     } catch (error) {
       console.error('❌ Update event failed:', error)
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to update event'
+        error: error instanceof Error ? error.message : 'Failed to update event',
       })
       throw error
     }
@@ -257,7 +257,7 @@ export const useEventStore = create<EventStore>()((set, get) => ({
       return await get().updateEvent({
         id: eventId,
         startDate: startTime,
-        endDate: endTime
+        endDate: endTime,
       })
     } catch (error) {
       console.error('❌ Update event time failed:', error)
@@ -269,15 +269,15 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   deleteEvent: async (eventId: string) => {
     return get().softDeleteEvent(eventId)
   },
-  
+
   // 論理削除（ソフトデリート）- 統一ゴミ箱連携
   softDeleteEvent: async (eventId: string) => {
     set({ loading: true, error: null })
-    
+
     try {
       const currentEvents = get().events
-      const eventToDelete = currentEvents.find(event => event.id === eventId)
-      
+      const eventToDelete = currentEvents.find((event) => event.id === eventId)
+
       if (!eventToDelete) {
         throw new Error(`Event with ID ${eventId} not found`)
       }
@@ -293,71 +293,84 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         originalData: eventToDelete,
         metadata: {
           color: eventToDelete.color,
-          tags: eventToDelete.tags?.map(tag => typeof tag === 'string' ? tag : tag.name) || [],
+          tags: eventToDelete.tags?.map((tag) => (typeof tag === 'string' ? tag : tag.name)) || [],
           subtitle: eventToDelete.startDate ? eventToDelete.startDate.toLocaleDateString() : undefined,
-          priority: eventToDelete.priority === 'urgent' ? 'high' : eventToDelete.priority === 'important' ? 'medium' : 'low'
-        }
+          priority:
+            eventToDelete.priority === 'urgent' ? 'high' : eventToDelete.priority === 'important' ? 'medium' : 'low',
+        },
       })
 
       // eventsから削除（物理削除）
-      const updatedEvents = currentEvents.filter(event => event.id !== eventId)
-      
-      set({ 
+      const updatedEvents = currentEvents.filter((event) => event.id !== eventId)
+
+      set({
         events: updatedEvents,
         selectedEventId: get().selectedEventId === eventId ? null : get().selectedEventId,
-        loading: false 
+        loading: false,
       })
-      
+
       saveToLocalStorage(updatedEvents)
       console.log('✅ Event moved to unified trash:', {
         title: eventToDelete.title,
         id: eventToDelete.id,
         startDate: eventToDelete.startDate,
-        endDate: eventToDelete.endDate
+        endDate: eventToDelete.endDate,
       })
     } catch (error) {
       console.error('❌ Soft delete event failed:', error)
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to delete event'
+        error: error instanceof Error ? error.message : 'Failed to delete event',
       })
       throw error
     }
   },
-  
+
   // イベント復元（統一ゴミ箱から復元される際に使用）
   restoreEvent: async (eventData: Event) => {
     set({ loading: true, error: null })
-    
+
     try {
       const currentEvents = get().events
-      
+
       // 既に存在するイベントかチェック
-      const existingEvent = currentEvents.find(event => event.id === eventData.id)
+      const existingEvent = currentEvents.find((event) => event.id === eventData.id)
       if (existingEvent) {
         console.log('Event already exists, skipping restore:', eventData.id)
         set({ loading: false })
         return
       }
-      
+
       // イベントを復元（日付データを適切に変換）
       const restoredEvent = {
         ...eventData,
-        startDate: eventData.startDate ? (eventData.startDate instanceof Date ? eventData.startDate : new Date(eventData.startDate)) : null,
-        endDate: eventData.endDate ? (eventData.endDate instanceof Date ? eventData.endDate : new Date(eventData.endDate)) : null,
-        createdAt: eventData.createdAt ? (eventData.createdAt instanceof Date ? eventData.createdAt : new Date(eventData.createdAt)) : new Date(),
+        startDate: eventData.startDate
+          ? eventData.startDate instanceof Date
+            ? eventData.startDate
+            : new Date(eventData.startDate)
+          : null,
+        endDate: eventData.endDate
+          ? eventData.endDate instanceof Date
+            ? eventData.endDate
+            : new Date(eventData.endDate)
+          : null,
+        createdAt: eventData.createdAt
+          ? eventData.createdAt instanceof Date
+            ? eventData.createdAt
+            : new Date(eventData.createdAt)
+          : new Date(),
         updatedAt: new Date(),
         deletedAt: null,
-        isDeleted: false
+        isDeleted: false,
       }
-      
+
       const updatedEvents = [...currentEvents, restoredEvent]
-      
-      set({ 
+
+      set({
         events: updatedEvents,
-        loading: false 
+        loading: false,
       })
-      
+
       saveToLocalStorage(updatedEvents)
       console.log('✅ Event restored to calendar:', {
         title: restoredEvent.title,
@@ -365,31 +378,31 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         originalStartDate: eventData.startDate,
         originalEndDate: eventData.endDate,
         restoredStartDate: restoredEvent.startDate,
-        restoredEndDate: restoredEvent.endDate
+        restoredEndDate: restoredEvent.endDate,
       })
     } catch (error) {
       console.error('❌ Restore event failed:', error)
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to restore event'
+        error: error instanceof Error ? error.message : 'Failed to restore event',
       })
       throw error
     }
   },
-  
+
   // 物理削除（統一ゴミ箱システムが管理するため、通常は使用されない）
   hardDeleteEvent: async (_eventId: string) => {
     console.log('hardDeleteEvent called - unified trash system manages permanent deletion')
   },
-  
+
   // バッチ論理削除 - 統一ゴミ箱連携
   batchSoftDelete: async (eventIds: string[]) => {
     set({ loading: true, error: null })
-    
+
     try {
       const currentEvents = get().events
-      const eventsToDelete = currentEvents.filter(event => eventIds.includes(event.id))
-      
+      const eventsToDelete = currentEvents.filter((event) => eventIds.includes(event.id))
+
       if (eventsToDelete.length === 0) {
         set({ loading: false })
         return
@@ -397,7 +410,7 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
       // 統一ゴミ箱にアイテムを一括追加
       const { useTrashStore } = await import('@/features/trash/stores/useTrashStore')
-      const trashItems = eventsToDelete.map(event => ({
+      const trashItems = eventsToDelete.map((event) => ({
         id: event.id,
         type: 'event' as const,
         title: event.title,
@@ -406,50 +419,55 @@ export const useEventStore = create<EventStore>()((set, get) => ({
         originalData: event,
         metadata: {
           color: event.color,
-          tags: event.tags?.map(tag => typeof tag === 'string' ? tag : tag.name) || [],
+          tags: event.tags?.map((tag) => (typeof tag === 'string' ? tag : tag.name)) || [],
           subtitle: event.startDate ? event.startDate.toLocaleDateString() : undefined,
-          priority: event.priority === 'urgent' ? 'high' as const : event.priority === 'important' ? 'medium' as const : 'low' as const
-        }
+          priority:
+            event.priority === 'urgent'
+              ? ('high' as const)
+              : event.priority === 'important'
+                ? ('medium' as const)
+                : ('low' as const),
+        },
       }))
 
       await useTrashStore.getState().addItems(trashItems)
 
       // eventsから削除（物理削除）
-      const updatedEvents = currentEvents.filter(event => !eventIds.includes(event.id))
-      
-      set({ 
+      const updatedEvents = currentEvents.filter((event) => !eventIds.includes(event.id))
+
+      set({
         events: updatedEvents,
         selectedEventId: eventIds.includes(get().selectedEventId || '') ? null : get().selectedEventId,
-        loading: false 
+        loading: false,
       })
-      
+
       saveToLocalStorage(updatedEvents)
       console.log('✅ Events moved to unified trash:', eventsToDelete.length, 'events')
     } catch (error) {
       console.error('❌ Batch soft delete failed:', error)
-      set({ 
+      set({
         loading: false,
-        error: error instanceof Error ? error.message : 'Failed to delete events'
+        error: error instanceof Error ? error.message : 'Failed to delete events',
       })
       throw error
     }
   },
-  
+
   // バッチ復元（統一ゴミ箱システムが管理）
   batchRestore: async (_eventIds: string[]) => {
     console.log('batchRestore called - unified trash system manages restoration')
   },
-  
+
   // バッチ物理削除（統一ゴミ箱システムが管理）
   batchHardDelete: async (_eventIds: string[]) => {
     console.log('batchHardDelete called - unified trash system manages permanent deletion')
   },
-  
+
   // ゴミ箱をクリア（統一ゴミ箱システムが管理）
   clearTrash: async () => {
     console.log('clearTrash called - unified trash system manages this operation')
   },
-  
+
   // ゴミ箱内のイベントを取得（統一ゴミ箱から取得）
   getTrashedEvents: () => {
     console.log('getTrashedEvents called - use unified trash system instead')
@@ -462,8 +480,8 @@ export const useEventStore = create<EventStore>()((set, get) => ({
   },
 
   setFilters: (filters: Partial<EventFilters>) => {
-    set(state => ({
-      filters: { ...state.filters, ...filters }
+    set((state) => ({
+      filters: { ...state.filters, ...filters },
     }))
   },
 
@@ -473,50 +491,56 @@ export const useEventStore = create<EventStore>()((set, get) => ({
 
   getEventsByDateRange: (startDate: Date, endDate: Date) => {
     const { events } = get()
-    
+
     const startDateOnly = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate())
     const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate())
-    
-    const filteredEvents = events.filter(event => {
+
+    const filteredEvents = events.filter((event) => {
       // 削除済みイベントは除外
       if (event.isDeleted) return false
       if (!event.startDate) return false
-      
-      const eventStartDateOnly = new Date(event.startDate.getFullYear(), event.startDate.getMonth(), event.startDate.getDate())
+
+      const eventStartDateOnly = new Date(
+        event.startDate.getFullYear(),
+        event.startDate.getMonth(),
+        event.startDate.getDate()
+      )
       let eventEndDateOnly = eventStartDateOnly
       if (event.endDate) {
         eventEndDateOnly = new Date(event.endDate.getFullYear(), event.endDate.getMonth(), event.endDate.getDate())
       }
-      
-      return (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
-             (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
-             (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
+
+      return (
+        (eventStartDateOnly >= startDateOnly && eventStartDateOnly <= endDateOnly) ||
+        (eventEndDateOnly >= startDateOnly && eventEndDateOnly <= endDateOnly) ||
+        (eventStartDateOnly <= startDateOnly && eventEndDateOnly >= endDateOnly)
+      )
     })
-    
+
     return filteredEvents
   },
 
   getEventsGroupedByType: () => {
     const { events } = get()
     // 削除済みイベントを除外
-    const activeEvents = events.filter(event => !event.isDeleted)
-    
+    const activeEvents = events.filter((event) => !event.isDeleted)
+
     const convertToCalendarEvent = (event: Event): CalendarEvent => ({
       ...event,
       displayStartDate: event.startDate || new Date(),
       displayEndDate: event.endDate || event.startDate || new Date(),
-      duration: event.endDate && event.startDate
-        ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
-        : 60,
-      isMultiDay: event.endDate && event.startDate ? 
-        formatDate(event.startDate) !== formatDate(event.endDate) : false,
+      duration:
+        event.endDate && event.startDate
+          ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
+          : 60,
+      isMultiDay: event.endDate && event.startDate ? formatDate(event.startDate) !== formatDate(event.endDate) : false,
       isRecurring: event.isRecurring || false,
     })
-    
+
     return {
-      events: activeEvents.filter(e => e.type === 'event').map(convertToCalendarEvent),
-      tasks: activeEvents.filter(e => e.type === 'task').map(convertToCalendarEvent),
-      reminders: activeEvents.filter(e => e.type === 'reminder').map(convertToCalendarEvent),
+      events: activeEvents.filter((e) => e.type === 'event').map(convertToCalendarEvent),
+      tasks: activeEvents.filter((e) => e.type === 'task').map(convertToCalendarEvent),
+      reminders: activeEvents.filter((e) => e.type === 'reminder').map(convertToCalendarEvent),
     }
   },
 
@@ -532,43 +556,40 @@ export const eventSelectors = {
   getError: (state: EventStore) => state.error,
   getFilters: (state: EventStore) => state.filters,
   getSelectedEventId: (state: EventStore) => state.selectedEventId,
-  
-  getSelectedEvent: (state: EventStore) => 
-    state.selectedEventId ? state.events.find(e => e.id === state.selectedEventId) : null,
-  
+
+  getSelectedEvent: (state: EventStore) =>
+    state.selectedEventId ? state.events.find((e) => e.id === state.selectedEventId) : null,
+
   getEventsByDate: (state: EventStore): EventsByDate => {
     const eventsByDate: EventsByDate = {}
-    
+
     // 削除済みイベントを除外
-    const activeEvents = state.events.filter(event => !event.isDeleted)
-    
-    activeEvents.forEach(event => {
+    const activeEvents = state.events.filter((event) => !event.isDeleted)
+
+    activeEvents.forEach((event) => {
       if (!event.startDate) return
       const dateKey = formatDate(event.startDate)
       if (!Object.prototype.hasOwnProperty.call(eventsByDate, dateKey)) {
         eventsByDate[dateKey] = []
       }
-      
+
       const calendarEvent: CalendarEvent = {
         ...event,
         displayStartDate: event.startDate,
         displayEndDate: event.endDate || event.startDate,
-        duration: event.endDate 
-          ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60))
-          : 60,
-        isMultiDay: event.endDate ? 
-          formatDate(event.startDate) !== formatDate(event.endDate) : false,
+        duration: event.endDate ? Math.round((event.endDate.getTime() - event.startDate.getTime()) / (1000 * 60)) : 60,
+        isMultiDay: event.endDate ? formatDate(event.startDate) !== formatDate(event.endDate) : false,
         isRecurring: event.isRecurring || false,
       }
-      
+
       const events = eventsByDate[dateKey]
       if (events) {
         events.push(calendarEvent)
       }
     })
-    
+
     // 日付内でソート
-    Object.keys(eventsByDate).forEach(dateKey => {
+    Object.keys(eventsByDate).forEach((dateKey) => {
       const events = eventsByDate[dateKey]
       if (events) {
         events.sort((a, b) => {
@@ -578,29 +599,27 @@ export const eventSelectors = {
         })
       }
     })
-    
+
     return eventsByDate
   },
-  
+
   getTodayEvents: (state: EventStore) => {
     const today = formatDate(new Date())
     const eventsByDate = eventSelectors.getEventsByDate(state)
-    return Object.prototype.hasOwnProperty.call(eventsByDate, today)
-      ? eventsByDate[today]
-      : []
+    return Object.prototype.hasOwnProperty.call(eventsByDate, today) ? eventsByDate[today] : []
   },
-  
+
   getUpcomingEvents: (state: EventStore, days = 7) => {
     const now = new Date()
     const futureDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000)
-    
-    return state.events.filter(event => 
-      event.startDate && event.startDate >= now && event.startDate <= futureDate
-    ).sort((a, b) => {
-      const aTime = a.startDate?.getTime() || 0
-      const bTime = b.startDate?.getTime() || 0
-      return aTime - bTime
-    })
+
+    return state.events
+      .filter((event) => event.startDate && event.startDate >= now && event.startDate <= futureDate)
+      .sort((a, b) => {
+        const aTime = a.startDate?.getTime() || 0
+        const bTime = b.startDate?.getTime() || 0
+        return aTime - bTime
+      })
   },
 }
 
@@ -610,7 +629,7 @@ let isInitialized = false
 // ストア初期化関数をエクスポート
 export const initializeEventStore = () => {
   if (!isBrowser || isInitialized) return
-  
+
   isInitialized = true
   useEventStore.getState().fetchEvents()
 }

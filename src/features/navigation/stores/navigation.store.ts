@@ -47,14 +47,12 @@ export const useNavigationStore = create<NavigationState>()(
       // AppBar State (L1)
       isAppBarOpen: true,
       setAppBarOpen: (open) => set({ isAppBarOpen: open }),
-      toggleAppBar: () =>
-        set((state) => ({ isAppBarOpen: !state.isAppBarOpen })),
+      toggleAppBar: () => set((state) => ({ isAppBarOpen: !state.isAppBarOpen })),
 
       // Sidebar State (L2)
       isSidebarOpen: true,
       setSidebarOpen: (open) => set({ isSidebarOpen: open }),
-      toggleSidebar: () =>
-        set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+      toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
 
       // Sidebar Resize Settings
       sidebarWidth: 240, // デフォルト幅
@@ -70,10 +68,8 @@ export const useNavigationStore = create<NavigationState>()(
 
       // Secondary Navigation State - deprecated
       isSecondaryNavCollapsed: false,
-      setSecondaryNavCollapsed: (collapsed) =>
-        set({ isSecondaryNavCollapsed: collapsed }),
-      toggleSecondaryNav: () =>
-        set((state) => ({ isSecondaryNavCollapsed: !state.isSecondaryNavCollapsed })),
+      setSecondaryNavCollapsed: (collapsed) => set({ isSecondaryNavCollapsed: collapsed }),
+      toggleSecondaryNav: () => set((state) => ({ isSecondaryNavCollapsed: !state.isSecondaryNavCollapsed })),
 
       // Column Widths (Legacy)
       primaryNavWidth: 280, // デフォルト幅

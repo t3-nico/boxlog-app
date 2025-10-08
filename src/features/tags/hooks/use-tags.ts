@@ -1,14 +1,8 @@
 // タグ管理用のReact Queryフック
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import type { 
-  Tag, 
-  TagWithChildren, 
-  CreateTagInput, 
-  UpdateTagInput,
-  TagWithChildrenResponse 
-} from '@/types/tags'
+import type { CreateTagInput, Tag, TagWithChildren, TagWithChildrenResponse, UpdateTagInput } from '@/types/tags'
 
 // API関数群
 const tagAPI = {
@@ -17,12 +11,12 @@ const tagAPI = {
     const params = new URLSearchParams({
       include_children: includeChildren.toString(),
       sort_field: 'name',
-      sort_order: 'asc'
+      sort_order: 'asc',
     })
-    
+
     const response = await fetch(`/api/tags?${params}`)
     if (!response.ok) throw new Error('Failed to fetch tags')
-    
+
     const data: TagWithChildrenResponse = await response.json()
     return data.data
   },
@@ -32,11 +26,11 @@ const tagAPI = {
     const response = await fetch('/api/tags', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input)
+      body: JSON.stringify(input),
     })
-    
+
     if (!response.ok) throw new Error('Failed to create tag')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -46,11 +40,11 @@ const tagAPI = {
     const response = await fetch(`/api/tags/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input)
+      body: JSON.stringify(input),
     })
-    
+
     if (!response.ok) throw new Error('Failed to update tag')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -58,9 +52,9 @@ const tagAPI = {
   // タグ削除
   async deleteTag(id: string): Promise<void> {
     const response = await fetch(`/api/tags/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     })
-    
+
     if (!response.ok) throw new Error('Failed to delete tag')
   },
 
@@ -72,12 +66,12 @@ const tagAPI = {
       body: JSON.stringify({
         tag_id: id,
         action: 'move',
-        data: { new_parent_id: newParentId }
-      })
+        data: { new_parent_id: newParentId },
+      }),
     })
-    
+
     if (!response.ok) throw new Error('Failed to move tag')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -90,12 +84,12 @@ const tagAPI = {
       body: JSON.stringify({
         tag_id: id,
         action: 'rename',
-        data: { name }
-      })
+        data: { name },
+      }),
     })
-    
+
     if (!response.ok) throw new Error('Failed to rename tag')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -108,12 +102,12 @@ const tagAPI = {
       body: JSON.stringify({
         tag_id: id,
         action: 'update_color',
-        data: { color }
-      })
+        data: { color },
+      }),
     })
-    
+
     if (!response.ok) throw new Error('Failed to update tag color')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -122,10 +116,10 @@ const tagAPI = {
   async getTag(id: string): Promise<TagWithChildren> {
     const response = await fetch(`/api/tags/${id}`)
     if (!response.ok) throw new Error('Failed to fetch tag')
-    
+
     const data = await response.json()
     return data.data
-  }
+  },
 }
 
 // クエリキー
@@ -159,7 +153,7 @@ export function useTag(id: string) {
 // タグ作成フック
 export function useCreateTag() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: tagAPI.createTag,
     onSuccess: () => {
@@ -168,30 +162,29 @@ export function useCreateTag() {
     },
     onError: (error) => {
       console.error('Tag creation failed:', error)
-    }
+    },
   })
 }
 
 // タグ更新フック
 export function useUpdateTag() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateTagInput }) => 
-      tagAPI.updateTag(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateTagInput }) => tagAPI.updateTag(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
     },
     onError: (error) => {
       console.error('Tag update failed:', error)
-    }
+    },
   })
 }
 
 // タグ削除フック
 export function useDeleteTag() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: tagAPI.deleteTag,
     onSuccess: () => {
@@ -199,139 +192,127 @@ export function useDeleteTag() {
     },
     onError: (error) => {
       console.error('Tag deletion failed:', error)
-    }
+    },
   })
 }
 
 // タグ移動フック
 export function useMoveTag() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: ({ id, newParentId }: { id: string; newParentId: string | null }) => 
-      tagAPI.moveTag(id, newParentId),
+    mutationFn: ({ id, newParentId }: { id: string; newParentId: string | null }) => tagAPI.moveTag(id, newParentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
     },
     onError: (error) => {
       console.error('Tag move failed:', error)
-    }
+    },
   })
 }
 
 // タグリネームフック
 export function useRenameTag() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: ({ id, name }: { id: string; name: string }) => 
-      tagAPI.renameTag(id, name),
+    mutationFn: ({ id, name }: { id: string; name: string }) => tagAPI.renameTag(id, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
     },
     onError: (error) => {
       console.error('Tag rename failed:', error)
-    }
+    },
   })
 }
 
 // タグ色変更フック
 export function useUpdateTagColor() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: ({ id, color }: { id: string; color: string }) => 
-      tagAPI.updateTagColor(id, color),
+    mutationFn: ({ id, color }: { id: string; color: string }) => tagAPI.updateTagColor(id, color),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: tagKeys.all })
     },
     onError: (error) => {
       console.error('Tag color update failed:', error)
-    }
+    },
   })
 }
 
 // 楽観的更新ヘルパー
 export function useOptimisticTagUpdate() {
   const queryClient = useQueryClient()
-  
+
   const updateTagOptimistically = (id: string, updates: Partial<Tag>) => {
-    queryClient.setQueryData(
-      tagKeys.list({ includeChildren: true }),
-      (oldData: TagWithChildren[] | undefined) => {
-        if (!oldData) return oldData
-        
-        const updateTagInTree = (tags: TagWithChildren[]): TagWithChildren[] => {
-          return tags.map(tag => {
-            if (tag.id === id) {
-              return { ...tag, ...updates }
-            }
-            if (tag.children) {
-              return { ...tag, children: updateTagInTree(tag.children) }
-            }
-            return tag
-          })
-        }
-        
-        return updateTagInTree(oldData)
+    queryClient.setQueryData(tagKeys.list({ includeChildren: true }), (oldData: TagWithChildren[] | undefined) => {
+      if (!oldData) return oldData
+
+      const updateTagInTree = (tags: TagWithChildren[]): TagWithChildren[] => {
+        return tags.map((tag) => {
+          if (tag.id === id) {
+            return { ...tag, ...updates }
+          }
+          if (tag.children) {
+            return { ...tag, children: updateTagInTree(tag.children) }
+          }
+          return tag
+        })
       }
-    )
+
+      return updateTagInTree(oldData)
+    })
   }
-  
+
   const addTagOptimistically = (newTag: TagWithChildren, parentId?: string | null) => {
-    queryClient.setQueryData(
-      tagKeys.list({ includeChildren: true }),
-      (oldData: TagWithChildren[] | undefined) => {
-        if (!oldData) return [newTag]
-        
-        if (!parentId) {
-          // ルートレベルに追加
-          return [...oldData, newTag]
-        }
-        
-        const addToParent = (tags: TagWithChildren[]): TagWithChildren[] => {
-          return tags.map(tag => {
-            if (tag.id === parentId) {
-              return { 
-                ...tag, 
-                children: [...(tag.children || []), newTag]
-              }
-            }
-            if (tag.children) {
-              return { ...tag, children: addToParent(tag.children) }
-            }
-            return tag
-          })
-        }
-        
-        return addToParent(oldData)
+    queryClient.setQueryData(tagKeys.list({ includeChildren: true }), (oldData: TagWithChildren[] | undefined) => {
+      if (!oldData) return [newTag]
+
+      if (!parentId) {
+        // ルートレベルに追加
+        return [...oldData, newTag]
       }
-    )
-  }
-  
-  const removeTagOptimistically = (id: string) => {
-    queryClient.setQueryData(
-      tagKeys.list({ includeChildren: true }),
-      (oldData: TagWithChildren[] | undefined) => {
-        if (!oldData) return oldData
-        
-        const removeFromTree = (tags: TagWithChildren[]): TagWithChildren[] => {
-          return tags
-            .filter(tag => tag.id !== id)
-            .map(tag => ({
+
+      const addToParent = (tags: TagWithChildren[]): TagWithChildren[] => {
+        return tags.map((tag) => {
+          if (tag.id === parentId) {
+            return {
               ...tag,
-              children: tag.children ? removeFromTree(tag.children) : []
-            }))
-        }
-        
-        return removeFromTree(oldData)
+              children: [...(tag.children || []), newTag],
+            }
+          }
+          if (tag.children) {
+            return { ...tag, children: addToParent(tag.children) }
+          }
+          return tag
+        })
       }
-    )
+
+      return addToParent(oldData)
+    })
   }
-  
+
+  const removeTagOptimistically = (id: string) => {
+    queryClient.setQueryData(tagKeys.list({ includeChildren: true }), (oldData: TagWithChildren[] | undefined) => {
+      if (!oldData) return oldData
+
+      const removeFromTree = (tags: TagWithChildren[]): TagWithChildren[] => {
+        return tags
+          .filter((tag) => tag.id !== id)
+          .map((tag) => ({
+            ...tag,
+            children: tag.children ? removeFromTree(tag.children) : [],
+          }))
+      }
+
+      return removeFromTree(oldData)
+    })
+  }
+
   return {
     updateTagOptimistically,
     addTagOptimistically,
-    removeTagOptimistically
+    removeTagOptimistically,
   }
 }

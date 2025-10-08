@@ -6,18 +6,18 @@
  * Issue #288: 翻訳品質を担保するためのQAプロセス設計・実装
  */
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   AlertTriangle,
+  Calendar,
   CheckCircle,
-  ThumbsUp,
-  ThumbsDown,
-  MessageSquare,
   FileText,
+  MessageSquare,
+  ThumbsDown,
+  ThumbsUp,
   TrendingUp,
   User,
-  Calendar
 } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -26,13 +26,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
@@ -105,13 +99,13 @@ const QUALITY_COLORS = {
   good: 'text-blue-600 bg-blue-100',
   acceptable: 'text-yellow-600 bg-yellow-100',
   needs_improvement: 'text-orange-600 bg-orange-100',
-  poor: 'text-red-600 bg-red-100'
+  poor: 'text-red-600 bg-red-100',
 }
 
 const SEVERITY_COLORS = {
   critical: 'text-red-600',
   major: 'text-orange-600',
-  minor: 'text-yellow-600'
+  minor: 'text-yellow-600',
 }
 
 const ISSUE_TYPE_LABELS = {
@@ -120,7 +114,7 @@ const ISSUE_TYPE_LABELS = {
   consistency: '一貫性',
   completeness: '完全性',
   cultural: '文化的適応',
-  technical: '技術的正確性'
+  technical: '技術的正確性',
 }
 
 /**
@@ -133,7 +127,7 @@ export default function QualityReviewPanel({
   translatedText,
   onReviewSubmit,
   onReviewUpdate,
-  initialWorkflow
+  initialWorkflow,
 }: QualityReviewPanelProps) {
   const [workflow, setWorkflow] = useState<ReviewWorkflow | null>(initialWorkflow || null)
   const [assessment, setAssessment] = useState<QualityAssessment | null>(null)
@@ -175,23 +169,28 @@ export default function QualityReviewPanel({
       consistency: 88,
       completeness: 95,
       culturalAdaptation: 78,
-      technicalAccuracy: 90
+      technicalAccuracy: 90,
     }
 
     const overallScore = Math.round(
-      (metrics.accuracy * 0.25 +
-       metrics.completeness * 0.20 +
-       metrics.fluency * 0.20 +
-       metrics.consistency * 0.15 +
-       metrics.technicalAccuracy * 0.15 +
-       metrics.culturalAdaptation * 0.05)
+      metrics.accuracy * 0.25 +
+        metrics.completeness * 0.2 +
+        metrics.fluency * 0.2 +
+        metrics.consistency * 0.15 +
+        metrics.technicalAccuracy * 0.15 +
+        metrics.culturalAdaptation * 0.05
     )
 
     const qualityLevel: QualityAssessment['qualityLevel'] =
-      overallScore >= 95 ? 'excellent' :
-      overallScore >= 85 ? 'good' :
-      overallScore >= 70 ? 'acceptable' :
-      overallScore >= 50 ? 'needs_improvement' : 'poor'
+      overallScore >= 95
+        ? 'excellent'
+        : overallScore >= 85
+          ? 'good'
+          : overallScore >= 70
+            ? 'acceptable'
+            : overallScore >= 50
+              ? 'needs_improvement'
+              : 'poor'
 
     const issues: QualityIssue[] = []
     if (metrics.culturalAdaptation < 80) {
@@ -199,7 +198,7 @@ export default function QualityReviewPanel({
         type: 'cultural',
         severity: 'minor',
         description: '文化的適応性に改善の余地があります',
-        suggestion: 'より日本語らしい表現に調整してください'
+        suggestion: 'より日本語らしい表現に調整してください',
       })
     }
 
@@ -208,7 +207,7 @@ export default function QualityReviewPanel({
         type: 'fluency',
         severity: 'minor',
         description: '流暢性をさらに向上できます',
-        suggestion: 'より自然な文章構造に調整してください'
+        suggestion: 'より自然な文章構造に調整してください',
       })
     }
 
@@ -224,8 +223,8 @@ export default function QualityReviewPanel({
       reviewDate: new Date(),
       recommendations: [
         '文化的コンテキストにより適合させることを検討してください',
-        '既存の翻訳スタイルとの一貫性を確認してください'
-      ]
+        '既存の翻訳スタイルとの一貫性を確認してください',
+      ],
     }
   }
 
@@ -240,26 +239,32 @@ export default function QualityReviewPanel({
       const finalAssessment: QualityAssessment = {
         ...assessment,
         reviewer: reviewerName,
-        reviewDate: new Date()
+        reviewDate: new Date(),
       }
 
       // ワークフローの更新
       const updatedWorkflow: ReviewWorkflow = {
         translationKey,
         language,
-        status: finalAssessment.qualityLevel === 'poor' ? 'rejected' :
-                finalAssessment.qualityLevel === 'needs_improvement' ? 'needs_revision' : 'approved',
+        status:
+          finalAssessment.qualityLevel === 'poor'
+            ? 'rejected'
+            : finalAssessment.qualityLevel === 'needs_improvement'
+              ? 'needs_revision'
+              : 'approved',
         reviewer: reviewerName,
         reviewedDate: new Date(),
-        comments: [{
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          reviewer: reviewerName,
-          timestamp: new Date(),
-          type: finalAssessment.qualityLevel === 'poor' ? 'correction' : 'suggestion',
-          content: reviewComments || 'レビュー完了'
-        }],
+        comments: [
+          {
+            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            reviewer: reviewerName,
+            timestamp: new Date(),
+            type: finalAssessment.qualityLevel === 'poor' ? 'correction' : 'suggestion',
+            content: reviewComments || 'レビュー完了',
+          },
+        ],
         assessment: finalAssessment,
-        assignedDate: workflow?.assignedDate || new Date()
+        assignedDate: workflow?.assignedDate || new Date(),
       }
 
       setWorkflow(updatedWorkflow)
@@ -267,7 +272,6 @@ export default function QualityReviewPanel({
       // コールバック実行
       onReviewSubmit?.(finalAssessment, reviewComments)
       onReviewUpdate?.(updatedWorkflow)
-
     } catch (error) {
       console.error('レビュー提出エラー:', error)
     } finally {
@@ -287,9 +291,9 @@ export default function QualityReviewPanel({
 
   if (loading && !assessment) {
     return (
-      <div className="bg-neutral-100 dark:bg-neutral-900 p-6 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <div className="rounded-lg border border-neutral-200 bg-neutral-100 p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-3"></div>
+          <div className="mr-3 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <span className="text-neutral-800 dark:text-neutral-200">品質評価を実行中...</span>
         </div>
       </div>
@@ -301,9 +305,7 @@ export default function QualityReviewPanel({
       <Alert>
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>評価エラー</AlertTitle>
-        <AlertDescription>
-          翻訳の品質評価に失敗しました。再試行してください。
-        </AlertDescription>
+        <AlertDescription>翻訳の品質評価に失敗しました。再試行してください。</AlertDescription>
       </Alert>
     )
   }
@@ -313,28 +315,24 @@ export default function QualityReviewPanel({
       {/* ヘッダー */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
-            翻訳品質レビュー
-          </h2>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">翻訳品質レビュー</h2>
           <p className="text-neutral-800 dark:text-neutral-200">
             {language.toUpperCase()} • {translationKey}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className={getQualityBadgeColor(assessment.qualityLevel)}>
-            {assessment.qualityLevel}
-          </Badge>
+          <Badge className={getQualityBadgeColor(assessment.qualityLevel)}>{assessment.qualityLevel}</Badge>
           <div className="text-right">
             <div className={`text-2xl font-bold ${getScoreColor(assessment.overallScore)}`}>
               {assessment.overallScore}
             </div>
-            <div className="text-sm text-muted-foreground">/ 100</div>
+            <div className="text-muted-foreground text-sm">/ 100</div>
           </div>
         </div>
       </div>
 
       {/* 翻訳内容表示 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium">原文 (English)</CardTitle>
@@ -378,9 +376,7 @@ export default function QualityReviewPanel({
                         <Label className="text-sm font-medium">
                           {ISSUE_TYPE_LABELS[key as keyof typeof ISSUE_TYPE_LABELS] || key}
                         </Label>
-                        <span className={`text-sm font-medium ${getScoreColor(value)}`}>
-                          {value}%
-                        </span>
+                        <span className={`text-sm font-medium ${getScoreColor(value)}`}>{value}%</span>
                       </div>
                       <Progress value={value} className="h-2" />
                     </div>
@@ -402,7 +398,7 @@ export default function QualityReviewPanel({
                   <ul className="space-y-2">
                     {assessment.recommendations.map((recommendation, index) => (
                       <li key={index} className="flex items-start gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                        <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"></div>
                         <span className="text-neutral-800 dark:text-neutral-200">{recommendation}</span>
                       </li>
                     ))}
@@ -427,12 +423,10 @@ export default function QualityReviewPanel({
               {assessment.issues.length > 0 ? (
                 <div className="space-y-4">
                   {assessment.issues.map((issue, index) => (
-                    <div key={index} className="border rounded-lg p-4">
+                    <div key={index} className="rounded-lg border p-4">
                       <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Badge variant="outline">
-                            {ISSUE_TYPE_LABELS[issue.type]}
-                          </Badge>
+                        <div className="mb-2 flex items-center gap-2">
+                          <Badge variant="outline">{ISSUE_TYPE_LABELS[issue.type]}</Badge>
                           <Badge
                             variant={issue.severity === 'critical' ? 'destructive' : 'secondary'}
                             className={SEVERITY_COLORS[issue.severity]}
@@ -442,21 +436,21 @@ export default function QualityReviewPanel({
                         </div>
                       </div>
 
-                      <p className="text-neutral-900 dark:text-neutral-100 mb-2">
-                        {issue.description}
-                      </p>
+                      <p className="mb-2 text-neutral-900 dark:text-neutral-100">{issue.description}</p>
 
-                      {issue.suggestion ? <div className="mt-3 p-3 bg-blue-50 rounded">
+                      {issue.suggestion ? (
+                        <div className="mt-3 rounded bg-blue-50 p-3">
                           <p className="text-sm text-blue-800">
                             <strong>提案:</strong> {issue.suggestion}
                           </p>
-                        </div> : null}
+                        </div>
+                      ) : null}
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500" />
+                <div className="text-muted-foreground py-8 text-center">
+                  <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500" />
                   <p>問題は検出されませんでした</p>
                 </div>
               )}
@@ -470,12 +464,10 @@ export default function QualityReviewPanel({
             <Card>
               <CardHeader>
                 <CardTitle>レビュー提出</CardTitle>
-                <CardDescription>
-                  翻訳の品質評価とコメントを入力してください
-                </CardDescription>
+                <CardDescription>翻訳の品質評価とコメントを入力してください</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="reviewer">レビューアー</Label>
                     <Select value={selectedReviewer} onValueChange={setSelectedReviewer}>
@@ -494,9 +486,7 @@ export default function QualityReviewPanel({
                   <div className="space-y-2">
                     <Label>現在の評価</Label>
                     <div className="flex items-center gap-2">
-                      <Badge className={getQualityBadgeColor(assessment.qualityLevel)}>
-                        {assessment.qualityLevel}
-                      </Badge>
+                      <Badge className={getQualityBadgeColor(assessment.qualityLevel)}>{assessment.qualityLevel}</Badge>
                       <span className={`font-bold ${getScoreColor(assessment.overallScore)}`}>
                         {assessment.overallScore}/100
                       </span>
@@ -522,7 +512,7 @@ export default function QualityReviewPanel({
                     className="flex items-center gap-2"
                   >
                     {loading ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
                     ) : (
                       <ThumbsUp className="h-4 w-4" />
                     )}
@@ -540,7 +530,8 @@ export default function QualityReviewPanel({
             </Card>
 
             {/* 既存のコメント */}
-            {workflow && workflow.comments.length > 0 ? <Card>
+            {workflow && workflow.comments.length > 0 ? (
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
@@ -551,15 +542,13 @@ export default function QualityReviewPanel({
                   <div className="space-y-4">
                     {workflow.comments.map((comment) => (
                       <div key={comment.id} className="border-l-4 border-blue-500 pl-4">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="mb-1 flex items-center gap-2">
                           <User className="h-4 w-4" />
                           <span className="font-medium">{comment.reviewer}</span>
                           <Badge variant="outline">{comment.type}</Badge>
                         </div>
-                        <p className="text-neutral-800 dark:text-neutral-200 mb-2">
-                          {comment.content}
-                        </p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <p className="mb-2 text-neutral-800 dark:text-neutral-200">{comment.content}</p>
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs">
                           <Calendar className="h-3 w-3" />
                           {comment.timestamp.toLocaleDateString()} {comment.timestamp.toLocaleTimeString()}
                         </div>
@@ -567,7 +556,8 @@ export default function QualityReviewPanel({
                     ))}
                   </div>
                 </CardContent>
-              </Card> : null}
+              </Card>
+            ) : null}
           </div>
         </TabsContent>
 
@@ -582,12 +572,10 @@ export default function QualityReviewPanel({
             <CardContent>
               {workflow ? (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <div>
                       <Label className="text-sm font-medium">ステータス</Label>
-                      <Badge className="mt-1">
-                        {workflow.status}
-                      </Badge>
+                      <Badge className="mt-1">{workflow.status}</Badge>
                     </div>
 
                     <div>
@@ -612,8 +600,9 @@ export default function QualityReviewPanel({
 
                   {workflow.assessment ? <Separator /> : null}
 
-                  {workflow.assessment ? <div>
-                      <Label className="text-sm font-medium mb-3 block">最終評価結果</Label>
+                  {workflow.assessment ? (
+                    <div>
+                      <Label className="mb-3 block text-sm font-medium">最終評価結果</Label>
                       <div className="flex items-center gap-4">
                         <Badge className={getQualityBadgeColor(workflow.assessment.qualityLevel)}>
                           {workflow.assessment.qualityLevel}
@@ -621,17 +610,16 @@ export default function QualityReviewPanel({
                         <span className={`text-lg font-bold ${getScoreColor(workflow.assessment.overallScore)}`}>
                           {workflow.assessment.overallScore}/100
                         </span>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <div className="text-muted-foreground flex items-center gap-1 text-sm">
                           <User className="h-3 w-3" />
                           {workflow.assessment.reviewer}
                         </div>
                       </div>
-                    </div> : null}
+                    </div>
+                  ) : null}
                 </div>
               ) : (
-                <p className="text-neutral-800 dark:text-neutral-200">
-                  ワークフローが開始されていません
-                </p>
+                <p className="text-neutral-800 dark:text-neutral-200">ワークフローが開始されていません</p>
               )}
             </CardContent>
           </Card>

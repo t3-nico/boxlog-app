@@ -108,7 +108,7 @@ export const EventContextMenu = ({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 min-w-[180px] bg-white dark:bg-neutral-900 rounded-md shadow-md border border-neutral-200 dark:border-neutral-800 p-2 text-sm"
+      className="fixed z-50 min-w-[180px] rounded-md border border-neutral-200 bg-white p-2 text-sm shadow-md dark:border-neutral-800 dark:bg-neutral-900"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
@@ -125,10 +125,10 @@ export const EventContextMenu = ({
               key={item.label}
               onClick={() => handleAction(item.action)}
               className={cn(
-                "flex w-full items-center gap-3 px-3 py-2 text-left rounded-sm transition-colors",
+                'flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left transition-colors',
                 item.dangerous
-                  ? "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                  : "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-900 dark:text-neutral-100"
+                  ? 'text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20'
+                  : 'text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800'
               )}
             >
               <IconComponent className="h-4 w-4 flex-shrink-0" />

@@ -167,7 +167,7 @@ export const AnimatedEventCard = ({
       data-event-id={event.id}
       className={cn(
         'absolute cursor-pointer overflow-hidden rounded-md',
-        'focus:ring-primary/50 focus:outline-none focus:ring-2',
+        'focus:ring-primary/50 focus:ring-2 focus:outline-none',
         'will-change-transform', // パフォーマンス最適化
         getAnimationClasses(),
         className
@@ -192,7 +192,7 @@ export const AnimatedEventCard = ({
           <div className="flex h-full flex-col">
             <div className="min-h-0 flex-1">
               {/* タイトル */}
-              <div className="mb-1 line-clamp-2 text-sm font-medium leading-tight">{event.title}</div>
+              <div className="mb-1 line-clamp-2 text-sm leading-tight font-medium">{event.title}</div>
 
               {/* 時間（高さが十分な場合のみ） */}
               {(style.height as number) > 40 && event.startDate ? (

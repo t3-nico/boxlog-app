@@ -215,7 +215,7 @@ export const EventBlock = memo<EventBlockProps>(function EventBlock({
 
       {/* 下部リサイズハンドル */}
       <div
-        className="absolute bottom-0 left-0 right-0 cursor-ns-resize focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+        className="absolute right-0 bottom-0 left-0 cursor-ns-resize focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
         role="slider"
         tabIndex={0}
         aria-label="Resize event duration"

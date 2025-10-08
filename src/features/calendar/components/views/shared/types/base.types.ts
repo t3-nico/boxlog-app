@@ -74,11 +74,11 @@ export interface BaseViewProps {
   tasks: Task[]
   events: CalendarEvent[]
   currentDate: Date
-  
+
   // Display options
   showWeekends?: boolean
   className?: string
-  
+
   // Event handlers (完全に共通)
   onTaskClick?: (task: Task) => void
   onEventClick?: (event: CalendarEvent) => void
@@ -88,12 +88,12 @@ export interface BaseViewProps {
   onDeleteEvent?: (eventId: string) => void
   onRestoreEvent?: (event: CalendarEvent) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
-  
+
   // Task handlers (完全に共通)
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
-  
+
   // Navigation handlers (完全に共通)
   onViewChange?: (viewType: CalendarViewType) => void
   onNavigatePrev?: () => void

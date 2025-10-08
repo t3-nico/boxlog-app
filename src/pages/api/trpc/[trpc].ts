@@ -3,9 +3,9 @@
  * /api/trpc/* エンドポイントの処理
  */
 
-import { createNextApiHandler } from '@trpc/server/adapters/next'
 import { appRouter } from '@/server/api/root'
 import { createTRPCContext } from '@/server/api/trpc'
+import { createNextApiHandler } from '@trpc/server/adapters/next'
 
 /**
  * tRPC APIハンドラー
@@ -13,7 +13,7 @@ import { createTRPCContext } from '@/server/api/trpc'
 export default createNextApiHandler({
   router: appRouter,
   createContext: createTRPCContext,
-  onError: ({ error, type, path, input, ctx}) => {
+  onError: ({ error, type, path, input, ctx }) => {
     // エラーログの出力
     console.error('tRPC Error:', {
       type,
@@ -34,14 +34,12 @@ export default createNextApiHandler({
     // リクエストごとのメタデータ設定
     const oneDay = 60 * 60 * 24
     const isQuery = type === 'query'
-    const isPublic = paths && paths.every(path => !path.includes('protected'))
+    const isPublic = paths && paths.every((path) => !path.includes('protected'))
 
     return {
       headers: {
         // クエリの場合はキャッシュを有効化
-        'cache-control': isQuery && isPublic
-          ? `s-maxage=1, stale-while-revalidate=${oneDay}`
-          : 'no-cache',
+        'cache-control': isQuery && isPublic ? `s-maxage=1, stale-while-revalidate=${oneDay}` : 'no-cache',
       },
     }
   },

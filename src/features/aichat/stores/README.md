@@ -7,6 +7,7 @@ AI関連機能のZustand storeを管理。
 ## 📁 ファイル一覧
 
 ### `useAIPanelStore.ts`
+
 **AIパネルのUI状態管理**
 
 ```typescript
@@ -24,11 +25,13 @@ function Component() {
 ```
 
 **管理する状態**:
+
 - `isOpen`: パネルの開閉状態
 - `panelHeight`: パネルの高さ（px）
 - `isMinimized`: 最小化状態
 
 ### `useChatStore.ts`
+
 **チャット機能の状態管理**
 
 ```typescript
@@ -51,6 +54,7 @@ function ChatComponent() {
 ```
 
 **管理する状態**:
+
 - `messages`: チャットメッセージ一覧
 - `unreadCount`: 未読メッセージ数
 - `isTyping`: AI応答中フラグ
@@ -58,6 +62,7 @@ function ChatComponent() {
 - `isOpen`: チャット画面の開閉状態
 
 **主要アクション**:
+
 - `sendMessage(content)`: メッセージ送信
 - `toggleChat()`: チャット画面の開閉
 - `clearMessages()`: メッセージ全削除
@@ -68,13 +73,18 @@ function ChatComponent() {
 ## 🎯 Context API からの移行完了
 
 ### Before: Context API (Provider地獄)
+
 ```tsx
 // layout.tsx
 <ThemeProvider>
   <GlobalSearchProvider>
     <NotificationModalProvider>
-      <AIPanelProvider>        {/* ← 削除 */}
-        <ChatProvider>         {/* ← 削除 */}
+      <AIPanelProvider>
+        {' '}
+        {/* ← 削除 */}
+        <ChatProvider>
+          {' '}
+          {/* ← 削除 */}
           {children}
         </ChatProvider>
       </AIPanelProvider>
@@ -84,12 +94,13 @@ function ChatComponent() {
 ```
 
 ### After: Zustand (Provider不要)
+
 ```tsx
 // layout.tsx
-<ThemeProvider>
+;<ThemeProvider>
   <GlobalSearchProvider>
     <NotificationModalProvider>
-      {children}  {/* すっきり！ */}
+      {children} {/* すっきり！ */}
     </NotificationModalProvider>
   </GlobalSearchProvider>
 </ThemeProvider>
@@ -107,20 +118,22 @@ function AnyComponent() {
 ## 🚨 重要な注意事項
 
 ### 1. Zustand storeは依存配列から除外
+
 ```tsx
 // ❌ 警告が出る
 const { inputValue, isTyping } = useChatStore()
 useEffect(() => {
   // ...
-}, [inputValue, isTyping])  // NG: Zustand storeの値は依存配列不要
+}, [inputValue, isTyping]) // NG: Zustand storeの値は依存配列不要
 
 // ✅ 正しい
 useEffect(() => {
   // Zustand storeの値変更時は自動で再レンダリング
-}, [])  // OK: 空の依存配列
+}, []) // OK: 空の依存配列
 ```
 
 ### 2. メッセージ送信の実装
+
 ```tsx
 // ✅ 正しい実装
 const { sendMessage } = useChatStore()
@@ -132,10 +145,11 @@ const handleSubmit = async () => {
 ```
 
 ### 3. 型安全性
+
 ```typescript
 import { ChatMessage } from '@/features/aichat/stores/useChatStore'
 
-const messages: ChatMessage[] = useChatStore(state => state.messages)
+const messages: ChatMessage[] = useChatStore((state) => state.messages)
 ```
 
 ---
@@ -143,13 +157,14 @@ const messages: ChatMessage[] = useChatStore(state => state.messages)
 ## 📊 パフォーマンス最適化
 
 ### セレクターを使った部分購読
+
 ```tsx
 // ❌ 非効率: store全体を購読
 const store = useChatStore()
 // messages以外の変更でも再レンダリング
 
 // ✅ 効率的: 必要な部分だけ購読
-const messages = useChatStore(state => state.messages)
+const messages = useChatStore((state) => state.messages)
 // messagesの変更時のみ再レンダリング
 ```
 
@@ -166,6 +181,7 @@ const messages = useChatStore(state => state.messages)
 ## 🆕 新機能追加時のガイド
 
 ### 新しい状態を追加
+
 ```typescript
 // useAIPanelStore.ts
 export const useAIPanelStore = create<AIPanelStore>((set) => ({
@@ -180,6 +196,7 @@ export const useAIPanelStore = create<AIPanelStore>((set) => ({
 ```
 
 ### 新しいアクションを追加
+
 ```typescript
 export const useChatStore = create<ChatStore>((set, get) => ({
   // ...
@@ -187,9 +204,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   // 🆕 メッセージ検索機能
   searchMessages: (query: string) => {
     const { messages } = get()
-    return messages.filter(msg =>
-      msg.content.includes(query)
-    )
+    return messages.filter((msg) => msg.content.includes(query))
   },
 }))
 ```

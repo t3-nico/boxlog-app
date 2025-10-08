@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useCalendarLayout } from './useCalendarLayout'
 
@@ -60,9 +60,7 @@ describe('useCalendarLayout', () => {
 
   describe('サイドバー操作', () => {
     it('toggleSidebarでサイドバーが開閉する', () => {
-      const { result } = renderHook(() =>
-        useCalendarLayout({ sidebarDefaultOpen: true })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ sidebarDefaultOpen: true }))
 
       expect(result.current.sidebarOpen).toBe(true)
 
@@ -80,9 +78,7 @@ describe('useCalendarLayout', () => {
     })
 
     it('setSidebarOpenで直接サイドバー状態を設定できる', () => {
-      const { result } = renderHook(() =>
-        useCalendarLayout({ sidebarDefaultOpen: true })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ sidebarDefaultOpen: true }))
 
       act(() => {
         result.current.setSidebarOpen(false)
@@ -134,9 +130,7 @@ describe('useCalendarLayout', () => {
   describe('カレンダービュー変更', () => {
     it('ビュータイプを変更できる', () => {
       const onViewChange = vi.fn()
-      const { result } = renderHook(() =>
-        useCalendarLayout({ initialViewType: 'week', onViewChange })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ initialViewType: 'week', onViewChange }))
 
       expect(result.current.viewType).toBe('week')
 
@@ -159,9 +153,7 @@ describe('useCalendarLayout', () => {
   describe('日付ナビゲーション', () => {
     it('特定の日付に移動できる', () => {
       const onDateChange = vi.fn()
-      const { result } = renderHook(() =>
-        useCalendarLayout({ onDateChange })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ onDateChange }))
 
       const newDate = new Date('2024-06-15')
 
@@ -174,9 +166,7 @@ describe('useCalendarLayout', () => {
     })
 
     it('todayで今日の日付に移動できる', () => {
-      const { result } = renderHook(() =>
-        useCalendarLayout({ initialDate: new Date('2024-01-15') })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ initialDate: new Date('2024-01-15') }))
 
       const today = new Date()
 
@@ -184,26 +174,20 @@ describe('useCalendarLayout', () => {
         result.current.navigateRelative('today')
       })
 
-      expect(result.current.currentDate.toDateString()).toBe(
-        today.toDateString()
-      )
+      expect(result.current.currentDate.toDateString()).toBe(today.toDateString())
       expect(result.current.isToday).toBe(true)
     })
 
     it('週表示で前後に移動できる', () => {
       const initialDate = new Date('2024-06-15')
-      const { result } = renderHook(() =>
-        useCalendarLayout({ initialViewType: 'week', initialDate })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ initialViewType: 'week', initialDate }))
 
       act(() => {
         result.current.navigateRelative('next')
       })
 
       const expectedNextWeek = new Date('2024-06-22')
-      expect(result.current.currentDate.toDateString()).toBe(
-        expectedNextWeek.toDateString()
-      )
+      expect(result.current.currentDate.toDateString()).toBe(expectedNextWeek.toDateString())
 
       act(() => {
         result.current.navigateRelative('prev')
@@ -213,25 +197,19 @@ describe('useCalendarLayout', () => {
       })
 
       const expectedPrevWeek = new Date('2024-06-08')
-      expect(result.current.currentDate.toDateString()).toBe(
-        expectedPrevWeek.toDateString()
-      )
+      expect(result.current.currentDate.toDateString()).toBe(expectedPrevWeek.toDateString())
     })
 
     it('日表示で前後に移動できる', () => {
       const initialDate = new Date('2024-06-15')
-      const { result } = renderHook(() =>
-        useCalendarLayout({ initialViewType: 'day', initialDate })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ initialViewType: 'day', initialDate }))
 
       act(() => {
         result.current.navigateRelative('next')
       })
 
       const expectedNextDay = new Date('2024-06-16')
-      expect(result.current.currentDate.toDateString()).toBe(
-        expectedNextDay.toDateString()
-      )
+      expect(result.current.currentDate.toDateString()).toBe(expectedNextDay.toDateString())
 
       act(() => {
         result.current.navigateRelative('prev')
@@ -241,18 +219,14 @@ describe('useCalendarLayout', () => {
       })
 
       const expectedPrevDay = new Date('2024-06-14')
-      expect(result.current.currentDate.toDateString()).toBe(
-        expectedPrevDay.toDateString()
-      )
+      expect(result.current.currentDate.toDateString()).toBe(expectedPrevDay.toDateString())
     })
   })
 
   describe('日付範囲計算', () => {
     it('週表示で正しい日付範囲を計算する', () => {
       const initialDate = new Date('2024-06-15') // 土曜日
-      const { result } = renderHook(() =>
-        useCalendarLayout({ initialViewType: 'week', initialDate })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ initialViewType: 'week', initialDate }))
 
       const { start, end } = result.current.dateRange
 
@@ -263,9 +237,7 @@ describe('useCalendarLayout', () => {
 
     it('日表示で同じ日付範囲を返す', () => {
       const initialDate = new Date('2024-06-15')
-      const { result } = renderHook(() =>
-        useCalendarLayout({ initialViewType: 'day', initialDate })
-      )
+      const { result } = renderHook(() => useCalendarLayout({ initialViewType: 'day', initialDate }))
 
       const { start, end } = result.current.dateRange
 
@@ -287,17 +259,13 @@ describe('useCalendarLayout', () => {
         result.current.setSidebarOpen(false)
       })
 
-      expect(
-        window.localStorage.getItem('calendar-sidebar-collapsed')
-      ).toBe('false')
+      expect(window.localStorage.getItem('calendar-sidebar-collapsed')).toBe('false')
 
       act(() => {
         result.current.setSidebarOpen(true)
       })
 
-      expect(
-        window.localStorage.getItem('calendar-sidebar-collapsed')
-      ).toBe('true')
+      expect(window.localStorage.getItem('calendar-sidebar-collapsed')).toBe('true')
     })
 
     it('カスタムストレージキーを使用できる', () => {
@@ -313,9 +281,7 @@ describe('useCalendarLayout', () => {
         result.current.setSidebarOpen(false)
       })
 
-      expect(window.localStorage.getItem('custom-sidebar-key')).toBe(
-        'false'
-      )
+      expect(window.localStorage.getItem('custom-sidebar-key')).toBe('false')
     })
   })
 

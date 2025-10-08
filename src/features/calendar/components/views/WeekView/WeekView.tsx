@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { isWeekend } from 'date-fns'
 
@@ -16,7 +16,7 @@ import type { WeekViewProps } from './WeekView.types'
 
 /**
  * WeekView - 週表示ビューコンポーネント
- * 
+ *
  * @description
  * 構成:
  * 1. shared/DateDisplay で7日分の日付表示
@@ -25,7 +25,7 @@ import type { WeekViewProps } from './WeekView.types'
  * 4. 7つの shared/components/DayColumn を横並び
  * 5. shared/components/EventBlock でイベント
  * 6. shared/grid/CurrentTimeLine で現在時刻
- * 
+ *
  * レイアウト:
  * ┌────┬────┬────┬────┬────┬────┬────┬────┐
  * │    │ 17 │ 18 │ 19 │ 20 │ 21 │ 22 │ 23 │
@@ -49,30 +49,24 @@ export const WeekView = ({
   onTimeRangeSelect,
 }: WeekViewProps) => {
   const { timezone } = useCalendarSettingsStore()
-  
+
   // 週の開始日を計算（通常は dateRange.start を使用）
   const weekStartDate = useMemo(() => {
     return dateRange.start
   }, [dateRange.start])
-  
+
   // WeekView専用ロジック
-  const {
-    weekDates,
-    eventsByDate,
-    todayIndex,
-  } = useWeekView({
+  const { weekDates, eventsByDate, todayIndex } = useWeekView({
     startDate: weekStartDate,
     events,
     weekStartsOn,
   })
-  
+
   // 表示する日付を計算（土日を除外するかどうか）
   const displayDates = useMemo(() => {
-    return showWeekends 
-      ? weekDates 
-      : weekDates.filter(day => !isWeekend(day))
+    return showWeekends ? weekDates : weekDates.filter((day) => !isWeekend(day))
   }, [weekDates, showWeekends])
-  
+
   // WeekView診断ログ
   console.log('[WeekView] コンポーネント受信データ:', {
     receivedEventsCount: events?.length || 0,
@@ -81,19 +75,17 @@ export const WeekView = ({
     eventsByDateKeys: Object.keys(eventsByDate),
     eventsByDateCounts: Object.entries(eventsByDate).map(([key, events]) => ({
       date: key,
-      count: events.length
-    }))
+      count: events.length,
+    })),
   })
-  
-  
+
   // 初期スクロールはScrollableCalendarLayoutに委譲
-  
+
   return (
     <CalendarViewAnimation viewType="week">
-      <div className={cn('flex flex-col h-full bg-background', className)}>
-        
+      <div className={cn('bg-background flex h-full flex-col', className)}>
         {/* メインコンテンツエリア */}
-        <div className="flex-1 min-h-0">
+        <div className="min-h-0 flex-1">
           <WeekGrid
             weekDates={displayDates}
             events={events}

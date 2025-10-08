@@ -23,7 +23,7 @@ export const handleArrowKeys = ({
   navigationState,
   navigateDate,
   navigateTime,
-  navigateEvents
+  navigateEvents,
 }: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'navigateDate' | 'navigateTime' | 'navigateEvents'>) => {
   const { key, shiftKey } = event
 
@@ -73,8 +73,17 @@ export const handleActionKeys = ({
   editCurrentEvent,
   createEvent,
   deleteCurrentEvent,
-  handleEscape
-}: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'navigateEvents' | 'editCurrentEvent' | 'createEvent' | 'deleteCurrentEvent' | 'handleEscape'>) => {
+  handleEscape,
+}: Pick<
+  KeyboardHandlerProps,
+  | 'event'
+  | 'navigationState'
+  | 'navigateEvents'
+  | 'editCurrentEvent'
+  | 'createEvent'
+  | 'deleteCurrentEvent'
+  | 'handleEscape'
+>) => {
   const { key, shiftKey } = event
 
   switch (key) {
@@ -113,8 +122,11 @@ export const handleNavigationKeys = ({
   navigateDate,
   setNavigationState,
   announce,
-  TIME_SLOTS
-}: Pick<KeyboardHandlerProps, 'event' | 'showKeyboardHelp' | 'navigateDate' | 'setNavigationState' | 'announce' | 'TIME_SLOTS'>) => {
+  TIME_SLOTS,
+}: Pick<
+  KeyboardHandlerProps,
+  'event' | 'showKeyboardHelp' | 'navigateDate' | 'setNavigationState' | 'announce' | 'TIME_SLOTS'
+>) => {
   const { key } = event
 
   switch (key) {
@@ -125,13 +137,13 @@ export const handleNavigationKeys = ({
 
     case 'Home':
       event.preventDefault()
-      setNavigationState(prev => ({ ...prev, selectedTime: TIME_SLOTS[0] }))
+      setNavigationState((prev) => ({ ...prev, selectedTime: TIME_SLOTS[0] }))
       announce(`${TIME_SLOTS[0]}に移動しました`)
       break
 
     case 'End':
       event.preventDefault()
-      setNavigationState(prev => ({ ...prev, selectedTime: TIME_SLOTS[TIME_SLOTS.length - 1] }))
+      setNavigationState((prev) => ({ ...prev, selectedTime: TIME_SLOTS[TIME_SLOTS.length - 1] }))
       announce(`${TIME_SLOTS[TIME_SLOTS.length - 1]}に移動しました`)
       break
 
@@ -152,24 +164,27 @@ export const handleEventDetailKeys = ({
   navigationState,
   events,
   announce,
-  noDescriptionText
+  noDescriptionText,
 }: Pick<KeyboardHandlerProps, 'event' | 'navigationState' | 'events' | 'announce' | 'noDescriptionText'>) => {
   const { key } = event
 
-  if (key === ' ') { // スペースキー
+  if (key === ' ') {
+    // スペースキー
     event.preventDefault()
     if (navigationState.selectedEventId) {
-      const selectedEvent = events.find(e => e.id === navigationState.selectedEventId)
+      const selectedEvent = events.find((e) => e.id === navigationState.selectedEventId)
       if (selectedEvent) {
         const timeString = selectedEvent.startDate?.toLocaleTimeString('ja-JP', {
           hour: '2-digit',
-          minute: '2-digit'
+          minute: '2-digit',
         })
         const endTimeString = selectedEvent.endDate?.toLocaleTimeString('ja-JP', {
           hour: '2-digit',
-          minute: '2-digit'
+          minute: '2-digit',
         })
-        announce(`${selectedEvent.title}。${timeString}から${endTimeString}まで。${selectedEvent.description || noDescriptionText}`)
+        announce(
+          `${selectedEvent.title}。${timeString}から${endTimeString}まで。${selectedEvent.description || noDescriptionText}`
+        )
       }
     }
   }

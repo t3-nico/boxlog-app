@@ -28,7 +28,7 @@ export function pixelsToTime(pixels: number, baseDate: Date, hourHeight: number 
   const totalMinutes = (pixels * 60) / hourHeight
   const hours = Math.floor(totalMinutes / 60)
   const minutes = Math.floor(totalMinutes % 60)
-  
+
   const result = new Date(baseDate)
   result.setHours(hours, minutes, 0, 0)
   return result
@@ -66,17 +66,17 @@ export function getEventStyle(
   const top = timeToPixels(start, hourHeight)
   const bottom = timeToPixels(end, hourHeight)
   const height = Math.max(bottom - top, 20) // 最小高さ20px
-  
+
   const width = 100 / totalColumns
   const left = (100 / totalColumns) * column
-  
+
   return {
     position: 'absolute',
     top: `${top}px`,
     height: `${height}px`,
     left: `${left}%`,
     width: `${width}%`,
-    zIndex: 10
+    zIndex: 10,
   }
 }
 
@@ -117,7 +117,7 @@ export function roundToQuarterHour(time: Date, direction: 'up' | 'down' | 'neare
   const result = new Date(time)
   const minutes = result.getMinutes()
   const quarterHour = 15
-  
+
   let roundedMinutes: number
   if (direction === 'up') {
     roundedMinutes = Math.ceil(minutes / quarterHour) * quarterHour
@@ -126,13 +126,13 @@ export function roundToQuarterHour(time: Date, direction: 'up' | 'down' | 'neare
   } else {
     roundedMinutes = Math.round(minutes / quarterHour) * quarterHour
   }
-  
+
   if (roundedMinutes === 60) {
     result.setHours(result.getHours() + 1, 0, 0, 0)
   } else {
     result.setMinutes(roundedMinutes, 0, 0)
   }
-  
+
   return result
 }
 

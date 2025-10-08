@@ -107,17 +107,21 @@ export const EmailConfigSchema = z.object({
  */
 export const ExternalApisSchema = z.object({
   /** OpenAI設定 */
-  openai: z.object({
-    apiKey: z.string().optional(),
-    model: z.string().default('gpt-3.5-turbo'),
-    maxTokens: z.number().int().min(1).max(4000).default(1000),
-    temperature: z.number().min(0).max(2).default(0.7),
-  }).optional(),
+  openai: z
+    .object({
+      apiKey: z.string().optional(),
+      model: z.string().default('gpt-3.5-turbo'),
+      maxTokens: z.number().int().min(1).max(4000).default(1000),
+      temperature: z.number().min(0).max(2).default(0.7),
+    })
+    .optional(),
   /** Vercel Analytics */
-  vercel: z.object({
-    token: z.string().optional(),
-    projectId: z.string().optional(),
-  }).optional(),
+  vercel: z
+    .object({
+      token: z.string().optional(),
+      projectId: z.string().optional(),
+    })
+    .optional(),
 })
 
 /**

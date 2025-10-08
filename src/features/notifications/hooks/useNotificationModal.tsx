@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, createContext, useContext, ReactNode } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
 import { NotificationModal } from '../components/NotificationModal'
 
@@ -34,7 +34,7 @@ export const NotificationModalProvider = ({ children }: { children: ReactNode })
     close,
     isOpen,
     notificationCount,
-    setNotificationCount
+    setNotificationCount,
   }
 
   return (

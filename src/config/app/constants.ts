@@ -16,5 +16,5 @@ export const LIMITS = {
 
 export const TIMEOUTS = {
   apiRequest: 10000, // 10秒
-  autoSave: 3000,    // 3秒
+  autoSave: 3000, // 3秒
 } as const

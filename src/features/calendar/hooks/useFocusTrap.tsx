@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
-import { useRef, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 interface FocusTrapOptions {
   enabled: boolean
@@ -45,7 +45,7 @@ const FOCUSABLE_SELECTORS = [
   '[role="checkbox"]',
   '[role="tab"]',
   '[role="switch"]',
-  '[role="textbox"]'
+  '[role="textbox"]',
 ].join(',')
 
 // 要素がフォーカス可能かどうかを判定
@@ -75,7 +75,7 @@ function isFocusable(element: HTMLElement): boolean {
 // 要素が表示されているかを判定
 function isVisible(element: HTMLElement): boolean {
   const style = window.getComputedStyle(element)
-  
+
   if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
     return false
   }
@@ -87,19 +87,19 @@ function isVisible(element: HTMLElement): boolean {
 // コンテナ内のフォーカス可能な要素を取得
 function getFocusableElements(container: HTMLElement): FocusableElement[] {
   const elements = Array.from(container.querySelectorAll(FOCUSABLE_SELECTORS)) as HTMLElement[]
-  
+
   return elements
-    .filter(element => isFocusable(element) && isVisible(element))
-    .map(element => ({
+    .filter((element) => isFocusable(element) && isVisible(element))
+    .map((element) => ({
       element,
-      tabIndex: parseInt(element.getAttribute('tabindex') || '0', 10)
+      tabIndex: parseInt(element.getAttribute('tabindex') || '0', 10),
     }))
     .sort((a, b) => {
       // tabindex順でソート（0と正数は文書順、負数は無視）
       if (a.tabIndex < 0 && b.tabIndex >= 0) return 1
       if (b.tabIndex < 0 && a.tabIndex >= 0) return -1
       if (a.tabIndex !== b.tabIndex) return a.tabIndex - b.tabIndex
-      
+
       // 同じtabindexの場合は文書順
       return a.element.compareDocumentPosition(b.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
     })
@@ -188,22 +188,28 @@ export function useFocusTrap(options: FocusTrapOptions) {
   }, [])
 
   // Escape キーの処理
-  const handleEscapeKey = useCallback((event: KeyboardEvent) => {
-    if (!isActive.current || !options.escapeDeactivates || event.key !== 'Escape') return
-    
-    event.preventDefault()
-    deactivate()
-  }, [options.escapeDeactivates, deactivate])
+  const handleEscapeKey = useCallback(
+    (event: KeyboardEvent) => {
+      if (!isActive.current || !options.escapeDeactivates || event.key !== 'Escape') return
+
+      event.preventDefault()
+      deactivate()
+    },
+    [options.escapeDeactivates, deactivate]
+  )
 
   // 外部クリックの処理
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (!isActive.current || !options.clickOutsideDeactivates || !containerRef.current) return
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (!isActive.current || !options.clickOutsideDeactivates || !containerRef.current) return
 
-    const target = event.target as Node
-    if (!containerRef.current.contains(target)) {
-      deactivate()
-    }
-  }, [options.clickOutsideDeactivates, deactivate])
+      const target = event.target as Node
+      if (!containerRef.current.contains(target)) {
+        deactivate()
+      }
+    },
+    [options.clickOutsideDeactivates, deactivate]
+  )
 
   // フォーカスが外部に移動した場合の処理
   const handleFocusOut = useCallback((_event: FocusEvent) => {
@@ -212,7 +218,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
     // フォーカスが完全に外部に移動したかを確認
     setTimeout(() => {
       const activeElement = document.activeElement as HTMLElement
-      
+
       if (!activeElement || !containerRef.current?.contains(activeElement)) {
         // フォーカスを最初の要素に戻す
         const focusableElements = getFocusableElements(containerRef.current!)
@@ -291,9 +297,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
     if (!containerRef.current) return false
 
     const focusableElements = getFocusableElements(containerRef.current)
-    const currentIndex = focusableElements.findIndex(
-      ({ element }) => element === document.activeElement
-    )
+    const currentIndex = focusableElements.findIndex(({ element }) => element === document.activeElement)
 
     if (currentIndex >= 0 && currentIndex < focusableElements.length - 1) {
       const nextElement = focusableElements[currentIndex + 1]
@@ -315,9 +319,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
     if (!containerRef.current) return false
 
     const focusableElements = getFocusableElements(containerRef.current)
-    const currentIndex = focusableElements.findIndex(
-      ({ element }) => element === document.activeElement
-    )
+    const currentIndex = focusableElements.findIndex(({ element }) => element === document.activeElement)
 
     if (currentIndex > 0) {
       const prevElement = focusableElements[currentIndex - 1]
@@ -342,20 +344,18 @@ export function useFocusTrap(options: FocusTrapOptions) {
         elements: [],
         count: 0,
         currentIndex: -1,
-        hasElements: false
+        hasElements: false,
       }
     }
 
     const focusableElements = getFocusableElements(containerRef.current)
-    const currentIndex = focusableElements.findIndex(
-      ({ element }) => element === document.activeElement
-    )
+    const currentIndex = focusableElements.findIndex(({ element }) => element === document.activeElement)
 
     return {
       elements: focusableElements,
       count: focusableElements.length,
       currentIndex,
-      hasElements: focusableElements.length > 0
+      hasElements: focusableElements.length > 0,
     }
   }, [])
 
@@ -368,7 +368,7 @@ export function useFocusTrap(options: FocusTrapOptions) {
     focusLast,
     focusNext,
     focusPrevious,
-    getFocusableInfo
+    getFocusableInfo,
   }
 }
 
@@ -394,7 +394,7 @@ export const FocusTrap = ({
   clickOutsideDeactivates = true,
   escapeDeactivates = true,
   onActivate,
-  onDeactivate
+  onDeactivate,
 }: FocusTrapProps) => {
   const { containerRef } = useFocusTrap({
     enabled,
@@ -404,15 +404,11 @@ export const FocusTrap = ({
     escapeDeactivates,
     returnFocusOnDeactivate: restoreFocus,
     onActivate,
-    onDeactivate
+    onDeactivate,
   })
 
   return (
-    <div
-      ref={containerRef}
-      className={className}
-      data-focus-trap={enabled ? 'active' : 'inactive'}
-    >
+    <div ref={containerRef} className={className} data-focus-trap={enabled ? 'active' : 'inactive'}>
       {children}
     </div>
   )

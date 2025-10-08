@@ -225,8 +225,11 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
                   <div className="truncate font-medium text-gray-900 dark:text-white">
                     {item.title || item.name || `Item ${index + 1}`}
                   </div>
-                  {item.status ? <div className="mt-1 text-gray-500 dark:text-gray-400">Status: {item.status}</div> : null}
-                  {item.tags && item.tags.length > 0 ? <div className="mt-1 flex flex-wrap gap-1">
+                  {item.status ? (
+                    <div className="mt-1 text-gray-500 dark:text-gray-400">Status: {item.status}</div>
+                  ) : null}
+                  {item.tags && item.tags.length > 0 ? (
+                    <div className="mt-1 flex flex-wrap gap-1">
                       {item.tags.slice(0, 3).map((tag: string, _tagIndex: number) => (
                         <span
                           key={`tag-${tag}`}
@@ -238,7 +241,8 @@ export const RulePreview = ({ rules, items }: RulePreviewProps) => {
                       {item.tags.length > 3 && (
                         <span className="text-xs text-gray-500 dark:text-gray-400">+{item.tags.length - 3} more</span>
                       )}
-                    </div> : null}
+                    </div>
+                  ) : null}
                 </div>
               ))}
 

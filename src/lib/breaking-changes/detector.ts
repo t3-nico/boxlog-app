@@ -8,7 +8,7 @@
 
 import { execSync } from 'child_process'
 
-import type { ImpactLevel, AffectedGroup } from './types'
+import type { AffectedGroup, ImpactLevel } from './types'
 
 /**
  * 🔍 変更検知結果
@@ -45,10 +45,7 @@ export class BreakingChangeDetector {
   /**
    * 📊 Git diff から破壊的変更を検知
    */
-  async detectFromGitDiff(
-    fromCommit: string = 'HEAD~1',
-    toCommit: string = 'HEAD'
-  ): Promise<DetectedChange[]> {
+  async detectFromGitDiff(fromCommit: string = 'HEAD~1', toCommit: string = 'HEAD'): Promise<DetectedChange[]> {
     try {
       // Git diff の取得
       const diffOutput = execSync(`git diff ${fromCommit}..${toCommit} --name-status`, {
@@ -71,7 +68,7 @@ export class BreakingChangeDetector {
         }
       }
 
-      return detectedChanges.filter(change => change.isBreaking)
+      return detectedChanges.filter((change) => change.isBreaking)
     } catch (error) {
       console.error('Git diff analysis failed:', error)
       return []
@@ -318,13 +315,13 @@ export class BreakingChangeDetector {
    */
   private matchesPattern(filePath: string, diff: string, pattern: DetectionPattern): boolean {
     // ファイルパスのマッチング
-    const fileMatches = pattern.filePatterns.some(filePattern => filePattern.test(filePath))
+    const fileMatches = pattern.filePatterns.some((filePattern) => filePattern.test(filePath))
     if (!fileMatches) {
       return false
     }
 
     // Diff内容のマッチング
-    return pattern.diffPatterns.some(diffPattern => diffPattern.test(diff))
+    return pattern.diffPatterns.some((diffPattern) => diffPattern.test(diff))
   }
 
   /**
@@ -340,11 +337,16 @@ export class BreakingChangeDetector {
    */
   private mapGitStatusToChangeType(status: string): 'added' | 'modified' | 'deleted' | 'renamed' {
     switch (status) {
-      case 'A': return 'added'
-      case 'M': return 'modified'
-      case 'D': return 'deleted'
-      case 'R': return 'renamed'
-      default: return 'modified'
+      case 'A':
+        return 'added'
+      case 'M':
+        return 'modified'
+      case 'D':
+        return 'deleted'
+      case 'R':
+        return 'renamed'
+      default:
+        return 'modified'
     }
   }
 
@@ -354,8 +356,8 @@ export class BreakingChangeDetector {
   private parseGitDiffOutput(diffOutput: string): Array<{ path: string; status: string }> {
     return diffOutput
       .split('\n')
-      .filter(line => line.trim())
-      .map(line => {
+      .filter((line) => line.trim())
+      .map((line) => {
         const [status, path] = line.split('\t')
         return { path, status }
       })
@@ -365,7 +367,7 @@ export class BreakingChangeDetector {
    * 📋 検知結果のフィルタリング
    */
   filterByConfidence(changes: DetectedChange[], minConfidence: number = 0.7): DetectedChange[] {
-    return changes.filter(change => change.confidence >= minConfidence)
+    return changes.filter((change) => change.confidence >= minConfidence)
   }
 
   /**
@@ -378,7 +380,10 @@ export class BreakingChangeDetector {
     averageConfidence: number
   } {
     const byImpact: Record<ImpactLevel, number> = {
-      low: 0, medium: 0, high: 0, critical: 0
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
     }
 
     let totalConfidence = 0
@@ -386,7 +391,7 @@ export class BreakingChangeDetector {
     let mediumConfidence = 0
     let lowConfidence = 0
 
-    changes.forEach(change => {
+    changes.forEach((change) => {
       byImpact[change.suggestedImpact]++
       totalConfidence += change.confidence
 

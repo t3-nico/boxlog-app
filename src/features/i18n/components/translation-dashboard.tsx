@@ -8,17 +8,7 @@
 
 import { useEffect, useState } from 'react'
 
-import {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
-  Globe,
-  TrendingUp,
-  Download,
-  Eye,
-  Edit
-} from 'lucide-react'
+import { AlertTriangle, CheckCircle, Clock, Download, Edit, Eye, FileText, Globe, TrendingUp } from 'lucide-react'
 // Note: recharts is not installed - commenting out chart imports
 // import {
 //   BarChart,
@@ -146,9 +136,9 @@ export default function TranslationDashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-neutral-100 dark:bg-neutral-900">
+      <div className="flex min-h-screen items-center justify-center bg-neutral-100 dark:bg-neutral-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="text-neutral-800 dark:text-neutral-200">翻訳データを読み込み中...</p>
         </div>
       </div>
@@ -157,38 +147,32 @@ export default function TranslationDashboard() {
 
   if (!report) {
     return (
-      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 p-6">
+      <div className="min-h-screen bg-neutral-100 p-6 dark:bg-neutral-900">
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>データ読み込みエラー</AlertTitle>
-          <AlertDescription>
-            翻訳データの読み込みに失敗しました。ページを再読み込みしてください。
-          </AlertDescription>
+          <AlertDescription>翻訳データの読み込みに失敗しました。ページを再読み込みしてください。</AlertDescription>
         </Alert>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-900 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-neutral-100 p-6 dark:bg-neutral-900">
+      <div className="mx-auto max-w-7xl space-y-6">
         {/* ヘッダー */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">
-              翻訳進捗ダッシュボード
-            </h1>
-            <p className="text-neutral-800 dark:text-neutral-200">
-              BoxLogアプリケーションの多言語化進捗状況
-            </p>
+            <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">翻訳進捗ダッシュボード</h1>
+            <p className="text-neutral-800 dark:text-neutral-200">BoxLogアプリケーションの多言語化進捗状況</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={handleExportJSON} variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               JSON
             </Button>
             <Button onClick={handleExportCSV} variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               CSV
             </Button>
             <Button onClick={loadTranslationData} variant="outline" size="sm">
@@ -198,38 +182,48 @@ export default function TranslationDashboard() {
         </div>
 
         {/* ヘルスアラート */}
-        {health && health.errors.length > 0 ? <Alert variant="destructive">
+        {health && health.errors.length > 0 ? (
+          <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>緊急対応が必要</AlertTitle>
             <AlertDescription>
               {health.errors.map((error, index) => (
-                <div key={index} className="mb-1">{error}</div>
+                <div key={index} className="mb-1">
+                  {error}
+                </div>
               ))}
             </AlertDescription>
-          </Alert> : null}
+          </Alert>
+        ) : null}
 
-        {health && health.warnings.length > 0 ? <Alert>
+        {health && health.warnings.length > 0 ? (
+          <Alert>
             <Clock className="h-4 w-4" />
             <AlertTitle>注意事項</AlertTitle>
             <AlertDescription>
               {health.warnings.map((warning, index) => (
-                <div key={index} className="mb-1">{warning}</div>
+                <div key={index} className="mb-1">
+                  {warning}
+                </div>
               ))}
             </AlertDescription>
-          </Alert> : null}
+          </Alert>
+        ) : null}
 
         {/* 概要カード */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">サポート言語</CardTitle>
-              <Globe className="h-4 w-4 text-muted-foreground" />
+              <Globe className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{report.overview.supportedLanguages.length}</div>
-              <div className="flex flex-wrap gap-1 mt-2">
-                {report.overview.supportedLanguages.map(lang => (
-                  <Badge key={lang} variant="secondary">{lang.toUpperCase()}</Badge>
+              <div className="mt-2 flex flex-wrap gap-1">
+                {report.overview.supportedLanguages.map((lang) => (
+                  <Badge key={lang} variant="secondary">
+                    {lang.toUpperCase()}
+                  </Badge>
                 ))}
               </div>
             </CardContent>
@@ -238,44 +232,35 @@ export default function TranslationDashboard() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">総キー数</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <FileText className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{report.overview.totalKeys}</div>
-              <p className="text-xs text-muted-foreground">
-                翻訳対象キーの総数
-              </p>
+              <p className="text-muted-foreground text-xs">翻訳対象キーの総数</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">全体完了率</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <TrendingUp className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {report.overview.globalCompletionRate.toFixed(1)}%
-              </div>
-              <Progress
-                value={report.overview.globalCompletionRate}
-                className="mt-2"
-              />
+              <div className="text-2xl font-bold">{report.overview.globalCompletionRate.toFixed(1)}%</div>
+              <Progress value={report.overview.globalCompletionRate} className="mt-2" />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">レビュー待ち</CardTitle>
-              <Eye className="h-4 w-4 text-muted-foreground" />
+              <Eye className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {Object.values(report.reviewQueue).reduce((sum, queue) => sum + queue.length, 0)}
               </div>
-              <p className="text-xs text-muted-foreground">
-                レビュー待ちキー数
-              </p>
+              <p className="text-muted-foreground text-xs">レビュー待ちキー数</p>
             </CardContent>
           </Card>
         </div>
@@ -291,7 +276,7 @@ export default function TranslationDashboard() {
           </TabsList>
 
           <TabsContent value="overview">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* 完了率チャート */}
               <Card>
                 <CardHeader>
@@ -300,7 +285,7 @@ export default function TranslationDashboard() {
                 </CardHeader>
                 <CardContent>
                   {/* TODO: Install recharts package to enable charts */}
-                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  <div className="text-muted-foreground flex h-[300px] items-center justify-center">
                     <p>Chart visualization (recharts package required)</p>
                   </div>
                   {/* <ResponsiveContainer width="100%" height={300}>
@@ -323,7 +308,7 @@ export default function TranslationDashboard() {
                 </CardHeader>
                 <CardContent>
                   {/* TODO: Install recharts package to enable charts */}
-                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  <div className="text-muted-foreground flex h-[300px] items-center justify-center">
                     <p>Pie chart visualization (recharts package required)</p>
                   </div>
                   {/* <ResponsiveContainer width="100%" height={300}>
@@ -372,42 +357,32 @@ export default function TranslationDashboard() {
                         <Badge variant="outline">{progress.language.toUpperCase()}</Badge>
                         言語進捗詳細
                       </CardTitle>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-muted-foreground text-sm">
                         最終更新: {progress.lastUpdated.toLocaleDateString()}
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">
-                          {progress.completedKeys}
-                        </div>
-                        <p className="text-sm text-muted-foreground">完了</p>
+                        <div className="text-2xl font-bold text-green-600">{progress.completedKeys}</div>
+                        <p className="text-muted-foreground text-sm">完了</p>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-yellow-600">
-                          {progress.partialKeys}
-                        </div>
-                        <p className="text-sm text-muted-foreground">部分的</p>
+                        <div className="text-2xl font-bold text-yellow-600">{progress.partialKeys}</div>
+                        <p className="text-muted-foreground text-sm">部分的</p>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-red-600">
-                          {progress.missingKeys}
-                        </div>
-                        <p className="text-sm text-muted-foreground">欠落</p>
+                        <div className="text-2xl font-bold text-red-600">{progress.missingKeys}</div>
+                        <p className="text-muted-foreground text-sm">欠落</p>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">
-                          {progress.reviewedKeys}
-                        </div>
-                        <p className="text-sm text-muted-foreground">レビュー済み</p>
+                        <div className="text-2xl font-bold text-blue-600">{progress.reviewedKeys}</div>
+                        <p className="text-muted-foreground text-sm">レビュー済み</p>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-orange-600">
-                          {progress.pendingReviewKeys}
-                        </div>
-                        <p className="text-sm text-muted-foreground">レビュー待ち</p>
+                        <div className="text-2xl font-bold text-orange-600">{progress.pendingReviewKeys}</div>
+                        <p className="text-muted-foreground text-sm">レビュー待ち</p>
                       </div>
                     </div>
                     <div className="mt-4 space-y-2">
@@ -440,33 +415,26 @@ export default function TranslationDashboard() {
                   </CardHeader>
                   <CardContent>
                     {keys.length === 0 ? (
-                      <div className="text-center py-4 text-muted-foreground">
-                        <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                      <div className="text-muted-foreground py-4 text-center">
+                        <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
                         すべての翻訳が完了しています
                       </div>
                     ) : (
-                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                      <div className="max-h-60 space-y-2 overflow-y-auto">
                         {keys.slice(0, 20).map((key) => (
-                          <div
-                            key={key.key}
-                            className="flex items-center justify-between p-2 border rounded"
-                          >
+                          <div key={key.key} className="flex items-center justify-between rounded border p-2">
                             <div>
-                              <code className="text-sm font-mono">{key.key}</code>
-                              <div className="text-xs text-muted-foreground">
-                                {key.path.join(' → ')}
-                              </div>
+                              <code className="font-mono text-sm">{key.key}</code>
+                              <div className="text-muted-foreground text-xs">{key.path.join(' → ')}</div>
                             </div>
                             <Button size="sm" variant="outline">
-                              <Edit className="w-3 h-3 mr-1" />
+                              <Edit className="mr-1 h-3 w-3" />
                               翻訳
                             </Button>
                           </div>
                         ))}
                         {keys.length > 20 && (
-                          <p className="text-sm text-muted-foreground text-center">
-                            他 {keys.length - 20} 件...
-                          </p>
+                          <p className="text-muted-foreground text-center text-sm">他 {keys.length - 20} 件...</p>
                         )}
                       </div>
                     )}
@@ -488,41 +456,34 @@ export default function TranslationDashboard() {
                   </CardHeader>
                   <CardContent>
                     {keys.length === 0 ? (
-                      <div className="text-center py-4 text-muted-foreground">
-                        <CheckCircle className="h-8 w-8 mx-auto mb-2 text-green-500" />
+                      <div className="text-muted-foreground py-4 text-center">
+                        <CheckCircle className="mx-auto mb-2 h-8 w-8 text-green-500" />
                         レビュー待ちの項目はありません
                       </div>
                     ) : (
-                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                      <div className="max-h-60 space-y-2 overflow-y-auto">
                         {keys.slice(0, 10).map((key) => (
-                          <div
-                            key={key.key}
-                            className="flex items-center justify-between p-2 border rounded"
-                          >
+                          <div key={key.key} className="flex items-center justify-between rounded border p-2">
                             <div className="flex-1">
-                              <code className="text-sm font-mono">{key.key}</code>
-                              <div className="text-xs text-muted-foreground">
-                                {key.value}
-                              </div>
+                              <code className="font-mono text-sm">{key.key}</code>
+                              <div className="text-muted-foreground text-xs">{key.value}</div>
                               <Badge
                                 variant={key.reviewStatus === 'needs_review' ? 'destructive' : 'secondary'}
-                                className="text-xs mt-1"
+                                className="mt-1 text-xs"
                               >
                                 {key.reviewStatus}
                               </Badge>
                             </div>
                             <div className="flex gap-2">
                               <Button size="sm" variant="outline">
-                                <Eye className="w-3 h-3 mr-1" />
+                                <Eye className="mr-1 h-3 w-3" />
                                 レビュー
                               </Button>
                             </div>
                           </div>
                         ))}
                         {keys.length > 10 && (
-                          <p className="text-sm text-muted-foreground text-center">
-                            他 {keys.length - 10} 件...
-                          </p>
+                          <p className="text-muted-foreground text-center text-sm">他 {keys.length - 10} 件...</p>
                         )}
                       </div>
                     )}
@@ -533,7 +494,8 @@ export default function TranslationDashboard() {
           </TabsContent>
 
           <TabsContent value="recommendations">
-            {health ? <div className="space-y-4">
+            {health ? (
+              <div className="space-y-4">
                 {health.recommendations.length > 0 && (
                   <Card>
                     <CardHeader>
@@ -541,15 +503,13 @@ export default function TranslationDashboard() {
                         <TrendingUp className="h-4 w-4" />
                         推奨事項
                       </CardTitle>
-                      <CardDescription>
-                        翻訳プロセス改善のための提案
-                      </CardDescription>
+                      <CardDescription>翻訳プロセス改善のための提案</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2">
                         {health.recommendations.map((recommendation, index) => (
                           <li key={index} className="flex items-start gap-2">
-                            <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                            <div className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"></div>
                             <span>{recommendation}</span>
                           </li>
                         ))}
@@ -563,18 +523,18 @@ export default function TranslationDashboard() {
                     <CardTitle>翻訳効率化のベストプラクティス</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <div>
-                        <h4 className="font-medium mb-2">自動化ツール</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
+                        <h4 className="mb-2 font-medium">自動化ツール</h4>
+                        <ul className="text-muted-foreground space-y-1 text-sm">
                           <li>• DeepL API / Google Translate API</li>
                           <li>• 翻訳管理システム (Crowdin, Lokalise)</li>
                           <li>• 自動翻訳キー検出</li>
                         </ul>
                       </div>
                       <div>
-                        <h4 className="font-medium mb-2">品質管理</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
+                        <h4 className="mb-2 font-medium">品質管理</h4>
+                        <ul className="text-muted-foreground space-y-1 text-sm">
                           <li>• ネイティブレビュアーによる校正</li>
                           <li>• A/Bテストでの文言検証</li>
                           <li>• 継続的なフィードバック収集</li>
@@ -583,7 +543,8 @@ export default function TranslationDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-              </div> : null}
+              </div>
+            ) : null}
           </TabsContent>
         </Tabs>
       </div>
@@ -596,7 +557,7 @@ const mockTranslationReport: TranslationReport = {
   overview: {
     supportedLanguages: ['en', 'ja'],
     totalKeys: 245,
-    globalCompletionRate: 87.5
+    globalCompletionRate: 87.5,
   },
   languageProgress: [
     {
@@ -609,7 +570,7 @@ const mockTranslationReport: TranslationReport = {
       pendingReviewKeys: 15,
       completionRate: 100,
       reviewRate: 93.9,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     },
     {
       language: 'ja',
@@ -621,8 +582,8 @@ const mockTranslationReport: TranslationReport = {
       pendingReviewKeys: 50,
       completionRate: 77.6,
       reviewRate: 67.3,
-      lastUpdated: new Date()
-    }
+      lastUpdated: new Date(),
+    },
   ],
   missingTranslations: {
     ja: [
@@ -631,9 +592,9 @@ const mockTranslationReport: TranslationReport = {
         path: ['features', 'calendar', 'advanced', 'title'],
         value: '',
         status: 'missing',
-        reviewStatus: 'needs_review'
-      }
-    ]
+        reviewStatus: 'needs_review',
+      },
+    ],
   },
   reviewQueue: {
     ja: [
@@ -642,24 +603,21 @@ const mockTranslationReport: TranslationReport = {
         path: ['notifications', 'email', 'template', 'subject'],
         value: 'BoxLogからの通知',
         status: 'complete',
-        reviewStatus: 'pending'
-      }
-    ]
+        reviewStatus: 'pending',
+      },
+    ],
   },
   recentChanges: {
     en: [],
-    ja: []
-  }
+    ja: [],
+  },
 }
 
 const mockTranslationHealth: TranslationHealth = {
-  warnings: [
-    'ja: 完了率が77.6%と低く、30個のキーが欠落しています',
-    'ja: 50個のキーがレビュー待ちです'
-  ],
+  warnings: ['ja: 完了率が77.6%と低く、30個のキーが欠落しています', 'ja: 50個のキーがレビュー待ちです'],
   errors: [],
   recommendations: [
     '自動翻訳ツール（DeepL API等）の活用を検討してください',
-    '翻訳管理システム（Crowdin、Lokalise等）の導入を検討してください'
-  ]
+    '翻訳管理システム（Crowdin、Lokalise等）の導入を検討してください',
+  ],
 }

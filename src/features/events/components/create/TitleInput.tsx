@@ -21,9 +21,12 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
   const [isFocused, setIsFocused] = useState(false)
 
   // jsx-no-bind optimization: Input change handler
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value)
-  }, [onChange])
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(e.target.value)
+    },
+    [onChange]
+  )
 
   // jsx-no-bind optimization: Focus handler
   const handleFocus = useCallback(() => {
@@ -69,7 +72,6 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
   useEffect(() => {
     if (value && onSmartExtract) {
       const smartExtract = () => {
-
         // 日付パターンの検出
         const _datePatterns = [
           new RegExp(`${tomorrowKeyword}|tomorrow`, 'i'),
@@ -112,23 +114,26 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
   }, [value, onSmartExtract])
 
   // jsx-no-bind optimization: Keyboard handler
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    // Enterキーで次のタブに移動
-    if (e.key === 'Enter' && value.trim() && onTabNext) {
-      e.preventDefault()
-      onTabNext()
-      return
-    }
-
-    // ESCでクリア、ダブルESCでモーダル閉じる
-    if (e.key === 'Escape') {
-      if (value) {
-        onChange('')
-        e.stopPropagation()
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      // Enterキーで次のタブに移動
+      if (e.key === 'Enter' && value.trim() && onTabNext) {
+        e.preventDefault()
+        onTabNext()
+        return
       }
-      // 空の場合は親に処理を委譲（モーダルが閉じる）
-    }
-  }, [value, onTabNext, onChange])
+
+      // ESCでクリア、ダブルESCでモーダル閉じる
+      if (e.key === 'Escape') {
+        if (value) {
+          onChange('')
+          e.stopPropagation()
+        }
+        // 空の場合は親に処理を委譲（モーダルが閉じる）
+      }
+    },
+    [value, onTabNext, onChange]
+  )
 
   const _letterVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.8 },
@@ -154,11 +159,11 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
           onKeyDown={handleKeyDown}
           placeholder={t('events.create.title.placeholder')}
           className={cn(
-            "w-full resize-none border-none bg-transparent text-3xl font-semibold leading-tight outline-none",
-            "placeholder:text-neutral-400 dark:placeholder:text-neutral-500",
-            "text-neutral-900 dark:text-neutral-50 pl-3 transition-all duration-300",
-            "md:text-4xl lg:text-5xl",
-            isFocused ? "scale-105 transform" : "scale-100 transform"
+            'w-full resize-none border-none bg-transparent text-3xl leading-tight font-semibold outline-none',
+            'placeholder:text-neutral-400 dark:placeholder:text-neutral-500',
+            'pl-3 text-neutral-900 transition-all duration-300 dark:text-neutral-50',
+            'md:text-4xl lg:text-5xl',
+            isFocused ? 'scale-105 transform' : 'scale-100 transform'
           )}
           style={{
             caretColor: '#3b82f6',
@@ -176,7 +181,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
               transition={{ duration: 0.3 }}
               className="pointer-events-none absolute inset-0"
             >
-              <span className="text-3xl font-semibold leading-tight text-neutral-400 md:text-4xl lg:text-5xl dark:text-neutral-500">
+              <span className="text-3xl leading-tight font-semibold text-neutral-400 md:text-4xl lg:text-5xl dark:text-neutral-500">
                 {t('events.create.title.placeholder')}
               </span>
             </motion.div>
@@ -212,10 +217,8 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             className={cn(
-              "absolute -bottom-8 right-0 text-sm",
-              value.length > 100
-                ? "text-amber-600 dark:text-amber-400"
-                : "text-neutral-600 dark:text-neutral-400"
+              'absolute right-0 -bottom-8 text-sm',
+              value.length > 100 ? 'text-amber-600 dark:text-amber-400' : 'text-neutral-600 dark:text-neutral-400'
             )}
           >
             {t('events.create.charCount', { count: value.length })}
@@ -230,7 +233,7 @@ export const TitleInput = ({ value, onChange, onSmartExtract, onTabNext, autoFoc
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className="absolute -right-2 -top-2 h-3 w-3 rounded-full bg-green-500"
+            className="absolute -top-2 -right-2 h-3 w-3 rounded-full bg-green-500"
           >
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}

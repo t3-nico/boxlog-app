@@ -29,18 +29,15 @@ export async function GET(request: NextRequest) {
       return new NextResponse(csvData, {
         headers: {
           'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="translation-progress-${new Date().toISOString().split('T')[0]}.csv"`
-        }
+          'Content-Disposition': `attachment; filename="translation-progress-${new Date().toISOString().split('T')[0]}.csv"`,
+        },
       })
     }
 
     return NextResponse.json(report)
   } catch (error) {
     console.error('翻訳レポート生成エラー:', error)
-    return NextResponse.json(
-      { error: '翻訳レポートの生成に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '翻訳レポートの生成に失敗しました' }, { status: 500 })
   }
 }
 
@@ -61,16 +58,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true })
 
       default:
-        return NextResponse.json(
-          { error: '無効なアクションです' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: '無効なアクションです' }, { status: 400 })
     }
   } catch (error) {
     console.error('翻訳データ更新エラー:', error)
-    return NextResponse.json(
-      { error: '翻訳データの更新に失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '翻訳データの更新に失敗しました' }, { status: 500 })
   }
 }

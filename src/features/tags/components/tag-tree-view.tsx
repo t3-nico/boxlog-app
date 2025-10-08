@@ -155,7 +155,7 @@ const TagTreeNode = ({
               onChange={handleEditNameChange}
               onBlur={handleSaveEdit}
               onKeyDown={handleKeyDown}
-              className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-700"
+              className="w-full rounded border border-blue-500 bg-white px-2 py-1 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none dark:bg-gray-700"
             />
           ) : (
             <button
@@ -198,7 +198,7 @@ const TagTreeNode = ({
 
             {/* コンテキストメニュー */}
             {showMenu != null && (
-              <div className="absolute right-0 top-full z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+              <div className="absolute top-full right-0 z-10 mt-1 min-w-[120px] rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
                 <button
                   type="button"
                   onClick={handleEditTag}
@@ -312,7 +312,9 @@ export const TagTreeView = ({
     <div className="space-y-1">
       {/* ヘッダー */}
       <div className="flex items-center justify-between border-b border-gray-200 px-3 py-2 dark:border-gray-700">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-white">{t('tags.messages.tagList')} ({tags.length})</h3>
+        <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+          {t('tags.messages.tagList')} ({tags.length})
+        </h3>
         <button
           type="button"
           onClick={handleCreateRootTag}

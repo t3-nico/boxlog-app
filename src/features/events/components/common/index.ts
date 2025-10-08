@@ -1,3 +1,3 @@
 // 共通UIコンポーネント
-export { EventTypeBadge } from './EventTypeBadge'
 export { EventStatusChip } from './EventStatusChip'
+export { EventTypeBadge } from './EventTypeBadge'

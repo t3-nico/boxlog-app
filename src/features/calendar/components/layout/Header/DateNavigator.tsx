@@ -66,7 +66,12 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('prev')}
-            className={cn('rounded-full p-1.5 transition-colors', 'hover:bg-neutral-300 dark:hover:bg-neutral-600', 'text-neutral-600 dark:text-neutral-400', 'hover:text-neutral-900 dark:hover:text-neutral-50')}
+            className={cn(
+              'rounded-full p-1.5 transition-colors',
+              'hover:bg-neutral-300 dark:hover:bg-neutral-600',
+              'text-neutral-600 dark:text-neutral-400',
+              'hover:text-neutral-900 dark:hover:text-neutral-50'
+            )}
             title="Previous period"
             aria-label="Previous"
           >
@@ -75,7 +80,12 @@ export const DateNavigator = ({
           <button
             type="button"
             onClick={() => onNavigate('next')}
-            className={cn('rounded-full p-1.5 transition-colors', 'hover:bg-neutral-300 dark:hover:bg-neutral-600', 'text-neutral-600 dark:text-neutral-400', 'hover:text-neutral-900 dark:hover:text-neutral-50')}
+            className={cn(
+              'rounded-full p-1.5 transition-colors',
+              'hover:bg-neutral-300 dark:hover:bg-neutral-600',
+              'text-neutral-600 dark:text-neutral-400',
+              'hover:text-neutral-900 dark:hover:text-neutral-50'
+            )}
             title="Next period"
             aria-label="Next"
           >

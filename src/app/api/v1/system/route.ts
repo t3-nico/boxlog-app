@@ -8,7 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { processApiRequest, getApiStats } from '@/lib/api/middleware'
+import { getApiStats, processApiRequest } from '@/lib/api/middleware'
 import type { ApiRequest } from '@/lib/api/versioning'
 import { API_VERSIONS } from '@/lib/api/versioning'
 

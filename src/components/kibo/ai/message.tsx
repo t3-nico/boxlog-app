@@ -1,11 +1,11 @@
-import type { ComponentProps, HTMLAttributes } from 'react';
+import type { ComponentProps, HTMLAttributes } from 'react'
 
-import { Avatar } from '@/components/ui/avatar';
-import { cn } from '@/lib/utils';
+import { Avatar } from '@/components/ui/avatar'
+import { cn } from '@/lib/utils'
 
 export type AIMessageProps = HTMLAttributes<HTMLDivElement> & {
-  from: 'user' | 'assistant';
-};
+  from: 'user' | 'assistant'
+}
 
 export const AIMessage = ({ className, from, ...props }: AIMessageProps) => (
   <div
@@ -17,15 +17,11 @@ export const AIMessage = ({ className, from, ...props }: AIMessageProps) => (
     )}
     {...props}
   />
-);
+)
 
-export type AIMessageContentProps = HTMLAttributes<HTMLDivElement>;
+export type AIMessageContentProps = HTMLAttributes<HTMLDivElement>
 
-export const AIMessageContent = ({
-  children,
-  className,
-  ...props
-}: AIMessageContentProps) => (
+export const AIMessageContent = ({ children, className, ...props }: AIMessageContentProps) => (
   <div
     className={cn(
       'flex flex-col gap-2 rounded-lg px-4 py-3 text-sm',
@@ -37,23 +33,13 @@ export const AIMessageContent = ({
   >
     <div className="is-user:dark">{children}</div>
   </div>
-);
+)
 
 export type AIMessageAvatarProps = ComponentProps<typeof Avatar> & {
-  src?: string;
-  name?: string;
-};
+  src?: string
+  name?: string
+}
 
-export const AIMessageAvatar = ({
-  src,
-  name,
-  className,
-  ...props
-}: AIMessageAvatarProps) => (
-  <Avatar
-    src={src}
-    initials={name?.slice(0, 2) || 'ME'}
-    className={cn('size-8', className)}
-    {...props}
-  />
-);
+export const AIMessageAvatar = ({ src, name, className, ...props }: AIMessageAvatarProps) => (
+  <Avatar src={src} initials={name?.slice(0, 2) || 'ME'} className={cn('size-8', className)} {...props} />
+)

@@ -63,7 +63,7 @@ export interface CurrentTimeLineProps {
   showDot?: boolean // 現在時刻のドットを表示するか
   updateInterval?: number // 更新間隔（ミリ秒）
   // 複数日ビュー用の新しいProps
-  displayDates?: Date[]  // 表示している日付の配列
+  displayDates?: Date[] // 表示している日付の配列
   viewMode?: 'day' | '3day' | 'week' | '2week'
 }
 
@@ -73,11 +73,11 @@ export interface TimeRange {
 }
 
 export interface TimeSlot {
-  time: string        // "09:15"
-  hour: number        // 9
-  minute: number      // 15
-  label: string       // "9:00" または "09:15"
-  isHour: boolean     // true if 正時(00分)
+  time: string // "09:15"
+  hour: number // 9
+  minute: number // 15
+  label: string // "9:00" または "09:15"
+  isHour: boolean // true if 正時(00分)
   isHalfHour: boolean // true if 30分
   isQuarterHour: boolean // true if 15分または45分
 }

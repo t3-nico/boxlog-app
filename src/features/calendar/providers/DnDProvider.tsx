@@ -10,9 +10,5 @@ interface DnDProviderProps {
 }
 
 export const DnDProvider = ({ children }: DnDProviderProps) => {
-  return (
-    <DndProvider backend={HTML5Backend}>
-      {children}
-    </DndProvider>
-  )
+  return <DndProvider backend={HTML5Backend}>{children}</DndProvider>
 }

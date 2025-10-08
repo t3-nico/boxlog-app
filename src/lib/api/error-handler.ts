@@ -3,10 +3,10 @@
  * API エラーハンドリング統合システム
  * tRPC・Zod・エラーパターン辞書の統合エラー処理
  */
+import { type AppError } from '@/config/error-patterns'
+import { trackError } from '@/lib/analytics/vercel-analytics'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { ERROR_CODES, type AppError } from '@/config/error-patterns'
-import { trackError } from '@/lib/analytics/vercel-analytics'
 import { safeJsonStringify } from './json-utils'
 /**
  * APIエラーレスポンス型
@@ -147,9 +147,7 @@ export function translateZodError(error: z.ZodError): {
     }
   })
   const primaryError = details[0]
-  const summary = details.length === 1
-    ? primaryError.message
-    : `入力内容に${details.length}件の問題があります`
+  const summary = details.length === 1 ? primaryError.message : `入力内容に${details.length}件の問題があります`
   return {
     message: summary,
     details,
@@ -297,10 +295,7 @@ export class APIErrorHandler {
   /**
    * 成功レスポンスを生成
    */
-  static createSuccessResponse<T>(
-    data: T,
-    requestId?: string
-  ): APISuccessResponse<T> {
+  static createSuccessResponse<T>(data: T, requestId?: string): APISuccessResponse<T> {
     return {
       success: true,
       data,
@@ -354,10 +349,16 @@ export function useErrorHandler() {
   const handleError = (error: unknown, context?: { operation?: string }) => {
     const errorResponse = APIErrorHandler.handleError(error, context)
     // エラーログの出力（安全なJSON処理）
-    console.error('API Error:', safeJsonStringify({
-      ...errorResponse.error,
-      context,
-    }, 2))
+    console.error(
+      'API Error:',
+      safeJsonStringify(
+        {
+          ...errorResponse.error,
+          context,
+        },
+        2
+      )
+    )
     return errorResponse
   }
   const handleZodError = (error: z.ZodError) => {

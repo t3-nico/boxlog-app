@@ -16,38 +16,41 @@ src/types/task/
 ## 🎯 各ファイルの役割
 
 ### core.ts（基本型）
+
 ```typescript
 import type {
-  Task,              // 基本タスク型（BaseTaskのエイリアス）
-  TaskType,          // 'feature' | 'bug' | 'improvement' | ...
-  TaskLabel,         // ラベル情報
-  TaskComment,       // コメント
-  TaskAttachment,    // 添付ファイル
-  TaskTimeEntry,     // 時間追跡
-  TaskHistory,       // 変更履歴
+  Task, // 基本タスク型（BaseTaskのエイリアス）
+  TaskType, // 'feature' | 'bug' | 'improvement' | ...
+  TaskLabel, // ラベル情報
+  TaskComment, // コメント
+  TaskAttachment, // 添付ファイル
+  TaskTimeEntry, // 時間追跡
+  TaskHistory, // 変更履歴
 } from './task/core'
 ```
 
 ### extended.ts（拡張型）
+
 ```typescript
 import type {
-  TaskDetailed,               // 詳細なプロジェクト管理情報を含むタスク
-  CreateTaskDetailedInput,    // タスク作成入力
-  UpdateTaskDetailedInput,    // タスク更新入力
-  TaskBoard,                  // カンバンボード設定
-  TaskBoardColumn,            // ボードカラム
-  TaskTemplate,               // タスクテンプレート
+  TaskDetailed, // 詳細なプロジェクト管理情報を含むタスク
+  CreateTaskDetailedInput, // タスク作成入力
+  UpdateTaskDetailedInput, // タスク更新入力
+  TaskBoard, // カンバンボード設定
+  TaskBoardColumn, // ボードカラム
+  TaskTemplate, // タスクテンプレート
 } from './task/extended'
 ```
 
 ### operations.ts（操作型）
+
 ```typescript
 import type {
-  TaskFilters,       // フィルター条件
-  TaskSort,          // ソート条件
-  TaskQuery,         // クエリ条件（フィルター + ソート + ページング）
-  TaskListResponse,  // 一覧レスポンス
-  TaskStats,         // 統計情報
+  TaskFilters, // フィルター条件
+  TaskSort, // ソート条件
+  TaskQuery, // クエリ条件（フィルター + ソート + ページング）
+  TaskListResponse, // 一覧レスポンス
+  TaskStats, // 統計情報
 } from './task/operations'
 ```
 
@@ -72,10 +75,7 @@ const task: Task = {
 ### 詳細タスク管理
 
 ```typescript
-import type {
-  TaskDetailed,
-  CreateTaskDetailedInput,
-} from '@/types/task'
+import type { TaskDetailed, CreateTaskDetailedInput } from '@/types/task'
 
 const createInput: CreateTaskDetailedInput = {
   title: '新機能実装',
@@ -86,9 +86,7 @@ const createInput: CreateTaskDetailedInput = {
   createdBy: 'user-1',
   assigneeId: 'user-2',
   estimatedHours: 8,
-  labels: [
-    { id: '1', name: 'Frontend', color: '#3b82f6' },
-  ],
+  labels: [{ id: '1', name: 'Frontend', color: '#3b82f6' }],
   tags: ['TypeScript', 'React'],
 }
 ```
@@ -226,14 +224,14 @@ const bugTemplate: TaskTemplate = {
 
 ## 📝 型の使い分け
 
-| 型 | 用途 |
-|---|---|
-| `Task` | 基本的なタスク表示・一覧 |
+| 型             | 用途                           |
+| -------------- | ------------------------------ |
+| `Task`         | 基本的なタスク表示・一覧       |
 | `TaskDetailed` | 詳細画面・プロジェクト管理機能 |
-| `TaskFilters` | 検索・フィルタリング機能 |
-| `TaskStats` | ダッシュボード・分析画面 |
-| `TaskBoard` | カンバンボード機能 |
-| `TaskTemplate` | タスク作成の効率化 |
+| `TaskFilters`  | 検索・フィルタリング機能       |
+| `TaskStats`    | ダッシュボード・分析画面       |
+| `TaskBoard`    | カンバンボード機能             |
+| `TaskTemplate` | タスク作成の効率化             |
 
 ## 🚨 注意事項
 

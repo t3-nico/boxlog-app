@@ -8,20 +8,20 @@ export const AUTH_CONFIG = {
     REQUIRE_NUMBERS: true,
     REQUIRE_SPECIAL_CHARS: false,
   },
-  
+
   // セッション設定
   SESSION: {
     TIMEOUT: 3600, // 1時間（秒）
     REFRESH_THRESHOLD: 300, // 5分前にリフレッシュ
   },
-  
+
   // レート制限
   RATE_LIMIT: {
     SIGN_UP: 5, // 1時間あたり5回
     SIGN_IN: 10, // 1時間あたり10回
     PASSWORD_RESET: 3, // 1時間あたり3回
   },
-  
+
   // リダイレクトURL
   REDIRECT_URLS: {
     SIGN_IN: '/calendar',
@@ -29,7 +29,7 @@ export const AUTH_CONFIG = {
     SIGN_OUT: '/auth',
     PASSWORD_RESET: '/auth/reset-password',
   },
-  
+
   // エラーメッセージ翻訳キー（Client Componentで t() を使用して翻訳）
   ERROR_MESSAGE_KEYS: {
     INVALID_CREDENTIALS: 'auth.errors.invalidCredentials',
@@ -102,4 +102,4 @@ export function isSessionExpiringSoon(expiresAt: number): boolean {
   const now = Math.floor(Date.now() / 1000)
   const timeUntilExpiry = expiresAt - now
   return timeUntilExpiry <= AUTH_CONFIG.SESSION.REFRESH_THRESHOLD
-} 
+}

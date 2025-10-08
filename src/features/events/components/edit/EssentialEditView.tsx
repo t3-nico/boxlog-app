@@ -1,8 +1,6 @@
 'use client'
 
-import React from 'react'
-
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { cn } from '@/lib/utils'
 
@@ -48,14 +46,7 @@ interface EssentialEditViewProps {
   }
 }
 
-export const EssentialEditView = ({
-  isOpen,
-  onClose,
-  onSave,
-  onDelete,
-  initialData
-}: EssentialEditViewProps) => {
-
+export const EssentialEditView = ({ isOpen, onClose, onSave, onDelete, initialData }: EssentialEditViewProps) => {
   // カスタムフックで状態管理とロジックを抽出
   const {
     title,
@@ -76,13 +67,13 @@ export const EssentialEditView = ({
     setMemo,
     handleSave,
     handleSmartExtract,
-    handleDelete
+    handleDelete,
   } = useEssentialEditView({
     isOpen,
     onClose,
     onSave,
     onDelete,
-    initialData
+    initialData,
   })
 
   if (!isOpen) return null
@@ -106,51 +97,29 @@ export const EssentialEditView = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className={cn(
-              'relative w-full max-w-2xl mx-4',
-              'bg-white dark:bg-neutral-900 rounded-2xl',
-              'shadow-2xl'
-            )}
+            className={cn('relative mx-4 w-full max-w-2xl', 'rounded-2xl bg-white dark:bg-neutral-900', 'shadow-2xl')}
             style={{
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)'
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
             }}
           >
             {/* ヘッダー */}
-            <EditHeader
-              title={title}
-              date={date}
-              tags={tags}
-              onClose={onClose}
-            />
+            <EditHeader title={title} date={date} tags={tags} onClose={onClose} />
 
             {/* メインコンテンツ */}
-            <div className="px-8 pb-8 space-y-6">
+            <div className="space-y-6 px-8 pb-8">
               {/* Title input */}
               <div>
-                <TitleInput
-                  value={title}
-                  onChange={setTitle}
-                  onSmartExtract={handleSmartExtract}
-                />
+                <TitleInput value={title} onChange={setTitle} onSmartExtract={handleSmartExtract} />
               </div>
 
               {/* 日付セクション */}
               <div>
-                <DateSelector
-                  value={date}
-                  endValue={endDate}
-                  onChange={setDate}
-                  onEndChange={setEndDate}
-                />
+                <DateSelector value={date} endValue={endDate} onChange={setDate} onEndChange={setEndDate} />
               </div>
 
               {/* Tags section */}
               <div className="pt-2">
-                <TagInput
-                  selectedTags={tags}
-                  onChange={setTags}
-                  contextualSuggestions={title.split(' ')}
-                />
+                <TagInput selectedTags={tags} onChange={setTags} contextualSuggestions={title.split(' ')} />
               </div>
 
               {/* 追加オプション */}
@@ -172,8 +141,8 @@ export const EssentialEditView = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     className={cn(
-                      'p-4 rounded-lg',
-                      'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400',
+                      'rounded-lg p-4',
+                      'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400',
                       'flex items-center gap-3'
                     )}
                   >
@@ -197,10 +166,7 @@ export const EssentialEditView = ({
             </div>
 
             {/* 成功アニメーション */}
-            <EditSuccessAnimation
-              showSuccess={showSuccess}
-              title={title}
-            />
+            <EditSuccessAnimation showSuccess={showSuccess} title={title} />
           </motion.div>
         </div>
       )}

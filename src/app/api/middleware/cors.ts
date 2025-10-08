@@ -31,10 +31,7 @@ export function createTimeoutPromise(timeout: number): Promise<never> {
   return new Promise((_, reject) => {
     setTimeout(() => {
       const { createAppError, ERROR_CODES } = require('@/config/error-patterns')
-      reject(createAppError(
-        `Request timeout after ${timeout}ms`,
-        ERROR_CODES.API_TIMEOUT
-      ))
+      reject(createAppError(`Request timeout after ${timeout}ms`, ERROR_CODES.API_TIMEOUT))
     }, timeout)
   })
 }

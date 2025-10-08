@@ -477,7 +477,12 @@ export function useDragAndDrop({
   const calculateTargetDateIndex = useCallback(
     (constrainedX: number, dragData: { [key: string]: unknown }, deltaX: number): number => {
       // TODO(#389): dragDataRefの型とDragStateの型を統一する
-      const typedDragData = dragData as { originalDateIndex: number; hasMoved?: boolean; originalElement?: HTMLElement; columnWidth?: number }
+      const typedDragData = dragData as {
+        originalDateIndex: number
+        hasMoved?: boolean
+        originalElement?: HTMLElement
+        columnWidth?: number
+      }
       let targetDateIndex = typedDragData.originalDateIndex
 
       if (viewMode !== 'day' && displayDates && typedDragData.hasMoved) {

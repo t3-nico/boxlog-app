@@ -76,7 +76,7 @@ export type AIToolParametersProps = ComponentProps<'div'> & {
 
 export const AIToolParameters = ({ className, parameters, ...props }: AIToolParametersProps) => (
   <div className={cn('space-y-2', className)} {...props}>
-    <h4 className="text-muted-foreground text-xs font-medium uppercase tracking-wide">Parameters</h4>
+    <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">Parameters</h4>
     <div className="bg-muted/50 rounded-md p-3">
       <pre className="text-muted-foreground overflow-x-auto text-xs">{JSON.stringify(parameters, null, 2)}</pre>
     </div>
@@ -95,7 +95,7 @@ export const AIToolResult = ({ className, result, error, ...props }: AIToolResul
 
   return (
     <div className={cn('space-y-2', className)} {...props}>
-      <h4 className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+      <h4 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
         {error ? 'Error' : 'Result'}
       </h4>
       <div

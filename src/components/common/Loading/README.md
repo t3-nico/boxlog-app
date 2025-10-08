@@ -9,26 +9,33 @@
 ## コンポーネント一覧
 
 ### LoadingSpinner
+
 基本的な回転スピナー
 
 ### RefreshSpinner
+
 リフレッシュ用スピナー
 
 ### LoadingOverlay
+
 オーバーレイ付きローディング
 
 ### LoadingCard
+
 カード型ローディング
 
 ### LoadingButton
+
 ローディング状態を持つボタン
 
 ### Skeleton系
+
 - `Skeleton` - 基本的なスケルトンUI
 - `SkeletonText` - テキスト用スケルトン
 - `SkeletonCard` - カード用スケルトン
 
 ### その他
+
 - `LoadingFallback` - エラーバウンダリー用フォールバック
 - `DataLoading` - データ取得中表示
 - `PresetLoadings` - プリセット詰め合わせ
@@ -58,11 +65,7 @@ import { LoadingSpinner } from '@/components/common'
 ```tsx
 import { LoadingOverlay } from '@/components/common'
 
-<LoadingOverlay
-  isLoading={isLoading}
-  message="データを取得中..."
-  spinnerSize="lg"
->
+;<LoadingOverlay isLoading={isLoading} message="データを取得中..." spinnerSize="lg">
   <YourContent />
 </LoadingOverlay>
 ```
@@ -72,10 +75,7 @@ import { LoadingOverlay } from '@/components/common'
 ```tsx
 import { LoadingCard } from '@/components/common'
 
-<LoadingCard
-  title="読み込み中"
-  message="データを取得しています..."
-/>
+;<LoadingCard title="読み込み中" message="データを取得しています..." />
 ```
 
 ### LoadingButton
@@ -83,12 +83,7 @@ import { LoadingCard } from '@/components/common'
 ```tsx
 import { LoadingButton } from '@/components/common'
 
-<LoadingButton
-  isLoading={isSubmitting}
-  loadingText="送信中..."
-  onClick={handleSubmit}
-  variant="default"
->
+;<LoadingButton isLoading={isSubmitting} loadingText="送信中..." onClick={handleSubmit} variant="default">
   送信
 </LoadingButton>
 ```
@@ -111,6 +106,7 @@ import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 ## Props
 
 ### LoadingSpinnerProps
+
 ```typescript
 {
   size?: 'sm' | 'md' | 'lg' | 'xl'
@@ -120,6 +116,7 @@ import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 ```
 
 ### LoadingOverlayProps
+
 ```typescript
 {
   isLoading: boolean
@@ -131,6 +128,7 @@ import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 ```
 
 ### LoadingCardProps
+
 ```typescript
 {
   title?: string
@@ -140,6 +138,7 @@ import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 ```
 
 ### LoadingButtonProps
+
 ```typescript
 {
   isLoading: boolean
@@ -155,18 +154,21 @@ import { Skeleton, SkeletonText, SkeletonCard } from '@/components/common'
 ## スタイリング
 
 ### サイズマップ
+
 - `sm`: `h-4 w-4`
 - `md`: `h-6 w-6`（デフォルト）
 - `lg`: `h-8 w-8`
 - `xl`: `h-12 w-12`
 
 ### カラー
+
 - デフォルト: `text-neutral-600 dark:text-neutral-400`
 - カスタマイズ: `className` で上書き可能
 
 ## アクセシビリティ
 
 すべてのローディングコンポーネントは:
+
 - `role="status"` 属性を持つ
 - `aria-label` でスクリーンリーダー対応
 - アニメーション中は適切なARIA属性を提供
@@ -178,6 +180,7 @@ npm run test:run -- Loading
 ```
 
 テストケース:
+
 - デフォルトサイズでのレンダリング
 - カスタムサイズでのレンダリング
 - ローディング状態の切り替え

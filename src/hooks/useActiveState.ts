@@ -1,6 +1,6 @@
 'use client'
-import { usePathname } from 'next/navigation'
 import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
+import { usePathname } from 'next/navigation'
 export const useActiveState = () => {
   const pathname = usePathname()
   const { filters } = useTaskStore()
@@ -22,6 +22,6 @@ export const useActiveState = () => {
     selectedSmartFolder,
     isViewActive,
     isTagActive,
-    isSmartFolderActive
+    isSmartFolderActive,
   }
 }

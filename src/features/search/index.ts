@@ -4,29 +4,22 @@
 export * from './types'
 
 // Components
-export { SearchBar, CompactSearchBar } from './components/search-bar'
 export { GlobalSearchModal } from './components/global-search-modal'
+export { CompactSearchBar, SearchBar } from './components/search-bar'
 
 // Hooks
-export { 
-  useSearch, 
-  useSearchHistory, 
-  useSearchSuggestions 
-} from './hooks/use-search'
-export { 
-  useGlobalSearch, 
-  GlobalSearchProvider 
-} from './hooks/use-global-search'
+export { GlobalSearchProvider, useGlobalSearch } from './hooks/use-global-search'
+export { useSearch, useSearchHistory, useSearchSuggestions } from './hooks/use-search'
 
 // Search Engine
-export { SearchEngine, FuzzySearch } from './lib/search-engine'
+export { FuzzySearch, SearchEngine } from './lib/search-engine'
 
 // Re-export for convenience
-export type { 
-  SearchResult,
-  SearchOptions,
-  SearchResultType,
-  SearchFilters,
+export type {
   SearchContext,
-  SearchProvider
+  SearchFilters,
+  SearchOptions,
+  SearchProvider,
+  SearchResult,
+  SearchResultType,
 } from './types'

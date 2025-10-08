@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 
-import { Plus, ChevronDown } from 'lucide-react'
+import { ChevronDown, Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { useI18n } from '@/features/i18n/lib/hooks'
@@ -22,7 +22,7 @@ export const CreateEventTrigger = ({
   variant = 'sidebar',
   className = '',
   initialData,
-  source = 'sidebar'
+  source = 'sidebar',
 }: CreateEventTriggerProps) => {
   const { t } = useI18n()
   const { openModal } = useCreateModalStore()
@@ -31,34 +31,34 @@ export const CreateEventTrigger = ({
     openModal({
       initialData,
       context: {
-        source
-      }
+        source,
+      },
     })
   }, [openModal, initialData, source])
-  
+
   // サイドバー用ボタン
   if (variant === 'sidebar') {
     return (
       <Button
         onClick={handleClick}
         className={cn(
-          "h-12 w-full bg-primary hover:bg-primary/90 active:bg-primary/80 text-primary-foreground font-medium px-4 rounded-md",
-          "shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between group",
+          'bg-primary hover:bg-primary/90 active:bg-primary/80 text-primary-foreground h-12 w-full rounded-md px-4 font-medium',
+          'group flex items-center justify-between shadow-sm transition-all duration-200 hover:shadow-md',
           className
         )}
         title={t('calendar.event.createNewEvent')}
       >
         <div className="flex items-center gap-3">
-          <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center">
-            <Plus className="w-3 h-3" />
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white/20">
+            <Plus className="h-3 w-3" />
           </div>
           <span className="text-[15px] font-medium">Create</span>
         </div>
-        <ChevronDown className="w-4 h-4 opacity-60 group-hover:opacity-80 transition-opacity" />
+        <ChevronDown className="h-4 w-4 opacity-60 transition-opacity group-hover:opacity-80" />
       </Button>
     )
   }
-  
+
   // フローティングアクションボタン
   if (variant === 'floating') {
     return (
@@ -66,7 +66,7 @@ export const CreateEventTrigger = ({
         onClick={handleClick}
         size="icon"
         className={cn(
-          "fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary hover:bg-primary/90 rounded-full shadow-lg",
+          'bg-primary hover:bg-primary/90 fixed right-6 bottom-6 z-50 h-14 w-14 rounded-full shadow-lg',
           className
         )}
         title="Create new event (⌘N)"
@@ -78,12 +78,8 @@ export const CreateEventTrigger = ({
 
   // インライン用ボタン
   return (
-    <Button
-      onClick={handleClick}
-      variant="outline"
-      className={cn(className)}
-    >
-      <Plus className="h-4 w-4 mr-2" />
+    <Button onClick={handleClick} variant="outline" className={cn(className)}>
+      <Plus className="mr-2 h-4 w-4" />
       Create Event
     </Button>
   )

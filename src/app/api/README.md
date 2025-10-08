@@ -78,9 +78,9 @@ export const GET = withRateLimit(
   },
   {
     rateLimit: {
-      windowMs: 60000,      // 1分間
-      maxRequests: 100      // 最大100リクエスト
-    }
+      windowMs: 60000, // 1分間
+      maxRequests: 100, // 最大100リクエスト
+    },
   }
 )
 ```
@@ -94,12 +94,12 @@ export const GET = withRateLimit(
 
 ### 使い分け
 
-| 用途 | 推奨 |
-|---|---|
-| 型安全なAPI | tRPC |
+| 用途        | 推奨              |
+| ----------- | ----------------- |
+| 型安全なAPI | tRPC              |
 | 外部公開API | REST (App Router) |
-| Webhooks | REST (App Router) |
-| 内部API | tRPC |
+| Webhooks    | REST (App Router) |
+| 内部API     | tRPC              |
 
 ## 🚨 重要な注意事項
 

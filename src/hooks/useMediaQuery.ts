@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false)
@@ -12,7 +12,7 @@ export function useMediaQuery(query: string): boolean {
     }
 
     const mediaQueryList = window.matchMedia(query)
-    
+
     // 初期値を設定
     setMatches(mediaQueryList.matches)
 

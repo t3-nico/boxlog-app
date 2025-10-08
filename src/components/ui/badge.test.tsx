@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
 import { Badge } from './badge'
 
@@ -76,10 +76,7 @@ describe('Badge', () => {
   describe('アクセシビリティ', () => {
     it('aria-label属性が適用される', () => {
       render(<Badge aria-label="ステータスバッジ">Status</Badge>)
-      expect(screen.getByText('Status')).toHaveAttribute(
-        'aria-label',
-        'ステータスバッジ'
-      )
+      expect(screen.getByText('Status')).toHaveAttribute('aria-label', 'ステータスバッジ')
     })
 
     it('data-slot属性が設定される', () => {

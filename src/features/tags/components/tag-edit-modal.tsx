@@ -38,7 +38,15 @@ const DEFAULT_COLORS = [
   '#6B7280', // Gray
 ]
 
-const ColorPicker = ({ value, onChange, t }: { value: string; onChange: (color: string) => void; t: ReturnType<typeof useI18n>['t'] }) => {
+const ColorPicker = ({
+  value,
+  onChange,
+  t,
+}: {
+  value: string
+  onChange: (color: string) => void
+  t: ReturnType<typeof useI18n>['t']
+}) => {
   const [customColor, setCustomColor] = useState(value)
 
   useEffect(() => {
@@ -93,7 +101,9 @@ const ColorPicker = ({ value, onChange, t }: { value: string; onChange: (color: 
           onChange={handleCustomColorChange}
           className="h-8 w-8 rounded border border-gray-300 dark:border-gray-600"
         />
-        <span className="text-sm text-gray-500 dark:text-gray-400">{t('tags.form.customColor')}: {customColor}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          {t('tags.form.customColor')}: {customColor}
+        </span>
       </div>
     </div>
   )
@@ -167,7 +177,7 @@ const ParentTagSelector = ({
     <select
       value={value || ''}
       onChange={handleSelectChange}
-      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+      className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
     >
       <option value="">-- {t('tags.form.rootLevel')} --</option>
       {allTags.flatMap((tag) => renderTagOption(tag))}
@@ -324,7 +334,7 @@ const EditTabContent = ({
           type="text"
           value={formData.name}
           onChange={handleNameChange}
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
           required
         />
         {errors.name ? <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.name}</p> : null}
@@ -343,7 +353,7 @@ const EditTabContent = ({
           value={formData.description}
           onChange={handleDescriptionChange}
           rows={3}
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         />
         {errors.description ? (
           <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>

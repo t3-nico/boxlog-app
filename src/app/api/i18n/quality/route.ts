@@ -25,17 +25,11 @@ export async function POST(request: NextRequest) {
       case 'get_report':
         return await handleGetReportAction(body)
       default:
-        return NextResponse.json(
-          { error: '無効なアクションです' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: '無効なアクションです' }, { status: 400 })
     }
   } catch (error) {
     console.error('品質保証API エラー:', error)
-    return NextResponse.json(
-      { error: '内部サーバーエラーが発生しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '内部サーバーエラーが発生しました' }, { status: 500 })
   }
 }
 
@@ -43,10 +37,7 @@ async function handleEvaluateAction(body: Record<string, unknown>) {
   const { translationKey, language, originalText, translatedText } = body
 
   if (!translationKey || !language || !originalText || !translatedText) {
-    return NextResponse.json(
-      { error: '必要なパラメータが不足しています' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: '必要なパラメータが不足しています' }, { status: 400 })
   }
 
   const assessment = await qa.evaluateTranslationQuality(
@@ -63,17 +54,10 @@ async function handleStartReviewAction(body: Record<string, unknown>) {
   const { translationKey, language, reviewer } = body
 
   if (!translationKey || !language) {
-    return NextResponse.json(
-      { error: 'translationKeyとlanguageは必須です' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: 'translationKeyとlanguageは必須です' }, { status: 400 })
   }
 
-  const workflow = await qa.startReviewWorkflow(
-    translationKey as string,
-    language as string,
-    reviewer as string
-  )
+  const workflow = await qa.startReviewWorkflow(translationKey as string, language as string, reviewer as string)
   return NextResponse.json(workflow)
 }
 
@@ -81,10 +65,7 @@ async function handleSubmitReviewAction(body: Record<string, unknown>) {
   const { translationKey, language, reviewer, assessment, comments } = body
 
   if (!translationKey || !language || !reviewer || !assessment) {
-    return NextResponse.json(
-      { error: '必要なレビュー情報が不足しています' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: '必要なレビュー情報が不足しています' }, { status: 400 })
   }
 
   const reviewedWorkflow = await qa.addReview(
@@ -100,9 +81,7 @@ async function handleSubmitReviewAction(body: Record<string, unknown>) {
 
 async function handleGetReportAction(body: Record<string, unknown>) {
   const { startDate, endDate, reportLanguage } = body
-  const start = startDate
-    ? new Date(startDate as string)
-    : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // デフォルト30日前
+  const start = startDate ? new Date(startDate as string) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // デフォルト30日前
   const end = endDate ? new Date(endDate as string) : new Date()
 
   const report = await qa.generateQualityReport(start, end, reportLanguage as string)
@@ -124,26 +103,17 @@ export async function GET(request: NextRequest) {
       case 'health':
         return await handleHealthAction()
       default:
-        return NextResponse.json(
-          { error: '無効なアクションです' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: '無効なアクションです' }, { status: 400 })
     }
   } catch (error) {
     console.error('品質保証API GET エラー:', error)
-    return NextResponse.json(
-      { error: '内部サーバーエラーが発生しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '内部サーバーエラーが発生しました' }, { status: 500 })
   }
 }
 
 async function handleGetWorkflowAction(translationKey: string | null, language: string | null) {
   if (!translationKey || !language) {
-    return NextResponse.json(
-      { error: 'translationKeyとlanguageは必須です' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: 'translationKeyとlanguageは必須です' }, { status: 400 })
   }
 
   const workflow = await qa.getReviewWorkflow(translationKey, language)

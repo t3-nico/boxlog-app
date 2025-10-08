@@ -70,7 +70,7 @@ graph TD
     B --> C[API Service]
     C --> D[Supabase]
     D --> E[PostgreSQL]
-    
+
     B --> F[Data Transformation]
     F --> G[CalendarEvent[]]
     G --> H[Views Components]
@@ -86,7 +86,7 @@ interface CalendarStore {
   currentDate: Date
   selectedEvents: CalendarEvent[]
   filters: CalendarFilter
-  
+
   // アクション
   setCurrentView: (view: CalendarViewType) => void
   setCurrentDate: (date: Date) => void
@@ -180,12 +180,12 @@ function useCalendarData(options: CalendarDataOptions) {
     loading: boolean              // ローディング状態
     error: Error | null           // エラー状態
     refetch: () => void           // データ再取得
-    
+
     // イベント操作
     createEvent: (input: CreateEventInput) => Promise<void>
     updateEvent: (id: string, input: Partial<CalendarEvent>) => Promise<void>
     deleteEvent: (id: string) => Promise<void>
-    
+
     // バッチ操作
     createBatch: (events: CreateEventInput[]) => Promise<void>
     updateBatch: (updates: EventUpdate[]) => Promise<void>
@@ -212,16 +212,16 @@ function useCalendarNavigation(initialView?: CalendarViewType) {
     currentView: CalendarViewType
     currentDate: Date
     dateRange: ViewDateRange
-    
+
     // ナビゲーション
     goToToday: () => void
     goToPrevious: () => void
     goToNext: () => void
     goToDate: (date: Date) => void
-    
+
     // ビュー切り替え
     setView: (view: CalendarViewType) => void
-    
+
     // URL同期
     updateUrl: boolean
   }
@@ -240,14 +240,14 @@ function useEventInteraction() {
     selectEvent: (event: CalendarEvent) => void
     selectMultiple: (events: CalendarEvent[]) => void
     clearSelection: () => void
-    
+
     // ドラッグ&ドロップ
     isDragging: boolean
     draggedEvent: CalendarEvent | null
     startDrag: (event: CalendarEvent) => void
     updateDragPosition: (position: { x: number; y: number }) => void
     endDrag: (dropTarget?: DropTarget) => void
-    
+
     // コンテキストメニュー
     contextMenu: {
       isOpen: boolean
@@ -269,17 +269,17 @@ interface CalendarViewProps {
   initialViewType?: CalendarViewType
   initialDate?: Date
   className?: string
-  
+
   // カスタマイズ
   enabledViews?: CalendarViewType[]
   defaultCalendars?: string[]
-  
+
   // イベントハンドラー
   onEventSelect?: (event: CalendarEvent) => void
   onEventCreate?: (input: CreateEventInput) => void
   onViewChange?: (view: CalendarViewType) => void
   onDateChange?: (date: Date) => void
-  
+
   // 高度な設定
   customRenderers?: {
     eventCard?: ComponentType<EventCardProps>
@@ -296,18 +296,18 @@ interface ViewComponentProps {
   events: CalendarEvent[]
   dateRange: ViewDateRange
   selectedEvents: CalendarEvent[]
-  
+
   // インタラクション
   onEventSelect: (event: CalendarEvent) => void
   onEventMove: (eventId: string, newStart: Date) => void
   onEventResize: (eventId: string, newDuration: number) => void
   onSlotClick: (date: Date) => void
-  
+
   // 表示設定
   showWeekends: boolean
   timeFormat: '12h' | '24h'
   firstDayOfWeek: number
-  
+
   // カスタマイズ
   className?: string
   style?: CSSProperties
@@ -324,21 +324,23 @@ function useRealtimeCalendar(calendarIds: string[]) {
   useEffect(() => {
     const subscription = supabase
       .channel('calendar-changes')
-      .on('postgres_changes', 
-        { 
-          event: '*', 
-          schema: 'public', 
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
           table: 'tasks',
-          filter: `calendar_id=in.(${calendarIds.join(',')})`
+          filter: `calendar_id=in.(${calendarIds.join(',')})`,
         },
         handleTaskChange
       )
-      .on('postgres_changes',
+      .on(
+        'postgres_changes',
         {
           event: '*',
-          schema: 'public', 
+          schema: 'public',
           table: 'task_records',
-          filter: `calendar_id=in.(${calendarIds.join(',')})`
+          filter: `calendar_id=in.(${calendarIds.join(',')})`,
         },
         handleRecordChange
       )
@@ -390,11 +392,9 @@ interface CacheConfig {
 // バッチ更新API
 async function batchUpdateEvents(updates: EventBatchUpdate[]): Promise<void> {
   const batches = chunk(updates, BATCH_SIZE)
-  
+
   for (const batch of batches) {
-    await Promise.all(
-      batch.map(update => updateSingleEvent(update))
-    )
+    await Promise.all(batch.map((update) => updateSingleEvent(update)))
   }
 }
 
@@ -417,7 +417,7 @@ if (process.env.NODE_ENV === 'development') {
     getEventById: (id: string) => findEventById(id),
     simulateRealtimeEvent: (event: RealtimeEvent) => handleRealtimeEvent(event),
     clearCache: () => cache.clear(),
-    getPerformanceMetrics: () => performanceMonitor.getMetrics()
+    getPerformanceMetrics: () => performanceMonitor.getMetrics(),
   }
 }
 ```

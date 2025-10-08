@@ -23,7 +23,7 @@ const ChronoTypePage = () => {
         type,
         displayMode: chronotype?.displayMode || 'both',
         opacity: chronotype?.opacity || 30,
-      }
+      },
     })
   }
 
@@ -33,10 +33,7 @@ const ChronoTypePage = () => {
   }
 
   return (
-    <SettingsLayout
-      title={t('settings.chronotype.title')}
-      description={t('settings.chronotype.description')}
-    >
+    <SettingsLayout title={t('settings.chronotype.title')} description={t('settings.chronotype.description')}>
       <div className="space-y-6">
         {/* クロノタイプ選択 */}
         <ChronotypeSelector selectedType={chronotype?.type} onSelect={handleProfileSelect} />

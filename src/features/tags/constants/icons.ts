@@ -1,72 +1,64 @@
 import {
+  GraduationCap as AcademicCapIcon,
+  ArrowRight as ArrowRightIcon,
+  Beaker as BeakerIcon,
+  // Health & Fitness
+  Zap as BoltIcon,
+  // Learning & Knowledge
+  BookOpen as BookOpenIcon,
   // Work & Business
   Briefcase as BriefcaseIcon,
   Building2 as BuildingOfficeIcon,
+  Calendar as CalendarIcon,
   BarChart3 as ChartBarIcon,
+  // Communication
+  MessageCircle as ChatBubbleLeftIcon,
+  CheckCircle as CheckCircleIcon,
+  Database as CircleStackIcon,
   ClipboardList as ClipboardDocumentListIcon,
-  FileText as DocumentTextIcon,
-  TrendingUp as PresentationChartLineIcon,
-  
   // Development & Tech
   Code as CodeBracketIcon,
   Terminal as CommandLineIcon,
   Monitor as ComputerDesktopIcon,
   Cpu as CpuChipIcon,
-  Server as ServerIcon,
-  Database as CircleStackIcon,
-  Rocket as RocketLaunchIcon,
-  
-  // Design & Creative
-  Paintbrush as PaintBrushIcon,
-  Palette as SwatchIcon,
   Box as CubeIcon,
-  Image as PhotoIcon,
-  Video as VideoCameraIcon,
-  Music as MusicalNoteIcon,
-  
-  // Personal & Life
-  User as UserIcon,
-  Heart as HeartIcon,
-  Home as HomeIcon,
-  ShoppingCart as ShoppingCartIcon,
-  Gift as GiftIcon,
-  Calendar as CalendarIcon,
-  
-  // Learning & Knowledge
-  BookOpen as BookOpenIcon,
-  GraduationCap as AcademicCapIcon,
-  Lightbulb as LightBulbIcon,
-  Search as MagnifyingGlassIcon,
-  Globe as GlobeAltIcon,
-  Languages as LanguageIcon,
-  
-  // Health & Fitness
-  Zap as BoltIcon,
-  Sparkles as SparklesIcon,
-  Beaker as BeakerIcon,
-  Flame as FireIcon,
-  Sun as SunIcon,
-  Moon as MoonIcon,
-  
-  // Communication
-  MessageCircle as ChatBubbleLeftIcon,
+  FileText as DocumentTextIcon,
   Mail as EnvelopeIcon,
-  Phone as PhoneIcon,
-  Megaphone as MegaphoneIcon,
-  
+  AlertTriangle as ExclamationTriangleIcon,
+  Flame as FireIcon,
+  Flag as FlagIcon,
   // Navigation & Movement
   FastForward as ForwardIcon,
-  ArrowRight as ArrowRightIcon,
-  MapPin as MapPinIcon,
+  Gift as GiftIcon,
+  Globe as GlobeAltIcon,
   Globe2 as GlobeEuropeAfricaIcon,
-  
+  Heart as HeartIcon,
+  Home as HomeIcon,
+  Info as InformationCircleIcon,
+  Languages as LanguageIcon,
+  Lightbulb as LightBulbIcon,
+  Search as MagnifyingGlassIcon,
+  MapPin as MapPinIcon,
+  Megaphone as MegaphoneIcon,
+  Moon as MoonIcon,
+  Music as MusicalNoteIcon,
+  // Design & Creative
+  Paintbrush as PaintBrushIcon,
+  Phone as PhoneIcon,
+  Image as PhotoIcon,
+  TrendingUp as PresentationChartLineIcon,
+  Rocket as RocketLaunchIcon,
+  Server as ServerIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Sparkles as SparklesIcon,
+  Star as StarIcon,
+  Sun as SunIcon,
+  Palette as SwatchIcon,
   // General
   Tag as TagIcon,
-  Star as StarIcon,
-  Flag as FlagIcon,
-  AlertTriangle as ExclamationTriangleIcon,
-  Info as InformationCircleIcon,
-  CheckCircle as CheckCircleIcon,
+  // Personal & Life
+  User as UserIcon,
+  Video as VideoCameraIcon,
 } from 'lucide-react'
 
 export const tagIconMapping = {
@@ -77,7 +69,7 @@ export const tagIconMapping = {
   ClipboardDocumentListIcon,
   DocumentTextIcon,
   PresentationChartLineIcon,
-  
+
   // Development & Tech
   CodeBracketIcon,
   CommandLineIcon,
@@ -86,7 +78,7 @@ export const tagIconMapping = {
   ServerIcon,
   CircleStackIcon,
   RocketLaunchIcon,
-  
+
   // Design & Creative
   PaintBrushIcon,
   SwatchIcon,
@@ -94,7 +86,7 @@ export const tagIconMapping = {
   PhotoIcon,
   VideoCameraIcon,
   MusicalNoteIcon,
-  
+
   // Personal & Life
   UserIcon,
   HeartIcon,
@@ -102,7 +94,7 @@ export const tagIconMapping = {
   ShoppingCartIcon,
   GiftIcon,
   CalendarIcon,
-  
+
   // Learning & Knowledge
   BookOpenIcon,
   AcademicCapIcon,
@@ -110,7 +102,7 @@ export const tagIconMapping = {
   MagnifyingGlassIcon,
   GlobeAltIcon,
   LanguageIcon,
-  
+
   // Health & Fitness
   BoltIcon,
   SparklesIcon,
@@ -118,19 +110,19 @@ export const tagIconMapping = {
   FireIcon,
   SunIcon,
   MoonIcon,
-  
+
   // Communication
   ChatBubbleLeftIcon,
   EnvelopeIcon,
   PhoneIcon,
   MegaphoneIcon,
-  
+
   // Navigation & Movement
   ForwardIcon,
   ArrowRightIcon,
   MapPinIcon,
   GlobeEuropeAfricaIcon,
-  
+
   // General
   TagIcon,
   StarIcon,
@@ -145,7 +137,7 @@ export type TagIconName = keyof typeof tagIconMapping
 export const tagIconCategories = {
   'Work & Business': [
     'BriefcaseIcon',
-    'BuildingOfficeIcon', 
+    'BuildingOfficeIcon',
     'ChartBarIcon',
     'ClipboardDocumentListIcon',
     'DocumentTextIcon',
@@ -160,22 +152,8 @@ export const tagIconCategories = {
     'CircleStackIcon',
     'RocketLaunchIcon',
   ],
-  'Design & Creative': [
-    'PaintBrushIcon',
-    'SwatchIcon',
-    'CubeIcon',
-    'PhotoIcon',
-    'VideoCameraIcon',
-    'MusicalNoteIcon',
-  ],
-  'Personal & Life': [
-    'UserIcon',
-    'HeartIcon',
-    'HomeIcon',
-    'ShoppingCartIcon',
-    'GiftIcon',
-    'CalendarIcon',
-  ],
+  'Design & Creative': ['PaintBrushIcon', 'SwatchIcon', 'CubeIcon', 'PhotoIcon', 'VideoCameraIcon', 'MusicalNoteIcon'],
+  'Personal & Life': ['UserIcon', 'HeartIcon', 'HomeIcon', 'ShoppingCartIcon', 'GiftIcon', 'CalendarIcon'],
   'Learning & Knowledge': [
     'BookOpenIcon',
     'AcademicCapIcon',
@@ -184,32 +162,8 @@ export const tagIconCategories = {
     'GlobeAltIcon',
     'LanguageIcon',
   ],
-  'Health & Fitness': [
-    'BoltIcon',
-    'SparklesIcon',
-    'BeakerIcon',
-    'FireIcon',
-    'SunIcon',
-    'MoonIcon',
-  ],
-  'Communication': [
-    'ChatBubbleLeftIcon',
-    'EnvelopeIcon',
-    'PhoneIcon',
-    'MegaphoneIcon',
-  ],
-  'Navigation & Movement': [
-    'ForwardIcon',
-    'ArrowRightIcon',
-    'MapPinIcon',
-    'GlobeEuropeAfricaIcon',
-  ],
-  'General': [
-    'TagIcon',
-    'StarIcon',
-    'FlagIcon',
-    'ExclamationTriangleIcon',
-    'InformationCircleIcon',
-    'CheckCircleIcon',
-  ],
+  'Health & Fitness': ['BoltIcon', 'SparklesIcon', 'BeakerIcon', 'FireIcon', 'SunIcon', 'MoonIcon'],
+  Communication: ['ChatBubbleLeftIcon', 'EnvelopeIcon', 'PhoneIcon', 'MegaphoneIcon'],
+  'Navigation & Movement': ['ForwardIcon', 'ArrowRightIcon', 'MapPinIcon', 'GlobeEuropeAfricaIcon'],
+  General: ['TagIcon', 'StarIcon', 'FlagIcon', 'ExclamationTriangleIcon', 'InformationCircleIcon', 'CheckCircleIcon'],
 } as const

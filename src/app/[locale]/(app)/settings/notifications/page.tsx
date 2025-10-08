@@ -1,4 +1,4 @@
-import { getDictionary, createTranslation } from '@/features/i18n/lib'
+import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 import NotificationsPageClient from './client'
@@ -20,4 +20,3 @@ export default async function NotificationsPage({ params }: PageProps) {
 
   return <NotificationsPageClient translations={translations} />
 }
-

@@ -50,9 +50,7 @@ export const checkBrowserNotificationSupport = (): boolean => {
 
 export const requestNotificationPermission = async (t?: (key: string) => string): Promise<NotificationPermission> => {
   if (!checkBrowserNotificationSupport()) {
-    const message = t
-      ? t('notifications.errors.notSupported')
-      : 'このブラウザは通知をサポートしていません'
+    const message = t ? t('notifications.errors.notSupported') : 'このブラウザは通知をサポートしていません'
     console.warn(message)
     return 'denied'
   }

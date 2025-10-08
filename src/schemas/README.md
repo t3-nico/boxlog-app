@@ -16,6 +16,7 @@ src/schemas/
 ```
 
 **主要機能**:
+
 1. **ランタイムバリデーション** - Zodによる実行時型チェック
 2. **TypeScript型生成** - スキーマから自動的に型を生成
 3. **ビジネスルール統一** - データ制約を一箇所で管理
@@ -24,12 +25,12 @@ src/schemas/
 
 ## 🎯 TypeScript公式ベストプラクティス
 
-| 原則 | 説明 | 実装状況 |
-|------|------|---------|
-| **Schema-first Development** | スキーマ駆動開発 | ✅ 実装済み |
-| **Runtime Validation** | ランタイムバリデーション | ✅ Zod使用 |
-| **Single Source of Truth** | 型の単一真実源 | ✅ スキーマから型生成 |
-| **Type Safety** | 型安全性の確保 | ✅ tRPC統合 |
+| 原則                         | 説明                     | 実装状況              |
+| ---------------------------- | ------------------------ | --------------------- |
+| **Schema-first Development** | スキーマ駆動開発         | ✅ 実装済み           |
+| **Runtime Validation**       | ランタイムバリデーション | ✅ Zod使用            |
+| **Single Source of Truth**   | 型の単一真実源           | ✅ スキーマから型生成 |
+| **Type Safety**              | 型安全性の確保           | ✅ tRPC統合           |
 
 ---
 
@@ -43,8 +44,8 @@ import { z } from 'zod'
 import { idSchema, titleSchema, descriptionSchema } from './common'
 
 export const createTaskInputSchema = z.object({
-  title: titleSchema,                    // 1-200文字、トリム処理あり
-  description: descriptionSchema,        // 最大2000文字、任意
+  title: titleSchema, // 1-200文字、トリム処理あり
+  description: descriptionSchema, // 最大2000文字、任意
   priority: z.enum(['low', 'medium', 'high']),
   dueDate: z.date().optional(),
 })
@@ -61,8 +62,8 @@ import { createTaskInputSchema, taskOutputSchema } from '@/schemas/api/tasks'
 
 export const tasksRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(createTaskInputSchema)      // ← 入力バリデーション
-    .output(taskOutputSchema)          // ← 出力型定義
+    .input(createTaskInputSchema) // ← 入力バリデーション
+    .output(taskOutputSchema) // ← 出力型定義
     .mutation(async ({ input }) => {
       // input は自動的に型推論される
       const task = await db.task.create({ data: input })
@@ -103,70 +104,72 @@ export const useCreateTask = () => {
 ### common.ts - 共通スキーマ
 
 **提供しているスキーマ**:
+
 ```typescript
 // ID・識別子
-idSchema                    // UUID形式
-emailSchema                 // メールアドレス
-passwordSchema              // パスワード（8文字以上、大小英数字含む）
+idSchema // UUID形式
+emailSchema // メールアドレス
+passwordSchema // パスワード（8文字以上、大小英数字含む）
 
 // 文字列
-titleSchema                 // 1-200文字、改行禁止
-descriptionSchema           // 最大2000文字
-requiredStringSchema        // 必須文字列
-trimmedStringSchema         // トリム処理付き
+titleSchema // 1-200文字、改行禁止
+descriptionSchema // 最大2000文字
+requiredStringSchema // 必須文字列
+trimmedStringSchema // トリム処理付き
 
 // 日付
-dateSchema                  // 日付型
-futureDateSchema            // 未来の日付のみ
+dateSchema // 日付型
+futureDateSchema // 未来の日付のみ
 
 // Enum
-prioritySchema              // 'low' | 'medium' | 'high'
-statusSchema                // 'todo' | 'in_progress' | 'done' | 'archived'
-colorSchema                 // HEX色コード (#RRGGBB)
+prioritySchema // 'low' | 'medium' | 'high'
+statusSchema // 'todo' | 'in_progress' | 'done' | 'archived'
+colorSchema // HEX色コード (#RRGGBB)
 
 // ページネーション
-paginationInputSchema       // ページ・件数・ソート順
-paginationOutputSchema      // 総数・総ページ数・前後フラグ
-searchInputSchema           // 検索クエリ + ページネーション
+paginationInputSchema // ページ・件数・ソート順
+paginationOutputSchema // 総数・総ページ数・前後フラグ
+searchInputSchema // 検索クエリ + ページネーション
 
 // API応答
-apiSuccessSchema(T)         // 成功レスポンス { success: true, data: T }
-apiErrorSchema              // エラーレスポンス { success: false, error: {...} }
-apiResponseSchema(T)        // 成功 | エラー の Union型
+apiSuccessSchema(T) // 成功レスポンス { success: true, data: T }
+apiErrorSchema // エラーレスポンス { success: false, error: {...} }
+apiResponseSchema(T) // 成功 | エラー の Union型
 
 // メタデータ
-metadataSchema              // createdAt, updatedAt, version 等
-fileSchema                  // ファイルアップロード用
+metadataSchema // createdAt, updatedAt, version 等
+fileSchema // ファイルアップロード用
 ```
 
 ### tasks.ts - タスクAPI用スキーマ
 
 **主要スキーマ**:
+
 ```typescript
 // 基本
-taskBaseSchema              // タスクの基本情報
-taskSchema                  // 完全なタスク（ID、メタデータ含む）
+taskBaseSchema // タスクの基本情報
+taskSchema // 完全なタスク（ID、メタデータ含む）
 
 // 入力
-createTaskInputSchema       // タスク作成
-updateTaskInputSchema       // タスク更新（partial）
-deleteTaskInputSchema       // タスク削除
-searchTasksInputSchema      // タスク検索
-getTasksInputSchema         // タスク一覧取得
+createTaskInputSchema // タスク作成
+updateTaskInputSchema // タスク更新（partial）
+deleteTaskInputSchema // タスク削除
+searchTasksInputSchema // タスク検索
+getTasksInputSchema // タスク一覧取得
 
 // 出力
-taskOutputSchema            // タスク1件
-tasksListOutputSchema       // タスク一覧 + ページネーション
-taskStatsOutputSchema       // タスク統計
-taskHistoryOutputSchema     // タスク履歴
+taskOutputSchema // タスク1件
+tasksListOutputSchema // タスク一覧 + ページネーション
+taskStatsOutputSchema // タスク統計
+taskHistoryOutputSchema // タスク履歴
 
 // バルク操作
-bulkUpdateTasksInputSchema  // 一括更新（最大100件）
-bulkDeleteTasksInputSchema  // 一括削除（最大100件）
+bulkUpdateTasksInputSchema // 一括更新（最大100件）
+bulkDeleteTasksInputSchema // 一括削除（最大100件）
 
 // インポート/エクスポート
-importTasksInputSchema      // タスクインポート
-exportTasksInputSchema      // タスクエクスポート（JSON/CSV/XLSX）
+importTasksInputSchema // タスクインポート
+exportTasksInputSchema // タスクエクスポート（JSON/CSV/XLSX）
 ```
 
 ---
@@ -190,19 +193,17 @@ import { z } from 'zod'
 import { idSchema, titleSchema, descriptionSchema, dateSchema } from './common'
 
 // 基本スキーマ
-export const projectBaseSchema = z.object({
-  title: titleSchema,
-  description: descriptionSchema,
-  startDate: dateSchema,
-  endDate: dateSchema,
-})
-  .refine(
-    (data) => data.endDate > data.startDate,
-    {
-      message: '終了日は開始日より後に設定してください',
-      path: ['endDate'],
-    }
-  )
+export const projectBaseSchema = z
+  .object({
+    title: titleSchema,
+    description: descriptionSchema,
+    startDate: dateSchema,
+    endDate: dateSchema,
+  })
+  .refine((data) => data.endDate > data.startDate, {
+    message: '終了日は開始日より後に設定してください',
+    path: ['endDate'],
+  })
 
 // 完全なスキーマ
 export const projectSchema = projectBaseSchema.extend({
@@ -246,11 +247,12 @@ export const projectsRouter = createTRPCRouter({
 ### 1. カスタムバリデーション
 
 ```typescript
-export const taskSchema = z.object({
-  title: titleSchema,
-  priority: prioritySchema,
-  estimatedHours: z.number().min(0.1).max(1000).optional(),
-})
+export const taskSchema = z
+  .object({
+    title: titleSchema,
+    priority: prioritySchema,
+    estimatedHours: z.number().min(0.1).max(1000).optional(),
+  })
   .refine(
     (data) => {
       // 高優先度タスクは見積時間が必須
@@ -363,12 +365,15 @@ describe('createTaskInputSchema', () => {
 ## 📊 既存の使用箇所
 
 **サーバー側**:
+
 - `src/server/api/routers/tasks.ts` - タスクtRPCルーター
 
 **クライアント側**:
+
 - `src/hooks/api/use-tasks.ts` - タスク操作hooks
 
 **ドキュメント**:
+
 - `docs/API_VALIDATION_GUIDE.md` - バリデーション詳細ガイド
 
 ---
@@ -380,16 +385,16 @@ describe('createTaskInputSchema', () => {
 ```typescript
 // ❌ any型の使用禁止
 export const badSchema = z.object({
-  data: z.any(),  // NG
+  data: z.any(), // NG
 })
 
 // ❌ 緩すぎるバリデーション
 export const badSchema = z.object({
-  title: z.string(),  // NG: 最小・最大長の指定なし
+  title: z.string(), // NG: 最小・最大長の指定なし
 })
 
 // ❌ 共通スキーマの重複定義
-export const myIdSchema = z.string().uuid()  // NG: common.tsのidSchemaを使う
+export const myIdSchema = z.string().uuid() // NG: common.tsのidSchemaを使う
 ```
 
 ### ✅ ベストプラクティス
@@ -400,8 +405,8 @@ import { idSchema, titleSchema } from './common'
 
 // ✅ 適切なバリデーション
 export const taskSchema = z.object({
-  title: titleSchema,  // 1-200文字、改行禁止
-  priority: prioritySchema,  // enum
+  title: titleSchema, // 1-200文字、改行禁止
+  priority: prioritySchema, // enum
 })
 
 // ✅ 型エクスポート

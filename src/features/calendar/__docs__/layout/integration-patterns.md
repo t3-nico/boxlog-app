@@ -9,12 +9,13 @@
 ## 🎯 統合アーキテクチャ概要
 
 ### 統合レイヤー
+
 ```
 ┌─────────────────────────────────────────┐
 │            External APIs                │ ← サードパーティ統合
 ├─────────────────────────────────────────┤
 │            Application Layer            │ ← CalendarController
-├─────────────────────────────────────────┤ 
+├─────────────────────────────────────────┤
 │            Domain Services              │ ← Business Logic
 ├─────────────────────────────────────────┤
 │            Data Layer                   │ ← Stores & Persistence
@@ -24,6 +25,7 @@
 ```
 
 ### 統合原則
+
 1. **疎結合** - 各コンポーネント間の依存を最小化
 2. **インターフェース駆動** - 明確なContract定義
 3. **エラー分離** - 一つの統合失敗が全体に影響しない
@@ -34,6 +36,7 @@
 ## 🎨 UI Framework統合
 
 ### shadcn/ui Integration
+
 ```typescript
 // Calendar専用のUI Component拡張
 import { Button } from '@/components/shadcn-ui/button'
@@ -58,6 +61,7 @@ const CalendarButton = styled(Button, {
 ```
 
 ### kiboUI Integration
+
 ```typescript
 // 高度なCalendar機能でkiboUIを活用
 import { KanbanBoard } from '@/components/kibo-ui/kanban'
@@ -66,7 +70,7 @@ import { AIAssistant } from '@/components/kibo-ui/ai'
 // Task管理でKanban表示
 const TaskKanbanView = () => {
   const { tasks } = useTaskStore()
-  
+
   const kanbanData = useMemo(() => ({
     columns: [
       { id: 'pending', title: '予定', tasks: tasks.filter(t => t.status === 'pending') },
@@ -74,7 +78,7 @@ const TaskKanbanView = () => {
       { id: 'completed', title: '完了', tasks: tasks.filter(t => t.status === 'completed') }
     ]
   }), [tasks])
-  
+
   return (
     <KanbanBoard
       data={kanbanData}
@@ -87,7 +91,7 @@ const TaskKanbanView = () => {
 // AI支援機能
 const CalendarAIAssistant = () => {
   const { events } = useEventStore()
-  
+
   return (
     <AIAssistant
       context={{
@@ -96,7 +100,7 @@ const CalendarAIAssistant = () => {
       }}
       capabilities={[
         'schedule_optimization',
-        'conflict_detection', 
+        'conflict_detection',
         'time_recommendation'
       ]}
       onSuggestion={handleAISuggestion}
@@ -106,6 +110,7 @@ const CalendarAIAssistant = () => {
 ```
 
 ### Tailwind CSS系统との統合
+
 ```typescript
 // Calendar専用のTailwind Config拡張
 module.exports = {
@@ -150,18 +155,19 @@ module.exports = {
 ## 🗄️ State Management統合
 
 ### Zustand Store Pattern
+
 ```typescript
 // Calendar Stores の統合パターン
 interface CalendarStoreSlice {
   // State
   state: CalendarState
-  
+
   // Actions
   actions: CalendarActions
-  
+
   // Selectors (computed values)
   selectors: CalendarSelectors
-  
+
   // Middleware hooks
   middleware: CalendarMiddleware
 }
@@ -176,34 +182,29 @@ const useCalendarStore = create<CalendarStoreSlice>()(
           events: [],
           tasks: [],
           settings: defaultSettings,
-          
+
           // Actions with Immer
-          addEvent: (event) => set(state => {
-            state.events.push(event)
-          }),
-          
+          addEvent: (event) =>
+            set((state) => {
+              state.events.push(event)
+            }),
+
           // Computed selectors
           getEventsForDate: (date) => {
-            return get().events.filter(event => 
-              isSameDay(event.startDate, date)
-            )
+            return get().events.filter((event) => isSameDay(event.startDate, date))
           },
-          
+
           // Middleware
           onEventChange: (callback) => {
-            return get().subscribe(
-              state => state.events,
-              callback,
-              { equalityFn: shallow }
-            )
-          }
+            return get().subscribe((state) => state.events, callback, { equalityFn: shallow })
+          },
         }))
       ),
       {
         name: 'calendar-store',
-        partialize: (state) => ({ 
-          settings: state.settings 
-        }) // 設定のみ永続化
+        partialize: (state) => ({
+          settings: state.settings,
+        }), // 設定のみ永続化
       }
     ),
     { name: 'calendar' }
@@ -212,6 +213,7 @@ const useCalendarStore = create<CalendarStoreSlice>()(
 ```
 
 ### React Query統合 (API状態管理)
+
 ```typescript
 // API データの管理
 const useEvents = (dateRange: DateRange) => {
@@ -223,23 +225,23 @@ const useEvents = (dateRange: DateRange) => {
     onSuccess: (data) => {
       // Zustand storeに同期
       useEventStore.getState().setEvents(data)
-    }
+    },
   })
 }
 
 // Mutation with optimistic updates
 const useCreateEvent = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: createEvent,
     onMutate: async (newEvent) => {
       // 楽観的更新
       await queryClient.cancelQueries(['events'])
-      
+
       const previousEvents = queryClient.getQueryData(['events'])
-      queryClient.setQueryData(['events'], old => [...old, newEvent])
-      
+      queryClient.setQueryData(['events'], (old) => [...old, newEvent])
+
       return { previousEvents }
     },
     onError: (err, newEvent, context) => {
@@ -249,12 +251,13 @@ const useCreateEvent = () => {
     onSettled: () => {
       // 成功・失敗問わず再取得
       queryClient.invalidateQueries(['events'])
-    }
+    },
   })
 }
 ```
 
 ### Store間通信パターン
+
 ```typescript
 // Store間の依存関係管理
 interface StoreSubscription {
@@ -265,24 +268,25 @@ interface StoreSubscription {
 const setupStoreIntegration = () => {
   // EventStoreの変更をTaskStoreに反映
   useEventStore.subscribe(
-    state => state.events,
+    (state) => state.events,
     (events) => {
       const taskStore = useTaskStore.getState()
-      
+
       // イベントに関連するタスクを更新
-      const relatedTasks = taskStore.tasks.filter(task =>
-        events.some(event => task.eventId === event.id)
-      )
-      
-      relatedTasks.forEach(task => {
-        taskStore.updateTaskFromEvent(task.id, events.find(e => e.id === task.eventId))
+      const relatedTasks = taskStore.tasks.filter((task) => events.some((event) => task.eventId === event.id))
+
+      relatedTasks.forEach((task) => {
+        taskStore.updateTaskFromEvent(
+          task.id,
+          events.find((e) => e.id === task.eventId)
+        )
       })
     }
   )
-  
+
   // SettingsStore → 全Store 設定変更の波及
   useCalendarSettingsStore.subscribe(
-    state => state.timezone,
+    (state) => state.timezone,
     (newTimezone) => {
       // 全イベントのタイムゾーン変換
       useEventStore.getState().convertTimezone(newTimezone)
@@ -297,11 +301,12 @@ const setupStoreIntegration = () => {
 ## 🌐 External API統合
 
 ### Google Calendar API
+
 ```typescript
 // Google Calendar 統合サービス
 class GoogleCalendarIntegration {
   private gapi: GoogleAPI
-  
+
   async syncEvents(dateRange: DateRange): Promise<Event[]> {
     try {
       const response = await this.gapi.client.calendar.events.list({
@@ -309,16 +314,16 @@ class GoogleCalendarIntegration {
         timeMin: dateRange.start.toISOString(),
         timeMax: dateRange.end.toISOString(),
         singleEvents: true,
-        orderBy: 'startTime'
+        orderBy: 'startTime',
       })
-      
+
       // Google Events → Internal Event format
       return response.result.items.map(this.transformGoogleEvent)
     } catch (error) {
       throw new CalendarIntegrationError('Google Calendar sync failed', error)
     }
   }
-  
+
   private transformGoogleEvent(gEvent: GoogleEvent): Event {
     return {
       id: gEvent.id,
@@ -329,18 +334,18 @@ class GoogleCalendarIntegration {
       location: gEvent.location,
       isAllDay: !gEvent.start.dateTime,
       source: 'google',
-      externalId: gEvent.id
+      externalId: gEvent.id,
     }
   }
-  
+
   async createEvent(event: Event): Promise<Event> {
     const gEvent = this.transformToGoogleEvent(event)
-    
+
     const response = await this.gapi.client.calendar.events.insert({
       calendarId: 'primary',
-      resource: gEvent
+      resource: gEvent,
     })
-    
+
     return this.transformGoogleEvent(response.result)
   }
 }
@@ -349,16 +354,16 @@ class GoogleCalendarIntegration {
 const useGoogleCalendarSync = () => {
   const [isConnected, setIsConnected] = useState(false)
   const [lastSync, setLastSync] = useState<Date | null>(null)
-  
+
   const integration = useMemo(() => new GoogleCalendarIntegration(), [])
-  
+
   const syncWithGoogle = useCallback(async () => {
     if (!isConnected) return
-    
+
     try {
       const dateRange = getMonthRange(new Date())
       const googleEvents = await integration.syncEvents(dateRange)
-      
+
       // ローカルストアに統合
       useEventStore.getState().mergeExternalEvents(googleEvents)
       setLastSync(new Date())
@@ -367,40 +372,41 @@ const useGoogleCalendarSync = () => {
       // エラー通知
     }
   }, [isConnected, integration])
-  
+
   return { isConnected, lastSync, syncWithGoogle }
 }
 ```
 
 ### Outlook Calendar API
+
 ```typescript
 // Microsoft Graph API統合
 class OutlookCalendarIntegration {
   private msalInstance: PublicClientApplication
-  
+
   async authenticate(): Promise<AuthenticationResult> {
     const request = {
       scopes: ['https://graph.microsoft.com/calendars.read'],
-      account: this.msalInstance.getAllAccounts()[0]
+      account: this.msalInstance.getAllAccounts()[0],
     }
-    
+
     return await this.msalInstance.acquireTokenSilent(request)
   }
-  
+
   async fetchEvents(dateRange: DateRange): Promise<Event[]> {
     const token = await this.authenticate()
-    
+
     const response = await fetch(`https://graph.microsoft.com/v1.0/me/events`, {
       headers: {
-        'Authorization': `Bearer ${token.accessToken}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token.accessToken}`,
+        'Content-Type': 'application/json',
       },
       params: {
         startDateTime: dateRange.start.toISOString(),
-        endDateTime: dateRange.end.toISOString()
-      }
+        endDateTime: dateRange.end.toISOString(),
+      },
     })
-    
+
     const data = await response.json()
     return data.value.map(this.transformOutlookEvent)
   }
@@ -408,40 +414,41 @@ class OutlookCalendarIntegration {
 ```
 
 ### WebDAV CalDAV統合
+
 ```typescript
 // CalDAV protocol support
 class CalDAVIntegration {
   private caldavClient: DAVClient
-  
+
   constructor(serverUrl: string, credentials: CalDAVCredentials) {
     this.caldavClient = new DAVClient({
       serverUrl,
       credentials,
-      defaultAccountType: 'caldav'
+      defaultAccountType: 'caldav',
     })
   }
-  
+
   async syncCalendars(): Promise<Calendar[]> {
     const calendars = await this.caldavClient.fetchCalendars()
-    
-    return calendars.map(cal => ({
+
+    return calendars.map((cal) => ({
       id: cal.url,
       name: cal.displayName,
       color: cal.color,
       source: 'caldav',
-      url: cal.url
+      url: cal.url,
     }))
   }
-  
+
   async fetchEvents(calendarUrl: string, dateRange: DateRange): Promise<Event[]> {
     const calendarObjects = await this.caldavClient.fetchCalendarObjects({
       calendar: { url: calendarUrl },
       timeRange: {
         start: dateRange.start,
-        end: dateRange.end
-      }
+        end: dateRange.end,
+      },
     })
-    
+
     return calendarObjects.map(this.parseICalEvent)
   }
 }
@@ -452,6 +459,7 @@ class CalDAVIntegration {
 ## 📱 Mobile & PWA統合
 
 ### React Native統合
+
 ```typescript
 // React Native Calendar Bridge
 interface NativeCalendarModule {
@@ -469,12 +477,12 @@ const CalendarBridge = NativeModules.CalendarModule as NativeCalendarModule
 const NativeCalendarView = () => {
   const [hasPermission, setHasPermission] = useState(false)
   const [nativeEvents, setNativeEvents] = useState<NativeEvent[]>([])
-  
+
   useEffect(() => {
     const requestPermission = async () => {
       const granted = await CalendarBridge.requestPermissions()
       setHasPermission(granted)
-      
+
       if (granted) {
         const events = await CalendarBridge.getEvents(
           startOfWeek(new Date()).toISOString(),
@@ -483,10 +491,10 @@ const NativeCalendarView = () => {
         setNativeEvents(events)
       }
     }
-    
+
     requestPermission()
   }, [])
-  
+
   return hasPermission ? (
     <CalendarWebView nativeEvents={nativeEvents} />
   ) : (
@@ -496,32 +504,31 @@ const NativeCalendarView = () => {
 ```
 
 ### PWA統合
+
 ```typescript
 // Service Worker でのオフライン対応
 // sw.js
 const CALENDAR_CACHE = 'calendar-v1'
-const CALENDAR_URLS = [
-  '/api/events',
-  '/api/tasks',
-  '/calendar'
-]
+const CALENDAR_URLS = ['/api/events', '/api/tasks', '/calendar']
 
 self.addEventListener('fetch', (event) => {
-  if (CALENDAR_URLS.some(url => event.request.url.includes(url))) {
+  if (CALENDAR_URLS.some((url) => event.request.url.includes(url))) {
     event.respondWith(
-      caches.open(CALENDAR_CACHE).then(cache => {
-        return cache.match(event.request).then(response => {
+      caches.open(CALENDAR_CACHE).then((cache) => {
+        return cache.match(event.request).then((response) => {
           if (response) {
             // キャッシュから返す
-            fetch(event.request).then(fetchResponse => {
-              cache.put(event.request, fetchResponse.clone())
-            }).catch(() => {}) // ネットワークエラーは無視
-            
+            fetch(event.request)
+              .then((fetchResponse) => {
+                cache.put(event.request, fetchResponse.clone())
+              })
+              .catch(() => {}) // ネットワークエラーは無視
+
             return response
           }
-          
+
           // ネットワークから取得してキャッシュ
-          return fetch(event.request).then(fetchResponse => {
+          return fetch(event.request).then((fetchResponse) => {
             cache.put(event.request, fetchResponse.clone())
             return fetchResponse
           })
@@ -534,7 +541,7 @@ self.addEventListener('fetch', (event) => {
 // Push通知
 self.addEventListener('push', (event) => {
   const data = event.data.json()
-  
+
   if (data.type === 'calendar_reminder') {
     event.waitUntil(
       self.registration.showNotification(data.title, {
@@ -543,9 +550,9 @@ self.addEventListener('push', (event) => {
         badge: '/icons/calendar-badge-72x72.png',
         actions: [
           { action: 'view', title: '確認' },
-          { action: 'snooze', title: '5分後に再通知' }
+          { action: 'snooze', title: '5分後に再通知' },
         ],
-        data: data.eventId
+        data: data.eventId,
       })
     )
   }
@@ -557,6 +564,7 @@ self.addEventListener('push', (event) => {
 ## 🧪 Testing統合
 
 ### Testing Library統合
+
 ```typescript
 // Calendar Testing Utilities
 export const calendarTestUtils = {
@@ -571,10 +579,10 @@ export const calendarTestUtils = {
         </QueryClient>
       </CalendarProvider>
     )
-    
+
     return render(component, { wrapper: AllProviders, ...options })
   },
-  
+
   // テストデータ生成
   createMockEvent: (overrides = {}): CalendarEvent => ({
     id: `event-${Date.now()}`,
@@ -584,17 +592,17 @@ export const calendarTestUtils = {
     description: 'Test Description',
     ...overrides
   }),
-  
+
   // イベント操作ヘルパー
   clickTimeSlot: async (hour: number, minute = 0) => {
     const timeSlot = screen.getByTestId(`time-slot-${hour}-${minute}`)
     await user.click(timeSlot)
   },
-  
+
   dragEvent: async (eventId: string, targetTime: string) => {
     const event = screen.getByTestId(`event-${eventId}`)
     const target = screen.getByTestId(`time-slot-${targetTime}`)
-    
+
     await user.drag(event, target)
   }
 }
@@ -603,17 +611,17 @@ export const calendarTestUtils = {
 describe('Calendar Integration', () => {
   it('イベント作成からビュー更新まで統合動作', async () => {
     const { renderCalendarView, createMockEvent, clickTimeSlot } = calendarTestUtils
-    
+
     renderCalendarView(<DayView />)
-    
+
     // 時間スロットクリックでポップアップ表示
     await clickTimeSlot(9, 0)
     expect(screen.getByRole('dialog')).toBeInTheDocument()
-    
+
     // イベント情報入力
     await user.type(screen.getByLabelText('タイトル'), 'New Event')
     await user.click(screen.getByText('保存'))
-    
+
     // ビューに反映されることを確認
     await waitFor(() => {
       expect(screen.getByText('New Event')).toBeInTheDocument()
@@ -623,24 +631,25 @@ describe('Calendar Integration', () => {
 ```
 
 ### E2E Testing (Playwright)
+
 ```typescript
 // E2E テストシナリオ
 test.describe('Calendar E2E Flow', () => {
   test('カレンダー全体のワークフロー', async ({ page }) => {
     await page.goto('/calendar')
-    
+
     // 週表示に切り替え
     await page.click('[data-testid="view-selector-week"]')
     await expect(page.locator('.week-view')).toBeVisible()
-    
+
     // イベント作成
     await page.click('[data-testid="time-slot-09-00"]')
     await page.fill('[data-testid="event-title"]', 'Meeting')
     await page.click('[data-testid="save-event"]')
-    
+
     // 作成されたイベントが表示されることを確認
     await expect(page.locator('[data-testid="event-Meeting"]')).toBeVisible()
-    
+
     // 日表示に切り替えてもイベントが見えることを確認
     await page.click('[data-testid="view-selector-day"]')
     await expect(page.locator('[data-testid="event-Meeting"]')).toBeVisible()
@@ -653,6 +662,7 @@ test.describe('Calendar E2E Flow', () => {
 ## 🔧 Build & Deployment統合
 
 ### Webpack/Vite統合
+
 ```typescript
 // Calendar module の動的インポート
 const CalendarModule = {
@@ -660,11 +670,11 @@ const CalendarModule = {
   DayView: () => import('./views/DayView'),
   WeekView: () => import('./views/WeekView'),
   AgendaView: () => import('./views/AgendaView'),
-  
+
   // Lazy loading with Suspense
   renderView: (viewType: CalendarViewType) => {
     const ViewComponent = lazy(() => CalendarModule[`${viewType}View`]())
-    
+
     return (
       <Suspense fallback={<CalendarSkeleton viewType={viewType} />}>
         <ViewComponent />
@@ -687,7 +697,7 @@ const calendarBundleConfig = {
         },
         calendarViews: {
           test: /[\\/]calendar[\\/]views[\\/]/,
-          name: 'calendar-views', 
+          name: 'calendar-views',
           priority: 20
         }
       }
@@ -697,6 +707,7 @@ const calendarBundleConfig = {
 ```
 
 ### Docker統合
+
 ```dockerfile
 # Calendar機能の最適化されたビルド
 FROM node:18-alpine as calendar-builder
@@ -726,43 +737,44 @@ CMD ["nginx", "-g", "daemon off;"]
 ## 📊 Monitoring & Analytics統合
 
 ### Performance Monitoring
+
 ```typescript
 // Calendar パフォーマンス監視
 const useCalendarPerformance = () => {
   const [metrics, setMetrics] = useState<PerformanceMetrics>({})
-  
+
   // レンダリングパフォーマンス
   useEffect(() => {
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
         if (entry.name.includes('calendar')) {
-          setMetrics(prev => ({
+          setMetrics((prev) => ({
             ...prev,
-            [entry.name]: entry.duration
+            [entry.name]: entry.duration,
           }))
         }
       }
     })
-    
+
     observer.observe({ entryTypes: ['measure'] })
     return () => observer.disconnect()
   }, [])
-  
+
   // メモリ使用量監視
   const trackMemoryUsage = useCallback(() => {
     if ('memory' in performance) {
       const memInfo = (performance as any).memory
-      setMetrics(prev => ({
+      setMetrics((prev) => ({
         ...prev,
         memory: {
           used: memInfo.usedJSHeapSize,
           total: memInfo.totalJSHeapSize,
-          limit: memInfo.jsHeapSizeLimit
-        }
+          limit: memInfo.jsHeapSizeLimit,
+        },
       }))
     }
   }, [])
-  
+
   return { metrics, trackMemoryUsage }
 }
 
@@ -772,35 +784,42 @@ const useCalendarAnalytics = () => {
     // Google Analytics
     gtag('event', eventName, {
       event_category: 'calendar',
-      ...properties
+      ...properties,
     })
-    
+
     // カスタム分析
     analytics.track(`calendar_${eventName}`, properties)
   }, [])
-  
-  const trackViewChange = useCallback((fromView: string, toView: string) => {
-    trackEvent('view_change', {
-      from_view: fromView,
-      to_view: toView,
-      timestamp: new Date().toISOString()
-    })
-  }, [trackEvent])
-  
-  const trackEventCreation = useCallback((event: CalendarEvent) => {
-    trackEvent('event_created', {
-      event_type: event.type,
-      has_location: Boolean(event.location),
-      duration_minutes: event.duration,
-      is_all_day: event.isAllDay
-    })
-  }, [trackEvent])
-  
+
+  const trackViewChange = useCallback(
+    (fromView: string, toView: string) => {
+      trackEvent('view_change', {
+        from_view: fromView,
+        to_view: toView,
+        timestamp: new Date().toISOString(),
+      })
+    },
+    [trackEvent]
+  )
+
+  const trackEventCreation = useCallback(
+    (event: CalendarEvent) => {
+      trackEvent('event_created', {
+        event_type: event.type,
+        has_location: Boolean(event.location),
+        duration_minutes: event.duration,
+        is_all_day: event.isAllDay,
+      })
+    },
+    [trackEvent]
+  )
+
   return { trackViewChange, trackEventCreation }
 }
 ```
 
 ### Error Tracking
+
 ```typescript
 // Sentry統合
 import * as Sentry from '@sentry/react'
@@ -829,7 +848,7 @@ Sentry.init({
         ...event.tags,
         component: 'calendar'
       }
-      
+
       event.contexts = {
         ...event.contexts,
         calendar: {
@@ -839,7 +858,7 @@ Sentry.init({
         }
       }
     }
-    
+
     return event
   }
 })
@@ -864,6 +883,7 @@ const CalendarErrorBoundary = Sentry.withErrorBoundary(CalendarApp, {
 ## 🎯 Best Practices
 
 ### 1. API統合
+
 ```typescript
 // ✅ Good: 統一されたAPI抽象化
 interface CalendarAPI {
@@ -875,14 +895,14 @@ interface CalendarAPI {
 
 class UnifiedCalendarAPI implements CalendarAPI {
   constructor(private providers: CalendarProvider[]) {}
-  
+
   async fetchEvents(range: DateRange): Promise<Event[]> {
     const results = await Promise.allSettled(
       this.providers.map(provider => provider.fetchEvents(range))
     )
-    
+
     return results
-      .filter((result): result is PromiseFulfilledResult<Event[]> => 
+      .filter((result): result is PromiseFulfilledResult<Event[]> =>
         result.status === 'fulfilled'
       )
       .flatMap(result => result.value)
@@ -895,6 +915,7 @@ const fetchOutlookEvents = () => fetch('/api/outlook/events')
 ```
 
 ### 2. エラーハンドリング
+
 ```typescript
 // ✅ Good: 階層的エラーハンドリング
 class CalendarIntegrationError extends Error {
@@ -913,17 +934,16 @@ const handleAPIError = (error: Error, provider: string) => {
     // すでにラップされたエラー
     throw error
   }
-  
+
   // プロバイダー固有のエラー変換
-  const message = provider === 'google' 
-    ? 'Google Calendarとの同期に失敗しました'
-    : 'カレンダー同期に失敗しました'
-    
+  const message = provider === 'google' ? 'Google Calendarとの同期に失敗しました' : 'カレンダー同期に失敗しました'
+
   throw new CalendarIntegrationError(message, provider, error)
 }
 ```
 
 ### 3. 型安全性
+
 ```typescript
 // ✅ Good: 厳密な型定義と変換
 interface ExternalEvent {
@@ -938,9 +958,7 @@ interface InternalEvent extends Event {
   readonly updatedAt: Date
 }
 
-const transformExternalEvent = (
-  external: ExternalEvent
-): InternalEvent => {
+const transformExternalEvent = (external: ExternalEvent): InternalEvent => {
   // 型安全な変換ロジック
   switch (external.source) {
     case 'google':
@@ -955,6 +973,6 @@ const transformExternalEvent = (
 
 ---
 
-*このドキュメントは Calendar Integration Patterns の詳細を説明しています。*  
-*更新日: 2025-01-XX*  
-*責任者: Calendar Development Team*
+_このドキュメントは Calendar Integration Patterns の詳細を説明しています。_  
+_更新日: 2025-01-XX_  
+_責任者: Calendar Development Team_

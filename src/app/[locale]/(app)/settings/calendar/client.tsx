@@ -1,6 +1,6 @@
 'use client'
 
-import { SettingsLayout, CalendarSettings } from '@/features/settings/components'
+import { CalendarSettings, SettingsLayout } from '@/features/settings/components'
 
 interface Props {
   translations: {

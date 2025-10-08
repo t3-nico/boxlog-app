@@ -275,7 +275,8 @@ export const CalendarDragSelection = ({
       {children}
 
       {/* ドラッグ選択範囲の表示（イベントカードと同じスタイル） */}
-      {selectionStyle && selection ? <div style={selectionStyle} className={selectionClassName}>
+      {selectionStyle && selection ? (
+        <div style={selectionStyle} className={selectionClassName}>
           <div
             className={cn(
               'flex h-full flex-col',
@@ -287,7 +288,7 @@ export const CalendarDragSelection = ({
               className={cn(
                 getEventColor('scheduled', 'text'),
                 calendarStyles.event.fontSize.title,
-                'mb-1 font-medium leading-tight'
+                'mb-1 leading-tight font-medium'
               )}
             >
               新しいイベント
@@ -325,7 +326,8 @@ export const CalendarDragSelection = ({
               })()}
             </div>
           </div>
-        </div> : null}
+        </div>
+      ) : null}
     </div>
   )
 }

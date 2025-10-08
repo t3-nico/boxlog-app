@@ -17,8 +17,8 @@ Reactアプリケーション全体のエラーをキャッチし、ユーザー
 ```typescript
 interface GlobalErrorBoundaryProps {
   children: ReactNode
-  maxRetries?: number           // 最大リトライ回数（デフォルト: 3）
-  retryDelay?: number           // リトライ遅延（ms）（デフォルト: 1000）
+  maxRetries?: number // 最大リトライ回数（デフォルト: 3）
+  retryDelay?: number // リトライ遅延（ms）（デフォルト: 1000）
   onError?: (error: Error, errorInfo: ErrorInfo, retryCount: number) => void
   className?: string
 }
@@ -58,21 +58,25 @@ function App() {
 ## 機能
 
 ### 1. エラー分析
+
 - error-patterns.tsと統合し、エラーを7カテゴリに自動分類
 - ユーザーフレンドリーなメッセージを自動生成
 - 推奨アクションを表示
 
 ### 2. 自動復旧
+
 - 復旧可能なエラーは自動でリトライ
 - 指数バックオフ（1秒 → 2秒 → 4秒）
 - リトライ回数の上限設定可能
 
 ### 3. 手動操作
+
 - 手動再試行ボタン
 - ページ再読み込みボタン
 - ホームに戻るボタン
 
 ### 4. 開発者向け情報
+
 - 開発環境では技術詳細を表示
 - スタックトレース表示
 - エラーID・分析コード表示
@@ -103,12 +107,14 @@ function App() {
 ## 統合されているシステム
 
 ### error-patterns.ts
+
 - エラーコード定義
 - カテゴリ分類（AUTH, VALIDATION, DB, BIZ, EXTERNAL, SYSTEM, RATE）
 - ユーザーフレンドリーメッセージ
 - 推奨アクション
 
 ### error-analysis.ts
+
 - エラー分析ロジック
 - 重要度判定
 - 復旧可能性判定
@@ -120,6 +126,7 @@ npm run test:run -- ErrorBoundary
 ```
 
 テストケース:
+
 - 正常なコンポーネントのレンダリング
 - エラー発生時のフォールバックUI表示
 - エラーIDの表示確認

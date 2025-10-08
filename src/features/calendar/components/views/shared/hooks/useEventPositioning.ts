@@ -4,8 +4,8 @@ import { useMemo } from 'react'
 
 import { isSameDay, isValid } from 'date-fns'
 
-import type { CalendarEvent } from '../types/event.types'
 import { HOUR_HEIGHT } from '../constants/grid.constants'
+import type { CalendarEvent } from '../types/event.types'
 
 import { useEventLayoutCalculator } from './useEventLayoutCalculator'
 
@@ -38,14 +38,13 @@ export function useEventPositioning({
   date,
   events = [], // デフォルト値を空配列に設定
 }: UseEventPositioningOptions) {
-  
   // 当日のイベントのみフィルター（Day/Week共通）
   const filteredEvents = useMemo(() => {
-    return events.filter(event => {
+    return events.filter((event) => {
       if (!event.startDate || !isValid(new Date(event.startDate))) {
         return false
       }
-      
+
       const eventDate = new Date(event.startDate)
       return isSameDay(eventDate, date)
     })
@@ -53,10 +52,10 @@ export function useEventPositioning({
 
   // CalendarEventをuseEventLayoutCalculatorで期待される形式に変換
   const convertedEvents = useMemo(() => {
-    return filteredEvents.map(event => ({
+    return filteredEvents.map((event) => ({
       ...event,
       start: event.startDate!,
-      end: event.endDate || new Date(new Date(event.startDate!).getTime() + 60 * 60 * 1000)
+      end: event.endDate || new Date(new Date(event.startDate!).getTime() + 60 * 60 * 1000),
     }))
   }, [filteredEvents])
 
@@ -86,18 +85,18 @@ export function useEventPositioning({
         zIndex: 10 + index,
         column: layout.column,
         totalColumns: layout.totalColumns,
-        opacity: layout.totalColumns > 1 ? 0.95 : 1.0
+        opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
       }
     })
   }, [eventLayouts])
 
   const maxConcurrentEvents = useMemo(() => {
-    return Math.max(1, ...eventLayouts.map(layout => layout.totalColumns))
+    return Math.max(1, ...eventLayouts.map((layout) => layout.totalColumns))
   }, [eventLayouts])
 
   return {
     events: filteredEvents,
     eventPositions,
-    maxConcurrentEvents
+    maxConcurrentEvents,
   }
 }

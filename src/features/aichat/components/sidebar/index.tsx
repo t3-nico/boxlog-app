@@ -1,13 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 
-import { 
-  Plus, 
-  Edit3, 
-  Trash2,
-  ExternalLink
-} from 'lucide-react'
+import { Edit3, ExternalLink, Plus, Trash2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
@@ -34,21 +29,21 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
       name: 'BoxLog User Guide',
       type: 'text',
       content: 'Sample user guide content...',
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
-      id: '2', 
+      id: '2',
       name: 'API Documentation',
       type: 'url',
       url: 'https://docs.boxlog.com/api',
-      createdAt: new Date()
+      createdAt: new Date(),
     },
     {
       id: '3',
       name: 'Release Notes',
       type: 'file',
-      createdAt: new Date()
-    }
+      createdAt: new Date(),
+    },
   ])
 
   const [chatHistory] = useState<ChatHistoryItem[]>([
@@ -56,20 +51,20 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
       id: '1',
       title: 'Task Management Help',
       lastMessage: 'How do I organize my tasks effectively?',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30) // 30 minutes ago
+      timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
     },
     {
       id: '2',
       title: 'Calendar Integration',
       lastMessage: 'Setting up calendar sync with Google Calendar',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2) // 2 hours ago
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
     },
     {
       id: '3',
       title: 'Productivity Analytics',
       lastMessage: 'Analyzing my productivity patterns',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24) // 1 day ago
-    }
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+    },
   ])
 
   const [showAddDocument, setShowAddDocument] = useState(false)
@@ -77,17 +72,17 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
     name: '',
     type: 'text' as Document['type'],
     content: '',
-    url: ''
+    url: '',
   })
 
   const handleAddDocument = () => {
     if (!newDocument.name) return
-    
+
     const doc: Document = {
       id: Date.now().toString(),
       name: newDocument.name,
       type: newDocument.type,
-      createdAt: new Date()
+      createdAt: new Date(),
     }
 
     if (newDocument.type === 'text') {
@@ -102,7 +97,7 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
   }
 
   const handleDeleteDocument = (id: string) => {
-    setDocuments(documents.filter(doc => doc.id !== id))
+    setDocuments(documents.filter((doc) => doc.id !== id))
   }
 
   const formatTimestamp = (date: Date) => {
@@ -129,70 +124,61 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
     <>
       {/* Resources Section */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-foreground">Resources</h3>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-foreground text-sm font-medium">Resources</h3>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowAddDocument(!showAddDocument)}
             className="h-6 w-6 p-0"
           >
-            <Plus className="w-3 h-3" />
+            <Plus className="h-3 w-3" />
           </Button>
         </div>
 
         {showAddDocument != null && (
-          <div className="mb-4 p-3 bg-accent/30 rounded-lg space-y-2">
+          <div className="bg-accent/30 mb-4 space-y-2 rounded-lg p-3">
             <input
               type="text"
               placeholder="Document name"
               value={newDocument.name}
-              onChange={(e) => setNewDocument({...newDocument, name: e.target.value})}
-              className="w-full px-2 py-1 text-xs bg-background border border-border rounded"
+              onChange={(e) => setNewDocument({ ...newDocument, name: e.target.value })}
+              className="bg-background border-border w-full rounded border px-2 py-1 text-xs"
             />
             <select
               value={newDocument.type}
-              onChange={(e) => setNewDocument({...newDocument, type: e.target.value as Document['type']})}
-              className="w-full px-2 py-1 text-xs bg-background border border-border rounded"
+              onChange={(e) => setNewDocument({ ...newDocument, type: e.target.value as Document['type'] })}
+              className="bg-background border-border w-full rounded border px-2 py-1 text-xs"
             >
               <option value="text">Text Content</option>
               <option value="url">URL</option>
               <option value="file">File Upload</option>
             </select>
-            
+
             {newDocument.type === 'text' && (
               <textarea
                 placeholder="Enter content..."
                 value={newDocument.content}
-                onChange={(e) => setNewDocument({...newDocument, content: e.target.value})}
-                className="w-full px-2 py-1 text-xs bg-background border border-border rounded h-16 resize-none"
+                onChange={(e) => setNewDocument({ ...newDocument, content: e.target.value })}
+                className="bg-background border-border h-16 w-full resize-none rounded border px-2 py-1 text-xs"
               />
             )}
-            
+
             {newDocument.type === 'url' && (
               <input
                 type="url"
                 placeholder="Enter URL..."
                 value={newDocument.url}
-                onChange={(e) => setNewDocument({...newDocument, url: e.target.value})}
-                className="w-full px-2 py-1 text-xs bg-background border border-border rounded"
+                onChange={(e) => setNewDocument({ ...newDocument, url: e.target.value })}
+                className="bg-background border-border w-full rounded border px-2 py-1 text-xs"
               />
             )}
 
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={handleAddDocument}
-                className="text-xs h-6"
-              >
+              <Button size="sm" onClick={handleAddDocument} className="h-6 text-xs">
                 Add
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAddDocument(false)}
-                className="text-xs h-6"
-              >
+              <Button variant="outline" size="sm" onClick={() => setShowAddDocument(false)} className="h-6 text-xs">
                 Cancel
               </Button>
             </div>
@@ -203,20 +189,18 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 transition-colors group"
+              className="hover:bg-accent/50 group flex items-center justify-between rounded-lg p-2 transition-colors"
             >
-              <div className="flex items-center gap-2 min-w-0 flex-1">
-                <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                 <div className="min-w-0 flex-1">
-                  <div className="text-xs font-medium text-foreground truncate">
-                    {doc.name}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-foreground truncate text-xs font-medium">{doc.name}</div>
+                  <div className="text-muted-foreground text-xs">
                     {doc.type === 'url' ? 'URL' : doc.type === 'file' ? 'File' : 'Text'}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                 {doc.type === 'url' && (
                   <Button
                     variant="ghost"
@@ -224,15 +208,11 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
                     onClick={() => window.open(doc.url, '_blank')}
                     className="h-5 w-5 p-0"
                   >
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="h-3 w-3" />
                   </Button>
                 )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-5 w-5 p-0"
-                >
-                  <Edit3 className="w-3 h-3" />
+                <Button variant="ghost" size="sm" className="h-5 w-5 p-0">
+                  <Edit3 className="h-3 w-3" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -240,7 +220,7 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
                   onClick={() => handleDeleteDocument(doc.id)}
                   className="h-5 w-5 p-0 text-red-500 hover:text-red-700"
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
             </div>
@@ -251,24 +231,15 @@ export const AIChatSidebarSections = ({ collapsed }: { collapsed: boolean }) => 
       {/* Chat History Section */}
       <div>
         <div className="mb-3">
-          <h3 className="text-sm font-medium text-foreground">Chat History</h3>
+          <h3 className="text-foreground text-sm font-medium">Chat History</h3>
         </div>
 
         <div className="space-y-1">
           {chatHistory.map((chat) => (
-            <div
-              key={chat.id}
-              className="p-2 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-            >
-              <div className="text-xs font-medium text-foreground truncate mb-1">
-                {chat.title}
-              </div>
-              <div className="text-xs text-muted-foreground truncate mb-1">
-                {chat.lastMessage}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {formatTimestamp(chat.timestamp)}
-              </div>
+            <div key={chat.id} className="hover:bg-accent/50 cursor-pointer rounded-lg p-2 transition-colors">
+              <div className="text-foreground mb-1 truncate text-xs font-medium">{chat.title}</div>
+              <div className="text-muted-foreground mb-1 truncate text-xs">{chat.lastMessage}</div>
+              <div className="text-muted-foreground text-xs">{formatTimestamp(chat.timestamp)}</div>
             </div>
           ))}
         </div>

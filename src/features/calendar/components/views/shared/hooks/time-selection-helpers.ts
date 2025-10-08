@@ -23,7 +23,7 @@ export function pixelsToTime(y: number, hourHeight: number): TimePoint {
   const minute = Math.floor((totalMinutes % 60) / 15) * 15 // 15分単位に丸める
   return {
     hour: Math.max(0, Math.min(23, hour)),
-    minute: Math.max(0, Math.min(45, minute))
+    minute: Math.max(0, Math.min(45, minute)),
   }
 }
 
@@ -38,8 +38,7 @@ export function timeToMinutes(time: TimePoint): number {
  * 時間の比較（time1 < time2 の場合true）
  */
 export function isTimeBefore(time1: TimePoint, time2: TimePoint): boolean {
-  return time1.hour < time2.hour ||
-    (time1.hour === time2.hour && time1.minute < time2.minute)
+  return time1.hour < time2.hour || (time1.hour === time2.hour && time1.minute < time2.minute)
 }
 
 /**
@@ -79,7 +78,7 @@ export function calculateTimeSelection(
     startHour: Math.max(0, startHour),
     startMinute: Math.max(0, startMinute),
     endHour: Math.min(23, endHour),
-    endMinute: Math.min(59, endMinute)
+    endMinute: Math.min(59, endMinute),
   }
 }
 
@@ -95,10 +94,7 @@ export function calculateSelectionDuration(selection: TimeSelection): number {
 /**
  * 選択範囲の表示スタイルを生成
  */
-export function generateSelectionStyle(
-  selection: TimeSelection,
-  hourHeight: number
-): React.CSSProperties {
+export function generateSelectionStyle(selection: TimeSelection, hourHeight: number): React.CSSProperties {
   return {
     position: 'absolute',
     left: 0,
@@ -109,17 +105,14 @@ export function generateSelectionStyle(
     border: '2px solid rgb(59, 130, 246)', // blue-500
     borderRadius: '4px',
     pointerEvents: 'none',
-    zIndex: 1000
+    zIndex: 1000,
   }
 }
 
 /**
  * マウス座標からコンテナ内のY座標を計算
  */
-export function getRelativeY(
-  mouseY: number,
-  container: HTMLElement
-): number {
+export function getRelativeY(mouseY: number, container: HTMLElement): number {
   const rect = container.getBoundingClientRect()
   return mouseY - rect.top + container.scrollTop
 }

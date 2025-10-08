@@ -8,7 +8,6 @@ import { DateRangeDisplay } from './DateRangeDisplay'
 import { HeaderActions } from './HeaderActions'
 import { ViewSwitcher } from './ViewSwitcher'
 
-
 interface CalendarHeaderProps {
   viewType: CalendarViewType
   currentDate: Date
@@ -48,24 +47,21 @@ export const CalendarHeader = ({
   showActions = false,
   leftSlot,
   onDateSelect,
-  showMiniCalendar = false
+  showMiniCalendar = false,
 }: CalendarHeaderProps) => {
   return (
-    <header className="relative bg-background px-4 py-4">
+    <header className="bg-background relative px-4 py-4">
       <div className="flex items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
           {/* カスタムスロット（モバイルメニューボタンなど） */}
           {leftSlot}
-          
+
           {/* 日付ナビゲーション */}
-          <DateNavigator 
-            onNavigate={onNavigate}
-            arrowSize="lg"
-          />
-          
+          <DateNavigator onNavigate={onNavigate} arrowSize="lg" />
+
           {/* 現在の日付表示 */}
-          <DateRangeDisplay 
+          <DateRangeDisplay
             date={currentDate}
             viewType={viewType}
             showWeekNumber={true}
@@ -73,24 +69,14 @@ export const CalendarHeader = ({
             onDateSelect={onDateSelect}
           />
         </div>
-        
+
         {/* 右側: ビュー切り替えとアクション */}
         <div className="flex items-center gap-2">
           {/* ビュー切り替え */}
-          <ViewSwitcher 
-            options={viewOptions}
-            currentView={viewType}
-            onChange={onViewChange}
-          />
-          
+          <ViewSwitcher options={viewOptions} currentView={viewType} onChange={onViewChange} />
+
           {/* アクションボタン */}
-          {showActions != null && (
-            <HeaderActions
-              onSettings={onSettings}
-              onExport={onExport}
-              onImport={onImport}
-            />
-          )}
+          {showActions != null && <HeaderActions onSettings={onSettings} onExport={onExport} onImport={onImport} />}
         </div>
       </div>
     </header>

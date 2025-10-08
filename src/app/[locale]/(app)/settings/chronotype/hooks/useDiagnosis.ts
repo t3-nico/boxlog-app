@@ -1,11 +1,11 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
-import type { ChronotypeType } from '@/types/chronotype'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import type { TranslationFunction } from '@/features/i18n/lib'
+import { useI18n } from '@/features/i18n/lib/hooks'
+import type { ChronotypeType } from '@/types/chronotype'
 
-import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
 import { calculateDiagnosisResult } from '../chronotype.diagnosis'
+import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
 
 export const useDiagnosis = (onDiagnosisComplete?: (result: ChronotypeType) => void) => {
   const { t } = useI18n()

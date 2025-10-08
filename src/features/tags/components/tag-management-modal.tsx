@@ -199,14 +199,14 @@ export const TagManagementModal = ({
       <div
         role="button"
         tabIndex={0}
-        className="fixed inset-0 z-50 bg-black bg-opacity-50"
+        className="bg-opacity-50 fixed inset-0 z-50 bg-black"
         onClick={onClose}
         onKeyDown={handleOverlayKeyDown}
         aria-label="モーダルを閉じる"
       />
 
       {/* Modal */}
-      <div className="fixed left-1/2 top-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800">
+      <div className="fixed top-1/2 left-1/2 z-50 max-h-[80vh] w-96 -translate-x-1/2 -translate-y-1/2 transform overflow-hidden rounded-lg bg-white shadow-xl dark:bg-gray-800">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Tag Management</h2>

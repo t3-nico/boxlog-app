@@ -3,35 +3,26 @@
  */
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
-import type { ApiHandler, MiddlewareConfig } from './types'
 import { withErrorHandling } from './error-handler'
+import type { ApiHandler, MiddlewareConfig } from './types'
 
 /**
  * 認証ミドルウェア
  */
-export function withAuth<T = unknown>(
-  handler: ApiHandler<T>,
-  config: MiddlewareConfig = {}
-) {
+export function withAuth<T = unknown>(handler: ApiHandler<T>, config: MiddlewareConfig = {}) {
   return withErrorHandling(async (req, context) => {
     // 認証チェック
     const authHeader = req.headers.get('authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw createAppError(
-        'Authorization header missing or invalid',
-        ERROR_CODES.INVALID_TOKEN,
-        { source: 'auth-middleware' }
-      )
+      throw createAppError('Authorization header missing or invalid', ERROR_CODES.INVALID_TOKEN, {
+        source: 'auth-middleware',
+      })
     }
 
     // トークン検証（実装は認証システムに依存）
     const token = authHeader.substring(7)
     if (!isValidToken(token)) {
-      throw createAppError(
-        'Invalid or expired token',
-        ERROR_CODES.EXPIRED_TOKEN,
-        { source: 'auth-middleware' }
-      )
+      throw createAppError('Invalid or expired token', ERROR_CODES.EXPIRED_TOKEN, { source: 'auth-middleware' })
     }
 
     // ユーザー情報をコンテキストに追加

@@ -33,7 +33,7 @@ const DEFAULT_CONFIG: MemoryConfig = {
   warningThresholdMB: 80,
   gcTriggerPercentage: 85,
   cleanupIntervalMs: 30000, // 30秒
-  monitoringEnabled: true
+  monitoringEnabled: true,
 }
 
 export class MemoryOptimizer {
@@ -50,7 +50,7 @@ export class MemoryOptimizer {
 
   constructor(config?: Partial<MemoryConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config }
-    
+
     if (this.config.monitoringEnabled) {
       this.startMonitoring()
     }
@@ -85,15 +85,19 @@ export class MemoryOptimizer {
    * 現在のメモリ使用量を取得
    */
   getMemoryStats(): MemoryStats {
-    const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory
-    
+    const memory = (
+      performance as Performance & {
+        memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number }
+      }
+    ).memory
+
     if (!memory) {
       return {
         used: 0,
         total: 0,
         limit: this.config.maxMemoryMB * 1024 * 1024,
         percentage: 0,
-        trend: 'stable'
+        trend: 'stable',
       }
     }
 
@@ -105,15 +109,15 @@ export class MemoryOptimizer {
     // トレンド判定
     let trend: MemoryStats['trend'] = 'stable'
     if (this.memoryHistory.length > 0) {
-      const previous = this.memoryHistory[this.memoryHistory.length - 1 as keyof typeof memoryHistory]
+      const previous = this.memoryHistory[(this.memoryHistory.length - 1) as keyof typeof memoryHistory]
       const change = (used - previous.used) / previous.used
-      
+
       if (change > 0.05) trend = 'increasing'
       else if (change < -0.05) trend = 'decreasing'
     }
 
     const stats: MemoryStats = { used, total, limit, percentage, trend }
-    
+
     // 履歴に追加（最新50件のみ保持）
     this.memoryHistory.push(stats)
     if (this.memoryHistory.length > 50) {
@@ -128,7 +132,7 @@ export class MemoryOptimizer {
    */
   private checkMemoryUsage(): void {
     const stats = this.getMemoryStats()
-    
+
     // 警告閾値チェック
     if (stats.percentage > (this.config.warningThresholdMB / this.config.maxMemoryMB) * 100) {
       console.warn(`⚠️ Memory usage warning: ${Math.round(stats.percentage)}%`)
@@ -148,12 +152,12 @@ export class MemoryOptimizer {
   forceGarbageCollection(): void {
     // WeakRefのクリーンアップ
     this.cleanupWeakReferences()
-    
+
     // 手動でのメモリ解放を促進
     if ((window as Window & { gc?: () => void }).gc) {
-      (window as Window & { gc?: () => void }).gc()
+      ;(window as Window & { gc?: () => void }).gc()
     }
-    
+
     // 大きなオブジェクトの削除を促進
     this.triggerCleanup('gc')
   }
@@ -161,16 +165,21 @@ export class MemoryOptimizer {
   /**
    * イベントリスナーの追跡登録
    */
-  trackEventListener(element: EventTarget, type: string, listener: EventListener, options?: boolean | AddEventListenerOptions): void {
+  trackEventListener(
+    element: EventTarget,
+    type: string,
+    listener: EventListener,
+    options?: boolean | AddEventListenerOptions
+  ): void {
     element.addEventListener(type, listener, options)
     this.listeners.add(listener)
-    
+
     // クリーンアップコールバックを登録
     const cleanup = () => {
       element.removeEventListener(type, listener, options)
       this.listeners.delete(listener)
     }
-    
+
     this.cleanupCallbacks.set(`listener_${Date.now()}_${Math.random()}`, cleanup)
   }
 
@@ -180,12 +189,12 @@ export class MemoryOptimizer {
   trackTimer(callback: () => void, delay: number): NodeJS.Timeout {
     const timer = setTimeout(callback, delay)
     this.timers.add(timer)
-    
+
     // 自動クリーンアップ
     setTimeout(() => {
       this.timers.delete(timer)
     }, delay + 100)
-    
+
     return timer
   }
 
@@ -195,12 +204,12 @@ export class MemoryOptimizer {
   trackInterval(callback: () => void, delay: number): NodeJS.Timer {
     const interval = setInterval(callback, delay)
     this.intervals.add(interval)
-    
+
     const cleanup = () => {
       clearInterval(interval)
       this.intervals.delete(interval)
     }
-    
+
     this.cleanupCallbacks.set(`interval_${Date.now()}_${Math.random()}`, cleanup)
     return interval
   }
@@ -210,12 +219,12 @@ export class MemoryOptimizer {
    */
   trackObserver(observer: MutationObserver | IntersectionObserver | ResizeObserver): void {
     this.observers.add(observer)
-    
+
     const cleanup = () => {
       observer.disconnect()
       this.observers.delete(observer)
     }
-    
+
     this.cleanupCallbacks.set(`observer_${Date.now()}_${Math.random()}`, cleanup)
   }
 
@@ -233,13 +242,13 @@ export class MemoryOptimizer {
    */
   private cleanupWeakReferences(): void {
     const validRefs = new Set<WeakRef<object>>()
-    
+
     for (const ref of this.weakRefs) {
       if (ref.deref() !== undefined) {
         validRefs.add(ref)
       }
     }
-    
+
     this.weakRefs = validRefs
   }
 
@@ -247,21 +256,18 @@ export class MemoryOptimizer {
    * メモリリークの検出
    */
   private detectMemoryLeaks(): void {
-    
     // 継続的なメモリ増加の検出
     if (this.memoryHistory.length >= 10) {
       const recent = this.memoryHistory.slice(-10)
-      const increasing = recent.every((stat, index) => 
-        index === 0 || stat.used > recent[index - 1].used
-      )
-      
+      const increasing = recent.every((stat, index) => index === 0 || stat.used > recent[index - 1].used)
+
       if (increasing) {
         this.reportLeak({
           component: 'general',
           type: 'reference',
           severity: 'medium',
           description: '継続的なメモリ増加を検出',
-          timestamp: Date.now()
+          timestamp: Date.now(),
         })
       }
     }
@@ -273,7 +279,7 @@ export class MemoryOptimizer {
         type: 'listener',
         severity: 'high',
         description: `${this.listeners.size}個の追跡されていないイベントリスナー`,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     }
 
@@ -284,7 +290,7 @@ export class MemoryOptimizer {
         type: 'timer',
         severity: 'medium',
         description: `${this.timers.size}個のアクティブなタイマー`,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       })
     }
   }
@@ -295,7 +301,7 @@ export class MemoryOptimizer {
   private reportLeak(leak: MemoryLeak): void {
     this.detectedLeaks.push(leak)
     console.warn(`🔍 Memory leak detected:`, leak)
-    
+
     // 最新50件のみ保持
     if (this.detectedLeaks.length > 50) {
       this.detectedLeaks.shift()
@@ -308,19 +314,22 @@ export class MemoryOptimizer {
   private performAutoCleanup(): void {
     // Dead WeakRefの削除
     this.cleanupWeakReferences()
-    
+
     // 期限切れタイマーの削除
     const _currentTime = Date.now()
     const expiredTimers = new Set<NodeJS.Timeout>()
-    
+
     for (const timer of this.timers) {
       // タイマーの状態確認（実装依存）
-      if ((timer as NodeJS.Timeout & { _destroyed?: boolean; _idleTimeout?: number })._destroyed || (timer as NodeJS.Timeout & { _destroyed?: boolean; _idleTimeout?: number })._idleTimeout === -1) {
+      if (
+        (timer as NodeJS.Timeout & { _destroyed?: boolean; _idleTimeout?: number })._destroyed ||
+        (timer as NodeJS.Timeout & { _destroyed?: boolean; _idleTimeout?: number })._idleTimeout === -1
+      ) {
         expiredTimers.add(timer)
       }
     }
-    
-    expiredTimers.forEach(timer => this.timers.delete(timer))
+
+    expiredTimers.forEach((timer) => this.timers.delete(timer))
   }
 
   /**
@@ -328,7 +337,7 @@ export class MemoryOptimizer {
    */
   triggerCleanup(reason: 'warning' | 'gc' | 'manual' = 'manual'): void {
     console.log(`🧹 Triggering cleanup (reason: ${reason})`)
-    
+
     // 登録されたクリーンアップコールバックの実行
     for (const [key, cleanup] of this.cleanupCallbacks) {
       try {
@@ -337,10 +346,10 @@ export class MemoryOptimizer {
         console.error(`Cleanup error for ${key}:`, error)
       }
     }
-    
+
     // WeakRefのクリーンアップ
     this.cleanupWeakReferences()
-    
+
     console.log('✅ Cleanup completed')
   }
 
@@ -349,20 +358,20 @@ export class MemoryOptimizer {
    */
   optimizeLargeObjects<T>(obj: T, compressFunc?: (obj: T) => string): T | string {
     const objString = JSON.stringify(obj)
-    const {size} = new Blob([objString])
-    
+    const { size } = new Blob([objString])
+
     // 1MB以上のオブジェクトは圧縮を検討
     if (size > 1024 * 1024) {
       console.warn(`Large object detected: ${Math.round(size / 1024 / 1024)}MB`)
-      
+
       if (compressFunc) {
         return compressFunc(obj)
       }
-      
+
       // デフォルトの圧縮（JSONの最小化）
       return JSON.stringify(obj) as T
     }
-    
+
     return obj
   }
 
@@ -371,11 +380,11 @@ export class MemoryOptimizer {
    */
   createChunkedArray<T>(items: T[], chunkSize: number = 1000): T[][] {
     const chunks: T[][] = []
-    
+
     for (let i = 0; i < items.length; i += chunkSize) {
       chunks.push(items.slice(i, i + chunkSize))
     }
-    
+
     return chunks
   }
 
@@ -383,22 +392,22 @@ export class MemoryOptimizer {
    * メモリ効率的なイテレーター
    */
   async *createMemoryEfficientIterator<T>(
-    items: T[], 
+    items: T[],
     batchSize: number = 100,
     processFunc?: (item: T) => void
   ): AsyncGenerator<T[], void, unknown> {
     for (let i = 0; i < items.length; i += batchSize) {
       const batch = items.slice(i, i + batchSize)
-      
+
       if (processFunc) {
         batch.forEach(processFunc)
       }
-      
+
       yield batch
-      
+
       // ガベージコレクションの機会を提供
       if (i % (batchSize * 10) === 0) {
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
       }
     }
   }
@@ -436,19 +445,19 @@ export class MemoryOptimizer {
   } {
     const current = this.getMemoryStats()
     const recommendations: string[] = []
-    
+
     if (current.percentage > 80) {
       recommendations.push('メモリ使用量が高い - 不要なデータのクリーンアップを実行')
     }
-    
+
     if (this.listeners.size > 50) {
       recommendations.push('イベントリスナーが多い - 不要なリスナーの削除を検討')
     }
-    
-    if (this.detectedLeaks.some(leak => leak.severity === 'high')) {
+
+    if (this.detectedLeaks.some((leak) => leak.severity === 'high')) {
       recommendations.push('重要なメモリリークが検出された - 緊急対応が必要')
     }
-    
+
     return {
       current,
       history: [...this.memoryHistory],
@@ -459,9 +468,9 @@ export class MemoryOptimizer {
         intervals: this.intervals.size,
         observers: this.observers.size,
         weakRefs: this.weakRefs.size,
-        cleanupCallbacks: this.cleanupCallbacks.size
+        cleanupCallbacks: this.cleanupCallbacks.size,
       },
-      recommendations
+      recommendations,
     }
   }
 
@@ -471,15 +480,15 @@ export class MemoryOptimizer {
   cleanup(): void {
     // 監視停止
     this.stopMonitoring()
-    
+
     // 全クリーンアップ実行
     this.triggerCleanup('manual')
-    
+
     // 追跡中のリソースを強制クリーンアップ
-    this.timers.forEach(timer => clearTimeout(timer))
-    this.intervals.forEach(interval => clearInterval(interval))
-    this.observers.forEach(observer => observer.disconnect())
-    
+    this.timers.forEach((timer) => clearTimeout(timer))
+    this.intervals.forEach((interval) => clearInterval(interval))
+    this.observers.forEach((observer) => observer.disconnect())
+
     // データ構造のクリア
     this.listeners.clear()
     this.timers.clear()
@@ -489,7 +498,7 @@ export class MemoryOptimizer {
     this.cleanupCallbacks.clear()
     this.memoryHistory = []
     this.detectedLeaks = []
-    
+
     console.log('🧠 Memory optimizer cleanup completed')
   }
 }
@@ -514,10 +523,10 @@ export function cleanupMemoryOptimizer(): void {
 // React Hook
 export function useMemoryOptimizer(autoStart: boolean = true) {
   const optimizer = getMemoryOptimizer()
-  
+
   if (autoStart && typeof window !== 'undefined') {
     optimizer.startMonitoring()
   }
-  
+
   return optimizer
 }

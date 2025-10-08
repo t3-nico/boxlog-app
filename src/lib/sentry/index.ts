@@ -4,20 +4,15 @@
 
 // メイン統合機能
 export {
-  SentryIntegration,
   SentryErrorHandler,
-  sentryIntegration,
+  SentryIntegration,
+  handleApiError,
+  handleReactError,
   initializeSentry,
   reportToSentry,
-  handleReactError,
-  handleApiError,
-  type SentryIntegrationOptions
+  sentryIntegration,
+  type SentryIntegrationOptions,
 } from './integration'
 
 // パフォーマンス監視
-export {
-  instrumentApiCalls,
-  measurePageLoad,
-  measureCoreWebVitals,
-  initPerformanceMonitoring
-} from './performance'
+export { initPerformanceMonitoring, instrumentApiCalls, measureCoreWebVitals, measurePageLoad } from './performance'

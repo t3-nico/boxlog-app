@@ -4,20 +4,20 @@ BoxLogアプリケーション全体で使用されるグローバル型定義�
 
 ## 📁 ファイル構成
 
-| ファイル | 行数 | 役割 | 主要な型 |
-|---------|------|------|---------|
-| **index.ts** | 140行 | 統一エクスポート | Task, TaskStatus, TaskPriority |
-| **task.ts** | 306行 | タスク型 | TaskLabel, TaskComment, TaskAttachment |
-| **tags.ts** | 244行 | タグシステム | Tag, TagWithChildren, TagHierarchy |
-| **supabase.ts** | 189行 | DB型 | Database, Tables, Enums |
-| **smart-folders.ts** | 176行 | スマートフォルダー | SmartFolder, SmartFolderRule |
-| **common.ts** | 150行 | 共通型 | User, UserSettings, Pagination |
-| **i18n.ts** | 145行 | 国際化 | Locale, Translation, I18nConfig |
-| **chronotype.ts** | 124行 | クロノタイプ | ChronotypeProfile, SleepPattern |
-| **sidebar.ts** | 85行 | サイドバー | SidebarConfig, MenuItem |
-| **unified.ts** | 75行 | 統一基本型 | ApiResponse, ApiError |
-| **trash.ts** | 35行 | ゴミ箱 | TrashedItem, TrashFilter |
-| **global.d.ts** | 20行 | グローバル型拡張 | BatteryManager, Navigator |
+| ファイル             | 行数  | 役割               | 主要な型                               |
+| -------------------- | ----- | ------------------ | -------------------------------------- |
+| **index.ts**         | 140行 | 統一エクスポート   | Task, TaskStatus, TaskPriority         |
+| **task.ts**          | 306行 | タスク型           | TaskLabel, TaskComment, TaskAttachment |
+| **tags.ts**          | 244行 | タグシステム       | Tag, TagWithChildren, TagHierarchy     |
+| **supabase.ts**      | 189行 | DB型               | Database, Tables, Enums                |
+| **smart-folders.ts** | 176行 | スマートフォルダー | SmartFolder, SmartFolderRule           |
+| **common.ts**        | 150行 | 共通型             | User, UserSettings, Pagination         |
+| **i18n.ts**          | 145行 | 国際化             | Locale, Translation, I18nConfig        |
+| **chronotype.ts**    | 124行 | クロノタイプ       | ChronotypeProfile, SleepPattern        |
+| **sidebar.ts**       | 85行  | サイドバー         | SidebarConfig, MenuItem                |
+| **unified.ts**       | 75行  | 統一基本型         | ApiResponse, ApiError                  |
+| **trash.ts**         | 35行  | ゴミ箱             | TrashedItem, TrashFilter               |
+| **global.d.ts**      | 20行  | グローバル型拡張   | BatteryManager, Navigator              |
 
 **合計**: 1,709行（12ファイル）
 
@@ -98,7 +98,7 @@ import { Task, TaskInsert, TaskUpdate, ApiResponse } from '@/types'
 async function createTask(data: TaskInsert): Promise<ApiResponse<Task>> {
   const response = await fetch('/api/tasks', {
     method: 'POST',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
   return response.json()
 }
@@ -107,7 +107,7 @@ async function createTask(data: TaskInsert): Promise<ApiResponse<Task>> {
 async function updateTask(id: string, data: TaskUpdate): Promise<ApiResponse<Task>> {
   const response = await fetch(`/api/tasks/${id}`, {
     method: 'PATCH',
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
   })
   return response.json()
 }
@@ -270,8 +270,8 @@ export interface TaskComment {
 // ❌ any型禁止（CLAUDE.mdルール）
 export interface TaskComment {
   id: string
-  content: any        // NG
-  metadata: any       // NG
+  content: any // NG
+  metadata: any // NG
 }
 ```
 
@@ -279,11 +279,11 @@ export interface TaskComment {
 
 ### 判断基準
 
-| 条件 | 配置場所 |
-|------|---------|
-| **3箇所以上で使用** | `src/types/` にグローバル型として追加 |
-| **1-2箇所のみ** | 各featureの `types.ts` にローカル型として追加 |
-| **feature固有** | そのfeatureディレクトリに配置 |
+| 条件                | 配置場所                                      |
+| ------------------- | --------------------------------------------- |
+| **3箇所以上で使用** | `src/types/` にグローバル型として追加         |
+| **1-2箇所のみ**     | 各featureの `types.ts` にローカル型として追加 |
+| **feature固有**     | そのfeatureディレクトリに配置                 |
 
 ### 追加手順
 
@@ -334,12 +334,12 @@ export interface SmartFilter { ... }
 
 ### 移行ガイド
 
-| 旧型 | 新型 |
-|------|------|
-| `CreateTaskData` | `TaskInsert` |
-| `SmartFilter` | `SmartFolder` |
-| `APIResponse` | `ApiResponse` (unified.ts) |
-| `APIError` | `ApiError` (unified.ts) |
+| 旧型             | 新型                       |
+| ---------------- | -------------------------- |
+| `CreateTaskData` | `TaskInsert`               |
+| `SmartFilter`    | `SmartFolder`              |
+| `APIResponse`    | `ApiResponse` (unified.ts) |
+| `APIError`       | `ApiError` (unified.ts)    |
 
 ## 📊 使用状況
 
@@ -351,6 +351,7 @@ grep -r "import.*from.*'@/types'" src --include="*.ts" --include="*.tsx"
 ```
 
 主な使用箇所：
+
 - `src/features/tasks/` - タスク管理機能
 - `src/features/tags/` - タグ管理機能
 - `src/stores/` - Zustand状態管理
@@ -381,6 +382,7 @@ export interface CalendarViewSettings { ... }
 ### Q3: 新しい型を追加する際の注意点は？
 
 **A**:
+
 1. まず既存の型で代用できないか確認
 2. 使用箇所が3箇所未満ならfeatureローカルに配置
 3. 必ず `index.ts` に追加してエクスポート
@@ -397,6 +399,7 @@ export interface CalendarViewSettings { ... }
 ### Q5: `common.ts` と `unified.ts` の違いは？
 
 **A**:
+
 - **unified.ts**: 基本エンティティ型（Task, Tag等）、API型
 - **common.ts**: アプリケーション共通型（User, Settings等）、ユーティリティ型
 

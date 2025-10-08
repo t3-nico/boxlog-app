@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { Sparkles } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
@@ -18,18 +16,15 @@ export const FloatingAIChat = () => {
       <div className={`absolute ${isOpen ? 'bottom-4' : 'bottom-4'} right-4 z-40 transition-all duration-300`}>
         <Button
           onClick={() => setIsOpen(true)}
-          className="w-12 h-12 rounded-full bg-muted hover:bg-muted/80 shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center group border border-border"
+          className="bg-muted hover:bg-muted/80 group border-border flex h-12 w-12 items-center justify-center rounded-full border shadow-lg transition-all duration-200 hover:shadow-xl"
           size="sm"
         >
-          <Sparkles className="w-5 h-5 text-foreground group-hover:scale-110 transition-transform" />
+          <Sparkles className="text-foreground h-5 w-5 transition-transform group-hover:scale-110" />
         </Button>
       </div>
 
       {/* Bottom-up Chat Modal */}
-      <BottomUpChatModal 
-        isOpen={isOpen} 
-        onClose={() => setIsOpen(false)}
-      />
+      <BottomUpChatModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   )
 }

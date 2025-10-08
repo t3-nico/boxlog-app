@@ -9,31 +9,30 @@ export interface DeletionStats {
 }
 
 export const eventDeletionUtils = {
-  
   isDeletionPending: (event: Event): boolean => {
     return event.isDeleted === true && event.deletedAt !== null
   },
 
   isOldDeletion: (event: Event, daysThreshold = 30): boolean => {
     if (!event.isDeleted || !event.deletedAt) return false
-    
+
     const threshold = new Date()
     threshold.setDate(threshold.getDate() - daysThreshold)
-    
+
     return event.deletedAt < threshold
   },
 
   getDaysUntilAutoDelete: (event: Event): number | null => {
     if (!event.isDeleted || !event.deletedAt) return null
-    
+
     const deletedAt = new Date(event.deletedAt)
     const thirtyDaysLater = new Date(deletedAt)
     thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30)
-    
+
     const today = new Date()
     const diffTime = thirtyDaysLater.getTime() - today.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
+
     return Math.max(0, diffDays)
   },
 
@@ -46,22 +45,18 @@ export const eventDeletionUtils = {
   },
 
   getDeletedEventsStats: (events: Event[]): DeletionStats => {
-    const deletedEvents = events.filter(event => event.isDeleted)
+    const deletedEvents = events.filter((event) => event.isDeleted)
     const thirtyDaysAgo = new Date()
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
-    const recentlyDeleted = deletedEvents.filter(event => 
-      event.deletedAt && event.deletedAt >= thirtyDaysAgo
-    ).length
+    const recentlyDeleted = deletedEvents.filter((event) => event.deletedAt && event.deletedAt >= thirtyDaysAgo).length
 
-    const oldDeleted = deletedEvents.filter(event =>
-      event.deletedAt && event.deletedAt < thirtyDaysAgo
-    ).length
+    const oldDeleted = deletedEvents.filter((event) => event.deletedAt && event.deletedAt < thirtyDaysAgo).length
 
     return {
       totalDeleted: deletedEvents.length,
       recentlyDeleted,
-      oldDeleted
+      oldDeleted,
     }
   },
 
@@ -126,29 +121,27 @@ export const eventDeletionUtils = {
   },
 
   filterActiveEvents: (events: Event[]): Event[] => {
-    return events.filter(event => !event.isDeleted)
+    return events.filter((event) => !event.isDeleted)
   },
 
   filterDeletedEvents: (events: Event[]): Event[] => {
-    return events.filter(event => event.isDeleted)
+    return events.filter((event) => event.isDeleted)
   },
 
   filterOldDeletedEvents: (events: Event[], daysThreshold = 30): Event[] => {
     const threshold = new Date()
     threshold.setDate(threshold.getDate() - daysThreshold)
-    
-    return events.filter(event => 
-      event.isDeleted && event.deletedAt && event.deletedAt < threshold
-    )
+
+    return events.filter((event) => event.isDeleted && event.deletedAt && event.deletedAt < threshold)
   },
 
   sortDeletedEventsByDate: (events: Event[]): Event[] => {
     return events
-      .filter(event => event.isDeleted && event.deletedAt)
+      .filter((event) => event.isDeleted && event.deletedAt)
       .sort((a, b) => {
         const aTime = a.deletedAt?.getTime() || 0
         const bTime = b.deletedAt?.getTime() || 0
         return bTime - aTime
       })
-  }
+  },
 }

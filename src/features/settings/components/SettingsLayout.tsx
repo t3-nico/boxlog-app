@@ -9,39 +9,24 @@ interface SettingsLayoutProps {
   actions?: React.ReactNode
 }
 
-export const SettingsLayout = ({
-  children,
-  title,
-  description,
-  actions
-}: SettingsLayoutProps) => {
+export const SettingsLayout = ({ children, title, description, actions }: SettingsLayoutProps) => {
   return (
-    <div className="flex-1 flex flex-col h-full bg-white dark:bg-neutral-900">
+    <div className="flex h-full flex-1 flex-col bg-white dark:bg-neutral-900">
       {/* ヘッダー部分 */}
-      <div className="p-6 pb-4 flex-shrink-0">
+      <div className="flex-shrink-0 p-6 pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-              {title}
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{title}</h2>
             {description != null && (
-              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-                {description}
-              </p>
+              <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{description}</p>
             )}
           </div>
-          {actions != null && (
-            <div className="flex items-center gap-2">
-              {actions}
-            </div>
-          )}
+          {actions != null && <div className="flex items-center gap-2">{actions}</div>}
         </div>
       </div>
 
       {/* メインコンテンツ */}
-      <div
-        className="flex-1 overflow-auto px-6 pt-0"
-      >
+      <div className="flex-1 overflow-auto px-6 pt-0">
         <style jsx>{`
           div::-webkit-scrollbar {
             width: 8px;
@@ -68,9 +53,7 @@ export const SettingsLayout = ({
             }
           }
         `}</style>
-        <div className="max-w-7xl mx-auto w-full">
-          {children}
-        </div>
+        <div className="mx-auto w-full max-w-7xl">{children}</div>
       </div>
     </div>
   )

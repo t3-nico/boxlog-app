@@ -43,7 +43,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
       <div className="flex flex-col gap-6">
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">Email Sent</h1>
-          <p className="text-muted-foreground text-balance text-sm">A password reset link was sent to {email}.</p>
+          <p className="text-muted-foreground text-sm text-balance">A password reset link was sent to {email}.</p>
         </div>
         <div className="text-center text-sm">
           <a href="/auth/login" className="underline underline-offset-4">
@@ -58,7 +58,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
     <form className={cn('flex flex-col gap-6', className)} onSubmit={handleSubmit} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Reset your password</h1>
-        <p className="text-muted-foreground text-balance text-sm">
+        <p className="text-muted-foreground text-sm text-balance">
           Enter your email address and we&apos;ll send you a reset link
         </p>
       </div>
@@ -74,7 +74,7 @@ export const PasswordResetForm = ({ className, ...props }: React.ComponentProps<
             required
           />
         </div>
-        {error ? <div className="text-red-600 dark:text-red-400 text-center text-sm">{error}</div> : null}
+        {error ? <div className="text-center text-sm text-red-600 dark:text-red-400">{error}</div> : null}
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Sending reset email...' : t('auth.passwordResetForm.sendResetEmail')}
         </Button>

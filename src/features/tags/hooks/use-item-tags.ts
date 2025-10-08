@@ -42,20 +42,16 @@ export interface DeleteItemTagRequest {
 // API関数
 const itemTagsAPI = {
   // アイテムのタグ取得
-  async getItemTags(params: {
-    item_id?: string
-    item_type?: ItemType
-    tag_ids?: string[]
-  }): Promise<ItemTag[]> {
+  async getItemTags(params: { item_id?: string; item_type?: ItemType; tag_ids?: string[] }): Promise<ItemTag[]> {
     const searchParams = new URLSearchParams()
-    
+
     if (params.item_id) searchParams.set('item_id', params.item_id)
     if (params.item_type) searchParams.set('item_type', params.item_type)
     if (params.tag_ids) searchParams.set('tag_ids', params.tag_ids.join(','))
-    
+
     const response = await fetch(`/api/item-tags?${searchParams}`)
     if (!response.ok) throw new Error('Failed to fetch item tags')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -65,9 +61,9 @@ const itemTagsAPI = {
     const response = await fetch('/api/item-tags', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
+      body: JSON.stringify(request),
     })
-    
+
     if (!response.ok) throw new Error('Failed to create item tag')
   },
 
@@ -76,9 +72,9 @@ const itemTagsAPI = {
     const response = await fetch('/api/item-tags', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
+      body: JSON.stringify(request),
     })
-    
+
     if (!response.ok) throw new Error('Failed to update item tags')
   },
 
@@ -87,11 +83,11 @@ const itemTagsAPI = {
     const response = await fetch('/api/item-tags', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request)
+      body: JSON.stringify(request),
     })
-    
+
     if (!response.ok) throw new Error('Failed to delete item tag')
-  }
+  },
 }
 
 // クエリキー
@@ -104,11 +100,13 @@ export const itemTagsKeys = {
 }
 
 // アイテムのタグ取得フック
-export function useItemTags(params: {
-  item_id?: string
-  item_type?: ItemType
-  tag_ids?: string[]
-} = {}) {
+export function useItemTags(
+  params: {
+    item_id?: string
+    item_type?: ItemType
+    tag_ids?: string[]
+  } = {}
+) {
   return useQuery({
     queryKey: itemTagsKeys.list(params),
     queryFn: () => itemTagsAPI.getItemTags(params),
@@ -143,14 +141,14 @@ export function useCreateItemTag() {
     onSuccess: (_, variables) => {
       // 関連するクエリを無効化
       queryClient.invalidateQueries({
-        queryKey: itemTagsKeys.lists()
+        queryKey: itemTagsKeys.lists(),
       })
       // 特定のアイテムのクエリも無効化
       queryClient.invalidateQueries({
-        queryKey: itemTagsKeys.list({ 
-          item_id: variables.item_id, 
-          item_type: variables.item_type 
-        })
+        queryKey: itemTagsKeys.list({
+          item_id: variables.item_id,
+          item_type: variables.item_type,
+        }),
       })
     },
   })
@@ -165,18 +163,18 @@ export function useBatchUpdateItemTags() {
     onSuccess: (_, variables) => {
       // 関連するクエリを無効化
       queryClient.invalidateQueries({
-        queryKey: itemTagsKeys.lists()
+        queryKey: itemTagsKeys.lists(),
       })
       // 特定のアイテムのクエリも無効化
       queryClient.invalidateQueries({
-        queryKey: itemTagsKeys.list({ 
-          item_id: variables.item_id, 
-          item_type: variables.item_type 
-        })
+        queryKey: itemTagsKeys.list({
+          item_id: variables.item_id,
+          item_type: variables.item_type,
+        }),
       })
       // タグ統計も更新
       queryClient.invalidateQueries({
-        queryKey: ['tag-stats']
+        queryKey: ['tag-stats'],
       })
     },
   })
@@ -191,18 +189,18 @@ export function useDeleteItemTag() {
     onSuccess: (_, variables) => {
       // 関連するクエリを無効化
       queryClient.invalidateQueries({
-        queryKey: itemTagsKeys.lists()
+        queryKey: itemTagsKeys.lists(),
       })
       // 特定のアイテムのクエリも無効化
       queryClient.invalidateQueries({
-        queryKey: itemTagsKeys.list({ 
-          item_id: variables.item_id, 
-          item_type: variables.item_type 
-        })
+        queryKey: itemTagsKeys.list({
+          item_id: variables.item_id,
+          item_type: variables.item_type,
+        }),
       })
       // タグ統計も更新
       queryClient.invalidateQueries({
-        queryKey: ['tag-stats']
+        queryKey: ['tag-stats'],
       })
     },
   })
@@ -213,11 +211,11 @@ export function useItemTagsOptimisticUpdate() {
   const queryClient = useQueryClient()
 
   const optimisticAdd = (params: CreateItemTagRequest, tag: ItemTag['tags']) => {
-    const queryKey = itemTagsKeys.list({ 
-      item_id: params.item_id, 
-      item_type: params.item_type 
+    const queryKey = itemTagsKeys.list({
+      item_id: params.item_id,
+      item_type: params.item_type,
     })
-    
+
     queryClient.setQueryData(queryKey, (old: ItemTag[] = []) => {
       const newItemTag: ItemTag = {
         id: `temp-${Date.now()}`,
@@ -228,29 +226,29 @@ export function useItemTagsOptimisticUpdate() {
         tagged_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        tags: tag
+        tags: tag,
       }
       return [...old, newItemTag]
     })
   }
 
   const optimisticRemove = (params: DeleteItemTagRequest) => {
-    const queryKey = itemTagsKeys.list({ 
-      item_id: params.item_id, 
-      item_type: params.item_type 
+    const queryKey = itemTagsKeys.list({
+      item_id: params.item_id,
+      item_type: params.item_type,
     })
-    
+
     queryClient.setQueryData(queryKey, (old: ItemTag[] = []) => {
-      return old.filter(item => item.tag_id !== params.tag_id)
+      return old.filter((item) => item.tag_id !== params.tag_id)
     })
   }
 
   const optimisticBatchUpdate = (params: BatchCreateItemTagsRequest, tags: ItemTag['tags'][]) => {
-    const queryKey = itemTagsKeys.list({ 
-      item_id: params.item_id, 
-      item_type: params.item_type 
+    const queryKey = itemTagsKeys.list({
+      item_id: params.item_id,
+      item_type: params.item_type,
     })
-    
+
     queryClient.setQueryData(queryKey, () => {
       return params.tag_ids.map((tag_id, index) => ({
         id: `temp-${Date.now()}-${index}`,
@@ -261,7 +259,7 @@ export function useItemTagsOptimisticUpdate() {
         tagged_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        tags: tags[index]
+        tags: tags[index],
       }))
     })
   }
@@ -269,6 +267,6 @@ export function useItemTagsOptimisticUpdate() {
   return {
     optimisticAdd,
     optimisticRemove,
-    optimisticBatchUpdate
+    optimisticBatchUpdate,
   }
 }

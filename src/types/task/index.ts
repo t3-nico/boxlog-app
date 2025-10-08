@@ -10,32 +10,26 @@
 
 // 基本型
 export type {
-  TaskStatus,
-  TaskPriority,
   Task,
-  TaskType,
-  TaskLabel,
-  TaskComment,
   TaskAttachment,
-  TaskTimeEntry,
+  TaskComment,
   TaskHistory,
+  TaskLabel,
+  TaskPriority,
+  TaskStatus,
+  TaskTimeEntry,
+  TaskType,
 } from './core'
 
 // 拡張型
 export type {
-  TaskDetailed,
   CreateTaskDetailedInput,
-  UpdateTaskDetailedInput,
-  TaskBoardColumn,
   TaskBoard,
+  TaskBoardColumn,
+  TaskDetailed,
   TaskTemplate,
+  UpdateTaskDetailedInput,
 } from './extended'
 
 // 操作型
-export type {
-  TaskFilters,
-  TaskSort,
-  TaskQuery,
-  TaskListResponse,
-  TaskStats,
-} from './operations'
+export type { TaskFilters, TaskListResponse, TaskQuery, TaskSort, TaskStats } from './operations'

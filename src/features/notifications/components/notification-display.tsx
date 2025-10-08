@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { X, Bell } from 'lucide-react'
+import { Bell, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 
@@ -18,53 +18,43 @@ interface NotificationDisplayProps {
   onClearAll: () => void
 }
 
-export const NotificationDisplay: React.FC<NotificationDisplayProps> = ({
-  notifications,
-  onDismiss,
-  onClearAll
-}) => {
+export const NotificationDisplay: React.FC<NotificationDisplayProps> = ({ notifications, onDismiss, onClearAll }) => {
   if (notifications.length === 0) return null
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+    <div className="fixed top-4 right-4 z-50 max-w-sm space-y-2">
       {/* Clear All Button */}
       {notifications.length > 1 && (
         <Button
           variant="ghost"
           size="sm"
           onClick={onClearAll}
-          className="ml-auto block text-xs bg-background/80 backdrop-blur-sm border"
+          className="bg-background/80 ml-auto block border text-xs backdrop-blur-sm"
         >
           すべてクリア
         </Button>
       )}
-      
+
       {/* Notification Items */}
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-4 shadow-lg animate-in slide-in-from-right-5"
+          className="bg-background/95 border-border animate-in slide-in-from-right-5 rounded-lg border p-4 shadow-lg backdrop-blur-sm"
         >
           <div className="flex items-start gap-3">
-            <Bell className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <h4 className="font-medium text-sm truncate">
-                {notification.title}
-              </h4>
-              <p className="text-xs text-muted-foreground mt-1">
-                {notification.message}
-              </p>
-              <p className="text-xs text-muted-foreground mt-2">
-                {notification.timestamp.toLocaleTimeString()}
-              </p>
+            <Bell className="text-primary mt-0.5 h-5 w-5 flex-shrink-0" />
+            <div className="min-w-0 flex-1">
+              <h4 className="truncate text-sm font-medium">{notification.title}</h4>
+              <p className="text-muted-foreground mt-1 text-xs">{notification.message}</p>
+              <p className="text-muted-foreground mt-2 text-xs">{notification.timestamp.toLocaleTimeString()}</p>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onDismiss(notification.id)}
-              className="h-6 w-6 p-0 flex-shrink-0"
+              className="h-6 w-6 flex-shrink-0 p-0"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </div>

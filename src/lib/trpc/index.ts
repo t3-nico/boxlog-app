@@ -4,10 +4,10 @@
  * 型安全なAPI通信の基盤
  */
 
+import { AppRouter } from '@/server/api/root'
+import { httpBatchLink, loggerLink } from '@trpc/client'
 import { createTRPCNext } from '@trpc/next'
 import { createTRPCReact } from '@trpc/react-query'
-import { httpBatchLink, loggerLink } from '@trpc/client'
-import { AppRouter } from '@/server/api/root'
 
 function getBaseUrl() {
   if (typeof window !== 'undefined') return '' // ブラウザーではルート相対パスを使用
@@ -24,8 +24,7 @@ export const api = createTRPCNext<AppRouter>({
       links: [
         loggerLink({
           enabled: (opts) =>
-            process.env.NODE_ENV === 'development' ||
-            (opts.direction === 'down' && opts.result instanceof Error),
+            process.env.NODE_ENV === 'development' || (opts.direction === 'down' && opts.result instanceof Error),
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,

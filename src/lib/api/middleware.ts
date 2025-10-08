@@ -8,9 +8,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
+import { safeJsonStringify } from './json-utils'
 import type { ApiRequest } from './versioning'
 import { withApiVersioning } from './versioning'
-import { safeJsonStringify } from './json-utils'
 
 /**
  * 📊 API レスポンス統計

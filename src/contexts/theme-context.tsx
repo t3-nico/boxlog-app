@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
 type Theme = 'light' | 'dark' | 'system'
 type ColorScheme = 'blue' | 'green' | 'purple' | 'orange' | 'red'
@@ -36,11 +36,11 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme
     const savedColorScheme = localStorage.getItem('colorScheme') as ColorScheme
-    
+
     if (savedTheme) {
       setTheme(savedTheme)
     }
-    
+
     if (savedColorScheme) {
       setColorScheme(savedColorScheme)
     }
@@ -49,28 +49,28 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // Handle theme changes
   useEffect(() => {
     const root = window.document.documentElement
-    
+
     // Save to localStorage
     localStorage.setItem('theme', theme)
     localStorage.setItem('colorScheme', colorScheme)
-    
+
     // Remove existing theme classes
     root.classList.remove('light', 'dark')
-    
+
     // Determine resolved theme
     let newResolvedTheme: 'light' | 'dark' = 'light'
-    
+
     if (theme === 'system') {
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
       newResolvedTheme = systemPrefersDark ? 'dark' : 'light'
     } else {
       newResolvedTheme = theme
     }
-    
+
     // Apply theme
     root.classList.add(newResolvedTheme)
     setResolvedTheme(newResolvedTheme)
-    
+
     // Apply color scheme CSS variables
     applyColorScheme(colorScheme, newResolvedTheme)
   }, [theme, colorScheme])
@@ -80,7 +80,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     if (theme !== 'system') return
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    
+
     const handleChange = () => {
       const newResolvedTheme = mediaQuery.matches ? 'dark' : 'light'
       setResolvedTheme(newResolvedTheme)
@@ -112,13 +112,15 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   }
 
   return (
-    <ThemeContext.Provider value={{
-      theme,
-      colorScheme,
-      setTheme,
-      setColorScheme,
-      resolvedTheme,
-    }}>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        colorScheme,
+        setTheme,
+        setColorScheme,
+        resolvedTheme,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   )
@@ -138,7 +140,7 @@ function getColorVariables(scheme: ColorScheme, theme: 'light' | 'dark') {
         '--color-primary-foreground': '30 58 138', // blue-900
         '--color-accent': '30 58 138', // blue-900
         '--color-accent-foreground': '219 234 254', // blue-100
-      }
+      },
     },
     green: {
       light: {
@@ -152,7 +154,7 @@ function getColorVariables(scheme: ColorScheme, theme: 'light' | 'dark') {
         '--color-primary-foreground': '20 83 45', // green-900
         '--color-accent': '20 83 45', // green-900
         '--color-accent-foreground': '220 252 231', // green-100
-      }
+      },
     },
     purple: {
       light: {
@@ -166,7 +168,7 @@ function getColorVariables(scheme: ColorScheme, theme: 'light' | 'dark') {
         '--color-primary-foreground': '88 28 135', // purple-900
         '--color-accent': '88 28 135', // purple-900
         '--color-accent-foreground': '233 213 255', // purple-100
-      }
+      },
     },
     orange: {
       light: {
@@ -180,7 +182,7 @@ function getColorVariables(scheme: ColorScheme, theme: 'light' | 'dark') {
         '--color-primary-foreground': '124 45 18', // orange-900
         '--color-accent': '124 45 18', // orange-900
         '--color-accent-foreground': '255 237 213', // orange-100
-      }
+      },
     },
     red: {
       light: {
@@ -194,8 +196,8 @@ function getColorVariables(scheme: ColorScheme, theme: 'light' | 'dark') {
         '--color-primary-foreground': '127 29 29', // red-900
         '--color-accent': '127 29 29', // red-900
         '--color-accent-foreground': '254 226 226', // red-100
-      }
-    }
+      },
+    },
   }
 
   return schemes[scheme][theme]

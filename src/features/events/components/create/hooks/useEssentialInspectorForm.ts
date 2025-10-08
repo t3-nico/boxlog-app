@@ -1,17 +1,25 @@
 // @ts-nocheck TODO(#389): 型エラー2件を段階的に修正する
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 // タグの色生成ヘルパー関数
 const generateTagColor = (name: string): string => {
   const colors = [
-    '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
-    '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1'
+    '#3b82f6',
+    '#10b981',
+    '#f59e0b',
+    '#8b5cf6',
+    '#ef4444',
+    '#06b6d4',
+    '#f97316',
+    '#ec4899',
+    '#14b8a6',
+    '#6366f1',
   ]
   const hash = name.split('').reduce((a, b) => {
-    a = ((a << 5) - a) + b.charCodeAt(0)
+    a = (a << 5) - a + b.charCodeAt(0)
     return a & a
   }, 0)
-  return colors[Math.abs(hash) % colors.length as keyof typeof colors]
+  return colors[(Math.abs(hash) % colors.length) as keyof typeof colors]
 }
 
 interface Tag {
@@ -84,7 +92,7 @@ export const useEssentialInspectorForm = ({
   initialData,
   _isEditMode = false,
   onSave,
-  onClose
+  onClose,
 }: UseEssentialInspectorFormProps) => {
   // スケジュールモード状態
   const [scheduleMode, setScheduleMode] = useState<ScheduleMode>(() => {
@@ -149,7 +157,8 @@ export const useEssentialInspectorForm = ({
   useEffect(() => {
     if (initialData) {
       const prev = prevInitialDataRef.current
-      const hasChanged = !prev ||
+      const hasChanged =
+        !prev ||
         prev.title !== initialData.title ||
         prev.date?.getTime() !== initialData.date?.getTime() ||
         prev.endDate?.getTime() !== initialData.endDate?.getTime()
@@ -194,21 +203,24 @@ export const useEssentialInspectorForm = ({
   }, [initialData])
 
   // スケジュールモード変更ハンドラー
-  const handleScheduleModeChange = useCallback((newMode: ScheduleMode) => {
-    setScheduleMode(newMode)
+  const handleScheduleModeChange = useCallback(
+    (newMode: ScheduleMode) => {
+      setScheduleMode(newMode)
 
-    if (!initialData && typeof window !== 'undefined') {
-      localStorage.setItem('boxlog-create-mode', newMode)
-    }
+      if (!initialData && typeof window !== 'undefined') {
+        localStorage.setItem('boxlog-create-mode', newMode)
+      }
 
-    if (newMode === 'schedule') {
-      const rounded = roundToNextQuarterHour()
-      setDate(rounded)
-      const newEndDate = new Date(rounded)
-      newEndDate.setTime(newEndDate.getTime() + 60 * 60 * 1000)
-      setEndDate(newEndDate)
-    }
-  }, [initialData])
+      if (newMode === 'schedule') {
+        const rounded = roundToNextQuarterHour()
+        setDate(rounded)
+        const newEndDate = new Date(rounded)
+        newEndDate.setTime(newEndDate.getTime() + 60 * 60 * 1000)
+        setEndDate(newEndDate)
+      }
+    },
+    [initialData]
+  )
 
   // 保存ハンドラー
   const handleSave = useCallback(async () => {
@@ -223,7 +235,7 @@ export const useEssentialInspectorForm = ({
         tags,
         estimatedDuration,
         priority: taskPriority,
-        status: scheduleMode === 'defer' ? 'backlog' : 'scheduled'
+        status: scheduleMode === 'defer' ? 'backlog' : 'scheduled',
       }
 
       if (scheduleMode === 'schedule') {
@@ -241,7 +253,6 @@ export const useEssentialInspectorForm = ({
       setTimeout(() => {
         onClose()
       }, 800)
-
     } catch (err) {
       setError(err instanceof Error ? err.message : '保存に失敗しました')
     } finally {
@@ -250,28 +261,27 @@ export const useEssentialInspectorForm = ({
   }, [isValid, onSave, title, date, endDate, tags, onClose, scheduleMode, estimatedDuration, taskPriority, memo])
 
   // スマート抽出ハンドラー
-  const handleSmartExtract = useCallback((extracted: {
-    title: string
-    date?: Date
-    tags: string[]
-  }) => {
-    setTitle(extracted.title)
-    if (extracted.date) {
-      setDate(extracted.date)
-    }
+  const handleSmartExtract = useCallback(
+    (extracted: { title: string; date?: Date; tags: string[] }) => {
+      setTitle(extracted.title)
+      if (extracted.date) {
+        setDate(extracted.date)
+      }
 
-    const newTags = extracted.tags
-      .filter(tagName => !tags.some(tag => tag.name === tagName))
-      .map(tagName => ({
-        id: Date.now().toString() + Math.random(),
-        name: tagName,
-        color: generateTagColor(tagName)
-      }))
+      const newTags = extracted.tags
+        .filter((tagName) => !tags.some((tag) => tag.name === tagName))
+        .map((tagName) => ({
+          id: Date.now().toString() + Math.random(),
+          name: tagName,
+          color: generateTagColor(tagName),
+        }))
 
-    if (newTags.length > 0) {
-      setTags(prev => [...prev, ...newTags])
-    }
-  }, [tags])
+      if (newTags.length > 0) {
+        setTags((prev) => [...prev, ...newTags])
+      }
+    },
+    [tags]
+  )
 
   return {
     // 状態
@@ -308,6 +318,6 @@ export const useEssentialInspectorForm = ({
     // ハンドラー
     handleScheduleModeChange,
     handleSave,
-    handleSmartExtract
+    handleSmartExtract,
   }
 }

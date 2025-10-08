@@ -81,7 +81,7 @@ export const MobileBottomNavigation = () => {
   return (
     <div
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-50',
+        'fixed right-0 bottom-0 left-0 z-50',
         'flex items-center',
         'h-16', // 64px height
         'bg-white dark:bg-neutral-800',
@@ -108,7 +108,7 @@ export const MobileBottomNavigation = () => {
           >
             <Icon
               className={cn(
-                'h-5 w-5 mb-1',
+                'mb-1 h-5 w-5',
                 isActive ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-600 dark:text-neutral-400'
               )}
             />
@@ -117,7 +117,7 @@ export const MobileBottomNavigation = () => {
                 'text-xs',
                 'leading-tight',
                 isActive
-                  ? 'text-neutral-900 dark:text-neutral-100 font-medium'
+                  ? 'font-medium text-neutral-900 dark:text-neutral-100'
                   : 'text-neutral-600 dark:text-neutral-400'
               )}
             >
@@ -138,7 +138,7 @@ export const MobileBottomNavigation = () => {
           'hover:bg-neutral-100 dark:hover:bg-neutral-700'
         )}
       >
-        <MenuIcon className="h-5 w-5 mb-1 text-neutral-600 dark:text-neutral-400" />
+        <MenuIcon className="mb-1 h-5 w-5 text-neutral-600 dark:text-neutral-400" />
         <span className="text-xs leading-tight text-neutral-600 dark:text-neutral-400">Menu</span>
       </button>
     </div>

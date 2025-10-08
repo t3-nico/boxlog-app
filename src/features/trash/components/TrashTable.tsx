@@ -265,7 +265,9 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                   <span
                     className={`font-medium ${isExpired ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}
                   >
-                    {isExpired ? t('trash.status.expired') : t('trash.time.daysUntilDelete', { days: daysUntilDelete.toString() })}
+                    {isExpired
+                      ? t('trash.status.expired')
+                      : t('trash.time.daysUntilDelete', { days: daysUntilDelete.toString() })}
                   </span>
                 ) : null}
               </div>
@@ -282,9 +284,7 @@ const TrashItemRow: React.FC<TrashItemRowProps> = ({
                     </span>
                   ))}
                   {trashOperations.formatTags(item.metadata.tags).hidden > 0 && (
-                    <span
-                      className="inline-block rounded-sm bg-neutral-50 px-2 py-1 text-sm text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400"
-                    >
+                    <span className="inline-block rounded-sm bg-neutral-50 px-2 py-1 text-sm text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
                       +{trashOperations.formatTags(item.metadata.tags).hidden}
                     </span>
                   )}

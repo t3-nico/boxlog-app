@@ -100,7 +100,7 @@ const useSmartExtraction = (
       a = (a << 5) - a + b.charCodeAt(0)
       return a & a
     }, 0)
-    return colors[Math.abs(hash) % colors.length as keyof typeof colors]
+    return colors[(Math.abs(hash) % colors.length) as keyof typeof colors]
   }
 
   const handleSmartExtract = (extracted: { title: string; date?: Date; tags: string[] }) => {
@@ -264,7 +264,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
             initial="hidden"
             animate="visible"
             exit="exit"
-            className={cn('relative mx-4 w-full max-w-2xl bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl')}
+            className={cn('relative mx-4 w-full max-w-2xl rounded-2xl bg-white shadow-2xl dark:bg-neutral-900')}
             style={{
               boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15)',
             }}
@@ -282,7 +282,9 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
               <button
                 type="button"
                 onClick={onClose}
-                className={cn('rounded-lg p-2 transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400')}
+                className={cn(
+                  'rounded-lg p-2 text-neutral-600 transition-colors duration-200 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800'
+                )}
               >
                 <X size={24} />
               </button>
@@ -298,19 +300,29 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                         'flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300',
                         index <= formState.currentStep
                           ? 'bg-blue-500 text-white'
-                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500'
+                          : 'bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500'
                       )}
                       animate={index === formState.currentStep ? { scale: [1, 1.1, 1] } : {}}
                       transition={{ duration: 0.3 }}
                     >
                       {index < formState.currentStep ? <Check size={16} /> : index + 1}
                     </motion.div>
-                    <span className={cn('text-sm font-medium', index <= formState.currentStep ? 'text-neutral-900 dark:text-neutral-50' : 'text-neutral-400 dark:text-neutral-500')}>
+                    <span
+                      className={cn(
+                        'text-sm font-medium',
+                        index <= formState.currentStep
+                          ? 'text-neutral-900 dark:text-neutral-50'
+                          : 'text-neutral-400 dark:text-neutral-500'
+                      )}
+                    >
                       {step}
                     </span>
                     {index < 2 && (
                       <div
-                        className={cn('mx-2 h-0.5 w-8', index < formState.currentStep ? 'bg-blue-500' : 'bg-neutral-100 dark:bg-neutral-800')}
+                        className={cn(
+                          'mx-2 h-0.5 w-8',
+                          index < formState.currentStep ? 'bg-blue-500' : 'bg-neutral-100 dark:bg-neutral-800'
+                        )}
                       />
                     )}
                   </div>
@@ -345,7 +357,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                           'rounded-lg px-6 py-3 font-medium transition-all duration-200',
                           formState.title.trim()
                             ? 'bg-blue-500 text-white hover:opacity-90'
-                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+                            : 'cursor-not-allowed bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500'
                         )}
                       >
                         Next: Date →
@@ -374,14 +386,18 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                       <button
                         type="button"
                         onClick={formState.handleTabPrev}
-                        className={cn('rounded-lg px-6 py-3 font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200')}
+                        className={cn(
+                          'rounded-lg bg-neutral-100 px-6 py-3 font-medium text-neutral-600 transition-all duration-200 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
+                        )}
                       >
                         ← Back
                       </button>
                       <button
                         type="button"
                         onClick={formState.handleTabNext}
-                        className={cn('rounded-lg px-6 py-3 font-medium bg-blue-500 text-white transition-all duration-200 hover:opacity-90')}
+                        className={cn(
+                          'rounded-lg bg-blue-500 px-6 py-3 font-medium text-white transition-all duration-200 hover:opacity-90'
+                        )}
                       >
                         Next: Tags →
                       </button>
@@ -398,12 +414,18 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                   >
-                    <TagInput selectedTags={formState.tags} onChange={formState.setTags} contextualSuggestions={formState.title.split(' ')} />
+                    <TagInput
+                      selectedTags={formState.tags}
+                      onChange={formState.setTags}
+                      contextualSuggestions={formState.title.split(' ')}
+                    />
                     <div className="flex justify-between">
                       <button
                         type="button"
                         onClick={formState.handleTabPrev}
-                        className={cn('rounded-lg px-6 py-3 font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200')}
+                        className={cn(
+                          'rounded-lg bg-neutral-100 px-6 py-3 font-medium text-neutral-600 transition-all duration-200 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
+                        )}
                       >
                         ← Back
                       </button>
@@ -421,8 +443,8 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                         className={cn(
                           'flex items-center gap-2 rounded-lg px-8 py-3 font-medium transition-all duration-200',
                           formState.isValid && !saveHandler.isSubmitting
-                            ? 'bg-blue-500 transform text-white hover:scale-105 hover:opacity-90'
-                            : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+                            ? 'transform bg-blue-500 text-white hover:scale-105 hover:opacity-90'
+                            : 'cursor-not-allowed bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500'
                         )}
                       >
                         {saveHandler.isSubmitting ? (
@@ -447,7 +469,9 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={cn('mx-8 mb-8 rounded-lg p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center gap-3')}
+                  className={cn(
+                    'mx-8 mb-8 flex items-center gap-3 rounded-lg bg-red-50 p-4 text-red-600 dark:bg-red-900/20 dark:text-red-400'
+                  )}
                 >
                   <div className="flex-shrink-0">⚠️</div>
                   <div>
@@ -476,7 +500,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
                       <Check size={32} className="text-white" />
                     </motion.div>
                     <motion.h2
-                      className={cn('text-xl font-semibold text-neutral-900 dark:text-neutral-50 mb-2')}
+                      className={cn('mb-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50')}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4 }}
@@ -497,7 +521,7 @@ export const EssentialCreate = ({ isOpen, onClose, onSave, initialData }: Essent
             </AnimatePresence>
 
             {/* キーボードヒント */}
-            <div className={cn('px-8 pb-6 text-sm text-neutral-600 dark:text-neutral-400 space-x-4 text-center')}>
+            <div className={cn('space-x-4 px-8 pb-6 text-center text-sm text-neutral-600 dark:text-neutral-400')}>
               <span>
                 <kbd className="rounded bg-neutral-100 px-1 dark:bg-neutral-800">Esc</kbd> to close
               </span>

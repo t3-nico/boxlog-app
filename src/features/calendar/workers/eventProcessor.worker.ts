@@ -86,7 +86,7 @@ interface LayoutOptimization {
 }
 
 // メインスレッドからのメッセージ処理
-self.onmessage = function(e: MessageEvent<WorkerMessage>) {
+self.onmessage = function (e: MessageEvent<WorkerMessage>) {
   const { id, type, payload } = e.data
   const startTime = performance.now()
 
@@ -123,7 +123,7 @@ self.onmessage = function(e: MessageEvent<WorkerMessage>) {
         result = optimizeEventLayout(p.events, p.containerWidth)
         break
       }
-      
+
       default:
         throw new Error(`Unknown message type: ${type}`)
     }
@@ -135,8 +135,8 @@ self.onmessage = function(e: MessageEvent<WorkerMessage>) {
       result,
       performance: {
         duration: endTime - startTime,
-        memoryUsed: getMemoryUsage()
-      }
+        memoryUsed: getMemoryUsage(),
+      },
     }
 
     self.postMessage(response)
@@ -148,8 +148,8 @@ self.onmessage = function(e: MessageEvent<WorkerMessage>) {
       error: error instanceof Error ? error.message : 'Unknown error',
       performance: {
         duration: endTime - startTime,
-        memoryUsed: getMemoryUsage()
-      }
+        memoryUsed: getMemoryUsage(),
+      },
     }
 
     self.postMessage(response)
@@ -163,37 +163,37 @@ function processEvents(events: CalendarEvent[], options: Record<string, unknown>
   // 大量データを効率的に処理
   const batchSize = 1000
   const processedEvents: CalendarEvent[] = []
-  
+
   for (let i = 0; i < events.length; i += batchSize) {
     const batch = events.slice(i, i + batchSize)
-    
+
     // バッチごとに処理
     const processed = batch
-      .filter(event => event.startDate && event.title) // 必須フィールドチェック
-      .map(event => normalizeEvent(event))
+      .filter((event) => event.startDate && event.title) // 必須フィールドチェック
+      .map((event) => normalizeEvent(event))
       .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
-    
+
     processedEvents.push(...processed)
-    
+
     // 進行状況の報告（オプション）
     if (options.onProgress) {
       const progress = Math.min(100, ((i + batchSize) / events.length) * 100)
       self.postMessage({
         id: 'progress',
         type: 'PROGRESS',
-        result: { progress }
+        result: { progress },
       })
     }
   }
 
   // 重複除去
   const uniqueEvents = removeDuplicateEvents(processedEvents)
-  
+
   return {
     events: uniqueEvents,
     totalProcessed: events.length,
     uniqueCount: uniqueEvents.length,
-    duplicatesRemoved: events.length - uniqueEvents.length
+    duplicatesRemoved: events.length - uniqueEvents.length,
   }
 }
 
@@ -205,7 +205,7 @@ function normalizeEvent(event: CalendarEvent): CalendarEvent {
     ...event,
     title: event.title.trim(),
     color: event.color || '#3b82f6',
-    tags: event.tags || []
+    tags: event.tags || [],
   }
 
   if (event.startDate) {
@@ -239,12 +239,10 @@ function removeDuplicateEvents(events: CalendarEvent[]): CalendarEvent[] {
 /**
  * イベントの重複計算
  */
-function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Date, end: Date }): OverlapResult[] {
+function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Date; end: Date }): OverlapResult[] {
   const results: OverlapResult[] = []
-  const relevantEvents = events.filter(event => 
-    event.startDate && 
-    event.startDate >= dateRange.start && 
-    event.startDate <= dateRange.end
+  const relevantEvents = events.filter(
+    (event) => event.startDate && event.startDate >= dateRange.start && event.startDate <= dateRange.end
   )
 
   for (let i = 0; i < relevantEvents.length; i++) {
@@ -257,16 +255,13 @@ function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Dat
       const otherEvent = relevantEvents[j]
       if (!otherEvent || !otherEvent.startDate || !otherEvent.endDate) continue
 
-      const overlap = calculateTimeOverlap(
-        event.startDate, event.endDate,
-        otherEvent.startDate, otherEvent.endDate
-      )
+      const overlap = calculateTimeOverlap(event.startDate, event.endDate, otherEvent.startDate, otherEvent.endDate)
 
       if (overlap.duration > 0) {
         overlaps.push({
           eventId: otherEvent.id,
           overlapDuration: overlap.duration,
-          overlapPercentage: overlap.percentage
+          overlapPercentage: overlap.percentage,
         })
       }
     }
@@ -274,7 +269,7 @@ function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Dat
     if (overlaps.length > 0) {
       results.push({
         eventId: event.id,
-        overlaps
+        overlaps,
       })
     }
   }
@@ -286,12 +281,14 @@ function calculateEventOverlaps(events: CalendarEvent[], dateRange: { start: Dat
  * 時間の重複計算
  */
 function calculateTimeOverlap(
-  start1: Date, end1: Date,
-  start2: Date, end2: Date
-): { duration: number, percentage: number } {
+  start1: Date,
+  end1: Date,
+  start2: Date,
+  end2: Date
+): { duration: number; percentage: number } {
   const overlapStart = new Date(Math.max(start1.getTime(), start2.getTime()))
   const overlapEnd = new Date(Math.min(end1.getTime(), end2.getTime()))
-  
+
   if (overlapStart >= overlapEnd) {
     return { duration: 0, percentage: 0 }
   }
@@ -307,15 +304,15 @@ function calculateTimeOverlap(
  * 繰り返しイベントの生成
  */
 function generateRecurringEvents(
-  baseEvent: CalendarEvent, 
-  pattern: RecurrencePattern, 
-  dateRange: { start: Date, end: Date }
+  baseEvent: CalendarEvent,
+  pattern: RecurrencePattern,
+  dateRange: { start: Date; end: Date }
 ): CalendarEvent[] {
   if (!baseEvent.startDate || !baseEvent.endDate) return []
 
   const events: CalendarEvent[] = []
   const eventDuration = baseEvent.endDate.getTime() - baseEvent.startDate.getTime()
-  
+
   let currentDate = new Date(baseEvent.startDate)
   let count = 0
   const maxCount = pattern.count || 1000 // 安全なデフォルト
@@ -327,7 +324,7 @@ function generateRecurringEvents(
         id: `${baseEvent.id}_${count}`,
         startDate: new Date(currentDate),
         endDate: new Date(currentDate.getTime() + eventDuration),
-        parentEventId: baseEvent.id
+        parentEventId: baseEvent.id,
       }
       events.push(newEvent)
     }
@@ -354,15 +351,15 @@ function getNextRecurrenceDate(currentDate: Date, pattern: RecurrencePattern): D
     case 'daily':
       nextDate.setDate(nextDate.getDate() + pattern.interval)
       break
-    
+
     case 'weekly':
-      nextDate.setDate(nextDate.getDate() + (7 * pattern.interval))
+      nextDate.setDate(nextDate.getDate() + 7 * pattern.interval)
       break
-    
+
     case 'monthly':
       nextDate.setMonth(nextDate.getMonth() + pattern.interval)
       break
-    
+
     case 'yearly':
       nextDate.setFullYear(nextDate.getFullYear() + pattern.interval)
       break
@@ -375,18 +372,18 @@ function getNextRecurrenceDate(currentDate: Date, pattern: RecurrencePattern): D
  * イベント検索
  */
 function searchEvents(
-  events: CalendarEvent[], 
-  query: string, 
-  options: { caseSensitive?: boolean, fields?: string[] } = {}
+  events: CalendarEvent[],
+  query: string,
+  options: { caseSensitive?: boolean; fields?: string[] } = {}
 ): CalendarEvent[] {
   const normalizedQuery = options.caseSensitive ? query : query.toLowerCase()
   const fields = options.fields || ['title', 'description', 'location']
 
-  return events.filter(event => {
-    return fields.some(field => {
+  return events.filter((event) => {
+    return fields.some((field) => {
       const value = event[field as keyof CalendarEvent] as string
       if (!value) return false
-      
+
       const normalizedValue = options.caseSensitive ? value : value.toLowerCase()
       return normalizedValue.includes(normalizedQuery)
     })
@@ -404,13 +401,13 @@ function optimizeEventLayout(events: CalendarEvent[], containerWidth: number): L
   for (const group of timeGroups) {
     const columnCount = group.length
     const columnWidth = containerWidth / columnCount
-    
+
     group.forEach((event, index) => {
       layouts.push({
         eventId: event.id,
         column: index,
         width: columnWidth - 4, // マージン考慮
-        left: index * columnWidth + 2
+        left: index * columnWidth + 2,
       })
     })
   }
@@ -424,14 +421,12 @@ function optimizeEventLayout(events: CalendarEvent[], containerWidth: number): L
 function groupEventsByTime(events: CalendarEvent[]): CalendarEvent[][] {
   const groups: CalendarEvent[][] = []
   const sortedEvents = events
-    .filter(e => e.startDate && e.endDate)
+    .filter((e) => e.startDate && e.endDate)
     .sort((a, b) => a.startDate!.getTime() - b.startDate!.getTime())
 
   for (const event of sortedEvents) {
     // 重複する既存グループを探す
-    const overlappingGroup = groups.find(group =>
-      group.some(groupEvent => eventsOverlap(event, groupEvent))
-    )
+    const overlappingGroup = groups.find((group) => group.some((groupEvent) => eventsOverlap(event, groupEvent)))
 
     if (overlappingGroup) {
       overlappingGroup.push(event)
@@ -467,19 +462,19 @@ function getMemoryUsage(): number {
 }
 
 // エラーハンドリング
-self.onerror = function(message, _source, _lineno, _colno, error) {
+self.onerror = function (message, _source, _lineno, _colno, error) {
   self.postMessage({
     id: 'error',
     type: 'ERROR',
-    error: error?.message || String(message)
+    error: error?.message || String(message),
   })
 }
 
 // 未処理の Promise エラーをキャッチ
-self.addEventListener('unhandledrejection', function(event) {
+self.addEventListener('unhandledrejection', function (event) {
   self.postMessage({
     id: 'error',
     type: 'UNHANDLED_REJECTION',
-    error: event.reason
+    error: event.reason,
   })
 })

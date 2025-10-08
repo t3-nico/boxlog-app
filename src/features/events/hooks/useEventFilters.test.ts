@@ -1,6 +1,6 @@
 // @ts-nocheck TODO(#389): 型エラー5件を段階的に修正する
+import { act, renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
 
 import type { Event } from '../types/events'
 
@@ -167,10 +167,7 @@ describe('useEventFilters', () => {
     })
 
     it('ステータスフィルター未指定時はすべて返される', () => {
-      const events: Event[] = [
-        createMockEvent({ status: 'inbox' }),
-        createMockEvent({ status: 'completed' }),
-      ]
+      const events: Event[] = [createMockEvent({ status: 'inbox' }), createMockEvent({ status: 'completed' })]
 
       const { result } = renderHook(() => useEventFilters())
 

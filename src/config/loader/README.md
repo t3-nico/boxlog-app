@@ -17,11 +17,13 @@ src/config/loader/
 ## 🎯 設計方針
 
 ### 分割前の課題
+
 - 元の `loader.ts` は **450行**（CLAUDE.md違反: 300行以下推奨）
 - 設定読み込み・バリデーション・環境変数パースが1ファイルに混在
 - 責務が多く、テスト・保守が困難
 
 ### 分割後の改善
+
 - 各ファイルが **単一責任** を持つ
 - テストしやすい構造
 - インポートの見通しが良い
@@ -50,9 +52,9 @@ if (result.success) {
 import { loadConfig } from '@/config/loader'
 
 const result = await loadConfig({
-  useCache: false,        // キャッシュを使わず毎回読み込み
-  preferEnvVars: true,    // 環境変数を優先
-  strict: true            // 厳格モード（警告をエラーに昇格）
+  useCache: false, // キャッシュを使わず毎回読み込み
+  preferEnvVars: true, // 環境変数を優先
+  strict: true, // 厳格モード（警告をエラーに昇格）
 })
 ```
 
@@ -106,11 +108,11 @@ export const ENV_VAR_MAPPINGS = {
 import { applyEnvironmentVariables, parseEnvValue } from '@/config/loader/env-parser'
 
 // 環境変数の型変換
-parseEnvValue('true')      // boolean: true
-parseEnvValue('123')       // number: 123
-parseEnvValue('1.5')       // number: 1.5
-parseEnvValue('{"a":1}')   // object: { a: 1 }
-parseEnvValue('text')      // string: 'text'
+parseEnvValue('true') // boolean: true
+parseEnvValue('123') // number: 123
+parseEnvValue('1.5') // number: 1.5
+parseEnvValue('{"a":1}') // object: { a: 1 }
+parseEnvValue('text') // string: 'text'
 
 // 設定に環境変数を適用
 const config = { app: { name: 'Default' } }
@@ -129,10 +131,7 @@ import { loadConfigFile, deepMerge, getDefaultConfig } from '@/config/loader/fil
 const config = await loadConfigFile('./config/base.json')
 
 // 複数設定のマージ
-const merged = deepMerge(
-  { app: { name: 'App1' } },
-  { app: { version: '1.0' } }
-)
+const merged = deepMerge({ app: { name: 'App1' } }, { app: { version: '1.0' } })
 // 結果: { app: { name: 'App1', version: '1.0' } }
 
 // 環境別デフォルト設定
@@ -150,7 +149,7 @@ import { validateConfig, generateWarnings } from '@/config/loader/validator'
 const result = validateConfig(config, false, 'production')
 
 if (!result.success) {
-  result.errors.forEach(error => {
+  result.errors.forEach((error) => {
     console.error(`[${error.path.join('.')}] ${error.message}`)
   })
 }
@@ -168,8 +167,8 @@ const warnings = generateWarnings(config, false, 'production')
 import { isValidConfigPath } from '@/config/loader/file-reader'
 
 // 許可されたパスのみ読み込み可能
-isValidConfigPath('./config/base.json')     // true
-isValidConfigPath('../../../etc/passwd')    // false
+isValidConfigPath('./config/base.json') // true
+isValidConfigPath('../../../etc/passwd') // false
 ```
 
 ### ファイルシステムアクセス
@@ -203,12 +202,12 @@ const result = await loadConfig({ strict: true })
 
 if (!result.success) {
   // エラー詳細をログ
-  result.errors.forEach(error => {
+  result.errors.forEach((error) => {
     console.error({
       path: error.path,
       message: error.message,
       code: error.code,
-      input: error.input
+      input: error.input,
     })
   })
   throw new Error('Configuration validation failed')
@@ -217,7 +216,7 @@ if (!result.success) {
 // 警告がある場合は表示
 if (result.warnings.length > 0) {
   console.warn('Configuration warnings:')
-  result.warnings.forEach(warning => console.warn(`  - ${warning}`))
+  result.warnings.forEach((warning) => console.warn(`  - ${warning}`))
 }
 ```
 

@@ -154,7 +154,7 @@ export const LoginForm = ({ className, ...props }: React.ComponentProps<'form'>)
       <form className={cn('flex flex-col gap-6', className)} onSubmit={handleMFAVerify} {...props}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Two-Factor Authentication</h1>
-          <p className="text-muted-foreground text-balance text-sm">
+          <p className="text-muted-foreground text-sm text-balance">
             Enter the 6-digit code from your authenticator app
           </p>
         </div>
@@ -200,7 +200,7 @@ export const LoginForm = ({ className, ...props }: React.ComponentProps<'form'>)
     <form className={cn('flex flex-col gap-6', className)} onSubmit={handleSubmit} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
-        <p className="text-muted-foreground text-balance text-sm">Enter your email below to login to your account</p>
+        <p className="text-muted-foreground text-sm text-balance">Enter your email below to login to your account</p>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-3">

@@ -187,9 +187,10 @@ export const useDebouncedToast = () => {
       const key = `drag-${operationType}-${eventTitle}`
       const debouncedFn = createDebouncedFunction(
         () => {
-          const message = operationType === 'move'
-            ? getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED)
-            : getTranslation(CALENDAR_TOAST_KEYS.EVENT_RESIZED)
+          const message =
+            operationType === 'move'
+              ? getTranslation(CALENDAR_TOAST_KEYS.EVENT_MOVED)
+              : getTranslation(CALENDAR_TOAST_KEYS.EVENT_RESIZED)
           return toast.success(message, {
             description: eventTitle,
           })
@@ -204,7 +205,10 @@ export const useDebouncedToast = () => {
 
   // 保存操作用の特殊デバウンス（連続保存を防ぐ）
   const saveOperationToast = useCallback(
-    (message: string = getTranslation(CALENDAR_TOAST_KEYS.EVENT_SAVED), config: DebounceConfig = { delay: 1000, leading: false, trailing: true }) => {
+    (
+      message: string = getTranslation(CALENDAR_TOAST_KEYS.EVENT_SAVED),
+      config: DebounceConfig = { delay: 1000, leading: false, trailing: true }
+    ) => {
       const key = 'save-operation'
       const debouncedFn = createDebouncedFunction(() => toast.success(message), config, key)
       return debouncedFn()

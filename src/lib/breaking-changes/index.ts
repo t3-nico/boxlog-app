@@ -6,19 +6,19 @@
  */
 
 // Core exports
-export * from './types'
 export * from './detector'
 export * from './manager'
+export * from './types'
 
 // Type exports for convenience
 export type {
-  BreakingChange,
-  BreakingChangeType,
-  ImpactLevel,
   AffectedGroup,
-  MigrationPlan,
+  BreakingChange,
   BreakingChangeSummary,
+  BreakingChangeType,
   ChangeImpactAnalysis,
+  ImpactLevel,
+  MigrationPlan,
 } from './types'
 
 // Detector exports
@@ -31,22 +31,22 @@ export {
 
 // Manager exports
 export {
+  addBreakingChange,
   BreakingChangeManager,
   breakingChangeManager,
-  addBreakingChange,
+  createMigrationPlan,
   findBreakingChanges,
   generateVersionSummary,
-  createMigrationPlan,
 } from './manager'
 
 // Convenience re-export
 import { breakingChangeDetector, detectBreakingChanges } from './detector'
 import {
-  breakingChangeManager,
   addBreakingChange,
+  breakingChangeManager,
+  createMigrationPlan,
   findBreakingChanges,
   generateVersionSummary,
-  createMigrationPlan
 } from './manager'
 
 const breakingChanges = {

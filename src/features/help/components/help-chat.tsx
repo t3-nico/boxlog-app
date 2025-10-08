@@ -18,8 +18,8 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
   if (isUser) {
     return (
       <div className="mb-6 flex justify-end">
-        <div className="max-w-[85%] break-words rounded-2xl rounded-tr-sm bg-blue-600 px-4 py-3 text-white">
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+        <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-blue-600 px-4 py-3 break-words text-white">
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
           {message.status != null && (
             <div className="mt-1 text-xs text-blue-100 opacity-75">
               {message.status === 'sending' && t('help.messageStatus.sending')}
@@ -39,8 +39,8 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
       </div>
 
       {/* AI Message Bubble */}
-      <div className="bg-background text-foreground border-border max-w-[85%] break-words rounded-2xl rounded-tl-sm border px-4 py-3">
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+      <div className="bg-background text-foreground border-border max-w-[85%] rounded-2xl rounded-tl-sm border px-4 py-3 break-words">
+        <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
         <div className="text-muted-foreground mt-1 text-xs">
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
@@ -55,9 +55,12 @@ const ChatInput = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // jsx-no-bind optimization: Event handlers
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value)
-  }, [setInputValue])
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setInputValue(e.target.value)
+    },
+    [setInputValue]
+  )
 
   const handleCompositionStart = useCallback(() => {
     setIsComposing(true)
@@ -67,19 +70,25 @@ const ChatInput = () => {
     setIsComposing(false)
   }, [])
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (inputValue.trim() && !isTyping) {
-      await sendMessage(inputValue)
-    }
-  }, [inputValue, isTyping, sendMessage])
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
       e.preventDefault()
-      handleSubmit(e)
-    }
-  }, [isComposing, handleSubmit])
+      if (inputValue.trim() && !isTyping) {
+        await sendMessage(inputValue)
+      }
+    },
+    [inputValue, isTyping, sendMessage]
+  )
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
+        e.preventDefault()
+        handleSubmit(e)
+      }
+    },
+    [isComposing, handleSubmit]
+  )
 
   // Auto-resize textarea
   useEffect(() => {
@@ -128,7 +137,7 @@ const ChatInput = () => {
           <button
             type="submit"
             disabled={!inputValue.trim() || isTyping}
-            className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute bottom-2 right-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
+            className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute right-2 bottom-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
           >
             <ArrowUpCircle className="h-6 w-6" />
           </button>
@@ -180,7 +189,7 @@ const ChatHeader = () => {
           </button>
 
           {showMenu != null && (
-            <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+            <div className="bg-card border-border absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
               <button
                 type="button"
                 onClick={handleClearMessages}
@@ -210,15 +219,26 @@ const WelcomeMessage = () => {
   const { t } = useI18n()
 
   // jsx-no-bind optimization: Quick prompt handler creator
-  const createSendMessageHandler = useCallback((text: string) => {
-    return () => sendMessage(text)
-  }, [sendMessage])
+  const createSendMessageHandler = useCallback(
+    (text: string) => {
+      return () => sendMessage(text)
+    },
+    [sendMessage]
+  )
 
   const quickPrompts = [
     { emoji: '🚀', text: 'How do I get started with BoxLog?', description: 'Basic setup and first steps' },
-    { emoji: '📊', text: t('help.suggestions.analyzeProductivity'), description: t('help.suggestions.analyzeProductivityDesc') },
+    {
+      emoji: '📊',
+      text: t('help.suggestions.analyzeProductivity'),
+      description: t('help.suggestions.analyzeProductivityDesc'),
+    },
     { emoji: '🎯', text: t('help.suggestions.focusToday'), description: t('help.suggestions.focusTodayDesc') },
-    { emoji: '📅', text: t('help.suggestions.organizeSchedule'), description: t('help.suggestions.organizeScheduleDesc') },
+    {
+      emoji: '📅',
+      text: t('help.suggestions.organizeSchedule'),
+      description: t('help.suggestions.organizeScheduleDesc'),
+    },
   ]
 
   return (

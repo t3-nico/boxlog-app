@@ -41,15 +41,18 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
     setIsEditing(false)
   }, [message.content])
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSave()
-    } else if (e.key === 'Escape') {
-      e.preventDefault()
-      handleCancel()
-    }
-  }, [handleSave, handleCancel])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault()
+        handleSave()
+      } else if (e.key === 'Escape') {
+        e.preventDefault()
+        handleCancel()
+      }
+    },
+    [handleSave, handleCancel]
+  )
 
   useEffect(() => {
     if (isEditing && textareaRef.current) {
@@ -62,9 +65,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
     return (
       <div className="group mb-6 flex justify-end">
         <div className="relative">
-          <div
-            className={cn('bg-blue-600 text-white rounded-lg rounded-tr-sm p-4 max-w-[85%] break-words')}
-          >
+          <div className={cn('max-w-[85%] rounded-lg rounded-tr-sm bg-blue-600 p-4 break-words text-white')}>
             {isEditing ? (
               <div className="relative">
                 <textarea
@@ -72,7 +73,9 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
                   value={editContent}
                   onChange={handleEditContentChange}
                   onKeyDown={handleKeyDown}
-                  className={cn('w-full bg-transparent text-white resize-none border-none placeholder-blue-200 outline-none text-sm leading-relaxed')}
+                  className={cn(
+                    'w-full resize-none border-none bg-transparent text-sm leading-relaxed text-white placeholder-blue-200 outline-none'
+                  )}
                   rows={1}
                   style={{ minHeight: '1.5rem' }}
                 />
@@ -80,21 +83,21 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
                   <button
                     type="button"
                     onClick={handleSave}
-                    className="p-1 hover:bg-blue-500 rounded-sm transition-colors"
+                    className="rounded-sm p-1 transition-colors hover:bg-blue-500"
                   >
                     <Check className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
                     onClick={handleCancel}
-                    className="p-1 hover:bg-blue-500 rounded-sm transition-colors"
+                    className="rounded-sm p-1 transition-colors hover:bg-blue-500"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+              <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
             )}
             {message.status && !isEditing ? (
               <div className="mt-1 text-xs text-blue-100 opacity-75">
@@ -107,7 +110,7 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
             <button
               type="button"
               onClick={handleEdit}
-              className="text-muted-foreground hover:text-foreground absolute -left-8 top-1/2 -translate-y-1/2 p-1 opacity-0 transition-opacity group-hover:opacity-100"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 -left-8 -translate-y-1/2 p-1 opacity-0 transition-opacity group-hover:opacity-100"
             >
               <Pencil className="h-4 w-4" />
             </button>
@@ -120,15 +123,13 @@ export const MessageBubble = ({ message }: MessageBubbleProps) => {
   return (
     <div className="mb-6 flex items-start justify-start gap-3">
       {/* AI Avatar */}
-      <div
-        className="h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm flex-shrink-0 font-medium"
-      >
+      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600 text-sm font-medium text-white">
         <Sparkles className="h-4 w-4" />
       </div>
 
       {/* AI Message Bubble */}
-      <div className="bg-background text-foreground border-border max-w-[85%] break-words rounded-2xl rounded-tl-sm border px-4 py-3">
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+      <div className="bg-background text-foreground border-border max-w-[85%] rounded-2xl rounded-tl-sm border px-4 py-3 break-words">
+        <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
         <div className="text-muted-foreground mt-1 text-xs">
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>

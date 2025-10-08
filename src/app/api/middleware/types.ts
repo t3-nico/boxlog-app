@@ -2,8 +2,8 @@
  * API ミドルウェア型定義
  */
 
-import type { NextRequest } from 'next/server'
 import type { ErrorCode } from '@/config/error-patterns'
+import type { NextRequest } from 'next/server'
 
 /**
  * API レスポンスの型定義
@@ -40,23 +40,21 @@ export interface ApiContext {
 /**
  * API ハンドラー関数の型
  */
-export type ApiHandler<T = unknown> = (
-  req: NextRequest,
-  context: ApiContext
-) => Promise<T>
+export type ApiHandler<T = unknown> = (req: NextRequest, context: ApiContext) => Promise<T>
 
 /**
  * ミドルウェア設定
  */
 export interface MiddlewareConfig {
-  enableErrorReporting?: boolean     // エラーレポートを有効にするか
-  enableMetrics?: boolean           // メトリクス収集を有効にするか
-  enableCors?: boolean              // CORS設定を有効にするか
-  corsOrigins?: string[]            // 許可するCORSオリジン
-  rateLimit?: {                     // レート制限設定
+  enableErrorReporting?: boolean // エラーレポートを有効にするか
+  enableMetrics?: boolean // メトリクス収集を有効にするか
+  enableCors?: boolean // CORS設定を有効にするか
+  corsOrigins?: string[] // 許可するCORSオリジン
+  rateLimit?: {
+    // レート制限設定
     windowMs: number
     maxRequests: number
   }
-  requestTimeout?: number           // リクエストタイムアウト（ミリ秒）
-  enableRequestLogging?: boolean    // リクエストログを有効にするか
+  requestTimeout?: number // リクエストタイムアウト（ミリ秒）
+  enableRequestLogging?: boolean // リクエストログを有効にするか
 }

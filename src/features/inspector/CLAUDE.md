@@ -84,20 +84,17 @@ type InspectorMode = 'calendar' | 'task' | 'event-detail' | 'default'
 ### 1. 状態管理
 
 **`useInspectorStore`を使用**:
+
 ```tsx
 import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 
-const {
-  isInspectorOpen,
-  toggleInspector,
-  openInspector,
-  closeInspector
-} = useInspectorStore()
+const { isInspectorOpen, toggleInspector, openInspector, closeInspector } = useInspectorStore()
 ```
 
 ### 2. イベント作成
 
 **`useCreateEventInspector` hookを使用**:
+
 ```tsx
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 
@@ -108,14 +105,15 @@ openCreateInspector({
   mode: 'calendar',
   context: {
     date: new Date(),
-    source: 'calendar-grid'
-  }
+    source: 'calendar-grid',
+  },
 })
 ```
 
 ### 3. スタイリング
 
 **globals.cssのセマンティックトークンを使用**:
+
 ```tsx
 // ✅ 正しい
 <div className="bg-card text-card-foreground border-border">
@@ -146,11 +144,7 @@ import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 export const InspectorToggleButton = () => {
   const { isInspectorOpen, toggleInspector } = useInspectorStore()
 
-  return (
-    <button onClick={toggleInspector}>
-      {isInspectorOpen ? 'Close' : 'Open'} Inspector
-    </button>
-  )
+  return <button onClick={toggleInspector}>{isInspectorOpen ? 'Close' : 'Open'} Inspector</button>
 }
 ```
 
@@ -167,8 +161,8 @@ export const CalendarGrid = () => {
       mode: 'calendar',
       context: {
         date,
-        source: 'calendar-grid'
-      }
+        source: 'calendar-grid',
+      },
     })
   }
 

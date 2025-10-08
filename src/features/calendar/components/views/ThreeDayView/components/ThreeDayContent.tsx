@@ -149,7 +149,7 @@ export const ThreeDayContent = ({
             <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
               {/* EventBlockの内容部分のみクリック可能 */}
               <div
-                className="pointer-events-auto absolute inset-0 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag event: ${event.title}`}

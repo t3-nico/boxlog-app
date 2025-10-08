@@ -7,6 +7,7 @@
 ## 📋 編集時の必須チェック
 
 ### 1. サイズ定義の一貫性
+
 ```tsx
 // ✅ 必須: サイズマップを維持
 const sizeClasses = {
@@ -18,11 +19,12 @@ const sizeClasses = {
 
 // ❌ 禁止: 独自サイズの追加（既存の4つで対応）
 const sizeClasses = {
-  xxl: 'h-16 w-16'  // NG: 追加しない
+  xxl: 'h-16 w-16', // NG: 追加しない
 }
 ```
 
 ### 2. アクセシビリティ属性
+
 ```tsx
 // ✅ 必須: role と aria-label
 <Loader2
@@ -36,6 +38,7 @@ const sizeClasses = {
 ```
 
 ### 3. 型定義の場所
+
 ```tsx
 // ✅ types.ts で定義
 import { LoadingSpinnerProps } from './types'
@@ -47,6 +50,7 @@ export interface LoadingSpinnerProps { ... }  // NG
 ## 🚨 絶対に変更してはいけない部分
 
 ### 1. デフォルトサイズ
+
 ```tsx
 // 変更禁止: md がデフォルト
 export const LoadingSpinner = ({
@@ -55,20 +59,23 @@ export const LoadingSpinner = ({
 ```
 
 ### 2. アニメーションクラス
+
 ```tsx
 // 変更禁止: Tailwind の animate-spin を使用
-className="animate-spin"  // CSS Modules不可
+className = 'animate-spin' // CSS Modules不可
 ```
 
 ### 3. カラースキーム
+
 ```tsx
 // 変更禁止: ダークモード対応のカラー
-className="text-neutral-600 dark:text-neutral-400"
+className = 'text-neutral-600 dark:text-neutral-400'
 ```
 
 ## 🔧 よくある変更パターン
 
 ### 新しいローディングバリアントを追加
+
 ```tsx
 // ✅ 推奨: 既存パターンを踏襲
 export const CustomLoadingVariant = ({
@@ -85,11 +92,7 @@ export const CustomLoadingVariant = ({
 
   return (
     <CustomIcon
-      className={cn(
-        'animate-spin text-neutral-600 dark:text-neutral-400',
-        sizeClasses[size],
-        className
-      )}
+      className={cn('animate-spin text-neutral-600 dark:text-neutral-400', sizeClasses[size], className)}
       aria-label={ariaLabel}
       role="status"
     />
@@ -98,6 +101,7 @@ export const CustomLoadingVariant = ({
 ```
 
 ### LoadingOverlay のカスタマイズ
+
 ```tsx
 // ✅ message や spinnerSize で制御
 <LoadingOverlay
@@ -109,12 +113,15 @@ export const CustomLoadingVariant = ({
 ```
 
 ### 条件付きローディング
+
 ```tsx
 // ✅ isLoading で制御
-{isLoading && <LoadingSpinner />}
+{
+  isLoading && <LoadingSpinner />
+}
 
 // または
-<LoadingOverlay isLoading={isLoading}>
+;<LoadingOverlay isLoading={isLoading}>
   <Content />
 </LoadingOverlay>
 ```
@@ -122,12 +129,11 @@ export const CustomLoadingVariant = ({
 ## 📝 テスト追加時のガイド
 
 ### 新しいテストケース追加
+
 ```tsx
 // ✅ 推奨: コンポーネントの振る舞いをテスト
 it('カスタムプロパティが正しく適用される', () => {
-  const { container } = render(
-    <LoadingSpinner size="xl" className="custom-class" />
-  )
+  const { container } = render(<LoadingSpinner size="xl" className="custom-class" />)
 
   const spinner = container.querySelector('[role="status"]')
   expect(spinner).toHaveClass('h-12', 'w-12', 'custom-class')
@@ -137,10 +143,12 @@ it('カスタムプロパティが正しく適用される', () => {
 ## 🎨 スタイリング
 
 ### Tailwind直接指定でOK
+
 - 共通コンポーネントのため `@/config/ui/theme.ts` 不要
 - `cn()` ヘルパーで className 結合
 
 ### カスタムカラー
+
 ```tsx
 // ✅ className で上書き
 <LoadingSpinner className="text-blue-500" />
@@ -149,6 +157,7 @@ it('カスタムプロパティが正しく適用される', () => {
 ## 🔗 関連ファイル
 
 修正時は以下も確認:
+
 - `types.ts` - Props型定義
 - `LoadingStates.test.tsx` - テスト
 - `index.ts` - re-export
@@ -156,6 +165,7 @@ it('カスタムプロパティが正しく適用される', () => {
 ## 📊 パフォーマンス考慮事項
 
 ### useCallback でメモ化
+
 ```tsx
 // ✅ イベントハンドラーはメモ化
 const handleClick = useCallback(() => {
@@ -164,6 +174,7 @@ const handleClick = useCallback(() => {
 ```
 
 ### 条件付きレンダリング
+
 ```tsx
 // ✅ 不要な要素はレンダリングしない
 {isLoading && <LoadingSpinner />}

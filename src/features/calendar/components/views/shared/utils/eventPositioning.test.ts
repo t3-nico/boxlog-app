@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { TimedEvent } from '../types/event.types'
 
-import { eventsOverlap, detectOverlapGroups, calculateViewEventColumns } from './eventPositioning'
+import { calculateViewEventColumns, detectOverlapGroups, eventsOverlap } from './eventPositioning'
 
 describe('eventPositioning', () => {
   const createTimedEvent = (
@@ -157,10 +157,7 @@ describe('eventPositioning', () => {
 
   describe('calculateViewEventColumns', () => {
     it('重複しないイベントは単一列に配置される', () => {
-      const events: TimedEvent[] = [
-        createTimedEvent('1', 10, 0, 11, 0),
-        createTimedEvent('2', 11, 0, 12, 0),
-      ]
+      const events: TimedEvent[] = [createTimedEvent('1', 10, 0, 11, 0), createTimedEvent('2', 11, 0, 12, 0)]
 
       const columnMap = calculateViewEventColumns(events)
 
@@ -227,7 +224,11 @@ describe('eventPositioning', () => {
 
       const columnMap = calculateViewEventColumns(events)
 
-      const indices = [columnMap.get('1')?.columnIndex, columnMap.get('2')?.columnIndex, columnMap.get('3')?.columnIndex]
+      const indices = [
+        columnMap.get('1')?.columnIndex,
+        columnMap.get('2')?.columnIndex,
+        columnMap.get('3')?.columnIndex,
+      ]
 
       // すべてのインデックスが定義されている
       expect(indices.every((idx) => idx !== undefined)).toBe(true)

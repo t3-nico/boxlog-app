@@ -1,8 +1,8 @@
 // スマートフォルダのReact Query hooks
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { SmartFolder, CreateSmartFolderInput, UpdateSmartFolderInput } from '@/types/smart-folders'
+import { CreateSmartFolderInput, SmartFolder, UpdateSmartFolderInput } from '@/types/smart-folders'
 
 // API関数
 const fetchSmartFolders = async (): Promise<SmartFolder[]> => {
@@ -12,7 +12,7 @@ const fetchSmartFolders = async (): Promise<SmartFolder[]> => {
       resolve([])
     }, 100)
   })
-  
+
   /* 実際のAPI呼び出し（一時的にコメントアウト）
   const response = await fetch('/api/smart-folders')
   if (!response.ok) {
@@ -102,12 +102,12 @@ export function useCreateSmartFolder() {
     onMutate: async (newFolder) => {
       // 楽観的更新
       await queryClient.cancelQueries({ queryKey: smartFolderKeys.lists() })
-      
+
       const previousFolders = queryClient.getQueryData<SmartFolder[]>(smartFolderKeys.lists())
-      
+
       // 新しいフォルダを一時的に追加
       const optimisticFolder: SmartFolder = {
-        id: `temp-${  Date.now()}`,
+        id: `temp-${Date.now()}`,
         name: newFolder.name,
         description: newFolder.description,
         userId: 'current-user', // 実際のユーザーIDを設定
@@ -120,14 +120,11 @@ export function useCreateSmartFolder() {
         createdAt: new Date(),
         updatedAt: new Date(),
       }
-      
+
       if (previousFolders) {
-        queryClient.setQueryData<SmartFolder[]>(
-          smartFolderKeys.lists(),
-          [...previousFolders, optimisticFolder]
-        )
+        queryClient.setQueryData<SmartFolder[]>(smartFolderKeys.lists(), [...previousFolders, optimisticFolder])
       }
-      
+
       return { previousFolders }
     },
     onError: (_err, _newFolder, context) => {
@@ -147,22 +144,19 @@ export function useUpdateSmartFolder() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, ...input }: { id: string } & UpdateSmartFolderInput) =>
-      updateSmartFolder(id, input),
+    mutationFn: ({ id, ...input }: { id: string } & UpdateSmartFolderInput) => updateSmartFolder(id, input),
     onMutate: async ({ id, ...updates }) => {
       await queryClient.cancelQueries({ queryKey: smartFolderKeys.lists() })
-      
+
       const previousFolders = queryClient.getQueryData<SmartFolder[]>(smartFolderKeys.lists())
-      
+
       if (previousFolders) {
-        const updatedFolders = previousFolders.map(folder =>
-          folder.id === id
-            ? { ...folder, ...updates, updatedAt: new Date() }
-            : folder
+        const updatedFolders = previousFolders.map((folder) =>
+          folder.id === id ? { ...folder, ...updates, updatedAt: new Date() } : folder
         )
         queryClient.setQueryData<SmartFolder[]>(smartFolderKeys.lists(), updatedFolders)
       }
-      
+
       return { previousFolders }
     },
     onError: (_err, _variables, context) => {
@@ -183,14 +177,14 @@ export function useDeleteSmartFolder() {
     mutationFn: deleteSmartFolder,
     onMutate: async (deletedId) => {
       await queryClient.cancelQueries({ queryKey: smartFolderKeys.lists() })
-      
+
       const previousFolders = queryClient.getQueryData<SmartFolder[]>(smartFolderKeys.lists())
-      
+
       if (previousFolders) {
-        const filteredFolders = previousFolders.filter(folder => folder.id !== deletedId)
+        const filteredFolders = previousFolders.filter((folder) => folder.id !== deletedId)
         queryClient.setQueryData<SmartFolder[]>(smartFolderKeys.lists(), filteredFolders)
       }
-      
+
       return { previousFolders }
     },
     onError: (_err, _deletedId, context) => {
@@ -211,19 +205,19 @@ export function useReorderSmartFolders() {
     mutationFn: reorderSmartFolders,
     onMutate: async (folderOrders) => {
       await queryClient.cancelQueries({ queryKey: smartFolderKeys.lists() })
-      
+
       const previousFolders = queryClient.getQueryData<SmartFolder[]>(smartFolderKeys.lists())
-      
+
       if (previousFolders) {
         const reorderedFolders = [...previousFolders].sort((a, b) => {
-          const orderA = folderOrders.find(o => o.id === a.id)?.orderIndex ?? a.orderIndex
-          const orderB = folderOrders.find(o => o.id === b.id)?.orderIndex ?? b.orderIndex
+          const orderA = folderOrders.find((o) => o.id === a.id)?.orderIndex ?? a.orderIndex
+          const orderB = folderOrders.find((o) => o.id === b.id)?.orderIndex ?? b.orderIndex
           return orderA - orderB
         })
-        
+
         queryClient.setQueryData<SmartFolder[]>(smartFolderKeys.lists(), reorderedFolders)
       }
-      
+
       return { previousFolders }
     },
     onError: (err, folderOrders, context) => {
@@ -240,7 +234,7 @@ export function useReorderSmartFolders() {
 // 複製用のヘルパーフック
 export function useDuplicateSmartFolder() {
   const createMutation = useCreateSmartFolder()
-  
+
   return useMutation({
     mutationFn: async (folder: SmartFolder) => {
       const duplicateInput: CreateSmartFolderInput = {
@@ -251,7 +245,7 @@ export function useDuplicateSmartFolder() {
         color: folder.color,
         orderIndex: folder.orderIndex + 1,
       }
-      
+
       return createMutation.mutateAsync(duplicateInput)
     },
   })
@@ -260,7 +254,7 @@ export function useDuplicateSmartFolder() {
 // フォルダの有効/無効切り替え
 export function useToggleSmartFolder() {
   const updateMutation = useUpdateSmartFolder()
-  
+
   return useMutation({
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
       return updateMutation.mutateAsync({ id, isActive })

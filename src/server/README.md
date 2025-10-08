@@ -18,6 +18,7 @@ src/server/
 ```
 
 **主要機能**:
+
 1. **型安全なAPI** - TypeScriptの型がクライアントまで自動伝播
 2. **認証・認可** - ミドルウェアによる統一的な権限管理
 3. **バリデーション** - Zodスキーマによる入出力検証
@@ -28,12 +29,12 @@ src/server/
 
 ## 🎯 TypeScript公式ベストプラクティス
 
-| 原則 | 説明 | 実装状況 |
-|------|------|---------|
-| **End-to-End Type Safety** | クライアント～サーバー間の型安全性 | ✅ tRPC実装済み |
-| **Server-side Validation** | サーバー側バリデーション | ✅ Zod統合 |
-| **Middleware Pattern** | 横断的関心事の分離 | ✅ 認証・レート制限 |
-| **Error Handling** | 統一的なエラー処理 | ✅ errorFormatter |
+| 原則                       | 説明                               | 実装状況            |
+| -------------------------- | ---------------------------------- | ------------------- |
+| **End-to-End Type Safety** | クライアント～サーバー間の型安全性 | ✅ tRPC実装済み     |
+| **Server-side Validation** | サーバー側バリデーション           | ✅ Zod統合          |
+| **Middleware Pattern**     | 横断的関心事の分離                 | ✅ 認証・レート制限 |
+| **Error Handling**         | 統一的なエラー処理                 | ✅ errorFormatter   |
 
 ---
 
@@ -60,6 +61,7 @@ export type AppRouter = typeof appRouter
 ```
 
 **使用方法**:
+
 ```typescript
 // クライアント側で型推論
 import { type AppRouter } from '@/server/api/root'
@@ -82,13 +84,11 @@ const tasks = trpc.tasks.getAll.useQuery()
 export interface Context {
   req: NextApiRequest
   res: NextApiResponse
-  userId?: string      // 認証済みユーザーID
-  sessionId?: string   // セッションID
+  userId?: string // 認証済みユーザーID
+  sessionId?: string // セッションID
 }
 
-export async function createTRPCContext(
-  opts: CreateNextContextOptions
-): Promise<Context> {
+export async function createTRPCContext(opts: CreateNextContextOptions): Promise<Context> {
   // リクエストヘッダーから認証情報を抽出
   const authHeader = opts.req.headers.authorization
 
@@ -109,11 +109,9 @@ export const publicProcedure = t.procedure
 
 // 使用例
 export const publicRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ name: z.string() }))
-    .query(({ input }) => {
-      return { greeting: `Hello ${input.name}!` }
-    }),
+  hello: publicProcedure.input(z.object({ name: z.string() })).query(({ input }) => {
+    return { greeting: `Hello ${input.name}!` }
+  }),
 })
 
 // 2. 認証必須プロシージャ
@@ -126,14 +124,13 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 
 // 使用例
 export const tasksRouter = createTRPCRouter({
-  getAll: protectedProcedure
-    .query(async ({ ctx }) => {
-      // ctx.userId は必ず存在する（型保証）
-      const tasks = await db.tasks.findMany({
-        where: { userId: ctx.userId }
-      })
-      return tasks
-    }),
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    // ctx.userId は必ず存在する（型保証）
+    const tasks = await db.tasks.findMany({
+      where: { userId: ctx.userId },
+    })
+    return tasks
+  }),
 })
 
 // 3. 管理者専用プロシージャ
@@ -147,11 +144,10 @@ export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 // 使用例
 export const adminRouter = createTRPCRouter({
-  deleteAllUsers: adminProcedure
-    .mutation(async () => {
-      // 管理者のみ実行可能
-      await db.users.deleteMany()
-    }),
+  deleteAllUsers: adminProcedure.mutation(async () => {
+    // 管理者のみ実行可能
+    await db.users.deleteMany()
+  }),
 })
 
 // 4. レート制限付きプロシージャ
@@ -168,12 +164,10 @@ export const rateLimitedProcedure = publicProcedure.use(({ ctx, next }) => {
 
 // 使用例
 export const publicApiRouter = createTRPCRouter({
-  search: rateLimitedProcedure
-    .input(z.object({ query: z.string() }))
-    .query(async ({ input }) => {
-      // レート制限を超えるとエラー
-      return searchDatabase(input.query)
-    }),
+  search: rateLimitedProcedure.input(z.object({ query: z.string() })).query(async ({ input }) => {
+    // レート制限を超えるとエラー
+    return searchDatabase(input.query)
+  }),
 })
 ```
 
@@ -186,9 +180,8 @@ const t = initTRPC.context<Context>().create({
     const isProduction = process.env.NODE_ENV === 'production'
 
     // プロダクションでは詳細を隠す
-    const message = isProduction && error.code === 'INTERNAL_SERVER_ERROR'
-      ? 'サーバーエラーが発生しました'
-      : shape.message
+    const message =
+      isProduction && error.code === 'INTERNAL_SERVER_ERROR' ? 'サーバーエラーが発生しました' : shape.message
 
     return {
       ...shape,
@@ -214,10 +207,7 @@ const t = initTRPC.context<Context>().create({
 ```typescript
 // src/server/api/routers/tasks.ts
 import { createTRPCRouter, protectedProcedure } from '../trpc'
-import {
-  createTaskInputSchema,
-  taskOutputSchema
-} from '@/schemas/api/tasks'
+import { createTaskInputSchema, taskOutputSchema } from '@/schemas/api/tasks'
 
 export const tasksRouter = createTRPCRouter({
   // タスク作成
@@ -236,9 +226,11 @@ export const tasksRouter = createTRPCRouter({
 
   // タスク一覧取得
   getAll: protectedProcedure
-    .input(z.object({
-      status: z.enum(['todo', 'in_progress', 'done']).optional(),
-    }))
+    .input(
+      z.object({
+        status: z.enum(['todo', 'in_progress', 'done']).optional(),
+      })
+    )
     .query(async ({ input, ctx }) => {
       const tasks = await db.task.findMany({
         where: {
@@ -250,27 +242,23 @@ export const tasksRouter = createTRPCRouter({
     }),
 
   // タスク更新
-  update: protectedProcedure
-    .input(updateTaskInputSchema)
-    .mutation(async ({ input, ctx }) => {
-      const { id, ...updateData } = input
+  update: protectedProcedure.input(updateTaskInputSchema).mutation(async ({ input, ctx }) => {
+    const { id, ...updateData } = input
 
-      const task = await db.task.update({
-        where: { id, userId: ctx.userId },
-        data: updateData,
-      })
-      return task
-    }),
+    const task = await db.task.update({
+      where: { id, userId: ctx.userId },
+      data: updateData,
+    })
+    return task
+  }),
 
   // タスク削除
-  delete: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
-      await db.task.delete({
-        where: { id: input.id, userId: ctx.userId },
-      })
-      return { success: true }
-    }),
+  delete: protectedProcedure.input(z.object({ id: z.string().uuid() })).mutation(async ({ input, ctx }) => {
+    await db.task.delete({
+      where: { id: input.id, userId: ctx.userId },
+    })
+    return { success: true }
+  }),
 })
 ```
 
@@ -322,30 +310,27 @@ export const projectsRouter = createTRPCRouter({
       return project
     }),
 
-  getAll: protectedProcedure
-    .query(async ({ ctx }) => {
-      const projects = await db.project.findMany({
-        where: { userId: ctx.userId },
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const projects = await db.project.findMany({
+      where: { userId: ctx.userId },
+    })
+    return projects
+  }),
+
+  getById: protectedProcedure.input(z.object({ id: z.string().uuid() })).query(async ({ input, ctx }) => {
+    const project = await db.project.findUnique({
+      where: { id: input.id, userId: ctx.userId },
+    })
+
+    if (!project) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'プロジェクトが見つかりません',
       })
-      return projects
-    }),
+    }
 
-  getById: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .query(async ({ input, ctx }) => {
-      const project = await db.project.findUnique({
-        where: { id: input.id, userId: ctx.userId },
-      })
-
-      if (!project) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'プロジェクトが見つかりません',
-        })
-      }
-
-      return project
-    }),
+    return project
+  }),
 })
 ```
 
@@ -355,11 +340,11 @@ export const projectsRouter = createTRPCRouter({
 // src/server/api/root.ts
 import { createTRPCRouter } from './trpc'
 import { tasksRouter } from './routers/tasks'
-import { projectsRouter } from './routers/projects'  // 追加
+import { projectsRouter } from './routers/projects' // 追加
 
 export const appRouter = createTRPCRouter({
   tasks: tasksRouter,
-  projects: projectsRouter,  // 追加
+  projects: projectsRouter, // 追加
 })
 
 export type AppRouter = typeof appRouter
@@ -391,14 +376,12 @@ export const profileRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx }) => {
     return await db.profile.findUnique({ where: { userId: ctx.userId } })
   }),
-  update: protectedProcedure
-    .input(updateProfileSchema)
-    .mutation(async ({ input, ctx }) => {
-      return await db.profile.update({
-        where: { userId: ctx.userId },
-        data: input,
-      })
-    }),
+  update: protectedProcedure.input(updateProfileSchema).mutation(async ({ input, ctx }) => {
+    return await db.profile.update({
+      where: { userId: ctx.userId },
+      data: input,
+    })
+  }),
 })
 
 // src/server/api/routers/users/settings.ts
@@ -449,9 +432,7 @@ const cacheMiddleware = t.middleware(async ({ path, input, next }) => {
 })
 
 // 使用
-export const cachedProcedure = protectedProcedure
-  .use(loggerMiddleware)
-  .use(cacheMiddleware)
+export const cachedProcedure = protectedProcedure.use(loggerMiddleware).use(cacheMiddleware)
 ```
 
 ### 3. サブスクリプション（リアルタイム）
@@ -460,24 +441,23 @@ export const cachedProcedure = protectedProcedure
 import { observable } from '@trpc/server/observable'
 
 export const tasksRouter = createTRPCRouter({
-  onTaskUpdate: protectedProcedure
-    .subscription(({ ctx }) => {
-      return observable<Task>((emit) => {
-        const onUpdate = (task: Task) => {
-          if (task.userId === ctx.userId) {
-            emit.next(task)
-          }
+  onTaskUpdate: protectedProcedure.subscription(({ ctx }) => {
+    return observable<Task>((emit) => {
+      const onUpdate = (task: Task) => {
+        if (task.userId === ctx.userId) {
+          emit.next(task)
         }
+      }
 
-        // イベントリスナー登録
-        eventEmitter.on('task:updated', onUpdate)
+      // イベントリスナー登録
+      eventEmitter.on('task:updated', onUpdate)
 
-        // クリーンアップ
-        return () => {
-          eventEmitter.off('task:updated', onUpdate)
-        }
-      })
-    }),
+      // クリーンアップ
+      return () => {
+        eventEmitter.off('task:updated', onUpdate)
+      }
+    })
+  }),
 })
 
 // クライアント側
@@ -526,9 +506,7 @@ describe('tasksRouter', () => {
 
     const caller = appRouter.createCaller(ctx)
 
-    await expect(
-      caller.tasks.create({ title: 'テストタスク', priority: 'high' })
-    ).rejects.toThrow('UNAUTHORIZED')
+    await expect(caller.tasks.create({ title: 'テストタスク', priority: 'high' })).rejects.toThrow('UNAUTHORIZED')
   })
 })
 ```
@@ -586,30 +564,28 @@ export const createTaskInputSchema = z.object({
 ```typescript
 // ❌ any型の使用禁止
 export const badRouter = createTRPCRouter({
-  get: protectedProcedure
-    .query(async ({ ctx }) => {
-      const data: any = await fetchData()  // NG
-      return data
-    }),
+  get: protectedProcedure.query(async ({ ctx }) => {
+    const data: any = await fetchData() // NG
+    return data
+  }),
 })
 
 // ❌ バリデーションの省略禁止
 export const badRouter = createTRPCRouter({
   create: protectedProcedure
     // .input(...) がない！
-    .mutation(async ({ input }) => {  // NG
+    .mutation(async ({ input }) => {
+      // NG
       return await db.create(input)
     }),
 })
 
 // ❌ エラーハンドリングの省略禁止
 export const badRouter = createTRPCRouter({
-  get: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
-      // NOT_FOUNDのハンドリングなし
-      return await db.findUnique({ where: { id: input.id } })  // NG
-    }),
+  get: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ input }) => {
+    // NOT_FOUNDのハンドリングなし
+    return await db.findUnique({ where: { id: input.id } }) // NG
+  }),
 })
 ```
 
@@ -642,7 +618,7 @@ import { createTaskInputSchema } from '@/schemas/api/tasks'
 
 export const goodRouter = createTRPCRouter({
   create: protectedProcedure
-    .input(createTaskInputSchema)  // Zodスキーマ
+    .input(createTaskInputSchema) // Zodスキーマ
     .mutation(async ({ input, ctx }) => {
       // input は自動的にバリデーション済み
       return await db.task.create({ data: input })
@@ -651,22 +627,20 @@ export const goodRouter = createTRPCRouter({
 
 // ✅ エラーハンドリング
 export const goodRouter = createTRPCRouter({
-  delete: protectedProcedure
-    .input(z.object({ id: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
-      try {
-        await db.task.delete({
-          where: { id: input.id, userId: ctx.userId },
-        })
-        return { success: true }
-      } catch (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'タスクの削除に失敗しました',
-          cause: error,
-        })
-      }
-    }),
+  delete: protectedProcedure.input(z.object({ id: z.string().uuid() })).mutation(async ({ input, ctx }) => {
+    try {
+      await db.task.delete({
+        where: { id: input.id, userId: ctx.userId },
+      })
+      return { success: true }
+    } catch (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'タスクの削除に失敗しました',
+        cause: error,
+      })
+    }
+  }),
 })
 ```
 
@@ -675,13 +649,16 @@ export const goodRouter = createTRPCRouter({
 ## 📊 既存の使用箇所
 
 **Pages Router**:
+
 - `src/pages/api/trpc/[trpc].ts` - APIハンドラー
 
 **クライアント設定**:
+
 - `src/lib/trpc/client.ts` - tRPCクライアント
 - `src/lib/trpc/index.ts` - エクスポート
 
 **ドキュメント**:
+
 - `src/pages/README.md` - tRPC API説明
 - `src/schemas/README.md` - バリデーション説明
 - `docs/API_VALIDATION_GUIDE.md` - 詳細ガイド
@@ -706,11 +683,11 @@ export const goodRouter = createTRPCRouter({
 ```typescript
 // A: AppRouter型が正しくエクスポートされているか確認
 // src/server/api/root.ts
-export type AppRouter = typeof appRouter  // これが必要
+export type AppRouter = typeof appRouter // これが必要
 
 // src/lib/trpc/client.ts
 import { type AppRouter } from '@/server/api/root'
-export const trpc = createTRPCReact<AppRouter>()  // 型パラメータ必須
+export const trpc = createTRPCReact<AppRouter>() // 型パラメータ必須
 ```
 
 ### Q: 認証エラーが発生する
@@ -719,7 +696,7 @@ export const trpc = createTRPCReact<AppRouter>()  // 型パラメータ必須
 // A: createTRPCContext でユーザーIDが正しく設定されているか確認
 export async function createTRPCContext(opts: CreateNextContextOptions) {
   const authHeader = opts.req.headers.authorization
-  console.log('Auth header:', authHeader)  // デバッグ
+  console.log('Auth header:', authHeader) // デバッグ
 
   return {
     req: opts.req,

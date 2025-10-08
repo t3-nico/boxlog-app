@@ -15,29 +15,25 @@
 ## 機能
 
 ### 1. ルートのプリフェッチ
+
 ```typescript
-const criticalRoutes = [
-  '/calendar',
-  '/board',
-  '/table',
-  '/settings'
-]
+const criticalRoutes = ['/calendar', '/board', '/table', '/settings']
 ```
 
 - Next.js の `router.prefetch()` を使用
 - 2秒の遅延後にプリフェッチ開始（初期ロードを妨げない）
 
 ### 2. フォントのプリロード
+
 ```typescript
-const fontLinks = [
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
-]
+const fontLinks = ['https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap']
 ```
 
 - `<link rel="preload" as="style">` で最適化
 - ブラウザのプリロードを活用
 
 ### 3. Service Worker（オプション）
+
 - `initializeCacheStrategy()` でキャッシュ戦略を初期化
 - PWA対応時に有効化
 
@@ -85,6 +81,7 @@ interface PreloadConfig {
 ```
 
 ### 実装例（将来）
+
 ```tsx
 <PreloadResources
   config={{
@@ -98,18 +95,20 @@ interface PreloadConfig {
 ## パフォーマンス
 
 ### 遅延プリフェッチ
+
 ```typescript
 setTimeout(() => {
-  criticalRoutes.forEach(route => {
+  criticalRoutes.forEach((route) => {
     router.prefetch(route)
   })
-}, 2000)  // 2秒後に実行
+}, 2000) // 2秒後に実行
 ```
 
 - 初期ロード（FCP/LCP）を優先
 - バックグラウンドでプリフェッチ
 
 ### クリーンアップ
+
 ```typescript
 return () => clearTimeout(timer)
 ```
@@ -120,17 +119,20 @@ return () => clearTimeout(timer)
 ## Service Worker
 
 ### 登録
+
 ```typescript
-navigator.serviceWorker.register('/sw.js')
-  .then(registration => {
+navigator.serviceWorker
+  .register('/sw.js')
+  .then((registration) => {
     console.log('SW registered: ', registration)
   })
-  .catch(error => {
+  .catch((error) => {
     console.log('SW registration failed: ', error)
   })
 ```
 
 ### 要件
+
 - `/public/sw.js` ファイルが必要
 - HTTPS環境（本番環境）
 - `localhost` では動作可能
@@ -142,17 +144,20 @@ npm run test:run -- Preload
 ```
 
 テストケース:
+
 - null をレンダリング（画面に何も表示しない）
 - useEffect でプリフェッチを実行
 
 ## ベストプラクティス
 
 ### ✅ DO
+
 - 頻繁にアクセスされるページをプリフェッチ
 - 初期ロード完了後にプリフェッチ
 - Service Worker でキャッシュ戦略を最適化
 
 ### ❌ DON'T
+
 - すべてのページをプリフェッチしない（帯域幅の無駄）
 - 初期ロード中にプリフェッチしない（パフォーマンス低下）
 - 動的ルートを無条件でプリフェッチしない

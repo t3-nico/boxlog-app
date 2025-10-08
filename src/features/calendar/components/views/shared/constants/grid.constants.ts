@@ -46,5 +46,5 @@ export const Z_INDEX = {
   CURRENT_TIME: 20,
   DRAGGING: 30,
   POPOVER: 40,
-  MODAL: 50
+  MODAL: 50,
 } as const

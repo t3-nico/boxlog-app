@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 export interface KeyboardShortcutActions {
   onEscape?: () => void
@@ -25,44 +25,47 @@ export interface UseKeyboardShortcutsOptions {
 export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions) {
   const { isActive = true, actions } = options
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!isActive) return
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!isActive) return
 
-    // デフォルト動作を防ぐキー
-    const preventDefaultKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space']
-    if (preventDefaultKeys.includes(e.key)) {
-      e.preventDefault()
-    }
+      // デフォルト動作を防ぐキー
+      const preventDefaultKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space']
+      if (preventDefaultKeys.includes(e.key)) {
+        e.preventDefault()
+      }
 
-    switch (e.key) {
-      case 'Escape':
-        actions.onEscape?.()
-        break
-      case 'Enter':
-        actions.onEnter?.()
-        break
-      case ' ':
-      case 'Space':
-        actions.onSpace?.()
-        break
-      case 'Delete':
-      case 'Backspace':
-        actions.onDelete?.()
-        break
-      case 'ArrowUp':
-        actions.onArrowUp?.()
-        break
-      case 'ArrowDown':
-        actions.onArrowDown?.()
-        break
-      case 'ArrowLeft':
-        actions.onArrowLeft?.()
-        break
-      case 'ArrowRight':
-        actions.onArrowRight?.()
-        break
-    }
-  }, [isActive, actions])
+      switch (e.key) {
+        case 'Escape':
+          actions.onEscape?.()
+          break
+        case 'Enter':
+          actions.onEnter?.()
+          break
+        case ' ':
+        case 'Space':
+          actions.onSpace?.()
+          break
+        case 'Delete':
+        case 'Backspace':
+          actions.onDelete?.()
+          break
+        case 'ArrowUp':
+          actions.onArrowUp?.()
+          break
+        case 'ArrowDown':
+          actions.onArrowDown?.()
+          break
+        case 'ArrowLeft':
+          actions.onArrowLeft?.()
+          break
+        case 'ArrowRight':
+          actions.onArrowRight?.()
+          break
+      }
+    },
+    [isActive, actions]
+  )
 
   useEffect(() => {
     if (!isActive) return
@@ -73,6 +76,6 @@ export function useKeyboardShortcuts(options: UseKeyboardShortcutsOptions) {
 
   return {
     // 現在アクティブかどうかの状態を返す
-    isActive
+    isActive,
   }
 }

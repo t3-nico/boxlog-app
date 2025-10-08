@@ -22,7 +22,7 @@ export type {
 export { getAllEventNames, getEventCategory, getEventStats, validateEventName } from './events'
 
 // Tracker exports
-export { AnalyticsTracker, analytics, flushEvents, setUserConsent, setUserId, trackEvent } from './tracker'
+export { analytics, AnalyticsTracker, flushEvents, setUserConsent, setUserId, trackEvent } from './tracker'
 export type { AnalyticsProvider } from './tracker'
 
 // Hooks exports
@@ -43,7 +43,7 @@ export {
 
 // Re-export for convenience
 import { ANALYTICS_EVENTS } from './events'
-import { trackEvent, setUserConsent, setUserId, flushEvents } from './tracker'
+import { flushEvents, setUserConsent, setUserId, trackEvent } from './tracker'
 
 const analytics = {
   events: ANALYTICS_EVENTS,

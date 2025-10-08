@@ -55,13 +55,15 @@ export class BreakingChangeManager {
   /**
    * 🔍 破壊的変更の検索
    */
-  findChanges(query: {
-    version?: string
-    impact?: ImpactLevel[]
-    affectedGroups?: AffectedGroup[]
-    keywords?: string[]
-  } = {}): BreakingChange[] {
-    return this.changes.filter(change => {
+  findChanges(
+    query: {
+      version?: string
+      impact?: ImpactLevel[]
+      affectedGroups?: AffectedGroup[]
+      keywords?: string[]
+    } = {}
+  ): BreakingChange[] {
+    return this.changes.filter((change) => {
       // バージョンフィルター
       if (query.version && change.version !== query.version) {
         return false
@@ -74,9 +76,7 @@ export class BreakingChangeManager {
 
       // 対象グループフィルター
       if (query.affectedGroups) {
-        const hasMatchingGroup = change.affectedGroups.some(group =>
-          query.affectedGroups!.includes(group)
-        )
+        const hasMatchingGroup = change.affectedGroups.some((group) => query.affectedGroups!.includes(group))
         if (!hasMatchingGroup) {
           return false
         }
@@ -85,9 +85,7 @@ export class BreakingChangeManager {
       // キーワード検索
       if (query.keywords && query.keywords.length > 0) {
         const searchText = `${change.title} ${change.description} ${change.reason}`.toLowerCase()
-        const hasKeyword = query.keywords.some(keyword =>
-          searchText.includes(keyword.toLowerCase())
-        )
+        const hasKeyword = query.keywords.some((keyword) => searchText.includes(keyword.toLowerCase()))
         if (!hasKeyword) {
           return false
         }
@@ -101,10 +99,13 @@ export class BreakingChangeManager {
    * 📊 バージョン別サマリー生成
    */
   generateVersionSummary(version: string): BreakingChangeSummary {
-    const versionChanges = this.changes.filter(change => change.version === version)
+    const versionChanges = this.changes.filter((change) => change.version === version)
 
     const byImpact: Record<ImpactLevel, number> = {
-      low: 0, medium: 0, high: 0, critical: 0
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
     }
 
     const byType: Record<string, number> = {}
@@ -113,7 +114,7 @@ export class BreakingChangeManager {
     let requiredMigrations = 0
     let totalMigrationTime = 0
 
-    versionChanges.forEach(change => {
+    versionChanges.forEach((change) => {
       // 影響度別カウント
       byImpact[change.impact]++
 
@@ -121,7 +122,7 @@ export class BreakingChangeManager {
       byType[change.type] = (byType[change.type] || 0) + 1
 
       // 対象グループ別カウント
-      change.affectedGroups.forEach(group => {
+      change.affectedGroups.forEach((group) => {
         byAffectedGroup[group] = (byAffectedGroup[group] || 0) + 1
       })
 
@@ -148,19 +149,22 @@ export class BreakingChangeManager {
    * 🎯 変更影響分析
    */
   analyzeChangeImpact(changeId: string): ChangeImpactAnalysis | null {
-    const change = this.changes.find(c => c.id === changeId)
+    const change = this.changes.find((c) => c.id === changeId)
     if (!change) {
       return null
     }
 
     // 影響評価の生成
-    const groupImpacts: Record<AffectedGroup, {
-      impact: ImpactLevel
-      details: string[]
-      mitigation?: string[]
-    }> = {} as any
+    const groupImpacts: Record<
+      AffectedGroup,
+      {
+        impact: ImpactLevel
+        details: string[]
+        mitigation?: string[]
+      }
+    > = {} as any
 
-    change.affectedGroups.forEach(group => {
+    change.affectedGroups.forEach((group) => {
       groupImpacts[group] = {
         impact: this.calculateGroupSpecificImpact(change, group),
         details: this.getGroupSpecificDetails(change, group),
@@ -209,19 +213,17 @@ export class BreakingChangeManager {
       }
     } = {}
   ): MigrationPlan {
-    const relevantChanges = this.changes.filter(change =>
-      change.version === version &&
-      (!options.targetGroups ||
-        change.affectedGroups.some(group => options.targetGroups!.includes(group)))
+    const relevantChanges = this.changes.filter(
+      (change) =>
+        change.version === version &&
+        (!options.targetGroups || change.affectedGroups.some((group) => options.targetGroups!.includes(group)))
     )
 
     const planId = this.generatePlanId(version)
-    const totalSteps = relevantChanges.reduce((sum, change) =>
-      sum + change.migration.steps.length, 0
-    )
+    const totalSteps = relevantChanges.reduce((sum, change) => sum + change.migration.steps.length, 0)
 
-    const checklist = relevantChanges.flatMap(change =>
-      change.migration.steps.map(step => ({
+    const checklist = relevantChanges.flatMap((change) =>
+      change.migration.steps.map((step) => ({
         item: `${change.title}: ${step.title}`,
         completed: false,
         assignee: undefined,
@@ -248,8 +250,8 @@ export class BreakingChangeManager {
    * 📄 Markdownドキュメント生成
    */
   generateMarkdownDocument(): string {
-    const sortedChanges = this.changes.sort((a, b) =>
-      new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime()
+    const sortedChanges = this.changes.sort(
+      (a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime()
     )
 
     let markdown = `# 🚨 BoxLog Breaking Changes
@@ -296,13 +298,13 @@ export class BreakingChangeManager {
         markdown += `\n\n`
       }
 
-      changes.forEach(change => {
+      changes.forEach((change) => {
         markdown += `### ${this.getChangeEmoji(change.type)} ${change.title}\n\n`
         markdown += `**変更内容:**\n${change.description}\n\n`
 
         // 影響範囲
         markdown += `**影響範囲:**\n`
-        change.affectedGroups.forEach(group => {
+        change.affectedGroups.forEach((group) => {
           const emoji = this.getGroupEmoji(group)
           markdown += `- ${emoji} **${this.getGroupDisplayName(group)}**: 影響あり\n`
         })
@@ -471,19 +473,14 @@ export class BreakingChangeManager {
    * 🛡️ リスク軽減策提案
    */
   private suggestRiskMitigation(change: BreakingChange): string[] {
-    return [
-      '段階的ロールアウトの実施',
-      'バックアップとロールバック計画の準備',
-      '十分なテスト期間の確保',
-    ]
+    return ['段階的ロールアウトの実施', 'バックアップとロールバック計画の準備', '十分なテスト期間の確保']
   }
 
   /**
    * 📅 アクション優先度計算
    */
   private calculateActionPriority(change: BreakingChange): 'low' | 'medium' | 'high' {
-    return change.impact === 'critical' ? 'high' :
-           change.impact === 'high' ? 'medium' : 'low'
+    return change.impact === 'critical' ? 'high' : change.impact === 'high' ? 'medium' : 'low'
   }
 
   /**
@@ -515,13 +512,16 @@ export class BreakingChangeManager {
    * 🔄 ヘルパーメソッド群
    */
   private groupChangesByVersion(changes: BreakingChange[]): Record<string, BreakingChange[]> {
-    return changes.reduce((groups, change) => {
-      if (!groups[change.version]) {
-        groups[change.version] = []
-      }
-      groups[change.version].push(change)
-      return groups
-    }, {} as Record<string, BreakingChange[]>)
+    return changes.reduce(
+      (groups, change) => {
+        if (!groups[change.version]) {
+          groups[change.version] = []
+        }
+        groups[change.version].push(change)
+        return groups
+      },
+      {} as Record<string, BreakingChange[]>
+    )
   }
 
   private getDefaultStartDate(): string {
@@ -529,9 +529,7 @@ export class BreakingChangeManager {
   }
 
   private calculateEndDate(changes: BreakingChange[]): string {
-    const totalTime = changes.reduce((sum, change) =>
-      sum + (change.migration.estimatedTime || 0), 0
-    )
+    const totalTime = changes.reduce((sum, change) => sum + (change.migration.estimatedTime || 0), 0)
     const days = Math.ceil(totalTime / (8 * 60)) // 8時間/日として計算
     const endDate = new Date()
     endDate.setDate(endDate.getDate() + days)
@@ -609,10 +607,11 @@ export const addBreakingChange = (change: Parameters<BreakingChangeManager['addB
 export const findBreakingChanges = (query: Parameters<BreakingChangeManager['findChanges']>[0]) =>
   breakingChangeManager.findChanges(query)
 
-export const generateVersionSummary = (version: string) =>
-  breakingChangeManager.generateVersionSummary(version)
+export const generateVersionSummary = (version: string) => breakingChangeManager.generateVersionSummary(version)
 
-export const createMigrationPlan = (version: string, options?: Parameters<BreakingChangeManager['createMigrationPlan']>[1]) =>
-  breakingChangeManager.createMigrationPlan(version, options)
+export const createMigrationPlan = (
+  version: string,
+  options?: Parameters<BreakingChangeManager['createMigrationPlan']>[1]
+) => breakingChangeManager.createMigrationPlan(version, options)
 
 export default BreakingChangeManager

@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 export interface EventSelectionState {
   selectedEventId: string | null
@@ -17,20 +17,23 @@ export interface UseEventSelectionOptions {
 
 const defaultState: EventSelectionState = {
   selectedEventId: null,
-  hoveredEventId: null
+  hoveredEventId: null,
 }
 
 export function useEventSelection(options: UseEventSelectionOptions = {}) {
   const { onSelectionChange } = options
   const [state, setState] = useState<EventSelectionState>(defaultState)
 
-  const selectEvent = useCallback((eventId: string | null) => {
-    setState(prev => ({ ...prev, selectedEventId: eventId }))
-    onSelectionChange?.(eventId)
-  }, [onSelectionChange])
+  const selectEvent = useCallback(
+    (eventId: string | null) => {
+      setState((prev) => ({ ...prev, selectedEventId: eventId }))
+      onSelectionChange?.(eventId)
+    },
+    [onSelectionChange]
+  )
 
   const setHoveredEvent = useCallback((eventId: string | null) => {
-    setState(prev => ({ ...prev, hoveredEventId: eventId }))
+    setState((prev) => ({ ...prev, hoveredEventId: eventId }))
   }, [])
 
   const clearSelection = useCallback(() => {
@@ -43,7 +46,7 @@ export function useEventSelection(options: UseEventSelectionOptions = {}) {
     actions: {
       selectEvent,
       setHoveredEvent,
-      clearSelection
-    }
+      clearSelection,
+    },
   }
 }

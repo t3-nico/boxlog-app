@@ -19,10 +19,7 @@ export async function GET() {
     return NextResponse.json(health)
   } catch (error) {
     console.error('翻訳ヘルスチェックエラー:', error)
-    return NextResponse.json(
-      { error: '翻訳ヘルスチェックに失敗しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '翻訳ヘルスチェックに失敗しました' }, { status: 500 })
   }
 }
 

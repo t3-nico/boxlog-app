@@ -5,7 +5,7 @@
 
 'use client'
 
-import React, { memo } from 'react'
+import { memo } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
@@ -50,76 +50,66 @@ export const EventContent = memo<EventContentProps>(function EventContent({
   isCompact = false,
   showTime = true,
   timeFormat = '24h',
-  previewTime = null
+  previewTime = null,
 }) {
   const { t } = useI18n()
 
   // イベントの開始・終了時刻をDateオブジェクトに変換
   const eventStart = parseEventStartDate(event)
   const eventEnd = parseEventEndDate(event)
-  
+
   // 継続時間を計算
-  
+
   if (isCompact) {
     // コンパクト表示：タイトルのみ
     return (
-      <div className="flex items-center h-full">
-        <span className="text-xs font-medium truncate leading-tight">
-          {event.title}
-        </span>
+      <div className="flex h-full items-center">
+        <span className="truncate text-xs leading-tight font-medium">{event.title}</span>
       </div>
     )
   }
-  
+
   // 通常表示：タイトル + 日付 + タグの順番
   return (
-    <div className="flex flex-col h-full relative">
+    <div className="relative flex h-full flex-col">
       {/* タイトル */}
-      <div className="text-sm font-medium leading-tight mb-1 flex-shrink-0">
-        <span className="line-clamp-2">
-          {event.title}
-        </span>
+      <div className="mb-1 flex-shrink-0 text-sm leading-tight font-medium">
+        <span className="line-clamp-2">{event.title}</span>
       </div>
-      
+
       {/* 時間表示（日付） */}
       {showTime != null && (
-        <div className="event-time text-xs leading-tight mb-1 opacity-75">
-          {previewTime ? (
-            formatTimeRange(previewTime.start, previewTime.end, timeFormat)
-          ) : (
-            eventStart && eventEnd ? formatTimeRange(
-              eventStart,
-              eventEnd,
-              timeFormat
-            ) : t('calendar.event.noTimeSet')
-          )}
+        <div className="event-time mb-1 text-xs leading-tight opacity-75">
+          {previewTime
+            ? formatTimeRange(previewTime.start, previewTime.end, timeFormat)
+            : eventStart && eventEnd
+              ? formatTimeRange(eventStart, eventEnd, timeFormat)
+              : t('calendar.event.noTimeSet')}
         </div>
       )}
-      
+
       {/* 時間の長さを視覚化するストレッチ領域 */}
-      <div className="flex-1 min-h-0 flex items-end justify-between">
+      <div className="flex min-h-0 flex-1 items-end justify-between">
         {/* タグ表示 */}
-        {event.tags && event.tags.length > 0 ? <div className="flex flex-wrap gap-1 w-full">
+        {event.tags && event.tags.length > 0 ? (
+          <div className="flex w-full flex-wrap gap-1">
             {event.tags.slice(0, 3).map((tag) => (
               <span
                 key={tag.id}
-                className="inline-flex items-center px-1.5 py-0.5 text-xs rounded-sm bg-white/30 text-white leading-tight flex-shrink-0"
+                className="inline-flex flex-shrink-0 items-center rounded-sm bg-white/30 px-1.5 py-0.5 text-xs leading-tight text-white"
                 style={{ backgroundColor: `${tag.color}40` }}
               >
                 {tag.icon ? <span className="mr-0.5">{tag.icon}</span> : null}
                 {tag.name}
               </span>
             ))}
-            {event.tags.length > 3 && (
-              <span className="text-xs opacity-75 px-1">
-                +{event.tags.length - 3}
-              </span>
-            )}
-          </div> : null}
-        
+            {event.tags.length > 3 && <span className="px-1 text-xs opacity-75">+{event.tags.length - 3}</span>}
+          </div>
+        ) : null}
+
         {/* 時間の長さを示す視覚的インジケーター */}
-        <div className="absolute right-1 top-1/2 transform -translate-y-1/2 opacity-30">
-          <div className="w-1 bg-current rounded-full" style={{ height: 'calc(100% - 16px)' }} />
+        <div className="absolute top-1/2 right-1 -translate-y-1/2 transform opacity-30">
+          <div className="w-1 rounded-full bg-current" style={{ height: 'calc(100% - 16px)' }} />
         </div>
       </div>
     </div>

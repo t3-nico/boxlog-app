@@ -1,12 +1,12 @@
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 // Smart Folders システムのコアロジック
 
-import { 
-  SmartFolder, 
-  SmartFolderRule, 
+import {
+  RuleEvaluationContext,
+  SmartFolder,
+  SmartFolderRule,
   SmartFolderRuleField,
   SmartFolderRuleOperator,
-  RuleEvaluationContext 
 } from '@/types/smart-folders'
 
 // ルール評価エンジン
@@ -20,7 +20,7 @@ export class SmartFolderRuleEngine {
     context: RuleEvaluationContext = {
       item: item as Record<string, unknown>,
       now: new Date(),
-      userTimeZone: 'UTC'
+      userTimeZone: 'UTC',
     }
   ): boolean {
     if (rules.length === 0) return true
@@ -116,7 +116,7 @@ export class SmartFolderRuleEngine {
     is_favorite: (item) => item.isFavorite || item.is_favorite || item.favorite,
     due_date: (item) => item.dueDate || item.due_date,
     title: (item) => item.title || item.name,
-    description: (item) => item.description || item.content
+    description: (item) => item.description || item.content,
   }
 
   /**
@@ -138,10 +138,11 @@ export class SmartFolderRuleEngine {
       return fieldValue.toLowerCase().includes(ruleValue.toLowerCase())
     }
     if (Array.isArray(fieldValue)) {
-      return fieldValue.some(item => 
-        typeof item === 'string' && 
-        typeof ruleValue === 'string' &&
-        item.toLowerCase().includes(ruleValue.toLowerCase())
+      return fieldValue.some(
+        (item) =>
+          typeof item === 'string' &&
+          typeof ruleValue === 'string' &&
+          item.toLowerCase().includes(ruleValue.toLowerCase())
       )
     }
     return false
@@ -178,7 +179,7 @@ export class SmartFolderRuleEngine {
 
       if (typeof ruleValue === 'string' && ruleValue.endsWith('days')) {
         const days = parseInt(ruleValue.replace('days', ''))
-        compareDate = new Date(context.now.getTime() - (days * 24 * 60 * 60 * 1000))
+        compareDate = new Date(context.now.getTime() - days * 24 * 60 * 60 * 1000)
       } else {
         compareDate = new Date(ruleValue)
       }
@@ -217,7 +218,7 @@ export class SmartFolderFilter {
    * アイテムリストをスマートフォルダでフィルタリング
    */
   static filterItems<T extends Record<string, unknown> = Record<string, unknown>>(
-    items: T[], 
+    items: T[],
     folder: SmartFolder,
     context?: Partial<RuleEvaluationContext>
   ): T[] {
@@ -229,10 +230,10 @@ export class SmartFolderFilter {
       item: null, // 各アイテムで設定される
       now: new Date(),
       userTimeZone: 'UTC',
-      ...context
+      ...context,
     }
 
-    return items.filter(item => {
+    return items.filter((item) => {
       evaluationContext.item = item
       return SmartFolderRuleEngine.evaluateRules(folder.rules, item, evaluationContext)
     })
@@ -242,13 +243,13 @@ export class SmartFolderFilter {
    * 複数のスマートフォルダでアイテムをグループ化
    */
   static groupItemsByFolders<T extends Record<string, unknown> = Record<string, unknown>>(
-    items: T[], 
+    items: T[],
     folders: SmartFolder[],
     context?: Partial<RuleEvaluationContext>
   ): Record<string, T[]> {
     const result: Record<string, T[]> = {}
 
-    folders.forEach(folder => {
+    folders.forEach((folder) => {
       result[folder.id] = this.filterItems(items, folder, context)
     })
 
@@ -268,13 +269,13 @@ export const PRESET_RULES = {
         field: 'updated_date' as SmartFolderRuleField,
         operator: 'greater_than' as SmartFolderRuleOperator,
         value: '7days',
-        logic: 'AND' as const
-      }
+        logic: 'AND' as const,
+      },
     ],
     icon: '🕒',
-    color: '#10B981'
+    color: '#10B981',
   },
-  
+
   // 高優先度タスク
   HIGH_PRIORITY: {
     id: 'high_priority',
@@ -285,13 +286,13 @@ export const PRESET_RULES = {
         field: 'priority' as SmartFolderRuleField,
         operator: 'equals' as SmartFolderRuleOperator,
         value: 'high',
-        logic: 'AND' as const
-      }
+        logic: 'AND' as const,
+      },
     ],
     icon: '🔥',
-    color: '#EF4444'
+    color: '#EF4444',
   },
-  
+
   // お気に入り
   FAVORITES: {
     id: 'favorites',
@@ -302,13 +303,13 @@ export const PRESET_RULES = {
         field: 'is_favorite' as SmartFolderRuleField,
         operator: 'equals' as SmartFolderRuleOperator,
         value: true,
-        logic: 'AND' as const
-      }
+        logic: 'AND' as const,
+      },
     ],
     icon: '⭐',
-    color: '#F59E0B'
+    color: '#F59E0B',
   },
-  
+
   // 期限切れ
   OVERDUE: {
     id: 'overdue',
@@ -319,12 +320,12 @@ export const PRESET_RULES = {
         field: 'due_date' as SmartFolderRuleField,
         operator: 'less_than' as SmartFolderRuleOperator,
         value: new Date().toISOString(),
-        logic: 'AND' as const
-      }
+        logic: 'AND' as const,
+      },
     ],
     icon: '⚠️',
-    color: '#DC2626'
-  }
+    color: '#DC2626',
+  },
 }
 
 // ルール構築ヘルパー

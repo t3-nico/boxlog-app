@@ -3,14 +3,14 @@
  */
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
-import type { ChronotypeType } from '@/types/chronotype'
-import { useI18n } from '@/features/i18n/lib/hooks'
 import type { TranslationFunction } from '@/features/i18n/lib'
+import { useI18n } from '@/features/i18n/lib/hooks'
+import type { ChronotypeType } from '@/types/chronotype'
 
-import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
 import { calculateDiagnosisResult } from '../chronotype.diagnosis'
+import { getDiagnosisQuestions } from '../chronotype.diagnosis-questions'
 
 interface DiagnosisModalProps {
   onComplete: (result: ChronotypeType) => void

@@ -32,9 +32,9 @@ src/config/
 ```typescript
 // ✅ 推奨：index.ts経由で一括インポート
 import {
-  APP_CONFIG,           // アプリケーション定数
-  FEATURE_FLAGS,        // 機能フラグ
-  createAppError        // エラー作成
+  APP_CONFIG, // アプリケーション定数
+  FEATURE_FLAGS, // 機能フラグ
+  createAppError, // エラー作成
 } from '@/config'
 
 // ❌ 非推奨：個別ファイルへの直接アクセス
@@ -48,9 +48,9 @@ import { APP_CONFIG } from '@/config/app/constants'
 ```typescript
 import { APP_CONFIG, LIMITS, TIMEOUTS } from '@/config'
 
-console.log(APP_CONFIG.name)      // 'BoxLog'
+console.log(APP_CONFIG.name) // 'BoxLog'
 console.log(LIMITS.maxTasksPerPage) // 50
-console.log(TIMEOUTS.autoSave)    // 3000ms
+console.log(TIMEOUTS.autoSave) // 3000ms
 ```
 
 #### 2. 機能フラグ
@@ -84,17 +84,10 @@ if (isFeatureEnabled('enableAIChat')) {
 import { createAppError, executeWithAutoRecovery } from '@/config'
 
 // エラー作成
-const error = createAppError(
-  'Database connection failed',
-  'DB_CONNECTION_TIMEOUT',
-  { source: 'api', userId: '123' }
-)
+const error = createAppError('Database connection failed', 'DB_CONNECTION_TIMEOUT', { source: 'api', userId: '123' })
 
 // 自動復旧付き実行
-const result = await executeWithAutoRecovery(
-  async () => await fetchData(),
-  'API_NETWORK_ERROR'
-)
+const result = await executeWithAutoRecovery(async () => await fetchData(), 'API_NETWORK_ERROR')
 
 if (!result.success) {
   console.error(result.error?.userMessage.title)

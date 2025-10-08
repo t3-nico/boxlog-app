@@ -2,12 +2,4 @@
 export { Heading, Subheading } from './heading'
 
 // Form components
-export {
-  Fieldset,
-  Field,
-  FieldGroup,
-  Label,
-  Description,
-  ErrorMessage,
-  Legend
-} from './fieldset'
+export { Description, ErrorMessage, Field, FieldGroup, Fieldset, Label, Legend } from './fieldset'

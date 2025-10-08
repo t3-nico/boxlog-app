@@ -24,11 +24,11 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
   // 各機能のフックを初期化
   const eventSelection = useEventSelection({ onSelectionChange })
   const dragInteraction = useDragInteraction({
-    onDragComplete: handleDragComplete
+    onDragComplete: handleDragComplete,
   })
   const eventCreation = useEventCreation({
     onConfirmCreate,
-    defaultDurationMinutes: 30
+    defaultDurationMinutes: 30,
   })
 
   // ドラッグ完了時の処理
@@ -56,19 +56,19 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
       dragInteraction.actions,
       eventCreation.actions,
       eventSelection.actions,
-      onEscape
+      onEscape,
     ]),
 
     onEnter: useCallback(() => {
       if (eventCreation.state.isCreating && eventCreation.state.creatingEvent) {
         eventCreation.actions.confirmCreate()
       }
-    }, [eventCreation.state, eventCreation.actions])
+    }, [eventCreation.state, eventCreation.actions]),
   }
 
   useKeyboardShortcuts({
     isActive: true,
-    actions: keyboardActions
+    actions: keyboardActions,
   })
 
   // タイムスロットホバー機能（シンプル化）
@@ -94,7 +94,7 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
       creatingEvent: eventCreation.state.creatingEvent,
 
       // レガシー互換性のため
-      hoveredTimeSlot: null
+      hoveredTimeSlot: null,
     },
     actions: {
       // イベント選択
@@ -118,7 +118,7 @@ export function useInteractionManagerRefactored(options: UseInteractionManagerRe
         eventSelection.actions.clearSelection()
         dragInteraction.actions.cancelDrag()
         eventCreation.actions.cancelCreating()
-      }, [eventSelection.actions, dragInteraction.actions, eventCreation.actions])
-    }
+      }, [eventSelection.actions, dragInteraction.actions, eventCreation.actions]),
+    },
   }
 }

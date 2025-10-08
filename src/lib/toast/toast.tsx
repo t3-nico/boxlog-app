@@ -60,7 +60,7 @@ export const Toast = ({ toast, onRemove }: ToastProps) => {
     <div
       className={cn(
         'flex items-start gap-3 rounded-lg p-4 shadow-lg backdrop-blur-sm',
-        'min-w-[300px] max-w-[500px]',
+        'max-w-[500px] min-w-[300px]',
         'transition-all duration-200 ease-out',
         'animate-in slide-in-from-right-full fade-in zoom-in-95',
         style.background,

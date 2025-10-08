@@ -2,15 +2,14 @@
 
 import React, { useCallback } from 'react'
 
-
 import { BotMessageSquare, Calendar, ListTodo, X } from 'lucide-react'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 
+import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { InspectorAIChat } from './inspector-ai-chat'
 import { InspectorContent } from './inspector-content'
-import { useInspectorStore } from '@/features/inspector/stores/inspector.store'
 import { UnscheduledTasksList } from './UnscheduledTasksList'
 
 export const MobileInspector = () => {
@@ -49,7 +48,7 @@ export const MobileInspector = () => {
     <>
       {/* Background Overlay */}
       <div
-        className={cn('fixed inset-0 z-[9998] bg-black bg-opacity-50 animate-in fade-in')}
+        className={cn('bg-opacity-50 animate-in fade-in fixed inset-0 z-[9998] bg-black')}
         onClick={handleToggleInspector}
         onKeyDown={handleOverlayKeyDown}
         role="button"
@@ -99,7 +98,7 @@ export const MobileInspector = () => {
 
         {/* Inspector Tabs */}
         <Tabs defaultValue="overview" className="flex min-h-0 flex-1 flex-col">
-          <div className={cn('flex-shrink-0 border-b border-neutral-200 dark:border-neutral-800 px-4 pb-2')}>
+          <div className={cn('flex-shrink-0 border-b border-neutral-200 px-4 pb-2 dark:border-neutral-800')}>
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="overview" className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />

@@ -25,17 +25,11 @@ export async function POST(request: NextRequest) {
       case 'progress':
         return await handleProgress(crowdin)
       default:
-        return NextResponse.json(
-          { error: 'Invalid action. Use upload, download, or progress.' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid action. Use upload, download, or progress.' }, { status: 400 })
     }
   } catch (error) {
     console.error('Crowdin sync error:', error)
-    return NextResponse.json(
-      { error: 'Crowdin同期エラーが発生しました' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Crowdin同期エラーが発生しました' }, { status: 500 })
   }
 }
 
@@ -57,10 +51,7 @@ async function handleUpload(crowdin: CrowdinIntegration, language: string) {
       data: result,
     })
   } catch (error) {
-    return NextResponse.json(
-      { error: `アップロードエラー: ${error}` },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: `アップロードエラー: ${error}` }, { status: 500 })
   }
 }
 
@@ -86,10 +77,7 @@ async function handleDownload(crowdin: CrowdinIntegration, language: string) {
       },
     })
   } catch (error) {
-    return NextResponse.json(
-      { error: `ダウンロードエラー: ${error}` },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: `ダウンロードエラー: ${error}` }, { status: 500 })
   }
 }
 
@@ -110,10 +98,7 @@ async function handleProgress(crowdin: CrowdinIntegration) {
       },
     })
   } catch (error) {
-    return NextResponse.json(
-      { error: `進捗取得エラー: ${error}` },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: `進捗取得エラー: ${error}` }, { status: 500 })
   }
 }
 
@@ -130,7 +115,7 @@ export async function GET() {
       message: 'Crowdin連携状況',
       data: {
         connected: true,
-        languages: progress.map(p => ({
+        languages: progress.map((p) => ({
           language: p.language,
           progress: p.progress,
           status: p.progress >= 100 ? 'completed' : p.progress >= 50 ? 'in-progress' : 'pending',

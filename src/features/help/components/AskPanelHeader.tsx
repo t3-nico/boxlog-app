@@ -60,7 +60,10 @@ export const AskPanelHeader = ({ activeTab }: AskPanelHeaderProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
-              className={cn('h-8 w-8 rounded-full bg-gradient-to-br flex items-center justify-center', activeTabData.color)}
+              className={cn(
+                'flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br',
+                activeTabData.color
+              )}
             >
               <activeTabData.icon className="h-4 w-4 text-white" />
             </div>
@@ -85,7 +88,7 @@ export const AskPanelHeader = ({ activeTab }: AskPanelHeaderProps) => {
                 </button>
 
                 {showMenu != null && (
-                  <div className="bg-card border-border absolute right-0 top-full z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+                  <div className="bg-card border-border absolute top-full right-0 z-50 mt-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                     <button
                       type="button"
                       onClick={handleClearMessages}

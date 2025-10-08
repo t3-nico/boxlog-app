@@ -1,14 +1,12 @@
 // @ts-nocheck TODO(#389): 型エラー3件を段階的に修正する
 'use client'
 
-import React from 'react'
-
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { SettingsLayout, SettingsCard, SettingField } from '@/features/settings/components'
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { SettingField, SettingsCard, SettingsLayout } from '@/features/settings/components'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 interface ProfileSettings {
   displayName: string
@@ -31,11 +29,11 @@ const AccountSettingsAutoSave = () => {
       displayName: '',
       email: '',
       timezone: 'Asia/Tokyo',
-      language: 'ja'
+      language: 'ja',
     },
     onSave: async (values) => {
       // 実際のAPIコール（例）
-      await new Promise(resolve => setTimeout(resolve, 1000)) // シミュレート
+      await new Promise((resolve) => setTimeout(resolve, 1000)) // シミュレート
 
       // await fetch('/api/settings/profile', {
       //   method: 'POST',
@@ -44,7 +42,7 @@ const AccountSettingsAutoSave = () => {
       // })
       console.log('Saving profile:', values)
     },
-    successMessage: t('settings.account.profileUpdated')
+    successMessage: t('settings.account.profileUpdated'),
   })
 
   // プライバシー設定（自動保存）
@@ -52,11 +50,11 @@ const AccountSettingsAutoSave = () => {
     initialValues: {
       publicProfile: false,
       showEmail: false,
-      allowNotifications: true
+      allowNotifications: true,
     },
     onSave: async (values) => {
       // 実際のAPIコール（例）
-      await new Promise(resolve => setTimeout(resolve, 800)) // シミュレート
+      await new Promise((resolve) => setTimeout(resolve, 800)) // シミュレート
 
       // await fetch('/api/settings/privacy', {
       //   method: 'POST',
@@ -65,14 +63,11 @@ const AccountSettingsAutoSave = () => {
       // })
       console.log('Saving privacy:', values)
     },
-    successMessage: t('settings.account.privacyUpdated')
+    successMessage: t('settings.account.privacyUpdated'),
   })
 
   return (
-    <SettingsLayout
-      title={t('settings.account.title')}
-      description={t('settings.account.description')}
-    >
+    <SettingsLayout title={t('settings.account.title')} description={t('settings.account.description')}>
       <div className="space-y-6">
         {/* プロフィール設定 */}
         <SettingsCard
@@ -93,10 +88,7 @@ const AccountSettingsAutoSave = () => {
               />
             </SettingField>
 
-            <SettingField
-              label={t('settings.account.email')}
-              required
-            >
+            <SettingField label={t('settings.account.email')} required>
               <Input
                 type="email"
                 value={profile.values.email}
@@ -104,12 +96,9 @@ const AccountSettingsAutoSave = () => {
                 placeholder="email@example.com"
               />
             </SettingField>
-            
+
             <SettingField label={t('settings.calendar.timezone')}>
-              <Select
-                value={profile.values.timezone}
-                onValueChange={(value) => profile.updateValue('timezone', value)}
-              >
+              <Select value={profile.values.timezone} onValueChange={(value) => profile.updateValue('timezone', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -122,10 +111,7 @@ const AccountSettingsAutoSave = () => {
             </SettingField>
 
             <SettingField label={t('settings.preferences.language')}>
-              <Select 
-                value={profile.values.language}
-                onValueChange={(value) => profile.updateValue('language', value)}
-              >
+              <Select value={profile.values.language} onValueChange={(value) => profile.updateValue('language', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -138,7 +124,7 @@ const AccountSettingsAutoSave = () => {
             </SettingField>
           </div>
         </SettingsCard>
-        
+
         {/* プライバシー設定 */}
         <SettingsCard
           title={t('settings.account.privacy')}
@@ -153,22 +139,15 @@ const AccountSettingsAutoSave = () => {
               />
               <Switch
                 checked={privacy.values.publicProfile}
-                onCheckedChange={(checked) =>
-                  privacy.updateValue('publicProfile', checked)
-                }
+                onCheckedChange={(checked) => privacy.updateValue('publicProfile', checked)}
               />
             </div>
 
             <div className="flex items-center justify-between">
-              <SettingField
-                label={t('settings.account.showEmail')}
-                description={t('settings.account.showEmailDesc')}
-              />
+              <SettingField label={t('settings.account.showEmail')} description={t('settings.account.showEmailDesc')} />
               <Switch
                 checked={privacy.values.showEmail}
-                onCheckedChange={(checked) =>
-                  privacy.updateValue('showEmail', checked)
-                }
+                onCheckedChange={(checked) => privacy.updateValue('showEmail', checked)}
               />
             </div>
 
@@ -179,20 +158,15 @@ const AccountSettingsAutoSave = () => {
               />
               <Switch
                 checked={privacy.values.allowNotifications}
-                onCheckedChange={(checked) =>
-                  privacy.updateValue('allowNotifications', checked)
-                }
+                onCheckedChange={(checked) => privacy.updateValue('allowNotifications', checked)}
               />
             </div>
           </div>
         </SettingsCard>
-        
+
         {/* デバッグ情報（開発用） */}
-        <SettingsCard
-          title={t('settings.account.debugInfo')}
-          description={t('settings.account.debugInfoDesc')}
-        >
-          <div className="space-y-2 text-xs font-mono">
+        <SettingsCard title={t('settings.account.debugInfo')} description={t('settings.account.debugInfoDesc')}>
+          <div className="space-y-2 font-mono text-xs">
             <div>Profile: {JSON.stringify(profile.values, null, 2)}</div>
             <div>Privacy: {JSON.stringify(privacy.values, null, 2)}</div>
             <div>Profile saving: {profile.isSaving ? 'Yes' : 'No'}</div>

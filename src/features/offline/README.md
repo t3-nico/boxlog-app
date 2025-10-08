@@ -9,16 +9,19 @@ BoxLogアプリケーションのオフライン対応・データ同期機能�
 ## 🎯 主要機能
 
 ### 1. オフライン操作の記録
+
 - ネットワーク切断時も操作を継続可能
 - IndexedDBに操作履歴を自動保存
 - オンライン復帰時に自動同期
 
 ### 2. 同期キュー管理
+
 - タイムスタンプ順に操作を処理
 - 最大3回の自動リトライ
 - バックグラウンドで定期的に同期チェック（30秒ごと）
 
 ### 3. 競合解決
+
 - サーバーとローカルデータの競合を自動検出
 - 3つの解決戦略:
   - `local` - ローカルデータを優先
@@ -26,6 +29,7 @@ BoxLogアプリケーションのオフライン対応・データ同期機能�
   - `merge` - 手動でマージしたデータを使用
 
 ### 4. イベント駆動設計
+
 - リアルタイムで状態変化を監視
 - カスタムイベントハンドラ登録可能
 
@@ -42,8 +46,8 @@ const actionId = await offlineManager.recordAction({
   entity: 'tasks',
   data: {
     title: 'New Task',
-    status: 'todo'
-  }
+    status: 'todo',
+  },
 })
 
 // 保留中のアクション取得
@@ -85,12 +89,12 @@ offlineManager.on('conflictDetected', (event) => {
 ```typescript
 // ローカルデータを優先
 await offlineManager.resolveConflict(conflictId, {
-  choice: 'local'
+  choice: 'local',
 })
 
 // サーバーデータを優先
 await offlineManager.resolveConflict(conflictId, {
-  choice: 'server'
+  choice: 'server',
 })
 
 // マージしたデータを使用
@@ -100,8 +104,8 @@ await offlineManager.resolveConflict(conflictId, {
     // マージ済みのデータ
     title: localData.title,
     status: serverData.status,
-    updatedAt: new Date()
-  }
+    updatedAt: new Date(),
+  },
 })
 ```
 
@@ -155,40 +159,45 @@ interface SyncResult<T = unknown> {
 ## 🗄️ IndexedDB構造
 
 ### actions ストア
+
 - **keyPath**: `id`
 - **インデックス**: `timestamp`, `syncStatus`, `entity`
 - **用途**: オフライン操作履歴の保存
 
 ### cache ストア
+
 - **keyPath**: `key`
 - **インデックス**: `expiry`
 - **用途**: ローカルキャッシュ（24時間保持）
 
 ### conflicts ストア
+
 - **keyPath**: `id`
 - **インデックス**: `resolvedAt`
 - **用途**: 競合解決履歴の保存
 
 ## 🎬 イベント一覧
 
-| イベント名 | 発火タイミング | ペイロード |
-|-----------|--------------|-----------|
-| `initialized` | 初期化完了時 | なし |
-| `online` | オンライン復帰時 | なし |
-| `offline` | オフライン時 | なし |
-| `actionRecorded` | アクション記録時 | `OfflineAction` |
-| `syncStarted` | 同期開始時 | なし |
-| `syncCompleted` | 同期完了時 | `{ processed, conflicts }` |
-| `conflictDetected` | 競合検出時 | `{ action, conflicts, conflictId }` |
-| `conflictResolved` | 競合解決時 | `{ conflictId, resolution, finalData }` |
-| `syncFailed` | 同期失敗時 | `{ action, error }` |
+| イベント名         | 発火タイミング   | ペイロード                              |
+| ------------------ | ---------------- | --------------------------------------- |
+| `initialized`      | 初期化完了時     | なし                                    |
+| `online`           | オンライン復帰時 | なし                                    |
+| `offline`          | オフライン時     | なし                                    |
+| `actionRecorded`   | アクション記録時 | `OfflineAction`                         |
+| `syncStarted`      | 同期開始時       | なし                                    |
+| `syncCompleted`    | 同期完了時       | `{ processed, conflicts }`              |
+| `conflictDetected` | 競合検出時       | `{ action, conflicts, conflictId }`     |
+| `conflictResolved` | 競合解決時       | `{ conflictId, resolution, finalData }` |
+| `syncFailed`       | 同期失敗時       | `{ action, error }`                     |
 
 ## 🔧 API Reference
 
 ### offlineManager.recordAction(action)
+
 オフライン操作を記録します。
 
 **Parameters:**
+
 - `action`: 記録するアクション
   - `type`: `'create' | 'update' | 'delete'`
   - `entity`: エンティティ名（例: `'tasks'`, `'events'`）
@@ -197,19 +206,23 @@ interface SyncResult<T = unknown> {
 **Returns:** `Promise<string>` - アクションID
 
 ### offlineManager.getPendingActions()
+
 同期待ちのアクション一覧を取得します。
 
 **Returns:** `Promise<OfflineAction[]>`
 
 ### offlineManager.getConflictingActions()
+
 競合が発生したアクション一覧を取得します。
 
 **Returns:** `Promise<OfflineAction[]>`
 
 ### offlineManager.resolveConflict(conflictId, resolution)
+
 競合を解決します。
 
 **Parameters:**
+
 - `conflictId`: 競合ID
 - `resolution`: 解決方法
   - `choice`: `'local' | 'server' | 'merge'`
@@ -218,9 +231,11 @@ interface SyncResult<T = unknown> {
 **Returns:** `Promise<SyncResult>`
 
 ### offlineManager.getStatus()
+
 現在のステータスを取得します。
 
 **Returns:** `OfflineManagerStatus`
+
 ```typescript
 {
   isOnline: boolean
@@ -231,21 +246,26 @@ interface SyncResult<T = unknown> {
 ```
 
 ### offlineManager.clearCompletedActions()
+
 完了済みアクションをクリアします。
 
 **Returns:** `Promise<void>`
 
 ### offlineManager.on(event, callback)
+
 イベントリスナーを登録します。
 
 **Parameters:**
+
 - `event`: イベント名
 - `callback`: コールバック関数
 
 ### offlineManager.off(event, callback)
+
 イベントリスナーを削除します。
 
 **Parameters:**
+
 - `event`: イベント名
 - `callback`: コールバック関数
 

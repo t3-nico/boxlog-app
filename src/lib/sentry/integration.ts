@@ -6,11 +6,7 @@
 
 import * as Sentry from '@sentry/nextjs'
 
-import {
-  AppError,
-  type ErrorCategory,
-  type SeverityLevel
-} from '@/config/error-patterns'
+import { AppError, type ErrorCategory, type SeverityLevel } from '@/config/error-patterns'
 
 /**
  * Sentry設定オプション
@@ -35,44 +31,44 @@ const CATEGORY_TAGS: Record<ErrorCategory, Record<string, string>> = {
     domain: 'authentication',
     priority: 'high',
     team: 'security',
-    alerting: 'immediate'
+    alerting: 'immediate',
   },
   VALIDATION: {
     domain: 'user-input',
     priority: 'medium',
     team: 'frontend',
-    alerting: 'batch'
+    alerting: 'batch',
   },
   DB: {
     domain: 'database',
     priority: 'critical',
     team: 'backend',
-    alerting: 'immediate'
+    alerting: 'immediate',
   },
   BIZ: {
     domain: 'business-logic',
     priority: 'medium',
     team: 'product',
-    alerting: 'daily'
+    alerting: 'daily',
   },
   EXTERNAL: {
     domain: 'third-party',
     priority: 'medium',
     team: 'integration',
-    alerting: 'hourly'
+    alerting: 'hourly',
   },
   SYSTEM: {
     domain: 'infrastructure',
     priority: 'critical',
     team: 'devops',
-    alerting: 'immediate'
+    alerting: 'immediate',
   },
   RATE: {
     domain: 'rate-limiting',
     priority: 'low',
     team: 'backend',
-    alerting: 'daily'
-  }
+    alerting: 'daily',
+  },
 }
 
 /**
@@ -90,7 +86,7 @@ export class SentryIntegration {
       enableAutoSessionTracking: true,
       enableUserContext: true,
       enablePerformanceMonitoring: true,
-      ...options
+      ...options,
     }
   }
 
@@ -113,7 +109,7 @@ export class SentryIntegration {
           return this.options.beforeSend(filteredEvent)
         }
         return filteredEvent
-      }
+      },
     })
 
     this.initialized = true
@@ -142,7 +138,7 @@ export class SentryIntegration {
         code: error.code,
         category: error.category,
         severity: error.severity,
-        userMessage: error.userMessage
+        userMessage: error.userMessage,
       })
 
       if (error.metadata) {
@@ -153,7 +149,7 @@ export class SentryIntegration {
         scope.setUser({
           id: error.metadata.userId,
           ip_address: error.metadata.ip,
-          userAgent: error.metadata.userAgent
+          userAgent: error.metadata.userAgent,
         })
       }
 
@@ -163,13 +159,9 @@ export class SentryIntegration {
 
   private filterEvent(event: Sentry.Event, hint?: Sentry.EventHint): Sentry.Event | null {
     if (this.options.environment === 'development') {
-      const ignoredMessages = [
-        'Non-Error promise rejection captured',
-        'Network Error',
-        'ChunkLoadError'
-      ]
+      const ignoredMessages = ['Non-Error promise rejection captured', 'Network Error', 'ChunkLoadError']
 
-      if (ignoredMessages.some(msg => event.message?.includes(msg))) {
+      if (ignoredMessages.some((msg) => event.message?.includes(msg))) {
         return null
       }
     }
@@ -178,11 +170,7 @@ export class SentryIntegration {
   }
 
   private generateFingerprint(error: AppError): string[] {
-    return [
-      'boxlog-app',
-      error.category,
-      error.code.toString()
-    ]
+    return ['boxlog-app', error.category, error.code.toString()]
   }
 
   private mapSeverityToSentryLevel(severity: SeverityLevel): Sentry.SeverityLevel {
@@ -224,11 +212,7 @@ export class SentryErrorHandler {
     if (error instanceof AppError) {
       sentryIntegration.reportError(error)
     } else {
-      const appError = new AppError(
-        error.message,
-        'SYSTEM_ERROR_500',
-        { originalError: error, ...context }
-      )
+      const appError = new AppError(error.message, 'SYSTEM_ERROR_500', { originalError: error, ...context })
       sentryIntegration.reportError(appError)
     }
   }
@@ -237,7 +221,12 @@ export class SentryErrorHandler {
     Sentry.setContext('operation', context)
   }
 
-  static addBreadcrumb(breadcrumb: { message: string; category?: string; level?: Sentry.SeverityLevel; data?: Record<string, any> }): void {
+  static addBreadcrumb(breadcrumb: {
+    message: string
+    category?: string
+    level?: Sentry.SeverityLevel
+    data?: Record<string, any>
+  }): void {
     Sentry.addBreadcrumb(breadcrumb)
   }
 }

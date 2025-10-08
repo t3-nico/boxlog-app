@@ -18,18 +18,27 @@ import { ChatInput } from './ChatInput'
 import { HelpContent } from './HelpContent'
 import { MessageBubble } from './MessageBubble'
 
-
-
-
 const AIIntroduction = () => {
   const { sendMessage } = useChatStore()
   const { t } = useI18n()
 
   const quickPrompts = [
-    { emoji: '📊', text: t('help.suggestions.analyzeProductivity'), description: t('help.suggestions.analyzeProductivityDesc') },
+    {
+      emoji: '📊',
+      text: t('help.suggestions.analyzeProductivity'),
+      description: t('help.suggestions.analyzeProductivityDesc'),
+    },
     { emoji: '🎯', text: t('help.suggestions.focusToday'), description: t('help.suggestions.focusTodayDesc') },
-    { emoji: '📅', text: t('help.suggestions.organizeSchedule'), description: t('help.suggestions.organizeScheduleDesc') },
-    { emoji: '💡', text: t('help.suggestions.suggestImprovements'), description: t('help.suggestions.suggestImprovementsDesc') },
+    {
+      emoji: '📅',
+      text: t('help.suggestions.organizeSchedule'),
+      description: t('help.suggestions.organizeScheduleDesc'),
+    },
+    {
+      emoji: '💡',
+      text: t('help.suggestions.suggestImprovements'),
+      description: t('help.suggestions.suggestImprovementsDesc'),
+    },
   ]
 
   // jsx-no-bind optimization handler using data attributes
@@ -117,10 +126,15 @@ const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
               type="button"
               key={item.id}
               onClick={() => onSelectTab(item.id)}
-              className={cn('flex w-full items-center gap-4 p-3 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 group text-left transition-colors')}
+              className={cn(
+                'group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-3 text-left transition-colors hover:bg-neutral-100 dark:border-neutral-800 dark:hover:bg-neutral-800'
+              )}
             >
               <div
-                className={cn('h-12 w-12 rounded-lg bg-gradient-to-br flex items-center justify-center transition-transform group-hover:scale-105', item.color)}
+                className={cn(
+                  'flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br transition-transform group-hover:scale-105',
+                  item.color
+                )}
               >
                 <ItemIcon className="h-6 w-6 text-white" />
               </div>
@@ -128,9 +142,7 @@ const PanelMenuSelection = ({ onSelectTab }: { onSelectTab: (tab: 'ai' | 'help')
                 <div className="mb-1 flex items-center gap-2">
                   <h4 className="text-foreground font-medium">{item.title}</h4>
                   {item.badge != null && (
-                    <span
-                      className="px-2 py-1 text-xs bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-400 rounded-full"
-                    >
+                    <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-600 dark:bg-blue-900 dark:text-blue-400">
                       {item.badge}
                     </span>
                   )}
@@ -241,14 +253,10 @@ export const AskPanel = () => {
             className="hover:bg-accent/50 group relative rounded-lg p-3 transition-colors"
             title="AI Assistant"
           >
-            <Sparkles
-              className="size-6 text-purple-600 transition-transform group-hover:scale-110 dark:text-purple-400"
-            />
+            <Sparkles className="size-6 text-purple-600 transition-transform group-hover:scale-110 dark:text-purple-400" />
             {unreadCount > 0 && (
-              <div className="bg-neutral-100 dark:bg-neutral-900 absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full">
-                <span className="text-xs text-white font-bold">
-                  {Math.min(unreadCount, 9)}
-                </span>
+              <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-900">
+                <span className="text-xs font-bold text-white">{Math.min(unreadCount, 9)}</span>
               </div>
             )}
           </button>
@@ -317,10 +325,8 @@ export const AskPanel = () => {
                     <div className="text-muted-foreground text-xs">Ask Claude for help</div>
                   </div>
                   {unreadCount > 0 && (
-                    <div className="bg-neutral-100 dark:bg-neutral-900 flex h-5 w-5 items-center justify-center rounded-full">
-                      <span className="text-xs text-white font-bold">
-                        {Math.min(unreadCount, 9)}
-                      </span>
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-900">
+                      <span className="text-xs font-bold text-white">{Math.min(unreadCount, 9)}</span>
                     </div>
                   )}
                 </button>
@@ -346,9 +352,7 @@ export const AskPanel = () => {
               <>
                 <div className="px-4 py-6">
                   <div className="flex items-start justify-start gap-3">
-                    <div
-                      className="h-8 w-8 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm flex-shrink-0 font-medium"
-                    >
+                    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-blue-600 text-sm font-medium text-white">
                       <Sparkles className="h-4 w-4" />
                     </div>
                     <div className="bg-background text-foreground border-border rounded-2xl rounded-tl-sm border px-4 py-3">

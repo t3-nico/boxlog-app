@@ -30,7 +30,7 @@ export interface Database {
             columns: ['parent_id']
             referencedRelation: 'tags'
             referencedColumns: ['id']
-          }
+          },
         ]
       }
     }

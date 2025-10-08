@@ -136,9 +136,7 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">
-                  エラーが発生しました
-                </h3>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">エラーが発生しました</h3>
                 <p className="mt-1 text-sm text-red-700 dark:text-red-400">{error}</p>
               </div>
               <div className="ml-auto pl-3">
@@ -179,7 +177,7 @@ export const TrashView: React.FC<TrashViewProps> = ({ className }) => {
               placeholder="アイテムを検索..."
               value={filters.searchQuery}
               onChange={(e) => setFilters({ searchQuery: e.target.value })}
-              className="block w-full rounded-md border border-neutral-300 bg-white py-2 pl-10 pr-3 text-sm text-neutral-900 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+              className="block w-full rounded-md border border-neutral-300 bg-white py-2 pr-3 pl-10 text-sm text-neutral-900 focus:ring-2 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             />
           </div>
         </div>

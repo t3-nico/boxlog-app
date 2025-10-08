@@ -3,8 +3,8 @@
  */
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
-import type { ApiHandler, MiddlewareConfig } from './types'
 import { withErrorHandling } from './error-handler'
+import type { ApiHandler, MiddlewareConfig } from './types'
 import { getClientId } from './utils'
 
 /**
@@ -29,14 +29,10 @@ export function withRateLimit<T = unknown>(
     } else {
       clientRequests.count++
       if (clientRequests.count > maxRequests) {
-        throw createAppError(
-          'Rate limit exceeded',
-          ERROR_CODES.RATE_LIMIT_EXCEEDED,
-          {
-            source: 'rate-limit-middleware',
-            context: { clientId, limit: maxRequests, window }
-          }
-        )
+        throw createAppError('Rate limit exceeded', ERROR_CODES.RATE_LIMIT_EXCEEDED, {
+          source: 'rate-limit-middleware',
+          context: { clientId, limit: maxRequests, window },
+        })
       }
     }
 

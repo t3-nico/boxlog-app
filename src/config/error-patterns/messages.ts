@@ -3,19 +3,19 @@
  * 技術的な詳細を隠し、ユーザーにとって分かりやすく、行動指向のメッセージを提供
  */
 
-import { ErrorCode, ERROR_CODES, getErrorCategory, type SeverityLevel } from './categories'
+import { ERROR_CODES, ErrorCode, getErrorCategory, type SeverityLevel } from './categories'
 
 /**
  * ユーザー向けメッセージの構造
  */
 export interface UserMessage {
-  title: string              // 短いタイトル（例：「認証エラー」）
-  description: string        // 詳細説明（ユーザー理解用）
-  action?: string           // 推奨アクション（例：「再度ログインしてください」）
-  severity: SeverityLevel    // 重要度レベル
-  icon?: string             // アイコン名（UI表示用）
-  autoRetry?: boolean       // 自動リトライ可能か
-  supportContact?: boolean  // サポート連絡が必要か
+  title: string // 短いタイトル（例：「認証エラー」）
+  description: string // 詳細説明（ユーザー理解用）
+  action?: string // 推奨アクション（例：「再度ログインしてください」）
+  severity: SeverityLevel // 重要度レベル
+  icon?: string // アイコン名（UI表示用）
+  autoRetry?: boolean // 自動リトライ可能か
+  supportContact?: boolean // サポート連絡が必要か
 }
 
 /**
@@ -29,7 +29,7 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'lock',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.EXPIRED_TOKEN]: {
     title: 'セッションが期限切れです',
@@ -38,7 +38,7 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'clock',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.NO_PERMISSION]: {
     title: 'アクセス権限がありません',
@@ -47,7 +47,7 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'shield-x',
     autoRetry: false,
-    supportContact: true
+    supportContact: true,
   },
   [ERROR_CODES.INVALID_CREDENTIALS]: {
     title: 'ログイン情報が正しくありません',
@@ -56,7 +56,7 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'key',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.ACCOUNT_LOCKED]: {
     title: 'アカウントがロックされています',
@@ -65,7 +65,7 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'lock',
     autoRetry: false,
-    supportContact: true
+    supportContact: true,
   },
   [ERROR_CODES.SESSION_EXPIRED]: {
     title: 'セッションが期限切れです',
@@ -74,8 +74,8 @@ const AUTH_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'clock',
     autoRetry: false,
-    supportContact: false
-  }
+    supportContact: false,
+  },
 }
 
 /**
@@ -89,7 +89,7 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'alert-circle',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.INVALID_FORMAT]: {
     title: '入力形式が正しくありません',
@@ -98,7 +98,7 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'edit',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.INVALID_EMAIL]: {
     title: 'メールアドレスの形式が正しくありません',
@@ -107,7 +107,7 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'mail',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.PASSWORD_TOO_WEAK]: {
     title: 'パスワードが安全ではありません',
@@ -116,7 +116,7 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'shield',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.FILE_TOO_LARGE]: {
     title: 'ファイルサイズが大きすぎます',
@@ -125,7 +125,7 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'file',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.DUPLICATE_VALUE]: {
     title: 'すでに使用されている値です',
@@ -134,8 +134,8 @@ const VALIDATION_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'copy',
     autoRetry: false,
-    supportContact: false
-  }
+    supportContact: false,
+  },
 }
 
 /**
@@ -149,7 +149,7 @@ const DB_MESSAGES: Record<number, UserMessage> = {
     severity: 'critical',
     icon: 'database',
     autoRetry: true,
-    supportContact: true
+    supportContact: true,
   },
   [ERROR_CODES.QUERY_TIMEOUT]: {
     title: '処理がタイムアウトしました',
@@ -158,7 +158,7 @@ const DB_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'clock',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.NOT_FOUND]: {
     title: 'データが見つかりません',
@@ -167,7 +167,7 @@ const DB_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'search',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.DUPLICATE_KEY]: {
     title: '重複データエラー',
@@ -176,8 +176,8 @@ const DB_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'copy',
     autoRetry: false,
-    supportContact: false
-  }
+    supportContact: false,
+  },
 }
 
 /**
@@ -191,7 +191,7 @@ const BIZ_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'credit-card',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.INVALID_OPERATION]: {
     title: '無効な操作です',
@@ -200,7 +200,7 @@ const BIZ_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'x-circle',
     autoRetry: false,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.RESOURCE_UNAVAILABLE]: {
     title: 'リソースが利用できません',
@@ -209,7 +209,7 @@ const BIZ_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'server',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.QUOTA_EXCEEDED]: {
     title: '利用制限に達しました',
@@ -218,8 +218,8 @@ const BIZ_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'trending-up',
     autoRetry: false,
-    supportContact: false
-  }
+    supportContact: false,
+  },
 }
 
 /**
@@ -233,7 +233,7 @@ const EXTERNAL_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'globe',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.API_TIMEOUT]: {
     title: '外部サービスとの通信がタイムアウトしました',
@@ -242,7 +242,7 @@ const EXTERNAL_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'clock',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.PAYMENT_FAILED]: {
     title: '決済に失敗しました',
@@ -251,7 +251,7 @@ const EXTERNAL_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'credit-card',
     autoRetry: false,
-    supportContact: true
+    supportContact: true,
   },
   [ERROR_CODES.EMAIL_SEND_FAILED]: {
     title: 'メール送信に失敗しました',
@@ -260,8 +260,8 @@ const EXTERNAL_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'mail',
     autoRetry: true,
-    supportContact: false
-  }
+    supportContact: false,
+  },
 }
 
 /**
@@ -275,7 +275,7 @@ const SYSTEM_MESSAGES: Record<number, UserMessage> = {
     severity: 'critical',
     icon: 'server',
     autoRetry: true,
-    supportContact: true
+    supportContact: true,
   },
   [ERROR_CODES.SERVICE_UNAVAILABLE]: {
     title: 'サービスが一時的に利用できません',
@@ -284,7 +284,7 @@ const SYSTEM_MESSAGES: Record<number, UserMessage> = {
     severity: 'critical',
     icon: 'server',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.NETWORK_ERROR]: {
     title: 'ネットワークエラーが発生しました',
@@ -293,7 +293,7 @@ const SYSTEM_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'wifi',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.UNEXPECTED_ERROR]: {
     title: '予期しないエラーが発生しました',
@@ -302,8 +302,8 @@ const SYSTEM_MESSAGES: Record<number, UserMessage> = {
     severity: 'high',
     icon: 'alert-triangle',
     autoRetry: false,
-    supportContact: true
-  }
+    supportContact: true,
+  },
 }
 
 /**
@@ -317,7 +317,7 @@ const RATE_MESSAGES: Record<number, UserMessage> = {
     severity: 'low',
     icon: 'clock',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.REQUEST_TOO_FREQUENT]: {
     title: 'リクエストが頻繁すぎます',
@@ -326,7 +326,7 @@ const RATE_MESSAGES: Record<number, UserMessage> = {
     severity: 'low',
     icon: 'pause',
     autoRetry: true,
-    supportContact: false
+    supportContact: false,
   },
   [ERROR_CODES.DAILY_LIMIT_EXCEEDED]: {
     title: '1日の利用制限に達しました',
@@ -335,8 +335,8 @@ const RATE_MESSAGES: Record<number, UserMessage> = {
     severity: 'medium',
     icon: 'calendar',
     autoRetry: false,
-    supportContact: false
-  }
+    supportContact: false,
+  },
 }
 
 /**
@@ -349,7 +349,7 @@ const ALL_MESSAGES = {
   ...BIZ_MESSAGES,
   ...EXTERNAL_MESSAGES,
   ...SYSTEM_MESSAGES,
-  ...RATE_MESSAGES
+  ...RATE_MESSAGES,
 }
 
 /**
@@ -367,7 +367,7 @@ export function getUserMessage(errorCode: ErrorCode): UserMessage {
       severity: 'medium',
       icon: 'alert-circle',
       autoRetry: true,
-      supportContact: true
+      supportContact: true,
     }
   }
   return message
@@ -380,20 +380,20 @@ export function getUserMessage(errorCode: ErrorCode): UserMessage {
 export const SEVERITY_STYLES = {
   low: {
     severity: 'low',
-    category: 'info'
+    category: 'info',
   },
   medium: {
     severity: 'medium',
-    category: 'warning'
+    category: 'warning',
   },
   high: {
     severity: 'high',
-    category: 'error'
+    category: 'error',
   },
   critical: {
     severity: 'critical',
-    category: 'critical'
-  }
+    category: 'critical',
+  },
 } as const
 
 /**
@@ -406,5 +406,5 @@ export const CATEGORY_DEFAULT_ACTIONS = {
   BIZ: '条件を確認してください',
   EXTERNAL: 'しばらく待ってから再試行してください',
   SYSTEM: 'ページを再読み込みしてください',
-  RATE: 'しばらく待ってから再試行してください'
+  RATE: 'しばらく待ってから再試行してください',
 } as const

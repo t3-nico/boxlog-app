@@ -31,16 +31,16 @@ export default function CalendarViewClient({ view, initialDate, translations }: 
       featureName="calendar"
       fallback={
         <div className="flex h-screen items-center justify-center">
-          <div className="bg-red-50 dark:bg-red-900/20 p-6 border-red-300 dark:border-red-700 rounded-lg border max-w-md">
+          <div className="max-w-md rounded-lg border border-red-300 bg-red-50 p-6 dark:border-red-700 dark:bg-red-900/20">
             <div className="text-center">
-              <div className="text-red-600 dark:text-red-400 mb-4 text-6xl">📅</div>
-              <h2 className="text-2xl font-bold tracking-tight text-red-600 dark:text-red-400 mb-2">
+              <div className="mb-4 text-6xl text-red-600 dark:text-red-400">📅</div>
+              <h2 className="mb-2 text-2xl font-bold tracking-tight text-red-600 dark:text-red-400">
                 {translations.errorTitle}
               </h2>
-              <p className="text-neutral-800 dark:text-neutral-200 mb-4 text-sm">{translations.errorMessage}</p>
+              <p className="mb-4 text-sm text-neutral-800 dark:text-neutral-200">{translations.errorMessage}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-blue-600 dark:bg-blue-500 rounded px-4 py-2 text-white transition-opacity hover:opacity-80"
+                className="rounded bg-blue-600 px-4 py-2 text-white transition-opacity hover:opacity-80 dark:bg-blue-500"
               >
                 {translations.reloadButton}
               </button>

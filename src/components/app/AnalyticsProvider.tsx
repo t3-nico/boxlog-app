@@ -208,7 +208,7 @@ export function CookieConsentBanner({
 
   return (
     <div
-      className={`fixed left-0 right-0 z-50 border-t border-gray-200 bg-white p-4 shadow-lg ${positionClasses} ${className}`}
+      className={`fixed right-0 left-0 z-50 border-t border-gray-200 bg-white p-4 shadow-lg ${positionClasses} ${className}`}
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex-1">
@@ -275,7 +275,7 @@ export function AnalyticsDebugPanel() {
   if (!debugMode) return null
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 max-h-96 w-96 overflow-y-auto rounded-lg bg-black bg-opacity-90 p-4 text-xs text-white">
+    <div className="bg-opacity-90 fixed right-4 bottom-4 z-50 max-h-96 w-96 overflow-y-auto rounded-lg bg-black p-4 text-xs text-white">
       <div className="mb-2">
         <h3 className="text-sm font-bold">📊 Analytics Debug</h3>
         <div className="text-xs text-gray-300">

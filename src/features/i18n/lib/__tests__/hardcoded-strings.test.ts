@@ -15,23 +15,19 @@ import { describe, expect, it } from 'vitest'
 /**
  * 検査対象のディレクトリ
  */
-const TARGET_DIRS = [
-  'src/app',
-  'src/features',
-  'src/components',
-]
+const TARGET_DIRS = ['src/app', 'src/features', 'src/components']
 
 /**
  * 検査除外パターン
  */
 const EXCLUDE_PATTERNS = [
-  /\.test\.tsx?$/,           // テストファイル
-  /\.stories\.tsx?$/,        // Storybookファイル
-  /__tests__/,               // テストディレクトリ
-  /node_modules/,            // node_modules
-  /\.next/,                  // Next.jsビルドディレクトリ
-  /dictionaries/,            // 翻訳辞書ファイル
-  /i18n-branded\.ts$/,       // ブランド型定義ファイル
+  /\.test\.tsx?$/, // テストファイル
+  /\.stories\.tsx?$/, // Storybookファイル
+  /__tests__/, // テストディレクトリ
+  /node_modules/, // node_modules
+  /\.next/, // Next.jsビルドディレクトリ
+  /dictionaries/, // 翻訳辞書ファイル
+  /i18n-branded\.ts$/, // ブランド型定義ファイル
 ]
 
 /**
@@ -180,8 +176,7 @@ describe('ハードコード文字列検出', () => {
 
     targetFiles.forEach((filePath) => {
       const content = fs.readFileSync(filePath, 'utf-8')
-      const issues = detectHardcodedStrings(content, filePath)
-        .filter((issue) => issue.type === 'japanese')
+      const issues = detectHardcodedStrings(content, filePath).filter((issue) => issue.type === 'japanese')
 
       if (issues.length > 0) {
         filesWithJapanese.push({
@@ -213,8 +208,7 @@ describe('ハードコード文字列検出', () => {
 
     targetFiles.forEach((filePath) => {
       const content = fs.readFileSync(filePath, 'utf-8')
-      const issues = detectHardcodedStrings(content, filePath)
-        .filter((issue) => issue.type === 'english')
+      const issues = detectHardcodedStrings(content, filePath).filter((issue) => issue.type === 'english')
 
       if (issues.length > 0) {
         filesWithEnglish.push({

@@ -10,8 +10,8 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
+import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import { SettingsLayout } from '@/features/settings/components'
-import { getDictionary, createTranslation } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 const Address = dynamic(() => import('../address').then((mod) => ({ default: mod.Address })), {

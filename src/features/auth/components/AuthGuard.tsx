@@ -14,7 +14,7 @@ interface AuthGuardProps {
 export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
   const { user, loading } = useAuthContext()
   const router = useRouter()
-  
+
   // 開発時の認証スキップ
   const skipAuthInDev = process.env.NODE_ENV === 'development' && process.env.SKIP_AUTH_IN_DEV === 'true'
 
@@ -35,7 +35,7 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-          <p className="mt-4 text-sm text-muted-foreground">Checking authentication status...</p>
+          <p className="text-muted-foreground mt-4 text-sm">Checking authentication status...</p>
         </div>
       </div>
     )
@@ -43,13 +43,15 @@ export const AuthGuard = ({ children, fallback }: AuthGuardProps) => {
 
   // 未認証の場合
   if (!user) {
-    return fallback || (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-medium">Authentication Required</p>
-          <p className="mt-2 text-sm text-muted-foreground">Redirecting to login page...</p>
+    return (
+      fallback || (
+        <div className="flex h-screen items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg font-medium">Authentication Required</p>
+            <p className="text-muted-foreground mt-2 text-sm">Redirecting to login page...</p>
+          </div>
         </div>
-      </div>
+      )
     )
   }
 

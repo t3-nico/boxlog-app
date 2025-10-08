@@ -8,14 +8,10 @@ const PlanBillingPage = () => {
   const { t } = useI18n()
 
   return (
-    <SettingsLayout
-      title={t('settings.planBilling.title')}
-      description={t('settings.planBilling.description')}
-    >
+    <SettingsLayout title={t('settings.planBilling.title')} description={t('settings.planBilling.description')}>
       <PlanBillingSettings />
     </SettingsLayout>
   )
 }
 
 export default PlanBillingPage
-

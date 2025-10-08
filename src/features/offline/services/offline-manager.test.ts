@@ -1,6 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { OfflineManager } from './offline-manager'
-import type { OfflineAction } from '../types'
 
 describe('OfflineManager', () => {
   let manager: OfflineManager
@@ -45,7 +44,7 @@ describe('OfflineManager', () => {
       const action = {
         type: 'create' as const,
         entity: 'task' as const,
-        data: { title: 'Test Task' }
+        data: { title: 'Test Task' },
       }
 
       const actionId = await manager.recordAction(action)
@@ -60,7 +59,7 @@ describe('OfflineManager', () => {
       const action = {
         type: 'update' as const,
         entity: 'task' as const,
-        data: { id: '1', title: 'Updated Task' }
+        data: { id: '1', title: 'Updated Task' },
       }
 
       await manager.recordAction(action)
@@ -79,13 +78,13 @@ describe('OfflineManager', () => {
       await manager.recordAction({
         type: 'create' as const,
         entity: 'task' as const,
-        data: { title: 'Task 1' }
+        data: { title: 'Task 1' },
       })
 
       await manager.recordAction({
         type: 'create' as const,
         entity: 'task' as const,
-        data: { title: 'Task 2' }
+        data: { title: 'Task 2' },
       })
 
       const pendingActions = await manager.getPendingActions()
@@ -155,7 +154,7 @@ describe('OfflineManager', () => {
         isOnline: expect.any(Boolean),
         isInitialized: expect.any(Boolean),
         syncInProgress: expect.any(Boolean),
-        queueSize: expect.any(Number)
+        queueSize: expect.any(Number),
       })
     })
   })

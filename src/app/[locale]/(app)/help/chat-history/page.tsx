@@ -2,14 +2,7 @@
 
 import React from 'react'
 
-import {
-  MessageCircle,
-  MessageSquare,
-  Trash2,
-  Eye,
-  Calendar,
-  Search
-} from 'lucide-react'
+import { Calendar, Eye, MessageCircle, MessageSquare, Search, Trash2 } from 'lucide-react'
 
 import { Heading } from '@/components/app'
 import { Badge } from '@/components/ui/badge'
@@ -30,7 +23,7 @@ const ChatHistoryPage = () => {
       timestamp: '2025-01-10 14:30',
       status: 'resolved' as const,
       messageCount: 12,
-      tags: ['sync', 'calendar']
+      tags: ['sync', 'calendar'],
     },
     {
       id: '2',
@@ -39,7 +32,7 @@ const ChatHistoryPage = () => {
       timestamp: '2025-01-09 09:15',
       status: 'active' as const,
       messageCount: 8,
-      tags: ['task management', 'board']
+      tags: ['task management', 'board'],
     },
     {
       id: '3',
@@ -48,7 +41,7 @@ const ChatHistoryPage = () => {
       timestamp: '2025-01-07 16:45',
       status: 'resolved' as const,
       messageCount: 6,
-      tags: ['export', 'data']
+      tags: ['export', 'data'],
     },
     {
       id: '4',
@@ -57,7 +50,7 @@ const ChatHistoryPage = () => {
       timestamp: '2025-01-05 11:20',
       status: 'resolved' as const,
       messageCount: 4,
-      tags: ['shortcuts', 'efficiency']
+      tags: ['shortcuts', 'efficiency'],
     },
     {
       id: '5',
@@ -66,7 +59,7 @@ const ChatHistoryPage = () => {
       timestamp: '2025-01-03 13:10',
       status: 'resolved' as const,
       messageCount: 15,
-      tags: ['settings', 'timezone']
+      tags: ['settings', 'timezone'],
     },
     {
       id: '6',
@@ -75,8 +68,8 @@ const ChatHistoryPage = () => {
       timestamp: '2025-01-01 10:30',
       status: 'resolved' as const,
       messageCount: 9,
-      tags: ['mobile', 'usage']
-    }
+      tags: ['mobile', 'usage'],
+    },
   ]
 
   const [searchQuery, setSearchQuery] = React.useState('')
@@ -98,13 +91,14 @@ const ChatHistoryPage = () => {
     setStatusFilter('resolved')
   }, [])
 
-  const filteredSessions = chatSessions.filter(session => {
-    const matchesSearch = session.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         session.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         session.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-    
+  const filteredSessions = chatSessions.filter((session) => {
+    const matchesSearch =
+      session.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      session.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      session.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+
     const matchesStatus = statusFilter === 'all' || session.status === statusFilter
-    
+
     return matchesSearch && matchesStatus
   })
 
@@ -122,7 +116,7 @@ const ChatHistoryPage = () => {
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
@@ -130,15 +124,13 @@ const ChatHistoryPage = () => {
     <div className="mx-auto max-w-6xl p-6">
       <div className="mb-8">
         <Heading>{t('title')}</Heading>
-        <p className="mt-4 text-neutral-800 dark:text-neutral-200">
-          {t('description')}
-        </p>
+        <p className="mt-4 text-neutral-800 dark:text-neutral-200">{t('description')}</p>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-600 dark:text-neutral-400" />
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row">
+        <div className="relative flex-1">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-neutral-600 dark:text-neutral-400" />
           <Input
             placeholder={t('searchPlaceholder')}
             value={searchQuery}
@@ -147,32 +139,20 @@ const ChatHistoryPage = () => {
           />
         </div>
         <div className="flex gap-2">
-          <Button
-            variant={statusFilter === 'all' ? "default" : "outline"}
-            size="sm"
-            onClick={handleAllFilter}
-          >
+          <Button variant={statusFilter === 'all' ? 'default' : 'outline'} size="sm" onClick={handleAllFilter}>
             {t('filters.all')}
           </Button>
-          <Button
-            variant={statusFilter === 'active' ? "default" : "outline"}
-            size="sm"
-            onClick={handleActiveFilter}
-          >
+          <Button variant={statusFilter === 'active' ? 'default' : 'outline'} size="sm" onClick={handleActiveFilter}>
             {t('filters.active')}
-            <span className="ml-1 text-sm">
-              ({chatSessions.filter(s => s.status === 'active').length})
-            </span>
+            <span className="ml-1 text-sm">({chatSessions.filter((s) => s.status === 'active').length})</span>
           </Button>
           <Button
-            variant={statusFilter === 'resolved' ? "default" : "outline"}
+            variant={statusFilter === 'resolved' ? 'default' : 'outline'}
             size="sm"
             onClick={handleResolvedFilter}
           >
             {t('filters.resolved')}
-            <span className="ml-1 text-sm">
-              ({chatSessions.filter(s => s.status === 'resolved').length})
-            </span>
+            <span className="ml-1 text-sm">({chatSessions.filter((s) => s.status === 'resolved').length})</span>
           </Button>
         </div>
       </div>
@@ -182,7 +162,7 @@ const ChatHistoryPage = () => {
         {filteredSessions.length === 0 ? (
           <Card>
             <CardContent className="p-8 text-center">
-              <MessageCircle className="w-12 h-12 text-neutral-600 dark:text-neutral-400 mx-auto mb-4" />
+              <MessageCircle className="mx-auto mb-4 h-12 w-12 text-neutral-600 dark:text-neutral-400" />
               <p className="text-neutral-800 dark:text-neutral-200">
                 {searchQuery ? t('empty.noMatch') : t('empty.noChats')}
               </p>
@@ -190,48 +170,48 @@ const ChatHistoryPage = () => {
           </Card>
         ) : (
           filteredSessions.map((session) => (
-            <Card key={session.id} className="hover:shadow-md transition-shadow">
+            <Card key={session.id} className="transition-shadow hover:shadow-md">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="mb-2 flex items-center gap-2">
                       {session.status === 'active' ? (
-                        <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+                        <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-500" />
                       ) : (
-                        <MessageCircle className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
+                        <MessageCircle className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
                       )}
-                      <CardTitle className="text-2xl font-semibold">
-                        {session.title}
-                      </CardTitle>
+                      <CardTitle className="text-2xl font-semibold">{session.title}</CardTitle>
                       {getStatusBadge(session.status)}
                     </div>
-                    <p className="text-sm text-neutral-800 dark:text-neutral-200 mb-2">
-                      {session.summary}
-                    </p>
+                    <p className="mb-2 text-sm text-neutral-800 dark:text-neutral-200">{session.summary}</p>
                     <div className="flex items-center gap-4 text-sm text-neutral-600 dark:text-neutral-400">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
+                        <Calendar className="h-3 w-3" />
                         {formatDate(session.timestamp)}
                       </div>
                       <div className="flex items-center gap-1">
-                        <MessageCircle className="w-3 h-3" />
+                        <MessageCircle className="h-3 w-3" />
                         {session.messageCount} {t('labels.messages')}
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-4">
+                  <div className="ml-4 flex gap-2">
                     <Button variant="outline" size="sm">
-                      <Eye className="w-4 h-4 mr-1" />
+                      <Eye className="mr-1 h-4 w-4" />
                       {t('actions.view')}
                     </Button>
-                    <Button variant="outline" size="sm" className="text-red-600 dark:text-red-500 hover:text-red-700 dark:hover:text-red-400">
-                      <Trash2 className="w-4 h-4" />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="flex gap-1 flex-wrap">
+                <div className="flex flex-wrap gap-1">
                   {session.tags.map((tag) => (
                     <Badge key={tag} variant="outline" className="text-sm">
                       {tag}
@@ -246,35 +226,29 @@ const ChatHistoryPage = () => {
 
       {/* Statistics */}
       {chatSessions.length > 0 && (
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
                 {chatSessions.length}
               </div>
-              <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                {t('stats.totalChats')}
-              </div>
+              <div className="text-sm text-neutral-800 dark:text-neutral-200">{t('stats.totalChats')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-3xl font-bold tracking-tight text-blue-600 dark:text-blue-500">
-                {chatSessions.filter(s => s.status === 'active').length}
+                {chatSessions.filter((s) => s.status === 'active').length}
               </div>
-              <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                {t('stats.active')}
-              </div>
+              <div className="text-sm text-neutral-800 dark:text-neutral-200">{t('stats.active')}</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-3xl font-bold tracking-tight text-green-600 dark:text-green-500">
-                {chatSessions.filter(s => s.status === 'resolved').length}
+                {chatSessions.filter((s) => s.status === 'resolved').length}
               </div>
-              <div className="text-sm text-neutral-800 dark:text-neutral-200">
-                {t('stats.resolved')}
-              </div>
+              <div className="text-sm text-neutral-800 dark:text-neutral-200">{t('stats.resolved')}</div>
             </CardContent>
           </Card>
         </div>

@@ -106,7 +106,7 @@ const DateMainDisplay = ({ dayName, dateString, today }: { dayName?: string; dat
     <div
       className={cn(
         'flex h-8 w-8 items-center justify-center rounded-full text-lg font-medium',
-        today && 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold'
+        today && 'bg-neutral-100 font-semibold text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300'
       )}
     >
       {dateString}

@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 export interface DragState<TData = unknown> {
   isDragging: boolean
@@ -19,58 +19,66 @@ export interface UseDragAndDropOptions<TData = unknown, TTarget = unknown> {
   onDrop?: (data: TData, target: TTarget) => void
 }
 
-export function useDragAndDrop<TData = unknown, TTarget = unknown>(options: UseDragAndDropOptions<TData, TTarget> = {}) {
+export function useDragAndDrop<TData = unknown, TTarget = unknown>(
+  options: UseDragAndDropOptions<TData, TTarget> = {}
+) {
   const { onDragStart, onDragEnd, onDrop } = options
-  
+
   const [dragState, setDragState] = useState<DragState<TData>>({
     isDragging: false,
     dragData: null,
-    dragPosition: null
+    dragPosition: null,
   })
-  
+
   const dragDataRef = useRef<TData | null>(null)
-  
-  const startDrag = useCallback((data: TData, position?: { x: number; y: number }) => {
-    dragDataRef.current = data
-    setDragState({
-      isDragging: true,
-      dragData: data,
-      dragPosition: position || null
-    })
-    onDragStart?.(data)
-  }, [onDragStart])
-  
+
+  const startDrag = useCallback(
+    (data: TData, position?: { x: number; y: number }) => {
+      dragDataRef.current = data
+      setDragState({
+        isDragging: true,
+        dragData: data,
+        dragPosition: position || null,
+      })
+      onDragStart?.(data)
+    },
+    [onDragStart]
+  )
+
   const updateDragPosition = useCallback((position: { x: number; y: number }) => {
-    setDragState(prev => ({
+    setDragState((prev) => ({
       ...prev,
-      dragPosition: position
+      dragPosition: position,
     }))
   }, [])
-  
+
   const endDrag = useCallback(() => {
     const data = dragDataRef.current
     setDragState({
       isDragging: false,
       dragData: null,
-      dragPosition: null
+      dragPosition: null,
     })
     dragDataRef.current = null
     onDragEnd?.(data)
   }, [onDragEnd])
-  
-  const handleDrop = useCallback((target: TTarget) => {
-    const data = dragDataRef.current
-    if (data) {
-      onDrop?.(data, target)
-    }
-    endDrag()
-  }, [onDrop, endDrag])
-  
+
+  const handleDrop = useCallback(
+    (target: TTarget) => {
+      const data = dragDataRef.current
+      if (data) {
+        onDrop?.(data, target)
+      }
+      endDrag()
+    },
+    [onDrop, endDrag]
+  )
+
   return {
     dragState,
     startDrag,
     updateDragPosition,
     endDrag,
-    handleDrop
+    handleDrop,
   }
 }

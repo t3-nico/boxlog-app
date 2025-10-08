@@ -72,4 +72,4 @@ export const CALENDAR_TOAST_KEYS = {
   ERROR_UNEXPECTED: 'calendar.errors.unexpected',
 } as const
 
-export type CalendarToastKey = typeof CALENDAR_TOAST_KEYS[keyof typeof CALENDAR_TOAST_KEYS]
+export type CalendarToastKey = (typeof CALENDAR_TOAST_KEYS)[keyof typeof CALENDAR_TOAST_KEYS]

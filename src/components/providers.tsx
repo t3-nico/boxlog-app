@@ -22,9 +22,7 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <ThemeProvider>
       <GlobalSearchProvider>
-        <NotificationModalProvider>
-          {children}
-        </NotificationModalProvider>
+        <NotificationModalProvider>{children}</NotificationModalProvider>
       </GlobalSearchProvider>
     </ThemeProvider>
   )

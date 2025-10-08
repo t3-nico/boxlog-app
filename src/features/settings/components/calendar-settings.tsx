@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { formatHour } from '@/features/settings/utils/timezone-utils'
-import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -153,7 +153,11 @@ const CalendarSettings = () => {
   return (
     <div className="space-y-6">
       {/* Time & Timezone Section */}
-      <SettingsCard title={t('settings.calendar.timeAndTimezone')} description={t('settings.calendar.timeAndTimezoneDesc')} isSaving={autoSave.isSaving}>
+      <SettingsCard
+        title={t('settings.calendar.timeAndTimezone')}
+        description={t('settings.calendar.timeAndTimezoneDesc')}
+        isSaving={autoSave.isSaving}
+      >
         <div className="space-y-4">
           <SettingField label={t('settings.calendar.timezone')} description={t('settings.calendar.timezoneDesc')}>
             <Select value={autoSave.values.timezone} onValueChange={handleTimezoneChange}>
@@ -182,11 +186,17 @@ const CalendarSettings = () => {
           </SettingField>
 
           {/* プレビュー表示 */}
-          <div className="p-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">{t('settings.calendar.preview')}</p>
+          <div className="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+            <p className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">{t('settings.calendar.preview')}</p>
             <div className="space-y-1">
-              <p className="font-medium">{t('settings.calendar.currentTime', { time: formatTimeWithSettings(new Date(), autoSave.values.timeFormat) })}</p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">{t('settings.calendar.fullFormat', { time: format(new Date(), 'yyyy/MM/dd HH:mm') })}</p>
+              <p className="font-medium">
+                {t('settings.calendar.currentTime', {
+                  time: formatTimeWithSettings(new Date(), autoSave.values.timeFormat),
+                })}
+              </p>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                {t('settings.calendar.fullFormat', { time: format(new Date(), 'yyyy/MM/dd HH:mm') })}
+              </p>
             </div>
           </div>
         </div>
@@ -199,7 +209,10 @@ const CalendarSettings = () => {
         isSaving={autoSave.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label={t('settings.calendar.weekStartsOn')} description={t('settings.calendar.weekStartsOnDesc')}>
+          <SettingField
+            label={t('settings.calendar.weekStartsOn')}
+            description={t('settings.calendar.weekStartsOnDesc')}
+          >
             <Select value={String(autoSave.values.weekStartsOn)} onValueChange={handleWeekStartsOnChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartDay')} />
@@ -212,11 +225,17 @@ const CalendarSettings = () => {
             </Select>
           </SettingField>
 
-          <SettingField label={t('settings.calendar.showWeekNumbers')} description={t('settings.calendar.showWeekNumbersDesc')}>
+          <SettingField
+            label={t('settings.calendar.showWeekNumbers')}
+            description={t('settings.calendar.showWeekNumbersDesc')}
+          >
             <Switch checked={autoSave.values.showWeekNumbers} onCheckedChange={handleShowWeekNumbersChange} />
           </SettingField>
 
-          <SettingField label={t('settings.calendar.showDeclinedEvents')} description={t('settings.calendar.showDeclinedEventsDesc')}>
+          <SettingField
+            label={t('settings.calendar.showDeclinedEvents')}
+            description={t('settings.calendar.showDeclinedEventsDesc')}
+          >
             <Switch checked={autoSave.values.showDeclinedEvents} onCheckedChange={handleShowDeclinedEventsChange} />
           </SettingField>
         </div>
@@ -229,7 +248,10 @@ const CalendarSettings = () => {
         isSaving={autoSave.isSaving}
       >
         <div className="space-y-4">
-          <SettingField label={t('settings.calendar.defaultDuration')} description={t('settings.calendar.defaultDurationDesc')}>
+          <SettingField
+            label={t('settings.calendar.defaultDuration')}
+            description={t('settings.calendar.defaultDurationDesc')}
+          >
             <Select value={String(autoSave.values.defaultDuration)} onValueChange={handleDefaultDurationChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectDuration')} />
@@ -264,9 +286,16 @@ const CalendarSettings = () => {
       </SettingsCard>
 
       {/* Business Hours Section */}
-      <SettingsCard title={t('settings.calendar.businessHours')} description={t('settings.calendar.businessHoursDesc')} isSaving={autoSave.isSaving}>
+      <SettingsCard
+        title={t('settings.calendar.businessHours')}
+        description={t('settings.calendar.businessHoursDesc')}
+        isSaving={autoSave.isSaving}
+      >
         <div className="space-y-4">
-          <SettingField label={t('settings.calendar.businessHoursStart')} description={t('settings.calendar.businessHoursStartDesc')}>
+          <SettingField
+            label={t('settings.calendar.businessHoursStart')}
+            description={t('settings.calendar.businessHoursStartDesc')}
+          >
             <Select value={String(autoSave.values.businessHours.start)} onValueChange={handleBusinessHoursStartChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectStartTime')} />
@@ -281,7 +310,10 @@ const CalendarSettings = () => {
             </Select>
           </SettingField>
 
-          <SettingField label={t('settings.calendar.businessHoursEnd')} description={t('settings.calendar.businessHoursEndDesc')}>
+          <SettingField
+            label={t('settings.calendar.businessHoursEnd')}
+            description={t('settings.calendar.businessHoursEndDesc')}
+          >
             <Select value={String(autoSave.values.businessHours.end)} onValueChange={handleBusinessHoursEndChange}>
               <SelectTrigger>
                 <SelectValue placeholder={t('settings.calendar.selectEndTime')} />
@@ -297,8 +329,10 @@ const CalendarSettings = () => {
           </SettingField>
 
           {/* 営業時間プレビュー */}
-          <div className="p-4 bg-neutral-100 dark:bg-neutral-800 rounded-lg">
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">{t('settings.calendar.businessHoursPreview')}</p>
+          <div className="rounded-lg bg-neutral-100 p-4 dark:bg-neutral-800">
+            <p className="mb-2 text-sm text-neutral-600 dark:text-neutral-400">
+              {t('settings.calendar.businessHoursPreview')}
+            </p>
             <p className="font-medium">
               {formatHour(autoSave.values.businessHours.start, autoSave.values.timeFormat)} -{' '}
               {formatHour(autoSave.values.businessHours.end, autoSave.values.timeFormat)}

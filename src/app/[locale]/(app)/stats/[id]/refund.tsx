@@ -5,21 +5,24 @@ import { useCallback, useState } from 'react'
 import { Description, Field, FieldGroup } from '@/components/app'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-
-export const RefundReview = ({ amount, ...props }: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) => {
+export const RefundReview = ({
+  amount,
+  ...props
+}: { amount: string } & React.ComponentPropsWithoutRef<typeof Button>) => {
   const [isOpen, setIsOpen] = useState(false)
-  
+
   const handleOpen = useCallback(() => setIsOpen(true), [])
   const handleClose = useCallback(() => setIsOpen(false), [])
 
@@ -35,35 +38,35 @@ export const RefundReview = ({ amount, ...props }: { amount: string } & React.Co
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-          <FieldGroup>
-            <Field>
-              <Label htmlFor="amount">Amount</Label>
-              <Input id="amount" name="amount" defaultValue={amount} placeholder="$0.00" />
-            </Field>
-            <Field>
-              <Label htmlFor="reason">Reason</Label>
-              <Select name="reason" defaultValue="">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a reason..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="duplicate">Duplicate</SelectItem>
-                  <SelectItem value="fraudulent">Fraudulent</SelectItem>
-                  <SelectItem value="requested_by_customer">Requested by customer</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </Field>
-            <Field>
-              <div className="flex items-start space-x-2">
-                <Checkbox id="notify" name="notify" />
-                <div className="space-y-1">
-                  <Label htmlFor="notify">Notify customer</Label>
-                  <Description>An email notification will be sent to this customer.</Description>
+            <FieldGroup>
+              <Field>
+                <Label htmlFor="amount">Amount</Label>
+                <Input id="amount" name="amount" defaultValue={amount} placeholder="$0.00" />
+              </Field>
+              <Field>
+                <Label htmlFor="reason">Reason</Label>
+                <Select name="reason" defaultValue="">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a reason..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="duplicate">Duplicate</SelectItem>
+                    <SelectItem value="fraudulent">Fraudulent</SelectItem>
+                    <SelectItem value="requested_by_customer">Requested by customer</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field>
+                <div className="flex items-start space-x-2">
+                  <Checkbox id="notify" name="notify" />
+                  <div className="space-y-1">
+                    <Label htmlFor="notify">Notify customer</Label>
+                    <Description>An email notification will be sent to this customer.</Description>
+                  </div>
                 </div>
-              </div>
-            </Field>
-          </FieldGroup>
+              </Field>
+            </FieldGroup>
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={handleClose}>

@@ -5,12 +5,12 @@ export { OfflineManager, offlineManager } from './services/offline-manager'
 
 // Types
 export type {
-  OfflineAction,
-  SyncResult,
+  ConflictDetectedEvent,
   ConflictResolution,
+  ConflictResolvedEvent,
+  OfflineAction,
   OfflineManagerStatus,
   SyncCompletedEvent,
-  ConflictDetectedEvent,
-  ConflictResolvedEvent,
-  SyncFailedEvent
+  SyncFailedEvent,
+  SyncResult,
 } from './types'

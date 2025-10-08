@@ -208,7 +208,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
             const value = options.find((opt) => String(opt.value) === e.target.value)?.value
             updateRule(index, { ...rule, value })
           }}
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         >
           <option value="">Select...</option>
           {options.map((option) => (
@@ -227,7 +227,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
           value={String(rule.value)}
           onChange={(e) => updateRule(index, { ...rule, value: e.target.value })}
           placeholder="e.g., 2024-01-15 or 7days"
-          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
         />
       )
     }
@@ -238,7 +238,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
         value={String(rule.value)}
         onChange={(e) => updateRule(index, { ...rule, value: e.target.value })}
         placeholder="Enter value..."
-        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+        className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
       />
     )
   }
@@ -288,7 +288,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             }
                             updateRule(index, newRule)
                           }}
-                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         >
                           {FIELD_OPTIONS.map((field) => (
                             <option key={field.value} value={field.value} title={field.description}>
@@ -306,7 +306,7 @@ export const RuleEditor = ({ rules, onChange }: RuleEditorProps) => {
                             const newRule = { ...rule, operator: e.target.value as SmartFolderRuleOperator, value: '' }
                             updateRule(index, newRule)
                           }}
-                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         >
                           {OPERATOR_OPTIONS[rule.field].map((operator) => (
                             <option key={operator.value} value={operator.value}>

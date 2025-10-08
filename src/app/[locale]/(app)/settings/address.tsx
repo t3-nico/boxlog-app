@@ -42,10 +42,13 @@ export const Address = () => {
         </SelectContent>
       </Select>
       <Input aria-label="Postal code" name="postal_code" placeholder="Postal Code" defaultValue="A1A 1A1" />
-      <Select value={country.code} onValueChange={(code) => {
-        const newCountry = countries.find(c => c.code === code)
-        if (newCountry) setCountry(newCountry)
-      }}>
+      <Select
+        value={country.code}
+        onValueChange={(code) => {
+          const newCountry = countries.find((c) => c.code === code)
+          if (newCountry) setCountry(newCountry)
+        }}
+      >
         <SelectTrigger aria-label="Country" className="col-span-2">
           <SelectValue placeholder="Country" />
         </SelectTrigger>
@@ -54,7 +57,7 @@ export const Address = () => {
             <SelectItem key={country.code} value={country.code}>
               <div className="flex items-center gap-2">
                 <Image
-                  className="w-5 sm:w-4 object-cover"
+                  className="w-5 object-cover sm:w-4"
                   src={country.flagUrl}
                   alt={`${country.name} flag`}
                   width={20}

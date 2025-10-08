@@ -13,12 +13,16 @@ export const DefaultInspectorContent = () => {
         <div className="space-y-3">
           <h3 className={cn('text-lg font-semibold text-neutral-900 dark:text-neutral-100')}>ページ情報</h3>
 
-          <div className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-4 bg-white dark:bg-neutral-800')}>
+          <div
+            className={cn(
+              'rounded-lg border border-neutral-300 bg-white p-4 dark:border-neutral-700 dark:bg-neutral-800'
+            )}
+          >
             <div className="flex items-start gap-3">
               <Info className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
                 <p className={cn('text-base font-medium text-neutral-900 dark:text-neutral-100')}>BoxLog Dashboard</p>
-                <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>
+                <p className={cn('mt-1 text-xs text-neutral-600 dark:text-neutral-400')}>
                   右側のInspectorパネルでは、選択したアイテムの詳細情報や関連する操作を確認できます。
                 </p>
               </div>
@@ -60,7 +64,7 @@ export const DefaultInspectorContent = () => {
               <div
                 key={action.title}
                 className={cn(
-                  'rounded-lg border border-neutral-300 dark:border-neutral-700 p-3',
+                  'rounded-lg border border-neutral-300 p-3 dark:border-neutral-700',
                   'bg-white dark:bg-neutral-800',
                   'hover:bg-accent cursor-pointer transition-colors'
                 )}
@@ -104,7 +108,9 @@ export const DefaultInspectorContent = () => {
             ].map((activity, _index) => (
               <div
                 key={`${activity.action}-${activity.item}-${activity.time}`}
-                className={cn('rounded-lg border border-neutral-300 dark:border-neutral-700 p-3 bg-white dark:bg-neutral-800')}
+                className={cn(
+                  'rounded-lg border border-neutral-300 bg-white p-3 dark:border-neutral-700 dark:bg-neutral-800'
+                )}
               >
                 <div className="flex items-start gap-3">
                   <div
@@ -122,7 +128,7 @@ export const DefaultInspectorContent = () => {
                       <span className="text-neutral-600 dark:text-neutral-400">{activity.action}</span>{' '}
                       <span className="font-medium">{activity.item}</span>
                     </p>
-                    <p className={cn('text-xs mt-1 text-neutral-600 dark:text-neutral-400')}>{activity.time}</p>
+                    <p className={cn('mt-1 text-xs text-neutral-600 dark:text-neutral-400')}>{activity.time}</p>
                   </div>
                 </div>
               </div>
@@ -144,10 +150,8 @@ export const DefaultInspectorContent = () => {
             <div className="flex items-start gap-3">
               <FileText className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className={cn('text-base font-medium text-blue-900 dark:text-blue-100')}>
-                  Inspectorの活用法
-                </p>
-                <p className={cn('text-xs mt-1 text-blue-700 dark:text-blue-300')}>
+                <p className={cn('text-base font-medium text-blue-900 dark:text-blue-100')}>Inspectorの活用法</p>
+                <p className={cn('mt-1 text-xs text-blue-700 dark:text-blue-300')}>
                   カレンダーのイベントやタスクを選択すると、ここに詳細情報が表示されます。効率的な作業のために活用してください。
                 </p>
               </div>

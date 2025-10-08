@@ -66,7 +66,8 @@ export function useWeekendNavigation({
 
         if (isWeekend(nextDate)) {
           // 週末の場合はスキップ
-          const daysToSkip = direction === 'next' ? (nextDate.getDay() === 6 ? 2 : 1) : nextDate.getDay() === 0 ? -2 : -1
+          const daysToSkip =
+            direction === 'next' ? (nextDate.getDay() === 6 ? 2 : 1) : nextDate.getDay() === 0 ? -2 : -1
 
           const skipDate = addDays(nextDate, daysToSkip)
           navigateToDate(skipDate)

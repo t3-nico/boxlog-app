@@ -13,7 +13,11 @@ export const getEventColor = (
   property: 'background' | 'text' | 'hover' = 'background'
 ): string => {
   const colors = calendarColors.event[status as keyof typeof event]
-  return (colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null) || calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]
+  return (
+    (colors && Object.prototype.hasOwnProperty.call(colors, property)
+      ? colors[property as keyof typeof colors]
+      : null) || calendarColors.event.scheduled[property as keyof typeof calendarColors.event.scheduled]
+  )
 }
 
 // UI状態の色クラスを取得
@@ -22,7 +26,11 @@ export const getStatusColor = (
   property: 'background' | 'text' = 'background'
 ): string => {
   const colors = calendarColors.states[state]
-  return (colors && Object.prototype.hasOwnProperty.call(colors, property) ? colors[property as keyof typeof colors] : null) || ''
+  return (
+    (colors && Object.prototype.hasOwnProperty.call(colors, property)
+      ? colors[property as keyof typeof colors]
+      : null) || ''
+  )
 }
 
 // 共通Tailwindクラスを取得するヘルパー
@@ -137,37 +145,22 @@ export const getTimeColumnClassName = (): string => {
 
 // グリッド線のクラス名を生成
 export const getGridLineClassName = (): string => {
-  return [
-    'border-t',
-    getBorderDefault(),
-    'absolute left-0 right-0',
-  ].join(' ')
+  return ['border-t', getBorderDefault(), 'absolute left-0 right-0'].join(' ')
 }
 
 // 今日ハイライトのクラス名を生成
 export const getTodayHighlightClassName = (): string => {
-  return [
-    getSelectionBg(),
-    'absolute inset-0 pointer-events-none',
-  ].join(' ')
+  return [getSelectionBg(), 'absolute inset-0 pointer-events-none'].join(' ')
 }
 
 // 週末ハイライトのクラス名を生成
 export const getWeekendHighlightClassName = (): string => {
-  return [
-    getSurfaceBg(),
-    'absolute inset-0 pointer-events-none',
-  ].join(' ')
+  return [getSurfaceBg(), 'absolute inset-0 pointer-events-none'].join(' ')
 }
 
 // 現在時刻線のクラス名を生成
 export const getCurrentTimeLineClassName = (): string => {
-  return [
-    'border-t-2',
-    getErrorBorder(),
-    'absolute left-0 right-0 z-20',
-    'pointer-events-none',
-  ].join(' ')
+  return ['border-t-2', getErrorBorder(), 'absolute left-0 right-0 z-20', 'pointer-events-none'].join(' ')
 }
 
 // ドロップゾーンのクラス名を生成

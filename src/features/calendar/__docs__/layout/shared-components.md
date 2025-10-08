@@ -9,15 +9,17 @@
 ## 🎯 設計方針
 
 ### DRY (Don't Repeat Yourself) 原則
+
 - **単一責任** - 各コンポーネントは明確な1つの責務
 - **再利用性** - 複数ビューで使用可能な汎用設計
 - **カスタマイズ性** - Props による柔軟な設定
 - **一貫性** - 統一されたAPIとスタイル
 
 ### 共通Props パターン
+
 ```typescript
 interface SharedComponentProps {
-  className?: string        // カスタムスタイル
+  className?: string // カスタムスタイル
   children?: React.ReactNode // 拡張コンテンツ
   // コンポーネント固有のProps...
 }
@@ -30,6 +32,7 @@ interface SharedComponentProps {
 ### 🏗️ Layout Components (v2.0)
 
 #### ScrollableCalendarLayout
+
 **責務:** 統一されたスクロール可能レイアウトシステム  
 **使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView
 
@@ -63,12 +66,14 @@ interface ScrollableCalendarLayoutProps {
 ```
 
 **主要特徴:**
+
 - 時間ラベルとグリッド線の完全同期
 - UTCタイムゾーンの左端固定配置
 - レスポンシブHOUR_HEIGHT対応
 - 統一されたスクロール動作
 
 #### CalendarLayoutWithHeader
+
 **責務:** ヘッダー付きレイアウトのラッパー  
 **内部実装:** ScrollableCalendarLayoutを使用
 
@@ -90,6 +95,7 @@ interface CalendarLayoutWithHeaderProps extends ScrollableCalendarLayoutProps {
 ### 🕒 Time & Date Components
 
 #### TimeColumn
+
 **責務:** 時間軸の表示  
 **使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView
 
@@ -113,12 +119,14 @@ interface TimeColumnProps {
 ```
 
 **実装特徴:**
+
 - 固定幅64px
 - スティッキー配置対応
 - 営業時間のハイライト表示
 - アクセシビリティ対応
 
 #### DateHeader
+
 **責務:** 日付ヘッダーの表示  
 **使用ビュー:** 全ビュー
 
@@ -149,12 +157,14 @@ interface DateHeaderProps {
 ```
 
 **実装特徴:**
+
 - date-fns による国際化対応
 - 複数フォーマット対応
 - インタラクティブ機能
 - 状態表示 (今日、選択中)
 
 #### CurrentTimeLine
+
 **責務:** 現在時刻線の表示  
 **使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView (今日がある場合)
 
@@ -174,12 +184,14 @@ interface CurrentTimeLineProps {
 ```
 
 **実装特徴:**
+
 - リアルタイム位置計算
 - absolute positioning
 - pointer-events: none で干渉回避
 - 目立つ赤色デザイン
 
 #### TimezoneOffset
+
 **責務:** タイムゾーン情報の表示  
 **使用ビュー:** 全ビュー
 
@@ -192,14 +204,15 @@ interface TimezoneOffsetProps {
 }
 
 // 使用例
-<TimezoneOffset 
-  timezone="Asia/Tokyo" 
+<TimezoneOffset
+  timezone="Asia/Tokyo"
   format="short"
   showOffset={true}
 />
 ```
 
 **実装特徴:**
+
 - Intl.DateTimeFormat 使用
 - 自動サマータイム対応
 - コンパクト表示
@@ -209,6 +222,7 @@ interface TimezoneOffsetProps {
 ### 📅 Event Components
 
 #### EventBlock
+
 **責務:** イベントブロックの表示  
 **使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView
 
@@ -237,6 +251,7 @@ interface EventBlockProps {
 ```
 
 **実装特徴:**
+
 - イベント色の自動適用
 - レスポンシブテキスト調整
 - ホバー・フォーカス状態
@@ -244,6 +259,7 @@ interface EventBlockProps {
 - 複数インタラクション対応
 
 #### EventActionMenu
+
 **責務:** イベントアクションメニュー  
 **使用ビュー:** 全ビュー (イベント右クリック時)
 
@@ -260,6 +276,7 @@ interface EventActionMenuProps {
 ```
 
 **実装特徴:**
+
 - コンテキストメニュー
 - 動的位置計算
 - キーボード操作対応
@@ -269,6 +286,7 @@ interface EventActionMenuProps {
 ### 🎨 Layout Components
 
 #### GridBackground
+
 **責務:** グリッド背景の描画  
 **使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView
 
@@ -293,11 +311,13 @@ interface GridBackgroundProps {
 ```
 
 **実装特徴:**
+
 - CSS Grid または SVG による描画
 - 営業時間のハイライト
 - 細かい時間目盛り
 
 #### ScrollContainer
+
 **責務:** スクロール領域の管理  
 **使用ビュー:** 全ビュー
 
@@ -306,12 +326,13 @@ interface ScrollContainerProps {
   direction: 'vertical' | 'horizontal' | 'both'
   className?: string
   onScroll?: (event: React.UIEvent) => void
-  scrollToTime?: string       // 初期スクロール位置
+  scrollToTime?: string // 初期スクロール位置
   children: React.ReactNode
 }
 ```
 
 **実装特徴:**
+
 - スムーススクロール
 - スクロール位置の復元
 - パフォーマンス最適化
@@ -321,6 +342,7 @@ interface ScrollContainerProps {
 ### 🎭 Interactive Components
 
 #### DragSelectionOverlay
+
 **責務:** ドラッグ選択範囲の視覚化  
 **使用ビュー:** DayView, ThreeDayView, WeekView, TwoWeekView
 
@@ -338,11 +360,13 @@ interface DragSelectionOverlayProps {
 ```
 
 **実装特徴:**
+
 - 半透明オーバーレイ
 - リアルタイム範囲更新
 - ドラッグ終了時のイベント発火
 
 #### UndoToast
+
 **責務:** Undo/Redo 通知の表示  
 **使用ビュー:** 全ビュー (アクション実行時)
 
@@ -364,6 +388,7 @@ interface UndoAction {
 ```
 
 **実装特徴:**
+
 - 自動非表示タイマー
 - プログレスバー表示
 - スワイプ操作対応
@@ -373,18 +398,20 @@ interface UndoAction {
 ## 🎨 デザインシステム統合
 
 ### カラーパレット
+
 ```typescript
 interface EventColors {
-  primary: string      // #3b82f6 (Blue)
-  secondary: string    // #8b5cf6 (Purple)
-  success: string      // #10b981 (Green)
-  warning: string      // #f59e0b (Amber)
-  danger: string       // #ef4444 (Red)
+  primary: string // #3b82f6 (Blue)
+  secondary: string // #8b5cf6 (Purple)
+  success: string // #10b981 (Green)
+  warning: string // #f59e0b (Amber)
+  danger: string // #ef4444 (Red)
   // 8色のカテゴリ色
 }
 ```
 
 ### タイポグラフィ
+
 ```typescript
 interface Typography {
   eventTitle: 'text-sm font-medium'
@@ -396,12 +423,13 @@ interface Typography {
 ```
 
 ### スペーシング
+
 ```typescript
 interface Spacing {
-  hourHeight: 72        // 1時間 = 72px
-  timeColumnWidth: 64   // 時間軸 = 64px
-  eventPadding: 4       // イベント内余白
-  gridGap: 1           // グリッド間隔
+  hourHeight: 72 // 1時間 = 72px
+  timeColumnWidth: 64 // 時間軸 = 64px
+  eventPadding: 4 // イベント内余白
+  gridGap: 1 // グリッド間隔
 }
 ```
 
@@ -410,6 +438,7 @@ interface Spacing {
 ## 🔧 実装パターン
 
 ### Compound Component パターン
+
 ```typescript
 // DateHeader を compound component として設計
 const DateHeader = ({ children, ...props }) => {
@@ -432,6 +461,7 @@ DateHeader.MonthYear = ({ format, ...props }) => { /* 月年表示 */ }
 ```
 
 ### Render Props パターン
+
 ```typescript
 interface EventBlockProps {
   event: CalendarEvent
@@ -441,8 +471,8 @@ interface EventBlockProps {
 // カスタムレンダリング可能
 <EventBlock event={event}>
   {({ event, isSelected, handlers }) => (
-    <CustomEventDisplay 
-      event={event} 
+    <CustomEventDisplay
+      event={event}
       selected={isSelected}
       {...handlers}
     />
@@ -451,18 +481,19 @@ interface EventBlockProps {
 ```
 
 ### Hook Integration
+
 ```typescript
 // 共通コンポーネントから専用フックを提供
 export function useEventBlock(event: CalendarEvent) {
   const [isSelected, setIsSelected] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
-  
+
   const handlers = {
     onClick: () => setIsSelected(!isSelected),
     onMouseEnter: () => setIsHovered(true),
     onMouseLeave: () => setIsHovered(false),
   }
-  
+
   return { isSelected, isHovered, handlers }
 }
 ```
@@ -472,6 +503,7 @@ export function useEventBlock(event: CalendarEvent) {
 ## 📱 レスポンシブ対応
 
 ### ブレークポイント戦略
+
 ```typescript
 const breakpoints = {
   sm: '640px',   // モバイル
@@ -484,7 +516,7 @@ const breakpoints = {
 const EventBlock = ({ event, compact }) => {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const showLocation = !isMobile || !compact
-  
+
   return (
     <div className={cn(
       'event-block',
@@ -498,12 +530,13 @@ const EventBlock = ({ event, compact }) => {
 ```
 
 ### アダプティブレンダリング
+
 ```typescript
 // デバイスに応じたコンポーネント切り替え
 const ResponsiveEventBlock = (props) => {
   const isMobile = useMediaQuery('(max-width: 768px)')
-  
-  return isMobile 
+
+  return isMobile
     ? <CompactEventBlock {...props} />
     : <DetailedEventBlock {...props} />
 }
@@ -514,17 +547,18 @@ const ResponsiveEventBlock = (props) => {
 ## 🔄 状態管理統合
 
 ### Zustand Store連携
+
 ```typescript
 // EventBlock での状態連携例
 const EventBlock = ({ event }) => {
   const { selectedEventId, setSelectedEventId } = useEventStore()
   const { timezone } = useCalendarSettingsStore()
-  
+
   const isSelected = selectedEventId === event.id
   const localTime = convertToTimezone(event.startDate, timezone)
-  
+
   return (
-    <div 
+    <div
       className={cn('event-block', isSelected && 'ring-2')}
       onClick={() => setSelectedEventId(event.id)}
     >
@@ -535,6 +569,7 @@ const EventBlock = ({ event }) => {
 ```
 
 ### イベント伝播
+
 ```typescript
 // 上位コンポーネントへのイベント伝播
 const EventBlock = ({ event, onEventAction }) => {
@@ -546,7 +581,7 @@ const EventBlock = ({ event, onEventAction }) => {
       nativeEvent: e
     })
   }
-  
+
   return <div onClick={handleClick}>{/* ... */}</div>
 }
 ```
@@ -556,28 +591,30 @@ const EventBlock = ({ event, onEventAction }) => {
 ## 🧪 テスト戦略
 
 ### Unit Test 例
+
 ```typescript
 describe('DateHeader', () => {
   it('今日の日付を適切にハイライトする', () => {
     const today = new Date()
     render(<DateHeader date={today} isToday={true} />)
-    
+
     expect(screen.getByRole('button')).toHaveClass('text-primary')
   })
-  
+
   it('クリックイベントを正しく発火する', () => {
     const handleClick = jest.fn()
     const date = new Date()
-    
+
     render(<DateHeader date={date} onClick={handleClick} />)
     fireEvent.click(screen.getByRole('button'))
-    
+
     expect(handleClick).toHaveBeenCalledWith(date)
   })
 })
 ```
 
 ### Integration Test
+
 ```typescript
 describe('TimeColumn + EventBlock 統合', () => {
   it('時間軸とイベントの位置が正しく連動する', () => {
@@ -585,14 +622,14 @@ describe('TimeColumn + EventBlock 統合', () => {
       startDate: new Date('2025-01-01 09:00'),
       endDate: new Date('2025-01-01 10:00')
     }
-    
+
     render(
       <div className="relative">
         <TimeColumn startHour={0} endHour={24} />
         <EventBlock event={event} />
       </div>
     )
-    
+
     // 9時の位置にイベントが配置されていることを確認
     const eventElement = screen.getByText(event.title)
     expect(eventElement).toHaveStyle({ top: '648px' }) // 9 * 72px
@@ -605,6 +642,7 @@ describe('TimeColumn + EventBlock 統合', () => {
 ## 🎯 最適化技術
 
 ### React.memo 活用
+
 ```typescript
 // 重い計算を伴うコンポーネントのメモ化
 const EventBlock = React.memo(({ event, ...props }) => {
@@ -619,6 +657,7 @@ const EventBlock = React.memo(({ event, ...props }) => {
 ```
 
 ### useMemo による計算最適化
+
 ```typescript
 const TimeColumn = ({ startHour, endHour, interval }) => {
   // 時間ラベルの計算をメモ化
@@ -635,7 +674,7 @@ const TimeColumn = ({ startHour, endHour, interval }) => {
     }
     return slots
   }, [startHour, endHour, interval])
-  
+
   return (
     <div>
       {timeSlots.map(slot => (
@@ -653,38 +692,39 @@ const TimeColumn = ({ startHour, endHour, interval }) => {
 ### 典型的な使用パターン
 
 #### 基本的なグリッドビュー構築
+
 ```typescript
 const BasicGridView = ({ events, date }) => {
   return (
     <div className="flex h-full">
       {/* 時間軸 */}
-      <TimeColumn 
-        startHour={0} 
-        endHour={24} 
+      <TimeColumn
+        startHour={0}
+        endHour={24}
         interval={60}
         className="w-16 border-r"
       />
-      
+
       {/* メインコンテンツ */}
       <div className="flex-1 relative">
         {/* グリッド背景 */}
-        <GridBackground 
-          hourHeight={72} 
+        <GridBackground
+          hourHeight={72}
           hourCount={24}
           showHalfLines={true}
         />
-        
+
         {/* 現在時刻線 */}
         {isToday(date) && (
-          <CurrentTimeLine 
+          <CurrentTimeLine
             startHour={0}
             className="absolute inset-x-0 z-20"
           />
         )}
-        
+
         {/* イベント */}
         {events.map(event => (
-          <EventBlock 
+          <EventBlock
             key={event.id}
             event={event}
             onClick={handleEventClick}
@@ -699,6 +739,7 @@ const BasicGridView = ({ events, date }) => {
 ```
 
 #### アクセシブルなイベントブロック
+
 ```typescript
 const AccessibleEventBlock = ({ event, onActivate }) => {
   return (
@@ -728,6 +769,6 @@ const AccessibleEventBlock = ({ event, onActivate }) => {
 
 ---
 
-*このドキュメントは Calendar Shared Components の設計と実装を説明しています。*  
-*更新日: 2025-01-XX*  
-*責任者: Calendar Development Team*
+_このドキュメントは Calendar Shared Components の設計と実装を説明しています。_  
+_更新日: 2025-01-XX_  
+_責任者: Calendar Development Team_

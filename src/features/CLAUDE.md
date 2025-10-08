@@ -5,6 +5,7 @@ BoxLog機能モジュール開発ガイドライン。
 ## 🏗️ 機能モジュール構造
 
 ### 標準ディレクトリ構成
+
 ```
 features/tasks/
 ├── components/      # 機能専用UIコンポーネント
@@ -30,6 +31,7 @@ features/tasks/
 ## 🎯 機能モジュール開発ステップ
 
 ### Step 1: 型定義
+
 ```tsx
 // features/tasks/types.ts
 export interface Task {
@@ -50,6 +52,7 @@ export interface TaskFilters {
 ```
 
 ### Step 2: 状態管理
+
 ```tsx
 // features/tasks/stores/useTaskStore.ts
 import { create } from 'zustand'
@@ -76,6 +79,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 ```
 
 ### Step 3: カスタムフック
+
 ```tsx
 // features/tasks/hooks/useTaskFilter.ts
 import { useMemo } from 'react'
@@ -85,7 +89,7 @@ export const useTaskFilter = () => {
   const { tasks, filters } = useTaskStore()
 
   const filteredTasks = useMemo(() => {
-    return tasks.filter(task => {
+    return tasks.filter((task) => {
       if (filters.status && task.status !== filters.status) return false
       if (filters.priority && task.priority !== filters.priority) return false
       if (filters.searchQuery && !task.title.includes(filters.searchQuery)) return false
@@ -98,6 +102,7 @@ export const useTaskFilter = () => {
 ```
 
 ### Step 4: UIコンポーネント
+
 ```tsx
 // features/tasks/components/TaskList.tsx
 import { FC } from 'react'
@@ -110,7 +115,7 @@ export const TaskList: FC = () => {
 
   return (
     <div className={`${colors.background.base} ${spacing.component.lg}`}>
-      {filteredTasks.map(task => (
+      {filteredTasks.map((task) => (
         <TaskCard key={task.id} task={task} />
       ))}
     </div>
@@ -119,6 +124,7 @@ export const TaskList: FC = () => {
 ```
 
 ### Step 5: エクスポート管理
+
 ```tsx
 // features/tasks/index.ts
 export { TaskList, TaskCard } from './components'
@@ -132,6 +138,7 @@ export type { Task, TaskFilters } from './types'
 ## 🚨 必須ルール
 
 ### 1. バリデーション実装
+
 ```tsx
 // ✅ Zodスキーマ使用
 import { z } from 'zod'
@@ -154,21 +161,22 @@ const createTask = async (taskData: Omit<Task, 'id'>) => {
 ```
 
 ### 2. エラーハンドリング
+
 ```tsx
 import { AppError, ERROR_CODES } from '@/lib/errors'
 
 try {
   await createTask(taskData)
 } catch (error) {
-  throw new AppError(
-    'タスク作成に失敗しました',
-    ERROR_CODES.DATA_VALIDATION_ERROR,
-    { context: { taskData }, originalError: error }
-  )
+  throw new AppError('タスク作成に失敗しました', ERROR_CODES.DATA_VALIDATION_ERROR, {
+    context: { taskData },
+    originalError: error,
+  })
 }
 ```
 
 ### 3. スタイリング
+
 ```tsx
 // ✅ 必須：themeシステム
 import { colors, typography, spacing } from '@/config/theme'
@@ -186,6 +194,7 @@ import { colors, typography, spacing } from '@/config/theme'
 ## 🧪 テスト戦略
 
 ### コンポーネントテスト
+
 ```tsx
 // features/tasks/components/TaskList.test.tsx
 import { describe, it, expect, beforeEach } from 'vitest'
@@ -198,8 +207,8 @@ describe('TaskList', () => {
     useTaskStore.setState({
       tasks: [
         { id: '1', title: 'Task 1', status: 'todo' },
-        { id: '2', title: 'Task 2', status: 'done' }
-      ]
+        { id: '2', title: 'Task 2', status: 'done' },
+      ],
     })
   })
 
@@ -212,6 +221,7 @@ describe('TaskList', () => {
 ```
 
 ### ストアテスト
+
 ```tsx
 // features/tasks/stores/useTaskStore.test.ts
 import { describe, it, expect } from 'vitest'
@@ -231,6 +241,7 @@ describe('useTaskStore', () => {
 ## 📦 機能間の依存関係
 
 ### 許可される依存
+
 ```tsx
 // ✅ 許可：共通モジュール
 import { colors } from '@/config/theme'
@@ -242,6 +253,7 @@ import { z } from 'zod'
 ```
 
 ### 禁止される依存
+
 ```tsx
 // ❌ 禁止：他の機能モジュールへの直接依存
 import { SomeComponent } from '@/features/other-feature/components'

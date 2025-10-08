@@ -5,14 +5,13 @@ import { notFound } from 'next/navigation'
 import { Banknote, Calendar, ChevronLeft, CreditCard } from 'lucide-react'
 import type { Metadata } from 'next'
 
-
 import { Heading, Subheading } from '@/components/app'
 import { Avatar } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { getReview } from '@/lib/data'
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
+import { getReview } from '@/lib/data'
 import type { Locale } from '@/types/i18n'
 
 import { RefundReview } from './refund'
@@ -26,7 +25,11 @@ interface Review {
   event: { type: string; description: string; url: string; thumbUrl: string; name: string }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string; locale?: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; locale?: Locale }>
+}): Promise<Metadata> {
   const { id } = await params
   const review = (await getReview(id)) as Review | null
 
@@ -48,7 +51,10 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
   return (
     <>
       <div className="max-lg:hidden">
-        <NextLink href={`/${locale}/review`} className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+        <NextLink
+          href={`/${locale}/review`}
+          className="inline-flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400"
+        >
           <ChevronLeft className="size-4 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
           {t('table.backLinks.reviews')}
         </NextLink>
@@ -60,11 +66,11 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
         </div>
         <div className="isolate mt-3 flex flex-wrap justify-between gap-x-6 gap-y-4">
           <div className="flex flex-wrap gap-x-10 gap-y-4 py-2">
-            <span className="flex items-center gap-3 text-base sm:text-sm text-neutral-900 dark:text-neutral-100">
+            <span className="flex items-center gap-3 text-base text-neutral-900 sm:text-sm dark:text-neutral-100">
               <Banknote className="size-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
               <span>US{review.amount.usd}</span>
             </span>
-            <span className="flex items-center gap-3 text-base sm:text-sm text-neutral-900 dark:text-neutral-100">
+            <span className="flex items-center gap-3 text-base text-neutral-900 sm:text-sm dark:text-neutral-100">
               <CreditCard className="size-4 shrink-0 text-neutral-600 dark:text-neutral-400" />
               <span className="inline-flex gap-3">
                 {review.payment.card.type}{' '}
@@ -73,7 +79,7 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
                 </span>
               </span>
             </span>
-            <span className="flex items-center gap-3 text-base sm:text-sm text-neutral-900 dark:text-neutral-100">
+            <span className="flex items-center gap-3 text-base text-neutral-900 sm:text-sm dark:text-neutral-100">
               <Calendar className="size-4 shrink-0 text-neutral-600 dark:text-neutral-400" data-slot="icon" />
               <span>{review.date}</span>
             </span>
@@ -90,47 +96,97 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
         <Subheading>{t('table.details.summary')}</Subheading>
         <Separator className="mt-4" />
         <dl className="grid grid-cols-1 text-base sm:grid-cols-[min(50%,theme(spacing.80))_auto] sm:text-sm">
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 first:border-none sm:py-3">{t('table.details.customer')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{review.customer.name}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.event')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 first:border-none sm:py-3 dark:border-neutral-800 dark:text-neutral-200">
+            {t('table.details.customer')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.customer.name}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:py-3 dark:border-neutral-800 dark:text-neutral-200">
+            {t('table.details.event')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
             <NextLink href={review.event.url} className="flex items-center gap-2">
               <Avatar src={review.event.thumbUrl} alt={review.event.name} className="size-6" />
               <span>{review.event.name}</span>
             </NextLink>
           </dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.amount')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">US{review.amount.usd}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.amountAfterExchange')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:py-3 dark:border-neutral-800 dark:text-neutral-200">
+            {t('table.details.amount')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
+            US{review.amount.usd}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:py-3 dark:border-neutral-800 dark:text-neutral-200">
+            {t('table.details.amountAfterExchange')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
             US{review.amount.usd} &rarr; CA{review.amount.cad}
           </dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.fee')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">CA{review.amount.fee}</dd>
-          <dt className="col-start-1 border-t border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:py-3">{t('table.details.net')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">CA{review.amount.net}</dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:py-3 dark:border-neutral-800 dark:text-neutral-200">
+            {t('table.details.fee')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
+            CA{review.amount.fee}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:py-3 dark:border-neutral-800 dark:text-neutral-200">
+            {t('table.details.net')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 dark:text-neutral-100 sm:dark:border-neutral-800">
+            CA{review.amount.net}
+          </dd>
         </dl>
       </div>
       <div className="mt-12">
         <Subheading>{t('table.details.paymentMethod')}</Subheading>
         <Separator className="mt-4" />
         <dl className="grid grid-cols-1 text-base sm:grid-cols-[min(50%,theme(spacing.80))_auto] sm:text-sm">
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 first:border-none sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.transactionId')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.payment.transactionId}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cardNumber')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">•••• {review.payment.card.number}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cardType')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.payment.card.type}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cardExpiry')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.payment.card.expiry}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.owner')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.customer.name}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.emailAddress')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.customer.email}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.address')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">{review.customer.address}</dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.country')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 first:border-none sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.transactionId')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.payment.transactionId}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.cardNumber')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            •••• {review.payment.card.number}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.cardType')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.payment.card.type}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.cardExpiry')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.payment.card.expiry}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.owner')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.customer.name}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.emailAddress')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.customer.email}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.address')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
+            {review.customer.address}
+          </dd>
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.country')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
             <span className="inline-flex gap-3">
               <Image
                 src={review.customer.countryFlagUrl}
@@ -142,8 +198,10 @@ const ReviewPage = async ({ params }: { params: Promise<{ id: string; locale?: L
               {review.customer.country}
             </span>
           </dd>
-          <dt className="col-start-1 border-t border-neutral-200 dark:border-neutral-800 pt-3 text-neutral-800 dark:text-neutral-200 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3">{t('table.details.cvc')}</dt>
-          <dd className="pt-1 pb-3 text-neutral-900 dark:text-neutral-100 sm:border-t sm:border-neutral-200 sm:dark:border-neutral-800 sm:py-3 sm:nth-2:border-none">
+          <dt className="col-start-1 border-t border-neutral-200 pt-3 text-neutral-800 sm:border-t sm:border-neutral-200 sm:py-3 dark:border-neutral-800 dark:text-neutral-200 sm:dark:border-neutral-800">
+            {t('table.details.cvc')}
+          </dt>
+          <dd className="pt-1 pb-3 text-neutral-900 sm:border-t sm:border-neutral-200 sm:py-3 sm:nth-2:border-none dark:text-neutral-100 sm:dark:border-neutral-800">
             <Badge color="lime">{t('table.details.cvcStatus')}</Badge>
           </dd>
         </dl>

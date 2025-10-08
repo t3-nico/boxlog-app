@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
 interface SmartExtraction {
   title: string
@@ -12,17 +12,17 @@ export function useSmartInput() {
 
   const extractSmartData = useCallback((input: string): SmartExtraction => {
     setIsProcessing(true)
-    
+
     try {
       let cleanTitle = input
       const result: SmartExtraction = {
         title: '',
-        tags: []
+        tags: [],
       }
 
       // タグの抽出
       const tagMatches = input.match(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g) || []
-      result.tags = tagMatches.map(tag => tag.slice(1))
+      result.tags = tagMatches.map((tag) => tag.slice(1))
       cleanTitle = cleanTitle.replace(/#[\w\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]+/g, '').trim()
 
       // 日付・時間の抽出
@@ -63,10 +63,10 @@ export function useSmartInput() {
       // 優先度の推測
       const urgentKeywords = ['緊急', '急ぎ', 'urgent', '至急', '重要']
       const importantKeywords = ['大事', 'important', '必須', '重要']
-      
-      if (urgentKeywords.some(keyword => input.toLowerCase().includes(keyword.toLowerCase()))) {
+
+      if (urgentKeywords.some((keyword) => input.toLowerCase().includes(keyword.toLowerCase()))) {
         result.priority = 'urgent'
-      } else if (importantKeywords.some(keyword => input.toLowerCase().includes(keyword.toLowerCase()))) {
+      } else if (importantKeywords.some((keyword) => input.toLowerCase().includes(keyword.toLowerCase()))) {
         result.priority = 'important'
       }
 
@@ -83,25 +83,25 @@ export function useSmartInput() {
   function extractWeekday(input: string): Date {
     const weekdays = ['日', '月', '火', '水', '木', '金', '土']
     const match = input.match(/今度の(月|火|水|木|金|土|日)/)
-    
+
     if (match) {
       const targetDay = weekdays.indexOf(match[1])
       const today = new Date()
       const currentDay = today.getDay()
       const daysUntilTarget = targetDay === currentDay ? 7 : (targetDay - currentDay + 7) % 7
-      
+
       const targetDate = new Date(today)
       targetDate.setDate(today.getDate() + daysUntilTarget)
       return targetDate
     }
-    
+
     return new Date()
   }
 
   // よく使うパターンの提案
   const getSuggestions = useCallback((input: string): string[] => {
     const suggestions: string[] = []
-    
+
     // 時間ベースの提案
     const hour = new Date().getHours()
     if (hour >= 9 && hour < 12) {
@@ -114,9 +114,11 @@ export function useSmartInput() {
 
     // 曜日ベースの提案
     const day = new Date().getDay()
-    if (day === 1) { // 月曜日
+    if (day === 1) {
+      // 月曜日
       suggestions.push('今週中に #週次タスク')
-    } else if (day === 5) { // 金曜日
+    } else if (day === 5) {
+      // 金曜日
       suggestions.push('週末に #個人')
     }
 
@@ -124,7 +126,7 @@ export function useSmartInput() {
     if (input.includes('会議') || input.includes('ミーティング')) {
       suggestions.push('#会議 #議事録')
     }
-    
+
     if (input.includes('レポート') || input.includes('報告')) {
       suggestions.push('#レポート #文書作成')
     }
@@ -139,6 +141,6 @@ export function useSmartInput() {
   return {
     extractSmartData,
     getSuggestions,
-    isProcessing
+    isProcessing,
   }
 }

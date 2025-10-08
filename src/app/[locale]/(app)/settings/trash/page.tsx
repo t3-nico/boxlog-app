@@ -1,7 +1,7 @@
 'use client'
 
-import { useI18n } from '@/features/i18n/lib/hooks'
 import { ErrorBoundary } from '@/components/error-boundary'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { SettingsLayout } from '@/features/settings/components'
 import { TrashView } from '@/features/trash/components/TrashView'
 import { useTrashStore } from '@/features/trash/stores/useTrashStore'
@@ -20,7 +20,7 @@ const TrashPage = () => {
           <button
             type="button"
             onClick={emptyTrash}
-            className="p-4 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+            className="rounded-lg bg-red-600 p-4 text-sm font-medium text-white transition-colors hover:bg-red-700"
           >
             {t('settings.trash.empty')}
           </button>
@@ -29,18 +29,16 @@ const TrashPage = () => {
     >
       <ErrorBoundary
         fallback={
-          <div className="bg-white dark:bg-neutral-800 rounded-xl border border-neutral-200/50 dark:border-neutral-700/50 p-8">
+          <div className="rounded-xl border border-neutral-200/50 bg-white p-8 dark:border-neutral-700/50 dark:bg-neutral-800">
             <div className="text-center">
-              <div className="text-red-600 dark:text-red-400 mb-4 text-6xl">🗑️</div>
-              <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-2">
+              <div className="mb-4 text-6xl text-red-600 dark:text-red-400">🗑️</div>
+              <h3 className="mb-2 text-lg font-semibold text-red-600 dark:text-red-400">
                 {t('settings.trash.displayError')}
               </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                {t('settings.trash.reloadMessage')}
-              </p>
+              <p className="mb-4 text-sm text-neutral-600 dark:text-neutral-400">{t('settings.trash.reloadMessage')}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 bg-blue-600 dark:bg-blue-500 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
                 {t('settings.trash.reloadButton')}
               </button>

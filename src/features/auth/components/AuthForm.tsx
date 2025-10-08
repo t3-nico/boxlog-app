@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
@@ -9,8 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { cn } from '@/lib/utils'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { cn } from '@/lib/utils'
 
 interface AuthFormProps {
   mode: 'login' | 'signup'
@@ -83,11 +83,11 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           onClick={() => handleSocialLogin('google')}
           disabled={isLoading}
           className={cn(
-            "flex w-full items-center justify-center gap-3 rounded-md border border-neutral-200 dark:border-neutral-800",
-            "bg-white dark:bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-400",
-            "shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-800",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50"
+            'flex w-full items-center justify-center gap-3 rounded-md border border-neutral-200 dark:border-neutral-800',
+            'bg-white px-4 py-2 text-sm font-medium text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400',
+            'shadow-sm hover:bg-neutral-50 dark:hover:bg-neutral-800',
+            'focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none',
+            'disabled:cursor-not-allowed disabled:opacity-50'
           )}
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -116,11 +116,11 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           onClick={() => handleSocialLogin('apple')}
           disabled={isLoading}
           className={cn(
-            "flex w-full items-center justify-center gap-3 rounded-md border border-neutral-800",
-            "bg-neutral-950 px-4 py-2 text-sm font-medium text-white",
-            "shadow-sm hover:bg-gray-900",
-            "focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50"
+            'flex w-full items-center justify-center gap-3 rounded-md border border-neutral-800',
+            'bg-neutral-950 px-4 py-2 text-sm font-medium text-white',
+            'shadow-sm hover:bg-gray-900',
+            'focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none',
+            'disabled:cursor-not-allowed disabled:opacity-50'
           )}
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -135,7 +135,9 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           <div className="w-full border-t border-neutral-200 dark:border-neutral-800" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white dark:bg-neutral-900 px-2 text-neutral-600 dark:text-neutral-400">Or continue with email</span>
+          <span className="bg-white px-2 text-neutral-600 dark:bg-neutral-900 dark:text-neutral-400">
+            Or continue with email
+          </span>
         </div>
       </div>
 
@@ -149,7 +151,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
             {...register('email')}
             type="email"
             id="email"
-            className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1"
+            className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
             placeholder="you@example.com"
           />
           {errors.email ? <p className="text-destructive mt-1 text-sm">{errors.email.message}</p> : null}
@@ -163,7 +165,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
             {...register('password')}
             type="password"
             id="password"
-            className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:outline-none focus:ring-1"
+            className="border-input focus:border-ring focus:ring-ring/50 mt-1 block w-full rounded-md border px-3 py-2 shadow-sm focus:ring-1 focus:outline-none"
             placeholder="••••••••"
           />
           {errors.password ? <p className="text-destructive mt-1 text-sm">{errors.password.message}</p> : null}
@@ -178,7 +180,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         <button
           type="submit"
           disabled={isLoading}
-          className="text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="text-primary-foreground bg-primary hover:bg-primary/90 focus:ring-ring flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-sm font-medium shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isLoading ? 'Loading...' : mode === 'login' ? 'Sign in' : 'Create account'}
         </button>

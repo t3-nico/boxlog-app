@@ -9,22 +9,27 @@ React Context APIを使用した各種プロバイダーを統合し、アプリ
 ## 含まれるプロバイダー
 
 ### 1. QueryClientProvider
+
 - React Query（TanStack Query）のクライアント
 - データフェッチング・キャッシング・リトライ戦略
 
 ### 2. AuthProvider
+
 - 認証状態の管理
 - ユーザー情報の提供
 
 ### 3. ChatProvider
+
 - AIチャット機能のコンテキスト
 - チャット履歴・状態管理
 
 ### 4. CommandPaletteProvider
+
 - コマンドパレットの状態管理
 - グローバルショートカット
 
 ### 5. PreloadResources
+
 - ルート・リソースのプリフェッチ
 - パフォーマンス最適化
 
@@ -54,9 +59,7 @@ export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
@@ -71,15 +74,15 @@ export default function RootLayout({ children }) {
 new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,        // 5分
-      gcTime: 10 * 60 * 1000,          // 10分
-      refetchOnWindowFocus: false,      // フォーカス時は再取得しない
-      refetchOnReconnect: 'always',     // 再接続時は常に再取得
+      staleTime: 5 * 60 * 1000, // 5分
+      gcTime: 10 * 60 * 1000, // 10分
+      refetchOnWindowFocus: false, // フォーカス時は再取得しない
+      refetchOnReconnect: 'always', // 再接続時は常に再取得
       retry: (failureCount, error) => {
         if (error.status === 404) return false
         return failureCount < 3
       },
-      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
     mutations: {
       retry: 1,
@@ -91,6 +94,7 @@ new QueryClient({
 ### 設定の意味
 
 #### queries
+
 - **staleTime**: キャッシュが「新鮮」とみなされる期間
 - **gcTime**: ガベージコレクション（削除）までの期間
 - **refetchOnWindowFocus**: ウィンドウフォーカス時の再取得
@@ -99,6 +103,7 @@ new QueryClient({
 - **retryDelay**: 指数バックオフ（1秒 → 2秒 → 4秒 → ... 最大30秒）
 
 #### mutations
+
 - **retry**: ミューテーション失敗時は1回だけリトライ
 
 ## Hooks の使用
@@ -143,6 +148,7 @@ interface ProvidersProps {
 ## パフォーマンス
 
 ### QueryClient のメモ化
+
 ```tsx
 const [queryClient] = useState(
   () => new QueryClient({ ... })
@@ -159,6 +165,7 @@ npm run test:run -- Providers
 ```
 
 テストケース:
+
 - 子要素を正しくレンダリング
 - 複数のプロバイダーで子要素をラップ
 
@@ -175,7 +182,9 @@ export const Providers = ({ children }: ProvidersProps) => {
       <AuthProvider>
         <ChatProvider>
           <CommandPaletteProvider>
-            <NewProvider>  {/* 追加 */}
+            <NewProvider>
+              {' '}
+              {/* 追加 */}
               <PreloadResources />
               {children}
             </NewProvider>
@@ -195,7 +204,7 @@ const [queryClient] = useState(
     new QueryClient({
       defaultOptions: {
         queries: {
-          staleTime: 10 * 60 * 1000,  // 10分に変更
+          staleTime: 10 * 60 * 1000, // 10分に変更
           // ...
         },
       },

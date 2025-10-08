@@ -12,7 +12,7 @@ export const smartFolderRuleFieldSchema = z.enum([
   'is_favorite',
   'due_date',
   'title',
-  'description'
+  'description',
 ])
 
 // ルール演算子のスキーマ
@@ -28,76 +28,49 @@ export const smartFolderRuleOperatorSchema = z.enum([
   'starts_with',
   'ends_with',
   'is_empty',
-  'is_not_empty'
+  'is_not_empty',
 ])
 
 // ルールロジックのスキーマ
 export const smartFolderRuleLogicSchema = z.enum(['AND', 'OR'])
 
 // ルール値のスキーマ（ユニオン型）
-export const smartFolderRuleValueSchema = z.union([
-  z.string(),
-  z.number(),
-  z.boolean(),
-  z.date(),
-  z.null()
-])
+export const smartFolderRuleValueSchema = z.union([z.string(), z.number(), z.boolean(), z.date(), z.null()])
 
 // スマートフォルダルールのスキーマ
 export const smartFolderRuleSchema = z.object({
   field: smartFolderRuleFieldSchema,
   operator: smartFolderRuleOperatorSchema,
   value: smartFolderRuleValueSchema,
-  logic: smartFolderRuleLogicSchema
+  logic: smartFolderRuleLogicSchema,
 })
 
 // スマートフォルダ作成用のスキーマ
 export const createSmartFolderSchema = z.object({
-  name: z.string()
-    .min(1, 'フォルダ名は必須です')
-    .max(100, 'フォルダ名は100文字以内で入力してください'),
-  description: z.string()
-    .max(500, '説明は500文字以内で入力してください')
-    .optional(),
-  rules: z.array(smartFolderRuleSchema)
-    .max(20, 'ルールは20個まで設定できます'),
-  icon: z.string()
-    .max(10, 'アイコンは10文字以内で入力してください')
-    .optional(),
-  color: z.string()
+  name: z.string().min(1, 'フォルダ名は必須です').max(100, 'フォルダ名は100文字以内で入力してください'),
+  description: z.string().max(500, '説明は500文字以内で入力してください').optional(),
+  rules: z.array(smartFolderRuleSchema).max(20, 'ルールは20個まで設定できます'),
+  icon: z.string().max(10, 'アイコンは10文字以内で入力してください').optional(),
+  color: z
+    .string()
     .regex(/^#[0-9A-F]{6}$/i, '色は16進数形式（#RRGGBB）で入力してください')
     .optional()
     .default('#3B82F6'),
-  orderIndex: z.number()
-    .int()
-    .min(0)
-    .optional()
-    .default(0)
+  orderIndex: z.number().int().min(0).optional().default(0),
 })
 
 // スマートフォルダ更新用のスキーマ
 export const updateSmartFolderSchema = z.object({
-  name: z.string()
-    .min(1, 'フォルダ名は必須です')
-    .max(100, 'フォルダ名は100文字以内で入力してください')
-    .optional(),
-  description: z.string()
-    .max(500, '説明は500文字以内で入力してください')
-    .optional(),
-  rules: z.array(smartFolderRuleSchema)
-    .max(20, 'ルールは20個まで設定できます')
-    .optional(),
+  name: z.string().min(1, 'フォルダ名は必須です').max(100, 'フォルダ名は100文字以内で入力してください').optional(),
+  description: z.string().max(500, '説明は500文字以内で入力してください').optional(),
+  rules: z.array(smartFolderRuleSchema).max(20, 'ルールは20個まで設定できます').optional(),
   isActive: z.boolean().optional(),
-  icon: z.string()
-    .max(10, 'アイコンは10文字以内で入力してください')
-    .optional(),
-  color: z.string()
+  icon: z.string().max(10, 'アイコンは10文字以内で入力してください').optional(),
+  color: z
+    .string()
     .regex(/^#[0-9A-F]{6}$/i, '色は16進数形式（#RRGGBB）で入力してください')
     .optional(),
-  orderIndex: z.number()
-    .int()
-    .min(0)
-    .optional()
+  orderIndex: z.number().int().min(0).optional(),
 })
 
 // スマートフォルダ（データベース形式）のスキーマ
@@ -113,7 +86,7 @@ export const smartFolderRowSchema = z.object({
   color: z.string(),
   is_system: z.boolean(),
   created_at: z.string(),
-  updated_at: z.string()
+  updated_at: z.string(),
 })
 
 // スマートフォルダ（アプリケーション形式）のスキーマ
@@ -130,21 +103,21 @@ export const smartFolderSchema = z.object({
   isSystem: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
-  taskCount: z.number().optional()
+  taskCount: z.number().optional(),
 })
 
 // ルール構築用のスキーマ
 export const ruleBuilderSchema = z.object({
   field: smartFolderRuleFieldSchema,
   operator: smartFolderRuleOperatorSchema,
-  value: smartFolderRuleValueSchema
+  value: smartFolderRuleValueSchema,
 })
 
 // フィルタリング結果のスキーマ
 export const smartFolderFilterResultSchema = z.object({
   items: z.array(z.unknown()),
   totalCount: z.number(),
-  folderId: z.string().uuid()
+  folderId: z.string().uuid(),
 })
 
 // プリセットルールのスキーマ
@@ -154,7 +127,7 @@ export const presetRuleSchema = z.object({
   description: z.string(),
   rules: z.array(smartFolderRuleSchema),
   icon: z.string(),
-  color: z.string()
+  color: z.string(),
 })
 
 // エクスポート用のスキーマ
@@ -163,30 +136,34 @@ export const smartFolderExportSchema = smartFolderSchema.omit({
   userId: true,
   createdAt: true,
   updatedAt: true,
-  taskCount: true
+  taskCount: true,
 })
 
 // インポート用のスキーマ
 export const smartFolderImportSchema = smartFolderExportSchema.omit({
-  isSystem: true
+  isSystem: true,
 })
 
 // バルク操作用のスキーマ
 export const bulkUpdateSmartFoldersSchema = z.object({
   folderIds: z.array(z.string().uuid()).min(1, '少なくとも1つのフォルダを選択してください'),
-  updates: updateSmartFolderSchema
+  updates: updateSmartFolderSchema,
 })
 
 export const bulkDeleteSmartFoldersSchema = z.object({
-  folderIds: z.array(z.string().uuid()).min(1, '少なくとも1つのフォルダを選択してください')
+  folderIds: z.array(z.string().uuid()).min(1, '少なくとも1つのフォルダを選択してください'),
 })
 
 // 並び替え用のスキーマ
 export const reorderSmartFoldersSchema = z.object({
-  folderOrders: z.array(z.object({
-    id: z.string().uuid(),
-    orderIndex: z.number().int().min(0)
-  })).min(1, '少なくとも1つのフォルダが必要です')
+  folderOrders: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        orderIndex: z.number().int().min(0),
+      })
+    )
+    .min(1, '少なくとも1つのフォルダが必要です'),
 })
 
 // 検索用のスキーマ
@@ -197,17 +174,19 @@ export const searchSmartFoldersSchema = z.object({
   limit: z.number().int().min(1).max(100).optional().default(50),
   offset: z.number().int().min(0).optional().default(0),
   sortBy: z.enum(['name', 'created_at', 'updated_at', 'order_index']).optional().default('order_index'),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('asc')
+  sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
 })
 
 // ルール評価用のスキーマ
 export const evaluateRulesSchema = z.object({
   rules: z.array(smartFolderRuleSchema),
   item: z.unknown(),
-  context: z.object({
-    now: z.date().optional(),
-    userTimeZone: z.string().optional()
-  }).optional()
+  context: z
+    .object({
+      now: z.date().optional(),
+      userTimeZone: z.string().optional(),
+    })
+    .optional(),
 })
 
 // 統計情報のスキーマ
@@ -217,7 +196,7 @@ export const smartFolderStatsSchema = z.object({
   systemFolders: z.number(),
   userFolders: z.number(),
   totalTasks: z.number(),
-  averageTasksPerFolder: z.number()
+  averageTasksPerFolder: z.number(),
 })
 
 // バリデーション関数のエクスポート

@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-
-import { CalendarEvent } from '@/features/events'
 import { timeToMinutes } from '@/features/calendar/lib/time-grid-helpers'
+import { CalendarEvent } from '@/features/events'
 
 // アニメーション設定
 export const eventAnimations = {
@@ -12,38 +11,38 @@ export const eventAnimations = {
   create: {
     initial: { opacity: 0, scale: 0.8, y: -10 },
     animate: { opacity: 1, scale: 1, y: 0 },
-    transition: { duration: 0.2, ease: 'easeOut' }
+    transition: { duration: 0.2, ease: 'easeOut' },
   },
-  
+
   // イベント削除時
   delete: {
     initial: { opacity: 1, scale: 1 },
     exit: { opacity: 0, scale: 0.8, y: -10 },
-    transition: { duration: 0.15, ease: 'easeIn' }
+    transition: { duration: 0.15, ease: 'easeIn' },
   },
-  
+
   // ホバー時
   hover: {
     scale: 1.02,
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-    transition: { duration: 0.1, ease: 'easeOut' }
+    transition: { duration: 0.1, ease: 'easeOut' },
   },
-  
+
   // 選択時
   selected: {
     scale: 1.05,
     boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)',
     borderWidth: '2px',
-    transition: { duration: 0.2, ease: 'easeOut' }
+    transition: { duration: 0.2, ease: 'easeOut' },
   },
-  
+
   // ドラッグ中
   dragging: {
     scale: 1.1,
     boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
     zIndex: 50,
-    transition: { duration: 0.1, ease: 'easeOut' }
-  }
+    transition: { duration: 0.1, ease: 'easeOut' },
+  },
 }
 
 // アニメーション付きイベントコンポーネント
@@ -67,10 +66,10 @@ export const AnimatedEventItem = ({
   isDragging = false,
   isCreating = false,
   className,
-  style
+  style,
 }: AnimatedEventItemProps) => {
   const [isVisible, setIsVisible] = useState(!isCreating)
-  
+
   useEffect(() => {
     if (isCreating) {
       // 作成アニメーション開始
@@ -84,7 +83,7 @@ export const AnimatedEventItem = ({
       {isVisible === true && (
         <div
           key={event.id}
-          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 shadow-[0_8px_24px_rgba(59,130,246,0.3)] border-2' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)] z-50' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
+          className={`${className} transition-all duration-200 ease-out ${isCreating ? 'animate-in fade-in scale-in-95 slide-in-from-bottom-2' : ''} ${isSelected ? 'scale-105 border-2 shadow-[0_8px_24px_rgba(59,130,246,0.3)]' : ''} ${isHovered ? 'scale-[1.02] shadow-[0_4px_12px_rgba(0,0,0,0.15)]' : ''} ${isDragging ? 'z-50 scale-110 shadow-[0_12px_32px_rgba(0,0,0,0.2)]' : ''} ${!isDragging ? 'hover:brightness-110' : ''}`}
           style={style}
         >
           {children}
@@ -115,7 +114,7 @@ export const CreatingEventPreview = ({
   onConfirm,
   onCancel,
   dayWidth,
-  className
+  className,
 }: CreatingEventPreviewProps) => {
   const [eventTitle, setEventTitle] = useState(title)
   const [isEditing, setIsEditing] = useState(false)
@@ -156,17 +155,17 @@ export const CreatingEventPreview = ({
 
   return (
     <div
-      className={`absolute rounded border-l-4 bg-white shadow-lg z-30 transition-all duration-200 ease-out animate-in fade-in scale-in-95 slide-in-from-bottom-2 ${className}`}
+      className={`animate-in fade-in scale-in-95 slide-in-from-bottom-2 absolute z-30 rounded border-l-4 bg-white shadow-lg transition-all duration-200 ease-out ${className}`}
       style={{
         top: `${top}px`,
         height: `${height}px`,
         width: `${dayWidth * 0.95}%`,
         left: '2.5%',
         borderLeftColor: color,
-        backgroundColor: `${color}15`
+        backgroundColor: `${color}15`,
       }}
     >
-      <div className="p-2 h-full flex flex-col">
+      <div className="flex h-full flex-col p-2">
         {/* タイトル編集 */}
         {isEditing ? (
           <input
@@ -176,7 +175,7 @@ export const CreatingEventPreview = ({
             onChange={(e) => setEventTitle(e.target.value)}
             onBlur={() => setIsEditing(false)}
             onKeyDown={handleKeyDown}
-            className="text-sm font-medium bg-transparent border-none outline-none w-full"
+            className="w-full border-none bg-transparent text-sm font-medium outline-none"
             style={{ color }}
             placeholder="Event title"
           />
@@ -184,7 +183,7 @@ export const CreatingEventPreview = ({
           <button
             type="button"
             onClick={handleTitleClick}
-            className="text-sm font-medium cursor-text truncate text-left w-full bg-transparent border-none p-0"
+            className="w-full cursor-text truncate border-none bg-transparent p-0 text-left text-sm font-medium"
             style={{ color }}
           >
             {eventTitle}
@@ -192,23 +191,23 @@ export const CreatingEventPreview = ({
         )}
 
         {/* 時間表示 */}
-        <div className="text-xs text-gray-600 mt-1">
+        <div className="mt-1 text-xs text-gray-600">
           {startTime} - {endTime}
         </div>
 
         {/* アクションボタン */}
-        <div className="flex gap-1 mt-auto">
+        <div className="mt-auto flex gap-1">
           <button
             type="button"
             onClick={handleConfirm}
-            className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            className="rounded bg-blue-500 px-2 py-1 text-xs text-white transition-colors hover:bg-blue-600"
           >
             Save
           </button>
           <button
             type="button"
             onClick={handleCancel}
-            className="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+            className="rounded bg-gray-500 px-2 py-1 text-xs text-white transition-colors hover:bg-gray-600"
           >
             Cancel
           </button>
@@ -245,9 +244,5 @@ interface PulseEffectProps {
 }
 
 export const PulseEffect = ({ isActive, children }: PulseEffectProps) => {
-  return (
-    <div className={isActive ? 'animate-pulse' : ''}>
-      {children}
-    </div>
-  )
+  return <div className={isActive ? 'animate-pulse' : ''}>{children}</div>
 }

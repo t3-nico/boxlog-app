@@ -65,12 +65,12 @@ interface NewViewProps extends CalendarViewProps {
   // 追加のprops定義
 }
 
-export const NewView = memo<NewViewProps>(({ 
+export const NewView = memo<NewViewProps>(({
   className,
   // その他のprops
 }) => {
   return (
-    <div 
+    <div
       className={cn("calendar-new-view", className)}
       role="grid"
       aria-label="新しいカレンダービュー"
@@ -104,7 +104,7 @@ export function useNewInteraction() {
   }, [])
 
   return {
-    handleInteraction
+    handleInteraction,
   }
 }
 ```
@@ -114,15 +114,16 @@ export function useNewInteraction() {
 ### 必須の最適化パターン
 
 1. **メモ化の活用**
+
 ```typescript
 import { memo, useMemo, useCallback } from 'react'
 
 const OptimizedComponent = memo(({ data, onChange }) => {
-  const processedData = useMemo(() => 
+  const processedData = useMemo(() =>
     heavyCalculation(data), [data]
   )
-  
-  const handleChange = useCallback((value) => 
+
+  const handleChange = useCallback((value) =>
     onChange(value), [onChange]
   )
 
@@ -131,6 +132,7 @@ const OptimizedComponent = memo(({ data, onChange }) => {
 ```
 
 2. **仮想化の実装**
+
 ```typescript
 import { VirtualCalendarGrid } from '../common/virtualization/VirtualCalendarGrid'
 
@@ -143,10 +145,11 @@ import { VirtualCalendarGrid } from '../common/virtualization/VirtualCalendarGri
 ```
 
 3. **遅延ローディング**
+
 ```typescript
 import { lazy, Suspense } from 'react'
 
-const HeavyComponent = lazy(() => 
+const HeavyComponent = lazy(() =>
   import('./HeavyComponent').then(mod => ({ default: mod.HeavyComponent }))
 )
 
@@ -170,6 +173,7 @@ MEMORY_MONITOR=true npm run dev
 ### 必須のアクセシビリティ実装
 
 1. **キーボード操作**
+
 ```typescript
 const handleKeyDown = useCallback((event: KeyboardEvent) => {
   switch (event.key) {
@@ -188,31 +192,23 @@ const handleKeyDown = useCallback((event: KeyboardEvent) => {
 ```
 
 2. **ARIA属性の設定**
+
 ```jsx
-<div
-  role="grid"
-  aria-label="カレンダー"
-  aria-rowcount={rowCount}
-  aria-colcount={colCount}
->
-  <div
-    role="gridcell"
-    aria-selected={isSelected}
-    aria-label={ariaLabel}
-    tabIndex={isSelected ? 0 : -1}
-  >
+<div role="grid" aria-label="カレンダー" aria-rowcount={rowCount} aria-colcount={colCount}>
+  <div role="gridcell" aria-selected={isSelected} aria-label={ariaLabel} tabIndex={isSelected ? 0 : -1}>
     {content}
   </div>
 </div>
 ```
 
 3. **フォーカス管理**
+
 ```typescript
 import { useFocusTrap } from '../hooks/useFocusTrap'
 
 const Component = () => {
   const trapRef = useFocusTrap<HTMLDivElement>()
-  
+
   return (
     <div ref={trapRef}>
       {/* フォーカストラップされたコンテンツ */}
@@ -256,7 +252,7 @@ describe('CalendarView', () => {
   test('キーボード操作が動作する', () => {
     render(<CalendarView initialViewType="day" />)
     const grid = screen.getByRole('grid')
-    
+
     fireEvent.keyDown(grid, { key: 'ArrowRight' })
     // アサーション
   })
@@ -268,18 +264,20 @@ describe('CalendarView', () => {
 ### デバッグツール
 
 1. **開発者ツール拡張**
+
 ```typescript
 // カレンダー専用のデバッグ情報
 if (process.env.NODE_ENV === 'development') {
   window.__CALENDAR_DEBUG__ = {
     currentView,
     selectedEvents,
-    performanceMetrics
+    performanceMetrics,
   }
 }
 ```
 
 2. **ログ出力**
+
 ```typescript
 import { debugLog } from '../utils/debug'
 
@@ -288,6 +286,7 @@ debugLog('calendar', 'View changed to:', newView)
 ```
 
 3. **パフォーマンス監視**
+
 ```typescript
 import { PerformanceMonitor } from '../utils/performance/PerformanceMonitor'
 
@@ -343,7 +342,7 @@ const config = {
   production: {
     debug: false,
     performanceMonitoring: false,
-  }
+  },
 }
 ```
 

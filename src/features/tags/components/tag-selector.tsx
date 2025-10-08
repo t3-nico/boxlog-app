@@ -5,20 +5,13 @@ import { useState } from 'react'
 import { ChevronDown as ChevronDownIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { useTagStore } from '@/features/tags/stores/tag-store'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { useTagStore } from '@/features/tags/stores/tag-store'
 import { Tag } from '@/types/unified'
 
 import { TagBadge } from './tag-badge'
-
-
 
 interface TagSelectorProps {
   selectedTagIds: string[]
@@ -31,20 +24,21 @@ export const TagSelector = ({
   selectedTagIds,
   onTagsChange,
   maxTags,
-  placeholder = 'Select tags...'
+  placeholder = 'Select tags...',
 }: TagSelectorProps) => {
   const { t } = useI18n()
   const { getAllTags, getTagHierarchy } = useTagStore()
   const [searchQuery, setSearchQuery] = useState('')
-  
+
   const allTags = getAllTags()
-  const selectedTags = allTags.filter(tag => selectedTagIds.includes(tag.id))
-  const availableTags = getTagHierarchy().filter(tag => !selectedTagIds.includes(tag.id))
-  
+  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id))
+  const availableTags = getTagHierarchy().filter((tag) => !selectedTagIds.includes(tag.id))
+
   const filteredTags = searchQuery
-    ? availableTags.filter(tag => 
-        tag.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tag.path.toLowerCase().includes(searchQuery.toLowerCase())
+    ? availableTags.filter(
+        (tag) =>
+          tag.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          tag.path.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : availableTags
 
@@ -55,7 +49,7 @@ export const TagSelector = ({
   }
 
   const handleTagRemove = (tagId: string) => {
-    onTagsChange(selectedTagIds.filter(id => id !== tagId))
+    onTagsChange(selectedTagIds.filter((id) => id !== tagId))
   }
 
   return (
@@ -63,12 +57,8 @@ export const TagSelector = ({
       {/* Selected Tags */}
       {selectedTags.length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {selectedTags.map(tag => (
-            <TagBadge
-              key={tag.id}
-              tag={tag}
-              onRemove={() => handleTagRemove(tag.id)}
-            />
+          {selectedTags.map((tag) => (
+            <TagBadge key={tag.id} tag={tag} onRemove={() => handleTagRemove(tag.id)} />
           ))}
         </div>
       )}
@@ -76,16 +66,15 @@ export const TagSelector = ({
       {/* Tag Selector Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="w-full justify-between"
             disabled={maxTags ? selectedTagIds.length >= maxTags : false}
           >
             <span className="text-left">
-              {selectedTags.length > 0 
+              {selectedTags.length > 0
                 ? `${selectedTags.length} tag${selectedTags.length !== 1 ? 's' : ''} selected`
-                : placeholder
-              }
+                : placeholder}
             </span>
             <ChevronDownIcon className="h-4 w-4" />
           </Button>
@@ -101,24 +90,18 @@ export const TagSelector = ({
           </div>
           <div className="max-h-48 overflow-y-auto">
             {filteredTags.length > 0 ? (
-              filteredTags.map(tag => (
+              filteredTags.map((tag) => (
                 <DropdownMenuItem
                   key={tag.id}
                   onClick={() => handleTagAdd(tag)}
-                  className={`flex items-center space-x-2 p-2 ${
-                    tag.level > 1 ? `ml-${(tag.level - 1) * 4}` : ''
-                  }`}
+                  className={`flex items-center space-x-2 p-2 ${tag.level > 1 ? `ml-${(tag.level - 1) * 4}` : ''}`}
                 >
                   <TagBadge tag={tag} showIcon={true} showPath={tag.level > 1} />
-                  {tag.description != null && (
-                    <span className="text-xs text-gray-500 truncate">
-                      {tag.description}
-                    </span>
-                  )}
+                  {tag.description != null && <span className="truncate text-xs text-gray-500">{tag.description}</span>}
                 </DropdownMenuItem>
               ))
             ) : (
-              <div className="p-2 text-sm text-gray-500 text-center">
+              <div className="p-2 text-center text-sm text-gray-500">
                 {searchQuery ? t('tags.search.noTags') : t('tags.search.noMoreTags')}
               </div>
             )}

@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
   public: {
@@ -36,12 +30,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
+            foreignKeyName: 'profiles_id_fkey'
+            columns: ['id']
             isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       tasks: {
@@ -54,7 +48,7 @@ export type Database = {
           actual_start: string | null
           actual_end: string | null
           satisfaction: number | null
-          status: "backlog" | "scheduled" | "completed" | "rescheduled" | "stopped" | "delegated"
+          status: 'backlog' | 'scheduled' | 'completed' | 'rescheduled' | 'stopped' | 'delegated'
           tags: string[]
           memo: string | null
           created_at: string
@@ -69,7 +63,7 @@ export type Database = {
           actual_start?: string | null
           actual_end?: string | null
           satisfaction?: number | null
-          status?: "backlog" | "scheduled" | "completed" | "rescheduled" | "stopped" | "delegated"
+          status?: 'backlog' | 'scheduled' | 'completed' | 'rescheduled' | 'stopped' | 'delegated'
           tags?: string[]
           memo?: string | null
           created_at?: string
@@ -84,7 +78,7 @@ export type Database = {
           actual_start?: string | null
           actual_end?: string | null
           satisfaction?: number | null
-          status?: "backlog" | "scheduled" | "completed" | "rescheduled" | "stopped" | "delegated"
+          status?: 'backlog' | 'scheduled' | 'completed' | 'rescheduled' | 'stopped' | 'delegated'
           tags?: string[]
           memo?: string | null
           created_at?: string
@@ -92,12 +86,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "tasks_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'tasks_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       user_values: {
@@ -127,12 +121,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "user_values_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'user_values_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
       smart_filters: {
@@ -165,12 +159,12 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "smart_filters_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: 'smart_filters_user_id_fkey'
+            columns: ['user_id']
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
         ]
       }
     }

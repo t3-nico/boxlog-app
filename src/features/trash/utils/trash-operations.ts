@@ -1,18 +1,11 @@
 // @ts-nocheck
 // TODO(#389): 型エラーを修正後、@ts-nocheckを削除
-import { 
-  TrashItem, 
-  TrashItemType, 
-  TRASH_ITEM_CONFIG, 
-  TRASH_RETENTION_DAYS, 
-  TRASH_WARNING_DAYS 
-} from '../types/trash'
+import { TRASH_ITEM_CONFIG, TRASH_RETENTION_DAYS, TRASH_WARNING_DAYS, TrashItem, TrashItemType } from '../types/trash'
 
 /**
  * ゴミ箱操作のユーティリティ関数
  */
 export const trashOperations = {
-  
   /**
    * アイテムがまもなく期限切れになるかチェック
    */
@@ -20,10 +13,10 @@ export const trashOperations = {
     const now = new Date()
     const expirationDate = new Date(item.deletedAt)
     expirationDate.setDate(expirationDate.getDate() + TRASH_RETENTION_DAYS)
-    
+
     const warningDate = new Date(expirationDate)
     warningDate.setDate(warningDate.getDate() - warningDays)
-    
+
     return now >= warningDate && now < expirationDate
   },
 
@@ -34,7 +27,7 @@ export const trashOperations = {
     const now = new Date()
     const expirationDate = new Date(item.deletedAt)
     expirationDate.setDate(expirationDate.getDate() + retentionDays)
-    
+
     return now >= expirationDate
   },
 
@@ -45,10 +38,10 @@ export const trashOperations = {
     const now = new Date()
     const expirationDate = new Date(item.deletedAt)
     expirationDate.setDate(expirationDate.getDate() + TRASH_RETENTION_DAYS)
-    
+
     const diffTime = expirationDate.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
+
     return Math.max(0, diffDays)
   },
 
@@ -61,7 +54,7 @@ export const trashOperations = {
     const diffMinutes = Math.floor(diffMs / (1000 * 60))
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-    
+
     if (diffMinutes < 1) {
       return 'たった今'
     } else if (diffMinutes < 60) {
@@ -85,11 +78,15 @@ export const trashOperations = {
    * アイテムタイプの設定を取得
    */
   getTypeConfig: (type: TrashItemType) => {
-    return (Object.prototype.hasOwnProperty.call(TRASH_ITEM_CONFIG, type) ? TRASH_ITEM_CONFIG[type as keyof typeof TRASH_ITEM_CONFIG] : null) || {
-      icon: '❓',
-      color: '#6B7280',
-      label: 'Unknown'
-    }
+    return (
+      (Object.prototype.hasOwnProperty.call(TRASH_ITEM_CONFIG, type)
+        ? TRASH_ITEM_CONFIG[type as keyof typeof TRASH_ITEM_CONFIG]
+        : null) || {
+        icon: '❓',
+        color: '#6B7280',
+        label: 'Unknown',
+      }
+    )
   },
 
   /**
@@ -97,7 +94,7 @@ export const trashOperations = {
    */
   truncateTitle: (title: string, maxLength = 50): string => {
     if (title.length <= maxLength) return title
-    return `${title.slice(0, maxLength - 3)  }...`
+    return `${title.slice(0, maxLength - 3)}...`
   },
 
   /**
@@ -106,7 +103,7 @@ export const trashOperations = {
   truncateDescription: (description: string | undefined, maxLength = 100): string => {
     if (!description) return ''
     if (description.length <= maxLength) return description
-    return `${description.slice(0, maxLength - 3)  }...`
+    return `${description.slice(0, maxLength - 3)}...`
   },
 
   /**
@@ -114,16 +111,16 @@ export const trashOperations = {
    */
   formatFileSize: (sizeInBytes: number | undefined): string => {
     if (!sizeInBytes || sizeInBytes === 0) return ''
-    
+
     const units = ['B', 'KB', 'MB', 'GB', 'TB']
     let size = sizeInBytes
     let unitIndex = 0
-    
+
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024
       unitIndex++
     }
-    
+
     return `${size.toFixed(1)} ${unitIndex < units.length ? units[unitIndex] || 'B' : 'B'}`
   },
 
@@ -132,16 +129,20 @@ export const trashOperations = {
    */
   formatDeletedFrom: (deletedFrom: string | undefined): string => {
     if (!deletedFrom) return ''
-    
+
     const pathMap: Record<string, string> = {
       '/calendar': 'カレンダー',
       '/tasks': 'タスク',
       '/documents': 'ドキュメント',
       '/notes': 'ノート',
-      '/settings': '設定'
+      '/settings': '設定',
     }
-    
-    return (Object.prototype.hasOwnProperty.call(pathMap, deletedFrom) ? pathMap[deletedFrom as keyof typeof pathMap] : null) || deletedFrom
+
+    return (
+      (Object.prototype.hasOwnProperty.call(pathMap, deletedFrom)
+        ? pathMap[deletedFrom as keyof typeof pathMap]
+        : null) || deletedFrom
+    )
   },
 
   /**
@@ -151,30 +152,33 @@ export const trashOperations = {
     const priorityClasses = {
       low: 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20',
       medium: 'text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-900/20',
-      high: 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20'
+      high: 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20',
     }
-    
+
     return priorityClasses[priority || 'medium']
   },
 
   /**
    * タグを表示用に処理
    */
-  formatTags: (tags: string[] | undefined, maxTags = 3): { 
+  formatTags: (
+    tags: string[] | undefined,
+    maxTags = 3
+  ): {
     visible: string[]
-    hidden: number 
+    hidden: number
   } => {
     if (!tags || tags.length === 0) {
       return { visible: [], hidden: 0 }
     }
-    
+
     if (tags.length <= maxTags) {
       return { visible: tags, hidden: 0 }
     }
-    
+
     return {
       visible: tags.slice(0, maxTags),
-      hidden: tags.length - maxTags
+      hidden: tags.length - maxTags,
     }
   },
 
@@ -188,9 +192,9 @@ export const trashOperations = {
 
     // 期限切れチェック（期限切れでも復元可能だが警告を出す）
     if (trashOperations.isExpired(item)) {
-      return { 
-        canRestore: true, 
-        reason: 'このアイテムは保持期限を過ぎていますが、復元できます' 
+      return {
+        canRestore: true,
+        reason: 'このアイテムは保持期限を過ぎていますが、復元できます',
       }
     }
 
@@ -201,14 +205,17 @@ export const trashOperations = {
    * アイテムを削除元のパスでグループ化
    */
   groupByDeletedFrom: (items: TrashItem[]): Record<string, TrashItem[]> => {
-    return items.reduce((groups, item) => {
-      const key = item.deletedFrom || 'その他'
-      if (!groups[key as keyof typeof groups]) {
-        groups[key as keyof typeof groups] = []
-      }
-      groups[key as keyof typeof groups].push(item)
-      return groups
-    }, {} as Record<string, TrashItem[]>)
+    return items.reduce(
+      (groups, item) => {
+        const key = item.deletedFrom || 'その他'
+        if (!groups[key as keyof typeof groups]) {
+          groups[key as keyof typeof groups] = []
+        }
+        groups[key as keyof typeof groups].push(item)
+        return groups
+      },
+      {} as Record<string, TrashItem[]>
+    )
   },
 
   /**
@@ -216,25 +223,22 @@ export const trashOperations = {
    */
   groupByType: (items: TrashItem[]): Record<TrashItemType, TrashItem[]> => {
     const groups = {} as Record<TrashItemType, TrashItem[]>
-    
+
     // 全タイプの初期化
-    const types: TrashItemType[] = [
-      'event', 'task', 'document', 'note', 
-      'tag', 'folder', 'record', 'template'
-    ]
-    types.forEach(type => {
+    const types: TrashItemType[] = ['event', 'task', 'document', 'note', 'tag', 'folder', 'record', 'template']
+    types.forEach((type) => {
       if (Object.prototype.hasOwnProperty.call(groups, type)) {
         groups[type] = []
       }
     })
-    
+
     // アイテムを分類
-    items.forEach(item => {
+    items.forEach((item) => {
       if (groups[item.type]) {
         groups[item.type].push(item)
       }
     })
-    
+
     return groups
   },
 
@@ -242,16 +246,19 @@ export const trashOperations = {
    * アイテムを削除日でグループ化
    */
   groupByDeletedDate: (items: TrashItem[]): Record<string, TrashItem[]> => {
-    return items.reduce((groups, item) => {
-      const dateKey = item.deletedAt.toDateString()
-      if (!Object.prototype.hasOwnProperty.call(groups, dateKey)) {
-        groups[dateKey] = []
-      }
-      if (groups[dateKey]) {
-        groups[dateKey].push(item)
-      }
-      return groups
-    }, {} as Record<string, TrashItem[]>)
+    return items.reduce(
+      (groups, item) => {
+        const dateKey = item.deletedAt.toDateString()
+        if (!Object.prototype.hasOwnProperty.call(groups, dateKey)) {
+          groups[dateKey] = []
+        }
+        if (groups[dateKey]) {
+          groups[dateKey].push(item)
+        }
+        return groups
+      },
+      {} as Record<string, TrashItem[]>
+    )
   },
 
   /**
@@ -259,33 +266,30 @@ export const trashOperations = {
    */
   searchItems: (items: TrashItem[], query: string): TrashItem[] => {
     if (!query.trim()) return items
-    
+
     const lowerQuery = query.toLowerCase()
-    
-    return items.filter(item => 
-      item.title.toLowerCase().includes(lowerQuery) ||
-      item.description?.toLowerCase().includes(lowerQuery) ||
-      item.type.toLowerCase().includes(lowerQuery) ||
-      item.deletedFrom?.toLowerCase().includes(lowerQuery) ||
-      item.metadata?.tags?.some(tag => tag.toLowerCase().includes(lowerQuery))
+
+    return items.filter(
+      (item) =>
+        item.title.toLowerCase().includes(lowerQuery) ||
+        item.description?.toLowerCase().includes(lowerQuery) ||
+        item.type.toLowerCase().includes(lowerQuery) ||
+        item.deletedFrom?.toLowerCase().includes(lowerQuery) ||
+        item.metadata?.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery))
     )
   },
 
   /**
    * 日付範囲でアイテムをフィルタリング
    */
-  filterByDateRange: (
-    items: TrashItem[], 
-    from: Date | null, 
-    to: Date | null
-  ): TrashItem[] => {
+  filterByDateRange: (items: TrashItem[], from: Date | null, to: Date | null): TrashItem[] => {
     if (!from && !to) return items
-    
-    return items.filter(item => {
+
+    return items.filter((item) => {
       const deletedAt = item.deletedAt.getTime()
       const fromTime = from?.getTime() || 0
       const toTime = to?.getTime() || Date.now()
-      
+
       return deletedAt >= fromTime && deletedAt <= toTime
     })
   },
@@ -293,23 +297,19 @@ export const trashOperations = {
   /**
    * アイテムの選択状態を切り替えるためのヘルパー
    */
-  toggleSelection: (
-    selectedIds: Set<string>,
-    itemId: string,
-    multiSelect = false
-  ): Set<string> => {
+  toggleSelection: (selectedIds: Set<string>, itemId: string, multiSelect = false): Set<string> => {
     const newSelected = new Set(selectedIds)
-    
+
     if (!multiSelect) {
       newSelected.clear()
     }
-    
+
     if (selectedIds.has(itemId)) {
       newSelected.delete(itemId)
     } else {
       newSelected.add(itemId)
     }
-    
+
     return newSelected
   },
 
@@ -321,14 +321,14 @@ export const trashOperations = {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
     const thisWeekStart = new Date(today)
     thisWeekStart.setDate(today.getDate() - today.getDay())
-    
+
     return {
       total: items.length,
-      deletedToday: items.filter(item => item.deletedAt >= today).length,
-      deletedThisWeek: items.filter(item => item.deletedAt >= thisWeekStart).length,
-      expiringSoon: items.filter(item => trashOperations.isExpiringSoon(item)).length,
-      expired: items.filter(item => trashOperations.isExpired(item)).length,
-      totalSize: items.reduce((total, item) => total + (item.metadata?.fileSize || 0), 0)
+      deletedToday: items.filter((item) => item.deletedAt >= today).length,
+      deletedThisWeek: items.filter((item) => item.deletedAt >= thisWeekStart).length,
+      expiringSoon: items.filter((item) => trashOperations.isExpiringSoon(item)).length,
+      expired: items.filter((item) => trashOperations.isExpired(item)).length,
+      totalSize: items.reduce((total, item) => total + (item.metadata?.fileSize || 0), 0),
     }
   },
 
@@ -336,7 +336,7 @@ export const trashOperations = {
    * エクスポート用のデータ準備
    */
   prepareExportData: (items: TrashItem[]) => {
-    return items.map(item => ({
+    return items.map((item) => ({
       id: item.id,
       type: item.type,
       title: item.title,
@@ -348,9 +348,9 @@ export const trashOperations = {
       isExpiringSoon: trashOperations.isExpiringSoon(item),
       tags: item.metadata?.tags,
       priority: item.metadata?.priority,
-      fileSize: item.metadata?.fileSize
+      fileSize: item.metadata?.fileSize,
     }))
-  }
+  },
 }
 
 /**
@@ -358,29 +358,29 @@ export const trashOperations = {
  */
 export const validateTrashItem = (item: unknown): { valid: boolean; errors: string[] } => {
   const errors: string[] = []
-  
+
   if (!item.id || typeof item.id !== 'string') {
     errors.push('IDが必要です')
   }
-  
+
   if (!item.type || typeof item.type !== 'string') {
     errors.push('タイプが必要です')
   }
-  
+
   if (!item.title || typeof item.title !== 'string') {
     errors.push('タイトルが必要です')
   }
-  
+
   if (!item.deletedAt || !(item.deletedAt instanceof Date)) {
     errors.push('削除日時が必要です')
   }
-  
+
   if (!item.originalData) {
     errors.push('復元用のデータが必要です')
   }
-  
+
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   }
 }

@@ -19,7 +19,7 @@ interface PerformanceMetrics {
   eventRenderTime: number
   scrollPerformance: number[]
   memoryUsage: MemoryInfo
-  
+
   // カレンダー固有のメトリクス
   calendarMetrics: {
     eventCount: number
@@ -53,7 +53,7 @@ const DEFAULT_THRESHOLDS: PerformanceThreshold = {
   cls: 0.1,
   initialLoad: 1000,
   timeToInteractive: 2000,
-  memoryUsage: 100 * 1024 * 1024 // 100MB
+  memoryUsage: 100 * 1024 * 1024, // 100MB
 }
 
 export class PerformanceMonitor {
@@ -64,10 +64,10 @@ export class PerformanceMonitor {
       visibleEventCount: 0,
       renderDuration: 0,
       dataSyncTime: 0,
-      cacheHitRate: 0
-    }
+      cacheHitRate: 0,
+    },
   }
-  
+
   private observers: PerformanceObserver[] = []
   private memoryCheckInterval: NodeJS.Timeout | null = null
   private thresholds: PerformanceThreshold = DEFAULT_THRESHOLDS
@@ -104,10 +104,10 @@ export class PerformanceMonitor {
    */
   stopMonitoring(): void {
     this.isMonitoring = false
-    
-    this.observers.forEach(observer => observer.disconnect())
+
+    this.observers.forEach((observer) => observer.disconnect())
     this.observers = []
-    
+
     if (this.memoryCheckInterval) {
       clearInterval(this.memoryCheckInterval)
       this.memoryCheckInterval = null
@@ -185,7 +185,7 @@ export class PerformanceMonitor {
         this.triggerCallback('memoryWarning', {
           current: memoryInfo.used,
           threshold: this.thresholds.memoryUsage,
-          percentage: memoryInfo.percentage
+          percentage: memoryInfo.percentage,
         })
       }
     }
@@ -224,7 +224,7 @@ export class PerformanceMonitor {
    */
   private measureInitialLoad(): void {
     const startTime = performance.now()
-    
+
     // DOM読み込み完了時の測定
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
@@ -245,11 +245,11 @@ export class PerformanceMonitor {
    */
   measureCalendarRender(eventCount: number, visibleCount: number): void {
     const startTime = performance.now()
-    
+
     // 次のフレームで測定完了
     requestAnimationFrame(() => {
       const renderTime = performance.now() - startTime
-      
+
       this.updateCalendarMetric('eventCount', eventCount)
       this.updateCalendarMetric('visibleEventCount', visibleCount)
       this.updateCalendarMetric('renderDuration', renderTime)
@@ -275,9 +275,9 @@ export class PerformanceMonitor {
         isScrolling = false
         const endTime = performance.now()
         const duration = endTime - scrollTimes[scrollTimes.length - 1]
-        
+
         this.metrics.scrollPerformance!.push(duration)
-        
+
         // 最新50件のみ保持
         if (this.metrics.scrollPerformance!.length > 50) {
           this.metrics.scrollPerformance!.shift()
@@ -299,8 +299,8 @@ export class PerformanceMonitor {
    */
   measureDataSync<T>(asyncOperation: () => Promise<T>): Promise<T> {
     const startTime = performance.now()
-    
-    return asyncOperation().then(result => {
+
+    return asyncOperation().then((result) => {
       const syncTime = performance.now() - startTime
       this.updateCalendarMetric('dataSyncTime', syncTime)
       return result
@@ -340,10 +340,10 @@ export class PerformanceMonitor {
         visibleEventCount: 0,
         renderDuration: 0,
         dataSyncTime: 0,
-        cacheHitRate: 0
+        cacheHitRate: 0,
       }
     }
-    
+
     this.metrics.calendarMetrics[key as keyof typeof this.metrics.calendarMetrics] = value
     this.addToHistory()
   }
@@ -353,7 +353,7 @@ export class PerformanceMonitor {
    */
   private addToHistory(): void {
     this.metricsHistory.push({ ...this.metrics })
-    
+
     if (this.metricsHistory.length > this.HISTORY_LIMIT) {
       this.metricsHistory.shift()
     }
@@ -365,13 +365,13 @@ export class PerformanceMonitor {
   private checkThresholds(key: string, value: number): void {
     const thresholdKey = key as keyof PerformanceThreshold
     const threshold = this.thresholds[thresholdKey as keyof typeof thresholds]
-    
+
     if (threshold && value > threshold) {
       this.triggerCallback('thresholdExceeded', {
         metric: key,
         value,
         threshold,
-        severity: this.getSeverity(value, threshold)
+        severity: this.getSeverity(value, threshold),
       })
     }
   }
@@ -387,23 +387,24 @@ export class PerformanceMonitor {
    * メモリ情報の取得
    */
   private getMemoryInfo(): MemoryInfo {
-    const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } }).memory
-    
+    const memory = (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } })
+      .memory
+
     if (memory) {
       const used = memory.usedJSHeapSize
       const total = memory.totalJSHeapSize
       const percentage = (used / total) * 100
-      
+
       // トレンドの判定（簡易実装）
       const previousUsage = this.metrics.memoryUsage?.used || 0
       let trend: MemoryInfo['trend'] = 'stable'
-      
+
       if (used > previousUsage * 1.1) trend = 'increasing'
       else if (used < previousUsage * 0.9) trend = 'decreasing'
-      
+
       return { used, total, percentage, trend }
     }
-    
+
     return { used: 0, total: 0, percentage: 0, trend: 'stable' }
   }
 
@@ -423,7 +424,7 @@ export class PerformanceMonitor {
   private triggerCallback(event: string, data: unknown): void {
     const callbacks = this.callbacks.get(event)
     if (callbacks) {
-      callbacks.forEach(callback => callback(data))
+      callbacks.forEach((callback) => callback(data))
     }
   }
 
@@ -450,7 +451,7 @@ export class PerformanceMonitor {
     recommendations: string[]
     score: number
   } {
-    const {metrics} = this
+    const { metrics } = this
     const issues: string[] = []
     const recommendations: string[] = []
     let score = 100
@@ -493,18 +494,18 @@ export class PerformanceMonitor {
         webVitals: {
           lcp: metrics.lcp,
           fid: metrics.fid,
-          cls: metrics.cls
+          cls: metrics.cls,
         },
         customMetrics: {
           initialLoadTime: metrics.initialLoadTime,
           timeToInteractive: metrics.timeToInteractive,
-          memoryUsage: metrics.memoryUsage
+          memoryUsage: metrics.memoryUsage,
         },
-        calendarMetrics: metrics.calendarMetrics
+        calendarMetrics: metrics.calendarMetrics,
       },
       issues,
       recommendations,
-      score: Math.max(0, score)
+      score: Math.max(0, score),
     }
   }
 
@@ -522,8 +523,8 @@ export class PerformanceMonitor {
         visibleEventCount: 0,
         renderDuration: 0,
         dataSyncTime: 0,
-        cacheHitRate: 0
-      }
+        cacheHitRate: 0,
+      },
     }
   }
 }
@@ -548,10 +549,10 @@ export function cleanupPerformanceMonitor(): void {
 // React Hook での使用
 export function usePerformanceMonitor(autoStart: boolean = true) {
   const monitor = getPerformanceMonitor()
-  
+
   if (autoStart && typeof window !== 'undefined') {
     monitor.startMonitoring()
   }
-  
+
   return monitor
 }

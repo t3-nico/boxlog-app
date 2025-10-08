@@ -80,10 +80,10 @@ export const LoadingOverlay = ({
     <div className={cn('relative', className)}>
       {children}
       {isLoading === true && (
-        <div className="absolute inset-0 bg-neutral-100/80 dark:bg-neutral-900/80 z-50 flex items-center justify-center backdrop-blur-sm">
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-neutral-100/80 backdrop-blur-sm dark:bg-neutral-900/80">
           <div className="flex flex-col items-center gap-2">
             <LoadingSpinner size={spinnerSize} />
-            {message ? <p className="text-sm text-neutral-800 dark:text-neutral-200 font-medium">{message}</p> : null}
+            {message ? <p className="text-sm font-medium text-neutral-800 dark:text-neutral-200">{message}</p> : null}
           </div>
         </div>
       )}
@@ -101,13 +101,13 @@ export const LoadingCard = ({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center p-8 bg-white dark:bg-neutral-800 rounded-md shadow-sm',
+        'flex flex-col items-center justify-center rounded-md bg-white p-8 shadow-sm dark:bg-neutral-800',
         className
       )}
     >
       <LoadingSpinner size="lg" className="mb-4" />
-      <h3 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-2">{title}</h3>
-      <p className="text-neutral-800 dark:text-neutral-200 max-w-sm text-center">{message}</p>
+      <h3 className="mb-2 text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">{title}</h3>
+      <p className="max-w-sm text-center text-neutral-800 dark:text-neutral-200">{message}</p>
     </div>
   )
 }
@@ -197,13 +197,13 @@ export interface SkeletonCardProps {
 
 export const SkeletonCard = ({ showAvatar = false, showImage = false, className = '' }: SkeletonCardProps) => {
   return (
-    <div className={cn('p-4 bg-white dark:bg-neutral-800 rounded-md shadow-sm', className)}>
-      {showImage ? <Skeleton className="h-40 w-full mb-4" /> : null}
+    <div className={cn('rounded-md bg-white p-4 shadow-sm dark:bg-neutral-800', className)}>
+      {showImage ? <Skeleton className="mb-4 h-40 w-full" /> : null}
 
       <div className="flex items-start gap-2">
         {showAvatar ? <Skeleton className="h-10 w-10 flex-shrink-0 rounded-full" /> : null}
 
-        <div className="flex-1 flex flex-col gap-2">
+        <div className="flex flex-1 flex-col gap-2">
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-4 w-1/2" />
           <div className="space-y-1">
@@ -256,8 +256,8 @@ export const DataLoading = ({
       <div className={cn('flex items-center justify-center p-8', className)}>
         {errorComponent || (
           <div className="text-center">
-            <p className="text-red-600 dark:text-red-400 mb-2">データの読み込みに失敗しました</p>
-            <button type="button" onClick={handleReload} className="text-blue-600 dark:text-blue-400 hover:underline">
+            <p className="mb-2 text-red-600 dark:text-red-400">データの読み込みに失敗しました</p>
+            <button type="button" onClick={handleReload} className="text-blue-600 hover:underline dark:text-blue-400">
               再試行
             </button>
           </div>

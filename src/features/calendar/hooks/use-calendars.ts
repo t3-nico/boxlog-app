@@ -1,16 +1,16 @@
 // @ts-nocheck TODO(#389): 型エラー4件を段階的に修正する
 import { useState } from 'react'
 
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 // import { calendarService } from '../services/calendar-service' // Removed - using localStorage
 import type {
   Calendar,
-  CreateCalendarInput,
-  UpdateCalendarInput,
   CalendarShare,
   CalendarShareInput,
-  CalendarViewState
+  CalendarViewState,
+  CreateCalendarInput,
+  UpdateCalendarInput,
 } from '../types/calendar.types'
 
 // ========================================
@@ -22,7 +22,7 @@ export function useCalendars(userId: string) {
   return useQuery({
     queryKey: ['calendars', userId],
     queryFn: () => Promise.resolve([]), // Temporary stub
-    enabled: !!userId
+    enabled: !!userId,
   })
 }
 
@@ -30,14 +30,13 @@ export function useCalendar(calendarId: string) {
   return useQuery({
     queryKey: ['calendar', calendarId],
     queryFn: () => Promise.resolve(null), // Temporary stub
-    enabled: !!calendarId
+    enabled: !!calendarId,
   })
 }
 
 export function useCreateCalendar(_userId: string) {
   return useMutation({
-    mutationFn: (_input: CreateCalendarInput) =>
-      Promise.resolve({} as Calendar), // Temporary stub
+    mutationFn: (_input: CreateCalendarInput) => Promise.resolve({} as Calendar), // Temporary stub
   })
 }
 
@@ -68,26 +67,28 @@ export function useCalendarShares(calendarId: string) {
   return useQuery({
     queryKey: ['calendar-shares', calendarId],
     queryFn: () => Promise.resolve([]), // Temporary stub
-    enabled: !!calendarId
+    enabled: !!calendarId,
   })
 }
 
 export function useShareCalendar() {
-
-
   return useMutation({
-    mutationFn: (_input: CalendarShareInput) =>
-      Promise.resolve({} as CalendarShare), // Temporary stub
+    mutationFn: (_input: CalendarShareInput) => Promise.resolve({} as CalendarShare), // Temporary stub
     onSuccess: (_share) => {
       // queryClient.invalidateQueries({ queryKey: ['calendar-shares', share.calendarId] })
-    }
+    },
   })
 }
 
 export function useUpdateCalendarShare() {
   return useMutation({
-    mutationFn: ({ shareId: _shareId, permission: _permission }: { shareId: string; permission: 'view' | 'edit' | 'admin' }) =>
-      Promise.resolve({} as CalendarShare), // Temporary stub
+    mutationFn: ({
+      shareId: _shareId,
+      permission: _permission,
+    }: {
+      shareId: string
+      permission: 'view' | 'edit' | 'admin'
+    }) => Promise.resolve({} as CalendarShare), // Temporary stub
   })
 }
 
@@ -99,11 +100,15 @@ export function useRevokeCalendarShare() {
 
 export function useCreatePublicShareLink() {
   return useMutation({
-    mutationFn: ({ calendarId: _calendarId, permission: _permission, expiresInDays: _expiresInDays }: {
+    mutationFn: ({
+      calendarId: _calendarId,
+      permission: _permission,
+      expiresInDays: _expiresInDays,
+    }: {
       calendarId: string
       permission: 'view' | 'edit'
       expiresInDays?: number
-    }) => Promise.resolve('') // Temporary stub
+    }) => Promise.resolve(''), // Temporary stub
   })
 }
 
@@ -116,14 +121,13 @@ export function useCalendarViewState(userId: string) {
     queryKey: ['calendar-view-state', userId],
     queryFn: () => Promise.resolve(null), // Temporary stub
     enabled: !!userId,
-    staleTime: 1000 * 60 * 5 // 5分間はキャッシュを維持
+    staleTime: 1000 * 60 * 5, // 5分間はキャッシュを維持
   })
 }
 
 export function useUpdateViewState(_userId: string) {
   return useMutation({
-    mutationFn: (_updates: Partial<CalendarViewState>) =>
-      Promise.resolve({} as CalendarViewState), // Temporary stub
+    mutationFn: (_updates: Partial<CalendarViewState>) => Promise.resolve({} as CalendarViewState), // Temporary stub
   })
 }
 
@@ -134,7 +138,7 @@ export function useUpdateViewState(_userId: string) {
 export function useCalendarManagement(userId: string) {
   const { data: calendars, isLoading: calendarsLoading } = useCalendars(userId)
   const { data: viewState, isLoading: viewStateLoading } = useCalendarViewState(userId)
-  
+
   const createCalendar = useCreateCalendar(userId)
   const updateCalendar = useUpdateCalendar()
   const deleteCalendar = useDeleteCalendar()
@@ -142,16 +146,14 @@ export function useCalendarManagement(userId: string) {
   const updateViewState = useUpdateViewState(userId)
 
   // デフォルトカレンダーを取得
-  const defaultCalendar = calendars?.find(cal => cal.isDefault)
-  
+  const defaultCalendar = calendars?.find((cal) => cal.isDefault)
+
   // 表示可能なカレンダーを取得
-  const visibleCalendars = calendars?.filter(cal => cal.isVisible) || []
-  
+  const visibleCalendars = calendars?.filter((cal) => cal.isVisible) || []
+
   // 選択されたカレンダー（ビュー状態から）
   const selectedCalendarIds = viewState?.selectedCalendars || []
-  const selectedCalendars = calendars?.filter(cal => 
-    selectedCalendarIds.includes(cal.id)
-  ) || []
+  const selectedCalendars = calendars?.filter((cal) => selectedCalendarIds.includes(cal.id)) || []
 
   return {
     // Data
@@ -160,21 +162,21 @@ export function useCalendarManagement(userId: string) {
     selectedCalendars,
     defaultCalendar,
     viewState,
-    
+
     // Loading states
     isLoading: calendarsLoading || viewStateLoading,
-    
+
     // Actions
     createCalendar: createCalendar.mutate,
     updateCalendar: updateCalendar.mutate,
     deleteCalendar: deleteCalendar.mutate,
     setDefaultCalendar: setDefaultCalendar.mutate,
     updateViewState: updateViewState.mutate,
-    
+
     // Status
     isCreating: createCalendar.isPending,
     isUpdating: updateCalendar.isPending,
-    isDeleting: deleteCalendar.isPending
+    isDeleting: deleteCalendar.isPending,
   }
 }
 
@@ -186,10 +188,8 @@ export function useCalendarSelection(initialCalendarIds: string[] = []) {
   const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>(initialCalendarIds)
 
   const toggleCalendar = (calendarId: string) => {
-    setSelectedCalendarIds(prev => 
-      prev.includes(calendarId)
-        ? prev.filter(id => id !== calendarId)
-        : [...prev, calendarId]
+    setSelectedCalendarIds((prev) =>
+      prev.includes(calendarId) ? prev.filter((id) => id !== calendarId) : [...prev, calendarId]
     )
   }
 
@@ -211,7 +211,7 @@ export function useCalendarSelection(initialCalendarIds: string[] = []) {
     selectAll,
     deselectAll,
     isSelected,
-    setSelectedCalendarIds
+    setSelectedCalendarIds,
   }
 }
 
@@ -233,12 +233,12 @@ export function useCalendarColors() {
 
   const addCustomColor = (color: string) => {
     if (!customColors.includes(color)) {
-      setCustomColors(prev => [...prev, color])
+      setCustomColors((prev) => [...prev, color])
     }
   }
 
   const removeCustomColor = (color: string) => {
-    setCustomColors(prev => prev.filter(c => c !== color))
+    setCustomColors((prev) => prev.filter((c) => c !== color))
   }
 
   const allColors = [...defaultColors, ...customColors]
@@ -248,6 +248,6 @@ export function useCalendarColors() {
     customColors,
     allColors,
     addCustomColor,
-    removeCustomColor
+    removeCustomColor,
   }
 }

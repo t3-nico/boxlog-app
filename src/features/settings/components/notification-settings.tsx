@@ -10,8 +10,8 @@ import { Switch } from '@/components/ui/switch'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
 import { cn } from '@/lib/utils'
 
-import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
@@ -99,10 +99,10 @@ const NotificationSettings = () => {
           type="button"
           onClick={handleListTabClick}
           className={cn(
-            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+            'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
             activeTab === 'list'
-              ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-              : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
+              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+              : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
           )}
         >
           <BellRing className="h-4 w-4" />
@@ -112,10 +112,10 @@ const NotificationSettings = () => {
           type="button"
           onClick={handleSettingsTabClick}
           className={cn(
-            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+            'flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
             activeTab === 'settings'
-              ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-              : "text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100"
+              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+              : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100'
           )}
         >
           <SettingsIcon className="h-4 w-4" />
@@ -199,7 +199,7 @@ const NotificationSettings = () => {
           </SettingsCard>
 
           {/* ヒント情報 */}
-          <div className="rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-4">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
             <p className="text-sm text-blue-700 dark:text-blue-300">{t('notifications.settings.tip')}</p>
           </div>
         </div>

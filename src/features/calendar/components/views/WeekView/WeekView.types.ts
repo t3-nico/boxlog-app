@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import type { BaseViewProps, BaseEventPosition, CalendarEvent , DateTimeSelection } from '../shared'
+import type { BaseEventPosition, BaseViewProps, CalendarEvent, DateTimeSelection } from '../shared'
 
 // WeekViewの固有Props（BaseViewPropsを継承して95%削減）
 export interface WeekViewProps extends BaseViewProps {

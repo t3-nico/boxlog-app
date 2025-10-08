@@ -35,19 +35,19 @@ export interface SidebarState {
   // UI状態
   collapsed: boolean
   activeSection: string
-  
+
   // 通知関連
   unreadNotifications: number
   notifications: Notification[]
-  
+
   // スマートフォルダ
   smartFolders: SidebarSmartFolder[]
-  
+
   // タグ関連
   tags: SidebarTag[]
   tagCounts: Record<string, number>
   expandedTags: string[]
-  
+
   // ユーザー設定
   preferences: SidebarPreferences
 }
@@ -56,18 +56,18 @@ export interface SidebarActions {
   // UI操作
   setCollapsed: (_collapsed: boolean) => void
   setActiveSection: (_section: string) => void
-  
+
   // 通知操作
   addNotification: (_notification: Notification) => void
   markNotificationRead: (_id: string) => void
   markAllNotificationsRead: () => void
   setUnreadCount: (_count: number) => void
   setNotifications: (_notifications: Notification[]) => void
-  
+
   // スマートフォルダ操作
   setSmartFolders: (_folders: SidebarSmartFolder[]) => void
   addSmartFolder: (_folder: SidebarSmartFolder) => void
-  
+
   // タグ操作
   setTags: (_tags: SidebarTag[]) => void
   updateTag: (_tagId: string, _updates: Partial<SidebarTag>) => void
@@ -75,7 +75,7 @@ export interface SidebarActions {
   addTag: (_tag: SidebarTag) => void
   updateTagCounts: (_counts: Record<string, number>) => void
   toggleTagExpansion: (_tagId: string) => void
-  
+
   // 設定操作
   hideSection: (_sectionId: string) => void
   showSection: (_sectionId: string) => void

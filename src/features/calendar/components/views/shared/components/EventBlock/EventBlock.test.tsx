@@ -1,7 +1,7 @@
 // @ts-nocheck
 // TODO(#389): EventBlock.test型エラーを修正後、@ts-nocheckを削除
+import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 

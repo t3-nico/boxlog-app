@@ -3,7 +3,7 @@ import { useDragAndDrop as useSharedDragAndDrop } from '../../shared/hooks/useDr
 
 import type { CalendarEvent } from '../../shared/types/event.types'
 
-export type { DragState, DragHandlers } from '../../shared/hooks/useDragAndDrop'
+export type { DragHandlers, DragState } from '../../shared/hooks/useDragAndDrop'
 
 interface UseDragAndDropProps {
   onEventUpdate?: (eventId: string, updates: { startTime: Date; endTime: Date }) => Promise<void> | void

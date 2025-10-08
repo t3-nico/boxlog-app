@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useI18n } from '@/features/i18n/lib/hooks'
 
@@ -26,7 +26,6 @@ interface ContrastTheme {
 }
 
 import { getTranslation } from '@/features/calendar/lib/toast/get-translation'
-import { CALENDAR_TOAST_KEYS } from '@/features/calendar/lib/toast/translation-keys'
 
 // 翻訳キーを追加
 const CALENDAR_ACCESSIBILITY_KEYS = {
@@ -50,8 +49,8 @@ const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
       disabled: '#9ca3af',
       error: '#dc2626',
       warning: '#d97706',
-      success: '#059669'
-    }
+      success: '#059669',
+    },
   },
   blackOnWhite: {
     name: '黒地に白文字（ハイコントラスト）',
@@ -68,8 +67,8 @@ const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
       disabled: '#666666',
       error: '#ff0000',
       warning: '#ffaa00',
-      success: '#00ff00'
-    }
+      success: '#00ff00',
+    },
   },
   whiteOnBlack: {
     name: '白地に黒文字（ハイコントラスト）',
@@ -86,8 +85,8 @@ const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
       disabled: '#999999',
       error: '#cc0000',
       warning: '#cc6600',
-      success: '#006600'
-    }
+      success: '#006600',
+    },
   },
   yellowOnBlack: {
     name: '黒地に黄色文字（ハイコントラスト）',
@@ -104,8 +103,8 @@ const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
       disabled: '#666600',
       error: '#ff0000',
       warning: '#ff6600',
-      success: '#00ff00'
-    }
+      success: '#00ff00',
+    },
   },
   blueOnYellow: {
     name: '黄色地に青文字（ハイコントラスト）',
@@ -122,44 +121,45 @@ const HIGH_CONTRAST_THEMES: Record<string, ContrastTheme> = {
       disabled: '#666666',
       error: '#cc0000',
       warning: '#cc3300',
-      success: '#006600'
-    }
-  }
+      success: '#006600',
+    },
+  },
 }
 
 // OSの設定からハイコントラストモードを検出
 function detectSystemHighContrast(): boolean {
   if (typeof window === 'undefined') return false
-  
-  return window.matchMedia('(prefers-contrast: high)').matches ||
-         window.matchMedia('(-ms-high-contrast: active)').matches ||
-         window.matchMedia('(-ms-high-contrast: black-on-white)').matches ||
-         window.matchMedia('(-ms-high-contrast: white-on-black)').matches
+
+  return (
+    window.matchMedia('(prefers-contrast: high)').matches ||
+    window.matchMedia('(-ms-high-contrast: active)').matches ||
+    window.matchMedia('(-ms-high-contrast: black-on-white)').matches ||
+    window.matchMedia('(-ms-high-contrast: white-on-black)').matches
+  )
 }
 
 // 色のコントラスト比を計算（WCAG準拠）
 function calculateContrastRatio(color1: string, color2: string): number {
   const getLuminance = (color: string): number => {
-    const rgb = color.startsWith('#') ? 
-      parseInt(color.slice(1), 16) : 0
-    
+    const rgb = color.startsWith('#') ? parseInt(color.slice(1), 16) : 0
+
     const r = (rgb >> 16) & 255
     const g = (rgb >> 8) & 255
     const b = rgb & 255
-    
-    const [rs = 0, gs = 0, bs = 0] = [r, g, b].map(c => {
+
+    const [rs = 0, gs = 0, bs = 0] = [r, g, b].map((c) => {
       c = c / 255
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
     })
 
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs
   }
-  
+
   const lum1 = getLuminance(color1)
   const lum2 = getLuminance(color2)
   const lighter = Math.max(lum1, lum2)
   const darker = Math.min(lum1, lum2)
-  
+
   return (lighter + 0.05) / (darker + 0.05)
 }
 
@@ -168,11 +168,11 @@ function removeHighContrastStyles(): void {
   document.documentElement.removeAttribute('data-high-contrast')
   const defaultTheme = HIGH_CONTRAST_THEMES.default
   if (defaultTheme) {
-    Object.keys(defaultTheme.colors).forEach(key => {
+    Object.keys(defaultTheme.colors).forEach((key) => {
       document.documentElement.style.removeProperty(`--contrast-${key}`)
     })
   }
-  
+
   const existingStyle = document.getElementById('high-contrast-styles')
   if (existingStyle) {
     existingStyle.remove()
@@ -222,7 +222,7 @@ function generateInteractiveStyles(isDark: boolean): string {
   const primary = isDark ? '#ffffff' : '#000000'
   const secondary = isDark ? '#000000' : '#ffffff'
   const hover = isDark ? '#333333' : '#cccccc'
-  
+
   return `
     [data-high-contrast] button,
     [data-high-contrast] [role="button"] {
@@ -281,21 +281,21 @@ function generateSelectionStyles(isDark: boolean): string {
 // ハイコントラストテーマを適用
 function applyHighContrastTheme(themeName: string): void {
   document.documentElement.setAttribute('data-high-contrast', themeName)
-  
+
   const isDark = themeName === 'dark' || themeName === 'blackOnWhite' || themeName === 'yellowOnBlack'
-  
+
   const styleContent = [
     generateBaseStyles(isDark),
     generateFocusStyles(isDark),
     generateInteractiveStyles(isDark),
-    generateSelectionStyles(isDark)
+    generateSelectionStyles(isDark),
   ].join('')
-  
+
   const existingStyle = document.getElementById('high-contrast-styles')
   if (existingStyle) {
     existingStyle.remove()
   }
-  
+
   const style = document.createElement('style')
   style.id = 'high-contrast-styles'
   style.textContent = styleContent
@@ -309,20 +309,23 @@ export function useHighContrast() {
   const [isSystemHighContrast, setIsSystemHighContrast] = useState(false)
 
   // 翻訳されたテーマ名を取得
-  const getThemeNames = useCallback(() => ({
-    default: t('calendar.accessibility.standardContrast'),
-    blackOnWhite: '黒地に白文字（ハイコントラスト）',
-    whiteOnBlack: '白地に黒文字（ハイコントラスト）',
-    yellowOnBlack: '黒地に黄色文字（ハイコントラスト）',
-    blueOnYellow: '黄色地に青文字（ハイコントラスト）'
-  }), [t])
+  const getThemeNames = useCallback(
+    () => ({
+      default: t('calendar.accessibility.standardContrast'),
+      blackOnWhite: '黒地に白文字（ハイコントラスト）',
+      whiteOnBlack: '白地に黒文字（ハイコントラスト）',
+      yellowOnBlack: '黒地に黄色文字（ハイコントラスト）',
+      blueOnYellow: '黄色地に青文字（ハイコントラスト）',
+    }),
+    [t]
+  )
 
   // システムのハイコントラスト設定を監視
   useEffect(() => {
     const updateSystemHighContrast = () => {
       const systemHighContrast = detectSystemHighContrast()
       setIsSystemHighContrast(systemHighContrast)
-      
+
       // システムでハイコントラストが有効な場合、自動的に適用
       if (systemHighContrast && !isHighContrastEnabled) {
         setIsHighContrastEnabled(true)
@@ -337,15 +340,15 @@ export function useHighContrast() {
       window.matchMedia('(prefers-contrast: high)'),
       window.matchMedia('(-ms-high-contrast: active)'),
       window.matchMedia('(-ms-high-contrast: black-on-white)'),
-      window.matchMedia('(-ms-high-contrast: white-on-black)')
+      window.matchMedia('(-ms-high-contrast: white-on-black)'),
     ]
 
-    mediaQueries.forEach(mq => {
+    mediaQueries.forEach((mq) => {
       mq.addEventListener('change', updateSystemHighContrast)
     })
 
     return () => {
-      mediaQueries.forEach(mq => {
+      mediaQueries.forEach((mq) => {
         mq.removeEventListener('change', updateSystemHighContrast)
       })
     }
@@ -355,11 +358,11 @@ export function useHighContrast() {
   useEffect(() => {
     const savedHighContrast = localStorage.getItem('accessibility-high-contrast')
     const savedTheme = localStorage.getItem('accessibility-contrast-theme')
-    
+
     if (savedHighContrast === 'true') {
       setIsHighContrastEnabled(true)
     }
-    
+
     if (savedTheme && HIGH_CONTRAST_THEMES[savedTheme]) {
       setCurrentTheme(savedTheme)
     }
@@ -377,30 +380,36 @@ export function useHighContrast() {
   }, [isHighContrastEnabled, currentTheme])
 
   // ハイコントラストモードの切り替え
-  const toggleHighContrast = useCallback((enabled?: boolean) => {
-    const newEnabled = enabled !== undefined ? enabled : !isHighContrastEnabled
-    setIsHighContrastEnabled(newEnabled)
-    localStorage.setItem('accessibility-high-contrast', newEnabled.toString())
-    
-    // システムからの自動適用でない場合は、適切なテーマを選択
-    if (newEnabled && currentTheme === 'default') {
-      setCurrentTheme('blackOnWhite')
-    }
-  }, [isHighContrastEnabled, currentTheme])
+  const toggleHighContrast = useCallback(
+    (enabled?: boolean) => {
+      const newEnabled = enabled !== undefined ? enabled : !isHighContrastEnabled
+      setIsHighContrastEnabled(newEnabled)
+      localStorage.setItem('accessibility-high-contrast', newEnabled.toString())
+
+      // システムからの自動適用でない場合は、適切なテーマを選択
+      if (newEnabled && currentTheme === 'default') {
+        setCurrentTheme('blackOnWhite')
+      }
+    },
+    [isHighContrastEnabled, currentTheme]
+  )
 
   // テーマの変更
-  const changeTheme = useCallback((themeName: string) => {
-    if (HIGH_CONTRAST_THEMES[themeName]) {
-      setCurrentTheme(themeName)
-      localStorage.setItem('accessibility-contrast-theme', themeName)
-      
-      // テーマ変更時にハイコントラストモードも有効化
-      if (!isHighContrastEnabled) {
-        setIsHighContrastEnabled(true)
-        localStorage.setItem('accessibility-high-contrast', 'true')
+  const changeTheme = useCallback(
+    (themeName: string) => {
+      if (HIGH_CONTRAST_THEMES[themeName]) {
+        setCurrentTheme(themeName)
+        localStorage.setItem('accessibility-contrast-theme', themeName)
+
+        // テーマ変更時にハイコントラストモードも有効化
+        if (!isHighContrastEnabled) {
+          setIsHighContrastEnabled(true)
+          localStorage.setItem('accessibility-high-contrast', 'true')
+        }
       }
-    }
-  }, [isHighContrastEnabled])
+    },
+    [isHighContrastEnabled]
+  )
 
   // 現在のテーマの情報を取得
   const getCurrentTheme = useCallback(() => {
@@ -411,7 +420,7 @@ export function useHighContrast() {
   const getAvailableThemes = useCallback(() => {
     return Object.entries(HIGH_CONTRAST_THEMES).map(([key, theme]) => ({
       key,
-      ...theme
+      ...theme,
     }))
   }, [])
 
@@ -421,7 +430,7 @@ export function useHighContrast() {
     return {
       ratio,
       wcagAA: ratio >= 4.5,
-      wcagAAA: ratio >= 7.0
+      wcagAAA: ratio >= 7.0,
     }
   }, [])
 
@@ -436,16 +445,16 @@ export function useHighContrast() {
       accent_background: checkContrast(theme.colors.accent, theme.colors.background),
       error_background: checkContrast(theme.colors.error, theme.colors.background),
       warning_background: checkContrast(theme.colors.warning, theme.colors.background),
-      success_background: checkContrast(theme.colors.success, theme.colors.background)
+      success_background: checkContrast(theme.colors.success, theme.colors.background),
     }
-    
-    const allAAA = Object.values(results).every(result => result.wcagAAA)
-    const allAA = Object.values(results).every(result => result.wcagAA)
-    
+
+    const allAAA = Object.values(results).every((result) => result.wcagAAA)
+    const allAA = Object.values(results).every((result) => result.wcagAA)
+
     return {
       results,
       wcagAAA: allAAA,
-      wcagAA: allAA
+      wcagAA: allAA,
     }
   }, [getCurrentTheme, checkContrast])
 
@@ -455,9 +464,12 @@ export function useHighContrast() {
   }, [])
 
   // ハイコントラスト用のクラス名を生成
-  const getContrastClassName = useCallback((baseClass: string, contrastClass: string) => {
-    return isHighContrastEnabled ? `${baseClass} ${contrastClass}` : baseClass
-  }, [isHighContrastEnabled])
+  const getContrastClassName = useCallback(
+    (baseClass: string, contrastClass: string) => {
+      return isHighContrastEnabled ? `${baseClass} ${contrastClass}` : baseClass
+    },
+    [isHighContrastEnabled]
+  )
 
   return {
     isHighContrastEnabled,
@@ -471,9 +483,9 @@ export function useHighContrast() {
     validateCurrentTheme,
     getContrastVariable,
     getContrastClassName,
-    
+
     // 便利なプロパティ
     colors: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).colors,
-    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).wcagAAA
+    isWcagAAA: (getCurrentTheme() || HIGH_CONTRAST_THEMES.default).wcagAAA,
   }
 }

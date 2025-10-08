@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { describe, expect, it, vi } from 'vitest'
 
 import { Button } from './button'
 
@@ -140,10 +140,7 @@ describe('Button', () => {
   describe('アクセシビリティ', () => {
     it('aria-label属性が適用される', () => {
       render(<Button aria-label="送信ボタン">送信</Button>)
-      expect(screen.getByRole('button')).toHaveAttribute(
-        'aria-label',
-        '送信ボタン'
-      )
+      expect(screen.getByRole('button')).toHaveAttribute('aria-label', '送信ボタン')
     })
 
     it('aria-disabled属性が適用される', () => {

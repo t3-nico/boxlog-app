@@ -12,16 +12,11 @@ export const PreloadResources = () => {
 
   useEffect(() => {
     // 重要なページをプリフェッチ
-    const criticalRoutes = [
-      '/calendar',
-      '/board',
-      '/table',
-      '/settings'
-    ]
+    const criticalRoutes = ['/calendar', '/board', '/table', '/settings']
 
     // 少し遅延してからプリフェッチ（初期ロードを妨げないため）
     const timer = setTimeout(() => {
-      criticalRoutes.forEach(route => {
+      criticalRoutes.forEach((route) => {
         router.prefetch(route)
       })
     }, 2000)
@@ -31,11 +26,9 @@ export const PreloadResources = () => {
 
   useEffect(() => {
     // WebFont のプリロード
-    const fontLinks = [
-      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
-    ]
+    const fontLinks = ['https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap']
 
-    fontLinks.forEach(href => {
+    fontLinks.forEach((href) => {
       const link = document.createElement('link')
       link.rel = 'preload'
       link.as = 'style'
@@ -53,7 +46,8 @@ export const PreloadResources = () => {
 export function initializeCacheStrategy() {
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker
+        .register('/sw.js')
         .then((registration) => {
           console.log('SW registered: ', registration)
         })

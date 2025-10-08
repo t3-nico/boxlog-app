@@ -20,7 +20,7 @@ const ErrorPage = () => {
       return {
         title: 'Error',
         description: message,
-        suggestion: 'Please try again or contact support if the problem persists.'
+        suggestion: 'Please try again or contact support if the problem persists.',
       }
     }
 
@@ -28,20 +28,21 @@ const ErrorPage = () => {
       case 'auth':
         return {
           title: 'Authentication Error',
-          description: 'There was a problem verifying your email or authentication link. The link may have expired or already been used.',
-          suggestion: 'Please try logging in again or request a new verification email.'
+          description:
+            'There was a problem verifying your email or authentication link. The link may have expired or already been used.',
+          suggestion: 'Please try logging in again or request a new verification email.',
         }
       case 'verification':
         return {
           title: 'Email Verification Failed',
-          description: 'We couldn\'t verify your email address. The verification link may be invalid or expired.',
-          suggestion: 'Please check your email for a new verification link or contact support if the problem persists.'
+          description: "We couldn't verify your email address. The verification link may be invalid or expired.",
+          suggestion: 'Please check your email for a new verification link or contact support if the problem persists.',
         }
       default:
         return {
           title: 'Something went wrong',
           description: 'An unexpected error occurred while processing your request.',
-          suggestion: 'Please try again or contact support if the problem continues.'
+          suggestion: 'Please try again or contact support if the problem continues.',
         }
     }
   }
@@ -57,37 +58,26 @@ const ErrorPage = () => {
   }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-100 dark:bg-neutral-900 p-6">
-      <div className={cn('max-w-md w-full flex flex-col gap-8')}>
+    <div className="flex min-h-screen items-center justify-center bg-neutral-100 p-6 dark:bg-neutral-900">
+      <div className={cn('flex w-full max-w-md flex-col gap-8')}>
         <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 dark:bg-red-900/20">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
             <AlertCircle className="h-8 w-8 text-red-600 dark:text-red-500" />
           </div>
           <h2 className="mt-6 text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
             {errorInfo.title}
           </h2>
-          <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-200">
-            {errorInfo.description}
-          </p>
-          <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">
-            {errorInfo.suggestion}
-          </p>
+          <p className="mt-2 text-sm text-neutral-800 dark:text-neutral-200">{errorInfo.description}</p>
+          <p className="mt-4 text-sm text-neutral-600 dark:text-neutral-400">{errorInfo.suggestion}</p>
         </div>
 
         <div className="flex flex-col gap-4">
-          <Button
-            onClick={handleGoToLogin}
-            className="w-full flex items-center justify-center gap-2"
-          >
+          <Button onClick={handleGoToLogin} className="flex w-full items-center justify-center gap-2">
             <Home className="h-4 w-4" />
             Go to Login
           </Button>
 
-          <Button
-            variant="outline"
-            onClick={handleGoBack}
-            className="w-full flex items-center justify-center gap-2"
-          >
+          <Button variant="outline" onClick={handleGoBack} className="flex w-full items-center justify-center gap-2">
             <RefreshCw className="h-4 w-4" />
             Go Back
           </Button>
@@ -98,7 +88,7 @@ const ErrorPage = () => {
             Need help?{' '}
             <a
               href="mailto:support@boxlog.com"
-              className="font-medium text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400"
+              className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400"
             >
               Contact Support
             </a>
@@ -109,4 +99,4 @@ const ErrorPage = () => {
   )
 }
 
-export default ErrorPage 
+export default ErrorPage

@@ -26,7 +26,7 @@ function sanitizeObject(obj: any): any {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObject(item))
+    return obj.map((item) => sanitizeObject(item))
   }
 
   if (obj !== null && typeof obj === 'object') {
@@ -49,15 +49,17 @@ function sanitizeString(str: string): string {
   if (typeof str !== 'string') return str
 
   // 高サロゲート文字（0xD800-0xDBFF）および低サロゲート文字（0xDC00-0xDFFF）の処理
-  return str
-    // 孤立した高サロゲート文字を除去
-    .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '�')
-    // 孤立した低サロゲート文字を除去
-    .replace(/(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '�')
-    // その他の制御文字を除去（タブ、改行、復帰は保持）
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '')
-    // 非文字コードポイントを除去
-    .replace(/[\uFDD0-\uFDEF\uFFFE\uFFFF]/g, '�')
+  return (
+    str
+      // 孤立した高サロゲート文字を除去
+      .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, '�')
+      // 孤立した低サロゲート文字を除去
+      .replace(/(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, '�')
+      // その他の制御文字を除去（タブ、改行、復帰は保持）
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '')
+      // 非文字コードポイントを除去
+      .replace(/[\uFDD0-\uFDEF\uFFFE\uFFFF]/g, '�')
+  )
 }
 
 /**
@@ -72,10 +74,12 @@ export function hasInvalidUnicodeChars(str: string): boolean {
   const controlChars = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/
   const nonCharacters = /[\uFDD0-\uFDEF\uFFFE\uFFFF]/
 
-  return isolatedHighSurrogate.test(str) ||
-         isolatedLowSurrogate.test(str) ||
-         controlChars.test(str) ||
-         nonCharacters.test(str)
+  return (
+    isolatedHighSurrogate.test(str) ||
+    isolatedLowSurrogate.test(str) ||
+    controlChars.test(str) ||
+    nonCharacters.test(str)
+  )
 }
 
 /**
@@ -106,60 +110,60 @@ export function analyzeInvalidChars(str: string): {
     const charCode = str.charCodeAt(i)
 
     // 高サロゲート文字
-    if (charCode >= 0xD800 && charCode <= 0xDBFF) {
+    if (charCode >= 0xd800 && charCode <= 0xdbff) {
       const nextChar = str[i + 1]
-      if (!nextChar || nextChar.charCodeAt(0) < 0xDC00 || nextChar.charCodeAt(0) > 0xDFFF) {
+      if (!nextChar || nextChar.charCodeAt(0) < 0xdc00 || nextChar.charCodeAt(0) > 0xdfff) {
         issues.push({
           type: 'isolated_high_surrogate',
           char,
           position: i,
-          charCode
+          charCode,
         })
       }
     }
 
     // 低サロゲート文字
-    if (charCode >= 0xDC00 && charCode <= 0xDFFF) {
+    if (charCode >= 0xdc00 && charCode <= 0xdfff) {
       const prevChar = str[i - 1]
-      if (!prevChar || prevChar.charCodeAt(0) < 0xD800 || prevChar.charCodeAt(0) > 0xDBFF) {
+      if (!prevChar || prevChar.charCodeAt(0) < 0xd800 || prevChar.charCodeAt(0) > 0xdbff) {
         issues.push({
           type: 'isolated_low_surrogate',
           char,
           position: i,
-          charCode
+          charCode,
         })
       }
     }
 
     // 制御文字
-    if ((charCode >= 0x0000 && charCode <= 0x0008) ||
-        charCode === 0x000B ||
-        charCode === 0x000C ||
-        (charCode >= 0x000E && charCode <= 0x001F) ||
-        (charCode >= 0x007F && charCode <= 0x009F)) {
+    if (
+      (charCode >= 0x0000 && charCode <= 0x0008) ||
+      charCode === 0x000b ||
+      charCode === 0x000c ||
+      (charCode >= 0x000e && charCode <= 0x001f) ||
+      (charCode >= 0x007f && charCode <= 0x009f)
+    ) {
       issues.push({
         type: 'control_character',
         char: char === '\u0000' ? '\\0' : char,
         position: i,
-        charCode
+        charCode,
       })
     }
 
     // 非文字コードポイント
-    if ((charCode >= 0xFDD0 && charCode <= 0xFDEF) ||
-        charCode === 0xFFFE ||
-        charCode === 0xFFFF) {
+    if ((charCode >= 0xfdd0 && charCode <= 0xfdef) || charCode === 0xfffe || charCode === 0xffff) {
       issues.push({
         type: 'non_character',
         char,
         position: i,
-        charCode
+        charCode,
       })
     }
   }
 
   return {
     hasIssues: issues.length > 0,
-    issues
+    issues,
   }
 }

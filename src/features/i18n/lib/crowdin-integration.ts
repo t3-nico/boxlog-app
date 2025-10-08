@@ -63,7 +63,7 @@ export class CrowdinIntegration {
       const response = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/files`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
+          Authorization: `Bearer ${this.config.apiToken}`,
         },
         body: formData,
       })
@@ -94,7 +94,7 @@ export class CrowdinIntegration {
       const buildResponse = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/translations/builds`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
+          Authorization: `Bearer ${this.config.apiToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -109,11 +109,14 @@ export class CrowdinIntegration {
       await this.waitForBuildCompletion(buildId)
 
       // Download translations
-      const downloadResponse = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/translations/builds/${buildId}/download`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
-        },
-      })
+      const downloadResponse = await fetch(
+        `${this.apiBaseUrl}/projects/${this.config.projectId}/translations/builds/${buildId}/download`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.config.apiToken}`,
+          },
+        }
+      )
 
       const downloadData = await downloadResponse.json()
       const fileResponse = await fetch(downloadData.data.url)
@@ -130,17 +133,19 @@ export class CrowdinIntegration {
    * 翻訳進捗状況の取得
    * 言語別の翻訳完了率、レビュー状況を取得
    */
-  async getTranslationProgress(): Promise<Array<{
-    language: string
-    translated: number
-    approved: number
-    total: number
-    progress: number
-  }>> {
+  async getTranslationProgress(): Promise<
+    Array<{
+      language: string
+      translated: number
+      approved: number
+      total: number
+      progress: number
+    }>
+  > {
     try {
       const response = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/languages/progress`, {
         headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
+          Authorization: `Bearer ${this.config.apiToken}`,
         },
       })
 
@@ -164,11 +169,14 @@ export class CrowdinIntegration {
    */
   async getPendingReviews(language: string): Promise<CrowdinTranslation[]> {
     try {
-      const response = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/translations?languageId=${language}&status=0`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
-        },
-      })
+      const response = await fetch(
+        `${this.apiBaseUrl}/projects/${this.config.projectId}/translations?languageId=${language}&status=0`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.config.apiToken}`,
+          },
+        }
+      )
 
       const data = await response.json()
       return data.data.map((item: any) => ({
@@ -195,7 +203,7 @@ export class CrowdinIntegration {
       const response = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/approvals`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
+          Authorization: `Bearer ${this.config.apiToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -240,18 +248,21 @@ export class CrowdinIntegration {
     let attempts = 0
 
     while (attempts < maxAttempts) {
-      const response = await fetch(`${this.apiBaseUrl}/projects/${this.config.projectId}/translations/builds/${buildId}`, {
-        headers: {
-          'Authorization': `Bearer ${this.config.apiToken}`,
-        },
-      })
+      const response = await fetch(
+        `${this.apiBaseUrl}/projects/${this.config.projectId}/translations/builds/${buildId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${this.config.apiToken}`,
+          },
+        }
+      )
 
       const data = await response.json()
       if (data.data.status === 'finished') {
         return
       }
 
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
       attempts++
     }
 

@@ -100,7 +100,7 @@ export const EssentialInspectorView = ({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={t('calendar.event.enterEventTitle')}
-            className="w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
           />
         </div>
       </div>

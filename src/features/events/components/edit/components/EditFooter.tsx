@@ -1,7 +1,5 @@
 'use client'
 
-import React from 'react'
-
 import { motion } from 'framer-motion'
 import { Loader2, Trash2 } from 'lucide-react'
 
@@ -15,15 +13,9 @@ interface EditFooterProps {
   onDelete?: () => void
 }
 
-export const EditFooter = ({
-  isValid,
-  isSubmitting,
-  onClose,
-  onSave,
-  onDelete
-}: EditFooterProps) => {
+export const EditFooter = ({ isValid, isSubmitting, onClose, onSave, onDelete }: EditFooterProps) => {
   return (
-    <div className="flex justify-between items-center pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800">
+    <div className="mt-6 flex items-center justify-between border-t border-neutral-200 pt-6 dark:border-neutral-800">
       {/* 削除ボタン（左端） */}
       <div>
         {onDelete != null && (
@@ -31,9 +23,9 @@ export const EditFooter = ({
             type="button"
             onClick={onDelete}
             className={cn(
-              'px-6 py-3 rounded-lg font-medium flex items-center gap-2',
+              'flex items-center gap-2 rounded-lg px-6 py-3 font-medium',
               'transition-all duration-200',
-              'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:opacity-90',
+              'bg-red-50 text-red-600 hover:opacity-90 dark:bg-red-900/20 dark:text-red-400',
               'border border-red-200 dark:border-red-800'
             )}
           >
@@ -58,9 +50,9 @@ export const EditFooter = ({
           type="button"
           onClick={onClose}
           className={cn(
-            'px-6 py-3 rounded-lg font-medium',
-            'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400',
-            'hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-all duration-200',
+            'rounded-lg px-6 py-3 font-medium',
+            'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
+            'transition-all duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-700',
             'border border-neutral-200 dark:border-neutral-700'
           )}
         >
@@ -70,11 +62,11 @@ export const EditFooter = ({
           onClick={onSave}
           disabled={!isValid || isSubmitting}
           className={cn(
-            'px-8 py-3 rounded-lg font-semibold flex items-center gap-2',
+            'flex items-center gap-2 rounded-lg px-8 py-3 font-semibold',
             'transition-all duration-200',
             isValid && !isSubmitting
-              ? 'bg-blue-500 text-white hover:bg-blue-600 hover:opacity-90 shadow-lg hover:shadow-xl'
-              : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 cursor-not-allowed'
+              ? 'bg-blue-500 text-white shadow-lg hover:bg-blue-600 hover:opacity-90 hover:shadow-xl'
+              : 'cursor-not-allowed bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500'
           )}
           whileHover={isValid && !isSubmitting ? { scale: 1.02 } : {}}
           whileTap={isValid && !isSubmitting ? { scale: 0.98 } : {}}

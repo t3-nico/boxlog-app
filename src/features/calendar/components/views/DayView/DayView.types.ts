@@ -2,12 +2,12 @@ import type { CSSProperties } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
 
-import type { 
-  ViewDateRange, 
-  Task, 
+import type {
   CalendarViewType,
+  CreateRecordInput,
   CreateTaskInput,
-  CreateRecordInput
+  Task,
+  ViewDateRange,
 } from '../../../types/calendar.types'
 import type { DateTimeSelection, TimeSlot } from '../shared'
 
@@ -19,7 +19,7 @@ export interface DayViewProps {
   currentDate: Date
   showWeekends?: boolean // 週末の表示/非表示（デフォルト: true）
   className?: string
-  
+
   // Event handlers
   onTaskClick?: (task: CalendarEvent) => void
   onEventClick?: (event: CalendarEvent) => void
@@ -30,12 +30,12 @@ export interface DayViewProps {
   onRestoreEvent?: (event: CalendarEvent) => Promise<void>
   onEmptyClick?: (date: Date, time: string) => void
   onTimeRangeSelect?: (selection: DateTimeSelection) => void
-  
+
   // Task handlers
   onTaskDrag?: (taskId: string, newDate: Date) => void
   onCreateTask?: (task: CreateTaskInput) => void
   onCreateRecord?: (record: CreateRecordInput) => void
-  
+
   // Navigation handlers
   onViewChange?: (viewType: CalendarViewType) => void
   onNavigatePrev?: () => void
@@ -90,7 +90,6 @@ export interface UseDayEventsReturn {
   eventPositions: EventPosition[]
   maxConcurrentEvents: number
 }
-
 
 export interface EventPosition {
   event: CalendarEvent

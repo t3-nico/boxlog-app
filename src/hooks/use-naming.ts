@@ -12,21 +12,21 @@ import { useCallback, useMemo } from 'react'
 
 import { usePathname, useRouter } from 'next/navigation'
 
-import { SCREENS, FEATURES } from '@/constants/naming'
+import { FEATURES, SCREENS } from '@/constants/naming'
 import {
-  createPageViewEvent,
   createActionEvent,
   createEngagementEvent,
   createErrorEvent,
+  createPageViewEvent,
   createPerformanceEvent,
-  navigateToScreen,
-  getParameterizedRoute,
-  getPageClassName,
   getComponentClassName,
+  getPageClassName,
+  getParameterizedRoute,
   isValidScreen,
+  navigateToScreen,
   safeGetScreenName,
-  type ScreenName,
   type FeatureName,
+  type ScreenName,
 } from '@/lib/naming-utils'
 
 // ==============================================
@@ -40,21 +40,18 @@ export function useAnalyticsTracking(currentScreen?: ScreenName) {
   /**
    * ページビューを追跡
    */
-  const trackPageView = useCallback(
-    (screen: ScreenName, properties?: Record<string, any>) => {
-      const event = createPageViewEvent(screen, properties)
+  const trackPageView = useCallback((screen: ScreenName, properties?: Record<string, any>) => {
+    const event = createPageViewEvent(screen, properties)
 
-      // 実際の分析サービスに送信
-      // analytics.track(event.name, event.properties)
+    // 実際の分析サービスに送信
+    // analytics.track(event.name, event.properties)
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('📊 Page View:', event)
-      }
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📊 Page View:', event)
+    }
 
-      return event
-    },
-    []
-  )
+    return event
+  }, [])
 
   /**
    * ユーザーアクションを追跡
@@ -158,60 +155,60 @@ export function useNamingNavigation() {
    */
   const currentScreen = useMemo(() => {
     // パス名から画面を推定
-    if ((pathname || "/") === '/') return 'dashboard'
-    if ((pathname || "/").startsWith('/auth/login')) return 'login'
-    if ((pathname || "/").startsWith('/auth/signup')) return 'signup'
-    if ((pathname || "/").startsWith('/auth/reset-password')) return 'password_reset'
-    if ((pathname || "/").startsWith('/auth/password')) return 'password_change'
-    if ((pathname || "/").startsWith('/auth')) return 'auth'
-    if ((pathname || "/").startsWith('/calendar/')) return 'calendar_view'
-    if ((pathname || "/") === '/calendar') return 'calendar'
-    if ((pathname || "/") === '/board') return 'board'
-    if ((pathname || "/").startsWith('/table/')) return 'table_detail'
-    if ((pathname || "/") === '/table') return 'table'
-    if ((pathname || "/") === '/ai-chat') return 'ai_chat'
-    if ((pathname || "/").startsWith('/stats/') && pathname !== '/stats') {
+    if ((pathname || '/') === '/') return 'dashboard'
+    if ((pathname || '/').startsWith('/auth/login')) return 'login'
+    if ((pathname || '/').startsWith('/auth/signup')) return 'signup'
+    if ((pathname || '/').startsWith('/auth/reset-password')) return 'password_reset'
+    if ((pathname || '/').startsWith('/auth/password')) return 'password_change'
+    if ((pathname || '/').startsWith('/auth')) return 'auth'
+    if ((pathname || '/').startsWith('/calendar/')) return 'calendar_view'
+    if ((pathname || '/') === '/calendar') return 'calendar'
+    if ((pathname || '/') === '/board') return 'board'
+    if ((pathname || '/').startsWith('/table/')) return 'table_detail'
+    if ((pathname || '/') === '/table') return 'table'
+    if ((pathname || '/') === '/ai-chat') return 'ai_chat'
+    if ((pathname || '/').startsWith('/stats/') && pathname !== '/stats') {
       // 詳細な統計ページの判定
-      if ((pathname || "/") === '/stats/life-vision') return 'stats_life_vision'
-      if ((pathname || "/") === '/stats/identity') return 'stats_identity'
-      if ((pathname || "/") === '/stats/goals') return 'stats_goals'
-      if ((pathname || "/") === '/stats/value') return 'stats_value'
-      if ((pathname || "/") === '/stats/antivalues') return 'stats_antivalues'
-      if ((pathname || "/") === '/stats/purpose') return 'stats_purpose'
-      if ((pathname || "/") === '/stats/principles') return 'stats_principles'
-      if ((pathname || "/") === '/stats/connpass') return 'stats_connpass'
-      if ((pathname || "/") === '/stats/reflect/all') return 'stats_reflect_all'
-      if ((pathname || "/") === '/stats/reflect/today') return 'stats_reflect_today'
-      if ((pathname || "/") === '/stats/reflect/week') return 'stats_reflect_week'
-      if ((pathname || "/") === '/stats/reflect/month') return 'stats_reflect_month'
-      if ((pathname || "/") === '/stats/act/try') return 'stats_act_try'
-      if ((pathname || "/") === '/stats/act/next') return 'stats_act_next'
+      if ((pathname || '/') === '/stats/life-vision') return 'stats_life_vision'
+      if ((pathname || '/') === '/stats/identity') return 'stats_identity'
+      if ((pathname || '/') === '/stats/goals') return 'stats_goals'
+      if ((pathname || '/') === '/stats/value') return 'stats_value'
+      if ((pathname || '/') === '/stats/antivalues') return 'stats_antivalues'
+      if ((pathname || '/') === '/stats/purpose') return 'stats_purpose'
+      if ((pathname || '/') === '/stats/principles') return 'stats_principles'
+      if ((pathname || '/') === '/stats/connpass') return 'stats_connpass'
+      if ((pathname || '/') === '/stats/reflect/all') return 'stats_reflect_all'
+      if ((pathname || '/') === '/stats/reflect/today') return 'stats_reflect_today'
+      if ((pathname || '/') === '/stats/reflect/week') return 'stats_reflect_week'
+      if ((pathname || '/') === '/stats/reflect/month') return 'stats_reflect_month'
+      if ((pathname || '/') === '/stats/act/try') return 'stats_act_try'
+      if ((pathname || '/') === '/stats/act/next') return 'stats_act_next'
       return 'stats_detail'
     }
-    if ((pathname || "/") === '/stats') return 'stats'
-    if ((pathname || "/").startsWith('/settings/')) {
+    if ((pathname || '/') === '/stats') return 'stats'
+    if ((pathname || '/').startsWith('/settings/')) {
       // 詳細な設定ページの判定
-      if ((pathname || "/") === '/settings/general') return 'settings_general'
-      if ((pathname || "/") === '/settings/account') return 'settings_account'
-      if ((pathname || "/") === '/settings/preferences') return 'settings_preferences'
-      if ((pathname || "/") === '/settings/notifications') return 'settings_notifications'
-      if ((pathname || "/") === '/settings/calendar') return 'settings_calendar'
-      if ((pathname || "/") === '/settings/tags') return 'settings_tags'
-      if ((pathname || "/") === '/settings/templates') return 'settings_templates'
-      if ((pathname || "/") === '/settings/integration') return 'settings_integration'
-      if ((pathname || "/") === '/settings/data-export') return 'settings_data_export'
-      if ((pathname || "/") === '/settings/plan-billing') return 'settings_plan_billing'
-      if ((pathname || "/") === '/settings/trash') return 'settings_trash'
-      if ((pathname || "/") === '/settings/legal') return 'settings_legal'
-      if ((pathname || "/") === '/settings/test-autosave') return 'settings_test_autosave'
-      if ((pathname || "/") === '/settings/chronotype') return 'settings_chronotype'
+      if ((pathname || '/') === '/settings/general') return 'settings_general'
+      if ((pathname || '/') === '/settings/account') return 'settings_account'
+      if ((pathname || '/') === '/settings/preferences') return 'settings_preferences'
+      if ((pathname || '/') === '/settings/notifications') return 'settings_notifications'
+      if ((pathname || '/') === '/settings/calendar') return 'settings_calendar'
+      if ((pathname || '/') === '/settings/tags') return 'settings_tags'
+      if ((pathname || '/') === '/settings/templates') return 'settings_templates'
+      if ((pathname || '/') === '/settings/integration') return 'settings_integration'
+      if ((pathname || '/') === '/settings/data-export') return 'settings_data_export'
+      if ((pathname || '/') === '/settings/plan-billing') return 'settings_plan_billing'
+      if ((pathname || '/') === '/settings/trash') return 'settings_trash'
+      if ((pathname || '/') === '/settings/legal') return 'settings_legal'
+      if ((pathname || '/') === '/settings/test-autosave') return 'settings_test_autosave'
+      if ((pathname || '/') === '/settings/chronotype') return 'settings_chronotype'
       return 'settings'
     }
-    if ((pathname || "/") === '/settings') return 'settings'
-    if ((pathname || "/") === '/help/chat-history') return 'help_chat_history'
-    if ((pathname || "/") === '/help') return 'help'
-    if ((pathname || "/") === '/error') return 'error'
-    if ((pathname || "/") === '/test-sentry') return 'test_sentry'
+    if ((pathname || '/') === '/settings') return 'settings'
+    if ((pathname || '/') === '/help/chat-history') return 'help_chat_history'
+    if ((pathname || '/') === '/help') return 'help'
+    if ((pathname || '/') === '/error') return 'error'
+    if ((pathname || '/') === '/test-sentry') return 'test_sentry'
 
     return 'dashboard' // デフォルト
   }, [pathname])
@@ -221,9 +218,7 @@ export function useNamingNavigation() {
    */
   const navigateTo = useCallback(
     (screen: ScreenName, parameter?: string) => {
-      const path = parameter
-        ? getParameterizedRoute(screen, parameter)
-        : navigateToScreen(screen)
+      const path = parameter ? getParameterizedRoute(screen, parameter) : navigateToScreen(screen)
 
       router.push(path)
 
@@ -255,10 +250,7 @@ export function useNamingNavigation() {
 /**
  * CSSクラス生成フック
  */
-export function useNamingStyles(
-  componentName?: string,
-  screenOverride?: ScreenName
-) {
+export function useNamingStyles(componentName?: string, screenOverride?: ScreenName) {
   const { currentScreen } = useNamingNavigation()
   const screen = screenOverride || currentScreen
 

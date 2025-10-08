@@ -19,8 +19,8 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
   if (isUser) {
     return (
       <div className="mb-4 flex justify-end">
-        <div className="max-w-[80%] break-words rounded-2xl rounded-tr-sm bg-purple-600 px-4 py-2 text-white">
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+        <div className="max-w-[80%] rounded-2xl rounded-tr-sm bg-purple-600 px-4 py-2 break-words text-white">
+          <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
           {message.status != null && (
             <div className="mt-1 text-xs text-purple-100 opacity-75">
               {message.status === 'sending' && 'Sending...'}
@@ -40,8 +40,8 @@ const MessageBubble = ({ message }: { message: ChatMessage }) => {
       </div>
 
       {/* AI Message Bubble */}
-      <div className="bg-background text-foreground border-border max-w-[80%] break-words rounded-2xl rounded-tl-sm border px-4 py-2">
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</div>
+      <div className="bg-background text-foreground border-border max-w-[80%] rounded-2xl rounded-tl-sm border px-4 py-2 break-words">
+        <div className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</div>
         <div className="text-muted-foreground mt-1 text-xs">
           {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
@@ -55,23 +55,32 @@ const ChatInput = () => {
   const [isComposing, setIsComposing] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (inputValue.trim() && !isTyping) {
-      await sendMessage(inputValue)
-    }
-  }, [inputValue, isTyping, sendMessage])
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
       e.preventDefault()
-      handleSubmit(e)
-    }
-  }, [isComposing, handleSubmit])
+      if (inputValue.trim() && !isTyping) {
+        await sendMessage(inputValue)
+      }
+    },
+    [inputValue, isTyping, sendMessage]
+  )
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInputValue(e.target.value)
-  }, [setInputValue])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
+        e.preventDefault()
+        handleSubmit(e)
+      }
+    },
+    [isComposing, handleSubmit]
+  )
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setInputValue(e.target.value)
+    },
+    [setInputValue]
+  )
 
   const handleCompositionStart = useCallback(() => {
     setIsComposing(true)
@@ -122,7 +131,7 @@ const ChatInput = () => {
           <button
             type="submit"
             disabled={!inputValue.trim() || isTyping}
-            className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute bottom-2 right-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
+            className="text-muted-foreground hover:text-foreground disabled:text-muted-foreground/50 absolute right-2 bottom-2 p-2 transition-colors focus:outline-none disabled:cursor-not-allowed"
           >
             <ArrowUpCircle className="h-6 w-6" />
           </button>
@@ -148,12 +157,15 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
   }, [messages])
 
   // Handle resize functionality
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    setIsResizing(true)
-    resizeStartY.current = e.clientY
-    resizeStartHeight.current = panelHeight
-  }, [panelHeight])
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      setIsResizing(true)
+      resizeStartY.current = e.clientY
+      resizeStartHeight.current = panelHeight
+    },
+    [panelHeight]
+  )
 
   const handleResizeKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -226,7 +238,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
       {/* Panel positioned within main area */}
       <div
         ref={panelRef}
-        className="bg-background border-border absolute bottom-0 left-0 right-0 z-50 flex flex-col border-t shadow-lg transition-all duration-300 ease-out"
+        className="bg-background border-border absolute right-0 bottom-0 left-0 z-50 flex flex-col border-t shadow-lg transition-all duration-300 ease-out"
         style={{
           transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
           height: isMinimized ? '40px' : `${panelHeight}px`,
@@ -285,7 +297,7 @@ export const BottomUpChatModal = ({ isOpen, onClose }: BottomUpChatModalProps) =
                   </Button>
 
                   {showMenu != null && (
-                    <div className="bg-card border-border absolute bottom-full right-0 z-50 mb-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
+                    <div className="bg-card border-border absolute right-0 bottom-full z-50 mb-1 min-w-[140px] rounded-lg border py-1 shadow-lg">
                       <button
                         type="button"
                         onClick={handleClearMessages}

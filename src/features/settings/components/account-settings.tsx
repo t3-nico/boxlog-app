@@ -231,9 +231,17 @@ const AccountSettings = () => {
   return (
     <div className="space-y-6">
       {/* Profile Section */}
-      <SettingsCard title={t('settings.account.profile')} description={t('settings.account.profileDesc')} isSaving={profile.isSaving}>
+      <SettingsCard
+        title={t('settings.account.profile')}
+        description={t('settings.account.profileDesc')}
+        isSaving={profile.isSaving}
+      >
         <div className="space-y-4">
-          <SettingField label={t('settings.account.displayName')} description={t('settings.account.displayNameDesc')} required>
+          <SettingField
+            label={t('settings.account.displayName')}
+            description={t('settings.account.displayNameDesc')}
+            required
+          >
             <Input
               value={profile.values.displayName}
               onChange={handleDisplayNameChange}
@@ -253,7 +261,10 @@ const AccountSettings = () => {
           </SettingField>
 
           {/* Profile Picture Section */}
-          <SettingField label={t('settings.account.profilePicture')} description={t('settings.account.profilePictureDesc')}>
+          <SettingField
+            label={t('settings.account.profilePicture')}
+            description={t('settings.account.profilePictureDesc')}
+          >
             {/* Current Avatar Display */}
             <div className="mb-4 flex items-center gap-4">
               {uploadedAvatar ? (
@@ -267,14 +278,12 @@ const AccountSettings = () => {
                   sizes="64px"
                 />
               ) : (
-                <div
-                  className="flex h-16 w-16 items-center justify-center rounded-full text-4xl bg-muted border-2 border-border"
-                >
+                <div className="bg-muted border-border flex h-16 w-16 items-center justify-center rounded-full border-2 text-4xl">
                   {profile.values.selectedIcon}
                 </div>
               )}
               <div className="flex-1">
-                <div className="text-sm text-muted-foreground">
+                <div className="text-muted-foreground text-sm">
                   {uploadedAvatar ? t('settings.account.usingCustomImage') : t('settings.account.usingEmojiIcon')}
                 </div>
               </div>
@@ -298,19 +307,19 @@ const AccountSettings = () => {
             <SettingField label={t('settings.account.profileIcon')} description={t('settings.account.profileIconDesc')}>
               <div className="mb-4 flex items-center gap-4">
                 <div className="text-4xl">{profile.values.selectedIcon}</div>
-                <div className="text-sm text-muted-foreground">{t('settings.account.currentIcon')}</div>
+                <div className="text-muted-foreground text-sm">{t('settings.account.currentIcon')}</div>
               </div>
-              <div className="grid grid-cols-10 gap-2 rounded-lg border border-border p-4 bg-muted">
+              <div className="border-border bg-muted grid grid-cols-10 gap-2 rounded-lg border p-4">
                 {availableIcons.map((icon) => (
                   <button
                     key={icon}
                     type="button"
                     onClick={createIconSelectHandler(icon)}
                     className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-lg border text-2xl transition-all duration-200 hover:scale-110",
+                      'flex h-10 w-10 items-center justify-center rounded-lg border text-2xl transition-all duration-200 hover:scale-110',
                       profile.values.selectedIcon === icon
-                        ? "bg-blue-500 text-white ring-2 ring-blue-300 dark:ring-blue-700"
-                        : "bg-white dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                        ? 'bg-blue-500 text-white ring-2 ring-blue-300 dark:ring-blue-700'
+                        : 'bg-white hover:bg-neutral-100 dark:bg-neutral-900 dark:hover:bg-neutral-800'
                     )}
                     style={{ borderColor: 'var(--border)' }}
                   >
@@ -357,11 +366,15 @@ const AccountSettings = () => {
       </SettingsCard>
 
       {/* Two-Factor Authentication Section */}
-      <SettingsCard title={t('settings.account.twoFactor')} description={t('settings.account.twoFactorDesc')} isSaving={security.isSaving}>
+      <SettingsCard
+        title={t('settings.account.twoFactor')}
+        description={t('settings.account.twoFactorDesc')}
+        isSaving={security.isSaving}
+      >
         <div className="flex items-center justify-between">
           <div>
-            <div className="font-medium text-base">{t('settings.account.enable2FA')}</div>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
+            <div className="text-base font-medium">{t('settings.account.enable2FA')}</div>
+            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
               {security.values.twoFactorEnabled
                 ? t('settings.account.twoFactorEnabled')
                 : t('settings.account.twoFactorPrompt')}
@@ -371,14 +384,14 @@ const AccountSettings = () => {
         </div>
 
         {security.values.twoFactorEnabled != null && (
-          <div className="mt-4 p-4 border border-border bg-accent rounded-lg">
+          <div className="border-border bg-accent mt-4 rounded-lg border p-4">
             <div className="mb-2 flex items-center gap-2">
-              <div className="h-2 w-2 bg-primary rounded-full"></div>
-              <span className="text-sm font-medium text-accent-foreground">{t('settings.account.twoFactorActive')}</span>
+              <div className="bg-primary h-2 w-2 rounded-full"></div>
+              <span className="text-accent-foreground text-sm font-medium">
+                {t('settings.account.twoFactorActive')}
+              </span>
             </div>
-            <p className="text-xs text-accent-foreground">
-              {t('settings.account.twoFactorProtection')}
-            </p>
+            <p className="text-accent-foreground text-xs">{t('settings.account.twoFactorProtection')}</p>
           </div>
         )}
       </SettingsCard>
@@ -388,7 +401,7 @@ const AccountSettings = () => {
         title={<span className="text-destructive">{t('settings.account.dangerZone')}</span>}
         description={t('settings.account.dangerZoneDesc')}
       >
-        <div className="border border-destructive/30 bg-destructive/5 rounded-lg">
+        <div className="border-destructive/30 bg-destructive/5 rounded-lg border">
           <div className="flex items-start justify-between p-6">
             <div className="flex-1 space-y-2">
               <div className="flex items-center gap-2">

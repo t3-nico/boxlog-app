@@ -23,7 +23,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
     handleEmptyTrash,
     handleClearExpired,
     handleCloseDialog,
-    deselectAll
+    deselectAll,
   } = useTrashActions()
 
   return (
@@ -53,10 +53,7 @@ export const TrashActions: React.FC<TrashActionsProps> = ({ className }) => {
       </div>
 
       {/* 確認ダイアログ */}
-      <TrashConfirmDialog
-        dialog={showConfirmDialog}
-        onClose={handleCloseDialog}
-      />
+      <TrashConfirmDialog dialog={showConfirmDialog} onClose={handleCloseDialog} />
     </>
   )
 }

@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import type { CalendarEvent } from '@/features/events'
 import { cn } from '@/lib/utils'
@@ -45,14 +45,14 @@ export const VirtualCalendarGrid = ({
   overscan = BUFFER_SIZE,
   onEventClick,
   onCreateEvent,
-  className
+  className,
 }: VirtualCalendarGridProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const [viewport, setViewport] = useState<ViewportInfo>({
     scrollTop: 0,
     visibleStart: startHour,
     visibleEnd: startHour + 8, // 初期表示は8時間分
-    containerHeight: 480
+    containerHeight: 480,
   })
 
   // 仮想化されたアイテムの計算
@@ -62,15 +62,14 @@ export const VirtualCalendarGrid = ({
     for (let hour = startHour; hour < endHour; hour++) {
       const index = hour - startHour
       const top = index * hourHeight
-      const isVisible = hour >= viewport.visibleStart - overscan && 
-                       hour <= viewport.visibleEnd + overscan
+      const isVisible = hour >= viewport.visibleStart - overscan && hour <= viewport.visibleEnd + overscan
 
       items.push({
         index,
         hour,
         top,
         height: hourHeight,
-        isVisible
+        isVisible,
       })
     }
 
@@ -84,48 +83,53 @@ export const VirtualCalendarGrid = ({
     const visibleStartHour = Math.max(0, viewport.visibleStart - overscan)
     const visibleEndHour = Math.min(24, viewport.visibleEnd + overscan)
 
-    return events.filter(event => {
+    return events.filter((event) => {
       if (!event.startDate) return false
 
       const eventHour = event.startDate.getHours()
       const eventEndHour = event.endDate ? event.endDate.getHours() : eventHour + 1
 
       // イベントが表示範囲と重複するかチェック
-      return (eventHour < visibleEndHour && eventEndHour > visibleStartHour)
+      return eventHour < visibleEndHour && eventEndHour > visibleStartHour
     })
   }, [events, viewport.visibleStart, viewport.visibleEnd, overscan])
 
   // スクロールハンドラー（パフォーマンス最適化）
-  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.currentTarget
-    const {scrollTop} = target
-    const containerHeight = target.clientHeight
+  const handleScroll = useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const target = e.currentTarget
+      const { scrollTop } = target
+      const containerHeight = target.clientHeight
 
-    // 新しい表示範囲を計算
-    const visibleStart = Math.floor(scrollTop / hourHeight) + startHour
-    const visibleEnd = Math.ceil((scrollTop + containerHeight) / hourHeight) + startHour
+      // 新しい表示範囲を計算
+      const visibleStart = Math.floor(scrollTop / hourHeight) + startHour
+      const visibleEnd = Math.ceil((scrollTop + containerHeight) / hourHeight) + startHour
 
-    setViewport(prev => {
-      // 変化がない場合は更新しない
-      if (prev.scrollTop === scrollTop && 
-          prev.visibleStart === visibleStart && 
+      setViewport((prev) => {
+        // 変化がない場合は更新しない
+        if (
+          prev.scrollTop === scrollTop &&
+          prev.visibleStart === visibleStart &&
           prev.visibleEnd === visibleEnd &&
-          prev.containerHeight === containerHeight) {
-        return prev
-      }
+          prev.containerHeight === containerHeight
+        ) {
+          return prev
+        }
 
-      return {
-        scrollTop,
-        visibleStart,
-        visibleEnd,
-        containerHeight
-      }
-    })
-  }, [hourHeight, startHour])
+        return {
+          scrollTop,
+          visibleStart,
+          visibleEnd,
+          containerHeight,
+        }
+      })
+    },
+    [hourHeight, startHour]
+  )
 
   // Intersection Observer for further optimization
   const observerRef = useRef<IntersectionObserver | null>(null)
-  
+
   useEffect(() => {
     if (!containerRef.current) return
 
@@ -143,7 +147,7 @@ export const VirtualCalendarGrid = ({
       {
         root: containerRef.current,
         rootMargin: `${overscan * hourHeight}px`,
-        threshold: 0
+        threshold: 0,
       }
     )
 
@@ -155,15 +159,15 @@ export const VirtualCalendarGrid = ({
   // レンダリング最適化のための時間スロット生成
   const renderTimeSlots = useCallback(() => {
     return virtualItems
-      .filter(item => item.isVisible)
-      .map(item => (
+      .filter((item) => item.isVisible)
+      .map((item) => (
         <VirtualTimeSlot
           key={`time-${item.hour}`}
           hour={item.hour}
           top={item.top}
           height={item.height}
           dates={dates}
-          events={visibleEvents.filter(event => {
+          events={visibleEvents.filter((event) => {
             if (!event.startDate) return false
             const eventHour = event.startDate.getHours()
             return eventHour === item.hour
@@ -182,14 +186,14 @@ export const VirtualCalendarGrid = ({
     <div
       ref={containerRef}
       className={cn(
-        "relative overflow-auto will-change-scroll",
-        "scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100",
+        'relative overflow-auto will-change-scroll',
+        'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100',
         className
       )}
       onScroll={handleScroll}
       style={{
         height: '100%',
-        contain: 'layout style paint' // ブラウザ最適化
+        contain: 'layout style paint', // ブラウザ最適化
       }}
     >
       {/* 仮想化されたコンテナ */}
@@ -197,7 +201,7 @@ export const VirtualCalendarGrid = ({
         style={{
           height: totalHeight,
           position: 'relative',
-          contain: 'layout style' // ブラウザ最適化
+          contain: 'layout style', // ブラウザ最適化
         }}
       >
         {renderTimeSlots()}
@@ -205,10 +209,16 @@ export const VirtualCalendarGrid = ({
 
       {/* パフォーマンス監視用の情報（開発時のみ） */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-4 right-4 bg-black/80 text-white p-2 rounded text-xs font-mono z-50">
-          <div>Visible: {viewport.visibleStart}h - {viewport.visibleEnd}h</div>
-          <div>Events: {visibleEvents.length}/{events.length}</div>
-          <div>Virtual Items: {virtualItems.filter(i => i.isVisible).length}/{virtualItems.length}</div>
+        <div className="fixed top-4 right-4 z-50 rounded bg-black/80 p-2 font-mono text-xs text-white">
+          <div>
+            Visible: {viewport.visibleStart}h - {viewport.visibleEnd}h
+          </div>
+          <div>
+            Events: {visibleEvents.length}/{events.length}
+          </div>
+          <div>
+            Virtual Items: {virtualItems.filter((i) => i.isVisible).length}/{virtualItems.length}
+          </div>
           <div>Scroll: {Math.round(viewport.scrollTop)}px</div>
         </div>
       )}
@@ -236,7 +246,7 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
   events,
   onEventClick,
   onCreateEvent,
-  observer
+  observer,
 }: VirtualTimeSlotProps) {
   const slotRef = useRef<HTMLDivElement>(null)
 
@@ -258,25 +268,21 @@ const VirtualTimeSlot = React.memo(function VirtualTimeSlot({
       style={{
         top,
         height,
-        contain: 'layout' // ブラウザ最適化
+        contain: 'layout', // ブラウザ最適化
       }}
       data-hour={hour}
     >
       {/* 時間ラベル */}
-      <div className="absolute left-0 top-0 w-16 text-xs text-gray-500 -mt-2">
-        {timeString}
-      </div>
+      <div className="absolute top-0 left-0 -mt-2 w-16 text-xs text-gray-500">{timeString}</div>
 
       {/* 各日付の列 */}
-      <div className="flex h-full ml-16">
+      <div className="ml-16 flex h-full">
         {dates.map((date, _dateIndex) => (
           <VirtualDayColumn
             key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
             date={date}
             hour={hour}
-            events={events.filter(event => 
-              event.startDate?.toDateString() === date.toDateString()
-            )}
+            events={events.filter((event) => event.startDate?.toDateString() === date.toDateString())}
             onEventClick={onEventClick}
             onCreateEvent={onCreateEvent}
           />
@@ -300,7 +306,7 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
   hour,
   events,
   onEventClick,
-  onCreateEvent
+  onCreateEvent,
 }: VirtualDayColumnProps) {
   const handleClick = useCallback(() => {
     const timeString = `${String(hour).padStart(2, '0')}:00`
@@ -312,7 +318,7 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
       role="button"
       tabIndex={0}
       aria-label={`Time slot for ${format(date, 'MMM d')} at ${hour}:00`}
-      className="flex-1 border-r border-gray-200 relative hover:bg-gray-50/50 cursor-pointer"
+      className="relative flex-1 cursor-pointer border-r border-gray-200 hover:bg-gray-50/50"
       onClick={handleClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -321,16 +327,12 @@ const VirtualDayColumn = React.memo(function VirtualDayColumn({
         }
       }}
       style={{
-        contain: 'layout style' // ブラウザ最適化
+        contain: 'layout style', // ブラウザ最適化
       }}
     >
       {/* イベント表示 */}
-      {events.map(event => (
-        <VirtualEventCard
-          key={event.id}
-          event={event}
-          onClick={() => onEventClick?.(event)}
-        />
+      {events.map((event) => (
+        <VirtualEventCard key={event.id} event={event} onClick={() => onEventClick?.(event)} />
       ))}
     </div>
   )
@@ -342,10 +344,7 @@ interface VirtualEventCardProps {
   onClick: () => void
 }
 
-const VirtualEventCard = React.memo(function VirtualEventCard({
-  event,
-  onClick
-}: VirtualEventCardProps) {
+const VirtualEventCard = React.memo(function VirtualEventCard({ event, onClick }: VirtualEventCardProps) {
   const style = useMemo(() => {
     if (!event.startDate || !event.endDate) return {}
 
@@ -355,7 +354,7 @@ const VirtualEventCard = React.memo(function VirtualEventCard({
     const endMinutes = event.endDate.getMinutes()
 
     const top = (startMinutes / 60) * HOUR_HEIGHT
-    const duration = (endHour - startHour) + (endMinutes - startMinutes) / 60
+    const duration = endHour - startHour + (endMinutes - startMinutes) / 60
     const height = duration * HOUR_HEIGHT
 
     return {
@@ -365,7 +364,7 @@ const VirtualEventCard = React.memo(function VirtualEventCard({
       right: '2px',
       height: `${height}px`,
       backgroundColor: event.color || '#3b82f6',
-      zIndex: 10
+      zIndex: 10,
     }
   }, [event])
 
@@ -374,7 +373,7 @@ const VirtualEventCard = React.memo(function VirtualEventCard({
       role="button"
       tabIndex={0}
       aria-label={`Event: ${event.title}`}
-      className="rounded-md text-white text-xs p-1 overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+      className="cursor-pointer overflow-hidden rounded-md p-1 text-xs text-white transition-shadow hover:shadow-lg"
       style={style}
       onClick={onClick}
       onKeyDown={(e) => {
@@ -384,10 +383,10 @@ const VirtualEventCard = React.memo(function VirtualEventCard({
         }
       }}
     >
-      <div className="font-medium truncate">{event.title}</div>
-      {(style.height as number) > 30 && event.startDate ? <div className="opacity-90">
-          {format(event.startDate, 'HH:mm')}
-        </div> : null}
+      <div className="truncate font-medium">{event.title}</div>
+      {(style.height as number) > 30 && event.startDate ? (
+        <div className="opacity-90">{format(event.startDate, 'HH:mm')}</div>
+      ) : null}
     </div>
   )
 })

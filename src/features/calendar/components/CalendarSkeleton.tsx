@@ -13,21 +13,21 @@ import { cn } from '@/lib/utils'
  */
 export const CalendarSkeleton = () => {
   return (
-    <div className="flex h-full w-full flex-col bg-background">
+    <div className="bg-background flex h-full w-full flex-col">
       {/* Header skeleton */}
-      <div className={cn('border-b border-border bg-card p-4')}>
+      <div className={cn('border-border bg-card border-b p-4')}>
         <div className="flex items-center justify-between">
           {/* Left: Date navigation */}
           <div className="flex items-center gap-4">
-            <div className={cn('h-9 w-9 animate-pulse rounded-md bg-muted')}></div>
-            <div className={cn('h-7 w-40 animate-pulse rounded-md bg-muted')}></div>
-            <div className={cn('h-9 w-9 animate-pulse rounded-md bg-muted')}></div>
+            <div className={cn('bg-muted h-9 w-9 animate-pulse rounded-md')}></div>
+            <div className={cn('bg-muted h-7 w-40 animate-pulse rounded-md')}></div>
+            <div className={cn('bg-muted h-9 w-9 animate-pulse rounded-md')}></div>
           </div>
 
           {/* Right: View switcher and actions */}
           <div className="flex items-center gap-2">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className={cn('h-9 w-16 animate-pulse rounded-md bg-muted')}></div>
+              <div key={i} className={cn('bg-muted h-9 w-16 animate-pulse rounded-md')}></div>
             ))}
           </div>
         </div>
@@ -41,7 +41,7 @@ export const CalendarSkeleton = () => {
             <div className="w-16 shrink-0" /> {/* Time column spacer */}
             <div className="grid flex-1 grid-cols-7 gap-1">
               {Array.from({ length: 7 }).map((_, i) => (
-                <div key={i} className={cn('h-10 animate-pulse rounded-md bg-muted')}></div>
+                <div key={i} className={cn('bg-muted h-10 animate-pulse rounded-md')}></div>
               ))}
             </div>
           </div>
@@ -51,20 +51,20 @@ export const CalendarSkeleton = () => {
             {/* Time column */}
             <div className="w-16 shrink-0 space-y-1 pr-2">
               {Array.from({ length: 24 }).map((_, i) => (
-                <div key={i} className={cn('h-12 animate-pulse rounded-sm bg-muted/50')}></div>
+                <div key={i} className={cn('bg-muted/50 h-12 animate-pulse rounded-sm')}></div>
               ))}
             </div>
 
             {/* Calendar columns */}
             <div className="grid flex-1 grid-cols-7 gap-1">
               {Array.from({ length: 7 }).map((_, dayIndex) => (
-                <div key={dayIndex} className="relative flex flex-col space-y-px border-l border-border">
+                <div key={dayIndex} className="border-border relative flex flex-col space-y-px border-l">
                   {/* Time slots */}
                   {Array.from({ length: 24 }).map((_, timeIndex) => (
                     <div
                       key={timeIndex}
                       className={cn(
-                        'h-12 border-b border-border/50',
+                        'border-border/50 h-12 border-b',
                         timeIndex % 2 === 0 ? 'bg-background' : 'bg-muted/10'
                       )}
                     ></div>
@@ -74,13 +74,17 @@ export const CalendarSkeleton = () => {
                   {dayIndex % 3 === 0 && (
                     <div
                       style={{ top: '160px', height: '96px' }}
-                      className={cn('absolute left-1 right-1 animate-pulse rounded-md bg-primary/20 border border-primary/30')}
+                      className={cn(
+                        'bg-primary/20 border-primary/30 absolute right-1 left-1 animate-pulse rounded-md border'
+                      )}
                     ></div>
                   )}
                   {dayIndex === 2 && (
                     <div
                       style={{ top: '320px', height: '64px' }}
-                      className={cn('absolute left-1 right-1 animate-pulse rounded-md bg-accent/20 border border-accent/30')}
+                      className={cn(
+                        'bg-accent/20 border-accent/30 absolute right-1 left-1 animate-pulse rounded-md border'
+                      )}
                     ></div>
                   )}
                 </div>

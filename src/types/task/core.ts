@@ -5,10 +5,10 @@
  * ここでは詳細な拡張型のみ定義
  */
 
-import type { TaskStatus, TaskPriority, Task as BaseTask } from '../index'
+import type { Task as BaseTask, TaskPriority, TaskStatus } from '../index'
 
 // 基本型を再エクスポート
-export type { TaskStatus, TaskPriority }
+export type { TaskPriority, TaskStatus }
 export type Task = BaseTask
 
 /**

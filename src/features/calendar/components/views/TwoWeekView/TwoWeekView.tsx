@@ -1,7 +1,7 @@
 // @ts-nocheck TODO(#389): 型エラー6件を段階的に修正する
 'use client'
 
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { format, isToday } from 'date-fns'
 
@@ -9,12 +9,7 @@ import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendar
 import { cn } from '@/lib/utils'
 
 import { CalendarViewAnimation } from '../../animations/ViewTransition'
-import { 
-  DateDisplay, 
-  CalendarLayoutWithHeader,
-  HourLines,
-  getDateKey
-} from '../shared'
+import { CalendarLayoutWithHeader, DateDisplay, HourLines, getDateKey } from '../shared'
 
 import { useResponsiveHourHeight } from '../shared/hooks/useResponsiveHourHeight'
 
@@ -23,16 +18,15 @@ import { useTwoWeekView } from './hooks/useTwoWeekView'
 
 import type { TwoWeekViewProps } from './TwoWeekView.types'
 
-
 /**
  * TwoWeekView - 2週間表示ビューコンポーネント
- * 
+ *
  * @description
  * 構成:
  * - WeekViewの拡張版
  * - 14日分を表示
  * - 横スクロール可能
- * 
+ *
  * レイアウト（横長）:
  * ┌────┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
  * │時間│日│月│火│水│木│金│土│日│月│火│水│木│金│土│
@@ -64,39 +58,34 @@ export const TwoWeekView = ({
   onViewChange: _onViewChange,
   onNavigatePrev: _onNavigatePrev,
   onNavigateNext: _onNavigateNext,
-  onNavigateToday: _onNavigateToday
+  onNavigateToday: _onNavigateToday,
 }: TwoWeekViewProps) => {
   const { timezone } = useCalendarSettingsStore()
-  
+
   // レスポンシブな時間高さ
   const HOUR_HEIGHT = useResponsiveHourHeight({
     mobile: 48,
     tablet: 60,
-    desktop: 72
+    desktop: 72,
   })
-  
+
   // TwoWeekViewではdateRangeの開始日を使用
   const displayStartDate = useMemo(() => {
     const date = new Date(dateRange.start)
     date.setHours(0, 0, 0, 0)
     console.log('🔧 TwoWeekView: dateRange.startを使用します', {
-      startDate: date.toDateString()
+      startDate: date.toDateString(),
     })
     return date
   }, [dateRange.start])
-  
+
   // TwoWeekView専用ロジック
-  const {
-    twoWeekDates,
-    eventsByDate,
-    isCurrentTwoWeeks,
-    todayIndex
-  } = useTwoWeekView({
+  const { twoWeekDates, eventsByDate, isCurrentTwoWeeks, todayIndex } = useTwoWeekView({
     startDate: displayStartDate,
     events,
-    weekStartsOn
+    weekStartsOn,
   })
-  
+
   // TwoWeekView診断ログ
   console.log('[TwoWeekView] コンポーネント受信データ:', {
     receivedEventsCount: events?.length || 0,
@@ -105,8 +94,8 @@ export const TwoWeekView = ({
     eventsByDateKeys: Object.keys(eventsByDate),
     eventsByDateCounts: Object.entries(eventsByDate).map(([key, events]) => ({
       date: key,
-      count: events.length
-    }))
+      count: events.length,
+    })),
   })
 
   // 表示日付配列（週末フィルタリング対応）
@@ -115,7 +104,7 @@ export const TwoWeekView = ({
       return twoWeekDates
     }
     // 週末を除外（土曜日=6、日曜日=0）
-    return twoWeekDates.filter(date => {
+    return twoWeekDates.filter((date) => {
       const day = date.getDay()
       return day !== 0 && day !== 6
     })
@@ -124,12 +113,12 @@ export const TwoWeekView = ({
   // 初期スクロールはScrollableCalendarLayoutに委譲
 
   const headerComponent = (
-    <div className="bg-background h-16 flex">
+    <div className="bg-background flex h-16">
       {/* 表示日数分のヘッダー（週末フィルタリング対応） */}
       {displayDates.map((date, _index) => (
         <div
           key={date.toISOString()}
-          className="flex-1 flex items-center justify-center px-1"
+          className="flex flex-1 items-center justify-center px-1"
           style={{ width: `${100 / displayDates.length}%` }}
         >
           <DateDisplay
@@ -142,11 +131,11 @@ export const TwoWeekView = ({
             isToday={isToday(date)}
             isSelected={false}
           />
-          
+
           {/* イベント数インジケーター */}
           {eventsByDate[format(date, 'yyyy-MM-dd')]?.length > 0 && (
-            <div className="text-center mt-1">
-              <span className="inline-block w-1.5 h-1.5 bg-primary rounded-full" />
+            <div className="mt-1 text-center">
+              <span className="bg-primary inline-block h-1.5 w-1.5 rounded-full" />
             </div>
           )}
         </div>
@@ -156,10 +145,9 @@ export const TwoWeekView = ({
 
   return (
     <CalendarViewAnimation viewType="2week">
-      <div className={cn('flex flex-col h-full bg-background', className)}>
-        
+      <div className={cn('bg-background flex h-full flex-col', className)}>
         {/* メインコンテンツエリア */}
-        <div className="flex-1 min-h-0">
+        <div className="min-h-0 flex-1">
           <CalendarLayoutWithHeader
             header={headerComponent}
             timezone={timezone}
@@ -174,60 +162,56 @@ export const TwoWeekView = ({
             enableKeyboardNavigation={true}
             className="h-full"
           >
-        {/* 表示日数分のグリッド（週末フィルタリング対応） */}
-        <div className="flex h-full relative">
-          {/* 共通のグリッド線（ThreeDayView・WeekViewと同じパターン） */}
-          <div className="absolute inset-0 pointer-events-none">
-            <HourLines 
-              startHour={0}
-              endHour={24}
-              hourHeight={HOUR_HEIGHT}
-            />
-          </div>
-          
-          {displayDates.map((date, dayIndex) => {
-            const dateKey = getDateKey(date)
-            const dayEvents = eventsByDate[dateKey] || []
-            
-            console.log('🔧 TwoWeekView日付処理:', {
-              date: date.toDateString(),
-              dateKey,
-              dayEventsCount: dayEvents.length,
-              availableKeys: Object.keys(eventsByDate)
-            })
-            
-            return (
-              <div
-                key={date.toISOString()}
-                className="flex-1 border-r border-neutral-900/20 dark:border-neutral-100/20 last:border-r-0 relative"
-                style={{ width: `${100 / displayDates.length}%` }}
-              >
-                {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
-                <TwoWeekContent
-                  date={date}
-                  events={dayEvents}
-                  onEventClick={onEventClick}
-                  onEventContextMenu={onEventContextMenu}
-                  onEmptyClick={onEmptyClick}
-                  onEventUpdate={onUpdateEvent}
-                  onTimeRangeSelect={(date, startTime, endTime) => {
-                    // 時間範囲選択時の処理（従来と同じ）
-                    const startDate = new Date(date)
-                    const [startHour, startMinute] = startTime.split(':').map(Number)
-                    startDate.setHours(startHour, startMinute, 0, 0)
-
-                    // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
-                    onCreateEvent?.(startDate, startTime)
-                  }}
-                  onCreateEvent={onCreateEvent}
-                  className="h-full"
-                  dayIndex={dayIndex}
-                  displayDates={displayDates}
-                />
+            {/* 表示日数分のグリッド（週末フィルタリング対応） */}
+            <div className="relative flex h-full">
+              {/* 共通のグリッド線（ThreeDayView・WeekViewと同じパターン） */}
+              <div className="pointer-events-none absolute inset-0">
+                <HourLines startHour={0} endHour={24} hourHeight={HOUR_HEIGHT} />
               </div>
-            )
-          })}
-        </div>
+
+              {displayDates.map((date, dayIndex) => {
+                const dateKey = getDateKey(date)
+                const dayEvents = eventsByDate[dateKey] || []
+
+                console.log('🔧 TwoWeekView日付処理:', {
+                  date: date.toDateString(),
+                  dateKey,
+                  dayEventsCount: dayEvents.length,
+                  availableKeys: Object.keys(eventsByDate),
+                })
+
+                return (
+                  <div
+                    key={date.toISOString()}
+                    className="relative flex-1 border-r border-neutral-900/20 last:border-r-0 dark:border-neutral-100/20"
+                    style={{ width: `${100 / displayDates.length}%` }}
+                  >
+                    {/* @ts-expect-error TODO(#389): TimedEvent型をCalendarEvent型に統一する必要がある */}
+                    <TwoWeekContent
+                      date={date}
+                      events={dayEvents}
+                      onEventClick={onEventClick}
+                      onEventContextMenu={onEventContextMenu}
+                      onEmptyClick={onEmptyClick}
+                      onEventUpdate={onUpdateEvent}
+                      onTimeRangeSelect={(date, startTime, endTime) => {
+                        // 時間範囲選択時の処理（従来と同じ）
+                        const startDate = new Date(date)
+                        const [startHour, startMinute] = startTime.split(':').map(Number)
+                        startDate.setHours(startHour, startMinute, 0, 0)
+
+                        // onCreateEventは(date: Date, time?: string)の形式なので、startTimeのみ渡す
+                        onCreateEvent?.(startDate, startTime)
+                      }}
+                      onCreateEvent={onCreateEvent}
+                      className="h-full"
+                      dayIndex={dayIndex}
+                      displayDates={displayDates}
+                    />
+                  </div>
+                )
+              })}
+            </div>
           </CalendarLayoutWithHeader>
         </div>
       </div>

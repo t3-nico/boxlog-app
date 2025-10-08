@@ -39,15 +39,18 @@ src/components/
 BoxLogでは以下の優先度でコンポーネントを選択します：
 
 ### 🥇 shadcn/ui（第一選択）
+
 基本的なUIコンポーネントの標準実装。
 
 **特徴:**
+
 - Radix UIベース
 - フル型安全
 - カスタマイズ可能
 - アクセシビリティ対応
 
 **主要コンポーネント:**
+
 - Button, Input, Textarea
 - Tabs, Dialog, Popover
 - Scroll Area, Separator
@@ -58,22 +61,27 @@ import { Input } from '@/components/shadcn-ui/input'
 ```
 
 ### 🥈 kibo-ui（高度な機能）
+
 複雑なUI要件に対応する高機能コンポーネント。
 
 **特徴:**
+
 - AI統合コンポーネント
 - 高度なインタラクション
 - 専門的なUI実装
 
 **使用場面:**
+
 - AIチャット機能
 - 複雑なデータ表示
 - 高度なフォーム要素
 
 ### 🥉 カスタム実装（最後の手段）
+
 既存ライブラリで要件を満たせない場合のみ。
 
 **条件:**
+
 - shadcn/ui, kibo-uiに該当機能がない
 - 要件が非常に特殊
 - パフォーマンス要件が厳しい
@@ -94,11 +102,13 @@ import { background, text, spacing } from '@/config/theme'
 ### コンポーネント作成時のルール
 
 1. **必ずテーマトークンをインポート**
+
    ```tsx
    import { background, text, border, typography } from '@/config/theme'
    ```
 
 2. **TypeScript厳密使用**
+
    ```tsx
    interface ComponentProps {
      variant?: 'primary' | 'secondary'
@@ -109,11 +119,9 @@ import { background, text, spacing } from '@/config/theme'
 
 3. **forwardRef対応**
    ```tsx
-   const Component = React.forwardRef<HTMLDivElement, ComponentProps>(
-     ({ className, ...props }, ref) => {
-       return <div ref={ref} className={cn(baseStyles, className)} {...props} />
-     }
-   )
+   const Component = React.forwardRef<HTMLDivElement, ComponentProps>(({ className, ...props }, ref) => {
+     return <div ref={ref} className={cn(baseStyles, className)} {...props} />
+   })
    ```
 
 ## shadcn/ui コンポーネント
@@ -125,14 +133,15 @@ import { background, text, spacing } from '@/config/theme'
 ```tsx
 import { Button } from '@/components/shadcn-ui/button'
 
-<Button variant="default" size="md">
+;<Button variant="default" size="md">
   ボタン
 </Button>
 ```
 
 **バリエーション:**
+
 - `default` - 主要アクション
-- `destructive` - 削除・危険アクション  
+- `destructive` - 削除・危険アクション
 - `outline` - 副次アクション
 - `secondary` - 補助アクション
 - `ghost` - 軽量アクション
@@ -144,12 +153,7 @@ import { Button } from '@/components/shadcn-ui/button'
 ```tsx
 import { Input } from '@/components/shadcn-ui/input'
 
-<Input
-  type="text"
-  placeholder="入力してください"
-  value={value}
-  onChange={(e) => setValue(e.target.value)}
-/>
+;<Input type="text" placeholder="入力してください" value={value} onChange={(e) => setValue(e.target.value)} />
 ```
 
 ### Tabs
@@ -159,7 +163,7 @@ import { Input } from '@/components/shadcn-ui/input'
 ```tsx
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
 
-<Tabs defaultValue="tab1">
+;<Tabs defaultValue="tab1">
   <TabsList>
     <TabsTrigger value="tab1">タブ1</TabsTrigger>
     <TabsTrigger value="tab2">タブ2</TabsTrigger>
@@ -174,6 +178,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui
 詳細は [`/src/components/layout/README.md`](./layout/README.md) を参照。
 
 **主要機能:**
+
 - 3レイヤーレイアウト（Sidebar + Navigation + Main）
 - レスポンシブ対応
 - Inspector機能

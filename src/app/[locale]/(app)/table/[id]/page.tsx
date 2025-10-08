@@ -11,8 +11,8 @@ import { Heading, Subheading } from '@/components/app'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { getEvent, getEventReviews } from '@/lib/data'
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
+import { getEvent, getEventReviews } from '@/lib/data'
 import type { Locale } from '@/types/i18n'
 
 interface Event {
@@ -45,7 +45,11 @@ const Stat = dynamic(() => import('@/features/stats').then((mod) => ({ default: 
   loading: () => <div className="h-24 animate-pulse rounded bg-gray-200" />,
 })
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string; locale?: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string; locale?: Locale }>
+}): Promise<Metadata> {
   const { id } = await params
   const event = (await getEvent(id)) as Event | null
 
@@ -78,9 +82,7 @@ const EventPage = async ({ params }: { params: Promise<{ id: string; locale?: Lo
           {t('table.backLinks.box')}
         </NextLink>
       </div>
-      <div
-        className="mt-4 flex flex-wrap items-end justify-between gap-4"
-      >
+      <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-wrap items-center gap-6">
           <div className="w-32 shrink-0">
             <Image

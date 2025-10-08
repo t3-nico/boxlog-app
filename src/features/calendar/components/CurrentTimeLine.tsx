@@ -4,15 +4,15 @@
 
 'use client'
 
-import React, { useMemo, useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+import { useEffect, useMemo, useState } from 'react'
 
 const currentTimeLineStyles = {
   container: 'absolute z-30 pointer-events-none w-full',
   label: 'absolute bg-red-500 text-white text-xs px-1 py-0.5 rounded text-[11px] top-[-10px]',
   dot: 'absolute w-2 h-2 bg-red-500 rounded-full top-[-3px]',
-  line: 'absolute h-[2px] bg-red-500'
+  line: 'absolute h-[2px] bg-red-500',
 } as const
-import { cn } from '@/lib/utils'
 
 interface CurrentTimeLineProps {
   hourHeight: number
@@ -20,45 +20,41 @@ interface CurrentTimeLineProps {
   timeColumnWidth?: number
 }
 
-export const CurrentTimeLine = ({
-  hourHeight,
-  displayDates,
-  timeColumnWidth = 0
-}: CurrentTimeLineProps) => {
+export const CurrentTimeLine = ({ hourHeight, displayDates, timeColumnWidth = 0 }: CurrentTimeLineProps) => {
   const [currentTime, setCurrentTime] = useState(new Date())
-  
+
   // 現在時刻を1分ごとに更新
   useEffect(() => {
     const updateTime = () => setCurrentTime(new Date())
     updateTime() // 初回実行
-    
+
     const interval = setInterval(updateTime, 60000) // 1分ごと
     return () => clearInterval(interval)
   }, [])
-  
+
   // 表示ロジック：displayDatesに今日が含まれているかチェック
   const shouldShowLine = useMemo(() => {
     // 1. 今日の日付を取得（時刻部分は無視）
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    
+
     // 2. displayDates配列の各日付を今日と比較
-    const hasToday = displayDates.some(date => {
+    const hasToday = displayDates.some((date) => {
       const d = new Date(date)
       d.setHours(0, 0, 0, 0) // 時刻部分は無視
       return d.getTime() === today.getTime()
     })
-    
+
     // 3. デバッグログ出力
     console.log('🔍 CurrentTimeLine 表示判定:', {
       today: today.toDateString(),
-      displayDates: displayDates.map(d => d.toDateString()),
-      hasToday
+      displayDates: displayDates.map((d) => d.toDateString()),
+      hasToday,
     })
-    
+
     return hasToday
   }, [displayDates])
-  
+
   // 現在時刻のY座標を計算
   const topPosition = useMemo(() => {
     const hours = currentTime.getHours()
@@ -66,21 +62,21 @@ export const CurrentTimeLine = ({
     const totalMinutes = hours * 60 + minutes
     return (totalMinutes / 60) * hourHeight
   }, [currentTime, hourHeight])
-  
+
   // 時刻文字列を生成
   const timeString = useMemo(() => {
-    return currentTime.toLocaleTimeString('ja-JP', { 
-      hour: '2-digit', 
+    return currentTime.toLocaleTimeString('ja-JP', {
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: false 
+      hour12: false,
     })
   }, [currentTime])
-  
+
   // 今日が含まれていない場合は表示しない
   if (!shouldShowLine) {
     return null
   }
-  
+
   return (
     <div
       className={cn(currentTimeLineStyles.container)}
@@ -88,34 +84,34 @@ export const CurrentTimeLine = ({
         top: `${topPosition}px`,
         left: 0,
         right: 0,
-        width: '100%'
+        width: '100%',
       }}
     >
       {/* 時刻ラベル */}
-      <div 
+      <div
         className={cn(currentTimeLineStyles.label)}
         style={{
-          left: `${timeColumnWidth - 40}px`
+          left: `${timeColumnWidth - 40}px`,
         }}
       >
         {timeString}
       </div>
-      
+
       {/* 赤い点 */}
-      <div 
+      <div
         className={cn(currentTimeLineStyles.dot)}
         style={{
-          left: `${timeColumnWidth}px`
+          left: `${timeColumnWidth}px`,
         }}
       />
-      
+
       {/* 赤い線 - 時間列の右から画面端まで */}
-      <div 
+      <div
         className={cn(currentTimeLineStyles.line)}
         style={{
           left: `${timeColumnWidth}px`,
           right: 0,
-          width: `calc(100% - ${timeColumnWidth}px)`
+          width: `calc(100% - ${timeColumnWidth}px)`,
         }}
       />
     </div>

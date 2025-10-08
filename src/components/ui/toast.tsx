@@ -1,9 +1,15 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import { CheckCircle as CheckCircleIcon, XCircle as XCircleIcon, AlertTriangle as ExclamationTriangleIcon, Info as InformationCircleIcon, X as XMarkIcon } from 'lucide-react'
+import {
+  CheckCircle as CheckCircleIcon,
+  AlertTriangle as ExclamationTriangleIcon,
+  Info as InformationCircleIcon,
+  XCircle as XCircleIcon,
+  X as XMarkIcon,
+} from 'lucide-react'
 
 export interface Toast {
   id: string
@@ -39,48 +45,65 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const generateId = () => Math.random().toString(36).substring(2) + Date.now().toString(36)
 
   const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id))
+    setToasts((prev) => prev.filter((toast) => toast.id !== id))
   }, [])
 
-  const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
-    const id = generateId()
-    const newToast = { ...toast, id }
-    
-    setToasts(prev => [...prev, newToast])
+  const addToast = useCallback(
+    (toast: Omit<Toast, 'id'>) => {
+      const id = generateId()
+      const newToast = { ...toast, id }
 
-    // Auto remove after duration (default 5 seconds)
-    const duration = toast.duration ?? 5000
-    setTimeout(() => {
-      removeToast(id)
-    }, duration)
-  }, [removeToast])
+      setToasts((prev) => [...prev, newToast])
 
-  const success = useCallback((title: string, description?: string) => {
-    addToast({ type: 'success', title, description })
-  }, [addToast])
+      // Auto remove after duration (default 5 seconds)
+      const duration = toast.duration ?? 5000
+      setTimeout(() => {
+        removeToast(id)
+      }, duration)
+    },
+    [removeToast]
+  )
 
-  const error = useCallback((title: string, description?: string) => {
-    addToast({ type: 'error', title, description })
-  }, [addToast])
+  const success = useCallback(
+    (title: string, description?: string) => {
+      addToast({ type: 'success', title, description })
+    },
+    [addToast]
+  )
 
-  const warning = useCallback((title: string, description?: string) => {
-    addToast({ type: 'warning', title, description })
-  }, [addToast])
+  const error = useCallback(
+    (title: string, description?: string) => {
+      addToast({ type: 'error', title, description })
+    },
+    [addToast]
+  )
 
-  const info = useCallback((title: string, description?: string) => {
-    addToast({ type: 'info', title, description })
-  }, [addToast])
+  const warning = useCallback(
+    (title: string, description?: string) => {
+      addToast({ type: 'warning', title, description })
+    },
+    [addToast]
+  )
+
+  const info = useCallback(
+    (title: string, description?: string) => {
+      addToast({ type: 'info', title, description })
+    },
+    [addToast]
+  )
 
   return (
-    <ToastContext.Provider value={{
-      toasts,
-      addToast,
-      removeToast,
-      success,
-      error,
-      warning,
-      info,
-    }}>
+    <ToastContext.Provider
+      value={{
+        toasts,
+        addToast,
+        removeToast,
+        success,
+        error,
+        warning,
+        info,
+      }}
+    >
       {children}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
@@ -88,7 +111,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 }
 
 function getToastIcon(type: Toast['type']) {
-  const iconProps = "h-6 w-6"
+  const iconProps = 'h-6 w-6'
   switch (type) {
     case 'success':
       return <CheckCircleIcon className={`${iconProps} text-green-500`} data-slot="icon" />
@@ -117,23 +140,19 @@ function getToastStyles(type: Toast['type']) {
 const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) => {
   return (
     <div
-      className={`relative flex w-full max-w-sm items-start space-x-3 rounded-lg border p-4 shadow-lg transition-all duration-300 animate-in slide-in-from-bottom-4 fade-in zoom-in hover:scale-[1.02] ${getToastStyles(toast.type)}`}
+      className={`animate-in slide-in-from-bottom-4 fade-in zoom-in relative flex w-full max-w-sm items-start space-x-3 rounded-lg border p-4 shadow-lg transition-all duration-300 hover:scale-[1.02] ${getToastStyles(toast.type)}`}
     >
-      <div className="flex-shrink-0">
-        {getToastIcon(toast.type)}
-      </div>
-      <div className="flex-1 min-w-0">
+      <div className="flex-shrink-0">{getToastIcon(toast.type)}</div>
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">{toast.title}</p>
-        {toast.description != null && (
-          <p className="mt-1 text-sm opacity-90">{toast.description}</p>
-        )}
+        {toast.description != null && <p className="mt-1 text-sm opacity-90">{toast.description}</p>}
       </div>
       <button
         type="button"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => onRemove(toast.id)}
-        className="flex-shrink-0 ml-2 text-current opacity-50 hover:opacity-100 transition-opacity"
+        className="ml-2 flex-shrink-0 text-current opacity-50 transition-opacity hover:opacity-100"
       >
         <XMarkIcon className="h-4 w-4" data-slot="icon" />
       </button>
@@ -143,7 +162,7 @@ const ToastItem = ({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
 
 const ToastContainer = ({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) => {
   return (
-    <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col space-y-2">
+    <div className="fixed top-1/2 left-1/2 z-50 flex -translate-x-1/2 -translate-y-1/2 transform flex-col space-y-2">
       <div className="space-y-4">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />

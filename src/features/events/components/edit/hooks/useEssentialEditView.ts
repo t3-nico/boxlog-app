@@ -36,14 +36,7 @@ interface UseEssentialEditViewProps {
   }
 }
 
-export const useEssentialEditView = ({
-  isOpen,
-  onClose,
-  onSave,
-  onDelete,
-  initialData
-}: UseEssentialEditViewProps) => {
-
+export const useEssentialEditView = ({ isOpen, onClose, onSave, onDelete, initialData }: UseEssentialEditViewProps) => {
   // カスタムフックで状態管理とロジックを抽出
   const {
     title,
@@ -63,12 +56,12 @@ export const useEssentialEditView = ({
     setShowMemo,
     setMemo,
     handleSave,
-    handleSmartExtract
+    handleSmartExtract,
   } = useEssentialEditForm({
     initialData,
     isOpen,
     onSave,
-    onClose
+    onClose,
   })
 
   // 削除処理
@@ -124,6 +117,6 @@ export const useEssentialEditView = ({
     setMemo,
     handleSave,
     handleSmartExtract,
-    handleDelete
+    handleDelete,
   }
 }

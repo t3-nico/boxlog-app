@@ -69,7 +69,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
             {process.env.NODE_ENV === 'development' && (
               <div className="mb-4 rounded border border-red-200 bg-red-50 p-3">
-                <p className="break-all font-mono text-xs text-red-800">{error.message}</p>
+                <p className="font-mono text-xs break-all text-red-800">{error.message}</p>
                 {error.digest ? <p className="mt-1 text-xs text-red-600">Error ID: {error.digest}</p> : null}
               </div>
             )}
@@ -77,13 +77,13 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <div className="flex space-x-3">
               <button
                 onClick={reset}
-                className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
               >
                 再試行
               </button>
               <button
                 onClick={() => (window.location.href = '/')}
-                className="flex-1 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                className="flex-1 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
               >
                 ホームに戻る
               </button>

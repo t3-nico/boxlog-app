@@ -1,21 +1,17 @@
-'use client';
+'use client'
 
-import type { ComponentProps } from 'react';
-import { useCallback } from 'react';
+import type { ComponentProps } from 'react'
+import { useCallback } from 'react'
 
-import { ArrowDownIcon } from 'lucide-react';
-import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
+import { ArrowDownIcon } from 'lucide-react'
+import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom'
 
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
+export type AIConversationProps = ComponentProps<typeof StickToBottom>
 
-export type AIConversationProps = ComponentProps<typeof StickToBottom>;
-
-export const AIConversation = ({
-  className,
-  ...props
-}: AIConversationProps) => (
+export const AIConversation = ({ className, ...props }: AIConversationProps) => (
   <StickToBottom
     className={cn('relative flex-1 overflow-y-auto', className)}
     initial="smooth"
@@ -23,25 +19,20 @@ export const AIConversation = ({
     role="log"
     {...props}
   />
-);
+)
 
-export type AIConversationContentProps = ComponentProps<
-  typeof StickToBottom.Content
->;
+export type AIConversationContentProps = ComponentProps<typeof StickToBottom.Content>
 
-export const AIConversationContent = ({
-  className,
-  ...props
-}: AIConversationContentProps) => (
+export const AIConversationContent = ({ className, ...props }: AIConversationContentProps) => (
   <StickToBottom.Content className={cn('p-4', className)} {...props} />
-);
+)
 
 export const AIConversationScrollButton = () => {
-  const { isAtBottom, scrollToBottom } = useStickToBottomContext();
+  const { isAtBottom, scrollToBottom } = useStickToBottomContext()
 
   const handleScrollToBottom = useCallback(() => {
-    scrollToBottom();
-  }, [scrollToBottom]);
+    scrollToBottom()
+  }, [scrollToBottom])
 
   return (
     !isAtBottom && (
@@ -55,5 +46,5 @@ export const AIConversationScrollButton = () => {
         <ArrowDownIcon className="size-4" />
       </Button>
     )
-  );
-};
+  )
+}

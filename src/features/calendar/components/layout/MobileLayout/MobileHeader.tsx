@@ -77,12 +77,15 @@ export const MobileHeader = ({
   }, [])
 
   // jsx-no-bind optimization: View change handler creator
-  const createViewChangeHandler = useCallback((value: CalendarViewType) => {
-    return () => {
-      onViewChange?.(value)
-      setIsViewMenuOpen(false)
-    }
-  }, [onViewChange])
+  const createViewChangeHandler = useCallback(
+    (value: CalendarViewType) => {
+      return () => {
+        onViewChange?.(value)
+        setIsViewMenuOpen(false)
+      }
+    },
+    [onViewChange]
+  )
 
   // 日付の表示形式をモバイル用に短縮
   const getDateDisplay = () => {
@@ -143,7 +146,8 @@ export const MobileHeader = ({
               onClick={handleViewMenuOpen}
               className="text-muted-foreground hover:bg-accent/50 rounded px-2 py-0.5 text-xs transition-colors"
             >
-              {viewLabels[viewType] || viewType}{t('calendar.mobile.header.viewSuffix')}
+              {viewLabels[viewType] || viewType}
+              {t('calendar.mobile.header.viewSuffix')}
             </button>
           </>
         )}
@@ -170,7 +174,8 @@ export const MobileHeader = ({
       </div>
 
       {/* ビュー切り替えメニュー */}
-      {isViewMenuOpen && onViewChange ? <>
+      {isViewMenuOpen && onViewChange ? (
+        <>
           {/* オーバーレイ */}
           <div
             className="fixed inset-0 z-50 bg-black/20"
@@ -182,7 +187,7 @@ export const MobileHeader = ({
           />
 
           {/* メニュー */}
-          <div className="bg-background border-border absolute left-1/2 top-full z-50 mt-2 w-48 -translate-x-1/2 rounded-lg border shadow-lg">
+          <div className="bg-background border-border absolute top-full left-1/2 z-50 mt-2 w-48 -translate-x-1/2 rounded-lg border shadow-lg">
             <div className="py-2">
               {Object.entries(viewLabels).map(([value, label]) => (
                 <button
@@ -194,12 +199,14 @@ export const MobileHeader = ({
                     viewType === value && 'bg-accent text-accent-foreground font-medium'
                   )}
                 >
-                  {label}{t('calendar.mobile.header.viewSuffix')}
+                  {label}
+                  {t('calendar.mobile.header.viewSuffix')}
                 </button>
               ))}
             </div>
           </div>
-        </> : null}
+        </>
+      ) : null}
     </header>
   )
 }

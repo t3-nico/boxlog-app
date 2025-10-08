@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import { useEventSelection } from './useEventSelection'
 
 describe('useEventSelection', () => {
@@ -22,9 +22,7 @@ describe('useEventSelection', () => {
 
   it('should call onSelectionChange when selecting event', () => {
     const onSelectionChange = vi.fn()
-    const { result } = renderHook(() =>
-      useEventSelection({ onSelectionChange })
-    )
+    const { result } = renderHook(() => useEventSelection({ onSelectionChange }))
 
     act(() => {
       result.current.actions.selectEvent('event-123')
@@ -45,9 +43,7 @@ describe('useEventSelection', () => {
 
   it('should clear selection', () => {
     const onSelectionChange = vi.fn()
-    const { result } = renderHook(() =>
-      useEventSelection({ onSelectionChange })
-    )
+    const { result } = renderHook(() => useEventSelection({ onSelectionChange }))
 
     act(() => {
       result.current.actions.selectEvent('event-123')

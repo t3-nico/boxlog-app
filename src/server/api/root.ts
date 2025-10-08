@@ -3,8 +3,8 @@
  * 全APIルーターの統合とエクスポート
  */
 
-import { createTRPCRouter } from './trpc'
 import { tasksRouter } from './routers/tasks'
+import { createTRPCRouter } from './trpc'
 
 /**
  * メインAPIルーター

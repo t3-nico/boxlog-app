@@ -43,11 +43,11 @@ interface UseViewEventsReturn {
 export function useViewEvents({ date, events }: UseViewEventsOptions): UseViewEventsReturn {
   // 指定日のイベントのみフィルター
   const dayEvents = useMemo(() => {
-    return events.filter(event => {
+    return events.filter((event) => {
       if (!event.startDate || !isValid(new Date(event.startDate))) {
         return false
       }
-      
+
       const eventDate = new Date(event.startDate)
       return isSameDay(eventDate, date)
     })
@@ -55,10 +55,10 @@ export function useViewEvents({ date, events }: UseViewEventsOptions): UseViewEv
 
   // CalendarEventをuseEventLayoutCalculatorで期待される形式に変換
   const convertedEvents = useMemo(() => {
-    return dayEvents.map(event => ({
+    return dayEvents.map((event) => ({
       ...event,
       start: event.startDate!,
-      end: event.endDate || new Date(new Date(event.startDate!).getTime() + 60 * 60 * 1000)
+      end: event.endDate || new Date(new Date(event.startDate!).getTime() + 60 * 60 * 1000),
     }))
   }, [dayEvents])
 
@@ -86,7 +86,7 @@ export function useViewEvents({ date, events }: UseViewEventsOptions): UseViewEv
         幅: layout.width,
         左位置: layout.left,
         top,
-        height
+        height,
       })
 
       return {
@@ -98,19 +98,19 @@ export function useViewEvents({ date, events }: UseViewEventsOptions): UseViewEv
         zIndex: 10 + index,
         column: layout.column,
         totalColumns: layout.totalColumns,
-        opacity: layout.totalColumns > 1 ? 0.95 : 1.0
+        opacity: layout.totalColumns > 1 ? 0.95 : 1.0,
       }
     })
   }, [eventLayouts])
 
   const maxConcurrentEvents = useMemo(() => {
-    return Math.max(1, ...eventLayouts.map(layout => layout.totalColumns))
+    return Math.max(1, ...eventLayouts.map((layout) => layout.totalColumns))
   }, [eventLayouts])
 
   return {
     dayEvents,
     eventPositions,
     maxConcurrentEvents,
-    skippedEventsCount: 0 // 新しいシステムではスキップしない
+    skippedEventsCount: 0, // 新しいシステムではスキップしない
   }
 }

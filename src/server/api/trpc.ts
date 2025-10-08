@@ -6,8 +6,8 @@
 
 import { initTRPC, TRPCError } from '@trpc/server'
 import { CreateNextContextOptions } from '@trpc/server/adapters/next'
-import { z } from 'zod'
 import superjson from 'superjson'
+import { z } from 'zod'
 
 import { createAppError, ERROR_CODES } from '@/config/error-patterns'
 import { trackError } from '@/lib/analytics/vercel-analytics'
@@ -62,9 +62,8 @@ const t = initTRPC.context<Context>().create({
     const isProduction = process.env.NODE_ENV === 'production'
 
     // エラーの詳細情報をプロダクションでは非表示
-    const message = isProduction && error.code === 'INTERNAL_SERVER_ERROR'
-      ? 'サーバーエラーが発生しました'
-      : shape.message
+    const message =
+      isProduction && error.code === 'INTERNAL_SERVER_ERROR' ? 'サーバーエラーが発生しました' : shape.message
 
     // Analyticsにエラーを送信
     if (error.code === 'INTERNAL_SERVER_ERROR') {
@@ -185,9 +184,7 @@ async function checkRateLimit(ip: string): Promise<boolean> {
 
 function getClientIP(req: CreateNextContextOptions['req']): string {
   const forwarded = req.headers['x-forwarded-for']
-  const ip = typeof forwarded === 'string'
-    ? forwarded.split(',')[0]
-    : req.socket.remoteAddress
+  const ip = typeof forwarded === 'string' ? forwarded.split(',')[0] : req.socket.remoteAddress
 
   return ip || 'unknown'
 }

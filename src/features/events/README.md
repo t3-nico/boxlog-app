@@ -62,12 +62,14 @@ src/features/events/
 Inspector内でのイベント詳細表示・編集を担当するメインコンポーネント。
 
 **特徴:**
+
 - Google Calendar風のシンプルなUI
 - リアルタイム自動保存（500ms debounce）
 - 作成・編集・表示モードの自動切り替え
 - 統一されたh6タイポグラフィ
 
 **主要機能:**
+
 - タイトル・説明編集
 - 日付・時間編集（inline入力）
 - タグ管理
@@ -79,11 +81,13 @@ Inspector内でのイベント詳細表示・編集を担当するメインコ�
 効率的なイベント作成を実現するシステム。
 
 **コンポーネント:**
+
 - `EssentialCreate.tsx`: 基本作成ロジック
 - `EssentialInspectorView.tsx`: Inspector内作成ビュー
 - `EssentialSingleView.tsx`: 単独ページ作成ビュー
 
 **特徴:**
+
 - 最小限の入力でイベント作成
 - スマート入力による自動補完
 - ファーストインプレッションを重視したUX
@@ -96,10 +100,8 @@ Inspector内でのイベント詳細表示・編集を担当するメインコ�
 import { background, text, border, typography, spacing } from '@/config/theme'
 
 // 正しい実装例
-<div className={cn('space-y-3 p-4 border-b', border.universal)}>
-  <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>
-    セクションタイトル
-  </h3>
+;<div className={cn('space-y-3 border-b p-4', border.universal)}>
+  <h3 className={cn(typography.heading.h6, 'font-semibold', text.primary)}>セクションタイトル</h3>
 </div>
 ```
 
@@ -110,6 +112,7 @@ import { background, text, border, typography, spacing } from '@/config/theme'
 メインのイベント状態管理store。
 
 **主な機能:**
+
 - イベントCRUD操作
 - 楽観的更新
 - エラーハンドリング
@@ -120,6 +123,7 @@ import { background, text, border, typography, spacing } from '@/config/theme'
 イベント作成モーダルの状態管理。
 
 **主な機能:**
+
 - モーダル開閉状態
 - 初期値設定
 - 作成フォーム状態

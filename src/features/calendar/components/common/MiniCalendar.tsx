@@ -136,7 +136,11 @@ export const MiniCalendar = memo<MiniCalendarProps>(
           isSelected && !isToday && [selectedState.background],
 
           // Today indicator (always maintains this style regardless of selected/hover state)
-          isToday && ['!bg-neutral-100 dark:!bg-neutral-800', 'text-neutral-700 dark:text-neutral-300', 'font-semibold'],
+          isToday && [
+            '!bg-neutral-100 dark:!bg-neutral-800',
+            'text-neutral-700 dark:text-neutral-300',
+            'font-semibold',
+          ],
 
           // Highlighted dates (events, etc.)
           isHighlighted &&
@@ -210,7 +214,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             className={cn(
               'rounded-full p-1.5 transition-colors',
               'hover:bg-neutral-300 dark:hover:bg-neutral-600',
-              'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50'
+              'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50'
             )}
             aria-label="Previous Month"
           >
@@ -225,7 +229,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             className={cn(
               'rounded-full p-1.5 transition-colors',
               'hover:bg-neutral-300 dark:hover:bg-neutral-600',
-              'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50'
+              'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50'
             )}
             aria-label="Next Month"
           >

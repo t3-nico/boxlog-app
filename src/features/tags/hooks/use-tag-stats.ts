@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 
 import { useQuery } from '@tanstack/react-query'
 
-import type { TagWithChildren, TagUsageStats } from '@/types/tags'
+import type { TagUsageStats, TagWithChildren } from '@/types/tags'
 
 interface TagWithUsage extends TagWithChildren {
   usage_count: number
@@ -27,7 +27,7 @@ const tagStatsAPI = {
   async fetchTagStats(): Promise<TagUsageStats[]> {
     const response = await fetch('/api/tags/stats')
     if (!response.ok) throw new Error('Failed to fetch tag stats')
-    
+
     const data = await response.json()
     return data.data
   },
@@ -51,7 +51,7 @@ const tagStatsAPI = {
         })
       }, 100)
     })
-  }
+  },
 }
 
 // クエリキー
@@ -80,15 +80,8 @@ export function useTagUsageCounts() {
 }
 
 // サイドバー表示用タグフック
-export function useSidebarTags(
-  allTags: TagWithChildren[],
-  options: SidebarTagsOptions = {}
-) {
-  const {
-    maxTopLevel = 5,
-    maxChildren = 3,
-    minUsageCount = 1
-  } = options
+export function useSidebarTags(allTags: TagWithChildren[], options: SidebarTagsOptions = {}) {
+  const { maxTopLevel = 5, maxChildren = 3, minUsageCount = 1 } = options
 
   const { data: usageCounts = {}, isLoading } = useTagUsageCounts()
 
@@ -97,13 +90,12 @@ export function useSidebarTags(
 
     // タグに使用数を付与
     const addUsageToTags = (tags: TagWithChildren[]): TagWithUsage[] => {
-      return tags.map(tag => {
+      return tags.map((tag) => {
         const usage_count = usageCounts[tag.id] || 0
         const childrenWithUsage = addUsageToTags(tag.children || [])
-        
+
         // 子タグの使用数も合計に含める
-        const totalUsage = usage_count + 
-          childrenWithUsage.reduce((sum, child) => sum + child.usage_count, 0)
+        const totalUsage = usage_count + childrenWithUsage.reduce((sum, child) => sum + child.usage_count, 0)
 
         return {
           ...tag,
@@ -112,7 +104,7 @@ export function useSidebarTags(
           event_count: Math.floor(totalUsage * 0.2),
           record_count: Math.floor(totalUsage * 0.1),
           last_used_at: usage_count > 0 ? new Date() : null,
-          children_with_usage: childrenWithUsage
+          children_with_usage: childrenWithUsage,
         }
       })
     }
@@ -122,11 +114,11 @@ export function useSidebarTags(
     // 使用頻度でソート
     const sortByUsage = (tags: TagWithUsage[]): TagWithUsage[] => {
       return tags
-        .filter(tag => tag.usage_count >= minUsageCount)
+        .filter((tag) => tag.usage_count >= minUsageCount)
         .sort((a, b) => b.usage_count - a.usage_count)
-        .map(tag => ({
+        .map((tag) => ({
           ...tag,
-          children_with_usage: sortByUsage(tag.children_with_usage).slice(0, maxChildren)
+          children_with_usage: sortByUsage(tag.children_with_usage).slice(0, maxChildren),
         }))
     }
 
@@ -140,7 +132,7 @@ export function useSidebarTags(
     tags: sidebarTags,
     isLoading,
     totalTags: allTags.length,
-    totalUsage: Object.values(usageCounts).reduce((sum, count) => sum + count, 0)
+    totalUsage: Object.values(usageCounts).reduce((sum, count) => sum + count, 0),
   }
 }
 
@@ -150,7 +142,7 @@ export function useTagExpandedState() {
 
   const getExpandedState = (): Set<string> => {
     if (typeof window === 'undefined') return new Set()
-    
+
     try {
       const stored = localStorage.getItem(STORAGE_KEY)
       return stored ? new Set(JSON.parse(stored)) : new Set()
@@ -161,7 +153,7 @@ export function useTagExpandedState() {
 
   const setExpandedState = (expandedIds: Set<string>) => {
     if (typeof window === 'undefined') return
-    
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(expandedIds)))
     } catch (error) {
@@ -183,7 +175,7 @@ export function useTagExpandedState() {
   return {
     getExpandedState,
     setExpandedState,
-    toggleExpanded
+    toggleExpanded,
   }
 }
 
@@ -191,40 +183,38 @@ export function useTagExpandedState() {
 export function useTagItemAnimation() {
   const getAnimationClasses = (isExpanded: boolean, hasChildren: boolean) => {
     if (!hasChildren) return ''
-    
-    return isExpanded 
+
+    return isExpanded
       ? 'transform transition-transform duration-200 ease-out'
       : 'transform transition-transform duration-200 ease-in'
   }
 
   const getChevronClasses = (isExpanded: boolean) => {
-    return `transform transition-transform duration-200 ease-in-out ${
-      isExpanded ? 'rotate-90' : 'rotate-0'
-    }`
+    return `transform transition-transform duration-200 ease-in-out ${isExpanded ? 'rotate-90' : 'rotate-0'}`
   }
 
   return {
     getAnimationClasses,
-    getChevronClasses
+    getChevronClasses,
   }
 }
 
 // デバッグ用のタグ統計表示
 export function useTagStatsDebug() {
   const { data: usageCounts } = useTagUsageCounts()
-  
+
   const debugInfo = useMemo(() => {
     if (!usageCounts) return null
 
     const entries = Object.entries(usageCounts)
     const total = entries.reduce((sum, [, count]) => sum + count, 0)
     const sorted = entries.sort(([, a], [, b]) => b - a)
-    
+
     return {
       total,
       topTags: sorted.slice(0, 5),
       tagCount: entries.length,
-      averageUsage: total / entries.length
+      averageUsage: total / entries.length,
     }
   }, [usageCounts])
 

@@ -7,24 +7,16 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from '@/components/ui/resizable'
-import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
 import { useI18n } from '@/features/i18n/lib/hooks'
-import { useGlobalSearch } from '@/features/search'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
-import { cn } from '@/lib/utils'
 
 import { Inspector } from '@/features/inspector'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
-import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
 interface BaseLayoutContentProps {
   children: React.ReactNode
@@ -52,20 +44,23 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
     })
   }, [openCreateInspector])
 
-  const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(pathname, searchParams || new URLSearchParams())
+  const { isCalendarPage, calendarProviderProps } = useCalendarProviderProps(
+    pathname,
+    searchParams || new URLSearchParams()
+  )
 
   const content = (
     <div className="flex h-screen flex-col">
       {/* アクセシビリティ: スキップリンク */}
       <a
         href="#main-content"
-        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
+        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
       >
         {t('common.skipToMainContent')}
       </a>
 
       {/* メインレイアウト - Inset方式 */}
-      <div className="flex flex-1 overflow-hidden bg-secondary">
+      <div className="bg-secondary flex flex-1 overflow-hidden">
         <ResizablePanelGroup direction="horizontal">
           {/* L1: Sidebar - Resizable */}
           <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
@@ -76,7 +71,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
           {/* L2: Main Content + Inspector - Floating */}
           <ResizablePanel defaultSize={80}>
-            <div className="m-2 ml-0 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl bg-muted shadow-lg">
+            <div className="bg-muted m-2 ml-0 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
               {/* Main Content Area */}
               <div className="flex flex-1 overflow-hidden">
                 <div className="relative z-10 flex flex-1">
@@ -99,7 +94,7 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         onClick={handleCreateEventClick}
         size="icon"
         aria-label={t('common.createNewEvent')}
-        className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-2xl shadow-lg md:bottom-6 md:right-6 md:h-16 md:w-16 lg:hidden"
+        className="fixed right-4 bottom-20 z-50 h-14 w-14 rounded-2xl shadow-lg md:right-6 md:bottom-6 md:h-16 md:w-16 lg:hidden"
       >
         <Plus className="h-6 w-6 md:h-7 md:w-7" />
       </Button>

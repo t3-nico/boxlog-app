@@ -73,7 +73,7 @@ export const MobileNavigation = ({
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-50',
+        'fixed right-0 bottom-0 left-0 z-50',
         'bg-background/95 border-border border-t backdrop-blur-sm',
         'safe-area-inset-bottom', // iOS SafeArea対応
         className
@@ -100,9 +100,11 @@ export const MobileNavigation = ({
             <div className="relative">
               {item.icon}
               {/* バッジ */}
-              {item.badge && item.badge > 0 ? <div className="bg-destructive text-destructive-foreground absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-xs">
+              {item.badge && item.badge > 0 ? (
+                <div className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-xs">
                   {item.badge > 99 ? '99+' : item.badge}
-                </div> : null}
+                </div>
+              ) : null}
             </div>
 
             {/* ラベル */}

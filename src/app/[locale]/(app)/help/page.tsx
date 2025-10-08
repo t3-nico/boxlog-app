@@ -1,4 +1,4 @@
-import { getDictionary, createTranslation } from '@/features/i18n/lib'
+import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
 
 import HelpPageClient from './client'

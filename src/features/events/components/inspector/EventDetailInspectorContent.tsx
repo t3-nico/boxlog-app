@@ -19,9 +19,9 @@ import {
   Trash2,
 } from 'lucide-react'
 
+import { TiptapEditor } from '@/components/app/rich-text-editor/tiptap-editor'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { TiptapEditor } from '@/components/app/rich-text-editor/tiptap-editor'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
 
@@ -53,87 +53,91 @@ const EventScheduleSection = React.memo(
   }) => {
     const { t } = useI18n()
     return (
-    <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-      <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>{t('events.detail.schedule.title')}</h3>
+      <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
+        <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>
+          {t('events.detail.schedule.title')}
+        </h3>
 
-      {/* タイトル with Priority */}
-      <div className="flex items-start gap-3">
-        <div className={cn('h-8 w-1 flex-shrink-0 rounded-full', 'bg-blue-600 dark:bg-blue-500')} />
-        {isEditable ? (
-          <input
-            type="text"
-            value={formData.title}
-            onChange={handleTitleInputChange}
-            placeholder={isCreateMode ? t('events.detail.schedule.titlePlaceholder') : ''}
-            className={cn(
-              'w-full flex-1 bg-transparent outline-none',
-              'text-2xl font-bold',
-              'text-neutral-900 dark:text-neutral-100',
-              'placeholder:text-neutral-600 dark:placeholder:text-neutral-400'
-            )}
-          />
-        ) : (
-          <h3 className={cn('text-2xl font-bold', 'flex-1 break-words text-neutral-900 dark:text-neutral-100')}>
-            {formData.title}
-          </h3>
-        )}
-      </div>
+        {/* タイトル with Priority */}
+        <div className="flex items-start gap-3">
+          <div className={cn('h-8 w-1 flex-shrink-0 rounded-full', 'bg-blue-600 dark:bg-blue-500')} />
+          {isEditable ? (
+            <input
+              type="text"
+              value={formData.title}
+              onChange={handleTitleInputChange}
+              placeholder={isCreateMode ? t('events.detail.schedule.titlePlaceholder') : ''}
+              className={cn(
+                'w-full flex-1 bg-transparent outline-none',
+                'text-2xl font-bold',
+                'text-neutral-900 dark:text-neutral-100',
+                'placeholder:text-neutral-600 dark:placeholder:text-neutral-400'
+              )}
+            />
+          ) : (
+            <h3 className={cn('text-2xl font-bold', 'flex-1 break-words text-neutral-900 dark:text-neutral-100')}>
+              {formData.title}
+            </h3>
+          )}
+        </div>
 
-      {/* 日付と時間 */}
-      <div className="max-w-full space-y-3">
-        {isEditable ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <Input
-              type="date"
-              value={format(formData.startDate ?? new Date(), 'yyyy-MM-dd')}
-              onChange={handleDateInputChange}
-              className={cn(
-                'text-base',
-                'w-auto rounded-md px-3 py-2',
-                '[&::-webkit-calendar-picker-indicator]:hidden',
-                'border-neutral-200 dark:border-neutral-700',
-                'bg-white dark:bg-neutral-800',
-                'text-neutral-900 dark:text-neutral-100'
-              )}
-              style={{ width: `${format(formData.startDate ?? new Date(), 'yyyy-MM-dd').length + 2}ch` }}
-            />
-            <Input
-              type="time"
-              value={format(formData.startDate ?? new Date(), 'HH:mm')}
-              onChange={handleTimeInputChange}
-              className={cn(
-                'text-base',
-                'w-fit rounded-md px-3 py-2 text-center',
-                '[&::-webkit-calendar-picker-indicator]:hidden',
-                'border-neutral-200 dark:border-neutral-700',
-                'bg-white dark:bg-neutral-800',
-                'text-neutral-900 dark:text-neutral-100'
-              )}
-            />
-            <span className={cn('text-base text-neutral-600 dark:text-neutral-400', 'flex-shrink-0')}>→</span>
-            <Input
-              type="time"
-              value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
-              onChange={handleEndTimeInputChange}
-              className={cn(
-                'text-base',
-                'w-fit rounded-md px-3 py-2 text-center',
-                '[&::-webkit-calendar-picker-indicator]:hidden',
-                'border-neutral-200 dark:border-neutral-700',
-                'bg-white dark:bg-neutral-800',
-                'text-neutral-900 dark:text-neutral-100'
-              )}
-            />
-          </div>
-        ) : (
-          <div className={cn('text-base', 'break-words font-medium text-neutral-900 dark:text-neutral-100')}>
-            {format(formData.startDate ?? new Date(), 'yyyy年M月d日（E）', { locale: ja })} {format(formData.startDate ?? new Date(), 'HH:mm')} →{' '}
-            {formData.endDate ? format(formData.endDate, 'HH:mm') : t('events.detail.schedule.endTimeNotSet')}
-          </div>
-        )}
+        {/* 日付と時間 */}
+        <div className="max-w-full space-y-3">
+          {isEditable ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <Input
+                type="date"
+                value={format(formData.startDate ?? new Date(), 'yyyy-MM-dd')}
+                onChange={handleDateInputChange}
+                className={cn(
+                  'text-base',
+                  'w-auto rounded-md px-3 py-2',
+                  '[&::-webkit-calendar-picker-indicator]:hidden',
+                  'border-neutral-200 dark:border-neutral-700',
+                  'bg-white dark:bg-neutral-800',
+                  'text-neutral-900 dark:text-neutral-100'
+                )}
+                style={{ width: `${format(formData.startDate ?? new Date(), 'yyyy-MM-dd').length + 2}ch` }}
+              />
+              <Input
+                type="time"
+                value={format(formData.startDate ?? new Date(), 'HH:mm')}
+                onChange={handleTimeInputChange}
+                className={cn(
+                  'text-base',
+                  'w-fit rounded-md px-3 py-2 text-center',
+                  '[&::-webkit-calendar-picker-indicator]:hidden',
+                  'border-neutral-200 dark:border-neutral-700',
+                  'bg-white dark:bg-neutral-800',
+                  'text-neutral-900 dark:text-neutral-100'
+                )}
+              />
+              <span className={cn('text-base text-neutral-600 dark:text-neutral-400', 'flex-shrink-0')}>→</span>
+              <Input
+                type="time"
+                value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
+                onChange={handleEndTimeInputChange}
+                className={cn(
+                  'text-base',
+                  'w-fit rounded-md px-3 py-2 text-center',
+                  '[&::-webkit-calendar-picker-indicator]:hidden',
+                  'border-neutral-200 dark:border-neutral-700',
+                  'bg-white dark:bg-neutral-800',
+                  'text-neutral-900 dark:text-neutral-100'
+                )}
+              />
+            </div>
+          ) : (
+            <div className={cn('text-base', 'font-medium break-words text-neutral-900 dark:text-neutral-100')}>
+              {format(formData.startDate ?? new Date(), 'yyyy年M月d日（E）', { locale: ja })}{' '}
+              {format(formData.startDate ?? new Date(), 'HH:mm')} →{' '}
+              {formData.endDate ? format(formData.endDate, 'HH:mm') : t('events.detail.schedule.endTimeNotSet')}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  )}
+    )
+  }
 )
 
 EventScheduleSection.displayName = 'EventScheduleSection'
@@ -267,34 +271,43 @@ const useFormHandlers = (
   updateFormData: (field: keyof CalendarEvent, value: unknown) => void
 ) => {
   // jsx-no-bind optimization: Form field handlers
-  const handleTitleChange = useCallback((value: string) => {
-    updateFormData('title', value)
-  }, [updateFormData])
+  const handleTitleChange = useCallback(
+    (value: string) => {
+      updateFormData('title', value)
+    },
+    [updateFormData]
+  )
 
-  const handleDescriptionChange = useCallback((value: string) => {
-    updateFormData('description', value)
-  }, [updateFormData])
+  const handleDescriptionChange = useCallback(
+    (value: string) => {
+      updateFormData('description', value)
+    },
+    [updateFormData]
+  )
 
-  const handleDateChange = useCallback((value: string) => {
-    if (value) {
-      const newDate = new Date(value)
-      if (!isNaN(newDate.getTime())) {
-        // 既存の時間を保持
-        const currentTime = formData.startDate
-        if (currentTime) {
-          newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
-        }
-        updateFormData('startDate', newDate)
+  const handleDateChange = useCallback(
+    (value: string) => {
+      if (value) {
+        const newDate = new Date(value)
+        if (!isNaN(newDate.getTime())) {
+          // 既存の時間を保持
+          const currentTime = formData.startDate
+          if (currentTime) {
+            newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
+          }
+          updateFormData('startDate', newDate)
 
-        // 終了日がある場合も同じ日付に変更
-        if (formData.endDate) {
-          const newEndDate = new Date(value)
-          newEndDate.setHours(formData.endDate.getHours(), formData.endDate.getMinutes())
-          updateFormData('endDate', newEndDate)
+          // 終了日がある場合も同じ日付に変更
+          if (formData.endDate) {
+            const newEndDate = new Date(value)
+            newEndDate.setHours(formData.endDate.getHours(), formData.endDate.getMinutes())
+            updateFormData('endDate', newEndDate)
+          }
         }
       }
-    }
-  }, [updateFormData, formData.startDate, formData.endDate])
+    },
+    [updateFormData, formData.startDate, formData.endDate]
+  )
 
   return {
     handleTitleChange,
@@ -315,12 +328,7 @@ export const EventDetailInspectorContent = ({
   const { t } = useI18n()
 
   // カスタムフックで状態管理とロジックを抽出
-  const {
-    showTimeline,
-    formData,
-    setShowTimeline,
-    updateFormData,
-  } = useEventDetailInspector({
+  const { showTimeline, formData, setShowTimeline, updateFormData } = useEventDetailInspector({
     event,
     mode,
     onSave,
@@ -340,39 +348,51 @@ export const EventDetailInspectorContent = ({
   const { handleTitleChange, handleDescriptionChange } = useFormHandlers(formData, updateFormData)
 
   // jsx-no-bind optimization: Event handlers
-  const handleTitleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleTitleChange(e.target.value)
-  }, [handleTitleChange])
+  const handleTitleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleTitleChange(e.target.value)
+    },
+    [handleTitleChange]
+  )
 
-  const handleDateInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      const newDate = new Date(e.target.value)
-      if (!isNaN(newDate.getTime())) {
-        // 既存の時間を保持
-        const currentTime = formData.startDate ?? new Date()
-        newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
-        updateFormData('startDate', newDate)
+  const handleDateInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.value) {
+        const newDate = new Date(e.target.value)
+        if (!isNaN(newDate.getTime())) {
+          // 既存の時間を保持
+          const currentTime = formData.startDate ?? new Date()
+          newDate.setHours(currentTime.getHours(), currentTime.getMinutes())
+          updateFormData('startDate', newDate)
 
-        // 終了日がある場合も同じ日付に変更
-        if (formData.endDate) {
-          const newEndDate = new Date(e.target.value)
-          newEndDate.setHours(formData.endDate.getHours(), formData.endDate.getMinutes())
-          updateFormData('endDate', newEndDate)
+          // 終了日がある場合も同じ日付に変更
+          if (formData.endDate) {
+            const newEndDate = new Date(e.target.value)
+            newEndDate.setHours(formData.endDate.getHours(), formData.endDate.getMinutes())
+            updateFormData('endDate', newEndDate)
+          }
         }
       }
-    }
-  }, [formData.startDate, formData.endDate, updateFormData])
+    },
+    [formData.startDate, formData.endDate, updateFormData]
+  )
 
-  const handleTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const [hours, minutes] = e.target.value.split(':')
-    const newDate = new Date(formData.startDate ?? new Date())
-    newDate.setHours(parseInt(hours), parseInt(minutes))
-    updateFormData('startDate', newDate)
-  }, [formData.startDate, updateFormData])
+  const handleTimeInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const [hours, minutes] = e.target.value.split(':')
+      const newDate = new Date(formData.startDate ?? new Date())
+      newDate.setHours(parseInt(hours), parseInt(minutes))
+      updateFormData('startDate', newDate)
+    },
+    [formData.startDate, updateFormData]
+  )
 
-  const handleDescriptionEditorChange = useCallback((value: string) => {
-    handleDescriptionChange(value)
-  }, [handleDescriptionChange])
+  const handleDescriptionEditorChange = useCallback(
+    (value: string) => {
+      handleDescriptionChange(value)
+    },
+    [handleDescriptionChange]
+  )
 
   const handleTimelineToggle = useCallback(() => {
     setShowTimeline(!showTimeline)
@@ -396,16 +416,19 @@ export const EventDetailInspectorContent = ({
     }
   }, [event, onDelete])
 
-  const handleEndTimeInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      const [hours, minutes] = e.target.value.split(':')
-      const newDate = new Date(formData.startDate)
-      newDate.setHours(parseInt(hours), parseInt(minutes))
-      updateFormData('endDate', newDate)
-    } else {
-      updateFormData('endDate', null)
-    }
-  }, [formData.startDate, updateFormData])
+  const handleEndTimeInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.value) {
+        const [hours, minutes] = e.target.value.split(':')
+        const newDate = new Date(formData.startDate)
+        newDate.setHours(parseInt(hours), parseInt(minutes))
+        updateFormData('endDate', newDate)
+      } else {
+        updateFormData('endDate', null)
+      }
+    },
+    [formData.startDate, updateFormData]
+  )
 
   // 時間情報の計算
   const _duration =
@@ -430,7 +453,9 @@ export const EventDetailInspectorContent = ({
 
         {/* タグ */}
         <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>{t('events.detail.tags.title')}</h3>
+          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>
+            {t('events.detail.tags.title')}
+          </h3>
 
           <div className="flex max-w-full flex-wrap gap-2">
             {formData.tags && formData.tags.length > 0 ? (
@@ -443,7 +468,7 @@ export const EventDetailInspectorContent = ({
                     'bg-white dark:bg-neutral-800',
                     'border-neutral-200 dark:border-neutral-700',
                     'text-neutral-600 dark:text-neutral-400',
-                    'hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer transition-colors'
+                    'cursor-pointer transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-700'
                   )}
                   style={{ backgroundColor: `${tag.color}20`, borderColor: tag.color }}
                 >
@@ -462,7 +487,9 @@ export const EventDetailInspectorContent = ({
 
         {/* メモ */}
         <div className={cn('space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>{t('events.detail.memo.title')}</h3>
+          <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>
+            {t('events.detail.memo.title')}
+          </h3>
           <div className="w-full">
             {isEditable ? (
               <TiptapEditor
@@ -473,10 +500,7 @@ export const EventDetailInspectorContent = ({
               />
             ) : formData.description ? (
               <div
-                className={cn(
-                  'text-base text-neutral-900 dark:text-neutral-100',
-                  'max-w-full break-words'
-                )}
+                className={cn('text-base text-neutral-900 dark:text-neutral-100', 'max-w-full break-words')}
                 dangerouslySetInnerHTML={{ __html: sanitizeRichText(formData.description || '') }}
               />
             ) : (
@@ -526,23 +550,17 @@ export const EventDetailInspectorContent = ({
                             {getEventIcon(event)}
                           </div>
                           {!isLast ? (
-                            <div
-                              className={cn(
-                                'mt-1 h-6 w-px border-l border-neutral-200 dark:border-neutral-700'
-                              )}
-                            />
+                            <div className={cn('mt-1 h-6 w-px border-l border-neutral-200 dark:border-neutral-700')} />
                           ) : null}
                         </div>
                         <div className="min-w-0 flex-1 pb-1">
                           <div className="flex max-w-full items-start justify-between gap-2">
-                            <div className={cn('text-sm', 'min-w-0 flex-1 break-words leading-relaxed')}>
+                            <div className={cn('text-sm', 'min-w-0 flex-1 leading-relaxed break-words')}>
                               {getEventDescription(event)}
                             </div>
                             {event.automatic ? (
                               <RefreshCw
-                                className={cn(
-                                  'mt-0.5 h-3 w-3 flex-shrink-0 text-neutral-600 dark:text-neutral-400'
-                                )}
+                                className={cn('mt-0.5 h-3 w-3 flex-shrink-0 text-neutral-600 dark:text-neutral-400')}
                                 title={t('events.detail.activity.autoUpdate')}
                               />
                             ) : null}
@@ -597,13 +615,7 @@ export const EventDetailInspectorContent = ({
                 </Button>
               </div>
 
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDeleteClick}
-                disabled={!event}
-                className="w-full"
-              >
+              <Button variant="destructive" size="sm" onClick={handleDeleteClick} disabled={!event} className="w-full">
                 <Trash2 className="mr-1 h-3 w-3" />
                 {t('events.detail.operations.delete')}
               </Button>

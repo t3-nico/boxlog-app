@@ -1,12 +1,10 @@
-import { describe, it, expect } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
-import { useCalendarSelection, useCalendarColors } from './use-calendars'
+import { act, renderHook } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
+import { useCalendarColors, useCalendarSelection } from './use-calendars'
 
 describe('useCalendarSelection', () => {
   it('should initialize with provided calendar IDs', () => {
-    const { result } = renderHook(() =>
-      useCalendarSelection(['cal-1', 'cal-2'])
-    )
+    const { result } = renderHook(() => useCalendarSelection(['cal-1', 'cal-2']))
 
     expect(result.current.selectedCalendarIds).toEqual(['cal-1', 'cal-2'])
   })
@@ -38,9 +36,7 @@ describe('useCalendarSelection', () => {
   })
 
   it('should deselect all calendars', () => {
-    const { result } = renderHook(() =>
-      useCalendarSelection(['cal-1', 'cal-2'])
-    )
+    const { result } = renderHook(() => useCalendarSelection(['cal-1', 'cal-2']))
 
     act(() => {
       result.current.deselectAll()
@@ -50,9 +46,7 @@ describe('useCalendarSelection', () => {
   })
 
   it('should check if calendar is selected', () => {
-    const { result } = renderHook(() =>
-      useCalendarSelection(['cal-1', 'cal-2'])
-    )
+    const { result } = renderHook(() => useCalendarSelection(['cal-1', 'cal-2']))
 
     expect(result.current.isSelected('cal-1')).toBe(true)
     expect(result.current.isSelected('cal-3')).toBe(false)

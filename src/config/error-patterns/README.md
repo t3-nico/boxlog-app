@@ -38,21 +38,22 @@ src/config/error-patterns/
 import { createAppError } from '@/config'
 
 const error = createAppError(
-  'Database connection timeout',    // 内部メッセージ
-  'DB_CONNECTION_TIMEOUT',          // エラーコード
-  {                                 // メタデータ（オプション）
+  'Database connection timeout', // 内部メッセージ
+  'DB_CONNECTION_TIMEOUT', // エラーコード
+  {
+    // メタデータ（オプション）
     source: 'api',
     userId: 'user123',
-    context: { query: 'SELECT * FROM tasks' }
+    context: { query: 'SELECT * FROM tasks' },
   }
 )
 
 // エラー情報の取得
-console.log(error.code)              // 'DB_CONNECTION_TIMEOUT'
-console.log(error.category)          // 'DATABASE'
-console.log(error.severity)          // 'high'
+console.log(error.code) // 'DB_CONNECTION_TIMEOUT'
+console.log(error.category) // 'DATABASE'
+console.log(error.severity) // 'high'
 console.log(error.userMessage.title) // '接続エラー'
-console.log(error.isRetryable())     // true
+console.log(error.isRetryable()) // true
 ```
 
 ### 2. 既存のエラーをラップする
@@ -63,11 +64,7 @@ import { wrapError } from '@/config'
 try {
   await fetch('/api/tasks')
 } catch (error) {
-  const appError = wrapError(
-    error as Error,
-    'API_NETWORK_ERROR',
-    { source: 'api', endpoint: '/api/tasks' }
-  )
+  const appError = wrapError(error as Error, 'API_NETWORK_ERROR', { source: 'api', endpoint: '/api/tasks' })
 
   throw appError
 }
@@ -85,8 +82,8 @@ async function fetchTasks() {
       if (!res.ok) throw new Error('API Error')
       return await res.json()
     },
-    'API_NETWORK_ERROR',  // エラーコード
-    { endpoint: '/api/tasks' }  // コンテキスト
+    'API_NETWORK_ERROR', // エラーコード
+    { endpoint: '/api/tasks' } // コンテキスト
   )
 
   if (result.success) {
@@ -107,42 +104,42 @@ async function fetchTasks() {
 ### NETWORK関連
 
 ```typescript
-'API_NETWORK_ERROR'           // ネットワークエラー
-'API_TIMEOUT'                 // タイムアウト
-'API_RATE_LIMIT'              // レート制限
-'API_SERVER_ERROR'            // サーバーエラー
+'API_NETWORK_ERROR' // ネットワークエラー
+'API_TIMEOUT' // タイムアウト
+'API_RATE_LIMIT' // レート制限
+'API_SERVER_ERROR' // サーバーエラー
 ```
 
 ### DATABASE関連
 
 ```typescript
-'DB_CONNECTION_TIMEOUT'       // 接続タイムアウト
-'DB_QUERY_ERROR'              // クエリエラー
-'DB_CONSTRAINT_VIOLATION'     // 制約違反
-'DB_TRANSACTION_FAILED'       // トランザクション失敗
+'DB_CONNECTION_TIMEOUT' // 接続タイムアウト
+'DB_QUERY_ERROR' // クエリエラー
+'DB_CONSTRAINT_VIOLATION' // 制約違反
+'DB_TRANSACTION_FAILED' // トランザクション失敗
 ```
 
 ### VALIDATION関連
 
 ```typescript
-'VALIDATION_REQUIRED_FIELD'   // 必須フィールド
-'VALIDATION_INVALID_FORMAT'   // 不正なフォーマット
-'VALIDATION_OUT_OF_RANGE'     // 範囲外
+'VALIDATION_REQUIRED_FIELD' // 必須フィールド
+'VALIDATION_INVALID_FORMAT' // 不正なフォーマット
+'VALIDATION_OUT_OF_RANGE' // 範囲外
 ```
 
 ### AUTHENTICATION関連
 
 ```typescript
-'AUTH_INVALID_CREDENTIALS'    // 認証情報が不正
-'AUTH_TOKEN_EXPIRED'          // トークン期限切れ
-'AUTH_PERMISSION_DENIED'      // 権限不足
+'AUTH_INVALID_CREDENTIALS' // 認証情報が不正
+'AUTH_TOKEN_EXPIRED' // トークン期限切れ
+'AUTH_PERMISSION_DENIED' // 権限不足
 ```
 
 ### BUSINESS_LOGIC関連
 
 ```typescript
-'BUSINESS_INVALID_STATE'      // 不正な状態
-'BUSINESS_DUPLICATE_ENTRY'    // 重複エラー
+'BUSINESS_INVALID_STATE' // 不正な状態
+'BUSINESS_DUPLICATE_ENTRY' // 重複エラー
 'BUSINESS_RESOURCE_NOT_FOUND' // リソース未検出
 ```
 
@@ -157,10 +154,10 @@ const data = await executeWithRetry(
   async () => await fetchData(),
   {
     enabled: true,
-    maxAttempts: 3,         // 最大3回リトライ
-    delayMs: 1000,          // 初回1秒待機
-    backoffMultiplier: 2,   // 指数バックオフ（1s, 2s, 4s）
-    retryableStatusCodes: [408, 429, 500, 502, 503, 504]
+    maxAttempts: 3, // 最大3回リトライ
+    delayMs: 1000, // 初回1秒待機
+    backoffMultiplier: 2, // 指数バックオフ（1s, 2s, 4s）
+    retryableStatusCodes: [408, 429, 500, 502, 503, 504],
   },
   'API_NETWORK_ERROR'
 )
@@ -172,9 +169,9 @@ const data = await executeWithRetry(
 import { CircuitBreaker } from '@/config'
 
 const breaker = new CircuitBreaker({
-  failureThreshold: 5,      // 5回失敗でOPEN
-  resetTimeoutMs: 60000,    // 60秒後にHALF_OPEN
-  halfOpenMaxAttempts: 3    // HALF_OPENで3回成功でCLOSED
+  failureThreshold: 5, // 5回失敗でOPEN
+  resetTimeoutMs: 60000, // 60秒後にHALF_OPEN
+  halfOpenMaxAttempts: 3, // HALF_OPENで3回成功でCLOSED
 })
 
 const result = await breaker.execute(async () => {
@@ -182,8 +179,8 @@ const result = await breaker.execute(async () => {
 })
 
 // 状態確認
-console.log(breaker.getState())     // 'CLOSED' | 'OPEN' | 'HALF_OPEN'
-console.log(breaker.getMetrics())   // 成功/失敗カウント
+console.log(breaker.getState()) // 'CLOSED' | 'OPEN' | 'HALF_OPEN'
+console.log(breaker.getMetrics()) // 成功/失敗カウント
 ```
 
 ### フォールバック処理
@@ -191,17 +188,14 @@ console.log(breaker.getMetrics())   // 成功/失敗カウント
 ```typescript
 import { executeWithFallback } from '@/config'
 
-const data = await executeWithFallback(
-  async () => await fetchFromAPI(),
-  {
-    enabled: true,
-    handler: async () => {
-      // キャッシュから取得
-      return await getFromCache()
-    },
-    timeout: 5000
-  }
-)
+const data = await executeWithFallback(async () => await fetchFromAPI(), {
+  enabled: true,
+  handler: async () => {
+    // キャッシュから取得
+    return await getFromCache()
+  },
+  timeout: 5000,
+})
 ```
 
 ## 📊 統計情報の取得
@@ -211,11 +205,11 @@ import { errorPatternDictionary } from '@/config'
 
 // エラーコード別統計
 const stats = errorPatternDictionary.getErrorStats()
-console.log(stats.get('API_NETWORK_ERROR'))  // 発生回数
+console.log(stats.get('API_NETWORK_ERROR')) // 発生回数
 
 // カテゴリ別統計
 const categoryStats = errorPatternDictionary.getCategoryStats()
-console.log(categoryStats.NETWORK)  // NETWORK系エラーの合計
+console.log(categoryStats.NETWORK) // NETWORK系エラーの合計
 
 // サーキットブレーカーの状態
 const breakerStatus = errorPatternDictionary.getCircuitBreakerStatus()
@@ -240,7 +234,7 @@ async function updateTask(taskId: string, data: TaskData) {
       const res = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       })
 
       if (!res.ok) {
@@ -281,7 +275,7 @@ async function updateTask(taskId: string, data: TaskData) {
 // categories.ts
 export const ERROR_CODES = {
   // ... 既存のコード
-  CUSTOM_NEW_ERROR: 'CUSTOM_NEW_ERROR'
+  CUSTOM_NEW_ERROR: 'CUSTOM_NEW_ERROR',
 } as const
 
 // messages.ts
@@ -290,8 +284,8 @@ const USER_MESSAGES: Record<ErrorCode, UserMessage> = {
   CUSTOM_NEW_ERROR: {
     title: 'カスタムエラー',
     description: '新しいエラーが発生しました',
-    action: '再度お試しください'
-  }
+    action: '再度お試しください',
+  },
 }
 ```
 
@@ -306,6 +300,7 @@ const USER_MESSAGES: Record<ErrorCode, UserMessage> = {
 ### Q1: いつ `createAppError` を使い、いつ `executeWithAutoRecovery` を使うべきか？
 
 **A**:
+
 - **`createAppError`**: エラーを作成するだけ（throw時）
 - **`executeWithAutoRecovery`**: 自動リトライ・フォールバックが必要な場合（推奨）
 

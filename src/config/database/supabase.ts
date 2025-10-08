@@ -10,7 +10,7 @@ export const SUPABASE_CONFIG = {
 
 export const DATABASE_TABLES = {
   tasks: 'tasks',
-  events: 'events', 
+  events: 'events',
   tags: 'tags',
   smart_folders: 'smart_folders',
   user_profiles: 'user_profiles',

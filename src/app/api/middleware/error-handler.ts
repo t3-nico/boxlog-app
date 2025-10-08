@@ -2,34 +2,26 @@
  * API エラーハンドリングミドルウェア
  */
 
-import { NextRequest, NextResponse } from 'next/server'
-import {
-  AppError,
-  createAppError,
-  type ErrorCode,
-  ERROR_CODES
-} from '@/config/error-patterns'
+import { AppError, createAppError, ERROR_CODES, type ErrorCode } from '@/config/error-patterns'
 import { globalErrorHandler } from '@/lib/error-handler'
 import { reportToSentry } from '@/lib/sentry'
+import { NextRequest, NextResponse } from 'next/server'
+import { createTimeoutPromise, setCorsHeaders } from './cors'
 import type { ApiContext, ApiHandler, ApiResponse, MiddlewareConfig } from './types'
 import {
-  generateRequestId,
-  extractUserId,
-  extractSessionId,
-  getHttpStatusCode,
   createJsonResponse,
+  extractSessionId,
+  extractUserId,
+  generateRequestId,
+  getHttpStatusCode,
   logRequest,
-  recordMetrics
+  recordMetrics,
 } from './utils'
-import { setCorsHeaders, createTimeoutPromise } from './cors'
 
 /**
  * API エラーハンドリングミドルウェア
  */
-export function withErrorHandling<T = unknown>(
-  handler: ApiHandler<T>,
-  config: MiddlewareConfig = {}
-) {
+export function withErrorHandling<T = unknown>(handler: ApiHandler<T>, config: MiddlewareConfig = {}) {
   return async (req: NextRequest): Promise<NextResponse> => {
     const startTime = Date.now()
     const requestId = generateRequestId()
@@ -40,7 +32,7 @@ export function withErrorHandling<T = unknown>(
       requestId,
       startTime,
       userId: extractUserId(req),
-      sessionId: extractSessionId(req)
+      sessionId: extractSessionId(req),
     }
 
     // CORS設定
@@ -53,15 +45,11 @@ export function withErrorHandling<T = unknown>(
       }
 
       // タイムアウト設定
-      const timeoutPromise = config.requestTimeout
-        ? createTimeoutPromise(config.requestTimeout)
-        : null
+      const timeoutPromise = config.requestTimeout ? createTimeoutPromise(config.requestTimeout) : null
 
       // ハンドラー実行
       const handlerPromise = handler(req, context)
-      const result = timeoutPromise
-        ? await Promise.race([handlerPromise, timeoutPromise])
-        : await handlerPromise
+      const result = timeoutPromise ? await Promise.race([handlerPromise, timeoutPromise]) : await handlerPromise
 
       // 成功レスポンス
       const executionTime = Date.now() - startTime
@@ -71,8 +59,8 @@ export function withErrorHandling<T = unknown>(
         meta: {
           requestId,
           timestamp: new Date().toISOString(),
-          executionTime
-        }
+          executionTime,
+        },
       }
 
       // メトリクス収集
@@ -81,7 +69,6 @@ export function withErrorHandling<T = unknown>(
       }
 
       return createJsonResponse(apiResponse, 200, response)
-
     } catch (error) {
       return await handleApiError(error, req, context, config, response)
     }
@@ -111,8 +98,8 @@ async function handleApiError(
       url: req.url,
       method: req.method,
       headers: Object.fromEntries(req.headers.entries()),
-      executionTime
-    }
+      executionTime,
+    },
   })
 
   // Sentry レポート
@@ -135,13 +122,13 @@ async function handleApiError(
       message: appError.message,
       userMessage: appError.userMessage || appError.message,
       timestamp: new Date().toISOString(),
-      requestId: context.requestId
+      requestId: context.requestId,
     },
     meta: {
       requestId: context.requestId,
       timestamp: new Date().toISOString(),
-      executionTime
-    }
+      executionTime,
+    },
   }
 
   return createJsonResponse(apiResponse, statusCode, baseResponse)
@@ -173,26 +160,27 @@ function normalizeApiError(error: unknown, context: ApiContext): AppError {
       errorCode = ERROR_CODES.RATE_LIMIT_EXCEEDED
     }
 
-    return createAppError(error.message, errorCode, {
-      source: 'api',
-      requestId: context.requestId,
-      userId: context.userId,
-      sessionId: context.sessionId,
-      context: {
-        url: context.request.url,
-        method: context.request.method
-      }
-    }, error.message)
+    return createAppError(
+      error.message,
+      errorCode,
+      {
+        source: 'api',
+        requestId: context.requestId,
+        userId: context.userId,
+        sessionId: context.sessionId,
+        context: {
+          url: context.request.url,
+          method: context.request.method,
+        },
+      },
+      error.message
+    )
   }
 
   // 不明なエラー
-  return createAppError(
-    'Unknown error occurred',
-    ERROR_CODES.UNEXPECTED_ERROR,
-    {
-      source: 'api',
-      requestId: context.requestId,
-      context: { originalError: String(error) }
-    }
-  )
+  return createAppError('Unknown error occurred', ERROR_CODES.UNEXPECTED_ERROR, {
+    source: 'api',
+    requestId: context.requestId,
+    context: { originalError: String(error) },
+  })
 }

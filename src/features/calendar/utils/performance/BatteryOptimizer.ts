@@ -35,7 +35,7 @@ const DEFAULT_CONFIG: BatteryConfig = {
   animationReductionLevel: 'none',
   backgroundTaskReduction: false,
   adaptiveFrameRate: false,
-  powerSaveMode: false
+  powerSaveMode: false,
 }
 
 export class BatteryOptimizer {
@@ -53,7 +53,7 @@ export class BatteryOptimizer {
   constructor(config?: Partial<BatteryConfig>) {
     this.config = { ...DEFAULT_CONFIG, ...config }
     this.powerOptimizations = this.getDefaultOptimizations()
-    
+
     this.initializeBatteryAPI()
     this.setupVisibilityChangeHandling()
     this.setupUserInteractionDetection()
@@ -66,18 +66,18 @@ export class BatteryOptimizer {
     try {
       if ('getBattery' in navigator) {
         const battery = await (navigator as Navigator & { getBattery(): Promise<BatteryManager> }).getBattery()
-        
+
         this.batteryInfo = {
           charging: battery.charging,
           chargingTime: battery.chargingTime,
           dischargingTime: battery.dischargingTime,
-          level: battery.level
+          level: battery.level,
         }
 
         // バッテリーイベントリスナーの設定
         battery.addEventListener('chargingchange', this.handleBatteryChange.bind(this))
         battery.addEventListener('levelchange', this.handleBatteryChange.bind(this))
-        
+
         this.evaluatePowerSaveMode()
         console.log('🔋 Battery API initialized:', this.batteryInfo)
       } else {
@@ -99,7 +99,7 @@ export class BatteryOptimizer {
       charging: battery.charging,
       chargingTime: battery.chargingTime,
       dischargingTime: battery.dischargingTime,
-      level: battery.level
+      level: battery.level,
     }
 
     this.evaluatePowerSaveMode()
@@ -129,7 +129,7 @@ export class BatteryOptimizer {
         disableHeavyEffects: true,
         reduceNetworkRequests: true,
         pauseBackgroundTasks: true,
-        simplifyRendering: true
+        simplifyRendering: true,
       }
     }
     // 低電力モード
@@ -141,7 +141,7 @@ export class BatteryOptimizer {
         disableHeavyEffects: true,
         reduceNetworkRequests: false,
         pauseBackgroundTasks: true,
-        simplifyRendering: false
+        simplifyRendering: false,
       }
     }
     // 通常モード
@@ -166,7 +166,7 @@ export class BatteryOptimizer {
       disableHeavyEffects: false,
       reduceNetworkRequests: false,
       pauseBackgroundTasks: false,
-      simplifyRendering: false
+      simplifyRendering: false,
     }
   }
 
@@ -175,15 +175,15 @@ export class BatteryOptimizer {
    */
   private applyOptimizations(): void {
     this.frameRateLimit = this.powerOptimizations.limitFrameRate
-    
+
     // CSS変数での制御
     document.documentElement.style.setProperty(
-      '--battery-optimize-animations', 
+      '--battery-optimize-animations',
       this.powerOptimizations.reduceAnimations ? '0' : '1'
     )
-    
+
     document.documentElement.style.setProperty(
-      '--battery-optimize-effects', 
+      '--battery-optimize-effects',
       this.powerOptimizations.disableHeavyEffects ? '0' : '1'
     )
 
@@ -220,15 +220,18 @@ export class BatteryOptimizer {
 
     const resetInteractionTimer = () => {
       clearTimeout(interactionTimeout)
-      interactionTimeout = setTimeout(() => {
-        // 5分間操作がない場合は電力節約モードを強化
-        if (!this.isInPowerSaveMode) {
-          this.temporaryPowerSaveMode()
-        }
-      }, 5 * 60 * 1000) // 5分
+      interactionTimeout = setTimeout(
+        () => {
+          // 5分間操作がない場合は電力節約モードを強化
+          if (!this.isInPowerSaveMode) {
+            this.temporaryPowerSaveMode()
+          }
+        },
+        5 * 60 * 1000
+      ) // 5分
     }
 
-    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+    ;['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach((event) => {
       document.addEventListener(event, resetInteractionTimer, { passive: true })
     })
 
@@ -240,16 +243,16 @@ export class BatteryOptimizer {
    */
   private temporaryPowerSaveMode(): void {
     console.log('⚡ Entering temporary power save mode due to inactivity')
-    
+
     const originalOptimizations = { ...this.powerOptimizations }
-    
+
     this.powerOptimizations = {
       ...this.powerOptimizations,
       limitFrameRate: Math.min(30, this.powerOptimizations.limitFrameRate),
       pauseBackgroundTasks: true,
-      reduceAnimations: true
+      reduceAnimations: true,
     }
-    
+
     this.applyOptimizations()
 
     // ユーザーが操作したら元に戻す
@@ -287,8 +290,7 @@ export class BatteryOptimizer {
    * バッテリー効率的なタイマー
    */
   createEfficientTimer(callback: () => void, interval: number): number {
-    const adaptedInterval = this.isInPowerSaveMode ? 
-      Math.max(interval * 2, interval) : interval
+    const adaptedInterval = this.isInPowerSaveMode ? Math.max(interval * 2, interval) : interval
 
     const timer = setInterval(() => {
       if (!document.hidden) {
@@ -303,10 +305,7 @@ export class BatteryOptimizer {
   /**
    * ネットワークリクエストの最適化
    */
-  optimizeNetworkRequest<T>(
-    requestFunc: () => Promise<T>,
-    priority: 'high' | 'medium' | 'low' = 'medium'
-  ): Promise<T> {
+  optimizeNetworkRequest<T>(requestFunc: () => Promise<T>, priority: 'high' | 'medium' | 'low' = 'medium'): Promise<T> {
     // 低電力モードでは低優先度リクエストを遅延
     if (this.powerOptimizations.reduceNetworkRequests && priority === 'low') {
       return new Promise((resolve, reject) => {
@@ -373,7 +372,7 @@ export class BatteryOptimizer {
       request()
     }
     this.networkRequestQueue.clear()
-    
+
     console.log('▶️ Background tasks resumed')
   }
 
@@ -434,7 +433,7 @@ export class BatteryOptimizer {
    */
   private notifyBatteryChangeListeners(): void {
     if (this.batteryInfo) {
-      this.batteryChangeListeners.forEach(listener => {
+      this.batteryChangeListeners.forEach((listener) => {
         try {
           listener(this.batteryInfo!)
         } catch (error) {
@@ -461,7 +460,7 @@ export class BatteryOptimizer {
       if (this.batteryInfo.level < 0.3) {
         recommendations.push('バッテリー残量が少ないため、電力節約モードの有効化を推奨')
       }
-      
+
       if (!this.isInPowerSaveMode) {
         recommendations.push('手動で電力節約モードを有効にして、バッテリー持続時間を延長可能')
         estimatedGain = '約20-30%の電力節約'
@@ -477,7 +476,7 @@ export class BatteryOptimizer {
       powerSaveMode: this.isInPowerSaveMode,
       optimizations: this.powerOptimizations,
       recommendations,
-      estimatedBatteryGain: estimatedGain
+      estimatedBatteryGain: estimatedGain,
     }
   }
 
@@ -486,9 +485,9 @@ export class BatteryOptimizer {
    */
   togglePowerSaveMode(enable?: boolean): void {
     const shouldEnable = enable !== undefined ? enable : !this.isInPowerSaveMode
-    
+
     this.isInPowerSaveMode = shouldEnable
-    
+
     if (shouldEnable) {
       this.powerOptimizations = {
         reduceAnimations: true,
@@ -496,12 +495,12 @@ export class BatteryOptimizer {
         disableHeavyEffects: true,
         reduceNetworkRequests: false,
         pauseBackgroundTasks: true,
-        simplifyRendering: false
+        simplifyRendering: false,
       }
     } else {
       this.powerOptimizations = this.getDefaultOptimizations()
     }
-    
+
     this.applyOptimizations()
     console.log(`⚡ Manual power save mode: ${shouldEnable ? 'ON' : 'OFF'}`)
   }
@@ -510,11 +509,11 @@ export class BatteryOptimizer {
    * クリーンアップ
    */
   cleanup(): void {
-    this.backgroundTasks.forEach(timer => clearInterval(timer))
+    this.backgroundTasks.forEach((timer) => clearInterval(timer))
     this.backgroundTasks.clear()
     this.networkRequestQueue.clear()
     this.batteryChangeListeners.clear()
-    
+
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId)
     }
@@ -543,7 +542,7 @@ export function cleanupBatteryOptimizer(): void {
 // React Hook
 export function useBatteryOptimizer() {
   const optimizer = getBatteryOptimizer()
-  
+
   return {
     optimizer,
     getBatteryInfo: () => optimizer.getBatteryInfo(),
@@ -551,6 +550,6 @@ export function useBatteryOptimizer() {
     togglePowerSave: (enable?: boolean) => optimizer.togglePowerSaveMode(enable),
     shouldUseSimplifiedRendering: () => optimizer.shouldUseSimplifiedRendering(),
     shouldDisableHeavyEffects: () => optimizer.shouldDisableHeavyEffects(),
-    getOptimizedClassName: (baseClass: string) => optimizer.getOptimizedClassName(baseClass)
+    getOptimizedClassName: (baseClass: string) => optimizer.getOptimizedClassName(baseClass),
   }
 }

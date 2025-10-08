@@ -443,7 +443,8 @@ export const useTrashStore = create<TrashStore>()((set, get) => ({
 
     // タイプ別カウント
     items.forEach((item) => {
-      stats.itemsByType[item.type as keyof typeof itemsByType] = (stats.itemsByType[item.type as keyof typeof itemsByType] || 0) + 1
+      stats.itemsByType[item.type as keyof typeof itemsByType] =
+        (stats.itemsByType[item.type as keyof typeof itemsByType] || 0) + 1
     })
 
     return stats

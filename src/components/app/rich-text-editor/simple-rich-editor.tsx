@@ -232,8 +232,8 @@ export const SimpleRichEditor = ({
           '[&_ul]:my-2 [&_ul]:list-inside [&_ul]:list-disc',
           '[&_ol]:my-2 [&_ol]:list-inside [&_ol]:list-decimal',
           '[&_li]:my-1',
-          '[&_a:hover]:text-blue-800 [&_a]:text-blue-600 [&_a]:underline',
-          '[&_a:hover]:dark:text-blue-200 [&_a]:dark:text-blue-400',
+          '[&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800',
+          '[&_a]:dark:text-blue-400 [&_a:hover]:dark:text-blue-200',
           '[&_div]:my-1'
         )}
         style={{
@@ -245,7 +245,12 @@ export const SimpleRichEditor = ({
 
       {/* プレースホルダー */}
       {isEmpty(value) && (
-        <div className={cn('pointer-events-none absolute left-3 top-[52px] text-neutral-600 dark:text-neutral-400', 'text-base')}>
+        <div
+          className={cn(
+            'pointer-events-none absolute top-[52px] left-3 text-neutral-600 dark:text-neutral-400',
+            'text-base'
+          )}
+        >
           {placeholder}
         </div>
       )}

@@ -192,7 +192,7 @@ export const AdvancedSlideTransition = ({
       },
     }
 
-    return (dir in variants) ? variants[dir as keyof typeof variants] : variants.left
+    return dir in variants ? variants[dir as keyof typeof variants] : variants.left
   }
 
   const animationConfig = prefersReducedMotion
@@ -380,7 +380,7 @@ export const TaskCreateAnimation = ({ children, isNew = false }: TaskCreateAnima
   return (
     <div
       className={`${
-        isNew ? 'animate-pulse shadow-lg ring-2 ring-blue-400 ring-opacity-50' : ''
+        isNew ? 'ring-opacity-50 animate-pulse shadow-lg ring-2 ring-blue-400' : ''
       } transition-all duration-300`}
     >
       {children}

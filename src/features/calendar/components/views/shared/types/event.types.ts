@@ -49,9 +49,18 @@ export interface EventBlockProps {
   onClick?: (event: CalendarEvent) => void
   onDoubleClick?: (event: CalendarEvent) => void
   onContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
-  onDragStart?: (event: CalendarEvent, mouseEvent: React.MouseEvent, position: { top: number; left: number; width: number; height: number }) => void
+  onDragStart?: (
+    event: CalendarEvent,
+    mouseEvent: React.MouseEvent,
+    position: { top: number; left: number; width: number; height: number }
+  ) => void
   onDragEnd?: (event: CalendarEvent) => void
-  onResizeStart?: (event: CalendarEvent, direction: 'top' | 'bottom', mouseEvent: React.MouseEvent, position: { top: number; left: number; width: number; height: number }) => void
+  onResizeStart?: (
+    event: CalendarEvent,
+    direction: 'top' | 'bottom',
+    mouseEvent: React.MouseEvent,
+    position: { top: number; left: number; width: number; height: number }
+  ) => void
   onResizeEnd?: (event: CalendarEvent) => void
   isDragging?: boolean
   isSelected?: boolean
@@ -79,7 +88,6 @@ export interface EventColumn {
   columnIndex: number
   totalColumns: number
 }
-
 
 export type EventInteractionHandler = {
   onClick?: (event: CalendarEvent) => void

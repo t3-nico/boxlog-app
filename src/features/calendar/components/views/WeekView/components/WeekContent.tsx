@@ -184,7 +184,7 @@ export const WeekContent = ({
             <div key={event.id} style={adjustedStyle} className="pointer-events-none absolute" data-event-block="true">
               {/* EventBlockの内容部分のみクリック可能 */}
               <div
-                className="pointer-events-auto absolute inset-0 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+                className="pointer-events-auto absolute inset-0 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none"
                 role="button"
                 tabIndex={0}
                 aria-label={`Drag event: ${event.title}`}
@@ -245,31 +245,33 @@ export const WeekContent = ({
 
         {/* ドラッグ中のイベントを他の日付カラムで表示 */}
         {dragState.isDragging &&
-          dragState.draggedEventId &&
-          dragState.targetDateIndex !== undefined &&
-          dragState.targetDateIndex === dayIndex &&
-          !events.find((e) => e.id === dragState.draggedEventId) &&
-          displayDates ? (() => {
-            // 週の全イベントからドラッグ中のイベントを探す
-            // displayDates配列を使って全日付のイベントを探索
-            const _draggedEvent: CalendarEvent | null = null
+        dragState.draggedEventId &&
+        dragState.targetDateIndex !== undefined &&
+        dragState.targetDateIndex === dayIndex &&
+        !events.find((e) => e.id === dragState.draggedEventId) &&
+        displayDates
+          ? (() => {
+              // 週の全イベントからドラッグ中のイベントを探す
+              // displayDates配列を使って全日付のイベントを探索
+              const _draggedEvent: CalendarEvent | null = null
 
-            // 他のWeekContentインスタンスが保持しているイベントを探すのは困難
-            // そのため、親コンポーネントから渡されるevents配列から探す
-            // 現在はeventsには当日のイベントのみ含まれているため、
-            // WeekGridから全イベントを渡すよう修正が必要
+              // 他のWeekContentインスタンスが保持しているイベントを探すのは困難
+              // そのため、親コンポーネントから渡されるevents配列から探す
+              // 現在はeventsには当日のイベントのみ含まれているため、
+              // WeekGridから全イベントを渡すよう修正が必要
 
-            // 一時的な解決策として、コンソールログで状況を確認
-            console.log('🔧 他日付カラムでのドラッグイベント表示試行:', {
-              draggedEventId: dragState.draggedEventId,
-              targetDateIndex: dragState.targetDateIndex,
-              currentDayIndex: dayIndex,
-              hasSnappedPosition: !!dragState.snappedPosition,
-            })
+              // 一時的な解決策として、コンソールログで状況を確認
+              console.log('🔧 他日付カラムでのドラッグイベント表示試行:', {
+                draggedEventId: dragState.draggedEventId,
+                targetDateIndex: dragState.targetDateIndex,
+                currentDayIndex: dayIndex,
+                hasSnappedPosition: !!dragState.snappedPosition,
+              })
 
-            // Implementation tracked in Issue #89
-            return null
-          })() : null}
+              // Implementation tracked in Issue #89
+              return null
+            })()
+          : null}
       </div>
     </div>
   )

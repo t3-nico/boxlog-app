@@ -63,7 +63,9 @@ interface ConfigInfoResponse {
 /**
  * 📊 セクション情報の構築
  */
-function buildSectionInfo(config: ConfigStructure): Record<string, { loaded: boolean; keys: number; hasSecrets?: boolean }> {
+function buildSectionInfo(
+  config: ConfigStructure
+): Record<string, { loaded: boolean; keys: number; hasSecrets?: boolean }> {
   return {
     app: {
       loaded: !!config.app,
@@ -72,12 +74,12 @@ function buildSectionInfo(config: ConfigStructure): Record<string, { loaded: boo
     database: {
       loaded: !!config.database,
       keys: config.database ? Object.keys(config.database).length : 0,
-      hasSecrets: !!(config.database?.password),
+      hasSecrets: !!config.database?.password,
     },
     auth: {
       loaded: !!config.auth,
       keys: config.auth ? Object.keys(config.auth).length : 0,
-      hasSecrets: !!(config.auth?.jwtSecret),
+      hasSecrets: !!config.auth?.jwtSecret,
     },
     features: {
       loaded: !!config.features,
@@ -86,17 +88,17 @@ function buildSectionInfo(config: ConfigStructure): Record<string, { loaded: boo
     email: {
       loaded: !!config.email,
       keys: config.email ? Object.keys(config.email).length : 0,
-      hasSecrets: !!(config.email?.password),
+      hasSecrets: !!config.email?.password,
     },
     apis: {
       loaded: !!config.apis,
       keys: config.apis ? Object.keys(config.apis).length : 0,
-      hasSecrets: !!(config.apis?.openai?.apiKey),
+      hasSecrets: !!config.apis?.openai?.apiKey,
     },
     server: {
       loaded: !!config.server,
       keys: config.server ? Object.keys(config.server).length : 0,
-      hasSecrets: !!(config.server?.session?.secret),
+      hasSecrets: !!config.server?.session?.secret,
     },
     logging: {
       loaded: !!config.logging,

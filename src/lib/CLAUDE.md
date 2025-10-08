@@ -202,15 +202,10 @@ captureMessage('Unusual activity detected', {
 import { supabase } from '@/lib/supabase'
 
 // データ取得
-const { data, error } = await supabase
-  .from('tasks')
-  .select('*')
-  .eq('status', 'todo')
+const { data, error } = await supabase.from('tasks').select('*').eq('status', 'todo')
 
 // データ挿入
-const { data, error } = await supabase
-  .from('tasks')
-  .insert(taskData)
+const { data, error } = await supabase.from('tasks').insert(taskData)
 
 // 認証
 const { user } = await supabase.auth.getUser()
@@ -264,7 +259,7 @@ createTask.mutate({
 import { cn } from '@/lib/utils'
 
 // className マージ（Tailwind CSS + clsx）
-<div className={cn('base-class', condition && 'conditional-class')} />
+;<div className={cn('base-class', condition && 'conditional-class')} />
 ```
 
 ### error-handler.ts - エラーハンドリング
@@ -338,7 +333,7 @@ export const calculateTotal = (items: Item[]) => {
 export const formatCurrency = (amount: number, currency: 'JPY' | 'USD'): string => {
   return new Intl.NumberFormat('ja-JP', {
     style: 'currency',
-    currency
+    currency,
   }).format(amount)
 }
 
@@ -382,8 +377,7 @@ describe('cn', () => {
   })
 
   it('should handle conditional classes', () => {
-    expect(cn('base', false && 'hidden', true && 'visible'))
-      .toBe('base visible')
+    expect(cn('base', false && 'hidden', true && 'visible')).toBe('base visible')
   })
 })
 ```
@@ -393,20 +387,24 @@ describe('cn', () => {
 ## 🔗 関連ドキュメント
 
 ### プロジェクト全体
+
 - [CLAUDE.md](../../CLAUDE.md) - プロジェクト開発指針
 - [src/CLAUDE.md](../CLAUDE.md) - コーディング基本ルール
 
 ### エラーハンドリング・バリデーション
+
 - [src/config/error-patterns.ts](../config/error-patterns.ts) - エラーコードシステム
 - [src/schemas/README.md](../schemas/README.md) - バリデーションスキーマ（Zod）
 - [docs/architecture/ERROR_HANDLING.md](../../docs/architecture/ERROR_HANDLING.md) - エラーハンドリング設計
 
 ### 統合・機能
+
 - [docs/integrations/SENTRY.md](../../docs/integrations/SENTRY.md) - Sentry統合
 - [docs/development/I18N_DEVELOPMENT_GUIDE.md](../../docs/development/I18N_DEVELOPMENT_GUIDE.md) - 国際化ガイド
 - [src/server/README.md](../server/README.md) - tRPC APIサーバー
 
 ### テスト
+
 - [docs/testing/CLAUDE.md](../../docs/testing/CLAUDE.md) - テスト戦略
 
 ---
@@ -460,6 +458,7 @@ export const goodFunction = async (): Promise<Result> => {
 ## 📊 使用統計
 
 **使用箇所**: 278箇所（224ファイル）
+
 - 最も使用されるモジュール: `utils.ts`, `analytics/`, `i18n/`, `toast/`
 - 重要度が高いモジュール: `trpc/`, `supabase/`, `sentry/`
 

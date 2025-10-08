@@ -1,10 +1,8 @@
 // @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
-import React from 'react'
-
-import { motion, AnimatePresence } from 'framer-motion'
-import { FileText, Bell, MoreHorizontal, Repeat } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Bell, FileText, MoreHorizontal, Repeat } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -18,15 +16,7 @@ interface EditOptionsProps {
   onMemoChange: (value: string) => void
 }
 
-export const EditOptions = ({
-  title,
-  date,
-  tags,
-  showMemo,
-  memo,
-  onToggleMemo,
-  onMemoChange
-}: EditOptionsProps) => {
+export const EditOptions = ({ title, date, tags, showMemo, memo, onToggleMemo, onMemoChange }: EditOptionsProps) => {
   if (!(title.trim() || date || tags.length > 0)) {
     return null
   }
@@ -42,10 +32,10 @@ export const EditOptions = ({
             type="button"
             onClick={onToggleMemo}
             className={cn(
-              'p-3 rounded-lg transition-all duration-200 flex items-center gap-2',
+              'flex items-center gap-2 rounded-lg p-3 transition-all duration-200',
               showMemo || memo
                 ? 'bg-blue-500 text-white'
-                : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
             )}
             title="Add memo"
           >
@@ -56,8 +46,8 @@ export const EditOptions = ({
           <button
             type="button"
             className={cn(
-              'p-3 rounded-lg transition-all duration-200',
-              'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+              'rounded-lg p-3 transition-all duration-200',
+              'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
             )}
             title="Set reminder"
           >
@@ -68,8 +58,8 @@ export const EditOptions = ({
           <button
             type="button"
             className={cn(
-              'p-3 rounded-lg transition-all duration-200',
-              'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+              'rounded-lg p-3 transition-all duration-200',
+              'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
             )}
             title="Set repeat"
           >
@@ -81,8 +71,8 @@ export const EditOptions = ({
         <button
           type="button"
           className={cn(
-            'p-3 rounded-lg transition-all duration-200',
-            'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+            'rounded-lg p-3 transition-all duration-200',
+            'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700'
           )}
           title="More options"
         >
@@ -104,9 +94,9 @@ export const EditOptions = ({
               onChange={(e) => onMemoChange(e.target.value)}
               placeholder="Enter memo or comments..."
               className={cn(
-                'w-full p-3 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50',
+                'w-full bg-neutral-100 p-3 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50',
                 'border border-neutral-200 dark:border-neutral-700',
-                'rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500'
+                'resize-none rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none'
               )}
               rows={3}
             />

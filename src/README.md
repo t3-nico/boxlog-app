@@ -36,30 +36,37 @@ src/
 ## 🎯 主要ディレクトリ詳細
 
 ### app/ - App Router
+
 Next.js 14のApp Routerを使用した画面ルーティング。
 
 **重要ファイル**:
+
 - `layout.tsx` - ルートレイアウト
 - `page.tsx` - ページコンポーネント
 - `api/` - APIルート
 
 ### components/ - 共通コンポーネント
+
 再利用可能なUIコンポーネント。
 
 **選択優先度**:
+
 1. **shadcn/ui** - 基本UIコンポーネント
 2. **kiboUI** - AI・高度な機能
 3. **カスタム実装** - 最後の手段
 
 ### config/ - 設定
+
 アプリケーション全体の設定。
 
 **🚨 必須**: `/config/theme` のデザインシステムを全スタイリングで使用。
 
 ### features/ - 機能モジュール
+
 機能別に独立したモジュール。
 
 **構造**:
+
 ```
 features/tasks/
 ├── components/      # 機能専用コンポーネント
@@ -69,9 +76,11 @@ features/tasks/
 ```
 
 ### lib/ - ライブラリ・ユーティリティ
+
 共通ロジック・外部サービス連携。
 
 **重要モジュール**:
+
 - `business-rules/` - ビジネスルール辞書システム
 - `supabase/` - データベースクライアント
 - `errors/` - 統一エラーコードシステム
@@ -81,6 +90,7 @@ features/tasks/
 ## 🔧 開発ガイドライン
 
 ### 新規コンポーネント作成
+
 ```bash
 # 1. 適切なディレクトリに配置
 src/features/tasks/components/TaskCard.tsx
@@ -90,6 +100,7 @@ src/features/tasks/components/TaskCard.test.tsx
 ```
 
 ### インポートパス
+
 ```tsx
 // ✅ エイリアス使用（@/）
 import { colors } from '@/config/theme'
@@ -100,6 +111,7 @@ import { colors } from '../../../../config/theme'
 ```
 
 ### スタイリング
+
 ```tsx
 // ✅ 必須：themeシステム
 import { colors, spacing } from '@/config/theme'
