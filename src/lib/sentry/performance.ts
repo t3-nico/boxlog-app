@@ -128,67 +128,125 @@ export function measurePageLoad() {
 }
 
 /**
- * Core Web Vitals の自動測定
+ * Core Web Vitals の自動測定（2025基準準拠）
+ *
+ * Google公式基準:
+ * - LCP: ≤ 2.5s (Good), > 4.0s (Poor)
+ * - INP: ≤ 200ms (Good), > 500ms (Poor) ← FIDから変更
+ * - CLS: < 0.1 (Good), > 0.25 (Poor)
+ * - FCP: < 1.8s (Good), > 3.0s (Poor)
+ * - TTFB: < 800ms (Good), > 1800ms (Poor)
  */
 export function measureCoreWebVitals() {
   if (typeof window === 'undefined') return
 
   // Dynamic import to avoid SSR issues
   import('web-vitals')
-    .then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
-      // Cumulative Layout Shift
+    .then(({ onCLS, onINP, onFCP, onLCP, onTTFB }) => {
+      // Cumulative Layout Shift (視覚的安定性)
+      // Google基準: < 0.1 (Good), > 0.25 (Poor)
       onCLS((metric) => {
         Sentry.setMeasurement('cls', metric.value, '')
         Sentry.addBreadcrumb({
           message: 'CLS measured',
           category: 'web-vital',
-          level: 'info',
-          data: { value: metric.value, rating: metric.rating },
+          level: metric.value > 0.25 ? 'warning' : 'info',
+          data: {
+            value: metric.value,
+            rating: metric.rating,
+            threshold: { good: 0.1, poor: 0.25 },
+          },
         })
+
+        // 閾値超過時は警告
+        if (metric.value > 0.25) {
+          Sentry.captureMessage(`Poor CLS: ${metric.value}`, 'warning')
+        }
       })
 
-      // First Input Delay
-      onFID((metric) => {
-        Sentry.setMeasurement('fid', metric.value, 'millisecond')
+      // Interaction to Next Paint (応答性) 🆕
+      // Google基準: ≤ 200ms (Good), > 500ms (Poor)
+      // 注: FIDは2024年3月に廃止、INPに置き換え
+      onINP((metric) => {
+        Sentry.setMeasurement('inp', metric.value, 'millisecond')
         Sentry.addBreadcrumb({
-          message: 'FID measured',
+          message: 'INP measured',
           category: 'web-vital',
-          level: 'info',
-          data: { value: metric.value, rating: metric.rating },
+          level: metric.value > 500 ? 'warning' : 'info',
+          data: {
+            value: metric.value,
+            rating: metric.rating,
+            threshold: { good: 200, poor: 500 },
+          },
         })
+
+        // 閾値超過時は警告
+        if (metric.value > 500) {
+          Sentry.captureMessage(`Poor INP: ${metric.value}ms`, 'warning')
+        }
       })
 
-      // First Contentful Paint
+      // First Contentful Paint (読み込み速度)
+      // Google基準: < 1.8s (Good), > 3.0s (Poor)
       onFCP((metric) => {
         Sentry.setMeasurement('fcp', metric.value, 'millisecond')
         Sentry.addBreadcrumb({
           message: 'FCP measured',
           category: 'web-vital',
-          level: 'info',
-          data: { value: metric.value, rating: metric.rating },
+          level: metric.value > 3000 ? 'warning' : 'info',
+          data: {
+            value: metric.value,
+            rating: metric.rating,
+            threshold: { good: 1800, poor: 3000 },
+          },
         })
+
+        // 閾値超過時は警告
+        if (metric.value > 3000) {
+          Sentry.captureMessage(`Poor FCP: ${metric.value}ms`, 'warning')
+        }
       })
 
-      // Largest Contentful Paint
+      // Largest Contentful Paint (読み込み速度)
+      // Google基準: ≤ 2.5s (Good), > 4.0s (Poor)
       onLCP((metric) => {
         Sentry.setMeasurement('lcp', metric.value, 'millisecond')
         Sentry.addBreadcrumb({
           message: 'LCP measured',
           category: 'web-vital',
-          level: 'info',
-          data: { value: metric.value, rating: metric.rating },
+          level: metric.value > 4000 ? 'warning' : 'info',
+          data: {
+            value: metric.value,
+            rating: metric.rating,
+            threshold: { good: 2500, poor: 4000 },
+          },
         })
+
+        // 閾値超過時は警告
+        if (metric.value > 4000) {
+          Sentry.captureMessage(`Poor LCP: ${metric.value}ms`, 'warning')
+        }
       })
 
-      // Time to First Byte
+      // Time to First Byte (サーバー応答速度)
+      // Google基準: < 800ms (Good), > 1800ms (Poor)
       onTTFB((metric) => {
         Sentry.setMeasurement('ttfb', metric.value, 'millisecond')
         Sentry.addBreadcrumb({
           message: 'TTFB measured',
           category: 'web-vital',
-          level: 'info',
-          data: { value: metric.value, rating: metric.rating },
+          level: metric.value > 1800 ? 'warning' : 'info',
+          data: {
+            value: metric.value,
+            rating: metric.rating,
+            threshold: { good: 800, poor: 1800 },
+          },
         })
+
+        // 閾値超過時は警告
+        if (metric.value > 1800) {
+          Sentry.captureMessage(`Poor TTFB: ${metric.value}ms`, 'warning')
+        }
       })
     })
     .catch((error) => {

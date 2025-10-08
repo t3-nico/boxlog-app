@@ -43,55 +43,58 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html lang="ja">
       <body>
-        <div className="flex min-h-screen items-center justify-center bg-gray-50">
-          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <div className="mb-4 flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h1 className="text-lg font-medium text-gray-900">アプリケーションエラーが発生しました</h1>
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <p className="text-sm text-gray-600">
-                予期しないエラーが発生しました。エラーは自動的に記録され、開発チームに報告されます。
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <div className="max-w-md w-full p-8 bg-card rounded-lg shadow-lg border border-border">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold text-destructive mb-2">
+                アプリケーションエラー
+              </h1>
+              <p className="text-muted-foreground">
+                申し訳ございません。予期しない問題が発生しました。
               </p>
             </div>
 
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mb-4 rounded border border-red-200 bg-red-50 p-3">
-                <p className="font-mono text-xs break-all text-red-800">{error.message}</p>
-                {error.digest ? <p className="mt-1 text-xs text-red-600">Error ID: {error.digest}</p> : null}
+            {error.digest && (
+              <div className="mb-4 p-3 bg-muted rounded text-xs">
+                <p className="text-muted-foreground">
+                  エラーID: <code className="font-mono">{error.digest}</code>
+                </p>
               </div>
             )}
 
-            <div className="flex space-x-3">
+            {process.env.NODE_ENV === 'development' && (
+              <details className="mb-6">
+                <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  エラー詳細を表示
+                </summary>
+                <div className="mt-3 p-3 bg-muted rounded">
+                  <p className="text-xs font-semibold mb-2">{error.name}</p>
+                  <pre className="text-xs text-muted-foreground overflow-auto max-h-40">
+                    {error.message}
+                  </pre>
+                </div>
+              </details>
+            )}
+
+            <div className="space-y-3">
               <button
                 onClick={reset}
-                className="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
+                className="w-full bg-primary text-primary-foreground py-2.5 px-4 rounded-md hover:bg-primary/90 transition-colors font-medium"
               >
                 再試行
               </button>
+
               <button
                 onClick={() => (window.location.href = '/')}
-                className="flex-1 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:outline-none"
+                className="w-full bg-muted text-foreground py-2.5 px-4 rounded-md hover:bg-muted/80 transition-colors"
               >
                 ホームに戻る
               </button>
             </div>
 
-            <div className="mt-4 text-center">
-              <p className="text-xs text-gray-500">🚨 このエラーはSentryに自動報告されました</p>
-            </div>
+            <p className="mt-6 text-xs text-center text-muted-foreground">
+              🚨 エラーは自動的にSentryに報告されました
+            </p>
           </div>
         </div>
       </body>

@@ -148,7 +148,7 @@
     "i18n:crowdin:setup": "node scripts/crowdin-integration-cli.js setup",
     "i18n:crowdin:test": "node scripts/crowdin-integration-cli.js test",
     "i18n:crowdin:help": "node scripts/crowdin-integration-cli.js help",
-    "sentry:test": "node scripts/sentry-connection-test.js",
+    "sentry:test": "node scripts/sentry/connection-test.cjs",
     "sentry:check": "npm run sentry:test",
     "vercel:env": "vercel env ls",
     "vercel:env:pull": "vercel env pull .env.local",
