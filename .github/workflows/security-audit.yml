@@ -16,6 +16,12 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: read          # コード読み取り
+  pull-requests: write    # PRコメント投稿
+  actions: read           # Artifact読み取り
+
 jobs:
   # =====================================
   # 🔍 npm audit - 依存関係の脆弱性チェック

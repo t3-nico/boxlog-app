@@ -23,6 +23,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: read              # コード読み取り
+  security-events: write      # セキュリティアラート作成
+  pull-requests: write        # 脆弱性レポート投稿
+  issues: write               # Critical脆弱性検出時にIssue作成
+
 jobs:
   # =====================================
   # 🔍 ZAP Baseline Scan（基本スキャン）

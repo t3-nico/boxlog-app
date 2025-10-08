@@ -8,6 +8,11 @@ on:
 env:
   NODE_VERSION: '18'
 
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: read          # コード読み取り
+  pull-requests: write    # バンドルサイズレポート投稿
+
 jobs:
   bundle-size:
     name: 📦 Bundle Size Analysis

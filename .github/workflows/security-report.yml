@@ -9,6 +9,12 @@ on:
 env:
   NODE_VERSION: '18'
 
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: read          # コード読み取り
+  issues: write           # 週次レポートをIssue化
+  pull-requests: read     # PR関連情報の取得
+
 jobs:
   generate-report:
     name: 📊 Generate Security Report
