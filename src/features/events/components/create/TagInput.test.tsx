@@ -113,9 +113,18 @@ describe('TagInput', () => {
 
   describe('タグ追加', () => {
     it('Enterキーで新しいタグが追加される', async () => {
+      let tagsInStore: { id: string; name: string; color: string }[] = []
+
+      const addTagMock = vi.fn().mockImplementation(async (tag: { name: string; color: string }) => {
+        tagsInStore = [...tagsInStore, { id: 'new-1', name: tag.name, color: tag.color }]
+        return true
+      })
+
+      const getAllTagsMock = vi.fn().mockImplementation(() => tagsInStore)
+
       vi.mocked(useTagStore).mockReturnValue({
-        addTag: vi.fn().mockResolvedValue(true),
-        getAllTags: vi.fn().mockReturnValue([{ id: 'new-1', name: '新規タグ', color: '#3b82f6' }]),
+        addTag: addTagMock,
+        getAllTags: getAllTagsMock,
         getTagById: vi.fn(),
         updateTag: vi.fn(),
         deleteTag: vi.fn(),
@@ -174,9 +183,18 @@ describe('TagInput', () => {
     })
 
     it('#付きで入力しても正しく追加される', async () => {
+      let tagsInStore: { id: string; name: string; color: string }[] = []
+
+      const addTagMock = vi.fn().mockImplementation(async (tag: { name: string; color: string }) => {
+        tagsInStore = [...tagsInStore, { id: 'new-1', name: tag.name, color: tag.color }]
+        return true
+      })
+
+      const getAllTagsMock = vi.fn().mockImplementation(() => tagsInStore)
+
       vi.mocked(useTagStore).mockReturnValue({
-        addTag: vi.fn().mockResolvedValue(true),
-        getAllTags: vi.fn().mockReturnValue([{ id: 'new-1', name: 'ハッシュタグ', color: '#3b82f6' }]),
+        addTag: addTagMock,
+        getAllTags: getAllTagsMock,
         getTagById: vi.fn(),
         updateTag: vi.fn(),
         deleteTag: vi.fn(),

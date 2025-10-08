@@ -85,10 +85,6 @@ export const useTagInput = ({ selectedTags, onChange, onInputClear, onSuggestion
       }
 
       if (tagToAdd) {
-        // 入力値をクリアして提案を非表示
-        onInputClear()
-        onSuggestionsHide()
-
         // コンポーネント用のTag型に変換
         const newTag: Tag = {
           id: tagToAdd.id,
@@ -96,10 +92,12 @@ export const useTagInput = ({ selectedTags, onChange, onInputClear, onSuggestion
           color: tagToAdd.color,
         }
 
-        // 短いアニメーション遅延でタグを追加
-        setTimeout(() => {
-          onChange([...selectedTags, newTag])
-        }, 50)
+        // タグを追加
+        onChange([...selectedTags, newTag])
+
+        // 入力値をクリアして提案を非表示
+        onInputClear()
+        onSuggestionsHide()
       }
     },
     [selectedTags, onChange, onInputClear, onSuggestionsHide, addTagToStore, getAllTags]
