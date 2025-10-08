@@ -1,0 +1,87 @@
+{
+  "app": {
+    "name": "BoxLog",
+    "description": "タスク管理アプリケーション",
+    "version": "v1.0.0"
+  },
+  "navigation": {
+    "dashboard": "ダッシュボード",
+    "tasks": "タスク",
+    "calendar": "カレンダー",
+    "settings": "設定",
+    "profile": "プロフィール"
+  },
+  "actions": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "update": "更新",
+    "search": "検索",
+    "filter": "フィルター",
+    "sort": "並べ替え"
+  },
+  "status": {
+    "loading": "読み込み中...",
+    "success": "成功",
+    "error": "エラー",
+    "warning": "警告",
+    "info": "情報"
+  },
+  "time": {
+    "today": "今日",
+    "yesterday": "昨日",
+    "tomorrow": "明日",
+    "thisWeek": "今週",
+    "nextWeek": "来週",
+    "thisMonth": "今月",
+    "nextMonth": "来月"
+  },
+  "language": {
+    "current": "現在の言語",
+    "switch": "言語を変更",
+    "english": "英語",
+    "japanese": "日本語"
+  },
+  "calendar": {
+    "viewSwitcher": {
+      "closeDropdown": "ドロップダウンを閉じる",
+      "showWeekends": "週末表示",
+      "enableWeekends": "週末表示を有効にする",
+      "disableWeekends": "週末表示を無効にする",
+      "keyboardShortcutDescription": "キーボードショートカット: Cmd+W または Ctrl+W で切り替え可能"
+    },
+    "dateRange": {
+      "weekLabel": "第{weekNumber}週"
+    },
+    "headerActions": {
+      "settings": "Settings",
+      "export": "Export",
+      "import": "Import",
+      "moreOptions": "More options"
+    },
+    "weekendDropDialog": {
+      "title": "週末への移動を検出しました",
+      "description": "現在週末表示がOFFになっています",
+      "sourceLabel": "移動元:",
+      "targetLabel": "移動先:",
+      "explanation": "週末表示がOFFのため、このイベントを次の平日（月曜日）に自動的に移動します。",
+      "hint": "週末に移動したい場合は、設定で「週末表示」をONにしてからもう一度お試しください。",
+      "confirmButton": "月曜日に移動"
+    },
+    "undoToast": {
+      "undoShortcut": "Press Ctrl+Z to undo",
+      "undoButton": "Undo"
+    },
+    "emptyState": {
+      "defaultTitle": "No events",
+      "defaultDescription": "Click to create a new event"
+    },
+    "contextMenu": {
+      "edit": "編集",
+      "duplicate": "複製",
+      "delete": "削除"
+    }
+  }
+}

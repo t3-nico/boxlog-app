@@ -1,0 +1,144 @@
+name: 📊 Weekly Security Report
+
+on:
+  schedule:
+    # 毎週月曜日 0:00 UTC（日本時間 9:00）
+    - cron: '0 0 * * 1'
+  workflow_dispatch: # 手動実行も可能
+
+env:
+  NODE_VERSION: '18'
+
+# セキュリティ: 最小権限の原則
+permissions:
+  contents: read          # コード読み取り
+  issues: write           # 週次レポートをIssue化
+  pull-requests: read     # PR関連情報の取得
+
+jobs:
+  generate-report:
+    name: 📊 Generate Security Report
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8  # v4.0.2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📊 Generate security report
+        run: npm run security:report
+
+      - name: 📤 Upload report artifact
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3  # v4.3.1
+        with:
+          name: security-report-${{ github.run_number }}
+          path: reports/security/*.md
+          retention-days: 90
+
+      - name: 📝 Create Issue with Report Summary
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // レポートファイルを読み込む
+            const reportsDir = 'reports/security';
+            const files = fs.readdirSync(reportsDir);
+            const latestReport = files
+              .filter(f => f.startsWith('security-report-'))
+              .sort()
+              .reverse()[0];
+
+            if (!latestReport) {
+              console.log('No report found');
+              return;
+            }
+
+            const reportPath = path.join(reportsDir, latestReport);
+            const reportContent = fs.readFileSync(reportPath, 'utf8');
+
+            // サマリーを抽出（最初の1000文字 + 推奨アクション）
+            const lines = reportContent.split('\n');
+            const summaryLines = lines.slice(0, 40);
+            const recommendationsIndex = lines.findIndex(l => l.includes('## 7. 推奨アクション'));
+            const recommendations = recommendationsIndex > 0
+              ? lines.slice(recommendationsIndex, recommendationsIndex + 20).join('\n')
+              : '';
+
+            // Issueの作成（既存のweekly reportがある場合はスキップ）
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'security,weekly-report',
+              state: 'open',
+            });
+
+            const thisWeek = new Date().toISOString().split('T')[0];
+            const existingThisWeek = existingIssues.find(
+              issue => issue.title.includes(thisWeek)
+            );
+
+            if (existingThisWeek) {
+              console.log('Weekly report issue already exists');
+              return;
+            }
+
+            // 新規Issue作成
+            const reportBody = [
+              '# 🛡️ Weekly Security Report',
+              '',
+              summaryLines.join('\n'),
+              '',
+              recommendations,
+              '',
+              '---',
+              '',
+              `**Full Report**: [Download Artifact](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              '',
+              `**Next Report**: ${new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}`,
+              '',
+              '<sub>🤖 Automated weekly security report</sub>'
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🛡️ Weekly Security Report - ${thisWeek}`,
+              labels: ['security', 'weekly-report', 'documentation'],
+              body: reportBody
+            });
+
+      - name: 💬 Notify on Critical Issues
+        if: failure()
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        with:
+          script: |
+            const errorBody = [
+              '## 🚨 Security Report Generation Failed',
+              '',
+              `**Workflow Run**: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              '',
+              `**Date**: ${new Date().toISOString()}`,
+              '',
+              '**Action Required**: Investigate why the security report generation failed.',
+              '',
+              '<sub>🤖 Automated security alert</sub>'
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Security Report Generation Failed',
+              labels: ['security', 'bug', 'P0-critical'],
+              body: errorBody
+            });

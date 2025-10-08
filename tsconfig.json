@@ -18,9 +18,20 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
-    }
+      "@/*": ["./src/*"],
+      "@/components/ui/kibo-ui/*": ["./src/components/ui/kibo-ui/*"],
+      "@compass/*": ["./compass/dist/*"]
+    },
+    "types": ["node"],
+    "forceConsistentCasingInFileNames": true,
+    // 2025 TypeScript Best Practices - 設定完了（エラー修正は #389 で実施）
+    "noUnusedLocals": false,              // ⚠️ 一時的に無効化（エラー削減のため）
+    "noUnusedParameters": false,          // ⚠️ 一時的に無効化（エラー削減のため）
+    "noUncheckedIndexedAccess": false,    // ⚠️ 一時的に無効化（エラー削減のため）
+    "exactOptionalPropertyTypes": false,  // ⚠️ 一時的に無効化（エラー削減のため）
+    "noImplicitReturns": false,           // ⚠️ 一時的に無効化（エラー削減のため）
+    "noFallthroughCasesInSwitch": true    // ✅ 有効化完了
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "compass/**"]
 }

@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+
+/* Tailwind v4 ダークモード設定 */
+@variant dark (.dark &);
+
+/* ============================================
+ * カラーシステム（modern-minimal OKLCH）
+ * Tailwind v4 @theme構文準拠
+ * ============================================ */
+@theme {
+  /* ライトモード */
+  --color-background: oklch(1.0000 0 0);
+  --color-foreground: oklch(0.3211 0 0);
+  --color-card: oklch(1.0000 0 0);
+  --color-card-foreground: oklch(0.3211 0 0);
+  --color-popover: oklch(1.0000 0 0);
+  --color-popover-foreground: oklch(0.3211 0 0);
+  --color-primary: oklch(0.6231 0.1880 259.8145);
+  --color-primary-foreground: oklch(1.0000 0 0);
+  --color-secondary: oklch(0.9670 0.0029 264.5419);
+  --color-secondary-foreground: oklch(0.4461 0.0263 256.8018);
+  --color-muted: oklch(0.9846 0.0017 247.8389);
+  --color-muted-foreground: oklch(0.5510 0.0234 264.3637);
+  --color-accent: oklch(0.9514 0.0250 236.8242);
+  --color-accent-foreground: oklch(0.3791 0.1378 265.5222);
+  --color-destructive: oklch(0.6368 0.2078 25.3313);
+  --color-destructive-foreground: oklch(1.0000 0 0);
+  --color-border: oklch(0.9276 0.0058 264.5313);
+  --color-input: oklch(0.9276 0.0058 264.5313);
+  --color-ring: oklch(0.6231 0.1880 259.8145);
+  --color-chart-1: oklch(0.6231 0.1880 259.8145);
+  --color-chart-2: oklch(0.5461 0.2152 262.8809);
+  --color-chart-3: oklch(0.4882 0.2172 264.3763);
+  --color-chart-4: oklch(0.4244 0.1809 265.6377);
+  --color-chart-5: oklch(0.3791 0.1378 265.5222);
+  --color-sidebar: oklch(1.0000 0 0);
+  --color-sidebar-foreground: oklch(0.3211 0 0);
+  --color-sidebar-accent: oklch(0.9514 0.0250 236.8242);
+  --color-sidebar-accent-foreground: oklch(0.3791 0.1378 265.5222);
+}
+
+/* ダークモード用カラー定義（.darkクラス時） */
+.dark {
+  --color-background: oklch(0.2046 0 0);
+  --color-foreground: oklch(0.9219 0 0);
+  --color-card: oklch(0.2686 0 0);
+  --color-card-foreground: oklch(0.9219 0 0);
+  --color-popover: oklch(0.2686 0 0);
+  --color-popover-foreground: oklch(0.9219 0 0);
+  --color-primary: oklch(0.6231 0.1880 259.8145);
+  --color-primary-foreground: oklch(1.0000 0 0);
+  --color-secondary: oklch(0.2686 0 0);
+  --color-secondary-foreground: oklch(0.9219 0 0);
+  --color-muted: oklch(0.2393 0 0);
+  --color-muted-foreground: oklch(0.7155 0 0);
+  --color-accent: oklch(0.3791 0.1378 265.5222);
+  --color-accent-foreground: oklch(0.8823 0.0571 254.1284);
+  --color-destructive: oklch(0.6368 0.2078 25.3313);
+  --color-destructive-foreground: oklch(1.0000 0 0);
+  --color-border: oklch(0.3715 0 0);
+  --color-input: oklch(0.3715 0 0);
+  --color-ring: oklch(0.6231 0.1880 259.8145);
+  --color-chart-1: oklch(0.7137 0.1434 254.6240);
+  --color-chart-2: oklch(0.6231 0.1880 259.8145);
+  --color-chart-3: oklch(0.5461 0.2152 262.8809);
+  --color-chart-4: oklch(0.4882 0.2172 264.3763);
+  --color-chart-5: oklch(0.4244 0.1809 265.6377);
+  --color-sidebar: oklch(0.2686 0 0);
+  --color-sidebar-foreground: oklch(0.9219 0 0);
+  --color-sidebar-accent: oklch(0.3791 0.1378 265.5222);
+  --color-sidebar-accent-foreground: oklch(0.8823 0.0571 254.1284);
+}
+
+@theme {
+  /* ============================================
+   * スペーシング（8pxグリッド）
+   * ============================================ */
+  --spacing-xs: 0.5rem;   /* 8px */
+  --spacing-sm: 1rem;     /* 16px */
+  --spacing-md: 1.5rem;   /* 24px */
+  --spacing-lg: 2rem;     /* 32px */
+  --spacing-xl: 3rem;     /* 48px */
+  --spacing-2xl: 4rem;    /* 64px */
+
+  /* ============================================
+   * ボーダー半径
+   * ============================================ */
+  --radius-sm: 0.25rem;   /* 4px */
+  --radius-md: 0.375rem;  /* 6px */
+  --radius-lg: 0.5rem;    /* 8px */
+  --radius-xl: 0.75rem;   /* 12px */
+  --radius-2xl: 1rem;     /* 16px */
+  --radius-full: 9999px;
+
+  /* ============================================
+   * シャドウ（modern-minimal準拠）
+   * ============================================ */
+  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+
+  /* ============================================
+   * Z-Index
+   * ============================================ */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* ============================================
+   * タイポグラフィトークン
+   * ============================================ */
+
+  /* フォントサイズ */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
+
+  /* 見出し用 */
+  --font-size-heading-h1: 2.25rem;   /* 36px */
+  --font-size-heading-h2: 1.875rem;  /* 30px */
+  --font-size-heading-h3: 1.5rem;    /* 24px */
+  --font-size-heading-h4: 1.25rem;   /* 20px */
+
+  /* フォントウェイト */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* 行間 */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+}
+
+/* next/font 最適化フォント適用 */
+body {
+  font-family: var(--font-inter), sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  font-variation-settings: 'opsz' 32;
+}
+
+/* ブラウザUIのダークモード対応 */
+html {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+/* ============================================
+ * スクロールバーのスタイリング
+ * ============================================ */
+/* Webkit系ブラウザ（Chrome, Safari, Edge） */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent);
+  border-radius: 6px;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-background);
+}
+/* ============================================
+ * カスタムユーティリティクラス
+ * ============================================ */
+@layer utilities {
+  /* タイポグラフィ - 見出し */
+  .text-heading-h1 {
+    font-size: var(--font-size-heading-h1);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-heading-h2 {
+    font-size: var(--font-size-heading-h2);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-heading-h3 {
+    font-size: var(--font-size-heading-h3);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  .text-heading-h4 {
+    font-size: var(--font-size-heading-h4);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+  }
+
+  /* タイポグラフィ - 本文 */
+  .text-body-base {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-body-lg {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-body-sm {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+
+  .text-body-xs {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+  }
+}

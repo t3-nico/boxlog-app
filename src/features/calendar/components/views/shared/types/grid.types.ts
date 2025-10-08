@@ -1,0 +1,92 @@
+/**
+ * グリッドシステムの型定義
+ */
+
+export interface GridDimensions {
+  width: number
+  height: number
+  hourHeight: number
+  minuteHeight: number
+  timeColumnWidth: number
+}
+
+export interface GridPosition {
+  top: number
+  left: number
+  width: number
+  height: number
+}
+
+export interface TimeSelection {
+  startHour: number
+  startMinute: number
+  endHour: number
+  endMinute: number
+}
+
+export interface TimeGridProps {
+  startHour?: number // 開始時間（デフォルト: 0）
+  endHour?: number // 終了時間（デフォルト: 24）
+  hourHeight?: number // 1時間の高さ（デフォルト: 72）
+  showHalfHourLines?: boolean // 30分線を表示するか
+  showQuarterHourLines?: boolean // 15分線を表示するか
+  showCurrentTime?: boolean // 現在時刻線を表示するか
+  className?: string
+  children?: React.ReactNode
+  onTimeClick?: (hour: number, minute: number) => void
+  onTimeRangeSelect?: (selection: TimeSelection) => void // ドラッグ選択時のコールバック
+  scrollToHour?: number // 初期スクロール位置
+  displayDates?: Date[] // 表示日付（現在時刻線の表示判定に使用）
+}
+
+export interface TimeColumnProps {
+  startHour?: number
+  endHour?: number
+  hourHeight?: number
+  format?: '12h' | '24h' // 時刻表示形式
+  className?: string
+}
+
+export interface GridLinesProps {
+  startHour?: number
+  endHour?: number
+  hourHeight?: number
+  showHalfHourLines?: boolean
+  className?: string
+}
+
+export interface CurrentTimeLineProps {
+  hourHeight?: number
+  timeColumnWidth?: number
+  containerWidth?: number
+  className?: string
+  showDot?: boolean // 現在時刻のドットを表示するか
+  updateInterval?: number // 更新間隔（ミリ秒）
+  // 複数日ビュー用の新しいProps
+  displayDates?: Date[] // 表示している日付の配列
+  viewMode?: 'day' | '3day' | 'week' | '2week'
+}
+
+export interface TimeRange {
+  start: Date
+  end: Date
+}
+
+export interface TimeSlot {
+  time: string // "09:15"
+  hour: number // 9
+  minute: number // 15
+  label: string // "9:00" または "09:15"
+  isHour: boolean // true if 正時(00分)
+  isHalfHour: boolean // true if 30分
+  isQuarterHour: boolean // true if 15分または45分
+}
+
+export interface GridEvent {
+  id: string
+  start: Date
+  end: Date
+  column?: number // 重複時の列番号
+  width?: number // イベントの幅（％）
+  left?: number // 左からの位置（％）
+}

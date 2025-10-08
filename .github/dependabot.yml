@@ -1,0 +1,78 @@
+version: 2
+updates:
+  # npm依存関係の自動更新
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+
+    # PR数の制限（1つずつ順次処理）
+    open-pull-requests-limit: 1
+
+    # ラベル設定
+    labels:
+      - "dependencies"
+      - "security"
+
+    # レビュアー設定
+    reviewers:
+      - "t3-nico"
+
+    # アサイン設定
+    assignees:
+      - "t3-nico"
+
+    # コミットメッセージ設定
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+    # 更新対象
+    allow:
+      - dependency-type: "direct"      # 直接依存
+      - dependency-type: "indirect"    # 間接依存
+
+    # バージョニング戦略
+    versioning-strategy: "increase"
+
+    # グループ化設定（セキュリティアップデートは個別）
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # GitHub Actions の自動更新
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Tokyo"
+
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "ci/cd"
+      - "security"
+
+    reviewers:
+      - "t3-nico"
+
+    assignees:
+      - "t3-nico"
+
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"

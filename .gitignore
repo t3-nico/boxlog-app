@@ -25,9 +25,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
+# Environment variables
 .env
+.env.local
+.env.development
+.env.staging
+.env.production.local
+!.env.example
+!.env.production
 
 # vercel
 .vercel
@@ -37,17 +42,22 @@ yarn-error.log*
 next-env.d.ts
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
+
+# Claude Code
+.claude/settings.local.json
+.claude-session.json
+.backup/
 
 # OS
 Thumbs.db
 
 # Logs
-logs
+logs/
 *.log
+lint_output.txt
 
 # Runtime data
 pids
@@ -68,8 +78,26 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
-# Optional eslint cache
+# ESLint Cache
 .eslintcache
+
+# Performance logs
+performance-*.log
+
+# Auto-generated reports
+/reports/
+*.csv
+license-report.csv
+
+# API change detection cache
+.api-changes-cache.json
+
+# Auto-generated code
+/src/types/generated/
+/src/**/generated/
+
+# Test files (moved to .eslint/tests/)
+test-*
 
 # Microbundle cache
 .rpt2_cache/
@@ -85,6 +113,7 @@ jspm_packages/
 
 # Yarn Integrity file
 .yarn-integrity
+yarn.lock
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -99,7 +128,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# public - Next.jsではpublicディレクトリを管理
 
 # Storybook build outputs
 .out
@@ -107,4 +136,9 @@ public
 
 # Temporary folders
 tmp/
-temp/ 
+temp/
+
+# Disabled/legacy files
+*.disabled
+*_MIGRATION_*.md
+*_CONVERSION_*.md

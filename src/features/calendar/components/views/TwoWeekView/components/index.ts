@@ -1,0 +1,1 @@
+export { TwoWeekContent } from './TwoWeekContent'

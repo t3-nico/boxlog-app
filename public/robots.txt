@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# BoxLog App - Task Management Application
+# 動的Sitemap（Next.js App Router）
+Sitemap: https://boxlog.app/sitemap.xml
+
+# 開発環境の場合
+# Sitemap: http://localhost:3000/sitemap.xml

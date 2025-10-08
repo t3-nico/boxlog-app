@@ -1,0 +1,101 @@
+/**
+ * イベント関連の型定義
+ */
+
+export interface TimedEvent {
+  id: string
+  title: string
+  description?: string
+  color?: string
+  start: Date
+  end: Date
+  // Aliases for backward compatibility
+  startDate?: Date
+  endDate?: Date
+  // Extended properties to match CalendarEvent
+  displayStartDate?: Date
+  displayEndDate?: Date
+  duration?: number
+  isRecurring?: boolean
+  status?: 'inbox' | 'planned' | 'in_progress' | 'completed' | 'cancelled'
+  priority?: 'urgent' | 'important' | 'necessary' | 'delegate' | 'optional'
+  location?: string
+  url?: string
+  createdAt?: Date
+  updatedAt?: Date
+  isMultiDay?: boolean
+  isReadOnly?: boolean
+  tags?: Array<{
+    id: string
+    name: string
+    color: string
+    icon?: string
+    parent_id?: string
+  }>
+  items?: Array<{
+    id: string
+    text: string
+    completed: boolean
+    duration?: number
+  }>
+  isDeleted?: boolean
+}
+
+export type CalendarEvent = TimedEvent
+
+export interface EventBlockProps {
+  event: CalendarEvent
+  position?: EventPosition // positionをオプショナルに変更
+  onClick?: (event: CalendarEvent) => void
+  onDoubleClick?: (event: CalendarEvent) => void
+  onContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  onDragStart?: (
+    event: CalendarEvent,
+    mouseEvent: React.MouseEvent,
+    position: { top: number; left: number; width: number; height: number }
+  ) => void
+  onDragEnd?: (event: CalendarEvent) => void
+  onResizeStart?: (
+    event: CalendarEvent,
+    direction: 'top' | 'bottom',
+    mouseEvent: React.MouseEvent,
+    position: { top: number; left: number; width: number; height: number }
+  ) => void
+  onResizeEnd?: (event: CalendarEvent) => void
+  isDragging?: boolean
+  isSelected?: boolean
+  isResizing?: boolean
+  className?: string
+  style?: React.CSSProperties
+  previewTime?: { start: Date; end: Date } | null
+}
+
+export interface EventPosition {
+  top: number // px
+  left: number // %
+  width: number // %
+  height: number // px
+  zIndex?: number
+}
+
+export interface EventGroup {
+  events: CalendarEvent[]
+  columns: EventColumn[]
+}
+
+export interface EventColumn {
+  events: CalendarEvent[]
+  columnIndex: number
+  totalColumns: number
+}
+
+export type EventInteractionHandler = {
+  onClick?: (event: CalendarEvent) => void
+  onDoubleClick?: (event: CalendarEvent) => void
+  onContextMenu?: (event: CalendarEvent, e: React.MouseEvent) => void
+  onDragStart?: (event: CalendarEvent) => void
+  onDragEnd?: (event: CalendarEvent) => void
+  onDragOver?: (event: CalendarEvent, date: Date, time: Date) => void
+  onDrop?: (event: CalendarEvent, date: Date, time: Date) => void
+  onResize?: (event: CalendarEvent, newStart: Date, newEnd: Date) => void
+}

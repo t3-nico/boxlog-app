@@ -1,25 +1,54 @@
-import '@/styles/tailwind.css'
+// app/layout.tsx - ルートレイアウト（i18n対応）
+import '@/styles/globals.css'
+
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { Suspense } from 'react'
+
+import { GlobalErrorBoundary, Providers } from '@/components/common'
+import { WebVitalsReporter } from '@/components/WebVitalsReporter'
+import { ToastContainer } from '@/lib/toast'
+import { cn } from '@/lib/utils'
+
+// next/font による最適化されたフォント読み込み
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+})
 
 export const metadata: Metadata = {
   title: {
-    template: '%s - Catalyst',
-    default: 'Catalyst',
+    template: '%s - BoxLog',
+    default: 'BoxLog',
   },
-  description: '',
+  description: 'BoxLog - Task management and productivity application',
 }
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+interface RootLayoutProps {
+  children: React.ReactNode
+}
+
+const RootLayout = ({ children }: RootLayoutProps) => {
   return (
-    <html
-      lang="en"
-      className="text-zinc-950 antialiased lg:bg-zinc-100 dark:bg-zinc-900 dark:text-white dark:lg:bg-zinc-950"
-    >
-      <head>
-        <link rel="preconnect" href="https://rsms.me/" />
-        <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-      </head>
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
+      <body className={cn('bg-neutral-100 dark:bg-neutral-900')} suppressHydrationWarning>
+        <Suspense fallback={null}>
+          <GlobalErrorBoundary maxRetries={3} retryDelay={1000}>
+            <Providers>
+              {children}
+              <ToastContainer />
+            </Providers>
+          </GlobalErrorBoundary>
+          <WebVitalsReporter />
+          <SpeedInsights />
+          <Analytics />
+        </Suspense>
+      </body>
     </html>
   )
 }
+
+export default RootLayout

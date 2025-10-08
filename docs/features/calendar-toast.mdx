@@ -1,0 +1,306 @@
+# Calendar Toast
+
+Calendar機能専用のToast通知システムです。
+
+## 概要
+
+Calendar Toast は既存の Toast システムを拡張し、カレンダー操作に特化した通知機能を提供します。
+日本語メッセージ、アンドゥ機能、Promise統合などの機能を備えています。
+
+## 基本的な使い方
+
+### セットアップ
+
+```typescript
+import useCalendarToast from '@/features/calendar/lib/toast';
+
+function MyComponent() {
+  const toast = useCalendarToast();
+  
+  // 使用例
+  toast.eventCreated(event);
+}
+```
+
+### 基本的な通知
+
+```typescript
+// 予定作成
+toast.eventCreated(event);
+
+// 予定削除（アンドゥ付き）
+toast.eventDeleted(event, () => restoreEvent(event.id));
+
+// 予定移動
+toast.eventMoved(event, newDate);
+
+// 一括削除
+toast.bulkDeleted(5, () => restoreAllEvents());
+```
+
+## API リファレンス
+
+### イベント操作
+
+#### `eventCreated`
+
+予定作成時の通知を表示します。
+
+```typescript
+toast.eventCreated(event: CalendarEvent, options?: CalendarToastOptions)
+```
+
+**パラメータ:**
+- `event`: 作成されたイベント
+- `options`: 追加オプション（viewAction など）
+
+**例:**
+```typescript
+toast.eventCreated(event, {
+  viewAction: () => router.push(`/event/${event.id}`)
+});
+```
+
+#### `eventDeleted`
+
+予定削除時の通知を表示します（アンドゥ機能付き）。
+
+```typescript
+toast.eventDeleted(event: CalendarEvent, undoAction?: () => void | Promise<void>)
+```
+
+**パラメータ:**
+- `event`: 削除されたイベント
+- `undoAction`: アンドゥ実行関数
+
+**例:**
+```typescript
+toast.eventDeleted(event, async () => {
+  await restoreEvent(event);
+  toast.success('予定を復元しました');
+});
+```
+
+#### `eventMoved`
+
+予定移動時の通知を表示します。
+
+```typescript
+toast.eventMoved(event: CalendarEvent, toDate: Date, options?: CalendarToastOptions)
+```
+
+**パラメータ:**
+- `event`: 移動されたイベント
+- `toDate`: 移動先の日付
+- `options`: 追加オプション（undoAction など）
+
+### Promise操作
+
+非同期処理の状態を自動的に通知します。
+
+```typescript
+const result = await toast.promise(
+  createEvent(data),
+  {
+    loading: '作成中...',
+    success: (event) => `「${event.title}」を作成しました`,
+    error: (err) => `エラー: ${err.message}`
+  }
+);
+```
+
+**パラメータ:**
+- `promise`: 実行するPromise
+- `messages`: 各状態のメッセージ設定
+
+### バッチ操作
+
+```typescript
+toast.bulkDeleted(count: number, undoAction?: () => void | Promise<void>)
+```
+
+**例:**
+```typescript
+toast.bulkDeleted(5, async () => {
+  // 5件の予定を復元
+  await restoreEvents(deletedIds);
+});
+```
+
+### 同期操作
+
+```typescript
+// 同期開始
+const syncId = toast.syncStart();
+
+// 同期完了
+toast.syncComplete();
+
+// 同期失敗（再試行付き）
+toast.syncFailed(() => retrySync());
+```
+
+## 高度な使用法
+
+### エラーハンドリング
+
+```typescript
+import { useNetworkErrorHandler } from '@/features/calendar/lib/toast';
+
+const { handleError } = useNetworkErrorHandler();
+
+try {
+  await updateEvent(event);
+  toast.eventUpdated(event);
+} catch (error) {
+  handleError(error, () => updateEvent(event)); // 再試行付き
+}
+```
+
+### 楽観的更新
+
+```typescript
+import { useOptimisticUpdate } from '@/features/calendar/lib/toast';
+
+const { moveEvent } = useOptimisticUpdate();
+
+await moveEvent(
+  eventId, 
+  { startDate: newDate }, 
+  { startDate: oldDate },
+  api.updateEvent,
+  updateEventInUI
+);
+```
+
+### デバウンス付きToast
+
+```typescript
+import { useDebouncedToast } from '@/features/calendar/lib/toast';
+
+const { debouncedSuccess, dragOperationToast } = useDebouncedToast();
+
+// 連続操作でも1秒後に1回だけ通知
+dragOperationToast(event.title, 'move');
+```
+
+## カスタマイズ
+
+### メッセージテンプレートの変更
+
+`templates.ts` でメッセージをカスタマイズできます：
+
+```typescript
+export const toastTemplates = {
+  created: {
+    title: 'イベントを追加しました', // カスタムメッセージ
+    description: (opts) => opts.event ? 
+      `「${opts.event.title}」${format(opts.event.displayStartDate, 'M月d日')}` : '',
+    type: 'success',
+    duration: 3000,
+  }
+};
+```
+
+### スタイリング
+
+既存のToastシステムのテーマを使用しているため、`@/config/theme/colors` でカラー調整可能です。
+
+```typescript
+// colors.ts での調整例
+export const semantic = {
+  success: {
+    light: 'bg-green-50 dark:bg-green-900/20',
+    text: 'text-green-700 dark:text-green-300',
+    // ...
+  }
+};
+```
+
+## ベストプラクティス
+
+### 1. 楽観的更新と組み合わせる
+
+```typescript
+// UIを即座に更新
+updateUI(newData);
+
+// その後APIコール
+try {
+  await api.update(newData);
+  toast.success('更新完了');
+} catch {
+  rollbackUI(oldData);
+  toast.error('更新失敗');
+}
+```
+
+### 2. アンドゥ機能の提供
+
+- 削除操作には必ずアンドゥを提供
+- アンドゥ可能時間を長めに設定（10秒）
+- 重要な操作ほど長く表示
+
+### 3. エラーメッセージの具体化
+
+```typescript
+// ❌ 一般的すぎる
+toast.error('エラーが発生しました');
+
+// ✅ 具体的で行動につながる
+toast.error('ネットワークエラー', {
+  description: '再接続してください',
+  retryAction: () => retry()
+});
+```
+
+### 4. 適切な通知レベルの選択
+
+- **success**: 操作完了の確認
+- **warning**: 注意が必要だが継続可能
+- **error**: 操作失敗、ユーザー対応が必要
+- **info**: 参考情報
+
+## トラブルシューティング
+
+### Toastが表示されない
+
+1. `ToastContainer` が適切な位置にマウントされているか確認
+2. z-indexの競合を確認
+3. コンソールエラーをチェック
+
+### アンドゥが機能しない
+
+1. アンドゥ関数が正しく渡されているか確認
+2. 非同期処理が適切に`await`されているか確認
+3. エラーハンドリングが適切か確認
+
+### パフォーマンスの問題
+
+1. 連続操作時は`useDebouncedToast`を使用
+2. 大量操作時は`groupedToast`でまとめて表示
+3. 不要なToastはタイミングよく`clear()`
+
+## テスト
+
+### 手動テスト
+UI操作との統合が重要なため、主要な動作は手動でテストすることを推奨します：
+
+```typescript
+// 基本操作のテスト例
+const toast = useCalendarToast();
+
+// 1. 予定作成のテスト
+toast.eventCreated(mockEvent);
+// 確認: 成功メッセージが表示されること
+
+// 2. 削除のアンドゥテスト
+toast.eventDeleted(mockEvent, () => console.log('Undo executed'));
+// 確認: アンドゥボタンが表示され、クリックで動作すること
+```
+
+## 関連項目
+
+- [基本Toast システム](/docs/components/toast.md)
+- [カレンダー機能](/docs/features/calendar.md)
+- [エラーハンドリング](/docs/patterns/error-handling.md)
