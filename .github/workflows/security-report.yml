@@ -123,19 +123,22 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
         with:
           script: |
+            const errorBody = [
+              '## 🚨 Security Report Generation Failed',
+              '',
+              `**Workflow Run**: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+              '',
+              `**Date**: ${new Date().toISOString()}`,
+              '',
+              '**Action Required**: Investigate why the security report generation failed.',
+              '',
+              '<sub>🤖 Automated security alert</sub>'
+            ].join('\n');
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: '🚨 Security Report Generation Failed',
               labels: ['security', 'bug', 'P0-critical'],
-              body: `## 🚨 Security Report Generation Failed
-
-**Workflow Run**: [${context.runId}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})
-
-**Date**: ${new Date().toISOString()}
-
-**Action Required**: Investigate why the security report generation failed.
-
-<sub>🤖 Automated security alert</sub>
-              `
+              body: errorBody
             });
