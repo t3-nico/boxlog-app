@@ -10,7 +10,14 @@ export default defineConfig({
     environment: 'happy-dom',
     setupFiles: ['./src/test/setup.ts'],
     include: ['**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['node_modules', 'dist', '.next', 'cypress', 'compass'],
+    exclude: [
+      'node_modules',
+      'dist',
+      '.next',
+      'cypress',
+      'compass',
+      '**/e2e/**', // Playwright E2Eテストを除外
+    ],
     css: true,
     coverage: {
       provider: 'v8',

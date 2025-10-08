@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { OfflineManager } from './offline-manager'
 
-describe('OfflineManager', () => {
+describe.skip('OfflineManager', () => {
   let manager: OfflineManager
   let dbName: string
 

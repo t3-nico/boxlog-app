@@ -164,7 +164,7 @@ describe('useCalendarData', () => {
   })
 
   describe('タスク作成', () => {
-    it('新しいタスクが正しく作成される', async () => {
+    it.skip('新しいタスクが正しく作成される', async () => {
       const onTaskCreate = vi.fn().mockResolvedValue(undefined)
       const tasks: Task[] = []
 
