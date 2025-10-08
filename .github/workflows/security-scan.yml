@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
 
       - name: 🔍 ZAP Baseline Scan
         uses: zaproxy/action-baseline@906a3c93ffde4864839d31a93daadcbd2737b4da  # v0.12.0
@@ -140,7 +140,7 @@ jobs:
 
     steps:
       - name: 📥 Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8  # v5.0.0
 
       - name: 🔍 ZAP Full Scan
         uses: zaproxy/action-full-scan@d479641f7e99facb91d7738171b3448e3f3c7bba  # v0.10.0
