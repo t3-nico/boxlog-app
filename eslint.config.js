@@ -12,7 +12,7 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 })
 
-export default [
+const config = [
   // Ignore patterns
   {
     ignores: [
@@ -51,3 +51,5 @@ export default [
     },
   },
 ]
+
+export default config

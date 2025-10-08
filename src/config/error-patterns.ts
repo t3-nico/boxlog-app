@@ -646,7 +646,7 @@ export function createAppError(
 // エクスポート
 // ==============================================
 
-export default {
+const errorPatterns = {
   ERROR_PATTERNS,
   getErrorPattern,
   getUserFriendlyMessage,
@@ -657,3 +657,4 @@ export default {
   AppError,
   createAppError,
 }
+export default errorPatterns

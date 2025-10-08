@@ -183,7 +183,7 @@ export const TagInput = ({ selectedTags, onChange, onTabNext, contextualSuggesti
         handleSpaceKey()
         break
     }
-  }, [showSuggestions, focusedSuggestionIndex, handleTabKey, handleEnterKey, handleArrowDown, handleArrowUp, handleEscapeKey, handleBackspaceKey, handleSpaceKey])
+  }, [showSuggestions, handleTabKey, handleEnterKey, handleArrowDown, handleArrowUp, handleEscapeKey, handleBackspaceKey, handleSpaceKey])
 
   // Input value changes and filtering
   useEffect(() => {

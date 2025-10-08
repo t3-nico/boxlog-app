@@ -397,7 +397,7 @@ export function validateNamingConsistency(): {
   }
 }
 
-export default {
+const namingUtils = {
   createPageViewEvent,
   createActionEvent,
   createEngagementEvent,
@@ -419,3 +419,5 @@ export default {
   getAllFeatures,
   validateNamingConsistency,
 }
+
+export default namingUtils

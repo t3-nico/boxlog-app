@@ -107,7 +107,7 @@ export function useAccessibilityKeyboard(
 
       return { ...prev, selectedDate: newDate }
     })
-  }, [announce, callbacks, t])
+  }, [announce, callbacks])
 
   /**
    * 時間の移動
@@ -125,7 +125,7 @@ export function useAccessibilityKeyboard(
 
       return { ...prev, selectedTime: newTime }
     })
-  }, [announce, callbacks, t])
+  }, [announce, callbacks])
 
   /**
    * イベント間の移動
@@ -175,10 +175,10 @@ export function useAccessibilityKeyboard(
     setNavigationState(prev => {
       announce(`${prev.selectedTime}に新しいイベントを作成します`)
       callbacks.onCreateEvent(prev.selectedDate, prev.selectedTime)
-      
+
       return { ...prev, isInEventCreationMode: true }
     })
-  }, [announce, callbacks, t])
+  }, [announce, callbacks])
 
   /**
    * イベント編集

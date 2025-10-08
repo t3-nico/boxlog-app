@@ -45,10 +45,11 @@ export {
 import { ANALYTICS_EVENTS } from './events'
 import { trackEvent, setUserConsent, setUserId, flushEvents } from './tracker'
 
-export default {
+const analytics = {
   events: ANALYTICS_EVENTS,
   track: trackEvent,
   setUserConsent,
   setUserId,
   flush: flushEvents,
 }
+export default analytics

@@ -49,7 +49,7 @@ import {
   createMigrationPlan
 } from './manager'
 
-export default {
+const breakingChanges = {
   detector: breakingChangeDetector,
   manager: breakingChangeManager,
   detectBreakingChanges,
@@ -58,3 +58,5 @@ export default {
   generateVersionSummary,
   createMigrationPlan,
 }
+
+export default breakingChanges
