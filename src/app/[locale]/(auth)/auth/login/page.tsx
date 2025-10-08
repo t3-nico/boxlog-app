@@ -1,37 +1,11 @@
-import { GalleryVerticalEnd } from 'lucide-react'
+import { LoginForm } from '@/components/login-form'
 
-import { AuthPageLayout, LoginForm } from '@/features/auth'
-import { createTranslation, getDictionary } from '@/features/i18n/lib'
-import type { Locale } from '@/types/i18n'
-
-interface PageProps {
-  params: { locale?: Locale }
-}
-
-const LoginPage = async ({ params }: PageProps) => {
-  const { locale: localeParam } = await params
-  const locale = localeParam || 'ja'
-  const dictionary = await getDictionary(locale)
-  const t = createTranslation(dictionary, locale)
-
+export default function LoginPage() {
   return (
-    <AuthPageLayout
-      logo={
-        <>
-          <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-            <GalleryVerticalEnd className="size-4" />
-          </div>
-          BoxLog
-        </>
-      }
-      backgroundGradient="bg-gradient-to-br from-blue-600/20 via-purple-600/20 to-cyan-600/20"
-      emoji="📦"
-      title={t('auth.welcome.title')}
-      description={t('auth.welcome.description')}
-    >
-      <LoginForm />
-    </AuthPageLayout>
+    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm md:max-w-4xl">
+        <LoginForm />
+      </div>
+    </div>
   )
 }
-
-export default LoginPage
