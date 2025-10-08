@@ -189,16 +189,41 @@ gh pr view
 
 **マージ条件**:
 - [ ] Quality Gate（全必須チェック）が通過
-- [ ] コードレビュー承認済み
+- [ ] **PR内容の目視確認完了**（承認者不在でも実施必須）
 - [ ] コンフリクトなし
 
+**⚠️ 重要: 一人開発での確認プロセス**
+
+承認者がいない場合でも、以下の手順で**必ずPR内容を確認**してからマージすること：
+
 ```bash
-# PRをマージ（Squash & Merge推奨）
+# 1. CI/CD完了を確認
+gh pr checks
+
+# 2. PRの変更内容を確認（Web UIで詳細レビュー）
+gh pr view --web
+
+# 3. 変更ファイル一覧を確認
+gh pr diff --name-only
+
+# 4. 重要な変更を個別確認（例: 設定ファイル、セキュリティ関連）
+gh pr diff -- package.json
+gh pr diff -- .github/workflows/
+gh pr diff -- src/middleware.ts
+
+# 5. 確認完了後にマージ（Squash & Merge推奨）
 gh pr merge --squash --delete-branch=false
 
-# または GitHub UI から手動マージ
+# または GitHub UI から手動マージ（推奨）
 # https://github.com/t3-nico/boxlog-app/pulls
 ```
+
+**確認すべき項目**:
+- [ ] 意図しない変更が含まれていないか
+- [ ] セキュリティ上問題のある変更がないか
+- [ ] 設定ファイルの変更が正しいか
+- [ ] ドキュメントの更新が適切か
+- [ ] コミットメッセージが適切か
 
 ⚠️ **重要**: `dev`ブランチは削除しないこと（`--delete-branch=false`）
 
