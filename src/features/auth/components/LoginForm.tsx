@@ -2,11 +2,17 @@
 
 import { useEffect, useState } from 'react'
 
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { Logo } from '@/app/logo'
-import { Heading } from '@/components/app'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { cn } from '@/lib/utils'
+
+import { useAuthContext } from '../contexts/AuthContext'
 
 // OAuth Provider Icons
 const GoogleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
@@ -43,14 +49,22 @@ const AppleIcon = (props: React.ComponentPropsWithoutRef<'svg'>) => (
   </svg>
 )
 
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+export interface LoginFormProps extends React.ComponentPropsWithoutRef<'form'> {
+  /** ローカル専用モード（認証スキップ） */
+  localMode?: boolean
+}
 
-import { useAuthContext } from '../contexts/AuthContext'
-
-const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
+/**
+ * ログインフォームコンポーネント
+ *
+ * shadcn/ui公式認証Block基準の実装
+ *
+ * @example
+ * ```tsx
+ * <LoginForm />
+ * ```
+ */
+export function LoginForm({ localMode = false, className, ...props }: LoginFormProps) {
   const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -85,7 +99,7 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
       await signIn(email, password)
     } catch (err) {
       console.error('LoginForm handleSubmit catch error:', err)
-      setError(t('auth.errors.unexpectedError')) // 予期せぬエラーの場合のフォールバック
+      setError(t('auth.errors.unexpectedError'))
     } finally {
       setLoading(false)
     }
@@ -108,11 +122,11 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
         <div className="w-full max-w-md space-y-8 p-8">
           <div className="text-center">
             <h2 className="text-2xl font-bold">BoxLog</h2>
-            <p className="text-muted-foreground mt-2 text-sm">ローカル専用モード</p>
+            <p className="text-muted-foreground mt-2 text-sm">{t('auth.localMode.description')}</p>
           </div>
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? '起動中...' : t('auth.loginForm.startApp')}
+              {loading ? t('auth.localMode.loading') : t('auth.loginForm.startApp')}
             </Button>
           </form>
         </div>
@@ -121,58 +135,87 @@ const LoginFormComponent = ({ localMode = false }: { localMode?: boolean }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid w-full max-w-sm grid-cols-1 gap-8">
-      <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
-      <Heading>Login</Heading>
-      <div className="mb-6 flex flex-col gap-2">
+    <form className={cn('flex flex-col gap-6', className)} onSubmit={handleSubmit} {...props}>
+      {/* ヘッダー */}
+      <div className="flex flex-col gap-2 text-center">
+        <h1 className="text-2xl font-bold">{t('auth.login.title')}</h1>
+        <p className="text-muted-foreground text-sm text-balance">{t('auth.login.description')}</p>
+      </div>
+
+      {/* OAuth */}
+      <div className="grid gap-2">
         <Button type="button" variant="outline" onClick={() => handleProviderSignIn('google')} className="w-full">
-          <GoogleIcon data-slot="icon" className="size-5" />
-          Continue with Google
+          <GoogleIcon />
+          {t('auth.login.continueWithGoogle')}
         </Button>
         <Button type="button" variant="outline" onClick={() => handleProviderSignIn('apple')} className="w-full">
-          <AppleIcon data-slot="icon" className="size-5" />
-          Continue with Apple
+          <AppleIcon />
+          {t('auth.login.continueWithApple')}
         </Button>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+
+      {/* 区切り線 */}
+      <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+        <span className="bg-background text-muted-foreground relative z-10 px-2">{t('auth.login.orContinueWith')}</span>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-      </div>
-      {error != null && <p className="text-lg font-bold text-red-600 sm:text-base dark:text-red-400">{error}</p>}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Checkbox id="remember" name="remember" />
-          <Label htmlFor="remember">Remember me</Label>
+
+      {/* Email/Password */}
+      <div className="grid gap-6">
+        <div className="grid gap-2">
+          <Label htmlFor="email">{t('auth.login.email')}</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder={t('auth.login.emailPlaceholder')}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
-        <p className="text-base text-neutral-600 sm:text-sm dark:text-neutral-400">
-          <a
-            href="/auth/password"
-            className="text-neutral-900 underline decoration-current/50 hover:decoration-current dark:text-neutral-100"
-          >
-            <strong className="font-medium text-neutral-900 dark:text-neutral-100">Forgot your password?</strong>
-          </a>
-        </p>
+        <div className="grid gap-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">{t('auth.login.password')}</Label>
+            <Link href="/auth/password" className="text-muted-foreground text-sm underline-offset-4 hover:underline">
+              {t('auth.login.forgotPassword')}
+            </Link>
+          </div>
+          <Input
+            id="password"
+            type="password"
+            placeholder={t('auth.login.passwordPlaceholder')}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        {/* Remember me */}
+        <div className="flex items-center gap-2">
+          <Checkbox id="remember" name="remember" />
+          <Label htmlFor="remember" className="text-sm font-normal">
+            {t('auth.login.rememberMe')}
+          </Label>
+        </div>
+
+        {/* エラーメッセージ */}
+        {error != null && <div className="text-destructive text-center text-sm">{error}</div>}
+
+        {/* ログインボタン */}
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? t('auth.login.loggingIn') : t('auth.login.loginButton')}
+        </Button>
       </div>
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? 'Logging in...' : 'Login'}
-      </Button>
-      <p className="text-center text-base text-neutral-600 sm:text-sm dark:text-neutral-400">
-        Don&apos;t have an account?{' '}
-        <a
-          href="/auth/signup"
-          className="text-neutral-900 underline decoration-current/50 hover:decoration-current dark:text-neutral-100"
-        >
-          <strong className="font-medium text-neutral-900 dark:text-neutral-100">Sign up</strong>
-        </a>
-      </p>
+
+      {/* サインアップリンク */}
+      <div className="text-center text-sm">
+        {t('auth.login.noAccount')}{' '}
+        <Link href="/auth/signup" className="underline underline-offset-4">
+          {t('auth.login.signUp')}
+        </Link>
+      </div>
     </form>
   )
 }
 
-// Named exportとDefault exportの両方をサポート
-export const LoginForm = LoginFormComponent
-export default LoginFormComponent
+// Default export（後方互換性）
+export default LoginForm
