@@ -84,11 +84,7 @@ export async function withTrace<T>(
  * })
  * ```
  */
-export function withTrace<T>(
-  name: string,
-  fn: () => T,
-  options?: Omit<TraceOptions, 'name'>
-): TraceResult<T>
+export function withTrace<T>(name: string, fn: () => T, options?: Omit<TraceOptions, 'name'>): TraceResult<T>
 
 /**
  * 関数実装（オーバーロード統合）
@@ -104,8 +100,14 @@ export function withTrace<T>(
     {
       name,
       op: options?.op || 'function',
-      data: options?.data,
-      tags: options?.tags,
+      ...(options?.data || options?.tags
+        ? {
+            attributes: {
+              ...options?.data,
+              ...options?.tags,
+            } as Record<string, string | number | boolean | undefined>,
+          }
+        : {}),
     },
     () => {
       // 関数実行
@@ -113,34 +115,36 @@ export function withTrace<T>(
 
       // 非同期の場合
       if (resultOrPromise instanceof Promise) {
-        return resultOrPromise.then((result) => {
-          const duration = performance.now() - startTime
+        return resultOrPromise
+          .then((result) => {
+            const duration = performance.now() - startTime
 
-          // パフォーマンスメトリクスを記録
-          Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
+            // パフォーマンスメトリクスを記録
+            Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
 
-          return { result, duration }
-        }).catch((error) => {
-          const duration = performance.now() - startTime
+            return { result, duration }
+          })
+          .catch((error) => {
+            const duration = performance.now() - startTime
 
-          // エラー時もメトリクスを記録
-          Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
-          Sentry.captureException(error, {
-            tags: {
-              trace_name: name,
-              ...options?.tags,
-            },
-            contexts: {
-              trace: {
+            // エラー時もメトリクスを記録
+            Sentry.setMeasurement(`${name}_duration`, duration, 'millisecond')
+            Sentry.captureException(error, {
+              tags: {
+                trace_name: name,
+                trace_duration_ms: String(duration),
+                trace_operation: options?.op || 'function',
+                ...options?.tags,
+              },
+              extra: {
                 duration,
                 operation: options?.op || 'function',
                 data: options?.data,
               },
-            },
-          })
+            })
 
-          throw error
-        })
+            throw error
+          })
       }
 
       // 同期の場合
@@ -162,10 +166,7 @@ export function withTrace<T>(
  * })
  * ```
  */
-export async function traceApiCall<T>(
-  endpoint: string,
-  fn: () => Promise<T>
-): Promise<T> {
+export async function traceApiCall<T>(endpoint: string, fn: () => Promise<T>): Promise<T> {
   const { result } = await withTrace(endpoint, fn, {
     op: 'http.client',
     tags: { endpoint },
@@ -184,10 +185,7 @@ export async function traceApiCall<T>(
  * })
  * ```
  */
-export async function traceDbQuery<T>(
-  queryName: string,
-  fn: () => Promise<T>
-): Promise<T> {
+export async function traceDbQuery<T>(queryName: string, fn: () => Promise<T>): Promise<T> {
   const { result } = await withTrace(queryName, fn, {
     op: 'db.query',
     tags: { query: queryName },
@@ -210,10 +208,7 @@ export async function traceDbQuery<T>(
  * }
  * ```
  */
-export async function traceServerComponent<T>(
-  componentName: string,
-  fn: () => Promise<T>
-): Promise<T> {
+export async function traceServerComponent<T>(componentName: string, fn: () => Promise<T>): Promise<T> {
   const { result } = await withTrace(`RSC: ${componentName}`, fn, {
     op: 'server-component',
     tags: { component: componentName },

@@ -208,8 +208,8 @@ function applyFilters(events: CalendarEvent[], filters: Record<string, unknown>)
 
   return events.filter((event) => {
     // タグフィルター
-    if (filters.tags && filters.tags.length > 0) {
-      if (!event.tags || !event.tags.some((tag) => filters.tags.includes(tag))) {
+    if (filters.tags && Array.isArray(filters.tags) && filters.tags.length > 0) {
+      if (!event.tags || !event.tags.some((tag) => filters.tags.includes(tag.id))) {
         return false
       }
     }

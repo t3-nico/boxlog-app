@@ -53,7 +53,6 @@ src/components/common/
 
 ```tsx
 import { GlobalErrorBoundary } from '@/components/common'
-
 ;<GlobalErrorBoundary maxRetries={3}>
   <YourApp />
 </GlobalErrorBoundary>
@@ -75,7 +74,6 @@ import { LoadingSpinner, LoadingOverlay } from '@/components/common'
 
 ```tsx
 import { Providers } from '@/components/common'
-
 ;<Providers>
   <App />
 </Providers>

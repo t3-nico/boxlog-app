@@ -48,10 +48,12 @@ export function sanitizeError(error: unknown): SecureErrorResponse {
 
   // AppErrorの場合
   if (error instanceof AppError) {
+    // ErrorCodeを文字列表現に変換（category情報を使用）
+    const codeString = String(error.code)
     return {
-      message: isProd ? getGenericMessage(error.code) : error.message,
-      code: error.code,
-      statusCode: error.statusCode,
+      message: isProd ? getGenericMessage(error.category) : error.message,
+      code: codeString,
+      statusCode: 500, // デフォルト500、必要に応じてcategoryからマッピング可能
       timestamp: new Date().toISOString(),
     }
   }
@@ -61,9 +63,7 @@ export function sanitizeError(error: unknown): SecureErrorResponse {
     // 本番環境: 機密情報チェック
     if (isProd) {
       return {
-        message: containsSensitiveInfo(error.message)
-          ? 'An error occurred. Please try again.'
-          : error.message,
+        message: containsSensitiveInfo(error.message) ? 'An error occurred. Please try again.' : error.message,
         code: 'INTERNAL_ERROR',
         statusCode: 500,
         timestamp: new Date().toISOString(),

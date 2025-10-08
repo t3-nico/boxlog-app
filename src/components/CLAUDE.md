@@ -115,7 +115,6 @@ npx shadcn-ui@latest add dialog
 ```tsx
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
-
 ;<Button variant="primary">クリック</Button>
 ```
 

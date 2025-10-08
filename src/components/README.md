@@ -132,7 +132,6 @@ import { background, text, spacing } from '@/config/theme'
 
 ```tsx
 import { Button } from '@/components/shadcn-ui/button'
-
 ;<Button variant="default" size="md">
   ボタン
 </Button>
@@ -152,7 +151,6 @@ import { Button } from '@/components/shadcn-ui/button'
 
 ```tsx
 import { Input } from '@/components/shadcn-ui/input'
-
 ;<Input type="text" placeholder="入力してください" value={value} onChange={(e) => setValue(e.target.value)} />
 ```
 
@@ -162,7 +160,6 @@ import { Input } from '@/components/shadcn-ui/input'
 
 ```tsx
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/shadcn-ui/tabs'
-
 ;<Tabs defaultValue="tab1">
   <TabsList>
     <TabsTrigger value="tab1">タブ1</TabsTrigger>

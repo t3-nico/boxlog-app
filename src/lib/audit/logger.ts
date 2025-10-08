@@ -154,7 +154,6 @@ export async function logAuditEvent(
     const level = getSeverityLevel(severity)
     console[level]('[AUDIT]', {
       type: eventType,
-      severity,
       ...entry,
     })
   }
@@ -174,9 +173,7 @@ export async function logAuditEvent(
 /**
  * 重要度に応じたコンソールログレベルを取得
  */
-function getSeverityLevel(
-  severity: AuditSeverity
-): 'log' | 'warn' | 'error' | 'error' {
+function getSeverityLevel(severity: AuditSeverity): 'log' | 'warn' | 'error' | 'error' {
   switch (severity) {
     case AuditSeverity.INFO:
       return 'log'
@@ -249,11 +246,7 @@ async function sendToSentry(entry: AuditLogEntry): Promise<void> {
 /**
  * ユーティリティ関数: ログイン成功ログ
  */
-export async function logLoginSuccess(
-  userId: string,
-  ipAddress?: string,
-  userAgent?: string
-): Promise<void> {
+export async function logLoginSuccess(userId: string, ipAddress?: string, userAgent?: string): Promise<void> {
   await logAuditEvent(AuditEventType.LOGIN_SUCCESS, AuditSeverity.INFO, {
     userId,
     ipAddress,
@@ -289,28 +282,20 @@ export async function logUnauthorizedAccess(
   ipAddress?: string,
   userAgent?: string
 ): Promise<void> {
-  await logAuditEvent(
-    AuditEventType.UNAUTHORIZED_ACCESS_ATTEMPT,
-    AuditSeverity.CRITICAL,
-    {
-      userId,
-      resource,
-      ipAddress,
-      userAgent,
-      success: false,
-      errorMessage: 'Unauthorized access attempt',
-    }
-  )
+  await logAuditEvent(AuditEventType.UNAUTHORIZED_ACCESS_ATTEMPT, AuditSeverity.CRITICAL, {
+    userId,
+    resource,
+    ipAddress,
+    userAgent,
+    success: false,
+    errorMessage: 'Unauthorized access attempt',
+  })
 }
 
 /**
  * ユーティリティ関数: レート制限超過ログ
  */
-export async function logRateLimitExceeded(
-  endpoint: string,
-  identifier: string,
-  ipAddress?: string
-): Promise<void> {
+export async function logRateLimitExceeded(endpoint: string, identifier: string, ipAddress?: string): Promise<void> {
   await logAuditEvent(AuditEventType.RATE_LIMIT_EXCEEDED, AuditSeverity.WARNING, {
     resource: endpoint,
     metadata: { identifier },

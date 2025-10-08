@@ -43,19 +43,15 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html lang="ja">
       <body>
-        <div className="min-h-screen flex items-center justify-center bg-background p-4">
-          <div className="max-w-md w-full p-8 bg-card rounded-lg shadow-lg border border-border">
+        <div className="bg-background flex min-h-screen items-center justify-center p-4">
+          <div className="bg-card border-border w-full max-w-md rounded-lg border p-8 shadow-lg">
             <div className="mb-6">
-              <h1 className="text-2xl font-bold text-destructive mb-2">
-                アプリケーションエラー
-              </h1>
-              <p className="text-muted-foreground">
-                申し訳ございません。予期しない問題が発生しました。
-              </p>
+              <h1 className="text-destructive mb-2 text-2xl font-bold">アプリケーションエラー</h1>
+              <p className="text-muted-foreground">申し訳ございません。予期しない問題が発生しました。</p>
             </div>
 
             {error.digest && (
-              <div className="mb-4 p-3 bg-muted rounded text-xs">
+              <div className="bg-muted mb-4 rounded p-3 text-xs">
                 <p className="text-muted-foreground">
                   エラーID: <code className="font-mono">{error.digest}</code>
                 </p>
@@ -64,14 +60,12 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
             {process.env.NODE_ENV === 'development' && (
               <details className="mb-6">
-                <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm transition-colors">
                   エラー詳細を表示
                 </summary>
-                <div className="mt-3 p-3 bg-muted rounded">
-                  <p className="text-xs font-semibold mb-2">{error.name}</p>
-                  <pre className="text-xs text-muted-foreground overflow-auto max-h-40">
-                    {error.message}
-                  </pre>
+                <div className="bg-muted mt-3 rounded p-3">
+                  <p className="mb-2 text-xs font-semibold">{error.name}</p>
+                  <pre className="text-muted-foreground max-h-40 overflow-auto text-xs">{error.message}</pre>
                 </div>
               </details>
             )}
@@ -79,22 +73,20 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             <div className="space-y-3">
               <button
                 onClick={reset}
-                className="w-full bg-primary text-primary-foreground py-2.5 px-4 rounded-md hover:bg-primary/90 transition-colors font-medium"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md px-4 py-2.5 font-medium transition-colors"
               >
                 再試行
               </button>
 
               <button
                 onClick={() => (window.location.href = '/')}
-                className="w-full bg-muted text-foreground py-2.5 px-4 rounded-md hover:bg-muted/80 transition-colors"
+                className="bg-muted text-foreground hover:bg-muted/80 w-full rounded-md px-4 py-2.5 transition-colors"
               >
                 ホームに戻る
               </button>
             </div>
 
-            <p className="mt-6 text-xs text-center text-muted-foreground">
-              🚨 エラーは自動的にSentryに報告されました
-            </p>
+            <p className="text-muted-foreground mt-6 text-center text-xs">🚨 エラーは自動的にSentryに報告されました</p>
           </div>
         </div>
       </body>

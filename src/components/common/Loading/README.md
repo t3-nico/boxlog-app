@@ -64,7 +64,6 @@ import { LoadingSpinner } from '@/components/common'
 
 ```tsx
 import { LoadingOverlay } from '@/components/common'
-
 ;<LoadingOverlay isLoading={isLoading} message="データを取得中..." spinnerSize="lg">
   <YourContent />
 </LoadingOverlay>
@@ -74,7 +73,6 @@ import { LoadingOverlay } from '@/components/common'
 
 ```tsx
 import { LoadingCard } from '@/components/common'
-
 ;<LoadingCard title="読み込み中" message="データを取得しています..." />
 ```
 
@@ -82,7 +80,6 @@ import { LoadingCard } from '@/components/common'
 
 ```tsx
 import { LoadingButton } from '@/components/common'
-
 ;<LoadingButton isLoading={isSubmitting} loadingText="送信中..." onClick={handleSubmit} variant="default">
   送信
 </LoadingButton>

@@ -13,8 +13,8 @@
  * - https://web.dev/articles/vitals
  */
 
-import { useReportWebVitals } from 'next/web-vitals'
 import * as Sentry from '@sentry/nextjs'
+import { useReportWebVitals } from 'next/web-vitals'
 
 /**
  * Google 2025公式閾値
@@ -35,87 +35,78 @@ export function WebVitalsReporter() {
     const metricName = metric.name as MetricName
     const threshold = THRESHOLDS[metricName]
 
-    // Sentryにトランザクションとして送信
-    const transaction = Sentry.startTransaction({
-      name: `Web Vital: ${metric.name}`,
-      op: 'web.vital',
-      tags: {
-        metric_name: metric.name,
-        metric_rating: metric.rating,
-        metric_id: metric.id,
+    // Sentry v8: startSpanを使用
+    Sentry.startSpan(
+      {
+        name: `Web Vital: ${metric.name}`,
+        op: 'web.vital',
+        attributes: {
+          metric_name: metric.name,
+          metric_rating: metric.rating,
+          metric_id: metric.id,
+          rating: metric.rating,
+          id: metric.id,
+        },
       },
-    })
+      () => {
+        // メトリクス値を記録
+        Sentry.setMeasurement(metric.name, metric.value, metric.name === 'CLS' ? '' : 'millisecond')
 
-    // メトリクス値を記録
-    transaction.setMeasurement(
-      metric.name,
-      metric.value,
-      metric.name === 'CLS' ? '' : 'millisecond'
-    )
+        // 閾値チェック
+        if (threshold) {
+          const isPoor = metric.value > threshold.poor
+          const needsImprovement = metric.value > threshold.good && metric.value <= threshold.poor
 
-    // 評価（Good/Needs Improvement/Poor）をタグ付け
-    transaction.setTag('rating', metric.rating)
-    transaction.setTag('id', metric.id)
-
-    // 閾値チェック
-    if (threshold) {
-      const isPoor = metric.value > threshold.poor
-      const needsImprovement =
-        metric.value > threshold.good && metric.value <= threshold.poor
-
-      if (isPoor) {
-        // Poorレベル: 警告送信
-        Sentry.captureMessage(
-          `Poor ${metric.name}: ${metric.value}${metric.name === 'CLS' ? '' : 'ms'}`,
-          {
-            level: 'warning',
-            tags: {
-              metric_name: metric.name,
-              metric_value: metric.value,
-              threshold_good: threshold.good,
-              threshold_poor: threshold.poor,
-            },
-            extra: {
-              metric: {
-                name: metric.name,
+          if (isPoor) {
+            // Poorレベル: 警告送信
+            Sentry.captureMessage(`Poor ${metric.name}: ${metric.value}${metric.name === 'CLS' ? '' : 'ms'}`, {
+              level: 'warning',
+              tags: {
+                metric_name: metric.name,
+                metric_value: metric.value,
+                threshold_good: threshold.good,
+                threshold_poor: threshold.poor,
+              },
+              extra: {
+                metric: {
+                  name: metric.name,
+                  value: metric.value,
+                  rating: metric.rating,
+                  id: metric.id,
+                  navigationType: metric.navigationType,
+                },
+              },
+            })
+          } else if (needsImprovement) {
+            // Needs Improvement: パンくずリストに記録
+            Sentry.addBreadcrumb({
+              message: `${metric.name} needs improvement`,
+              category: 'web-vital',
+              level: 'info',
+              data: {
                 value: metric.value,
                 rating: metric.rating,
-                id: metric.id,
-                navigationType: metric.navigationType,
+                threshold_good: threshold.good,
+                threshold_poor: threshold.poor,
               },
-            },
+            })
           }
-        )
-      } else if (needsImprovement) {
-        // Needs Improvement: パンくずリストに記録
+        }
+
+        // パンくずリストに記録
         Sentry.addBreadcrumb({
-          message: `${metric.name} needs improvement`,
+          message: `${metric.name} measured`,
           category: 'web-vital',
           level: 'info',
           data: {
             value: metric.value,
             rating: metric.rating,
-            threshold_good: threshold.good,
-            threshold_poor: threshold.poor,
+            id: metric.id,
+            navigationType: metric.navigationType,
           },
         })
       }
-    }
-
-    // パンくずリストに記録
-    Sentry.addBreadcrumb({
-      message: `${metric.name} measured`,
-      category: 'web-vital',
-      level: 'info',
-      data: {
-        value: metric.value,
-        rating: metric.rating,
-        id: metric.id,
-        navigationType: metric.navigationType,
-      },
-    })
-
-    transaction.finish()
+    )
   })
 
   // このコンポーネントはUIをレンダリングしない

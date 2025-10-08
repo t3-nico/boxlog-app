@@ -88,7 +88,6 @@ const editor = useEditor({
 
 ```tsx
 import { TiptapEditor } from '@/components/ui/rich-text-editor/tiptap-editor'
-
 ;<TiptapEditor
   value={description}
   onChange={(html) => setDescription(html)}
