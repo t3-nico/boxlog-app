@@ -8,6 +8,7 @@ import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 
 import { GlobalErrorBoundary, Providers } from '@/components/common'
+import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { ToastContainer } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
@@ -41,6 +42,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
               <ToastContainer />
             </Providers>
           </GlobalErrorBoundary>
+          <WebVitalsReporter />
           <SpeedInsights />
           <Analytics />
         </Suspense>
