@@ -306,7 +306,12 @@ jobs:
 
             ---
 
-            ${{ needs.quality-gate.result == 'success' ? '🎉 **All checks passed! Ready to merge.**' : '🔧 **Please fix the issues above.**' }}
+            ${(() => {
+              const result = '${{ needs.quality-gate.result }}';
+              return result === 'success'
+                ? '🎉 **All checks passed! Ready to merge.**'
+                : '🔧 **Please fix the issues above.**';
+            })()}
 
             <sub>🤖 BoxLog CI/CD Pipeline</sub>`;
 
