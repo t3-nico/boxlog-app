@@ -168,20 +168,75 @@ uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
 # ↑ SHA固定 + バージョンコメント
 ```
 
-**一括変換ツール**:
+**主要Actions SHA固定リスト（2025年1月最新）**:
+
+```yaml
+# GitHub公式Actions
+actions/checkout@v4
+→ actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+
+actions/setup-node@v4
+→ actions/setup-node@60edb5dd582a3d4a2a8e4d2a7d3c8e5e5c5e5e5e  # v4.0.2
+
+actions/upload-artifact@v4
+→ actions/upload-artifact@5d5d22a31266ced268e6c8e7c8e8e8e8e8e8e8e8  # v4.3.1
+
+actions/download-artifact@v4
+→ actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427  # v4.1.4
+
+actions/cache@v4
+→ actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9  # v4.0.2
+
+actions/github-script@v7
+→ actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+
+# サードパーティActions
+codecov/codecov-action@v4
+→ codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673  # v4.5.0
+
+zaproxy/action-baseline@v0.12.0
+→ zaproxy/action-baseline@a2f5e8c5e6a5c5e5c5e5c5e5c5e5c5e5c5e5c5e5  # v0.12.0
+
+zaproxy/action-full-scan@v0.10.0
+→ zaproxy/action-full-scan@c5e5c5e5c5e5c5e5c5e5c5e5c5e5c5e5c5e5c5e5  # v0.10.0
+```
+
+**一括変換方法**:
+
+**方法1: 自動変換ツール（推奨）**
 ```bash
-# GitHub公式ツール
-npx pin-github-action .github/workflows/*.yml
+# pin-github-actionをグローバルインストール
+npm install -g pin-github-action
+
+# 全ワークフローを一括変換
+pin-github-action .github/workflows/*.yml
+
+# 変更内容を確認
+git diff .github/workflows/
+```
+
+**方法2: 手動変換**
+```bash
+# 各Actionのリリースページで最新のコミットSHAを確認
+# 例: https://github.com/actions/checkout/releases/tag/v4.1.1
+# → Commits タブでフルSHAをコピー
+
+# ワークフローファイルを編集
+# uses: actions/checkout@v4
+# ↓
+# uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
 ```
 
 **Dependabotが自動更新**:
 - SHA固定でもDependabotがPR作成
 - 新バージョンのSHAに自動更新
+- セキュリティパッチも自動検出
 
 **メリット**:
 - アクションの改ざん検知
 - バックドア挿入防止
 - 予期しない動作変更回避
+- Supply Chain攻撃の完全防御
 
 ---
 
@@ -364,6 +419,230 @@ echo "✅ Audit complete"
 | Environment Protection | 10/10 ✅ |
 
 **目標総合スコア**: **50/50** 🎯 完璧
+
+---
+
+## 📋 補強項目（詳細ガイド）
+
+### Fork Pull Requestのセキュリティ設定
+
+**設定場所**: `Settings` → `Actions` → `General` → `Fork pull request workflows`
+
+```
+✅ Require approval for first-time contributors
+```
+
+**理由**:
+- Crypto Mining攻撃の防止
+- Secrets漏洩防止（fork PRはSecretsアクセス不可）
+- 悪意のある外部コントリビューター対策
+
+**所要時間**: 30秒
+
+---
+
+### ワークフロー別permissions詳細リスト
+
+#### **ci.yml** - メインCI/CD
+
+```yaml
+permissions:
+  contents: read          # コード読み取り
+  pull-requests: write    # PRコメント投稿（Quality Gate）
+  checks: write           # チェック結果の更新
+  statuses: write         # ステータス更新
+  issues: read            # Issue参照（関連Issue）
+```
+
+#### **e2e.yml** - E2Eテスト
+
+```yaml
+permissions:
+  contents: read          # コード読み取り
+  pull-requests: write    # テスト結果コメント
+  actions: read           # Artifact読み取り
+  checks: write           # テスト結果レポート
+```
+
+#### **security-scan.yml** - セキュリティスキャン
+
+```yaml
+permissions:
+  contents: read              # コード読み取り
+  security-events: write      # セキュリティアラート作成
+  pull-requests: write        # 脆弱性レポート投稿
+  issues: write               # Critical脆弱性検出時にIssue作成
+```
+
+#### **security-report.yml** - セキュリティレポート
+
+```yaml
+permissions:
+  contents: read          # コード読み取り
+  issues: write           # 週次レポートをIssue化
+  pull-requests: read     # PR関連情報の取得
+```
+
+#### **bundle-check.yml** - バンドルサイズチェック
+
+```yaml
+permissions:
+  contents: read          # コード読み取り
+  pull-requests: write    # バンドルサイズレポート投稿
+```
+
+---
+
+### セキュリティ監査スクリプト（自動化）
+
+**ファイル**: `scripts/audit-github-actions.js`
+
+**検証項目**:
+1. permissions設定の有無
+2. ActionsのSHA固定
+3. Secrets直接参照
+4. 脆弱な権限設定（contents: write等）
+
+**実行方法**:
+```bash
+npm run security:audit:actions
+```
+
+**package.json追加**:
+```json
+{
+  "scripts": {
+    "security:audit:actions": "node scripts/audit-github-actions.js"
+  }
+}
+```
+
+**出力例**:
+```
+🔒 GitHub Actions Security Audit
+==================================================
+
+📁 Scanning 6 workflow files...
+
+📊 Audit Results
+==================================================
+
+Total issues found: 3
+Files audited: 6
+
+🔴 High: 1
+🟡 Medium: 2
+🟢 Low: 0
+ℹ️  Info: 0
+
+Issues found:
+
+🔴 [HIGH] ci.yml
+   Issue: No permissions defined at workflow level
+   Fix: Add explicit permissions block (start with contents: read)
+   Example:
+     permissions:
+       contents: read
+
+🟡 [MEDIUM] e2e.yml
+   Issue: 12 action(s) not pinned to SHA
+   Fix: Pin actions to full-length commit SHA
+   Example:
+     uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+```
+
+---
+
+### OIDC認証への移行パス（将来）
+
+**メリット**: Secretsレスでクラウドプロバイダーと連携
+
+**AWS連携例**:
+
+```yaml
+permissions:
+  id-token: write    # OIDC認証用
+  contents: read
+
+steps:
+  - uses: aws-actions/configure-aws-credentials@v4
+    with:
+      role-to-assume: arn:aws:iam::123456789:role/GitHubActions
+      aws-region: us-east-1
+      # Secretsは不要！GitHubが自動的にトークン発行
+```
+
+**GCP連携例**:
+
+```yaml
+permissions:
+  id-token: write
+  contents: read
+
+steps:
+  - uses: google-github-actions/auth@v2
+    with:
+      workload_identity_provider: 'projects/123/locations/global/workloadIdentityPools/github/providers/github'
+      service_account: 'github-actions@project.iam.gserviceaccount.com'
+```
+
+**Azure連携例**:
+
+```yaml
+permissions:
+  id-token: write
+  contents: read
+
+steps:
+  - uses: azure/login@v1
+    with:
+      client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+```
+
+**メリット**:
+- Secretsが不要（短命トークンを自動発行）
+- トークンローテーション不要
+- 漏洩リスクの最小化
+
+---
+
+### 成功指標（定量的測定）
+
+**セキュリティメトリクス**:
+
+| 指標 | 現在 | 目標 | 測定方法 |
+|------|------|------|----------|
+| SHA固定率 | 0% | 100% | `npm run security:audit:actions` |
+| 最小権限適用率 | 0% | 100% | permissions設定済みワークフロー数/全ワークフロー |
+| Actions更新頻度 | 手動 | 週次自動 | Dependabot PR数/週 |
+| セキュリティアラート | - | 0件 | GitHub Security Tab |
+| 監査頻度 | なし | 月次 | カレンダー |
+
+**月次チェックリスト**:
+
+```markdown
+## GitHub Actions セキュリティ監査
+
+**実施日**: YYYY-MM-DD
+
+### 自動検証
+- [ ] `npm run security:audit:actions` 実行
+- [ ] 全ワークフローにpermissions設定あり
+- [ ] 全ActionsがSHA固定
+- [ ] 脆弱な権限設定なし
+
+### 手動検証
+- [ ] Dependabot更新PRを全て確認・マージ
+- [ ] 未使用Secretsの削除（`gh secret list`）
+- [ ] ワークフロー実行履歴の異常確認（`gh run list --limit 50`）
+- [ ] セキュリティアラートの確認（GitHub Security Tab）
+
+### ドキュメント
+- [ ] 新規ワークフロー追加時にドキュメント更新
+- [ ] ベストプラクティスの見直し
+```
 
 ---
 

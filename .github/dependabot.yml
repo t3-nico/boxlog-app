@@ -63,10 +63,16 @@ updates:
 
     labels:
       - "dependencies"
+      - "github-actions"
       - "ci/cd"
+      - "security"
 
     reviewers:
       - "t3-nico"
 
+    assignees:
+      - "t3-nico"
+
     commit-message:
-      prefix: "ci"
+      prefix: "chore(deps)"
+      include: "scope"
