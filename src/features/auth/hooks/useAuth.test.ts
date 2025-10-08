@@ -64,7 +64,7 @@ describe('useAuth', () => {
         expect(result.current.loading).toBe(false)
       })
 
-      expect(result.current.error).toBe('Failed to initialize local auth')
+      expect(result.current.error).toBe('auth.errors.unexpectedError')
       expect(result.current.user).toBeNull()
     })
   })
@@ -80,7 +80,7 @@ describe('useAuth', () => {
       const response = await result.current.signUp('test@example.com', 'password123')
 
       expect(response.data).toBeNull()
-      expect(response.error).toBe('Sign up disabled in localStorage mode')
+      expect(response.error).toBe('auth.errors.unexpectedError')
     })
 
     it('signInは現在のユーザーとセッションを返す', async () => {
@@ -107,7 +107,7 @@ describe('useAuth', () => {
       const response = await result.current.signInWithOAuth('google')
 
       expect(response.data).toBeNull()
-      expect(response.error).toBe('OAuth disabled in localStorage mode')
+      expect(response.error).toBe('auth.errors.unexpectedError')
     })
 
     it('signOutはエラーなしで成功する', async () => {
@@ -132,7 +132,7 @@ describe('useAuth', () => {
       const response = await result.current.resetPassword('test@example.com')
 
       expect(response.data).toBeNull()
-      expect(response.error).toBe('Password reset disabled in localStorage mode')
+      expect(response.error).toBe('auth.errors.unexpectedError')
     })
 
     it('updatePasswordはlocalStorageモードでエラーを返す', async () => {
@@ -145,7 +145,7 @@ describe('useAuth', () => {
       const response = await result.current.updatePassword('newpassword123')
 
       expect(response.data).toBeNull()
-      expect(response.error).toBe('Password update disabled in localStorage mode')
+      expect(response.error).toBe('auth.errors.unexpectedError')
     })
   })
 
@@ -160,7 +160,7 @@ describe('useAuth', () => {
         expect(result.current.loading).toBe(false)
       })
 
-      expect(result.current.error).toBe('Failed to initialize local auth')
+      expect(result.current.error).toBe('auth.errors.unexpectedError')
 
       // エラーをクリア
       result.current.clearError()

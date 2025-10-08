@@ -244,7 +244,6 @@ describe('time-grid-helpers', () => {
 
   describe('isDroppable', () => {
     it('重複がない場合はドロップ可能', () => {
-      const targetDate = new Date('2099-06-15')
       const targetTime = new Date('2099-06-15T14:00:00')
 
       const task: CalendarTask = {
@@ -256,11 +255,10 @@ describe('time-grid-helpers', () => {
 
       const existingTasks: CalendarTask[] = []
 
-      expect(isDroppable(targetDate, targetTime, task, existingTasks)).toBe(true)
+      expect(isDroppable(targetTime, task, existingTasks)).toBe(true)
     })
 
     it('重複がある場合はドロップ不可', () => {
-      const targetDate = new Date('2099-06-15')
       const targetTime = new Date('2099-06-15T10:00:00')
 
       const task: CalendarTask = {
@@ -279,7 +277,7 @@ describe('time-grid-helpers', () => {
         },
       ]
 
-      expect(isDroppable(targetDate, targetTime, task, existingTasks)).toBe(false)
+      expect(isDroppable(targetTime, task, existingTasks)).toBe(false)
     })
   })
 
