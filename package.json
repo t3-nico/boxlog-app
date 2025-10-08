@@ -161,7 +161,10 @@
     "security:audit": "npm audit --production",
     "security:fix": "npm audit fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml}\"",
+    "security:check": "npm audit --audit-level=moderate",
+    "security:check:production": "npm audit --production --audit-level=high",
+    "security:full": "npm run security:check && npm run typecheck && npm run lint"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.23",
