@@ -138,12 +138,9 @@ describe('TagInput', () => {
       const input = screen.getByPlaceholderText(/Enter tag and press Enter to add/i)
       await user.type(input, '新規タグ{Enter}')
 
-      await waitFor(
-        () => {
-          expect(mockOnChange).toHaveBeenCalled()
-        },
-        { timeout: 2000 }
-      )
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalled()
+      })
     })
 
     it('人気タグをクリックして追加できる', async () => {
@@ -208,12 +205,9 @@ describe('TagInput', () => {
       const input = screen.getByPlaceholderText(/Enter tag and press Enter to add/i)
       await user.type(input, '#ハッシュタグ{Enter}')
 
-      await waitFor(
-        () => {
-          expect(mockOnChange).toHaveBeenCalled()
-        },
-        { timeout: 2000 }
-      )
+      await waitFor(() => {
+        expect(mockOnChange).toHaveBeenCalled()
+      })
     })
   })
 
