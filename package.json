@@ -246,6 +246,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.60.0",
     "react-markdown": "^10.1.0",
+    "react-resizable-panels": "^3.0.6",
     "react-window": "^1.8.11",
     "remark-gfm": "^4.0.1",
     "shiki": "^3.8.0",

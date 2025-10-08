@@ -69,7 +69,7 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-secondary p-4">
+    <aside className="flex h-full w-64 flex-col bg-secondary px-4 py-2">
       {/* Header - User Menu */}
       <div className="mb-4">
         <NavUser user={userData} />

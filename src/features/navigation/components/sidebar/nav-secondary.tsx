@@ -18,8 +18,8 @@ export function NavSecondary({
   }[]
 } & React.ComponentPropsWithoutRef<"div">) {
   return (
-    <div className={cn("flex flex-col gap-1", className)} {...props}>
-      <div className="flex items-center justify-between rounded-md px-3 py-2">
+    <div className={cn("flex flex-col gap-2", className)} {...props}>
+      <div className="flex items-center justify-between rounded-md px-2 py-2">
         <span className="text-sm font-medium">Theme</span>
         <SimpleThemeToggle />
       </div>
@@ -27,7 +27,7 @@ export function NavSecondary({
         <a
           key={item.title}
           href={item.url}
-          className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent"
+          className="flex items-center gap-2 rounded-md px-2 py-2 text-sm font-medium transition-colors hover:bg-accent"
         >
           <item.icon className="h-4 w-4" />
           <span>{item.title}</span>

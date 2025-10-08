@@ -7,6 +7,11 @@ import { usePathname, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from '@/components/ui/resizable'
 import { useAIPanelStore } from '@/features/aichat/stores/useAIPanelStore'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
@@ -61,24 +66,32 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
       {/* メインレイアウト - Inset方式 */}
       <div className="flex flex-1 overflow-hidden bg-secondary">
-        {/* L1: Sidebar (256px) */}
-        <AppSidebar />
+        <ResizablePanelGroup direction="horizontal">
+          {/* L1: Sidebar - Resizable */}
+          <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+            <AppSidebar />
+          </ResizablePanel>
 
-        {/* L2: Main Content + Inspector - Floating */}
-        <div className="flex flex-1 flex-col overflow-hidden rounded-xl bg-muted shadow-lg my-2 mr-2">
-          {/* Main Content Area */}
-          <div className="flex flex-1 overflow-hidden">
-            <div className="relative z-10 flex flex-1">
-              {/* Main Content */}
-              <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
-                {children}
-              </main>
+          <ResizableHandle withHandle />
+
+          {/* L2: Main Content + Inspector - Floating */}
+          <ResizablePanel defaultSize={80}>
+            <div className="m-2 ml-0 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl bg-muted shadow-lg">
+              {/* Main Content Area */}
+              <div className="flex flex-1 overflow-hidden">
+                <div className="relative z-10 flex flex-1">
+                  {/* Main Content */}
+                  <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
+                    {children}
+                  </main>
+                </div>
+
+                {/* Inspector - 右端 */}
+                <Inspector />
+              </div>
             </div>
-
-            {/* Inspector - 右端 */}
-            <Inspector />
-          </div>
-        </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
 
       {/* Floating Action Button */}
