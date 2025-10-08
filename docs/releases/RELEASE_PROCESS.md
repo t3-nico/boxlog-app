@@ -32,6 +32,35 @@ git --version
 - GitHub Releaseの作成権限
 - Vercelプロジェクトへのアクセス権
 
+### ブランチ保護設定（推奨）
+
+**GitHub公式推奨**: `main`ブランチへの直接プッシュを禁止し、必ずPRを経由する
+
+```bash
+# GitHub Settings → Branches → Branch protection rules
+# または GitHub CLI で設定
+gh api repos/:owner/:repo/branches/main/protection \
+  --method PUT \
+  --field required_status_checks[strict]=true \
+  --field required_status_checks[contexts][]=lint \
+  --field required_status_checks[contexts][]=typecheck \
+  --field required_status_checks[contexts][]=unit-tests \
+  --field required_status_checks[contexts][]=build \
+  --field required_pull_request_reviews[required_approving_review_count]=1 \
+  --field enforce_admins=false \
+  --field restrictions=null
+```
+
+**推奨設定**:
+- ✅ Require a pull request before merging
+  - Require approvals: 1
+- ✅ Require status checks to pass before merging
+  - Require branches to be up to date before merging
+  - Status checks: `lint`, `typecheck`, `unit-tests`, `build`
+- ✅ Do not allow bypassing the above settings
+- ❌ Allow force pushes (本番ブランチでは禁止)
+- ❌ Allow deletions
+
 ## リリース前チェックリスト
 
 ### 1. コードの品質確認
@@ -71,21 +100,123 @@ npm run license:check
 
 ## リリース手順
 
-### Phase 1: 準備
+### Phase 0: Pull Request作成（dev → main）
 
-#### 1.1 最新のコードを取得
+#### 0.1 最新のコードを取得
 ```bash
 git checkout dev
 git pull origin dev
 ```
 
-#### 1.2 ブランチの状態確認
+#### 0.2 ブランチの状態確認
 ```bash
 # 未コミットの変更がないこと
 git status
 
 # 最新のコミット確認
 git log -5 --oneline
+
+# devとmainの差分確認
+git log main..dev --oneline
+```
+
+#### 0.3 Pull Request作成
+```bash
+# GitHub CLI でPR作成
+gh pr create \
+  --base main \
+  --head dev \
+  --title "Release v${VERSION}" \
+  --body "$(cat <<'EOF'
+## 📦 Release v${VERSION}
+
+### リリース内容
+- CHANGELOG.md を参照
+- docs/releases/v${VERSION}.md を参照
+
+### リリース前チェックリスト
+- [ ] npm run lint - 成功
+- [ ] npm run typecheck - 成功
+- [ ] npm run test:run - 成功
+- [ ] npm run build - 成功
+- [ ] CHANGELOG.md 更新済み
+- [ ] リリースノート作成済み
+
+### CI/CD
+- GitHub Actions が自動実行されます
+- Quality Gate 通過後にマージ可能になります
+
+/cc @reviewer
+EOF
+)"
+
+# または GitHub UI から手動作成
+# https://github.com/t3-nico/boxlog-app/compare/main...dev
+```
+
+#### 0.4 CI/CD パイプライン確認
+
+**自動実行されるチェック（`.github/workflows/ci.yml`）**:
+
+**Phase 1: Quick Checks（並列実行 / 3分以内）**
+- 🔍 ESLint & Prettier
+- 🔤 TypeScript型チェック
+- 🧪 Unit Tests（カバレッジ付き）
+- 🌍 i18n Translation Check
+
+**Phase 2: Quality Checks（並列実行 / 5分以内）**
+- 🏗️ Build（Next.js本番ビルド）
+- ♿ Accessibility（a11yチェック）
+- 🔍 Heavy Analysis（License, API, Performance）
+- 📚 Docs Consistency
+
+**Phase 3: Quality Gate**
+- 🚪 全チェック結果の集約
+- 💬 PRへのサマリーコメント自動投稿
+
+```bash
+# CI/CD実行状況を確認
+gh pr checks
+
+# 詳細ログを確認
+gh run view --log
+
+# PRのステータスを確認
+gh pr view
+```
+
+#### 0.5 レビュー & マージ
+
+**マージ条件**:
+- [ ] Quality Gate（全必須チェック）が通過
+- [ ] コードレビュー承認済み
+- [ ] コンフリクトなし
+
+```bash
+# PRをマージ（Squash & Merge推奨）
+gh pr merge --squash --delete-branch=false
+
+# または GitHub UI から手動マージ
+# https://github.com/t3-nico/boxlog-app/pulls
+```
+
+⚠️ **重要**: `dev`ブランチは削除しないこと（`--delete-branch=false`）
+
+### Phase 1: バージョンタグ作成
+
+#### 1.1 mainブランチに切り替え
+```bash
+git checkout main
+git pull origin main
+```
+
+#### 1.2 ブランチの状態確認
+```bash
+# PRマージが反映されていることを確認
+git log -5 --oneline
+
+# devとmainが同期していることを確認
+git log main..dev --oneline  # 何も表示されないはず
 ```
 
 ### Phase 2: リリースノート作成
@@ -182,11 +313,19 @@ git show HEAD
 
 #### 4.1 コミット & タグをプッシュ
 ```bash
-# コミットをプッシュ
-git push origin dev
+# コミットをプッシュ（mainブランチから）
+git push origin main
 
 # タグをプッシュ
 git push origin v${VERSION}
+```
+
+#### 4.1.1 devブランチへの同期
+```bash
+# mainの変更をdevに反映（Fast-forward）
+git checkout dev
+git merge main --ff-only
+git push origin dev
 ```
 
 #### 4.2 プッシュ確認
@@ -383,7 +522,7 @@ npm run vercel:check
 ```markdown
 ## リリース v${VERSION} チェックシート
 
-### リリース前
+### リリース前（devブランチ）
 - [ ] npm run lint - 成功
 - [ ] npm run typecheck - 成功
 - [ ] npm run test:run - 成功
@@ -392,17 +531,37 @@ npm run vercel:check
 - [ ] リリースノート作成済み
 - [ ] マイルストーンの全Issue/PRクローズ済み
 
-### リリース実行
-- [ ] バージョンアップ実行
-- [ ] Git push 完了
-- [ ] Tag push 完了
-- [ ] GitHub Release作成完了
+### Phase 0: PR作成 & マージ（dev → main）
+- [ ] PRテンプレート記入完了
+- [ ] CI/CD Quality Gate 通過
+  - [ ] lint ✅
+  - [ ] typecheck ✅
+  - [ ] unit-tests ✅
+  - [ ] build ✅
+  - [ ] i18n-check ✅
+  - [ ] accessibility ✅
+  - [ ] heavy-checks ✅
+  - [ ] docs-consistency ✅
+- [ ] コードレビュー承認済み
+- [ ] PRマージ完了（Squash & Merge）
 
-### リリース後
+### Phase 1-4: バージョンタグ作成 & プッシュ（mainブランチ）
+- [ ] mainブランチに切り替え
+- [ ] PRマージ内容を確認
+- [ ] バージョンアップ実行（npm version）
+- [ ] Git push完了（main）
+- [ ] Tag push完了
+- [ ] devブランチへ同期完了
+
+### Phase 5-6: GitHub Release & デプロイ
+- [ ] GitHub Release作成完了
 - [ ] Vercelデプロイ成功
 - [ ] 本番環境動作確認OK
 - [ ] Sentryエラー監視OK
+
+### リリース後
 - [ ] マイルストーンクローズ
+- [ ] 関連Issueへコメント
 - [ ] チームへ通知完了
 
 ### 日時
@@ -411,10 +570,50 @@ npm run vercel:check
 - 実施者: @username
 ```
 
+## リリースフロー概要図
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Phase 0: Pull Request（dev → main）                         │
+├─────────────────────────────────────────────────────────────┤
+│ 1. dev ブランチで開発完了                                    │
+│ 2. PR作成（dev → main）                                      │
+│ 3. CI/CD自動実行（lint, typecheck, test, build...）         │
+│ 4. Quality Gate 通過                                         │
+│ 5. コードレビュー & 承認                                      │
+│ 6. PRマージ（Squash & Merge）                                │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Phase 1-4: バージョンタグ作成（main）                        │
+├─────────────────────────────────────────────────────────────┤
+│ 1. main ブランチに切り替え                                   │
+│ 2. npm version [patch|minor|major]                           │
+│ 3. git push origin main                                      │
+│ 4. git push origin v0.X.X                                    │
+│ 5. dev ブランチに同期（git merge main --ff-only）            │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│ Phase 5-6: GitHub Release & デプロイ                         │
+├─────────────────────────────────────────────────────────────┤
+│ 1. GitHub Release作成（gh release create）                   │
+│ 2. Vercel自動デプロイ（main → Production）                   │
+│ 3. 本番環境動作確認                                          │
+│ 4. Sentryモニタリング                                        │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ## 参考リンク
 
+### プロジェクト内
 - [VERSIONING.md](VERSIONING.md) - バージョニングルール
 - [CHANGELOG.md](../../CHANGELOG.md) - 変更履歴
+- [.github/workflows/ci.yml](../../.github/workflows/ci.yml) - CI/CD設定
+
+### 公式ドキュメント
 - [Semantic Versioning](https://semver.org/)
 - [GitHub Releases](https://docs.github.com/ja/repositories/releasing-projects-on-github/managing-releases-in-a-repository)
+- [GitHub Branch Protection](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
+- [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 - [Vercel Deployments](https://vercel.com/docs/deployments/overview)
