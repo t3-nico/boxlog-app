@@ -33,6 +33,10 @@
   --color-chart-3: oklch(0.4882 0.2172 264.3763);
   --color-chart-4: oklch(0.4244 0.1809 265.6377);
   --color-chart-5: oklch(0.3791 0.1378 265.5222);
+  --color-sidebar: oklch(1.0000 0 0);
+  --color-sidebar-foreground: oklch(0.3211 0 0);
+  --color-sidebar-accent: oklch(0.9514 0.0250 236.8242);
+  --color-sidebar-accent-foreground: oklch(0.3791 0.1378 265.5222);
 }
 
 /* ダークモード用カラー定義（.darkクラス時） */
@@ -61,6 +65,10 @@
   --color-chart-3: oklch(0.5461 0.2152 262.8809);
   --color-chart-4: oklch(0.4882 0.2172 264.3763);
   --color-chart-5: oklch(0.4244 0.1809 265.6377);
+  --color-sidebar: oklch(0.2686 0 0);
+  --color-sidebar-foreground: oklch(0.9219 0 0);
+  --color-sidebar-accent: oklch(0.3791 0.1378 265.5222);
+  --color-sidebar-accent-foreground: oklch(0.8823 0.0571 254.1284);
 }
 
 @theme {
@@ -153,6 +161,30 @@ html {
 
 html.dark {
   color-scheme: dark;
+}
+
+/* ============================================
+ * スクロールバーのスタイリング
+ * ============================================ */
+/* Webkit系ブラウザ（Chrome, Safari, Edge） */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent);
+  border-radius: 6px;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--color-muted-foreground) 30%, transparent) var(--color-background);
 }
 /* ============================================
  * カスタムユーティリティクラス

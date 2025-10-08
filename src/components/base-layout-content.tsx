@@ -17,10 +17,8 @@ import { cn } from '@/lib/utils'
 
 import { Inspector } from '@/features/inspector'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
-import { AppBar } from '@/features/navigation/components/appbar'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
-import { Sidebar } from '@/features/navigation/components/sidebar'
-import { CommonSidebar } from '@/features/navigation/components/sidebar/CommonSidebar'
+import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
 import { useNavigationStore } from '@/features/navigation/stores/navigation.store'
 
 interface BaseLayoutContentProps {
@@ -61,21 +59,16 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {t('common.skipToMainContent')}
       </a>
 
-      {/* メインレイアウト - 3カラム構成 */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* L1: AppBar (64px) - 固定ナビゲーション */}
-        <AppBar />
+      {/* メインレイアウト - Inset方式 */}
+      <div className="flex flex-1 overflow-hidden bg-secondary">
+        {/* L1: Sidebar (256px) */}
+        <AppSidebar />
 
-        {/* L2: Sidebar (240px) - ルート可変 */}
-        <Sidebar>
-          <CommonSidebar />
-        </Sidebar>
-
-        {/* L3: Main Content + Inspector */}
-        <div className="flex flex-1 flex-col">
+        {/* L2: Main Content + Inspector - Floating */}
+        <div className="flex flex-1 flex-col overflow-hidden rounded-xl bg-muted shadow-lg my-2 mr-2">
           {/* Main Content Area */}
           <div className="flex flex-1 overflow-hidden">
-            <div className="relative z-10 flex flex-1 bg-background">
+            <div className="relative z-10 flex flex-1">
               {/* Main Content */}
               <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
                 {children}

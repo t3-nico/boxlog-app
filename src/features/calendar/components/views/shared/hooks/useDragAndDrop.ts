@@ -454,40 +454,66 @@ export function useDragAndDrop({
     [calculateSnappedPosition, updateDragElementPosition, calculatePreviewTime, updateTimeDisplay]
   )
 
-  // マウス移動処理
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
+  // 境界制限処理（handleMouseMoveより前に定義）
+  const getConstrainedPosition = useCallback((clientX: number, clientY: number) => {
+    const calendarContainer =
+      (document.querySelector('[data-calendar-main]') as HTMLElement) ||
+      (document.querySelector('.calendar-main') as HTMLElement) ||
+      (document.querySelector('main') as HTMLElement)
 
-      const dragData = dragDataRef.current
-      const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
-      const deltaX = constrainedX - dragData.startX
-      const deltaY = constrainedY - dragData.startY
+    let constrainedX = clientX
+    let constrainedY = clientY
 
-      if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
-        dragData.hasMoved = true
+    if (calendarContainer) {
+      const rect = calendarContainer.getBoundingClientRect()
+      constrainedX = Math.max(rect.left, Math.min(rect.right, clientX))
+      constrainedY = Math.max(rect.top, Math.min(rect.bottom, clientY))
+    }
+
+    return { constrainedX, constrainedY }
+  }, [])
+
+  // 日付インデックス計算（handleMouseMoveより前に定義）
+  const calculateTargetDateIndex = useCallback(
+    (constrainedX: number, dragData: { [key: string]: unknown }, deltaX: number): number => {
+      // TODO(#389): dragDataRefの型とDragStateの型を統一する
+      const typedDragData = dragData as { originalDateIndex: number; hasMoved?: boolean; originalElement?: HTMLElement; columnWidth?: number }
+      let targetDateIndex = typedDragData.originalDateIndex
+
+      if (viewMode !== 'day' && displayDates && typedDragData.hasMoved) {
+        const gridContainer =
+          (typedDragData.originalElement?.closest('.flex') as HTMLElement) ||
+          (document.querySelector('.flex.h-full.relative') as HTMLElement) ||
+          (typedDragData.originalElement?.parentElement?.parentElement as HTMLElement)
+
+        if (gridContainer && typedDragData.columnWidth && typedDragData.columnWidth > 0) {
+          const rect = gridContainer.getBoundingClientRect()
+          const relativeX = Math.max(0, Math.min(constrainedX - rect.left, rect.width))
+
+          const columnIndex = Math.floor(relativeX / typedDragData.columnWidth)
+          const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
+
+          targetDateIndex = newTargetIndex
+
+          // デバッグログ
+          if (Math.abs(newTargetIndex - typedDragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
+            console.log('🔧 日付間移動（非連続日付対応）:', {
+              originalIndex: typedDragData.originalDateIndex,
+              originalDate: displayDates[typedDragData.originalDateIndex]?.toDateString?.(),
+              newTargetIndex,
+              targetDate: displayDates[newTargetIndex]?.toDateString?.(),
+              relativeX,
+              columnWidth: typedDragData.columnWidth,
+              columnIndex,
+              isNonConsecutive: displayDates.length < 7,
+            })
+          }
+        }
       }
 
-      if (Math.abs(deltaX) > 30) {
-        console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
-      }
-
-      const targetDateIndex = calculateTargetDateIndex(constrainedX, dragData, deltaX)
-
-      if (dragState.isResizing) {
-        handleResizing(dragData, constrainedX, constrainedY, deltaY)
-      } else if (dragState.isDragging) {
-        handleDragging(dragData, constrainedX, constrainedY, deltaX, deltaY, targetDateIndex)
-      }
+      return targetDateIndex
     },
-    [
-      dragState.isDragging,
-      dragState.isResizing,
-      getConstrainedPosition,
-      calculateTargetDateIndex,
-      handleResizing,
-      handleDragging,
-    ]
+    [viewMode, displayDates]
   )
 
   // ドラッグ要素のクリーンアップ
@@ -535,66 +561,40 @@ export function useDragAndDrop({
     return false
   }, [events, onEventClick, resetDragState])
 
-  // 境界制限処理
-  const getConstrainedPosition = useCallback((clientX: number, clientY: number) => {
-    const calendarContainer =
-      (document.querySelector('[data-calendar-main]') as HTMLElement) ||
-      (document.querySelector('.calendar-main') as HTMLElement) ||
-      (document.querySelector('main') as HTMLElement)
+  // マウス移動処理
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if ((!dragState.isDragging && !dragState.isResizing) || !dragDataRef.current) return
 
-    let constrainedX = clientX
-    let constrainedY = clientY
+      const dragData = dragDataRef.current
+      const { constrainedX, constrainedY } = getConstrainedPosition(e.clientX, e.clientY)
+      const deltaX = constrainedX - dragData.startX
+      const deltaY = constrainedY - dragData.startY
 
-    if (calendarContainer) {
-      const rect = calendarContainer.getBoundingClientRect()
-      constrainedX = Math.max(rect.left, Math.min(rect.right, clientX))
-      constrainedY = Math.max(rect.top, Math.min(rect.bottom, clientY))
-    }
-
-    return { constrainedX, constrainedY }
-  }, [])
-
-  // 日付インデックス計算
-  const calculateTargetDateIndex = useCallback(
-    (constrainedX: number, dragData: { [key: string]: unknown }, deltaX: number): number => {
-      // TODO(#389): dragDataRefの型とDragStateの型を統一する
-      const typedDragData = dragData as { originalDateIndex: number; hasMoved?: boolean; originalElement?: HTMLElement; columnWidth?: number }
-      let targetDateIndex = typedDragData.originalDateIndex
-
-      if (viewMode !== 'day' && displayDates && typedDragData.hasMoved) {
-        const gridContainer =
-          (typedDragData.originalElement?.closest('.flex') as HTMLElement) ||
-          (document.querySelector('.flex.h-full.relative') as HTMLElement) ||
-          (typedDragData.originalElement?.parentElement?.parentElement as HTMLElement)
-
-        if (gridContainer && typedDragData.columnWidth && typedDragData.columnWidth > 0) {
-          const rect = gridContainer.getBoundingClientRect()
-          const relativeX = Math.max(0, Math.min(constrainedX - rect.left, rect.width))
-
-          const columnIndex = Math.floor(relativeX / typedDragData.columnWidth)
-          const newTargetIndex = Math.max(0, Math.min(displayDates.length - 1, columnIndex))
-
-          targetDateIndex = newTargetIndex
-
-          // デバッグログ
-          if (Math.abs(newTargetIndex - typedDragData.originalDateIndex) > 0 && Math.abs(deltaX) > 30) {
-            console.log('🔧 日付間移動（非連続日付対応）:', {
-              originalIndex: typedDragData.originalDateIndex,
-              originalDate: displayDates[typedDragData.originalDateIndex]?.toDateString?.(),
-              newTargetIndex,
-              targetDate: displayDates[newTargetIndex]?.toDateString?.(),
-              relativeX,
-              columnWidth: typedDragData.columnWidth,
-              columnIndex,
-              isNonConsecutive: displayDates.length < 7,
-            })
-          }
-        }
+      if (Math.abs(deltaY) > 5 || Math.abs(deltaX) > 5) {
+        dragData.hasMoved = true
       }
 
-      return targetDateIndex
+      if (Math.abs(deltaX) > 30) {
+        console.log('🔧 水平移動検出:', { deltaX, columnWidth: dragData.columnWidth })
+      }
+
+      const targetDateIndex = calculateTargetDateIndex(constrainedX, dragData, deltaX)
+
+      if (dragState.isResizing) {
+        handleResizing(dragData, constrainedX, constrainedY, deltaY)
+      } else if (dragState.isDragging) {
+        handleDragging(dragData, constrainedX, constrainedY, deltaX, deltaY, targetDateIndex)
+      }
     },
-    [viewMode, displayDates]
+    [
+      dragState.isDragging,
+      dragState.isResizing,
+      getConstrainedPosition,
+      calculateTargetDateIndex,
+      handleResizing,
+      handleDragging,
+    ]
   )
 
   // リサイズ処理
