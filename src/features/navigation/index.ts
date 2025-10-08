@@ -1,8 +1,8 @@
-// Sidebar
-export { Sidebar } from './components/sidebar'
-export { CommonSidebar } from './components/sidebar/CommonSidebar'
-export { SidebarHeader } from './components/sidebar/SidebarHeader'
-export { SidebarSection } from './components/sidebar/SidebarSection'
+// Sidebar components (shadcn/ui based)
+export { AppSidebar } from './components/sidebar/app-sidebar'
+export { NavMain } from './components/sidebar/nav-main'
+export { NavSecondary } from './components/sidebar/nav-secondary'
+export { NavUser } from './components/sidebar/nav-user'
 
 // Mobile
 export { MobileBottomNavigation } from './components/mobile/MobileBottomNavigation'

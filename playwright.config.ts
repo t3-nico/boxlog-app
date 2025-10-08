@@ -42,27 +42,55 @@ export default defineConfig({
 
   // テスト対象プロジェクト（ブラウザ別）
   projects: [
+    // ==========================================
+    // デスクトップブラウザ
+    // ==========================================
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+      },
     },
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1920, height: 1080 },
+      },
     },
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        viewport: { width: 1920, height: 1080 },
+      },
     },
 
-    // モバイル対応テスト
+    // ==========================================
+    // モバイルブラウザ
+    // ==========================================
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: {
+        ...devices['Pixel 5'],
+      },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: {
+        ...devices['iPhone 12'],
+      },
+    },
+
+    // ==========================================
+    // タブレット
+    // ==========================================
+    {
+      name: 'iPad',
+      use: {
+        ...devices['iPad Pro'],
+      },
     },
   ],
 
