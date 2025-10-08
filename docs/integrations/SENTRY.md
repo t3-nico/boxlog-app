@@ -92,11 +92,18 @@ NEXT_PUBLIC_APP_VERSION=1.0.0
 #### 4. 動作確認
 
 ```bash
+# Sentry設定検証
+npm run sentry:verify
+
 # 開発サーバー起動
 npm run smart:dev
 
-# テストページにアクセス
-# http://localhost:3000/test-sentry
+# テストエンドポイントにアクセス
+curl http://localhost:3000/api/test/sentry?type=message
+curl http://localhost:3000/api/test/sentry?type=error
+
+# Sentryダッシュボードで確認（5分以内）
+# https://sentry.io/organizations/[YOUR_ORG]/issues/
 
 # エラーテストボタンをクリックしてSentryダッシュボードで確認
 ```
@@ -261,24 +268,61 @@ export async function GET(request: Request) {
 
 ### パフォーマンス監視
 
-#### 自動測定
+#### Web Vitals自動計測（2025基準準拠）
 
 ```typescript
 // src/app/layout.tsx
-import { initPerformanceMonitoring } from '@/lib/sentry/performance'
+import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    initPerformanceMonitoring() // Core Web Vitals・API応答時間の自動測定
-  }, [])
-
-  return <html>{children}</html>
+  return (
+    <html>
+      <body>
+        {children}
+        <WebVitalsReporter /> {/* Core Web Vitals 2025自動計測 */}
+      </body>
+    </html>
+  )
 }
 ```
 
-#### カスタムトランザクション
+**計測される指標（Google 2025基準）**:
+- **LCP** (Largest Contentful Paint): ≤ 2.5s (Good), > 4.0s (Poor)
+- **INP** (Interaction to Next Paint): ≤ 200ms (Good), > 500ms (Poor) 🆕
+- **CLS** (Cumulative Layout Shift): < 0.1 (Good), > 0.25 (Poor)
+- **FCP** (First Contentful Paint): < 1.8s (Good), > 3.0s (Poor)
+- **TTFB** (Time to First Byte): < 800ms (Good), > 1800ms (Poor)
+
+**注**: FID (First Input Delay) は2024年3月に廃止され、INPに置き換えられました。
+
+#### カスタムパフォーマンストレース
 
 ```typescript
+import { withTrace, traceApiCall, traceDbQuery } from '@/lib/sentry'
+
+// API呼び出し計測
+const tasks = await traceApiCall('GET /tasks', async () => {
+  return await api.get('/tasks')
+})
+
+// データベースクエリ計測
+const user = await traceDbQuery('users.findUnique', async () => {
+  return await prisma.user.findUnique({ where: { id } })
+})
+
+// 汎用トレース
+const { result, duration } = await withTrace('complex-calculation', async () => {
+  return await heavyComputation()
+}, {
+  op: 'function',
+  tags: { complexity: 'high' }
+})
+```
+
+#### 旧形式（非推奨）
+
+```typescript
+// ❌ 非推奨: 手動トランザクション管理
 import * as Sentry from '@sentry/nextjs'
 
 const transaction = Sentry.startTransaction({
@@ -328,7 +372,7 @@ Sentry.addBreadcrumb({
 #### Performance タブ
 - ページロード時間
 - API応答時間
-- Core Web Vitals (LCP, FID, CLS)
+- Core Web Vitals 2025 (LCP, INP, CLS, FCP, TTFB)
 
 #### Releases タブ
 - デプロイバージョン別のエラー追跡
@@ -346,9 +390,17 @@ Sentry.addBreadcrumb({
    - 条件: 1時間に50件以上のエラー
    - 通知: Slack/Email
 
-3. **Performance Degradation**
-   - 条件: LCP > 2.5秒
+3. **Performance Degradation (2025基準)**
+   - 条件: LCP > 4.0秒（Poor）または INP > 500ms（Poor）
    - 通知: 日次レポート
+
+4. **新規エラー検知**
+   - 条件: 初めて発生したエラー
+   - 通知: 即座にメール
+
+5. **ユーザー影響大**
+   - 条件: 影響ユーザー > 10人/時
+   - 通知: Slack（緊急チャンネル）
 
 ### チームコラボレーション
 
@@ -374,8 +426,11 @@ Sentry.addBreadcrumb({
 3. 開発サーバーを再起動
 
 ```bash
+# Sentry設定検証（推奨）
+npm run sentry:verify
+
 # 接続テスト実行
-node scripts/sentry/connection-test.js
+npm run sentry:test
 ```
 
 ### Auth Token エラー

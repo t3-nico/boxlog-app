@@ -150,6 +150,7 @@
     "i18n:crowdin:help": "node scripts/crowdin-integration-cli.js help",
     "sentry:test": "node scripts/sentry/connection-test.cjs",
     "sentry:check": "npm run sentry:test",
+    "sentry:verify": "node scripts/verify-sentry.mjs",
     "vercel:env": "vercel env ls",
     "vercel:env:pull": "vercel env pull .env.local",
     "deps:check": "knip",
