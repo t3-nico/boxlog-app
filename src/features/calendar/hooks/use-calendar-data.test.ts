@@ -15,7 +15,8 @@ describe('useCalendarData', () => {
     type: 'task',
     status: 'backlog',
     priority: 'medium',
-    due_date: '2025-01-15T10:00:00.000Z',
+    planned_start: '2025-01-15T10:00:00.000Z',
+    planned_duration: 60,
     created_at: '2025-01-01T00:00:00.000Z',
     updated_at: '2025-01-01T00:00:00.000Z',
     userId: 'user-1',
@@ -33,9 +34,9 @@ describe('useCalendarData', () => {
   describe('基本機能', () => {
     it('期間内のタスクが正しくフィルタリングされる', () => {
       const tasks: Task[] = [
-        { ...mockTask, id: 'task-1', due_date: '2025-01-15T10:00:00.000Z' }, // 期間内
-        { ...mockTask, id: 'task-2', due_date: '2025-01-05T10:00:00.000Z' }, // 期間外（前）
-        { ...mockTask, id: 'task-3', due_date: '2025-01-25T10:00:00.000Z' }, // 期間外（後）
+        { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' }, // 期間内
+        { ...mockTask, id: 'task-2', planned_start: '2025-01-05T10:00:00.000Z' }, // 期間外（前）
+        { ...mockTask, id: 'task-3', planned_start: '2025-01-25T10:00:00.000Z' }, // 期間外（後）
       ]
 
       const { result } = renderHook(() =>
@@ -49,10 +50,10 @@ describe('useCalendarData', () => {
       expect(result.current.tasks[0]?.id).toBe('task-1')
     })
 
-    it('due_dateがないタスクは除外される', () => {
+    it('planned_startがないタスクは除外される', () => {
       const tasks: Task[] = [
-        { ...mockTask, id: 'task-1', due_date: '2025-01-15T10:00:00.000Z' },
-        { ...mockTask, id: 'task-2', due_date: undefined },
+        { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' },
+        { ...mockTask, id: 'task-2', planned_start: undefined },
       ]
 
       const { result } = renderHook(() =>
@@ -105,7 +106,7 @@ describe('useCalendarData', () => {
       })
 
       expect(onTaskUpdate).toHaveBeenCalledWith('task-1', {
-        due_date: newStart.toISOString(),
+        planned_start: newStart.toISOString(),
       })
     })
 
@@ -185,15 +186,15 @@ describe('useCalendarData', () => {
       expect(onTaskCreate).toHaveBeenCalledWith(
         expect.objectContaining({
           title: '新しいタスク',
-          type: 'task',
           status: 'backlog',
           priority: 'medium',
-          userId: 'default-user',
+          planned_duration: 60,
+          user_id: 'default-user',
         })
       )
 
       const callArg = onTaskCreate.mock.calls[0][0]
-      const dueDate = new Date(callArg.due_date)
+      const dueDate = new Date(callArg.planned_start)
       expect(dueDate.getHours()).toBe(14)
       expect(dueDate.getMinutes()).toBe(30)
     })
@@ -333,8 +334,8 @@ describe('useCalendarData', () => {
   describe('列割り当て', () => {
     it('重複しないタスクは同じ列に配置される', () => {
       const tasks: Task[] = [
-        { ...mockTask, id: 'task-1', due_date: '2025-01-15T10:00:00.000Z' },
-        { ...mockTask, id: 'task-2', due_date: '2025-01-15T12:00:00.000Z' }, // 2時間後
+        { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' },
+        { ...mockTask, id: 'task-2', planned_start: '2025-01-15T12:00:00.000Z' }, // 2時間後
       ]
 
       const { result } = renderHook(() =>
@@ -350,8 +351,8 @@ describe('useCalendarData', () => {
 
     it('重複するタスクは異なる列に配置される', () => {
       const tasks: Task[] = [
-        { ...mockTask, id: 'task-1', due_date: '2025-01-15T10:00:00.000Z' },
-        { ...mockTask, id: 'task-2', due_date: '2025-01-15T10:30:00.000Z' }, // 30分後（重複）
+        { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' },
+        { ...mockTask, id: 'task-2', planned_start: '2025-01-15T10:30:00.000Z' }, // 30分後（重複）
       ]
 
       const { result } = renderHook(() =>
@@ -367,8 +368,8 @@ describe('useCalendarData', () => {
 
     it('columnSpanが正しく設定される', () => {
       const tasks: Task[] = [
-        { ...mockTask, id: 'task-1', due_date: '2025-01-15T10:00:00.000Z' },
-        { ...mockTask, id: 'task-2', due_date: '2025-01-15T10:30:00.000Z' },
+        { ...mockTask, id: 'task-1', planned_start: '2025-01-15T10:00:00.000Z' },
+        { ...mockTask, id: 'task-2', planned_start: '2025-01-15T10:30:00.000Z' },
       ]
 
       const { result } = renderHook(() =>
