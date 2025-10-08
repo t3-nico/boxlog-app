@@ -217,13 +217,46 @@ jobs:
         run: npm run api:check
         continue-on-error: true
 
-      - name: ⚡ Performance test
-        run: npm run perf:check
-        continue-on-error: true
-
       - name: 🏷️ Naming convention
         run: npm run naming:migrate
         continue-on-error: true
+
+  performance:
+    name: ⚡ Performance (Lighthouse CI)
+    runs-on: ubuntu-latest
+    needs: [build]
+    timeout-minutes: 15
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.sha }}
+          path: .next
+
+      - name: ⚡ Run Lighthouse CI
+        run: npm run perf:lighthouse
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: 📊 Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports-${{ github.sha }}
+          path: .lighthouseci
+          retention-days: 7
 
   docs-consistency:
     name: 📚 Docs Consistency
@@ -253,7 +286,7 @@ jobs:
   quality-gate:
     name: 🚪 Quality Gate
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, unit-tests, build, accessibility, heavy-checks, docs-consistency]
+    needs: [lint, typecheck, unit-tests, build, performance, accessibility, heavy-checks, docs-consistency]
     if: always()
     steps:
       - name: ✅ Check results
@@ -272,6 +305,10 @@ jobs:
           fi
           if [[ "${{ needs.build.result }}" != "success" ]]; then
             echo "❌ Build failed"
+            exit 1
+          fi
+          if [[ "${{ needs.performance.result }}" != "success" ]]; then
+            echo "❌ Performance check failed"
             exit 1
           fi
           echo "✅ All critical checks passed!"
@@ -295,6 +332,7 @@ jobs:
             | ${getEmoji('${{ needs.typecheck.result }}')} **TypeScript** | ${{ needs.typecheck.result }} |
             | ${getEmoji('${{ needs.unit-tests.result }}')} **Tests** | ${{ needs.unit-tests.result }} |
             | ${getEmoji('${{ needs.build.result }}')} **Build** | ${{ needs.build.result }} |
+            | ${getEmoji('${{ needs.performance.result }}')} **Performance** | ${{ needs.performance.result }} |
             | ${getEmoji('${{ needs.accessibility.result }}')} **Accessibility** | ${{ needs.accessibility.result }} |
             | ${getEmoji('${{ needs.heavy-checks.result }}')} **Heavy Checks** | ${{ needs.heavy-checks.result }} |
             | ${getEmoji('${{ needs.docs-consistency.result }}')} **Docs** | ${{ needs.docs-consistency.result }} |
