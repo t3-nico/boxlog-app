@@ -395,6 +395,33 @@
     "common": {
       "saved": "設定を保存しました",
       "saveFailed": "保存に失敗しました"
+    },
+    "dialog": {
+      "title": "設定",
+      "categories": {
+        "general": "一般",
+        "generalDesc": "アプリケーションの基本設定",
+        "account": "アカウント",
+        "accountDesc": "プロフィールとアカウント情報",
+        "notifications": "通知",
+        "notificationsDesc": "通知とリマインダーの設定",
+        "calendar": "カレンダー",
+        "calendarDesc": "カレンダー表示とタイムゾーン",
+        "tags": "タグ",
+        "tagsDesc": "タグの作成と管理",
+        "preferences": "環境設定",
+        "preferencesDesc": "テーマと表示オプション",
+        "planBilling": "プラン・請求",
+        "planBillingDesc": "サブスクリプションと支払い",
+        "integration": "連携",
+        "integrationDesc": "外部サービス連携",
+        "dataExport": "データエクスポート",
+        "dataExportDesc": "データのエクスポートとバックアップ",
+        "legal": "法的情報",
+        "legalDesc": "利用規約とプライバシーポリシー",
+        "trash": "ゴミ箱",
+        "trashDesc": "削除済みアイテムの管理"
+      }
     }
   },
   "board": {
@@ -609,6 +636,13 @@
       "requireLowercase": "小文字を含めてください",
       "requireNumber": "数字を含めてください",
       "requireSpecialChar": "特殊文字を含めてください"
+    },
+    "passwordStrength": {
+      "label": "パスワード強度",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い"
     },
     "localStorage": {
       "signupDisabled": "ローカルストレージモードではサインアップが無効です",

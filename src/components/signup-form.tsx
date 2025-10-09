@@ -1,18 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { Eye, EyeOff } from 'lucide-react'
+import { Check, Eye, EyeOff, X } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { Progress } from '@/components/ui/progress'
 import { Spinner } from '@/components/ui/spinner'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
+
+interface PasswordRequirement {
+  met: boolean
+  text: string
+}
+
+function RequirementItem({ met, text }: PasswordRequirement) {
+  return (
+    <div className={cn('flex items-center gap-2 text-sm', met ? 'text-green-600' : 'text-muted-foreground')}>
+      {met ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
+      <span>{text}</span>
+    </div>
+  )
+}
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
   const params = useParams()
@@ -28,6 +43,44 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // パスワード要件のチェック
+  const passwordRequirements: PasswordRequirement[] = [
+    { met: password.length >= 8, text: t('auth.passwordValidation.minLength') },
+    { met: /[A-Z]/.test(password), text: t('auth.passwordValidation.requireUppercase') },
+    { met: /[a-z]/.test(password), text: t('auth.passwordValidation.requireLowercase') },
+    { met: /[0-9]/.test(password), text: t('auth.passwordValidation.requireNumber') },
+  ]
+
+  // パスワード強度計算（0-100）
+  const passwordStrength = useMemo(() => {
+    if (!password) return 0
+
+    let strength = 0
+    const checks = [
+      password.length >= 8, // 25%
+      /[A-Z]/.test(password), // 25%
+      /[a-z]/.test(password), // 25%
+      /[0-9]/.test(password), // 25%
+    ]
+
+    checks.forEach((check) => {
+      if (check) strength += 25
+    })
+
+    return strength
+  }, [password])
+
+  // 強度ラベルと色
+  const getStrengthInfo = (strength: number) => {
+    if (strength === 0) return { label: '', color: '' }
+    if (strength <= 25) return { label: t('auth.passwordStrength.weak'), color: 'bg-red-500' }
+    if (strength <= 50) return { label: t('auth.passwordStrength.fair'), color: 'bg-orange-500' }
+    if (strength <= 75) return { label: t('auth.passwordStrength.good'), color: 'bg-yellow-500' }
+    return { label: t('auth.passwordStrength.strong'), color: 'bg-green-500' }
+  }
+
+  const strengthInfo = getStrengthInfo(passwordStrength)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -142,6 +195,27 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     </div>
                   </Field>
                 </Field>
+
+                {/* パスワード強度インジケーター */}
+                {password && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground text-sm">{t('auth.passwordStrength.label')}</span>
+                      {strengthInfo.label && <span className="text-sm font-medium">{strengthInfo.label}</span>}
+                    </div>
+                    <Progress value={passwordStrength} className="h-2" indicatorClassName={strengthInfo.color} />
+                  </div>
+                )}
+
+                {/* リアルタイムバリデーション表示 */}
+                {password && (
+                  <div className="mt-2 space-y-1">
+                    {passwordRequirements.map((req, index) => (
+                      <RequirementItem key={index} met={req.met} text={req.text} />
+                    ))}
+                  </div>
+                )}
+
                 <FieldDescription>{t('auth.signupForm.passwordRequirement')}</FieldDescription>
               </Field>
 
