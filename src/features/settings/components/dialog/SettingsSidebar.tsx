@@ -15,7 +15,7 @@ export function SettingsSidebar() {
   const { activeCategory, setActiveCategory } = useSettingsDialogStore()
 
   return (
-    <aside className="border-border w-60 flex-shrink-0 overflow-y-auto border-r">
+    <aside className="bg-sidebar border-border w-60 flex-shrink-0 overflow-y-auto border-r">
       <nav className="space-y-1 p-4">
         {SETTINGS_CATEGORIES.map((category) => {
           const Icon = category.icon

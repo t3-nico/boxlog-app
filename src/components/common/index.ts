@@ -23,7 +23,7 @@ export { PreloadResources, initializeCacheStrategy } from './Preload'
 export type { PreloadConfig } from './Preload'
 
 // Providers
-export { Providers, useCommandPalette } from './Providers'
+export { Providers } from './Providers'
 export type { ProvidersProps } from './Providers'
 
 // Auto-retry hooks

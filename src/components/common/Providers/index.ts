@@ -1,2 +1,2 @@
-export { Providers, useCommandPalette } from './Providers'
+export { Providers } from './Providers'
 export type { ProvidersProps } from './types'

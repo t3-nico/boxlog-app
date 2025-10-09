@@ -36,7 +36,7 @@ export function SearchBar({
   // Get data from stores
   const tasks = useTaskStore((state) => state.tasks)
   const tags = useTagStore((state) => state.tags)
-  const smartFolders = useSmartFolderStore((state) => state.folders)
+  const smartFolders = useSmartFolderStore((state) => state.smartFolders)
   const events = useEventStore((state) => state.events)
 
   // Filter data by types
