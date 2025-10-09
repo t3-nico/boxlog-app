@@ -88,7 +88,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     }
                   >
                     <TrendingUp className="mr-2 h-4 w-4" />
-                    High priority tasks
+                    <span>High priority tasks</span>
                   </CommandItem>
                   <CommandItem
                     onSelect={() =>
@@ -98,7 +98,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     }
                   >
                     <Calendar className="mr-2 h-4 w-4" />
-                    Today&apos;s events
+                    <span>Today&apos;s events</span>
                   </CommandItem>
                   <CommandItem
                     onSelect={() =>
@@ -108,7 +108,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     }
                   >
                     <Tag className="mr-2 h-4 w-4" />
-                    Untagged items
+                    <span>Untagged items</span>
                   </CommandItem>
                 </CommandGroup>
                 <CommandSeparator />
