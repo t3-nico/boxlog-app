@@ -657,6 +657,8 @@
       "emailPlaceholder": "m@example.com",
       "password": "パスワード",
       "forgotPassword": "パスワードをお忘れですか？",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを隠す",
       "loginButton": "ログイン",
       "orContinueWith": "または続けて",
       "loginWithApple": "Appleでログイン",
