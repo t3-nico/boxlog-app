@@ -21,6 +21,21 @@
     },
     "toggleSidebar": "サイドバーを開閉"
   },
+  "sidebar": {
+    "views": "ビュー",
+    "quickCreate": "クイック作成",
+    "inbox": "受信箱",
+    "theme": "テーマ",
+    "getHelp": "ヘルプ",
+    "navigation": {
+      "calendar": "カレンダー",
+      "board": "ボード",
+      "table": "テーブル",
+      "stats": "統計",
+      "settings": "設定",
+      "search": "検索"
+    }
+  },
   "actions": {
     "save": "保存",
     "cancel": "キャンセル",

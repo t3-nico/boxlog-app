@@ -21,6 +21,21 @@
     },
     "toggleSidebar": "Toggle Sidebar"
   },
+  "sidebar": {
+    "views": "Views",
+    "quickCreate": "Quick Create",
+    "inbox": "Inbox",
+    "theme": "Theme",
+    "getHelp": "Get Help",
+    "navigation": {
+      "calendar": "Calendar",
+      "board": "Board",
+      "table": "Table",
+      "stats": "Stats",
+      "settings": "Settings",
+      "search": "Search"
+    }
+  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",

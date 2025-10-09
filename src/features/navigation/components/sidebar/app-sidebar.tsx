@@ -1,57 +1,68 @@
 'use client'
 
 import { BarChart3, Calendar, HelpCircle, Search, Settings, SquareKanban, Table as TableIcon } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
 
 import { useAuthContext } from '@/features/auth'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { NavMain } from './nav-main'
 import { NavSecondary } from './nav-secondary'
 import { NavUser } from './nav-user'
 
-const data = {
-  navMain: [
-    {
-      title: 'Calendar',
-      url: '/ja/calendar',
-      icon: Calendar,
-    },
-    {
-      title: 'Board',
-      url: '/ja/board',
-      icon: SquareKanban,
-    },
-    {
-      title: 'Table',
-      url: '/ja/table',
-      icon: TableIcon,
-    },
-    {
-      title: 'Stats',
-      url: '/ja/stats',
-      icon: BarChart3,
-    },
-  ],
-  navSecondary: [
-    {
-      title: 'Settings',
-      url: '/ja/settings',
-      icon: Settings,
-    },
-    {
-      title: 'Get Help',
-      url: '#',
-      icon: HelpCircle,
-    },
-    {
-      title: 'Search',
-      url: '#',
-      icon: Search,
-    },
-  ],
-}
-
 export function AppSidebar() {
   const { user } = useAuthContext()
+  const pathname = usePathname()
+
+  // URLから locale を抽出 (例: /ja/calendar -> ja)
+  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  const { t, locale, ready } = useI18n(localeFromPath)
+
+  const data = useMemo(
+    () => ({
+      navMain: [
+        {
+          title: t('sidebar.navigation.calendar'),
+          url: `/${locale}/calendar`,
+          icon: Calendar,
+        },
+        {
+          title: t('sidebar.navigation.board'),
+          url: `/${locale}/board`,
+          icon: SquareKanban,
+        },
+        {
+          title: t('sidebar.navigation.table'),
+          url: `/${locale}/table`,
+          icon: TableIcon,
+        },
+        {
+          title: t('sidebar.navigation.stats'),
+          url: `/${locale}/stats`,
+          icon: BarChart3,
+        },
+      ],
+      navSecondary: [
+        {
+          title: t('sidebar.navigation.settings'),
+          url: `/${locale}/settings`,
+          icon: Settings,
+        },
+        {
+          title: t('sidebar.getHelp'),
+          url: '#',
+          icon: HelpCircle,
+        },
+        {
+          title: t('sidebar.navigation.search'),
+          url: '#',
+          icon: Search,
+        },
+      ],
+    }),
+    [t, locale, ready]
+  )
 
   const userData = {
     name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
@@ -60,7 +71,7 @@ export function AppSidebar() {
   }
 
   return (
-    <aside className="bg-secondary flex h-full w-64 flex-col px-4 py-2">
+    <aside className="bg-sidebar text-sidebar-foreground flex h-full w-64 flex-col px-4 py-2">
       {/* Header - User Menu */}
       <div className="mb-4">
         <NavUser user={userData} />
