@@ -50,10 +50,10 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="overflow-hidden p-0" style={{ maxWidth: '768px', maxHeight: '80vh' }}>
+      <DialogContent className="overflow-hidden p-0" style={{ maxWidth: '768px' }}>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
           <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
-          <CommandList className="max-h-[calc(80vh-80px)]">
+          <CommandList className="max-h-[500px]">
             <CommandEmpty>No results found.</CommandEmpty>
 
             {/* Recent Searches */}
