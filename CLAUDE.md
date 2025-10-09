@@ -170,6 +170,11 @@ AIは、コードを書く前に以下を必ず実行すること：
 1. **コミット前**: `npm run lint` 必須実行（3.6秒で完了）
 2. **スタイリング**: `globals.css` のセマンティックトークン使用（Tailwindクラス直接指定。`bg-card`, `text-foreground` 等）
 3. **Issue管理**: すべての作業をIssue化（例外なし）
+   - **Claude Codeの権限**: AIアシスタントは必要に応じて**自由にIssue作成可能**
+   - 新機能・バグ修正・ドキュメント・リファクタリング等、すべての作業をIssue化すること
+   - ユーザーの明示的な依頼がなくても、作業開始前に自主的にIssue作成してよい
+   - **柔軟な運用**: 技術的な議論・アイデア・調査タスク・メモなども気軽にIssue化OK
+   - 削除は開発者が行うので、積極的にIssue化すること
 4. **TypeScript厳格**: `any` 型禁止
 5. **公式準拠**: Next.js/React/TypeScript公式のベストプラクティスに従う（詳細は後述）
 6. **コロケーション**: 関連ファイルは必ず近接配置（テスト・型・hooks・ドキュメント等）
@@ -197,6 +202,7 @@ AIは、コードを書く前に以下を必ず実行すること：
 
 - **コミット規約**: [`docs/development/COMMIT_RULES.md`](docs/development/COMMIT_RULES.md)
 - **Issue管理**: [`docs/development/ISSUE_MANAGEMENT.md`](docs/development/ISSUE_MANAGEMENT.md)
+- **Issueラベル付けルール**: [`docs/development/ISSUE_LABELING_RULES.md`](docs/development/ISSUE_LABELING_RULES.md)
 - **セッション管理**: [`docs/development/SESSION_MANAGEMENT.md`](docs/development/SESSION_MANAGEMENT.md)
 
 ### システム管理
@@ -299,4 +305,4 @@ npm run docs:check          # ドキュメント整合性チェック
 
 ---
 
-**📖 最終更新**: 2025-10-06 | **バージョン**: v9.1 - ドキュメント棲み分け明確化
+**📖 最終更新**: 2025-10-10 | **バージョン**: v9.3 - Issue管理の柔軟な運用を明記（技術的な議論・アイデアもOK）
