@@ -700,6 +700,8 @@
       "passwordRequirement": "Must be at least 8 characters long.",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
+      "passwordMatch": "Passwords match",
+      "passwordMismatch": "Passwords do not match",
       "createAccountButton": "Create Account",
       "orContinueWith": "Or continue with",
       "signupWithApple": "Sign up with Apple",

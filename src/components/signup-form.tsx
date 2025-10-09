@@ -32,6 +32,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
 
   const minPasswordLength = 8
   const isPasswordValid = password.length >= minPasswordLength
+  const isPasswordMatching = confirmPassword.length > 0 && password === confirmPassword
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -164,7 +165,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     </Field>
                   </Field>
 
-                  {/* パスワード文字数インジケーター */}
+                  {/* パスワードバリデーション */}
                   <div className="grid grid-cols-2 gap-4">
                     {password && (
                       <div className="flex items-center gap-2 text-sm">
@@ -181,18 +182,15 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     )}
                     {confirmPassword && (
                       <div className="flex items-center gap-2 text-sm">
-                        {confirmPassword.length >= minPasswordLength ? (
+                        {isPasswordMatching ? (
                           <Check className="h-4 w-4 text-green-600" />
                         ) : (
                           <X className="text-muted-foreground h-4 w-4" />
                         )}
-                        <span
-                          className={cn(
-                            confirmPassword.length >= minPasswordLength ? 'text-green-600' : 'text-muted-foreground'
-                          )}
-                        >
-                          {confirmPassword.length} / {minPasswordLength}
-                          {t('auth.passwordStrength.minCharacters')}
+                        <span className={cn(isPasswordMatching ? 'text-green-600' : 'text-muted-foreground')}>
+                          {isPasswordMatching
+                            ? t('auth.signupForm.passwordMatch')
+                            : t('auth.signupForm.passwordMismatch')}
                         </span>
                       </div>
                     )}

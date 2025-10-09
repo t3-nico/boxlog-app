@@ -695,6 +695,8 @@
       "passwordRequirement": "8文字以上である必要があります。",
       "showPassword": "パスワードを表示",
       "hidePassword": "パスワードを隠す",
+      "passwordMatch": "パスワードが一致しています",
+      "passwordMismatch": "パスワードが一致していません",
       "createAccountButton": "アカウント作成",
       "orContinueWith": "または続けて",
       "signupWithApple": "Appleで登録",
