@@ -147,11 +147,11 @@ const ActionButtonsSection = React.memo(({ isEditable }: { isEditable: boolean }
   const { t } = useI18n()
   return (
     <div className={cn('flex items-center gap-2 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
-      <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
+      <Button variant="secondary" size="sm" className="flex items-center gap-2" disabled={!isEditable}>
         <BellRing className="h-4 w-4" />
         {t('events.detail.actions.notification')}
       </Button>
-      <Button variant="secondary" size="sm" className="flex items-center gap-1.5" disabled={!isEditable}>
+      <Button variant="secondary" size="sm" className="flex items-center gap-2" disabled={!isEditable}>
         <Repeat className="h-4 w-4" />
         {t('events.detail.actions.repeat')}
       </Button>

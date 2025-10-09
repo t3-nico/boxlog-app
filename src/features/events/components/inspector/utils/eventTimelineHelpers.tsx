@@ -75,7 +75,7 @@ export const renderCreatedEventDescription = () => {
  */
 export const renderStatusEventDescription = (event: StatusEvent) => {
   return (
-    <span className="flex flex-wrap items-center gap-1.5">
+    <span className="flex flex-wrap items-center gap-2">
       <span className="text-neutral-600 dark:text-neutral-400">ステータス:</span>
       <span className="text-neutral-600 dark:text-neutral-400">{event.oldValue}</span>
       <ArrowRight className="h-3 w-3 text-neutral-600 dark:text-neutral-400" />
@@ -96,7 +96,7 @@ export const renderReminderEventDescription = (event: ReminderEvent) => {
  */
 export const renderTimeEventDescription = (event: TimeEvent) => {
   return (
-    <span className="flex flex-wrap items-center gap-1.5">
+    <span className="flex flex-wrap items-center gap-2">
       <span className="text-neutral-600 dark:text-neutral-400">時間変更:</span>
       <span className="font-mono text-xs text-neutral-600 dark:text-neutral-400">{event.oldValue}</span>
       <ArrowRight className="h-3 w-3 text-neutral-600 dark:text-neutral-400" />
@@ -110,7 +110,7 @@ export const renderTimeEventDescription = (event: TimeEvent) => {
  */
 export const renderTagAddedEventDescription = (event: TagEvent) => {
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-center gap-2">
       <span className="text-neutral-600 dark:text-neutral-400">タグ追加:</span>
       <span className="rounded-full border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-xs text-neutral-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-50">
         {event.newValue}
@@ -124,7 +124,7 @@ export const renderTagAddedEventDescription = (event: TagEvent) => {
  */
 export const renderTagRemovedEventDescription = (event: TagEvent) => {
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-center gap-2">
       <span className="text-neutral-600 dark:text-neutral-400">タグ削除:</span>
       <span className="rounded-full border border-dashed border-neutral-300 bg-transparent px-2 py-0.5 text-xs text-neutral-500 dark:border-neutral-600 dark:text-neutral-400">
         {event.oldValue}
@@ -138,7 +138,7 @@ export const renderTagRemovedEventDescription = (event: TagEvent) => {
  */
 export const renderMemoEventDescription = (event: MemoEvent) => {
   return (
-    <span className="flex items-center gap-1.5">
+    <span className="flex items-center gap-2">
       <span className="text-neutral-600 dark:text-neutral-400">メモ{event.action === 'added' ? '追加' : '更新'}:</span>
       <span className="text-xs text-neutral-900 dark:text-neutral-50">
         {event.newValue.length > 20 ? `${event.newValue.slice(0, 20)}...` : event.newValue}

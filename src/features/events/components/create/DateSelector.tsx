@@ -441,9 +441,9 @@ export const DateSelector = ({ value, endValue, onChange, onEndChange }: DateSel
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-auto mb-3 flex items-center gap-1.5"
+            className="mt-auto mb-3 flex items-center gap-2"
           >
-            <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <Clock size={12} />
               <span>{formatDuration(duration)}</span>
             </div>

@@ -96,7 +96,7 @@ const Calendar = ({
           defaultClassNames.month_caption
         ),
         dropdowns: cn(
-          'h-(--cell-size) flex w-full items-center justify-center gap-1.5 text-sm font-medium',
+          'h-(--cell-size) flex w-full items-center justify-center gap-2 text-sm font-medium',
           defaultClassNames.dropdowns
         ),
         dropdown_root: cn(

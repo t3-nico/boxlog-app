@@ -339,7 +339,7 @@ export const WeekCalendarLayout = ({
                           <X className="h-3 w-3 text-gray-700 dark:text-gray-300" />
                         </button>
 
-                        <div className="h-full overflow-hidden p-1 text-white sm:p-1.5">
+                        <div className="h-full overflow-hidden p-1 text-white sm:p-2">
                           <div className="flex h-full flex-col">
                             <div className="min-h-0 flex-1">
                               <div className="mb-0.5 line-clamp-2 text-xs leading-tight font-medium">{event.title}</div>

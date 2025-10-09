@@ -80,7 +80,7 @@ export const DragPreview = () => {
 
       {/* イベントカードのプレビュー（フルカラー） */}
       <div
-        className="rounded-md border border-white/20 p-1.5 shadow-lg"
+        className="rounded-md border border-white/20 p-2 shadow-lg"
         style={{
           height: `${(eventDuration * HOUR_HEIGHT) / 60}px`,
           backgroundColor: event.color || '#3b82f6',

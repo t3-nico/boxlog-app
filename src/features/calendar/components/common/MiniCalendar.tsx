@@ -212,7 +212,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             type="button"
             onClick={handlePrevMonth}
             className={cn(
-              'rounded-full p-1.5 transition-colors',
+              'rounded-full p-2 transition-colors',
               'hover:bg-neutral-300 dark:hover:bg-neutral-600',
               'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50'
             )}
@@ -227,7 +227,7 @@ export const MiniCalendar = memo<MiniCalendarProps>(
             type="button"
             onClick={handleNextMonth}
             className={cn(
-              'rounded-full p-1.5 transition-colors',
+              'rounded-full p-2 transition-colors',
               'hover:bg-neutral-300 dark:hover:bg-neutral-600',
               'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50'
             )}
