@@ -1,10 +1,15 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export function SignupForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const { t } = useI18n()
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -12,36 +17,32 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
           <form className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Create your account</h1>
-                <p className="text-muted-foreground text-sm text-balance">
-                  Enter your email below to create your account
-                </p>
+                <h1 className="text-2xl font-bold">{t('auth.signupForm.createAccount')}</h1>
+                <p className="text-muted-foreground text-sm text-balance">{t('auth.signupForm.enterEmail')}</p>
               </div>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="m@example.com" required />
-                <FieldDescription>
-                  We&apos;ll use this to contact you. We will not share your email with anyone else.
-                </FieldDescription>
+                <FieldLabel htmlFor="email">{t('auth.signupForm.email')}</FieldLabel>
+                <Input id="email" type="email" placeholder={t('auth.signupForm.emailPlaceholder')} required />
+                <FieldDescription>{t('auth.signupForm.emailDescription')}</FieldDescription>
               </Field>
               <Field>
                 <Field className="grid grid-cols-2 gap-4">
                   <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <FieldLabel htmlFor="password">{t('auth.signupForm.password')}</FieldLabel>
                     <Input id="password" type="password" required />
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+                    <FieldLabel htmlFor="confirm-password">{t('auth.signupForm.confirmPassword')}</FieldLabel>
                     <Input id="confirm-password" type="password" required />
                   </Field>
                 </Field>
-                <FieldDescription>Must be at least 8 characters long.</FieldDescription>
+                <FieldDescription>{t('auth.signupForm.passwordRequirement')}</FieldDescription>
               </Field>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit">{t('auth.signupForm.createAccountButton')}</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
+                {t('auth.signupForm.orContinueWith')}
               </FieldSeparator>
               <Field className="grid grid-cols-3 gap-4">
                 <Button variant="outline" type="button">
@@ -51,7 +52,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Sign up with Apple</span>
+                  <span className="sr-only">{t('auth.signupForm.signupWithApple')}</span>
                 </Button>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -60,7 +61,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Sign up with Google</span>
+                  <span className="sr-only">{t('auth.signupForm.signupWithGoogle')}</span>
                 </Button>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -69,11 +70,11 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Sign up with Meta</span>
+                  <span className="sr-only">{t('auth.signupForm.signupWithMeta')}</span>
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Already have an account? <a href="/auth/login">Log in</a>
+                {t('auth.signupForm.alreadyHaveAccount')} <a href="/auth/login">{t('auth.signupForm.login')}</a>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -87,7 +88,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        {t('auth.signupForm.byContinuing')} <a href="#">{t('auth.signupForm.termsOfService')}</a>{' '}
+        {t('auth.signupForm.and')} <a href="#">{t('auth.signupForm.privacyPolicy')}</a>.
       </FieldDescription>
     </div>
   )

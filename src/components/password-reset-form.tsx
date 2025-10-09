@@ -7,9 +7,11 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { useAuthContext } from '@/features/auth'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export function PasswordResetForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -44,14 +46,14 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
             <div className="p-6 md:p-8">
               <FieldGroup>
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <h1 className="text-2xl font-bold">Check your email</h1>
+                  <h1 className="text-2xl font-bold">{t('auth.passwordResetForm.checkEmail')}</h1>
                   <p className="text-muted-foreground text-balance">
-                    We sent a password reset link to <span className="font-medium">{email}</span>
+                    {t('auth.passwordResetForm.sentResetLink')} <span className="font-medium">{email}</span>
                   </p>
                 </div>
                 <Field>
                   <Button asChild>
-                    <a href="/auth/login">Back to Login</a>
+                    <a href="/auth/login">{t('auth.passwordResetForm.backToLogin')}</a>
                   </Button>
                 </Field>
               </FieldGroup>
@@ -76,17 +78,15 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
           <form className="p-6 md:p-8" onSubmit={handleSubmit}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Reset your password</h1>
-                <p className="text-muted-foreground text-balance">
-                  Enter your email address and we&apos;ll send you a reset link
-                </p>
+                <h1 className="text-2xl font-bold">{t('auth.passwordResetForm.resetPassword')}</h1>
+                <p className="text-muted-foreground text-balance">{t('auth.passwordResetForm.enterEmail')}</p>
               </div>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email">{t('auth.passwordResetForm.email')}</FieldLabel>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder={t('auth.passwordResetForm.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -95,11 +95,12 @@ export function PasswordResetForm({ className, ...props }: React.ComponentProps<
               {error ? <FieldDescription className="text-destructive">{error}</FieldDescription> : null}
               <Field>
                 <Button type="submit" disabled={loading}>
-                  {loading ? 'Sending...' : 'Send reset link'}
+                  {loading ? t('auth.passwordResetForm.sending') : t('auth.passwordResetForm.sendResetLink')}
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Remember your password? <a href="/auth/login">Log in</a>
+                {t('auth.passwordResetForm.rememberPassword')}{' '}
+                <a href="/auth/login">{t('auth.passwordResetForm.login')}</a>
               </FieldDescription>
             </FieldGroup>
           </form>

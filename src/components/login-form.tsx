@@ -1,10 +1,15 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const { t } = useI18n()
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -12,27 +17,27 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
           <form className="p-6 md:p-8">
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-muted-foreground text-balance">Login to your Acme Inc account</p>
+                <h1 className="text-2xl font-bold">{t('auth.loginForm.welcomeBack')}</h1>
+                <p className="text-muted-foreground text-balance">{t('auth.loginForm.loginToAccount')}</p>
               </div>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+                <FieldLabel htmlFor="email">{t('auth.loginForm.email')}</FieldLabel>
+                <Input id="email" type="email" placeholder={t('auth.loginForm.emailPlaceholder')} required />
               </Field>
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <FieldLabel htmlFor="password">{t('auth.loginForm.password')}</FieldLabel>
                   <a href="/auth/password" className="ml-auto text-sm underline-offset-2 hover:underline">
-                    Forgot your password?
+                    {t('auth.loginForm.forgotPassword')}
                   </a>
                 </div>
                 <Input id="password" type="password" required />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button type="submit">{t('auth.loginForm.loginButton')}</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
+                {t('auth.loginForm.orContinueWith')}
               </FieldSeparator>
               <Field className="grid grid-cols-3 gap-4">
                 <Button variant="outline" type="button">
@@ -42,7 +47,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Login with Apple</span>
+                  <span className="sr-only">{t('auth.loginForm.loginWithApple')}</span>
                 </Button>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -51,7 +56,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Login with Google</span>
+                  <span className="sr-only">{t('auth.loginForm.loginWithGoogle')}</span>
                 </Button>
                 <Button variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -60,11 +65,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">Login with Meta</span>
+                  <span className="sr-only">{t('auth.loginForm.loginWithMeta')}</span>
                 </Button>
               </Field>
               <FieldDescription className="text-center">
-                Don&apos;t have an account? <a href="/auth/signup">Sign up</a>
+                {t('auth.loginForm.noAccount')} <a href="/auth/signup">{t('auth.loginForm.signUp')}</a>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -78,7 +83,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         </CardContent>
       </Card>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        {t('auth.loginForm.termsAndPrivacy')} <a href="#">{t('auth.loginForm.termsOfService')}</a>{' '}
+        {t('auth.loginForm.and')} <a href="#">{t('auth.loginForm.privacyPolicy')}</a>.
       </FieldDescription>
     </div>
   )
