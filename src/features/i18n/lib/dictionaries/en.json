@@ -647,7 +647,8 @@
       "weak": "Weak",
       "fair": "Fair",
       "good": "Good",
-      "strong": "Strong"
+      "strong": "Strong",
+      "minCharacters": "characters minimum"
     },
     "localStorage": {
       "signupDisabled": "Sign up disabled in localStorage mode",
@@ -697,6 +698,8 @@
       "password": "Password",
       "confirmPassword": "Confirm Password",
       "passwordRequirement": "Must be at least 8 characters long.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
       "createAccountButton": "Create Account",
       "orContinueWith": "Or continue with",
       "signupWithApple": "Sign up with Apple",

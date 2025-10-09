@@ -642,7 +642,8 @@
       "weak": "弱い",
       "fair": "普通",
       "good": "良い",
-      "strong": "強い"
+      "strong": "強い",
+      "minCharacters": "文字以上"
     },
     "localStorage": {
       "signupDisabled": "ローカルストレージモードではサインアップが無効です",
@@ -692,6 +693,8 @@
       "password": "パスワード",
       "confirmPassword": "パスワード確認",
       "passwordRequirement": "8文字以上である必要があります。",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを隠す",
       "createAccountButton": "アカウント作成",
       "orContinueWith": "または続けて",
       "signupWithApple": "Appleで登録",
