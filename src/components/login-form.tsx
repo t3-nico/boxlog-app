@@ -1,5 +1,7 @@
 'use client'
 
+import { useParams } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
@@ -8,7 +10,9 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const { t } = useI18n()
+  const params = useParams()
+  const locale = (params?.locale as string) || 'ja'
+  const { t } = useI18n(locale as 'en' | 'ja')
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>

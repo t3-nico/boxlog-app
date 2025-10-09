@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { useParams } from 'next/navigation'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -11,7 +13,9 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
 export function PasswordResetForm({ className, ...props }: React.ComponentProps<'div'>) {
-  const { t } = useI18n()
+  const params = useParams()
+  const locale = (params?.locale as string) || 'ja'
+  const { t } = useI18n(locale as 'en' | 'ja')
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
