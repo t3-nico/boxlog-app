@@ -1,162 +1,184 @@
-// @ts-nocheck TODO(#389): 型エラー1件を段階的に修正する
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 
-import { Loader2, Search, X } from 'lucide-react'
+import { Calendar, CheckSquare, Folder, Search, Tag } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { useEventStore } from '@/features/events'
+import { useSmartFolderStore } from '@/features/smart-folders/stores/smart-folder-store'
+import { useTagStore } from '@/features/tags/stores/tag-store'
+import { useTaskStore } from '@/features/tasks/stores/useTaskStore'
 import { cn } from '@/lib/utils'
 
-import { useSearch, useSearchHistory } from '../hooks/use-search'
-import type { SearchResult, SearchResultType } from '../types'
+import { useSearchHistory } from '../hooks/use-search'
+import type { SearchResultType } from '../types'
 
 interface SearchBarProps {
   className?: string
   placeholder?: string
   types?: SearchResultType[]
-  onResultSelect?: (result: SearchResult) => void
-  showResults?: boolean
-  autoFocus?: boolean
+  onResultSelect?: (id: string, type: SearchResultType) => void
 }
 
-export const SearchBar = ({
+export function SearchBar({
   className,
   placeholder = 'Search tasks, tags, events...',
-  types,
+  types = ['task', 'tag', 'smart-folder', 'event'],
   onResultSelect,
-  showResults = true,
-  _autoFocus = false,
-}: SearchBarProps) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  const { query, setQuery, results, isSearching, clearSearch, groupedResults } = useSearch({ types })
-
+}: SearchBarProps) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
   const { addToHistory } = useSearchHistory()
 
-  // Handle click outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+  // Get data from stores
+  const tasks = useTaskStore((state) => state.tasks)
+  const tags = useTagStore((state) => state.tags)
+  const smartFolders = useSmartFolderStore((state) => state.folders)
+  const events = useEventStore((state) => state.events)
+
+  // Filter data by types
+  const filteredTasks = types.includes('task') ? tasks : []
+  const filteredTags = types.includes('tag') ? tags : []
+  const filteredFolders = types.includes('smart-folder') ? smartFolders : []
+  const filteredEvents = types.includes('event') ? events : []
+
+  // Handle selection
+  const handleSelect = useCallback(
+    (id: string, type: SearchResultType) => {
+      if (query) {
+        addToHistory(query)
       }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  // Handle result selection
-  const handleResultClick = (result: SearchResult) => {
-    if (result.action) {
-      result.action()
-    }
-    if (onResultSelect) {
-      onResultSelect(result)
-    }
-    addToHistory(query)
-    setIsOpen(false)
-    clearSearch()
-  }
-
-  // Handle keyboard navigation
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsOpen(false)
-      inputRef.current?.blur()
-    }
-    if (e.key === 'Enter' && query.trim()) {
-      addToHistory(query)
-    }
-  }
+      if (onResultSelect) {
+        onResultSelect(id, type)
+      }
+      setOpen(false)
+      setQuery('')
+    },
+    [query, addToHistory, onResultSelect]
+  )
 
   return (
-    <div ref={containerRef} className={cn('relative', className)}>
-      <div className="relative">
-        <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-        <Input
-          ref={inputRef}
-          type="text"
-          placeholder={placeholder}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value)
-            setIsOpen(true)
-          }}
-          onFocus={() => setIsOpen(true)}
-          onKeyDown={handleKeyDown}
-          className="pr-9 pl-9"
-        />
-        {isSearching === true && (
-          <Loader2 className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin" />
-        )}
-        {!isSearching && query ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearSearch}
-            className="absolute top-1/2 right-1 h-6 w-6 -translate-y-1/2 p-0"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        ) : null}
-      </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className={cn('w-full justify-start text-left font-normal', className)}
+        >
+          <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+          <span className="text-muted-foreground truncate">{placeholder}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[400px] p-0" align="start">
+        <Command>
+          <CommandInput placeholder={placeholder} value={query} onValueChange={setQuery} />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
 
-      {/* Search Results Dropdown */}
-      {showResults && isOpen && (query || results.length > 0) ? (
-        <div className="bg-popover absolute top-full z-50 mt-2 w-full rounded-lg border p-2 shadow-lg">
-          {results.length === 0 && !isSearching ? (
-            <div className="text-muted-foreground px-3 py-2 text-sm">
-              {query ? 'No results found' : 'Start typing to search...'}
-            </div>
-          ) : (
-            <div className="max-h-[400px] overflow-y-auto">
-              {Object.entries(groupedResults).map(([type, items]) => {
-                if (items.length === 0) return null
-
-                return (
-                  <div key={type} className="mb-2">
-                    <div className="text-muted-foreground mb-1 px-3 text-xs font-medium">
-                      {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}s
+            {/* Tasks */}
+            {filteredTasks.length > 0 && (
+              <CommandGroup heading="Tasks">
+                {filteredTasks.slice(0, 5).map((task) => (
+                  <CommandItem
+                    key={task.id}
+                    value={task.title}
+                    keywords={[task.description || '', ...(task.tags || [])]}
+                    onSelect={() => handleSelect(task.id, 'task')}
+                  >
+                    <CheckSquare className="mr-2 h-4 w-4" />
+                    <div className="flex flex-1 flex-col">
+                      <span>{task.title}</span>
+                      {task.description && <span className="text-muted-foreground text-xs">{task.description}</span>}
                     </div>
-                    {items.map((result) => (
-                      <button
-                        key={result.id}
-                        type="button"
-                        onClick={() => handleResultClick(result)}
-                        className="hover:bg-accent flex w-full items-center gap-2 rounded-md px-3 py-2 text-left"
-                      >
-                        <span className="font-medium">{result.title}</span>
-                        {result.description != null && (
-                          <span className="text-muted-foreground text-sm">{result.description}</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-      ) : null}
-    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
+            {/* Events */}
+            {filteredEvents.length > 0 && (
+              <CommandGroup heading="Events">
+                {filteredEvents.slice(0, 5).map((event) => (
+                  <CommandItem
+                    key={event.id}
+                    value={event.title}
+                    keywords={[event.description || '', event.location || '']}
+                    onSelect={() => handleSelect(event.id, 'event')}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    <div className="flex flex-1 flex-col">
+                      <span>{event.title}</span>
+                      {event.description && <span className="text-muted-foreground text-xs">{event.description}</span>}
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
+            {/* Tags */}
+            {filteredTags.length > 0 && (
+              <CommandGroup heading="Tags">
+                {filteredTags.slice(0, 5).map((tag) => (
+                  <CommandItem
+                    key={tag.id}
+                    value={tag.name}
+                    keywords={[tag.description || '', tag.path || '']}
+                    onSelect={() => handleSelect(tag.id, 'tag')}
+                  >
+                    <Tag className="mr-2 h-4 w-4" />
+                    <div className="flex flex-1 flex-col">
+                      <span>{tag.name}</span>
+                      {tag.description && <span className="text-muted-foreground text-xs">{tag.description}</span>}
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+
+            {/* Smart Folders */}
+            {filteredFolders.length > 0 && (
+              <CommandGroup heading="Smart Folders">
+                {filteredFolders.slice(0, 5).map((folder) => (
+                  <CommandItem
+                    key={folder.id}
+                    value={folder.name}
+                    keywords={[folder.description || '']}
+                    onSelect={() => handleSelect(folder.id, 'smart-folder')}
+                  >
+                    <Folder className="mr-2 h-4 w-4" />
+                    <div className="flex flex-1 flex-col">
+                      <span>{folder.name}</span>
+                      {folder.description && (
+                        <span className="text-muted-foreground text-xs">{folder.description}</span>
+                      )}
+                    </div>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   )
 }
 
 // Compact search bar for header/navbar
-export const CompactSearchBar = ({ className }: { className?: string }) => {
+export function CompactSearchBar({ className }: { className?: string }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   if (!isExpanded) {
     return (
       <Button variant="ghost" size="sm" onClick={() => setIsExpanded(true)} className={cn('h-8 w-8 p-0', className)}>
         <Search className="h-4 w-4" />
+        <span className="sr-only">Search</span>
       </Button>
     )
   }
 
-  return <SearchBar className={cn('w-64', className)} showResults={true} />
+  return <SearchBar className={cn('w-64', className)} />
 }

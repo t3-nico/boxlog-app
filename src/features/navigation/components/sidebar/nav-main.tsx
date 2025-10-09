@@ -3,6 +3,7 @@
 import { Mail, PlusCircle, type LucideIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 export function NavMain({
   items,
@@ -24,10 +25,19 @@ export function NavMain({
           <PlusCircle className="h-4 w-4" />
           <span>Quick Create</span>
         </button>
-        <Button size="icon" className="h-8 w-8 shrink-0" variant="outline">
-          <Mail className="h-4 w-4" />
-          <span className="sr-only">Inbox</span>
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button size="icon" className="h-8 w-8 shrink-0" variant="outline">
+                <Mail className="h-4 w-4" />
+                <span className="sr-only">Inbox</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Inbox</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       {/* Navigation Items */}
