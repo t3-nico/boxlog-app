@@ -18,7 +18,7 @@ export function SettingsDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeSettings()}>
-      <DialogContent className="!flex h-[85vh] !max-w-6xl !flex-col gap-0 p-0">
+      <DialogContent className="!flex h-[65vh] !max-w-4xl !flex-col gap-0 p-0">
         {/* 2カラムレイアウト */}
         <div className="flex h-full flex-1 overflow-hidden">
           {/* 左: サイドバー */}
