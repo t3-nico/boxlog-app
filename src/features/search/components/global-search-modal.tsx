@@ -12,6 +12,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  CommandShortcut,
 } from '@/components/ui/command'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useEventStore } from '@/features/events'
@@ -52,7 +53,15 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="overflow-hidden p-0" style={{ maxWidth: '768px' }}>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
-          <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
+          <div className="flex items-center border-b px-3">
+            <CommandInput
+              placeholder="Search tasks, events, tags, folders..."
+              value={query}
+              onValueChange={setQuery}
+              className="flex-1 border-0"
+            />
+            <CommandShortcut>⌘K</CommandShortcut>
+          </div>
           <CommandList className="max-h-[500px]">
             <CommandEmpty>No results found.</CommandEmpty>
 
