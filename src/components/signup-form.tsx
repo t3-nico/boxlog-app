@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Eye, EyeOff } from 'lucide-react'
+import { Check, Eye, EyeOff, X } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -28,6 +28,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const isPasswordValid = password.length >= 8
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -142,6 +144,21 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                     </div>
                   </Field>
                 </Field>
+
+                {/* パスワード文字数インジケーター */}
+                {password && (
+                  <div className="flex items-center gap-2 text-sm">
+                    {isPasswordValid ? (
+                      <Check className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <X className="text-muted-foreground h-4 w-4" />
+                    )}
+                    <span className={cn(isPasswordValid ? 'text-green-600' : 'text-muted-foreground')}>
+                      {password.length} / 8文字以上
+                    </span>
+                  </div>
+                )}
+
                 <FieldDescription>{t('auth.signupForm.passwordRequirement')}</FieldDescription>
               </Field>
 
