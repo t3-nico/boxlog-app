@@ -165,19 +165,38 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                   </Field>
 
                   {/* パスワード文字数インジケーター */}
-                  {password && (
-                    <div className="flex items-center gap-2 text-sm">
-                      {isPasswordValid ? (
-                        <Check className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <X className="text-muted-foreground h-4 w-4" />
-                      )}
-                      <span className={cn(isPasswordValid ? 'text-green-600' : 'text-muted-foreground')}>
-                        {password.length} / {minPasswordLength}
-                        {t('auth.passwordStrength.minCharacters')}
-                      </span>
-                    </div>
-                  )}
+                  <div className="grid grid-cols-2 gap-4">
+                    {password && (
+                      <div className="flex items-center gap-2 text-sm">
+                        {isPasswordValid ? (
+                          <Check className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <X className="text-muted-foreground h-4 w-4" />
+                        )}
+                        <span className={cn(isPasswordValid ? 'text-green-600' : 'text-muted-foreground')}>
+                          {password.length} / {minPasswordLength}
+                          {t('auth.passwordStrength.minCharacters')}
+                        </span>
+                      </div>
+                    )}
+                    {confirmPassword && (
+                      <div className="flex items-center gap-2 text-sm">
+                        {confirmPassword.length >= minPasswordLength ? (
+                          <Check className="h-4 w-4 text-green-600" />
+                        ) : (
+                          <X className="text-muted-foreground h-4 w-4" />
+                        )}
+                        <span
+                          className={cn(
+                            confirmPassword.length >= minPasswordLength ? 'text-green-600' : 'text-muted-foreground'
+                          )}
+                        >
+                          {confirmPassword.length} / {minPasswordLength}
+                          {t('auth.passwordStrength.minCharacters')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
                   <FieldDescription>{t('auth.signupForm.passwordRequirement')}</FieldDescription>
                 </Field>
