@@ -8,15 +8,18 @@ import { Plus } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
+import { Sheet, SheetContent } from '@/components/ui/sheet'
 import { CalendarNavigationProvider } from '@/features/calendar/contexts/CalendarNavigationContext'
 import { useCalendarProviderProps } from '@/features/calendar/hooks/useCalendarProviderProps'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
+import { SiteHeader } from '@/components/site-header'
 import { Inspector } from '@/features/inspector'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
+import { useSidebarStore } from '@/features/navigation/stores/useSidebarStore'
 import { SettingsDialog } from '@/features/settings/components/dialog'
 
 interface BaseLayoutContentProps {
@@ -30,11 +33,13 @@ interface BaseLayoutContentProps {
  * Client Componentとして分離
  */
 export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
-  const { t } = useI18n()
+  const pathname = usePathname() || '/'
+  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  const { t } = useI18n(localeFromPath)
   const { openCreateInspector } = useCreateEventInspector()
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const pathname = usePathname() || '/'
   const searchParams = useSearchParams()
+  const { isOpen, toggle } = useSidebarStore()
 
   // jsx-no-bind optimization: Create event handler
   const handleCreateEventClick = useCallback(() => {
@@ -60,34 +65,64 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
         {t('common.skipToMainContent')}
       </a>
 
-      {/* メインレイアウト - Inset方式 */}
+      {/* メインレイアウト */}
       <div className="bg-secondary flex flex-1 overflow-hidden">
-        <ResizablePanelGroup direction="horizontal">
-          {/* L1: Sidebar - Resizable */}
-          <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-            <AppSidebar />
-          </ResizablePanel>
+        {isMobile ? (
+          <>
+            {/* モバイル: Sheet（オーバーレイ）でSidebarを表示 */}
+            <Sheet open={isOpen} onOpenChange={toggle}>
+              <SheetContent side="left" className="w-64 p-0">
+                <AppSidebar />
+              </SheetContent>
+            </Sheet>
 
-          <ResizableHandle withHandle />
+            {/* Main Content */}
+            <div className="bg-muted m-2 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
+              {/* Site Header */}
+              <SiteHeader />
 
-          {/* L2: Main Content + Inspector - Floating */}
-          <ResizablePanel defaultSize={80}>
-            <div className="bg-muted m-2 ml-0 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
-              {/* Main Content Area */}
               <div className="flex flex-1 overflow-hidden">
                 <div className="relative z-10 flex flex-1">
-                  {/* Main Content */}
                   <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
                     {children}
                   </main>
                 </div>
-
-                {/* Inspector - 右端 */}
                 <Inspector />
               </div>
             </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+          </>
+        ) : (
+          <ResizablePanelGroup direction="horizontal">
+            {/* デスクトップ: Resizable Sidebar */}
+            {isOpen && (
+              <>
+                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+                  <div className="ml-2 flex h-full flex-col">
+                    <AppSidebar />
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+              </>
+            )}
+
+            {/* Main Content + Inspector */}
+            <ResizablePanel defaultSize={isOpen ? 80 : 100}>
+              <div className="bg-muted m-2 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
+                {/* Site Header */}
+                <SiteHeader />
+
+                <div className="flex flex-1 overflow-hidden">
+                  <div className="relative z-10 flex flex-1">
+                    <main id="main-content" className="relative flex-1 overflow-hidden" role="main">
+                      {children}
+                    </main>
+                  </div>
+                  <Inspector />
+                </div>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        )}
       </div>
 
       {/* Floating Action Button */}
