@@ -48,7 +48,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   )
 
   return (
-    <CommandDialog open={isOpen} onOpenChange={onClose} className="sm:!max-w-2xl">
+    <CommandDialog open={isOpen} onOpenChange={onClose} className="sm:max-w-2xl">
       <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
