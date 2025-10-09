@@ -32,7 +32,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   // Get data from stores
   const tasks = useTaskStore((state) => state.tasks)
   const tags = useTagStore((state) => state.tags)
-  const smartFolders = useSmartFolderStore((state) => state.folders)
+  const smartFolders = useSmartFolderStore((state) => state.smartFolders)
   const events = useEventStore((state) => state.events)
 
   // Handle result selection
@@ -48,7 +48,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
   )
 
   return (
-    <CommandDialog open={isOpen} onOpenChange={onClose}>
+    <CommandDialog open={isOpen} onOpenChange={onClose} className="sm:max-w-2xl">
       <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
