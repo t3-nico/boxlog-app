@@ -1,5 +1,43 @@
 // Settings-related types
 
+import type { LucideIcon } from 'lucide-react'
+
+import type { TranslatedString } from '@/types/i18n-branded'
+
+// ========================================
+// Settings Dialog Types
+// ========================================
+
+/**
+ * 設定カテゴリの識別子
+ */
+export type SettingsCategory =
+  | 'general'
+  | 'account'
+  | 'notifications'
+  | 'calendar'
+  | 'tags'
+  | 'preferences'
+  | 'plan-billing'
+  | 'integration'
+  | 'data-export'
+  | 'legal'
+  | 'trash'
+
+/**
+ * 設定メニュー項目
+ */
+export interface SettingsMenuItem {
+  id: SettingsCategory
+  icon: LucideIcon
+  label: TranslatedString
+  description?: TranslatedString
+}
+
+// ========================================
+// Individual Settings Types
+// ========================================
+
 export interface CalendarSettings {
   timezone: string
   weekStartDay: number
@@ -30,6 +68,9 @@ export interface IntegrationSettings {
   zapier: boolean
 }
 
+/**
+ * @deprecated Use SettingsMenuItem instead
+ */
 export interface SettingsSection {
   id: string
   title: string

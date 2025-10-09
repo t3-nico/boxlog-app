@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { NotificationsList } from '@/features/notifications/components/notifications-list'
 import { cn } from '@/lib/utils'
 
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
 import { SettingField } from './fields/SettingField'
@@ -26,7 +26,7 @@ interface NotificationAutoSaveSettings {
 
 const NotificationSettings = () => {
   const [activeTab, setActiveTab] = useState<'list' | 'settings'>('list')
-  const t = useTranslation()
+  const { t } = useI18n()
 
   // 通知設定の自動保存
   const notifications = useAutoSaveSettings<NotificationAutoSaveSettings>({

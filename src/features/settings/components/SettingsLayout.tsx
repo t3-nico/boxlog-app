@@ -11,7 +11,7 @@ interface SettingsLayoutProps {
 
 export const SettingsLayout = ({ children, title, description, actions }: SettingsLayoutProps) => {
   return (
-    <div className="flex h-full flex-1 flex-col bg-white dark:bg-neutral-900">
+    <div className="flex h-full flex-1 flex-col">
       {/* ヘッダー部分 */}
       <div className="flex-shrink-0 p-6 pb-4">
         <div className="flex items-center justify-between">
@@ -53,7 +53,7 @@ export const SettingsLayout = ({ children, title, description, actions }: Settin
             }
           }
         `}</style>
-        <div className="mx-auto w-full max-w-7xl">{children}</div>
+        <div className="w-full">{children}</div>
       </div>
     </div>
   )

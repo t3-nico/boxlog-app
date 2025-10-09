@@ -17,6 +17,7 @@ import { Inspector } from '@/features/inspector'
 import { useCreateEventInspector } from '@/features/inspector/hooks/useCreateEventInspector'
 import { MobileBottomNavigation } from '@/features/navigation/components/mobile/MobileBottomNavigation'
 import { AppSidebar } from '@/features/navigation/components/sidebar/app-sidebar'
+import { SettingsDialog } from '@/features/settings/components/dialog'
 
 interface BaseLayoutContentProps {
   children: React.ReactNode
@@ -98,6 +99,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
       >
         <Plus className="h-6 w-6 md:h-7 md:w-7" />
       </Button>
+
+      {/* Settings Dialog */}
+      <SettingsDialog />
 
       {/* Mobile Bottom Navigation */}
       {isMobile ? <MobileBottomNavigation /> : null}

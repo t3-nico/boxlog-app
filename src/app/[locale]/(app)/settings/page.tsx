@@ -1,16 +1,29 @@
-import { redirect } from 'next/navigation'
+'use client'
 
-import type { Locale } from '@/types/i18n'
+import { useEffect } from 'react'
 
-interface SettingsPageProps {
-  params: { locale: Locale }
-}
+import { useRouter } from 'next/navigation'
+
+import { useSettingsDialogStore } from '@/features/settings/stores/useSettingsDialogStore'
 
 /**
- * 設定トップページ
- * Next.js公式: Server Componentでredirect()使用
+ * 設定ページ
+ *
+ * ページベースのルーティングからDialog形式に移行
+ * このページにアクセスすると自動的にSettingsDialogを開いてHomeに遷移
  */
-export default async function SettingsIndexPage({ params }: SettingsPageProps) {
-  const { locale } = await params
-  redirect(`/${locale}/settings/account`)
+export default function SettingsPage() {
+  const router = useRouter()
+  const { openSettings } = useSettingsDialogStore()
+
+  useEffect(() => {
+    // Dialogを開く
+    openSettings()
+
+    // Homeページに遷移（URLを/settingsから変更）
+    router.push('/')
+  }, [openSettings, router])
+
+  // レンダリング中は何も表示しない（即座にリダイレクト）
+  return null
 }

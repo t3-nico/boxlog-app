@@ -12,7 +12,7 @@ import { AIMessage, AIMessageContent } from '@/components/kibo/ai/message'
 import { AIResponse } from '@/components/kibo/ai/response'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 // Vercel AI SDK message type extension
 interface ExtendedMessage extends UIMessage {
@@ -72,7 +72,7 @@ const RelatedFiles = ({ files }: { files: string[] }) => (
 
 // ユーザーメッセージ内容コンポーネント
 const UserMessageContent = ({ message }: { message: UIMessage }) => {
-  const { t } = useTranslation()
+  const { t } = useI18n()
   const extendedMessage = message as ExtendedMessage
   return (
     <div className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -167,7 +167,7 @@ const MainSupportChatInput = ({
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) => {
-  const { t } = useTranslation()
+  const { t } = useI18n()
   const [_isComposing, _setIsComposing] = useState(false)
 
   const handleCompositionStart = useCallback(() => {
@@ -225,7 +225,7 @@ const MainSupportChatInput = ({
 
 export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
-  const { t } = useTranslation()
+  const { t } = useI18n()
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const chatHelpers = useChat({
