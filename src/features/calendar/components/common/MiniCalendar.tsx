@@ -37,7 +37,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
         onMonthChange={onMonthChange}
         showWeekNumber={showWeekNumbers}
         captionLayout="dropdown"
-        className={className}
+        className="bg-transparent"
         locale={locale === 'ja' ? ja : undefined}
         weekStartsOn={1}
       />
