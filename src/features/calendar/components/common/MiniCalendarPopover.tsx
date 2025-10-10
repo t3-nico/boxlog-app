@@ -47,7 +47,7 @@ export const MiniCalendarPopover = ({
       <PopoverTrigger asChild className={cn('hover:bg-accent transition-colors', className)}>
         {children}
       </PopoverTrigger>
-      <PopoverContent className={cn('bg-popover w-auto border-none p-0', popoverClassName)} align={align} side={side}>
+      <PopoverContent className={cn('bg-muted w-auto border-none p-0', popoverClassName)} align={align} side={side}>
         <MiniCalendar
           selectedDate={selectedDate}
           onDateSelect={handleDateSelect}
