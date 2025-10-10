@@ -50,7 +50,7 @@ export const CalendarHeader = ({
   showMiniCalendar = false,
 }: CalendarHeaderProps) => {
   return (
-    <header className="bg-background relative px-4 py-4">
+    <header className="bg-background relative px-4 py-2">
       <div className="flex items-center justify-between">
         {/* 左側: カスタムスロット + ナビゲーションコントロールと日付 */}
         <div className="flex items-center gap-4">
