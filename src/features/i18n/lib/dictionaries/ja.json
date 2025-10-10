@@ -30,6 +30,7 @@
     "toggleSidebar": "サイドバーを開閉",
     "closeSidebar": "サイドバーを閉じる",
     "openSidebar": "サイドバーを開く",
+    "resize": "サイズを変更",
     "navigation": {
       "calendar": "カレンダー",
       "board": "ボード",

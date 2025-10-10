@@ -30,6 +30,7 @@
     "toggleSidebar": "Toggle Sidebar",
     "closeSidebar": "Close Sidebar",
     "openSidebar": "Open Sidebar",
+    "resize": "Resize",
     "navigation": {
       "calendar": "Calendar",
       "board": "Board",

@@ -4,7 +4,7 @@ import { Mail, PlusCircle, type LucideIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 import type { TranslatedString } from '@/types/i18n-branded'
@@ -33,19 +33,17 @@ export function NavMain({
           <PlusCircle className="h-4 w-4" />
           <span>{t('sidebar.quickCreate')}</span>
         </button>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button size="icon" className="h-8 w-8 shrink-0" variant="outline">
-                <Mail className="h-4 w-4" />
-                <span className="sr-only">{t('sidebar.inbox')}</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{t('sidebar.inbox')}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size="icon" className="h-8 w-8 shrink-0" variant="outline">
+              <Mail className="h-4 w-4" />
+              <span className="sr-only">{t('sidebar.inbox')}</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{t('sidebar.inbox')}</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       {/* Navigation Items */}

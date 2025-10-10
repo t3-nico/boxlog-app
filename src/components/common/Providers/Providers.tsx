@@ -4,6 +4,7 @@ import { useState } from 'react'
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthProvider } from '@/features/auth'
 
 import { PreloadResources } from '../Preload'
@@ -37,8 +38,10 @@ export const Providers = ({ children }: ProvidersProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <PreloadResources />
-        {children}
+        <TooltipProvider delayDuration={300} skipDelayDuration={100}>
+          <PreloadResources />
+          {children}
+        </TooltipProvider>
       </AuthProvider>
     </QueryClientProvider>
   )
