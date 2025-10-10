@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
@@ -161,10 +162,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               </FieldGroup>
             </form>
             <div className="bg-muted relative hidden md:block">
-              <img
+              <Image
                 src="/placeholder.svg"
                 alt="Image"
-                className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                fill
+                className="object-cover dark:brightness-[0.2] dark:grayscale"
               />
             </div>
           </CardContent>
