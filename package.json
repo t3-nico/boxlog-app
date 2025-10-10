@@ -9,8 +9,10 @@
     "src/app/globals.css"
   ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
+    "dev:safe": "./scripts/dev-server-guard.sh",
+    "dev:kill": "lsof -ti:3000 | xargs kill -9 2>/dev/null || echo 'No server running'",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
     "lint": "eslint . --max-warnings 30",
     "lint:fix": "eslint . --fix",

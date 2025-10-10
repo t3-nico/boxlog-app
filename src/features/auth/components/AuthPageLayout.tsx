@@ -67,15 +67,9 @@ export function AuthPageLayout({
         <div className={cn('absolute inset-0', backgroundGradient)}>
           <div className="flex h-full items-center justify-center p-8">
             <div className="space-y-4 text-center">
-              {emoji != null && (
-                <div className="text-muted-foreground/60 text-6xl font-bold">{emoji}</div>
-              )}
-              {title != null && (
-                <h2 className="text-muted-foreground text-3xl font-bold">{title}</h2>
-              )}
-              {description != null && (
-                <p className="text-muted-foreground/80 max-w-md text-lg">{description}</p>
-              )}
+              {emoji != null && <div className="text-muted-foreground/60 text-6xl font-bold">{emoji}</div>}
+              {title != null && <h2 className="text-muted-foreground text-3xl font-bold">{title}</h2>}
+              {description != null && <p className="text-muted-foreground/80 max-w-md text-lg">{description}</p>}
             </div>
           </div>
         </div>

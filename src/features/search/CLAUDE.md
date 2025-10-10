@@ -208,7 +208,6 @@ if (item.title === 'Search') {
 
 ```tsx
 import { GlobalSearchProvider } from '@/features/search'
-
 ;<GlobalSearchProvider>{children}</GlobalSearchProvider>
 ```
 
