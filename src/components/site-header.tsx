@@ -63,26 +63,22 @@ export function SiteHeader() {
   const showMenuButton = isMobile || !isOpen
 
   return (
-    <header className="bg-background border-border flex h-14 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
-      <div className="flex w-full items-center gap-2 px-4 lg:gap-2 lg:px-6">
+    <header className="bg-background flex min-h-12 shrink-0 items-center transition-[width,height] ease-linear">
+      <div className="flex w-full items-center gap-2 px-4 py-2">
         {/* Sidebar Trigger - モバイルは常に表示、デスクトップはSidebar閉じているときのみ */}
-        {showMenuButton && (
+        {showMenuButton ? (
           <>
-            <Button
-              onClick={toggle}
-              variant="ghost"
-              size="icon"
-              className="-ml-1"
-              aria-label={t('sidebar.openSidebar')}
-            >
-              <PanelLeft className="h-5 w-5" />
+            <Button onClick={toggle} variant="ghost" size="icon-sm" aria-label={t('sidebar.openSidebar')}>
+              <PanelLeft className="h-4 w-4" />
             </Button>
             <Separator orientation="vertical" className="mx-2 data-[orientation=vertical]:h-4" />
           </>
+        ) : (
+          <div className="w-0" />
         )}
 
         {/* Breadcrumb Navigation */}
-        <Breadcrumb>
+        <Breadcrumb className="mr-2">
           <BreadcrumbList>
             {breadcrumbs.map((crumb, index) => (
               <div key={crumb.path} className="flex items-center gap-2">

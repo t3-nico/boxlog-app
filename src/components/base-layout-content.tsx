@@ -95,19 +95,21 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           <ResizablePanelGroup direction="horizontal">
             {/* デスクトップ: Resizable Sidebar */}
             {isOpen && (
-              <>
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
-                  <div className="my-2 ml-2 flex h-full flex-col">
-                    <AppSidebar />
-                  </div>
-                </ResizablePanel>
-                <ResizableHandle className="hover:bg-primary w-1.5 transition-colors" />
-              </>
+              <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
+                <AppSidebar />
+              </ResizablePanel>
+            )}
+
+            {isOpen && (
+              <ResizableHandle
+                className="border-border hover:border-primary w-0 border-r transition-colors"
+                aria-label={t('sidebar.resize')}
+              />
             )}
 
             {/* Main Content + Inspector */}
             <ResizablePanel>
-              <div className="bg-muted m-2 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
+              <div className="bg-muted relative flex h-full flex-1 flex-col overflow-hidden shadow-lg">
                 {/* Site Header */}
                 <SiteHeader />
 
