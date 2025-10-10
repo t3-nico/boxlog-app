@@ -12,7 +12,7 @@ import { AIMessage, AIMessageContent } from '@/components/kibo/ai/message'
 import { AIResponse } from '@/components/kibo/ai/response'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 // Vercel AI SDK message type extension
 interface ExtendedMessage extends UIMessage {
@@ -72,16 +72,16 @@ const RelatedFiles = ({ files }: { files: string[] }) => (
 
 // ユーザーメッセージ内容コンポーネント
 const UserMessageContent = ({ message }: { message: UIMessage }) => {
-  const { t } = useTranslation()
+  const { t } = useI18n()
   const extendedMessage = message as ExtendedMessage
   return (
     <div className="text-sm leading-relaxed whitespace-pre-wrap">
       {getMessageContent(message)}
       {extendedMessage.status != null && (
         <div className="mt-1 text-xs opacity-75">
-          {extendedMessage.status === 'sending' && t('help.messageStatus.sending', 'Sending...')}
-          {extendedMessage.status === 'error' && t('help.messageStatus.error', 'Error')}
-          {extendedMessage.status === 'sent' && t('help.messageStatus.sent', 'Sent')}
+          {extendedMessage.status === 'sending' && t('help.messageStatus.sending')}
+          {extendedMessage.status === 'error' && t('help.messageStatus.error')}
+          {extendedMessage.status === 'sent' && t('help.messageStatus.sent')}
         </div>
       )}
     </div>
@@ -167,7 +167,7 @@ const MainSupportChatInput = ({
   handleSubmit: (e: React.FormEvent) => void
   isLoading: boolean
 }) => {
-  const { t } = useTranslation()
+  const { t } = useI18n()
   const [_isComposing, _setIsComposing] = useState(false)
 
   const handleCompositionStart = useCallback(() => {
@@ -193,7 +193,7 @@ const MainSupportChatInput = ({
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.2s' }}></div>
             <div className="h-2 w-2 animate-pulse rounded-full bg-blue-400" style={{ animationDelay: '0.4s' }}></div>
           </div>
-          <span>{t('help.status.checking', 'Checking...')}</span>
+          <span>{t('help.status.checking')}</span>
         </div>
       )}
 
@@ -203,7 +203,7 @@ const MainSupportChatInput = ({
           onChange={handleInputChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
-          placeholder={t('help.placeholder', 'Ask me anything...')}
+          placeholder={t('help.placeholder')}
           disabled={isLoading}
           minHeight={40}
           maxHeight={120}
@@ -212,7 +212,7 @@ const MainSupportChatInput = ({
           <AIInputTools>
             <div className="text-muted-foreground flex items-center gap-1 px-2 text-xs">
               <BotMessageSquare className="h-4 w-4" />
-              <span>{t('help.subtitle', 'AI Assistant')}</span>
+              <span>{t('help.subtitle')}</span>
             </div>
           </AIInputTools>
 
@@ -225,7 +225,7 @@ const MainSupportChatInput = ({
 
 export const MainSupportChat = () => {
   const [showMenu, setShowMenu] = useState(false)
-  const { t } = useTranslation()
+  const { t } = useI18n()
 
   // Use Vercel AI SDK's useChat hook with simple configuration
   const chatHelpers = useChat({
@@ -242,13 +242,13 @@ export const MainSupportChat = () => {
         parts: [
           {
             type: 'text' as const,
-            text: `${t('help.welcome.greeting', 'Welcome')}
+            text: `${t('help.welcome.greeting')}
 
-${t('help.welcome.capabilities', 'I can help you with:')}
+${t('help.welcome.capabilities')}
 
-${t('help.welcome.note', 'Note: AI responses may not always be accurate.')}
+${t('help.welcome.note')}
 
-${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
+${t('help.mainSupportChat.greeting')}`,
           },
         ],
       },
@@ -318,8 +318,8 @@ ${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
               <BotMessageSquare className="text-foreground h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-foreground text-lg font-semibold">{t('help.title', 'Help & Support')}</h3>
-              <p className="text-muted-foreground text-sm">{t('help.subtitle', 'AI Assistant')}</p>
+              <h3 className="text-foreground text-lg font-semibold">{t('help.title')}</h3>
+              <p className="text-muted-foreground text-sm">{t('help.subtitle')}</p>
             </div>
           </div>
 
@@ -349,7 +349,7 @@ ${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
-                    {t('help.actions.clearConversation', 'Clear Conversation')}
+                    {t('help.actions.clearConversation')}
                   </button>
                   <button
                     type="button"
@@ -357,7 +357,7 @@ ${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
                     className="text-card-foreground hover:bg-accent/50 flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors"
                   >
                     <Copy className="h-4 w-4" />
-                    {t('help.actions.exportConversation', 'Export Conversation')}
+                    {t('help.actions.exportConversation')}
                   </button>
                 </div>
               )}
@@ -380,17 +380,15 @@ ${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
                     clipRule="evenodd"
                   />
                 </svg>
-                <span className="text-sm font-medium">{t('help.status.error', 'Error')}</span>
+                <span className="text-sm font-medium">{t('help.status.error')}</span>
               </div>
-              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
-                {t('help.status.errorMessage', 'An error occurred. Please try again.')}
-              </p>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">{t('help.status.errorMessage')}</p>
               <button
                 type="button"
                 onClick={handleReload}
                 className="mt-2 text-xs text-red-800 underline hover:text-red-900 dark:text-red-200 dark:hover:text-red-100"
               >
-                {t('help.status.retryMessage', 'Retry')}
+                {t('help.status.retryMessage')}
               </button>
             </div>
           )}
@@ -400,13 +398,13 @@ ${t('help.mainSupportChat.greeting', 'How can I help you today?')}`,
               <AssistantIcon />
               <AIMessageContent>
                 <CodebaseAIResponse>
-                  {`${t('help.welcome.greeting', 'Welcome')}
+                  {`${t('help.welcome.greeting')}
 
-${t('help.welcome.capabilities', 'I can help you with:')}
+${t('help.welcome.capabilities')}
 
-${t('help.welcome.note', 'Note: AI responses may not always be accurate.')}
+${t('help.welcome.note')}
 
-${t('help.welcome.question', 'How can I help you today?')}`}
+${t('help.welcome.question')}`}
                 </CodebaseAIResponse>
               </AIMessageContent>
             </AIMessage>

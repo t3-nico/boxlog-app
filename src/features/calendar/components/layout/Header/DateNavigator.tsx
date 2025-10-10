@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+import { buttonVariants } from '@/components/ui/button'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { cn } from '@/lib/utils'
 
@@ -45,15 +46,7 @@ export const DateNavigator = ({
         <button
           type="button"
           onClick={() => onNavigate('today')}
-          className={cn(
-            'px-4 py-2 text-sm font-medium',
-            'rounded-md transition-colors',
-            'bg-neutral-200 dark:bg-neutral-700',
-            'text-neutral-700 dark:text-neutral-300',
-            'hover:bg-neutral-300 dark:hover:bg-neutral-600',
-            'flex items-center gap-2',
-            buttonClassName
-          )}
+          className={cn(buttonVariants({ variant: 'outline' }), buttonClassName)}
           title={t('calendar.actions.goToToday')}
         >
           <span>{todayLabel}</span>
@@ -67,7 +60,7 @@ export const DateNavigator = ({
             type="button"
             onClick={() => onNavigate('prev')}
             className={cn(
-              'rounded-full p-1.5 transition-colors',
+              'rounded-full p-2 transition-colors',
               'hover:bg-neutral-300 dark:hover:bg-neutral-600',
               'text-neutral-600 dark:text-neutral-400',
               'hover:text-neutral-900 dark:hover:text-neutral-50'
@@ -81,7 +74,7 @@ export const DateNavigator = ({
             type="button"
             onClick={() => onNavigate('next')}
             className={cn(
-              'rounded-full p-1.5 transition-colors',
+              'rounded-full p-2 transition-colors',
               'hover:bg-neutral-300 dark:hover:bg-neutral-600',
               'text-neutral-600 dark:text-neutral-400',
               'hover:text-neutral-900 dark:hover:text-neutral-50'

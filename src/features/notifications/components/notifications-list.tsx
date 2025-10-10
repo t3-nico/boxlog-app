@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import { BellRing } from 'lucide-react'
 
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 import { useNotificationTypeLabel } from '../utils/notification-helpers'
 
@@ -50,7 +50,7 @@ interface NotificationsListProps {
 }
 
 export const NotificationsList: React.FC<NotificationsListProps> = ({ notifications }) => {
-  const t = useTranslation()
+  const { t } = useI18n()
   const getTypeLabel = useNotificationTypeLabel()
   const defaultNotifications = getDefaultNotifications(t)
   const [notificationList, setNotificationList] = useState(notifications || defaultNotifications)

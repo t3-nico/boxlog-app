@@ -2,24 +2,35 @@
 
 import React from 'react'
 
-import { Label } from '@/components/ui/label'
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field'
 
 interface SettingFieldProps {
   label: string
   description?: string
   children: React.ReactNode
   required?: boolean
+  orientation?: 'vertical' | 'horizontal' | 'responsive'
 }
 
-export const SettingField = ({ label, description, children, required }: SettingFieldProps) => {
+/**
+ * 設定画面用のフィールドコンポーネント
+ * shadcn/ui Field コンポーネントのラッパー
+ */
+export const SettingField = ({
+  label,
+  description,
+  children,
+  required,
+  orientation = 'vertical',
+}: SettingFieldProps) => {
   return (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+    <Field orientation={orientation}>
+      <FieldLabel>
         {label}
-        {required ? <span className="ml-1 text-red-600 dark:text-red-400">*</span> : null}
-      </Label>
-      {description != null && <p className="text-sm text-neutral-600 dark:text-neutral-400">{description}</p>}
-      <div>{children}</div>
-    </div>
+        {required && <span className="text-destructive ml-1">*</span>}
+      </FieldLabel>
+      {description && <FieldDescription>{description}</FieldDescription>}
+      {children}
+    </Field>
   )
 }

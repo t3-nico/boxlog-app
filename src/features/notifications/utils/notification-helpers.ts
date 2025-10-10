@@ -1,5 +1,5 @@
 // @ts-nocheck TODO(#389): 型エラー7件を段階的に修正する
-import { useTranslation } from '@/features/i18n/lib/hooks'
+import { useI18n } from '@/features/i18n/lib/hooks'
 
 export const getNotificationTypeColor = (type: string) => {
   switch (type) {
@@ -15,7 +15,7 @@ export const getNotificationTypeColor = (type: string) => {
 }
 
 export const useNotificationTypeLabel = () => {
-  const t = useTranslation()
+  const { t } = useI18n()
 
   return (type: string) => {
     switch (type) {

@@ -66,7 +66,7 @@ export const EventTypeBadge = ({
     <Badge
       variant={variant === 'default' ? 'secondary' : variant}
       className={cn(
-        'inline-flex items-center gap-1.5 font-medium',
+        'inline-flex items-center gap-2 font-medium',
         sizeClasses[size],
         variant === 'default' && config.textColor,
         variant === 'outline' && `border-current ${config.textColor}`,

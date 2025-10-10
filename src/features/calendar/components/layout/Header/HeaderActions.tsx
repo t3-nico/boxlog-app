@@ -30,7 +30,7 @@ export const HeaderActions = ({
   const buttonClass = cn(
     'rounded-md p-2 transition-colors',
     'hover:bg-accent/50 text-muted-foreground hover:text-foreground',
-    compact ? 'p-1.5' : 'p-2'
+    compact ? 'p-2' : 'p-2'
   )
 
   const iconSize = compact ? 'h-4 w-4' : 'h-5 w-5'

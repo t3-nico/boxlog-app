@@ -21,6 +21,25 @@
     },
     "toggleSidebar": "Toggle Sidebar"
   },
+  "sidebar": {
+    "views": "Views",
+    "quickCreate": "Quick Create",
+    "inbox": "Inbox",
+    "theme": "Theme",
+    "getHelp": "Get Help",
+    "toggleSidebar": "Toggle Sidebar",
+    "closeSidebar": "Close Sidebar",
+    "openSidebar": "Open Sidebar",
+    "resize": "Resize",
+    "navigation": {
+      "calendar": "Calendar",
+      "board": "Board",
+      "table": "Table",
+      "stats": "Stats",
+      "settings": "Settings",
+      "search": "Search"
+    }
+  },
   "actions": {
     "save": "Save",
     "cancel": "Cancel",
@@ -58,169 +77,54 @@
     "japanese": "Japanese"
   },
   "help": {
-    "title": "BoxLog Support",
-    "subtitle": "Your AI assistant for BoxLog usage",
-    "placeholder": "Ask about BoxLog features and usage...",
-    "status": {
-      "checking": "Checking support info...",
-      "thinking": "BoxLog AI is thinking...",
-      "error": "Connection Error",
-      "errorMessage": "Unable to connect to BoxLog support. Please check your connection and try again.",
-      "retryMessage": "Retry last message"
+    "messageBubble": {
+      "sendError": "Send Error"
     },
-    "actions": {
-      "clearConversation": "Clear conversation",
-      "exportConversation": "Export conversation",
-      "sendMessage": "Send message"
+    "mainSupportChat": {
+      "or": "or",
+      "greeting": "How can I help you today?"
     },
-    "welcome": {
-      "greeting": "Hello! I'm the **BoxLog** application support assistant.",
-      "capabilities": "I can help you with:",
-      "features": [
-        "📅 **Calendar Features** - How to use calendar views",
-        "📋 **Task Management** - Creating and organizing tasks",
-        "🏷️ **Tag System** - Categorizing and filtering",
-        "📊 **Progress Tracking** - Monitoring productivity",
-        "🔄 **Smart Folders** - Automated organization",
-        "🛠️ **Troubleshooting** - Solving common issues"
-      ],
-      "note": "**Note**: I only provide support for BoxLog application usage.",
-      "question": "What would you like to know about BoxLog?"
+    "askPanel": {
+      "assistant": "Your AI assistant",
+      "chatPlaceholder": "Chat with Claude for productivity insights and task management"
     },
-    "messageStatus": {
-      "sending": "Sending...",
-      "sent": "Sent",
-      "error": "Send Error"
+    "content": {
+      "quickStartGuide": "Quick Start Guide",
+      "learnBasics": "Learn the basics of BoxLog",
+      "creatingFirstTask": "Creating Your First Task",
+      "settingUpWorkspace": "Setting Up Your Workspace",
+      "customizeEnvironment": "Customize your environment",
+      "manageTasksCalendar": "Managing tasks in calendar format",
+      "organizeTags": "Organizing with tags and automation",
+      "understandPatterns": "Understanding your work patterns",
+      "frequentProblems": "Solutions to frequent problems",
+      "optimizeExperience": "Optimize your BoxLog experience"
     },
-    "chatHistory": {
-      "title": "Chat History",
-      "description": "View and manage your past help chat sessions.",
-      "searchPlaceholder": "Search chats...",
-      "filters": {
-        "all": "All",
-        "active": "Active",
-        "resolved": "Resolved"
-      },
-      "empty": {
-        "noMatch": "No chats found matching your search criteria",
-        "noChats": "No chat history available"
-      },
-      "stats": {
-        "totalChats": "Total Chats",
-        "active": "Active",
-        "resolved": "Resolved"
-      },
-      "actions": {
-        "view": "View",
-        "delete": "Delete"
-      },
-      "labels": {
-        "messages": "messages"
-      }
+    "suggestions": {
+      "analyzeProductivity": "Analyze my productivity patterns",
+      "analyzeProductivityDesc": "Get insights on your work patterns",
+      "focusToday": "What tasks should I focus on today?",
+      "focusTodayDesc": "Prioritize your day",
+      "organizeSchedule": "Help me organize my schedule",
+      "organizeScheduleDesc": "Optimize your calendar",
+      "suggestImprovements": "Suggest productivity improvements",
+      "suggestImprovementsDesc": "Enhance your workflow",
+      "showDeadlines": "Show me my upcoming deadlines"
+    },
+    "sidebar": {
+      "calendarSyncIssues": "Calendar sync issues",
+      "howToDeleteTasks": "How to delete tasks",
+      "dataExportProcedures": "Data export procedures"
+    },
+    "errors": {
+      "sendingMessage": "Error sending message"
     }
   },
   "notifications": {
-    "title": "Notifications",
-    "tabs": {
-      "all": "All",
-      "unread": "Unread"
-    },
-    "empty": {
-      "all": "No notifications",
-      "unread": "No unread notifications"
-    },
-    "actions": {
-      "markAllAsRead": "Mark all as read",
-      "settings": "Notification settings",
-      "close": "Close"
-    },
-    "types": {
-      "system": "System",
-      "feature": "Feature",
-      "important": "Important",
-      "general": "General",
-      "reminder": "Reminder",
-      "task": "Task",
-      "event": "Event"
-    },
-    "messages": {
-      "meetingReminder": "Meeting reminder",
-      "meetingStartsIn": "Starts in 15 minutes",
-      "taskCompleted": "Task completed",
-      "taskCompletedMessage": "Project report has been completed",
-      "eventNotification": "Event notification",
-      "eventAddedMessage": "Tomorrow's schedule has been added",
-      "browserNotificationUnsupported": "This browser does not support notifications",
-      "browserNotificationPermissionFailed": "Failed to get notification permission",
-      "browserNotificationFailed": "Failed to display browser notification"
-    },
-    "aria": {
-      "modalBackdrop": "Modal background - click to close",
-      "closeModal": "Close modal"
-    },
-    "settings": {
-      "tabs": {
-        "list": "Notification List",
-        "settings": "Notification Settings"
-      },
-      "deliverySettings": {
-        "title": "Notification Delivery Settings",
-        "description": "Email, push, and browser notification settings",
-        "email": {
-          "label": "Email Notifications",
-          "description": "Receive important notifications via email"
-        },
-        "push": {
-          "label": "Push Notifications",
-          "description": "Push notifications to mobile devices"
-        },
-        "browser": {
-          "label": "Browser Notifications",
-          "description": "Display notifications in browser"
-        }
-      },
-      "contentSettings": {
-        "title": "Content Notifications",
-        "description": "Regular information delivery and system notifications",
-        "weeklyDigest": {
-          "label": "Weekly Digest",
-          "description": "Email delivery of weekly activity summary"
-        },
-        "system": {
-          "label": "System Notifications",
-          "description": "Receive maintenance and update information"
-        }
-      },
-      "tip": "💡 Tip: To enable browser notifications, please allow notifications in your browser settings.",
-      "saveSuccess": "Notification settings saved"
-    },
-    "list": {
-      "title": "Notifications",
-      "description": "Check the latest announcements and updates.",
-      "empty": {
-        "title": "No notifications",
-        "description": "New notifications will appear here when posted."
-      },
-      "actions": {
-        "markAsRead": "Mark as read"
-      },
-      "badges": {
-        "unread": "Unread"
-      },
-      "sampleNotifications": {
-        "maintenance": {
-          "title": "System Maintenance Notice",
-          "content": "System maintenance will be conducted on July 12, 2025 (Sat) from 2:00-4:00."
-        },
-        "newFeature": {
-          "title": "New Feature Announcement",
-          "content": "A new tagging feature has been added. More efficient information organization is now possible."
-        },
-        "termsUpdate": {
-          "title": "Terms of Service Update",
-          "content": "We have updated our Terms of Service. Please review the changes."
-        }
-      }
+    "errors": {
+      "notSupported": "This browser does not support notifications",
+      "permissionFailed": "Failed to obtain notification permission",
+      "displayFailed": "Failed to display browser notification"
     }
   },
   "common": {
@@ -318,13 +222,12 @@
       "moveFailed": "Failed to move event",
       "duplicateFailed": "Failed to duplicate event",
       "restoreError": "Restore Error",
-      "restoreFailed": "Failed to restore",
       "createNewEvent": "Create new event",
       "enterEventTitle": "Enter event title"
     },
     "accessibility": {
       "standardContrast": "Standard Contrast",
-      "toggleWeekend": "Toggle weekend display"
+      "toggleWeekend": "Toggle Weekend Display"
     },
     "toast": {
       "created": "Event created",
@@ -355,10 +258,6 @@
       "view": "View",
       "goToToday": "Go to today"
     },
-    "accessibility": {
-      "standardContrast": "Standard Contrast",
-      "toggleWeekend": "Toggle Weekend Display"
-    },
     "performance": {
       "notCalculated": "Not Calculated",
       "memoryLeakDetected": "Continuous memory increase detected",
@@ -379,181 +278,169 @@
     }
   },
   "settings": {
-    "title": "Settings",
-    "general": {
-      "title": "General Settings",
-      "description": "Manage organization's basic information and settings",
-      "organizationName": {
-        "label": "Organization Name",
-        "description": "This will be displayed on your public profile."
-      },
-      "organizationBio": {
-        "label": "Organization Bio",
-        "description": "This will be displayed on your public profile. Maximum 240 characters."
-      },
-      "organizationEmail": {
-        "label": "Organization Email",
-        "description": "This is how customers can contact you for support.",
-        "showOnProfile": "Show email on public profile"
-      },
-      "address": {
-        "label": "Address",
-        "description": "This is where your organization is registered."
-      },
-      "currency": {
-        "label": "Currency",
-        "description": "The currency that your organization will be collecting.",
-        "select": "Select currency",
-        "cad": "CAD - Canadian Dollar",
-        "usd": "USD - United States Dollar"
-      },
-      "actions": {
-        "reset": "Reset",
-        "save": "Save changes"
-      }
-    },
-    "preferences": {
-      "title": "Preferences",
-      "description": "Application display and behavior settings"
+    "account": {
+      "profileUpdated": "Profile updated successfully",
+      "passwordUpdated": "Password updated successfully",
+      "deleteNotImplemented": "Account deletion feature will be implemented later",
+      "deleteFailed": "Failed to delete account",
+      "profile": "Profile",
+      "profileDesc": "Basic information and profile image settings",
+      "displayName": "Display Name",
+      "displayNameDesc": "Name shown to other users",
+      "displayNamePlaceholder": "Enter display name",
+      "email": "Email Address",
+      "emailDesc": "Email address associated with your account",
+      "emailPlaceholder": "Enter email address",
+      "profilePicture": "Profile Picture",
+      "profilePictureDesc": "JPG, PNG, GIF max 2MB",
+      "profilePictureAlt": "Profile Picture",
+      "usingCustomImage": "Using custom image",
+      "usingEmojiIcon": "Using emoji icon",
+      "uploading": "Uploading...",
+      "uploadImage": "📷 Upload Image",
+      "remove": "Remove",
+      "profileIcon": "Profile Icon (Emoji)",
+      "profileIconDesc": "Emoji to use instead of profile picture",
+      "currentIcon": "Current icon",
+      "password": "Password",
+      "passwordDesc": "Change your account password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "updatingPassword": "Updating password...",
+      "updatePassword": "Update Password",
+      "twoFactor": "Two-Factor Authentication",
+      "twoFactorDesc": "Add an extra layer of security to your account",
+      "enable2FA": "Enable 2FA",
+      "twoFactorEnabled": "Two-factor authentication is enabled",
+      "twoFactorPrompt": "Require authentication code when signing in",
+      "twoFactorActive": "Two-factor authentication active",
+      "twoFactorProtection": "Your account is protected with an additional security layer.",
+      "dangerZone": "Danger Zone",
+      "dangerZoneDesc": "Irreversible and destructive actions",
+      "privacy": "Privacy",
+      "privacyDesc": "Configure information visibility",
+      "publicProfile": "Public Profile",
+      "publicProfileDesc": "Allow other users to view your profile",
+      "showEmail": "Show Email Address",
+      "showEmailDesc": "Display email address on your profile",
+      "allowNotifications": "Allow Notifications",
+      "allowNotificationsDesc": "Receive notifications from the system",
+      "debugInfo": "Debug Information",
+      "debugInfoDesc": "Current settings values (for development)",
+      "publicInfo": "Public basic information",
+      "title": "Account Settings",
+      "description": "Manage your profile and account",
+      "privacyUpdated": "Privacy settings updated successfully"
     },
     "calendar": {
-      "title": "Calendar",
-      "description": "Calendar display settings and timezone management"
+      "settingsSaved": "Calendar settings saved successfully",
+      "timeAndTimezone": "Time and Timezone",
+      "timeAndTimezoneDesc": "Configure how dates and times are displayed",
+      "timezone": "Timezone",
+      "timezoneDesc": "Timezone used for calendar display",
+      "selectTimezone": "Select timezone",
+      "timeFormat": "Time format",
+      "timeFormatDesc": "Select 12-hour or 24-hour time format",
+      "selectTimeFormat": "Select time format",
+      "timeFormat24h": "24-hour format (13:00)",
+      "timeFormat12h": "12-hour format (1:00 PM)",
+      "preview": "Preview:",
+      "currentTime": "Current time: {{time}}",
+      "fullFormat": "Full format: {{time}}",
+      "weekAndCalendar": "Week & Calendar Display",
+      "weekAndCalendarDesc": "Configure how weeks and calendar are displayed",
+      "weekStartsOn": "Week starts on",
+      "weekStartsOnDesc": "Select the first day of the week for calendar",
+      "selectStartDay": "Select start day",
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "saturday": "Saturday",
+      "showWeekNumbers": "Show week numbers",
+      "showWeekNumbersDesc": "Display week numbers in calendar view",
+      "showDeclinedEvents": "Show declined events",
+      "showDeclinedEventsDesc": "Display declined events in calendar",
+      "defaultTaskSettings": "Default Task Settings",
+      "defaultTaskSettingsDesc": "Default behavior for new tasks and events",
+      "defaultDuration": "Default task duration",
+      "defaultDurationDesc": "Default duration when creating new tasks",
+      "selectDuration": "Select duration",
+      "duration15min": "15 minutes",
+      "duration30min": "30 minutes",
+      "duration1hour": "1 hour",
+      "duration1hour30min": "1 hour 30 minutes",
+      "duration2hours": "2 hours",
+      "snapInterval": "Drag & drop snap interval",
+      "snapIntervalDesc": "Grid interval when dragging events in calendar",
+      "selectInterval": "Select interval",
+      "interval5min": "5 minutes",
+      "interval10min": "10 minutes",
+      "interval15min": "15 minutes",
+      "interval30min": "30 minutes",
+      "businessHours": "Business Hours",
+      "businessHoursDesc": "Define working hours in calendar",
+      "businessHoursStart": "Business hours start",
+      "businessHoursStartDesc": "Start time of business hours",
+      "businessHoursEnd": "Business hours end",
+      "businessHoursEndDesc": "End time of business hours",
+      "selectStartTime": "Start time",
+      "selectEndTime": "End time",
+      "businessHoursPreview": "Business hours:",
+      "resetSettings": "Reset Settings",
+      "resetSettingsDesc": "Reset all calendar settings to default values",
+      "resetToDefault": "Reset to Default"
     },
-    "integration": {
-      "title": "Integrations",
-      "description": "External service integration settings"
+    "preferences": {
+      "settingsSaved": "Preferences saved successfully",
+      "theme": "Theme",
+      "themeDesc": "Configure application appearance",
+      "themeLabel": "Theme",
+      "themeLabelDesc": "Application appearance theme",
+      "selectTheme": "Select theme",
+      "userExperience": "User Experience",
+      "userExperienceDesc": "Animation and sound settings",
+      "animations": "Animations",
+      "animationsDesc": "Enable animation effects for transitions and buttons",
+      "soundEffects": "Sound Effects",
+      "soundEffectsDesc": "Play notification and click sounds",
+      "dataPrivacy": "Data & Privacy",
+      "dataPrivacyDesc": "Data backup and developer features",
+      "autoBackup": "Auto Backup",
+      "autoBackupDesc": "Automatically backup data periodically",
+      "developerMode": "Developer Mode",
+      "developerModeDesc": "Show advanced features and debug information",
+      "language": "Language"
     },
-    "templates": {
-      "title": "Templates",
-      "description": "Manage frequently used forms and task templates"
+    "common": {
+      "saved": "Settings saved successfully",
+      "saveFailed": "Failed to save settings"
     },
-    "account": {
-      "title": "Account",
-      "description": "Account settings and profile information management"
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Notification settings and alert management"
-    },
-    "chronotype": {
-      "title": "Chronotype Settings",
-      "description": "Set up a schedule optimized for your circadian rhythm",
-      "proceed": "Proceed to Settings",
-      "saved": "Chronotype settings saved",
-      "benefits": {
-        "productivity": "Improve productivity: Schedule important tasks during your peak hours",
-        "routine": "Email processing, administrative work, routine tasks"
-      },
-      "profiles": {
-        "lion": "Lion (Early Bird)",
-        "bear": "Bear (Standard)",
-        "wolf": "Wolf (Night Owl)",
-        "dolphin": "Dolphin (Irregular)",
-        "lionDescription": "Most productive in early morning. Wake up at 5-6 AM and peak during morning hours.",
-        "bearDescription": "Follow the sun's rhythm. Wake up around 7 AM, productive in morning and early afternoon.",
-        "wolfDescription": "Most creative at night. Morning is difficult, productivity increases from afternoon to night.",
-        "dolphinDescription": "Light sleeper with irregular rhythm. Multiple short periods of focus.",
-        "lionPeakHours": "7:00-11:00",
-        "lionLowHours": "17:00-21:00, After 21:00",
-        "bearPeakHours": "9:00-12:00, 14:00-17:00",
-        "bearLowHours": "12:00-14:00, After 22:00",
-        "wolfPeakHours": "17:00-22:00",
-        "wolfLowHours": "6:00-10:00, 12:00-14:00",
-        "dolphinPeakHours": "Morning focus, Evening work",
-        "dolphinLowHours": "Midday rest"
-      },
-      "schedules": {
-        "morningSetup": "Wake up and preparation time",
-        "peakPerformance": "Peak performance time",
-        "focusedWork": "Focused work",
-        "regularTasks": "Regular tasks",
-        "lowEnergy": "Low energy time",
-        "sleepTime": "Sleep time",
-        "morningPrep": "Wake up and preparation",
-        "morningPeak": "Morning peak time",
-        "lunchBreak": "Lunch and break",
-        "afternoonPeak": "Afternoon peak time",
-        "eveningWindDown": "Evening time",
-        "slowMorning": "Slow morning time",
-        "gradualStart": "Gradually picking up pace",
-        "afternoonFocus": "Afternoon focus time",
-        "eveningPeak": "Evening peak time",
-        "creativeNight": "Creative night time",
-        "morningStart": "Early morning wake up",
-        "morningFocus": "Morning focus time",
-        "middayRest": "Midday low energy time",
-        "eveningWork": "Evening work",
-        "eveningTasks": "Evening time"
-      },
-      "diagnosis": {
-        "questions": {
-          "bedtime": "What is your ideal bedtime?",
-          "wakeup": "What is your ideal wake-up time?",
-          "peakFocus": "When are you most focused?",
-          "morningWake": "How do you wake up in the morning?",
-          "eveningActivity": "How do you prefer to spend your evenings?",
-          "sleepQuality": "How would you describe your sleep quality?",
-          "weekendPattern": "What is your natural weekend sleep pattern?"
-        },
-        "options": {
-          "bedtime1": "20:00-21:30 (Very early)",
-          "bedtime2": "21:30-23:00 (Standard)",
-          "bedtime3": "23:00-01:00 (Night owl)",
-          "bedtimeIrregular": "Irregular/Varies",
-          "wakeup1": "5:00-6:30 (Very early)",
-          "wakeup2": "6:30-8:00 (Standard)",
-          "wakeup3": "8:00-10:00 (Late)",
-          "wakeupIrregular": "Irregular/Varies",
-          "focusEarly": "Early morning (6-9am)",
-          "focusMorning": "Morning (9am-12pm)",
-          "focusNight": "Night (8pm-12am)",
-          "focusMultiple": "Multiple short periods (8-10am, 2-4pm)",
-          "wakeVeryFresh": "Very fresh, ready to start immediately",
-          "wakeFresh": "Wake up refreshed",
-          "wakeHard": "Hard to wake up",
-          "wakeLight": "Light sleep, wake frequently",
-          "eveningRelax": "Relax mode around 7-8pm",
-          "eveningModerate": "Moderately relaxed around 9-10pm",
-          "eveningActive": "Active until late night",
-          "eveningDepends": "Depends on mood/condition",
-          "sleepRegular": "Regular and deep sleep",
-          "sleepStable": "Stable and good sleep",
-          "sleepLateDeep": "Late to bed but deep sleep",
-          "sleepLight": "Light sleep with frequent awakenings",
-          "weekendSame": "Exactly same as weekdays",
-          "weekendSimilar": "Similar to weekdays (±1 hour)",
-          "weekendDifferent": "Significantly different (2-3+ hours)",
-          "weekendIrregular": "Irregular and inconsistent"
-        }
+    "dialog": {
+      "title": "Settings",
+      "categories": {
+        "general": "General",
+        "generalDesc": "Basic application settings",
+        "account": "Account",
+        "accountDesc": "Profile and account information",
+        "notifications": "Notifications",
+        "notificationsDesc": "Notification and reminder settings",
+        "calendar": "Calendar",
+        "calendarDesc": "Calendar display and timezone",
+        "tags": "Tags",
+        "tagsDesc": "Tag creation and management",
+        "preferences": "Preferences",
+        "preferencesDesc": "Theme and display options",
+        "planBilling": "Plan & Billing",
+        "planBillingDesc": "Subscription and payment",
+        "integration": "Integrations",
+        "integrationDesc": "External service connections",
+        "dataExport": "Data Export",
+        "dataExportDesc": "Data export and backup",
+        "legal": "Legal",
+        "legalDesc": "Terms and Privacy Policy",
+        "trash": "Trash",
+        "trashDesc": "Deleted items management"
       }
-    },
-    "dataExport": {
-      "title": "Data Export",
-      "description": "Export your data for backup and migration purposes"
-    },
-    "planBilling": {
-      "title": "Plan & Billing",
-      "description": "Manage subscription and billing information"
-    },
-    "legal": {
-      "title": "Legal Information",
-      "description": "Review privacy policy, terms of service, and app information"
-    },
-    "tags": {
-      "title": "Tag Management",
-      "description": "Organize and manage tags in a hierarchical structure",
-      "loadError": "Failed to load tags",
-      "reload": "Reload"
-    },
-    "trash": {
-      "title": "Trash",
-      "description": "Manage deleted items",
-      "itemsCount": "{{count}} items. Automatically deleted after 30 days.",
-      "empty": "Empty Trash",
-      "displayError": "Failed to display trash",
-      "reloadMessage": "Please reload the page.",
-      "reloadButton": "Reload"
     }
   },
   "board": {
@@ -721,17 +608,24 @@
   "auth": {
     "welcome": {
       "title": "Welcome to BoxLog",
-      "description": "The modern task management system that helps you stay organized and productive."
+      "description": "Simplify your task management. Maximize your productivity."
     },
     "login": {
-      "title": "Sign In",
-      "subtitle": "Welcome back to BoxLog",
-      "email": "Email address",
+      "title": "Login",
+      "description": "Login to your BoxLog account",
+      "email": "Email",
+      "emailPlaceholder": "m@example.com",
       "password": "Password",
+      "passwordPlaceholder": "Enter your password",
       "rememberMe": "Remember me",
       "forgotPassword": "Forgot password?",
-      "signIn": "Sign In",
-      "signUp": "Don't have an account? Sign up"
+      "loginButton": "Login",
+      "loggingIn": "Logging in...",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithApple": "Continue with Apple",
+      "orContinueWith": "Or continue with",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
     },
     "register": {
       "title": "Create Account",
@@ -751,13 +645,7 @@
       "passwordRequired": "Password is required",
       "passwordMismatch": "Passwords do not match",
       "weakPassword": "Password must be at least 8 characters long",
-      "emailNotConfirmed": "Email verification required",
-      "emailAlreadyRegistered": "This email address is already registered",
-      "networkError": "Network error occurred",
-      "unexpectedError": "An unexpected error occurred",
-      "initLocalAuthFailed": "Failed to initialize local authentication",
-      "emailInvalid": "Please enter a valid email address",
-      "tooManyRequests": "Too many requests. Please wait a moment and try again"
+      "unexpectedError": "An unexpected error occurred"
     },
     "success": {
       "loginSuccess": "Successfully logged in",
@@ -773,20 +661,82 @@
       "requireNumber": "Must include number",
       "requireSpecialChar": "Must include special character"
     },
+    "passwordStrength": {
+      "label": "Password Strength",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong",
+      "minCharacters": "characters minimum"
+    },
     "localStorage": {
       "signupDisabled": "Sign up disabled in localStorage mode",
       "passwordResetDisabled": "Password reset disabled in localStorage mode",
       "passwordUpdateDisabled": "Password update disabled in localStorage mode"
     },
     "loginForm": {
+      "welcomeBack": "Welcome back",
+      "loginToAccount": "Login to your Acme Inc account",
+      "email": "Email",
+      "emailPlaceholder": "m@example.com",
+      "password": "Password",
+      "forgotPassword": "Forgot your password?",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "loginButton": "Login",
+      "orContinueWith": "Or continue with",
+      "loginWithApple": "Login with Apple",
+      "loginWithGoogle": "Login with Google",
+      "loginWithMeta": "Login with Meta",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "termsAndPrivacy": "By clicking continue, you agree to our",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
       "startApp": "Start App"
     },
     "passwordResetForm": {
-      "sendResetEmail": "Send reset email"
+      "resetPassword": "Reset your password",
+      "enterEmail": "Enter your email address and we'll send you a reset link",
+      "email": "Email",
+      "emailPlaceholder": "m@example.com",
+      "sendResetLink": "Send reset link",
+      "sending": "Sending...",
+      "rememberPassword": "Remember your password?",
+      "login": "Log in",
+      "checkEmail": "Check your email",
+      "sentResetLink": "We sent a password reset link to",
+      "backToLogin": "Back to Login"
     },
     "signupForm": {
-      "enterPassword": "Enter your password",
-      "confirmPassword": "Confirm your password"
+      "createAccount": "Create your account",
+      "enterEmail": "Enter your email below to create your account",
+      "email": "Email",
+      "emailPlaceholder": "m@example.com",
+      "emailDescription": "We'll use this to contact you. We will not share your email with anyone else.",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "passwordRequirement": "Must be at least 8 characters long.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "passwordMatch": "Passwords match",
+      "passwordMismatch": "Passwords do not match",
+      "createAccountButton": "Create Account",
+      "orContinueWith": "Or continue with",
+      "signupWithApple": "Sign up with Apple",
+      "signupWithGoogle": "Sign up with Google",
+      "signupWithMeta": "Sign up with Meta",
+      "alreadyHaveAccount": "Already have an account?",
+      "login": "Log in",
+      "byContinuing": "By clicking continue, you agree to our",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy"
+    },
+    "localMode": {
+      "description": "Local Mode Only",
+      "loading": "Starting..."
     }
   },
   "tags": {
@@ -984,199 +934,9 @@
       }
     }
   },
-  "help": {
-    "messageBubble": {
-      "sendError": "Send Error"
-    },
-    "mainSupportChat": {
-      "or": "or",
-      "greeting": "How can I help you today?"
-    },
-    "askPanel": {
-      "assistant": "Your AI assistant",
-      "chatPlaceholder": "Chat with Claude for productivity insights and task management"
-    },
-    "content": {
-      "quickStartGuide": "Quick Start Guide",
-      "learnBasics": "Learn the basics of BoxLog",
-      "creatingFirstTask": "Creating Your First Task",
-      "settingUpWorkspace": "Setting Up Your Workspace",
-      "customizeEnvironment": "Customize your environment",
-      "manageTasksCalendar": "Managing tasks in calendar format",
-      "organizeTags": "Organizing with tags and automation",
-      "understandPatterns": "Understanding your work patterns",
-      "frequentProblems": "Solutions to frequent problems",
-      "optimizeExperience": "Optimize your BoxLog experience"
-    },
-    "suggestions": {
-      "analyzeProductivity": "Analyze my productivity patterns",
-      "analyzeProductivityDesc": "Get insights on your work patterns",
-      "focusToday": "What tasks should I focus on today?",
-      "focusTodayDesc": "Prioritize your day",
-      "organizeSchedule": "Help me organize my schedule",
-      "organizeScheduleDesc": "Optimize your calendar",
-      "suggestImprovements": "Suggest productivity improvements",
-      "suggestImprovementsDesc": "Enhance your workflow",
-      "showDeadlines": "Show me my upcoming deadlines"
-    },
-    "sidebar": {
-      "calendarSyncIssues": "Calendar sync issues",
-      "howToDeleteTasks": "How to delete tasks",
-      "dataExportProcedures": "Data export procedures"
-    },
-    "errors": {
-      "sendingMessage": "Error sending message"
-    }
-  },
   "ai": {
     "chat": {
       "inputPlaceholder": "What would you like to know?"
-    }
-  },
-  "notifications": {
-    "errors": {
-      "notSupported": "This browser does not support notifications",
-      "permissionFailed": "Failed to obtain notification permission",
-      "displayFailed": "Failed to display browser notification"
-    }
-  },
-  "settings": {
-    "account": {
-      "profileUpdated": "Profile updated successfully",
-      "passwordUpdated": "Password updated successfully",
-      "deleteNotImplemented": "Account deletion feature will be implemented later",
-      "deleteFailed": "Failed to delete account",
-      "profile": "Profile",
-      "profileDesc": "Basic information and profile image settings",
-      "displayName": "Display Name",
-      "displayNameDesc": "Name shown to other users",
-      "displayNamePlaceholder": "Enter display name",
-      "email": "Email Address",
-      "emailDesc": "Email address associated with your account",
-      "emailPlaceholder": "Enter email address",
-      "profilePicture": "Profile Picture",
-      "profilePictureDesc": "JPG, PNG, GIF max 2MB",
-      "profilePictureAlt": "Profile Picture",
-      "usingCustomImage": "Using custom image",
-      "usingEmojiIcon": "Using emoji icon",
-      "uploading": "Uploading...",
-      "uploadImage": "📷 Upload Image",
-      "remove": "Remove",
-      "profileIcon": "Profile Icon (Emoji)",
-      "profileIconDesc": "Emoji to use instead of profile picture",
-      "currentIcon": "Current icon",
-      "password": "Password",
-      "passwordDesc": "Change your account password",
-      "currentPassword": "Current password",
-      "newPassword": "New password",
-      "confirmPassword": "Confirm new password",
-      "updatingPassword": "Updating password...",
-      "updatePassword": "Update Password",
-      "twoFactor": "Two-Factor Authentication",
-      "twoFactorDesc": "Add an extra layer of security to your account",
-      "enable2FA": "Enable 2FA",
-      "twoFactorEnabled": "Two-factor authentication is enabled",
-      "twoFactorPrompt": "Require authentication code when signing in",
-      "twoFactorActive": "Two-factor authentication active",
-      "twoFactorProtection": "Your account is protected with an additional security layer.",
-      "dangerZone": "Danger Zone",
-      "dangerZoneDesc": "Irreversible and destructive actions",
-      "privacy": "Privacy",
-      "privacyDesc": "Configure information visibility",
-      "publicProfile": "Public Profile",
-      "publicProfileDesc": "Allow other users to view your profile",
-      "showEmail": "Show Email Address",
-      "showEmailDesc": "Display email address on your profile",
-      "allowNotifications": "Allow Notifications",
-      "allowNotificationsDesc": "Receive notifications from the system",
-      "debugInfo": "Debug Information",
-      "debugInfoDesc": "Current settings values (for development)",
-      "publicInfo": "Public basic information",
-      "title": "Account Settings",
-      "description": "Manage your profile and account",
-      "privacyUpdated": "Privacy settings updated successfully"
-    },
-    "calendar": {
-      "settingsSaved": "Calendar settings saved successfully",
-      "timeAndTimezone": "Time and Timezone",
-      "timeAndTimezoneDesc": "Configure how dates and times are displayed",
-      "timezone": "Timezone",
-      "timezoneDesc": "Timezone used for calendar display",
-      "selectTimezone": "Select timezone",
-      "timeFormat": "Time format",
-      "timeFormatDesc": "Select 12-hour or 24-hour time format",
-      "selectTimeFormat": "Select time format",
-      "timeFormat24h": "24-hour format (13:00)",
-      "timeFormat12h": "12-hour format (1:00 PM)",
-      "preview": "Preview:",
-      "currentTime": "Current time: {{time}}",
-      "fullFormat": "Full format: {{time}}",
-      "weekAndCalendar": "Week & Calendar Display",
-      "weekAndCalendarDesc": "Configure how weeks and calendar are displayed",
-      "weekStartsOn": "Week starts on",
-      "weekStartsOnDesc": "Select the first day of the week for calendar",
-      "selectStartDay": "Select start day",
-      "sunday": "Sunday",
-      "monday": "Monday",
-      "saturday": "Saturday",
-      "showWeekNumbers": "Show week numbers",
-      "showWeekNumbersDesc": "Display week numbers in calendar view",
-      "showDeclinedEvents": "Show declined events",
-      "showDeclinedEventsDesc": "Display declined events in calendar",
-      "defaultTaskSettings": "Default Task Settings",
-      "defaultTaskSettingsDesc": "Default behavior for new tasks and events",
-      "defaultDuration": "Default task duration",
-      "defaultDurationDesc": "Default duration when creating new tasks",
-      "selectDuration": "Select duration",
-      "duration15min": "15 minutes",
-      "duration30min": "30 minutes",
-      "duration1hour": "1 hour",
-      "duration1hour30min": "1 hour 30 minutes",
-      "duration2hours": "2 hours",
-      "snapInterval": "Drag & drop snap interval",
-      "snapIntervalDesc": "Grid interval when dragging events in calendar",
-      "selectInterval": "Select interval",
-      "interval5min": "5 minutes",
-      "interval10min": "10 minutes",
-      "interval15min": "15 minutes",
-      "interval30min": "30 minutes",
-      "businessHours": "Business Hours",
-      "businessHoursDesc": "Define working hours in calendar",
-      "businessHoursStart": "Business hours start",
-      "businessHoursStartDesc": "Start time of business hours",
-      "businessHoursEnd": "Business hours end",
-      "businessHoursEndDesc": "End time of business hours",
-      "selectStartTime": "Start time",
-      "selectEndTime": "End time",
-      "businessHoursPreview": "Business hours:",
-      "resetSettings": "Reset Settings",
-      "resetSettingsDesc": "Reset all calendar settings to default values",
-      "resetToDefault": "Reset to Default"
-    },
-    "preferences": {
-      "settingsSaved": "Preferences saved successfully",
-      "theme": "Theme",
-      "themeDesc": "Configure application appearance",
-      "themeLabel": "Theme",
-      "themeLabelDesc": "Application appearance theme",
-      "selectTheme": "Select theme",
-      "userExperience": "User Experience",
-      "userExperienceDesc": "Animation and sound settings",
-      "animations": "Animations",
-      "animationsDesc": "Enable animation effects for transitions and buttons",
-      "soundEffects": "Sound Effects",
-      "soundEffectsDesc": "Play notification and click sounds",
-      "dataPrivacy": "Data & Privacy",
-      "dataPrivacyDesc": "Data backup and developer features",
-      "autoBackup": "Auto Backup",
-      "autoBackupDesc": "Automatically backup data periodically",
-      "developerMode": "Developer Mode",
-      "developerModeDesc": "Show advanced features and debug information",
-      "language": "Language"
-    },
-    "common": {
-      "saved": "Settings saved successfully",
-      "saveFailed": "Failed to save settings"
     }
   }
 }

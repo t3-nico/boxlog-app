@@ -21,6 +21,25 @@
     },
     "toggleSidebar": "サイドバーを開閉"
   },
+  "sidebar": {
+    "views": "ビュー",
+    "quickCreate": "クイック作成",
+    "inbox": "受信箱",
+    "theme": "テーマ",
+    "getHelp": "ヘルプ",
+    "toggleSidebar": "サイドバーを開閉",
+    "closeSidebar": "サイドバーを閉じる",
+    "openSidebar": "サイドバーを開く",
+    "resize": "サイズを変更",
+    "navigation": {
+      "calendar": "カレンダー",
+      "board": "ボード",
+      "table": "テーブル",
+      "stats": "統計",
+      "settings": "設定",
+      "search": "検索"
+    }
+  },
   "actions": {
     "save": "保存",
     "cancel": "キャンセル",
@@ -58,169 +77,54 @@
     "japanese": "日本語"
   },
   "help": {
-    "title": "BoxLogサポート",
-    "subtitle": "BoxLog利用のためのAIアシスタント",
-    "placeholder": "BoxLogの機能や使い方について質問してください...",
-    "status": {
-      "checking": "サポート情報を確認中...",
-      "thinking": "BoxLog AIが考えています...",
-      "error": "接続エラー",
-      "errorMessage": "BoxLogサポートに接続できませんでした。接続を確認して再試行してください。",
-      "retryMessage": "最後のメッセージを再試行"
+    "messageBubble": {
+      "sendError": "送信エラー"
     },
-    "actions": {
-      "clearConversation": "会話をクリア",
-      "exportConversation": "会話をエクスポート",
-      "sendMessage": "メッセージを送信"
+    "mainSupportChat": {
+      "or": "または",
+      "greeting": "今日はどのようにお手伝いしましょうか？"
     },
-    "welcome": {
-      "greeting": "こんにちは！私は**BoxLog**アプリケーションのサポートアシスタントです。",
-      "capabilities": "以下のことでお手伝いできます：",
-      "features": [
-        "📅 **カレンダー機能** - カレンダービューの使い方",
-        "📋 **タスク管理** - タスクの作成と整理",
-        "🏷️ **タグシステム** - カテゴリ分けとフィルタリング",
-        "📊 **進捗追跡** - 生産性の監視",
-        "🔄 **スマートフォルダ** - 自動整理機能",
-        "🛠️ **トラブルシューティング** - 一般的な問題の解決"
-      ],
-      "note": "**注意**: BoxLogアプリケーションの使用方法に関するサポートのみ提供しています。",
-      "question": "BoxLogについて何か知り���いことはありますか？"
+    "askPanel": {
+      "assistant": "あなたのAIアシスタント",
+      "chatPlaceholder": "Claude に生産性の洞察とタスク管理について質問する"
     },
-    "messageStatus": {
-      "sending": "送信中...",
-      "sent": "送信済み",
-      "error": "送信エラー"
+    "content": {
+      "quickStartGuide": "クイックスタートガイド",
+      "learnBasics": "BoxLogの基本を学ぶ",
+      "creatingFirstTask": "最初のタスクを作成",
+      "settingUpWorkspace": "ワークスペースの設定",
+      "customizeEnvironment": "環境をカスタマイズ",
+      "manageTasksCalendar": "カレンダー形式でタスクを管理",
+      "organizeTags": "タグと自動化で整理",
+      "understandPatterns": "作業パターンを理解",
+      "frequentProblems": "よくある問題の解決策",
+      "optimizeExperience": "BoxLog体験を最適化"
     },
-    "chatHistory": {
-      "title": "チャット履歴",
-      "description": "過去のヘルプチャットセッションを表示・管理します。",
-      "searchPlaceholder": "チャットを検索...",
-      "filters": {
-        "all": "すべて",
-        "active": "アクティブ",
-        "resolved": "解決済み"
-      },
-      "empty": {
-        "noMatch": "検索条件に一致するチャットが見つかりませんでした",
-        "noChats": "チャット履歴がありません"
-      },
-      "stats": {
-        "totalChats": "総チャット数",
-        "active": "アクティブ",
-        "resolved": "解決済み"
-      },
-      "actions": {
-        "view": "表示",
-        "delete": "削除"
-      },
-      "labels": {
-        "messages": "メッセージ"
-      }
+    "suggestions": {
+      "analyzeProductivity": "生産性パターンを分析",
+      "analyzeProductivityDesc": "作業パターンの洞察を得る",
+      "focusToday": "今日注目すべきタスクは？",
+      "focusTodayDesc": "1日の優先順位を決める",
+      "organizeSchedule": "スケジュールを整理",
+      "organizeScheduleDesc": "カレンダーを最適化",
+      "suggestImprovements": "生産性改善の提案",
+      "suggestImprovementsDesc": "ワークフローを強化",
+      "showDeadlines": "今後の期限を表示"
+    },
+    "sidebar": {
+      "calendarSyncIssues": "カレンダー同期の問題",
+      "howToDeleteTasks": "タスクの削除方法",
+      "dataExportProcedures": "データエクスポート手順"
+    },
+    "errors": {
+      "sendingMessage": "メッセージ送信エラー"
     }
   },
   "notifications": {
-    "title": "通知",
-    "tabs": {
-      "all": "すべて",
-      "unread": "未読"
-    },
-    "empty": {
-      "all": "通知はありません",
-      "unread": "未読の通知はありません"
-    },
-    "actions": {
-      "markAllAsRead": "すべて既読にする",
-      "settings": "通知設定",
-      "close": "閉じる"
-    },
-    "types": {
-      "system": "システム",
-      "feature": "新機能",
-      "important": "重要",
-      "general": "お知らせ",
-      "reminder": "リマインダー",
-      "task": "タスク",
-      "event": "イベント"
-    },
-    "messages": {
-      "meetingReminder": "ミーティングリマインダー",
-      "meetingStartsIn": "15分後に開始します",
-      "taskCompleted": "タスク完了",
-      "taskCompletedMessage": "プロジェクトレポートが完了しました",
-      "eventNotification": "イベント通知",
-      "eventAddedMessage": "明日の予定が追加されました",
-      "browserNotificationUnsupported": "このブラウザは通知をサポートしていません",
-      "browserNotificationPermissionFailed": "通知許可の取得に失敗しました",
-      "browserNotificationFailed": "ブラウザ通知の表示に失敗しました"
-    },
-    "aria": {
-      "modalBackdrop": "モーダル背景 - クリックして閉じる",
-      "closeModal": "モーダルを閉じる"
-    },
-    "settings": {
-      "tabs": {
-        "list": "お知らせ一覧",
-        "settings": "通知設定"
-      },
-      "deliverySettings": {
-        "title": "通知配信設定",
-        "description": "メール、プッシュ、ブラウザ通知の設定",
-        "email": {
-          "label": "メール通知",
-          "description": "重要なお知らせをメールで受信"
-        },
-        "push": {
-          "label": "プッシュ通知",
-          "description": "モバイルデバイスへのプッシュ通知"
-        },
-        "browser": {
-          "label": "ブラウザ通知",
-          "description": "ブラウザでの通知表示"
-        }
-      },
-      "contentSettings": {
-        "title": "コンテンツ通知",
-        "description": "定期的な情報配信とシステム通知",
-        "weeklyDigest": {
-          "label": "週次ダイジェスト",
-          "description": "週単位のアクティビティサマリーをメールで配信"
-        },
-        "system": {
-          "label": "システム通知",
-          "description": "メンテナンス・アップデート情報を受信"
-        }
-      },
-      "tip": "💡 ヒント: ブラウザ通知を有効にするには、ブラウザの設定で通知を許可してください。",
-      "saveSuccess": "通知設定を保存しました"
-    },
-    "list": {
-      "title": "お知らせ",
-      "description": "最新のお知らせや更新情報をご確認いただけます。",
-      "empty": {
-        "title": "お知らせはありません",
-        "description": "新しいお知らせが投稿されるとここに表示されます。"
-      },
-      "actions": {
-        "markAsRead": "既読にする"
-      },
-      "badges": {
-        "unread": "未読"
-      },
-      "sampleNotifications": {
-        "maintenance": {
-          "title": "システムメンテナンスのお知らせ",
-          "content": "2025年7月12日（土）2:00-4:00にシステムメンテナンスを実施いたします。"
-        },
-        "newFeature": {
-          "title": "新機能のご案内",
-          "content": "新しいタグ機能が追加されました。より効率的な情報整理が可能になります。"
-        },
-        "termsUpdate": {
-          "title": "利用規約の更新",
-          "content": "利用規約を更新いたしました。変更内容をご確認ください。"
-        }
-      }
+    "errors": {
+      "notSupported": "このブラウザは通知をサポートしていません",
+      "permissionFailed": "通知許可の取得に失敗しました",
+      "displayFailed": "ブラウザ通知の表示に失敗しました"
     }
   },
   "common": {
@@ -295,7 +199,7 @@
       "edit": "編集",
       "duplicate": "複製",
       "restore": "予定を復元しました",
-      "restoreFailed": "復元に失敗しました",
+      "restoreFailed": "復元できませんでした",
       "adjustEndTime": "ドラッグして終了時間を調整",
       "noTimeSet": "時間未設定",
       "noDescription": "説明なし",
@@ -318,7 +222,6 @@
       "moveFailed": "予定の移動に失敗しました",
       "duplicateFailed": "予定の複製に失敗しました",
       "restoreError": "復元エラー",
-      "restoreFailed": "復元できませんでした",
       "createNewEvent": "新しいイベントを作成",
       "enterEventTitle": "イベントタイトルを入力"
     },
@@ -355,10 +258,6 @@
       "view": "表示",
       "goToToday": "今日へ移動"
     },
-    "accessibility": {
-      "standardContrast": "標準コントラスト",
-      "toggleWeekend": "週末表示の切り替え"
-    },
     "performance": {
       "notCalculated": "未計測",
       "memoryLeakDetected": "継続的なメモリ増加を検出",
@@ -379,181 +278,169 @@
     }
   },
   "settings": {
-    "title": "設定",
-    "general": {
-      "title": "一般設定",
-      "description": "組織の基本情報と設定を管理します",
-      "organizationName": {
-        "label": "組織名",
-        "description": "公開プロフィールに表示されます"
-      },
-      "organizationBio": {
-        "label": "組織の紹介",
-        "description": "公開プロフィールに表示されます。最大240文字。"
-      },
-      "organizationEmail": {
-        "label": "組織メールアドレス",
-        "description": "顧客がサポートに連絡する際のメールアドレスです。",
-        "showOnProfile": "公開プロフィールにメールを表示"
-      },
-      "address": {
-        "label": "住所",
-        "description": "組織が登録されている場所です。"
-      },
-      "currency": {
-        "label": "通貨",
-        "description": "組織が使用する通貨です。",
-        "select": "通貨を選択",
-        "cad": "CAD - カナダドル",
-        "usd": "USD - 米ドル"
-      },
-      "actions": {
-        "reset": "リセット",
-        "save": "変更を保存"
-      }
-    },
-    "preferences": {
-      "title": "環境設定",
-      "description": "アプリケーションの表示や動作設定"
+    "account": {
+      "profileUpdated": "プロフィールを更新しました",
+      "passwordUpdated": "パスワードを更新しました",
+      "deleteNotImplemented": "アカウント削除機能は後で実装されます",
+      "deleteFailed": "アカウントの削除に失敗しました",
+      "profile": "プロフィール",
+      "profileDesc": "基本情報とプロフィール画像の設定",
+      "displayName": "表示名",
+      "displayNameDesc": "他のユーザーに表示される名前",
+      "displayNamePlaceholder": "表示名を入力",
+      "email": "メールアドレス",
+      "emailDesc": "アカウントに関連付けられたメールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "profilePicture": "プロフィール画像",
+      "profilePictureDesc": "JPG, PNG, GIF 最大2MB",
+      "profilePictureAlt": "プロフィール画像",
+      "usingCustomImage": "カスタム画像を使用",
+      "usingEmojiIcon": "絵文字アイコンを使用",
+      "uploading": "アップロード中...",
+      "uploadImage": "📷 画像をアップロード",
+      "remove": "削除",
+      "profileIcon": "プロフィールアイコン (絵文字)",
+      "profileIconDesc": "プロフィール画像の代わりに使用する絵文字",
+      "currentIcon": "現在のアイコン",
+      "password": "パスワード",
+      "passwordDesc": "アカウントのパスワードを変更",
+      "currentPassword": "現在のパスワード",
+      "newPassword": "新しいパスワード",
+      "confirmPassword": "新しいパスワード（確認）",
+      "updatingPassword": "パスワード更新中...",
+      "updatePassword": "パスワードを更新",
+      "twoFactor": "2要素認証",
+      "twoFactorDesc": "アカウントに追加のセキュリティ層を追加",
+      "enable2FA": "2FAを有効にする",
+      "twoFactorEnabled": "2要素認証が有効になっています",
+      "twoFactorPrompt": "サインイン時に認証コードを要求します",
+      "twoFactorActive": "2要素認証が有効",
+      "twoFactorProtection": "アカウントが追加のセキュリティ層で保護されています。",
+      "dangerZone": "危険な操作",
+      "dangerZoneDesc": "取り消すことのできない破壊的なアクション",
+      "privacy": "プライバシー",
+      "privacyDesc": "情報の公開範囲を設定",
+      "publicProfile": "プロフィールを公開",
+      "publicProfileDesc": "他のユーザーがあなたのプロフィールを閲覧できます",
+      "showEmail": "メールアドレスを表示",
+      "showEmailDesc": "プロフィールにメールアドレスを表示します",
+      "allowNotifications": "通知を許可",
+      "allowNotificationsDesc": "システムからの通知を受け取ります",
+      "debugInfo": "デバッグ情報",
+      "debugInfoDesc": "現在の設定値（開発用）",
+      "publicInfo": "公開される基本情報",
+      "title": "アカウント設定",
+      "description": "プロフィールとアカウントの管理",
+      "privacyUpdated": "プライバシー設定を更新しました"
     },
     "calendar": {
-      "title": "カレンダー",
-      "description": "カレンダー表示設定とタイムゾーンの管理"
+      "settingsSaved": "カレンダー設定を保存しました",
+      "timeAndTimezone": "時間とタイムゾーン",
+      "timeAndTimezoneDesc": "日付と時間の表示方法を設定",
+      "timezone": "タイムゾーン",
+      "timezoneDesc": "カレンダー表示に使用するタイムゾーン",
+      "selectTimezone": "タイムゾーンを選択",
+      "timeFormat": "時間表示形式",
+      "timeFormatDesc": "12時間表記または24時間表記を選択",
+      "selectTimeFormat": "時間表示形式を選択",
+      "timeFormat24h": "24時間表記 (13:00)",
+      "timeFormat12h": "12時間表記 (1:00 PM)",
+      "preview": "プレビュー:",
+      "currentTime": "現在時刻: {{time}}",
+      "fullFormat": "完全表記: {{time}}",
+      "weekAndCalendar": "週とカレンダー表示",
+      "weekAndCalendarDesc": "週の表示方法とカレンダーのカスタマイズ",
+      "weekStartsOn": "週の開始曜日",
+      "weekStartsOnDesc": "カレンダーの週の開始日を選択",
+      "selectStartDay": "開始日を選択",
+      "sunday": "日曜日",
+      "monday": "月曜日",
+      "saturday": "土曜日",
+      "showWeekNumbers": "週番号を表示",
+      "showWeekNumbersDesc": "カレンダービューで週番号を表示",
+      "showDeclinedEvents": "辞退したイベントを表示",
+      "showDeclinedEventsDesc": "辞退したイベントもカレンダーに表示",
+      "defaultTaskSettings": "デフォルトタスク設定",
+      "defaultTaskSettingsDesc": "新しいタスクとイベントのデフォルト動作",
+      "defaultDuration": "デフォルトタスク時間",
+      "defaultDurationDesc": "新しいタスク作成時のデフォルト時間",
+      "selectDuration": "時間を選択",
+      "duration15min": "15分",
+      "duration30min": "30分",
+      "duration1hour": "1時間",
+      "duration1hour30min": "1時間30分",
+      "duration2hours": "2時間",
+      "snapInterval": "ドラッグ&ドロップのスナップ間隔",
+      "snapIntervalDesc": "カレンダーでイベントをドラッグする際のグリッド間隔",
+      "selectInterval": "間隔を選択",
+      "interval5min": "5分",
+      "interval10min": "10分",
+      "interval15min": "15分",
+      "interval30min": "30分",
+      "businessHours": "営業時間",
+      "businessHoursDesc": "作業時間をカレンダーに定義",
+      "businessHoursStart": "営業開始時間",
+      "businessHoursStartDesc": "営業時間の開始時間",
+      "businessHoursEnd": "営業終了時間",
+      "businessHoursEndDesc": "営業時間の終了時間",
+      "selectStartTime": "開始時間",
+      "selectEndTime": "終了時間",
+      "businessHoursPreview": "営業時間:",
+      "resetSettings": "設定のリセット",
+      "resetSettingsDesc": "すべてのカレンダー設定をデフォルト値に戻す",
+      "resetToDefault": "デフォルトに戻す"
     },
-    "integration": {
-      "title": "連携設定",
-      "description": "外部サービスとの連携設定"
+    "preferences": {
+      "settingsSaved": "環境設定を保存しました",
+      "theme": "テーマ",
+      "themeDesc": "アプリケーションの外観の設定",
+      "themeLabel": "テーマ",
+      "themeLabelDesc": "アプリケーションの外観テーマ",
+      "selectTheme": "テーマを選択",
+      "userExperience": "ユーザーエクスペリエンス",
+      "userExperienceDesc": "アニメーションやサウンドの設定",
+      "animations": "アニメーション",
+      "animationsDesc": "画面遷移やボタンのアニメーション効果を有効にする",
+      "soundEffects": "サウンド効果",
+      "soundEffectsDesc": "通知音やクリック音を再生する",
+      "dataPrivacy": "データとプライバシー",
+      "dataPrivacyDesc": "データのバックアップと開発者向け機能",
+      "autoBackup": "自動バックアップ",
+      "autoBackupDesc": "データを定期的に自動でバックアップする",
+      "developerMode": "開発者モード",
+      "developerModeDesc": "高度な機能とデバッグ情報を表示する",
+      "language": "言語"
     },
-    "templates": {
-      "title": "テンプレート",
-      "description": "よく使用するフォームやタスクのテンプレートを管理します"
+    "common": {
+      "saved": "設定を保存しました",
+      "saveFailed": "保存に失敗しました"
     },
-    "account": {
-      "title": "アカウント",
-      "description": "アカウント設定とプロフィール情報の管理"
-    },
-    "notifications": {
-      "title": "通知",
-      "description": "通知設定とアラートの管理"
-    },
-    "chronotype": {
-      "title": "クロノタイプ設定",
-      "description": "あなたの生体リズムに最適化されたスケジュールを設定します",
-      "proceed": "設定に進む",
-      "saved": "クロノタイプ設定を保存しました",
-      "benefits": {
-        "productivity": "生産性の向上：自分のピーク時間に重要なタスクを配置",
-        "routine": "メール処理、事務作業、ルーチンタスク"
-      },
-      "profiles": {
-        "lion": "Lion (ライオン型・超朝型)",
-        "bear": "Bear (クマ型・標準型)",
-        "wolf": "Wolf (オオカミ型・夜型)",
-        "dolphin": "Dolphin (イルカ型・不規則型)",
-        "lionDescription": "早朝に最も生産的。朝5-6時に起床し、午前中にピークを迎える。",
-        "bearDescription": "太陽のリズムに従う。朝7時頃起床、午前中と午後早めが生産的。",
-        "wolfDescription": "夜に最も創造的。朝は苦手で、午後から夜にかけて生産性が上がる。",
-        "dolphinDescription": "睡眠が浅く、不規則なリズム。短い集中時間を複数回持つ。",
-        "lionPeakHours": "7:00-11:00",
-        "lionLowHours": "17:00-21:00, 21:00以降",
-        "bearPeakHours": "9:00-12:00, 14:00-17:00",
-        "bearLowHours": "12:00-14:00, 22:00以降",
-        "wolfPeakHours": "17:00-22:00, 22:00-02:00",
-        "wolfLowHours": "7:00-11:00",
-        "dolphinPeakHours": "8:00-10:00, 14:00-16:00",
-        "dolphinLowHours": "12:00-14:00, 22:00以降"
-      },
-      "schedules": {
-        "morningSetup": "起床・準備の時間",
-        "peakPerformance": "最高のパフォーマンス時間",
-        "focusedWork": "集中作業",
-        "regularTasks": "通常業務",
-        "lowEnergy": "低エネルギー時間",
-        "sleepTime": "睡眠時間",
-        "morningPrep": "起床・準備",
-        "morningPeak": "午前のピーク時間",
-        "lunchBreak": "ランチ・休憩",
-        "afternoonPeak": "午後のピーク時間",
-        "eveningWindDown": "夕方の時間",
-        "slowMorning": "低調な朝の時間",
-        "gradualStart": "徐々にペースアップ",
-        "afternoonFocus": "午後の集中時間",
-        "eveningPeak": "夜のピーク時間",
-        "creativeNight": "深夜の創造的時間",
-        "morningStart": "早朝の起床",
-        "morningFocus": "朝の集中時間",
-        "middayRest": "昼間の低調時間",
-        "eveningWork": "夕方の作業",
-        "eveningTasks": "夜の時間"
-      },
-      "diagnosis": {
-        "questions": {
-          "bedtime": "理想的な就寝時間はいつですか？",
-          "wakeup": "理想的な起床時間はいつですか？",
-          "peakFocus": "最も集中できる時間帯はいつですか？",
-          "morningWake": "朝の目覚めはどうですか？",
-          "eveningActivity": "夜の過ごし方として好ましいのは？",
-          "sleepQuality": "睡眠の質について教えてください",
-          "weekendPattern": "週末の自然な睡眠パターンは？"
-        },
-        "options": {
-          "bedtime1": "20:00-21:30（超早寝）",
-          "bedtime2": "21:30-23:00（標準的）",
-          "bedtime3": "23:00-01:00（夜型）",
-          "bedtimeIrregular": "不規則・まちまち",
-          "wakeup1": "5:00-6:30（超早起き）",
-          "wakeup2": "6:30-8:00（標準的）",
-          "wakeup3": "8:00-10:00（遅め）",
-          "wakeupIrregular": "不規則・まちまち",
-          "focusEarly": "早朝（6-9時）",
-          "focusMorning": "午前中（9-12時）",
-          "focusNight": "夜間（20-24時）",
-          "focusMultiple": "複数の短時間（8-10時、14-16時）",
-          "wakeVeryFresh": "非常にスッキリ、すぐ活動開始",
-          "wakeFresh": "スッキリ目覚める",
-          "wakeHard": "なかなか起きられない",
-          "wakeLight": "浅い眠り、頻繁に目覚める",
-          "eveningRelax": "19-20時頃にはリラックスモード",
-          "eveningModerate": "21-22時頃に適度にくつろぐ",
-          "eveningActive": "深夜まで活発に活動する",
-          "eveningDepends": "気分や体調による",
-          "sleepRegular": "規則正しく深く眠れる",
-          "sleepStable": "安定して良く眠れる",
-          "sleepLateDeep": "遅寝だが深く眠れる",
-          "sleepLight": "浅い眠り、中途覚醒が多い",
-          "weekendSame": "平日とまったく同じ",
-          "weekendSimilar": "平日とほぼ同じ（±1時間）",
-          "weekendDifferent": "大幅にずれる（2-3時間以上）",
-          "weekendIrregular": "不規則で一定しない"
-        }
+    "dialog": {
+      "title": "設定",
+      "categories": {
+        "general": "一般",
+        "generalDesc": "アプリケーションの基本設定",
+        "account": "アカウント",
+        "accountDesc": "プロフィールとアカウント情報",
+        "notifications": "通知",
+        "notificationsDesc": "通知とリマインダーの設定",
+        "calendar": "カレンダー",
+        "calendarDesc": "カレンダー表示とタイムゾーン",
+        "tags": "タグ",
+        "tagsDesc": "タグの作成と管理",
+        "preferences": "環境設定",
+        "preferencesDesc": "テーマと表示オプション",
+        "planBilling": "プラン・請求",
+        "planBillingDesc": "サブスクリプションと支払い",
+        "integration": "連携",
+        "integrationDesc": "外部サービス連携",
+        "dataExport": "データエクスポート",
+        "dataExportDesc": "データのエクスポートとバックアップ",
+        "legal": "法的情報",
+        "legalDesc": "利用規約とプライバシーポリシー",
+        "trash": "ゴミ箱",
+        "trashDesc": "削除済みアイテムの管理"
       }
-    },
-    "dataExport": {
-      "title": "データエクスポート",
-      "description": "あなたのデータをバックアップ・移行用にエクスポートできます"
-    },
-    "planBilling": {
-      "title": "プラン・料金",
-      "description": "サブスクリプションと請求情報を管理します"
-    },
-    "legal": {
-      "title": "法的情報",
-      "description": "プライバシーポリシー、利用規約、アプリ情報を確認できます"
-    },
-    "tags": {
-      "title": "タグ管理",
-      "description": "階層構造でタグを整理・管理できます",
-      "loadError": "タグの読み込みに失敗しました",
-      "reload": "再読み込み"
-    },
-    "trash": {
-      "title": "ゴミ箱",
-      "description": "削除されたアイテムの管理",
-      "itemsCount": "{{count}}件のアイテム。30日後に自動削除されます。",
-      "empty": "ゴミ箱を空にする",
-      "displayError": "ゴミ箱の表示に失敗しました",
-      "reloadMessage": "ページをリロードしてください。",
-      "reloadButton": "リロード"
     }
   },
   "board": {
@@ -716,17 +603,24 @@
   "auth": {
     "welcome": {
       "title": "BoxLogへようこそ",
-      "description": "効率的なタスク管理で、生産性を向上させましょう。"
+      "description": "タスク管理を簡単に。あなたの生産性を最大化します。"
     },
     "login": {
-      "title": "サインイン",
-      "subtitle": "BoxLogへようこそ",
+      "title": "ログイン",
+      "description": "BoxLogアカウントにログインしてください",
       "email": "メールアドレス",
+      "emailPlaceholder": "example@email.com",
       "password": "パスワード",
+      "passwordPlaceholder": "パスワードを入力",
       "rememberMe": "ログイン状態を保持する",
-      "forgotPassword": "パスワードを忘れた方",
-      "signIn": "サインイン",
-      "signUp": "アカウントをお持ちでない方はこちら"
+      "forgotPassword": "パスワードをお忘れですか？",
+      "loginButton": "ログイン",
+      "loggingIn": "ログイン中...",
+      "continueWithGoogle": "Googleで続ける",
+      "continueWithApple": "Appleで続ける",
+      "orContinueWith": "または続けて",
+      "noAccount": "アカウントをお持ちでない方",
+      "signUp": "新規登録"
     },
     "register": {
       "title": "アカウント作成",
@@ -738,7 +632,7 @@
       "confirmPassword": "パスワード確認",
       "agreeTerms": "利用規約とプライバシーポリシーに同意する",
       "signUp": "アカウント作成",
-      "signIn": "すでにアカウントをお持ちでない方はこちら"
+      "signIn": "すでにアカウントをお持ちの方はこちら"
     },
     "errors": {
       "invalidCredentials": "メールアドレスまたはパスワードが正しくありません",
@@ -746,13 +640,7 @@
       "passwordRequired": "パスワードが必要です",
       "passwordMismatch": "パスワードが一致しません",
       "weakPassword": "パスワードは8文字以上にしてください",
-      "emailNotConfirmed": "メールアドレスの確認が必要です",
-      "emailAlreadyRegistered": "このメールアドレスは既に登録されています",
-      "networkError": "ネットワークエラーが発生しました",
-      "unexpectedError": "予期しないエラーが発生しました",
-      "initLocalAuthFailed": "ローカル認証の初期化に失敗しました",
-      "emailInvalid": "有効なメールアドレスを入力してください",
-      "tooManyRequests": "リクエストが多すぎます。しばらく待ってから再試行してください"
+      "unexpectedError": "予期しないエラーが発生しました"
     },
     "success": {
       "loginSuccess": "ログインに成功しました",
@@ -768,20 +656,82 @@
       "requireNumber": "数字を含めてください",
       "requireSpecialChar": "特殊文字を含めてください"
     },
+    "passwordStrength": {
+      "label": "パスワード強度",
+      "weak": "弱い",
+      "fair": "普通",
+      "good": "良い",
+      "strong": "強い",
+      "minCharacters": "文字以上"
+    },
     "localStorage": {
       "signupDisabled": "ローカルストレージモードではサインアップが無効です",
       "passwordResetDisabled": "ローカルストレージモードではパスワードリセットが無効です",
       "passwordUpdateDisabled": "ローカルストレージモードではパスワード更新が無効です"
     },
     "loginForm": {
-      "startApp": "アプリを開始"
+      "welcomeBack": "おかえりなさい",
+      "loginToAccount": "BoxLogアカウントにログイン",
+      "email": "メールアドレス",
+      "emailPlaceholder": "m@example.com",
+      "password": "パスワード",
+      "forgotPassword": "パスワードをお忘れですか？",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを隠す",
+      "loginButton": "ログイン",
+      "orContinueWith": "または続けて",
+      "loginWithApple": "Appleでログイン",
+      "loginWithGoogle": "Googleでログイン",
+      "loginWithMeta": "Metaでログイン",
+      "noAccount": "アカウントをお持ちでない方は",
+      "signUp": "新規登録",
+      "termsAndPrivacy": "続けることで、",
+      "termsOfService": "利用規約",
+      "and": "と",
+      "privacyPolicy": "プライバシーポリシー",
+      "startApp": "アプリを起動"
     },
     "passwordResetForm": {
-      "sendResetEmail": "リセットメールを送信"
+      "resetPassword": "パスワードをリセット",
+      "enterEmail": "メールアドレスを入力してください。リセット用のリンクを送信します。",
+      "email": "メールアドレス",
+      "emailPlaceholder": "m@example.com",
+      "sendResetLink": "リセット用リンクを送信",
+      "sending": "送信中...",
+      "rememberPassword": "パスワードを思い出しましたか？",
+      "login": "ログイン",
+      "checkEmail": "メールを確認してください",
+      "sentResetLink": "パスワードリセット用のリンクを送信しました：",
+      "backToLogin": "ログインに戻る"
     },
     "signupForm": {
-      "enterPassword": "パスワードを入力",
-      "confirmPassword": "パスワードを確認"
+      "createAccount": "アカウントを作成",
+      "enterEmail": "メールアドレスを入力してアカウントを作成",
+      "email": "メールアドレス",
+      "emailPlaceholder": "m@example.com",
+      "emailDescription": "ご連絡に使用します。メールアドレスは第三者と共有しません。",
+      "password": "パスワード",
+      "confirmPassword": "パスワード確認",
+      "passwordRequirement": "8文字以上である必要があります。",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを隠す",
+      "passwordMatch": "パスワードが一致しています",
+      "passwordMismatch": "パスワードが一致していません",
+      "createAccountButton": "アカウント作成",
+      "orContinueWith": "または続けて",
+      "signupWithApple": "Appleで登録",
+      "signupWithGoogle": "Googleで登録",
+      "signupWithMeta": "Metaで登録",
+      "alreadyHaveAccount": "既にアカウントをお持ちですか？",
+      "login": "ログイン",
+      "byContinuing": "続けることで、",
+      "termsOfService": "利用規約",
+      "and": "と",
+      "privacyPolicy": "プライバシーポリシー"
+    },
+    "localMode": {
+      "description": "ローカル専用モード",
+      "loading": "起動中..."
     }
   },
   "tags": {
@@ -979,199 +929,9 @@
       }
     }
   },
-  "help": {
-    "messageBubble": {
-      "sendError": "送信エラー"
-    },
-    "mainSupportChat": {
-      "or": "または",
-      "greeting": "今日はどのようにお手伝いしましょうか？"
-    },
-    "askPanel": {
-      "assistant": "あなたのAIアシスタント",
-      "chatPlaceholder": "Claude に生産性の洞察とタスク管理について質問する"
-    },
-    "content": {
-      "quickStartGuide": "クイックスタートガイド",
-      "learnBasics": "BoxLogの基本を学ぶ",
-      "creatingFirstTask": "最初のタスクを作成",
-      "settingUpWorkspace": "ワークスペースの設定",
-      "customizeEnvironment": "環境をカスタマイズ",
-      "manageTasksCalendar": "カレンダー形式でタスクを管理",
-      "organizeTags": "タグと自動化で整理",
-      "understandPatterns": "作業パターンを理解",
-      "frequentProblems": "よくある問題の解決策",
-      "optimizeExperience": "BoxLog体験を最適化"
-    },
-    "suggestions": {
-      "analyzeProductivity": "生産性パターンを分析",
-      "analyzeProductivityDesc": "作業パターンの洞察を得る",
-      "focusToday": "今日注目すべきタスクは？",
-      "focusTodayDesc": "1日の優先順位を決める",
-      "organizeSchedule": "スケジュールを整理",
-      "organizeScheduleDesc": "カレンダーを最適化",
-      "suggestImprovements": "生産性改善の提案",
-      "suggestImprovementsDesc": "ワークフローを強化",
-      "showDeadlines": "今後の期限を表示"
-    },
-    "sidebar": {
-      "calendarSyncIssues": "カレンダー同期の問題",
-      "howToDeleteTasks": "タスクの削除方法",
-      "dataExportProcedures": "データエクスポート手順"
-    },
-    "errors": {
-      "sendingMessage": "メッセージ送信エラー"
-    }
-  },
   "ai": {
     "chat": {
       "inputPlaceholder": "何を知りたいですか？"
-    }
-  },
-  "notifications": {
-    "errors": {
-      "notSupported": "このブラウザは通知をサポートしていません",
-      "permissionFailed": "通知許可の取得に失敗しました",
-      "displayFailed": "ブラウザ通知の表示に失敗しました"
-    }
-  },
-  "settings": {
-    "account": {
-      "profileUpdated": "プロフィールを更新しました",
-      "passwordUpdated": "パスワードを更新しました",
-      "deleteNotImplemented": "アカウント削除機能は後で実装されます",
-      "deleteFailed": "アカウントの削除に失敗しました",
-      "profile": "プロフィール",
-      "profileDesc": "基本情報とプロフィール画像の設定",
-      "displayName": "表示名",
-      "displayNameDesc": "他のユーザーに表示される名前",
-      "displayNamePlaceholder": "表示名を入力",
-      "email": "メールアドレス",
-      "emailDesc": "アカウントに関連付けられたメールアドレス",
-      "emailPlaceholder": "メールアドレスを入力",
-      "profilePicture": "プロフィール画像",
-      "profilePictureDesc": "JPG, PNG, GIF 最大2MB",
-      "profilePictureAlt": "プロフィール画像",
-      "usingCustomImage": "カスタム画像を使用",
-      "usingEmojiIcon": "絵文字アイコンを使用",
-      "uploading": "アップロード中...",
-      "uploadImage": "📷 画像をアップロード",
-      "remove": "削除",
-      "profileIcon": "プロフィールアイコン (絵文字)",
-      "profileIconDesc": "プロフィール画像の代わりに使用する絵文字",
-      "currentIcon": "現在のアイコン",
-      "password": "パスワード",
-      "passwordDesc": "アカウントのパスワードを変更",
-      "currentPassword": "現在のパスワード",
-      "newPassword": "新しいパスワード",
-      "confirmPassword": "新しいパスワード（確認）",
-      "updatingPassword": "パスワード更新中...",
-      "updatePassword": "パスワードを更新",
-      "twoFactor": "2要素認証",
-      "twoFactorDesc": "アカウントに追加のセキュリティ層を追加",
-      "enable2FA": "2FAを有効にする",
-      "twoFactorEnabled": "2要素認証が有効になっています",
-      "twoFactorPrompt": "サインイン時に認証コードを要求します",
-      "twoFactorActive": "2要素認証が有効",
-      "twoFactorProtection": "アカウントが追加のセキュリティ層で保護されています。",
-      "dangerZone": "危険な操作",
-      "dangerZoneDesc": "取り消すことのできない破壊的なアクション",
-      "privacy": "プライバシー",
-      "privacyDesc": "情報の公開範囲を設定",
-      "publicProfile": "プロフィールを公開",
-      "publicProfileDesc": "他のユーザーがあなたのプロフィールを閲覧できます",
-      "showEmail": "メールアドレスを表示",
-      "showEmailDesc": "プロフィールにメールアドレスを表示します",
-      "allowNotifications": "通知を許可",
-      "allowNotificationsDesc": "システムからの通知を受け取ります",
-      "debugInfo": "デバッグ情報",
-      "debugInfoDesc": "現在の設定値（開発用）",
-      "publicInfo": "公開される基本情報",
-      "title": "アカウント設定",
-      "description": "プロフィールとアカウントの管理",
-      "privacyUpdated": "プライバシー設定を更新しました"
-    },
-    "calendar": {
-      "settingsSaved": "カレンダー設定を保存しました",
-      "timeAndTimezone": "時間とタイムゾーン",
-      "timeAndTimezoneDesc": "日付と時間の表示方法を設定",
-      "timezone": "タイムゾーン",
-      "timezoneDesc": "カレンダー表示に使用するタイムゾーン",
-      "selectTimezone": "タイムゾーンを選択",
-      "timeFormat": "時間表示形式",
-      "timeFormatDesc": "12時間表記または24時間表記を選択",
-      "selectTimeFormat": "時間表示形式を選択",
-      "timeFormat24h": "24時間表記 (13:00)",
-      "timeFormat12h": "12時間表記 (1:00 PM)",
-      "preview": "プレビュー:",
-      "currentTime": "現在時刻: {{time}}",
-      "fullFormat": "完全表記: {{time}}",
-      "weekAndCalendar": "週とカレンダー表示",
-      "weekAndCalendarDesc": "週の表示方法とカレンダーのカスタマイズ",
-      "weekStartsOn": "週の開始曜日",
-      "weekStartsOnDesc": "カレンダーの週の開始日を選択",
-      "selectStartDay": "開始日を選択",
-      "sunday": "日曜日",
-      "monday": "月曜日",
-      "saturday": "土曜日",
-      "showWeekNumbers": "週番号を表示",
-      "showWeekNumbersDesc": "カレンダービューで週番号を表示",
-      "showDeclinedEvents": "辞退したイベントを表示",
-      "showDeclinedEventsDesc": "辞退したイベントもカレンダーに表示",
-      "defaultTaskSettings": "デフォルトタスク設定",
-      "defaultTaskSettingsDesc": "新しいタスクとイベントのデフォルト動作",
-      "defaultDuration": "デフォルトタスク時間",
-      "defaultDurationDesc": "新しいタスク作成時のデフォルト時間",
-      "selectDuration": "時間を選択",
-      "duration15min": "15分",
-      "duration30min": "30分",
-      "duration1hour": "1時間",
-      "duration1hour30min": "1時間30分",
-      "duration2hours": "2時間",
-      "snapInterval": "ドラッグ&ドロップのスナップ間隔",
-      "snapIntervalDesc": "カレンダーでイベントをドラッグする際のグリッド間隔",
-      "selectInterval": "間隔を選択",
-      "interval5min": "5分",
-      "interval10min": "10分",
-      "interval15min": "15分",
-      "interval30min": "30分",
-      "businessHours": "営業時間",
-      "businessHoursDesc": "作業時間をカレンダーに定義",
-      "businessHoursStart": "営業開始時間",
-      "businessHoursStartDesc": "営業時間の開始時間",
-      "businessHoursEnd": "営業終了時間",
-      "businessHoursEndDesc": "営業時間の終了時間",
-      "selectStartTime": "開始時間",
-      "selectEndTime": "終了時間",
-      "businessHoursPreview": "営業時間:",
-      "resetSettings": "設定のリセット",
-      "resetSettingsDesc": "すべてのカレンダー設定をデフォルト値に戻す",
-      "resetToDefault": "デフォルトに戻す"
-    },
-    "preferences": {
-      "settingsSaved": "環境設定を保存しました",
-      "theme": "テーマ",
-      "themeDesc": "アプリケーションの外観の設定",
-      "themeLabel": "テーマ",
-      "themeLabelDesc": "アプリケーションの外観テーマ",
-      "selectTheme": "テーマを選択",
-      "userExperience": "ユーザーエクスペリエンス",
-      "userExperienceDesc": "アニメーションやサウンドの設定",
-      "animations": "アニメーション",
-      "animationsDesc": "画面遷移やボタンのアニメーション効果を有効にする",
-      "soundEffects": "サウンド効果",
-      "soundEffectsDesc": "通知音やクリック音を再生する",
-      "dataPrivacy": "データとプライバシー",
-      "dataPrivacyDesc": "データのバックアップと開発者向け機能",
-      "autoBackup": "自動バックアップ",
-      "autoBackupDesc": "データを定期的に自動でバックアップする",
-      "developerMode": "開発者モード",
-      "developerModeDesc": "高度な機能とデバッグ情報を表示する",
-      "language": "言語"
-    },
-    "common": {
-      "saved": "設定を保存しました",
-      "saveFailed": "保存に失敗しました"
     }
   }
 }

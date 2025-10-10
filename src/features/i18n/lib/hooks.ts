@@ -220,8 +220,9 @@ export const useTranslation = () => {
  * }
  * ```
  */
-export const useI18n = () => {
-  const locale = useCurrentLocale()
+export const useI18n = (providedLocale?: 'en' | 'ja') => {
+  const detectedLocale = useCurrentLocale()
+  const locale = providedLocale || detectedLocale
   const [dictionary, setDictionary] = useState<Dictionary | null>(null)
 
   useEffect(() => {

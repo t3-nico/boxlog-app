@@ -26,13 +26,16 @@ export const MiniCalendarPopover = ({
   align = 'start',
   side = 'bottom',
   onOpenChange,
+  displayRange,
   ...miniCalendarProps
 }: MiniCalendarPopoverProps) => {
   const [open, setOpen] = useState(false)
 
-  const handleDateSelect = (date: Date) => {
-    onDateSelect?.(date)
-    setOpen(false) // 日付選択後にポップオーバーを閉じる
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      onDateSelect?.(date)
+      setOpen(false) // 日付選択後にポップオーバーを閉じる
+    }
   }
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -42,14 +45,11 @@ export const MiniCalendarPopover = ({
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger
-        asChild
-        className={cn('hover:bg-neutral-300 dark:hover:bg-neutral-600', 'transition-colors', className)}
-      >
+      <PopoverTrigger asChild className={cn('hover:bg-accent transition-colors', className)}>
         {children}
       </PopoverTrigger>
       <PopoverContent
-        className={cn('w-auto border-none bg-neutral-100 p-4 dark:bg-neutral-800', popoverClassName)}
+        className={cn('bg-muted dark:border-input w-auto border p-0', popoverClassName)}
         align={align}
         side={side}
       >
@@ -57,6 +57,7 @@ export const MiniCalendarPopover = ({
           selectedDate={selectedDate}
           onDateSelect={handleDateSelect}
           onMonthChange={onMonthChange}
+          displayRange={displayRange}
           {...miniCalendarProps}
         />
       </PopoverContent>

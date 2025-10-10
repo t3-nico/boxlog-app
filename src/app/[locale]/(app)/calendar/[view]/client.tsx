@@ -30,17 +30,15 @@ export default function CalendarViewClient({ view, initialDate, translations }: 
     <FeatureErrorBoundary
       featureName="calendar"
       fallback={
-        <div className="flex h-screen items-center justify-center">
-          <div className="max-w-md rounded-lg border border-red-300 bg-red-50 p-6 dark:border-red-700 dark:bg-red-900/20">
+        <div className="flex h-full items-center justify-center p-4">
+          <div className="border-destructive/30 bg-destructive/10 max-w-md rounded-lg border p-6">
             <div className="text-center">
-              <div className="mb-4 text-6xl text-red-600 dark:text-red-400">📅</div>
-              <h2 className="mb-2 text-2xl font-bold tracking-tight text-red-600 dark:text-red-400">
-                {translations.errorTitle}
-              </h2>
-              <p className="mb-4 text-sm text-neutral-800 dark:text-neutral-200">{translations.errorMessage}</p>
+              <div className="mb-4 text-6xl">📅</div>
+              <h2 className="text-destructive mb-2 text-2xl font-bold tracking-tight">{translations.errorTitle}</h2>
+              <p className="text-foreground/80 mb-4 text-sm">{translations.errorMessage}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="rounded bg-blue-600 px-4 py-2 text-white transition-opacity hover:opacity-80 dark:bg-blue-500"
+                className="bg-primary text-primary-foreground rounded px-4 py-2 transition-opacity hover:opacity-80"
               >
                 {translations.reloadButton}
               </button>

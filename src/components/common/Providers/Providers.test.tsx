@@ -22,11 +22,6 @@ vi.mock('@/features/auth', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
-vi.mock('@/features/command-palette/hooks/use-command-palette', () => ({
-  CommandPaletteProvider: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-  useCommandPalette: vi.fn(),
-}))
-
 describe('Providers', () => {
   it('子要素を正しくレンダリング', () => {
     render(
@@ -45,7 +40,7 @@ describe('Providers', () => {
       </Providers>
     )
 
-    // QueryClientProvider, AuthProvider, ChatProvider, CommandPaletteProvider がネストされていることを確認
+    // QueryClientProvider, AuthProvider がネストされていることを確認
     expect(container.querySelector('[data-testid="content"]')).toBeInTheDocument()
   })
 })

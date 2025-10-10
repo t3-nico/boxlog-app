@@ -160,7 +160,7 @@ export const UndoToast = ({ action, onUndo, onDismiss, autoHideDelay = 5000 }: U
               type="button"
               onClick={handleDismiss}
               className={cn(
-                'rounded-md p-1.5 text-gray-400 hover:text-white',
+                'rounded-md p-2 text-gray-400 hover:text-white',
                 'hover:bg-gray-700 focus:ring-2 focus:ring-gray-500 focus:outline-none',
                 'transition-colors duration-150'
               )}
