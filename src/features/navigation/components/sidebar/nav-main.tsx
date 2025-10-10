@@ -19,7 +19,7 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
-  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
 
   return (
@@ -52,7 +52,7 @@ export function NavMain({
         <div className="flex flex-col">
           {items.map((item) => {
             // パス比較: 両方のパスを正規化して比較
-            const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
+            const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
             return (
               <a
                 key={item.title}

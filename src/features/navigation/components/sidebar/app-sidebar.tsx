@@ -29,7 +29,7 @@ export function AppSidebar() {
   const { close } = useSidebarStore()
 
   // URLから locale を抽出 (例: /ja/calendar -> ja)
-  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t, locale, ready } = useI18n(localeFromPath)
 
   const data = useMemo(

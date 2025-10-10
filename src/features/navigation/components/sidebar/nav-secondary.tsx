@@ -23,7 +23,7 @@ export function NavSecondary({
   }[]
 } & React.ComponentPropsWithoutRef<'div'>) {
   const pathname = usePathname()
-  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
   const { openSettings } = useSettingsDialogStore()
   const { open: openGlobalSearch } = useGlobalSearch()
@@ -53,7 +53,7 @@ export function NavSecondary({
         <SimpleThemeToggle />
       </div>
       {items.map((item) => {
-        const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
+        const isActive = pathname === item.url || pathname?.startsWith(item.url + '/')
         return (
           <a
             key={item.title}

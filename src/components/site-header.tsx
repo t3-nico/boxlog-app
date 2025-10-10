@@ -30,14 +30,14 @@ import { useMediaQuery } from '@/hooks/useMediaQuery'
  */
 export function SiteHeader() {
   const pathname = usePathname()
-  const localeFromPath = (pathname.split('/')[1] || 'ja') as 'ja' | 'en'
+  const localeFromPath = (pathname?.split('/')[1] || 'ja') as 'ja' | 'en'
   const { t } = useI18n(localeFromPath)
   const { isOpen, toggle } = useSidebarStore()
   const isMobile = useMediaQuery('(max-width: 768px)')
 
   // パスからパンくずリストを生成
   const breadcrumbs = useMemo(() => {
-    const segments = pathname.split('/').filter(Boolean)
+    const segments = pathname?.split('/').filter(Boolean) || []
     // locale部分を除外
     const pathSegments = segments.slice(1)
 
