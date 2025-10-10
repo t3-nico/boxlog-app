@@ -694,7 +694,6 @@
       "termsOfService": "Terms of Service",
       "and": "and",
       "privacyPolicy": "Privacy Policy",
-      "agree": "",
       "startApp": "Start App"
     },
     "passwordResetForm": {
@@ -733,8 +732,7 @@
       "byContinuing": "By clicking continue, you agree to our",
       "termsOfService": "Terms of Service",
       "and": "and",
-      "privacyPolicy": "Privacy Policy",
-      "agree": ""
+      "privacyPolicy": "Privacy Policy"
     },
     "localMode": {
       "description": "Local Mode Only",

@@ -689,7 +689,6 @@
       "termsOfService": "利用規約",
       "and": "と",
       "privacyPolicy": "プライバシーポリシー",
-      "agree": "に同意したものとみなされます",
       "startApp": "アプリを起動"
     },
     "passwordResetForm": {
@@ -728,8 +727,7 @@
       "byContinuing": "続けることで、",
       "termsOfService": "利用規約",
       "and": "と",
-      "privacyPolicy": "プライバシーポリシー",
-      "agree": "に同意したものとみなされます"
+      "privacyPolicy": "プライバシーポリシー"
     },
     "localMode": {
       "description": "ローカル専用モード",
