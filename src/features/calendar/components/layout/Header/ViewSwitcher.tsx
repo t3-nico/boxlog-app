@@ -1,9 +1,18 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { Check, ChevronDown } from 'lucide-react'
 
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { useCalendarSettingsStore } from '@/features/settings/stores/useCalendarSettingsStore'
 import { cn } from '@/lib/utils'
@@ -20,48 +29,27 @@ interface ViewSwitcherProps {
   currentView: string
   onChange: (view: string) => void
   className?: string
-  buttonClassName?: string
-  dropdownClassName?: string
 }
 
 /**
  * ビュー切り替えドロップダウン
- * 汎用的なビュー切り替えコンポーネント
+ * shadcn/ui公式DropdownMenuを使用
  */
-export const ViewSwitcher = ({
-  options,
-  currentView,
-  onChange,
-  className,
-  buttonClassName,
-  dropdownClassName,
-}: ViewSwitcherProps) => {
+export const ViewSwitcher = ({ options, currentView, onChange, className }: ViewSwitcherProps) => {
   const { t } = useI18n()
-  const [isOpen, setIsOpen] = useState(false)
   const currentOption = options.find((opt) => opt.value === currentView)
   const { showWeekends, updateSettings } = useCalendarSettingsStore()
 
-  const handleSelect = (value: string) => {
-    onChange(value)
-    setIsOpen(false)
-  }
+  const handleSelect = useCallback(
+    (value: string) => {
+      onChange(value)
+    },
+    [onChange]
+  )
 
-  const handleWeekendToggle = (e: React.MouseEvent) => {
-    e.stopPropagation()
-
-    // アニメーション付きで切り替え
-    const newValue = !showWeekends
-
-    // 即座に視覚的なフィードバックを提供
-    const checkIcon = e.currentTarget.querySelector('[data-check-icon]')
-    if (checkIcon) {
-      checkIcon.classList.add('scale-110')
-      setTimeout(() => checkIcon.classList.remove('scale-110'), 150)
-    }
-
-    // 設定を更新（これによりカレンダーが再レンダリングされる）
-    updateSettings({ showWeekends: newValue })
-  }
+  const handleWeekendToggle = useCallback(() => {
+    updateSettings({ showWeekends: !showWeekends })
+  }, [showWeekends, updateSettings])
 
   // ショートカットキー機能
   useEffect(() => {
@@ -95,141 +83,45 @@ export const ViewSwitcher = ({
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [options, currentView, onChange])
 
-  // Handler functions
-  const handleToggleOpen = useCallback(() => {
-    setIsOpen(!isOpen)
-  }, [isOpen])
-
-  const handleClose = useCallback(() => {
-    setIsOpen(false)
-  }, [])
-
-  const handleBackdropKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsOpen(false)
-    }
-  }, [])
-
-  const createOptionClickHandler = useCallback((value: string) => {
-    return () => handleSelect(value)
-  }, [])
-
   return (
-    <div className={cn('relative', className)}>
-      <button
-        type="button"
-        onClick={handleToggleOpen}
-        className={cn(
-          'flex items-center gap-2 px-4 py-2 text-sm font-medium',
-          'rounded-md transition-colors',
-          'bg-neutral-200 dark:bg-neutral-700',
-          'text-neutral-700 dark:text-neutral-300',
-          'hover:bg-neutral-300 dark:hover:bg-neutral-600',
-          buttonClassName
-        )}
-      >
-        {currentOption?.icon}
-        <span>{currentOption?.label || 'Day'}</span>
-        <ChevronDown className="h-4 w-4" />
-      </button>
-
-      {isOpen === true && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-40"
-            onClick={handleClose}
-            onKeyDown={handleBackdropKeyDown}
-            role="button"
-            tabIndex={0}
-            aria-label={t('calendar.viewSwitcher.closeDropdown')}
-          />
-
-          {/* Dropdown */}
-          <div
-            className={cn(
-              'absolute top-full right-0 mt-1',
-              'min-w-[160px]',
-              'bg-white dark:bg-neutral-900',
-              'rounded-md',
-              'z-50 shadow-lg',
-              dropdownClassName
-            )}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className={cn('flex items-center gap-2', className)}>
+          {currentOption?.icon}
+          <span>{currentOption?.label || 'Day'}</span>
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[160px]">
+        {/* ビューオプション */}
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => handleSelect(option.value)}
+            className="flex items-center justify-between gap-2"
           >
-            <div>
-              {/* ビューオプション */}
-              <div className="py-1">
-                {options.map((option) => (
-                  <button
-                    type="button"
-                    key={option.value}
-                    onClick={createOptionClickHandler(option.value)}
-                    className={cn(
-                      'w-full px-4 py-2 text-left text-sm',
-                      'transition-colors',
-                      'flex items-center justify-between gap-2',
-                      currentView === option.value
-                        ? 'bg-blue-100 font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                        : 'text-neutral-600 hover:bg-neutral-300 dark:text-neutral-400 dark:hover:bg-neutral-600'
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      {option.icon}
-                      <span>{option.label}</span>
-                    </div>
-                    {option.shortcut != null && (
-                      <span className="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">{option.shortcut}</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {/* ボーダー */}
-              <div className="border-t border-neutral-900/10 dark:border-neutral-100/10" />
-
-              {/* 週末表示オプション（すべてのビューに反映） */}
-              <div className="py-1">
-                <button
-                  type="button"
-                  onClick={handleWeekendToggle}
-                  className={cn(
-                    'w-full px-4 py-2 text-sm',
-                    'flex items-center gap-2',
-                    'transition-colors',
-                    'rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none',
-                    'text-neutral-600 dark:text-neutral-400',
-                    'hover:bg-neutral-300 dark:hover:bg-neutral-600'
-                  )}
-                  role="checkbox"
-                  aria-checked={showWeekends}
-                  aria-label={
-                    showWeekends
-                      ? t('calendar.viewSwitcher.disableWeekends')
-                      : t('calendar.viewSwitcher.enableWeekends')
-                  }
-                  aria-describedby="weekend-toggle-description"
-                >
-                  <div
-                    className={cn(
-                      'flex h-4 w-4 items-center justify-center rounded border border-neutral-300 transition-all duration-200 dark:border-neutral-600',
-                      showWeekends && 'bg-primary border-primary'
-                    )}
-                  >
-                    {showWeekends != null && (
-                      <Check className="h-3 w-3 text-white transition-transform duration-150" data-check-icon />
-                    )}
-                  </div>
-                  <span>{t('calendar.viewSwitcher.showWeekends')}</span>
-                </button>
-                {/* アクセシビリティ用の説明（スクリーンリーダー向け） */}
-                <div id="weekend-toggle-description" className="sr-only">
-                  {t('calendar.viewSwitcher.keyboardShortcutDescription')}
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              {option.icon}
+              <span>{option.label}</span>
             </div>
-          </div>
-        </>
-      )}
-    </div>
+            <div className="flex items-center gap-2">
+              {option.shortcut && (
+                <span className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
+                  {option.shortcut}
+                </span>
+              )}
+              {currentView === option.value && <Check className="text-primary h-4 w-4" />}
+            </div>
+          </DropdownMenuItem>
+        ))}
+
+        <DropdownMenuSeparator />
+
+        {/* 週末表示オプション */}
+        <DropdownMenuCheckboxItem checked={showWeekends} onCheckedChange={handleWeekendToggle}>
+          {t('calendar.viewSwitcher.showWeekends')}
+        </DropdownMenuCheckboxItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
