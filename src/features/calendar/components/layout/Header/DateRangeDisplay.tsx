@@ -17,6 +17,11 @@ interface DateRangeDisplayProps {
   weekBadgeClassName?: string
   onDateSelect?: (date: Date) => void
   clickable?: boolean
+  // 現在表示している期間（MiniCalendarでのハイライト用）
+  displayRange?: {
+    start: Date
+    end: Date
+  }
 }
 
 /**
@@ -74,10 +79,17 @@ const createClickableContent = (
   showWeekNumber: boolean,
   weekNumber: number,
   weekBadgeClassName?: string,
-  className?: string
+  className?: string,
+  displayRange?: { start: Date; end: Date }
 ) => (
   <div className={cn('flex items-center gap-2', className)}>
-    <MiniCalendarPopover selectedDate={selectedDate} onDateSelect={onDateSelect} align="start" side="bottom">
+    <MiniCalendarPopover
+      selectedDate={selectedDate}
+      onDateSelect={onDateSelect}
+      align="start"
+      side="bottom"
+      displayRange={displayRange}
+    >
       {dateContent}
     </MiniCalendarPopover>
     {showWeekNumber ? <WeekBadge weekNumber={weekNumber} className={weekBadgeClassName} /> : null}
@@ -97,6 +109,7 @@ export const DateRangeDisplay = ({
   weekBadgeClassName,
   onDateSelect,
   clickable = false,
+  displayRange,
 }: DateRangeDisplayProps) => {
   const weekNumber = getWeek(date, { weekStartsOn: 1 })
   const isClickable = clickable && onDateSelect
@@ -117,7 +130,8 @@ export const DateRangeDisplay = ({
       showWeekNumber,
       weekNumber,
       weekBadgeClassName,
-      className
+      className,
+      displayRange
     )
   }
 
@@ -132,14 +146,7 @@ const WeekBadge = ({ weekNumber, className }: { weekNumber: number; className?: 
 
   return (
     <span
-      className={cn(
-        'inline-flex items-center px-2 py-1',
-        'rounded-sm border',
-        'text-base font-medium',
-        'border border-neutral-300 dark:border-neutral-700',
-        'text-neutral-700 dark:text-neutral-300',
-        className
-      )}
+      className={cn('text-muted-foreground inline-flex items-center text-sm font-normal', className)}
       aria-label={t('calendar.dateRange.weekLabel').replace('{weekNumber}', String(weekNumber))}
     >
       week{weekNumber}

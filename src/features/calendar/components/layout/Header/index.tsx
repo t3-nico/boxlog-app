@@ -23,6 +23,11 @@ interface CalendarHeaderProps {
   // 日付選択機能
   onDateSelect?: (date: Date) => void
   showMiniCalendar?: boolean
+  // 現在表示している期間（MiniCalendarでのハイライト用）
+  displayRange?: {
+    start: Date
+    end: Date
+  }
 }
 
 const viewOptions = [
@@ -48,6 +53,7 @@ export const CalendarHeader = ({
   leftSlot,
   onDateSelect,
   showMiniCalendar = false,
+  displayRange,
 }: CalendarHeaderProps) => {
   return (
     <header className="bg-background relative px-4 py-2">
@@ -67,6 +73,7 @@ export const CalendarHeader = ({
             showWeekNumber={true}
             clickable={showMiniCalendar}
             onDateSelect={onDateSelect}
+            displayRange={displayRange}
           />
         </div>
 

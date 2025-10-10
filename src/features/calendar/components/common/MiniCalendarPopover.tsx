@@ -26,6 +26,7 @@ export const MiniCalendarPopover = ({
   align = 'start',
   side = 'bottom',
   onOpenChange,
+  displayRange,
   ...miniCalendarProps
 }: MiniCalendarPopoverProps) => {
   const [open, setOpen] = useState(false)
@@ -47,11 +48,16 @@ export const MiniCalendarPopover = ({
       <PopoverTrigger asChild className={cn('hover:bg-accent transition-colors', className)}>
         {children}
       </PopoverTrigger>
-      <PopoverContent className={cn('bg-muted w-auto border-none p-0', popoverClassName)} align={align} side={side}>
+      <PopoverContent
+        className={cn('bg-muted dark:border-input w-auto border p-0', popoverClassName)}
+        align={align}
+        side={side}
+      >
         <MiniCalendar
           selectedDate={selectedDate}
           onDateSelect={handleDateSelect}
           onMonthChange={onMonthChange}
+          displayRange={displayRange}
           {...miniCalendarProps}
         />
       </PopoverContent>

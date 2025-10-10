@@ -27,6 +27,12 @@ interface CalendarLayoutProps {
   // Date selection for mini calendar
   selectedDate?: Date
   onDateSelect?: (date: Date) => void
+
+  // Display range for mini calendar highlight
+  displayRange?: {
+    start: Date
+    end: Date
+  }
 }
 
 /**
@@ -50,6 +56,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
 
     // Date selection for mini calendar
     onDateSelect,
+    displayRange,
   }) => {
     return (
       <div className={cn('calendar-layout bg-background flex h-full flex-col', className)}>
@@ -65,6 +72,7 @@ export const CalendarLayout = memo<CalendarLayoutProps>(
           showActions={showHeaderActions}
           onDateSelect={onDateSelect}
           showMiniCalendar={true}
+          displayRange={displayRange}
         />
 
         {/* メインコンテンツ */}

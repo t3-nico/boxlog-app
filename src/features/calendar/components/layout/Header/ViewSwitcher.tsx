@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react'
 
 import { Check, ChevronDown } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -85,14 +85,12 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" className={cn('flex items-center gap-2', className)}>
-          {currentOption?.icon}
-          <span>{currentOption?.label || 'Day'}</span>
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+      <DropdownMenuTrigger className={cn(buttonVariants({ variant: 'outline' }), 'gap-2', className)}>
+        {currentOption?.icon}
+        <span>{currentOption?.label || 'Day'}</span>
+        <ChevronDown className="h-4 w-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[160px]">
+      <DropdownMenuContent align="end" side="bottom" sideOffset={8} className="dark:border-input min-w-[160px] border">
         {/* ビューオプション */}
         {options.map((option) => (
           <DropdownMenuItem
@@ -103,15 +101,13 @@ export const ViewSwitcher = ({ options, currentView, onChange, className }: View
             <div className="flex items-center gap-2">
               {option.icon}
               <span>{option.label}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {option.shortcut && (
-                <span className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
-                  {option.shortcut}
-                </span>
-              )}
               {currentView === option.value && <Check className="text-primary h-4 w-4" />}
             </div>
+            {option.shortcut && (
+              <span className="bg-muted text-muted-foreground rounded px-1.5 py-0.5 font-mono text-xs">
+                {option.shortcut}
+              </span>
+            )}
           </DropdownMenuItem>
         ))}
 
