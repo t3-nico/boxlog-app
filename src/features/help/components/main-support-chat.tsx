@@ -382,9 +382,7 @@ ${t('help.mainSupportChat.greeting')}`,
                 </svg>
                 <span className="text-sm font-medium">{t('help.status.error')}</span>
               </div>
-              <p className="mt-1 text-sm text-red-700 dark:text-red-300">
-                {t('help.status.errorMessage')}
-              </p>
+              <p className="mt-1 text-sm text-red-700 dark:text-red-300">{t('help.status.errorMessage')}</p>
               <button
                 type="button"
                 onClick={handleReload}

@@ -78,9 +78,11 @@ main() {
 
   log_success "ポートは空いています"
   log_info "Next.js開発サーバーを起動中..."
+  log_info "メモリ制限: 12GB (RAM: 24GB の場合、システム用に12GB確保)"
 
   # メモリ制限付きでNext.jsを起動
-  NODE_OPTIONS="--max-old-space-size=4096" npm run dev
+  # RAM 24GB環境: 12GB設定（システム用に12GB確保）
+  NODE_OPTIONS="--max-old-space-size=12288" npm run dev
 }
 
 main "$@"
