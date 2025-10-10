@@ -71,13 +71,13 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
           <>
             {/* モバイル: Sheet（オーバーレイ）でSidebarを表示 */}
             <Sheet open={isOpen} onOpenChange={toggle}>
-              <SheetContent side="left" className="w-64 p-0">
+              <SheetContent side="left" className="w-64 p-0" showCloseButton={false}>
                 <AppSidebar />
               </SheetContent>
             </Sheet>
 
             {/* Main Content */}
-            <div className="bg-muted m-2 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
+            <div className="bg-muted flex h-full flex-1 flex-col overflow-hidden">
               {/* Site Header */}
               <SiteHeader />
 
@@ -96,17 +96,17 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
             {/* デスクトップ: Resizable Sidebar */}
             {isOpen && (
               <>
-                <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-                  <div className="ml-2 flex h-full flex-col">
+                <ResizablePanel defaultSize={20} minSize={15} maxSize={30} collapsible={false}>
+                  <div className="my-2 ml-2 flex h-full flex-col">
                     <AppSidebar />
                   </div>
                 </ResizablePanel>
-                <ResizableHandle withHandle />
+                <ResizableHandle className="hover:bg-primary w-1.5 transition-colors" />
               </>
             )}
 
             {/* Main Content + Inspector */}
-            <ResizablePanel defaultSize={isOpen ? 80 : 100}>
+            <ResizablePanel>
               <div className="bg-muted m-2 flex h-[calc(100%-1rem)] flex-1 flex-col overflow-hidden rounded-xl shadow-lg">
                 {/* Site Header */}
                 <SiteHeader />

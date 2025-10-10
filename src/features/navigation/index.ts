@@ -9,3 +9,4 @@ export { MobileBottomNavigation } from './components/mobile/MobileBottomNavigati
 
 // Stores
 export { useNavigationStore } from './stores/navigation.store'
+export { useSidebarStore } from './stores/useSidebarStore'

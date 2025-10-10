@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useCallback, useState } from 'react'
 
 import { Calendar, CheckSquare, Clock, Folder, Tag, TrendingUp } from 'lucide-react'
@@ -12,7 +13,6 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from '@/components/ui/command'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useEventStore } from '@/features/events'
@@ -28,6 +28,7 @@ interface GlobalSearchModalProps {
 }
 
 export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
+  const router = useRouter()
   const { history, addToHistory } = useSearchHistory()
   const [query, setQuery] = useState('')
 
@@ -53,15 +54,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="overflow-hidden p-0" style={{ maxWidth: '768px' }}>
         <Command className="[&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3">
-          <div className="flex items-center border-b px-3">
-            <CommandInput
-              placeholder="Search tasks, events, tags, folders..."
-              value={query}
-              onValueChange={setQuery}
-              className="flex-1 border-0"
-            />
-            <CommandShortcut>⌘K</CommandShortcut>
-          </div>
+          <CommandInput placeholder="Search tasks, events, tags, folders..." value={query} onValueChange={setQuery} />
           <CommandList className="max-h-[500px]">
             <CommandEmpty>No results found.</CommandEmpty>
 
@@ -92,7 +85,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   <CommandItem
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log('Navigate to high priority tasks')
+                        router.push('/tasks?priority=high')
                       })
                     }
                   >
@@ -102,7 +95,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   <CommandItem
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log("Navigate to today's events")
+                        router.push('/calendar?view=today')
                       })
                     }
                   >
@@ -112,7 +105,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                   <CommandItem
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log('Navigate to untagged items')
+                        router.push('/tasks?filter=untagged')
                       })
                     }
                   >
@@ -134,7 +127,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     keywords={[task.description || '', ...(task.tags || [])]}
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log('Navigate to task:', task.id)
+                        router.push(`/tasks/${task.id}`)
                       }, query)
                     }
                   >
@@ -158,7 +151,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     keywords={[event.description || '', event.location || '']}
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log('Navigate to event:', event.id)
+                        router.push(`/calendar?event=${event.id}`)
                       }, query)
                     }
                   >
@@ -182,7 +175,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     keywords={[tag.description || '', tag.path || '']}
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log('Filter by tag:', tag.id)
+                        router.push(`/tags/${tag.id}`)
                       }, query)
                     }
                   >
@@ -206,7 +199,7 @@ export function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModalProps) {
                     keywords={[folder.description || '']}
                     onSelect={() =>
                       handleSelect(() => {
-                        console.log('Navigate to smart folder:', folder.id)
+                        router.push(`/smart-folders/${folder.id}`)
                       }, query)
                     }
                   >

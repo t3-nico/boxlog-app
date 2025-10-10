@@ -27,6 +27,9 @@
     "inbox": "Inbox",
     "theme": "Theme",
     "getHelp": "Get Help",
+    "toggleSidebar": "Toggle Sidebar",
+    "closeSidebar": "Close Sidebar",
+    "openSidebar": "Open Sidebar",
     "navigation": {
       "calendar": "Calendar",
       "board": "Board",
