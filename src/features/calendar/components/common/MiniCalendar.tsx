@@ -10,7 +10,7 @@ import { useI18n } from '@/features/i18n/lib/hooks'
 
 export interface MiniCalendarProps {
   selectedDate?: Date
-  onDateSelect?: (date: Date) => void
+  onDateSelect?: (date: Date | undefined) => void
   onMonthChange?: (date: Date) => void
   className?: string
   showWeekNumbers?: boolean
@@ -66,6 +66,7 @@ export const MiniCalendar = React.memo<MiniCalendarProps>(
     return (
       <Calendar
         mode="single"
+        required={false}
         selected={selectedDate}
         onSelect={onDateSelect}
         onMonthChange={onMonthChange}
