@@ -21,6 +21,7 @@ import {
 
 import { TiptapEditor } from '@/components/app/rich-text-editor/tiptap-editor'
 import { Button } from '@/components/ui/button'
+import { Field, FieldContent } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 
 import type { CalendarEvent } from '@/features/calendar/types/calendar.types'
@@ -53,88 +54,73 @@ const EventScheduleSection = React.memo(
   }) => {
     const { t } = useI18n()
     return (
-      <div className={cn('max-w-full space-y-3 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
+      <div className={cn('max-w-full space-y-4 border-b border-neutral-200 p-4 dark:border-neutral-700')}>
         <h3 className={cn('text-base font-semibold text-neutral-900 dark:text-neutral-100')}>
           {t('events.detail.schedule.title')}
         </h3>
 
-        {/* タイトル with Priority */}
-        <div className="flex items-start gap-3">
-          <div className={cn('h-8 w-1 flex-shrink-0 rounded-full', 'bg-blue-600 dark:bg-blue-500')} />
-          {isEditable ? (
-            <input
-              type="text"
-              value={formData.title}
-              onChange={handleTitleInputChange}
-              placeholder={isCreateMode ? t('events.detail.schedule.titlePlaceholder') : ''}
-              className={cn(
-                'w-full flex-1 bg-transparent outline-none',
-                'text-2xl font-bold',
-                'text-neutral-900 dark:text-neutral-100',
-                'placeholder:text-neutral-600 dark:placeholder:text-neutral-400'
+        {/* タイトル */}
+        <Field>
+          <FieldContent>
+            <div className="flex items-start gap-3">
+              <div className={cn('h-8 w-1 flex-shrink-0 rounded-full', 'bg-blue-600 dark:bg-blue-500')} />
+              {isEditable ? (
+                <Input
+                  type="text"
+                  value={formData.title}
+                  onChange={handleTitleInputChange}
+                  placeholder={isCreateMode ? t('events.detail.schedule.titlePlaceholder') : ''}
+                  className={cn(
+                    'w-full flex-1 border-0 bg-transparent px-0 ring-0 outline-none focus-visible:ring-0',
+                    'text-2xl font-bold',
+                    'text-neutral-900 dark:text-neutral-100',
+                    'placeholder:text-neutral-600 dark:placeholder:text-neutral-400'
+                  )}
+                />
+              ) : (
+                <h3 className={cn('text-2xl font-bold', 'flex-1 break-words text-neutral-900 dark:text-neutral-100')}>
+                  {formData.title}
+                </h3>
               )}
-            />
-          ) : (
-            <h3 className={cn('text-2xl font-bold', 'flex-1 break-words text-neutral-900 dark:text-neutral-100')}>
-              {formData.title}
-            </h3>
-          )}
-        </div>
+            </div>
+          </FieldContent>
+        </Field>
 
         {/* 日付と時間 */}
-        <div className="max-w-full space-y-3">
-          {isEditable ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <Input
-                type="date"
-                value={format(formData.startDate ?? new Date(), 'yyyy-MM-dd')}
-                onChange={handleDateInputChange}
-                className={cn(
-                  'text-base',
-                  'w-auto rounded-md px-3 py-2',
-                  '[&::-webkit-calendar-picker-indicator]:hidden',
-                  'border-neutral-200 dark:border-neutral-700',
-                  'bg-white dark:bg-neutral-800',
-                  'text-neutral-900 dark:text-neutral-100'
-                )}
-                style={{ width: `${format(formData.startDate ?? new Date(), 'yyyy-MM-dd').length + 2}ch` }}
-              />
-              <Input
-                type="time"
-                value={format(formData.startDate ?? new Date(), 'HH:mm')}
-                onChange={handleTimeInputChange}
-                className={cn(
-                  'text-base',
-                  'w-fit rounded-md px-3 py-2 text-center',
-                  '[&::-webkit-calendar-picker-indicator]:hidden',
-                  'border-neutral-200 dark:border-neutral-700',
-                  'bg-white dark:bg-neutral-800',
-                  'text-neutral-900 dark:text-neutral-100'
-                )}
-              />
-              <span className={cn('text-base text-neutral-600 dark:text-neutral-400', 'flex-shrink-0')}>→</span>
-              <Input
-                type="time"
-                value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
-                onChange={handleEndTimeInputChange}
-                className={cn(
-                  'text-base',
-                  'w-fit rounded-md px-3 py-2 text-center',
-                  '[&::-webkit-calendar-picker-indicator]:hidden',
-                  'border-neutral-200 dark:border-neutral-700',
-                  'bg-white dark:bg-neutral-800',
-                  'text-neutral-900 dark:text-neutral-100'
-                )}
-              />
-            </div>
-          ) : (
-            <div className={cn('text-base', 'font-medium break-words text-neutral-900 dark:text-neutral-100')}>
-              {format(formData.startDate ?? new Date(), 'yyyy年M月d日（E）', { locale: ja })}{' '}
-              {format(formData.startDate ?? new Date(), 'HH:mm')} →{' '}
-              {formData.endDate ? format(formData.endDate, 'HH:mm') : t('events.detail.schedule.endTimeNotSet')}
-            </div>
-          )}
-        </div>
+        <Field>
+          <FieldContent>
+            {isEditable ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <Input
+                  type="date"
+                  value={format(formData.startDate ?? new Date(), 'yyyy-MM-dd')}
+                  onChange={handleDateInputChange}
+                  className={cn('w-auto text-base')}
+                  style={{ width: `${format(formData.startDate ?? new Date(), 'yyyy-MM-dd').length + 2}ch` }}
+                />
+                <Input
+                  type="time"
+                  value={format(formData.startDate ?? new Date(), 'HH:mm')}
+                  onChange={handleTimeInputChange}
+                  className={cn('w-fit text-center text-base')}
+                />
+                <span className={cn('flex-shrink-0 text-base text-neutral-600 dark:text-neutral-400')}>→</span>
+                <Input
+                  type="time"
+                  value={formData.endDate ? format(formData.endDate, 'HH:mm') : ''}
+                  onChange={handleEndTimeInputChange}
+                  className={cn('w-fit text-center text-base')}
+                />
+              </div>
+            ) : (
+              <div className={cn('text-base', 'font-medium break-words text-neutral-900 dark:text-neutral-100')}>
+                {format(formData.startDate ?? new Date(), 'yyyy年M月d日（E）', { locale: ja })}{' '}
+                {format(formData.startDate ?? new Date(), 'HH:mm')} →{' '}
+                {formData.endDate ? format(formData.endDate, 'HH:mm') : t('events.detail.schedule.endTimeNotSet')}
+              </div>
+            )}
+          </FieldContent>
+        </Field>
       </div>
     )
   }

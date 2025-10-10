@@ -137,11 +137,13 @@ export const renderTagRemovedEventDescription = (event: TagEvent) => {
  * メモイベントの説明文を生成
  */
 export const renderMemoEventDescription = (event: MemoEvent) => {
+  const memoText = event.newValue || ''
+
   return (
     <span className="flex items-center gap-2">
       <span className="text-neutral-600 dark:text-neutral-400">メモ{event.action === 'added' ? '追加' : '更新'}:</span>
       <span className="text-xs text-neutral-900 dark:text-neutral-50">
-        {event.newValue.length > 20 ? `${event.newValue.slice(0, 20)}...` : event.newValue}
+        {memoText.length > 20 ? `${memoText.slice(0, 20)}...` : memoText}
       </span>
     </span>
   )
