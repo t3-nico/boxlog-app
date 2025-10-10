@@ -15,7 +15,7 @@ interface DateRangeDisplayProps {
   formatPattern?: string
   className?: string
   weekBadgeClassName?: string
-  onDateSelect?: (date: Date) => void
+  onDateSelect?: (date: Date | undefined) => void
   clickable?: boolean
   // 現在表示している期間（MiniCalendarでのハイライト用）
   displayRange?: {
@@ -75,7 +75,7 @@ const createStaticContent = (
 const createClickableContent = (
   dateContent: React.ReactNode,
   selectedDate: Date,
-  onDateSelect: (date: Date) => void,
+  onDateSelect: (date: Date | undefined) => void,
   showWeekNumber: boolean,
   weekNumber: number,
   weekBadgeClassName?: string,
