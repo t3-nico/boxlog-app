@@ -7,10 +7,10 @@ import { useChat } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2, X } from 'lucide-react'
 
-import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/kibo/ai/conversation'
-import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/kibo/ai/input'
-import { AIMessage, AIMessageContent } from '@/components/kibo/ai/message'
-import { AIResponse } from '@/components/kibo/ai/response'
+import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/ai/conversation'
+import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/ai/input'
+import { AIMessage, AIMessageContent } from '@/components/ai/message'
+import { AIResponse } from '@/components/ai/response'
 import { Avatar } from '@/components/ui/avatar'
 import { useAuthContext } from '@/features/auth'
 

@@ -4,7 +4,7 @@ import type { ComponentProps, ReactNode } from 'react'
 
 import { CheckCircleIcon, ChevronDownIcon, CircleIcon, ClockIcon, WrenchIcon, XCircleIcon } from 'lucide-react'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ai/collapsible'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 

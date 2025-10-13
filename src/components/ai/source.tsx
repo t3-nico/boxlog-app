@@ -4,7 +4,7 @@ import type { ComponentProps } from 'react'
 
 import { BookIcon, ChevronDownIcon } from 'lucide-react'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/kibo/collapsible'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ai/collapsible'
 import { cn } from '@/lib/utils'
 
 export type AISourcesProps = ComponentProps<'div'>
