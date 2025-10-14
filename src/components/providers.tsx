@@ -2,6 +2,7 @@
 
 import React from 'react'
 
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { ThemeProvider } from '@/contexts/theme-context'
 import { NotificationModalProvider } from '@/features/notifications'
 import { GlobalSearchProvider } from '@/features/search'
@@ -21,9 +22,11 @@ interface ProvidersProps {
 export function Providers({ children }: ProvidersProps) {
   return (
     <ThemeProvider>
-      <GlobalSearchProvider>
-        <NotificationModalProvider>{children}</NotificationModalProvider>
-      </GlobalSearchProvider>
+      <TooltipProvider delayDuration={0}>
+        <GlobalSearchProvider>
+          <NotificationModalProvider>{children}</NotificationModalProvider>
+        </GlobalSearchProvider>
+      </TooltipProvider>
     </ThemeProvider>
   )
 }
