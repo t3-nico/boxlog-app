@@ -6,11 +6,15 @@ import { useChat, type UIMessage } from '@ai-sdk/react'
 
 import { BotMessageSquare, Copy, MoreVertical, RefreshCw, Trash2 } from 'lucide-react'
 
-import { AIConversation, AIConversationContent, AIConversationScrollButton } from '@/components/ai/conversation'
-import { AIInput, AIInputSubmit, AIInputTextarea, AIInputToolbar, AIInputTools } from '@/components/ai/input'
-import { AIMessage, AIMessageContent } from '@/components/ai/message'
-import { AIResponse } from '@/components/ai/response'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import {
+  Conversation,
+  ConversationContent,
+  ConversationScrollButton,
+} from '@/components/vercel-ai-elements/conversation'
+import { Message, MessageContent } from '@/components/vercel-ai-elements/message'
+import { PromptInput, PromptInputSubmit, PromptInputTextarea } from '@/components/vercel-ai-elements/prompt-input'
+import { Response } from '@/components/vercel-ai-elements/response'
 import { useAuthContext } from '@/features/auth'
 import { useI18n } from '@/features/i18n/lib/hooks'
 
@@ -28,17 +32,10 @@ const getMessageContent = (message: UIMessage): string => {
 }
 
 // BoxLog専用のAI Responseコンポーネント
-const CodebaseAIResponse = ({ children, ...props }: { children: string; [key: string]: unknown }) => (
-  <AIResponse
-    className="prose prose-sm dark:prose-invert max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
-    options={{
-      disallowedElements: ['script', 'iframe'],
-      remarkPlugins: [],
-    }}
-    {...props}
-  >
+const CodebaseAIResponse = ({ children }: { children: string }) => (
+  <Response className="prose prose-sm dark:prose-invert max-w-none [&_blockquote]:border-l-4 [&_blockquote]:border-blue-500 [&_blockquote]:pl-4 [&_blockquote]:italic [&_code]:rounded [&_code]:bg-gray-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-sm [&_code]:dark:bg-gray-800 [&_h1]:mt-4 [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h2]:mt-3 [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h3]:mt-3 [&_h3]:mb-1 [&_h3]:text-sm [&_h3]:font-semibold [&_li]:my-1 [&_ol]:my-2 [&_p]:my-2 [&_p]:leading-relaxed [&_pre]:rounded [&_pre]:bg-gray-100 [&_pre]:p-3 [&_pre]:dark:bg-gray-800 [&_ul]:my-2 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
     {children}
-  </AIResponse>
+  </Response>
 )
 
 // ユーザー情報を取得するヘルパー
@@ -135,10 +132,10 @@ const MessageBubble = ({ message }: { message: UIMessage }) => {
   const messageFrom = message.role === 'system' ? 'assistant' : (message.role as 'user' | 'assistant')
 
   return (
-    <AIMessage from={messageFrom}>
+    <Message from={messageFrom}>
       {isAssistant ? <AssistantIcon /> : null}
 
-      <AIMessageContent>
+      <MessageContent>
         {isAssistant ? <AssistantMessageContent message={message} /> : <UserMessageContent message={message} />}
 
         {isAssistant && (message as ExtendedMessage).createdAt ? (
@@ -149,10 +146,10 @@ const MessageBubble = ({ message }: { message: UIMessage }) => {
             })}
           </div>
         ) : null}
-      </AIMessageContent>
+      </MessageContent>
 
       {isUser ? <UserAvatar displayName={displayName} profileIcon={profileIcon} avatarUrl={avatarUrl} /> : null}
-    </AIMessage>
+    </Message>
   )
 }
 
@@ -164,7 +161,7 @@ const MainSupportChatInput = ({
 }: {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => void
-  handleSubmit: (e: React.FormEvent) => void
+  handleSubmit: (_message: unknown, event: React.FormEvent) => void
   isLoading: boolean
 }) => {
   const { t } = useI18n()
@@ -197,28 +194,24 @@ const MainSupportChatInput = ({
         </div>
       )}
 
-      <AIInput onSubmit={handleSubmit}>
-        <AIInputTextarea
+      <PromptInput onSubmit={handleSubmit}>
+        <PromptInputTextarea
           value={input}
           onChange={handleInputChange}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
           placeholder={t('help.placeholder')}
           disabled={isLoading}
-          minHeight={40}
-          maxHeight={120}
         />
-        <AIInputToolbar>
-          <AIInputTools>
-            <div className="text-muted-foreground flex items-center gap-1 px-2 text-xs">
-              <BotMessageSquare className="h-4 w-4" />
-              <span>{t('help.subtitle')}</span>
-            </div>
-          </AIInputTools>
+        <div className="flex items-center justify-between gap-2 px-3 pb-2">
+          <div className="text-muted-foreground flex items-center gap-1 text-xs">
+            <BotMessageSquare className="h-4 w-4" />
+            <span>{t('help.subtitle')}</span>
+          </div>
 
-          <AIInputSubmit disabled={!input.trim() || isLoading} status={getSubmitStatus()} />
-        </AIInputToolbar>
-      </AIInput>
+          <PromptInputSubmit disabled={!input.trim() || isLoading} />
+        </div>
+      </PromptInput>
     </div>
   )
 }
@@ -267,8 +260,8 @@ ${t('help.mainSupportChat.greeting')}`,
   }, [])
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault()
+    (_message: unknown, event: React.FormEvent) => {
+      event.preventDefault()
       if (!input.trim() || isLoading) return
 
       // Send message using sendMessage from useChat
@@ -367,8 +360,8 @@ ${t('help.mainSupportChat.greeting')}`,
       </div>
 
       {/* Chat Content */}
-      <AIConversation>
-        <AIConversationContent className="px-6 py-6">
+      <Conversation>
+        <ConversationContent className="px-6 py-6">
           {/* Error display */}
           {error != null && (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
@@ -394,9 +387,9 @@ ${t('help.mainSupportChat.greeting')}`,
           )}
 
           {messages.length === 0 ? (
-            <AIMessage from="assistant">
+            <Message from="assistant">
               <AssistantIcon />
-              <AIMessageContent>
+              <MessageContent>
                 <CodebaseAIResponse>
                   {`${t('help.welcome.greeting')}
 
@@ -406,14 +399,14 @@ ${t('help.welcome.note')}
 
 ${t('help.welcome.question')}`}
                 </CodebaseAIResponse>
-              </AIMessageContent>
-            </AIMessage>
+              </MessageContent>
+            </Message>
           ) : (
             messages.map((message) => <MessageBubble key={message.id} message={message} />)
           )}
-        </AIConversationContent>
-        <AIConversationScrollButton />
-      </AIConversation>
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
 
       {/* Chat Input */}
       <MainSupportChatInput

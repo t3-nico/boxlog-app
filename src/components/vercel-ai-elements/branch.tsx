@@ -1,40 +1,39 @@
 'use client'
 
-import type { HTMLAttributes, ReactElement, ReactNode } from 'react'
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import type { UIMessage } from 'ai'
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import type { ComponentProps, HTMLAttributes, ReactElement } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
-type AIBranchContextType = {
+type BranchContextType = {
   currentBranch: number
   totalBranches: number
   goToPrevious: () => void
   goToNext: () => void
   branches: ReactElement[]
-  setBranches: (_branches: ReactElement[]) => void
+  setBranches: (branches: ReactElement[]) => void
 }
 
-const AIBranchContext = createContext<AIBranchContextType | null>(null)
+const BranchContext = createContext<BranchContextType | null>(null)
 
-const useAIBranch = () => {
-  const context = useContext(AIBranchContext)
+const useBranch = () => {
+  const context = useContext(BranchContext)
 
   if (!context) {
-    throw new Error('AIBranch components must be used within AIBranch')
+    throw new Error('Branch components must be used within Branch')
   }
 
   return context
 }
 
-export type AIBranchProps = HTMLAttributes<HTMLDivElement> & {
+export type BranchProps = HTMLAttributes<HTMLDivElement> & {
   defaultBranch?: number
-  onBranchChange?: (_branchIndex: number) => void
+  onBranchChange?: (branchIndex: number) => void
 }
 
-export const AIBranch = ({ defaultBranch = 0, onBranchChange, className, ...props }: AIBranchProps) => {
+export const Branch = ({ defaultBranch = 0, onBranchChange, className, ...props }: BranchProps) => {
   const [currentBranch, setCurrentBranch] = useState(defaultBranch)
   const [branches, setBranches] = useState<ReactElement[]>([])
 
@@ -53,7 +52,7 @@ export const AIBranch = ({ defaultBranch = 0, onBranchChange, className, ...prop
     handleBranchChange(newBranch)
   }
 
-  const contextValue: AIBranchContextType = {
+  const contextValue: BranchContextType = {
     currentBranch,
     totalBranches: branches.length,
     goToPrevious,
@@ -63,43 +62,42 @@ export const AIBranch = ({ defaultBranch = 0, onBranchChange, className, ...prop
   }
 
   return (
-    <AIBranchContext.Provider value={contextValue}>
+    <BranchContext.Provider value={contextValue}>
       <div className={cn('grid w-full gap-2 [&>div]:pb-0', className)} {...props} />
-    </AIBranchContext.Provider>
+    </BranchContext.Provider>
   )
 }
 
-export type AIBranchMessagesProps = {
-  children: ReactElement | ReactElement[]
-}
+export type BranchMessagesProps = HTMLAttributes<HTMLDivElement>
 
-export const AIBranchMessages = ({ children }: AIBranchMessagesProps) => {
-  const { currentBranch, setBranches, branches } = useAIBranch()
-  const childrenArray = useMemo(() => (Array.isArray(children) ? children : [children]), [children])
+export const BranchMessages = ({ children, ...props }: BranchMessagesProps) => {
+  const { currentBranch, setBranches, branches } = useBranch()
+  const childrenArray = Array.isArray(children) ? children : [children]
 
   // Use useEffect to update branches when they change
   useEffect(() => {
     if (branches.length !== childrenArray.length) {
       setBranches(childrenArray)
     }
-  }, [childrenArray, branches.length, setBranches])
+  }, [childrenArray, branches, setBranches])
 
   return childrenArray.map((branch, index) => (
     <div
-      className={cn('grid gap-2 [&>div]:pb-0', index === currentBranch ? 'block' : 'hidden')}
-      key={branch.key || `branch-${index}`}
+      className={cn('grid gap-2 overflow-hidden [&>div]:pb-0', index === currentBranch ? 'block' : 'hidden')}
+      key={branch.key}
+      {...props}
     >
       {branch}
     </div>
   ))
 }
 
-export type AIBranchSelectorProps = HTMLAttributes<HTMLDivElement> & {
-  from: 'user' | 'assistant'
+export type BranchSelectorProps = HTMLAttributes<HTMLDivElement> & {
+  from: UIMessage['role']
 }
 
-export const AIBranchSelector = ({ className, from, ...props }: AIBranchSelectorProps) => {
-  const { totalBranches } = useAIBranch()
+export const BranchSelector = ({ className, from, ...props }: BranchSelectorProps) => {
+  const { totalBranches } = useBranch()
 
   // Don't render if there's only one branch
   if (totalBranches <= 1) {
@@ -118,13 +116,10 @@ export const AIBranchSelector = ({ className, from, ...props }: AIBranchSelector
   )
 }
 
-export type AIBranchPreviousProps = {
-  className?: string
-  children?: ReactNode
-}
+export type BranchPreviousProps = ComponentProps<typeof Button>
 
-export const AIBranchPrevious = ({ className, children }: AIBranchPreviousProps) => {
-  const { goToPrevious, totalBranches } = useAIBranch()
+export const BranchPrevious = ({ className, children, ...props }: BranchPreviousProps) => {
+  const { goToPrevious, totalBranches } = useBranch()
 
   return (
     <Button
@@ -140,19 +135,17 @@ export const AIBranchPrevious = ({ className, children }: AIBranchPreviousProps)
       size="icon"
       type="button"
       variant="ghost"
+      {...props}
     >
       {children ?? <ChevronLeftIcon size={14} />}
     </Button>
   )
 }
 
-export type AIBranchNextProps = {
-  className?: string
-  children?: ReactNode
-}
+export type BranchNextProps = ComponentProps<typeof Button>
 
-export const AIBranchNext = ({ className, children }: AIBranchNextProps) => {
-  const { goToNext, totalBranches } = useAIBranch()
+export const BranchNext = ({ className, children, ...props }: BranchNextProps) => {
+  const { goToNext, totalBranches } = useBranch()
 
   return (
     <Button
@@ -168,21 +161,20 @@ export const AIBranchNext = ({ className, children }: AIBranchNextProps) => {
       size="icon"
       type="button"
       variant="ghost"
+      {...props}
     >
       {children ?? <ChevronRightIcon size={14} />}
     </Button>
   )
 }
 
-export type AIBranchPageProps = {
-  className?: string
-}
+export type BranchPageProps = HTMLAttributes<HTMLSpanElement>
 
-export const AIBranchPage = ({ className }: AIBranchPageProps) => {
-  const { currentBranch, totalBranches } = useAIBranch()
+export const BranchPage = ({ className, ...props }: BranchPageProps) => {
+  const { currentBranch, totalBranches } = useBranch()
 
   return (
-    <span className={cn('text-muted-foreground text-xs font-medium tabular-nums', className)}>
+    <span className={cn('text-muted-foreground text-xs font-medium tabular-nums', className)} {...props}>
       {currentBranch + 1} of {totalBranches}
     </span>
   )
