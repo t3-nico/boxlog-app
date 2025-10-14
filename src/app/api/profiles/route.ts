@@ -1,16 +1,19 @@
 /**
- * プロフィール管理API エンドポイント
+ * プロフィール管理API エンドポイント (Route Handler)
  * @description Supabase を使用したユーザープロフィール管理
+ *
+ * @see Issue #531 - Supabase × Vercel × Next.js 認証チェックリスト
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 import { handleSupabaseError, isValidUUID } from '@/lib/supabase/utils'
 
 // プロフィールの取得 (GET)
 export async function GET(request: NextRequest) {
   try {
+    const supabase = createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 
@@ -40,6 +43,7 @@ export async function GET(request: NextRequest) {
 // プロフィールの作成・更新 (POST)
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createClient()
     const body = await request.json()
     const { id, email, name, avatar_url } = body
 
@@ -78,6 +82,7 @@ export async function POST(request: NextRequest) {
 // プロフィールの更新 (PUT)
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = createClient()
     const body = await request.json()
     const { id, name, avatar_url } = body
 
@@ -115,6 +120,7 @@ export async function PUT(request: NextRequest) {
 // プロフィールの削除 (DELETE)
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = createClient()
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
 

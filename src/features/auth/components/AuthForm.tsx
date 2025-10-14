@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react'
 
 import { useRouter } from 'next/navigation'
 
-// import { createClient } from '@/lib/supabase/client' // Disabled for localStorage mode
+import { createClient } from '@/lib/supabase/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -21,7 +21,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  // const supabase = createClient() // Disabled for localStorage mode
+  const supabase = createClient()
 
   const authSchema = useMemo(
     () =>
@@ -42,16 +42,43 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     resolver: zodResolver(authSchema),
   })
 
-  const onSubmit = async (_data: AuthFormData) => {
+  const onSubmit = async (data: AuthFormData) => {
     setIsLoading(true)
     setError(null)
 
     try {
-      // ローカル専用モード: 常にダッシュボードにリダイレクト
       if (mode === 'login') {
-        router.push('/dashboard')
+        // サインイン処理
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: data.email,
+          password: data.password,
+        })
+
+        if (signInError) {
+          setError(signInError.message)
+          return
+        }
+
+        // ⚠️ 重要: router.refresh() でServer Componentsのセッション状態を更新
+        router.refresh()
+        router.push('/calendar')
       } else {
-        router.push('/dashboard')
+        // サインアップ処理
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        })
+
+        if (signUpError) {
+          setError(signUpError.message)
+          return
+        }
+
+        // メール確認画面へリダイレクト
+        router.push('/auth/verify-email')
       }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An unknown error occurred')
@@ -65,8 +92,16 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     setError(null)
 
     try {
-      // ローカル専用モード: OAuth無効
-      setError(`${provider} login disabled in localStorage mode`)
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (oauthError) {
+        setError(oauthError.message)
+      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : 'An unknown error occurred')
     } finally {

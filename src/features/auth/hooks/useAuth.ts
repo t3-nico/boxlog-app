@@ -2,105 +2,146 @@
 
 import { useEffect, useState } from 'react'
 
-import { AUTH_CONFIG } from '../lib/auth-config'
+import type { User } from '@supabase/supabase-js'
 
-// Local types for localStorage mode
-interface User {
-  id: string
-  email?: string
-}
-
-interface Session {
-  user: User
-  access_token: string
-}
+import { createClient } from '@/lib/supabase/client'
 
 interface AuthState {
   user: User | null
-  session: Session | null
   loading: boolean
   error: string | null
 }
 
+/**
+ * Supabase認証フック
+ *
+ * Client Componentsで認証状態を管理するカスタムフック
+ *
+ * 使用例:
+ * ```tsx
+ * 'use client'
+ * import { useAuth } from '@/features/auth/hooks/useAuth'
+ *
+ * export function ProfilePage() {
+ *   const { user, loading, signOut } = useAuth()
+ *
+ *   if (loading) return <div>Loading...</div>
+ *   if (!user) return <div>Not logged in</div>
+ *
+ *   return <div>Welcome {user.email}</div>
+ * }
+ * ```
+ */
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
-    session: null,
     loading: true,
     error: null,
   })
 
+  const supabase = createClient()
+
   useEffect(() => {
-    // ローカル専用モード: localStorage からユーザー情報を読み込み
-    const initializeLocalAuth = () => {
-      try {
-        const savedUser = localStorage.getItem('boxlog-user')
-        if (savedUser) {
-          const userData = JSON.parse(savedUser)
-          const session: Session = {
-            user: userData,
-            access_token: 'local-token',
-          }
-          setAuthState({
-            user: userData,
-            session,
-            loading: false,
-            error: null,
-          })
-        } else {
-          // デフォルトユーザーを作成
-          const defaultUser: User = {
-            id: `local-user-${Date.now()}`,
-            email: 'user@localhost',
-          }
-          localStorage.setItem('boxlog-user', JSON.stringify(defaultUser))
-          const session: Session = {
-            user: defaultUser,
-            access_token: 'local-token',
-          }
-          setAuthState({
-            user: defaultUser,
-            session,
-            loading: false,
-            error: null,
-          })
-        }
-      } catch (error) {
-        setAuthState({
-          user: null,
-          session: null,
-          loading: false,
-          error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR,
-        })
-      }
+    // 初期セッション取得
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setAuthState({
+        user: session?.user ?? null,
+        loading: false,
+        error: null,
+      })
+    })
+
+    // 認証状態の変更を監視
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAuthState({
+        user: session?.user ?? null,
+        loading: false,
+        error: null,
+      })
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
+
+  const signUp = async (email: string, password: string, metadata?: Record<string, unknown>) => {
+    const result = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: metadata,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (result.error) {
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
     }
 
-    initializeLocalAuth()
-  }, [])
-
-  // ローカル専用モード用のスタブメソッド（翻訳キーを返す）
-  const signUp = async (_email: string, _password: string, _metadata?: Record<string, unknown>) => {
-    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
+    return result
   }
 
-  const signIn = async (_email: string, _password: string) => {
-    return { data: { user: authState.user, session: authState.session }, error: null }
+  const signIn = async (email: string, password: string) => {
+    const result = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (result.error) {
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+    }
+
+    return result
   }
 
-  const signInWithOAuth = async (_provider: 'google' | 'apple') => {
-    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
+  const signInWithOAuth = async (provider: 'google' | 'apple') => {
+    const result = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    })
+
+    if (result.error) {
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+    }
+
+    return result
   }
 
   const signOut = async () => {
-    return { error: null }
+    const result = await supabase.auth.signOut()
+
+    if (result.error) {
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+    }
+
+    return result
   }
 
-  const resetPassword = async (_email: string) => {
-    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
+  const resetPassword = async (email: string) => {
+    const result = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    })
+
+    if (result.error) {
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+    }
+
+    return result
   }
 
-  const updatePassword = async (_password: string) => {
-    return { data: null, error: AUTH_CONFIG.ERROR_MESSAGE_KEYS.UNKNOWN_ERROR }
+  const updatePassword = async (password: string) => {
+    const result = await supabase.auth.updateUser({
+      password,
+    })
+
+    if (result.error) {
+      setAuthState((prev) => ({ ...prev, error: result.error?.message ?? null }))
+    }
+
+    return result
   }
 
   const clearError = () => {
@@ -109,7 +150,6 @@ export function useAuth() {
 
   return {
     user: authState.user,
-    session: authState.session,
     loading: authState.loading,
     error: authState.error,
     signUp,
