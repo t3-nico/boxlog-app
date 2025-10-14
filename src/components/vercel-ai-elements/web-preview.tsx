@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { ChevronDownIcon } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
@@ -75,25 +75,23 @@ export const WebPreviewNavigationButton = ({
   children,
   ...props
 }: WebPreviewNavigationButtonProps) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          className="hover:text-foreground h-8 w-8 p-0"
-          disabled={disabled}
-          onClick={onClick}
-          size="sm"
-          variant="ghost"
-          {...props}
-        >
-          {children}
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>{tooltip}</p>
-      </TooltipContent>
-    </Tooltip>
-  </TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button
+        className="hover:text-foreground h-8 w-8 p-0"
+        disabled={disabled}
+        onClick={onClick}
+        size="sm"
+        variant="ghost"
+        {...props}
+      >
+        {children}
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{tooltip}</p>
+    </TooltipContent>
+  </Tooltip>
 )
 
 export type WebPreviewUrlProps = ComponentProps<typeof Input>

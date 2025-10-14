@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { type LucideIcon, XIcon } from 'lucide-react'
 import type { ComponentProps, HTMLAttributes } from 'react'
@@ -91,14 +91,12 @@ export const ArtifactAction = ({
 
   if (tooltip) {
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>{button}</TooltipTrigger>
-          <TooltipContent>
-            <p>{tooltip}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent>
+          <p>{tooltip}</p>
+        </TooltipContent>
+      </Tooltip>
     )
   }
 
