@@ -34,6 +34,7 @@ BoxLogアプリケーションの統一エラーハンドリングシステム�
 ## 📁 ディレクトリ構造
 
 ### **1. エラーパターン辞書**
+
 ```
 src/config/
 ├── error-patterns.ts          # メインの辞書システム (使用中)
@@ -51,6 +52,7 @@ src/config/
 ```
 
 **使用箇所:** 10ファイル
+
 - GlobalErrorBoundary.tsx
 - error-analysis.ts
 - sentry/integration.ts
@@ -62,6 +64,7 @@ src/config/
 - server/api/trpc.ts
 
 ### **2. エラーバウンダリー**
+
 ```
 src/components/
 ├── error-boundary.tsx              # 機能別エラーバウンダリー
@@ -83,10 +86,12 @@ src/components/
 ```
 
 **使用箇所:**
+
 - `error-boundary.tsx`: 5箇所 (カレンダー、AI Chat、設定)
 - `GlobalErrorBoundary.tsx`: 1箇所 (layout.tsx)
 
 ### **3. エラーハンドラー**
+
 ```
 src/lib/
 ├── error-handler.ts           # 汎用エラーハンドラー (2箇所で使用)
@@ -97,7 +102,23 @@ src/lib/
     └── error-messages.ts      # i18nエラーメッセージ
 ```
 
-### **4. その他**
+### **4. エラーページ (UI)**
+
+```
+src/app/
+├── not-found.tsx              # 404エラー（自動）
+├── error.tsx                  # 500エラー（自動）
+└── error/
+    ├── 401/page.tsx           # 認証エラー
+    ├── 403/page.tsx           # 権限エラー
+    ├── 500/page.tsx           # サーバーエラー
+    └── maintenance/page.tsx   # メンテナンス
+```
+
+**詳細**: [docs/systems/ERROR_PAGES.md](../systems/ERROR_PAGES.md)
+
+### **5. その他**
+
 ```
 src/
 ├── hooks/
@@ -107,10 +128,7 @@ src/
 │   └── errorCodes.ts          # エラーコード定数
 │
 └── app/
-    ├── global-error.tsx       # Next.js グローバルエラー
-    └── error/
-        ├── page.tsx           # エラーページ
-        └── not-found.tsx      # 404ページ
+    └── global-error.tsx       # Next.js グローバルエラー
 ```
 
 ---
@@ -118,6 +136,7 @@ src/
 ## 🔄 エラーハンドリングフロー
 
 ### **1. フロントエンドエラー**
+
 ```
 エラー発生
   ↓
@@ -134,6 +153,7 @@ error-patterns.ts からパターン取得
 ```
 
 ### **2. API/サーバーエラー**
+
 ```
 エラー発生
   ↓
@@ -147,6 +167,7 @@ api/error-handler.ts でキャッチ
 ```
 
 ### **3. グローバルエラー**
+
 ```
 未処理のエラー発生
   ↓
@@ -166,15 +187,15 @@ Sentry統合 (sentry/integration.ts)
 
 ### **7つの主要カテゴリ**
 
-| カテゴリ | コード範囲 | 重要度 | リトライ可能 |
-|---------|-----------|--------|-------------|
-| AUTH    | 1000-1999 | high   | ❌ No       |
-| VALIDATION | 2000-2999 | medium | ❌ No    |
-| DB      | 3000-3999 | critical | ✅ Yes   |
-| BIZ     | 4000-4999 | medium | ❌ No       |
-| EXTERNAL | 5000-5999 | medium | ✅ Yes    |
-| SYSTEM  | 6000-6999 | critical | ✅ Yes   |
-| RATE    | 7000-7999 | low    | ✅ Yes       |
+| カテゴリ   | コード範囲 | 重要度   | リトライ可能 |
+| ---------- | ---------- | -------- | ------------ |
+| AUTH       | 1000-1999  | high     | ❌ No        |
+| VALIDATION | 2000-2999  | medium   | ❌ No        |
+| DB         | 3000-3999  | critical | ✅ Yes       |
+| BIZ        | 4000-4999  | medium   | ❌ No        |
+| EXTERNAL   | 5000-5999  | medium   | ✅ Yes       |
+| SYSTEM     | 6000-6999  | critical | ✅ Yes       |
+| RATE       | 7000-7999  | low      | ✅ Yes       |
 
 ---
 
@@ -183,15 +204,13 @@ Sentry統合 (sentry/integration.ts)
 ### **1. エラーバウンダリーの使用**
 
 #### 機能別エラーバウンダリー
+
 ```tsx
 import { FeatureErrorBoundary } from '@/components/error-boundary'
 
 export default function CalendarPage() {
   return (
-    <FeatureErrorBoundary
-      featureName="calendar"
-      fallback={<ErrorFallback />}
-    >
+    <FeatureErrorBoundary featureName="calendar" fallback={<ErrorFallback />}>
       <CalendarComponent />
     </FeatureErrorBoundary>
   )
@@ -199,26 +218,19 @@ export default function CalendarPage() {
 ```
 
 #### グローバルエラーバウンダリー (layout.tsx)
+
 ```tsx
 import GlobalErrorBoundary from '@/components/common/GlobalErrorBoundary'
 
 export default function RootLayout({ children }) {
-  return (
-    <GlobalErrorBoundary>
-      {children}
-    </GlobalErrorBoundary>
-  )
+  return <GlobalErrorBoundary>{children}</GlobalErrorBoundary>
 }
 ```
 
 ### **2. エラーパターン辞書の使用**
 
 ```typescript
-import {
-  getUserFriendlyMessage,
-  createErrorToast,
-  isAutoRecoverable
-} from '@/config/error-patterns'
+import { getUserFriendlyMessage, createErrorToast, isAutoRecoverable } from '@/config/error-patterns'
 
 // ユーザー向けメッセージ取得
 const message = getUserFriendlyMessage(errorCode)
@@ -242,11 +254,11 @@ try {
 } catch (error) {
   const analysis = analyzeError(error)
 
-  console.log(analysis.code)              // エラーコード
-  console.log(analysis.category)          // カテゴリ
-  console.log(analysis.severity)          // 重要度
-  console.log(analysis.autoRetryable)     // リトライ可能か
-  console.log(analysis.suggestedActions)  // 推奨アクション
+  console.log(analysis.code) // エラーコード
+  console.log(analysis.category) // カテゴリ
+  console.log(analysis.severity) // 重要度
+  console.log(analysis.autoRetryable) // リトライ可能か
+  console.log(analysis.suggestedActions) // 推奨アクション
 }
 ```
 
@@ -257,14 +269,16 @@ try {
 ### **新しいエラーパターンの追加**
 
 #### 1. `src/constants/errorCodes.ts` にコード追加
+
 ```typescript
 export const ERROR_CODES = {
   // 既存のコード...
-  NEW_ERROR: 4100,  // 4000番台 = BIZカテゴリ
+  NEW_ERROR: 4100, // 4000番台 = BIZカテゴリ
 }
 ```
 
 #### 2. `src/config/error-patterns.ts` にパターン追加
+
 ```typescript
 export const ERROR_PATTERNS: Record<number, ErrorPattern> = {
   // 既存のパターン...
@@ -276,8 +290,8 @@ export const ERROR_PATTERNS: Record<number, ErrorPattern> = {
     recommendedActions: ['アクション1', 'アクション2'],
     autoRecoverable: false,
     urgency: 'medium',
-    emoji: '⚠️'
-  }
+    emoji: '⚠️',
+  },
 }
 ```
 
@@ -286,12 +300,14 @@ export const ERROR_PATTERNS: Record<number, ErrorPattern> = {
 ## 🚀 ベストプラクティス
 
 ### ✅ DO
+
 - エラーは必ずエラーパターン辞書に登録する
 - カテゴリに応じた適切なエラーコードを使用する
 - ユーザーフレンドリーなメッセージを提供する
 - 自動復旧可能なエラーは積極的にリトライする
 
 ### ❌ DON'T
+
 - 汎用的な `try-catch` を乱用しない
 - エラーメッセージに技術的な詳細を含めない
 - エラーを握りつぶさない (必ずログ出力またはSentry送信)
@@ -302,6 +318,7 @@ export const ERROR_PATTERNS: Record<number, ErrorPattern> = {
 ## 📈 統計・モニタリング
 
 ### **Sentry統合**
+
 - すべてのエラーは自動的にSentryに送信
 - カテゴリ別タグ付けで分析が容易
 - エラーパターン辞書と統合した構造化レポート
@@ -309,6 +326,7 @@ export const ERROR_PATTERNS: Record<number, ErrorPattern> = {
 詳細: [docs/integrations/SENTRY.md](../integrations/SENTRY.md)
 
 ### **エラー統計**
+
 ```typescript
 import { errorPatternDictionary } from '@/config/error-patterns'
 
@@ -339,6 +357,7 @@ const health = errorPatternDictionary.healthCheck()
 ## 🔮 将来の拡張
 
 ### **高機能版への移行 (オプション)**
+
 `src/config/error-patterns/` には以下の高機能版が用意されています:
 
 - **ErrorPatternDictionary クラス**: より高度なエラー管理
@@ -352,21 +371,26 @@ const health = errorPatternDictionary.healthCheck()
 
 ## 📚 関連ドキュメント
 
+- [ERROR_PAGES.md](../systems/ERROR_PAGES.md) - エラーページシステム
 - [CLAUDE.md](../../CLAUDE.md) - 開発指針
 - [SENTRY.md](../integrations/SENTRY.md) - Sentry統合ガイド
 - [Issue #404](https://github.com/t3-nico/boxlog-app/issues/404) - エラーハンドリング整理Issue
+- [Issue #543](https://github.com/t3-nico/boxlog-app/issues/543) - エラーページ実装Issue
 
 ---
 
 ## 📞 トラブルシューティング
 
 ### Q: エラーが正しくキャッチされない
+
 A: ErrorBoundary/FeatureErrorBoundaryで囲まれているか確認してください。
 
 ### Q: ユーザーメッセージが表示されない
+
 A: エラーコードが `error-patterns.ts` に登録されているか確認してください。
 
 ### Q: 自動復旧が動作しない
+
 A: `isAutoRecoverable(errorCode)` が `true` を返すか確認してください。
 
 ---

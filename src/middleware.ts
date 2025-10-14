@@ -57,6 +57,14 @@ async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const locale = getLocaleFromRequest(request)
 
+  // メンテナンスモードチェック
+  const isMaintenanceMode = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === 'true'
+  const isMaintenancePage = pathname.includes('/error/maintenance')
+
+  if (isMaintenanceMode && !isMaintenancePage) {
+    return NextResponse.redirect(new URL('/error/maintenance', request.url))
+  }
+
   // 言語リダイレクトの処理
   if (shouldRedirectToLocale(pathname)) {
     const redirectUrl = new URL(`/${locale}${pathname}`, request.url)
@@ -116,8 +124,9 @@ async function middleware(request: NextRequest) {
 
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
-      console.log('[Middleware] Redirecting to login:', request.nextUrl.pathname)
-      return NextResponse.redirect(new URL(`/${currentLocale}/auth/login`, request.url))
+      console.log('[Middleware] Redirecting to 401:', request.nextUrl.pathname)
+      // 401 Unauthorizedページにリダイレクト
+      return NextResponse.redirect(new URL('/error/401', request.url))
     }
 
     // 認証済みでauth系のパスにアクセスした場合

@@ -938,5 +938,49 @@
     "chat": {
       "inputPlaceholder": "What would you like to know?"
     }
+  },
+  "errors": {
+    "common": {
+      "contactUs": "Contact Us",
+      "goHome": "Go Home",
+      "reload": "Reload"
+    },
+    "404": {
+      "title": "404",
+      "heading": "Page Not Found",
+      "description": "The page you're looking for doesn't exist or has been moved.",
+      "action": "Go Home",
+      "sidebarHint": "Navigate from sidebar"
+    },
+    "401": {
+      "title": "401",
+      "heading": "Authentication Required",
+      "description": "You need to log in to access this page.",
+      "action": "Go to Login",
+      "secondaryAction": "Go Home"
+    },
+    "403": {
+      "title": "403",
+      "heading": "Access Forbidden",
+      "description": "You don't have permission to access this resource.",
+      "action": "Go Home",
+      "contactSupport": "If you need access, please contact your administrator."
+    },
+    "500": {
+      "title": "500",
+      "heading": "Server Error",
+      "description": "An unexpected error occurred on the server.",
+      "action": "Reload",
+      "secondaryAction": "Go Home",
+      "contactSupport": "If the problem persists, please contact support."
+    },
+    "maintenance": {
+      "title": "Under Maintenance",
+      "heading": "Under Maintenance",
+      "description": "We're currently performing system maintenance.",
+      "estimatedTime": "Estimated completion",
+      "checkStatus": "Check Status",
+      "thankYou": "We apologize for the inconvenience."
+    }
   }
 }

@@ -933,5 +933,49 @@
     "chat": {
       "inputPlaceholder": "何を知りたいですか？"
     }
+  },
+  "errors": {
+    "common": {
+      "contactUs": "お問い合わせ",
+      "goHome": "ホームに戻る",
+      "reload": "再読み込み"
+    },
+    "404": {
+      "title": "404",
+      "heading": "ページが見つかりません",
+      "description": "お探しのページは存在しないか、移動した可能性があります。",
+      "action": "ホームに戻る",
+      "sidebarHint": "サイドメニューから移動"
+    },
+    "401": {
+      "title": "401",
+      "heading": "認証が必要です",
+      "description": "このページにアクセスするには、ログインが必要です。",
+      "action": "ログインページへ",
+      "secondaryAction": "ホームに戻る"
+    },
+    "403": {
+      "title": "403",
+      "heading": "アクセス権限がありません",
+      "description": "このリソースにアクセスする権限がありません。",
+      "action": "ホームに戻る",
+      "contactSupport": "権限が必要な場合は、管理者にお問い合わせください。"
+    },
+    "500": {
+      "title": "500",
+      "heading": "サーバーエラー",
+      "description": "サーバーで予期しないエラーが発生しました。",
+      "action": "再読み込み",
+      "secondaryAction": "ホームに戻る",
+      "contactSupport": "問題が解決しない場合は、サポートにお問い合わせください。"
+    },
+    "maintenance": {
+      "title": "メンテナンス中",
+      "heading": "メンテナンス中",
+      "description": "現在、システムメンテナンスを実施しています。",
+      "estimatedTime": "完了予定時刻",
+      "checkStatus": "ステータスを確認",
+      "thankYou": "ご不便をおかけして申し訳ございません。"
+    }
   }
 }
