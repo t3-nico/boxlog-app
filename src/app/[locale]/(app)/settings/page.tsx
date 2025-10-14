@@ -22,7 +22,8 @@ export default function SettingsPage() {
 
     // Homeページに遷移（URLを/settingsから変更）
     router.push('/')
-  }, [openSettings, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // レンダリング中は何も表示しない（即座にリダイレクト）
   return null

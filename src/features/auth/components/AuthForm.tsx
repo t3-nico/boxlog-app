@@ -49,7 +49,7 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     try {
       if (mode === 'login') {
         // サインイン処理
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email: data.email,
           password: data.password,
         })
@@ -59,9 +59,26 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           return
         }
 
-        // ⚠️ 重要: router.refresh() でServer Componentsのセッション状態を更新
-        router.refresh()
-        router.push('/calendar')
+        // AALレベルをチェック（正しい方法）
+        const { data: aalData, error: aalError } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+
+        console.log('Login successful. AAL Data:', aalData)
+
+        if (aalError) {
+          console.error('AAL check error:', aalError)
+        }
+
+        // currentLevel が aal1 で nextLevel が aal2 の場合、MFA検証が必要
+        if (aalData && aalData.currentLevel === 'aal1' && aalData.nextLevel === 'aal2') {
+          // MFA検証が必要
+          console.log('MFA verification required')
+          router.push('/auth/mfa-verify')
+        } else {
+          // MFAが不要、または既にaal2の場合は通常通りリダイレクト
+          console.log('No MFA required, proceeding to calendar')
+          router.refresh()
+          router.push('/calendar')
+        }
       } else {
         // サインアップ処理
         const { error: signUpError } = await supabase.auth.signUp({

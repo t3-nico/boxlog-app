@@ -4,12 +4,13 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import Image from 'next/image'
+import QRCode from 'qrcode'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Switch } from '@/components/ui/switch'
 import { useAuthContext } from '@/features/auth/contexts/AuthContext'
 import { useI18n } from '@/features/i18n/lib/hooks'
+import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
@@ -39,6 +40,19 @@ const AccountSettings = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [isPasswordLoading, setIsPasswordLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // MFA関連のstate
+  const [hasMFA, setHasMFA] = useState(false)
+  const [showMFASetup, setShowMFASetup] = useState(false)
+  const [qrCode, setQrCode] = useState<string | null>(null)
+  const [secret, setSecret] = useState<string | null>(null)
+  const [factorId, setFactorId] = useState<string | null>(null)
+  const [verificationCode, setVerificationCode] = useState('')
+  const [mfaError, setMfaError] = useState<string | null>(null)
+  const [mfaSuccess, setMfaSuccess] = useState<string | null>(null)
+  const [isMFALoading, setIsMFALoading] = useState(false)
+
+  const supabase = createClient()
 
   // アイコンの選択肢
   const availableIcons = [
@@ -177,6 +191,117 @@ const AccountSettings = () => {
       setIsDeleting(false)
     }
   }, [])
+
+  // MFA状態チェック
+  const checkMFAStatus = useCallback(async () => {
+    try {
+      const { data: factors } = await supabase.auth.mfa.listFactors()
+      if (factors && factors.totp.length > 0) {
+        const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
+        setHasMFA(!!verifiedFactor)
+      }
+    } catch (err) {
+      console.error('MFA status check error:', err)
+    }
+  }, [supabase])
+
+  // MFA登録開始
+  const handleEnrollMFA = useCallback(async () => {
+    setIsMFALoading(true)
+    setMfaError(null)
+    setMfaSuccess(null)
+
+    try {
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: 'totp',
+        friendlyName: 'Authenticator App',
+      })
+
+      if (error) throw error
+
+      if (data) {
+        setFactorId(data.id)
+        setSecret(data.totp.secret)
+        const qrCodeDataUrl = await QRCode.toDataURL(data.totp.uri)
+        setQrCode(qrCodeDataUrl)
+        setShowMFASetup(true)
+      }
+    } catch (err) {
+      console.error('MFA enrollment error:', err)
+      setMfaError('2段階認証の設定開始に失敗しました')
+    } finally {
+      setIsMFALoading(false)
+    }
+  }, [supabase])
+
+  // MFA検証
+  const handleVerifyMFA = useCallback(async () => {
+    if (!factorId || !verificationCode) {
+      setMfaError('6桁のコードを入力してください')
+      return
+    }
+
+    setIsMFALoading(true)
+    setMfaError(null)
+
+    try {
+      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+        factorId,
+        code: verificationCode,
+      })
+
+      if (error) throw error
+
+      setMfaSuccess('2段階認証が有効になりました！')
+      setHasMFA(true)
+      setShowMFASetup(false)
+      setVerificationCode('')
+      setQrCode(null)
+      setSecret(null)
+      setFactorId(null)
+    } catch (err) {
+      console.error('MFA verification error:', err)
+      setMfaError('コードの検証に失敗しました。もう一度お試しください')
+    } finally {
+      setIsMFALoading(false)
+    }
+  }, [factorId, verificationCode, supabase])
+
+  // MFA無効化
+  const handleDisableMFA = useCallback(async () => {
+    const confirmed = window.confirm('2段階認証を無効にしますか？')
+    if (!confirmed) return
+
+    setIsMFALoading(true)
+    setMfaError(null)
+
+    try {
+      const { data: factors } = await supabase.auth.mfa.listFactors()
+      if (factors && factors.totp.length > 0) {
+        const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
+        if (verifiedFactor) {
+          const { error } = await supabase.auth.mfa.unenroll({
+            factorId: verifiedFactor.id,
+          })
+
+          if (error) throw error
+
+          setMfaSuccess('2段階認証を無効にしました')
+          setHasMFA(false)
+        }
+      }
+    } catch (err) {
+      console.error('MFA disable error:', err)
+      setMfaError('2段階認証の無効化に失敗しました')
+    } finally {
+      setIsMFALoading(false)
+    }
+  }, [supabase])
+
+  // 初回マウント時にMFA状態チェック
+  useEffect(() => {
+    checkMFAStatus()
+  }, [checkMFAStatus])
 
   // jsx-no-bind optimization: Avatar remove handler
   const handleAvatarRemove = useCallback(() => {
@@ -369,31 +494,120 @@ const AccountSettings = () => {
       <SettingsCard
         title={t('settings.account.twoFactor')}
         description={t('settings.account.twoFactorDesc')}
-        isSaving={security.isSaving}
+        isSaving={isMFALoading}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-base font-medium">{t('settings.account.enable2FA')}</div>
-            <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
-              {security.values.twoFactorEnabled
-                ? t('settings.account.twoFactorEnabled')
-                : t('settings.account.twoFactorPrompt')}
-            </p>
-          </div>
-          <Switch checked={security.values.twoFactorEnabled} onCheckedChange={handleTwoFactorChange} />
-        </div>
-
-        {security.values.twoFactorEnabled != null && (
-          <div className="border-border bg-accent mt-4 rounded-lg border p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <div className="bg-primary h-2 w-2 rounded-full"></div>
-              <span className="text-accent-foreground text-sm font-medium">
-                {t('settings.account.twoFactorActive')}
-              </span>
+        <div className="space-y-4">
+          {/* エラー・成功メッセージ */}
+          {mfaError && (
+            <div className="border-destructive/30 bg-destructive/5 text-destructive rounded-lg border p-3 text-sm">
+              {mfaError}
             </div>
-            <p className="text-accent-foreground text-xs">{t('settings.account.twoFactorProtection')}</p>
-          </div>
-        )}
+          )}
+          {mfaSuccess && (
+            <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-3 text-sm text-green-700 dark:text-green-400">
+              {mfaSuccess}
+            </div>
+          )}
+
+          {/* MFA未設定時の表示 */}
+          {!hasMFA && !showMFASetup && (
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-base font-medium">Two-Factor Authentication (MFA)</div>
+                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">
+                  認証アプリを使って、ログイン時に追加のセキュリティ層を追加します
+                </p>
+              </div>
+              <Button type="button" variant="outline" onClick={handleEnrollMFA} disabled={isMFALoading}>
+                {isMFALoading ? '読み込み中...' : 'MFAを有効にする'}
+              </Button>
+            </div>
+          )}
+
+          {/* MFA設定中の表示 */}
+          {!hasMFA && showMFASetup && qrCode && (
+            <div className="border-border bg-card space-y-4 rounded-lg border p-6">
+              <div>
+                <h3 className="mb-2 text-lg font-semibold">2段階認証を設定</h3>
+                <p className="text-muted-foreground text-sm">
+                  以下の手順に従って、認証アプリで2段階認証を設定してください。
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <p className="mb-2 text-sm font-medium">1. QRコードをスキャン</p>
+                  <div className="border-border flex justify-center rounded-lg border bg-white p-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={qrCode} alt="QR Code" className="h-48 w-48" />
+                  </div>
+                  <p className="text-muted-foreground mt-2 text-xs">
+                    Google Authenticator、Microsoft Authenticator、Authyなどの認証アプリでスキャンしてください
+                  </p>
+                </div>
+
+                {secret && (
+                  <div>
+                    <p className="mb-2 text-sm font-medium">またはこのコードを手動で入力:</p>
+                    <code className="bg-muted block rounded p-2 text-xs">{secret}</code>
+                  </div>
+                )}
+
+                <div>
+                  <p className="mb-2 text-sm font-medium">2. 認証アプリに表示された6桁のコードを入力</p>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="text"
+                      placeholder="000000"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value)}
+                      maxLength={6}
+                      className="max-w-[150px] text-center text-lg tracking-widest"
+                    />
+                    <Button onClick={handleVerifyMFA} disabled={isMFALoading || verificationCode.length !== 6}>
+                      {isMFALoading ? '検証中...' : '確認'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowMFASetup(false)
+                        setQrCode(null)
+                        setSecret(null)
+                        setFactorId(null)
+                        setVerificationCode('')
+                      }}
+                    >
+                      キャンセル
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* MFA有効時の表示 */}
+          {hasMFA && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm font-medium text-green-700 dark:text-green-400">
+                    2段階認証が有効になっています
+                  </span>
+                </div>
+                <p className="text-xs text-green-600 dark:text-green-500">
+                  ログイン時に認証アプリで生成されるコードが必要になります
+                </p>
+              </div>
+
+              <div className="flex justify-end">
+                <Button variant="destructive" onClick={handleDisableMFA} disabled={isMFALoading}>
+                  {isMFALoading ? '処理中...' : 'MFAを無効にする'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </SettingsCard>
 
       {/* Danger Zone */}
