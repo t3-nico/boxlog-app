@@ -977,5 +977,20 @@
       "checkStatus": "ステータスを確認",
       "thankYou": "ご不便をおかけして申し訳ございません。"
     }
+  },
+  "ossCredits": {
+    "title": "オープンソースライセンス",
+    "description": "このプロジェクトで使用しているオープンソースソフトウェアのライセンス情報",
+    "intro": "BoxLogは以下のオープンソースソフトウェアを使用しています。各プロジェクトのメンテナーと貢献者の皆様に深く感謝いたします。",
+    "totalPackages": "総パッケージ数",
+    "searchPlaceholder": "パッケージ名で検索...",
+    "license": "ライセンス",
+    "version": "バージョン",
+    "repository": "リポジトリ",
+    "publisher": "公開者",
+    "noRepository": "リポジトリ情報なし",
+    "noPublisher": "公開者情報なし",
+    "noResults": "検索結果が見つかりませんでした",
+    "loadingError": "ライセンス情報の読み込みに失敗しました"
   }
 }
