@@ -11,7 +11,7 @@ const TablePage = () => {
 
   return (
     <div className="bg-background relative flex h-full flex-col">
-      <div className={cn('flex h-full flex-col p-4 transition-all duration-300', isOpen && 'mr-96')}>
+      <div className={cn('flex h-full flex-col px-4 transition-all duration-300 md:px-6', isOpen && 'mr-96')}>
         {/* 開発環境用：テストデータ追加ボタン */}
         {process.env.NODE_ENV === 'development' && (
           <div className="bg-muted mb-4 flex items-center gap-2 rounded-md border p-2">
@@ -24,9 +24,7 @@ const TablePage = () => {
             </Button>
           </div>
         )}
-        <div className="flex-1 overflow-hidden">
-          <TaskTable />
-        </div>
+        <TaskTable />
       </div>
     </div>
   )

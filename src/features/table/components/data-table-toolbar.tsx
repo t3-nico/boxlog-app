@@ -1,7 +1,7 @@
 'use client'
 
 import type { Table } from '@tanstack/react-table'
-import { X } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,21 +20,6 @@ export function DataTableToolbar<TData>({ table, onDeleteSelected }: DataTableTo
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center space-x-2">
-        {selectedRows.length > 0 && onDeleteSelected && (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => {
-              const ids = selectedRows.map((row) => (row.original as { id: string }).id)
-              onDeleteSelected(ids)
-              table.resetRowSelection()
-            }}
-            className="h-8"
-          >
-            <X className="mr-2 h-4 w-4" />
-            {selectedRows.length}件削除
-          </Button>
-        )}
         <Input
           placeholder="タスクを検索..."
           value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
@@ -73,7 +58,13 @@ export function DataTableToolbar<TData>({ table, onDeleteSelected }: DataTableTo
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      <div className="flex items-center space-x-2">
+        <DataTableViewOptions table={table} />
+        <Button variant="default" size="sm" className="h-8">
+          <Plus className="mr-2 h-4 w-4" />
+          タスク追加
+        </Button>
+      </div>
     </div>
   )
 }

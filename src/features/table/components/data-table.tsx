@@ -14,7 +14,7 @@ import {
 } from '@tanstack/react-table'
 import * as React from 'react'
 
-import { TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DataTableEmpty } from './data-table-empty'
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
@@ -58,19 +58,17 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="mb-4 shrink-0">
-        <DataTableToolbar table={table} onDeleteSelected={onDeleteSelected} />
-      </div>
-      <div className="relative min-h-0 flex-1 overflow-auto rounded-md border">
-        <table className="w-full caption-bottom text-sm">
+    <div className="space-y-4">
+      <DataTableToolbar table={table} onDeleteSelected={onDeleteSelected} />
+      <div className="border-input overflow-x-auto rounded-md border">
+        <Table>
           <TableCaption className="sr-only">タスク一覧テーブル</TableCaption>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-b">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="bg-background sticky top-0 z-10 border-b">
+                    <TableHead key={header.id}>
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   )
@@ -89,17 +87,15 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="p-0">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   <DataTableEmpty onCreateTask={onCreateTask} />
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
-        </table>
+        </Table>
       </div>
-      <div className="mt-4 shrink-0">
-        <DataTablePagination table={table} />
-      </div>
+      <DataTablePagination table={table} />
     </div>
   )
 }

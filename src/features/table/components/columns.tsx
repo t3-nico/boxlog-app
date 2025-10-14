@@ -14,10 +14,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import type { Task } from '@/types'
 import { format } from 'date-fns'
 import { ja } from 'date-fns/locale'
 import type { TableTask } from '../types/table.types'
 import { DataTableColumnHeader } from './data-table-column-header'
+import { EditablePriorityCell } from './editable-priority-cell'
+import { EditableStatusCell } from './editable-status-cell'
 
 /**
  * ステータスバッジの色マッピング
@@ -64,7 +67,10 @@ const priorityLabelMap = {
 /**
  * タスクテーブルのカラム定義
  */
-export const columns: ColumnDef<TableTask>[] = [
+export const getColumns = (
+  onUpdateStatus: (taskId: string, status: Task['status']) => void,
+  onUpdatePriority: (taskId: string, priority: Task['priority']) => void
+): ColumnDef<TableTask>[] => [
   // 選択チェックボックス
   {
     id: 'select',
@@ -93,36 +99,37 @@ export const columns: ColumnDef<TableTask>[] = [
     cell: ({ row }) => {
       const title = row.getValue('title') as string
       return (
-        <div className="max-w-md">
-          <div className="truncate font-medium">{title}</div>
-          {row.original.description && (
-            <div className="text-muted-foreground truncate text-xs">{row.original.description}</div>
-          )}
+        <div className="cursor-pointer font-medium transition-all hover:underline hover:underline-offset-4">
+          {title}
         </div>
       )
     },
   },
 
-  // ステータス（フィルタ可能）
+  // ステータス（フィルタ可能・編集可能）
   {
     accessorKey: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title="ステータス" />,
     cell: ({ row }) => {
       const status = row.getValue('status') as TableTask['status']
-      return <Badge variant={statusVariantMap[status]}>{statusLabelMap[status]}</Badge>
+      const taskId = row.original.id
+      return <EditableStatusCell status={status} onUpdate={(newStatus) => onUpdateStatus(taskId, newStatus)} />
     },
     filterFn: (row, id, value: string[]) => {
       return value.includes(row.getValue(id))
     },
   },
 
-  // 優先度（フィルタ可能）
+  // 優先度（フィルタ可能・編集可能）
   {
     accessorKey: 'priority',
     header: ({ column }) => <DataTableColumnHeader column={column} title="優先度" />,
     cell: ({ row }) => {
       const priority = row.getValue('priority') as TableTask['priority']
-      return <Badge variant={priorityVariantMap[priority]}>{priorityLabelMap[priority]}</Badge>
+      const taskId = row.original.id
+      return (
+        <EditablePriorityCell priority={priority} onUpdate={(newPriority) => onUpdatePriority(taskId, newPriority)} />
+      )
     },
     filterFn: (row, id, value: string[]) => {
       return value.includes(row.getValue(id))
