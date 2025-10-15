@@ -998,6 +998,7 @@
     "description": "利用規約、プライバシーポリシー、その他の法的文書",
     "lastUpdated": "最終更新日",
     "effectiveDate": "施行日",
+    "cookieSettings": "Cookie設定",
     "privacy": {
       "title": "プライバシーポリシー",
       "description": "BoxLogにおける個人情報の取り扱いについて",
@@ -1144,6 +1145,58 @@
     "contact": {
       "email": "support@boxlog.app",
       "website": "https://boxlog.app"
+    },
+    "cookies": {
+      "title": "Cookie設定",
+      "description": "Cookieの使用と管理について",
+      "banner": {
+        "title": "Cookieの使用について",
+        "description": "当サイトでは、サービス向上のためにCookieを使用しています。",
+        "learnMore": "詳細",
+        "acceptAll": "すべて受け入れ",
+        "rejectAll": "必須のみ",
+        "customize": "カスタマイズ"
+      },
+      "categories": {
+        "necessary": {
+          "title": "必須Cookie",
+          "description": "サイトの基本機能に必要なCookieです。無効にすることはできません。",
+          "cookies": {
+            "session": "セッションCookie（認証状態の維持）",
+            "csrf": "CSRFトークン（セキュリティ保護）",
+            "consent": "Cookie同意状態"
+          }
+        },
+        "analytics": {
+          "title": "分析Cookie",
+          "description": "サイトの利用状況を分析し、サービス改善に役立てるためのCookieです。",
+          "cookies": {
+            "vercel": "Vercel Analytics（ページビュー、パフォーマンス）",
+            "sentry": "Sentry Performance（エラー監視、パフォーマンス）"
+          }
+        },
+        "marketing": {
+          "title": "マーケティングCookie",
+          "description": "広告配信やマーケティング活動に使用されるCookieです。現在は使用していません。"
+        }
+      },
+      "settings": {
+        "title": "Cookie設定",
+        "description": "カテゴリ別にCookieの使用を管理できます。",
+        "enabled": "有効",
+        "disabled": "無効",
+        "alwaysActive": "常に有効",
+        "save": "設定を保存",
+        "saved": "Cookie設定を保存しました"
+      },
+      "page": {
+        "intro": "当サイトでは、以下のCookieを使用しています。各カテゴリの詳細とCookieの管理方法をご確認ください。",
+        "whatAreCookies": "Cookieとは？",
+        "whatAreCookiesDesc": "Cookieは、Webサイトがブラウザに保存する小さなテキストファイルです。Cookieを使用することで、ログイン状態の維持、設定の記憶、サイト利用状況の分析が可能になります。",
+        "manageCookies": "Cookieの管理",
+        "manageCookiesDesc": "ブラウザの設定でCookieを無効化することもできますが、一部機能が制限される場合があります。",
+        "lastUpdated": "最終更新"
+      }
     }
   }
 }

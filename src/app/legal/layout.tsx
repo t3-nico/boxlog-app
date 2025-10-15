@@ -34,6 +34,12 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
                 利用規約
               </Link>
               <Link
+                href="/legal/cookies"
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                Cookie設定
+              </Link>
+              <Link
                 href="/legal/oss-credits"
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
               >
@@ -67,6 +73,12 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
               >
                 利用規約
+              </Link>
+              <Link
+                href="/legal/cookies"
+                className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              >
+                Cookie設定
               </Link>
               <Link
                 href="/legal/oss-credits"

@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from 'next/navigation'
 
 import { Plus } from 'lucide-react'
 
+import { CookieConsentBanner } from '@/components/cookie-consent-banner'
 import { Button } from '@/components/ui/button'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
@@ -139,6 +140,9 @@ export function BaseLayoutContent({ children }: BaseLayoutContentProps) {
 
       {/* Settings Dialog */}
       <SettingsDialog />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsentBanner />
 
       {/* Mobile Bottom Navigation */}
       {isMobile ? <MobileBottomNavigation /> : null}

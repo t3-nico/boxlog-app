@@ -1003,6 +1003,7 @@
     "description": "Terms of Service, Privacy Policy, and other legal documents",
     "lastUpdated": "Last Updated",
     "effectiveDate": "Effective Date",
+    "cookieSettings": "Cookie Settings",
     "privacy": {
       "title": "Privacy Policy",
       "description": "How BoxLog handles your personal information",
@@ -1143,6 +1144,70 @@
         "contact": {
           "title": "Contact Us",
           "content": "If you have any questions about these Terms, please contact us at:"
+        }
+      }
+    },
+    "cookies": {
+      "title": "Cookie Settings",
+      "banner": {
+        "title": "About Cookies",
+        "description": "We use cookies to improve our service. You can control cookie preferences at any time.",
+        "acceptAll": "Accept All",
+        "rejectAll": "Essential Only"
+      },
+      "categories": {
+        "necessary": {
+          "title": "Essential Cookies",
+          "description": "These cookies are necessary for the basic functionality of the site. They cannot be disabled.",
+          "cookies": {
+            "session": "Session Cookie (maintain authentication state)",
+            "csrf": "CSRF Token (security protection)",
+            "consent": "Cookie consent state"
+          }
+        },
+        "analytics": {
+          "title": "Analytics Cookies",
+          "description": "These cookies help us analyze site usage and improve user experience.",
+          "cookies": {
+            "vercel": "Vercel Analytics (page views, performance)",
+            "sentry": "Sentry Performance (error monitoring, performance)"
+          }
+        },
+        "marketing": {
+          "title": "Marketing Cookies",
+          "description": "Used for personalized content and advertising. Currently not in use.",
+          "cookies": {
+            "none": "Not currently using marketing cookies"
+          }
+        }
+      },
+      "settings": {
+        "title": "Manage Cookie Preferences",
+        "description": "You can enable or disable each cookie category. Please note that essential cookies cannot be disabled.",
+        "save": "Save Settings",
+        "acceptAll": "Accept All",
+        "rejectAll": "Essential Only"
+      },
+      "page": {
+        "title": "Cookie Policy",
+        "description": "This page explains how BoxLog uses cookies",
+        "whatAreCookies": {
+          "title": "What are Cookies?",
+          "content": "Cookies are small text files stored on your device when you visit a website. They help improve user experience and enable various website features."
+        },
+        "howWeUse": {
+          "title": "How We Use Cookies",
+          "content": "We use cookies for the following purposes:",
+          "purposes": {
+            "authentication": "Maintaining login state",
+            "preferences": "Saving user settings and preferences",
+            "analytics": "Analyzing site usage and improving services",
+            "security": "Preventing unauthorized access and protecting user data"
+          }
+        },
+        "manageCookies": {
+          "title": "Managing Cookies",
+          "content": "You can manage cookie settings through your browser or our cookie settings page. Please note that disabling certain cookies may limit some features."
         }
       }
     },
