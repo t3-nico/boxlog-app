@@ -90,6 +90,10 @@ export const getColumns = (
     ),
     enableSorting: false,
     enableHiding: false,
+    enableResizing: false,
+    size: 50,
+    minSize: 50,
+    maxSize: 50,
   },
 
   // タスク名（ソート可能）
@@ -104,6 +108,9 @@ export const getColumns = (
         </div>
       )
     },
+    size: 300,
+    minSize: 150,
+    maxSize: 600,
   },
 
   // ステータス（フィルタ可能・編集可能）
@@ -118,6 +125,9 @@ export const getColumns = (
     filterFn: (row, id, value: string[]) => {
       return value.includes(row.getValue(id))
     },
+    size: 150,
+    minSize: 120,
+    maxSize: 200,
   },
 
   // 優先度（フィルタ可能・編集可能）
@@ -134,6 +144,9 @@ export const getColumns = (
     filterFn: (row, id, value: string[]) => {
       return value.includes(row.getValue(id))
     },
+    size: 120,
+    minSize: 100,
+    maxSize: 180,
   },
 
   // 開始予定日時
@@ -142,8 +155,11 @@ export const getColumns = (
     header: ({ column }) => <DataTableColumnHeader column={column} title="開始予定" />,
     cell: ({ row }) => {
       const date = new Date(row.getValue('planned_start'))
-      return <div className="text-sm">{format(date, 'yyyy/MM/dd HH:mm', { locale: ja })}</div>
+      return <div className="text-sm whitespace-nowrap">{format(date, 'yyyy/MM/dd HH:mm', { locale: ja })}</div>
     },
+    size: 180,
+    minSize: 160,
+    maxSize: 220,
   },
 
   // 予定時間
@@ -155,12 +171,15 @@ export const getColumns = (
       const hours = Math.floor(duration / 60)
       const minutes = duration % 60
       return (
-        <div className="text-sm">
+        <div className="text-sm whitespace-nowrap">
           {hours > 0 && `${hours}時間`}
           {minutes > 0 && `${minutes}分`}
         </div>
       )
     },
+    size: 120,
+    minSize: 100,
+    maxSize: 160,
   },
 
   // タグ
@@ -185,6 +204,9 @@ export const getColumns = (
         </div>
       )
     },
+    size: 200,
+    minSize: 150,
+    maxSize: 300,
   },
 
   // アクション
@@ -212,5 +234,9 @@ export const getColumns = (
         </DropdownMenu>
       )
     },
+    enableResizing: false,
+    size: 80,
+    minSize: 80,
+    maxSize: 80,
   },
 ]

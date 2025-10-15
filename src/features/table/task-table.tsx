@@ -66,7 +66,7 @@ export function TaskTable() {
       </div>
 
       {/* デスクトップ表示: テーブルレイアウト (768px以上) */}
-      <div className="hidden h-full flex-1 flex-col md:flex">
+      <div className="hidden h-full md:block">
         <DataTable columns={columns} data={tableTasks} />
       </div>
     </>
