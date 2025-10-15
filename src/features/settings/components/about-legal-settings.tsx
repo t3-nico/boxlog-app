@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
+import { Switch } from '@/components/ui/switch'
 import { useI18n } from '@/features/i18n/lib/hooks'
 import { getCookieConsent, type CookieConsent } from '@/lib/cookie-consent'
 import { ExternalLink } from 'lucide-react'
@@ -45,6 +46,21 @@ export default function AboutLegalSettings() {
     }
   }, [])
 
+  // Cookie設定変更ハンドラー
+  const handleAnalyticsChange = (checked: boolean) => {
+    setCookieConsent({
+      analytics: checked,
+      marketing: cookieConsent?.marketing ?? false,
+    })
+  }
+
+  const handleMarketingChange = (checked: boolean) => {
+    setCookieConsent({
+      analytics: cookieConsent?.analytics ?? false,
+      marketing: checked,
+    })
+  }
+
   // SSR時は何も表示しない
   if (!isClient) {
     return null
@@ -71,22 +87,24 @@ export default function AboutLegalSettings() {
 
           {/* 分析Cookie */}
           <Field orientation="horizontal">
-            <FieldLabel>{t('settings.legal.cookies.current.analytics')}</FieldLabel>
-            <Badge variant={cookieConsent?.analytics ? 'default' : 'secondary'}>
-              {cookieConsent?.analytics
-                ? t('settings.legal.cookies.current.enabled')
-                : t('settings.legal.cookies.current.disabled')}
-            </Badge>
+            <FieldLabel htmlFor="analytics-switch">{t('settings.legal.cookies.current.analytics')}</FieldLabel>
+            <Switch
+              id="analytics-switch"
+              checked={cookieConsent?.analytics ?? false}
+              onCheckedChange={handleAnalyticsChange}
+              aria-label={t('settings.legal.cookies.current.analytics')}
+            />
           </Field>
 
           {/* マーケティングCookie */}
           <Field orientation="horizontal">
-            <FieldLabel>{t('settings.legal.cookies.current.marketing')}</FieldLabel>
-            <Badge variant={cookieConsent?.marketing ? 'default' : 'secondary'}>
-              {cookieConsent?.marketing
-                ? t('settings.legal.cookies.current.enabled')
-                : t('settings.legal.cookies.current.disabled')}
-            </Badge>
+            <FieldLabel htmlFor="marketing-switch">{t('settings.legal.cookies.current.marketing')}</FieldLabel>
+            <Switch
+              id="marketing-switch"
+              checked={cookieConsent?.marketing ?? false}
+              onCheckedChange={handleMarketingChange}
+              aria-label={t('settings.legal.cookies.current.marketing')}
+            />
           </Field>
 
           {/* 最終更新日時 */}
