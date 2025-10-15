@@ -1198,13 +1198,11 @@
       "title": "Cookie Settings",
       "banner": {
         "title": "About Cookies",
-        "description": "We use cookies to improve our service. You can control cookie preferences at any time.",
-        "learnMore": "Learn More",
+        "description": "We use cookies to improve our service and analyze usage.",
+        "learnMore": "Learn more",
         "acceptAll": "Accept All",
-        "rejectAll": "Essential Only",
-        "customize": "Customize",
-        "gdprNotice": "You can manage your privacy settings by controlling cookies.",
-        "manageCookies": "Manage Cookie Settings"
+        "rejectAll": "Necessary Only",
+        "customize": "Customize"
       },
       "categories": {
         "necessary": {

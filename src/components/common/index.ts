@@ -1,3 +1,6 @@
+// Cookie consent
+export { CookieConsentBanner } from './cookie-consent-banner'
+
 // Error handling
 export { GlobalErrorBoundary } from './ErrorBoundary'
 export type { GlobalErrorBoundaryProps, GlobalErrorBoundaryState } from './ErrorBoundary'

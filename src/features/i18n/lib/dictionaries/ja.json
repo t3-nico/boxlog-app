@@ -1210,13 +1210,11 @@
       "description": "Cookieの使用と管理について",
       "banner": {
         "title": "Cookieの使用について",
-        "description": "当サイトでは、サービス向上のためにCookieを使用しています。",
-        "learnMore": "詳細",
-        "acceptAll": "すべて受け入れ",
+        "description": "当サイトは、サービスの向上と利用状況の分析のためにCookieを使用します。",
+        "learnMore": "詳しく見る",
+        "acceptAll": "すべて同意",
         "rejectAll": "必須のみ",
-        "customize": "カスタマイズ",
-        "gdprNotice": "Cookieを管理することで、プライバシー設定を変更できます。",
-        "manageCookies": "Cookie設定を管理"
+        "customize": "カスタマイズ"
       },
       "categories": {
         "necessary": {

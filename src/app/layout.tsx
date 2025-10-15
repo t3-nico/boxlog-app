@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 
-import { GlobalErrorBoundary, Providers } from '@/components/common'
+import { CookieConsentBanner, GlobalErrorBoundary, Providers } from '@/components/common'
 import { Toaster } from '@/components/ui/sonner'
 import { WebVitalsReporter } from '@/components/WebVitalsReporter'
 import { cn } from '@/lib/utils'
@@ -40,6 +40,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
             <Providers>
               {children}
               <Toaster />
+              <CookieConsentBanner />
             </Providers>
           </GlobalErrorBoundary>
           <WebVitalsReporter />
