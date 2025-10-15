@@ -481,6 +481,34 @@
         "trash": "ゴミ箱",
         "trashDesc": "削除済みアイテムの管理"
       }
+    },
+    "legal": {
+      "title": "法的情報",
+      "description": "利用規約やプライバシーポリシー、Cookie設定を管理します",
+      "cookies": {
+        "title": "Cookie設定",
+        "description": "Cookieの使用方法を管理します",
+        "current": {
+          "title": "現在の設定",
+          "necessary": "必須Cookie",
+          "necessaryStatus": "有効（無効化不可）",
+          "analytics": "分析Cookie",
+          "marketing": "マーケティングCookie",
+          "enabled": "有効",
+          "disabled": "無効"
+        },
+        "manage": "Cookie設定を管理",
+        "lastUpdated": "最終更新"
+      },
+      "links": {
+        "title": "法的文書",
+        "description": "当サービスの法的文書を確認できます",
+        "privacy": "プライバシーポリシー",
+        "terms": "利用規約",
+        "security": "セキュリティポリシー",
+        "cookies": "Cookie設定",
+        "ossCredits": "オープンソースライセンス"
+      }
     }
   },
   "board": {

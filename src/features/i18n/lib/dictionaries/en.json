@@ -481,6 +481,34 @@
         "trash": "Trash",
         "trashDesc": "Deleted items management"
       }
+    },
+    "legal": {
+      "title": "Legal Information",
+      "description": "Manage terms of service, privacy policy, and cookie settings",
+      "cookies": {
+        "title": "Cookie Settings",
+        "description": "Manage how we use cookies",
+        "current": {
+          "title": "Current Settings",
+          "necessary": "Necessary Cookies",
+          "necessaryStatus": "Enabled (Required)",
+          "analytics": "Analytics Cookies",
+          "marketing": "Marketing Cookies",
+          "enabled": "Enabled",
+          "disabled": "Disabled"
+        },
+        "manage": "Manage Cookie Settings",
+        "lastUpdated": "Last Updated"
+      },
+      "links": {
+        "title": "Legal Documents",
+        "description": "Access our legal documents",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "security": "Security Policy",
+        "cookies": "Cookie Settings",
+        "ossCredits": "Open Source Licenses"
+      }
     }
   },
   "board": {
