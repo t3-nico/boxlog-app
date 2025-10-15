@@ -1195,7 +1195,9 @@
         "learnMore": "詳細",
         "acceptAll": "すべて受け入れ",
         "rejectAll": "必須のみ",
-        "customize": "カスタマイズ"
+        "customize": "カスタマイズ",
+        "gdprNotice": "Cookieを管理することで、プライバシー設定を変更できます。",
+        "manageCookies": "Cookie設定を管理"
       },
       "categories": {
         "necessary": {
