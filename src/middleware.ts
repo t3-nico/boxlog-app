@@ -125,8 +125,8 @@ async function middleware(request: NextRequest) {
     // 未認証でprotectedPathにアクセスした場合
     if (!user && isProtectedPath) {
       console.log('[Middleware] Redirecting to 401:', request.nextUrl.pathname)
-      // 401 Unauthorizedページにリダイレクト
-      return NextResponse.redirect(new URL('/error/401', request.url))
+      // 401 Unauthorizedページにリダイレクト（言語プレフィックス付き）
+      return NextResponse.redirect(new URL(`/${currentLocale}/error/401`, request.url))
     }
 
     // 認証済みでauth系のパスにアクセスした場合
