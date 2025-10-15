@@ -212,23 +212,32 @@ const AccountSettings = () => {
     setMfaSuccess(null)
 
     try {
+      console.log('MFA登録を開始...')
+
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
         friendlyName: 'Authenticator App',
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('Enrollment error:', error)
+        throw new Error(`登録エラー: ${error.message}`)
+      }
 
       if (data) {
+        console.log('MFAファクター作成成功:', data.id)
         setFactorId(data.id)
         setSecret(data.totp.secret)
         const qrCodeDataUrl = await QRCode.toDataURL(data.totp.uri)
         setQrCode(qrCodeDataUrl)
         setShowMFASetup(true)
+      } else {
+        throw new Error('MFAデータが取得できませんでした')
       }
     } catch (err) {
       console.error('MFA enrollment error:', err)
-      setMfaError('2段階認証の設定開始に失敗しました')
+      const errorMessage = err instanceof Error ? err.message : '2段階認証の設定開始に失敗しました'
+      setMfaError(errorMessage)
     } finally {
       setIsMFALoading(false)
     }
@@ -241,16 +250,41 @@ const AccountSettings = () => {
       return
     }
 
+    if (verificationCode.length !== 6) {
+      setMfaError('コードは6桁で入力してください')
+      return
+    }
+
     setIsMFALoading(true)
     setMfaError(null)
 
     try {
-      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+      console.log('MFA検証を開始... Factor ID:', factorId)
+
+      // enrollment時はchallengeを発行してからverifyする
+      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
         factorId,
+      })
+
+      if (challengeError) {
+        console.error('Challenge error:', challengeError)
+        throw new Error(`チャレンジエラー: ${challengeError.message}`)
+      }
+
+      console.log('Challenge作成成功:', challengeData.id)
+
+      const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId: challengeData.id,
         code: verificationCode,
       })
 
-      if (error) throw error
+      if (verifyError) {
+        console.error('Verify error:', verifyError)
+        throw new Error(`検証エラー: ${verifyError.message}`)
+      }
+
+      console.log('MFA enrollment verified successfully:', verifyData)
 
       setMfaSuccess('2段階認証が有効になりました！')
       setHasMFA(true)
@@ -259,44 +293,77 @@ const AccountSettings = () => {
       setQrCode(null)
       setSecret(null)
       setFactorId(null)
+
+      // 状態を再確認
+      await checkMFAStatus()
     } catch (err) {
       console.error('MFA verification error:', err)
-      setMfaError('コードの検証に失敗しました。もう一度お試しください')
+      const errorMessage = err instanceof Error ? err.message : 'コードの検証に失敗しました。もう一度お試しください'
+      setMfaError(errorMessage)
+      setVerificationCode('')
     } finally {
       setIsMFALoading(false)
     }
-  }, [factorId, verificationCode, supabase])
+  }, [factorId, verificationCode, supabase, checkMFAStatus])
 
   // MFA無効化
   const handleDisableMFA = useCallback(async () => {
-    const confirmed = window.confirm('2段階認証を無効にしますか？')
+    const confirmed = window.confirm('2段階認証を無効にしますか？セキュリティが低下します。')
     if (!confirmed) return
 
     setIsMFALoading(true)
     setMfaError(null)
+    setMfaSuccess(null)
 
     try {
-      const { data: factors } = await supabase.auth.mfa.listFactors()
-      if (factors && factors.totp.length > 0) {
-        const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
-        if (verifiedFactor) {
-          const { error } = await supabase.auth.mfa.unenroll({
-            factorId: verifiedFactor.id,
-          })
+      console.log('MFA無効化を開始...')
 
-          if (error) throw error
+      const { data: factors, error: listError } = await supabase.auth.mfa.listFactors()
 
-          setMfaSuccess('2段階認証を無効にしました')
-          setHasMFA(false)
-        }
+      if (listError) {
+        console.error('Factor list error:', listError)
+        throw new Error(`ファクター取得エラー: ${listError.message}`)
       }
+
+      console.log('取得したファクター:', factors)
+
+      if (!factors || factors.totp.length === 0) {
+        setMfaError('有効なMFAファクターが見つかりません')
+        return
+      }
+
+      const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
+
+      if (!verifiedFactor) {
+        setMfaError('検証済みのMFAファクターが見つかりません')
+        return
+      }
+
+      console.log('無効化するファクターID:', verifiedFactor.id)
+
+      const { error: unenrollError } = await supabase.auth.mfa.unenroll({
+        factorId: verifiedFactor.id,
+      })
+
+      if (unenrollError) {
+        console.error('Unenroll error:', unenrollError)
+        throw new Error(`無効化エラー: ${unenrollError.message}`)
+      }
+
+      console.log('MFA無効化成功')
+      setMfaSuccess('2段階認証を無効にしました')
+      setHasMFA(false)
+
+      // 状態を再確認
+      await checkMFAStatus()
     } catch (err) {
       console.error('MFA disable error:', err)
-      setMfaError('2段階認証の無効化に失敗しました')
+      const errorMessage = err instanceof Error ? err.message : '2段階認証の無効化に失敗しました'
+      setMfaError(errorMessage)
     } finally {
       setIsMFALoading(false)
     }
-  }, [supabase])
+  }, [supabase, checkMFAStatus])
 
   // 初回マウント時にMFA状態チェック
   useEffect(() => {

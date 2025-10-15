@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,12 +11,15 @@ import { createClient } from '@/lib/supabase/client'
 export default function MFAVerifyPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const params = useParams()
+  const locale = params.locale as string
   const supabase = createClient()
 
   const [verificationCode, setVerificationCode] = useState('')
   const [isVerifying, setIsVerifying] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [factorId, setFactorId] = useState<string | null>(null)
+  const [challengeId, setChallengeId] = useState<string | null>(null)
 
   useEffect(() => {
     // ログイン後にMFAチャレンジを発行
@@ -26,40 +29,55 @@ export default function MFAVerifyPage() {
 
   const checkMFARequired = async () => {
     try {
+      console.log('MFA検証ページ: ファクターをチェック中...')
       const { data: factors } = await supabase.auth.mfa.listFactors()
 
       if (factors && factors.totp.length > 0) {
         // 最初の有効なTOTPファクターを使用
         const verifiedFactor = factors.totp.find((f) => f.status === 'verified')
         if (verifiedFactor) {
+          console.log('検証済みファクター発見:', verifiedFactor.id)
           setFactorId(verifiedFactor.id)
 
-          // MFAチャレンジを発行（これが重要！）
+          // MFAチャレンジを発行（公式ベストプラクティス）
           const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
             factorId: verifiedFactor.id,
           })
 
           if (challengeError) {
             console.error('Challenge error:', challengeError)
-            setError('Failed to create MFA challenge')
+            setError('MFAチャレンジの作成に失敗しました')
+            return
+          }
+
+          if (challengeData) {
+            console.log('チャレンジ作成成功:', challengeData.id)
+            setChallengeId(challengeData.id)
           }
         } else {
           // MFAが設定されていない場合はリダイレクト
+          console.log('検証済みファクターなし、カレンダーへリダイレクト')
           router.push('/calendar')
         }
       } else {
         // MFAが設定されていない場合はリダイレクト
+        console.log('TOTPファクターなし、カレンダーへリダイレクト')
         router.push('/calendar')
       }
     } catch (err) {
       console.error('MFA check error:', err)
-      setError('Failed to check MFA status')
+      setError('MFA状態の確認に失敗しました')
     }
   }
 
   const handleVerify = async () => {
-    if (!factorId || !verificationCode) {
-      setError('Please enter the verification code')
+    if (!factorId || !challengeId || !verificationCode) {
+      setError('6桁のコードを入力してください')
+      return
+    }
+
+    if (verificationCode.length !== 6) {
+      setError('コードは6桁である必要があります')
       return
     }
 
@@ -67,29 +85,30 @@ export default function MFAVerifyPage() {
     setError(null)
 
     try {
-      // チャレンジを再度発行してから検証
-      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({
-        factorId,
-      })
+      console.log('MFA検証開始:', { factorId, challengeId, codeLength: verificationCode.length })
 
-      if (challengeError) throw challengeError
-
-      // チャレンジIDを使って検証
+      // 公式ベストプラクティス: 保存済みのchallengeIdを使用
       const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
         factorId,
-        challengeId: challengeData.id,
+        challengeId,
         code: verificationCode,
       })
 
-      if (verifyError) throw verifyError
+      if (verifyError) {
+        console.error('Verify error:', verifyError)
+        throw new Error(verifyError.message)
+      }
+
+      console.log('MFA検証成功:', verifyData)
 
       // 検証成功、次のページへリダイレクト
-      const next = searchParams.get('next') || '/calendar'
+      const next = searchParams.get('next') || `/${locale}/calendar`
       router.refresh()
       router.push(next)
     } catch (err) {
       console.error('Verification error:', err)
-      setError(err instanceof Error ? err.message : 'Invalid verification code')
+      const errorMessage = err instanceof Error ? err.message : '無効なコードです。もう一度お試しください'
+      setError(errorMessage)
       setVerificationCode('')
     } finally {
       setIsVerifying(false)

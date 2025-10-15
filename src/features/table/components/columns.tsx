@@ -108,6 +108,7 @@ export const getColumns = (
         </div>
       )
     },
+    enableSorting: true,
     size: 300,
     minSize: 150,
     maxSize: 600,
@@ -125,6 +126,7 @@ export const getColumns = (
     filterFn: (row, id, value: string[]) => {
       return value.includes(row.getValue(id))
     },
+    enableSorting: true,
     size: 150,
     minSize: 120,
     maxSize: 200,
@@ -144,6 +146,7 @@ export const getColumns = (
     filterFn: (row, id, value: string[]) => {
       return value.includes(row.getValue(id))
     },
+    enableSorting: true,
     size: 120,
     minSize: 100,
     maxSize: 180,
@@ -157,6 +160,12 @@ export const getColumns = (
       const date = new Date(row.getValue('planned_start'))
       return <div className="text-sm whitespace-nowrap">{format(date, 'yyyy/MM/dd HH:mm', { locale: ja })}</div>
     },
+    sortingFn: (rowA, rowB, columnId) => {
+      const dateA = new Date(rowA.getValue(columnId) as string).getTime()
+      const dateB = new Date(rowB.getValue(columnId) as string).getTime()
+      return dateA - dateB
+    },
+    enableSorting: true,
     size: 180,
     minSize: 160,
     maxSize: 220,
@@ -177,6 +186,7 @@ export const getColumns = (
         </div>
       )
     },
+    enableSorting: true,
     size: 120,
     minSize: 100,
     maxSize: 160,

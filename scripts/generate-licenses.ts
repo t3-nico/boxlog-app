@@ -16,7 +16,6 @@
  * @see Issue #545 - 第三者ライセンス表記整備 Phase 2
  */
 
-import { execSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 // @ts-expect-error - license-checker has no type definitions
@@ -52,7 +51,7 @@ interface CreditInfo {
  */
 async function generateLicenses(): Promise<void> {
   console.log('📄 License Information Generator')
-  console.log('=' .repeat(50))
+  console.log('='.repeat(50))
 
   try {
     // 1. license-checkerで依存関係を収集
@@ -96,7 +95,7 @@ async function generateLicenses(): Promise<void> {
       })
 
     console.log('\n✅ License information generated successfully!')
-    console.log('=' .repeat(50))
+    console.log('='.repeat(50))
   } catch (error) {
     console.error('\n❌ Error generating licenses:', error)
     process.exit(1)
@@ -208,9 +207,7 @@ Generated: ${new Date().toISOString()}
 /**
  * ライセンスごとの統計を計算
  */
-function calculateLicenseStats(
-  packages: Record<string, LicenseInfo>
-): Record<string, number> {
+function calculateLicenseStats(packages: Record<string, LicenseInfo>): Record<string, number> {
   const stats: Record<string, number> = {}
 
   Object.values(packages).forEach((info) => {

@@ -1,9 +1,9 @@
 import { createTranslation, getDictionary } from '@/features/i18n/lib'
 import type { Locale } from '@/types/i18n'
+import type { Metadata } from 'next'
+import Link from 'next/link'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import Link from 'next/link'
-import type { Metadata } from 'next'
 
 /**
  * OSSクレジット情報の型定義
@@ -68,16 +68,14 @@ export default async function OSSCreditsPage() {
       <div className="bg-muted mb-8 rounded-lg p-6">
         <p className="text-foreground mb-4">{t('ossCredits.intro')}</p>
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-sm">
-            {t('ossCredits.totalPackages')}:
-          </span>
+          <span className="text-muted-foreground text-sm">{t('ossCredits.totalPackages')}:</span>
           <span className="text-foreground text-xl font-semibold">{credits.length}</span>
         </div>
       </div>
 
       {/* エラー表示 */}
       {loadError && (
-        <div className="bg-destructive/10 text-destructive mb-8 rounded-lg border border-destructive/20 p-6">
+        <div className="bg-destructive/10 text-destructive border-destructive/20 mb-8 rounded-lg border p-6">
           <p className="font-semibold">{t('ossCredits.loadingError')}</p>
         </div>
       )}
@@ -113,9 +111,7 @@ export default async function OSSCreditsPage() {
                 <div className="mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                   <h3 className="text-foreground text-lg font-semibold">
                     {credit.name}
-                    <span className="text-muted-foreground ml-2 text-sm font-normal">
-                      v{credit.version}
-                    </span>
+                    <span className="text-muted-foreground ml-2 text-sm font-normal">v{credit.version}</span>
                   </h3>
                   <span className="bg-primary/10 text-primary w-fit rounded px-3 py-1 text-sm font-medium">
                     {credit.license}
@@ -125,8 +121,7 @@ export default async function OSSCreditsPage() {
                 <div className="text-muted-foreground space-y-1 text-sm">
                   {credit.publisher && (
                     <div>
-                      <span className="font-medium">{t('ossCredits.publisher')}:</span>{' '}
-                      {credit.publisher}
+                      <span className="font-medium">{t('ossCredits.publisher')}:</span> {credit.publisher}
                     </div>
                   )}
                   {credit.repository && (
@@ -151,15 +146,9 @@ export default async function OSSCreditsPage() {
 
       {/* フッター - 詳細情報へのリンク */}
       <div className="bg-muted mt-12 rounded-lg p-6 text-center">
-        <p className="text-muted-foreground mb-4 text-sm">
-          For complete license texts and NOTICE files, please see:
-        </p>
+        <p className="text-muted-foreground mb-4 text-sm">For complete license texts and NOTICE files, please see:</p>
         <div className="flex flex-col gap-2 md:flex-row md:justify-center md:gap-4">
-          <Link
-            href="/THIRD_PARTY_NOTICES.txt"
-            target="_blank"
-            className="text-primary hover:underline"
-          >
+          <Link href="/THIRD_PARTY_NOTICES.txt" target="_blank" className="text-primary hover:underline">
             THIRD_PARTY_NOTICES.txt
           </Link>
           <Link
