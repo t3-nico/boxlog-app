@@ -992,5 +992,158 @@
     "noPublisher": "公開者情報なし",
     "noResults": "検索結果が見つかりませんでした",
     "loadingError": "ライセンス情報の読み込みに失敗しました"
+  },
+  "legal": {
+    "title": "法的情報",
+    "description": "利用規約、プライバシーポリシー、その他の法的文書",
+    "lastUpdated": "最終更新日",
+    "effectiveDate": "施行日",
+    "privacy": {
+      "title": "プライバシーポリシー",
+      "description": "BoxLogにおける個人情報の取り扱いについて",
+      "sections": {
+        "introduction": {
+          "title": "はじめに",
+          "content": "BoxLog（以下「当サービス」）は、ユーザーのプライバシーを尊重し、個人情報を適切に保護することをお約束します。本プライバシーポリシーは、当サービスがどのように個人情報を収集、使用、保護するかを説明します。"
+        },
+        "dataCollection": {
+          "title": "収集する情報",
+          "accountInfo": "アカウント情報（メールアドレス、名前、プロフィール画像）",
+          "usageData": "サービス利用データ（タスク、カレンダー、設定）",
+          "technicalData": "技術データ（IPアドレス、ブラウザ情報、デバイス情報）",
+          "cookies": "Cookie及び類似技術"
+        },
+        "dataUsage": {
+          "title": "情報の利用目的",
+          "serviceProvision": "サービスの提供・運営・改善",
+          "userSupport": "ユーザーサポートとお問い合わせ対応",
+          "security": "不正利用の防止とセキュリティ維持",
+          "analytics": "サービス分析と機能改善",
+          "communication": "重要なお知らせとサービス更新の通知"
+        },
+        "dataSharing": {
+          "title": "第三者提供",
+          "intro": "当サービスは以下のサービスプロバイダーと連携しています：",
+          "supabase": "Supabase（認証・データベース）",
+          "vercel": "Vercel（ホスティング）",
+          "sentry": "Sentry（エラー監視）",
+          "note": "これらのプロバイダーは、各社のプライバシーポリシーに基づいて情報を管理します。"
+        },
+        "dataRetention": {
+          "title": "データ保持期間",
+          "active": "アカウント有効期間中は保持します",
+          "deleted": "アカウント削除後30日以内に完全削除します",
+          "legal": "法令により保持が義務付けられる場合を除きます"
+        },
+        "userRights": {
+          "title": "ユーザーの権利",
+          "access": "個人情報へのアクセス権",
+          "correction": "個人情報の訂正権",
+          "deletion": "個人情報の削除権（忘れられる権利）",
+          "portability": "データポータビリティ権",
+          "objection": "処理への異議申し立て権",
+          "contact": "これらの権利を行使する場合は、設定ページまたはお問い合わせフォームからご連絡ください。"
+        },
+        "security": {
+          "title": "セキュリティ対策",
+          "measures": "当サービスは、個人情報を不正アクセス、紛失、破損、改ざん、漏洩から保護するため、業界標準のセキュリティ対策を実施しています。",
+          "encryption": "データ転送時のSSL/TLS暗号化",
+          "access": "アクセス制御と認証システム",
+          "monitoring": "定期的なセキュリティ監査"
+        },
+        "cookies": {
+          "title": "Cookieについて",
+          "intro": "当サービスは、ユーザー体験の向上のためにCookieを使用します。",
+          "essential": "必須Cookie（ログイン状態の維持）",
+          "analytics": "分析Cookie（利用状況の把握）",
+          "preference": "設定Cookie（ユーザー設定の保存）",
+          "control": "ブラウザ設定でCookieを無効化できますが、一部機能が制限される場合があります。"
+        },
+        "children": {
+          "title": "未成年者について",
+          "content": "当サービスは、13歳未満のお子様を対象としておらず、意図的に個人情報を収集することはありません。"
+        },
+        "changes": {
+          "title": "ポリシーの変更",
+          "content": "本プライバシーポリシーは、法令の変更や業務の見直しに伴い変更される場合があります。重要な変更がある場合は、事前にユーザーへ通知します。"
+        },
+        "contact": {
+          "title": "お問い合わせ",
+          "content": "プライバシーに関するご質問やご懸念は、以下までご連絡ください："
+        }
+      }
+    },
+    "terms": {
+      "title": "利用規約",
+      "description": "BoxLogサービスの利用に関する規約",
+      "sections": {
+        "introduction": {
+          "title": "はじめに",
+          "content": "本利用規約（以下「本規約」）は、BoxLog（以下「当サービス」）の利用条件を定めるものです。当サービスをご利用になる場合には、本規約に同意したものとみなされます。"
+        },
+        "serviceDescription": {
+          "title": "サービス内容",
+          "content": "当サービスは、タスク管理、カレンダー機能、生産性向上ツールを提供するWebアプリケーションです。"
+        },
+        "accountRegistration": {
+          "title": "アカウント登録",
+          "requirements": "正確かつ最新の情報を登録すること",
+          "responsibility": "アカウント情報の管理責任はユーザーにあります",
+          "security": "不正利用を発見した場合は速やかに通知すること",
+          "age": "13歳以上であること"
+        },
+        "userResponsibilities": {
+          "title": "ユーザーの責任",
+          "intro": "ユーザーは以下の行為を行ってはなりません：",
+          "illegal": "法令に違反する行為",
+          "harmful": "他のユーザーやサービスに害を与える行為",
+          "unauthorized": "不正アクセスやシステムへの妨害行為",
+          "impersonation": "他者になりすます行為",
+          "spam": "スパムや迷惑行為",
+          "content": "不適切なコンテンツの投稿"
+        },
+        "intellectualProperty": {
+          "title": "知的財産権",
+          "ownership": "当サービスに関するすべての知的財産権は、当社または正当な権利者に帰属します。",
+          "userContent": "ユーザーが作成したコンテンツの著作権はユーザーに帰属します。",
+          "license": "ただし、サービス提供のために必要な範囲で、当社にコンテンツの使用を許諾するものとします。"
+        },
+        "dataBackup": {
+          "title": "データのバックアップ",
+          "responsibility": "ユーザーは自己の責任において、重要なデータのバックアップを行ってください。",
+          "liability": "当社はデータの損失について一切の責任を負いません。"
+        },
+        "disclaimer": {
+          "title": "免責事項",
+          "availability": "当サービスの可用性、正確性、完全性を保証しません",
+          "interruption": "サービスの中断や障害について責任を負いません",
+          "damages": "サービス利用により生じた損害について責任を負いません",
+          "thirdParty": "第三者サービスとの連携に関する問題について責任を負いません"
+        },
+        "termination": {
+          "title": "アカウント停止・削除",
+          "userInitiated": "ユーザーは、設定ページからいつでもアカウントを削除できます。",
+          "serviceInitiated": "当社は、本規約違反や不正利用があった場合、事前通知なくアカウントを停止または削除できます。",
+          "dataRetention": "削除後、データは30日以内に完全削除されます。"
+        },
+        "modifications": {
+          "title": "規約の変更",
+          "content": "当社は、必要に応じて本規約を変更できます。重要な変更がある場合は、事前にユーザーへ通知します。"
+        },
+        "governingLaw": {
+          "title": "準拠法・管轄裁判所",
+          "law": "本規約は日本法に準拠します",
+          "jurisdiction": "本規約に関する紛争は、東京地方裁判所を第一審の専属的合意管轄裁判所とします"
+        },
+        "contact": {
+          "title": "お問い合わせ",
+          "content": "本規約に関するご質問は、以下までご連絡ください："
+        }
+      }
+    },
+    "contact": {
+      "email": "support@boxlog.app",
+      "website": "https://boxlog.app"
+    }
   }
 }

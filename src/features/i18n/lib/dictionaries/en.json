@@ -997,5 +997,158 @@
     "noPublisher": "No publisher information",
     "noResults": "No search results found",
     "loadingError": "Failed to load license information"
+  },
+  "legal": {
+    "title": "Legal Information",
+    "description": "Terms of Service, Privacy Policy, and other legal documents",
+    "lastUpdated": "Last Updated",
+    "effectiveDate": "Effective Date",
+    "privacy": {
+      "title": "Privacy Policy",
+      "description": "How BoxLog handles your personal information",
+      "sections": {
+        "introduction": {
+          "title": "Introduction",
+          "content": "BoxLog (the \"Service\") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, and protect your personal information."
+        },
+        "dataCollection": {
+          "title": "Information We Collect",
+          "accountInfo": "Account Information (email address, name, profile picture)",
+          "usageData": "Service Usage Data (tasks, calendar, settings)",
+          "technicalData": "Technical Data (IP address, browser information, device information)",
+          "cookies": "Cookies and similar technologies"
+        },
+        "dataUsage": {
+          "title": "How We Use Your Information",
+          "serviceProvision": "Providing, operating, and improving the Service",
+          "userSupport": "User support and responding to inquiries",
+          "security": "Preventing unauthorized use and maintaining security",
+          "analytics": "Service analysis and feature improvements",
+          "communication": "Sending important notices and service updates"
+        },
+        "dataSharing": {
+          "title": "Third-Party Services",
+          "intro": "We work with the following service providers:",
+          "supabase": "Supabase (authentication & database)",
+          "vercel": "Vercel (hosting)",
+          "sentry": "Sentry (error monitoring)",
+          "note": "These providers manage information according to their respective privacy policies."
+        },
+        "dataRetention": {
+          "title": "Data Retention",
+          "active": "We retain your data while your account is active",
+          "deleted": "Data is permanently deleted within 30 days after account deletion",
+          "legal": "Except where retention is required by law"
+        },
+        "userRights": {
+          "title": "Your Rights",
+          "access": "Right to access your personal information",
+          "correction": "Right to correct your personal information",
+          "deletion": "Right to delete your personal information (right to be forgotten)",
+          "portability": "Right to data portability",
+          "objection": "Right to object to processing",
+          "contact": "To exercise these rights, please contact us through the settings page or contact form."
+        },
+        "security": {
+          "title": "Security Measures",
+          "measures": "We implement industry-standard security measures to protect your personal information from unauthorized access, loss, damage, alteration, and disclosure.",
+          "encryption": "SSL/TLS encryption for data transmission",
+          "access": "Access control and authentication systems",
+          "monitoring": "Regular security audits"
+        },
+        "cookies": {
+          "title": "About Cookies",
+          "intro": "We use cookies to improve user experience.",
+          "essential": "Essential Cookies (maintain login state)",
+          "analytics": "Analytics Cookies (understand usage)",
+          "preference": "Preference Cookies (save user settings)",
+          "control": "You can disable cookies in your browser settings, but some features may be limited."
+        },
+        "children": {
+          "title": "Children's Privacy",
+          "content": "Our Service is not intended for children under 13 years old, and we do not knowingly collect personal information from them."
+        },
+        "changes": {
+          "title": "Policy Changes",
+          "content": "This Privacy Policy may be updated due to legal changes or business reviews. We will notify users in advance of any significant changes."
+        },
+        "contact": {
+          "title": "Contact Us",
+          "content": "If you have any questions or concerns about privacy, please contact us at:"
+        }
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "description": "Terms and conditions for using BoxLog",
+      "sections": {
+        "introduction": {
+          "title": "Introduction",
+          "content": "These Terms of Service (the \"Terms\") govern your use of BoxLog (the \"Service\"). By using the Service, you agree to these Terms."
+        },
+        "serviceDescription": {
+          "title": "Service Description",
+          "content": "The Service is a web application providing task management, calendar functionality, and productivity tools."
+        },
+        "accountRegistration": {
+          "title": "Account Registration",
+          "requirements": "Provide accurate and current information",
+          "responsibility": "You are responsible for managing your account information",
+          "security": "Notify us immediately if you discover unauthorized use",
+          "age": "You must be at least 13 years old"
+        },
+        "userResponsibilities": {
+          "title": "User Responsibilities",
+          "intro": "You must not engage in the following activities:",
+          "illegal": "Illegal activities",
+          "harmful": "Activities harmful to other users or the Service",
+          "unauthorized": "Unauthorized access or system interference",
+          "impersonation": "Impersonating others",
+          "spam": "Spam or abusive behavior",
+          "content": "Posting inappropriate content"
+        },
+        "intellectualProperty": {
+          "title": "Intellectual Property",
+          "ownership": "All intellectual property rights related to the Service belong to us or the rightful owners.",
+          "userContent": "You retain copyright to content you create.",
+          "license": "However, you grant us a license to use your content to the extent necessary to provide the Service."
+        },
+        "dataBackup": {
+          "title": "Data Backup",
+          "responsibility": "You are responsible for backing up your important data.",
+          "liability": "We are not liable for any data loss."
+        },
+        "disclaimer": {
+          "title": "Disclaimer",
+          "availability": "We do not guarantee the availability, accuracy, or completeness of the Service",
+          "interruption": "We are not liable for service interruptions or failures",
+          "damages": "We are not liable for damages arising from use of the Service",
+          "thirdParty": "We are not responsible for issues with third-party service integrations"
+        },
+        "termination": {
+          "title": "Account Suspension/Deletion",
+          "userInitiated": "You may delete your account at any time through the settings page.",
+          "serviceInitiated": "We may suspend or delete accounts without prior notice for Terms violations or unauthorized use.",
+          "dataRetention": "Data is permanently deleted within 30 days after deletion."
+        },
+        "modifications": {
+          "title": "Terms Modifications",
+          "content": "We may modify these Terms as necessary. We will notify users in advance of any significant changes."
+        },
+        "governingLaw": {
+          "title": "Governing Law & Jurisdiction",
+          "law": "These Terms are governed by Japanese law",
+          "jurisdiction": "Tokyo District Court has exclusive jurisdiction over disputes related to these Terms"
+        },
+        "contact": {
+          "title": "Contact Us",
+          "content": "If you have any questions about these Terms, please contact us at:"
+        }
+      }
+    },
+    "contact": {
+      "email": "support@boxlog.app",
+      "website": "https://boxlog.app"
+    }
   }
 }

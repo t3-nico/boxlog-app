@@ -3,10 +3,12 @@
 import { useState } from 'react'
 
 import { Check, Eye, EyeOff, X } from 'lucide-react'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
@@ -27,6 +29,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -196,8 +199,32 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
                 <FieldDescription>{t('auth.signupForm.passwordRequirement')}</FieldDescription>
               </Field>
 
+              {/* 利用規約とプライバシーポリシーへの同意 */}
               <Field>
-                <Button type="submit" disabled={isLoading} className="w-full">
+                <div className="flex items-start gap-3">
+                  <Checkbox
+                    id="agree-terms"
+                    checked={agreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                    disabled={isLoading}
+                    aria-label={t('auth.register.agreeTerms')}
+                  />
+                  <label htmlFor="agree-terms" className="text-sm leading-relaxed">
+                    {t('auth.signupForm.byContinuing')}{' '}
+                    <Link href="/legal/terms" target="_blank" className="text-primary hover:underline">
+                      {t('auth.signupForm.termsOfService')}
+                    </Link>{' '}
+                    {t('auth.signupForm.and')}{' '}
+                    <Link href="/legal/privacy" target="_blank" className="text-primary hover:underline">
+                      {t('auth.signupForm.privacyPolicy')}
+                    </Link>
+                    に同意します。
+                  </label>
+                </div>
+              </Field>
+
+              <Field>
+                <Button type="submit" disabled={isLoading || !agreedToTerms} className="w-full">
                   {isLoading && <Spinner className="mr-2" />}
                   {t('auth.signupForm.createAccountButton')}
                 </Button>
@@ -238,7 +265,10 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
               </Field>
 
               <FieldDescription className="text-center">
-                {t('auth.signupForm.alreadyHaveAccount')} <a href="/auth/login">{t('auth.signupForm.login')}</a>
+                {t('auth.signupForm.alreadyHaveAccount')}{' '}
+                <Link href="/auth/login" className="text-primary hover:underline">
+                  {t('auth.signupForm.login')}
+                </Link>
               </FieldDescription>
             </FieldGroup>
           </form>
@@ -251,10 +281,6 @@ export function SignupForm({ className, ...props }: React.ComponentProps<'div'>)
           </div>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        {t('auth.signupForm.byContinuing')} <a href="#">{t('auth.signupForm.termsOfService')}</a>{' '}
-        {t('auth.signupForm.and')} <a href="#">{t('auth.signupForm.privacyPolicy')}</a>.
-      </FieldDescription>
     </div>
   )
 }
