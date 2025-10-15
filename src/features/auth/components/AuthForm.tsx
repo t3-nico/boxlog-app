@@ -17,7 +17,7 @@ interface AuthFormProps {
 }
 
 export const AuthForm = ({ mode }: AuthFormProps) => {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -72,12 +72,12 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
         if (aalData && aalData.currentLevel === 'aal1' && aalData.nextLevel === 'aal2') {
           // MFA検証が必要
           console.log('MFA verification required')
-          router.push('/auth/mfa-verify')
+          router.push(`/${locale}/auth/mfa-verify`)
         } else {
           // MFAが不要、または既にaal2の場合は通常通りリダイレクト
           console.log('No MFA required, proceeding to calendar')
           router.refresh()
-          router.push('/calendar')
+          router.push(`/${locale}/calendar`)
         }
       } else {
         // サインアップ処理
