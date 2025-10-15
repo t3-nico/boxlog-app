@@ -134,7 +134,10 @@ export default function AboutLegalSettings() {
           {/* プライバシーポリシー */}
           <Field orientation="horizontal">
             <FieldLabel>
-              <Link href={`/${locale}/legal/privacy`} className="text-primary hover:text-primary/80 transition-colors">
+              <Link
+                href={`/${locale}/legal/privacy`}
+                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+              >
                 {t('settings.legal.links.privacy')}
               </Link>
             </FieldLabel>
@@ -149,7 +152,10 @@ export default function AboutLegalSettings() {
           {/* 利用規約 */}
           <Field orientation="horizontal">
             <FieldLabel>
-              <Link href={`/${locale}/legal/terms`} className="text-primary hover:text-primary/80 transition-colors">
+              <Link
+                href={`/${locale}/legal/terms`}
+                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+              >
                 {t('settings.legal.links.terms')}
               </Link>
             </FieldLabel>
@@ -164,7 +170,10 @@ export default function AboutLegalSettings() {
           {/* セキュリティポリシー */}
           <Field orientation="horizontal">
             <FieldLabel>
-              <Link href={`/${locale}/legal/security`} className="text-primary hover:text-primary/80 transition-colors">
+              <Link
+                href={`/${locale}/legal/security`}
+                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+              >
                 {t('settings.legal.links.security')}
               </Link>
             </FieldLabel>
@@ -179,7 +188,10 @@ export default function AboutLegalSettings() {
           {/* Cookie設定 */}
           <Field orientation="horizontal">
             <FieldLabel>
-              <Link href={`/${locale}/legal/cookies`} className="text-primary hover:text-primary/80 transition-colors">
+              <Link
+                href={`/${locale}/legal/cookies`}
+                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
+              >
                 {t('settings.legal.links.cookies')}
               </Link>
             </FieldLabel>
@@ -196,7 +208,7 @@ export default function AboutLegalSettings() {
             <FieldLabel>
               <Link
                 href={`/${locale}/legal/oss-credits`}
-                className="text-primary hover:text-primary/80 transition-colors"
+                className="text-primary hover:text-primary/80 underline underline-offset-4 transition-colors"
               >
                 {t('settings.legal.links.ossCredits')}
               </Link>
