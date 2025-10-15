@@ -15,6 +15,8 @@ import { cn } from '@/lib/utils'
 
 import { useAutoSaveSettings } from '@/features/settings/hooks/useAutoSaveSettings'
 
+import { AccountDeletionDialog } from './account-deletion-dialog'
+import { DataExport } from './data-export'
 import { SettingField } from './fields/SettingField'
 import { SettingsCard } from './SettingsCard'
 
@@ -39,7 +41,6 @@ const AccountSettings = () => {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [isPasswordLoading, setIsPasswordLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
 
   // MFA関連のstate
   const [hasMFA, setHasMFA] = useState(false)
@@ -168,29 +169,6 @@ const AccountSettings = () => {
     },
     [newPassword, confirmPassword]
   )
-
-  // jsx-no-bind optimization: Delete account handler
-  const handleDeleteAccount = useCallback(async () => {
-    const confirmed = window.confirm(
-      'この操作は取り消すことができません。すべてのデータが完全に削除されます。本当にアカウントを削除しますか？'
-    )
-
-    if (!confirmed) return
-
-    setIsDeleting(true)
-
-    try {
-      // アカウント削除ロジック（実際の実装は後で）
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      console.log('Deleting account')
-      alert(t('settings.account.deleteNotImplemented'))
-    } catch (err) {
-      console.error('Account deletion error:', err)
-      alert(t('settings.account.deleteFailed'))
-    } finally {
-      setIsDeleting(false)
-    }
-  }, [])
 
   // MFA状態チェック
   const checkMFAStatus = useCallback(async () => {
@@ -677,40 +655,20 @@ const AccountSettings = () => {
         </div>
       </SettingsCard>
 
+      {/* Data Export & Privacy Section */}
+      <SettingsCard
+        title={t('settings.account.dataExport.title')}
+        description={t('settings.account.dataExport.description')}
+      >
+        <DataExport />
+      </SettingsCard>
+
       {/* Danger Zone */}
       <SettingsCard
         title={<span className="text-destructive">{t('settings.account.dangerZone')}</span>}
         description={t('settings.account.dangerZoneDesc')}
       >
-        <div className="border-destructive/30 bg-destructive/5 rounded-lg border">
-          <div className="flex items-start justify-between p-6">
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="bg-destructive h-2 w-2 animate-pulse rounded-full"></div>
-                <div className="text-destructive font-medium">アカウント削除</div>
-              </div>
-              <p className="text-destructive text-sm leading-relaxed">
-                ⚠️ <strong>この操作は取り消すことができません。</strong>
-                <br />
-                アカウントとすべての関連データが完全に削除されます。
-              </p>
-              <ul className="text-destructive ml-4 space-y-1 text-xs">
-                <li>• すべてのタスクとプロジェクトが削除されます</li>
-                <li>• プロフィールと設定が削除されます</li>
-                <li>• この操作は即座に実行され、取り消すことができません</li>
-              </ul>
-            </div>
-            <Button
-              type="button"
-              onClick={handleDeleteAccount}
-              disabled={isDeleting}
-              variant="destructive"
-              className="ml-4"
-            >
-              {isDeleting ? '削除中...' : '🗑️ アカウント削除'}
-            </Button>
-          </div>
-        </div>
+        <AccountDeletionDialog />
       </SettingsCard>
     </div>
   )
