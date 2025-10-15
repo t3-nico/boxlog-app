@@ -83,7 +83,7 @@ export default async function OSSCreditsPage() {
       {/* ライセンス統計 */}
       {!loadError && (
         <div className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold">License Distribution</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t('ossCredits.licenseDistribution')}</h2>
           <div className="bg-card border-border grid grid-cols-2 gap-4 rounded-lg border p-6 md:grid-cols-4">
             {Object.entries(licenseStats)
               .sort(([, a], [, b]) => b - a)
@@ -101,7 +101,7 @@ export default async function OSSCreditsPage() {
       {/* パッケージリスト */}
       {!loadError && (
         <div>
-          <h2 className="mb-4 text-xl font-semibold">Package List ({credits.length})</h2>
+          <h2 className="mb-4 text-xl font-semibold">{t('ossCredits.packageList', { count: credits.length })}</h2>
           <div className="space-y-4">
             {credits.map((credit) => (
               <div
@@ -146,10 +146,10 @@ export default async function OSSCreditsPage() {
 
       {/* フッター - 詳細情報へのリンク */}
       <div className="bg-muted mt-12 rounded-lg p-6 text-center">
-        <p className="text-muted-foreground mb-4 text-sm">For complete license texts and NOTICE files, please see:</p>
+        <p className="text-muted-foreground mb-4 text-sm">{t('ossCredits.footer.notice')}</p>
         <div className="flex flex-col gap-2 md:flex-row md:justify-center md:gap-4">
           <Link href="/THIRD_PARTY_NOTICES.txt" target="_blank" className="text-primary hover:underline">
-            THIRD_PARTY_NOTICES.txt
+            {t('ossCredits.footer.thirdPartyNotices')}
           </Link>
           <Link
             href="https://github.com/your-org/boxlog-app"
@@ -157,7 +157,7 @@ export default async function OSSCreditsPage() {
             rel="noopener noreferrer"
             className="text-primary hover:underline"
           >
-            GitHub Repository
+            {t('ossCredits.footer.githubRepository')}
           </Link>
         </div>
       </div>

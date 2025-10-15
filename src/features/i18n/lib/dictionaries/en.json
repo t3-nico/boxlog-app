@@ -1036,7 +1036,14 @@
     "noRepository": "No repository information",
     "noPublisher": "No publisher information",
     "noResults": "No search results found",
-    "loadingError": "Failed to load license information"
+    "loadingError": "Failed to load license information",
+    "licenseDistribution": "License Distribution",
+    "packageList": "Package List ({{count}})",
+    "footer": {
+      "notice": "For complete license texts and NOTICE files, please see:",
+      "thirdPartyNotices": "THIRD_PARTY_NOTICES.txt",
+      "githubRepository": "GitHub Repository"
+    }
   },
   "legal": {
     "title": "Legal Information",
