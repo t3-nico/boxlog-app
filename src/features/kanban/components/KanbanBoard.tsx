@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useKanbanDnd } from '../hooks/useKanbanDnd'
 import { useKanbanStore } from '../stores/useKanbanStore'
 import type { KanbanCard as KanbanCardType } from '../types'
+import { KanbanBoardSkeleton } from './shared/KanbanBoardSkeleton'
 import { KanbanCard } from './shared/KanbanCard'
 import { KanbanCardDialog } from './shared/KanbanCardDialog'
 import { KanbanColumn } from './shared/KanbanColumn'
@@ -21,12 +22,17 @@ import { KanbanColumn } from './shared/KanbanColumn'
  * ```
  */
 export function KanbanBoard() {
-  const { activeBoard, addCard, updateCard, deleteCard, selectCard } = useKanbanStore()
+  const { activeBoard, addCard, updateCard, deleteCard, selectCard, isLoading } = useKanbanStore()
   const { sensors, handleDragStart, handleDragEnd, handleDragCancel, activeCard } = useKanbanDnd()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingCard, setEditingCard] = useState<KanbanCardType | undefined>()
   const [targetColumnId, setTargetColumnId] = useState<string | undefined>()
+
+  // ローディング中
+  if (isLoading) {
+    return <KanbanBoardSkeleton />
+  }
 
   // ボードが未作成の場合の初期化ボタン
   if (!activeBoard) {

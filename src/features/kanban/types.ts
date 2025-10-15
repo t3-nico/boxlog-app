@@ -24,6 +24,10 @@ export const kanbanCardSchema = z.object({
   assignee: z.string().optional(),
   tags: z.array(z.string()).default([]),
   dueDate: z.date().optional(),
+  isBlocked: z.boolean().default(false), // ブロック状態
+  blockedReason: z.string().optional(), // ブロック理由
+  startedAt: z.date().optional(), // 作業開始日時（サイクルタイム計測用）
+  completedAt: z.date().optional(), // 完了日時（リードタイム計測用）
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -49,6 +53,8 @@ export interface KanbanColumn {
   status: KanbanStatus
   cards: KanbanCard[]
   order: number
+  wipLimit?: number // WIP制限（Work In Progress Limit）
+  definitionOfDone?: string[] // 完了定義（Definition of Done）
 }
 
 /**

@@ -55,7 +55,7 @@ interface KanbanCardDialogProps {
  * ```
  */
 export function KanbanCardDialog({ card, isOpen, onClose, onSave, defaultStatus = 'todo' }: KanbanCardDialogProps) {
-  // @ts-expect-error - React Hook FormとZodの型互換性の問題（実行時には問題なし）
+  // @ts-ignore - React Hook FormとZodの型互換性の問題（実行時には問題なし）
   const form = useForm<KanbanCardFormData>({
     resolver: zodResolver(kanbanCardInputSchema),
     defaultValues: card

@@ -1,6 +1,4 @@
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +9,7 @@ import {
 import { cn } from '@/lib/utils'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Calendar, MoreVertical, User } from 'lucide-react'
+import { AlertCircle, Calendar, MoreHorizontal, User } from 'lucide-react'
 import type { KanbanCard as KanbanCardType } from '../../types'
 
 interface KanbanCardProps {
@@ -24,20 +22,9 @@ interface KanbanCardProps {
 }
 
 /**
- * Kanbanカードコンポーネント
+ * Kanbanカードコンポーネント（ClickUp風デザイン）
  *
- * shadcn/ui Cardをベースに、dnd-kit対応したドラッグ可能なカード
- *
- * @example
- * ```tsx
- * <KanbanCard
- *   card={card}
- *   columnId={columnId}
- *   index={0}
- *   onEdit={(card) => console.log('Edit', card)}
- *   onDelete={(id) => console.log('Delete', id)}
- * />
- * ```
+ * シンプルで実用的なカードデザイン
  */
 export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging = false }: KanbanCardProps) {
   const {
@@ -61,74 +48,86 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
     transition,
   }
 
-  const priorityVariant = {
-    low: 'outline' as const,
-    medium: 'secondary' as const,
-    high: 'destructive' as const,
-  }
-
-  const priorityLabel = {
-    low: '低',
-    medium: '中',
-    high: '高',
+  // 優先度の色（ドット）
+  const priorityColor = {
+    low: 'bg-blue-500',
+    medium: 'bg-yellow-500',
+    high: 'bg-red-500',
   }
 
   return (
-    <Card
+    <div
       ref={setNodeRef}
       style={style}
       className={cn(
-        'cursor-pointer transition-all hover:shadow-md',
-        (isDragging || isSortableDragging) && 'rotate-3 opacity-50',
-        'touch-none' // タッチ操作でのスクロール防止
+        'group bg-card relative rounded-lg p-3 shadow-sm transition-all hover:shadow-md',
+        'border-border cursor-pointer border',
+        (isDragging || isSortableDragging) && 'opacity-50 shadow-lg',
+        card.isBlocked && 'border-l-destructive border-l-4', // ブロック状態の視覚化
+        'touch-none'
       )}
       {...attributes}
       {...listeners}
     >
-      <CardHeader className="gap-0 pb-3">
-        <div className="flex items-start justify-between gap-2">
-          <CardTitle className="line-clamp-2 text-sm">{card.title}</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="icon" className="size-6 shrink-0" aria-label="カードメニュー">
-                <MoreVertical className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit?.(card)}>編集</DropdownMenuItem>
-              <DropdownMenuItem>複製</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => onDelete?.(card.id)}>
-                削除
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+      {/* ブロック状態バナー */}
+      {card.isBlocked && (
+        <div className="bg-destructive/10 mb-2 flex items-center gap-1.5 rounded px-2 py-1">
+          <AlertCircle className="text-destructive size-3" />
+          <span className="text-destructive text-xs font-medium">ブロック中</span>
+          {card.blockedReason && <span className="text-muted-foreground text-xs">: {card.blockedReason}</span>}
         </div>
-        <Badge variant={priorityVariant[card.priority]} className="w-fit">
-          {priorityLabel[card.priority]}
-        </Badge>
-      </CardHeader>
+      )}
 
-      <CardContent className="gap-3 pt-0">
-        {card.description && <p className="text-muted-foreground line-clamp-2 text-xs">{card.description}</p>}
+      {/* ヘッダー：優先度ドット + メニュー */}
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          {/* 優先度ドット */}
+          <div className={cn('size-2 shrink-0 rounded-full', priorityColor[card.priority])} />
+          <h3 className="text-foreground truncate text-sm leading-tight font-medium">{card.title}</h3>
+        </div>
 
-        {/* タグ */}
-        {card.tags && card.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
-            {card.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-            {card.tags.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{card.tags.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
+        {/* メニューボタン */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-6 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="カードメニュー"
+            >
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onEdit?.(card)}>編集</DropdownMenuItem>
+            <DropdownMenuItem>複製</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => onDelete?.(card.id)}>
+              削除
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-        {/* メタ情報 */}
+      {/* 説明 */}
+      {card.description && <p className="text-muted-foreground mb-3 line-clamp-2 text-xs">{card.description}</p>}
+
+      {/* タグ */}
+      {card.tags && card.tags.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-1">
+          {card.tags.slice(0, 3).map((tag) => (
+            <span key={tag} className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs">
+              {tag}
+            </span>
+          ))}
+          {card.tags.length > 3 && (
+            <span className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs">+{card.tags.length - 3}</span>
+          )}
+        </div>
+      )}
+
+      {/* フッター：担当者・期限 */}
+      {(card.assignee || card.dueDate) && (
         <div className="text-muted-foreground flex items-center gap-3 text-xs">
           {card.assignee && (
             <div className="flex items-center gap-1">
@@ -143,7 +142,7 @@ export function KanbanCard({ card, columnId, index, onEdit, onDelete, isDragging
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   )
 }

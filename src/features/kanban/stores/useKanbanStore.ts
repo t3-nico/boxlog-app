@@ -33,6 +33,7 @@ interface KanbanStoreState {
   selectedCard: KanbanCard | null
   filter: KanbanFilter
   sort: KanbanSort
+  isLoading: boolean
 }
 
 interface KanbanStore extends KanbanStoreState {
@@ -61,6 +62,7 @@ interface KanbanStore extends KanbanStoreState {
 
   // Utility
   clearAllData: () => void
+  setLoading: (isLoading: boolean) => void
 }
 
 // ユーティリティ関数
@@ -76,6 +78,8 @@ function createDefaultColumns(): KanbanColumn[] {
       status: 'todo',
       cards: [],
       order: 0,
+      wipLimit: undefined, // To Doは制限なし
+      definitionOfDone: ['タスクの詳細が明確', '担当者が決定', '優先度が設定済み'],
     },
     {
       id: generateId(),
@@ -83,6 +87,8 @@ function createDefaultColumns(): KanbanColumn[] {
       status: 'in_progress',
       cards: [],
       order: 1,
+      wipLimit: 3, // 同時進行は3つまで（ベストプラクティス）
+      definitionOfDone: ['作業完了', 'テスト実施', 'レビュー完了'],
     },
     {
       id: generateId(),
@@ -90,6 +96,8 @@ function createDefaultColumns(): KanbanColumn[] {
       status: 'done',
       cards: [],
       order: 2,
+      wipLimit: undefined, // Doneは制限なし
+      definitionOfDone: ['全ての要件を満たす', 'ステークホルダーの承認'],
     },
   ]
 }
@@ -104,6 +112,7 @@ const initialState: KanbanStoreState = {
     key: 'createdAt',
     order: 'desc',
   },
+  isLoading: false,
 }
 
 export const useKanbanStore = create<KanbanStore>()(
@@ -168,8 +177,22 @@ export const useKanbanStore = create<KanbanStore>()(
 
             // カードを移動
             const [movedCard] = sourceColumn.cards.splice(event.sourceIndex, 1)
+            const now = new Date()
+
+            // ステータス変更時のサイクルタイム・リードタイム計測
+            if (movedCard.status !== targetColumn.status) {
+              // In Progressに移動した場合、startedAtを記録
+              if (targetColumn.status === 'in_progress' && !movedCard.startedAt) {
+                movedCard.startedAt = now
+              }
+              // Doneに移動した場合、completedAtを記録
+              if (targetColumn.status === 'done' && !movedCard.completedAt) {
+                movedCard.completedAt = now
+              }
+            }
+
             movedCard.status = targetColumn.status
-            movedCard.updatedAt = new Date()
+            movedCard.updatedAt = now
             targetColumn.cards.splice(event.targetIndex, 0, movedCard)
 
             return {
@@ -302,6 +325,10 @@ export const useKanbanStore = create<KanbanStore>()(
         // Utility
         clearAllData: () => {
           set(initialState)
+        },
+
+        setLoading: (isLoading: boolean) => {
+          set({ isLoading })
         },
       }),
       {
