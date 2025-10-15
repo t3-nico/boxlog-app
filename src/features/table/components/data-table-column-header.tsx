@@ -26,7 +26,19 @@ export function DataTableColumnHeader<TData, TValue>({
         variant="ghost"
         size="sm"
         className={cn('hover:bg-accent -ml-3 h-8', column.getIsSorted() && 'bg-accent/50')}
-        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        onClick={() => {
+          const currentSort = column.getIsSorted()
+          if (currentSort === false) {
+            // ソートなし → 昇順
+            column.toggleSorting(false)
+          } else if (currentSort === 'asc') {
+            // 昇順 → 降順
+            column.toggleSorting(true)
+          } else {
+            // 降順 → ソートなし
+            column.clearSorting()
+          }
+        }}
       >
         <span>{title}</span>
         {column.getIsSorted() === 'desc' ? (
